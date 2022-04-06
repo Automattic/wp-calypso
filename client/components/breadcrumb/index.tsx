@@ -20,6 +20,9 @@ const StyledLi = styled.li`
 	font-size: 13px;
 	font-weight: 400;
 	--color-link: var( --studio-gray-50 );
+	& .info-popover {
+		align-self: flex-start;
+	}
 
 	:last-of-type:not( :first-of-type ) {
 		--color-link: var( --studio-gray-80 );
@@ -60,6 +63,8 @@ const StyledGridicon = styled( Gridicon )`
 
 const HelpBuble = styled( InfoPopover )`
 	margin-left: 7px;
+	display: flex;
+	align-items: center;
 	& .gridicon {
 		color: var( --studio-gray-30 );
 	}

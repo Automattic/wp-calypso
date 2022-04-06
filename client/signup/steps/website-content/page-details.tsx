@@ -8,10 +8,11 @@ import {
 } from 'calypso/signup/accordion-form/form-components';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import {
+	imageRemoved,
 	imageUploaded,
 	imageUploadFailed,
 	imageUploadInitiated,
-	textChanged,
+	websiteContentFieldChanged,
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MediaUploadData, WordpressMediaUpload } from './wordpress-media-upload';
@@ -71,14 +72,24 @@ export function PageDetails( {
 			} as ChangeEvent< HTMLInputElement > );
 	};
 
+	const onMediaRemoved = ( { mediaIndex }: MediaUploadData ) => {
+		dispatch(
+			imageRemoved( {
+				pageId: page.id,
+				mediaIndex,
+			} )
+		);
+	};
+
 	const onContentChange = ( e: ChangeEvent< HTMLInputElement > ) => {
 		const {
 			target: { value },
 		} = e;
 		dispatch(
-			textChanged( {
+			websiteContentFieldChanged( {
 				pageId: page.id,
-				content: value,
+				fieldName: 'content',
+				fieldValue: value,
 			} )
 		);
 		onChangeField && onChangeField( e );
@@ -114,6 +125,7 @@ export function PageDetails( {
 						onMediaUploadComplete={ onMediaUploadComplete }
 						initialCaption={ image.caption }
 						initialUrl={ image.url }
+						onRemoveImage={ onMediaRemoved }
 					/>
 				) ) }
 			</HorizontalGrid>

@@ -13,3 +13,13 @@
 .scan__content .scan-placeholder.scan__content {
 	padding-top: 0;
 }
+
+.scan-placeholder__header.is-placeholder,
+.scan-placeholder__content.is-placeholder {
+	margin-left: auto;
+	margin-right: auto;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-left: 0;
+	}
+}

@@ -78,6 +78,7 @@ export function createP24PaymentMethodStore(): P24Store {
 export function createP24Method( { store }: { store: P24Store } ): PaymentMethod {
 	return {
 		id: 'p24',
+		paymentProcessorId: 'p24',
 		label: <P24Label />,
 		activeContent: <P24Fields />,
 		inactiveContent: <P24Summary />,
@@ -181,7 +182,7 @@ function P24PayButton( {
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting p24 payment' );
-					onClick( 'p24', {
+					onClick( {
 						name: customerName.value,
 						email: customerEmail.value,
 					} );

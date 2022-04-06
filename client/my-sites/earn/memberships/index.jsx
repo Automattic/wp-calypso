@@ -610,7 +610,7 @@ class MembershipsSection extends Component {
 					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
 					shouldDisplay={ () => true }
 					feature={ FEATURE_MEMBERSHIPS }
-					title={ this.props.translate( 'Upgrade to the Personal plan' ) }
+					title={ this.props.translate( 'Upgrade to the Pro plan' ) }
 					description={ this.props.translate( 'Upgrade to start selling.' ) }
 					showIcon={ true }
 					event="calypso_memberships_upsell_nudge"

@@ -201,6 +201,7 @@ export function createCreditCardMethod( {
 } ) {
 	return {
 		id: 'card',
+		paymentProcessorId: 'card',
 		label: <CreditCardLabel />,
 		activeContent: (
 			<CreditCardFields

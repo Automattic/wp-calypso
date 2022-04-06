@@ -28,7 +28,6 @@ const ALT_TEXT = {
 	amex: 'American Express',
 	'apple-pay': 'Apple Pay',
 	bancontact: 'Bancontact',
-	'brazil-tef': 'Transferência bancária',
 	diners: 'Diners Club',
 	discover: 'Discover',
 	eps: 'eps',

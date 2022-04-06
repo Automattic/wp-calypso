@@ -25,18 +25,22 @@ const TimeFrame: React.FC< TimeFrameProps > = ( { expiryDate, billingTerm } ) =>
 	}, [ billingTerm, translate ] );
 
 	return productExpiryDate ? (
-		<time
-			className="display-price__expiration-date"
-			dateTime={ productExpiryDate.format( 'YYYY-DD-YY' ) }
-		>
-			{ translate( 'expires %(date)s', {
-				args: {
-					date: productExpiryDate.format( 'L' ),
-				},
-			} ) }
-		</time>
+		<div>
+			<time
+				className="display-price__expiration-date"
+				dateTime={ productExpiryDate.format( 'YYYY-DD-YY' ) }
+			>
+				{ translate( 'expires %(date)s', {
+					args: {
+						date: productExpiryDate.format( 'L' ),
+					},
+				} ) }
+			</time>
+		</div>
 	) : (
-		<span className="display-price__billing-time-frame">{ billingTermText }</span>
+		<div>
+			<span className="display-price__billing-time-frame">{ billingTermText }</span>
+		</div>
 	);
 };
 

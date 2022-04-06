@@ -4,9 +4,11 @@ import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
+import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import TrackInputChanges from 'calypso/components/track-input-changes';
@@ -15,6 +17,9 @@ import { FormCheckbox } from 'calypso/devdocs/design/playground-scope';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getMimePrefix, url } from 'calypso/lib/media/utils';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EditorMediaModalFieldset from '../fieldset';
 
 const noop = () => {};
@@ -45,6 +50,12 @@ class EditorMediaModalDetailFields extends Component {
 		if ( nextProps.item && nextProps.item.ID !== this.props.item?.ID ) {
 			this.updateChange( true );
 			this.setState( { modifiedChanges: null } );
+		}
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.item && prevProps.item.privacy_setting !== this.props.item?.privacy_setting ) {
+			window.postMessage( { event: 'videopress_refresh_iframe' }, '*' );
 		}
 	}
 
@@ -116,6 +127,11 @@ class EditorMediaModalDetailFields extends Component {
 
 	handleRatingChange = ( { currentTarget } ) => {
 		this.setFieldByName( 'rating', currentTarget.value );
+	};
+
+	handlePrivacySettingChange = ( { currentTarget } ) => {
+		const clippedValue = Math.max( 0, Math.min( 2, parseInt( currentTarget.value, 10 ) ) );
+		this.setFieldByName( 'privacy_setting', clippedValue );
 	};
 
 	handleDisplayEmbed = () => {
@@ -212,6 +228,25 @@ class EditorMediaModalDetailFields extends Component {
 						</FormLabel>
 					) ) }
 				</div>
+			</EditorMediaModalFieldset>
+		);
+	};
+
+	renderPrivacySetting = () => {
+		const privacySetting = this.getItemValue( 'privacy_setting' );
+		return (
+			<EditorMediaModalFieldset legend={ this.props.translate( 'Privacy' ) }>
+				<FormSelect value={ privacySetting } onChange={ this.handlePrivacySettingChange }>
+					<option key={ 2 } value={ 2 }>
+						{ this.props.translate( 'Site Default' ) }
+					</option>
+					<option key={ 0 } value={ 0 }>
+						{ this.props.translate( 'Public' ) }
+					</option>
+					<option key={ 1 } value={ 1 }>
+						{ this.props.translate( 'Private' ) }
+					</option>
+				</FormSelect>
 			</EditorMediaModalFieldset>
 		);
 	};
@@ -316,10 +351,24 @@ class EditorMediaModalDetailFields extends Component {
 				{ this.renderShareEmbed() }
 				{ this.renderAllowDownloadOption() }
 				{ this.renderRating() }
+				{
+					false && this.props.hasVideoPrivacyFeature && this.renderPrivacySetting()
+					/* TODO: Remove false when VP Privacy Setting PR lands */
+				}
 				{ this.renderVideoPressShortcode() }
 			</div>
 		);
 	}
 }
 
-export default localize( withUpdateMedia( EditorMediaModalDetailFields ) );
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const isWpcom = ! isJetpackSite( state, siteId );
+	const hasVideoPrivacyFeature =
+		isWpcom && hasActiveSiteFeature( state, siteId, 'videopress-privacy-setting' );
+
+	return {
+		siteId,
+		hasVideoPrivacyFeature,
+	};
+} )( localize( withUpdateMedia( EditorMediaModalDetailFields ) ) );

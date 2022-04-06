@@ -5,7 +5,10 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
-import { getThreatFix } from 'calypso/components/jetpack/threat-item/utils';
+import {
+	getThreatPayloadDescription,
+	getThreatFix,
+} from 'calypso/components/jetpack/threat-item/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import LogItem from '../log-item';
@@ -168,6 +171,8 @@ const ThreatItem: React.FC< Props > = ( {
 				status={ threat.status }
 				fix={ getFix() }
 				problem={ threat.description }
+				type={ getThreatPayloadDescription( threat ) }
+				source={ threat.source }
 				context={ threat.context }
 				diff={ threat.diff }
 				rows={ threat.rows }

@@ -7,13 +7,11 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import SignupForm from 'calypso/blocks/signup-form';
-import SocialSignupToS from 'calypso/blocks/signup-form/social-signup-tos';
 import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
-import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
@@ -137,6 +135,9 @@ export class UserStep extends Component {
 			userLoggedIn,
 			wccomFrom,
 			isReskinned,
+			sectionName,
+			from,
+			locale,
 		} = this.props;
 
 		let subHeaderText = this.props.subHeaderText;
@@ -193,7 +194,16 @@ export class UserStep extends Component {
 		}
 
 		if ( isReskinned && 0 === positionInFlow ) {
-			const loginUrl = this.getLoginUrl( this.props );
+			const loginUrl = login( {
+				isJetpack: 'jetpack-connect' === sectionName,
+				from,
+				redirectTo: getRedirectToAfterLoginUrl( this.props ),
+				locale,
+				oauth2ClientId: oauth2Client?.id,
+				wccomFrom,
+				isWhiteLogin: isReskinned,
+				signupUrl: window.location.pathname + window.location.search,
+			} );
 
 			subHeaderText = translate(
 				'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
@@ -456,21 +466,6 @@ export class UserStep extends Component {
 		);
 	}
 
-	getLoginUrl( props ) {
-		const { oauth2Client, wccomFrom, isReskinned, sectionName, from, locale } = props;
-
-		return login( {
-			isJetpack: 'jetpack-connect' === sectionName,
-			from,
-			redirectTo: getRedirectToAfterLoginUrl( props ),
-			locale,
-			oauth2ClientId: oauth2Client?.id,
-			wccomFrom,
-			isWhiteLogin: isReskinned,
-			signupUrl: window.location.pathname + window.location.search,
-		} );
-	}
-
 	renderP2SignupStep() {
 		return (
 			<P2StepWrapper
@@ -499,7 +494,7 @@ export class UserStep extends Component {
 			return null; // return nothing so that we don't see the error message and the sign up form.
 		}
 
-		const stepWrapper = (
+		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
@@ -509,31 +504,6 @@ export class UserStep extends Component {
 				fallbackHeaderText={ this.props.translate( 'Create your account.' ) }
 				stepContent={ this.renderSignupForm() }
 			/>
-		);
-
-		return (
-			<ProvideExperimentData
-				name="registration_social_login_first_on_mobile_v3"
-				options={ {
-					isEligible: isMobile() && 'wpcc' !== this.props.flowName,
-				} }
-			>
-				{ ( isLoading, experimentAssignment ) => {
-					if ( isLoading ) {
-						return null;
-					}
-
-					if ( experimentAssignment?.variationName === 'treatment' ) {
-						return (
-							<div className="user__simpler-mobile-form">
-								{ stepWrapper }
-								<SocialSignupToS />
-							</div>
-						);
-					}
-					return stepWrapper;
-				} }
-			</ProvideExperimentData>
 		);
 	}
 }

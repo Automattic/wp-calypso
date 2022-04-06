@@ -32,6 +32,7 @@ export const formatScanThreat = ( threat ) => ( {
 	table: threat.table,
 	context: threat.context,
 	severity: threat.severity,
+	source: threat.source,
 } );
 
 /**

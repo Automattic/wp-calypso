@@ -6,7 +6,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import SocialLogo from 'calypso/components/social-logo';
-import type { SocialProfile, SocialProfilesState } from 'calypso/state/difm/social-profiles/schema';
+import type { SocialProfilesState, SocialProfileUrlKey } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement } from 'react';
 
@@ -47,14 +47,14 @@ const ActionButton = styled( Button )`
 `;
 
 const SocialProfilesFormField = ( {
-	socialProfileId,
+	name,
 	label,
 	logo,
 	value,
 	placeholder,
 	onChange,
 }: {
-	socialProfileId: SocialProfile;
+	name: SocialProfileUrlKey;
 	label: TranslateResult;
 	logo: ReactElement;
 	value: string;
@@ -62,32 +62,37 @@ const SocialProfilesFormField = ( {
 	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 } ) => (
 	<FormFieldset>
-		<FormLabel htmlFor={ socialProfileId }>{ label }</FormLabel>
+		<FormLabel htmlFor={ name }>{ label }</FormLabel>
 		<TextInputWrapper>
 			{ logo }
-			<FormInput
-				name={ socialProfileId }
-				id={ socialProfileId }
-				value={ value }
-				placeholder={ placeholder }
-				onChange={ onChange }
-			/>
+			<FormInput name={ name } value={ value } placeholder={ placeholder } onChange={ onChange } />
 		</TextInputWrapper>
 	</FormFieldset>
 );
 
 export default function SocialProfiles( {
-	initialSocialProfiles,
+	defaultTwitterUrl = '',
+	defaultFacebookUrl = '',
+	defaultLinkedinUrl = '',
+	defaultInstagramUrl = '',
 	onSubmit,
 	onSkip,
 }: {
-	initialSocialProfiles: SocialProfilesState;
+	defaultTwitterUrl: string;
+	defaultFacebookUrl: string;
+	defaultLinkedinUrl: string;
+	defaultInstagramUrl: string;
 	onSubmit: ( formValues: SocialProfilesState ) => void;
 	onSkip: () => void;
 } ) {
 	const translate = useTranslate();
 
-	const [ formValues, setFormValues ] = useState( initialSocialProfiles );
+	const [ formValues, setFormValues ] = useState< SocialProfilesState >( {
+		twitterUrl: defaultTwitterUrl,
+		facebookUrl: defaultFacebookUrl,
+		linkedinUrl: defaultLinkedinUrl,
+		instagramUrl: defaultInstagramUrl,
+	} );
 
 	const onChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setFormValues( ( value ) => ( {
@@ -104,35 +109,35 @@ export default function SocialProfiles( {
 	return (
 		<form onSubmit={ handleSubmit }>
 			<SocialProfilesFormField
-				socialProfileId="FACEBOOK"
+				name="facebookUrl"
 				label={ translate( 'Facebook' ) }
 				logo={ <SocialLogo size={ 22 } icon="facebook" /> }
 				placeholder="https://facebook.com/yourprofile"
-				value={ formValues[ 'FACEBOOK' ] }
+				value={ formValues.facebookUrl }
 				onChange={ onChange }
 			/>
 			<SocialProfilesFormField
-				socialProfileId="TWITTER"
+				name="twitterUrl"
 				label={ translate( 'Twitter' ) }
 				logo={ <SocialLogo size={ 22 } icon="twitter" /> }
 				placeholder="https://twitter.com/yourprofile"
-				value={ formValues[ 'TWITTER' ] }
+				value={ formValues.twitterUrl }
 				onChange={ onChange }
 			/>
 			<SocialProfilesFormField
-				socialProfileId="INSTAGRAM"
+				name="instagramUrl"
 				label={ translate( 'Instagram' ) }
 				logo={ <SocialLogo size={ 22 } icon="instagram" /> }
 				placeholder="https://instagram.com/yourprofile"
-				value={ formValues[ 'INSTAGRAM' ] }
+				value={ formValues.instagramUrl }
 				onChange={ onChange }
 			/>
 			<SocialProfilesFormField
-				socialProfileId="LINKEDIN"
+				name="linkedinUrl"
 				label={ translate( 'Linkedin' ) }
 				logo={ <SocialLogo size={ 22 } icon="linkedin" /> }
 				placeholder="https://linkedin.com/yourprofile"
-				value={ formValues[ 'LINKEDIN' ] }
+				value={ formValues.linkedinUrl }
 				onChange={ onChange }
 			/>
 			<ButtonWrapper>

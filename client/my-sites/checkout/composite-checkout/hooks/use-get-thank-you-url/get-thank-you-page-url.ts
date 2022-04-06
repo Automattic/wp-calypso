@@ -31,6 +31,7 @@ import {
 	hasTrafficGuide,
 	hasDIFMProduct,
 	hasMonthlyCartItem,
+	hasProPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -38,7 +39,6 @@ import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
 import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';
-import { PROFESSIONAL_EMAIL_OFFER } from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
 import {
 	clearSignupCompleteFlowName,
 	getSignupCompleteFlowName,
@@ -578,7 +578,8 @@ function getProfessionalEmailUpsellUrl( {
 		! hasBloggerPlan( cart ) &&
 		! hasPersonalPlan( cart ) &&
 		! hasBusinessPlan( cart ) &&
-		! hasEcommercePlan( cart )
+		! hasEcommercePlan( cart ) &&
+		! hasProPlan( cart )
 	) {
 		return;
 	}
@@ -602,7 +603,7 @@ function getProfessionalEmailUpsellUrl( {
 		return;
 	}
 
-	return `/checkout/offer/${ PROFESSIONAL_EMAIL_OFFER }/${ domainName }/${ pendingOrReceiptId }/${ siteSlug }`;
+	return `/checkout/offer-professional-email/${ domainName }/${ pendingOrReceiptId }/${ siteSlug }`;
 }
 
 function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< string, string > {

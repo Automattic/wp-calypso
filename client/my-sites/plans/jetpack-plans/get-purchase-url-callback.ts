@@ -43,7 +43,6 @@ function buildCheckoutURL(
 			urlQueryArgs.checkoutBackUrl = window.location.href;
 		}
 	}
-
 	// host maybe needed in either siteless or userless checkout below
 	const host =
 		'development' === urlQueryArgs.calypso_env
@@ -89,12 +88,16 @@ function buildCheckoutURL(
  */
 export const getPurchaseURLCallback = (
 	siteSlug: string,
-	urlQueryArgs: QueryArgs
+	urlQueryArgs: QueryArgs,
+	locale?: string
 ): PurchaseURLCallback => (
 	product: SelectorProduct,
 	isUpgradeableToYearly?,
 	purchase?: Purchase
 ) => {
+	if ( locale ) {
+		urlQueryArgs.lang = locale;
+	}
 	if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
 		return product.externalUrl || '';
 	}

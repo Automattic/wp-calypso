@@ -154,7 +154,7 @@ export class EditGravatar extends Component {
 	};
 
 	render() {
-		const { isUploading, translate, user } = this.props;
+		const { isUploading, translate, user, additionalUploadHtml } = this.props;
 		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
@@ -231,6 +231,11 @@ export class EditGravatar extends Component {
 							}
 						) }
 					</InfoPopover>
+					{ additionalUploadHtml && (
+						<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
+							{ additionalUploadHtml }
+						</FilePicker>
+					) }
 				</div>
 			</div>
 		);

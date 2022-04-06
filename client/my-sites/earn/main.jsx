@@ -14,6 +14,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { canAccessAds } from 'calypso/lib/ads/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AdsSettings from 'calypso/my-sites/earn/ads/form-settings';
+import WordAdsPayments from 'calypso/my-sites/earn/ads/payments';
 import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
 import {
 	getSelectedSite,
@@ -54,6 +55,11 @@ class EarningsMain extends Component {
 				id: 'ads-earnings',
 			} );
 			tabs.push( {
+				title: translate( 'Payments' ),
+				path: '/earn/ads-payments' + pathSuffix,
+				id: 'ads-payments',
+			} );
+			tabs.push( {
 				title: translate( 'Settings' ),
 				path: '/earn/ads-settings' + pathSuffix,
 				id: 'ads-settings',
@@ -69,6 +75,12 @@ class EarningsMain extends Component {
 				return (
 					<AdsWrapper section={ this.props.section }>
 						<WordAdsEarnings site={ this.props.site } />
+					</AdsWrapper>
+				);
+			case 'ads-payments':
+				return (
+					<AdsWrapper section={ this.props.section }>
+						<WordAdsPayments site={ this.props.site } />
 					</AdsWrapper>
 				);
 			case 'ads-settings':
@@ -122,6 +134,7 @@ class EarningsMain extends Component {
 			case 'payments':
 				return translate( 'Payments' );
 			case 'ads-earnings':
+			case 'ads-payments':
 			case 'ads-settings':
 				return translate( 'Ads' );
 

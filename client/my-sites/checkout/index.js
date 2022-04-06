@@ -1,6 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	redirectLoggedOut,
+	render as clientRender,
+	setLocaleMiddleware,
+} from 'calypso/controller';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
 import {
@@ -23,7 +28,14 @@ import {
 export default function () {
 	page( '/checkout*', recordSiftScienceUser );
 
-	page( '/checkout/jetpack/:productSlug', noSite, checkoutSiteless, makeLayout, clientRender );
+	page(
+		`/checkout/jetpack/:productSlug`,
+		setLocaleMiddleware(),
+		noSite,
+		checkoutSiteless,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/checkout/jetpack/thank-you/licensing-auto-activate/:product',
@@ -65,7 +77,13 @@ export default function () {
 		clientRender
 	);
 
-	page( '/checkout/jetpack/:siteSlug/:productSlug', checkout, makeLayout, clientRender );
+	page(
+		`/checkout/jetpack/:siteSlug/:productSlug`,
+		setLocaleMiddleware(),
+		checkout,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/checkout/jetpack/thank-you/:site/:product',
@@ -199,7 +217,8 @@ export default function () {
 	);
 
 	page(
-		'/checkout/:domainOrProduct',
+		`/checkout/:domainOrProduct`,
+		setLocaleMiddleware(),
 		redirectLoggedOut,
 		siteSelection,
 		redirectJetpackLegacyPlans,
@@ -209,7 +228,8 @@ export default function () {
 	);
 
 	page(
-		'/checkout/:product/:domainOrProduct',
+		`/checkout/:product/:domainOrProduct`,
+		setLocaleMiddleware(),
 		redirectLoggedOut,
 		siteSelection,
 		redirectJetpackLegacyPlans,

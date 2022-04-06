@@ -196,11 +196,27 @@ export const startOnboarding = () => ( {
 	type: 'ONBOARDING_START' as const,
 } );
 
+export const setIntent = ( intent: string ) => ( {
+	type: 'SET_INTENT' as const,
+	intent,
+} );
+
+export const setStartingPoint = ( startingPoint: string ) => ( {
+	type: 'SET_STARTING_POINT' as const,
+	startingPoint,
+} );
+
+export const setStoreType = ( storeType: string ) => ( {
+	type: 'SET_STORE_TYPE' as const,
+	storeType,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
 	| typeof resetFonts
 	| typeof resetOnboardStore
+	| typeof setStoreType
 	| typeof setDomain
 	| typeof setDomainCategory
 	| typeof setDomainSearch
@@ -216,4 +232,6 @@ export type OnboardAction = ReturnType<
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
 	| typeof startOnboarding
+	| typeof setIntent
+	| typeof setStartingPoint
 >;

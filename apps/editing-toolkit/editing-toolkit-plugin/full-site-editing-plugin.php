@@ -334,6 +334,18 @@ function load_tags_education() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
 
 /**
+ * Help center
+ */
+function load_help_center() {
+	/* phpcs:ignore WordPress.Security.NonceVerification */
+	if ( ! isset( $_GET['enable-help-center'] ) ) {
+		return;
+	}
+	require_once __DIR__ . '/help-center/class-help-center.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_help_center' );
+
+/**
  * Load paragraph block
  */
 function load_paragraph_block() {

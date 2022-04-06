@@ -403,7 +403,13 @@ export default function CompositeCheckout( {
 
 	const addItemAndLog = useCallback(
 		( cartItem ) => {
-			recordAddEvent( cartItem );
+			try {
+				recordAddEvent( cartItem );
+			} catch ( error ) {
+				logStashEvent( 'checkout_add_product_analytics_error', {
+					error: String( error ),
+				} );
+			}
 			addProductsToCart( [ cartItem ] );
 		},
 		[ addProductsToCart ]
@@ -468,8 +474,6 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'sofort', transactionData, dataForProcessor ),
 			eps: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'eps', transactionData, dataForProcessor ),
-			'ebanx-tef': ( transactionData: unknown ) =>
-				genericRedirectProcessor( 'brazil-tef', transactionData, dataForProcessor ),
 			'full-credits': () => fullCreditsProcessor( dataForProcessor ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),

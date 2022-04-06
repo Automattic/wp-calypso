@@ -1,4 +1,4 @@
-import { describe, expect, it, test } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 import {
 	getTestAccountByFeature,
 	envToFeatureKey,
@@ -64,7 +64,7 @@ describe( 'getTestAccountByFeature', function () {
 		expect( accountName ).toBe( 'multipleFeaturesUndefinedRightAccountName' );
 	} );
 
-	test( 'order of attributes in the criteria should not matter', () => {
+	it( 'order of attributes in the criteria should not matter', () => {
 		// Objects are rebuilt internally so as to have their keys sorted. Two objects
 		// with the same attributes but in different order will be considered to
 		// be the exact same criterion.

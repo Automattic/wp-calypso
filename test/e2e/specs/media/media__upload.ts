@@ -1,5 +1,6 @@
 /**
  * @group calypso-pr
+ * @group jetpack
  */
 
 import assert from 'assert';
@@ -30,9 +31,10 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 
 	// Parametrized test.
 	describe.each`
-		siteType      | accountName
-		${ 'Simple' } | ${ 'defaultUser' }
-		${ 'Atomic' } | ${ 'eCommerceUser' }
+		siteType       | accountName
+		${ 'Simple' }  | ${ 'defaultUser' }
+		${ 'Atomic' }  | ${ 'eCommerceUser' }
+		${ 'Jetpack' } | ${ 'jetpackUser' }
 	`( 'Upload media files ($siteType)', ( { accountName } ) => {
 		let mediaPage: MediaPage;
 		let testAccount: TestAccount;

@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { intersection } from 'lodash';
-import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
 import { PlansComparisonRowHeader } from './plans-comparison-row-header';
 import type { PlanComparisonFeature } from './plans-comparison-features';
 import type { WPComPlan } from '@automattic/calypso-products';
@@ -10,38 +9,14 @@ interface Props {
 	plans: WPComPlan[];
 }
 
-const DesktopContent = styled.div`
+export const DesktopContent = styled.div`
 	display: flex;
 	flex-direction: column;
-
-	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
-		.is-section-signup & {
-			display: none;
-		}
-	}
-
-	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_PLANS }px ) {
-		.is-section-plans & {
-			display: none;
-		}
-	}
 `;
 
-const MobileContent = styled.div`
+export const MobileContent = styled.div`
 	display: none;
 	font-weight: 400;
-
-	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
-		.is-section-signup & {
-			display: block;
-		}
-	}
-
-	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_PLANS }px ) {
-		.is-section-plans & {
-			display: block;
-		}
-	}
 `;
 
 const Title = styled.div`

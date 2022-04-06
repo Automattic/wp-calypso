@@ -53,7 +53,9 @@ function WelcomeTour() {
 	const isWelcomeTourNext = () => {
 		return new URLSearchParams( document.location.search ).has( 'welcome-tour-next' );
 	};
-	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext() );
+	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
+
+	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext(), isSiteEditor );
 
 	// Only keep Payment block step if user comes from seller simple flow
 	if ( ! ( 'sell' === intent && sitePlan && 'ecommerce-bundle' !== sitePlan.product_slug ) ) {

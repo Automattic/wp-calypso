@@ -40,7 +40,6 @@
 	},
 	"scripts": {
 		"clean": "yarn build --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json",
-		"test": "yarn jest"
+		"build": "tsc --build ./tsconfig.json"
 	}
 }

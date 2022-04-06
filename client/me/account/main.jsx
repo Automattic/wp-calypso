@@ -33,6 +33,7 @@ import { withGeoLocation } from 'calypso/data/geo/with-geolocation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
 import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
+import { onboardingUrl } from 'calypso/lib/paths';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { clearStore } from 'calypso/lib/user/store';
@@ -49,7 +50,6 @@ import {
 import { successNotice, errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-community-translator';
-import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
@@ -538,12 +538,12 @@ class Account extends Component {
 	}
 
 	renderPrimarySite() {
-		const { onboardingUrl, requestingMissingSites, translate, visibleSiteCount } = this.props;
+		const { requestingMissingSites, translate, visibleSiteCount } = this.props;
 
 		if ( ! visibleSiteCount ) {
 			return (
 				<Button
-					href={ onboardingUrl + '?ref=me-account-settings' }
+					href={ onboardingUrl() + '?ref=me-account-settings' }
 					onClick={ this.getClickHandler( 'Primary Site Add New WordPress Button' ) }
 				>
 					{ translate( 'Add New Site' ) }
@@ -996,7 +996,6 @@ export default compose(
 			userSettings: getUserSettings( state ),
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
-			onboardingUrl: getOnboardingUrl( state ),
 		} ),
 		{
 			bumpStat,

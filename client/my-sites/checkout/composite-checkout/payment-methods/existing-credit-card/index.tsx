@@ -100,6 +100,7 @@ export function createExistingCardMethod( {
 
 	return {
 		id,
+		paymentProcessorId: 'existing-card',
 		label: (
 			<ExistingCardLabel
 				last4={ last4 }
@@ -424,7 +425,7 @@ function ExistingCardPayButton( {
 						errorNotice( getMissingTaxLocationInformationMessage( translate, taxInfoFromServer ) )
 					);
 				} else {
-					onClick( 'existing-card', {
+					onClick( {
 						items,
 						name: cardholderName,
 						storedDetailsId,

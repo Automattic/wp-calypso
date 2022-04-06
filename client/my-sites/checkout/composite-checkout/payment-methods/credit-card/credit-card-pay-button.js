@@ -36,7 +36,7 @@ export default function CreditCardPayButton( {
 				if ( isCreditCardFormValid( store, paymentPartner, __ ) ) {
 					if ( paymentPartner === 'stripe' ) {
 						debug( 'submitting stripe payment' );
-						onClick( 'card', {
+						onClick( {
 							stripe,
 							name: cardholderName?.value,
 							items,
@@ -53,7 +53,7 @@ export default function CreditCardPayButton( {
 					}
 					if ( paymentPartner === 'ebanx' ) {
 						debug( 'submitting ebanx payment' );
-						onClick( 'card', {
+						onClick( {
 							name: cardholderName?.value || '',
 							countryCode: fields?.countryCode?.value || '',
 							number: fields?.number?.value?.replace( /\s+/g, '' ) || '',

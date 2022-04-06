@@ -1,4 +1,5 @@
 import {
+	isPlan,
 	findPlansKeys,
 	findProductKeys,
 	getBillingMonthsForTerm,
@@ -39,6 +40,7 @@ export interface AvailableProductVariant {
 	plan: Plan | Product;
 	product: {
 		product_id: number;
+		product_slug: string;
 		currency_code: string;
 	};
 	priceFull: number;
@@ -177,6 +179,11 @@ function isVariantAllowed(
 	variant: AvailableProductVariant,
 	activePlanRenewalInterval: number | undefined
 ): boolean {
+	// Allow the variant when the item added to the cart is not a plan.
+	if ( ! isPlan( variant.product ) ) {
+		return true;
+	}
+
 	// If this is a plan, does the site currently own a plan? If so, is the term
 	// of the variant lower than the term of the currently owned plan? If so, do
 	// not allow the variant.

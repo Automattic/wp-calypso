@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
@@ -10,6 +11,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
+import OlarkChat from 'calypso/components/olark-chat';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -328,6 +330,10 @@ class ThemeShowcase extends Component {
 				),
 		};
 
+		const olarkIdentity = config( 'olark_chat_identity' );
+		const olarkSystemsGroupId = '239c0f99c53692d81539f76e86910d52';
+		const isEligibleForOlarkChat = ! isLoggedIn && 'en' === locale;
+
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div>
@@ -376,6 +382,9 @@ class ThemeShowcase extends Component {
 					<ThanksModal source={ 'list' } />
 					<AutoLoadingHomepageModal source={ 'list' } />
 					<ThemePreview />
+					{ isEligibleForOlarkChat && (
+						<OlarkChat identity={ olarkIdentity } systemsGroupId={ olarkSystemsGroupId } />
+					) }
 				</div>
 			</div>
 		);

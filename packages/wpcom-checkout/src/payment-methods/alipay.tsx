@@ -66,6 +66,7 @@ export function createAlipayPaymentMethodStore(): AlipayStore {
 export function createAlipayMethod( { store }: { store: AlipayStore } ): PaymentMethod {
 	return {
 		id: 'alipay',
+		paymentProcessorId: 'alipay',
 		label: <AlipayLabel />,
 		activeContent: <AlipayFields />,
 		inactiveContent: <AlipaySummary />,
@@ -156,7 +157,7 @@ function AlipayPayButton( {
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting alipay payment' );
-					onClick( 'alipay', {
+					onClick( {
 						name: customerName?.value,
 						items,
 						total,

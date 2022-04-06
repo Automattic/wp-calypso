@@ -1,14 +1,15 @@
 import {
 	getPlan,
-	TERM_BIENNIALLY,
-	TERM_MONTHLY,
-	JETPACK_LEGACY_PLANS,
+	getProductFromSlug,
+	isConciergeSession,
 	isDomainRegistration,
 	isDomainTransfer,
-	isConciergeSession,
+	isEmailMonthly,
 	isJetpackPlan,
 	isJetpackProduct,
-	getProductFromSlug,
+	JETPACK_LEGACY_PLANS,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { getIntroductoryOfferIntervalDisplay } from '@automattic/wpcom-checkout';
@@ -38,7 +39,6 @@ import {
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
@@ -251,7 +251,7 @@ function PurchaseMetaPrice( { purchase } ) {
 		}
 	}
 
-	if ( productSlug === TITAN_MAIL_MONTHLY_SLUG ) {
+	if ( isEmailMonthly( purchase ) ) {
 		period = translate( 'month' );
 	}
 

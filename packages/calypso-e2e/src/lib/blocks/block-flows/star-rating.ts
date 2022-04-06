@@ -48,21 +48,25 @@ export class StarRatingBlock implements BlockFlow {
 		}
 
 		if ( rating === 0.5 ) {
-			// Because the default is 1 start, we just have one click to do here.
-			await context.editorIframe.click( selectors.starButton( 1 ) );
+			const oneStarLocator = context.editorLocator.locator( selectors.starButton( 1 ) );
+			await oneStarLocator.click();
 			return;
 		}
 
 		if ( wholeRatings.includes( rating as WholeRating ) ) {
-			await context.editorIframe.click( selectors.starButton( rating ) );
+			const starButtonLocator = context.editorLocator.locator( selectors.starButton( rating ) );
+			await starButtonLocator.click();
 			return;
 		}
 
 		if ( halfRatings.includes( rating as HalfRating ) ) {
 			const starNthIndex = Math.ceil( rating );
+			const starButtonLocator = context.editorLocator.locator(
+				selectors.starButton( starNthIndex )
+			);
 			// Two clicks creates a half star rating.
-			await context.editorIframe.click( selectors.starButton( starNthIndex ) );
-			await context.editorIframe.click( selectors.starButton( starNthIndex ) );
+			await starButtonLocator.click();
+			await starButtonLocator.click();
 			return;
 		}
 
@@ -76,10 +80,10 @@ export class StarRatingBlock implements BlockFlow {
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
 		// This is screen-reader text, and the easiest way to validate the star rating.
-		// Because it's not actually visual text on the page, we're using 'attached' state instead of default of 'visible'.
-		await context.page.waitForSelector(
-			`text=Rating: ${ this.configurationData.rating } out of 5.`,
-			{ state: 'attached' }
+		const expectedTextLocator = context.page.locator(
+			`text=Rating: ${ this.configurationData.rating } out of 5.`
 		);
+		// Because it's not actually visual text on the page, we're using 'attached' state instead of default of 'visible'.
+		await expectedTextLocator.waitFor( { state: 'attached' } );
 	}
 }

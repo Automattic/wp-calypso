@@ -68,7 +68,7 @@ export class IndividualPurchasePage {
 	async clickRenewNowCardButton(): Promise< void > {
 		// This triggers a real navigation to the `/checkout/<site_name>` endpoint.
 		await Promise.all( [
-			this.page.waitForNavigation( { timeout: 45 * 1000, waitUntil: 'networkidle' } ),
+			this.page.waitForNavigation( { url: /.*\/checkout.*/ } ),
 			this.page.click( selectors.renewNowCardButton ),
 		] );
 	}

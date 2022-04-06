@@ -56,7 +56,9 @@ export default function IntentStep( props: Props ): React.ReactNode {
 	const subHeaderText = translate( 'You can change your mind at any time.' );
 	const branchSteps = useBranchSteps( stepName, getExcludedSteps );
 
-	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
+	const siteId =
+		useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) ) ||
+		queryObject?.siteId;
 	const canImport = useSelector( ( state ) =>
 		canCurrentUser( state, siteId as number, 'manage_options' )
 	);

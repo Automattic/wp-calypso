@@ -23,14 +23,14 @@ const tag = 'test-tag';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
-	let page: Page;
-	let editorPage: EditorPage;
-	let publishedPostPage: PublishedPostPage;
-
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features, [
 		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
 	] );
+
+	let page: Page;
+	let editorPage: EditorPage;
+	let publishedPostPage: PublishedPostPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -58,7 +58,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		const patternName = 'About Me';
 
 		it( `Add ${ patternName } pattern`, async function () {
-			await editorPage.addPattern( patternName );
+			await editorPage.addPatternFromSidebar( patternName );
 		} );
 	} );
 

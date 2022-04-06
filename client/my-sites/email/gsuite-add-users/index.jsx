@@ -1,3 +1,4 @@
+import { isGoogleWorkspaceMonthly } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
@@ -22,15 +23,11 @@ import {
 	getGSuiteExpiryDate,
 	getGSuiteMailboxPurchaseCost,
 	getGSuiteMailboxRenewalCost,
+	getGSuiteProductSlug,
 	getGSuiteSupportedDomains,
-	getProductSlug,
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
-import {
-	GOOGLE_PROVIDER_NAME,
-	GOOGLE_WORKSPACE_PRODUCT_TYPE,
-	GSUITE_PRODUCT_TYPE,
-} from 'calypso/lib/gsuite/constants';
+import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import {
 	areAllUsersValid,
 	getItemsForCart,
@@ -80,7 +77,7 @@ class GSuiteAddUsers extends Component {
 	}
 
 	handleContinue = () => {
-		const { domains, productType, selectedSite } = this.props;
+		const { domains, googleMailProduct, selectedSite } = this.props;
 		const { users } = this.state;
 		const validatedUsers = validateUsers( users );
 		const canContinue = areAllUsersValid( validatedUsers );
@@ -94,7 +91,7 @@ class GSuiteAddUsers extends Component {
 
 		if ( canContinue ) {
 			this.props.shoppingCartManager
-				.addProductsToCart( getItemsForCart( domains, getProductSlug( productType ), users ) )
+				.addProductsToCart( getItemsForCart( domains, googleMailProduct.product_slug, users ) )
 				.then( () => {
 					this.isMounted && page( '/checkout/' + selectedSite.slug );
 				} );
@@ -244,7 +241,6 @@ class GSuiteAddUsers extends Component {
 			currentRoute,
 			domains,
 			googleMailProduct,
-			productType,
 			selectedDomainName,
 			selectedSite,
 			translate,
@@ -262,7 +258,7 @@ class GSuiteAddUsers extends Component {
 			currentRoute
 		);
 
-		const googleMailServiceFamily = getGoogleMailServiceFamily( getProductSlug( productType ) );
+		const googleMailServiceFamily = getGoogleMailServiceFamily( googleMailProduct?.product_slug );
 
 		return (
 			<>
@@ -290,13 +286,14 @@ class GSuiteAddUsers extends Component {
 						} ) }
 						noticeStatus="is-info"
 					>
-						{ selectedDomainName && hasGSuiteWithUs( selectedDomain ) && (
+						{ selectedDomainName && googleMailProduct && hasGSuiteWithUs( selectedDomain ) && (
 							<EmailPricingNotice
 								domain={ selectedDomain }
 								expiryDate={ getGSuiteExpiryDate( selectedDomain ) }
 								mailboxRenewalCost={ getGSuiteMailboxRenewalCost( selectedDomain ) }
 								mailboxPurchaseCost={ getGSuiteMailboxPurchaseCost( selectedDomain ) }
 								product={ googleMailProduct }
+								isMonthlyBilling={ isGoogleWorkspaceMonthly( googleMailProduct ) }
 							/>
 						) }
 						{ this.renderAddGSuite() }
@@ -310,10 +307,9 @@ class GSuiteAddUsers extends Component {
 GSuiteAddUsers.propTypes = {
 	currentRoute: PropTypes.string,
 	domains: PropTypes.array.isRequired,
-	googleMailProduct: PropTypes.object.isRequired,
+	googleMailProduct: PropTypes.object,
 	gsuiteUsers: PropTypes.array,
 	isRequestingDomains: PropTypes.bool.isRequired,
-	productType: PropTypes.oneOf( [ GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE ] ),
 	selectedDomainName: PropTypes.string.isRequired,
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,
@@ -327,7 +323,13 @@ export default connect(
 		const selectedSite = getSelectedSite( state );
 		const selectedSiteId = getSelectedSiteId( state );
 		const domains = getDomainsBySiteId( state, selectedSiteId );
-		const productSlug = getProductSlug( ownProps.productType );
+
+		const selectedDomain = getSelectedDomain( {
+			domains,
+			selectedDomainName: ownProps.selectedDomainName,
+		} );
+
+		const productSlug = getGSuiteProductSlug( selectedDomain );
 
 		return {
 			currentRoute: getCurrentRoute( state ),

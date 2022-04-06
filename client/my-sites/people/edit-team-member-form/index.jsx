@@ -12,7 +12,11 @@ import PeopleProfile from 'calypso/my-sites/people/people-profile';
 import { recordGoogleEvent as recordGoogleEventAction } from 'calypso/state/analytics/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import EditUserForm from './edit-user-form';
 
 import './style.scss';
@@ -79,12 +83,18 @@ export const EditTeamMemberForm = ( {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const site = getSelectedSite( state );
+
+		const isJetpack = isJetpackSite( state, siteId );
+		const isMultisite = isJetpack
+			? isJetpackSiteMultiSite( state, siteId )
+			: site && site.is_multisite;
 
 		return {
 			siteId,
 			siteSlug: getSelectedSiteSlug( state ),
-			isJetpack: isJetpackSite( state, siteId ),
-			isMultisite: isJetpackSiteMultiSite( state, siteId ),
+			isJetpack,
+			isMultisite,
 			previousRoute: getPreviousRoute( state ),
 		};
 	},

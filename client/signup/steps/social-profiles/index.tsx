@@ -1,53 +1,63 @@
-import 'calypso/state/difm/init';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import startingPointImageUrl from 'calypso/assets/images/onboarding/starting-point.svg';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import {
-	resetSocialProfiles,
-	updateSocialProfiles,
-} from 'calypso/state/difm/social-profiles/actions';
-import { getSocialProfiles } from 'calypso/state/difm/social-profiles/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import SocialProfiles from './social-profiles';
-import type { SocialProfilesState } from 'calypso/state/difm/social-profiles/schema';
+import type { SocialProfilesState } from './types';
 
 import './style.scss';
 
 interface Props {
 	goToNextStep: () => void;
-	submitSignupStep: ( { stepName, wasSkipped }: { stepName: string; wasSkipped: boolean } ) => void;
-	goToStep: ( stepName: string ) => void;
 	stepName: string;
+	signupDependencies: SocialProfilesState;
 }
 
 export default function SocialProfilesStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const { stepName, signupDependencies, goToNextStep } = props;
 
 	const headerText = translate( 'Do you have social media profiles?' );
 	const subHeaderText = translate( 'You can change your mind at any time.' );
 
 	useEffect( () => {
-		dispatch( saveSignupStep( { stepName: props.stepName } ) );
-	}, [ dispatch, props.stepName ] );
+		dispatch( saveSignupStep( { stepName: stepName } ) );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
-	const initialSocialProfiles = useSelector( getSocialProfiles );
-
-	const submitSignupStepAndProceed = () => {
-		dispatch( submitSignupStep( { stepName: props.stepName } ) );
-		props.goToNextStep();
-	};
+	const { twitterUrl, facebookUrl, linkedinUrl, instagramUrl } = signupDependencies;
 
 	const onSubmit = ( socialProfiles: SocialProfilesState ) => {
-		dispatch( updateSocialProfiles( socialProfiles ) );
-		submitSignupStepAndProceed();
+		dispatch(
+			submitSignupStep(
+				{ stepName: stepName },
+				{
+					twitterUrl: socialProfiles.twitterUrl,
+					facebookUrl: socialProfiles.facebookUrl,
+					linkedinUrl: socialProfiles.linkedinUrl,
+					instagramUrl: socialProfiles.instagramUrl,
+				}
+			)
+		);
+		goToNextStep();
 	};
 
 	const onSkip = () => {
-		dispatch( resetSocialProfiles() );
-		submitSignupStepAndProceed();
+		dispatch(
+			submitSignupStep(
+				{ stepName: stepName },
+				{
+					twitterUrl: '',
+					facebookUrl: '',
+					linkedinUrl: '',
+					instagramUrl: '',
+				}
+			)
+		);
+		goToNextStep();
 	};
 
 	return (
@@ -58,7 +68,10 @@ export default function SocialProfilesStep( props: Props ): React.ReactNode {
 			fallbackSubHeaderText={ subHeaderText }
 			stepContent={
 				<SocialProfiles
-					initialSocialProfiles={ initialSocialProfiles }
+					defaultTwitterUrl={ twitterUrl }
+					defaultFacebookUrl={ facebookUrl }
+					defaultLinkedinUrl={ linkedinUrl }
+					defaultInstagramUrl={ instagramUrl }
 					onSubmit={ onSubmit }
 					onSkip={ onSkip }
 				/>

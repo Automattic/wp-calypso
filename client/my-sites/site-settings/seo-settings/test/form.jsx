@@ -7,12 +7,12 @@ import {
 	PLAN_FREE,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
-	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
+	PLAN_WPCOM_PRO,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
@@ -159,7 +159,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 				<SeoForm { ...props } siteIsJetpack={ false } selectedSite={ { plan: { product_slug } } } />
 			);
 			expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
-			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS );
+			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_WPCOM_PRO );
 		} );
 	} );
 
