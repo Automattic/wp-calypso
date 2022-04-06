@@ -168,6 +168,15 @@ export function getTosUploadToken(): string {
 }
 
 /**
+ * Returns the site upload destination for the ToS screenshots.
+ *
+ * @returns {string} Site ID of the destination to which uploaded.
+ */
+export function getTosUploadDestination(): string {
+	return '200900774'; // wpcom site ID
+}
+
+/**
  * Returns a new test email address with the domain name `mailosaur.io` within a specific inbox.
  *
  * @param param0 Keyed parameter object.

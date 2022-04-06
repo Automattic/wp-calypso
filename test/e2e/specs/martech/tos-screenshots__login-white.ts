@@ -73,7 +73,8 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		} );
 
 		it( 'Zip screenshots and upload', async function () {
-			const zipFilename = 'tos-screenshots-login-white.zip';
+			const filetnameTitle = 'tos-screenshots-login-white';
+			const zipFilename = `${ filetnameTitle }.zip`;
 			const archive = archiver( 'zip', {
 				zlib: { level: 9 }, // Sets the compression level.
 			} );
@@ -85,18 +86,22 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 			output.on( 'close', function () {
 				const form = new FormData();
 				const bearerToken = DataHelper.getTosUploadToken();
-				form.append( 'zip_file', fs.createReadStream( zipFilename ) );
-				fetch( 'https://public-api.wordpress.com/wpcom/v2/tos-screenshots', {
-					method: 'POST',
-					body: form,
-					headers: {
-						Authorization: `Bearer ${ bearerToken }`,
-					},
-				} )
+				form.append( 'media[]', fs.createReadStream( zipFilename ) );
+				fetch(
+					`https://public-api.wordpress.com/rest/v1.1/sites/${ DataHelper.getTosUploadDestination() }/media/new`,
+					{
+						method: 'POST',
+						body: form,
+						headers: {
+							Authorization: `Bearer ${ bearerToken }`,
+						},
+					}
+				)
 					.then( ( response ) => response.json() )
-					.then( ( response ) =>
-						expect( response?.data?.upload_status ).toStrictEqual( 'success' )
-					);
+					.then( ( response ) => {
+						expect( response?.media[ 0 ]?.title ).toStrictEqual( filetnameTitle );
+						expect( response?.media[ 0 ]?.mime_type ).toStrictEqual( 'application/zip' );
+					} );
 			} );
 		} );
 	} );
