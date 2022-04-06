@@ -1,5 +1,5 @@
 import { camelOrSnakeSlug } from './camel-or-snake-slug';
-import { isGSuiteOrGoogleWorkspaceProductSlug } from './gsuite-product-slug';
+import { isGSuiteOrGoogleWorkspaceProductSlug } from './is-gsuite-or-google-workspace-product-slug';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from './types';
 
 export function isGSuiteOrGoogleWorkspace(
