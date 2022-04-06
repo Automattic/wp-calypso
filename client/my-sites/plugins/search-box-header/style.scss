@@ -98,20 +98,25 @@
 
 .search-box-header.fixed-top {
 	.search-box-header__search {
-		margin-top: 0;
-		position: fixed;
-		z-index: 2;
-		top: var( --masterbar-height );
-		left: calc( var( --sidebar-width-max ) + 1px );
-		width: calc( 100% - var( --sidebar-width-max ) - 1px );
-		max-width: 100%;
-		padding: 10px 32px;
-		box-sizing: border-box;
-		border-bottom: 1px solid var( --studio-gray-5 );
-		background-color: var( --studio-white );
+		@media ( min-width: 1024px ) {
+			margin-top: 0;
+			position: fixed;
+			z-index: 2;
+			top: var( --masterbar-height );
+			left: calc( var( --sidebar-width-max ) + 1px );
+			width: calc( 100% - var( --sidebar-width-max ) - 1px );
+			max-width: 100%;
+			padding: 10px 32px;
+			box-sizing: border-box;
+			border-bottom: 1px solid var( --studio-gray-5 );
+			background-color: var( --studio-white );
+		}
+		
 	}
 
 	.search-box-header__recommended-searches-title {
-		margin-top: calc( 52px + 24px );
+		@media ( min-width: 1024px ) {
+			margin-top: calc( 52px + 24px );
+		}
 	}
 }
