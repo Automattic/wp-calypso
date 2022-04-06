@@ -6,9 +6,11 @@ import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useSite } from '../../../../hooks/use-site';
 import { ONBOARD_STORE } from '../../../../stores';
 import { useIntents, useIntentsAlt } from './intents';
 import type { Step } from '../../types';
+
 import './style.scss';
 
 /**
@@ -29,8 +31,9 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 	//);
 
 	const intents = useIntents();
-	// TODO: I need to get the site slug to get the siteId to get the canImport
-	const intentsAlt = useIntentsAlt( true );
+	const site = useSite();
+	const canImport = Boolean( site?.capabilities.manage_options );
+	const intentsAlt = useIntentsAlt( canImport );
 
 	const submitIntent = ( intent: string ) => {
 		const providedDependencies = { intent };
