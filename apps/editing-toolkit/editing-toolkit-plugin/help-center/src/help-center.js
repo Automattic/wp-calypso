@@ -1,7 +1,6 @@
 import { Button } from '@wordpress/components';
 import { PinnedItems } from '@wordpress/interface';
 import { registerPlugin } from '@wordpress/plugins';
-import { hasQueryArg } from '@wordpress/url';
 import cx from 'classnames';
 import React from 'react';
 import './help-center.scss';
@@ -57,8 +56,6 @@ function HelpCenter() {
 	);
 }
 
-if ( hasQueryArg( globalThis.location.href, 'enable-help-center' ) ) {
-	registerPlugin( 'etk-help-center', {
-		render: () => <HelpCenter />,
-	} );
-}
+registerPlugin( 'etk-help-center', {
+	render: () => <HelpCenter />,
+} );
