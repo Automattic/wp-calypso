@@ -11,7 +11,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useEffect, useState, useMemo } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
 import {
@@ -24,7 +24,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import PaymentMethodEditButton from './payment-method-edit-button';
 import PaymentMethodEditDialog from './payment-method-edit-dialog';
 import { usePaymentMethodTaxInfo } from './use-payment-method-tax-info';
-import type { TaxInfo, TaxGetInfo } from './types';
+import type { TaxGetInfo, TaxInfo } from './types';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
@@ -127,6 +127,21 @@ const CardHolderName = styled.span`
 	display: block;
 `;
 
+function contactDetailsToTaxInfo( info?: TaxInfo ): ManagedContactDetails {
+	return {
+		countryCode: {
+			value: info?.tax_country_code ?? '',
+			isTouched: true,
+			errors: [],
+		},
+		postalCode: {
+			value: info?.tax_postal_code ?? '',
+			isTouched: true,
+			errors: [],
+		},
+	};
+}
+
 function ExistingCardLabel( {
 	last4,
 	cardExpiry,
@@ -147,9 +162,9 @@ function ExistingCardLabel( {
 	const { __, _x } = useI18n();
 
 	const [ isDialogVisible, setIsDialogVisible ] = useState( false );
-	const [ inputValues, setInputValues ] = useState< TaxInfo >( {
-		tax_country_code: '',
-		tax_postal_code: '',
+	const [ inputValues, setInputValues ] = useState< ManagedContactDetails >( {
+		countryCode: { value: '', isTouched: false, errors: [] },
+		postalCode: { value: '', isTouched: false, errors: [] },
 	} );
 	const [ updateError, setUpdateError ] = useState( '' );
 	const closeDialog = useCallback( () => {
@@ -164,47 +179,31 @@ function ExistingCardLabel( {
 	} = usePaymentMethodTaxInfo( storedDetailsId );
 
 	const openDialog = useCallback( () => {
-		taxInfoFromServer && setInputValues( taxInfoFromServer );
+		setInputValues( contactDetailsToTaxInfo( taxInfoFromServer ) );
 		setIsDialogVisible( true );
 	}, [ taxInfoFromServer ] );
 
+	// Any time the server data changes, update the form data.
 	useEffect( () => {
 		if ( ! taxInfoFromServer?.tax_country_code ) {
 			return;
 		}
-		setInputValues( {
-			tax_postal_code: taxInfoFromServer?.tax_postal_code ?? '',
-			tax_country_code: taxInfoFromServer?.tax_country_code ?? '',
-		} );
-	}, [ taxInfoFromServer?.tax_country_code, taxInfoFromServer?.tax_postal_code ] );
+		setInputValues( contactDetailsToTaxInfo( taxInfoFromServer ) );
+	}, [ taxInfoFromServer ] );
 
 	const countriesList = useCountryList();
 	const updateTaxInfo = useCallback( () => {
-		setTaxInfo( inputValues ).then( closeDialog ).catch( setUpdateError );
+		setTaxInfo( {
+			tax_country_code: inputValues?.countryCode?.value ?? '',
+			tax_postal_code: inputValues?.postalCode?.value ?? '',
+		} )
+			.then( closeDialog )
+			.catch( setUpdateError );
 	}, [ setTaxInfo, inputValues, closeDialog ] );
 
-	const onChangeTaxInfo = ( { postalCode, countryCode }: ManagedContactDetails ) => {
-		setInputValues( {
-			tax_country_code: countryCode?.value ?? '',
-			tax_postal_code: postalCode?.value ?? '',
-		} );
+	const onChangeTaxInfo = ( info: ManagedContactDetails ) => {
+		setInputValues( info );
 	};
-
-	const taxInfoForForm = useMemo(
-		() => ( {
-			postalCode: {
-				value: inputValues.tax_postal_code,
-				errors: [],
-				isTouched: true,
-			},
-			countryCode: {
-				value: inputValues.tax_country_code,
-				errors: [],
-				isTouched: true,
-			},
-		} ),
-		[ inputValues ]
-	);
 
 	/* translators: %s is the last 4 digits of the credit card number */
 	const maskedCardDetails = sprintf( _x( '**** %s', 'Masked credit card number' ), last4 );
@@ -236,7 +235,7 @@ function ExistingCardLabel( {
 					form={
 						<TaxFields
 							section={ `existing-card-payment-method-${ storedDetailsId }` }
-							taxInfo={ taxInfoForForm }
+							taxInfo={ inputValues }
 							countriesList={ countriesList }
 							onChange={ onChangeTaxInfo }
 						/>
