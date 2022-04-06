@@ -1,0 +1,12 @@
+@import '../style';
+
+body.is-group-stepper.is-section-stepper {
+	.store-address__is-store-address {
+		.components-base-control__label {
+			display: block;
+			font-size: 0.875rem;
+			font-weight: 600;
+			margin-bottom: 5px;
+		}
+	}
+}
