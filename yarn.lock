@@ -632,7 +632,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/help-center@workspace:packages/help-center":
+"@automattic/help-center@workspace:^, @automattic/help-center@workspace:packages/help-center":
   version: 0.0.0-use.local
   resolution: "@automattic/help-center@workspace:packages/help-center"
   dependencies:
@@ -1534,6 +1534,7 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
     "@automattic/format-currency": "workspace:^"
+    "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/launch": "workspace:^"
     "@automattic/newspack-blocks": ^1.37.1

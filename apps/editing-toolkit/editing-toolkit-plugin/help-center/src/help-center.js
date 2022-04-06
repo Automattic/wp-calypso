@@ -1,3 +1,4 @@
+import HelpCenter from '@automattic/help-center';
 import { Button } from '@wordpress/components';
 import { PinnedItems } from '@wordpress/interface';
 import { registerPlugin } from '@wordpress/plugins';
@@ -35,7 +36,7 @@ const HelpIcon = ( { newItems, active } ) => (
 	</svg>
 );
 
-function HelpCenter() {
+function HelpCenterComponent() {
 	const [ isActive, setIsActive ] = React.useState( false );
 
 	return (
@@ -49,13 +50,11 @@ function HelpCenter() {
 					></Button>
 				</span>
 			</PinnedItems>
-			{ /*
-			 the floating container could be here
-			 */ }
+			{ isActive && <HelpCenter handleClose={ () => setIsActive( false ) } /> }
 		</>
 	);
 }
 
 registerPlugin( 'etk-help-center', {
-	render: () => <HelpCenter />,
+	render: () => <HelpCenterComponent />,
 } );
