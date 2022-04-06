@@ -376,6 +376,10 @@ const SearchListView = ( {
 	const [ page, setPage ] = useState( 1 );
 	const [ pageSize, setPageSize ] = useState( SEARCH_RESULTS_LIST_LENGTH );
 
+	useEffect( () => {
+		setPage( 1 );
+	}, [ searchTerm ] );
+
 	const {
 		data: { plugins: pluginsBySearchTerm = [], pagination: pluginsPagination } = {},
 		isLoading: isFetchingPluginsBySearchTerm,
