@@ -11,7 +11,7 @@ import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
@@ -24,8 +24,6 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import Pagination from 'calypso/components/pagination';
-import { PaginationVariant } from 'calypso/components/pagination/constants';
 import {
 	useWPCOMPlugins,
 	useWPCOMFeaturedPlugins,
@@ -79,7 +77,6 @@ import './style.scss';
  * Module variables
  */
 const SHORT_LIST_LENGTH = 6;
-const SEARCH_RESULTS_LIST_LENGTH = 12;
 
 const translateCategory = ( { category, translate } ) => {
 	switch ( category ) {
@@ -345,22 +342,17 @@ const SearchListView = ( {
 	billingPeriod,
 } ) => {
 	const dispatch = useDispatch();
-	const [ page, setPage ] = useState( 1 );
-	const [ pageSize, setPageSize ] = useState( SEARCH_RESULTS_LIST_LENGTH );
-
-	useEffect( () => {
-		setPage( 1 );
-	}, [ searchTerm ] );
-
 	const {
 		data: { plugins: pluginsBySearchTerm = [], pagination: pluginsPagination } = {},
 		isLoading: isFetchingPluginsBySearchTerm,
-	} = useWPORGPlugins(
-		{ searchTerm, page, pageSize },
+		fetchNextPage,
+	} = useWPORGInfinitePlugins(
+		{ searchTerm },
 		{
 			enabled: !! searchTerm,
 		}
 	);
+
 	const {
 		data: paidPluginsBySearchTermRaw = [],
 		isLoading: isFetchingPaidPluginsBySearchTerm,
@@ -372,16 +364,6 @@ const SearchListView = ( {
 		[ paidPluginsBySearchTermRaw ]
 	);
 	const translate = useTranslate();
-
-	const pluginItemsFetch = ( currentPage ) => {
-		return currentPage === 1
-			? SEARCH_RESULTS_LIST_LENGTH + ( paidPluginsBySearchTerm?.length % 2 )
-			: SEARCH_RESULTS_LIST_LENGTH;
-	};
-
-	useEffect( () => {
-		setPageSize( pluginItemsFetch( page ) );
-	}, [ paidPluginsBySearchTerm ] );
 
 	useEffect( () => {
 		if ( searchTerm && pluginsPagination?.page === 1 ) {
@@ -425,33 +407,18 @@ const SearchListView = ( {
 		return (
 			<>
 				<PluginsBrowserList
-					plugins={ ( pluginsPagination?.page === 1
-						? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ]
-						: pluginsBySearchTerm
-					).filter( isNotBlocked ) }
+					plugins={ [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ].filter( isNotBlocked ) }
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
 					title={ searchTitle }
 					subtitle={ subtitle }
 					site={ siteSlug }
 					showPlaceholders={ isFetchingPluginsBySearchTerm || isFetchingPaidPluginsBySearchTerm }
-					size={ pageSize }
 					currentSites={ sites }
 					variant={ PluginsBrowserListVariant.Paginated }
 					extended
 					billingPeriod={ billingPeriod }
 				/>
-				{ pluginsPagination && (
-					<Pagination
-						page={ pluginsPagination.page }
-						perPage={ pluginItemsFetch( pluginsPagination?.page ) }
-						total={ pluginsPagination.results }
-						pageClick={ ( clickedPage ) => {
-							setPage( clickedPage );
-							setPageSize( pluginItemsFetch( clickedPage ) );
-						} }
-						variant={ PaginationVariant.minimal }
-					/>
-				) }
+				<InfiniteScroll nextPageMethod={ fetchNextPage } />
 			</>
 		);
 	}

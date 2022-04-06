@@ -65,6 +65,9 @@ export const useWPORGPlugins = (
 const extractPages = ( pages: Array< { plugins: object; info: object } > = [] ) =>
 	pages.flatMap( ( page ) => page.plugins ).map( normalizePluginData );
 
+const extractPagination = ( pages: Array< { plugins: object; info: object } > = [] ) =>
+	pages[ pages.length - 1 ].info;
+
 export const useWPORGInfinitePlugins = (
 	options: WPORGOptionsType,
 	{ enabled = true, staleTime = 1000 * 60 * 60 * 2, refetchOnMount = true }: UseQueryOptions = {}
@@ -88,6 +91,7 @@ export const useWPORGInfinitePlugins = (
 				return {
 					...data,
 					plugins: extractPages( data.pages ),
+					pagination: extractPagination( data.pages ),
 				};
 			},
 			getNextPageParam: ( lastPage ) => {
