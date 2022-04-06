@@ -1,9 +1,5 @@
 import { camelOrSnakeSlug } from './camel-or-snake-slug';
-import {
-	isGoogleWorkspaceProductSlug,
-	isGSuiteProductSlug,
-	isGSuiteOrGoogleWorkspaceProductSlug,
-} from './gsuite-product-slug';
+import { isGoogleWorkspaceProductSlug, isGSuiteProductSlug } from './gsuite-product-slug';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from './types';
 
 export function isGoogleWorkspace( product: WithCamelCaseSlug | WithSnakeCaseSlug ): boolean {
@@ -29,10 +25,4 @@ export function isGoogleWorkspaceExtraLicence(
 
 export function isGSuite( product: WithCamelCaseSlug | WithSnakeCaseSlug ): boolean {
 	return isGSuiteProductSlug( camelOrSnakeSlug( product ) );
-}
-
-export function isGSuiteOrGoogleWorkspace(
-	product: WithCamelCaseSlug | WithSnakeCaseSlug
-): boolean {
-	return isGSuiteOrGoogleWorkspaceProductSlug( camelOrSnakeSlug( product ) );
 }

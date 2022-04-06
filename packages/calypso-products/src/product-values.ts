@@ -35,15 +35,11 @@ export { isFreeJetpackPlan } from './is-free-jetpack-plan';
 export { isFreePlanProduct } from './is-free-plan';
 export { isFlexiblePlanProduct } from './is-flexible-plan';
 export { isFreeWordPressComDomain } from './is-free-wordpress-com-domain';
-export {
-	isGoogleWorkspace,
-	isGoogleWorkspaceExtraLicence,
-	isGSuite,
-	isGSuiteOrGoogleWorkspace,
-} from './is-gsuite';
+export { isGoogleWorkspace, isGoogleWorkspaceExtraLicence, isGSuite } from './is-gsuite';
 export { isGoogleWorkspaceMonthly } from './is-google-workspace-monthly';
 export { isGSuiteOrExtraLicense } from './is-gsuite-or-extra-license';
 export { isGSuiteOrExtraLicenseOrGoogleWorkspace } from './is-gsuite-or-extra-license-or-google-workspace';
+export { isGSuiteOrGoogleWorkspace } from './is-gsuite-or-google-workspace';
 export { isJetpackAntiSpam } from './is-jetpack-anti-spam';
 export { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
 export { isJetpackBackup } from './is-jetpack-backup';
