@@ -31,12 +31,11 @@ const StoreFeatures: Step = function StartingPointStep( { navigation } ) {
 	const subHeaderText = translate( 'Let’s create a website that suits your needs.' );
 	const siteSlug = useSiteSlugParam();
 	const site = useSite();
-	const hasPaymentsFeature = useSelect(
-		( select ) =>
-			site && select( SITE_STORE ).hasActiveSiteFeature( site?.ID, FEATURE_SIMPLE_PAYMENTS )
+	const hasPaymentsFeature = useSelect( ( select ) =>
+		select( SITE_STORE ).hasActiveSiteFeature( site?.ID, FEATURE_SIMPLE_PAYMENTS )
 	);
-	const hasWooFeature = useSelect(
-		( select ) => site && select( SITE_STORE ).hasActiveSiteFeature( site?.ID, FEATURE_WOOP )
+	const hasWooFeature = useSelect( ( select ) =>
+		select( SITE_STORE ).hasActiveSiteFeature( site?.ID, FEATURE_WOOP )
 	);
 	const intents = useIntents( siteSlug, hasPaymentsFeature, hasWooFeature, trackSupportLinkClick );
 	const { setStoreType } = useDispatch( ONBOARD_STORE );
