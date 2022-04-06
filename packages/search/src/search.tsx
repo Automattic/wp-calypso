@@ -214,6 +214,7 @@ const InnerSearch = (
 		if ( keyword ) {
 			if ( searchMode === 'when-typing' ) {
 				doSearch( keyword );
+				onSearchChange?.( keyword );
 			}
 		} else {
 			if ( searchMode === 'on-enter' ) {
@@ -221,9 +222,8 @@ const InnerSearch = (
 			}
 
 			bypassOnSearchDebounce( keyword );
+			onSearchChange?.( keyword );
 		}
-
-		onSearchChange?.( keyword );
 	}, [ keyword ] );
 
 	const openSearch = ( event: KeyboardOrMouseEvent ) => {
@@ -243,7 +243,11 @@ const InnerSearch = (
 		}
 
 		setKeyword( '' );
-		if ( 'on-enter' === searchMode ) bypassOnSearchDebounce( '' );
+		if ( 'on-enter' === searchMode ) {
+			bypassOnSearchDebounce( '' );
+			onSearchChange?.( '' );
+		}
+
 		setIsOpen( false );
 
 		if ( searchInput.current ) {
@@ -309,6 +313,7 @@ const InnerSearch = (
 
 		if ( event.key === 'Enter' && searchMode === 'on-enter' ) {
 			bypassOnSearchDebounce( keyword );
+			onSearchChange?.( keyword );
 		}
 
 		if ( ! pinned ) {
