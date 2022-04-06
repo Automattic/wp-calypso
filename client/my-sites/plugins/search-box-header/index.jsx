@@ -20,6 +20,7 @@ const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef } ) => {
 				fitsContainer={ isMobile }
 				onSearch={ doSearch }
 				defaultValue={ searchTerm }
+				searchMode="on-enter"
 				placeholder={ translate( 'Try searching "ecommerce"' ) }
 				delaySearch={ true }
 				recordEvent={ recordSearchEvent }
@@ -83,18 +84,15 @@ const SearchBoxHeader = ( props ) => {
 	// since the search input is an uncontrolled component we need to tap in into the component api and trigger an update
 	const updateSearchBox = ( keyword ) => {
 		searchBoxRef.current.setKeyword( keyword );
+
+		doSearch( keyword );
 	};
 
 	return (
 		<div className={ isSticky ? 'search-box-header fixed-top' : 'search-box-header' }>
 			<div className="search-box-header__header">{ title }</div>
 			<div className="search-box-header__search">
-				<SearchBox
-					doSearch={ doSearch }
-					searchTerm={ searchTerm }
-					delayTimeout={ 1000 }
-					searchBoxRef={ searchBoxRef }
-				/>
+				<SearchBox doSearch={ doSearch } searchTerm={ searchTerm } searchBoxRef={ searchBoxRef } />
 			</div>
 			<PopularSearches
 				doSearch={ updateSearchBox }
