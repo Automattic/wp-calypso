@@ -14,8 +14,6 @@ import type { FunctionComponent, ReactNode } from 'react';
 
 import './style.scss';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
 const PaymentMethodEditDialog: FunctionComponent< {
 	paymentMethodSummary: ReactNode;
 	isVisible: boolean;
@@ -60,7 +58,7 @@ const PaymentMethodEditButton: FunctionComponent< {
 			compact
 			borderless={ borderless }
 			scary={ scary }
-			className="payment-method-edit-button"
+			className="payment-method-tax-info__edit-button"
 			onClick={ onClick }
 			disabled={ disabled }
 		>
@@ -169,13 +167,13 @@ export function TaxInfoArea( {
 	}
 	if ( taxInfoDisplay ) {
 		return (
-			<span className="existing-credit-card__tax-info-display">
-				<span className="existing-credit-card__tax-info-postal-country">{ taxInfoDisplay }</span>
-			</span>
+			<div className="payment-method-tax-info">
+				<span>{ taxInfoDisplay }</span>
+			</div>
 		);
 	}
 	return (
-		<span className="existing-credit-card__tax-info-display tax-info-incomplete">
+		<div className="payment-method-tax-info">
 			<PaymentMethodEditButton
 				onClick={ openDialog }
 				buttonTextContent={ getMissingTaxLocationInformationMessage(
@@ -204,6 +202,6 @@ export function TaxInfoArea( {
 				}
 				error={ updateError }
 			/>
-		</span>
+		</div>
 	);
 }
