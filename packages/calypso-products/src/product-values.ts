@@ -39,6 +39,7 @@ export { isGoogleWorkspace } from './is-google-workspace';
 export { isGoogleWorkspaceExtraLicence } from './is-google-workspace-extra-license';
 export { isGoogleWorkspaceMonthly } from './is-google-workspace-monthly';
 export { isGSuite } from './is-gsuite';
+export { isGSuiteProductSlug } from './is-gsuite-product-slug';
 export { isGSuiteOrExtraLicense } from './is-gsuite-or-extra-license';
 export { isGSuiteOrExtraLicenseOrGoogleWorkspace } from './is-gsuite-or-extra-license-or-google-workspace';
 export { isGSuiteOrGoogleWorkspace } from './is-gsuite-or-google-workspace';

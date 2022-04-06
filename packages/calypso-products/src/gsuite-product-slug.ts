@@ -1,8 +1,6 @@
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	GSUITE_BASIC_SLUG,
-	GSUITE_BUSINESS_SLUG,
 	GSUITE_EXTRA_LICENSE_SLUG,
 } from './constants';
 
@@ -17,16 +15,6 @@ export function isGoogleWorkspaceProductSlug( productSlug: string ): boolean {
 		GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
 		GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	].includes( productSlug );
-}
-
-/**
- * Determines whether the specified product slug is for G Suite Basic or Business.
- *
- * @param {string} productSlug - slug of the product
- * @returns {boolean} true if the slug refers to G Suite Basic or Business, false otherwise
- */
-export function isGSuiteProductSlug( productSlug: string ): boolean {
-	return [ GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG ].includes( productSlug );
 }
 
 /**
