@@ -6,6 +6,7 @@ import { sprintf, _x } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import page from 'page';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
@@ -38,7 +39,10 @@ interface DisplayData {
 const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const { __ } = useI18n();
 	const navigationItems = [ { label: 'WooCommerce' } ];
-	const ctaRef = useRef( null );
+	const [ showActions, setShowActions ] = useState( false );
+	const headerRef = useRef< HTMLElement >( null );
+	const ctaRef = useRef< HTMLElement >( null );
+
 	const currentIntent = useSelector( ( state ) => getSiteOption( state, siteId, 'site_intent' ) );
 
 	const {
@@ -153,12 +157,34 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 		};
 	}
 
+	useEffect( () => {
+		const handleScroll = () => {
+			const headerHeight = headerRef?.current?.getBoundingClientRect().height;
+			const offset = ctaRef.current && headerHeight ? ctaRef.current.offsetTop - headerHeight : 0;
+
+			if ( offset > 0 && window.scrollY < offset ) {
+				setShowActions( false );
+			} else {
+				setShowActions( true );
+			}
+		};
+
+		handleScroll();
+
+		window.addEventListener( 'scroll', handleScroll );
+		return () => {
+			window.removeEventListener( 'scroll', handleScroll );
+		};
+	}, [ ctaRef, headerRef ] );
+
 	return (
 		<div className="landing-page">
-			<FixedNavigationHeader navigationItems={ navigationItems } contentRef={ ctaRef }>
-				<Button onClick={ onCTAClickHandler } primary disabled={ isTransferringBlocked }>
-					{ displayData.action }
-				</Button>
+			<FixedNavigationHeader navigationItems={ navigationItems } ref={ headerRef }>
+				{ showActions && (
+					<Button onClick={ onCTAClickHandler } primary disabled={ isTransferringBlocked }>
+						{ displayData.action }
+					</Button>
+				) }
 			</FixedNavigationHeader>
 			{ renderWarningNotice() }
 			<EmptyContent
