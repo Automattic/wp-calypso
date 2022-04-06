@@ -28,6 +28,10 @@
 
 				box-shadow: 0 0 0 1px var( --studio-gray-10 );
 
+				.search-component__icon-navigation:focus {
+					box-shadow: none;
+				}
+
 				.search-component__open-icon,
 				.search-component__close-icon {
 					color: var( --studio-black );
@@ -38,7 +42,6 @@
 				}
 			}
 		}
-
 	}
 
 	.search-box-header__header {
