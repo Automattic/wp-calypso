@@ -24,7 +24,7 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () 
 
 		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
 		await testAccount.authenticate( page );
-		plansPage = new PlansPage( page );
+		plansPage = new PlansPage( page, 'legacy' );
 	} );
 
 	it( 'Navigate to Upgrades > Plans', async function () {
@@ -51,7 +51,6 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () 
 		} );
 
 		it( 'Automatically return to Plans page', async function () {
-			plansPage = new PlansPage( page );
 			await plansPage.validateActiveNavigationTab( 'Plans' );
 		} );
 	} );
