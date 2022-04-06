@@ -74,7 +74,7 @@ const SocialProfilesFormField = ( {
 		<TextInputWrapper>
 			{ logo }
 			<FormTextInput
-				type="url"
+				type="text"
 				name={ name }
 				value={ value }
 				placeholder={ placeholder }
