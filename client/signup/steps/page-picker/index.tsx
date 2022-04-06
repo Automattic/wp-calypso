@@ -74,7 +74,7 @@ const CellLabelContainer = styled.div`
 	}
 `;
 
-const PopularContainer = styled.div`
+const PageCellBadge = styled.div`
 	background: var( --studio-green-5 );
 	border-radius: 4px;
 	text-align: center;
@@ -92,9 +92,10 @@ interface PageCellType {
 	selectedPages: string[];
 	onClick: ( pageId: string ) => void;
 	popular?: boolean;
+	required?: boolean;
 }
 
-function PageCell( { pageId, popular, selectedPages, onClick }: PageCellType ) {
+function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCellType ) {
 	const translate = useTranslate();
 	const selectedIndex = selectedPages.indexOf( pageId );
 	const totalSelections = selectedPages.length;
@@ -113,7 +114,8 @@ function PageCell( { pageId, popular, selectedPages, onClick }: PageCellType ) {
 			/>
 			<CellLabelContainer>
 				<div>{ title }</div>
-				{ popular ? <PopularContainer>{ translate( 'Popular' ) }</PopularContainer> : null }
+				{ popular ? <PageCellBadge>{ translate( 'Popular' ) }</PageCellBadge> : null }
+				{ required ? <PageCellBadge>{ translate( 'Required' ) }</PageCellBadge> : null }
 			</CellLabelContainer>
 		</GridCellContainer>
 	);
@@ -141,7 +143,7 @@ function PageSelector( {
 	return (
 		<PageGrid>
 			<PageCell
-				popular
+				required
 				pageId={ HOME_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
