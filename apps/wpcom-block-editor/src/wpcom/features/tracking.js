@@ -764,7 +764,7 @@ if (
 } else {
 	debug( 'registering tracking handlers.' );
 	// Intercept dispatch function and add tracking for actions that need it.
-	use( async ( registry ) => ( {
+	use( ( registry ) => ( {
 		dispatch: ( namespace ) => {
 			const namespaceName = typeof namespace === 'object' ? namespace.name : namespace;
 			const actions = { ...registry.dispatch( namespaceName ) };
