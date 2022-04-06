@@ -96,9 +96,9 @@ const useSticky = () => {
 			const scrollPosition = window.scrollY;
 
 			if ( offset > 0 && scrollPosition < offset ) {
-				setIsSticky( true );
-			} else {
 				setIsSticky( false );
+			} else {
+				setIsSticky( true );
 			}
 		};
 
@@ -366,7 +366,7 @@ const PluginsBrowser = ( {
 				siteSlug={ siteSlug }
 			/>
 			<SearchBoxHeader
-				searchBoxRef={ contentRef }
+				contentRef={ contentRef }
 				isSticky={ isSticky }
 				doSearch={ doSearch }
 				searchTerm={ search }

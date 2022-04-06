@@ -1,5 +1,6 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
+import { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
@@ -12,8 +13,9 @@ const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef } ) => {
 		dispatch( recordGoogleEvent( 'PluginsBrowser', eventName ) );
 
 	return (
-		<div className="search-box-header__searchbox" ref={ searchBoxRef }>
+		<div className="search-box-header__searchbox">
 			<Search
+				ref={ searchBoxRef }
 				pinned={ isMobile }
 				fitsContainer={ isMobile }
 				onSearch={ doSearch }
@@ -27,7 +29,7 @@ const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef } ) => {
 };
 
 const PopularSearches = ( props ) => {
-	const { searchTerms, doSearch, searchedTerm, searchBoxRef } = props;
+	const { searchTerms, doSearch, searchedTerm, contentRef } = props;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -42,7 +44,7 @@ const PopularSearches = ( props ) => {
 	};
 
 	return (
-		<div className="search-box-header__recommended-searches" ref={ searchBoxRef }>
+		<div className="search-box-header__recommended-searches" ref={ contentRef }>
 			<div className="search-box-header__recommended-searches-title">
 				{ translate( 'Most popular searches' ) }
 			</div>
@@ -75,7 +77,8 @@ const PopularSearches = ( props ) => {
 };
 
 const SearchBoxHeader = ( props ) => {
-	const { doSearch, searchTerm, title, searchTerms, isSticky, searchBoxRef } = props;
+	const { doSearch, searchTerm, title, searchTerms, isSticky, contentRef } = props;
+	const searchBoxRef = useRef( null );
 
 	// since the search input is an uncontrolled component we need to tap in into the component api and trigger an update
 	const updateSearchBox = ( keyword ) => {
@@ -83,16 +86,21 @@ const SearchBoxHeader = ( props ) => {
 	};
 
 	return (
-		<div className={ isSticky ? 'search-box-header' : 'search-box-header fixed-top' }>
+		<div className={ isSticky ? 'search-box-header fixed-top' : 'search-box-header' }>
 			<div className="search-box-header__header">{ title }</div>
 			<div className="search-box-header__search">
-				<SearchBox doSearch={ doSearch } searchTerm={ searchTerm } />
+				<SearchBox
+					doSearch={ doSearch }
+					searchTerm={ searchTerm }
+					delayTimeout={ 1000 }
+					searchBoxRef={ searchBoxRef }
+				/>
 			</div>
 			<PopularSearches
 				doSearch={ updateSearchBox }
 				searchedTerm={ searchTerm }
 				searchTerms={ searchTerms }
-				searchBoxRef={ searchBoxRef }
+				contentRef={ contentRef }
 			/>
 		</div>
 	);
