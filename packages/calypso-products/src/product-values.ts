@@ -39,11 +39,11 @@ export {
 	isGoogleWorkspace,
 	isGoogleWorkspaceExtraLicence,
 	isGSuite,
-	isGSuiteOrExtraLicense,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
 } from './is-gsuite';
 export { isGoogleWorkspaceMonthly } from './is-google-workspace-monthly';
+export { isGSuiteOrExtraLicense } from './is-gsuite-or-extra-license';
 export { isJetpackAntiSpam } from './is-jetpack-anti-spam';
 export { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
 export { isJetpackBackup } from './is-jetpack-backup';

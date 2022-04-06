@@ -32,10 +32,6 @@ export function isGSuite( product: WithCamelCaseSlug | WithSnakeCaseSlug ): bool
 	return isGSuiteProductSlug( camelOrSnakeSlug( product ) );
 }
 
-export function isGSuiteOrExtraLicense( product: WithCamelCaseSlug | WithSnakeCaseSlug ): boolean {
-	return isGSuiteOrExtraLicenseProductSlug( camelOrSnakeSlug( product ) );
-}
-
 export function isGSuiteOrExtraLicenseOrGoogleWorkspace(
 	product: WithCamelCaseSlug | WithSnakeCaseSlug
 ): boolean {
