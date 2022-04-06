@@ -161,6 +161,45 @@ function ExistingCardLabel( {
 } ): JSX.Element {
 	const { __, _x } = useI18n();
 
+	/* translators: %s is the last 4 digits of the credit card number */
+	const maskedCardDetails = sprintf( _x( '**** %s', 'Masked credit card number' ), last4 );
+
+	return (
+		<Fragment>
+			<div>
+				<CardHolderName>{ cardholderName }</CardHolderName>
+				<CardDetails>{ maskedCardDetails }</CardDetails>
+				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
+				{ allowEditingTaxInfo && (
+					<TaxInfoArea
+						last4={ last4 }
+						brand={ brand }
+						storedDetailsId={ storedDetailsId }
+						paymentPartnerProcessorId={ paymentPartnerProcessorId }
+					/>
+				) }
+			</div>
+			<div className="existing-credit-card__logo payment-logos">
+				<PaymentLogo brand={ brand } isSummary={ true } />
+			</div>
+		</Fragment>
+	);
+}
+
+function TaxInfoArea( {
+	last4,
+	brand,
+	storedDetailsId,
+	paymentPartnerProcessorId,
+}: {
+	last4: string;
+	brand: string;
+	storedDetailsId: string;
+	paymentPartnerProcessorId: string;
+} ) {
+	const translate = useTranslate();
+	const { formStatus } = useFormStatus();
+
 	const [ isDialogVisible, setIsDialogVisible ] = useState( false );
 	const [ inputValues, setInputValues ] = useState< ManagedContactDetails >( {
 		countryCode: { value: '', isTouched: false, errors: [] },
@@ -172,11 +211,9 @@ function ExistingCardLabel( {
 		setIsDialogVisible( false );
 	}, [] );
 
-	const {
-		taxInfo: taxInfoFromServer,
-		isLoading: isLoadingTaxInfo,
-		setTaxInfo,
-	} = usePaymentMethodTaxInfo( storedDetailsId );
+	const { isLoading, taxInfo: taxInfoFromServer, setTaxInfo } = usePaymentMethodTaxInfo(
+		storedDetailsId
+	);
 
 	const openDialog = useCallback( () => {
 		setInputValues( contactDetailsToTaxInfo( taxInfoFromServer ) );
@@ -205,66 +242,13 @@ function ExistingCardLabel( {
 		setInputValues( info );
 	};
 
-	/* translators: %s is the last 4 digits of the credit card number */
-	const maskedCardDetails = sprintf( _x( '**** %s', 'Masked credit card number' ), last4 );
-
-	return (
-		<Fragment>
-			<div>
-				<CardHolderName>{ cardholderName }</CardHolderName>
-				<CardDetails>{ maskedCardDetails }</CardDetails>
-				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
-				{ ! isLoadingTaxInfo && (
-					<TaxInfoArea
-						taxInfoFromServer={ taxInfoFromServer }
-						openDialog={ openDialog }
-						allowEditing={ !! allowEditingTaxInfo }
-					/>
-				) }
-			</div>
-			<div className="existing-credit-card__logo payment-logos">
-				<PaymentLogo brand={ brand } isSummary={ true } />
-
-				<PaymentMethodEditDialog
-					paymentMethodSummary={
-						<PaymentMethodSummary type={ brand || paymentPartnerProcessorId } digits={ last4 } />
-					}
-					isVisible={ isDialogVisible }
-					onClose={ closeDialog }
-					onConfirm={ updateTaxInfo }
-					form={
-						<TaxFields
-							section={ `existing-card-payment-method-${ storedDetailsId }` }
-							taxInfo={ inputValues }
-							countriesList={ countriesList }
-							onChange={ onChangeTaxInfo }
-						/>
-					}
-					error={ updateError }
-				/>
-			</div>
-		</Fragment>
-	);
-}
-
-function TaxInfoArea( {
-	taxInfoFromServer,
-	openDialog,
-	allowEditing,
-}: {
-	taxInfoFromServer: TaxGetInfo | undefined;
-	openDialog: () => void;
-	allowEditing: boolean;
-} ) {
-	const translate = useTranslate();
 	const taxInfoDisplay = joinNonEmptyValues(
 		', ',
 		taxInfoFromServer?.tax_postal_code,
 		taxInfoFromServer?.tax_country_code
 	);
-	const { formStatus } = useFormStatus();
 
-	if ( ! allowEditing ) {
+	if ( isLoading ) {
 		return null;
 	}
 	if ( taxInfoDisplay ) {
@@ -286,6 +270,23 @@ function TaxInfoArea( {
 				borderless={ false }
 				icon={ <Gridicon icon="notice" /> }
 				disabled={ formStatus !== FormStatus.READY }
+			/>
+			<PaymentMethodEditDialog
+				paymentMethodSummary={
+					<PaymentMethodSummary type={ brand || paymentPartnerProcessorId } digits={ last4 } />
+				}
+				isVisible={ isDialogVisible }
+				onClose={ closeDialog }
+				onConfirm={ updateTaxInfo }
+				form={
+					<TaxFields
+						section={ `existing-card-payment-method-${ storedDetailsId }` }
+						taxInfo={ inputValues }
+						countriesList={ countriesList }
+						onChange={ onChangeTaxInfo }
+					/>
+				}
+				error={ updateError }
 			/>
 		</span>
 	);
