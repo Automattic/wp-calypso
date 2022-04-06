@@ -1,6 +1,7 @@
 import { Button } from '@wordpress/components';
 import { PinnedItems } from '@wordpress/interface';
 import { registerPlugin } from '@wordpress/plugins';
+import { hasQueryArg } from '@wordpress/url';
 import cx from 'classnames';
 import React from 'react';
 import './use-help-center.scss';
@@ -56,6 +57,8 @@ function HelpCenter() {
 	);
 }
 
-registerPlugin( 'wpcom-help-center', {
-	render: () => <HelpCenter />,
-} );
+if ( hasQueryArg( globalThis.location.href, 'enable-help-center' ) ) {
+	registerPlugin( 'wpcom-help-center', {
+		render: () => <HelpCenter />,
+	} );
+}
