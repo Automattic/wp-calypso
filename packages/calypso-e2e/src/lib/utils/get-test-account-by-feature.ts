@@ -6,7 +6,7 @@ export type TestAccountEnvVariables = Pick<
 	'GUTENBERG' | 'COBLOCKS' | 'TARGET'
 >;
 
-// @todo Would it be better to call this type `ReleasType` or `ReleaseTag`?
+// @todo Would it be better to call this type `ReleaseType` or `ReleaseTag`?
 type Env = 'edge' | 'stable';
 
 export type Target = 'simple' | 'atomic';
