@@ -62,7 +62,8 @@ export default function BillingDetails(): ReactElement {
 
 							<div className="billing-details__subtotal">
 								{ billing.data.priceInterval === 'day' &&
-									translate( '%(count)d Day', '%(count)d Days', {
+									// Translators: * designates a footnote explaining how we calculate the number of days.
+									translate( '%(count)d Day*', '%(count)d Days*', {
 										count: product.productQuantity,
 										args: { count: product.productQuantity },
 									} ) }
@@ -155,6 +156,15 @@ export default function BillingDetails(): ReactElement {
 					) }
 				</div>
 			</Card>
+
+			{ billing.isSuccess && billing.data.priceInterval === 'day' && (
+				<Card compact className="billing-details__footer">
+					<small>
+						* Estimate of the combined number of full days each license will be active for by the
+						end of the current month, accounting for licenses that were newly issued or revoked.
+					</small>
+				</Card>
+			) }
 		</div>
 	);
 }
