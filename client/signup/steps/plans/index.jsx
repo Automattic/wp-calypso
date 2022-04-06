@@ -85,20 +85,20 @@ export class PlansStep extends Component {
 		};
 
 		if ( flowName === 'site-selected' && ! cartItem ) {
-			wp.req
-				.post( {
-					path: `/domains/${ this.props.selectedSite.ID }/${ this.props.selectedSite.name }/convert-domain-only-to-site`,
-					apiVersion: '1.1',
-				} )
-				.catch( ( error ) => {
-					this.props.errorNotice( error.message );
-				} )
-				.finally( () => {
+			wp.req.post(
+				`/domains/${ this.props.selectedSite.ID }/${ this.props.selectedSite.name }/convert-domain-only-to-site`,
+				{},
+				( error ) => {
+					if ( error ) {
+						this.props.errorNotice( error.message );
+						return;
+					}
 					this.props.submitSignupStep( step, {
 						cartItem,
 					} );
 					this.props.goToNextStep();
-				} );
+				}
+			);
 		} else {
 			this.props.submitSignupStep( step, {
 				cartItem,
