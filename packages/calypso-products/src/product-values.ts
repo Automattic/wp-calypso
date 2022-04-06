@@ -38,6 +38,7 @@ export { isFreeWordPressComDomain } from './is-free-wordpress-com-domain';
 export { isGoogleWorkspace } from './is-google-workspace';
 export { isGoogleWorkspaceExtraLicence } from './is-google-workspace-extra-license';
 export { isGoogleWorkspaceMonthly } from './is-google-workspace-monthly';
+export { isGoogleWorkspaceProductSlug } from './is-google-workspace-product-slug';
 export { isGSuite } from './is-gsuite';
 export { isGSuiteProductSlug } from './is-gsuite-product-slug';
 export { isGSuiteOrExtraLicense } from './is-gsuite-or-extra-license';
