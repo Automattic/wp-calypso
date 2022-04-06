@@ -124,7 +124,7 @@ const currentEnvVariables = { ...defaultEnvVariables };
 supportedEnvVariableNames.forEach( ( name ) => {
 	const originalValue = process.env[ name ];
 	// Some env vars might be set with the `unspecified` "special" value to mean
-	// they're ffectivelly unset. This is useful to avoid creating condition
+	// they're effectivelly unset. This is useful to avoid creating condition
 	// branches in the code that passes the vars to Jest, and one can just
 	// pass `unspecified` and it will have the same effect as not setting it.
 	if ( originalValue && ( originalValue as unspecified ) !== 'unspecified' ) {
