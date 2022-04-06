@@ -3,6 +3,7 @@ import { SelectItems } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
@@ -88,11 +89,14 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			fallbackSubHeaderText={ subHeaderText }
 			headerImageUrl={ null }
 			stepContent={
-				<SelectItems
-					items={ intents }
-					onSelect={ submitStoreFeatures }
-					preventWidows={ preventWidows }
-				/>
+				<>
+					<QuerySiteFeatures siteId={ props.siteId } />
+					<SelectItems
+						items={ intents }
+						onSelect={ submitStoreFeatures }
+						preventWidows={ preventWidows }
+					/>
+				</>
 			}
 			align={ 'left' }
 			hideSkip={ true }
