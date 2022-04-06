@@ -12,7 +12,7 @@ import type { TaxInfo, TaxGetInfo } from './types';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 import type { FunctionComponent, ReactNode } from 'react';
 
-import 'calypso/me/purchases/payment-methods/style.scss';
+import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
