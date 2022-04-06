@@ -37,7 +37,6 @@
 		"@wordpress/hooks": "^3.2.2",
 		"@wordpress/i18n": "^4.2.4",
 		"@wordpress/icons": "^6.1.1",
-		"@wordpress/interface": "^4.1.15",
 		"@wordpress/is-shallow-equal": "^4.2.1",
 		"@wordpress/plugins": "^4.0.7",
 		"@wordpress/rich-text": "^5.0.7",

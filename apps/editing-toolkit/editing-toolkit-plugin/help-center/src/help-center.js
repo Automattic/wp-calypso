@@ -4,7 +4,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { hasQueryArg } from '@wordpress/url';
 import cx from 'classnames';
 import React from 'react';
-import './use-help-center.scss';
+import './help-center.scss';
 
 const HelpIcon = ( { newItems, active } ) => (
 	<svg width="26" height="25" viewBox="0 0 26 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -42,7 +42,7 @@ function HelpCenter() {
 	return (
 		<>
 			<PinnedItems scope="core/edit-post">
-				<span className="use-help-center">
+				<span className="etk-help-center">
 					<Button
 						className={ cx( 'entry-point-button', { 'is-active': isActive } ) }
 						onClick={ () => setIsActive( ! isActive ) }
@@ -58,7 +58,7 @@ function HelpCenter() {
 }
 
 if ( hasQueryArg( globalThis.location.href, 'enable-help-center' ) ) {
-	registerPlugin( 'wpcom-help-center', {
+	registerPlugin( 'etk-help-center', {
 		render: () => <HelpCenter />,
 	} );
 }
