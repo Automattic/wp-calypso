@@ -79,44 +79,6 @@ import './style.scss';
  */
 const SHORT_LIST_LENGTH = 6;
 
-const useSticky = () => {
-	const contentRef = useRef( null );
-	const headerRef = useRef( null );
-	const [ isSticky, setIsSticky ] = useState( false );
-
-	useEffect( () => {
-		if ( ! contentRef || ! headerRef ) {
-			return;
-		}
-
-		const handleScroll = () => {
-			const headerHeight = headerRef?.current?.getBoundingClientRect().height;
-			const offset =
-				contentRef.current && headerHeight ? contentRef.current.offsetTop - headerHeight : 0;
-			const scrollPosition = window.scrollY;
-
-			if ( offset > 0 && scrollPosition < offset ) {
-				setIsSticky( false );
-			} else {
-				setIsSticky( true );
-			}
-		};
-
-		handleScroll();
-
-		window.addEventListener( 'scroll', handleScroll );
-		return () => {
-			window.removeEventListener( 'scroll', handleScroll );
-		};
-	}, [ contentRef ] );
-
-	return {
-		contentRef,
-		headerRef,
-		isSticky,
-	};
-};
-
 const translateCategory = ( { category, translate } ) => {
 	switch ( category ) {
 		case 'popular':
