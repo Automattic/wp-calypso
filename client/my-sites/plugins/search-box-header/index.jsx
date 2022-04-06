@@ -29,7 +29,7 @@ const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef } ) => {
 };
 
 const PopularSearches = ( props ) => {
-	const { searchTerms, doSearch, searchedTerm, contentRef } = props;
+	const { searchTerms, doSearch, searchedTerm, popularSearchesRef } = props;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -44,7 +44,7 @@ const PopularSearches = ( props ) => {
 	};
 
 	return (
-		<div className="search-box-header__recommended-searches" ref={ contentRef }>
+		<div className="search-box-header__recommended-searches" ref={ popularSearchesRef }>
 			<div className="search-box-header__recommended-searches-title">
 				{ translate( 'Most popular searches' ) }
 			</div>
@@ -77,7 +77,7 @@ const PopularSearches = ( props ) => {
 };
 
 const SearchBoxHeader = ( props ) => {
-	const { doSearch, searchTerm, title, searchTerms, isSticky, contentRef } = props;
+	const { doSearch, searchTerm, title, searchTerms, isSticky, popularSearchesRef } = props;
 	const searchBoxRef = useRef( null );
 
 	// since the search input is an uncontrolled component we need to tap in into the component api and trigger an update
@@ -100,7 +100,7 @@ const SearchBoxHeader = ( props ) => {
 				doSearch={ updateSearchBox }
 				searchedTerm={ searchTerm }
 				searchTerms={ searchTerms }
-				contentRef={ contentRef }
+				popularSearchesRef={ popularSearchesRef }
 			/>
 		</div>
 	);

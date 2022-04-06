@@ -11,7 +11,7 @@ import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
@@ -33,6 +33,7 @@ import {
 import { useWPORGPlugins } from 'calypso/data/marketplace/use-wporg-plugin-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
+import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import NoResults from 'calypso/my-sites/no-results';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import EducationFooter from 'calypso/my-sites/plugins/education-footer';
@@ -79,44 +80,6 @@ import './style.scss';
 const SHORT_LIST_LENGTH = 6;
 const SEARCH_RESULTS_LIST_LENGTH = 12;
 
-const useSticky = () => {
-	const contentRef = useRef( null );
-	const headerRef = useRef( null );
-	const [ isSticky, setIsSticky ] = useState( false );
-
-	useEffect( () => {
-		if ( ! contentRef || ! headerRef ) {
-			return;
-		}
-
-		const handleScroll = () => {
-			const headerHeight = headerRef?.current?.getBoundingClientRect().height;
-			const offset =
-				contentRef.current && headerHeight ? contentRef.current.offsetTop - headerHeight : 0;
-			const scrollPosition = window.scrollY;
-
-			if ( offset > 0 && scrollPosition < offset ) {
-				setIsSticky( false );
-			} else {
-				setIsSticky( true );
-			}
-		};
-
-		handleScroll();
-
-		window.addEventListener( 'scroll', handleScroll );
-		return () => {
-			window.removeEventListener( 'scroll', handleScroll );
-		};
-	}, [ contentRef ] );
-
-	return {
-		contentRef,
-		headerRef,
-		isSticky,
-	};
-};
-
 const translateCategory = ( { category, translate } ) => {
 	switch ( category ) {
 		case 'popular':
@@ -157,7 +120,12 @@ const PluginsBrowser = ( {
 	hideHeader,
 	doSearch,
 } ) => {
-	const { isSticky, contentRef, headerRef } = useSticky();
+	const {
+		isAboveElement,
+		targetRef: searchHeaderRef,
+		referenceRef: navigationHeaderRef,
+	} = useScrollAboveElement();
+
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -325,7 +293,7 @@ const PluginsBrowser = ( {
 					className="plugins-browser__header"
 					navigationItems={ breadcrumbs }
 					compactBreadcrumb={ isMobile }
-					componentRef={ headerRef }
+					componentRef={ navigationHeaderRef }
 				>
 					<div className="plugins-browser__main-buttons">
 						<ManageButton
@@ -366,8 +334,8 @@ const PluginsBrowser = ( {
 				siteSlug={ siteSlug }
 			/>
 			<SearchBoxHeader
-				contentRef={ contentRef }
-				isSticky={ isSticky }
+				popularSearchesRef={ searchHeaderRef }
+				isSticky={ isAboveElement }
 				doSearch={ doSearch }
 				searchTerm={ search }
 				title={ translate( 'Plugins you need to get your projects done' ) }
