@@ -17,13 +17,6 @@ export { getGSuiteSubscriptionId } from './get-gsuite-subscription-id';
 export { getGSuiteSubscriptionStatus } from './get-gsuite-subscription-status';
 export { getLoginUrlWithTOSRedirect } from './get-login-url-with-tos-redirect';
 export { getMonthlyPrice } from './get-monthly-price';
-export {
-	isGoogleWorkspaceProductSlug,
-	isGSuiteExtraLicenseProductSlug,
-	isGSuiteOrExtraLicenseProductSlug,
-	isGSuiteOrGoogleWorkspaceProductSlug,
-	isGSuiteProductSlug,
-} from '@automattic/calypso-products';
 export { getGSuiteSupportedDomains, hasGSuiteSupportedDomain } from './gsuite-supported-domain';
 export { hasGSuiteWithAnotherProvider } from './has-gsuite-with-another-provider';
 export { hasGSuiteWithUs } from './has-gsuite-with-us';

@@ -1,11 +1,14 @@
-import { isGoogleWorkspaceExtraLicence } from '@automattic/calypso-products';
+import {
+	isGoogleWorkspaceExtraLicence,
+	isGoogleWorkspaceProductSlug,
+	isGSuiteProductSlug,
+} from '@automattic/calypso-products';
 import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
 import {
 	hasDomainRegistration,
 	hasTransferProduct,
 	hasOnlyRenewalItems,
 } from 'calypso/lib/cart-values/cart-items';
-import { isGoogleWorkspaceProductSlug, isGSuiteProductSlug } from 'calypso/lib/gsuite';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ContactDetailsType } from '@automattic/wpcom-checkout';
 
