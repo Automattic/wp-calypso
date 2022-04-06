@@ -38,7 +38,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page, { target: features.target } );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
@@ -49,7 +49,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	} );
 
 	it( 'Enter post title', async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page, { target: features.target } );
 		const title = DataHelper.getRandomPhrase();
 		await editorPage.enterTitle( title );
 	} );

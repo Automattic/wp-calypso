@@ -20,7 +20,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features, [
-		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+		{ gutenberg: 'stable', target: 'simple', accountName: 'simpleSitePersonalPlanUser' },
 	] );
 
 	let editorPage: EditorPage;
@@ -35,7 +35,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page, { target: features.target } );
 		await editorPage.visit( 'post' );
 	} );
 

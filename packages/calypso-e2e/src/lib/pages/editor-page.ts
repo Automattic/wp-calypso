@@ -13,7 +13,7 @@ import {
 	EditorInlineBlockInserterComponent,
 	EditorSidebarBlockInserterComponent,
 } from '../components';
-import type { SiteType } from '../../lib/utils';
+import type { Target } from '../../lib/utils';
 import type { PreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from '../components';
 
 const selectors = {
@@ -48,7 +48,7 @@ interface BlockInserter {
 export class EditorPage {
 	private page: Page;
 	private editor: Locator;
-	private target: SiteType;
+	private target: Target;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
@@ -65,7 +65,7 @@ export class EditorPage {
 	 * @param param0 Keyed object parameter.
 	 * @param param0.target Target editor type. Defaults to 'simple'.
 	 */
-	constructor( page: Page, { target = 'simple' }: { target?: SiteType } = {} ) {
+	constructor( page: Page, { target = 'simple' }: { target?: Target } = {} ) {
 		if ( target === 'atomic' ) {
 			// For Atomic editors, there is no iFrame - the editor is
 			// part of the page DOM and is thus accessible directly.

@@ -1,4 +1,5 @@
 import path from 'path';
+import { Target } from './lib';
 
 const VIEWPORT_NAMES = [ 'mobile', 'desktop' ] as const;
 const TEST_LOCALES = [
@@ -23,7 +24,7 @@ const TEST_LOCALES = [
 // TODO: Maybe move these to config? 👆
 
 type EnvVariableKey = string;
-type EnvVariableValue = boolean | string | string[] | number;
+type EnvVariableValue = boolean | string | string[] | number | undefined;
 type EnvVariables = {
 	[ key: EnvVariableKey ]: EnvVariableValue;
 };
@@ -31,17 +32,20 @@ type EnvVariables = {
 export type ViewportName = typeof VIEWPORT_NAMES[ number ];
 export type TestLocales = string[] & typeof TEST_LOCALES;
 
+type unspecified = 'unspecified';
+type PluginReleaseTag = 'stable' | 'edge' | unspecified | undefined;
+
 export interface SupportedEnvVariables extends EnvVariables {
 	VIEWPORT_NAME: ViewportName;
-	GUTENBERG_EDGE: boolean;
-	COBLOCKS_EDGE: boolean;
+	GUTENBERG?: PluginReleaseTag;
+	COBLOCKS?: PluginReleaseTag;
 	TEST_LOCALES: TestLocales;
 	COOKIES_PATH: string;
 	AUTHENTICATE_ACCOUNTS: string[];
 	ARTIFACTS_PATH: string;
 	HEADLESS: boolean;
 	SLOW_MO: number;
-	TEST_ON_ATOMIC: boolean;
+	TARGET: Target;
 }
 
 const defaultEnvVariables: SupportedEnvVariables = {
@@ -49,19 +53,21 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	TEST_LOCALES: [ ...TEST_LOCALES ],
 	HEADLESS: false,
 	SLOW_MO: 0,
-	GUTENBERG_EDGE: false,
-	COBLOCKS_EDGE: false,
 	AUTHENTICATE_ACCOUNTS: [ 'simpleSitePersonalPlanUser', 'eCommerceUser', 'defaultUser' ],
 	COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
 	ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
-	TEST_ON_ATOMIC: false,
+	TARGET: 'simple',
 };
 
 const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue => {
 	let output: EnvVariableValue = value;
 
+	const envVal = defaultEnvVariables[ name ];
+
+	if ( ! envVal ) return;
+
 	// Cast based on the default value type.
-	switch ( defaultEnvVariables[ name ].constructor.name ) {
+	switch ( envVal.constructor.name ) {
 		case 'Number': {
 			output = Number( value );
 			if ( Number.isNaN( output ) ) {
@@ -117,7 +123,11 @@ const currentEnvVariables = { ...defaultEnvVariables };
 
 supportedEnvVariableNames.forEach( ( name ) => {
 	const originalValue = process.env[ name ];
-	if ( originalValue ) {
+	// Some env vars might be set with the `unspecified` "special" value to mean
+	// they're ffectivelly unset. This is useful to avoid creating condition
+	// branches in the code that passes the vars to Jest, and one can just
+	// pass `unspecified` and it will have the same effect as not setting it.
+	if ( originalValue && ( originalValue as unspecified ) !== 'unspecified' ) {
 		currentEnvVariables[ name ] = castKnownEnvVariable( name, originalValue );
 	}
 } );

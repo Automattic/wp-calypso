@@ -28,7 +28,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 	describe( DataHelper.createSuiteTitle( `Editor: Privacy (${ visibility })` ), function () {
 		const features = envToFeatureKey( envVariables );
 		const accountName = getTestAccountByFeature( features, [
-			{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+			{ gutenberg: 'stable', target: 'simple', accountName: 'simpleSitePersonalPlanUser' },
 		] );
 
 		let page: Page;
@@ -44,7 +44,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 			} );
 
 			it( 'Start new page', async function () {
-				editorPage = new EditorPage( page, { target: features.siteType } );
+				editorPage = new EditorPage( page, { target: features.target } );
 				await editorPage.visit( 'page' );
 				await editorPage.waitUntilLoaded();
 				const editorIframe = await editorPage.getEditorHandle();
@@ -53,7 +53,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 			} );
 
 			it( 'Enter page title', async function () {
-				editorPage = new EditorPage( page, { target: features.siteType } );
+				editorPage = new EditorPage( page, { target: features.target } );
 				await editorPage.enterTitle( `Privacy: ${ visibility } - ${ DataHelper.getTimestamp() }` );
 			} );
 

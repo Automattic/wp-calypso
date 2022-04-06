@@ -27,7 +27,7 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 		const accountName = getTestAccountByFeature( features, [
 			{
 				gutenberg: 'stable',
-				siteType: 'simple',
+				target: 'simple',
 				accountName: 'simpleSitePersonalPlanUser',
 			},
 		] );
@@ -39,7 +39,7 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 
 		beforeAll( async () => {
 			page = await browser.newPage();
-			editorPage = new EditorPage( page, { target: features.siteType } );
+			editorPage = new EditorPage( page, { target: features.target } );
 			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
 		} );

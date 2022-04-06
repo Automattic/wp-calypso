@@ -23,10 +23,11 @@ Environment Variables are values that are defined at the system level to serve a
 
 ## CI
 
-| Name           | Description                            | Example | Required |
-| -------------- | -------------------------------------- | ------- | -------- |
-| COBLOCKS_EDGE  | Use the bleeding edge CoBlocks build.  | true    | No       |
-| GUTENBERG_EDGE | Use the bleeding edge Gutenberg build. | true    | No       |
+| Name      | Description                                                                                | - Example | Required                     |
+| --------- | ------------------------------------------------------------------------------------------ | --------- | ---------------------------- |
+| COBLOCKS  | Specifies what release of CoBlocks (stable or edge) to use or none/default if unspecified  | stable    | No (defaults to unspecified) |
+| GUTENBERG | Specifies what release of Gutenberg (stable or edge) to use or none/default if unspecified | edge      | No (defaults to unspecified) |
+| TARGET    | Specifies what WPCOM target environment to use (atomic or simple)                          | simple    | No (defauls to simple)       |
 
 <!-- When adding new rows, run the following command to sort the resulting sub-table in alphabetical order:
 

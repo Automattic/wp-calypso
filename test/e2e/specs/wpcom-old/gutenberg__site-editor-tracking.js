@@ -23,9 +23,7 @@ const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
 const siteEditorUser =
-	process.env.GUTENBERG_EDGE === 'true'
-		? 'siteEditorSimpleSiteEdgeUser'
-		: 'siteEditorSimpleSiteUser';
+	process.env.GUTENBERG === 'edge' ? 'siteEditorSimpleSiteEdgeUser' : 'siteEditorSimpleSiteUser';
 
 const navigationSidebarBackToRoot = async ( driver ) => {
 	const backButtonLocator = By.css(

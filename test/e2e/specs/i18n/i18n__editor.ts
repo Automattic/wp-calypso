@@ -234,7 +234,7 @@ describe( 'I18N: Editor', function () {
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page, { target: features.target } );
 	} );
 
 	describe.each( locales )( `Locale: %s`, function ( locale ) {
@@ -269,7 +269,7 @@ describe( 'I18N: Editor', function () {
 				const blockTimeout = 10 * 1000;
 
 				it( 'Insert test block', async function () {
-					editorPage = new EditorPage( page, { target: features.siteType } );
+					editorPage = new EditorPage( page, { target: features.target } );
 					await editorPage.addBlockFromSidebar( block.blockName, block.blockEditorSelector );
 				} );
 

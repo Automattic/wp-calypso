@@ -28,7 +28,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	const accountName = getTestAccountByFeature( features, [
 		{
 			gutenberg: 'stable',
-			siteType: 'simple',
+			target: 'simple',
 			accountName: 'simpleSitePersonalPlanUser',
 		},
 	] );
@@ -54,7 +54,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page, { target: features.target } );
 	} );
 
 	it( 'Go to new post page', async function () {

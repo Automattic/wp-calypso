@@ -14,24 +14,24 @@ describe( 'getTestAccountByFeature', function () {
 		{
 			gutenberg: 'edge',
 			coblocks: 'stable',
-			siteType: 'simple',
+			target: 'simple',
 			accountName: 'multipleFeaturesRightAccountName',
 		},
 		{
 			gutenberg: 'edge',
-			siteType: 'simple',
+			target: 'simple',
 			accountName: 'multipleFeaturesUndefinedRightAccountName',
 		},
 		{
 			gutenberg: 'stable',
 			coblocks: 'stable',
-			siteType: 'simple',
+			target: 'simple',
 			accountName: 'wrongAccountName',
 		},
 	];
 
 	it( 'returns the right default account for single feature', () => {
-		const accountName = getTestAccountByFeature( { gutenberg: 'edge', siteType: 'simple' } );
+		const accountName = getTestAccountByFeature( { gutenberg: 'edge', target: 'simple' } );
 
 		expect( accountName ).toBe( 'gutenbergSimpleSiteEdgeUser' );
 	} );
@@ -41,7 +41,7 @@ describe( 'getTestAccountByFeature', function () {
 			{
 				gutenberg: 'edge',
 				coblocks: 'stable',
-				siteType: 'simple',
+				target: 'simple',
 			},
 			customCriteria
 		);
@@ -51,12 +51,14 @@ describe( 'getTestAccountByFeature', function () {
 
 	it( 'returns the right feature if one of the features is undefined', () => {
 		// This simulates a scenario where the presence of a feature depends
-		// on external data (i.e env var) and that data might be not set.
+		// on external data (i.e env var) and that data might be not set. This
+		// indicates that that specific feature is not present (or it might just
+		// fallback to its default in some sites).
 		const accountName = getTestAccountByFeature(
 			{
 				gutenberg: 'edge',
 				coblocks: undefined,
-				siteType: 'simple',
+				target: 'simple',
 			},
 			customCriteria
 		);
@@ -73,20 +75,20 @@ describe( 'getTestAccountByFeature', function () {
 		// last-defined one will prevail.
 		const criteria: FeatureCriteria[] = [
 			{
-				siteType: 'simple',
+				target: 'simple',
 				gutenberg: 'edge',
 				accountName: 'wrongAccount',
 			},
 			{
 				gutenberg: 'edge',
-				siteType: 'simple',
+				target: 'simple',
 				accountName: 'rightAccount',
 			},
 		];
 
 		const accountName = getTestAccountByFeature(
 			{
-				siteType: 'simple',
+				target: 'simple',
 				gutenberg: 'edge',
 			},
 			criteria
@@ -98,7 +100,7 @@ describe( 'getTestAccountByFeature', function () {
 	it( 'will throw en error if passed feature does not match an account', () => {
 		expect( () =>
 			/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-			getTestAccountByFeature( { coblocks: 'foo', siteType: 'bar' } as any )
+			getTestAccountByFeature( { coblocks: 'foo', target: 'bar' } as any )
 		).toThrowError();
 	} );
 
@@ -108,14 +110,14 @@ describe( 'getTestAccountByFeature', function () {
 		const customCriteria: FeatureCriteria[] = [
 			{
 				gutenberg: 'edge',
-				siteType: 'simple',
+				target: 'simple',
 				variant: 'siteEditor',
 				accountName: 'siteEditorEdgeAccount',
 			},
 		];
 		const siteEditorAccountName = getTestAccountByFeature(
 			{
-				siteType: 'simple',
+				target: 'simple',
 				gutenberg: 'edge',
 				variant: 'siteEditor',
 			},
@@ -123,7 +125,7 @@ describe( 'getTestAccountByFeature', function () {
 		);
 
 		const editorAccountName = getTestAccountByFeature( {
-			siteType: 'simple',
+			target: 'simple',
 			gutenberg: 'edge',
 		} );
 
@@ -138,14 +140,14 @@ describe( 'getTestAccountByFeature', function () {
 		const customCriteria: FeatureCriteria[] = [
 			{
 				gutenberg: 'edge',
-				siteType: 'simple',
+				target: 'simple',
 				accountName: 'aNewAccount',
 			},
 		];
 
 		const editorAccountName = getTestAccountByFeature(
 			{
-				siteType: 'simple',
+				target: 'simple',
 				gutenberg: 'edge',
 			},
 			customCriteria
@@ -157,50 +159,16 @@ describe( 'getTestAccountByFeature', function () {
 
 describe( 'envToFeatureKey', () => {
 	const envVariables: TestAccountEnvVariables = {
-		COBLOCKS_EDGE: true,
-		GUTENBERG_EDGE: false,
-		TEST_ON_ATOMIC: false,
+		COBLOCKS: 'edge',
+		GUTENBERG: 'stable',
+		TARGET: 'simple',
 	};
 
-	it( 'will return a proper `FeatureKey` object', () => {
+	it( 'will return a proper `FeatureKey` object based on the `envVariables` object', () => {
 		expect( envToFeatureKey( envVariables ) ).toEqual( {
 			coblocks: 'edge',
 			gutenberg: 'stable',
-			siteType: 'simple',
+			target: 'simple',
 		} as FeatureKey );
-	} );
-
-	it( 'will return a `FeatureKey` object without coblocks (=== `undefined`) if env.COBLOCKS_EDGE is `false`', () => {
-		expect( envToFeatureKey( { ...envVariables, COBLOCKS_EDGE: false } )[ 'coblocks' ] ).toBe(
-			undefined
-		);
-	} );
-
-	it( 'will return a `FeatureKey` object with `coblocks: "edge"` if env.COBLOCKS_EDGE is `true`', () => {
-		expect( envToFeatureKey( envVariables ) ).toMatchObject( {
-			coblocks: 'edge',
-		} );
-	} );
-
-	it( 'will return a `FeatureKey` object with `gutenberg: "stable"` if env.GUTENBERG_EDGE is `false`', () => {
-		expect( envToFeatureKey( envVariables ) ).toMatchObject( { gutenberg: 'stable' } );
-	} );
-
-	it( 'will return a `FeatureKey` object with `gutenberg: "edge"` if env.GUTENBERG_EDGE is `true`', () => {
-		expect( envToFeatureKey( { ...envVariables, GUTENBERG_EDGE: true } ) ).toMatchObject( {
-			gutenberg: 'edge',
-		} );
-	} );
-
-	it( 'will return a `FeatureKey` object with `siteType: "simple"` if env.TEST_ON_ATOMIC is `false`', () => {
-		expect( envToFeatureKey( envVariables ) ).toMatchObject( {
-			siteType: 'simple',
-		} );
-	} );
-
-	it( 'will return a `FeatureKey` object with `siteType: "atomic"` if env.TEST_ON_ATOMIC is `true`', () => {
-		expect( envToFeatureKey( { ...envVariables, TEST_ON_ATOMIC: true } ) ).toMatchObject( {
-			siteType: 'atomic',
-		} );
 	} );
 } );

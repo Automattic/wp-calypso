@@ -37,8 +37,8 @@ object WPComTests : Project({
 
 	buildType(gutenbergPlaywrightBuildType("desktop", "fab2e82e-d27b-4ba2-bbd7-232df944e75c"));
 	buildType(gutenbergPlaywrightBuildType("mobile", "77a5a0f1-9644-4c04-9d27-0066cd2d4ada"));
-	buildType(gutenbergPlaywrightBuildType("desktop", "c341e9b9-1118-48e9-a569-325100f5fd9" , true));
-	buildType(gutenbergPlaywrightBuildType("mobile", "e0f7e412-ae6c-41d3-9eec-c57c94dd8385", true));
+	buildType(gutenbergPlaywrightBuildType("desktop", "c341e9b9-1118-48e9-a569-325100f5fd9" , "atomic"));
+	buildType(gutenbergPlaywrightBuildType("mobile", "e0f7e412-ae6c-41d3-9eec-c57c94dd8385", "atomic"));
 
 	buildType(coblocksPlaywrightBuildType("desktop", "08f88b93-993e-4de8-8d80-4a94981d9af4"));
 	buildType(coblocksPlaywrightBuildType("mobile", "cbcd44d5-4d31-4adc-b1b5-97f1225c6a7c"));
@@ -52,6 +52,8 @@ object WPComTests : Project({
 	buildType(I18NTests);
 	buildType(P2E2ETests)
 })
+
+var pluginReleaseTags = listOf("stable", "edge", "unspecified");
 
 fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 	return BuildType {
@@ -79,21 +81,19 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 				description = "URL to test against",
 				allowEmpty = false
 			)
-			checkbox(
-				name = "GUTENBERG_EDGE",
-				value = "false",
-				label = "Use gutenberg-edge",
-				description = "Use a blog with gutenberg-edge sticker",
-				checked = "true",
-				unchecked = "false"
+			select(
+				name = "GUTENBERG",
+				value = "stable",
+				label = "Gutenberg Release",
+				description = "Specifies if this test needs a specific Gutenberg release, or none/default if unspecified",
+				options = pluginReleaseTags
 			)
-			checkbox(
-				name = "COBLOCKS_EDGE",
-				value = "false",
-				label = "Use coblocks-edge",
-				description = "Use a blog with coblocks-edge sticker",
-				checked = "true",
-				unchecked = "false"
+			select(
+				name = "COBLOCKS",
+				value = "stable",
+				label = "CoBlocks Release",
+				description = "Specifies if this test needs a CoBlocks release, or none/default if unspecified",
+				options = pluginReleaseTags
 			)
 		}
 
@@ -120,8 +120,8 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 					export NODE_CONFIG_ENV=test
 					export TEST_VIDEO=true
 					export HIGHLIGHT_ELEMENT=true
-					export GUTENBERG_EDGE=%GUTENBERG_EDGE%
-					export COBLOCKS_EDGE=%COBLOCKS_EDGE%
+					export GUTENBERG=%GUTENBERG%
+					export COBLOCKS=%COBLOCKS%
 					export URL=%URL%
 					export BROWSERSIZE=$screenSize
 					export BROWSERLOCALE=en
@@ -220,14 +220,14 @@ fun gutenbergBuildType(screenSize: String, buildUuid: String): BuildType {
 	}
 }
 
-fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false ): E2EBuildType {
-	var siteType = if (atomic) "atomic" else "simple";
+var WPCOMTargets = listOf("simple", "atomic");
 
+fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, target: String = "simple" ): E2EBuildType {
     return E2EBuildType (
-		buildId = "WPComTests_gutenberg_Playwright_${siteType}_$targetDevice",
+		buildId = "WPComTests_gutenberg_Playwright_${target}_$targetDevice",
 		buildUuid = buildUuid,
-		buildName = "Playwright Gutenberg $siteType E2E tests ($targetDevice)",
-		buildDescription = "Runs Gutenberg $siteType E2E tests on $targetDevice size",
+		buildName = "Playwright Gutenberg $target E2E tests ($targetDevice)",
+		buildDescription = "Runs Gutenberg $target E2E tests on $targetDevice size",
 		testGroup = "gutenberg",
 		buildParams = {
 			text(
@@ -237,33 +237,30 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				description = "URL to test against",
 				allowEmpty = false
 			)
-			checkbox(
-				name = "env.GUTENBERG_EDGE",
-				value = "false",
-				label = "Use gutenberg-edge",
-				description = "Use a blog with gutenberg-edge sticker",
-				checked = "true",
-				unchecked = "false"
+			select(
+				name = "env.GUTENBERG",
+				value = "stable",
+				label = "Gutenberg Release",
+				description = "Specifies if this test needs a specific Gutenberg release, or none/default if unspecified",
+				options = pluginReleaseTags
 			)
-			checkbox(
-				name = "env.COBLOCKS_EDGE",
-				value = "false",
-				label = "Use coblocks-edge",
-				description = "Use a blog with coblocks-edge sticker",
-				checked = "true",
-				unchecked = "false"
+			select(
+				name = "env.COBLOCKS",
+				value = "unspecified",
+				label = "CoBlocks Release",
+				description = "Specifies if this test needs a CoBlocks release, or none/default if unspecified",
+				options = pluginReleaseTags
 			)
-			checkbox(
-				name = "env.TEST_ON_ATOMIC",
-				value = "false",
-				label = "Test on Atomic",
-				description = "Use an Atomic blog to test against",
-				checked = "true",
-				unchecked = "false"
+			select(
+				name = "env.TARGET",
+				value = "simple",
+				label = "Target environment",
+				description = "The WPCOM target environment to test against. Defaults to 'simple'",
+				options = WPCOMTargets
 			)
 			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser,simpleSitePersonalPlanUser")
 			param("env.VIEWPORT_NAME", "$targetDevice")
-			if (atomic) param("env.TEST_ON_ATOMIC", "true")
+			param("env.TARGET", target)
 		},
 		buildFeatures = {
 			notifications {
@@ -311,13 +308,19 @@ fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2EB
 				description = "URL to test against",
 				allowEmpty = false
 			)
-			checkbox(
-				name = "env.COBLOCKS_EDGE",
-				value = "false",
-				label = "Use coblocks-edge",
-				description = "Use a blog with coblocks-edge sticker",
-				checked = "true",
-				unchecked = "false"
+			select(
+				name = "env.COBLOCKS",
+				value = "stable",
+				label = "CoBlocks Release",
+				description = "Specifies if this test needs a CoBlocks release, or none/default if unspecified",
+				options = pluginReleaseTags
+			)
+			select(
+				name = "env.TARGET",
+				value = "simple",
+				label = "Target environment",
+				description = "The WPCOM target environment to test against. Defaults to 'simple'",
+				options = WPCOMTargets
 			)
 			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser")
 			param("env.VIEWPORT_NAME", "$targetDevice")
