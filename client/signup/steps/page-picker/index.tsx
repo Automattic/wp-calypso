@@ -10,7 +10,6 @@ import {
 	CONTACT_PAGE,
 	ABOUT_PAGE,
 	PHOTO_GALLERY_PAGE,
-	SERVICE_SHOWCASE_PAGE,
 	VIDEO_GALLERY_PAGE,
 	PODCAST_PAGE,
 	PORTFOLIO_PAGE,
@@ -18,6 +17,7 @@ import {
 	SITEMAP_PAGE,
 	PROFILE_PAGE,
 	PAGE_LIMIT,
+	SERVICES_PAGE,
 } from 'calypso/signup/difm/constants';
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -173,11 +173,7 @@ function PageSelector( {
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
-			<PageCell
-				pageId={ SERVICE_SHOWCASE_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
+			<PageCell pageId={ SERVICES_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
 			<PageCell
 				pageId={ VIDEO_GALLERY_PAGE }
 				selectedPages={ selectedPages }
