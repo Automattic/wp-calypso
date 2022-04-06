@@ -215,7 +215,7 @@ export default function WrapperWebsiteContent(
 	const dispatch = useDispatch();
 	const headerText = translate( 'Website Content' );
 	const subHeaderText = translate(
-		'In this step, you will add your brand visuals, pages and media to be used on your website.'
+		'Add your logo, page text and media to be used on your website.'
 	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
