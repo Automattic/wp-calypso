@@ -131,7 +131,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 
 				{ showUpgradePlanScreen && (
 					<>
-						<ConfirmUpgradePlan sourceSite={ sourceSite } />
+						<ConfirmUpgradePlan sourceSite={ sourceSite } targetSite={ targetSite } />
 						<NextButton onClick={ () => setIsModalDetailsOpen( true ) }>
 							{ __( 'Upgrade and import' ) }
 						</NextButton>
