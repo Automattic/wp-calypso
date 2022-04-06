@@ -216,7 +216,7 @@ function getStateFromPersistence( reducer, subkey, currentUserId ) {
 // between server and local persisted data.
 // This function handles both legacy and modularized Redux state.
 // `loadPersistedState` must have completed first.
-export function getStateFromCache( reducer, subkey, currentUserId ) {
+export const getStateFromCache = ( currentUserId ) => ( reducer, subkey ) => {
 	let serverState = null;
 
 	if ( subkey && typeof window !== 'undefined' ) {
@@ -251,7 +251,7 @@ export function getStateFromCache( reducer, subkey, currentUserId ) {
 		reducer,
 		useServerState
 	);
-}
+};
 
 // Deserialize a portion of state.
 // This function handles both legacy and modularized Redux state.

@@ -8,7 +8,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
 import express from 'express';
-import { get, includes, pick, snakeCase } from 'lodash';
+import { get, includes, snakeCase } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
@@ -51,13 +51,6 @@ import { logSectionResponse } from './analytics';
 const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
-
-// TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
-function getInitialServerState( serializedServerState ) {
-	// Bootstrapped state from a server-render
-	const serverState = deserialize( initialReducer, serializedServerState );
-	return pick( serverState, Object.keys( serializedServerState ) );
-}
 
 function getCurrentBranchName() {
 	try {
@@ -106,10 +99,16 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	}
 
 	const cacheKey = `${ getNormalizedPath( request.path, request.query ) }:gdpr=${ showGdprBanner }`;
-	const serializeCachedServerState = stateCache.get( cacheKey ) || {};
-	const initialServerState = getInitialServerState( serializeCachedServerState );
-	const reduxStore = createReduxStore( initialServerState );
-	setStore( reduxStore );
+	const cachedServerState = stateCache.get( cacheKey ) || {};
+	const getCachedState = ( reducer, storageKey ) => {
+		const storedState = cachedServerState[ storageKey ];
+		if ( ! storedState ) {
+			return undefined;
+		}
+		return deserialize( reducer, storedState );
+	};
+	const reduxStore = createReduxStore( getCachedState( initialReducer, 'root' ) );
+	setStore( reduxStore, getCachedState );
 
 	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
