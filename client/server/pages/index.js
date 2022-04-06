@@ -105,24 +105,20 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		response.cookie( 'country_code', geoIPCountryCode );
 	}
 
-	let initialServerState = {};
 	const cacheKey = `${ getNormalizedPath( request.path, request.query ) }:gdpr=${ showGdprBanner }`;
+	const serializeCachedServerState = stateCache.get( cacheKey ) || {};
+	const initialServerState = getInitialServerState( serializeCachedServerState );
+	const reduxStore = createReduxStore( initialServerState );
+	setStore( reduxStore );
+
 	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
-
-	if ( cacheKey ) {
-		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
-		initialServerState = getInitialServerState( serializeCachedServerState );
-	}
 
 	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
 	const isWCComConnect =
 		( 'login' === request.context.sectionName || 'signup' === request.context.sectionName ) &&
 		request.query[ 'wccom-from' ] &&
 		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
-
-	const reduxStore = createReduxStore( initialServerState );
-	setStore( reduxStore );
 
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
