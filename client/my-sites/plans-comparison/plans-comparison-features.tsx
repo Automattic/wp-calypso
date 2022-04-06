@@ -120,7 +120,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 
 			return feature
 				? translate( 'Custom domain name is free for one year!' )
-				: translate( 'Custom domain name is not included' );
+				: translate( 'Custom domain name is {{strong}}not{{/strong}} included', {
+						components: { strong: <strong /> },
+				  } );
 		},
 	},
 	{
@@ -138,7 +140,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Premium themes are included' )
-					: translate( 'Premium themes are not included' );
+					: translate( 'Premium themes are {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -177,7 +181,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 
 			return feature
 				? translate( 'Unlimited WordPress plugins' )
-				: translate( 'WordPress plugins are not included' );
+				: translate( 'WordPress plugins are {{strong}}not{{/strong}} included', {
+						components: { strong: <strong /> },
+				  } );
 		},
 	},
 	{
@@ -198,7 +204,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Premium support is included' )
-					: translate( 'Premium support is not included' );
+					: translate( 'Premium support is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -218,7 +226,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'WooCommerce is included' )
-					: translate( 'WooCommerce is not included' );
+					: translate( 'WooCommerce is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -267,7 +277,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Remove ads is included' )
-					: translate( 'Remove ads is not included' );
+					: translate( 'Remove ads is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -288,7 +300,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Advanced SEO tools are included' )
-					: translate( 'Advanced SEO tools are not included' );
+					: translate( 'Advanced SEO tools are {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -337,7 +351,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Upload videos is included' )
-					: translate( 'Upload videos is not included' );
+					: translate( 'Upload videos is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -360,7 +376,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Collect payments is included' )
-					: translate( 'Collect payments is not included' );
+					: translate( 'Collect payments is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -381,7 +399,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Built in social media tools are included' )
-					: translate( 'Built in social media tools are not included' );
+					: translate( 'Built in social media tools are {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -420,7 +440,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 
 			return feature
 				? translate( 'Professional Email is free for 3 months' )
-				: translate( 'Professional Email is not included' );
+				: translate( 'Professional Email is {{strong}}not{{/strong}} included', {
+						components: { strong: <strong /> },
+				  } );
 		},
 	},
 	{
@@ -441,7 +463,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Earn money from ads is included' )
-					: translate( 'Earn money from ads is not included' );
+					: translate( 'Earn money from ads is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -464,7 +488,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'SFTP, Database access is included' )
-					: translate( 'SFTP, Database access is not included' );
+					: translate( 'SFTP, Database access is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -487,7 +513,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Automated website backups are included' )
-					: translate( 'Automated website backups are not included' );
+					: translate( 'Automated website backups are {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -507,7 +535,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Jetpack essentials are included' )
-					: translate( 'Jetpack essentials are not included' );
+					: translate( 'Jetpack essentials are {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
