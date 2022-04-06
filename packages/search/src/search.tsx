@@ -75,6 +75,7 @@ type Props = {
 	recordEvent?: ( eventName: string ) => void;
 	searching?: boolean;
 	value?: string;
+	searchMode?: string;
 };
 
 //This is fix for IE11. Does not work on Edge.
@@ -141,6 +142,7 @@ const InnerSearch = (
 		maxLength,
 		hideClose = false,
 		isReskinned = false,
+		searchMode = 'when-typing',
 	}: Props,
 	forwardedRef: Ref< ImperativeHandle >
 ) => {
@@ -154,6 +156,32 @@ const InnerSearch = (
 	const openIcon = React.useRef< HTMLButtonElement >( null );
 	const overlay = React.useRef< HTMLDivElement >( null );
 	const firstRender = React.useRef< boolean >( true );
+
+	const doSearch: ( ( search: string ) => void ) & { cancel?: () => void } = React.useMemo( () => {
+		if ( ! onSearch ) {
+			return () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
+		}
+
+		if ( ! delaySearch ) {
+			return onSearch;
+		}
+
+		return debounce( onSearch, delayTimeout );
+	}, [ onSearch, delayTimeout, delaySearch ] );
+
+	const bypassOnSearchDebounce = React.useCallback(
+		( value: string ) => {
+			// explicitly bypass debouncing when hitting enter
+			if ( delaySearch ) {
+				// Cancel any pending debounce
+				doSearch.cancel?.();
+			}
+
+			// call the callback directly without debouncing
+			onSearch?.( value );
+		},
+		[ delaySearch, doSearch, onSearch ]
+	);
 
 	React.useImperativeHandle(
 		forwardedRef,
@@ -174,18 +202,6 @@ const InnerSearch = (
 		[]
 	);
 
-	const doSearch: ( ( search: string ) => void ) & { cancel?: () => void } = React.useMemo( () => {
-		if ( ! onSearch ) {
-			return () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
-		}
-
-		if ( ! delaySearch ) {
-			return onSearch;
-		}
-
-		return debounce( onSearch, delayTimeout );
-	}, [ onSearch, delayTimeout, delaySearch ] );
-
 	useEffect( () => {
 		if ( keyword ) {
 			onSearch?.( keyword );
@@ -196,16 +212,15 @@ const InnerSearch = (
 
 	useUpdateEffect( () => {
 		if ( keyword ) {
-			doSearch( keyword );
+			if ( searchMode === 'when-typing' ) {
+				doSearch( keyword );
+			}
 		} else {
-			// explicitly bypass debouncing when keyword is empty
-			if ( delaySearch ) {
-				// Cancel any pending debounce
-				doSearch.cancel?.();
+			if ( searchMode === 'on-enter' ) {
+				return;
 			}
 
-			// call the callback directly without debouncing
-			onSearch?.( keyword );
+			bypassOnSearchDebounce( keyword );
 		}
 
 		onSearchChange?.( keyword );
@@ -228,6 +243,7 @@ const InnerSearch = (
 		}
 
 		setKeyword( '' );
+		if ( 'on-enter' === searchMode ) bypassOnSearchDebounce( '' );
 		setIsOpen( false );
 
 		if ( searchInput.current ) {
@@ -289,6 +305,10 @@ const InnerSearch = (
 		if ( event.key === 'Enter' && window.innerWidth < 480 ) {
 			//dismiss soft keyboards
 			blur();
+		}
+
+		if ( event.key === 'Enter' && searchMode === 'on-enter' ) {
+			bypassOnSearchDebounce( keyword );
 		}
 
 		if ( ! pinned ) {
