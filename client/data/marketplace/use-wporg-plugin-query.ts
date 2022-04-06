@@ -1,6 +1,17 @@
-import { useQuery, UseQueryResult, UseQueryOptions, QueryKey } from 'react-query';
+import {
+	useQuery,
+	useInfiniteQuery,
+	UseQueryResult,
+	UseQueryOptions,
+	QueryKey,
+	InfiniteData,
+} from 'react-query';
 import { useSelector } from 'react-redux';
-import { extractSearchInformation, normalizePluginsList } from 'calypso/lib/plugins/utils';
+import {
+	extractSearchInformation,
+	normalizePluginsList,
+	normalizePluginData,
+} from 'calypso/lib/plugins/utils';
 import { fetchPluginsList } from 'calypso/lib/wporg';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
@@ -14,11 +25,11 @@ type WPORGOptionsType = {
 
 const getCacheKey = ( key: string ): QueryKey => [ 'wporg-plugins', key ];
 
-const getPluginsListKey = ( options: WPORGOptionsType ): QueryKey =>
+const getPluginsListKey = ( options: WPORGOptionsType, infinite?: boolean ): QueryKey =>
 	getCacheKey(
-		`${ options.category || '' }_${ options.searchTerm || '' }_${ options.page || '' }_${
-			options.pageSize || ''
-		}_${ options.locale || '' }`
+		`${ infinite ? 'infinite' : '' }${ options.category || '' }_${ options.searchTerm || '' }_${
+			options.page || ''
+		}_${ options.pageSize || '' }_${ options.locale || '' }`
 	);
 
 export const useWPORGPlugins = (
@@ -44,6 +55,44 @@ export const useWPORGPlugins = (
 				plugins: normalizePluginsList( plugins ),
 				pagination: info,
 			} ),
+			enabled: enabled,
+			staleTime: staleTime,
+			refetchOnMount: refetchOnMount,
+		}
+	);
+};
+
+const extractPages = ( pages: Array< { plugins: object; info: object } > = [] ) =>
+	pages.flatMap( ( page ) => page.plugins ).map( normalizePluginData );
+
+export const useWPORGInfinitePlugins = (
+	options: WPORGOptionsType,
+	{ enabled = true, staleTime = 1000 * 60 * 60 * 2, refetchOnMount = true }: UseQueryOptions = {}
+): UseQueryResult => {
+	const [ search, author ] = extractSearchInformation( options.searchTerm );
+	const locale = useSelector( getCurrentUserLocale );
+
+	return useInfiniteQuery(
+		getPluginsListKey( options, true ),
+		( { pageParam = 1 } ) =>
+			fetchPluginsList( {
+				pageSize: options.pageSize,
+				page: pageParam,
+				category: options.category,
+				locale: options.locale || locale,
+				search,
+				author,
+			} ),
+		{
+			select: ( data: InfiniteData< { plugins: object; info: { page: number } } > ) => {
+				return {
+					...data,
+					plugins: extractPages( data.pages ),
+				};
+			},
+			getNextPageParam: ( lastPage ) => {
+				return ( lastPage.info.page || 0 ) + 1;
+			},
 			enabled: enabled,
 			staleTime: staleTime,
 			refetchOnMount: refetchOnMount,
