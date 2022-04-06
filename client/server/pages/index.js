@@ -95,12 +95,18 @@ function setupLoggedInContext( req, res, next ) {
 }
 
 function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
+	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
+	const showGdprBanner = shouldSeeGdprBanner(
+		request.cookies.country_code || geoIPCountryCode,
+		request.cookies.sensitive_pixel_option
+	);
+
+	if ( ! request.cookies.country_code && geoIPCountryCode ) {
+		response.cookie( 'country_code', geoIPCountryCode );
+	}
+
 	let initialServerState = {};
-	// We don't compare context.query against an allowed list here. Explicit allowance lists are route-specific,
-	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
-	// called before route-specific middleware, so it's up to the cache *writes* in server
-	// render to make sure that Redux state and markup are only cached for specified query args.
-	const cacheKey = getNormalizedPath( request.path, request.query );
+	const cacheKey = `${ getNormalizedPath( request.path, request.query ) }:gdpr=${ showGdprBanner }`;
 	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
 
@@ -118,15 +124,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	const reduxStore = createReduxStore( initialServerState );
 	setStore( reduxStore );
 
-	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
-	const showGdprBanner = shouldSeeGdprBanner(
-		request.cookies.country_code || geoIPCountryCode,
-		request.cookies.sensitive_pixel_option
-	);
-
-	if ( ! request.cookies.country_code && geoIPCountryCode ) {
-		response.cookie( 'country_code', geoIPCountryCode );
-	}
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
