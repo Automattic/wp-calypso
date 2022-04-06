@@ -83,7 +83,7 @@
 
 				&:not( :last-child )::after {
 					display: inline-block;
-					content: '\00a0,\00a0'; // comma and spaces
+					content: ','; // comma
 				}
 
 				&:not( .search-box-header__recommended-searches-list-item-selected ) {
