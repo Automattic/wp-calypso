@@ -99,7 +99,7 @@ const PluginDetailsCTA = ( {
 								)
 							}
 						</PluginPrice>
-						{ shouldUpgrade && (
+						{ selectedSite && shouldUpgrade && (
 							<span className="plugin-details-CTA__uprade-required">
 								{ translate( 'Plan upgrade required' ) }
 							</span>
