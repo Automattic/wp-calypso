@@ -15,6 +15,7 @@ import { useDispatch } from 'react-redux';
 import {
 	TaxInfoArea,
 	usePaymentMethodTaxInfo,
+	getMissingTaxLocationInformationMessage,
 } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-tax-info';
 import {
 	SummaryLine,
@@ -22,7 +23,6 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
-import type { TaxGetInfo } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-tax-info';
 
 const debug = debugFactory( 'calypso:existing-card-payment-method' );
 
@@ -161,19 +161,6 @@ function ExistingCardLabel( {
 			</div>
 		</Fragment>
 	);
-}
-
-function getMissingTaxLocationInformationMessage(
-	translate: ReturnType< typeof useTranslate >,
-	taxInfoFromServer: TaxGetInfo | undefined
-): string {
-	const description = ! taxInfoFromServer?.tax_country_code
-		? translate( 'Country', { textOnly: true } )
-		: translate( 'Postal code', { textOnly: true } );
-	return translate( 'Missing required %(description)s field', {
-		args: { description },
-		textOnly: true,
-	} );
 }
 
 function ExistingCardPayButton( {
