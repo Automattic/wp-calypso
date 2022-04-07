@@ -8,6 +8,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import CredentialsConfigured from 'calypso/my-sites/site-settings/jetpack-credentials/credentials-configured';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
@@ -54,7 +55,11 @@ const SiteSettingsJetpack = ( {
 				align="left"
 			/>
 			<SiteSettingsNavigation site={ site } section="jetpack" />
-			{ showCredentials && <AdvancedCredentials action={ action } host={ host } role="main" /> }
+			{ showCredentials ? (
+				<CredentialsConfigured siteId={ siteId } />
+			) : (
+				<AdvancedCredentials action={ action } host={ host } role="main" />
+			) }
 		</Main>
 	);
 };
