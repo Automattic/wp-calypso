@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
-import { useEffect, useRef } from '@wordpress/element';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import Breadcrumb from 'calypso/components/breadcrumb';
 
 const Header = styled.header`
@@ -56,64 +55,20 @@ interface Props {
 	className?: string;
 	children?: ReactNode;
 	navigationItems: { label: string; href?: string }[];
-	contentRef?: React.RefObject< HTMLElement >;
-	componentRef?: React.RefObject< HTMLElement >;
 	compactBreadcrumb?: boolean;
 }
 
-const FixedNavigationHeader: React.FunctionComponent< Props > = ( props ) => {
-	const {
-		id,
-		componentRef,
-		className,
-		children,
-		navigationItems,
-		contentRef,
-		compactBreadcrumb = false,
-	} = props;
-	const actionsRef = useRef< HTMLDivElement >( null );
-	const headerRef = useRef< HTMLElement >( null );
-
-	useEffect( () => {
-		if ( ! contentRef ) {
-			return;
-		}
-
-		const handleScroll = () => {
-			const headerHeight = headerRef?.current?.getBoundingClientRect().height;
-			const offset =
-				contentRef.current && headerHeight ? contentRef.current.offsetTop - headerHeight : 0;
-			const scrollPosition = window.scrollY;
-			const actionElement = actionsRef?.current;
-
-			if ( ! actionElement ) {
-				return;
-			}
-
-			if ( offset > 0 && scrollPosition < offset ) {
-				actionElement.style.visibility = 'hidden';
-			} else {
-				actionElement.style.visibility = 'visible';
-			}
-		};
-
-		handleScroll();
-
-		window.addEventListener( 'scroll', handleScroll );
-		return () => {
-			window.removeEventListener( 'scroll', handleScroll );
-		};
-	}, [ contentRef ] );
-
+const FixedNavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
+	const { id, className, children, navigationItems, compactBreadcrumb = false } = props;
 	return (
-		<Header id={ id } className={ className } ref={ componentRef || headerRef }>
+		<Header id={ id } className={ className } ref={ ref }>
 			<Container>
 				<Breadcrumb items={ navigationItems } compact={ compactBreadcrumb } />
-				<ActionsContainer ref={ actionsRef }>{ children }</ActionsContainer>
+				<ActionsContainer>{ children }</ActionsContainer>
 			</Container>
 		</Header>
 	);
-};
+} );
 
 FixedNavigationHeader.defaultProps = {
 	id: '',
