@@ -29,7 +29,6 @@ import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-act
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -262,7 +261,7 @@ class Layout extends Component {
 				<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
-				<QuerySiteFeatures siteIds={ this.props.selectedOrAllSites.map( ( site ) => site.ID ) } />
+				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
 					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				) }
@@ -394,7 +393,6 @@ export default withCurrentRoute(
 			hasActiveHappyChat: hasActiveHappychatSession( state ),
 			colorSchemePreference: getPreference( state, 'colorScheme' ),
 			siteId,
-			selectedOrAllSites: getSelectedOrAllSites( state ),
 			// We avoid requesting sites in the Jetpack Connect authorization step, because this would
 			// request all sites before authorization has finished. That would cause the "all sites"
 			// request to lack the newly authorized site, and when the request finishes after
