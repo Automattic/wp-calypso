@@ -1,3 +1,4 @@
+import { FEATURE_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -38,7 +39,7 @@ import {
 	getPluginOnSite,
 	getPluginOnSites,
 	getSiteObjectsWithPlugin,
-	getSitesWithoutPlugin,
+	getSiteObjectsWithoutPlugin,
 	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
@@ -56,6 +57,7 @@ import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-use
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	isJetpackSite,
@@ -370,16 +372,23 @@ function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, billingPe
 		getSiteObjectsWithPlugin( state, siteIds, props.pluginSlug )
 	);
 	const sitesWithoutPlugin = useSelector( ( state ) =>
-		getSitesWithoutPlugin( state, siteIds, props.pluginSlug )
+		getSiteObjectsWithoutPlugin( state, siteIds, props.pluginSlug )
+	);
+
+	const availableOnSites = useSelector( ( state ) =>
+		sitesWithoutPlugin.filter( ( site ) =>
+			hasActiveSiteFeature( state, site.ID, FEATURE_INSTALL_PLUGINS )
+		)
+	);
+	const upgradeNeededSites = useSelector( ( state ) =>
+		sitesWithoutPlugin.filter(
+			( site ) => ! hasActiveSiteFeature( state, site.ID, FEATURE_INSTALL_PLUGINS )
+		)
 	);
 
 	if ( isFetching || ( props.siteUrl && ! isPluginInstalledOnsite ) ) {
 		return null;
 	}
-
-	const notInstalledSites = sitesWithoutPlugin.map( ( siteId ) =>
-		sitesWithPlugins.find( ( site ) => site.ID === siteId )
-	);
 
 	return (
 		<div className="plugin-details__sites-list-background">
@@ -403,7 +412,15 @@ function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, billingPe
 						translate,
 						selectedSite,
 					} ) }
-					sites={ notInstalledSites }
+					sites={ availableOnSites }
+					plugin={ plugin }
+					billingPeriod={ billingPeriod }
+				/>
+
+				<PluginSiteList
+					className="plugin-details__not-installed-on"
+					title={ translate( 'Upgrade needed' ) }
+					sites={ upgradeNeededSites }
 					plugin={ plugin }
 					billingPeriod={ billingPeriod }
 				/>
