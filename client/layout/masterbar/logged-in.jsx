@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -30,11 +31,15 @@ import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
+import { MasterBarMobileMenu } from './masterbar-menu';
 import Notifications from './notifications';
 
+const MOBILE_BREAKPOINT = '<480px';
 class MasterbarLoggedIn extends Component {
 	state = {
 		isActionSearchVisible: false,
+		isMenuOpen: false,
+		isMobile: isWithinBreakpoint( MOBILE_BREAKPOINT ),
 	};
 
 	static propTypes = {
@@ -49,6 +54,12 @@ class MasterbarLoggedIn extends Component {
 		isCheckoutPending: PropTypes.bool,
 	};
 
+	subscribeToViewPortChanges() {
+		this.unsubscribeToViewPortChanges = subscribeIsWithinBreakpoint(
+			MOBILE_BREAKPOINT,
+			( isMobile ) => this.setState( { isMobile } )
+		);
+	}
 	handleLayoutFocus = ( currentSection ) => {
 		if ( currentSection !== this.props.section ) {
 			// When current section is not focused then open the sidebar.
@@ -73,10 +84,12 @@ class MasterbarLoggedIn extends Component {
 			}
 		};
 		document.addEventListener( 'keydown', this.actionSearchShortCutListener );
+		this.subscribeToViewPortChanges();
 	}
 
 	componentWillUnmount() {
 		document.removeEventListener( 'keydown', this.actionSearchShortCutListener );
+		this.unsubscribeToViewPortChanges?.();
 	}
 
 	clickMySites = () => {
@@ -176,6 +189,8 @@ class MasterbarLoggedIn extends Component {
 			isCustomerHomeEnabled,
 			section,
 		} = this.props;
+		const { isMenuOpen } = this.state;
+
 		const homeUrl = isCustomerHomeEnabled
 			? `/home/${ siteSlug }`
 			: getStatsPathForTab( 'day', siteSlug );
@@ -190,7 +205,7 @@ class MasterbarLoggedIn extends Component {
 				tipTarget="my-sites"
 				icon={ this.wordpressIcon() }
 				onClick={ this.clickMySites }
-				isActive={ this.isActive( 'sites' ) }
+				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
 				tooltip={ translate( 'View a list of your sites and access their dashboards' ) }
 				preloadSection={ this.preloadMySites }
 			>
@@ -201,12 +216,17 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	render() {
+	handleToggleMenu() {
+		this.setState( { isMenuOpen: ! this.state.isMenuOpen } );
+	}
+
+	masterbarItemsMap() {
 		const isWordPressActionSearchFeatureEnabled = config.isEnabled( 'wordpress-action-search' );
+		const { isActionSearchVisible, isMobile } = this.state;
+
 		const {
 			domainOnlySite,
 			translate,
-			isCheckout,
 			isCheckoutPending,
 			isMigrationInProgress,
 			previousPath,
@@ -217,10 +237,8 @@ class MasterbarLoggedIn extends Component {
 			currentSelectedSiteId,
 		} = this.props;
 
-		const { isActionSearchVisible } = this.state;
-
-		if ( isCheckout || isCheckoutPending ) {
-			return (
+		return {
+			checkout: () => (
 				<AsyncLoad
 					require="calypso/layout/masterbar/checkout.tsx"
 					placeholder={ null }
@@ -230,111 +248,186 @@ class MasterbarLoggedIn extends Component {
 					siteSlug={ siteSlug }
 					isLeavingAllowed={ ! isCheckoutPending }
 				/>
-			);
-		}
-
-		return (
-			<>
-				{ isWordPressActionSearchFeatureEnabled && isActionSearchVisible ? (
+			),
+			popupSearch: () =>
+				isWordPressActionSearchFeatureEnabled && isActionSearchVisible ? (
 					<AsyncLoad
 						require="calypso/layout/popup-search"
 						placeholder={ null }
 						onClose={ this.onSearchActionsClose }
 					/>
-				) : null }
+				) : null,
+			mySites: () => this.renderMySites(),
+			reader: () => (
+				<Item
+					tipTarget="reader"
+					className="masterbar__reader"
+					url="/read"
+					icon="reader"
+					onClick={ this.clickReader }
+					isActive={ this.isActive( 'reader' ) }
+					tooltip={ translate( 'Read the blogs and topics you follow' ) }
+					preloadSection={ this.preloadReader }
+				>
+					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+				</Item>
+			),
+			languageSwitcher: () =>
+				( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
+					<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
+				),
+			search: () =>
+				isWordPressActionSearchFeatureEnabled && (
+					<Item
+						tipTarget="Action Search"
+						icon="search"
+						onClick={ this.clickSearchActions }
+						isActive={ false }
+						className="masterbar__item-action-search"
+						tooltip={ translate( 'Search' ) }
+						preloadSection={ this.preloadMe }
+					>
+						{ translate( 'Search Actions' ) }
+					</Item>
+				),
+			planUpsell: () => (
+				<AsyncLoad
+					require="./plan-upsell"
+					className="masterbar__item-upsell button is-primary"
+					tooltip={ translate( 'Upgrade your plan' ) }
+				>
+					{ translate( 'Upgrade' ) }
+				</AsyncLoad>
+			),
+			publish: () =>
+				! domainOnlySite &&
+				! isMigrationInProgress && (
+					<AsyncLoad
+						require="./publish"
+						placeholder={ null }
+						isActive={ this.isActive( 'post' ) }
+						className="masterbar__item-new"
+						tooltip={ translate( 'Create a New Post' ) }
+					>
+						{ translate( 'Write' ) }
+					</AsyncLoad>
+				),
+			cart: () => (
+				<AsyncLoad
+					require="./masterbar-cart/masterbar-cart-wrapper"
+					placeholder={ null }
+					goToCheckout={ this.goToCheckout }
+					onRemoveProduct={ this.onRemoveCartProduct }
+					onRemoveCoupon={ this.onRemoveCartProduct }
+					selectedSiteSlug={ currentSelectedSiteSlug }
+					selectedSiteId={ currentSelectedSiteId }
+				/>
+			),
+			me: () => (
+				<Item
+					tipTarget="me"
+					url="/me"
+					icon={ isMobile ? null : 'user-circle' }
+					onClick={ this.clickMe }
+					isActive={ this.isActive( 'me' ) }
+					className="masterbar__item-me"
+					tooltip={ translate( 'Update your profile, personal settings, and more' ) }
+					preloadSection={ this.preloadMe }
+				>
+					<Gravatar
+						className="masterbar__item-me-gravatar"
+						user={ this.props.user }
+						alt={ translate( 'My Profile' ) }
+						size={ 18 }
+					/>
+					<span className="masterbar__item-me-label">
+						{ translate( 'My Profile', {
+							context: 'Toolbar, must be shorter than ~12 chars',
+						} ) }
+					</span>
+				</Item>
+			),
+			notifications: () => (
+				<Notifications
+					isShowing={ this.props.isNotificationsShowing }
+					isActive={ this.isActive( 'notifications' ) }
+					className="masterbar__item-notifications"
+					tooltip={ translate( 'Manage your notifications' ) }
+				>
+					<span className="masterbar__item-notifications-label">
+						{ translate( 'Notifications', {
+							comment: 'Toolbar, must be shorter than ~12 chars',
+						} ) }
+					</span>
+				</Notifications>
+			),
+			menu: () => (
+				<>
+					<Item
+						tipTarget="Menu"
+						icon="menu"
+						onClick={ () => this.handleToggleMenu() }
+						isActive={ this.state.isMenuOpen }
+						className="masterbar__item-menu"
+						tooltip={ translate( 'Menu' ) }
+					/>
+					<MasterBarMobileMenu open={ this.state.isMenuOpen }>
+						{ this.masterbarItemsMap().publish() }
+						{ this.masterbarItemsMap().reader() }
+						{ this.masterbarItemsMap().me() }
+					</MasterBarMobileMenu>
+				</>
+			),
+		};
+	}
+
+	render() {
+		const { isCheckout, isCheckoutPending } = this.props;
+		const { isMobile } = this.state;
+
+		const allItems = this.masterbarItemsMap();
+
+		if ( isCheckout || isCheckoutPending ) {
+			return allItems.checkout();
+		}
+
+		if ( isMobile ) {
+			return (
+				<>
+					{ allItems.popupSearch() }
+					<Masterbar>
+						<div className="masterbar__section masterbar__section--left">
+							{ this.renderMySites() }
+							{ allItems.languageSwitcher() }
+							{ allItems.search() }
+						</div>
+						<div className="masterbar__section masterbar__section--right">
+							{ allItems.cart() }
+							{ allItems.notifications() }
+							{ allItems.menu() }
+						</div>
+					</Masterbar>
+				</>
+			);
+		}
+		return (
+			<>
+				{ allItems.popupSearch() }
 				<Masterbar>
 					<div className="masterbar__section masterbar__section--left">
 						{ this.renderMySites() }
-						<Item
-							tipTarget="reader"
-							className="masterbar__reader"
-							url="/read"
-							icon="reader"
-							onClick={ this.clickReader }
-							isActive={ this.isActive( 'reader' ) }
-							tooltip={ translate( 'Read the blogs and topics you follow' ) }
-							preloadSection={ this.preloadReader }
-						>
-							{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-						</Item>
-						{ ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
-							<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
-						) }
-						{ isWordPressActionSearchFeatureEnabled && (
-							<Item
-								tipTarget="Action Search"
-								icon="search"
-								onClick={ this.clickSearchActions }
-								isActive={ false }
-								className="masterbar__item-action-search"
-								tooltip={ translate( 'Search' ) }
-								preloadSection={ this.preloadMe }
-							>
-								{ translate( 'Search Actions' ) }
-							</Item>
-						) }
+						{ allItems.reader() }
+						{ allItems.languageSwitcher() }
+						{ allItems.search() }
 					</div>
 					<div className="masterbar__section masterbar__section--center">
-						{ ! domainOnlySite && ! isMigrationInProgress && (
-							<>
-								<AsyncLoad
-									require="./plan-upsell"
-									className="masterbar__item-upsell button is-primary"
-									tooltip={ translate( 'Upgrade your plan' ) }
-								>
-									{ translate( 'Upgrade' ) }
-								</AsyncLoad>
-								<AsyncLoad
-									require="./publish"
-									placeholder={ null }
-									isActive={ this.isActive( 'post' ) }
-									className="masterbar__item-new"
-									tooltip={ translate( 'Create a New Post' ) }
-								>
-									{ translate( 'Write' ) }
-								</AsyncLoad>
-							</>
-						) }
+						{ allItems.planUpsell() }
+						{ allItems.publish() }
 					</div>
 					<div className="masterbar__section masterbar__section--right">
-						<AsyncLoad
-							require="./masterbar-cart/masterbar-cart-wrapper"
-							placeholder={ null }
-							goToCheckout={ this.goToCheckout }
-							onRemoveProduct={ this.onRemoveCartProduct }
-							onRemoveCoupon={ this.onRemoveCartProduct }
-							selectedSiteSlug={ currentSelectedSiteSlug }
-							selectedSiteId={ currentSelectedSiteId }
-						/>
-						<Item
-							tipTarget="me"
-							url="/me"
-							icon="user-circle"
-							onClick={ this.clickMe }
-							isActive={ this.isActive( 'me' ) }
-							className="masterbar__item-me"
-							tooltip={ translate( 'Update your profile, personal settings, and more' ) }
-							preloadSection={ this.preloadMe }
-						>
-							<Gravatar user={ this.props.user } alt={ translate( 'My Profile' ) } size={ 18 } />
-							<span className="masterbar__item-me-label">
-								{ translate( 'My Profile', {
-									context: 'Toolbar, must be shorter than ~12 chars',
-								} ) }
-							</span>
-						</Item>
-						<Notifications
-							isShowing={ this.props.isNotificationsShowing }
-							isActive={ this.isActive( 'notifications' ) }
-							className="masterbar__item-notifications"
-							tooltip={ translate( 'Manage your notifications' ) }
-						>
-							<span className="masterbar__item-notifications-label">
-								{ translate( 'Notifications', {
-									comment: 'Toolbar, must be shorter than ~12 chars',
-								} ) }
-							</span>
-						</Notifications>
+						{ allItems.cart() }
+						{ allItems.me() }
+						{ allItems.notifications() }
 					</div>
 				</Masterbar>
 			</>

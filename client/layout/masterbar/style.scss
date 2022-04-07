@@ -50,6 +50,41 @@ $autobar-height: 20px;
 			-webkit-font-smoothing: antialiased;
 		}
 	}
+
+	.masterbar__mobile-menu-container {
+		position: fixed;
+		width: 100%;
+		background: #23282d;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		top: var( --masterbar-height );
+		padding: 10px;
+		box-sizing: border-box;
+		animation: mobile-menu-fade-in 200ms ease-out forwards;
+
+		.masterbar__item {
+			width: 100%;
+			justify-content: flex-start;
+			box-sizing: border-box;
+
+			.masterbar__item-content {
+				display: flex;
+				align-items: center;
+
+				.masterbar__item-me-label {
+					display: block;
+					padding-left: 6px;
+				}
+				.masterbar__item-me-gravatar {
+					position: relative;
+					top: initial;
+					left: initial;
+					transform: initial;
+				}
+			}
+		}
+	}
 }
 
 .pride .masterbar {
@@ -120,10 +155,15 @@ $autobar-height: 20px;
 }
 
 .masterbar__section {
-	flex: 2;
 	display: flex;
 
+	&--right {
+		flex: 1;
+		justify-content: flex-end;
+	}
+
 	@include breakpoint-deprecated( '>480px' ) {
+		flex: 2;
 		.masterbar__item {
 			flex: 0 0 auto;
 		}
@@ -144,7 +184,6 @@ $autobar-height: 20px;
 		flex-grow: 0;
 	}
 }
-
 
 .masterbar__drafts {
 	white-space: nowrap;
@@ -254,10 +293,8 @@ $autobar-height: 20px;
 	}
 
 	@include breakpoint-deprecated( '<480px' ) {
-		.gridicon {
-			margin: 0 auto;
-		}
-
+		// reset flex value on mobile
+		flex: 0 1 auto;
 		.masterbar__item-content {
 			display: none;
 		}
@@ -285,13 +322,6 @@ $autobar-height: 20px;
 	@include breakpoint-deprecated( '<480px' ) {
 		& {
 			padding-right: 14px;
-		}
-
-		.masterbar__item-content {
-			display: block;
-			margin: 0 auto;
-			width: 30px;
-			overflow: hidden;
 		}
 
 		.masterbar__wpcom-logo {
@@ -459,7 +489,7 @@ $autobar-height: 20px;
 
 .masterbar__item-upsell {
 	height: 24px;
-    margin-top: 4px;
+	margin-top: 4px;
 
 	@media only screen and ( max-width: 782px ) {
 		height: 34px;
@@ -562,6 +592,14 @@ $autobar-height: 20px;
 	}
 	80% {
 		transform: scale3d( 1.15, 1.15, 1.15 );
+	}
+}
+@keyframes mobile-menu-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
 	}
 }
 
