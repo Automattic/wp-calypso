@@ -17,6 +17,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import AutomaticBillingNotice from 'calypso/jetpack-cloud/sections/partner-portal/automatic-billing-notice';
 import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-loading';
 import PaymentMethodImage from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/payment-method-image';
 import { assignNewCardProcessor } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
@@ -143,6 +144,8 @@ function PaymentMethodAdd(): ReactElement {
 							{ 0 === paymentMethods.length && <CreditCardLoading /> }
 
 							{ paymentMethods && paymentMethods[ 0 ] && paymentMethods[ 0 ].activeContent }
+
+							<AutomaticBillingNotice className="payment-method-add__notice" />
 
 							<div className="payment-method-add__navigation-buttons">
 								<Button

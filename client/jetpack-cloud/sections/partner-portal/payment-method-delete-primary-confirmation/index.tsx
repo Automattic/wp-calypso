@@ -1,6 +1,7 @@
 import { PaymentLogo } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useRecentPaymentMethodsQuery } from 'calypso/jetpack-cloud/sections/partner-portal//hooks';
+import AutomaticBillingNotice from '../automatic-billing-notice';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 import type { FunctionComponent } from 'react';
 
@@ -62,6 +63,8 @@ const PaymentMethodDeletePrimaryConfirmation: FunctionComponent< Props > = ( {
 						</>
 					) }
 				</div>
+
+				<AutomaticBillingNotice className="payment-method-delete-primary-confirmation__notice" />
 			</div>
 		</div>
 	);
