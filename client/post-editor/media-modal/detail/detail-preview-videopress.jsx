@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { get, keys } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -28,6 +27,14 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		onVideoLoaded: noop,
 	};
 
+	constructor( props ) {
+		super( props );
+
+		this.autoplay = props.isPlaying;
+	}
+
+	autoplay = false;
+
 	componentDidMount() {
 		window.addEventListener( 'message', this.receiveMessage, false );
 	}
@@ -36,27 +43,12 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		this.destroy();
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.isPlaying && ! nextProps.isPlaying ) {
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.isPlaying && ! this.props.isPlaying ) {
 			this.pause();
-		} else if ( ! this.props.isPlaying && nextProps.isPlaying ) {
+		} else if ( ! prevProps.isPlaying && this.props.isPlaying ) {
 			this.play();
 		}
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( this.props.item.videopress_guid !== prevProps.item.videopress_guid ) {
-			this.destroy();
-		}
-	}
-
-	shouldComponentUpdate( nextProps ) {
-		if ( this.props.item.videopress_guid !== nextProps.item.videopress_guid ) {
-			return true;
-		}
-
-		return false;
 	}
 
 	setVideoInstance = ( ref ) => ( this.video = ref );
@@ -86,15 +78,15 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 
 		if (
 			'videopress_loading_state' === data.event &&
-			'loaded' === get( data, 'state' ) &&
-			! get( data, 'converting' )
+			'loaded' === data.state &&
+			! data.converting
 		) {
 			this.props.onVideoLoaded();
 		} else if ( 'videopress_action_pause_response' === data.event ) {
-			let currentTime = get( data, 'currentTimeMs', -1 );
+			let currentTime = data.currentTimeMs ?? -1;
 			let isMillisec = true;
 			if ( currentTime < 0 ) {
-				currentTime = get( data, 'currentTime' );
+				currentTime = data.currentTime;
 				isMillisec = false;
 			}
 			this.props.onPause( currentTime, isMillisec );
@@ -172,16 +164,17 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 
 	render() {
 		const classes = classNames( this.props.className, 'is-video' );
-		const { isPlaying, item } = this.props;
+		const { item } = this.props;
 		const { height = 480, videopress_guid, width = 854 } = item;
 
 		const params = {
-			autoPlay: isPlaying,
+			autoPlay: this.autoplay,
 			height,
 			width,
 			fill: true,
 		};
-		const qs = keys( params ).map( ( key ) => `${ key }=${ params[ key ] }` );
+
+		const qs = Object.keys( params ).map( ( key ) => `${ key }=${ params[ key ] }` );
 		const videoUrl = `https://video.wordpress.com/v/${ videopress_guid }?${ qs.join( '&' ) }`;
 
 		return (
