@@ -46,17 +46,6 @@ export function usePaymentMethodTaxInfo(
 				mutationInputValues.tax_country_code
 			),
 		{
-			onMutate: async () => {
-				// Stop any active fetches
-				await queryClient.cancelQueries( queryKey );
-				// Store previous fields so they can be restored if the data is invalid
-				const previousData = queryClient.getQueryData( queryKey );
-				return { previousData };
-			},
-			onError: ( error, _, context ) => {
-				// Restore previous fields
-				queryClient.setQueryData( queryKey, context?.previousData );
-			},
 			onSuccess: ( onSuccessInputValues: TaxInfo ) => {
 				queryClient.setQueryData( queryKey, {
 					tax_postal_code: onSuccessInputValues.tax_postal_code,
