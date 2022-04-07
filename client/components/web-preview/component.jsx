@@ -6,8 +6,6 @@ import { Component } from 'react';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import WebPreviewContent from './connectedContent';
 
-import './style.scss';
-
 const noop = () => {};
 
 export class WebPreviewModal extends Component {
