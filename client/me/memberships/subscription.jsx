@@ -33,26 +33,37 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 	useEffect( () => {
 		if ( stoppingStatus === 'fail' ) {
 			// run is-error notice to contact support
-			dispatch(
-				errorNotice(
-					translate(
-						'There was a problem while stopping your subscription, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
-						{
-							components: {
-								a: <a href={ CALYPSO_CONTACT } />,
-								strong: <strong />,
-							},
-						}
-					)
-				)
-			);
+			subscription && ! subscription.renew_interval
+				? dispatch(
+						errorNotice(
+							translate(
+								'There was a problem while removing your product, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
+								{
+									components: {
+										a: <a href={ CALYPSO_CONTACT } />,
+										strong: <strong />,
+									},
+								}
+							)
+						)
+				  )
+				: dispatch(
+						errorNotice(
+							translate(
+								'There was a problem while stopping your subscription, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
+								{
+									components: {
+										a: <a href={ CALYPSO_CONTACT } />,
+										strong: <strong />,
+									},
+								}
+							)
+						)
+				  );
 		} else if ( stoppingStatus === 'success' ) {
 			// redirect back to Purchases list
 			dispatch(
-				successNotice(
-					translate( 'This subscription has been canceled. You will no longer be charged.' ),
-					{ displayOnNextPage: true }
-				)
+				successNotice( translate( 'This item has been removed.' ), { displayOnNextPage: true } )
 			);
 			page( purchasesRoot );
 		}
@@ -60,15 +71,29 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 
 	return (
 		<Main wideLayout className="memberships__subscription">
-			<DocumentHead title={ translate( 'Subscription Details' ) } />
+			<DocumentHead
+				title={
+					subscription && ! subscription.renew_interval
+						? translate( 'Product Details' )
+						: translate( 'Subscription Details' )
+				}
+			/>
 			<QueryMembershipsSubscriptions />
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-			<HeaderCake backHref={ purchasesRoot }>{ translate( 'Subscription Details' ) }</HeaderCake>
+			<HeaderCake backHref={ purchasesRoot }>
+				{ subscription && ! subscription.renew_interval
+					? translate( 'Product Details' )
+					: translate( 'Subscription Details' ) }
+			</HeaderCake>
 			{ stoppingStatus === 'start' && (
 				<Notice
 					status="is-info"
 					isLoading={ true }
-					text={ translate( 'Stopping this subscription' ) }
+					text={
+						subscription && ! subscription.renew_interval
+							? translate( 'Removing this product' )
+							: translate( 'Stopping this subscription' )
+					}
 				/>
 			) }
 			{ subscription && (
@@ -118,7 +143,9 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 						className="memberships__subscription-remove"
 						onClick={ stopSubscription }
 					>
-						{ translate( 'Stop %s subscription.', { args: subscription.title } ) }
+						{ subscription && ! subscription.renew_interval
+							? translate( 'Remove %s product.', { args: subscription.title } )
+							: translate( 'Stop %s subscription.', { args: subscription.title } ) }
 						<Gridicon className="card__link-indicator" icon="trash" />
 					</CompactCard>
 				</>
