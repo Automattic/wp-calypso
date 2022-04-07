@@ -294,7 +294,7 @@ export class EditorToolbarComponent {
 	 * @throws If the undo button is not enabled.
 	 */
 	async undo(): Promise< void > {
-		const locator = this.page.locator( selectors.undoButton );
+		const locator = this.editor.locator( selectors.undoButton );
 		await locator.click();
 	}
 
@@ -304,7 +304,7 @@ export class EditorToolbarComponent {
 	 * @throws If the redo button is not enabled.
 	 */
 	async redo(): Promise< void > {
-		const locator = this.page.locator( selectors.redoButton );
+		const locator = this.editor.locator( selectors.redoButton );
 		await locator.click();
 	}
 }

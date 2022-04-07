@@ -52,7 +52,9 @@ export class EditorTracksEventManager {
 		// It just matters that we're in the right iframe, so we use a very generic selector ("body") to get something safe and top-level.
 		return this.page.url().includes( '/wp-admin' )
 			? this.page.locator( 'body' ) // No Gutenframe
-			: this.page.frameLocator( '[src*="wp-admin/post"]' ).locator( 'body' ); // Gutenframe
+			: this.page
+					.frameLocator( '[src*="wp-admin/post"],[src*="wp-admin/themes"]' ) // Post, page, and site editor!
+					.locator( 'body' ); // Gutenframe
 	}
 
 	/**

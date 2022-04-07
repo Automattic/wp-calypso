@@ -149,7 +149,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 
 			it( 'Go to site editor', async function () {
 				await siteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
-				await siteEditorPage.prepareForInteraction();
+				await siteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
 			it( 'Add a Header block', async function () {
@@ -157,16 +157,21 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			} );
 
 			it( 'Undo action', async function () {
-				await page.pause();
 				await siteEditorPage.undo();
 			} );
 
-			it( 'redo action', async function () {
+			it( '"wpcom_block_editor_undo_performed" event fires', async function () {
+				const eventDidFire = await eventManager.didEventFire( 'wpcom_block_editor_undo_performed' );
+				expect( eventDidFire ).toBe( true );
+			} );
+
+			it( 'Redo action', async function () {
 				await siteEditorPage.redo();
 			} );
 
-			it( '"wpcom_block_editor_details_open" event fires', async function () {
-				console.log( await eventManager.getAllEvents() );
+			it( '"wpcom_block_editor_redo_performed" event fires', async function () {
+				const eventDidFire = await eventManager.didEventFire( 'wpcom_block_editor_redo_performed' );
+				expect( eventDidFire ).toBe( true );
 			} );
 		} );
 	}
