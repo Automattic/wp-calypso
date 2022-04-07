@@ -135,6 +135,9 @@ export const siteSetupFlow: Flow = {
 				case 'bloggerStartingPoint':
 					return navigate( 'options' );
 
+				case 'intent':
+					return navigate( isEnabled( 'signup/site-vertical-step' ) ? 'vertical' : 'intent' );
+
 				case 'storeFeatures':
 					return navigate( 'options' );
 

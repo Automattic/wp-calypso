@@ -15,7 +15,8 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const subHeaderText = translate( 'Choose a category that defines your website the best.' );
 	const isSkipSynonyms = useQuery().get( 'isSkipSynonyms' );
 
-	const handleSubmit = () => {
+	const handleSubmit = ( event: React.FormEvent ) => {
+		event.preventDefault();
 		submit?.();
 	};
 

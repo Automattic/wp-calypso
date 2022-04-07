@@ -10,20 +10,14 @@ import './form.scss';
 
 interface Props {
 	isSkipSynonyms?: boolean;
-	onSubmit?: () => void;
+	onSubmit?: ( event: React.FormEvent ) => void;
 }
 
 const SiteVerticalForm: React.FC< Props > = ( { isSkipSynonyms, onSubmit } ) => {
 	const translate = useTranslate();
 
 	return (
-		<form
-			className="site-vertical__form"
-			onSubmit={ ( event ) => {
-				event.preventDefault();
-				onSubmit?.();
-			} }
-		>
+		<form className="site-vertical__form" onSubmit={ onSubmit }>
 			<FormFieldset className="site-vertical__form-fieldset">
 				<SelectVertical isSkipSynonyms={ isSkipSynonyms } />
 				<FormSettingExplanation>
