@@ -50,7 +50,9 @@ function HelpCenterComponent() {
 					></Button>
 				</span>
 			</PinnedItems>
-			{ isActive && <HelpCenter handleClose={ () => setIsActive( false ) } /> }
+			{ isActive && (
+				<HelpCenter content={ <h1>Help center</h1> } handleClose={ () => setIsActive( false ) } />
+			) }
 		</>
 	);
 }
