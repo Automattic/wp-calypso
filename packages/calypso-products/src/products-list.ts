@@ -6,6 +6,7 @@ import {
 	FEATURE_ANTISPAM_V2,
 	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_BACKUP_REALTIME_V2,
+	FEATURE_CLOUD_CRITICAL_CSS,
 	FEATURE_FILTERING_V2,
 	FEATURE_INSTANT_EMAIL_V2,
 	FEATURE_JETPACK_1TB_BACKUP_STORAGE,
@@ -51,6 +52,8 @@ import {
 	TERM_MONTHLY,
 	JETPACK_SECURITY_CATEGORY,
 	JETPACK_PERFORMANCE_CATEGORY,
+	PRODUCT_JETPACK_BOOST,
+	PRODUCT_JETPACK_BOOST_MONTHLY,
 } from './constants';
 import { getJetpackProductsShortNames } from './translations';
 import type { ProductSlug, JetpackProductSlug, WPComProductSlug, Product } from './types';
@@ -295,6 +298,28 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		],
 		getProductId: () => 2115,
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+	},
+	[ PRODUCT_JETPACK_BOOST ]: {
+		product_name: translate( 'Boost' ),
+		product_slug: PRODUCT_JETPACK_BOOST,
+		type: PRODUCT_JETPACK_BOOST,
+		term: TERM_ANNUALLY,
+		bill_period: PLAN_ANNUAL_PERIOD,
+		categories: [],
+		getFeatures: () => [ FEATURE_CLOUD_CRITICAL_CSS ],
+		getProductId: () => 2401,
+		getStoreSlug: () => PRODUCT_JETPACK_BOOST,
+	},
+	[ PRODUCT_JETPACK_BOOST_MONTHLY ]: {
+		product_name: translate( 'Boost' ),
+		product_slug: PRODUCT_JETPACK_BOOST_MONTHLY,
+		type: PRODUCT_JETPACK_BOOST,
+		term: TERM_MONTHLY,
+		bill_period: PLAN_MONTHLY_PERIOD,
+		categories: [],
+		getFeatures: () => [ FEATURE_CLOUD_CRITICAL_CSS ],
+		getProductId: () => 2400,
+		getStoreSlug: () => PRODUCT_JETPACK_BOOST_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_VIDEOPRESS ]: {
 		product_name: translate( 'VideoPress' ),
