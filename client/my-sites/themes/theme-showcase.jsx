@@ -334,7 +334,8 @@ class ThemeShowcase extends Component {
 		const olarkIdentity = config( 'olark_chat_identity' );
 		const olarkSystemsGroupId = '239c0f99c53692d81539f76e86910d52';
 		const cookies = cookie.parse( document.cookie );
-		const isEligibleForOlarkChat = ! isLoggedIn && 'en' === locale && ! cookies?.recognized_logins;
+		const isEligibleForOlarkChat =
+			! isLoggedIn && 'en' === locale && ! cookies.hasOwnProperty( 'recognized_logins' );
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
