@@ -351,8 +351,7 @@ EmailPlan.propType = {
 	source: PropTypes.string,
 
 	// Connected props
-	canAddGoogleWorkspaceMailboxes: PropTypes.bool,
-	canAddProfessionalEmailMailboxes: PropTypes.bool,
+	canAddMailboxes: PropTypes.bool,
 	currentRoute: PropTypes.string,
 	emailForwards: PropTypes.array,
 	hasSubscription: PropTypes.bool,
