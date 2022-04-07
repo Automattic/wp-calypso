@@ -14,6 +14,7 @@ import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import { businessPlanToAdd } from 'calypso/lib/plugins/utils';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { installPlugin } from 'calypso/state/plugins/installed/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
@@ -152,7 +153,14 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderMarketplaceButton() {
-		const { translate, selectedSite, plugin, billingPeriod, canInstallPlugins } = this.props;
+		const {
+			translate,
+			selectedSite,
+			plugin,
+			billingPeriod,
+			canInstallPlugins,
+			eligibleForProPlan,
+		} = this.props;
 		const variationPeriod = getPeriodVariationValue( billingPeriod );
 		const product_slug = plugin?.variations?.[ variationPeriod ]?.product_slug;
 
@@ -160,7 +168,8 @@ export class PluginInstallButton extends Component {
 			? `/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }`
 			: `/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
 					selectedSite?.plan,
-					billingPeriod
+					billingPeriod,
+					eligibleForProPlan
 			  ) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
 					selectedSite.slug
 			  }#step2`;
@@ -330,6 +339,7 @@ export default connect(
 			siteIsConnected: getSiteConnectionStatus( state, siteId ),
 			siteIsWpcomAtomic: isSiteWpcomAtomic( state, siteId ),
 			canInstallPlugins: hasActiveSiteFeature( state, siteId, FEATURE_INSTALL_PLUGINS ),
+			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
 		};
 	},
 	{
