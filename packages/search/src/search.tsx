@@ -75,7 +75,7 @@ type Props = {
 	recordEvent?: ( eventName: string ) => void;
 	searching?: boolean;
 	value?: string;
-	searchMode?: string;
+	searchMode?: 'when-typing' | 'on-enter';
 };
 
 //This is fix for IE11. Does not work on Edge.
@@ -188,20 +188,6 @@ const InnerSearch = (
 		return debounce( onSearch, delayTimeout );
 	}, [ onSearch, delayTimeout, delaySearch ] );
 
-	const bypassOnSearchDebounce = React.useCallback(
-		( value: string ) => {
-			// explicitly bypass debouncing when hitting enter
-			if ( delaySearch ) {
-				// Cancel any pending debounce
-				doSearch.cancel?.();
-			}
-
-			// call the callback directly without debouncing
-			onSearch?.( value );
-		},
-		[ delaySearch, doSearch, onSearch ]
-	);
-
 	useEffect( () => {
 		if ( keyword ) {
 			onSearch?.( keyword );
@@ -211,19 +197,24 @@ const InnerSearch = (
 	}, [] );
 
 	useUpdateEffect( () => {
+		if ( searchMode === 'on-enter' ) {
+			return;
+		}
+
 		if ( keyword ) {
-			if ( searchMode === 'when-typing' ) {
-				doSearch( keyword );
-				onSearchChange?.( keyword );
-			}
+			doSearch( keyword );
 		} else {
-			if ( searchMode === 'on-enter' ) {
-				return;
+			// explicitly bypass debouncing when keyword is empty
+			if ( delaySearch ) {
+				// Cancel any pending debounce
+				doSearch.cancel?.();
 			}
 
-			bypassOnSearchDebounce( keyword );
-			onSearchChange?.( keyword );
+			// call the callback directly without debouncing
+			onSearch?.( keyword );
 		}
+
+		onSearchChange?.( keyword );
 	}, [ keyword ] );
 
 	const openSearch = ( event: KeyboardOrMouseEvent ) => {
@@ -244,10 +235,9 @@ const InnerSearch = (
 
 		setKeyword( '' );
 		if ( 'on-enter' === searchMode ) {
-			bypassOnSearchDebounce( '' );
+			onSearch?.( '' );
 			onSearchChange?.( '' );
 		}
-
 		setIsOpen( false );
 
 		if ( searchInput.current ) {
@@ -311,11 +301,6 @@ const InnerSearch = (
 			blur();
 		}
 
-		if ( event.key === 'Enter' && searchMode === 'on-enter' ) {
-			bypassOnSearchDebounce( keyword );
-			onSearchChange?.( keyword );
-		}
-
 		if ( ! pinned ) {
 			return;
 		}
@@ -359,6 +344,10 @@ const InnerSearch = (
 	};
 
 	const handleSubmit = ( event: FormEvent ) => {
+		if ( 'on-enter' === searchMode ) {
+			onSearch?.( keyword );
+			onSearchChange?.( keyword );
+		}
 		event.preventDefault();
 		event.stopPropagation();
 	};

@@ -22,7 +22,7 @@ const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef } ) => {
 				defaultValue={ searchTerm }
 				searchMode="on-enter"
 				placeholder={ translate( 'Try searching "ecommerce"' ) }
-				delaySearch={ true }
+				delaySearch={ false }
 				recordEvent={ recordSearchEvent }
 			/>
 		</div>
@@ -84,7 +84,6 @@ const SearchBoxHeader = ( props ) => {
 	// since the search input is an uncontrolled component we need to tap in into the component api and trigger an update
 	const updateSearchBox = ( keyword ) => {
 		searchBoxRef.current.setKeyword( keyword );
-
 		doSearch( keyword );
 	};
 
