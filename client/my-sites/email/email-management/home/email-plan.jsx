@@ -243,16 +243,8 @@ const EmailPlan = ( props ) => {
 	}
 
 	function renderAddNewMailboxesOrRenewNavItem() {
-		const {
-			canAddGoogleWorkspaceMailboxes,
-			canAddProfessionalEmailMailboxes,
-			domain,
-			hasSubscription,
-			purchase,
-			translate,
-		} = props;
+		const { canAddMailboxes, domain, hasSubscription, purchase, translate } = props;
 
-		const canAddMailboxes = canAddGoogleWorkspaceMailboxes || canAddProfessionalEmailMailboxes;
 		if ( hasTitanMailWithUs( domain ) && ! hasSubscription && canAddMailboxes ) {
 			return (
 				<VerticalNavItem { ...getAddMailboxProps() }>
@@ -371,8 +363,9 @@ EmailPlan.propType = {
 
 export default connect( ( state, ownProps ) => {
 	return {
-		canAddGoogleWorkspaceMailboxes: Boolean( getGSuiteProductSlug( ownProps.domain ) ),
-		canAddProfessionalEmailMailboxes: Boolean( getTitanProductSlug( ownProps.domain ) ),
+		canAddMailboxes:
+			Boolean( getGSuiteProductSlug( ownProps.domain ) ) ||
+			Boolean( getTitanProductSlug( ownProps.domain ) ),
 		currentRoute: getCurrentRoute( state ),
 		emailForwards: getEmailForwards( state, ownProps.domain.name ),
 		isLoadingEmailForwards: isRequestingEmailForwards( state, ownProps.domain.name ),
