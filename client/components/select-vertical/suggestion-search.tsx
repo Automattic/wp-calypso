@@ -28,7 +28,8 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 
 	const handleTextInputBlur = useCallback( () => {
 		setIsFocused( false );
-	}, [ setIsFocused ] );
+		setIsShowSuggestions( false );
+	}, [ setIsShowSuggestions, setIsFocused ] );
 
 	const handleTextInputFocus = useCallback( () => {
 		if ( 0 < suggestions.length ) {
@@ -52,11 +53,15 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 				event.preventDefault();
 			}
 
+			if ( event.key === 'Escape' ) {
+				setIsShowSuggestions( false );
+			}
+
 			if ( suggestionsRef.current ) {
 				( suggestionsRef.current as Suggestions ).handleKeyEvent( event );
 			}
 		},
-		[ suggestionsRef ]
+		[ setIsShowSuggestions, suggestionsRef ]
 	);
 
 	const handleSuggestionsSelect = useCallback(
