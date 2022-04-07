@@ -55,6 +55,10 @@ function recordSubmitStep( stepName, providedDependencies, optionalProps ) {
 				propValue = otherProps;
 			}
 
+			if ( propName === 'selected_page_titles' && propValue?.length ) {
+				propValue = propValue.join( ',' );
+			}
+
 			if ( [ 'cart_item', 'domain_item' ].includes( propName ) && typeof propValue !== 'string' ) {
 				propValue = Object.entries( propValue || {} )
 					.map( ( pair ) => pair.join( ':' ) )
