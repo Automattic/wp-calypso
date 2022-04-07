@@ -181,13 +181,12 @@ export function TaxInfoArea( {
 	return (
 		<div className="payment-method-tax-info">
 			<Button
-				compact
+				scary
 				className="payment-method-tax-info__edit-button"
 				onClick={ openDialog }
-				scary={ true }
 				disabled={ formStatus !== FormStatus.READY }
 			>
-				{ <Gridicon icon="notice" /> }
+				<Gridicon icon="notice" />
 				{ getMissingTaxLocationInformationMessage( translate, taxInfoFromServer ) }
 			</Button>
 			<PaymentMethodEditDialog
