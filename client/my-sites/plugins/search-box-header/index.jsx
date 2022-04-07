@@ -50,27 +50,30 @@ const PopularSearches = ( props ) => {
 			</div>
 
 			<div className="search-box-header__recommended-searches-list">
-				{ searchTerms.map( ( searchTerm, n ) =>
-					searchTerm === searchedTerm ? (
-						<span
-							className="search-box-header__recommended-searches-list-item search-box-header__recommended-searches-list-item-selected"
-							key={ 'recommended-search-item-' + n }
-						>
-							{ searchTerm }
-						</span>
-					) : (
-						<span
-							onClick={ () => onClick( searchTerm ) }
-							onKeyPress={ () => onClick( searchTerm ) }
-							role="link"
-							tabIndex={ 0 }
-							className="search-box-header__recommended-searches-list-item"
-							key={ 'recommended-search-item-' + n }
-						>
-							{ searchTerm }
-						</span>
-					)
-				) }
+				{ searchTerms.map( ( searchTerm, n ) => (
+					<>
+						{ searchTerm === searchedTerm ? (
+							<span
+								className="search-box-header__recommended-searches-list-item search-box-header__recommended-searches-list-item-selected"
+								key={ 'recommended-search-item-' + n }
+							>
+								{ searchTerm }
+							</span>
+						) : (
+							<span
+								onClick={ () => onClick( searchTerm ) }
+								onKeyPress={ () => onClick( searchTerm ) }
+								role="link"
+								tabIndex={ 0 }
+								className="search-box-header__recommended-searches-list-item"
+								key={ 'recommended-search-item-' + n }
+							>
+								{ searchTerm }
+							</span>
+						) }
+						{ n !== searchTerms.length - 1 && <>,&nbsp;</> }
+					</>
+				) ) }
 			</div>
 		</div>
 	);

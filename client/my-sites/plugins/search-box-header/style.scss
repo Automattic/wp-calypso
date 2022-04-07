@@ -81,11 +81,6 @@
 					outline: none;
 				}
 
-				&:not( :last-child )::after {
-					display: inline-block;
-					content: ', '; // comma
-				}
-
 				&:not( .search-box-header__recommended-searches-list-item-selected ) {
 					text-decoration: underline;
 				}
