@@ -1,12 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import { useRef } from '@wordpress/element';
 import { sprintf, _x } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import page from 'page';
-import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
@@ -14,6 +12,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import WarningCard from 'calypso/components/warning-card';
+import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import WooCommerceColophon from './woocommerce-colophon';
@@ -39,10 +38,6 @@ interface DisplayData {
 const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const { __ } = useI18n();
 	const navigationItems = [ { label: 'WooCommerce' } ];
-	const [ showActions, setShowActions ] = useState( false );
-	const headerRef = useRef< HTMLElement >( null );
-	const ctaRef = useRef< HTMLElement >( null );
-
 	const currentIntent = useSelector( ( state ) => getSiteOption( state, siteId, 'site_intent' ) );
 
 	const {
@@ -157,30 +152,12 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 		};
 	}
 
-	useEffect( () => {
-		const handleScroll = () => {
-			const headerHeight = headerRef?.current?.getBoundingClientRect().height;
-			const offset = ctaRef.current && headerHeight ? ctaRef.current.offsetTop - headerHeight : 0;
-
-			if ( offset > 0 && window.scrollY < offset ) {
-				setShowActions( false );
-			} else {
-				setShowActions( true );
-			}
-		};
-
-		handleScroll();
-
-		window.addEventListener( 'scroll', handleScroll );
-		return () => {
-			window.removeEventListener( 'scroll', handleScroll );
-		};
-	}, [ ctaRef, headerRef ] );
+	const { isAboveElement, targetRef: ctaRef, referenceRef: headerRef } = useScrollAboveElement();
 
 	return (
 		<div className="landing-page">
 			<FixedNavigationHeader navigationItems={ navigationItems } ref={ headerRef }>
-				{ showActions && (
+				{ isAboveElement && (
 					<Button onClick={ onCTAClickHandler } primary disabled={ isTransferringBlocked }>
 						{ displayData.action }
 					</Button>
