@@ -88,6 +88,7 @@
 		"signup/hero-flow-non-en": true,
 		"signup/redesigned-difm-flow": false,
 		"signup/starting-point-courses": true,
+		"signup/site-vertical-step": false,
 		"site-indicator": true,
 		"stepper-woocommerce-poc": false,
 		"themes/premium": true,

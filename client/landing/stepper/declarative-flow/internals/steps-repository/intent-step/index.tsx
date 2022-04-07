@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { isEnabled } from '@automattic/calypso-config';
 import { IntentScreen, StepContainer } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -17,7 +18,7 @@ import './style.scss';
  * The intent capture step
  */
 const IntentStep: Step = function IntentStep( { navigation } ) {
-	const { submit } = navigation;
+	const { goBack, submit } = navigation;
 	const translate = useTranslate();
 	const headerText = translate( 'Where will you start?' );
 	const subHeaderText = translate( 'You can change your mind at any time.' );
@@ -46,8 +47,9 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 		<StepContainer
 			stepName={ 'intent-step' }
 			headerImageUrl={ intentImageUrl }
+			goBack={ goBack }
 			hideSkip
-			hideBack
+			hideBack={ ! isEnabled( 'signup/site-vertical-step' ) }
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader

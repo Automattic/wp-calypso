@@ -16,6 +16,7 @@ export const siteSetupFlow: Flow = {
 
 	useSteps() {
 		return [
+			...( isEnabled( 'signup/site-vertical-step' ) ? [ 'vertical' ] : [] ),
 			'intent',
 			'options',
 			'designSetup',
@@ -23,7 +24,7 @@ export const siteSetupFlow: Flow = {
 			'courses',
 			'storeFeatures',
 			'storeAddress',
-		];
+		] as StepPath[];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -122,6 +123,10 @@ export const siteSetupFlow: Flow = {
 				case 'courses': {
 					return redirect( `/post/${ siteSlug }` );
 				}
+
+				case 'vertical': {
+					return navigate( 'intent' );
+				}
 			}
 		}
 
@@ -129,6 +134,9 @@ export const siteSetupFlow: Flow = {
 			switch ( currentStep ) {
 				case 'bloggerStartingPoint':
 					return navigate( 'options' );
+
+				case 'intent':
+					return navigate( isEnabled( 'signup/site-vertical-step' ) ? 'vertical' : 'intent' );
 
 				case 'storeFeatures':
 					return navigate( 'options' );
