@@ -121,8 +121,8 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 				}
 
-        case 'storeAddress':
-						return navigate( 'businessInfo' );
+				case 'storeAddress':
+					return navigate( 'businessInfo' );
 
 				case 'businessInfo':
 					return navigate( 'storeFeatures' );
