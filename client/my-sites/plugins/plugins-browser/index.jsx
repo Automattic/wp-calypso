@@ -275,7 +275,7 @@ const PluginsBrowser = ( {
 					className="plugins-browser__header"
 					navigationItems={ breadcrumbs }
 					compactBreadcrumb={ isMobile }
-					componentRef={ navigationHeaderRef }
+					ref={ navigationHeaderRef }
 				>
 					<div className="plugins-browser__main-buttons">
 						<ManageButton
