@@ -105,7 +105,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 		if ( 'unsubmitted' !== formSubmissionStatus ) {
 			return Step.Verification;
 		} else if ( statusState === StatusState.Connected ) {
-			return 'edit' === action ? Step.ConnectedEdit : Step.Connected;
+			return 'edit' === action && ! isAtomic ? Step.ConnectedEdit : Step.Connected;
 		} else if ( undefined === host ) {
 			return Step.HostSelection;
 		}
