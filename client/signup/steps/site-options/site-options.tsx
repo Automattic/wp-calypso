@@ -16,7 +16,8 @@ interface Props {
 	defaultSiteTitle: string;
 	defaultTagline: string;
 	siteTitleLabel: ReactChild;
-	taglineExplanation: ReactChild;
+	siteTitleExplanation?: ReactChild;
+	taglineExplanation?: ReactChild;
 	isSiteTitleRequired?: boolean;
 	isTaglineRequired?: boolean;
 	onSubmit: ( siteOptionsFormValues: SiteOptionsFormValues ) => void;
@@ -27,6 +28,7 @@ const SiteOptions: React.FC< Props > = ( {
 	defaultSiteTitle = '',
 	defaultTagline = '',
 	siteTitleLabel,
+	siteTitleExplanation,
 	taglineExplanation,
 	isSiteTitleRequired,
 	isTaglineRequired,
@@ -77,6 +79,12 @@ const SiteOptions: React.FC< Props > = ( {
 					onChange={ onChange }
 				/>
 				{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
+				{ siteTitleExplanation && (
+					<FormSettingExplanation>
+						<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
+						{ siteTitleExplanation }
+					</FormSettingExplanation>
+				) }
 			</FormFieldset>
 			<FormFieldset className="site-options__form-fieldset">
 				<FormLabel htmlFor="tagline" optional={ ! isTaglineRequired }>
@@ -90,10 +98,12 @@ const SiteOptions: React.FC< Props > = ( {
 					onChange={ onChange }
 				/>
 				{ taglineError && <FormInputValidation isError text={ taglineError } /> }
-				<FormSettingExplanation>
-					<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
-					{ taglineExplanation }
-				</FormSettingExplanation>
+				{ taglineExplanation && (
+					<FormSettingExplanation>
+						<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
+						{ taglineExplanation }
+					</FormSettingExplanation>
+				) }
 			</FormFieldset>
 			<Button className="site-options__submit-button" type="submit" primary>
 				{ translate( 'Continue' ) }
