@@ -58,7 +58,7 @@ export function PlanStorage( { children, className, siteId } ) {
 			! legacySiteWithHigherLimits &&
 			mediaStorage.max_storage_bytes === 3072 * 1024 * 1024
 		) {
-			mediaStorage.max_storage_bytes = 500 * 1024 * 1024;
+			mediaStorage.max_storage_bytes = 1024 * 1024 * 1024;
 		}
 		if ( sitePlanSlug === PLAN_WPCOM_PRO ) {
 			mediaStorage.max_storage_bytes = 50 * 1024 * 1024 * 1024;

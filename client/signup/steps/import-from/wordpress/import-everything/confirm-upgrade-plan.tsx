@@ -1,13 +1,14 @@
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { getPlan, PLAN_BUSINESS, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
 import { sprintf } from '@wordpress/i18n';
-import { check, Icon } from '@wordpress/icons';
+import { check, plus, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import PlanPrice from 'calypso/my-sites/plan-price';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
@@ -15,17 +16,28 @@ import type { FunctionComponent } from 'react';
 
 interface Props {
 	sourceSite: SitesItem | null;
+	targetSite: SitesItem | null;
 }
 
 export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
+	const initialFeaturesNumber = 6;
 
-	const { sourceSite } = props;
-	const plan = getPlan( PLAN_BUSINESS );
+	const { sourceSite, targetSite } = props;
+	const targetSiteEligibleForProPlan = useSelector( ( state ) =>
+		isEligibleForProPlan( state, targetSite?.ID )
+	);
+	const planType = targetSiteEligibleForProPlan ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
+	const plan = getPlan( planType );
 	const planId = plan?.getProductId();
+	const [ visibleFeaturesNum, setVisibleFeatureNum ] = useState( initialFeaturesNumber );
+
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
-	const promotedFeatures: string[] = plan?.getPromotedFeatures() ?? [];
+	let features: string[] = plan?.getPlanCompareFeatures() ?? [];
+	features = features
+		.map( ( x: string ) => getFeatureByKey( x )?.getTitle() || '' )
+		.filter( ( x: string ) => x );
 
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const rawPrice = useSelector( ( state ) => getPlanRawPrice( state, planId as number, true ) );
@@ -33,12 +45,19 @@ export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 	function renderFeatureList() {
 		return (
 			<ul className={ classnames( 'import__details-list' ) }>
-				{ promotedFeatures.map( ( feature, i ) => (
+				{ features.slice( 0, visibleFeaturesNum ).map( ( feature, i ) => (
 					<li className={ classnames( 'import__upgrade-plan-feature' ) } key={ i }>
 						<Icon size={ 20 } icon={ check } />
-						<span>{ getFeatureByKey( feature ).getTitle() }</span>
+						<span>{ feature }</span>
 					</li>
 				) ) }
+				{ visibleFeaturesNum < features.length && (
+					<li className={ classnames( 'import__upgrade-plan-feature-more' ) }>
+						<button onClick={ () => setVisibleFeatureNum( features.length ) }>
+							<Icon size={ 20 } icon={ plus } /> { __( 'See more' ) }
+						</button>
+					</li>
+				) }
 			</ul>
 		);
 	}
@@ -58,13 +77,9 @@ export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 
 			<div className={ classnames( 'import__upgrade-plan-container' ) }>
 				<div className={ classnames( 'import__upgrade-plan-price' ) }>
-					<h3 className={ classnames( 'plan-title' ) }>
-						WordPress.com { getPlan( PLAN_BUSINESS )?.getTitle() }
-					</h3>
+					<h3 className={ classnames( 'plan-title' ) }>{ plan?.getTitle() }</h3>
 					<PlanPrice rawPrice={ rawPrice } currency={ currencyCode } />
-					<span className={ classnames( 'plan-time-frame' ) }>
-						{ getPlan( PLAN_BUSINESS )?.getBillingTimeFrame() }
-					</span>
+					<span className={ classnames( 'plan-time-frame' ) }>{ plan?.getBillingTimeFrame() }</span>
 				</div>
 				<div className={ classnames( 'import__upgrade-plan-details' ) }>
 					{ renderFeatureList() }

@@ -5,7 +5,6 @@ import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import {
 	getMappingFreeText,
-	getMappingPriceText,
 	getTransferFreeText,
 	getTransferPriceText,
 	getTransferRestrictionMessage,
@@ -65,14 +64,6 @@ export function getOptionInfo( {
 		isSignupStep,
 	} );
 
-	const mappingPriceText = getMappingPriceText( {
-		cart,
-		currencyCode,
-		domain,
-		productsList,
-		selectedSite,
-	} );
-
 	const transferFreeText = getTransferFreeText( {
 		cart,
 		domain,
@@ -102,7 +93,6 @@ export function getOptionInfo( {
 	};
 
 	const mappingPricing = {
-		cost: mappingPriceText,
 		text: mappingFreeText,
 	};
 

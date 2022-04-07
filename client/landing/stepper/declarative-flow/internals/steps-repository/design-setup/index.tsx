@@ -21,7 +21,6 @@ import { useMemo, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -45,9 +44,6 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 
-	// // const signupDependencies = useSelector( ( state ) => getSignupDependencyStore( state ) );
-
-	// // TODO EMN: These values should come from state
 	const flowName = 'setup-site';
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
@@ -55,16 +51,20 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const siteTitle = site?.name;
 	const isReskinned = true;
 	const sitePlanSlug = site?.plan?.product_slug;
+	const isPrivateAtomic = Boolean(
+		site?.launch_status === 'unlaunched' && site?.options?.is_automated_transfer
+	);
 
 	const showDesignPickerCategories = isEnabled( 'signup/design-picker-categories' );
 	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
 
-	// // In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
+	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
 	const useFeaturedPicksButtons =
 		showDesignPickerCategories && isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
-	const isPremiumThemeAvailable = useMemo(
-		() => sitePlanSlug && planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
-		[ sitePlanSlug ]
+	const isPremiumThemeAvailable = Boolean(
+		useMemo( () => sitePlanSlug && planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ), [
+			sitePlanSlug,
+		] )
 	);
 
 	const tier =
@@ -88,7 +88,9 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const { designs, featuredPicksDesigns } = useMemo( () => {
 		return {
 			designs: shuffle( allThemes.filter( ( theme ) => ! theme.is_featured_picks ) ),
-			featuredPicksDesigns: allThemes.filter( ( theme ) => theme.is_featured_picks ),
+			featuredPicksDesigns: allThemes.filter(
+				( theme ) => theme.is_featured_picks && ! isBlankCanvasDesign( theme )
+			),
 		};
 	}, [ allThemes ] );
 
@@ -167,6 +169,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	}
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
+		// scroll up to reveal the spinner
+		window.scrollTo( 0, 0 );
 		setIsLoading( true );
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlug && _selectedDesign ) {
@@ -191,20 +195,21 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	}
 
 	function upgradePlan() {
-		// disable for now
-		/*
-		const params = new URLSearchParams( window.location.search );
-		params.append( 'products', PLAN_PREMIUM );
-		history.replace( { search: params.toString() } );
-		*/
+		goToCheckout();
 	}
 
-	function renderCheckoutModal() {
+	function goToCheckout() {
 		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
 			return null;
 		}
+		if ( siteSlug ) {
+			const params = new URLSearchParams();
+			params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
-		return <AsyncCheckoutModal />;
+			window.location.href = `/checkout/${ encodeURIComponent(
+				siteSlug
+			) }/premium?${ params.toString() }`;
+		}
 	}
 
 	const handleBackClick = () => {
@@ -242,10 +247,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 				} ) }
 				toolbarComponent={ PreviewToolbar }
 				siteId={ site?.ID }
-				// TODO: figure out how to get this info
-				isPrivateAtomic={ false }
+				isPrivateAtomic={ isPrivateAtomic }
 				url={ site?.URL }
-				shouldConnectContent={ false }
 				translate={ translate }
 				recordTracksEvent={ recordTracksEvent }
 			/>
@@ -309,10 +312,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 					/>
 				}
 				categoriesFooter={ renderCategoriesFooter() }
-				// disable premium themes for now, because we can't access checkout
-				isPremiumThemeAvailable={ false }
+				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			/>
-			{ renderCheckoutModal() }
 		</>
 	);
 
@@ -329,6 +330,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 			recordTracksEvent={ recordTracksEvent }
 			goNext={ () => submit?.() }
 			goBack={ handleBackClick }
+			shouldHideNavButtons={ loading }
+			customizedActionButtons={ loading ? <Spinner /> : undefined }
 		/>
 	);
 };

@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormInput from 'calypso/components/forms/form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import SocialLogo from 'calypso/components/social-logo';
 import type { SocialProfilesState, SocialProfileUrlKey } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -13,18 +13,26 @@ import type { ReactElement } from 'react';
 const TextInputWrapper = styled.div`
 	display: flex;
 	align-items: center;
-	border: 1px solid #646970;
-	box-sizing: border-box;
+	gap: 10px;
 	border-radius: 4px;
-
+	border: 1px solid var( --color-neutral-10 );
+	&:focus-within,
+	&:focus-within:hover {
+		border-color: #646970;
+		box-shadow: 0 0 0 2px #e2eaf1;
+	}
+	&:hover {
+		border-color: var( --color-neutral-20 );
+	}
 	.social-logo {
 		opacity: 0.18;
 		margin: 11px 0 11px 10px;
 	}
-	input[type='text'].form-text-input {
+	input.form-text-input {
 		border: none;
-		padding-left: 10px;
-		&:focus {
+		padding-inline-start: 0px;
+		&:focus,
+		&:focus:hover {
 			box-shadow: none;
 		}
 		&::placeholder {
@@ -65,7 +73,13 @@ const SocialProfilesFormField = ( {
 		<FormLabel htmlFor={ name }>{ label }</FormLabel>
 		<TextInputWrapper>
 			{ logo }
-			<FormInput name={ name } value={ value } placeholder={ placeholder } onChange={ onChange } />
+			<FormTextInput
+				type="text"
+				name={ name }
+				value={ value }
+				placeholder={ placeholder }
+				onChange={ onChange }
+			/>
 		</TextInputWrapper>
 	</FormFieldset>
 );

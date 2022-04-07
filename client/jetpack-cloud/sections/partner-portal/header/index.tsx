@@ -8,13 +8,13 @@ import { preventWidows } from 'calypso/lib/formatting';
 import './style.scss';
 
 export default function Header() {
-	const identity = config( 'olark_chat_identity' );
+	const identity = String( config( 'olark_chat_identity' ) );
 	const translate = useTranslate();
 	const title = translate( 'Security, performance, and growth tools for WordPress' );
 
 	return (
 		<>
-			{ identity && <OlarkChat { ...{ identity } } /> }
+			{ identity && <OlarkChat identity={ identity } /> }
 			<JetpackComMasterbar />
 			<div className={ classNames( 'header' ) }>
 				<FormattedHeader

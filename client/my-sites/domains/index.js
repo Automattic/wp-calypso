@@ -319,6 +319,13 @@ export default function () {
 	);
 
 	page(
+		paths.domainManagementRoot() + '/:domain/edit',
+		domainsController.redirectDomainToSite,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/domains/:site',
 		siteSelection,
 		navigation,

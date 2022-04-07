@@ -67,7 +67,6 @@ const Settings = ( {
 }: SettingsPageProps ): JSX.Element => {
 	const translate = useTranslate();
 	const contactInformation = findRegistrantWhois( whoisData );
-	const isDomainOnly = selectedSite.options?.is_domain_only;
 
 	useEffect( () => {
 		if ( ! contactInformation ) {
@@ -120,7 +119,7 @@ const Settings = ( {
 	};
 
 	const renderStatusSection = () => {
-		if ( ! ( domain && isDomainOnly ) ) {
+		if ( ! ( domain && selectedSite.options?.is_domain_only ) ) {
 			return null;
 		}
 
@@ -145,7 +144,7 @@ const Settings = ( {
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Registration and auto-renew', { textOnly: true } ) }
 					key="main"
-					expanded={ ! isDomainOnly }
+					expanded={ ! selectedSite.options?.is_domain_only }
 				>
 					<RegisteredDomainDetails
 						domain={ domain }

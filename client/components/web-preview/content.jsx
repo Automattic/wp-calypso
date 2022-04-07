@@ -11,6 +11,8 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import Toolbar from './toolbar';
 
+import './style.scss';
+
 const debug = debugModule( 'calypso:web-preview' );
 const noop = () => {};
 

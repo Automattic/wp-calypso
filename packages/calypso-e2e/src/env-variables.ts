@@ -42,6 +42,7 @@ export interface SupportedEnvVariables extends EnvVariables {
 	HEADLESS: boolean;
 	SLOW_MO: number;
 	TEST_ON_ATOMIC: boolean;
+	TEST_ON_JETPACK: boolean;
 }
 
 const defaultEnvVariables: SupportedEnvVariables = {
@@ -55,6 +56,7 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
 	ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
 	TEST_ON_ATOMIC: false,
+	TEST_ON_JETPACK: false,
 };
 
 const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue => {
