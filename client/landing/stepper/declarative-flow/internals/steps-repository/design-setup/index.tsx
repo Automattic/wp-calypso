@@ -6,7 +6,8 @@ import DesignPicker, {
 	PremiumBadge,
 	useCategorization,
 	isBlankCanvasDesign,
-	getDesignUrl,
+	getDesignPreviewUrl,
+	useGeneratedDesigns,
 	useThemeDesignsQuery,
 } from '@automattic/design-picker';
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
@@ -25,10 +26,11 @@ import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import { getCategorizationOptions, getGeneratedDesignsCategory } from './categories';
 import PreviewToolbar from './preview-toolbar';
 import type { Step } from '../../types';
 import './style.scss';
-import type { Design, Category } from '@automattic/design-picker';
+import type { Design } from '@automattic/design-picker';
 /**
  * The design picker step
  */
@@ -51,12 +53,22 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const siteTitle = site?.name;
 	const isReskinned = true;
 	const sitePlanSlug = site?.plan?.product_slug;
+	const siteVertical = useMemo(
+		() => ( {
+			// TODO: fetch from store/site settings
+			id: '439',
+			name: 'Photographic & Digital Arts',
+		} ),
+		[]
+	);
 	const isPrivateAtomic = Boolean(
 		site?.launch_status === 'unlaunched' && site?.options?.is_automated_transfer
 	);
 
 	const showDesignPickerCategories = isEnabled( 'signup/design-picker-categories' );
 	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
+	const showGeneratedDesigns =
+		isEnabled( 'signup/design-picker-generated-designs' ) && intent === 'build' && !! siteVertical;
 
 	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
 	const useFeaturedPicksButtons =
@@ -77,22 +89,31 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		? 'auto-loading-homepage,full-site-editing'
 		: 'auto-loading-homepage';
 
-	const { data: apiThemes = [] } = useThemeDesignsQuery(
+	const { data: themeDesigns = [] } = useThemeDesignsQuery(
 		{ filter: themeFilters, tier },
 		// Wait until block editor settings have loaded to load themes
 		{ enabled: ! isLoading }
 	);
 
-	const allThemes = apiThemes;
+	const staticDesigns = themeDesigns;
+
+	const generatedDesignsCategory = useMemo(
+		() => ( showGeneratedDesigns ? getGeneratedDesignsCategory( siteVertical.name ) : undefined ),
+		[ showGeneratedDesigns, siteVertical ]
+	);
+	const generatedDesigns = useGeneratedDesigns( generatedDesignsCategory );
 
 	const { designs, featuredPicksDesigns } = useMemo( () => {
 		return {
-			designs: shuffle( allThemes.filter( ( theme ) => ! theme.is_featured_picks ) ),
-			featuredPicksDesigns: allThemes.filter(
-				( theme ) => theme.is_featured_picks && ! isBlankCanvasDesign( theme )
+			designs: [
+				...generatedDesigns,
+				...shuffle( staticDesigns.filter( ( design ) => ! design.is_featured_picks ) ),
+			],
+			featuredPicksDesigns: staticDesigns.filter(
+				( design ) => design.is_featured_picks && ! isBlankCanvasDesign( design )
 			),
 		};
-	}, [ allThemes ] );
+	}, [ staticDesigns, generatedDesigns ] );
 
 	function headerText() {
 		if ( showDesignPickerCategories ) {
@@ -122,41 +143,19 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	}
 
 	const getEventPropsByDesign = ( design: Design ) => ( {
-		theme: design?.stylesheet ?? `pub/${ design.theme }`,
+		theme: design.recipe?.stylesheet,
 		template: design.template,
 		is_premium: design?.is_premium,
 		flow: flowName,
 		intent: intent,
 	} );
 
-	const getCategorizationOptionsForStep = () => {
-		const result: {
-			showAllFilter: boolean;
-			defaultSelection: string | null;
-			sort: ( a: Category, b: Category ) => 0 | 1 | -1;
-		} = {
-			showAllFilter: showDesignPickerCategoriesAllFilter,
-			defaultSelection: '',
-			sort: sortBlogToTop,
-		};
-		switch ( intent ) {
-			case 'write':
-				result.defaultSelection = 'blog';
-				result.sort = sortBlogToTop;
-				break;
-			case 'sell':
-				result.defaultSelection = 'store';
-				result.sort = sortStoreToTop;
-				break;
-			default:
-				result.defaultSelection = null;
-				result.sort = sortBlogToTop;
-				break;
-		}
-
-		return result;
-	};
-	const categorization = useCategorization( designs, getCategorizationOptionsForStep() );
+	const categorizationOptions = getCategorizationOptions(
+		intent,
+		showDesignPickerCategoriesAllFilter,
+		showGeneratedDesigns
+	);
+	const categorization = useCategorization( designs, categorizationOptions );
 
 	function renderCategoriesFooter() {
 		return (
@@ -227,11 +226,10 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
-		const previewUrl = getDesignUrl( selectedDesign, locale, {
-			iframe: true,
+		const previewUrl = getDesignPreviewUrl( selectedDesign, {
+			language: locale,
 			// If the user fills out the site title with write intent, we show it on the design preview
-			// Otherwise, use the title of selected design directly
-			site_title: intent === 'write' && siteTitle ? siteTitle : selectedDesign?.title,
+			siteTitle: intent === 'write' ? siteTitle : undefined,
 		} );
 
 		stepContent = (
@@ -302,7 +300,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 				highResThumbnails
 				premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ !! isPremiumThemeAvailable } /> }
 				categorization={ showDesignPickerCategories ? categorization : undefined }
-				recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
+				recommendedCategorySlug={ categorizationOptions.defaultSelection }
 				categoriesHeading={
 					<FormattedHeader
 						id={ 'step-header' }
@@ -335,30 +333,5 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		/>
 	);
 };
-
-// Ensures Blog category appears at the top of the design category list
-// (directly below the All Themes category).
-function sortBlogToTop( a: Category, b: Category ) {
-	if ( a.slug === b.slug ) {
-		return 0;
-	} else if ( a.slug === 'blog' ) {
-		return -1;
-	} else if ( b.slug === 'blog' ) {
-		return 1;
-	}
-	return 0;
-}
-// Ensures store category appears at the top of the design category list
-// (directly below the All Themes category).
-function sortStoreToTop( a: Category, b: Category ) {
-	if ( a.slug === b.slug ) {
-		return 0;
-	} else if ( a.slug === 'store' ) {
-		return -1;
-	} else if ( b.slug === 'store' ) {
-		return 1;
-	}
-	return 0;
-}
 
 export default designSetup;
