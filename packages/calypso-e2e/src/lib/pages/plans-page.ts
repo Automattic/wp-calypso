@@ -152,16 +152,16 @@ export class PlansPage {
 	 * @throws If the expected tab name is not the active tab.
 	 */
 	async validateActiveNavigationTab( expectedTab: PlansPageTab ): Promise< void > {
-		await this.waitUntilLoaded();
-
-		// For mobile sized viewport, the currently selected tab name will be shown alongside the
-		// dropdown toggle button, so verify the expected tab name is shown there.
+		// For mobile sized viewport, the currently selected tab name
+		// is hidden behind a pseudo-dropdown.
+		// Therefore the valicdation will look for hidden element.
+		const currentSelectedLocator = this.page.locator(
+			selectors.activeNavigationTab( expectedTab )
+		);
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			await this.page.waitForSelector(
-				`${ selectors.mobileNavTabsToggle }:has-text("${ expectedTab }")`
-			);
+			await currentSelectedLocator.waitFor( { state: 'hidden' } );
 		} else {
-			await this.page.waitForSelector( selectors.activeNavigationTab( expectedTab ) );
+			await currentSelectedLocator.waitFor();
 		}
 	}
 
