@@ -86,8 +86,8 @@ class ReskinSideExplainer extends Component {
 			<div className="reskin-side-explainer">
 				<div className="reskin-side-explainer__title">{ title }</div>
 				<div className="reskin-side-explainer__subtitle">
-					<p>{ subtitle }</p>
-					{ subtitle2 && <p>{ subtitle2 }</p> }
+					<div>{ subtitle }</div>
+					{ subtitle2 && <div className="reskin-side-explainer__subtitle-2">{ subtitle2 }</div> }
 				</div>
 				{ ctaText && (
 					<div className="reskin-side-explainer__cta">
