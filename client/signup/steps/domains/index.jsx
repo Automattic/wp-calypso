@@ -442,6 +442,7 @@ class DomainsStep extends Component {
 					<div className="domains__domain-side-content">
 						<ReskinSideExplainer
 							onClick={ this.handleUseYourDomainClick }
+							skipOption={ this.handleDomainExplainerClick }
 							type={ 'use-your-domain' }
 						/>
 					</div>

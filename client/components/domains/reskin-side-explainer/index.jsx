@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { localize } from 'i18n-calypso';
+import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -14,6 +14,11 @@ class ReskinSideExplainer extends Component {
 		let title;
 		let subtitle;
 		let ctaText;
+
+		const showNewTransferCard =
+			i18n.hasTranslation(
+				'Choose the WordPress Pro plan on the next page to connect the domain you own to your new WordPress.com site.'
+			) || 'en' === getLocaleSlug();
 
 		// The special case latter is for handling the case in the sign-up flow.
 		// By that time, a site is not available yet, so we can only check the feature flag for now
@@ -44,9 +49,16 @@ class ReskinSideExplainer extends Component {
 
 			case 'use-your-domain':
 				title = translate( 'Already own a domain?' );
-				subtitle = translate(
-					'Connect your domain purchased elsewhere to your WordPress.com site through mapping or transfer.'
-				);
+				subtitle = showNewTransferCard
+					? translate(
+							'Choose the {{b}}WordPress Pro{{/b}} plan on the next page to connect the domain you own to your new WordPress.com site.',
+							{
+								components: { b: <strong /> },
+							}
+					  )
+					: translate(
+							'Connect your domain purchased elsewhere to your WordPress.com site through mapping or transfer.'
+					  );
 				ctaText = translate( 'Use a domain I own' );
 				break;
 
@@ -63,11 +75,11 @@ class ReskinSideExplainer extends Component {
 				break;
 		}
 
-		return { title, subtitle, ctaText };
+		return { title, subtitle, ctaText, showNewTransferCard };
 	}
 
 	render() {
-		const { title, subtitle, ctaText } = this.getStrings();
+		const { title, subtitle, ctaText, showNewTransferCard } = this.getStrings();
 
 		return (
 			/* eslint-disable jsx-a11y/click-events-have-key-events */
@@ -79,7 +91,7 @@ class ReskinSideExplainer extends Component {
 						<span
 							className="reskin-side-explainer__cta-text"
 							role="button"
-							onClick={ this.props.onClick }
+							onClick={ showNewTransferCard ? this.props.skipOption : this.props.onClick }
 							tabIndex="0"
 						>
 							{ ctaText }
