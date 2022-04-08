@@ -68,7 +68,7 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 			);
 			page( purchasesRoot );
 		}
-	}, [ stoppingStatus, dispatch, translate ] );
+	}, [ stoppingStatus, dispatch, translate, isProduct ] );
 
 	return (
 		<Main wideLayout className="memberships__subscription">
