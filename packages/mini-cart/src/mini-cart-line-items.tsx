@@ -18,7 +18,7 @@ const MiniCartLineItemsWrapper = styled.ul< { theme?: Theme } >`
 	box-sizing: border-box;
 	margin: 20px 0;
 	padding: 0;
-	overflow-y: scroll;
+	overflow-y: auto;
 	max-height: 50vh;
 `;
 
