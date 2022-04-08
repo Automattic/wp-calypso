@@ -259,10 +259,10 @@ function setupErrorLogger( reduxStore ) {
 		},
 		beforeBreadcrumb( breadcrumb ) {
 			// Ignore default navigation events -- we'll track them ourselves in the page( '*' ) handler.
-			if ( breadcrumb.category === 'navigation' && ! breadcrumb.should_capture ) {
+			if ( breadcrumb.category === 'navigation' && ! breadcrumb.data?.should_capture ) {
 				return null;
-			} else if ( breadcrumb.category === 'navigation' ) {
-				delete breadcrumb.should_capture;
+			} else if ( breadcrumb.category === 'navigation' && breadcrumb.data?.should_capture ) {
+				delete breadcrumb.data.should_capture;
 			}
 			return breadcrumb;
 		},
