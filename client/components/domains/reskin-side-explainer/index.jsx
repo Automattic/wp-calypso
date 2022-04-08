@@ -24,6 +24,16 @@ class ReskinSideExplainer extends Component {
 				'Use the search tool on this page to find a domain you love, then select the {{b}}WordPress Pro{{/b}} plan.'
 			) || isEnLocale;
 
+		const newSubtitleCopy =
+			'pro' === this.props.flowName
+				? translate( 'Use the search tool on this page to find a domain you love.' )
+				: translate(
+						'Use the search tool on this page to find a domain you love, then select the {{b}}WordPress Pro{{/b}} plan.',
+						{
+							components: { b: <strong /> },
+						}
+				  );
+
 		switch ( type ) {
 			case 'free-domain-explainer':
 				title = showNewTitle
@@ -38,12 +48,7 @@ class ReskinSideExplainer extends Component {
 					  );
 
 				subtitle = showNewSubtitle
-					? translate(
-							'Use the search tool on this page to find a domain you love, then select the {{b}}WordPress Pro{{/b}} plan.',
-							{
-								components: { b: <strong /> },
-							}
-					  )
+					? newSubtitleCopy
 					: translate( "You can claim your free custom domain later if you aren't ready yet." );
 
 				subtitle2 =
