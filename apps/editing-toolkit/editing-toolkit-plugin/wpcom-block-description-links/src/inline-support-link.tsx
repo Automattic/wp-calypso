@@ -23,7 +23,7 @@ export default function DescriptionSupportLink( { children, title, url }: Props 
 			<br />
 			<ExternalLink
 				onClick={ () => {
-					recordTracksEvent( 'calypso_block_description_links', {
+					recordTracksEvent( 'calypso_block_description_support_link_click', {
 						block: title,
 						support_link: url,
 					} );
