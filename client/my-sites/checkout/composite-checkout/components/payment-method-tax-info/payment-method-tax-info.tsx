@@ -31,7 +31,7 @@ function TaxInfoButtonContents( {
 	return (
 		<>
 			<Gridicon icon="notice" />
-			{ getMissingTaxLocationInformationMessage( translate, taxInfoFromServer ) }
+			{ translate( 'Fix missing data' ) }
 		</>
 	);
 }
