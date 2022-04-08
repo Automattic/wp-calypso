@@ -51,6 +51,7 @@ class ReskinSideExplainer extends Component {
 					translate(
 						'We’ll pay the first year’s domain registration fees for you, simple as that!'
 					);
+				ctaText = ! showNewSubtitle && translate( 'Choose my domain later' );
 				break;
 
 			case 'use-your-domain':
