@@ -51,7 +51,7 @@ const StoreFeatures: Step = function StartingPointStep( { navigation } ) {
 		<StepContainer
 			stepName={ 'store-features' }
 			goBack={ goBack }
-			skipLabelText={ translate( 'Skip to My Home' ) }
+			skipLabelText={ translate( 'Skip to dashboard' ) }
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader

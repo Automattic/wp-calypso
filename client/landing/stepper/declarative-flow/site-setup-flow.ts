@@ -177,6 +177,12 @@ export const siteSetupFlow: Flow = {
 					}
 					return navigate( 'bloggerStartingPoint' );
 
+				case 'intent':
+					return redirect( `/home/${ siteSlug }` );
+
+				case 'vertical':
+					return redirect( `/home/${ siteSlug }` );
+
 				default:
 					return navigate( 'intent' );
 			}

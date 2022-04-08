@@ -99,6 +99,14 @@ export const sites: Reducer< { [ key: number | string ]: SiteDetails | undefined
 				description: action.tagline ?? '',
 			},
 		};
+	} else if ( action.type === 'RECEIVE_SITE_VERTICAL' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				...( state[ action.siteId ] as SiteDetails ),
+				site_vertical: action.vertical ?? '',
+			},
+		};
 	}
 	return state;
 };
