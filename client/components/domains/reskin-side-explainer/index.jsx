@@ -46,9 +46,11 @@ class ReskinSideExplainer extends Component {
 					  )
 					: translate( "You can claim your free custom domain later if you aren't ready yet." );
 
-				subtitle2 = translate(
-					'We’ll pay the first year’s domain registration fees for you, simple as that!'
-				);
+				subtitle2 =
+					showNewSubtitle &&
+					translate(
+						'We’ll pay the first year’s domain registration fees for you, simple as that!'
+					);
 				break;
 
 			case 'use-your-domain':
