@@ -87,7 +87,7 @@
 
 	.display-price {
 		.plan-price.is-original {
-			color: var(--studio-gray-80);
+			color: var( --studio-gray-80 );
 
 			.plan-price__integer, .plan-price__fraction, .plan-price__currency-symbol {
 				font-size: 0.875rem;
@@ -100,7 +100,7 @@
 		}
 
 		.plan-price.is-original::before {
-			border-color: var(--studio-gray-80);
+			border-color: var( --studio-gray-80 );
 			border-top-width: 1px;
 		}
 
@@ -108,7 +108,7 @@
 	}
 
 	.jetpack-product-card__heading {
-		margin: 0.75rem 0 0 0;
+		margin: 0.75rem 0 0;
 	}
 
 	.jetpack-product-card__button {
@@ -117,7 +117,7 @@
 
 	.jetpack-product-card__below-button {
 		display: inline-block;
-		color: var(--studio-gray-60);
+		color: var( --studio-gray-60 );
 		font-size: 0.875rem;
 		line-height: 1.2rem;
 	}
@@ -136,8 +136,6 @@
 		font-size: 0.875rem;
 		line-height: 1.2rem;
 		margin: 0 3px 0 6px;
-		color: var(--studio-gray-40);
+		color: var( --studio-gray-40 );
 	}
 }
-
-
