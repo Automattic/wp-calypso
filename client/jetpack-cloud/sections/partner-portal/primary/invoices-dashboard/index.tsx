@@ -13,7 +13,7 @@ export default function InvoicesDashboard(): ReactElement {
 
 	return (
 		<Main wideLayout className="invoices-dashboard">
-			<DocumentHead title={ translate( 'Billing' ) } />
+			<DocumentHead title={ translate( 'Invoices' ) } />
 			<SidebarNavigation />
 
 			<div className="invoices-dashboard__header">

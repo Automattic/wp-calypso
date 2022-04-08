@@ -4,37 +4,39 @@ import { useDispatch, useSelector } from 'react-redux';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getActivePartnerKeyId } from 'calypso/state/partner-portal/partner/selectors';
-import type { APIInvoice, Invoice } from 'calypso/state/partner-portal/types';
+import type { APIInvoices, Invoices } from 'calypso/state/partner-portal/types';
 
 interface QueryError {
 	code?: string;
 }
 
-function queryInvoices(): Promise< APIInvoice[] > {
+function queryInvoices(): Promise< APIInvoices > {
 	return wpcomJpl.req.get( {
 		apiNamespace: 'wpcom/v2',
 		path: '/jetpack-licensing/partner/invoices',
 	} );
 }
 
-function selectInvoices( api: APIInvoice[] ): Invoice[] {
-	return api.map( ( apiInvoice ) => ( {
-		id: apiInvoice.id,
-		dueDate: apiInvoice.due_date,
-		status: apiInvoice.status,
-		total: apiInvoice.total,
-		pdfUrl: apiInvoice.invoice_pdf,
-	} ) );
+function selectInvoices( api: APIInvoices ): Invoices {
+	return {
+		items: api.items.map( ( apiInvoice ) => ( {
+			id: apiInvoice.id,
+			dueDate: apiInvoice.due_date,
+			status: apiInvoice.status,
+			total: apiInvoice.total,
+			pdfUrl: apiInvoice.invoice_pdf,
+		} ) ),
+	};
 }
 
 export default function useInvoicesQuery(
-	options?: UseQueryOptions< APIInvoice[], QueryError, Invoice[] >
-): UseQueryResult< Invoice[], QueryError > {
+	options?: UseQueryOptions< APIInvoices, QueryError, Invoices >
+): UseQueryResult< Invoices, QueryError > {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const activeKeyId = useSelector( getActivePartnerKeyId );
 
-	return useQuery< APIInvoice[], QueryError, Invoice[] >(
+	return useQuery< APIInvoices, QueryError, Invoices >(
 		[ 'partner-portal', 'invoices', activeKeyId ],
 		queryInvoices,
 		{

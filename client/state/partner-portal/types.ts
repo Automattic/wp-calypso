@@ -94,6 +94,10 @@ export interface APIError {
 	message: string;
 }
 
+export interface APIInvoices {
+	items: APIInvoice[];
+}
+
 export interface APIInvoice {
 	id: string;
 	due_date: string;
@@ -105,6 +109,9 @@ export interface APIInvoice {
 /**
  * Calypso.
  */
+export interface Invoices {
+	items: Invoice[];
+}
 
 export interface Invoice {
 	id: string;

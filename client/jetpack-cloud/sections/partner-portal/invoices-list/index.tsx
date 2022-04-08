@@ -88,7 +88,7 @@ export default function InvoicesList(): ReactElement {
 			</Card>
 
 			{ invoices.isSuccess &&
-				invoices.data.map( ( invoice ) => (
+				invoices.data.items.map( ( invoice ) => (
 					<InvoiceCard
 						key={ invoice.id }
 						id={ invoice.id }

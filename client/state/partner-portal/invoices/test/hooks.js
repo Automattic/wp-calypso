@@ -31,25 +31,29 @@ describe( 'useInvoicesQuery', () => {
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
-		const stub = [
-			{
-				id: 'in_1234',
-				due_date: '2022-04-04 12:00:00',
-				status: 'open',
-				total: 12.34,
-				invoice_pdf: 'https://example.org/invoice.pdf',
-			},
-		];
+		const stub = {
+			items: [
+				{
+					id: 'in_1234',
+					due_date: '2022-04-04 12:00:00',
+					status: 'open',
+					total: 12.34,
+					invoice_pdf: 'https://example.org/invoice.pdf',
+				},
+			],
+		};
 
-		const formattedStub = [
-			{
-				id: 'in_1234',
-				dueDate: '2022-04-04 12:00:00',
-				status: 'open',
-				total: 12.34,
-				pdfUrl: 'https://example.org/invoice.pdf',
-			},
-		];
+		const formattedStub = {
+			items: [
+				{
+					id: 'in_1234',
+					dueDate: '2022-04-04 12:00:00',
+					status: 'open',
+					total: 12.34,
+					pdfUrl: 'https://example.org/invoice.pdf',
+				},
+			],
+		};
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/jetpack-licensing/partner/invoices' )
