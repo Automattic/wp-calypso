@@ -12,6 +12,7 @@ class ReskinSideExplainer extends Component {
 
 		let title;
 		let subtitle;
+		let subtitle2;
 		let ctaText;
 
 		const showNewTitle =
@@ -20,32 +21,34 @@ class ReskinSideExplainer extends Component {
 
 		const showNewSubtitle =
 			i18n.hasTranslation(
-				'Use the search tool on this page to find a domain you love, then select the {{b}}WordPress Pro{{/b}} plan.{{br}}{{br}}We’ll pay the first year’s domain registration fees for you, simple as that!'
+				'Use the search tool on this page to find a domain you love, then select the {{b}}WordPress Pro{{/b}} plan.'
 			) || 'en' === getLocaleSlug();
 
 		switch ( type ) {
 			case 'free-domain-explainer':
-				showNewTitle
-					? ( title = translate( 'Get your domain {{b}}free{{/b}} with WordPress Pro', {
+				title = showNewTitle
+					? translate( 'Get your domain {{b}}free{{/b}} with WordPress Pro', {
 							components: { b: <strong /> },
-					  } ) )
-					: ( title = translate(
+					  } )
+					: translate(
 							'Get a {{b}}free{{/b}} one-year domain registration with your WordPress Pro annual plan.',
 							{
 								components: { b: <strong /> },
 							}
-					  ) );
+					  );
 
-				showNewSubtitle
-					? ( subtitle = translate(
-							'Use the search tool on this page to find a domain you love, then select the {{b}}WordPress Pro{{/b}} plan.{{br /}}{{br /}}We’ll pay the first year’s domain registration fees for you, simple as that!',
+				subtitle = showNewSubtitle
+					? translate(
+							'Use the search tool on this page to find a domain you love, then select the {{b}}WordPress Pro{{/b}} plan.',
 							{
-								components: { b: <strong />, br: <br /> },
+								components: { b: <strong /> },
 							}
-					  ) )
-					: ( subtitle = translate(
-							"You can claim your free custom domain later if you aren't ready yet."
-					  ) );
+					  )
+					: translate( "You can claim your free custom domain later if you aren't ready yet." );
+
+				subtitle2 = translate(
+					'We’ll pay the first year’s domain registration fees for you, simple as that!'
+				);
 				break;
 
 			case 'use-your-domain':
@@ -69,17 +72,20 @@ class ReskinSideExplainer extends Component {
 				break;
 		}
 
-		return { title, subtitle, ctaText };
+		return { title, subtitle, subtitle2, ctaText };
 	}
 
 	render() {
-		const { title, subtitle, ctaText } = this.getStrings();
+		const { title, subtitle, subtitle2, ctaText } = this.getStrings();
 
 		return (
 			/* eslint-disable jsx-a11y/click-events-have-key-events */
 			<div className="reskin-side-explainer">
 				<div className="reskin-side-explainer__title">{ title }</div>
-				<div className="reskin-side-explainer__subtitle">{ subtitle }</div>
+				<div className="reskin-side-explainer__subtitle">
+					<p>{ subtitle }</p>
+					{ subtitle2 && <p>{ subtitle2 }</p> }
+				</div>
 				{ ctaText && (
 					<div className="reskin-side-explainer__cta">
 						<span
