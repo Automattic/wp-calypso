@@ -55,7 +55,7 @@ function recordSubmitStep( stepName, providedDependencies, optionalProps ) {
 				propValue = otherProps;
 			}
 
-			if ( propName === 'selected_page_titles' && propValue?.length ) {
+			if ( propName === 'selected_page_titles' && Array.isArray( propValue ) ) {
 				propValue = propValue.join( ',' );
 			}
 
