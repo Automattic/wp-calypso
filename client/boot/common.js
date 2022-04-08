@@ -248,7 +248,23 @@ function setupErrorLogger( reduxStore ) {
 		initialScope: {
 			user: { id: getCurrentUserId( reduxStore.getState() ) },
 		},
+		beforeSend( event ) {
+			const state = reduxStore.getState();
+			event.tags.blog_id = getSelectedSiteId( state );
+			event.tags.calypso_section = getSectionName( state );
+			return event;
+		},
+		beforeBreadcrumb( breadcrumb ) {
+			// Ignore default navigation events -- we'll track them ourselves in the page( '*' ) handler.
+			if ( breadcrumb.category === 'navigation' && ! breadcrumb.should_capture ) {
+				return null;
+			} else if ( breadcrumb.category === 'navigation' ) {
+				delete breadcrumb.should_capture;
+			}
+			return breadcrumb;
+		},
 	} );
+
 	if ( window._jsErr ) {
 		window._jsErr.forEach( ( error ) => Sentry.captureException( error ) );
 		Sentry.flush().then( () => {
@@ -280,10 +296,22 @@ function setupErrorLogger( reduxStore ) {
 		errorLogger.saveExtraData( { lastTracksEvent } )
 	);
 
+	let prevPath;
 	page( '*', function ( context, next ) {
-		errorLogger.saveNewPath(
-			context.canonicalPath.replace( getSiteFragment( context.canonicalPath ), ':siteId' )
+		const path = context.canonicalPath.replace(
+			getSiteFragment( context.canonicalPath ),
+			':siteId'
 		);
+		Sentry.addBreadcrumb( {
+			type: 'navigation',
+			data: {
+				from: prevPath ?? path,
+				to: path,
+				should_capture: true, // Hint that this is our own breadcrumb, not the default navigation one.
+			},
+		} );
+		prevPath = path;
+		errorLogger.saveNewPath( path );
 		next();
 	} );
 }

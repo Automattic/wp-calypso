@@ -53,10 +53,10 @@ const Head = ( { title = 'WordPress.com', children, branchName, inlineScriptNonc
 				type="text/javascript"
 				nonce={ inlineScriptNonce }
 				dangerouslySetInnerHTML={ {
+					// Quickly catch any errors before the main error handler has a chance to load.
 					// eslint-disable
 					__html: `
 			(function() {
-				// Quickly catch any errors before the main error handler has a chance to load.
 				window._jsErr = [];
 				window._headJsErrorHandler = ( e ) => { window._jsErr?.push(e); }
 				window.addEventListener( 'error', window._headJsErrorHandler );
