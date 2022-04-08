@@ -145,19 +145,17 @@ export function TaxInfoArea( {
 	if ( taxInfoDisplay ) {
 		return (
 			<div className="payment-method-tax-info">
-				<span>
-					<span className="payment-method-tax-info__address">
-						{ translate( 'Address', { textOnly: true } ) }
-					</span>
-					<Button
-						className="payment-method-tax-info__edit-button"
-						onClick={ openDialog }
-						borderless
-						disabled={ formStatus !== FormStatus.READY }
-					>
-						{ taxInfoDisplay }
-					</Button>
+				<span className="payment-method-tax-info__address">
+					{ translate( 'Address', { textOnly: true } ) }
 				</span>
+				<Button
+					borderless
+					className="payment-method-tax-info__edit-button"
+					onClick={ openDialog }
+					disabled={ formStatus !== FormStatus.READY }
+				>
+					{ taxInfoDisplay }
+				</Button>
 				<PaymentMethodEditDialog
 					paymentMethodSummary={
 						<PaymentMethodSummary type={ brand || paymentPartnerProcessorId } digits={ last4 } />
