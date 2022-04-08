@@ -58,6 +58,7 @@ interface ConnectedProps {
 	isPremiumOrBetterPlan?: boolean;
 	isUserAdmin?: boolean;
 	eligibleForProPlan?: boolean;
+	stripeAvailable: boolean;
 }
 
 type BoolFunction = ( arg: string ) => boolean;
@@ -80,6 +81,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	hasConnectedAccount,
 	hasSetupAds,
 	eligibleForProPlan,
+	stripeAvailable,
 	trackUpgrade,
 	trackLearnLink,
 	trackCtaButton,
@@ -179,7 +181,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getRecurringPaymentsCard = () => {
-		const cta = isFreePlan
+		const cta = ! stripeAvailable
 			? {
 					text: translate( 'Unlock this feature' ),
 					action: () => {
@@ -234,7 +236,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getDonationsCard = () => {
-		const cta = isFreePlan
+		const cta = ! stripeAvailable
 			? {
 					text: translate( 'Unlock this feature' ),
 					action: () => {
@@ -282,7 +284,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getPremiumContentCard = () => {
-		const cta = isFreePlan
+		const cta = ! stripeAvailable
 			? {
 					text: translate( 'Unlock this feature' ),
 					action: () => {
@@ -542,7 +544,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	return (
 		<Fragment>
 			{ ! hasWordAds && <QueryWordadsStatus siteId={ siteId } /> }
-			{ ! isFreePlan && <QueryMembershipsSettings siteId={ siteId } /> }
+			{ <QueryMembershipsSettings siteId={ siteId } /> }
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
 					<PromoSection
@@ -599,6 +601,7 @@ export default connect(
 			hasSetupAds: Boolean(
 				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
 			),
+			stripeAvailable: hasConnectedAccount || ! isFreePlan,
 		};
 	},
 	( dispatch ) => ( {

@@ -604,7 +604,7 @@ class MembershipsSection extends Component {
 	}
 
 	render() {
-		if ( ! this.props.paidPlan ) {
+		if ( ! this.props.connectedAccountId && ! this.props.paidPlan ) {
 			return this.renderOnboarding(
 				<UpsellNudge
 					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
