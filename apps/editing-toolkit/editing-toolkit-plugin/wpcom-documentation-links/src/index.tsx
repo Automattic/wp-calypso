@@ -8,6 +8,8 @@ function overrideCoreDocumentationLinksToWpcom( translation: string, text: strin
 			return 'https://wordpress.com/support/permalinks-and-slugs/';
 		case 'https://wordpress.org/support/article/wordpress-editor/':
 			return 'https://wordpress.com/support/wordpress-editor/';
+		case 'https://wordpress.org/support/article/site-editor/':
+			return 'https://wordpress.com/support/site-editor/';
 	}
 
 	return translation;
