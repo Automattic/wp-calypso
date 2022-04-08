@@ -72,3 +72,72 @@
 	line-height: 1rem;
 	margin-left: 5px;
 }
+
+.jetpack-discount-price-focused {
+	.display-price {
+		.plan-price.is-discounted {
+			margin-bottom: -8px;
+
+			.plan-price__fraction {
+				font-size: 1.5rem;
+				margin-top: 0.25rem;
+			}
+		}
+	}
+
+	.display-price {
+		.plan-price.is-original {
+			color: var(--studio-gray-80);
+
+			.plan-price__integer, .plan-price__fraction, .plan-price__currency-symbol {
+				font-size: 0.875rem;
+				line-height: 1.2rem;
+			}
+
+			.plan-price__currency-symbol {
+				margin-top: 0;
+			}
+		}
+
+		.plan-price.is-original::before {
+			border-color: var(--studio-gray-80);
+			border-top-width: 1px;
+		}
+
+
+	}
+
+	.jetpack-product-card__heading {
+		margin: 0.75rem 0 0 0;
+	}
+
+	.jetpack-product-card__button {
+		margin-block-start: 24px;
+	}
+
+	.jetpack-product-card__below-button {
+		display: inline-block;
+		color: var(--studio-gray-60);
+		font-size: 0.875rem;
+		line-height: 1.2rem;
+	}
+
+	.plan-price__term-short {
+		display: inline-block;
+		font-size: 1.5rem;
+		text-align: left;
+		line-height: 3.375rem;
+		margin-left: 0;
+		margin-top: 0.25rem;
+		font-weight: 600;
+	}
+
+	.plan-price__original-price-prefix {
+		font-size: 0.875rem;
+		line-height: 1.2rem;
+		margin: 0 3px 0 6px;
+		color: var(--studio-gray-40);
+	}
+}
+
+

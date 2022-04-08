@@ -1,4 +1,4 @@
-import { TranslateResult } from 'i18n-calypso';
+import { translate, TranslateResult } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import TimeFrame from './time-frame';
@@ -15,6 +15,8 @@ type OwnProps = {
 	displayFrom?: boolean;
 	tooltipText?: TranslateResult | ReactNode;
 	expiryDate?: Moment;
+	isPricingPageTreatment202204?: boolean;
+	isPricingPageTest202204Loading?: boolean;
 };
 
 const Paid: React.FC< OwnProps > = ( {
@@ -26,11 +28,13 @@ const Paid: React.FC< OwnProps > = ( {
 	displayFrom,
 	tooltipText,
 	expiryDate,
+	isPricingPageTreatment202204,
+	isPricingPageTest202204Loading,
 } ) => {
 	const finalPrice = discountedPrice ?? originalPrice;
 
 	// Placeholder (while prices are loading)
-	if ( ! currencyCode || ! originalPrice || pricesAreFetching ) {
+	if ( ! currencyCode || ! originalPrice || pricesAreFetching || isPricingPageTest202204Loading ) {
 		return (
 			<>
 				<PlanPrice
@@ -47,14 +51,42 @@ const Paid: React.FC< OwnProps > = ( {
 	}
 
 	const renderDiscountedPrice = () => {
+		/*
+		 * Price should be displayed from left-to-right, even in right-to-left
+		 * languages. `PlanPrice` seems to keep the ltr direction no matter
+		 * what when seen in the dev docs page, but somehow it doesn't in
+		 * the pricing page.
+		 */
+		if ( isPricingPageTreatment202204 ) {
+			return (
+				<>
+					<span dir="ltr">
+						<PlanPrice
+							discounted
+							className="display-price__discounted-price"
+							rawPrice={ finalPrice as number }
+							currencyCode={ currencyCode }
+							displayShortPerMonthNotation
+						/>
+					</span>
+					<br />
+					<span dir="ltr">
+						<PlanPrice
+							original
+							className="display-price__original-price display-price__original-price-small"
+							rawPrice={ originalPrice as number }
+							currencyCode={ currencyCode }
+							originalPricePrefix={ translate( 'Normally', {
+								comment: 'A way to describe a price before a discount is applied',
+							} ) }
+						/>
+					</span>
+				</>
+			);
+		}
+
 		return (
 			<>
-				{ /*
-				 * Price should be displayed from left-to-right, even in right-to-left
-				 * languages. `PlanPrice` seems to keep the ltr direction no matter
-				 * what when seen in the dev docs page, but somehow it doesn't in
-				 * the pricing page.
-				 */ }
 				<span dir="ltr">
 					<PlanPrice
 						original
@@ -88,7 +120,9 @@ const Paid: React.FC< OwnProps > = ( {
 					{ tooltipText }
 				</InfoPopover>
 			) }
-			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
+			{ ! isPricingPageTreatment202204 && (
+				<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
+			) }
 		</>
 	);
 };
