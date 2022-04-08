@@ -251,7 +251,10 @@ function setupErrorLogger( reduxStore ) {
 	} );
 	if ( window._jsErr ) {
 		window._jsErr.forEach( ( error ) => Sentry.captureException( error ) );
-		Sentry.flush().then( () => delete window._jsErr );
+		Sentry.flush().then( () => {
+			window.removeEventListener( window._headJsErrorHandler );
+			delete window._jsErr;
+		} );
 	}
 
 	const errorLogger = new Logger();
