@@ -167,11 +167,11 @@ export class EditorTracksEventManager {
 	 * @param {number} maxMsToWait Max number of milliseconds to keep retrying.
 	 * @returns The result of the searchForEvent function after necessary retries.
 	 */
-	private async searchWithRetry< Result >(
-		searchForEvent: () => Promise< Result >,
-		stopSearching: ( result: Result ) => boolean,
+	private async searchWithRetry< SearchResult >(
+		searchForEvent: () => Promise< SearchResult >,
+		stopSearching: ( result: SearchResult ) => boolean,
 		maxMsToWait: number
-	): Promise< Result > {
+	): Promise< SearchResult > {
 		const WAIT_INTERVAL_MS = 200;
 		let totalWaitedMs = 0;
 
