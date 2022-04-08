@@ -152,7 +152,7 @@ export function TaxInfoArea( {
 					<Button
 						className="payment-method-tax-info__edit-button"
 						onClick={ openDialog }
-						borderless={ true }
+						borderless
 						disabled={ formStatus !== FormStatus.READY }
 					>
 						{ taxInfoDisplay }
@@ -180,8 +180,12 @@ export function TaxInfoArea( {
 	}
 	return (
 		<div className="payment-method-tax-info">
+			<span className="payment-method-tax-info__address">
+				{ translate( 'Address', { textOnly: true } ) }
+			</span>
 			<Button
 				scary
+				borderless
 				className="payment-method-tax-info__edit-button"
 				onClick={ openDialog }
 				disabled={ formStatus !== FormStatus.READY }
