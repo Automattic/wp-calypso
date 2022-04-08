@@ -512,12 +512,16 @@ export class HelpContactForm extends PureComponent {
 				  } );
 
 		const hasNoSites = siteCount === 0;
+		const helpSiteIsNotWpCom = analyseSiteData && analyseSiteData.startsWith( 'isNonWpComHosted' );
 
 		let noticeMessage;
 		let actionLink;
 		let actionMessage;
 
-		if ( analyseSiteData === 'isWpComConnectedSiteNotLinkedToAccount' ) {
+		if (
+			showAlternativeSiteOptionsField &&
+			analyseSiteData === 'isWpComConnectedSiteNotLinkedToAccount'
+		) {
 			// The site is linked to WordPress.com but not appearing for the user, so they've probably lost access to the account which owns it.
 			noticeMessage = translate(
 				"%(siteName)s is linked to another WordPress.com account. If you're trying to access it, please follow our Account Recovery procedure.",
@@ -532,6 +536,7 @@ export class HelpContactForm extends PureComponent {
 		}
 
 		if (
+			showAlternativeSiteOptionsField &&
 			analyseSiteData &&
 			analyseSiteData.startsWith( 'isNonWpComHosted' ) &&
 			this.state.errorData !== 'jetpack_error'
@@ -554,6 +559,14 @@ export class HelpContactForm extends PureComponent {
 						siteName,
 					},
 				}
+			);
+		}
+
+		if ( helpSiteIsNotWpCom ) {
+			noticeMessage = translate(
+				'The site you’ve selected is a self-hosted WordPress site. ' +
+					'If you need help with an Automattic product like Jetpack, VaultPress or Akismet, please fill out the contact form below. ' +
+					'If you have a general question about your site, please contact your web host instead, as they’ll be best equipped to assist you.'
 			);
 		}
 
@@ -650,24 +663,24 @@ export class HelpContactForm extends PureComponent {
 										/>
 									</div>
 								) }
-
-								{ noticeMessage && (
-									<Notice
-										className="help-contact-form__site-notice"
-										status="is-warning"
-										showDismiss={ false }
-										text={ noticeMessage }
-									>
-										{ actionMessage && (
-											<NoticeAction href={ actionLink } external>
-												{ actionMessage }
-											</NoticeAction>
-										) }
-									</Notice>
-								) }
 							</div>
 						) }
 					</div>
+				) }
+
+				{ noticeMessage && (
+					<Notice
+						className="help-contact-form__site-notice"
+						status="is-warning"
+						showDismiss={ false }
+						text={ noticeMessage }
+					>
+						{ actionMessage && (
+							<NoticeAction href={ actionLink } external>
+								{ actionMessage }
+							</NoticeAction>
+						) }
+					</Notice>
 				) }
 
 				{ showSubjectField && (
