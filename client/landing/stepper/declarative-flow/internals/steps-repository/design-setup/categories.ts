@@ -8,7 +8,7 @@ const CATEGORY_GENERATED = 'generated';
  * Ensures the category appears at the top of the design category list
  * (directly below the Show All filter).
  */
-function sortCategoryToTop( slug: string ) {
+function makeSortCategoryToTop( slug: string ) {
 	return ( a: Category, b: Category ) => {
 		if ( a.slug === b.slug ) {
 			return 0;
@@ -21,9 +21,9 @@ function sortCategoryToTop( slug: string ) {
 	};
 }
 
-const sortBlogToTop = sortCategoryToTop( CATEGORY_BLOG );
-const sortStoreToTop = sortCategoryToTop( CATEGORY_STORE );
-const sortGeneratedToTop = sortCategoryToTop( CATEGORY_GENERATED );
+const sortBlogToTop = makeSortCategoryToTop( CATEGORY_BLOG );
+const sortStoreToTop = makeSortCategoryToTop( CATEGORY_STORE );
+const sortGeneratedToTop = makeSortCategoryToTop( CATEGORY_GENERATED );
 
 export function getGeneratedDesignsCategory( name: string ): Category {
 	return { slug: CATEGORY_GENERATED, name };
