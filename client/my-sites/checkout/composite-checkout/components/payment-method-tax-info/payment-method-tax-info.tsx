@@ -14,6 +14,28 @@ import type { FunctionComponent, ReactNode } from 'react';
 
 import './style.scss';
 
+function TaxInfoButtonContents( {
+	taxInfoFromServer,
+}: {
+	taxInfoFromServer: TaxGetInfo | undefined;
+} ) {
+	const translate = useTranslate();
+	if ( taxInfoFromServer?.tax_country_code ) {
+		const taxInfoDisplay = joinNonEmptyValues(
+			', ',
+			taxInfoFromServer?.tax_postal_code,
+			taxInfoFromServer?.tax_country_code
+		);
+		return <>{ taxInfoDisplay }</>;
+	}
+	return (
+		<>
+			<Gridicon icon="notice" />
+			{ getMissingTaxLocationInformationMessage( translate, taxInfoFromServer ) }
+		</>
+	);
+}
+
 const PaymentMethodEditDialog: FunctionComponent< {
 	paymentMethodSummary: ReactNode;
 	isVisible: boolean;
@@ -133,63 +155,25 @@ export function TaxInfoArea( {
 		setInputValues( info );
 	};
 
-	const taxInfoDisplay = joinNonEmptyValues(
-		', ',
-		taxInfoFromServer?.tax_postal_code,
-		taxInfoFromServer?.tax_country_code
-	);
-
 	if ( isLoading ) {
 		return null;
 	}
-	if ( taxInfoDisplay ) {
-		return (
-			<div className="payment-method-tax-info">
-				<span className="payment-method-tax-info__address">
-					{ translate( 'Address', { textOnly: true } ) }
-				</span>
-				<Button
-					borderless
-					className="payment-method-tax-info__edit-button"
-					onClick={ openDialog }
-					disabled={ formStatus !== FormStatus.READY }
-				>
-					{ taxInfoDisplay }
-				</Button>
-				<PaymentMethodEditDialog
-					paymentMethodSummary={
-						<PaymentMethodSummary type={ brand || paymentPartnerProcessorId } digits={ last4 } />
-					}
-					isVisible={ isDialogVisible }
-					onClose={ closeDialog }
-					onConfirm={ updateTaxInfo }
-					form={
-						<TaxFields
-							section={ `existing-card-payment-method-${ storedDetailsId }` }
-							taxInfo={ inputValues }
-							countriesList={ countriesList }
-							onChange={ onChangeTaxInfo }
-						/>
-					}
-					error={ updateError }
-				/>
-			</div>
-		);
-	}
+
+	const isTaxInfoComplete = !! taxInfoFromServer?.tax_country_code;
+
 	return (
 		<div className="payment-method-tax-info">
 			<span className="payment-method-tax-info__address">
 				{ translate( 'Address', { textOnly: true } ) }
 			</span>
 			<Button
-				scary
+				scary={ ! isTaxInfoComplete }
 				borderless
 				className="payment-method-tax-info__edit-button"
 				onClick={ openDialog }
 				disabled={ formStatus !== FormStatus.READY }
 			>
-				<Gridicon icon="notice" />
-				{ getMissingTaxLocationInformationMessage( translate, taxInfoFromServer ) }
+				<TaxInfoButtonContents taxInfoFromServer={ taxInfoFromServer } />
 			</Button>
 			<PaymentMethodEditDialog
 				paymentMethodSummary={
