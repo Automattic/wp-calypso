@@ -34,7 +34,6 @@ import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
-import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import {
 	getPluginOnSite,
 	getPluginOnSites,
@@ -110,7 +109,6 @@ function PluginDetails( props ) {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isWpcom = selectedSite && ! isJetpack;
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
-	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
 	const isSiteConnected = useSelector( ( state ) =>
 		getSiteConnectionStatus( state, selectedSite?.ID )
 	);
@@ -253,16 +251,14 @@ function PluginDetails( props ) {
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist />
 			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs }>
-				{ ( isMarketplaceProduct || shouldUpgrade ) &&
-					! requestingPluginsForSites &&
-					! isPluginInstalledOnsite && (
-						<BillingIntervalSwitcher
-							billingPeriod={ billingPeriod }
-							onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
-							compact={ ! isWide }
-							plugin={ fullPlugin }
-						/>
-					) }
+				{ isMarketplaceProduct && ! requestingPluginsForSites && ! isPluginInstalledOnsite && (
+					<BillingIntervalSwitcher
+						billingPeriod={ billingPeriod }
+						onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
+						compact={ ! isWide }
+						plugin={ fullPlugin }
+					/>
+				) }
 			</FixedNavigationHeader>
 			<PluginNotices
 				pluginId={ fullPlugin.id }
