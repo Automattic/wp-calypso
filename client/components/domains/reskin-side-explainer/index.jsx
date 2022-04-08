@@ -1,5 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { localize } from 'i18n-calypso';
+import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -9,37 +8,44 @@ import './style.scss';
 
 class ReskinSideExplainer extends Component {
 	getStrings() {
-		const { type, eligibleForProPlan, selectedSiteId, translate } = this.props;
+		const { type, translate } = this.props;
 
 		let title;
 		let subtitle;
 		let ctaText;
 
-		// The special case latter is for handling the case in the sign-up flow.
-		// By that time, a site is not available yet, so we can only check the feature flag for now
-		const shouldShowProPlanTitle =
-			eligibleForProPlan || ( selectedSiteId == null && isEnabled( 'plans/pro-plan' ) );
+		const showNewTitle =
+			i18n.hasTranslation( 'Your domain is {{b}}free{{/b}} with WordPress Pro' ) ||
+			'en' === getLocaleSlug();
+
+		const showNewSubtitle =
+			i18n.hasTranslation(
+				'Use the search tool on this page to find a domain you love, then select the {{b}}WordPress Pro{{/b}} plan.{{br}}{{br}}We’ll pay the first year’s domain registration fees for you, simple as that!'
+			) || 'en' === getLocaleSlug();
 
 		switch ( type ) {
 			case 'free-domain-explainer':
-				title = shouldShowProPlanTitle
-					? translate(
+				showNewTitle
+					? ( title = translate( 'Get your domain {{b}}free{{/b}} with WordPress Pro', {
+							components: { b: <strong /> },
+					  } ) )
+					: ( title = translate(
 							'Get a {{b}}free{{/b}} one-year domain registration with your WordPress Pro annual plan.',
 							{
 								components: { b: <strong /> },
 							}
-					  )
-					: translate(
-							'Get a {{b}}free{{/b}} one-year domain registration with any paid annual plan.',
-							{
-								components: { b: <strong /> },
-							}
-					  );
+					  ) );
 
-				subtitle = translate(
-					"You can claim your free custom domain later if you aren't ready yet."
-				);
-				ctaText = translate( 'Choose my domain later' );
+				showNewSubtitle
+					? ( subtitle = translate(
+							'Use the search tool on this page to find a domain you love, then select the {{b}}WordPress Pro{{/b}} plan.{{br /}}{{br /}}We’ll pay the first year’s domain registration fees for you, simple as that!',
+							{
+								components: { b: <strong />, br: <br /> },
+							}
+					  ) )
+					: ( subtitle = translate(
+							"You can claim your free custom domain later if you aren't ready yet."
+					  ) );
 				break;
 
 			case 'use-your-domain':
