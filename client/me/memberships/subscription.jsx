@@ -29,11 +29,12 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 	const dispatch = useDispatch();
 
 	const stopSubscription = () => dispatch( requestSubscriptionStop( subscription.ID ) );
+	const isProduct = subscription && ! subscription.renew_interval;
 
 	useEffect( () => {
 		if ( stoppingStatus === 'fail' ) {
 			// run is-error notice to contact support
-			subscription && ! subscription.renew_interval
+			isProduct
 				? dispatch(
 						errorNotice(
 							translate(
@@ -72,25 +73,19 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 	return (
 		<Main wideLayout className="memberships__subscription">
 			<DocumentHead
-				title={
-					subscription && ! subscription.renew_interval
-						? translate( 'Product Details' )
-						: translate( 'Subscription Details' )
-				}
+				title={ isProduct ? translate( 'Product Details' ) : translate( 'Subscription Details' ) }
 			/>
 			<QueryMembershipsSubscriptions />
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<HeaderCake backHref={ purchasesRoot }>
-				{ subscription && ! subscription.renew_interval
-					? translate( 'Product Details' )
-					: translate( 'Subscription Details' ) }
+				{ isProduct ? translate( 'Product Details' ) : translate( 'Subscription Details' ) }
 			</HeaderCake>
 			{ stoppingStatus === 'start' && (
 				<Notice
 					status="is-info"
 					isLoading={ true }
 					text={
-						subscription && ! subscription.renew_interval
+						isProduct
 							? translate( 'Removing this product' )
 							: translate( 'Stopping this subscription' )
 					}
@@ -143,7 +138,7 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 						className="memberships__subscription-remove"
 						onClick={ stopSubscription }
 					>
-						{ subscription && ! subscription.renew_interval
+						{ isProduct
 							? translate( 'Remove %s product.', { args: subscription.title } )
 							: translate( 'Stop %s subscription.', { args: subscription.title } ) }
 						<Gridicon className="card__link-indicator" icon="trash" />
