@@ -11,7 +11,7 @@ import {
 	TestAccount,
 	EditorTracksEventManager,
 	skipDescribeIf,
-	SiteEditorPage,
+	FullSiteEditorPage,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -26,7 +26,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 		describe( 'wpcom_block_editor_list_view_toggle/select', function () {
 			let page: Page;
 			let editorPage: EditorPage;
-			let eventManager: EditorTracksEventManager;
+			let editorTracksEventManager: EditorTracksEventManager;
 			beforeAll( async () => {
 				page = await browser.newPage();
 
@@ -34,7 +34,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
 
-				eventManager = new EditorTracksEventManager( page );
+				editorTracksEventManager = new EditorTracksEventManager( page );
 				editorPage = new EditorPage( page, { target: features.siteType } );
 			} );
 
@@ -52,7 +52,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			} );
 
 			it( '"wpcom_block_editor_list_view_toggle" event fires with "is_open" set to true', async function () {
-				const eventDidFire = await eventManager.didEventFire(
+				const eventDidFire = await editorTracksEventManager.didEventFire(
 					'wpcom_block_editor_list_view_toggle',
 					{
 						matchingProperties: {
@@ -68,7 +68,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			} );
 
 			it( '"wpcom_block_editor_list_view_select" event fires with correct "block_name" property', async function () {
-				const eventDidFire = await eventManager.didEventFire(
+				const eventDidFire = await editorTracksEventManager.didEventFire(
 					'wpcom_block_editor_list_view_select',
 					{
 						matchingProperties: {
@@ -84,7 +84,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			} );
 
 			it( '"wpcom_block_editor_list_view_toggle" event fires again with "is_open" set to false', async function () {
-				const eventDidFire = await eventManager.didEventFire(
+				const eventDidFire = await editorTracksEventManager.didEventFire(
 					'wpcom_block_editor_list_view_toggle',
 					{
 						matchingProperties: {
@@ -99,7 +99,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 		describe( 'wpcom_block_editor_details_open', function () {
 			let page: Page;
 			let editorPage: EditorPage;
-			let eventManager: EditorTracksEventManager;
+			let editorTracksEventManager: EditorTracksEventManager;
 			beforeAll( async () => {
 				page = await browser.newPage();
 
@@ -107,7 +107,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 				const testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
 
-				eventManager = new EditorTracksEventManager( page );
+				editorTracksEventManager = new EditorTracksEventManager( page );
 				editorPage = new EditorPage( page, { target: features.siteType } );
 			} );
 
@@ -126,15 +126,17 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			} );
 
 			it( '"wpcom_block_editor_details_open" event fires', async function () {
-				const eventDidFire = await eventManager.didEventFire( 'wpcom_block_editor_details_open' );
+				const eventDidFire = await editorTracksEventManager.didEventFire(
+					'wpcom_block_editor_details_open'
+				);
 				expect( eventDidFire ).toBe( true );
 			} );
 		} );
 
 		describe( 'wpcom_block_editor_undo/redo_performed', function () {
 			let page: Page;
-			let siteEditorPage: SiteEditorPage;
-			let eventManager: EditorTracksEventManager;
+			let fullSiteEditorPage: FullSiteEditorPage;
+			let editorTracksEventManager: EditorTracksEventManager;
 			let testAccount: TestAccount;
 			beforeAll( async () => {
 				page = await browser.newPage();
@@ -143,34 +145,38 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 				testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
 
-				eventManager = new EditorTracksEventManager( page );
-				siteEditorPage = new SiteEditorPage( page );
+				editorTracksEventManager = new EditorTracksEventManager( page );
+				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
 
 			it( 'Go to site editor', async function () {
-				await siteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
-				await siteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
 			it( 'Add a Header block', async function () {
-				await siteEditorPage.addBlockFromSidebar( 'Header' );
+				await fullSiteEditorPage.addBlockFromSidebar( 'Header' );
 			} );
 
 			it( 'Undo action', async function () {
-				await siteEditorPage.undo();
+				await fullSiteEditorPage.undo();
 			} );
 
 			it( '"wpcom_block_editor_undo_performed" event fires', async function () {
-				const eventDidFire = await eventManager.didEventFire( 'wpcom_block_editor_undo_performed' );
+				const eventDidFire = await editorTracksEventManager.didEventFire(
+					'wpcom_block_editor_undo_performed'
+				);
 				expect( eventDidFire ).toBe( true );
 			} );
 
 			it( 'Redo action', async function () {
-				await siteEditorPage.redo();
+				await fullSiteEditorPage.redo();
 			} );
 
 			it( '"wpcom_block_editor_redo_performed" event fires', async function () {
-				const eventDidFire = await eventManager.didEventFire( 'wpcom_block_editor_redo_performed' );
+				const eventDidFire = await editorTracksEventManager.didEventFire(
+					'wpcom_block_editor_redo_performed'
+				);
 				expect( eventDidFire ).toBe( true );
 			} );
 		} );

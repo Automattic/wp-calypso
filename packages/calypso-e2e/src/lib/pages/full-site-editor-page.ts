@@ -23,7 +23,7 @@ const selectors = {
  * Represents an instance of the FSE site editor.
  * This class is composed of editor components, combining them into larger flows.
  */
-export class SiteEditorPage {
+export class FullSiteEditorPage {
 	private page: Page;
 
 	private editorToolbarComponent: EditorToolbarComponent;
