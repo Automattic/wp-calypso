@@ -24,7 +24,7 @@ import { cancelPurchase } from 'calypso/me/purchases/paths';
 import RemovePurchase from 'calypso/me/purchases/remove-purchase';
 import {
 	domainAddNew,
-	domainManagementNameServers,
+	domainManagementEdit,
 	domainManagementContactsPrivacy,
 	domainManagementTransfer,
 	domainManagementDns,
@@ -147,7 +147,7 @@ class DomainManagementNavigationEnhanced extends Component {
 
 		return (
 			<VerticalNavItemEnhanced
-				path={ domainManagementNameServers( selectedSite.slug, domain.name, currentRoute ) }
+				path={ domainManagementEdit( selectedSite.slug, domain.name, currentRoute ) }
 				materialIcon="language"
 				text={ translate( 'Change your name servers & DNS records' ) }
 				description={ description }
