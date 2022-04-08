@@ -8,7 +8,7 @@ export const getDesignPreviewUrl = (
 	const { recipe } = design;
 
 	let url = addQueryArgs( 'https://public-api.wordpress.com/wpcom/v2/block-previews/site', {
-		theme: recipe?.theme,
+		stylesheet: recipe?.stylesheet,
 		pattern_ids: recipe?.patternIds?.join( ',' ),
 		language: options.language,
 		viewport_height: 700,

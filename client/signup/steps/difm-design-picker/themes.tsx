@@ -15,7 +15,7 @@ const difmThemes: Design[] = [
 		theme: 'russell',
 		title: 'Russell',
 		recipe: {
-			theme: 'pub/russell',
+			stylesheet: 'pub/russell',
 		},
 	},
 	{
@@ -32,7 +32,7 @@ const difmThemes: Design[] = [
 		theme: 'zoologist',
 		title: 'Zoologist',
 		recipe: {
-			theme: 'pub/zoologist',
+			stylesheet: 'pub/zoologist',
 		},
 	},
 	{
@@ -44,7 +44,7 @@ const difmThemes: Design[] = [
 		theme: 'quadrat',
 		title: 'Quadrat',
 		recipe: {
-			theme: 'pub/quadrat',
+			stylesheet: 'pub/quadrat',
 		},
 	},
 	{
@@ -56,7 +56,7 @@ const difmThemes: Design[] = [
 		theme: 'geologist',
 		title: 'Geologist',
 		recipe: {
-			theme: 'pub/geologist',
+			stylesheet: 'pub/geologist',
 		},
 	},
 	{
@@ -68,7 +68,7 @@ const difmThemes: Design[] = [
 		theme: 'bradford',
 		title: 'Bradford',
 		recipe: {
-			theme: 'pub/bradford',
+			stylesheet: 'pub/bradford',
 		},
 	},
 	{
@@ -86,7 +86,7 @@ const difmThemes: Design[] = [
 		theme: 'twentytwentyone',
 		title: 'Twenty Twenty-One',
 		recipe: {
-			theme: 'pub/twentytwentyone',
+			stylesheet: 'pub/twentytwentyone',
 		},
 	},
 	{
@@ -103,7 +103,7 @@ const difmThemes: Design[] = [
 		theme: 'spearhead',
 		title: 'Spearhead',
 		recipe: {
-			theme: 'pub/spearhead',
+			stylesheet: 'pub/spearhead',
 		},
 	},
 	{
@@ -120,7 +120,7 @@ const difmThemes: Design[] = [
 		theme: 'seedlet',
 		title: 'Seedlet',
 		recipe: {
-			theme: 'pub/seedlet',
+			stylesheet: 'pub/seedlet',
 		},
 	},
 	{
@@ -137,7 +137,7 @@ const difmThemes: Design[] = [
 		theme: 'twentytwenty',
 		title: 'Twenty Twenty',
 		recipe: {
-			theme: 'pub/twentytwenty',
+			stylesheet: 'pub/twentytwenty',
 		},
 	},
 	{
@@ -154,7 +154,7 @@ const difmThemes: Design[] = [
 		theme: 'barnsbury',
 		title: 'Barnsbury',
 		recipe: {
-			theme: 'pub/barnsbury',
+			stylesheet: 'pub/barnsbury',
 		},
 	},
 	{
@@ -171,7 +171,7 @@ const difmThemes: Design[] = [
 		theme: 'rivington',
 		title: 'Rivington',
 		recipe: {
-			theme: 'pub/rivington',
+			stylesheet: 'pub/rivington',
 		},
 	},
 	{
@@ -183,7 +183,7 @@ const difmThemes: Design[] = [
 		theme: 'maywood',
 		title: 'Maywood',
 		recipe: {
-			theme: 'pub/maywood',
+			stylesheet: 'pub/maywood',
 		},
 	},
 	{
@@ -200,7 +200,7 @@ const difmThemes: Design[] = [
 		theme: 'shawburn',
 		title: 'Shawburn',
 		recipe: {
-			theme: 'pub/shawburn',
+			stylesheet: 'pub/shawburn',
 		},
 	},
 	{
@@ -212,7 +212,7 @@ const difmThemes: Design[] = [
 		theme: 'alves',
 		title: 'Alves',
 		recipe: {
-			theme: 'pub/alves',
+			stylesheet: 'pub/alves',
 		},
 	},
 	{
@@ -229,7 +229,7 @@ const difmThemes: Design[] = [
 		theme: 'exford',
 		title: 'Exford',
 		recipe: {
-			theme: 'pub/exford',
+			stylesheet: 'pub/exford',
 		},
 	},
 	{
@@ -241,7 +241,7 @@ const difmThemes: Design[] = [
 		theme: 'rockfield',
 		title: 'Rockfield',
 		recipe: {
-			theme: 'pub/rockfield',
+			stylesheet: 'pub/rockfield',
 		},
 	},
 	{
@@ -258,7 +258,7 @@ const difmThemes: Design[] = [
 		theme: 'coutoire',
 		title: 'Coutoire',
 		recipe: {
-			theme: 'pub/coutoire',
+			stylesheet: 'pub/coutoire',
 		},
 	},
 	{
@@ -275,7 +275,7 @@ const difmThemes: Design[] = [
 		theme: 'morden',
 		title: 'Morden',
 		recipe: {
-			theme: 'pub/morden',
+			stylesheet: 'pub/morden',
 		},
 	},
 	{
@@ -292,7 +292,7 @@ const difmThemes: Design[] = [
 		theme: 'stow',
 		title: 'Stow',
 		recipe: {
-			theme: 'pub/stow',
+			stylesheet: 'pub/stow',
 		},
 	},
 	{
@@ -309,7 +309,7 @@ const difmThemes: Design[] = [
 		theme: 'hever',
 		title: 'Hever',
 		recipe: {
-			theme: 'pub/hever',
+			stylesheet: 'pub/hever',
 		},
 	},
 	{
@@ -326,7 +326,7 @@ const difmThemes: Design[] = [
 		theme: 'independent-publisher-2',
 		title: 'Independent Publisher 2',
 		recipe: {
-			theme: 'pub/independent-publisher-2',
+			stylesheet: 'pub/independent-publisher-2',
 		},
 	},
 	{
@@ -343,7 +343,7 @@ const difmThemes: Design[] = [
 		theme: 'twentysixteen',
 		title: 'Twenty Sixteen',
 		recipe: {
-			theme: 'pub/twentysixteen',
+			stylesheet: 'pub/twentysixteen',
 		},
 	},
 	{
@@ -360,7 +360,7 @@ const difmThemes: Design[] = [
 		theme: 'twentyfifteen',
 		title: 'Twenty Fifteen',
 		recipe: {
-			theme: 'pub/twentyfifteen',
+			stylesheet: 'pub/twentyfifteen',
 		},
 	},
 	{
@@ -377,7 +377,7 @@ const difmThemes: Design[] = [
 		theme: 'hemingway-rewritten',
 		title: 'Hemingway Rewritten',
 		recipe: {
-			theme: 'pub/hemingway-rewritten',
+			stylesheet: 'pub/hemingway-rewritten',
 		},
 	},
 ];

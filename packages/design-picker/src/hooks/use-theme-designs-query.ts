@@ -62,7 +62,7 @@ function apiThemeToDesign( { id, name, taxonomies, stylesheet }: any ): Design {
 		slug: id,
 		title: name,
 		recipe: {
-			theme: stylesheet,
+			stylesheet,
 		},
 		is_premium: stylesheet && stylesheet.startsWith( 'premium/' ),
 		categories: taxonomies?.theme_subject ?? [],

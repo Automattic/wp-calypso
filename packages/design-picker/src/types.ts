@@ -15,7 +15,7 @@ export interface Category {
 }
 
 export interface DesignRecipe {
-	theme?: string;
+	stylesheet?: string;
 	patternIds?: number[];
 }
 
