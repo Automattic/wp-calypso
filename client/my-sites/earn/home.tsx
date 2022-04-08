@@ -12,6 +12,9 @@ import {
 	isSecurityRealTimePlan,
 	isCompletePlan,
 	isProPlan,
+	FEATURE_PREMIUM_CONTENT_CONTAINER,
+	FEATURE_DONATIONS,
+	FEATURE_RECURRING_PAYMENTS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
@@ -31,6 +34,7 @@ import wp from 'calypso/lib/wp';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasFeature, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -58,7 +62,9 @@ interface ConnectedProps {
 	isPremiumOrBetterPlan?: boolean;
 	isUserAdmin?: boolean;
 	eligibleForProPlan?: boolean;
-	stripeAvailable: boolean;
+	hasDonations: boolean;
+	hasPremiumContent: boolean;
+	hasRecurringPayments: boolean;
 }
 
 type BoolFunction = ( arg: string ) => boolean;
@@ -81,7 +87,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	hasConnectedAccount,
 	hasSetupAds,
 	eligibleForProPlan,
-	stripeAvailable,
+	hasDonations,
+	hasPremiumContent,
+	hasRecurringPayments,
 	trackUpgrade,
 	trackLearnLink,
 	trackCtaButton,
@@ -181,7 +189,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getRecurringPaymentsCard = () => {
-		const cta = ! stripeAvailable
+		const cta = ! hasRecurringPayments
 			? {
 					text: translate( 'Unlock this feature' ),
 					action: () => {
@@ -236,7 +244,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getDonationsCard = () => {
-		const cta = ! stripeAvailable
+		const cta = ! hasDonations
 			? {
 					text: translate( 'Unlock this feature' ),
 					action: () => {
@@ -284,7 +292,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getPremiumContentCard = () => {
-		const cta = ! stripeAvailable
+		const cta = ! hasPremiumContent
 			? {
 					text: translate( 'Unlock this feature' ),
 					action: () => {
@@ -601,7 +609,12 @@ export default connect(
 			hasSetupAds: Boolean(
 				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
 			),
-			stripeAvailable: hasConnectedAccount || ! isFreePlan,
+			hasDonations: hasConnectedAccount || hasActiveSiteFeature( state, siteId, FEATURE_DONATIONS ),
+			hasPremiumContent:
+				hasConnectedAccount ||
+				hasActiveSiteFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ),
+			hasRecurringPayments:
+				hasConnectedAccount || hasActiveSiteFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 		};
 	},
 	( dispatch ) => ( {
