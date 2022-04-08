@@ -15,6 +15,8 @@ import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
@@ -35,13 +37,14 @@ import Masterbar from './masterbar';
 import { MasterBarMobileMenu } from './masterbar-menu';
 import Notifications from './notifications';
 
+const MENU_POPOVER_PREFERENCE_KEY = 'dismissed-masterbar-collapsable-menu-popover';
+
 const MOBILE_BREAKPOINT = '<480px';
 class MasterbarLoggedIn extends Component {
 	state = {
 		isActionSearchVisible: false,
 		isMenuOpen: false,
 		isMobile: isWithinBreakpoint( MOBILE_BREAKPOINT ),
-		menuPopoverOpen: true,
 		// making the ref a state triggers a re-render when it changes (needed for popover)
 		menuBtnRef: null,
 	};
@@ -224,15 +227,9 @@ class MasterbarLoggedIn extends Component {
 		this.setState( { isMenuOpen: ! this.state.isMenuOpen } );
 	}
 
-	onMenuPopoverClose() {
-		// here we should also store that the user saw the popover and never show it again
-
-		this.setState( { menuPopoverOpen: false } );
-	}
-
 	masterbarItemsMap() {
 		const isWordPressActionSearchFeatureEnabled = config.isEnabled( 'wordpress-action-search' );
-		const { isActionSearchVisible, isMobile, menuPopoverOpen, menuBtnRef } = this.state;
+		const { isActionSearchVisible, isMobile, menuBtnRef } = this.state;
 
 		const {
 			domainOnlySite,
@@ -245,6 +242,8 @@ class MasterbarLoggedIn extends Component {
 			title,
 			currentSelectedSiteSlug,
 			currentSelectedSiteId,
+			hasDismissedThePopover,
+			dismissPopover,
 		} = this.props;
 
 		return {
@@ -391,9 +390,9 @@ class MasterbarLoggedIn extends Component {
 					</MasterBarMobileMenu>
 					{ menuBtnRef && (
 						<Popover
-							isVisible={ menuPopoverOpen }
+							isVisible={ ! hasDismissedThePopover }
 							context={ menuBtnRef }
-							onClose={ () => this.onMenuPopoverClose() }
+							onClose={ dismissPopover }
 							autoPosition
 							showDelay={ 500 }
 						>
@@ -405,7 +404,7 @@ class MasterbarLoggedIn extends Component {
 								</h1>
 								<p>{ translate( 'We changed the navigation for a cleaner experience.' ) }</p>
 								<div className="masterbar__new-menu-popover-actions">
-									<Button onClick={ () => this.onMenuPopoverClose() }>
+									<Button onClick={ dismissPopover }>
 										{ translate( 'Got it', { comment: 'Got it, as in OK' } ) }
 									</Button>
 								</div>
@@ -477,7 +476,6 @@ export default connect(
 		// by the user yet
 		const currentSelectedSiteId = getSelectedSiteId( state );
 		const siteId = currentSelectedSiteId || getPrimarySiteId( state );
-
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
 			isSiteMigrationActiveRoute( state );
@@ -499,7 +497,18 @@ export default connect(
 			previousPath: getPreviousRoute( state ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
+			hasDismissedThePopover: getPreference( state, MENU_POPOVER_PREFERENCE_KEY ),
 		};
 	},
-	{ setNextLayoutFocus, recordTracksEvent, updateSiteMigrationMeta, activateNextLayoutFocus }
+	( dispatch ) => {
+		return {
+			setNextLayoutFocus,
+			recordTracksEvent,
+			updateSiteMigrationMeta,
+			activateNextLayoutFocus,
+			dismissPopover: () => {
+				dispatch( savePreference( MENU_POPOVER_PREFERENCE_KEY, true ) );
+			},
+		};
+	}
 )( localize( MasterbarLoggedIn ) );
