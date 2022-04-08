@@ -28,7 +28,7 @@ const TextInputWrapper = styled.div`
 		opacity: 0.18;
 		margin: 11px 0 11px 10px;
 	}
-	input.form-text-input {
+	input[type='text'].form-text-input {
 		border: none;
 		padding-inline-start: 0px;
 		&:focus,
