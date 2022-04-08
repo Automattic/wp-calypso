@@ -24,10 +24,7 @@ function activateSentry() {
 
 	// We still need to report the head errors, if any.
 	headErrors.forEach( ( error ) => Sentry.captureException( error ) );
-	Sentry.flush().then( () => {
-		delete window._jsErr;
-		window.removeEventListener( window._headJsErrorHandler );
-	} );
+	Sentry.flush().then( () => delete window._jsErr );
 }
 
 // Activate the home-brew error-reporting
