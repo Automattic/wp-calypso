@@ -250,6 +250,9 @@ function setupErrorLogger( reduxStore ) {
 		},
 		beforeSend( event ) {
 			const state = reduxStore.getState();
+			if ( ! event.tags ) {
+				event.tags = {};
+			}
 			event.tags.blog_id = getSelectedSiteId( state );
 			event.tags.calypso_section = getSectionName( state );
 			return event;
