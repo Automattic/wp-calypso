@@ -305,7 +305,7 @@ function setupErrorLogger( reduxStore ) {
 			':siteId'
 		);
 		Sentry.addBreadcrumb( {
-			type: 'navigation',
+			category: 'navigation',
 			data: {
 				from: prevPath ?? path,
 				to: path,
