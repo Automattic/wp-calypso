@@ -15,14 +15,14 @@ class ReskinSideExplainer extends Component {
 		let subtitle2;
 		let ctaText;
 
+		const isEnLocale = [ 'en', 'en-gb' ].includes( getLocaleSlug() );
 		const showNewTitle =
-			i18n.hasTranslation( 'Get your domain {{b}}free{{/b}} with WordPress Pro' ) ||
-			'en' === getLocaleSlug();
+			i18n.hasTranslation( 'Get your domain {{b}}free{{/b}} with WordPress Pro' ) || isEnLocale;
 
 		const showNewSubtitle =
 			i18n.hasTranslation(
 				'Use the search tool on this page to find a domain you love, then select the {{b}}WordPress Pro{{/b}} plan.'
-			) || 'en' === getLocaleSlug();
+			) || isEnLocale;
 
 		switch ( type ) {
 			case 'free-domain-explainer':
