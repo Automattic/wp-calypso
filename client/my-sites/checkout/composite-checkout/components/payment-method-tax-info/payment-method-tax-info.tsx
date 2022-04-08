@@ -41,10 +41,22 @@ const PaymentMethodEditDialog: FunctionComponent< {
 	isVisible: boolean;
 	onClose: () => void;
 	onConfirm: () => void;
-	form: JSX.Element;
+	onChange: ( input: ManagedContactDetails ) => void;
 	error: string;
-} > = ( { paymentMethodSummary, isVisible, onClose, onConfirm, form, error } ) => {
+	storedDetailsId: string;
+	value: ManagedContactDetails;
+} > = ( {
+	paymentMethodSummary,
+	isVisible,
+	onClose,
+	onConfirm,
+	error,
+	onChange,
+	storedDetailsId,
+	value,
+} ) => {
 	const translate = useTranslate();
+	const countriesList = useCountryList();
 
 	return (
 		<Dialog
@@ -62,7 +74,12 @@ const PaymentMethodEditDialog: FunctionComponent< {
 				<strong>{ paymentMethodSummary }</strong>
 			</CardHeading>
 			{ error && <Notice status="is-error" isCompact={ true } text={ error } /> }
-			{ form }
+			<TaxFields
+				section={ `existing-card-payment-method-${ storedDetailsId }` }
+				taxInfo={ value }
+				countriesList={ countriesList }
+				onChange={ onChange }
+			/>
 		</Dialog>
 	);
 };
@@ -141,7 +158,6 @@ export function TaxInfoArea( {
 		setInputValues( contactDetailsToTaxInfo( taxInfoFromServer ) );
 	}, [ taxInfoFromServer ] );
 
-	const countriesList = useCountryList();
 	const updateTaxInfo = useCallback( () => {
 		setTaxInfo( {
 			tax_country_code: inputValues?.countryCode?.value ?? '',
@@ -182,14 +198,9 @@ export function TaxInfoArea( {
 				isVisible={ isDialogVisible }
 				onClose={ closeDialog }
 				onConfirm={ updateTaxInfo }
-				form={
-					<TaxFields
-						section={ `existing-card-payment-method-${ storedDetailsId }` }
-						taxInfo={ inputValues }
-						countriesList={ countriesList }
-						onChange={ onChangeTaxInfo }
-					/>
-				}
+				value={ inputValues }
+				storedDetailsId={ storedDetailsId }
+				onChange={ onChangeTaxInfo }
 				error={ updateError }
 			/>
 		</div>
