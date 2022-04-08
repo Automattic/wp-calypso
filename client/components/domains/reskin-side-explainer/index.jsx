@@ -16,7 +16,7 @@ class ReskinSideExplainer extends Component {
 		let ctaText;
 
 		const showNewTitle =
-			i18n.hasTranslation( 'Your domain is {{b}}free{{/b}} with WordPress Pro' ) ||
+			i18n.hasTranslation( 'Get your domain {{b}}free{{/b}} with WordPress Pro' ) ||
 			'en' === getLocaleSlug();
 
 		const showNewSubtitle =
