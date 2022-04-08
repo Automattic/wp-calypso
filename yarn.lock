@@ -5068,7 +5068,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:^6.19.6":
+"@sentry/browser@npm:6.19.6, @sentry/browser@npm:^6.19.6":
   version: 6.19.6
   resolution: "@sentry/browser@npm:6.19.6"
   dependencies:
@@ -5112,6 +5112,22 @@ __metadata:
     "@sentry/types": 6.19.6
     tslib: ^1.9.3
   checksum: ab748fbceac0d142d70f2a8c79456876b46c6c5b2640c709aaa20c4421def96339620584a8780ae3de97b07322cf0a7d2a8bb659e3359794993c5e1706c532e1
+  languageName: node
+  linkType: hard
+
+"@sentry/react@npm:^6.19.4":
+  version: 6.19.6
+  resolution: "@sentry/react@npm:6.19.6"
+  dependencies:
+    "@sentry/browser": 6.19.6
+    "@sentry/minimal": 6.19.6
+    "@sentry/types": 6.19.6
+    "@sentry/utils": 6.19.6
+    hoist-non-react-statics: ^3.3.2
+    tslib: ^1.9.3
+  peerDependencies:
+    react: 15.x || 16.x || 17.x || 18.x
+  checksum: 18f6a4bea654319fbb6682119cba2d5637bc20601df57e5a34675f2a9f49612a55144be1ca99d41b4722ae86e9b966ff9a74f881b247dd84db146902e8decfc7
   languageName: node
   linkType: hard
 
@@ -12699,6 +12715,7 @@ __metadata:
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@github/webauthn-json": ^0.4.1
+    "@sentry/react": ^6.19.4
     "@stripe/react-stripe-js": ^1.4.1
     "@stripe/stripe-js": ^1.17.1
     "@testing-library/jest-dom": ^5.16.2

@@ -74,7 +74,9 @@ class Document extends Component {
 			( languageRevisions
 				? `var languageRevisions = ${ jsonStringifyForHtml( languageRevisions ) };\n`
 				: '' ) +
-			`var installedChunks = ${ jsonStringifyForHtml( installedChunks ) };\n`;
+			`var installedChunks = ${ jsonStringifyForHtml( installedChunks ) };\n` +
+			// Quickly catch any errors before the main error handler has a chance to load.
+			`window.addEventListener('error',e=>{window._jsErr=window._jsErr??[];window._jsErr.push(e);});\n`;
 
 		const isJetpackWooCommerceFlow =
 			'jetpack-connect' === sectionName && 'woocommerce-onboarding' === requestFrom;

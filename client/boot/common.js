@@ -2,6 +2,7 @@ import accessibleFocus from '@automattic/accessible-focus';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
+import * as Sentry from '@sentry/react';
 import debugFactory from 'debug';
 import page from 'page';
 import ReactDom from 'react-dom';
@@ -239,6 +240,18 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 function setupErrorLogger( reduxStore ) {
 	if ( ! config.isEnabled( 'catch-js-errors' ) ) {
 		return;
+	}
+
+	Sentry.init( {
+		dsn: 'https://61275d63a504465ab315245f1a379dab@o248881.ingest.sentry.io/6313676',
+		environment: config( 'env_id' ),
+		initialScope: {
+			user: { id: getCurrentUserId( reduxStore.getState() ) },
+		},
+	} );
+	if ( window._jsErr ) {
+		window._jsErr.forEach( ( error ) => Sentry.captureException( error ) );
+		Sentry.flush().then( () => delete window._jsErr );
 	}
 
 	const errorLogger = new Logger();
