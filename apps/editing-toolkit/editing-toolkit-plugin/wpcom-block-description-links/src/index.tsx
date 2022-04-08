@@ -2,7 +2,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
 import { ReactElement, JSXElementConstructor } from 'react';
 import blockLinks from './block-links-map';
-import InlineSupportLink from './inline-support-link';
+import DescriptionSupportLink from './inline-support-link';
 
 const addBlockSupportLinks = (
 	settings: {
@@ -17,9 +17,12 @@ const addBlockSupportLinks = (
 	if ( blockLinks.hasOwnProperty( blockName ) ) {
 		const descriptionWithLink = createInterpolateElement( '<InlineSupportLink />', {
 			InlineSupportLink: (
-				<InlineSupportLink title={ String( settings.title ) } url={ blockLinks[ blockName ].url }>
+				<DescriptionSupportLink
+					title={ String( settings.title ) }
+					url={ blockLinks[ blockName ].url }
+				>
 					{ settings.description }
-				</InlineSupportLink>
+				</DescriptionSupportLink>
 			),
 		} );
 
