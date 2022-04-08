@@ -356,7 +356,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getPaidNewsletterCard = () => {
-		const cta = isFreePlan
+		const cta = ! hasPremiumContent
 			? {
 					text: translate( 'Unlock this feature' ),
 					action: () => {
