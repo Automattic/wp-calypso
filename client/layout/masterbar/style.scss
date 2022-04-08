@@ -87,6 +87,30 @@ $autobar-height: 20px;
 	}
 }
 
+.masterbar__new-menu-popover-inner {
+	text-align: initial;
+	padding: 16px;
+	box-sizing: border-box;
+	h1 {
+		font-weight: 500;
+		font-size: $font-body;
+		margin: 5px 0;
+	}
+	p {
+		font-size: $font-body-small;
+		margin-top: 4px;
+	}
+	.masterbar__new-menu-popover-actions {
+		display: flex;
+		justify-content: flex-end;
+		margin-top: 24px;
+		.button {
+			padding: 8px 22px;
+			font-size: $font-body-small;
+		}
+	}
+}
+
 .pride .masterbar {
 	background: linear-gradient(
 		to bottom,

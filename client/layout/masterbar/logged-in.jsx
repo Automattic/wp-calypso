@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Popover, Button } from '@automattic/components';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -40,6 +41,9 @@ class MasterbarLoggedIn extends Component {
 		isActionSearchVisible: false,
 		isMenuOpen: false,
 		isMobile: isWithinBreakpoint( MOBILE_BREAKPOINT ),
+		menuPopoverOpen: true,
+		// making the ref a state triggers a re-render when it changes (needed for popover)
+		menuBtnRef: null,
 	};
 
 	static propTypes = {
@@ -220,9 +224,15 @@ class MasterbarLoggedIn extends Component {
 		this.setState( { isMenuOpen: ! this.state.isMenuOpen } );
 	}
 
+	onMenuPopoverClose() {
+		// here we should also store that the user saw the popover and never show it again
+
+		this.setState( { menuPopoverOpen: false } );
+	}
+
 	masterbarItemsMap() {
 		const isWordPressActionSearchFeatureEnabled = config.isEnabled( 'wordpress-action-search' );
-		const { isActionSearchVisible, isMobile } = this.state;
+		const { isActionSearchVisible, isMobile, menuPopoverOpen, menuBtnRef } = this.state;
 
 		const {
 			domainOnlySite,
@@ -290,15 +300,17 @@ class MasterbarLoggedIn extends Component {
 						{ translate( 'Search Actions' ) }
 					</Item>
 				),
-			planUpsell: () => (
-				<AsyncLoad
-					require="./plan-upsell"
-					className="masterbar__item-upsell button is-primary"
-					tooltip={ translate( 'Upgrade your plan' ) }
-				>
-					{ translate( 'Upgrade' ) }
-				</AsyncLoad>
-			),
+			planUpsell: () =>
+				! domainOnlySite &&
+				! isMigrationInProgress && (
+					<AsyncLoad
+						require="./plan-upsell"
+						className="masterbar__item-upsell button is-primary"
+						tooltip={ translate( 'Upgrade your plan' ) }
+					>
+						{ translate( 'Upgrade' ) }
+					</AsyncLoad>
+				),
 			publish: () =>
 				! domainOnlySite &&
 				! isMigrationInProgress && (
@@ -370,12 +382,36 @@ class MasterbarLoggedIn extends Component {
 						isActive={ this.state.isMenuOpen }
 						className="masterbar__item-menu"
 						tooltip={ translate( 'Menu' ) }
+						ref={ ( ref ) => ref !== menuBtnRef && this.setState( { menuBtnRef: ref } ) }
 					/>
 					<MasterBarMobileMenu open={ this.state.isMenuOpen }>
 						{ this.masterbarItemsMap().publish() }
 						{ this.masterbarItemsMap().reader() }
 						{ this.masterbarItemsMap().me() }
 					</MasterBarMobileMenu>
+					{ menuBtnRef && (
+						<Popover
+							isVisible={ menuPopoverOpen }
+							context={ menuBtnRef }
+							onClose={ () => this.onMenuPopoverClose() }
+							autoPosition
+							showDelay={ 500 }
+						>
+							<div className="masterbar__new-menu-popover-inner">
+								<h1>
+									{ translate( '👆 New top navigation', {
+										comment: 'This is a popover title under the masterbar',
+									} ) }
+								</h1>
+								<p>{ translate( 'We changed the navigation for a cleaner experience.' ) }</p>
+								<div className="masterbar__new-menu-popover-actions">
+									<Button onClick={ () => this.onMenuPopoverClose() }>
+										{ translate( 'Got it', { comment: 'Got it, as in OK' } ) }
+									</Button>
+								</div>
+							</div>
+						</Popover>
+					) }
 				</>
 			),
 		};
