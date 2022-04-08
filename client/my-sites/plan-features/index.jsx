@@ -209,7 +209,7 @@ export class PlanFeatures extends Component {
 	higherPlanAvailable() {
 		const currentPlan = get( this.props, 'sitePlan.product_slug', '' );
 		const highestPlan = last( this.props.planProperties );
-		return currentPlan !== highestPlan.planName && highestPlan.availableForPurchase;
+		return currentPlan !== highestPlan?.planName && highestPlan?.availableForPurchase;
 	}
 
 	renderCreditNotice() {
