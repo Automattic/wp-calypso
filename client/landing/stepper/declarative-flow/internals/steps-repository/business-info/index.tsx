@@ -1,16 +1,14 @@
 import { StepContainer, NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { CheckboxControl, SelectControl, TextControl } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { without } from 'lodash';
 import { FormEvent, ReactElement, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSiteSettings } from 'calypso/landing/stepper/hooks/use-site-settings';
-import useUpdateSiteSettingsMutation from 'calypso/landing/stepper/hooks/use-update-site-settings-mutation';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 import './style.scss';
@@ -42,14 +40,22 @@ const BusinessInfo: Step = function ( props ): ReactElement | null {
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 
 	const siteSlug = useQuery().get( 'siteSlug' );
-	const settings = useSiteSettings( siteSlug );
+
+	const siteId = useSelect(
+		( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug )
+	);
+
+	const settings = useSelect(
+		( select ) => ( siteId && select( SITE_STORE ).getSiteSettings( siteId ) ) || {}
+	);
+
 	const onboardingProfile = settings?.woocommerce_onboarding_profile || {};
 
 	const [ profileChanges, setProfileChanges ] = useState< {
 		[ key: string ]: string | boolean | Array< string > | undefined;
 	} >( {} );
 
-	const { updateSiteSettings } = useUpdateSiteSettingsMutation();
+	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
 	function updateProductTypes( type: string ) {
 		const productTypes = getProfileValue( 'product_types' ) || [];
@@ -94,12 +100,14 @@ const BusinessInfo: Step = function ( props ): ReactElement | null {
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		updateSiteSettings( siteSlug, {
-			woocommerce_onboarding_profile: {
-				...onboardingProfile,
-				...profileChanges,
-			},
-		} );
+		if ( siteId ) {
+			saveSiteSettings( siteId, {
+				woocommerce_onboarding_profile: {
+					...onboardingProfile,
+					...profileChanges,
+				},
+			} );
+		}
 		submit?.();
 	};
 

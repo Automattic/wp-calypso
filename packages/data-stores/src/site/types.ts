@@ -279,6 +279,10 @@ export interface Domain {
 	owner: string;
 }
 
+export interface SiteSettings {
+	[ key: string ]: any;
+}
+
 export interface SiteLaunchState {
 	status: SiteLaunchStatus;
 	errorCode: SiteLaunchError | undefined;
