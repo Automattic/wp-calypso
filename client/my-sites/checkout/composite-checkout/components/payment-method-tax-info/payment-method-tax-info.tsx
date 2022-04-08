@@ -183,7 +183,9 @@ export function TaxInfoArea( {
 	return (
 		<div className="payment-method-tax-info">
 			<span className="payment-method-tax-info__address">
-				{ translate( 'Address', { textOnly: true } ) }
+				{ i18n.hasTranslation( 'Billing information:' )
+					? translate( 'Billing information:', { textOnly: true } )
+					: translate( 'Address', { textOnly: true } ) }
 			</span>
 			<Button
 				scary={ ! isTaxInfoComplete }
