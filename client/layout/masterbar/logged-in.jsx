@@ -244,6 +244,7 @@ class MasterbarLoggedIn extends Component {
 			currentSelectedSiteId,
 			hasDismissedThePopover,
 			dismissPopover,
+			user,
 		} = this.props;
 
 		return {
@@ -352,9 +353,11 @@ class MasterbarLoggedIn extends Component {
 						size={ 18 }
 					/>
 					<span className="masterbar__item-me-label">
-						{ translate( 'My Profile', {
-							context: 'Toolbar, must be shorter than ~12 chars',
-						} ) }
+						{ isMobile
+							? user?.display_name
+							: translate( 'My Profile', {
+									context: 'Toolbar, must be shorter than ~12 chars',
+							  } ) }
 					</span>
 				</Item>
 			),
