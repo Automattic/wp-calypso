@@ -56,6 +56,8 @@ const Head = ( { title = 'WordPress.com', children, branchName, inlineScriptNonc
 					// eslint-disable
 					__html: `
 			(function() {
+				// Quickly catch any errors before the main error handler has a chance to load.
+				window.addEventListener('error',e=>{window._jsErr=window._jsErr??[];window._jsErr.push(e);});
 				var m = document.createElement( "link" );
 				m.rel = "stylesheet";
 				m.href = "https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i&subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese&display=swap";
