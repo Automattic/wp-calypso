@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
+import cookie from 'cookie';
 import { localize } from 'i18n-calypso';
 import { compact, pickBy } from 'lodash';
 import page from 'page';
@@ -332,7 +333,9 @@ class ThemeShowcase extends Component {
 
 		const olarkIdentity = config( 'olark_chat_identity' );
 		const olarkSystemsGroupId = '239c0f99c53692d81539f76e86910d52';
-		const isEligibleForOlarkChat = ! isLoggedIn && 'en' === locale;
+		const cookies = typeof window !== 'undefined' && cookie.parse( document.cookie );
+		const isEligibleForOlarkChat =
+			! isLoggedIn && 'en' === locale && ! cookies?.hasOwnProperty( 'recognized_logins' );
 
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
