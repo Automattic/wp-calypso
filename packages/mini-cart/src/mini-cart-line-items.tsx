@@ -21,9 +21,6 @@ const MiniCartLineItemsWrapper = styled.ul< { theme?: Theme } >`
 	overflow-y: auto;
 	max-height: 50vh;
 	scrollbar-color: var( --color-text, #000 ) var( --color-surface, #fff );
-	&::-webkit-scrollbar {
-		background: var( --color-surface, #fff );
-	}
 `;
 
 const MiniCartLineItemWrapper = styled.li`
