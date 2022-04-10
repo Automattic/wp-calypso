@@ -9,11 +9,20 @@ const selectors = {
 	startContainer: '.signup.is-do-it-for-me',
 
 	// Options page
-	siteName: '#siteTitle',
-	tagline: '#tagline',
+	siteNameInput: '#siteTitle',
+	taglineInput: '#tagline',
 
 	// Social page
-	facebook: 'input[name=facebookUrl]',
+	facebookInput: 'input[name=facebookUrl]',
+
+	// Design page
+	designPickerContainer: '.design-picker',
+
+	//Page picker page
+	pagePickerContainer: '.signup__step .is-difm-page-picker',
+
+	// Checkout page
+	checkoutContainer: '.checkout__content',
 };
 
 /**
@@ -34,8 +43,6 @@ export class DIFMFlow {
 	 */
 	async clickButton( text: string ): Promise< void > {
 		const selector = selectors.button( text );
-
-		await this.page.waitForSelector( selector );
 		await this.page.click( selector );
 	}
 
@@ -49,7 +56,6 @@ export class DIFMFlow {
 			)
 		);
 		await this.validateSetupPage();
-		await this.clickButton( 'Start a new site' );
 	}
 
 	/**
@@ -63,14 +69,35 @@ export class DIFMFlow {
 	 * Validates that we've landed on the options page.
 	 */
 	async validateOptionsPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.siteName );
+		await this.page.waitForSelector( selectors.siteNameInput );
 	}
 
 	/**
 	 * Validates that we've landed on the social page.
 	 */
 	async validateSocialPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.facebook );
+		await this.page.waitForSelector( selectors.facebookInput );
+	}
+
+	/**
+	 * Validates that we've landed on the design picker page.
+	 */
+	async validateDesignPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.designPickerContainer );
+	}
+
+	/**
+	 * Validates that we've landed on the page picker page.
+	 */
+	async validatePagePickerPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.pagePickerContainer );
+	}
+
+	/**
+	 * Validates that we've landed on the checkout page.
+	 */
+	async validateCheckoutPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.checkoutContainer, { timeout: 60000 } );
 	}
 
 	/**
@@ -80,10 +107,9 @@ export class DIFMFlow {
 	 * @param {string} [tagline] An optional tagline.
 	 */
 	async enterOptions( name: string, tagline?: string ): Promise< void > {
-		await this.page.fill( selectors.siteName, name );
+		await this.page.fill( selectors.siteNameInput, name );
 		if ( typeof tagline !== 'undefined' ) {
-			await this.page.fill( selectors.tagline, tagline );
+			await this.page.fill( selectors.taglineInput, tagline );
 		}
-		await this.clickButton( 'Continue' );
 	}
 }

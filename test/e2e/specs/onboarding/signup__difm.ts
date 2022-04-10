@@ -23,18 +23,39 @@ describe( DataHelper.createSuiteTitle( 'Do it for me' ), () => {
 	 * Navigate to initial setup page.
 	 */
 	const navigateToLanding = () => {
-		it( `Navigate to Setup page`, async () => {
+		it( `Navigate to landing page`, async () => {
 			await difmFlow.startSetup();
-			await difmFlow.validateOptionsPage();
+			await difmFlow.validateSetupPage();
 		} );
 	};
 
-	describe( 'Follow the WordPress import flow', () => {
+	describe( 'Follow the default DIFM order flow', () => {
 		navigateToLanding();
 
-		it( 'Start a WordPress import', async () => {
+		it( 'Start a DIFM order for a new site', async () => {
+			await difmFlow.clickButton( 'start a new site' );
+			await difmFlow.validateOptionsPage();
+		} );
+
+		it( 'Enter relevant information', async () => {
 			await difmFlow.enterOptions( 'Test Site', 'Just a little test' );
+			await difmFlow.clickButton( 'Continue' );
 			await difmFlow.validateSocialPage();
+		} );
+
+		it( 'Skip the social page', async () => {
+			await difmFlow.clickButton( 'Skip' );
+			await difmFlow.validateDesignPage();
+		} );
+
+		it( 'Let the team chose the layout', async () => {
+			await difmFlow.clickButton( 'Let us choose' );
+			await difmFlow.validatePagePickerPage();
+		} );
+
+		it( 'Proceed to Checkout', async () => {
+			await difmFlow.clickButton( 'Go to Checkout' );
+			await difmFlow.validateCheckoutPage();
 		} );
 	} );
 } );
