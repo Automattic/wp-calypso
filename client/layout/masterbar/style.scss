@@ -326,6 +326,7 @@ $autobar-height: 20px;
 	}
 
 	@include breakpoint-deprecated( '<480px' ) {
+		width: 48px;
 		// reset flex value on mobile
 		flex: 0 1 auto;
 		.masterbar__item-content {

@@ -70,10 +70,6 @@
 			font-size: $nav-unification-masterbar-mobile-font-size;
 		}
 
-		.masterbar__item .gridicon + .masterbar__item-content {
-			padding-left: 8px;
-		}
-
 		.masterbar__reader .gridicon + .masterbar__item-content {
 			padding-left: 6px;
 		}
@@ -215,8 +211,6 @@
 	// breakpoint used in wp-admin
 	@media only screen and ( max-width: 782px ) {
 		.masterbar__item-notifications {
-			width: 26px;
-
 			.gridicon {
 				flex-shrink: 0;
 			}
@@ -231,7 +225,6 @@
 	@include breakpoint-deprecated( '<480px' ) {
 		.masterbar__item-notifications {
 			margin-top: 0;
-			width: auto;
 		}
 	}
 
