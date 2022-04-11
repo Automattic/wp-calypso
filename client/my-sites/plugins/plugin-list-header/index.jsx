@@ -45,8 +45,6 @@ export class PluginsListHeader extends PureComponent {
 		removePluginNotice: PropTypes.func.isRequired,
 		haveActiveSelected: PropTypes.bool,
 		haveInactiveSelected: PropTypes.bool,
-		bulkManagement: PropTypes.bool,
-		selectedSiteSlug: PropTypes.string,
 		plugins: PropTypes.array.isRequired,
 		selected: PropTypes.array.isRequired,
 	};
