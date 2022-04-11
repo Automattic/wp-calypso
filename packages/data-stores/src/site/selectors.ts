@@ -46,6 +46,10 @@ export const getSiteDomains = ( state: State, siteId: number ) => {
 	return state.sitesDomains[ siteId ];
 };
 
+export const getSiteSettings = ( state: State, siteId: number ) => {
+	return state.sitesSettings[ siteId ];
+};
+
 export const getPrimarySiteDomain = ( _: State, siteId: number ) =>
 	select( STORE_KEY )
 		.getSiteDomains( siteId )

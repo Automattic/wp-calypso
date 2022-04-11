@@ -11,6 +11,7 @@ import type {
 	Cart,
 	Domain,
 	SiteLaunchError as SiteLaunchErrorType,
+	SiteSettings,
 } from './types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
@@ -147,6 +148,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		domains,
 	} );
 
+	const receiveSiteSettings = ( siteId: number, settings: SiteSettings ) => ( {
+		type: 'RECEIVE_SITE_SETTINGS' as const,
+		siteId,
+		settings,
+	} );
+
 	function* setCart( siteId: number, cartData: Cart ) {
 		const success: Cart = yield wpcomRequest( {
 			path: '/me/shopping-cart/' + siteId,
@@ -159,7 +166,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 	function* saveSiteSettings(
 		siteId: number,
-		settings: { blogname?: string; blogdescription?: string }
+		settings: {
+			blogname?: string;
+			blogdescription?: string;
+			woocommerce_onboarding_profile?: { [ key: string ]: any };
+		}
 	) {
 		try {
 			// extract this into its own function as a generic settings setter
@@ -212,6 +223,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 	return {
 		receiveSiteDomains,
+		receiveSiteSettings,
 		saveSiteTitle,
 		saveSiteSettings,
 		receiveSiteTitle,
@@ -243,6 +255,7 @@ export type Action =
 			| ActionCreators[ 'fetchNewSite' ]
 			| ActionCreators[ 'fetchSite' ]
 			| ActionCreators[ 'receiveSiteDomains' ]
+			| ActionCreators[ 'receiveSiteSettings' ]
 			| ActionCreators[ 'receiveNewSite' ]
 			| ActionCreators[ 'receiveSiteTitle' ]
 			| ActionCreators[ 'receiveNewSiteFailed' ]
