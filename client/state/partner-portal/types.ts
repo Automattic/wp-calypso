@@ -78,6 +78,7 @@ export interface APIProductFamilyProduct {
 	product_id: number;
 	currency: string;
 	amount: number;
+	price_interval: string;
 }
 
 export interface APIProductFamily {
