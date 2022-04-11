@@ -6,6 +6,7 @@ import {
 	Domain,
 	SiteLaunchState,
 	SiteLaunchStatus,
+	SiteSettings,
 } from './types';
 import type { Action } from './actions';
 import type { Reducer } from 'redux';
@@ -112,6 +113,16 @@ export const sitesDomains: Reducer< { [ key: number ]: Domain[] }, Action > = (
 	return state;
 };
 
+export const sitesSettings: Reducer< { [ key: number ]: SiteSettings }, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'RECEIVE_SITE_SETTINGS' ) {
+		return { ...state, [ action.siteId ]: action.settings };
+	}
+	return state;
+};
+
 export const launchStatus: Reducer< { [ key: number ]: SiteLaunchState }, Action > = (
 	state = {},
 	action
@@ -152,6 +163,7 @@ const reducer = combineReducers( {
 	sites,
 	launchStatus,
 	sitesDomains,
+	sitesSettings,
 } );
 
 export type State = ReturnType< typeof reducer >;

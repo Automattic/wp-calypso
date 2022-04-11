@@ -23,6 +23,7 @@ export const siteSetupFlow: Flow = {
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
+			'businessInfo',
 			'storeAddress',
 		] as StepPath[];
 	},
@@ -119,6 +120,12 @@ export const siteSetupFlow: Flow = {
 					}
 					return navigate( 'bloggerStartingPoint' );
 				}
+
+				case 'storeAddress':
+					return navigate( 'businessInfo' );
+
+				case 'businessInfo':
+					return navigate( 'storeFeatures' );
 
 				case 'courses': {
 					return redirect( `/post/${ siteSlug }` );
