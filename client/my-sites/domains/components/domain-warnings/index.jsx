@@ -28,7 +28,6 @@ import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
 	domainManagementEdit,
 	domainManagementList,
-	domainManagementNameServers,
 	domainManagementTransferIn,
 	domainManagementManageConsent,
 } from 'calypso/my-sites/domains/paths';
@@ -467,7 +466,7 @@ export class DomainWarnings extends PureComponent {
 			);
 		} else {
 			const domain = newTransfers[ 0 ].name;
-			actionLink = domainManagementNameServers( this.props.selectedSite.slug, domain );
+			actionLink = domainManagementEdit( this.props.selectedSite.slug, domain );
 			actionText = translate( 'Update now', {
 				comment: 'Call to action link for updating the nameservers on a newly transferred domain',
 			} );

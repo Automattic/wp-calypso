@@ -12,73 +12,78 @@ import {
 	TestAccount,
 	getTestAccountByFeature,
 	envToFeatureKey,
+	skipDescribeIf,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { TEST_IMAGE_PATH } from '../constants';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), () => {
-	const features = envToFeatureKey( envVariables );
-	const accountName = getTestAccountByFeature( features );
+const features = envToFeatureKey( envVariables );
 
-	let page: Page;
-	let testAccount: TestAccount;
-	let editorPage: EditorPage;
-	let imageFile: TestFile;
-	let coverBlock: CoverBlock;
+skipDescribeIf( features.siteType === 'atomic' )(
+	DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ),
+	() => {
+		const accountName = getTestAccountByFeature( features );
 
-	beforeAll( async () => {
-		page = await browser.newPage();
-		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		testAccount = new TestAccount( accountName );
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		let page: Page;
+		let testAccount: TestAccount;
+		let editorPage: EditorPage;
+		let imageFile: TestFile;
+		let coverBlock: CoverBlock;
 
-		await testAccount.authenticate( page );
-	} );
+		beforeAll( async () => {
+			page = await browser.newPage();
+			imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
+			testAccount = new TestAccount( accountName );
+			editorPage = new EditorPage( page, { target: features.siteType } );
 
-	it( 'Go to the new post page', async () => {
-		await editorPage.visit( 'post' );
-	} );
+			await testAccount.authenticate( page );
+		} );
 
-	it( 'Insert Cover block', async () => {
-		const blockHandle = await editorPage.addBlockFromSidebar(
-			CoverBlock.blockName,
-			CoverBlock.blockEditorSelector
-		);
-		coverBlock = new CoverBlock( blockHandle );
-	} );
+		it( 'Go to the new post page', async () => {
+			await editorPage.visit( 'post' );
+		} );
 
-	it( 'Upload image', async () => {
-		await coverBlock.upload( imageFile.fullpath );
-		// After uploading the image the focus is switched to the inner
-		// paragraph block (Cover title), so we need to switch it back outside.
-		const editorFrame = await editorPage.getEditorHandle();
-		await editorFrame.click( '.wp-block-cover', { position: { x: 1, y: 1 } } );
-	} );
+		it( 'Insert Cover block', async () => {
+			const blockHandle = await editorPage.addBlockFromSidebar(
+				CoverBlock.blockName,
+				CoverBlock.blockEditorSelector
+			);
+			coverBlock = new CoverBlock( blockHandle );
+		} );
 
-	it( 'Open settings sidebar', async function () {
-		await editorPage.openSettings();
-	} );
+		it( 'Upload image', async () => {
+			await coverBlock.upload( imageFile.fullpath );
+			// After uploading the image the focus is switched to the inner
+			// paragraph block (Cover title), so we need to switch it back outside.
+			const editorFrame = await editorPage.getEditorHandle();
+			await editorFrame.click( '.wp-block-cover', { position: { x: 1, y: 1 } } );
+		} );
 
-	it.each( CoverBlock.coverStyles )( 'Verify "%s" style is available', async ( style ) => {
-		const editorFrame = await editorPage.getEditorHandle();
-		await editorFrame.waitForSelector( `button[aria-label="${ style }"]` );
-	} );
+		it( 'Open settings sidebar', async function () {
+			await editorPage.openSettings();
+		} );
 
-	it( 'Set "Bottom Wave" style', async () => {
-		await coverBlock.setCoverStyle( 'Bottom Wave' );
-	} );
+		it.each( CoverBlock.coverStyles )( 'Verify "%s" style is available', async ( style ) => {
+			const editorFrame = await editorPage.getEditorHandle();
+			await editorFrame.waitForSelector( `button[aria-label="${ style }"]` );
+		} );
 
-	it( 'Close settings sidebar', async () => {
-		await editorPage.closeSettings();
-	} );
+		it( 'Set "Bottom Wave" style', async () => {
+			await coverBlock.setCoverStyle( 'Bottom Wave' );
+		} );
 
-	it( 'Publish and visit the post', async () => {
-		await editorPage.publish( { visit: true } );
-	} );
+		it( 'Close settings sidebar', async () => {
+			await editorPage.closeSettings();
+		} );
 
-	it( 'Verify the class for "Bottom Wave" style is present', async () => {
-		await page.waitForSelector( '.wp-block-cover.is-style-bottom-wave' );
-	} );
-} );
+		it( 'Publish and visit the post', async () => {
+			await editorPage.publish( { visit: true } );
+		} );
+
+		it( 'Verify the class for "Bottom Wave" style is present', async () => {
+			await page.waitForSelector( '.wp-block-cover.is-style-bottom-wave' );
+		} );
+	}
+);

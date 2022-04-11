@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { isEnabled } from '@automattic/calypso-config';
 import { IntentScreen, StepContainer } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -6,24 +7,34 @@ import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useSite } from '../../../../hooks/use-site';
 import { ONBOARD_STORE } from '../../../../stores';
 import { useIntents, useIntentsAlt } from './intents';
 import type { Step } from '../../types';
+
 import './style.scss';
 
 /**
  * The intent capture step
  */
 const IntentStep: Step = function IntentStep( { navigation } ) {
-	const { submit } = navigation;
+	const { goBack, submit } = navigation;
 	const translate = useTranslate();
 	const headerText = translate( 'Where will you start?' );
 	const subHeaderText = translate( 'You can change your mind at any time.' );
 
 	const { setIntent } = useDispatch( ONBOARD_STORE );
+
+	// example usage
+	// const site = useSite();
+	// const hasSimplePayments = useSelect(
+	//	( select ) => site && select( SITE_STORE ).hasActiveSiteFeature( site?.ID, 'simple-payments' )
+	//);
+
 	const intents = useIntents();
-	// TODO: I need to get the site slug to get the siteId to get the canImport
-	const intentsAlt = useIntentsAlt( true );
+	const site = useSite();
+	const canImport = Boolean( site?.capabilities.manage_options );
+	const intentsAlt = useIntentsAlt( canImport );
 
 	const submitIntent = ( intent: string ) => {
 		const providedDependencies = { intent };
@@ -36,8 +47,9 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 		<StepContainer
 			stepName={ 'intent-step' }
 			headerImageUrl={ intentImageUrl }
+			goBack={ goBack }
 			hideSkip
-			hideBack
+			hideBack={ ! isEnabled( 'signup/site-vertical-step' ) }
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader

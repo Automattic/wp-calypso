@@ -1,4 +1,3 @@
-import { isWpComProPlan } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SelectItem } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -9,18 +8,14 @@ import { StoreFeatureSet } from './types';
 
 export function useIntents(
 	siteSlug: string | null,
-	sitePlanSlug: string | undefined,
+	hasPaymentsFeature: boolean | false,
+	hasWooFeature: boolean | false,
 	trackSupportLinkClick: ( url: StoreFeatureSet ) => void
 ): SelectItem< StoreFeatureSet >[] {
 	const translate = useTranslate();
 	if ( ! siteSlug ) {
 		return [];
 	}
-	const isPaidPlan = sitePlanSlug !== 'free_plan';
-	const isBusinessOrEcommercePlan = [ 'business-bundle', 'ecommerce-bundle' ].includes(
-		sitePlanSlug ?? ''
-	);
-	const isProPlan = sitePlanSlug ? isWpComProPlan( sitePlanSlug ) : false;
 
 	return [
 		{
@@ -29,9 +24,9 @@ export function useIntents(
 			description: (
 				<>
 					<span className="store-features__requirements">
-						{ isPaidPlan
+						{ hasPaymentsFeature
 							? translate( 'Included in your plan' )
-							: translate( 'Requires a {{a}}paid plan{{/a}}', {
+							: translate( 'Requires a {{a}}Pro plan{{/a}}', {
 									components: {
 										a: (
 											<a
@@ -84,7 +79,7 @@ export function useIntents(
 			description: (
 				<>
 					<span className="store-features__requirements">
-						{ isBusinessOrEcommercePlan || isProPlan
+						{ hasWooFeature
 							? translate( 'Included in your plan' )
 							: translate( 'Requires a {{a}}Pro plan{{/a}}', {
 									components: {
@@ -131,7 +126,7 @@ export function useIntents(
 			),
 			icon: truck,
 			value: 'power',
-			actionText: translate( 'Upgrade' ),
+			actionText: hasWooFeature ? translate( 'Continue' ) : translate( 'Upgrade' ),
 		},
 	] as SelectItem< StoreFeatureSet >[];
 }

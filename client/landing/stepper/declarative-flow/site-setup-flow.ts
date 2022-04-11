@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useSelect } from '@wordpress/data';
 import { useFSEStatus } from '../hooks/use-fse-status';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
@@ -15,13 +16,15 @@ export const siteSetupFlow: Flow = {
 
 	useSteps() {
 		return [
+			...( isEnabled( 'signup/site-vertical-step' ) ? [ 'vertical' ] : [] ),
 			'intent',
 			'options',
 			'designSetup',
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
-		];
+			'storeAddress',
+		] as StepPath[];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -103,6 +106,10 @@ export const siteSetupFlow: Flow = {
 				case 'storeFeatures': {
 					const storeType = params[ 0 ];
 					if ( storeType === 'power' ) {
+						if ( isEnabled( 'stepper-woocommerce-poc' ) ) {
+							return navigate( 'storeAddress' );
+						}
+
 						const args = new URLSearchParams();
 						args.append( 'back_to', `/start/setup-site/store-features?siteSlug=${ siteSlug }` );
 						args.append( 'siteSlug', siteSlug as string );
@@ -116,6 +123,10 @@ export const siteSetupFlow: Flow = {
 				case 'courses': {
 					return redirect( `/post/${ siteSlug }` );
 				}
+
+				case 'vertical': {
+					return navigate( 'intent' );
+				}
 			}
 		}
 
@@ -124,8 +135,14 @@ export const siteSetupFlow: Flow = {
 				case 'bloggerStartingPoint':
 					return navigate( 'options' );
 
+				case 'intent':
+					return navigate( isEnabled( 'signup/site-vertical-step' ) ? 'vertical' : 'intent' );
+
 				case 'storeFeatures':
 					return navigate( 'options' );
+
+				case 'storeAddress':
+					return navigate( 'storeFeatures' );
 
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );

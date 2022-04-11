@@ -4,7 +4,6 @@ import moment from 'moment';
 import { modeType, stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
 import { isSubdomain } from 'calypso/lib/domains';
 import { isExpiringSoon } from 'calypso/lib/domains/utils/is-expiring-soon';
-import { isRecentlyRegistered } from 'calypso/lib/domains/utils/is-recently-registered';
 import { shouldRenderExpiringCreditCard, handleRenewNowClick } from 'calypso/lib/purchases';
 import {
 	SETTING_PRIMARY_DOMAIN,
@@ -14,8 +13,8 @@ import {
 	DOMAIN_EXPIRATION_AUCTION,
 } from 'calypso/lib/url/support';
 import {
+	domainManagementEdit,
 	domainManagementEditContactInfo,
-	domainManagementNameServers,
 	domainMappingSetup,
 } from 'calypso/my-sites/domains/paths';
 import { transferStatus, type as domainTypes, gdprConsentStatus } from './constants';
@@ -461,7 +460,7 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if ( isRecentlyRegistered( domain.registrationDate ) ) {
+			if ( domain.pendingRegistration ) {
 				let noticeText;
 				if ( domain.isPrimary ) {
 					noticeText = translate(
@@ -531,7 +530,7 @@ export function resolveDomainStatus(
 								strong: <strong />,
 								a: (
 									<a
-										href={ domainManagementNameServers( siteSlug as string, domain.domain ) }
+										href={ domainManagementEdit( siteSlug as string, domain.domain ) }
 										onClick={ ( e ) => e.stopPropagation() }
 									/>
 								),
@@ -543,7 +542,7 @@ export function resolveDomainStatus(
 						{
 							components: {
 								strong: <strong />,
-								a: <a href={ domainManagementNameServers( siteSlug as string, domain.domain ) } />,
+								a: <a href={ domainManagementEdit( siteSlug as string, domain.domain ) } />,
 							},
 						}
 					),
@@ -552,10 +551,7 @@ export function resolveDomainStatus(
 				};
 			}
 
-			if (
-				gdprConsentStatus.PENDING_ASYNC === domain.gdprConsentStatus ||
-				domain.pendingRegistration
-			) {
+			if ( gdprConsentStatus.PENDING_ASYNC === domain.gdprConsentStatus ) {
 				const detailCta = domain.currentUserIsOwner
 					? translate( 'Please check the email sent to you for further details' )
 					: translate( 'Please check the email sent to the domain owner for further details' );

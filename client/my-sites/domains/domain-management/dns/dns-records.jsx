@@ -12,11 +12,7 @@ import InfoNotice from 'calypso/my-sites/domains/domain-management/components/do
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import DnsRecordsList from 'calypso/my-sites/domains/domain-management/dns/dns-records-list';
 import EmailSetup from 'calypso/my-sites/domains/domain-management/email-setup';
-import {
-	domainManagementEdit,
-	domainManagementNameServers,
-	domainManagementList,
-} from 'calypso/my-sites/domains/paths';
+import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { fetchDns } from 'calypso/state/domains/dns/actions';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
@@ -57,7 +53,7 @@ class DnsRecords extends Component {
 		const mobileItem = {
 			// translators: %(domain)s is the domain name (e.g. example.com) to which settings page the user will return to when pressing the link
 			label: translate( 'Back to %(domain)s', { args: { domain: selectedDomainName } } ),
-			href: domainManagementNameServers( selectedSite.slug, selectedDomainName, currentRoute ),
+			href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
 

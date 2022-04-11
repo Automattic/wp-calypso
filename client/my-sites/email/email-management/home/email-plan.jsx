@@ -19,7 +19,12 @@ import {
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
 import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
-import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
+import {
+	getTitanProductName,
+	getTitanProductSlug,
+	getTitanSubscriptionId,
+	hasTitanMailWithUs,
+} from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
@@ -238,9 +243,9 @@ const EmailPlan = ( props ) => {
 	}
 
 	function renderAddNewMailboxesOrRenewNavItem() {
-		const { domain, hasSubscription, purchase, translate } = props;
+		const { canAddMailboxes, domain, hasSubscription, purchase, translate } = props;
 
-		if ( hasTitanMailWithUs( domain ) && ! hasSubscription ) {
+		if ( hasTitanMailWithUs( domain ) && ! hasSubscription && canAddMailboxes ) {
 			return (
 				<VerticalNavItem { ...getAddMailboxProps() }>
 					{ translate( 'Add new mailboxes' ) }
@@ -261,11 +266,14 @@ const EmailPlan = ( props ) => {
 				);
 			}
 
-			return (
-				<VerticalNavItem { ...getAddMailboxProps() }>
-					{ translate( 'Add new mailboxes' ) }
-				</VerticalNavItem>
-			);
+			if ( canAddMailboxes ) {
+				return (
+					<VerticalNavItem { ...getAddMailboxProps() }>
+						{ translate( 'Add new mailboxes' ) }
+					</VerticalNavItem>
+				);
+			}
+			return null;
 		}
 
 		return (
@@ -343,6 +351,7 @@ EmailPlan.propType = {
 	source: PropTypes.string,
 
 	// Connected props
+	canAddMailboxes: PropTypes.bool,
 	currentRoute: PropTypes.string,
 	emailForwards: PropTypes.array,
 	hasSubscription: PropTypes.bool,
@@ -353,6 +362,9 @@ EmailPlan.propType = {
 
 export default connect( ( state, ownProps ) => {
 	return {
+		canAddMailboxes:
+			Boolean( getGSuiteProductSlug( ownProps.domain ) ) ||
+			Boolean( getTitanProductSlug( ownProps.domain ) ),
 		currentRoute: getCurrentRoute( state ),
 		emailForwards: getEmailForwards( state, ownProps.domain.name ),
 		isLoadingEmailForwards: isRequestingEmailForwards( state, ownProps.domain.name ),

@@ -5,7 +5,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { isExpiringSoon } from 'calypso/lib/domains/utils';
 import {
-	domainManagementNameServers,
+	domainManagementEdit,
 	domainManagementTransferToOtherSite,
 } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -18,7 +18,7 @@ const DomainOnlyNotice = ( { domain, selectedSiteSlug, translate } ) => {
 		[ domain.name, selectedSiteSlug, currentRoute ]
 	);
 	const handleChangeNameServersClick = useCallback(
-		() => page( domainManagementNameServers( selectedSiteSlug, domain.name, currentRoute ) ),
+		() => page( domainManagementEdit( selectedSiteSlug, domain.name, currentRoute ) ),
 		[ domain.name, selectedSiteSlug, currentRoute ]
 	);
 

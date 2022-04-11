@@ -69,6 +69,7 @@ interface EmailManagementHomeProps {
 	emailListInactiveHeader?: ReactElement;
 	sectionHeaderLabel?: TranslateResult;
 	selectedDomainName: string;
+	selectedEmailProviderSlug: string;
 	selectedIntervalLength?: IntervalLength;
 	showActiveDomainList?: boolean;
 	source: string;
@@ -77,6 +78,7 @@ interface EmailManagementHomeProps {
 const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 	const {
 		emailListInactiveHeader,
+		selectedEmailProviderSlug,
 		showActiveDomainList = true,
 		selectedDomainName,
 		selectedIntervalLength,
@@ -126,6 +128,8 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 				<EmailProvidersStackedComparisonPage
 					comparisonContext="email-home-selected-domain"
 					selectedDomainName={ selectedDomainName }
+					selectedEmailProviderSlug={ selectedEmailProviderSlug }
+					selectedIntervalLength={ selectedIntervalLength }
 					source={ source }
 				/>
 			);
@@ -158,8 +162,9 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 			<EmailProvidersStackedComparisonPage
 				comparisonContext="email-home-single-domain"
 				selectedDomainName={ domainsWithNoEmail[ 0 ].name }
-				source={ source }
+				selectedEmailProviderSlug={ selectedEmailProviderSlug }
 				selectedIntervalLength={ selectedIntervalLength }
+				source={ source }
 			/>
 		);
 	}

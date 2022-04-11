@@ -36,8 +36,7 @@ const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
 const clickOverrides = {};
 let addedListener = false;
-// Replicates basic '$( el ).on( selector, cb )'. Includes preventDefault to override
-// the default event handlers.
+// Replicates basic '$( el ).on( selector, cb )'.
 function addEditorListener( selector, cb ) {
 	clickOverrides[ selector ] = cb;
 
@@ -62,10 +61,7 @@ function triggerOverrideHandler( e ) {
 
 	// Find the correct callback to use for this clicked element.
 	for ( const [ selector, cb ] of Object.entries( clickOverrides ) ) {
-		if ( matchingElement.matches( selector ) ) {
-			e.preventDefault();
-			cb( e );
-		}
+		matchingElement.matches( selector ) && cb( e );
 	}
 }
 
@@ -128,7 +124,8 @@ function handlePostTrash( calypsoPort ) {
 }
 
 function overrideRevisions( calypsoPort ) {
-	addEditorListener( '[href*="revision.php"]', () => {
+	addEditorListener( '[href*="revision.php"]', ( e ) => {
+		e.preventDefault();
 		calypsoPort.postMessage( { action: 'openRevisions' } );
 
 		calypsoPort.addEventListener( 'message', onLoadRevision, false );
@@ -586,11 +583,11 @@ async function openLinksInParentFrame( calypsoPort ) {
 	].join( ',' );
 
 	addEditorListener( viewPostLinks, ( e ) => {
-		// Ignore if the click has modifier
+		// Allows modifiers to open links outside of the current tab using the default behavior.
 		if ( e.shiftKey || e.ctrlKey || e.metaKey ) {
 			return;
 		}
-
+		e.preventDefault();
 		calypsoPort.postMessage( {
 			action: 'viewPost',
 			payload: { postUrl: e.target.href },
@@ -705,30 +702,28 @@ async function openLinksInParentFrame( calypsoPort ) {
 	const body = document.querySelector( '.interface-interface-skeleton__body' );
 	sidebarsObserver.observe( body, { childList: true } );
 
-	// Manage reusable blocks link in the 3 dots more menu, post and site editors
-	if ( manageReusableBlocksUrl ) {
-		const toggleButton = document.querySelector(
-			'.edit-post-more-menu button, .edit-site-more-menu button'
-		);
-		const moreMenuManageReusableBlocksObserver = new window.MutationObserver( () => {
-			const isExpanded =
-				toggleButton.attributes.getNamedItem( 'aria-expanded' )?.nodeValue === 'true';
-			if ( isExpanded ) {
-				// The menu has not expanded at this point in Safari, so modify the link
-				// after the call stack has cleared and the menu has rendered.
-				setTimeout( () => {
-					const hyperlink = document.querySelector(
-						'a.components-menu-item__button[href*="post_type=wp_block"]'
+	const popoverSlotObserver = new window.MutationObserver( ( mutations ) => {
+		const isComponentsPopover = ( node ) => node.classList.contains( 'components-popover' );
+
+		const replaceWithManageReusableBlocksHref = ( anchorElem ) => {
+			anchorElem.href = manageReusableBlocksUrl;
+			anchorElem.target = '_top';
+		};
+
+		for ( const record of mutations ) {
+			for ( const node of record.addedNodes ) {
+				if ( isComponentsPopover( node ) ) {
+					const manageReusableBlocksAnchorElem = node.querySelector(
+						'a[href$="edit.php?post_type=wp_block"]'
 					);
-					hyperlink.href = manageReusableBlocksUrl;
-					hyperlink.target = '_top';
-				} );
+					manageReusableBlocksAnchorElem &&
+						replaceWithManageReusableBlocksHref( manageReusableBlocksAnchorElem );
+				}
 			}
-		} );
-		moreMenuManageReusableBlocksObserver.observe( toggleButton, {
-			attributeFilter: [ 'aria-expanded' ],
-		} );
-	}
+		}
+	} );
+	const popoverSlotElem = document.querySelector( '.interface-interface-skeleton ~ .popover-slot' );
+	popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
 
 	// Sidebar might already be open before this script is executed.
 	// post and site editors
@@ -753,6 +748,7 @@ async function openLinksInParentFrame( calypsoPort ) {
  */
 function openCustomizer( calypsoPort ) {
 	addEditorListener( '[href*="customize.php"]', ( e ) => {
+		e.preventDefault();
 		calypsoPort.postMessage( {
 			action: 'openCustomizer',
 			payload: {
@@ -771,6 +767,7 @@ function openCustomizer( calypsoPort ) {
  */
 function openTemplatePartLinks( calypsoPort ) {
 	addEditorListener( '.template__block-container .template-block__overlay a', ( e ) => {
+		e.preventDefault();
 		e.stopPropagation(); // Otherwise it will port the message twice.
 
 		// Get the template part ID from the current href.

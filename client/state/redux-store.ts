@@ -1,33 +1,36 @@
 import { Reducer, Store } from 'redux';
-import { addReducerToStore, clear as clearReducers, WithAddReducer } from './add-reducer';
+import {
+	addReducerToStore,
+	clear as clearReducers,
+	WithAddReducer,
+	GetStoredState,
+} from './add-reducer';
 
 type QueueEntry = [ string[], Reducer ];
 
-let applicationStore: ( Store & WithAddReducer ) | undefined;
-let applicationUserId: number | undefined;
+let currentAddReducer: ReturnType< typeof addReducerToStore > | undefined;
 const reducerRegistrationQueue: QueueEntry[] = [];
 
-export function setStore( store: Store & WithAddReducer, currentUserId: number | undefined ): void {
+export function setStore( store: Store & WithAddReducer, getStoredState?: GetStoredState ): void {
 	// Clear any previously added reducers when replacing an existing store.
-	if ( applicationStore ) {
+	if ( currentAddReducer ) {
 		clearReducers();
 	}
 
-	applicationStore = store;
-	applicationUserId = currentUserId;
+	currentAddReducer = addReducerToStore( store, getStoredState );
 
 	// Synchronously add all pending reducers.
 	// These include reducers registered to previous stores, since their code has
 	// already been loaded.
 	for ( const [ key, reducer ] of reducerRegistrationQueue ) {
-		addReducerToStore( applicationStore, applicationUserId )( key, reducer );
+		currentAddReducer( key, reducer );
 	}
 }
 
 export function registerReducer( key: string[], reducer: Reducer ): void {
-	if ( applicationStore ) {
+	if ( currentAddReducer ) {
 		// Register immediately.
-		addReducerToStore( applicationStore, applicationUserId )( key, reducer );
+		currentAddReducer( key, reducer );
 	}
 
 	// Add to queue, for future stores.

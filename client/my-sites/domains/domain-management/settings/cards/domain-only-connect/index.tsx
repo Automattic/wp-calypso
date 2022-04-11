@@ -20,7 +20,7 @@ const DomainOnlyConnectCard = ( props: DomainOnlyConnectCardProps ): JSX.Element
 				<p>{ translate( 'Your domain is not associated with a WordPress.com site.' ) }</p>
 			</div>
 			<div className="domain-only-connect__card-button-container">
-				<Button href={ createSiteFromDomainOnly( selectedDomainName ) } primary>
+				<Button href={ createSiteFromDomainOnly( selectedDomainName, selectedSite.ID ) } primary>
 					{ translate( 'Create a site' ) }
 				</Button>
 

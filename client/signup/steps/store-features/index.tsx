@@ -1,13 +1,15 @@
+import { FEATURE_SIMPLE_PAYMENTS, FEATURE_WOOP } from '@automattic/calypso-products';
 import { SelectItems } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { getSite } from 'calypso/state/sites/selectors';
 import { EXCLUDED_STEPS } from '../intent/index';
 import { useIntents } from './intents';
 import { StoreFeatureSet } from './types';
@@ -66,14 +68,18 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 		} );
 	};
 
-	const sitePlanSlug = useSelector( ( state ) => getSite( state, siteSlug )?.plan?.product_slug );
-
 	// Only do following things when mounted
 	React.useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [] );
 
-	const intents = useIntents( siteSlug, sitePlanSlug, trackSupportLinkClick );
+	const hasPaymentsFeature = useSelector( ( state ) =>
+		hasActiveSiteFeature( state, props.siteId, FEATURE_SIMPLE_PAYMENTS )
+	);
+	const hasWooFeature = useSelector( ( state ) =>
+		hasActiveSiteFeature( state, props.siteId, FEATURE_WOOP )
+	);
+	const intents = useIntents( siteSlug, hasPaymentsFeature, hasWooFeature, trackSupportLinkClick );
 
 	return (
 		<StepWrapper
@@ -83,11 +89,14 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			fallbackSubHeaderText={ subHeaderText }
 			headerImageUrl={ null }
 			stepContent={
-				<SelectItems
-					items={ intents }
-					onSelect={ submitStoreFeatures }
-					preventWidows={ preventWidows }
-				/>
+				<>
+					<QuerySiteFeatures siteIds={ [ props.siteId ] } />
+					<SelectItems
+						items={ intents }
+						onSelect={ submitStoreFeatures }
+						preventWidows={ preventWidows }
+					/>
+				</>
 			}
 			align={ 'left' }
 			hideSkip={ true }

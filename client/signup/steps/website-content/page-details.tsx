@@ -12,7 +12,7 @@ import {
 	imageUploaded,
 	imageUploadFailed,
 	imageUploadInitiated,
-	textChanged,
+	websiteContentFieldChanged,
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MediaUploadData, WordpressMediaUpload } from './wordpress-media-upload';
@@ -86,9 +86,10 @@ export function PageDetails( {
 			target: { value },
 		} = e;
 		dispatch(
-			textChanged( {
+			websiteContentFieldChanged( {
 				pageId: page.id,
-				content: value,
+				fieldName: 'content',
+				fieldValue: value,
 			} )
 		);
 		onChangeField && onChangeField( e );

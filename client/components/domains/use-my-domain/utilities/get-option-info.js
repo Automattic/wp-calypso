@@ -5,7 +5,6 @@ import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import {
 	getMappingFreeText,
-	getMappingPriceText,
 	getTransferFreeText,
 	getTransferPriceText,
 	getTransferRestrictionMessage,
@@ -65,14 +64,6 @@ export function getOptionInfo( {
 		isSignupStep,
 	} );
 
-	const mappingPriceText = getMappingPriceText( {
-		cart,
-		currencyCode,
-		domain,
-		productsList,
-		selectedSite,
-	} );
-
 	const transferFreeText = getTransferFreeText( {
 		cart,
 		domain,
@@ -102,7 +93,6 @@ export function getOptionInfo( {
 	};
 
 	const mappingPricing = {
-		cost: mappingPriceText,
 		text: mappingFreeText,
 	};
 
@@ -127,6 +117,19 @@ export function getOptionInfo( {
 							"We don't support transfers for domains ending with <strong>.%s</strong>, but you can connect it instead."
 						),
 						getTld( domain )
+					),
+					{ strong: createElement( 'strong' ) }
+				),
+			};
+			break;
+		case domainAvailability.MAPPABLE:
+			transferContent = {
+				...optionInfo.transferNotSupported,
+				topText: createInterpolateElement(
+					sprintf(
+						/* translators: %s - the domain the user wanted to transfer */
+						__( "<strong>%s</strong> can't be transferred, but you can connect it instead." ),
+						domain
 					),
 					{ strong: createElement( 'strong' ) }
 				),

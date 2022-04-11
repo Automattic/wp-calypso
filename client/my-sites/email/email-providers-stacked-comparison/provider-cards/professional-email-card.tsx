@@ -156,7 +156,7 @@ const ProfessionalEmailCard = ( {
 
 	professionalEmail.onExpandedChange = onExpandedChange;
 	professionalEmail.priceBadge = (
-		<ProfessionalEmailPrice domain={ domain } intervalLength={ intervalLength } />
+		<ProfessionalEmailPrice { ...{ domain, intervalLength, isDomainInCart } } />
 	);
 
 	professionalEmail.formFields = (
