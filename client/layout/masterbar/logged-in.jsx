@@ -227,6 +227,10 @@ class MasterbarLoggedIn extends Component {
 		this.setState( { isMenuOpen: ! this.state.isMenuOpen } );
 	}
 
+	dismissPopover = () => {
+		this.props.savePreference( MENU_POPOVER_PREFERENCE_KEY, true );
+	};
+
 	masterbarItemsMap() {
 		const isWordPressActionSearchFeatureEnabled = config.isEnabled( 'wordpress-action-search' );
 		const { isActionSearchVisible, isMobile, menuBtnRef } = this.state;
@@ -243,7 +247,6 @@ class MasterbarLoggedIn extends Component {
 			currentSelectedSiteSlug,
 			currentSelectedSiteId,
 			hasDismissedThePopover,
-			dismissPopover,
 			user,
 			isFetchingPrefs,
 		} = this.props;
@@ -268,7 +271,6 @@ class MasterbarLoggedIn extends Component {
 						onClose={ this.onSearchActionsClose }
 					/>
 				) : null,
-			mySites: () => this.renderMySites(),
 			reader: () => (
 				<Item
 					tipTarget="reader"
@@ -400,7 +402,7 @@ class MasterbarLoggedIn extends Component {
 							className="masterbar__new-menu-popover"
 							isVisible={ ! isFetchingPrefs && ! hasDismissedThePopover }
 							context={ menuBtnRef }
-							onClose={ dismissPopover }
+							onClose={ this.dismissPopover }
 							position="bottom left"
 							showDelay={ 500 }
 						>
@@ -412,7 +414,7 @@ class MasterbarLoggedIn extends Component {
 								</h1>
 								<p>{ translate( 'We changed the navigation for a cleaner experience.' ) }</p>
 								<div className="masterbar__new-menu-popover-actions">
-									<Button onClick={ dismissPopover }>
+									<Button onClick={ this.dismissPopover }>
 										{ translate( 'Got it', { comment: 'Got it, as in OK' } ) }
 									</Button>
 								</div>
@@ -509,15 +511,11 @@ export default connect(
 			isFetchingPrefs: isFetchingPreferences( state ),
 		};
 	},
-	( dispatch ) => {
-		return {
-			setNextLayoutFocus,
-			recordTracksEvent,
-			updateSiteMigrationMeta,
-			activateNextLayoutFocus,
-			dismissPopover: () => {
-				dispatch( savePreference( MENU_POPOVER_PREFERENCE_KEY, true ) );
-			},
-		};
+	{
+		setNextLayoutFocus,
+		recordTracksEvent,
+		updateSiteMigrationMeta,
+		activateNextLayoutFocus,
+		savePreference,
 	}
 )( localize( MasterbarLoggedIn ) );
