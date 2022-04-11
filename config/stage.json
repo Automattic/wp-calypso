@@ -14,6 +14,7 @@
 	"olark_chat_identity": "7089-503-10-5123",
 	"features": {
 		"ad-tracking": false,
+		"anchor-fm": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
 		"cloudflare": true,
