@@ -25,7 +25,7 @@ export const anchorFmFlow: Flow = {
 			recordSubmitStep( providedDependencies, 'anchor-fm', currentStep );
 
 			switch ( currentStep ) {
-				case 'options':
+				case 'podcastTitle':
 					return navigate( 'designSetup' );
 				case 'designSetup':
 					return navigate( 'fontPairing' );
@@ -37,17 +37,17 @@ export const anchorFmFlow: Flow = {
 		const goBack = () => {
 			switch ( currentStep ) {
 				case 'designSetup':
-					return navigate( 'options' );
+					return navigate( 'podcastTitle' );
 				case 'fontPairing':
 					return navigate( 'designSetup' );
 				default:
-					return navigate( 'options' );
+					return navigate( 'podcastTitle' );
 			}
 		};
 
 		const goNext = () => {
 			switch ( currentStep ) {
-				case 'options':
+				case 'podcastTitle':
 					return navigate( 'designSetup' );
 				case 'designSetup':
 					return navigate( 'fontPairing' );
@@ -55,7 +55,7 @@ export const anchorFmFlow: Flow = {
 					return redirect( `/page/home/${ siteSlug }` );
 
 				default:
-					return navigate( 'options' );
+					return navigate( 'podcastTitle' );
 			}
 		};
 

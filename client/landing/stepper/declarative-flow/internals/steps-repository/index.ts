@@ -12,6 +12,7 @@ export { default as processing } from './processing-step';
 export type StepPath =
 	| 'courses'
 	| 'intent'
+	| 'podcastTitle'
 	| 'options'
 	| 'bloggerStartingPoint'
 	| 'storeFeatures'
