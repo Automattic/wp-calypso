@@ -438,9 +438,11 @@ class DomainsStep extends Component {
 
 		return (
 			<ProvideExperimentData
-				name="calypso_signup_domain_mobile_browser_chrome_added_v2"
+				name="calypso_signup_domain_mobile_browser_chrome_added_v3"
 				options={ {
-					isEligible: isMobile() && 'onboarding' === this.props.flowName,
+					isEligible:
+						isMobile() &&
+						[ 'onboarding', 'launch-site', 'free', 'pro' ].includes( this.props.flowName ),
 				} }
 			>
 				{ ( isLoading, experimentAssignment ) => {

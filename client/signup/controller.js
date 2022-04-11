@@ -342,8 +342,8 @@ export default {
 			loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v2' );
 		}
 
-		if ( isMobile() && 'onboarding' === flowName ) {
-			loadExperimentAssignment( 'calypso_signup_domain_mobile_browser_chrome_added_v2' );
+		if ( isMobile() && [ 'onboarding', 'launch-site', 'free', 'pro' ].includes( flowName ) ) {
+			loadExperimentAssignment( 'calypso_signup_domain_mobile_browser_chrome_added_v3' );
 		}
 
 		context.primary = createElement( SignupComponent, {
