@@ -11,6 +11,7 @@ export default function BillingDetails(): ReactElement {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const billing = useBillingDashboardQuery();
+	const useDailyPrices = billing.isSuccess && billing.data.priceInterval === 'day';
 
 	return (
 		<div className="billing-details">
@@ -19,11 +20,7 @@ export default function BillingDetails(): ReactElement {
 					<div>{ translate( 'Products' ) }</div>
 					<div>{ translate( 'Assigned licenses' ) }</div>
 					<div>{ translate( 'Unassigned licenses' ) }</div>
-					<div>
-						{ billing.isSuccess &&
-							billing.data.priceInterval === 'day' &&
-							translate( 'Days in Total' ) }
-					</div>
+					<div>{ billing.isSuccess && useDailyPrices && translate( 'Days in Total' ) }</div>
 				</div>
 			</Card>
 
@@ -34,12 +31,12 @@ export default function BillingDetails(): ReactElement {
 							<div className="billing-details__product">
 								{ product.productName }
 								<span className="billing-details__line-item-meta">
-									{ billing.data.priceInterval === 'day' &&
+									{ useDailyPrices &&
 										translate( 'Price per license per day: %(price)s', {
 											args: { price: formatCurrency( product.productCost, 'USD' ) },
 										} ) }
 
-									{ billing.data.priceInterval === 'month' &&
+									{ ! useDailyPrices &&
 										translate( 'Price per license per month: %(price)s', {
 											args: { price: formatCurrency( product.productCost, 'USD' ) },
 										} ) }
@@ -61,14 +58,14 @@ export default function BillingDetails(): ReactElement {
 							</div>
 
 							<div className="billing-details__subtotal">
-								{ billing.data.priceInterval === 'day' &&
+								{ useDailyPrices &&
 									// Translators: * designates a footnote explaining how we calculate the number of days.
 									translate( '%(count)d Day*', '%(count)d Days*', {
 										count: product.productQuantity,
 										args: { count: product.productQuantity },
 									} ) }
 
-								{ billing.data.priceInterval === 'month' &&
+								{ ! useDailyPrices &&
 									translate( '%(count)d License', '%(count)d Licenses', {
 										count: product.counts.total,
 										args: { count: product.counts.total },
@@ -133,7 +130,7 @@ export default function BillingDetails(): ReactElement {
 						{ billing.isError && <Gridicon icon="minus" /> }
 					</strong>
 
-					{ billing.isSuccess && billing.data.priceInterval === 'month' && (
+					{ billing.isSuccess && ! useDailyPrices && (
 						<>
 							<span className="billing-details__total-label billing-details__line-item-meta">
 								{ translate( 'Assigned licenses:' ) }
@@ -144,7 +141,7 @@ export default function BillingDetails(): ReactElement {
 						</>
 					) }
 
-					{ billing.isSuccess && billing.data.priceInterval === 'month' && (
+					{ billing.isSuccess && ! useDailyPrices && (
 						<>
 							<span className="billing-details__total-label billing-details__line-item-meta">
 								{ translate( 'Unassigned licenses:' ) }
@@ -157,7 +154,7 @@ export default function BillingDetails(): ReactElement {
 				</div>
 			</Card>
 
-			{ billing.isSuccess && billing.data.priceInterval === 'day' && (
+			{ billing.isSuccess && useDailyPrices && (
 				<Card compact className="billing-details__footer">
 					<small>
 						* Estimate of the combined number of full days each license will be active for by the
