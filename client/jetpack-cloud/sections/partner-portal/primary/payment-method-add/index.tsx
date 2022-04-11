@@ -147,9 +147,15 @@ function PaymentMethodAdd(): ReactElement {
 
 							<AutomaticBillingNotice
 								className="payment-method-add__notice"
-								text={ translate(
-									'By storing your credit card you agree to have it charged automatically each month.'
-								) }
+								text={
+									useAsPrimaryPaymentMethod
+										? translate(
+												'By storing your payment method as primary you agree to have it charged automatically each month.'
+										  )
+										: translate(
+												'By storing your payment method you agree to it potentially being used for monthly invoices in the future.'
+										  )
+								}
 							/>
 
 							<div className="payment-method-add__navigation-buttons">
