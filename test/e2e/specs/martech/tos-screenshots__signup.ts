@@ -79,26 +79,31 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 			archive.glob( 'tos_white_signup_*' );
 			archive.finalize();
 
-			output.on( 'close', async function () {
-				const form = new FormData();
-				const bearerToken = DataHelper.getTosUploadToken();
-				form.append( 'media[]', fs.createReadStream( zipFilename ) );
-				await fetch(
-					`https://public-api.wordpress.com/rest/v1.1/sites/${ DataHelper.getTosUploadDestination() }/media/new`,
-					{
-						method: 'POST',
-						body: form,
-						headers: {
-							Authorization: `Bearer ${ bearerToken }`,
-						},
-					}
-				)
-					.then( ( response ) => response.json() )
-					.then( ( response ) => {
-						expect( response?.media[ 0 ]?.title ).toStrictEqual( filetnameTitle );
-						expect( response?.media[ 0 ]?.mime_type ).toStrictEqual( 'application/zip' );
-					} );
+			const fsStreamEndPromise = new Promise( ( resolve ) => {
+				return output.on( 'close', function () {
+					return resolve( 'closed' );
+				} );
 			} );
+			await fsStreamEndPromise;
+
+			const form = new FormData();
+			const bearerToken = DataHelper.getTosUploadToken();
+			form.append( 'media[]', fs.createReadStream( zipFilename ) );
+			const response = await fetch(
+				`https://public-api.wordpress.com/rest/v1.1/sites/${ DataHelper.getTosUploadDestination() }/media/new`,
+				{
+					method: 'POST',
+					body: form,
+					headers: {
+						Authorization: `Bearer ${ bearerToken }`,
+					},
+				}
+			);
+			const result = await response.json();
+
+			expect( result?.media?.[ 0 ]?.title ).toStrictEqual( filetnameTitle );
+
+			expect( result?.media?.[ 0 ]?.mime_type ).toStrictEqual( 'application/zip' );
 		} );
 	} );
 } );
