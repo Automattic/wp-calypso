@@ -66,7 +66,7 @@ jest.mock( 'calypso/server/render', () => ( {
 	attachI18n: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/server/state-cache', () => jest.fn() );
+jest.mock( 'calypso/server/state-cache', () => new Map() );
 
 jest.mock( 'calypso/server/user-bootstrap', () => jest.fn() );
 

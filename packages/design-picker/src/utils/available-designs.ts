@@ -6,6 +6,7 @@ import type { Design, DesignUrlOptions } from '../types';
 import type { AvailableDesigns } from './available-designs-config';
 import type { MShotsOptions } from '@automattic/onboarding';
 
+/** @deprecated used for Gutenboarding (/new flow) */
 export const getDesignUrl = (
 	design: Design,
 	locale: string,

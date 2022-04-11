@@ -11,7 +11,6 @@ import EditContactInfoPage from './edit-contact-info-page';
 import SiteRedirect from './edit/site-redirect';
 import TransferIn from './edit/transfer-in';
 import ManageConsent from './manage-consent';
-import NameServers from './name-servers';
 import Security from './security';
 import Settings from './settings';
 import SiteRedirectSettings from './site-redirect';
@@ -32,7 +31,6 @@ export default {
 	ManageConsent,
 	AllDomains,
 	SiteDomains,
-	NameServers,
 	Security,
 	Settings,
 	SiteRedirect,

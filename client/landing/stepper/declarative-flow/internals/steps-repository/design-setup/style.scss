@@ -194,8 +194,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	 */
 	.design-setup__preview {
 		.step-container__header {
-			margin: 12px 0 24px;
-			transform: translateY( -48px );
+			margin-top: 40px;
 
 			.formatted-header {
 				margin-top: 0;
@@ -214,13 +213,20 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 					padding: 0;
 				}
 			}
+
+			@include break-mobile {
+				margin: 12px 0 24px;
+				transform: translateY( -48px );
+			}
 		}
 
 		.step-container__content {
 			height: calc( 100vh - 245px );
+			margin-top: 74px;
 
 			@include break-mobile {
 				height: calc( 100vh - 225px );
+				margin-top: 32px;
 			}
 
 			@include break-small {

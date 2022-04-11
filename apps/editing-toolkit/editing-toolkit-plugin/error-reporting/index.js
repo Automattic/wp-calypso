@@ -18,6 +18,7 @@ function activateSentry() {
 		// Set tracesSampleRate to 1.0 to capture 100%
 		// of transactions for performance monitoring.
 		// We recommend adjusting this value in production
+		release: 'wpcom-test-01',
 		tracesSampleRate: 1.0,
 	} );
 

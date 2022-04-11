@@ -54,9 +54,10 @@ const PluginDetailsCTA = ( {
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 	const isFreePlan = selectedSite && isFreePlanProduct( selectedSite.plan );
 
-	const shouldUpgrade = useSelector(
-		( state ) => ! hasActiveSiteFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
-	);
+	const shouldUpgrade =
+		useSelector(
+			( state ) => ! hasActiveSiteFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
+		) && ! isJetpackSelfHosted;
 
 	// Eligibilities for Simple Sites.
 	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
