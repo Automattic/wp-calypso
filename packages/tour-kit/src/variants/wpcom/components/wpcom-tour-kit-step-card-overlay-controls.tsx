@@ -1,6 +1,6 @@
 import { Button, Flex } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import minimize from '../icons/minimize';
 import type { TourStepRendererProps } from '../../../types';
 
@@ -13,11 +13,13 @@ const WpcomTourKitStepCardOverlayControls: React.FunctionComponent< Props > = ( 
 	onMinimize,
 	onDismiss,
 } ) => {
+	const { __ } = useI18n();
+
 	return (
 		<div className="wpcom-tour-kit-step-card-overlay-controls">
 			<Flex>
 				<Button
-					label={ __( 'Minimize Tour' ) }
+					label={ __( 'Minimize Tour', __i18n_text_domain__ ) }
 					isPrimary
 					className="wpcom-tour-kit-step-card-overlay-controls__minimize-icon"
 					icon={ minimize }
@@ -25,7 +27,7 @@ const WpcomTourKitStepCardOverlayControls: React.FunctionComponent< Props > = ( 
 					onClick={ onMinimize }
 				></Button>
 				<Button
-					label={ __( 'Close Tour' ) }
+					label={ __( 'Close Tour', __i18n_text_domain__ ) }
 					isPrimary
 					icon={ close }
 					iconSize={ 24 }
