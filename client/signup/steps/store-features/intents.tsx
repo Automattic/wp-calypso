@@ -26,7 +26,7 @@ export function useIntents(
 					<span className="store-features__requirements">
 						{ hasPaymentsFeature
 							? translate( 'Included in your plan' )
-							: translate( 'Requires a {{a}}paid plan{{/a}}', {
+							: translate( 'Requires a {{a}}Pro plan{{/a}}', {
 									components: {
 										a: (
 											<a
