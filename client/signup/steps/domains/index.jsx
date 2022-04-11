@@ -459,7 +459,7 @@ class DomainsStep extends Component {
 									<span className="domains__domain-side-content-container-browser-chrome-url">
 										https://
 										{ this.props.translate( 'yoursitename', {
-											comment: 'xample url used to explain what a domain is.',
+											comment: 'example url used to explain what a domain is.',
 										} ) }
 										.com
 									</span>
@@ -490,14 +490,7 @@ class DomainsStep extends Component {
 										/>
 									</div>
 								) }
-							{ ! this.shouldHideUseYourDomain() && (
-								<div className="domains__domain-side-content">
-									<ReskinSideExplainer
-										onClick={ this.handleUseYourDomainClick }
-										type={ 'use-your-domain' }
-									/>
-								</div>
-							) }
+							{ useYourDomain }
 							{ this.shouldDisplayDomainOnlyExplainer() && (
 								<div className="domains__domain-side-content">
 									<ReskinSideExplainer
