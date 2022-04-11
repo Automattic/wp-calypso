@@ -87,6 +87,10 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 	}
 
 	if ( ! isInSignup && [ TYPE_FLEXIBLE, TYPE_FREE ].includes( plan.type ) ) {
+		if ( isCurrentPlan ) {
+			return <Button disabled>{ translate( 'This is your plan' ) }</Button>;
+		}
+
 		return null;
 	}
 
