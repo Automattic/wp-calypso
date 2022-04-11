@@ -285,7 +285,12 @@ const ComparisonTable = styled.table< TableProps >`
 	}
 
 	tbody th {
-		padding-left: 0;
+		html[dir='ltr'] & {
+			padding-left: 0;
+		}
+		html[dir='rtl'] & {
+			padding-right: 0;
+		}
 	}
 
 	thead th,
