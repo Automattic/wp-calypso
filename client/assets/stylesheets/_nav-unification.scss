@@ -10,7 +10,8 @@
  * IMPORTANT: When adding to this file please also add the source file in a comment.
  */
 
-.theme-default.is-nav-unification { // excludes theme-jetpack-cloud.
+.theme-default.is-nav-unification {
+	// excludes theme-jetpack-cloud.
 	// breakpoint used in wp-admin
 	@media only screen and ( min-width: 782px ) {
 		// client/assets/stylesheets/shared/_variables.scss
@@ -144,6 +145,30 @@
 	}
 
 	@include breakpoint-deprecated( '<480px' ) {
+		// New post button
+		.masterbar__item-new {
+			background: #32373c;
+		}
+
+		.masterbar__toggle-drafts.button.is-borderless {
+			background: #32373c;
+			color: #eeeeee;
+			border-left: #646970;
+			border-left-style: solid;
+
+			&:hover {
+				background: #32373c;
+
+				.gridicon {
+					color: #eeeeee;
+				}
+			}
+
+			.gridicon {
+				color: #eeeeee;
+			}
+		}
+
 		.masterbar__item-new,
 		.masterbar__toggle-drafts.button.is-borderless {
 			height: 36px;

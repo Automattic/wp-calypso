@@ -1,4 +1,3 @@
-import page from 'page';
 import { useEffect, useState } from 'react';
 import type { ReactNode, FC } from 'react';
 
@@ -7,7 +6,7 @@ export const MasterBarMobileMenu: FC< {
 	open: boolean;
 	onClose: () => void;
 } > = ( { children, open, onClose } ) => {
-	const currentURL = page.current;
+	const currentURL = window.location.pathname;
 
 	const [ openingURL, setOpeningUrl ] = useState( currentURL );
 

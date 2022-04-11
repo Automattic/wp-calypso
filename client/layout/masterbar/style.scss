@@ -72,10 +72,18 @@ $autobar-height: 20px;
 			width: 100%;
 			justify-content: flex-start;
 			box-sizing: border-box;
+			// icon colors
+			color: #a2aab2;
+
+			.gridicon {
+				fill: #a2aab2;
+			}
 
 			.masterbar__item-content {
 				display: flex;
 				align-items: center;
+				// text color
+				color: white;
 
 				.masterbar__item-me-label {
 					display: block;
@@ -86,6 +94,7 @@ $autobar-height: 20px;
 					top: initial;
 					left: initial;
 					transform: initial;
+					border-color: #a2aab2;
 				}
 			}
 		}
