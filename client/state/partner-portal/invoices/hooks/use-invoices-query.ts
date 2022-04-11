@@ -24,6 +24,7 @@ function selectInvoices( api: APIInvoices ): Invoices {
 			dueDate: apiInvoice.due_date,
 			status: apiInvoice.status,
 			total: apiInvoice.total,
+			currency: apiInvoice.currency,
 			pdfUrl: apiInvoice.invoice_pdf,
 		} ) ),
 	};

@@ -12,7 +12,7 @@ import './style.scss';
 
 // Component extracted for readability and not meant to be reusable as the header and card grid (.invoice-list__row)
 // have to be identical for the faux table columns to align visually.
-function InvoiceCard( { dueDate, status, total, pdfUrl }: Invoice ): ReactElement {
+function InvoiceCard( { dueDate, status, total, currency, pdfUrl }: Invoice ): ReactElement {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const dueDateMoment = moment( dueDate );
@@ -58,7 +58,9 @@ function InvoiceCard( { dueDate, status, total, pdfUrl }: Invoice ): ReactElemen
 					<Badge type={ badgeType }>{ badgeLabel }</Badge>
 				</div>
 
-				<div className="invoices-list__total">{ formatCurrency( total, 'USD' ) }</div>
+				<div className="invoices-list__total">
+					{ formatCurrency( total, currency.toUpperCase() ) }
+				</div>
 
 				<div className="invoices-list__download">
 					{ pdfUrl && (
@@ -83,7 +85,7 @@ export default function InvoicesList(): ReactElement {
 					<div>{ translate( 'Due Date' ) }</div>
 					<div>{ translate( 'Status' ) }</div>
 					<div>{ translate( 'Total' ) }</div>
-					<div></div>
+					<div />
 				</div>
 			</Card>
 
@@ -95,6 +97,7 @@ export default function InvoicesList(): ReactElement {
 						dueDate={ invoice.dueDate }
 						status={ invoice.status }
 						total={ invoice.total }
+						currency={ invoice.currency }
 						pdfUrl={ invoice.pdfUrl }
 					/>
 				) ) }
