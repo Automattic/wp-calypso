@@ -74,6 +74,7 @@ $autobar-height: 20px;
 			box-sizing: border-box;
 			// icon colors
 			color: #a2aab2;
+			margin-left: 0;
 
 			.gridicon {
 				fill: #a2aab2;
@@ -338,6 +339,8 @@ $autobar-height: 20px;
 		width: 48px;
 		// reset flex value on mobile
 		flex: 0 1 auto;
+		padding: 0;
+
 		.masterbar__item-content {
 			display: none;
 		}
