@@ -24,7 +24,6 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"features": {
 		"ad-tracking": false,
-		"anchor-fm": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": false,
 		"cloudflare": true,
@@ -72,6 +71,7 @@
 		"seller-experience": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
+		"signup/anchor-fm": false,
 		"signup/social": true,
 		"signup/redesigned-difm-flow": true,
 		"site-indicator": true,

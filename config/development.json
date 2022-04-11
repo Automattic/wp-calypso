@@ -27,7 +27,6 @@
 	"olark_chat_identity": "7089-503-10-5123",
 	"features": {
 		"ad-tracking": false,
-		"anchor-fm": true,
 		"calypsoify/plugins": true,
 		"cloudflare": true,
 		"comments/filters-in-posts": true,
@@ -129,6 +128,7 @@
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
+		"signup/anchor-fm": true,
 		"signup/professional-email-step": false,
 		"signup/reskin": true,
 		"signup/social": true,
