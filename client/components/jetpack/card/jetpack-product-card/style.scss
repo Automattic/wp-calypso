@@ -164,6 +164,11 @@
 	em {
 		font-style: normal;
 	}
+	.info-popover.owner-info__pop-over {
+		> .gridicon {
+			color: var( --color-accent );
+		}
+	}
 }
 
 .jetpack-product-card__features {

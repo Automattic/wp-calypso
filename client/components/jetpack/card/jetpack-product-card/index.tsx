@@ -28,6 +28,7 @@ type OwnProps = {
 	buttonPrimary: boolean;
 	onButtonClick?: React.MouseEventHandler;
 	buttonURL?: string;
+	buttonDisabled?: boolean;
 	expiryDate?: Moment;
 	isFeatured?: boolean;
 	isOwned?: boolean;
@@ -67,6 +68,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	buttonPrimary,
 	onButtonClick,
 	buttonURL,
+	buttonDisabled,
 	expiryDate,
 	isFeatured,
 	isOwned,
@@ -188,8 +190,8 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 						primary={ buttonPrimary }
 						className="jetpack-product-card__button"
 						onClick={ onButtonClick }
-						href={ isDisabled ? '#' : buttonURL }
-						disabled={ isDisabled }
+						href={ isDisabled || buttonDisabled ? '#' : buttonURL }
+						disabled={ isDisabled || buttonDisabled }
 					>
 						{ buttonLabel }
 					</Button>
@@ -198,7 +200,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 						primary={ buttonPrimary }
 						className="jetpack-product-card__button"
 						onClick={ onButtonClick }
-						disabled={ isDisabled }
+						disabled={ isDisabled || buttonDisabled }
 					>
 						{ buttonLabel }
 					</Button>
