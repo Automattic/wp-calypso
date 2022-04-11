@@ -25,6 +25,8 @@ import {
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
+	PRODUCT_JETPACK_BOOST,
+	PRODUCT_JETPACK_BOOST_MONTHLY,
 } from './constants';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -55,6 +57,8 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: translate( 'Backup' ),
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate( 'Backup' ),
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: translate( 'Backup' ),
+		[ PRODUCT_JETPACK_BOOST ]: translate( 'Boost' ),
+		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: translate( 'Boost' ),
 		[ PRODUCT_JETPACK_SCAN_REALTIME ]: translate( 'Scan {{em}}Real-time{{/em}}', {
 			components: {
 				em: createElement( 'em', { style: { whiteSpace: 'nowrap' } } ),
@@ -108,6 +112,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	);
 	const videoPress = translate( 'VideoPress' );
 	const antiSpam = translate( 'Anti-spam' );
+	const boost = translate( 'Boost' );
 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -118,6 +123,8 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupT1,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupT2,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupT2,
+		[ PRODUCT_JETPACK_BOOST ]: boost,
+		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boost,
 		[ PRODUCT_JETPACK_SEARCH ]: search,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
 		[ PRODUCT_WPCOM_SEARCH ]: search,
@@ -154,6 +161,7 @@ export const getJetpackProductsCallToAction = (): Record< string, TranslateResul
 	const scan = translate( 'Get Scan' );
 	const videoPress = translate( 'Get VideoPress' );
 	const antiSpam = translate( 'Get Anti-spam' );
+	const boost = translate( 'Get Boost' );
 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -164,6 +172,8 @@ export const getJetpackProductsCallToAction = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupT1,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupT2,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupT2,
+		[ PRODUCT_JETPACK_BOOST ]: boost,
+		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boost,
 		[ PRODUCT_JETPACK_SEARCH ]: search,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: search,
 		[ PRODUCT_JETPACK_SCAN ]: scan,
@@ -182,6 +192,8 @@ export const getJetpackProductsTaglines = (): Record<
 	const backupDailyTagline = translate( 'Best for sites with occasional updates' );
 	const backupRealtimeTagline = translate( 'Best for sites with frequent updates' );
 	const backupOwnedTagline = translate( 'Your site is actively being backed up' );
+	const boostTagLine = translate( "Improve your site's performance" );
+	const boostOwnedTagLine = translate( 'Your site is optimized with Boost' );
 	const searchTagline = translate( 'Recommended for sites with lots of products or content' );
 	const scanTagline = translate( 'Protect your site' );
 	const scanOwnedTagline = translate( 'Your site is actively being scanned for malicious threats' );
@@ -222,6 +234,14 @@ export const getJetpackProductsTaglines = (): Record<
 			default: backupRealtimeTagline,
 			owned: backupOwnedTagline,
 		},
+		[ PRODUCT_JETPACK_BOOST ]: {
+			default: boostTagLine,
+			owned: boostOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: {
+			default: boostTagLine,
+			owned: boostOwnedTagLine,
+		},
 		[ PRODUCT_JETPACK_SEARCH ]: { default: searchTagline },
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: { default: searchTagline },
 		[ PRODUCT_WPCOM_SEARCH ]: { default: searchTagline },
@@ -254,6 +274,9 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 	const backupT2Description = translate(
 		'Save every change with real-time backups and get back online quickly with one-click restores.'
 	);
+	const boostDescription = translate(
+		"One-click optimizations that supercharge your WordPress site's performance and improve web vitals scores for better SEO."
+	);
 	const searchDescription = translate(
 		'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
 	);
@@ -279,6 +302,8 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupT1Description,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupT2Description,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupT2Description,
+		[ PRODUCT_JETPACK_BOOST ]: boostDescription,
+		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostDescription,
 		[ PRODUCT_JETPACK_SEARCH ]: searchDescription,
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchDescription,
 		[ PRODUCT_JETPACK_SCAN ]: scanDescription,
