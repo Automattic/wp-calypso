@@ -50,15 +50,19 @@ $autobar-height: 20px;
 			-webkit-font-smoothing: antialiased;
 		}
 	}
-
-	.masterbar__mobile-menu-container {
+	.masterbar__mobile-menu-backdrop {
 		position: fixed;
+		top: var( --masterbar-height );
+		left: 0;
+		height: calc( 100% - var( --masterbar-height ) );
+		width: 100%;
+	}
+	.masterbar__mobile-menu-inner {
 		width: 100%;
 		background: #23282d;
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-end;
-		top: var( --masterbar-height );
 		padding: 10px;
 		box-sizing: border-box;
 		animation: mobile-menu-fade-in 200ms ease-out forwards;

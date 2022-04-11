@@ -387,7 +387,10 @@ class MasterbarLoggedIn extends Component {
 						tooltip={ translate( 'Menu' ) }
 						ref={ ( ref ) => ref !== menuBtnRef && this.setState( { menuBtnRef: ref } ) }
 					/>
-					<MasterBarMobileMenu open={ this.state.isMenuOpen }>
+					<MasterBarMobileMenu
+						onClose={ () => this.handleToggleMenu() }
+						open={ this.state.isMenuOpen }
+					>
 						{ this.masterbarItemsMap().publish() }
 						{ this.masterbarItemsMap().reader() }
 						{ this.masterbarItemsMap().me() }
