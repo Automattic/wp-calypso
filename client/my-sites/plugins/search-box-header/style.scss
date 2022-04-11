@@ -37,11 +37,6 @@
 					color: var( --studio-black );
 				}
 
-				@media ( min-width: 660px ) {
-					&.is-open input.search-component__input[type='search'] {
-						font-size: $font-body-small;
-					}
-				}
 			}
 		}
 	}
