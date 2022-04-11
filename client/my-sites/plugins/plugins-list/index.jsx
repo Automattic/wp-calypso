@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { find, get, includes, isEmpty, isEqual, range, reduce, sortBy } from 'lodash';
+import { get, includes, isEmpty, isEqual, range, reduce, sortBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -140,11 +140,6 @@ export class PluginsList extends Component {
 			selectedPlugins: Object.assign( {}, this.state.selectedPlugins, slugsToBeUpdated ),
 		} );
 	};
-
-	getPluginBySlug( slug ) {
-		const { plugins } = this.props;
-		return find( plugins, ( plugin ) => plugin.slug === slug );
-	}
 
 	filterSelection = {
 		active( plugin ) {
