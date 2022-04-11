@@ -435,6 +435,7 @@ class DomainsStep extends Component {
 						<ReskinSideExplainer
 							onClick={ this.handleDomainExplainerClick }
 							type={ 'free-domain-explainer' }
+							flowName={ this.props.flowName }
 						/>
 					</div>
 				) }
