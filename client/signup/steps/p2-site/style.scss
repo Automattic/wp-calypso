@@ -40,11 +40,18 @@
 	box-sizing: border-box;
 }
 
+.p2-site__wordpress-domain-default-container {
+	position: relative;
+	height: 0;
+}
+
 .p2-site__wordpress-domain-default {
 	color: var( --p2-color-text );
-	position: relative;
+	position: absolute;
 	font-size: var( --p2-font-size-form );
-	top: -66px;
+	top: -42px;
+	left: 0;
+	right: 0;
 	display: flex;
 	align-items: center;
 	max-width: 400px;

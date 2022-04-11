@@ -465,6 +465,7 @@ class P2Site extends Component {
 					name="suggested-site"
 					value={ site ? `https://${ site }.wordpress.com` : '' }
 				/>
+				<div class="p2-site__wordpress-domain-default-container">{ this.renderDefaultSite() }</div>
 				<FormSettingExplanation className="p2-site__workspace-form-input-explanation">
 					{ this.props.translate(
 						'We suggest this URL, but you can {{a}}choose manually{{/a}} too',
@@ -475,7 +476,6 @@ class P2Site extends Component {
 						}
 					) }
 				</FormSettingExplanation>
-				{ this.renderDefaultSite() }
 			</>
 		);
 	};
