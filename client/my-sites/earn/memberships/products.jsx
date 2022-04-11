@@ -6,6 +6,7 @@ import {
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
@@ -13,6 +14,7 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import HeaderCake from 'calypso/components/header-cake';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import {
@@ -66,6 +68,11 @@ class MembershipsProductsSection extends Component {
 
 	closeDialog = () => this.setState( { showAddEditDialog: false, showDeleteDialog: false } );
 
+	goToPlanUpgrade = () => {
+		this.props.trackUpgrade();
+		page( '/plans/' + this.props.siteSlug );
+	};
+
 	render() {
 		return (
 			<div>
@@ -81,7 +88,7 @@ class MembershipsProductsSection extends Component {
 						</Button>
 					) }
 					{ ! this.props.hasStripeFeature && (
-						<Button primary compact href={ '/plans/' + this.props.siteSlug }>
+						<Button primary compact onClick={ () => this.goToPlanUpgrade() }>
 							{ this.props.translate( 'Upgrade to add and edit plans' ) }
 						</Button>
 					) }
@@ -115,17 +122,28 @@ class MembershipsProductsSection extends Component {
 	}
 }
 
-export default connect( ( state ) => {
-	const site = getSelectedSite( state );
-	const siteId = getSelectedSiteId( state );
-	return {
-		site,
-		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
-		products: getProductsForSiteId( state, siteId ),
-		hasStripeFeature:
-			hasActiveSiteFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
-			hasActiveSiteFeature( state, siteId, FEATURE_DONATIONS ) ||
-			hasActiveSiteFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
-	};
-} )( localize( MembershipsProductsSection ) );
+export default connect(
+	( state ) => {
+		const site = getSelectedSite( state );
+		const siteId = getSelectedSiteId( state );
+		return {
+			site,
+			siteId,
+			siteSlug: getSelectedSiteSlug( state ),
+			products: getProductsForSiteId( state, siteId ),
+			hasStripeFeature:
+				hasActiveSiteFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
+				hasActiveSiteFeature( state, siteId, FEATURE_DONATIONS ) ||
+				hasActiveSiteFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
+		};
+	},
+	( dispatch ) => ( {
+		trackUpgrade: () =>
+			dispatch(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_earn_page_payment_plans_upgrade_button_click' ),
+					bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' )
+				)
+			),
+	} )
+)( localize( MembershipsProductsSection ) );
