@@ -201,7 +201,7 @@ export class EditorMediaModalDetailItem extends Component {
 
 		return (
 			<EditorMediaModalDetailFields
-				key={ `detail-fields-${ item?.ID }` }
+				key={ `detail-fields-${ site.ID }-${ item?.ID }` }
 				site={ site }
 				item={ item }
 				onUpdate={ this.props.onUpdate }
