@@ -16,7 +16,6 @@ const autoUpdateActions = [ ENABLE_AUTOUPDATE_PLUGIN, DISABLE_AUTOUPDATE_PLUGIN 
 export class PluginAutoUpdateToggle extends Component {
 	toggleAutoUpdates = () => {
 		const {
-			isMock,
 			disabled,
 			site,
 			plugin,
@@ -24,7 +23,7 @@ export class PluginAutoUpdateToggle extends Component {
 			recordTracksEvent: recordEvent,
 		} = this.props;
 
-		if ( isMock || disabled ) {
+		if ( disabled ) {
 			return;
 		}
 
@@ -177,7 +176,6 @@ export class PluginAutoUpdateToggle extends Component {
 }
 
 PluginAutoUpdateToggle.propTypes = {
-	isMock: PropTypes.bool,
 	site: PropTypes.object.isRequired,
 	plugin: PropTypes.object.isRequired,
 	wporg: PropTypes.bool,
@@ -186,7 +184,6 @@ PluginAutoUpdateToggle.propTypes = {
 };
 
 PluginAutoUpdateToggle.defaultProps = {
-	isMock: false,
 	disabled: false,
 	isMarketplaceProduct: false,
 };

@@ -25,7 +25,6 @@ export class PluginsListHeader extends PureComponent {
 	};
 
 	static defaultProps = {
-		isMock: false,
 		disabled: false,
 	};
 
