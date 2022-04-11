@@ -79,6 +79,7 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": false,
+		"signup/anchor-fm": false,
 		"signup/professional-email-step": false,
 		"signup/reskin": true,
 		"signup/social": true,
