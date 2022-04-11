@@ -16,7 +16,7 @@ import { preload } from 'calypso/sections-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
+import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
@@ -245,6 +245,7 @@ class MasterbarLoggedIn extends Component {
 			hasDismissedThePopover,
 			dismissPopover,
 			user,
+			isFetchingPrefs,
 		} = this.props;
 
 		return {
@@ -393,10 +394,11 @@ class MasterbarLoggedIn extends Component {
 					</MasterBarMobileMenu>
 					{ menuBtnRef && (
 						<Popover
-							isVisible={ ! hasDismissedThePopover }
+							className="masterbar__new-menu-popover"
+							isVisible={ ! isFetchingPrefs && ! hasDismissedThePopover }
 							context={ menuBtnRef }
 							onClose={ dismissPopover }
-							autoPosition
+							position="bottom left"
 							showDelay={ 500 }
 						>
 							<div className="masterbar__new-menu-popover-inner">
@@ -501,6 +503,7 @@ export default connect(
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			hasDismissedThePopover: getPreference( state, MENU_POPOVER_PREFERENCE_KEY ),
+			isFetchingPrefs: isFetchingPreferences( state ),
 		};
 	},
 	( dispatch ) => {
