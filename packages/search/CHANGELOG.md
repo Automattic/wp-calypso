@@ -5,5 +5,4 @@
 ## 1.0.1
 
 - Add search modes
-- Add "when-typing" search mode
-- Add "on-enter" searchmode.
+- Add "when-typing" and "on-enter" search modes, defaulting to "when-typing".
