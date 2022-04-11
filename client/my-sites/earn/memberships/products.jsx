@@ -74,13 +74,18 @@ class MembershipsProductsSection extends Component {
 					{ this.props.translate( 'Payment plans' ) }
 				</HeaderCake>
 
-				{ this.props.hasStripeFeature && (
-					<SectionHeader>
+				<SectionHeader>
+					{ this.props.hasStripeFeature && (
 						<Button primary compact onClick={ () => this.openAddEditDialog( null ) }>
 							{ this.props.translate( 'Add a new payment plan' ) }
 						</Button>
-					</SectionHeader>
-				) }
+					) }
+					{ ! this.props.hasStripeFeature && (
+						<Button primary compact href={ '/plans/' + this.props.siteSlug }>
+							{ this.props.translate( 'Upgrade to add and edit plans' ) }
+						</Button>
+					) }
+				</SectionHeader>
 				{ this.props.products.map( ( product ) => (
 					<CompactCard className="memberships__products-product-card" key={ product.ID }>
 						<div className="memberships__products-product-details">
