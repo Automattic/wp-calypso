@@ -1,23 +1,17 @@
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
+import { ReactChild, ReactElement } from 'react';
 
 import './style.scss';
 
 interface Props {
 	className?: string;
+	text: ReactChild;
 }
 
-export default function AutomaticBillingNotice( { className = '' }: Props ): ReactElement {
-	const translate = useTranslate();
-
+export default function AutomaticBillingNotice( { className = '', text }: Props ): ReactElement {
 	return (
 		<p className={ classnames( 'automatic-billing-notice', className ) }>
-			<small>
-				{ translate(
-					'Your primary payment method will be automatically charged for your monthly invoices.'
-				) }
-			</small>
+			<small>{ text }</small>
 		</p>
 	);
 }

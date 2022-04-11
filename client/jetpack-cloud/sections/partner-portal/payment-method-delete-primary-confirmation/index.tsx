@@ -64,7 +64,12 @@ const PaymentMethodDeletePrimaryConfirmation: FunctionComponent< Props > = ( {
 					) }
 				</div>
 
-				<AutomaticBillingNotice className="payment-method-delete-primary-confirmation__notice" />
+				<AutomaticBillingNotice
+					className="payment-method-delete-primary-confirmation__notice"
+					text={ translate(
+						'Your primary payment method will be automatically charged for your monthly invoices.'
+					) }
+				/>
 			</div>
 		</div>
 	);

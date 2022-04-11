@@ -145,7 +145,12 @@ function PaymentMethodAdd(): ReactElement {
 
 							{ paymentMethods && paymentMethods[ 0 ] && paymentMethods[ 0 ].activeContent }
 
-							<AutomaticBillingNotice className="payment-method-add__notice" />
+							<AutomaticBillingNotice
+								className="payment-method-add__notice"
+								text={ translate(
+									'By storing your credit card you agree to have it charged automatically each month.'
+								) }
+							/>
 
 							<div className="payment-method-add__navigation-buttons">
 								<Button
