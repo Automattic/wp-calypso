@@ -11,11 +11,7 @@ export const anchorFmFlow: Flow = {
 	name: 'anchor-fm',
 
 	useSteps() {
-		return [
-			'podcastTitle', //This step doesn't exist yet
-			'designSetup', //This is the design picker with only three "podcast" themes loaded, no sidebar
-			'fontPairing', //This step doesn't exist yet
-		] as StepPath[];
+		return [ 'podcastTitle', 'designSetup', 'fontPairing' ] as StepPath[];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
