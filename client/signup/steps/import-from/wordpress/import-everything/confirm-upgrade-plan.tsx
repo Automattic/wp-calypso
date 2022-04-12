@@ -78,7 +78,7 @@ export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 			<div className={ classnames( 'import__upgrade-plan-container' ) }>
 				<div className={ classnames( 'import__upgrade-plan-price' ) }>
 					<h3 className={ classnames( 'plan-title' ) }>{ plan?.getTitle() }</h3>
-					<PlanPrice rawPrice={ rawPrice } currency={ currencyCode } />
+					<PlanPrice rawPrice={ rawPrice } currencyCode={ currencyCode } />
 					<span className={ classnames( 'plan-time-frame' ) }>{ plan?.getBillingTimeFrame() }</span>
 				</div>
 				<div className={ classnames( 'import__upgrade-plan-details' ) }>
