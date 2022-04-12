@@ -6,7 +6,7 @@ import {
 import 'calypso/state/reader/init';
 
 /**
- * Get sites by organization id
+ * Has feed / blog an organization id
  */
 const hasReaderFollowsOrganization = createSelector(
 	( state, feedId, blogId ) => {
