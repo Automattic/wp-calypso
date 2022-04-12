@@ -471,7 +471,7 @@ class MasterbarLoggedIn extends Component {
 							{ this.renderBackButton() }
 						</div>
 						<div className="masterbar__section masterbar__section--right">
-							{ this.renderBackButton() }
+							{ this.renderHelpCenter() }
 						</div>
 					</Masterbar>
 				);

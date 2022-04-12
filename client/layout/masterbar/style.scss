@@ -84,8 +84,9 @@ $autobar-height: 20px;
 			.masterbar__item-content {
 				display: flex;
 				align-items: center;
-				// text color
 				color: white;
+				font-size: $font-body-small;
+				font-weight: 400;
 
 				.masterbar__item-me-label {
 					display: block;

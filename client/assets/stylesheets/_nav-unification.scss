@@ -147,17 +147,19 @@
 	@include breakpoint-deprecated( '<480px' ) {
 		// New post button
 		.masterbar__item-new {
-			background: var( --color-sidebar-submenu-background );
+			background: #32373c;
 		}
 
 		.masterbar__toggle-drafts.button.is-borderless {
-			background: var( --color-sidebar-submenu-background );
+			background: #32373c;
 			color: var( --color-sidebar-text );
 			border-left: #646970;
 			border-left-style: solid;
+			margin-right: 0;
+			padding: 0 16px;
 
 			&:hover {
-				background: var( --color-sidebar-submenu-background );
+				background: #32373c;
 
 				.gridicon {
 					color: var( --color-sidebar-text );
