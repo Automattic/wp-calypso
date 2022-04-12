@@ -1,0 +1,8 @@
+.categories__discover {
+	.categories__header {
+		@extend .wp-brand-font;
+		font-size: $font-title-large;
+		display: flex;
+		align-items: center;
+	}
+}
