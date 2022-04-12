@@ -52,7 +52,7 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 							className={ classNames( 'podcast-title__underline', {
 								'is-empty': ! ( podcastTitle as string )?.length,
 							} ) }
-							style={ { width: ! ( podcastTitle as string )?.length ? '100%' : underlineWidth } }
+							style={ { width: underlineWidth || '100%' } }
 						/>
 						<FormSettingExplanation>
 							<Icon className="podcast-title__form-icon" icon={ tip } size={ 20 } />
