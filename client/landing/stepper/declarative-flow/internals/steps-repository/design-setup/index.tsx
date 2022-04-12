@@ -45,7 +45,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 
-	const flowName = config.isEnabled( 'signup/anchor-fm' ) ? 'anchor-fm' : 'setup-site';
+	const flowName = isEnabled( 'signup/anchor-fm' ) ? 'anchor-fm' : 'setup-site';
 	const isAnchorSite = 'anchor-fm' === flowName;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
