@@ -86,8 +86,12 @@ import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
 export const exampleFlow: Flow = {
-	useSteps()...
-	useStepNavigation( currentStep, navigate )...
+	useSteps(): Array< StepPath > {
+		return [];
+	},
+	useStepNavigation( currentStep, navigate ) {
+		return { goNext, goBack };
+	},
 	useAssertConditions() {
 		const siteSlug = useSiteSlugParam();
 
