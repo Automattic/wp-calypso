@@ -22,17 +22,16 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 	const PodcastTitleForm: React.FC = () => {
 		const [ podcastTitle, setPodcastTitle ] = useState( '' );
 		const [ formTouched, setFormTouched ] = useState( false );
-		const [ underlineWidth, setUnderlineWidth ] = useState( 0 );
-		const inputRef = useRef() as React.MutableRefObject< HTMLInputElement >;
+		const inputRef = useRef< HTMLInputElement >();
 
 		const handleSubmit = () => {
 			submit?.();
 		};
 
+		const underlineWidth = getTextWidth( ( podcastTitle as string ) || '', inputRef.current );
+
 		const handleChange = ( event: React.FormEvent< HTMLInputElement > ) => {
 			setFormTouched( true );
-			const underlineWidth = getTextWidth( ( podcastTitle as string ) || '', inputRef.current );
-			setUnderlineWidth( underlineWidth );
 			return setPodcastTitle( event.currentTarget.value );
 		};
 		return (
@@ -53,7 +52,7 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 							className={ classNames( 'podcast-title__underline', {
 								'is-empty': ! ( podcastTitle as string )?.length,
 							} ) }
-							style={ { width: underlineWidth || '100%' } }
+							style={ { width: ! ( podcastTitle as string )?.length ? '100%' : underlineWidth } }
 						/>
 						<FormSettingExplanation>
 							<Icon className="podcast-title__form-icon" icon={ tip } size={ 20 } />
