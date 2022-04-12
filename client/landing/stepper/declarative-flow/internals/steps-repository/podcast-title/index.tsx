@@ -7,10 +7,14 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 
 const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
-	const { goBack, goNext } = navigation;
+	const { goBack, submit } = navigation;
 	const translate = useTranslate();
 	const headerText = translate( 'My podcast is called' );
 	const subHeaderText = translate( "Don't worry, you can change it later." );
+
+	const handleClick = () => {
+		submit?.();
+	};
 
 	return (
 		<StepContainer
@@ -27,7 +31,7 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 					align={ 'left' }
 				/>
 			}
-			stepContent={ <Button onClick={ goNext }>Go to next step</Button> }
+			stepContent={ <Button onClick={ handleClick }>Go to next step</Button> }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

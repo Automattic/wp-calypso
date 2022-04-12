@@ -7,12 +7,16 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 
 const FontPairingStep: Step = function FontPairingStep( { navigation } ) {
-	const { goBack, goNext } = navigation;
+	const { goBack, submit } = navigation;
 	const translate = useTranslate();
 	const headerText = translate( 'Pick a font pairing' );
 	const subHeaderText = translate(
 		'Customize your design with typography that best suits your podcast. You can always fine-tune it later.'
 	);
+
+	const handleClick = () => {
+		submit?.();
+	};
 
 	return (
 		<StepContainer
@@ -28,7 +32,7 @@ const FontPairingStep: Step = function FontPairingStep( { navigation } ) {
 					align={ 'left' }
 				/>
 			}
-			stepContent={ <Button onClick={ goNext }>Go to next step</Button> }
+			stepContent={ <Button onClick={ handleClick }>Go to next step</Button> }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
