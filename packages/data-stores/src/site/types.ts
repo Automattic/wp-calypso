@@ -149,6 +149,7 @@ export interface SiteDetails {
 		show_on_front?: string;
 		site_intent?: string;
 		site_segment?: string;
+		site_vertical?: string;
 		software_version?: string;
 		selected_features?: FeatureId[];
 		theme_slug?: string;

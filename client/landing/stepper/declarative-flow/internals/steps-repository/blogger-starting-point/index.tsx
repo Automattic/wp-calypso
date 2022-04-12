@@ -32,7 +32,7 @@ const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
 			stepName={ 'blogger-starting-point' }
 			headerImageUrl={ startingPointImageUrl }
 			goBack={ goBack }
-			skipLabelText={ translate( 'Skip to My Home' ) }
+			skipLabelText={ translate( 'Skip to dashboard' ) }
 			goNext={ () => submitIntent( 'skip-to-my-home' ) }
 			skipButtonAlign={ 'top' }
 			isHorizontalLayout={ true }
