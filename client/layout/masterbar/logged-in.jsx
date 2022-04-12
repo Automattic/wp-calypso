@@ -31,13 +31,13 @@ import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-cur
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import { MasterBarMobileMenu } from './masterbar-menu';
 import Notifications from './notifications';
 
-const MENU_POPOVER_PREFERENCE_KEY = 'dismissed-masterbar-collapsable-menu-popover';
+const MENU_POPOVER_PREFERENCE_KEY = 'dismissible-card-masterbar-collapsable-menu-popover';
 
 const MOBILE_BREAKPOINT = '<480px';
 class MasterbarLoggedIn extends Component {
@@ -59,6 +59,7 @@ class MasterbarLoggedIn extends Component {
 		hasMoreThanOneSite: PropTypes.bool,
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
+		isInEditor: PropTypes.bool,
 	};
 
 	subscribeToViewPortChanges() {
@@ -224,18 +225,18 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	handleToggleMenu = () => {
-		this.setState( { isMenuOpen: ! this.state.isMenuOpen } );
+		this.setState( ( state ) => ( { isMenuOpen: ! state.isMenuOpen } ) );
 	};
 
 	dismissPopover = () => {
 		this.props.savePreference( MENU_POPOVER_PREFERENCE_KEY, true );
 	};
 
-	checkout = () => {
+	renderCheckout() {
 		const { isCheckoutPending, previousPath, siteSlug, isJetpackNotAtomic, title } = this.props;
 		return (
 			<AsyncLoad
-				require="calypso/layout/masterbar/checkout.tsx"
+				require="calypso/layout/masterbar/checkout"
 				placeholder={ null }
 				title={ title }
 				isJetpackNotAtomic={ isJetpackNotAtomic }
@@ -244,9 +245,9 @@ class MasterbarLoggedIn extends Component {
 				isLeavingAllowed={ ! isCheckoutPending }
 			/>
 		);
-	};
+	}
 
-	renderReader = () => {
+	renderReader() {
 		const { translate } = this.props;
 		return (
 			<Item
@@ -262,20 +263,19 @@ class MasterbarLoggedIn extends Component {
 				{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 			</Item>
 		);
-	};
+	}
 
-	renderLanguageSwitcher = () => {
-		return (
-			( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
-				<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
-			)
-		);
-	};
+	renderLanguageSwitcher() {
+		if ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) {
+			return <AsyncLoad require="./quick-language-switcher" placeholder={ null } />;
+		}
+		return null;
+	}
 
-	renderSearch = () => {
+	renderSearch() {
 		const { translate, isWordPressActionSearchFeatureEnabled } = this.props;
-		return (
-			isWordPressActionSearchFeatureEnabled && (
+		if ( isWordPressActionSearchFeatureEnabled ) {
+			return (
 				<Item
 					tipTarget="Action Search"
 					icon="search"
@@ -287,15 +287,15 @@ class MasterbarLoggedIn extends Component {
 				>
 					{ translate( 'Search Actions' ) }
 				</Item>
-			)
-		);
-	};
+			);
+		}
+		return null;
+	}
 
-	renderPlanUpsell = () => {
+	renderPlanUpsell() {
 		const { domainOnlySite, translate, isMigrationInProgress } = this.props;
-		return (
-			! domainOnlySite &&
-			! isMigrationInProgress && (
+		if ( ! domainOnlySite && ! isMigrationInProgress ) {
+			return (
 				<AsyncLoad
 					require="./plan-upsell"
 					className="masterbar__item-upsell button is-primary"
@@ -303,15 +303,15 @@ class MasterbarLoggedIn extends Component {
 				>
 					{ translate( 'Upgrade' ) }
 				</AsyncLoad>
-			)
-		);
-	};
+			);
+		}
+		return null;
+	}
 
-	renderPublish = () => {
+	renderPublish() {
 		const { domainOnlySite, translate, isMigrationInProgress } = this.props;
-		return (
-			! domainOnlySite &&
-			! isMigrationInProgress && (
+		if ( ! domainOnlySite && ! isMigrationInProgress ) {
+			return (
 				<AsyncLoad
 					require="./publish"
 					placeholder={ null }
@@ -321,10 +321,12 @@ class MasterbarLoggedIn extends Component {
 				>
 					{ translate( 'Write' ) }
 				</AsyncLoad>
-			)
-		);
-	};
-	renderCart = () => {
+			);
+		}
+		return null;
+	}
+
+	renderCart() {
 		const { currentSelectedSiteSlug, currentSelectedSiteId } = this.props;
 		return (
 			<AsyncLoad
@@ -337,8 +339,9 @@ class MasterbarLoggedIn extends Component {
 				selectedSiteId={ currentSelectedSiteId }
 			/>
 		);
-	};
-	renderMe = () => {
+	}
+
+	renderMe() {
 		const { isMobile } = this.state;
 		const { translate, user } = this.props;
 		return (
@@ -367,8 +370,9 @@ class MasterbarLoggedIn extends Component {
 				</span>
 			</Item>
 		);
-	};
-	renderNotifications = () => {
+	}
+
+	renderNotifications() {
 		const { translate } = this.props;
 		return (
 			<Notifications
@@ -384,8 +388,9 @@ class MasterbarLoggedIn extends Component {
 				</span>
 			</Notifications>
 		);
-	};
-	renderMenu = () => {
+	}
+
+	renderMenu() {
 		const { menuBtnRef } = this.state;
 		const { translate, hasDismissedThePopover, isFetchingPrefs } = this.props;
 		return (
@@ -430,29 +435,48 @@ class MasterbarLoggedIn extends Component {
 				) }
 			</>
 		);
-	};
-	renderPopupSearch = () => {
+	}
+
+	renderPopupSearch() {
 		const isWordPressActionSearchFeatureEnabled = config.isEnabled( 'wordpress-action-search' );
 		const { isActionSearchVisible } = this.state;
 
-		return isWordPressActionSearchFeatureEnabled && isActionSearchVisible ? (
+		if ( ! isWordPressActionSearchFeatureEnabled || ! isActionSearchVisible ) {
+			return null;
+		}
+
+		return (
 			<AsyncLoad
 				require="calypso/layout/popup-search"
 				placeholder={ null }
 				onClose={ this.onSearchActionsClose }
 			/>
-		) : null;
-	};
+		);
+	}
 
 	render() {
 		const { isCheckout, isCheckoutPending } = this.props;
 		const { isMobile } = this.state;
 
 		if ( isCheckout || isCheckoutPending ) {
-			return this.checkout();
+			return this.renderCheckout();
 		}
 
 		if ( isMobile ) {
+			/* TODO: implement this when help center is ready
+			if ( isInEditor ) {
+				return (
+					<Masterbar>
+						<div className="masterbar__section masterbar__section--left">
+							{ this.renderBackButton() }
+						</div>
+						<div className="masterbar__section masterbar__section--right">
+							{ this.renderBackButton() }
+						</div>
+					</Masterbar>
+				);
+			}
+			 */
 			return (
 				<>
 					{ this.renderPopupSearch() }
@@ -514,6 +538,7 @@ export default connect(
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			user: getCurrentUser( state ),
 			isSupportSession: isSupportSession( state ),
+			isInEditor: getSectionName( state ) === 'gutenberg-editor',
 			isMigrationInProgress,
 			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
 			currentSelectedSiteId,

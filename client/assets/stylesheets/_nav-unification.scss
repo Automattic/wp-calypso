@@ -147,25 +147,25 @@
 	@include breakpoint-deprecated( '<480px' ) {
 		// New post button
 		.masterbar__item-new {
-			background: #32373c;
+			background: var( --color-sidebar-submenu-background );
 		}
 
 		.masterbar__toggle-drafts.button.is-borderless {
-			background: #32373c;
-			color: #eeeeee;
+			background: var( --color-sidebar-submenu-background );
+			color: var( --color-sidebar-text );
 			border-left: #646970;
 			border-left-style: solid;
 
 			&:hover {
-				background: #32373c;
+				background: var( --color-sidebar-submenu-background );
 
 				.gridicon {
-					color: #eeeeee;
+					color: var( --color-sidebar-text );
 				}
 			}
 
 			.gridicon {
-				color: #eeeeee;
+				color: var( --color-sidebar-text );
 			}
 		}
 
