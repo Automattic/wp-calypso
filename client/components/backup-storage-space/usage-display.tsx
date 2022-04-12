@@ -9,7 +9,7 @@ import { useStorageUsageText } from './hooks';
 import { StorageUsageLevels } from './storage-usage-levels';
 
 const PROGRESS_BAR_CLASS_NAMES = {
-	[ StorageUsageLevels.Full ]: 'red-warning',
+	[ StorageUsageLevels.Full ]: 'full-warning',
 	[ StorageUsageLevels.Critical ]: 'red-warning',
 	[ StorageUsageLevels.Warning ]: 'yellow-warning',
 	[ StorageUsageLevels.Normal ]: 'no-warning',
