@@ -68,10 +68,6 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 		);
 	};
 
-	const handleClick = () => {
-		submit?.();
-	};
-
 	return (
 		<StepContainer
 			stepName={ 'podcast-title-step' }

@@ -80,6 +80,10 @@ $input-max-width: 448px;
         width: 100%;
         max-width: 100%;
 
+        &:focus {
+            box-shadow: none;
+        }
+
         @include break-medium {
             max-width: $input-max-width;
         }
