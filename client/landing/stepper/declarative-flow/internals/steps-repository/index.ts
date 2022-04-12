@@ -7,6 +7,7 @@ export { default as designSetup } from './design-setup';
 export { default as businessInfo } from './business-info';
 export { default as storeAddress } from './store-address';
 export { default as vertical } from './site-vertical';
+export { default as processing } from './processing-step';
 
 export type StepPath =
 	| 'courses'
@@ -17,4 +18,5 @@ export type StepPath =
 	| 'designSetup'
 	| 'businessInfo'
 	| 'storeAddress'
+	| 'processing'
 	| 'vertical';

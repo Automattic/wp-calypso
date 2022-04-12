@@ -25,6 +25,7 @@ export const siteSetupFlow: Flow = {
 			'storeFeatures',
 			'businessInfo',
 			'storeAddress',
+			'processing',
 		] as StepPath[];
 	},
 
@@ -45,7 +46,10 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 				}
 
-				case 'designSetup': {
+				case 'designSetup':
+					return navigate( 'processing' );
+
+				case 'processing': {
 					// If the user skips starting point, redirect them to My Home
 					if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
 						if ( startingPoint !== 'write' ) {
