@@ -666,9 +666,7 @@ export class EditorPage {
 		//
 		// Once https://github.com/Automattic/wp-calypso/issues/54421 is resolved,
 		// this listener can be removed.
-		this.page.once( 'dialog', async ( dialog ) => {
-			await dialog.accept();
-		} );
+		this.allowLeavingWithoutSaving();
 
 		await this.page.goto( url, { waitUntil: 'domcontentloaded' } );
 
@@ -785,6 +783,15 @@ export class EditorPage {
 
 		// Perform the actions and resolve promises.
 		await Promise.all( actions );
+	}
+
+	/**
+	 * Sets up a handler to accept the leave without saving warning.
+	 */
+	allowLeavingWithoutSaving(): void {
+		this.page.once( 'dialog', async ( dialog ) => {
+			await dialog.accept();
+		} );
 	}
 
 	/**
