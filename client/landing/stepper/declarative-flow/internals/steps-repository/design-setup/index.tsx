@@ -30,6 +30,7 @@ import PreviewToolbar from './preview-toolbar';
 import type { Step } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
+
 /**
  * The design picker step
  */
@@ -44,7 +45,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 
-	const flowName = 'setup-site';
+	const flowName = config.isEnabled( 'signup/anchor-fm' ) ? 'anchor-fm' : 'setup-site';
+	const isAnchorSite = 'anchor-fm' === flowName;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const siteSlug = useSiteSlugParam();
@@ -277,10 +279,57 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		);
 	}
 
+	const anchorThemes = [
+		{
+			title: 'Gilbert',
+			slug: 'gilbert',
+			template: 'gilbert',
+			theme: 'spearhead',
+			fonts: {
+				headings: 'Roboto',
+				base: 'Roboto',
+			},
+			is_premium: false,
+			features: [ 'anchorfm' ],
+		},
+		{
+			title: 'Hannah',
+			slug: 'hannah',
+			template: 'hannah',
+			theme: 'mayland',
+			fonts: {
+				headings: 'Raleway',
+				base: 'Cabin',
+			},
+			is_premium: false,
+			features: [ 'anchorfm' ],
+		},
+		{
+			title: 'Riley',
+			slug: 'riley',
+			template: 'riley',
+			theme: 'spearhead',
+			fonts: {
+				headings: 'Raleway',
+				base: 'Cabin',
+			},
+			is_premium: false,
+			features: [ 'anchorfm' ],
+		},
+	];
+
+	let featuredDesigns = [ ...featuredPicksDesigns, ...designs ];
+
+	if ( isAnchorSite ) {
+		featuredDesigns = anchorThemes;
+	} else if ( useFeaturedPicksButtons ) {
+		featuredDesigns = designs;
+	}
+
 	stepContent = (
 		<>
 			<DesignPicker
-				designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
+				designs={ featuredDesigns }
 				theme={ isReskinned ? 'light' : 'dark' }
 				locale={ locale }
 				onSelect={ pickDesign }
@@ -289,9 +338,11 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 				className={ classnames( {
 					'design-setup__has-categories': showDesignPickerCategories,
 				} ) }
+				isGridMinimal={ isAnchorSite ? true : false }
 				highResThumbnails
+				hideFullScreenPreview={ isAnchorSite ? true : false }
 				premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ !! isPremiumThemeAvailable } /> }
-				categorization={ showDesignPickerCategories ? categorization : undefined }
+				categorization={ showDesignPickerCategories && ! isAnchorSite ? categorization : undefined }
 				recommendedCategorySlug={ categorizationOptions.defaultSelection }
 				categoriesHeading={
 					<FormattedHeader
