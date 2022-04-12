@@ -1,5 +1,6 @@
 export * from './available-designs-config';
 export * from './available-designs';
+export * from './designs';
 export * from './fonts';
 import { SHOW_ALL_SLUG } from '../constants';
 import type { Category, Design } from '../types';

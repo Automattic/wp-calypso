@@ -26,7 +26,7 @@ export const FEATURE_SET_PRIMARY_CUSTOM_DOMAIN = 'set-primary-custom-domain';
 export const FEATURE_JETPACK_ESSENTIAL = 'jetpack-essential';
 export const FEATURE_JETPACK_ADVANCED = 'jetpack-advanced';
 export const FEATURE_FREE_THEMES = 'free-themes';
-export const FEATURE_500MB_STORAGE = '500mb-storage';
+export const FEATURE_1GB_STORAGE = '1gb-storage';
 export const FEATURE_3GB_STORAGE = '3gb-storage';
 export const FEATURE_6GB_STORAGE = '6gb-storage';
 export const FEATURE_13GB_STORAGE = '13gb-storage';
@@ -83,7 +83,11 @@ export const FEATURE_ADVANCED_SEO_TOOLS = 'advanced-seo-tools';
 export const FEATURE_ADVANCED_SEO_EXPANDED_ABBR = 'advanced-seo-expanded-abbreviation';
 export const FEATURE_FREE_THEMES_SIGNUP = 'free-themes-signup';
 export const FEATURE_MEMBERSHIPS = 'memberships';
+export const FEATURE_DONATIONS = 'donations';
+export const FEATURE_RECURRING_PAYMENTS = 'recurring-payments';
+// This is a legacy alias, FEATURE_PREMIUM_CONTENT_CONTAINER should be used instead.
 export const FEATURE_PREMIUM_CONTENT_BLOCK = 'premium-content-block';
+export const FEATURE_PREMIUM_CONTENT_CONTAINER = 'premium-content/container';
 export const FEATURE_HOSTING = 'hosting';
 export const PREMIUM_DESIGN_FOR_STORES = 'premium-design-for-stores';
 export const FEATURE_SFTP_DATABASE = 'sftp-and-database-access';
@@ -172,6 +176,7 @@ export const FEATURE_JETPACK_VIDEOPRESS_STORAGE = 'jetpack-videopress-storage';
 export const FEATURE_JETPACK_VIDEOPRESS_UNBRANDED = 'jetpack-videopress-unbranded';
 export const FEATURE_JETPACK_CRM = PRODUCT_JETPACK_CRM;
 export const FEATURE_JETPACK_CRM_MONTHLY = PRODUCT_JETPACK_CRM_MONTHLY;
+export const FEATURE_CLOUD_CRITICAL_CSS = 'cloud-critical-css';
 
 // Jetpack tiered product features
 export const FEATURE_JETPACK_10GB_BACKUP_STORAGE = 'jetpack-10gb-backup-storage';
@@ -204,7 +209,5 @@ export const FEATURE_PAYMENT_BLOCKS = 'payment-blocks';
 export const FEATURE_TITAN_EMAIL = 'titan-email';
 export const FEATURE_UNLIMITED_ADMINS = 'unlimited-admins';
 export const FEATURE_ADDITIONAL_SITES = 'additional-sites';
-export const FEATURE_10K_VISITS = '10k-visits';
-export const FEATURE_100K_VISITS = '100k-visits';
 export const FEATURE_WOOCOMMERCE = 'woocommerce';
 export const FEATURE_SOCIAL_MEDIA_TOOLS = 'social-media-tools';

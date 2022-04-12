@@ -159,6 +159,10 @@
 			display: none;
 		}
 
+		&.should-hide-nav-buttons {
+			justify-content: flex-end;
+		}
+
 		.step-container__navigation-link {
 			font-size: 0.875rem;
 			font-weight: 500;

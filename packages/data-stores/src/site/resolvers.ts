@@ -1,7 +1,7 @@
 import { dispatch } from '@wordpress/data';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
-import type { SiteDetails, Domain } from './types';
+import type { SiteDetails, Domain, SiteSettings } from './types';
 
 /**
  * Attempt to find a site based on its id, and if not return undefined.
@@ -36,5 +36,20 @@ export function* getSiteDomains( siteId: number ) {
 			apiVersion: '1.2',
 		} );
 		yield dispatch( STORE_KEY ).receiveSiteDomains( siteId, result?.domains );
+	} catch ( e ) {}
+}
+
+/**
+ * Get all site settings
+ *
+ * @param siteId {number} The site id
+ */
+export function* getSiteSettings( siteId: number ) {
+	try {
+		const result: { settings: SiteSettings } = yield wpcomRequest( {
+			path: '/sites/' + encodeURIComponent( siteId ) + '/settings',
+			apiVersion: '1.4',
+		} );
+		yield dispatch( STORE_KEY ).receiveSiteSettings( siteId, result?.settings );
 	} catch ( e ) {}
 }

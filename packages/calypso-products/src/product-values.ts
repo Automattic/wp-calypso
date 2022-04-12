@@ -28,20 +28,25 @@ export { isDomainRedemption } from './is-domain-redemption';
 export { isDomainRegistration } from './is-domain-registration';
 export { isDomainTransfer } from './is-domain-transfer';
 export { isDotComPlan } from './is-dot-com-plan';
+export { isEmailMonthly } from './is-email-monthly';
 export { isEcommerce } from './is-ecommerce';
 export { isEnterprise } from './is-enterprise';
 export { isFreeJetpackPlan } from './is-free-jetpack-plan';
 export { isFreePlanProduct } from './is-free-plan';
 export { isFlexiblePlanProduct } from './is-flexible-plan';
 export { isFreeWordPressComDomain } from './is-free-wordpress-com-domain';
-export {
-	isGoogleWorkspace,
-	isGoogleWorkspaceExtraLicence,
-	isGSuite,
-	isGSuiteOrExtraLicense,
-	isGSuiteOrExtraLicenseOrGoogleWorkspace,
-	isGSuiteOrGoogleWorkspace,
-} from './is-gsuite';
+export { isGoogleWorkspace } from './is-google-workspace';
+export { isGoogleWorkspaceExtraLicence } from './is-google-workspace-extra-license';
+export { isGoogleWorkspaceMonthly } from './is-google-workspace-monthly';
+export { isGoogleWorkspaceProductSlug } from './is-google-workspace-product-slug';
+export { isGSuite } from './is-gsuite';
+export { isGSuiteExtraLicenseProductSlug } from './is-gsuite-extra-license-product-slug';
+export { isGSuiteOrExtraLicense } from './is-gsuite-or-extra-license';
+export { isGSuiteOrExtraLicenseOrGoogleWorkspace } from './is-gsuite-or-extra-license-or-google-workspace';
+export { isGSuiteOrExtraLicenseProductSlug } from './is-gsuite-or-extra-license-product-slug';
+export { isGSuiteOrGoogleWorkspace } from './is-gsuite-or-google-workspace';
+export { isGSuiteOrGoogleWorkspaceProductSlug } from './is-gsuite-or-google-workspace-product-slug';
+export { isGSuiteProductSlug } from './is-gsuite-product-slug';
 export { isJetpackAntiSpam } from './is-jetpack-anti-spam';
 export { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
 export { isJetpackBackup } from './is-jetpack-backup';
@@ -73,6 +78,7 @@ export { isSecurityRealTime } from './is-security-realtime';
 export { isJetpackSecuritySlug } from './is-jetpack-security-slug';
 export { isTheme } from './is-theme';
 export { isTitanMail } from './is-titan-mail';
+export { isTitanMailMonthly } from './is-titan-mail-monthly';
 export { isUnlimitedSpace } from './is-unlimited-space';
 export { isUnlimitedThemes } from './is-unlimited-themes';
 export { isVideoPress } from './is-video-press';

@@ -15,8 +15,6 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'free-purchase';
 		case 'WPCOM_Billing_Ebanx':
 			return 'ebanx';
-		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef':
-			return 'brazil-tef';
 		case 'WPCOM_Billing_PayPal_Direct':
 			return 'paypal-direct';
 		case 'WPCOM_Billing_PayPal_Express':
@@ -63,8 +61,6 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_MoneyPress_Stored';
 		case 'ebanx':
 			return 'WPCOM_Billing_Ebanx';
-		case 'brazil-tef':
-			return 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef';
 		case 'netbanking':
 			return 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking';
 		case 'paypal-direct':
@@ -107,7 +103,6 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 	switch ( slug ) {
 		case 'WPCOM_Billing_WPCOM':
 		case 'WPCOM_Billing_Ebanx':
-		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef':
 		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
 		case 'WPCOM_Billing_PayPal_Direct':
 		case 'WPCOM_Billing_PayPal_Express':
@@ -136,7 +131,6 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 	}
 	switch ( slug ) {
 		case 'ebanx':
-		case 'brazil-tef':
 		case 'netbanking':
 		case 'paypal-direct':
 		case 'paypal':
@@ -191,7 +185,6 @@ export function isRedirectPaymentMethod( slug: CheckoutPaymentMethodSlug ): bool
 		'netbanking',
 		'paypal',
 		'p24',
-		'brazil-tef',
 		'wechat',
 		'sofort',
 	];

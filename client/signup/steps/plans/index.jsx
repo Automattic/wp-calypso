@@ -8,7 +8,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse as parseQs } from 'qs';
 import { Component } from 'react';
@@ -20,11 +20,13 @@ import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import wp from 'calypso/lib/wp';
 import PlansComparison, { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -82,10 +84,27 @@ export class PlansStep extends Component {
 			...additionalStepData,
 		};
 
-		this.props.submitSignupStep( step, {
-			cartItem,
-		} );
-		this.props.goToNextStep();
+		if ( flowName === 'site-selected' && ! cartItem ) {
+			wp.req.post(
+				`/domains/${ this.props.selectedSite.ID }/${ this.props.selectedSite.name }/convert-domain-only-to-site`,
+				{},
+				( error ) => {
+					if ( error ) {
+						this.props.errorNotice( error.message );
+						return;
+					}
+					this.props.submitSignupStep( step, {
+						cartItem,
+					} );
+					this.props.goToNextStep();
+				}
+			);
+		} else {
+			this.props.submitSignupStep( step, {
+				cartItem,
+			} );
+			this.props.goToNextStep();
+		}
 	};
 
 	getDomainName() {
@@ -160,7 +179,6 @@ export class PlansStep extends Component {
 					{ errorDisplay }
 					<PlansComparison
 						isInSignup={ true }
-						hideFreePlan={ hideFreePlan }
 						onSelectPlan={ this.onSelectPlan }
 						selectedSiteId={ selectedSite?.ID || undefined }
 					/>
@@ -276,10 +294,12 @@ export class PlansStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, translate, eligibleForProPlan } = this.props;
+		const { headerText, translate, eligibleForProPlan, locale } = this.props;
 
 		if ( eligibleForProPlan ) {
-			return translate( 'Choose the plan that’s right for you' );
+			return 'en' === locale || i18n.hasTranslation( 'Choose your hosting plan' )
+				? translate( 'Choose your hosting plan' )
+				: translate( 'Choose the plan that’s right for you' );
 		}
 
 		if ( this.state.isDesktop ) {
@@ -290,10 +310,13 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { hideFreePlan, subHeaderText, translate, eligibleForProPlan } = this.props;
+		const { hideFreePlan, subHeaderText, translate, eligibleForProPlan, locale } = this.props;
 
 		if ( eligibleForProPlan ) {
-			return translate( 'The WordPress Pro plan comes with a 14-day full money back guarantee' );
+			return 'en' === locale ||
+				i18n.hasTranslation( 'he WordPress Pro plan comes with a 14-day money back guarantee' )
+				? translate( 'The WordPress Pro plan comes with a 14-day money back guarantee' )
+				: translate( 'The WordPress Pro plan comes with a 14-day full money back guarantee' );
 		}
 
 		if ( ! hideFreePlan ) {
@@ -455,5 +478,5 @@ export default connect(
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
 	} ),
-	{ recordTracksEvent, saveSignupStep, submitSignupStep }
+	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

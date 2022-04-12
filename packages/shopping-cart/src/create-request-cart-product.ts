@@ -6,12 +6,14 @@ export default function createRequestCartProduct(
 	if ( ! properties.product_slug ) {
 		throw new Error( 'product_slug is required for request cart products' );
 	}
+	const { product_slug, product_id, meta, volume, quantity, extra } = properties;
 	return {
-		meta: '',
-		volume: 1,
-		quantity: null,
-		extra: {},
-		...properties,
+		product_slug,
+		product_id,
+		meta: meta ?? '',
+		volume: volume ?? 1,
+		quantity: quantity ?? null,
+		extra: extra ?? {},
 	};
 }
 

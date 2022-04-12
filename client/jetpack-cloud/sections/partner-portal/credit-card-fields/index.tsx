@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useState } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
+import { useRecentPaymentMethodsQuery } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import CreditCardElementField from './credit-card-element-field';
 import CreditCardLoading from './credit-card-loading';
@@ -65,6 +66,11 @@ export default function CreditCardFields() {
 		},
 	};
 
+	const {
+		data: { items: paymentMethods } = [],
+		isFetching: isFetchingPaymentMethods,
+	} = useRecentPaymentMethodsQuery();
+
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
@@ -97,8 +103,8 @@ export default function CreditCardFields() {
 				/>
 
 				<SetAsPrimaryPaymentMethod
-					isChecked={ useAsPrimaryPaymentMethod }
-					isDisabled={ isDisabled }
+					isChecked={ useAsPrimaryPaymentMethod || paymentMethods.length === 0 }
+					isDisabled={ isFetchingPaymentMethods || isDisabled || paymentMethods.length === 0 }
 					onChange={ setUseAsPrimaryPaymentMethod }
 				/>
 			</div>

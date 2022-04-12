@@ -1,11 +1,13 @@
-import { PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { isAnnualPlanOrUpgradeableAnnualPeriod } from 'calypso/state/marketplace/selectors';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const StyledUl = styled.ul`
 	margin-top: 20px;
@@ -50,9 +52,20 @@ const USPS: React.FC< Props > = ( {
 	const isAnnualPlan = useSelector( isAnnualPlanOrUpgradeableAnnualPeriod );
 
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
-	const planDisplayCost = useSelector( ( state ) =>
-		getProductDisplayCost( state, isAnnualPeriod ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY )
+
+	const selectedSite = useSelector( getSelectedSite );
+	const eligibleForProPlan = useSelector( ( state ) =>
+		isEligibleForProPlan( state, selectedSite?.ID )
 	);
+
+	const planDisplayCost = useSelector( ( state ) => {
+		const productSlug = isAnnualPeriod ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY;
+		return getProductDisplayCost( state, eligibleForProPlan ? PLAN_WPCOM_PRO : productSlug );
+	} );
+
+	const supportText = isAnnualPlan
+		? translate( 'Live chat support 24x7' )
+		: translate( 'Unlimited Email Support' );
 
 	const filteredUSPS = [
 		...( isMarketplaceProduct
@@ -82,9 +95,13 @@ const USPS: React.FC< Props > = ( {
 					{
 						id: 'plan',
 						className: 'title',
-						text: translate( 'Included in the Business plan (%s):', {
-							args: [ planDisplayCost ],
-						} ),
+						text: eligibleForProPlan
+							? translate( 'Included in the Pro plan (%s):', {
+									args: [ planDisplayCost ],
+							  } )
+							: translate( 'Included in the Business plan (%s):', {
+									args: [ planDisplayCost ],
+							  } ),
 						eligibilities: [ 'needs-upgrade' ],
 					},
 			  ]
@@ -114,9 +131,7 @@ const USPS: React.FC< Props > = ( {
 					{
 						id: 'support',
 						image: <Gridicon icon="chat" size={ 16 } />,
-						text: isAnnualPlan
-							? translate( 'Live chat support 24x7' )
-							: translate( 'Unlimited Email Support' ),
+						text: eligibleForProPlan ? translate( 'Premium support' ) : supportText,
 						eligibilities: [ 'needs-upgrade', 'marketplace' ],
 					},
 			  ]

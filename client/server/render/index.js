@@ -21,7 +21,6 @@ import {
 	getDocumentHeadMeta,
 	getDocumentHeadLink,
 } from 'calypso/state/document-head/selectors';
-import initialReducer from 'calypso/state/reducer';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 import { serialize } from 'calypso/state/utils';
@@ -243,9 +242,9 @@ export function serverRender( req, res ) {
 
 		// And cache on the server, too.
 		if ( cacheKey ) {
-			const cacheableInitialState = pick( context.store.getState(), cacheableReduxSubtrees );
-			const serverState = serialize( initialReducer, cacheableInitialState );
-			stateCache.set( cacheKey, serverState );
+			const cacheableServerState = pick( context.store.getState(), cacheableReduxSubtrees );
+			const serverState = serialize( context.store.getCurrentReducer(), cacheableServerState );
+			stateCache.set( cacheKey, serverState.get() );
 		}
 	}
 	context.clientData = config.clientData;

@@ -2,13 +2,15 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE_CURRENT_INDEX,
 	SIGNUP_COMPLETE_RESET,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_COMPLETED,
-	SIGNUP_STEPS_WEBSITE_CONTENT_TEXT_CHANGED,
+	SIGNUP_STEPS_WEBSITE_FIELD_CHANGED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_INITIALIZE_PAGES,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_STARTED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_COMPLETED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_STARTED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_LOGO_UPLOAD_FAILED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_FAILED,
+	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_REMOVED,
+	SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL,
 } from 'calypso/state/action-types';
 import { withSchemaValidation } from 'calypso/state/utils';
 import { schema, initialState, WebsiteContentCollection, PageData } from './schema';
@@ -18,6 +20,7 @@ export const IMAGE_UPLOAD_STATES = {
 	UPLOAD_STARTED: 'UPLOAD_STARTED',
 	UPLOAD_COMPLETED: 'UPLOAD_COMPLETED',
 	UPLOAD_FAILED: 'UPLOAD_FAILED',
+	UPLOAD_REMOVED: 'UPLOAD_REMOVED',
 };
 
 export const LOGO_SECTION_ID = 'logo_section';
@@ -76,6 +79,23 @@ export default withSchemaValidation(
 						[ LOGO_SECTION_ID ]: {
 							...state.imageUploadStates[ LOGO_SECTION_ID ],
 							[ 0 ]: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+						},
+					},
+				};
+			}
+
+			case SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL: {
+				return {
+					...state,
+					websiteContent: {
+						...state.websiteContent,
+						siteLogoUrl: '',
+					},
+					imageUploadStates: {
+						...state.imageUploadStates,
+						[ LOGO_SECTION_ID ]: {
+							...state.imageUploadStates[ LOGO_SECTION_ID ],
+							[ 0 ]: IMAGE_UPLOAD_STATES.UPLOAD_REMOVED,
 						},
 					},
 				};
@@ -147,14 +167,15 @@ export default withSchemaValidation(
 				};
 			}
 
-			case SIGNUP_STEPS_WEBSITE_CONTENT_TEXT_CHANGED: {
+			case SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_REMOVED: {
 				const { payload } = action;
+				const { pageId } = payload;
 
-				const pageIndex = state.websiteContent.pages.findIndex(
-					( page ) => page.id === payload.pageId
-				);
+				const pageIndex = state.websiteContent.pages.findIndex( ( page ) => page.id === pageId );
 
 				const changedPage = state.websiteContent.pages[ pageIndex ];
+				const newImages = [ ...changedPage.images ];
+				newImages.splice( payload.mediaIndex, 1, { caption: '', url: '' } );
 
 				return {
 					...state,
@@ -164,10 +185,37 @@ export default withSchemaValidation(
 							...state.websiteContent.pages.slice( 0, pageIndex ),
 							{
 								...changedPage,
-								content: payload.content,
+								images: newImages,
 							},
 							...state.websiteContent.pages.slice( pageIndex + 1 ),
 						],
+					},
+					imageUploadStates: {
+						...state.imageUploadStates,
+						[ payload.pageId ]: {
+							...state.imageUploadStates[ payload.pageId ],
+							[ payload.mediaIndex ]: IMAGE_UPLOAD_STATES.UPLOAD_REMOVED,
+						},
+					},
+				};
+			}
+
+			case SIGNUP_STEPS_WEBSITE_FIELD_CHANGED: {
+				const { payload } = action;
+
+				return {
+					...state,
+					websiteContent: {
+						...state.websiteContent,
+						pages: state.websiteContent.pages.map( ( page ) => {
+							if ( payload.pageId === page.id ) {
+								return {
+									...page,
+									[ payload.fieldName ]: payload.fieldValue,
+								};
+							}
+							return page;
+						} ),
 					},
 				};
 			}

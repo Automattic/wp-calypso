@@ -46,6 +46,10 @@ export const getSiteDomains = ( state: State, siteId: number ) => {
 	return state.sitesDomains[ siteId ];
 };
 
+export const getSiteSettings = ( state: State, siteId: number ) => {
+	return state.sitesSettings[ siteId ];
+};
+
 export const getPrimarySiteDomain = ( _: State, siteId: number ) =>
 	select( STORE_KEY )
 		.getSiteDomains( siteId )
@@ -55,3 +59,13 @@ export const getSiteSubdomain = ( _: State, siteId: number ) =>
 	select( STORE_KEY )
 		.getSiteDomains( siteId )
 		?.find( ( domain ) => domain.is_subdomain );
+
+export const hasActiveSiteFeature = (
+	_: State,
+	siteId: number | undefined,
+	featureKey: string
+): boolean => {
+	return Boolean(
+		siteId && select( STORE_KEY ).getSite( siteId )?.plan?.features.active.includes( featureKey )
+	);
+};

@@ -66,6 +66,12 @@ export interface PageData {
 	images: Array< ImageData >;
 }
 
+export interface ContactPageData extends PageData {
+	displayEmail?: string;
+	displayPhone?: string;
+	displayAddress?: string;
+}
+
 export type WebsiteContent = { pages: Array< PageData >; siteLogoUrl: string };
 export interface WebsiteContentCollection {
 	currentIndex: number;

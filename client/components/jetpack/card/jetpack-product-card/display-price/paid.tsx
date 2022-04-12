@@ -29,11 +29,19 @@ const Paid: React.FC< OwnProps > = ( {
 } ) => {
 	const finalPrice = discountedPrice ?? originalPrice;
 
+	// Placeholder (while prices are loading)
 	if ( ! currencyCode || ! originalPrice || pricesAreFetching ) {
 		return (
 			<>
-				<div className="display-price__price-placeholder" />
-				<div className="display-price__time-frame-placeholder" />
+				<PlanPrice
+					original
+					className="display-price__original-price"
+					rawPrice={ 0.01 }
+					currencyCode={ '$' }
+				/>
+				{ /* Remove this secondary <PlanPrice/> placeholder if we're not showing discounted prices */ }
+				<PlanPrice discounted rawPrice={ 0.01 } currencyCode={ '$' } />
+				<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
 			</>
 		);
 	}

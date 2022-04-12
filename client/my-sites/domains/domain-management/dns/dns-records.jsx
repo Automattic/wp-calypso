@@ -8,14 +8,11 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import DnsRecordsList from 'calypso/my-sites/domains/domain-management/dns/dns-records-list';
 import EmailSetup from 'calypso/my-sites/domains/domain-management/email-setup';
-import {
-	domainManagementEdit,
-	domainManagementNameServers,
-	domainManagementList,
-} from 'calypso/my-sites/domains/paths';
+import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { fetchDns } from 'calypso/state/domains/dns/actions';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
@@ -56,7 +53,7 @@ class DnsRecords extends Component {
 		const mobileItem = {
 			// translators: %(domain)s is the domain name (e.g. example.com) to which settings page the user will return to when pressing the link
 			label: translate( 'Back to %(domain)s', { args: { domain: selectedDomainName } } ),
-			href: domainManagementNameServers( selectedSite.slug, selectedDomainName, currentRoute ),
+			href: domainManagementEdit( selectedSite.slug, selectedDomainName, currentRoute ),
 			showBackArrow: true,
 		};
 
@@ -99,7 +96,8 @@ class DnsRecords extends Component {
 	};
 
 	renderMain() {
-		const { dns, selectedDomainName, selectedSite, translate } = this.props;
+		const { dns, selectedDomainName, selectedSite, translate, domains } = this.props;
+		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
 		const headerText = translate( 'DNS Records' );
 
 		return (
@@ -108,13 +106,19 @@ class DnsRecords extends Component {
 				<DocumentHead title={ headerText } />
 				{ this.renderBreadcrumbs() }
 				<FormattedHeader brandFont headerText={ headerText } align="left" />
-				<DnsDetails />
-				<DnsRecordsList
-					dns={ dns }
-					selectedSite={ selectedSite }
-					selectedDomainName={ selectedDomainName }
-				/>
-				<EmailSetup selectedDomainName={ selectedDomainName } />
+				{ selectedDomain?.canManageDnsRecords ? (
+					<>
+						<DnsDetails />
+						<DnsRecordsList
+							dns={ dns }
+							selectedSite={ selectedSite }
+							selectedDomainName={ selectedDomainName }
+						/>
+						<EmailSetup selectedDomainName={ selectedDomainName } />
+					</>
+				) : (
+					<InfoNotice redesigned={ false } text={ selectedDomain?.cannotManageDnsRecordsReason } />
+				) }
 			</Main>
 		);
 	}

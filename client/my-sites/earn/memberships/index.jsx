@@ -1,4 +1,7 @@
 import {
+	FEATURE_PREMIUM_CONTENT_CONTAINER,
+	FEATURE_DONATIONS,
+	FEATURE_RECURRING_PAYMENTS,
 	FEATURE_MEMBERSHIPS,
 	PLAN_PERSONAL,
 	PLAN_JETPACK_PERSONAL,
@@ -42,7 +45,7 @@ import {
 	getTotalSubscribersForSiteId,
 	getOwnershipsForSiteId,
 } from 'calypso/state/memberships/subscribers/selectors';
-import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -604,13 +607,13 @@ class MembershipsSection extends Component {
 	}
 
 	render() {
-		if ( ! this.props.paidPlan ) {
+		if ( ! this.props.connectedAccountId && ! this.props.hasStripeFeature ) {
 			return this.renderOnboarding(
 				<UpsellNudge
 					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
 					shouldDisplay={ () => true }
 					feature={ FEATURE_MEMBERSHIPS }
-					title={ this.props.translate( 'Upgrade to the Personal plan' ) }
+					title={ this.props.translate( 'Upgrade to the Pro plan' ) }
 					description={ this.props.translate( 'Upgrade to start selling.' ) }
 					showIcon={ true }
 					event="calypso_memberships_upsell_nudge"
@@ -658,7 +661,10 @@ const mapStateToProps = ( state ) => {
 		subscribers: getOwnershipsForSiteId( state, siteId ),
 		connectedAccountId: getConnectedAccountIdForSiteId( state, siteId ),
 		connectUrl: getConnectUrlForSiteId( state, siteId ),
-		paidPlan: isSiteOnPaidPlan( state, siteId ),
+		hasStripeFeature:
+			hasActiveSiteFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
+			hasActiveSiteFeature( state, siteId, FEATURE_DONATIONS ) ||
+			hasActiveSiteFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 		isJetpack: isJetpackSite( state, siteId ),
 	};
 };

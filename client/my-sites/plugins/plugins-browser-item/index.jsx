@@ -169,7 +169,8 @@ const PluginsBrowserListElement = ( props ) => {
 						{ !! plugin.active_installs && (
 							<div className="plugins-browser-item__active-installs">
 								<span className="plugins-browser-item__active-installs-value">{ `${ formatNumberMetric(
-									plugin.active_installs
+									plugin.active_installs,
+									0
 								) }${ plugin.active_installs > 1000 ? '+' : '' }` }</span>
 								{ translate( ' Active Installs' ) }
 							</div>

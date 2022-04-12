@@ -52,7 +52,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Enter post content', async function () {
-			const blockHandle = await editorPage.addBlock(
+			const blockHandle = await editorPage.addBlockFromSidebar(
 				ParagraphBlock.blockName,
 				ParagraphBlock.blockEditorSelector
 			);
@@ -84,12 +84,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Editor is shown', async function () {
-			editorPage = new EditorPage( page );
+			editorPage = new EditorPage( page, { target: features.siteType } );
 			await editorPage.waitUntilLoaded();
 		} );
 
 		it( 'Append additional content', async function () {
-			const blockHandle = await editorPage.addBlock(
+			const blockHandle = await editorPage.addBlockFromSidebar(
 				ParagraphBlock.blockName,
 				ParagraphBlock.blockEditorSelector
 			);

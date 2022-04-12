@@ -46,14 +46,15 @@ export class WhatsAppButtonFlow implements BlockFlow {
 	 */
 	async configure( context: EditorContext ): Promise< void > {
 		if ( this.configurationData.buttonText ) {
-			await context.editorIframe.fill( selectors.buttonLabel, this.configurationData.buttonText );
+			const buttonLabelLocator = context.editorLocator.locator( selectors.buttonLabel );
+			await buttonLabelLocator.fill( this.configurationData.buttonText );
 		}
 
-		await context.editorIframe.click( selectors.settings );
-		await context.editorIframe.fill(
-			selectors.phoneNumberInput,
-			this.configurationData.phoneNumber.toString()
-		);
+		const settingsLocator = context.editorLocator.locator( selectors.settings );
+		await settingsLocator.click();
+
+		const phoneInputLocator = context.editorLocator.locator( selectors.phoneNumberInput );
+		await phoneInputLocator.fill( this.configurationData.phoneNumber.toString() );
 	}
 
 	/**
@@ -62,11 +63,14 @@ export class WhatsAppButtonFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		await context.page.waitForSelector( selectors.block );
+		const blockLocator = context.page.locator( selectors.block );
+		await blockLocator.waitFor();
+
 		if ( this.configurationData.buttonText ) {
-			await context.page.waitForSelector(
+			const expectedButtonTextLocator = context.page.locator(
 				`${ selectors.block } :text("${ this.configurationData.buttonText }")`
 			);
+			await expectedButtonTextLocator.waitFor();
 		}
 	}
 }

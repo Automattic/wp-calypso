@@ -43,7 +43,7 @@ const Cloudflare = () => {
 								<p className="site-settings__cloudflare-title">
 									{ translate( 'Jetpack Site Accelerator' ) }
 								</p>
-								<p>{ translate( 'Comes built-in with WordPress.com Business plans.' ) }</p>
+								<p>{ translate( 'Comes built-in with the WordPress.com Pro plan.' ) }</p>
 								<p>
 									<a
 										onClick={ recordClick }
@@ -59,7 +59,7 @@ const Cloudflare = () => {
 					</CompactCard>
 					{ sitePlan && showBizUpsell && (
 						<UpsellNudge
-							title={ translate( 'Available on Business plan or higher' ) }
+							title={ translate( 'Available on the Pro plan' ) }
 							href={ upgradeLink }
 							event={ 'calypso_settings_cloudflare_cdn_upsell_nudge_click' }
 							showIcon={ true }
@@ -94,7 +94,7 @@ const Cloudflare = () => {
 					</CompactCard>
 					{ sitePlan && showUpsell && (
 						<UpsellNudge
-							title={ translate( 'Available with Premium plans or higher' ) }
+							title={ translate( 'Available on the Pro plan' ) }
 							description={ translate(
 								'A CDN (Content Delivery Network) optimizes your content to provide users with the fastest experience.'
 							) }

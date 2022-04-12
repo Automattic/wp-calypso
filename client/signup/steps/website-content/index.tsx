@@ -1,3 +1,4 @@
+import calypsoConfig from '@automattic/calypso-config';
 import { Button, Dialog } from '@automattic/components';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
@@ -18,6 +19,7 @@ import {
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import getDIFMLiteSiteCategory from 'calypso/state/selectors/get-difm-lite-site-category';
+import getDIFMLiteSitePageTitles from 'calypso/state/selectors/get-difm-lite-site-page-titles';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import isDIFMLiteWebsiteContentSubmitted from 'calypso/state/selectors/is-difm-lite-website-content-submitted';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
@@ -84,6 +86,7 @@ function WebsiteContentStep( {
 	const websiteContent = useSelector( getWebsiteContent );
 	const currentIndex = useSelector( getWebsiteContentDataCollectionIndex );
 	const siteCategory = useSelector( ( state ) => getDIFMLiteSiteCategory( state, siteId ) );
+	const pageTitles = useSelector( ( state ) => getDIFMLiteSitePageTitles( state, siteId ) );
 	const isImageUploading = useSelector( ( state ) =>
 		isImageUploadInProgress( state as WebsiteContentStateModel )
 	);
@@ -103,7 +106,15 @@ function WebsiteContentStep( {
 			}
 		}
 
-		if ( siteCategory ) {
+		if ( calypsoConfig.isEnabled( 'signup/redesigned-difm-flow' ) ) {
+			if ( pageTitles && pageTitles.length > 0 ) {
+				const pages = pageTitles.map( ( pageTitle ) => ( {
+					id: pageTitle,
+					name: translatedPageTitles[ pageTitle ],
+				} ) );
+				dispatch( initializePages( pages ) );
+			}
+		} else if ( siteCategory ) {
 			dispatch(
 				initializePages( [
 					{ id: HOME_PAGE, name: translatedPageTitles[ HOME_PAGE ] },
@@ -113,7 +124,7 @@ function WebsiteContentStep( {
 				] )
 			);
 		}
-	}, [ dispatch, siteCategory, translate, translatedPageTitles ] );
+	}, [ dispatch, siteCategory, pageTitles, translatedPageTitles ] );
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
@@ -204,7 +215,7 @@ export default function WrapperWebsiteContent(
 	const dispatch = useDispatch();
 	const headerText = translate( 'Website Content' );
 	const subHeaderText = translate(
-		'In this step, you will add your brand visuals, pages and media to be used on your website.'
+		'Add your logo, page text and media to be used on your website.'
 	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 

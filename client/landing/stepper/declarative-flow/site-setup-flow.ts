@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useSelect } from '@wordpress/data';
 import { useFSEStatus } from '../hooks/use-fse-status';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
@@ -15,13 +16,16 @@ export const siteSetupFlow: Flow = {
 
 	useSteps() {
 		return [
+			...( isEnabled( 'signup/site-vertical-step' ) ? [ 'vertical' ] : [] ),
 			'intent',
 			'options',
 			'designSetup',
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
-		];
+			'businessInfo',
+			'storeAddress',
+		] as StepPath[];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -103,6 +107,10 @@ export const siteSetupFlow: Flow = {
 				case 'storeFeatures': {
 					const storeType = params[ 0 ];
 					if ( storeType === 'power' ) {
+						if ( isEnabled( 'stepper-woocommerce-poc' ) ) {
+							return navigate( 'storeAddress' );
+						}
+
 						const args = new URLSearchParams();
 						args.append( 'back_to', `/start/setup-site/store-features?siteSlug=${ siteSlug }` );
 						args.append( 'siteSlug', siteSlug as string );
@@ -113,8 +121,18 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 				}
 
+				case 'storeAddress':
+					return navigate( 'businessInfo' );
+
+				case 'businessInfo':
+					return navigate( 'storeFeatures' );
+
 				case 'courses': {
 					return redirect( `/post/${ siteSlug }` );
+				}
+
+				case 'vertical': {
+					return navigate( 'intent' );
 				}
 			}
 		}
@@ -124,8 +142,14 @@ export const siteSetupFlow: Flow = {
 				case 'bloggerStartingPoint':
 					return navigate( 'options' );
 
+				case 'intent':
+					return navigate( isEnabled( 'signup/site-vertical-step' ) ? 'vertical' : 'intent' );
+
 				case 'storeFeatures':
 					return navigate( 'options' );
+
+				case 'storeAddress':
+					return navigate( 'storeFeatures' );
 
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );
@@ -152,6 +176,12 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'storeFeatures' );
 					}
 					return navigate( 'bloggerStartingPoint' );
+
+				case 'intent':
+					return redirect( `/home/${ siteSlug }` );
+
+				case 'vertical':
+					return redirect( `/home/${ siteSlug }` );
 
 				default:
 					return navigate( 'intent' );

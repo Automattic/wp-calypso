@@ -26,10 +26,7 @@ import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
 import { addQueryArgs } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
-import {
-	getCurrentUserCountryCode,
-	getCurrentUserLocale,
-} from 'calypso/state/current-user/selectors';
+import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { setEditorIframeLoaded, startEditingPost } from 'calypso/state/editor/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { selectMediaItems } from 'calypso/state/media/actions';
@@ -58,7 +55,6 @@ import {
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import isAppBannerDismissed from 'calypso/state/ui/selectors/app-banner-is-dismissed';
 import * as T from 'calypso/types';
-import { sendSiteEditorBetaFeedback } from '../../lib/fse-beta/send-site-editor-beta-feedback';
 import Iframe from './iframe';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { Placeholder } from './placeholder';
@@ -126,7 +122,6 @@ enum EditorActions {
 	GetNavSidebarLabels = 'getNavSidebarLabels',
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
-	SendSiteEditorBetaFeedback = 'sendSiteEditorBetaFeedback',
 	GetIsAppBannerVisible = 'getIsAppBannerVisible',
 }
 
@@ -473,16 +468,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 					blockCount: payload.blockCount,
 				} );
 			}
-		}
-
-		if ( EditorActions.SendSiteEditorBetaFeedback === action ) {
-			sendSiteEditorBetaFeedback(
-				payload,
-				this.props.siteUrl,
-				this.props.currentUserLocale,
-				() => ports[ 0 ].postMessage( 'success' ),
-				() => ports[ 0 ].postMessage( 'error' )
-			);
 		}
 
 		if ( EditorActions.GetIsAppBannerVisible === action ) {
@@ -847,7 +832,6 @@ const mapStateToProps = (
 		closeUrl,
 		closeLabel,
 		currentRoute,
-		currentUserLocale: getCurrentUserLocale( state ),
 		currentUserCountryCode: getCurrentUserCountryCode( state ),
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',

@@ -77,9 +77,9 @@ export default function WPCOMScanUpsellPage(): ReactElement {
 				</p>
 				<PromoCardCTA
 					cta={ {
-						text: translate( 'Upgrade to Business Plan' ),
+						text: translate( 'Upgrade to Pro Plan' ),
 						action: {
-							url: `/checkout/${ siteSlug }/business`,
+							url: `/checkout/${ siteSlug }/pro`,
 							onClick: onUpgradeClick,
 							selfTarget: true,
 						},
@@ -87,7 +87,7 @@ export default function WPCOMScanUpsellPage(): ReactElement {
 				/>
 			</PromoCard>
 
-			<h2 className="scan__subheader">{ translate( 'Also included in the Business Plan' ) }</h2>
+			<h2 className="scan__subheader">{ translate( 'Also included in the Pro Plan' ) }</h2>
 
 			<PromoSection { ...filteredPromos } />
 

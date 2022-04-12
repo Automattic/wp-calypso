@@ -1,5 +1,6 @@
 /**
  * @group calypso-pr
+ * @group jetpack
  */
 
 import {
@@ -9,15 +10,21 @@ import {
 	PreviewComponent,
 	SiteSelectComponent,
 	TestAccount,
+	envVariables,
+	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
+describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), function () {
 	// This test will use this specific theme as it will never be active.
 	const themeName = 'Twenty Seventeen';
-	const testAccount = new TestAccount( 'defaultUser' );
+	const accountName = envVariables.TEST_ON_JETPACK
+		? 'jetpackUser'
+		: getTestAccountByFeature( envToFeatureKey( envVariables ) );
+	const testAccount = new TestAccount( accountName );
 	const testAccountSiteDomain = testAccount.getSiteURL( { protocol: false } );
 
 	let sidebarComponent: SidebarComponent;
@@ -30,7 +37,7 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 		await testAccount.authenticate( page );
 	} );
 
-	it( 'Navigate to Themes', async function () {
+	it( 'Navigate to Appearance > Themes', async function () {
 		sidebarComponent = new SidebarComponent( page );
 		await sidebarComponent.navigate( 'Appearance', 'Themes' );
 	} );
@@ -43,9 +50,8 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview' ), () => {
 		}
 	} );
 
-	it( `Search for free theme with keyword ${ themeName }`, async function () {
+	it( `Search for theme with keyword ${ themeName }`, async function () {
 		themesPage = new ThemesPage( page );
-		await themesPage.filterThemes( 'Free' );
 		await themesPage.search( themeName );
 	} );
 

@@ -422,7 +422,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	const [ showCollapsibleRows, setShowCollapsibleRows ] = useState( false );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? '';
 	const plans = [ getPlan( PLAN_WPCOM_FLEXIBLE ), getPlan( PLAN_WPCOM_PRO ) ] as WPComPlan[];
-	const prices: PlanPrices[] = [ { price: 0 }, usePlanPrices( plans[ 1 ], selectedSiteId ) ];
+	const prices: PlanPrices[] = [ { price: 0 }, usePlanPrices( plans[ 1 ] ) ];
 
 	if ( hideFreePlan ) {
 		plans.shift();

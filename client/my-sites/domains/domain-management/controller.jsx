@@ -10,7 +10,6 @@ import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementList,
-	domainManagementNameServers,
 	domainManagementRedirectSettings,
 	domainManagementSecurity,
 	domainManagementSiteRedirect,
@@ -226,20 +225,6 @@ export default {
 				context={ pageContext }
 				needsDomains
 				selectedDomainName={ decodeURIComponentIfValid( pageContext.params.domain ) }
-			/>
-		);
-		next();
-	},
-
-	domainManagementNameServers( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementNameServers( ':site', ':domain' ) }
-				analyticsTitle="Domain Management > Name Servers and DNS"
-				component={ DomainManagement.NameServers }
-				context={ pageContext }
-				needsDomains
-				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
 		next();

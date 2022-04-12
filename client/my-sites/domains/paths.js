@@ -138,15 +138,6 @@ export function domainManagementEmail( siteName, domainName ) {
  * @param {string} domainName
  * @param {string?} relativeTo
  */
-export function domainManagementNameServers( siteName, domainName, relativeTo = null ) {
-	return domainManagementEditBase( siteName, domainName, 'name-servers', relativeTo );
-}
-
-/**
- * @param {string} siteName
- * @param {string} domainName
- * @param {string?} relativeTo
- */
 export function domainManagementDns( siteName, domainName, relativeTo = null ) {
 	return domainManagementEditBase( siteName, domainName, 'dns', relativeTo );
 }

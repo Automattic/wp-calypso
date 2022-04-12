@@ -194,7 +194,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	 */
 	.design-setup__preview {
 		.step-container__header {
-			margin: 12px 0 24px;
+			margin-top: 40px;
 
 			.formatted-header {
 				margin-top: 0;
@@ -213,13 +213,20 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 					padding: 0;
 				}
 			}
+
+			@include break-mobile {
+				margin: 12px 0 24px;
+				transform: translateY( -48px );
+			}
 		}
 
 		.step-container__content {
 			height: calc( 100vh - 245px );
+			margin-top: 74px;
 
 			@include break-mobile {
 				height: calc( 100vh - 225px );
+				margin-top: 32px;
 			}
 
 			@include break-small {
@@ -228,6 +235,10 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 			@include break-medium {
 				height: calc( 100vh - 148px );
+			}
+
+			.web-preview__inner {
+				transform: translateY( -48px );
 			}
 
 			.web-preview__frame-wrapper.is-resizable {
@@ -242,6 +253,16 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				/* stylelint-disable-next-line scales/radii */
 				border-radius: 0 0 6px 6px;
 				box-sizing: border-box;
+			}
+
+			.web-preview__inner .spinner-line {
+				width: 100%;
+				width: calc( 100% - 1px );
+				top: unset;
+				left: unset;
+				transform: unset;
+				margin: 0 auto;
+				position: static;
 			}
 		}
 

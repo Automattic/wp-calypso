@@ -56,6 +56,7 @@ export { default as isJetpackSiteSecondaryNetworkSite } from './is-jetpack-site-
 export { default as isNewSite } from './is-new-site';
 export { default as isRequestingSite } from './is-requesting-site';
 export { default as isRequestingSites } from './is-requesting-sites';
+export { default as isSearchPluginActive } from './is-search-plugin-active';
 export { default as isSingleUserSite } from './is-single-user-site';
 export { default as isSiteConflicting } from './is-site-conflicting';
 export { default as isSitePreviewable } from './is-site-previewable';

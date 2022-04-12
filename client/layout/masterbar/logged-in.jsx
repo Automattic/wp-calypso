@@ -276,15 +276,24 @@ class MasterbarLoggedIn extends Component {
 					</div>
 					<div className="masterbar__section masterbar__section--center">
 						{ ! domainOnlySite && ! isMigrationInProgress && (
-							<AsyncLoad
-								require="./publish"
-								placeholder={ null }
-								isActive={ this.isActive( 'post' ) }
-								className="masterbar__item-new"
-								tooltip={ translate( 'Create a New Post' ) }
-							>
-								{ translate( 'Write' ) }
-							</AsyncLoad>
+							<>
+								<AsyncLoad
+									require="./plan-upsell"
+									className="masterbar__item-upsell button is-primary"
+									tooltip={ translate( 'Upgrade your plan' ) }
+								>
+									{ translate( 'Upgrade' ) }
+								</AsyncLoad>
+								<AsyncLoad
+									require="./publish"
+									placeholder={ null }
+									isActive={ this.isActive( 'post' ) }
+									className="masterbar__item-new"
+									tooltip={ translate( 'Create a New Post' ) }
+								>
+									{ translate( 'Write' ) }
+								</AsyncLoad>
+							</>
 						) }
 					</div>
 					<div className="masterbar__section masterbar__section--right">

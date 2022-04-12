@@ -42,7 +42,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 	it.each( [ { revision: 1 }, { revision: 2 }, { revision: 3 } ] )(
 		'Create revision $revision',
 		async function ( { revision } ) {
-			const blockHandle = await editorPage.addBlock(
+			const blockHandle = await editorPage.addBlockFromSidebar(
 				ParagraphBlock.blockName,
 				ParagraphBlock.blockEditorSelector
 			);

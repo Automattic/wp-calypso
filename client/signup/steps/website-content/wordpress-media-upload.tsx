@@ -1,7 +1,8 @@
+import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import placeholder from 'calypso/assets/images/difm/placeholder.svg';
 import FilePicker from 'calypso/components/file-picker';
 import Spinner from 'calypso/components/spinner';
@@ -18,8 +19,26 @@ const UPLOAD_STATES = {
 	FAILED: 'FAILED',
 };
 
+const StyledGridIcon = styled( Gridicon )`
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	color: var( --studio-gray-20 );
+	cursor: pointer;
+	background-color: #f5f9fc;
+	border-radius: 13px;
+	width: 15px;
+	height: 15px;
+	border: 2px solid var( --studio-gray-20 );
+	&:hover {
+		color: var( --studio-gray-80 );
+		border: 2px solid var( --studio-gray-80 );
+	}
+`;
+
 const FileSelectThumbnailContainer = styled.div< { disabled?: boolean } >`
 	cursor: ${ ( props ) => ( props.disabled ? 'default' : 'pointer' ) };
+	position: relative;
 	width: 195px;
 	height: 145px;
 	background: rgba( 187, 224, 250, 0.12 );
@@ -46,12 +65,22 @@ const CroppedImage = styled.div`
 	align-items: center;
 	justify-content: center;
 	height: 100%;
+	position: relative;
 	img {
 		max-height: 100%;
 		max-width: 100%;
 		margin: 0 auto;
 	}
 `;
+
+function CrossButton( { onClick }: { onClick: ( e: MouseEvent< SVGSVGElement > ) => void } ) {
+	const onIconClick = ( e: MouseEvent< SVGSVGElement > ) => {
+		e.stopPropagation();
+		onClick( e );
+	};
+
+	return <StyledGridIcon icon="cross" onClick={ onIconClick } />;
+}
 
 export interface MediaUploadData {
 	title?: string;
@@ -63,6 +92,7 @@ interface WordpressMediaUploadProps {
 	onMediaUploadComplete: ( imageData: MediaUploadData ) => void;
 	onMediaUploadStart?: ( imageData: MediaUploadData ) => void;
 	onMediaUploadFailed?: ( imageData: MediaUploadData ) => void;
+	onRemoveImage: ( imageData: MediaUploadData ) => void;
 	mediaIndex: number;
 	site: SiteData;
 	initialUrl: string;
@@ -75,6 +105,7 @@ export function WordpressMediaUpload( {
 	onMediaUploadComplete,
 	onMediaUploadStart,
 	onMediaUploadFailed,
+	onRemoveImage,
 	initialUrl,
 	initialCaption,
 }: WordpressMediaUploadProps ) {
@@ -83,9 +114,11 @@ export function WordpressMediaUpload( {
 		initialUrl ? UPLOAD_STATES.COMPLETED : UPLOAD_STATES.NOT_SELECTED
 	);
 	const [ imageCaption, setImageCaption ] = useState( initialCaption );
+	const [ isImageLoading, setIsImageLoading ] = useState( false );
 	const translate = useTranslate();
 	const addMedia = useAddMedia();
 	const onPick = async function ( file: FileList ) {
+		setIsImageLoading( true );
 		setImageCaption( '' );
 		onMediaUploadStart && onMediaUploadStart( { mediaIndex } );
 		setUploadState( UPLOAD_STATES.IN_PROGRESS );
@@ -104,13 +137,27 @@ export function WordpressMediaUpload( {
 		}
 	};
 
+	const onClickRemoveImage = () => {
+		setUploadedImageUrl( '' );
+		setUploadState( UPLOAD_STATES.NOT_SELECTED );
+		setImageCaption( '' );
+		onRemoveImage && onRemoveImage( { mediaIndex } );
+	};
+
 	switch ( uploadState ) {
 		case UPLOAD_STATES.COMPLETED:
 			return (
 				<FilePicker key={ mediaIndex } accept="image/*" onPick={ onPick }>
 					<FileSelectThumbnailContainer>
 						<CroppedImage>
-							<img src={ uploadedImageUrl } alt={ imageCaption } />
+							{ /* Fixes small UI glitch where cross icon switches on load */ }
+							{ ! isImageLoading && <CrossButton onClick={ onClickRemoveImage } /> }
+							<img
+								style={ { opacity: isImageLoading ? 0.2 : 1 } }
+								src={ uploadedImageUrl }
+								alt={ imageCaption }
+								onLoad={ () => setIsImageLoading( false ) }
+							/>
 						</CroppedImage>
 						<Label>{ translate( 'Replace' ) }</Label>
 					</FileSelectThumbnailContainer>

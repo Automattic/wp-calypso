@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
+import { FEATURE_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -11,11 +12,14 @@ import { connect } from 'react-redux';
 import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
+import { businessPlanToAdd } from 'calypso/lib/plugins/utils';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { installPlugin } from 'calypso/state/plugins/installed/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isCompatiblePlugin } from '../plugin-compatibility';
 import { getPeriodVariationValue } from '../plugin-price';
@@ -149,18 +153,35 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderMarketplaceButton() {
-		const { translate, selectedSite, plugin, billingPeriod } = this.props;
+		const {
+			translate,
+			selectedSite,
+			plugin,
+			billingPeriod,
+			canInstallPlugins,
+			eligibleForProPlan,
+		} = this.props;
 		const variationPeriod = getPeriodVariationValue( billingPeriod );
 		const product_slug = plugin?.variations?.[ variationPeriod ]?.product_slug;
 
+		const buttonLink = canInstallPlugins
+			? `/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }`
+			: `/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
+					selectedSite?.plan,
+					billingPeriod,
+					eligibleForProPlan
+			  ) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
+					selectedSite.slug
+			  }#step2`;
+
 		return (
 			<span className="plugin-install-button__install embed">
-				<Button
-					href={ `/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }#step2` }
-				>
+				<Button href={ buttonLink }>
 					<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
 					<Gridicon icon="plugins" size={ 18 } />
-					{ translate( 'Purchase and activate' ) }
+					{ canInstallPlugins
+						? translate( 'Purchase and activate' )
+						: translate( 'Upgrade and activate' ) }
 				</Button>
 			</span>
 		);
@@ -317,6 +338,8 @@ export default connect(
 			siteId,
 			siteIsConnected: getSiteConnectionStatus( state, siteId ),
 			siteIsWpcomAtomic: isSiteWpcomAtomic( state, siteId ),
+			canInstallPlugins: hasActiveSiteFeature( state, siteId, FEATURE_INSTALL_PLUGINS ),
+			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
 		};
 	},
 	{

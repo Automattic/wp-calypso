@@ -11,6 +11,10 @@ import {
 	isSecurityDailyPlan,
 	isSecurityRealTimePlan,
 	isCompletePlan,
+	isProPlan,
+	FEATURE_PREMIUM_CONTENT_CONTAINER,
+	FEATURE_DONATIONS,
+	FEATURE_RECURRING_PAYMENTS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
@@ -27,8 +31,10 @@ import EmptyContent from 'calypso/components/empty-content';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
 import wp from 'calypso/lib/wp';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasFeature, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -55,6 +61,10 @@ interface ConnectedProps {
 	trackCtaButton: ( feature: string ) => void;
 	isPremiumOrBetterPlan?: boolean;
 	isUserAdmin?: boolean;
+	eligibleForProPlan?: boolean;
+	hasDonations: boolean;
+	hasPremiumContent: boolean;
+	hasRecurringPayments: boolean;
 }
 
 type BoolFunction = ( arg: string ) => boolean;
@@ -76,6 +86,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	hasWordAds,
 	hasConnectedAccount,
 	hasSetupAds,
+	eligibleForProPlan,
+	hasDonations,
+	hasPremiumContent,
+	hasRecurringPayments,
 	trackUpgrade,
 	trackLearnLink,
 	trackCtaButton,
@@ -111,10 +125,12 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	};
 
 	const getPremiumPlanNames = () => {
+		const nonAtomicJetpackText = eligibleForProPlan
+			? translate( 'Available only with a Pro plan.' )
+			: translate( 'Available only with a Premium, Business, or eCommerce plan.' );
+
 		// Space isn't included in the translatable string to prevent it being easily missed.
-		return isNonAtomicJetpack
-			? getAnyPlanNames()
-			: ' ' + translate( 'Available only with a Premium, Business, or eCommerce plan.' );
+		return isNonAtomicJetpack ? getAnyPlanNames() : ' ' + nonAtomicJetpackText;
 	};
 
 	/**
@@ -173,7 +189,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getRecurringPaymentsCard = () => {
-		const cta = isFreePlan
+		const cta = ! hasRecurringPayments
 			? {
 					text: translate( 'Unlock this feature' ),
 					action: () => {
@@ -228,7 +244,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getDonationsCard = () => {
-		const cta = isFreePlan
+		const cta = ! hasDonations
 			? {
 					text: translate( 'Unlock this feature' ),
 					action: () => {
@@ -276,7 +292,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getPremiumContentCard = () => {
-		const cta = isFreePlan
+		const cta = ! hasPremiumContent
 			? {
 					text: translate( 'Unlock this feature' ),
 					action: () => {
@@ -340,7 +356,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getPaidNewsletterCard = () => {
-		const cta = isFreePlan
+		const cta = ! hasPremiumContent
 			? {
 					text: translate( 'Unlock this feature' ),
 					action: () => {
@@ -536,7 +552,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	return (
 		<Fragment>
 			{ ! hasWordAds && <QueryWordadsStatus siteId={ siteId } /> }
-			{ ! isFreePlan && <QueryMembershipsSettings siteId={ siteId } /> }
+			{ <QueryMembershipsSettings siteId={ siteId } /> }
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
 					<PromoSection
@@ -572,7 +588,8 @@ export default connect(
 					isJetpackBusinessPlan,
 					isSecurityDailyPlan,
 					isSecurityRealTimePlan,
-					isCompletePlan
+					isCompletePlan,
+					isProPlan
 				)( sitePlanSlug )
 		);
 		return {
@@ -587,10 +604,17 @@ export default connect(
 			hasWordAds: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
 			hasSimplePayments: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
+			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
 			isLoading,
 			hasSetupAds: Boolean(
 				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
 			),
+			hasDonations: hasConnectedAccount || hasActiveSiteFeature( state, siteId, FEATURE_DONATIONS ),
+			hasPremiumContent:
+				hasConnectedAccount ||
+				hasActiveSiteFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ),
+			hasRecurringPayments:
+				hasConnectedAccount || hasActiveSiteFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 		};
 	},
 	( dispatch ) => ( {

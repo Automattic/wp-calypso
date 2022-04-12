@@ -211,6 +211,15 @@ export const setStoreType = ( storeType: string ) => ( {
 	storeType,
 } );
 
+export const setStoreAddressValue = (
+	store_address_field: string,
+	store_address_value: string
+) => ( {
+	type: 'SET_STORE_ADDRESS_VALUE' as const,
+	store_address_field,
+	store_address_value,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -234,4 +243,5 @@ export type OnboardAction = ReturnType<
 	| typeof startOnboarding
 	| typeof setIntent
 	| typeof setStartingPoint
+	| typeof setStoreAddressValue
 >;

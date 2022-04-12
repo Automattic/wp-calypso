@@ -20,6 +20,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 	const accountName = getTestAccountByFeature( features, [
 		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
 	] );
+
 	const postTitle = `Scheduled Post: ${ DataHelper.getTimestamp() }`;
 	const postContent = DataHelper.getRandomPhrase();
 	let postURL: URL;

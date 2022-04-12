@@ -34,7 +34,7 @@ const PluginDetailsSidebar = ( {
 								{ translate( 'Active installations' ) }
 							</div>
 							<div className="plugin-details-sidebar__active-installs-value value">
-								{ formatNumberMetric( active_installs, 'en' ) }
+								{ formatNumberMetric( active_installs, 0 ) }
 							</div>
 						</div>
 					) }

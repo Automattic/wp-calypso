@@ -128,8 +128,7 @@ export class ContactDetailsFormFields extends Component {
 		);
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.formStateController = formState.Controller( {
 			debounceWait: 500,
 			fieldNames: CONTACT_DETAILS_FORM_FIELDS,
@@ -524,6 +523,11 @@ export class ContactDetailsFormFields extends Component {
 			labelTexts,
 			contactDetailsErrors,
 		} = this.props;
+
+		if ( ! this.state.form ) {
+			return null;
+		}
+
 		const countryCode = this.getCountryCode();
 
 		const isFooterVisible = !! ( this.props.onSubmit || onCancel );

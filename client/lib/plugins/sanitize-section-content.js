@@ -1,3 +1,4 @@
+import { addQueryArgs } from '@wordpress/url';
 import { filter } from 'lodash';
 import validUrl from 'valid-url';
 
@@ -193,6 +194,10 @@ export const sanitizeSectionContent = ( content ) => {
 		if ( 'a' === tagName && node.getAttribute( 'href' ) ) {
 			node.setAttribute( 'target', '_blank' );
 			node.setAttribute( 'rel', 'external noopener noreferrer' );
+			node.setAttribute(
+				'href',
+				addQueryArgs( node.getAttribute( 'href' ), { referrer: 'wordpress.com' } )
+			);
 		}
 
 		// prevent mixed-content issues from blocking Youtube embeds

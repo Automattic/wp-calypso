@@ -294,7 +294,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 		case domainAvailability.DOTBLOG_SUBDOMAIN:
 		case domainAvailability.RESTRICTED:
 			message = translate(
-				'You cannot map another WordPress.com subdomain - try creating a new site or one of the custom domains below.'
+				'This is a free WordPress.com subdomain. You can’t map it to another site.'
 			);
 			break;
 

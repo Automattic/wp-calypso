@@ -1,13 +1,9 @@
+import { isGoogleWorkspaceProductSlug, isGSuiteProductSlug } from '@automattic/calypso-products';
 import emailValidator from 'email-validator';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { v4 as uuidv4 } from 'uuid';
 import { googleApps, googleAppsExtraLicenses } from 'calypso/lib/cart-values/cart-items';
-import {
-	getGSuiteMailboxCount,
-	hasGSuiteWithUs,
-	isGoogleWorkspaceProductSlug,
-	isGSuiteProductSlug,
-} from 'calypso/lib/gsuite';
+import { getGSuiteMailboxCount, hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
