@@ -1,7 +1,6 @@
 import { PaymentLogo } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useRecentPaymentMethodsQuery } from 'calypso/jetpack-cloud/sections/partner-portal//hooks';
-import AutomaticBillingNotice from '../automatic-billing-notice';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 import type { FunctionComponent } from 'react';
 
@@ -23,7 +22,17 @@ const PaymentMethodDeletePrimaryConfirmation: FunctionComponent< Props > = ( {
 	);
 
 	if ( ! isFetching && ! nextPrimaryPaymentMethod ) {
-		return null;
+		return (
+			<div className="payment-method-delete-primary-confirmation">
+				<div className="payment-method-delete-primary-confirmation__card">
+					<p className="payment-method-delete-primary-confirmation__notice">
+						{ translate(
+							'Issuing new licenses will be paused until you add a new primary payment method.'
+						) }
+					</p>
+				</div>
+			</div>
+		);
 	}
 
 	return (
@@ -64,12 +73,11 @@ const PaymentMethodDeletePrimaryConfirmation: FunctionComponent< Props > = ( {
 					) }
 				</div>
 
-				<AutomaticBillingNotice
-					className="payment-method-delete-primary-confirmation__notice"
-					text={ translate(
-						'Your primary payment method will be charged automatically each month.'
-					) }
-				/>
+				<p className="payment-method-delete-primary-confirmation__notice">
+					<small>
+						{ translate( 'Your primary payment method will be charged automatically each month.' ) }
+					</small>
+				</p>
 			</div>
 		</div>
 	);
