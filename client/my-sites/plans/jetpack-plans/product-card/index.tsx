@@ -22,11 +22,12 @@ import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { ITEM_TYPE_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getUserOwnsPurchase } from 'calypso/state/purchases/selectors/get-user-owns-purchase';
-import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
-import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
 import productAboveButtonText from './product-above-button-text';
@@ -260,7 +261,13 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 };
 
 export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state ) ?? 0;
+	const currentRoute = getCurrentRouteParameterized( state, siteId );
+
 	return {
-		isJetpackPricingPage: isJetpackCloud() && getCurrentRoute( state ) === '/pricing',
+		isJetpackPricingPage:
+			( isJetpackCloud() && currentRoute === '/pricing' ) ||
+			( isJetpackSite( state, siteId ) && currentRoute === '/plans/:site' ) ||
+			currentRoute === '/jetpack/connect/store',
 	};
 } )( ProductCard );
