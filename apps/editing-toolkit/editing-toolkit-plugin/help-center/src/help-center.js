@@ -39,6 +39,56 @@ const HelpIcon = ( { newItems, active } ) => (
 function HelpCenterComponent() {
 	const [ isActive, setIsActive ] = React.useState( false );
 
+	const content = (
+		<>
+			<h1>Help center</h1>
+			<p>
+				Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis
+				egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec
+				eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat
+				eleifend leo.
+			</p>
+			<p>
+				Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis
+				egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec
+				eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat
+				eleifend leo.
+			</p>
+			<h2>Subheader</h2>
+			<p>
+				Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis
+				egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec
+				eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat
+				eleifend leo.
+			</p>
+			<p>
+				Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis
+				egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec
+				eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat
+				eleifend leo.
+			</p>
+			<p>
+				Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis
+				egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec
+				eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat
+				eleifend leo.
+			</p>
+			<h2>Second subheader</h2>
+			<p>
+				Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis
+				egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec
+				eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat
+				eleifend leo.
+			</p>
+			<h2>Third subheader</h2>
+			<p>
+				Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis
+				egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec
+				eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat
+				eleifend leo.
+			</p>
+		</>
+	);
 	return (
 		<>
 			<PinnedItems scope="core/edit-post">
@@ -50,9 +100,7 @@ function HelpCenterComponent() {
 					></Button>
 				</span>
 			</PinnedItems>
-			{ isActive && (
-				<HelpCenter content={ <h1>Help center</h1> } handleClose={ () => setIsActive( false ) } />
-			) }
+			{ isActive && <HelpCenter content={ content } handleClose={ () => setIsActive( false ) } /> }
 		</>
 	);
 }

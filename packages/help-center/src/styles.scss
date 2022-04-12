@@ -1,12 +1,18 @@
 .help-center__container {
 	background-color: #fff;
 	color: #000;
+	
+	& > div {
+		display: flex;
+		flex-direction: column;
+	}
 
 	&.is-desktop {
 		background: white;
 		border-radius: 2px;
 		box-shadow: 0 0 3px 0 rgba( 0, 0, 0, 0.25 );
 		cursor: default;
+		height: 800px;
 		display: inline;
 		position: fixed;
 		right: 16px;
@@ -23,6 +29,7 @@
 		}
 
 		.help-center__container-content {
+			flex-grow: 1;
 			max-height: 70vh;
 			min-height: 300px;
 			overflow-y: auto;
