@@ -150,7 +150,7 @@ function PaymentMethodAdd(): ReactElement {
 								text={
 									useAsPrimaryPaymentMethod
 										? translate(
-												'By storing your payment method as primary you agree to have it charged automatically each month.'
+												'By storing your primary payment method you agree to have it charged automatically each month.'
 										  )
 										: translate(
 												'By storing your payment method you agree to it potentially being used for monthly invoices in the future.'
