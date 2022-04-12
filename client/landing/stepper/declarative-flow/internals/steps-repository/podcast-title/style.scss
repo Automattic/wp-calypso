@@ -49,6 +49,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
     }
 
     input[type='text'],
+    input[type='text']::placeholder,
     label {
         @extend .wp-brand-font;
         font-size: 2rem;
@@ -66,6 +67,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 
     input[type='text'] {
         border: none;
+        display: inline-block;
         flex: 1;
         letter-spacing: -0.4px;
         line-height: 57px;
@@ -110,7 +112,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
         max-width: 100%;
 
         &.is-empty {
-            background: transparent;
+            max-width: 400px;
         }
 
         @include break-medium {

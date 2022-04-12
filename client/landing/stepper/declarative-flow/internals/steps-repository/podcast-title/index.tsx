@@ -31,7 +31,7 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 
 		const handleChange = ( event: React.FormEvent< HTMLInputElement > ) => {
 			setFormTouched( true );
-			const underlineWidth = getTextWidth( podcastTitle as string, inputRef.current );
+			const underlineWidth = getTextWidth( ( podcastTitle as string ) || '', inputRef.current );
 			setUnderlineWidth( underlineWidth );
 			return setPodcastTitle( event.currentTarget.value );
 		};
@@ -47,12 +47,13 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 							inputRef={ inputRef }
 							value={ podcastTitle }
 							onChange={ handleChange }
+							placeholder={ __( 'Good Fun' ) }
 						/>
 						<div
 							className={ classNames( 'podcast-title__underline', {
 								'is-empty': ! ( podcastTitle as string )?.length,
 							} ) }
-							style={ { width: underlineWidth } }
+							style={ { width: underlineWidth || '100%' } }
 						/>
 						<FormSettingExplanation>
 							<Icon className="podcast-title__form-icon" icon={ tip } size={ 20 } />
