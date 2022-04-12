@@ -98,7 +98,7 @@ export const exampleFlow: Flow = {
 		if ( ! siteSlug ) {
 			throw new Error( 'site-setup did not provide the site slug it is configured to.' );
 		}
-	}
+	},
 };
 ```
 
