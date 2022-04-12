@@ -198,4 +198,12 @@ export const siteSetupFlow: Flow = {
 
 		return { goNext, goBack, goToStep, submit };
 	},
+
+	useAssertConditions() {
+		const siteSlug = useSiteSlugParam();
+
+		if ( ! siteSlug ) {
+			throw new Error( 'site-setup did not provide the site slug it is configured to.' );
+		}
+	},
 };
