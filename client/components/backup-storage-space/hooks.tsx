@@ -1,5 +1,7 @@
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import getJetpackStorageUpgradeUrl from 'calypso/state/plans/selectors/get-jetpack-storage-upgrade-url';
 
 enum StorageUnits {
 	Gigabyte = 2 ** 30,
@@ -21,6 +23,7 @@ export const useStorageUsageText = (
 	bytesAvailable: number | undefined
 ): TranslateResult | null => {
 	const translate = useTranslate();
+	const storageUpgradeUrl = useSelector( getJetpackStorageUpgradeUrl );
 
 	return useMemo( () => {
 		if ( bytesUsed === undefined ) {
@@ -43,20 +46,23 @@ export const useStorageUsageText = (
 
 		if ( availableUnit === StorageUnits.Gigabyte ) {
 			return translate(
-				'%(usedGigabytes).1fGB of %(availableUnitAmount)dGB used',
-				'%(usedGigabytes).1fGB of %(availableUnitAmount)dGB used',
+				'%(usedGigabytes).1fGB used of %(availableUnitAmount)dGB - {{a}}Upgrade{{/a}}',
+				'%(usedGigabytes).1fGB used of %(availableUnitAmount)dGB - {{a}}Upgrade{{/a}}',
 				{
 					count: usedGigabytes,
 					args: { usedGigabytes, availableUnitAmount },
 					comment:
 						'Must use unit abbreviation; describes used vs available storage amounts (e.g., 20.0GB of 30GB used, 0.5GB of 20GB used)',
+					components: {
+						a: <a href={ storageUpgradeUrl } />,
+					},
 				}
 			);
 		}
 
 		return translate(
-			'%(usedGigabytes).1fGB of %(availableUnitAmount)dTB used',
-			'%(usedGigabytes).1fGB of %(availableUnitAmount)dTB used',
+			'%(usedGigabytes).1fGB used of %(availableUnitAmount)dTB',
+			'%(usedGigabytes).1fGB used of %(availableUnitAmount)dTB',
 			{
 				count: usedGigabytes,
 				args: { usedGigabytes, availableUnitAmount },
@@ -64,5 +70,5 @@ export const useStorageUsageText = (
 					'Must use unit abbreviation; describes used vs available storage amounts (e.g., 20.0GB of 1TB used, 0.5GB of 2TB used)',
 			}
 		);
-	}, [ translate, bytesUsed, bytesAvailable ] );
+	}, [ translate, storageUpgradeUrl, bytesUsed, bytesAvailable ] );
 };

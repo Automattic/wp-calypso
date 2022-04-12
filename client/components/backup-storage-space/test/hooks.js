@@ -1,15 +1,33 @@
+/**
+ * @jest-environment jsdom
+ */
+
+const EXAMPLE_SITE_SLUG = 'mysite.example';
+
+// Mock dependencies
+jest.mock( 'react-redux', () => ( {
+	...jest.requireActual( 'react-redux' ),
+	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
+} ) );
+jest.mock( 'calypso/state/ui/selectors/get-selected-site-slug', () =>
+	jest.fn().mockImplementation( () => EXAMPLE_SITE_SLUG )
+);
+
+import '@testing-library/jest-dom/extend-expect';
+import { render } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { useStorageUsageText } from 'calypso/components/backup-storage-space/hooks';
 
 const GIGABYTE = 2 ** 30;
 const TERABYTE = 2 ** 40;
 
-function render( bytesUsed, bytesAvailable ) {
+function renderText( bytesUsed, bytesAvailable ) {
 	const {
 		result: { current: text },
 	} = renderHook( () => useStorageUsageText( bytesUsed, bytesAvailable ) );
 
-	return text;
+	const { container } = render( text );
+	return container;
 }
 
 describe( 'useStorageUsageText', () => {
@@ -21,8 +39,8 @@ describe( 'useStorageUsageText', () => {
 	] )(
 		'renders used storage in gigabytes to one decimal place, rounded',
 		( bytesUsed, expectedGB ) => {
-			const text = render( bytesUsed, 0 );
-			expect( text.includes( `${ expectedGB.toFixed( 1 ) }GB` ) ).toBe( true );
+			const text = renderText( bytesUsed, 0 );
+			expect( text ).toHaveTextContent( `${ expectedGB.toFixed( 1 ) }GB` );
 		}
 	);
 
@@ -34,8 +52,8 @@ describe( 'useStorageUsageText', () => {
 	] )(
 		'shows available storage in integer terabytes if bytesAvailable is >= 1TB',
 		( bytesAvailable, expectedTB ) => {
-			const text = render( 0, bytesAvailable );
-			expect( text.includes( `${ expectedTB }TB` ) ).toBe( true );
+			const text = renderText( 0, bytesAvailable );
+			expect( text ).toHaveTextContent( `${ expectedTB }TB` );
 		}
 	);
 
@@ -47,18 +65,19 @@ describe( 'useStorageUsageText', () => {
 	] )(
 		'shows available storage in integer gigabytes if bytesAvailable is < 1TB',
 		( bytesAvailable, expectedGB ) => {
-			const text = render( 0, bytesAvailable );
-			expect( text.includes( `${ expectedGB }GB` ) ).toBe( true );
+			const text = renderText( 0, bytesAvailable );
+			expect( text ).toHaveTextContent( `${ expectedGB }GB` );
 		}
 	);
 
 	test( "doesn't render available storage if availableBytes is undefined", () => {
-		const text = render( GIGABYTE, undefined );
-		expect( text ).toEqual( '1.0GB used' );
+		const text = renderText( GIGABYTE, undefined );
+		expect( text ).toHaveTextContent( '1.0GB used' );
+		expect( text ).not.toHaveTextContent( ' of ' );
 	} );
 
 	test( 'renders null if bytesUsed is undefined', () => {
-		const text = render( undefined, GIGABYTE );
-		expect( text ).toBeNull();
+		const text = renderText( undefined, GIGABYTE );
+		expect( text ).toBeEmptyDOMElement();
 	} );
 } );
