@@ -166,8 +166,6 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	}
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
-		// scroll up to reveal the spinner
-		window.scrollTo( 0, 0 );
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlug && _selectedDesign ) {
 			setPendingAction( setDesignOnSite( siteSlug, _selectedDesign ) );
