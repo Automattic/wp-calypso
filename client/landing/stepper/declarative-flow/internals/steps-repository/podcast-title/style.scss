@@ -3,6 +3,7 @@
 
 $design-button-primary-color: var( --color-primary );
 $design-button-primary-hover-color: var( --color-primary-60 );
+$input-max-width: 448px;
 
 .podcast-title__form {
     display: flex;
@@ -77,6 +78,11 @@ $design-button-primary-hover-color: var( --color-primary-60 );
         height: auto;
         padding: 0;
         width: 100%;
+        max-width: 100%;
+
+        @include break-medium {
+            max-width: $input-max-width;
+        }
     }
 
     .form-setting-explanation {
@@ -121,6 +127,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 
         @include break-medium {
             margin-top: -12px;
+            max-width: $input-max-width;
         }
     }
 }
