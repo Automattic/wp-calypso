@@ -55,7 +55,7 @@ export default class TusUploader {
 				withCredentials: false,
 				autoRetry: true,
 				overridePatchMethod: false,
-				chunkSize: 500000, // 500 Kb.
+				chunkSize: 10000000, // 10mb.
 				allowedFileTypes: [ 'video/*' ],
 				metadata: {
 					filename: file.name,
