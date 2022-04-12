@@ -1,7 +1,7 @@
 import HelpCenter from '@automattic/help-center';
 import { Button } from '@wordpress/components';
 import { PinnedItems } from '@wordpress/interface';
-import { registerPlugin } from '@wordpress/plugins';
+import { registerPlugin, unregisterPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
 import React from 'react';
 import './help-center.scss';
@@ -57,6 +57,22 @@ function HelpCenterComponent() {
 	);
 }
 
-registerPlugin( 'etk-help-center', {
-	render: () => <HelpCenterComponent />,
+function registerHelpCenter() {
+	registerPlugin( 'etk-help-center', {
+		render: () => <HelpCenterComponent />,
+	} );
+}
+
+// Register the plugin only if we are on desktop
+if ( ! window.matchMedia( '(max-width: 480px)' ).matches ) {
+	registerHelpCenter();
+}
+
+// If the viewport changes, we register the plugin if we are on desktop, unregister it otherwise
+window.matchMedia( '(max-width: 480px)' ).addEventListener( 'change', ( event ) => {
+	if ( event.matches ) {
+		unregisterPlugin( 'etk-help-center' );
+	} else {
+		registerHelpCenter();
+	}
 } );
