@@ -30,10 +30,13 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	constructor( props ) {
 		super( props );
 
-		this.autoplay = props.isPlaying;
+		// We use an instance property because we only want to set this once
+		// before the component got rendered for the first time. `isPlaying`
+		// could change over time but it doesn't make sense to re-set the
+		// `autoPlay` attribute for the videopress iframe (which would also
+		// cause the iframe to flicker).
+		this.enableAutoplay = props.isPlaying;
 	}
-
-	autoplay = false;
 
 	componentDidMount() {
 		window.addEventListener( 'message', this.receiveMessage, false );
@@ -168,7 +171,7 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		const { height = 480, videopress_guid, width = 854 } = item;
 
 		const params = {
-			autoPlay: this.autoplay,
+			autoPlay: this.enableAutoplay,
 			height,
 			width,
 			fill: true,
