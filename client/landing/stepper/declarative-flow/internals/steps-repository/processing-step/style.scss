@@ -1,0 +1,21 @@
+@import 'calypso/assets/stylesheets/shared/_loading.scss';
+@import '@automattic/onboarding/styles/mixins';
+
+$progress-duration: 800ms;
+
+.processing-step {
+	padding: 1em;
+	max-width: 540px;
+	text-align: center;
+	margin: 32vh auto;
+
+	&__progress-step {
+		@include onboarding-font-recoleta;
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 1.625rem;
+		line-height: 40px;
+		text-align: center;
+		vertical-align: middle;
+		margin: 0;
+	}
+}

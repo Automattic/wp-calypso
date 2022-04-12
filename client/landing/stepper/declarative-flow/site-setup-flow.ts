@@ -23,7 +23,9 @@ export const siteSetupFlow: Flow = {
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
+			'businessInfo',
 			'storeAddress',
+			'processing',
 		] as StepPath[];
 	},
 
@@ -44,7 +46,10 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 				}
 
-				case 'designSetup': {
+				case 'designSetup':
+					return navigate( 'processing' );
+
+				case 'processing': {
 					// If the user skips starting point, redirect them to My Home
 					if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
 						if ( startingPoint !== 'write' ) {
@@ -120,6 +125,12 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 				}
 
+				case 'storeAddress':
+					return navigate( 'businessInfo' );
+
+				case 'businessInfo':
+					return navigate( 'storeFeatures' );
+
 				case 'courses': {
 					return redirect( `/post/${ siteSlug }` );
 				}
@@ -169,6 +180,12 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'storeFeatures' );
 					}
 					return navigate( 'bloggerStartingPoint' );
+
+				case 'intent':
+					return redirect( `/home/${ siteSlug }` );
+
+				case 'vertical':
+					return redirect( `/home/${ siteSlug }` );
 
 				default:
 					return navigate( 'intent' );

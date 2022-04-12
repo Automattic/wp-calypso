@@ -55,7 +55,8 @@ export default function LicenseProductCard( props: Props ): ReactElement {
 							{ formatCurrency( product.amount, product.currency ) }
 						</div>
 						<div className="license-product-card__price-interval">
-							{ translate( '/per site per month' ) }
+							{ product.price_interval === 'day' && translate( '/per license per day' ) }
+							{ product.price_interval === 'month' && translate( '/per license per month' ) }
 						</div>
 					</div>
 				</div>

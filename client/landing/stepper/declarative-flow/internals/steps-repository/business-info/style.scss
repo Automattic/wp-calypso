@@ -1,0 +1,40 @@
+@import 'calypso/signup/style.scss';
+
+.business-info__instructions-container {
+	.components-base-control {
+		margin-bottom: 24px;
+	}
+
+	.components-base-control__field .components-input-control__label {
+		font-size: $editor-font-size;
+		margin-bottom: $grid-unit;
+		padding: 0;
+	}
+
+	.components-base-control__field
+		.components-input-control__container
+		.components-select-control__input {
+		box-sizing: initial;
+		height: auto;
+		line-height: 20px;
+		min-height: auto;
+		padding: 12px 16px;
+	}
+
+	.business-info__components-group .components-checkbox-control:not( :last-child ) {
+		margin-bottom: $grid-unit;
+	}
+}
+
+.business-info__components-group-label {
+	box-sizing: border-box;
+	color: currentColor;
+	display: block;
+	max-width: 100%;
+	z-index: 1;
+	font-size: $editor-font-size;
+	margin-bottom: $grid-unit;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

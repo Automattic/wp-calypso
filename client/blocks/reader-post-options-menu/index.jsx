@@ -21,6 +21,7 @@ import * as stats from 'calypso/reader/stats';
 import * as PostUtils from 'calypso/state/posts/utils';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import {
 	requestMarkAsSeen,
 	requestMarkAsUnseen,
@@ -253,6 +254,7 @@ class ReaderPostOptionsMenu extends Component {
 			posts,
 			isWPForTeamsItem,
 			currentRoute,
+			hasOrganization,
 		} = this.props;
 
 		if ( ! post ) {
@@ -315,8 +317,8 @@ class ReaderPostOptionsMenu extends Component {
 						/>
 					) }
 
-					{ isEligibleForUnseen( { teams, isWPForTeamsItem } ) &&
-						canBeMarkedAsSeen( { post, posts, currentRoute } ) &&
+					{ isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
+						canBeMarkedAsSeen( { post, posts } ) &&
 						post.is_seen && (
 							<PopoverMenuItem
 								onClick={ this.markAsUnSeen }
@@ -328,8 +330,8 @@ class ReaderPostOptionsMenu extends Component {
 							</PopoverMenuItem>
 						) }
 
-					{ isEligibleForUnseen( { teams, isWPForTeamsItem } ) &&
-						canBeMarkedAsSeen( { post, posts, currentRoute } ) &&
+					{ isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
+						canBeMarkedAsSeen( { post, posts } ) &&
 						! post.is_seen && (
 							<PopoverMenuItem onClick={ this.markAsSeen } icon="visible">
 								{ size( posts ) > 0 && translate( 'Mark all as seen' ) }
@@ -384,6 +386,9 @@ export default connect(
 		return Object.assign(
 			{ currentRoute: getCurrentRoute( state ) },
 			{ isWPForTeamsItem: isSiteWPForTeams( state, siteId ) || isFeedWPForTeams( state, feedId ) },
+			{
+				hasOrganization: hasReaderFollowOrganization( state, feedId, siteId ),
+			},
 			{ teams: getReaderTeams( state ) },
 			feedId > 0 && { feed: getFeed( state, feedId ) },
 			siteId > 0 && { site: getSite( state, siteId ) }

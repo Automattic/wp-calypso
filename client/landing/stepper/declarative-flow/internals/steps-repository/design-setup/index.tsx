@@ -13,7 +13,6 @@ import DesignPicker, {
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
 import { StepContainer } from '@automattic/onboarding';
-import { Spinner } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
@@ -36,14 +35,13 @@ import type { Design } from '@automattic/design-picker';
  */
 const designSetup: Step = function DesignSetup( { navigation } ) {
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
-	const [ loading, setIsLoading ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
 	const { goBack, submit } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
 	const site = useSite();
-	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
+	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 
 	const flowName = 'setup-site';
@@ -168,18 +166,14 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	}
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
-		// scroll up to reveal the spinner
-		window.scrollTo( 0, 0 );
-		setIsLoading( true );
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlug && _selectedDesign ) {
-			setDesignOnSite( siteSlug, _selectedDesign ).then( () => {
-				const providedDependencies = {
-					selectedDesign: _selectedDesign,
-					selectedSiteCategory: categorization.selection,
-				};
-				submit?.( providedDependencies );
-			} );
+			setPendingAction( setDesignOnSite( siteSlug, _selectedDesign ) );
+			const providedDependencies = {
+				selectedDesign: _selectedDesign,
+				selectedSiteCategory: categorization.selection,
+			};
+			submit?.( providedDependencies );
 		}
 	}
 
@@ -269,7 +263,6 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 						align={ isMobile ? 'left' : 'center' }
 					/>
 				}
-				shouldHideNavButtons={ loading }
 				customizedActionButtons={
 					<>
 						{ shouldUpgrade ? (
@@ -277,7 +270,6 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 								{ translate( 'Upgrade Plan' ) }
 							</Button>
 						) : undefined }
-						{ loading ? <Spinner /> : '' }
 					</>
 				}
 				recordTracksEvent={ recordTracksEvent }
@@ -328,8 +320,6 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 			recordTracksEvent={ recordTracksEvent }
 			goNext={ () => submit?.() }
 			goBack={ handleBackClick }
-			shouldHideNavButtons={ loading }
-			customizedActionButtons={ loading ? <Spinner /> : undefined }
 		/>
 	);
 };

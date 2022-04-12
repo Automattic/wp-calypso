@@ -86,6 +86,7 @@
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
+		"signup/anchor-fm": false,
 		"signup/professional-email-step": false,
 		"signup/reskin": true,
 		"signup/social": true,

@@ -1,5 +1,6 @@
 export interface SiteVerticalsResponse {
 	id: string;
+	name: string;
 	title: string;
 }
 
