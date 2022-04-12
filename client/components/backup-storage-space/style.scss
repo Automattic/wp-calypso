@@ -85,14 +85,18 @@
 }
 
 .backup-storage-space__progress-heading {
+	margin-block-end: 12px;
 	font-weight: 600;
-	margin-block-end: 8px;
-
-	@include breakpoint-deprecated( '>960px' ) {
-		margin-block-end: initial;
-	}
+	font-size: $font-body-small;
 }
 
 .backup-storage-space__progress-usage-text {
+	margin-block-start: 8px;
+
+	font-size: $font-body-extra-small;
 	color: var( --color-text-subtle );
+
+	a {
+		text-decoration: underline;
+	}
 }
