@@ -28,10 +28,19 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 
     .podcast-title__input-wrapper {
         display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
+        flex-direction: column;
         margin-bottom: 40px;
         text-align: left;
+
+        @include break-medium {
+            flex-direction: row;
+            flex-wrap: nowrap;
+        }
+
+        &.is-touched .form-setting-explanation {
+            opacity: 1;
+            transition-delay: 3s;
+        }
     }
 
     .podcast-title__explanation {
@@ -42,8 +51,12 @@ $design-button-primary-hover-color: var( --color-primary-60 );
     input[type='text'],
     label {
         @extend .wp-brand-font;
-        font-size: 4rem; /* stylelint-disable-line scales/font-sizes */
+        font-size: 2rem;
         line-height: 1.4em;
+
+        @include break-medium {
+            font-size: 4rem; /* stylelint-disable-line scales/font-sizes */
+        }
     }
 
     label {
@@ -67,6 +80,8 @@ $design-button-primary-hover-color: var( --color-primary-60 );
         margin: 16px 0;
         font-style: normal;
         color: var( --color-text-subtle );
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
 
         .podcast-title__form-icon {
             margin-right: 8px;
