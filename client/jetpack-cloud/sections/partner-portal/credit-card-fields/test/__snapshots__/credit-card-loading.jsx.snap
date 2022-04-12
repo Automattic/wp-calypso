@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CreditCardLoading> should render correctly and match the snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="credit-card-fields credit-card-fields--placeholder"
+    >
+      <div
+        class="credit-card-fields__form"
+      >
+        <div
+          class="credit-card-fields__field"
+        />
+        <div
+          class="credit-card-fields__field"
+        />
+        <div
+          class="credit-card-fields__field"
+        />
+      </div>
+    </div>
+  </div>
+</body>
+`;

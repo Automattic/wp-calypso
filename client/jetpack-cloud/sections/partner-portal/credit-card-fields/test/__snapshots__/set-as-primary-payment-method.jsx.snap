@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SetAsPrimaryPaymentMethod> should render correctly, match the snapshot and fire change event correctly 1`] = `
+<body>
+  <p
+    class="a11y-speak-intro-text"
+    hidden="hidden"
+    id="a11y-speak-intro-text"
+    style="position: absolute;margin: -1px;padding: 0;height: 1px;width: 1px;overflow: hidden;clip: rect(1px, 1px, 1px, 1px);-webkit-clip-path: inset(50%);clip-path: inset(50%);border: 0;word-wrap: normal !important;"
+  >
+    Notifications
+  </p>
+  <div
+    aria-atomic="true"
+    aria-live="assertive"
+    aria-relevant="additions text"
+    class="a11y-speak-region"
+    id="a11y-speak-assertive"
+    style="position: absolute;margin: -1px;padding: 0;height: 1px;width: 1px;overflow: hidden;clip: rect(1px, 1px, 1px, 1px);-webkit-clip-path: inset(50%);clip-path: inset(50%);border: 0;word-wrap: normal !important;"
+  />
+  <div
+    aria-atomic="true"
+    aria-live="polite"
+    aria-relevant="additions text"
+    class="a11y-speak-region"
+    id="a11y-speak-polite"
+    style="position: absolute;margin: -1px;padding: 0;height: 1px;width: 1px;overflow: hidden;clip: rect(1px, 1px, 1px, 1px);-webkit-clip-path: inset(50%);clip-path: inset(50%);border: 0;word-wrap: normal !important;"
+  />
+  <div>
+    <div
+      class="css-l9oib9-CheckboxWrapper ei6zaz10"
+    >
+      <div
+        class="components-base-control components-checkbox-control credit-card-fields__set-as-primary-field css-wdf2ti-Wrapper e1puf3u3"
+      >
+        <div
+          class="components-base-control__field css-igk9ll-StyledField e1puf3u2"
+        >
+          <span
+            class="components-checkbox-control__input-container"
+          >
+            <input
+              checked=""
+              class="components-checkbox-control__input"
+              id="inspector-checkbox-control-0"
+              type="checkbox"
+              value="1"
+            />
+            <svg
+              aria-hidden="true"
+              class="components-checkbox-control__checked"
+              focusable="false"
+              height="24"
+              role="presentation"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M16.7 7.1l-6.3 8.5-3.3-2.5-.9 1.2 4.5 3.4L17.9 8z"
+              />
+            </svg>
+          </span>
+          <label
+            class="components-checkbox-control__label"
+            for="inspector-checkbox-control-0"
+          >
+            Set as primary payment method
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
