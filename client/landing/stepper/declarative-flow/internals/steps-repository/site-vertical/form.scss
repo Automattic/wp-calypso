@@ -6,7 +6,7 @@
 }
 
 .site-vertical__form-fieldset {
-	$gray-60: #50575e;
+	$gray-60: var( --color-gray-60 );
 	$gray-40: #787c82;
 
 	margin-bottom: 24px;

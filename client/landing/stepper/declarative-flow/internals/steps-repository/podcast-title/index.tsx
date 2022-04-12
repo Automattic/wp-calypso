@@ -2,6 +2,7 @@
 import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { Icon } from '@wordpress/icons';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -28,8 +29,10 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 					<div className="podcast-title__explanation">
 						<FormInput id="podcast-title" value={ podcastTitle } />
 						<div
-							className="podcast-title__underline"
-							style={ { width: podcastTitle?.length || '100%' } }
+							className={ classNames( 'podcast-title__underline', {
+								'is-empty': ! podcastTitle?.length,
+							} ) }
+							style={ { width: ( podcastTitle as string )?.length || '100%' } }
 						/>
 						<FormSettingExplanation>
 							<Icon className="podcast-title__form-icon" icon={ tip } size={ 20 } />

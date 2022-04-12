@@ -1,10 +1,10 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
-.podcast-title__form {
-    $gray-60: #50575e;
-    $gray-40: #787c82;
+$design-button-primary-color: var( --color-primary );
+$design-button-primary-hover-color: var( --color-primary-60 );
 
+.podcast-title__form {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -66,7 +66,7 @@
         align-items: center;
         margin: 16px 0;
         font-style: normal;
-        color: $gray-40;
+        color: var( --color-text-subtle );
 
         .podcast-title__form-icon {
             margin-right: 8px;
@@ -74,10 +74,18 @@
     }
 
     .podcast-title__submit-button {
+        background: $design-button-primary-color;
+        border-color: $design-button-primary-color;
         padding: 9px 48px;
         border-radius: 4px;
         font-weight: 500;
         box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+
+        &:hover,
+        &:focus {
+            background: $design-button-primary-hover-color;
+            border-color: $design-button-primary-hover-color;
+        }
     }
 
     .podcast-title__underline {
@@ -85,6 +93,10 @@
         background: currentColor;
         margin-top: -5px;
         max-width: 100%;
+
+        &.is-empty {
+            background: transparent;
+        }
 
         @include break-medium {
             margin-top: -12px;
