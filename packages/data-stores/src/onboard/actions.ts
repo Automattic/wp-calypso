@@ -220,6 +220,11 @@ export const setStoreAddressValue = (
 	store_address_value,
 } );
 
+export const setPendingAction = ( pendingAction: Promise< any > ) => ( {
+	type: 'SET_PENDING_ACTION' as const,
+	pendingAction,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -244,4 +249,5 @@ export type OnboardAction = ReturnType<
 	| typeof setIntent
 	| typeof setStartingPoint
 	| typeof setStoreAddressValue
+	| typeof setPendingAction
 >;

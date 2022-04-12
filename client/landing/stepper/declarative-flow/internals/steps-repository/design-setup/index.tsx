@@ -27,7 +27,6 @@ import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions, getGeneratedDesignsCategory } from './categories';
 import PreviewToolbar from './preview-toolbar';
-import ProcessingScreen from './processing-screen';
 import type { Step } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
@@ -36,14 +35,13 @@ import type { Design } from '@automattic/design-picker';
  */
 const designSetup: Step = function DesignSetup( { navigation } ) {
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
-	const [ loading, setIsLoading ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
 	const { goBack, submit } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
 	const site = useSite();
-	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
+	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 
 	const flowName = 'setup-site';
@@ -170,16 +168,14 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		// scroll up to reveal the spinner
 		window.scrollTo( 0, 0 );
-		setIsLoading( true );
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlug && _selectedDesign ) {
-			setDesignOnSite( siteSlug, _selectedDesign ).then( () => {
-				const providedDependencies = {
-					selectedDesign: _selectedDesign,
-					selectedSiteCategory: categorization.selection,
-				};
-				submit?.( providedDependencies );
-			} );
+			setPendingAction( setDesignOnSite( siteSlug, _selectedDesign ) );
+			const providedDependencies = {
+				selectedDesign: _selectedDesign,
+				selectedSiteCategory: categorization.selection,
+			};
+			submit?.( providedDependencies );
 		}
 	}
 
@@ -252,9 +248,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 			/>
 		);
 
-		return loading ? (
-			<ProcessingScreen />
-		) : (
+		return (
 			<StepContainer
 				stepName={ 'design-setup' }
 				stepContent={ stepContent }
@@ -315,9 +309,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		</>
 	);
 
-	return loading ? (
-		<ProcessingScreen />
-	) : (
+	return (
 		<StepContainer
 			stepName={ 'design-step' }
 			className={ classnames( {
@@ -330,8 +322,6 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 			recordTracksEvent={ recordTracksEvent }
 			goNext={ () => submit?.() }
 			goBack={ handleBackClick }
-			shouldHideNavButtons={ loading }
-			customizedActionButtons={ loading ? <Spinner /> : undefined }
 		/>
 	);
 };

@@ -1,7 +1,10 @@
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useRef, useState } from 'react';
+import { ReactElement, useEffect, useRef, useState } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { useInterval } from 'calypso/lib/interval/use-interval';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { useInterval } from 'calypso/lib/interval';
+import type { Step } from '../../types';
 import 'calypso/assets/stylesheets/shared/_loading.scss';
 import './style.scss';
 
@@ -23,7 +26,22 @@ const useSteps = () => {
 	return useRef( steps.filter( Boolean ) );
 };
 
-export default function ProcessingScreen() {
+const ProcessingStep: Step = function ( props ): ReactElement | null {
+	const { submit } = props.navigation;
+
+	const action = useSelect( ( select ) => select( ONBOARD_STORE ).getPendingAction() );
+
+	if ( ! action ) {
+		// Nothing to process
+		submit?.();
+	}
+
+	useEffect( () => {
+		action?.then( () => {
+			submit?.();
+		} );
+	}, [ action ] );
+
 	const steps = useSteps();
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
@@ -32,9 +50,11 @@ export default function ProcessingScreen() {
 	}, steps.current[ currentStep ]?.duration );
 
 	return (
-		<div className={ 'processing-screen' }>
-			<h1 className="processing-screen__progress-step">{ steps.current[ currentStep ]?.title }</h1>
+		<div className={ 'processing-step' }>
+			<h1 className="processing-step__progress-step">{ steps.current[ currentStep ]?.title }</h1>
 			<LoadingEllipsis />
 		</div>
 	);
-}
+};
+
+export default ProcessingStep;
