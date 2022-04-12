@@ -50,17 +50,8 @@ window.AppBoot = async () => {
 		<LocaleContext>
 			<QueryClientProvider client={ queryClient }>
 				<WindowLocaleEffectManager />
-<<<<<<< HEAD
 				<BrowserRouter basename="setup">
-<<<<<<< HEAD
 					<FlowRenderer flow={ flow } />
-=======
-					<FlowRenderer flow={ siteSetupFlow } />
-=======
-				<BrowserRouter basename="stepper">
-					<FlowRenderer flow={ flow } />
->>>>>>> 1e39f48536 (Begin adding Anchor.fm as a separate flow)
->>>>>>> 29c1fdf6ae (Begin adding Anchor.fm as a separate flow)
 				</BrowserRouter>
 			</QueryClientProvider>
 		</LocaleContext>,
