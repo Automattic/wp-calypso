@@ -15,19 +15,15 @@ import {
 	getSourceFollowUrl as getDiscoverFollowUrl,
 } from 'calypso/reader/discover/helper';
 import FollowButton from 'calypso/reader/follow-button';
-import {
-	canBeMarkedAsSeen,
-	getDefaultSeenValue,
-	isEligibleForUnseen,
-} from 'calypso/reader/get-helpers';
+import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
+import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import DisplayTypes from 'calypso/state/reader/posts/display-types';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
 import PostByline from './byline';
 import ConversationPost from './conversation-post';
 import GalleryPost from './gallery';
@@ -56,7 +52,7 @@ class ReaderPostCard extends Component {
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
 		isWPForTeamsItem: PropTypes.bool,
-		teams: PropTypes.array,
+		hasOrganization: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -134,13 +130,13 @@ class ReaderPostCard extends Component {
 			isExpanded,
 			expandCard,
 			compact,
-			teams,
+			hasOrganization,
 			isWPForTeamsItem,
 		} = this.props;
 
-		let isSeen = getDefaultSeenValue( currentRoute );
-		if ( canBeMarkedAsSeen( { post, currentRoute } ) ) {
-			isSeen = isEligibleForUnseen( { teams, isWPForTeamsItem } ) && post.is_seen;
+		let isSeen = false;
+		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {
+			isSeen = post?.is_seen;
 		}
 		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
@@ -293,7 +289,11 @@ export default connect(
 			ownProps.postKey &&
 			( isSiteWPForTeams( state, ownProps.postKey.blogId ) ||
 				isFeedWPForTeams( state, ownProps.postKey.feedId ) ),
-		teams: getReaderTeams( state ),
+		hasOrganization: hasReaderFollowOrganization(
+			state,
+			ownProps.postKey.feedId,
+			ownProps.postKey.blogId
+		),
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
 	} ),
 	{ expandCard: expandCardAction }
