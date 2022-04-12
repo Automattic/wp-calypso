@@ -14,11 +14,6 @@
 .backup-storage-space__progress-bar-container {
 	display: flex;
 	flex-direction: column;
-	column-gap: 24px;
-
-	@include breakpoint-deprecated( '>960px' ) {
-		flex-direction: row;
-	}
 }
 
 /**
