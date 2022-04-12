@@ -44,13 +44,13 @@ const ConnectedDomainDetails = ( {
 
 		const expireWithBundledMessage = domain.isAutoRenewing
 			? translate(
-					'Domain connection will be autorenewed with your plan on %(expirationDate)s',
+					'Domain connection will be auto-renewed with your plan on %(expirationDate)s',
 					args
 			  )
 			: translate( 'Domain connection expires with your plan on %(expirationDate)s', args );
 
 		const expireWithoutBundledMessage = domain.isAutoRenewing
-			? translate( 'Domain connection will be autorenewed on %(expirationDate)s', args )
+			? translate( 'Domain connection will be auto-renewed on %(expirationDate)s', args )
 			: translate( 'Domain connection expires on %(expirationDate)s', args );
 
 		return domain.bundledPlanSubscriptionId
