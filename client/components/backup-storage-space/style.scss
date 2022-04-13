@@ -31,6 +31,7 @@
 	.progress-bar {
 		height: 100%;
 		border-radius: 12px;
+		background-color: var( --studio-gray-0 );
 
 		.progress-bar__progress {
 			// Unless we're 100% full, the left side of the bar
@@ -56,7 +57,7 @@
 
 		&.yellow-warning {
 			.progress-bar__progress {
-				background-color: var( --studio-yellow-30 );
+				background-color: var( --studio-yellow-20 );
 			}
 		}
 
