@@ -417,25 +417,27 @@ class P2Site extends Component {
 		const { isFetchingDefaultSuggestion } = this.state;
 
 		return (
-			<span
-				className="p2-site__wordpress-domain-default"
-				title={ site ? `https://${ site }.wordpress.com` : '' }
-			>
-				<span onMouseLeave={ handleMouseLeave } className="p2-site__site-wordpress-domain">
-					{ site }
-				</span>
-				<span className="p2-site__site-wordpress-suffix">
-					{ site ? '.wordpress.com' : '' }&nbsp;
-				</span>
-				<button
-					type="button"
-					disabled={ isFetchingDefaultSuggestion }
-					className="p2-site__site-wordpress-domain-refresh"
-					onClick={ this.suggestDefaultSubdomain }
+			<div class="p2-site__wordpress-domain-default-container">
+				<span
+					className="p2-site__wordpress-domain-default"
+					title={ site ? `https://${ site }.wordpress.com` : '' }
 				>
-					<Icon size={ 24 } icon={ reusableBlock } />
-				</button>
-			</span>
+					<span onMouseLeave={ handleMouseLeave } className="p2-site__site-wordpress-domain">
+						{ site }
+					</span>
+					<span className="p2-site__site-wordpress-suffix">
+						{ site ? '.wordpress.com' : '' }&nbsp;
+					</span>
+					<button
+						type="button"
+						disabled={ isFetchingDefaultSuggestion }
+						className="p2-site__site-wordpress-domain-refresh"
+						onClick={ this.suggestDefaultSubdomain }
+					>
+						<Icon size={ 24 } icon={ reusableBlock } />
+					</button>
+				</span>
+			</div>
 		);
 	};
 
@@ -465,7 +467,7 @@ class P2Site extends Component {
 					name="suggested-site"
 					value={ site ? `https://${ site }.wordpress.com` : '' }
 				/>
-				<div class="p2-site__wordpress-domain-default-container">{ this.renderDefaultSite() }</div>
+				{ this.renderDefaultSite() }
 				<FormSettingExplanation className="p2-site__workspace-form-input-explanation">
 					{ this.props.translate(
 						'We suggest this URL, but you can {{a}}choose manually{{/a}} too',
