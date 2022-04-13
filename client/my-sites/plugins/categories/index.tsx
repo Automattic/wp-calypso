@@ -1,102 +1,173 @@
-import { Card, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+// import PopularCategories from './popular-categories';
 import './style.scss';
 
 export type Category = {
-	slug: string;
 	name: string;
+	slug: string;
+	tags: string[];
+	description?: string;
+	icon?: string;
 	separator?: boolean;
-};
-
-const PopularCategories = ( {
-	onSelect,
-	categories,
-}: {
-	onSelect: ( category: Category ) => void;
-	categories: Category[];
-} ) => {
-	return (
-		<div className="categories__card-list">
-			{ categories.slice( 0, 6 ).map(
-				( category, n ) =>
-					! category.separator && (
-						<Card
-							className="categories__card-list-item"
-							onClick={ () => onSelect( category ) }
-							onKeyPress={ () => onSelect( category ) }
-							role="link"
-							tabIndex={ 0 }
-							key={ 'popular-categories-' + n }
-						>
-							{ category.name }
-						</Card>
-					)
-			) }
-		</div>
-	);
 };
 
 const Categories = ( { onSelect }: { onSelect: ( category: Category ) => void } ) => {
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
 
-	const popularCategories: Category[] = [
-		{ slug: 'discover', name: __( 'Discover' ) },
-		{ slug: 'collections', name: __( 'Collections' ) },
-		{ slug: '', name: '', separator: true },
-		{ slug: 'all', name: __( 'All Categories' ) },
-		{ slug: 'ecommerce', name: __( 'Ecommerce' ) },
-		{ slug: 'widget', name: __( 'Widgets' ) },
-		{ slug: 'posts', name: __( 'Posts & Pages' ) },
-		{ slug: 'admin', name: __( 'Administration' ) },
-		{ slug: 'shortcode', name: __( 'Shortcodes' ) },
-		{ slug: 'comments', name: __( 'Comments' ) },
-		{ slug: 'seo', name: __( 'SEO' ) },
-		{ slug: 'images', name: __( 'Images' ) },
-		{ slug: 'social', name: __( 'Social' ) },
-		{ slug: 'sidebar', name: __( 'Sidebar' ) },
-		{ slug: 'email', name: __( 'Email' ) },
-		{ slug: 'security', name: __( 'Security' ) },
-		{ slug: 'video', name: __( 'Video' ) },
-		{ slug: 'links', name: __( 'Links' ) },
-	];
-
-	const onClick = () => {
-		const category = { slug: 'todo', name: 'ToDo' };
-
-		dispatch(
-			recordTracksEvent( 'calypso_plugins_discover_click', {
-				category: category.slug,
-			} )
-		);
-
-		onSelect( category );
+	const popularCategories: Record< string, Category > = {
+		discover: { name: __( 'Discover' ), slug: 'discover', tags: [] },
+		'top-free': { name: __( 'Top free plugins' ), slug: 'top-free', tags: [] },
+		'top-paid': { name: __( 'Top premium plugins' ), slug: 'top-paid', tags: [] },
+		editors: { name: __( 'Editor’s pick' ), slug: 'editors', tags: [] },
+		separator: { name: '', separator: true, slug: '', tags: [] },
+		all: { name: __( 'All Categories' ), slug: 'all', tags: [] },
+		analytics: {
+			name: __( 'Analytics' ),
+			description: __( 'Analytics' ),
+			icon: 'grid',
+			slug: 'analytics',
+			tags: [ 'analytics' ],
+		},
+		business: {
+			name: __( 'Business' ),
+			description: __( 'Business' ),
+			icon: 'grid',
+			slug: 'business',
+			tags: [ 'business' ],
+		},
+		customer: {
+			name: __( 'Customer Service' ),
+			description: __( 'Customer Service' ),
+			icon: 'grid',
+			slug: 'customer',
+			tags: [ 'customer-service' ],
+		},
+		design: {
+			name: __( 'Design' ),
+			description: __( 'Design' ),
+			icon: 'grid',
+			slug: 'design',
+			tags: [ 'design' ],
+		},
+		ecommerce: {
+			name: __( 'Ecommerce' ),
+			description: __( 'Ecommerce' ),
+			icon: 'grid',
+			slug: 'ecommerce',
+			tags: [ 'ecommerce', 'woocommerce' ],
+		},
+		education: {
+			name: __( 'Education' ),
+			description: __( 'Education' ),
+			icon: 'grid',
+			slug: 'education',
+			tags: [ 'education' ],
+		},
+		finance: {
+			name: __( 'Finance' ),
+			description: __( 'Finance' ),
+			icon: 'grid',
+			slug: 'finance',
+			tags: [ 'finance' ],
+		},
+		marketing: {
+			name: __( 'Marketing' ),
+			description: __( 'Marketing' ),
+			icon: 'grid',
+			slug: 'marketing',
+			tags: [ 'marketing' ],
+		},
+		seo: {
+			name: __( 'Search Optimization' ),
+			description: __( 'Search Optimization' ),
+			icon: 'grid',
+			slug: 'seo',
+			tags: [ 'seo' ],
+		},
+		photo: {
+			name: __( 'Photo & Video' ),
+			description: __( 'Photo & Video' ),
+			icon: 'grid',
+			slug: 'photo',
+			tags: [ 'photo', 'video', 'media' ],
+		},
+		social: {
+			name: __( 'Social' ),
+			description: __( 'Social' ),
+			icon: 'grid',
+			slug: 'social',
+			tags: [ 'social', 'facebook', 'twitter', 'instagram', 'tiktok', 'youtube', 'pinterest' ],
+		},
+		widgets: {
+			name: __( 'Widgets' ),
+			description: __( 'Widgets' ),
+			icon: 'grid',
+			slug: 'widgets',
+			tags: [ 'widgets' ],
+		},
+		email: {
+			name: __( 'Email' ),
+			description: __( 'Email' ),
+			icon: 'grid',
+			slug: 'email',
+			tags: [ 'email' ],
+		},
+		security: {
+			name: __( 'Security' ),
+			description: __( 'Security' ),
+			icon: 'grid',
+			slug: 'security',
+			tags: [ 'security' ],
+		},
+		posts: {
+			name: __( 'Posts & Posting' ),
+			description: __( 'Posts & Posting' ),
+			icon: 'grid',
+			slug: 'posts',
+			tags: [ 'posts', 'post', 'page', 'pages' ],
+		},
 	};
 
 	const [ selecting, setSelecting ] = useState( false );
 	const toggleSelecting = () => setSelecting( ! selecting );
+	const [ selected, setSelected ] = useState< Category >( popularCategories.discover );
+
+	const onClick = ( category: Category ) => {
+		dispatch(
+			recordTracksEvent( 'calypso_plugins_discover_click', {
+				tag: category.slug || '',
+			} )
+		);
+
+		setSelected( category );
+		setSelecting( false );
+
+		onSelect( category );
+	};
 
 	return (
 		<div className="categories__discover">
 			<button className="categories__header" onClick={ toggleSelecting }>
 				{ /* translators: Page title, referring to discovering categories */ }
-				{ __( 'Discover' ) }
+				{ selected.name }
 				&nbsp;
 				{ ! selecting && <Gridicon icon="chevron-right" /> }
 				{ selecting && <Gridicon icon="chevron-down" /> }
 			</button>
 			{ selecting && (
 				<ul className="categories__select-list">
-					{ popularCategories.map( ( category, n ) => (
+					{ Object.values( popularCategories ).map( ( category, n ) => (
 						<li key={ 'categories-' + n }>
 							{ category.separator && <hr /> }
 							{ ! category.separator && (
 								<span
-									onClick={ () => onSelect( category ) }
-									onKeyPress={ () => onSelect( category ) }
+									onClick={ () => onClick( category ) }
+									onKeyPress={ () => onClick( category ) }
 									role="link"
 									tabIndex={ 0 }
 								>
@@ -107,7 +178,7 @@ const Categories = ( { onSelect }: { onSelect: ( category: Category ) => void } 
 					) ) }
 				</ul>
 			) }
-			<PopularCategories onSelect={ onClick } categories={ popularCategories } />
+			{ /* <PopularCategories onSelect={ onClick } categories={ popularCategories } /> */ }
 		</div>
 	);
 };

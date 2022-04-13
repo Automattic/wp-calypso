@@ -325,7 +325,7 @@ const PluginsBrowser = ( {
 				title={ translate( 'Plugins you need to get your projects done' ) }
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 			/>
-			<Categories />
+			<Categories onSelect={ ( c ) => doSearch( c.tags?.[ 0 ] || '' ) } />
 			<PluginBrowserContent
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
 				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
