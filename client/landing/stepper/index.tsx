@@ -51,8 +51,11 @@ window.AppBoot = async () => {
 		new URLSearchParams( search ).get( 'anchor_podcast' )
 	);
 
-	const flow =
-		anchorPodcastId && config.isEnabled( 'signup/anchor-fm' ) ? anchorFmFlow : siteSetupFlow;
+	let flow = siteSetupFlow;
+
+	if ( anchorPodcastId && config.isEnabled( 'signup/anchor-fm' ) ) {
+		flow = anchorFmFlow;
+	}
 
 	ReactDom.render(
 		<LocaleContext>
