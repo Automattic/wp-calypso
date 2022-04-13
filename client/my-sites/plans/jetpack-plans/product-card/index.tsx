@@ -22,6 +22,7 @@ import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { ITEM_TYPE_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getUserOwnsPurchase } from 'calypso/state/purchases/selectors/get-user-owns-purchase';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -254,15 +255,17 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
 			pricesAreFetching={ pricesAreFetching }
 			isPricingPageTreatment202204={ isPricingPageTreatment202204 }
-			isPricingPageTest202204Loading={ isLoadingExperimentAssignment }
+			isPricingPageTest202204AssignmentLoading={ isLoadingExperimentAssignment }
 			belowButtonText={ isPricingPageTreatment202204 ? 'Renews at the normal rate.' : '' }
 		/>
 	);
 };
 
 export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state ) ?? 0;
-	const currentRoute = getCurrentRouteParameterized( state, siteId );
+	const siteId = getSelectedSiteId( state );
+	const currentRoute = siteId
+		? getCurrentRouteParameterized( state, siteId )
+		: getCurrentRoute( state );
 
 	return {
 		isJetpackPricingPage:

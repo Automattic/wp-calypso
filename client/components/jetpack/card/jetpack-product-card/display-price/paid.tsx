@@ -16,7 +16,7 @@ type OwnProps = {
 	tooltipText?: TranslateResult | ReactNode;
 	expiryDate?: Moment;
 	isPricingPageTreatment202204?: boolean;
-	isPricingPageTest202204Loading?: boolean;
+	isPricingPageTest202204AssignmentLoading?: boolean;
 };
 
 const Paid: React.FC< OwnProps > = ( {
@@ -29,12 +29,17 @@ const Paid: React.FC< OwnProps > = ( {
 	tooltipText,
 	expiryDate,
 	isPricingPageTreatment202204,
-	isPricingPageTest202204Loading,
+	isPricingPageTest202204AssignmentLoading,
 } ) => {
 	const finalPrice = discountedPrice ?? originalPrice;
 
 	// Placeholder (while prices are loading)
-	if ( ! currencyCode || ! originalPrice || pricesAreFetching || isPricingPageTest202204Loading ) {
+	if (
+		! currencyCode ||
+		! originalPrice ||
+		pricesAreFetching ||
+		isPricingPageTest202204AssignmentLoading
+	) {
 		return (
 			<>
 				<PlanPrice

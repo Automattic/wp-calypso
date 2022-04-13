@@ -46,7 +46,7 @@ type OwnProps = {
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
 	collapseFeaturesOnMobile?: boolean;
 	isPricingPageTreatment202204?: boolean;
-	isPricingPageTest202204Loading?: boolean;
+	isPricingPageTest202204AssignmentLoading?: boolean;
 	belowButtonText?: string;
 };
 
@@ -89,7 +89,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	scrollCardIntoView,
 	collapseFeaturesOnMobile,
 	isPricingPageTreatment202204,
-	isPricingPageTest202204Loading,
+	isPricingPageTest202204AssignmentLoading,
 	belowButtonText,
 } ) => {
 	const isFree = item.isFree;
@@ -182,7 +182,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 						productName={ item.displayName }
 						hideSavingLabel={ hideSavingLabel }
 						isPricingPageTreatment202204={ isPricingPageTreatment202204 }
-						isPricingPageTest202204Loading={ isPricingPageTest202204Loading }
+						isPricingPageTest202204AssignmentLoading={ isPricingPageTest202204AssignmentLoading }
 					/>
 				) }
 
