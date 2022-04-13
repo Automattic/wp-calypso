@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 
-function CVV( { className } ) {
+function CVV( { className }: { className?: string } ) {
 	const { __ } = useI18n();
 
 	return (
