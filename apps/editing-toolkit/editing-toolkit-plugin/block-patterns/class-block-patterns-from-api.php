@@ -39,28 +39,15 @@ class Block_Patterns_From_API {
 	private $core_to_wpcom_categories_dictionary;
 
 	/**
-	 * This is the current editor type. One of `block_editor` (default), `site_editor`.
-	 *
-	 * @var string
-	 */
-	private $editor_type;
-
-	/**
 	 * Block_Patterns constructor.
 	 *
-	 * @param string                    $editor_type The current editor. One of `block_editor` (default), `site_editor`.
 	 * @param Block_Patterns_Utils|null $utils       A class dependency containing utils methods.
 	 */
-	public function __construct( $editor_type, Block_Patterns_Utils $utils = null ) {
-		if ( ! $editor_type || ! is_string( $editor_type ) ) {
-			$editor_type = 'block_editor';
-		}
-
-		$this->editor_type      = $editor_type;
+	public function __construct( Block_Patterns_Utils $utils = null ) {
 		$this->patterns_sources = array( 'block_patterns' );
 
 		// While we're still testing the FSE patterns, limit activation via a filter.
-		if ( 'site_editor' === $this->editor_type && apply_filters( 'a8c_enable_fse_block_patterns_api', false ) ) {
+		if ( apply_filters( 'a8c_enable_fse_block_patterns_api', false ) ) {
 			$this->patterns_sources[] = 'fse_block_patterns';
 		}
 

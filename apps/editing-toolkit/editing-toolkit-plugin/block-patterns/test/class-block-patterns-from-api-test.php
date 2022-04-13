@@ -90,7 +90,7 @@ class Block_Patterns_From_Api_Test extends TestCase {
 	 */
 	public function test_patterns_request_succeeds_with_empty_cache() {
 		$utils_mock              = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ) );
-		$block_patterns_from_api = new Block_Patterns_From_API( '', $utils_mock );
+		$block_patterns_from_api = new Block_Patterns_From_API( $utils_mock );
 
 		$utils_mock->expects( $this->once() )
 			->method( 'cache_get' )
@@ -108,13 +108,13 @@ class Block_Patterns_From_Api_Test extends TestCase {
 	}
 
 	/**
-	 *  Tests that we're making two requests when we specify that we're on the site editor.
+	 *  Tests that we're making two requests and `a8c_enable_fse_block_patterns_api` is `true`
 	 */
 	public function test_patterns_site_editor_source_site() {
 		add_filter( 'a8c_enable_fse_block_patterns_api', '__return_true' );
 
 		$utils_mock              = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ) );
-		$block_patterns_from_api = new Block_Patterns_From_API( 'site_editor', $utils_mock );
+		$block_patterns_from_api = new Block_Patterns_From_API( $utils_mock );
 
 		$utils_mock->expects( $this->exactly( 2 ) )
 			->method( 'remote_get' )
@@ -133,7 +133,7 @@ class Block_Patterns_From_Api_Test extends TestCase {
 	 */
 	public function test_patterns_request_succeeds_with_set_cache() {
 		$utils_mock              = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ), array( $this->pattern_mock_object ) );
-		$block_patterns_from_api = new Block_Patterns_From_API( '', $utils_mock );
+		$block_patterns_from_api = new Block_Patterns_From_API( $utils_mock );
 
 		$utils_mock->expects( $this->once() )
 			->method( 'cache_get' )
@@ -158,7 +158,7 @@ class Block_Patterns_From_Api_Test extends TestCase {
 
 		add_filter( 'a8c_override_patterns_source_site', $example_site );
 		$utils_mock              = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ) );
-		$block_patterns_from_api = new Block_Patterns_From_API( '', $utils_mock );
+		$block_patterns_from_api = new Block_Patterns_From_API( $utils_mock );
 
 		$utils_mock->expects( $this->never() )
 			->method( 'cache_get' );

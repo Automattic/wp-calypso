@@ -50,6 +50,8 @@ require_once __DIR__ . '/dotcom-fse/helpers.php';
 // Enqueues the shared JS data stores and defines shared helper functions.
 require_once __DIR__ . '/common/index.php';
 
+require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
+
 /**
  * Load dotcom-FSE.
  */
@@ -232,32 +234,45 @@ function load_wpcom_block_editor_nux() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
 
 /**
- * Load editing toolkit block patterns from the API
+ * Return a function that loads and register block patterns from the API. This
+ * function can be registered to the `rest_dispatch_request` filter.
  *
- * @param obj $current_screen The current screen object.
+ * @param Function $register_patterns_func A function that when called will
+ * register the relevant block patterns in the registry.
  */
-function load_block_patterns_from_api( $current_screen ) {
-	if ( ! apply_filters( 'a8c_enable_block_patterns_api', false ) ) {
-		return;
-	}
+function load_block_patterns_from_api( $register_patterns_func ) {
+	/**
+	 * Load editing toolkit block patterns from the API.
+	 *
+	 * It will only register the patterns for certain allowed requests and
+	 * return early otherwise.
+	 *
+	 * @param mixed           $response
+	 * @param WP_REST_Request $request
+	 */
+	return function ( $response, $request ) use ( $register_patterns_func ) {
+		$route           = $request->get_route();
+		$request_allowed = preg_match( '/^\/wp\/v2\/sites\/[0-9]+\/block\-patterns\/(patterns|categories)$/', $route );
 
-	$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
+		if ( ! $request_allowed || ! apply_filters( 'a8c_enable_block_patterns_api', false ) ) {
+			return $response;
+		};
 
-	if ( ! $current_screen->is_block_editor && ! $is_site_editor ) {
-		return;
-	}
+		$register_patterns_func();
 
-	$editor_type = 'block_editor';
-
-	if ( $is_site_editor ) {
-		$editor_type = 'site_editor';
-	}
-
-	require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
-	$block_patterns_from_api = new Block_Patterns_From_API( $editor_type );
-	$block_patterns_from_api->register_patterns();
+		return $response;
+	};
 }
-add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
+add_filter(
+	'rest_dispatch_request',
+	load_block_patterns_from_api(
+		function () {
+			( new Block_Patterns_From_API() )->register_patterns();
+		}
+	),
+	10,
+	2
+);
 
 /**
  * Load Block Inserter Modifications module.

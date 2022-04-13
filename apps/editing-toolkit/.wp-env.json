@@ -1,5 +1,8 @@
 {
 	"plugins": [ "./editing-toolkit-plugin", "../../../gutenberg" ],
+	"config": {
+		"WP_TESTS_DOMAIN": "http://localhost"
+	},
 	"themes": [ "../../../themes/varia", "../../../themes/maywood" ],
 	"port": 4013,
 	"testsPort": 4005,
