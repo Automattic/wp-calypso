@@ -25,6 +25,7 @@ import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { getCategorizationOptions, getGeneratedDesignsCategory } from './categories';
 import PreviewToolbar from './preview-toolbar';
 import type { Step } from '../../types';
@@ -279,57 +280,10 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 			/>
 		);
 	}
-	/*
-	 * Anchor.fm themes are not actual themes as we understand them.
-	 * They're built at site setup from specialized Headstart annotations
-	 * using existing themes `spearhead` and `mayland`.
-	 * Therefore we hard-code their data since it's not available via the themes API.
-	 *
-	 * @TODO: Extract these out of this file for clarity
-	 */
-	const anchorThemes = [
-		{
-			title: 'Gilbert',
-			slug: 'gilbert',
-			template: 'gilbert',
-			theme: 'spearhead',
-			fonts: {
-				headings: 'Roboto',
-				base: 'Roboto',
-			},
-			is_premium: false,
-			features: [ 'anchorfm' ],
-		},
-		{
-			title: 'Hannah',
-			slug: 'hannah',
-			template: 'hannah',
-			theme: 'mayland',
-			fonts: {
-				headings: 'Raleway',
-				base: 'Cabin',
-			},
-			is_premium: false,
-			features: [ 'anchorfm' ],
-		},
-		{
-			title: 'Riley',
-			slug: 'riley',
-			template: 'riley',
-			theme: 'spearhead',
-			fonts: {
-				headings: 'Raleway',
-				base: 'Cabin',
-			},
-			is_premium: false,
-			features: [ 'anchorfm' ],
-		},
-	];
 
 	let featuredDesigns = [ ...featuredPicksDesigns, ...designs ];
-
 	if ( isAnchorSite ) {
-		featuredDesigns = anchorThemes;
+		( featuredDesigns as Array< any > ) = ANCHOR_FM_THEMES;
 	} else if ( useFeaturedPicksButtons ) {
 		featuredDesigns = designs;
 	}
