@@ -9,8 +9,9 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CaptureStep from 'calypso/signup/steps/import/capture';
 import ListStep from 'calypso/signup/steps/import/list';
 import {
-	ReadyPreviewStep,
+	ReadyStep,
 	ReadyNotStep,
+	ReadyPreviewStep,
 	ReadyAlreadyOnWPCOMStep,
 } from 'calypso/signup/steps/import/ready';
 import { GoToStep } from 'calypso/signup/types';
@@ -48,11 +49,21 @@ const ImportStep: Step = function ImportStep( props ) {
 					{ currentRoute === 'import' && <CaptureStep goToStep={ goToStep } /> }
 					{ currentRoute === 'import/list' && <ListStep goToStep={ goToStep } /> }
 
+					{ currentRoute === 'import/ready' && (
+						<ReadyStep
+							platform={ urlData?.platform }
+							goToImporterPage={ () => {
+								// console.log( 'gotToImporterPage' );
+							} }
+							recordTracksEvent={ recordTracksEvent }
+						/>
+					) }
+
 					{ currentRoute === 'import/ready/preview' && (
 						<ReadyPreviewStep
 							urlData={ urlData }
 							goToImporterPage={ () => {
-								// console.log( 'goToImporterPage' )
+								// console.log( 'goToImporterPage' );
 							} }
 							siteSlug={ siteSlug as string }
 							recordTracksEvent={ recordTracksEvent }
