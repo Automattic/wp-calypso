@@ -21,7 +21,6 @@ export type StepPath =
 	| 'storeFeatures'
 	| 'designSetup'
 	| 'import'
-	| 'designSetup'
 	| 'businessInfo'
 	| 'fontPairing'
 	| 'storeAddress'
