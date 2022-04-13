@@ -59,13 +59,14 @@ export function fetchPluginsList( options ) {
 	const category = options.category || DEFAULT_CATEGORY;
 	const search = options.search;
 	const author = options.author;
+	const tag = options.tag;
 
 	const query = {
 		action: 'query_plugins',
 		'request[page]': page,
 		'request[per_page]': pageSize,
 		'request[fields]':
-			'icons,last_updated,rating,active_installs,tested,-downloaded,-ratings,-requires,-requires_php,-tags,-contributors,-added,-donate_link,-homepage',
+			'icons,last_updated,rating,active_installs,tested,-downloaded,-ratings,-requires,-requires_php,-contributors,-added,-donate_link,-homepage',
 		'request[locale]': getWporgLocaleCode( options.locale ),
 	};
 
@@ -77,7 +78,11 @@ export function fetchPluginsList( options ) {
 		query[ 'request[author]' ] = author;
 	}
 
-	if ( ! search && ! author ) {
+	if ( tag ) {
+		query[ 'request[tag]' ] = tag;
+	}
+
+	if ( ! search && ! author && ! tag ) {
 		query[ 'request[browse]' ] = category;
 	}
 

@@ -119,12 +119,15 @@ const PluginsBrowser = ( {
 	searchTitle,
 	hideHeader,
 	doSearch,
+	queryParams,
 } ) => {
 	const {
 		isAboveElement,
 		targetRef: searchHeaderRef,
 		referenceRef: navigationHeaderRef,
 	} = useScrollAboveElement();
+
+	const { tag } = queryParams;
 
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
@@ -325,8 +328,9 @@ const PluginsBrowser = ( {
 				title={ translate( 'Plugins you need to get your projects done' ) }
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 			/>
-			<Categories onSelect={ ( c ) => doSearch( c.tags?.[ 0 ] || '' ) } />
+			<Categories onSelect={ ( c ) => doSearch( search, { tag: c.tags?.join( ',' ) || '' } ) } />
 			<PluginBrowserContent
+				tag={ tag }
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
 				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
@@ -350,6 +354,7 @@ const PluginsBrowser = ( {
 
 const SearchListView = ( {
 	search: searchTerm,
+	tag,
 	searchTitle: searchTitleTerm,
 	siteSlug,
 	siteId,
@@ -357,23 +362,25 @@ const SearchListView = ( {
 	billingPeriod,
 } ) => {
 	const dispatch = useDispatch();
+
 	const {
 		data: { plugins: pluginsBySearchTerm = [], pagination: pluginsPagination } = {},
 		isLoading: isFetchingPluginsBySearchTerm,
 		fetchNextPage,
 	} = useWPORGInfinitePlugins(
-		{ searchTerm },
+		{ searchTerm, tag },
 		{
-			enabled: !! searchTerm,
+			enabled: !! searchTerm || !! tag,
 		}
 	);
 
 	const {
 		data: paidPluginsBySearchTermRaw = [],
 		isLoading: isFetchingPaidPluginsBySearchTerm,
-	} = useWPCOMPlugins( 'all', searchTerm, {
-		enabled: !! searchTerm,
+	} = useWPCOMPlugins( 'all', searchTerm, tag, {
+		enabled: !! searchTerm || !! tag,
 	} );
+
 	const paidPluginsBySearchTerm = useMemo(
 		() => paidPluginsBySearchTermRaw.map( updateWpComRating ),
 		[ paidPluginsBySearchTermRaw ]
@@ -567,7 +574,7 @@ const PluginSingleListView = ( {
 };
 
 const PluginBrowserContent = ( props ) => {
-	if ( props.search ) {
+	if ( props.search || props.tag ) {
 		return <SearchListView { ...props } />;
 	}
 	if ( props.category ) {

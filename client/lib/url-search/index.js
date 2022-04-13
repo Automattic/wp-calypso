@@ -1,4 +1,5 @@
-import url from 'url';
+// eslint-disable-next-line no-restricted-imports
+import url from 'url'; //TODO: fix this restricted import
 import debugFactory from 'debug';
 import { pick } from 'lodash';
 import page from 'page';
@@ -22,7 +23,7 @@ const debug = debugFactory( 'calypso:url-search' );
  *
  * @returns {string} The built search url
  */
-export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
+export const buildSearchUrl = ( { uri, search, queryKey = 's' }, extraParams = {} ) => {
 	const parsedUrl = pick( url.parse( uri, true ), 'pathname', 'hash', 'query' );
 
 	if ( search ) {
@@ -30,6 +31,10 @@ export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {
 	} else {
 		delete parsedUrl.query[ queryKey ];
 	}
+
+	Object.keys( extraParams ).forEach( ( extraParamKey ) => {
+		parsedUrl.query[ extraParamKey ] = extraParams[ extraParamKey ];
+	} );
 
 	return url.format( parsedUrl ).replace( /%20/g, '+' );
 };
@@ -50,16 +55,19 @@ const UrlSearch = ( Component ) =>
 			return ! search && this.setState( { searchOpen: false } );
 		}
 
-		doSearch = ( query ) => {
+		doSearch = ( query, extraParams = {} ) => {
 			this.setState( {
 				searchOpen: false !== query,
 			} );
 
-			const searchURL = buildSearchUrl( {
-				uri: window.location.href,
-				search: query,
-				queryKey: this.props.queryKey,
-			} );
+			const searchURL = buildSearchUrl(
+				{
+					uri: window.location.href,
+					search: query,
+					queryKey: this.props.queryKey,
+				},
+				extraParams
+			);
 
 			debug( 'search for: %s', query );
 			if ( this.props.search && query ) {
@@ -79,6 +87,7 @@ const UrlSearch = ( Component ) =>
 			return (
 				<Component
 					{ ...this.props }
+					queryParams={ url.parse( this.props.path, true ).query }
 					doSearch={ this.doSearch }
 					getSearchOpen={ this.getSearchOpen }
 				/>

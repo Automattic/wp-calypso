@@ -16,7 +16,7 @@ const baseStaleTime = 1000 * 60 * 60 * 2; // 2h
 
 const getCacheKey = ( key: string ): QueryKey => [ 'wpcom-plugins', key ];
 
-const fetchWPCOMPlugins = ( type: Type, searchTerm?: string ) => {
+const fetchWPCOMPlugins = ( type: Type, searchTerm?: string, tag?: string ) => {
 	const [ search, author ] = extractSearchInformation( searchTerm );
 
 	return wpcom.req.get(
@@ -28,6 +28,7 @@ const fetchWPCOMPlugins = ( type: Type, searchTerm?: string ) => {
 			type: type,
 			...( search && { q: search } ),
 			...( author && { author } ),
+			...( tag && { tag } ),
 		}
 	);
 };
@@ -37,20 +38,26 @@ const fetchWPCOMPlugins = ( type: Type, searchTerm?: string ) => {
  *
  * @param {Type} type Optional The query type
  * @param {string} searchTerm Optional The term to search for
+ * @param {string} tag Optional The tag to search for
  * @param {{enabled: boolean, staleTime: number, refetchOnMount: boolean}} {} Optional options to pass to the underlying query engine
  * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
  */
 export const useWPCOMPlugins = (
 	type: Type,
 	searchTerm?: string,
+	tag?: string,
 	{ enabled = true, staleTime = baseStaleTime, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
-	return useQuery( getCacheKey( type + searchTerm ), () => fetchWPCOMPlugins( type, searchTerm ), {
-		select: ( data ) => normalizePluginsList( data.results ),
-		enabled: enabled,
-		staleTime: staleTime,
-		refetchOnMount: refetchOnMount,
-	} );
+	return useQuery(
+		getCacheKey( type + searchTerm + tag ),
+		() => fetchWPCOMPlugins( type, searchTerm, tag ),
+		{
+			select: ( data ) => normalizePluginsList( data.results ),
+			enabled: enabled,
+			staleTime: staleTime,
+			refetchOnMount: refetchOnMount,
+		}
+	);
 };
 
 const fetchWPCOMPlugin = ( slug: string ) => {

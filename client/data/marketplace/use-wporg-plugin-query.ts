@@ -20,6 +20,7 @@ type WPORGOptionsType = {
 	page?: number;
 	category?: string;
 	searchTerm?: string;
+	tag?: string;
 	locale: string;
 };
 
@@ -29,7 +30,7 @@ const getPluginsListKey = ( options: WPORGOptionsType, infinite?: boolean ): Que
 	getCacheKey(
 		`${ infinite ? 'infinite' : '' }${ options.category || '' }_${ options.searchTerm || '' }_${
 			options.page || ''
-		}_${ options.pageSize || '' }_${ options.locale || '' }`
+		}${ options.tag || '' }_${ options.pageSize || '' }_${ options.locale || '' }`
 	);
 
 export const useWPORGPlugins = (
@@ -84,6 +85,7 @@ export const useWPORGInfinitePlugins = (
 				category: options.category,
 				locale: options.locale || locale,
 				search,
+				tag: options.tag,
 				author,
 			} ),
 		{
