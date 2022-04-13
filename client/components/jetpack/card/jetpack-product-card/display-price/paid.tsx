@@ -81,7 +81,7 @@ const Paid: React.FC< OwnProps > = ( {
 							className="display-price__original-price display-price__original-price-small"
 							rawPrice={ originalPrice as number }
 							currencyCode={ currencyCode }
-							originalPricePrefix={ translate( 'Normally', {
+							originalPricePrefix={ translate( 'normally', {
 								comment: 'A way to describe a price before a discount is applied',
 							} ) }
 						/>

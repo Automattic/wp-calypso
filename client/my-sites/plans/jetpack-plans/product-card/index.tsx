@@ -256,7 +256,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			pricesAreFetching={ pricesAreFetching }
 			isPricingPageTreatment202204={ isPricingPageTreatment202204 }
 			isPricingPageTest202204AssignmentLoading={ isLoadingExperimentAssignment }
-			belowButtonText={ isPricingPageTreatment202204 ? 'Renews at the normal rate.' : '' }
+			belowButtonText={
+				isPricingPageTreatment202204 ? translate( 'Renews at the normal rate.' ) : ''
+			}
 		/>
 	);
 };
