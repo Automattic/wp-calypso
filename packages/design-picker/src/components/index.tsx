@@ -223,7 +223,7 @@ export interface DesignPickerProps {
 	highResThumbnails?: boolean;
 	categorization?: Categorization;
 	categoriesHeading?: React.ReactNode;
-	anchorHeading?: React.ReactNode | undefined;
+	anchorHeading?: React.ReactNode;
 	categoriesFooter?: React.ReactNode;
 	recommendedCategorySlug: string | null;
 	hideFullScreenPreview?: boolean;
