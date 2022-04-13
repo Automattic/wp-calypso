@@ -71,6 +71,7 @@
 		"seller-experience": true,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
+		"signup/anchor-fm": false,
 		"signup/social": true,
 		"signup/redesigned-difm-flow": true,
 		"site-indicator": true,

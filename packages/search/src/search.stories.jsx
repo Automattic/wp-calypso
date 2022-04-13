@@ -1,3 +1,4 @@
+import { action } from '@storybook/addon-actions';
 import Search from './search';
 
 export default { title: 'Search', component: Search };
@@ -16,6 +17,14 @@ const BoxedSearch = ( props ) => (
 
 export const _default = () => {
 	return <BoxedSearch />;
+};
+
+export const WhenTypingSearchMode = () => {
+	return <BoxedSearch searchMode="when-typing" onSearch={ action( 'onSearch' ) } />;
+};
+
+export const OnEnterSearchMode = () => {
+	return <BoxedSearch searchMode="on-enter" onSearch={ action( 'onSearch' ) } />;
 };
 
 export const Simple = () => {

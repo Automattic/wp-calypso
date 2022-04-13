@@ -45,14 +45,6 @@ class EditorMediaModalDetailFields extends Component {
 		};
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.item && nextProps.item.ID !== this.props.item?.ID ) {
-			this.updateChange( true );
-			this.setState( { modifiedChanges: null } );
-		}
-	}
-
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.item && prevProps.item.privacy_setting !== this.props.item?.privacy_setting ) {
 			window.postMessage( { event: 'videopress_refresh_iframe' }, '*' );
@@ -351,10 +343,7 @@ class EditorMediaModalDetailFields extends Component {
 				{ this.renderShareEmbed() }
 				{ this.renderAllowDownloadOption() }
 				{ this.renderRating() }
-				{
-					false && this.props.hasVideoPrivacyFeature && this.renderPrivacySetting()
-					/* TODO: Remove false when VP Privacy Setting PR lands */
-				}
+				{ this.props.hasVideoPrivacyFeature && this.renderPrivacySetting() }
 				{ this.renderVideoPressShortcode() }
 			</div>
 		);

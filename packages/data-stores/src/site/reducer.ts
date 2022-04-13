@@ -6,6 +6,7 @@ import {
 	Domain,
 	SiteLaunchState,
 	SiteLaunchStatus,
+	SiteSettings,
 } from './types';
 import type { Action } from './actions';
 import type { Reducer } from 'redux';
@@ -98,6 +99,14 @@ export const sites: Reducer< { [ key: number | string ]: SiteDetails | undefined
 				description: action.tagline ?? '',
 			},
 		};
+	} else if ( action.type === 'RECEIVE_SITE_VERTICAL' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				...( state[ action.siteId ] as SiteDetails ),
+				site_vertical: action.vertical ?? '',
+			},
+		};
 	}
 	return state;
 };
@@ -108,6 +117,16 @@ export const sitesDomains: Reducer< { [ key: number ]: Domain[] }, Action > = (
 ) => {
 	if ( action.type === 'RECEIVE_SITE_DOMAINS' ) {
 		return { ...state, [ action.siteId ]: action.domains };
+	}
+	return state;
+};
+
+export const sitesSettings: Reducer< { [ key: number ]: SiteSettings }, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'RECEIVE_SITE_SETTINGS' ) {
+		return { ...state, [ action.siteId ]: action.settings };
 	}
 	return state;
 };
@@ -152,6 +171,7 @@ const reducer = combineReducers( {
 	sites,
 	launchStatus,
 	sitesDomains,
+	sitesSettings,
 } );
 
 export type State = ReturnType< typeof reducer >;

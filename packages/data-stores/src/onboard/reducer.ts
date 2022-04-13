@@ -243,6 +243,16 @@ const storeAddress: Reducer< StoreAddress, OnboardAction > = (
 	return state;
 };
 
+const pendingAction: Reducer< Promise< any > | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_PENDING_ACTION' ) {
+		return action.pendingAction;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -264,6 +274,7 @@ const reducer = combineReducers( {
 	intent,
 	startingPoint,
 	storeAddress,
+	pendingAction,
 } );
 
 export type State = ReturnType< typeof reducer >;

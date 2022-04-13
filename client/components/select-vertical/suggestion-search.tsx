@@ -12,6 +12,7 @@ interface Props {
 	suggestions: Vertical[];
 	isLoading?: boolean | undefined;
 	onInputChange?: ( value: string ) => void;
+	onSelect?: ( vertical: Vertical ) => void;
 }
 
 const SelectVerticalSuggestionSearch: FC< Props > = ( {
@@ -20,6 +21,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 	suggestions,
 	isLoading,
 	onInputChange,
+	onSelect,
 } ) => {
 	const [ isShowSuggestions, setIsShowSuggestions ] = useState( false );
 	const [ isFocused, setIsFocused ] = useState( false );
@@ -49,7 +51,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 
 	const handleTextInputKeyDown = useCallback(
 		( event: KeyboardEvent ) => {
-			if ( event.key === 'Enter' ) {
+			if ( event.key === 'Enter' && isShowSuggestions ) {
 				event.preventDefault();
 			}
 
@@ -61,13 +63,14 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 				( suggestionsRef.current as Suggestions ).handleKeyEvent( event );
 			}
 		},
-		[ setIsShowSuggestions, suggestionsRef ]
+		[ setIsShowSuggestions, isShowSuggestions, suggestionsRef ]
 	);
 
 	const handleSuggestionsSelect = useCallback(
-		( { label }: { label: string } ) => {
+		( { label, value }: { label: string; value?: string } ) => {
 			setIsShowSuggestions( false );
 			onInputChange?.( label );
+			onSelect?.( { label, value } as Vertical );
 		},
 		[ setIsShowSuggestions, onInputChange ]
 	);
