@@ -159,6 +159,38 @@ export const launchStatus: Reducer< { [ key: number ]: SiteLaunchState }, Action
 	return state;
 };
 
+export const siteSetupErrors: Reducer<
+	{ [ key: number ]: any | undefined },
+	{
+		type: string;
+		siteId: number;
+		error?: string;
+		message?: string;
+	}
+> = ( state = {}, action ) => {
+	if ( action.type === 'SET_SITE_SETUP_ERROR' ) {
+		const { siteId, error, message } = action;
+
+		return {
+			...state,
+			[ siteId ]: {
+				error,
+				message,
+			},
+		};
+	}
+
+	if ( action.type === 'CLEAR_SITE_SETUP_ERROR' ) {
+		const newState = {
+			...state,
+		};
+
+		delete newState[ action.siteId ];
+	}
+
+	return state;
+};
+
 const newSite = combineReducers( {
 	data: newSiteData,
 	error: newSiteError,
@@ -172,6 +204,7 @@ const reducer = combineReducers( {
 	launchStatus,
 	sitesDomains,
 	sitesSettings,
+	siteSetupErrors,
 } );
 
 export type State = ReturnType< typeof reducer >;

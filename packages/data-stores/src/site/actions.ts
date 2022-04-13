@@ -231,6 +231,18 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return data?.is_fse_active ?? false;
 	}
 
+	const setSiteSetupError = ( siteId: number, error: string, message: string ) => ( {
+		type: 'SET_SITE_SETUP_ERROR',
+		siteId,
+		error,
+		message,
+	} );
+
+	const clearSiteSetupError = ( siteId: number ) => ( {
+		type: 'CLEAR_SITE_SETUP_ERROR',
+		siteId,
+	} );
+
 	return {
 		receiveSiteDomains,
 		receiveSiteSettings,
@@ -256,6 +268,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		launchSiteFailure,
 		getCart,
 		setCart,
+		setSiteSetupError,
+		clearSiteSetupError,
 	};
 }
 
