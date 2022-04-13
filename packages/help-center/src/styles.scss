@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/variables';
 $head-foot-height: 50px;
 
 .components-card.help-center__container {
@@ -26,7 +27,7 @@ $head-foot-height: 50px;
 	}
 
 	&.is-desktop {
-		top: 10px;
+		top: calc( $header-height + 16px );
 		right: 16px;
 		width: 410px;
 		height: 95vh;
