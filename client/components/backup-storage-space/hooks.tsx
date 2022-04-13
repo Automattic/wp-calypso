@@ -2,6 +2,7 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import getJetpackStorageUpgradeUrl from 'calypso/state/plans/selectors/get-jetpack-storage-upgrade-url';
+import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 
 enum StorageUnits {
 	Gigabyte = 2 ** 30,
@@ -23,7 +24,11 @@ export const useStorageUsageText = (
 	bytesAvailable: number | undefined
 ): TranslateResult | null => {
 	const translate = useTranslate();
-	const storageUpgradeUrl = useSelector( getJetpackStorageUpgradeUrl );
+
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const storageUpgradeUrl = useSelector( ( state ) =>
+		getJetpackStorageUpgradeUrl( state, siteSlug )
+	);
 
 	return useMemo( () => {
 		if ( bytesUsed === undefined ) {

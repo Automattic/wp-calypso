@@ -4,12 +4,11 @@ import type { AppState } from 'calypso/types';
 /**
  *
  * @param state The Redux application state
+ * @param siteSlug The site whose storage upgrade URL should be returned
  * @returns A Calypso Blue- or Green-relative URL that points to the Jetpack storage upgrade page;
  * 			or, if no site is selected, an empty URL ("#").
  */
-const getJetpackStorageUpgradeUrl = ( state: AppState ): string => {
-	const siteSlug = getSelectedSiteSlug( state );
-
+const getJetpackStorageUpgradeUrl = ( state: AppState, siteSlug: string | null ): string => {
 	if ( ! siteSlug ) {
 		return '#';
 	}
