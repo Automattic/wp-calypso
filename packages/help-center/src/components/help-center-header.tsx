@@ -15,7 +15,7 @@ const HelpCenterMobileHeader: React.FC< Header > = ( {
 	return (
 		<CardHeader className={ classNames }>
 			<Flex>
-				<p>{ __( 'Help Center' ) }</p>
+				<p style={ { fontSize: 14, fontWeight: 500 } }>{ __( 'Help Center' ) }</p>
 				<div>
 					{ isMinimized ? (
 						<Button
