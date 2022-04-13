@@ -79,6 +79,10 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 			return;
 		}
 
+		if ( 'playing' === data.event ) {
+			this.props.setIsPlaying( true );
+		}
+
 		if (
 			'videopress_loading_state' === data.event &&
 			'loaded' === data.state &&
