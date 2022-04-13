@@ -5,15 +5,15 @@ import { useDispatch } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import { StorageUsageLevels } from '../storage-usage-levels';
 import ActionButton from './action-button';
+import type { StorageUsageLevelName } from '../storage-usage-levels';
 
 import './style.scss';
 
 type OwnProps = {
 	siteSlug: string;
 	bytesUsed: number;
-	usageLevel: StorageUsageLevels;
+	usageLevel: StorageUsageLevelName;
 };
 
 const UsageWarningUpsell: React.FC< OwnProps > = ( { siteSlug, bytesUsed, usageLevel } ) => {
@@ -23,7 +23,7 @@ const UsageWarningUpsell: React.FC< OwnProps > = ( { siteSlug, bytesUsed, usageL
 	useEffect( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_display', {
-				type: StorageUsageLevels[ usageLevel ],
+				type: usageLevel,
 				bytes_used: bytesUsed,
 			} )
 		);
@@ -32,7 +32,7 @@ const UsageWarningUpsell: React.FC< OwnProps > = ( { siteSlug, bytesUsed, usageL
 	const onClick = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_backup_storage_upsell_click', {
-				type: StorageUsageLevels[ usageLevel ],
+				type: usageLevel,
 				bytes_used: bytesUsed,
 			} )
 		);
