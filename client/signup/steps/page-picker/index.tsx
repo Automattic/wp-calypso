@@ -15,7 +15,6 @@ import {
 	FAQ_PAGE,
 	SITEMAP_PAGE,
 	PROFILE_PAGE,
-	PAGE_LIMIT,
 	SERVICES_PAGE,
 	MENU_PAGE,
 } from 'calypso/signup/difm/constants';
@@ -98,9 +97,8 @@ interface PageCellType {
 function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCellType ) {
 	const translate = useTranslate();
 	const selectedIndex = selectedPages.indexOf( pageId );
-	const totalSelections = selectedPages.length;
 	const isSelected = Boolean( selectedIndex > -1 );
-	const isDisabled = selectedIndex === -1 && totalSelections >= PAGE_LIMIT;
+	const isDisabled = selectedIndex === -1;
 	const title = useTranslatedPageTitles()[ pageId ];
 
 	return (
@@ -134,7 +132,7 @@ function PageSelector( {
 		if ( pageId !== HOME_PAGE ) {
 			if ( foundIndex > -1 ) {
 				setSelectedPages( selectedPages.filter( ( page, index ) => index !== foundIndex ) );
-			} else if ( selectedPages.length !== PAGE_LIMIT ) {
+			} else {
 				setSelectedPages( [ ...selectedPages, pageId ] );
 			}
 		}
