@@ -72,6 +72,7 @@ const PluginsBrowserListElement = ( props ) => {
 			site: site,
 			plugin: plugin.slug,
 			list_name: props.listName,
+			grid_position: props.gridPosition,
 		} );
 	}, [ site, plugin, props.listName ] );
 
