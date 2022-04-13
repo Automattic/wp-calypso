@@ -310,9 +310,9 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 				className={ classnames( {
 					'design-setup__has-categories': showDesignPickerCategories,
 				} ) }
-				isGridMinimal={ isAnchorSite ? true : false }
+				isGridMinimal={ isAnchorSite }
 				highResThumbnails
-				hideFullScreenPreview={ isAnchorSite ? true : false }
+				hideFullScreenPreview={ isAnchorSite }
 				premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ !! isPremiumThemeAvailable } /> }
 				categorization={ showDesignPickerCategories ? categorization : undefined }
 				recommendedCategorySlug={ categorizationOptions.defaultSelection }
