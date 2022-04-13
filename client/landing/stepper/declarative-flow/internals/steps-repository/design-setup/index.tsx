@@ -278,7 +278,14 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 			/>
 		);
 	}
-
+	/*
+	 * Anchor.fm themes are not actual themes as we understand them.
+	 * They're built at site setup from specialized Headstart annotations
+	 * using existing themes `spearhead` and `mayland`.
+	 * Therefore we hard-code their data since it's not available via the themes API.
+	 *
+	 * @TODO: Extract these out of this file for clarity
+	 */
 	const anchorThemes = [
 		{
 			title: 'Gilbert',
