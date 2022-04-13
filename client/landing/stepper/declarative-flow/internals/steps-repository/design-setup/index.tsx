@@ -376,6 +376,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 			className={ classnames( {
 				'design-picker__has-categories': showDesignPickerCategories,
 			} ) }
+			hideSkip={ isAnchorSite }
 			skipButtonAlign={ 'top' }
 			hideFormattedHeader
 			skipLabelText={ intent === 'write' ? translate( 'Skip and draft first post' ) : undefined }
