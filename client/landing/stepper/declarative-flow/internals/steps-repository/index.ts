@@ -22,6 +22,7 @@ export type StepPath =
 	| 'designSetup'
 	| 'import'
 	| 'import/ready/not'
+	| 'import/ready/wpcom'
 	| 'import/ready/preview'
 	| 'businessInfo'
 	| 'fontPairing'

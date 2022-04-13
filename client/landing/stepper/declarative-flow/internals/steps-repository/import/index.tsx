@@ -7,7 +7,11 @@ import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CaptureStep from 'calypso/signup/steps/import/capture';
-import { ReadyPreviewStep, ReadyNotStep } from 'calypso/signup/steps/import/ready';
+import {
+	ReadyPreviewStep,
+	ReadyNotStep,
+	ReadyAlreadyOnWPCOMStep,
+} from 'calypso/signup/steps/import/ready';
 import { GoToStep } from 'calypso/signup/types';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { removeTrailingSlash } from './utils';
@@ -55,6 +59,14 @@ const ImportStep: Step = function ImportStep( props ) {
 
 					{ currentRoute === 'import/ready/not' && (
 						<ReadyNotStep goToStep={ goToStep } recordTracksEvent={ recordTracksEvent } />
+					) }
+
+					{ currentRoute === 'import/ready/wpcom' && (
+						<ReadyAlreadyOnWPCOMStep
+							urlData={ urlData }
+							goToStep={ goToStep }
+							recordTracksEvent={ recordTracksEvent }
+						/>
 					) }
 				</div>
 			}
