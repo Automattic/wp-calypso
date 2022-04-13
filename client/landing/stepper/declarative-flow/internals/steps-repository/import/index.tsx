@@ -26,17 +26,38 @@ const ImportStep: Step = function ImportStep( props ) {
 	const BASE_ROUTE = 'import';
 	const { navigation } = props;
 
+	/**
+	 * ↓ Fields
+	 */
 	const siteSlug = useSiteSlugParam();
 	const currentRoute = useCurrentRoute();
 	const urlData = useSelector( getUrlData );
 
+	/**
+	 * ↓ Effects
+	 */
+	if ( ! urlData && currentRoute !== 'import' && currentRoute !== 'import/list' ) {
+		goToHomeStep();
+		return null;
+	}
+
+	/**
+	 * ↓ Methods
+	 */
 	const goToStep: GoToStep = function ( stepName, stepSectionName ) {
-		const routes = [ BASE_ROUTE, stepName, stepSectionName, undefined, undefined ];
-		const stepPath = removeTrailingSlash( routes.join( '/' ) ) as StepPath;
+		const routes = [ BASE_ROUTE, stepName, stepSectionName ];
+		const stepPath = ( '/' + removeTrailingSlash( routes.join( '/' ) ) ) as StepPath;
 
 		navigation.goToStep?.( stepPath );
 	};
 
+	function goToHomeStep() {
+		navigation.goToStep?.( `/${ BASE_ROUTE }` as StepPath );
+	}
+
+	/**
+	 * Renders
+	 */
 	return (
 		<StepContainer
 			stepName={ 'import-step' }
