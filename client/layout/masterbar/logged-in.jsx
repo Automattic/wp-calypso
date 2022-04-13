@@ -207,11 +207,13 @@ class MasterbarLoggedIn extends Component {
 		if ( 'sites' === section ) {
 			mySitesUrl = '';
 		}
+		const icon =
+			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
 		return (
 			<Item
 				url={ mySitesUrl }
 				tipTarget="my-sites"
-				icon={ this.wordpressIcon() }
+				icon={ icon }
 				onClick={ this.clickMySites }
 				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
 				tooltip={ translate( 'View a list of your sites and access their dashboards' ) }
