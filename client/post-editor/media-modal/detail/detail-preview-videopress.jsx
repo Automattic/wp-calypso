@@ -86,6 +86,8 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 
 		if ( 'playing' === data.event ) {
 			this.props.setIsPlaying( true );
+		} else if ( 'pause' === data.event ) {
+			this.props.setIsPlaying( false );
 		}
 
 		if (
