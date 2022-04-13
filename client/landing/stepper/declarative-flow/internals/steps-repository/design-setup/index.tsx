@@ -126,6 +126,11 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	}
 
 	function subHeaderText() {
+		if ( isAnchorSite ) {
+			return translate(
+				'Pick a homepage layout for your podcast site. You can customize or change it later.'
+			);
+		}
 		if ( ! showDesignPickerCategories ) {
 			return translate(
 				'Pick your favorite homepage layout. You can customize or change it later.'
