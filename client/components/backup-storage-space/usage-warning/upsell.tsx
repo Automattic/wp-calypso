@@ -1,10 +1,10 @@
 import { useJetpack1TbStorageAmountText } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import getJetpackStorageUpgradeUrl from 'calypso/state/plans/selectors/get-jetpack-storage-upgrade-url';
 import ActionButton from './action-button';
 import type { StorageUsageLevelName } from '../storage-usage-levels';
 
@@ -46,12 +46,16 @@ const UsageWarningUpsell: React.FC< OwnProps > = ( { siteSlug, bytesUsed, usageL
 		} )
 	);
 
+	const storageUpgradeUrl = useSelector( ( state ) =>
+		getJetpackStorageUpgradeUrl( state, siteSlug )
+	);
+
 	return (
 		<ActionButton
 			className="usage-warning__upsell"
 			usageLevel={ usageLevel }
 			actionText={ actionText }
-			href={ isJetpackCloud() ? `/pricing/storage/${ siteSlug }` : `/plans/storage/${ siteSlug }` }
+			href={ storageUpgradeUrl }
 			onClick={ onClick }
 		/>
 	);
