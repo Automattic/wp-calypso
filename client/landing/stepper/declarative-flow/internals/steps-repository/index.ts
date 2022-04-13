@@ -21,6 +21,7 @@ export type StepPath =
 	| 'storeFeatures'
 	| 'designSetup'
 	| 'import'
+	| 'import/ready/not'
 	| 'import/ready/preview'
 	| 'businessInfo'
 	| 'fontPairing'
