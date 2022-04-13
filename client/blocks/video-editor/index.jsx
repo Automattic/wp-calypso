@@ -165,6 +165,7 @@ class VideoEditor extends Component {
 								className="video-editor__preview"
 								isPlaying={ ! pauseVideo }
 								setIsPlaying={ this.setIsPlaying }
+								isSelectingFrame={ isSelectingFrame }
 								item={ media }
 								onPause={ this.updatePoster }
 								onScriptLoadError={ this.setError }
