@@ -86,12 +86,15 @@
 
 .backup-storage-space__progress-heading {
 	margin-block-end: 12px;
+	white-space: nowrap;
+
 	font-weight: 600;
 	font-size: $font-body-small;
 }
 
 .backup-storage-space__progress-usage-text {
 	margin-block-start: 8px;
+	white-space: nowrap;
 
 	font-size: $font-body-extra-small;
 	color: var( --color-text-subtle );
