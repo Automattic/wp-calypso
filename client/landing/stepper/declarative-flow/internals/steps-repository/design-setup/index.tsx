@@ -334,6 +334,16 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		featuredDesigns = designs;
 	}
 
+	const heading = (
+		<FormattedHeader
+			className={ isAnchorSite ? 'is-anchor-header' : null }
+			id={ 'step-header' }
+			headerText={ headerText() }
+			subHeaderText={ subHeaderText() }
+			align="left"
+		/>
+	);
+
 	stepContent = (
 		<>
 			<DesignPicker
@@ -352,14 +362,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 				premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ !! isPremiumThemeAvailable } /> }
 				categorization={ showDesignPickerCategories ? categorization : undefined }
 				recommendedCategorySlug={ categorizationOptions.defaultSelection }
-				categoriesHeading={
-					<FormattedHeader
-						id={ 'step-header' }
-						headerText={ headerText() }
-						subHeaderText={ subHeaderText() }
-						align="left"
-					/>
-				}
+				categoriesHeading={ heading }
+				anchorHeading={ isAnchorSite && heading }
 				categoriesFooter={ renderCategoriesFooter() }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			/>
