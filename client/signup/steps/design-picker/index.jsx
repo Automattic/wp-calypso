@@ -235,48 +235,10 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function renderDesignPicker() {
-		const anchorThemes = [
-			{
-				title: 'Gilbert',
-				slug: 'gilbert',
-				template: 'gilbert',
-				theme: 'spearhead',
-				fonts: {
-					headings: 'Roboto',
-					base: 'Roboto',
-				},
-				is_premium: false,
-				features: [ 'anchorfm' ],
-			},
-			{
-				title: 'Hannah',
-				slug: 'hannah',
-				template: 'hannah',
-				theme: 'mayland',
-				fonts: {
-					headings: 'Raleway',
-					base: 'Cabin',
-				},
-				is_premium: false,
-				features: [ 'anchorfm' ],
-			},
-			{
-				title: 'Riley',
-				slug: 'riley',
-				template: 'riley',
-				theme: 'spearhead',
-				fonts: {
-					headings: 'Raleway',
-					base: 'Cabin',
-				},
-				is_premium: false,
-				features: [ 'anchorfm' ],
-			},
-		];
 		return (
 			<>
 				<DesignPicker
-					designs={ anchorThemes }
+					designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
 					theme={ isReskinned ? 'light' : 'dark' }
 					locale={ translate.localeSlug }
 					onSelect={ pickDesign }
@@ -291,7 +253,7 @@ export default function DesignPickerStep( props ) {
 							<PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />
 						)
 					}
-					categorization={ undefined }
+					categorization={ showDesignPickerCategories ? categorization : undefined }
 					recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
 					categoriesHeading={
 						<FormattedHeader
@@ -305,7 +267,6 @@ export default function DesignPickerStep( props ) {
 					hideFullScreenPreview={ hideFullScreenPreview }
 					hideDesignTitle={ hideDesignTitle }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
-					isGridMinimal
 				/>
 				{ renderCheckoutModal() }
 			</>
