@@ -37,13 +37,10 @@
 					color: var( --studio-black );
 				}
 
-				&.is-open input.search-component__input[type='search'] {
-					font-size: $font-body-small;
-				}
 			}
 		}
 	}
-	
+
 
 	.search-box-header__header {
 		text-align: center;
@@ -109,7 +106,7 @@
 			border-bottom: 1px solid var( --studio-gray-5 );
 			background-color: var( --studio-white );
 		}
-		
+
 	}
 
 	.search-box-header__recommended-searches-title {

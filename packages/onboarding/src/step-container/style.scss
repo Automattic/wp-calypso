@@ -28,13 +28,13 @@
 		max-width: 1024px;
 		padding: 0 20px;
 
+		&.has-navigation {
+			padding-bottom: 60px;
+		}
+
 		@include break-small {
 			margin-top: 25vh;
 			display: flex;
-
-			&.has-navigation {
-				padding-bottom: 60px;
-			}
 
 			.step-container__header {
 				margin-top: 0;

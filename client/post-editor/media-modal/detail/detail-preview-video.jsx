@@ -15,8 +15,14 @@ export default class extends Component {
 	};
 
 	render() {
-		if ( isVideoPressItem( this.props.item ) ) {
-			return <EditorMediaModalDetailItemVideoPress { ...this.props } />;
+		const { item } = this.props;
+		if ( isVideoPressItem( item ) ) {
+			return (
+				<EditorMediaModalDetailItemVideoPress
+					key={ `videopress-${ item.videopress_guid }` }
+					{ ...this.props }
+				/>
+			);
 		}
 
 		const { className, ...props } = this.props;

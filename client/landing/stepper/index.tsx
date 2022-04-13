@@ -47,7 +47,7 @@ window.AppBoot = async () => {
 		<LocaleContext>
 			<QueryClientProvider client={ queryClient }>
 				<WindowLocaleEffectManager />
-				<BrowserRouter basename="stepper">
+				<BrowserRouter basename="setup">
 					<FlowRenderer flow={ siteSetupFlow } />
 				</BrowserRouter>
 			</QueryClientProvider>
