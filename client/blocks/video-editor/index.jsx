@@ -1,7 +1,6 @@
 import { ProgressBar } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -42,19 +41,9 @@ class VideoEditor extends Component {
 		pauseVideo: false,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.shouldShowError && ! this.props.shouldShowError ) {
-			this.setState( {
-				error: true,
-				pauseVideo: false,
-			} );
-
-			return;
-		}
-
-		if ( this.props.posterUrl !== nextProps.posterUrl ) {
-			this.props.onUpdatePoster( this.getVideoEditorProps( nextProps.posterUrl ) );
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.posterUrl !== this.props.posterUrl ) {
+			this.props.onUpdatePoster( this.getVideoEditorProps() );
 		}
 	}
 
@@ -85,7 +74,7 @@ class VideoEditor extends Component {
 		}
 
 		const { media } = this.props;
-		const guid = get( media, 'videopress_guid', null );
+		const guid = media?.videopress_guid;
 
 		if ( guid ) {
 			this.props.updatePoster(
@@ -126,15 +115,15 @@ class VideoEditor extends Component {
 		}
 
 		const { media } = this.props;
-		const guid = get( media, 'videopress_guid', null );
+		const guid = media?.videopress_guid;
 
 		if ( guid ) {
 			this.props.updatePoster( guid, { file }, { mediaId: media.ID } );
 		}
 	};
 
-	getVideoEditorProps( posterUrl ) {
-		const { media } = this.props;
+	getVideoEditorProps() {
+		const { media, posterUrl } = this.props;
 		const videoProperties = { posterUrl };
 
 		if ( media && media.ID ) {
@@ -160,7 +149,7 @@ class VideoEditor extends Component {
 	}
 
 	render() {
-		const { className, media, onCancel, uploadProgress, translate } = this.props;
+		const { className, media, onCancel, uploadProgress, translate, shouldShowError } = this.props;
 		const { error, isLoading, isSelectingFrame, pauseVideo } = this.state;
 
 		const classes = classNames( 'video-editor', className );
@@ -201,7 +190,7 @@ class VideoEditor extends Component {
 					</div>
 				</figure>
 
-				{ error && this.renderError() }
+				{ ( error || shouldShowError ) && this.renderError() }
 			</div>
 		);
 	}
