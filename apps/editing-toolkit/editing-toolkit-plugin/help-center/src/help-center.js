@@ -1,9 +1,10 @@
 import HelpCenter from '@automattic/help-center';
 import { Button } from '@wordpress/components';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { PinnedItems } from '@wordpress/interface';
-import { registerPlugin, unregisterPlugin } from '@wordpress/plugins';
+import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
-import React from 'react';
+import { useRef, useLayoutEffect } from 'react';
 import './help-center.scss';
 
 const HelpIcon = ( { newItems, active } ) => (
@@ -37,42 +38,49 @@ const HelpIcon = ( { newItems, active } ) => (
 );
 
 function HelpCenterComponent() {
-	const [ isActive, setIsActive ] = React.useState( false );
+	const isDesktop = useRef( false );
+	const { show } = useSelect( ( select ) => {
+		return {
+			show: select( 'automattic/help-center' ).isHelpCenterShown(),
+		};
+	} );
+	const setShowHelpCenter = useDispatch( 'automattic/help-center' )?.setShowHelpCenter;
+
+	useLayoutEffect( () => {
+		isDesktop.current = ! window.matchMedia( '(max-width: 480px)' ).matches;
+
+		window.matchMedia( '(max-width: 480px)' ).addEventListener( 'change', ( event ) => {
+			isDesktop.current = event.matches ? false : true;
+		} );
+
+		return () => {
+			window.matchMedia( '(max-width: 480px)' ).removeEventListener( 'change' );
+		};
+	}, [] );
 
 	return (
 		<>
-			<PinnedItems scope="core/edit-post">
-				<span className="etk-help-center">
-					<Button
-						className={ cx( 'entry-point-button', { 'is-active': isActive } ) }
-						onClick={ () => setIsActive( ! isActive ) }
-						icon={ <HelpIcon newItems active={ isActive } /> }
-					></Button>
-				</span>
-			</PinnedItems>
-			{ isActive && (
-				<HelpCenter content={ <h1>Help center</h1> } handleClose={ () => setIsActive( false ) } />
+			{ isDesktop.current && (
+				<PinnedItems scope="core/edit-post">
+					<span className="etk-help-center">
+						<Button
+							className={ cx( 'entry-point-button', { 'is-active': show } ) }
+							onClick={ () => setShowHelpCenter( ! show ) }
+							icon={ <HelpIcon newItems active={ show } /> }
+						></Button>
+					</span>
+				</PinnedItems>
+			) }
+			{ show && (
+				<HelpCenter
+					content={ <h1>Help center</h1> }
+					handleClose={ () => setShowHelpCenter( false ) }
+				/>
 			) }
 		</>
 	);
 }
 
-function registerHelpCenter() {
-	registerPlugin( 'etk-help-center', {
-		render: () => <HelpCenterComponent />,
-	} );
-}
-
-// Register the plugin only if we are on desktop
-if ( ! window.matchMedia( '(max-width: 480px)' ).matches ) {
-	registerHelpCenter();
-}
-
-// If the viewport changes, we register the plugin if we are on desktop, unregister it otherwise
-window.matchMedia( '(max-width: 480px)' ).addEventListener( 'change', ( event ) => {
-	if ( event.matches ) {
-		unregisterPlugin( 'etk-help-center' );
-	} else {
-		registerHelpCenter();
-	}
+registerPlugin( 'etk-help-center', {
+	render: () => <HelpCenterComponent />,
 } );
