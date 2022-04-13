@@ -1,21 +1,45 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import React from 'react';
+import { useI18n } from '@wordpress/react-i18n';
 import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
-import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 
+import './style.scss';
+
+//Need to port these over?
+import ViewportSelect from './viewport-select';
+import { Viewport } from './types';
+import FontSelect from './font-select';
+import Preview from './preview';
+
 const FontPairingStep: Step = function FontPairingStep( { navigation } ) {
 	const { goBack, submit } = navigation;
-	const translate = useTranslate();
-	const headerText = translate( 'Pick a font pairing' );
-	const subHeaderText = translate(
+	const { __ } = useI18n();
+	const headerText = __( 'Pick a font pairing' );
+	const subHeaderText = __(
 		'Customize your design with typography that best suits your podcast. You can always fine-tune it later.'
 	);
 
-	const handleClick = () => {
-		submit?.();
+	const FontPairingUI: React.FC = () => {
+		const handleSubmit = () => {
+			submit?.();
+		};
+
+		const [ selectedViewport, setSelectedViewport ] = React.useState< Viewport >( 'desktop' );
+
+		return (
+			<div className="font-pairing__step-content">
+				<ViewportSelect selected={ selectedViewport } onSelect={ setSelectedViewport } />
+				<FontSelect />
+				<Preview viewport={ selectedViewport } />
+				<Button className="font-pairing__submit-button" onClick={ handleSubmit }>
+					{ __( 'Continue' ) }
+				</Button>
+			</div>
+		);
 	};
 
 	return (
@@ -23,7 +47,7 @@ const FontPairingStep: Step = function FontPairingStep( { navigation } ) {
 			stepName={ 'font-pairing-step' }
 			goBack={ goBack }
 			hideSkip
-			isHorizontalLayout={ true }
+			isWideLayout
 			formattedHeader={
 				<FormattedHeader
 					id={ 'font-pairing-header' }
@@ -32,7 +56,7 @@ const FontPairingStep: Step = function FontPairingStep( { navigation } ) {
 					align={ 'left' }
 				/>
 			}
-			stepContent={ <Button onClick={ handleClick }>Go to next step</Button> }
+			stepContent={ <FontPairingUI /> }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
