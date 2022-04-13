@@ -21,6 +21,7 @@ export type StepPath =
 	| 'storeFeatures'
 	| 'designSetup'
 	| 'import'
+	| 'import/list'
 	| 'import/ready/not'
 	| 'import/ready/wpcom'
 	| 'import/ready/preview'

@@ -7,6 +7,7 @@ import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CaptureStep from 'calypso/signup/steps/import/capture';
+import ListStep from 'calypso/signup/steps/import/list';
 import {
 	ReadyPreviewStep,
 	ReadyNotStep,
@@ -45,6 +46,7 @@ const ImportStep: Step = function ImportStep( props ) {
 			stepContent={
 				<div className="import__onboarding-page">
 					{ currentRoute === 'import' && <CaptureStep goToStep={ goToStep } /> }
+					{ currentRoute === 'import/list' && <ListStep goToStep={ goToStep } /> }
 
 					{ currentRoute === 'import/ready/preview' && (
 						<ReadyPreviewStep
