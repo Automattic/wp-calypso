@@ -1,9 +1,9 @@
 import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { useTranslate } from 'i18n-calypso';
-import type { Step } from '../../types';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import type { Step } from '../../types';
 
 const WooCommerceConfirmStep: Step = function WooCommerceConfirmStep( { navigation } ) {
 	const { goBack, submit } = navigation;
