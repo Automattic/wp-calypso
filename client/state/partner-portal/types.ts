@@ -41,6 +41,8 @@ export interface LicenseListContext {
 	sortDirection: LicenseSortDirection;
 }
 
+export type InvoiceStatus = 'draft' | 'open' | 'paid' | 'void' | 'uncollectible';
+
 /**
  * API schemas.
  */
@@ -91,6 +93,35 @@ export interface APIError {
 	status: number;
 	code: string | null;
 	message: string;
+}
+
+export interface APIInvoices {
+	items: APIInvoice[];
+}
+
+export interface APIInvoice {
+	id: string;
+	due_date: string;
+	status: InvoiceStatus;
+	total: number;
+	currency: string;
+	invoice_pdf: string;
+}
+
+/**
+ * Calypso.
+ */
+export interface Invoices {
+	items: Invoice[];
+}
+
+export interface Invoice {
+	id: string;
+	dueDate: string;
+	status: InvoiceStatus;
+	total: number;
+	currency: string;
+	pdfUrl: string;
 }
 
 /**
