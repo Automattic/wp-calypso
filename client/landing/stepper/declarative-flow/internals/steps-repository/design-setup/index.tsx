@@ -65,7 +65,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		site?.launch_status === 'unlaunched' && site?.options?.is_automated_transfer
 	);
 
-	const showDesignPickerCategories = isEnabled( 'signup/design-picker-categories' );
+	const showDesignPickerCategories =
+		isEnabled( 'signup/design-picker-categories' ) && ! isAnchorSite;
 	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
 	const showGeneratedDesigns =
 		isEnabled( 'signup/design-picker-generated-designs' ) && intent === 'build' && !! siteVertical;
@@ -349,7 +350,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 				highResThumbnails
 				hideFullScreenPreview={ isAnchorSite ? true : false }
 				premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ !! isPremiumThemeAvailable } /> }
-				categorization={ showDesignPickerCategories && ! isAnchorSite ? categorization : undefined }
+				categorization={ showDesignPickerCategories ? categorization : undefined }
 				recommendedCategorySlug={ categorizationOptions.defaultSelection }
 				categoriesHeading={
 					<FormattedHeader
