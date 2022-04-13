@@ -9,7 +9,6 @@ import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { LocaleContext } from '../gutenboarding/components/locale-context';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
-import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';
@@ -44,7 +43,7 @@ window.AppBoot = async () => {
 
 	const queryClient = new QueryClient();
 
-	const flow = config.isEnabled( 'signup/anchor-fm' ) ? anchorFmFlow : siteSetupFlow;
+	const flow = siteSetupFlow;
 
 	ReactDom.render(
 		<LocaleContext>
