@@ -4,6 +4,10 @@ export interface SiteVerticalsResponse {
 	title: string;
 }
 
+export interface SiteVerticalQueryByIdParams {
+	id?: string;
+}
+
 export interface SiteVerticalsQueryParams {
 	term?: string;
 	limit?: number;

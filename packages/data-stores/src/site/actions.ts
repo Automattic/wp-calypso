@@ -88,10 +88,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		tagline,
 	} );
 
-	const receiveSiteVertical = ( siteId: number, vertical: string | undefined ) => ( {
-		type: 'RECEIVE_SITE_VERTICAL' as const,
+	const receiveSiteVerticalId = ( siteId: number, verticalId: string | undefined ) => ( {
+		type: 'RECEIVE_SITE_VERTICAL_ID' as const,
 		siteId,
-		vertical,
+		verticalId,
 	} );
 
 	const receiveSiteFailed = ( siteId: number, response: SiteError | undefined ) => ( {
@@ -175,7 +175,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		settings: {
 			blogname?: string;
 			blogdescription?: string;
-			site_vertical?: string;
+			site_vertical_id?: string;
 			woocommerce_onboarding_profile?: { [ key: string ]: any };
 		}
 	) {
@@ -193,8 +193,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			if ( 'blogdescription' in settings ) {
 				yield receiveSiteTagline( siteId, settings.blogdescription );
 			}
-			if ( 'site_vertical' in settings ) {
-				yield receiveSiteVertical( siteId, settings.site_vertical );
+			if ( 'site_vertical_id' in settings ) {
+				yield receiveSiteVerticalId( siteId, settings.site_vertical_id );
 			}
 		} catch ( e ) {}
 	}
@@ -247,7 +247,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveSite,
 		receiveSiteFailed,
 		receiveSiteTagline,
-		receiveSiteVertical,
+		receiveSiteVerticalId,
 		saveSiteTagline,
 		reset,
 		launchSite,
@@ -271,7 +271,7 @@ export type Action =
 			| ActionCreators[ 'receiveSiteTitle' ]
 			| ActionCreators[ 'receiveNewSiteFailed' ]
 			| ActionCreators[ 'receiveSiteTagline' ]
-			| ActionCreators[ 'receiveSiteVertical' ]
+			| ActionCreators[ 'receiveSiteVerticalId' ]
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'reset' ]
