@@ -42,6 +42,10 @@ export const isSiteLaunching = ( state: State, siteId: number ) => {
 	return state.launchStatus[ siteId ]?.status === SiteLaunchStatus.IN_PROGRESS;
 };
 
+export const isSiteAtomic = ( state: State, siteId: number | string ) => {
+	return select( STORE_KEY ).getSite( siteId )?.options.is_wpcom_atomic === true;
+};
+
 export const getSiteDomains = ( state: State, siteId: number ) => {
 	return state.sitesDomains[ siteId ];
 };

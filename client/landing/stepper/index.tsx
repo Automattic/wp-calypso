@@ -44,7 +44,18 @@ window.AppBoot = async () => {
 
 	const queryClient = new QueryClient();
 
-	const flow = config.isEnabled( 'signup/anchor-fm' ) ? anchorFmFlow : siteSetupFlow;
+	const sanitizePodcastId = ( id: string | null ) => id?.replace( /[^a-zA-Z0-9]/g, '' );
+	const search = location.search;
+
+	const anchorPodcastId = sanitizePodcastId(
+		new URLSearchParams( search ).get( 'anchor_podcast' )
+	);
+
+	let flow = siteSetupFlow;
+
+	if ( anchorPodcastId && config.isEnabled( 'signup/anchor-fm' ) ) {
+		flow = anchorFmFlow;
+	}
 
 	ReactDom.render(
 		<LocaleContext>
