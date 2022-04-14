@@ -71,7 +71,7 @@ export class FullSiteEditorPage {
 	/**
 	 * Visit the site editor by URL directly.
 	 *
-	 * @param siteHostName Host name of the site, without scheme. (e.g. testsite.wordpress.com)
+	 * @param {string} siteHostName Host name of the site, without scheme. (e.g. testsite.wordpress.com)
 	 */
 	async visit( siteHostName: string ): Promise< void > {
 		await this.page.goto( getCalypsoURL( `site-editor/${ siteHostName }` ) );
