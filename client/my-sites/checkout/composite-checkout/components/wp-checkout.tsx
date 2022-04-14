@@ -238,14 +238,6 @@ export default function WPCheckout( {
 			return;
 		}
 
-		// When the contact details change, update the cached contact details on
-		// the server. This can fail if validation fails but we will silently
-		// ignore failures here because the validation call will handle them better
-		// than this will.
-		reduxDispatch(
-			saveContactDetailsCache( prepareDomainContactValidationRequest( contactInfo ) )
-		);
-
 		// When the contact details change, update the tax location in cart if the
 		// active payment method is taxable.
 		if ( nonTaxPaymentMethods.includes( activePaymentMethod.id ) ) {
@@ -267,7 +259,6 @@ export default function WPCheckout( {
 			} );
 		}
 	}, [
-		reduxDispatch,
 		activePaymentMethod,
 		updateLocation,
 		contactInfo,
@@ -463,6 +454,7 @@ export default function WPCheckout( {
 						setShouldShowContactDetailsValidationErrors( true );
 						// Touch the fields so they display validation errors
 						touchContactFields();
+						updateCartContactDetails();
 						return validateContactDetails(
 							contactInfo,
 							isLoggedOutCart,
@@ -475,7 +467,14 @@ export default function WPCheckout( {
 							true
 						).then( ( response ) => {
 							if ( response ) {
-								updateCartContactDetails();
+								// When the contact details change, update the cached contact details on
+								// the server. This can fail if validation fails but we will silently
+								// ignore failures here because the validation call will handle them better
+								// than this will.
+								reduxDispatch(
+									saveContactDetailsCache( prepareDomainContactValidationRequest( contactInfo ) )
+								);
+
 								reduxDispatch(
 									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
 										step: 1,
