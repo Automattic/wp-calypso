@@ -58,7 +58,7 @@ const ImportStep: Step = function ImportStep( props ) {
 		navigation.goToStep?.( `/${ BASE_ROUTE }` as StepPath );
 	}
 
-	function shouldHideNext() {
+	function shouldHideSkipBtn() {
 		switch ( currentRoute ) {
 			case 'import':
 				return false;
@@ -74,12 +74,10 @@ const ImportStep: Step = function ImportStep( props ) {
 	return (
 		<StepContainer
 			stepName={ 'import-step' }
-			hideSkip={ true }
-			hideBack={ false }
-			hideNext={ shouldHideNext() }
+			hideSkip={ shouldHideSkipBtn() }
 			goBack={ navigation.goBack }
 			goNext={ navigation.goNext }
-			nextLabelText={ __( "I don't have a site address" ) }
+			skipLabelText={ __( "I don't have a site address" ) }
 			isFullLayout={ true }
 			stepContent={
 				<div className="import__onboarding-page">
