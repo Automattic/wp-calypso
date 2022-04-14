@@ -40,20 +40,6 @@ function areAnyContactFieldsDifferent(
 	} );
 }
 
-function arePostalCodesSupportedByCountry(
-	country: string | undefined | null,
-	countriesList: CountryListItem[]
-): boolean {
-	if ( ! country ) {
-		return true;
-	}
-	if ( countriesList.length < 1 ) {
-		debug( 'no country list available, so we are assuming postal codes exist' );
-		return true;
-	}
-	return getCountryPostalCodeSupport( countriesList, country );
-}
-
 /**
  * Load cached contact details from the server and use them to populate the
  * checkout contact form and the shopping cart tax location.
@@ -83,10 +69,9 @@ export default function useCachedDomainContactDetails(
 
 	const cachedContactDetails = useSelector( getContactDetailsCache );
 
-	const arePostalCodesSupported = arePostalCodesSupportedByCountry(
-		cachedContactDetails?.countryCode,
-		countriesList
-	);
+	const arePostalCodesSupported = cachedContactDetails?.countryCode
+		? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode )
+		: true;
 
 	const { loadDomainContactDetailsFromCache } = useDispatch( 'wpcom-checkout' );
 
