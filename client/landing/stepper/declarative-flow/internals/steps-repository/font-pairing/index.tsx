@@ -8,12 +8,10 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 
 import './style.scss';
-
-//Need to port these over?
-import ViewportSelect from './viewport-select';
-import { Viewport } from './types';
-import FontSelect from './font-select';
-import Preview from './preview';
+import ViewportSelect from 'calypso/landing/gutenboarding/onboarding-block/style-preview/viewport-select';
+import FontSelect from 'calypso/landing/gutenboarding/onboarding-block/style-preview/font-select';
+import { Viewport } from 'calypso/landing/gutenboarding/onboarding-block/style-preview/types';
+import Preview from 'calypso/landing/gutenboarding/onboarding-block/style-preview/preview';
 
 const FontPairingStep: Step = function FontPairingStep( { navigation } ) {
 	const { goBack, submit } = navigation;
