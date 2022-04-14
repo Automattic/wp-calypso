@@ -96,6 +96,8 @@ class VideoEditor extends Component {
 		this.setState( { isLoading: false } );
 	};
 
+	setIsPlaying = ( isPlaying ) => this.setState( { pauseVideo: ! isPlaying } );
+
 	pauseVideo = () => {
 		this.setState( {
 			error: false,
@@ -162,6 +164,8 @@ class VideoEditor extends Component {
 							<DetailPreviewVideo
 								className="video-editor__preview"
 								isPlaying={ ! pauseVideo }
+								setIsPlaying={ this.setIsPlaying }
+								isSelectingFrame={ isSelectingFrame }
 								item={ media }
 								onPause={ this.updatePoster }
 								onScriptLoadError={ this.setError }
