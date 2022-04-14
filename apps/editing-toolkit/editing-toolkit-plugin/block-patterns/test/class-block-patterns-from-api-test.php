@@ -172,17 +172,17 @@ class Block_Patterns_From_Api_Test extends TestCase {
 	/**
 	 * Tests the given patterns registration mock against multiple REST API routes.
 	 *
-	 * @param object $block_patterns_utils_mock A mock object for the block pattern utilities class.
+	 * @param object $patterns_from_api_mock A mock object for the block pattern from API class.
 	 * @param array  $test_routes               An array of strings of routes to test.
 	 */
-	private function test_pattern_registration_on_routes( $block_patterns_utils_mock, $test_routes ) {
+	public function test_pattern_registration_on_routes( $patterns_from_api_mock, $test_routes ) {
 		foreach ( $test_routes as $route ) {
 			$request_mock = $this->createMock( \WP_REST_Request::class );
 			$request_mock->method( 'get_route' )->willReturn( $route );
 
 			load_block_patterns_from_api(
-				function () use ( $block_patterns_utils_mock ) {
-					$block_patterns_utils_mock->register_patterns();
+				function () use ( $patterns_from_api_mock ) {
+					$patterns_from_api_mock->register_patterns();
 				}
 			)( null, $request_mock );
 		}
@@ -200,10 +200,10 @@ class Block_Patterns_From_Api_Test extends TestCase {
 			'/wp/v2/sites/178915379/block-patterns/patterns',
 		);
 
-		$utils_mock = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ) );
-		$utils_mock->expects( $this->exactly( count( $test_routes ) ) )->method( 'register_patterns' );
+		$patterns_mock = $this->createMock( Block_Patterns_From_API::class );
+		$patterns_mock->expects( $this->exactly( count( $test_routes ) ) )->method( 'register_patterns' );
 
-		$this->test_pattern_registration_on_routes( $utils_mock, $test_routes );
+		$this->test_pattern_registration_on_routes( $patterns_mock, $test_routes );
 	}
 
 	/**
@@ -212,9 +212,6 @@ class Block_Patterns_From_Api_Test extends TestCase {
 	 */
 	public function test_load_block_patterns_from_api_is_skipped_in_wrong_request_context() {
 		add_filter( 'a8c_enable_block_patterns_api', '__return_true' );
-
-		$utils_mock = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ) );
-		$utils_mock->expects( $this->never() )->method( 'register_patterns' );
 
 		$test_routes = array(
 			'/rest/v1.1/help/olark/mine',
@@ -228,6 +225,9 @@ class Block_Patterns_From_Api_Test extends TestCase {
 			'/wp/v2/123/block-patterns/categories',
 		);
 
-		$this->test_pattern_registration_on_routes( $utils_mock, $test_routes );
+		$patterns_mock = $this->createMock( Block_Patterns_From_API::class );
+		$patterns_mock->expects( $this->never() )->method( 'register_patterns' );
+
+		$this->test_pattern_registration_on_routes( $patterns_mock, $test_routes );
 	}
 }
