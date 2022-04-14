@@ -367,6 +367,12 @@ function onClickInstallPlugin( {
 			plugin: plugin.slug,
 		} )
 	);
+	dispatch(
+		recordTracksEvent( 'calypso_plugin_install_activate_click', {
+			plugin: plugin.slug,
+			blog_id: selectedSite?.ID,
+		} )
+	);
 
 	dispatch( productToBeInstalled( plugin.slug, selectedSite.slug ) );
 
