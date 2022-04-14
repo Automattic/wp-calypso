@@ -146,7 +146,7 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page );
+				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 			} );
 
 			it( 'Go to site editor', async function () {
