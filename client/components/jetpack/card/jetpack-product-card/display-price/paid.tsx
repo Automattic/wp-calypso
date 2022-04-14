@@ -42,12 +42,7 @@ const Paid: React.FC< OwnProps > = ( {
 	) {
 		return (
 			<>
-				<PlanPrice
-					original
-					className="display-price__original-price"
-					rawPrice={ 0.01 }
-					currencyCode={ '$' }
-				/>
+				<PlanPrice original className="display-price__original-price" />
 				{ /* Remove this secondary <PlanPrice/> placeholder if we're not showing discounted prices */ }
 				<PlanPrice discounted rawPrice={ 0.01 } currencyCode={ '$' } />
 				<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
