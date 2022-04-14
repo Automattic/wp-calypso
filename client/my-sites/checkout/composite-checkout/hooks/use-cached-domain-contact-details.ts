@@ -29,6 +29,17 @@ function areTaxFieldsDifferent(
 	return true;
 }
 
+function areAnyContactFieldsDifferent(
+	previous: PossiblyCompleteDomainContactDetails | undefined,
+	next: PossiblyCompleteDomainContactDetails | undefined
+): boolean {
+	return Object.keys( next ?? {} ).some( ( key: string ) => {
+		const previousRecord = previous as undefined | Record< string, string | null | undefined >;
+		const nextRecord = next as undefined | Record< string, string | null | undefined >;
+		return previousRecord?.[ key ] !== nextRecord?.[ key ];
+	} );
+}
+
 function arePostalCodesSupportedByCountry(
 	country: string | undefined | null,
 	countriesList: CountryListItem[]
@@ -43,6 +54,10 @@ function arePostalCodesSupportedByCountry(
 	return getCountryPostalCodeSupport( countriesList, country );
 }
 
+/**
+ * Load cached contact details from the server and use them to populate the
+ * checkout contact form and the shopping cart tax location.
+ */
 export default function useCachedDomainContactDetails(
 	overrideCountryList?: CountryListItem[]
 ): void {
@@ -72,12 +87,6 @@ export default function useCachedDomainContactDetails(
 		cachedContactDetails?.countryCode,
 		countriesList
 	);
-	debug(
-		'are postal codes supported by',
-		cachedContactDetails?.countryCode,
-		'?',
-		arePostalCodesSupported
-	);
 
 	const { loadDomainContactDetailsFromCache } = useDispatch( 'wpcom-checkout' );
 
@@ -87,7 +96,7 @@ export default function useCachedDomainContactDetails(
 		if ( ! cachedContactDetails || ! countriesList ) {
 			return;
 		}
-		if ( ! areTaxFieldsDifferent( previousDetailsForForm.current, cachedContactDetails ) ) {
+		if ( ! areAnyContactFieldsDifferent( previousDetailsForForm.current, cachedContactDetails ) ) {
 			return;
 		}
 		previousDetailsForForm.current = cachedContactDetails;
