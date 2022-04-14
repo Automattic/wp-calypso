@@ -31,6 +31,7 @@ import PreviewToolbar from './preview-toolbar';
 import type { Step } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
+import { useAnchorPodcastId } from 'calypso/landing/stepper/hooks/use-anchor-podcast-id';
 
 /**
  * The design picker step
@@ -46,7 +47,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 
-	const flowName = isEnabled( 'signup/anchor-fm' ) ? 'anchor-fm' : 'setup-site';
+	const anchorPodcastId = useAnchorPodcastId();
+	const flowName = isEnabled( 'signup/anchor-fm' ) && anchorPodcastId ? 'anchor-fm' : 'setup-site';
 	const isAnchorSite = 'anchor-fm' === flowName;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );

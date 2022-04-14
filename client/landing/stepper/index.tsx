@@ -13,6 +13,7 @@ import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';
+import { useAnchorPodcastId } from './hooks/use-anchor-podcast-id';
 
 function generateGetSuperProps() {
 	return () => ( {
@@ -44,14 +45,9 @@ window.AppBoot = async () => {
 
 	const queryClient = new QueryClient();
 
-	const sanitizePodcastId = ( id: string | null ) => id?.replace( /[^a-zA-Z0-9]/g, '' );
-	const search = location.search;
-
-	const anchorPodcastId = sanitizePodcastId(
-		new URLSearchParams( search ).get( 'anchor_podcast' )
-	);
-
 	let flow = siteSetupFlow;
+
+	const anchorPodcastId = useAnchorPodcastId();
 
 	if ( anchorPodcastId && config.isEnabled( 'signup/anchor-fm' ) ) {
 		flow = anchorFmFlow;
