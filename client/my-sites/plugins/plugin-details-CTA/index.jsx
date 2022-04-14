@@ -371,6 +371,8 @@ function onClickInstallPlugin( {
 		recordTracksEvent( 'calypso_plugin_install_activate_click', {
 			plugin: plugin.slug,
 			blog_id: selectedSite?.ID,
+			marketplace_product: isMarketplaceProduct,
+			needs_plan_upgrade: upgradeAndInstall,
 		} )
 	);
 
