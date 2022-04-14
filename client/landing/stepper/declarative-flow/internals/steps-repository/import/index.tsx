@@ -19,6 +19,7 @@ import { GoToStep } from 'calypso/signup/types';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { removeTrailingSlash } from './utils';
 import type { Step } from '../../types';
+import './style.scss';
 
 /**
  * The import step
@@ -79,7 +80,7 @@ const ImportStep: Step = function ImportStep( props ) {
 			goBack={ navigation.goBack }
 			goNext={ navigation.goNext }
 			nextLabelText={ __( "I don't have a site address" ) }
-			isHorizontalLayout={ false }
+			isFullLayout={ true }
 			stepContent={
 				<div className="import__onboarding-page">
 					{ currentRoute === 'import' && <CaptureStep goToStep={ goToStep } /> }
