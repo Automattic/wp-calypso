@@ -3,6 +3,7 @@ import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
+	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_SAVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
@@ -43,11 +44,36 @@ export function receiveContactDetailsCache( data ) {
 export function requestContactDetailsCache() {
 	return ( dispatch ) => {
 		dispatch( {
+			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_SAVE,
+		} );
+
+		wpcom.req
+			.post( '/me/domain-contact-information' )
+			.then( ( data ) => {
+				dispatch(
+					receiveContactDetailsCache( mapRecordKeysRecursively( data, snakeToCamelCase ) )
+				);
+				dispatch( {
+					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
+				} );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
+					error,
+				} );
+			} );
+	};
+}
+
+export function saveContactDetailsCache( contactInformation ) {
+	return ( dispatch ) => {
+		dispatch( {
 			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 		} );
 
 		wpcom.req
-			.get( '/me/domain-contact-information' )
+			.post( '/me/domain-contact-information', contactInformation )
 			.then( ( data ) => {
 				dispatch(
 					receiveContactDetailsCache( mapRecordKeysRecursively( data, snakeToCamelCase ) )
