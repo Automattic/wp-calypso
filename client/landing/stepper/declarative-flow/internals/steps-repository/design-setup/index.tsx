@@ -20,7 +20,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
-import { useAnchorPodcastId } from 'calypso/landing/stepper/hooks/use-anchor-podcast-id';
+import { getAnchorPodcastId } from '../../../get-anchor-podcast-id';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
@@ -47,7 +47,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 
-	const anchorPodcastId = useAnchorPodcastId();
+	const anchorPodcastId = getAnchorPodcastId();
 	const flowName = isEnabled( 'signup/anchor-fm' ) && anchorPodcastId ? 'anchor-fm' : 'setup-site';
 	const isAnchorSite = 'anchor-fm' === flowName;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );

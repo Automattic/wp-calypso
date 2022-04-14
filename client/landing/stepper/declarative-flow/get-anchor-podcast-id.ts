@@ -1,4 +1,4 @@
-export function useAnchorPodcastId() {
+export function getAnchorPodcastId() {
 	/* @TODO: hook this up to the store and make it an actual hook :) */
 	const sanitizePodcastId = ( id: string | null ) => id?.replace( /[^a-zA-Z0-9]/g, '' );
 	const search = location.search;
