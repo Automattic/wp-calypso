@@ -170,7 +170,7 @@ export async function initSentry( { beforeSend }: SentryOptions ) {
 				environment,
 				release,
 				beforeBreadcrumb,
-				beforeSend: ( event ) => beforeSend( event ),
+				beforeSend,
 			} );
 			state = { state: 'loaded', sentry: Sentry };
 		} catch ( err ) {
