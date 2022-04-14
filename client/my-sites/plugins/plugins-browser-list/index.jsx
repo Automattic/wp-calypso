@@ -38,6 +38,7 @@ const PluginsBrowserList = ( {
 				<PluginBrowserItem
 					site={ site }
 					key={ plugin.slug + n }
+					gridPosition={ n + 1 }
 					plugin={ plugin }
 					currentSites={ currentSites }
 					listName={ listName }
