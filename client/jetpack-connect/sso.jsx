@@ -39,23 +39,21 @@ class JetpackSsoForm extends Component {
 		showTermsDialog: false,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.maybeValidateSSO();
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.maybeValidateSSO( nextProps );
+	componentDidUpdate( prevProps ) {
+		this.maybeValidateSSO();
 
-		if ( nextProps.ssoUrl && ! this.props.ssoUrl ) {
+		if ( this.props.ssoUrl && ! prevProps.ssoUrl ) {
 			// After receiving the SSO URL, which will log the user in on remote site,
 			// we redirect user to remote site to be logged in.
 			//
 			// Note: We add `calypso_env` so that when we are redirected back to Calypso,
 			// we land in the same development environment.
 			const configEnv = config( 'env_id' ) || process.env.NODE_ENV;
-			const redirect = addQueryArgs( { calypso_env: configEnv }, nextProps.ssoUrl );
+			const redirect = addQueryArgs( { calypso_env: configEnv }, this.props.ssoUrl );
 			debug( 'Redirecting to: ' + redirect );
 			window.location.href = redirect;
 		}
@@ -131,8 +129,8 @@ class JetpackSsoForm extends Component {
 		return login( { redirectTo: window.location.href } );
 	}
 
-	maybeValidateSSO( props = this.props ) {
-		const { ssoNonce, siteId, nonceValid, isAuthorizing, isValidating } = props;
+	maybeValidateSSO() {
+		const { ssoNonce, siteId, nonceValid, isAuthorizing, isValidating } = this.props;
 
 		if (
 			ssoNonce &&
