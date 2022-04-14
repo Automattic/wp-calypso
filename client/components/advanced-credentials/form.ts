@@ -7,7 +7,7 @@ export enum FormMode {
 }
 
 export interface Credentials {
-	type: 'ssh' | 'ftp';
+	type: 'ssh' | 'ftp' | 'dynamic-ssh';
 	host: string;
 	port: number | '';
 	user: string;
@@ -15,7 +15,7 @@ export interface Credentials {
 }
 
 export interface FormState {
-	protocol: 'ssh' | 'ftp';
+	protocol: 'ssh' | 'ftp' | 'dynamic-ssh';
 	host: string;
 	port: number | '';
 	user: string;
