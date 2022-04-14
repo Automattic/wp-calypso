@@ -21,23 +21,20 @@ import { removeTrailingSlash } from './utils';
 import type { Step } from '../../types';
 import './style.scss';
 
-/**
- * The import step
- */
 const ImportStep: Step = function ImportStep( props ) {
 	const { __ } = useI18n();
 	const BASE_ROUTE = 'import';
 	const { navigation } = props;
 
 	/**
-	 * ↓ Fields
+	 ↓ Fields
 	 */
 	const siteSlug = useSiteSlugParam();
 	const currentRoute = useCurrentRoute();
 	const urlData = useSelector( getUrlData );
 
 	/**
-	 * ↓ Effects
+	 ↓ Effects
 	 */
 	if ( ! urlData && currentRoute !== 'import' && currentRoute !== 'import/list' ) {
 		goToHomeStep();
@@ -45,7 +42,7 @@ const ImportStep: Step = function ImportStep( props ) {
 	}
 
 	/**
-	 * ↓ Methods
+	 ↓ Methods
 	 */
 	const goToStep: GoToStep = function ( stepName, stepSectionName ) {
 		const routes = [ BASE_ROUTE, stepName, stepSectionName ];
@@ -69,8 +66,50 @@ const ImportStep: Step = function ImportStep( props ) {
 	}
 
 	/**
-	 * Renders
+	 ↓ Renders
 	 */
+	function renderStepContent() {
+		return (
+			<div className="import__onboarding-page">
+				{ currentRoute === 'import' && <CaptureStep goToStep={ goToStep } /> }
+				{ currentRoute === 'import/list' && <ListStep goToStep={ goToStep } /> }
+
+				{ currentRoute === 'import/ready' && (
+					<ReadyStep
+						platform={ urlData?.platform }
+						goToImporterPage={ () => {
+							// console.log( 'gotToImporterPage' );
+						} }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
+
+				{ currentRoute === 'import/ready/preview' && (
+					<ReadyPreviewStep
+						urlData={ urlData }
+						goToImporterPage={ () => {
+							// console.log( 'goToImporterPage' );
+						} }
+						siteSlug={ siteSlug as string }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
+
+				{ currentRoute === 'import/ready/not' && (
+					<ReadyNotStep goToStep={ goToStep } recordTracksEvent={ recordTracksEvent } />
+				) }
+
+				{ currentRoute === 'import/ready/wpcom' && (
+					<ReadyAlreadyOnWPCOMStep
+						urlData={ urlData }
+						goToStep={ goToStep }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
+			</div>
+		);
+	}
+
 	return (
 		<StepContainer
 			stepName={ 'import-step' }
@@ -79,45 +118,7 @@ const ImportStep: Step = function ImportStep( props ) {
 			goNext={ navigation.goNext }
 			skipLabelText={ __( "I don't have a site address" ) }
 			isFullLayout={ true }
-			stepContent={
-				<div className="import__onboarding-page">
-					{ currentRoute === 'import' && <CaptureStep goToStep={ goToStep } /> }
-					{ currentRoute === 'import/list' && <ListStep goToStep={ goToStep } /> }
-
-					{ currentRoute === 'import/ready' && (
-						<ReadyStep
-							platform={ urlData?.platform }
-							goToImporterPage={ () => {
-								// console.log( 'gotToImporterPage' );
-							} }
-							recordTracksEvent={ recordTracksEvent }
-						/>
-					) }
-
-					{ currentRoute === 'import/ready/preview' && (
-						<ReadyPreviewStep
-							urlData={ urlData }
-							goToImporterPage={ () => {
-								// console.log( 'goToImporterPage' );
-							} }
-							siteSlug={ siteSlug as string }
-							recordTracksEvent={ recordTracksEvent }
-						/>
-					) }
-
-					{ currentRoute === 'import/ready/not' && (
-						<ReadyNotStep goToStep={ goToStep } recordTracksEvent={ recordTracksEvent } />
-					) }
-
-					{ currentRoute === 'import/ready/wpcom' && (
-						<ReadyAlreadyOnWPCOMStep
-							urlData={ urlData }
-							goToStep={ goToStep }
-							recordTracksEvent={ recordTracksEvent }
-						/>
-					) }
-				</div>
-			}
+			stepContent={ renderStepContent() }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
