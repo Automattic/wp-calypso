@@ -61,7 +61,7 @@ export default function useCachedDomainContactDetails(
 	const arePostalCodesSupported =
 		countriesList.length && cachedContactDetails?.countryCode
 			? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode )
-			: true;
+			: false;
 
 	const { loadDomainContactDetailsFromCache } = useDispatch( 'wpcom-checkout' );
 
