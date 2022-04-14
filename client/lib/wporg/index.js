@@ -85,40 +85,67 @@ export function fetchPluginsList( options ) {
 }
 
 export function fetchWPOrgPluginsFromIndex( options ) {
-	// default variables;
-	const page = options.page || DEFAULT_FIRST_PAGE;
-	const pageSize = options.pageSize || DEFAULT_PAGE_SIZE;
 	const category = options.category || DEFAULT_CATEGORY;
 	const search = options.search;
 	const author = options.author;
 
-	// TODO assemble query at the end, add pagination, etc here
+	// Set up base query
+	const size = options.pageSize || DEFAULT_PAGE_SIZE;
+	const from = ( ( options.page || DEFAULT_FIRST_PAGE ) - 1 ) * size;
+	const must = [];
+	const should = [];
 	const query = {
-		action: 'query_plugins',
-		'request[page]': page,
-		'request[per_page]': pageSize,
-		'request[fields]':
-			'icons,last_updated,rating,active_installs,tested,-downloaded,-ratings,-requires,-requires_php,-tags,-contributors,-added,-donate_link,-homepage',
-		'request[locale]': getWporgLocaleCode( options.locale ),
+		bool: {
+			must,
+			should,
+		},
 	};
 
-	// TODO implement query matching here
+	// add a match clause to the query
+	const addMatch = ( term, match ) => {
+		term.push( { match } );
+	};
+
 	if ( search ) {
-		query[ 'request[search]' ] = search;
+		must.push( {
+			multi_match: {
+				fields: [
+					'title.en^0.1',
+					'content.en^0.1',
+					'excerpt.en^0.1',
+					'tag.name.en^0.1',
+					'category.name.en^0.1',
+					'author_login^0.1',
+					'author^0.1',
+					'slug^0.1',
+				],
+				query: search,
+				operator: 'and',
+			},
+		} );
 	}
 
-	// todo implement author matching here
 	if ( author ) {
-		query[ 'request[author]' ] = author;
+		addMatch( must, { author } );
 	}
 
-	// TODO implement category matching here
+	// matching category if no other criteria given
 	if ( ! search && ! author ) {
-		query[ 'request[browse]' ] = category;
+		addMatch( must, { 'taxonomy.plugin_category.name': category } );
 	}
 
-	// TODO add site search endpoint here
-	return getRequest( WPORG_PLUGINS_ENDPOINT, query );
+	const fields = [
+		'meta.rating.value',
+		'post_id',
+		'meta.assets_icons.value',
+		'taxonomy.plugin_category.name',
+		'excerpt_en',
+		'taxonomy.plugin_tags.name',
+		'title_en',
+	];
+
+	// TODO update to POST request, add endpoint
+	return getRequest( WPORG_PLUGINS_ENDPOINT, { query, fields, size, from } );
 }
 
 /**
