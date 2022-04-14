@@ -97,6 +97,7 @@ export interface APIError {
 
 export interface APIInvoices {
 	items: APIInvoice[];
+	has_more: boolean;
 }
 
 export interface APIInvoice {
@@ -113,6 +114,7 @@ export interface APIInvoice {
  */
 export interface Invoices {
 	items: Invoice[];
+	hasMore: boolean;
 }
 
 export interface Invoice {

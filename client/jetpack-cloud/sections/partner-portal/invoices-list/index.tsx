@@ -1,10 +1,13 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
+import { memo, ReactElement, useCallback, useState } from 'react';
 import Badge from 'calypso/components/badge';
 import FormattedDate from 'calypso/components/formatted-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import Pagination from 'calypso/components/pagination';
+import { useCursorPagination } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import useInvoicesQuery from 'calypso/state/partner-portal/invoices/hooks/use-invoices-query';
 import type { Invoice } from 'calypso/state/partner-portal/types';
@@ -74,9 +77,72 @@ function InvoiceCard( { dueDate, status, total, currency, pdfUrl }: Invoice ): R
 	);
 }
 
+const InvoicePlaceholderCard = memo(
+	(): ReactElement => {
+		return (
+			<Card compact>
+				<div className="invoices-list__row">
+					<div className="invoices-list__due-date">
+						<TextPlaceholder />
+					</div>
+
+					<div className="invoices-list__status">
+						<TextPlaceholder />
+					</div>
+
+					<div className="invoices-list__total">
+						<TextPlaceholder />
+					</div>
+
+					<div className="invoices-list__download">
+						<TextPlaceholder />
+					</div>
+				</div>
+			</Card>
+		);
+	}
+);
+
 export default function InvoicesList(): ReactElement {
 	const translate = useTranslate();
-	const invoices = useInvoicesQuery();
+	const [ pagination, setPagination ] = useState( { starting_after: '', ending_before: '' } );
+	const invoices = useInvoicesQuery( pagination );
+	const hasMore = invoices.isSuccess ? invoices.data.hasMore : false;
+	const onNavigateCallback = useCallback(
+		( page, direction ) => {
+			if ( ! invoices.isSuccess || invoices.data.items.length === 0 ) {
+				return;
+			}
+
+			if ( page <= 1 ) {
+				setPagination( {
+					starting_after: '',
+					ending_before: '',
+				} );
+				return;
+			}
+
+			const items = invoices.data?.items;
+
+			setPagination(
+				direction === 'next'
+					? {
+							starting_after: items[ items.length - 1 ].id,
+							ending_before: '',
+					  }
+					: {
+							starting_after: '',
+							ending_before: items[ 0 ].id,
+					  }
+			);
+		},
+		[ invoices.isSuccess, invoices.data?.items, setPagination ]
+	);
+	const [ page, showPagination, onNavigate ] = useCursorPagination(
+		! invoices.isFetching,
+		hasMore,
+		onNavigateCallback
+	);
 
 	return (
 		<div className="invoices-list">
@@ -90,6 +156,7 @@ export default function InvoicesList(): ReactElement {
 			</Card>
 
 			{ invoices.isSuccess &&
+				! invoices.isFetching &&
 				invoices.data.items.map( ( invoice ) => (
 					<InvoiceCard
 						key={ invoice.id }
@@ -102,34 +169,31 @@ export default function InvoicesList(): ReactElement {
 					/>
 				) ) }
 
-			{ ! invoices.isSuccess && (
-				<Card compact>
-					<div className="invoices-list__row">
-						<div className="invoices-list__due-date">
-							{ invoices.isLoading && <TextPlaceholder /> }
+			{ invoices.isFetching && (
+				<>
+					<InvoicePlaceholderCard />
+					<InvoicePlaceholderCard />
+					<InvoicePlaceholderCard />
+					<InvoicePlaceholderCard />
+					<InvoicePlaceholderCard />
+					<InvoicePlaceholderCard />
+					<InvoicePlaceholderCard />
+					<InvoicePlaceholderCard />
+					<InvoicePlaceholderCard />
+					<InvoicePlaceholderCard />
+				</>
+			) }
 
-							{ invoices.isError && <Gridicon icon="minus" /> }
-						</div>
-
-						<div className="invoices-list__status">
-							{ invoices.isLoading && <TextPlaceholder /> }
-
-							{ invoices.isError && <Gridicon icon="minus" /> }
-						</div>
-
-						<div className="invoices-list__total">
-							{ invoices.isLoading && <TextPlaceholder /> }
-
-							{ invoices.isError && <Gridicon icon="minus" /> }
-						</div>
-
-						<div className="invoices-list__download">
-							{ invoices.isLoading && <TextPlaceholder /> }
-
-							{ invoices.isError && <Gridicon icon="minus" /> }
-						</div>
-					</div>
-				</Card>
+			{ showPagination && (
+				<Pagination
+					className={ classnames( 'invoices-list__pagination', {
+						'invoices-list__pagination--has-prev': page > 1,
+						'invoices-list__pagination--has-next': invoices.isFetching || hasMore,
+					} ) }
+					pageClick={ onNavigate }
+					page={ page }
+					perPage={ 10 }
+				/>
 			) }
 		</div>
 	);
