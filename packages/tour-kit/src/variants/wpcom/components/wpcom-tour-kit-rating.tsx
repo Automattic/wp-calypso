@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useTourKitContext } from '../../../index';
 import thumbsDown from '../icons/thumbs_down';
@@ -12,6 +12,7 @@ const WpcomTourKitRating: React.FunctionComponent = () => {
 	const context = useTourKitContext();
 	const config = ( context.config as unknown ) as WpcomConfig;
 	const tourRating = config.options?.tourRating?.useTourRating?.() ?? tempRating;
+	const { __ } = useI18n();
 
 	let isDisabled = false;
 
@@ -41,11 +42,11 @@ const WpcomTourKitRating: React.FunctionComponent = () => {
 	return (
 		<>
 			<p className="wpcom-tour-kit-rating__end-text">
-				{ __( 'Did you find this guide helpful?' ) }
+				{ __( 'Did you find this guide helpful?', __i18n_text_domain__ ) }
 			</p>
 			<div>
 				<Button
-					aria-label={ __( 'Rate thumbs up' ) }
+					aria-label={ __( 'Rate thumbs up', __i18n_text_domain__ ) }
 					className={ classNames( 'wpcom-tour-kit-rating__end-icon', {
 						active: tourRating === 'thumbs-up',
 					} ) }
@@ -55,7 +56,7 @@ const WpcomTourKitRating: React.FunctionComponent = () => {
 					iconSize={ 24 }
 				/>
 				<Button
-					aria-label={ __( 'Rate thumbs down' ) }
+					aria-label={ __( 'Rate thumbs down', __i18n_text_domain__ ) }
 					className={ classNames( 'wpcom-tour-kit-rating__end-icon', {
 						active: tourRating === 'thumbs-down',
 					} ) }

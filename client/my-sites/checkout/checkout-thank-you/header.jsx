@@ -4,11 +4,13 @@ import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
+	isGoogleWorkspaceExtraLicence,
+	isGSuiteExtraLicenseProductSlug,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	isGSuiteOrGoogleWorkspaceProductSlug,
 	isPlan,
 	isSiteRedirect,
 	isTitanMail,
-	isGoogleWorkspaceExtraLicence,
 } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -18,10 +20,6 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
-import {
-	isGSuiteExtraLicenseProductSlug,
-	isGSuiteOrGoogleWorkspaceProductSlug,
-} from 'calypso/lib/gsuite';
 import { getTitanEmailUrl, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { getTitanAppsUrlPrefix } from 'calypso/lib/titan/get-titan-urls';
 import {

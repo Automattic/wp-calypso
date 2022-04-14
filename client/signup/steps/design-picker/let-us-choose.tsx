@@ -28,12 +28,12 @@ const LetUsChooseButton = styled( Button )`
 	text-align: center;
 `;
 
+const LET_US_CHOOSE_THEME_SLUG = 'russell';
+
 const LetUsChoose = ( { flowName, designs, onSelect }: Props ) => {
 	const translate = useTranslate();
 
-	const defaultDesign = designs.find( ( design ) =>
-		design.features.includes( 'difm-lite-default' )
-	);
+	const defaultDesign = designs.find( ( design ) => LET_US_CHOOSE_THEME_SLUG === design.slug );
 
 	if ( ! defaultDesign ) {
 		return null;

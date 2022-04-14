@@ -29,46 +29,66 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 	const dispatch = useDispatch();
 
 	const stopSubscription = () => dispatch( requestSubscriptionStop( subscription.ID ) );
+	const isProduct = subscription && ! subscription.renew_interval;
 
 	useEffect( () => {
 		if ( stoppingStatus === 'fail' ) {
 			// run is-error notice to contact support
-			dispatch(
-				errorNotice(
-					translate(
-						'There was a problem while stopping your subscription, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
-						{
-							components: {
-								a: <a href={ CALYPSO_CONTACT } />,
-								strong: <strong />,
-							},
-						}
-					)
-				)
-			);
+			isProduct
+				? dispatch(
+						errorNotice(
+							translate(
+								'There was a problem while removing your product, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
+								{
+									components: {
+										a: <a href={ CALYPSO_CONTACT } />,
+										strong: <strong />,
+									},
+								}
+							)
+						)
+				  )
+				: dispatch(
+						errorNotice(
+							translate(
+								'There was a problem while stopping your subscription, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.',
+								{
+									components: {
+										a: <a href={ CALYPSO_CONTACT } />,
+										strong: <strong />,
+									},
+								}
+							)
+						)
+				  );
 		} else if ( stoppingStatus === 'success' ) {
 			// redirect back to Purchases list
 			dispatch(
-				successNotice(
-					translate( 'This subscription has been canceled. You will no longer be charged.' ),
-					{ displayOnNextPage: true }
-				)
+				successNotice( translate( 'This item has been removed.' ), { displayOnNextPage: true } )
 			);
 			page( purchasesRoot );
 		}
-	}, [ stoppingStatus, dispatch, translate ] );
+	}, [ stoppingStatus, dispatch, translate, isProduct ] );
 
 	return (
 		<Main wideLayout className="memberships__subscription">
-			<DocumentHead title={ translate( 'Subscription Details' ) } />
+			<DocumentHead
+				title={ isProduct ? translate( 'Product Details' ) : translate( 'Subscription Details' ) }
+			/>
 			<QueryMembershipsSubscriptions />
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-			<HeaderCake backHref={ purchasesRoot }>{ translate( 'Subscription Details' ) }</HeaderCake>
+			<HeaderCake backHref={ purchasesRoot }>
+				{ isProduct ? translate( 'Product Details' ) : translate( 'Subscription Details' ) }
+			</HeaderCake>
 			{ stoppingStatus === 'start' && (
 				<Notice
 					status="is-info"
 					isLoading={ true }
-					text={ translate( 'Stopping this subscription' ) }
+					text={
+						isProduct
+							? translate( 'Removing this product' )
+							: translate( 'Stopping this subscription' )
+					}
 				/>
 			) }
 			{ subscription && (
@@ -118,7 +138,9 @@ function Subscription( { translate, subscription, moment, stoppingStatus } ) {
 						className="memberships__subscription-remove"
 						onClick={ stopSubscription }
 					>
-						{ translate( 'Stop %s subscription.', { args: subscription.title } ) }
+						{ isProduct
+							? translate( 'Remove %s product.', { args: subscription.title } )
+							: translate( 'Stop %s subscription.', { args: subscription.title } ) }
 						<Gridicon className="card__link-indicator" icon="trash" />
 					</CompactCard>
 				</>

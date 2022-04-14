@@ -1,6 +1,7 @@
 import page from 'page';
 import AssignLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/assign-license';
 import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
+import InvoicesDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/invoices-dashboard';
 import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import LandingPage from 'calypso/jetpack-cloud/sections/partner-portal/primary/landing-page';
 import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
@@ -113,6 +114,13 @@ export function paymentMethodAddContext( context: PageJS.Context, next: () => vo
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <PaymentMethodAdd />;
+	next();
+}
+
+export function invoicesDashboardContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <InvoicesDashboard />;
 	next();
 }
 

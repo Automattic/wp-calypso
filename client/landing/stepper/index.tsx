@@ -9,6 +9,7 @@ import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { LocaleContext } from '../gutenboarding/components/locale-context';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
+import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';
@@ -43,12 +44,25 @@ window.AppBoot = async () => {
 
 	const queryClient = new QueryClient();
 
+	const sanitizePodcastId = ( id: string | null ) => id?.replace( /[^a-zA-Z0-9]/g, '' );
+	const search = location.search;
+
+	const anchorPodcastId = sanitizePodcastId(
+		new URLSearchParams( search ).get( 'anchor_podcast' )
+	);
+
+	let flow = siteSetupFlow;
+
+	if ( anchorPodcastId && config.isEnabled( 'signup/anchor-fm' ) ) {
+		flow = anchorFmFlow;
+	}
+
 	ReactDom.render(
 		<LocaleContext>
 			<QueryClientProvider client={ queryClient }>
 				<WindowLocaleEffectManager />
-				<BrowserRouter basename="stepper">
-					<FlowRenderer flow={ siteSetupFlow } />
+				<BrowserRouter basename="setup">
+					<FlowRenderer flow={ flow } />
 				</BrowserRouter>
 			</QueryClientProvider>
 		</LocaleContext>,

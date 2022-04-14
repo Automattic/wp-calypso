@@ -144,6 +144,16 @@ function PaymentMethodAdd(): ReactElement {
 
 							{ paymentMethods && paymentMethods[ 0 ] && paymentMethods[ 0 ].activeContent }
 
+							{ useAsPrimaryPaymentMethod && (
+								<p className="payment-method-add__notice">
+									<small>
+										{ translate(
+											'By storing your primary payment method you agree to have it charged automatically each month.'
+										) }
+									</small>
+								</p>
+							) }
+
 							<div className="payment-method-add__navigation-buttons">
 								<Button
 									className="payment-method-add__back-button"

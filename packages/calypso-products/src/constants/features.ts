@@ -83,7 +83,11 @@ export const FEATURE_ADVANCED_SEO_TOOLS = 'advanced-seo-tools';
 export const FEATURE_ADVANCED_SEO_EXPANDED_ABBR = 'advanced-seo-expanded-abbreviation';
 export const FEATURE_FREE_THEMES_SIGNUP = 'free-themes-signup';
 export const FEATURE_MEMBERSHIPS = 'memberships';
+export const FEATURE_DONATIONS = 'donations';
+export const FEATURE_RECURRING_PAYMENTS = 'recurring-payments';
+// This is a legacy alias, FEATURE_PREMIUM_CONTENT_CONTAINER should be used instead.
 export const FEATURE_PREMIUM_CONTENT_BLOCK = 'premium-content-block';
+export const FEATURE_PREMIUM_CONTENT_CONTAINER = 'premium-content/container';
 export const FEATURE_HOSTING = 'hosting';
 export const PREMIUM_DESIGN_FOR_STORES = 'premium-design-for-stores';
 export const FEATURE_SFTP_DATABASE = 'sftp-and-database-access';
@@ -172,6 +176,7 @@ export const FEATURE_JETPACK_VIDEOPRESS_STORAGE = 'jetpack-videopress-storage';
 export const FEATURE_JETPACK_VIDEOPRESS_UNBRANDED = 'jetpack-videopress-unbranded';
 export const FEATURE_JETPACK_CRM = PRODUCT_JETPACK_CRM;
 export const FEATURE_JETPACK_CRM_MONTHLY = PRODUCT_JETPACK_CRM_MONTHLY;
+export const FEATURE_CLOUD_CRITICAL_CSS = 'cloud-critical-css';
 
 // Jetpack tiered product features
 export const FEATURE_JETPACK_10GB_BACKUP_STORAGE = 'jetpack-10gb-backup-storage';

@@ -261,7 +261,7 @@ class Layout extends Component {
 				<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
-				<QuerySiteFeatures siteId={ this.props.siteId } />
+				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
 					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				) }

@@ -24,6 +24,7 @@ interface Props {
 	isPrimary?: boolean;
 	manageHref?: string;
 	onClick?: () => void;
+	disabled?: boolean;
 }
 
 type TranslateFunc = ReturnType< typeof useTranslate >;
@@ -58,6 +59,7 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 	currentSitePlanSlug,
 	manageHref,
 	onClick,
+	disabled,
 	...props
 } ) => {
 	const { plan } = props;
@@ -91,7 +93,12 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 	}
 
 	return (
-		<Button className={ className } onClick={ handleClick } href={ manageHref }>
+		<Button
+			className={ className }
+			onClick={ handleClick }
+			href={ manageHref }
+			disabled={ disabled }
+		>
 			{ buttonText }
 		</Button>
 	);

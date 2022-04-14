@@ -51,6 +51,36 @@ describe( 'search', () => {
 		} );
 	} );
 
+	describe( '"on-enter" search mode', () => {
+		it( "shouldn't call onSearch and onSearchChange when search changes", () => {
+			const searchString = '12345';
+			const onSearch = jest.fn();
+			const onSearchChange = jest.fn();
+			render(
+				<Search onSearch={ onSearch } searchMode="on-enter" onSearchChange={ onSearchChange } />
+			);
+			const searchbox = screen.getByRole( 'searchbox' );
+			userEvent.type( searchbox, searchString );
+			expect( onSearch ).toHaveBeenCalledTimes( 0 ); // once per character
+			expect( onSearchChange ).toHaveBeenCalledTimes( 0 );
+		} );
+
+		it( 'should call onSearch and onSearchChange when user hits enter', () => {
+			const searchString = '12345{enter}';
+			const onSearch = jest.fn();
+			const onSearchChange = jest.fn();
+			render(
+				<Search onSearch={ onSearch } searchMode="on-enter" onSearchChange={ onSearchChange } />
+			);
+			const searchbox = screen.getByRole( 'searchbox' );
+			userEvent.type( searchbox, searchString );
+			expect( onSearch ).toHaveBeenCalledTimes( 1 ); // once per character
+			expect( onSearch ).toHaveBeenCalledWith( '12345' );
+			expect( onSearchChange ).toHaveBeenCalledTimes( 1 );
+			expect( onSearchChange ).toHaveBeenCalledWith( '12345' );
+		} );
+	} );
+
 	it( 'should call onSearch and onSearchChange when search changes', () => {
 		const searchString = '12345';
 		const onSearch = jest.fn();

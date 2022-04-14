@@ -60,8 +60,6 @@ export function useCreatePayPal( {
 export function useCreateCreditCard( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 	shouldUseEbanx,
 	shouldShowTaxFields = false,
 	activePayButtonText = undefined,
@@ -70,8 +68,6 @@ export function useCreateCreditCard( {
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 	shouldUseEbanx: boolean;
 	shouldShowTaxFields?: boolean;
 	activePayButtonText?: string | undefined;
@@ -92,8 +88,6 @@ export function useCreateCreditCard( {
 			shouldLoadStripeMethod
 				? createCreditCardMethod( {
 						store: stripePaymentMethodStore,
-						stripe,
-						stripeConfiguration,
 						shouldUseEbanx,
 						shouldShowTaxFields,
 						activePayButtonText,
@@ -103,8 +97,6 @@ export function useCreateCreditCard( {
 		[
 			shouldLoadStripeMethod,
 			stripePaymentMethodStore,
-			stripe,
-			stripeConfiguration,
 			shouldUseEbanx,
 			shouldShowTaxFields,
 			activePayButtonText,
@@ -439,8 +431,6 @@ export default function useCreatePaymentMethods( {
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 		shouldUseEbanx,
 		allowUseForAllSubscriptions,
 	} );

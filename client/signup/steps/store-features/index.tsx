@@ -90,7 +90,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 			headerImageUrl={ null }
 			stepContent={
 				<>
-					<QuerySiteFeatures siteId={ props.siteId } />
+					<QuerySiteFeatures siteIds={ [ props.siteId ] } />
 					<SelectItems
 						items={ intents }
 						onSelect={ submitStoreFeatures }

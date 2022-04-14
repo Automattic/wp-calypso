@@ -1,7 +1,7 @@
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 
-export default function Spinner( { className } ) {
+export default function Spinner( { className = undefined } ) {
 	return <SpinnerWrapper className={ className } />;
 }
 

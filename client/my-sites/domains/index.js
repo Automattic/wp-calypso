@@ -105,11 +105,6 @@ export default function () {
 	);
 
 	registerStandardDomainManagementPages(
-		paths.domainManagementNameServers,
-		domainManagementController.domainManagementNameServers
-	);
-
-	registerStandardDomainManagementPages(
 		paths.domainManagementTransfer,
 		domainManagementController.domainManagementTransfer
 	);

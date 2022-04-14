@@ -43,6 +43,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -72,9 +73,14 @@ class InvitePeople extends Component {
 	};
 
 	getInitialState = () => {
-		const { isWPForTeamsSite } = this.props;
+		const { isAtomic, isWPForTeamsSite } = this.props;
 
-		const defaultRole = isWPForTeamsSite ? 'editor' : 'follower';
+		let defaultRole = 'follower';
+		if ( isWPForTeamsSite ) {
+			defaultRole = 'editor';
+		} else if ( isAtomic ) {
+			defaultRole = 'subscriber';
+		}
 
 		return {
 			isExternal: false,
@@ -392,6 +398,10 @@ class InvitePeople extends Component {
 	renderInviteForm = () => {
 		const { site, translate, needsVerification, isJetpack, showSSONotice } = this.props;
 
+		// Atomic private sites don't support Viewers/Followers.
+		// @see https://github.com/Automattic/wp-calypso/issues/43919
+		const includeFollower = ! this.props.isAtomic;
+
 		const inviteForm = (
 			<Card>
 				<EmailVerificationGate>
@@ -424,7 +434,7 @@ class InvitePeople extends Component {
 						<RoleSelect
 							id="role"
 							name="role"
-							includeFollower
+							includeFollower={ includeFollower }
 							siteId={ this.props.siteId }
 							onChange={ this.onRoleChange }
 							onFocus={ this.onFocusRoleSelect }
@@ -495,19 +505,20 @@ class InvitePeople extends Component {
 	};
 
 	getInviteLinkRoles = () => {
-		const { siteRoles, translate } = this.props;
+		const { isAtomic, siteRoles, translate } = this.props;
 		const wpcomFollowerRole = getWpcomFollowerRole( this.props.isPrivateSite, translate );
 
 		if ( ! siteRoles || ! wpcomFollowerRole ) {
 			return [];
 		}
 
-		return siteRoles.concat( wpcomFollowerRole );
-	};
+		// Atomic private sites don't support Viewers/Followers.
+		// @see https://github.com/Automattic/wp-calypso/issues/43919
+		if ( isAtomic && this.props.isPrivateSite ) {
+			return siteRoles;
+		}
 
-	isValidInviteLinkRole = ( inviteLinkRole ) => {
-		const roles = this.getInviteLinkRoles();
-		return roles.some( ( role ) => role === inviteLinkRole );
+		return siteRoles.concat( wpcomFollowerRole );
 	};
 
 	generateInviteLinks = () => {
@@ -745,6 +756,7 @@ const mapStateToProps = ( state ) => {
 		siteId,
 		needsVerification: ! isCurrentUserEmailVerified( state ),
 		showSSONotice: ! ( activating || active ),
+		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isJetpack: isJetpackSite( state, siteId ),
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		inviteLinks: getInviteLinksForSite( state, siteId ),

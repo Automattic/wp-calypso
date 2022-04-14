@@ -1,7 +1,7 @@
 import path from 'path';
 
 const VIEWPORT_NAMES = [ 'mobile', 'desktop' ] as const;
-const TEST_LOCALES = [
+export const TEST_LOCALES = [
 	'en',
 	'es',
 	'pt-br',

@@ -127,11 +127,11 @@ function plugin( context, next ) {
 // render the plugin browser for that site. Otherwise render plugin.
 export function browsePluginsOrPlugin( context, next ) {
 	const siteUrl = getSiteFragment( context.path );
-
 	if (
-		context.params.plugin &&
-		( ( siteUrl && context.params.plugin === siteUrl.toString() ) ||
-			includes( allowedCategoryNames, context.params.plugin ) )
+		( context.params.plugin &&
+			( ( siteUrl && context.params.plugin === siteUrl.toString() ) ||
+				includes( allowedCategoryNames, context.params.plugin ) ) ) ||
+		context.query?.s
 	) {
 		browsePlugins( context, next );
 		return;

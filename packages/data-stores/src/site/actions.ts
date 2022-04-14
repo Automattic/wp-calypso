@@ -11,6 +11,7 @@ import type {
 	Cart,
 	Domain,
 	SiteLaunchError as SiteLaunchErrorType,
+	SiteSettings,
 } from './types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
@@ -87,6 +88,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		tagline,
 	} );
 
+	const receiveSiteVertical = ( siteId: number, vertical: string | undefined ) => ( {
+		type: 'RECEIVE_SITE_VERTICAL' as const,
+		siteId,
+		vertical,
+	} );
+
 	const receiveSiteFailed = ( siteId: number, response: SiteError | undefined ) => ( {
 		type: 'RECEIVE_SITE_FAILED' as const,
 		siteId,
@@ -147,6 +154,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		domains,
 	} );
 
+	const receiveSiteSettings = ( siteId: number, settings: SiteSettings ) => ( {
+		type: 'RECEIVE_SITE_SETTINGS' as const,
+		siteId,
+		settings,
+	} );
+
 	function* setCart( siteId: number, cartData: Cart ) {
 		const success: Cart = yield wpcomRequest( {
 			path: '/me/shopping-cart/' + siteId,
@@ -159,7 +172,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 	function* saveSiteSettings(
 		siteId: number,
-		settings: { blogname?: string; blogdescription?: string }
+		settings: {
+			blogname?: string;
+			blogdescription?: string;
+			site_vertical?: string;
+			woocommerce_onboarding_profile?: { [ key: string ]: any };
+		}
 	) {
 		try {
 			// extract this into its own function as a generic settings setter
@@ -174,6 +192,9 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			}
 			if ( 'blogdescription' in settings ) {
 				yield receiveSiteTagline( siteId, settings.blogdescription );
+			}
+			if ( 'site_vertical' in settings ) {
+				yield receiveSiteVertical( siteId, settings.site_vertical );
 			}
 		} catch ( e ) {}
 	}
@@ -212,6 +233,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 	return {
 		receiveSiteDomains,
+		receiveSiteSettings,
 		saveSiteTitle,
 		saveSiteSettings,
 		receiveSiteTitle,
@@ -225,6 +247,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveSite,
 		receiveSiteFailed,
 		receiveSiteTagline,
+		receiveSiteVertical,
 		saveSiteTagline,
 		reset,
 		launchSite,
@@ -243,10 +266,12 @@ export type Action =
 			| ActionCreators[ 'fetchNewSite' ]
 			| ActionCreators[ 'fetchSite' ]
 			| ActionCreators[ 'receiveSiteDomains' ]
+			| ActionCreators[ 'receiveSiteSettings' ]
 			| ActionCreators[ 'receiveNewSite' ]
 			| ActionCreators[ 'receiveSiteTitle' ]
 			| ActionCreators[ 'receiveNewSiteFailed' ]
 			| ActionCreators[ 'receiveSiteTagline' ]
+			| ActionCreators[ 'receiveSiteVertical' ]
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'reset' ]

@@ -16,6 +16,7 @@ import {
 	isWpComPlan,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TYPE_PRO,
 } from '@automattic/calypso-products';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
@@ -724,6 +725,10 @@ function shouldRenderMonthlyRenewalOption( purchase ) {
 	const plan = getPlan( purchase.productSlug );
 
 	if ( ! [ TERM_ANNUALLY, TERM_BIENNIALLY ].includes( plan.term ) ) {
+		return false;
+	}
+
+	if ( TYPE_PRO === plan.type ) {
 		return false;
 	}
 
