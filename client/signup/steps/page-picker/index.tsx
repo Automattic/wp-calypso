@@ -44,10 +44,8 @@ const PageGrid = styled.div`
 	}
 `;
 
-const GridCellContainer = styled.div< { isClickDisabled: boolean; isSelected: boolean } >`
+const GridCellContainer = styled.div`
 	cursor: default;
-	opacity: ${ ( { isSelected, isClickDisabled } ) =>
-		! isSelected && isClickDisabled ? '0.4' : '1' };
 	border-radius: 4px;
 	position: relative;
 	width: 100%;
@@ -98,15 +96,13 @@ function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCe
 	const translate = useTranslate();
 	const selectedIndex = selectedPages.indexOf( pageId );
 	const isSelected = Boolean( selectedIndex > -1 );
-	const isDisabled = selectedIndex === -1;
 	const title = useTranslatedPageTitles()[ pageId ];
 
 	return (
-		<GridCellContainer isSelected={ isSelected } isClickDisabled={ isDisabled }>
+		<GridCellContainer>
 			<BrowserView
 				onClick={ () => onClick( pageId ) }
 				pageId={ pageId }
-				isClickDisabled={ isDisabled }
 				isSelected={ isSelected }
 				selectedIndex={ selectedIndex >= 0 ? selectedIndex : -1 }
 			/>
@@ -212,6 +208,7 @@ export default function DIFMPagePicker( props: StepProps ) {
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
 	const submitPickedPages = () => {
