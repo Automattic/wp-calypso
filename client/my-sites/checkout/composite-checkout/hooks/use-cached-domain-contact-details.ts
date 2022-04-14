@@ -49,7 +49,8 @@ export default function useCachedDomainContactDetails(
 	const reduxDispatch = useReduxDispatch();
 	const countriesList = useCountryList( overrideCountryList );
 	const haveRequestedCachedDetails = useRef( false );
-	const previousCachedContactDetails = useRef< PossiblyCompleteDomainContactDetails >();
+	const previousDetailsForCart = useRef< PossiblyCompleteDomainContactDetails >();
+	const previousDetailsForForm = useRef< PossiblyCompleteDomainContactDetails >();
 	const cartKey = useCartKey();
 	const {
 		updateLocation: updateCartLocation,
@@ -86,6 +87,10 @@ export default function useCachedDomainContactDetails(
 		if ( ! cachedContactDetails || ! countriesList ) {
 			return;
 		}
+		if ( ! areTaxFieldsDifferent( previousDetailsForForm.current, cachedContactDetails ) ) {
+			return;
+		}
+		previousDetailsForForm.current = cachedContactDetails;
 		debug( 'using fetched cached domain contact details', cachedContactDetails );
 		loadDomainContactDetailsFromCache( {
 			...cachedContactDetails,
@@ -111,16 +116,16 @@ export default function useCachedDomainContactDetails(
 		) {
 			return;
 		}
-		if ( ! areTaxFieldsDifferent( previousCachedContactDetails.current, cachedContactDetails ) ) {
+		if ( ! areTaxFieldsDifferent( previousDetailsForCart.current, cachedContactDetails ) ) {
 			return;
 		}
+		previousDetailsForCart.current = cachedContactDetails;
 		debug( 'updating cart tax details with cached contact details', cachedContactDetails );
 		updateCartLocation( {
 			countryCode: cachedContactDetails.countryCode ?? '',
 			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode ?? '' : '',
 			subdivisionCode: cachedContactDetails.state ?? '',
 		} );
-		previousCachedContactDetails.current = cachedContactDetails;
 	}, [
 		cartLoadingError,
 		isLoadingCart,
