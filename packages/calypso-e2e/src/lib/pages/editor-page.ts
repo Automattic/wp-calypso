@@ -12,7 +12,9 @@ import {
 	EditorBlockListViewComponent,
 	EditorInlineBlockInserterComponent,
 	EditorSidebarBlockInserterComponent,
+	EditorWelcomeTourComponent,
 } from '../components';
+import { BlockInserter, OpenInlineInserter } from './shared-types';
 import type { SiteType } from '../../lib/utils';
 import type { PreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from '../components';
 
@@ -33,15 +35,6 @@ const selectors = {
 };
 const EXTENDED_TIMEOUT = 90 * 1000;
 
-export type OpenInlineInserter = ( editor: Locator ) => Promise< void >;
-interface BlockInserter {
-	searchBlockInserter( blockName: string ): Promise< void >;
-	selectBlockInserterResult(
-		name: string,
-		options?: { type?: 'block' | 'pattern' }
-	): Promise< void >;
-}
-
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
  */
@@ -57,6 +50,7 @@ export class EditorPage {
 	private editorBlockListViewComponent: EditorBlockListViewComponent;
 	private editorSidebarBlockInserterComponent: EditorSidebarBlockInserterComponent;
 	private editorInlineBlockInserterComponent: EditorInlineBlockInserterComponent;
+	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -86,6 +80,7 @@ export class EditorPage {
 		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
 		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
 		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
+		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
 			page,
 			this.editor
@@ -124,35 +119,7 @@ export class EditorPage {
 		const titleLocator = editor.locator( selectors.editorTitle );
 		await titleLocator.waitFor( { timeout: EXTENDED_TIMEOUT } );
 
-		await this.forceDismissWelcomeTour();
-	}
-
-	/**
-	 * Forcefully dismisses the Welcome Tour via action dispatch.
-	 *
-	 * @see {@link https://github.com/Automattic/wp-calypso/issues/57660}
-	 */
-	async forceDismissWelcomeTour(): Promise< void > {
-		// Welcome Tour is not observed on Atomic sites.
-		if ( this.target === 'atomic' ) {
-			return;
-		}
-
-		const frame = await this.getEditorHandle();
-		await frame.waitForFunction(
-			async () =>
-				await ( window as any ).wp.data
-					.select( 'automattic/wpcom-welcome-guide' )
-					.isWelcomeGuideStatusLoaded()
-		);
-
-		await frame.waitForFunction( async () => {
-			const actionPayload = await ( window as any ).wp.data
-				.dispatch( 'automattic/wpcom-welcome-guide' )
-				.setShowWelcomeGuide( false );
-
-			return actionPayload.show === false;
-		} );
+		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
 	}
 
 	/**
