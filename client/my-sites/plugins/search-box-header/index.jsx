@@ -1,6 +1,6 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { useRef } from 'react';
+import { useRef, Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
@@ -52,7 +52,7 @@ const PopularSearches = ( props ) => {
 
 			<div className="search-box-header__recommended-searches-list">
 				{ searchTerms.map( ( searchTerm, n ) => (
-					<>
+					<Fragment key={ 'search-box-item' + n }>
 						{ searchTerm === searchedTerm ? (
 							<span
 								className="search-box-header__recommended-searches-list-item search-box-header__recommended-searches-list-item-selected"
@@ -73,7 +73,7 @@ const PopularSearches = ( props ) => {
 							</span>
 						) }
 						{ n !== searchTerms.length - 1 && <>,&nbsp;</> }
-					</>
+					</Fragment>
 				) ) }
 			</div>
 		</div>
