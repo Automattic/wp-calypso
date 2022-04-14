@@ -461,15 +461,17 @@ $autobar-height: 20px;
 }
 
 .masterbar__item-new {
-	background: var( --color-surface );
 	border-radius: 2px;
 	color: var( --color-primary );
 	height: 36px;
 	margin: 5px 8px;
 	transition: all 0.2s ease-out;
 
-	@include breakpoint-deprecated( '<480px' ) {
-		padding: 0 8px;
+	// @include breakpoint-deprecated( '<480px' ) {
+	// 	padding: 0 8px;
+	// }
+	@include breakpoint-deprecated( '>480px' ) {
+		background: var( --color-surface );
 	}
 
 	&.has-drafts {

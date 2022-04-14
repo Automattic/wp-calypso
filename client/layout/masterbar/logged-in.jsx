@@ -318,7 +318,7 @@ class MasterbarLoggedIn extends Component {
 					require="./publish"
 					placeholder={ null }
 					isActive={ this.isActive( 'post' ) }
-					// className="masterbar__item-new"
+					className="masterbar__item-new"
 					tooltip={ translate( 'Create a New Post' ) }
 				>
 					{ translate( 'Write' ) }

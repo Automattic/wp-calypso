@@ -87,7 +87,6 @@
 	// New post button
 	.masterbar__item-new {
 		font-size: $nav-unification-masterbar-font-size;
-		background: var( --studio-white );
 		color: $nav-unification-primary;
 
 		&:hover {
@@ -103,6 +102,10 @@
 			color: $nav-unification-primary;
 			font-weight: 500;
 		}
+		
+		@include breakpoint-deprecated( '>480px' ) {
+			background: var( --studio-white );
+		}
 	}
 
 	// client/layout/masterbar/style.scss
@@ -116,7 +119,6 @@
 		margin-left: -8px;
 		color: $nav-unification-primary;
 		font-size: $nav-unification-masterbar-font-size;
-
 		.gridicon {
 			width: 14px;
 			color: var( --studio-gray-20 );
@@ -152,11 +154,6 @@
 	}
 
 	@include breakpoint-deprecated( '<480px' ) {
-		// New post button
-		.masterbar__item-new {
-			background: #32373c;
-		}
-
 		.masterbar__toggle-drafts.button.is-borderless {
 			color: var( --color-sidebar-text );
 			
