@@ -10,10 +10,10 @@ import { LocaleContext } from '../gutenboarding/components/locale-context';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
 import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
+import { getAnchorPodcastId } from './declarative-flow/get-anchor-podcast-id';
 import { FlowRenderer } from './declarative-flow/internals';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';
-import { getAnchorPodcastId } from './declarative-flow/get-anchor-podcast-id';
 
 function generateGetSuperProps() {
 	return () => ( {
