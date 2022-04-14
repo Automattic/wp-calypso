@@ -14,17 +14,41 @@
 .backup-storage-space__progress-bar-container {
 	display: flex;
 	flex-direction: column;
-	column-gap: 24px;
-
-	@include breakpoint-deprecated( '>960px' ) {
-		flex-direction: row;
-	}
 }
 
+/**
+ * .backup-storage-space__progress-bar: wraps the storage progress bar
+ * .progress-bar: the actual progress bar, both filled and empty portions
+ * .progress-bar__progress: the filled part of the bar
+**/
+
+/* stylelint-disable scales/radii --
+   We need to be able to define a border-radius of 1/2 the parent height
+*/
 .backup-storage-space__progress-bar {
-	flex-grow: 1;
+	height: 24px;
 
 	.progress-bar {
+		height: 100%;
+		border-radius: 12px;
+		background-color: var( --studio-gray-0 );
+
+		.progress-bar__progress {
+			// Unless we're 100% full, the left side of the bar
+			// is rounded and the right side is flat
+			border-radius: 12px 0 0 12px;
+
+			// We always expect some amount of used storage,
+			// so keep a border-radius sized buffer so
+			// the left side of the bar looks correctly rounded
+			min-width: 12px;
+
+			// Only allow full width if storage is full;
+			// otherwise, leave a border-radius sized buffer,
+			// so the right side looks okay without a radius
+			max-width: calc( 100% - 12px );
+		}
+
 		&.no-warning {
 			.progress-bar__progress {
 				background-color: var( --studio-gray-80 );
@@ -33,7 +57,7 @@
 
 		&.yellow-warning {
 			.progress-bar__progress {
-				background-color: var( --studio-yellow-30 );
+				background-color: var( --studio-yellow-20 );
 			}
 		}
 
@@ -42,8 +66,19 @@
 				background-color: var( --studio-red-40 );
 			}
 		}
+
+		// When the bar is full, we can show the filled portion
+		// at full width, with a rounded right side
+		&.full-warning {
+			.progress-bar__progress {
+				max-width: initial;
+				background-color: var( --studio-red-40 );
+				border-radius: 12px;
+			}
+		}
 	}
 }
+/* stylelint-enable scales/radii */
 
 .backup-storage-space__divider {
 	margin: 16px -32px;
@@ -51,14 +86,21 @@
 }
 
 .backup-storage-space__progress-heading {
-	font-weight: 600;
-	margin-block-end: 8px;
+	margin-block-end: 12px;
+	white-space: nowrap;
 
-	@include breakpoint-deprecated( '>960px' ) {
-		margin-block-end: initial;
-	}
+	font-weight: 600;
+	font-size: $font-body-small;
 }
 
 .backup-storage-space__progress-usage-text {
+	margin-block-start: 8px;
+	white-space: nowrap;
+
+	font-size: $font-body-extra-small;
 	color: var( --color-text-subtle );
+
+	a {
+		text-decoration: underline;
+	}
 }
