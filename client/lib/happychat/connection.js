@@ -21,7 +21,10 @@ const debug = debugFactory( 'calypso:happychat:connection' );
 
 const buildConnection = ( socket ) =>
 	typeof socket === 'string'
-		? new IO( socket ) // If socket is an URL, connect to server.
+		? new IO( socket, {
+				// force websocket connection since we no longer have sticky connections server side.
+				transports: [ 'websocket' ],
+		  } ) // If socket is an URL, connect to server.
 		: socket; // If socket is not an url, use it directly. Useful for testing.
 
 class Connection {
@@ -70,7 +73,10 @@ class Connection {
 						.on( 'message.optimistic', ( message ) =>
 							dispatch( receiveMessageOptimistic( message ) )
 						)
-						.on( 'message.update', ( message ) => dispatch( receiveMessageUpdate( message ) ) );
+						.on( 'message.update', ( message ) => dispatch( receiveMessageUpdate( message ) ) )
+						.on( 'reconnect_attempt', () => {
+							socket.io.opts.transports = [ 'polling', 'websocket' ];
+						} );
 				} )
 				.catch( ( e ) => reject( e ) );
 		} );
