@@ -5,8 +5,6 @@ import {
 	PLAN_FREE,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_FLEXIBLE,
-	isFreePlanProduct,
-	isPro,
 } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { localize } from 'i18n-calypso';
@@ -21,7 +19,6 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
@@ -29,6 +26,7 @@ import { useExperiment } from 'calypso/lib/explat';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansComparison, { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import legacyPlanNotice from 'calypso/my-sites/plans/legacy-plan-notice';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
@@ -194,26 +192,6 @@ class Plans extends Component {
 	render() {
 		const { selectedSite, translate, canAccessPlans, currentPlan, eligibleForProPlan } = this.props;
 
-		const maybeRenderLegacyPlanNotice = () => {
-			// Renders the legacy plan notice for users on legacy plans (not including legacy Free plan).
-			if (
-				eligibleForProPlan &&
-				! isFreePlanProduct( selectedSite.plan ) &&
-				! isPro( selectedSite.plan )
-			) {
-				return (
-					<Notice
-						status="is-info"
-						text={
-							'You’re currently on a legacy plan. If you’d like to learn about your eligibility to switch to a Pro plan please contact support.'
-						}
-						icon="info-outline"
-						showDismiss={ false }
-					></Notice>
-				);
-			}
-		};
-
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
 			return this.renderPlaceholder();
 		}
@@ -246,7 +224,7 @@ class Plans extends Component {
 							/>
 							<div id="plans" className="plans plans__has-sidebar">
 								<PlansNavigation path={ this.props.context.path } />
-								{ maybeRenderLegacyPlanNotice() }
+								{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
 								{ this.renderPlansMain() }
 								<PerformanceTrackerStop />
 							</div>
