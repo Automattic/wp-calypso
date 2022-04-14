@@ -163,6 +163,7 @@ const PluginsBrowser = ( {
 			!! selectedSite?.ID && ! canCurrentUser( state, selectedSite?.ID, 'manage_options' )
 	);
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
 	const {
@@ -335,6 +336,7 @@ const PluginsBrowser = ( {
 				sites={ sites }
 				searchTitle={ searchTitle }
 				siteSlug={ siteSlug }
+				siteId={ siteId }
 				jetpackNonAtomic={ jetpackNonAtomic }
 				billingPeriod={ billingPeriod }
 				setBillingPeriod={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
@@ -348,6 +350,7 @@ const SearchListView = ( {
 	search: searchTerm,
 	searchTitle: searchTitleTerm,
 	siteSlug,
+	siteId,
 	sites,
 	billingPeriod,
 } ) => {
@@ -381,6 +384,18 @@ const SearchListView = ( {
 				recordTracksEvent( 'calypso_plugins_search_results_show', {
 					search_term: searchTerm,
 					results_count: pluginsPagination?.results,
+					blog_id: siteId,
+				} )
+			);
+		}
+
+		if ( searchTerm && pluginsPagination ) {
+			dispatch(
+				recordTracksEvent( 'calypso_plugins_search_results_page', {
+					search_term: searchTerm,
+					page: pluginsPagination.page,
+					results_count: pluginsPagination.results,
+					blog_id: siteId,
 				} )
 			);
 		}
