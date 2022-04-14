@@ -84,6 +84,43 @@ export function fetchPluginsList( options ) {
 	return getRequest( WPORG_PLUGINS_ENDPOINT, query );
 }
 
+export function fetchWPOrgPluginsFromIndex( options ) {
+	// default variables;
+	const page = options.page || DEFAULT_FIRST_PAGE;
+	const pageSize = options.pageSize || DEFAULT_PAGE_SIZE;
+	const category = options.category || DEFAULT_CATEGORY;
+	const search = options.search;
+	const author = options.author;
+
+	// TODO assemble query at the end, add pagination, etc here
+	const query = {
+		action: 'query_plugins',
+		'request[page]': page,
+		'request[per_page]': pageSize,
+		'request[fields]':
+			'icons,last_updated,rating,active_installs,tested,-downloaded,-ratings,-requires,-requires_php,-tags,-contributors,-added,-donate_link,-homepage',
+		'request[locale]': getWporgLocaleCode( options.locale ),
+	};
+
+	// TODO implement query matching here
+	if ( search ) {
+		query[ 'request[search]' ] = search;
+	}
+
+	// todo implement author matching here
+	if ( author ) {
+		query[ 'request[author]' ] = author;
+	}
+
+	// TODO implement category matching here
+	if ( ! search && ! author ) {
+		query[ 'request[browse]' ] = category;
+	}
+
+	// TODO add site search endpoint here
+	return getRequest( WPORG_PLUGINS_ENDPOINT, query );
+}
+
 /**
  * Get information about a given theme from the WordPress.org API.
  * If provided with a callback, will call that on succes with an object with theme details.
