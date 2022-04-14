@@ -13,6 +13,7 @@ import {
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackProductSlug,
 	isTitanMail,
+	isDIFMExtraPageProduct,
 } from '@automattic/calypso-products';
 import {
 	CheckoutModal,
@@ -664,6 +665,27 @@ function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct }
 					comment:
 						'premium label, product type and billing interval, separated by a colon. ex: ".blog domain registration: billed annually" or "Premium .blog domain registration: billed annually"',
 				} ) }
+			</>
+		);
+	}
+
+	if ( isDIFMExtraPageProduct( product ) ) {
+		const itemPrice = product.item_original_cost_for_quantity_one_display;
+		const quantity = product?.quantity || 1;
+
+		return (
+			<>
+				{ translate(
+					'Extra Page: %(itemPrice)s x %(quantity)s page',
+					'Extra Page: %(itemPrice)s x %(quantity)s pages',
+					{
+						args: {
+							itemPrice,
+							quantity,
+						},
+						count: quantity,
+					}
+				) }
 			</>
 		);
 	}
