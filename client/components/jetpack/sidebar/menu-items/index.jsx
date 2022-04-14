@@ -91,6 +91,18 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 				selected={ currentPathMatches( `/jetpack-search/${ siteSlug }` ) }
 				expandSection={ expandSection }
 			/>
+			{ isAdmin && ! isWPForTeamsSite && (
+				<SidebarItem
+					customIcon={ showIcons && <JetpackIcons icon="social" /> }
+					label={ translate( 'Social', {
+						comment: 'Jetpack sidebar menu item',
+					} ) }
+					link={ `/jetpack-social/${ siteSlug }` }
+					onNavigate={ onNavigate( tracksEventNames.socialClicked ) }
+					selected={ currentPathMatches( `/jetpack-social/${ siteSlug }` ) }
+					expandSection={ expandSection }
+				/>
+			) }
 		</>
 	);
 };
