@@ -343,7 +343,7 @@ export default {
 		}
 
 		if ( isMobile() && [ 'onboarding', 'launch-site', 'free', 'pro' ].includes( flowName ) ) {
-			loadExperimentAssignment( 'calypso_signup_domain_mobile_browser_chrome_added_v3' );
+			loadExperimentAssignment( 'calypso_signup_domain_mobile_browser_chrome_added_v4' );
 		}
 
 		context.primary = createElement( SignupComponent, {

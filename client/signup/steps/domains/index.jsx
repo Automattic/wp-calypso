@@ -438,7 +438,7 @@ class DomainsStep extends Component {
 
 		return (
 			<ProvideExperimentData
-				name="calypso_signup_domain_mobile_browser_chrome_added_v3"
+				name="calypso_signup_domain_mobile_browser_chrome_added_v4"
 				options={ {
 					isEligible:
 						isMobile() &&
