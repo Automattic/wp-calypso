@@ -25,11 +25,14 @@ import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import { getAnchorPodcastId } from '../../../get-anchor-podcast-id';
+import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { getCategorizationOptions, getGeneratedDesignsCategory } from './categories';
 import PreviewToolbar from './preview-toolbar';
 import type { Step } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
+
 /**
  * The design picker step
  */
@@ -44,7 +47,9 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 
-	const flowName = 'setup-site';
+	const anchorPodcastId = getAnchorPodcastId();
+	const flowName = isEnabled( 'signup/anchor-fm' ) && anchorPodcastId ? 'anchor-fm' : 'setup-site';
+	const isAnchorSite = 'anchor-fm' === flowName;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const siteSlug = useSiteSlugParam();
@@ -63,7 +68,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		site?.launch_status === 'unlaunched' && site?.options?.is_automated_transfer
 	);
 
-	const showDesignPickerCategories = isEnabled( 'signup/design-picker-categories' );
+	const showDesignPickerCategories =
+		isEnabled( 'signup/design-picker-categories' ) && ! isAnchorSite;
 	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
 	const showGeneratedDesigns =
 		isEnabled( 'signup/design-picker-generated-designs' ) && intent === 'build' && !! siteVertical;
@@ -122,6 +128,11 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	}
 
 	function subHeaderText() {
+		if ( isAnchorSite ) {
+			return translate(
+				'Pick a homepage layout for your podcast site. You can customize or change it later.'
+			);
+		}
 		if ( ! showDesignPickerCategories ) {
 			return translate(
 				'Pick your favorite homepage layout. You can customize or change it later.'
@@ -277,10 +288,27 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		);
 	}
 
+	let featuredDesigns = [ ...featuredPicksDesigns, ...designs ];
+	if ( isAnchorSite ) {
+		featuredDesigns = ANCHOR_FM_THEMES as Design[];
+	} else if ( useFeaturedPicksButtons ) {
+		featuredDesigns = designs;
+	}
+
+	const heading = (
+		<FormattedHeader
+			className={ isAnchorSite ? 'is-anchor-header' : null }
+			id={ 'step-header' }
+			headerText={ headerText() }
+			subHeaderText={ subHeaderText() }
+			align="left"
+		/>
+	);
+
 	stepContent = (
 		<>
 			<DesignPicker
-				designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
+				designs={ featuredDesigns }
 				theme={ isReskinned ? 'light' : 'dark' }
 				locale={ locale }
 				onSelect={ pickDesign }
@@ -289,18 +317,14 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 				className={ classnames( {
 					'design-setup__has-categories': showDesignPickerCategories,
 				} ) }
+				isGridMinimal={ isAnchorSite }
 				highResThumbnails
+				hideFullScreenPreview={ isAnchorSite }
 				premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ !! isPremiumThemeAvailable } /> }
 				categorization={ showDesignPickerCategories ? categorization : undefined }
 				recommendedCategorySlug={ categorizationOptions.defaultSelection }
-				categoriesHeading={
-					<FormattedHeader
-						id={ 'step-header' }
-						headerText={ headerText() }
-						subHeaderText={ subHeaderText() }
-						align="left"
-					/>
-				}
+				categoriesHeading={ heading }
+				anchorHeading={ isAnchorSite && heading }
 				categoriesFooter={ renderCategoriesFooter() }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			/>
@@ -313,6 +337,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 			className={ classnames( {
 				'design-picker__has-categories': showDesignPickerCategories,
 			} ) }
+			hideSkip={ isAnchorSite }
 			skipButtonAlign={ 'top' }
 			hideFormattedHeader
 			skipLabelText={ intent === 'write' ? translate( 'Skip and draft first post' ) : undefined }

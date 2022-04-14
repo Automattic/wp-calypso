@@ -5,7 +5,12 @@ export const getDesignPreviewUrl = (
 	design: Design,
 	options: DesignPreviewOptions = {}
 ): string => {
-	const { recipe } = design;
+	const { recipe, slug } = design;
+
+	//Anchor.fm themes get previews from their starter sites, ${slug}starter.wordpress.com
+	if ( [ 'hannah', 'riley', 'gilbert' ].indexOf( slug ) >= 0 ) {
+		return `https://${ slug }starter.wordpress.com`;
+	}
 
 	let url = addQueryArgs( 'https://public-api.wordpress.com/wpcom/v2/block-previews/site', {
 		stylesheet: recipe?.stylesheet,
