@@ -175,7 +175,7 @@ class Block_Patterns_From_Api_Test extends TestCase {
 	 * @param object $patterns_from_api_mock A mock object for the block pattern from API class.
 	 * @param array  $test_routes               An array of strings of routes to test.
 	 */
-	public function test_pattern_registration_on_routes( $patterns_from_api_mock, $test_routes ) {
+	public function multiple_route_pattern_registration( $patterns_from_api_mock, $test_routes ) {
 		foreach ( $test_routes as $route ) {
 			$request_mock = $this->createMock( \WP_REST_Request::class );
 			$request_mock->method( 'get_route' )->willReturn( $route );
@@ -203,7 +203,7 @@ class Block_Patterns_From_Api_Test extends TestCase {
 		$patterns_mock = $this->createMock( Block_Patterns_From_API::class );
 		$patterns_mock->expects( $this->exactly( count( $test_routes ) ) )->method( 'register_patterns' );
 
-		$this->test_pattern_registration_on_routes( $patterns_mock, $test_routes );
+		$this->multiple_route_pattern_registration( $patterns_mock, $test_routes );
 	}
 
 	/**
@@ -228,6 +228,6 @@ class Block_Patterns_From_Api_Test extends TestCase {
 		$patterns_mock = $this->createMock( Block_Patterns_From_API::class );
 		$patterns_mock->expects( $this->never() )->method( 'register_patterns' );
 
-		$this->test_pattern_registration_on_routes( $patterns_mock, $test_routes );
+		$this->multiple_route_pattern_registration( $patterns_mock, $test_routes );
 	}
 }
