@@ -18,9 +18,8 @@ $input-max-width: 448px;
     }
 
     @include break-medium {
-        padding: 0 20px 20px;
-        position: absolute;
-        top: 24%;
+        padding: 20px;
+        top: 24vh;
         left: 50%;
         width: 100%;
         max-width: 1024px;
