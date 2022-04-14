@@ -8,7 +8,10 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import useCountryList from './use-country-list';
-import type { PossiblyCompleteDomainContactDetails } from '@automattic/wpcom-checkout';
+import type {
+	PossiblyCompleteDomainContactDetails,
+	CountryListItem,
+} from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
 
@@ -26,8 +29,10 @@ function areTaxFieldsDifferent(
 	return true;
 }
 
-function useArePostalCodesSupportedByCountry( country: string | undefined | null ): boolean {
-	const countriesList = useCountryList();
+function arePostalCodesSupportedByCountry(
+	country: string | undefined | null,
+	countriesList: CountryListItem[]
+): boolean {
 	if ( ! country ) {
 		return true;
 	}
@@ -38,9 +43,11 @@ function useArePostalCodesSupportedByCountry( country: string | undefined | null
 	return getCountryPostalCodeSupport( countriesList, country );
 }
 
-export default function useCachedDomainContactDetails(): void {
+export default function useCachedDomainContactDetails(
+	overrideCountryList?: CountryListItem[]
+): void {
 	const reduxDispatch = useReduxDispatch();
-	const countriesList = useCountryList();
+	const countriesList = useCountryList( overrideCountryList );
 	const haveRequestedCachedDetails = useRef( false );
 	const previousCachedContactDetails = useRef< PossiblyCompleteDomainContactDetails >();
 	const cartKey = useCartKey();
@@ -60,8 +67,9 @@ export default function useCachedDomainContactDetails(): void {
 
 	const cachedContactDetails = useSelector( getContactDetailsCache );
 
-	const arePostalCodesSupported = useArePostalCodesSupportedByCountry(
-		cachedContactDetails?.countryCode
+	const arePostalCodesSupported = arePostalCodesSupportedByCountry(
+		cachedContactDetails?.countryCode,
+		countriesList
 	);
 	debug(
 		'are postal codes supported by',
