@@ -20,22 +20,35 @@ const FontPairingStep: Step = function FontPairingStep( { navigation } ) {
 	const subHeaderText = __(
 		'Customize your design with typography that best suits your podcast. You can always fine-tune it later.'
 	);
+	const [ selectedViewport, setSelectedViewport ] = React.useState< Viewport >( 'desktop' );
 
-	const FontPairingUI: React.FC = () => {
+	const FontPairingHeader: React.FC = () => {
 		const handleSubmit = () => {
 			submit?.();
 		};
-
-		const [ selectedViewport, setSelectedViewport ] = React.useState< Viewport >( 'desktop' );
-
 		return (
-			<div className="font-pairing__step-content">
+			<div className="font-pairing__header">
+				<FormattedHeader
+					id={ 'font-pairing-header' }
+					headerText={ headerText }
+					subHeaderText={ subHeaderText }
+					align={ 'left' }
+				/>
 				<ViewportSelect selected={ selectedViewport } onSelect={ setSelectedViewport } />
-				<FontSelect />
-				<Preview viewport={ selectedViewport } />
 				<Button className="font-pairing__submit-button" onClick={ handleSubmit }>
 					{ __( 'Continue' ) }
 				</Button>
+			</div>
+		);
+	};
+
+	const FontPairingUI: React.FC = () => {
+		return (
+			<div className="font-pairing__step-content">
+				<FontSelect />
+				<div className="font-pairing__preview-wrapper">
+					<Preview viewport={ selectedViewport } />
+				</div>
 			</div>
 		);
 	};
@@ -45,15 +58,8 @@ const FontPairingStep: Step = function FontPairingStep( { navigation } ) {
 			stepName={ 'font-pairing-step' }
 			goBack={ goBack }
 			hideSkip
-			isWideLayout
-			formattedHeader={
-				<FormattedHeader
-					id={ 'font-pairing-header' }
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
-					align={ 'left' }
-				/>
-			}
+			isFullLayout
+			formattedHeader={ <FontPairingHeader /> }
 			stepContent={ <FontPairingUI /> }
 			recordTracksEvent={ recordTracksEvent }
 		/>
