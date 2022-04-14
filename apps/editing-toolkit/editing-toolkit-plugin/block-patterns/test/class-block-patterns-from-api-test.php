@@ -12,19 +12,13 @@ namespace A8C\FSE;
 
 use PHPUnit\Framework\TestCase;
 
+require_once __DIR__ . '/../../full-site-editing-plugin.php';
 require_once __DIR__ . '/../class-block-patterns-from-api.php';
 
 /**
- * Class Coming_Soon_Test
+ * Tests block pattern registration in the API context.
  */
 class Block_Patterns_From_Api_Test extends TestCase {
-	/**
-	 * PHPUnit_Framework_MockObject_MockObject.
-	 *
-	 * @var object
-	 */
-	protected $utils_mock;
-
 	/**
 	 * Representation of a Pattern as returned by the API.
 	 *
@@ -173,5 +167,67 @@ class Block_Patterns_From_Api_Test extends TestCase {
 		$this->assertEquals( array( 'a8c/' . $this->pattern_mock_object['name'] => true ), $block_patterns_from_api->register_patterns() );
 
 		remove_filter( 'a8c_override_patterns_source_site', $example_site );
+	}
+
+	/**
+	 * Tests the given patterns registration mock against multiple REST API routes.
+	 *
+	 * @param object $block_patterns_utils_mock A mock object for the block pattern utilities class.
+	 * @param array  $test_routes               An array of strings of routes to test.
+	 */
+	private function test_pattern_registration_on_routes( $block_patterns_utils_mock, $test_routes ) {
+		foreach ( $test_routes as $route ) {
+			$request_mock = $this->createMock( \WP_REST_Request::class );
+			$request_mock->method( 'get_route' )->willReturn( $route );
+
+			load_block_patterns_from_api(
+				function () use ( $block_patterns_utils_mock ) {
+					$block_patterns_utils_mock->register_patterns();
+				}
+			)( null, $request_mock );
+		}
+	}
+
+	/**
+	 * Tests that pattern registration does occur on API routes related to block patterns.
+	 */
+	public function test_load_block_patterns_from_api_runs_in_correct_request_context() {
+		add_filter( 'a8c_enable_block_patterns_api', '__return_true' );
+		$test_routes = array(
+			'/wp/v2/block-patterns/categories',
+			'/wp/v2/block-patterns/patterns',
+			'/wp/v2/sites/178915379/block-patterns/categories',
+			'/wp/v2/sites/178915379/block-patterns/patterns',
+		);
+
+		$utils_mock = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ) );
+		$utils_mock->expects( $this->exactly( count( $test_routes ) ) )->method( 'register_patterns' );
+
+		$this->test_pattern_registration_on_routes( $utils_mock, $test_routes );
+	}
+
+	/**
+	 * Tests that pattern registration does not occur on rest API routes unrelated
+	 * to block patterns.
+	 */
+	public function test_load_block_patterns_from_api_is_skipped_in_wrong_request_context() {
+		add_filter( 'a8c_enable_block_patterns_api', '__return_true' );
+
+		$utils_mock = $this->createBlockPatternsUtilsMock( array( $this->pattern_mock_object ) );
+		$utils_mock->expects( $this->never() )->method( 'register_patterns' );
+
+		$test_routes = array(
+			'/rest/v1.1/help/olark/mine',
+			'/wpcom/v2/sites/178915379/post-counts',
+			'/rest/v1.1/me/shopping-cart/',
+			'/wpcom/v3/sites/178915379/gutenberg',
+			'/wp/v2/sites/178915379/types',
+			'/wp/v2/sites/178915379/block-patterns/3ategories',
+			'/wp/v2//block-patterns/patterns',
+			'/wp/v2block-patterns/categories',
+			'/wp/v2/123/block-patterns/categories',
+		);
+
+		$this->test_pattern_registration_on_routes( $utils_mock, $test_routes );
 	}
 }

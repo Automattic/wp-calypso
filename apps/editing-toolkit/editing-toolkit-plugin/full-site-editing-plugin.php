@@ -251,8 +251,10 @@ function load_block_patterns_from_api( $register_patterns_func ) {
 	 * @param WP_REST_Request $request
 	 */
 	return function ( $response, $request ) use ( $register_patterns_func ) {
-		$route           = $request->get_route();
-		$request_allowed = preg_match( '/^\/wp\/v2\/sites\/[0-9]+\/block\-patterns\/(patterns|categories)$/', $route );
+		$route = $request->get_route();
+		// Matches either /wp/v2/sites/123/block-patterns/patterns or /wp/v2/block-patterns/patterns
+		// to handle the API format of both WordPress.com and WordPress core.
+		$request_allowed = preg_match( '/^\/wp\/v2\/(sites\/[0-9]+\/)?block\-patterns\/(patterns|categories)$/', $route );
 
 		if ( ! $request_allowed || ! apply_filters( 'a8c_enable_block_patterns_api', false ) ) {
 			return $response;

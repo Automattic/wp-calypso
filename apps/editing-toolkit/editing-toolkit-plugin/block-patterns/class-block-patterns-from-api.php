@@ -46,7 +46,7 @@ class Block_Patterns_From_API {
 	public function __construct( Block_Patterns_Utils $utils = null ) {
 		$this->patterns_sources = array( 'block_patterns' );
 
-		// While we're still testing the FSE patterns, limit activation via a filter.
+		// Switch the patterns source based on whether we're using a block-based theme.
 		if ( apply_filters( 'a8c_enable_fse_block_patterns_api', false ) ) {
 			$this->patterns_sources[] = 'fse_block_patterns';
 		}
