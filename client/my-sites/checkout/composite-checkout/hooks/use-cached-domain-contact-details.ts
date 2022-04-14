@@ -7,17 +7,13 @@ import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
-import type {
-	PossiblyCompleteDomainContactDetails,
-	CountryListItem,
-} from '@automattic/wpcom-checkout';
+import type { CountryListItem } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
 
 export default function useCachedDomainContactDetails( countriesList: CountryListItem[] ): void {
 	const reduxDispatch = useReduxDispatch();
 	const haveRequestedCachedDetails = useRef( false );
-	const previousCachedContactDetails = useRef< PossiblyCompleteDomainContactDetails >();
 	const cartKey = useCartKey();
 	const {
 		updateLocation: updateCartLocation,
@@ -56,29 +52,20 @@ export default function useCachedDomainContactDetails( countriesList: CountryLis
 	// When we have fetched or loaded contact details, send them to the
 	// to the shopping cart for calculating taxes.
 	useEffect( () => {
-		if ( isLoadingCart || cartLoadingError || ! cachedContactDetails ) {
+		if ( isLoadingCart || cartLoadingError ) {
 			return;
 		}
 		if (
-			! cachedContactDetails.countryCode &&
-			! cachedContactDetails.postalCode &&
-			! cachedContactDetails.state
+			cachedContactDetails?.countryCode ||
+			cachedContactDetails?.postalCode ||
+			cachedContactDetails?.state
 		) {
-			return;
+			updateCartLocation( {
+				countryCode: cachedContactDetails.countryCode ?? '',
+				postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode ?? '' : '',
+				subdivisionCode: cachedContactDetails.state ?? '',
+			} );
 		}
-		if (
-			cachedContactDetails.countryCode === previousCachedContactDetails.current?.countryCode &&
-			cachedContactDetails.postalCode === previousCachedContactDetails.current?.postalCode &&
-			cachedContactDetails.state === previousCachedContactDetails.current?.state
-		) {
-			return;
-		}
-		updateCartLocation( {
-			countryCode: cachedContactDetails.countryCode ?? '',
-			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode ?? '' : '',
-			subdivisionCode: cachedContactDetails.state ?? '',
-		} );
-		previousCachedContactDetails.current = cachedContactDetails;
 	}, [
 		cartLoadingError,
 		isLoadingCart,
