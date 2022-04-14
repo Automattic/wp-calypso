@@ -290,7 +290,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 
 	let featuredDesigns = [ ...featuredPicksDesigns, ...designs ];
 	if ( isAnchorSite ) {
-		( featuredDesigns as Array< any > ) = ANCHOR_FM_THEMES;
+		featuredDesigns = ANCHOR_FM_THEMES as Design[];
 	} else if ( useFeaturedPicksButtons ) {
 		featuredDesigns = designs;
 	}
