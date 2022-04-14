@@ -39,10 +39,6 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 			await testAccount.authenticate( page );
 		} );
 
-		afterAll( async () => {
-			await page.close();
-		} );
-
 		it( 'Navigate to Media', async function () {
 			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.navigate( 'Media' );

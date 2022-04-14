@@ -46,10 +46,6 @@ describe( DataHelper.createSuiteTitle( 'Media: Upload' ), () => {
 			await testAccount.authenticate( page );
 		} );
 
-		afterAll( async () => {
-			await page.close();
-		} );
-
 		it( 'Navigate to Media', async function () {
 			const sidebarComponent = new SidebarComponent( page );
 			await sidebarComponent.navigate( 'Media' );
