@@ -169,6 +169,13 @@ export const siteSetupFlow: Flow = {
 					}
 					return navigate( 'intent' );
 
+				case 'import/list':
+				case 'import/ready':
+				case 'import/ready/not':
+				case 'import/ready/wpcom':
+				case 'import/ready/preview':
+					return navigate( '/import' as StepPath );
+
 				default:
 					return navigate( 'intent' );
 			}
