@@ -463,7 +463,6 @@ export default function WPCheckout( {
 						setShouldShowContactDetailsValidationErrors( true );
 						// Touch the fields so they display validation errors
 						touchContactFields();
-						updateCartContactDetails();
 						return validateContactDetails(
 							contactInfo,
 							isLoggedOutCart,
@@ -476,6 +475,7 @@ export default function WPCheckout( {
 							true
 						).then( ( response ) => {
 							if ( response ) {
+								updateCartContactDetails();
 								reduxDispatch(
 									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
 										step: 1,
