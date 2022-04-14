@@ -248,7 +248,7 @@ export default function CompositeCheckout( {
 	useWpcomStore( emptyManagedContactDetails, updateContactDetailsCache );
 
 	useDetectedCountryCode();
-	useCachedDomainContactDetails( countriesList );
+	useCachedDomainContactDetails();
 
 	// Record errors adding products to the cart
 	useActOnceOnStrings( [ cartProductPrepError ].filter( isValueTruthy ), ( messages ) => {
