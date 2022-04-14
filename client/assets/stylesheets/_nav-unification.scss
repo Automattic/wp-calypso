@@ -71,6 +71,10 @@
 			font-size: $nav-unification-masterbar-mobile-font-size;
 		}
 
+		.masterbar__publish .masterbar__item-content {
+			padding-left: 6px;
+		}
+
 		.masterbar__reader .gridicon + .masterbar__item-content {
 			padding-left: 6px;
 		}
@@ -111,7 +115,6 @@
 	.masterbar__toggle-drafts.button.is-borderless {
 		margin-left: -8px;
 		color: $nav-unification-primary;
-		background: #fafafa;
 		font-size: $nav-unification-masterbar-font-size;
 
 		.gridicon {
@@ -127,6 +130,10 @@
 			.gridicon {
 				color: $nav-unification-primary;
 			}
+		}
+
+		@media ( min-width: 480px ) {
+			background: #fafafa;
 		}
 	}
 
@@ -151,10 +158,8 @@
 		}
 
 		.masterbar__toggle-drafts.button.is-borderless {
-			background: #32373c;
 			color: var( --color-sidebar-text );
-			border-left: #646970;
-			border-left-style: solid;
+			
 			margin-right: 0;
 			padding: 0 16px;
 
