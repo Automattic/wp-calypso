@@ -1,17 +1,17 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import React from 'react';
-import { useI18n } from '@wordpress/react-i18n';
 import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
+import { useI18n } from '@wordpress/react-i18n';
+import React from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import FontSelect from 'calypso/landing/gutenboarding/onboarding-block/style-preview/font-select';
+import Preview from 'calypso/landing/gutenboarding/onboarding-block/style-preview/preview';
+import { Viewport } from 'calypso/landing/gutenboarding/onboarding-block/style-preview/types';
+import ViewportSelect from 'calypso/landing/gutenboarding/onboarding-block/style-preview/viewport-select';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 
 import './style.scss';
-import ViewportSelect from 'calypso/landing/gutenboarding/onboarding-block/style-preview/viewport-select';
-import FontSelect from 'calypso/landing/gutenboarding/onboarding-block/style-preview/font-select';
-import { Viewport } from 'calypso/landing/gutenboarding/onboarding-block/style-preview/types';
-import Preview from 'calypso/landing/gutenboarding/onboarding-block/style-preview/preview';
 
 const FontPairingStep: Step = function FontPairingStep( { navigation } ) {
 	const { goBack, submit } = navigation;
