@@ -41,6 +41,7 @@ export const siteSetupFlow: Flow = {
 			'error',
 			'wooTransfer',
 			'wooInstallPlugins',
+			'wooConfirm',
 		] as StepPath[];
 	},
 	useSideEffect() {
@@ -183,6 +184,16 @@ export const siteSetupFlow: Flow = {
 					if ( isAtomic ) {
 						return navigate( 'wooInstallPlugins' );
 					}
+					return navigate( 'wooConfirm' );
+				}
+
+				case 'wooConfirm': {
+					const [ checkoutUrl ] = params;
+
+					if ( checkoutUrl ) {
+						return exitFlow( checkoutUrl.toString() );
+					}
+
 					return navigate( 'wooTransfer' );
 				}
 
@@ -223,6 +234,9 @@ export const siteSetupFlow: Flow = {
 
 				case 'businessInfo':
 					return navigate( 'storeAddress' );
+
+				case 'wooConfirm':
+					return navigate( 'businessInfo' );
 
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );
