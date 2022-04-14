@@ -2,8 +2,8 @@ import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automat
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import { ProvidedDependencies } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useIsAnchorFm } from '../../../gutenboarding/path';
-import useStepNavigation from '../../hooks/use-step-navigation';
 import { useTrackStep } from '../../hooks/use-track-step';
 import { ONBOARD_STORE } from '../../stores/onboard';
 import FontSelect from './font-select';
@@ -13,11 +13,13 @@ import type { Viewport } from './types';
 
 import './style.scss';
 
-const StylePreview: React.FunctionComponent = () => {
+const StylePreview: React.FunctionComponent< {
+	goBack?: () => void;
+	submit?: () => ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
+} > = ( { goBack, submit } ) => {
 	const { getSelectedFonts } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 
 	const { __ } = useI18n();
-	const { goBack, goNext } = useStepNavigation();
 
 	const [ selectedViewport, setSelectedViewport ] = React.useState< Viewport >( 'desktop' );
 
@@ -27,6 +29,14 @@ const StylePreview: React.FunctionComponent = () => {
 		selected_heading_font: getSelectedFonts()?.headings,
 		selected_body_font: getSelectedFonts()?.base,
 	} ) );
+
+	const handleBack = () => {
+		goBack?.();
+	};
+
+	const handleNext = () => {
+		submit?.();
+	};
 
 	return (
 		<>
@@ -46,8 +56,8 @@ const StylePreview: React.FunctionComponent = () => {
 					</div>
 					<ViewportSelect selected={ selectedViewport } onSelect={ setSelectedViewport } />
 					<ActionButtons className="style-preview__actions">
-						<BackButton onClick={ goBack } />
-						<NextButton onClick={ goNext } />
+						{ goBack && <BackButton onClick={ handleBack } /> }
+						<NextButton onClick={ handleNext } />
 					</ActionButtons>
 				</div>
 				<div className="style-preview__content">
