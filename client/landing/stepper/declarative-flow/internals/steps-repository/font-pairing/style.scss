@@ -3,13 +3,12 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
-
 $design-button-primary-color: var( --color-primary );
 $design-button-primary-hover-color: var( --color-primary-60 );
 $design-button-primary-text-color: var( --color-text-inverted );
 
 .font-pairing-step {
-    padding: 48px 20px 0;
+    padding: 80px 20px 0;
 }
 
 .font-pairing-step .step-container__header,
@@ -25,10 +24,18 @@ $design-button-primary-text-color: var( --color-text-inverted );
     }
 }
 
+.step-container__header {
+    .font-pairing__header {
+        .formatted-header {
+            flex-grow: 0;
+        }
+    }
+}
+
 .font-pairing__header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 64px;
 
     .font-pairing__submit-button {
@@ -46,6 +53,10 @@ $design-button-primary-text-color: var( --color-text-inverted );
             background: $design-button-primary-hover-color;
             border-color: $design-button-primary-hover-color;
         }
+
+        @include break-medium {
+            margin-left: 20px;
+        }
     }
 }
 
@@ -61,6 +72,10 @@ $design-button-primary-text-color: var( --color-text-inverted );
 
         @include break-large {
             margin-left: 100px;
+        }
+
+        .style-preview__iframe {
+            border: 0;
         }
     }
 }
