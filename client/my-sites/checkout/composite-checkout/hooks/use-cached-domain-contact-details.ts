@@ -78,9 +78,13 @@ export default function useCachedDomainContactDetails(
 	// When we have fetched or loaded contact details, send them to the
 	// `wpcom-checkout` data store for use by the checkout contact form.
 	useEffect( () => {
+		// Do nothing if the contact details are loading, or the countries are loading.
 		if ( ! cachedContactDetails || ! countriesList ) {
 			return;
 		}
+		// Do nothing if the cached data has not changed since the last time we
+		// sent the data to the form (this typically will only ever need to be
+		// activated once).
 		if ( ! areAnyContactFieldsDifferent( previousDetailsForForm.current, cachedContactDetails ) ) {
 			return;
 		}
@@ -100,6 +104,7 @@ export default function useCachedDomainContactDetails(
 	// When we have fetched or loaded contact details, send them to the
 	// to the shopping cart for calculating taxes.
 	useEffect( () => {
+		// Do nothing if the cart is loading, the contact details are loading, or the countries are loading.
 		if ( isLoadingCart || cartLoadingError || ! cachedContactDetails || ! countriesList ) {
 			return;
 		}
@@ -110,6 +115,9 @@ export default function useCachedDomainContactDetails(
 		) {
 			return;
 		}
+		// Do nothing if the cached data has not changed since the last time we
+		// sent the data to the cart endpoint (this typically will only ever need
+		// to be activated once).
 		if ( ! areTaxFieldsDifferent( previousDetailsForCart.current, cachedContactDetails ) ) {
 			return;
 		}
