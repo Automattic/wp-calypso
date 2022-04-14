@@ -24,6 +24,7 @@ export const siteSetupFlow: Flow = {
 			'storeAddress',
 			'processing',
 			'error',
+			'woocommerceConfirm',
 		] as StepPath[];
 	},
 

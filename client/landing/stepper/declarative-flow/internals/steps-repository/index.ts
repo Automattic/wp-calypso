@@ -11,6 +11,7 @@ export { default as storeAddress } from './store-address';
 export { default as vertical } from './site-vertical';
 export { default as processing } from './processing-step';
 export { default as error } from './error-step';
+export { default as woocommerceConfirm } from './woocommerce-confirm';
 
 export type StepPath =
 	| 'courses'
@@ -25,4 +26,5 @@ export type StepPath =
 	| 'storeAddress'
 	| 'processing'
 	| 'vertical'
-	| 'error';
+	| 'error'
+	| 'woocommerceConfirm';
