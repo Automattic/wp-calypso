@@ -98,6 +98,26 @@ export function clientRouter( route, ...middlewares ) {
 	page( route, ...middlewares, smartHydrate );
 }
 
+function isEditorPath( path ) {	
+const splitPath = path.split( '/' ).filter( ( n ) => n );
+switch ( splitPath[ 0 ] ) {
+	case 'page':
+	case 'post':
+		return true;
+	case 'edit':
+		if (
+			splitPath[ 1 ] &&
+			[ 'jetpack-testimonial', 'jetpack-portfolio' ].includes( splitPath[ 1 ] )
+		) {
+			return true;
+		}
+		return false;
+	}
+
+	return false;
+}
+
+
 export function redirectLoggedOut( context, next ) {
 	const state = context.store.getState();
 	const userLoggedOut = ! isUserLoggedIn( state );
@@ -121,6 +141,11 @@ export function redirectLoggedOut( context, next ) {
 		const login_locale = getImmediateLoginLocale( state );
 		if ( login_locale ) {
 			loginParameters.locale = login_locale;
+		}
+
+		if ( isEditorPath( context.path ) && siteFragment ) {
+			window.location = `https://public-api.wordpress.com/wpcom/v2/redirect?path=${ context.path }&site=${ siteFragment }&redirect=true`;
+			return;
 		}
 
 		// force full page reload to avoid SSR hydration issues.
