@@ -114,6 +114,7 @@ const ImportStep: Step = function ImportStep( props ) {
 		<StepContainer
 			stepName={ 'import-step' }
 			hideSkip={ shouldHideSkipBtn() }
+			hideFormattedHeader={ true }
 			goBack={ navigation.goBack }
 			goNext={ navigation.goNext }
 			skipLabelText={ __( "I don't have a site address" ) }
