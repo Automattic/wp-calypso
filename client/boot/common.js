@@ -237,23 +237,26 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 };
 
-function setupErrorLogger( reduxStore ) {
+function setupErrorLogger( currentUser, reduxStore ) {
 	if ( ! config.isEnabled( 'catch-js-errors' ) ) {
 		return;
 	}
 
-	// Add a bit of metadata from the redux store to the sentry event.
-	const beforeSend = ( event ) => {
-		const state = reduxStore.getState();
-		if ( ! event.tags ) {
-			event.tags = {};
-		}
-		event.tags.blog_id = getSelectedSiteId( state );
-		event.tags.calypso_section = getSectionName( state );
-		return event;
-	};
-	// Note: no need to await, since we don't depend on the results.
-	initSentry( { beforeSend } );
+	// Enable Sentry for 10% of users. Disable otherwise.
+	if ( currentUser?.ID ?? 0 % 10 ) {
+		// Add a bit of metadata from the redux store to the sentry event.
+		const beforeSend = ( event ) => {
+			const state = reduxStore.getState();
+			if ( ! event.tags ) {
+				event.tags = {};
+			}
+			event.tags.blog_id = getSelectedSiteId( state );
+			event.tags.calypso_section = getSectionName( state );
+			return event;
+		};
+
+		initSentry( { beforeSend } );
+	}
 
 	const errorLogger = new Logger();
 
@@ -311,7 +314,7 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
 	initializeAnalytics( currentUser ? currentUser : undefined, getSuperProps( reduxStore ) );
 
-	setupErrorLogger( reduxStore );
+	setupErrorLogger( currentUser, reduxStore );
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
 	// This can be removed when the legacy version is retired.
