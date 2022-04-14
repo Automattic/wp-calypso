@@ -2,7 +2,6 @@ import accessibleFocus from '@automattic/accessible-focus';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
-import * as Sentry from '@sentry/react';
 import debugFactory from 'debug';
 import page from 'page';
 import ReactDom from 'react-dom';
@@ -25,6 +24,7 @@ import { checkFormHandler } from 'calypso/lib/protect-form';
 import { setReduxStore as setReduxBridgeReduxStore } from 'calypso/lib/redux-bridge';
 import { getSiteFragment, normalize } from 'calypso/lib/route';
 import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
+import { addBreadcrumb, initSentry } from 'calypso/lib/sentry';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { isOutsideCalypso } from 'calypso/lib/url';
 import { JETPACK_PRICING_PAGE } from 'calypso/lib/url/support';
@@ -242,38 +242,18 @@ function setupErrorLogger( reduxStore ) {
 		return;
 	}
 
-	Sentry.init( {
-		dsn: 'https://61275d63a504465ab315245f1a379dab@o248881.ingest.sentry.io/6313676',
-		environment: config( 'env_id' ),
-		initialScope: {
-			user: { id: getCurrentUserId( reduxStore.getState() ) },
-		},
-		beforeSend( event ) {
-			const state = reduxStore.getState();
-			if ( ! event.tags ) {
-				event.tags = {};
-			}
-			event.tags.blog_id = getSelectedSiteId( state );
-			event.tags.calypso_section = getSectionName( state );
-			return event;
-		},
-		beforeBreadcrumb( breadcrumb ) {
-			// Ignore default navigation events -- we'll track them ourselves in the page( '*' ) handler.
-			if ( breadcrumb.category === 'navigation' && ! breadcrumb.data?.should_capture ) {
-				return null;
-			} else if ( breadcrumb.category === 'navigation' && breadcrumb.data?.should_capture ) {
-				delete breadcrumb.data.should_capture;
-			}
-			return breadcrumb;
-		},
-	} );
-
-	window._jsErr?.forEach( ( error ) => Sentry.captureException( error ) );
-	Sentry.flush().then( () => {
-		window.removeEventListener( window._headJsErrorHandler );
-		delete window._jsErr;
-		delete window._headJsErrorHandler;
-	} );
+	// Add a bit of metadata from the redux store to the sentry event.
+	const beforeSend = ( event ) => {
+		const state = reduxStore.getState();
+		if ( ! event.tags ) {
+			event.tags = {};
+		}
+		event.tags.blog_id = getSelectedSiteId( state );
+		event.tags.calypso_section = getSectionName( state );
+		return event;
+	};
+	// Note: no need to await, since we don't depend on the results.
+	initSentry( { beforeSend } );
 
 	const errorLogger = new Logger();
 
@@ -304,7 +284,8 @@ function setupErrorLogger( reduxStore ) {
 			getSiteFragment( context.canonicalPath ),
 			':siteId'
 		);
-		Sentry.addBreadcrumb( {
+		// Also save the context to Sentry for easier debugging.
+		addBreadcrumb( {
 			category: 'navigation',
 			data: {
 				from: prevPath ?? path,
