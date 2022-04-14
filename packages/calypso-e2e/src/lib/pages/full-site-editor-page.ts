@@ -1,10 +1,10 @@
 import { Locator, Page } from 'playwright';
 import {
 	BlockInserter,
-	EditorGutenbergComponent,
 	EditorSidebarBlockInserterComponent,
 	EditorToolbarComponent,
 	EditorWelcomeTourComponent,
+	SiteType,
 } from '..';
 import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
@@ -25,9 +25,10 @@ const selectors = {
  */
 export class FullSiteEditorPage {
 	private page: Page;
+	private editor: Locator;
+	private editorCanvas: Locator;
 
 	private editorToolbarComponent: EditorToolbarComponent;
-	private editorGutenbergComponent: EditorGutenbergComponent;
 	private editorSidebarBlockInserterComponent: EditorSidebarBlockInserterComponent;
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
 
@@ -35,9 +36,25 @@ export class FullSiteEditorPage {
 	 * Constructs an instance of the page POM class.
 	 *
 	 * @param {Page} page The underlying page.
+	 * @param {Object} param0 Keyed object parameter.
+	 * @param {SiteType} param0.target Target editor type. Defaults to 'simple'.
 	 */
-	constructor( page: Page ) {
+	constructor( page: Page, { target = 'simple' }: { target?: SiteType } = {} ) {
 		this.page = page;
+
+		if ( target === 'atomic' ) {
+			// For Atomic editors, there is no iFrame - the editor is
+			// part of the page DOM and is thus accessible directly.
+			this.editor = page.locator( selectors.editorRoot );
+		} else {
+			// For Simple editors, the editor is located within an iFrame
+			// and thus it must first be extracted.
+			this.editor = page.frameLocator( selectors.editorIframe ).locator( selectors.editorRoot );
+		}
+
+		this.editorCanvas = this.editor
+			.frameLocator( selectors.editorCanvasIframe )
+			.locator( selectors.editorCanvasRoot );
 
 		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
 		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
@@ -45,27 +62,6 @@ export class FullSiteEditorPage {
 			page,
 			this.editor
 		);
-		// Because of the unique extra iframe in the site editor, this component needs the canvas locator.
-		this.editorGutenbergComponent = new EditorGutenbergComponent( page, this.editorCanvas );
-	}
-
-	/**
-	 * A frame-safe locator to the top level element in the editor, for building other editor locators.
-	 */
-	private get editor(): Locator {
-		return this.page.url().includes( wpAdminPath )
-			? this.page.locator( selectors.editorRoot )
-			: this.page.frameLocator( selectors.editorIframe ).locator( selectors.editorRoot );
-	}
-
-	/**
-	 * A frame-safe locator to the top level element in the editor canvas, for building other editor locators.
-	 * The editor canvas is an iframe wrapping the center editor area that is unique to the site-editor.
-	 */
-	private get editorCanvas(): Locator {
-		return this.editor
-			.frameLocator( selectors.editorCanvasIframe )
-			.locator( selectors.editorCanvasRoot );
 	}
 
 	/**
