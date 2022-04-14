@@ -20,6 +20,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
+import { useAnchorPodcastId } from 'calypso/landing/stepper/hooks/use-anchor-podcast-id';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
@@ -31,7 +32,6 @@ import PreviewToolbar from './preview-toolbar';
 import type { Step } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
-import { useAnchorPodcastId } from 'calypso/landing/stepper/hooks/use-anchor-podcast-id';
 
 /**
  * The design picker step
