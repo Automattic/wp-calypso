@@ -10,7 +10,7 @@
 	left: 0;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		top: calc( var( --masterbar-height ) + 16px );
+		top: calc( var( --masterbar-height ) + 64px );
 		right: 16px;
 		bottom: auto;
 		left: auto;
@@ -18,7 +18,7 @@
 	}
 
 	@include breakpoint-deprecated( '>960px' ) {
-		top: calc( var( --masterbar-height ) + 24px );
+		top: calc( var( --masterbar-height ) + 64px );
 		right: 24px;
 		max-width: calc( 100% - 48px );
 	}
