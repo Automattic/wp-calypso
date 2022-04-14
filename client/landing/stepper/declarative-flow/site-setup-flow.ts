@@ -188,6 +188,9 @@ export const siteSetupFlow: Flow = {
 				case 'vertical':
 					return redirect( `/home/${ siteSlug }` );
 
+				case 'import':
+					return navigate( 'import/list' );
+
 				default:
 					return navigate( 'intent' );
 			}

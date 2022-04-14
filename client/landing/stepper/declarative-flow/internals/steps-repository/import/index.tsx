@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { StepContainer } from '@automattic/onboarding';
+import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { StepPath } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository';
@@ -23,6 +24,7 @@ import type { Step } from '../../types';
  * The import step
  */
 const ImportStep: Step = function ImportStep( props ) {
+	const { __ } = useI18n();
 	const BASE_ROUTE = 'import';
 	const { navigation } = props;
 
@@ -55,15 +57,28 @@ const ImportStep: Step = function ImportStep( props ) {
 		navigation.goToStep?.( `/${ BASE_ROUTE }` as StepPath );
 	}
 
+	function shouldHideNext() {
+		switch ( currentRoute ) {
+			case 'import':
+				return false;
+
+			default:
+				return true;
+		}
+	}
+
 	/**
 	 * Renders
 	 */
 	return (
 		<StepContainer
 			stepName={ 'import-step' }
-			hideSkip={ false }
+			hideSkip={ true }
 			hideBack={ false }
-			hideNext={ false }
+			hideNext={ shouldHideNext() }
+			goBack={ navigation.goBack }
+			goNext={ navigation.goNext }
+			nextLabelText={ __( "I don't have a site address" ) }
 			isHorizontalLayout={ false }
 			stepContent={
 				<div className="import__onboarding-page">
