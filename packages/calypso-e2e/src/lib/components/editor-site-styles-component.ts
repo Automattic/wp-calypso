@@ -38,11 +38,15 @@ export class EditorSiteStylesComponent {
 		this.editor = editor;
 
 		this.editorColorPickerComponent = new EditorColorPickerComponent( page, editor );
-		this.editorTypographyComponent = new EditorTypographyComponent( page, editor, 'site' );
+		this.editorTypographyComponent = new EditorTypographyComponent( page, editor, 'site-styles' );
 	}
 
 	/**
-	 * Click menu button by name.
+	 * Checks if the site styles sidebar/panel is open.
+	 * Not reliable for immediate validation after an open/close action,
+	 * but can be used to determine starting state.
+	 *
+	 * @returns true if the site styles sidebar/panel is open, false otherwise.
 	 */
 	async siteStylesIsOpen(): Promise< boolean > {
 		const locator = this.editor.locator( parentSelector );
@@ -50,7 +54,7 @@ export class EditorSiteStylesComponent {
 	}
 
 	/**
-	 *
+	 * Closes the site styles sidebar/panel.
 	 */
 	async closeSiteStyles(): Promise< void > {
 		if ( await this.siteStylesIsOpen() ) {
@@ -60,9 +64,11 @@ export class EditorSiteStylesComponent {
 	}
 
 	/**
+	 * Sets a color style setting globaly for the site.
+	 * This auto-handles returning to top menu and navigating down.
 	 *
-	 * @param colorLocation
-	 * @param colorSettings
+	 * @param {ColorLocation} colorLocation What part of the site we are updating the color for.
+	 * @param {ColorSettings} colorSettings Settings for the color to set.
 	 */
 	async setGlobalColor(
 		colorLocation: ColorLocation,
@@ -79,9 +85,11 @@ export class EditorSiteStylesComponent {
 	// In future: setGlobalTypography()
 
 	/**
+	 * Sets a typography style for a block.
+	 * This auto-handles returning to top menu and navigating down.
 	 *
-	 * @param blockName
-	 * @param typographySettings
+	 * @param {string} blockName Block name (as appears in list).
+	 * @param {TypographySettings} typographySettings Typography settings to set.
 	 */
 	async setBlockTypography(
 		blockName: string,
@@ -95,8 +103,9 @@ export class EditorSiteStylesComponent {
 	}
 
 	/**
+	 * Clicks a navigation button in the site styles panel/sidebar.
 	 *
-	 * @param buttonName
+	 * @param {string} buttonName Button name.
 	 */
 	private async clickNavigationButton( buttonName: string ): Promise< void > {
 		const locator = this.editor.locator( selectors.navigationButton( buttonName ) );
@@ -104,10 +113,13 @@ export class EditorSiteStylesComponent {
 	}
 
 	/**
-	 *
+	 * Returns to the top-level menu in the site styles sidebar.
 	 */
 	private async returnToTopMenu(): Promise< void > {
 		const backButtonLocator = this.editor.locator( selectors.backButton );
+		// The DOM node of the current active panel is directly replaced on re-render.
+		// This means that we can safely rely on "count()" as an indicator of if there's
+		// back navigation to do.
 		while ( ( await backButtonLocator.count() ) > 0 ) {
 			await backButtonLocator.click();
 		}

@@ -1,7 +1,6 @@
 import { Locator, Page } from 'playwright';
 
 const parentSelector = '.block-editor-color-gradient-control__fieldset';
-
 const selectors = {
 	colorSwatchButton: ( swatchName: ThemeColorPurposes | DefaultColorNames ) =>
 		`${ parentSelector } .components-circular-option-picker__swatches [aria-label="Color: ${ swatchName }"]`,
@@ -14,24 +13,34 @@ const selectors = {
 
 type ColorType = 'Solid' | 'Gradient';
 
+// Color settings types.
+
 type ThemeColorPurposes = 'Primary' | 'Secondary' | 'Tertiary' | 'Background' | 'Foreground';
 type DefaultColorNames = 'Black' | 'White'; // Add as needed.
 interface ColorSwatch {
 	colorName: DefaultColorNames | ThemeColorPurposes;
 }
+interface CustomColor {
+	hexValue: string;
+}
+type SolidColor = ColorSwatch | CustomColor;
+
+type GradientColor = 'NOT IMPLEMENTED';
+
+export type ColorSettings = SolidColor | GradientColor;
+
+// Type guards to determine what type of color settings were provided.
+
 /**
- * Type guard to determine if a SolidColor is a DefaultSwatch.
+ * Type guard to determine if a SolidColor is a ColorSwatch.
  *
  * @param {SolidColor} solidColor The SolidColor configuration settings.
- * @returns Type guard for DefaultSwatch.
+ * @returns Type guard for ColorSwatch.
  */
 function isColorSwatch( solidColor: SolidColor ): solidColor is ColorSwatch {
 	return ( solidColor as ColorSwatch ).colorName !== undefined;
 }
 
-interface CustomColor {
-	hexValue: string;
-}
 /**
  * Type guard to determine if a SolidColor is a CustomColor.
  *
@@ -42,11 +51,11 @@ function isCustomColor( solidColor: SolidColor ): solidColor is CustomColor {
 	return ( solidColor as CustomColor ).hexValue !== undefined;
 }
 
-type SolidColor = ColorSwatch | CustomColor;
 /**
+ * Type guard to determine if a ColorSettings is a SolidColor.
  *
- * @param colorSettings
- * @returns
+ * @param {ColorSettings} colorSettings
+ * @returns Type guard for SolidColor.
  */
 function isSolidColor( colorSettings: ColorSettings ): colorSettings is SolidColor {
 	return (
@@ -54,12 +63,8 @@ function isSolidColor( colorSettings: ColorSettings ): colorSettings is SolidCol
 	);
 }
 
-type GradientColor = 'NOT IMPLEMENTED';
-
-export type ColorSettings = SolidColor | GradientColor;
-
 /**
- * Represents a color picker in the editor (used in blocks and global styles).
+ * Represents a color picker in the editor (used in blocks and site styles).
  */
 export class EditorColorPickerComponent {
 	private page: Page;
@@ -77,8 +82,9 @@ export class EditorColorPickerComponent {
 	}
 
 	/**
+	 * Set a color in the color picker.
 	 *
-	 * @param colorSettings
+	 * @param {ColorSettings} colorSettings Settings for the color to set.
 	 */
 	async setColor( colorSettings: ColorSettings ): Promise< void > {
 		if ( isSolidColor( colorSettings ) ) {
@@ -89,8 +95,9 @@ export class EditorColorPickerComponent {
 	}
 
 	/**
+	 * Sets a solid color value.
 	 *
-	 * @param colorSettings
+	 * @param {SolidColor} colorSettings
 	 */
 	private async setSolidColor( colorSettings: SolidColor ): Promise< void > {
 		if ( await this.colorTypeToggleIsAvailable() ) {
@@ -111,8 +118,9 @@ export class EditorColorPickerComponent {
 	}
 
 	/**
+	 * Clicks the toggle button for color type ('Solid' or 'Gradient')
 	 *
-	 * @param colorType
+	 * @param {ColorType} colorType
 	 */
 	private async toggleColorType( colorType: ColorType ): Promise< void > {
 		const locator = this.editor.locator( selectors.colorTypeToggle( colorType ) );
@@ -120,13 +128,17 @@ export class EditorColorPickerComponent {
 	}
 
 	/**
+	 * Checks if the component has a color type toggle. (If it doesn't, only solid is supported.)
 	 *
-	 * @returns
+	 * @returns true if the color type toggle is there, false otherwise.
 	 */
 	private async colorTypeToggleIsAvailable(): Promise< boolean > {
+		// Due to async loading, we need something that IS always there to key off of.
+		// The custom color picker is always there! We can reliably wait for it.
 		const customColorLocator = this.editor.locator( selectors.customColorButton );
 		await customColorLocator.waitFor();
 
+		// Now we know the component has fully loaded, we can check for the toggle's presence.
 		const toggleLocator = this.editor.locator( selectors.colorTypeToggle( 'Solid' ) );
 		return ( await toggleLocator.count() ) > 0;
 	}

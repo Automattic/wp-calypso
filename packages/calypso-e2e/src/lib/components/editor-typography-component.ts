@@ -1,18 +1,5 @@
 import { Locator, Page } from 'playwright';
 
-type FontSize = 'Small' | 'Medium' | 'Large' | 'Extra Large'; // expand as needed.
-type FontAppearance = 'Default' | 'Thin' | 'Regular' | 'Medium'; // expand as needed.
-
-export interface TypographySettings {
-	fontSize?: FontSize | number;
-	lineHeight?: number;
-	letterSpacing?: number;
-	appearance?: FontAppearance;
-	// Can add other block editor ones later (like drop cap)
-}
-
-type EditorContext = 'site' | 'block';
-
 const parentSelector = '[class*="typography"]'; // Support block and site.
 const selectors = {
 	appearanceDropdownButton: `${ parentSelector } button[aria-label="Appearance"]`,
@@ -20,8 +7,21 @@ const selectors = {
 		`${ parentSelector } .components-font-appearance-control [role=option]:text-is("${ appearance }")`,
 };
 
+type FontSize = 'Small' | 'Medium' | 'Large' | 'Extra Large'; // expand as needed.
+type FontAppearance = 'Default' | 'Thin' | 'Regular' | 'Medium'; // expand as needed.
+
+export interface TypographySettings {
+	fontSize?: FontSize | number;
+	lineHeight?: number;
+	letterSpacing?: number;
+	fontAppearance?: FontAppearance;
+	// Can add other block editor specific ones later (like drop cap)
+}
+
+type EditorContext = 'site-styles' | 'block';
+
 /**
- * Represents a typography settings component (used in blocks and global styles).
+ * Represents a typography settings component (used in blocks and site styles).
  */
 export class EditorTypographyComponent {
 	private page: Page;
@@ -33,6 +33,7 @@ export class EditorTypographyComponent {
 	 *
 	 * @param {Page} page Object representing the base page.
 	 * @param {Locator} editor Frame-safe locator to the editor.
+	 * @param {EditorContext} context Whether we're in global styles or a block.
 	 */
 	constructor( page: Page, editor: Locator, context: EditorContext ) {
 		this.page = page;
@@ -41,8 +42,9 @@ export class EditorTypographyComponent {
 	}
 
 	/**
+	 * Set typography settings.
 	 *
-	 * @param settings
+	 * @param {TypographySettings} settings Settings to set. Only properties provided will be set.
 	 */
 	async setTypography( settings: TypographySettings ): Promise< void > {
 		if ( settings.fontSize ) {
@@ -57,22 +59,24 @@ export class EditorTypographyComponent {
 			throw new Error( 'Font size is not yet implemented.' );
 		}
 
-		if ( settings.appearance ) {
-			await this.setAppearance( settings.appearance );
+		if ( settings.fontAppearance ) {
+			await this.setAppearance( settings.fontAppearance );
 		}
 	}
 
 	/**
+	 * Sets the typography font appearance.
 	 *
-	 * @param appearance
+	 * @param {FontAppearance} fontAppearance Font appearance to select.
 	 */
-	private async setAppearance( appearance: FontAppearance ): Promise< void > {
-		// In the future, if we're in the block context, we'll probably have to add this field first.
+	private async setAppearance( fontAppearance: FontAppearance ): Promise< void > {
+		// In the future, if we're in the block context, we'll have to add this field first.
 
+		// It's not a real select input. It's a button and a custom control.
 		const dropdownButtonLocator = this.editor.locator( selectors.appearanceDropdownButton );
 		await dropdownButtonLocator.click();
 
-		const selectionLocator = this.editor.locator( selectors.appearanceSelection( appearance ) );
+		const selectionLocator = this.editor.locator( selectors.appearanceSelection( fontAppearance ) );
 		await selectionLocator.click();
 	}
 }

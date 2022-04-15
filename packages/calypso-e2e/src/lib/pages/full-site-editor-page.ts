@@ -177,6 +177,9 @@ export class FullSiteEditorPage {
 
 	/**
 	 * Opens the site styles sidebar in the site editor.
+	 *
+	 * @param {object} param0 Keyed options parameter.
+	 * @param {boolean} param0.closeWelcomeGuide Set if should close welcome guide on opening.
 	 */
 	async openSiteStyles(
 		{ closeWelcomeGuide }: { closeWelcomeGuide: boolean } = { closeWelcomeGuide: true }
@@ -185,7 +188,7 @@ export class FullSiteEditorPage {
 			await this.editorToolbarComponent.openMoreOptionsMenu();
 
 			if ( closeWelcomeGuide ) {
-				// The unawaited promise and no-op catch are intentional here!
+				// The unawaited promise and no-op catch are both intentional here!
 				// We want to close the welcome guide if it opens, but not slow down the test if it doesn't.
 				// This will effectively register a handler that waits for the welcome guide to close it if it appears
 				// but otherwise doesn't affect the following actions.
@@ -197,7 +200,7 @@ export class FullSiteEditorPage {
 	}
 
 	/**
-	 *
+	 * Closes the site styles welcome guide.
 	 */
 	private async closeStylesWelcomeGuide(): Promise< void > {
 		const locator = this.editor.locator( selectors.closeStylesWelcomeGuideButton );
@@ -205,9 +208,11 @@ export class FullSiteEditorPage {
 	}
 
 	/**
+	 * Sets a color style setting globaly for the site.
+	 * This auto-handles returning to top menu and navigating down.
 	 *
-	 * @param colorLocation
-	 * @param colorSettings
+	 * @param {ColorLocation} colorLocation What part of the site we are updating the color for.
+	 * @param {ColorSettings} colorSettings Settings for the color to set.
 	 */
 	async setGlobalColorStlye(
 		colorLocation: ColorLocation,
@@ -217,9 +222,11 @@ export class FullSiteEditorPage {
 	}
 
 	/**
+	 * Sets a typography style for a block.
+	 * This auto-handles returning to top menu and navigating down.
 	 *
-	 * @param blockName
-	 * @param typographySettings
+	 * @param {string} blockName Block name (as appears in list).
+	 * @param {TypographySettings} typographySettings Typography settings to set.
 	 */
 	async setBlockTypographyStyle(
 		blockName: string,
