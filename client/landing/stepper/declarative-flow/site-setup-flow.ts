@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSelect } from '@wordpress/data';
 import { useFSEStatus } from '../hooks/use-fse-status';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -197,5 +198,14 @@ export const siteSetupFlow: Flow = {
 		};
 
 		return { goNext, goBack, goToStep, submit };
+	},
+
+	useAssertConditions() {
+		const siteSlug = useSiteSlugParam();
+		const siteId = useSiteIdParam();
+
+		if ( ! siteSlug && ! siteId ) {
+			throw new Error( 'site-setup did not provide the site slug or site id it is configured to.' );
+		}
 	},
 };

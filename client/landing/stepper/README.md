@@ -77,6 +77,31 @@ export const exampleFlow: Flow = {
 };
 ```
 
+### Assert Conditions
+
+Optionally, you could also define a `useAssertConditions` function in the flow. This function can be used to add some conditions to check, and maybe return an error if those are not met.
+
+```ts
+import type { StepPath } from './internals/steps-repository';
+import type { Flow } from './internals/types';
+
+export const exampleFlow: Flow = {
+	useSteps(): Array< StepPath > {
+		return [];
+	},
+	useStepNavigation( currentStep, navigate ) {
+		return { goNext, goBack };
+	},
+	useAssertConditions() {
+		const siteSlug = useSiteSlugParam();
+
+		if ( ! siteSlug ) {
+			throw new Error( 'site-setup did not provide the site slug it is configured to.' );
+		}
+	},
+};
+```
+
 ## Reusability
 
 Stepper aims to create a big `steps-repository` that contains the steps and allows them to be recycled and reused. Every step you create is inherently reusable by any future flow. Because steps are like components, they're not parts of the flows, flows just happen to use them.
