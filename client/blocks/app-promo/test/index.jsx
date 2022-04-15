@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { render } from '@testing-library/react';
-import { expect } from 'chai';
 
 describe( 'AppPromo', () => {
 	const appPromoDetails = {
@@ -32,23 +31,23 @@ describe( 'AppPromo', () => {
 		test( 'should render the primary components', () => {
 			const { container } = render( AppPromoComponent );
 
-			expect( container.getElementsByClassName( 'app-promo' ) ).to.have.lengthOf( 1 );
-			expect( container.getElementsByClassName( 'app-promo__dismiss' ) ).to.have.lengthOf( 1 );
-			expect( container.getElementsByClassName( 'app-promo__icon' ) ).to.have.lengthOf( 1 );
+			expect( container.getElementsByClassName( 'app-promo' ) ).toHaveLength( 1 );
+			expect( container.getElementsByClassName( 'app-promo__dismiss' ) ).toHaveLength( 1 );
+			expect( container.getElementsByClassName( 'app-promo__icon' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should render the promo text', () => {
 			const { container } = render( AppPromoComponent );
 
-			expect( container.textContent ).to.contain( appPromoDetails.message );
+			expect( container.textContent ).toEqual( expect.stringContaining( appPromoDetails.message ) );
 		} );
 
 		test( 'should render the promo link', () => {
 			const { container } = render( AppPromoComponent );
 
 			const promoLink = container.getElementsByClassName( 'app-promo__link' );
-			expect( promoLink ).to.have.lengthOf( 1 );
-			expect( promoLink[ 0 ].getAttribute( 'href' ) ).to.equal( appPromoLink );
+			expect( promoLink ).toHaveLength( 1 );
+			expect( promoLink[ 0 ].getAttribute( 'href' ) ).toBe( appPromoLink );
 		} );
 	} );
 
@@ -66,11 +65,15 @@ describe( 'AppPromo', () => {
 		};
 
 		test( 'should render a mobile link when the mobile promo code is passed in', () => {
-			expect( getPromoLink( 'reader', mobilePromo ) ).to.include( 'mobile' );
+			expect( getPromoLink( 'reader', mobilePromo ) ).toEqual(
+				expect.stringContaining( 'mobile' )
+			);
 		} );
 
 		test( 'should render a desktop link when the desktop promo code is passed in', () => {
-			expect( getPromoLink( 'reader', desktopPromo ) ).to.include( 'desktop' );
+			expect( getPromoLink( 'reader', desktopPromo ) ).toEqual(
+				expect.stringContaining( 'desktop' )
+			);
 		} );
 	} );
 } );
