@@ -1,9 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-
+import { render } from '@testing-library/react';
 import { expect } from 'chai';
-import { shallow, mount } from 'enzyme';
 
 describe( 'AppPromo', () => {
 	const appPromoDetails = {
@@ -31,25 +30,25 @@ describe( 'AppPromo', () => {
 
 	describe( 'readering', () => {
 		test( 'should render the primary components', () => {
-			const wrapper = shallow( AppPromoComponent );
+			const { container } = render( AppPromoComponent );
 
-			expect( wrapper.find( '.app-promo' ) ).to.have.lengthOf( 1 );
-			expect( wrapper.find( '.app-promo__dismiss' ) ).to.have.lengthOf( 1 );
-			expect( wrapper.find( '.app-promo__icon' ) ).to.have.lengthOf( 1 );
+			expect( container.getElementsByClassName( 'app-promo' ) ).to.have.lengthOf( 1 );
+			expect( container.getElementsByClassName( 'app-promo__dismiss' ) ).to.have.lengthOf( 1 );
+			expect( container.getElementsByClassName( 'app-promo__icon' ) ).to.have.lengthOf( 1 );
 		} );
 
 		test( 'should render the promo text', () => {
-			const wrapper = mount( AppPromoComponent );
+			const { container } = render( AppPromoComponent );
 
-			expect( wrapper.text() ).to.contain( appPromoDetails.message );
+			expect( container.textContent ).to.contain( appPromoDetails.message );
 		} );
 
 		test( 'should render the promo link', () => {
-			const wrapper = shallow( AppPromoComponent );
+			const { container } = render( AppPromoComponent );
 
-			const promoLink = wrapper.find( '.app-promo__link' );
+			const promoLink = container.getElementsByClassName( 'app-promo__link' );
 			expect( promoLink ).to.have.lengthOf( 1 );
-			expect( promoLink.prop( 'href' ) ).to.equal( appPromoLink );
+			expect( promoLink[ 0 ].getAttribute( 'href' ) ).to.equal( appPromoLink );
 		} );
 	} );
 
