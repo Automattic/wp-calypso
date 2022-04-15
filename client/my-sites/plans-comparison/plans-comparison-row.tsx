@@ -7,6 +7,7 @@ import type { WPComPlan } from '@automattic/calypso-products';
 interface Props {
 	feature: PlanComparisonFeature;
 	plans: WPComPlan[];
+	isLegacySiteWithHigherLimits: boolean;
 }
 
 export const DesktopContent = styled.div`

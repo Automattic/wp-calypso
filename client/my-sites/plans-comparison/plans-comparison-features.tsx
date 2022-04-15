@@ -54,7 +54,7 @@ export interface PlanComparisonFeature {
 	getCellText: (
 		feature: string | undefined,
 		isMobile: boolean,
-		isLegacySiteWithHigherLimits: boolean,
+		isLegacySiteWithHigherLimits?: boolean,
 		extraArgs?: unknown
 	) => TranslateResult | [ TranslateResult, TranslateResult ];
 }

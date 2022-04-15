@@ -423,7 +423,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	onSelectPlan,
 } ) => {
 	const legacySiteWithHigherLimits = useSelector( ( state ) =>
-		isLegacySiteWithHigherLimits( state, selectedSiteId || null )
+		isLegacySiteWithHigherLimits( state, selectedSiteId || 0 )
 	);
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSiteId || null ) );
 	const [ showCollapsibleRows, setShowCollapsibleRows ] = useState( false );
