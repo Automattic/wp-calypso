@@ -184,7 +184,7 @@ class MobileDownloadCard extends Component {
 				</div>
 
 				{ featureIsEnabled && (
-					<div className="get-apps__sms-subpanel">
+					<div className="get-apps__qr-code-subpanel">
 						<p>
 							<strong>{ translate( 'Ready to WordPress on the go?' ) }</strong>
 							<br />

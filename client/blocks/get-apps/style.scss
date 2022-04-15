@@ -70,6 +70,13 @@
 	.get-apps__magic-link-subpanel {
 		margin-top: 64px;
 	}
+
+	.get-apps__qr-code-subpanel {
+		// This is a hack to allow us to use a feature flag to hide this subpanel
+		// without the parent card having a big ugly blank space at the bottom.
+		margin-top: 64px;
+	}
+
 }
 
 .get-apps__illustration {
