@@ -3,8 +3,6 @@ import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
-import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import phoneValidation from 'calypso/lib/phone-validation';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import userAgent from 'calypso/lib/user-agent';
@@ -165,8 +163,6 @@ class MobileDownloadCard extends Component {
 	render() {
 		const { translate } = this.props;
 
-		const hasAllData = this.userSettingsHaveBeenLoadedWithAccountRecoveryPhone();
-		const { countryCode, number, isValid } = this.getPreferredNumber();
 		const { isMobile } = userAgent;
 		const featureIsEnabled = ! isMobile;
 
