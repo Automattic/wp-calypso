@@ -28,7 +28,7 @@ const fetchWPCOMPlugins = ( type: Type, searchTerm?: string, tag?: string ) => {
 			type: type,
 			...( search && { q: search } ),
 			...( author && { author } ),
-			...( tag && { tag } ),
+			...( tag && ! search && { tag } ),
 		}
 	);
 };

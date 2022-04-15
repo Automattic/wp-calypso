@@ -328,7 +328,9 @@ const PluginsBrowser = ( {
 				title={ translate( 'Plugins you need to get your projects done' ) }
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 			/>
-			<Categories onSelect={ ( c ) => doSearch( search, { tag: c.tags?.join( ',' ) || '' } ) } />
+			{ ! search && (
+				<Categories onSelect={ ( c ) => doSearch( search, { tag: c.tags?.join( ',' ) || '' } ) } />
+			) }
 			<PluginBrowserContent
 				tag={ tag }
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
@@ -418,15 +420,16 @@ const SearchListView = ( {
 	) {
 		const searchTitle =
 			searchTitleTerm ||
-			translate( 'Search results for {{b}}%(searchTerm)s{{/b}}', {
-				textOnly: true,
-				args: {
-					searchTerm,
-				},
-				components: {
-					b: <b />,
-				},
-			} );
+			( searchTerm &&
+				translate( 'Search results for {{b}}%(searchTerm)s{{/b}}', {
+					textOnly: true,
+					args: {
+						searchTerm,
+					},
+					components: {
+						b: <b />,
+					},
+				} ) );
 
 		const subtitle =
 			pluginsPagination &&

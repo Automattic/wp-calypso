@@ -77,6 +77,7 @@ function getCategoryForPluginsBrowser( context ) {
 
 function renderPluginsBrowser( context ) {
 	const searchTerm = context.query.s;
+	const tag = context.query.tag;
 	const site = getSelectedSite( context.store.getState() );
 	const category = getCategoryForPluginsBrowser( context );
 
@@ -87,6 +88,7 @@ function renderPluginsBrowser( context ) {
 		path: context.path,
 		category,
 		search: searchTerm,
+		tag: tag,
 	} );
 }
 

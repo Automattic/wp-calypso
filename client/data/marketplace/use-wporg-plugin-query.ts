@@ -30,7 +30,9 @@ const getPluginsListKey = ( options: WPORGOptionsType, infinite?: boolean ): Que
 	getCacheKey(
 		`${ infinite ? 'infinite' : '' }${ options.category || '' }_${ options.searchTerm || '' }_${
 			options.page || ''
-		}${ options.tag || '' }_${ options.pageSize || '' }_${ options.locale || '' }`
+		}_${ options.tag && ! options.searchTerm ? options.tag : '' }_${ options.pageSize || '' }_${
+			options.locale || ''
+		}`
 	);
 
 export const useWPORGPlugins = (
@@ -50,6 +52,7 @@ export const useWPORGPlugins = (
 				locale: options.locale || locale,
 				search,
 				author,
+				tag: options.tag && ! search ? options.tag : null,
 			} ),
 		{
 			select: ( { plugins = [], info = {} } ) => ( {
@@ -85,7 +88,7 @@ export const useWPORGInfinitePlugins = (
 				category: options.category,
 				locale: options.locale || locale,
 				search,
-				tag: options.tag,
+				tag: options.tag && ! search ? options.tag : null,
 				author,
 			} ),
 		{
