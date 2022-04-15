@@ -50,8 +50,6 @@ require_once __DIR__ . '/dotcom-fse/helpers.php';
 // Enqueues the shared JS data stores and defines shared helper functions.
 require_once __DIR__ . '/common/index.php';
 
-require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
-
 /**
  * Load dotcom-FSE.
  */
@@ -269,6 +267,7 @@ add_filter(
 	'rest_dispatch_request',
 	register_patterns_on_api_request(
 		function () {
+			require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
 			( new Block_Patterns_From_API() )->register_patterns();
 		}
 	),
