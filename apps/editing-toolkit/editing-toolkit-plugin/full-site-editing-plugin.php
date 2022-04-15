@@ -240,7 +240,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
  * @param Function $register_patterns_func A function that when called will
  * register the relevant block patterns in the registry.
  */
-function load_block_patterns_from_api( $register_patterns_func ) {
+function register_patterns_on_api_request( $register_patterns_func ) {
 	/**
 	 * Load editing toolkit block patterns from the API.
 	 *
@@ -267,7 +267,7 @@ function load_block_patterns_from_api( $register_patterns_func ) {
 }
 add_filter(
 	'rest_dispatch_request',
-	load_block_patterns_from_api(
+	register_patterns_on_api_request(
 		function () {
 			( new Block_Patterns_From_API() )->register_patterns();
 		}
@@ -275,6 +275,34 @@ add_filter(
 	10,
 	2
 );
+
+/**
+ * This function exists for back-compatibility. Patterns in Gutenberg v13.0.0 and
+ * newer are loaded over the API instead of injected into the document. While we
+ * register patterns in the API above, we still need to maintain compatibility
+ * with older Gutenberg versions and WP 5.9 without Gutenberg.
+ *
+ * This can be removed once the rest API approach is in core WordPress and available
+ * on Atomic and Simple sites. (Note that Atomic sites may disable the Gutenberg
+ * plugin, so we cannot guarantee its availability.)
+ *
+ * @param object $current_screen An object describing the wp-admin screen properties.
+ */
+function register_patterns_on_screen_load( $current_screen ) {
+	// No need to use this when the REST API approach is available.
+	if ( class_exists( 'WP_REST_Block_Pattern_Categories_Controller' ) ) {
+		return;
+	}
+
+	// is_block_editor should include site editor support.
+	if ( ! apply_filters( 'a8c_enable_block_patterns_api', false ) || ! $current_screen->is_block_editor ) {
+		return;
+	}
+
+	require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
+	( new Block_Patterns_From_API() )->register_patterns();
+}
+add_action( 'current_screen', __NAMESPACE__ . '\register_patterns_on_screen_load' );
 
 /**
  * Load Block Inserter Modifications module.

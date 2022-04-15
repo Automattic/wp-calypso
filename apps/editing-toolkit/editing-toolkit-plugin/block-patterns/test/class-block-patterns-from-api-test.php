@@ -180,7 +180,7 @@ class Block_Patterns_From_Api_Test extends TestCase {
 			$request_mock = $this->createMock( \WP_REST_Request::class );
 			$request_mock->method( 'get_route' )->willReturn( $route );
 
-			load_block_patterns_from_api(
+			register_patterns_on_api_request(
 				function () use ( $patterns_from_api_mock ) {
 					$patterns_from_api_mock->register_patterns();
 				}
