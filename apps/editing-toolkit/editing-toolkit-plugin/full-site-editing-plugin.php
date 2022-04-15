@@ -289,17 +289,18 @@ add_filter(
  */
 function register_patterns_on_screen_load( $current_screen ) {
 	// No need to use this when the REST API approach is available.
-	if ( class_exists( 'WP_REST_Block_Pattern_Categories_Controller' ) ) {
+	if ( class_exists( 'WP_REST_Block_Pattern_Categories_Controller' ) || ! apply_filters( 'a8c_enable_block_patterns_api', false ) ) {
 		return;
 	}
 
-	// is_block_editor should include site editor support.
-	if ( ! apply_filters( 'a8c_enable_block_patterns_api', false ) || ! $current_screen->is_block_editor ) {
+	$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
+	if ( ! $current_screen->is_block_editor && ! $is_site_editor ) {
 		return;
 	}
 
 	require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
-	( new Block_Patterns_From_API() )->register_patterns();
+	$block_patterns_from_api = new Block_Patterns_From_API();
+	$block_patterns_from_api->register_patterns();
 }
 add_action( 'current_screen', __NAMESPACE__ . '\register_patterns_on_screen_load' );
 
