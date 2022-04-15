@@ -193,40 +193,11 @@ class MobileDownloadCard extends Component {
 							<strong>{ translate( 'Ready to WordPress on the go?' ) }</strong>
 							<br />
 							{ translate(
-								'We’ll send you an SMS message with a download link for the right app for your mobile device.'
+								'Scan the code using your mobile phone to download the app.'
 							) }
 						</p>
 
-						<div className="get-apps__sms-field-wrapper">
-							<QuerySmsCountries />
-
-							{ hasAllData ? (
-								<FormPhoneInput
-									countriesList={ this.props.countriesList }
-									initialCountryCode={ countryCode }
-									initialPhoneNumber={ number }
-									phoneInputProps={ {
-										onKeyUp: this.onKeyUp,
-									} }
-									onChange={ this.onChange }
-								/>
-							) : (
-								<>
-									<FormPhoneInput countriesList={ this.props.countriesList } isDisabled={ true } />
-								</>
-							) }
-						</div>
-						<div className="get-apps__sms-button-wrapper">
-							<Button
-								className="get-apps__sms-button"
-								onClick={ this.onSubmit }
-								disabled={ ! isValid }
-							>
-								{ translate( 'Text me a link' ) }
-							</Button>
-
-							<p>{ translate( 'Standard SMS rates may apply' ) }</p>
-						</div>
+						<img src="/calypso/images/me/qrcode-calypso.svg" alt="QR code https://apps.wordpress.com/get/?campaign=calypso-qrcode-apps" scale="0" width="180" height="180">
 					</div>
 				) }
 
