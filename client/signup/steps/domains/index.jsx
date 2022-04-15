@@ -482,7 +482,7 @@ class DomainsStep extends Component {
 						<div className="domains__domain-side-content-container">
 							{ ! this.shouldHideDomainExplainer() &&
 								this.props.isPlanSelectionAvailableLaterInFlow && (
-									<div className="domains__domain-side-content">
+									<div className="domains__domain-side-content domains__free-domain">
 										<ReskinSideExplainer
 											onClick={ this.handleDomainExplainerClick }
 											type={ 'free-domain-explainer' }
