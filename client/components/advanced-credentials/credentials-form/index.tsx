@@ -48,7 +48,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 			case 'protocol':
 				onFormStateChange( {
 					...formState,
-					protocol: currentTarget.value as 'ftp' | 'ssh',
+					protocol: currentTarget.value as 'ftp' | 'ssh' | 'dynamic-ssh',
 					port: ( () => {
 						let port = parseInt( String( formState.port ) );
 

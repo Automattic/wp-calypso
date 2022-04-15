@@ -1,14 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
-import { StorageUsageLevels } from '../storage-usage-levels';
+import { StorageUsageLevelName, StorageUsageLevels } from '../storage-usage-levels';
 import ManageStorage from './manage-storage';
 import siteCanUpgradeBackupStorage from './site-can-upgrade-backup-storage';
 import Upsell from './upsell';
 
 type OwnProps = {
 	siteId: number;
-	usageLevel: StorageUsageLevels;
+	usageLevel: StorageUsageLevelName;
 	bytesUsed: number;
 };
 

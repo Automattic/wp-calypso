@@ -10,6 +10,7 @@ import { LocaleContext } from '../gutenboarding/components/locale-context';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
 import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
+import { getAnchorPodcastId } from './declarative-flow/get-anchor-podcast-id';
 import { FlowRenderer } from './declarative-flow/internals';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';
@@ -44,14 +45,9 @@ window.AppBoot = async () => {
 
 	const queryClient = new QueryClient();
 
-	const sanitizePodcastId = ( id: string | null ) => id?.replace( /[^a-zA-Z0-9]/g, '' );
-	const search = location.search;
-
-	const anchorPodcastId = sanitizePodcastId(
-		new URLSearchParams( search ).get( 'anchor_podcast' )
-	);
-
 	let flow = siteSetupFlow;
+
+	const anchorPodcastId = getAnchorPodcastId();
 
 	if ( anchorPodcastId && config.isEnabled( 'signup/anchor-fm' ) ) {
 		flow = anchorFmFlow;

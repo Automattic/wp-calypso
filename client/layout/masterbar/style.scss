@@ -2,6 +2,7 @@ $autobar-height: 20px;
 
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
+@import 'client/assets/stylesheets/shared/_animation.scss';
 
 // Hide the masterbar on WP Mobile App views.
 .is-mobile-app-view {
@@ -50,6 +51,89 @@ $autobar-height: 20px;
 			-webkit-font-smoothing: antialiased;
 		}
 	}
+	.masterbar__mobile-menu-backdrop {
+		position: fixed;
+		top: 0;
+		left: 0;
+		height: calc( 100% - var( --masterbar-height ) );
+		width: 100%;
+	}
+	.masterbar__mobile-menu-inner {
+		width: 100%;
+		background: #23282d;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		padding: 10px;
+		box-sizing: border-box;
+		animation: appear 200ms ease-out forwards;
+		margin-top: var( --masterbar-height );
+
+		.masterbar__item {
+			width: 100%;
+			justify-content: flex-start;
+			box-sizing: border-box;
+			// icon colors
+			color: #a2aab2;
+			margin-left: 0;
+
+			.gridicon {
+				fill: #a2aab2;
+			}
+
+			.masterbar__item-content {
+				display: flex;
+				align-items: center;
+				color: white;
+				font-size: $font-body-small;
+				font-weight: 400;
+
+				.masterbar__item-me-label {
+					display: block;
+					padding-left: 6px;
+				}
+				.masterbar__item-me-gravatar {
+					position: relative;
+					top: initial;
+					left: initial;
+					transform: initial;
+					border-color: #a2aab2;
+				}
+			}
+		}
+	}
+}
+
+.masterbar__new-menu-popover {
+	animation: fadeIn 0.2s;
+}
+
+.masterbar__new-menu-popover-inner {
+	text-align: initial;
+	padding: 16px;
+	box-sizing: border-box;
+	h1 {
+		font-weight: 500;
+		font-size: $font-body;
+		margin: 5px 0;
+	}
+	p {
+		font-size: $font-body-small;
+		margin-top: 4px;
+	}
+	.masterbar__new-menu-popover-actions {
+		display: flex;
+		justify-content: flex-end;
+		margin-top: 24px;
+		.button {
+			padding: 8px 22px;
+			font-size: $font-body-small;
+		}
+	}
+}
+
+.masterbar__new-menu-popover.is-bottom-left {
+	right: 16px;
 }
 
 .pride .masterbar {
@@ -120,10 +204,15 @@ $autobar-height: 20px;
 }
 
 .masterbar__section {
-	flex: 2;
 	display: flex;
 
+	&--right {
+		flex: 1;
+		justify-content: flex-end;
+	}
+
 	@include breakpoint-deprecated( '>480px' ) {
+		flex: 2;
 		.masterbar__item {
 			flex: 0 0 auto;
 		}
@@ -144,7 +233,6 @@ $autobar-height: 20px;
 		flex-grow: 0;
 	}
 }
-
 
 .masterbar__drafts {
 	white-space: nowrap;
@@ -254,9 +342,10 @@ $autobar-height: 20px;
 	}
 
 	@include breakpoint-deprecated( '<480px' ) {
-		.gridicon {
-			margin: 0 auto;
-		}
+		width: 48px;
+		// reset flex value on mobile
+		flex: 0 1 auto;
+		padding: 0;
 
 		.masterbar__item-content {
 			display: none;
@@ -285,13 +374,6 @@ $autobar-height: 20px;
 	@include breakpoint-deprecated( '<480px' ) {
 		& {
 			padding-right: 14px;
-		}
-
-		.masterbar__item-content {
-			display: block;
-			margin: 0 auto;
-			width: 30px;
-			overflow: hidden;
 		}
 
 		.masterbar__wpcom-logo {
@@ -379,15 +461,17 @@ $autobar-height: 20px;
 }
 
 .masterbar__item-new {
-	background: var( --color-surface );
 	border-radius: 2px;
 	color: var( --color-primary );
 	height: 36px;
 	margin: 5px 8px;
 	transition: all 0.2s ease-out;
 
-	@include breakpoint-deprecated( '<480px' ) {
-		padding: 0 8px;
+	// @include breakpoint-deprecated( '<480px' ) {
+	// 	padding: 0 8px;
+	// }
+	@include breakpoint-deprecated( '>480px' ) {
+		background: var( --color-surface );
 	}
 
 	&.has-drafts {
@@ -459,7 +543,7 @@ $autobar-height: 20px;
 
 .masterbar__item-upsell {
 	height: 24px;
-    margin-top: 4px;
+	margin-top: 4px;
 
 	@media only screen and ( max-width: 782px ) {
 		height: 34px;
@@ -591,6 +675,10 @@ $autobar-height: 20px;
 	.async-load {
 		display: none;
 	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		border-bottom: 1px solid #646970;
+	}
 }
 
 .masterbar__toggle-drafts.button.is-borderless {
@@ -604,7 +692,15 @@ $autobar-height: 20px;
 	// stylelint-disable-next-line scales/font-weights
 	font-weight: 500;
 	color: var( --color-text );
-	border-left: 1px solid var( --studio-gray-5 );
+
+	
+	@include breakpoint-deprecated( '>480px' ) {
+		border-left: 1px solid var( --studio-gray-5 );
+	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		background: none;
+	}
 
 	&:hover {
 		background-color: var( --color-neutral-0 );
@@ -781,5 +877,16 @@ a.masterbar__quick-language-switcher {
 			color: var( --color-jetpack-masterbar-text );
 			transform: translateY( -1px );
 		}
+	}
+}
+
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
 	}
 }

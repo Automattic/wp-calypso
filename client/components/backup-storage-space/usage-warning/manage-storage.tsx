@@ -2,11 +2,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import { StorageUsageLevels } from '../storage-usage-levels';
 import ActionButton from './action-button';
+import type { StorageUsageLevelName } from '../storage-usage-levels';
 
 type OwnProps = {
-	usageLevel: StorageUsageLevels;
+	usageLevel: StorageUsageLevelName;
 	bytesUsed: number;
 };
 
@@ -17,7 +17,7 @@ const ManageStorage: React.FC< OwnProps > = ( { usageLevel, bytesUsed } ) => {
 	useEffect( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_backup_storage_managestorage_display', {
-				type: StorageUsageLevels[ usageLevel ],
+				type: usageLevel,
 				bytes_used: bytesUsed,
 			} )
 		);

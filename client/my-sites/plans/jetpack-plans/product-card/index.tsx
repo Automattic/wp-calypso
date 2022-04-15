@@ -165,12 +165,15 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	const isDisabled =
 		( ( isMultisite && ! isMultisiteCompatible ) ||
 			isCrmMonthlyProduct ||
-			( ! purchase && item.type === ITEM_TYPE_PLAN && jetpackUpgradesLocked ) ||
-			( purchase && isNotPlanOwner ) ) ??
+			( ! purchase && item.type === ITEM_TYPE_PLAN && jetpackUpgradesLocked ) ) ??
 		false;
 
+	// Disable the button CTA if the overall product card is disabled, or disable
+	//  the "Manage Plan/Subscription" button if the user is not the purchase owner.
+	const buttonDisabled = isOwned || isIncludedInPlan ? isDisabled || isNotPlanOwner : isDisabled;
+
 	let disabledMessage;
-	if ( isDisabled && isNotPlanOwner ) {
+	if ( isDisabled ) {
 		if ( ! isMultisiteCompatible && ! isDeprecated ) {
 			disabledMessage = translate( 'Not available for multisite WordPress installs' );
 		} else if ( isCrmMonthlyProduct ) {
@@ -220,6 +223,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			buttonURL={
 				createButtonURL ? createButtonURL( item, isUpgradeableToYearly, purchase ) : undefined
 			}
+			buttonDisabled={ isDisabled || buttonDisabled }
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isFeatured={ isFeatured }
 			isOwned={ isOwned }

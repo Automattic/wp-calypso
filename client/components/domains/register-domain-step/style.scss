@@ -141,7 +141,11 @@
 	color: var( --studio-gray-40 );
 	display: flex;
 	align-items: center;
-	margin: 0 20px;
+	margin: 0;
+
+	@include break-small {
+		margin: 0 20px;
+	}
 
 	svg {
 		fill: #a7aaad;
