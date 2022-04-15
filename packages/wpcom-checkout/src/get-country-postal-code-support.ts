@@ -14,7 +14,7 @@ export function getCountryPostalCodeSupport(
 	if ( ! countryCode ) {
 		return false;
 	}
-	if ( ! countries ) {
+	if ( ! countries?.length ) {
 		// eslint-disable-next-line no-console
 		console.error(
 			'Error: getCountryPostalCodeSupport was called without a countries list. This will result in incorrect data!'
