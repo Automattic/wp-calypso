@@ -355,7 +355,7 @@ export class ContactDetailsFormFields extends Component {
 	}
 
 	getCountryPostalCodeSupport = ( countryCode ) =>
-		this.props.countriesList && countryCode
+		this.props.countriesList?.length && countryCode
 			? getCountryPostalCodeSupport( this.props.countriesList, countryCode )
 			: false;
 

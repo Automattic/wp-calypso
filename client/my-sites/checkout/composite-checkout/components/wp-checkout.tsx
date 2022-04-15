@@ -226,7 +226,7 @@ export default function WPCheckout( {
 	const { formStatus } = useFormStatus();
 
 	const arePostalCodesSupported =
-		countriesList && contactInfo.countryCode?.value
+		countriesList.length && contactInfo.countryCode?.value
 			? getCountryPostalCodeSupport( countriesList, contactInfo.countryCode.value )
 			: false;
 

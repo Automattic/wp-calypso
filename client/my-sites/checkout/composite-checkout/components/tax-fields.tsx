@@ -49,7 +49,7 @@ export default function TaxFields( {
 	const translate = useTranslate();
 	const { postalCode, countryCode } = taxInfo;
 	const arePostalCodesSupported =
-		countriesList && countryCode?.value
+		countriesList.length && countryCode?.value
 			? getCountryPostalCodeSupport( countriesList, countryCode.value )
 			: false;
 
@@ -108,7 +108,7 @@ function updatePostalCodeForCountry(
 	countriesList: CountryListItem[]
 ): ManagedValue | undefined {
 	const arePostalCodesSupported =
-		countriesList && countryCode?.value
+		countriesList.length && countryCode?.value
 			? getCountryPostalCodeSupport( countriesList, countryCode.value )
 			: false;
 	if ( ! arePostalCodesSupported ) {
