@@ -1,32 +1,52 @@
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import FormLabel from 'calypso/components/forms/form-label';
-import { useSiteVerticalsQuery } from 'calypso/data/site-verticals';
+import { useSiteVerticalQueryById, useSiteVerticalsQuery } from 'calypso/data/site-verticals';
 import SuggestionSearch from './suggestion-search';
 import type { Vertical } from './types';
 import type { SiteVerticalsResponse } from 'calypso/data/site-verticals';
 
 interface Props {
+	defaultVertical?: string;
 	isSkipSynonyms?: boolean;
 	onSelect?: ( vertical: Vertical ) => void;
 }
 
-const SelectVertical: React.FC< Props > = ( { isSkipSynonyms, onSelect } ) => {
+const SelectVertical: React.FC< Props > = ( { defaultVertical, isSkipSynonyms, onSelect } ) => {
 	const translate = useTranslate();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
-	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
-	const { data: suggestions } = useSiteVerticalsQuery(
-		{ term: debouncedSearchTerm, skip_synonyms: isSkipSynonyms },
-		{ enabled: '' !== debouncedSearchTerm }
-	);
+	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 150 );
+	const isDebouncing = searchTerm !== debouncedSearchTerm;
 
-	const mapSiteVerticalsResponseToVertical = ( verticals: SiteVerticalsResponse[] ): Vertical[] =>
-		verticals.map( ( vertical: SiteVerticalsResponse ) => ( {
-			value: vertical.id,
-			label: vertical.title,
-			category: String( translate( 'Suggestions' ) ),
-		} ) );
+	const { data: defaultValue, isLoading: isLoadingDefaultVertical } = useSiteVerticalQueryById(
+		defaultVertical || ''
+	);
+	const { data: suggestions, isLoading: isLoadingSuggestions } = useSiteVerticalsQuery( {
+		term: debouncedSearchTerm,
+		skip_synonyms: isSkipSynonyms,
+	} );
+
+	const mapOneSiteVerticalsResponseToVertical = ( vertical: SiteVerticalsResponse ): Vertical => ( {
+		value: vertical.id,
+		label: vertical.title,
+		category: String( translate( 'Suggestions' ) ),
+	} );
+
+	const mapManySiteVerticalsResponseToVertical = (
+		verticals: SiteVerticalsResponse[]
+	): Vertical[] =>
+		verticals.map( ( vertical: SiteVerticalsResponse ) =>
+			mapOneSiteVerticalsResponseToVertical( vertical )
+		);
+
+	useEffect( () => {
+		if ( defaultValue ) {
+			const suggestion = mapOneSiteVerticalsResponseToVertical( defaultValue );
+			setSearchTerm( suggestion.label );
+			onSelect?.( suggestion );
+		}
+	}, [ defaultValue ] );
 
 	return (
 		<>
@@ -34,8 +54,11 @@ const SelectVertical: React.FC< Props > = ( { isSkipSynonyms, onSelect } ) => {
 			<SuggestionSearch
 				placeholder={ String( translate( 'Ex. Cafe, Education, Photography' ) ) }
 				searchTerm={ searchTerm }
-				suggestions={ mapSiteVerticalsResponseToVertical( suggestions || [] ) }
-				isLoading={ undefined === suggestions }
+				suggestions={
+					! isDebouncing ? mapManySiteVerticalsResponseToVertical( suggestions || [] ) : []
+				}
+				isLoading={ isDebouncing || isLoadingDefaultVertical || isLoadingSuggestions }
+				isDisableInput={ isLoadingDefaultVertical }
 				onInputChange={ setSearchTerm }
 				onSelect={ onSelect }
 			/>

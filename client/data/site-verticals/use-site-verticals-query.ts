@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions, UseQueryResult, QueryKey } from 'react-query';
+import { useQuery, UseQueryResult, QueryKey } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 import type { SiteVerticalsResponse, SiteVerticalsQueryParams } from './types';
 
@@ -9,14 +9,15 @@ const defaults = {
 };
 
 const useSiteVerticalsQuery = (
-	fetchOptions: SiteVerticalsQueryParams = {},
-	{ enabled = false }: UseQueryOptions = {}
+	fetchOptions: SiteVerticalsQueryParams = {}
 ): UseQueryResult< SiteVerticalsResponse[] > => {
+	const { term } = fetchOptions;
+
 	return useQuery(
-		getCacheKey( fetchOptions.term || '' ),
+		getCacheKey( term || '' ),
 		() => fetchSiteVerticals( { ...defaults, ...fetchOptions } ),
 		{
-			enabled,
+			enabled: typeof term === 'string' && term !== '',
 			staleTime: Infinity,
 			refetchInterval: false,
 			refetchOnMount: 'always',

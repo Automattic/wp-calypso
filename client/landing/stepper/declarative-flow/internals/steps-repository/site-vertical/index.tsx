@@ -1,5 +1,5 @@
 import { StepContainer } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import siteVerticalImage from 'calypso/assets/images/onboarding/site-vertical.svg';
@@ -15,8 +15,12 @@ import type { Vertical } from 'calypso/components/select-vertical/types';
 const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const { goNext, submit } = navigation;
 	const [ vertical, setVertical ] = React.useState< Vertical | null >();
+	const [ isBusy, setIsBusy ] = React.useState( false );
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 	const site = useSite();
+	const siteVertical = useSelect(
+		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site?.ID ) ) || undefined
+	);
 	const translate = useTranslate();
 	const headerText = translate( 'What’s your website about?' );
 	const subHeaderText = translate( 'Choose a category that defines your website the best.' );
@@ -28,18 +32,24 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
+
 		if ( site && vertical ) {
-			const vertical_id = vertical.value;
+			const { value, label } = vertical;
 
-			await saveSiteSettings( site.ID, { site_vertical: vertical_id } );
+			setIsBusy( true );
+			await saveSiteSettings( site.ID, { site_vertical_id: value } );
 			recordTracksEvent( 'calypso_signup_site_vertical_submit', {
-				vertical_id,
-				vertical_title: vertical.label,
+				vertical_id: value,
+				vertical_title: label,
 			} );
-
+			setIsBusy( false );
 			submit?.();
 		}
 	};
+
+	if ( ! site ) {
+		return null;
+	}
 
 	return (
 		<StepContainer
@@ -60,7 +70,9 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 			}
 			stepContent={
 				<SiteVerticalForm
+					defaultVertical={ siteVertical }
 					isSkipSynonyms={ Boolean( isSkipSynonyms ) }
+					isBusy={ isBusy }
 					onSelect={ handleSiteVerticalSelect }
 					onSubmit={ handleSubmit }
 				/>

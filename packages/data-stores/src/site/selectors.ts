@@ -32,6 +32,9 @@ export const getSiteIdBySlug = ( _: State, slug: string ) => {
 export const getSiteTitle = ( _: State, siteId: number ) =>
 	select( STORE_KEY ).getSite( siteId )?.name;
 
+export const getSiteVerticalId = ( _: State, siteId: number ) =>
+	select( STORE_KEY ).getSite( siteId )?.options?.site_vertical_id;
+
 // @TODO: Return LaunchStatus instead of a boolean
 export const isSiteLaunched = ( state: State, siteId: number ) => {
 	return state.launchStatus[ siteId ]?.status === SiteLaunchStatus.SUCCESS;

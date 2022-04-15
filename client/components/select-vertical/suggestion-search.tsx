@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FC, ChangeEvent, useCallback, useMemo, useRef, useState } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import Spinner from 'calypso/components/spinner';
 import type { Vertical } from './types';
 import './style.scss';
 
@@ -10,6 +11,7 @@ interface Props {
 	placeholder?: string;
 	searchTerm: string;
 	suggestions: Vertical[];
+	isDisableInput?: boolean | undefined;
 	isLoading?: boolean | undefined;
 	onInputChange?: ( value: string ) => void;
 	onSelect?: ( vertical: Vertical ) => void;
@@ -19,6 +21,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 	placeholder,
 	searchTerm,
 	suggestions,
+	isDisableInput,
 	isLoading,
 	onInputChange,
 	onSelect,
@@ -34,7 +37,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 	}, [ setIsShowSuggestions, setIsFocused ] );
 
 	const handleTextInputFocus = useCallback( () => {
-		if ( 0 < suggestions.length ) {
+		if ( suggestions.length > 0 ) {
 			setIsShowSuggestions( true );
 		}
 
@@ -43,7 +46,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 
 	const handleTextInputChange = useCallback(
 		( event: ChangeEvent< HTMLInputElement > ) => {
-			setIsShowSuggestions( 0 < event.target.value.trim().length );
+			setIsShowSuggestions( event.target.value.trim().length > 0 );
 			onInputChange?.( event.target.value );
 		},
 		[ setIsShowSuggestions, onInputChange ]
@@ -96,9 +99,11 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 				'is-show-suggestions': isShowSuggestions,
 			} ) }
 		>
+			{ isLoading && isShowSuggestions && <Spinner /> }
 			<FormTextInput
 				value={ searchTerm }
 				placeholder={ placeholder }
+				disabled={ isDisableInput }
 				onBlur={ handleTextInputBlur }
 				onFocus={ handleTextInputFocus }
 				onChange={ handleTextInputChange }
