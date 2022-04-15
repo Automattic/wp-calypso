@@ -8,6 +8,8 @@ const selectors = {
 
 	colorTypeToggle: ( colorType: ColorType ) =>
 		`${ parentSelector } [aria-label="Select color type"] button[aria-label="${ colorType }"]`,
+
+	customColorButton: `${ parentSelector } [aria-label^="Custom color picker"]`,
 };
 
 type ColorType = 'Solid' | 'Gradient';
@@ -18,9 +20,9 @@ interface ColorSwatch {
 	colorName: DefaultColorNames | ThemeColorPurposes;
 }
 /**
- * Type guard to determine if solid color is a DefaultSwatch.
+ * Type guard to determine if a SolidColor is a DefaultSwatch.
  *
- * @param {SolidColor} solidColor The solid color configuration.
+ * @param {SolidColor} solidColor The SolidColor configuration settings.
  * @returns Type guard for DefaultSwatch.
  */
 function isColorSwatch( solidColor: SolidColor ): solidColor is ColorSwatch {
@@ -31,9 +33,9 @@ interface CustomColor {
 	hexValue: string;
 }
 /**
- * Type guard to determine if solid color is a CustomColor.
+ * Type guard to determine if a SolidColor is a CustomColor.
  *
- * @param {SolidColor} solidColor The solid color configuration.
+ * @param {SolidColor} solidColor The SolidColor configuration settings.
  * @returns Type guard for CustomColor.
  */
 function isCustomColor( solidColor: SolidColor ): solidColor is CustomColor {
@@ -47,8 +49,9 @@ type SolidColor = ColorSwatch | CustomColor;
  * @returns
  */
 function isSolidColor( colorSettings: ColorSettings ): colorSettings is SolidColor {
-	const solidColor = colorSettings as SolidColor;
-	return isColorSwatch( solidColor ) || isCustomColor( solidColor );
+	return (
+		isColorSwatch( colorSettings as SolidColor ) || isCustomColor( colorSettings as SolidColor )
+	);
 }
 
 type GradientColor = 'NOT IMPLEMENTED';
@@ -90,16 +93,41 @@ export class EditorColorPickerComponent {
 	 * @param colorSettings
 	 */
 	private async setSolidColor( colorSettings: SolidColor ): Promise< void > {
-		const solidToggleLocator = this.editor.locator( selectors.colorTypeToggle( 'Solid' ) );
-		await solidToggleLocator.click();
+		if ( await this.colorTypeToggleIsAvailable() ) {
+			await this.toggleColorType( 'Solid' );
+		}
+		// If the toggle is not available, it's only solid colors anyway -- we can proceed!
 
 		if ( isCustomColor( colorSettings ) ) {
 			throw new Error( 'Custom colors have not been implemented yet.' );
 		}
 
 		if ( isColorSwatch( colorSettings ) ) {
-			const locator = this.editor.locator( selectors.colorSwatchButton( colorSettings.colorName ) );
-			await locator.click();
+			const swatchLocator = this.editor.locator(
+				selectors.colorSwatchButton( colorSettings.colorName )
+			);
+			await swatchLocator.click();
 		}
+	}
+
+	/**
+	 *
+	 * @param colorType
+	 */
+	private async toggleColorType( colorType: ColorType ): Promise< void > {
+		const locator = this.editor.locator( selectors.colorTypeToggle( colorType ) );
+		await locator.click();
+	}
+
+	/**
+	 *
+	 * @returns
+	 */
+	private async colorTypeToggleIsAvailable(): Promise< boolean > {
+		const customColorLocator = this.editor.locator( selectors.customColorButton );
+		await customColorLocator.waitFor();
+
+		const toggleLocator = this.editor.locator( selectors.colorTypeToggle( 'Solid' ) );
+		return ( await toggleLocator.count() ) > 0;
 	}
 }

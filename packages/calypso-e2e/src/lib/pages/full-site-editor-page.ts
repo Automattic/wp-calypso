@@ -5,10 +5,14 @@ import {
 	EditorToolbarComponent,
 	EditorWelcomeTourComponent,
 	SiteType,
+	EditorPopoverMenuComponent,
+	EditorSiteStylesComponent,
+	ColorSettings,
+	TypographySettings,
+	ColorLocation,
 } from '..';
 import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
-import { EditorPopoverMenuComponent } from '../components';
 
 const wpAdminPath = 'wp-admin/themes.php';
 
@@ -18,6 +22,8 @@ const selectors = {
 	editorCanvasIframe: 'iframe[name="editor-canvas"]',
 	editorCanvasRoot: '.wp-site-blocks',
 	templateLoadingSpinner: '[aria-label="Block: Template Part"] .components-spinner',
+	closeStylesWelcomeGuideButton:
+		'[aria-label="Welcome to styles"] button[aria-label="Close dialog"]',
 };
 
 /**
@@ -33,6 +39,7 @@ export class FullSiteEditorPage {
 	private editorSidebarBlockInserterComponent: EditorSidebarBlockInserterComponent;
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
 	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
+	private editorSiteStylesComponent: EditorSiteStylesComponent;
 
 	/**
 	 * Constructs an instance of the page POM class.
@@ -61,6 +68,7 @@ export class FullSiteEditorPage {
 		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
 		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
+		this.editorSiteStylesComponent = new EditorSiteStylesComponent( page, this.editor );
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
 			page,
 			this.editor
@@ -170,8 +178,53 @@ export class FullSiteEditorPage {
 	/**
 	 * Opens the site styles sidebar in the site editor.
 	 */
-	async openSiteStyles(): Promise< void > {
-		await this.editorToolbarComponent.openMoreOptionsMenu();
-		await this.editorPopoverMenuComponent.clickMenuButton( 'Styles' );
+	async openSiteStyles(
+		{ closeWelcomeGuide }: { closeWelcomeGuide: boolean } = { closeWelcomeGuide: true }
+	): Promise< void > {
+		if ( ! ( await this.editorSiteStylesComponent.siteStylesIsOpen() ) ) {
+			await this.editorToolbarComponent.openMoreOptionsMenu();
+
+			if ( closeWelcomeGuide ) {
+				// The unawaited promise and no-op catch are intentional here!
+				// We want to close the welcome guide if it opens, but not slow down the test if it doesn't.
+				// This will effectively register a handler that waits for the welcome guide to close it if it appears
+				// but otherwise doesn't affect the following actions.
+				const safelyWatchForWelcomeGuide = () => this.closeStylesWelcomeGuide().catch();
+				safelyWatchForWelcomeGuide();
+			}
+			await this.editorPopoverMenuComponent.clickMenuButton( 'Styles' );
+		}
+	}
+
+	/**
+	 *
+	 */
+	private async closeStylesWelcomeGuide(): Promise< void > {
+		const locator = this.editor.locator( selectors.closeStylesWelcomeGuideButton );
+		await locator.click( { timeout: 5 * 1000 } );
+	}
+
+	/**
+	 *
+	 * @param colorLocation
+	 * @param colorSettings
+	 */
+	async setGlobalColorStlye(
+		colorLocation: ColorLocation,
+		colorSettings: ColorSettings
+	): Promise< void > {
+		await this.editorSiteStylesComponent.setGlobalColor( colorLocation, colorSettings );
+	}
+
+	/**
+	 *
+	 * @param blockName
+	 * @param typographySettings
+	 */
+	async setBlockTypographyStyle(
+		blockName: string,
+		typographySettings: TypographySettings
+	): Promise< void > {
+		await this.editorSiteStylesComponent.setBlockTypography( blockName, typographySettings );
 	}
 }

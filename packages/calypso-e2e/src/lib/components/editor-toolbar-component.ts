@@ -315,7 +315,7 @@ export class EditorToolbarComponent {
 	 * Opens the more options menu (three dots).
 	 */
 	async openMoreOptionsMenu(): Promise< void > {
-		if ( ! this.targetIsOpen( selectors.moreOptionsButton ) ) {
+		if ( ! ( await this.targetIsOpen( selectors.moreOptionsButton ) ) ) {
 			const locator = this.editor.locator( selectors.moreOptionsButton );
 			await locator.click();
 		}

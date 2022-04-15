@@ -12,9 +12,10 @@ const selectors = {
 	navigationButton: ( buttonName: string ) =>
 		`${ parentSelector } button.components-navigator-button:has-text("${ buttonName }")`,
 	closeSidebarButton: 'button[aria-label="Close global styles sidebar"]',
+	backButton: `${ parentSelector } button[aria-label="Navigate to the previous view"]`,
 };
 
-type ColorLocation = 'Background' | 'Text' | 'Links';
+export type ColorLocation = 'Background' | 'Text' | 'Links';
 
 /**
  * Represents the site editor site styles sidebar/panel.
@@ -52,7 +53,7 @@ export class EditorSiteStylesComponent {
 	 *
 	 */
 	async closeSiteStyles(): Promise< void > {
-		if ( await this.siteStylesIsOpen ) {
+		if ( await this.siteStylesIsOpen() ) {
 			const locator = this.editor.locator( selectors.closeSidebarButton );
 			await locator.click();
 		}
@@ -67,9 +68,10 @@ export class EditorSiteStylesComponent {
 		colorLocation: ColorLocation,
 		colorSettings: ColorSettings
 	): Promise< void > {
+		await this.returnToTopMenu();
 		await this.clickNavigationButton( 'Colors' );
 		await this.clickNavigationButton( colorLocation );
-		this.editorColorPickerComponent.setColor( colorSettings );
+		await this.editorColorPickerComponent.setColor( colorSettings );
 	}
 
 	// In future: setBlockColor()
@@ -85,6 +87,7 @@ export class EditorSiteStylesComponent {
 		blockName: string,
 		typographySettings: TypographySettings
 	): Promise< void > {
+		await this.returnToTopMenu();
 		await this.clickNavigationButton( 'Blocks' );
 		await this.clickNavigationButton( blockName );
 		await this.clickNavigationButton( 'Typography' );
@@ -98,5 +101,15 @@ export class EditorSiteStylesComponent {
 	private async clickNavigationButton( buttonName: string ): Promise< void > {
 		const locator = this.editor.locator( selectors.navigationButton( buttonName ) );
 		await locator.click();
+	}
+
+	/**
+	 *
+	 */
+	private async returnToTopMenu(): Promise< void > {
+		const backButtonLocator = this.editor.locator( selectors.backButton );
+		while ( ( await backButtonLocator.count() ) > 0 ) {
+			await backButtonLocator.click();
+		}
 	}
 }

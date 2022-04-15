@@ -1,5 +1,8 @@
 import { Locator, Page } from 'playwright';
 
+type FontSize = 'Small' | 'Medium' | 'Large' | 'Extra Large'; // expand as needed.
+type FontAppearance = 'Default' | 'Thin' | 'Regular' | 'Medium'; // expand as needed.
+
 export interface TypographySettings {
 	fontSize?: FontSize | number;
 	lineHeight?: number;
@@ -8,16 +11,13 @@ export interface TypographySettings {
 	// Can add other block editor ones later (like drop cap)
 }
 
-type FontSize = 'Small' | 'Medium' | 'Large' | 'Extra Large'; // expand as needed.
-type FontAppearance = 'Default' | 'Thin' | 'Regular' | 'Medium'; // expand as needed.
-
 type EditorContext = 'site' | 'block';
 
 const parentSelector = '[class*="typography"]'; // Support block and site.
 const selectors = {
 	appearanceDropdownButton: `${ parentSelector } button[aria-label="Appearance"]`,
 	appearanceSelection: ( appearance: FontAppearance ) =>
-		`${ parentSelector } .components-font-appearance-control [role=option]:has-text("${ appearance }")`,
+		`${ parentSelector } .components-font-appearance-control [role=option]:text-is("${ appearance }")`,
 };
 
 /**

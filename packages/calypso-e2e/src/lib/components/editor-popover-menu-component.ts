@@ -3,7 +3,7 @@ import { Page, Locator } from 'playwright';
 const popoverParentSelector = '.popover-slot .components-popover';
 
 const selectors = {
-	menuButton: ( name: string ) => `${ popoverParentSelector } button:has-text("${ name }")`,
+	menuButton: ( name: string ) => `${ popoverParentSelector } button  :text-is("${ name }")`,
 };
 
 /**
