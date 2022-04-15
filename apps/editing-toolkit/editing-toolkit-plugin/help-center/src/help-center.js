@@ -5,6 +5,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
 import React from 'react';
 import './help-center.scss';
+import Content from './help-center-content';
 
 const HelpIcon = ( { newItems, active } ) => (
 	<svg width="26" height="25" viewBox="0 0 26 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -51,7 +52,7 @@ function HelpCenterComponent() {
 				</span>
 			</PinnedItems>
 			{ isActive && (
-				<HelpCenter content={ <h1>Help center</h1> } handleClose={ () => setIsActive( false ) } />
+				<HelpCenter content={ <Content /> } handleClose={ () => setIsActive( false ) } />
 			) }
 		</>
 	);

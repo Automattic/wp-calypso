@@ -15,3 +15,10 @@ export interface Header {
 	onMaximize?: () => void;
 	onDismiss: () => void;
 }
+
+export interface HelpResult {
+	link: string;
+	title: string;
+	description: string;
+	image: any;
+}
