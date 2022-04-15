@@ -11,6 +11,9 @@ export function getCountryPostalCodeSupport(
 	countries: CountryListItem[],
 	countryCode: string
 ): boolean {
+	if ( ! countryCode ) {
+		return false;
+	}
 	if ( ! countries ) {
 		// eslint-disable-next-line no-console
 		console.error(
