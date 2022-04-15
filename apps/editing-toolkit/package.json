@@ -43,8 +43,7 @@
 		"test:js:update-snapshots": "npx wp-scripts test-unit-js -u --config='jest.config.js' --colors",
 		"test:js:watch": "npx wp-scripts test-unit-js --config='jest.config.js' --watch --colors",
 		"test:php": "npx wp-env run phpunit 'phpunit -c /var/www/html/wp-content/plugins/editing-toolkit-plugin/phpunit.xml.dist'",
-		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh",
-		"en": "npx wp-env start --update"
+		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
