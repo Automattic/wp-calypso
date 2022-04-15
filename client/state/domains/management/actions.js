@@ -3,7 +3,6 @@ import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_RECEIVE,
-	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_SAVE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
 	DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
@@ -44,7 +43,7 @@ export function receiveContactDetailsCache( data ) {
 export function requestContactDetailsCache() {
 	return ( dispatch ) => {
 		dispatch( {
-			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_SAVE,
+			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
 		} );
 
 		wpcom.req
