@@ -29,17 +29,6 @@ function areTaxFieldsDifferent(
 	return true;
 }
 
-function areAnyContactFieldsDifferent(
-	previous: PossiblyCompleteDomainContactDetails | undefined,
-	next: PossiblyCompleteDomainContactDetails | undefined
-): boolean {
-	return Object.keys( next ?? {} ).some( ( key: string ) => {
-		const previousRecord = previous as undefined | Record< string, string | null | undefined >;
-		const nextRecord = next as undefined | Record< string, string | null | undefined >;
-		return previousRecord?.[ key ] !== nextRecord?.[ key ];
-	} );
-}
-
 /**
  * Load cached contact details from the server and use them to populate the
  * checkout contact form and the shopping cart tax location.
@@ -86,7 +75,7 @@ export default function useCachedDomainContactDetails(
 		// Do nothing if the cached data has not changed since the last time we
 		// sent the data to the form (this typically will only ever need to be
 		// activated once).
-		if ( ! areAnyContactFieldsDifferent( previousDetailsForForm.current, cachedContactDetails ) ) {
+		if ( previousDetailsForForm.current === cachedContactDetails ) {
 			return;
 		}
 		previousDetailsForForm.current = cachedContactDetails;
