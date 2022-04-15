@@ -1,4 +1,5 @@
 import * as Auth from './auth';
+import * as AutomatedTransferEligibility from './automated-transfer-eligibility';
 import * as DomainSuggestions from './domain-suggestions';
 import * as HelpCenter from './help-center';
 import * as I18n from './i18n';
@@ -30,6 +31,7 @@ export {
 	Onboard,
 	persistenceConfigFactory,
 	ProductsList,
+	AutomatedTransferEligibility,
 };
 
 /**
