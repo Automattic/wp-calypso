@@ -6,6 +6,7 @@ import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryAllDomains from 'calypso/components/data/query-all-domains';
 import QueryAllDomainsWithDetails from 'calypso/components/data/query-all-domains-with-details';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import InlineSupportLink from 'calypso/components/inline-support-link';
