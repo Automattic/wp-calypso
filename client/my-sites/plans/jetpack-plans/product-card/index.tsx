@@ -10,25 +10,20 @@ import {
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import * as React from 'react';
-import { useSelector, connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useExperiment } from 'calypso/lib/explat';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { ITEM_TYPE_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getUserOwnsPurchase } from 'calypso/state/purchases/selectors/get-user-owns-purchase';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
-import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
 import productAboveButtonText from './product-above-button-text';
@@ -57,7 +52,8 @@ interface ProductCardProps {
 	hideSavingLabel?: boolean;
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
 	collapseFeaturesOnMobile?: boolean;
-	isJetpackPricingPage?: boolean;
+	isPricingPageTreatment202204?: boolean;
+	isPricingPageTest202204AssignmentLoading?: boolean;
 }
 
 const ProductCard: React.FC< ProductCardProps > = ( {
@@ -73,7 +69,8 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	hideSavingLabel,
 	scrollCardIntoView,
 	collapseFeaturesOnMobile,
-	isJetpackPricingPage,
+	isPricingPageTreatment202204,
+	isPricingPageTest202204AssignmentLoading,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -215,13 +212,6 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		buttonLabel
 	);
 
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'calypso_jetpack_pricing_page_focus_on_intro_rate_202204_v1'
-	);
-
-	const isPricingPageTreatment202204 =
-		isJetpackPricingPage && experimentAssignment?.variationName === 'treatment';
-
 	return (
 		<JetpackProductCard
 			item={ item }
@@ -255,7 +245,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
 			pricesAreFetching={ pricesAreFetching }
 			isPricingPageTreatment202204={ isPricingPageTreatment202204 }
-			isPricingPageTest202204AssignmentLoading={ isLoadingExperimentAssignment }
+			isPricingPageTest202204AssignmentLoading={ isPricingPageTest202204AssignmentLoading }
 			belowButtonText={
 				isPricingPageTreatment202204 ? translate( 'Renews at the normal rate.' ) : ''
 			}
@@ -263,16 +253,4 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	);
 };
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const currentRoute = siteId
-		? getCurrentRouteParameterized( state, siteId )
-		: getCurrentRoute( state );
-
-	return {
-		isJetpackPricingPage:
-			( isJetpackCloud() && currentRoute === '/pricing' ) ||
-			( isJetpackSite( state, siteId ) && currentRoute === '/plans/:site' ) ||
-			currentRoute === '/jetpack/connect/store',
-	};
-} )( ProductCard );
+export default ProductCard;
