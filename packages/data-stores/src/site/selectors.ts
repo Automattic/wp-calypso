@@ -1,3 +1,4 @@
+import { FEATURE_WOOP } from '@automattic/calypso-products';
 import { select } from '@wordpress/data';
 import { STORE_KEY } from './constants';
 import { SiteLaunchStatus } from './types';

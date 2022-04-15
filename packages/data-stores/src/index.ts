@@ -11,6 +11,7 @@ import * as Site from './site';
 import * as User from './user';
 import * as Verticals from './verticals';
 import * as VerticalsTemplates from './verticals-templates';
+import * as AutomatedTransferEligibility from './woocommerce-eligibility';
 import * as WPCOMFeatures from './wpcom-features';
 
 export {
@@ -28,6 +29,8 @@ export {
 	Reader,
 	Onboard,
 	persistenceConfigFactory,
+	ProductsList,
+	AutomatedTransferEligibility,
 };
 
 /**
