@@ -9,15 +9,14 @@ import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
+import { useThemeSupportsQuery } from 'calypso/data/theme-supports/use-theme-supports-query';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { getCustomizerUrl } from 'calypso/state/sites/selectors';
-import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 function ThemeEnhancements( {
 	isAtomic,
-	currentTheme,
 	siteIsJetpack,
 	handleAutosavingToggle,
 	handleAutosavingRadio,
@@ -31,8 +30,9 @@ function ThemeEnhancements( {
 	const translate = useTranslate();
 	const blockedByFooter = 'footer' === get( fields, 'infinite_scroll_blocked' );
 	const name = 'infinite_scroll';
+	const { data } = useThemeSupportsQuery( siteId );
 	const themeSupportsInfiniteScroll =
-		currentTheme?.tags && currentTheme.tags.some( ( tag ) => tag === 'infinite-scroll' );
+		data?.theme_support && data.theme_support[ 'infinite-scroll' ];
 
 	function RadioOptions() {
 		const options = [
@@ -90,7 +90,7 @@ function ThemeEnhancements( {
 								) }
 							</FormSettingExplanation>
 							<RadioOptions />
-							<hr />{ ' ' }
+							<hr />
 						</>
 					) : null }
 					<SupportInfo
@@ -149,7 +149,7 @@ function ThemeEnhancements( {
 		) : null;
 	}
 
-	return { content };
+	return content;
 }
 
 ThemeEnhancements.defaultProps = {
@@ -173,12 +173,8 @@ ThemeEnhancements.propTypes = {
 export default connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const selectedSiteId = get( site, 'ID' );
-	const currentThemeId = getActiveTheme( state, selectedSiteId );
-	const currentTheme = getCanonicalTheme( state, selectedSiteId, currentThemeId );
 
 	return {
-		currentTheme,
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
-		selectedSiteId,
 	};
 } )( localize( ThemeEnhancements ) );
