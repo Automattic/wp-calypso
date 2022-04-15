@@ -3,7 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-// import PopularCategories from './popular-categories';
+import PopularCategories from './popular-categories';
 import './style.scss';
 
 export type Category = {
@@ -178,7 +178,9 @@ const Categories = ( { onSelect }: { onSelect: ( category: Category ) => void } 
 					) ) }
 				</ul>
 			) }
-			{ /* <PopularCategories onSelect={ onClick } categories={ popularCategories } /> */ }
+			{ selected.slug === 'discover' && (
+				<PopularCategories onSelect={ onClick } categories={ Object.values( popularCategories ) } />
+			) }
 		</div>
 	);
 };

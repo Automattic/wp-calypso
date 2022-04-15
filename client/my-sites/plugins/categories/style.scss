@@ -5,4 +5,22 @@
 		display: flex;
 		align-items: center;
 	}
+
+	.categories__select-list {
+		background: #656667;
+		border: 1px solid #000000;
+		box-sizing: border-box;
+		border-radius: 15px; /* stylelint-disable-line */
+		max-width: 210px;
+		margin: 0;
+		list-style: none;
+		padding: 20px;
+		color: var( --studio-white );
+		position: absolute;
+		z-index: 10;
+
+		li span {
+			cursor: pointer;
+		}
+	}
 }
