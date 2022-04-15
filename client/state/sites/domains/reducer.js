@@ -2,6 +2,8 @@
 
 import { find } from 'lodash';
 import {
+	ALL_DOMAINS_TEST_REQUEST_SUCCESS,
+	ALL_DOMAINS_TEST_REQUEST_FAILURE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
@@ -19,7 +21,9 @@ import {
 	DOMAIN_CONTACT_INFO_REDACT_SUCCESS,
 	DOMAIN_CONTACT_INFO_REDACT_FAILURE,
 } from 'calypso/state/action-types';
+import { createLightSiteDomainObject } from 'calypso/state/all-domains/helpers';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
+import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { itemsSchema } from './schema';
 
 /**
@@ -55,6 +59,22 @@ const modifySiteDomainObjectImmutable = ( state, siteId, domain, modifyDomainPro
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	const { siteId } = action;
 	switch ( action.type ) {
+		case ALL_DOMAINS_TEST_REQUEST_SUCCESS: {
+			// const newState = Object.assign( {}, state, {
+			// 	allDomains: ( action.domains ?? [] ).map( createLightSiteDomainObject ),
+			// } );
+			const newState = Object.assign( {}, state );
+			action.domains.forEach( ( domain ) => {
+				if ( ! newState[ domain.blog_id ] ) {
+					newState[ domain.blog_id ] = [];
+				}
+				newState[ domain.blog_id ].push( createSiteDomainObject( domain ) );
+			} );
+			return newState;
+		}
+		case ALL_DOMAINS_TEST_REQUEST_FAILURE:
+			// TODO: Implement
+			return state;
 		case SITE_DOMAINS_RECEIVE:
 			return Object.assign( {}, state, {
 				[ siteId ]: action.domains,

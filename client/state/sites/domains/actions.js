@@ -5,6 +5,9 @@ import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_PRIVACY_ENABLE,
 	DOMAIN_PRIVACY_DISABLE,
+	ALL_DOMAINS_TEST_REQUEST,
+	ALL_DOMAINS_TEST_REQUEST_SUCCESS,
+	ALL_DOMAINS_TEST_REQUEST_FAILURE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
@@ -22,6 +25,93 @@ import 'calypso/state/data-layer/wpcom/domains/privacy/index.js';
  */
 const debug = debugFactory( 'calypso:state:sites:domains:actions' );
 const noop = () => {};
+
+/**
+ * Action creator function
+ *
+ * Return SITE_DOMAINS_REQUEST action object
+ *
+ * @param {number} siteId - side identifier
+ * @returns {object} siteId - action object
+ */
+export const domainsTestRequestAction = () => {
+	const action = {
+		type: ALL_DOMAINS_TEST_REQUEST,
+	};
+
+	debug( 'returning action: %o', action );
+	return action;
+};
+
+/**
+ * Action creator function
+ *
+ * Return SITE_DOMAINS_REQUEST_SUCCESS action object
+ *
+ * @param {number} siteId - side identifier
+ * @returns {object} siteId - action object
+ */
+export const domainsTestRequestSuccessAction = ( domains ) => {
+	const action = {
+		type: ALL_DOMAINS_TEST_REQUEST_SUCCESS,
+		domains,
+	};
+
+	debug( 'returning action: %o', action );
+	return action;
+};
+
+/**
+ * Action creator function
+ *
+ * Return SITE_DOMAINS_REQUEST_FAILURE action object
+ *
+ * @param {number} siteId - site identifier
+ * @param {object} error - error message according to REST-API error response
+ * @returns {object} action object
+ */
+export const domainsTestRequestFailureAction = ( error ) => {
+	const action = {
+		type: ALL_DOMAINS_TEST_REQUEST_FAILURE,
+		error,
+	};
+
+	debug( 'returning action: %o', action );
+	return action;
+};
+
+/**
+ * Fetches domains for the given site.
+ *
+ * @returns {Function} a promise that will resolve once fetching is completed
+ */
+export function fetchTestSiteDomains() {
+	return ( dispatch ) => {
+		dispatch( domainsTestRequestAction() );
+
+		return wpcom.req
+			.get( `/all-domains-with-details`, { apiVersion: '1.1' } )
+			.then( ( data ) => {
+				const { domains = [], error, message } = data;
+
+				if ( error ) {
+					throw new Error( message );
+				}
+
+				dispatch( domainsTestRequestSuccessAction( domains ) );
+			} )
+			.catch( ( error ) => {
+				const message =
+					error instanceof Error
+						? error.message
+						: translate(
+								'There was a problem fetching domains. Please try again later or contact support.'
+						  );
+
+				dispatch( domainsTestRequestFailureAction( siteId, message ) );
+			} );
+	};
+}
 
 /**
  * Action creator function
