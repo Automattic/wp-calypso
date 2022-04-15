@@ -65,7 +65,7 @@ class AllDomains extends Component {
 		canManageSitesMap: PropTypes.object.isRequired,
 		currentRoute: PropTypes.string.isRequired,
 		domainsList: PropTypes.array.isRequired,
-		filteredDomainsList: PropTypes.array.isRequired,
+		// filteredDomainsList: PropTypes.array.isRequired,
 		sites: PropTypes.object.isRequired,
 		requestingSiteDomains: PropTypes.object,
 		isContactEmailEditContext: PropTypes.bool,
@@ -80,12 +80,17 @@ class AllDomains extends Component {
 		contactInfoSaveResults: {},
 	};
 
+	/*
+	// contact email update
 	componentDidUpdate() {
 		if ( this.props.isContactEmailEditContext && ! this.isLoadingDomainDetails() ) {
 			this.setSelectedDomains();
 		}
 	}
+	*/
 
+	/*
+	// contact email update
 	setSelectedDomains = () => {
 		const newFilteredDomains = ( this.props.filteredDomainsList ?? [] ).filter( ( domain ) => {
 			return ! Object.keys( this.state.selectedDomains ?? {} ).includes( domain.domain );
@@ -130,7 +135,9 @@ class AllDomains extends Component {
 			}
 		);
 	};
+	*/
 
+	/*
 	fetchWhoisData = ( domain ) => {
 		wpcom.req
 			.get( `/domains/${ domain }/whois` )
@@ -141,6 +148,7 @@ class AllDomains extends Component {
 	setWhoisData = ( domain, whoisData ) => {
 		this.setState( { whoisData: { ...this.state.whoisData, [ domain ]: whoisData } } );
 	};
+	*/
 
 	handleDomainItemClick = ( domain ) => {
 		const { sites, currentRoute } = this.props;
@@ -153,6 +161,8 @@ class AllDomains extends Component {
 		page( getDomainManagementPath( domain.name, domain.type, site.slug, currentRoute ) );
 	};
 
+	/*
+	// contact email update
 	handleDomainItemToggle = ( domain, selected ) => {
 		if ( selected && Object.keys( this.state.whoisData[ domain ] ?? {} ).length === 0 ) {
 			this.fetchWhoisData( domain );
@@ -168,6 +178,7 @@ class AllDomains extends Component {
 			};
 		} );
 	};
+	*/
 
 	isLoading() {
 		const { domainsList, requestingFlatDomains, hasAllSitesLoaded } = this.props;
@@ -187,6 +198,8 @@ class AllDomains extends Component {
 		return this.isLoading() || this.isRequestingSiteDomains();
 	}
 
+	/*
+	// Contact email edit
 	isLoadingWhoisData() {
 		const { isContactEmailEditContext } = this.props;
 		const { selectedDomains, whoisData } = this.state;
@@ -212,6 +225,7 @@ class AllDomains extends Component {
 
 		return false;
 	}
+	*/
 
 	findDomainDetails( domainsDetails = [], domain = {} ) {
 		return domainsDetails[ domain?.blogId ]?.find(
@@ -219,9 +233,12 @@ class AllDomains extends Component {
 		);
 	}
 
+	/*
+	// contact email update 
 	handleSelectAllDomains = ( event ) => {
 		return this.handleDomainListHeaderToggle( event.target.checked );
 	};
+	*/
 
 	mergeFilteredDomainsWithDomainsDetails() {
 		const { domainsDetails } = this.props;
@@ -232,6 +249,8 @@ class AllDomains extends Component {
 		} ) );
 	}
 
+	/*
+	// contact email update
 	handleDomainListHeaderToggle = ( selected ) => {
 		const selectedDomains = Object.keys( this.state.selectedDomains ?? {} ).reduce(
 			( list, domain ) => {
@@ -248,6 +267,7 @@ class AllDomains extends Component {
 			};
 		} );
 	};
+	*/
 
 	renderDomainsList() {
 		if ( this.isLoading() ) {
@@ -255,6 +275,13 @@ class AllDomains extends Component {
 				<ListItemPlaceholder key={ `item-${ n }` } />
 			) );
 		}
+
+		console.log( {
+			domainsList: this.props.domainsList,
+			domainsDetails: this.props.domainsDetails,
+			mergedList: this.mergeFilteredDomainsWithDomainsDetails(),
+		} );
+		console.log( '------' );
 
 		const {
 			purchases,
@@ -361,6 +388,7 @@ class AllDomains extends Component {
 			{ name: 'action', label: null },
 		];
 
+		/*
 		if ( isContactEmailEditContext ) {
 			const areAllCheckboxesChecked = Object.entries( this.state.selectedDomains ).every(
 				( [ , selected ] ) => selected
@@ -376,6 +404,7 @@ class AllDomains extends Component {
 				),
 			} );
 		}
+		*/
 
 		return (
 			<>
@@ -418,10 +447,15 @@ class AllDomains extends Component {
 		return <DomainOnlyUpsellCarousel domain={ domains[ 0 ] } />;
 	}
 
+	/*
+	// contact email update
 	handleContactInfoTransferLockOptOutChange = ( transferLockOptOut ) => {
 		this.setState( { transferLockOptOut } );
 	};
+	*/
 
+	/*
+	// contact email update
 	getUpdatedContactInfo = ( domainName, contactInfo ) => {
 		const { whoisData } = this.state;
 		const updatedContactInfo = whoisData[ domainName ];
@@ -446,13 +480,17 @@ class AllDomains extends Component {
 			fax: updatedContactInfo?.fax,
 		};
 	};
+	*/
 
+	/*
+	// Contact email update
 	handleSaveContactInfo = ( contactInfo ) => {
 		this.setState( { isSavingContactInfo: true, contactInfoSaveResults: {} }, () =>
 			this.saveContactInfo( contactInfo )
 		);
 	};
 
+	// Contact email update
 	saveContactInfo = ( contactInfo ) => {
 		const selectedDomainNamesList = Object.entries( this.state.selectedDomains ).reduce(
 			( list, [ domain, selected ] ) => {
@@ -516,7 +554,10 @@ class AllDomains extends Component {
 			);
 		} );
 	};
+	*/
 
+	/*
+	// contact email update
 	renderActionForm() {
 		if ( ! this.isLoading() && this.props.isContactEmailEditContext ) {
 			const selectedDomainNamesList = Object.entries( this.state.selectedDomains ).reduce(
@@ -547,17 +588,25 @@ class AllDomains extends Component {
 			);
 		}
 	}
+	*/
 
 	filteredDomains() {
-		const { filteredDomainsList, domainsList, canManageSitesMap, isContactEmailEditContext } =
-			this.props;
+		const {
+			// filteredDomainsList,
+			domainsList,
+			canManageSitesMap,
+			// isContactEmailEditContext,
+		} = this.props;
+
 		if ( ! domainsList ) {
 			return [];
 		}
 
+		/*
 		if ( isContactEmailEditContext ) {
 			return filteredDomainsList;
 		}
+		*/
 
 		// filter on sites we can manage, that aren't `wpcom` type
 		return domainsList.filter(
@@ -641,6 +690,8 @@ class AllDomains extends Component {
 	renderContent() {
 		const { domainsList, translate } = this.props;
 
+		/*
+		// contact email update
 		if (
 			this.props.isContactEmailEditContext &&
 			domainsList.length > 0 &&
@@ -656,10 +707,11 @@ class AllDomains extends Component {
 				/>
 			);
 		}
+		*/
 
 		return (
 			<>
-				<div>{ this.renderActionForm() }</div>
+				{ /* <div>{ this.renderActionForm() }</div> */ }
 				<div>
 					<QueryAllDomains />
 					<QueryUserPurchases />
@@ -700,10 +752,12 @@ const getSitesById = ( state ) => {
 	}, {} );
 };
 
+/*
+// contact email update
 const getFilteredDomainsList = ( state, context ) => {
 	const action = parse( context.querystring )?.action;
-	const sites = getSitesById( state );
-	const canManageSitesMap = canCurrentUserForSites( state, Object.keys( sites ), 'manage_options' );
+	// const sites = getSitesById( state );
+	// const canManageSitesMap = canCurrentUserForSites( state, Object.keys( sites ), 'manage_options' );
 	const domainsList = getFlatDomainsList( state );
 	const domainsDetails = getAllDomains( state );
 
@@ -735,6 +789,7 @@ const getFilteredDomainsList = ( state, context ) => {
 			);
 	}
 };
+*/
 
 export default connect(
 	( state, { context } ) => {
@@ -747,7 +802,7 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			domainsList: getFlatDomainsList( state ),
 			domainsDetails: getAllDomains( state ),
-			filteredDomainsList: getFilteredDomainsList( state, context ),
+			// filteredDomainsList: getFilteredDomainsList( state, context ),
 			hasAllSitesLoaded: hasAllSitesList( state ),
 			isContactEmailEditContext: ListAllActions.editContactEmail === action,
 			purchases: getUserPurchases( state ) || [],
