@@ -48,7 +48,7 @@ export function requestContactDetailsCache() {
 		} );
 
 		wpcom.req
-			.post( '/me/domain-contact-information' )
+			.get( '/me/domain-contact-information' )
 			.then( ( data ) => {
 				dispatch(
 					receiveContactDetailsCache( mapRecordKeysRecursively( data, snakeToCamelCase ) )
