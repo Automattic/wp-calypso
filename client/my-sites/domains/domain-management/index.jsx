@@ -1,4 +1,5 @@
 import AllDomains from 'calypso/my-sites/domains/domain-management/list/all-domains';
+import AllDomainsTest from 'calypso/my-sites/domains/domain-management/list/all-domains-test';
 import SiteDomains from 'calypso/my-sites/domains/domain-management/list/site-domains';
 import ContactsPrivacy from './contacts-privacy';
 import AddDnsRecord from './dns/add-dns-record';
@@ -30,6 +31,7 @@ export default {
 	EditContactInfoPage,
 	ManageConsent,
 	AllDomains,
+	AllDomainsTest,
 	SiteDomains,
 	Security,
 	Settings,
