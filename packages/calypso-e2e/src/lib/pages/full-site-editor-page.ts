@@ -8,6 +8,7 @@ import {
 } from '..';
 import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
+import { EditorPopoverMenuComponent } from '../components';
 
 const wpAdminPath = 'wp-admin/themes.php';
 
@@ -31,6 +32,7 @@ export class FullSiteEditorPage {
 	private editorToolbarComponent: EditorToolbarComponent;
 	private editorSidebarBlockInserterComponent: EditorSidebarBlockInserterComponent;
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
+	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
 
 	/**
 	 * Constructs an instance of the page POM class.
@@ -58,6 +60,7 @@ export class FullSiteEditorPage {
 
 		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
 		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
+		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
 			page,
 			this.editor
@@ -162,5 +165,13 @@ export class FullSiteEditorPage {
 	 */
 	async redo(): Promise< void > {
 		await this.editorToolbarComponent.redo();
+	}
+
+	/**
+	 * Opens the site styles sidebar in the site editor.
+	 */
+	async openSiteStyles(): Promise< void > {
+		await this.editorToolbarComponent.openMoreOptionsMenu();
+		await this.editorPopoverMenuComponent.clickMenuButton( 'Styles' );
 	}
 }

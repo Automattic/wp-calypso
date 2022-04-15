@@ -40,6 +40,9 @@ const selectors = {
 	// Undo/Redo
 	undoButton: 'button[aria-disabled=false][aria-label="Undo"]',
 	redoButton: 'button[aria-disabled=false][aria-label="Redo"]',
+
+	// More options
+	moreOptionsButton: `${ panel } button[aria-label="Options"]`,
 };
 
 /**
@@ -306,5 +309,15 @@ export class EditorToolbarComponent {
 	async redo(): Promise< void > {
 		const locator = this.editor.locator( selectors.redoButton );
 		await locator.click();
+	}
+
+	/**
+	 * Opens the more options menu (three dots).
+	 */
+	async openMoreOptionsMenu(): Promise< void > {
+		if ( ! this.targetIsOpen( selectors.moreOptionsButton ) ) {
+			const locator = this.editor.locator( selectors.moreOptionsButton );
+			await locator.click();
+		}
 	}
 }
