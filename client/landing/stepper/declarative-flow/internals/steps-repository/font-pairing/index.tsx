@@ -3,7 +3,7 @@ import { FontPair, getFontTitle } from '@automattic/design-picker';
 import { StepContainer } from '@automattic/onboarding';
 import React from 'react';
 import { useFontPairings } from 'calypso/landing/gutenboarding/fonts';
-import StylePreview from 'calypso/landing/gutenboarding/onboarding-block/style-preview';
+import StylePreview from 'calypso/landing/stepper/components/style-preview';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 import './style.scss';
