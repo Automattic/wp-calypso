@@ -70,41 +70,6 @@
 	.get-apps__magic-link-subpanel {
 		margin-top: 64px;
 	}
-
-	.get-apps__sms-subpanel {
-
-		// This is a hack to allow us to use a feature flag to hide this subpanel
-		// without the parent card having a big ugly blank space at the bottom.
-		margin-top: 64px;
-
-		.get-apps__sms-field-wrapper .form-phone-input {
-			@include breakpoint-deprecated('>800px') {
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-			}
-
-			.form-phone-input__country {
-				flex: 0;
-				padding-right: 24px;
-			}
-
-			.form-phone-input__phone-number {
-				flex: 1;
-			}
-		}
-
-		.get-apps__sms-button-wrapper {
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-			
-			p {
-				margin: 0;
-				padding-left: 16px;
-			}
-		}
-	}
 }
 
 .get-apps__illustration {
