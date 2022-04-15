@@ -192,12 +192,16 @@ class MobileDownloadCard extends Component {
 						<p>
 							<strong>{ translate( 'Ready to WordPress on the go?' ) }</strong>
 							<br />
-							{ translate(
-								'Scan the code using your mobile phone to download the app.'
-							) }
+							{ translate( 'Scan the code using your mobile phone to download the app.' ) }
 						</p>
 
-						<img src="/calypso/images/me/qrcode-calypso.svg" alt="QR code https://apps.wordpress.com/get/?campaign=calypso-qrcode-apps" scale="0" width="180" height="180">
+						<img
+							src="/calypso/images/me/qrcode-calypso.svg"
+							alt="QR code https://apps.wordpress.com/get/?campaign=calypso-qrcode-apps"
+							scale="0"
+							width="180"
+							height="180"
+						/>
 					</div>
 				) }
 
