@@ -59,7 +59,7 @@ export default function useCachedDomainContactDetails(
 	const cachedContactDetails = useSelector( getContactDetailsCache );
 
 	const arePostalCodesSupported =
-		countriesList && cachedContactDetails?.countryCode
+		countriesList.length && cachedContactDetails?.countryCode
 			? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode )
 			: true;
 
@@ -69,7 +69,7 @@ export default function useCachedDomainContactDetails(
 	// `wpcom-checkout` data store for use by the checkout contact form.
 	useEffect( () => {
 		// Do nothing if the contact details are loading, or the countries are loading.
-		if ( ! cachedContactDetails || ! countriesList ) {
+		if ( ! cachedContactDetails || ! countriesList.length ) {
 			return;
 		}
 		// Do nothing if the cached data has not changed since the last time we
@@ -95,7 +95,7 @@ export default function useCachedDomainContactDetails(
 	// to the shopping cart for calculating taxes.
 	useEffect( () => {
 		// Do nothing if the cart is loading, the contact details are loading, or the countries are loading.
-		if ( isLoadingCart || cartLoadingError || ! cachedContactDetails || ! countriesList ) {
+		if ( isLoadingCart || cartLoadingError || ! cachedContactDetails || ! countriesList.length ) {
 			return;
 		}
 		if (
