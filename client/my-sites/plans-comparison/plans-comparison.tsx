@@ -15,6 +15,7 @@ import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
 import { PlansComparisonAction } from './plans-comparison-action';
@@ -421,6 +422,9 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	hideFreePlan,
 	onSelectPlan,
 } ) => {
+	const legacySiteWithHigherLimits = useSelector( ( state ) =>
+		isLegacySiteWithHigherLimits( state, selectedSiteId || null )
+	);
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSiteId || null ) );
 	const [ showCollapsibleRows, setShowCollapsibleRows ] = useState( false );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? '';
@@ -489,12 +493,22 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 				</THead>
 				<tbody className="plans-comparison__rows">
 					{ planComparisonFeatures.slice( 0, 7 ).map( ( feature ) => (
-						<PlansComparisonRow feature={ feature } plans={ plans } key={ feature.features[ 0 ] } />
+						<PlansComparisonRow
+							feature={ feature }
+							plans={ plans }
+							isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
+							key={ feature.features[ 0 ] }
+						/>
 					) ) }
 				</tbody>
 				<tbody className={ collapsibleRowsclassName }>
 					{ planComparisonFeatures.slice( 7 ).map( ( feature ) => (
-						<PlansComparisonRow feature={ feature } plans={ plans } key={ feature.features[ 0 ] } />
+						<PlansComparisonRow
+							feature={ feature }
+							plans={ plans }
+							isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
+							key={ feature.features[ 0 ] }
+						/>
 					) ) }
 				</tbody>
 				<tbody>

@@ -48,11 +48,13 @@ export interface PlanComparisonFeature {
 	 *
 	 * @param {string} feature The feature constant. e.g. FEATURE_UNLIMITED_ADMINS
 	 * @param {boolean} isMobile Whether the text is displayed on mobile.
+	 * @param {boolean} isLegacySiteWithHigherLimits Whether the feature is being displayed in the context of a legacy site that is entitled to higher free plan limits.
 	 * @returns {TranslateResult|TranslateResult[]} Array of text if there is an additional description.
 	 */
 	getCellText: (
 		feature: string | undefined,
 		isMobile: boolean,
+		isLegacySiteWithHigherLimits: boolean,
 		extraArgs?: unknown
 	) => TranslateResult | [ TranslateResult, TranslateResult ];
 }
@@ -233,17 +235,48 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_1GB_STORAGE, FEATURE_50GB_STORAGE ],
-		getCellText: ( feature, isMobile = false ) => {
+		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
 			let storageSize = '1';
+			const legacyStorageSize = '3';
 
 			if ( feature === FEATURE_50GB_STORAGE ) {
 				storageSize = '50';
 			}
 
 			if ( isMobile ) {
+				if ( isLegacySiteWithHigherLimits && feature === FEATURE_1GB_STORAGE ) {
+					return translate(
+						'{{del}}%(originalStorage)sGB of storage{{/del}} %(modifiedStorage)sGB on this site',
+						{
+							components: {
+								del: <del />,
+							},
+							args: {
+								originalStorage: storageSize,
+								modifiedStorage: legacyStorageSize,
+							},
+						}
+					);
+				}
+
 				return translate( '%sGB of storage', {
 					args: [ storageSize ],
 				} );
+			}
+
+			if ( isLegacySiteWithHigherLimits && feature === FEATURE_1GB_STORAGE ) {
+				return translate(
+					'{{del}}%(originalStorage)sGB{{/del}} %(modifiedStorage)sGB on this site',
+					{
+						components: {
+							del: <del />,
+						},
+						args: {
+							originalStorage: storageSize,
+							modifiedStorage: legacyStorageSize,
+						},
+					}
+				);
 			}
 
 			return translate( '%sGB', {
@@ -303,23 +336,60 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_UNLIMITED_ADMINS ],
-		getCellText: ( feature, isMobile ) => {
+		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
 			const adminCount = 1;
 
 			if ( ! isMobile ) {
-				return feature ? translate( 'Unlimited' ) : String( adminCount );
-			}
+				if ( feature ) {
+					return translate( 'Unlimited' );
+				}
 
-			return feature
-				? translate( 'Unlimited Website Administrators' )
-				: translate(
-						'%(adminCount)s Website Administrator',
-						'%(adminCount)s Website Administrators',
+				if ( isLegacySiteWithHigherLimits ) {
+					// Adding "administrator" is redundant here (and differs from the non-legacy
+					// case below), but we're adding it because just having the number crossed
+					// out is hard to read.
+					return translate(
+						'{{del}}%(adminCount)s administrator{{/del}} Unlimited on this site',
+						'{{del}}%(adminCount)s administrators{{/del}} Unlimited on this site',
 						{
 							count: adminCount,
+							components: {
+								del: <del />,
+							},
 							args: { adminCount: numberFormat( adminCount, 0 ) },
 						}
-				  );
+					);
+				}
+
+				return String( adminCount );
+			}
+
+			if ( feature ) {
+				return translate( 'Unlimited Website Administrators' );
+			}
+
+			if ( isLegacySiteWithHigherLimits ) {
+				return translate(
+					'{{del}}%(adminCount)s Website Administrator{{/del}} Unlimited on this site',
+					'{{del}}%(adminCount)s Website Administrators{{/del}} Unlimited on this site',
+					{
+						count: adminCount,
+						components: {
+							del: <del />,
+						},
+						args: { adminCount: numberFormat( adminCount, 0 ) },
+					}
+				);
+			}
+
+			return translate(
+				'%(adminCount)s Website Administrator',
+				'%(adminCount)s Website Administrators',
+				{
+					count: adminCount,
+					args: { adminCount: numberFormat( adminCount, 0 ) },
+				}
+			);
 		},
 	},
 	{
