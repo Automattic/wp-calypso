@@ -43,6 +43,9 @@ const selectors = {
 
 	// More options
 	moreOptionsButton: `${ panel } button[aria-label="Options"]`,
+
+	// Site editor save
+	saveSiteEditorButton: `${ panel } button.edit-site-save-button__button`,
 };
 
 /**
@@ -319,5 +322,15 @@ export class EditorToolbarComponent {
 			const locator = this.editor.locator( selectors.moreOptionsButton );
 			await locator.click();
 		}
+	}
+
+	/** FSE unique buttons */
+
+	/**
+	 * Click the save button (publish equivalent) for the full site editor.
+	 */
+	async saveSiteEditor(): Promise< void > {
+		const locator = this.editor.locator( selectors.saveSiteEditorButton );
+		await locator.click();
 	}
 }

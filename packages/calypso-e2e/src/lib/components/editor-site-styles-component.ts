@@ -9,10 +9,11 @@ import {
 const parentSelector = '.edit-site-global-styles-sidebar';
 
 const selectors = {
-	navigationButton: ( buttonName: string ) =>
+	menuButton: ( buttonName: string ) =>
 		`${ parentSelector } button.components-navigator-button:has-text("${ buttonName }")`,
-	closeSidebarButton: 'button[aria-label="Close global styles sidebar"]',
+	closeSidebarButton: 'button[aria-label="Close global styles sidebar"]:visible',
 	backButton: `${ parentSelector } button[aria-label="Navigate to the previous view"]`,
+	moreActionsMenuButton: `${ parentSelector } button[aria-label="More Global Styles Actions"]`,
 };
 
 export type ColorLocation = 'Background' | 'Text' | 'Links';
@@ -75,8 +76,8 @@ export class EditorSiteStylesComponent {
 		colorSettings: ColorSettings
 	): Promise< void > {
 		await this.returnToTopMenu();
-		await this.clickNavigationButton( 'Colors' );
-		await this.clickNavigationButton( colorLocation );
+		await this.clickMenuButton( 'Colors' );
+		await this.clickMenuButton( colorLocation );
 		await this.editorColorPickerComponent.setColor( colorSettings );
 	}
 
@@ -96,26 +97,26 @@ export class EditorSiteStylesComponent {
 		typographySettings: TypographySettings
 	): Promise< void > {
 		await this.returnToTopMenu();
-		await this.clickNavigationButton( 'Blocks' );
-		await this.clickNavigationButton( blockName );
-		await this.clickNavigationButton( 'Typography' );
+		await this.clickMenuButton( 'Blocks' );
+		await this.clickMenuButton( blockName );
+		await this.clickMenuButton( 'Typography' );
 		await this.editorTypographyComponent.setTypography( typographySettings );
 	}
 
 	/**
-	 * Clicks a navigation button in the site styles panel/sidebar.
+	 * Clicks a menu button in the site styles sidebar/panel.
 	 *
 	 * @param {string} buttonName Button name.
 	 */
-	private async clickNavigationButton( buttonName: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.navigationButton( buttonName ) );
+	async clickMenuButton( buttonName: string ): Promise< void > {
+		const locator = this.editor.locator( selectors.menuButton( buttonName ) );
 		await locator.click();
 	}
 
 	/**
-	 * Returns to the top-level menu in the site styles sidebar.
+	 * Returns to the top-level menu in the site styles sidebar/panel.
 	 */
-	private async returnToTopMenu(): Promise< void > {
+	async returnToTopMenu(): Promise< void > {
 		const backButtonLocator = this.editor.locator( selectors.backButton );
 		// The DOM node of the current active panel is directly replaced on re-render.
 		// This means that we can safely rely on "count()" as an indicator of if there's
@@ -123,5 +124,13 @@ export class EditorSiteStylesComponent {
 		while ( ( await backButtonLocator.count() ) > 0 ) {
 			await backButtonLocator.click();
 		}
+	}
+
+	/**
+	 * Open the more actions menu in the site styles sidebar/panel.
+	 */
+	async openMoreActionsMenu(): Promise< void > {
+		const locator = this.editor.locator( selectors.moreActionsMenuButton );
+		await locator.click();
 	}
 }

@@ -10,6 +10,7 @@ import {
 	ColorSettings,
 	TypographySettings,
 	ColorLocation,
+	FullSiteEditorSavePanelComponent,
 } from '..';
 import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
@@ -24,6 +25,7 @@ const selectors = {
 	templateLoadingSpinner: '[aria-label="Block: Template Part"] .components-spinner',
 	closeStylesWelcomeGuideButton:
 		'[aria-label="Welcome to styles"] button[aria-label="Close dialog"]',
+	saveConfirmationToast: '.components-snackbar:has-text("Site updated.")',
 };
 
 /**
@@ -40,6 +42,7 @@ export class FullSiteEditorPage {
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
 	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
 	private editorSiteStylesComponent: EditorSiteStylesComponent;
+	private fullSiteEditorSavePanelComponent: FullSiteEditorSavePanelComponent;
 
 	/**
 	 * Constructs an instance of the page POM class.
@@ -70,6 +73,10 @@ export class FullSiteEditorPage {
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
 		this.editorSiteStylesComponent = new EditorSiteStylesComponent( page, this.editor );
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
+			page,
+			this.editor
+		);
+		this.fullSiteEditorSavePanelComponent = new FullSiteEditorSavePanelComponent(
 			page,
 			this.editor
 		);
@@ -208,6 +215,29 @@ export class FullSiteEditorPage {
 	}
 
 	/**
+	 * Close the site styles sidebar/panel.
+	 */
+	async closeSiteStyles(): Promise< void > {
+		await this.editorSiteStylesComponent.closeSiteStyles();
+	}
+
+	/**
+	 * Clicks a navigation menu item/button in the site styles sidebar/panel.
+	 *
+	 * @param {string} buttonName Name on the menu item/button.
+	 */
+	async clickStylesMenuButton( buttonName: string ): Promise< void > {
+		await this.editorSiteStylesComponent.clickMenuButton( buttonName );
+	}
+
+	/**
+	 * Returns to the top menu level of the styles sidebar/panel.
+	 */
+	async returnToStylesTopMenu(): Promise< void > {
+		await this.editorSiteStylesComponent.returnToTopMenu();
+	}
+
+	/**
 	 * Sets a color style setting globaly for the site.
 	 * This auto-handles returning to top menu and navigating down.
 	 *
@@ -233,5 +263,34 @@ export class FullSiteEditorPage {
 		typographySettings: TypographySettings
 	): Promise< void > {
 		await this.editorSiteStylesComponent.setBlockTypography( blockName, typographySettings );
+	}
+
+	/**
+	 * Resets the site styles to the defaults for the theme.
+	 */
+	async resetStylesToDefaults(): Promise< void > {
+		await this.editorSiteStylesComponent.openMoreActionsMenu();
+		await this.editorPopoverMenuComponent.clickMenuButton( 'Reset to defaults' );
+	}
+
+	/**
+	 * Save the changes in the full site editor (equivalent of publish).
+	 */
+	async save(): Promise< void > {
+		await this.clearExistingSaveConfirmationToast();
+		await this.editorToolbarComponent.saveSiteEditor();
+		await this.fullSiteEditorSavePanelComponent.confirmSave();
+		const toastLocator = this.editor.locator( selectors.saveConfirmationToast );
+		await toastLocator.waitFor();
+	}
+
+	/**
+	 * Clears existing save confirmation toasts.
+	 */
+	private async clearExistingSaveConfirmationToast(): Promise< void > {
+		const toastLocator = this.editor.locator( selectors.saveConfirmationToast );
+		if ( ( await toastLocator.count() ) > 0 ) {
+			await toastLocator.click();
+		}
 	}
 }
