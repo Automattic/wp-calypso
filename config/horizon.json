@@ -26,6 +26,7 @@
 		"domains/kracken-ui/pagination": true,
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
+		"editor/help-center": false,
 		"external-media": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,

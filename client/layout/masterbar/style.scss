@@ -880,6 +880,11 @@ a.masterbar__quick-language-switcher {
 	}
 }
 
+.masterbar__item-help {
+	&.is-active {
+		background: #1e1e1e;
+	}
+}
 
 @keyframes fadeIn {
 	0% {
