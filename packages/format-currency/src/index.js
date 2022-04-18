@@ -1,5 +1,5 @@
-import { numberFormat } from 'i18n-calypso';
 import { getCurrencyDefaults } from './currencies';
+import numberFormat from './number-format';
 export { getCurrencyDefaults };
 
 export { CURRENCIES } from './currencies';
@@ -24,11 +24,7 @@ export default function formatCurrency( number, code, options = {} ) {
 	}
 	const { decimal, grouping, precision, symbol } = { ...currencyDefaults, ...options };
 	const sign = number < 0 ? '-' : '';
-	let value = numberFormat( Math.abs( number ), {
-		decimals: precision,
-		thousandsSep: grouping,
-		decPoint: decimal,
-	} );
+	let value = numberFormat( Math.abs( number ), precision, decimal, grouping );
 
 	if ( options.stripZeros ) {
 		value = stripZeros( value, decimal );
@@ -58,18 +54,10 @@ export function getCurrencyObject( number, code, options = {} ) {
 	const sign = number < 0 ? '-' : '';
 	const absNumber = Math.abs( number );
 	const rawInteger = Math.floor( absNumber );
-	const integer = numberFormat( absNumber, {
-		decimals: precision,
-		thousandsSep: grouping,
-		decPoint: decimal,
-	} ).split( decimal )[ 0 ];
+	const integer = numberFormat( absNumber, precision, decimal, grouping ).split( decimal )[ 0 ];
 	const fraction =
 		precision > 0
-			? numberFormat( absNumber - rawInteger, {
-					decimals: precision,
-					thousandsSep: grouping,
-					decPoint: decimal,
-			  } ).slice( 1 )
+			? numberFormat( absNumber - rawInteger, precision, decimal, grouping ).slice( 1 )
 			: '';
 	return {
 		sign,

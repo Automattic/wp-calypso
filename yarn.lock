@@ -596,7 +596,6 @@ __metadata:
   resolution: "@automattic/format-currency@workspace:packages/format-currency"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    i18n-calypso: "workspace:^"
   peerDependencies:
     react: ^17.0.2
   languageName: unknown
