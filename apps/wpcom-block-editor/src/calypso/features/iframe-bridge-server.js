@@ -1085,7 +1085,7 @@ function handleHelpCenterShowing( calypsoPort ) {
 
 	port1.onmessage = ( { data } ) => {
 		const { isHelpCenterVisible } = data;
-		dispatch( 'automattic/help-center' ).setShowHelpCenter( isHelpCenterVisible );
+		dispatch( 'automattic/help-center' )?.setShowHelpCenter?.( isHelpCenterVisible );
 	};
 }
 

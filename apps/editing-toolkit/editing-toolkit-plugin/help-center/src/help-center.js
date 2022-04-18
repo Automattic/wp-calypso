@@ -1,14 +1,14 @@
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { Button } from '@wordpress/components';
+import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { PinnedItems } from '@wordpress/interface';
 import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
-import { useRef, useLayoutEffect } from 'react';
 import './help-center.scss';
 
 function HelpCenterComponent() {
-	const isDesktop = useRef( false );
+	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const { show } = useSelect( ( select ) => {
 		return {
 			show: select( 'automattic/help-center' ).isHelpCenterShown(),
@@ -16,21 +16,9 @@ function HelpCenterComponent() {
 	} );
 	const setShowHelpCenter = useDispatch( 'automattic/help-center' )?.setShowHelpCenter;
 
-	useLayoutEffect( () => {
-		isDesktop.current = ! window.matchMedia( '(max-width: 480px)' ).matches;
-
-		window.matchMedia( '(max-width: 480px)' ).addEventListener( 'change', ( event ) => {
-			isDesktop.current = event.matches ? false : true;
-		} );
-
-		return () => {
-			window.matchMedia( '(max-width: 480px)' ).removeEventListener( 'change' );
-		};
-	}, [] );
-
 	return (
 		<>
-			{ isDesktop.current && (
+			{ isDesktop && (
 				<PinnedItems scope="core/edit-post">
 					<span className="etk-help-center">
 						<Button
