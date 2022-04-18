@@ -3,6 +3,7 @@ import page from 'page';
 import { createElement } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
+import { getCategoriesWithTags } from 'calypso/my-sites/plugins/categories/categories-list';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PlanSetup from './jetpack-plugins-setup';
@@ -14,7 +15,10 @@ import PluginBrowser from './plugins-browser';
 /**
  * Module variables
  */
-const allowedCategoryNames = [ 'new', 'popular', 'featured', 'paid' ];
+const pluginsCategories = getCategoriesWithTags().map( ( category ) => {
+	return category.slug;
+} );
+const allowedCategoryNames = [ 'new', 'popular', 'featured', 'paid', ...pluginsCategories ];
 
 let lastPluginsListVisited;
 let lastPluginsQuerystring;
