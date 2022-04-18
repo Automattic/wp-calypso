@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import Debug from 'debug';
 import { translate } from 'i18n-calypso';
 import page from 'page';
@@ -26,15 +27,22 @@ const clearPageTitle = ( context, next ) => {
 	next();
 };
 
-const redirectToPrimarySiteLanding = ( context ) => {
+const redirectToPrimarySiteLanding = ( context, next ) => {
 	debug( 'controller: redirectToPrimarySiteLanding', context );
 	const state = context.store.getState();
 	const currentUser = getCurrentUser( state );
 	const isPrimarySiteJetpackSite = getPrimarySiteIsJetpack( state );
 
-	isPrimarySiteJetpackSite
-		? page( `/landing/${ currentUser.primarySiteSlug }` )
-		: page( `/landing` );
+	const isAgency = config.isEnabled( 'jetpack/agency-dashboard' );
+
+	if ( isAgency ) {
+		page( `/dashboard` );
+	} else {
+		isPrimarySiteJetpackSite
+			? page( `/landing/${ currentUser.primarySiteSlug }` )
+			: page( `/landing` );
+	}
+	next();
 };
 
 const landingController = ( context, next ) => {

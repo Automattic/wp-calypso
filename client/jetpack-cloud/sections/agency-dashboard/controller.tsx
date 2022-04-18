@@ -1,5 +1,8 @@
 import config from '@automattic/calypso-config';
 import page from 'page';
+import Header from './header';
+import DashboardSidebar from './sidebar';
+import SitesOverview from './sites-overview';
 
 export function agencyDashboardContext( context: PageJS.Context, next: () => void ): void {
 	if ( ! config.isEnabled( 'jetpack/agency-dashboard' ) ) {
@@ -7,6 +10,8 @@ export function agencyDashboardContext( context: PageJS.Context, next: () => voi
 		next();
 	}
 
-	context.primary = <div>Agency dashboard placeholder</div>;
+	context.header = <Header />;
+	context.secondary = <DashboardSidebar path={ context.path } />;
+	context.primary = <SitesOverview />;
 	next();
 }
