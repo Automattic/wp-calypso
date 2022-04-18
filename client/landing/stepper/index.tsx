@@ -10,6 +10,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
+import { loadPersistedState } from 'calypso/state/persisted-state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
@@ -52,6 +53,7 @@ window.AppBoot = async () => {
 
 	const queryClient = new QueryClient();
 
+	await loadPersistedState();
 	const user = ( await initializeCurrentUser() ) as unknown;
 	const userId = ( user as CurrentUser ).ID;
 
