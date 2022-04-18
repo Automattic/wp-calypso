@@ -75,6 +75,7 @@ type Props = {
 	recordEvent?: ( eventName: string ) => void;
 	searching?: boolean;
 	value?: string;
+	searchMode?: 'when-typing' | 'on-enter';
 };
 
 //This is fix for IE11. Does not work on Edge.
@@ -141,6 +142,7 @@ const InnerSearch = (
 		maxLength,
 		hideClose = false,
 		isReskinned = false,
+		searchMode = 'when-typing',
 	}: Props,
 	forwardedRef: Ref< ImperativeHandle >
 ) => {
@@ -195,6 +197,10 @@ const InnerSearch = (
 	}, [] );
 
 	useUpdateEffect( () => {
+		if ( searchMode === 'on-enter' ) {
+			return;
+		}
+
 		if ( keyword ) {
 			doSearch( keyword );
 		} else {
@@ -228,6 +234,10 @@ const InnerSearch = (
 		}
 
 		setKeyword( '' );
+		if ( 'on-enter' === searchMode ) {
+			onSearch?.( '' );
+			onSearchChange?.( '' );
+		}
 		setIsOpen( false );
 
 		if ( searchInput.current ) {
@@ -334,6 +344,10 @@ const InnerSearch = (
 	};
 
 	const handleSubmit = ( event: FormEvent ) => {
+		if ( 'on-enter' === searchMode ) {
+			onSearch?.( keyword );
+			onSearchChange?.( keyword );
+		}
 		event.preventDefault();
 		event.stopPropagation();
 	};

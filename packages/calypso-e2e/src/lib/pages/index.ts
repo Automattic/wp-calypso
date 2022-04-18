@@ -26,5 +26,7 @@ export * from './posts-page';
 export * from './pages-page';
 export * from './plugins-page';
 export * from './writing-settings-page';
+export * from './shared-types';
+export * from './full-site-editor-page';
 
 export * from './me';

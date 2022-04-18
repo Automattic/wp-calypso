@@ -189,57 +189,12 @@
 	padding: 0;
 	box-shadow: none;
 
-	@include breakpoint-deprecated( '>960px' ) {
-		margin-block-end: 16px;
+	.usage-warning__upsell {
+		margin-block-start: 16px;
 	}
 
 	.backup-storage-space__divider,
 	.usage-warning__storage-full {
 		display: none;
-	}
-
-	.backup-storage-space__progress-bar-container {
-		margin-block-end: 24px;
-
-		display: grid;
-		column-gap: 16px;
-	}
-
-	.backup-storage-space__progress-heading {
-		margin-block-end: 8px;
-
-		font-weight: 600;
-		white-space: nowrap;
-
-		grid-row: 1 / 1;
-		grid-column: 1 / 1;
-
-		@include breakpoint-deprecated( '>1040px' ) {
-			margin-block-end: initial;
-		}
-	}
-
-	.backup-storage-space__progress-usage-text {
-		grid-row: 3;
-		grid-column: 1 / 1;
-
-		color: var( --color-text-subtle );
-		white-space: nowrap;
-
-		@include breakpoint-deprecated( '>1040px' ) {
-			grid-row: 1;
-			grid-column: 2;
-
-			text-align: end;
-		}
-	}
-
-	.backup-storage-space__progress-bar {
-		padding: 0;
-		grid-row: 2;
-
-		@include breakpoint-deprecated( '>1040px' ) {
-			grid-column: 1 / span 2;
-		}
 	}
 }

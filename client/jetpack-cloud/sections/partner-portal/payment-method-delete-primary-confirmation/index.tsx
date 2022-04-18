@@ -22,7 +22,17 @@ const PaymentMethodDeletePrimaryConfirmation: FunctionComponent< Props > = ( {
 	);
 
 	if ( ! isFetching && ! nextPrimaryPaymentMethod ) {
-		return null;
+		return (
+			<div className="payment-method-delete-primary-confirmation">
+				<div className="payment-method-delete-primary-confirmation__card">
+					<p className="payment-method-delete-primary-confirmation__notice">
+						{ translate(
+							'Issuing new licenses will be paused until you add a new primary payment method.'
+						) }
+					</p>
+				</div>
+			</div>
+		);
 	}
 
 	return (
@@ -62,6 +72,12 @@ const PaymentMethodDeletePrimaryConfirmation: FunctionComponent< Props > = ( {
 						</>
 					) }
 				</div>
+
+				<p className="payment-method-delete-primary-confirmation__notice">
+					<small>
+						{ translate( 'Your primary payment method will be charged automatically each month.' ) }
+					</small>
+				</p>
 			</div>
 		</div>
 	);

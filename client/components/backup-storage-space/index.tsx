@@ -28,7 +28,7 @@ const BackupStorageSpace: React.FC = () => {
 	const bytesAvailable = useSelector( ( state ) => getRewindBytesAvailable( state, siteId ) );
 	const usageLevel = getUsageLevel( bytesUsed, bytesAvailable ) ?? StorageUsageLevels.Normal;
 
-	const showWarning = usageLevel > StorageUsageLevels.Normal;
+	const showWarning = usageLevel !== StorageUsageLevels.Normal;
 
 	const requestingPurchases = useSelector( isFetchingSitePurchases );
 	const requestingPolicies = useSelector( ( state ) =>

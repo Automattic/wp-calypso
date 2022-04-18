@@ -32,6 +32,9 @@ export const getSiteIdBySlug = ( _: State, slug: string ) => {
 export const getSiteTitle = ( _: State, siteId: number ) =>
 	select( STORE_KEY ).getSite( siteId )?.name;
 
+export const getSiteVerticalId = ( _: State, siteId: number ) =>
+	select( STORE_KEY ).getSite( siteId )?.options?.site_vertical_id;
+
 // @TODO: Return LaunchStatus instead of a boolean
 export const isSiteLaunched = ( state: State, siteId: number ) => {
 	return state.launchStatus[ siteId ]?.status === SiteLaunchStatus.SUCCESS;
@@ -42,8 +45,16 @@ export const isSiteLaunching = ( state: State, siteId: number ) => {
 	return state.launchStatus[ siteId ]?.status === SiteLaunchStatus.IN_PROGRESS;
 };
 
+export const isSiteAtomic = ( state: State, siteId: number | string ) => {
+	return select( STORE_KEY ).getSite( siteId )?.options.is_wpcom_atomic === true;
+};
+
 export const getSiteDomains = ( state: State, siteId: number ) => {
 	return state.sitesDomains[ siteId ];
+};
+
+export const getSiteSettings = ( state: State, siteId: number ) => {
+	return state.sitesSettings[ siteId ];
 };
 
 export const getPrimarySiteDomain = ( _: State, siteId: number ) =>

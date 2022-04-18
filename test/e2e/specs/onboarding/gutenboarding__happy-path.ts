@@ -6,9 +6,9 @@ import {
 	DataHelper,
 	CloseAccountFlow,
 	GutenboardingFlow,
-	EditorPage,
+	FullSiteEditorPage,
 } from '@automattic/calypso-e2e';
-import { Page, Browser, Frame } from 'playwright';
+import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
@@ -73,18 +73,8 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 			await page.waitForURL( /.*\/site-editor\/.*/, { waitUntil: 'networkidle' } );
 
 			// {@TODO} This is temporary while the FSE spec is awaiting migration to Playwright.
-			const editorPage = new EditorPage( page );
-			await editorPage.forceDismissWelcomeTour();
-			const outerFrame = await editorPage.getEditorHandle();
-
-			// There's another iframe within the parent iframe.
-			const innerFrame = ( await (
-				await outerFrame.waitForSelector( 'iframe[name="editor-canvas"]' )
-			 ).contentFrame() ) as Frame;
-			await innerFrame.waitForSelector( '[aria-label="Block: Site Title"]' );
-			const elementHandle = await innerFrame.waitForSelector( '[aria-label="Block: Site Title"]' );
-			const siteEditorTitle = await elementHandle.innerText();
-			expect( siteEditorTitle ).toStrictEqual( siteTitle );
+			const fullSiteEditorPage = new FullSiteEditorPage( page, { target: 'simple' } );
+			await fullSiteEditorPage.waitUntilLoaded();
 		} );
 	} );
 

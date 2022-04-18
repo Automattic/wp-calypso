@@ -86,6 +86,9 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 
 	const hasCredentials = credentials && Object.keys( credentials ).length > 0;
 
+	const { protocol } = credentials;
+	const isAtomic = hasCredentials && 'dynamic-ssh' === protocol;
+
 	const statusState = useMemo( (): StatusState => {
 		if ( isRequestingCredentials ) {
 			return StatusState.Loading;
@@ -102,7 +105,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 		if ( 'unsubmitted' !== formSubmissionStatus ) {
 			return Step.Verification;
 		} else if ( statusState === StatusState.Connected ) {
-			return 'edit' === action ? Step.ConnectedEdit : Step.Connected;
+			return 'edit' === action && ! isAtomic ? Step.ConnectedEdit : Step.Connected;
 		} else if ( undefined === host ) {
 			return Step.HostSelection;
 		}
@@ -297,21 +300,32 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			case Step.Connected:
 				return (
 					<div>
-						<Button
-							borderless
-							className="advanced-credentials__connected"
-							href={ `${ settingsPath( siteSlug ) }?action=edit` }
-						>
-							{ translate(
+						{ isAtomic ? (
+							translate(
 								'The remote server credentials for %(siteSlug)s are present and correct, allowing Jetpack to perform restores and security fixes when required.',
 								{
 									args: {
 										siteSlug,
 									},
 								}
-							) }
-							<Gridicon icon="chevron-right" />
-						</Button>
+							)
+						) : (
+							<Button
+								borderless
+								className="advanced-credentials__connected"
+								href={ `${ settingsPath( siteSlug ) }?action=edit` }
+							>
+								{ translate(
+									'The remote server credentials for %(siteSlug)s are present and correct, allowing Jetpack to perform restores and security fixes when required.',
+									{
+										args: {
+											siteSlug,
+										},
+									}
+								) }
+								<Gridicon icon="chevron-right" />
+							</Button>
+						) }
 					</div>
 				);
 			case Step.ConnectedEdit:

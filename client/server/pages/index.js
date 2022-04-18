@@ -8,7 +8,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
 import express from 'express';
-import { get, includes, pick, snakeCase } from 'lodash';
+import { get, includes, snakeCase } from 'lodash';
 import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
@@ -52,13 +52,6 @@ const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
 
-// TODO: Re-use (a modified version of) client/state/initial-state#getInitialServerState here
-function getInitialServerState( serializedServerState ) {
-	// Bootstrapped state from a server-render
-	const serverState = deserialize( initialReducer, serializedServerState );
-	return pick( serverState, Object.keys( serializedServerState ) );
-}
-
 function getCurrentBranchName() {
 	try {
 		return execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
@@ -95,29 +88,6 @@ function setupLoggedInContext( req, res, next ) {
 }
 
 function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
-	let initialServerState = {};
-	// We don't compare context.query against an allowed list here. Explicit allowance lists are route-specific,
-	// i.e. they can be created by route-specific middleware. `getDefaultContext` is always
-	// called before route-specific middleware, so it's up to the cache *writes* in server
-	// render to make sure that Redux state and markup are only cached for specified query args.
-	const cacheKey = getNormalizedPath( request.path, request.query );
-	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
-	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
-
-	if ( cacheKey ) {
-		const serializeCachedServerState = stateCache.get( cacheKey ) || {};
-		initialServerState = getInitialServerState( serializeCachedServerState );
-	}
-
-	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
-	const isWCComConnect =
-		( 'login' === request.context.sectionName || 'signup' === request.context.sectionName ) &&
-		request.query[ 'wccom-from' ] &&
-		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
-
-	const reduxStore = createReduxStore( initialServerState );
-	setStore( reduxStore );
-
 	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
 	const showGdprBanner = shouldSeeGdprBanner(
 		request.cookies.country_code || geoIPCountryCode,
@@ -127,6 +97,28 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	if ( ! request.cookies.country_code && geoIPCountryCode ) {
 		response.cookie( 'country_code', geoIPCountryCode );
 	}
+
+	const cacheKey = `${ getNormalizedPath( request.path, request.query ) }:gdpr=${ showGdprBanner }`;
+	const cachedServerState = stateCache.get( cacheKey ) || {};
+	const getCachedState = ( reducer, storageKey ) => {
+		const storedState = cachedServerState[ storageKey ];
+		if ( ! storedState ) {
+			return undefined;
+		}
+		return deserialize( reducer, storedState );
+	};
+	const reduxStore = createReduxStore( getCachedState( initialReducer, 'root' ) );
+	setStore( reduxStore, getCachedState );
+
+	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
+	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
+
+	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
+	const isWCComConnect =
+		( 'login' === request.context.sectionName || 'signup' === request.context.sectionName ) &&
+		request.query[ 'wccom-from' ] &&
+		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
+
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
@@ -783,7 +775,7 @@ export default function pages() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/new', 'entry-gutenboarding' );
-	handleSectionPath( STEPPER_SECTION_DEFINITION, '/stepper', 'entry-stepper' );
+	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(

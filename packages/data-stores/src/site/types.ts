@@ -102,7 +102,7 @@ export interface SiteDetails {
 		anchor_podcast?: boolean;
 		background_color?: boolean;
 		blog_public?: number;
-		created_at: Date;
+		created_at?: Date;
 		default_category?: number;
 		default_comment_status?: boolean;
 		default_likes_enabled?: boolean;
@@ -149,6 +149,7 @@ export interface SiteDetails {
 		show_on_front?: string;
 		site_intent?: string;
 		site_segment?: string;
+		site_vertical_id?: string;
 		software_version?: string;
 		selected_features?: FeatureId[];
 		theme_slug?: string;
@@ -277,6 +278,10 @@ export interface Domain {
 	bundled_plan_subscription_id?: any;
 	product_slug?: any;
 	owner: string;
+}
+
+export interface SiteSettings {
+	[ key: string ]: any;
 }
 
 export interface SiteLaunchState {

@@ -1,6 +1,6 @@
 import { getMediaQueryList, isMobile, MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { Button, Card, CardBody, CardFooter, CardMedia } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import WpcomTourKitRating from './wpcom-tour-kit-rating';
 import WpcomTourKitStepCardNavigation from './wpcom-tour-kit-step-card-navigation';
 import WpcomTourKitStepCardOverlayControls from './wpcom-tour-kit-step-card-overlay-controls';
@@ -16,6 +16,7 @@ const WpcomTourKitStepCard: React.FunctionComponent< WpcomTourStepRendererProps 
 	onPreviousStep,
 	setInitialFocusedElement,
 } ) => {
+	const { __ } = useI18n();
 	const lastStepIndex = steps.length - 1;
 	const { descriptions, heading, imgSrc } = steps[ currentStepIndex ].meta;
 	const isLastStep = currentStepIndex === lastStepIndex;
@@ -38,7 +39,7 @@ const WpcomTourKitStepCard: React.FunctionComponent< WpcomTourStepRendererProps 
 								media={ mediaQueryList?.media }
 							/>
 						) }
-						<img alt={ __( 'Tour Media' ) } src={ imgSrc.desktop?.src } />
+						<img alt={ __( 'Tour Media', __i18n_text_domain__ ) } src={ imgSrc.desktop?.src } />
 					</picture>
 				</CardMedia>
 			) }
@@ -53,7 +54,7 @@ const WpcomTourKitStepCard: React.FunctionComponent< WpcomTourStepRendererProps 
 							onClick={ () => onGoToStep( 0 ) }
 							ref={ setInitialFocusedElement }
 						>
-							{ __( 'Restart tour' ) }
+							{ __( 'Restart tour', __i18n_text_domain__ ) }
 						</Button>
 					) : null }
 				</p>

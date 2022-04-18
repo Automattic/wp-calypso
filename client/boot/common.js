@@ -38,7 +38,7 @@ import { initConnection as initHappychatConnection } from 'calypso/state/happych
 import wasHappychatRecentlyActive from 'calypso/state/happychat/selectors/was-happychat-recently-active';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getHappychatAuth } from 'calypso/state/happychat/utils';
-import { getInitialState, persistOnChange } from 'calypso/state/initial-state';
+import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/state/initial-state';
 import { loadPersistedState } from 'calypso/state/persisted-state';
 import { init as pushNotificationsInit } from 'calypso/state/push-notifications/actions';
 import { createQueryClient } from 'calypso/state/query-client';
@@ -395,7 +395,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	const queryClient = await createQueryClient( currentUser?.ID );
 	const initialState = getInitialState( initialReducer, currentUser?.ID );
 	const reduxStore = createReduxStore( initialState, initialReducer );
-	setStore( reduxStore, currentUser?.ID );
+	setStore( reduxStore, getStateFromCache( currentUser?.ID ) );
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
 	setupLocale( currentUser, reduxStore );
 	configureReduxStore( currentUser, reduxStore );

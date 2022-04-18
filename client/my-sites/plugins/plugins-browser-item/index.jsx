@@ -72,8 +72,10 @@ const PluginsBrowserListElement = ( props ) => {
 			site: site,
 			plugin: plugin.slug,
 			list_name: props.listName,
+			grid_position: props.gridPosition,
+			blog_id: selectedSite?.ID,
 		} );
-	}, [ site, plugin, props.listName ] );
+	}, [ site, plugin, selectedSite, props.listName ] );
 
 	const isWpcomPreinstalled = useMemo( () => {
 		if ( plugin.isPreinstalled ) {

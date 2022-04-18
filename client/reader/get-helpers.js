@@ -3,7 +3,6 @@ import { translate } from 'i18n-calypso';
 import { trim } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { isSiteDescriptionBlocked } from 'calypso/reader/lib/site-description-blocklist';
-import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 
 /**
  * Given a feed, site, or post: return the site url. return false if one could not be found.
@@ -88,39 +87,36 @@ export const getSiteAuthorName = ( site ) => {
 };
 
 /**
- * Get list of routes that should not have unseen functionality.
- *
- * @returns {[string, string, string]} list of routes.
- */
-export const getRoutesWithoutSeenSupport = () => {
-	return [ '/read/conversations', '/read/conversations/a8c', '/activities/likes' ];
-};
-
-/**
- * Get default seen value given a route. FALSE if the route does not support seen functionality, TRUE otherwise.
- *
- * @param {string} currentRoute given route
- * @returns {boolean} default seen value for given route
- */
-export const getDefaultSeenValue = ( currentRoute ) => {
-	const routesWithoutSeen = getRoutesWithoutSeenSupport();
-	return routesWithoutSeen.includes( currentRoute ) ? false : true;
-};
-
-/**
- * Check if user is eligible to use seen posts feature (unseen counts and mark as seen)
+ * Check if route or feed/blog is eligible to use seen posts feature (unseen counts and mark as seen)
  *
  * @param {object} flags eligibility data
- * @param {Array} flags.teams list of reader teams
+ * @param {string} flags.currentRoute current route
  * @param {boolean} flags.isWPForTeamsItem id if exists
+ * @param {boolean} flags.hasOrganization id if exists
  * @returns {boolean} whether or not the user can use the feature for the given site
  */
-export const isEligibleForUnseen = ( { teams, isWPForTeamsItem = false } ) => {
-	if ( isAutomatticTeamMember( teams ) ) {
-		return true;
+export const isEligibleForUnseen = ( {
+	isWPForTeamsItem = false,
+	currentRoute = null,
+	hasOrganization = null,
+} ) => {
+	let isEligible = isWPForTeamsItem;
+	if ( hasOrganization !== null ) {
+		isEligible = hasOrganization;
 	}
 
-	return isWPForTeamsItem;
+	if ( currentRoute ) {
+		if (
+			[ '/read/a8c', '/read/p2' ].includes( currentRoute ) ||
+			[ '/read/feeds/', '/read/blogs/' ].some( ( route ) => currentRoute.startsWith( route ) )
+		) {
+			return isEligible;
+		}
+
+		return false;
+	}
+
+	return isEligible;
 };
 
 /**
@@ -129,15 +125,9 @@ export const isEligibleForUnseen = ( { teams, isWPForTeamsItem = false } ) => {
  * @param {Object} params method params
  * @param {Object} params.post object
  * @param {Array} params.posts list
- * @param {string} params.currentRoute given route
  * @returns {boolean} whether or not the post can be marked as seen
  */
-export const canBeMarkedAsSeen = ( { post = null, posts = [], currentRoute = '' } ) => {
-	const routesWithoutSeen = getRoutesWithoutSeenSupport();
-	if ( currentRoute && routesWithoutSeen.includes( currentRoute ) ) {
-		return false;
-	}
-
+export const canBeMarkedAsSeen = ( { post = null, posts = [] } ) => {
 	if ( post !== null ) {
 		return post.hasOwnProperty( 'is_seen' );
 	}

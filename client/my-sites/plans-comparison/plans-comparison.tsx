@@ -21,6 +21,7 @@ import { PlansComparisonAction } from './plans-comparison-action';
 import { PlansComparisonColHeader } from './plans-comparison-col-header';
 import { planComparisonFeatures } from './plans-comparison-features';
 import { PlansComparisonRow, DesktopContent, MobileContent } from './plans-comparison-row';
+import { PlansDomainConnectionInfo } from './plans-domain-connection-info';
 import { usePlanPrices, PlanPrices } from './use-plan-prices';
 import type { WPComPlan } from '@automattic/calypso-products';
 import type { RequestCartProduct as CartItem } from '@automattic/shopping-cart';
@@ -394,6 +395,7 @@ interface Props {
 	isInSignup?: boolean;
 	selectedSiteId?: number;
 	selectedSiteSlug?: string;
+	selectedDomainConnection?: boolean;
 	hideFreePlan?: boolean;
 	purchaseId?: number | null;
 	onSelectPlan: ( item: Partial< CartItem > | null ) => void;
@@ -414,6 +416,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	isInSignup = false,
 	selectedSiteId,
 	selectedSiteSlug,
+	selectedDomainConnection,
 	purchaseId,
 	hideFreePlan,
 	onSelectPlan,
@@ -422,7 +425,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	const [ showCollapsibleRows, setShowCollapsibleRows ] = useState( false );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? '';
 	const plans = [ getPlan( PLAN_WPCOM_FLEXIBLE ), getPlan( PLAN_WPCOM_PRO ) ] as WPComPlan[];
-	const prices: PlanPrices[] = [ { price: 0 }, usePlanPrices( plans[ 1 ], selectedSiteId ) ];
+	const prices: PlanPrices[] = [ { price: 0 }, usePlanPrices( plans[ 1 ] ) ];
 
 	if ( hideFreePlan ) {
 		plans.shift();
@@ -467,6 +470,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 								originalPrice={ prices[ index ].originalPrice }
 								translate={ translate }
 							>
+								{ selectedDomainConnection && <PlansDomainConnectionInfo plan={ plan } /> }
 								<PlansComparisonAction
 									currentSitePlanSlug={ sitePlan?.product_slug }
 									plan={ plan }
@@ -474,6 +478,9 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 									isPrimary={ plan.type === TYPE_PRO }
 									isCurrentPlan={ sitePlan?.product_slug === plan.getStoreSlug() }
 									manageHref={ manageHref }
+									disabled={
+										selectedDomainConnection && [ TYPE_FREE, TYPE_FLEXIBLE ].includes( plan.type )
+									}
 									onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
 								/>
 							</PlansComparisonColHeader>

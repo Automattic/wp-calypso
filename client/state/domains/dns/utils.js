@@ -22,7 +22,7 @@ function validateField( { name, value, type, domainName } ) {
 		case 'data':
 			return isValidData( value, type );
 		case 'protocol':
-			return [ 'tcp', 'udp', 'tls' ].includes( value );
+			return [ '_tcp', '_udp', '_tls' ].includes( value );
 		case 'weight':
 		case 'aux':
 		case 'port': {
@@ -82,11 +82,6 @@ function getNormalizedData( record, selectedDomainName ) {
 	normalizedRecord.name = getNormalizedName( record.name, record.type, selectedDomainName );
 	if ( record.target ) {
 		normalizedRecord.target = getFieldWithDot( record.target );
-	}
-	// The leading '_' in SRV's service field is a convention
-	// The record itself should not contain it
-	if ( record.service ) {
-		normalizedRecord.service = record.service.replace( /^_+/, '' );
 	}
 
 	return normalizedRecord;

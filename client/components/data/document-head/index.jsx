@@ -12,58 +12,27 @@ import {
 import { getDocumentHeadFormattedTitle } from 'calypso/state/document-head/selectors/get-document-head-formatted-title';
 import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
 
+const isServer = typeof document === 'undefined';
+
 class DocumentHead extends Component {
+	constructor( props ) {
+		super( props );
+		// In SSR, sync the state in constructor, in browser do it in effects.
+		if ( isServer ) {
+			this.syncState();
+		}
+	}
+
 	componentDidMount() {
-		const { title, unreadCount } = this.props;
-
-		if ( this.props.title !== undefined ) {
-			this.props.setTitle( title );
-		}
-
-		if ( this.props.unreadCount !== undefined ) {
-			this.props.setUnreadCount( unreadCount );
-		}
-
-		if ( this.props.link !== undefined ) {
-			this.props.setLink( this.props.link );
-		}
-
-		if ( this.props.meta !== undefined ) {
-			this.props.setMeta( this.props.meta );
-		}
-
-		this.setFormattedTitle( this.props.formattedTitle );
+		this.syncState();
+		this.setFormattedTitle();
 	}
 
 	componentDidUpdate( prevProps ) {
-		// The `title` prop is commonly receiving its value as a result from a `translate` call
-		// and in some cases it returns a React component instead of string.
-		// A shallow comparison of two React components may result in unnecessary title updates.
-		// To avoid that, we compare the string representation of the passed `title` prop value.
-		if (
-			this.props.title !== undefined &&
-			prevProps.title?.toString?.() !== this.props.title?.toString?.()
-		) {
-			this.props.setTitle( this.props.title );
-		}
-
-		if (
-			this.props.unreadCount !== undefined &&
-			prevProps.unreadCount !== this.props.unreadCount
-		) {
-			this.props.setUnreadCount( this.props.unreadCount );
-		}
-
-		if ( this.props.link !== undefined && ! isEqual( prevProps.link, this.props.link ) ) {
-			this.props.setLink( this.props.link );
-		}
-
-		if ( this.props.meta !== undefined && ! isEqual( prevProps.meta, this.props.meta ) ) {
-			this.props.setMeta( this.props.meta );
-		}
+		this.syncState( prevProps );
 
 		if ( this.props.formattedTitle !== prevProps.formattedTitle ) {
-			this.setFormattedTitle( this.props.formattedTitle );
+			this.setFormattedTitle();
 		}
 	}
 
@@ -71,8 +40,34 @@ class DocumentHead extends Component {
 		this.setFormattedTitle.cancel();
 	}
 
-	setFormattedTitle = debounce( ( title ) => {
-		document.title = title;
+	syncState( prevProps = null ) {
+		const { title, unreadCount, link, meta } = this.props;
+		// The `title` prop is commonly receiving its value as a result from a `translate` call
+		// and in some cases it returns a React component instead of string.
+		// A shallow comparison of two React components may result in unnecessary title updates.
+		// To avoid that, we compare the string representation of the passed `title` prop value.
+		if (
+			title !== undefined &&
+			! ( prevProps && prevProps.title?.toString?.() === title?.toString?.() )
+		) {
+			this.props.setTitle( title );
+		}
+
+		if ( unreadCount !== undefined && ! ( prevProps && prevProps.unreadCount === unreadCount ) ) {
+			this.props.setUnreadCount( unreadCount );
+		}
+
+		if ( link !== undefined && ! ( prevProps && isEqual( prevProps.link, link ) ) ) {
+			this.props.setLink( link );
+		}
+
+		if ( meta !== undefined && ! ( prevProps && isEqual( prevProps.meta, meta ) ) ) {
+			this.props.setMeta( meta );
+		}
+	}
+
+	setFormattedTitle = debounce( () => {
+		document.title = this.props.formattedTitle;
 	} );
 
 	render() {

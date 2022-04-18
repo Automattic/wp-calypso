@@ -18,7 +18,7 @@ import './style.scss';
  * The intent capture step
  */
 const IntentStep: Step = function IntentStep( { navigation } ) {
-	const { goBack, submit } = navigation;
+	const { goBack, goNext, submit } = navigation;
 	const translate = useTranslate();
 	const headerText = translate( 'Where will you start?' );
 	const subHeaderText = translate( 'You can change your mind at any time.' );
@@ -48,7 +48,9 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 			stepName={ 'intent-step' }
 			headerImageUrl={ intentImageUrl }
 			goBack={ goBack }
-			hideSkip
+			goNext={ goNext }
+			skipLabelText={ translate( 'Skip to dashboard' ) }
+			skipButtonAlign={ 'top' }
 			hideBack={ ! isEnabled( 'signup/site-vertical-step' ) }
 			isHorizontalLayout={ true }
 			formattedHeader={

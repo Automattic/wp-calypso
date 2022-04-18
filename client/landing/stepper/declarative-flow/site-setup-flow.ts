@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSelect } from '@wordpress/data';
 import { useFSEStatus } from '../hooks/use-fse-status';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -23,7 +24,9 @@ export const siteSetupFlow: Flow = {
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
+			'businessInfo',
 			'storeAddress',
+			'processing',
 		] as StepPath[];
 	},
 
@@ -44,7 +47,10 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 				}
 
-				case 'designSetup': {
+				case 'designSetup':
+					return navigate( 'processing' );
+
+				case 'processing': {
 					// If the user skips starting point, redirect them to My Home
 					if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
 						if ( startingPoint !== 'write' ) {
@@ -120,6 +126,12 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 				}
 
+				case 'storeAddress':
+					return navigate( 'businessInfo' );
+
+				case 'businessInfo':
+					return navigate( 'storeFeatures' );
+
 				case 'courses': {
 					return redirect( `/post/${ siteSlug }` );
 				}
@@ -170,6 +182,12 @@ export const siteSetupFlow: Flow = {
 					}
 					return navigate( 'bloggerStartingPoint' );
 
+				case 'intent':
+					return redirect( `/home/${ siteSlug }` );
+
+				case 'vertical':
+					return redirect( `/home/${ siteSlug }` );
+
 				default:
 					return navigate( 'intent' );
 			}
@@ -180,5 +198,14 @@ export const siteSetupFlow: Flow = {
 		};
 
 		return { goNext, goBack, goToStep, submit };
+	},
+
+	useAssertConditions() {
+		const siteSlug = useSiteSlugParam();
+		const siteId = useSiteIdParam();
+
+		if ( ! siteSlug && ! siteId ) {
+			throw new Error( 'site-setup did not provide the site slug or site id it is configured to.' );
+		}
 	},
 };
