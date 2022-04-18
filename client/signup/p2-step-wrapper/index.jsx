@@ -72,7 +72,8 @@ function P2StepWrapper( {
 }
 
 P2StepWrapper.propTypes = {
-	headerText: PropTypes.string,
+	headerText: PropTypes.node,
+	subHeaderText: PropTypes.node,
 	flowName: PropTypes.string,
 	stepName: PropTypes.string,
 	positionInFlow: PropTypes.number,

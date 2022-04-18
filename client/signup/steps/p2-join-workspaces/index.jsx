@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, chevronRight } from '@wordpress/icons';
 import { useCallback } from 'react';
@@ -17,6 +17,7 @@ function P2JoinWorkspaces( {
 	stepName,
 	submitSignupStep,
 } ) {
+	const CHALLENGE_CODE_LENGTH = 6;
 	const dispatch = useDispatch();
 	const userEmail = useSelector( getCurrentUserEmail );
 	if ( ! userEmail ) {
@@ -45,23 +46,37 @@ function P2JoinWorkspaces( {
 		fetchList();
 	}, [ fetchList ] );
 
-	const handleJoinWorkspaceClick = async ( siteId ) => {
+	const handleJoinWorkspaceClick = async ( { id, name } ) => {
 		const response = await request( {
 			path: '/p2/preapproved-joining/request-code',
 			apiNamespace: 'wpcom/v2',
 			global: true,
 			method: 'POST',
 			body: {
-				hub_id: parseInt( siteId ),
+				hub_id: parseInt( id ),
 			},
 		} );
 
+		//Test only, REMOVE ME!
+		// const response = {
+		// 	success: true,
+		// 	hub_id: id,
+		// };
+
 		if ( response.success ) {
 			setWorkspaceStatus( {
-				requested: parseInt( response.hub_id ),
+				requested: { id: parseInt( response.hub_id ), name },
 				joined: workspaceStatus.joined,
 			} );
 		}
+	};
+
+	const handleCodeInputChange = ( event ) => {
+		const inputBoxes = event.target.parentNode.querySelectorAll(
+			'input.p2-join-workspaces__code-input-box'
+		);
+		const newCode = Array.from( inputBoxes ).reduce( ( acc, curr ) => acc + curr.value, '' );
+		setChallengeCode( newCode );
 	};
 
 	const handleSubmitCode = async () => {
@@ -97,13 +112,16 @@ function P2JoinWorkspaces( {
 		goToNextStep();
 	};
 
-	const renderWorkspaceActionButton = ( workspaceId ) => {
+	const renderWorkspaceActionButton = ( workspaceId, workspaceName ) => {
 		if ( ! workspaceStatus.joined.includes( workspaceId ) ) {
 			return (
 				<Button
 					className="p2-join-workspaces__action-join"
 					onClick={ () => {
-						handleJoinWorkspaceClick( workspaceId );
+						handleJoinWorkspaceClick( {
+							id: workspaceId,
+							name: workspaceName,
+						} );
 					} }
 				>
 					{ __( 'Join' ) }
@@ -123,8 +141,13 @@ function P2JoinWorkspaces( {
 			<div className="p2-join-workspaces__workspaces-list">
 				{ eligibleWorkspaces.map( ( workspace ) => (
 					<div className="p2-join-workspaces__workspace" key={ workspace.id }>
+						<div className="p2-join-workspaces__workspace-icon">
+							{ workspace.name && workspace.name.charAt( 0 ) }
+						</div>
 						<div className="p2-join-workspaces__workspace-name">
-							<a href={ workspace.site_url }>{ workspace.name }</a>
+							<a className="p2-join-workspaces__workspace-link" href={ workspace.site_url }>
+								{ workspace.name }
+							</a>
 						</div>
 						<div className="p2-join-workspaces__workspace-description">
 							<span>
@@ -147,7 +170,7 @@ function P2JoinWorkspaces( {
 							</span>
 						</div>
 						<div className="p2-join-workspaces__action">
-							{ renderWorkspaceActionButton( parseInt( workspace.id ) ) }
+							{ renderWorkspaceActionButton( parseInt( workspace.id ), workspace.name ) }
 						</div>
 					</div>
 				) ) }
@@ -157,30 +180,91 @@ function P2JoinWorkspaces( {
 
 	const renderCreateWorkspaceSection = () => {
 		return (
-			<Button onClick={ handleCreateWorkspaceClick }>{ __( 'Create a new workspace' ) }</Button>
+			<div className="p2-join-workspaces__create-workspace">
+				<div className="p2-join-workspaces__create-workspace-header">
+					{ __( 'Want to create a new workspace?' ) }
+				</div>
+				<div className="p2-join-workspaces__create-workspace-subheader">
+					{ __( 'Get your team on P2 — for free.' ) }
+				</div>
+				<div className="p2-join-workspaces__create-workspace-action">
+					<Button onClick={ handleCreateWorkspaceClick }>{ __( 'Create a new workspace' ) }</Button>
+				</div>
+			</div>
 		);
+	};
+
+	const renderCodeInputBoxes = () => {
+		const boxes = [];
+		for ( let index = 0; index < CHALLENGE_CODE_LENGTH; index++ ) {
+			boxes.push(
+				<input
+					key={ index }
+					className="p2-join-workspaces__code-input-box"
+					maxLength={ 1 }
+					onChange={ ( event ) => {
+						handleCodeInputChange( event, index );
+					} }
+					// eslint-disable-next-line jsx-a11y/no-autofocus
+					autoFocus={ index === 0 }
+				/>
+			);
+		}
+
+		return boxes;
 	};
 
 	const renderCodeInputForm = () => {
 		return (
 			<div className="p2-join-workspaces__code-input">
 				<div className="p2-join-workspaces__code-input-label">
-					{ __( 'Enter the code from your workspace invitation email' ) }
+					{ __( 'Enter the code here, please.' ) }
 				</div>
-				<input
-					className="p2-join-workspaces__code-input-field"
-					type="text"
-					placeholder={ __( 'Code' ) }
-					onChange={ ( event ) => {
-						setChallengeCode( event.target.value );
-					} }
-				/>
-				<Button onClick={ handleSubmitCode } isPrimary={ true }>
-					{ __( 'Join' ) }
-				</Button>
-				<Button onClick={ handleCancelJoin }>{ __( 'Cancel' ) }</Button>
+				<form className="p2-join-workspaces__code-input-form">
+					<fieldset>{ renderCodeInputBoxes() }</fieldset>
+					<Button
+						className="p2-join-workspaces__code-input-submit"
+						onClick={ handleSubmitCode }
+						isPrimary={ true }
+					>
+						{ __( 'Continue' ) }
+					</Button>
+					<Button className="p2-join-workspaces__code-input-cancel" onClick={ handleCancelJoin }>
+						{ __( 'Cancel' ) }
+					</Button>
+				</form>
 			</div>
 		);
+	};
+
+	const getHeaderText = () => {
+		if ( workspaceStatus.requested?.name ) {
+			return createInterpolateElement(
+				sprintf(
+					/* translators: %s is the site name */
+					__( 'Enter the code to join <br />%s' ),
+					workspaceStatus.requested.name
+				),
+				{ br: <br /> }
+			);
+		}
+
+		return __( 'Welcome to P2!' );
+	};
+
+	const getSubHeaderText = () => {
+		if ( workspaceStatus.requested?.id ) {
+			return createInterpolateElement(
+				sprintf(
+					/* translators: %s is the email address */
+					__( "We've sent an email with a code to <br /><strong>%s</strong>" ),
+					userEmail
+				),
+				{ br: <br />, strong: <strong /> }
+			);
+		}
+
+		return __( 'A better way of working.' );
 	};
 
 	return (
@@ -189,8 +273,8 @@ function P2JoinWorkspaces( {
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
-				headerText={ __( 'Welcome to P2!' ) }
-				subHeaderText={ __( 'A better way of working' ) }
+				headerText={ getHeaderText() }
+				subHeaderText={ getSubHeaderText() }
 			>
 				<div className="p2-join-workspaces">
 					{ workspaceStatus.requested && renderCodeInputForm() }
