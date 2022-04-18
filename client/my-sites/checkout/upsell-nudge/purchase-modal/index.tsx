@@ -26,7 +26,6 @@ type PurchaseModalProps = {
 	isCartUpdating: boolean;
 	onClose: () => void;
 	siteSlug: string;
-	discountRateCopy: string;
 };
 
 export function PurchaseModal( {
@@ -35,7 +34,6 @@ export function PurchaseModal( {
 	isCartUpdating,
 	onClose,
 	siteSlug,
-	discountRateCopy,
 }: PurchaseModalProps ): JSX.Element {
 	const [ step, setStep ] = useState( BEFORE_SUBMIT );
 	const submitTransaction = useSubmitTransaction( {
@@ -50,7 +48,6 @@ export function PurchaseModal( {
 		onClose,
 		siteSlug,
 		step,
-		discountRateCopy,
 		submitTransaction,
 	};
 
