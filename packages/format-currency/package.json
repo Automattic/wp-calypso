@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/format-currency",
-	"version": "1.0.0-alpha.0",
+	"version": "1.0.0-alpha.1",
 	"description": "JavaScript library for formatting currency.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -40,5 +40,9 @@
 		"tslib": "^2.3.0",
 		"typescript": "^4.5.5"
 	},
+	"files": [
+		"dist",
+		"src"
+	],
 	"types": "dist/types"
 }
