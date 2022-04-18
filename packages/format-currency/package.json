@@ -4,7 +4,7 @@
 	"description": "JavaScript library for formatting currency.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.js",
+	"calypso:src": "src/index.ts",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -26,9 +26,11 @@
 		"i18n-calypso": "workspace:^"
 	},
 	"scripts": {
-		"clean": "rm -rf dist",
-		"build": "transpile",
-		"prepack": "yarn run clean && yarn run build"
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepare": "yarn run build",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"peerDependencies": {
 		"react": "^17.0.2"
@@ -36,5 +38,5 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^"
 	},
-	"types": "types"
+	"types": "dist/types"
 }
