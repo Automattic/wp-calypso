@@ -14,13 +14,23 @@
 		max-width: 210px;
 		margin: 0;
 		list-style: none;
-		padding: 20px;
+		padding: 18px 5px;
 		color: var( --studio-white );
 		position: absolute;
 		z-index: 10;
 
-		li span {
+		span {
+			padding: 2px 10px;
+			border-radius: 5px; /* stylelint-disable-line */
+			display: block;
 			cursor: pointer;
+		}
+		span:hover {
+			background-color: #82a7ec;
+		}
+
+		hr {
+			margin: 15px 10px;
 		}
 	}
 }
