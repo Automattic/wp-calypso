@@ -11,6 +11,7 @@ export { default as importReady } from './import-ready';
 export { default as importReadyNot } from './import-ready-not';
 export { default as importReadyWpcom } from './import-ready-wpcom';
 export { default as importReadyPreview } from './import-ready-preview';
+export { default as importer } from './importer';
 export { default as businessInfo } from './business-info';
 export { default as storeAddress } from './store-address';
 export { default as vertical } from './site-vertical';
@@ -33,6 +34,7 @@ export type StepPath =
 	| 'importReadyNot'
 	| 'importReadyWpcom'
 	| 'importReadyPreview'
+	| 'importer'
 	| 'businessInfo'
 	| 'storeAddress'
 	| 'processing'
