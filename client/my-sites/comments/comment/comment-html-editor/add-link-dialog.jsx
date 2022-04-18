@@ -31,16 +31,9 @@ export class AddLinkDialog extends Component {
 
 	state = {
 		linkNewTab: false,
-		linkText: '',
-		linkUrl: '',
+		linkUrl: inferUrl( this.props.selectedText ),
+		linkText: this.props.selectedText,
 	};
-
-	static getDerivedStateFromProps( { selectedText } ) {
-		return {
-			linkUrl: inferUrl( selectedText ),
-			linkText: selectedText,
-		};
-	}
 
 	correctUrl() {
 		const url = this.state.linkUrl.trim();
