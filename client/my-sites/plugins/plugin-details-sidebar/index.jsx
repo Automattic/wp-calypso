@@ -94,6 +94,7 @@ const PluginDetailsSidebar = ( {
 						'Take a look at the posibilities of this plugin before your commit.'
 					) }
 					links={ [ { href: { demo_url }, label: translate( 'View live demo' ) } ] }
+					first={ ! isWooCommercePluginRequired }
 				/>
 			) }
 
@@ -107,6 +108,7 @@ const PluginDetailsSidebar = ( {
 						: translate( 'Unlimited Email Support' )
 				}
 				links={ supportLinks }
+				first={ ! isWooCommercePluginRequired && ! demo_url }
 			/>
 		</div>
 	);
