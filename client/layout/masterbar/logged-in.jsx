@@ -40,6 +40,7 @@ import Notifications from './notifications';
 const MENU_POPOVER_PREFERENCE_KEY = 'dismissible-card-masterbar-collapsable-menu-popover';
 
 const MOBILE_BREAKPOINT = '<480px';
+
 class MasterbarLoggedIn extends Component {
 	state = {
 		isActionSearchVisible: false,
@@ -188,6 +189,7 @@ class MasterbarLoggedIn extends Component {
 		return 'my-sites';
 	};
 
+	// will render as back button on mobile and in editor
 	renderMySites() {
 		const {
 			domainOnlySite,
@@ -456,6 +458,10 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	renderHelpCenter() {
+		return <AsyncLoad require="./masterbar-help-center" placeholder={ null } />;
+	}
+
 	render() {
 		const { isCheckout, isCheckoutPending } = this.props;
 		const { isMobile } = this.state;
@@ -463,14 +469,13 @@ class MasterbarLoggedIn extends Component {
 		if ( isCheckout || isCheckoutPending ) {
 			return this.renderCheckout();
 		}
-
 		if ( isMobile ) {
-			/* TODO: implement this when help center is ready
-			if ( isInEditor ) {
+			const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
+			if ( this.props.isInEditor && isHelpCenterEnabled ) {
 				return (
 					<Masterbar>
 						<div className="masterbar__section masterbar__section--left">
-							{ this.renderBackButton() }
+							{ this.renderMySites() }
 						</div>
 						<div className="masterbar__section masterbar__section--right">
 							{ this.renderHelpCenter() }
@@ -478,7 +483,6 @@ class MasterbarLoggedIn extends Component {
 					</Masterbar>
 				);
 			}
-			 */
 			return (
 				<>
 					{ this.renderPopupSearch() }

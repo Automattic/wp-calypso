@@ -1,5 +1,6 @@
 import * as Auth from './auth';
 import * as DomainSuggestions from './domain-suggestions';
+import * as HelpCenter from './help-center';
 import * as I18n from './i18n';
 import * as Launch from './launch';
 import * as Onboard from './onboard';
@@ -16,6 +17,7 @@ export {
 	Auth,
 	User,
 	DomainSuggestions,
+	HelpCenter,
 	I18n,
 	Site,
 	Verticals,
