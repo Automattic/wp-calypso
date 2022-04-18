@@ -200,6 +200,17 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} catch ( e ) {}
 	}
 
+	function* setIntentOnSite( siteSlug: string, intent: string ) {
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteSlug ) }/site-intent`,
+				apiNamespace: 'wpcom/v2',
+				body: { site_intent: intent },
+				method: 'POST',
+			} );
+		} catch ( e ) {}
+	}
+
 	function* saveSiteTitle( siteId: number, blogname: string | undefined ) {
 		yield saveSiteSettings( siteId, { blogname } );
 	}
@@ -311,6 +322,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveSiteSettings,
 		saveSiteTitle,
 		saveSiteSettings,
+		setIntentOnSite,
 		receiveSiteTitle,
 		fetchNewSite,
 		fetchSite,
