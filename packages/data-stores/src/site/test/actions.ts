@@ -112,4 +112,60 @@ describe( 'Site Actions', () => {
 			expect( finalResult.done ).toBe( true );
 		} );
 	} );
+
+	describe( 'Atomic Actions', () => {
+		it( 'should start an Atomic transfer', () => {
+			const { initiateAtomicTransfer } = createActions( mockedClientCredentials );
+			const softwareSet = 'woo-on-plans';
+			const generator = initiateAtomicTransfer( siteId, softwareSet );
+
+			const mockedApiResponse = {
+				request: {
+					apiNamespace: 'wpcom/v2',
+					method: 'POST',
+					path: `/sites/${ siteId }/atomic/transfers`,
+					body: { software_set: softwareSet },
+				},
+				type: 'WPCOM_REQUEST',
+			};
+
+			// First iteration: WP_COM_REQUEST is fired
+			expect( generator.next().value ).toEqual( mockedApiResponse );
+		} );
+
+		it( 'should request the Atomic transfer status', () => {
+			const { requestLatestAtomicTransfer } = createActions( mockedClientCredentials );
+			const generator = requestLatestAtomicTransfer( siteId );
+
+			const mockedApiResponse = {
+				request: {
+					apiNamespace: 'wpcom/v2',
+					method: 'GET',
+					path: `/sites/${ siteId }/atomic/transfers/latest`,
+				},
+				type: 'WPCOM_REQUEST',
+			};
+
+			// First iteration: WP_COM_REQUEST is fired
+			expect( generator.next().value ).toEqual( mockedApiResponse );
+		} );
+
+		it( 'should request the Atomic software install status', () => {
+			const { requestAtomicSoftwareStatus } = createActions( mockedClientCredentials );
+			const softwareSet = 'woo-on-plans';
+			const generator = requestAtomicSoftwareStatus( siteId, softwareSet );
+
+			const mockedApiResponse = {
+				request: {
+					apiNamespace: 'wpcom/v2',
+					method: 'GET',
+					path: `/sites/${ siteId }/atomic/software/${ softwareSet }`,
+				},
+				type: 'WPCOM_REQUEST',
+			};
+
+			// First iteration: WP_COM_REQUEST is fired
+			expect( generator.next().value ).toEqual( mockedApiResponse );
+		} );
+	} );
 } );

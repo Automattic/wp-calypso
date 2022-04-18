@@ -243,6 +243,39 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		siteId,
 	} );
 
+	function* initiateAtomicTransfer( siteId: number, softwareSet: string | undefined ) {
+		yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteId ) }/atomic/transfers`,
+			apiNamespace: 'wpcom/v2',
+			method: 'POST',
+			...( softwareSet
+				? {
+						body: {
+							software_set: encodeURIComponent( softwareSet ),
+						},
+				  }
+				: {} ),
+		} );
+	}
+
+	function* requestLatestAtomicTransfer( siteId: number ) {
+		yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteId ) }/atomic/transfers/latest`,
+			apiNamespace: 'wpcom/v2',
+			method: 'GET',
+		} );
+	}
+
+	function* requestAtomicSoftwareStatus( siteId: number, softwareSet: string ) {
+		yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteId ) }/atomic/software/${ encodeURIComponent(
+				softwareSet
+			) }`,
+			apiNamespace: 'wpcom/v2',
+			method: 'GET',
+		} );
+	}
+
 	return {
 		receiveSiteDomains,
 		receiveSiteSettings,
@@ -270,6 +303,9 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		setCart,
 		setSiteSetupError,
 		clearSiteSetupError,
+		initiateAtomicTransfer,
+		requestLatestAtomicTransfer,
+		requestAtomicSoftwareStatus,
 	};
 }
 
