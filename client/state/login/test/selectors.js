@@ -8,7 +8,6 @@ import {
 	getTwoFactorSupportedAuthTypes,
 	getTwoFactorUserId,
 	isRequesting,
-	isRequestingTwoFactorAuth,
 	isTwoFactorAuthTypeSupported,
 	isTwoFactorEnabled,
 	isFormDisabled,
@@ -80,32 +79,6 @@ describe( 'selectors', () => {
 			);
 
 			expect( nonce ).toBe( 'abcdef123456' );
-		} );
-	} );
-
-	describe( 'isRequestingTwoFactorAuth', () => {
-		test( 'should return false by default', () => {
-			expect( isRequestingTwoFactorAuth( EMPTY_STATE ) ).toBe( false );
-		} );
-
-		test( 'should return true if the request is in progress', () => {
-			expect(
-				isRequestingTwoFactorAuth( {
-					login: {
-						isRequestingTwoFactorAuth: true,
-					},
-				} )
-			).toBe( true );
-		} );
-
-		test( 'should return false if the request is not in progress', () => {
-			expect(
-				isRequestingTwoFactorAuth( {
-					login: {
-						isRequestingTwoFactorAuth: false,
-					},
-				} )
-			).toBe( false );
 		} );
 	} );
 
