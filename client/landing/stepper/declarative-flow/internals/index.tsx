@@ -37,6 +37,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	return (
 		<Switch>
 			{ stepPaths.map( ( path ) => {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore - steps with slash char cause type issue ( example: import/list )
 				const StepComponent = Steps[ path ];
 				return (
 					<Route key={ path } path={ `/${ path }` }>
