@@ -5,6 +5,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { StepPath } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CaptureStep from 'calypso/signup/steps/import/capture';
@@ -17,7 +18,8 @@ import {
 } from 'calypso/signup/steps/import/ready';
 import { GoToStep } from 'calypso/signup/types';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
-import { removeTrailingSlash } from './utils';
+import isAtomicSiteSelector from 'calypso/state/selectors/is-site-automated-transfer';
+import { redirect, getFinalImporterUrl, removeTrailingSlash } from './utils';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -30,7 +32,11 @@ const ImportStep: Step = function ImportStep( props ) {
 	 ↓ Fields
 	 */
 	const siteSlug = useSiteSlugParam();
+	const site = useSite();
 	const currentRoute = useCurrentRoute();
+	const isAtomicSite = useSelector( ( state ) =>
+		isAtomicSiteSelector( state, site?.ID as number )
+	);
 	const urlData = useSelector( getUrlData );
 
 	/**
@@ -55,6 +61,17 @@ const ImportStep: Step = function ImportStep( props ) {
 		navigation.goToStep?.( `/${ BASE_ROUTE }` as StepPath );
 	}
 
+	function goToImporterPage() {
+		const url = getFinalImporterUrl(
+			siteSlug as string,
+			urlData.url,
+			urlData.platform,
+			isAtomicSite
+		);
+
+		redirect( url );
+	}
+
 	function shouldHideSkipBtn() {
 		switch ( currentRoute ) {
 			case 'import':
@@ -77,9 +94,7 @@ const ImportStep: Step = function ImportStep( props ) {
 				{ currentRoute === 'import/ready' && (
 					<ReadyStep
 						platform={ urlData?.platform }
-						goToImporterPage={ () => {
-							// console.log( 'gotToImporterPage' );
-						} }
+						goToImporterPage={ goToImporterPage }
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }
@@ -87,9 +102,7 @@ const ImportStep: Step = function ImportStep( props ) {
 				{ currentRoute === 'import/ready/preview' && (
 					<ReadyPreviewStep
 						urlData={ urlData }
-						goToImporterPage={ () => {
-							// console.log( 'goToImporterPage' );
-						} }
+						goToImporterPage={ goToImporterPage }
 						siteSlug={ siteSlug as string }
 						recordTracksEvent={ recordTracksEvent }
 					/>
