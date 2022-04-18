@@ -512,7 +512,6 @@ export class HelpContactForm extends PureComponent {
 				  } );
 
 		const hasNoSites = siteCount === 0;
-		const helpSiteIsNotWpCom = analyseSiteData && analyseSiteData.startsWith( 'isNonWpComHosted' );
 
 		let noticeMessage;
 		let actionLink;
@@ -535,39 +534,35 @@ export class HelpContactForm extends PureComponent {
 			actionMessage = translate( 'Learn more' );
 		}
 
-		if (
-			showAlternativeSiteOptionsField &&
-			analyseSiteData &&
-			analyseSiteData.startsWith( 'isNonWpComHosted' ) &&
-			this.state.errorData !== 'jetpack_error'
-		) {
-			noticeMessage = translate(
-				'%(siteName)s may be a copy of WordPress with a different hosting service. ' +
-					"{{helpLink}}Here's the best way to find help with that{{/helpLink}}. " +
-					"If you're not sure though, please share your question with a link, and we'll point you in the right direction!",
-				{
-					components: {
-						helpLink: (
-							<a
-								href={ localizeUrl(
-									'https://wordpress.com/support/help-support-options/#where-should-i-go-for-support'
-								) }
-							/>
-						),
-					},
-					args: {
-						siteName,
-					},
-				}
-			);
-		}
-
+		const helpSiteIsNotWpCom = analyseSiteData && analyseSiteData.startsWith( 'isNonWpComHosted' );
 		if ( helpSiteIsNotWpCom ) {
-			noticeMessage = translate(
-				'The site you’ve selected is a self-hosted WordPress site. ' +
-					'If you need help with an Automattic product like Jetpack, VaultPress or Akismet, please fill out the contact form below. ' +
-					'If you have a general question about your site, please contact your web host instead, as they’ll be best equipped to assist you.'
-			);
+			if ( ! showAlternativeSiteOptionsField ) {
+				noticeMessage = translate(
+					'The site you’ve selected is a self-hosted WordPress site. ' +
+						'If you need help with an Automattic product like Jetpack, VaultPress or Akismet, please fill out the contact form below. ' +
+						'If you have a general question about your site, please contact your web host instead, as they’ll be best equipped to assist you.'
+				);
+			} else if ( this.state.errorData !== 'jetpack_error' ) {
+				noticeMessage = translate(
+					'%(siteName)s may be a copy of WordPress with a different hosting service. ' +
+						"{{helpLink}}Here's the best way to find help with that{{/helpLink}}. " +
+						"If you're not sure though, please share your question with a link, and we'll point you in the right direction!",
+					{
+						components: {
+							helpLink: (
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/help-support-options/#where-should-i-go-for-support'
+									) }
+								/>
+							),
+						},
+						args: {
+							siteName,
+						},
+					}
+				);
+			}
 		}
 
 		if ( this.state.showingQandAStep && hasQASuggestions ) {
