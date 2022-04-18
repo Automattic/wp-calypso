@@ -89,58 +89,58 @@ const ImportStep: Step = function ImportStep( props ) {
 	 */
 	function renderStepContent() {
 		return (
-			<>
-				<DocumentHead title={ __( 'Import your site content' ) } />
+			<div className="import__onboarding-page">
+				{ currentRoute === 'import' && <CaptureStep goToStep={ goToStep } /> }
+				{ currentRoute === 'import/list' && <ListStep goToStep={ goToStep } /> }
 
-				<div className="import__onboarding-page">
-					{ currentRoute === 'import' && <CaptureStep goToStep={ goToStep } /> }
-					{ currentRoute === 'import/list' && <ListStep goToStep={ goToStep } /> }
+				{ currentRoute === 'import/ready' && (
+					<ReadyStep
+						platform={ urlData?.platform }
+						goToImporterPage={ goToImporterPage }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
 
-					{ currentRoute === 'import/ready' && (
-						<ReadyStep
-							platform={ urlData?.platform }
-							goToImporterPage={ goToImporterPage }
-							recordTracksEvent={ recordTracksEvent }
-						/>
-					) }
+				{ currentRoute === 'import/ready/preview' && (
+					<ReadyPreviewStep
+						urlData={ urlData }
+						goToImporterPage={ goToImporterPage }
+						siteSlug={ siteSlug as string }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
 
-					{ currentRoute === 'import/ready/preview' && (
-						<ReadyPreviewStep
-							urlData={ urlData }
-							goToImporterPage={ goToImporterPage }
-							siteSlug={ siteSlug as string }
-							recordTracksEvent={ recordTracksEvent }
-						/>
-					) }
+				{ currentRoute === 'import/ready/not' && (
+					<ReadyNotStep goToStep={ goToStep } recordTracksEvent={ recordTracksEvent } />
+				) }
 
-					{ currentRoute === 'import/ready/not' && (
-						<ReadyNotStep goToStep={ goToStep } recordTracksEvent={ recordTracksEvent } />
-					) }
-
-					{ currentRoute === 'import/ready/wpcom' && (
-						<ReadyAlreadyOnWPCOMStep
-							urlData={ urlData }
-							goToStep={ goToStep }
-							recordTracksEvent={ recordTracksEvent }
-						/>
-					) }
-				</div>
-			</>
+				{ currentRoute === 'import/ready/wpcom' && (
+					<ReadyAlreadyOnWPCOMStep
+						urlData={ urlData }
+						goToStep={ goToStep }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
+			</div>
 		);
 	}
 
 	return (
-		<StepContainer
-			stepName={ 'import-step' }
-			hideSkip={ shouldHideSkipBtn() }
-			hideFormattedHeader={ true }
-			goBack={ navigation.goBack }
-			goNext={ navigation.goNext }
-			skipLabelText={ __( "I don't have a site address" ) }
-			isFullLayout={ true }
-			stepContent={ renderStepContent() }
-			recordTracksEvent={ recordTracksEvent }
-		/>
+		<>
+			<DocumentHead title={ __( 'Import your site content' ) } />
+
+			<StepContainer
+				stepName={ 'import-step' }
+				hideSkip={ shouldHideSkipBtn() }
+				hideFormattedHeader={ true }
+				goBack={ navigation.goBack }
+				goNext={ navigation.goNext }
+				skipLabelText={ __( "I don't have a site address" ) }
+				isFullLayout={ true }
+				stepContent={ renderStepContent() }
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		</>
 	);
 };
 
