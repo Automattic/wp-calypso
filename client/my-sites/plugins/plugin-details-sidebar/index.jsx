@@ -15,11 +15,15 @@ const PluginDetailsSidebar = ( {
 		isMarketplaceProduct = false,
 		demo_url = null,
 		documentation_url = null,
+		requirements = {},
 	},
 } ) => {
 	const translate = useTranslate();
 
 	const isAnnualPlan = useSelector( isAnnualPlanOrUpgradeableAnnualPeriod );
+	const isWooCommercePluginRequired = requirements.plugins?.some(
+		( pluginName ) => pluginName === 'plugins/woocommerce'
+	);
 
 	if ( ! isMarketplaceProduct ) {
 		return (
@@ -65,20 +69,22 @@ const PluginDetailsSidebar = ( {
 
 	return (
 		<div className="plugin-details-sidebar__plugin-details-content">
-			<PluginDetailsSidebarUSP
-				id="woo"
-				icon={ { src: wooLogo } }
-				title={ translate( 'Your store foundations' ) }
-				description={ translate(
-					'This plugin requires the WooCommerce plugin to work.{{br/}}If you do not have it installed, it will be installed automatically for free.',
-					{
-						components: {
-							br: <br />,
-						},
-					}
-				) }
-				first
-			/>
+			{ isWooCommercePluginRequired && (
+				<PluginDetailsSidebarUSP
+					id="woo"
+					icon={ { src: wooLogo } }
+					title={ translate( 'Your store foundations' ) }
+					description={ translate(
+						'This plugin requires the WooCommerce plugin to work.{{br/}}If you do not have it installed, it will be installed automatically for free.',
+						{
+							components: {
+								br: <br />,
+							},
+						}
+					) }
+					first
+				/>
+			) }
 			{ demo_url && (
 				<PluginDetailsSidebarUSP
 					id="demo"
