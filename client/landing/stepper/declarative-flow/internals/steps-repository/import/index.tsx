@@ -19,7 +19,8 @@ import {
 import { GoToStep } from 'calypso/signup/types';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import isAtomicSiteSelector from 'calypso/state/selectors/is-site-automated-transfer';
-import { redirect, getFinalImporterUrl, removeTrailingSlash } from './util';
+import { getFinalImporterUrl } from './helper';
+import { redirect, removeTrailingSlash } from './util';
 import type { Step } from '../../types';
 import './style.scss';
 
