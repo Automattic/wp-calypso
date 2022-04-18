@@ -3,6 +3,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
 import { StepPath } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -88,39 +89,43 @@ const ImportStep: Step = function ImportStep( props ) {
 	 */
 	function renderStepContent() {
 		return (
-			<div className="import__onboarding-page">
-				{ currentRoute === 'import' && <CaptureStep goToStep={ goToStep } /> }
-				{ currentRoute === 'import/list' && <ListStep goToStep={ goToStep } /> }
+			<>
+				<DocumentHead title={ __( 'Import your site content' ) } />
 
-				{ currentRoute === 'import/ready' && (
-					<ReadyStep
-						platform={ urlData?.platform }
-						goToImporterPage={ goToImporterPage }
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				) }
+				<div className="import__onboarding-page">
+					{ currentRoute === 'import' && <CaptureStep goToStep={ goToStep } /> }
+					{ currentRoute === 'import/list' && <ListStep goToStep={ goToStep } /> }
 
-				{ currentRoute === 'import/ready/preview' && (
-					<ReadyPreviewStep
-						urlData={ urlData }
-						goToImporterPage={ goToImporterPage }
-						siteSlug={ siteSlug as string }
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				) }
+					{ currentRoute === 'import/ready' && (
+						<ReadyStep
+							platform={ urlData?.platform }
+							goToImporterPage={ goToImporterPage }
+							recordTracksEvent={ recordTracksEvent }
+						/>
+					) }
 
-				{ currentRoute === 'import/ready/not' && (
-					<ReadyNotStep goToStep={ goToStep } recordTracksEvent={ recordTracksEvent } />
-				) }
+					{ currentRoute === 'import/ready/preview' && (
+						<ReadyPreviewStep
+							urlData={ urlData }
+							goToImporterPage={ goToImporterPage }
+							siteSlug={ siteSlug as string }
+							recordTracksEvent={ recordTracksEvent }
+						/>
+					) }
 
-				{ currentRoute === 'import/ready/wpcom' && (
-					<ReadyAlreadyOnWPCOMStep
-						urlData={ urlData }
-						goToStep={ goToStep }
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				) }
-			</div>
+					{ currentRoute === 'import/ready/not' && (
+						<ReadyNotStep goToStep={ goToStep } recordTracksEvent={ recordTracksEvent } />
+					) }
+
+					{ currentRoute === 'import/ready/wpcom' && (
+						<ReadyAlreadyOnWPCOMStep
+							urlData={ urlData }
+							goToStep={ goToStep }
+							recordTracksEvent={ recordTracksEvent }
+						/>
+					) }
+				</div>
+			</>
 		);
 	}
 
