@@ -31,7 +31,6 @@ import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainOnlyNotice from '../domain-only-notice';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
-import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 
 class RegisteredDomainType extends Component {
@@ -264,10 +263,6 @@ class RegisteredDomainType extends Component {
 		);
 	}
 
-	handlePaymentSettingsClick = () => {
-		this.props.recordPaymentSettingsClick( this.props.domain );
-	};
-
 	render() {
 		const { domain, selectedSite, purchase, isLoadingPurchase, isDomainOnlySite } = this.props;
 		const { name: domain_name } = domain;
@@ -328,23 +323,16 @@ class RegisteredDomainType extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const { subscriptionId } = ownProps.domain;
-		const currentUserId = getCurrentUserId( state );
-		const purchase = subscriptionId
-			? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
-			: null;
+export default connect( ( state, ownProps ) => {
+	const { subscriptionId } = ownProps.domain;
+	const currentUserId = getCurrentUserId( state );
+	const purchase = subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null;
 
-		return {
-			isDomainOnlySite: getSiteIsDomainOnly( state, ownProps.selectedSite.ID ),
-			isLoadingPurchase:
-				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
-			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
-			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
-		};
-	},
-	{
-		recordPaymentSettingsClick,
-	}
-)( withLocalizedMoment( localize( RegisteredDomainType ) ) );
+	return {
+		isDomainOnlySite: getSiteIsDomainOnly( state, ownProps.selectedSite.ID ),
+		isLoadingPurchase:
+			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
+		purchase: purchase && purchase.userId === currentUserId ? purchase : null,
+		redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
+	};
+} )( withLocalizedMoment( localize( RegisteredDomainType ) ) );
