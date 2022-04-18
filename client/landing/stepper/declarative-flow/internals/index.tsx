@@ -25,7 +25,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const history = useHistory();
 	const { search } = useLocation();
 	const stepNavigation = flow.useStepNavigation( currentRoute, ( path: StepPath ) =>
-		history.push( generatePath( path + search ), stepPaths )
+		history.push( generatePath( '/' + path + search ), stepPaths )
 	);
 	const pathToClass = ( path: string ) =>
 		path.replace( /([a-z0-9])([A-Z])/g, '$1-$2' ).toLowerCase();

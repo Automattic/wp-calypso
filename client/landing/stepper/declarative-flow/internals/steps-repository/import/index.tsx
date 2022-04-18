@@ -54,13 +54,13 @@ const ImportStep: Step = function ImportStep( props ) {
 	 */
 	const goToStep: GoToStep = function ( stepName, stepSectionName ) {
 		const routes = [ BASE_ROUTE, stepName, stepSectionName ];
-		const stepPath = ( '/' + removeTrailingSlash( routes.join( '/' ) ) ) as StepPath;
+		const stepPath = removeTrailingSlash( routes.join( '/' ) ) as StepPath;
 
 		navigation.goToStep?.( stepPath );
 	};
 
 	function goToHomeStep() {
-		navigation.goToStep?.( `/${ BASE_ROUTE }` as StepPath );
+		navigation.goToStep?.( BASE_ROUTE );
 	}
 
 	function goToImporterPage() {
