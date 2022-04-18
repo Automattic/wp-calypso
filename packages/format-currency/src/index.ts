@@ -1,5 +1,7 @@
 import { numberFormat } from 'i18n-calypso';
 import { getCurrencyDefaults } from './currencies';
+import { FormatCurrencyOptions, CurrencyObject } from './types';
+
 export { getCurrencyDefaults };
 
 export { CURRENCIES } from './currencies';
@@ -17,7 +19,11 @@ export { CURRENCIES } from './currencies';
  * @param   {boolean}    options.stripZeros  whether to remove trailing zero cents
  * @returns {?string}                        A formatted string.
  */
-export default function formatCurrency( number, code, options = {} ) {
+export default function formatCurrency(
+	number: number,
+	code: string,
+	options: FormatCurrencyOptions = {}
+): string | null {
 	const currencyDefaults = getCurrencyDefaults( code );
 	if ( ! currencyDefaults || isNaN( number ) ) {
 		return null;
@@ -47,9 +53,13 @@ export default function formatCurrency( number, code, options = {} ) {
  * @param   {string}     options.grouping    thousands separator
  * @param   {number}     options.precision   decimal digits
  * @param   {string}     options.symbol      currency symbol e.g. 'A$'
- * @returns {?string}                        A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
+ * @returns {?CurrencyObject}                        A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
  */
-export function getCurrencyObject( number, code, options = {} ) {
+export function getCurrencyObject(
+	number: number,
+	code: string,
+	options: FormatCurrencyOptions = {}
+): CurrencyObject | null {
 	const currencyDefaults = getCurrencyDefaults( code );
 	if ( ! currencyDefaults || isNaN( number ) ) {
 		return null;
@@ -87,7 +97,7 @@ export function getCurrencyObject( number, code, options = {} ) {
  * @returns {string}
  */
 
-function stripZeros( number, decimal ) {
+function stripZeros( number: string, decimal: string ): string {
 	const regex = new RegExp( `\\${ decimal }0+$` );
 	return number.replace( regex, '' );
 }
