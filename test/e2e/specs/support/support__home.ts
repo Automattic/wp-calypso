@@ -23,10 +23,6 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 			await testAccount.authenticate( page );
 		} );
 
-		afterAll( async () => {
-			await page.close();
-		} );
-
 		it( 'Displays default entries', async function () {
 			supportComponent = new SupportComponent( page );
 			await supportComponent.showSupportCard();
