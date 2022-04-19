@@ -60,19 +60,26 @@ const Categories = ( { selected }: { selected?: string } ) => {
 			{ selecting && (
 				<ul className="categories__select-list">
 					{ Object.values( categories ).map( ( category, n ) => (
-						<li key={ 'categories-' + n }>
-							{ category.separator && <hr /> }
-							{ ! category.separator && (
-								<span
-									onClick={ () => onClick( category ) }
-									onKeyPress={ () => onClick( category ) }
-									role="link"
-									tabIndex={ 0 }
-								>
-									{ category.name }
-								</span>
+						<>
+							{ category.slug === 'analytics' && (
+								<li>
+									<hr />
+								</li>
 							) }
-						</li>
+							<li key={ 'categories-' + n }>
+								{ category.separator && <hr /> }
+								{ ! category.separator && (
+									<span
+										onClick={ () => onClick( category ) }
+										onKeyPress={ () => onClick( category ) }
+										role="link"
+										tabIndex={ 0 }
+									>
+										{ category.name }
+									</span>
+								) }
+							</li>
+						</>
 					) ) }
 				</ul>
 			) }
