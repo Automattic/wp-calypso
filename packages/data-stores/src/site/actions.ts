@@ -1,6 +1,6 @@
 import { Design } from '@automattic/design-picker/src/types';
 import { wpcomRequest } from '../wpcom-request-controls';
-import { SiteLaunchError } from './types';
+import { SiteLaunchError, AtomicTransferError } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import type {
 	CreateSiteParams,
@@ -11,6 +11,7 @@ import type {
 	Cart,
 	Domain,
 	SiteLaunchError as SiteLaunchErrorType,
+	AtomicTransferError as AtomicTransferErrorType,
 	SiteSettings,
 } from './types';
 
@@ -243,19 +244,48 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		siteId,
 	} );
 
+	const atomicTransferStart = ( siteId: number, softwareSet: string | undefined ) => ( {
+		type: 'ATOMIC_TRANSFER_START' as const,
+		siteId,
+		softwareSet,
+	} );
+
+	const atomicTransferSuccess = ( siteId: number, softwareSet: string | undefined ) => ( {
+		type: 'ATOMIC_TRANSFER_SUCCESS' as const,
+		siteId,
+		softwareSet,
+	} );
+
+	const atomicTransferFailure = (
+		siteId: number,
+		softwareSet: string | undefined,
+		error: AtomicTransferErrorType
+	) => ( {
+		type: 'ATOMIC_TRANSFER_FAILURE' as const,
+		siteId,
+		softwareSet,
+		error,
+	} );
+
 	function* initiateAtomicTransfer( siteId: number, softwareSet: string | undefined ) {
-		yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteId ) }/atomic/transfers`,
-			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-			...( softwareSet
-				? {
-						body: {
-							software_set: encodeURIComponent( softwareSet ),
-						},
-				  }
-				: {} ),
-		} );
+		yield atomicTransferStart( siteId, softwareSet );
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/atomic/transfers`,
+				apiNamespace: 'wpcom/v2',
+				method: 'POST',
+				...( softwareSet
+					? {
+							body: {
+								software_set: encodeURIComponent( softwareSet ),
+							},
+					  }
+					: {} ),
+			} );
+			yield atomicTransferSuccess( siteId, softwareSet );
+		} catch ( _ ) {
+			yield atomicTransferFailure( siteId, softwareSet, AtomicTransferError.INTERNAL );
+		}
 	}
 
 	function* requestLatestAtomicTransfer( siteId: number ) {
@@ -304,6 +334,9 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		setSiteSetupError,
 		clearSiteSetupError,
 		initiateAtomicTransfer,
+		atomicTransferStart,
+		atomicTransferSuccess,
+		atomicTransferFailure,
 		requestLatestAtomicTransfer,
 		requestAtomicSoftwareStatus,
 	};
@@ -329,6 +362,9 @@ export type Action =
 			| ActionCreators[ 'launchSiteStart' ]
 			| ActionCreators[ 'launchSiteSuccess' ]
 			| ActionCreators[ 'launchSiteFailure' ]
+			| ActionCreators[ 'atomicTransferStart' ]
+			| ActionCreators[ 'atomicTransferSuccess' ]
+			| ActionCreators[ 'atomicTransferFailure' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };
