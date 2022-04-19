@@ -9,7 +9,6 @@ import { domainConnect } from 'calypso/lib/domains/constants';
 import DnsRecordsListHeader from 'calypso/my-sites/domains/domain-management/dns/dns-records-list-header';
 import { domainManagementDnsEditRecord } from 'calypso/my-sites/domains/paths';
 import { addDns, deleteDns } from 'calypso/state/domains/dns/actions';
-import { isDeletingLastMXRecord } from 'calypso/state/domains/dns/utils';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecordData from './dns-record-data';
@@ -116,9 +115,8 @@ class DnsRecordsList extends Component {
 
 	deleteDns = ( record, action = 'delete', confirmed = false ) => {
 		const { selectedDomainName, translate } = this.props;
-		const { records } = this.props.dns;
 
-		if ( ! confirmed && isDeletingLastMXRecord( record, records ) ) {
+		if ( ! confirmed && record.protected_field ) {
 			this.openDialog( 'deleteEmailForwards', ( result ) => {
 				if ( result.shouldDeleteEmailForwards ) {
 					this.deleteDns( record, action, true );
