@@ -13,7 +13,6 @@ import {
 	PLAN_FREE,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
-import { assert } from 'chai';
 import nock from 'nock';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
@@ -64,13 +63,13 @@ describe( 'PlanStorage basic tests', () => {
 
 	test( 'should not blow up and have class .plan-storage', () => {
 		const { container } = renderComponent( <PlanStorage siteId={ siteId } /> );
-		assert.lengthOf( container.getElementsByClassName( 'plan-storage' ), 1 );
+		expect( container.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should render a PlanStorageBar', () => {
 		renderComponent( <PlanStorage siteId={ siteId } /> );
 		const progressBar = screen.queryByRole( 'progressbar' );
-		assert.isDefined( progressBar );
+		expect( progressBar ).toBeDefined();
 	} );
 
 	test( 'should render when storage is limited', () => {
@@ -79,63 +78,63 @@ describe( 'PlanStorage basic tests', () => {
 			{},
 			PLAN_PREMIUM
 		);
-		assert.lengthOf( premContainer.getElementsByClassName( 'plan-storage' ), 1 );
+		expect( premContainer.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 1 );
 
 		const { container: prem2Container } = renderComponent(
 			<PlanStorage siteId={ siteId } />,
 			{},
 			PLAN_PREMIUM_2_YEARS
 		);
-		assert.lengthOf( prem2Container.getElementsByClassName( 'plan-storage' ), 1 );
+		expect( prem2Container.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 1 );
 
 		const { container: persContainer } = renderComponent(
 			<PlanStorage siteId={ siteId } />,
 			{},
 			PLAN_PERSONAL
 		);
-		assert.lengthOf( persContainer.getElementsByClassName( 'plan-storage' ), 1 );
+		expect( persContainer.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 1 );
 
 		const { container: pers2Container } = renderComponent(
 			<PlanStorage siteId={ siteId } />,
 			{},
 			PLAN_PERSONAL_2_YEARS
 		);
-		assert.lengthOf( pers2Container.getElementsByClassName( 'plan-storage' ), 1 );
+		expect( pers2Container.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 1 );
 
 		const { container: freeContainer } = renderComponent(
 			<PlanStorage siteId={ siteId } />,
 			{},
 			PLAN_FREE
 		);
-		assert.lengthOf( freeContainer.getElementsByClassName( 'plan-storage' ), 1 );
+		expect( freeContainer.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 1 );
 
 		const { container: busContainer } = renderComponent(
 			<PlanStorage siteId={ siteId } />,
 			{},
 			PLAN_BUSINESS
 		);
-		assert.lengthOf( busContainer.getElementsByClassName( 'plan-storage' ), 1 );
+		expect( busContainer.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 1 );
 
 		const { container: bus2Container } = renderComponent(
 			<PlanStorage siteId={ siteId } />,
 			{},
 			PLAN_BUSINESS_2_YEARS
 		);
-		assert.lengthOf( bus2Container.getElementsByClassName( 'plan-storage' ), 1 );
+		expect( bus2Container.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 1 );
 
 		const { container: ecomContainer } = renderComponent(
 			<PlanStorage siteId={ siteId } />,
 			{},
 			PLAN_ECOMMERCE
 		);
-		assert.lengthOf( ecomContainer.getElementsByClassName( 'plan-storage' ), 1 );
+		expect( ecomContainer.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 1 );
 
 		const { container: ecom2Container } = renderComponent(
 			<PlanStorage siteId={ siteId } />,
 			{},
 			PLAN_ECOMMERCE_2_YEARS
 		);
-		assert.lengthOf( ecom2Container.getElementsByClassName( 'plan-storage' ), 1 );
+		expect( ecom2Container.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should render for atomic sites', () => {
@@ -155,7 +154,7 @@ describe( 'PlanStorage basic tests', () => {
 				},
 			},
 		} );
-		assert.lengthOf( container.getElementsByClassName( 'plan-storage' ), 1 );
+		expect( container.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should not render for jetpack sites', () => {
@@ -172,7 +171,7 @@ describe( 'PlanStorage basic tests', () => {
 				},
 			},
 		} );
-		assert.lengthOf( container.getElementsByClassName( 'plan-storage' ), 0 );
+		expect( container.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should not render for contributors', () => {
@@ -185,11 +184,11 @@ describe( 'PlanStorage basic tests', () => {
 				},
 			},
 		} );
-		assert.lengthOf( container.getElementsByClassName( 'plan-storage' ), 0 );
+		expect( container.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should not render when site plan slug is empty', () => {
 		const { container } = renderComponent( <PlanStorage siteId={ siteId } />, {}, null );
-		assert.lengthOf( container.getElementsByClassName( '.plan-storage' ), 0 );
+		expect( container.getElementsByClassName( '.plan-storage' ) ).toHaveLength( 0 );
 	} );
 } );
