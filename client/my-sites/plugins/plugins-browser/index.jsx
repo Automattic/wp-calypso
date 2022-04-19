@@ -439,7 +439,6 @@ const SearchListView = ( {
 };
 
 const FullListView = ( { category, siteSlug, sites, billingPeriod, setBillingPeriod } ) => {
-	const translate = useTranslate();
 	const categories = useCategories();
 	const categoryTags = categories[ category ]?.tags || [];
 
