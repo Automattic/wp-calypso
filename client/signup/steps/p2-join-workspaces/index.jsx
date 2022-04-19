@@ -29,10 +29,17 @@ function P2JoinWorkspaces( {
 	}
 
 	const [ eligibleWorkspaces, setEligibleWorkspaces ] = useState( [] );
-	const [ workspaceStatus, setWorkspaceStatus ] = useState( { requested: null, joined: [] } );
+	const [ workspaceStatus, setWorkspaceStatus ] = useState( {
+		requesting: null,
+		requested: null,
+		joined: [],
+	} );
+
+	const [ isLoading, setIsLoading ] = useState( false );
+
 	// Input from the user.
 	const [ challengeCode, setChallengeCode ] = useState( '' );
-	const [ error, setError ] = useState( null );
+	const [ codeInputError, setCodeInputError ] = useState( null );
 
 	const fetchList = useCallback( async () => {
 		if ( ! userEmail ) {
@@ -52,6 +59,12 @@ function P2JoinWorkspaces( {
 	}, [ fetchList ] );
 
 	const handleJoinWorkspaceClick = async ( { id, name } ) => {
+		// Remember which workspace is being requested, for more accurate loading feedback.
+		setWorkspaceStatus( {
+			...workspaceStatus,
+			requesting: id,
+		} );
+
 		const response = await request( {
 			path: '/p2/preapproved-joining/request-code',
 			apiNamespace: 'wpcom/v2',
@@ -70,8 +83,9 @@ function P2JoinWorkspaces( {
 
 		if ( response.success ) {
 			setWorkspaceStatus( {
+				...workspaceStatus,
+				requesting: null,
 				requested: { id: parseInt( response.hub_id ), name },
-				joined: workspaceStatus.joined,
 			} );
 		}
 	};
@@ -142,31 +156,41 @@ function P2JoinWorkspaces( {
 			return;
 		}
 
-		const response = await request( {
-			path: '/p2/preapproved-joining/request-join',
-			apiNamespace: 'wpcom/v2',
-			global: true,
-			method: 'POST',
-			body: {
-				hub_id: hubId,
-				code: challengeCode,
+		setIsLoading( true );
+
+		await request(
+			{
+				path: '/p2/preapproved-joining/request-join',
+				apiNamespace: 'wpcom/v2',
+				global: true,
+				method: 'POST',
+				body: {
+					hub_id: hubId,
+					code: challengeCode,
+				},
 			},
-		} );
+			( err, response ) => {
+				setIsLoading( false );
 
-		if ( ! response.success ) {
-			setError( response.error || __( 'An error has occurred. Please try again.' ) );
-			return;
-		}
+				if ( ! response.success ) {
+					setCodeInputError( response.error || __( 'An error has occurred. Please try again.' ) );
+					return;
+				}
 
-		setWorkspaceStatus( {
-			requested: null,
-			joined: [ ...workspaceStatus.joined, parseInt( response.hub_id ) ],
-		} );
+				setWorkspaceStatus( {
+					...workspaceStatus,
+					requested: null,
+					joined: [ ...workspaceStatus.joined, parseInt( response.hub_id ) ],
+				} );
+
+				setCodeInputError( null );
+			}
+		);
 	};
 
 	const handleCancelJoin = () => {
 		setWorkspaceStatus( { ...workspaceStatus, requested: null } );
-		setError( null );
+		setCodeInputError( null );
 	};
 
 	const handleCreateWorkspaceClick = () => {
@@ -179,6 +203,7 @@ function P2JoinWorkspaces( {
 
 	const renderWorkspaceActionButton = ( workspaceId, workspaceName ) => {
 		if ( ! workspaceStatus.joined.includes( workspaceId ) ) {
+			const isBusy = workspaceStatus.requesting === workspaceId;
 			return (
 				<Button
 					className="p2-join-workspaces__action-join"
@@ -188,8 +213,9 @@ function P2JoinWorkspaces( {
 							name: workspaceName,
 						} );
 					} }
+					isBusy={ isBusy }
 				>
-					{ __( 'Join' ) }
+					{ ! isBusy && __( 'Join' ) }
 				</Button>
 			);
 		}
@@ -210,7 +236,12 @@ function P2JoinWorkspaces( {
 							{ workspace.name && workspace.name.charAt( 0 ) }
 						</div>
 						<div className="p2-join-workspaces__workspace-name">
-							<a className="p2-join-workspaces__workspace-link" href={ workspace.site_url }>
+							<a
+								className="p2-join-workspaces__workspace-link"
+								href={ workspace.site_url }
+								target="_blank"
+								rel="noreferrer"
+							>
 								{ workspace.name }
 							</a>
 						</div>
@@ -284,8 +315,10 @@ function P2JoinWorkspaces( {
 			}
 		}
 
-		if ( error ) {
-			fieldset.push( <div className="p2-join-workspaces__code-input-error">{ error }</div> );
+		if ( codeInputError ) {
+			fieldset.push(
+				<div className="p2-join-workspaces__code-input-error">{ codeInputError }</div>
+			);
 		}
 
 		return fieldset;
@@ -293,7 +326,7 @@ function P2JoinWorkspaces( {
 
 	const renderCodeInputForm = () => {
 		const formClasses = classnames( 'p2-join-workspaces__code-input-form', {
-			'has-error': error,
+			'has-error': codeInputError,
 		} );
 
 		return (
@@ -308,8 +341,9 @@ function P2JoinWorkspaces( {
 						onClick={ handleSubmitCode }
 						isPrimary={ true }
 						disabled={ challengeCode.length !== CHALLENGE_CODE_LENGTH }
+						isBusy={ isLoading }
 					>
-						{ __( 'Continue' ) }
+						{ ! isLoading && __( 'Continue' ) }
 					</Button>
 					<Button className="p2-join-workspaces__code-input-cancel" onClick={ handleCancelJoin }>
 						{ __( 'Cancel' ) }
