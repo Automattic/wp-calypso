@@ -1,4 +1,6 @@
-export const CURRENCIES = {
+import { CurrencyDefinition, CurrenciesDictionary } from './types';
+
+export const CURRENCIES: CurrenciesDictionary = {
 	AED: {
 		symbol: 'د.إ.‏',
 		grouping: ',',
@@ -973,7 +975,7 @@ export const CURRENCIES = {
  * @param   {string} code      currency code
  * @returns {?object}          currency defaults
  */
-export function getCurrencyDefaults( code ) {
+export function getCurrencyDefaults( code: string ): CurrencyDefinition {
 	const defaultCurrency = {
 		symbol: '$',
 		grouping: ',',
