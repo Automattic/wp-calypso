@@ -53,7 +53,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 
 	useEffect( () => {
 		let timeoutReference: NodeJS.Timeout;
-		if ( progress ) {
+		if ( progress >= 0 ) {
 			timeoutReference = setTimeout( () => {
 				if ( progress > simulatedProgress || progress === 1 ) {
 					setSimulatedProgress( progress );
@@ -76,7 +76,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	return (
 		<div className={ 'processing-step' }>
 			<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
-			{ progress ? (
+			{ progress >= 0 ? (
 				<div className="processing-step__content woocommerce-install__content">
 					<div
 						className="processing-step__progress-bar"

@@ -256,12 +256,12 @@ const pendingAction: Reducer< undefined | ( () => Promise< any > ), OnboardActio
 	return state;
 };
 
-const progress: Reducer< number, OnboardAction > = ( state = 0, action ) => {
+const progress: Reducer< number, OnboardAction > = ( state = -1, action ) => {
 	if ( action.type === 'SET_PROGRESS' ) {
 		return action.progress;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return 0;
+		return -1;
 	}
 	return state;
 };
