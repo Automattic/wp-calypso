@@ -104,9 +104,11 @@ That script will set up the correct dependencies and install wp-env. Note that t
 # All commands should be run from apps/editing-toolkit,
 # which is where the .wp-env.json config file is located.
 
-wp-env start # Starts the environment on localhost:4013
-wp-env stop
-wp-env run cli wp ... # Runs a wp-cli command.
+# Using yarn to run wp-env utilizes the local module -- otherwise, you'd have to
+# install wp-env globally.
+yarn wp-env start # Starts the environment on localhost:4013
+yarn wp-env stop
+yarn wp-env run cli wp ... # Runs a wp-cli command.
 ```
 
 Once the environment running, you can use the dev script (shown above), and the environment will automatically see the updated build. It works by mounting the editing toolkit plugin as a Docker volume.
@@ -151,7 +153,8 @@ Making sure you add your test suite to `editing-toolkit-plugin/phpunit.xml.dist`
 
 ### Troubleshooting wp-env
 
-- Make sure you're using `npx <command>` to favour the local tools over global installs. There's no harm in running `npx some-command-not-in-node_modules/.bin`
+- Use `yarn` to execute wp-env, so that you use the copy in node_modules. (E.g. `yarn wp-env run wordpress bash` or `yarn wp-env start --update`)
+- Use `yarn wp-env --version` to verify the version you're running matches the `@wordpress/env` version in package.json.
 - If there's an error connecting to the docker deamon, check that `docker-machine ls` shows a running machine named 'default', and try `docker-machine start`
 - If the default machine is already running (or the mysql connection is refused) you may need to re-run `eval $(docker-machine env)`
 - If there are missing includes or defines from Gutenberg and/or themes, check that they're installed and up-to-date. By default, `wp-env` expects to find Gutenberg next to (outside) the top level `wp-calypso` directory, as per `./apps/editing-toolkit/bin/setup-env.sh`
