@@ -62,22 +62,19 @@ const Categories = ( { selected }: { selected?: string } ) => {
 					{ Object.values( categories ).map( ( category, n ) => (
 						<>
 							{ category.slug === 'analytics' && (
-								<li>
+								<li key={ 'separator' + category.slug }>
 									<hr />
 								</li>
 							) }
 							<li key={ 'categories-' + n }>
-								{ category.separator && <hr /> }
-								{ ! category.separator && (
-									<span
-										onClick={ () => onClick( category ) }
-										onKeyPress={ () => onClick( category ) }
-										role="link"
-										tabIndex={ 0 }
-									>
-										{ category.name }
-									</span>
-								) }
+								<span
+									onClick={ () => onClick( category ) }
+									onKeyPress={ () => onClick( category ) }
+									role="link"
+									tabIndex={ 0 }
+								>
+									{ category.name }
+								</span>
 							</li>
 						</>
 					) ) }
