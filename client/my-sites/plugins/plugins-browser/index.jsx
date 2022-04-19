@@ -438,34 +438,40 @@ const SearchListView = ( {
 	);
 };
 
-const FullListView = ( {
-	category,
-	siteSlug,
-	sites,
-	paidPlugins,
-	isFetchingPaidPlugins,
-	billingPeriod,
-	setBillingPeriod,
-} ) => {
+const FullListView = ( { category, siteSlug, sites, billingPeriod, setBillingPeriod } ) => {
 	const translate = useTranslate();
 	const categories = useCategories();
 	const categoryTags = categories[ category ]?.tags || [];
 
-	const options = categoryTags.length > 0 ? { tag: categoryTags.join( ',' ) } : { category };
 	const {
 		data: { plugins: wporgPlugins = [] } = {},
 		isLoading: isFetchingDotOrg,
 		fetchNextPage,
-	} = useWPORGInfinitePlugins( options );
+	} = useWPORGInfinitePlugins( {
+		tag: category !== 'popular' ? categoryTags.join( ',' ) : undefined,
+		enabled: category !== 'paid' && category !== 'featured',
+		category: category === 'popular' ? category : undefined,
+	} );
 
 	const { data: wpcomPluginsRaw = [], isLoading: isFetchingDotCom } = useWPCOMPlugins(
 		'all',
 		'',
 		categoryTags.join( ',' ),
 		{
-			enabled: categoryTags.length > 0 && category !== 'popular',
+			enabled: category !== 'popular' && category !== 'featured',
 		}
 	);
+
+	const {
+		data: featuredPluginsRaw = [],
+		isLoading: isFetchingFeaturedPlugins,
+	} = useWPCOMFeaturedPlugins( {
+		enabled: category === 'featured',
+	} );
+
+	const featuredPlugins = useMemo( () => featuredPluginsRaw.map( updateWpComRating ), [
+		featuredPluginsRaw,
+	] );
 
 	const wpcomPlugins = useMemo( () => wpcomPluginsRaw.map( updateWpComRating ), [
 		wpcomPluginsRaw,
@@ -473,17 +479,36 @@ const FullListView = ( {
 
 	const isPaidCategory = category === 'paid';
 
-	const plugins = [ ...wpcomPlugins, ...wporgPlugins ];
-	if ( wporgPlugins.length > 0 || wpcomPlugins.length > 0 ) {
+	let plugins = [];
+	let isFetching = false;
+
+	switch ( category ) {
+		case 'paid':
+			plugins = wpcomPlugins;
+			isFetching = isFetchingDotCom;
+			break;
+		case 'popular':
+			plugins = wporgPlugins;
+			isFetching = isFetchingDotOrg;
+			break;
+		case 'featured':
+			isFetching = isFetchingFeaturedPlugins;
+			plugins = featuredPlugins;
+			break;
+		default:
+			plugins = [ ...wpcomPlugins, ...wporgPlugins ];
+			isFetching = isFetchingDotCom || isFetchingDotOrg;
+			break;
+	}
+
+	if ( plugins.length > 0 ) {
 		return (
 			<>
 				<PluginsBrowserList
-					plugins={ isPaidCategory ? paidPlugins : plugins }
+					plugins={ plugins }
 					listName={ category }
 					site={ siteSlug }
-					showPlaceholders={
-						isPaidCategory ? isFetchingPaidPlugins : isFetchingDotCom || isFetchingDotOrg
-					}
+					showPlaceholders={ isFetching }
 					currentSites={ sites }
 					variant={ PluginsBrowserListVariant.InfiniteScroll }
 					billingPeriod={ billingPeriod }

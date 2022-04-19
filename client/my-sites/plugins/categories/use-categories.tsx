@@ -38,9 +38,6 @@ export function useCategories(): Record< string, Category > {
 	// Only showing these top level categories for now
 	const allowed = allowedCategories.slice();
 
-	// The featured category is currently broken, lets hide until it's fixed.
-	allowed.splice( allowed.indexOf( 'featured' ), 1 );
-
 	// Jetpack sites shouldn't see paid plugins
 	if ( isJetpack && allowed.indexOf( 'paid' ) >= 0 ) {
 		allowed.splice( allowed.indexOf( 'paid' ), 1 );
