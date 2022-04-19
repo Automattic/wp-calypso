@@ -34,6 +34,9 @@ const selectors = {
 		`.plugin-site-jetpack__container .components-toggle-control:has(span:text("${ target }")) span.components-form-toggle`,
 	installButton: 'button:text("Install and activate")',
 	removeButton: 'button.plugin-remove-button__remove-button',
+
+	// Category selector
+	selectedCategory: ( categoryTitle: string ) => `.categories__header:text("${ categoryTitle }")`,
 };
 
 /**
@@ -79,6 +82,13 @@ export class PluginsPage {
 	 */
 	async validateHasSection( section: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.sectionTitle( section ) );
+	}
+
+	/**
+	 * Validate page has the right category selected
+	 */
+	async validateSelectedCategory( categoryTitle: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.selectedCategory( categoryTitle ) );
 	}
 
 	/**
