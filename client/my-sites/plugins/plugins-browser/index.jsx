@@ -466,9 +466,11 @@ const FullListView = ( {
 			enabled: categoryTags.length > 0 && category !== 'popular',
 		}
 	);
+
 	const wpcomPlugins = useMemo( () => wpcomPluginsRaw.map( updateWpComRating ), [
 		wpcomPluginsRaw,
 	] );
+
 	const isPaidCategory = category === 'paid';
 
 	const plugins = [ ...wpcomPlugins, ...wporgPlugins ];
