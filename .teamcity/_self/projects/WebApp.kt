@@ -335,6 +335,7 @@ object RunAllUnitTests : BuildType({
 				yarn tsc --build packages/*/tsconfig.json
 				yarn tsc --build apps/editing-toolkit/tsconfig.json
 				yarn tsc --build client/tsconfig.json
+				yarn tsc --build test/e2e/tsconfig.json
 			"""
 		}
 		bashNodeScript {
