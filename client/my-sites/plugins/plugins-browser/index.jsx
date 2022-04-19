@@ -338,17 +338,17 @@ const SearchListView = ( {
 		isLoading: isFetchingPluginsBySearchTerm,
 		fetchNextPage,
 	} = useWPORGInfinitePlugins(
-		{ searchTerm, tag },
+		{ searchTerm },
 		{
-			enabled: !! searchTerm || !! tag,
+			enabled: !! searchTerm,
 		}
 	);
 
 	const {
 		data: paidPluginsBySearchTermRaw = [],
 		isLoading: isFetchingPaidPluginsBySearchTerm,
-	} = useWPCOMPlugins( 'all', searchTerm, tag, {
-		enabled: !! searchTerm || !! tag,
+	} = useWPCOMPlugins( 'all', searchTerm, undefined, {
+		enabled: !! searchTerm,
 	} );
 
 	const paidPluginsBySearchTerm = useMemo(
@@ -565,7 +565,7 @@ const PluginSingleListView = ( {
 };
 
 const PluginBrowserContent = ( props ) => {
-	if ( props.search || props.tag ) {
+	if ( props.search ) {
 		return <SearchListView { ...props } />;
 	}
 	if ( props.category ) {
