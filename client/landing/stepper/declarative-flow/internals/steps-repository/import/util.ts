@@ -5,3 +5,7 @@ export function redirect( to: string ) {
 export function removeTrailingSlash( str: string ) {
 	return str.replace( /\/+$/, '' );
 }
+
+export function removeLeadingSlash( str: string ) {
+	return str.replace( /^\/+/, '' );
+}

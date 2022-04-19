@@ -13,7 +13,8 @@ export function getFinalImporterUrl(
 	targetSlug: string,
 	fromSite: string,
 	platform: ImporterPlatform,
-	isAtomicSite: boolean | null
+	isAtomicSite: boolean | null,
+	framework: 'signup' | 'stepper' = 'signup'
 ) {
 	let importerUrl;
 
@@ -28,7 +29,7 @@ export function getFinalImporterUrl(
 		( platform === 'wix' && isEnabled( 'onboarding/import-from-wix' ) ) ||
 		( platform === 'wordpress' && isEnabled( 'onboarding/import-from-wordpress' ) )
 	) {
-		importerUrl = getWpComOnboardingUrl( targetSlug, platform, fromSite );
+		importerUrl = getWpComOnboardingUrl( targetSlug, platform, fromSite, framework );
 	} else {
 		importerUrl = getImporterUrl( targetSlug, platform, fromSite );
 	}
