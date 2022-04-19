@@ -35,6 +35,10 @@ const ImporterStep: Step = function ImportStep( props ) {
 		navigation.goToStep?.( 'import' );
 	}
 
+	function onGoBack() {
+		navigation.goBack();
+	}
+
 	/**
 	 ↓ Renders
 	 */
@@ -50,7 +54,7 @@ const ImporterStep: Step = function ImportStep( props ) {
 				stepName={ 'importer-step' }
 				hideSkip={ true }
 				hideFormattedHeader={ true }
-				goBack={ navigation.goBack }
+				goBack={ onGoBack }
 				isFullLayout={ true }
 				stepContent={ renderStepContent() }
 				recordTracksEvent={ recordTracksEvent }

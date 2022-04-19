@@ -234,6 +234,9 @@ export const siteSetupFlow: Flow = {
 				case 'importReadyPreview':
 					return navigate( 'import' );
 
+				case 'importer':
+					return navigate( 'import' );
+
 				default:
 					return navigate( 'intent' );
 			}
