@@ -28,10 +28,12 @@ function paragraph_block_script() {
 		wp_localize_script(
 			'paragraph-block-script',
 			'wpcomParagraphBlockPlaceholder',
-			translation_with_fallback(
-				"Start writing or type '/' to insert a block",
-				__( "Start writing or type '/' to insert a block", 'full-site-editing' ),
-				''
+			array(
+				'placeholder' => translation_with_fallback(
+					"Start writing or type '/' to insert a block",
+					__( "Start writing or type '/' to insert a block", 'full-site-editing' ),
+					''
+				),
 			)
 		);
 	}
