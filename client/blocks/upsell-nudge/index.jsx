@@ -3,6 +3,7 @@ import {
 	isBloggerPlan,
 	isPersonalPlan,
 	isPremiumPlan,
+	isFreePlan,
 	isBusinessPlan,
 	isEcommercePlan,
 	GROUP_JETPACK,
@@ -93,8 +94,13 @@ export const UpsellNudge = ( {
 	if ( ! href && siteSlug && canUserUpgrade ) {
 		const currentPlanSlug = currentPlan?.productSlug;
 
-		// Redirect to the checkout page if the user is on a Premium or Personal plan since the can't view the overhauled Plans page.
-		if ( isPremiumPlan( currentPlanSlug ) || isPersonalPlan( currentPlanSlug ) ) {
+		// Redirect to the checkout page in case the Plans page can't be accessed by the plan.
+		if (
+			isFreePlan( currentPlanSlug ) ||
+			isBloggerPlan( currentPlanSlug ) ||
+			isPremiumPlan( currentPlanSlug ) ||
+			isPersonalPlan( currentPlanSlug )
+		) {
 			href = `/checkout/${ siteSlug }/pro`;
 		} else {
 			href = addQueryArgs( { feature, plan }, `/plans/${ siteSlug }` );
