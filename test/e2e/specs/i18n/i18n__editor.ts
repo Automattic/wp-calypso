@@ -216,9 +216,9 @@ describe( 'I18N: Editor', function () {
 	const accountName = getTestAccountByFeature( { ...features, variant: 'i18n' } );
 
 	// Filter out the locales that do not have valid translation content defined above.
-	const locales = Object.keys( translations ).filter( ( locale ) =>
+	const locales: LanguageSlug[] = Object.keys( translations ).filter( ( locale ) =>
 		( envVariables.TEST_LOCALES as ReadonlyArray< string > ).includes( locale )
-	);
+	) as LanguageSlug[];
 	let page: Page;
 	let editorPage: EditorPage;
 
@@ -259,11 +259,13 @@ describe( 'I18N: Editor', function () {
 			} );
 		} );
 
-		describe.each( translations[ locale ].blocks )(
+		// We know these are all defined because of the filtering above. Non-null asserting is safe here.
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		describe.each( translations[ locale ]!.blocks! )(
 			'Translations for block: $blockName',
 			( ...args ) => {
 				const block = args[ 0 ]; // Makes TS stop complaining about incompatible args type
-				let frame: Frame;
+				let frame: Page | Frame;
 				let editorPage: EditorPage;
 
 				const blockTimeout = 10 * 1000;
@@ -277,7 +279,7 @@ describe( 'I18N: Editor', function () {
 					frame = await editorPage.getEditorHandle();
 					// Ensure block contents are translated as expected.
 					await Promise.all(
-						block.blockEditorContent.map( ( content: any ) =>
+						block.blockEditorContent.map( ( content ) =>
 							frame.waitForSelector( `${ block.blockEditorSelector } ${ content }`, {
 								timeout: blockTimeout,
 							} )
