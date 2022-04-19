@@ -23,7 +23,6 @@ import {
 import reducer, {
 	isRequesting,
 	isFormDisabled,
-	isRequestingTwoFactorAuth,
 	requestError,
 	requestNotice,
 	requestSuccess,
@@ -39,7 +38,6 @@ describe( 'reducer', () => {
 			'authAccountType',
 			'isFormDisabled',
 			'isRequesting',
-			'isRequestingTwoFactorAuth',
 			'lastCheckedUsernameOrEmail',
 			'magicLogin',
 			'redirectTo',
@@ -142,38 +140,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.true;
-		} );
-	} );
-
-	describe( 'isRequestingTwoFactorAuth', () => {
-		test( 'should default to a false', () => {
-			const state = isRequestingTwoFactorAuth( undefined, {} );
-
-			expect( state ).to.be.false;
-		} );
-
-		test( 'should set isRequesting to true value if a request is initiated', () => {
-			const state = isRequestingTwoFactorAuth( undefined, {
-				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
-			} );
-
-			expect( state ).to.be.true;
-		} );
-
-		test( 'should set isRequesting to false value if a request was unsuccessful', () => {
-			const state = isRequestingTwoFactorAuth( undefined, {
-				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
-			} );
-
-			expect( state ).to.be.false;
-		} );
-
-		test( 'should set isRequesting to false value if a request was successful', () => {
-			const state = isRequestingTwoFactorAuth( undefined, {
-				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
-			} );
-
-			expect( state ).to.be.false;
 		} );
 	} );
 

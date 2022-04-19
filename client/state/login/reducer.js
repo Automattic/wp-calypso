@@ -320,19 +320,6 @@ export const twoFactorAuth = ( state = null, action ) => {
 	return state;
 };
 
-export const isRequestingTwoFactorAuth = ( state = false, action ) => {
-	switch ( action.type ) {
-		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST:
-			return true;
-		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE:
-			return false;
-		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS:
-			return false;
-	}
-
-	return state;
-};
-
 export const twoFactorAuthRequestError = ( state = null, action ) => {
 	switch ( action.type ) {
 		case TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST:
@@ -444,7 +431,6 @@ const combinedReducer = combineReducers( {
 	authAccountType,
 	isFormDisabled,
 	isRequesting,
-	isRequestingTwoFactorAuth,
 	lastCheckedUsernameOrEmail,
 	magicLogin,
 	redirectTo,
