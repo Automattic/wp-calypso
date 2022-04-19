@@ -107,11 +107,11 @@ const translateCategory = ( { category, translate } ) => {
 const translateCategoryTitle = ( { category, translate } ) => {
 	switch ( category ) {
 		case 'popular':
-			return translate( 'All Popular Plugins' );
+			return translate( 'Top free plugins' );
 		case 'featured':
-			return translate( 'All Featured Plugins' );
+			return translate( "Editor's pick" );
 		case 'paid':
-			return translate( 'All Premium Plugins' );
+			return translate( 'Top premium plugins' );
 		default:
 			return translate( 'Plugins' );
 	}
