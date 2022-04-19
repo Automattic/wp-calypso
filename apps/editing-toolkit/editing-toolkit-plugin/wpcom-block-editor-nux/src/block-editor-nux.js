@@ -1,6 +1,3 @@
-/*** THIS MUST BE THE FIRST THING EVALUATED IN THIS SCRIPT *****/
-import './public-path';
-
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';

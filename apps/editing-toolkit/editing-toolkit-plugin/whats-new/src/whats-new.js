@@ -1,6 +1,3 @@
-/*** THIS MUST BE THE FIRST THING EVALUATED IN THIS SCRIPT *****/
-import './public-path';
-
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import WhatsNewGuide from '@automattic/whats-new';
 import { Fill, MenuItem } from '@wordpress/components';

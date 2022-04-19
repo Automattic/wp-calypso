@@ -55,12 +55,6 @@ class Whats_New {
 			true
 		);
 
-		wp_localize_script(
-			'whats-new-script',
-			'whatsNewAssetsUrl',
-			plugins_url( 'dist/', __FILE__ )
-		);
-
 		wp_set_script_translations( 'whats-new-script', 'full-site-editing' );
 
 		$style_path = 'dist/whats-new' . ( is_rtl() ? '.rtl' : '' ) . '.css';
