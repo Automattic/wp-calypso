@@ -26,7 +26,7 @@ const HelpIcon: React.FC< Props > = ( { newItems, active } ) => (
 				cy="8"
 				r="5"
 				stroke={ active ? '#1e1e1e' : 'white' }
-				fill="#0675C4"
+				fill="currentColor"
 				strokeWidth="2"
 			/>
 		) }
