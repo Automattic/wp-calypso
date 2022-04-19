@@ -336,6 +336,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 			stepName={ 'design-step' }
 			className={ classnames( {
 				'design-picker__has-categories': showDesignPickerCategories,
+				'design-picker__sell-intent': 'sell' === intent,
 			} ) }
 			hideSkip={ isAnchorSite }
 			skipButtonAlign={ 'top' }
