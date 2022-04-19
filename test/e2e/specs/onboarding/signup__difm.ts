@@ -2,7 +2,7 @@
  * @group calypso-pr
  */
 
-import { DataHelper, DIFMFlow, TestAccount } from '@automattic/calypso-e2e';
+import { DataHelper, DIFMFlow, CartCheckoutPage, TestAccount } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
@@ -10,10 +10,12 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Do it for me' ), () => {
 	let page: Page;
 	let difmFlow: DIFMFlow;
+	let cart: CartCheckoutPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		difmFlow = new DIFMFlow( page );
+		cart = new CartCheckoutPage( page );
 
 		const testAccount = new TestAccount( 'defaultUser' );
 		await testAccount.authenticate( page );
@@ -24,8 +26,8 @@ describe( DataHelper.createSuiteTitle( 'Do it for me' ), () => {
 	 */
 	const navigateToLanding = () => {
 		it( `Navigate to landing page`, async () => {
-			await difmFlow.startSetup();
-			await difmFlow.validateSetupPage();
+			await difmFlow.visitSetup();
+			await difmFlow.validateStartPage();
 		} );
 	};
 
@@ -43,19 +45,44 @@ describe( DataHelper.createSuiteTitle( 'Do it for me' ), () => {
 			await difmFlow.validateSocialPage();
 		} );
 
-		it( 'Skip the social page', async () => {
-			await difmFlow.clickButton( 'Skip' );
+		it( 'Fill out the social page', async () => {
+			await difmFlow.enterSocial( 'https://twitter.com/automattic' );
+			await difmFlow.clickButton( 'Continue' );
 			await difmFlow.validateDesignPage();
 		} );
 
-		it( 'Let the team chose the layout', async () => {
-			await difmFlow.clickButton( 'Let us choose' );
+		it( 'Choose one of the free designs', async () => {
+			await difmFlow.chooseFreeDesign();
 			await difmFlow.validatePagePickerPage();
 		} );
 
 		it( 'Proceed to Checkout', async () => {
+			await difmFlow.selectPage( 'Blog' );
+			await difmFlow.selectPage( 'Services' );
 			await difmFlow.clickButton( 'Go to Checkout' );
 			await difmFlow.validateCheckoutPage();
+			await cart.validateCartItem( 'Do It For Me' );
+		} );
+	} );
+
+	describe( 'Use existing page for DIFM', () => {
+		navigateToLanding();
+
+		it( 'Start a DIFM order for an existing site', async () => {
+			await difmFlow.clickButton( 'Select a site' );
+			await difmFlow.validateUseExistingPage();
+		} );
+
+		it( 'Search and select an existing site', async () => {
+			await difmFlow.searchForSite( 'Test Site' );
+			await difmFlow.selectSite( 'Test Site' );
+			await difmFlow.validateConfirmationBox();
+		} );
+
+		it( 'Confirm and delete existing site', async () => {
+			await difmFlow.confirmDeletion();
+			await difmFlow.clickButton( 'Delete site content' );
+			await difmFlow.validateOptionsPage();
 		} );
 	} );
 } );
