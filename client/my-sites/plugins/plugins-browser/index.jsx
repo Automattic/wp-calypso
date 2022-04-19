@@ -300,7 +300,7 @@ const PluginsBrowser = ( {
 					searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 				/>
 			) }
-			{ ! search && <Categories selectedSlug={ category } /> }
+			{ ! search && <Categories selected={ category } /> }
 			<PluginBrowserContent
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
 				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
@@ -463,7 +463,7 @@ const FullListView = ( {
 		'',
 		categoryTags.join( ',' ),
 		{
-			enabled: categoryTags.length > 0,
+			enabled: categoryTags.length > 0 && category !== 'popular',
 		}
 	);
 	const wpcomPlugins = useMemo( () => wpcomPluginsRaw.map( updateWpComRating ), [
