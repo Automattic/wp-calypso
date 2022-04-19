@@ -88,15 +88,15 @@ const SHORT_LIST_LENGTH = 6;
 const translateCategory = ( { category, translate } ) => {
 	switch ( category ) {
 		case 'popular':
-			return translate( 'Popular', {
+			return translate( 'Top Free Plugins', {
 				context: 'Category description for the plugin browser.',
 			} );
 		case 'featured':
-			return translate( 'Featured', {
+			return translate( "Editor's Pick", {
 				context: 'Category description for the plugin browser.',
 			} );
 		case 'paid':
-			return translate( 'Premium', {
+			return translate( 'Top Premium Plugins', {
 				context: 'Category description for the plugin browser.',
 			} );
 		default:
@@ -107,11 +107,11 @@ const translateCategory = ( { category, translate } ) => {
 const translateCategoryTitle = ( { category, translate } ) => {
 	switch ( category ) {
 		case 'popular':
-			return translate( 'Top free plugins' );
+			return translate( 'All Top Free Plugins' );
 		case 'featured':
-			return translate( "Editor's pick" );
+			return translate( "All Editor's Pick" );
 		case 'paid':
-			return translate( 'Top premium plugins' );
+			return translate( 'All Top Premium Plugins' );
 		default:
 			return translate( 'Plugins' );
 	}
