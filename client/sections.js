@@ -455,6 +455,12 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
+		name: 'jetpack-cloud-agency-dashboard',
+		paths: [ '/dashboard' ],
+		module: 'calypso/jetpack-cloud/sections/agency-dashboard',
+		group: 'jetpack-cloud',
+	},
+	{
 		name: 'jetpack-cloud-settings',
 		paths: [ '/settings' ],
 		module: 'calypso/jetpack-cloud/sections/settings',
