@@ -85,19 +85,6 @@ import './style.scss';
  */
 const SHORT_LIST_LENGTH = 6;
 
-const translateCategory = ( { category, translate } ) => {
-	switch ( category ) {
-		case 'popular':
-			return translate( 'Top free plugins' );
-		case 'featured':
-			return translate( 'Editor’s pick' );
-		case 'paid':
-			return translate( 'Top paid plugins' );
-		default:
-			return translate( 'Plugins' );
-	}
-};
-
 const PluginsBrowser = ( {
 	trackPageViews = true,
 	category,
@@ -184,6 +171,9 @@ const PluginsBrowser = ( {
 		return ! selectedSite?.ID && hasJetpack;
 	}, [ isJetpack, selectedSite, hasJetpack ] );
 
+	const categories = useCategories();
+	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
+
 	useEffect( () => {
 		const items = [
 			{
@@ -198,7 +188,7 @@ const PluginsBrowser = ( {
 
 		if ( category ) {
 			items.push( {
-				label: translateCategory( { category, translate } ),
+				label: categoryName,
 				href: `/plugins/${ category }/${ siteSlug || '' }`,
 				id: 'category',
 			} );
@@ -213,7 +203,7 @@ const PluginsBrowser = ( {
 		}
 
 		dispatch( updateBreadcrumbs( items ) );
-	}, [ siteSlug, search, category, dispatch, translate ] );
+	}, [ siteSlug, search, category, categoryName, dispatch, translate ] );
 
 	const trackSiteDisconnect = () =>
 		composeAnalytics(
@@ -547,6 +537,9 @@ const PluginSingleListView = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
+	const categories = useCategories();
+	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
+
 	let plugins;
 	let isFetching;
 	if ( category === 'popular' ) {
@@ -572,7 +565,7 @@ const PluginSingleListView = ( {
 		<PluginsBrowserList
 			plugins={ plugins.slice( 0, SHORT_LIST_LENGTH ) }
 			listName={ category }
-			title={ translateCategory( { category, translate } ) }
+			title={ categoryName }
 			site={ siteSlug }
 			expandedListLink={ plugins.length > SHORT_LIST_LENGTH ? listLink : false }
 			size={ SHORT_LIST_LENGTH }
