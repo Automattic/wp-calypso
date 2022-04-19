@@ -220,7 +220,10 @@ export const setStoreAddressValue = (
 	store_address_value,
 } );
 
-export const setPendingAction = ( pendingAction: Promise< any > ) => ( {
+export const setPendingAction = ( pendingAction: {
+	promise: Promise< any >;
+	redirect?: string;
+} ) => ( {
 	type: 'SET_PENDING_ACTION' as const,
 	pendingAction,
 } );

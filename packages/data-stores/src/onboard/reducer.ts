@@ -243,7 +243,14 @@ const storeAddress: Reducer< StoreAddress, OnboardAction > = (
 	return state;
 };
 
-const pendingAction: Reducer< Promise< any > | undefined, OnboardAction > = ( state, action ) => {
+const pendingAction: Reducer<
+	| {
+			promise: Promise< any >;
+			redirect?: string;
+	  }
+	| undefined,
+	OnboardAction
+> = ( state, action ) => {
 	if ( action.type === 'SET_PENDING_ACTION' ) {
 		return action.pendingAction;
 	}
