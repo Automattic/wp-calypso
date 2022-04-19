@@ -5,6 +5,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { PinnedItems } from '@wordpress/interface';
 import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
+import Contents from './contents';
 import './help-center.scss';
 
 function HelpCenterComponent() {
@@ -30,10 +31,7 @@ function HelpCenterComponent() {
 				</PinnedItems>
 			) }
 			{ show && (
-				<HelpCenter
-					content={ <h1>Help center</h1> }
-					handleClose={ () => setShowHelpCenter( false ) }
-				/>
+				<HelpCenter content={ <Contents /> } handleClose={ () => setShowHelpCenter( false ) } />
 			) }
 		</>
 	);

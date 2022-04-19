@@ -20,10 +20,12 @@ class InlineHelpPopoverContent extends Component {
 	static propTypes = {
 		onClose: PropTypes.func.isRequired,
 		setDialogState: PropTypes.func.isRequired,
+		isReskinned: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onClose: noop,
+		isReskinned: false,
 	};
 
 	state = {
@@ -88,9 +90,9 @@ class InlineHelpPopoverContent extends Component {
 	};
 
 	renderPopoverFooter = () => {
-		const { translate } = this.props;
+		const { translate, isReskinned } = this.props;
 		return (
-			<div className="inline-help__footer">
+			<div className={ classNames( 'inline-help__footer', { 'is-reskinned': isReskinned } ) }>
 				<Button
 					onClick={ this.moreHelpClicked }
 					className="inline-help__more-button"
@@ -120,9 +122,11 @@ class InlineHelpPopoverContent extends Component {
 	};
 
 	renderPopoverContent = () => {
+		const { isReskinned } = this.props;
+
 		return (
 			<Fragment>
-				<div className="inline-help__search">
+				<div className={ classNames( 'inline-help__search', { 'is-reskinned': isReskinned } ) }>
 					<InlineHelpSearchCard
 						searchQuery={ this.state.searchQuery }
 						onSearch={ this.setSearchQuery }
@@ -140,11 +144,12 @@ class InlineHelpPopoverContent extends Component {
 	};
 
 	renderSecondaryView = () => {
-		const { onClose, setDialogState } = this.props;
+		const { onClose, setDialogState, isReskinned } = this.props;
 		const { searchQuery, selectedResult } = this.state;
 		const classes = classNames(
 			'inline-help__secondary-view',
-			`inline-help__${ this.state.activeSecondaryView }`
+			`inline-help__${ this.state.activeSecondaryView }`,
+			{ 'is-reskinned': isReskinned }
 		);
 
 		return (
@@ -174,8 +179,11 @@ class InlineHelpPopoverContent extends Component {
 	};
 
 	render() {
+		const { isReskinned } = this.props;
+
 		const className = classNames( 'inline-help__popover-content', {
 			'is-secondary-view-active': this.state.activeSecondaryView,
+			'is-reskinned': isReskinned,
 		} );
 
 		return (

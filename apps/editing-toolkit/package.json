@@ -48,6 +48,7 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-polyfills": "workspace:^",
 		"@automattic/composite-checkout": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/domain-picker": "workspace:^",
@@ -111,8 +112,11 @@
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"react-popper": "^2.2.5",
+		"react-query": "^3.32.1",
+		"react-redux": "^7.2.6",
 		"reakit-utils": "^0.15.1",
 		"redux": "^4.1.2",
+		"redux-thunk": "^2.3.0",
 		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {
