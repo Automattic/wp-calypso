@@ -35,6 +35,7 @@ export type StepPath =
 	| 'importReadyWpcom'
 	| 'importReadyPreview'
 	| 'importer'
+	| 'importer/wordpress'
 	| 'businessInfo'
 	| 'storeAddress'
 	| 'processing'
