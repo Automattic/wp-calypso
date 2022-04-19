@@ -116,7 +116,7 @@ class DnsRecordsList extends Component {
 	deleteDns = ( record, action = 'delete', confirmed = false ) => {
 		const { selectedDomainName, translate } = this.props;
 
-		if ( ! confirmed && record.protected_field ) {
+		if ( ! confirmed && record.protected_field && 'MX' === record.type ) {
 			this.openDialog( 'deleteEmailForwards', ( result ) => {
 				if ( result.shouldDeleteEmailForwards ) {
 					this.deleteDns( record, action, true );
