@@ -5,7 +5,27 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { Category } from '.';
 
-export const allowedCategories = [ 'discover', 'paid', 'popular', 'featured' ];
+export const allowedCategories = [
+	'discover',
+	'paid',
+	'popular',
+	'featured',
+	'analytics',
+	'business',
+	'customer',
+	'design',
+	'ecommerce',
+	'education',
+	'finance',
+	'marketing',
+	'seo',
+	'photo',
+	'social',
+	'widgets',
+	'email',
+	'security',
+	'posts',
+];
 
 export function useCategories(): Record< string, Category > {
 	const { __ } = useI18n();
