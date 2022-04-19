@@ -3,7 +3,6 @@ import page from 'page';
 import { createElement } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
-import { getCategoriesWithTags } from 'calypso/my-sites/plugins/categories/categories-list';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { allowedCategories } from './categories/use-categories';
@@ -13,13 +12,6 @@ import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
 import PluginUpload from './plugin-upload';
 import PluginBrowser from './plugins-browser';
-/**
- * Module variables
- */
-const pluginsCategories = getCategoriesWithTags().map( ( category ) => {
-	return category.slug;
-} );
-const allowedCategoryNames = [ 'new', 'popular', 'featured', 'paid', ...pluginsCategories ];
 
 let lastPluginsListVisited;
 let lastPluginsQuerystring;

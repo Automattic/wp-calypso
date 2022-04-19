@@ -11,7 +11,6 @@ import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
@@ -39,10 +38,7 @@ import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import NoResults from 'calypso/my-sites/no-results';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import Categories from 'calypso/my-sites/plugins/categories';
-import {
-	getTagsFromCategory,
-	getCategoryUrl,
-} from 'calypso/my-sites/plugins/categories/categories-list';
+import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import EducationFooter from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -77,7 +73,6 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import Categories from '../categories';
 import './style.scss';
 
 /**
@@ -92,15 +87,12 @@ const PluginsBrowser = ( {
 	searchTitle,
 	hideHeader,
 	doSearch,
-	queryParams,
 } ) => {
 	const {
 		isAboveElement,
 		targetRef: searchHeaderRef,
 		referenceRef: navigationHeaderRef,
 	} = useScrollAboveElement();
-
-	const { tag } = queryParams;
 
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
@@ -308,14 +300,8 @@ const PluginsBrowser = ( {
 					searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 				/>
 			) }
-			{ ! search && (
-				<Categories
-					onSelect={ ( c ) => page( getCategoryUrl( c, siteSlug ) ) }
-					selectedSlug={ category }
-				/>
-			) }
+			{ ! search && <Categories selectedSlug={ category } /> }
 			<PluginBrowserContent
-				tag={ tag }
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
 				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
@@ -339,7 +325,6 @@ const PluginsBrowser = ( {
 
 const SearchListView = ( {
 	search: searchTerm,
-	tag,
 	searchTitle: searchTitleTerm,
 	siteSlug,
 	siteId,
@@ -463,8 +448,8 @@ const FullListView = ( {
 	setBillingPeriod,
 } ) => {
 	const translate = useTranslate();
-
-	const categoryTags = getTagsFromCategory( category ) || [];
+	const categories = useCategories();
+	const categoryTags = categories[ category ]?.tags || [];
 
 	const options = categoryTags.length > 0 ? { tag: categoryTags.join( ',' ) } : { category };
 	const {
