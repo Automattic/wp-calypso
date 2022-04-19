@@ -22,7 +22,9 @@ const ProgressScreen: React.FunctionComponent< Props > = ( props ) => {
 				value={ Number.isNaN( progress ) ? 0 : progress }
 			/>
 			<SubTitle>
-				{ __( "This may take a few minutes. We'll notify you by email when it's done." ) }
+				{ __(
+					'This may take long depending on your content. No need to wait, we’ll notify you by email when it’s done.'
+				) }
 			</SubTitle>
 		</Progress>
 	);
