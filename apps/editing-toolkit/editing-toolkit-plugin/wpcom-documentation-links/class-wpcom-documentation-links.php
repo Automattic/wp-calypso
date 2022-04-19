@@ -53,17 +53,6 @@ class WPCOM_Documentation_Links {
 			true
 		);
 
-		wp_localize_script(
-			'wpcom-documentation-links-script',
-			'wpcomDocumentationLinksAssetsUrl',
-			plugins_url( 'dist/', __FILE__ )
-		);
-		wp_localize_script(
-			'wpcom-documentation-links-script',
-			'wpcomDocumentationLinksLocale',
-			\A8C\FSE\Common\get_iso_639_locale( determine_locale() )
-		);
-
 		wp_set_script_translations( 'wpcom-documentation-links-script', 'full-site-editing' );
 	}
 }

@@ -55,12 +55,6 @@ class WPCOM_Block_Editor_Nav_Sidebar {
 
 		wp_set_script_translations( 'wpcom-block-editor-nav-sidebar-script', 'full-site-editing' );
 
-		wp_localize_script(
-			'wpcom-block-editor-nav-sidebar-script',
-			'wpcomBlockEditorNavSidebarAssetsUrl',
-			plugins_url( 'dist/', __FILE__ )
-		);
-
 		$post_ids_to_exclude = array();
 
 		// Only exclude page_for_posts when a static page is being used as the front page, because

@@ -52,18 +52,6 @@ class WPCOM_Block_Description_Links {
 			$version,
 			true
 		);
-
-		wp_localize_script(
-			'wpcom-block-description-links-script',
-			'wpcomBlockDescriptionLinksAssetsUrl',
-			plugins_url( 'dist/', __FILE__ )
-		);
-
-		wp_localize_script(
-			'wpcom-block-description-links-script',
-			'wpcomBlockDescriptionLinksLocale',
-			\A8C\FSE\Common\get_iso_639_locale( determine_locale() )
-		);
 	}
 
 }
