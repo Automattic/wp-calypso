@@ -1,3 +1,8 @@
+@import '@automattic/typography/styles/variables';
+@import '../../assets/stylesheets/shared/mixins/_breakpoints';
+@import '../../assets/stylesheets/shared/mixins/hide-content-accessibly';
+
+
 .inline-help__popover-content {
 	background-color: var( --color-surface );
 
