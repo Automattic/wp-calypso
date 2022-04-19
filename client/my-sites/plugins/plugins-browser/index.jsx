@@ -11,6 +11,7 @@ import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
@@ -37,6 +38,11 @@ import UrlSearch from 'calypso/lib/url-search';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import NoResults from 'calypso/my-sites/no-results';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import Categories from 'calypso/my-sites/plugins/categories';
+import {
+	getTagsFromCategory,
+	getCategoryUrl,
+} from 'calypso/my-sites/plugins/categories/categories-list';
 import EducationFooter from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -99,12 +105,15 @@ const PluginsBrowser = ( {
 	searchTitle,
 	hideHeader,
 	doSearch,
+	queryParams,
 } ) => {
 	const {
 		isAboveElement,
 		targetRef: searchHeaderRef,
 		referenceRef: navigationHeaderRef,
 	} = useScrollAboveElement();
+
+	const { tag } = queryParams;
 
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
@@ -299,17 +308,24 @@ const PluginsBrowser = ( {
 				hasBusinessPlan={ hasBusinessPlan }
 				siteSlug={ siteSlug }
 			/>
-
-			<SearchBoxHeader
-				popularSearchesRef={ searchHeaderRef }
-				isSticky={ isAboveElement }
-				doSearch={ doSearch }
-				searchTerm={ search }
-				title={ translate( 'Plugins you need to get your projects done' ) }
-				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
-			/>
-			{ ! search && <Categories selected={ category } /> }
+			{ ! category && (
+				<SearchBoxHeader
+					popularSearchesRef={ searchHeaderRef }
+					isSticky={ isAboveElement }
+					doSearch={ doSearch }
+					searchTerm={ search }
+					title={ translate( 'Plugins you need to get your projects done' ) }
+					searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
+				/>
+			) }
+			{ ! search && (
+				<Categories
+					onSelect={ ( c ) => page( getCategoryUrl( c, siteSlug ) ) }
+					selectedSlug={ category }
+				/>
+			) }
 			<PluginBrowserContent
+				tag={ tag }
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
 				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
@@ -333,6 +349,7 @@ const PluginsBrowser = ( {
 
 const SearchListView = ( {
 	search: searchTerm,
+	tag,
 	searchTitle: searchTitleTerm,
 	siteSlug,
 	siteId,
@@ -340,23 +357,25 @@ const SearchListView = ( {
 	billingPeriod,
 } ) => {
 	const dispatch = useDispatch();
+
 	const {
 		data: { plugins: pluginsBySearchTerm = [], pagination: pluginsPagination } = {},
 		isLoading: isFetchingPluginsBySearchTerm,
 		fetchNextPage,
 	} = useWPORGInfinitePlugins(
-		{ searchTerm },
+		{ searchTerm, tag },
 		{
-			enabled: !! searchTerm,
+			enabled: !! searchTerm || !! tag,
 		}
 	);
 
 	const {
 		data: paidPluginsBySearchTermRaw = [],
 		isLoading: isFetchingPaidPluginsBySearchTerm,
-	} = useWPCOMPlugins( 'all', searchTerm, {
-		enabled: !! searchTerm,
+	} = useWPCOMPlugins( 'all', searchTerm, tag, {
+		enabled: !! searchTerm || !! tag,
 	} );
+
 	const paidPluginsBySearchTerm = useMemo(
 		() => paidPluginsBySearchTermRaw.map( updateWpComRating ),
 		[ paidPluginsBySearchTermRaw ]
@@ -394,15 +413,16 @@ const SearchListView = ( {
 	) {
 		const searchTitle =
 			searchTitleTerm ||
-			translate( 'Search results for {{b}}%(searchTerm)s{{/b}}', {
-				textOnly: true,
-				args: {
-					searchTerm,
-				},
-				components: {
-					b: <b />,
-				},
-			} );
+			( searchTerm &&
+				translate( 'Search results for {{b}}%(searchTerm)s{{/b}}', {
+					textOnly: true,
+					args: {
+						searchTerm,
+					},
+					components: {
+						b: <b />,
+					},
+				} ) );
 
 		const subtitle =
 			pluginsPagination &&
@@ -454,21 +474,39 @@ const FullListView = ( {
 } ) => {
 	const translate = useTranslate();
 
+	const categoryTags = getTagsFromCategory( category ) || [];
+
+	const options = categoryTags.length > 0 ? { tag: categoryTags.join( ',' ) } : { category };
 	const {
-		data: { plugins = [] } = {},
-		isLoading: isFetching,
+		data: { plugins: wporgPlugins = [] } = {},
+		isLoading: isFetchingDotOrg,
 		fetchNextPage,
-	} = useWPORGInfinitePlugins( { category } );
+	} = useWPORGInfinitePlugins( options );
+
+	const { data: wpcomPluginsRaw = [], isLoading: isFetchingDotCom } = useWPCOMPlugins(
+		'all',
+		'',
+		categoryTags.join( ',' ),
+		{
+			enabled: categoryTags.length > 0,
+		}
+	);
+	const wpcomPlugins = useMemo( () => wpcomPluginsRaw.map( updateWpComRating ), [
+		wpcomPluginsRaw,
+	] );
 	const isPaidCategory = category === 'paid';
 
-	if ( plugins.length > 0 || isFetching ) {
+	const plugins = [ ...wpcomPlugins, ...wporgPlugins ];
+	if ( wporgPlugins.length > 0 || wpcomPlugins.length > 0 ) {
 		return (
 			<>
 				<PluginsBrowserList
 					plugins={ isPaidCategory ? paidPlugins : plugins }
 					listName={ category }
 					site={ siteSlug }
-					showPlaceholders={ isPaidCategory ? isFetchingPaidPlugins : isFetching }
+					showPlaceholders={
+						isPaidCategory ? isFetchingPaidPlugins : isFetchingDotCom || isFetchingDotOrg
+					}
 					currentSites={ sites }
 					variant={ PluginsBrowserListVariant.InfiniteScroll }
 					billingPeriod={ billingPeriod }
@@ -549,7 +587,7 @@ const PluginSingleListView = ( {
 };
 
 const PluginBrowserContent = ( props ) => {
-	if ( props.search ) {
+	if ( props.search || props.tag ) {
 		return <SearchListView { ...props } />;
 	}
 	if ( props.category ) {
