@@ -277,7 +277,8 @@ export class JetpackAuthorize extends Component {
 			this.shouldRedirectJetpackStart() ||
 			getRoleFromScope( scope ) === 'subscriber' ||
 			this.isJetpackUpgradeFlow() ||
-			this.isFromJetpackConnectionManager()
+			this.isFromJetpackConnectionManager() ||
+			this.isFromJetpackSocialPlugin()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -376,6 +377,11 @@ export class JetpackAuthorize extends Component {
 	isFromJetpackSearchPlugin( props = this.props ) {
 		const { from } = props.authQuery;
 		return startsWith( from, 'jetpack-search' );
+	}
+
+	isFromJetpackSocialPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-social' );
 	}
 
 	isWooRedirect = ( props = this.props ) => {
