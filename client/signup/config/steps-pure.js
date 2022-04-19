@@ -607,8 +607,8 @@ export function generateSteps( {
 			fulfilledStepCallback: excludeStepIfProfileComplete,
 		},
 
-		'p2-join-workspaces': {
-			stepName: 'p2-join-workspaces',
+		'p2-join-workspace': {
+			stepName: 'p2-join-workspace',
 		},
 
 		'plans-personal-monthly': {
