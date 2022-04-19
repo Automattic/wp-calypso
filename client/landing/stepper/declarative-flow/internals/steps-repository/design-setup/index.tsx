@@ -179,7 +179,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlug && _selectedDesign ) {
-			setPendingAction( setDesignOnSite( siteSlug, _selectedDesign ) );
+			setPendingAction( () => setDesignOnSite( siteSlug, _selectedDesign ) );
 			const providedDependencies = {
 				selectedDesign: _selectedDesign,
 				selectedSiteCategory: categorization.selection,

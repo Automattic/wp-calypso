@@ -243,9 +243,32 @@ const storeAddress: Reducer< StoreAddress, OnboardAction > = (
 	return state;
 };
 
-const pendingAction: Reducer< Promise< any > | undefined, OnboardAction > = ( state, action ) => {
+const pendingAction: Reducer< undefined | ( () => Promise< any > ), OnboardAction > = (
+	state,
+	action
+) => {
 	if ( action.type === 'SET_PENDING_ACTION' ) {
 		return action.pendingAction;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const progress: Reducer< number, OnboardAction > = ( state = 0, action ) => {
+	if ( action.type === 'SET_PROGRESS' ) {
+		return action.progress;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return 0;
+	}
+	return state;
+};
+
+const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_PROGRESS_TITLE' ) {
+		return action.progressTitle;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
@@ -275,6 +298,8 @@ const reducer = combineReducers( {
 	startingPoint,
 	storeAddress,
 	pendingAction,
+	progress,
+	progressTitle,
 } );
 
 export type State = ReturnType< typeof reducer >;
