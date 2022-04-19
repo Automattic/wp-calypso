@@ -242,3 +242,12 @@ function enqueue_disable_heic_images_script() {
 	}
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_disable_heic_images_script' );
+
+/**
+ * Adds the locale code needed by a few scripts.
+ */
+function inject_i18n_locale_code() {
+	$locale = wp_json_encode( get_iso_639_locale( determine_locale() ) );
+	wp_add_inline_script( 'etk-inject-i18n-locale', "window.ETK_I18N_LOCALE_CODE = '$locale';", 'before' );
+}
+add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\inject_i18n_locale_code' );

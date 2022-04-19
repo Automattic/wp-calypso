@@ -61,7 +61,7 @@ function WelcomeTour() {
 
 	if ( variant === DEFAULT_VARIANT ) {
 		return (
-			<LocaleProvider localeSlug={ window.wpcomBlockEditorNuxLocale ?? i18nDefaultLocaleSlug }>
+			<LocaleProvider localeSlug={ window.ETK_I18N_LOCALE_CODE ?? i18nDefaultLocaleSlug }>
 				{ showDraftPostModal ? <DraftPostModal /> : <LaunchWpcomWelcomeTour /> }
 			</LocaleProvider>
 		);

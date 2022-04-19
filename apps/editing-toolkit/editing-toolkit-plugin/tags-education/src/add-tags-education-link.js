@@ -28,7 +28,7 @@ const addTagsEducationLink = createHigherOrderComponent( ( PostTaxonomyType ) =>
 						// However, if we have any string without translation in `default` domain, the configure block will be overwritten by empty locale data
 						// so that we cannot get the correct locale from the @wordpress/i18n locale data.
 						// Also, the format of current locale slug is not ISO 639 and it makes localizeUrl not work correctly.
-						window.tagsEducationLocale
+						window.ETK_I18N_LOCALE_CODE
 					) }
 					onClick={ trackTagsEducationLinkClick }
 				>

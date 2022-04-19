@@ -53,14 +53,6 @@ class Tags_Education {
 			true
 		);
 
-		// TODO: remove tagsEducationLocale after fixing useLocalizeUrl.
-		// See https://github.com/Automattic/wp-calypso/pull/55527.
-		wp_localize_script(
-			'tags-education-script',
-			'tagsEducationLocale',
-			\A8C\FSE\Common\get_iso_639_locale( determine_locale() )
-		);
-
 		wp_set_script_translations( 'tags-education-script', 'full-site-editing' );
 	}
 }
