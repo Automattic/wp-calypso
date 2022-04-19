@@ -501,33 +501,22 @@ const FullListView = ( { category, siteSlug, sites, billingPeriod, setBillingPer
 			break;
 	}
 
-	if ( plugins.length > 0 ) {
-		return (
-			<>
-				<PluginsBrowserList
-					plugins={ plugins }
-					listName={ category }
-					site={ siteSlug }
-					showPlaceholders={ isFetching }
-					currentSites={ sites }
-					variant={ PluginsBrowserListVariant.InfiniteScroll }
-					billingPeriod={ billingPeriod }
-					setBillingPeriod={ isPaidCategory && setBillingPeriod }
-					extended
-				/>
-
-				<InfiniteScroll nextPageMethod={ fetchNextPage } />
-			</>
-		);
-	}
-
-	// This shouldn't ever render but we can't return void/null here.
 	return (
-		<NoResults
-			text={ translate( 'No plugins available.', {
-				textOnly: true,
-			} ) }
-		/>
+		<>
+			<PluginsBrowserList
+				plugins={ plugins }
+				listName={ category }
+				site={ siteSlug }
+				showPlaceholders={ isFetching }
+				currentSites={ sites }
+				variant={ PluginsBrowserListVariant.InfiniteScroll }
+				billingPeriod={ billingPeriod }
+				setBillingPeriod={ isPaidCategory && setBillingPeriod }
+				extended
+			/>
+
+			<InfiniteScroll nextPageMethod={ fetchNextPage } />
+		</>
 	);
 };
 
