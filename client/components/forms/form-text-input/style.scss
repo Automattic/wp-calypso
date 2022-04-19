@@ -1,3 +1,6 @@
+@import '@automattic/typography/styles/variables';
+@import '../../../assets/stylesheets/shared/_extends-forms';
+
 .form-text-input {
 	@at-root {
 		input[type='text']#{&},

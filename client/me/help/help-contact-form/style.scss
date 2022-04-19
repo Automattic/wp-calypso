@@ -1,3 +1,6 @@
+@import '../../../assets/stylesheets/shared/mixins/_breakpoints';
+@import '@automattic/typography/styles/variables';
+
 .help-contact-form {
 	.form-textarea {
 		// Fix the width of our text area so that it can only be resized vertically
