@@ -71,7 +71,7 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-
+import Categories from '../categories';
 import './style.scss';
 
 /**
@@ -82,30 +82,11 @@ const SHORT_LIST_LENGTH = 6;
 const translateCategory = ( { category, translate } ) => {
 	switch ( category ) {
 		case 'popular':
-			return translate( 'Popular', {
-				context: 'Category description for the plugin browser.',
-			} );
+			return translate( 'Top free plugins' );
 		case 'featured':
-			return translate( 'Featured', {
-				context: 'Category description for the plugin browser.',
-			} );
+			return translate( 'Editor’s pick' );
 		case 'paid':
-			return translate( 'Premium', {
-				context: 'Category description for the plugin browser.',
-			} );
-		default:
-			return translate( 'Plugins' );
-	}
-};
-
-const translateCategoryTitle = ( { category, translate } ) => {
-	switch ( category ) {
-		case 'popular':
-			return translate( 'All Popular Plugins' );
-		case 'featured':
-			return translate( 'All Featured Plugins' );
-		case 'paid':
-			return translate( 'All Premium Plugins' );
+			return translate( 'Top paid plugins' );
 		default:
 			return translate( 'Plugins' );
 	}
@@ -205,18 +186,20 @@ const PluginsBrowser = ( {
 				),
 			},
 		];
+
+		if ( category ) {
+			items.push( {
+				label: translateCategory( { category, translate } ),
+				href: `/plugins/${ category }/${ siteSlug || '' }`,
+				id: 'category',
+			} );
+		}
+
 		if ( search ) {
 			items.push( {
 				label: translate( 'Search Results' ),
 				href: `/plugins/${ siteSlug || '' }?s=${ search }`,
 				id: 'plugins-search',
-			} );
-		}
-		if ( category ) {
-			items.push( {
-				label: translateCategoryTitle( { category, translate } ),
-				href: `/plugins/${ category }/${ siteSlug || '' }`,
-				id: 'category',
 			} );
 		}
 
@@ -316,6 +299,7 @@ const PluginsBrowser = ( {
 				hasBusinessPlan={ hasBusinessPlan }
 				siteSlug={ siteSlug }
 			/>
+
 			<SearchBoxHeader
 				popularSearchesRef={ searchHeaderRef }
 				isSticky={ isAboveElement }
@@ -324,6 +308,7 @@ const PluginsBrowser = ( {
 				title={ translate( 'Plugins you need to get your projects done' ) }
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 			/>
+			{ ! search && <Categories selected={ category } /> }
 			<PluginBrowserContent
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
 				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
@@ -482,7 +467,6 @@ const FullListView = ( {
 				<PluginsBrowserList
 					plugins={ isPaidCategory ? paidPlugins : plugins }
 					listName={ category }
-					title={ translateCategoryTitle( { category, translate } ) }
 					site={ siteSlug }
 					showPlaceholders={ isPaidCategory ? isFetchingPaidPlugins : isFetching }
 					currentSites={ sites }

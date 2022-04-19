@@ -299,3 +299,19 @@ export enum SiteLaunchStatus {
 	SUCCESS = 'success',
 	FAILURE = 'failure',
 }
+
+export interface AtomicTransferState {
+	status: AtomicTransferStatus;
+	errorCode: AtomicTransferError | undefined;
+}
+
+export enum AtomicTransferStatus {
+	UNINITIALIZED = 'unintialized',
+	IN_PROGRESS = 'in_progress',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+}
+
+export enum AtomicTransferError {
+	INTERNAL = 'internal',
+}
