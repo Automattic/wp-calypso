@@ -34,7 +34,6 @@ export const siteSetupFlow: Flow = {
 		const { setIntentOnSite } = useDispatch( SITE_STORE );
 		const { FSEActive } = useFSEStatus();
 
-		// here
 		const exitFlow = ( to: string ) => {
 			setPendingAction( { promise: setIntentOnSite( siteSlug as string, intent ), redirect: to } );
 			navigate( 'processing' );
