@@ -1,6 +1,8 @@
 import languages from '@automattic/languages';
 import { find } from 'lodash';
+import phpUnserialize from 'phpunserialize';
 import { stringify as stringifyQs } from 'qs';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Constants
@@ -84,7 +86,28 @@ export function fetchPluginsList( options ) {
 	return getRequest( WPORG_PLUGINS_ENDPOINT, query );
 }
 
-export function fetchWPOrgPluginsFromIndex( options ) {
+const mapIndexResultsToPluginData = ( results ) => {
+	return results.map( ( hit ) => {
+		return {
+			name: hit.title_en,
+			slug: hit.slug,
+			version: hit.meta.version.value,
+			author: hit.author,
+			author_profile: hit.author, // TODO: generate author profile URL
+			tested: hit.meta.tested.value,
+			rating: hit.meta.rating.value,
+			num_ratings: hit.num_ratings,
+			support_threads: hit.support_threads,
+			support_threads_resolved: hit.support_threads_resolved,
+			active_installs: hit.active_installs,
+			last_updated: hit.last_updated,
+			short_description: hit.excerpt_en,
+			icons: phpUnserialize( hit.meta.assets_icons.value ),
+		};
+	} );
+};
+
+export async function fetchWPOrgPluginsFromIndex( options ) {
 	const category = options.category || DEFAULT_CATEGORY;
 	const search = options.search;
 	const author = options.author;
@@ -142,10 +165,32 @@ export function fetchWPOrgPluginsFromIndex( options ) {
 		'excerpt_en',
 		'taxonomy.plugin_tags.name',
 		'title_en',
+		'meta.version.value',
+		'author',
+		'meta.tested.value',
+		'meta.rating.value',
+		'num_ratings',
+		'support_threads',
+		'support_threads_resolved',
+		'active_installs',
+		'last_updated',
 	];
 
-	// TODO update to POST request, add endpoint
-	return getRequest( WPORG_PLUGINS_ENDPOINT, { query, fields, size, from } );
+	// TODO move this request to wp data layer
+	const res = await wpcom.req.post( {
+		path: '/sites/108986944/search',
+		apiNamespace: 'rest/v1',
+		body: { query, fields, size, from },
+	} );
+
+	return {
+		info: {
+			page: options.page || DEFAULT_FIRST_PAGE,
+			pages: Math.ceil( res.results.total / size ),
+			results: res.results.total,
+		},
+		plugins: mapIndexResultsToPluginData( res.results.hits ),
+	};
 }
 
 /**

@@ -12,7 +12,7 @@ import {
 	normalizePluginsList,
 	normalizePluginData,
 } from 'calypso/lib/plugins/utils';
-import { fetchPluginsList } from 'calypso/lib/wporg';
+import { fetchPluginsList, fetchWPOrgPluginsFromIndex } from 'calypso/lib/wporg';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 type WPORGOptionsType = {
@@ -78,7 +78,7 @@ export const useWPORGInfinitePlugins = (
 	return useInfiniteQuery(
 		getPluginsListKey( options, true ),
 		( { pageParam = 1 } ) =>
-			fetchPluginsList( {
+			fetchWPOrgPluginsFromIndex( {
 				pageSize: options.pageSize,
 				page: pageParam,
 				category: options.category,
