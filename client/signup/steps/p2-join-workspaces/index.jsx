@@ -18,6 +18,9 @@ function P2JoinWorkspaces( {
 	submitSignupStep,
 } ) {
 	const CHALLENGE_CODE_LENGTH = 6;
+	const CHALLENGE_CODE_ALLOWED_CHARS = /^[a-zA-Z0-9]$/;
+	const CHALLENGE_CODE_SELECTOR = 'input.p2-join-workspaces__code-input-box';
+
 	const dispatch = useDispatch();
 	const userEmail = useSelector( getCurrentUserEmail );
 	if ( ! userEmail ) {
@@ -72,11 +75,58 @@ function P2JoinWorkspaces( {
 	};
 
 	const handleCodeInputChange = ( event ) => {
-		const inputBoxes = event.target.parentNode.querySelectorAll(
-			'input.p2-join-workspaces__code-input-box'
-		);
+		const inputBoxes = event.target.parentNode.querySelectorAll( CHALLENGE_CODE_SELECTOR );
 		const newCode = Array.from( inputBoxes ).reduce( ( acc, curr ) => acc + curr.value, '' );
 		setChallengeCode( newCode );
+	};
+
+	const handleCodeInputKeyPress = ( event ) => {
+		// Reject invalid characters.
+		if ( event.key.match( CHALLENGE_CODE_ALLOWED_CHARS ) === null ) {
+			event.preventDefault();
+			return false;
+		}
+
+		return true;
+	};
+
+	const handleCodeInputKeyUp = ( event ) => {
+		const inputBoxes = event.target.parentNode.querySelectorAll( CHALLENGE_CODE_SELECTOR );
+		const currentIndex = Array.from( inputBoxes ).indexOf( event.target );
+		if ( event.key === 'Backspace' && currentIndex > 0 ) {
+			inputBoxes[ currentIndex - 1 ].focus();
+		} else if (
+			event.key.match( CHALLENGE_CODE_ALLOWED_CHARS ) &&
+			currentIndex < inputBoxes.length - 1
+		) {
+			inputBoxes[ currentIndex + 1 ].focus();
+		}
+
+		return true;
+	};
+
+	const handleCodeInputPaste = ( event ) => {
+		event.preventDefault();
+		const text = ( event.clipboardData || window.clipboardData ).getData( 'text' );
+
+		if ( ! text ) {
+			return false;
+		}
+
+		const chars = text.split( '' ).filter( ( char ) => char.match( CHALLENGE_CODE_ALLOWED_CHARS ) );
+		const inputBoxes = event.target.parentNode.querySelectorAll( CHALLENGE_CODE_SELECTOR );
+		inputBoxes.forEach( ( box, index ) => {
+			if ( index > chars.length - 1 ) {
+				return;
+			}
+
+			box.value = chars[ index ] || '';
+		} );
+
+		const focusIndex = Math.min( chars.length, inputBoxes.length - 1 );
+		inputBoxes[ focusIndex ].focus();
+
+		return false;
 	};
 
 	const handleSubmitCode = async () => {
@@ -205,10 +255,19 @@ function P2JoinWorkspaces( {
 					onChange={ ( event ) => {
 						handleCodeInputChange( event, index );
 					} }
+					onKeyPress={ handleCodeInputKeyPress }
+					onKeyUp={ handleCodeInputKeyUp }
+					onPaste={ handleCodeInputPaste }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
 					autoFocus={ index === 0 }
 				/>
 			);
+
+			if ( index === CHALLENGE_CODE_LENGTH / 2 - 1 ) {
+				boxes.push(
+					<span key="separator" className="p2-join-workspaces__code-input-separator"></span>
+				);
+			}
 		}
 
 		return boxes;

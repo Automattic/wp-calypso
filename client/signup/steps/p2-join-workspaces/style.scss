@@ -145,11 +145,22 @@
 	}
 }
 
-.p2-join-workspaces__code-input-box {
+.p2-join-workspaces__code-input-box,
+.p2-join-workspaces__code-input-separator {
 	height: 4rem;
 	width: 4rem;
 	margin: 0 0.25rem;
+
+}
+
+.p2-join-workspaces__code-input-box {
 	border: 1px solid var( --p2-color-border-medium );
 	font-size: 2rem;
 	text-align: center;
+}
+
+.p2-join-workspaces__code-input-separator {
+	&::before {
+		content: '—';
+	}
 }
