@@ -31,7 +31,7 @@ export function canItemBeRemovedFromCart(
 	item: ResponseCartProduct,
 	responseCart: ResponseCart
 ): boolean {
-	const itemTypesThatCannotBeDeleted = [ 'domain_redemption' ];
+	const itemTypesThatCannotBeDeleted = [ 'domain_redemption', 'wp_difm_extra_page' ];
 	if ( itemTypesThatCannotBeDeleted.includes( item.product_slug ) ) {
 		return false;
 	}
