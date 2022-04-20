@@ -84,3 +84,24 @@ export const hasActiveSiteFeature = (
 		siteId && select( STORE_KEY ).getSite( siteId )?.plan?.features.active.includes( featureKey )
 	);
 };
+
+export const hasAvailableSiteFeature = (
+	_: State,
+	siteId: number | undefined,
+	featureKey: string
+): boolean => {
+	return Boolean(
+		siteId && select( STORE_KEY ).getSite( siteId )?.plan?.features.available[ featureKey ]
+	);
+};
+
+export const requiresUpgrade = ( state: State, siteId: number | null ) => {
+	const isWoopFeatureActive = Boolean(
+		siteId && select( STORE_KEY ).hasActiveSiteFeature( siteId, 'woop' )
+	);
+	const hasWoopFeatureAvailable = Boolean(
+		siteId && select( STORE_KEY ).hasAvailableSiteFeature( siteId, 'woop' )
+	);
+
+	return Boolean( ! isWoopFeatureActive && hasWoopFeatureAvailable );
+};
