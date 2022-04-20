@@ -5,6 +5,7 @@ import { Icon, chevronRight } from '@wordpress/icons';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import request from 'wpcom-proxy-request';
+import Spinner from 'calypso/components/spinner';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
@@ -18,6 +19,8 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 		dispatch( fetchCurrentUser() );
 	}
 
+	const [ isLoading, setIsLoading ] = useState( true );
+
 	const [ eligibleWorkspaces, setEligibleWorkspaces ] = useState( [] );
 	const [ workspaceStatus, setWorkspaceStatus ] = useState( {
 		requesting: null,
@@ -30,12 +33,17 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 			return;
 		}
 
+		setIsLoading( true );
+
 		const workspaceList = await request( {
 			path: '/p2/preapproved-joining/list-workspaces',
 			apiNamespace: 'wpcom/v2',
 			global: true,
 		} );
+
 		setEligibleWorkspaces( workspaceList );
+
+		setIsLoading( false );
 	}, [ userEmail ] );
 
 	useEffect( () => {
@@ -58,12 +66,6 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 				hub_id: parseInt( id ),
 			},
 		} );
-
-		//Test only, REMOVE ME!
-		// const response = {
-		// 	success: true,
-		// 	hub_id: id,
-		// };
 
 		if ( response.success ) {
 			setWorkspaceStatus( {
@@ -96,7 +98,7 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 					} }
 					isBusy={ isBusy }
 				>
-					{ ! isBusy && __( 'Join' ) }
+					{ isBusy ? <Spinner /> : __( 'Join' ) }
 				</Button>
 			);
 		}
@@ -217,14 +219,23 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 				subHeaderText={ getSubHeaderText() }
 			>
 				<div className="p2-join-workspace">
-					{ workspaceStatus.requested && (
-						<P2JoinWorkspaceCodeInput
-							workspaceStatus={ workspaceStatus }
-							setWorkspaceStatus={ setWorkspaceStatus }
-						/>
+					{ isLoading ? (
+						<Spinner size={ 30 } />
+					) : (
+						<>
+							{ workspaceStatus.requested ? (
+								<P2JoinWorkspaceCodeInput
+									workspaceStatus={ workspaceStatus }
+									setWorkspaceStatus={ setWorkspaceStatus }
+								/>
+							) : (
+								<>
+									{ renderEligibleWorkspacesList() }
+									{ renderCreateWorkspaceSection() }
+								</>
+							) }
+						</>
 					) }
-					{ ! workspaceStatus.requested && renderEligibleWorkspacesList() }
-					{ ! workspaceStatus.requested && renderCreateWorkspaceSection() }
 				</div>
 			</P2StepWrapper>
 		)

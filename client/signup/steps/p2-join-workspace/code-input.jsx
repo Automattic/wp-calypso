@@ -3,6 +3,7 @@ import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import request from 'wpcom-proxy-request';
+import Spinner from 'calypso/components/spinner';
 
 function P2JoinWorkspaceCodeInput( { workspaceStatus, setWorkspaceStatus } ) {
 	const CHALLENGE_CODE_LENGTH = 6;
@@ -171,7 +172,7 @@ function P2JoinWorkspaceCodeInput( { workspaceStatus, setWorkspaceStatus } ) {
 					disabled={ challengeCode.length !== CHALLENGE_CODE_LENGTH }
 					isBusy={ isLoading }
 				>
-					{ ! isLoading && __( 'Continue' ) }
+					{ isLoading ? <Spinner /> : __( 'Continue' ) }
 				</Button>
 				<Button className="p2-join-workspace__code-input-cancel" onClick={ handleCancelJoin }>
 					{ __( 'Cancel' ) }
