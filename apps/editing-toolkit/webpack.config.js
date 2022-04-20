@@ -96,7 +96,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 				},
 			} ),
 		],
-		devtool: isDevelopment ? 'inline-cheap-source-map' : false,
+		devtool: isDevelopment ? 'inline-cheap-source-map' : 'source-map',
 		stats: 'minimal',
 	};
 }
