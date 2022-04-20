@@ -1,6 +1,5 @@
 import { Locator, Page } from 'playwright';
 
-const blockEditorSelctor = '[aria-label="Block: Template Part"]';
 const selectors = {
 	chooseButton: 'button:has-text("Choose")',
 	startBlankButton: 'button:has-text("Start blank")',
@@ -11,7 +10,7 @@ const selectors = {
  */
 export class TemplatePartBlock {
 	static blockName = 'Template Part';
-	static blockEditorSelector = blockEditorSelctor;
+	static blockEditorSelector = '[aria-label="Block: Template Part"]';
 
 	private page: Page;
 	block: Locator;

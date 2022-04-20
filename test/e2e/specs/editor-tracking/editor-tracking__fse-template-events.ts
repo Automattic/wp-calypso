@@ -12,6 +12,7 @@ import {
 	FullSiteEditorPage,
 	TemplatePartBlock,
 	ElementHelper,
+	ButtonsBlock,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -35,7 +36,7 @@ describe(
 			let editorTracksEventManager: EditorTracksEventManager;
 			let templatePartBlock: TemplatePartBlock;
 
-			const templatePartName = createTemplatePartName();
+			let templatePartName: string;
 
 			beforeAll( async () => {
 				page = await browser.newPage();
@@ -45,6 +46,8 @@ describe(
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
 				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+
+				templatePartName = createTemplatePartName();
 			} );
 
 			it( 'Visit the site editor', async function () {
@@ -151,6 +154,82 @@ describe(
 					'wpcom_block_editor_template_part_choose_existing'
 				);
 				expect( eventDidFire ).toBe( false );
+			} );
+		} );
+
+		describe( 'wpcom_block_editor_convert_to_template_part / wpcom_block_editor_template_part_detach_blocks', function () {
+			let page: Page;
+			let testAccount: TestAccount;
+			let fullSiteEditorPage: FullSiteEditorPage;
+			let editorTracksEventManager: EditorTracksEventManager;
+			let buttonsBlock: ButtonsBlock;
+			let buttonsBlockId: string;
+
+			let templatePartName: string;
+
+			beforeAll( async () => {
+				page = await browser.newPage();
+
+				testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
+
+				editorTracksEventManager = new EditorTracksEventManager( page );
+				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+
+				templatePartName = createTemplatePartName();
+			} );
+
+			it( 'Visit the site editor', async function () {
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Add and configure a Buttons block', async function () {
+				const block = await fullSiteEditorPage.addBlockFromSidebar(
+					ButtonsBlock.blockName,
+					ButtonsBlock.blockEditorSelector
+				);
+				buttonsBlock = new ButtonsBlock( page, block );
+				await buttonsBlock.enterButtonText( { index: 0, text: 'Test' } );
+			} );
+
+			it( 'Convert to a template part', async function () {
+				buttonsBlockId = await ElementHelper.getIdFromBlock( buttonsBlock.block );
+				await fullSiteEditorPage.focusBlock( `#${ buttonsBlockId }` );
+				await fullSiteEditorPage.clickBlockToolbarOption( 'Make template part' );
+				await fullSiteEditorPage.nameAndFinalizeTemplatePart( templatePartName );
+				await fullSiteEditorPage.waitForConfirmationToast( 'Template part created' );
+				createdTemplateParts.push( templatePartName );
+			} );
+
+			it( '"wpcom_block_editor_create_template_part" event fires with correct "block_names"', async function () {
+				const eventDidFire = await editorTracksEventManager.didEventFire(
+					'wpcom_block_editor_convert_to_template_part',
+					{
+						matchingProperties: {
+							block_names: 'core/buttons,core/button',
+						},
+					}
+				);
+				expect( eventDidFire ).toBe( true );
+			} );
+
+			it( 'Detach the blocks from the newly create template part', async function () {
+				// After creation, the new template part block should already be focused.
+				await fullSiteEditorPage.clickBlockToolbarOption( 'Detach blocks from template part' );
+			} );
+
+			it( '"wpcom_block_editor_template_part_detach_blocks" event fires with correct "block_names" and "template_part_id"', async function () {
+				const eventDidFire = await editorTracksEventManager.didEventFire(
+					'wpcom_block_editor_template_part_detach_blocks',
+					{
+						matchingProperties: {
+							block_names: 'core/buttons,core/button',
+							template_part_id: `pub/blockbase//${ templatePartName }`,
+						},
+					}
+				);
+				expect( eventDidFire ).toBe( true );
 			} );
 		} );
 

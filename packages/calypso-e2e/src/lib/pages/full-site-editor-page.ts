@@ -36,6 +36,7 @@ const selectors = {
 	// The toast can have double quotes, so we use single quotes here.
 	confirmationToast: ( text: string ) => `.components-snackbar:has-text('${ text }')`,
 	focusedBlock: ( blockSelector: string ) => `${ blockSelector }.is-selected`,
+	parentOfFocusedBlock: ( blockSelector: string ) => `${ blockSelector }.has-child-selected`,
 };
 
 /**
@@ -168,7 +169,11 @@ export class FullSiteEditorPage {
 		await this.addBlockFromInserter( blockName, this.editorSidebarBlockInserterComponent );
 
 		const addedBlockId = await getIdFromBlock(
-			this.editorCanvas.locator( selectors.focusedBlock( blockEditorSelector ) )
+			this.editorCanvas.locator(
+				`${ selectors.focusedBlock( blockEditorSelector ) },${ selectors.parentOfFocusedBlock(
+					blockEditorSelector
+				) }`
+			)
 		);
 
 		// Dismiss the block inserter if viewport is larger than mobile to
@@ -353,6 +358,22 @@ export class FullSiteEditorPage {
 
 	/**
 	 *
+	 * @param optionName
+	 */
+	async clickBlockToolbarOption( optionName: string ): Promise< void > {
+		await this.editorBlockToolbarComponent.clickOptionsButton();
+		await this.editorPopoverMenuComponent.clickMenuButton( optionName );
+	}
+
+	/**
+	 *
+	 */
+	async clickBlockToolbarParentBlock(): Promise< void > {
+		await this.editorBlockToolbarComponent.clickParentBlockButton();
+	}
+
+	/**
+	 *
 	 * @param name
 	 */
 	async nameAndFinalizeTemplatePart( name: string ): Promise< void > {
@@ -381,5 +402,14 @@ export class FullSiteEditorPage {
 		await this.editorToolbarComponent.openNavSidebar();
 		await this.editorNavSidebarComponent.clickMenuLink( 'Template Parts' );
 		await this.templatePartListComponent.deleteTemplatePart( name );
+	}
+
+	/**
+	 *
+	 * @param text
+	 */
+	async waitForConfirmationToast( text: string ): Promise< void > {
+		const locator = this.editor.locator( selectors.confirmationToast( text ) );
+		await locator.waitFor();
 	}
 }

@@ -18,6 +18,7 @@ const selectors = {
 		}
 		return selector;
 	},
+	parentBlockButton: '.block-editor-block-parent-selector button',
 };
 
 export interface BlockToolbarButtonIdentifier {
@@ -48,8 +49,24 @@ export class EditorBlockToolbarComponent {
 	 *
 	 * @param {BlockToolbarButtonIdentifier} identifier Ways to identify the button.
 	 */
-	async clickPrimaryButton( identifier: BlockToolbarButtonIdentifier ) {
+	async clickPrimaryButton( identifier: BlockToolbarButtonIdentifier ): Promise< void > {
 		const locator = await this.editor.locator( selectors.button( identifier ) );
+		await locator.click();
+	}
+
+	/**
+	 * Click on the options button (three dots).
+	 */
+	async clickOptionsButton(): Promise< void > {
+		const locator = await this.editor.locator( selectors.button( { ariaLabel: 'Options' } ) );
+		await locator.click();
+	}
+
+	/**
+	 *
+	 */
+	async clickParentBlockButton(): Promise< void > {
+		const locator = await this.editor.locator( selectors.parentBlockButton );
 		await locator.click();
 	}
 }
