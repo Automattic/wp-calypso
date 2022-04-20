@@ -1,10 +1,9 @@
 import { Page, Locator } from 'playwright';
-import envVariables from '../../env-variables';
 
-const panel = 'div.wpcom-block-editor-nav-sidebar-nav-sidebar__container';
+// Support both site editor and post editor
+const panel = '.wpcom-block-editor-nav-sidebar-nav-sidebar__container,.edit-site-navigation-panel';
 const selectors = {
-	sidebarButton: `button[aria-label="Block editor sidebar"]`,
-	exitLink: `${ panel } a[aria-description="Returns to the dashboard"]`,
+	menuLink: ( name: string ) => `${ panel } >> a:has-text("${ name }")`,
 };
 
 /**
@@ -27,60 +26,22 @@ export class EditorNavSidebarComponent {
 	}
 
 	/**
-	 * Opens the sidebar if not already open.
-	 */
-	async openSidebar(): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			return;
-		}
-
-		if ( await this.sidebarIsOpen() ) {
-			return;
-		}
-
-		const locator = this.editor.locator( selectors.sidebarButton );
-		await locator.click();
-	}
-
-	/**
-	 * Closes the sidebar if open.
-	 */
-	async closeSidebar(): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			return;
-		}
-
-		if ( ! ( await this.sidebarIsOpen() ) ) {
-			return;
-		}
-
-		const locator = this.editor.locator( selectors.sidebarButton );
-		await locator.click();
-	}
-
-	/**
 	 * Exits the editor.
 	 *
-	 * For Desktop viewports, the sidebar is used to exit.
-	 * For Mobile viewports, nothing happens.
+	 * Clicks the Dashboard menu link to exit the editor.
 	 */
 	async exitEditor(): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			return;
-		}
-
-		const exitLinkLocator = this.editor.locator( selectors.exitLink );
+		const exitLinkLocator = this.editor.locator( selectors.menuLink( 'Dashboard' ) );
 		await exitLinkLocator.click();
 	}
 
 	/**
-	 * Returns whether the sidebar is open.
+	 * Clicks a navigation link from the menu in the navigation sidebar.
 	 *
-	 * @returns {boolean} True if the sidebar is open. False otherwise.
+	 * @param {string} name Name of link to click.
 	 */
-	private async sidebarIsOpen(): Promise< boolean > {
-		const locator = this.editor.locator( selectors.sidebarButton );
-		const status = await locator.getAttribute( 'aria-expanded' );
-		return status === 'true';
+	async clickMenuLink( name: string ): Promise< void > {
+		const locator = this.editor.locator( selectors.menuLink( name ) );
+		await locator.click();
 	}
 }

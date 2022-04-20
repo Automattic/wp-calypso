@@ -9,5 +9,7 @@ export * from './file-block';
 export * from './logos-block';
 export * from './schemas';
 export * from './paragraph-block';
+export * from './block-components/template-part-block';
 
 export * from './block-flows';
+export * from './block-components';
