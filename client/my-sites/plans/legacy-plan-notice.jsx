@@ -10,7 +10,6 @@ import Notice from 'calypso/components/notice';
  * @returns - Legacy plan Notice component.
  */
 const maybeRenderLegacyPlanNotice = ( eligibleForProPlan, selectedSite ) => {
-	// Renders the legacy plan notice for users on legacy plans (not including legacy Free plan).
 	if (
 		eligibleForProPlan &&
 		! isFreePlanProduct( selectedSite.plan ) &&
