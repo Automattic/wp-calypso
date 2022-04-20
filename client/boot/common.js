@@ -242,9 +242,9 @@ function setupErrorLogger( currentUser, reduxStore ) {
 		return;
 	}
 
-	// Enable Sentry for 10% of users. Disable otherwise. Also enable for calypso.live
-	// so that we don't miss any major problems with it.
-	if ( config( 'env_id' ) === 'wpcalypso' || ( currentUser?.ID ?? 0 ) % 10 ) {
+	// Enable Sentry 10% of the time this function is executed. Disable otherwise.
+	// Also enable for calypso.live so that we don't miss any major problems.
+	if ( config( 'env_id' ) === 'wpcalypso' || Math.floor( Math.random() * 10 ) === 1 ) {
 		// Add a bit of metadata from the redux store to the sentry event.
 		const beforeSend = ( event ) => {
 			const state = reduxStore.getState();
