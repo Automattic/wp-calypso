@@ -5,6 +5,7 @@ import ScanBadge from 'calypso/components/jetpack/scan-badge';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import { backupPath, scanPath } from 'calypso/lib/jetpack/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
+import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
@@ -91,7 +92,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 				selected={ currentPathMatches( `/jetpack-search/${ siteSlug }` ) }
 				expandSection={ expandSection }
 			/>
-			{ isAdmin && ! isWPForTeamsSite && (
+			{ isSectionNameEnabled( 'jetpack-social' ) && isAdmin && ! isWPForTeamsSite && (
 				<SidebarItem
 					customIcon={ showIcons && <JetpackIcons icon="social" /> }
 					label={ translate( 'Social', {
