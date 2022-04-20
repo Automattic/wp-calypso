@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { expect } from 'chai';
-import { render } from 'calypso/test-helpers/config/testing-library';
+import { render, screen } from 'calypso/test-helpers/config/testing-library';
 import UsAddressFieldset from '../us-address-fieldset';
 
 jest.mock( 'i18n-calypso', () => ( {
@@ -29,16 +29,16 @@ describe( 'US Address Fieldset', () => {
 	} );
 
 	test( 'should render expected input components', () => {
-		const { container } = render( <UsAddressFieldset { ...defaultProps } /> );
-		expect( container.querySelectorAll( '[name="city"]' ) ).to.have.length( 1 );
-		expect( container.querySelectorAll( '[name="state"]' ) ).to.have.length( 1 );
-		expect( container.querySelectorAll( '[name="postal-code"]' ) ).to.have.length( 1 );
+		render( <UsAddressFieldset { ...defaultProps } /> );
+		expect( screen.queryByLabelText( 'City' ) ).to.exist;
+		expect( screen.queryByLabelText( 'State' ) ).to.exist;
+		expect( screen.queryByLabelText( 'ZIP code' ) ).to.exist;
 	} );
 
 	test( 'should render all expected input components but postal code', () => {
-		const { container } = render( <UsAddressFieldset { ...propsWithoutPostalCode } /> );
-		expect( container.querySelectorAll( '[name="city"]' ) ).to.have.length( 1 );
-		expect( container.querySelectorAll( '[name="state"]' ) ).to.have.length( 1 );
-		expect( container.querySelectorAll( '[name="postal-code"]' ) ).to.have.length( 0 );
+		render( <UsAddressFieldset { ...propsWithoutPostalCode } /> );
+		expect( screen.queryByLabelText( 'City' ) ).to.exist;
+		expect( screen.queryByLabelText( 'State' ) ).to.exist;
+		expect( screen.queryByLabelText( 'Postal Code' ) ).to.not.exist;
 	} );
 } );

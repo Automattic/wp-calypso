@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { expect } from 'chai';
 import UkAddressFieldset from '../uk-address-fieldset';
 
@@ -28,19 +28,19 @@ describe( 'UK Address Fieldset', () => {
 	} );
 
 	test( 'should render expected input components', () => {
-		const { container } = render( <UkAddressFieldset { ...defaultProps } /> );
-		expect( container.querySelectorAll( '[name="city"]' ) ).to.have.length( 1 );
-		expect( container.querySelectorAll( '[name="postal-code"]' ) ).to.have.length( 1 );
+		render( <UkAddressFieldset { ...defaultProps } /> );
+		expect( screen.queryByLabelText( 'City' ) ).to.exist;
+		expect( screen.queryByLabelText( 'Postal Code' ) ).to.exist;
 	} );
 
 	test( 'should not render a state select components', () => {
-		const { container } = render( <UkAddressFieldset { ...defaultProps } /> );
-		expect( container.querySelectorAll( '[name="state"]' ) ).to.have.length( 0 );
+		render( <UkAddressFieldset { ...defaultProps } /> );
+		expect( screen.queryByLabelText( 'State' ) ).to.not.exist;
 	} );
 
 	test( 'should render all expected input components but postal code', () => {
-		const { container } = render( <UkAddressFieldset { ...propsWithoutPostalCode } /> );
-		expect( container.querySelectorAll( '[name="city"]' ) ).to.have.length( 1 );
-		expect( container.querySelectorAll( '[name="postal-code"]' ) ).to.have.length( 0 );
+		render( <UkAddressFieldset { ...propsWithoutPostalCode } /> );
+		expect( screen.queryByLabelText( 'City' ) ).to.exist;
+		expect( screen.queryByLabelText( 'Postal Code' ) ).to.not.exist;
 	} );
 } );
