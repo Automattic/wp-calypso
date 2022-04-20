@@ -1,5 +1,8 @@
-// NOTE: This file has been copied mostly verbatim from Redpop/Tumblr.
-// @sirreal and @blowery may have more information.
+// NOTE: This file has been copied mostly verbatim from Redpop/Tumblr. The main
+// purpose is to stub basic Sentry methods so that consumers in Calypso can use
+// them. Then we can async-load Sentry for only a certain percent of requests.
+// Otherwise, we'd add a fair amount to the bundle size when we don't really need
+// it for every single request.
 import config from '@automattic/calypso-config';
 import type * as SentryApi from '@sentry/react';
 
@@ -112,9 +115,8 @@ function beforeBreadcrumb( breadcrumb: SentryApi.Breadcrumb ): SentryApi.Breadcr
 
 interface SentryOptions {
 	beforeSend: ( e: SentryApi.Event ) => SentryApi.Event | null;
-	shouldEnable: boolean;
 }
-export async function initSentry( { beforeSend, shouldEnable }: SentryOptions ) {
+export async function initSentry( { beforeSend }: SentryOptions ) {
 	// Make sure we don't throw
 	try {
 		// No Sentry loading on the server.
@@ -122,14 +124,23 @@ export async function initSentry( { beforeSend, shouldEnable }: SentryOptions ) 
 		if ( typeof document === 'undefined' || state.state !== 'initial' ) {
 			return;
 		}
-		// Set state to disabled to stop maintaining a queue of sentry method calls.
-		if ( ! shouldEnable ) {
+		state = { state: 'loading' };
+
+		// Enable Sentry only for 10% of requests or always in calypso.live for testing.
+		// Always disable if catch-js-errors is not available in the environment.
+		if (
+			! (
+				config.isEnabled( 'catch-js-errors' ) &&
+				( config( 'env_id' ) !== 'wpcalypso' || Math.floor( Math.random() * 10 ) !== 1 )
+			)
+		) {
+			// Set state to disabled to stop maintaining a queue of sentry method calls.
 			state = { state: 'disabled' };
 			// Note that the `clearQueues()` call in the finally block is still
 			// executed after returning here, so cleanup does happen correctly.
 			return;
 		}
-		state = { state: 'loading' };
+
 		const errorHandler = ( errorEvent: ErrorEvent ): void =>
 			void errorQueue.push( [
 				errorEvent.message,

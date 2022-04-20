@@ -238,12 +238,6 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 };
 
 function setupErrorLogger( reduxStore ) {
-	// Enable Sentry only for 10% of requests or always in calypso.live for testing.
-	// Always disable if catch-js-errors is not available in the environment.
-	const shouldEnable =
-		config.isEnabled( 'catch-js-errors' ) &&
-		( config( 'env_id' ) === 'wpcalypso' || Math.floor( Math.random() * 10 ) === 1 );
-
 	// Add a bit of metadata from the redux store to the sentry event.
 	const beforeSend = ( event ) => {
 		const state = reduxStore.getState();
@@ -255,9 +249,10 @@ function setupErrorLogger( reduxStore ) {
 		return event;
 	};
 
-	// We pass in `isEnabled` rather than wrapping with an if-statement because
-	// some cleanup has to happen if we are not going to enable sentry.
-	initSentry( { beforeSend, shouldEnable } );
+	// Note that Sentry can disable itself and do some cleanup if needed, so we
+	// run it before the catch-js-errors check. (Otherwise, cleanup would never
+	// never happen.)
+	initSentry( { beforeSend } );
 
 	if ( ! config.isEnabled( 'catch-js-errors' ) ) {
 		return;
