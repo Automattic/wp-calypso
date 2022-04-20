@@ -17,7 +17,7 @@ const selectors = {
 	freeDesignButton: 'button[data-e2e-button=freeOption]',
 
 	//Page picker page
-	pageOption: ( text: string ) => `div.css-1wedqbn:has-text("${ text }")`,
+	pageOption: ( text: string ) => `img:above(div:has-text("${ text }"))`,
 
 	// Checkout page
 	checkoutHeader: '.checkout-step__header:has-text("Your order")',
@@ -29,6 +29,10 @@ const selectors = {
 	// Confirmation box
 	confirmationInput: 'input#confirmTextChangeInput',
 };
+
+export interface SocialProfiles {
+	twitter?: string;
+}
 
 /**
  * Class encapsulating the flow when starting a new do-it-for-me site order.
@@ -143,10 +147,12 @@ export class DIFMFlow {
 	/**
 	 * Enter the links to social media profiles.
 	 *
-	 * @param {string} twitter The link to a twitter profile.
+	 * @param {SocialProfiles} [profiles] The link to a twitter profile.
 	 */
-	async enterSocial( twitter: string ): Promise< void > {
-		await this.page.fill( selectors.twitterInput, twitter );
+	async enterSocial( profiles: SocialProfiles ): Promise< void > {
+		if ( typeof profiles.twitter !== 'undefined' ) {
+			await this.page.fill( selectors.twitterInput, profiles.twitter );
+		}
 	}
 
 	/**

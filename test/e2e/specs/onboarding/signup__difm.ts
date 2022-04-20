@@ -46,7 +46,7 @@ describe( DataHelper.createSuiteTitle( 'Do it for me' ), () => {
 		} );
 
 		it( 'Fill out the social page', async () => {
-			await difmFlow.enterSocial( 'https://twitter.com/automattic' );
+			await difmFlow.enterSocial( { twitter: 'https://twitter.com/automattic' } );
 			await difmFlow.clickButton( 'Continue' );
 			await difmFlow.validateDesignPage();
 		} );
@@ -56,9 +56,12 @@ describe( DataHelper.createSuiteTitle( 'Do it for me' ), () => {
 			await difmFlow.validatePagePickerPage();
 		} );
 
-		it( 'Proceed to Checkout', async () => {
+		it( 'Select multiple new pages', async () => {
 			await difmFlow.selectPage( 'Blog' );
 			await difmFlow.selectPage( 'Services' );
+		} );
+
+		it( 'Proceed to Checkout', async () => {
 			await difmFlow.clickButton( 'Go to Checkout' );
 			await difmFlow.validateCheckoutPage();
 			await cart.validateCartItem( 'Do It For Me' );
