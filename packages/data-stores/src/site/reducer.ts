@@ -243,6 +243,7 @@ export const latestAtomicTransferStatus: Reducer<
 			...state,
 			[ action.siteId ]: {
 				status: LatestAtomicTransferStatus.IN_PROGRESS,
+				transfer: undefined,
 				errorCode: undefined,
 			},
 		};
@@ -262,6 +263,7 @@ export const latestAtomicTransferStatus: Reducer<
 			...state,
 			[ action.siteId ]: {
 				status: LatestAtomicTransferStatus.FAILURE,
+				transfer: undefined,
 				errorCode: action.error,
 			},
 		};
