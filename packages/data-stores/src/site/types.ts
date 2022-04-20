@@ -328,6 +328,7 @@ export interface LatestAtomicTransfer {
 
 export interface LatestAtomicTransferState {
 	status: LatestAtomicTransferStatus;
+	transfer: LatestAtomicTransfer | undefined;
 	errorCode: LatestAtomicTransferError | undefined;
 }
 

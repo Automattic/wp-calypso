@@ -71,6 +71,10 @@ export const getSiteSubdomain = ( _: State, siteId: number ) =>
 		.getSiteDomains( siteId )
 		?.find( ( domain ) => domain.is_subdomain );
 
+export const getSiteLatestAtomicTransfer = ( state: State, siteId: number ) => {
+	return state.latestAtomicTransferStatus[ siteId ]?.transfer;
+};
+
 export const hasActiveSiteFeature = (
 	_: State,
 	siteId: number | undefined,
