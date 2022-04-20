@@ -121,7 +121,7 @@
 }
 
 .p2-join-workspace__code-input-label {
-	margin-bottom: 1rem;
+	margin-bottom: 2.5rem;
 }
 
 .p2-join-workspace__code-input-form {
@@ -133,11 +133,6 @@
 		border: none;
 		text-align: center;
 		margin-bottom: 2rem;
-	}
-
-	button.p2-join-workspace__code-input-submit,
-	button.p2-join-workspace__code-input-cancel {
-		max-width: 60%;
 	}
 
 	.p2-join-workspace__code-input-cancel {
@@ -154,15 +149,16 @@
 .p2-join-workspace__code-input-box,
 .p2-join-workspace__code-input-separator {
 	height: 4rem;
-	width: 4rem;
+	width: 3.6rem;
 	margin: 0 0.25rem;
 
 }
 
 .p2-join-workspace__code-input-box {
 	border: 1px solid var( --p2-color-border-medium );
-	font-size: 2rem;
+	font-size: 1.5rem;
 	text-align: center;
+	border-radius: 2px;
 
 	.has-error & {
 		border-color: var( --p2-color-error );

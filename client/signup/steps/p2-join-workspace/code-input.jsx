@@ -160,7 +160,7 @@ function P2JoinWorkspaceCodeInput( { workspaceStatus, setWorkspaceStatus } ) {
 	return (
 		<div className="p2-join-workspace__code-input">
 			<div className="p2-join-workspace__code-input-label">
-				{ __( 'Enter the code here, please.' ) }
+				{ __( 'Enter the code to continue, please.' ) }
 			</div>
 			<form className={ formClasses }>
 				<fieldset>{ renderCodeInputFieldset() }</fieldset>
