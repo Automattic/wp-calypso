@@ -27,7 +27,7 @@ describe( 'formatCurrency', () => {
 		expect( money ).toBe( '-$1,234.57' );
 	} );
 	test( 'unknown currency codes return default', () => {
-		const money = formatCurrency( 9800900.32, {} );
+		const money = formatCurrency( 9800900.32, '' );
 		expect( money ).toBe( '$9,800,900.32' );
 	} );
 
