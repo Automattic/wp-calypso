@@ -32,6 +32,8 @@ type SentryState =
 	| { state: 'loading' }
 	// Load failed
 	| { state: 'error' }
+	// Sentry will not be enabled
+	| { state: 'disabled' }
 	// Fully loaded!
 	| { state: 'loaded'; sentry: typeof import('@sentry/react') };
 let state: SentryState = { state: 'initial' };
@@ -40,12 +42,13 @@ function dispatchSentryMethodCall< Method extends SupportedMethods >(
 	method: Method,
 	args: Parameters< typeof SentryApi[ Method ] >
 ) {
-	if ( state.state === 'loaded' ) {
+	const { state: status } = state;
+	if ( status === 'loaded' ) {
 		// @ts-expect-error We have a union of tuples and TypeScript wants a Tuple. It's OK.
 		state.sentry[ method ]( ...args );
 		return;
 	}
-	if ( state.state === 'error' ) {
+	if ( status === 'error' || status === 'disabled' ) {
 		return;
 	}
 	callQueue.push( { f: method, a: args } );
@@ -103,17 +106,21 @@ function beforeBreadcrumb( breadcrumb: SentryApi.Breadcrumb ): SentryApi.Breadcr
 
 interface SentryOptions {
 	beforeSend: ( e: SentryApi.Event ) => SentryApi.Event | null;
+	shouldEnable: boolean;
 }
-export async function initSentry( { beforeSend }: SentryOptions ) {
+export async function initSentry( { beforeSend, shouldEnable }: SentryOptions ) {
 	// Make sure we don't throw
 	try {
 		// No Sentry loading on the server.
 		// No double-loading.
-		if (
-			typeof document === 'undefined' ||
-			state.state !== 'initial' ||
-			! config.isEnabled( 'catch-js-errors' )
-		) {
+		if ( typeof document === 'undefined' || state.state !== 'initial' ) {
+			return;
+		}
+		// Set state to disabled to stop maintaining a queue of sentry method calls.
+		if ( ! shouldEnable ) {
+			state = { state: 'disabled' };
+			// Note that the `clearQueues()` call in the finally block is still
+			// executed after returning here, so cleanup does happen correctly.
 			return;
 		}
 		state = { state: 'loading' };

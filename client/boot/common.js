@@ -237,28 +237,33 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 };
 
-function setupErrorLogger( currentUser, reduxStore ) {
+function setupErrorLogger( reduxStore ) {
+	// Enable Sentry only for 10% of requests or always in calypso.live for testing.
+	// Always disable if catch-js-errors is not available in the environment.
+	const shouldEnable =
+		config.isEnabled( 'catch-js-errors' ) &&
+		( config( 'env_id' ) === 'wpcalypso' || Math.floor( Math.random() * 10 ) === 1 );
+
+	// Add a bit of metadata from the redux store to the sentry event.
+	const beforeSend = ( event ) => {
+		const state = reduxStore.getState();
+		if ( ! event.tags ) {
+			event.tags = {};
+		}
+		event.tags.blog_id = getSelectedSiteId( state );
+		event.tags.calypso_section = getSectionName( state );
+		return event;
+	};
+
+	// We pass in `isEnabled` rather than wrapping with an if-statement because
+	// some cleanup has to happen if we are not going to enable sentry.
+	initSentry( { beforeSend, shouldEnable } );
+
 	if ( ! config.isEnabled( 'catch-js-errors' ) ) {
 		return;
 	}
 
-	// Enable Sentry 10% of the time this function is executed. Disable otherwise.
-	// Also enable for calypso.live so that we don't miss any major problems.
-	if ( config( 'env_id' ) === 'wpcalypso' || Math.floor( Math.random() * 10 ) === 1 ) {
-		// Add a bit of metadata from the redux store to the sentry event.
-		const beforeSend = ( event ) => {
-			const state = reduxStore.getState();
-			if ( ! event.tags ) {
-				event.tags = {};
-			}
-			event.tags.blog_id = getSelectedSiteId( state );
-			event.tags.calypso_section = getSectionName( state );
-			return event;
-		};
-
-		initSentry( { beforeSend } );
-	}
-
+	// At this point, the normal error logger is still set up so that
 	const errorLogger = new Logger();
 
 	// Save errorLogger to a singleton for use in arbitrary logging.
@@ -315,7 +320,7 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 	// The analytics module requires user (when logged in) and superProps objects. Inject these here.
 	initializeAnalytics( currentUser ? currentUser : undefined, getSuperProps( reduxStore ) );
 
-	setupErrorLogger( currentUser, reduxStore );
+	setupErrorLogger( reduxStore );
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
 	// This can be removed when the legacy version is retired.
