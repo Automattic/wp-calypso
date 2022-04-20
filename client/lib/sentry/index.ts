@@ -3,7 +3,12 @@
 import config from '@automattic/calypso-config';
 import type * as SentryApi from '@sentry/react';
 
-export const IGNORED_ERRORS: Array< string | RegExp > = [];
+const SENTRY_CONFIG: SentryApi.BrowserOptions = {
+	dsn: 'https://61275d63a504465ab315245f1a379dab@o248881.ingest.sentry.io/6313676',
+	// Determine the sample of errors collected where 1.0 is 100% of errors.
+	sampleRate: 1.0, // We're disabling it for 90% of requests, so we should track 100% of errors for the remaining 10% of requests.
+};
+
 type SupportedMethods =
 	| 'addBreadcrumb'
 	| 'captureEvent'
@@ -167,13 +172,7 @@ export async function initSentry( { beforeSend, shouldEnable }: SentryOptions ) 
 
 			// See configuration docs: https://docs.sentry.io/clients/javascript/config
 			Sentry.init( {
-				dsn: 'https://61275d63a504465ab315245f1a379dab@o248881.ingest.sentry.io/6313676',
-				// Determine the sample of errors collected where 1.0 is 100% of errors.
-				sampleRate: 0.01,
-				// Array of strings or regexes.
-				// string will partially match messages.
-				// Regexes will be tested, so /^pattern$/ can match full results.
-				ignoreErrors: IGNORED_ERRORS,
+				...SENTRY_CONFIG,
 				environment,
 				release,
 				beforeBreadcrumb,
