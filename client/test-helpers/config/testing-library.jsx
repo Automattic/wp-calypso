@@ -1,6 +1,7 @@
 import { render as rtlRender } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { applyMiddleware, createStore } from 'redux';
+import thunkMiddleware from 'redux-thunk';
 import initialReducer from 'calypso/state/reducer';
 
 const render = ( ui, { initialState, store, reducers, ...renderOptions } = {} ) => {
@@ -13,7 +14,7 @@ const render = ( ui, { initialState, store, reducers, ...renderOptions } = {} ) 
 			}
 		}
 
-		store = createStore( reducer, initialState );
+		store = createStore( reducer, initialState, applyMiddleware( thunkMiddleware ) );
 	}
 
 	const Wrapper = ( { children } ) => <Provider store={ store }>{ children }</Provider>;
