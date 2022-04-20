@@ -76,6 +76,10 @@ export const getSiteLatestAtomicTransfer = ( state: State, siteId: number ) => {
 	return state.latestAtomicTransferStatus[ siteId ]?.transfer;
 };
 
+export const getSiteLatestAtomicTransferError = ( state: State, siteId: number ) => {
+	return state.latestAtomicTransferStatus[ siteId ]?.errorCode;
+};
+
 export const hasActiveSiteFeature = (
 	_: State,
 	siteId: number | undefined,
