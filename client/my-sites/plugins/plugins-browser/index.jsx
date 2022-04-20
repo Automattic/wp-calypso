@@ -290,17 +290,18 @@ const PluginsBrowser = ( {
 				hasBusinessPlan={ hasBusinessPlan }
 				siteSlug={ siteSlug }
 			/>
-			{ ! category && (
-				<SearchBoxHeader
-					popularSearchesRef={ searchHeaderRef }
-					isSticky={ isAboveElement }
-					doSearch={ doSearch }
-					searchTerm={ search }
-					title={ translate( 'Plugins you need to get your projects done' ) }
-					searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
-				/>
-			) }
+
+			<SearchBoxHeader
+				popularSearchesRef={ searchHeaderRef }
+				isSticky={ isAboveElement }
+				doSearch={ doSearch }
+				searchTerm={ search }
+				title={ translate( 'Plugins you need to get your projects done' ) }
+				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
+			/>
+
 			{ ! search && <Categories selected={ category } /> }
+
 			<PluginBrowserContent
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
 				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
