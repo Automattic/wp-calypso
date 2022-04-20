@@ -5,6 +5,12 @@ import {
 	EditorToolbarComponent,
 	EditorWelcomeTourComponent,
 	SiteType,
+	EditorPopoverMenuComponent,
+	EditorSiteStylesComponent,
+	ColorSettings,
+	TypographySettings,
+	ColorLocation,
+	FullSiteEditorSavePanelComponent,
 } from '..';
 import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
@@ -17,6 +23,9 @@ const selectors = {
 	editorCanvasIframe: 'iframe[name="editor-canvas"]',
 	editorCanvasRoot: '.wp-site-blocks',
 	templateLoadingSpinner: '[aria-label="Block: Template Part"] .components-spinner',
+	closeStylesWelcomeGuideButton:
+		'[aria-label="Welcome to styles"] button[aria-label="Close dialog"]',
+	saveConfirmationToast: '.components-snackbar:has-text("Site updated.")',
 };
 
 /**
@@ -31,6 +40,9 @@ export class FullSiteEditorPage {
 	private editorToolbarComponent: EditorToolbarComponent;
 	private editorSidebarBlockInserterComponent: EditorSidebarBlockInserterComponent;
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
+	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
+	private editorSiteStylesComponent: EditorSiteStylesComponent;
+	private fullSiteEditorSavePanelComponent: FullSiteEditorSavePanelComponent;
 
 	/**
 	 * Constructs an instance of the page POM class.
@@ -58,7 +70,13 @@ export class FullSiteEditorPage {
 
 		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
 		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
+		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
+		this.editorSiteStylesComponent = new EditorSiteStylesComponent( page, this.editor );
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
+			page,
+			this.editor
+		);
+		this.fullSiteEditorSavePanelComponent = new FullSiteEditorSavePanelComponent(
 			page,
 			this.editor
 		);
@@ -162,5 +180,117 @@ export class FullSiteEditorPage {
 	 */
 	async redo(): Promise< void > {
 		await this.editorToolbarComponent.redo();
+	}
+
+	/**
+	 * Opens the site styles sidebar in the site editor.
+	 *
+	 * @param {object} param0 Keyed options parameter.
+	 * @param {boolean} param0.closeWelcomeGuide Set if should close welcome guide on opening.
+	 */
+	async openSiteStyles(
+		{ closeWelcomeGuide }: { closeWelcomeGuide: boolean } = { closeWelcomeGuide: true }
+	): Promise< void > {
+		if ( ! ( await this.editorSiteStylesComponent.siteStylesIsOpen() ) ) {
+			await this.editorToolbarComponent.openMoreOptionsMenu();
+
+			if ( closeWelcomeGuide ) {
+				// The unawaited promise and no-op catch are both intentional here!
+				// We want to close the welcome guide if it opens, but not slow down the test if it doesn't.
+				// This will effectively register a handler that waits for the welcome guide to close it if it appears
+				// but otherwise doesn't affect the following actions.
+				const safelyWatchForWelcomeGuide = () => this.closeStylesWelcomeGuide().catch();
+				safelyWatchForWelcomeGuide();
+			}
+			await this.editorPopoverMenuComponent.clickMenuButton( 'Styles' );
+		}
+	}
+
+	/**
+	 * Closes the site styles welcome guide.
+	 */
+	private async closeStylesWelcomeGuide(): Promise< void > {
+		const locator = this.editor.locator( selectors.closeStylesWelcomeGuideButton );
+		await locator.click( { timeout: 5 * 1000 } );
+	}
+
+	/**
+	 * Close the site styles sidebar/panel.
+	 */
+	async closeSiteStyles(): Promise< void > {
+		await this.editorSiteStylesComponent.closeSiteStyles();
+	}
+
+	/**
+	 * Clicks a navigation menu item/button in the site styles sidebar/panel.
+	 *
+	 * @param {string} buttonName Name on the menu item/button.
+	 */
+	async clickStylesMenuButton( buttonName: string ): Promise< void > {
+		await this.editorSiteStylesComponent.clickMenuButton( buttonName );
+	}
+
+	/**
+	 * Returns to the top menu level of the styles sidebar/panel.
+	 */
+	async returnToStylesTopMenu(): Promise< void > {
+		await this.editorSiteStylesComponent.returnToTopMenu();
+	}
+
+	/**
+	 * Sets a color style setting globaly for the site.
+	 * This auto-handles returning to top menu and navigating down.
+	 *
+	 * @param {ColorLocation} colorLocation What part of the site we are updating the color for.
+	 * @param {ColorSettings} colorSettings Settings for the color to set.
+	 */
+	async setGlobalColorStlye(
+		colorLocation: ColorLocation,
+		colorSettings: ColorSettings
+	): Promise< void > {
+		await this.editorSiteStylesComponent.setGlobalColor( colorLocation, colorSettings );
+	}
+
+	/**
+	 * Sets a typography style for a block.
+	 * This auto-handles returning to top menu and navigating down.
+	 *
+	 * @param {string} blockName Block name (as appears in list).
+	 * @param {TypographySettings} typographySettings Typography settings to set.
+	 */
+	async setBlockTypographyStyle(
+		blockName: string,
+		typographySettings: TypographySettings
+	): Promise< void > {
+		await this.editorSiteStylesComponent.setBlockTypography( blockName, typographySettings );
+	}
+
+	/**
+	 * Resets the site styles to the defaults for the theme.
+	 */
+	async resetStylesToDefaults(): Promise< void > {
+		await this.editorSiteStylesComponent.openMoreActionsMenu();
+		await this.editorPopoverMenuComponent.clickMenuButton( 'Reset to defaults' );
+	}
+
+	/**
+	 * Save the changes in the full site editor (equivalent of publish).
+	 */
+	async save(): Promise< void > {
+		await this.clearExistingSaveConfirmationToast();
+		await this.editorToolbarComponent.saveSiteEditor();
+		await this.fullSiteEditorSavePanelComponent.confirmSave();
+		const toastLocator = this.editor.locator( selectors.saveConfirmationToast );
+		await toastLocator.waitFor();
+	}
+
+	/**
+	 * Clears existing save confirmation toasts.
+	 */
+	private async clearExistingSaveConfirmationToast(): Promise< void > {
+		const toastLocator = this.editor.locator( selectors.saveConfirmationToast );
+		if ( ( await toastLocator.count() ) > 0 ) {
+			await toastLocator.click();
+		}
 	}
 }

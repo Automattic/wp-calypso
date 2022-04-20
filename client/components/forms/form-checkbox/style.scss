@@ -1,5 +1,8 @@
+@import '@automattic/typography/styles/variables';
+@import '../../../assets/stylesheets/shared/_extends-forms';
+
 .form-checkbox {
-	@extend %form-field;
+	@extend %form-field !optional;
 
 	clear: none;
 	cursor: pointer;

@@ -7,7 +7,9 @@ import {
 	SiteLaunchState,
 	SiteLaunchStatus,
 	SiteSettings,
+	AtomicTransferStatus,
 } from './types';
+import { AtomicTransferState } from '.';
 import type { Action } from './actions';
 import type { Reducer } from 'redux';
 
@@ -162,6 +164,75 @@ export const launchStatus: Reducer< { [ key: number ]: SiteLaunchState }, Action
 	return state;
 };
 
+export const siteSetupErrors: Reducer<
+	{ [ key: number ]: any | undefined },
+	{
+		type: string;
+		siteId: number;
+		error?: string;
+		message?: string;
+	}
+> = ( state = {}, action ) => {
+	if ( action.type === 'SET_SITE_SETUP_ERROR' ) {
+		const { siteId, error, message } = action;
+
+		return {
+			...state,
+			[ siteId ]: {
+				error,
+				message,
+			},
+		};
+	}
+
+	if ( action.type === 'CLEAR_SITE_SETUP_ERROR' ) {
+		const newState = {
+			...state,
+		};
+
+		delete newState[ action.siteId ];
+	}
+
+	return state;
+};
+
+export const atomicTransferStatus: Reducer< { [ key: number ]: AtomicTransferState }, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'ATOMIC_TRANSFER_START' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				status: AtomicTransferStatus.IN_PROGRESS,
+				softwareSet: action.softwareSet,
+				errorCode: undefined,
+			},
+		};
+	}
+	if ( action.type === 'ATOMIC_TRANSFER_SUCCESS' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				status: AtomicTransferStatus.SUCCESS,
+				softwareSet: action.softwareSet,
+				errorCode: undefined,
+			},
+		};
+	}
+	if ( action.type === 'ATOMIC_TRANSFER_FAILURE' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				status: AtomicTransferStatus.FAILURE,
+				softwareSet: action.softwareSet,
+				errorCode: action.error,
+			},
+		};
+	}
+	return state;
+};
+
 const newSite = combineReducers( {
 	data: newSiteData,
 	error: newSiteError,
@@ -175,6 +246,8 @@ const reducer = combineReducers( {
 	launchStatus,
 	sitesDomains,
 	sitesSettings,
+	siteSetupErrors,
+	atomicTransferStatus,
 } );
 
 export type State = ReturnType< typeof reducer >;

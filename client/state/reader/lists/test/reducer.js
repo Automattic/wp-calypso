@@ -3,11 +3,10 @@ import {
 	READER_LIST_DELETE,
 	READER_LIST_FOLLOW_RECEIVE,
 	READER_LIST_UNFOLLOW_RECEIVE,
-	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_REQUEST_SUCCESS,
 	READER_LISTS_RECEIVE,
 } from 'calypso/state/reader/action-types';
-import { items, listItems, updatedLists, subscribedLists } from '../reducer';
+import { items, listItems, subscribedLists } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {
@@ -86,27 +85,6 @@ describe( 'reducer', () => {
 					{ ID: 12346, feed_ID: 333 },
 				],
 			} );
-		} );
-	} );
-
-	describe( '#updatedLists()', () => {
-		test( 'should default to an empty array', () => {
-			const state = updatedLists( undefined, {} );
-			expect( state ).toEqual( [] );
-		} );
-
-		test( 'should add a list ID when a list is updated', () => {
-			const state = updatedLists( [], {
-				type: READER_LIST_UPDATE_SUCCESS,
-				data: {
-					list: {
-						ID: 841,
-						title: 'Hello World',
-					},
-				},
-			} );
-
-			expect( state ).toEqual( [ 841 ] );
 		} );
 	} );
 

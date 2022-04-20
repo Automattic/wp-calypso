@@ -14,7 +14,11 @@ import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserSiteCount, getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserSiteCount,
+	getCurrentUser,
+	getCurrentUserDate,
+} from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -37,6 +41,7 @@ import Masterbar from './masterbar';
 import { MasterBarMobileMenu } from './masterbar-menu';
 import Notifications from './notifications';
 
+const NEW_MASTERBAR_SHIPPING_DATE = new Date( 2022, 3, 14 ).getTime();
 const MENU_POPOVER_PREFERENCE_KEY = 'dismissible-card-masterbar-collapsable-menu-popover';
 
 const MOBILE_BREAKPOINT = '<480px';
@@ -61,6 +66,8 @@ class MasterbarLoggedIn extends Component {
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
 		isInEditor: PropTypes.bool,
+		hasDismissedThePopover: PropTypes.bool,
+		isUserNewerThanNewNavigation: PropTypes.bool,
 	};
 
 	subscribeToViewPortChanges() {
@@ -396,7 +403,12 @@ class MasterbarLoggedIn extends Component {
 
 	renderMenu() {
 		const { menuBtnRef } = this.state;
-		const { translate, hasDismissedThePopover, isFetchingPrefs } = this.props;
+		const {
+			translate,
+			hasDismissedThePopover,
+			isFetchingPrefs,
+			isUserNewerThanNewNavigation,
+		} = this.props;
 		return (
 			<>
 				<Item
@@ -416,7 +428,9 @@ class MasterbarLoggedIn extends Component {
 				{ menuBtnRef && (
 					<Popover
 						className="masterbar__new-menu-popover"
-						isVisible={ ! isFetchingPrefs && ! hasDismissedThePopover }
+						isVisible={
+							! isFetchingPrefs && ! hasDismissedThePopover && ! isUserNewerThanNewNavigation
+						}
 						context={ menuBtnRef }
 						onClose={ this.dismissPopover }
 						position="bottom left"
@@ -556,6 +570,9 @@ export default connect(
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			hasDismissedThePopover: getPreference( state, MENU_POPOVER_PREFERENCE_KEY ),
 			isFetchingPrefs: isFetchingPreferences( state ),
+			// If the user is newer than new navigation shipping date, don't tell them this nav is new. Everything is new to them.
+			isUserNewerThanNewNavigation:
+				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 		};
 	},
 	{

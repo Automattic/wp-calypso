@@ -6,7 +6,7 @@ const selectors = {
 	blockResultItem: ( blockName: string ) =>
 		`${ popoverParentSelector } [aria-label=Blocks] button:has-text("${ blockName }")`,
 	patternResultItem: ( patternName: string ) =>
-		`${ popoverParentSelector } [aria-label="Block Patterns] [aria-label=${ patternName }]`,
+		`${ popoverParentSelector } [aria-label="Block Patterns"] [aria-label="${ patternName }"]`,
 };
 
 /**

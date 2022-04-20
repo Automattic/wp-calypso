@@ -1,3 +1,6 @@
+@import '@automattic/typography/styles/variables';
+@import '../../assets/stylesheets/shared/mixins/_breakpoints';
+
 .inline-help__empty-results {
 	padding: 8px 16px 0;
 	margin: 0;

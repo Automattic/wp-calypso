@@ -11,6 +11,15 @@ const REGEXP_EMAIL = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 const REGEXP_URL = /^(https?|ftp):\/\/[A-Z0-9.-]+\.[A-Z]{2,4}[^ "]*$/i;
 const REGEXP_STANDALONE_URL = /^(?:[a-z]+:|#|\?|\.|\/)/;
 
+function inferUrl( selectedText ) {
+	if ( REGEXP_EMAIL.test( selectedText ) ) {
+		return 'mailto:' + selectedText;
+	} else if ( REGEXP_URL.test( selectedText ) ) {
+		return selectedText.replace( /&amp;|&#0?38;/gi, '&' );
+	}
+	return '';
+}
+
 export class AddLinkDialog extends Component {
 	static propTypes = {
 		onClose: PropTypes.func,
@@ -22,17 +31,9 @@ export class AddLinkDialog extends Component {
 
 	state = {
 		linkNewTab: false,
-		linkText: '',
-		linkUrl: '',
+		linkUrl: inferUrl( this.props.selectedText ),
+		linkText: this.props.selectedText,
 	};
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		this.setState( {
-			linkUrl: this.inferUrl( newProps.selectedText ),
-			linkText: newProps.selectedText,
-		} );
-	}
 
 	correctUrl() {
 		const url = this.state.linkUrl.trim();
@@ -43,15 +44,6 @@ export class AddLinkDialog extends Component {
 			return `http://${ url }`;
 		}
 		return url;
-	}
-
-	inferUrl( selectedText ) {
-		if ( REGEXP_EMAIL.test( selectedText ) ) {
-			return 'mailto:' + selectedText;
-		} else if ( REGEXP_URL.test( selectedText ) ) {
-			return selectedText.replace( /&amp;|&#0?38;/gi, '&' );
-		}
-		return '';
 	}
 
 	setLinkUrl = ( event ) => this.setState( { linkUrl: event.target.value } );

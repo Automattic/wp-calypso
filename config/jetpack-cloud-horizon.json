@@ -32,6 +32,7 @@
 		"checkout/google-pay": true,
 		"fullstory": true,
 		"jetpack-cloud": true,
+		"jetpack/agency-dashboard": false,
 		"jetpack/backup-messaging-i3": true,
 		"jetpack/partner-portal-payment": true,
 		"jetpack/pricing-page": true,
@@ -54,11 +55,12 @@
 	"sections": {
 		"activity": true,
 		"backup": true,
+		"jetpack-cloud": true,
+		"jetpack-cloud-agency-dashboard": true,
 		"jetpack-cloud-auth": false,
+		"jetpack-cloud-partner-portal": true,
 		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
-		"jetpack-cloud-partner-portal": true,
-		"jetpack-cloud": true,
 		"jetpack-search": true,
 		"scan": true,
 		"site-purchases": true

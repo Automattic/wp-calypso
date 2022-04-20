@@ -1,11 +1,9 @@
 import {
 	isRequestingList,
 	getSubscribedLists,
-	isUpdatedList,
 	getListByOwnerAndSlug,
 	getMatchingItem,
 	isSubscribedByOwnerAndSlug,
-	hasError,
 	isMissingByOwnerAndSlug,
 } from '../selectors';
 
@@ -80,38 +78,6 @@ describe( 'selectors', () => {
 				{ ID: 456, slug: 'ants', title: 'abc' },
 				{ ID: 123, slug: 'bananas', title: 'def' },
 			] );
-		} );
-	} );
-
-	describe( '#isUpdatedList()', () => {
-		test( 'should return false if list has not been updated', () => {
-			const isUpdated = isUpdatedList(
-				{
-					reader: {
-						lists: {
-							updatedLists: [],
-						},
-					},
-				},
-				123
-			);
-
-			expect( isUpdated ).toBeFalsy();
-		} );
-
-		test( 'should return true if the list has been updated', () => {
-			const isUpdated = isUpdatedList(
-				{
-					reader: {
-						lists: {
-							updatedLists: [ 123, 456 ],
-						},
-					},
-				},
-				123
-			);
-
-			expect( isUpdated ).toBeTruthy();
 		} );
 	} );
 
@@ -267,38 +233,6 @@ describe( 'selectors', () => {
 			);
 
 			expect( isSubscribed ).toEqual( true );
-		} );
-	} );
-
-	describe( '#hasError()', () => {
-		test( 'should return false if there is no error for the list', () => {
-			const result = hasError(
-				{
-					reader: {
-						lists: {
-							errors: { 123: 400 },
-						},
-					},
-				},
-				456
-			);
-
-			expect( result ).toBeFalsy();
-		} );
-
-		test( 'should return true if the list has an error', () => {
-			const result = hasError(
-				{
-					reader: {
-						lists: {
-							errors: { 123: 400 },
-						},
-					},
-				},
-				123
-			);
-
-			expect( result ).toBeTruthy();
 		} );
 	} );
 

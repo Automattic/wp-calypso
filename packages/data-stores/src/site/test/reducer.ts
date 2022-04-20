@@ -7,7 +7,7 @@
  */
 
 import { createActions } from '../actions';
-import { sites, launchStatus } from '../reducer';
+import { sites, launchStatus, siteSetupErrors } from '../reducer';
 import {
 	SiteLaunchError,
 	SiteLaunchState,
@@ -123,6 +123,55 @@ describe( 'Site', () => {
 			};
 
 			expect( launchStatus( originalState, action ) ).toEqual( expected );
+		} );
+	} );
+
+	describe( 'Site Setup Errors', () => {
+		type ClientCredentials = { client_id: string; client_secret: string };
+
+		let siteId: number;
+		let client_id: string;
+		let client_secret: string;
+		let mockedClientCredentials: ClientCredentials;
+		let originalState: { [ key: number ]: SiteLaunchState };
+
+		beforeEach( () => {
+			siteId = 12345;
+			client_id = 'magic_client_id';
+			client_secret = 'magic_client_secret';
+			mockedClientCredentials = { client_id, client_secret };
+			originalState = {};
+		} );
+
+		it( 'should default to the initial state when an unknown action is dispatched', () => {
+			const state = siteSetupErrors( undefined, { type: 'TEST_ACTION', siteId } );
+			expect( state ).toStrictEqual( {} );
+		} );
+
+		it( 'should set a site setup error when a SET_SITE_SETUP_ERROR action is dispatched', () => {
+			const { setSiteSetupError } = createActions( mockedClientCredentials );
+
+			const error = 'test_error';
+			const message = 'This is a test error';
+
+			const action = setSiteSetupError( siteId, error, message );
+			const expected = {
+				[ siteId ]: {
+					error,
+					message,
+				},
+			};
+
+			expect( siteSetupErrors( originalState, action ) ).toEqual( expected );
+		} );
+
+		it( 'should clear a site setup error when a CLEAR_SITE_SETUP_ERROR action is dispatched', () => {
+			const { clearSiteSetupError } = createActions( mockedClientCredentials );
+
+			const action = clearSiteSetupError( siteId );
+			const expected = {};
+
+			expect( siteSetupErrors( originalState, action ) ).toEqual( expected );
 		} );
 	} );
 } );

@@ -1,5 +1,9 @@
+@import '../../assets/stylesheets/shared/mixins/_breakpoints';
+@import '@automattic/typography/styles/variables';
+
 @keyframes notice-loading-pulse {
-	0%, 100% {
+	0%,
+	100% {
 		opacity: 0.75;
 	}
 	50% {
@@ -106,7 +110,7 @@
 	left: calc( 50% - 8px );
 	width: 16px;
 	height: 16px;
-	border-radius: 8px;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
 	background: var( --color-neutral );
 
 	& + .notice__icon {
@@ -207,8 +211,8 @@ a.notice__action {
 	align-items: center;
 
 	@include breakpoint-deprecated( '>480px' ) {
-			flex-shrink: 1;
-			flex-grow: 0;
+		flex-shrink: 1;
+		flex-grow: 0;
 		align-items: center;
 		font-size: $font-body-small;
 		margin: 0 0 0 auto; // forces the element to the right;
@@ -239,8 +243,8 @@ a.notice__action {
 // Compact notices
 .notice.is-compact {
 	display: inline-flex;
-		flex-wrap: nowrap;
-		flex-direction: row;
+	flex-wrap: nowrap;
+	flex-direction: row;
 	width: auto;
 	min-height: 20px;
 	margin: 0;
