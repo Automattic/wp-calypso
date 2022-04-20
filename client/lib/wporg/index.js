@@ -86,23 +86,35 @@ export function fetchPluginsList( options ) {
 	return getRequest( WPORG_PLUGINS_ENDPOINT, query );
 }
 
+const createIconsObject = ( pluginSlug, iconsArray ) => {
+	const icons = phpUnserialize( iconsArray );
+	return Object.values( icons ).reduce( ( prev, { resolution, filename, location, revision } ) => {
+		prev[
+			resolution
+		] = `https://ps.w.org/${ pluginSlug }/${ location }/${ filename }?rev=${ revision }`;
+		return prev;
+	}, {} );
+};
+
+const createAuthorUrl = ( { header_author_uri, header_author } ) =>
+	`<a href="${ header_author_uri }">${ header_author }</a>`;
+
 const mapIndexResultsToPluginData = ( results ) => {
-	return results.map( ( hit ) => {
+	return results.map( ( { fields: hit } ) => {
 		return {
-			name: hit.title_en,
+			name: hit.title_en, // TODO: add localization
 			slug: hit.slug,
-			version: hit.meta.version.value,
-			author: hit.author,
-			author_profile: hit.author, // TODO: generate author profile URL
-			tested: hit.meta.tested.value,
-			rating: hit.meta.rating.value,
+			version: hit.stable_tag,
+			author: createAuthorUrl( hit ),
+			tested: hit.tested,
+			rating: hit.rating,
 			num_ratings: hit.num_ratings,
 			support_threads: hit.support_threads,
 			support_threads_resolved: hit.support_threads_resolved,
 			active_installs: hit.active_installs,
 			last_updated: hit.last_updated,
-			short_description: hit.excerpt_en,
-			icons: phpUnserialize( hit.meta.assets_icons.value ),
+			short_description: hit.excerpt_en, // TODO: add localization
+			icons: createIconsObject( hit.slug, hit.meta.assets_icons.value ),
 		};
 	} );
 };
@@ -158,17 +170,16 @@ export async function fetchWPOrgPluginsFromIndex( options ) {
 	}
 
 	const fields = [
-		'meta.rating.value',
+		'rating',
 		'post_id',
 		'meta.assets_icons.value',
 		'taxonomy.plugin_category.name',
 		'excerpt_en',
 		'taxonomy.plugin_tags.name',
 		'title_en',
-		'meta.version.value',
+		'stable_tag',
 		'author',
-		'meta.tested.value',
-		'meta.rating.value',
+		'tested',
 		'num_ratings',
 		'support_threads',
 		'support_threads_resolved',
@@ -177,20 +188,40 @@ export async function fetchWPOrgPluginsFromIndex( options ) {
 	];
 
 	// TODO move this request to wp data layer
-	const res = await wpcom.req.post( {
-		path: '/sites/108986944/search',
-		apiNamespace: 'rest/v1',
-		body: { query, fields, size, from },
-	} );
-
-	return {
-		info: {
-			page: options.page || DEFAULT_FIRST_PAGE,
-			pages: Math.ceil( res.results.total / size ),
-			results: res.results.total,
+	const res = wpcom.req.post(
+		{
+			path: '/sites/108986944/search',
+			apiNamespace: 'rest/v1',
+			body: { query, fields, size, from },
 		},
-		plugins: mapIndexResultsToPluginData( res.results.hits ),
-	};
+		( error, body, headers ) => {
+			// eslint-disable-next-line no-console
+			console.log( 'callback', { error, body, headers } ); // body returns ''
+			return {
+				info: {
+					page: options.page || DEFAULT_FIRST_PAGE,
+					pages: Math.ceil( body.results.total / size ),
+					results: body.results.total,
+				},
+				plugins: mapIndexResultsToPluginData( body.results.hits ),
+			};
+		}
+	);
+
+	return res;
+
+	// const ret = {
+	// 	info: {
+	// 		page: options.page || DEFAULT_FIRST_PAGE,
+	// 		pages: Math.ceil( res.results.total / size ),
+	// 		results: res.results.total,
+	// 	},
+	// 	plugins: mapIndexResultsToPluginData( res.results.hits ),
+	// };
+
+	// console.log( { ret } );
+
+	// return ret;
 }
 
 /**

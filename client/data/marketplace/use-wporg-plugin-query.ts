@@ -23,6 +23,28 @@ type WPORGOptionsType = {
 	locale: string;
 };
 
+type WPORGPluginType = {
+	name: string;
+	slug: string;
+	version: string;
+	author: string;
+	author_profile: string;
+	tested: string;
+	rating: number;
+	num_ratings: number;
+	support_threads: number;
+	support_threads_resolved: number;
+	active_installs: number;
+	last_updated: string;
+	short_description: string;
+	download_link?: string;
+	icons: {
+		'1x'?: string;
+		'2x'?: string;
+		svg?: string;
+	};
+};
+
 const getCacheKey = ( key: string ): QueryKey => [ 'wporg-plugins', key ];
 
 const getPluginsListKey = ( options: WPORGOptionsType, infinite?: boolean ): QueryKey =>
@@ -62,7 +84,7 @@ export const useWPORGPlugins = (
 	);
 };
 
-const extractPages = ( pages: Array< { plugins: object; info: object } > = [] ) =>
+const extractPages = ( pages: Array< { plugins: WPORGPluginType[]; info: object } > = [] ) =>
 	pages.flatMap( ( page ) => page.plugins ).map( normalizePluginData );
 
 const extractPagination = ( pages: Array< { plugins: object; info: object } > = [] ) =>
@@ -87,7 +109,7 @@ export const useWPORGInfinitePlugins = (
 				author,
 			} ),
 		{
-			select: ( data: InfiniteData< { plugins: object; info: { page: number } } > ) => {
+			select: ( data: InfiniteData< { plugins: WPORGPluginType[]; info: { page: number } } > ) => {
 				return {
 					...data,
 					plugins: extractPages( data.pages ),

@@ -221,7 +221,13 @@ export function normalizePluginData( plugin, pluginData ) {
 				break;
 			case 'icons':
 				if ( item ) {
-					returnData.icon = item[ '2x' ] || item[ '1x' ] || item.svg || item.default;
+					returnData.icon =
+						item[ '256x256' ] ||
+						item[ '128x128' ] ||
+						item[ '2x' ] ||
+						item[ '1x' ] ||
+						item.svg ||
+						item.default;
 				}
 				break;
 			case 'homepage':
@@ -282,10 +288,10 @@ export function extractSearchInformation( searchTerm = '' ) {
 /**
  * Returns an author keyword to be used on plugin search by author
  * The follow actions are taken:
- * * Try to get the main author from the list of contributors
- * * Try to extract the author keyword from author_profile
- * * Try to get the author_name
- * * Send an empty string if none of the previous actions works
+ * Try to get the main author from the list of contributors
+ * Try to extract the author keyword from author_profile
+ * Try to get the author_name
+ * Send an empty string if none of the previous actions works
  *
  * @param plugin
  * @returns {string} the author keyword or an empty string
