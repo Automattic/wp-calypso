@@ -43,8 +43,9 @@ describe( 'PlanStorageBar basic tests', () => {
 	} );
 
 	test( 'should render when storage is limited', () => {
-		const { container: premContainer } = render( <PlanStorageBar { ...props } /> );
-		render( <PlanStorageBar { ...props } sitePlanSlug={ PLAN_PREMIUM } /> );
+		const { container: premContainer } = render(
+			<PlanStorageBar { ...props } sitePlanSlug={ PLAN_PREMIUM } />
+		);
 		expect( premContainer.getElementsByClassName( 'plan-storage__bar' ) ).toHaveLength( 1 );
 
 		const { container: prem2Container } = render(
