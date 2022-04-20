@@ -3,6 +3,7 @@
 import config from '@automattic/calypso-config';
 import type * as SentryApi from '@sentry/react';
 
+// Static sentry configuration. We add any dynamic values when initializing Sentry.
 const SENTRY_CONFIG: SentryApi.BrowserOptions = {
 	dsn: 'https://61275d63a504465ab315245f1a379dab@o248881.ingest.sentry.io/6313676',
 	// Determine the sample of errors collected where 1.0 is 100% of errors.
