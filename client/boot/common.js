@@ -258,7 +258,8 @@ function setupErrorLogger( reduxStore ) {
 		return;
 	}
 
-	// At this point, the normal error logger is still set up so that
+	// At this point, the normal error logger is still set up so that logstash
+	// contains a definitive log of calypso errors.
 	const errorLogger = new Logger();
 
 	// Save errorLogger to a singleton for use in arbitrary logging.
