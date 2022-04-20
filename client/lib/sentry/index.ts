@@ -131,7 +131,7 @@ export async function initSentry( { beforeSend }: SentryOptions ) {
 		if (
 			! (
 				config.isEnabled( 'catch-js-errors' ) &&
-				( config( 'env_id' ) !== 'wpcalypso' || Math.floor( Math.random() * 10 ) !== 1 )
+				( config( 'env_id' ) === 'wpcalypso' || Math.floor( Math.random() * 10 ) === 1 )
 			)
 		) {
 			// Set state to disabled to stop maintaining a queue of sentry method calls.
