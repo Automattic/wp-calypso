@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import page from 'page';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
@@ -60,7 +60,7 @@ const Categories = ( { selected }: { selected?: string } ) => {
 			{ selecting && (
 				<ul className="categories__select-list">
 					{ Object.values( categories ).map( ( category, n ) => (
-						<>
+						<React.Fragment key={ 'key' + n }>
 							{ category.slug === 'analytics' && (
 								<li key={ 'separator' + category.slug }>
 									<hr />
@@ -76,7 +76,7 @@ const Categories = ( { selected }: { selected?: string } ) => {
 									{ category.name }
 								</span>
 							</li>
-						</>
+						</React.Fragment>
 					) ) }
 				</ul>
 			) }
