@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { expect } from 'chai';
 import { render, screen } from 'calypso/test-helpers/config/testing-library';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
@@ -36,9 +35,9 @@ describe( 'Region Address Fieldsets', () => {
 
 	test( 'should render `<UsAddressFieldset />` with default props', () => {
 		const { container } = render( <RegionAddressFieldsets { ...defaultProps } /> );
-		expect( container.getElementsByClassName( 'us-address-fieldset' ) ).to.have.length( 1 );
-		expect( screen.queryByLabelText( 'Address' ) ).to.exist;
-		expect( screen.queryByText( '+ Add Address Line 2' ) ).to.exist;
+		expect( container.getElementsByClassName( 'us-address-fieldset' ) ).toHaveLength( 1 );
+		expect( screen.queryByLabelText( 'Address' ) ).toBeDefined();
+		expect( screen.queryByText( '+ Add Address Line 2' ) ).toBeDefined();
 	} );
 
 	test( 'should render `<UkAddressFieldset />` with a UK region countryCode', () => {
@@ -48,7 +47,7 @@ describe( 'Region Address Fieldsets', () => {
 				countryCode={ CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ] }
 			/>
 		);
-		expect( container.getElementsByClassName( 'uk-address-fieldset' ) ).to.have.length( 1 );
+		expect( container.getElementsByClassName( 'uk-address-fieldset' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should render `<EuAddressFieldset />` with an EU region countryCode', () => {
@@ -58,7 +57,7 @@ describe( 'Region Address Fieldsets', () => {
 				countryCode={ CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ] }
 			/>
 		);
-		expect( container.getElementsByClassName( 'eu-address-fieldset' ) ).to.have.length( 1 );
+		expect( container.getElementsByClassName( 'eu-address-fieldset' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should render `<UsAddressFieldset />` with an EU region country that has states', () => {
@@ -68,8 +67,8 @@ describe( 'Region Address Fieldsets', () => {
 				countryCode={ CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ] }
 			/>
 		);
-		expect( container.getElementsByClassName( 'us-address-fieldset' ) ).to.have.length( 1 );
-		expect( container.getElementsByClassName( 'eu-address-fieldset' ) ).to.have.length( 0 );
+		expect( container.getElementsByClassName( 'us-address-fieldset' ) ).toHaveLength( 1 );
+		expect( container.getElementsByClassName( 'eu-address-fieldset' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should render `<UsAddressFieldset />` with a UK region country that has states', () => {
@@ -79,7 +78,7 @@ describe( 'Region Address Fieldsets', () => {
 				countryCode={ CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ] }
 			/>
 		);
-		expect( container.getElementsByClassName( 'us-address-fieldset' ) ).to.have.length( 1 );
-		expect( container.getElementsByClassName( 'uk-address-fieldset' ) ).to.have.length( 0 );
+		expect( container.getElementsByClassName( 'us-address-fieldset' ) ).toHaveLength( 1 );
+		expect( container.getElementsByClassName( 'uk-address-fieldset' ) ).toHaveLength( 0 );
 	} );
 } );

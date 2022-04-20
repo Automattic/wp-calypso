@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { expect } from 'chai';
 import { render, screen } from 'calypso/test-helpers/config/testing-library';
 import UsAddressFieldset from '../us-address-fieldset';
 
@@ -25,20 +24,20 @@ describe( 'US Address Fieldset', () => {
 
 	test( 'should render correctly with default props', () => {
 		const { container } = render( <UsAddressFieldset { ...defaultProps } /> );
-		expect( container.getElementsByClassName( 'us-address-fieldset' ) ).to.have.length( 1 );
+		expect( container.getElementsByClassName( 'us-address-fieldset' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should render expected input components', () => {
 		render( <UsAddressFieldset { ...defaultProps } /> );
-		expect( screen.queryByLabelText( 'City' ) ).to.exist;
-		expect( screen.queryByLabelText( 'State' ) ).to.exist;
-		expect( screen.queryByLabelText( 'ZIP code' ) ).to.exist;
+		expect( screen.queryByLabelText( 'City' ) ).toBeDefined();
+		expect( screen.queryByLabelText( 'State' ) ).toBeDefined();
+		expect( screen.queryByLabelText( 'ZIP code' ) ).toBeDefined();
 	} );
 
 	test( 'should render all expected input components but postal code', () => {
 		render( <UsAddressFieldset { ...propsWithoutPostalCode } /> );
-		expect( screen.queryByLabelText( 'City' ) ).to.exist;
-		expect( screen.queryByLabelText( 'State' ) ).to.exist;
-		expect( screen.queryByLabelText( 'Postal Code' ) ).to.not.exist;
+		expect( screen.queryByLabelText( 'City' ) ).toBeDefined();
+		expect( screen.queryByLabelText( 'State' ) ).toBeDefined();
+		expect( screen.queryByLabelText( 'Postal Code' ) ).toBeNull();
 	} );
 } );
