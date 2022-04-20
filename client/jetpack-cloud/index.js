@@ -33,9 +33,9 @@ const redirectToPrimarySiteLanding = ( context, next ) => {
 	const currentUser = getCurrentUser( state );
 	const isPrimarySiteJetpackSite = getPrimarySiteIsJetpack( state );
 
-	const isAgency = config.isEnabled( 'jetpack/agency-dashboard' );
+	const isAgencyDashboardEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
 
-	if ( isAgency ) {
+	if ( isAgencyDashboardEnabled ) {
 		page( `/dashboard` );
 	} else {
 		isPrimarySiteJetpackSite

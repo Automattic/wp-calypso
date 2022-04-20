@@ -19,20 +19,11 @@ interface Props {
 const DashboardSidebar: FunctionComponent< Props > = ( { path } ) => {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch< CalypsoDispatch >();
+
 	const onNavigate = ( menuItem: string ) => () => {
 		reduxDispatch(
 			recordTracksEvent( 'calypso_jetpack_sidebar_menu_click', {
 				menu_item: menuItem,
-			} )
-		);
-
-		window.scrollTo( 0, 0 );
-	};
-
-	const onGetHelp = () => {
-		reduxDispatch(
-			recordTracksEvent( 'calypso_jetpack_sidebar_menu_click', {
-				menu_item: 'Jetpack Cloud / Support',
 			} )
 		);
 		window.scrollTo( 0, 0 );
@@ -65,7 +56,7 @@ const DashboardSidebar: FunctionComponent< Props > = ( { path } ) => {
 							link="https://jetpack.com/support"
 							className="sidebar__jetpack-cloud-item-has-border"
 							customIcon={ <JetpackIcons icon="help" /> }
-							onNavigate={ onGetHelp }
+							onNavigate={ onNavigate( 'Jetpack Cloud / Support' ) }
 						/>
 					</SidebarMenu>
 				</SidebarFooter>

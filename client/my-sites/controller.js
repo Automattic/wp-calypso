@@ -547,21 +547,26 @@ export function navigation( context, next ) {
  * @param {Function} next -- Call next middleware in chain
  */
 export function sites( context, next ) {
-	if ( context.query.verified === '1' ) {
-		context.store.dispatch(
-			successNotice(
-				i18n.translate(
-					"Email verified! Now that you've confirmed your email address you can publish posts on your blog."
+	const isAgencyDashboardEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
+	if ( isAgencyDashboardEnabled ) {
+		page.redirect( '/dashboard' );
+	} else {
+		if ( context.query.verified === '1' ) {
+			context.store.dispatch(
+				successNotice(
+					i18n.translate(
+						"Email verified! Now that you've confirmed your email address you can publish posts on your blog."
+					)
 				)
-			)
-		);
+			);
+		}
+
+		context.store.dispatch( setLayoutFocus( 'content' ) );
+		setSectionMiddleware( { group: 'sites' } )( context );
+
+		context.primary = createSitesComponent( context );
+		next();
 	}
-
-	context.store.dispatch( setLayoutFocus( 'content' ) );
-	setSectionMiddleware( { group: 'sites' } )( context );
-
-	context.primary = createSitesComponent( context );
-	next();
 }
 
 export function redirectWithoutSite( redirectPath ) {
