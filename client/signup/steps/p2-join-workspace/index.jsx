@@ -84,7 +84,7 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 		goToNextStep();
 	};
 
-	const renderWorkspaceActionButton = ( workspaceId, workspaceName ) => {
+	const renderWorkspaceActionButton = ( { workspaceId, workspaceName, workspaceURL } ) => {
 		if ( ! workspaceStatus.joined.includes( workspaceId ) ) {
 			const isBusy = workspaceStatus.requesting === workspaceId;
 			return (
@@ -104,7 +104,10 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 		}
 
 		return (
-			<Button className="p2-join-workspace__action-open-workspace">
+			<Button
+				className="p2-join-workspace__action-open-workspace"
+				onClick={ () => window.open( workspaceURL, '_blank' ) }
+			>
 				<Icon icon={ chevronRight } />
 			</Button>
 		);
@@ -150,7 +153,11 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 								</span>
 							</div>
 							<div className="p2-join-workspace__action">
-								{ renderWorkspaceActionButton( parseInt( workspace.id ), workspace.name ) }
+								{ renderWorkspaceActionButton( {
+									workspaceId: parseInt( workspace.id ),
+									workspaceName: workspace.name,
+									workspaceURL: workspace.site_url,
+								} ) }
 							</div>
 						</div>
 					) ) }
