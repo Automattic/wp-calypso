@@ -8,7 +8,7 @@ import configureStore from 'redux-mock-store';
 import SetAsPrimaryPaymentMethod from '../set-as-primary-payment-method';
 
 describe( '<SetAsPrimaryPaymentMethod>', () => {
-	test( 'should render correctly, match the snapshot and fire change event correctly', () => {
+	test( 'should render correctly, and fire change event correctly', () => {
 		const initialState = {};
 		const mockStore = configureStore();
 		const store = mockStore( initialState );
@@ -19,15 +19,13 @@ describe( '<SetAsPrimaryPaymentMethod>', () => {
 			onChange: jest.fn(),
 		};
 
-		render(
+		const { container } = render(
 			<Provider store={ store }>
 				<SetAsPrimaryPaymentMethod { ...props } />
 			</Provider>
 		);
 
-		expect( document.body ).toMatchSnapshot();
-
-		const input = document.body.getElementsByTagName( 'input' )[ 0 ];
+		const [ input ] = container.getElementsByTagName( 'input' );
 
 		expect( input ).toBeChecked();
 

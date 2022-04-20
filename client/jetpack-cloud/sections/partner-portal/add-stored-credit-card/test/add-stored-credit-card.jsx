@@ -14,13 +14,13 @@ describe( '<AddStoredCreditCard>', () => {
 		const mockStore = configureStore();
 		const store = mockStore( initialState );
 
-		render(
+		const { container } = render(
 			<Provider store={ store }>
 				<AddStoredCreditCard />
 			</Provider>
 		);
 
-		const aTag = document.body.getElementsByClassName( 'add-stored-credit-card' )[ 0 ];
+		const [ aTag ] = container.getElementsByClassName( 'add-stored-credit-card' );
 		const href = 'https://example.com/partner-portal/payment-methods/add';
 
 		expect( aTag ).toHaveProperty( 'href', href );

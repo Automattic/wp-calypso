@@ -85,7 +85,7 @@ describe( '<CreditCardSubmitButton>', () => {
 		useFormStatus.mockClear();
 	} );
 
-	test( 'should render correctly, match the snapshot and fire event correctly', async () => {
+	test( 'should render correctly, and fire event correctly', async () => {
 		const initialState = {};
 		const mockStore = configureStore();
 
@@ -114,7 +114,7 @@ describe( '<CreditCardSubmitButton>', () => {
 			activeButtonText: buttonText,
 		};
 
-		render(
+		const { container } = render(
 			<Provider store={ newStore }>
 				<Elements stripe={ stripe }>
 					<CreditCardSubmitButton { ...props } />
@@ -122,11 +122,9 @@ describe( '<CreditCardSubmitButton>', () => {
 			</Provider>
 		);
 
-		expect( document.body ).toMatchSnapshot();
-
 		expect( screen.getByText( buttonText ) ).toBeInTheDocument();
 
-		const button = document.body.getElementsByTagName( 'button' )[ 0 ];
+		const [ button ] = container.getElementsByTagName( 'button' );
 
 		fireEvent.click( button );
 

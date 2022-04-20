@@ -5,9 +5,9 @@ import { checkoutTheme } from '@automattic/composite-checkout';
 import { ThemeProvider } from '@emotion/react';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-import { render } from '@testing-library/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import '@testing-library/jest-dom/extend-expect';
+import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import CreditCardFields from '../index';
@@ -60,7 +60,7 @@ describe( '<CreditCardFields>', () => {
 		useSelect.mockClear();
 	} );
 
-	test( 'should render correctly and match the snapshot', async () => {
+	test( 'should render correctly and card name field should exist', async () => {
 		const initialState = {};
 		const mockStore = configureStore();
 		const store = mockStore( initialState );
@@ -71,7 +71,7 @@ describe( '<CreditCardFields>', () => {
 			locale: 'en',
 		} );
 
-		render(
+		const wrapper = mount(
 			<Provider store={ store }>
 				<Elements stripe={ stripe }>
 					<ThemeProvider theme={ checkoutTheme }>
@@ -81,6 +81,6 @@ describe( '<CreditCardFields>', () => {
 			</Provider>
 		);
 
-		expect( document.body ).toMatchSnapshot();
+		expect( wrapper.find( '#cardholder-name' ) ).toExist();
 	} );
 } );

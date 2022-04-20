@@ -18,13 +18,18 @@ describe( '<PaymentMethodAdd>', () => {
 
 		const store = createStore( ( state ) => state, initialState );
 
-		render(
+		const { container, getByText } = render(
 			<Provider store={ store }>
 				<PaymentMethodAdd />
 			</Provider>
 		);
 
-		expect( document.body ).toMatchSnapshot();
+		const [ aTag ] = container.getElementsByClassName( 'payment-method-add__back-button' );
+		const href = 'https://example.com/partner-portal/payment-methods/';
+
+		expect( aTag ).toHaveProperty( 'href', href );
+
+		expect( getByText( 'Credit card details' ) ).toBeInTheDocument();
 
 		await act( () => promise );
 	} );
