@@ -252,6 +252,7 @@ export const latestAtomicTransferStatus: Reducer<
 			...state,
 			[ action.siteId ]: {
 				status: LatestAtomicTransferStatus.SUCCESS,
+				transfer: action.transfer,
 				errorCode: undefined,
 			},
 		};
