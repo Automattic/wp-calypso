@@ -39,6 +39,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 				submit?.();
 			}
 		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ action ] );
 
 	const [ currentMessage, setCurrentMessage ] = useState( 0 );
