@@ -5,20 +5,24 @@
  * @license See CREDITS.md
  * @see https://github.com/kvz/phpjs/blob/ffe1356af23a6f2512c84c954dd4e828e92579fa/functions/strings/number_format.js
  */
-function toFixedFix( n, prec ) {
+function toFixedFix( n: number, prec: number ) {
 	const k = Math.pow( 10, prec );
 	return '' + ( Math.round( n * k ) / k ).toFixed( prec );
 }
 
-export default function number_format( number, decimals, dec_point, thousands_sep ) {
-	number = ( number + '' ).replace( /[^0-9+\-Ee.]/g, '' );
+export default function number_format(
+	_number: number,
+	decimals: number,
+	dec_point: string,
+	thousands_sep: string
+) {
+	const number = ( _number + '' ).replace( /[^0-9+\-Ee.]/g, '' );
 	const n = ! isFinite( +number ) ? 0 : +number;
 	const prec = ! isFinite( +decimals ) ? 0 : Math.abs( decimals );
 	const sep = typeof thousands_sep === 'undefined' ? ',' : thousands_sep;
 	const dec = typeof dec_point === 'undefined' ? '.' : dec_point;
-	let s = '';
 	// Fix for IE parseFloat(0.55).toFixed(0) = 0;
-	s = ( prec ? toFixedFix( n, prec ) : '' + Math.round( n ) ).split( '.' );
+	const s = ( prec ? toFixedFix( n, prec ) : '' + Math.round( n ) ).split( '.' );
 	if ( s[ 0 ].length > 3 ) {
 		s[ 0 ] = s[ 0 ].replace( /\B(?=(?:\d{3})+(?!\d))/g, sep );
 	}
