@@ -10,6 +10,7 @@ import type {
 	SiteError,
 	Cart,
 	Domain,
+	LatestAtomicTransfer,
 	SiteLaunchError as SiteLaunchErrorType,
 	AtomicTransferError as AtomicTransferErrorType,
 	LatestAtomicTransferError as LatestAtomicTransferErrorType,
@@ -305,9 +306,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		siteId,
 	} );
 
-	const latestAtomicTransferSuccess = ( siteId: number ) => ( {
+	const latestAtomicTransferSuccess = ( siteId: number, transfer: LatestAtomicTransfer ) => ( {
 		type: 'LATEST_ATOMIC_TRANSFER_SUCCESS' as const,
 		siteId,
+		transfer,
 	} );
 
 	const latestAtomicTransferFailure = (
@@ -323,14 +325,14 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		yield latestAtomicTransferStart( siteId );
 
 		try {
-			yield wpcomRequest( {
+			const transfer: LatestAtomicTransfer = yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/atomic/transfers/latest`,
 				apiNamespace: 'wpcom/v2',
 				method: 'GET',
 			} );
-			yield latestAtomicTransferSuccess( siteId );
-		} catch ( _ ) {
-			yield latestAtomicTransferFailure( siteId, LatestAtomicTransferError.INTERNAL );
+			yield latestAtomicTransferSuccess( siteId, transfer );
+		} catch ( err ) {
+			yield latestAtomicTransferFailure( siteId, err as LatestAtomicTransferError );
 		}
 	}
 

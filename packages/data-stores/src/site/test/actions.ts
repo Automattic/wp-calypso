@@ -3,7 +3,12 @@
  */
 
 import { createActions } from '../actions';
-import { SiteLaunchError, AtomicTransferError, LatestAtomicTransferError } from '../types';
+import {
+	SiteLaunchError,
+	AtomicTransferError,
+	LatestAtomicTransfer,
+	LatestAtomicTransferError,
+} from '../types';
 
 const client_id = 'magic_client_id';
 const client_secret = 'magic_client_secret';
@@ -11,7 +16,12 @@ const mockedClientCredentials = { client_id, client_secret };
 const siteId = 12345;
 const error = SiteLaunchError.INTERNAL;
 const atomicTransferError = AtomicTransferError.INTERNAL;
-const latestAtomicTransferError = LatestAtomicTransferError.INTERNAL;
+const latestAtomicTransferError: LatestAtomicTransferError = {
+	name: 'NotFoundError',
+	status: 404,
+	message: 'Transfer not found',
+	code: 'no_transfer_error',
+};
 
 describe( 'Site Actions', () => {
 	describe( 'LAUNCH_SITE Actions', () => {
@@ -227,6 +237,15 @@ describe( 'Site Actions', () => {
 		it( 'should request succesfully the Atomic transfer status', () => {
 			const { requestLatestAtomicTransfer } = createActions( mockedClientCredentials );
 			const generator = requestLatestAtomicTransfer( siteId );
+			const transfer: LatestAtomicTransfer = {
+				atomic_transfer_id: 123,
+				blog_id: 12345,
+				status: 'SUCCESS',
+				created_at: 'now',
+				is_stuck: false,
+				is_stuck_reset: false,
+				in_lossless_revert: false,
+			};
 
 			const mockedApiResponse = {
 				request: {
@@ -247,9 +266,10 @@ describe( 'Site Actions', () => {
 			expect( generator.next().value ).toEqual( mockedApiResponse );
 
 			// Third iteration: ATOMIC_TRANSFER_SUCCESS is fired
-			expect( generator.next().value ).toEqual( {
+			expect( generator.next( transfer ).value ).toEqual( {
 				type: 'LATEST_ATOMIC_TRANSFER_SUCCESS',
 				siteId,
+				transfer,
 			} );
 		} );
 

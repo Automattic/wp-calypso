@@ -316,6 +316,16 @@ export enum AtomicTransferError {
 	INTERNAL = 'internal',
 }
 
+export interface LatestAtomicTransfer {
+	atomic_transfer_id: number;
+	blog_id: number;
+	status: string;
+	created_at: string;
+	is_stuck: boolean;
+	is_stuck_reset: boolean;
+	in_lossless_revert: boolean;
+}
+
 export interface LatestAtomicTransferState {
 	status: LatestAtomicTransferStatus;
 	errorCode: LatestAtomicTransferError | undefined;
@@ -328,6 +338,9 @@ export enum LatestAtomicTransferStatus {
 	FAILURE = 'failure',
 }
 
-export enum LatestAtomicTransferError {
-	INTERNAL = 'internal',
+export interface LatestAtomicTransferError {
+	name: string; // "NotFoundError"
+	status: number; // 404
+	message: string; // "Transfer not found"
+	code: string; // "no_transfer_record"
 }
