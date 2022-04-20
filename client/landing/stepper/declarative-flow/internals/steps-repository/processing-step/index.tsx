@@ -32,9 +32,14 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	}
 
 	useEffect( () => {
-		action?.then( () => {
-			submit?.();
+		action?.promise.then( () => {
+			if ( action?.redirect ) {
+				window.location.href = action.redirect;
+			} else {
+				submit?.();
+			}
 		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ action ] );
 
 	const [ currentMessage, setCurrentMessage ] = useState( 0 );

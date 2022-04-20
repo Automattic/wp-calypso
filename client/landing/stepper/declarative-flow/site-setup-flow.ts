@@ -1,16 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useFSEStatus } from '../hooks/use-fse-status';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { ONBOARD_STORE } from '../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
-
-function redirect( to: string ) {
-	window.location.href = to;
-}
 
 export const siteSetupFlow: Flow = {
 	name: 'site-setup',
@@ -34,7 +30,14 @@ export const siteSetupFlow: Flow = {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
 		const siteSlug = useSiteSlugParam();
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { setIntentOnSite } = useDispatch( SITE_STORE );
 		const { FSEActive } = useFSEStatus();
+
+		const exitFlow = ( to: string ) => {
+			setPendingAction( { promise: setIntentOnSite( siteSlug as string, intent ), redirect: to } );
+			navigate( 'processing' );
+		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			recordSubmitStep( providedDependencies, intent, currentStep );
@@ -57,27 +60,27 @@ export const siteSetupFlow: Flow = {
 							window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
 						}
 
-						return redirect( `/post/${ siteSlug }` );
+						return exitFlow( `/post/${ siteSlug }` );
 					}
 
 					if ( FSEActive && intent !== 'write' ) {
-						return redirect( `/site-editor/${ siteSlug }` );
+						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
 
-					return redirect( `/home/${ siteSlug }` );
+					return exitFlow( `/home/${ siteSlug }` );
 				}
 
 				case 'bloggerStartingPoint': {
 					const intent = params[ 0 ];
 					switch ( intent ) {
 						case 'firstPost': {
-							return redirect( `https://wordpress.com/post/${ siteSlug }` );
+							return exitFlow( `https://wordpress.com/post/${ siteSlug }` );
 						}
 						case 'courses': {
 							return navigate( 'courses' );
 						}
 						case 'skip-to-my-home': {
-							return redirect( `/home/${ siteSlug }` );
+							return exitFlow( `/home/${ siteSlug }` );
 						}
 						default: {
 							return navigate( intent as StepPath );
@@ -89,7 +92,7 @@ export const siteSetupFlow: Flow = {
 					const submittedIntent = params[ 0 ];
 					switch ( submittedIntent ) {
 						case 'wpadmin': {
-							return redirect( `https://wordpress.com/home/${ siteSlug }` );
+							return exitFlow( `https://wordpress.com/home/${ siteSlug }` );
 						}
 						case 'build': {
 							return navigate( 'designSetup' );
@@ -98,7 +101,7 @@ export const siteSetupFlow: Flow = {
 							return navigate( 'options' );
 						}
 						case 'import': {
-							return redirect( `/start/importer/capture?siteSlug=${ siteSlug }` );
+							return exitFlow( `/start/importer/capture?siteSlug=${ siteSlug }` );
 						}
 						case 'write': {
 							return navigate( 'options' );
@@ -119,7 +122,7 @@ export const siteSetupFlow: Flow = {
 						const args = new URLSearchParams();
 						args.append( 'back_to', `/start/setup-site/store-features?siteSlug=${ siteSlug }` );
 						args.append( 'siteSlug', siteSlug as string );
-						return redirect( `/start/woocommerce-install?${ args.toString() }` );
+						return exitFlow( `/start/woocommerce-install?${ args.toString() }` );
 					} else if ( storeType === 'simple' ) {
 						return navigate( 'designSetup' );
 					}
@@ -133,7 +136,7 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'storeFeatures' );
 
 				case 'courses': {
-					return redirect( `/post/${ siteSlug }` );
+					return exitFlow( `/post/${ siteSlug }` );
 				}
 
 				case 'vertical': {
@@ -183,10 +186,10 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 
 				case 'intent':
-					return redirect( `/home/${ siteSlug }` );
+					return exitFlow( `/home/${ siteSlug }` );
 
 				case 'vertical':
-					return redirect( `/home/${ siteSlug }` );
+					return exitFlow( `/home/${ siteSlug }` );
 
 				default:
 					return navigate( 'intent' );
