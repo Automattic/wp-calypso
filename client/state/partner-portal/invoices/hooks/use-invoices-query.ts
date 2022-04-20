@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import { useQuery, UseQueryOptions, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryOptions, UseQueryResult, QueryFunctionContext } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { addQueryArgs } from 'calypso/lib/url';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getActivePartnerKeyId } from 'calypso/state/partner-portal/partner/selectors';
@@ -10,10 +11,17 @@ interface QueryError {
 	code?: string;
 }
 
-function queryInvoices(): Promise< APIInvoices > {
+interface Pagination {
+	starting_after: string;
+	ending_before: string;
+}
+
+function queryInvoices( context: QueryFunctionContext ): Promise< APIInvoices > {
+	const { starting_after, ending_before } = context.queryKey[ 3 ] as Pagination;
+
 	return wpcomJpl.req.get( {
 		apiNamespace: 'wpcom/v2',
-		path: '/jetpack-licensing/partner/invoices',
+		path: addQueryArgs( { starting_after, ending_before }, '/jetpack-licensing/partner/invoices' ),
 	} );
 }
 
@@ -27,10 +35,12 @@ function selectInvoices( api: APIInvoices ): Invoices {
 			currency: apiInvoice.currency,
 			pdfUrl: apiInvoice.invoice_pdf,
 		} ) ),
+		hasMore: api.has_more,
 	};
 }
 
 export default function useInvoicesQuery(
+	pagination: Pagination,
 	options?: UseQueryOptions< APIInvoices, QueryError, Invoices >
 ): UseQueryResult< Invoices, QueryError > {
 	const translate = useTranslate();
@@ -38,9 +48,10 @@ export default function useInvoicesQuery(
 	const activeKeyId = useSelector( getActivePartnerKeyId );
 
 	return useQuery< APIInvoices, QueryError, Invoices >(
-		[ 'partner-portal', 'invoices', activeKeyId ],
+		[ 'partner-portal', 'invoices', activeKeyId, pagination ],
 		queryInvoices,
 		{
+			refetchOnWindowFocus: false,
 			select: selectInvoices,
 			onError: () => {
 				dispatch(
