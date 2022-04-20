@@ -1,5 +1,6 @@
 import i18n from 'i18n-calypso';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import { errorNotice } from 'calypso/state/notices/actions';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 import type { AnyAction, Dispatch } from 'redux';
 
@@ -37,10 +38,15 @@ export const fetchStoredCards = ( paging: { startingAfter: string; endingBefore:
 			} );
 		} )
 		.catch( ( error: Error ) => {
+			const errorMessage =
+				error.message || i18n.translate( 'There was a problem retrieving stored cards.' );
+
 			dispatch( {
 				type: 'STORED_CARDS_FETCH_FAILED',
-				error: error.message || i18n.translate( 'There was a problem retrieving stored cards.' ),
+				error: errorMessage,
 			} );
+
+			dispatch( errorNotice( errorMessage, { id: 'partner-portal-fetch-payment-methods-error' } ) );
 
 			return Promise.reject( error );
 		} );
