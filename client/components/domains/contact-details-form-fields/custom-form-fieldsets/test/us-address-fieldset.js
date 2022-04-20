@@ -1,14 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-
 import { expect } from 'chai';
-import { shallow } from 'enzyme';
+import { render } from 'calypso/test-helpers/config/testing-library';
 import UsAddressFieldset from '../us-address-fieldset';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: ( x ) => x,
 	translate: ( x ) => x,
+	useTranslate: () => ( x ) => x,
 } ) );
 
 describe( 'US Address Fieldset', () => {
@@ -24,21 +24,21 @@ describe( 'US Address Fieldset', () => {
 	};
 
 	test( 'should render correctly with default props', () => {
-		const wrapper = shallow( <UsAddressFieldset { ...defaultProps } /> );
-		expect( wrapper.find( '.us-address-fieldset' ) ).to.have.length( 1 );
+		const { container } = render( <UsAddressFieldset { ...defaultProps } /> );
+		expect( container.getElementsByClassName( 'us-address-fieldset' ) ).to.have.length( 1 );
 	} );
 
 	test( 'should render expected input components', () => {
-		const wrapper = shallow( <UsAddressFieldset { ...defaultProps } /> );
-		expect( wrapper.find( '[name="city"]' ) ).to.have.length( 1 );
-		expect( wrapper.find( '[name="state"]' ) ).to.have.length( 1 );
-		expect( wrapper.find( '[name="postal-code"]' ) ).to.have.length( 1 );
+		const { container } = render( <UsAddressFieldset { ...defaultProps } /> );
+		expect( container.querySelectorAll( '[name="city"]' ) ).to.have.length( 1 );
+		expect( container.querySelectorAll( '[name="state"]' ) ).to.have.length( 1 );
+		expect( container.querySelectorAll( '[name="postal-code"]' ) ).to.have.length( 1 );
 	} );
 
 	test( 'should render all expected input components but postal code', () => {
-		const wrapper = shallow( <UsAddressFieldset { ...propsWithoutPostalCode } /> );
-		expect( wrapper.find( '[name="city"]' ) ).to.have.length( 1 );
-		expect( wrapper.find( '[name="state"]' ) ).to.have.length( 1 );
-		expect( wrapper.find( '[name="postal-code"]' ) ).to.have.length( 0 );
+		const { container } = render( <UsAddressFieldset { ...propsWithoutPostalCode } /> );
+		expect( container.querySelectorAll( '[name="city"]' ) ).to.have.length( 1 );
+		expect( container.querySelectorAll( '[name="state"]' ) ).to.have.length( 1 );
+		expect( container.querySelectorAll( '[name="postal-code"]' ) ).to.have.length( 0 );
 	} );
 } );

@@ -1,14 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-
+import { render } from '@testing-library/react';
 import { expect } from 'chai';
-import { shallow } from 'enzyme';
 import EuAddressFieldset from '../eu-address-fieldset';
 
 jest.mock( 'i18n-calypso', () => ( {
 	localize: ( x ) => x,
 	translate: ( x ) => x,
+	useTranslate: () => ( x ) => x,
 } ) );
 
 describe( 'EU Address Fieldset', () => {
@@ -23,24 +23,24 @@ describe( 'EU Address Fieldset', () => {
 	};
 
 	test( 'should render correctly with default props', () => {
-		const wrapper = shallow( <EuAddressFieldset { ...defaultProps } /> );
-		expect( wrapper.find( '.eu-address-fieldset' ) ).to.have.length( 1 );
+		const { container } = render( <EuAddressFieldset { ...defaultProps } /> );
+		expect( container.getElementsByClassName( 'eu-address-fieldset' ) ).to.have.length( 1 );
 	} );
 
 	test( 'should render expected input components', () => {
-		const wrapper = shallow( <EuAddressFieldset { ...defaultProps } /> );
-		expect( wrapper.find( '[name="city"]' ) ).to.have.length( 1 );
-		expect( wrapper.find( '[name="postal-code"]' ) ).to.have.length( 1 );
+		const { container } = render( <EuAddressFieldset { ...defaultProps } /> );
+		expect( container.querySelectorAll( '[name="city"]' ) ).to.have.length( 1 );
+		expect( container.querySelectorAll( '[name="postal-code"]' ) ).to.have.length( 1 );
 	} );
 
 	test( 'should not render a state select components', () => {
-		const wrapper = shallow( <EuAddressFieldset { ...defaultProps } /> );
-		expect( wrapper.find( '[name="state"]' ) ).to.have.length( 0 );
+		const { container } = render( <EuAddressFieldset { ...defaultProps } /> );
+		expect( container.querySelectorAll( '[name="state"]' ) ).to.have.length( 0 );
 	} );
 
 	test( 'should render all expected input components but postal code', () => {
-		const wrapper = shallow( <EuAddressFieldset { ...propsWithoutPostalCode } /> );
-		expect( wrapper.find( '[name="city"]' ) ).to.have.length( 1 );
-		expect( wrapper.find( '[name="postal-code"]' ) ).to.have.length( 0 );
+		const { container } = render( <EuAddressFieldset { ...propsWithoutPostalCode } /> );
+		expect( container.querySelectorAll( '[name="city"]' ) ).to.have.length( 1 );
+		expect( container.querySelectorAll( '[name="postal-code"]' ) ).to.have.length( 0 );
 	} );
 } );
