@@ -23,6 +23,7 @@ export const siteSetupFlow: Flow = {
 			'businessInfo',
 			'storeAddress',
 			'processing',
+			'error',
 		] as StepPath[];
 	},
 
