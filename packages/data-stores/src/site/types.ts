@@ -315,3 +315,19 @@ export enum AtomicTransferStatus {
 export enum AtomicTransferError {
 	INTERNAL = 'internal',
 }
+
+export interface LatestAtomicTransferState {
+	status: LatestAtomicTransferStatus;
+	errorCode: LatestAtomicTransferError | undefined;
+}
+
+export enum LatestAtomicTransferStatus {
+	UNINITIALIZED = 'unintialized',
+	IN_PROGRESS = 'in_progress',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+}
+
+export enum LatestAtomicTransferError {
+	INTERNAL = 'internal',
+}

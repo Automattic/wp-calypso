@@ -1,6 +1,6 @@
 import { Design } from '@automattic/design-picker/src/types';
 import { wpcomRequest } from '../wpcom-request-controls';
-import { SiteLaunchError, AtomicTransferError } from './types';
+import { SiteLaunchError, AtomicTransferError, LatestAtomicTransferError } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import type {
 	CreateSiteParams,
@@ -12,6 +12,7 @@ import type {
 	Domain,
 	SiteLaunchError as SiteLaunchErrorType,
 	AtomicTransferError as AtomicTransferErrorType,
+	LatestAtomicTransferError as LatestAtomicTransferErrorType,
 	SiteSettings,
 } from './types';
 
@@ -299,12 +300,38 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 	}
 
+	const latestAtomicTransferStart = ( siteId: number ) => ( {
+		type: 'LATEST_ATOMIC_TRANSFER_START' as const,
+		siteId,
+	} );
+
+	const latestAtomicTransferSuccess = ( siteId: number ) => ( {
+		type: 'LATEST_ATOMIC_TRANSFER_SUCCESS' as const,
+		siteId,
+	} );
+
+	const latestAtomicTransferFailure = (
+		siteId: number,
+		error: LatestAtomicTransferErrorType
+	) => ( {
+		type: 'LATEST_ATOMIC_TRANSFER_FAILURE' as const,
+		siteId,
+		error,
+	} );
+
 	function* requestLatestAtomicTransfer( siteId: number ) {
-		yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteId ) }/atomic/transfers/latest`,
-			apiNamespace: 'wpcom/v2',
-			method: 'GET',
-		} );
+		yield latestAtomicTransferStart( siteId );
+
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/atomic/transfers/latest`,
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+			} );
+			yield latestAtomicTransferSuccess( siteId );
+		} catch ( _ ) {
+			yield latestAtomicTransferFailure( siteId, LatestAtomicTransferError.INTERNAL );
+		}
 	}
 
 	function* requestAtomicSoftwareStatus( siteId: number, softwareSet: string ) {
@@ -349,6 +376,9 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		atomicTransferStart,
 		atomicTransferSuccess,
 		atomicTransferFailure,
+		latestAtomicTransferStart,
+		latestAtomicTransferSuccess,
+		latestAtomicTransferFailure,
 		requestLatestAtomicTransfer,
 		requestAtomicSoftwareStatus,
 	};
@@ -377,6 +407,9 @@ export type Action =
 			| ActionCreators[ 'atomicTransferStart' ]
 			| ActionCreators[ 'atomicTransferSuccess' ]
 			| ActionCreators[ 'atomicTransferFailure' ]
+			| ActionCreators[ 'latestAtomicTransferStart' ]
+			| ActionCreators[ 'latestAtomicTransferSuccess' ]
+			| ActionCreators[ 'latestAtomicTransferFailure' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

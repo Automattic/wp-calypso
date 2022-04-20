@@ -3,7 +3,7 @@
  */
 
 import { createActions } from '../actions';
-import { SiteLaunchError, AtomicTransferError } from '../types';
+import { SiteLaunchError, AtomicTransferError, LatestAtomicTransferError } from '../types';
 
 const client_id = 'magic_client_id';
 const client_secret = 'magic_client_secret';
@@ -11,6 +11,7 @@ const mockedClientCredentials = { client_id, client_secret };
 const siteId = 12345;
 const error = SiteLaunchError.INTERNAL;
 const atomicTransferError = AtomicTransferError.INTERNAL;
+const latestAtomicTransferError = LatestAtomicTransferError.INTERNAL;
 
 describe( 'Site Actions', () => {
 	describe( 'LAUNCH_SITE Actions', () => {
@@ -223,7 +224,7 @@ describe( 'Site Actions', () => {
 			} );
 		} );
 
-		it( 'should request the Atomic transfer status', () => {
+		it( 'should request succesfully the Atomic transfer status', () => {
 			const { requestLatestAtomicTransfer } = createActions( mockedClientCredentials );
 			const generator = requestLatestAtomicTransfer( siteId );
 
@@ -236,8 +237,50 @@ describe( 'Site Actions', () => {
 				type: 'WPCOM_REQUEST',
 			};
 
-			// First iteration: WP_COM_REQUEST is fired
+			// First iteration: LATEST_ATOMIC_TRANSFER_START is fired
+			expect( generator.next().value ).toEqual( {
+				type: 'LATEST_ATOMIC_TRANSFER_START',
+				siteId,
+			} );
+
+			// Second iteration: WP_COM_REQUEST is fired
 			expect( generator.next().value ).toEqual( mockedApiResponse );
+
+			// Third iteration: ATOMIC_TRANSFER_SUCCESS is fired
+			expect( generator.next().value ).toEqual( {
+				type: 'LATEST_ATOMIC_TRANSFER_SUCCESS',
+				siteId,
+			} );
+		} );
+
+		it( 'should request the Atomic transfer status and fail', () => {
+			const { requestLatestAtomicTransfer } = createActions( mockedClientCredentials );
+			const generator = requestLatestAtomicTransfer( siteId );
+
+			const mockedApiResponse = {
+				request: {
+					apiNamespace: 'wpcom/v2',
+					method: 'GET',
+					path: `/sites/${ siteId }/atomic/transfers/latest`,
+				},
+				type: 'WPCOM_REQUEST',
+			};
+
+			// First iteration: LATEST_ATOMIC_TRANSFER_START is fired
+			expect( generator.next().value ).toEqual( {
+				type: 'LATEST_ATOMIC_TRANSFER_START',
+				siteId,
+			} );
+
+			// Second iteration: WP_COM_REQUEST is fired
+			expect( generator.next().value ).toEqual( mockedApiResponse );
+
+			// Third iteration: LATEST_ATOMIC_TRANSFER_FAILURE is fired
+			expect( generator.throw( latestAtomicTransferError ).value ).toEqual( {
+				type: 'LATEST_ATOMIC_TRANSFER_FAILURE',
+				siteId,
+				error: latestAtomicTransferError,
+			} );
 		} );
 
 		it( 'should request the Atomic software install status', () => {
