@@ -7,6 +7,7 @@ import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/li
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import {
@@ -20,18 +21,38 @@ function selectProductOptions( families: APIProductFamily[] ): APIProductFamilyP
 	return families.flatMap( ( family ) => family.products );
 }
 
-export default function IssueLicenseForm(): ReactElement {
+interface Props {
+	selectedSite?: number;
+}
+
+export default function IssueLicenseForm( { selectedSite }: Props ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const products = useProductsQuery( {
 		select: selectProductOptions,
 	} );
 
+	const assignLicense = useAssignLicenseMutation( {
+		onSuccess: ( license: any ) => {
+			page.redirect(
+				addQueryArgs( { highlight: license.license_key }, '/partner-portal/licenses' )
+			);
+		},
+		onError: ( error: Error ) => {
+			dispatch( errorNotice( error.message ) );
+		},
+	} );
+
 	const issueLicense = useIssueLicenseMutation( {
 		onSuccess: ( license ) => {
-			page.redirect(
-				addQueryArgs( { key: license.license_key }, '/partner-portal/assign-license' )
-			);
+			const licenseKey = license.license_key;
+			if ( selectedSite ) {
+				assignLicense.mutate( { licenseKey, selectedSite } );
+			} else {
+				page.redirect(
+					addQueryArgs( { key: license.license_key }, '/partner-portal/assign-license' )
+				);
+			}
 		},
 		onError: ( error: APIError ) => {
 			let errorMessage;

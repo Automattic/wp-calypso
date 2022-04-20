@@ -83,9 +83,10 @@ export function licensesContext( context: PageJS.Context, next: () => void ): vo
 }
 
 export function issueLicenseContext( context: PageJS.Context, next: () => void ): void {
+	const { site_id } = context.query;
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <IssueLicense />;
+	context.primary = <IssueLicense site_id={ site_id } />;
 	next();
 }
 
