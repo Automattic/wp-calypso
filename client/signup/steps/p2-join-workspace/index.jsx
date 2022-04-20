@@ -110,48 +110,50 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 
 	const renderEligibleWorkspacesList = () => {
 		return (
-			<div className="p2-join-workspace__workspace-list">
-				{ eligibleWorkspaces.map( ( workspace ) => (
-					<div className="p2-join-workspace__workspace" key={ workspace.id }>
-						<div className="p2-join-workspace__workspace-icon">
-							{ workspace.name && workspace.name.charAt( 0 ) }
+			eligibleWorkspaces.length > 0 && (
+				<div className="p2-join-workspace__workspace-list">
+					{ eligibleWorkspaces.map( ( workspace ) => (
+						<div className="p2-join-workspace__workspace" key={ workspace.id }>
+							<div className="p2-join-workspace__workspace-icon">
+								{ workspace.name && workspace.name.charAt( 0 ) }
+							</div>
+							<div className="p2-join-workspace__workspace-name">
+								<a
+									className="p2-join-workspace__workspace-link"
+									href={ workspace.site_url }
+									target="_blank"
+									rel="noreferrer"
+								>
+									{ workspace.name }
+								</a>
+							</div>
+							<div className="p2-join-workspace__workspace-description">
+								<span>
+									{ sprintf(
+										/* translators: %(userCount)d is a number */
+										_n( '%(userCount)d user', '%(userCount)d users', workspace.user_count ),
+										{
+											userCount: workspace.user_count,
+										}
+									) }
+								</span>
+								<span>
+									{ sprintf(
+										/* translators: %(siteCount)d is a number */
+										_n( '%(siteCount)d P2', '%(siteCount)d P2s', workspace.site_count ),
+										{
+											siteCount: workspace.site_count,
+										}
+									) }
+								</span>
+							</div>
+							<div className="p2-join-workspace__action">
+								{ renderWorkspaceActionButton( parseInt( workspace.id ), workspace.name ) }
+							</div>
 						</div>
-						<div className="p2-join-workspace__workspace-name">
-							<a
-								className="p2-join-workspace__workspace-link"
-								href={ workspace.site_url }
-								target="_blank"
-								rel="noreferrer"
-							>
-								{ workspace.name }
-							</a>
-						</div>
-						<div className="p2-join-workspace__workspace-description">
-							<span>
-								{ sprintf(
-									/* translators: %(userCount)d is a number */
-									_n( '%(userCount)d user', '%(userCount)d users', workspace.user_count ),
-									{
-										userCount: workspace.user_count,
-									}
-								) }
-							</span>
-							<span>
-								{ sprintf(
-									/* translators: %(siteCount)d is a number */
-									_n( '%(siteCount)d P2', '%(siteCount)d P2s', workspace.site_count ),
-									{
-										siteCount: workspace.site_count,
-									}
-								) }
-							</span>
-						</div>
-						<div className="p2-join-workspace__action">
-							{ renderWorkspaceActionButton( parseInt( workspace.id ), workspace.name ) }
-						</div>
-					</div>
-				) ) }
-			</div>
+					) ) }
+				</div>
+			)
 		);
 	};
 
@@ -196,6 +198,10 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 				),
 				{ br: <br />, strong: <strong /> }
 			);
+		}
+
+		if ( eligibleWorkspaces.length > 0 ) {
+			return __( 'Great news! You can join some workspaces right away!' );
 		}
 
 		return __( 'A better way of working.' );
