@@ -21,7 +21,7 @@ module.exports = {
 	bail: ! isDevelopment,
 	entry: path.join( __dirname, 'src', 'app' ),
 	mode: isDevelopment ? 'development' : 'production',
-	devtool: false,
+	devtool: 'source-map',
 	output: {
 		path: outputPath,
 		filename: 'build.min.js',
