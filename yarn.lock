@@ -6689,6 +6689,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/archiver@npm:^5.3.1":
+  version: 5.3.1
+  resolution: "@types/archiver@npm:5.3.1"
+  dependencies:
+    "@types/glob": "*"
+  checksum: 622c0d3cf54c0009d07db0c78349a4e81ae3a4b699c7f2ea34085c0ebfb13eca8c4a6459aa5e376c2c0f72916280a0986154fad35022a280670a6e5551fff9d2
+  languageName: node
+  linkType: hard
+
 "@types/aria-query@npm:^4.2.0":
   version: 4.2.0
   resolution: "@types/aria-query@npm:4.2.0"
@@ -38339,6 +38348,7 @@ testarmada-magellan@11.0.10:
     "@automattic/testarmada-magellan-mocha-plugin": "workspace:^"
     "@babel/core": ^7.16.0
     "@testim/chrome-version": ^1.0.7
+    "@types/archiver": ^5.3.1
     "@types/jest": ^27.0.2
     "@xmpp/plugins": ^0.3.0
     archiver: ^5.3.0
