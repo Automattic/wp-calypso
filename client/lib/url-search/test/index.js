@@ -34,32 +34,4 @@ describe( '#buildSearchUrl', () => {
 		const url = buildSearchUrl( params );
 		expect( url ).eql( 'wordpress.com/read/search' );
 	} );
-
-	test( 'params', () => {
-		const params = {
-			uri: 'wordpress.com/read/search',
-			search: 'term',
-			queryKey: 'q',
-			params: {
-				test: 'test',
-				test2: 'test1,test2',
-			},
-		};
-		const url = buildSearchUrl( params );
-		expect( url ).eql( 'wordpress.com/read/search?q=term&test=test&test2=test1%2Ctest2' );
-	} );
-
-	test( 'params unset if empty', () => {
-		const params = {
-			uri: 'wordpress.com/read/search?test2=removed',
-			search: 'term',
-			queryKey: 'q',
-			params: {
-				test: 'test',
-				test2: '',
-			},
-		};
-		const url = buildSearchUrl( params );
-		expect( url ).eql( 'wordpress.com/read/search?q=term&test=test' );
-	} );
 } );
