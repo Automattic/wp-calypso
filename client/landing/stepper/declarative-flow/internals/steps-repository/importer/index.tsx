@@ -1,6 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -11,6 +13,7 @@ import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-pa
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Importer, ImportJob } from 'calypso/signup/steps/import-from/types';
 import { getImporterTypeForEngine } from 'calypso/signup/steps/import-from/util';
+import WordpressImporter from 'calypso/signup/steps/import-from/wordpress';
 import { fetchImporterState, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
@@ -130,8 +133,31 @@ const ImporterStep: Step = function ImportStep( props ) {
 	/**
 	 ↓ Renders
 	 */
+	function renderWordpressImporter() {
+		return (
+			<WordpressImporter
+				job={ getImportJob( importer as Importer ) }
+				siteId={ siteId as number }
+				siteSlug={ siteSlug as string }
+				fromSite={ fromSite }
+			/>
+		);
+	}
+
 	function renderStepContent() {
-		return <></>;
+		return (
+			<div
+				className={ classnames( 'import__onboarding-page import-layout__center importer-wrapper', {
+					[ `importer-wrapper__${ importer }` ]: !! importer,
+				} ) }
+			>
+				{ ( () => {
+					if ( importer === 'wordpress' && isEnabled( 'onboarding/import-from-wordpress' ) ) {
+						return renderWordpressImporter();
+					}
+				} )() }
+			</div>
+		);
 	}
 
 	return (
@@ -143,7 +169,7 @@ const ImporterStep: Step = function ImportStep( props ) {
 				hideSkip={ true }
 				hideFormattedHeader={ true }
 				goBack={ onGoBack }
-				isFullLayout={ true }
+				isWideLayout={ true }
 				stepContent={ renderStepContent() }
 				recordTracksEvent={ recordTracksEvent }
 			/>
