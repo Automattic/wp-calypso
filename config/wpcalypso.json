@@ -82,7 +82,6 @@
 		"me/vat-details": true,
 		"network-connection": true,
 		"p2/p2-plus": true,
-		"p2/preapproved-domains": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": true,
 		"post-editor/checkout-overlay": true,
