@@ -380,8 +380,9 @@ function useStripeConfiguration(
 	stripeConfigurationError: undefined | Error;
 } {
 	const [ stripeConfigurationError, setStripeConfigurationError ] = useState< undefined | Error >();
-	const [ stripeConfiguration, setStripeConfiguration ] =
-		useState< null | StripeConfiguration >( null );
+	const [ stripeConfiguration, setStripeConfiguration ] = useState< null | StripeConfiguration >(
+		null
+	);
 	const memoizedRequestArgs = useMemoCompare( requestArgs, areRequestArgsEqual );
 
 	useEffect( () => {

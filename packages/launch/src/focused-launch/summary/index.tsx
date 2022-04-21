@@ -295,8 +295,9 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	// persist non-default selected paid plan if it's paid in order to keep displaying it in the plan picker
 	const [ nonDefaultPaidPlan, setNonDefaultPaidPlan ] = React.useState< Plan | undefined >();
-	const [ nonDefaultPaidPlanProduct, setNonDefaultPaidPlanProduct ] =
-		React.useState< PlanProduct | undefined >();
+	const [ nonDefaultPaidPlanProduct, setNonDefaultPaidPlanProduct ] = React.useState<
+		PlanProduct | undefined
+	>();
 
 	const { defaultPaidPlan, defaultFreePlan, defaultPaidPlanProduct, defaultFreePlanProduct } =
 		usePlans( billingPeriod );

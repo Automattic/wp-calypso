@@ -13,8 +13,9 @@ export function useDomainProductFromCart(): DomainProduct | undefined {
 	const { siteId } = useContext( LaunchContext );
 	const { getCart } = useDispatch( SITE_STORE );
 
-	const [ domainProductFromCart, setDomainProductFromCart ] =
-		useState< DomainProduct | undefined >( undefined );
+	const [ domainProductFromCart, setDomainProductFromCart ] = useState< DomainProduct | undefined >(
+		undefined
+	);
 
 	useEffect( () => {
 		( async function () {

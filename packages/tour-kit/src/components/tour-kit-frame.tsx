@@ -27,8 +27,9 @@ interface Props {
 
 const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
-	const [ initialFocusedElement, setInitialFocusedElement ] =
-		useState< HTMLElement | null >( null );
+	const [ initialFocusedElement, setInitialFocusedElement ] = useState< HTMLElement | null >(
+		null
+	);
 	const [ isMinimized, setIsMinimized ] = useState( config.isMinimized ?? false );
 
 	const [ popperElement, setPopperElement ] = useState< HTMLElement | null >( null );

@@ -46,8 +46,9 @@ export function usePlanProductFromCart(): PlanProductForFlow | undefined {
 	const { siteId } = useContext( LaunchContext );
 	const { getCart } = useDispatch( SITE_STORE );
 
-	const [ planProductFromCart, setPlanProductFromCart ] =
-		useState< PlanProductForFlow | undefined >( undefined );
+	const [ planProductFromCart, setPlanProductFromCart ] = useState<
+		PlanProductForFlow | undefined
+	>( undefined );
 
 	useEffect( () => {
 		( async function () {

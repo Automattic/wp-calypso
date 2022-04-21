@@ -54,8 +54,9 @@ const NameServersCard = ( {
 	const [ nameservers, setNameservers ] = useState( nameserversProps || null );
 	const [ shouldPersistNameServers, setShouldPersistNameServers ] = useState( false );
 	const [ isEditingNameServers, setIsEditingNameServers ] = useState( false );
-	const [ nameServersBeforeEditing, setNameServersBeforeEditing ] =
-		useState< string[] | null >( null );
+	const [ nameServersBeforeEditing, setNameServersBeforeEditing ] = useState< string[] | null >(
+		null
+	);
 
 	useEffect( () => {
 		setNameservers( nameserversProps );
