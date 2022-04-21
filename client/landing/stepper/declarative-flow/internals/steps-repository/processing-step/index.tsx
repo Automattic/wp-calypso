@@ -7,6 +7,12 @@ import { useInterval } from 'calypso/lib/interval';
 import type { Step } from '../../types';
 import './style.scss';
 
+export enum ProcessingResult {
+	NO_ACTION = 'no-action',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+}
+
 const ProcessingStep: Step = function ( props ): ReactElement | null {
 	const { submit } = props.navigation;
 
@@ -41,9 +47,13 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	useEffect( () => {
 		( async () => {
 			if ( typeof action === 'function' ) {
-				await action();
-			}
-			submit?.();
+				try {
+					await action();
+					submit?.( {}, ProcessingResult.SUCCESS );
+				} catch ( e ) {
+					submit?.( {}, ProcessingResult.FAILURE );
+				}
+			} else submit?.( {}, ProcessingResult.NO_ACTION );
 		} )();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ action ] );
