@@ -27,7 +27,7 @@ export class TemplatePartBlock {
 	}
 
 	/**
-	 *
+	 * Click the "Start blank" button from the initial state..
 	 */
 	async clickStartBlank(): Promise< void > {
 		const locator = this.block.locator( selectors.startBlankButton );
@@ -35,7 +35,7 @@ export class TemplatePartBlock {
 	}
 
 	/**
-	 *
+	 * Click the "Choose" button from the initial state.
 	 */
 	async clickChoose(): Promise< void > {
 		const locator = this.block.locator( selectors.chooseButton );

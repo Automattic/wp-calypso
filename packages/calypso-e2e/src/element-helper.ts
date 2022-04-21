@@ -112,8 +112,10 @@ export async function reloadAndRetry(
 }
 
 /**
+ * Gets and validates the block ID from a Locator to a parent Block element in the editor.
  *
- * @param block
+ * @param {Locator} block A frame-safe Loccator to the top of a block.
+ * @returns A block ID that can be used to identify the block in the DOM later.
  */
 export async function getIdFromBlock( block: Locator ): Promise< string > {
 	const blockId = await block.getAttribute( 'id' );

@@ -12,15 +12,13 @@ import {
 	ColorLocation,
 	FullSiteEditorSavePanelComponent,
 	EditorBlockToolbarComponent,
+	BlockToolbarButtonIdentifier,
+	EditorNavSidebarComponent,
+	TemplatePartListComponent,
 } from '..';
 import { getCalypsoURL } from '../../data-helper';
 import { getIdFromBlock } from '../../element-helper';
 import envVariables from '../../env-variables';
-import {
-	BlockToolbarButtonIdentifier,
-	EditorNavSidebarComponent,
-	TemplatePartListComponent,
-} from '../components';
 import { TemplatePartModalComponent } from '../components/template-part-modal-component';
 
 const wpAdminPath = 'wp-admin/themes.php';
