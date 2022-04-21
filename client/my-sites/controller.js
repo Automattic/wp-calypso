@@ -16,6 +16,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
+import { withoutHttp } from 'calypso/lib/url';
 import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
 import {
 	domainManagementContactsPrivacy,
@@ -61,7 +62,7 @@ import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSite, getSiteId, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSite, getSiteId, getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -476,6 +477,14 @@ export function siteSelection( context, next ) {
 			.catch( () => null )
 			.then( ( site ) => {
 				let freshSiteId = getSiteId( getState(), siteFragment );
+				const siteSlug = getSiteSlug( getState(), site.ID );
+				const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
+
+				// If the fragment matches the *.wordpress.com domain for a site with a mapped domain, redirect to the mapped domain.
+				if ( ! freshSiteId && unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
+					const basePath = sectionify( context.path, siteFragment );
+					return page.redirect( `${ basePath }/${ siteSlug }` );
+				}
 
 				if ( ! freshSiteId ) {
 					const wpcomStagingFragment = siteFragment.replace(
