@@ -252,7 +252,7 @@ function setupErrorLogger( reduxStore ) {
 	// Note that Sentry can disable itself and do some cleanup if needed, so we
 	// run it before the catch-js-errors check. (Otherwise, cleanup would never
 	// never happen.)
-	initSentry( { beforeSend } );
+	initSentry( { beforeSend, userId: getCurrentUserId( reduxStore.getState() ) } );
 
 	if ( ! config.isEnabled( 'catch-js-errors' ) ) {
 		return;

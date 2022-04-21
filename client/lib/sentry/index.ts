@@ -115,8 +115,9 @@ function beforeBreadcrumb( breadcrumb: SentryApi.Breadcrumb ): SentryApi.Breadcr
 
 interface SentryOptions {
 	beforeSend: ( e: SentryApi.Event ) => SentryApi.Event | null;
+	userId?: number;
 }
-export async function initSentry( { beforeSend }: SentryOptions ) {
+export async function initSentry( { beforeSend, userId }: SentryOptions ) {
 	// Make sure we don't throw
 	try {
 		// No Sentry loading on the server.
@@ -185,6 +186,9 @@ export async function initSentry( { beforeSend }: SentryOptions ) {
 			// See configuration docs: https://docs.sentry.io/clients/javascript/config
 			Sentry.init( {
 				...SENTRY_CONFIG,
+				initialScope: {
+					user: { id: userId?.toString() },
+				},
 				environment,
 				release,
 				beforeBreadcrumb,
