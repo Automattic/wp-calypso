@@ -123,6 +123,7 @@ object BuildDockerImage : BuildType({
 					--build-arg node_memory=32768
 					--build-arg use_cache=true
 					--build-arg base_image=%base_image%
+					--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
 				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")
