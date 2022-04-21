@@ -54,7 +54,7 @@ class InlineHelpPopoverContent extends Component {
 	openResultView = ( event, result ) => {
 		event.preventDefault();
 		this.setState( { selectedResult: result } );
-		this.props.setSelectedArticle( result );
+		this.props.setSelectedArticle?.( result );
 		this.openSecondaryView( VIEW_RICH_RESULT );
 	};
 
@@ -177,7 +177,10 @@ class InlineHelpPopoverContent extends Component {
 							</Fragment>
 						),
 						[ VIEW_RICH_RESULT ]: inlineArticles ? (
-							<InlineHelpEmbedResult result={ selectedResult } />
+							<InlineHelpEmbedResult
+								result={ selectedResult }
+								handleBackButton={ this.closeSecondaryView }
+							/>
 						) : (
 							<InlineHelpRichResult
 								setDialogState={ setDialogState }
@@ -193,7 +196,7 @@ class InlineHelpPopoverContent extends Component {
 	};
 
 	render() {
-		const { isReskinned } = this.props;
+		const { isReskinned, inlineArticles } = this.props;
 
 		const className = classNames( 'inline-help__popover-content', {
 			'is-secondary-view-active': this.state.activeSecondaryView,
@@ -203,7 +206,7 @@ class InlineHelpPopoverContent extends Component {
 		return (
 			<div className={ className }>
 				{ this.renderPopoverContent() }
-				{ this.renderPopoverFooter() }
+				{ ! inlineArticles && this.renderPopoverFooter() }
 			</div>
 		);
 	}
