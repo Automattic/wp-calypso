@@ -1,3 +1,5 @@
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+
 const pathIncludes = ( currentPath, term, position ) =>
 	currentPath.split( /[/,?]/ )?.[ position ]?.includes( term );
 
@@ -20,17 +22,26 @@ export const itemLinkMatches = ( path, currentPath ) => {
 	if ( pathIncludes( currentPath, 'taxonomies', 2 ) ) {
 		return fragmentIsEqual( path, currentPath, 3 );
 	}
-	/*
-	 * If the menu item URL contains 'taxonomies', ignore it when on Settings screens.
-	 * Taxonomies are located under the Posts parent menu; this prevents the Posts parent
-	 * from being highlighted when Settings screens are active.
-	 */
-	if ( pathIncludes( currentPath, 'settings', 1 ) && pathIncludes( path, 'taxonomies', 2 ) ) {
-		return false;
-	}
-	// Account for rest of settings pages.
+
 	if ( pathIncludes( currentPath, 'settings', 1 ) ) {
-		return fragmentIsEqual( path, currentPath, 2 );
+		// Jetpack Cloud uses a simpler /settings/:site pattern for the settings page.
+		if ( isJetpackCloud() ) {
+			return fragmentIsEqual( path, currentPath, 1 );
+		}
+
+		/*
+		 * If the menu item URL contains 'taxonomies', ignore it when on Settings screens.
+		 * Taxonomies are located under the Posts parent menu; this prevents the Posts parent
+		 * from being highlighted when Settings screens are active.
+		 */
+		if ( pathIncludes( currentPath, 'settings', 1 ) && pathIncludes( path, 'taxonomies', 2 ) ) {
+			return false;
+		}
+
+		// Account for rest of settings pages.
+		if ( pathIncludes( currentPath, 'settings', 1 ) ) {
+			return fragmentIsEqual( path, currentPath, 2 );
+		}
 	}
 
 	return fragmentIsEqual( path, currentPath, 1 );

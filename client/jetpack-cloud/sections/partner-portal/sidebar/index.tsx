@@ -78,7 +78,7 @@ class PartnerPortalSidebar extends Component< Props > {
 								} ) }
 								link="/partner-portal/invoices"
 								onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Invoices' ) }
-								selected={ itemLinkMatches( [ '/partner-portal/invoices' ], path ) }
+								selected={ itemLinkMatches( '/partner-portal/invoices', path ) }
 							/>
 						) }
 					</SidebarMenu>
