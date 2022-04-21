@@ -944,7 +944,7 @@ export default connect( ( state, props ) => {
 			? getByPurchaseId( state, purchase.attachedToPurchaseId )
 			: null;
 	const selectedSiteId = getSelectedSiteId( state );
-	const siteId = selectedSiteId || ( purchase ? purchase.siteId : null );
+	const siteId = purchase?.siteId ?? selectedSiteId ?? null;
 	const purchases = purchase && getSitePurchases( state, purchase.siteId );
 	const userId = getCurrentUserId( state );
 	const isProductOwner = purchase && purchase.userId === userId;
