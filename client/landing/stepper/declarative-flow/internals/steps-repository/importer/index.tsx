@@ -17,8 +17,10 @@ import BloggerImporter from 'calypso/signup/steps/import-from/blogger';
 import NotAuthorized from 'calypso/signup/steps/import-from/components/not-authorized';
 import NotFound from 'calypso/signup/steps/import-from/components/not-found';
 import MediumImporter from 'calypso/signup/steps/import-from/medium';
+import SquarespaceImporter from 'calypso/signup/steps/import-from/squarespace';
 import { Importer, ImportJob } from 'calypso/signup/steps/import-from/types';
 import { getImporterTypeForEngine } from 'calypso/signup/steps/import-from/util';
+import WixImporter from 'calypso/signup/steps/import-from/wix';
 import WordpressImporter from 'calypso/signup/steps/import-from/wordpress';
 import { fetchImporterState, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
@@ -167,6 +169,32 @@ const ImporterStep: Step = function ImportStep( props ) {
 		);
 	}
 
+	function renderSquarespaceImporter() {
+		return (
+			<SquarespaceImporter
+				job={ getImportJob( importer as Importer ) }
+				run={ runImportInitially }
+				siteId={ siteId as number }
+				site={ site as SiteDetails }
+				siteSlug={ siteSlug as string }
+				fromSite={ fromSite }
+				urlData={ fromSiteData }
+			/>
+		);
+	}
+
+	function renderWixImporter() {
+		return (
+			<WixImporter
+				job={ getImportJob( importer as Importer ) }
+				run={ runImportInitially }
+				siteId={ siteId as number }
+				siteSlug={ siteSlug as string }
+				fromSite={ fromSite }
+			/>
+		);
+	}
+
 	function renderWordpressImporter() {
 		return (
 			<WordpressImporter
@@ -196,6 +224,13 @@ const ImporterStep: Step = function ImportStep( props ) {
 						return renderBloggerImporter();
 					} else if ( importer === 'medium' && isEnabled( 'onboarding/import-from-medium' ) ) {
 						return renderMediumImporter();
+					} else if (
+						importer === 'squarespace' &&
+						isEnabled( 'onboarding/import-from-squarespace' )
+					) {
+						return renderSquarespaceImporter();
+					} else if ( importer === 'wix' && isEnabled( 'onboarding/import-from-wix' ) ) {
+						return renderWixImporter();
 					} else if (
 						importer === 'wordpress' &&
 						isEnabled( 'onboarding/import-from-wordpress' )
