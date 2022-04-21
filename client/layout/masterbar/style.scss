@@ -279,12 +279,14 @@ $autobar-height: 20px;
 	}
 
 	&:hover {
-		background: var( --color-masterbar-item-hover-background );
-		color: var( --color-masterbar-text );
+		@include breakpoint-deprecated( '>480px' ) {
+			background: var( --color-masterbar-item-hover-background );
+			color: var( --color-masterbar-text );
 
-		.is-section-checkout.is-jetpack-site & {
-			background: var( --color-jetpack-masterbar-item-hover-background );
-			color: var( --color-jetpack-masterbar-text );
+			.is-section-checkout.is-jetpack-site & {
+				background: var( --color-jetpack-masterbar-item-hover-background );
+				color: var( --color-jetpack-masterbar-text );
+			}
 		}
 	}
 
@@ -693,7 +695,6 @@ $autobar-height: 20px;
 	font-weight: 500;
 	color: var( --color-text );
 
-	
 	@include breakpoint-deprecated( '>480px' ) {
 		border-left: 1px solid var( --studio-gray-5 );
 	}
