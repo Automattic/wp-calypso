@@ -7,12 +7,15 @@ import classnames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import BloggerImporter from 'calypso/signup/steps/import-from/blogger';
+import NotAuthorized from 'calypso/signup/steps/import-from/components/not-authorized';
+import NotFound from 'calypso/signup/steps/import-from/components/not-found';
 import { Importer, ImportJob } from 'calypso/signup/steps/import-from/types';
 import { getImporterTypeForEngine } from 'calypso/signup/steps/import-from/util';
 import WordpressImporter from 'calypso/signup/steps/import-from/wordpress';
@@ -168,7 +171,13 @@ const ImporterStep: Step = function ImportStep( props ) {
 				} ) }
 			>
 				{ ( () => {
-					if ( importer === 'blogger' && isEnabled( 'onboarding/import-from-blogger' ) ) {
+					if ( isLoading() ) {
+						return <LoadingEllipsis />;
+					} else if ( ! siteSlug ) {
+						return <NotFound />;
+					} else if ( ! hasPermission() ) {
+						return <NotAuthorized siteSlug={ siteSlug } />;
+					} else if ( importer === 'blogger' && isEnabled( 'onboarding/import-from-blogger' ) ) {
 						return renderBloggerImporter();
 					} else if (
 						importer === 'wordpress' &&
