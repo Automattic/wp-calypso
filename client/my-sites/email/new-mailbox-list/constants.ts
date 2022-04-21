@@ -6,3 +6,9 @@ export const FIELD_IS_ADMIN = 'isAdmin';
 export const FIELD_MAILBOX = 'mailbox';
 export const FIELD_PASSWORD = 'password';
 export const FIELD_UUID = 'uuid';
+
+/**
+ * Providers
+ */
+export const PROVIDER_SLUG_TITAN = 'titan';
+export const PROVIDER_SLUG_GOOGLE = 'google';

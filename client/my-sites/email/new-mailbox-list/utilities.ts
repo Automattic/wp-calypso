@@ -12,14 +12,14 @@ import {
 	FIELD_MAILBOX,
 	FIELD_PASSWORD,
 	FIELD_UUID,
-} from 'calypso/my-sites/email/email-provider-new-mailbox-list/constants';
+} from 'calypso/my-sites/email/new-mailbox-list/constants';
 import type {
 	Mailbox,
 	MailboxField,
 	Nullable,
 	StringOrBoolean,
 	TranslateResult,
-} from 'calypso/my-sites/email/email-provider-new-mailbox-list/types';
+} from 'calypso/my-sites/email/new-mailbox-list/types';
 
 export const sanitizeValueForEmail = ( value: string ) =>
 	String( value )
