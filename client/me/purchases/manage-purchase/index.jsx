@@ -97,6 +97,7 @@ import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
 import RemovePurchase from '../remove-purchase';
@@ -135,6 +136,7 @@ class ManagePurchase extends Component {
 		showHeader: PropTypes.bool,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
+		selectedSiteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
 		isSiteLevel: PropTypes.bool,
 	};
@@ -879,11 +881,10 @@ class ManagePurchase extends Component {
 					eventName="calypso_manage_purchase_view"
 					purchaseId={ this.props.purchaseId }
 				/>
-				{ this.props.isSiteLevel && this.props.siteId ? (
-					<QuerySitePurchases siteId={ this.props.siteId } />
-				) : (
-					<QueryUserPurchases />
-				) }
+				<PurchasesQueryComponent
+					isSiteLevel={ this.props.isSiteLevel }
+					selectedSiteId={ this.props.selectedSiteId }
+				/>
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 
@@ -937,12 +938,24 @@ function addPaymentMethodLinkText( { purchase, translate } ) {
 	return linkText;
 }
 
+function PurchasesQueryComponent( { isSiteLevel, selectedSiteId } ) {
+	if ( isSiteLevel ) {
+		if ( ! selectedSiteId ) {
+			// Probably still loading
+			return null;
+		}
+		return <QuerySitePurchases siteId={ selectedSiteId } />;
+	}
+	return <QueryUserPurchases />;
+}
+
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
 	const purchaseAttachedTo =
 		purchase && purchase.attachedToPurchaseId
 			? getByPurchaseId( state, purchase.attachedToPurchaseId )
 			: null;
+	const selectedSiteId = getSelectedSiteId( state );
 	const siteId = purchase?.siteId ?? null;
 	const purchases = purchase && getSitePurchases( state, purchase.siteId );
 	const userId = getCurrentUserId( state );
@@ -971,6 +984,7 @@ export default connect( ( state, props ) => {
 		purchases,
 		purchaseAttachedTo,
 		siteId,
+		selectedSiteId,
 		isProductOwner,
 		site,
 		renewableSitePurchases,
