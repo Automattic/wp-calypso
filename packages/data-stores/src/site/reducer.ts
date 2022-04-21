@@ -10,7 +10,7 @@ import {
 	AtomicTransferStatus,
 	LatestAtomicTransferStatus,
 } from './types';
-import { AtomicTransferState, LatestAtomicTransferState } from '.';
+import { AtomicTransferState, LatestAtomicTransferState, AtomicSoftwareStatusState } from '.';
 import type { Action } from './actions';
 import type { Reducer } from 'redux';
 
@@ -271,6 +271,46 @@ export const latestAtomicTransferStatus: Reducer<
 	return state;
 };
 
+export const atomicSoftwareStatus: Reducer<
+	{ [ key: number ]: AtomicSoftwareStatusState },
+	Action
+> = ( state = {}, action ) => {
+	if ( action.type === 'ATOMIC_SOFTWARE_STATUS_START' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				[ action.softwareSet ]: {
+					status: undefined,
+					error: undefined,
+				},
+			},
+		};
+	}
+	if ( action.type === 'ATOMIC_SOFTWARE_STATUS_SUCCESS' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				[ action.softwareSet ]: {
+					status: action.status,
+					error: undefined,
+				},
+			},
+		};
+	}
+	if ( action.type === 'ATOMIC_SOFTWARE_STATUS_FAILURE' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				[ action.softwareSet ]: {
+					status: undefined,
+					error: action.error,
+				},
+			},
+		};
+	}
+	return state;
+};
+
 const newSite = combineReducers( {
 	data: newSiteData,
 	error: newSiteError,
@@ -287,6 +327,7 @@ const reducer = combineReducers( {
 	siteSetupErrors,
 	atomicTransferStatus,
 	latestAtomicTransferStatus,
+	atomicSoftwareStatus,
 } );
 
 export type State = ReturnType< typeof reducer >;

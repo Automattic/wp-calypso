@@ -345,3 +345,24 @@ export interface LatestAtomicTransferError {
 	message: string; // "Transfer not found"
 	code: string; // "no_transfer_record"
 }
+
+export interface AtomicSoftwareStatus {
+	blog_id: number;
+	software_set: Record< string, { path: string; state: string } >;
+	applied: boolean;
+}
+
+export interface AtomicSoftwareStatusError {
+	name: string; // "NotFoundError"
+	status: number; // 404
+	message: string; // "Transfer not found"
+	code: string; // "no_transfer_record"
+}
+
+export type AtomicSoftwareStatusState = Record<
+	string,
+	{
+		status: AtomicSoftwareStatus | undefined;
+		error: AtomicSoftwareStatusError | undefined;
+	}
+>;
