@@ -137,6 +137,7 @@ class ManagePurchase extends Component {
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
+		isSiteLevel: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -879,7 +880,7 @@ class ManagePurchase extends Component {
 					eventName="calypso_manage_purchase_view"
 					purchaseId={ this.props.purchaseId }
 				/>
-				{ this.props.siteId ? (
+				{ this.props.isSiteLevel && this.props.siteId ? (
 					<QuerySitePurchases siteId={ this.props.siteId } />
 				) : (
 					<QueryUserPurchases />
