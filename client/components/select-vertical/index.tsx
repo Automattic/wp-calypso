@@ -14,10 +14,16 @@ import type { SiteVerticalsResponse } from 'calypso/data/site-verticals';
 interface Props {
 	defaultVertical?: string;
 	isSkipSynonyms?: boolean;
-	onSelect?: ( vertical: Vertical, term?: string ) => void;
+	onInputChange?: ( searchTerm: string ) => void;
+	onSelect?: ( vertical: Vertical ) => void;
 }
 
-const SelectVertical: React.FC< Props > = ( { defaultVertical, isSkipSynonyms, onSelect } ) => {
+const SelectVertical: React.FC< Props > = ( {
+	defaultVertical,
+	isSkipSynonyms,
+	onInputChange,
+	onSelect,
+} ) => {
 	const translate = useTranslate();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 150 );
@@ -70,8 +76,14 @@ const SelectVertical: React.FC< Props > = ( { defaultVertical, isSkipSynonyms, o
 				}
 				isLoading={ isDebouncing || isLoadingDefaultVertical || isLoadingSuggestions }
 				isDisableInput={ isLoadingDefaultVertical }
-				onInputChange={ setSearchTerm }
-				onSelect={ onSelect }
+				onInputChange={ ( searchTerm: string ) => {
+					setSearchTerm( searchTerm );
+					onInputChange?.( searchTerm );
+				} }
+				onSelect={ ( vertical: Vertical ) => {
+					setSearchTerm( vertical.label );
+					onSelect?.( vertical );
+				} }
 			/>
 		</>
 	);
