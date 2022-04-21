@@ -97,7 +97,6 @@ import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
 import RemovePurchase from '../remove-purchase';
@@ -944,8 +943,7 @@ export default connect( ( state, props ) => {
 		purchase && purchase.attachedToPurchaseId
 			? getByPurchaseId( state, purchase.attachedToPurchaseId )
 			: null;
-	const selectedSiteId = getSelectedSiteId( state );
-	const siteId = purchase?.siteId ?? selectedSiteId ?? null;
+	const siteId = purchase?.siteId ?? null;
 	const purchases = purchase && getSitePurchases( state, purchase.siteId );
 	const userId = getCurrentUserId( state );
 	const isProductOwner = purchase && purchase.userId === userId;
