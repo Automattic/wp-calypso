@@ -155,7 +155,10 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			} );
 
 			it( 'Add a Header block', async function () {
-				await fullSiteEditorPage.addBlockFromSidebar( 'Header' );
+				await fullSiteEditorPage.addBlockFromSidebar(
+					'Header',
+					'[aria-label="Block: Template Part"]'
+				);
 			} );
 
 			it( 'Undo action', async function () {

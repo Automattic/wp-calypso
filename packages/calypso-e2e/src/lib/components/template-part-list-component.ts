@@ -3,11 +3,9 @@ import { Locator, Page } from 'playwright';
 const parentSelector = '[aria-label="Template parts list - Content"]';
 
 const selectors = {
-	deletePartButton: `${ parentSelector } button:has-text("Delete")`,
+	deleteButton: `${ parentSelector } button:has-text("Delete")`,
 	actionsButtonForPart: ( partName: string ) =>
 		`${ parentSelector } .edit-site-list-table-row:has-text("${ partName }") button[aria-label="Actions"]`,
-	deletionToast: ( partName: string ) =>
-		`.components-snackbar:has-text('"${ partName }" deleted.')`,
 };
 
 /**
@@ -29,17 +27,25 @@ export class TemplatePartListComponent {
 	}
 
 	/**
+	 * Delete a template part from the list.
 	 *
-	 * @param partName
+	 * @param {string} name The name of the template part to delete.
 	 */
-	async deleteTemplatePart( partName: string ): Promise< void > {
-		const actionsButtonLocator = this.editor.locator( selectors.actionsButtonForPart( partName ) );
+	async deleteTemplatePart( name: string ): Promise< void > {
+		const actionsButtonLocator = this.editor.locator( selectors.actionsButtonForPart( name ) );
 		await actionsButtonLocator.click();
 
-		const deleteButtonLocator = this.editor.locator( selectors.deletePartButton );
+		const deleteButtonLocator = this.editor.locator( selectors.deleteButton );
 		await deleteButtonLocator.click();
+	}
 
-		const deletionToastLocator = this.editor.locator( selectors.deletionToast( partName ) );
-		await deletionToastLocator.waitFor();
+	/**
+	 * Checks if the template part list is open and visible.
+	 *
+	 * @returns True if the template part list component is open and visible, false otherwise.
+	 */
+	async isOpen(): Promise< boolean > {
+		const shellLocator = this.editor.locator( parentSelector );
+		return ( await shellLocator.count() ) > 0;
 	}
 }

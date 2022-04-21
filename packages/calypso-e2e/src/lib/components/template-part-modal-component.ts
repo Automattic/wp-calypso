@@ -28,8 +28,9 @@ export class TemplatePartModalComponent {
 	}
 
 	/**
+	 * Enter a name for a new template part.
 	 *
-	 * @param name
+	 * @param {string} name Name for the new template.
 	 */
 	async enterTemplateName( name: string ): Promise< void > {
 		const locator = this.editor.locator( selectors.nameInput );
@@ -37,7 +38,7 @@ export class TemplatePartModalComponent {
 	}
 
 	/**
-	 *
+	 * Click the create button for a new template part.
 	 */
 	async clickCreate(): Promise< void > {
 		const locator = this.editor.locator( selectors.createButton );
@@ -45,8 +46,9 @@ export class TemplatePartModalComponent {
 	}
 
 	/**
+	 * Select an existing template part from the selection modal for insertion.
 	 *
-	 * @param name
+	 * @param {string} name Name of the existing template part.
 	 */
 	async selectExistingTemplatePart( name: string ): Promise< void > {
 		const locator = this.editor.locator( selectors.existingTemplatePart( name ) );

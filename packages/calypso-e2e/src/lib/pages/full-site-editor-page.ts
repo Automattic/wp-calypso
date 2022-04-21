@@ -88,6 +88,7 @@ export class FullSiteEditorPage {
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
 		this.editorSiteStylesComponent = new EditorSiteStylesComponent( page, this.editor );
 		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
+		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
 			page,
 			this.editor
@@ -98,8 +99,9 @@ export class FullSiteEditorPage {
 		);
 		this.templatePartModalComponent = new TemplatePartModalComponent( page, this.editor );
 		this.templatePartListComponent = new TemplatePartListComponent( page, this.editor );
-		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
 	}
+
+	//#region Visit and Setup
 
 	/**
 	 * Visit the site editor by URL directly.
@@ -148,6 +150,10 @@ export class FullSiteEditorPage {
 		}
 	}
 
+	//#endregion
+
+	//#region Block Actions
+
 	/**
 	 * Adds a Gutenberg block from the sidebar block inserter panel.
 	 *
@@ -162,19 +168,22 @@ export class FullSiteEditorPage {
 	 * @param {string} blockName Name of the block to be inserted.
 	 * @param {string} blockEditorSelector Selector to find the top-level element of the added block in the editor.
 	 * @throws If the provided selector does not locate the added block correctly.
-	 * @returns The a frame-safe locator to the top of the block.
+	 * @returns A frame-safe locator to the top of the block.
 	 */
 	async addBlockFromSidebar( blockName: string, blockEditorSelector: string ): Promise< Locator > {
 		await this.editorToolbarComponent.openBlockInserter();
 		await this.addBlockFromInserter( blockName, this.editorSidebarBlockInserterComponent );
 
-		const addedBlockId = await getIdFromBlock(
-			this.editorCanvas.locator(
-				`${ selectors.focusedBlock( blockEditorSelector ) },${ selectors.parentOfFocusedBlock(
-					blockEditorSelector
-				) }`
-			)
+		// The added block will always either be focused, or will be the parent of a focused block.
+		const addedBlockLocator = this.editorCanvas.locator(
+			`${ selectors.focusedBlock( blockEditorSelector ) },${ selectors.parentOfFocusedBlock(
+				blockEditorSelector
+			) }`
 		);
+		await addedBlockLocator.waitFor();
+		// Over time in the editor, the block's ID is going to be the most reliable way to select it.
+		// Let's grab it now for future use.
+		const addedBlockId = await getIdFromBlock( addedBlockLocator );
 
 		// Dismiss the block inserter if viewport is larger than mobile to
 		// ensure no interference from the block inserter in subsequent actions on the editor.
@@ -201,6 +210,77 @@ export class FullSiteEditorPage {
 	}
 
 	/**
+	 * Focus (select in a way that gives block-specific features) a block in the site editor.
+	 *
+	 * @param {string} blockSelector A selector that uniquely identifies this block in the editor.
+	 */
+	async focusBlock( blockSelector: string ): Promise< void >;
+	/**
+	 * Focus (select in a way that gives block-specific features) a block in the site edito
+	 *
+	 * @param {Locator} blockLocator The locator to the parent block element.
+	 */
+	async focusBlock( blockLocator: Locator ): Promise< void >;
+	/**
+	 * Focus (select in a way that gives block-specific features) a block in the site editor.
+	 * This is the overload implementation.
+	 *
+	 * @param {string|Locator} block A way to locate the block (Locator or selector).
+	 */
+	async focusBlock( block: string | Locator ): Promise< void > {
+		let originalBlockLocator: Locator;
+		let focusedBlockLocator: Locator;
+		if ( typeof block === 'string' ) {
+			// It's a selector.
+			originalBlockLocator = this.editorCanvas.locator( block );
+			focusedBlockLocator = this.editorCanvas.locator( selectors.focusedBlock( block ) );
+		} else {
+			// It's a Locator.
+			originalBlockLocator = block; // We can just re-use the Locator.
+			// For the focused Locator, we have to append a class. We can't do this with a Locator.
+			// So, we need to find the block's ID to use to create a focused locator.
+			const blockId = await getIdFromBlock( block );
+			focusedBlockLocator = this.editorCanvas.locator( selectors.focusedBlock( `#${ blockId }` ) );
+		}
+
+		// Some blocks are buried within parent blocks that may eat the first click.
+		// Sending up to three clicks should be enough.
+		for ( let clickAttempt = 1; clickAttempt <= 3; clickAttempt++ ) {
+			if ( ( await focusedBlockLocator.count() ) > 0 ) {
+				return;
+			}
+			await originalBlockLocator.click();
+		}
+		// Do one last wait to let any async re-renders go through.
+		await focusedBlockLocator.waitFor();
+	}
+
+	/**
+	 * Click a primary (not buried under a dropdown) button on the block toolbar.
+	 *
+	 * @param {BlockToolbarButtonIdentifier} indentifier A way to identify the button.
+	 */
+	async clickBlockToolbarPrimaryButton(
+		indentifier: BlockToolbarButtonIdentifier
+	): Promise< void > {
+		await this.editorBlockToolbarComponent.clickPrimaryButton( indentifier );
+	}
+
+	/**
+	 * Click an option button (under the three-dots popover menu) on the block toolbar.
+	 *
+	 * @param {string} optionName The name of the option in the popover menu.
+	 */
+	async clickBlockToolbarOption( optionName: string ): Promise< void > {
+		await this.editorBlockToolbarComponent.clickOptionsButton();
+		await this.editorPopoverMenuComponent.clickMenuButton( optionName );
+	}
+
+	//#endregion
+
+	//#region Toolbar Actions
+
+	/**
 	 * Click the editor undo button.
 	 */
 	async undo(): Promise< void > {
@@ -213,6 +293,20 @@ export class FullSiteEditorPage {
 	async redo(): Promise< void > {
 		await this.editorToolbarComponent.redo();
 	}
+
+	/**
+	 * Save the changes in the full site editor (equivalent of publish).
+	 */
+	async save(): Promise< void > {
+		await this.clearExistingSaveConfirmationToast();
+		await this.editorToolbarComponent.saveSiteEditor();
+		await this.fullSiteEditorSavePanelComponent.confirmSave();
+		await this.waitForConfirmationToast( 'Site updated.' );
+	}
+
+	//#endregion
+
+	//#region Site Global Styles
 
 	/**
 	 * Opens the site styles sidebar in the site editor.
@@ -305,15 +399,61 @@ export class FullSiteEditorPage {
 		await this.editorPopoverMenuComponent.clickMenuButton( 'Reset to defaults' );
 	}
 
+	//#endregion
+
+	//#region Template Parts
+
 	/**
-	 * Save the changes in the full site editor (equivalent of publish).
+	 * Names and creates a template part from the creation modal.
+	 * Because that modal can come from a variety of flows,
+	 * this method assumes you have launched the modal first.
+	 *
+	 * @param {string} name Name to use for the template part.
 	 */
-	async save(): Promise< void > {
-		await this.clearExistingSaveConfirmationToast();
-		await this.editorToolbarComponent.saveSiteEditor();
-		await this.fullSiteEditorSavePanelComponent.confirmSave();
-		const toastLocator = this.editor.locator( selectors.confirmationToast( 'Site updated.' ) );
-		await toastLocator.waitFor();
+	async nameAndFinalizeTemplatePart( name: string ): Promise< void > {
+		await this.templatePartModalComponent.enterTemplateName( name );
+		await this.templatePartModalComponent.clickCreate();
+	}
+
+	/**
+	 * Select an existing template part from the template part selection modal.
+	 * Because that modal can come from a variety of flows,
+	 * this method assumes you have launched the modal first.
+	 *
+	 * @param {string} name Name of the template part to select.
+	 */
+	async selectExistingTemplatePartFromModal( name: string ): Promise< void > {
+		await this.templatePartModalComponent.selectExistingTemplatePart( name );
+		// This toast always fires for all insertertions done from this modal.
+		await this.waitForConfirmationToast( `Template Part "${ name }" inserted.` );
+	}
+
+	/**
+	 * Delete a template part in the site editor.
+	 *
+	 * @param {string} name Name of the template part.
+	 */
+	async deleteTemplatePart( name: string ): Promise< void > {
+		if ( ! ( await this.templatePartListComponent.isOpen() ) ) {
+			await this.editorToolbarComponent.openNavSidebar();
+			await this.editorNavSidebarComponent.clickMenuLink( 'Template Parts' );
+		}
+		await this.templatePartListComponent.deleteTemplatePart( name );
+		await this.waitForConfirmationToast( `"${ name }" deleted.` );
+	}
+
+	//#endregion
+
+	//#region Misc
+
+	/**
+	 * Waits for a confirmation toast to appear with the provided text.
+	 *
+	 * @param {string} text The text we expect on the confirmation toast.
+	 */
+	async waitForConfirmationToast( text: string ): Promise< void > {
+		const locator = this.editor.locator( selectors.confirmationToast( text ) );
+		await locator.waitFor();
 	}
 
 	/**
@@ -326,90 +466,5 @@ export class FullSiteEditorPage {
 		}
 	}
 
-	/**
-	 *
-	 * @param uniqueBlockSelector
-	 * @returns
-	 */
-	async focusBlock( uniqueBlockSelector: string ): Promise< void > {
-		const focusedBlockLocator = this.editorCanvas.locator(
-			selectors.focusedBlock( uniqueBlockSelector )
-		);
-		if ( ( await focusedBlockLocator.count() ) > 0 ) {
-			// The block is already focused
-			return;
-		}
-
-		const blockLocator = this.editorCanvas.locator( uniqueBlockSelector );
-		await blockLocator.click();
-		await focusedBlockLocator.waitFor();
-	}
-
-	/**
-	 * Click a primary (not buried under a dropdown) button on the block toolbar.
-	 *
-	 * @param {BlockToolbarButtonIdentifier} indentifier A way to identify the button.
-	 */
-	async clickBlockToolbarPrimaryButton(
-		indentifier: BlockToolbarButtonIdentifier
-	): Promise< void > {
-		await this.editorBlockToolbarComponent.clickPrimaryButton( indentifier );
-	}
-
-	/**
-	 *
-	 * @param optionName
-	 */
-	async clickBlockToolbarOption( optionName: string ): Promise< void > {
-		await this.editorBlockToolbarComponent.clickOptionsButton();
-		await this.editorPopoverMenuComponent.clickMenuButton( optionName );
-	}
-
-	/**
-	 *
-	 */
-	async clickBlockToolbarParentBlock(): Promise< void > {
-		await this.editorBlockToolbarComponent.clickParentBlockButton();
-	}
-
-	/**
-	 *
-	 * @param name
-	 */
-	async nameAndFinalizeTemplatePart( name: string ): Promise< void > {
-		await this.templatePartModalComponent.enterTemplateName( name );
-		await this.templatePartModalComponent.clickCreate();
-	}
-
-	/**
-	 *
-	 * @param name
-	 */
-	async selectExistingTemplatePartFromModal( name: string ): Promise< void > {
-		await this.templatePartModalComponent.selectExistingTemplatePart( name );
-		const toastLocator = this.editor.locator(
-			selectors.confirmationToast( `Template Part "${ name }" inserted.` )
-		);
-		await toastLocator.waitFor();
-	}
-
-	/**
-	 * Delete a template part.
-	 *
-	 * @param {string} name Name of the template part.
-	 */
-	async deleteTemplatePart( name: string ): Promise< void > {
-		await this.editorToolbarComponent.openNavSidebar();
-		await this.editorNavSidebarComponent.clickMenuLink( 'Template Parts' );
-		await this.templatePartListComponent.deleteTemplatePart( name );
-	}
-
-	/**
-	 *
-	 * @param text
-	 */
-	async waitForConfirmationToast( text: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.confirmationToast( text ) );
-		await locator.waitFor();
-	}
+	//#endregion
 }

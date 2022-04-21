@@ -8,7 +8,8 @@ const selectors = {
 
 /**
  * Represents an instance of the WordPress.com Editor's navigation sidebar.
- * The component is available only in the Desktop viewport.
+ * The component is available only in the Desktop viewport for the post editor.
+ * It is visible on all viewports for the site editor.
  */
 export class EditorNavSidebarComponent {
 	private page: Page;

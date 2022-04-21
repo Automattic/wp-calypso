@@ -18,7 +18,6 @@ const selectors = {
 		}
 		return selector;
 	},
-	parentBlockButton: '.block-editor-block-parent-selector button',
 };
 
 export interface BlockToolbarButtonIdentifier {
@@ -59,14 +58,6 @@ export class EditorBlockToolbarComponent {
 	 */
 	async clickOptionsButton(): Promise< void > {
 		const locator = await this.editor.locator( selectors.button( { ariaLabel: 'Options' } ) );
-		await locator.click();
-	}
-
-	/**
-	 *
-	 */
-	async clickParentBlockButton(): Promise< void > {
-		const locator = await this.editor.locator( selectors.parentBlockButton );
 		await locator.click();
 	}
 }

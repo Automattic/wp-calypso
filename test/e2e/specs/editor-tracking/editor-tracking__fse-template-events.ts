@@ -12,14 +12,13 @@ import {
 	FullSiteEditorPage,
 	TemplatePartBlock,
 	ElementHelper,
-	ButtonsBlock,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
 const createTemplatePartName = () =>
-	`TP_${ DataHelper.getTimestamp() }_${ DataHelper.getRandomInteger( 0, 100 ) }`;
+	`TP-${ DataHelper.getTimestamp() }-${ DataHelper.getRandomInteger( 0, 100 ) }`;
 
 describe(
 	DataHelper.createSuiteTitle( 'Editor tracking: Site editor template events' ),
@@ -101,7 +100,7 @@ describe(
 			} );
 
 			it( 'Add a Header block', async function () {
-				// It's just a Template Part block with a different name in the sidebar.
+				// It's just a Template Part block with a different name in the sidebar, so we can re-use that POM class.
 				const block = await fullSiteEditorPage.addBlockFromSidebar(
 					'Header',
 					TemplatePartBlock.blockEditorSelector
@@ -137,7 +136,7 @@ describe(
 				const blockId = await ElementHelper.getIdFromBlock( headerBlock.block );
 				await fullSiteEditorPage.focusBlock( `#${ blockId }` );
 
-				// Then we can take block toolabr actions.
+				// Then we can take block toolbar actions.
 				await fullSiteEditorPage.clickBlockToolbarPrimaryButton( { text: 'Replace' } );
 				await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'header-linear' );
 			} );
@@ -162,8 +161,6 @@ describe(
 			let testAccount: TestAccount;
 			let fullSiteEditorPage: FullSiteEditorPage;
 			let editorTracksEventManager: EditorTracksEventManager;
-			let buttonsBlock: ButtonsBlock;
-			let buttonsBlockId: string;
 
 			let templatePartName: string;
 
@@ -184,30 +181,28 @@ describe(
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
-			it( 'Add and configure a Buttons block', async function () {
-				const block = await fullSiteEditorPage.addBlockFromSidebar(
-					ButtonsBlock.blockName,
-					ButtonsBlock.blockEditorSelector
+			it( 'Add a Page List block', async function () {
+				await fullSiteEditorPage.addBlockFromSidebar(
+					'Page List',
+					'[aria-label="Block: Page List"]'
 				);
-				buttonsBlock = new ButtonsBlock( page, block );
-				await buttonsBlock.enterButtonText( { index: 0, text: 'Test' } );
 			} );
 
 			it( 'Convert to a template part', async function () {
-				buttonsBlockId = await ElementHelper.getIdFromBlock( buttonsBlock.block );
-				await fullSiteEditorPage.focusBlock( `#${ buttonsBlockId }` );
+				// Page List block should already be focused due to just adding it.
 				await fullSiteEditorPage.clickBlockToolbarOption( 'Make template part' );
 				await fullSiteEditorPage.nameAndFinalizeTemplatePart( templatePartName );
+				// This toast in unique to conversion. It doesn't fire during other creation flows..
 				await fullSiteEditorPage.waitForConfirmationToast( 'Template part created' );
 				createdTemplateParts.push( templatePartName );
 			} );
 
-			it( '"wpcom_block_editor_create_template_part" event fires with correct "block_names"', async function () {
+			it( '"wpcom_block_editor_convert_to_template_part" event fires with correct "block_names"', async function () {
 				const eventDidFire = await editorTracksEventManager.didEventFire(
 					'wpcom_block_editor_convert_to_template_part',
 					{
 						matchingProperties: {
-							block_names: 'core/buttons,core/button',
+							block_names: 'core/page-list',
 						},
 					}
 				);
@@ -215,7 +210,7 @@ describe(
 			} );
 
 			it( 'Detach the blocks from the newly create template part', async function () {
-				// After creation, the new template part block should already be focused.
+				// After creation, the new Template Part block should already be focused.
 				await fullSiteEditorPage.clickBlockToolbarOption( 'Detach blocks from template part' );
 			} );
 
@@ -224,8 +219,9 @@ describe(
 					'wpcom_block_editor_template_part_detach_blocks',
 					{
 						matchingProperties: {
-							block_names: 'core/buttons,core/button',
-							template_part_id: `pub/blockbase//${ templatePartName }`,
+							block_names: 'core/page-list',
+							// Event property values are always lower case.
+							template_part_id: `pub/blockbase//${ templatePartName.toLowerCase() }`,
 						},
 					}
 				);
