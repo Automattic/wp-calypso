@@ -912,13 +912,11 @@ class ManagePurchase extends Component {
 						getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
 					/>
 				) }
-				<AsyncLoad
-					require="calypso/blocks/product-plan-overlap-notices"
-					placeholder={ null }
-					plans={ JETPACK_PLANS }
-					products={ JETPACK_PRODUCTS_LIST }
-					siteId={ siteId }
-					currentPurchase={ purchase }
+				<PlanOverlapNotice
+					isSiteLevel={ this.props.isSiteLevel }
+					selectedSiteId={ this.props.selectedSiteId }
+					siteId={ this.props.siteId }
+					purchase={ this.props.purchase }
 				/>
 				{ this.renderPurchaseDetail( preventRenewal ) }
 				{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
@@ -936,6 +934,35 @@ function addPaymentMethodLinkText( { purchase, translate } ) {
 		linkText = translate( 'Add Payment Method' );
 	}
 	return linkText;
+}
+
+function PlanOverlapNotice( { isSiteLevel, selectedSiteId, siteId, purchase } ) {
+	if ( isSiteLevel ) {
+		if ( ! selectedSiteId ) {
+			// Probably still loading
+			return null;
+		}
+		return (
+			<AsyncLoad
+				require="calypso/blocks/product-plan-overlap-notices"
+				placeholder={ null }
+				plans={ JETPACK_PLANS }
+				products={ JETPACK_PRODUCTS_LIST }
+				siteId={ selectedSiteId }
+				currentPurchase={ purchase }
+			/>
+		);
+	}
+	return (
+		<AsyncLoad
+			require="calypso/blocks/product-plan-overlap-notices"
+			placeholder={ null }
+			plans={ JETPACK_PLANS }
+			products={ JETPACK_PRODUCTS_LIST }
+			siteId={ siteId }
+			currentPurchase={ purchase }
+		/>
+	);
 }
 
 function PurchasesQueryComponent( { isSiteLevel, selectedSiteId } ) {
