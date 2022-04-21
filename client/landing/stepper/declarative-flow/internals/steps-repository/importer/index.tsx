@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { isEnabled } from '@automattic/calypso-config';
+import { SiteDetails } from '@automattic/data-stores/dist/types/site';
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -11,6 +12,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import BloggerImporter from 'calypso/signup/steps/import-from/blogger';
 import { Importer, ImportJob } from 'calypso/signup/steps/import-from/types';
 import { getImporterTypeForEngine } from 'calypso/signup/steps/import-from/util';
 import WordpressImporter from 'calypso/signup/steps/import-from/wordpress';
@@ -133,6 +135,20 @@ const ImporterStep: Step = function ImportStep( props ) {
 	/**
 	 ↓ Renders
 	 */
+	function renderBloggerImporter() {
+		return (
+			<BloggerImporter
+				job={ getImportJob( importer as Importer ) }
+				run={ runImportInitially }
+				siteId={ siteId as number }
+				site={ site as SiteDetails }
+				siteSlug={ siteSlug as string }
+				fromSite={ fromSite }
+				urlData={ fromSiteData }
+			/>
+		);
+	}
+
 	function renderWordpressImporter() {
 		return (
 			<WordpressImporter
@@ -152,7 +168,12 @@ const ImporterStep: Step = function ImportStep( props ) {
 				} ) }
 			>
 				{ ( () => {
-					if ( importer === 'wordpress' && isEnabled( 'onboarding/import-from-wordpress' ) ) {
+					if ( importer === 'blogger' && isEnabled( 'onboarding/import-from-blogger' ) ) {
+						return renderBloggerImporter();
+					} else if (
+						importer === 'wordpress' &&
+						isEnabled( 'onboarding/import-from-wordpress' )
+					) {
 						return renderWordpressImporter();
 					}
 				} )() }
