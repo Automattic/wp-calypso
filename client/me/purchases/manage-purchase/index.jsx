@@ -961,7 +961,7 @@ export default connect( ( state, props ) => {
 	return {
 		hasLoadedDomains,
 		hasLoadedSites,
-		hasLoadedPurchasesFromServer: selectedSiteId
+		hasLoadedPurchasesFromServer: props.isSiteLevel
 			? hasLoadedSitePurchasesFromServer( state )
 			: hasLoadedUserPurchasesFromServer( state ),
 		hasNonPrimaryDomainsFlag: getCurrentUser( state )
