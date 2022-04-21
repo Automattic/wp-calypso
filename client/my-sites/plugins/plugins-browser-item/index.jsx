@@ -103,12 +103,13 @@ const PluginsBrowserListElement = ( props ) => {
 		return version_compare( wpVersion, pluginTestedVersion, '>' );
 	}, [ selectedSite, plugin ] );
 
-	const jetpackAndAtomic = useSelector(
-		( state ) => isJetpackSite( state, selectedSite?.ID ) && isAtomicSite( state, selectedSite?.ID )
+	const jetpackNonAtomic = useSelector(
+		( state ) =>
+			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
 	);
 
 	const isPluginIncompatible = useMemo( () => {
-		return ! isCompatiblePlugin( plugin.slug ) && jetpackAndAtomic;
+		return ! isCompatiblePlugin( plugin.slug ) && ! jetpackNonAtomic;
 	} );
 
 	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
