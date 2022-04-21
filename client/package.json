@@ -216,7 +216,6 @@
 		"component-query": "^0.0.3",
 		"html-loader": "^0.5.5",
 		"ignore-loader": "^0.1.2",
-		"phpunserialize": "^1.1.0",
 		"pkg-dir": "^5.0.0",
 		"react-router": "^5.1.2",
 		"react-test-renderer": "^17.0.2",
