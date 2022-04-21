@@ -15,6 +15,7 @@ import type { Vertical } from 'calypso/components/select-vertical/types';
 const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const { goNext, submit } = navigation;
 	const [ vertical, setVertical ] = React.useState< Vertical | null >();
+	const [ userInput, setUserInput ] = React.useState( '' );
 	const [ isBusy, setIsBusy ] = React.useState( false );
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 	const site = useSite();
@@ -26,8 +27,9 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const subHeaderText = translate( 'Choose a category that defines your website the best.' );
 	const isSkipSynonyms = useQuery().get( 'isSkipSynonyms' );
 
-	const handleSiteVerticalSelect = ( vertical: Vertical ) => {
+	const handleSiteVerticalSelect = ( vertical: Vertical, term?: string ) => {
 		setVertical( vertical );
+		setUserInput( term || '' );
 	};
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
@@ -39,6 +41,7 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 			setIsBusy( true );
 			await saveSiteSettings( site.ID, { site_vertical_id: value } );
 			recordTracksEvent( 'calypso_signup_site_vertical_submit', {
+				user_input: userInput,
 				vertical_id: value,
 				vertical_title: label,
 			} );

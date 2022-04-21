@@ -15,7 +15,7 @@ interface Props {
 	isDisableInput?: boolean | undefined;
 	isLoading?: boolean | undefined;
 	onInputChange?: ( value: string ) => void;
-	onSelect?: ( vertical: Vertical ) => void;
+	onSelect?: ( vertical: Vertical, term?: string ) => void;
 }
 
 const SelectVerticalSuggestionSearch: FC< Props > = ( {
@@ -117,9 +117,9 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 		( { label, value }: { label: string; value?: string } ) => {
 			setIsShowSuggestions( false );
 			onInputChange?.( label );
-			onSelect?.( { label, value } as Vertical );
+			onSelect?.( { label, value } as Vertical, searchTerm );
 		},
-		[ setIsShowSuggestions ]
+		[ setIsShowSuggestions, searchTerm ]
 	);
 
 	const getSuggestions = useMemo( () => {

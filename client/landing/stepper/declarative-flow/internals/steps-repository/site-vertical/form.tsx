@@ -13,7 +13,7 @@ interface Props {
 	defaultVertical?: string;
 	isSkipSynonyms?: boolean;
 	isBusy?: boolean;
-	onSelect?: ( vertical: Vertical ) => void;
+	onSelect?: ( vertical: Vertical, term?: string ) => void;
 	onSubmit?: ( event: React.FormEvent ) => void;
 }
 

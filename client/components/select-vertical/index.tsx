@@ -14,7 +14,7 @@ import type { SiteVerticalsResponse } from 'calypso/data/site-verticals';
 interface Props {
 	defaultVertical?: string;
 	isSkipSynonyms?: boolean;
-	onSelect?: ( vertical: Vertical ) => void;
+	onSelect?: ( vertical: Vertical, term?: string ) => void;
 }
 
 const SelectVertical: React.FC< Props > = ( { defaultVertical, isSkipSynonyms, onSelect } ) => {
