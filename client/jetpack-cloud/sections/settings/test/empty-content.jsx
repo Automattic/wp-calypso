@@ -4,7 +4,7 @@
 
 import '@testing-library/jest-dom/extend-expect';
 import { JETPACK_PRICING_PAGE } from 'calypso/lib/url/support';
-import { render } from 'calypso/test-helpers/config/testing-library';
+import { render } from 'calypso/test-helpers/testing-library';
 import NoSitePurchasesMessage from '../empty-content';
 
 describe( 'NoSitePurchasesMessage', () => {

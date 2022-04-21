@@ -3,7 +3,7 @@
  */
 
 import { reducer as purchases } from 'calypso/state/purchases/reducer';
-import { render as rtlRender, screen } from 'calypso/test-helpers/config/testing-library';
+import { render as rtlRender, screen } from 'calypso/test-helpers/testing-library';
 import HasSitePurchasesSwitch from '../index';
 
 import '@testing-library/jest-dom/extend-expect';

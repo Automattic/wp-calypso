@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from 'calypso/test-helpers/config/testing-library';
+import { render, screen } from 'calypso/test-helpers/testing-library';
 import UsAddressFieldset from '../us-address-fieldset';
 
 jest.mock( 'i18n-calypso', () => ( {

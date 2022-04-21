@@ -11,7 +11,7 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 import { TERM_MONTHLY } from '@automattic/calypso-products';
 import productsList from 'calypso/state/products-list/reducer';
 import { reducer as purchases } from 'calypso/state/purchases/reducer';
-import { render, screen } from 'calypso/test-helpers/config/testing-library';
+import { render, screen } from 'calypso/test-helpers/testing-library';
 import PlanUpgradeSection from '../index';
 
 const initialState = {
