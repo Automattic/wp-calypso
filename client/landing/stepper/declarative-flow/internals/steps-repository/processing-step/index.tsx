@@ -39,13 +39,13 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	};
 
 	useEffect( () => {
-		// Being able to 'await' makes it simpler
 		( async () => {
 			if ( typeof action === 'function' ) {
 				await action();
 			}
 			submit?.();
 		} )();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ action ] );
 
 	// Progress smoothing, works out to be around 40seconds unless step polling dictates otherwise

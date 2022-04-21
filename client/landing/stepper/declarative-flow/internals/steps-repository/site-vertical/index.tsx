@@ -33,8 +33,8 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
 
-		if ( site && vertical ) {
-			const { value, label } = vertical;
+		if ( site ) {
+			const { value = '', label = '' } = vertical || {};
 
 			setIsBusy( true );
 			await saveSiteSettings( site.ID, { site_vertical_id: value } );

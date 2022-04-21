@@ -596,7 +596,6 @@ __metadata:
   resolution: "@automattic/format-currency@workspace:packages/format-currency"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    i18n-calypso: "workspace:^"
     tslib: ^2.3.0
     typescript: ^4.5.5
   peerDependencies:
@@ -6686,6 +6685,15 @@ __metadata:
   version: 0.2.0
   resolution: "@trysound/sax@npm:0.2.0"
   checksum: 44907308549ce775a41c38a815f747009ac45929a45d642b836aa6b0a536e4978d30b8d7d680bbd116e9dd73b7dbe2ef0d1369dcfc2d09e83ba381e485ecbe12
+  languageName: node
+  linkType: hard
+
+"@types/archiver@npm:^5.3.1":
+  version: 5.3.1
+  resolution: "@types/archiver@npm:5.3.1"
+  dependencies:
+    "@types/glob": "*"
+  checksum: 622c0d3cf54c0009d07db0c78349a4e81ae3a4b699c7f2ea34085c0ebfb13eca8c4a6459aa5e376c2c0f72916280a0986154fad35022a280670a6e5551fff9d2
   languageName: node
   linkType: hard
 
@@ -38339,6 +38347,7 @@ testarmada-magellan@11.0.10:
     "@automattic/testarmada-magellan-mocha-plugin": "workspace:^"
     "@babel/core": ^7.16.0
     "@testim/chrome-version": ^1.0.7
+    "@types/archiver": ^5.3.1
     "@types/jest": ^27.0.2
     "@xmpp/plugins": ^0.3.0
     archiver: ^5.3.0

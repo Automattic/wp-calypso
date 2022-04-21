@@ -73,11 +73,8 @@ function P2ConfirmEmail( {
 			} );
 	};
 
-	const handleNextStepClick = ( option ) => {
-		submitSignupStep( {
-			stepName,
-			option,
-		} );
+	const handleNextStepClick = () => {
+		submitSignupStep( { stepName } );
 
 		goToNextStep();
 	};

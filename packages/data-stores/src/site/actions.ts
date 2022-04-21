@@ -1,6 +1,6 @@
 import { Design } from '@automattic/design-picker/src/types';
 import { wpcomRequest } from '../wpcom-request-controls';
-import { SiteLaunchError, AtomicTransferError } from './types';
+import { SiteLaunchError, AtomicTransferError, LatestAtomicTransferError } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import type {
 	CreateSiteParams,
@@ -10,8 +10,10 @@ import type {
 	SiteError,
 	Cart,
 	Domain,
+	LatestAtomicTransfer,
 	SiteLaunchError as SiteLaunchErrorType,
 	AtomicTransferError as AtomicTransferErrorType,
+	LatestAtomicTransferError as LatestAtomicTransferErrorType,
 	SiteSettings,
 } from './types';
 
@@ -200,6 +202,17 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} catch ( e ) {}
 	}
 
+	function* setIntentOnSite( siteSlug: string, intent: string ) {
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteSlug ) }/site-intent`,
+				apiNamespace: 'wpcom/v2',
+				body: { site_intent: intent },
+				method: 'POST',
+			} );
+		} catch ( e ) {}
+	}
+
 	function* saveSiteTitle( siteId: number, blogname: string | undefined ) {
 		yield saveSiteSettings( siteId, { blogname } );
 	}
@@ -288,12 +301,39 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 	}
 
+	const latestAtomicTransferStart = ( siteId: number ) => ( {
+		type: 'LATEST_ATOMIC_TRANSFER_START' as const,
+		siteId,
+	} );
+
+	const latestAtomicTransferSuccess = ( siteId: number, transfer: LatestAtomicTransfer ) => ( {
+		type: 'LATEST_ATOMIC_TRANSFER_SUCCESS' as const,
+		siteId,
+		transfer,
+	} );
+
+	const latestAtomicTransferFailure = (
+		siteId: number,
+		error: LatestAtomicTransferErrorType
+	) => ( {
+		type: 'LATEST_ATOMIC_TRANSFER_FAILURE' as const,
+		siteId,
+		error,
+	} );
+
 	function* requestLatestAtomicTransfer( siteId: number ) {
-		yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteId ) }/atomic/transfers/latest`,
-			apiNamespace: 'wpcom/v2',
-			method: 'GET',
-		} );
+		yield latestAtomicTransferStart( siteId );
+
+		try {
+			const transfer: LatestAtomicTransfer = yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/atomic/transfers/latest`,
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+			} );
+			yield latestAtomicTransferSuccess( siteId, transfer );
+		} catch ( err ) {
+			yield latestAtomicTransferFailure( siteId, err as LatestAtomicTransferError );
+		}
 	}
 
 	function* requestAtomicSoftwareStatus( siteId: number, softwareSet: string ) {
@@ -311,6 +351,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveSiteSettings,
 		saveSiteTitle,
 		saveSiteSettings,
+		setIntentOnSite,
 		receiveSiteTitle,
 		fetchNewSite,
 		fetchSite,
@@ -337,6 +378,9 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		atomicTransferStart,
 		atomicTransferSuccess,
 		atomicTransferFailure,
+		latestAtomicTransferStart,
+		latestAtomicTransferSuccess,
+		latestAtomicTransferFailure,
 		requestLatestAtomicTransfer,
 		requestAtomicSoftwareStatus,
 	};
@@ -365,6 +409,9 @@ export type Action =
 			| ActionCreators[ 'atomicTransferStart' ]
 			| ActionCreators[ 'atomicTransferSuccess' ]
 			| ActionCreators[ 'atomicTransferFailure' ]
+			| ActionCreators[ 'latestAtomicTransferStart' ]
+			| ActionCreators[ 'latestAtomicTransferSuccess' ]
+			| ActionCreators[ 'latestAtomicTransferFailure' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

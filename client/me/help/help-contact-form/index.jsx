@@ -517,7 +517,10 @@ export class HelpContactForm extends PureComponent {
 		let actionLink;
 		let actionMessage;
 
-		if ( analyseSiteData === 'isWpComConnectedSiteNotLinkedToAccount' ) {
+		if (
+			showAlternativeSiteOptionsField &&
+			analyseSiteData === 'isWpComConnectedSiteNotLinkedToAccount'
+		) {
 			// The site is linked to WordPress.com but not appearing for the user, so they've probably lost access to the account which owns it.
 			noticeMessage = translate(
 				"%(siteName)s is linked to another WordPress.com account. If you're trying to access it, please follow our Account Recovery procedure.",
@@ -531,30 +534,35 @@ export class HelpContactForm extends PureComponent {
 			actionMessage = translate( 'Learn more' );
 		}
 
-		if (
-			analyseSiteData &&
-			analyseSiteData.startsWith( 'isNonWpComHosted' ) &&
-			this.state.errorData !== 'jetpack_error'
-		) {
-			noticeMessage = translate(
-				'%(siteName)s may be a copy of WordPress with a different hosting service. ' +
-					"{{helpLink}}Here's the best way to find help with that{{/helpLink}}. " +
-					"If you're not sure though, please share your question with a link, and we'll point you in the right direction!",
-				{
-					components: {
-						helpLink: (
-							<a
-								href={ localizeUrl(
-									'https://wordpress.com/support/help-support-options/#where-should-i-go-for-support'
-								) }
-							/>
-						),
-					},
-					args: {
-						siteName,
-					},
-				}
-			);
+		const helpSiteIsNotWpCom = analyseSiteData && analyseSiteData.startsWith( 'isNonWpComHosted' );
+		if ( helpSiteIsNotWpCom ) {
+			if ( ! showAlternativeSiteOptionsField ) {
+				noticeMessage = translate(
+					'The site you’ve selected is a self-hosted WordPress site. ' +
+						'If you need help with an Automattic product like Jetpack, VaultPress or Akismet, please fill out the contact form below. ' +
+						'If you have a general question about your site, please contact your web host instead, as they’ll be best equipped to assist you.'
+				);
+			} else if ( this.state.errorData !== 'jetpack_error' ) {
+				noticeMessage = translate(
+					'%(siteName)s may be a copy of WordPress with a different hosting service. ' +
+						"{{helpLink}}Here's the best way to find help with that{{/helpLink}}. " +
+						"If you're not sure though, please share your question with a link, and we'll point you in the right direction!",
+					{
+						components: {
+							helpLink: (
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/help-support-options/#where-should-i-go-for-support'
+									) }
+								/>
+							),
+						},
+						args: {
+							siteName,
+						},
+					}
+				);
+			}
 		}
 
 		if ( this.state.showingQandAStep && hasQASuggestions ) {
@@ -650,24 +658,24 @@ export class HelpContactForm extends PureComponent {
 										/>
 									</div>
 								) }
-
-								{ noticeMessage && (
-									<Notice
-										className="help-contact-form__site-notice"
-										status="is-warning"
-										showDismiss={ false }
-										text={ noticeMessage }
-									>
-										{ actionMessage && (
-											<NoticeAction href={ actionLink } external>
-												{ actionMessage }
-											</NoticeAction>
-										) }
-									</Notice>
-								) }
 							</div>
 						) }
 					</div>
+				) }
+
+				{ noticeMessage && (
+					<Notice
+						className="help-contact-form__site-notice"
+						status="is-warning"
+						showDismiss={ false }
+						text={ noticeMessage }
+					>
+						{ actionMessage && (
+							<NoticeAction href={ actionLink } external>
+								{ actionMessage }
+							</NoticeAction>
+						) }
+					</Notice>
 				) }
 
 				{ showSubjectField && (

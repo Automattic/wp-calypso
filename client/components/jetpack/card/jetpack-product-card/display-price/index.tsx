@@ -29,6 +29,8 @@ type OwnProps = {
 	originalPrice?: number;
 	productName: TranslateResult;
 	tooltipText?: TranslateResult | ReactNode;
+	isPricingPageTreatment202204?: boolean;
+	isPricingPageTest202204AssignmentLoading?: boolean;
 };
 
 const DisplayPrice: React.FC< OwnProps > = ( {
@@ -48,6 +50,8 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 	pricesAreFetching,
 	productName,
 	tooltipText,
+	isPricingPageTreatment202204,
+	isPricingPageTest202204AssignmentLoading,
 } ) => {
 	if ( isDeprecated ) {
 		return <Deprecated productName={ productName } />;
@@ -81,6 +85,8 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 			displayFrom={ displayFrom }
 			tooltipText={ tooltipText }
 			expiryDate={ expiryDate }
+			isPricingPageTreatment202204={ isPricingPageTreatment202204 }
+			isPricingPageTest202204AssignmentLoading={ isPricingPageTest202204AssignmentLoading }
 		/>
 	);
 };

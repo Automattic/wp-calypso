@@ -8,8 +8,9 @@ import {
 	SiteLaunchStatus,
 	SiteSettings,
 	AtomicTransferStatus,
+	LatestAtomicTransferStatus,
 } from './types';
-import { AtomicTransferState } from '.';
+import { AtomicTransferState, LatestAtomicTransferState } from '.';
 import type { Action } from './actions';
 import type { Reducer } from 'redux';
 
@@ -233,6 +234,43 @@ export const atomicTransferStatus: Reducer< { [ key: number ]: AtomicTransferSta
 	return state;
 };
 
+export const latestAtomicTransferStatus: Reducer<
+	{ [ key: number ]: LatestAtomicTransferState },
+	Action
+> = ( state = {}, action ) => {
+	if ( action.type === 'LATEST_ATOMIC_TRANSFER_START' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				status: LatestAtomicTransferStatus.IN_PROGRESS,
+				transfer: undefined,
+				errorCode: undefined,
+			},
+		};
+	}
+	if ( action.type === 'LATEST_ATOMIC_TRANSFER_SUCCESS' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				status: LatestAtomicTransferStatus.SUCCESS,
+				transfer: action.transfer,
+				errorCode: undefined,
+			},
+		};
+	}
+	if ( action.type === 'LATEST_ATOMIC_TRANSFER_FAILURE' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				status: LatestAtomicTransferStatus.FAILURE,
+				transfer: undefined,
+				errorCode: action.error,
+			},
+		};
+	}
+	return state;
+};
+
 const newSite = combineReducers( {
 	data: newSiteData,
 	error: newSiteError,
@@ -248,6 +286,7 @@ const reducer = combineReducers( {
 	sitesSettings,
 	siteSetupErrors,
 	atomicTransferStatus,
+	latestAtomicTransferStatus,
 } );
 
 export type State = ReturnType< typeof reducer >;

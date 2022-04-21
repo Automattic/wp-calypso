@@ -71,6 +71,10 @@ export const getSiteSubdomain = ( _: State, siteId: number ) =>
 		.getSiteDomains( siteId )
 		?.find( ( domain ) => domain.is_subdomain );
 
+export const getSiteLatestAtomicTransfer = ( state: State, siteId: number ) => {
+	return state.latestAtomicTransferStatus[ siteId ]?.transfer;
+};
+
 export const hasActiveSiteFeature = (
 	_: State,
 	siteId: number | undefined,
@@ -79,4 +83,25 @@ export const hasActiveSiteFeature = (
 	return Boolean(
 		siteId && select( STORE_KEY ).getSite( siteId )?.plan?.features.active.includes( featureKey )
 	);
+};
+
+export const hasAvailableSiteFeature = (
+	_: State,
+	siteId: number | undefined,
+	featureKey: string
+): boolean => {
+	return Boolean(
+		siteId && select( STORE_KEY ).getSite( siteId )?.plan?.features.available[ featureKey ]
+	);
+};
+
+export const requiresUpgrade = ( state: State, siteId: number | null ) => {
+	const isWoopFeatureActive = Boolean(
+		siteId && select( STORE_KEY ).hasActiveSiteFeature( siteId, 'woop' )
+	);
+	const hasWoopFeatureAvailable = Boolean(
+		siteId && select( STORE_KEY ).hasAvailableSiteFeature( siteId, 'woop' )
+	);
+
+	return Boolean( ! isWoopFeatureActive && hasWoopFeatureAvailable );
 };

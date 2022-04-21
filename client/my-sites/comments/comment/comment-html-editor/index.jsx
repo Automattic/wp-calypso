@@ -231,6 +231,7 @@ export class CommentHtmlEditor extends Component {
 				/>
 
 				<AddLinkDialog
+					key={ `add-link-dialog-${ selectedText }` }
 					onClose={ this.closeLinkDialog }
 					onInsert={ this.insertATag }
 					selectedText={ selectedText }

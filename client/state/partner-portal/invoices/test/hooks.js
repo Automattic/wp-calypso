@@ -56,12 +56,19 @@ describe( 'useInvoicesQuery', () => {
 		};
 
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/jetpack-licensing/partner/invoices' )
+			.get( '/wpcom/v2/jetpack-licensing/partner/invoices?starting_after=&ending_before=' )
 			.reply( 200, stub );
 
-		const { result, waitFor } = renderHook( () => useInvoicesQuery(), {
-			wrapper,
-		} );
+		const { result, waitFor } = renderHook(
+			() =>
+				useInvoicesQuery( {
+					starting_after: '',
+					ending_before: '',
+				} ),
+			{
+				wrapper,
+			}
+		);
 
 		await waitFor( () => result.current.isSuccess );
 
@@ -75,15 +82,25 @@ describe( 'useInvoicesQuery', () => {
 		);
 
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/jetpack-licensing/partner/invoices' )
+			.get( '/wpcom/v2/jetpack-licensing/partner/invoices?starting_after=&ending_before=' )
 			.reply( 403 );
 
 		const dispatch = jest.fn();
 		useDispatch.mockReturnValue( dispatch );
 
-		const { result, waitFor } = renderHook( () => useInvoicesQuery( { retry: false } ), {
-			wrapper,
-		} );
+		const { result, waitFor } = renderHook(
+			() =>
+				useInvoicesQuery(
+					{
+						starting_after: '',
+						ending_before: '',
+					},
+					{ retry: false }
+				),
+			{
+				wrapper,
+			}
+		);
 
 		await waitFor( () => result.current.isError );
 
