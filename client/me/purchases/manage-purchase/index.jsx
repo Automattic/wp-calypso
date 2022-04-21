@@ -953,6 +953,10 @@ function PlanOverlapNotice( { isSiteLevel, selectedSiteId, siteId, purchase } ) 
 			/>
 		);
 	}
+	if ( ! siteId ) {
+		// Probably still loading
+		return null;
+	}
 	return (
 		<AsyncLoad
 			require="calypso/blocks/product-plan-overlap-notices"
