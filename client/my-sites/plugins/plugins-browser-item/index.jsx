@@ -18,6 +18,7 @@ import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PluginsBrowserElementVariant } from './types';
@@ -102,8 +103,13 @@ const PluginsBrowserListElement = ( props ) => {
 		return version_compare( wpVersion, pluginTestedVersion, '>' );
 	}, [ selectedSite, plugin ] );
 
+	const jetpackNonAtomic = useSelector(
+		( state ) =>
+			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
+	);
+
 	const isPluginIncompatible = useMemo( () => {
-		return ! isCompatiblePlugin( plugin.slug );
+		return ! isCompatiblePlugin( plugin.slug ) && ! jetpackNonAtomic;
 	} );
 
 	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
@@ -156,7 +162,7 @@ const PluginsBrowserListElement = ( props ) => {
 				) }
 				{ isPluginIncompatible && (
 					<ExternalLink icon={ false } href="https://wordpress.com/support/incompatible-plugins/">
-						{ translate( 'Why this plugin is not compatible with WordPress.com?' ) }
+						{ translate( 'Why is this plugin not compatible with WordPress.com?' ) }
 					</ExternalLink>
 				) }
 				<div className="plugins-browser-item__footer">
