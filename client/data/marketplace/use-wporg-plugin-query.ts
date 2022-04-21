@@ -12,42 +12,14 @@ import {
 	normalizePluginsList,
 	normalizePluginData,
 } from 'calypso/lib/plugins/utils';
-import { fetchPluginsList, fetchWPOrgPluginsFromIndex } from 'calypso/lib/wporg';
+import { fetchPluginsList } from 'calypso/lib/wporg';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-
-type WPORGOptionsType = {
-	pageSize?: number;
-	page?: number;
-	category?: string;
-	searchTerm?: string;
-	locale: string;
-};
-
-type WPORGPluginType = {
-	name: string;
-	slug: string;
-	version: string;
-	author: string;
-	author_profile: string;
-	tested: string;
-	rating: number;
-	num_ratings: number;
-	support_threads: number;
-	support_threads_resolved: number;
-	active_installs: number;
-	last_updated: string;
-	short_description: string;
-	download_link?: string;
-	icons: {
-		'1x'?: string;
-		'2x'?: string;
-		svg?: string;
-	};
-};
+import { BASE_STALE_TIME } from './constants';
+import { QueryOptions } from './types';
 
 const getCacheKey = ( key: string ): QueryKey => [ 'wporg-plugins', key ];
 
-const getPluginsListKey = ( options: WPORGOptionsType, infinite?: boolean ): QueryKey =>
+const getPluginsListKey = ( options: QueryOptions, infinite?: boolean ): QueryKey =>
 	getCacheKey(
 		`${ infinite ? 'infinite' : '' }${ options.category || '' }_${ options.searchTerm || '' }_${
 			options.page || ''
@@ -55,8 +27,8 @@ const getPluginsListKey = ( options: WPORGOptionsType, infinite?: boolean ): Que
 	);
 
 export const useWPORGPlugins = (
-	options: WPORGOptionsType,
-	{ enabled = true, staleTime = 1000 * 60 * 60 * 2, refetchOnMount = true }: UseQueryOptions = {}
+	options: QueryOptions,
+	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
 	const [ search, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
@@ -84,15 +56,15 @@ export const useWPORGPlugins = (
 	);
 };
 
-const extractPages = ( pages: Array< { plugins: WPORGPluginType[]; info: object } > = [] ) =>
+const extractPages = ( pages: Array< { plugins: QueryOptions[]; info: object } > = [] ) =>
 	pages.flatMap( ( page ) => page.plugins ).map( normalizePluginData );
 
 const extractPagination = ( pages: Array< { plugins: object; info: object } > = [] ) =>
 	pages[ pages.length - 1 ].info;
 
 export const useWPORGInfinitePlugins = (
-	options: WPORGOptionsType,
-	{ enabled = true, staleTime = 1000 * 60 * 60 * 2, refetchOnMount = true }: UseQueryOptions = {}
+	options: QueryOptions,
+	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
 	const [ search, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
@@ -100,7 +72,7 @@ export const useWPORGInfinitePlugins = (
 	return useInfiniteQuery(
 		getPluginsListKey( options, true ),
 		( { pageParam = 1 } ) =>
-			fetchWPOrgPluginsFromIndex( {
+			fetchPluginsList( {
 				pageSize: options.pageSize,
 				page: pageParam,
 				category: options.category,
@@ -109,7 +81,7 @@ export const useWPORGInfinitePlugins = (
 				author,
 			} ),
 		{
-			select: ( data: InfiniteData< { plugins: WPORGPluginType[]; info: { page: number } } > ) => {
+			select: ( data: InfiniteData< { plugins: QueryOptions[]; info: { page: number } } > ) => {
 				return {
 					...data,
 					plugins: extractPages( data.pages ),
