@@ -8,10 +8,10 @@ import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sid
 import AssignLicenseStepProgress from '../../assign-license-step-progress';
 
 interface Props {
-	siteId?: number;
+	selectedSite?: number;
 }
 
-export default function IssueLicense( { siteId }: Props ): ReactElement {
+export default function IssueLicense( { selectedSite }: Props ): ReactElement {
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -32,7 +32,7 @@ export default function IssueLicense( { siteId }: Props ): ReactElement {
 			<AssignLicenseStepProgress currentStep={ 1 } />
 			<CardHeading size={ 36 }>{ translate( 'Issue a new License' ) }</CardHeading>
 
-			<IssueLicenseForm selectedSite={ siteId } />
+			<IssueLicenseForm selectedSite={ selectedSite } />
 		</Main>
 	);
 }
