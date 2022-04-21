@@ -51,6 +51,7 @@ function HelpSearchResults( {
 	onAdminSectionSelect = noop,
 	searchQuery = '',
 	placeholderLines,
+	openAdminInNewTab,
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -110,7 +111,7 @@ function HelpSearchResults( {
 			// push state only if it's internal link.
 			if ( ! /^http/.test( link ) ) {
 				event.preventDefault();
-				page( link );
+				openAdminInNewTab ? window.open( 'https://wordpress.com' + link, '_blank' ) : page( link );
 				onAdminSectionSelect( event );
 			}
 

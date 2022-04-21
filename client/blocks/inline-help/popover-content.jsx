@@ -134,7 +134,7 @@ class InlineHelpPopoverContent extends Component {
 	};
 
 	renderPopoverContent = () => {
-		const { isReskinned } = this.props;
+		const { isReskinned, inlineArticles } = this.props;
 
 		return (
 			<Fragment>
@@ -148,6 +148,7 @@ class InlineHelpPopoverContent extends Component {
 						onSelect={ this.openResultView }
 						onAdminSectionSelect={ this.setAdminSection }
 						searchQuery={ this.state.searchQuery }
+						openAdminInNewTab={ inlineArticles }
 					/>
 				</div>
 				{ this.renderSecondaryView() }
@@ -180,6 +181,7 @@ class InlineHelpPopoverContent extends Component {
 							<InlineHelpEmbedResult
 								result={ selectedResult }
 								handleBackButton={ this.closeSecondaryView }
+								searchQuery={ searchQuery }
 							/>
 						) : (
 							<InlineHelpRichResult
