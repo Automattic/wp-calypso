@@ -1,49 +1,52 @@
-import { assert } from 'chai';
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+
+import { render, screen } from '@testing-library/react';
 import Badge from '../index';
 
 describe( 'Badge', () => {
 	test( 'should have badge class', () => {
-		const featureExample = shallow( <Badge /> );
-		assert.lengthOf( featureExample.find( '.badge' ), 1 );
+		const { container } = render( <Badge /> );
+		expect( container.getElementsByClassName( 'badge' ).length ).toBe( 1 );
 	} );
 
 	test( 'should have proper type class (warning)', () => {
-		const badge = shallow( <Badge type="warning" /> );
-		assert.lengthOf( badge.find( '.badge.badge--warning' ), 1 );
+		const { container } = render( <Badge type="warning" /> );
+		expect( container.getElementsByClassName( 'badge badge--warning' ).length ).toBe( 1 );
 	} );
 
 	test( 'should have proper type class (success)', () => {
-		const badge = shallow( <Badge type="success" /> );
-		assert.lengthOf( badge.find( '.badge.badge--success' ), 1 );
+		const { container } = render( <Badge type="success" /> );
+		expect( container.getElementsByClassName( 'badge badge--success' ).length ).toBe( 1 );
 	} );
 
 	test( 'should have proper type class (info)', () => {
-		const badge = shallow( <Badge type="info" /> );
-		assert.lengthOf( badge.find( '.badge.badge--info' ), 1 );
+		const { container } = render( <Badge type="info" /> );
+		expect( container.getElementsByClassName( 'badge badge--info' ).length ).toBe( 1 );
 	} );
 
 	test( 'should have proper type class (info-blue)', () => {
-		const badge = shallow( <Badge type="info-blue" /> );
-		assert.lengthOf( badge.find( '.badge.badge--info-blue' ), 1 );
+		const { container } = render( <Badge type="info-blue" /> );
+		expect( container.getElementsByClassName( 'badge badge--info-blue' ).length ).toBe( 1 );
 	} );
 
 	test( 'should have proper type class (error)', () => {
-		const badge = shallow( <Badge type="error" /> );
-		assert.lengthOf( badge.find( '.badge.badge--error' ), 1 );
+		const { container } = render( <Badge type="error" /> );
+		expect( container.getElementsByClassName( 'badge badge--error' ).length ).toBe( 1 );
 	} );
 
 	test( 'should have proper type class (default)', () => {
-		const badge = shallow( <Badge /> );
-		assert.lengthOf( badge.find( '.badge.badge--warning' ), 1 );
+		const { container } = render( <Badge /> );
+		expect( container.getElementsByClassName( 'badge badge--warning' ).length ).toBe( 1 );
 	} );
 
 	test( 'should contains the passed children wrapped by a feature-example div', () => {
-		const featureExample = shallow(
+		render(
 			<Badge>
-				<div>test</div>
+				<div>arbitrary-text-content</div>
 			</Badge>
 		);
-		assert.isTrue( featureExample.contains( <div>test</div> ) );
+		expect( screen.getByText( 'arbitrary-text-content' ) ).toBeDefined();
 	} );
 } );
