@@ -8,6 +8,7 @@ import {
 	AtomicTransferError,
 	LatestAtomicTransfer,
 	LatestAtomicTransferError,
+	AtomicSoftwareStatus,
 } from '../types';
 
 const client_id = 'magic_client_id';
@@ -303,10 +304,17 @@ describe( 'Site Actions', () => {
 			} );
 		} );
 
-		it( 'should request the Atomic software install status', () => {
+		it( 'should request the Atomic software install status succesfully', () => {
 			const { requestAtomicSoftwareStatus } = createActions( mockedClientCredentials );
 			const softwareSet = 'woo-on-plans';
 			const generator = requestAtomicSoftwareStatus( siteId, softwareSet );
+			const status: AtomicSoftwareStatus = {
+				blog_id: 123,
+				software_set: {
+					test: { path: '/valid_path.php', state: 'activate' },
+				},
+				applied: false,
+			};
 
 			const mockedApiResponse = {
 				request: {
@@ -317,8 +325,23 @@ describe( 'Site Actions', () => {
 				type: 'WPCOM_REQUEST',
 			};
 
-			// First iteration: WP_COM_REQUEST is fired
+			// First iteration
+			expect( generator.next().value ).toEqual( {
+				type: 'ATOMIC_SOFTWARE_STATUS_START',
+				siteId,
+				softwareSet,
+			} );
+
+			// Second iteration: WP_COM_REQUEST is fired
 			expect( generator.next().value ).toEqual( mockedApiResponse );
+
+			// Third iteration: LATEST_ATOMIC_TRANSFER_SUCCESS is fired
+			expect( generator.next( status ).value ).toEqual( {
+				type: 'ATOMIC_SOFTWARE_STATUS_SUCCESS',
+				siteId,
+				softwareSet,
+				status,
+			} );
 		} );
 	} );
 } );
