@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import InlineHelpContactView from 'calypso/blocks/inline-help/inline-help-contact-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
+import InlineHelpEmbedResult from './inline-help-embed-result';
 import InlineHelpRichResult from './inline-help-rich-result';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpSearchResults from './inline-help-search-results';
@@ -21,11 +22,13 @@ class InlineHelpPopoverContent extends Component {
 		onClose: PropTypes.func.isRequired,
 		setDialogState: PropTypes.func.isRequired,
 		isReskinned: PropTypes.bool,
+		inlineArticles: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		onClose: noop,
 		isReskinned: false,
+		inlineArticles: false,
 	};
 
 	state = {
@@ -144,7 +147,7 @@ class InlineHelpPopoverContent extends Component {
 	};
 
 	renderSecondaryView = () => {
-		const { onClose, setDialogState, isReskinned } = this.props;
+		const { onClose, setDialogState, isReskinned, inlineArticles } = this.props;
 		const { searchQuery, selectedResult } = this.state;
 		const classes = classNames(
 			'inline-help__secondary-view',
@@ -164,7 +167,9 @@ class InlineHelpPopoverContent extends Component {
 								<InlineHelpContactView />
 							</Fragment>
 						),
-						[ VIEW_RICH_RESULT ]: (
+						[ VIEW_RICH_RESULT ]: inlineArticles ? (
+							<InlineHelpEmbedResult result={ selectedResult } />
+						) : (
 							<InlineHelpRichResult
 								setDialogState={ setDialogState }
 								closePopover={ onClose }

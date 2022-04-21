@@ -19,6 +19,8 @@ import happychatMiddleware from 'calypso/state/happychat/middleware';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { setSection } from 'calypso/state/ui/section/actions';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
 
 const rootReducer = combineReducers( {
@@ -36,6 +38,11 @@ const store = createStore(
 );
 
 setStore( store );
+
+//For the moment we have the help center only in the editor
+store.dispatch( setSection( { name: 'gutenberg-editor' } ) );
+
+store.dispatch( setSelectedSiteId( window._currentSiteId ) );
 
 rawCurrentUserFetch()
 	.then( filterUserObject )
@@ -56,7 +63,7 @@ export default function Content() {
 			<Provider store={ store }>
 				<>
 					<QuerySites siteId={ window._currentSiteId } />
-					<InlineHelpPopoverContent isReskinned />
+					<InlineHelpPopoverContent isReskinned inlineArticles />
 				</>
 			</Provider>
 		</QueryClientProvider>

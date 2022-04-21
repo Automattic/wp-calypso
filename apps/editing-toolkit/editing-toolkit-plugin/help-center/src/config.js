@@ -17,6 +17,8 @@ window.configData = {
 		happychat: true,
 	},
 	signup_url: '/',
+	discover_blog_id: 53424024,
+	discover_feed_id: 41325786,
 };
 window.process = {
 	env: {
