@@ -40,9 +40,8 @@ const LicenseTransition = ( props: PropsWithChildren< LicenseTransitionProps > )
 
 export default function LicenseList(): ReactElement {
 	const dispatch = useDispatch();
-	const { filter, search, sortField, sortDirection, currentPage } = useContext(
-		LicenseListContext
-	);
+	const { filter, search, sortField, sortDirection, currentPage } =
+		useContext( LicenseListContext );
 	const hasFetched = useSelector( hasFetchedLicenses );
 	const isFetching = useSelector( isFetchingLicenses );
 	const licenses = useSelector( getPaginatedLicenses ) as PaginatedItems< License >;

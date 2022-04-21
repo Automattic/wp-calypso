@@ -11,9 +11,10 @@ export function useTitle() {
 
 	const locale = useLocale();
 
-	const existingSiteTitle = useSelect( ( select ) => select( SITE_STORE ).getSiteTitle( siteId ), [
-		siteId,
-	] );
+	const existingSiteTitle = useSelect(
+		( select ) => select( SITE_STORE ).getSiteTitle( siteId ),
+		[ siteId ]
+	);
 	const launchSiteTitle = useSelect( ( select ) => select( LAUNCH_STORE ).getSiteTitle(), [] );
 
 	const updateTitle = useDispatch( LAUNCH_STORE ).setSiteTitle;

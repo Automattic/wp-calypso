@@ -188,10 +188,8 @@ export default function WPCheckout( {
 		clearDomainContactErrorMessages,
 	} = useDispatch( 'wpcom-checkout' );
 
-	const [
-		shouldShowContactDetailsValidationErrors,
-		setShouldShowContactDetailsValidationErrors,
-	] = useState( false );
+	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
+		useState( false );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it

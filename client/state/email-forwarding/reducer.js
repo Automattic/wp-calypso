@@ -84,17 +84,19 @@ const handleRemoveRequestSuccess = ( forwards, { mailbox } ) => {
 	return ( forwards || [] ).filter( ( forward ) => mailbox !== forward.mailbox );
 };
 
-const changeMailBoxTemporary = ( temporary ) => ( forwards, { mailbox } ) => {
-	return ( forwards || [] ).map( ( forward ) => {
-		if ( mailbox === forward.mailbox ) {
-			return {
-				...forward,
-				temporary,
-			};
-		}
-		return forward;
-	} );
-};
+const changeMailBoxTemporary =
+	( temporary ) =>
+	( forwards, { mailbox } ) => {
+		return ( forwards || [] ).map( ( forward ) => {
+			if ( mailbox === forward.mailbox ) {
+				return {
+					...forward,
+					temporary,
+				};
+			}
+			return forward;
+		} );
+	};
 
 export const typeReducer = withSchemaValidation( typeSchema, ( state = null, action ) => {
 	switch ( action.type ) {

@@ -172,17 +172,19 @@ export const addComments = ( { query }, { comments } ) => {
 	return actions;
 };
 
-const announceFailure = ( { query: { siteId } } ) => ( dispatch, getState ) => {
-	const site = getRawSite( getState(), siteId );
-	const error =
-		site && site.name
-			? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
-					args: { siteName: site.name },
-			  } )
-			: translate( 'Failed to retrieve comments for your site' );
+const announceFailure =
+	( { query: { siteId } } ) =>
+	( dispatch, getState ) => {
+		const site = getRawSite( getState(), siteId );
+		const error =
+			site && site.name
+				? translate( 'Failed to retrieve comments for site “%(siteName)s”', {
+						args: { siteName: site.name },
+				  } )
+				: translate( 'Failed to retrieve comments for your site' );
 
-	dispatch( errorNotice( error ) );
-};
+		dispatch( errorNotice( error ) );
+	};
 
 // @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/
 export const editComment = ( action ) => ( dispatch, getState ) => {

@@ -99,9 +99,10 @@ export const ThankYouCard: FC< Props > = ( {
 		[ dispatchRecordTracksEvent ]
 	);
 
-	const jetpackVersion = useMemo( () => selectedSite?.options?.jetpack_version ?? 0, [
-		selectedSite,
-	] );
+	const jetpackVersion = useMemo(
+		() => selectedSite?.options?.jetpack_version ?? 0,
+		[ selectedSite ]
+	);
 
 	if ( ! siteAdminUrl ) {
 		return null;

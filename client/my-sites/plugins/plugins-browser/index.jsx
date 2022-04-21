@@ -109,12 +109,12 @@ const PluginsBrowser = ( {
 			isEcommerce( sitePlan ) ||
 			isPro( sitePlan ) );
 
-	const { data: paidPluginsRawList = [], isLoading: isFetchingPaidPlugins } = useWPCOMPlugins(
-		'all'
+	const { data: paidPluginsRawList = [], isLoading: isFetchingPaidPlugins } =
+		useWPCOMPlugins( 'all' );
+	const paidPlugins = useMemo(
+		() => paidPluginsRawList.map( updateWpComRating ),
+		[ paidPluginsRawList ]
 	);
-	const paidPlugins = useMemo( () => paidPluginsRawList.map( updateWpComRating ), [
-		paidPluginsRawList,
-	] );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const jetpackNonAtomic = useSelector(
@@ -135,10 +135,8 @@ const PluginsBrowser = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
-	const {
-		data: pluginsByCategoryFeatured = [],
-		isLoading: isFetchingPluginsByCategoryFeatured,
-	} = useWPCOMFeaturedPlugins();
+	const { data: pluginsByCategoryFeatured = [], isLoading: isFetchingPluginsByCategoryFeatured } =
+		useWPCOMFeaturedPlugins();
 
 	const {
 		data: { plugins: popularPlugins = [] } = {},
@@ -345,12 +343,10 @@ const SearchListView = ( {
 		}
 	);
 
-	const {
-		data: paidPluginsBySearchTermRaw = [],
-		isLoading: isFetchingPaidPluginsBySearchTerm,
-	} = useWPCOMPlugins( 'all', searchTerm, undefined, {
-		enabled: !! searchTerm,
-	} );
+	const { data: paidPluginsBySearchTermRaw = [], isLoading: isFetchingPaidPluginsBySearchTerm } =
+		useWPCOMPlugins( 'all', searchTerm, undefined, {
+			enabled: !! searchTerm,
+		} );
 
 	const paidPluginsBySearchTerm = useMemo(
 		() => paidPluginsBySearchTermRaw.map( updateWpComRating ),
@@ -462,20 +458,20 @@ const FullListView = ( { category, siteSlug, sites, billingPeriod, setBillingPer
 		}
 	);
 
-	const {
-		data: featuredPluginsRaw = [],
-		isLoading: isFetchingFeaturedPlugins,
-	} = useWPCOMFeaturedPlugins( {
-		enabled: category === 'featured',
-	} );
+	const { data: featuredPluginsRaw = [], isLoading: isFetchingFeaturedPlugins } =
+		useWPCOMFeaturedPlugins( {
+			enabled: category === 'featured',
+		} );
 
-	const featuredPlugins = useMemo( () => featuredPluginsRaw.map( updateWpComRating ), [
-		featuredPluginsRaw,
-	] );
+	const featuredPlugins = useMemo(
+		() => featuredPluginsRaw.map( updateWpComRating ),
+		[ featuredPluginsRaw ]
+	);
 
-	const wpcomPlugins = useMemo( () => wpcomPluginsRaw.map( updateWpComRating ), [
-		wpcomPluginsRaw,
-	] );
+	const wpcomPlugins = useMemo(
+		() => wpcomPluginsRaw.map( updateWpComRating ),
+		[ wpcomPluginsRaw ]
+	);
 
 	const isPaidCategory = category === 'paid';
 

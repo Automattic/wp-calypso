@@ -21,16 +21,8 @@ const debug = debugFactory( 'calypso:jetpack-connect:actions' );
 
 export function authorize( queryObject ) {
 	return ( dispatch ) => {
-		const {
-			_wp_nonce,
-			client_id,
-			from,
-			jp_version,
-			redirect_uri,
-			scope,
-			secret,
-			state,
-		} = queryObject;
+		const { _wp_nonce, client_id, from, jp_version, redirect_uri, scope, secret, state } =
+			queryObject;
 		debug( 'Trying Jetpack login.', _wp_nonce, redirect_uri, scope, state );
 		dispatch( recordTracksEvent( 'calypso_jpc_authorize', { from, site: client_id } ) );
 		dispatch( {

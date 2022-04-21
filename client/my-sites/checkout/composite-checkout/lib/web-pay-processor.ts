@@ -34,13 +34,8 @@ export default async function webPayProcessor(
 		recordTransactionBeginAnalytics( { paymentMethodId: webPaymentType } )
 	);
 
-	const {
-		includeDomainDetails,
-		includeGSuiteDetails,
-		responseCart,
-		siteId,
-		contactDetails,
-	} = transactionOptions;
+	const { includeDomainDetails, includeGSuiteDetails, responseCart, siteId, contactDetails } =
+		transactionOptions;
 
 	debug( 'formatting web-pay transaction', submitData );
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {

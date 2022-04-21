@@ -177,8 +177,7 @@ describe( 'markup', () => {
 					site,
 					{
 						ID: 1,
-						URL:
-							'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
+						URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
 						alt: 'Automattic',
 						thumbnails: {},
 						width: 276,
@@ -215,8 +214,7 @@ describe( 'markup', () => {
 					siteWithWidth,
 					{
 						ID: 1,
-						URL:
-							'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
+						URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
 						alt: 'Automattic',
 						thumbnails: {},
 						width: 276,
@@ -271,8 +269,7 @@ describe( 'markup', () => {
 					site,
 					{
 						ID: 1,
-						URL:
-							'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
+						URL: 'https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png',
 						alt: 'Automattic',
 						thumbnails: {},
 						width: 2760,

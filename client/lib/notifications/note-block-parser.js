@@ -55,7 +55,8 @@ const rangeSort = ( { indices: [ aStart, aEnd ] }, { indices: [ bStart, bEnd ] }
  * @param {number} range.indices.1 innerEnd   End index of the range
  * @returns {Function({indices: Number[]}): boolean} performs the check
  */
-const encloses = ( { indices: [ innerStart, innerEnd ] } ) =>
+const encloses =
+	( { indices: [ innerStart, innerEnd ] } ) =>
 	/**
 	 * Indicates if the given range encloses the first "inner" range
 	 *

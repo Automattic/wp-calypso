@@ -33,16 +33,8 @@ export default class PurchaseDetail extends PureComponent {
 	};
 
 	renderPurchaseButton() {
-		const {
-			buttonText,
-			isPlaceholder,
-			isSubmitting,
-			href,
-			onClick,
-			primaryButton,
-			target,
-			rel,
-		} = this.props;
+		const { buttonText, isPlaceholder, isSubmitting, href, onClick, primaryButton, target, rel } =
+			this.props;
 
 		if ( ! buttonText && ! isPlaceholder ) {
 			return null;

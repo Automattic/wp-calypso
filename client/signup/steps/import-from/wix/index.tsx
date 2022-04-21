@@ -28,17 +28,8 @@ interface Props {
 }
 export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	const importer: Importer = 'wix';
-	const {
-		job,
-		error,
-		run,
-		siteId,
-		siteSlug,
-		fromSite,
-		importSite,
-		startImport,
-		resetImport,
-	} = props;
+	const { job, error, run, siteId, siteSlug, fromSite, importSite, startImport, resetImport } =
+		props;
 
 	/**
 	 ↓ Effects

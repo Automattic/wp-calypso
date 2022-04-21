@@ -29,11 +29,10 @@ const HasSiteCredentialsSwitch: React.FC< Props > = ( {
 	const [ isLocked, setLocked ] = useState( hasCredentials );
 	const [ currentSiteId, setCurrentSiteId ] = useState( siteId );
 
-	const loadingCondition = useCallback( () => ( ! hasLoaded || isFetching ) && ! isLocked, [
-		hasLoaded,
-		isFetching,
-		isLocked,
-	] );
+	const loadingCondition = useCallback(
+		() => ( ! hasLoaded || isFetching ) && ! isLocked,
+		[ hasLoaded, isFetching, isLocked ]
+	);
 	const renderCondition = useCallback( () => hasCredentials, [ hasCredentials ] );
 
 	useEffect( () => {

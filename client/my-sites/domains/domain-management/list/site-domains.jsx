@@ -451,12 +451,8 @@ export class SiteDomains extends Component {
 
 	// TODO: maybe move this to utils?
 	shouldUpgradeToMakeDomainPrimary = ( domain ) => {
-		const {
-			isDomainOnly,
-			isOnFreePlan,
-			hasNonPrimaryDomainsFlag,
-			canSetPrimaryDomain,
-		} = this.props;
+		const { isDomainOnly, isOnFreePlan, hasNonPrimaryDomainsFlag, canSetPrimaryDomain } =
+			this.props;
 
 		return (
 			hasNonPrimaryDomainsFlag &&

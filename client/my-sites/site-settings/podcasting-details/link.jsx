@@ -32,13 +32,8 @@ class PodcastingLink extends Component {
 	}
 
 	renderCardBody() {
-		const {
-			isPrivate,
-			isPodcastingEnabled,
-			podcastingCategoryId,
-			detailsLink,
-			translate,
-		} = this.props;
+		const { isPrivate, isPodcastingEnabled, podcastingCategoryId, detailsLink, translate } =
+			this.props;
 
 		if ( isPrivate ) {
 			return <PodcastingPrivateSiteMessage />;

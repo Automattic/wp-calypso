@@ -67,39 +67,41 @@ const recordAction = ( action ) => {
 	}
 };
 
-export const actionLogger = ( next ) => ( ...args ) => {
-	const store = next( ...args );
+export const actionLogger =
+	( next ) =>
+	( ...args ) => {
+		const store = next( ...args );
 
-	if ( 'undefined' === typeof window ) {
-		return store;
-	}
-
-	const dispatch = ( action ) => {
-		if ( state.shouldRecordActions ) {
-			recordAction( action );
+		if ( 'undefined' === typeof window ) {
+			return store;
 		}
 
-		/* eslint-disable no-console */
-		if (
-			'function' === typeof state.watchPredicate &&
-			'function' === typeof console.log &&
-			state.watchPredicate( action )
-		) {
-			console.log( 'Watched action observed:\n%o', action );
-		}
-		/* eslint-enable no-console */
+		const dispatch = ( action ) => {
+			if ( state.shouldRecordActions ) {
+				recordAction( action );
+			}
 
-		return store.dispatch( action );
+			/* eslint-disable no-console */
+			if (
+				'function' === typeof state.watchPredicate &&
+				'function' === typeof console.log &&
+				state.watchPredicate( action )
+			) {
+				console.log( 'Watched action observed:\n%o', action );
+			}
+			/* eslint-enable no-console */
+
+			return store.dispatch( action );
+		};
+
+		Object.assign( window, {
+			actionLog,
+		} );
+
+		return {
+			...store,
+			dispatch,
+		};
 	};
-
-	Object.assign( window, {
-		actionLog,
-	} );
-
-	return {
-		...store,
-		dispatch,
-	};
-};
 
 export default actionLogger;

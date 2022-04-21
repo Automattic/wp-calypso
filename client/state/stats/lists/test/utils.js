@@ -1051,8 +1051,7 @@ describe( 'utils', () => {
 											plays: 32,
 											post_id: 111111111,
 											title: 'Press This!',
-											url:
-												'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+											url: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
 										},
 									],
 								},
@@ -1071,8 +1070,7 @@ describe( 'utils', () => {
 					{
 						actions: [
 							{
-								data:
-									'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
+								data: 'http://en.blog.wordpress.com/wp-admin/media.php?action=edit&attachment_id=111111111',
 								type: 'link',
 							},
 						],
@@ -1121,8 +1119,7 @@ describe( 'utils', () => {
 						{
 							label:
 								'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
-							link:
-								'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
+							link: 'http://www.themepremium.com/blog-with-the-speed-of-your-thought-with-the-p2-theme/',
 						},
 					],
 				} );
@@ -1333,8 +1330,7 @@ describe( 'utils', () => {
 								'2017-01-12': {
 									clicks: [
 										{
-											icon:
-												'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+											icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
 											name: 'wordpress.com/support',
 											url: null,
 											views: 45,
@@ -1348,8 +1344,7 @@ describe( 'utils', () => {
 										},
 										{
 											children: null,
-											icon:
-												'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+											icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
 											name: 'en.forums.wordpress.com',
 											url: 'https://en.forums.wordpress.com/',
 											views: 6,
@@ -1399,8 +1394,7 @@ describe( 'utils', () => {
 							summary: {
 								clicks: [
 									{
-										icon:
-											'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+										icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
 										name: 'wordpress.com/support',
 										url: null,
 										views: 50,
@@ -1414,8 +1408,7 @@ describe( 'utils', () => {
 									},
 									{
 										children: null,
-										icon:
-											'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+										icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
 										name: 'en.forums.wordpress.com',
 										url: 'https://en.forums.wordpress.com/',
 										views: 10,
@@ -1482,8 +1475,7 @@ describe( 'utils', () => {
 										group: 'WordPress.com Reader',
 										name: 'WordPress.com Reader',
 										url: 'https://wordpress.com',
-										icon:
-											'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
+										icon: 'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
 										results: {
 											views: 500,
 										},
@@ -1491,8 +1483,7 @@ describe( 'utils', () => {
 									},
 									{
 										group: 'wordpress.com/support',
-										icon:
-											'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+										icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
 										name: 'wordpress.com/support',
 										results: [
 											{ name: 'homepage', url: 'https://wordpress.com/support/', views: 200 },
@@ -1570,8 +1561,7 @@ describe( 'utils', () => {
 											group: 'WordPress.com Reader',
 											name: 'WordPress.com Reader',
 											url: 'https://wordpress.com',
-											icon:
-												'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
+											icon: 'https://secure.gravatar.com/blavatar/236c008da9dc0edb4b3464ecebb3fc1d?s=48',
 											results: {
 												views: 407,
 											},
@@ -1579,8 +1569,7 @@ describe( 'utils', () => {
 										},
 										{
 											group: 'wordpress.com/support',
-											icon:
-												'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+											icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
 											name: 'wordpress.com/support',
 											results: [
 												{ name: 'homepage', url: 'https://wordpress.com/support/', views: 42 },

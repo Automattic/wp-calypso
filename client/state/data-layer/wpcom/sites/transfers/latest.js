@@ -18,25 +18,27 @@ export const requestTransfer = ( action ) =>
 		action
 	);
 
-export const receiveTransfer = ( { siteId }, transfer ) => ( dispatch ) => {
-	dispatch( setAtomicTransfer( siteId, transfer ) );
+export const receiveTransfer =
+	( { siteId }, transfer ) =>
+	( dispatch ) => {
+		dispatch( setAtomicTransfer( siteId, transfer ) );
 
-	const status = transfer.status;
-	if ( status !== transferStates.ERROR && status !== transferStates.COMPLETED ) {
-		delay( () => dispatch( fetchAtomicTransfer( siteId ) ), 10000 );
-	}
+		const status = transfer.status;
+		if ( status !== transferStates.ERROR && status !== transferStates.COMPLETED ) {
+			delay( () => dispatch( fetchAtomicTransfer( siteId ) ), 10000 );
+		}
 
-	if ( status === transferStates.COMPLETED ) {
-		dispatch(
-			recordTracksEvent( 'calypso_atomic_transfer_complete', {
-				transfer_id: transfer.atomic_transfer_id,
-			} )
-		);
+		if ( status === transferStates.COMPLETED ) {
+			dispatch(
+				recordTracksEvent( 'calypso_atomic_transfer_complete', {
+					transfer_id: transfer.atomic_transfer_id,
+				} )
+			);
 
-		// Update the now-atomic site to ensure plugin page displays correctly.
-		dispatch( requestSite( siteId ) );
-	}
-};
+			// Update the now-atomic site to ensure plugin page displays correctly.
+			dispatch( requestSite( siteId ) );
+		}
+	};
 
 registerHandlers( 'state/data-layer/wpcom/sites/atomic/transfer/index.js', {
 	[ ATOMIC_TRANSFER_REQUEST ]: [

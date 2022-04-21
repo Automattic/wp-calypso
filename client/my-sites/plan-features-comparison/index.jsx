@@ -327,15 +327,8 @@ const hasPlaceholders = ( planProperties ) =>
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
-		const {
-			isInSignup,
-			placeholder,
-			plans,
-			isLandingPage,
-			siteId,
-			visiblePlans,
-			popularPlanSpec,
-		} = ownProps;
+		const { isInSignup, placeholder, plans, isLandingPage, siteId, visiblePlans, popularPlanSpec } =
+			ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
 

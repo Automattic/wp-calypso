@@ -88,9 +88,8 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 	const siteTitleError = null;
 	const taglineError = null;
 
-	const { headerText, headerImage, siteTitleLabel, taglineExplanation } = getTextsFromIntent(
-		intent
-	);
+	const { headerText, headerImage, siteTitleLabel, taglineExplanation } =
+		getTextsFromIntent( intent );
 
 	const stepContent = (
 		<form className="site-options__form" onSubmit={ handleSubmit }>

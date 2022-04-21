@@ -1,6 +1,6 @@
 import { find } from 'lodash';
 
-export const shortEnough = ( limit ) => ( title ) => ( title.length <= limit ? title : false );
+export const shortEnough = ( limit ) => ( title ) => title.length <= limit ? title : false;
 
 export const truncatedAtSpace = ( lower, upper ) => ( fullTitle ) => {
 	const title = fullTitle.slice( 0, upper );
@@ -11,8 +11,10 @@ export const truncatedAtSpace = ( lower, upper ) => ( fullTitle ) => {
 
 export const hardTruncation = ( limit ) => ( title ) => title.slice( 0, limit ).concat( '…' );
 
-export const firstValid = ( ...predicates ) => ( a ) =>
-	find( predicates, ( p ) => false !== p( a ) )( a );
+export const firstValid =
+	( ...predicates ) =>
+	( a ) =>
+		find( predicates, ( p ) => false !== p( a ) )( a );
 
 export const stripHtmlTags = ( description ) =>
 	description ? description.replace( /(<([^>]+)>)/gi, '' ) : '';

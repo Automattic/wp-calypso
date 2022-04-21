@@ -9,9 +9,8 @@ export function usePersistentSelectedDomain(
 	currentDomain?: DomainSuggestion
 ): DomainSuggestion | undefined {
 	// Keep the users selected domain in local state so we can always show it to the user.
-	const [ persistentSelectedDomain, setPersistentSelectedDomain ] = useState<
-		DomainSuggestion | undefined
-	>();
+	const [ persistentSelectedDomain, setPersistentSelectedDomain ] =
+		useState< DomainSuggestion | undefined >();
 
 	// Make a complete list of suggestions with the subdomain
 	const domainSuggestionsWithSubdomain =

@@ -15,18 +15,20 @@ function CartMessage( { message }: { message: ResponseCartMessage } ): JSX.Eleme
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 
-	const getPrettyMessage = useMemo( () => getMessagePrettifier( translate, selectedSiteSlug ), [
-		translate,
-		selectedSiteSlug,
-	] );
+	const getPrettyMessage = useMemo(
+		() => getMessagePrettifier( translate, selectedSiteSlug ),
+		[ translate, selectedSiteSlug ]
+	);
 	return <>{ getPrettyMessage( message ) }</>;
 }
 
 export default function CartMessages(): null {
 	const cartKey = useCartKey();
-	const { responseCart: cart, isLoading: isLoadingCart, clearMessages } = useShoppingCart(
-		cartKey
-	);
+	const {
+		responseCart: cart,
+		isLoading: isLoadingCart,
+		clearMessages,
+	} = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
 
 	const showErrorMessages = useCallback(

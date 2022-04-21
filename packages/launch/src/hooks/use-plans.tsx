@@ -8,9 +8,7 @@ import type { PlanProductForFlow } from '../utils';
 import type { Plans } from '@automattic/data-stores';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
-export function usePlans(
-	billingPeriod: Plans.PlanBillingPeriod = 'ANNUALLY'
-): {
+export function usePlans( billingPeriod: Plans.PlanBillingPeriod = 'ANNUALLY' ): {
 	defaultPaidPlan: Plans.Plan | undefined;
 	defaultFreePlan: Plans.Plan | undefined;
 	defaultFreePlanProduct: Plans.PlanProduct | undefined;
@@ -48,9 +46,8 @@ export function usePlanProductFromCart(): PlanProductForFlow | undefined {
 	const { siteId } = useContext( LaunchContext );
 	const { getCart } = useDispatch( SITE_STORE );
 
-	const [ planProductFromCart, setPlanProductFromCart ] = useState<
-		PlanProductForFlow | undefined
-	>( undefined );
+	const [ planProductFromCart, setPlanProductFromCart ] =
+		useState< PlanProductForFlow | undefined >( undefined );
 
 	useEffect( () => {
 		( async function () {

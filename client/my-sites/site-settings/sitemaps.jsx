@@ -116,12 +116,8 @@ class Sitemaps extends Component {
 	}
 
 	renderJetpackSettingsContent() {
-		const {
-			activatingSitemapsModule,
-			sitemapsModule,
-			sitemapsModuleActive,
-			translate,
-		} = this.props;
+		const { activatingSitemapsModule, sitemapsModule, sitemapsModuleActive, translate } =
+			this.props;
 
 		if ( ! this.isSitePublic() && ! activatingSitemapsModule ) {
 			return (

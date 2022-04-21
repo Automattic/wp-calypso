@@ -516,13 +516,8 @@ export class ContactDetailsFormFields extends Component {
 	}
 
 	render() {
-		const {
-			translate,
-			onCancel,
-			disableSubmitButton,
-			labelTexts,
-			contactDetailsErrors,
-		} = this.props;
+		const { translate, onCancel, disableSubmitButton, labelTexts, contactDetailsErrors } =
+			this.props;
 
 		if ( ! this.state.form ) {
 			return null;

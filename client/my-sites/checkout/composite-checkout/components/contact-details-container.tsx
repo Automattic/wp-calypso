@@ -52,12 +52,8 @@ export default function ContactDetailsContainer( {
 		.filter( ( product ) => isDomainProduct( product ) || isDomainTransfer( product ) )
 		.filter( ( product ) => ! isDomainMapping( product ) )
 		.map( getDomain );
-	const {
-		updateDomainContactFields,
-		updateCountryCode,
-		updatePostalCode,
-		updateEmail,
-	} = useDispatch( 'wpcom-checkout' );
+	const { updateDomainContactFields, updateCountryCode, updatePostalCode, updateEmail } =
+		useDispatch( 'wpcom-checkout' );
 	const contactDetails = prepareDomainContactDetails( contactInfo );
 	const contactDetailsErrors = prepareDomainContactDetailsErrors( contactInfo );
 	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {

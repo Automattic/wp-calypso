@@ -188,12 +188,8 @@ export class SiteSettingsFormSEO extends Component {
 
 	trackSubmission = () => {
 		const { dirtyFields } = this.state;
-		const {
-			path,
-			trackFormSubmitted,
-			trackTitleFormatsUpdated,
-			trackFrontPageMetaUpdated,
-		} = this.props;
+		const { path, trackFormSubmitted, trackTitleFormatsUpdated, trackFrontPageMetaUpdated } =
+			this.props;
 
 		trackFormSubmitted( { path } );
 

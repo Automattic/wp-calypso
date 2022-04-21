@@ -12,9 +12,10 @@ interface Result {
 const useCourseData = ( courseSlug: string ): Result => {
 	const { data } = useCourseQuery( courseSlug );
 
-	const videoSlugs = useMemo( () => ( data?.videos ? Object.keys( data.videos ) : [] ), [
-		data?.videos,
-	] );
+	const videoSlugs = useMemo(
+		() => ( data?.videos ? Object.keys( data.videos ) : [] ),
+		[ data?.videos ]
+	);
 
 	const completedVideoSlugs = useMemo( () => {
 		if ( ! data?.completions ) {

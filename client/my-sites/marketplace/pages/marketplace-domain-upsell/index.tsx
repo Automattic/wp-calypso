@@ -65,9 +65,8 @@ const getSiteNameFromURL = ( url: string ) => url?.split( '.' )?.[ 0 ] ?? url;
 
 function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
 	const [ selectedDomainProductUUID, setDomainProductUUID ] = useState< string >( '' );
-	const [ selectedDomain, setDomain ] = useState< DomainSuggestions.DomainSuggestion | undefined >(
-		undefined
-	);
+	const [ selectedDomain, setDomain ] =
+		useState< DomainSuggestions.DomainSuggestion | undefined >( undefined );
 	const [ isExpandedBasketView, setIsExpandedBasketView ] = useState( false );
 	const cartKey = useCartKey();
 	const { addProductsToCart, removeProductFromCart } = useShoppingCart( cartKey );

@@ -153,13 +153,8 @@ class SiteOwnership extends Component {
 	}
 
 	renderConnectionDetails() {
-		const {
-			connectionOwner,
-			siteIsConnected,
-			siteIsInDevMode,
-			userIsConnectionOwner,
-			translate,
-		} = this.props;
+		const { connectionOwner, siteIsConnected, siteIsInDevMode, userIsConnectionOwner, translate } =
+			this.props;
 
 		if ( siteIsConnected === false ) {
 			return translate( 'The site is not connected.' );

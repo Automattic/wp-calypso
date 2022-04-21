@@ -331,15 +331,8 @@ class DomainRow extends PureComponent {
 	};
 
 	renderEllipsisMenu() {
-		const {
-			isLoadingDomainDetails,
-			site,
-			domain,
-			showDomainDetails,
-			disabled,
-			isBusy,
-			translate,
-		} = this.props;
+		const { isLoadingDomainDetails, site, domain, showDomainDetails, disabled, isBusy, translate } =
+			this.props;
 
 		if ( ! showDomainDetails ) {
 			return <div className="domain-row__action-cell"></div>;

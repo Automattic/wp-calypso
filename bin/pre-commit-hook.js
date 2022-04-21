@@ -100,7 +100,11 @@ const toFormat = files.filter( ( file ) => ! dirtyFiles.has( file ) );
 // Split the set to format into things to format with stylelint and things to format with prettier.
 // We avoid prettier on sass files because of outstanding bugs in how prettier handles
 // single line comments. We also split on PHP files for PHPCS handling.
-const { toPrettify = [], toStylelintfix = [], toPHPCBF = [] } = _.groupBy( toFormat, ( file ) => {
+const {
+	toPrettify = [],
+	toStylelintfix = [],
+	toPHPCBF = [],
+} = _.groupBy( toFormat, ( file ) => {
 	switch ( true ) {
 		case file.endsWith( '.scss' ):
 			return 'toStylelintfix';
@@ -152,7 +156,11 @@ if ( toPHPCBF.length ) {
 }
 
 // Now run the linters over everything staged to commit (excepting JSON), even if they are partially staged
-const { toEslint = [], toStylelint = [], toPHPCS = [] } = _.groupBy(
+const {
+	toEslint = [],
+	toStylelint = [],
+	toPHPCS = [],
+} = _.groupBy(
 	files.filter( ( file ) => ! file.endsWith( '.json' ) ),
 	( file ) => {
 		switch ( true ) {

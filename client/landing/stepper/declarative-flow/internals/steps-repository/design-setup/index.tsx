@@ -78,9 +78,10 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const useFeaturedPicksButtons =
 		showDesignPickerCategories && isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
 	const isPremiumThemeAvailable = Boolean(
-		useMemo( () => sitePlanSlug && planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ), [
-			sitePlanSlug,
-		] )
+		useMemo(
+			() => sitePlanSlug && planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
+			[ sitePlanSlug ]
+		)
 	);
 
 	const tier =

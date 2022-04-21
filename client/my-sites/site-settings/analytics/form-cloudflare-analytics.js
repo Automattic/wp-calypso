@@ -46,9 +46,8 @@ export function CloudflareAnalyticsSettings( {
 } ) {
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
 	const [ isCloudflareEnabled, setIsCloudflareEnabled ] = useState( false );
-	const [ loggedCloudflareAnalyticsModified, setLoggedCloudflareAnalyticsModified ] = useState(
-		false
-	);
+	const [ loggedCloudflareAnalyticsModified, setLoggedCloudflareAnalyticsModified ] =
+		useState( false );
 	const isSubmitButtonDisabled =
 		isRequestingSettings || isSavingSettings || ! isCodeValid || ! enableForm;
 

@@ -22,15 +22,8 @@ class EditorRevisions extends Component {
 	}
 
 	render() {
-		const {
-			authorsIds,
-			comparisons,
-			postId,
-			revisions,
-			selectedDiff,
-			selectedRevisionId,
-			siteId,
-		} = this.props;
+		const { authorsIds, comparisons, postId, revisions, selectedDiff, selectedRevisionId, siteId } =
+			this.props;
 
 		return (
 			<div className="editor-revisions">

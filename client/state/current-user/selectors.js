@@ -36,10 +36,12 @@ export function getCurrentUser( state ) {
  * @param {?T} otherwise A default value that is returned if no user or property is found
  * @returns {(state: S) => T} A selector which takes the state as a parameter
  */
-export const createCurrentUserSelector = ( path, otherwise = null ) => ( state ) => {
-	const user = getCurrentUser( state );
-	return user?.[ path ] ?? otherwise;
-};
+export const createCurrentUserSelector =
+	( path, otherwise = null ) =>
+	( state ) => {
+		const user = getCurrentUser( state );
+		return user?.[ path ] ?? otherwise;
+	};
 
 /**
  * Returns the locale slug for the current user.

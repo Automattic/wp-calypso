@@ -137,9 +137,8 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	}, [ duration, currentPlanSlug, translate ] );
 
 	const { shouldWrap: shouldWrapGrid, gridRef } = useWrapGridForSmallScreens( 3 );
-	const { availableProducts, purchasedProducts, includedInPlanProducts } = useGetPlansGridProducts(
-		siteId
-	);
+	const { availableProducts, purchasedProducts, includedInPlanProducts } =
+		useGetPlansGridProducts( siteId );
 	const [ popularItems, otherItems ] = useMemo( () => {
 		const allItems = sortByGridPosition( [
 			...getProductsToDisplay( {

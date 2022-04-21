@@ -38,10 +38,9 @@ function slugIsJetpackProductSlug( slug: string ): slug is JetpackProductSlug {
 }
 
 function slugIsJetpackPlanSlug( slug: string ): slug is JetpackPlanSlug {
-	return ( [
-		...JETPACK_LEGACY_PLANS,
-		...JETPACK_RESET_PLANS,
-	] as ReadonlyArray< string > ).includes( slug );
+	return (
+		[ ...JETPACK_LEGACY_PLANS, ...JETPACK_RESET_PLANS ] as ReadonlyArray< string >
+	 ).includes( slug );
 }
 
 function objectIsSelectorProduct(

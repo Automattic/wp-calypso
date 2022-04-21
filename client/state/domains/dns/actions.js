@@ -18,20 +18,22 @@ import { getDomainDns } from './selectors';
 
 import 'calypso/state/domains/init';
 
-export const fetchDns = ( domainName, forceReload = false ) => ( dispatch, getState ) => {
-	const dns = getDomainDns( getState(), domainName );
+export const fetchDns =
+	( domainName, forceReload = false ) =>
+	( dispatch, getState ) => {
+		const dns = getDomainDns( getState(), domainName );
 
-	if ( ! forceReload && ( dns.isFetching || dns.hasLoadedFromServer ) ) {
-		return;
-	}
+		if ( ! forceReload && ( dns.isFetching || dns.hasLoadedFromServer ) ) {
+			return;
+		}
 
-	dispatch( { type: DOMAINS_DNS_FETCH, domainName } );
+		dispatch( { type: DOMAINS_DNS_FETCH, domainName } );
 
-	wpcom.req.get( `/domains/${ domainName }/dns` ).then(
-		( { records } ) => dispatch( { type: DOMAINS_DNS_FETCH_COMPLETED, domainName, records } ),
-		() => dispatch( { type: DOMAINS_DNS_FETCH_FAILED, domainName } )
-	);
-};
+		wpcom.req.get( `/domains/${ domainName }/dns` ).then(
+			( { records } ) => dispatch( { type: DOMAINS_DNS_FETCH_COMPLETED, domainName, records } ),
+			() => dispatch( { type: DOMAINS_DNS_FETCH_FAILED, domainName } )
+		);
+	};
 
 const updateDnsRequest = ( domainName, records ) =>
 	wpcom.req.post( `/domains/${ domainName }/dns`, {

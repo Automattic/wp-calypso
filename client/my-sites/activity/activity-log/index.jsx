@@ -289,16 +289,8 @@ class ActivityLog extends Component {
 	 * @returns {object}                 Card showing progress.
 	 */
 	getProgressBanner( siteId, actionProgress, action ) {
-		const {
-			percent,
-			progress,
-			restoreId,
-			downloadId,
-			status,
-			timestamp,
-			rewindId,
-			context,
-		} = actionProgress;
+		const { percent, progress, restoreId, downloadId, status, timestamp, rewindId, context } =
+			actionProgress;
 		return (
 			<ProgressBanner
 				key={ `progress-${ restoreId || downloadId }` }
@@ -388,15 +380,8 @@ class ActivityLog extends Component {
 	}
 
 	renderNoLogsContent() {
-		const {
-			filter,
-			displayRulesLoaded,
-			logsLoaded,
-			siteId,
-			translate,
-			siteHasNoLog,
-			slug,
-		} = this.props;
+		const { filter, displayRulesLoaded, logsLoaded, siteId, translate, siteHasNoLog, slug } =
+			this.props;
 
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
