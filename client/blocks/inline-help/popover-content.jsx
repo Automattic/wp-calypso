@@ -23,6 +23,8 @@ class InlineHelpPopoverContent extends Component {
 		setDialogState: PropTypes.func.isRequired,
 		isReskinned: PropTypes.bool,
 		inlineArticles: PropTypes.bool,
+		selectedArticle: PropTypes.object,
+		setSelectedArticle: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -34,8 +36,14 @@ class InlineHelpPopoverContent extends Component {
 	state = {
 		searchQuery: '',
 		activeSecondaryView: null,
-		selectedResult: null,
+		selectedResult: this.props.selectedArticle ?? null,
 	};
+
+	componentDidMount() {
+		if ( this.state.selectedResult ) {
+			this.openSecondaryView( VIEW_RICH_RESULT );
+		}
+	}
 
 	secondaryViewRef = createRef();
 
@@ -46,6 +54,7 @@ class InlineHelpPopoverContent extends Component {
 	openResultView = ( event, result ) => {
 		event.preventDefault();
 		this.setState( { selectedResult: result } );
+		this.props.setSelectedArticle( result );
 		this.openSecondaryView( VIEW_RICH_RESULT );
 	};
 

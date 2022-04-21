@@ -57,13 +57,18 @@ rawCurrentUserFetch()
 
 const queryClient = new QueryClient();
 
-export default function Content() {
+export default function Content( { selectedArticle, setSelectedArticle } ) {
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<Provider store={ store }>
 				<>
 					<QuerySites siteId={ window._currentSiteId } />
-					<InlineHelpPopoverContent isReskinned inlineArticles />
+					<InlineHelpPopoverContent
+						isReskinned
+						inlineArticles
+						selectedArticle={ selectedArticle }
+						setSelectedArticle={ setSelectedArticle }
+					/>
 				</>
 			</Provider>
 		</QueryClientProvider>

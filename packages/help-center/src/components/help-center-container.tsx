@@ -3,6 +3,7 @@
  */
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useState } from 'react';
 import Draggable from 'react-draggable';
@@ -14,7 +15,8 @@ import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
 import { Container } from './types';
 
-const HelpCenterContainer: React.FC< Container > = ( { content, handleClose } ) => {
+const HelpCenterContainer: React.FC< Container > = ( { content, handleClose, headerText } ) => {
+	const { __ } = useI18n();
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
@@ -39,6 +41,8 @@ const HelpCenterContainer: React.FC< Container > = ( { content, handleClose } ) 
 		onAnimationEnd: toggleVisible,
 	};
 
+	const header = isMinimized ? headerText : __( 'Help Center' );
+
 	const containerContent = (
 		<>
 			<HelpCenterHeader
@@ -46,6 +50,7 @@ const HelpCenterContainer: React.FC< Container > = ( { content, handleClose } ) 
 				onMinimize={ () => setIsMinimized( true ) }
 				onMaximize={ () => setIsMinimized( false ) }
 				onDismiss={ onDismiss }
+				headerText={ header }
 			/>
 			{ ! isMinimized && (
 				<>

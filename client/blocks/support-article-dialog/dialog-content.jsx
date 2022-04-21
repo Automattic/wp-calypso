@@ -34,7 +34,12 @@ const DialogContent = ( { postId, blogId, articleUrl } ) => {
 
 	useEffect( () => {
 		//If a url includes an anchor, let's scroll this into view!
-		if ( typeof window !== 'undefined' && articleUrl?.indexOf( '#' ) !== -1 && post?.content ) {
+		if (
+			typeof window !== 'undefined' &&
+			articleUrl &&
+			articleUrl.indexOf( '#' ) !== -1 &&
+			post?.content
+		) {
 			setTimeout( () => {
 				const anchorId = articleUrl.split( '#' ).pop();
 				const element = document.getElementById( anchorId );
