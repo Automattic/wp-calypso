@@ -16,6 +16,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import BloggerImporter from 'calypso/signup/steps/import-from/blogger';
 import NotAuthorized from 'calypso/signup/steps/import-from/components/not-authorized';
 import NotFound from 'calypso/signup/steps/import-from/components/not-found';
+import MediumImporter from 'calypso/signup/steps/import-from/medium';
 import { Importer, ImportJob } from 'calypso/signup/steps/import-from/types';
 import { getImporterTypeForEngine } from 'calypso/signup/steps/import-from/util';
 import WordpressImporter from 'calypso/signup/steps/import-from/wordpress';
@@ -152,6 +153,20 @@ const ImporterStep: Step = function ImportStep( props ) {
 		);
 	}
 
+	function renderMediumImporter() {
+		return (
+			<MediumImporter
+				job={ getImportJob( importer as Importer ) }
+				run={ runImportInitially }
+				siteId={ siteId as number }
+				site={ site as SiteDetails }
+				siteSlug={ siteSlug as string }
+				fromSite={ fromSite }
+				urlData={ fromSiteData }
+			/>
+		);
+	}
+
 	function renderWordpressImporter() {
 		return (
 			<WordpressImporter
@@ -179,6 +194,8 @@ const ImporterStep: Step = function ImportStep( props ) {
 						return <NotAuthorized siteSlug={ siteSlug } />;
 					} else if ( importer === 'blogger' && isEnabled( 'onboarding/import-from-blogger' ) ) {
 						return renderBloggerImporter();
+					} else if ( importer === 'medium' && isEnabled( 'onboarding/import-from-medium' ) ) {
+						return renderMediumImporter();
 					} else if (
 						importer === 'wordpress' &&
 						isEnabled( 'onboarding/import-from-wordpress' )
