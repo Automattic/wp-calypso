@@ -13,6 +13,7 @@ const {
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
+const SentryCliPlugin = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
@@ -140,6 +141,11 @@ const fileLoader = FileConfig.loader(
 		  }
 );
 
+const filePaths = {
+	path: path.join( outputDir, 'public', extraPath ),
+	publicPath: `/calypso/${ extraPath }/`,
+};
+
 const webpackConfig = {
 	bail: ! isDevelopment,
 	context: __dirname,
@@ -152,11 +158,11 @@ const webpackConfig = {
 		'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
-	devtool: process.env.SOURCEMAP || ( isDevelopment ? 'eval' : false ),
+	// devtool: process.env.SOURCEMAP || ( isDevelopment ? 'eval' : false ),
+	devtool: 'source-map',
 	output: {
-		path: path.join( outputDir, 'public', extraPath ),
+		...filePaths,
 		pathinfo: false,
-		publicPath: `/calypso/${ extraPath }/`,
 		filename: outputFilename,
 		chunkFilename: outputChunkFilename,
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
@@ -355,6 +361,20 @@ const webpackConfig = {
 		shouldProfile && new webpack.ProgressPlugin( { profile: true } ),
 
 		shouldUsePersistentCache && shouldUseReadonlyCache && new ReadOnlyCachePlugin(),
+
+		// NOTE: Must be last.
+		new SentryCliPlugin( {
+			dryRun: true,
+			release: process.env.COMMIT_SHA,
+			org: 'a8c',
+			project: 'calypso',
+			authToken: process.env.SENTRY_AUTH_TOKEN,
+			include: filePaths.path,
+			urlPrefix: `~${ filePaths.publicPath }`,
+			// ignoreFile: '.sentrycliignore',
+			// ignore: [ 'node_modules', 'webpack.config.js' ],
+			configFile: 'sentry.properties',
+		} ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
 
