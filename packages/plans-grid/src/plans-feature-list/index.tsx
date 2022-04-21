@@ -25,8 +25,9 @@ const CrossIcon: React.FunctionComponent< FeatureListIconProps > = ( { className
 	<Icon className={ className } icon={ close } size={ 18 } />
 );
 
-const DefaultFeatureListItemContentWrapper: React.FunctionComponent< FeatureListItemContentWrapperProps > =
-	( { children, className } ) => <span className={ className }>{ children }</span>;
+const DefaultFeatureListItemContentWrapper: React.FunctionComponent<
+	FeatureListItemContentWrapperProps
+> = ( { children, className } ) => <span className={ className }>{ children }</span>;
 
 const FeatureAnnualDiscountNudge: React.FunctionComponent< {
 	billingPeriod: Plans.PlanBillingPeriod;
