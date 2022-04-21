@@ -63,6 +63,7 @@
 		"@emotion/react": "^11.4.1",
 		"@emotion/styled": "^11.3.0",
 		"@github/webauthn-json": "^0.4.1",
+		"@sentry/react": "^6.19.4",
 		"@stripe/react-stripe-js": "^1.4.1",
 		"@stripe/stripe-js": "^1.17.1",
 		"@wordpress/a11y": "^3.2.4",
