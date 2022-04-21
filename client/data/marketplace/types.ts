@@ -45,3 +45,5 @@ export type ESIndexResult = {
 	active_installs: number;
 	slug: string;
 };
+
+export type ESHits = Array< { fields: ESIndexResult } >;

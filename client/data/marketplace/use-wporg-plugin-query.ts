@@ -15,7 +15,7 @@ import {
 import { fetchPluginsList } from 'calypso/lib/wporg';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { BASE_STALE_TIME } from './constants';
-import { QueryOptions } from './types';
+import { Plugin, QueryOptions } from './types';
 
 const getCacheKey = ( key: string ): QueryKey => [ 'wporg-plugins', key ];
 
@@ -56,7 +56,7 @@ export const useWPORGPlugins = (
 	);
 };
 
-const extractPages = ( pages: Array< { plugins: QueryOptions[]; info: object } > = [] ) =>
+const extractPages = ( pages: Array< { plugins: Plugin[]; info: object } > = [] ) =>
 	pages.flatMap( ( page ) => page.plugins ).map( normalizePluginData );
 
 const extractPagination = ( pages: Array< { plugins: object; info: object } > = [] ) =>
@@ -81,7 +81,7 @@ export const useWPORGInfinitePlugins = (
 				author,
 			} ),
 		{
-			select: ( data: InfiniteData< { plugins: QueryOptions[]; info: { page: number } } > ) => {
+			select: ( data: InfiniteData< { plugins: Plugin[]; info: { page: number } } > ) => {
 				return {
 					...data,
 					plugins: extractPages( data.pages ),

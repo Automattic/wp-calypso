@@ -1,15 +1,10 @@
 import phpUnserialize from 'phpunserialize';
-import { useQuery, UseQueryResult, UseQueryOptions } from 'react-query';
+import { UseQueryResult, UseQueryOptions, InfiniteData, useInfiniteQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { extractSearchInformation, normalizePluginsList } from 'calypso/lib/plugins/utils';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import {
-	BASE_STALE_TIME,
-	DEFAULT_FIRST_PAGE,
-	DEFAULT_PAGE_SIZE,
-	DEFAULT_CATEGORY,
-} from './constants';
-import { ESIndexResult, Plugin, QueryOptions } from './types';
+import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_CATEGORY } from './constants';
+import { ESHits, Plugin, QueryOptions } from './types';
 
 /**
  * Constants
@@ -44,7 +39,7 @@ const createIconsObject = ( pluginSlug: string, iconsArray: string ) => {
 const createAuthorUrl = ( header_author: string, header_author_uri: string ) =>
 	`<a href="${ header_author_uri }">${ header_author }</a>`;
 
-const mapIndexResultsToPluginData = ( results: Array< { fields: ESIndexResult } > ): Plugin[] => {
+const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	return results.map( ( { fields: hit } ) => {
 		return {
 			name: hit.title_en, // TODO: add localization
@@ -169,16 +164,17 @@ export async function fetchWPOrgPluginsFromSiteSearch( options: QueryOptions ) {
 	return requestResult.results;
 }
 
-const extractPagesFromEsResponse = (
-	{ total }: { total: number },
-	pageSize: number,
-	page: number
-) => {
+const extractPagesFromEsResponse = ( total: number, pageSize: number, page: number ) => {
 	return {
 		page: page || DEFAULT_FIRST_PAGE,
 		pages: Math.ceil( total / pageSize ),
 		results: total,
 	};
+};
+
+type ESResponse = {
+	hits: ESHits;
+	total: number;
 };
 
 /**
@@ -189,19 +185,19 @@ const extractPagesFromEsResponse = (
  */
 export const useSiteSearchWPORGPlugins = (
 	options: QueryOptions,
-	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
+	{ enabled = true, staleTime = 0 /* TODO remove */, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
 	const pageSize: number = options.pageSize ?? DEFAULT_PAGE_SIZE;
 	const page: number = options.page ?? DEFAULT_FIRST_PAGE;
 
-	return useQuery(
+	return useInfiniteQuery(
 		'wpcom-site-search-wporg-plugins',
-		() =>
+		( { pageParam = DEFAULT_FIRST_PAGE } ) =>
 			fetchWPOrgPluginsFromSiteSearch( {
 				pageSize,
-				page,
+				page: pageParam,
 				category: options.category,
 				locale: options.locale || locale,
 				searchTerm,
@@ -209,10 +205,11 @@ export const useSiteSearchWPORGPlugins = (
 			} ),
 		{
 			//select: ( data ) => normalizePluginsList( data ),
-			select: ( data ) => ( {
-				data,
-				plugins: normalizePluginsList( mapIndexResultsToPluginData( data.hits ) ),
-				pagination: extractPagesFromEsResponse( data, pageSize, page ),
+			select: ( data: InfiniteData< ESResponse > ) => ( {
+				pages: data.pages,
+				pageParams: data.pageParams,
+				plugins: normalizePluginsList( mapIndexResultsToPluginData( data.hits ) ), // TODO flatmap from pages?
+				pagination: extractPagesFromEsResponse( data.total, pageSize, page ),
 			} ),
 			enabled,
 			staleTime,
