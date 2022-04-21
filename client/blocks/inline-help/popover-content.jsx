@@ -9,10 +9,12 @@ import { connect } from 'react-redux';
 import InlineHelpContactView from 'calypso/blocks/inline-help/inline-help-contact-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
+import InlineHelpContactPage, { InlineHelpContactPageButton } from './inline-help-contact-page';
 import InlineHelpEmbedResult from './inline-help-embed-result';
 import InlineHelpRichResult from './inline-help-rich-result';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpSearchResults from './inline-help-search-results';
+
 import './popover-content.scss';
 
 const noop = () => {};
@@ -25,6 +27,7 @@ class InlineHelpPopoverContent extends Component {
 		inlineArticles: PropTypes.bool,
 		selectedArticle: PropTypes.object,
 		setSelectedArticle: PropTypes.func,
+		setHelpCenterFooter: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -102,7 +105,17 @@ class InlineHelpPopoverContent extends Component {
 	};
 
 	renderPopoverFooter = () => {
-		const { translate, isReskinned } = this.props;
+		const { translate, isReskinned, inlineArticles } = this.props;
+
+		if ( inlineArticles ) {
+			this.props.setHelpCenterFooter(
+				this.state.activeSecondaryView ? null : (
+					<InlineHelpContactPageButton onClick={ this.openContactView } />
+				)
+			);
+			return null;
+		}
+
 		return (
 			<div className={ classNames( 'inline-help__footer', { 'is-reskinned': isReskinned } ) }>
 				<Button
@@ -169,7 +182,9 @@ class InlineHelpPopoverContent extends Component {
 			<section ref={ this.secondaryViewRef } className={ classes }>
 				{
 					{
-						[ VIEW_CONTACT ]: (
+						[ VIEW_CONTACT ]: inlineArticles ? (
+							<InlineHelpContactPage closeContactPage={ this.closeSecondaryView } />
+						) : (
 							<Fragment>
 								<h2 className="inline-help__title" tabIndex="-1">
 									{ __( 'Get Support' ) }
@@ -198,7 +213,7 @@ class InlineHelpPopoverContent extends Component {
 	};
 
 	render() {
-		const { isReskinned, inlineArticles } = this.props;
+		const { isReskinned } = this.props;
 
 		const className = classNames( 'inline-help__popover-content', {
 			'is-secondary-view-active': this.state.activeSecondaryView,
@@ -208,7 +223,7 @@ class InlineHelpPopoverContent extends Component {
 		return (
 			<div className={ className }>
 				{ this.renderPopoverContent() }
-				{ ! inlineArticles && this.renderPopoverFooter() }
+				{ this.renderPopoverFooter() }
 			</div>
 		);
 	}

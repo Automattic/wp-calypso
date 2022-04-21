@@ -57,7 +57,7 @@ rawCurrentUserFetch()
 
 const queryClient = new QueryClient();
 
-export default function Content( { selectedArticle, setSelectedArticle } ) {
+export default function Content( { selectedArticle, setSelectedArticle, setFooterContent } ) {
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<Provider store={ store }>
@@ -68,6 +68,7 @@ export default function Content( { selectedArticle, setSelectedArticle } ) {
 						inlineArticles
 						selectedArticle={ selectedArticle }
 						setSelectedArticle={ setSelectedArticle }
+						setHelpCenterFooter={ setFooterContent }
 					/>
 				</>
 			</Provider>

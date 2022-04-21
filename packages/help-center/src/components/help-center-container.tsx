@@ -15,7 +15,12 @@ import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
 import { Container } from './types';
 
-const HelpCenterContainer: React.FC< Container > = ( { content, handleClose, headerText } ) => {
+const HelpCenterContainer: React.FC< Container > = ( {
+	content,
+	handleClose,
+	headerText,
+	footerContent,
+} ) => {
 	const { __ } = useI18n();
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( true );
@@ -55,7 +60,7 @@ const HelpCenterContainer: React.FC< Container > = ( { content, handleClose, hea
 			{ ! isMinimized && (
 				<>
 					<HelpCenterContent content={ content } />
-					<HelpCenterFooter />
+					{ footerContent && <HelpCenterFooter footerContent={ footerContent } /> }
 				</>
 			) }
 		</>

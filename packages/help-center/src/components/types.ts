@@ -4,6 +4,7 @@ export interface Container {
 	content: ReactElement;
 	handleClose: () => void;
 	headerText: string;
+	footerContent: ReactElement;
 }
 
 export interface Content {

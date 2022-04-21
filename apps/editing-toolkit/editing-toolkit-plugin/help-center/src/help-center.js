@@ -18,6 +18,7 @@ function HelpCenterComponent() {
 	} );
 	const setShowHelpCenter = useDispatch( 'automattic/help-center' )?.setShowHelpCenter;
 	const [ selectedArticle, setSelectedArticle ] = useState( null );
+	const [ footerContent, setFooterContent ] = useState( null );
 
 	useEffect( () => {
 		if ( ! show ) {
@@ -44,10 +45,12 @@ function HelpCenterComponent() {
 						<Contents
 							selectedArticle={ selectedArticle }
 							setSelectedArticle={ setSelectedArticle }
+							setFooterContent={ setFooterContent }
 						/>
 					}
 					headerText={ selectedArticle?.title }
 					handleClose={ () => setShowHelpCenter( false ) }
+					footerContent={ footerContent }
 				/>
 			) }
 		</>
