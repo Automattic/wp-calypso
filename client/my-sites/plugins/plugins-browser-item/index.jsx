@@ -156,7 +156,7 @@ const PluginsBrowserListElement = ( props ) => {
 				) }
 				{ isPluginIncompatible && (
 					<ExternalLink icon={ false } href="https://wordpress.com/support/incompatible-plugins/">
-						{ translate( 'Why this plugin is not compatible with WordPress.com?' ) }
+						{ translate( 'Why is this plugin not compatible with WordPress.com?' ) }
 					</ExternalLink>
 				) }
 				<div className="plugins-browser-item__footer">
