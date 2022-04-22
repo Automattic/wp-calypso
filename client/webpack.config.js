@@ -60,7 +60,7 @@ let sourceMapType = process.env.SOURCEMAP;
 if ( ! sourceMapType && shouldCreateSentryRelease ) {
 	sourceMapType = 'hidden-source-map';
 } else if ( ! sourceMapType && isDevelopment ) {
-	sourceMapType = 'hidden';
+	sourceMapType = 'eval';
 }
 
 if ( shouldCreateSentryRelease ) {
