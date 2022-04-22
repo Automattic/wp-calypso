@@ -39,10 +39,18 @@ object WebApp : Project({
 object BuildDockerImage : BuildType({
 	uuid = "89fff49e-c79b-4e68-a012-a7ba405359b6"
 	name = "Docker image"
-	description = "Build docker image containing Calypso"
+	description = "checkBuild docker image containing Calypso"
 
 	params {
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
+		checkbox(
+			name = "CREATE_SENTRY_RELEASE",
+			value = "false",
+			label = "Create a sentry release.",
+			description = "Generate and upload sourcemaps to Sentry as a new release for this commit.",
+			checked = "true",
+			unchecked = "false"
+		)
 	}
 
 	vcs {
@@ -104,6 +112,9 @@ object BuildDockerImage : BuildType({
 		}
 
 		dockerCommand {
+			val toggledSentryRelease = "%CREATE_SENTRY_RELEASE%" === "true"
+			val isDefaultBranch = "%teamcity.build.branch.is_default%" === "true"
+			val shouldMakeSentryRelease = toggledSentryRelease || isDefaultBranch
 			name = "Build docker image"
 			commandType = build {
 				source = file {
@@ -124,6 +135,8 @@ object BuildDockerImage : BuildType({
 					--build-arg use_cache=true
 					--build-arg base_image=%base_image%
 					--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
+					--build-arg create_sentry_release="$shouldMakeSentryRelease" // Computed in Kotlin above.
+					--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
 				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")

@@ -21,10 +21,14 @@ FROM builder-cache-${use_cache} as builder
 ARG commit_sha="(unknown)"
 ARG workers=4
 ARG node_memory=8192
+ARG create_sentry_release=false
+ARG sentry_auth_token=''
 ENV CONTAINER 'docker'
 ENV PROFILE=true
 ENV COMMIT_SHA $commit_sha
 ENV CALYPSO_ENV production
+ENV CREATE_SENTRY_RELEASE $create_sentry_release
+ENV SENTRY_AUTH_TOKEN $sentry_auth_token
 ENV WORKERS $workers
 ENV BUILD_TRANSLATION_CHUNKS true
 ENV CHROMEDRIVER_SKIP_DOWNLOAD true
