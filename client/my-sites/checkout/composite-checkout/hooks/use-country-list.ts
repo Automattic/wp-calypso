@@ -13,7 +13,7 @@ export default function useCountryList(
 	overrideCountryList?: CountryListItem[]
 ): CountryListItem[] {
 	// Should we fetch the country list from global state?
-	const shouldFetchList = ( overrideCountryList?.length ?? 0 ) <= 0;
+	const shouldFetchList = ! overrideCountryList;
 
 	const [ countriesList, setCountriesList ] = useState( overrideCountryList ?? [] );
 
