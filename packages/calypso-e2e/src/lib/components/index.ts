@@ -31,5 +31,6 @@ export * from './full-site-editor-save-panel-component';
 export * from './editor-block-toolbar-component';
 export * from './template-part-list-component';
 export * from './template-part-modal-component';
+export * from './full-side-editor-nav-sidebar-component';
 
 export * from './me';

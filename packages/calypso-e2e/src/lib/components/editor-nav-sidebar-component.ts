@@ -1,15 +1,13 @@
 import { Page, Locator } from 'playwright';
 
-// Support both site editor and post editor
-const panel = '.wpcom-block-editor-nav-sidebar-nav-sidebar__container,.edit-site-navigation-panel';
+const panel = '.wpcom-block-editor-nav-sidebar-nav-sidebar__container';
 const selectors = {
-	menuLink: ( name: string ) => `${ panel } >> a:has-text("${ name }")`,
+	exitLink: `${ panel } a[aria-description="Returns to the dashboard"]`,
 };
 
 /**
  * Represents an instance of the WordPress.com Editor's navigation sidebar.
  * The component is available only in the Desktop viewport for the post editor.
- * It is visible on all viewports for the site editor.
  */
 export class EditorNavSidebarComponent {
 	private page: Page;
@@ -32,17 +30,7 @@ export class EditorNavSidebarComponent {
 	 * Clicks the Dashboard menu link to exit the editor.
 	 */
 	async exitEditor(): Promise< void > {
-		const exitLinkLocator = this.editor.locator( selectors.menuLink( 'Dashboard' ) );
+		const exitLinkLocator = this.editor.locator( selectors.exitLink );
 		await exitLinkLocator.click();
-	}
-
-	/**
-	 * Clicks a navigation link from the menu in the navigation sidebar.
-	 *
-	 * @param {string} name Name of link to click.
-	 */
-	async clickMenuLink( name: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.menuLink( name ) );
-		await locator.click();
 	}
 }

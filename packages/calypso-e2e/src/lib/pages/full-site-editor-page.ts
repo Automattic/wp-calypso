@@ -13,13 +13,13 @@ import {
 	FullSiteEditorSavePanelComponent,
 	EditorBlockToolbarComponent,
 	BlockToolbarButtonIdentifier,
-	EditorNavSidebarComponent,
 	TemplatePartListComponent,
+	FullSiteEditorNavSidebarComponent,
+	TemplatePartModalComponent,
 } from '..';
 import { getCalypsoURL } from '../../data-helper';
 import { getIdFromBlock } from '../../element-helper';
 import envVariables from '../../env-variables';
-import { TemplatePartModalComponent } from '../components/template-part-modal-component';
 
 const wpAdminPath = 'wp-admin/themes.php';
 
@@ -51,9 +51,9 @@ export class FullSiteEditorPage {
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
 	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
 	private editorSiteStylesComponent: EditorSiteStylesComponent;
-	private fullSiteEditorSavePanelComponent: FullSiteEditorSavePanelComponent;
 	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
-	private editorNavSidebarComponent: EditorNavSidebarComponent;
+	private fullSiteEditorSavePanelComponent: FullSiteEditorSavePanelComponent;
+	private fullSiteEditorNavSidebarComponent: FullSiteEditorNavSidebarComponent;
 	private templatePartModalComponent: TemplatePartModalComponent;
 	private templatePartListComponent: TemplatePartListComponent;
 
@@ -86,7 +86,10 @@ export class FullSiteEditorPage {
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
 		this.editorSiteStylesComponent = new EditorSiteStylesComponent( page, this.editor );
 		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
-		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
+		this.fullSiteEditorNavSidebarComponent = new FullSiteEditorNavSidebarComponent(
+			page,
+			this.editor
+		);
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
 			page,
 			this.editor
@@ -434,7 +437,7 @@ export class FullSiteEditorPage {
 	async deleteTemplatePart( name: string ): Promise< void > {
 		if ( ! ( await this.templatePartListComponent.isOpen() ) ) {
 			await this.editorToolbarComponent.openNavSidebar();
-			await this.editorNavSidebarComponent.clickMenuLink( 'Template Parts' );
+			await this.fullSiteEditorNavSidebarComponent.navigateToTemplateParts();
 		}
 		await this.templatePartListComponent.deleteTemplatePart( name );
 		await this.waitForConfirmationToast( `"${ name }" deleted.` );
