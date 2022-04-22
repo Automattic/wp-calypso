@@ -54,7 +54,7 @@ const shouldUseReadonlyCache = process.env.READONLY_CACHE === 'true';
 const shouldProfile = process.env.PROFILE === 'true';
 
 const shouldCreateSentryRelease =
-	process.env.CREATE_SENTRY_RELEASE === 'true' && process.env.SENTRY_AUTH_TOKEN?.length > 1;
+	process.env.create_sentry_release === 'true' && process.env.sentry_auth_token?.length > 1;
 let sourceMapType = process.env.SOURCEMAP;
 if ( ! sourceMapType && shouldCreateSentryRelease ) {
 	sourceMapType = 'hidden-source-map';
@@ -381,7 +381,7 @@ const webpackConfig = {
 			new SentryCliPlugin( {
 				org: 'a8c',
 				project: 'calypso',
-				authToken: process.env.SENTRY_AUTH_TOKEN,
+				authToken: process.env.sentry_auth_token,
 				release: process.env.COMMIT_SHA,
 				include: filePaths.path,
 				urlPrefix: `~${ filePaths.publicPath }`,
