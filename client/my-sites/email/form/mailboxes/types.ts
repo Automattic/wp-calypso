@@ -1,4 +1,4 @@
-import { PROVIDER_GOOGLE, PROVIDER_TITAN } from 'calypso/my-sites/email/new-mailbox-list/constants';
+import { PROVIDER_GOOGLE, PROVIDER_TITAN } from 'calypso/my-sites/email/form/mailboxes/constants';
 import type { TranslateResult } from 'i18n-calypso';
 
 type FieldError = TranslateResult | null;
