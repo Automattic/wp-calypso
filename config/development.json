@@ -106,7 +106,6 @@
 		"network-connection": true,
 		"oauth": false,
 		"p2/p2-plus": true,
-		"p2/preapproved-domains": true,
 		"page/export": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": true,
