@@ -2,7 +2,7 @@ import { Gridicon, Suggestions } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useCallback, useMemo, useRef, useState } from 'react';
+import { FC, useMemo, useRef, useState } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Spinner from 'calypso/components/spinner';
 import type { Vertical } from './types';
@@ -34,93 +34,74 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 	const toggleIconRef = useRef( null );
 	const translate = useTranslate();
 
-	const handleTextInputBlur = useCallback(
-		( event ) => {
-			// Hide the suggestion dropdown unless the focus is moved to the toggle icon.
-			if ( event && event.relatedTarget?.contains( toggleIconRef.current ) ) {
-				return;
-			}
+	const handleTextInputBlur = ( event: React.FocusEvent ) => {
+		// Hide the suggestion dropdown unless the focus is moved to the toggle icon.
+		if ( event && event.relatedTarget?.contains( toggleIconRef.current ) ) {
+			return;
+		}
 
-			setIsShowSuggestions( false );
-			setIsFocused( false );
-		},
-		[ setIsShowSuggestions, setIsFocused ]
-	);
+		setIsShowSuggestions( false );
+		setIsFocused( false );
+	};
 
-	const handleTextInputFocus = useCallback( () => {
+	const handleTextInputFocus = () => {
 		setIsShowSuggestions( true );
 		setIsFocused( true );
-	}, [ setIsShowSuggestions, setIsFocused ] );
+	};
 
-	const handleTextInputChange = useCallback(
-		( event: React.ChangeEvent< HTMLInputElement > ) => {
-			// Reset the vertical selection if input field is empty.
-			// This is so users don't need to explicitly select "Something else" to clear previous selection.
-			if ( event.target.value.trim().length === 0 ) {
-				onSelect?.( { value: '', label: '' } );
-			}
+	const handleTextInputChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		// Reset the vertical selection if input field is empty.
+		// This is so users don't need to explicitly select "Something else" to clear previous selection.
+		if ( event.target.value.trim().length === 0 ) {
+			onSelect?.( { value: '', label: '' } );
+		}
 
-			setIsShowSuggestions( true );
-			onInputChange?.( event.target.value );
-		},
-		[ setIsShowSuggestions ]
-	);
+		setIsShowSuggestions( true );
+		onInputChange?.( event.target.value );
+	};
 
-	const handleToggleSuggestionsBlur = useCallback(
-		( event ) => {
-			// Hide the suggestion dropdown unless the focus is moved to the input field.
-			if ( event && event.relatedTarget?.contains( inputRef.current ) ) {
-				return;
-			}
+	const handleToggleSuggestionsBlur = ( event: React.FocusEvent ) => {
+		// Hide the suggestion dropdown unless the focus is moved to the input field.
+		if ( event && event.relatedTarget?.contains( inputRef.current ) ) {
+			return;
+		}
 
-			setIsShowSuggestions( false );
-			setIsFocused( false );
-		},
-		[ setIsFocused ]
-	);
+		setIsShowSuggestions( false );
+		setIsFocused( false );
+	};
 
-	const handleToggleSuggestionsClick = useCallback( () => {
+	const handleToggleSuggestionsClick = () => {
 		if ( isDisableInput ) {
 			return;
 		}
 
 		setIsShowSuggestions( ! isShowSuggestions );
-	}, [ setIsShowSuggestions, isShowSuggestions, isDisableInput ] );
+	};
 
-	const handleToggleSuggestionsKeyDown = useCallback(
-		( event: React.KeyboardEvent< HTMLButtonElement > ) => {
-			if ( event.key === 'Escape' || event.key === 'Tab' ) {
-				setIsShowSuggestions( false );
-			}
-		},
-		[ setIsShowSuggestions ]
-	);
-
-	const handleTextInputKeyDown = useCallback(
-		( event: KeyboardEvent ) => {
-			if ( event.key === 'Enter' && isShowSuggestions ) {
-				event.preventDefault();
-			}
-
-			if ( event.key === 'Escape' ) {
-				setIsShowSuggestions( false );
-			}
-
-			if ( suggestionsRef.current ) {
-				( suggestionsRef.current as Suggestions ).handleKeyEvent( event );
-			}
-		},
-		[ setIsShowSuggestions, isShowSuggestions, suggestionsRef ]
-	);
-
-	const handleSuggestionsSelect = useCallback(
-		( { label, value }: { label: string; value?: string } ) => {
+	const handleToggleSuggestionsKeyDown = ( event: React.KeyboardEvent< HTMLButtonElement > ) => {
+		if ( event.key === 'Escape' || event.key === 'Tab' ) {
 			setIsShowSuggestions( false );
-			onInputChange?.( label );
-			onSelect?.( { label, value } as Vertical );
-		},
-		[ setIsShowSuggestions ]
-	);
+		}
+	};
+
+	const handleTextInputKeyDown = ( event: KeyboardEvent ) => {
+		if ( event.key === 'Enter' && isShowSuggestions ) {
+			event.preventDefault();
+		}
+
+		if ( event.key === 'Escape' ) {
+			setIsShowSuggestions( false );
+		}
+
+		if ( suggestionsRef.current ) {
+			( suggestionsRef.current as Suggestions ).handleKeyEvent( event );
+		}
+	};
+
+	const handleSuggestionsSelect = ( { label, value }: { label: string; value?: string } ) => {
+		setIsShowSuggestions( false );
+		onSelect?.( { label, value } as Vertical );
+	};
 
 	const getSuggestions = useMemo( () => {
 		if ( isLoading || ! isShowSuggestions ) {
