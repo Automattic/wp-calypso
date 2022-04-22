@@ -79,12 +79,11 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 			$variant = 'tour';
 		}
 
-		$blog_id   = get_current_blog_id();
-		$is_p2     = \WPForTeams\is_wpforteams_site( $blog_id );
-		$is_a8cian = is_automattician( wp_get_current_user()->ID );
+		$blog_id = get_current_blog_id();
+		$is_p2   = \WPForTeams\is_wpforteams_site( $blog_id );
 
-		if ( $is_p2 && $is_a8cian ) {
-			// disable welcome tour for automatticians authoring P2s.
+		if ( $is_p2 ) {
+			// disable welcome tour for authoring P2s.
 			// see: https://a8c.slack.com/archives/C025Q5RK2/p1650559200031119.
 			$nux_status = 'disabled';
 		} elseif ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
