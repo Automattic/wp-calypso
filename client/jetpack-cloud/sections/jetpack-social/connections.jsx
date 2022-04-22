@@ -10,7 +10,7 @@ import Main from 'calypso/components/main';
 import SharingServicesGroup from 'calypso/my-sites/marketing/connections/services-group';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-import '../marketing/style.scss';
+import 'calypso/my-sites/marketing/style.scss';
 import './style.scss';
 
 export const Connections = ( { siteId, translate } ) => {

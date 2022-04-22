@@ -501,7 +501,7 @@ const sections = [
 	{
 		name: 'jetpack-social',
 		paths: [ '/jetpack-social' ],
-		module: 'calypso/my-sites/jetpack-social',
+		module: 'calypso/jetpack-cloud/sections/jetpack-social',
 		group: 'jetpack-cloud',
 	},
 	{
