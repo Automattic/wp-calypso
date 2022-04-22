@@ -1,19 +1,17 @@
 import config from '@automattic/calypso-config';
-import {
-	getEmptyResponseCart,
-	getEmptyResponseCartProduct,
-	RequestCartProduct,
-} from '@automattic/shopping-cart';
+import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import { screen } from '@testing-library/react';
 import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import domainManagementReducer from 'calypso/state/domains/management/reducer';
 import type {
+	CartKey,
 	SetCart,
 	RequestCart,
 	ResponseCart,
 	ResponseCartProduct,
+	RequestCartProduct,
 } from '@automattic/shopping-cart';
 import type {
 	CountryListItem,
@@ -496,6 +494,20 @@ function convertRequestProductToResponseProduct(
 			item_subtotal_integer: 0,
 			item_tax: 0,
 		};
+	};
+}
+
+export function mockCartEndpoint( initialCart: ResponseCart, currency: string, locale: string ) {
+	let cart = initialCart;
+	const mockSetCart = mockSetCartEndpointWith( { currency, locale } );
+	const setCart = async ( cartKey: CartKey, val: RequestCart ) => {
+		cart = await mockSetCart( cartKey, val );
+		return cart;
+	};
+
+	return {
+		getCart: async () => cart,
+		setCart,
 	};
 }
 

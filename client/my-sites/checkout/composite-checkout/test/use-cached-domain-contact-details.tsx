@@ -8,24 +8,23 @@ import {
 	getEmptyResponseCart,
 } from '@automattic/shopping-cart';
 import '@testing-library/jest-dom/extend-expect';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
+import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import useCachedDomainContactDetails from 'calypso/my-sites/checkout/composite-checkout/hooks/use-cached-domain-contact-details';
 import { useWpcomStore } from 'calypso/my-sites/checkout/composite-checkout/hooks/wpcom-store';
 import {
 	countryList,
 	createTestReduxStore,
-	mockGetCartEndpointWith,
-	mockSetCartEndpointWith,
+	mockCartEndpoint,
 	mockCachedContactDetailsEndpoint,
 	verifyThatTextNeverAppears,
 } from './util';
 import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const initialCart = getEmptyResponseCart();
-const getCart = mockGetCartEndpointWith( initialCart );
-const setCart = mockSetCartEndpointWith( initialCart );
+const { getCart, setCart } = mockCartEndpoint( initialCart, 'USD', 'US' );
 const cartManagerClient = createShoppingCartManagerClient( { getCart, setCart } );
 const reduxStore = createTestReduxStore();
 
@@ -41,11 +40,23 @@ function MyTestWrapper( { countries }: { countries: CountryListItem[] } ) {
 
 function MyTestContent( { countries }: { countries: CountryListItem[] } ) {
 	useWpcomStore();
-	const { responseCart } = useShoppingCart( initialCart.cart_key );
+	const { responseCart, reloadFromServer, updateLocation } = useShoppingCart(
+		initialCart.cart_key
+	);
 	useCachedDomainContactDetails( countries );
 	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
 		select( 'wpcom-checkout' ).getContactInfo()
 	);
+	const [ localLocation, setLocation ] = useState( { countryCode: '', postalCode: '' } );
+	const onChangeCountry = ( evt ) => {
+		const newVal = evt.target.value;
+		setLocation( ( prev ) => ( { ...prev, countryCode: newVal } ) );
+	};
+	const onChangePostal = ( evt ) => {
+		const newVal = evt.target.value;
+		setLocation( ( prev ) => ( { ...prev, postalCode: newVal } ) );
+	};
+
 	return (
 		<div>
 			<div>Test content</div>
@@ -59,6 +70,19 @@ function MyTestContent( { countries }: { countries: CountryListItem[] } ) {
 				<div>Form Country: { contactInfo.countryCode?.value }</div>
 			) }
 			{ contactInfo.postalCode?.value && <div>Form Postal: { contactInfo.postalCode?.value }</div> }
+
+			<div>
+				<label htmlFor="country">Country</label>
+				<input id="country" value={ localLocation.countryCode } onChange={ onChangeCountry } />
+			</div>
+			<div>
+				<label htmlFor="postal">Postal</label>
+				<input id="postal" value={ localLocation.postalCode } onChange={ onChangePostal } />
+			</div>
+			<button onClick={ () => updateLocation( localLocation ) }>
+				Click to set cart tax location
+			</button>
+			<button onClick={ reloadFromServer }>Click to reload cart</button>
 		</div>
 	);
 }
@@ -100,6 +124,39 @@ describe( 'useCachedDomainContactDetails', () => {
 		await verifyThatTextNeverAppears( 'Tax Postal: 10001' );
 		await waitFor( () => {
 			expect( screen.queryByText( 'Test content' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'does not send the country from the contact details endpoint to the cart if the cart reloads after they have already been sent', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: 'US',
+			postal_code: '10001',
+		} );
+		render( <MyTestWrapper countries={ countryList } /> );
+		// Wait for the cart info to be populated by the hook.
+		await waitFor( () => {
+			expect( screen.queryByText( 'Tax Country: US' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Tax Postal: 10001' ) ).toBeInTheDocument();
+		} );
+
+		// Change the cart info to something else.
+		fireEvent.change( screen.getByLabelText( 'Country' ), {
+			target: { value: 'US' },
+		} );
+		fireEvent.change( screen.getByLabelText( 'Postal' ), {
+			target: { value: '90210' },
+		} );
+		fireEvent.click( await screen.findByText( 'Click to set cart tax location' ) );
+		await waitFor( () => {
+			expect( screen.queryByText( 'Tax Country: US' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Tax Postal: 90210' ) ).toBeInTheDocument();
+		} );
+
+		// Reload the cart and verify that the hook does not revert the cart info.
+		fireEvent.click( await screen.findByText( 'Click to reload cart' ) );
+		await verifyThatTextNeverAppears( 'Tax Postal: 10001' );
+		await waitFor( () => {
+			expect( screen.queryByText( 'Tax Postal: 90210' ) ).toBeInTheDocument();
 		} );
 	} );
 
