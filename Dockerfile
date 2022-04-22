@@ -71,7 +71,7 @@ ENV NODE_ENV production
 RUN yarn run build
 
 # Delete any sourcemaps which may have been generated to avoid creating a large artifact.
-RUN find build public -name "*.*.map" -exec rm {} \;
+RUN find /calypso/build /calypso/public -name "*.*.map" -exec rm {} \;
 
 ###################
 FROM node:${node_version}-alpine as app
