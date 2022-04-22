@@ -319,8 +319,8 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 			sub_total_with_taxes_display: 'R$156',
 			sub_total_with_taxes_integer: totalInteger,
 			tax: {
-				location: requestCart.tax.location ?? {},
-				display_taxes: !! requestCart.tax.location.postal_code,
+				location: requestCart.tax?.location ?? {},
+				display_taxes: !! requestCart.tax?.location?.postal_code,
 			},
 			total_cost: 0,
 			total_cost_display: 'R$156',
