@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import InlineHelpPopoverContent from 'calypso/blocks/inline-help/popover-content';
+import InlineHelpCenterContent from 'calypso/blocks/inline-help/inline-help-center-content';
 import QuerySites from 'calypso/components/data/query-sites';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
@@ -63,9 +63,7 @@ export default function Content( { selectedArticle, setSelectedArticle, setFoote
 			<Provider store={ store }>
 				<>
 					<QuerySites siteId={ window._currentSiteId } />
-					<InlineHelpPopoverContent
-						isReskinned
-						inlineArticles
+					<InlineHelpCenterContent
 						selectedArticle={ selectedArticle }
 						setSelectedArticle={ setSelectedArticle }
 						setHelpCenterFooter={ setFooterContent }

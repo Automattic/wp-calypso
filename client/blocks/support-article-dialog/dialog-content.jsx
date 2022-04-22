@@ -10,6 +10,9 @@ import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import SupportArticleHeader from './header';
 import Placeholders from './placeholders';
 
+import './style.scss';
+import './content.scss';
+
 const getPostKey = ( blogId, postId ) => ( { blogId, postId } );
 
 const useSupportArticleAlternatePostKey = ( blogId, postId ) => {

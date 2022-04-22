@@ -51,7 +51,7 @@ function HelpSearchResults( {
 	onAdminSectionSelect = noop,
 	searchQuery = '',
 	placeholderLines,
-	openAdminInNewTab,
+	openAdminInNewTab = false,
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();

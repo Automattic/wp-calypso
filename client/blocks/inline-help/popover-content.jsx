@@ -9,12 +9,9 @@ import { connect } from 'react-redux';
 import InlineHelpContactView from 'calypso/blocks/inline-help/inline-help-contact-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
-import InlineHelpContactPage, { InlineHelpContactPageButton } from './inline-help-contact-page';
-import InlineHelpEmbedResult from './inline-help-embed-result';
 import InlineHelpRichResult from './inline-help-rich-result';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpSearchResults from './inline-help-search-results';
-
 import './popover-content.scss';
 
 const noop = () => {};
@@ -23,30 +20,17 @@ class InlineHelpPopoverContent extends Component {
 	static propTypes = {
 		onClose: PropTypes.func.isRequired,
 		setDialogState: PropTypes.func.isRequired,
-		isReskinned: PropTypes.bool,
-		inlineArticles: PropTypes.bool,
-		selectedArticle: PropTypes.object,
-		setSelectedArticle: PropTypes.func,
-		setHelpCenterFooter: PropTypes.func,
 	};
 
 	static defaultProps = {
 		onClose: noop,
-		isReskinned: false,
-		inlineArticles: false,
 	};
 
 	state = {
 		searchQuery: '',
 		activeSecondaryView: null,
-		selectedResult: this.props.selectedArticle ?? null,
+		selectedResult: null,
 	};
-
-	componentDidMount() {
-		if ( this.state.selectedResult ) {
-			this.openSecondaryView( VIEW_RICH_RESULT );
-		}
-	}
 
 	secondaryViewRef = createRef();
 
@@ -57,7 +41,6 @@ class InlineHelpPopoverContent extends Component {
 	openResultView = ( event, result ) => {
 		event.preventDefault();
 		this.setState( { selectedResult: result } );
-		this.props.setSelectedArticle?.( result );
 		this.openSecondaryView( VIEW_RICH_RESULT );
 	};
 
@@ -105,19 +88,9 @@ class InlineHelpPopoverContent extends Component {
 	};
 
 	renderPopoverFooter = () => {
-		const { translate, isReskinned, inlineArticles } = this.props;
-
-		if ( inlineArticles ) {
-			this.props.setHelpCenterFooter(
-				this.state.activeSecondaryView ? null : (
-					<InlineHelpContactPageButton onClick={ this.openContactView } />
-				)
-			);
-			return null;
-		}
-
+		const { translate } = this.props;
 		return (
-			<div className={ classNames( 'inline-help__footer', { 'is-reskinned': isReskinned } ) }>
+			<div className="inline-help__footer">
 				<Button
 					onClick={ this.moreHelpClicked }
 					className="inline-help__more-button"
@@ -147,11 +120,9 @@ class InlineHelpPopoverContent extends Component {
 	};
 
 	renderPopoverContent = () => {
-		const { isReskinned, inlineArticles } = this.props;
-
 		return (
 			<Fragment>
-				<div className={ classNames( 'inline-help__search', { 'is-reskinned': isReskinned } ) }>
+				<div className="inline-help__search">
 					<InlineHelpSearchCard
 						searchQuery={ this.state.searchQuery }
 						onSearch={ this.setSearchQuery }
@@ -161,7 +132,6 @@ class InlineHelpPopoverContent extends Component {
 						onSelect={ this.openResultView }
 						onAdminSectionSelect={ this.setAdminSection }
 						searchQuery={ this.state.searchQuery }
-						openAdminInNewTab={ inlineArticles }
 					/>
 				</div>
 				{ this.renderSecondaryView() }
@@ -170,21 +140,18 @@ class InlineHelpPopoverContent extends Component {
 	};
 
 	renderSecondaryView = () => {
-		const { onClose, setDialogState, isReskinned, inlineArticles } = this.props;
+		const { onClose, setDialogState } = this.props;
 		const { searchQuery, selectedResult } = this.state;
 		const classes = classNames(
 			'inline-help__secondary-view',
-			`inline-help__${ this.state.activeSecondaryView }`,
-			{ 'is-reskinned': isReskinned }
+			`inline-help__${ this.state.activeSecondaryView }`
 		);
 
 		return (
 			<section ref={ this.secondaryViewRef } className={ classes }>
 				{
 					{
-						[ VIEW_CONTACT ]: inlineArticles ? (
-							<InlineHelpContactPage closeContactPage={ this.closeSecondaryView } />
-						) : (
+						[ VIEW_CONTACT ]: (
 							<Fragment>
 								<h2 className="inline-help__title" tabIndex="-1">
 									{ __( 'Get Support' ) }
@@ -192,13 +159,7 @@ class InlineHelpPopoverContent extends Component {
 								<InlineHelpContactView />
 							</Fragment>
 						),
-						[ VIEW_RICH_RESULT ]: inlineArticles ? (
-							<InlineHelpEmbedResult
-								result={ selectedResult }
-								handleBackButton={ this.closeSecondaryView }
-								searchQuery={ searchQuery }
-							/>
-						) : (
+						[ VIEW_RICH_RESULT ]: (
 							<InlineHelpRichResult
 								setDialogState={ setDialogState }
 								closePopover={ onClose }
@@ -213,11 +174,8 @@ class InlineHelpPopoverContent extends Component {
 	};
 
 	render() {
-		const { isReskinned } = this.props;
-
 		const className = classNames( 'inline-help__popover-content', {
 			'is-secondary-view-active': this.state.activeSecondaryView,
-			'is-reskinned': isReskinned,
 		} );
 
 		return (
