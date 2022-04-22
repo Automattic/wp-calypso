@@ -26,22 +26,16 @@ export interface BlockToolbarButtonIdentifier {
 }
 
 /**
- * Represents the popover toolbar menu that appears for a focused block.
+ * Represents the toolbar menu that appears for a focused block.
  */
 export class EditorBlockToolbarComponent {
-	private page: Page;
-	private editor: Locator;
-
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
 	 * @param {Locator} editor Frame-safe locator to the editor.
 	 */
-	constructor( page: Page, editor: Locator ) {
-		this.page = page;
-		this.editor = editor;
-	}
+	constructor( private page: Page, private editor: Locator ) {}
 
 	/**
 	 * Click one of the primary (not buried under a drop down) buttons in the block toolbar.

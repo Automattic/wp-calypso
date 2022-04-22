@@ -12,19 +12,13 @@ const selectors = {
  * Unlike the post editor's, this is visible on all viewports for the site editor.
  */
 export class FullSiteEditorNavSidebarComponent {
-	private page: Page;
-	private editor: Locator;
-
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
 	 * @param {Locator} editor Locator or FrameLocator to the editor.
 	 */
-	constructor( page: Page, editor: Locator ) {
-		this.page = page;
-		this.editor = editor;
-	}
+	constructor( private page: Page, private editor: Locator ) {}
 
 	/**
 	 * Exits the site editor.

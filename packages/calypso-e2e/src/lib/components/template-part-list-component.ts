@@ -12,19 +12,13 @@ const selectors = {
  * Represents the list of template parts in the full site editor.
  */
 export class TemplatePartListComponent {
-	private page: Page;
-	private editor: Locator;
-
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
 	 * @param {Locator} editor Frame-safe locator to the editor.
 	 */
-	constructor( page: Page, editor: Locator ) {
-		this.page = page;
-		this.editor = editor;
-	}
+	constructor( private page: Page, private editor: Locator ) {}
 
 	/**
 	 * Delete a template part from the list.

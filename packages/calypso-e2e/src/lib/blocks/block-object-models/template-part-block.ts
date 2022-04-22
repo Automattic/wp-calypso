@@ -12,19 +12,13 @@ export class TemplatePartBlock {
 	static blockName = 'Template Part';
 	static blockEditorSelector = '[aria-label="Block: Template Part"]';
 
-	private page: Page;
-	block: Locator;
-
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
 	 * @param {Locator} block Frame-safe locator to the top element of the block.
 	 */
-	constructor( page: Page, block: Locator ) {
-		this.page = page;
-		this.block = block;
-	}
+	constructor( private page: Page, public block: Locator ) {}
 
 	/**
 	 * Click the "Start blank" button from the initial state..

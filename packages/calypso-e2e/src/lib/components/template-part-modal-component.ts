@@ -13,19 +13,13 @@ const selectors = {
  * Represents the modal in the full site editor that lets you create or select template parts.
  */
 export class TemplatePartModalComponent {
-	private page: Page;
-	private editor: Locator;
-
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
 	 * @param {Locator} editor Frame-safe locator to the editor.
 	 */
-	constructor( page: Page, editor: Locator ) {
-		this.page = page;
-		this.editor = editor;
-	}
+	constructor( private page: Page, private editor: Locator ) {}
 
 	/**
 	 * Enter a name for a new template part.
