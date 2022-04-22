@@ -31,7 +31,6 @@ const selectors = {
 	legacyPlansGrid: '.plans-features-main',
 
 	// Overhauled plans view
-	overhauledPlansGrid: 'div.plans > table',
 	upgradeToProButton: 'th button.is-primary',
 	planComparisonActionButton: ( action: PlansComparisonAction ) => {
 		const buttonText = `${ toTitleCase( action ) } full plan comparison`;
@@ -80,22 +79,29 @@ export class PlansPage {
 	}
 
 	/**
-	 * Clicks on the Show/Hide Plan Comparison button at the bottom of the table.
+	 * Shows the full Plan comparison table.
 	 *
-	 * @param {PlansComparisonAction} action Action to perform on the Plans comparison button.
+	 * This method is applicable only to the overhauled plans.
 	 */
-	async clickPlanComparisonActionButton( action: PlansComparisonAction ): Promise< void > {
-		const buttonLocator = this.page.locator( selectors.planComparisonActionButton( action ) );
+	async showPlanComparison(): Promise< void > {
+		const buttonLocator = this.page.locator( selectors.planComparisonActionButton( 'show' ) );
 		await buttonLocator.click();
 
-		if ( action === 'show' ) {
-			const hideButtonLocator = this.page.locator( selectors.planComparisonActionButton( 'hide' ) );
-			await hideButtonLocator.waitFor();
-		}
-		if ( action === 'hide' ) {
-			const showButtonLocator = this.page.locator( selectors.planComparisonActionButton( 'show' ) );
-			await showButtonLocator.waitFor();
-		}
+		const hideButtonLocator = this.page.locator( selectors.planComparisonActionButton( 'hide' ) );
+		await hideButtonLocator.waitFor();
+	}
+
+	/**
+	 * Hides the full Plan comparison table.
+	 *
+	 * This method is applicable only to the overhauled plans.
+	 */
+	async hidePlanComparison(): Promise< void > {
+		const buttonLocator = this.page.locator( selectors.planComparisonActionButton( 'hide' ) );
+		await buttonLocator.click();
+
+		const showButtonLocator = this.page.locator( selectors.planComparisonActionButton( 'show' ) );
+		await showButtonLocator.waitFor();
 	}
 
 	/* Legacy Plans */

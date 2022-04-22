@@ -33,7 +33,7 @@ describe( DataHelper.createSuiteTitle( 'Plans: Add Upgrade to Cart' ), function 
 	describe( 'View Plans comparison', function () {
 		it( 'Show full details of the plan', async function () {
 			plansPage = new PlansPage( page, 'current' );
-			await plansPage.clickPlanComparisonActionButton( 'show' );
+			await plansPage.showPlanComparison();
 		} );
 	} );
 
