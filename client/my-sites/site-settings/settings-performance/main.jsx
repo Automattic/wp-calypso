@@ -147,7 +147,7 @@ class SiteSettingsPerformance extends Component {
 				{ ( ! siteIsJetpack || siteIsAtomic ) && (
 					<CompactCard>
 						<InlineSupportLink supportContext="site-speed" showIcon={ false }>
-							Learn more about site speed and performance
+							{ translate( 'Learn more about site speed and performance' ) }
 						</InlineSupportLink>
 					</CompactCard>
 				) }
