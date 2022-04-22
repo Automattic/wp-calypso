@@ -84,7 +84,7 @@ export function licensesContext( context: PageJS.Context, next: () => void ): vo
 }
 
 export function issueLicenseContext( context: PageJS.Context, next: () => void ): void {
-	const { siteId } = context.query;
+	const { site_id: siteId } = context.query;
 	const state = context.store.getState();
 	const sites = getSitesItems( state );
 	const selectedSite = sites.hasOwnProperty( siteId ) ? siteId : null;
