@@ -11,7 +11,7 @@ export const MySitesSidebarUnifiedStatsSparkline = ( { slug } ) => {
 		return null;
 	}
 
-	return <StatsSparkline className="sidebar-unified__sparkline" siteId={ selectedSiteId } />;
+	return <StatsSparkline className="sidebar__sparkline" siteId={ selectedSiteId } />;
 };
 
 export default memo( MySitesSidebarUnifiedStatsSparkline );

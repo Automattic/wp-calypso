@@ -34,7 +34,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 		setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
 	};
-	const currentPathMatches = ( url ) => itemLinkMatches( [ url ], path );
+	const currentPathMatches = ( url ) => itemLinkMatches( url, path );
 
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 

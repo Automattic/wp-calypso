@@ -51,7 +51,7 @@ export default ( { path } ) => {
 					} ) }
 					link={ settingsPath( siteSlug ) }
 					onNavigate={ onNavigate }
-					selected={ itemLinkMatches( [ settingsPath( siteSlug ) ], path ) }
+					selected={ itemLinkMatches( settingsPath( siteSlug ), path ) }
 				/>
 			) }
 			{ shouldShowPurchases && (
@@ -62,7 +62,7 @@ export default ( { path } ) => {
 					} ) }
 					link={ purchasesPath( siteSlug ) }
 					onNavigate={ onNavigate }
-					selected={ itemLinkMatches( [ purchasesBasePath() ], path ) }
+					selected={ itemLinkMatches( purchasesBasePath(), path ) }
 				/>
 			) }
 		</>

@@ -20,8 +20,7 @@ $link-focus: darken($highlight-color, 10%);
 Uses custom theme highlight monochromatic palette for primary + accent
 */
 
-.color-scheme.is-modern,
-.color-scheme.is-modern.is-nav-unification {
+.color-scheme.is-modern {
 	/* Variables used in Calypso Modern */
 	--theme-text-color: #ffffff; /* Direct from wp-admin */
 	--theme-text-color-rgb: 255, 255, 255; /* Manual conversion */

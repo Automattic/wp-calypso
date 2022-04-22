@@ -215,7 +215,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 			{ /* Using Global to override Global masterbar height */ }
 			<Global
 				styles={ css`
-					body.is-section-marketplace.is-nav-unification {
+					body.is-section-marketplace {
 						--masterbar-height: 72px;
 					}
 				` }

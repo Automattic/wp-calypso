@@ -2,7 +2,7 @@
 @import url( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' );
 
 // Override Global Vars
-.is-nav-unification {
+.theme-default {
 	// client/assets/stylesheets/shared/_variables.scss
 	--sidebar-width-max: 272px;
 	--sidebar-width-min: 272px;
@@ -41,7 +41,7 @@ $font-size: rem( 14px );
 	}
 }
 
-.is-nav-unification {
+.theme-default {
 	// client/layout/style.scss
 	.layout__content {
 		min-height: 101vh; // Hack to give JS the chance to trigger the scroll event when the content is short. JS code: client/layout/utils.ts:36.
@@ -309,7 +309,7 @@ $font-size: rem( 14px );
 
 	//client/components/site-selector/style.scss
 	.site-selector .site.is-highlighted {
-		background-color: var ( --color-sidebar-submenu-background );
+		background-color: var( --color-sidebar-submenu-background );
 	}
 
 	.site-selector .site.is-highlighted .site__domain,
@@ -508,7 +508,7 @@ $font-size: rem( 14px );
 		}
 	}
 
-	.sidebar-unified__menu-loading {
+	.sidebar__menu-loading {
 		position: absolute;
 		top: 0;
 		right: 0;
@@ -516,7 +516,7 @@ $font-size: rem( 14px );
 		bottom: 0;
 	}
 
-	.sidebar-unified__sparkline {
+	.sidebar__sparkline {
 		margin-right: 8px;
 	}
 
@@ -558,12 +558,12 @@ $font-size: rem( 14px );
 
 // Flyout menu (showing from >782px)
 @media screen and ( min-width: 783px ) {
-	.is-nav-unification {
+	.theme-default {
 		.focus-content,
 		.focus-sites,
 		.focus-sidebar {
 			.sidebar {
-				z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
+				z-index: z-index( 'root', '.layout__secondary' );
 			}
 		}
 
@@ -630,7 +630,7 @@ $font-size: rem( 14px );
 
 @media screen and ( max-width: 782px ) {
 	// client/layout/sidebar/style.scss
-	.is-nav-unification {
+	.theme-default {
 		.focus-content .layout__content {
 			padding: 71px 24px 24px;
 			transition: padding 0.15s ease-in-out;
@@ -701,7 +701,7 @@ $font-size: rem( 14px );
 }
 
 @media screen and ( max-width: 660px ) {
-	.is-nav-unification {
+	.theme-default {
 		// client/layout/style.scss
 		.layout__content {
 			min-height: initial;

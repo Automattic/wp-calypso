@@ -10,8 +10,7 @@
  * IMPORTANT: When adding to this file please also add the source file in a comment.
  */
 
-.theme-default.is-nav-unification {
-	// excludes theme-jetpack-cloud.
+.theme-default {
 	// breakpoint used in wp-admin
 	@media only screen and ( min-width: 782px ) {
 		// client/assets/stylesheets/shared/_variables.scss
@@ -85,7 +84,7 @@
 	}
 
 	// New post button
-	.masterbar__item-new {
+	a.masterbar__item-new {
 		font-size: $nav-unification-masterbar-font-size;
 		color: $nav-unification-primary;
 
@@ -102,7 +101,7 @@
 			color: $nav-unification-primary;
 			font-weight: 500;
 		}
-		
+
 		@include breakpoint-deprecated( '>480px' ) {
 			background: var( --studio-white );
 		}
@@ -116,7 +115,6 @@
 	}
 
 	.masterbar__toggle-drafts.button.is-borderless {
-		margin-left: -8px;
 		color: $nav-unification-primary;
 		font-size: $nav-unification-masterbar-font-size;
 		.gridicon {
@@ -148,7 +146,7 @@
 			margin-right: 9px;
 		}
 
-		.masterbar__toggle-drafts.button.is-borderless {
+		.masterbar__publish .masterbar__toggle-drafts.button.is-borderless {
 			margin-left: -9px;
 		}
 	}
@@ -156,7 +154,7 @@
 	@include breakpoint-deprecated( '<480px' ) {
 		.masterbar__toggle-drafts.button.is-borderless {
 			color: var( --color-sidebar-text );
-			
+
 			margin-right: 0;
 			padding: 0 16px;
 
@@ -178,10 +176,6 @@
 			height: 36px;
 			margin-top: 5px;
 			width: auto;
-		}
-
-		.masterbar__toggle-drafts.button.is-borderless {
-			margin-left: -9px;
 		}
 	}
 
@@ -282,7 +276,7 @@
 
 // Ensure sidebar is visually separate from the content in the Contrast color scheme
 // client/layout/style.scss
-.theme-default.is-contrast.is-nav-unification {
+.theme-default.is-contrast {
 	.layout__secondary {
 		outline: 1px solid var( --color-sidebar-border );
 	}
@@ -290,8 +284,8 @@
 
 // Ensure that the sidebar always remains on top.
 // Related issue: https://github.com/Automattic/wp-calypso/issues/53504
-.is-nav-unification {
+.theme-default {
 	.layout__secondary {
-		z-index: z-index( 'root', '.is-nav-unification .layout__secondary' );
+		z-index: z-index( 'root', '.layout__secondary' );
 	}
 }
