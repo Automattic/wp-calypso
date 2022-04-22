@@ -25,7 +25,6 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getIsIntroOfferRequesting from 'calypso/state/selectors/get-is-requesting-into-offers';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -60,7 +59,6 @@ import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
 import weChatProcessor from './lib/we-chat-processor';
 import webPayProcessor from './lib/web-pay-processor';
 import { StoredCard } from './types/stored-cards';
-import { emptyManagedContactDetails } from './types/wpcom-store-state';
 import type { PaymentProcessorOptions } from './types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type {
@@ -245,7 +243,7 @@ export default function CompositeCheckout( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	useWpcomStore( emptyManagedContactDetails, updateContactDetailsCache );
+	useWpcomStore();
 
 	useDetectedCountryCode();
 	useCachedDomainContactDetails( countriesList );
