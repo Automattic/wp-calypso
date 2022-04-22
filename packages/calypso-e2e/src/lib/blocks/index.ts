@@ -11,3 +11,4 @@ export * from './schemas';
 export * from './paragraph-block';
 
 export * from './block-flows';
+export * from './block-object-models';
