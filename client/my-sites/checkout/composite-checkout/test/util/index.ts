@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-import { screen } from '@testing-library/react';
+import { prettyDOM } from '@testing-library/react';
 import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
@@ -900,9 +900,51 @@ export function mockCachedContactDetailsEndpoint( data ): void {
 		.reply( mockDomainContactResponse );
 }
 
-// This is a little tricky because we need to verify that text never appears,
-// even after some time passes, so we use this slightly convoluted technique:
-// https://stackoverflow.com/a/68318058/2615868
-export async function verifyThatTextNeverAppears( text: string ): Promise< void > {
-	await expect( screen.findByText( text ) ).rejects.toThrow();
+// Add the below custom Jest assertion to TypeScript.
+declare global {
+	// eslint-disable-next-line @typescript-eslint/no-namespace
+	namespace jest {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		interface Matchers< R > {
+			toNeverAppear(): Promise< CustomMatcherResult >;
+		}
+	}
 }
+
+expect.extend( {
+	/**
+	 * Assert that a DOM element never appears, even after some time passes.
+	 *
+	 * The argument should be a call to one of testing-library's `findBy...`
+	 * methods which will throw if they do not find a result.
+	 *
+	 * This is an async matcher so you must await its result.
+	 *
+	 * Example:
+	 * `await expect( screen.findByText( 'Bad things' ) ).toNeverAppear();`
+	 *
+	 * This is a little tricky because we need to keep checking over time, so we
+	 * use this slightly convoluted technique:
+	 * https://stackoverflow.com/a/68318058/2615868
+	 */
+	async toNeverAppear( elementPromise: Promise< HTMLElement > ) {
+		let pass = false;
+		let element = null;
+		try {
+			element = await elementPromise;
+		} catch {
+			pass = true;
+		}
+		if ( pass ) {
+			return {
+				message: () => `expected element to appear but it did not.`,
+				pass: true,
+			};
+		}
+		const elementPretty = element ? prettyDOM( element ) : '';
+		return {
+			message: () => `expected element to never appear but it did:\n${ elementPretty }`,
+			pass: false,
+		};
+	},
+} );

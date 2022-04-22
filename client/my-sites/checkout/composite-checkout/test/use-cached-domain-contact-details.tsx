@@ -19,7 +19,6 @@ import {
 	createTestReduxStore,
 	mockCartEndpoint,
 	mockCachedContactDetailsEndpoint,
-	verifyThatTextNeverAppears,
 } from './util';
 import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
 
@@ -120,11 +119,8 @@ describe( 'useCachedDomainContactDetails', () => {
 			postal_code: '10001',
 		} );
 		render( <MyTestWrapper countries={ [] } /> );
-		await verifyThatTextNeverAppears( 'Tax Country: US' );
-		await verifyThatTextNeverAppears( 'Tax Postal: 10001' );
-		await waitFor( () => {
-			expect( screen.queryByText( 'Test content' ) ).toBeInTheDocument();
-		} );
+		await expect( screen.findByText( 'Tax Country: US' ) ).toNeverAppear();
+		await expect( screen.findByText( 'Tax Postal: 10001' ) ).toNeverAppear();
 	} );
 
 	it( 'does not send the country from the contact details endpoint to the cart if the cart reloads after they have already been sent', async () => {
@@ -154,7 +150,7 @@ describe( 'useCachedDomainContactDetails', () => {
 
 		// Reload the cart and verify that the hook does not revert the cart info.
 		fireEvent.click( await screen.findByText( 'Click to reload cart' ) );
-		await verifyThatTextNeverAppears( 'Tax Postal: 10001' );
+		await expect( screen.findByText( 'Tax Postal: 10001' ) ).toNeverAppear();
 		await waitFor( () => {
 			expect( screen.queryByText( 'Tax Postal: 90210' ) ).toBeInTheDocument();
 		} );
@@ -196,10 +192,7 @@ describe( 'useCachedDomainContactDetails', () => {
 			postal_code: postalCode,
 		} );
 		render( <MyTestWrapper countries={ [] } /> );
-		await verifyThatTextNeverAppears( 'Form Country: US' );
-		await verifyThatTextNeverAppears( 'Form Postal: 10001' );
-		await waitFor( () => {
-			expect( screen.queryByText( 'Test content' ) ).toBeInTheDocument();
-		} );
+		await expect( screen.findByText( 'Form Country: US' ) ).toNeverAppear();
+		await expect( screen.findByText( 'Form Postal: 10001' ) ).toNeverAppear();
 	} );
 } );
