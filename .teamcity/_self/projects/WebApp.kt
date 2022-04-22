@@ -44,7 +44,7 @@ object BuildDockerImage : BuildType({
 	params {
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
 		checkbox(
-			name = "CREATE_SENTRY_RELEASE",
+			name = "MANUAL_SENTRY_RELEASE",
 			value = "false",
 			label = "Create a sentry release.",
 			description = "Generate and upload sourcemaps to Sentry as a new release for this commit.",
@@ -132,8 +132,9 @@ object BuildDockerImage : BuildType({
 					--build-arg use_cache=true
 					--build-arg base_image=%base_image%
 					--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
-					--build-arg create_sentry_release="${ "%CREATE_SENTRY_RELEASE%" === "true" || "%teamcity.build.branch.is_default%" === "true" }"
-					--build-arg sentry_auth_token="%SENTRY_AUTH_TOKEN%"
+					--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
+					--build-arg is_default_branch=%teamcity.build.branch.is_default%
+					--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
 				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")

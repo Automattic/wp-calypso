@@ -19,9 +19,11 @@ ENV READONLY_CACHE=true
 FROM builder-cache-${use_cache} as builder
 
 # Information for Sentry Releases.
-ARG create_sentry_release=false
+ARG manual_sentry_release=false
+ARG is_default_branch=false
 ARG sentry_auth_token=''
-ENV CREATE_SENTRY_RELEASE $create_sentry_release
+ENV MANUAL_SENTRY_RELEASE $manual_sentry_release
+ENV IS_DEFAULT_BRANCH $is_default_branch
 ENV SENTRY_AUTH_TOKEN $sentry_auth_token
 
 ARG commit_sha="(unknown)"

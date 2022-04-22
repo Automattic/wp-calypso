@@ -54,7 +54,8 @@ const shouldUseReadonlyCache = process.env.READONLY_CACHE === 'true';
 const shouldProfile = process.env.PROFILE === 'true';
 
 const shouldCreateSentryRelease =
-	process.env.CREATE_SENTRY_RELEASE === 'true' && process.env.SENTRY_AUTH_TOKEN?.length > 1;
+	( process.env.MANUAL_SENTRY_RELEASE === 'true' || process.env.IS_DEFAULT_BRANCH === 'true' ) &&
+	process.env.SENTRY_AUTH_TOKEN?.length > 1;
 let sourceMapType = process.env.SOURCEMAP;
 if ( ! sourceMapType && shouldCreateSentryRelease ) {
 	sourceMapType = 'hidden-source-map';
