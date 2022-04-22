@@ -636,9 +636,17 @@ $masterbar-color-secondary: #101517;
 .masterbar__item-notifications {
 	margin-right: 12px;
 
+	.masterbar__item-content {
+		display: block;
+	}
+
 	@include breakpoint-deprecated( '<480px' ) {
 		margin-right: 0;
 		margin-top: 0;
+
+		&:active, &:hover, &:focus {
+			color: var( --color-text-inverted );
+		}
 	}
 
 	.gridicon {
@@ -664,9 +672,9 @@ $masterbar-color-secondary: #101517;
 
 	.masterbar__notifications-bubble {
 		border: solid 2px var( --color-masterbar-background );
+		background: var( --color-masterbar-unread-dot-background );
 		// stylelint-disable-next-line declaration-property-unit-allowed-list
 		border-radius: 50%;
-		display: none;
 		// stylelint-disable-next-line declaration-property-unit-allowed-list
 		font-size: 8px;
 		height: 8px;
@@ -676,13 +684,11 @@ $masterbar-color-secondary: #101517;
 		padding: 0;
 		position: absolute;
 		top: 3px;
-		left: 50%;
+		right: 20%;
 		width: 8px;
 		z-index: z-index( '.masterbar', '.masterbar__notifications-bubble' );
-		transform: translateX( 1px );
 
 		// Animation
-		animation: bubble-unread-indication 0.5s linear both;
 		transition: all 150ms ease-in;
 
 		@media only screen and ( max-width: 782px ) {
@@ -696,11 +702,6 @@ $masterbar-color-secondary: #101517;
 
 	&.is-active .masterbar__notifications-bubble {
 		border-color: var( --color-masterbar-item-active-background );
-	}
-
-	&.has-unread .masterbar__notifications-bubble {
-		display: block;
-		background: var( --color-masterbar-unread-dot-background );
 	}
 
 	&.is-initial-load .masterbar__notifications-bubble {

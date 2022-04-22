@@ -9,6 +9,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import hasUnseenNotifications from 'calypso/state/selectors/has-unseen-notifications';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
+import { BellIcon } from './bell-straight-icon';
 import MasterbarItem from './item';
 
 class MasterbarItemNotifications extends Component {
@@ -112,7 +113,7 @@ class MasterbarItemNotifications extends Component {
 			<>
 				<MasterbarItem
 					url="/notifications"
-					icon="bell"
+					icon={ <BellIcon /> }
 					onClick={ this.toggleNotesFrame }
 					isActive={ this.props.isActive }
 					tooltip={ this.props.tooltip }
@@ -120,12 +121,7 @@ class MasterbarItemNotifications extends Component {
 					ref={ this.notificationLink }
 				>
 					{ this.props.children }
-					<span
-						className="masterbar__notifications-bubble"
-						key={
-							'notification-indicator-animation-state-' + Math.abs( this.state.animationState )
-						}
-					/>
+					{ this.state.newNote && <span className={ 'masterbar__notifications-bubble' } /> }
 				</MasterbarItem>
 				<div className="masterbar__notifications-panel" ref={ this.notificationPanel }>
 					<AsyncLoad

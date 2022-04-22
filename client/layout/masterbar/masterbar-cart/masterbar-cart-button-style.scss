@@ -1,5 +1,36 @@
 .masterbar-cart-button {
 	cursor: pointer;
+
+	.masterbar-cart__bubble {
+		border: solid 2px var( --color-masterbar-background );
+		background: var( --color-masterbar-unread-dot-background );
+		// stylelint-disable-next-line declaration-property-unit-allowed-list
+		border-radius: 50%;
+		// stylelint-disable-next-line declaration-property-unit-allowed-list
+		font-size: 8px;
+		height: 8px;
+		letter-spacing: 0;
+		line-height: 12px;
+		margin: 0 0 0 -12px;
+		padding: 0;
+		position: absolute;
+		top: 3px;
+		right: 20%;
+		width: 8px;
+		z-index: z-index( '.masterbar', '.masterbar-cart__bubble' );
+
+		@media only screen and ( max-width: 782px ) {
+			top: 10px;
+		}
+	}
+
+	&:hover .masterbar-cart__bubble {
+		border-color: var( --color-masterbar-item-hover-background );
+	}
+
+	&.is-active .masterbar-cart__bubble {
+		border-color: var( --color-masterbar-item-active-background );
+	}
 }
 
 .masterbar-cart-button__count-container {

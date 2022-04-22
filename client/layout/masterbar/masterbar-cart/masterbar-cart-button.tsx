@@ -64,9 +64,10 @@ export function MasterbarCartButton( {
 				icon="cart"
 				tooltip={ tooltip }
 				onClick={ onClick }
+				isActive={ isActive }
 				ref={ cartButtonRef }
 			>
-				<MasterbarCartCount productsInCart={ responseCart.products.length } />
+				{ responseCart.products.length > 0 && <span className={ 'masterbar-cart__bubble' } /> }
 			</MasterbarItem>
 			<Popover
 				isVisible={ isActive }
@@ -88,8 +89,4 @@ export function MasterbarCartButton( {
 			</Popover>
 		</>
 	);
-}
-
-function MasterbarCartCount( { productsInCart }: { productsInCart: number } ): JSX.Element {
-	return <span className="masterbar-cart-button__count-container">{ productsInCart }</span>;
 }
