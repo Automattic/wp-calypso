@@ -18,6 +18,10 @@ import { AppState } from 'calypso/types';
  * @returns {boolean} True if the site is considered a legacy site
  */
 export default function isLegacySiteWithHigherLimits( state: AppState, siteId: number ): boolean {
+	if ( ! siteId ) {
+		return false;
+	}
+
 	// Note this checks for both simple and Atomic sites.
 	if ( ! isSiteWpcom( state, siteId ) ) {
 		return false;
