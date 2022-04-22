@@ -18,10 +18,11 @@ ENV READONLY_CACHE=true
 ###################
 FROM builder-cache-${use_cache} as builder
 
-# Information for Sentry Releases. Not added to ENV as they are not needed after
-# webpack has completed.
+# Information for Sentry Releases.
 ARG create_sentry_release=false
 ARG sentry_auth_token=''
+ENV CREATE_SENTRY_RELEASE $create_sentry_release
+ENV SENTRY_AUTH_TOKEN $sentry_auth_token
 
 ARG commit_sha="(unknown)"
 ARG workers=4

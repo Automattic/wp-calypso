@@ -112,11 +112,6 @@ object BuildDockerImage : BuildType({
 		}
 
 		dockerCommand {
-			val toggledSentryRelease = "%CREATE_SENTRY_RELEASE%" === "true"
-			val isDefaultBranch = "%teamcity.build.branch.is_default%" === "true"
-			val shouldMakeSentryRelease = toggledSentryRelease || isDefaultBranch
-			println("Sentry release debug info:")
-			println("Is Toggled: $toggledSentryRelease, Is Default Branch: $isDefaultBranch, Release Enabled: $shouldMakeSentryRelease")
 			name = "Build docker image"
 			commandType = build {
 				source = file {
@@ -137,7 +132,7 @@ object BuildDockerImage : BuildType({
 					--build-arg use_cache=true
 					--build-arg base_image=%base_image%
 					--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
-					--build-arg create_sentry_release="%CREATE_SENTRY_RELEASE%"
+					--build-arg create_sentry_release="${ "%CREATE_SENTRY_RELEASE%" === "true" || "%teamcity.build.branch.is_default%" === "true" }"
 					--build-arg sentry_auth_token="%SENTRY_AUTH_TOKEN%"
 				""".trimIndent().replace("\n"," ")
 			}
