@@ -4,6 +4,7 @@ import {
 	getEmptyResponseCartProduct,
 	RequestCartProduct,
 } from '@automattic/shopping-cart';
+import { screen } from '@testing-library/react';
 import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
@@ -877,3 +878,19 @@ export const expectedCreateAccountRequest = {
 	client_id: config( 'wpcom_signup_id' ),
 	client_secret: config( 'wpcom_signup_key' ),
 };
+
+export function mockCachedContactDetailsEndpoint( data ): void {
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+	const mockDomainContactResponse = () => [ 200, data ];
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/domain-contact-information' )
+		.reply( mockDomainContactResponse );
+}
+
+// This is a little tricky because we need to verify that text never appears,
+// even after some time passes, so we use this slightly convoluted technique:
+// https://stackoverflow.com/a/68318058/2615868
+export async function verifyThatTextNeverAppears( text: string ): Promise< void > {
+	await expect( screen.findByText( text ) ).rejects.toThrow();
+}
