@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { planHasFeature, FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import DesignPicker, {
-	FeaturedPicksButtons,
 	PremiumBadge,
 	useCategorization,
 	isBlankCanvasDesign,
@@ -74,9 +73,6 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const showGeneratedDesigns =
 		isEnabled( 'signup/design-picker-generated-designs' ) && intent === 'build' && !! siteVertical;
 
-	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
-	const useFeaturedPicksButtons =
-		showDesignPickerCategories && isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
 	const isPremiumThemeAvailable = Boolean(
 		useMemo( () => sitePlanSlug && planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ), [
 			sitePlanSlug,
@@ -107,17 +103,13 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	);
 	const generatedDesigns = useGeneratedDesigns( generatedDesignsCategory );
 
-	const { designs, featuredPicksDesigns } = useMemo( () => {
-		return {
-			designs: [
-				...generatedDesigns,
-				...shuffle( staticDesigns.filter( ( design ) => ! design.is_featured_picks ) ),
-			],
-			featuredPicksDesigns: staticDesigns.filter(
-				( design ) => design.is_featured_picks && ! isBlankCanvasDesign( design )
-			),
-		};
-	}, [ staticDesigns, generatedDesigns ] );
+	const designs = useMemo(
+		() => [
+			...generatedDesigns,
+			...shuffle( staticDesigns.filter( ( design ) => ! isBlankCanvasDesign( design ) ) ),
+		],
+		[ staticDesigns, generatedDesigns ]
+	);
 
 	function headerText() {
 		if ( showDesignPickerCategories ) {
@@ -165,16 +157,6 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		showGeneratedDesigns
 	);
 	const categorization = useCategorization( designs, categorizationOptions );
-
-	function renderCategoriesFooter() {
-		return (
-			<>
-				{ useFeaturedPicksButtons && (
-					<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
-				) }
-			</>
-		);
-	}
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
@@ -288,13 +270,6 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		);
 	}
 
-	let featuredDesigns = [ ...featuredPicksDesigns, ...designs ];
-	if ( isAnchorSite ) {
-		featuredDesigns = ANCHOR_FM_THEMES as Design[];
-	} else if ( useFeaturedPicksButtons ) {
-		featuredDesigns = designs;
-	}
-
 	const heading = (
 		<FormattedHeader
 			className={ isAnchorSite ? 'is-anchor-header' : null }
@@ -308,7 +283,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	stepContent = (
 		<>
 			<DesignPicker
-				designs={ featuredDesigns }
+				designs={ isAnchorSite ? ( ANCHOR_FM_THEMES as Design[] ) : designs }
 				theme={ isReskinned ? 'light' : 'dark' }
 				locale={ locale }
 				onSelect={ pickDesign }
@@ -325,7 +300,6 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 				recommendedCategorySlug={ categorizationOptions.defaultSelection }
 				categoriesHeading={ heading }
 				anchorHeading={ isAnchorSite && heading }
-				categoriesFooter={ renderCategoriesFooter() }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			/>
 		</>
