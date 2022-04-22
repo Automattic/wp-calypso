@@ -135,8 +135,8 @@ object BuildDockerImage : BuildType({
 					--build-arg use_cache=true
 					--build-arg base_image=%base_image%
 					--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
-					--build-arg create_sentry_release="$shouldMakeSentryRelease" // Computed in Kotlin above.
-					--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
+					--build-arg create_sentry_release="$shouldMakeSentryRelease"
+					--build-arg sentry_auth_token="%SENTRY_AUTH_TOKEN%"
 				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")

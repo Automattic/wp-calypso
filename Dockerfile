@@ -70,6 +70,9 @@ RUN yarn install --immutable --check-cache
 ENV NODE_ENV production
 RUN yarn run build
 
+RUN [[ "$CREATE_SENTRY_RELEASE" == "true" ]] \
+  && rm -fr /calypso/build/**/*.*.map /calypso/build/*.*.map /calypso/public/**/*.*.map \
+  || echo "Not deleting sourcemaps because DEVTOOL arg was set."
 
 ###################
 FROM node:${node_version}-alpine as app
