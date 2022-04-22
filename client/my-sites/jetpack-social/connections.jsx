@@ -34,7 +34,6 @@ export const Connections = ( { siteId, translate } ) => {
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			{ siteId && <QueryPublicizeConnections siteId={ siteId } /> }
 			<FormattedHeader
-				brandFont
 				className="connections__page-heading"
 				headerText={ titleHeader }
 				subHeaderText={ translate( 'Manage your connections to social media networks' ) }
