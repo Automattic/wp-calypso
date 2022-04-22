@@ -27,6 +27,18 @@ describe( 'actions', () => {
 		} );
 	} );
 
+	describe( '#setUseAsPrimaryPaymentMethod()', () => {
+		test( 'should return an action with boolean value', () => {
+			const { setUseAsPrimaryPaymentMethod } = actions;
+			const payload = true;
+
+			expect( setUseAsPrimaryPaymentMethod( payload ) ).toEqual( {
+				type: 'USE_AS_PRIMARY_PAYMENT_METHOD',
+				payload,
+			} );
+		} );
+	} );
+
 	describe( '#setFieldValue()', () => {
 		test( 'should return an action with the key and field value', () => {
 			const { setFieldValue } = actions;
