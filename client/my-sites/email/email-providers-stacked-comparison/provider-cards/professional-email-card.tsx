@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
@@ -10,9 +11,9 @@ import {
 	TitanProductProps,
 } from 'calypso/lib/cart-values/cart-items';
 import {
-	getSelectedDomain,
 	canCurrentUserAddEmail,
 	getCurrentUserCannotAddEmailReason,
+	getSelectedDomain,
 } from 'calypso/lib/domains';
 import { getTitanProductName } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
@@ -30,9 +31,19 @@ import {
 	addToCartAndCheckout,
 	recordTracksEventAddToCartClick,
 } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+import NewMailboxList from 'calypso/my-sites/email/new-mailbox-list';
 import {
-	TITAN_PASSWORD_RESET_FIELD,
+	FIELD_ALTERNATIVE_EMAIL,
+	FIELD_FIRSTNAME,
+} from 'calypso/my-sites/email/new-mailbox-list/constants';
+import { Provider } from 'calypso/my-sites/email/new-mailbox-list/types';
+import {
+	getNewMailbox,
+	validateMailboxes,
+} from 'calypso/my-sites/email/new-mailbox-list/utilities';
+import {
 	TITAN_FULL_NAME_FIELD,
+	TITAN_PASSWORD_RESET_FIELD,
 } from 'calypso/my-sites/email/titan-new-mailbox';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
@@ -96,6 +107,9 @@ const ProfessionalEmailCard = ( {
 	const [ titanMailbox, setTitanMailbox ] = useState( [
 		buildNewTitanMailbox( selectedDomainName, false ),
 	] );
+
+	const [ mailboxes, setMailboxes ] = useState( [ getNewMailbox( selectedDomainName ) ] );
+
 	const [ addingToCart, setAddingToCart ] = useState( false );
 	const [ validatedTitanMailboxUuids, setValidatedTitanMailboxUuids ] = useState( [ '' ] );
 	const optionalFields = [ TITAN_PASSWORD_RESET_FIELD, TITAN_FULL_NAME_FIELD ];
@@ -104,7 +118,10 @@ const ProfessionalEmailCard = ( {
 	professionalEmail.detailsExpanded = detailsExpanded;
 
 	const onTitanConfirmNewMailboxes = () => {
-		const validatedTitanMailboxes = validateTitanMailboxes( titanMailbox, optionalFields );
+		window.console.log( mailboxes );
+		const validatedTitanMailboxes = isEnabled( 'email-provider-card/unified' )
+			? ( validateMailboxes( mailboxes ) as [  ] )
+			: validateTitanMailboxes( titanMailbox, optionalFields );
 
 		const mailboxesAreValid = areAllMailboxesValid( validatedTitanMailboxes, optionalFields );
 		const userCanAddEmail = isDomainInCart || canCurrentUserAddEmail( domain );
@@ -122,7 +139,24 @@ const ProfessionalEmailCard = ( {
 			userCanAddEmail,
 			userCannotAddEmailReason
 		);
-
+		window.console.log( [
+			'validatedTitanMailboxes',
+			validatedTitanMailboxes,
+			'comparisonContext',
+			comparisonContext,
+			'validatedMailboxUuids',
+			validatedMailboxUuids,
+			'mailboxesAreValid',
+			mailboxesAreValid,
+			'provider',
+			TITAN_PROVIDER_NAME,
+			'source',
+			source ?? '',
+			'userCanAddEmail',
+			userCanAddEmail,
+			'userCannotAddEmailReason',
+			userCannotAddEmailReason,
+		] );
 		setTitanMailbox( titanMailbox );
 		setValidatedTitanMailboxUuids( validatedMailboxUuids );
 
@@ -159,26 +193,49 @@ const ProfessionalEmailCard = ( {
 		<ProfessionalEmailPrice { ...{ domain, intervalLength, isDomainInCart } } />
 	);
 
-	professionalEmail.formFields = (
-		<TitanNewMailboxList
-			onMailboxesChange={ setTitanMailbox }
-			mailboxes={ titanMailbox }
-			selectedDomainName={ selectedDomainName }
-			onReturnKeyPress={ onTitanFormReturnKeyPress }
-			validatedMailboxUuids={ validatedTitanMailboxUuids }
-			showAddAnotherMailboxButton={ false }
-			hiddenFieldNames={ [ TITAN_FULL_NAME_FIELD, TITAN_PASSWORD_RESET_FIELD ] }
-		>
-			<FullWidthButton
-				className="professional-email-card__continue"
-				primary
-				busy={ addingToCart }
-				onClick={ onTitanConfirmNewMailboxes }
+	if ( isEnabled( 'email-provider-card/unified' ) ) {
+		professionalEmail.formFields = (
+			<NewMailboxList
+				hiddenFieldNames={ [ FIELD_FIRSTNAME, FIELD_ALTERNATIVE_EMAIL ] }
+				mailboxes={ mailboxes }
+				onMailboxesChange={ setMailboxes }
+				onReturnKeyPress={ onTitanFormReturnKeyPress }
+				provider={ Provider.Titan }
+				selectedDomainName={ selectedDomainName }
+				validatedMailboxUuids={ validatedTitanMailboxUuids }
 			>
-				{ translate( 'Create your mailbox' ) }
-			</FullWidthButton>
-		</TitanNewMailboxList>
-	);
+				<FullWidthButton
+					className="professional-email-card__continue"
+					primary
+					busy={ addingToCart }
+					onClick={ onTitanConfirmNewMailboxes }
+				>
+					{ translate( 'Create your mailbox' ) }
+				</FullWidthButton>
+			</NewMailboxList>
+		);
+	} else {
+		professionalEmail.formFields = (
+			<TitanNewMailboxList
+				onMailboxesChange={ setTitanMailbox }
+				mailboxes={ titanMailbox }
+				selectedDomainName={ selectedDomainName }
+				onReturnKeyPress={ onTitanFormReturnKeyPress }
+				validatedMailboxUuids={ validatedTitanMailboxUuids }
+				showAddAnotherMailboxButton={ false }
+				hiddenFieldNames={ [ TITAN_FULL_NAME_FIELD, TITAN_PASSWORD_RESET_FIELD ] }
+			>
+				<FullWidthButton
+					className="professional-email-card__continue"
+					primary
+					busy={ addingToCart }
+					onClick={ onTitanConfirmNewMailboxes }
+				>
+					{ translate( 'Create your mailbox' ) }
+				</FullWidthButton>
+			</TitanNewMailboxList>
+		);
+	}
 
 	return <EmailProvidersStackedCard { ...professionalEmail } />;
 };
