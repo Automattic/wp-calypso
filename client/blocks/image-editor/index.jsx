@@ -72,9 +72,9 @@ class ImageEditor extends Component {
 	editCanvasRef = createRef();
 
 	componentDidUpdate( prevProps ) {
-		const { media: currentMedia } = this.props;
+		const { media } = this.props;
 
-		if ( this.props.media && ! isEqual( prevProps.media, currentMedia ) ) {
+		if ( media && ! isEqual( prevProps.media, media ) ) {
 			this.props.resetAllImageEditorState();
 			this.updateFileInfo();
 			this.setDefaultAspectRatio();
