@@ -70,7 +70,12 @@ const InlineHelpCenterContent = ( {
 			<section ref={ secondaryViewRef } className={ classes }>
 				{
 					{
-						[ VIEW_CONTACT ]: <InlineHelpContactPage closeContactPage={ closeSecondaryView } />,
+						[ VIEW_CONTACT ]: (
+							<InlineHelpContactPage
+								closeContactPage={ closeSecondaryView }
+								onSelectResource={ openResultView }
+							/>
+						),
 						[ VIEW_RICH_RESULT ]: (
 							<InlineHelpEmbedResult
 								result={ selectedArticle }
@@ -107,17 +112,28 @@ const InlineHelpCenterContent = ( {
 
 	useEffect( () => {
 		setHelpCenterFooter(
-			activeSecondaryView ? null : <InlineHelpContactPageButton onClick={ openContactView } />
+			activeSecondaryView ? null : (
+				<InlineHelpContactPageButton
+					onClick={ openContactView }
+					onSelectResource={ openResultView }
+				/>
+			)
 		);
+	}, [ activeSecondaryView ] );
 
+	useEffect( () => {
 		if ( selectedArticle ) {
 			openSecondaryView( VIEW_RICH_RESULT );
 		}
 	}, [] );
 
-	const className = classNames( 'inline-help-center__content', {
-		'is-secondary-view-active': activeSecondaryView,
-	} );
+	const className = classNames(
+		'inline-help-center__content',
+		activeSecondaryView && `is-secondary-view-${ activeSecondaryView }`,
+		{
+			'is-secondary-view-active': activeSecondaryView,
+		}
+	);
 
 	return <div className={ className }>{ renderHelpCenterContent() }</div>;
 };

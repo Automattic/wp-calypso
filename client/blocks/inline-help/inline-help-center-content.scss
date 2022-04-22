@@ -6,7 +6,7 @@
 .inline-help-center__content {
 	background-color: var( --color-surface );
 
-    &:not( .is-secondary-view-active ) {
+    &:not( .is-secondary-view-richresult ) {
         p {
             font-size: $font-body-extra-small;
     
@@ -52,14 +52,12 @@
 	display: none;
 
 	box-sizing: border-box;
-	max-height: 70vh;
 	min-height: 206px;
 	overflow-y: auto;
 	padding: 16px;
 
 	.button {
 		width: 100%;
-		text-align: center;
 	}
 }
 
