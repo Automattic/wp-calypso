@@ -7,12 +7,17 @@ import {
 import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
+import domainManagementReducer from 'calypso/state/domains/management/reducer';
 import type {
 	SetCart,
 	RequestCart,
 	ResponseCart,
 	ResponseCartProduct,
 } from '@automattic/shopping-cart';
+import type {
+	CountryListItem,
+	PossiblyCompleteDomainContactDetails,
+} from '@automattic/wpcom-checkout';
 
 export const stripeConfiguration = {
 	processor_id: 'IE',
@@ -35,7 +40,23 @@ export const processorOptions = {
 	stripe: undefined,
 };
 
-export const countryList = [
+export const cachedContactDetails: PossiblyCompleteDomainContactDetails = {
+	firstName: null,
+	lastName: null,
+	organization: null,
+	email: null,
+	alternateEmail: null,
+	phone: null,
+	address1: null,
+	address2: null,
+	city: null,
+	state: null,
+	postalCode: null,
+	countryCode: null,
+	fax: null,
+};
+
+export const countryList: CountryListItem[] = [
 	{
 		code: 'US',
 		name: 'United States',
@@ -296,7 +317,10 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 			sub_total_integer: totalInteger - taxInteger,
 			sub_total_with_taxes_display: 'R$156',
 			sub_total_with_taxes_integer: totalInteger,
-			tax: { location: {}, display_taxes: true },
+			tax: {
+				location: requestCart.tax.location ?? {},
+				display_taxes: !! requestCart.tax.location.postal_code,
+			},
 			total_cost: 0,
 			total_cost_display: 'R$156',
 			total_cost_integer: totalInteger,
@@ -618,8 +642,9 @@ export function getPlansItemsState() {
 }
 
 export function createTestReduxStore() {
-	return applyMiddleware( thunk )( createStore )( () => {
+	const rootReducer = ( state, action ) => {
 		return {
+			...state,
 			plans: {
 				items: getPlansItemsState(),
 			},
@@ -716,8 +741,10 @@ export function createTestReduxStore() {
 			},
 			purchases: {},
 			countries: { payments: countryList, domains: countryList },
+			domains: { management: domainManagementReducer( state?.domains?.management ?? {}, action ) },
 		};
-	} );
+	};
+	return createStore( rootReducer, applyMiddleware( thunk ) );
 }
 
 export function mockPayPalEndpoint( endpointResponse ) {
