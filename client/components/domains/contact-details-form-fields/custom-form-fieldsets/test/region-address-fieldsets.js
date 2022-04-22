@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from 'calypso/test-helpers/config/testing-library';
+import { screen } from '@testing-library/react';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
@@ -34,14 +35,14 @@ describe( 'Region Address Fieldsets', () => {
 	};
 
 	test( 'should render `<UsAddressFieldset />` with default props', () => {
-		const { container } = render( <RegionAddressFieldsets { ...defaultProps } /> );
+		const { container } = renderWithProvider( <RegionAddressFieldsets { ...defaultProps } /> );
 		expect( container.getElementsByClassName( 'us-address-fieldset' ) ).toHaveLength( 1 );
 		expect( screen.queryByLabelText( 'Address' ) ).toBeDefined();
 		expect( screen.queryByText( '+ Add Address Line 2' ) ).toBeDefined();
 	} );
 
 	test( 'should render `<UkAddressFieldset />` with a UK region countryCode', () => {
-		const { container } = render(
+		const { container } = renderWithProvider(
 			<RegionAddressFieldsets
 				{ ...defaultProps }
 				countryCode={ CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ] }
@@ -51,7 +52,7 @@ describe( 'Region Address Fieldsets', () => {
 	} );
 
 	test( 'should render `<EuAddressFieldset />` with an EU region countryCode', () => {
-		const { container } = render(
+		const { container } = renderWithProvider(
 			<RegionAddressFieldsets
 				{ ...defaultProps }
 				countryCode={ CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ] }
@@ -61,7 +62,7 @@ describe( 'Region Address Fieldsets', () => {
 	} );
 
 	test( 'should render `<UsAddressFieldset />` with an EU region country that has states', () => {
-		const { container } = render(
+		const { container } = renderWithProvider(
 			<RegionAddressFieldsets
 				{ ...propsWithStates }
 				countryCode={ CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ] }
@@ -72,7 +73,7 @@ describe( 'Region Address Fieldsets', () => {
 	} );
 
 	test( 'should render `<UsAddressFieldset />` with a UK region country that has states', () => {
-		const { container } = render(
+		const { container } = renderWithProvider(
 			<RegionAddressFieldsets
 				{ ...propsWithStates }
 				countryCode={ CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES[ 0 ] }

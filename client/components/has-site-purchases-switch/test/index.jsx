@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-
+import { screen } from '@testing-library/react';
 import { reducer as purchases } from 'calypso/state/purchases/reducer';
-import { render as rtlRender, screen } from 'calypso/test-helpers/config/testing-library';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import HasSitePurchasesSwitch from '../index';
 
 import '@testing-library/jest-dom/extend-expect';
@@ -24,7 +24,7 @@ const getQueryElt = () => screen.getByText( /query/i );
 const getLoadingElt = () => screen.getByText( /loading/i );
 const getTrueElt = () => screen.getByText( /true/i );
 const getFalseElt = () => screen.getByText( /false/i );
-const render = ( el, options ) => rtlRender( el, { ...options, reducers: { purchases } } );
+const render = ( el, options ) => renderWithProvider( el, { ...options, reducers: { purchases } } );
 
 describe( 'HasSitePurchasesSwitch', () => {
 	it( 'should render the loading state if data is being fetched', () => {
