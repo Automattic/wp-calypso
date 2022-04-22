@@ -39,7 +39,7 @@ object WebApp : Project({
 object BuildDockerImage : BuildType({
 	uuid = "89fff49e-c79b-4e68-a012-a7ba405359b6"
 	name = "Docker image"
-	description = "checkBuild docker image containing Calypso"
+	description = "Build docker image containing Calypso"
 
 	params {
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
