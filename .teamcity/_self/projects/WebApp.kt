@@ -137,7 +137,7 @@ object BuildDockerImage : BuildType({
 					--build-arg use_cache=true
 					--build-arg base_image=%base_image%
 					--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
-					--build-arg create_sentry_release="${shouldMakeSentryRelease}"
+					--build-arg create_sentry_release="%CREATE_SENTRY_RELEASE%"
 					--build-arg sentry_auth_token="%SENTRY_AUTH_TOKEN%"
 				""".trimIndent().replace("\n"," ")
 			}
