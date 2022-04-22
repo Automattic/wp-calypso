@@ -26,8 +26,8 @@
 	},
 	"dependencies": {
 		"@automattic/explat-client": "workspace:^",
-		"react": "^17.0.2",
-		"tslib": "^2.3.0"
+		"react": ">=16.8",
+		"tslib": ">=2.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-polyfills": "workspace:^",

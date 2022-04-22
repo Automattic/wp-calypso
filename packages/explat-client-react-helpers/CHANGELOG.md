@@ -3,6 +3,10 @@
 
 - Added ExperimentOptions and ExPlatClientReactHelpers Typescript interfaces to export
 
+## 0.0.4
+
+- Loosen the requirements around dependencies
+
 ## 0.0.3
 
 - Update dependencies
