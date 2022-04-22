@@ -80,7 +80,7 @@ function useCachedContactDetailsForCheckoutForm(
 		debug( 'using fetched cached contact details for checkout data store', cachedContactDetails );
 		loadDomainContactDetailsFromCache( {
 			...cachedContactDetails,
-			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode : undefined,
+			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode : '',
 		} );
 	}, [
 		cachedContactDetails,
