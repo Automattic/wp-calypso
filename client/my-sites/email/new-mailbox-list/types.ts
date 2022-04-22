@@ -9,21 +9,21 @@ enum Provider {
 	Titan = PROVIDER_TITAN,
 }
 
-interface MailboxField {
+interface MailboxFormField {
 	error: FieldError;
 	value: FieldValue;
 }
 
 interface Mailbox {
-	alternativeEmail: MailboxField;
-	domain: MailboxField;
-	firstName: MailboxField;
-	isAdmin: MailboxField;
-	lastName: MailboxField;
-	mailbox: MailboxField;
-	password: MailboxField;
+	alternativeEmail: MailboxFormField;
+	domain: MailboxFormField;
+	firstName: MailboxFormField;
+	isAdmin: MailboxFormField;
+	lastName: MailboxFormField;
+	mailbox: MailboxFormField;
+	password: MailboxFormField;
 	provider: Provider;
 	uuid: string;
 }
 
-export type { FieldError, FieldValue, Mailbox, MailboxField, Provider, TranslateResult };
+export type { FieldError, FieldValue, Mailbox, MailboxFormField, Provider, TranslateResult };
