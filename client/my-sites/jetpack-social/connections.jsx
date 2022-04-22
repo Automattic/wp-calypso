@@ -1,10 +1,11 @@
+import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
 import FormattedHeader from 'calypso/components/formatted-header';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import SharingServicesGroup from 'calypso/my-sites/marketing/connections/services-group';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -14,6 +15,17 @@ import './style.scss';
 
 export const Connections = ( { siteId, translate } ) => {
 	const titleHeader = translate( 'Social' );
+
+	const learnMoreLink = (
+		<a
+			href={ localizeUrl( 'https://jetpack.com/support/publicize/' ) }
+			className={ 'connections__support-link' }
+			target="_blank"
+			rel="noopener noreferrer"
+		>
+			<Gridicon icon="help-outline" size={ 16 } />
+		</a>
+	);
 
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -31,9 +43,7 @@ export const Connections = ( { siteId, translate } ) => {
 			<SharingServicesGroup
 				type="publicize"
 				title={ translate( 'Publicize posts {{learnMoreLink/}}', {
-					components: {
-						learnMoreLink: <InlineSupportLink supportContext="publicize" showText={ false } />,
-					},
+					components: { learnMoreLink },
 				} ) }
 			/>
 		</Main>
