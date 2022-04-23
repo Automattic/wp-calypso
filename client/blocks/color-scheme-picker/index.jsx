@@ -15,22 +15,21 @@ function ColorSchemePicker( { defaultSelection, temporarySelection, onSelection,
 	const dispatch = useDispatch();
 	const colorSchemePreference = useSelector( ( state ) => getPreference( state, 'colorScheme' ) );
 
-	function handleColorSchemeSelection( event ) {
+	async function handleColorSchemeSelection( event ) {
 		const { value } = event.currentTarget;
 
 		if ( temporarySelection ) {
-			onSelection( value );
 			dispatch( setPreference( 'colorScheme', value ) );
 		} else {
-			dispatch( savePreference( 'colorScheme', value ) );
+			await dispatch( savePreference( 'colorScheme', value ) );
+			dispatch(
+				successNotice( translate( 'Settings saved successfully!' ), {
+					id: 'color-scheme-picker-save',
+					duration: 10000,
+				} )
+			);
 		}
-
-		dispatch(
-			successNotice( translate( 'Settings saved successfully!' ), {
-				id: 'color-scheme-picker-save',
-				duration: 10000,
-			} )
-		);
+		onSelection?.( value );
 	}
 
 	const colorSchemesData = getColorSchemesData( translate );
