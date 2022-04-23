@@ -43,7 +43,6 @@ object WPComTests : Project({
 	buildType(jetpackPlaywrightBuildType("desktop", "68fe6336-5869-4244-b236-cca23ba03487"));
 	buildType(jetpackPlaywrightBuildType("mobile", "a80b5c10-1fef-4c7f-9e2c-5c5c30d637c8"));
 
-	buildType(VisualRegressionTests);
 	buildType(I18NTests);
 	buildType(P2E2ETests)
 })
