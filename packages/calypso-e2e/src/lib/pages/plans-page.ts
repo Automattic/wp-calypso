@@ -9,7 +9,7 @@ type PlansComparisonAction = 'show' | 'hide';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
 export type LegacyPlans = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
-export type PlansPageTab = 'My Plan' | 'Plans' | 'New Plans';
+export type PlansPageTab = 'My Plan' | 'Plans';
 export type PlanActionButton = 'Manage plan' | 'Upgrade';
 
 const selectors = {
@@ -22,13 +22,12 @@ const selectors = {
 	activeNavigationTab: ( tabName: PlansPageTab ) =>
 		`.is-selected.section-nav-tab:has-text("${ tabName }")`,
 
+	// Legacy plans view
+	legacyPlansGrid: '.plans-features-main',
 	actionButton: ( { plan, buttonText }: { plan: LegacyPlans; buttonText: PlanActionButton } ) => {
 		const viewportSuffix = envVariables.VIEWPORT_NAME === 'mobile' ? 'mobile' : 'table';
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
-
-	// Legacy plans view
-	legacyPlansGrid: '.plans-features-main',
 
 	// Overhauled plans view
 	upgradeToProButton: 'th button.is-primary',
