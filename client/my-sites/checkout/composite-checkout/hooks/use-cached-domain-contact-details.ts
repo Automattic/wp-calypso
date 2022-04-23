@@ -31,15 +31,19 @@ function areTaxFieldsDifferent(
 
 function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null {
 	const reduxDispatch = useReduxDispatch();
-	const haveRequestedCachedDetails = useRef( false );
+	const haveRequestedCachedDetails = useRef< 'not-started' | 'pending' | 'done' >( 'not-started' );
 	const cachedContactDetails = useSelector( getContactDetailsCache );
 	useEffect( () => {
-		if ( ! haveRequestedCachedDetails.current ) {
+		if ( haveRequestedCachedDetails.current === 'not-started' ) {
 			debug( 'requesting cached domain contact details' );
 			reduxDispatch( requestContactDetailsCache() );
-			haveRequestedCachedDetails.current = true;
+			haveRequestedCachedDetails.current = 'pending';
 		}
 	}, [ reduxDispatch ] );
+	if ( haveRequestedCachedDetails.current === 'pending' && cachedContactDetails ) {
+		debug( 'cached domain contact details retrieved', cachedContactDetails );
+		haveRequestedCachedDetails.current = 'done';
+	}
 	return cachedContactDetails;
 }
 
@@ -67,13 +71,19 @@ function useCachedContactDetailsForCheckoutForm(
 	// `wpcom-checkout` data store for use by the checkout contact form.
 	useEffect( () => {
 		// Do nothing if the contact details are loading, or the countries are loading.
-		if ( ! cachedContactDetails || ! countriesList.length ) {
+		if ( ! cachedContactDetails ) {
+			debug( 'cached contact details for form have not loaded' );
+			return;
+		}
+		if ( ! countriesList.length ) {
+			debug( 'cached contact details for form are waiting for the countries list' );
 			return;
 		}
 		// Do nothing if the cached data has not changed since the last time we
 		// sent the data to the form (this typically will only ever need to be
 		// activated once).
 		if ( previousDetailsForForm.current === cachedContactDetails ) {
+			debug( 'cached contact details for form have not changed' );
 			return;
 		}
 		previousDetailsForForm.current = cachedContactDetails;
