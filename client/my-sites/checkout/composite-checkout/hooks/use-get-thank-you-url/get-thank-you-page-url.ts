@@ -131,7 +131,7 @@ export default function getThankYouPageUrl( {
 					plan_upgraded: '1',
 				} ),
 			} ).href;
-			debug( 'returning sanitized internal redirectTo', redirectTo );
+			debug( 'returning sanitized internal redirectTo', sanitizedRedirectTo );
 			return sanitizedRedirectTo;
 		}
 
@@ -744,7 +744,11 @@ function isRedirectSameSite( redirectTo: string, siteSlug?: string ) {
 	// For subdirectory site, check that both hostname and subdirectory matches the siteSlug (host.name::subdirectory).
 	if ( siteSlug.indexOf( '::' ) !== -1 ) {
 		const slugParts = siteSlug.split( '::' );
-		return hostname === slugParts[ 0 ] && pathname?.startsWith( `/${ slugParts[ 1 ] }` );
+		const hostnameFromSlug = slugParts[ 0 ];
+		const subDirectoryPathFromSlug = slugParts.splice( 1 ).join( '/' );
+		return (
+			hostname === hostnameFromSlug && pathname?.startsWith( `/${ subDirectoryPathFromSlug }` )
+		);
 	}
 	// For standard non-subdirectory site, check that hostname matches the siteSlug.
 	return hostname === siteSlug;
