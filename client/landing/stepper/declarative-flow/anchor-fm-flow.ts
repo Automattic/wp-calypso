@@ -11,7 +11,7 @@ export const anchorFmFlow: Flow = {
 	name: 'anchor-fm',
 
 	useSteps() {
-		return [ 'podcastTitle', 'designSetup', 'fontPairing' ] as StepPath[];
+		return [ 'podcastTitle', 'designSetup' ] as StepPath[];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -24,8 +24,6 @@ export const anchorFmFlow: Flow = {
 				case 'podcastTitle':
 					return navigate( 'designSetup' );
 				case 'designSetup':
-					return navigate( 'fontPairing' );
-				case 'fontPairing':
 					return redirect( `/page/home/${ siteSlug }` );
 			}
 		}
@@ -34,8 +32,6 @@ export const anchorFmFlow: Flow = {
 			switch ( currentStep ) {
 				case 'designSetup':
 					return navigate( 'podcastTitle' );
-				case 'fontPairing':
-					return navigate( 'designSetup' );
 				default:
 					return navigate( 'podcastTitle' );
 			}
@@ -46,8 +42,6 @@ export const anchorFmFlow: Flow = {
 				case 'podcastTitle':
 					return navigate( 'designSetup' );
 				case 'designSetup':
-					return navigate( 'fontPairing' );
-				case 'fontPairing':
 					return redirect( `/page/home/${ siteSlug }` );
 
 				default:

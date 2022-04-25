@@ -6,7 +6,6 @@ export { default as bloggerStartingPoint } from './blogger-starting-point';
 export { default as storeFeatures } from './store-features';
 export { default as designSetup } from './design-setup';
 export { default as businessInfo } from './business-info';
-export { default as fontPairing } from './font-pairing';
 export { default as storeAddress } from './store-address';
 export { default as vertical } from './site-vertical';
 export { default as wooTransfer } from './woo-transfer';
@@ -23,7 +22,6 @@ export type StepPath =
 	| 'storeFeatures'
 	| 'designSetup'
 	| 'businessInfo'
-	| 'fontPairing'
 	| 'storeAddress'
 	| 'processing'
 	| 'vertical'
