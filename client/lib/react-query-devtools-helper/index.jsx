@@ -7,42 +7,49 @@ import { setStoredItem, getStoredItem } from 'calypso/lib/browser-storage';
 import './style.scss';
 
 function useDevtoolsEnabled() {
-	const [ enableDevtools, setEnableDevtools ] = useState();
+	const [ devtoolsEnabled, setEnabled ] = useState( false );
 
 	useEffect( () => {
-		getStoredItem( 'enable-react-query-devtools' ).then( setEnableDevtools );
+		getStoredItem( 'enable-react-query-devtools' ).then( ( value ) =>
+			setEnabled( value ?? false )
+		);
 	}, [] );
 
-	return enableDevtools;
+	const setDevtoolsEnabled = async ( status ) => {
+		await setStoredItem( 'enable-react-query-devtools', status );
+		setEnabled( status );
+	};
+
+	return { devtoolsEnabled, setDevtoolsEnabled };
 }
 
 export function CalypsoReactQueryDevtools() {
-	const enableDevtools = useDevtoolsEnabled();
+	const { devtoolsEnabled } = useDevtoolsEnabled();
 
 	if ( config.isEnabled( 'dev/react-query-devtools' ) ) {
-		return enableDevtools ? <ReactQueryDevtools /> : null;
+		return devtoolsEnabled ? <ReactQueryDevtools /> : null;
 	}
 
 	return null;
 }
 
 function ReactQueryDevtoolsHelper() {
-	const enableDevtools = useDevtoolsEnabled();
+	const { devtoolsEnabled, setDevtoolsEnabled } = useDevtoolsEnabled();
 
 	async function toggleDevtools( event ) {
-		await setStoredItem( 'enable-react-query-devtools', event.target.checked );
+		await setDevtoolsEnabled( event.target.checked );
 		window.location.reload();
 	}
 
 	return (
 		<>
-			<div>ReactQuery</div>
+			<div>React Query</div>
 			<div className="react-query-devtools-helper__popover">
 				<label className="react-query-devtools-helper__label">
 					<input
 						type="checkbox"
 						name="react-query-devtools"
-						checked={ enableDevtools ?? false }
+						checked={ devtoolsEnabled }
 						onChange={ toggleDevtools }
 					/>
 					<span>Enable Devtools</span>
