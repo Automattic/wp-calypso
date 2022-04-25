@@ -88,7 +88,7 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 
 		if ( $is_p2 ) {
 			// disable welcome tour for authoring P2s.
-			// see: https://a8c.slack.com/archives/C025Q5RK2/p1650559200031119.
+			// see: https://github.com/Automattic/wp-calypso/issues/62973.
 			$nux_status = 'disabled';
 		} elseif ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
 			$nux_status = apply_filters( 'wpcom_block_editor_nux_get_status', false );
