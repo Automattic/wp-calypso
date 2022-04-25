@@ -1,15 +1,35 @@
 import phpUnserialize from 'phpunserialize';
-import { UseQueryResult, UseQueryOptions, InfiniteData, useInfiniteQuery } from 'react-query';
+import {
+	UseQueryResult,
+	UseQueryOptions,
+	InfiniteData,
+	useInfiniteQuery,
+	QueryKey,
+} from 'react-query';
 import { useSelector } from 'react-redux';
 import { extractSearchInformation, normalizePluginsList } from 'calypso/lib/plugins/utils';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE, DEFAULT_CATEGORY } from './constants';
+import {
+	DEFAULT_FIRST_PAGE,
+	DEFAULT_PAGE_SIZE,
+	DEFAULT_CATEGORY,
+	BASE_STALE_TIME,
+} from './constants';
 import { ESHits, Plugin, QueryOptions } from './types';
 
 /**
  * Constants
  */
 const SITE_SEARCH_ENDPOINT = 'https://public-api.wordpress.com/rest/v1/sites/108986944/search';
+
+const getCacheKey = ( key: string ): QueryKey => [ 'wpcom-site-search-wporg-plugins', key ];
+
+const getPluginsListKey = ( options: QueryOptions, infinite?: boolean ): QueryKey =>
+	getCacheKey(
+		`${ infinite ? 'infinite' : '' }${ options.category || '' }_${ options.searchTerm || '' }_${
+			options.page || ''
+		}_${ options.pageSize || '' }_${ options.locale || '' }`
+	);
 
 /**
  *
@@ -172,11 +192,6 @@ const extractPagesFromEsResponse = ( total: number, pageSize: number, page: numb
 	};
 };
 
-type ESResponse = {
-	hits: ESHits;
-	total: number;
-};
-
 /**
  * Returns a list of plugins from WPORG site search
  *
@@ -185,7 +200,7 @@ type ESResponse = {
  */
 export const useSiteSearchWPORGPlugins = (
 	options: QueryOptions,
-	{ enabled = true, staleTime = 0 /* TODO remove */, refetchOnMount = true }: UseQueryOptions = {}
+	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = false }: UseQueryOptions
 ): UseQueryResult => {
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
@@ -193,7 +208,7 @@ export const useSiteSearchWPORGPlugins = (
 	const page: number = options.page ?? DEFAULT_FIRST_PAGE;
 
 	return useInfiniteQuery(
-		'wpcom-site-search-wporg-plugins',
+		getPluginsListKey( options, true ),
 		( { pageParam = DEFAULT_FIRST_PAGE } ) =>
 			fetchWPOrgPluginsFromSiteSearch( {
 				pageSize,
@@ -204,13 +219,14 @@ export const useSiteSearchWPORGPlugins = (
 				author,
 			} ),
 		{
-			//select: ( data ) => normalizePluginsList( data ),
-			select: ( data: InfiniteData< ESResponse > ) => ( {
-				pages: data.pages,
-				pageParams: data.pageParams,
-				plugins: normalizePluginsList( mapIndexResultsToPluginData( data.hits ) ), // TODO flatmap from pages?
-				pagination: extractPagesFromEsResponse( data.total, pageSize, page ),
-			} ),
+			select: ( data: InfiniteData< { hits: ESHits; total: number } > ) => {
+				const { total, hits } = data.pages[ 0 ];
+				return {
+					...data,
+					plugins: normalizePluginsList( mapIndexResultsToPluginData( hits ) ),
+					pagination: extractPagesFromEsResponse( total, pageSize, page ),
+				};
+			},
 			enabled,
 			staleTime,
 			refetchOnMount,
