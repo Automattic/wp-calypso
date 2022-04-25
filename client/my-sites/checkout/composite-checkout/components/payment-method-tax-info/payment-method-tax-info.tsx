@@ -1,6 +1,6 @@
 import { Gridicon, Button, Dialog } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import i18n, { useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import Notice from 'calypso/components/notice';
@@ -28,9 +28,7 @@ function TaxInfoButtonContents( {
 		);
 		return <>{ taxInfoDisplay }</>;
 	}
-	const text = i18n.hasTranslation( 'Fix missing data' )
-		? translate( 'Fix missing data' )
-		: translate( 'Action required' );
+	const text = translate( 'Fix missing data' );
 	return (
 		<>
 			<Gridicon icon="notice" />
@@ -183,9 +181,7 @@ export function TaxInfoArea( {
 	return (
 		<div className="payment-method-tax-info">
 			<span className="payment-method-tax-info__address">
-				{ i18n.hasTranslation( 'Billing information:' )
-					? translate( 'Billing information:', { textOnly: true } )
-					: translate( 'Address', { textOnly: true } ) }
+				{ translate( 'Billing information:', { textOnly: true } ) }
 			</span>
 			<Button
 				scary={ ! isTaxInfoComplete }
