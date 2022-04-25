@@ -129,14 +129,17 @@ class FoldableCard extends Component {
 			this.props.header,
 			this.renderActionButton()
 		);
+		const hasSummary = this.props.expandedSummary || this.props.summary;
 
 		return (
 			<div className={ headerClasses } role="presentation" onClick={ headerClickAction }>
 				{ header }
-				<span className="foldable-card__secondary">
-					{ summary }
-					{ expandedSummary }
-				</span>
+				{ hasSummary && (
+					<span className="foldable-card__secondary">
+						{ summary }
+						{ expandedSummary }
+					</span>
+				) }
 			</div>
 		);
 	}
