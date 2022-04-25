@@ -1,25 +1,14 @@
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
-import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
-import type { EmailProvidersStackedComparisonProps } from 'calypso/my-sites/email/email-providers-stacked-comparison';
+import { MailboxFormFactory, EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 
-const EmailProvidersStackedComparisonPage = (
-	props: EmailProvidersStackedComparisonProps
-): JSX.Element => {
-	return (
-		<>
-			<PageViewTracker
-				path={ emailManagementPurchaseNewEmailAccount( ':site', ':domain' ) }
-				title="Email Comparison"
-				properties={ {
-					source: props.source,
-					context: props.comparisonContext,
-					provider: props.selectedEmailProviderSlug,
-				} }
-			/>
-			<EmailProvidersStackedComparison { ...props } />
-		</>
-	);
+const EmailProvidersStackedComparisonPage = (): JSX.Element => {
+	const mb = MailboxFormFactory.create( EmailProvider.Google );
+	window.console.log( 'ZKK', mb.password.error );
+	mb.validateAll();
+	window.console.log( 'ZKK', mb.provider, mb.password.error );
+	mb.clearErrors();
+	window.console.log( 'ZKK', mb.provider, mb.password.error );
+
+	return <></>;
 };
 
 export default EmailProvidersStackedComparisonPage;

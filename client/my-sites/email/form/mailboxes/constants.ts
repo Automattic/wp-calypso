@@ -10,10 +10,3 @@ export const FIELD_IS_ADMIN = 'isAdmin';
 export const FIELD_MAILBOX = 'mailbox';
 export const FIELD_PASSWORD = 'password';
 export const FIELD_UUID = 'uuid';
-
-/**
- * Provider ids.
- * Used in enums to differentiate providers
- */
-export const PROVIDER_GOOGLE = 0;
-export const PROVIDER_TITAN = 1;
