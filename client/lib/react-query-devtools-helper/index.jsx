@@ -10,8 +10,8 @@ function useDevtoolsEnabled() {
 	const [ devtoolsEnabled, setEnabled ] = useState( false );
 
 	useEffect( () => {
-		getStoredItem( 'enable-react-query-devtools' ).then( ( value ) =>
-			setEnabled( value ?? false )
+		getStoredItem( 'enable-react-query-devtools' ).then( ( status ) =>
+			setEnabled( status ?? false )
 		);
 	}, [] );
 
@@ -20,11 +20,11 @@ function useDevtoolsEnabled() {
 		setEnabled( status );
 	};
 
-	return { devtoolsEnabled, setDevtoolsEnabled };
+	return [ devtoolsEnabled, setDevtoolsEnabled ];
 }
 
 export function CalypsoReactQueryDevtools() {
-	const { devtoolsEnabled } = useDevtoolsEnabled();
+	const [ devtoolsEnabled ] = useDevtoolsEnabled();
 
 	if ( config.isEnabled( 'dev/react-query-devtools' ) ) {
 		return devtoolsEnabled ? <ReactQueryDevtools /> : null;
@@ -34,7 +34,7 @@ export function CalypsoReactQueryDevtools() {
 }
 
 function ReactQueryDevtoolsHelper() {
-	const { devtoolsEnabled, setDevtoolsEnabled } = useDevtoolsEnabled();
+	const [ devtoolsEnabled, setDevtoolsEnabled ] = useDevtoolsEnabled();
 
 	async function toggleDevtools( event ) {
 		await setDevtoolsEnabled( event.target.checked );
