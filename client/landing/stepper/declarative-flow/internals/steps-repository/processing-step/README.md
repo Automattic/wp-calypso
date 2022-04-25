@@ -9,9 +9,19 @@ It works together with `ONBOARD_STORE` and some of its state:
 ## How to use it
 ### Basic example
 1. Identify the step that requires background work, let's call it the **"main step"**.
-1. Add `processing` to the flow's  step list (`useSteps()`)
-2. Configure your flow in a way that the `processing` step is called after submitting the main step.
-3. On the main step, before calling `submit()`, set the pendingAction.
+3. Add `processing` to the flow's  step list (`useSteps()`)
+3. Configure your flow in a way that the `processing` step is called after submitting the main step, something like:
+
+```
+function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
+...
+	switch ( currentStep ) {
+		case 'myMainStep':
+			return navigate( 'processing' );
+...
+```
+
+4. On the main step, before calling `submit()`, set the pendingAction.
    - Remember to `await` all `Promisse`s
 
 ```
