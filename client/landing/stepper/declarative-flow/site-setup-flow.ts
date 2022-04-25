@@ -37,8 +37,10 @@ export const siteSetupFlow: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
-		const siteId = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedSite() );
 		const siteSlug = useSiteSlugParam();
+		const siteId = useSelect(
+			( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug )
+		);
 		const isAtomic = useSelect( ( select ) =>
 			select( SITE_STORE ).isSiteAtomic( siteId as number )
 		);
