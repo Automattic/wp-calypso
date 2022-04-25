@@ -21,9 +21,7 @@ async function setTaxInfoOnServer(
 	} );
 }
 
-export function usePaymentMethodTaxInfo(
-	storedDetailsId: string
-): {
+export function usePaymentMethodTaxInfo( storedDetailsId: string ): {
 	taxInfo: TaxGetInfo | undefined;
 	isLoading: boolean;
 	setTaxInfo: ( newInfo: TaxInfo ) => Promise< void >;

@@ -142,9 +142,11 @@ export function TaxInfoArea( {
 		setIsDialogVisible( false );
 	}, [] );
 
-	const { isLoading, taxInfo: taxInfoFromServer, setTaxInfo } = usePaymentMethodTaxInfo(
-		storedDetailsId
-	);
+	const {
+		isLoading,
+		taxInfo: taxInfoFromServer,
+		setTaxInfo,
+	} = usePaymentMethodTaxInfo( storedDetailsId );
 
 	const openDialog = useCallback( () => {
 		setInputValues( contactDetailsToTaxInfo( taxInfoFromServer ) );
