@@ -93,6 +93,7 @@ export function getAllowedPluginData( plugin ) {
 		'short_description',
 		'detailsFetched',
 		'downloaded',
+		'documentation_url',
 		'homepage',
 		'icons',
 		'id',
@@ -165,11 +166,10 @@ export function normalizeCompatibilityList( compatibilityList ) {
 		}
 		return splittedVersion;
 	}
-	const sortedCompatibility = sortBy( Object.keys( compatibilityList ).map( splitInNumbers ), [
-		0,
-		1,
-		2,
-	] );
+	const sortedCompatibility = sortBy(
+		Object.keys( compatibilityList ).map( splitInNumbers ),
+		[ 0, 1, 2 ]
+	);
 	return sortedCompatibility.map( function ( version ) {
 		if ( version.length && version[ version.length - 1 ] === 0 ) {
 			version.pop();
