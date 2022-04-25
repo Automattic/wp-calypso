@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import { isAnchorPodcastIdValid } from './use-is-anchor-fm';
 import useParameter from './use-parameter';
+=======
+import useAnchorParameter from './use-anchor-parameter';
+import { isAnchorPodcastIdValid } from './use-is-anchor-fm';
+>>>>>>> 9dac995278 (Allow Anchor flow to pull podcast title from API initially)
 
 export interface AnchorFmParams {
 	anchorFmPodcastId: string | null;
@@ -12,7 +17,11 @@ export interface AnchorFmParams {
 }
 export function useAnchorFmParams(): AnchorFmParams {
 	const sanitizePodcast = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
+<<<<<<< HEAD
 	const anchorFmPodcastId = useParameter( {
+=======
+	const anchorFmPodcastId = useAnchorParameter( {
+>>>>>>> 9dac995278 (Allow Anchor flow to pull podcast title from API initially)
 		queryParamName: 'anchor_podcast',
 		locationStateParamName: 'anchorFmPodcastId',
 		sanitize: sanitizePodcast,
@@ -24,7 +33,11 @@ export function useAnchorFmParams(): AnchorFmParams {
 	// Reserved characters: !*'();:@&=+$,/?#[]
 	// Unreserved: A-Za-z0-9_.~-    (possibly % as a part of percent-encoding)
 	const sanitizeEpisode = ( id: string ) => id.replace( /[^A-Za-z0-9_.\-~%]/g, '' );
+<<<<<<< HEAD
 	const anchorFmEpisodeId = useParameter( {
+=======
+	const anchorFmEpisodeId = useAnchorParameter( {
+>>>>>>> 9dac995278 (Allow Anchor flow to pull podcast title from API initially)
 		queryParamName: 'anchor_episode',
 		locationStateParamName: 'anchorFmEpisodeId',
 		sanitize: sanitizeEpisode,
@@ -35,7 +48,11 @@ export function useAnchorFmParams(): AnchorFmParams {
 	// Unreserved: A-Za-z0-9_.~-    (possibly % as a part of percent-encoding)
 	const sanitizeShowUrl = ( id: string ) =>
 		id.replace( /[^A-Za-z0-9_.\-~%!*'();:@&=+$,/?#[\]]/g, '' );
+<<<<<<< HEAD
 	const anchorFmSpotifyUrl = useParameter( {
+=======
+	const anchorFmSpotifyUrl = useAnchorParameter( {
+>>>>>>> 9dac995278 (Allow Anchor flow to pull podcast title from API initially)
 		queryParamName: 'spotify_url',
 		locationStateParamName: 'anchorFmSpotifyUrl',
 		sanitize: sanitizeShowUrl,
@@ -46,12 +63,20 @@ export function useAnchorFmParams(): AnchorFmParams {
 	// We store them as strings for consistency with the other param types
 	// and simplicity in code and type signatures.
 	const sanitizeNumberParam = ( id: string ) => id.replace( /^\D+$/g, '' );
+<<<<<<< HEAD
 	const anchorFmSite = useParameter( {
+=======
+	const anchorFmSite = useAnchorParameter( {
+>>>>>>> 9dac995278 (Allow Anchor flow to pull podcast title from API initially)
 		queryParamName: 'site',
 		locationStateParamName: 'anchorFmSite',
 		sanitize: sanitizeNumberParam,
 	} );
+<<<<<<< HEAD
 	const anchorFmPost = useParameter( {
+=======
+	const anchorFmPost = useAnchorParameter( {
+>>>>>>> 9dac995278 (Allow Anchor flow to pull podcast title from API initially)
 		queryParamName: 'post',
 		locationStateParamName: 'anchorFmPost',
 		sanitize: sanitizeNumberParam,
@@ -64,7 +89,11 @@ export function useAnchorFmParams(): AnchorFmParams {
 	// no matching site and redirect us to "/new?anchor_podcast=abcdef0&anchor_episode=1234-123456&anchor_is_new_site=true",
 	// because it found the last episode and wanted to pass that information to us.
 	// In this case, we don't need to ask the backend again after restarting gutenboarding.
+<<<<<<< HEAD
 	const anchorFmIsNewSite = useParameter( {
+=======
+	const anchorFmIsNewSite = useAnchorParameter( {
+>>>>>>> 9dac995278 (Allow Anchor flow to pull podcast title from API initially)
 		queryParamName: 'anchor_is_new_site',
 		locationStateParamName: 'anchorFmIsNewSite',
 		sanitize: ( flag: string ) => ( flag === 'true' ? 'true' : 'false' ),
