@@ -1,7 +1,6 @@
 import path from 'path';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { isEqual } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -10,6 +9,7 @@ import CloseOnEscape from 'calypso/components/close-on-escape';
 import QuerySites from 'calypso/components/data/query-sites';
 import Notice from 'calypso/components/notice';
 import { getMimeType, url } from 'calypso/lib/media/utils';
+import { withSelectedItems } from 'calypso/my-sites/media/context';
 import {
 	resetImageEditorState,
 	resetAllImageEditorState,
@@ -35,7 +35,7 @@ const noop = () => {};
 class ImageEditor extends Component {
 	static propTypes = {
 		// Component props
-		media: PropTypes.object,
+		mediaId: PropTypes.number,
 		siteId: PropTypes.number,
 		onDone: PropTypes.func,
 		onCancel: PropTypes.func,
@@ -54,7 +54,7 @@ class ImageEditor extends Component {
 	};
 
 	static defaultProps = {
-		media: null,
+		mediaId: null,
 		onDone: noop,
 		onCancel: null,
 		onReset: noop,
@@ -71,22 +71,23 @@ class ImageEditor extends Component {
 
 	editCanvasRef = createRef();
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		const { media: currentMedia } = this.props;
+	componentDidUpdate( prevProps ) {
+		const { selectedItems, mediaId } = this.props;
 
-		if ( newProps.media && ! isEqual( newProps.media, currentMedia ) ) {
+		if ( mediaId && prevProps.mediaId !== mediaId ) {
+			const currentMedia = selectedItems.find( ( { ID } ) => ID === mediaId );
+
 			this.props.resetAllImageEditorState();
-
-			this.updateFileInfo( newProps.media );
-
+			this.updateFileInfo( currentMedia );
 			this.setDefaultAspectRatio();
 		}
 	}
 
 	componentDidMount() {
-		this.updateFileInfo( this.props.media );
+		const { selectedItems, mediaId } = this.props;
+		const currentMedia = selectedItems.find( ( { ID } ) => ID === mediaId );
 
+		this.updateFileInfo( currentMedia );
 		this.setDefaultAspectRatio();
 	}
 
@@ -175,7 +176,7 @@ class ImageEditor extends Component {
 	};
 
 	getImageEditorProps = () => {
-		const { src, fileName, media, mimeType, title, site } = this.props;
+		const { src, fileName, mediaId, mimeType, title, site } = this.props;
 
 		const imageProperties = {
 			src,
@@ -186,8 +187,8 @@ class ImageEditor extends Component {
 			resetAllImageEditorState: this.props.resetAllImageEditorState,
 		};
 
-		if ( media && media.ID ) {
-			imageProperties.ID = media.ID;
+		if ( mediaId ) {
+			imageProperties.ID = mediaId;
 		}
 
 		return imageProperties;
@@ -304,4 +305,4 @@ export default connect(
 			dispatch
 		);
 	}
-)( localize( ImageEditor ) );
+)( localize( withSelectedItems( ImageEditor ) ) );

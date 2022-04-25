@@ -1,5 +1,3 @@
-import getMediaItem from 'calypso/state/selectors/get-media-item';
-
 import 'calypso/state/media/init';
 
 const EMPTY_ARRAY = [];
@@ -22,7 +20,5 @@ export default ( state, siteId ) => {
 		return EMPTY_ARRAY;
 	}
 
-	return selectedMediaIds
-		.map( ( mediaId ) => getMediaItem( state, siteId, mediaId ) )
-		.filter( ( media ) => media );
+	return state.media.selectedItems?.[ siteId ] ?? EMPTY_ARRAY;
 };
