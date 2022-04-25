@@ -10,7 +10,6 @@ import { dispatch, select, subscribe } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
 import { AtomicSoftwareStatus, register } from '..';
 import { getAtomicSoftwareStatus } from '../selectors';
-
 import type { State } from '../reducer';
 
 jest.mock( 'wpcom-proxy-request', () => ( {
