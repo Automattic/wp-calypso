@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
@@ -10,11 +10,11 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import getTextWidth from 'calypso/landing/gutenboarding/onboarding-block/acquire-intent/get-text-width';
+import usePodcastTitle from 'calypso/landing/stepper/hooks/use-podcast-title';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import type { Step } from '../../types';
-
 import './style.scss';
 
 const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
@@ -23,7 +23,7 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 
 	const PodcastTitleForm: React.FC = () => {
 		const [ formTouched, setFormTouched ] = useState( false );
-		const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+		const podcastTitle = usePodcastTitle();
 		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 		const inputRef = useRef< HTMLInputElement >();
 
@@ -31,7 +31,7 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 			submit?.();
 		};
 
-		const underlineWidth = getTextWidth( ( siteTitle as string ) || '', inputRef.current );
+		const underlineWidth = getTextWidth( ( podcastTitle as string ) || '', inputRef.current );
 
 		const handleChange = ( event: React.FormEvent< HTMLInputElement > ) => {
 			setFormTouched( true );
@@ -47,13 +47,13 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 						<FormInput
 							id="podcast-title"
 							inputRef={ inputRef }
-							value={ siteTitle }
+							value={ podcastTitle }
 							onChange={ handleChange }
 							placeholder="Good Fun"
 						/>
 						<div
 							className={ classNames( 'podcast-title__underline', {
-								'is-empty': ! ( siteTitle as string )?.length,
+								'is-empty': ! ( podcastTitle as string )?.length,
 							} ) }
 							style={ { width: underlineWidth || '100%' } }
 						/>
