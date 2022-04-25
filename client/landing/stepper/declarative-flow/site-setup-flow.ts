@@ -173,6 +173,9 @@ export const siteSetupFlow: Flow = {
 				case 'wooTransfer':
 					return navigate( 'processing' );
 
+				case 'wooInstallPlugins':
+					return navigate( 'processing' );
+
 				case 'courses': {
 					return exitFlow( `/post/${ siteSlug }` );
 				}
