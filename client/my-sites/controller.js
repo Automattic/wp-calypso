@@ -14,7 +14,6 @@ import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
-import { getShowAgencyDashboard } from 'calypso/lib/partner/utils';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
 import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
@@ -558,11 +557,6 @@ export function sites( context, next ) {
 		);
 	}
 
-	const showAgencyDashboard = getShowAgencyDashboard( context.store );
-	if ( showAgencyDashboard ) {
-		page.redirect( '/dashboard' );
-		return;
-	}
 	context.store.dispatch( setLayoutFocus( 'content' ) );
 	setSectionMiddleware( { group: 'sites' } )( context );
 

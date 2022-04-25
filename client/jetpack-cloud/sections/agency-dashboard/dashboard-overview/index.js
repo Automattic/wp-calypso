@@ -3,19 +3,17 @@ import page from 'page';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Spinner from 'calypso/components/spinner';
-import { isAgencyUser } from 'calypso/lib/partner/utils';
 import {
 	hasFetchedPartner,
-	getCurrentPartner,
 	isFetchingPartner,
+	isAgencyUser,
 } from 'calypso/state/partner-portal/partner/selectors';
 import SitesOverview from '../sites-overview';
 
 export default function DashboardOverview() {
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
-	const partner = useSelector( getCurrentPartner );
-	const isAgency = isAgencyUser( partner );
+	const isAgency = useSelector( isAgencyUser );
 	const isAgencyEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
 	useEffect( () => {
 		if ( hasFetched ) {

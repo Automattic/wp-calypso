@@ -14,8 +14,10 @@ import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
 import searchSites from 'calypso/components/search-sites';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { showAgencyDashboard } from 'calypso/state/partner-portal/partner/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -472,6 +474,10 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 	function getPathnameForSite() {
 		const site = getSite( state, siteId );
 		debug( 'getPathnameForSite', siteId, site );
+
+		if ( isJetpackCloud() && ! site && showAgencyDashboard( state ) ) {
+			return page.redirect( '/dashboard' );
+		}
 
 		if ( siteId === ALL_SITES ) {
 			// default posts links to /posts/my when possible and /posts when not
