@@ -6,15 +6,15 @@ import {
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import HeaderCake from 'calypso/components/header-cake';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { bumpStat } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import {
@@ -68,11 +68,6 @@ class MembershipsProductsSection extends Component {
 
 	closeDialog = () => this.setState( { showAddEditDialog: false, showDeleteDialog: false } );
 
-	goToPlanUpgrade = () => {
-		this.props.trackUpgrade();
-		page( '/plans/' + this.props.siteSlug );
-	};
-
 	render() {
 		return (
 			<div>
@@ -81,15 +76,29 @@ class MembershipsProductsSection extends Component {
 					{ this.props.translate( 'Payment plans' ) }
 				</HeaderCake>
 
+				{ ! this.props.hasStripeFeature && (
+					// Purposefully isn't a dismissible nudge as without this nudge, the page would appear to be
+					// broken as it only does listing and deleting of plans and it wouldn't be clear how to change that.
+					<UpsellNudge
+						title={ this.props.translate(
+							'Upgrade to change payment plans and add new payment plans'
+						) }
+						href={ '/plans/' + this.props.siteSlug }
+						showIcon={ true }
+						onClick={ () => this.props.trackUpgrade() }
+						// This could be any stripe payment features (see `hasStripeFeature`) but UpsellNudge only
+						// supports 1. They're all available on the same plans anyway, so practically it's ok to pick 1.
+						feature={ FEATURE_RECURRING_PAYMENTS }
+						event="calypso_earn_page_payment_plans_upgrade_nudge"
+						tracksClickName="calypso_earn_page_payment_plans_upgrade_button_click"
+						tracksImpressionName="calypso_earn_page_payment_plans_upgrade_button_view"
+					/>
+				) }
+
 				<SectionHeader>
 					{ this.props.hasStripeFeature && (
 						<Button primary compact onClick={ () => this.openAddEditDialog( null ) }>
 							{ this.props.translate( 'Add a new payment plan' ) }
-						</Button>
-					) }
-					{ ! this.props.hasStripeFeature && (
-						<Button primary compact onClick={ () => this.goToPlanUpgrade() }>
-							{ this.props.translate( 'Upgrade to add and edit plans' ) }
 						</Button>
 					) }
 				</SectionHeader>
@@ -138,12 +147,6 @@ export default connect(
 		};
 	},
 	( dispatch ) => ( {
-		trackUpgrade: () =>
-			dispatch(
-				composeAnalytics(
-					recordTracksEvent( 'calypso_earn_page_payment_plans_upgrade_button_click' ),
-					bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' )
-				)
-			),
+		trackUpgrade: () => dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) ),
 	} )
 )( localize( MembershipsProductsSection ) );
