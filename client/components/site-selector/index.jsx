@@ -459,88 +459,89 @@ class SiteSelector extends Component {
 	}
 }
 
-const navigateToSite =
-	( siteId, { allSitesPath, allSitesSingleUser, siteBasePath } ) =>
-	( dispatch, getState ) => {
-		const state = getState();
-		const pathname = getPathnameForSite();
-		if ( pathname ) {
-			page( pathname );
-		}
+const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePath } ) => (
+	dispatch,
+	getState
+) => {
+	const state = getState();
+	const pathname = getPathnameForSite();
+	if ( pathname ) {
+		page( pathname );
+	}
 
-		function getPathnameForSite() {
-			const site = getSite( state, siteId );
-			debug( 'getPathnameForSite', siteId, site );
+	function getPathnameForSite() {
+		const site = getSite( state, siteId );
+		debug( 'getPathnameForSite', siteId, site );
 
-			if ( siteId === ALL_SITES ) {
-				// default posts links to /posts/my when possible and /posts when not
-				const postsBase = allSitesSingleUser ? '/posts' : '/posts/my';
-				const path = allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
+		if ( siteId === ALL_SITES ) {
+			// default posts links to /posts/my when possible and /posts when not
+			const postsBase = allSitesSingleUser ? '/posts' : '/posts/my';
+			const path = allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
 
-				// There is currently no "all sites" version of the insights page
-				return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
-			} else if ( siteBasePath ) {
-				const base = getSiteBasePath( site );
+			// There is currently no "all sites" version of the insights page
+			return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
+		} else if ( siteBasePath ) {
+			const base = getSiteBasePath( site );
 
-				// Record original URL type. The original URL should be a path-absolute URL, e.g. `/posts`.
-				const urlType = determineUrlType( base );
+			// Record original URL type. The original URL should be a path-absolute URL, e.g. `/posts`.
+			const urlType = determineUrlType( base );
 
-				// Get URL parts and modify the path.
-				const { origin, pathname: urlPathname, search } = getUrlParts( base );
-				const newPathname = `${ urlPathname }/${ site.slug }`;
+			// Get URL parts and modify the path.
+			const { origin, pathname: urlPathname, search } = getUrlParts( base );
+			const newPathname = `${ urlPathname }/${ site.slug }`;
 
-				try {
-					// Get an absolute URL from the original URL, the modified path, and some defaults.
-					const absoluteUrl = getUrlFromParts( {
-						origin: origin || window.location.origin,
-						pathname: newPathname,
-						search,
-					} );
+			try {
+				// Get an absolute URL from the original URL, the modified path, and some defaults.
+				const absoluteUrl = getUrlFromParts( {
+					origin: origin || window.location.origin,
+					pathname: newPathname,
+					search,
+				} );
 
-					// Format the absolute URL down to the original URL type.
-					return format( absoluteUrl, urlType );
-				} catch {
-					// Invalid URLs will cause `getUrlFromParts` to throw. Return `null` in that case.
-					return null;
-				}
+				// Format the absolute URL down to the original URL type.
+				return format( absoluteUrl, urlType );
+			} catch {
+				// Invalid URLs will cause `getUrlFromParts` to throw. Return `null` in that case.
+				return null;
 			}
 		}
+	}
 
-		function getSiteBasePath( site ) {
-			let path = siteBasePath;
-			const postsBase = site.jetpack || site.single_user_site ? '/posts' : '/posts/my';
+	function getSiteBasePath( site ) {
+		let path = siteBasePath;
+		const postsBase = site.jetpack || site.single_user_site ? '/posts' : '/posts/my';
 
-			// Default posts to /posts/my when possible and /posts when not
-			path = path.replace( /^\/posts\b(\/my)?/, postsBase );
+		// Default posts to /posts/my when possible and /posts when not
+		path = path.replace( /^\/posts\b(\/my)?/, postsBase );
 
-			// Default stats to /stats/slug when on a 3rd level post/page summary
-			if ( path.match( /^\/stats\/(post|page)\// ) ) {
-				path = '/stats';
-			}
-
-			if ( path.match( /^\/domains\/manage\// ) ) {
-				path = '/domains/manage';
-			}
-
-			if ( path.match( /^\/email\// ) ) {
-				path = '/email';
-			}
-
-			if ( path.match( /^\/store\/stats\// ) ) {
-				const isStore = site.jetpack && site.options && site.options.woocommerce_is_active;
-				if ( ! isStore ) {
-					path = '/stats/day';
-				}
-			}
-
-			// Jetpack Cloud: default to /backups/ when in the details of a particular backup
-			if ( path.match( /^\/backup\/.*\/(download|restore|detail)/ ) ) {
-				path = '/backup';
-			}
-
-			return path;
+		// Default stats to /stats/slug when on a 3rd level post/page summary
+		if ( path.match( /^\/stats\/(post|page)\// ) ) {
+			path = '/stats';
 		}
-	};
+
+		if ( path.match( /^\/domains\/manage\// ) ) {
+			path = '/domains/manage';
+		}
+
+		if ( path.match( /^\/email\// ) ) {
+			path = '/email';
+		}
+
+		if ( path.match( /^\/store\/stats\// ) ) {
+			const isStore = site.jetpack && site.options && site.options.woocommerce_is_active;
+			if ( ! isStore ) {
+				path = '/stats/day';
+			}
+		}
+
+		// Jetpack Cloud: default to /backups/ when in the details of a particular backup
+		if ( path.match( /^\/backup\/.*\/(download|restore|detail)/ ) ) {
+			path = '/backup';
+		}
+
+		return path;
+	}
+};
 
 const mapState = ( state ) => {
 	const user = getCurrentUser( state );
