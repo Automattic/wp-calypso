@@ -59,7 +59,6 @@
 		"gdpr-banner": false,
 		"google-my-business": true,
 		"google-drive": true,
-		"google-workspace-monthly": false,
 		"gutenboarding/alpha-templates": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
