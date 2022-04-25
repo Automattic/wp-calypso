@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
@@ -23,7 +23,9 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 
 	const PodcastTitleForm: React.FC = () => {
 		const [ formTouched, setFormTouched ] = useState( false );
-		const podcastTitle = usePodcastTitle();
+		const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+		const titleFromApi = usePodcastTitle();
+		const podcastTitle = siteTitle ? siteTitle : titleFromApi;
 		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 		const inputRef = useRef< HTMLInputElement >();
 
