@@ -31,11 +31,9 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 		useSiteTitle();
 		const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 		const [ formTouched, setFormTouched ] = useState( false );
-		const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 		const titleFromApi = usePodcastTitle();
 		const podcastTitle = siteTitle ? siteTitle : titleFromApi;
-		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
-
 		const inputRef = useRef< HTMLInputElement >();
 		const underlineWidth = getTextWidth( ( siteTitle as string ) || '', inputRef.current );
 
