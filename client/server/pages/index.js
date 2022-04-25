@@ -119,6 +119,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		request.query[ 'wccom-from' ] &&
 		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
 
+	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
@@ -139,6 +140,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		lang: config( 'i18n_default_locale_slug' ),
 		entrypoint: request.getFilesForEntrypoint( entrypoint ),
 		manifests: request.getAssets().manifests,
+		reactQueryDevtoolsHelper,
 		authHelper,
 		preferencesHelper,
 		featuresHelper,

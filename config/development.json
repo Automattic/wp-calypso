@@ -38,6 +38,7 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"devdocs/color-scheme-picker": true,
+		"dev/react-query-devtools": true,
 		"dev/auth-helper": true,
 		"dev/features-helper": true,
 		"dev/preferences-helper": true,
