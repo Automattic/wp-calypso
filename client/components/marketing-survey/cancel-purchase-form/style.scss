@@ -295,3 +295,18 @@
 		display: none;
 	}
 }
+
+.cancel-purchase-form__benefits-wrapper-grid {
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 240px, 1fr ) );
+	grid-gap: 1rem;
+
+	h3 {
+		font-weight:bold;
+	}
+
+	.gridicons-cross-small {
+		/* TODO: Position more nicely */
+		color:red;
+	}
+}
