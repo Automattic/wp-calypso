@@ -14,6 +14,7 @@ import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
+import { getShowAgencyDashboard } from 'calypso/lib/partner/utils';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
 import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
@@ -547,26 +548,26 @@ export function navigation( context, next ) {
  * @param {Function} next -- Call next middleware in chain
  */
 export function sites( context, next ) {
-	const isAgencyDashboardEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
-	if ( isAgencyDashboardEnabled ) {
-		page.redirect( '/dashboard' );
-	} else {
-		if ( context.query.verified === '1' ) {
-			context.store.dispatch(
-				successNotice(
-					i18n.translate(
-						"Email verified! Now that you've confirmed your email address you can publish posts on your blog."
-					)
+	if ( context.query.verified === '1' ) {
+		context.store.dispatch(
+			successNotice(
+				i18n.translate(
+					"Email verified! Now that you've confirmed your email address you can publish posts on your blog."
 				)
-			);
-		}
-
-		context.store.dispatch( setLayoutFocus( 'content' ) );
-		setSectionMiddleware( { group: 'sites' } )( context );
-
-		context.primary = createSitesComponent( context );
-		next();
+			)
+		);
 	}
+
+	const showAgencyDashboard = getShowAgencyDashboard( context.store );
+	if ( showAgencyDashboard ) {
+		page.redirect( '/dashboard' );
+		return;
+	}
+	context.store.dispatch( setLayoutFocus( 'content' ) );
+	setSectionMiddleware( { group: 'sites' } )( context );
+
+	context.primary = createSitesComponent( context );
+	next();
 }
 
 export function redirectWithoutSite( redirectPath ) {
