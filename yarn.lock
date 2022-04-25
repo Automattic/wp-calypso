@@ -598,8 +598,6 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: ^2.3.0
     typescript: ^4.5.5
-  peerDependencies:
-    react: ^17.0.2
   languageName: unknown
   linkType: soft
 
