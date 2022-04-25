@@ -65,7 +65,36 @@ private object EditingToolkit : WPComPluginBuild(
 	withSlackNotify = "false",
 	buildSteps = {
 		bashNodeScript {
-			name = "Update version"
+			name = "Upload Source Maps to Sentry"
+			scriptContent = """
+				# Install the Sentry CLI binary
+
+				curl -sL https://sentry.io/get-cli/ | bash
+
+				# The `wpcom-test-01` is a fixed "Sentry release" we're using now for testing purposes.
+				# The ideal implementation would create a new release for each ETK deploy/release.
+				# Creating a new release at each build is problematic:
+				# - ETK and other Calypso sub-apps that run in the WP (not Calypso) context all get consolidated in the
+				#   WPCOM git repo after each release. A release ideally should include a hash pointing to the actual
+				#   commit hash in the VCS tree. We wouldn't be able to do that from here, as we can't get a WPCOM
+				#   deploy hash from TC (or at least it wouldn't be trivial to do so).
+				# - Builds run all the time, and we would need to restrict this step to only the release build. I'm
+				#   not sure how to identify that, yet. Even if a trunk build can be considered to be a release, someone
+				#   could possible trigger another one manually and then we'd have a release in Sentry without an
+				#   actual deploy in WPCOM? I still don't know. Anyway, this shouldn't be a problem for this PoC as
+				#   the release is not changed at all (it stays at `wpcom-test-01`), for now.
+				#
+				# Clean up the release in Sentry of all existing artifacts before uploading the new ones
+				sentry-cli --auth-token %SENTRY_AUTH_TOKEN% releases --org a8c files "wpcom-test-01" delete --all
+				cd apps/editing-toolkit/editing-toolkit-plugin
+				# Upload the .js and .js.map files to Sentry (`wpcom-test-01` release)
+				sentry-cli --auth-token %SENTRY_AUTH_TOKEN% releases --org a8c --project wpcom-gutenberg-wp-admin files wpcom-test-01 upload-sourcemaps . --url-prefix '~/wp-content/plugins/editing-toolkit-plugin/prod
+				# Delete source-maps before the build artifact is created.
+				find . -name "*.*.map" -exec rm {} \;
+			"""
+
+		}
+		bashNodeScript {
 			scriptContent = """
 				cd apps/editing-toolkit
 				# Update plugin version in the plugin file and readme.txt.
@@ -138,7 +167,6 @@ private object Notifications : WPComPluginBuild(
 		else
 			old_cache_buster=`cat ./release-archive/cache-buster.txt`
 		fi
-		
 		new_cache_buster=`jq -r '.cache_buster' ./dist/build_meta.json`
 		sed -i "s~${'$'}old_cache_buster~${'$'}new_cache_buster~g" release-archive/index.html release-archive/rtl.html
 	""".trimIndent(),
