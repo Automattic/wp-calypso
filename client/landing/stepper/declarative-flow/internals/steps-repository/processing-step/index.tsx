@@ -7,6 +7,12 @@ import { useInterval } from 'calypso/lib/interval';
 import type { Step } from '../../types';
 import './style.scss';
 
+export enum ProcessingResult {
+	NO_ACTION = 'no-action',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+}
+
 const ProcessingStep: Step = function ( props ): ReactElement | null {
 	const { submit } = props.navigation;
 
@@ -24,36 +30,74 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 		{ title: __( 'Closing the loop' ), duration: 5000 },
 	];
 
-	const action = useSelect( ( select ) => select( ONBOARD_STORE ).getPendingAction() );
+	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
 
-	if ( ! action ) {
-		// Nothing to process
-		submit?.();
-	}
+	useInterval( () => {
+		setCurrentMessageIndex( ( s ) => ( s + 1 ) % loadingMessages.length );
+	}, loadingMessages[ currentMessageIndex ]?.duration );
+
+	const action = useSelect( ( select ) => select( ONBOARD_STORE ).getPendingAction() );
+	const progress = useSelect( ( select ) => select( ONBOARD_STORE ).getProgress() );
+	const progressTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getProgressTitle() );
+
+	const getCurrentMessage = () => {
+		return progressTitle || loadingMessages[ currentMessageIndex ]?.title;
+	};
 
 	useEffect( () => {
-		action?.promise.then( () => {
-			if ( action?.redirect ) {
-				window.location.href = action.redirect;
-			} else {
-				submit?.();
-			}
-		} );
+		( async () => {
+			if ( typeof action === 'function' ) {
+				try {
+					await action();
+					submit?.( {}, ProcessingResult.SUCCESS );
+				} catch ( e ) {
+					submit?.( {}, ProcessingResult.FAILURE );
+				}
+			} else submit?.( {}, ProcessingResult.NO_ACTION );
+		} )();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ action ] );
 
-	const [ currentMessage, setCurrentMessage ] = useState( 0 );
+	// Progress smoothing, works out to be around 40seconds unless step polling dictates otherwise
+	const [ simulatedProgress, setSimulatedProgress ] = useState( 0 );
 
-	useInterval( () => {
-		setCurrentMessage( ( s ) => ( s + 1 ) % loadingMessages.length );
-	}, loadingMessages[ currentMessage ]?.duration );
+	useEffect( () => {
+		let timeoutReference: NodeJS.Timeout;
+		if ( progress >= 0 ) {
+			timeoutReference = setTimeout( () => {
+				if ( progress > simulatedProgress || progress === 1 ) {
+					setSimulatedProgress( progress );
+				} else if ( simulatedProgress < 1 ) {
+					setSimulatedProgress( ( previousProgress ) => {
+						let newProgress = previousProgress + Math.random() * 0.04;
+						// Stall at 95%, allow complete to finish up
+						if ( newProgress >= 0.95 ) {
+							newProgress = 0.95;
+						}
+						return newProgress;
+					} );
+				}
+			}, 1000 );
+		}
+
+		return () => clearTimeout( timeoutReference );
+	}, [ simulatedProgress, progress, __ ] );
 
 	return (
 		<div className={ 'processing-step' }>
-			<h1 className="processing-step__progress-step">
-				{ loadingMessages[ currentMessage ]?.title }
-			</h1>
-			<LoadingEllipsis />
+			<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
+			{ progress >= 0 ? (
+				<div className="processing-step__content woocommerce-install__content">
+					<div
+						className="processing-step__progress-bar"
+						style={
+							{ '--progress': simulatedProgress > 1 ? 1 : simulatedProgress } as React.CSSProperties
+						}
+					/>
+				</div>
+			) : (
+				<LoadingEllipsis />
+			) }
 		</div>
 	);
 };

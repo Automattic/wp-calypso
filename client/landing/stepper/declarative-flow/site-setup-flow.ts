@@ -8,6 +8,10 @@ import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
+function redirect( to: string ) {
+	window.location.href = to;
+}
+
 export const siteSetupFlow: Flow = {
 	name: 'site-setup',
 
@@ -36,7 +40,13 @@ export const siteSetupFlow: Flow = {
 		const { FSEActive } = useFSEStatus();
 
 		const exitFlow = ( to: string ) => {
-			setPendingAction( { promise: setIntentOnSite( siteSlug as string, intent ), redirect: to } );
+			setPendingAction(
+				() =>
+					new Promise( () =>
+						setIntentOnSite( siteSlug as string, intent ).then( () => redirect( to ) )
+					)
+			);
+
 			navigate( 'processing' );
 		};
 
