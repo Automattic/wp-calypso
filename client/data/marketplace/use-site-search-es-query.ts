@@ -15,7 +15,7 @@ import {
 	DEFAULT_CATEGORY,
 	BASE_STALE_TIME,
 } from './constants';
-import { ESHits, Plugin, QueryOptions } from './types';
+import { ESHits, ESResponse, Plugin, QueryOptions } from './types';
 
 /**
  * Constants
@@ -184,12 +184,9 @@ export async function fetchWPOrgPluginsFromSiteSearch( options: QueryOptions ) {
 	return requestResult.results;
 }
 
-const extractPagesFromEsResponse = ( total: number, pageSize: number, page: number ) => {
-	return {
-		page: page || DEFAULT_FIRST_PAGE,
-		pages: Math.ceil( total / pageSize ),
-		results: total,
-	};
+const extractPages = ( pages: Array< { hits: ESHits } > = [] ) => {
+	const allHits = pages.flatMap( ( page ) => page.hits );
+	return normalizePluginsList( mapIndexResultsToPluginData( allHits ) );
 };
 
 /**
@@ -200,12 +197,11 @@ const extractPagesFromEsResponse = ( total: number, pageSize: number, page: numb
  */
 export const useSiteSearchWPORGPlugins = (
 	options: QueryOptions,
-	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = false }: UseQueryOptions
+	{ staleTime = BASE_STALE_TIME, refetchOnMount = false }: UseQueryOptions = {}
 ): UseQueryResult => {
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
-	const pageSize: number = options.pageSize ?? DEFAULT_PAGE_SIZE;
-	const page: number = options.page ?? DEFAULT_FIRST_PAGE;
+	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
 
 	return useInfiniteQuery(
 		getPluginsListKey( options, true ),
@@ -219,15 +215,17 @@ export const useSiteSearchWPORGPlugins = (
 				author,
 			} ),
 		{
-			select: ( data: InfiniteData< { hits: ESHits; total: number } > ) => {
-				const { total, hits } = data.pages[ 0 ];
+			select: ( data: InfiniteData< ESResponse > ) => {
 				return {
 					...data,
-					plugins: normalizePluginsList( mapIndexResultsToPluginData( hits ) ),
-					pagination: extractPagesFromEsResponse( total, pageSize, page ),
+					plugins: extractPages( data.pages ),
 				};
 			},
-			enabled,
+			getNextPageParam: ( lastPage: ESResponse, allPages: ESResponse[] ) => {
+				const pages = Math.ceil( lastPage.total / pageSize );
+				const nextPage = allPages.length + 1;
+				return nextPage <= pages ? nextPage : undefined;
+			},
 			staleTime,
 			refetchOnMount,
 		}

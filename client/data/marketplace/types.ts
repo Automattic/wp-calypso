@@ -47,3 +47,5 @@ export type ESIndexResult = {
 };
 
 export type ESHits = Array< { fields: ESIndexResult } >;
+
+export type ESResponse = { hits: ESHits; total: number };
