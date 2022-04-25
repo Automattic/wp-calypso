@@ -30,8 +30,9 @@ jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteSlug: () => 'site-slug',
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-jetpack-credentials-update-status', () => () =>
-	'unsubmitted'
+jest.mock(
+	'calypso/state/selectors/get-jetpack-credentials-update-status',
+	() => () => 'unsubmitted'
 );
 
 jest.mock( 'calypso/state/jetpack/credentials/actions', () => ( {

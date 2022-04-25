@@ -377,9 +377,8 @@ export default class GutenbergEditorComponent extends AbstractEditorComponent {
 	}
 	// return blockID - top level block id which is looks like `block-b91ce479-fb2d-45b7-ad92-22ae7a58cf04`. Should be used for further interaction with added block.
 	async addBlock( title ) {
-		const { ariaLabel, prefix, blockClass, initsWithChildFocus } = this.getBlockLocatorSettings(
-			title
-		);
+		const { ariaLabel, prefix, blockClass, initsWithChildFocus } =
+			this.getBlockLocatorSettings( title );
 
 		const inserterBlockItemLocator = By.css(
 			`.edit-post-editor__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`

@@ -39,8 +39,11 @@ export default async function genericRedirectProcessor(
 	// until a webhook is received that confirms the payment, at which point the
 	// pending page will redirect to the thank-you page as returned by
 	// getThankYouUrl.
-	const { origin = 'https://wordpress.com', pathname = '/', search = '' } =
-		typeof window !== 'undefined' ? window.location : {};
+	const {
+		origin = 'https://wordpress.com',
+		pathname = '/',
+		search = '',
+	} = typeof window !== 'undefined' ? window.location : {};
 	const thankYouUrl = getThankYouUrl() || 'https://wordpress.com';
 	const successUrlPath = `/checkout/thank-you/${ siteSlug || 'no-site' }/pending`;
 	const successUrlBase = `${ origin }${ successUrlPath }`;

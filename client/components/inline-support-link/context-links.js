@@ -60,8 +60,7 @@ const contextLinks = {
 		post_id: 5444,
 	},
 	'getting-started-video': {
-		link:
-			'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com',
+		link: 'https://wordpress.com/support/getting-started-with-wordpress-com/#video-getting-started-with-word-press-com',
 		post_id: 158974,
 	},
 	'google-analytics-measurement-id': {

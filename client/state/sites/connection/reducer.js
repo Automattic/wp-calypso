@@ -6,10 +6,12 @@ import {
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
-const createRequestingReducer = ( requesting ) => ( state, { siteId } ) => ( {
-	...state,
-	[ siteId ]: requesting,
-} );
+const createRequestingReducer =
+	( requesting ) =>
+	( state, { siteId } ) => ( {
+		...state,
+		[ siteId ]: requesting,
+	} );
 
 export const items = ( state = {}, action ) => {
 	switch ( action.type ) {

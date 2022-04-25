@@ -84,13 +84,8 @@ class TitanAddMailboxes extends Component {
 	};
 
 	goToEmail = () => {
-		const {
-			currentRoute,
-			isSelectedDomainNameValid,
-			selectedDomainName,
-			selectedSite,
-			source,
-		} = this.props;
+		const { currentRoute, isSelectedDomainNameValid, selectedDomainName, selectedSite, source } =
+			this.props;
 
 		page(
 			emailManagement(
@@ -182,12 +177,8 @@ class TitanAddMailboxes extends Component {
 	};
 
 	handleUnusedMailboxFinishSetupClick = () => {
-		const {
-			currentRoute,
-			isSelectedDomainNameValid,
-			selectedDomainName,
-			selectedSite,
-		} = this.props;
+		const { currentRoute, isSelectedDomainNameValid, selectedDomainName, selectedSite } =
+			this.props;
 
 		this.recordClickEvent( 'calypso_email_management_titan_add_mailboxes_create_mailbox_click' );
 

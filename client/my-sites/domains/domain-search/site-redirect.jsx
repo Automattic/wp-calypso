@@ -49,13 +49,8 @@ class SiteRedirect extends Component {
 	}
 
 	render() {
-		const {
-			selectedSite,
-			selectedSiteAdminUrl,
-			isSiteAtomic,
-			productsList,
-			translate,
-		} = this.props;
+		const { selectedSite, selectedSiteAdminUrl, isSiteAtomic, productsList, translate } =
+			this.props;
 
 		if ( isSiteAtomic ) {
 			return (

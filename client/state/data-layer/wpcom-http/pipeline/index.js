@@ -48,28 +48,23 @@ const applyInboundProcessor = ( inboundData, nextProcessor ) =>
 const applyOutboundProcessor = ( outboundData, nextProcessor ) =>
 	outboundData.nextRequest !== null ? nextProcessor( outboundData ) : outboundData;
 
-export const processInboundChain = ( chain ) => (
-	originalRequest,
-	store,
-	originalData,
-	originalError,
-	originalHeaders
-) =>
-	pick(
-		chain.reduce( applyInboundProcessor, {
-			originalRequest,
-			store,
-			originalData,
-			originalError,
-			originalHeaders,
-			nextData: originalData,
-			nextError: originalError,
-			nextHeaders: originalHeaders,
-			failures: compact( [ originalRequest.onFailure ] ),
-			successes: compact( [ originalRequest.onSuccess ] ),
-		} ),
-		[ 'failures', 'nextData', 'nextError', 'nextHeaders', 'successes', 'shouldAbort' ]
-	);
+export const processInboundChain =
+	( chain ) => ( originalRequest, store, originalData, originalError, originalHeaders ) =>
+		pick(
+			chain.reduce( applyInboundProcessor, {
+				originalRequest,
+				store,
+				originalData,
+				originalError,
+				originalHeaders,
+				nextData: originalData,
+				nextError: originalError,
+				nextHeaders: originalHeaders,
+				failures: compact( [ originalRequest.onFailure ] ),
+				successes: compact( [ originalRequest.onSuccess ] ),
+			} ),
+			[ 'failures', 'nextData', 'nextError', 'nextHeaders', 'successes', 'shouldAbort' ]
+		);
 
 export const processOutboundChain = ( chain ) => ( originalRequest, store ) =>
 	chain.reduce( applyOutboundProcessor, { originalRequest, store, nextRequest: originalRequest } )

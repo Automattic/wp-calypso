@@ -76,10 +76,8 @@ class SiteImporterInputPane extends Component {
 	}
 
 	componentWillUnmount() {
-		const {
-			importerStatus: { importerState, importerId } = {},
-			site: { ID: siteId } = {},
-		} = this.props;
+		const { importerStatus: { importerState, importerId } = {}, site: { ID: siteId } = {} } =
+			this.props;
 
 		if ( importerState !== appStates.UPLOAD_SUCCESS ) {
 			this.props.cancelImport( siteId, importerId );

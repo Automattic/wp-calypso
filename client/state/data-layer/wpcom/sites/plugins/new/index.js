@@ -56,26 +56,28 @@ const showErrorNotice = ( error ) => {
 	return errorNotice( translate( 'Problem installing the plugin.' ) );
 };
 
-export const uploadComplete = ( { siteId }, data ) => ( dispatch ) => {
-	const { slug: pluginId } = data;
+export const uploadComplete =
+	( { siteId }, data ) =>
+	( dispatch ) => {
+		const { slug: pluginId } = data;
 
-	dispatch(
-		recordTracksEvent( 'calypso_plugin_upload_complete', {
-			plugin_id: pluginId,
-		} )
-	);
+		dispatch(
+			recordTracksEvent( 'calypso_plugin_upload_complete', {
+				plugin_id: pluginId,
+			} )
+		);
 
-	dispatch( completePluginUpload( siteId, pluginId ) );
+		dispatch( completePluginUpload( siteId, pluginId ) );
 
-	// Notifying installed plugins that this plugin was successfully installed
-	dispatch( {
-		type: PLUGIN_INSTALL_REQUEST_SUCCESS,
-		action: INSTALL_PLUGIN,
-		siteId,
-		pluginId: data.id,
-		data,
-	} );
-};
+		// Notifying installed plugins that this plugin was successfully installed
+		dispatch( {
+			type: PLUGIN_INSTALL_REQUEST_SUCCESS,
+			action: INSTALL_PLUGIN,
+			siteId,
+			pluginId: data.id,
+			data,
+		} );
+	};
 
 export const receiveError = ( { siteId }, error ) => [
 	recordTracksEvent( 'calypso_plugin_upload_error', {

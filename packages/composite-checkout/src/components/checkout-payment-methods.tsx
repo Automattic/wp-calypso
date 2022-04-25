@@ -36,9 +36,10 @@ export default function CheckoutPaymentMethods( {
 } ): JSX.Element | null {
 	const { __ } = useI18n();
 	const { onPageLoadError, onPaymentMethodChanged } = useContext( CheckoutContext );
-	const onError = useCallback( ( error ) => onPageLoadError?.( 'payment_method_load', error ), [
-		onPageLoadError,
-	] );
+	const onError = useCallback(
+		( error ) => onPageLoadError?.( 'payment_method_load', error ),
+		[ onPageLoadError ]
+	);
 
 	const paymentMethod = usePaymentMethod();
 	const [ , setPaymentMethod ] = usePaymentMethodId();

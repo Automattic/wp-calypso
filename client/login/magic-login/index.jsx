@@ -66,13 +66,8 @@ class MagicLogin extends Component {
 	};
 
 	renderLinks() {
-		const {
-			isJetpackLogin,
-			isGutenboardingLogin,
-			locale,
-			showCheckYourEmail,
-			translate,
-		} = this.props;
+		const { isJetpackLogin, isGutenboardingLogin, locale, showCheckYourEmail, translate } =
+			this.props;
 
 		if ( showCheckYourEmail ) {
 			return null;

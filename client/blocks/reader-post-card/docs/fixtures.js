@@ -57,8 +57,7 @@ export const posts = [
 			height: 390,
 			iframe:
 				'<iframe data-wpcom-embed-url="https://www.youtube.com/watch?v=ptkYu1fdRIM" class="youtube-player" type="text/html" width="640" height="390" src="https://www.youtube.com/embed/ptkYu1fdRIM?version=3&amp;rel=1&amp;fs=1&amp;autohide=2&amp;showsearch=0&amp;showinfo=1&amp;iv_load_policy=1&amp;wmode=transparent" allowfullscreen="true" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>',
-			src:
-				'https://www.youtube.com/embed/ptkYu1fdRIM?version=3&rel=1&fs=1&autohide=2&showsearch=0&showinfo=1&iv_load_policy=1&wmode=transparent',
+			src: 'https://www.youtube.com/embed/ptkYu1fdRIM?version=3&rel=1&fs=1&autohide=2&showsearch=0&showinfo=1&iv_load_policy=1&wmode=transparent',
 			thumbnailUrl: 'https://img.youtube.com/vi/ptkYu1fdRIM/mqdefault.jpg',
 			type: 'youtube',
 			mediaType: 'video',
@@ -110,31 +109,26 @@ export const posts = [
 			email: 'sue@example.com',
 		},
 		canonical_media: {
-			src:
-				'https://tedideas.files.wordpress.com/2016/11/miltonglaser11x17.jpg?w=720&quality=80&strip=info',
+			src: 'https://tedideas.files.wordpress.com/2016/11/miltonglaser11x17.jpg?w=720&quality=80&strip=info',
 			mediaType: 'image',
 			width: 720,
 			height: 988,
 		},
 		images: [
 			{
-				src:
-					'https://tedideas.files.wordpress.com/2016/11/miltonglaser11x17.jpg?w=720&quality=80&strip=info',
+				src: 'https://tedideas.files.wordpress.com/2016/11/miltonglaser11x17.jpg?w=720&quality=80&strip=info',
 				width: 720,
 			},
 			{
-				src:
-					'https://tedideas.files.wordpress.com/2016/11/gotv_posternataliawarren.jpg?w=720&quality=80&strip=info',
+				src: 'https://tedideas.files.wordpress.com/2016/11/gotv_posternataliawarren.jpg?w=720&quality=80&strip=info',
 				width: 720,
 			},
 			{
-				src:
-					'https://tedideas.files.wordpress.com/2016/11/new-kind11x17_2.jpg?w=720&quality=80&strip=info',
+				src: 'https://tedideas.files.wordpress.com/2016/11/new-kind11x17_2.jpg?w=720&quality=80&strip=info',
 				width: 720,
 			},
 			{
-				src:
-					'https://tedideas.files.wordpress.com/2016/11/jesusgarcia_aiga_gotv_yourvotematterseventothem.jpg?w=720&quality=80&strip=info',
+				src: 'https://tedideas.files.wordpress.com/2016/11/jesusgarcia_aiga_gotv_yourvotematterseventothem.jpg?w=720&quality=80&strip=info',
 				width: 720,
 			},
 		],

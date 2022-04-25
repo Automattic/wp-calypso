@@ -7,14 +7,16 @@ import {
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
-const createListReducer = ( updatedActionType ) => ( state = [], action ) => {
-	switch ( action.type ) {
-		case updatedActionType:
-			return action.countries;
-		default:
-			return state;
-	}
-};
+const createListReducer =
+	( updatedActionType ) =>
+	( state = [], action ) => {
+		switch ( action.type ) {
+			case updatedActionType:
+				return action.countries;
+			default:
+				return state;
+		}
+	};
 
 const combinedReducer = combineReducers( {
 	domains: createListReducer( COUNTRIES_DOMAINS_UPDATED ),

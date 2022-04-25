@@ -35,8 +35,7 @@ const originalKeyringServices = {
 			class: 'twitter', // eslint-disable-line quote-props
 			unicode: '\f202',
 		},
-		icon:
-			'http://i.wordpress.com/wp-content/admin-plugins/publicize/assets/publicize-twitter-2x.png',
+		icon: 'http://i.wordpress.com/wp-content/admin-plugins/publicize/assets/publicize-twitter-2x.png',
 		jetpack_module_required: 'publicize',
 		jetpack_support: true,
 		label: 'Twitter',

@@ -35,24 +35,20 @@ import './style.scss';
 const WIDE_LAYOUT_STEPS: StepType[] = [ Step.DesignSelection ];
 
 const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const {
-		hasSiteTitle,
-		hasSelectedDesign,
-		hasSelectedDesignWithoutFonts,
-		isRedirecting,
-	} = useSelect(
-		( select ) => {
-			const onboardSelect = select( ONBOARD_STORE );
+	const { hasSiteTitle, hasSelectedDesign, hasSelectedDesignWithoutFonts, isRedirecting } =
+		useSelect(
+			( select ) => {
+				const onboardSelect = select( ONBOARD_STORE );
 
-			return {
-				hasSiteTitle: onboardSelect.hasSiteTitle(),
-				hasSelectedDesign: onboardSelect.hasSelectedDesign(),
-				hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
-				isRedirecting: onboardSelect.getIsRedirecting(),
-			};
-		},
-		[ ONBOARD_STORE ]
-	);
+				return {
+					hasSiteTitle: onboardSelect.hasSiteTitle(),
+					hasSelectedDesign: onboardSelect.hasSelectedDesign(),
+					hasSelectedDesignWithoutFonts: onboardSelect.hasSelectedDesignWithoutFonts(),
+					isRedirecting: onboardSelect.getIsRedirecting(),
+				};
+			},
+			[ ONBOARD_STORE ]
+		);
 	const { isCreatingSite, newSiteError } = useSelect(
 		( select ) => {
 			const { isFetchingSite, getNewSiteError } = select( SITE_STORE );

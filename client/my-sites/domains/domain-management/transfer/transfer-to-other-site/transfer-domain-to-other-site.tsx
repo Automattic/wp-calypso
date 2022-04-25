@@ -185,13 +185,8 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 	};
 
 	renderSection(): JSX.Element {
-		const {
-			currentUserCanManage,
-			selectedDomainName,
-			aftermarketAuction,
-			translate,
-			domain,
-		} = this.props;
+		const { currentUserCanManage, selectedDomainName, aftermarketAuction, translate, domain } =
+			this.props;
 		const { children, ...propsWithoutChildren } = this.props;
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...propsWithoutChildren } />;

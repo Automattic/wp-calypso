@@ -74,9 +74,10 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		isEnabled( 'signup/design-picker-generated-designs' ) && intent === 'build' && !! siteVertical;
 
 	const isPremiumThemeAvailable = Boolean(
-		useMemo( () => sitePlanSlug && planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ), [
-			sitePlanSlug,
-		] )
+		useMemo(
+			() => sitePlanSlug && planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
+			[ sitePlanSlug ]
+		)
 	);
 
 	const tier =

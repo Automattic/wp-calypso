@@ -25,10 +25,8 @@ const PostPublishedModal: React.FC = () => {
 	);
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
-	const {
-		fetchShouldShowFirstPostPublishedModal,
-		setShouldShowFirstPostPublishedModal,
-	} = useDispatch( 'automattic/wpcom-welcome-guide' );
+	const { fetchShouldShowFirstPostPublishedModal, setShouldShowFirstPostPublishedModal } =
+		useDispatch( 'automattic/wpcom-welcome-guide' );
 
 	useEffect( () => {
 		fetchShouldShowFirstPostPublishedModal();

@@ -45,16 +45,8 @@ class AllSites extends Component {
 	}
 
 	render() {
-		const {
-			title,
-			href,
-			domain,
-			sites,
-			translate,
-			isHighlighted,
-			isSelected,
-			showCount,
-		} = this.props;
+		const { title, href, domain, sites, translate, isHighlighted, isSelected, showCount } =
+			this.props;
 
 		// Note: Update CSS selectors in SiteSelector.scrollToHighlightedSite() if the class names change.
 		const allSitesClass = classNames( {
@@ -91,10 +83,8 @@ const isSiteVisible = ( { visible = true } ) => visible;
 
 export default connect( ( state, props ) => {
 	// If sites or count are not specified as props, fetch the default values from Redux
-	const {
-		sites = getSites( state ),
-		userSitesCount = getCurrentUserVisibleSiteCount( state ),
-	} = props;
+	const { sites = getSites( state ), userSitesCount = getCurrentUserVisibleSiteCount( state ) } =
+		props;
 
 	const visibleSites = sites?.filter( isSiteVisible );
 

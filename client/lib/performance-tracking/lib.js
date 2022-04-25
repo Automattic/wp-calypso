@@ -27,10 +27,8 @@ const buildDefaultCollector = ( state ) => {
 	const userCountryCode = getCurrentUserCountryCode( state );
 	const userBootstrapped = isCurrentUserBootstrapped( state );
 	const userLocale = getCurrentUserLocale( state );
-	const {
-		count: translationsChunksCount,
-		total: translationsChunksDuration,
-	} = collectTranslationTimings();
+	const { count: translationsChunksCount, total: translationsChunksDuration } =
+		collectTranslationTimings();
 	clearTranslationTimings();
 
 	return ( report ) => {

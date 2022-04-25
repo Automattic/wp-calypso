@@ -540,7 +540,10 @@ describe( 'utils', () => {
 
 describe( 'addReducer', () => {
 	// creator of toy reducers that initialize to `initialValue` and don't react to other actions
-	const toyReducer = ( initialValue ) => ( state = initialValue ) => state;
+	const toyReducer =
+		( initialValue ) =>
+		( state = initialValue ) =>
+			state;
 
 	describe( 'basic tests', () => {
 		test( 'can add a new top-level reducer', () => {

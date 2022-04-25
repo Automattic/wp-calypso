@@ -267,8 +267,7 @@ export class SiteSettingsFormGeneral extends Component {
 				text: translate(
 					'The Site Language setting is disabled because your site has the WPLANG constant set.'
 				),
-				link:
-					'https://codex.wordpress.org/Installing_WordPress_in_Your_Language#Setting_the_language_for_your_site',
+				link: 'https://codex.wordpress.org/Installing_WordPress_in_Your_Language#Setting_the_language_for_your_site',
 				//don't know if this will ever trigger on a .com site?
 				linkText: translate( 'More info' ),
 			},
@@ -292,14 +291,8 @@ export class SiteSettingsFormGeneral extends Component {
 	};
 
 	languageOptions() {
-		const {
-			eventTracker,
-			fields,
-			isRequestingSettings,
-			onChangeField,
-			siteIsJetpack,
-			translate,
-		} = this.props;
+		const { eventTracker, fields, isRequestingSettings, onChangeField, siteIsJetpack, translate } =
+			this.props;
 		const errorNotice = this.renderLanguagePickerNotice();
 
 		return (
@@ -524,15 +517,8 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderLaunchSite() {
-		const {
-			translate,
-			siteDomains,
-			siteSlug,
-			siteId,
-			isPaidPlan,
-			isComingSoon,
-			fields,
-		} = this.props;
+		const { translate, siteDomains, siteSlug, siteId, isPaidPlan, isComingSoon, fields } =
+			this.props;
 
 		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
 			'site-settings__disable-privacy-settings': ! siteDomains.length,
@@ -582,13 +568,8 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	privacySettings() {
-		const {
-			isRequestingSettings,
-			translate,
-			handleSubmitForm,
-			isSavingSettings,
-			isP2HubSite,
-		} = this.props;
+		const { isRequestingSettings, translate, handleSubmitForm, isSavingSettings, isP2HubSite } =
+			this.props;
 
 		if ( isP2HubSite ) {
 			return <></>;

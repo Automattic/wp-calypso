@@ -114,13 +114,8 @@ const getThreatCountMessage = (
 };
 
 const ScanThreats = ( { error, site, threats }: Props ) => {
-	const {
-		updatingThreats,
-		selectedThreat,
-		setSelectedThreat,
-		fixThreats,
-		updateThreat,
-	} = useThreats( site.ID );
+	const { updatingThreats, selectedThreat, setSelectedThreat, fixThreats, updateThreat } =
+		useThreats( site.ID );
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const [ showFixAllThreatsDialog, setShowFixAllThreatsDialog ] = React.useState( false );
 	const [ actionToPerform, setActionToPerform ] = React.useState< ThreatAction >( 'fix' );

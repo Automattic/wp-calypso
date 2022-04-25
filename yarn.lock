@@ -29557,6 +29557,15 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"prettier@npm:wp-prettier@2.6.2-beta-1":
+  version: 2.6.2-beta-1
+  resolution: "wp-prettier@npm:2.6.2-beta-1"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 5375d3f19a909715dbc52ca4ac2ded0a0ae4531cd64f99ebb76f2935ea969ee1e42a7d2ffece7b388797e136343b77c2c25f8cae752c2f28ba712454a1b24095
+  languageName: node
+  linkType: hard
+
 "pretty-error@npm:^2.1.1":
   version: 2.1.1
   resolution: "pretty-error@npm:2.1.1"
@@ -38313,7 +38322,7 @@ testarmada-magellan@11.0.10:
     postcss: ^8.4.5
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
-    prettier: "npm:wp-prettier@2.2.1-beta-1"
+    prettier: "npm:wp-prettier@2.6.2-beta-1"
     react: ^17.0.2
     react-dom: ^17.0.2
     readline-sync: ^1.4.10

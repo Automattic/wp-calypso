@@ -84,9 +84,8 @@ type DomainSelection = {
 };
 
 export function useDomainSelection(): DomainSelection {
-	const { setDomain, unsetDomain, unsetPlanProductId, confirmDomainSelection } = useDispatch(
-		LAUNCH_STORE
-	);
+	const { setDomain, unsetDomain, unsetPlanProductId, confirmDomainSelection } =
+		useDispatch( LAUNCH_STORE );
 	const {
 		domain: selectedDomain,
 		planProductId,

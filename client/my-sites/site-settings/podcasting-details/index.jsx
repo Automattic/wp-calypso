@@ -53,13 +53,8 @@ class PodcastingDetails extends Component {
 	}
 
 	renderExplicitContent() {
-		const {
-			fields,
-			handleSelect,
-			isRequestingSettings,
-			translate,
-			isPodcastingEnabled,
-		} = this.props;
+		const { fields, handleSelect, isRequestingSettings, translate, isPodcastingEnabled } =
+			this.props;
 
 		return (
 			<FormFieldset>

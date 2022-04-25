@@ -298,19 +298,18 @@ export default function CompositeCheckout( {
 		[ ...responseCartErrors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy )
 			.length > 0;
 
-	const {
-		isRemovingProductFromCart,
-		removeProductFromCartAndMaybeRedirect,
-	} = useRemoveFromCartAndRedirect(
-		updatedSiteSlug,
-		createUserAndSiteBeforeTransaction,
-		customizedPreviousPath
-	);
+	const { isRemovingProductFromCart, removeProductFromCartAndMaybeRedirect } =
+		useRemoveFromCartAndRedirect(
+			updatedSiteSlug,
+			createUserAndSiteBeforeTransaction,
+			customizedPreviousPath
+		);
 
-	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
-		wpcomGetStoredCards,
-		Boolean( isLoggedOutCart )
-	);
+	const {
+		storedCards,
+		isLoading: isLoadingStoredCards,
+		error: storedCardsError,
+	} = useStoredCards( wpcomGetStoredCards, Boolean( isLoggedOutCart ) );
 
 	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) => {

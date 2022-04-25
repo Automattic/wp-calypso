@@ -403,12 +403,8 @@ class MasterbarLoggedIn extends Component {
 
 	renderMenu() {
 		const { menuBtnRef } = this.state;
-		const {
-			translate,
-			hasDismissedThePopover,
-			isFetchingPrefs,
-			isUserNewerThanNewNavigation,
-		} = this.props;
+		const { translate, hasDismissedThePopover, isFetchingPrefs, isUserNewerThanNewNavigation } =
+			this.props;
 		return (
 			<>
 				<Item

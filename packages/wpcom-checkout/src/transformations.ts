@@ -95,24 +95,22 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 		const lineItem = getTaxLineItemFromCart( responseCart );
 		return lineItem ? [ lineItem ] : [];
 	}
-	return responseCart.total_tax_breakdown.map(
-		( taxBreakdownItem: TaxBreakdownItem ): LineItem => {
-			const id = `tax-line-item-${ taxBreakdownItem.label ?? taxBreakdownItem.rate }`;
-			const label = taxBreakdownItem.label
-				? `${ taxBreakdownItem.label } (${ taxBreakdownItem.rate_display })`
-				: String( translate( 'Tax' ) );
-			return {
-				id,
-				label,
-				type: 'tax',
-				amount: {
-					currency: responseCart.currency,
-					value: taxBreakdownItem.tax_collected_integer,
-					displayValue: taxBreakdownItem.tax_collected_display,
-				},
-			};
-		}
-	);
+	return responseCart.total_tax_breakdown.map( ( taxBreakdownItem: TaxBreakdownItem ): LineItem => {
+		const id = `tax-line-item-${ taxBreakdownItem.label ?? taxBreakdownItem.rate }`;
+		const label = taxBreakdownItem.label
+			? `${ taxBreakdownItem.label } (${ taxBreakdownItem.rate_display })`
+			: String( translate( 'Tax' ) );
+		return {
+			id,
+			label,
+			type: 'tax',
+			amount: {
+				currency: responseCart.currency,
+				value: taxBreakdownItem.tax_collected_integer,
+				displayValue: taxBreakdownItem.tax_collected_display,
+			},
+		};
+	} );
 }
 
 export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineItem | null {

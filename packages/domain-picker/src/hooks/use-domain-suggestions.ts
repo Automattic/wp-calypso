@@ -23,9 +23,9 @@ export function useDomainSuggestions(
 	extraOptions = {}
 ): DomainSuggestionsResult | undefined {
 	const [ domainSearch ] = useDebounce( searchTerm, DOMAIN_SEARCH_DEBOUNCE_INTERVAL );
-	const { invalidateResolutionForStoreSelector } = ( useDispatch(
+	const { invalidateResolutionForStoreSelector } = useDispatch(
 		DOMAIN_SUGGESTIONS_STORE
-	) as unknown ) as {
+	) as unknown as {
 		invalidateResolutionForStoreSelector: ( selectorName: string ) => void;
 	};
 
@@ -34,9 +34,8 @@ export function useDomainSuggestions(
 			if ( ! domainSearch || domainSearch.length < DOMAIN_QUERY_MINIMUM_LENGTH ) {
 				return;
 			}
-			const { getDomainSuggestions, getDomainState, getDomainErrorMessage } = select(
-				DOMAIN_SUGGESTIONS_STORE
-			);
+			const { getDomainSuggestions, getDomainState, getDomainErrorMessage } =
+				select( DOMAIN_SUGGESTIONS_STORE );
 
 			const retryRequest = (): void => {
 				invalidateResolutionForStoreSelector( '__internalGetDomainSuggestions' );

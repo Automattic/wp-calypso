@@ -30,7 +30,11 @@ const SiteLanguagePicker = ( { languages: origLanguages, ...restProps } ) => {
 
 	let languages = origLanguages;
 	// If site is Jetpack or Atomic, do an API request for a list of WP.org translations
-	const { data: wporgTranslations, error, isLoading } = useQuery(
+	const {
+		data: wporgTranslations,
+		error,
+		isLoading,
+	} = useQuery(
 		'wporg-translations-' + wpVersion,
 		async () => fetchWporgTranslationsList( wpVersion ),
 		{ enabled: !! siteIsJetpack }

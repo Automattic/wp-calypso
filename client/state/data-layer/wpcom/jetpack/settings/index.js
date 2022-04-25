@@ -55,20 +55,22 @@ export const requestJetpackSettings = ( action ) => {
 	);
 };
 
-export const announceRequestFailure = ( { siteId } ) => ( dispatch, getState ) => {
-	const state = getState();
-	const url = getSiteUrl( state, siteId );
-	const noticeOptions = {
-		id: `jps-communication-error-${ siteId }`,
+export const announceRequestFailure =
+	( { siteId } ) =>
+	( dispatch, getState ) => {
+		const state = getState();
+		const url = getSiteUrl( state, siteId );
+		const noticeOptions = {
+			id: `jps-communication-error-${ siteId }`,
+		};
+
+		if ( url ) {
+			noticeOptions.button = translate( 'Visit site admin' );
+			noticeOptions.href = trailingslashit( url ) + 'wp-admin/admin.php?page=jetpack';
+		}
+
+		return dispatch( errorNotice( translate( 'Something went wrong.' ), noticeOptions ) );
 	};
-
-	if ( url ) {
-		noticeOptions.button = translate( 'Visit site admin' );
-		noticeOptions.href = trailingslashit( url ) + 'wp-admin/admin.php?page=jetpack';
-	}
-
-	return dispatch( errorNotice( translate( 'Something went wrong.' ), noticeOptions ) );
-};
 
 /**
  * Dispatches a request to save particular settings on a site

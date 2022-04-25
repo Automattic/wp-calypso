@@ -213,40 +213,42 @@ export const setUploadStartState = ( importerId, filenameOrUrl ) => ( {
 	importerId,
 } );
 
-export const startUpload = ( importerStatus, file, url = undefined ) => ( dispatch ) => {
-	const {
-		importerId,
-		site: { ID: siteId },
-	} = importerStatus;
+export const startUpload =
+	( importerStatus, file, url = undefined ) =>
+	( dispatch ) => {
+		const {
+			importerId,
+			site: { ID: siteId },
+		} = importerStatus;
 
-	dispatch( setUploadStartState( importerId, file.name ) );
+		dispatch( setUploadStartState( importerId, file.name ) );
 
-	return uploadExportFile( siteId, {
-		importStatus: toApi( importerStatus ),
-		file,
-		url,
-		onprogress: ( event ) => {
-			dispatch(
-				setUploadProgress( importerId, {
-					uploadLoaded: event.loaded,
-					uploadTotal: event.total,
-				} )
-			);
-		},
-		onabort: () => {
-			dispatch( cancelImport( siteId, importerId ) );
-		},
-	} )
-		.then( ( data ) => {
-			dispatch( finishUpload( importerId, fromApi( data ) ) );
+		return uploadExportFile( siteId, {
+			importStatus: toApi( importerStatus ),
+			file,
+			url,
+			onprogress: ( event ) => {
+				dispatch(
+					setUploadProgress( importerId, {
+						uploadLoaded: event.loaded,
+						uploadTotal: event.total,
+					} )
+				);
+			},
+			onabort: () => {
+				dispatch( cancelImport( siteId, importerId ) );
+			},
 		} )
-		.catch( ( error ) => {
-			const failUploadAction = {
-				type: IMPORTS_UPLOAD_FAILED,
-				importerId,
-				error: error.message,
-			};
+			.then( ( data ) => {
+				dispatch( finishUpload( importerId, fromApi( data ) ) );
+			} )
+			.catch( ( error ) => {
+				const failUploadAction = {
+					type: IMPORTS_UPLOAD_FAILED,
+					importerId,
+					error: error.message,
+				};
 
-			dispatch( failUploadAction );
-		} );
-};
+				dispatch( failUploadAction );
+			} );
+	};

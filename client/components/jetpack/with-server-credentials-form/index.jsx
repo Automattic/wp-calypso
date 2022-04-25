@@ -137,13 +137,8 @@ function withServerCredentialsForm( WrappedComponent ) {
 
 		render() {
 			const { form, formErrors, showAdvancedSettings } = this.state;
-			const {
-				formIsSubmitting,
-				formSubmissionStatus,
-				requirePath,
-				siteId,
-				...otherProps
-			} = this.props;
+			const { formIsSubmitting, formSubmissionStatus, requirePath, siteId, ...otherProps } =
+				this.props;
 			return (
 				<>
 					<QuerySiteCredentials siteId={ siteId } />

@@ -131,14 +131,8 @@ export class CheckoutThankYou extends Component {
 	componentDidMount() {
 		this.redirectIfThemePurchased();
 
-		const {
-			gsuiteReceipt,
-			gsuiteReceiptId,
-			receipt,
-			receiptId,
-			selectedSite,
-			sitePlans,
-		} = this.props;
+		const { gsuiteReceipt, gsuiteReceiptId, receipt, receiptId, selectedSite, sitePlans } =
+			this.props;
 
 		if ( selectedSite ) {
 			this.props.fetchAtomicTransfer?.( selectedSite.ID );
@@ -622,11 +616,8 @@ export class CheckoutThankYou extends Component {
 		const purchases = getPurchases( this.props );
 		const failedPurchases = getFailedPurchases( this.props );
 		const hasFailedPurchases = failedPurchases.length > 0;
-		const [
-			ComponentClass,
-			primaryPurchase,
-			domain,
-		] = this.getComponentAndPrimaryPurchaseAndDomain();
+		const [ ComponentClass, primaryPurchase, domain ] =
+			this.getComponentAndPrimaryPurchaseAndDomain();
 		const registrarSupportUrl =
 			! ComponentClass || this.isGenericReceipt() || hasFailedPurchases
 				? null

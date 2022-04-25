@@ -157,13 +157,8 @@ export class CommentActions extends Component {
 	};
 
 	render() {
-		const {
-			canModerateComment,
-			commentIsApproved,
-			commentIsLiked,
-			toggleReply,
-			translate,
-		} = this.props;
+		const { canModerateComment, commentIsApproved, commentIsLiked, toggleReply, translate } =
+			this.props;
 
 		return (
 			<div className="comment__actions">

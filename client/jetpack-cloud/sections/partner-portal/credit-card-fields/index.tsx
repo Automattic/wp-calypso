@@ -26,12 +26,8 @@ export default function CreditCardFields() {
 		const managedValue = getField( key );
 		return managedValue.errors ?? [];
 	};
-	const {
-		setFieldValue,
-		setCardDataError,
-		setCardDataComplete,
-		setUseAsPrimaryPaymentMethod,
-	} = useDispatch( 'credit-card' );
+	const { setFieldValue, setCardDataError, setCardDataComplete, setUseAsPrimaryPaymentMethod } =
+		useDispatch( 'credit-card' );
 	const reduxDispatch = useReduxDispatch();
 
 	const cardholderName = getField( 'cardholderName' );
@@ -66,10 +62,8 @@ export default function CreditCardFields() {
 		},
 	};
 
-	const {
-		data: { items: paymentMethods } = [],
-		isFetching: isFetchingPaymentMethods,
-	} = useRecentPaymentMethodsQuery();
+	const { data: { items: paymentMethods } = [], isFetching: isFetchingPaymentMethods } =
+		useRecentPaymentMethodsQuery();
 
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;

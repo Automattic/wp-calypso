@@ -24,13 +24,8 @@ class ColorSchemePicker extends PureComponent {
 	};
 
 	handleColorSchemeSelection = ( event ) => {
-		const {
-			temporarySelection,
-			translate,
-			onSelection,
-			saveColorSchemePreference,
-			successNotice,
-		} = this.props;
+		const { temporarySelection, translate, onSelection, saveColorSchemePreference, successNotice } =
+			this.props;
 		const { value } = event.currentTarget;
 		const noticeSettings = {
 			id: 'color-scheme-picker-save',

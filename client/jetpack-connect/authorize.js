@@ -227,13 +227,8 @@ export class JetpackAuthorize extends Component {
 			siteHasJetpackBackupProduct,
 			siteHasJetpackSearchProduct,
 		} = this.props;
-		const {
-			from,
-			homeUrl,
-			redirectAfterAuth,
-			scope,
-			closeWindowAfterAuthorize,
-		} = this.props.authQuery;
+		const { from, homeUrl, redirectAfterAuth, scope, closeWindowAfterAuthorize } =
+			this.props.authQuery;
 		const { isRedirecting } = this.state;
 
 		if ( isRedirecting ) {
@@ -530,12 +525,8 @@ export class JetpackAuthorize extends Component {
 	}
 
 	renderNotices() {
-		const {
-			authorizeError,
-			isAuthorizing,
-			authorizeSuccess,
-			userAlreadyConnected,
-		} = this.props.authorizationData;
+		const { authorizeError, isAuthorizing, authorizeSuccess, userAlreadyConnected } =
+			this.props.authorizationData;
 		const { alreadyAuthorized, site } = this.props.authQuery;
 
 		let redirectToMobileApp = null;

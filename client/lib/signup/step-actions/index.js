@@ -1145,9 +1145,8 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 export function isNewOrExistingSiteFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { existingSiteCount, submitSignupStep } = nextProps;
 	if ( ! existingSiteCount || 0 === existingSiteCount ) {
-		const stepProvidesDependency = steps[ stepName ].providesDependencies.includes(
-			'newOrExistingSiteChoice'
-		);
+		const stepProvidesDependency =
+			steps[ stepName ].providesDependencies.includes( 'newOrExistingSiteChoice' );
 		let dependency = undefined;
 		if ( stepProvidesDependency ) {
 			dependency = {

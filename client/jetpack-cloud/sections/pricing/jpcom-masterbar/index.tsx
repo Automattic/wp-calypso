@@ -97,8 +97,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 							{
 								label: translate( 'CRM' ),
 								tagline: translate( 'Connect with your people' ),
-								href:
-									'https://jetpackcrm.com/?utm_medium=automattic_referred&utm_source=jpcom_header',
+								href: 'https://jetpackcrm.com/?utm_medium=automattic_referred&utm_source=jpcom_header',
 							},
 						],
 					},

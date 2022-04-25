@@ -65,10 +65,8 @@ export default function DesignPickerStep( props ) {
 
 	// Limit themes to those that support the Site editor, if site is fse eligible
 	const siteId = useSelector( ( state ) => getSiteId( state, dependencies.siteSlug ) );
-	const {
-		isLoading: blockEditorSettingsAreLoading,
-		data: blockEditorSettings,
-	} = useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.useDIFMThemes );
+	const { isLoading: blockEditorSettingsAreLoading, data: blockEditorSettings } =
+		useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.useDIFMThemes );
 	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
 
 	const getThemeFilters = () => {

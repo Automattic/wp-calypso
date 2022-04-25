@@ -125,18 +125,17 @@ export const requestAutomatedTransferEligibility = ( action ) =>
 		action
 	);
 
-export const updateAutomatedTransferEligibility = ( { siteId }, data ) => (
-	dispatch,
-	getState
-) => {
-	const siteIsUnlaunched = isUnlaunchedSite( getState(), siteId );
-	dispatch(
-		withAnalytics(
-			trackEligibility( data ),
-			updateEligibility( siteId, fromApi( data, { sitePrivateUnlaunched: siteIsUnlaunched } ) )
-		)
-	);
-};
+export const updateAutomatedTransferEligibility =
+	( { siteId }, data ) =>
+	( dispatch, getState ) => {
+		const siteIsUnlaunched = isUnlaunchedSite( getState(), siteId );
+		dispatch(
+			withAnalytics(
+				trackEligibility( data ),
+				updateEligibility( siteId, fromApi( data, { sitePrivateUnlaunched: siteIsUnlaunched } ) )
+			)
+		);
+	};
 
 registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/eligibility/index.js', {
 	[ AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST ]: [

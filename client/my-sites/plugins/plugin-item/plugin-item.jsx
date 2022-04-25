@@ -210,10 +210,8 @@ class PluginItem extends Component {
 	}
 
 	renderActions() {
-		const {
-			activation: canToggleActivation,
-			autoupdate: canToggleAutoupdate,
-		} = this.props.allowedActions;
+		const { activation: canToggleActivation, autoupdate: canToggleAutoupdate } =
+			this.props.allowedActions;
 
 		return (
 			<div className="plugin-item__actions">
