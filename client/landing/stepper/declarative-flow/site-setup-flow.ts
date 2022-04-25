@@ -5,6 +5,7 @@ import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { ProcessingResult } from './internals/steps-repository/processing-step';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
@@ -28,6 +29,8 @@ export const siteSetupFlow: Flow = {
 			'storeAddress',
 			'processing',
 			'error',
+			'wooTransfer',
+			'wooInstallPlugins',
 		] as StepPath[];
 	},
 
@@ -35,6 +38,13 @@ export const siteSetupFlow: Flow = {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
 		const siteSlug = useSiteSlugParam();
+		const siteId = useSelect(
+			( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug )
+		);
+		const isAtomic = useSelect( ( select ) =>
+			select( SITE_STORE ).isSiteAtomic( siteId as number )
+		);
+		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite } = useDispatch( SITE_STORE );
 		const { FSEActive } = useFSEStatus();
@@ -65,6 +75,12 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing': {
+					const processingResult = params[ 0 ] as ProcessingResult;
+
+					if ( processingResult === ProcessingResult.FAILURE ) {
+						// error page?
+					}
+
 					// If the user skips starting point, redirect them to My Home
 					if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
 						if ( startingPoint !== 'write' ) {
@@ -72,6 +88,12 @@ export const siteSetupFlow: Flow = {
 						}
 
 						return exitFlow( `/post/${ siteSlug }` );
+					}
+
+					// End of woo flow
+					if ( storeType === 'power' ) {
+						// eslint-disable-next-line no-console
+						console.log( 'end woo flow here' );
 					}
 
 					if ( FSEActive && intent !== 'write' ) {
@@ -143,8 +165,18 @@ export const siteSetupFlow: Flow = {
 				case 'storeAddress':
 					return navigate( 'businessInfo' );
 
-				case 'businessInfo':
-					return navigate( 'storeFeatures' );
+				case 'businessInfo': {
+					if ( isAtomic ) {
+						return navigate( 'wooInstallPlugins' );
+					}
+					return navigate( 'wooTransfer' );
+				}
+
+				case 'wooTransfer':
+					return navigate( 'processing' );
+
+				case 'wooInstallPlugins':
+					return navigate( 'processing' );
 
 				case 'courses': {
 					return exitFlow( `/post/${ siteSlug }` );

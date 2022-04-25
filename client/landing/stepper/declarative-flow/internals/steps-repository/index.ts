@@ -9,6 +9,8 @@ export { default as businessInfo } from './business-info';
 export { default as fontPairing } from './font-pairing';
 export { default as storeAddress } from './store-address';
 export { default as vertical } from './site-vertical';
+export { default as wooTransfer } from './woo-transfer';
+export { default as wooInstallPlugins } from './woo-install-plugins';
 export { default as processing } from './processing-step';
 export { default as error } from './error-step';
 
@@ -25,4 +27,6 @@ export type StepPath =
 	| 'storeAddress'
 	| 'processing'
 	| 'vertical'
+	| 'wooTransfer'
+	| 'wooInstallPlugins'
 	| 'error';
