@@ -368,16 +368,14 @@ class MasterbarLoggedIn extends Component {
 			>
 				<Gravatar
 					className="masterbar__item-me-gravatar"
-					user={ this.props.user }
+					user={ user }
 					alt={ translate( 'My Profile' ) }
 					size={ 18 }
 				/>
 				<span className="masterbar__item-me-label">
-					{ isMobile
-						? user?.display_name
-						: translate( 'My Profile', {
-								context: 'Toolbar, must be shorter than ~12 chars',
-						  } ) }
+					{ translate( 'My Profile', {
+						context: 'Toolbar, must be shorter than ~12 chars',
+					} ) }
 				</span>
 			</Item>
 		);
@@ -403,12 +401,8 @@ class MasterbarLoggedIn extends Component {
 
 	renderMenu() {
 		const { menuBtnRef } = this.state;
-		const {
-			translate,
-			hasDismissedThePopover,
-			isFetchingPrefs,
-			isUserNewerThanNewNavigation,
-		} = this.props;
+		const { translate, hasDismissedThePopover, isFetchingPrefs, isUserNewerThanNewNavigation } =
+			this.props;
 		return (
 			<>
 				<Item

@@ -126,13 +126,8 @@ export class CommentEdit extends Component {
 			toggleEditMode,
 			translate,
 		} = this.props;
-		const {
-			authorDisplayName,
-			authorUrl,
-			commentContent,
-			commentDate,
-			isDatePopoverVisible,
-		} = this.state;
+		const { authorDisplayName, authorUrl, commentContent, commentDate, isDatePopoverVisible } =
+			this.state;
 
 		return (
 			<div className="comment__edit">

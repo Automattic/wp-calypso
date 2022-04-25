@@ -375,10 +375,10 @@ describe( 'indexOfLongestCommonSuffix', () => {
 	} );
 
 	test( 'if array1 is a proper prefix of array2', () => {
-		deepStrictEqual( indexOfLongestCommonSuffix( [ 'a', 'b', 'c' ], [ 'a', 'b', 'c', 'd' ] ), [
-			3,
-			4,
-		] );
+		deepStrictEqual(
+			indexOfLongestCommonSuffix( [ 'a', 'b', 'c' ], [ 'a', 'b', 'c', 'd' ] ),
+			[ 3, 4 ]
+		);
 	} );
 
 	test( 'if array2 is a proper suffix of array1', () => {
@@ -386,10 +386,10 @@ describe( 'indexOfLongestCommonSuffix', () => {
 	} );
 
 	test( 'if longest common suffix of array1 and array2 is empty', () => {
-		deepStrictEqual( indexOfLongestCommonSuffix( [ 'x', 'y', 'z' ], [ 'a', 'b', 'c', 'd' ] ), [
-			3,
-			4,
-		] );
+		deepStrictEqual(
+			indexOfLongestCommonSuffix( [ 'x', 'y', 'z' ], [ 'a', 'b', 'c', 'd' ] ),
+			[ 3, 4 ]
+		);
 	} );
 } );
 

@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 import envVariables from './env-variables';
 
 const selectors = {
@@ -109,4 +109,20 @@ export async function reloadAndRetry(
 		}
 	}
 	return;
+}
+
+/**
+ * Gets and validates the block ID from a Locator to a parent Block element in the editor.
+ *
+ * @param {Locator} block A frame-safe Loccator to the top of a block.
+ * @returns A block ID that can be used to identify the block in the DOM later.
+ */
+export async function getIdFromBlock( block: Locator ): Promise< string > {
+	const blockId = await block.getAttribute( 'id' );
+	const blockIdRegex = /^block-[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$/;
+	if ( ! blockId || ! blockIdRegex.test( blockId ) ) {
+		throw new Error( `Unable to find valid block ID from Locator. ID was "${ blockId }"` );
+	}
+
+	return blockId;
 }

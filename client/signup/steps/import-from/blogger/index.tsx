@@ -17,17 +17,8 @@ import { getImporterTypeForEngine } from '../util';
 
 export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( props ) => {
 	const importer: Importer = 'blogger';
-	const {
-		job,
-		urlData,
-		siteId,
-		site,
-		siteSlug,
-		fromSite,
-		importSite,
-		startImport,
-		resetImport,
-	} = props;
+	const { job, urlData, siteId, site, siteSlug, fromSite, importSite, startImport, resetImport } =
+		props;
 
 	/**
 	 * Effects

@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { planHasFeature, FEATURE_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import DesignPicker, {
-	FeaturedPicksButtons,
 	PremiumBadge,
 	isBlankCanvasDesign,
 	getDesignUrl,
@@ -54,10 +53,6 @@ export default function DesignPickerStep( props ) {
 
 	const userLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
 
-	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
-	const useFeaturedPicksButtons =
-		showDesignPickerCategories && isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
-
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -70,10 +65,8 @@ export default function DesignPickerStep( props ) {
 
 	// Limit themes to those that support the Site editor, if site is fse eligible
 	const siteId = useSelector( ( state ) => getSiteId( state, dependencies.siteSlug ) );
-	const {
-		isLoading: blockEditorSettingsAreLoading,
-		data: blockEditorSettings,
-	} = useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.useDIFMThemes );
+	const { isLoading: blockEditorSettingsAreLoading, data: blockEditorSettings } =
+		useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.useDIFMThemes );
 	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
 
 	const getThemeFilters = () => {
@@ -116,14 +109,10 @@ export default function DesignPickerStep( props ) {
 		};
 	}, [ props.stepSectionName ] );
 
-	const { designs, featuredPicksDesigns } = useMemo( () => {
-		return {
-			designs: shuffle( apiThemes.filter( ( theme ) => ! theme.is_featured_picks ) ),
-			featuredPicksDesigns: apiThemes.filter(
-				( theme ) => theme.is_featured_picks && ! isBlankCanvasDesign( theme )
-			),
-		};
-	}, [ apiThemes ] );
+	const designs = useMemo(
+		() => shuffle( apiThemes.filter( ( theme ) => ! isBlankCanvasDesign( theme ) ) ),
+		[ apiThemes ]
+	);
 
 	const getEventPropsByDesign = ( design ) => ( {
 		theme: design?.stylesheet ?? `pub/${ design?.theme }`,
@@ -238,7 +227,7 @@ export default function DesignPickerStep( props ) {
 		return (
 			<>
 				<DesignPicker
-					designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
+					designs={ designs }
 					theme={ isReskinned ? 'light' : 'dark' }
 					locale={ translate.localeSlug }
 					onSelect={ pickDesign }
@@ -276,9 +265,6 @@ export default function DesignPickerStep( props ) {
 	function renderCategoriesFooter() {
 		return (
 			<>
-				{ useFeaturedPicksButtons && (
-					<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
-				) }
 				{ showLetUsChoose && (
 					<LetUsChoose flowName={ props.flowName } designs={ designs } onSelect={ pickDesign } />
 				) }

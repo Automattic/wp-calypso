@@ -107,9 +107,11 @@
 	bottom: 0;
 	color: var( --color-sidebar-text );
 	background: var( --color-sidebar-background );
-	border-right: 1px solid var( --color-sidebar-border );
 	width: var( --sidebar-width-max );
 	overflow: hidden;
+	// Ensure that the sidebar always remains on top.
+	// Related issue: https://github.com/Automattic/wp-calypso/issues/53504
+	z-index: z-index( 'root', '.layout__secondary' );
 
 	@include breakpoint-deprecated( '<960px' ) {
 		width: var( --sidebar-width-min );
@@ -268,11 +270,10 @@
 
 // Move the secondary element off screen when focused
 // on the content. This only applies to small screens.
-.layout.focus-content {
-	@include breakpoint-deprecated( '<660px' ) {
-		.layout__secondary {
-			transform: translateX( -100% );
-		}
+.layout.focus-content .layout__secondary {
+	@media only screen and ( max-width: 782px ) {
+		transform: translateX( -100% );
+		padding: 71px 24px 24px;
 	}
 }
 
@@ -354,5 +355,12 @@
 				display: block;
 			}
 		}
+	}
+}
+
+// Ensure sidebar is visually separate from the content in the Contrast color scheme
+.theme-default.is-contrast {
+	.layout__secondary {
+		outline: 1px solid var( --color-sidebar-border );
 	}
 }

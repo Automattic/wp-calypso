@@ -4,7 +4,10 @@ import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import initialReducer from 'calypso/state/reducer';
 
-const render = ( ui, { initialState, store, reducers, ...renderOptions } = {} ) => {
+export const renderWithProvider = (
+	ui,
+	{ initialState, store, reducers, ...renderOptions } = {}
+) => {
 	if ( ! store ) {
 		let reducer = initialReducer;
 
@@ -21,7 +24,3 @@ const render = ( ui, { initialState, store, reducers, ...renderOptions } = {} ) 
 
 	return rtlRender( ui, { wrapper: Wrapper, ...renderOptions } );
 };
-
-export * from '@testing-library/react';
-
-export { render };

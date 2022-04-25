@@ -51,13 +51,15 @@ export function receivePage( { streamKey, pageHandle, streamItems, gap } ) {
 	};
 }
 
-export const showUpdates = ( { streamKey } ) => ( dispatch, getState ) => {
-	const items = getStream( getState(), streamKey ).pendingItems.items;
-	return dispatch( {
-		type: READER_STREAMS_SHOW_UPDATES,
-		payload: { streamKey, items },
-	} );
-};
+export const showUpdates =
+	( { streamKey } ) =>
+	( dispatch, getState ) => {
+		const items = getStream( getState(), streamKey ).pendingItems.items;
+		return dispatch( {
+			type: READER_STREAMS_SHOW_UPDATES,
+			payload: { streamKey, items },
+		} );
+	};
 
 export function receiveUpdates( { streamKey, streamItems } ) {
 	return {

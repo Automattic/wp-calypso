@@ -1,6 +1,11 @@
 import { Design } from '@automattic/design-picker/src/types';
 import { wpcomRequest } from '../wpcom-request-controls';
-import { SiteLaunchError, AtomicTransferError, LatestAtomicTransferError } from './types';
+import {
+	SiteLaunchError,
+	AtomicTransferError,
+	LatestAtomicTransferError,
+	AtomicSoftwareStatusError,
+} from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import type {
 	CreateSiteParams,
@@ -14,6 +19,8 @@ import type {
 	SiteLaunchError as SiteLaunchErrorType,
 	AtomicTransferError as AtomicTransferErrorType,
 	LatestAtomicTransferError as LatestAtomicTransferErrorType,
+	AtomicSoftwareStatusError as AtomicSoftwareStatusErrorType,
+	AtomicSoftwareStatus,
 	SiteSettings,
 } from './types';
 
@@ -336,14 +343,48 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 	}
 
+	const atomicSoftwareStatusStart = ( siteId: number, softwareSet: string ) => ( {
+		type: 'ATOMIC_SOFTWARE_STATUS_START' as const,
+		siteId,
+		softwareSet,
+	} );
+
+	const atomicSoftwareStatusSuccess = (
+		siteId: number,
+		softwareSet: string,
+		status: AtomicSoftwareStatus
+	) => ( {
+		type: 'ATOMIC_SOFTWARE_STATUS_SUCCESS' as const,
+		siteId,
+		softwareSet,
+		status,
+	} );
+
+	const atomicSoftwareStatusFailure = (
+		siteId: number,
+		softwareSet: string,
+		error: AtomicSoftwareStatusErrorType
+	) => ( {
+		type: 'ATOMIC_SOFTWARE_STATUS_FAILURE' as const,
+		siteId,
+		softwareSet,
+		error,
+	} );
+
 	function* requestAtomicSoftwareStatus( siteId: number, softwareSet: string ) {
-		yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteId ) }/atomic/software/${ encodeURIComponent(
-				softwareSet
-			) }`,
-			apiNamespace: 'wpcom/v2',
-			method: 'GET',
-		} );
+		yield atomicSoftwareStatusStart( siteId, softwareSet );
+		try {
+			const status: AtomicSoftwareStatus = yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/atomic/software/${ encodeURIComponent(
+					softwareSet
+				) }`,
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+			} );
+			yield atomicSoftwareStatusSuccess( siteId, softwareSet, status );
+		} catch ( err ) {
+			yield atomicSoftwareStatusFailure( siteId, softwareSet, err as AtomicSoftwareStatusError );
+		}
 	}
 
 	return {
@@ -382,6 +423,9 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		latestAtomicTransferSuccess,
 		latestAtomicTransferFailure,
 		requestLatestAtomicTransfer,
+		atomicSoftwareStatusStart,
+		atomicSoftwareStatusSuccess,
+		atomicSoftwareStatusFailure,
 		requestAtomicSoftwareStatus,
 	};
 }
@@ -412,6 +456,9 @@ export type Action =
 			| ActionCreators[ 'latestAtomicTransferStart' ]
 			| ActionCreators[ 'latestAtomicTransferSuccess' ]
 			| ActionCreators[ 'latestAtomicTransferFailure' ]
+			| ActionCreators[ 'atomicSoftwareStatusStart' ]
+			| ActionCreators[ 'atomicSoftwareStatusSuccess' ]
+			| ActionCreators[ 'atomicSoftwareStatusFailure' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

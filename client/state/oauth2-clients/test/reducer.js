@@ -46,8 +46,7 @@ describe( 'clients reducer', () => {
 				id: 2665,
 				title: 'IntenseDebate',
 				url: 'https://intensedebate.com/',
-				icon:
-					'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100',
+				icon: 'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100',
 			},
 		} );
 
@@ -68,8 +67,7 @@ describe( 'clients reducer', () => {
 				id: 2665,
 				title: 'IntenseDebate',
 				url: 'https://intensedebate.com/',
-				icon:
-					'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100',
+				icon: 'https://i0.wp.com/developer.files.wordpress.com/2013/04/idwp-feature-adminpanel.png?w=100',
 			},
 		} );
 	} );

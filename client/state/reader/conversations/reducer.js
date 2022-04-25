@@ -18,10 +18,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 		case READER_CONVERSATION_FOLLOW: {
 			const newState = {
 				...state,
-				[ key(
-					action.payload.siteId,
-					action.payload.postId
-				) ]: CONVERSATION_FOLLOW_STATUS.following,
+				[ key( action.payload.siteId, action.payload.postId ) ]:
+					CONVERSATION_FOLLOW_STATUS.following,
 			};
 			return newState;
 		}

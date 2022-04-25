@@ -40,26 +40,24 @@ const GSuiteNewUserList = ( {
 }: GSuiteNewUserListProps ): ReactElement => {
 	const translate = useTranslate();
 
-	const onUserValueChange = ( uuid: string ) => (
-		fieldName: string,
-		fieldValue: string,
-		mailBoxFieldTouched = false
-	) => {
-		const changedUsers = users.map( ( user ) => {
-			if ( user.uuid !== uuid ) {
-				return user;
-			}
+	const onUserValueChange =
+		( uuid: string ) =>
+		( fieldName: string, fieldValue: string, mailBoxFieldTouched = false ) => {
+			const changedUsers = users.map( ( user ) => {
+				if ( user.uuid !== uuid ) {
+					return user;
+				}
 
-			const changedUser = { ...user, [ fieldName ]: { value: fieldValue, error: null } };
+				const changedUser = { ...user, [ fieldName ]: { value: fieldValue, error: null } };
 
-			if ( 'firstName' === fieldName && ! mailBoxFieldTouched ) {
-				return { ...changedUser, mailBox: { value: sanitizeEmail( fieldValue ), error: null } };
-			}
+				if ( 'firstName' === fieldName && ! mailBoxFieldTouched ) {
+					return { ...changedUser, mailBox: { value: sanitizeEmail( fieldValue ), error: null } };
+				}
 
-			return changedUser;
-		} );
-		onUsersChange( validateUsers( changedUsers, extraValidation ) );
-	};
+				return changedUser;
+			} );
+			onUsersChange( validateUsers( changedUsers, extraValidation ) );
+		};
 
 	const onUserAdd = () => {
 		onUsersChange( [ ...users, newUser( selectedDomainName ) ] );

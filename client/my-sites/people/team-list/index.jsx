@@ -37,15 +37,8 @@ function TeamList( { site, search } ) {
 		: {};
 	const listKey = [ 'team', site.ID, search ].join( '-' );
 
-	const {
-		data,
-		isLoading,
-		isFetchingNextPage,
-		hasNextPage,
-		fetchNextPage,
-		error,
-		refetch,
-	} = useUsersQuery( site.ID, fetchOptions );
+	const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage, error, refetch } =
+		useUsersQuery( site.ID, fetchOptions );
 
 	useErrorNotice( error, refetch );
 

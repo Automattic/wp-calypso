@@ -332,9 +332,9 @@ class RegisterDomainStep extends Component {
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
-				const freeSubdomainPlaceholders = Array(
-					this.getFreeSubdomainSuggestionsQuantity()
-				).fill( { is_placeholder: true } );
+				const freeSubdomainPlaceholders = Array( this.getFreeSubdomainSuggestionsQuantity() ).fill(
+					{ is_placeholder: true }
+				);
 				suggestions.unshift( ...freeSubdomainPlaceholders );
 			} else if ( ! isEmpty( this.state.subdomainSearchResults ) ) {
 				suggestions.unshift( ...this.state.subdomainSearchResults );
@@ -1183,13 +1183,8 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderExampleSuggestions() {
-		const {
-			isReskinned,
-			domainsWithPlansOnly,
-			offerUnavailableOption,
-			products,
-			path,
-		} = this.props;
+		const { isReskinned, domainsWithPlansOnly, offerUnavailableOption, products, path } =
+			this.props;
 
 		if ( isReskinned ) {
 			return this.renderBestNamesPrompt();

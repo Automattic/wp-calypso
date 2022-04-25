@@ -17,9 +17,8 @@ const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > 
 registerPlugin( 'a8c-editor-site-launch', {
 	render: function LaunchSidebar() {
 		const { isSidebarOpen } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-		const { closeSidebar, setSidebarFullscreen, unsetSidebarFullscreen } = useDispatch(
-			LAUNCH_STORE
-		);
+		const { closeSidebar, setSidebarFullscreen, unsetSidebarFullscreen } =
+			useDispatch( LAUNCH_STORE );
 
 		useEffect( () => {
 			// @automattic/viewport doesn't have a breakpoint for medium (782px)

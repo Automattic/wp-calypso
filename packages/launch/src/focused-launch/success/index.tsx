@@ -15,9 +15,8 @@ import './style.scss';
 // Success is shown when the site is launched but also while the site is still launching.
 // This view is technically going to be the selected view in the modal even while the user goes through the checkout flow (which is rendered on top of this view).
 const Success: React.FunctionComponent = () => {
-	const { redirectTo, siteId, getCurrentLaunchFlowUrl, isInIframe } = React.useContext(
-		LaunchContext
-	);
+	const { redirectTo, siteId, getCurrentLaunchFlowUrl, isInIframe } =
+		React.useContext( LaunchContext );
 
 	const isSiteLaunching = useSelect(
 		( select ) => select( SITE_STORE ).isSiteLaunching( siteId ),

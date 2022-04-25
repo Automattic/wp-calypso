@@ -151,33 +151,35 @@ export const requestCommentCounts = ( siteId, postId ) => ( {
  * @param {object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
  * @returns {object} action that deletes a comment
  */
-export const deleteComment = (
-	siteId,
-	postId,
-	commentId,
-	options = { showSuccessNotice: true },
-	refreshCommentListQuery = null
-) => ( dispatch, getState ) => {
-	const siteComment = getSiteComment( getState(), siteId, commentId );
-	const previousStatus = siteComment && siteComment.status;
-
-	dispatch( {
-		type: COMMENTS_DELETE,
+export const deleteComment =
+	(
 		siteId,
 		postId,
 		commentId,
-		options,
-		refreshCommentListQuery,
-		meta: {
-			comment: {
-				previousStatus,
+		options = { showSuccessNotice: true },
+		refreshCommentListQuery = null
+	) =>
+	( dispatch, getState ) => {
+		const siteComment = getSiteComment( getState(), siteId, commentId );
+		const previousStatus = siteComment && siteComment.status;
+
+		dispatch( {
+			type: COMMENTS_DELETE,
+			siteId,
+			postId,
+			commentId,
+			options,
+			refreshCommentListQuery,
+			meta: {
+				comment: {
+					previousStatus,
+				},
+				dataLayer: {
+					trackRequest: true,
+				},
 			},
-			dataLayer: {
-				trackRequest: true,
-			},
-		},
-	} );
-};
+		} );
+	};
 
 /**
  * Creates a write comment action for a siteId and postId
@@ -259,33 +261,29 @@ export const unlikeComment = ( siteId, postId, commentId ) => ( {
  * @param {object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
  * @returns {object} Action that changes a comment status
  */
-export const changeCommentStatus = (
-	siteId,
-	postId,
-	commentId,
-	status,
-	refreshCommentListQuery = null
-) => ( dispatch, getState ) => {
-	const siteComment = getSiteComment( getState(), siteId, commentId );
-	const previousStatus = siteComment && siteComment.status;
+export const changeCommentStatus =
+	( siteId, postId, commentId, status, refreshCommentListQuery = null ) =>
+	( dispatch, getState ) => {
+		const siteComment = getSiteComment( getState(), siteId, commentId );
+		const previousStatus = siteComment && siteComment.status;
 
-	dispatch( {
-		type: COMMENTS_CHANGE_STATUS,
-		siteId,
-		postId,
-		commentId,
-		status,
-		refreshCommentListQuery,
-		meta: {
-			comment: {
-				previousStatus,
+		dispatch( {
+			type: COMMENTS_CHANGE_STATUS,
+			siteId,
+			postId,
+			commentId,
+			status,
+			refreshCommentListQuery,
+			meta: {
+				comment: {
+					previousStatus,
+				},
+				dataLayer: {
+					trackRequest: true,
+				},
 			},
-			dataLayer: {
-				trackRequest: true,
-			},
-		},
-	} );
-};
+		} );
+	};
 
 /**
  * @typedef {object} Comment

@@ -101,5 +101,6 @@ export type __TodoAny__ = any; /* eslint-disable-line @typescript-eslint/no-expl
 declare global {
 	interface Window {
 		AppBoot: () => void;
+		COMMIT_SHA: string; // Added by an inline script in <head> via SSR context + webpack.
 	}
 }

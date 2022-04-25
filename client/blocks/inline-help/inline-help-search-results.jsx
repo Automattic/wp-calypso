@@ -59,10 +59,10 @@ function HelpSearchResults( {
 	const sectionName = useSelector( getSectionName );
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
 	const siteIntent = useSiteOption( 'site_intent' );
-	const rawContextualResults = useMemo( () => getContextResults( sectionName, siteIntent ), [
-		sectionName,
-		siteIntent,
-	] );
+	const rawContextualResults = useMemo(
+		() => getContextResults( sectionName, siteIntent ),
+		[ sectionName, siteIntent ]
+	);
 	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 
 	const contextualResults = rawContextualResults.filter(

@@ -54,7 +54,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	 * and therefore we need to be ready to render.
 	 */
 	if ( ! menuItems && isRequestingMenu ) {
-		return <Spinner className="sidebar-unified__menu-loading" />;
+		return <Spinner className="sidebar__menu-loading" />;
 	}
 
 	// Jetpack self-hosted sites should open external links to WP Admin in new tabs,
@@ -148,7 +148,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 				/>
 			</Sidebar>
 			<AsyncLoad
-				require="calypso/my-sites/sidebar-unified/external-link-dialog"
+				require="calypso/my-sites/sidebar/external-link-dialog"
 				isVisible={ showDialog }
 				closeModalHandler={ closeModalHandler }
 			/>

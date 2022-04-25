@@ -22,9 +22,8 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale, bil
 	const { __, hasTranslation } = useI18n();
 
 	const { supportedPlans, planProducts, features, featuresByType } = useSelect( ( select ) => {
-		const { getPlanProduct, getFeatures, getFeaturesByType, getSupportedPlans } = select(
-			PLANS_STORE
-		);
+		const { getPlanProduct, getFeatures, getFeaturesByType, getSupportedPlans } =
+			select( PLANS_STORE );
 		const supportedPlans = getSupportedPlans( locale );
 		const planProducts = supportedPlans.map( ( plan ) =>
 			getPlanProduct( plan.periodAgnosticSlug, billingPeriod )

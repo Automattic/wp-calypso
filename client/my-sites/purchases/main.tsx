@@ -120,6 +120,7 @@ export function PurchaseDetails( {
 				<ManagePurchase
 					cardTitle={ titles.managePurchase }
 					purchaseId={ purchaseId }
+					isSiteLevel
 					siteSlug={ siteSlug }
 					showHeader={ false }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }

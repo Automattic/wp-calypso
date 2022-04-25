@@ -1,31 +1,29 @@
 import * as Blocks from './blocks';
 
-export const FormattedBlockRenderer = ( blockTypeMapping ) => ( {
-	content = {},
-	onClick = null,
-	meta = {},
-} ) => {
-	if ( 'string' === typeof content ) {
-		return content;
-	}
+export const FormattedBlockRenderer =
+	( blockTypeMapping ) =>
+	( { content = {}, onClick = null, meta = {} } ) => {
+		if ( 'string' === typeof content ) {
+			return content;
+		}
 
-	const { children: nestedContent, text = null, type } = content;
+		const { children: nestedContent, text = null, type } = content;
 
-	if ( undefined === type && ! nestedContent ) {
-		return text;
-	}
+		if ( undefined === type && ! nestedContent ) {
+			return text;
+		}
 
-	const children = nestedContent.map( ( child, key ) => (
-		<FormattedBlock key={ key } content={ child } onClick={ onClick } meta={ meta } />
-	) );
+		const children = nestedContent.map( ( child, key ) => (
+			<FormattedBlock key={ key } content={ child } onClick={ onClick } meta={ meta } />
+		) );
 
-	const blockToRender = blockTypeMapping[ type ];
-	if ( blockToRender ) {
-		return blockToRender( { content, onClick, meta, children } );
-	}
+		const blockToRender = blockTypeMapping[ type ];
+		if ( blockToRender ) {
+			return blockToRender( { content, onClick, meta, children } );
+		}
 
-	return <>{ children }</>;
-};
+		return <>{ children }</>;
+	};
 
 const FormattedBlock = FormattedBlockRenderer( {
 	b: Blocks.Strong,

@@ -221,14 +221,8 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderNoticeOrButton() {
-		const {
-			plugin,
-			isEmbed,
-			selectedSite,
-			siteIsConnected,
-			siteIsWpcomAtomic,
-			translate,
-		} = this.props;
+		const { plugin, isEmbed, selectedSite, siteIsConnected, siteIsWpcomAtomic, translate } =
+			this.props;
 
 		if ( siteIsConnected === false ) {
 			return (

@@ -39,8 +39,8 @@ function TransferDomainStepStart( {
 		Maybe< typeof domainInboundTransferStatusInfo >
 	>( domainInboundTransferStatusInfo );
 	const [ isFetching, setIsFetching ] = useState( isFetchingAvailability );
-	const isDomainTransferrable = getDomainTransferrability( inboundTransferStatusInfo )
-		.transferrable;
+	const isDomainTransferrable =
+		getDomainTransferrability( inboundTransferStatusInfo ).transferrable;
 
 	const initialValidation = useRef( false );
 

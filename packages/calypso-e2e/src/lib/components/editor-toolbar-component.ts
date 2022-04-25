@@ -46,6 +46,10 @@ const selectors = {
 
 	// Site editor save
 	saveSiteEditorButton: `${ panel } button.edit-site-save-button__button`,
+
+	// Nav sidebar
+	navSidebarButton:
+		'button[aria-label="Block editor sidebar"],button[aria-label="Toggle navigation"]',
 };
 
 /**
@@ -236,6 +240,32 @@ export class EditorToolbarComponent {
 			return;
 		}
 		const locator = this.editor.locator( selectors.settingsButton );
+		await locator.click();
+	}
+
+	/* Navigation sidebar */
+
+	/**
+	 * Opens the nav sidebar.
+	 */
+	async openNavSidebar(): Promise< void > {
+		if ( await this.targetIsOpen( selectors.navSidebarButton ) ) {
+			return;
+		}
+
+		const locator = this.editor.locator( selectors.navSidebarButton );
+		await locator.click();
+	}
+
+	/**
+	 * Closes the nav sidebar.
+	 */
+	async closeNavSidebar(): Promise< void > {
+		if ( ! ( await this.targetIsOpen( selectors.navSidebarButton ) ) ) {
+			return;
+		}
+
+		const locator = this.editor.locator( selectors.navSidebarButton );
 		await locator.click();
 	}
 

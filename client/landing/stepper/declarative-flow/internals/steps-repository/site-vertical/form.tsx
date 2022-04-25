@@ -14,7 +14,7 @@ interface Props {
 	isSkipSynonyms?: boolean;
 	isBusy?: boolean;
 	onSelect?: ( vertical: Vertical ) => void;
-	onSubmit?: ( event: React.FormEvent ) => void;
+	onSubmit?: ( event: React.FormEvent, userInput: string ) => void;
 }
 
 const SiteVerticalForm: React.FC< Props > = ( {
@@ -25,13 +25,20 @@ const SiteVerticalForm: React.FC< Props > = ( {
 	onSubmit,
 } ) => {
 	const translate = useTranslate();
+	const [ userInput, setUserInput ] = React.useState( '' );
 
 	return (
-		<form className="site-vertical__form" onSubmit={ onSubmit }>
+		<form
+			className="site-vertical__form"
+			onSubmit={ ( event: React.FormEvent ) => {
+				onSubmit?.( event, userInput );
+			} }
+		>
 			<FormFieldset className="site-vertical__form-fieldset">
 				<SelectVertical
 					defaultVertical={ defaultVertical }
 					isSkipSynonyms={ isSkipSynonyms }
+					onInputChange={ setUserInput }
 					onSelect={ onSelect }
 				/>
 				<FormSettingExplanation>

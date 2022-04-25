@@ -1,12 +1,16 @@
 const noop = () => {};
 
-const handleDayMouseEnter = ( date, modifiers, onMouseEnter = noop ) => ( event ) => {
-	onMouseEnter( date, modifiers, event );
-};
+const handleDayMouseEnter =
+	( date, modifiers, onMouseEnter = noop ) =>
+	( event ) => {
+		onMouseEnter( date, modifiers, event );
+	};
 
-const handleDayMouseLeave = ( date, modifiers, onMouseLeave = noop ) => ( event ) => {
-	onMouseLeave( date, modifiers, event );
-};
+const handleDayMouseLeave =
+	( date, modifiers, onMouseLeave = noop ) =>
+	( event ) => {
+		onMouseLeave( date, modifiers, event );
+	};
 
 const DatePickerDay = ( { date, modifiers, onMouseEnter, onMouseLeave } ) => {
 	return (

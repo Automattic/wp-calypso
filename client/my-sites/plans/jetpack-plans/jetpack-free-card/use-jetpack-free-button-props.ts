@@ -74,11 +74,10 @@ export default function useJetpackFreeButtonProps(
 		storePlan( PLAN_JETPACK_FREE );
 		trackCallback();
 	}, [ trackCallback ] );
-	const href = useMemo( () => buildHref( siteWpAdminUrl, siteId, urlQueryArgs ), [
-		siteWpAdminUrl,
-		siteId,
-		urlQueryArgs,
-	] );
+	const href = useMemo(
+		() => buildHref( siteWpAdminUrl, siteId, urlQueryArgs ),
+		[ siteWpAdminUrl, siteId, urlQueryArgs ]
+	);
 
 	return {
 		href,

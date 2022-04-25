@@ -65,6 +65,31 @@ export function requestContactDetailsCache() {
 	};
 }
 
+export function saveContactDetailsCache( contactInformation ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST,
+		} );
+
+		wpcom.req
+			.post( '/me/domain-contact-information', contactInformation )
+			.then( ( data ) => {
+				dispatch(
+					receiveContactDetailsCache( mapRecordKeysRecursively( data, snakeToCamelCase ) )
+				);
+				dispatch( {
+					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_SUCCESS,
+				} );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_REQUEST_FAILURE,
+					error,
+				} );
+			} );
+	};
+}
+
 export function updateContactDetailsCache( data ) {
 	return {
 		type: DOMAIN_MANAGEMENT_CONTACT_DETAILS_CACHE_UPDATE,

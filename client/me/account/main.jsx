@@ -48,7 +48,6 @@ import {
 	getCurrentUserVisibleSiteCount,
 } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice, removeNotice } from 'calypso/state/notices/actions';
-import { savePreference } from 'calypso/state/preferences/actions';
 import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-community-translator';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
@@ -67,8 +66,6 @@ const noticeOptions = {
 };
 
 import './style.scss';
-
-const colorSchemeKey = 'colorScheme';
 
 /**
  * Debug instance
@@ -208,7 +205,6 @@ class Account extends Component {
 	updateColorScheme = ( colorScheme ) => {
 		this.props.recordTracksEvent( 'calypso_color_schemes_select', { color_scheme: colorScheme } );
 		this.props.recordGoogleEvent( 'Me', 'Selected Color Scheme', 'scheme', colorScheme );
-		this.props.saveColorSchemePreference( colorScheme );
 		this.props.recordTracksEvent( 'calypso_color_schemes_save', {
 			color_scheme: colorScheme,
 		} );
@@ -965,7 +961,6 @@ class Account extends Component {
 										{ translate( 'Dashboard color scheme' ) }
 									</FormLabel>
 									<ColorSchemePicker
-										temporarySelection
 										disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
 										defaultSelection="classic-dark"
 										onSelection={ this.updateColorScheme }
@@ -1008,8 +1003,6 @@ export default compose(
 			saveUnsavedUserSettings,
 			setUserSetting,
 			successNotice,
-			saveColorSchemePreference: ( newColorScheme ) =>
-				savePreference( colorSchemeKey, newColorScheme ),
 		}
 	)
 )( Account );

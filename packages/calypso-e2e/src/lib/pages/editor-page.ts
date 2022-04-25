@@ -166,7 +166,7 @@ export class EditorPage {
 	async closeAllPanels(): Promise< void > {
 		await Promise.allSettled( [
 			this.editorPublishPanelComponent.closePanel(),
-			this.editorNavSidebarComponent.closeSidebar(),
+			this.editorToolbarComponent.closeNavSidebar(),
 			this.editorToolbarComponent.closeSettings(),
 		] );
 	}
@@ -727,8 +727,6 @@ export class EditorPage {
 	 * will have access to the Calyspo sidebar, allowing navigation around Calypso.
 	 */
 	async exitEditor(): Promise< void > {
-		await this.editorNavSidebarComponent.openSidebar();
-
 		// There are three different places to return to,
 		// depending on how the editor was entered.
 		const navigationPromise = Promise.race( [
@@ -745,7 +743,10 @@ export class EditorPage {
 			const navbarComponent = new NavbarComponent( this.page );
 			actions.push( navbarComponent.clickMySites() );
 		} else {
-			actions.push( this.editorNavSidebarComponent.exitEditor() );
+			actions.push(
+				this.editorToolbarComponent.openNavSidebar(),
+				this.editorNavSidebarComponent.exitEditor()
+			);
 		}
 
 		// Perform the actions and resolve promises.

@@ -20,7 +20,7 @@ norms and learn proper patterns and idioms; this team is there to help guide you
 
 ![](./typescript-dev-flow.dot.svg)
 
-Graph built with [`typescript-dev-flow.dot`](./typescript-dev-flow.dot)
+Graph built with [`typescript-dev-flow.dot`](https://github.com/Automattic/wp-calypso/blob/trunk/docs/coding-guidelines/typescript-dev-flow.dot)
 
 ## Type Principles for Calypso
 

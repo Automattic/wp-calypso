@@ -27,15 +27,8 @@ const useErrorNotice = ( error, refetch ) => {
 };
 
 const ViewersList = ( { site, label } ) => {
-	const {
-		data,
-		isLoading,
-		fetchNextPage,
-		isFetchingNextPage,
-		hasNextPage,
-		error,
-		refetch,
-	} = useViewersQuery( site.ID );
+	const { data, isLoading, fetchNextPage, isFetchingNextPage, hasNextPage, error, refetch } =
+		useViewersQuery( site.ID );
 	const { removeViewer } = useRemoveViewer();
 
 	useErrorNotice( error, refetch );

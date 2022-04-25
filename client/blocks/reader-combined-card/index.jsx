@@ -95,8 +95,10 @@ class ReaderCombinedCardComponent extends Component {
 		const siteName = getSiteName( { site, post: posts[ 0 ] } );
 		const isSelectedPost = ( post ) => keysAreEqual( keyForPost( post ), selectedPostKey );
 		const followUrl = ( feed && feed.URL ) || ( site && site.URL );
-		const mediaCount = filter( posts, ( post ) => post && ! isEmpty( post.canonical_media ) )
-			.length;
+		const mediaCount = filter(
+			posts,
+			( post ) => post && ! isEmpty( post.canonical_media )
+		).length;
 
 		// Handle blocked sites here rather than in the post lifecycle, because we don't have the posts there
 		if ( posts[ 0 ] && ! posts[ 0 ].is_external && includes( blockedSites, +posts[ 0 ].site_ID ) ) {

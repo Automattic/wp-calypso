@@ -95,9 +95,11 @@ HappychatPage.propTypes = {
 	timeline: PropTypes.array,
 };
 
-const isMessageFromCurrentUser = ( currentUser ) => ( { user_id, source } ) => {
-	return user_id.toString() === currentUser.ID.toString() && source === 'customer';
-};
+const isMessageFromCurrentUser =
+	( currentUser ) =>
+	( { user_id, source } ) => {
+		return user_id.toString() === currentUser.ID.toString() && source === 'customer';
+	};
 
 const mapState = ( state ) => {
 	const currentUser = getCurrentUser( state );

@@ -16,8 +16,7 @@ const PromoSectionExample = () => {
 		promos: [
 			{
 				title: 'Collect one-time payments',
-				body:
-					'Add a payment button to any post or page to collect PayPal payments for physical products, digital goods, services, or donations. Available to any site with a Premium plan.',
+				body: 'Add a payment button to any post or page to collect PayPal payments for physical products, digital goods, services, or donations. Available to any site with a Premium plan.',
 				image: {
 					path: simplePaymentsImage,
 				},
@@ -30,8 +29,7 @@ const PromoSectionExample = () => {
 			},
 			{
 				title: 'Collect payments',
-				body:
-					'Charge for services, collect membership dues, or take one-time or recurring donations. Automate recurring payments, and use your site to earn reliable revenue. Available to any site with a paid plan.',
+				body: 'Charge for services, collect membership dues, or take one-time or recurring donations. Automate recurring payments, and use your site to earn reliable revenue. Available to any site with a paid plan.',
 				image: {
 					path: recurringImage,
 				},

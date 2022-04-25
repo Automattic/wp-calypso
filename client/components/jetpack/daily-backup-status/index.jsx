@@ -40,10 +40,10 @@ const DailyBackupStatus = ( {
 	const today = useDateWithOffset( moment() );
 
 	const dispatch = useDispatch();
-	const refreshBackupProgress = useCallback( () => dispatch( requestRewindBackups( siteId ) ), [
-		dispatch,
-		siteId,
-	] );
+	const refreshBackupProgress = useCallback(
+		() => dispatch( requestRewindBackups( siteId ) ),
+		[ dispatch, siteId ]
+	);
 
 	const hasRealtimeBackups = useSelector( ( state ) => siteHasRealtimeBackups( state, siteId ) );
 	const backupCurrentlyInProgress = useSelector( ( state ) =>

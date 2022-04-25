@@ -63,14 +63,8 @@ class TitanRedirector extends Component {
 	}
 
 	render() {
-		const {
-			translate,
-			isLoggedIn,
-			siteSlugs,
-			currentQuery,
-			currentRoute,
-			hasAllSitesLoaded,
-		} = this.props;
+		const { translate, isLoggedIn, siteSlugs, currentQuery, currentRoute, hasAllSitesLoaded } =
+			this.props;
 		const { loaded, hasError, action, domain, blogId, subscriptionId } = this.state;
 
 		if ( ! isLoggedIn ) {

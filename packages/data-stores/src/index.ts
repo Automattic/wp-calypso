@@ -6,6 +6,7 @@ import * as Launch from './launch';
 import * as Onboard from './onboard';
 import persistenceConfigFactory from './persistence-config-factory';
 import * as Plans from './plans';
+import * as ProductsList from './products-list';
 import * as Reader from './reader';
 import * as Site from './site';
 import * as User from './user';
@@ -28,6 +29,7 @@ export {
 	Reader,
 	Onboard,
 	persistenceConfigFactory,
+	ProductsList,
 };
 
 /**

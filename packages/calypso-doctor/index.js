@@ -23,7 +23,11 @@ const runEvaluations = async () => {
 			};
 
 			try {
-				const { result, ignored, evaluationMessage = '' } = await new Promise(
+				const {
+					result,
+					ignored,
+					evaluationMessage = '',
+				} = await new Promise(
 					// eslint-disable-next-line no-async-promise-executor
 					async ( resolve, reject ) => {
 						try {

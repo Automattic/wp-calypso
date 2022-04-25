@@ -46,13 +46,8 @@ export function* createSite( {
 	anchorFmEpisodeId = null,
 	anchorFmSpotifyUrl = null,
 }: CreateSiteActionParameters ) {
-	const {
-		domain,
-		selectedDesign,
-		selectedFonts,
-		siteTitle,
-		selectedFeatures,
-	}: State = yield select( STORE_KEY, 'getState' );
+	const { domain, selectedDesign, selectedFonts, siteTitle, selectedFeatures }: State =
+		yield select( STORE_KEY, 'getState' );
 
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;

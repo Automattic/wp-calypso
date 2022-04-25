@@ -75,6 +75,14 @@ export const getSiteLatestAtomicTransfer = ( state: State, siteId: number ) => {
 	return state.latestAtomicTransferStatus[ siteId ]?.transfer;
 };
 
+export const getAtomicSoftwareStatus = ( state: State, siteId: number, softwareSet: string ) => {
+	return state.atomicSoftwareStatus[ siteId ]?.[ softwareSet ]?.status;
+};
+
+export const getSiteLatestAtomicTransferError = ( state: State, siteId: number ) => {
+	return state.latestAtomicTransferStatus[ siteId ]?.errorCode;
+};
+
 export const hasActiveSiteFeature = (
 	_: State,
 	siteId: number | undefined,

@@ -77,31 +77,29 @@ function InvoiceCard( { dueDate, status, total, currency, pdfUrl }: Invoice ): R
 	);
 }
 
-const InvoicePlaceholderCard = memo(
-	(): ReactElement => {
-		return (
-			<Card compact>
-				<div className="invoices-list__row">
-					<div className="invoices-list__due-date">
-						<TextPlaceholder />
-					</div>
-
-					<div className="invoices-list__status">
-						<TextPlaceholder />
-					</div>
-
-					<div className="invoices-list__total">
-						<TextPlaceholder />
-					</div>
-
-					<div className="invoices-list__download">
-						<TextPlaceholder />
-					</div>
+const InvoicePlaceholderCard = memo( (): ReactElement => {
+	return (
+		<Card compact>
+			<div className="invoices-list__row">
+				<div className="invoices-list__due-date">
+					<TextPlaceholder />
 				</div>
-			</Card>
-		);
-	}
-);
+
+				<div className="invoices-list__status">
+					<TextPlaceholder />
+				</div>
+
+				<div className="invoices-list__total">
+					<TextPlaceholder />
+				</div>
+
+				<div className="invoices-list__download">
+					<TextPlaceholder />
+				</div>
+			</div>
+		</Card>
+	);
+} );
 
 export default function InvoicesList(): ReactElement {
 	const translate = useTranslate();

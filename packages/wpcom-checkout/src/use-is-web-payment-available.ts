@@ -77,15 +77,13 @@ export function useIsWebPayAvailable(
 		// Other payment methods handle this on the backend in a similar way.
 		const applePayDisabledCurrencies: string[] = [];
 		const googlePayDisabledCurrencies: string[] = [];
-		const isApplePayAllowedForCurrency = ! applePayDisabledCurrencies.includes(
-			normalizedCurrency
-		);
+		const isApplePayAllowedForCurrency =
+			! applePayDisabledCurrencies.includes( normalizedCurrency );
 		if ( ! isApplePayAllowedForCurrency ) {
 			debug( 'Apple Pay disabled by currency check.' );
 		}
-		const isGooglePayAllowedForCurrency = ! googlePayDisabledCurrencies.includes(
-			normalizedCurrency
-		);
+		const isGooglePayAllowedForCurrency =
+			! googlePayDisabledCurrencies.includes( normalizedCurrency );
 		if ( ! isGooglePayAllowedForCurrency ) {
 			debug( 'Google Pay disabled by currency check.' );
 		}

@@ -14,10 +14,10 @@ const useSiteChecklistTask = (
 	taskId: typeof CHECKLIST_KNOWN_TASKS[ keyof typeof CHECKLIST_KNOWN_TASKS ]
 ): Task | undefined => {
 	const siteChecklist = useSiteChecklist( siteId );
-	const task = useMemo( () => siteChecklist?.tasks.find( ( { id } ) => id === taskId ), [
-		siteChecklist,
-		taskId,
-	] );
+	const task = useMemo(
+		() => siteChecklist?.tasks.find( ( { id } ) => id === taskId ),
+		[ siteChecklist, taskId ]
+	);
 
 	return task;
 };
