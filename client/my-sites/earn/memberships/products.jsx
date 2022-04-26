@@ -95,13 +95,13 @@ class MembershipsProductsSection extends Component {
 					/>
 				) }
 
-				<SectionHeader>
-					{ this.props.hasStripeFeature && (
+				{ this.props.hasStripeFeature && (
+					<SectionHeader>
 						<Button primary compact onClick={ () => this.openAddEditDialog( null ) }>
 							{ this.props.translate( 'Add a new payment plan' ) }
 						</Button>
-					) }
-				</SectionHeader>
+					</SectionHeader>
+				) }
 				{ this.props.products.map( ( product ) => (
 					<CompactCard className="memberships__products-product-card" key={ product.ID }>
 						<div className="memberships__products-product-details">
