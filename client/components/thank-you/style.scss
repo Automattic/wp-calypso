@@ -56,11 +56,6 @@
 	}
 }
 
-.thank-you__step-cta > a.button:not( .is-primary ) {
-	border-color: var( --color-accent );
-	color: var( --color-accent );
-}
-
 .thank-you__help-link {
 	display: flex;
 	font-size: $font-body-small;
