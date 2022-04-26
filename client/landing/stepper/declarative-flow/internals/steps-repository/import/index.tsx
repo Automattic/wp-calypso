@@ -19,7 +19,6 @@ import {
 } from 'calypso/signup/steps/import/ready';
 import { GoToStep } from 'calypso/signup/types';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
-import isAtomicSiteSelector from 'calypso/state/selectors/is-site-automated-transfer';
 import { getFinalImporterUrl } from './helper';
 import { redirect, removeTrailingSlash } from './util';
 import type { Step } from '../../types';
@@ -38,6 +37,7 @@ const ImportStep: Step = function ImportStep( props ) {
 	const currentRoute = useCurrentRoute();
 	const isAtomicSite = !! site?.options?.is_automated_transfer;
 	const urlData = useSelector( getUrlData );
+	const shouldHideSkipBtn = currentRoute !== 'import';
 
 	/**
 	 ↓ Effects
@@ -70,16 +70,6 @@ const ImportStep: Step = function ImportStep( props ) {
 		);
 
 		redirect( url );
-	}
-
-	function shouldHideSkipBtn() {
-		switch ( currentRoute ) {
-			case 'import':
-				return false;
-
-			default:
-				return true;
-		}
 	}
 
 	/**
@@ -129,7 +119,7 @@ const ImportStep: Step = function ImportStep( props ) {
 
 			<StepContainer
 				stepName={ 'import-step' }
-				hideSkip={ shouldHideSkipBtn() }
+				hideSkip={ shouldHideSkipBtn }
 				hideFormattedHeader={ true }
 				goBack={ navigation.goBack }
 				goNext={ navigation.goNext }
