@@ -8,8 +8,8 @@
 
 import { dispatch, select, subscribe } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
-import { AtomicSoftwareStatus, register } from '..';
-import { getAtomicSoftwareStatus } from '../selectors';
+import { AtomicSoftwareStatus, AtomicSoftwareStatusError, register } from '..';
+import { getAtomicSoftwareStatus, getAtomicSoftwareError } from '../selectors';
 import type { State } from '../reducer';
 
 jest.mock( 'wpcom-proxy-request', () => ( {
@@ -185,5 +185,30 @@ describe( 'getAtomicSoftwareStatus', () => {
 
 		// Should return undefined when the site ID is not found
 		expect( getAtomicSoftwareStatus( state, 123456, softwareSet ) ).toEqual( undefined );
+	} );
+
+	it( 'Fails to retrive the Atomic Software Status', async () => {
+		const siteId = 1234;
+		const softwareSet = 'non-existing-software-set';
+		const error: AtomicSoftwareStatusError = {
+			name: 'NotFoundError',
+			status: 404,
+			message: 'Transfer not found',
+			code: 'no_transfer_record',
+		};
+
+		const state: State = {
+			atomicSoftwareStatus: {
+				[ siteId ]: {
+					[ softwareSet ]: {
+						status: undefined,
+						error: error,
+					},
+				},
+			},
+		};
+
+		// Successfuly returns the status
+		expect( getAtomicSoftwareError( state, siteId, softwareSet ) ).toEqual( error );
 	} );
 } );
