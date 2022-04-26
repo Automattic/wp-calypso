@@ -24,9 +24,10 @@ import { redirect, removeTrailingSlash } from './util';
 import type { Step } from '../../types';
 import './style.scss';
 
+const BASE_ROUTE = 'import';
+
 const ImportStep: Step = function ImportStep( props ) {
 	const { __ } = useI18n();
-	const BASE_ROUTE = 'import';
 	const { navigation } = props;
 
 	/**
@@ -37,12 +38,12 @@ const ImportStep: Step = function ImportStep( props ) {
 	const currentRoute = useCurrentRoute();
 	const isAtomicSite = !! site?.options?.is_automated_transfer;
 	const urlData = useSelector( getUrlData );
-	const shouldHideSkipBtn = currentRoute !== 'import';
+	const shouldHideSkipBtn = currentRoute !== BASE_ROUTE;
 
 	/**
 	 ↓ Effects
 	 */
-	if ( ! urlData && currentRoute !== 'import' && currentRoute !== 'import/list' ) {
+	if ( ! urlData && currentRoute !== BASE_ROUTE && currentRoute !== 'import/list' ) {
 		goToHomeStep();
 		return null;
 	}
