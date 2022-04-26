@@ -1,4 +1,4 @@
-export type QueryOptions = {
+export type PluginQueryOptions = {
 	pageSize?: number;
 	page?: number;
 	category?: string;

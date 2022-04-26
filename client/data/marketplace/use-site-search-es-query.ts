@@ -1,11 +1,5 @@
 import phpUnserialize from 'phpunserialize';
-import {
-	UseQueryResult,
-	UseQueryOptions,
-	InfiniteData,
-	useInfiniteQuery,
-	QueryKey,
-} from 'react-query';
+import { UseQueryResult, UseQueryOptions, InfiniteData, useInfiniteQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { extractSearchInformation, normalizePluginsList } from 'calypso/lib/plugins/utils';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -14,22 +8,11 @@ import {
 	DEFAULT_PAGE_SIZE,
 	DEFAULT_CATEGORY,
 	BASE_STALE_TIME,
+	SITE_SEARCH_CACHE_KEY,
+	SITE_SEARCH_ENDPOINT,
 } from './constants';
-import { ESHits, ESResponse, Plugin, QueryOptions } from './types';
-
-/**
- * Constants
- */
-const SITE_SEARCH_ENDPOINT = 'https://public-api.wordpress.com/rest/v1/sites/108986944/search';
-
-const getCacheKey = ( key: string ): QueryKey => [ 'wpcom-site-search-wporg-plugins', key ];
-
-const getPluginsListKey = ( options: QueryOptions, infinite?: boolean ): QueryKey =>
-	getCacheKey(
-		`${ infinite ? 'infinite' : '' }${ options.category || '' }_${ options.searchTerm || '' }_${
-			options.page || ''
-		}_${ options.pageSize || '' }_${ options.locale || '' }`
-	);
+import { ESHits, ESResponse, Plugin, PluginQueryOptions } from './types';
+import { getPluginsListKey } from './utils';
 
 /**
  *
@@ -102,7 +85,7 @@ async function postRequest( url: string, body: object ) {
 	throw new Error( await response.text() );
 }
 
-export async function fetchWPOrgPluginsFromSiteSearch( options: QueryOptions ) {
+export async function fetchWPOrgPluginsFromSiteSearch( options: PluginQueryOptions ) {
 	const category = options.category || DEFAULT_CATEGORY;
 	const search = options.searchTerm;
 	const author = options.author;
@@ -196,15 +179,15 @@ const extractPages = ( pages: Array< { hits: ESHits } > = [] ) => {
  * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
  */
 export const useSiteSearchWPORGPlugins = (
-	options: QueryOptions,
-	{ staleTime = BASE_STALE_TIME, refetchOnMount = false }: UseQueryOptions = {}
+	options: PluginQueryOptions,
+	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = false }: UseQueryOptions = {}
 ): UseQueryResult => {
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
 	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
 
 	return useInfiniteQuery(
-		getPluginsListKey( options, true ),
+		getPluginsListKey( SITE_SEARCH_CACHE_KEY, options, true ),
 		( { pageParam = DEFAULT_FIRST_PAGE } ) =>
 			fetchWPOrgPluginsFromSiteSearch( {
 				pageSize,
@@ -226,6 +209,7 @@ export const useSiteSearchWPORGPlugins = (
 				const nextPage = allPages.length + 1;
 				return nextPage <= pages ? nextPage : undefined;
 			},
+			enabled,
 			staleTime,
 			refetchOnMount,
 		}
