@@ -377,7 +377,7 @@ const webpackConfig = {
 
 		shouldUsePersistentCache && shouldUseReadonlyCache && new ReadOnlyCachePlugin(),
 
-		// NOTE: Must be last.
+		// NOTE: Sentry should be the last webpack plugin in the array.
 		shouldCreateSentryRelease &&
 			new SentryCliPlugin( {
 				org: 'a8c',
@@ -386,7 +386,6 @@ const webpackConfig = {
 				release: process.env.COMMIT_SHA,
 				include: filePaths.path,
 				urlPrefix: `~${ filePaths.publicPath }`,
-				configFile: 'sentry.properties',
 			} ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
