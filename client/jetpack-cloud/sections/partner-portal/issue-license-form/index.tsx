@@ -22,7 +22,7 @@ function selectProductOptions( families: APIProductFamily[] ): APIProductFamilyP
 }
 
 interface Props {
-	selectedSite?: number;
+	selectedSite?: number | null;
 }
 
 export default function IssueLicenseForm( { selectedSite }: Props ): ReactElement {

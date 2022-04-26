@@ -8,7 +8,7 @@ import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sid
 import AssignLicenseStepProgress from '../../assign-license-step-progress';
 
 interface Props {
-	selectedSite?: number;
+	selectedSite?: number | null;
 }
 
 export default function IssueLicense( { selectedSite }: Props ): ReactElement {

@@ -87,7 +87,7 @@ export function issueLicenseContext( context: PageJS.Context, next: () => void )
 	const { site_id: siteId } = context.query;
 	const state = context.store.getState();
 	const sites = getSitesItems( state );
-	const selectedSite = sites.hasOwnProperty( siteId ) ? siteId : null;
+	const selectedSite = sites[ siteId ] ? siteId : null;
 
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
