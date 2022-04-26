@@ -17,5 +17,8 @@ export const getPluginsListKey = (
 	} else {
 		keyParams.push( options.page || '' );
 	}
+	if ( options.tag && ! options.searchTerm ) {
+		keyParams.push( options.tag );
+	}
 	return [ key, ...keyParams ];
 };

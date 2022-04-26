@@ -15,26 +15,7 @@ import { fetchPluginsList } from 'calypso/lib/wporg';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { BASE_STALE_TIME, WPORG_CACHE_KEY } from './constants';
 import { Plugin, PluginQueryOptions } from './types';
-
-type WPORGOptionsType = {
-	pageSize?: number;
-	page?: number;
-	category?: string;
-	searchTerm?: string;
-	tag?: string;
-	locale: string;
-};
-
-const getCacheKey = ( key: string ): QueryKey => [ 'wporg-plugins', key ];
-
-const getPluginsListKey = ( options: WPORGOptionsType, infinite?: boolean ): QueryKey =>
-	getCacheKey(
-		`${ infinite ? 'infinite' : '' }${ options.category || '' }_${ options.searchTerm || '' }_${
-			options.page || ''
-		}_${ options.tag && ! options.searchTerm ? options.tag : '' }_${ options.pageSize || '' }_${
-			options.locale || ''
-		}`
-	);
+import { getPluginsListKey } from './utils';
 
 export const useWPORGPlugins = (
 	options: PluginQueryOptions,
@@ -44,7 +25,7 @@ export const useWPORGPlugins = (
 	const locale = useSelector( getCurrentUserLocale );
 
 	return useQuery(
-		getPluginsListKey( options ),
+		getPluginsListKey( WPORG_CACHE_KEY, options ),
 		() =>
 			fetchPluginsList( {
 				pageSize: options.pageSize,
@@ -81,7 +62,7 @@ export const useWPORGInfinitePlugins = (
 	const locale = useSelector( getCurrentUserLocale );
 
 	return useInfiniteQuery(
-		getPluginsListKey( options, true ),
+		getPluginsListKey( WPORG_CACHE_KEY, options, true ),
 		( { pageParam = 1 } ) =>
 			fetchPluginsList( {
 				pageSize: options.pageSize,

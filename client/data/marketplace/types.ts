@@ -4,6 +4,7 @@ export type PluginQueryOptions = {
 	category?: string;
 	searchTerm?: string;
 	locale: string;
+	tag?: string;
 	author?: string;
 };
 
