@@ -156,7 +156,7 @@
 		"percentage-regex": "^3.0.0",
 		"phone": "^2.4.2",
 		"photon": "workspace:^",
-		"php-unserialize": "^0.0.1",
+		"phpunserialize": "^1.1.0",
 		"postcss": "^8.4.5",
 		"prismjs": "^1.26.0",
 		"prop-types": "^15.7.2",
