@@ -57,7 +57,26 @@ class MailboxForm< T extends EmailProvider > {
 		}
 	}
 
+	hasErrors() {
+		return Object.values( this.formFields ).some( ( field ) => field.error !== null );
+	}
+
+	hasValidValues() {
+		return Object.values( this.formFields as MailboxFormFields )
+			.filter( ( field ) => field.required ?? false )
+			.some(
+				( field ) =>
+					field.typeName === Boolean.name.toLowerCase() || `${ field.value }`.trim() !== ''
+			);
+	}
+
+	isValid() {
+		return ! this.hasErrors() && this.hasValidValues();
+	}
+
 	validate() {
+		this.clearErrors();
+
 		for ( const [ fieldName, validator ] of this.validators ) {
 			if ( ! fieldName ) {
 				continue;

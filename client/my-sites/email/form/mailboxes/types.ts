@@ -11,11 +11,19 @@ enum EmailProvider {
 interface MailboxFormField< Type > {
 	error: FieldError;
 	value: Type;
+	readonly typeName: string;
+	readonly required: boolean;
 }
 
 abstract class MailboxFormFieldBase< T > implements MailboxFormField< T > {
 	error: FieldError = null;
 	value!: T;
+	readonly typeName = String.name.toLowerCase();
+	readonly required;
+
+	constructor( required = true ) {
+		this.required = required;
+	}
 }
 
 class DataMailboxFormField extends MailboxFormFieldBase< string > {
@@ -28,6 +36,7 @@ class TextMailboxFormField extends MailboxFormFieldBase< string > {
 
 class BooleanMailboxFormField extends MailboxFormFieldBase< boolean > {
 	value = false;
+	readonly typeName = Boolean.name.toLowerCase();
 }
 
 interface IBaseMailboxFormFields {
@@ -66,7 +75,7 @@ class GoogleMailboxFormFields extends MailboxFormFields implements IGoogleMailbo
 
 class TitanMailboxFormFields extends MailboxFormFields implements ITitanMailboxFormFields {
 	alternativeEmail? = new TextMailboxFormField();
-	isAdmin? = new BooleanMailboxFormField();
+	isAdmin? = new BooleanMailboxFormField( false );
 	name? = new TextMailboxFormField();
 }
 
