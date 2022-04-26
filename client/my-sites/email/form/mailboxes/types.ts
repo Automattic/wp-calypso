@@ -22,8 +22,8 @@ class DataMailboxFormField extends MailboxFormFieldBase< string > {
 	value = uuid_v4();
 }
 
-class TextMailboxFormField extends MailboxFormFieldBase< string | null > {
-	value = null;
+class TextMailboxFormField extends MailboxFormFieldBase< string > {
+	value = '';
 }
 
 class BooleanMailboxFormField extends MailboxFormFieldBase< boolean > {
@@ -31,39 +31,43 @@ class BooleanMailboxFormField extends MailboxFormFieldBase< boolean > {
 }
 
 interface IBaseMailboxFormFields {
-	domain: TextMailboxFormField;
+	readonly domain: TextMailboxFormField;
 	mailbox: TextMailboxFormField;
 	password: TextMailboxFormField;
 	readonly uuid: DataMailboxFormField;
 }
 
 interface IGoogleMailboxFormFields extends IBaseMailboxFormFields {
-	firstName: TextMailboxFormField;
-	lastName: TextMailboxFormField;
+	firstName?: TextMailboxFormField;
+	lastName?: TextMailboxFormField;
 }
 
 interface ITitanMailboxFormFields extends IBaseMailboxFormFields {
-	alternativeEmail: TextMailboxFormField;
-	name: TextMailboxFormField;
-	isAdmin: BooleanMailboxFormField;
+	alternativeEmail?: TextMailboxFormField;
+	name?: TextMailboxFormField;
+	isAdmin?: BooleanMailboxFormField;
 }
 
 abstract class MailboxFormFields implements IBaseMailboxFormFields {
-	domain = new TextMailboxFormField();
+	readonly domain = new TextMailboxFormField();
 	mailbox = new TextMailboxFormField();
 	password = new TextMailboxFormField();
 	readonly uuid = new DataMailboxFormField();
+
+	constructor( domain: string ) {
+		this.domain.value = domain;
+	}
 }
 
 class GoogleMailboxFormFields extends MailboxFormFields implements IGoogleMailboxFormFields {
-	firstName = new TextMailboxFormField();
-	lastName = new TextMailboxFormField();
+	firstName? = new TextMailboxFormField();
+	lastName? = new TextMailboxFormField();
 }
 
 class TitanMailboxFormFields extends MailboxFormFields implements ITitanMailboxFormFields {
-	alternativeEmail = new TextMailboxFormField();
-	isAdmin = new BooleanMailboxFormField();
-	name = new TextMailboxFormField();
+	alternativeEmail? = new TextMailboxFormField();
+	isAdmin? = new BooleanMailboxFormField();
+	name? = new TextMailboxFormField();
 }
 
 const MailboxFormFieldsMap = {
@@ -75,14 +79,20 @@ type ValidatorFieldNames = keyof GoogleMailboxFormFields | keyof TitanMailboxFor
 
 type ProviderKeys = keyof typeof MailboxFormFieldsMap;
 type ProviderTypes = typeof MailboxFormFieldsMap[ ProviderKeys ];
-type ExtractInstanceType< T > = T extends new () => infer R ? R : never;
+type ExtractInstanceType< T > = T extends new ( domain: string ) => infer R ? R : never;
 
 class MailboxFormFieldsFactory {
-	static create( providerKey: ProviderKeys ): ExtractInstanceType< ProviderTypes > {
-		return new MailboxFormFieldsMap[ providerKey ]();
+	static create( providerKey: ProviderKeys, domain: string ): ExtractInstanceType< ProviderTypes > {
+		return new MailboxFormFieldsMap[ providerKey ]( domain );
 	}
 }
 
-export type { ValidatorFieldNames, MailboxFormFieldBase, MailboxFormFields };
+export type {
+	GoogleMailboxFormFields,
+	MailboxFormFieldBase,
+	MailboxFormFields,
+	TitanMailboxFormFields,
+	ValidatorFieldNames,
+};
 
 export { EmailProvider, MailboxFormFieldsFactory };
