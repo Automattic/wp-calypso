@@ -107,7 +107,7 @@ function UseMyDomain( props ) {
 	}, [] );
 
 	const filterDomainName = useCallback( ( domain ) => {
-		return domain.replace( /(?:^http(?:s){0,1}:\/\/){0,1}([^/]*)(?:.*)$/gi, '$1' );
+		return domain.replace( /(?:^http(?:s)?:)?(?:[/]*)([^/?]*)(?:.*)$/gi, '$1' );
 	}, [] );
 
 	const setTransferStepsAndLockStatus = useCallback(
