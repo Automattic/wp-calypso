@@ -31,11 +31,15 @@ object WPComTests : Project({
 		}
 	}
 
-	// Keep the previous ID in order to preserve the historical data
-	buildType(gutenbergPlaywrightBuildType("desktop", "fab2e82e-d27b-4ba2-bbd7-232df944e75c"));
-	buildType(gutenbergPlaywrightBuildType("mobile", "77a5a0f1-9644-4c04-9d27-0066cd2d4ada"));
-	buildType(gutenbergPlaywrightBuildType("desktop", "c341e9b9-1118-48e9-a569-325100f5fd9" , true));
-	buildType(gutenbergPlaywrightBuildType("mobile", "e0f7e412-ae6c-41d3-9eec-c57c94dd8385", true));
+	// Gutenberg Simple
+	buildType(gutenbergPlaywrightBuildType("desktop", "fab2e82e-d27b-4ba2-bbd7-232df944e75c", false, false));
+	buildType(gutenbergPlaywrightBuildType("mobile", "77a5a0f1-9644-4c04-9d27-0066cd2d4ada", false, false));
+	// Gutenberg Simple Edge
+	buildType(gutenbergPlaywrightBuildType("desktop", "", false, true));
+	buildType(gutenbergPlaywrightBuildType("mobile", "", false, true));
+	// Gutenberg Atomic
+	buildType(gutenbergPlaywrightBuildType("desktop", "c341e9b9-1118-48e9-a569-325100f5fd9" , true, false));
+	buildType(gutenbergPlaywrightBuildType("mobile", "e0f7e412-ae6c-41d3-9eec-c57c94dd8385", true, false));
 
 	buildType(coblocksPlaywrightBuildType("desktop", "08f88b93-993e-4de8-8d80-4a94981d9af4"));
 	buildType(coblocksPlaywrightBuildType("mobile", "cbcd44d5-4d31-4adc-b1b5-97f1225c6a7c"));
@@ -49,6 +53,7 @@ object WPComTests : Project({
 
 fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false ): E2EBuildType {
 	var siteType = if (atomic) "atomic" else "simple";
+	var edgeType = if (edge) "Edge" else "";
 
     return E2EBuildType (
 		buildId = "WPComTests_gutenberg_Playwright_${siteType}_$targetDevice",
@@ -64,14 +69,14 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				description = "URL to test against",
 				allowEmpty = false
 			)
-			checkbox(
-				name = "env.GUTENBERG_EDGE",
-				value = "false",
-				label = "Use gutenberg-edge",
-				description = "Use a blog with gutenberg-edge sticker",
-				checked = "true",
-				unchecked = "false"
-			)
+			// checkbox(
+			// 	name = "env.GUTENBERG_EDGE",
+			// 	value = "false",
+			// 	label = "Use gutenberg-edge",
+			// 	description = "Use a blog with gutenberg-edge sticker",
+			// 	checked = "true",
+			// 	unchecked = "false"
+			// )
 			checkbox(
 				name = "env.COBLOCKS_EDGE",
 				value = "false",
@@ -90,7 +95,12 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 			)
 			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser,simpleSitePersonalPlanUser")
 			param("env.VIEWPORT_NAME", "$targetDevice")
-			if (atomic) param("env.TEST_ON_ATOMIC", "true")
+			if (atomic) {
+				param("env.TEST_ON_ATOMIC", "true")
+			}
+			if (edge) {
+				param("env.GUTENBERG_EDGE", "true")
+			}
 		},
 		buildFeatures = {
 			notifications {
