@@ -13,7 +13,7 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () {
+describe( DataHelper.createSuiteTitle( 'Plans: Upgrade' ), function () {
 	const planName = 'Business';
 	let page: Page;
 	let plansPage: PlansPage;
@@ -24,7 +24,7 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () 
 
 		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
 		await testAccount.authenticate( page );
-		plansPage = new PlansPage( page, 'legacy' );
+		plansPage = new PlansPage( page );
 	} );
 
 	it( 'Navigate to Upgrades > Plans', async function () {
@@ -51,6 +51,7 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () 
 		} );
 
 		it( 'Automatically return to Plans page', async function () {
+			plansPage = new PlansPage( page );
 			await plansPage.validateActiveNavigationTab( 'Plans' );
 		} );
 	} );

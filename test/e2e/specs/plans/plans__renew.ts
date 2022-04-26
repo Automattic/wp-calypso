@@ -14,7 +14,7 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () {
+describe( DataHelper.createSuiteTitle( 'Plans: Upgrade' ), function () {
 	const planTier = 'Personal';
 	const planName = `WordPress.com ${ planTier }`;
 	let page: Page;
@@ -27,7 +27,7 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () 
 
 		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
 		await testAccount.authenticate( page );
-		plansPage = new PlansPage( page, 'legacy' );
+		plansPage = new PlansPage( page );
 	} );
 
 	it( 'Navigate to Upgrades > Plans', async function () {
