@@ -5083,6 +5083,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/cli@npm:^1.73.0":
+  version: 1.74.3
+  resolution: "@sentry/cli@npm:1.74.3"
+  dependencies:
+    https-proxy-agent: ^5.0.0
+    mkdirp: ^0.5.5
+    node-fetch: ^2.6.7
+    npmlog: ^4.1.2
+    progress: ^2.0.3
+    proxy-from-env: ^1.1.0
+    which: ^2.0.2
+  bin:
+    sentry-cli: bin/sentry-cli
+  checksum: 6e5ba95f9d7c756e8a7d6f6ec010cde8c39588dd19dc3994c628910a245db0feb32f411fb2410157a6af2c7352165625f58092f82d1191aa493d385eed7a2887
+  languageName: node
+  linkType: hard
+
 "@sentry/core@npm:6.19.6":
   version: 6.19.6
   resolution: "@sentry/core@npm:6.19.6"
@@ -5161,6 +5178,15 @@ __metadata:
     "@sentry/types": 6.19.6
     tslib: ^1.9.3
   checksum: 4e7afdf023f93ef7ddccd85ad7847342b030bdc1189110eeb7cb53349f89882e6184149ec29182e41d7fc45f161e19196f2b488138e75185b3fd114f84dac0d6
+  languageName: node
+  linkType: hard
+
+"@sentry/webpack-plugin@npm:^1.18.8":
+  version: 1.18.8
+  resolution: "@sentry/webpack-plugin@npm:1.18.8"
+  dependencies:
+    "@sentry/cli": ^1.73.0
+  checksum: cad2e8a03804889db9521b05cfd1ce24221d1598acc54f5922fc91d16a4bc96806e55b86b4f21f1d62b42b2358239454ba00f6d98d6d14662551048f5e126618
   languageName: node
   linkType: hard
 
@@ -12719,6 +12745,7 @@ __metadata:
     "@emotion/styled": ^11.3.0
     "@github/webauthn-json": ^0.4.1
     "@sentry/react": ^6.19.4
+    "@sentry/webpack-plugin": ^1.18.8
     "@stripe/react-stripe-js": ^1.4.1
     "@stripe/stripe-js": ^1.17.1
     "@testing-library/jest-dom": ^5.16.2
@@ -26947,12 +26974,17 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.2.0, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.6":
-  version: 2.6.6
-  resolution: "node-fetch@npm:2.6.6"
+"node-fetch@npm:^2.2.0, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.6, node-fetch@npm:^2.6.7":
+  version: 2.6.7
+  resolution: "node-fetch@npm:2.6.7"
   dependencies:
     whatwg-url: ^5.0.0
-  checksum: f9b5c8789c7bcd393a2fb70d752e36d5b5e84eb52bd5bffceb4fb64ac81dce1a1f55ca023a990e51bbf8594fc502ea9bea3004037e6eab65205cd84e8af94fc9
+  peerDependencies:
+    encoding: ^0.1.0
+  peerDependenciesMeta:
+    encoding:
+      optional: true
+  checksum: fcae80f5ac52fbf5012f5e19df2bd3915e67d3b3ad51cb5942943df2238d32ba15890fecabd0e166876a9f98a581ab50f3f10eb942b09405c49ef8da36b826c7
   languageName: node
   linkType: hard
 

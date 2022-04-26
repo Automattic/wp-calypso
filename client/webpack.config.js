@@ -13,6 +13,7 @@ const {
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
+const SentryCliPlugin = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
@@ -51,6 +52,22 @@ const cachePath = path.resolve( '.cache', extraPath );
 const shouldUsePersistentCache = process.env.PERSISTENT_CACHE === 'true';
 const shouldUseReadonlyCache = process.env.READONLY_CACHE === 'true';
 const shouldProfile = process.env.PROFILE === 'true';
+
+const shouldCreateSentryRelease =
+	( process.env.MANUAL_SENTRY_RELEASE === 'true' || process.env.IS_DEFAULT_BRANCH === 'true' ) &&
+	process.env.SENTRY_AUTH_TOKEN?.length > 1;
+let sourceMapType = process.env.SOURCEMAP;
+if ( ! sourceMapType && shouldCreateSentryRelease ) {
+	sourceMapType = 'hidden-source-map';
+} else if ( ! sourceMapType && isDevelopment ) {
+	sourceMapType = 'eval';
+}
+
+if ( shouldCreateSentryRelease ) {
+	console.log(
+		"A sentry release is being created because the auth token exists and we're either on the trunk branch or the manual checkbox has been toggled."
+	);
+}
 
 function filterEntrypoints( entrypoints ) {
 	if ( ! process.env.ENTRY_LIMIT ) {
@@ -140,6 +157,11 @@ const fileLoader = FileConfig.loader(
 		  }
 );
 
+const filePaths = {
+	path: path.join( outputDir, 'public', extraPath ),
+	publicPath: `/calypso/${ extraPath }/`,
+};
+
 const webpackConfig = {
 	bail: ! isDevelopment,
 	context: __dirname,
@@ -152,11 +174,10 @@ const webpackConfig = {
 		'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
-	devtool: process.env.SOURCEMAP || ( isDevelopment ? 'eval' : false ),
+	devtool: sourceMapType,
 	output: {
-		path: path.join( outputDir, 'public', extraPath ),
+		...filePaths,
 		pathinfo: false,
-		publicPath: `/calypso/${ extraPath }/`,
 		filename: outputFilename,
 		chunkFilename: outputChunkFilename,
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
@@ -355,6 +376,17 @@ const webpackConfig = {
 		shouldProfile && new webpack.ProgressPlugin( { profile: true } ),
 
 		shouldUsePersistentCache && shouldUseReadonlyCache && new ReadOnlyCachePlugin(),
+
+		// NOTE: Sentry should be the last webpack plugin in the array.
+		shouldCreateSentryRelease &&
+			new SentryCliPlugin( {
+				org: 'a8c',
+				project: 'calypso',
+				authToken: process.env.SENTRY_AUTH_TOKEN,
+				release: process.env.COMMIT_SHA,
+				include: filePaths.path,
+				urlPrefix: `~${ filePaths.publicPath }`,
+			} ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
 
@@ -373,7 +405,7 @@ const webpackConfig = {
 						shouldMinify,
 						process.env.ENTRY_LIMIT,
 						process.env.SECTION_LIMIT,
-						process.env.SOURCEMAP,
+						sourceMapType,
 						process.env.NODE_ENV,
 						process.env.CALYPSO_ENV,
 					].join( '-' ),
