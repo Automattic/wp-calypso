@@ -1,4 +1,3 @@
-import { createHigherOrderComponent } from '@wordpress/compose';
 import { useReducer } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import WebPreview from 'calypso/components/web-preview';
@@ -9,24 +8,16 @@ import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { closePreview } from 'calypso/state/ui/preview/actions';
 import { getPreviewSiteId, getPreviewUrl } from 'calypso/state/ui/preview/selectors';
 
-function SitePreview( { className } ) {
+function SitePreviewInner( { siteId, className } ) {
 	const dispatch = useDispatch();
 	const [ previewCount, incrementPreviewCount ] = useReducer( ( n ) => n + 1, 0 );
 
-	const selectedSiteId = useSelector( getPreviewSiteId );
 	const showPreview = useSelector( ( state ) => getCurrentLayoutFocus( state ) === 'preview' );
 	const selectedSiteNonce = useSelector( ( state ) =>
-		getSiteOption( state, selectedSiteId, 'frame_nonce' )
-	);
-	const selectedSitePreviewable = useSelector( ( state ) =>
-		isSitePreviewable( state, selectedSiteId )
+		getSiteOption( state, siteId, 'frame_nonce' )
 	);
 	const previewUrl = useSelector( getPreviewUrl );
-	const hideSEO = useSelector( ( state ) => isDomainOnlySite( state, selectedSiteId ) );
-
-	if ( ! selectedSitePreviewable ) {
-		return null;
-	}
+	const hideSEO = useSelector( ( state ) => isDomainOnlySite( state, siteId ) );
 
 	function formatPreviewUrl() {
 		if ( ! previewUrl ) {
@@ -61,12 +52,11 @@ function SitePreview( { className } ) {
 	);
 }
 
-const withSiteIdAsKey = createHigherOrderComponent(
-	( Wrapped ) => ( props ) => {
-		const selectedSiteId = useSelector( getPreviewSiteId );
-		return <Wrapped key={ `site-preview-${ selectedSiteId }` } { ...props } />;
-	},
-	'WithSiteIdAsKey'
-);
+export default function SitePreview( props ) {
+	const siteId = useSelector( getPreviewSiteId );
+	const isPreviewable = useSelector( ( state ) => isSitePreviewable( state, siteId ) );
 
-export default withSiteIdAsKey( SitePreview );
+	if ( ! isPreviewable ) return null;
+
+	return <SitePreviewInner key={ siteId } siteId={ siteId } { ...props } />;
+}
