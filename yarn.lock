@@ -573,9 +573,9 @@ __metadata:
     "@automattic/explat-client": "workspace:^"
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": 7.0.2
-    react: ^17.0.2
+    react: ">=16.8"
     react-dom: ^17.0.2
-    tslib: ^2.3.0
+    tslib: ">=2.3.0"
     typescript: ^4.5.5
   languageName: unknown
   linkType: soft
@@ -31041,6 +31041,15 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"react@npm:>=16.8":
+  version: 18.0.0
+  resolution: "react@npm:18.0.0"
+  dependencies:
+    loose-envify: ^1.1.0
+  checksum: cf55bc7b4315f54321d04cb0b69241c4973a5182d679551b3e6c3f57b312a4fdeac05038ca9502d48ea4d040d7550b0b7f07b3872a19589a5995ee899cc19d2b
+  languageName: node
+  linkType: hard
+
 "react@npm:^16.13.1":
   version: 16.13.1
   resolution: "react@npm:16.13.1"
@@ -36233,6 +36242,13 @@ testarmada-magellan@11.0.10:
   version: 1.11.2
   resolution: "tslib@npm:1.11.2"
   checksum: 19c6407249e67107eef12c0ab0a9786a08d1c5db50919ac3496e975990a4e2f4d5338242fc6130f236639942efc16d5b98d8264629c1b387432cc938d092e171
+  languageName: node
+  linkType: hard
+
+"tslib@npm:>=2.3.0":
+  version: 2.4.0
+  resolution: "tslib@npm:2.4.0"
+  checksum: eb19bda3ae545b03caea6a244b34593468e23d53b26bf8649fbc20fce43e9b21a71127fd6d2b9662c0fe48ee6ff668ead48fd00d3b88b2b716b1c12edae25b5d
   languageName: node
   linkType: hard
 
