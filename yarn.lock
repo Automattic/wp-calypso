@@ -574,9 +574,9 @@ __metadata:
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": 7.0.2
     react: ">=16.8"
-    react-dom: ^17.0.2
+    react-dom: ">=16.8"
     tslib: ">=2.3.0"
-    typescript: ^4.5.5
+    typescript: ">=4.5.5"
   languageName: unknown
   linkType: soft
 
@@ -30443,6 +30443,18 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"react-dom@npm:>=16.8":
+  version: 18.0.0
+  resolution: "react-dom@npm:18.0.0"
+  dependencies:
+    loose-envify: ^1.1.0
+    scheduler: ^0.21.0
+  peerDependencies:
+    react: ^18.0.0
+  checksum: 78aa393ab4ae35f7266ba5cd761ebd35cab8375f63051bda2bb97a27be2622dbd661b24b32b8e55f9365aa027e732251e7d0d754c755f8efb6bd38a72ba03df8
+  languageName: node
+  linkType: hard
+
 "react-dom@npm:^16.13.1":
   version: 16.13.1
   resolution: "react-dom@npm:16.13.1"
@@ -33254,6 +33266,15 @@ resolve@^2.0.0-next.3:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
   checksum: b0982e4b0f34f4ffa4f2f486161c0fd9ce9b88680b045dccbf250eb1aa4fd27413570645455187a83535e2370f5c667a251045547765408492bd883cbe95fcdb
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.21.0":
+  version: 0.21.0
+  resolution: "scheduler@npm:0.21.0"
+  dependencies:
+    loose-envify: ^1.1.0
+  checksum: 083a9a0c83f4923f7f5bb28d8bcf13cff42c90f4303bc187166520fcfc576c97e946d426c707d5a9c0aa0a655819605dd0c741467c626824bbf191251c126f1b
   languageName: node
   linkType: hard
 
@@ -36494,6 +36515,16 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
+"typescript@npm:>=4.5.5":
+  version: 4.6.3
+  resolution: "typescript@npm:4.6.3"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 53e8bcf00abde8ecb2002d1f1e15160b21cb62b2dd0ff71bad2ef55fa96141f76316fce649a415758d3f17bd8e0c5676d8f017c34ec3e38b585812d4717a712c
+  languageName: node
+  linkType: hard
+
 "typescript@npm:^4.5.5":
   version: 4.5.5
   resolution: "typescript@npm:4.5.5"
@@ -36501,6 +36532,16 @@ testarmada-magellan@11.0.10:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: ac15b92f3dcd9a4233cab288a913ccbd96729fc488181396fa93c0297ccef3cd3c2f9a7a63340efb0d07bff3d5026028fc81b9c1ef08076029e057081eb5884b
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@>=4.5.5#~builtin<compat/typescript>":
+  version: 4.6.3
+  resolution: "typescript@patch:typescript@npm%3A4.6.3#~builtin<compat/typescript>::version=4.6.3&hash=493e53"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: d06fdd5852d0fe86f44b56507d37a3458812a1dff11c0fedaeedbe163e81646643669a5bc0dcc3500c72128267b384cda7567c53c568f94e7c753ac6b4cfbce3
   languageName: node
   linkType: hard
 
