@@ -1531,6 +1531,7 @@ __metadata:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
@@ -1590,6 +1591,7 @@ __metadata:
     "@wordpress/server-side-render": ^3.0.17
     "@wordpress/url": 3.3.2
     babel-jest: ^26.6.3
+    calypso: "workspace:^"
     classnames: ^2.3.1
     enzyme: ^3.11.0
     eslint: ^8.6.0
@@ -1602,8 +1604,11 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-popper: ^2.2.5
+    react-query: ^3.32.1
+    react-redux: ^7.2.6
     reakit-utils: ^0.15.1
     redux: ^4.1.2
+    redux-thunk: ^2.3.0
     utility-types: ^3.10.0
     wait-for-expect: ^3.0.2
     webpack: ^5.68.0

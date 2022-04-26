@@ -1,3 +1,7 @@
+@import 'calypso/assets/stylesheets/shared/mixins/_breakpoints';
+@import 'calypso/assets/stylesheets/shared/mixins/_placeholder';
+@import '@automattic/typography/styles/fonts';
+
 .support-article-dialog__base.dialog__backdrop {
 	// Display above the guided tour.
 	z-index: z-index( 'root', '.support-article-dialog__base.dialog__backdrop' );
