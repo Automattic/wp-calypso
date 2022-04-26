@@ -7,7 +7,7 @@ import { bumpStat as bumpAnalyticsStat } from 'calypso/state/analytics/actions';
 import { getPost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import { isSitePreviewable } from 'calypso/state/sites/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { setAllSitesPreviewSiteId, setPreviewUrl } from 'calypso/state/ui/preview/actions';
+import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
 import { bumpStatGenerator } from './utils';
 
 class PostActionsEllipsisMenuView extends Component {
@@ -39,8 +39,7 @@ class PostActionsEllipsisMenuView extends Component {
 			return;
 		}
 
-		this.props.setAllSitesPreviewSiteId( siteId );
-		this.props.setPreviewUrl( previewUrl );
+		this.props.setPreviewUrl( previewUrl, siteId );
 		this.props.setLayoutFocus( 'preview' );
 		event.preventDefault();
 	};
@@ -83,7 +82,6 @@ const mapStateToProps = ( state, { globalId } ) => {
 };
 
 const mapDispatchToProps = {
-	setAllSitesPreviewSiteId,
 	setPreviewUrl,
 	setLayoutFocus,
 	bumpAnalyticsStat,
