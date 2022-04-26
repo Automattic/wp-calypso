@@ -160,7 +160,7 @@ export default function CompositeCheckout( {
 		isUserComingFromLoginForm,
 	} );
 
-	const countriesList = useCountryList( overrideCountryList || [] );
+	const countriesList = useCountryList( overrideCountryList );
 
 	const {
 		productsForCart,
