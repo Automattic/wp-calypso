@@ -160,8 +160,6 @@ function UseMyDomain( props ) {
 
 	const onNext = useCallback( async () => {
 		const filteredDomainName = filterDomainName( domainName );
-		// setDomainName( filteredDomainName );
-
 		if ( ! validateDomainName( filteredDomainName ) ) {
 			return;
 		}
