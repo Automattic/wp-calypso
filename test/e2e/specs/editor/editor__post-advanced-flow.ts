@@ -13,6 +13,7 @@ import {
 	SnackbarNotificationComponent,
 	getTestAccountByFeature,
 	envToFeatureKey,
+	ElementHelper,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -69,7 +70,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 			const testPage = await browser.newPage();
 			await testPage.goto( postURL.href );
 
-			await ParagraphBlock.validatePublishedContent( testPage, [ originalContent ] );
+			await ElementHelper.reloadAndRetry( testPage, loadPublishedPage );
+
+			async function loadPublishedPage(): Promise< void > {
+				await ParagraphBlock.validatePublishedContent( testPage, [ originalContent ] );
+			}
+
 			await testPage.close();
 		} );
 	} );
