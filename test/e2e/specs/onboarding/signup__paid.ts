@@ -173,7 +173,7 @@ skipDescribeIf( isStagingOrProd )(
 			} );
 
 			it( 'Manage plan', async function () {
-				const plansPage = new PlansPage( page );
+				const plansPage = new PlansPage( page, 'legacy' );
 				await plansPage.clickTab( 'Plans' );
 				await plansPage.clickPlanActionButton( { plan: 'Personal', buttonText: 'Manage plan' } );
 			} );
