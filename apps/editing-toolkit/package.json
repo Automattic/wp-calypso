@@ -101,6 +101,7 @@
 		"@wordpress/scripts": "^19.2.2",
 		"@wordpress/server-side-render": "^3.0.17",
 		"@wordpress/url": "3.3.2",
+		"calypso": "workspace:^",
 		"classnames": "^2.3.1",
 		"enzyme": "^3.11.0",
 		"eslint": "^8.6.0",
