@@ -11,8 +11,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormInput from 'calypso/components/forms/form-text-input';
 import getTextWidth from 'calypso/landing/gutenboarding/onboarding-block/acquire-intent/get-text-width';
 import usePodcastTitle from 'calypso/landing/stepper/hooks/use-podcast-title';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import type { Step } from '../../types';
@@ -24,22 +23,16 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 
 	const PodcastTitleForm: React.FC = () => {
 		const [ formTouched, setFormTouched ] = useState( false );
-		const site = useSite();
 		const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
-		const { saveSiteSettings } = useDispatch( SITE_STORE );
 		const titleFromApi = usePodcastTitle();
 		const podcastTitle = siteTitle ? siteTitle : titleFromApi;
 		const inputRef = useRef< HTMLInputElement >();
 
-		const handleSubmit = async ( event: React.FormEvent, siteTitle: string ) => {
-			event.preventDefault();
+		const handleSubmit = async ( siteTitle: string ) => {
 			const providedDependencies = { siteTitle };
-			if ( site ) {
-				//@TODO: Also save the podcast ID at this point
-				await saveSiteSettings( site.ID, { blogname: siteTitle } );
-				submit?.( providedDependencies, siteTitle );
-			}
+			setSiteTitle( siteTitle );
+			submit?.( providedDependencies, siteTitle );
 		};
 
 		const underlineWidth = getTextWidth( ( podcastTitle as string ) || '', inputRef.current );
@@ -51,8 +44,8 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 		return (
 			<form
 				className="podcast-title__form"
-				onSubmit={ ( event: React.FormEvent ) => {
-					handleSubmit?.( event, siteTitle );
+				onSubmit={ () => {
+					handleSubmit?.( siteTitle );
 				} }
 			>
 				<div
