@@ -2,13 +2,14 @@ import config from '@automattic/calypso-config';
 import page from 'page';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import Spinner from 'calypso/components/spinner';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import {
 	hasFetchedPartner,
 	isFetchingPartner,
 	isAgencyUser,
 } from 'calypso/state/partner-portal/partner/selectors';
 import SitesOverview from '../sites-overview';
+import '../style.scss';
 
 export default function DashboardOverview() {
 	const hasFetched = useSelector( hasFetchedPartner );
@@ -28,5 +29,7 @@ export default function DashboardOverview() {
 		return <SitesOverview />;
 	}
 
-	return <>{ isFetching ? <Spinner /> : null }</>;
+	return (
+		<>{ isFetching ? <JetpackLogo size={ 72 } className="dashboard-overview__logo" /> : null }</>
+	);
 }
