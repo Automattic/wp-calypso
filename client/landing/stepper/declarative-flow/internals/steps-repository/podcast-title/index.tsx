@@ -14,7 +14,7 @@ import useDetectMatchingAnchorSite from 'calypso/landing/stepper/hooks/use-detec
 import useSiteTitle from 'calypso/landing/stepper/hooks/use-site-title';
 import usePodcastTitle from 'calypso/landing/stepper/hooks/use-podcast-title';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import type { Step } from '../../types';
