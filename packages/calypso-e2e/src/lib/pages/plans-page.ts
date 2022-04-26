@@ -69,19 +69,9 @@ export class PlansPage {
 	/* Current Plans */
 
 	/**
-	 * Clicks on the button to initiate upgrade to WordPress.com Pro plan.
-	 */
-	// async upgradeToPro(): Promise< void > {
-	// const locator = this.page.locator( selectors.upgradeToProButton );
-	// await Promise.all( [
-	// this.page.waitForNavigation( { url: /.*checkout.*/ } ),
-	// locator.click(),
-	// ] );
-	// }
-
-	/**
+	 * Selects the target plan on the plans grid.
 	 *
-	 * @param plan
+	 * @param {Plans} plan Plan to select.
 	 */
 	async selectPlan( plan: Plans ): Promise< void > {
 		const locator = this.page.locator( selectors.selectPlanButton( plan ) );
