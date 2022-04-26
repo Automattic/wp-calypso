@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -108,7 +108,12 @@ function P2CompleteProfile( {
 			subHeaderText={ __(
 				'Using a recognizable photo and name will help your team to identify you more easily.'
 			) }
-			stepIndicator={ __( 'Step 3 of 3' ) }
+			stepIndicator={ sprintf(
+				/* translators: for example, Step 1 of 3 */
+				__( 'Step %(currentStep)s of %(totalSteps)s' ),
+				3,
+				3
+			) }
 		>
 			<div className="p2-complete-profile">
 				<div className="p2-complete-profile__avatar-wrapper">
