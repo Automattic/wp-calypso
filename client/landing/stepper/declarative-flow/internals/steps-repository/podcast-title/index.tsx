@@ -13,7 +13,8 @@ import getTextWidth from 'calypso/landing/gutenboarding/onboarding-block/acquire
 import useDetectMatchingAnchorSite from 'calypso/landing/stepper/hooks/use-detect-matching-anchor-site';
 import useSiteTitle from 'calypso/landing/stepper/hooks/use-site-title';
 import usePodcastTitle from 'calypso/landing/stepper/hooks/use-podcast-title';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import type { Step } from '../../types';
@@ -29,6 +30,7 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 	const PodcastTitleForm: React.FC = () => {
 		//Sets the site title from the API on first load if a custom title has not been set
 		useSiteTitle();
+		const site = useSite();
 		const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 		const [ formTouched, setFormTouched ] = useState( false );
 		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
