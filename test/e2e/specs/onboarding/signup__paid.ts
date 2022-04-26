@@ -75,7 +75,7 @@ skipDescribeIf( isStagingOrProd )(
 
 			it( 'Select WordPress.com Personal plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				await signupPickPlanPage.selectPlan( 'Personal' );
+				await signupPickPlanPage.selectPlan( 'Pro' );
 			} );
 
 			it( 'See secure payment', async function () {
