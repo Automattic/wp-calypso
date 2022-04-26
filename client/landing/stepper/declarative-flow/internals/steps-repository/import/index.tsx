@@ -36,7 +36,7 @@ const ImportStep: Step = function ImportStep( props ) {
 	const siteSlug = useSiteSlugParam();
 	const site = useSite();
 	const currentRoute = useCurrentRoute();
-	const isAtomicSite = site?.options?.is_automated_transfer;
+	const isAtomicSite = !! site?.options?.is_automated_transfer;
 	const urlData = useSelector( getUrlData );
 
 	/**
