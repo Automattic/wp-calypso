@@ -10,7 +10,13 @@ import {
 	AtomicTransferStatus,
 	LatestAtomicTransferStatus,
 } from './types';
-import { AtomicTransferState, LatestAtomicTransferState, AtomicSoftwareStatusState } from '.';
+import {
+	AtomicTransferState,
+	LatestAtomicTransferState,
+	AtomicSoftwareStatusState,
+	AtomicSoftwareInstallState,
+	AtomicSoftwareInstallStatus,
+} from '.';
 import type { Action } from './actions';
 import type { Reducer } from 'redux';
 
@@ -311,6 +317,46 @@ export const atomicSoftwareStatus: Reducer<
 	return state;
 };
 
+export const atomicSoftwareInstallStatus: Reducer<
+	{ [ key: number ]: AtomicSoftwareInstallState },
+	Action
+> = ( state = {}, action ) => {
+	if ( action.type === 'ATOMIC_SOFTWARE_INSTALL_START' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				[ action.softwareSet ]: {
+					status: AtomicSoftwareInstallStatus.IN_PROGRESS,
+					error: undefined,
+				},
+			},
+		};
+	}
+	if ( action.type === 'ATOMIC_SOFTWARE_INSTALL_SUCCESS' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				[ action.softwareSet ]: {
+					status: AtomicSoftwareInstallStatus.SUCCESS,
+					error: undefined,
+				},
+			},
+		};
+	}
+	if ( action.type === 'ATOMIC_SOFTWARE_INSTALL_FAILURE' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				[ action.softwareSet ]: {
+					status: AtomicSoftwareInstallStatus.FAILURE,
+					error: undefined,
+				},
+			},
+		};
+	}
+	return state;
+};
+
 const newSite = combineReducers( {
 	data: newSiteData,
 	error: newSiteError,
@@ -328,6 +374,7 @@ const reducer = combineReducers( {
 	atomicTransferStatus,
 	latestAtomicTransferStatus,
 	atomicSoftwareStatus,
+	atomicSoftwareInstallStatus,
 } );
 
 export type State = ReturnType< typeof reducer >;
