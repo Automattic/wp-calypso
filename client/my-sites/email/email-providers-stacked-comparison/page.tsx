@@ -1,12 +1,19 @@
-import { MailboxFormFactory, EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
+import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
+import { EmailProvider, TitanMailboxFormFields } from 'calypso/my-sites/email/form/mailboxes/types';
 
 const EmailProvidersStackedComparisonPage = (): JSX.Element => {
-	const mb = MailboxFormFactory.create( EmailProvider.Google );
-	window.console.log( 'ZKK', mb.password.error );
-	mb.validateAll();
-	window.console.log( 'ZKK', mb.provider, mb.password.error );
-	mb.clearErrors();
-	window.console.log( 'ZKK', mb.provider, mb.password.error );
+	const mb = new MailboxForm( EmailProvider.Titan, 'rodent.com', [] );
+	const formFields: TitanMailboxFormFields = mb.formFields;
+
+	formFields.mailbox.value = 'formica-ca';
+	if ( formFields.alternativeEmail ) {
+		formFields.alternativeEmail.value = 'com@rodent.com';
+	}
+
+	mb.validate();
+	window.console.log( 'ZKK', mb.provider, formFields.password.error );
+	// mb.clearErrors();
+	window.console.log( 'ZKK', mb.provider, formFields );
 
 	return <></>;
 };
