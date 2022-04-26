@@ -113,7 +113,7 @@ class MasterbarItemNotifications extends Component {
 			<>
 				<MasterbarItem
 					url="/notifications"
-					icon={ <BellIcon /> }
+					icon={ <BellIcon newItems={ this.state.newNote } active={ this.props.isActive } /> }
 					onClick={ this.toggleNotesFrame }
 					isActive={ this.props.isActive }
 					tooltip={ this.props.tooltip }
@@ -121,7 +121,6 @@ class MasterbarItemNotifications extends Component {
 					ref={ this.notificationLink }
 				>
 					{ this.props.children }
-					{ this.state.newNote && <span className={ 'masterbar__notifications-bubble' } /> }
 				</MasterbarItem>
 				<div className="masterbar__notifications-panel" ref={ this.notificationPanel }>
 					<AsyncLoad

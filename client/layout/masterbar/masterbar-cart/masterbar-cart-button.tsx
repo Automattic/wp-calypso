@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MasterbarItem from '../item';
+import { CartIcon } from './masterbar-cart-icon';
 
 import './masterbar-cart-button-style.scss';
 
@@ -61,14 +62,12 @@ export function MasterbarCartButton( {
 			<MasterbarItem
 				className="masterbar-cart-button"
 				alwaysShowContent
-				icon="cart"
+				icon={ <CartIcon newItems={ !! responseCart.products } active={ isActive } /> }
 				tooltip={ tooltip }
 				onClick={ onClick }
 				isActive={ isActive }
 				ref={ cartButtonRef }
-			>
-				{ responseCart.products.length > 0 && <span className={ 'masterbar-cart__bubble' } /> }
-			</MasterbarItem>
+			/>
 			<Popover
 				isVisible={ isActive }
 				onClose={ onClose }
