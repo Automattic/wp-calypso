@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { render } from '@testing-library/react';
-import { expect } from 'chai';
 import Rating from 'calypso/components/rating';
 
 describe( '<Rating />', () => {
@@ -11,7 +10,7 @@ describe( '<Rating />', () => {
 			const { container } = render( <Rating /> );
 
 			const component = container.getElementsByClassName( 'rating' )[ 0 ];
-			expect( component.style.width ).to.equal( '90px' ); // 18 * 5 = 120;
+			expect( component.style.width ).toEqual( '90px' ); // 18 * 5 = 120;
 		} );
 
 		test( 'should use size if passed', () => {
@@ -19,7 +18,7 @@ describe( '<Rating />', () => {
 			const { container } = render( <Rating size={ size } /> );
 
 			const component = container.getElementsByClassName( 'rating' )[ 0 ];
-			expect( component.style.width ).to.equal( size * 5 + 'px' );
+			expect( component.style.width ).toEqual( size * 5 + 'px' );
 		} );
 
 		test( 'should use size in each star', () => {
@@ -29,7 +28,7 @@ describe( '<Rating />', () => {
 			const icons = container.getElementsByTagName( 'svg' );
 
 			for ( const icon of icons ) {
-				expect( icon.style.width ).to.equal( size + 'px' );
+				expect( icon.style.width ).toEqual( size + 'px' );
 			}
 		} );
 	} );
@@ -40,8 +39,8 @@ describe( '<Rating />', () => {
 			const { container } = render( <Rating size={ size } /> );
 
 			const component = container.getElementsByClassName( 'rating__overlay' )[ 0 ];
-			expect( component.style.clipPath ).to.equal( 'inset(0 ' + size * 5 + 'px 0 0 )' );
-			expect( component.style.clip ).to.equal( 'rect(0px, 0px, ' + size + 'px, 0px)' );
+			expect( component.style.clipPath ).toEqual( 'inset(0 ' + size * 5 + 'px 0 0 )' );
+			expect( component.style.clip ).toEqual( 'rect(0px, 0px, ' + size + 'px, 0px)' );
 		} );
 
 		test( 'should render rating clipping mask properly', () => {
@@ -54,10 +53,10 @@ describe( '<Rating />', () => {
 				const maskPosition = ( roundRating / 100 ) * ratingWidth;
 				const clipPathMaskPosition = ratingWidth - ( roundRating / 100 ) * ratingWidth;
 				const component = container.getElementsByClassName( 'rating__overlay' )[ 0 ];
-				expect( component.style.clipPath ).to.equal(
+				expect( component.style.clipPath ).toEqual(
 					'inset(0 ' + clipPathMaskPosition + 'px 0 0 )'
 				);
-				expect( component.style.clip ).to.equal(
+				expect( component.style.clip ).toEqual(
 					'rect(0px, ' + maskPosition + 'px, ' + size + 'px, 0px)'
 				);
 			} );
