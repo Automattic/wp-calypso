@@ -630,12 +630,10 @@ function getNoticeType( cart: ResponseCart | undefined ): Record< string, string
 	return {};
 }
 
-function getUrlWithQueryParam( url: string, queryParams: Record< string, string > ): string {
-	const defaultUrl = '/';
-	url = url || defaultUrl;
+function getUrlWithQueryParam( url = '/', queryParams: Record< string, string > = {} ): string {
 	const urlType = determineUrlType( url );
 	if ( urlType === URL_TYPE.INVALID || urlType === URL_TYPE.PATH_RELATIVE ) {
-		return defaultUrl;
+		return url;
 	}
 	const { search, origin, host, ...parsedURL } = getUrlParts( url );
 
