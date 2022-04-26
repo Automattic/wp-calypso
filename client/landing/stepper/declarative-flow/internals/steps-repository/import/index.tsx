@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { StepPath } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository';
@@ -26,8 +26,32 @@ import './style.scss';
 
 const BASE_ROUTE = 'import';
 
-const ImportStep: Step = function ImportStep( props ) {
+export const ImportWrapper: Step = function ( props ) {
 	const { __ } = useI18n();
+	const { navigation, children } = props;
+	const currentRoute = useCurrentRoute();
+	const shouldHideSkipBtn = currentRoute !== BASE_ROUTE;
+
+	return (
+		<>
+			<DocumentHead title={ __( 'Import your site content' ) } />
+
+			<StepContainer
+				stepName={ 'import-step' }
+				hideSkip={ shouldHideSkipBtn }
+				hideFormattedHeader={ true }
+				goBack={ navigation.goBack }
+				goNext={ navigation.goNext }
+				skipLabelText={ __( "I don't have a site address" ) }
+				isFullLayout={ true }
+				stepContent={ children as ReactElement }
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		</>
+	);
+};
+
+const ImportStep: Step = function ImportStep( props ) {
 	const { navigation } = props;
 
 	/**
@@ -38,7 +62,6 @@ const ImportStep: Step = function ImportStep( props ) {
 	const currentRoute = useCurrentRoute();
 	const isAtomicSite = !! site?.options?.is_automated_transfer;
 	const urlData = useSelector( getUrlData );
-	const shouldHideSkipBtn = currentRoute !== BASE_ROUTE;
 
 	/**
 	 ↓ Effects
@@ -114,23 +137,7 @@ const ImportStep: Step = function ImportStep( props ) {
 		);
 	}
 
-	return (
-		<>
-			<DocumentHead title={ __( 'Import your site content' ) } />
-
-			<StepContainer
-				stepName={ 'import-step' }
-				hideSkip={ shouldHideSkipBtn }
-				hideFormattedHeader={ true }
-				goBack={ navigation.goBack }
-				goNext={ navigation.goNext }
-				skipLabelText={ __( "I don't have a site address" ) }
-				isFullLayout={ true }
-				stepContent={ renderStepContent() }
-				recordTracksEvent={ recordTracksEvent }
-			/>
-		</>
-	);
+	return <ImportWrapper { ...props }>{ renderStepContent() }</ImportWrapper>;
 };
 
 export default ImportStep;
