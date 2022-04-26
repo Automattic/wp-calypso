@@ -1,4 +1,3 @@
-import calypsoConfig from '@automattic/calypso-config';
 import { Button, Dialog } from '@automattic/components';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
@@ -106,14 +105,12 @@ function WebsiteContentStep( {
 			}
 		}
 
-		if ( calypsoConfig.isEnabled( 'signup/redesigned-difm-flow' ) ) {
-			if ( pageTitles && pageTitles.length > 0 ) {
-				const pages = pageTitles.map( ( pageTitle ) => ( {
-					id: pageTitle,
-					name: translatedPageTitles[ pageTitle ],
-				} ) );
-				dispatch( initializePages( pages ) );
-			}
+		if ( pageTitles && pageTitles.length > 0 ) {
+			const pages = pageTitles.map( ( pageTitle ) => ( {
+				id: pageTitle,
+				name: translatedPageTitles[ pageTitle ],
+			} ) );
+			dispatch( initializePages( pages ) );
 		} else if ( siteCategory ) {
 			dispatch(
 				initializePages( [

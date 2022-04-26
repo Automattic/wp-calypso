@@ -141,15 +141,8 @@ export class RewindCredentialsForm extends Component {
 	}
 
 	render() {
-		const {
-			formIsSubmitting,
-			labels,
-			showNotices,
-			onCancel,
-			requirePath,
-			siteId,
-			translate,
-		} = this.props;
+		const { formIsSubmitting, labels, showNotices, onCancel, requirePath, siteId, translate } =
+			this.props;
 		const { showAdvancedSettings, formErrors } = this.state;
 
 		return (

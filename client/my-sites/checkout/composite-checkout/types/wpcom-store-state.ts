@@ -387,9 +387,7 @@ export function prepareDomainContactDetailsErrors(
 	};
 }
 
-function prepareTldExtraContactDetails(
-	details: ManagedContactDetails
-): {
+function prepareTldExtraContactDetails( details: ManagedContactDetails ): {
 	ca: null | CaDomainContactExtraDetails;
 	uk: null | UkDomainContactExtraDetails;
 	fr: null | FrDomainContactExtraDetails;
@@ -401,9 +399,7 @@ function prepareTldExtraContactDetails(
 	};
 }
 
-function prepareTldExtraContactDetailsErrors(
-	details: ManagedContactDetails
-): {
+function prepareTldExtraContactDetailsErrors( details: ManagedContactDetails ): {
 	ca: null | CaDomainContactExtraDetailsErrors;
 	uk: null | UkDomainContactExtraDetailsErrors;
 	fr: null | FrDomainContactExtraDetailsErrors;
@@ -465,9 +461,8 @@ function prepareUkDomainContactExtraDetailsErrors(
 
 		return {
 			registrantType: details.tldExtraFields.uk?.registrantType?.errors?.map( toErrorPayload ),
-			registrationNumber: details.tldExtraFields.uk?.registrationNumber?.errors?.map(
-				toErrorPayload
-			),
+			registrationNumber:
+				details.tldExtraFields.uk?.registrationNumber?.errors?.map( toErrorPayload ),
 			tradingName: details.tldExtraFields.uk?.tradingName?.errors?.map( toErrorPayload ),
 		};
 	}

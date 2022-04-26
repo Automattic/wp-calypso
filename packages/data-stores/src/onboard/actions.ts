@@ -46,13 +46,8 @@ export function* createSite( {
 	anchorFmEpisodeId = null,
 	anchorFmSpotifyUrl = null,
 }: CreateSiteActionParameters ) {
-	const {
-		domain,
-		selectedDesign,
-		selectedFonts,
-		siteTitle,
-		selectedFeatures,
-	}: State = yield select( STORE_KEY, 'getState' );
+	const { domain, selectedDesign, selectedFonts, siteTitle, selectedFeatures }: State =
+		yield select( STORE_KEY, 'getState' );
 
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
@@ -220,9 +215,19 @@ export const setStoreAddressValue = (
 	store_address_value,
 } );
 
-export const setPendingAction = ( pendingAction: Promise< any > ) => ( {
+export const setPendingAction = ( pendingAction: undefined | ( () => Promise< any > ) ) => ( {
 	type: 'SET_PENDING_ACTION' as const,
 	pendingAction,
+} );
+
+export const setProgress = ( progress: number ) => ( {
+	type: 'SET_PROGRESS' as const,
+	progress,
+} );
+
+export const setProgressTitle = ( progressTitle: string | undefined ) => ( {
+	type: 'SET_PROGRESS_TITLE' as const,
+	progressTitle,
 } );
 
 export type OnboardAction = ReturnType<
@@ -250,4 +255,6 @@ export type OnboardAction = ReturnType<
 	| typeof setStartingPoint
 	| typeof setStoreAddressValue
 	| typeof setPendingAction
+	| typeof setProgress
+	| typeof setProgressTitle
 >;

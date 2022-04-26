@@ -59,20 +59,22 @@ const sanitizeMenuItem = ( menuItem, wpAdminUrl ) => {
 	};
 };
 
-export const handleSuccess = ( { siteId }, menuData ) => ( dispatch, getState ) => {
-	if ( ! Array.isArray( menuData ) ) {
-		return dispatch( receiveAdminMenu( siteId, menuData ) );
-	}
+export const handleSuccess =
+	( { siteId }, menuData ) =>
+	( dispatch, getState ) => {
+		if ( ! Array.isArray( menuData ) ) {
+			return dispatch( receiveAdminMenu( siteId, menuData ) );
+		}
 
-	// Sanitize menu data.
-	const wpAdminUrl = getSiteAdminUrl( getState(), siteId );
-	return dispatch(
-		receiveAdminMenu(
-			siteId,
-			menuData.map( ( menuItem ) => sanitizeMenuItem( menuItem, wpAdminUrl ) )
-		)
-	);
-};
+		// Sanitize menu data.
+		const wpAdminUrl = getSiteAdminUrl( getState(), siteId );
+		return dispatch(
+			receiveAdminMenu(
+				siteId,
+				menuData.map( ( menuItem ) => sanitizeMenuItem( menuItem, wpAdminUrl ) )
+			)
+		);
+	};
 
 export const handleError = () => {
 	return null;

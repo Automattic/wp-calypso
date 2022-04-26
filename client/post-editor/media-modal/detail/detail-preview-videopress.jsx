@@ -16,6 +16,8 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		isPlaying: PropTypes.bool,
+		setIsPlaying: PropTypes.func,
+		isSelectingFrame: PropTypes.bool,
 		item: PropTypes.object.isRequired,
 		onPause: PropTypes.func,
 		onVideoLoaded: PropTypes.func,
@@ -23,6 +25,8 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 
 	static defaultProps = {
 		isPlaying: false,
+		setIsPlaying: noop,
+		isSelectingFrame: false,
 		onPause: noop,
 		onVideoLoaded: noop,
 	};
@@ -47,7 +51,10 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( prevProps.isPlaying && ! this.props.isPlaying ) {
+		if (
+			( prevProps.isPlaying && ! this.props.isPlaying ) ||
+			( ! prevProps.isSelectingFrame && this.props.isSelectingFrame )
+		) {
 			this.pause();
 		} else if ( ! prevProps.isPlaying && this.props.isPlaying ) {
 			this.play();
@@ -77,6 +84,12 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 		// events received from player only
 		if ( event.origin && event.origin !== 'https://video.wordpress.com' ) {
 			return;
+		}
+
+		if ( 'playing' === data.event ) {
+			this.props.setIsPlaying( true );
+		} else if ( 'pause' === data.event ) {
+			this.props.setIsPlaying( false );
 		}
 
 		if (

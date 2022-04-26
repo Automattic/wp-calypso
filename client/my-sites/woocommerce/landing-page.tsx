@@ -40,13 +40,8 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const navigationItems = [ { label: 'WooCommerce' } ];
 	const currentIntent = useSelector( ( state ) => getSiteOption( state, siteId, 'site_intent' ) );
 
-	const {
-		isTransferringBlocked,
-		wpcomDomain,
-		isDataReady,
-		currentUserEmail,
-		isEmailVerified,
-	} = useWooCommerceOnPlansEligibility( siteId );
+	const { isTransferringBlocked, wpcomDomain, isDataReady, currentUserEmail, isEmailVerified } =
+		useWooCommerceOnPlansEligibility( siteId );
 
 	function onCTAClickHandler() {
 		recordTracksEvent( 'calypso_woocommerce_dashboard_action_click', {

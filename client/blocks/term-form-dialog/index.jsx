@@ -306,14 +306,8 @@ class TermFormDialog extends Component {
 	}
 
 	render() {
-		const {
-			isHierarchical,
-			labels,
-			term,
-			translate,
-			showDescriptionInput,
-			showDialog,
-		} = this.props;
+		const { isHierarchical, labels, term, translate, showDescriptionInput, showDialog } =
+			this.props;
 		const { name, description } = this.state;
 		const isNew = ! term;
 		const submitLabel = isNew ? translate( 'Add' ) : translate( 'Update' );

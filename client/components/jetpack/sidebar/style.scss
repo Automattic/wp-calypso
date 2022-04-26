@@ -9,7 +9,7 @@
 		svg {
 			fill: var( --color-sidebar-background );
 		}
-		
+
 	}
 
 	.current-site__switch-sites .button.is-borderless {
@@ -71,7 +71,7 @@
 				color: var( --color-sidebar-menu-hover-text );
 			}
 		}
-		
+
 		html.accessible-focus &:focus {
 			box-shadow: inset 0 0 0 2px var( --color-primary-light );
 		}

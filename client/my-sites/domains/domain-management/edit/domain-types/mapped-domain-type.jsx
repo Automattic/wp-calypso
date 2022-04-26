@@ -22,7 +22,6 @@ import DomainStatus from '../card/domain-status';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
-import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 
 class MappedDomainType extends Component {
@@ -165,10 +164,6 @@ class MappedDomainType extends Component {
 		return this.renderAutoRenewToggle();
 	}
 
-	handlePaymentSettingsClick = () => {
-		this.props.recordPaymentSettingsClick( this.props.domain );
-	};
-
 	render() {
 		const { domain, selectedSite, purchase, mappingPurchase, isLoadingPurchase } = this.props;
 		const { name: domain_name } = domain;
@@ -216,34 +211,29 @@ class MappedDomainType extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const { subscriptionId, bundledPlanSubscriptionId } = ownProps.domain;
-		const currentUserId = getCurrentUserId( state );
+export default connect( ( state, ownProps ) => {
+	const { subscriptionId, bundledPlanSubscriptionId } = ownProps.domain;
+	const currentUserId = getCurrentUserId( state );
 
-		const purchaseSubscriptionId = bundledPlanSubscriptionId
-			? bundledPlanSubscriptionId
-			: subscriptionId;
+	const purchaseSubscriptionId = bundledPlanSubscriptionId
+		? bundledPlanSubscriptionId
+		: subscriptionId;
 
-		const purchase = purchaseSubscriptionId
-			? getByPurchaseId( state, parseInt( purchaseSubscriptionId, 10 ) )
-			: null;
+	const purchase = purchaseSubscriptionId
+		? getByPurchaseId( state, parseInt( purchaseSubscriptionId, 10 ) )
+		: null;
 
-		const mappingPurchase = subscriptionId
-			? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
-			: null;
+	const mappingPurchase = subscriptionId
+		? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
+		: null;
 
-		return {
-			purchase: purchase && currentUserId === purchase.userId ? purchase : null,
-			mappingPurchase:
-				mappingPurchase && currentUserId === mappingPurchase.userId ? mappingPurchase : null,
-			isLoadingPurchase:
-				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
-			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, ownProps.selectedSite.ID ),
-			isJetpackSite: isJetpackSite( state, ownProps.selectedSite.ID ),
-		};
-	},
-	{
-		recordPaymentSettingsClick,
-	}
-)( withLocalizedMoment( localize( MappedDomainType ) ) );
+	return {
+		purchase: purchase && currentUserId === purchase.userId ? purchase : null,
+		mappingPurchase:
+			mappingPurchase && currentUserId === mappingPurchase.userId ? mappingPurchase : null,
+		isLoadingPurchase:
+			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
+		isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, ownProps.selectedSite.ID ),
+		isJetpackSite: isJetpackSite( state, ownProps.selectedSite.ID ),
+	};
+} )( withLocalizedMoment( localize( MappedDomainType ) ) );

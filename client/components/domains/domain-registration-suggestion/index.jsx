@@ -170,14 +170,8 @@ class DomainRegistrationSuggestion extends Component {
 	}
 
 	getPriceRule() {
-		const {
-			cart,
-			isDomainOnly,
-			domainsWithPlansOnly,
-			selectedSite,
-			suggestion,
-			flowName,
-		} = this.props;
+		const { cart, isDomainOnly, domainsWithPlansOnly, selectedSite, suggestion, flowName } =
+			this.props;
 		return getDomainPriceRule(
 			domainsWithPlansOnly,
 			selectedSite,

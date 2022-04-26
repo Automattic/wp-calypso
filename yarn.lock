@@ -596,9 +596,8 @@ __metadata:
   resolution: "@automattic/format-currency@workspace:packages/format-currency"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    i18n-calypso: "workspace:^"
-  peerDependencies:
-    react: ^17.0.2
+    tslib: ^2.3.0
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -5067,7 +5066,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:^6.19.6":
+"@sentry/browser@npm:6.19.6, @sentry/browser@npm:^6.19.6":
   version: 6.19.6
   resolution: "@sentry/browser@npm:6.19.6"
   dependencies:
@@ -5111,6 +5110,22 @@ __metadata:
     "@sentry/types": 6.19.6
     tslib: ^1.9.3
   checksum: ab748fbceac0d142d70f2a8c79456876b46c6c5b2640c709aaa20c4421def96339620584a8780ae3de97b07322cf0a7d2a8bb659e3359794993c5e1706c532e1
+  languageName: node
+  linkType: hard
+
+"@sentry/react@npm:^6.19.4":
+  version: 6.19.6
+  resolution: "@sentry/react@npm:6.19.6"
+  dependencies:
+    "@sentry/browser": 6.19.6
+    "@sentry/minimal": 6.19.6
+    "@sentry/types": 6.19.6
+    "@sentry/utils": 6.19.6
+    hoist-non-react-statics: ^3.3.2
+    tslib: ^1.9.3
+  peerDependencies:
+    react: 15.x || 16.x || 17.x || 18.x
+  checksum: 18f6a4bea654319fbb6682119cba2d5637bc20601df57e5a34675f2a9f49612a55144be1ca99d41b4722ae86e9b966ff9a74f881b247dd84db146902e8decfc7
   languageName: node
   linkType: hard
 
@@ -6684,6 +6699,15 @@ __metadata:
   version: 0.2.0
   resolution: "@trysound/sax@npm:0.2.0"
   checksum: 44907308549ce775a41c38a815f747009ac45929a45d642b836aa6b0a536e4978d30b8d7d680bbd116e9dd73b7dbe2ef0d1369dcfc2d09e83ba381e485ecbe12
+  languageName: node
+  linkType: hard
+
+"@types/archiver@npm:^5.3.1":
+  version: 5.3.1
+  resolution: "@types/archiver@npm:5.3.1"
+  dependencies:
+    "@types/glob": "*"
+  checksum: 622c0d3cf54c0009d07db0c78349a4e81ae3a4b699c7f2ea34085c0ebfb13eca8c4a6459aa5e376c2c0f72916280a0986154fad35022a280670a6e5551fff9d2
   languageName: node
   linkType: hard
 
@@ -12689,6 +12713,7 @@ __metadata:
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@github/webauthn-json": ^0.4.1
+    "@sentry/react": ^6.19.4
     "@stripe/react-stripe-js": ^1.4.1
     "@stripe/stripe-js": ^1.17.1
     "@testing-library/jest-dom": ^5.16.2
@@ -29539,6 +29564,15 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"prettier@npm:wp-prettier@2.6.2-beta-1":
+  version: 2.6.2-beta-1
+  resolution: "wp-prettier@npm:2.6.2-beta-1"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 5375d3f19a909715dbc52ca4ac2ded0a0ae4531cd64f99ebb76f2935ea969ee1e42a7d2ffece7b388797e136343b77c2c25f8cae752c2f28ba712454a1b24095
+  languageName: node
+  linkType: hard
+
 "pretty-error@npm:^2.1.1":
   version: 2.1.1
   resolution: "pretty-error@npm:2.1.1"
@@ -38296,7 +38330,7 @@ testarmada-magellan@11.0.10:
     postcss: ^8.4.5
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
-    prettier: "npm:wp-prettier@2.2.1-beta-1"
+    prettier: "npm:wp-prettier@2.6.2-beta-1"
     react: ^17.0.2
     react-dom: ^17.0.2
     readline-sync: ^1.4.10
@@ -38345,6 +38379,7 @@ testarmada-magellan@11.0.10:
     "@automattic/testarmada-magellan-mocha-plugin": "workspace:^"
     "@babel/core": ^7.16.0
     "@testim/chrome-version": ^1.0.7
+    "@types/archiver": ^5.3.1
     "@types/jest": ^27.0.2
     "@xmpp/plugins": ^0.3.0
     archiver: ^5.3.0

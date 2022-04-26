@@ -1,7 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { type as domainType } from 'calypso/lib/domains/constants';
+import { isCancelable, isRemovable } from 'calypso/lib/purchases';
 import RemovePurchase from 'calypso/me/purchases/remove-purchase';
+import { getCancelPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import {
 	getByPurchaseId,
 	hasLoadedSitePurchasesFromServer,
@@ -56,14 +58,28 @@ const DomainDeleteInfoCard = ( {
 		</RemovePurchase>
 	);
 
-	if ( ! removePurchaseRenderedComponent ) return null;
+	if ( isRemovable( purchase ) ) {
+		return (
+			<DomainInfoCard
+				type="custom"
+				title={ title }
+				description={ getDescription() }
+				cta={ removePurchaseRenderedComponent }
+			/>
+		);
+	}
 
+	if ( ! isCancelable( purchase ) ) {
+		return null;
+	}
+	const link = getCancelPurchaseUrlFor( selectedSite.slug, purchase.id );
 	return (
 		<DomainInfoCard
-			type="custom"
+			type="href"
+			ctaText={ translate( 'Delete' ) }
 			title={ title }
 			description={ getDescription() }
-			cta={ removePurchaseRenderedComponent }
+			href={ link }
 		/>
 	);
 };

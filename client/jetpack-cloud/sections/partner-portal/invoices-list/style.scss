@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
+@import 'calypso/jetpack-cloud/sections/partner-portal/mixins.scss';
 
 .invoices-list {
 	&__row {
@@ -26,5 +27,11 @@
 		@include break-xlarge() {
 			display: block;
 		}
+	}
+
+	&__pagination {
+		margin: 64px 0;
+
+		@include licensing-portal-cursor-pagination();
 	}
 }

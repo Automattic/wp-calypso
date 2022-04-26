@@ -36,11 +36,14 @@ Pinghub.prototype.connect = function ( path, fn ) {
 		debug( 'onload', path, e );
 		fn( null, e );
 	};
-	xhr.onerror = xhr.onabort = xhr.onclose = function ( e ) {
-		debug( 'onerror', path, e );
-		pinghub.remove( path );
-		fn( e, null );
-	};
+	xhr.onerror =
+		xhr.onabort =
+		xhr.onclose =
+			function ( e ) {
+				debug( 'onerror', path, e );
+				pinghub.remove( path );
+				fn( e, null );
+			};
 };
 
 /**

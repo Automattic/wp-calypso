@@ -21,11 +21,13 @@ const PREV_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_previous
 const NEXT_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_next' );
 const CALENDAR_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_calendar_select_day' );
 
-const onSpace = ( fn: () => void ) => ( { key }: { key?: string } ) => {
-	if ( key === ' ' ) {
-		fn();
-	}
-};
+const onSpace =
+	( fn: () => void ) =>
+	( { key }: { key?: string } ) => {
+		if ( key === ' ' ) {
+			fn();
+		}
+	};
 
 const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 	const dispatch = useDispatch();

@@ -1,9 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useFSEStatus } from '../hooks/use-fse-status';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { ONBOARD_STORE } from '../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { ProcessingResult } from './internals/steps-repository/processing-step';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
@@ -26,6 +28,9 @@ export const siteSetupFlow: Flow = {
 			'businessInfo',
 			'storeAddress',
 			'processing',
+			'error',
+			'wooTransfer',
+			'wooInstallPlugins',
 		] as StepPath[];
 	},
 
@@ -33,7 +38,27 @@ export const siteSetupFlow: Flow = {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
 		const siteSlug = useSiteSlugParam();
+		const siteId = useSelect(
+			( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug )
+		);
+		const isAtomic = useSelect( ( select ) =>
+			select( SITE_STORE ).isSiteAtomic( siteId as number )
+		);
+		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { setIntentOnSite } = useDispatch( SITE_STORE );
 		const { FSEActive } = useFSEStatus();
+
+		const exitFlow = ( to: string ) => {
+			setPendingAction(
+				() =>
+					new Promise( () =>
+						setIntentOnSite( siteSlug as string, intent ).then( () => redirect( to ) )
+					)
+			);
+
+			navigate( 'processing' );
+		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			recordSubmitStep( providedDependencies, intent, currentStep );
@@ -50,33 +75,45 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing': {
+					const processingResult = params[ 0 ] as ProcessingResult;
+
+					if ( processingResult === ProcessingResult.FAILURE ) {
+						// error page?
+					}
+
 					// If the user skips starting point, redirect them to My Home
 					if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
 						if ( startingPoint !== 'write' ) {
 							window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
 						}
 
-						return redirect( `/post/${ siteSlug }` );
+						return exitFlow( `/post/${ siteSlug }` );
+					}
+
+					// End of woo flow
+					if ( storeType === 'power' ) {
+						// eslint-disable-next-line no-console
+						console.log( 'end woo flow here' );
 					}
 
 					if ( FSEActive && intent !== 'write' ) {
-						return redirect( `/site-editor/${ siteSlug }` );
+						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
 
-					return redirect( `/home/${ siteSlug }` );
+					return exitFlow( `/home/${ siteSlug }` );
 				}
 
 				case 'bloggerStartingPoint': {
 					const intent = params[ 0 ];
 					switch ( intent ) {
 						case 'firstPost': {
-							return redirect( `https://wordpress.com/post/${ siteSlug }` );
+							return exitFlow( `https://wordpress.com/post/${ siteSlug }` );
 						}
 						case 'courses': {
 							return navigate( 'courses' );
 						}
 						case 'skip-to-my-home': {
-							return redirect( `/home/${ siteSlug }` );
+							return exitFlow( `/home/${ siteSlug }` );
 						}
 						default: {
 							return navigate( intent as StepPath );
@@ -88,7 +125,7 @@ export const siteSetupFlow: Flow = {
 					const submittedIntent = params[ 0 ];
 					switch ( submittedIntent ) {
 						case 'wpadmin': {
-							return redirect( `https://wordpress.com/home/${ siteSlug }` );
+							return exitFlow( `https://wordpress.com/home/${ siteSlug }` );
 						}
 						case 'build': {
 							return navigate( 'designSetup' );
@@ -97,7 +134,7 @@ export const siteSetupFlow: Flow = {
 							return navigate( 'options' );
 						}
 						case 'import': {
-							return redirect( `/start/importer/capture?siteSlug=${ siteSlug }` );
+							return exitFlow( `/start/importer/capture?siteSlug=${ siteSlug }` );
 						}
 						case 'write': {
 							return navigate( 'options' );
@@ -118,7 +155,7 @@ export const siteSetupFlow: Flow = {
 						const args = new URLSearchParams();
 						args.append( 'back_to', `/start/setup-site/store-features?siteSlug=${ siteSlug }` );
 						args.append( 'siteSlug', siteSlug as string );
-						return redirect( `/start/woocommerce-install?${ args.toString() }` );
+						return exitFlow( `/start/woocommerce-install?${ args.toString() }` );
 					} else if ( storeType === 'simple' ) {
 						return navigate( 'designSetup' );
 					}
@@ -128,11 +165,21 @@ export const siteSetupFlow: Flow = {
 				case 'storeAddress':
 					return navigate( 'businessInfo' );
 
-				case 'businessInfo':
-					return navigate( 'storeFeatures' );
+				case 'businessInfo': {
+					if ( isAtomic ) {
+						return navigate( 'wooInstallPlugins' );
+					}
+					return navigate( 'wooTransfer' );
+				}
+
+				case 'wooTransfer':
+					return navigate( 'processing' );
+
+				case 'wooInstallPlugins':
+					return navigate( 'processing' );
 
 				case 'courses': {
-					return redirect( `/post/${ siteSlug }` );
+					return exitFlow( `/post/${ siteSlug }` );
 				}
 
 				case 'vertical': {
@@ -182,10 +229,10 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 
 				case 'intent':
-					return redirect( `/home/${ siteSlug }` );
+					return exitFlow( `/home/${ siteSlug }` );
 
 				case 'vertical':
-					return redirect( `/home/${ siteSlug }` );
+					return exitFlow( `/home/${ siteSlug }` );
 
 				default:
 					return navigate( 'intent' );
@@ -197,5 +244,14 @@ export const siteSetupFlow: Flow = {
 		};
 
 		return { goNext, goBack, goToStep, submit };
+	},
+
+	useAssertConditions() {
+		const siteSlug = useSiteSlugParam();
+		const siteId = useSiteIdParam();
+
+		if ( ! siteSlug && ! siteId ) {
+			throw new Error( 'site-setup did not provide the site slug or site id it is configured to.' );
+		}
 	},
 };

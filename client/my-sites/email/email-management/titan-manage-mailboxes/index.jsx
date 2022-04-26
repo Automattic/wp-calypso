@@ -149,14 +149,8 @@ class TitanManageMailboxes extends Component {
 	};
 
 	render() {
-		const {
-			domain,
-			hasSubscription,
-			isLoadingPurchase,
-			purchase,
-			selectedSite,
-			translate,
-		} = this.props;
+		const { domain, hasSubscription, isLoadingPurchase, purchase, selectedSite, translate } =
+			this.props;
 
 		return (
 			<>

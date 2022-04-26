@@ -22,56 +22,55 @@ import 'calypso/state/login/init';
  * @param {string} redirectTo              Url to redirect the user to upon successful login
  * @returns {Function} A thunk that can be dispatched
  */
-export const connectSocialUser = (
-	{ service, access_token, id_token, user_name, user_email },
-	redirectTo
-) => ( dispatch ) => {
-	dispatch( {
-		type: SOCIAL_CONNECT_ACCOUNT_REQUEST,
-		notice: {
-			message: translate( 'Creating your account' ),
-		},
-	} );
-
-	/*
-	 * Before attempting the social connect, we reload the proxy.
-	 * This ensures that the proxy iframe has set the correct API cookie,
-	 * particularly after the user has logged in, but Calypso hasn't
-	 * been reloaded yet.
-	 */
-	require( 'wpcom-proxy-request' ).reloadProxy();
-
-	wpcom.req.post( { metaAPI: { accessAllUsersBlogs: true } } );
-
-	return wpcom.req
-		.post( '/me/social-login/connect', {
-			service,
-			access_token,
-			id_token,
-			user_name,
-			user_email,
-			redirect_to: redirectTo,
-
-			// This API call is restricted to these OAuth keys
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_key' ),
-		} )
-		.then(
-			( wpcomResponse ) => {
-				dispatch( {
-					type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
-					redirect_to: wpcomResponse.redirect_to,
-				} );
+export const connectSocialUser =
+	( { service, access_token, id_token, user_name, user_email }, redirectTo ) =>
+	( dispatch ) => {
+		dispatch( {
+			type: SOCIAL_CONNECT_ACCOUNT_REQUEST,
+			notice: {
+				message: translate( 'Creating your account' ),
 			},
-			( wpcomError ) => {
-				const error = getErrorFromWPCOMError( wpcomError );
+		} );
 
-				dispatch( {
-					type: SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
-					error,
-				} );
+		/*
+		 * Before attempting the social connect, we reload the proxy.
+		 * This ensures that the proxy iframe has set the correct API cookie,
+		 * particularly after the user has logged in, but Calypso hasn't
+		 * been reloaded yet.
+		 */
+		require( 'wpcom-proxy-request' ).reloadProxy();
 
-				return Promise.reject( error );
-			}
-		);
-};
+		wpcom.req.post( { metaAPI: { accessAllUsersBlogs: true } } );
+
+		return wpcom.req
+			.post( '/me/social-login/connect', {
+				service,
+				access_token,
+				id_token,
+				user_name,
+				user_email,
+				redirect_to: redirectTo,
+
+				// This API call is restricted to these OAuth keys
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
+			} )
+			.then(
+				( wpcomResponse ) => {
+					dispatch( {
+						type: SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
+						redirect_to: wpcomResponse.redirect_to,
+					} );
+				},
+				( wpcomError ) => {
+					const error = getErrorFromWPCOMError( wpcomError );
+
+					dispatch( {
+						type: SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
+						error,
+					} );
+
+					return Promise.reject( error );
+				}
+			);
+	};

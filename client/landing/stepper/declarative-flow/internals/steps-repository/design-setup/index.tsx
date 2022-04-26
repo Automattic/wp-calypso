@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { planHasFeature, FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import DesignPicker, {
-	FeaturedPicksButtons,
 	PremiumBadge,
 	useCategorization,
 	isBlankCanvasDesign,
@@ -25,11 +24,14 @@ import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import { getAnchorPodcastId } from '../../../get-anchor-podcast-id';
+import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { getCategorizationOptions, getGeneratedDesignsCategory } from './categories';
 import PreviewToolbar from './preview-toolbar';
 import type { Step } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
+
 /**
  * The design picker step
  */
@@ -44,7 +46,9 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 
-	const flowName = 'setup-site';
+	const anchorPodcastId = getAnchorPodcastId();
+	const flowName = isEnabled( 'signup/anchor-fm' ) && anchorPodcastId ? 'anchor-fm' : 'setup-site';
+	const isAnchorSite = 'anchor-fm' === flowName;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const siteSlug = useSiteSlugParam();
@@ -63,18 +67,17 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		site?.launch_status === 'unlaunched' && site?.options?.is_automated_transfer
 	);
 
-	const showDesignPickerCategories = isEnabled( 'signup/design-picker-categories' );
+	const showDesignPickerCategories =
+		isEnabled( 'signup/design-picker-categories' ) && ! isAnchorSite;
 	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
 	const showGeneratedDesigns =
 		isEnabled( 'signup/design-picker-generated-designs' ) && intent === 'build' && !! siteVertical;
 
-	// In order to show designs with a "featured" term in the theme_picks taxonomy at the below of categories filter
-	const useFeaturedPicksButtons =
-		showDesignPickerCategories && isEnabled( 'signup/design-picker-use-featured-picks-buttons' );
 	const isPremiumThemeAvailable = Boolean(
-		useMemo( () => sitePlanSlug && planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ), [
-			sitePlanSlug,
-		] )
+		useMemo(
+			() => sitePlanSlug && planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
+			[ sitePlanSlug ]
+		)
 	);
 
 	const tier =
@@ -101,17 +104,13 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	);
 	const generatedDesigns = useGeneratedDesigns( generatedDesignsCategory );
 
-	const { designs, featuredPicksDesigns } = useMemo( () => {
-		return {
-			designs: [
-				...generatedDesigns,
-				...shuffle( staticDesigns.filter( ( design ) => ! design.is_featured_picks ) ),
-			],
-			featuredPicksDesigns: staticDesigns.filter(
-				( design ) => design.is_featured_picks && ! isBlankCanvasDesign( design )
-			),
-		};
-	}, [ staticDesigns, generatedDesigns ] );
+	const designs = useMemo(
+		() => [
+			...generatedDesigns,
+			...shuffle( staticDesigns.filter( ( design ) => ! isBlankCanvasDesign( design ) ) ),
+		],
+		[ staticDesigns, generatedDesigns ]
+	);
 
 	function headerText() {
 		if ( showDesignPickerCategories ) {
@@ -122,6 +121,11 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	}
 
 	function subHeaderText() {
+		if ( isAnchorSite ) {
+			return translate(
+				'Pick a homepage layout for your podcast site. You can customize or change it later.'
+			);
+		}
 		if ( ! showDesignPickerCategories ) {
 			return translate(
 				'Pick your favorite homepage layout. You can customize or change it later.'
@@ -155,20 +159,11 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	);
 	const categorization = useCategorization( designs, categorizationOptions );
 
-	function renderCategoriesFooter() {
-		return (
-			<>
-				{ useFeaturedPicksButtons && (
-					<FeaturedPicksButtons designs={ featuredPicksDesigns } onSelect={ pickDesign } />
-				) }
-			</>
-		);
-	}
-
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlug && _selectedDesign ) {
-			setPendingAction( setDesignOnSite( siteSlug, _selectedDesign ) );
+			setPendingAction( () => setDesignOnSite( siteSlug, _selectedDesign ) );
+			recordTracksEvent( 'calypso_signup_select_design', getEventPropsByDesign( _selectedDesign ) );
 			const providedDependencies = {
 				selectedDesign: _selectedDesign,
 				selectedSiteCategory: categorization.selection,
@@ -277,10 +272,20 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		);
 	}
 
+	const heading = (
+		<FormattedHeader
+			className={ isAnchorSite ? 'is-anchor-header' : null }
+			id={ 'step-header' }
+			headerText={ headerText() }
+			subHeaderText={ subHeaderText() }
+			align="left"
+		/>
+	);
+
 	stepContent = (
 		<>
 			<DesignPicker
-				designs={ useFeaturedPicksButtons ? designs : [ ...featuredPicksDesigns, ...designs ] }
+				designs={ isAnchorSite ? ( ANCHOR_FM_THEMES as Design[] ) : designs }
 				theme={ isReskinned ? 'light' : 'dark' }
 				locale={ locale }
 				onSelect={ pickDesign }
@@ -289,19 +294,14 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 				className={ classnames( {
 					'design-setup__has-categories': showDesignPickerCategories,
 				} ) }
+				isGridMinimal={ isAnchorSite }
 				highResThumbnails
+				hideFullScreenPreview={ isAnchorSite }
 				premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ !! isPremiumThemeAvailable } /> }
 				categorization={ showDesignPickerCategories ? categorization : undefined }
 				recommendedCategorySlug={ categorizationOptions.defaultSelection }
-				categoriesHeading={
-					<FormattedHeader
-						id={ 'step-header' }
-						headerText={ headerText() }
-						subHeaderText={ subHeaderText() }
-						align="left"
-					/>
-				}
-				categoriesFooter={ renderCategoriesFooter() }
+				categoriesHeading={ heading }
+				anchorHeading={ isAnchorSite && heading }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			/>
 		</>
@@ -312,7 +312,9 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 			stepName={ 'design-step' }
 			className={ classnames( {
 				'design-picker__has-categories': showDesignPickerCategories,
+				'design-picker__sell-intent': 'sell' === intent,
 			} ) }
+			hideSkip={ isAnchorSite }
 			skipButtonAlign={ 'top' }
 			hideFormattedHeader
 			skipLabelText={ intent === 'write' ? translate( 'Skip and draft first post' ) : undefined }

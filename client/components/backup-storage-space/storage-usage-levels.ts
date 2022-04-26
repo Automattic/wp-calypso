@@ -1,25 +1,27 @@
-export enum StorageUsageLevels {
-	Full = 100,
-	Critical = 80,
-	Warning = 65,
-	Normal = 0,
-}
+export type StorageUsageLevelName = 'Full' | 'Critical' | 'Warning' | 'Normal';
+export const StorageUsageLevels: Record< StorageUsageLevelName, StorageUsageLevelName > = {
+	Full: 'Full',
+	Critical: 'Critical',
+	Warning: 'Warning',
+	Normal: 'Normal',
+} as const;
 
-// Transform the enum so we can iterate more easily,
-// sorting levels from highest to lowest.
-//
-// This ordering is important for getUsageLevel,
-// because it looks at the elements *in order*.
-const levelsArray: StorageUsageLevels[] = Object.values( StorageUsageLevels )
-	// Get only numeric values, ignoring the enum keys (which are also stored as values)
-	.filter( Number.isInteger )
-	.sort( ( a, b ) => ( b as number ) - ( a as number ) )
-	.map( ( val ) => val as StorageUsageLevels );
+const THRESHOLDS: Record< number, StorageUsageLevelName > = {
+	100: StorageUsageLevels.Full,
+	80: StorageUsageLevels.Critical,
+	65: StorageUsageLevels.Warning,
+	0: StorageUsageLevels.Normal,
+};
+const THRESHOLD_VALUES = Object.keys( THRESHOLDS )
+	.map( Number )
+	// Sorting from highest to lowest is important for getUsageLevel,
+	// because it looks at the elements *in order*.
+	.sort( ( a, b ) => b - a );
 
 export const getUsageLevel = (
 	used: number | undefined,
 	available: number | undefined
-): StorageUsageLevels | null => {
+): StorageUsageLevelName | null => {
 	if ( available === undefined || used === undefined ) {
 		return null;
 	}
@@ -30,5 +32,6 @@ export const getUsageLevel = (
 	}
 
 	const percentUsed = ( 100 * used ) / available;
-	return levelsArray.find( ( level ) => percentUsed >= level ) ?? StorageUsageLevels.Normal;
+	const thresholdValue = THRESHOLD_VALUES.find( ( value ) => percentUsed >= value ) ?? 0;
+	return THRESHOLDS[ thresholdValue ];
 };

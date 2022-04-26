@@ -37,6 +37,7 @@ export const exampleFlow: Flow = {
 To create a flow, you only have to define `useSteps` and `useStepNavigation`. `useSteps` just returns an array of step keys, `useStepNavigation` is the engine where you make navigation decisions. This hook returns an object of type [`NavigationControls`](./declarative-flow/internals/types.ts):
 
 ```tsx
+// prettier-ignore
 /**
  * This is the return type of useStepNavigation hook
  */
@@ -72,6 +73,31 @@ export const exampleFlow: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		return { goNext, goBack };
+	},
+};
+```
+
+### Assert Conditions
+
+Optionally, you could also define a `useAssertConditions` function in the flow. This function can be used to add some conditions to check, and maybe return an error if those are not met.
+
+```ts
+import type { StepPath } from './internals/steps-repository';
+import type { Flow } from './internals/types';
+
+export const exampleFlow: Flow = {
+	useSteps(): Array< StepPath > {
+		return [];
+	},
+	useStepNavigation( currentStep, navigate ) {
+		return { goNext, goBack };
+	},
+	useAssertConditions() {
+		const siteSlug = useSiteSlugParam();
+
+		if ( ! siteSlug ) {
+			throw new Error( 'site-setup did not provide the site slug it is configured to.' );
+		}
 	},
 };
 ```

@@ -292,6 +292,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getPremiumContentCard = () => {
+		if ( isNonAtomicJetpack ) {
+			return;
+		}
 		const cta = ! hasPremiumContent
 			? {
 					text: translate( 'Unlock this feature' ),
@@ -356,6 +359,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getPaidNewsletterCard = () => {
+		if ( isNonAtomicJetpack ) {
+			return;
+		}
 		const cta = ! hasPremiumContent
 			? {
 					text: translate( 'Unlock this feature' ),

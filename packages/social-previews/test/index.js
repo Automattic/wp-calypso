@@ -252,8 +252,7 @@ describe( 'Twitter previews', () => {
 		const tweets = [
 			{
 				...emptyTweet,
-				text:
-					'This text (https://jetpack.com/) has (https://wordpress.com/) some (https://jetpack.com/) URLs (https://wordpress.org/).',
+				text: 'This text (https://jetpack.com/) has (https://wordpress.com/) some (https://jetpack.com/) URLs (https://wordpress.org/).',
 				urls: [
 					'https://jetpack.com/',
 					'https://wordpress.com/',

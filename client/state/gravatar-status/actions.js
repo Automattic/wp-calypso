@@ -21,18 +21,20 @@ export function uploadGravatar( file, email ) {
 	} );
 }
 
-export const receiveGravatarImageFailed = ( { errorMessage, statName } ) => ( dispatch ) => {
-	dispatch(
-		withAnalytics(
-			composeAnalytics(
-				recordTracksEvent( 'calypso_edit_gravatar_file_receive_failure' ),
-				bumpStat( 'calypso_gravatar_update_error', statName )
-			),
-			{
-				type: GRAVATAR_RECEIVE_IMAGE_FAILURE,
-				errorMessage,
-			}
-		)
-	);
-	dispatch( errorNotice( errorMessage, { id: 'gravatar-upload' } ) );
-};
+export const receiveGravatarImageFailed =
+	( { errorMessage, statName } ) =>
+	( dispatch ) => {
+		dispatch(
+			withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_edit_gravatar_file_receive_failure' ),
+					bumpStat( 'calypso_gravatar_update_error', statName )
+				),
+				{
+					type: GRAVATAR_RECEIVE_IMAGE_FAILURE,
+					errorMessage,
+				}
+			)
+		);
+		dispatch( errorNotice( errorMessage, { id: 'gravatar-upload' } ) );
+	};

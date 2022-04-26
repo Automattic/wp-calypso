@@ -54,13 +54,9 @@ const PostScheduleExample = localize(
 					eventsByDay: [],
 					showTooltip: false,
 					tooltipContext: null,
-				};
-			}
 
-			UNSAFE_componentWillMount() {
-				this.setState( {
 					isFuture: true,
-				} );
+				};
 			}
 
 			setDate = ( date ) => {

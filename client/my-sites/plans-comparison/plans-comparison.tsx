@@ -15,12 +15,14 @@ import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
 import { PlansComparisonAction } from './plans-comparison-action';
 import { PlansComparisonColHeader } from './plans-comparison-col-header';
 import { planComparisonFeatures } from './plans-comparison-features';
 import { PlansComparisonRow, DesktopContent, MobileContent } from './plans-comparison-row';
+import { PlansDomainConnectionInfo } from './plans-domain-connection-info';
 import { usePlanPrices, PlanPrices } from './use-plan-prices';
 import type { WPComPlan } from '@automattic/calypso-products';
 import type { RequestCartProduct as CartItem } from '@automattic/shopping-cart';
@@ -70,8 +72,8 @@ export const globalOverrides = css`
 			box-shadow: 0 1px 0 1px rgba( 0, 0, 0, 0.1 );
 		}
 
-		.is-nav-unification .sidebar .sidebar__heading::after,
-		.is-nav-unification .sidebar .sidebar__menu-link::after {
+		.sidebar .sidebar__heading::after,
+		.sidebar .sidebar__menu-link::after {
 			html[dir='ltr'] & {
 				margin-right: -1px;
 				border-right-color: #fdfdfd;
@@ -394,6 +396,7 @@ interface Props {
 	isInSignup?: boolean;
 	selectedSiteId?: number;
 	selectedSiteSlug?: string;
+	selectedDomainConnection?: boolean;
 	hideFreePlan?: boolean;
 	purchaseId?: number | null;
 	onSelectPlan: ( item: Partial< CartItem > | null ) => void;
@@ -414,10 +417,14 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	isInSignup = false,
 	selectedSiteId,
 	selectedSiteSlug,
+	selectedDomainConnection,
 	purchaseId,
 	hideFreePlan,
 	onSelectPlan,
 } ) => {
+	const legacySiteWithHigherLimits = useSelector( ( state ) =>
+		isLegacySiteWithHigherLimits( state, selectedSiteId || 0 )
+	);
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSiteId || null ) );
 	const [ showCollapsibleRows, setShowCollapsibleRows ] = useState( false );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? '';
@@ -467,6 +474,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 								originalPrice={ prices[ index ].originalPrice }
 								translate={ translate }
 							>
+								{ selectedDomainConnection && <PlansDomainConnectionInfo plan={ plan } /> }
 								<PlansComparisonAction
 									currentSitePlanSlug={ sitePlan?.product_slug }
 									plan={ plan }
@@ -474,6 +482,9 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 									isPrimary={ plan.type === TYPE_PRO }
 									isCurrentPlan={ sitePlan?.product_slug === plan.getStoreSlug() }
 									manageHref={ manageHref }
+									disabled={
+										selectedDomainConnection && [ TYPE_FREE, TYPE_FLEXIBLE ].includes( plan.type )
+									}
 									onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
 								/>
 							</PlansComparisonColHeader>
@@ -482,12 +493,22 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 				</THead>
 				<tbody className="plans-comparison__rows">
 					{ planComparisonFeatures.slice( 0, 7 ).map( ( feature ) => (
-						<PlansComparisonRow feature={ feature } plans={ plans } key={ feature.features[ 0 ] } />
+						<PlansComparisonRow
+							feature={ feature }
+							plans={ plans }
+							isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
+							key={ feature.features[ 0 ] }
+						/>
 					) ) }
 				</tbody>
 				<tbody className={ collapsibleRowsclassName }>
 					{ planComparisonFeatures.slice( 7 ).map( ( feature ) => (
-						<PlansComparisonRow feature={ feature } plans={ plans } key={ feature.features[ 0 ] } />
+						<PlansComparisonRow
+							feature={ feature }
+							plans={ plans }
+							isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
+							key={ feature.features[ 0 ] }
+						/>
 					) ) }
 				</tbody>
 				<tbody>

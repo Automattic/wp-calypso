@@ -34,11 +34,10 @@ const useBackupTimeDisplay = ( activityTs: number ) => {
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 
-	return useMemo( () => applySiteOffset( activityTs, { gmtOffset, timezone } ).format( 'LT' ), [
-		activityTs,
-		gmtOffset,
-		timezone,
-	] );
+	return useMemo(
+		() => applySiteOffset( activityTs, { gmtOffset, timezone } ).format( 'LT' ),
+		[ activityTs, gmtOffset, timezone ]
+	);
 };
 
 type OwnProps = {

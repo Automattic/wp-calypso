@@ -6,7 +6,8 @@ export type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
 const panel = 'div.interface-interface-skeleton__header';
 const selectors = {
 	// Block Inserter
-	blockInserterButton: `${ panel } button.edit-post-header-toolbar__inserter-toggle`,
+	// Note the partial class match. This is to support site and post editor. We can't use aria-label because of i18n. :(
+	blockInserterButton: `${ panel } button[class*="header-toolbar__inserter-toggle"]`,
 
 	// Draft
 	saveDraftButton: ( state: 'disabled' | 'enabled' ) => {
@@ -35,6 +36,20 @@ const selectors = {
 
 	// Editor settings
 	settingsButton: `${ panel } .edit-post-header__settings .interface-pinned-items button:first-child`,
+
+	// Undo/Redo
+	undoButton: 'button[aria-disabled=false][aria-label="Undo"]',
+	redoButton: 'button[aria-disabled=false][aria-label="Redo"]',
+
+	// More options
+	moreOptionsButton: `${ panel } button[aria-label="Options"]`,
+
+	// Site editor save
+	saveSiteEditorButton: `${ panel } button.edit-site-save-button__button`,
+
+	// Nav sidebar
+	navSidebarButton:
+		'button[aria-label="Block editor sidebar"],button[aria-label="Toggle navigation"]',
 };
 
 /**
@@ -228,6 +243,32 @@ export class EditorToolbarComponent {
 		await locator.click();
 	}
 
+	/* Navigation sidebar */
+
+	/**
+	 * Opens the nav sidebar.
+	 */
+	async openNavSidebar(): Promise< void > {
+		if ( await this.targetIsOpen( selectors.navSidebarButton ) ) {
+			return;
+		}
+
+		const locator = this.editor.locator( selectors.navSidebarButton );
+		await locator.click();
+	}
+
+	/**
+	 * Closes the nav sidebar.
+	 */
+	async closeNavSidebar(): Promise< void > {
+		if ( ! ( await this.targetIsOpen( selectors.navSidebarButton ) ) ) {
+			return;
+		}
+
+		const locator = this.editor.locator( selectors.navSidebarButton );
+		await locator.click();
+	}
+
 	/* List view */
 
 	/**
@@ -280,6 +321,46 @@ export class EditorToolbarComponent {
 		}
 
 		const locator = this.editor.locator( selectors.detailsButton );
+		await locator.click();
+	}
+
+	/**
+	 * Click the editor undo button. Throws an error if the button is not enabled.
+	 *
+	 * @throws If the undo button is not enabled.
+	 */
+	async undo(): Promise< void > {
+		const locator = this.editor.locator( selectors.undoButton );
+		await locator.click();
+	}
+
+	/**
+	 * Click the editor redo button. Throws an error if the button is not enabled.
+	 *
+	 * @throws If the redo button is not enabled.
+	 */
+	async redo(): Promise< void > {
+		const locator = this.editor.locator( selectors.redoButton );
+		await locator.click();
+	}
+
+	/**
+	 * Opens the more options menu (three dots).
+	 */
+	async openMoreOptionsMenu(): Promise< void > {
+		if ( ! ( await this.targetIsOpen( selectors.moreOptionsButton ) ) ) {
+			const locator = this.editor.locator( selectors.moreOptionsButton );
+			await locator.click();
+		}
+	}
+
+	/** FSE unique buttons */
+
+	/**
+	 * Click the save button (publish equivalent) for the full site editor.
+	 */
+	async saveSiteEditor(): Promise< void > {
+		const locator = this.editor.locator( selectors.saveSiteEditorButton );
 		await locator.click();
 	}
 }

@@ -122,10 +122,9 @@ export default function WPCOMBusinessAT(): ReactElement {
 
 	// Gets the site eligibility data.
 	const isEligible = useSelector( ( state ) => isEligibleForAutomatedTransfer( state, siteId ) );
-	const {
-		eligibilityHolds: holds,
-		eligibilityWarnings: warnings,
-	}: EligibilityData = useSelector( ( state ) => getEligibility( state, siteId ) );
+	const { eligibilityHolds: holds, eligibilityWarnings: warnings }: EligibilityData = useSelector(
+		( state ) => getEligibility( state, siteId )
+	);
 
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )

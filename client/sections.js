@@ -455,6 +455,12 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
+		name: 'jetpack-cloud-agency-dashboard',
+		paths: [ '/dashboard' ],
+		module: 'calypso/jetpack-cloud/sections/agency-dashboard',
+		group: 'jetpack-cloud',
+	},
+	{
 		name: 'jetpack-cloud-settings',
 		paths: [ '/settings' ],
 		module: 'calypso/jetpack-cloud/sections/settings',
@@ -476,8 +482,7 @@ const sections = [
 		links: [
 			{
 				rel: 'stylesheet',
-				href:
-					'https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap',
+				href: 'https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap',
 			},
 		],
 	},

@@ -180,10 +180,8 @@ describe( 'Checkout', () => {
 		beforeEach( () => {
 			MyCheckout = ( props ) => {
 				const [ paymentData, setPaymentData ] = useState( {} );
-				const {
-					stepObjectsWithStepNumber,
-					stepObjectsWithoutStepNumber,
-				} = createStepsFromStepObjects( props.steps || steps );
+				const { stepObjectsWithStepNumber, stepObjectsWithoutStepNumber } =
+					createStepsFromStepObjects( props.steps || steps );
 				const createStepFromStepObject = createStepObjectConverter( paymentData );
 				return (
 					<myContext.Provider value={ [ paymentData, setPaymentData ] }>

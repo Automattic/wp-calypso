@@ -1,9 +1,5 @@
 import { Browser } from 'playwright';
 
-// TODO: These doesn't seem to be used?
-export type Plans = typeof PlansArray[ number ];
-export const PlansArray = [ 'Free', 'Personal', 'Premium', 'Business', 'eCommerce' ] as const;
-
 // Because these types are ultimately accessed on "window", adding them here.
 export interface TracksEventProperties {
 	[ key: string ]: boolean | number | string;

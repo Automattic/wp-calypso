@@ -117,14 +117,16 @@ const ThreatItem: React.FC< Props > = ( {
 		}
 
 		return (
-			<p className="threat-item threat-description__section-text">
-				{ getThreatFix( threat.fixable ) }
-				<p>
+			<>
+				<p className="threat-item threat-description__section-text">
 					{ translate(
 						'Jetpack Scan is able to automatically fix this threat for you. Since it will replace the affected file or directory the site’s look-and-feel or features can be compromised. We recommend that you check if your latest backup was performed successfully in case a restore is needed.'
 					) }
 				</p>
-			</p>
+				<p className="threat-item threat-description__section-text">
+					{ getThreatFix( threat.fixable ) }
+				</p>
+			</>
 		);
 	}, [ threat ] );
 

@@ -879,13 +879,8 @@ class PurchaseNotice extends Component {
 	};
 
 	renderExpiredRenewNotice() {
-		const {
-			purchase,
-			purchaseAttachedTo,
-			selectedSite,
-			translate,
-			getManagePurchaseUrlFor,
-		} = this.props;
+		const { purchase, purchaseAttachedTo, selectedSite, translate, getManagePurchaseUrlFor } =
+			this.props;
 
 		// For purchases included with a plan (for example, a domain mapping
 		// bundled with the plan), the plan purchase is used on this page when

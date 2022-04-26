@@ -121,14 +121,8 @@ class HandleEmailedLinkForm extends Component {
 	}
 
 	render() {
-		const {
-			currentUser,
-			emailAddress,
-			isExpired,
-			isFetching,
-			translate,
-			initialQuery,
-		} = this.props;
+		const { currentUser, emailAddress, isExpired, isFetching, translate, initialQuery } =
+			this.props;
 		const isWooDna = wooDnaConfig( initialQuery ).isWooDnaFlow();
 
 		if ( isExpired ) {

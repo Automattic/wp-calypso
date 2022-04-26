@@ -47,12 +47,14 @@ const BackupCard: FunctionComponent< Props > = ( {
 
 	const restoreRef = useRef( null );
 	const [ isTooltipVisible, setTooltipVisibility ] = useState( false );
-	const onRestoreButtonEnter = useCallback( () => setTooltipVisibility( true ), [
-		setTooltipVisibility,
-	] );
-	const onRestoreButtonLeave = useCallback( () => setTooltipVisibility( false ), [
-		setTooltipVisibility,
-	] );
+	const onRestoreButtonEnter = useCallback(
+		() => setTooltipVisibility( true ),
+		[ setTooltipVisibility ]
+	);
+	const onRestoreButtonLeave = useCallback(
+		() => setTooltipVisibility( false ),
+		[ setTooltipVisibility ]
+	);
 	const onDownloadClick = useCallback(
 		() =>
 			dispatch(

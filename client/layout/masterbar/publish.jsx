@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { navigate } from 'calypso/lib/navigate';
-import { reduxGetState } from 'calypso/lib/redux-bridge';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';
@@ -58,8 +57,7 @@ class MasterbarItemNew extends Component {
 	}
 
 	onSiteSelect = ( siteId ) => {
-		const redirectUrl = getEditorUrl( reduxGetState(), siteId, null, 'post' );
-		this.props.openEditor( redirectUrl );
+		this.props.openEditorForSite( siteId );
 		return true; // handledByHost = true, don't let the component nav
 	};
 
@@ -110,9 +108,10 @@ class MasterbarItemNew extends Component {
 	}
 }
 
-const openEditor = ( editorUrl ) => ( dispatch ) => {
+const openEditorForSite = ( siteId ) => ( dispatch, getState ) => {
+	const redirectUrl = getEditorUrl( getState(), siteId, null, 'post' );
 	dispatch( recordTracksEvent( 'calypso_masterbar_write_button_clicked' ) );
-	navigate( editorUrl );
+	navigate( redirectUrl );
 };
 
 export default connect(
@@ -134,5 +133,5 @@ export default connect(
 
 		return { shouldOpenSiteSelector, editorUrl, draftCount };
 	},
-	{ openEditor }
+	{ openEditorForSite }
 )( MasterbarItemNew );

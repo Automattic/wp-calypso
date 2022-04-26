@@ -122,9 +122,8 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				if (
 					experimentNameToWrappedExperimentAssignmentFetchAndStore[ experimentName ] === undefined
 				) {
-					experimentNameToWrappedExperimentAssignmentFetchAndStore[
-						experimentName
-					] = createWrappedExperimentAssignmentFetchAndStore( experimentName );
+					experimentNameToWrappedExperimentAssignmentFetchAndStore[ experimentName ] =
+						createWrappedExperimentAssignmentFetchAndStore( experimentName );
 				}
 
 				// Temporarilly running an A/B experiment on the timeout, see https://github.com/Automattic/wp-calypso/pull/54507

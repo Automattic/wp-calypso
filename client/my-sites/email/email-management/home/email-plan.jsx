@@ -283,14 +283,8 @@ const EmailPlan = ( props ) => {
 		);
 	}
 
-	const {
-		currentRoute,
-		domain,
-		selectedSite,
-		hasSubscription,
-		purchase,
-		isLoadingPurchase,
-	} = props;
+	const { currentRoute, domain, selectedSite, hasSubscription, purchase, isLoadingPurchase } =
+		props;
 
 	// Ensure we check for email forwarding additions and removals
 	const shouldQueryEmailForwards = shouldCheckForEmailForwards( domain );

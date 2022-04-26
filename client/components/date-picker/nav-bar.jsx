@@ -3,10 +3,12 @@ import { translate } from 'i18n-calypso';
 
 const noop = () => {};
 
-const handleMonthClick = ( onClick = noop ) => ( event ) => {
-	event.preventDefault();
-	onClick();
-};
+const handleMonthClick =
+	( onClick = noop ) =>
+	( event ) => {
+		event.preventDefault();
+		onClick();
+	};
 
 export const DatePickerNavBar = ( {
 	nextMonth,

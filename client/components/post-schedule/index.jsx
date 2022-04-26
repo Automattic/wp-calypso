@@ -13,6 +13,9 @@ import { convertDateToUserLocation, convertDateToGivenOffset } from './utils';
 import './style.scss';
 
 const noop = () => {};
+const getDateToUserLocation = ( date, timezone, gmtOffset ) => {
+	return convertDateToUserLocation( date || new Date(), timezone, gmtOffset );
+};
 
 export default class PostSchedule extends Component {
 	static propTypes = {
@@ -44,35 +47,19 @@ export default class PostSchedule extends Component {
 		showTooltip: false,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		if ( ! this.props.selectedDay ) {
-			return this.setState( {
+	static getDerivedStateFromProps( { selectedDay, timezone, gmtOffset }, { isFutureDate } ) {
+		if ( ! selectedDay ) {
+			return {
 				localizedDate: null,
 				isFutureDate: false,
-			} );
+			};
 		}
 
-		const localizedDate = this.getDateToUserLocation( this.props.selectedDay );
-		this.setState( {
+		const localizedDate = getDateToUserLocation( selectedDay, timezone, gmtOffset );
+		return {
 			localizedDate,
-			isFutureDate: localizedDate.isAfter(),
-		} );
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.selectedDay === nextProps.selectedDay ) {
-			return;
-		}
-
-		if ( ! nextProps.selectedDay ) {
-			return this.setState( { localizedDate: null } );
-		}
-
-		this.setState( {
-			localizedDate: this.getDateToUserLocation( nextProps.selectedDay ),
-		} );
+			isFutureDate: isFutureDate === undefined ? localizedDate.isAfter() : isFutureDate,
+		};
 	}
 
 	getLocaleUtils() {
@@ -100,11 +87,7 @@ export default class PostSchedule extends Component {
 	}
 
 	getDateToUserLocation( date ) {
-		return convertDateToUserLocation(
-			date || new Date(),
-			this.props.timezone,
-			this.props.gmtOffset
-		);
+		return getDateToUserLocation( date, this.props.timezone, this.props.gmtOffset );
 	}
 
 	setCurrentMonth = ( date ) => {

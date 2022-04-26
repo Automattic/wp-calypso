@@ -10,24 +10,49 @@ import type { Vertical } from 'calypso/components/select-vertical/types';
 import './form.scss';
 
 interface Props {
+	defaultVertical?: string;
 	isSkipSynonyms?: boolean;
+	isBusy?: boolean;
 	onSelect?: ( vertical: Vertical ) => void;
-	onSubmit?: ( event: React.FormEvent ) => void;
+	onSubmit?: ( event: React.FormEvent, userInput: string ) => void;
 }
 
-const SiteVerticalForm: React.FC< Props > = ( { isSkipSynonyms, onSelect, onSubmit } ) => {
+const SiteVerticalForm: React.FC< Props > = ( {
+	defaultVertical,
+	isSkipSynonyms,
+	isBusy,
+	onSelect,
+	onSubmit,
+} ) => {
 	const translate = useTranslate();
+	const [ userInput, setUserInput ] = React.useState( '' );
 
 	return (
-		<form className="site-vertical__form" onSubmit={ onSubmit }>
+		<form
+			className="site-vertical__form"
+			onSubmit={ ( event: React.FormEvent ) => {
+				onSubmit?.( event, userInput );
+			} }
+		>
 			<FormFieldset className="site-vertical__form-fieldset">
-				<SelectVertical isSkipSynonyms={ isSkipSynonyms } onSelect={ onSelect } />
+				<SelectVertical
+					defaultVertical={ defaultVertical }
+					isSkipSynonyms={ isSkipSynonyms }
+					onInputChange={ setUserInput }
+					onSelect={ onSelect }
+				/>
 				<FormSettingExplanation>
 					<Icon className="site-vertical__form-icon" icon={ tip } size={ 20 } />
 					{ translate( 'We will use this information to guide you towards next steps.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
-			<Button className="site-vertical__submit-button" type="submit" primary>
+			<Button
+				className="site-vertical__submit-button"
+				type="submit"
+				disabled={ isBusy }
+				busy={ isBusy }
+				primary
+			>
 				{ translate( 'Continue' ) }
 			</Button>
 		</form>

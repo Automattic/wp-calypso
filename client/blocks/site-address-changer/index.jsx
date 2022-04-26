@@ -328,14 +328,8 @@ export class SiteAddressChanger extends Component {
 	};
 
 	renderNewAddressForm = () => {
-		const {
-			currentDomain,
-			isAvailable,
-			siteId,
-			selectedSiteSlug,
-			translate,
-			isAtomicSite,
-		} = this.props;
+		const { currentDomain, isAvailable, siteId, selectedSiteSlug, translate, isAtomicSite } =
+			this.props;
 
 		if ( isAtomicSite ) {
 			return (

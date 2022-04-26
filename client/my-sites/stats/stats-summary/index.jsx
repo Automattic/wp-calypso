@@ -66,15 +66,8 @@ class StatsSummaryChart extends Component {
 	}
 
 	render() {
-		const {
-			dataKey,
-			isLoading,
-			labelClass,
-			labelKey,
-			numberFormat,
-			selected,
-			tabLabel,
-		} = this.props;
+		const { dataKey, isLoading, labelClass, labelKey, numberFormat, selected, tabLabel } =
+			this.props;
 		const label = selected ? ': ' + selected[ labelKey ] : '';
 		const tabOptions = {
 			attr: labelKey,

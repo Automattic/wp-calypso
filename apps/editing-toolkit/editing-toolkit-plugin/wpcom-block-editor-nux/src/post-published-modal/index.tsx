@@ -3,8 +3,10 @@ import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import React from 'react';
 import NuxModal from '../nux-modal';
 import postPublishedImage from './images/post-published.svg';
+
 import './style.scss';
 
 /**
@@ -23,10 +25,8 @@ const PostPublishedModal: React.FC = () => {
 	);
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
-	const {
-		fetchShouldShowFirstPostPublishedModal,
-		setShouldShowFirstPostPublishedModal,
-	} = useDispatch( 'automattic/wpcom-welcome-guide' );
+	const { fetchShouldShowFirstPostPublishedModal, setShouldShowFirstPostPublishedModal } =
+		useDispatch( 'automattic/wpcom-welcome-guide' );
 
 	useEffect( () => {
 		fetchShouldShowFirstPostPublishedModal();
@@ -57,6 +57,11 @@ const PostPublishedModal: React.FC = () => {
 		setShouldShowFirstPostPublishedModal,
 	] );
 
+	const handleClick = ( event: React.MouseEvent ) => {
+		event.preventDefault();
+		( window.top as Window ).location.href = link;
+	};
+
 	return (
 		<NuxModal
 			isOpen={ isOpen }
@@ -68,7 +73,7 @@ const PostPublishedModal: React.FC = () => {
 			) }
 			imageSrc={ postPublishedImage }
 			actionButtons={
-				<Button isPrimary href={ link }>
+				<Button isPrimary onClick={ handleClick }>
 					{ __( 'View Post', 'full-site-editing' ) }
 				</Button>
 			}

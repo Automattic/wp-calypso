@@ -136,7 +136,9 @@ class ManagePurchase extends Component {
 		showHeader: PropTypes.bool,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
+		selectedSiteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
+		isSiteLevel: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -879,11 +881,10 @@ class ManagePurchase extends Component {
 					eventName="calypso_manage_purchase_view"
 					purchaseId={ this.props.purchaseId }
 				/>
-				{ this.props.siteId ? (
-					<QuerySitePurchases siteId={ this.props.siteId } />
-				) : (
-					<QueryUserPurchases />
-				) }
+				<PurchasesQueryComponent
+					isSiteLevel={ this.props.isSiteLevel }
+					selectedSiteId={ this.props.selectedSiteId }
+				/>
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 
@@ -911,13 +912,11 @@ class ManagePurchase extends Component {
 						getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
 					/>
 				) }
-				<AsyncLoad
-					require="calypso/blocks/product-plan-overlap-notices"
-					placeholder={ null }
-					plans={ JETPACK_PLANS }
-					products={ JETPACK_PRODUCTS_LIST }
-					siteId={ siteId }
-					currentPurchase={ purchase }
+				<PlanOverlapNotice
+					isSiteLevel={ this.props.isSiteLevel }
+					selectedSiteId={ this.props.selectedSiteId }
+					siteId={ this.props.siteId }
+					purchase={ this.props.purchase }
 				/>
 				{ this.renderPurchaseDetail( preventRenewal ) }
 				{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
@@ -937,6 +936,50 @@ function addPaymentMethodLinkText( { purchase, translate } ) {
 	return linkText;
 }
 
+function PlanOverlapNotice( { isSiteLevel, selectedSiteId, siteId, purchase } ) {
+	if ( isSiteLevel ) {
+		if ( ! selectedSiteId ) {
+			// Probably still loading
+			return null;
+		}
+		return (
+			<AsyncLoad
+				require="calypso/blocks/product-plan-overlap-notices"
+				placeholder={ null }
+				plans={ JETPACK_PLANS }
+				products={ JETPACK_PRODUCTS_LIST }
+				siteId={ selectedSiteId }
+				currentPurchase={ purchase }
+			/>
+		);
+	}
+	if ( ! siteId ) {
+		// Probably still loading
+		return null;
+	}
+	return (
+		<AsyncLoad
+			require="calypso/blocks/product-plan-overlap-notices"
+			placeholder={ null }
+			plans={ JETPACK_PLANS }
+			products={ JETPACK_PRODUCTS_LIST }
+			siteId={ siteId }
+			currentPurchase={ purchase }
+		/>
+	);
+}
+
+function PurchasesQueryComponent( { isSiteLevel, selectedSiteId } ) {
+	if ( isSiteLevel ) {
+		if ( ! selectedSiteId ) {
+			// Probably still loading
+			return null;
+		}
+		return <QuerySitePurchases siteId={ selectedSiteId } />;
+	}
+	return <QueryUserPurchases />;
+}
+
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
 	const purchaseAttachedTo =
@@ -944,7 +987,7 @@ export default connect( ( state, props ) => {
 			? getByPurchaseId( state, purchase.attachedToPurchaseId )
 			: null;
 	const selectedSiteId = getSelectedSiteId( state );
-	const siteId = selectedSiteId || ( purchase ? purchase.siteId : null );
+	const siteId = purchase?.siteId ?? null;
 	const purchases = purchase && getSitePurchases( state, purchase.siteId );
 	const userId = getCurrentUserId( state );
 	const isProductOwner = purchase && purchase.userId === userId;
@@ -960,7 +1003,7 @@ export default connect( ( state, props ) => {
 	return {
 		hasLoadedDomains,
 		hasLoadedSites,
-		hasLoadedPurchasesFromServer: selectedSiteId
+		hasLoadedPurchasesFromServer: props.isSiteLevel
 			? hasLoadedSitePurchasesFromServer( state )
 			: hasLoadedUserPurchasesFromServer( state ),
 		hasNonPrimaryDomainsFlag: getCurrentUser( state )
@@ -972,6 +1015,7 @@ export default connect( ( state, props ) => {
 		purchases,
 		purchaseAttachedTo,
 		siteId,
+		selectedSiteId,
 		isProductOwner,
 		site,
 		renewableSitePurchases,

@@ -14,12 +14,10 @@ export const StatsNoContentBanner = ( {
 	siteId,
 	siteSlug,
 }: StatsNoContentBannerProps ): JSX.Element | null => {
-	const {
-		data: hasNeverPublishedPost,
-		isLoading: isHasNeverPublishedPostLoading,
-	} = useHasNeverPublishedPost( siteId ?? null, true, {
-		retry: false,
-	} );
+	const { data: hasNeverPublishedPost, isLoading: isHasNeverPublishedPostLoading } =
+		useHasNeverPublishedPost( siteId ?? null, true, {
+			retry: false,
+		} );
 
 	if ( ! hasNeverPublishedPost || isHasNeverPublishedPostLoading ) {
 		return null;

@@ -41,14 +41,8 @@ class SiteTopicForm extends Component {
 	};
 
 	onSubmit = ( event ) => {
-		const {
-			isUserInput,
-			siteSlug,
-			siteTopic,
-			suggestedTheme,
-			verticalId,
-			verticalParentId,
-		} = this.props;
+		const { isUserInput, siteSlug, siteTopic, suggestedTheme, verticalId, verticalParentId } =
+			this.props;
 
 		event.preventDefault();
 

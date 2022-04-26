@@ -13,10 +13,12 @@ import {
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
-const setTargetState = ( value ) => ( state, { target } ) => ( {
-	...state,
-	[ target ]: value,
-} );
+const setTargetState =
+	( value ) =>
+	( state, { target } ) => ( {
+		...state,
+		[ target ]: value,
+	} );
 
 const isUpdating = ( state = {}, action ) => {
 	switch ( action.type ) {

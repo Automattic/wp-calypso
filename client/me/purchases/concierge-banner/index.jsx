@@ -100,13 +100,8 @@ class ConciergeBanner extends Component {
 			return this.placeholder();
 		}
 
-		const {
-			headerText,
-			mainText,
-			buttonText,
-			buttonHref,
-			illustrationUrl,
-		} = this.getBannerContent();
+		const { headerText, mainText, buttonText, buttonHref, illustrationUrl } =
+			this.getBannerContent();
 
 		return (
 			<>

@@ -4,13 +4,14 @@ import { useCallback, useEffect, useMemo } from 'react';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { getJetpackStorageUpgradeUrl } from 'calypso/state/plans/selectors';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import cloudSuccessIcon from './icons/cloud-success.svg';
 import './style.scss';
 
@@ -54,7 +55,10 @@ const VisibleDaysLimit: React.FC< OwnProps > = ( { selectedDate } ) => {
 		);
 	}, [ dispatch, siteId ] );
 
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const storageUpgradeUrl = useSelector( ( state ) =>
+		getJetpackStorageUpgradeUrl( state, siteSlug )
+	);
 
 	return (
 		<div className="visible-days-limit">
@@ -79,9 +83,7 @@ const VisibleDaysLimit: React.FC< OwnProps > = ( { selectedDate } ) => {
 				</p>
 				<Button
 					className="status-card__button"
-					href={
-						isJetpackCloud() ? `/pricing/storage/${ siteSlug }` : `/plans/storage/${ siteSlug }`
-					}
+					href={ storageUpgradeUrl }
 					onClick={ recordUpsellButtonClick }
 				>
 					{ translate( 'Upgrade storage' ) }

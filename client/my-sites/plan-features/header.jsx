@@ -36,12 +36,8 @@ const PLANS_LIST = getPlans();
 
 export class PlanFeaturesHeader extends Component {
 	render() {
-		const {
-			isInSignup,
-			plansWithScroll,
-			planType,
-			isInVerticalScrollingPlansExperiment,
-		} = this.props;
+		const { isInSignup, plansWithScroll, planType, isInVerticalScrollingPlansExperiment } =
+			this.props;
 
 		if ( planType === PLAN_P2_FREE ) {
 			return this.renderPlansHeaderP2Free();

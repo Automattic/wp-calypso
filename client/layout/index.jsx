@@ -231,11 +231,6 @@ class Layout extends Component {
 		const optionalBodyProps = () => {
 			const bodyClass = [ 'font-smoothing-antialiased' ];
 
-			if ( ! config.isEnabled( 'jetpack-cloud' ) ) {
-				// Jetpack cloud hasn't yet aligned with WPCOM.
-				bodyClass.push( 'is-nav-unification' );
-			}
-
 			if ( this.props.sidebarIsCollapsed && isWithinBreakpoint( '>800px' ) ) {
 				bodyClass.push( 'is-sidebar-collapsed' );
 			}

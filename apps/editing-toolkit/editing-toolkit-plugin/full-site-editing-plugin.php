@@ -232,32 +232,77 @@ function load_wpcom_block_editor_nux() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
 
 /**
- * Load editing toolkit block patterns from the API
+ * Return a function that loads and register block patterns from the API. This
+ * function can be registered to the `rest_dispatch_request` filter.
  *
- * @param obj $current_screen The current screen object.
+ * @param Function $register_patterns_func A function that when called will
+ * register the relevant block patterns in the registry.
  */
-function load_block_patterns_from_api( $current_screen ) {
-	if ( ! apply_filters( 'a8c_enable_block_patterns_api', false ) ) {
+function register_patterns_on_api_request( $register_patterns_func ) {
+	/**
+	 * Load editing toolkit block patterns from the API.
+	 *
+	 * It will only register the patterns for certain allowed requests and
+	 * return early otherwise.
+	 *
+	 * @param mixed           $response
+	 * @param WP_REST_Request $request
+	 */
+	return function ( $response, $request ) use ( $register_patterns_func ) {
+		$route = $request->get_route();
+		// Matches either /wp/v2/sites/123/block-patterns/patterns or /wp/v2/block-patterns/patterns
+		// to handle the API format of both WordPress.com and WordPress core.
+		$request_allowed = preg_match( '/^\/wp\/v2\/(sites\/[0-9]+\/)?block\-patterns\/(patterns|categories)$/', $route );
+
+		if ( ! $request_allowed || ! apply_filters( 'a8c_enable_block_patterns_api', false ) ) {
+			return $response;
+		};
+
+		$register_patterns_func();
+
+		return $response;
+	};
+}
+add_filter(
+	'rest_dispatch_request',
+	register_patterns_on_api_request(
+		function () {
+			require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
+			( new Block_Patterns_From_API() )->register_patterns();
+		}
+	),
+	10,
+	2
+);
+
+/**
+ * This function exists for back-compatibility. Patterns in Gutenberg v13.0.0 and
+ * newer are loaded over the API instead of injected into the document. While we
+ * register patterns in the API above, we still need to maintain compatibility
+ * with older Gutenberg versions and WP 5.9 without Gutenberg.
+ *
+ * This can be removed once the rest API approach is in core WordPress and available
+ * on Atomic and Simple sites. (Note that Atomic sites may disable the Gutenberg
+ * plugin, so we cannot guarantee its availability.)
+ *
+ * @param object $current_screen An object describing the wp-admin screen properties.
+ */
+function register_patterns_on_screen_load( $current_screen ) {
+	// No need to use this when the REST API approach is available.
+	if ( class_exists( 'WP_REST_Block_Pattern_Categories_Controller' ) || ! apply_filters( 'a8c_enable_block_patterns_api', false ) ) {
 		return;
 	}
 
 	$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
-
 	if ( ! $current_screen->is_block_editor && ! $is_site_editor ) {
 		return;
 	}
 
-	$editor_type = 'block_editor';
-
-	if ( $is_site_editor ) {
-		$editor_type = 'site_editor';
-	}
-
 	require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
-	$block_patterns_from_api = new Block_Patterns_From_API( $editor_type );
+	$block_patterns_from_api = new Block_Patterns_From_API();
 	$block_patterns_from_api->register_patterns();
 }
-add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
+add_action( 'current_screen', __NAMESPACE__ . '\register_patterns_on_screen_load' );
 
 /**
  * Load Block Inserter Modifications module.

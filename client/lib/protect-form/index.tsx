@@ -9,7 +9,7 @@ import { useRef, useCallback, useEffect } from 'react';
  */
 const debug = debugModule( 'calypso:protect-form' );
 
-type FormId = [  ];
+type FormId = [];
 
 let formsChanged = new Set< FormId >();
 let listenerCount = 0;

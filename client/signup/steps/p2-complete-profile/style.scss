@@ -57,6 +57,7 @@
 	display: inline;
 	width: auto;
 	color: var( --p2-color-link );
+	font-size: inherit;
 
 	&:hover {
 		background: none;

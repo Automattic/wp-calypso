@@ -46,40 +46,42 @@ function getHighlightedProduct( productSlug?: string ): [ string, string ] | nul
 	return [ monthlySlug, yearlySlug ];
 }
 
-export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, next ) => {
-	// Get the selected site's current plan term, and set it as default duration
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	const urlQueryArgs: QueryArgs = context.query;
-	const { lang } = context.params;
-	const { site: siteParam, duration: durationParam } = getParamsFromContext( context );
-	const duration = siteId && ( getCurrentPlanTerm( state, siteId ) as Duration );
-	const planRecommendation = getPlanRecommendationFromContext( context );
-	const highlightedProducts = getHighlightedProduct( urlQueryArgs.plan ) || undefined;
+export const productSelect =
+	( rootUrl: string ): PageJS.Callback =>
+	( context, next ) => {
+		// Get the selected site's current plan term, and set it as default duration
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const urlQueryArgs: QueryArgs = context.query;
+		const { lang } = context.params;
+		const { site: siteParam, duration: durationParam } = getParamsFromContext( context );
+		const duration = siteId && ( getCurrentPlanTerm( state, siteId ) as Duration );
+		const planRecommendation = getPlanRecommendationFromContext( context );
+		const highlightedProducts = getHighlightedProduct( urlQueryArgs.plan ) || undefined;
 
-	const enableUserLicensesDialog = !! (
-		siteId &&
-		( isJetpackCloud() || context.path.startsWith( '/jetpack/connect/plans' ) )
-	);
+		const enableUserLicensesDialog = !! (
+			siteId &&
+			( isJetpackCloud() || context.path.startsWith( '/jetpack/connect/plans' ) )
+		);
 
-	context.primary = (
-		<SelectorPage
-			defaultDuration={ stringToDuration( durationParam ) || duration || TERM_ANNUALLY }
-			rootUrl={ rootUrl }
-			siteSlug={ siteParam || context.query.site }
-			urlQueryArgs={ urlQueryArgs }
-			highlightedProducts={ highlightedProducts }
-			nav={ context.nav }
-			header={ context.header }
-			footer={ context.footer }
-			planRecommendation={ planRecommendation }
-			enableUserLicensesDialog={ enableUserLicensesDialog }
-			locale={ lang }
-		/>
-	);
+		context.primary = (
+			<SelectorPage
+				defaultDuration={ stringToDuration( durationParam ) || duration || TERM_ANNUALLY }
+				rootUrl={ rootUrl }
+				siteSlug={ siteParam || context.query.site }
+				urlQueryArgs={ urlQueryArgs }
+				highlightedProducts={ highlightedProducts }
+				nav={ context.nav }
+				header={ context.header }
+				footer={ context.footer }
+				planRecommendation={ planRecommendation }
+				enableUserLicensesDialog={ enableUserLicensesDialog }
+				locale={ lang }
+			/>
+		);
 
-	next();
-};
+		next();
+	};
 
 export function jetpackFreeWelcome( context: PageJS.Context, next: () => void ): void {
 	context.primary = <JetpackFreeWelcomePage />;

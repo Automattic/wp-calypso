@@ -112,42 +112,42 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		handleCallback( currentStepIndex, config.options?.callbacks?.onMaximize );
 	}, [ config.options?.callbacks?.onMaximize, currentStepIndex ] );
 
-	const { styles: popperStyles, attributes: popperAttributes, update: popperUpdate } = usePopper(
-		referenceElement,
-		popperElement,
-		{
-			strategy: 'fixed',
-			placement: 'bottom',
-			modifiers: [
-				{
-					name: 'preventOverflow',
-					options: {
-						rootBoundary: 'document',
-						padding: 16, // same as the left/margin of the tour frame
-					},
+	const {
+		styles: popperStyles,
+		attributes: popperAttributes,
+		update: popperUpdate,
+	} = usePopper( referenceElement, popperElement, {
+		strategy: 'fixed',
+		placement: 'bottom',
+		modifiers: [
+			{
+				name: 'preventOverflow',
+				options: {
+					rootBoundary: 'document',
+					padding: 16, // same as the left/margin of the tour frame
 				},
-				{
-					name: 'arrow',
-					options: {
-						padding: 12,
-					},
+			},
+			{
+				name: 'arrow',
+				options: {
+					padding: 12,
 				},
-				{
-					name: 'offset',
-					options: {
-						offset: [ 0, showArrowIndicator() ? 12 : 10 ],
-					},
+			},
+			{
+				name: 'offset',
+				options: {
+					offset: [ 0, showArrowIndicator() ? 12 : 10 ],
 				},
-				{
-					name: 'flip',
-					options: {
-						fallbackPlacements: [ 'top', 'left', 'right' ],
-					},
+			},
+			{
+				name: 'flip',
+				options: {
+					fallbackPlacements: [ 'top', 'left', 'right' ],
 				},
-				...( config.options?.popperModifiers || [] ),
-			],
-		}
-	);
+			},
+			...( config.options?.popperModifiers || [] ),
+		],
+	} );
 
 	const stepRepositionProps =
 		! isMinimized && referenceElement && tourReady

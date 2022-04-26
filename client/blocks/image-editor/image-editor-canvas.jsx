@@ -79,11 +79,22 @@ export class ImageEditorCanvas extends Component {
 		this.isMounted = true;
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		if ( this.props.src !== newProps.src ) {
-			this.getImage( newProps.src );
+	componentDidUpdate( prevProps ) {
+		if ( this.props.src !== prevProps.src ) {
+			this.getImage( this.props.src );
 		}
+
+		this.drawImage();
+		this.updateCanvasPosition();
+	}
+
+	componentWillUnmount() {
+		if ( typeof window !== 'undefined' && this.onWindowResize ) {
+			window.removeEventListener( 'resize', this.onWindowResize );
+			window.cancelAnimationFrame( this.requestAnimationFrameId );
+		}
+
+		this.isMounted = false;
 	}
 
 	fetchImageBlob( src ) {
@@ -138,24 +149,6 @@ export class ImageEditorCanvas extends Component {
 
 		this.props.setImageEditorImageHasLoaded( this.image.width, this.image.height );
 	};
-
-	componentWillUnmount() {
-		if ( typeof window !== 'undefined' && this.onWindowResize ) {
-			window.removeEventListener( 'resize', this.onWindowResize );
-			window.cancelAnimationFrame( this.requestAnimationFrameId );
-		}
-
-		this.isMounted = false;
-	}
-
-	componentDidUpdate( prevProps ) {
-		if ( this.props.src !== prevProps.src ) {
-			this.getImage( this.props.src );
-		}
-
-		this.drawImage();
-		this.updateCanvasPosition();
-	}
 
 	toBlob( callback ) {
 		const { leftRatio, topRatio, widthRatio, heightRatio } = this.props.crop;

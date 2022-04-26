@@ -373,10 +373,8 @@ class PostCommentList extends Component {
 			commentCount,
 			followSource,
 		} = this.props;
-		const {
-			haveEarlierCommentsToFetch,
-			haveLaterCommentsToFetch,
-		} = this.props.commentsFetchingStatus;
+		const { haveEarlierCommentsToFetch, haveLaterCommentsToFetch } =
+			this.props.commentsFetchingStatus;
 
 		const amountOfCommentsToTake = this.props.startingCommentId
 			? Infinity
