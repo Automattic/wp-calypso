@@ -138,6 +138,7 @@ function P2ConfirmEmail( {
 				headerText={
 					isEmailVerified ? translate( 'Email confirmed' ) : translate( 'Check your email' )
 				}
+				stepIndicator={ translate( 'Step 2 of 3' ) }
 			>
 				<div className="p2-confirm-email">
 					{ isEmailVerified ? renderPostConfirmationNotice() : renderCheckEmailNotice() }

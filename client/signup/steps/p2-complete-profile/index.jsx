@@ -108,6 +108,7 @@ function P2CompleteProfile( {
 			subHeaderText={ __(
 				'Using a recognizable photo and name will help your team to identify you more easily.'
 			) }
+			stepIndicator={ __( 'Step 3 of 3' ) }
 		>
 			<div className="p2-complete-profile">
 				<div className="p2-complete-profile__avatar-wrapper">

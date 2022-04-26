@@ -46,6 +46,15 @@
 	}
 }
 
+.p2-step-wrapper__header-step-indicator {
+	position: absolute;
+	right: 24px;
+	top: 24px;
+	color: var( --p2-color-text-light );
+	font-size: 0.875rem;
+	font-weight: 500;
+}
+
 .p2-step-wrapper button.is-primary {
 	@extend %p2-form-button;
 }

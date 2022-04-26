@@ -479,6 +479,7 @@ export class UserStep extends Component {
 						components: { strong: <strong /> },
 					}
 				) }
+				stepIndicator={ this.props.translate( 'Step 1 of 3' ) }
 			>
 				{ this.renderSignupForm() }
 			</P2StepWrapper>
