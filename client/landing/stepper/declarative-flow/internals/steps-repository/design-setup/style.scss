@@ -280,3 +280,12 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		}
 	}
 }
+
+/* Hide categories from the sell intent */
+.design-picker__sell-intent {
+	.design-picker-category-filter__sidebar,
+	.design-picker-category-filter__dropdown,
+	.design-picker__category-heading-0 {
+		display: none;
+	}
+}

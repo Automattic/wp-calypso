@@ -102,24 +102,28 @@ export function userSettingsSaveFailure( { settingsOverride }, error ) {
  * After settings were successfully saved, update the settings stored in the Redux state,
  * clear the unsaved settings list, and re-fetch info about the user.
  */
-export const userSettingsSaveSuccess = ( { settingsOverride }, data ) => async ( dispatch ) => {
-	dispatch( saveUserSettingsSuccess( fromApi( data ) ) );
-	dispatch( clearUnsavedUserSettings( settingsOverride ? Object.keys( settingsOverride ) : null ) );
+export const userSettingsSaveSuccess =
+	( { settingsOverride }, data ) =>
+	async ( dispatch ) => {
+		dispatch( saveUserSettingsSuccess( fromApi( data ) ) );
+		dispatch(
+			clearUnsavedUserSettings( settingsOverride ? Object.keys( settingsOverride ) : null )
+		);
 
-	// Refetch the user data after saving user settings
-	await dispatch( fetchCurrentUser() );
+		// Refetch the user data after saving user settings
+		await dispatch( fetchCurrentUser() );
 
-	if ( settingsOverride?.user_email_change_pending !== undefined ) {
-		dispatch( successNotice( translate( 'The email change has been successfully canceled.' ) ) );
-		return;
-	}
+		if ( settingsOverride?.user_email_change_pending !== undefined ) {
+			dispatch( successNotice( translate( 'The email change has been successfully canceled.' ) ) );
+			return;
+		}
 
-	dispatch(
-		successNotice( translate( 'Settings saved successfully!' ), {
-			id: 'save-user-settings',
-		} )
-	);
-};
+		dispatch(
+			successNotice( translate( 'Settings saved successfully!' ), {
+				id: 'save-user-settings',
+			} )
+		);
+	};
 
 registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {
 	[ USER_SETTINGS_REQUEST ]: [

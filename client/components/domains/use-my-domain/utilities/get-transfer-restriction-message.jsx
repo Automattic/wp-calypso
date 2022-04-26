@@ -3,12 +3,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import moment from 'moment';
 
 export const getTransferRestrictionMessage = ( inboundTransferStatus ) => {
-	const {
-		domain,
-		termMaximumInYears,
-		transferEligibleDate,
-		transferRestrictionStatus,
-	} = inboundTransferStatus;
+	const { domain, termMaximumInYears, transferEligibleDate, transferRestrictionStatus } =
+		inboundTransferStatus;
 
 	let reason = null;
 

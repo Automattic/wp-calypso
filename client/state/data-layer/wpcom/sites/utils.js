@@ -121,27 +121,26 @@ export const updatePlaceholderComment = (
  * @param {object} rawError plain error object
  * @returns {Function} thunk
  */
-export const handleWriteCommentFailure = (
-	{ siteId, postId, parentCommentId, placeholderId },
-	rawError
-) => ( dispatch, getState ) => {
-	// Dispatch error notice
-	const post = getSitePost( getState(), siteId, postId );
-	const postTitle = post && post.title && post.title.trim().slice( 0, 20 ).trim().concat( '…' );
-	const error = postTitle
-		? translate( 'Could not add a reply to “%(postTitle)s”', { args: { postTitle } } )
-		: translate( 'Could not add a reply to this post' );
+export const handleWriteCommentFailure =
+	( { siteId, postId, parentCommentId, placeholderId }, rawError ) =>
+	( dispatch, getState ) => {
+		// Dispatch error notice
+		const post = getSitePost( getState(), siteId, postId );
+		const postTitle = post && post.title && post.title.trim().slice( 0, 20 ).trim().concat( '…' );
+		const error = postTitle
+			? translate( 'Could not add a reply to “%(postTitle)s”', { args: { postTitle } } )
+			: translate( 'Could not add a reply to this post' );
 
-	// Dispatch an error so we can record the failed comment placeholder in state
-	dispatch( {
-		type: COMMENTS_WRITE_ERROR,
-		siteId,
-		postId,
-		commentId: placeholderId,
-		parentCommentId,
-		error,
-		errorType: rawError && rawError.error,
-	} );
+		// Dispatch an error so we can record the failed comment placeholder in state
+		dispatch( {
+			type: COMMENTS_WRITE_ERROR,
+			siteId,
+			postId,
+			commentId: placeholderId,
+			parentCommentId,
+			error,
+			errorType: rawError && rawError.error,
+		} );
 
-	dispatch( errorNotice( error, { duration: 5000 } ) );
-};
+		dispatch( errorNotice( error, { duration: 5000 } ) );
+	};

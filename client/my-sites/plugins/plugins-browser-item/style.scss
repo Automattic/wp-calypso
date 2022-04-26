@@ -57,6 +57,19 @@
 	@include breakpoint-deprecated( '<960px' ) {
 		width: 100%;
 	}
+
+	&.incompatible {
+		.plugins-browser-item__link {
+			.external-link {
+				margin-bottom: 16px;
+				font-size: $font-body-small;
+			}
+
+			*:not( .external-link ) {
+				opacity: 0.6;
+			}
+		}
+	}
 }
 
 .plugins-browser-item__info {

@@ -1,10 +1,10 @@
 {
 	"name": "@automattic/format-currency",
-	"version": "1.0.0-alpha.0",
+	"version": "1.0.1",
 	"description": "JavaScript library for formatting currency.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.js",
+	"calypso:src": "src/index.ts",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -22,19 +22,23 @@
 	"license": "GPL-2.0-or-later",
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso",
-	"dependencies": {
-		"i18n-calypso": "workspace:^"
-	},
 	"scripts": {
-		"clean": "rm -rf dist",
-		"build": "transpile",
-		"prepack": "yarn run clean && yarn run build"
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepare": "yarn run build",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
-	"peerDependencies": {
-		"react": "^17.0.2"
+	"dependencies": {
+		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-typescript-config": "workspace:^"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^4.5.5"
 	},
-	"types": "types"
+	"files": [
+		"dist",
+		"src"
+	],
+	"types": "dist/types"
 }

@@ -12,14 +12,13 @@ interface Props {
 	};
 }
 
-const request = ( paging: { startingAfter: string; endingBefore: string } ) => (
-	dispatch: CalypsoDispatch,
-	getState: AppState
-) => {
-	if ( ! isFetchingStoredCards( getState() ) ) {
-		dispatch( fetchStoredCards( paging ) );
-	}
-};
+const request =
+	( paging: { startingAfter: string; endingBefore: string } ) =>
+	( dispatch: CalypsoDispatch, getState: AppState ) => {
+		if ( ! isFetchingStoredCards( getState() ) ) {
+			dispatch( fetchStoredCards( paging ) );
+		}
+	};
 
 export default function QueryJetpackPartnerPortalStoredCards( { paging }: Props ) {
 	const dispatch = useDispatch();

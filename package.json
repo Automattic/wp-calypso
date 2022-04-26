@@ -254,7 +254,7 @@
 		"postcss": "^8.4.5",
 		"postcss-cli": "^9.0.1",
 		"postcss-custom-properties": "^11.0.0",
-		"prettier": "npm:wp-prettier@2.2.1-beta-1",
+		"prettier": "npm:wp-prettier@2.6.2-beta-1",
 		"readline-sync": "^1.4.10",
 		"recursive-copy": "^2.0.10",
 		"replace": "^1.1.5",
@@ -278,7 +278,7 @@
 	},
 	"resolutions": {
 		"@automattic/newspack-blocks/swiper@4.5.1": "patch:swiper@4.5.1#.patches/swiper@4.5.1.diff",
-		"@automattic/newspack-blocks/prettier": "npm:wp-prettier@2.2.1-beta-1",
+		"@automattic/newspack-blocks/prettier": "npm:wp-prettier@2.6.2-beta-1",
 		"@types/react": "^17.0.39",
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0",
 		"lzma-native": "^8.0.5"

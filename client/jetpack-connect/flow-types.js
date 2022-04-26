@@ -4,9 +4,9 @@ import { UPSELL_PRODUCT_MATRIX } from 'calypso/my-sites/plans/jetpack-plans/cons
 // Offer Reset allows users to purchase two products at the same time. The allowed
 // combinations are stored in `OFFER_RESET_COMBINED_FLOW_TYPES`. From this matrix,
 // we get a list of strings that follow the `productSlug1,productSlug2` pattern.
-export const OFFER_RESET_COMBINED_FLOW_TYPES = Object.entries(
-	UPSELL_PRODUCT_MATRIX
-).map( ( fromTo ) => fromTo.join( ',' ) );
+export const OFFER_RESET_COMBINED_FLOW_TYPES = Object.entries( UPSELL_PRODUCT_MATRIX ).map(
+	( fromTo ) => fromTo.join( ',' )
+);
 
 // Since Offer Reset relies in this flow, we need to make sure we are supporting
 // all types that are part of Offer Reset.

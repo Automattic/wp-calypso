@@ -32,6 +32,9 @@ export const getSiteIdBySlug = ( _: State, slug: string ) => {
 export const getSiteTitle = ( _: State, siteId: number ) =>
 	select( STORE_KEY ).getSite( siteId )?.name;
 
+export const getSiteVerticalId = ( _: State, siteId: number ) =>
+	select( STORE_KEY ).getSite( siteId )?.options?.site_vertical_id;
+
 // @TODO: Return LaunchStatus instead of a boolean
 export const isSiteLaunched = ( state: State, siteId: number ) => {
 	return state.launchStatus[ siteId ]?.status === SiteLaunchStatus.SUCCESS;
@@ -54,6 +57,10 @@ export const getSiteSettings = ( state: State, siteId: number ) => {
 	return state.sitesSettings[ siteId ];
 };
 
+export const getSiteSetupError = ( state: State, siteId: number ) => {
+	return state.siteSetupErrors[ siteId ] || null;
+};
+
 export const getPrimarySiteDomain = ( _: State, siteId: number ) =>
 	select( STORE_KEY )
 		.getSiteDomains( siteId )
@@ -64,6 +71,22 @@ export const getSiteSubdomain = ( _: State, siteId: number ) =>
 		.getSiteDomains( siteId )
 		?.find( ( domain ) => domain.is_subdomain );
 
+export const getSiteLatestAtomicTransfer = ( state: State, siteId: number ) => {
+	return state.latestAtomicTransferStatus[ siteId ]?.transfer;
+};
+
+export const getSiteLatestAtomicTransferError = ( state: State, siteId: number ) => {
+	return state.latestAtomicTransferStatus[ siteId ]?.errorCode;
+};
+
+export const getAtomicSoftwareStatus = ( state: State, siteId: number, softwareSet: string ) => {
+	return state.atomicSoftwareStatus[ siteId ]?.[ softwareSet ]?.status;
+};
+
+export const getAtomicSoftwareError = ( state: State, siteId: number, softwareSet: string ) => {
+	return state.atomicSoftwareStatus[ siteId ]?.[ softwareSet ]?.error;
+};
+
 export const hasActiveSiteFeature = (
 	_: State,
 	siteId: number | undefined,
@@ -72,4 +95,25 @@ export const hasActiveSiteFeature = (
 	return Boolean(
 		siteId && select( STORE_KEY ).getSite( siteId )?.plan?.features.active.includes( featureKey )
 	);
+};
+
+export const hasAvailableSiteFeature = (
+	_: State,
+	siteId: number | undefined,
+	featureKey: string
+): boolean => {
+	return Boolean(
+		siteId && select( STORE_KEY ).getSite( siteId )?.plan?.features.available[ featureKey ]
+	);
+};
+
+export const requiresUpgrade = ( state: State, siteId: number | null ) => {
+	const isWoopFeatureActive = Boolean(
+		siteId && select( STORE_KEY ).hasActiveSiteFeature( siteId, 'woop' )
+	);
+	const hasWoopFeatureAvailable = Boolean(
+		siteId && select( STORE_KEY ).hasAvailableSiteFeature( siteId, 'woop' )
+	);
+
+	return Boolean( ! isWoopFeatureActive && hasWoopFeatureAvailable );
 };

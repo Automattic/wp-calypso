@@ -20,92 +20,89 @@ function getDefaultLocale(): Locale {
 	return getLocaleSlug?.() ?? 'en';
 }
 
-const setLocalizedUrlHost = ( hostname: string, validLocales: Locale[] = [] ) => (
-	url: URL,
-	locale: Locale
-) => {
-	if ( validLocales.includes( locale ) && locale !== 'en' ) {
-		// Avoid changing the hostname when the locale is set via the path.
-		if ( url.pathname.substr( 0, locale.length + 2 ) !== '/' + locale + '/' ) {
-			url.host = `${ localesToSubdomains[ locale ] || locale }.${ hostname }`;
+const setLocalizedUrlHost =
+	( hostname: string, validLocales: Locale[] = [] ) =>
+	( url: URL, locale: Locale ) => {
+		if ( validLocales.includes( locale ) && locale !== 'en' ) {
+			// Avoid changing the hostname when the locale is set via the path.
+			if ( url.pathname.substr( 0, locale.length + 2 ) !== '/' + locale + '/' ) {
+				url.host = `${ localesToSubdomains[ locale ] || locale }.${ hostname }`;
+			}
 		}
-	}
-	return url;
-};
+		return url;
+	};
 
-const setLocalizedWpComPath = (
-	prefix: string,
-	validLocales: Locale[] = [],
-	limitPathMatch: RegExp | null = null
-) => ( url: URL, localeSlug: Locale ) => {
-	url.host = 'wordpress.com';
-	if (
-		typeof limitPathMatch === 'object' &&
-		limitPathMatch instanceof RegExp &&
-		! limitPathMatch.test( url.pathname )
-	) {
-		validLocales = []; // only rewrite to English.
-	}
-	url.pathname = prefix + url.pathname;
+const setLocalizedWpComPath =
+	( prefix: string, validLocales: Locale[] = [], limitPathMatch: RegExp | null = null ) =>
+	( url: URL, localeSlug: Locale ) => {
+		url.host = 'wordpress.com';
+		if (
+			typeof limitPathMatch === 'object' &&
+			limitPathMatch instanceof RegExp &&
+			! limitPathMatch.test( url.pathname )
+		) {
+			validLocales = []; // only rewrite to English.
+		}
+		url.pathname = prefix + url.pathname;
 
-	if ( validLocales.includes( localeSlug ) && localeSlug !== 'en' ) {
-		url.pathname = localeSlug + url.pathname;
-	}
-	return url;
-};
+		if ( validLocales.includes( localeSlug ) && localeSlug !== 'en' ) {
+			url.pathname = localeSlug + url.pathname;
+		}
+		return url;
+	};
 
 type PrefixOrSuffix = 'prefix' | 'suffix';
 
-const prefixOrSuffixLocalizedUrlPath = (
-	validLocales: Locale[] = [],
-	limitPathMatch: RegExp | null = null,
-	prefixOrSuffix: PrefixOrSuffix
-) => ( url: URL, localeSlug: Locale ): URL => {
-	if ( typeof limitPathMatch === 'object' && limitPathMatch instanceof RegExp ) {
-		if ( ! limitPathMatch.test( url.pathname ) ) {
-			return url; // No rewriting if not matches the path.
+const prefixOrSuffixLocalizedUrlPath =
+	(
+		validLocales: Locale[] = [],
+		limitPathMatch: RegExp | null = null,
+		prefixOrSuffix: PrefixOrSuffix
+	) =>
+	( url: URL, localeSlug: Locale ): URL => {
+		if ( typeof limitPathMatch === 'object' && limitPathMatch instanceof RegExp ) {
+			if ( ! limitPathMatch.test( url.pathname ) ) {
+				return url; // No rewriting if not matches the path.
+			}
 		}
-	}
 
-	if ( ! validLocales.includes( localeSlug ) || localeSlug === 'en' ) {
+		if ( ! validLocales.includes( localeSlug ) || localeSlug === 'en' ) {
+			return url;
+		}
+
+		if ( prefixOrSuffix === 'prefix' ) {
+			url.pathname = localeSlug + url.pathname;
+		} else if ( prefixOrSuffix === 'suffix' ) {
+			// Make sure there's a slash between the path and the locale. Plus, if
+			// the path has a trailing slash, add one after the suffix too.
+			if ( url.pathname.endsWith( '/' ) ) {
+				url.pathname += localeSlug + '/';
+			} else {
+				url.pathname += '/' + localeSlug;
+			}
+		}
 		return url;
-	}
+	};
 
-	if ( prefixOrSuffix === 'prefix' ) {
-		url.pathname = localeSlug + url.pathname;
-	} else if ( prefixOrSuffix === 'suffix' ) {
-		// Make sure there's a slash between the path and the locale. Plus, if
-		// the path has a trailing slash, add one after the suffix too.
-		if ( url.pathname.endsWith( '/' ) ) {
-			url.pathname += localeSlug + '/';
-		} else {
-			url.pathname += '/' + localeSlug;
-		}
-	}
-	return url;
-};
+const prefixLocalizedUrlPath =
+	( validLocales: Locale[] = [], limitPathMatch: RegExp | null = null ) =>
+	( url: URL, localeSlug: Locale ): URL => {
+		return prefixOrSuffixLocalizedUrlPath(
+			validLocales,
+			limitPathMatch,
+			'prefix'
+		)( url, localeSlug );
+	};
 
-const prefixLocalizedUrlPath = (
-	validLocales: Locale[] = [],
-	limitPathMatch: RegExp | null = null
-) => ( url: URL, localeSlug: Locale ): URL => {
-	return prefixOrSuffixLocalizedUrlPath(
-		validLocales,
-		limitPathMatch,
-		'prefix'
-	)( url, localeSlug );
-};
-
-const suffixLocalizedUrlPath = (
-	validLocales: Locale[] = [],
-	limitPathMatch: RegExp | null = null
-) => ( url: URL, localeSlug: Locale ): URL => {
-	return prefixOrSuffixLocalizedUrlPath(
-		validLocales,
-		limitPathMatch,
-		'suffix'
-	)( url, localeSlug );
-};
+const suffixLocalizedUrlPath =
+	( validLocales: Locale[] = [], limitPathMatch: RegExp | null = null ) =>
+	( url: URL, localeSlug: Locale ): URL => {
+		return prefixOrSuffixLocalizedUrlPath(
+			validLocales,
+			limitPathMatch,
+			'suffix'
+		)( url, localeSlug );
+	};
 
 type LinkLocalizer = ( url: URL, localeSlug: string, isLoggedIn: boolean ) => URL;
 

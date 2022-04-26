@@ -34,11 +34,8 @@ class Transfer extends Component {
 	renderSection() {
 		const topLevelOfTld = getTopLevelOfTld( this.props.selectedDomainName );
 		const { locked, transferProhibited } = this.props.wapiDomainInfo.data;
-		const {
-			currentUserCanManage,
-			isPendingIcannVerification,
-			transferAwayEligibleAt,
-		} = getSelectedDomain( this.props );
+		const { currentUserCanManage, isPendingIcannVerification, transferAwayEligibleAt } =
+			getSelectedDomain( this.props );
 		let section = null;
 
 		if ( ! currentUserCanManage ) {

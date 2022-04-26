@@ -164,19 +164,21 @@ export function disableDomainPrivacy( siteId, domain ) {
  * @param {string} domain
  * @param {onComplete} onComplete
  */
-export const setPrimaryDomain = ( siteId, domain, onComplete = noop ) => ( dispatch ) => {
-	debug( 'setPrimaryDomain', siteId, domain );
-	return wpcom.req.post( `/sites/${ siteId }/domains/primary`, { domain }, ( error, data ) => {
-		if ( error ) {
-			return onComplete( error, data );
-		}
+export const setPrimaryDomain =
+	( siteId, domain, onComplete = noop ) =>
+	( dispatch ) => {
+		debug( 'setPrimaryDomain', siteId, domain );
+		return wpcom.req.post( `/sites/${ siteId }/domains/primary`, { domain }, ( error, data ) => {
+			if ( error ) {
+				return onComplete( error, data );
+			}
 
-		return dispatch( fetchSiteDomains( siteId ) ).then( () => {
-			onComplete( null, data );
-			dispatch( requestSite( siteId ) );
+			return dispatch( fetchSiteDomains( siteId ) ).then( () => {
+				onComplete( null, data );
+				dispatch( requestSite( siteId ) );
+			} );
 		} );
-	} );
-};
+	};
 
 export function discloseDomainContactInfo( siteId, domain ) {
 	return {

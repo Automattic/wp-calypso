@@ -1,0 +1,11 @@
+@import '@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.step-container.error-step {
+	padding: 1rem;
+
+	.formatted-header .formatted-header__title {
+		margin: 40px 0;
+	}
+}

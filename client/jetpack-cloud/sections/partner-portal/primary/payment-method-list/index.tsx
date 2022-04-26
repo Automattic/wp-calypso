@@ -1,6 +1,6 @@
-import classNames from 'classnames';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -8,6 +8,7 @@ import QueryJetpackPartnerPortalStoredCards from 'calypso/components/data/query-
 import Main from 'calypso/components/main';
 import Pagination from 'calypso/components/pagination';
 import AddStoredCreditCard from 'calypso/jetpack-cloud/sections/partner-portal/add-stored-credit-card';
+import { useCursorPagination } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import StoredCreditCard from 'calypso/jetpack-cloud/sections/partner-portal/stored-credit-card';
@@ -45,29 +46,20 @@ export default function PaymentMethodList(): ReactElement {
 	const storedCards = useSelector( getAllStoredCards );
 	const isFetching = useSelector( isFetchingStoredCards );
 	const perPage = useSelector( getStoredCardsPerPage );
-	const hasMoreItems = useSelector( hasMoreStoredCards );
-	const cards = storedCards.map( ( card: PaymentMethod ) => (
-		<StoredCreditCard key={ card.id } card={ card } />
-	) );
-
-	const [ showPagination, setShowPagination ] = useState( false );
+	const hasMore = useSelector( hasMoreStoredCards );
 	const [ paging, setPaging ] = useState( { startingAfter: '', endingBefore: '' } );
-	const [ currentPage, setCurrentPage ] = useState( 1 );
-	const onPageClick = ( pageNumber: number ) => {
-		const direction = pageNumber > currentPage ? 'next' : 'prev';
-
-		// Set a cursor for use in pagination.
-		setPaging( preparePagingCursor( direction, storedCards, pageNumber === 1 ) );
-
-		setCurrentPage( pageNumber );
-	};
-
-	// If the initial request has more items, we need to always display the pagination controls.
-	useEffect( () => {
-		if ( hasMoreItems ) {
-			setShowPagination( true );
-		}
-	}, [ hasMoreItems ] );
+	const onPageClickCallback = useCallback(
+		( page, direction ) => {
+			// Set a cursor for use in pagination.
+			setPaging( preparePagingCursor( direction, storedCards, page === 1 ) );
+		},
+		[ storedCards, preparePagingCursor, setPaging ]
+	);
+	const [ page, showPagination, onPageClick ] = useCursorPagination(
+		! isFetching,
+		hasMore,
+		onPageClickCallback
+	);
 
 	return (
 		<Main wideLayout className="payment-method-list">
@@ -84,17 +76,20 @@ export default function PaymentMethodList(): ReactElement {
 
 				{ isFetching && <StoredCreditCardLoading /> }
 
-				{ ! isFetching && cards }
+				{ ! isFetching &&
+					storedCards.map( ( card: PaymentMethod ) => (
+						<StoredCreditCard key={ card.id } card={ card } />
+					) ) }
 			</div>
 
 			{ showPagination && (
 				<Pagination
-					className={ classNames( 'payment-method-list__pagination', {
-						'payment-method-list__pagination--is-fetching': isFetching,
-						'payment-method-list__pagination--no-more-items': ! hasMoreItems,
+					className={ classnames( 'payment-method-list__pagination', {
+						'payment-method-list__pagination--has-prev': page > 1,
+						'payment-method-list__pagination--has-next': isFetching || hasMore,
 					} ) }
 					pageClick={ onPageClick }
-					page={ currentPage }
+					page={ page }
 					perPage={ perPage }
 				/>
 			) }

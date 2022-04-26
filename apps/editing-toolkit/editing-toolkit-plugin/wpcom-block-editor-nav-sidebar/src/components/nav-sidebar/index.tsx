@@ -44,7 +44,7 @@ const Button = forwardRef(
 function WpcomBlockEditorNavSidebar() {
 	const { toggleSidebar, setSidebarClosing } = useDispatch( STORE_KEY );
 	const [ isOpen, isClosing, postType, selectedItemId, siteTitle ] = useSelect( ( select ) => {
-		const { getPostType, getSite } = ( select( 'core' ) as unknown ) as {
+		const { getPostType, getSite } = select( 'core' ) as unknown as {
 			getPostType: ( postType: string ) => null | { slug: string };
 			getSite: () => null | { title: string };
 		};
@@ -292,12 +292,8 @@ type NavItemRecord = {
 };
 function useNavItems(): NavItemRecord {
 	return useSelect( ( select ) => {
-		const {
-			isEditedPostNew,
-			getCurrentPostId,
-			getCurrentPostType,
-			getEditedPostAttribute,
-		} = select( 'core/editor' );
+		const { isEditedPostNew, getCurrentPostId, getCurrentPostType, getEditedPostAttribute } =
+			select( 'core/editor' );
 		const statuses = select( 'core' ).getEntityRecords( 'root', 'status', { context: 'edit' } );
 
 		if ( ! statuses ) {

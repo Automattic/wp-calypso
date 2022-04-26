@@ -99,13 +99,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	getText() {
-		const {
-			translate,
-			isDataLoaded,
-			hasFailedPurchases,
-			primaryPurchase,
-			displayMode,
-		} = this.props;
+		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase, displayMode } =
+			this.props;
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some of the items in your cart could not be added.' );
@@ -479,12 +474,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	getSearchButtonProps() {
-		const {
-			translate,
-			selectedSite,
-			jetpackSearchCustomizeUrl,
-			jetpackSearchDashboardUrl,
-		} = this.props;
+		const { translate, selectedSite, jetpackSearchCustomizeUrl, jetpackSearchDashboardUrl } =
+			this.props;
 
 		const buttonTitle = selectedSite.jetpack
 			? translate( 'Go to Search Dashboard' )

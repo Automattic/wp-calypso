@@ -78,7 +78,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		} );
 
 		it( 'Click on the "Plans" navigation tab', async function () {
-			plansPage = new PlansPage( page );
+			plansPage = new PlansPage( page, 'legacy' );
 			await plansPage.clickTab( 'Plans' );
 		} );
 

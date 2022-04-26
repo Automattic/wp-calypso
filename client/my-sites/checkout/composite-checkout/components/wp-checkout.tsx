@@ -35,8 +35,10 @@ import {
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
+import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
@@ -188,10 +190,8 @@ export default function WPCheckout( {
 		clearDomainContactErrorMessages,
 	} = useDispatch( 'wpcom-checkout' );
 
-	const [
-		shouldShowContactDetailsValidationErrors,
-		setShouldShowContactDetailsValidationErrors,
-	] = useState( false );
+	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
+		useState( false );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -231,13 +231,15 @@ export default function WPCheckout( {
 	);
 
 	const updateCartContactDetails = useCallback( () => {
-		// Update tax location in cart
 		const nonTaxPaymentMethods = [ 'free-purchase' ];
 		if ( ! activePaymentMethod || ! contactInfo ) {
 			return;
 		}
+
+		// When the contact details change, update the tax location in cart if the
+		// active payment method is taxable.
 		if ( nonTaxPaymentMethods.includes( activePaymentMethod.id ) ) {
-			// this data is intentionally empty so we do not charge taxes
+			// This data is intentionally empty so we do not charge taxes
 			updateLocation( {
 				countryCode: '',
 				postalCode: '',
@@ -463,6 +465,14 @@ export default function WPCheckout( {
 							true
 						).then( ( response ) => {
 							if ( response ) {
+								// When the contact details change, update the cached contact details on
+								// the server. This can fail if validation fails but we will silently
+								// ignore failures here because the validation call will handle them better
+								// than this will.
+								reduxDispatch(
+									saveContactDetailsCache( prepareDomainContactValidationRequest( contactInfo ) )
+								);
+
 								reduxDispatch(
 									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
 										step: 1,

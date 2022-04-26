@@ -53,17 +53,8 @@ class Pagination extends Component {
 	};
 
 	render() {
-		const {
-			className,
-			compact,
-			nextLabel,
-			page,
-			pageClick,
-			perPage,
-			prevLabel,
-			total,
-			variant,
-		} = this.props;
+		const { className, compact, nextLabel, page, pageClick, perPage, prevLabel, total, variant } =
+			this.props;
 		const pageCount = Math.ceil( total / perPage );
 
 		if ( pageCount <= 1 ) {

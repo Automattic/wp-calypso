@@ -24,5 +24,13 @@ export * from './editor-block-list-view-component';
 export * from './editor-sidebar-block-inserter-component';
 export * from './editor-welcome-tour-component';
 export * from './editor-popover-menu-component';
+export * from './editor-site-styles-component';
+export * from './editor-color-picker-component';
+export * from './editor-typography-component';
+export * from './full-site-editor-save-panel-component';
+export * from './editor-block-toolbar-component';
+export * from './template-part-list-component';
+export * from './template-part-modal-component';
+export * from './full-side-editor-nav-sidebar-component';
 
 export * from './me';

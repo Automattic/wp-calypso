@@ -227,13 +227,8 @@ export class JetpackAuthorize extends Component {
 			siteHasJetpackBackupProduct,
 			siteHasJetpackSearchProduct,
 		} = this.props;
-		const {
-			from,
-			homeUrl,
-			redirectAfterAuth,
-			scope,
-			closeWindowAfterAuthorize,
-		} = this.props.authQuery;
+		const { from, homeUrl, redirectAfterAuth, scope, closeWindowAfterAuthorize } =
+			this.props.authQuery;
 		const { isRedirecting } = this.state;
 
 		if ( isRedirecting ) {
@@ -277,7 +272,8 @@ export class JetpackAuthorize extends Component {
 			this.shouldRedirectJetpackStart() ||
 			getRoleFromScope( scope ) === 'subscriber' ||
 			this.isJetpackUpgradeFlow() ||
-			this.isFromJetpackConnectionManager()
+			this.isFromJetpackConnectionManager() ||
+			this.isFromJetpackSocialPlugin()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -376,6 +372,11 @@ export class JetpackAuthorize extends Component {
 	isFromJetpackSearchPlugin( props = this.props ) {
 		const { from } = props.authQuery;
 		return startsWith( from, 'jetpack-search' );
+	}
+
+	isFromJetpackSocialPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-social' );
 	}
 
 	isWooRedirect = ( props = this.props ) => {
@@ -524,12 +525,8 @@ export class JetpackAuthorize extends Component {
 	}
 
 	renderNotices() {
-		const {
-			authorizeError,
-			isAuthorizing,
-			authorizeSuccess,
-			userAlreadyConnected,
-		} = this.props.authorizationData;
+		const { authorizeError, isAuthorizing, authorizeSuccess, userAlreadyConnected } =
+			this.props.authorizationData;
 		const { alreadyAuthorized, site } = this.props.authQuery;
 
 		let redirectToMobileApp = null;

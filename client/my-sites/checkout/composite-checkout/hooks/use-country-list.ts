@@ -12,9 +12,7 @@ const emptyList: CountryListItem[] = [];
 export default function useCountryList(
 	overrideCountryList?: CountryListItem[]
 ): CountryListItem[] {
-	// Should we fetch the country list from global state?
-	const shouldFetchList = ( overrideCountryList?.length ?? 0 ) <= 0;
-
+	const shouldFetch = ! overrideCountryList;
 	const [ countriesList, setCountriesList ] = useState( overrideCountryList ?? [] );
 
 	const reduxDispatch = useDispatch();
@@ -25,15 +23,19 @@ export default function useCountryList(
 	const isListFetched = globalCountryList.length > 0;
 
 	useEffect( () => {
-		if ( shouldFetchList ) {
+		if ( shouldFetch ) {
 			if ( isListFetched ) {
+				debug( 'countries list is empty; filling with retrieved data' );
 				setCountriesList( globalCountryList );
 			} else {
 				debug( 'countries list is empty; dispatching request for data' );
 				reduxDispatch( fetchPaymentCountries() );
 			}
+			return;
 		}
-	}, [ shouldFetchList, isListFetched, globalCountryList, reduxDispatch ] );
 
-	return countriesList;
+		debug( 'not fetching countries list because override is set' );
+	}, [ isListFetched, globalCountryList, reduxDispatch, shouldFetch ] );
+
+	return overrideCountryList ?? countriesList;
 }

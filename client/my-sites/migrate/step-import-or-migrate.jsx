@@ -98,14 +98,8 @@ class StepImportOrMigrate extends Component {
 	}
 
 	render() {
-		const {
-			targetSite,
-			targetSiteSlug,
-			sourceHasJetpack,
-			sourceSite,
-			sourceSiteInfo,
-			translate,
-		} = this.props;
+		const { targetSite, targetSiteSlug, sourceHasJetpack, sourceSite, sourceSiteInfo, translate } =
+			this.props;
 		const backHref = `/migrate/${ targetSiteSlug }`;
 
 		const everythingLabels = [];

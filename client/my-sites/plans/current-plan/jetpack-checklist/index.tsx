@@ -124,19 +124,21 @@ class JetpackChecklist extends PureComponent< Props & LocalizeProps > {
 		return this.props.translate( '%d minute', '%d minutes', { count: minutes, args: [ minutes ] } );
 	}
 
-	handleTaskStart = ( { taskId, tourId }: { taskId: string; tourId?: string } ) => () => {
-		if ( taskId ) {
-			this.props.recordTracksEvent( 'calypso_checklist_task_start', {
-				checklist_name: 'jetpack',
-				location: 'JetpackChecklist',
-				step_name: taskId,
-			} );
-		}
+	handleTaskStart =
+		( { taskId, tourId }: { taskId: string; tourId?: string } ) =>
+		() => {
+			if ( taskId ) {
+				this.props.recordTracksEvent( 'calypso_checklist_task_start', {
+					checklist_name: 'jetpack',
+					location: 'JetpackChecklist',
+					step_name: taskId,
+				} );
+			}
 
-		if ( tourId && ! this.isComplete( taskId ) && isDesktop() ) {
-			this.props.requestGuidedTour( tourId );
-		}
-	};
+			if ( tourId && ! this.isComplete( taskId ) && isDesktop() ) {
+				this.props.requestGuidedTour( tourId );
+			}
+		};
 
 	handleWpAdminLink = () => {
 		this.props.recordTracksEvent( 'calypso_checklist_wpadmin_click', {

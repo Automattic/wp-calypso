@@ -51,6 +51,7 @@ function HelpSearchResults( {
 	onAdminSectionSelect = noop,
 	searchQuery = '',
 	placeholderLines,
+	openAdminInNewTab = false,
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -59,10 +60,10 @@ function HelpSearchResults( {
 	const sectionName = useSelector( getSectionName );
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
 	const siteIntent = useSiteOption( 'site_intent' );
-	const rawContextualResults = useMemo( () => getContextResults( sectionName, siteIntent ), [
-		sectionName,
-		siteIntent,
-	] );
+	const rawContextualResults = useMemo(
+		() => getContextResults( sectionName, siteIntent ),
+		[ sectionName, siteIntent ]
+	);
 	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 
 	const contextualResults = rawContextualResults.filter(
@@ -110,7 +111,7 @@ function HelpSearchResults( {
 			// push state only if it's internal link.
 			if ( ! /^http/.test( link ) ) {
 				event.preventDefault();
-				page( link );
+				openAdminInNewTab ? window.open( 'https://wordpress.com' + link, '_blank' ) : page( link );
 				onAdminSectionSelect( event );
 			}
 

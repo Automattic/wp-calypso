@@ -87,11 +87,8 @@ describe( 'newUserData', () => {
 
 	it( 'set username, userId, and bearerToken from a sandboxed response', () => {
 		const state = newUserData( undefined, receiveNewUser( newUserSuccessResponseSandboxed ) );
-		const {
-			signup_sandbox_username,
-			signup_sandbox_user_id,
-			bearer_token,
-		} = newUserSuccessResponseSandboxed;
+		const { signup_sandbox_username, signup_sandbox_user_id, bearer_token } =
+			newUserSuccessResponseSandboxed;
 		expect( state ).toEqual( {
 			username: signup_sandbox_username,
 			userId: signup_sandbox_user_id,

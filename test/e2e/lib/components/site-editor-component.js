@@ -93,12 +93,8 @@ export default class SiteEditorComponent extends AbstractEditorComponent {
 	}
 
 	async addBlock( title, overrideLocatorSuffix, overrideAriaLabel ) {
-		const {
-			ariaLabel,
-			prefix,
-			blockClass,
-			initsWithChildFocus,
-		} = new GutenbergEditorComponent().getBlockLocatorSettings( title );
+		const { ariaLabel, prefix, blockClass, initsWithChildFocus } =
+			new GutenbergEditorComponent().getBlockLocatorSettings( title );
 
 		const inserterBlockItemLocator = By.css(
 			`.edit-site-editor__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${

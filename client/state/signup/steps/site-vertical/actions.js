@@ -25,20 +25,18 @@ export function setSiteVertical( siteVerticalData ) {
  * @param {string} suggestedTheme Fulfills the theme dependency if this vertical has a suggested theme e.g. `pub/maywood`
  * @returns {Function} A thunk
  */
-export const submitSiteVertical = (
-	siteVerticalData,
-	stepName = 'site-topic',
-	suggestedTheme = undefined
-) => ( dispatch ) => {
-	dispatch( setSiteVertical( siteVerticalData ) );
-	dispatch(
-		submitSignupStep(
-			{ stepName },
-			{
-				siteTopic: siteVerticalData.name,
-				...( 'site-topic-with-theme' !== stepName &&
-					suggestedTheme && { themeSlugWithRepo: suggestedTheme } ),
-			}
-		)
-	);
-};
+export const submitSiteVertical =
+	( siteVerticalData, stepName = 'site-topic', suggestedTheme = undefined ) =>
+	( dispatch ) => {
+		dispatch( setSiteVertical( siteVerticalData ) );
+		dispatch(
+			submitSignupStep(
+				{ stepName },
+				{
+					siteTopic: siteVerticalData.name,
+					...( 'site-topic-with-theme' !== stepName &&
+						suggestedTheme && { themeSlugWithRepo: suggestedTheme } ),
+				}
+			)
+		);
+	};

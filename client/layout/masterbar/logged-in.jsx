@@ -1,4 +1,6 @@
 import config from '@automattic/calypso-config';
+import { Popover, Button } from '@automattic/components';
+import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -12,7 +14,13 @@ import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserSiteCount, getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserSiteCount,
+	getCurrentUser,
+	getCurrentUserDate,
+} from 'calypso/state/current-user/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
@@ -27,14 +35,24 @@ import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-cur
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
+import { MasterBarMobileMenu } from './masterbar-menu';
 import Notifications from './notifications';
+
+const NEW_MASTERBAR_SHIPPING_DATE = new Date( 2022, 3, 14 ).getTime();
+const MENU_POPOVER_PREFERENCE_KEY = 'dismissible-card-masterbar-collapsable-menu-popover';
+
+const MOBILE_BREAKPOINT = '<480px';
 
 class MasterbarLoggedIn extends Component {
 	state = {
 		isActionSearchVisible: false,
+		isMenuOpen: false,
+		isMobile: isWithinBreakpoint( MOBILE_BREAKPOINT ),
+		// making the ref a state triggers a re-render when it changes (needed for popover)
+		menuBtnRef: null,
 	};
 
 	static propTypes = {
@@ -47,8 +65,17 @@ class MasterbarLoggedIn extends Component {
 		hasMoreThanOneSite: PropTypes.bool,
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
+		isInEditor: PropTypes.bool,
+		hasDismissedThePopover: PropTypes.bool,
+		isUserNewerThanNewNavigation: PropTypes.bool,
 	};
 
+	subscribeToViewPortChanges() {
+		this.unsubscribeToViewPortChanges = subscribeIsWithinBreakpoint(
+			MOBILE_BREAKPOINT,
+			( isMobile ) => this.setState( { isMobile } )
+		);
+	}
 	handleLayoutFocus = ( currentSection ) => {
 		if ( currentSection !== this.props.section ) {
 			// When current section is not focused then open the sidebar.
@@ -73,10 +100,12 @@ class MasterbarLoggedIn extends Component {
 			}
 		};
 		document.addEventListener( 'keydown', this.actionSearchShortCutListener );
+		this.subscribeToViewPortChanges();
 	}
 
 	componentWillUnmount() {
 		document.removeEventListener( 'keydown', this.actionSearchShortCutListener );
+		this.unsubscribeToViewPortChanges?.();
 	}
 
 	clickMySites = () => {
@@ -167,6 +196,7 @@ class MasterbarLoggedIn extends Component {
 		return 'my-sites';
 	};
 
+	// will render as back button on mobile and in editor
 	renderMySites() {
 		const {
 			domainOnlySite,
@@ -176,6 +206,8 @@ class MasterbarLoggedIn extends Component {
 			isCustomerHomeEnabled,
 			section,
 		} = this.props;
+		const { isMenuOpen } = this.state;
+
 		const homeUrl = isCustomerHomeEnabled
 			? `/home/${ siteSlug }`
 			: getStatsPathForTab( 'day', siteSlug );
@@ -184,13 +216,15 @@ class MasterbarLoggedIn extends Component {
 		if ( 'sites' === section ) {
 			mySitesUrl = '';
 		}
+		const icon =
+			this.state.isMobile && this.props.isInEditor ? 'chevron-left' : this.wordpressIcon();
 		return (
 			<Item
 				url={ mySitesUrl }
 				tipTarget="my-sites"
-				icon={ this.wordpressIcon() }
+				icon={ icon }
 				onClick={ this.clickMySites }
-				isActive={ this.isActive( 'sites' ) }
+				isActive={ this.isActive( 'sites' ) && ! isMenuOpen }
 				tooltip={ translate( 'View a list of your sites and access their dashboards' ) }
 				preloadSection={ this.preloadMySites }
 			>
@@ -201,140 +235,298 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	render() {
-		const isWordPressActionSearchFeatureEnabled = config.isEnabled( 'wordpress-action-search' );
-		const {
-			domainOnlySite,
-			translate,
-			isCheckout,
-			isCheckoutPending,
-			isMigrationInProgress,
-			previousPath,
-			siteSlug,
-			isJetpackNotAtomic,
-			title,
-			currentSelectedSiteSlug,
-			currentSelectedSiteId,
-		} = this.props;
+	handleToggleMenu = () => {
+		this.setState( ( state ) => ( { isMenuOpen: ! state.isMenuOpen } ) );
+	};
 
-		const { isActionSearchVisible } = this.state;
+	dismissPopover = () => {
+		this.props.savePreference( MENU_POPOVER_PREFERENCE_KEY, true );
+	};
 
-		if ( isCheckout || isCheckoutPending ) {
+	renderCheckout() {
+		const { isCheckoutPending, previousPath, siteSlug, isJetpackNotAtomic, title } = this.props;
+		return (
+			<AsyncLoad
+				require="calypso/layout/masterbar/checkout"
+				placeholder={ null }
+				title={ title }
+				isJetpackNotAtomic={ isJetpackNotAtomic }
+				previousPath={ previousPath }
+				siteSlug={ siteSlug }
+				isLeavingAllowed={ ! isCheckoutPending }
+			/>
+		);
+	}
+
+	renderReader() {
+		const { translate } = this.props;
+		return (
+			<Item
+				tipTarget="reader"
+				className="masterbar__reader"
+				url="/read"
+				icon="reader"
+				onClick={ this.clickReader }
+				isActive={ this.isActive( 'reader' ) }
+				tooltip={ translate( 'Read the blogs and topics you follow' ) }
+				preloadSection={ this.preloadReader }
+			>
+				{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+			</Item>
+		);
+	}
+
+	renderLanguageSwitcher() {
+		if ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) {
+			return <AsyncLoad require="./quick-language-switcher" placeholder={ null } />;
+		}
+		return null;
+	}
+
+	renderSearch() {
+		const { translate, isWordPressActionSearchFeatureEnabled } = this.props;
+		if ( isWordPressActionSearchFeatureEnabled ) {
+			return (
+				<Item
+					tipTarget="Action Search"
+					icon="search"
+					onClick={ this.clickSearchActions }
+					isActive={ false }
+					className="masterbar__item-action-search"
+					tooltip={ translate( 'Search' ) }
+					preloadSection={ this.preloadMe }
+				>
+					{ translate( 'Search Actions' ) }
+				</Item>
+			);
+		}
+		return null;
+	}
+
+	renderPlanUpsell() {
+		const { domainOnlySite, translate, isMigrationInProgress } = this.props;
+		if ( ! domainOnlySite && ! isMigrationInProgress ) {
 			return (
 				<AsyncLoad
-					require="calypso/layout/masterbar/checkout.tsx"
-					placeholder={ null }
-					title={ title }
-					isJetpackNotAtomic={ isJetpackNotAtomic }
-					previousPath={ previousPath }
-					siteSlug={ siteSlug }
-					isLeavingAllowed={ ! isCheckoutPending }
-				/>
+					require="./plan-upsell"
+					className="masterbar__item-upsell button is-primary"
+					tooltip={ translate( 'Upgrade your plan' ) }
+				>
+					{ translate( 'Upgrade' ) }
+				</AsyncLoad>
 			);
+		}
+		return null;
+	}
+
+	renderPublish() {
+		const { domainOnlySite, translate, isMigrationInProgress } = this.props;
+		if ( ! domainOnlySite && ! isMigrationInProgress ) {
+			return (
+				<AsyncLoad
+					require="./publish"
+					placeholder={ null }
+					isActive={ this.isActive( 'post' ) }
+					className="masterbar__item-new"
+					tooltip={ translate( 'Create a New Post' ) }
+				>
+					{ translate( 'Write' ) }
+				</AsyncLoad>
+			);
+		}
+		return null;
+	}
+
+	renderCart() {
+		const { currentSelectedSiteSlug, currentSelectedSiteId } = this.props;
+		return (
+			<AsyncLoad
+				require="./masterbar-cart/masterbar-cart-wrapper"
+				placeholder={ null }
+				goToCheckout={ this.goToCheckout }
+				onRemoveProduct={ this.onRemoveCartProduct }
+				onRemoveCoupon={ this.onRemoveCartProduct }
+				selectedSiteSlug={ currentSelectedSiteSlug }
+				selectedSiteId={ currentSelectedSiteId }
+			/>
+		);
+	}
+
+	renderMe() {
+		const { isMobile } = this.state;
+		const { translate, user } = this.props;
+		return (
+			<Item
+				tipTarget="me"
+				url="/me"
+				icon={ isMobile ? null : 'user-circle' }
+				onClick={ this.clickMe }
+				isActive={ this.isActive( 'me' ) }
+				className="masterbar__item-me"
+				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
+				preloadSection={ this.preloadMe }
+			>
+				<Gravatar
+					className="masterbar__item-me-gravatar"
+					user={ user }
+					alt={ translate( 'My Profile' ) }
+					size={ 18 }
+				/>
+				<span className="masterbar__item-me-label">
+					{ translate( 'My Profile', {
+						context: 'Toolbar, must be shorter than ~12 chars',
+					} ) }
+				</span>
+			</Item>
+		);
+	}
+
+	renderNotifications() {
+		const { translate } = this.props;
+		return (
+			<Notifications
+				isShowing={ this.props.isNotificationsShowing }
+				isActive={ this.isActive( 'notifications' ) }
+				className="masterbar__item-notifications"
+				tooltip={ translate( 'Manage your notifications' ) }
+			>
+				<span className="masterbar__item-notifications-label">
+					{ translate( 'Notifications', {
+						comment: 'Toolbar, must be shorter than ~12 chars',
+					} ) }
+				</span>
+			</Notifications>
+		);
+	}
+
+	renderMenu() {
+		const { menuBtnRef } = this.state;
+		const { translate, hasDismissedThePopover, isFetchingPrefs, isUserNewerThanNewNavigation } =
+			this.props;
+		return (
+			<>
+				<Item
+					tipTarget="Menu"
+					icon="menu"
+					onClick={ this.handleToggleMenu }
+					isActive={ this.state.isMenuOpen }
+					className="masterbar__item-menu"
+					tooltip={ translate( 'Menu' ) }
+					ref={ ( ref ) => ref !== menuBtnRef && this.setState( { menuBtnRef: ref } ) }
+				/>
+				<MasterBarMobileMenu onClose={ this.handleToggleMenu } open={ this.state.isMenuOpen }>
+					{ this.renderPublish() }
+					{ this.renderReader() }
+					{ this.renderMe() }
+				</MasterBarMobileMenu>
+				{ menuBtnRef && (
+					<Popover
+						className="masterbar__new-menu-popover"
+						isVisible={
+							! isFetchingPrefs && ! hasDismissedThePopover && ! isUserNewerThanNewNavigation
+						}
+						context={ menuBtnRef }
+						onClose={ this.dismissPopover }
+						position="bottom left"
+						showDelay={ 500 }
+					>
+						<div className="masterbar__new-menu-popover-inner">
+							<h1>
+								{ translate( '👆 New top navigation', {
+									comment: 'This is a popover title under the masterbar',
+								} ) }
+							</h1>
+							<p>{ translate( 'We changed the navigation for a cleaner experience.' ) }</p>
+							<div className="masterbar__new-menu-popover-actions">
+								<Button onClick={ this.dismissPopover }>
+									{ translate( 'Got it', { comment: 'Got it, as in OK' } ) }
+								</Button>
+							</div>
+						</div>
+					</Popover>
+				) }
+			</>
+		);
+	}
+
+	renderPopupSearch() {
+		const isWordPressActionSearchFeatureEnabled = config.isEnabled( 'wordpress-action-search' );
+		const { isActionSearchVisible } = this.state;
+
+		if ( ! isWordPressActionSearchFeatureEnabled || ! isActionSearchVisible ) {
+			return null;
 		}
 
 		return (
+			<AsyncLoad
+				require="calypso/layout/popup-search"
+				placeholder={ null }
+				onClose={ this.onSearchActionsClose }
+			/>
+		);
+	}
+
+	renderHelpCenter() {
+		return <AsyncLoad require="./masterbar-help-center" placeholder={ null } />;
+	}
+
+	render() {
+		const { isCheckout, isCheckoutPending } = this.props;
+		const { isMobile } = this.state;
+
+		if ( isCheckout || isCheckoutPending ) {
+			return this.renderCheckout();
+		}
+		if ( isMobile ) {
+			const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
+			if ( this.props.isInEditor && isHelpCenterEnabled ) {
+				return (
+					<Masterbar>
+						<div className="masterbar__section masterbar__section--left">
+							{ this.renderMySites() }
+						</div>
+						<div className="masterbar__section masterbar__section--right">
+							{ this.renderHelpCenter() }
+						</div>
+					</Masterbar>
+				);
+			}
+			return (
+				<>
+					{ this.renderPopupSearch() }
+					<Masterbar>
+						<div className="masterbar__section masterbar__section--left">
+							{ this.renderMySites() }
+							{ this.renderLanguageSwitcher() }
+							{ this.renderSearch() }
+						</div>
+						<div className="masterbar__section masterbar__section--right">
+							{ this.renderCart() }
+							{ this.renderNotifications() }
+							{ this.renderMenu() }
+						</div>
+					</Masterbar>
+				</>
+			);
+		}
+		return (
 			<>
-				{ isWordPressActionSearchFeatureEnabled && isActionSearchVisible ? (
-					<AsyncLoad
-						require="calypso/layout/popup-search"
-						placeholder={ null }
-						onClose={ this.onSearchActionsClose }
-					/>
-				) : null }
+				{ this.renderPopupSearch() }
 				<Masterbar>
 					<div className="masterbar__section masterbar__section--left">
 						{ this.renderMySites() }
-						<Item
-							tipTarget="reader"
-							className="masterbar__reader"
-							url="/read"
-							icon="reader"
-							onClick={ this.clickReader }
-							isActive={ this.isActive( 'reader' ) }
-							tooltip={ translate( 'Read the blogs and topics you follow' ) }
-							preloadSection={ this.preloadReader }
-						>
-							{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
-						</Item>
-						{ ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
-							<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
-						) }
-						{ isWordPressActionSearchFeatureEnabled && (
-							<Item
-								tipTarget="Action Search"
-								icon="search"
-								onClick={ this.clickSearchActions }
-								isActive={ false }
-								className="masterbar__item-action-search"
-								tooltip={ translate( 'Search' ) }
-								preloadSection={ this.preloadMe }
-							>
-								{ translate( 'Search Actions' ) }
-							</Item>
-						) }
+						{ this.renderReader() }
+						{ this.renderLanguageSwitcher() }
+						{ this.renderSearch() }
 					</div>
 					<div className="masterbar__section masterbar__section--center">
-						{ ! domainOnlySite && ! isMigrationInProgress && (
-							<>
-								<AsyncLoad
-									require="./plan-upsell"
-									className="masterbar__item-upsell button is-primary"
-									tooltip={ translate( 'Upgrade your plan' ) }
-								>
-									{ translate( 'Upgrade' ) }
-								</AsyncLoad>
-								<AsyncLoad
-									require="./publish"
-									placeholder={ null }
-									isActive={ this.isActive( 'post' ) }
-									className="masterbar__item-new"
-									tooltip={ translate( 'Create a New Post' ) }
-								>
-									{ translate( 'Write' ) }
-								</AsyncLoad>
-							</>
-						) }
+						{ this.renderPlanUpsell() }
+						{ this.renderPublish() }
 					</div>
 					<div className="masterbar__section masterbar__section--right">
-						<AsyncLoad
-							require="./masterbar-cart/masterbar-cart-wrapper"
-							placeholder={ null }
-							goToCheckout={ this.goToCheckout }
-							onRemoveProduct={ this.onRemoveCartProduct }
-							onRemoveCoupon={ this.onRemoveCartProduct }
-							selectedSiteSlug={ currentSelectedSiteSlug }
-							selectedSiteId={ currentSelectedSiteId }
-						/>
-						<Item
-							tipTarget="me"
-							url="/me"
-							icon="user-circle"
-							onClick={ this.clickMe }
-							isActive={ this.isActive( 'me' ) }
-							className="masterbar__item-me"
-							tooltip={ translate( 'Update your profile, personal settings, and more' ) }
-							preloadSection={ this.preloadMe }
-						>
-							<Gravatar user={ this.props.user } alt={ translate( 'My Profile' ) } size={ 18 } />
-							<span className="masterbar__item-me-label">
-								{ translate( 'My Profile', {
-									context: 'Toolbar, must be shorter than ~12 chars',
-								} ) }
-							</span>
-						</Item>
-						<Notifications
-							isShowing={ this.props.isNotificationsShowing }
-							isActive={ this.isActive( 'notifications' ) }
-							className="masterbar__item-notifications"
-							tooltip={ translate( 'Manage your notifications' ) }
-						>
-							<span className="masterbar__item-notifications-label">
-								{ translate( 'Notifications', {
-									comment: 'Toolbar, must be shorter than ~12 chars',
-								} ) }
-							</span>
-						</Notifications>
+						{ this.renderCart() }
+						{ this.renderMe() }
+						{ this.renderNotifications() }
 					</div>
 				</Masterbar>
 			</>
@@ -348,7 +540,6 @@ export default connect(
 		// by the user yet
 		const currentSelectedSiteId = getSelectedSiteId( state );
 		const siteId = currentSelectedSiteId || getPrimarySiteId( state );
-
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
 			isSiteMigrationActiveRoute( state );
@@ -361,6 +552,7 @@ export default connect(
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			user: getCurrentUser( state ),
 			isSupportSession: isSupportSession( state ),
+			isInEditor: getSectionName( state ) === 'gutenberg-editor',
 			isMigrationInProgress,
 			migrationStatus: getSiteMigrationStatus( state, currentSelectedSiteId ),
 			currentSelectedSiteId,
@@ -370,7 +562,18 @@ export default connect(
 			previousPath: getPreviousRoute( state ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
+			hasDismissedThePopover: getPreference( state, MENU_POPOVER_PREFERENCE_KEY ),
+			isFetchingPrefs: isFetchingPreferences( state ),
+			// If the user is newer than new navigation shipping date, don't tell them this nav is new. Everything is new to them.
+			isUserNewerThanNewNavigation:
+				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 		};
 	},
-	{ setNextLayoutFocus, recordTracksEvent, updateSiteMigrationMeta, activateNextLayoutFocus }
+	{
+		setNextLayoutFocus,
+		recordTracksEvent,
+		updateSiteMigrationMeta,
+		activateNextLayoutFocus,
+		savePreference,
+	}
 )( localize( MasterbarLoggedIn ) );

@@ -1,6 +1,12 @@
 import { Design } from '@automattic/design-picker/src/types';
 import { wpcomRequest } from '../wpcom-request-controls';
-import { SiteLaunchError } from './types';
+import {
+	SiteLaunchError,
+	AtomicTransferError,
+	LatestAtomicTransferError,
+	AtomicSoftwareStatusError,
+	AtomicSoftwareInstallError,
+} from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import type {
 	CreateSiteParams,
@@ -10,7 +16,13 @@ import type {
 	SiteError,
 	Cart,
 	Domain,
+	LatestAtomicTransfer,
 	SiteLaunchError as SiteLaunchErrorType,
+	AtomicTransferError as AtomicTransferErrorType,
+	LatestAtomicTransferError as LatestAtomicTransferErrorType,
+	AtomicSoftwareStatusError as AtomicSoftwareStatusErrorType,
+	AtomicSoftwareInstallError as AtomicSoftwareInstallErrorType,
+	AtomicSoftwareStatus,
 	SiteSettings,
 } from './types';
 
@@ -88,10 +100,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		tagline,
 	} );
 
-	const receiveSiteVertical = ( siteId: number, vertical: string | undefined ) => ( {
-		type: 'RECEIVE_SITE_VERTICAL' as const,
+	const receiveSiteVerticalId = ( siteId: number, verticalId: string | undefined ) => ( {
+		type: 'RECEIVE_SITE_VERTICAL_ID' as const,
 		siteId,
-		vertical,
+		verticalId,
 	} );
 
 	const receiveSiteFailed = ( siteId: number, response: SiteError | undefined ) => ( {
@@ -175,7 +187,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		settings: {
 			blogname?: string;
 			blogdescription?: string;
-			site_vertical?: string;
+			site_vertical_id?: string;
 			woocommerce_onboarding_profile?: { [ key: string ]: any };
 		}
 	) {
@@ -193,9 +205,20 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			if ( 'blogdescription' in settings ) {
 				yield receiveSiteTagline( siteId, settings.blogdescription );
 			}
-			if ( 'site_vertical' in settings ) {
-				yield receiveSiteVertical( siteId, settings.site_vertical );
+			if ( 'site_vertical_id' in settings ) {
+				yield receiveSiteVerticalId( siteId, settings.site_vertical_id );
 			}
+		} catch ( e ) {}
+	}
+
+	function* setIntentOnSite( siteSlug: string, intent: string ) {
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteSlug ) }/site-intent`,
+				apiNamespace: 'wpcom/v2',
+				body: { site_intent: intent },
+				method: 'POST',
+			} );
 		} catch ( e ) {}
 	}
 
@@ -231,11 +254,191 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return data?.is_fse_active ?? false;
 	}
 
+	const setSiteSetupError = ( siteId: number, error: string, message: string ) => ( {
+		type: 'SET_SITE_SETUP_ERROR',
+		siteId,
+		error,
+		message,
+	} );
+
+	const clearSiteSetupError = ( siteId: number ) => ( {
+		type: 'CLEAR_SITE_SETUP_ERROR',
+		siteId,
+	} );
+
+	const atomicTransferStart = ( siteId: number, softwareSet: string | undefined ) => ( {
+		type: 'ATOMIC_TRANSFER_START' as const,
+		siteId,
+		softwareSet,
+	} );
+
+	const atomicTransferSuccess = ( siteId: number, softwareSet: string | undefined ) => ( {
+		type: 'ATOMIC_TRANSFER_SUCCESS' as const,
+		siteId,
+		softwareSet,
+	} );
+
+	const atomicTransferFailure = (
+		siteId: number,
+		softwareSet: string | undefined,
+		error: AtomicTransferErrorType
+	) => ( {
+		type: 'ATOMIC_TRANSFER_FAILURE' as const,
+		siteId,
+		softwareSet,
+		error,
+	} );
+
+	function* initiateAtomicTransfer( siteId: number, softwareSet: string | undefined ) {
+		yield atomicTransferStart( siteId, softwareSet );
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/atomic/transfers`,
+				apiNamespace: 'wpcom/v2',
+				method: 'POST',
+				...( softwareSet
+					? {
+							body: {
+								software_set: encodeURIComponent( softwareSet ),
+							},
+					  }
+					: {} ),
+			} );
+			yield atomicTransferSuccess( siteId, softwareSet );
+		} catch ( _ ) {
+			yield atomicTransferFailure( siteId, softwareSet, AtomicTransferError.INTERNAL );
+		}
+	}
+
+	const latestAtomicTransferStart = ( siteId: number ) => ( {
+		type: 'LATEST_ATOMIC_TRANSFER_START' as const,
+		siteId,
+	} );
+
+	const latestAtomicTransferSuccess = ( siteId: number, transfer: LatestAtomicTransfer ) => ( {
+		type: 'LATEST_ATOMIC_TRANSFER_SUCCESS' as const,
+		siteId,
+		transfer,
+	} );
+
+	const latestAtomicTransferFailure = (
+		siteId: number,
+		error: LatestAtomicTransferErrorType
+	) => ( {
+		type: 'LATEST_ATOMIC_TRANSFER_FAILURE' as const,
+		siteId,
+		error,
+	} );
+
+	function* requestLatestAtomicTransfer( siteId: number ) {
+		yield latestAtomicTransferStart( siteId );
+
+		try {
+			const transfer: LatestAtomicTransfer = yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/atomic/transfers/latest`,
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+			} );
+			yield latestAtomicTransferSuccess( siteId, transfer );
+		} catch ( err ) {
+			yield latestAtomicTransferFailure( siteId, err as LatestAtomicTransferError );
+		}
+	}
+
+	const atomicSoftwareStatusStart = ( siteId: number, softwareSet: string ) => ( {
+		type: 'ATOMIC_SOFTWARE_STATUS_START' as const,
+		siteId,
+		softwareSet,
+	} );
+
+	const atomicSoftwareStatusSuccess = (
+		siteId: number,
+		softwareSet: string,
+		status: AtomicSoftwareStatus
+	) => ( {
+		type: 'ATOMIC_SOFTWARE_STATUS_SUCCESS' as const,
+		siteId,
+		softwareSet,
+		status,
+	} );
+
+	const atomicSoftwareStatusFailure = (
+		siteId: number,
+		softwareSet: string,
+		error: AtomicSoftwareStatusErrorType
+	) => ( {
+		type: 'ATOMIC_SOFTWARE_STATUS_FAILURE' as const,
+		siteId,
+		softwareSet,
+		error,
+	} );
+
+	function* requestAtomicSoftwareStatus( siteId: number, softwareSet: string ) {
+		yield atomicSoftwareStatusStart( siteId, softwareSet );
+		try {
+			const status: AtomicSoftwareStatus = yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/atomic/software/${ encodeURIComponent(
+					softwareSet
+				) }`,
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+			} );
+			yield atomicSoftwareStatusSuccess( siteId, softwareSet, status );
+		} catch ( err ) {
+			yield atomicSoftwareStatusFailure( siteId, softwareSet, err as AtomicSoftwareStatusError );
+		}
+	}
+
+	const atomicSoftwareInstallStart = ( siteId: number, softwareSet: string ) => ( {
+		type: 'ATOMIC_SOFTWARE_INSTALL_START' as const,
+		siteId,
+		softwareSet,
+	} );
+
+	const atomicSoftwareInstallSuccess = ( siteId: number, softwareSet: string ) => ( {
+		type: 'ATOMIC_SOFTWARE_INSTALL_SUCCESS' as const,
+		siteId,
+		softwareSet,
+	} );
+
+	const atomicSoftwareInstallFailure = (
+		siteId: number,
+		softwareSet: string,
+		error: AtomicSoftwareInstallErrorType
+	) => ( {
+		type: 'ATOMIC_SOFTWARE_INSTALL_FAILURE' as const,
+		siteId,
+		softwareSet,
+		error,
+	} );
+
+	function* initiateSoftwareInstall( siteId: number, softwareSet: string ) {
+		yield atomicSoftwareInstallStart( siteId, softwareSet );
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/atomic/software/${ encodeURIComponent(
+					softwareSet
+				) }`,
+				apiNamespace: 'wpcom/v2',
+				method: 'POST',
+				body: {},
+			} );
+			yield atomicSoftwareInstallSuccess( siteId, softwareSet );
+		} catch ( _ ) {
+			yield atomicSoftwareInstallFailure(
+				siteId,
+				softwareSet,
+				AtomicSoftwareInstallError.INTERNAL
+			);
+		}
+	}
+
 	return {
 		receiveSiteDomains,
 		receiveSiteSettings,
 		saveSiteTitle,
 		saveSiteSettings,
+		setIntentOnSite,
 		receiveSiteTitle,
 		fetchNewSite,
 		fetchSite,
@@ -247,7 +450,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveSite,
 		receiveSiteFailed,
 		receiveSiteTagline,
-		receiveSiteVertical,
+		receiveSiteVerticalId,
 		saveSiteTagline,
 		reset,
 		launchSite,
@@ -256,6 +459,24 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		launchSiteFailure,
 		getCart,
 		setCart,
+		setSiteSetupError,
+		clearSiteSetupError,
+		initiateAtomicTransfer,
+		atomicTransferStart,
+		atomicTransferSuccess,
+		atomicTransferFailure,
+		latestAtomicTransferStart,
+		latestAtomicTransferSuccess,
+		latestAtomicTransferFailure,
+		requestLatestAtomicTransfer,
+		atomicSoftwareStatusStart,
+		atomicSoftwareStatusSuccess,
+		atomicSoftwareStatusFailure,
+		requestAtomicSoftwareStatus,
+		initiateSoftwareInstall,
+		atomicSoftwareInstallStart,
+		atomicSoftwareInstallSuccess,
+		atomicSoftwareInstallFailure,
 	};
 }
 
@@ -271,7 +492,7 @@ export type Action =
 			| ActionCreators[ 'receiveSiteTitle' ]
 			| ActionCreators[ 'receiveNewSiteFailed' ]
 			| ActionCreators[ 'receiveSiteTagline' ]
-			| ActionCreators[ 'receiveSiteVertical' ]
+			| ActionCreators[ 'receiveSiteVerticalId' ]
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'reset' ]
@@ -279,6 +500,18 @@ export type Action =
 			| ActionCreators[ 'launchSiteStart' ]
 			| ActionCreators[ 'launchSiteSuccess' ]
 			| ActionCreators[ 'launchSiteFailure' ]
+			| ActionCreators[ 'atomicTransferStart' ]
+			| ActionCreators[ 'atomicTransferSuccess' ]
+			| ActionCreators[ 'atomicTransferFailure' ]
+			| ActionCreators[ 'latestAtomicTransferStart' ]
+			| ActionCreators[ 'latestAtomicTransferSuccess' ]
+			| ActionCreators[ 'latestAtomicTransferFailure' ]
+			| ActionCreators[ 'atomicSoftwareStatusStart' ]
+			| ActionCreators[ 'atomicSoftwareStatusSuccess' ]
+			| ActionCreators[ 'atomicSoftwareStatusFailure' ]
+			| ActionCreators[ 'atomicSoftwareInstallStart' ]
+			| ActionCreators[ 'atomicSoftwareInstallSuccess' ]
+			| ActionCreators[ 'atomicSoftwareInstallFailure' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

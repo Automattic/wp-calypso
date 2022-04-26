@@ -102,7 +102,7 @@ export interface SiteDetails {
 		anchor_podcast?: boolean;
 		background_color?: boolean;
 		blog_public?: number;
-		created_at: Date;
+		created_at?: Date;
 		default_category?: number;
 		default_comment_status?: boolean;
 		default_likes_enabled?: boolean;
@@ -149,7 +149,7 @@ export interface SiteDetails {
 		show_on_front?: string;
 		site_intent?: string;
 		site_segment?: string;
-		site_vertical?: string;
+		site_vertical_id?: string;
 		software_version?: string;
 		selected_features?: FeatureId[];
 		theme_slug?: string;
@@ -298,4 +298,88 @@ export enum SiteLaunchStatus {
 	IN_PROGRESS = 'in_progress',
 	SUCCESS = 'success',
 	FAILURE = 'failure',
+}
+
+export interface AtomicTransferState {
+	status: AtomicTransferStatus;
+	errorCode: AtomicTransferError | undefined;
+}
+
+export enum AtomicTransferStatus {
+	UNINITIALIZED = 'unintialized',
+	IN_PROGRESS = 'in_progress',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+}
+
+export enum AtomicTransferError {
+	INTERNAL = 'internal',
+}
+
+export interface LatestAtomicTransfer {
+	atomic_transfer_id: number;
+	blog_id: number;
+	status: string;
+	created_at: string;
+	is_stuck: boolean;
+	is_stuck_reset: boolean;
+	in_lossless_revert: boolean;
+}
+
+export interface LatestAtomicTransferState {
+	status: LatestAtomicTransferStatus;
+	transfer: LatestAtomicTransfer | undefined;
+	errorCode: LatestAtomicTransferError | undefined;
+}
+
+export enum LatestAtomicTransferStatus {
+	UNINITIALIZED = 'unintialized',
+	IN_PROGRESS = 'in_progress',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+}
+
+export interface LatestAtomicTransferError {
+	name: string; // "NotFoundError"
+	status: number; // 404
+	message: string; // "Transfer not found"
+	code: string; // "no_transfer_record"
+}
+
+export interface AtomicSoftwareStatus {
+	blog_id: number;
+	software_set: Record< string, { path: string; state: string } >;
+	applied: boolean;
+}
+
+export interface AtomicSoftwareStatusError {
+	name: string; // "NotFoundError"
+	status: number; // 404
+	message: string; // "Transfer not found"
+	code: string; // "no_transfer_record"
+}
+
+export type AtomicSoftwareStatusState = Record<
+	string,
+	{
+		status: AtomicSoftwareStatus | undefined;
+		error: AtomicSoftwareStatusError | undefined;
+	}
+>;
+
+export enum AtomicSoftwareInstallStatus {
+	UNINITIALIZED = 'unintialized',
+	IN_PROGRESS = 'in_progress',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+}
+export type AtomicSoftwareInstallState = Record<
+	string,
+	{
+		status: AtomicSoftwareInstallStatus | undefined;
+		error: AtomicSoftwareInstallError | undefined;
+	}
+>;
+export enum AtomicSoftwareInstallError {
+	INTERNAL = 'internal',
 }

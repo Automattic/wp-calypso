@@ -482,7 +482,7 @@ class DomainsStep extends Component {
 						<div className="domains__domain-side-content-container">
 							{ ! this.shouldHideDomainExplainer() &&
 								this.props.isPlanSelectionAvailableLaterInFlow && (
-									<div className="domains__domain-side-content">
+									<div className="domains__domain-side-content domains__free-domain">
 										<ReskinSideExplainer
 											onClick={ this.handleDomainExplainerClick }
 											type={ 'free-domain-explainer' }
@@ -642,14 +642,8 @@ class DomainsStep extends Component {
 	};
 
 	getSubHeaderText() {
-		const {
-			flowName,
-			isAllDomains,
-			siteType,
-			stepSectionName,
-			isReskinned,
-			translate,
-		} = this.props;
+		const { flowName, isAllDomains, siteType, stepSectionName, isReskinned, translate } =
+			this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -675,14 +669,8 @@ class DomainsStep extends Component {
 	}
 
 	getHeaderText() {
-		const {
-			headerText,
-			isAllDomains,
-			siteType,
-			isReskinned,
-			stepSectionName,
-			translate,
-		} = this.props;
+		const { headerText, isAllDomains, siteType, isReskinned, stepSectionName, translate } =
+			this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Your next big idea starts here' );

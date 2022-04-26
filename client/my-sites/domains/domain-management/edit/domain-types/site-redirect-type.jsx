@@ -16,7 +16,6 @@ import {
 import DomainStatus from '../card/domain-status';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
-import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 
 class SiteRedirectType extends Component {
@@ -76,10 +75,6 @@ class SiteRedirectType extends Component {
 		return this.renderAutoRenewToggle();
 	}
 
-	handlePaymentSettingsClick = () => {
-		this.props.recordPaymentSettingsClick( this.props.domain );
-	};
-
 	render() {
 		const { domain, selectedSite, purchase, isLoadingPurchase } = this.props;
 		const { name: domain_name } = domain;
@@ -117,21 +112,14 @@ class SiteRedirectType extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const { subscriptionId } = ownProps.domain;
-		const currentUserId = getCurrentUserId( state );
-		const purchase = subscriptionId
-			? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
-			: null;
+export default connect( ( state, ownProps ) => {
+	const { subscriptionId } = ownProps.domain;
+	const currentUserId = getCurrentUserId( state );
+	const purchase = subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null;
 
-		return {
-			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
-			isLoadingPurchase:
-				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
-		};
-	},
-	{
-		recordPaymentSettingsClick,
-	}
-)( withLocalizedMoment( localize( SiteRedirectType ) ) );
+	return {
+		purchase: purchase && purchase.userId === currentUserId ? purchase : null,
+		isLoadingPurchase:
+			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
+	};
+} )( withLocalizedMoment( localize( SiteRedirectType ) ) );

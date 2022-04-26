@@ -34,6 +34,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		window.scrollTo( 0, 0 );
 	}, [ location ] );
 
+	flow.useAssertConditions?.();
+
 	return (
 		<Switch>
 			{ stepPaths.map( ( path ) => {

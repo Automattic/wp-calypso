@@ -119,6 +119,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		request.query[ 'wccom-from' ] &&
 		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
 
+	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
@@ -139,6 +140,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		lang: config( 'i18n_default_locale_slug' ),
 		entrypoint: request.getFilesForEntrypoint( entrypoint ),
 		manifests: request.getAssets().manifests,
+		reactQueryDevtoolsHelper,
 		authHelper,
 		preferencesHelper,
 		featuresHelper,
@@ -473,35 +475,39 @@ function setUpRoute( req, res, next ) {
 	);
 }
 
-const render404 = ( entrypoint = 'entry-main' ) => ( req, res ) => {
-	const ctx = {
-		entrypoint: req.getFilesForEntrypoint( entrypoint ),
-	};
+const render404 =
+	( entrypoint = 'entry-main' ) =>
+	( req, res ) => {
+		const ctx = {
+			entrypoint: req.getFilesForEntrypoint( entrypoint ),
+		};
 
-	res.status( 404 ).send( renderJsx( '404', ctx ) );
-};
+		res.status( 404 ).send( renderJsx( '404', ctx ) );
+	};
 
 /* We don't use `next` but need to add it for express.js to
    recognize this function as an error handler, hence the
 	 eslint-disable. */
 // eslint-disable-next-line no-unused-vars
-const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next ) => {
-	// If the response is not writable it means someone else already rendered a page, do nothing
-	// Hopefully they logged the error as well.
-	if ( res.writableEnded ) return;
+const renderServerError =
+	( entrypoint = 'entry-main' ) =>
+	( err, req, res, next ) => {
+		// If the response is not writable it means someone else already rendered a page, do nothing
+		// Hopefully they logged the error as well.
+		if ( res.writableEnded ) return;
 
-	try {
-		req.logger.error( err );
-	} catch ( error ) {
-		console.error( error );
-	}
+		try {
+			req.logger.error( err );
+		} catch ( error ) {
+			console.error( error );
+		}
 
-	const ctx = {
-		entrypoint: req.getFilesForEntrypoint( entrypoint ),
+		const ctx = {
+			entrypoint: req.getFilesForEntrypoint( entrypoint ),
+		};
+
+		res.status( err.status || 500 ).send( renderJsx( '500', ctx ) );
 	};
-
-	res.status( err.status || 500 ).send( renderJsx( '500', ctx ) );
-};
 
 /**
  * Checks if the passed URL has the same origin as the request

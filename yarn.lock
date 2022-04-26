@@ -572,10 +572,10 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/explat-client": "workspace:^"
     "@testing-library/react": ^12.1.3
-    "@testing-library/react-hooks": 7.0.2
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    tslib: ^2.3.0
+    "@testing-library/react-hooks": ^7.0.2
+    react: ">=16.8 <18"
+    react-dom: ">=16.8 <18"
+    tslib: ">=2.3.0"
     typescript: ^4.5.5
   languageName: unknown
   linkType: soft
@@ -596,9 +596,8 @@ __metadata:
   resolution: "@automattic/format-currency@workspace:packages/format-currency"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    i18n-calypso: "workspace:^"
-  peerDependencies:
-    react: ^17.0.2
+    tslib: ^2.3.0
+    typescript: ^4.5.5
   languageName: unknown
   linkType: soft
 
@@ -1532,6 +1531,7 @@ __metadata:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
@@ -1591,6 +1591,7 @@ __metadata:
     "@wordpress/server-side-render": ^3.0.17
     "@wordpress/url": 3.3.2
     babel-jest: ^26.6.3
+    calypso: "workspace:^"
     classnames: ^2.3.1
     enzyme: ^3.11.0
     eslint: ^8.6.0
@@ -1603,8 +1604,11 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-popper: ^2.2.5
+    react-query: ^3.32.1
+    react-redux: ^7.2.6
     reakit-utils: ^0.15.1
     redux: ^4.1.2
+    redux-thunk: ^2.3.0
     utility-types: ^3.10.0
     wait-for-expect: ^3.0.2
     webpack: ^5.68.0
@@ -5067,7 +5071,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:^6.19.6":
+"@sentry/browser@npm:6.19.6, @sentry/browser@npm:^6.19.6":
   version: 6.19.6
   resolution: "@sentry/browser@npm:6.19.6"
   dependencies:
@@ -5111,6 +5115,22 @@ __metadata:
     "@sentry/types": 6.19.6
     tslib: ^1.9.3
   checksum: ab748fbceac0d142d70f2a8c79456876b46c6c5b2640c709aaa20c4421def96339620584a8780ae3de97b07322cf0a7d2a8bb659e3359794993c5e1706c532e1
+  languageName: node
+  linkType: hard
+
+"@sentry/react@npm:^6.19.4":
+  version: 6.19.6
+  resolution: "@sentry/react@npm:6.19.6"
+  dependencies:
+    "@sentry/browser": 6.19.6
+    "@sentry/minimal": 6.19.6
+    "@sentry/types": 6.19.6
+    "@sentry/utils": 6.19.6
+    hoist-non-react-statics: ^3.3.2
+    tslib: ^1.9.3
+  peerDependencies:
+    react: 15.x || 16.x || 17.x || 18.x
+  checksum: 18f6a4bea654319fbb6682119cba2d5637bc20601df57e5a34675f2a9f49612a55144be1ca99d41b4722ae86e9b966ff9a74f881b247dd84db146902e8decfc7
   languageName: node
   linkType: hard
 
@@ -6626,7 +6646,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react-hooks@npm:7.0.2":
+"@testing-library/react-hooks@npm:7.0.2, @testing-library/react-hooks@npm:^7.0.2":
   version: 7.0.2
   resolution: "@testing-library/react-hooks@npm:7.0.2"
   dependencies:
@@ -6684,6 +6704,15 @@ __metadata:
   version: 0.2.0
   resolution: "@trysound/sax@npm:0.2.0"
   checksum: 44907308549ce775a41c38a815f747009ac45929a45d642b836aa6b0a536e4978d30b8d7d680bbd116e9dd73b7dbe2ef0d1369dcfc2d09e83ba381e485ecbe12
+  languageName: node
+  linkType: hard
+
+"@types/archiver@npm:^5.3.1":
+  version: 5.3.1
+  resolution: "@types/archiver@npm:5.3.1"
+  dependencies:
+    "@types/glob": "*"
+  checksum: 622c0d3cf54c0009d07db0c78349a4e81ae3a4b699c7f2ea34085c0ebfb13eca8c4a6459aa5e376c2c0f72916280a0986154fad35022a280670a6e5551fff9d2
   languageName: node
   linkType: hard
 
@@ -12689,6 +12718,7 @@ __metadata:
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@github/webauthn-json": ^0.4.1
+    "@sentry/react": ^6.19.4
     "@stripe/react-stripe-js": ^1.4.1
     "@stripe/stripe-js": ^1.17.1
     "@testing-library/jest-dom": ^5.16.2
@@ -29532,6 +29562,15 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"prettier@npm:wp-prettier@2.6.2-beta-1":
+  version: 2.6.2-beta-1
+  resolution: "wp-prettier@npm:2.6.2-beta-1"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 5375d3f19a909715dbc52ca4ac2ded0a0ae4531cd64f99ebb76f2935ea969ee1e42a7d2ffece7b388797e136343b77c2c25f8cae752c2f28ba712454a1b24095
+  languageName: node
+  linkType: hard
+
 "pretty-error@npm:^2.1.1":
   version: 2.1.1
   resolution: "pretty-error@npm:2.1.1"
@@ -30396,7 +30435,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-dom@npm:17.0.2, react-dom@npm:^17.0.1, react-dom@npm:^17.0.2":
+"react-dom@npm:17.0.2, react-dom@npm:>=16.8 <18, react-dom@npm:^17.0.1, react-dom@npm:^17.0.2":
   version: 17.0.2
   resolution: "react-dom@npm:17.0.2"
   dependencies:
@@ -30997,7 +31036,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react@npm:17.0.2, react@npm:^17.0.1, react@npm:^17.0.2":
+"react@npm:17.0.2, react@npm:>=16.8 <18, react@npm:^17.0.1, react@npm:^17.0.2":
   version: 17.0.2
   resolution: "react@npm:17.0.2"
   dependencies:
@@ -36202,17 +36241,17 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
+"tslib@npm:>=2.3.0, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.1.0, tslib@npm:^2.3.0":
+  version: 2.4.0
+  resolution: "tslib@npm:2.4.0"
+  checksum: eb19bda3ae545b03caea6a244b34593468e23d53b26bf8649fbc20fce43e9b21a71127fd6d2b9662c0fe48ee6ff668ead48fd00d3b88b2b716b1c12edae25b5d
+  languageName: node
+  linkType: hard
+
 "tslib@npm:^1.10.0, tslib@npm:^1.8.1, tslib@npm:^1.9.0, tslib@npm:^1.9.3":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
   checksum: 69ae09c49eea644bc5ebe1bca4fa4cc2c82b7b3e02f43b84bd891504edf66dbc6b2ec0eef31a957042de2269139e4acff911e6d186a258fb14069cd7f6febce2
-  languageName: node
-  linkType: hard
-
-"tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.1.0, tslib@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "tslib@npm:2.3.0"
-  checksum: a845aed84e7e7dbb4c774582da60d7030ea39d67307250442d35c4c5dd77e4b44007098c37dd079e100029c76055f2a362734b8442ba828f8cc934f15ed9be61
   languageName: node
   linkType: hard
 
@@ -36445,22 +36484,22 @@ testarmada-magellan@11.0.10:
   linkType: hard
 
 "typescript@npm:^4.5.5":
-  version: 4.5.5
-  resolution: "typescript@npm:4.5.5"
+  version: 4.6.3
+  resolution: "typescript@npm:4.6.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: ac15b92f3dcd9a4233cab288a913ccbd96729fc488181396fa93c0297ccef3cd3c2f9a7a63340efb0d07bff3d5026028fc81b9c1ef08076029e057081eb5884b
+  checksum: 53e8bcf00abde8ecb2002d1f1e15160b21cb62b2dd0ff71bad2ef55fa96141f76316fce649a415758d3f17bd8e0c5676d8f017c34ec3e38b585812d4717a712c
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>":
-  version: 4.5.5
-  resolution: "typescript@patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"
+  version: 4.6.3
+  resolution: "typescript@patch:typescript@npm%3A4.6.3#~builtin<compat/typescript>::version=4.6.3&hash=493e53"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 6a8888c9fe41d0a19324125c636b1adb9ec5c984342fc7a26f2a389a432a94639c24b72e6e019ffbbb03cb614c1f008b4c31e48fb560b772e45e6581265c500b
+  checksum: d06fdd5852d0fe86f44b56507d37a3458812a1dff11c0fedaeedbe163e81646643669a5bc0dcc3500c72128267b384cda7567c53c568f94e7c753ac6b4cfbce3
   languageName: node
   linkType: hard
 
@@ -38288,7 +38327,7 @@ testarmada-magellan@11.0.10:
     postcss: ^8.4.5
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
-    prettier: "npm:wp-prettier@2.2.1-beta-1"
+    prettier: "npm:wp-prettier@2.6.2-beta-1"
     react: ^17.0.2
     react-dom: ^17.0.2
     readline-sync: ^1.4.10
@@ -38337,6 +38376,7 @@ testarmada-magellan@11.0.10:
     "@automattic/testarmada-magellan-mocha-plugin": "workspace:^"
     "@babel/core": ^7.16.0
     "@testim/chrome-version": ^1.0.7
+    "@types/archiver": ^5.3.1
     "@types/jest": ^27.0.2
     "@xmpp/plugins": ^0.3.0
     archiver: ^5.3.0

@@ -1,10 +1,10 @@
-import { PREVIEW_SITE_SET, PREVIEW_URL_CLEAR, PREVIEW_URL_SET } from 'calypso/state/action-types';
+import { PREVIEW_URL_CLEAR, PREVIEW_URL_SET } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
 export function currentPreviewSiteId( state = null, action ) {
 	switch ( action.type ) {
-		case PREVIEW_SITE_SET:
-			return action.siteId;
+		case PREVIEW_URL_SET:
+			return action.siteId ?? null;
 	}
 	return state;
 }

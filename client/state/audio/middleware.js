@@ -33,17 +33,18 @@ handlers[ HAPPYCHAT_IO_RECEIVE_MESSAGE ] = playSoundForMessageToCustomer;
  * Middleware
  */
 
-export default ( { dispatch } ) => ( next ) => {
-	if ( ! isAudioSupported() ) {
-		return next;
-	}
-
-	return ( action ) => {
-		const handler = handlers[ action.type ];
-		if ( 'function' === typeof handler ) {
-			handler( dispatch, action );
+export default ( { dispatch } ) =>
+	( next ) => {
+		if ( ! isAudioSupported() ) {
+			return next;
 		}
 
-		return next( action );
+		return ( action ) => {
+			const handler = handlers[ action.type ];
+			if ( 'function' === typeof handler ) {
+				handler( dispatch, action );
+			}
+
+			return next( action );
+		};
 	};
-};

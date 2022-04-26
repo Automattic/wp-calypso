@@ -59,10 +59,10 @@ const DEFAULT_GET_CACHE_KEY = ( () => {
  * @param dependants Array of getDependants
  * @returns Function mapping getDependants results
  */
-const makeSelectorFromArray = < TState, TProps extends any[] >(
-	dependants: ( ( state: TState, ...args: TProps ) => any )[]
-) => ( state: TState, ...args: TProps ) =>
-	dependants.map( ( dependant ) => dependant( state, ...args ) );
+const makeSelectorFromArray =
+	< TState, TProps extends any[] >( dependants: ( ( state: TState, ...args: TProps ) => any )[] ) =>
+	( state: TState, ...args: TProps ) =>
+		dependants.map( ( dependant ) => dependant( state, ...args ) );
 
 /**
  * Returns a memoized state selector for use with the global application state.

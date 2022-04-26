@@ -1,0 +1,38 @@
+.categories__discover {
+	.categories__header {
+		@extend .wp-brand-font;
+		font-size: $font-title-large;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		margin-top: 20px;
+	}
+
+	.categories__select-list {
+		background: #656667;
+		border: 1px solid #000000;
+		box-sizing: border-box;
+		border-radius: 15px; /* stylelint-disable-line */
+		max-width: 210px;
+		margin: 0;
+		list-style: none;
+		padding: 18px 5px;
+		color: var( --studio-white );
+		position: absolute;
+		z-index: 10;
+
+		span {
+			padding: 2px 10px;
+			border-radius: 5px; /* stylelint-disable-line */
+			display: block;
+			cursor: pointer;
+		}
+		span:hover {
+			background-color: #82a7ec;
+		}
+
+		hr {
+			margin: 15px 10px;
+		}
+	}
+}

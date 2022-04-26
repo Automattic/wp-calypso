@@ -30,9 +30,9 @@ interface ImporterConfigArgs {
 	siteTitle?: string;
 }
 
-function getConfig(
-	args: ImporterConfigArgs = { siteTitle: '' }
-): { [ key: string ]: ImporterConfig } {
+function getConfig( args: ImporterConfigArgs = { siteTitle: '' } ): {
+	[ key: string ]: ImporterConfig;
+} {
 	const importerConfig: ImporterConfigMap = {};
 
 	importerConfig.wordpress = {
