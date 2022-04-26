@@ -24,6 +24,7 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { useSiteSearchWPORGPlugins } from 'calypso/data/marketplace/use-site-search-es-query';
 import {
 	useWPCOMPlugins,
 	useWPCOMFeaturedPlugins,
@@ -71,7 +72,6 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-
 import './style.scss';
 
 /**
@@ -356,7 +356,7 @@ const SearchListView = ( {
 		data: { plugins: pluginsBySearchTerm = [], pagination: pluginsPagination } = {},
 		isLoading: isFetchingPluginsBySearchTerm,
 		fetchNextPage,
-	} = useWPORGInfinitePlugins(
+	} = useSiteSearchWPORGPlugins(
 		{ searchTerm },
 		{
 			enabled: !! searchTerm,
