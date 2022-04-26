@@ -80,9 +80,7 @@ class MembershipsProductsSection extends Component {
 					// Purposefully isn't a dismissible nudge as without this nudge, the page would appear to be
 					// broken as it only does listing and deleting of plans and it wouldn't be clear how to change that.
 					<UpsellNudge
-						title={ this.props.translate(
-							'Upgrade to change payment plans and add new payment plans'
-						) }
+						title={ this.props.translate( 'Upgrade to modify payment plans or add new plans' ) }
 						href={ '/plans/' + this.props.siteSlug }
 						showIcon={ true }
 						onClick={ () => this.props.trackUpgrade() }
