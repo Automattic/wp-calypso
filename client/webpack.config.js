@@ -383,7 +383,7 @@ const webpackConfig = {
 				org: 'a8c',
 				project: 'calypso',
 				authToken: process.env.SENTRY_AUTH_TOKEN,
-				release: process.env.COMMIT_SHA,
+				release: `calypso_${ process.env.COMMIT_SHA }`,
 				include: filePaths.path,
 				urlPrefix: `~${ filePaths.publicPath }`,
 			} ),
