@@ -42,7 +42,7 @@
 		"@automattic/shopping-cart": "workspace:^",
 		"@automattic/wpcom-checkout": "workspace:^",
 		"@emotion/styled": "^11.3.0",
-		"@wordpress/i18n": "^4.2.4",
+		"@wordpress/i18n": "^4.7.0",
 		"@wordpress/react-i18n": "^3.0.4",
 		"debug": "^4.3.3"
 	},
