@@ -46,7 +46,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 		onAnimationEnd: toggleVisible,
 	};
 
-	const header = isMinimized ? headerText : __( 'Help Center' );
+	const header = isMinimized ? headerText ?? __( 'Help Center' ) : __( 'Help Center' );
 
 	const containerContent = (
 		<>
