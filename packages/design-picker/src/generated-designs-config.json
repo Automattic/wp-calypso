@@ -3,13 +3,12 @@
 		"slug": "business",
 		"title": "Business",
 		"recipe": {
-			"stylesheet": "pub/winkel",
-			"patternIds": [ 1603, 162, 157 ]
+			"stylesheet": "pub/zoologist",
+			"patternIds": [ 1707, 1163, 1190, 1163, 1538, 655 ]
 		},
 		"is_premium": false,
 		"categories": [],
 		"features": [],
-
 		"theme": "",
 		"template": ""
 	},
@@ -17,13 +16,12 @@
 		"slug": "portfolio",
 		"title": "Portfolio",
 		"recipe": {
-			"stylesheet": "pub/quadrat-white",
-			"patternIds": [ 1349 ]
+			"stylesheet": "pub/zoologist",
+			"patternIds": [ 2077, 2080, 2082, 1768, 2088 ]
 		},
 		"is_premium": false,
 		"categories": [],
 		"features": [],
-
 		"theme": "",
 		"template": ""
 	},
@@ -31,12 +29,12 @@
 		"slug": "blog",
 		"title": "Blog",
 		"recipe": {
-			"stylesheet": "pub/zoologist"
+			"stylesheet": "pub/zoologist",
+			"patternIds": [ 1243, 2118, 2121, 1812 ]
 		},
 		"is_premium": false,
 		"categories": [],
 		"features": [],
-
 		"theme": "",
 		"template": ""
 	}
