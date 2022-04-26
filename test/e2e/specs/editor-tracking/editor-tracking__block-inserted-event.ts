@@ -260,8 +260,8 @@ describe(
 				} );
 			} );
 
-			describe( 'Adding existing template parts', function () {
-				it( 'Add a Footer block', async function () {
+			describe( 'Adding blocks from existing template parts', function () {
+				it( 'Add a Header block', async function () {
 					const block = await fullSiteEditorPage.addBlockFromSidebar(
 						HeaderBlock.blockName,
 						HeaderBlock.blockEditorSelector
@@ -273,7 +273,7 @@ describe(
 					await editorTracksEventManager.clearEvents();
 				} );
 
-				it( 'Choose an existing theme template (header-centered)', async function () {
+				it( 'Choose an existing theme template part (header-centered)', async function () {
 					await headerBlock.clickChoose();
 					await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'header-centered' );
 				} );
