@@ -8,7 +8,9 @@
 
 import { dispatch, select, subscribe } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
-import { register } from '..';
+import { AtomicSoftwareStatus, register } from '..';
+import { getAtomicSoftwareStatus } from '../selectors';
+import type { State } from '../reducer';
 
 jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
@@ -150,5 +152,38 @@ describe( 'hasAvailableSiteFeature', () => {
 
 		// Site requires upgrade
 		expect( select( store ).requiresUpgrade( siteId ) ).toEqual( true );
+	} );
+} );
+
+describe( 'getAtomicSoftwareStatus', () => {
+	it( 'Tries to retrive the Atomic Software Status', async () => {
+		const siteId = 1234;
+		const softwareSet = 'woo-on-plans';
+		const status: AtomicSoftwareStatus = {
+			blog_id: 123,
+			software_set: {
+				test: { path: '/valid_path.php', state: 'activate' },
+			},
+			applied: false,
+		};
+		const state: State = {
+			atomicSoftwareStatus: {
+				[ siteId ]: {
+					[ softwareSet ]: {
+						status: status,
+						error: undefined,
+					},
+				},
+			},
+		};
+
+		// Successfuly returns the status
+		expect( getAtomicSoftwareStatus( state, siteId, softwareSet ) ).toEqual( status );
+
+		// Should return undefined when the software set is not found.
+		expect( getAtomicSoftwareStatus( state, siteId, 'unknown_software_set' ) ).toEqual( undefined );
+
+		// Should return undefined when the site ID is not found
+		expect( getAtomicSoftwareStatus( state, 123456, softwareSet ) ).toEqual( undefined );
 	} );
 } );
