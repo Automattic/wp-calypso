@@ -85,7 +85,7 @@
 		"@wordpress/keyboard-shortcuts": "^3.5.0",
 		"@wordpress/keycodes": "^3.7.0",
 		"@wordpress/react-i18n": "^3.0.4",
-		"@wordpress/url": "3.8.0",
+		"@wordpress/url": "^3.8.0",
 		"@wordpress/viewport": "^4.5.0",
 		"@wordpress/warning": "^2.7.0",
 		"autosize": "^4.0.4",

@@ -176,7 +176,7 @@
 		"@wordpress/icons": "^8.3.0",
 		"@wordpress/is-shallow-equal": "^4.7.0",
 		"@wordpress/jest-preset-default": "^8.1.1",
-		"@wordpress/url": "3.8.0",
+		"@wordpress/url": "^3.8.0",
 		"backstopjs": "5.1.0",
 		"browserslist": "^4.16.0",
 		"calypso": "workspace:^",

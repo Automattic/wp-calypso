@@ -40,7 +40,7 @@
 		"@wordpress/is-shallow-equal": "^4.7.0",
 		"@wordpress/plugins": "^4.5.0",
 		"@wordpress/rich-text": "^5.5.0",
-		"@wordpress/url": "3.8.0",
+		"@wordpress/url": "^3.8.0",
 		"debug": "^4.3.3",
 		"lodash": "^4.17.21",
 		"react": "^17.0.2",
