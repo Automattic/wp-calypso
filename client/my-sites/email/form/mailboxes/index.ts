@@ -64,7 +64,7 @@ class MailboxForm< T extends EmailProvider > {
 	hasValidValues() {
 		return Object.values( this.formFields as MailboxFormFields )
 			.filter( ( field ) => field.required ?? false )
-			.some(
+			.every(
 				( field ) =>
 					field.typeName === Boolean.name.toLowerCase() || `${ field.value }`.trim() !== ''
 			);
