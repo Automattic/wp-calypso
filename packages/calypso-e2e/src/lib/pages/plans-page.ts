@@ -8,6 +8,7 @@ type PlansGridVersion = 'current' | 'legacy';
 type PlansComparisonAction = 'show' | 'hide';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
+export type Plans = 'Free' | 'Pro';
 export type LegacyPlans = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
 export type PlansPageTab = 'My Plan' | 'Plans';
 export type PlanActionButton = 'Manage plan' | 'Upgrade';
@@ -30,7 +31,8 @@ const selectors = {
 	},
 
 	// Overhauled plans view
-	upgradeToProButton: 'th button.is-primary',
+	selectPlanButton: ( type: Plans ) => `tr th button.button:has-text("${ type }")`,
+	// upgradeToProButton: 'th button.is-primary',
 	planComparisonActionButton: ( action: PlansComparisonAction ) => {
 		const buttonText = `${ toTitleCase( action ) } full plan comparison`;
 		return `button:text("${ buttonText }")`;
@@ -69,12 +71,21 @@ export class PlansPage {
 	/**
 	 * Clicks on the button to initiate upgrade to WordPress.com Pro plan.
 	 */
-	async upgradeToPro(): Promise< void > {
-		const locator = this.page.locator( selectors.upgradeToProButton );
-		await Promise.all( [
-			this.page.waitForNavigation( { url: /.*checkout.*/ } ),
-			locator.click(),
-		] );
+	// async upgradeToPro(): Promise< void > {
+	// const locator = this.page.locator( selectors.upgradeToProButton );
+	// await Promise.all( [
+	// this.page.waitForNavigation( { url: /.*checkout.*/ } ),
+	// locator.click(),
+	// ] );
+	// }
+
+	/**
+	 *
+	 * @param plan
+	 */
+	async selectPlan( plan: Plans ): Promise< void > {
+		const locator = this.page.locator( selectors.selectPlanButton( plan ) );
+		await Promise.all( [ this.page.waitForNavigation(), locator.click() ] );
 	}
 
 	/**
