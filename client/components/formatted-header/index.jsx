@@ -35,7 +35,7 @@ function FormattedHeader( {
 	return (
 		<header id={ id } className={ classes }>
 			{ ! isSecondary && (
-				<h1 className={ headerClasses }>
+				<h1 className={ headerClasses } data-hello="world">
 					{ preventWidows( headerText, 2 ) } { tooltip }
 				</h1>
 			) }
