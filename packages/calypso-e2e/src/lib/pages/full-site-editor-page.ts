@@ -17,11 +17,12 @@ import {
 	FullSiteEditorNavSidebarComponent,
 	TemplatePartModalComponent,
 	OpenInlineInserter,
+	EditorInlineBlockInserterComponent,
+	DimensionsSettings,
 } from '..';
 import { getCalypsoURL } from '../../data-helper';
 import { getIdFromBlock } from '../../element-helper';
 import envVariables from '../../env-variables';
-import { EditorInlineBlockInserterComponent } from '../components';
 
 const wpAdminPath = 'wp-admin/themes.php';
 
@@ -381,7 +382,10 @@ export class FullSiteEditorPage {
 				// We want to close the welcome guide if it opens, but not slow down the test if it doesn't.
 				// This will effectively register a handler that waits for the welcome guide to close it if it appears
 				// but otherwise doesn't affect the following actions.
-				const safelyWatchForWelcomeGuide = () => this.closeStylesWelcomeGuide().catch();
+				const safelyWatchForWelcomeGuide = () =>
+					this.closeStylesWelcomeGuide().catch( () => {
+						// No-op
+					} );
 				safelyWatchForWelcomeGuide();
 			}
 			await this.editorPopoverMenuComponent.clickMenuButton( 'Styles' );
@@ -445,6 +449,24 @@ export class FullSiteEditorPage {
 		typographySettings: TypographySettings
 	): Promise< void > {
 		await this.editorSiteStylesComponent.setBlockTypography( blockName, typographySettings );
+	}
+
+	/**
+	 * Set global layout settings for the site.
+	 * Note that only the "Padding" dimension is available globally.
+	 * This auto-handles returning to top menu and navigating down.
+	 *
+	 * @param {DimensionsSettings} dimensionsSettings The dimensions settings to set.
+	 */
+	async setGlobalLayoutStyle( dimensionsSettings: DimensionsSettings ): Promise< void > {
+		await this.editorSiteStylesComponent.setGlobalLayout( dimensionsSettings );
+	}
+
+	/**
+	 * Resets the global layout style to the layout defaults (empty).
+	 */
+	async resetGlobalLayoutStyle(): Promise< void > {
+		await this.editorSiteStylesComponent.resetGlobalLayout();
 	}
 
 	/**
