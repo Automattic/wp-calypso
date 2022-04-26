@@ -36,6 +36,7 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 			event.preventDefault();
 			const providedDependencies = { siteTitle };
 			if ( site ) {
+				//@TODO: Also save the podcast ID at this point
 				await saveSiteSettings( site.ID, { blogname: siteTitle } );
 				submit?.( providedDependencies, siteTitle );
 			}
