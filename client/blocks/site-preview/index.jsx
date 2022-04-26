@@ -38,15 +38,15 @@ function SitePreviewInner( { siteId, className } ) {
 	return (
 		<WebPreview
 			className={ className }
-			previewUrl={ formatPreviewUrl() }
 			externalUrl={ previewUrl }
-			showExternal={ true }
-			showClose={ true }
-			showPreview={ showPreview }
 			onClose={ () => {
 				dispatch( closePreview() );
 				incrementPreviewCount();
 			} }
+			previewUrl={ formatPreviewUrl() }
+			showClose
+			showExternal
+			showPreview={ showPreview }
 			showSEO={ ! hideSEO }
 		/>
 	);
