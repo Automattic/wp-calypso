@@ -366,3 +366,20 @@ export type AtomicSoftwareStatusState = Record<
 		error: AtomicSoftwareStatusError | undefined;
 	}
 >;
+
+export enum AtomicSoftwareInstallStatus {
+	UNINITIALIZED = 'unintialized',
+	IN_PROGRESS = 'in_progress',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+}
+export type AtomicSoftwareInstallState = Record<
+	string,
+	{
+		status: AtomicSoftwareInstallStatus | undefined;
+		error: AtomicSoftwareInstallError | undefined;
+	}
+>;
+export enum AtomicSoftwareInstallError {
+	INTERNAL = 'internal',
+}
