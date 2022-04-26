@@ -1,4 +1,4 @@
-import phpUnserialize from 'phpunserialize';
+import { unserialize } from 'php-unserialize';
 import { UseQueryResult, UseQueryOptions, InfiniteData, useInfiniteQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import { extractSearchInformation, normalizePluginsList } from 'calypso/lib/plugins/utils';
@@ -27,7 +27,7 @@ const createIconsObject = ( pluginSlug: string, iconsArray: string ) => {
 		location: string;
 		revision: string;
 	};
-	const icons: Record< string, Icon > = phpUnserialize( iconsArray );
+	const icons: Record< string, Icon > = unserialize( iconsArray );
 	return Object.values( icons ).reduce(
 		( prev: Record< string, string >, { resolution, filename, location, revision } ) => {
 			prev[

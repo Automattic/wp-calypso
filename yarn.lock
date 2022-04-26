@@ -12815,6 +12815,7 @@ __metadata:
     percentage-regex: ^3.0.0
     phone: ^2.4.2
     photon: "workspace:^"
+    php-unserialize: ^0.0.1
     pkg-dir: ^5.0.0
     postcss: ^8.4.5
     prismjs: ^1.26.0
@@ -28500,19 +28501,19 @@ fsevents@~2.1.2:
   languageName: unknown
   linkType: soft
 
+"php-unserialize@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "php-unserialize@npm:0.0.1"
+  checksum: 072d87511a9e1d4bf887e3c5b7738f773e3615cb2dd7fb35b95f3afeff89000c391271a68fe4df854cac0664be12b2d8c3162f4bbf943163a9544178749b89f9
+  languageName: node
+  linkType: hard
+
 "phpegjs@npm:^1.0.0-beta7":
   version: 1.0.0-beta7
   resolution: "phpegjs@npm:1.0.0-beta7"
   peerDependencies:
     pegjs: ^0.10.0
   checksum: 15cdc5b0cebc4958771c1c651e54e6a4e439c08998eca74f7c91294e364061a1e9c3050de80192f43197522bedd49489d02b200c34dcc8716209603dda1f7dab
-  languageName: node
-  linkType: hard
-
-"phpunserialize@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "phpunserialize@npm:1.1.0"
-  checksum: 6382e8d103092ee8644c821cd2b2d11b0674fe07e5b8adcb579aab834945fdf1ca2caeb4725591425cfec337d9e9dda7611f7c05f560798184f8fb82b240953b
   languageName: node
   linkType: hard
 
@@ -38326,7 +38327,6 @@ testarmada-magellan@11.0.10:
     node-fetch: ^2.6.6
     npm-run-all: ^4.1.5
     photon: "workspace:^"
-    phpunserialize: ^1.1.0
     postcss: ^8.4.5
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
