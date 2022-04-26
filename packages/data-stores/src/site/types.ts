@@ -93,6 +93,7 @@ export interface SiteDetails {
 	description: string;
 	URL: string;
 	launch_status: string;
+	jetpack: boolean;
 	options: {
 		admin_url?: string;
 		advanced_seo_front_page_description?: string;

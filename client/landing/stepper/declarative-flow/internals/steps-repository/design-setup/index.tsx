@@ -63,10 +63,13 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		} ),
 		[]
 	);
-	const isPrivateAtomic = Boolean(
-		site?.launch_status === 'unlaunched' && site?.options?.is_automated_transfer
-	);
 
+	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
+	const isPrivateAtomic = Boolean( site?.launch_status === 'unlaunched' && isAtomic );
+
+	const isEligibleForProPlan = useSelect(
+		( select ) => site && select( SITE_STORE ).isEligibleForProPlan( site.ID )
+	);
 	const showDesignPickerCategories =
 		isEnabled( 'signup/design-picker-categories' ) && ! isAnchorSite;
 	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
@@ -74,10 +77,9 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		isEnabled( 'signup/design-picker-generated-designs' ) && intent === 'build' && !! siteVertical;
 
 	const isPremiumThemeAvailable = Boolean(
-		useMemo(
-			() => sitePlanSlug && planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
-			[ sitePlanSlug ]
-		)
+		useMemo( () => sitePlanSlug && planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ), [
+			sitePlanSlug,
+		] )
 	);
 
 	const tier =
@@ -190,13 +192,16 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
 			return null;
 		}
+
+		const plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
+
 		if ( siteSlug ) {
 			const params = new URLSearchParams();
 			params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 			window.location.href = `/checkout/${ encodeURIComponent(
 				siteSlug
-			) }/premium?${ params.toString() }`;
+			) }/${ plan }?${ params.toString() }`;
 		}
 	}
 
