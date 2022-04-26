@@ -259,6 +259,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 					thankYouSubtitle={ pluginOnSite && thankYouSubtitle }
 					headerBackgroundColor="#fff"
 					headerTextColor="#000"
+					documentationURL={ documentationURL }
 				/>
 			</ThankYouContainer>
 		</ThemeProvider>

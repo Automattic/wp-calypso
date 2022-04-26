@@ -39,6 +39,7 @@ export type ThankYouProps = {
 	sections: ThankYouSectionProps[];
 	showSupportSection?: boolean;
 	customSupportSection?: ThankYouSupportSectionProps;
+	documentationURL?: string;
 	thankYouImage: {
 		alt: string | TranslateResult;
 		src: string;
