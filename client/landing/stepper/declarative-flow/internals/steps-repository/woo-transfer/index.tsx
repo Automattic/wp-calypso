@@ -118,7 +118,6 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 			let stopPollingSoftware = false;
 
 			while ( ! stopPollingSoftware ) {
-				await wait( 3000 );
 				await requestAtomicSoftwareStatus( siteId, 'woo-on-plans' );
 				const softwareStatus = getAtomicSoftwareStatus( siteId, 'woo-on-plans' );
 
