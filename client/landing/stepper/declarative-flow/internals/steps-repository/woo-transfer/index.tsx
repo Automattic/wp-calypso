@@ -1,10 +1,19 @@
 /* eslint-disable no-console */
+import config from '@automattic/calypso-config';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { transferStates } from 'calypso/state/atomic/transfers/constants';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
+
+export interface FailureInfo {
+	type: string;
+	code: number | string;
+	error: string;
+}
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
@@ -21,8 +30,31 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 		getSiteLatestAtomicTransfer,
 		getSiteLatestAtomicTransferError,
 		getAtomicSoftwareStatus,
-		// getAtomicSoftwareError,
+		getAtomicSoftwareError,
 	} = useSelect( ( select ) => select( SITE_STORE ) );
+
+	const handleTransferFailure = ( failureInfo: FailureInfo ) => {
+		recordTracksEvent( 'calypso_woocommerce_dashboard_snag_error', {
+			action: failureInfo.type,
+			site: site?.URL,
+			code: failureInfo.code,
+			error: failureInfo.error,
+		} );
+
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: failureInfo.error,
+			severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+			blog_id: siteId,
+			properties: {
+				env: config( 'env_id' ),
+				type: 'calypso_woocommerce_dashboard_snag_error',
+				action: failureInfo.type,
+				site: site?.URL,
+				code: failureInfo.code,
+			},
+		} );
+	};
 
 	useEffect( () => {
 		if ( ! siteId ) return;
@@ -62,16 +94,21 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 				}
 
 				if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
-					throw new Error( 'Transfer error' );
-					// onFailure( {
-					// 	type: 'transfer',
-					// 	error: transferError?.message || softwareError?.message || '',
-					// 	code: transferError?.code || softwareError?.code || '',
-					// } );
+					handleTransferFailure( {
+						type: 'transfer',
+						error: transferError?.message || '',
+						code: transferError?.code || '',
+					} );
+					throw new Error( 'transfer error' );
 				}
 
 				if ( maxFinishTime < new Date().getTime() ) {
-					throw new Error( 'Timeout error' );
+					handleTransferFailure( {
+						type: 'transfer_timeout',
+						error: 'transfer took too long',
+						code: 'transfer_timeout',
+					} );
+					throw new Error( 'transfer timeout' );
 				}
 
 				stopPollingTransfer = transferStatus === transferStates.COMPLETED;
@@ -84,13 +121,24 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 				await wait( 3000 );
 				await requestAtomicSoftwareStatus( siteId, 'woo-on-plans' );
 				const softwareStatus = getAtomicSoftwareStatus( siteId, 'woo-on-plans' );
-				// const softwareError = getAtomicSoftwareError( siteId, 'woo-on-plans' );
-				// if ( softwareError ) {
-				// 	throw new Error( 'Software error' );
-				// }
+
+				const softwareError = getAtomicSoftwareError( siteId, 'woo-on-plans' );
+				if ( softwareError ) {
+					handleTransferFailure( {
+						type: 'transfer',
+						error: softwareError.message || '',
+						code: softwareError.status || '',
+					} );
+					throw new Error( 'software install error' );
+				}
 
 				if ( maxFinishTime < new Date().getTime() ) {
-					throw new Error( 'Timeout error' );
+					handleTransferFailure( {
+						type: 'transfer_timeout',
+						error: 'transfer took too long',
+						code: 'transfer_timeout',
+					} );
+					throw new Error( 'transfer timeout' );
 				}
 
 				stopPollingSoftware = !! softwareStatus?.applied;
