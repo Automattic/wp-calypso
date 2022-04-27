@@ -19,12 +19,11 @@ import {
 } from 'calypso/signup/steps/import/ready';
 import { GoToStep } from 'calypso/signup/types';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
+import { BASE_ROUTE } from './config';
 import { getFinalImporterUrl } from './helper';
 import { redirect, removeTrailingSlash } from './util';
 import type { Step } from '../../types';
 import './style.scss';
-
-const BASE_ROUTE = 'import';
 
 export const ImportWrapper: Step = function ( props ) {
 	const { __ } = useI18n();
@@ -38,6 +37,7 @@ export const ImportWrapper: Step = function ( props ) {
 
 			<StepContainer
 				stepName={ 'import-step' }
+				className={ 'import__onboarding-page' }
 				hideSkip={ shouldHideSkipBtn }
 				hideFormattedHeader={ true }
 				goBack={ navigation.goBack }
@@ -101,7 +101,7 @@ const ImportStep: Step = function ImportStep( props ) {
 	 */
 	function renderStepContent() {
 		return (
-			<div className="import__onboarding-page">
+			<>
 				{ currentRoute === 'import' && <CaptureStep goToStep={ goToStep } /> }
 				{ currentRoute === 'import/list' && <ListStep goToStep={ goToStep } /> }
 
@@ -133,7 +133,7 @@ const ImportStep: Step = function ImportStep( props ) {
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }
-			</div>
+			</>
 		);
 	}
 
