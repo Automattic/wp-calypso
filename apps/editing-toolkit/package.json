@@ -79,7 +79,7 @@
 		"@wordpress/data": "^6.1.5",
 		"@wordpress/data-controls": "^2.2.8",
 		"@wordpress/date": "^4.2.3",
-		"@wordpress/dependency-extraction-webpack-plugin": "^3.2.1",
+		"@wordpress/dependency-extraction-webpack-plugin": "^3.4.1",
 		"@wordpress/dom-ready": "^3.2.3",
 		"@wordpress/edit-post": "^5.0.20",
 		"@wordpress/editor": "^12.0.16",

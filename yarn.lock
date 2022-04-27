@@ -1566,7 +1566,7 @@ __metadata:
     "@wordpress/data": ^6.1.5
     "@wordpress/data-controls": ^2.2.8
     "@wordpress/date": ^4.2.3
-    "@wordpress/dependency-extraction-webpack-plugin": ^3.2.1
+    "@wordpress/dependency-extraction-webpack-plugin": ^3.4.1
     "@wordpress/dom-ready": ^3.2.3
     "@wordpress/edit-post": ^5.0.20
     "@wordpress/editor": ^12.0.16
@@ -9001,6 +9001,18 @@ __metadata:
   peerDependencies:
     webpack: ^4.8.3 || ^5.0.0
   checksum: 4b240fe7e5c5443fb9511a2f2804c959052c8b6dec73cdbbefb68c845be00bad9174c3eee0cce978bcffa8d325d2d43c04cdd32734271483f3f7d7d0b5483064
+  languageName: node
+  linkType: hard
+
+"@wordpress/dependency-extraction-webpack-plugin@npm:^3.4.1":
+  version: 3.4.2
+  resolution: "@wordpress/dependency-extraction-webpack-plugin@npm:3.4.2"
+  dependencies:
+    json2php: ^0.0.4
+    webpack-sources: ^3.2.2
+  peerDependencies:
+    webpack: ^4.8.3 || ^5.0.0
+  checksum: 91229e7ce8b84793ab79e0c0e7e127ab6e0723c70bcb9e3115bf0633c82ed3852ab2dadd41f9e945fdbf6aa800f4aac6b1397f2f7f0115b48e7f8dbf6bbfff96
   languageName: node
   linkType: hard
 
@@ -37854,7 +37866,7 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
-"webpack-sources@npm:^3.2.3":
+"webpack-sources@npm:^3.2.2, webpack-sources@npm:^3.2.3":
   version: 3.2.3
   resolution: "webpack-sources@npm:3.2.3"
   checksum: 2ef63d77c4fad39de4a6db17323d75eb92897b32674e97d76f0a1e87c003882fc038571266ad0ef581ac734cbe20952912aaa26155f1905e96ce251adbb1eb4e
