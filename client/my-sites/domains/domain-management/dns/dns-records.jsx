@@ -7,7 +7,7 @@ import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import DnsRecordsList from 'calypso/my-sites/domains/domain-management/dns/dns-records-list';
@@ -86,7 +86,7 @@ class DnsRecords extends Component {
 		];
 
 		return (
-			<Breadcrumbs
+			<DomainHeader
 				items={ items }
 				mobileItem={ mobileItem }
 				buttons={ buttons }
