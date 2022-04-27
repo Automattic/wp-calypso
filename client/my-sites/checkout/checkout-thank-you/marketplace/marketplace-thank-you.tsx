@@ -188,6 +188,22 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 					</FullWidthButton>
 				),
 			},
+			...( documentationURL
+				? [
+						{
+							stepKey: 'whats_next_documentation',
+							stepTitle: translate( 'Documentation' ),
+							stepDescription: translate(
+								'Visit the step-by-step guide to learn how to use this plugin.'
+							),
+							stepCta: (
+								<FullWidthButton href={ documentationURL }>
+									{ translate( 'Visit guide' ) }
+								</FullWidthButton>
+							),
+						},
+				  ]
+				: [] ),
 			{
 				stepKey: 'whats_next_grow',
 				stepTitle: translate( 'Keep growing' ),
@@ -205,22 +221,6 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 					</FullWidthButton>
 				),
 			},
-			...( documentationURL
-				? [
-						{
-							stepKey: 'whats_next_documentation',
-							stepTitle: translate( 'Documentation' ),
-							stepDescription: translate(
-								'Visit the step-by-step guide to learn how to use this plugin.'
-							),
-							stepCta: (
-								<FullWidthButton href={ documentationURL }>
-									{ translate( 'Visit guide' ) }
-								</FullWidthButton>
-							),
-						},
-				  ]
-				: [] ),
 		],
 	};
 
@@ -259,7 +259,6 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 					thankYouSubtitle={ pluginOnSite && thankYouSubtitle }
 					headerBackgroundColor="#fff"
 					headerTextColor="#000"
-					documentationURL={ documentationURL }
 				/>
 			</ThankYouContainer>
 		</ThemeProvider>

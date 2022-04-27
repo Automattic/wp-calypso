@@ -156,7 +156,6 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 		headerTextColor = 'var( --studio-white )',
 		containerClassName,
 		sections,
-		documentationURL,
 		showSupportSection = true,
 		thankYouTitle,
 		thankYouSubtitle,
@@ -196,14 +195,6 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 				href: CALYPSO_CONTACT,
 				title: translate( 'Ask a question' ),
 			},
-			...( documentationURL
-				? [
-						{
-							href: documentationURL,
-							title: translate( 'View plugin documentation' ),
-						},
-				  ]
-				: [] ),
 			{
 				href: localizeUrl( SUPPORT_ROOT ),
 				title: translate( 'View WordPress.com support guides' ),
