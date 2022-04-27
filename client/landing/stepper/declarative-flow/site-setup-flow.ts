@@ -191,6 +191,11 @@ export const siteSetupFlow: Flow = {
 				case 'vertical': {
 					return navigate( 'intent' );
 				}
+
+				case 'importReady':
+				case 'importReadyPreview': {
+					return exitFlow( providedDependencies?.url as string );
+				}
 			}
 		}
 

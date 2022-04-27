@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -38,7 +37,7 @@ const ImportReadyPreview: Step = function ImportStep( props ) {
 			isAtomicSite
 		);
 
-		redirect( url );
+		navigation.submit?.( { url } );
 	}
 
 	function goToHomeStep() {
