@@ -105,7 +105,7 @@ const InlineHelpCenterContent = ( {
 						searchQuery={ searchQuery }
 						openAdminInNewTab={ true }
 					/>
-					<InlineHelpMoreResources />
+					{ ! searchQuery && <InlineHelpMoreResources /> }
 				</div>
 				{ renderSecondaryView() }
 			</>
