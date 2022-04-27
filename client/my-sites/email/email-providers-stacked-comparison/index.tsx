@@ -28,6 +28,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 export type EmailProvidersStackedComparisonProps = {
+	backPath?: string;
 	cartDomainName?: string;
 	comparisonContext: string;
 	isDomainInCart?: boolean;
@@ -38,6 +39,7 @@ export type EmailProvidersStackedComparisonProps = {
 };
 
 const EmailProvidersStackedComparison = ( {
+	backPath,
 	comparisonContext,
 	isDomainInCart = false,
 	selectedDomainName,
@@ -129,6 +131,19 @@ const EmailProvidersStackedComparison = ( {
 		return null;
 	}
 
+	const header = (
+		<h1 className="email-providers-stacked-comparison__header">
+			{ isDomainInCart
+				? translate( 'Add a professional email address to %(domainName)s', {
+						args: {
+							domainName: selectedDomainName,
+						},
+						comment: '%(domainName)s is the domain name, e.g example.com',
+				  } )
+				: translate( 'Pick an email solution' ) }
+		</h1>
+	);
+
 	const hasExistingEmailForwards = ! isDomainInCart && hasEmailForwards( domain );
 
 	return (
@@ -139,28 +154,47 @@ const EmailProvidersStackedComparison = ( {
 
 			{ ! isDomainInCart && selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-			<h1 className="email-providers-stacked-comparison__header">
-				{ translate( 'Pick an email solution' ) }
-			</h1>
+			{ header }
 
 			{ selectedSite && (
 				<div className="email-providers-stacked-comparison__sub-header">
-					{ translate( 'Not sure where to start? {{a}}See how they compare{{/a}}.', {
-						components: {
-							a: (
-								<a
-									href={ emailManagementInDepthComparison(
-										selectedSite.slug,
-										selectedDomainName,
-										currentRoute,
-										null,
-										selectedIntervalLength
-									) }
-									onClick={ handleCompareClick }
-								/>
-							),
-						},
-					} ) }
+					{ isDomainInCart
+						? translate(
+								'Not sure where to start? {{a}}See how they compare{{/a}} or {{skip}}skip this step{{/skip}}.',
+								{
+									components: {
+										a: (
+											<a
+												href={ emailManagementInDepthComparison(
+													selectedSite.slug,
+													selectedDomainName,
+													currentRoute,
+													null,
+													selectedIntervalLength
+												) }
+												onClick={ handleCompareClick }
+											/>
+										),
+										skip: <a href={ `/checkout/${ selectedSite.slug }` } />,
+									},
+								}
+						  )
+						: translate( 'Not sure where to start? {{a}}See how they compare{{/a}}', {
+								components: {
+									a: (
+										<a
+											href={ emailManagementInDepthComparison(
+												selectedSite.slug,
+												selectedDomainName,
+												currentRoute,
+												null,
+												selectedIntervalLength
+											) }
+											onClick={ handleCompareClick }
+										/>
+									),
+								},
+						  } ) }
 				</div>
 			) }
 
@@ -179,6 +213,7 @@ const EmailProvidersStackedComparison = ( {
 			{ ! isDomainInCart && domain && <EmailExistingPaidServiceNotice domain={ domain } /> }
 
 			<ProfessionalEmailCard
+				backPath={ backPath }
 				comparisonContext={ comparisonContext }
 				detailsExpanded={ detailsExpanded.titan }
 				intervalLength={ selectedIntervalLength }
@@ -189,6 +224,7 @@ const EmailProvidersStackedComparison = ( {
 			/>
 
 			<GoogleWorkspaceCard
+				backPath={ backPath }
 				comparisonContext={ comparisonContext }
 				detailsExpanded={ detailsExpanded.google }
 				intervalLength={ selectedIntervalLength }

@@ -21,6 +21,7 @@ export interface ProviderCardProps {
 }
 
 export type EmailProvidersStackedCardProps = {
+	backPath?: string;
 	isDomainInCart?: boolean;
 	comparisonContext: string;
 	detailsExpanded: boolean;

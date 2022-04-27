@@ -44,6 +44,7 @@ export default function EmailProvidersUpsell( { domain, interval, provider } ) {
 				/>
 			) : (
 				<EmailProvidersStackedComparison
+					backPath={ domainAddNew( selectedSiteSlug ) }
 					comparisonContext="domain-upsell"
 					isDomainInCart={ true }
 					selectedDomainName={ domain }

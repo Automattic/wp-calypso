@@ -19,6 +19,7 @@ import './style.scss';
 const noop = () => {};
 
 const TitanNewMailboxList = ( {
+	backPath,
 	children,
 	hiddenFieldNames = [],
 	selectedDomainName,
@@ -84,6 +85,7 @@ const TitanNewMailboxList = ( {
 					) }
 
 					<TitanNewMailbox
+						backPath={ backPath }
 						selectedDomainName={ selectedDomainName }
 						onMailboxValueChange={ onMailboxValueChange( mailbox.uuid ) }
 						mailbox={ mailbox }

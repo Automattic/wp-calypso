@@ -75,6 +75,7 @@ const professionalEmailCardInformation: ProviderCardProps = {
 };
 
 const ProfessionalEmailCard = ( {
+	backPath,
 	comparisonContext,
 	detailsExpanded,
 	intervalLength,
@@ -161,6 +162,7 @@ const ProfessionalEmailCard = ( {
 
 	professionalEmail.formFields = (
 		<TitanNewMailboxList
+			backPath={ backPath }
 			onMailboxesChange={ setTitanMailbox }
 			mailboxes={ titanMailbox }
 			selectedDomainName={ selectedDomainName }

@@ -1,5 +1,7 @@
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate, useRtl } from 'i18n-calypso';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -11,6 +13,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { getMailboxPropTypeShape } from 'calypso/lib/titan/new-mailbox';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
@@ -21,6 +24,7 @@ export const TITAN_PASSWORD_RESET_FIELD = 'alternativeEmail';
 const noop = () => {};
 
 const TitanNewMailbox = ( {
+	backPath,
 	hiddenFieldNames = [],
 	onMailboxValueChange,
 	onReturnKeyPress = noop,
@@ -37,6 +41,8 @@ const TitanNewMailbox = ( {
 } ) => {
 	const translate = useTranslate();
 	const isRtl = useRtl();
+	const cartKey = useCartKey();
+	const shoppingCartManager = useShoppingCart( cartKey );
 
 	const hasBeenValidated =
 		[ alternativeEmail, mailbox, name, password ].some( ( value ) => '' !== value ) ||
@@ -73,6 +79,16 @@ const TitanNewMailbox = ( {
 		setShowAlternateEmail( true );
 		onMailboxValueChange( 'alternativeEmail', userEmail );
 		setAlternativeEmailFieldTouched( true );
+	};
+
+	const redirectAndMaybeRemoveDomainFromCart = async () => {
+		const domain = shoppingCartManager.responseCart?.products.filter(
+			( product ) => product.meta === selectedDomainName
+		)[ 0 ];
+		if ( domain ) {
+			await shoppingCartManager.removeProductFromCart( domain.uuid );
+		}
+		page( backPath );
 	};
 
 	return (
@@ -118,6 +134,16 @@ const TitanNewMailbox = ( {
 						/>
 					</FormLabel>
 					{ hasMailboxError && <FormInputValidation text={ mailboxError } isError /> }
+					{ backPath && (
+						<FormSettingExplanation>
+							{ translate( 'You still can modify your domain. {{a}}Go back{{/a}}.', {
+								components: {
+									// eslint-disable-next-line jsx-a11y/anchor-is-valid
+									a: <a href="#" onClick={ redirectAndMaybeRemoveDomainFromCart } />,
+								},
+							} ) }
+						</FormSettingExplanation>
+					) }
 				</FormFieldset>
 				<FormFieldset>
 					<FormLabel>
