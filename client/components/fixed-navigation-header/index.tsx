@@ -56,7 +56,7 @@ interface Props {
 	className?: string;
 	children?: ReactNode;
 	navigationItems: NavigationItem[];
-	mobileItem: NavigationItem;
+	mobileItem?: NavigationItem;
 	compactBreadcrumb?: boolean;
 }
 
