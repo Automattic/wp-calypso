@@ -192,6 +192,11 @@ export const setAnchorPodcastEpisodeId = ( anchorPodcastEpisodeId: string | null
 	anchorPodcastEpisodeId,
 } );
 
+export const setAnchorPodcastSpotifyUrl = ( anchorPodcastSpotifyUrl: string | null ) => ( {
+	type: 'SET_ANCHOR_PODCAST_SPOTIFY_URL' as const,
+	anchorPodcastSpotifyUrl,
+} );
+
 export function updatePlan( planProductId: number ) {
 	// keep updatePlan for backwards compat
 	return setPlanProductId( planProductId );
@@ -262,6 +267,7 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteTitle
 	| typeof setAnchorPodcastId
 	| typeof setAnchorPodcastEpisodeId
+	| typeof setAnchorPodcastSpotifyUrl
 	| typeof startOnboarding
 	| typeof setIntent
 	| typeof setStartingPoint

@@ -192,6 +192,16 @@ const anchorPodcastEpisodeId: Reducer< string | null, OnboardAction > = ( state 
 	return state;
 };
 
+const anchorPodcastSpotifyUrl: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_ANCHOR_PODCAST_SPOTIFY_URL' ) {
+		return action.anchorPodcastSpotifyUrl;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'ONBOARDING_START' ) {
 		return true;
@@ -299,6 +309,7 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorPodcastEpisodeId,
+	anchorPodcastSpotifyUrl,
 	domain,
 	domainSearch,
 	domainCategory,

@@ -33,18 +33,26 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 		const [ formTouched, setFormTouched ] = useState( false );
 		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 
-		const { anchorFmPodcastId, isAnchorFmPodcastIdError, anchorFmEpisodeId } = useAnchorFmParams();
-		const { setAnchorPodcastId, setAnchorPodcastEpisodeId } = useDispatch( ONBOARD_STORE );
+		const { anchorFmPodcastId, isAnchorFmPodcastIdError, anchorFmEpisodeId, anchorFmSpotifyUrl } =
+			useAnchorFmParams();
+		const { setAnchorPodcastId, setAnchorPodcastEpisodeId, setAnchorPodcastSpotifyUrl } =
+			useDispatch( ONBOARD_STORE );
 
 		const inputRef = useRef< HTMLInputElement >();
 		const underlineWidth = getTextWidth( ( siteTitle as string ) || '', inputRef.current );
 
 		const handleSubmit = ( siteTitle: string ) => {
-			const providedDependencies = { siteTitle, anchorFmPodcastId };
+			const providedDependencies = {
+				siteTitle,
+				anchorFmPodcastId,
+				anchorFmEpisodeId,
+				anchorFmSpotifyUrl,
+			};
 			setSiteTitle( siteTitle );
-			! isAnchorFmPodcastIdError && setAnchorPodcastId( anchorFmPodcastId );
+			setAnchorPodcastId( ! isAnchorFmPodcastIdError ? anchorFmPodcastId : null );
 			setAnchorPodcastEpisodeId( anchorFmEpisodeId );
-			submit?.( providedDependencies, siteTitle, anchorFmPodcastId as string );
+			setAnchorPodcastSpotifyUrl( anchorFmSpotifyUrl );
+			submit?.( providedDependencies );
 		};
 
 		const handleChange = ( event: React.FormEvent< HTMLInputElement > ) => {
