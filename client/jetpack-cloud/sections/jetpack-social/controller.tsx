@@ -12,7 +12,7 @@ export const connections: PageJS.Callback = ( context, next ) => {
 	const state = store.getState();
 	const site = getSelectedSite( state );
 
-	if ( site?.ID && ! canCurrentUser( state, site?.ID, 'publish_posts' ) ) {
+	if ( site?.ID && ! canCurrentUser( state, site.ID, 'publish_posts' ) ) {
 		dispatch(
 			errorNotice(
 				translate( 'You are not authorized to manage social media connections for this site.' )
