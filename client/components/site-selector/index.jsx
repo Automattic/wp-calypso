@@ -485,7 +485,7 @@ const navigateToSite =
 				// There is currently no "all sites" version of the insights page
 				return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
 			} else if ( siteBasePath ) {
-				const base = getSiteBasePath( site );
+				const base = getSiteBasePath();
 
 				// Record original URL type. The original URL should be a path-absolute URL, e.g. `/posts`.
 				const urlType = determineUrlType( base );
@@ -511,9 +511,9 @@ const navigateToSite =
 			}
 		}
 
-		function getSiteBasePath( siteObj ) {
+		function getSiteBasePath() {
 			let path = siteBasePath;
-			const postsBase = siteObj.jetpack || siteObj.single_user_site ? '/posts' : '/posts/my';
+			const postsBase = site.jetpack || site.single_user_site ? '/posts' : '/posts/my';
 
 			// Default posts to /posts/my when possible and /posts when not
 			path = path.replace( /^\/posts\b(\/my)?/, postsBase );
@@ -532,7 +532,7 @@ const navigateToSite =
 			}
 
 			if ( path.match( /^\/store\/stats\// ) ) {
-				const isStore = siteObj.jetpack && siteObj.options && siteObj.options.woocommerce_is_active;
+				const isStore = site.jetpack && site.options && site.options.woocommerce_is_active;
 				if ( ! isStore ) {
 					path = '/stats/day';
 				}
