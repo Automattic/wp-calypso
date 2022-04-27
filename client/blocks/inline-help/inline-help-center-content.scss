@@ -34,17 +34,6 @@
 		.inline-help__secondary-view {
 			display: block;
 		}
-
-		.inline-help__footer {
-			.inline-help__more-button,
-			.inline-help__contact-button {
-				display: none;
-			}
-
-			.inline-help__cancel-button {
-				display: block;
-			}
-		}
 	}
 }
 
@@ -113,51 +102,78 @@
 	}
 }
 
-.inline-help__footer {
-	background: var( --color-neutral-0 );
-	border-top: 1px solid var( --color-neutral-10 );
-	border-radius: 0 0 2px 2px;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	flex-wrap: wrap;
+.inline-help__section-title {
+	font-weight: bold;
+	line-height: 1.4;
+	display: block;
+	padding: 8px 16px;
+	font-size: $font-body-small;
+	text-align: left;
 
-	.button.is-borderless.inline-help__more-button,
-	.button.is-borderless.inline-help__contact-button,
-	.button.is-borderless.inline-help__cancel-button {
-		text-align: left;
-		position: relative;
-		padding: 12px 8px 12px 46px;
+	&::after {
+		content: ':';
+	}
+}
 
-		.gridicon.inline-help__gridicon-left {
-			margin: 0;
-			position: absolute;
-			top: 11px;
-			left: 13px;
+.inline-help__more-resources {
+	list-style: none;
+	text-align: left;
+	margin: 0;
+	padding: 0;
+
+	.inline-help__resource-item {
+		margin: 0;
+		margin-bottom: 0.6em;
+		font-size: $font-body-small;
+
+		.inline-help__resource-cell {
+			width: 100%;
 		}
-
-		.gridicon.inline-help__gridicon-right {
-			margin: 0;
-			position: absolute;
-			top: 11px;
-			right: 13px;
+	
+		@include breakpoint-deprecated( '>660px' ) {
+			font-size: $font-title-small;
+			line-height: 1.3;
 		}
-
-		&:hover {
-			color: var( --color-primary );
-
+	
+		a {
+			color: #000;
+			text-decoration: none;
+			font-weight: normal;
+			line-height: 1.4;
+			display: flex;
+			align-items: center;
+	
+			span {
+				flex-grow: 2;
+			}
+	
 			.gridicon {
-				fill: var( --color-primary );
+				align-self: baseline;
+				background: var( --color-neutral-0 );
+				color: var( --color-neutral-light );
+				flex-shrink: 0;
+				margin-right: 8px;
+				padding: 10px;
+				position: relative;
+			}
+	
+			&:hover {
+				cursor: pointer;
+				background: var( --color-neutral-0 );
+	
+				.gridicon {
+					color: var( --color-neutral );
+				}
+			}
+	
+			&:focus {
+				background: var( --color-primary );
+				color: var( --color-text-inverted );
+	
+				.gridicon {
+					color: var( --color-text-inverted );
+				}
 			}
 		}
-	}
-
-	.button.is-borderless.inline-help__contact-button {
-		padding-right: 40px;
-	}
-
-	// Hide/Show buttons as needed
-	.inline-help__cancel-button {
-		display: none;
 	}
 }
