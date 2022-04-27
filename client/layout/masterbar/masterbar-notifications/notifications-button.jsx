@@ -12,6 +12,8 @@ import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import MasterbarItem from '../item';
 import { BellIcon } from './notifications-bell-icon';
 
+import './notifications-style.scss';
+
 class MasterbarItemNotifications extends Component {
 	static propTypes = {
 		isActive: PropTypes.bool,

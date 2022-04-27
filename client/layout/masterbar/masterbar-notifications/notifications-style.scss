@@ -1,0 +1,39 @@
+
+.masterbar__item-notifications {
+	margin-right: 12px;
+
+	.masterbar__item-content {
+		display: block;
+	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		margin-right: 0;
+		margin-top: 0;
+
+		&:active, &:hover, &:focus {
+			color: var( --color-text-inverted );
+		}
+	}
+
+	.gridicon {
+		fill: var( --color-text-inverted );
+		margin-top: 1px;
+
+		@media only screen and ( max-width: 782px ) {
+			flex-shrink: 0;
+		}
+	}
+
+	.gridicon + .masterbar__item-content {
+		padding: 0;
+
+		@include breakpoint-deprecated( '<480px' ) {
+			display: block;
+		}
+	}
+
+	.masterbar__item-notifications-label {
+		display: none;
+	}
+
+}
