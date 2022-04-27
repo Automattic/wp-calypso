@@ -85,9 +85,11 @@ const TitanNewMailbox = ( {
 		const domain = shoppingCartManager.responseCart?.products.filter(
 			( product ) => product.meta === selectedDomainName
 		)[ 0 ];
+
 		if ( domain ) {
 			await shoppingCartManager.removeProductFromCart( domain.uuid );
 		}
+
 		page( backPath );
 	};
 

@@ -160,10 +160,10 @@ const EmailProvidersStackedComparison = ( {
 				<div className="email-providers-stacked-comparison__sub-header">
 					{ isDomainInCart
 						? translate(
-								'Not sure where to start? {{a}}See how they compare{{/a}} or {{skip}}skip this step{{/skip}}.',
+								'Not sure where to start? {{compare_link}}See how they compare{{/compare_link}} or {{skip_link}}skip this step{{/skip_link}}.',
 								{
 									components: {
-										a: (
+										compare_link: (
 											<a
 												href={ emailManagementInDepthComparison(
 													selectedSite.slug,
@@ -175,11 +175,11 @@ const EmailProvidersStackedComparison = ( {
 												onClick={ handleCompareClick }
 											/>
 										),
-										skip: <a href={ `/checkout/${ selectedSite.slug }` } />,
+										skip_link: <a href={ `/checkout/${ selectedSite.slug }` } />,
 									},
 								}
 						  )
-						: translate( 'Not sure where to start? {{a}}See how they compare{{/a}}', {
+						: translate( 'Not sure where to start? {{a}}See how they compare{{/a}}.', {
 								components: {
 									a: (
 										<a
