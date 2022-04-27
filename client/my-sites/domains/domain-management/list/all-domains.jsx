@@ -6,13 +6,11 @@ import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Breadcrumb from 'calypso/components/breadcrumb';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAllDomains from 'calypso/components/data/query-all-domains';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -24,7 +22,6 @@ import {
 } from 'calypso/lib/domains';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import {
