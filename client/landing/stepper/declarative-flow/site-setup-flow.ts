@@ -221,11 +221,11 @@ export const siteSetupFlow: Flow = {
 					}
 					return navigate( 'intent' );
 
-				case 'import/list':
-				case 'import/ready':
-				case 'import/ready/not':
-				case 'import/ready/wpcom':
-				case 'import/ready/preview':
+				case 'importList':
+				case 'importReady':
+				case 'importReadyNot':
+				case 'importReadyWpcom':
+				case 'importReadyPreview':
 					return navigate( 'import' );
 
 				default:
@@ -248,7 +248,7 @@ export const siteSetupFlow: Flow = {
 					return exitFlow( `/home/${ siteSlug }` );
 
 				case 'import':
-					return navigate( 'import/list' );
+					return navigate( 'importList' );
 
 				default:
 					return navigate( 'intent' );
