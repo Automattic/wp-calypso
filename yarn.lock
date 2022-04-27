@@ -1587,7 +1587,7 @@ __metadata:
     "@wordpress/scripts": ^22.5.0
     "@wordpress/server-side-render": ^3.5.0
     "@wordpress/url": ^3.8.0
-    babel-jest: ^26.6.3
+    babel-jest: ^27.5.1
     calypso: "workspace:^"
     classnames: ^2.3.1
     enzyme: ^3.11.0
