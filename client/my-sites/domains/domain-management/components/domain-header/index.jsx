@@ -2,7 +2,7 @@ import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import './style.scss';
 
-const DomainHeader = ( { items, mobileItem, buttons, mobileButtons } ) => {
+const DomainHeader = ( { items, mobileItem, buttons = null, mobileButtons = null } ) => {
 	const isWide = useDesktopBreakpoint();
 
 	const renderButtons = () => (
