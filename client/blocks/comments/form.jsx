@@ -28,12 +28,6 @@ class PostCommentForm extends Component {
 			commentText: props.commentText || '',
 			haveFocus: false,
 		};
-
-		// bind event handlers to this instance
-		Object.getOwnPropertyNames( PostCommentForm.prototype )
-			.filter( ( prop ) => prop.indexOf( 'handle' ) === 0 )
-			.filter( ( prop ) => typeof this[ prop ] === 'function' )
-			.forEach( ( prop ) => ( this[ prop ] = this[ prop ].bind( this ) ) );
 	}
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -43,12 +37,12 @@ class PostCommentForm extends Component {
 		} );
 	}
 
-	handleSubmit( event ) {
+	handleSubmit = ( event ) => {
 		event.preventDefault();
 		this.submit();
-	}
+	};
 
-	handleKeyDown( event ) {
+	handleKeyDown = ( event ) => {
 		// Use Ctrl+Enter to submit comment
 		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
 			event.preventDefault();
@@ -68,18 +62,18 @@ class PostCommentForm extends Component {
 				);
 			}
 		}
-	}
+	};
 
-	handleFocus() {
+	handleFocus = () => {
 		this.setState( { haveFocus: true } );
-	}
+	};
 
-	handleTextChange( commentText ) {
+	handleTextChange = ( commentText ) => {
 		this.setState( { commentText } );
 
 		// Update the comment text in the container's state
 		this.props.onUpdateCommentText( commentText );
-	}
+	};
 
 	handleTextChangeEvent = ( event ) => {
 		this.handleTextChange( event.target.value );
