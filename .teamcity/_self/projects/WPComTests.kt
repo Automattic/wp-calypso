@@ -56,9 +56,9 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 	var edgeType = if (edge) "edge" else "production";
 
     return E2EBuildType (
-		buildId = "WPComTests_gutenberg_Playwright_${siteType}_${edgeType}_$targetDevice",
+		buildId = "WPComTests_gutenberg_${siteType}_${edgeType}_$targetDevice",
 		buildUuid = buildUuid,
-		buildName = "Gutenberg $siteType E2E tests ($targetDevice)",
+		buildName = "Gutenberg $siteType E2E tests $edgeType ($targetDevice)",
 		buildDescription = "Runs Gutenberg $siteType E2E tests on $targetDevice size",
 		testGroup = "gutenberg",
 		buildParams = {
@@ -74,14 +74,6 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				value = "false",
 				label = "Use coblocks-edge",
 				description = "Use a blog with coblocks-edge sticker",
-				checked = "true",
-				unchecked = "false"
-			)
-			checkbox(
-				name = "env.TEST_ON_ATOMIC",
-				value = "false",
-				label = "Test on Atomic",
-				description = "Use an Atomic blog to test against",
 				checked = "true",
 				unchecked = "false"
 			)
