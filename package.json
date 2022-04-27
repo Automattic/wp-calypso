@@ -10,8 +10,7 @@
 			"desktop",
 			"apps/*",
 			"packages/*",
-			"test/e2e",
-			"test/e2e/lib/reporter"
+			"test/e2e"
 		]
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
