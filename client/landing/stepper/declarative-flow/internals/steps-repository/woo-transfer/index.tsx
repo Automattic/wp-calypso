@@ -11,11 +11,8 @@ const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 const WooTransfer: Step = function WooTransfer( { navigation } ) {
 	const { submit } = navigation;
 	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
-	const {
-		requestAtomicSoftwareStatus,
-		requestLatestAtomicTransfer,
-		initiateAtomicTransfer,
-	} = useDispatch( SITE_STORE );
+	const { requestAtomicSoftwareStatus, requestLatestAtomicTransfer, initiateAtomicTransfer } =
+		useDispatch( SITE_STORE );
 	const site = useSite();
 
 	const siteId = site?.ID;
@@ -96,7 +93,9 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 					throw new Error( 'Timeout error' );
 				}
 
-				stopPollingSoftware = softwareStatus?.applied;
+				stopPollingSoftware = !! softwareStatus?.applied;
+
+				if ( ! stopPollingSoftware ) await wait( 3000 );
 			}
 			setProgress( 1 );
 			// Allow progress bar to complete
