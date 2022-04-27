@@ -182,6 +182,16 @@ const anchorPodcastId: Reducer< string | null, OnboardAction > = ( state = '', a
 	return state;
 };
 
+const anchorPodcastEpisodeId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_ANCHOR_PODCAST_EPISODE_ID' ) {
+		return action.anchorPodcastEpisodeId;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'ONBOARDING_START' ) {
 		return true;
@@ -288,6 +298,7 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 
 const reducer = combineReducers( {
 	anchorPodcastId,
+	anchorPodcastEpisodeId,
 	domain,
 	domainSearch,
 	domainCategory,

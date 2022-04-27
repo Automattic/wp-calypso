@@ -33,17 +33,18 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 		const [ formTouched, setFormTouched ] = useState( false );
 		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 
-		const { anchorFmPodcastId, isAnchorFmPodcastIdError } = useAnchorFmParams();
-		const { setAnchorPodcastId } = useDispatch( ONBOARD_STORE );
+		const { anchorFmPodcastId, isAnchorFmPodcastIdError, anchorFmEpisodeId } = useAnchorFmParams();
+		const { setAnchorPodcastId, setAnchorPodcastEpisodeId } = useDispatch( ONBOARD_STORE );
 
 		const inputRef = useRef< HTMLInputElement >();
 		const underlineWidth = getTextWidth( ( siteTitle as string ) || '', inputRef.current );
 
-		const handleSubmit = async ( siteTitle: string, podcastId: string | null ) => {
-			const providedDependencies = { siteTitle, podcastId };
+		const handleSubmit = ( siteTitle: string ) => {
+			const providedDependencies = { siteTitle, anchorFmPodcastId };
 			setSiteTitle( siteTitle );
-			setAnchorPodcastId( podcastId );
-			submit?.( providedDependencies, siteTitle, podcastId as string );
+			! isAnchorFmPodcastIdError && setAnchorPodcastId( anchorFmPodcastId );
+			setAnchorPodcastEpisodeId( anchorFmEpisodeId );
+			submit?.( providedDependencies, siteTitle, anchorFmPodcastId as string );
 		};
 
 		const handleChange = ( event: React.FormEvent< HTMLInputElement > ) => {
@@ -60,7 +61,7 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 			<form
 				className="podcast-title__form"
 				onSubmit={ () => {
-					handleSubmit?.( siteTitle, ! isAnchorFmPodcastIdError ? anchorFmPodcastId : null );
+					handleSubmit?.( siteTitle );
 				} }
 			>
 				<div
