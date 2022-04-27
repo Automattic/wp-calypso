@@ -89,6 +89,84 @@ async function postRequest( url: string, body: object ) {
 	}
 	throw new Error( await response.text() );
 }
+/**
+ * Based on WPORG plugin search scoring
+ * See https://github.com/WordPress/wordpress.org/blob/7f3e0d50e02008f5edd46d281052caf827661550/wordpress.org/public_html/wp-content/plugins/plugin-directory/libs/site-search/jetpack-search.php#L1040 for more info
+ */
+export const scoreQuery = ( query: object ) => {
+	const today = new Date();
+	const dateOrigin = today.toISOString().slice( 0, 10 );
+
+	return {
+		function_score: {
+			query,
+			functions: [
+				{
+					exp: {
+						plugin_modified: {
+							origin: dateOrigin,
+							offset: '180d',
+							scale: '360d',
+							decay: 0.5,
+						},
+					},
+				},
+				{
+					exp: {
+						tested: {
+							origin: '4.0',
+							offset: 0.1,
+							scale: 0.4,
+							decay: 0.6,
+						},
+					},
+				},
+				{
+					field_value_factor: {
+						field: 'active_installs',
+						factor: 0.375,
+						modifier: 'log2p',
+						missing: 1,
+					},
+				},
+				{
+					filter: {
+						range: {
+							active_installs: {
+								lte: 1000000,
+							},
+						},
+					},
+					exp: {
+						active_installs: {
+							origin: 1000000,
+							offset: 0,
+							scale: 900000,
+							decay: 0.75,
+						},
+					},
+				},
+				{
+					field_value_factor: {
+						field: 'support_threads_resolved',
+						factor: 0.25,
+						modifier: 'log2p',
+						missing: 0.5,
+					},
+				},
+				{
+					field_value_factor: {
+						field: 'rating',
+						factor: 0.25,
+						modifier: 'sqrt',
+						missing: 2.5,
+					},
+				},
+			],
+			score_mode: 'multiply',
+		},
+	};
+};
 
 export async function fetchPluginsFromSiteSearch( options: PluginQueryOptions ) {
 	const category = options.category || DEFAULT_CATEGORY;
@@ -163,7 +241,7 @@ export async function fetchPluginsFromSiteSearch( options: PluginQueryOptions ) 
 	];
 
 	const requestResult = await postRequest( getSiteSearchEndpoint( WPORG_PLUGINS_BLOG_ID ), {
-		query,
+		query: scoreQuery( query ),
 		fields,
 		size,
 		from,
