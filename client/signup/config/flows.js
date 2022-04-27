@@ -63,23 +63,18 @@ function getSignupDestination( { domainItem, siteId, siteSlug }, localeSlug ) {
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
-	let queryParam = { siteSlug };
+	let queryParam = { siteSlug, loading_ellipsis: 1 };
 	if ( domainItem ) {
 		// If the user is purchasing a domain then the site's primary url might change from
 		// `siteSlug` to something else during the checkout process, which means the
-		// `/setup/intent?siteSlug=${ siteSlug }` url would become invalid. So in this
+		// `/start/setup-site?siteSlug=${ siteSlug }` url would become invalid. So in this
 		// case we use the ID because we know it won't change depending on whether the user
 		// successfully completes the checkout process or not.
 		queryParam = { siteId };
 	}
 
-	if ( isEnabled( 'signup/stepper-flow' ) ) {
-		return addQueryArgs( queryParam, '/setup/intent' );
-	}
-
 	// Initially ship to English users only, then ship to all users when translations complete
 	if ( englishLocales.includes( localeSlug ) || isEnabled( 'signup/hero-flow-non-en' ) ) {
-		queryParam.loading_ellipsis = 1;
 		return addQueryArgs( queryParam, '/start/setup-site' );
 	}
 
