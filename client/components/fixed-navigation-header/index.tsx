@@ -50,20 +50,26 @@ const ActionsContainer = styled.div`
 	align-items: center;
 `;
 
+type NavigationItem = { label: string; href?: string };
 interface Props {
 	id?: string;
 	className?: string;
 	children?: ReactNode;
-	navigationItems: { label: string; href?: string }[];
+	navigationItems: NavigationItem[];
+	mobileItem: NavigationItem;
 	compactBreadcrumb?: boolean;
 }
 
 const FixedNavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
-	const { id, className, children, navigationItems, compactBreadcrumb = false } = props;
+	const { id, className, children, navigationItems, mobileItem, compactBreadcrumb = false } = props;
 	return (
 		<Header id={ id } className={ className } ref={ ref }>
 			<Container>
-				<Breadcrumb items={ navigationItems } compact={ compactBreadcrumb } />
+				<Breadcrumb
+					items={ navigationItems }
+					mobileItem={ mobileItem }
+					compact={ compactBreadcrumb }
+				/>
 				<ActionsContainer>{ children }</ActionsContainer>
 			</Container>
 		</Header>
