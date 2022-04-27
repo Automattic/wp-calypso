@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { camelCase } from 'lodash';
 import { ImporterPlatform } from 'calypso/signup/steps/import/types';
 import {
 	getImporterUrl,
@@ -6,7 +7,6 @@ import {
 	getWpOrgImporterUrl,
 } from 'calypso/signup/steps/import/util';
 import { BASE_ROUTE } from './config';
-import { removeTrailingSlash } from './util';
 import type { StepPath } from '../../steps-repository';
 
 export function getFinalImporterUrl(
@@ -39,5 +39,5 @@ export function getFinalImporterUrl(
 export function generateStepPath( stepName: string, stepSectionName?: string ): StepPath {
 	const routes = [ BASE_ROUTE, stepName, stepSectionName ];
 
-	return removeTrailingSlash( routes.join( '/' ) ) as StepPath;
+	return camelCase( routes.join( '_' ) ) as StepPath;
 }
