@@ -30,7 +30,7 @@
 		"title": "Blog",
 		"recipe": {
 			"stylesheet": "pub/zoologist",
-			"patternIds": [ 1243, 2118, 2121, 1812 ]
+			"patternIds": [ 1243, 2118, 2266, 2121, 1812 ]
 		},
 		"is_premium": false,
 		"categories": [],
