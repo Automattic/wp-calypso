@@ -1,13 +1,11 @@
-import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import SectionHeader from 'calypso/components/section-header';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
@@ -19,11 +17,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
-import StatsList from '../stats-list';
-import StatsListLegend from '../stats-list/legend';
 import AllTimeNav from './all-time-nav';
-import StatsModuleAvailabilityWarning from './availability-warning';
-import StatsModuleExpand from './expand';
 import StatsModulePlaceholder from './placeholder';
 
 import './style.scss';
@@ -116,7 +110,6 @@ class VideoPressStatsModule extends Component {
 		const {
 			className,
 			summary,
-			siteId,
 			path,
 			data,
 			moduleStrings,
@@ -124,19 +117,14 @@ class VideoPressStatsModule extends Component {
 			statType,
 			query,
 			period,
-			translate,
-			useShortLabel,
+			siteSlug,
 		} = this.props;
 
-		console.log( data );
-
-		// const noData = false;
 		let completeVideoStats = [];
 		if ( data && data.days ) {
 			completeVideoStats = Object.values( data.days )
 				.map( ( o ) => o.data )
 				.flat();
-			console.log( completeVideoStats );
 		}
 
 		const noData = data && this.state.loaded && ! completeVideoStats.length;
@@ -162,6 +150,10 @@ class VideoPressStatsModule extends Component {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 
+		const editVideo = ( postId ) => {
+			page( `/media/${ siteSlug }/${ postId }` );
+		};
+
 		return (
 			<div>
 				{ ! isAllTime && (
@@ -179,12 +171,43 @@ class VideoPressStatsModule extends Component {
 					{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
 					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
 					{ hasError && <ErrorPanel /> }
-					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
-					<ul className={ 'module-content-list foo' }>
-						{ completeVideoStats.map( ( videoStat ) => {
-							return <li className={ 'module-content-list-item' }>Stat</li>;
-						} ) }
-					</ul>
+
+					<div className="videopress-stats-module__grid">
+						<div className="videopress-stats-module__header-row-wrapper">
+							<div className="videopress-stats-module__grid-header">{ 'Title' }</div>
+							<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
+								{ 'Impressions' }
+							</div>
+							<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
+								{ 'Time Watched' }
+							</div>
+							<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
+								{ 'Views' }
+							</div>
+						</div>
+						{ completeVideoStats.map( ( row ) => (
+							<div className="videopress-stats-module__row-wrapper">
+								<div
+									className="videopress-stats-module__grid-cell videopress-stats-module__grid-link"
+									onClick={ () => editVideo( row.post_id ) }
+									onKeyUp={ () => editVideo( row.post_id ) }
+									tabIndex="0"
+									role="button"
+								>
+									{ row.title }
+								</div>
+								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
+									{ row.impressions }
+								</div>
+								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
+									{ row.watch_time }
+								</div>
+								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
+									{ row.views }
+								</div>
+							</div>
+						) ) }
+					</div>
 					<StatsModulePlaceholder isLoading={ isLoading } />
 				</Card>
 				{ isAllTime && (
