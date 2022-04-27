@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
-import { translate } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -19,6 +19,17 @@ import AutoresizingFormTextarea from './autoresizing-form-textarea';
 import './form.scss';
 
 const noop = () => {};
+
+function PostCommentFormError( { type } ) {
+	const translate = useTranslate();
+
+	const message =
+		type === 'comment_duplicate'
+			? translate( "Duplicate comment detected. It looks like you've already said that!" )
+			: translate( 'Sorry - there was a problem posting your comment.' );
+
+	return <FormInputValidation isError text={ message } />;
+}
 
 class PostCommentForm extends Component {
 	state = {
@@ -100,31 +111,8 @@ class PostCommentForm extends Component {
 		return this.props.commentText.trim().length > 0;
 	}
 
-	renderError() {
-		const error = this.props.error;
-		let message;
-
-		if ( ! error ) {
-			return null;
-		}
-
-		switch ( this.props.errorType ) {
-			case 'comment_duplicate':
-				message = translate(
-					"Duplicate comment detected. It looks like you've already said that!"
-				);
-				break;
-
-			default:
-				message = translate( 'Sorry - there was a problem posting your comment.' );
-				break;
-		}
-
-		return <FormInputValidation isError text={ message } />;
-	}
-
 	render() {
-		const post = this.props.post;
+		const { post, error, errorType, translate } = this.props;
 
 		// Don't display the form if comments are closed
 		if (
@@ -182,7 +170,7 @@ class PostCommentForm extends Component {
 					>
 						{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
 					</Button>
-					{ this.renderError() }
+					{ error && <PostCommentFormError type={ errorType } /> }
 				</FormFieldset>
 			</form>
 		);
@@ -214,4 +202,4 @@ export default connect(
 		currentUser: getCurrentUser( state ),
 	} ),
 	{ writeComment, deleteComment, replyComment }
-)( PostCommentForm );
+)( localize( PostCommentForm ) );
