@@ -31,12 +31,15 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 		useSiteTitle();
 		const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 		const [ formTouched, setFormTouched ] = useState( false );
-		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 
+		const {
+			setSiteTitle,
+			setAnchorPodcastId,
+			setAnchorPodcastEpisodeId,
+			setAnchorPodcastSpotifyUrl,
+		} = useDispatch( ONBOARD_STORE );
 		const { anchorFmPodcastId, isAnchorFmPodcastIdError, anchorFmEpisodeId, anchorFmSpotifyUrl } =
 			useAnchorFmParams();
-		const { setAnchorPodcastId, setAnchorPodcastEpisodeId, setAnchorPodcastSpotifyUrl } =
-			useDispatch( ONBOARD_STORE );
 
 		const inputRef = useRef< HTMLInputElement >();
 		const underlineWidth = getTextWidth( ( siteTitle as string ) || '', inputRef.current );
