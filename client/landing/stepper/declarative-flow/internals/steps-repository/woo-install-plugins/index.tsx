@@ -54,7 +54,6 @@ const WooInstallPlugins: Step = function WooInstallPlugins( { navigation } ) {
 
 		setPendingAction( async () => {
 			setProgressTitle( 'Installing WooCommerce' );
-			//http://calypso.localhost:3000/setup/intent?siteSlug=testsite176507503.wpcomstaging.com
 			initiateSoftwareInstall( site.ID, softwareSet );
 
 			const timeoutMs = 1000 * 60 * 3;
