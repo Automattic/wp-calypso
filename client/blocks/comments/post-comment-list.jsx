@@ -87,6 +87,7 @@ class PostCommentList extends Component {
 
 	state = {
 		amountOfCommentsToTake: this.props.initialSize,
+		commentText: '',
 	};
 
 	shouldFetchInitialComment = () => {
@@ -213,7 +214,7 @@ class PostCommentList extends Component {
 				activeReplyCommentId={ this.props.activeReplyCommentId }
 				onReplyClick={ this.onReplyClick }
 				onReplyCancel={ this.onReplyCancel }
-				commentText={ this.commentText }
+				commentText={ this.state.commentText }
 				onUpdateCommentText={ this.onUpdateCommentText }
 				onCommentSubmit={ this.resetActiveReplyComment }
 				depth={ 0 }
