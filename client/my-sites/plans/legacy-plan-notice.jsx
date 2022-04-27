@@ -1,20 +1,19 @@
-import { isFreePlanProduct, isPro } from '@automattic/calypso-products';
+import { isBlogger, isPersonal, isPremium } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 
 /**
- * Renders a "You're on a legacy plan" for users on legacy plans (excluding legacy free plan users).
+ * Renders a "You're on a legacy plan" for sites on legacy plans (excluding free, business, and ecommerce plan).
  *
  * @param {boolean} eligibleForProPlan - Is the user eligible for pro plan?
  * @param {object} selectedSite - Site object from store.
+ * @param {object} selectedSite.plan - The plan object nested inside the selectedSite object.
  * @returns - Legacy plan Notice component.
  */
-const maybeRenderLegacyPlanNotice = ( eligibleForProPlan, selectedSite ) => {
-	if (
-		eligibleForProPlan &&
-		! isFreePlanProduct( selectedSite.plan ) &&
-		! isPro( selectedSite.plan )
-	) {
+const maybeRenderLegacyPlanNotice = ( eligibleForProPlan, { plan } ) => {
+	const eligibleLegacyPlan = isBlogger( plan ) || isPersonal( plan ) || isPremium( plan );
+
+	if ( eligibleForProPlan && eligibleLegacyPlan ) {
 		return (
 			<Notice
 				status="is-info"
