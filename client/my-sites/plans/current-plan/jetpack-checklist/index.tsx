@@ -67,10 +67,10 @@ interface Props {
 	wpAdminUrl: undefined | string;
 	akismetFinished: boolean;
 	hasAntiSpam: boolean;
-	productInstallStatus: JetpackProductInstallStatus;
+	productInstallStatus: JetpackProductInstallStatus | null;
 	rewindState: string;
-	siteId: undefined | number;
-	siteSlug: undefined | string;
+	siteId: number | null;
+	siteSlug: string | null;
 	vaultpressFinished: boolean;
 	recordTracksEvent: typeof recordTracksEvent;
 	requestGuidedTour: typeof requestGuidedTour;
@@ -416,14 +416,18 @@ function mapStateToProps( state: AppState ) {
 	const isPaidPlan = isPremium || isProfessional || isSiteOnPaidPlan( state, siteId ?? 0 );
 
 	const siteProducts = getSiteProducts( state, siteId );
-	const hasAntiSpam =
-		siteProducts && siteProducts.filter( ( product ) => isJetpackAntiSpam( product ) ).length > 0;
+	const hasAntiSpam = !! (
+		siteProducts && siteProducts.filter( ( product ) => isJetpackAntiSpam( product ) ).length > 0
+	);
 
 	return {
-		akismetFinished: productInstallStatus && productInstallStatus.akismet_status === 'installed',
-		vaultpressFinished:
+		akismetFinished: !! (
+			productInstallStatus && productInstallStatus.akismet_status === 'installed'
+		),
+		vaultpressFinished: !! (
 			productInstallStatus &&
-			[ 'installed', 'skipped' ].includes( productInstallStatus.vaultpress_status ),
+			[ 'installed', 'skipped' ].includes( productInstallStatus.vaultpress_status )
+		),
 		widgetCustomizerPaneUrl: siteId ? getCustomizerUrl( state, siteId, 'widgets' ) : null,
 		isPaidPlan,
 		hasAntiSpam,
@@ -433,10 +437,11 @@ function mapStateToProps( state: AppState ) {
 		siteSlug: getSiteSlug( state, siteId ),
 		taskStatuses: getSiteChecklist( state, siteId ?? 0 )?.tasks,
 		wpAdminUrl,
-		hasVideoHosting:
+		hasVideoHosting: !! (
 			siteId &&
 			hasFeature( state, siteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO ) &&
-			( ! isJetpackOfferResetPlan( planSlug ?? '' ) || isMinimumVersion ),
+			( ! isJetpackOfferResetPlan( planSlug ?? '' ) || isMinimumVersion )
+		),
 		sitePurchases: getSitePurchases( state, siteId ),
 	};
 }
