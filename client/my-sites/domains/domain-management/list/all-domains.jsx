@@ -22,6 +22,7 @@ import {
 } from 'calypso/lib/domains';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import {
@@ -45,7 +46,6 @@ import {
 } from 'calypso/state/sites/domains/selectors';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import BulkEditContactInfo from './bulk-edit-contact-info';
-import DomainHeader from './domain-header';
 import DomainOnlyUpsellCarousel from './domain-only-upsell-carousel';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
