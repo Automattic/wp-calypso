@@ -109,8 +109,8 @@ function P2CompleteProfile( {
 				'Using a recognizable photo and name will help your team to identify you more easily.'
 			) }
 			stepIndicator={ sprintf(
-				/* translators: for example, Step 1 of 3 */
-				__( 'Step %(currentStep)s of %(totalSteps)s' ),
+				/* translators: %1$d and %2$d are numbers. For example, Step 1 of 3 */
+				__( 'Step %1$d of %2$d' ),
 				3,
 				3
 			) }
