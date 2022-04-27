@@ -45,6 +45,8 @@ const createIconsObject = ( pluginSlug: string, iconsArray: string ) => {
 const createAuthorUrl = ( headerAuthor: string, headerAuthorUri: string ) =>
 	`<a href="${ headerAuthorUri }">${ headerAuthor }</a>`;
 
+const mapStarRatingToPercent = ( starRating: number ) => ( starRating / 5 ) * 100;
+
 const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	return results.map( ( { fields: hit } ) => {
 		return {
@@ -57,7 +59,7 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 			),
 			author_profile: hit[ 'meta.header_author_uri.value' ], // TODO: get author profile URL
 			tested: hit.tested,
-			rating: hit.rating,
+			rating: mapStarRatingToPercent( hit.rating ),
 			num_ratings: hit.num_ratings,
 			support_threads: hit.support_threads,
 			support_threads_resolved: hit.support_threads_resolved,
