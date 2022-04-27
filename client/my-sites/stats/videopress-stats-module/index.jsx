@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { numberFormat, localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -154,6 +154,16 @@ class VideoPressStatsModule extends Component {
 			page( `/media/${ siteSlug }/${ postId }` );
 		};
 
+		const showStat = ( queryStatType, row ) => {
+			const url = `/stats/${ data.period }/videodetails/${ siteSlug }?post=${ row.post_id }&statType=${ queryStatType }`;
+
+			page( url );
+		};
+
+		const formatHours = ( seconds ) => {
+			return ( seconds / 3600 ).toFixed( 1 );
+		};
+
 		return (
 			<div>
 				{ ! isAllTime && (
@@ -179,7 +189,7 @@ class VideoPressStatsModule extends Component {
 								{ 'Impressions' }
 							</div>
 							<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
-								{ 'Time Watched' }
+								{ 'Hours Watched' }
 							</div>
 							<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
 								{ 'Views' }
@@ -196,14 +206,32 @@ class VideoPressStatsModule extends Component {
 								>
 									{ row.title }
 								</div>
-								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
-									{ row.impressions }
+								<div
+									className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric"
+									onClick={ () => showStat( 'impressions', row ) }
+									onKeyUp={ () => showStat( 'impressions', row ) }
+									tabIndex="0"
+									role="button"
+								>
+									{ numberFormat( row.impressions ) }
 								</div>
-								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
-									{ row.watch_time }
+								<div
+									className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric"
+									onClick={ () => showStat( 'watch_time', row ) }
+									onKeyUp={ () => showStat( 'watch_time', row ) }
+									tabIndex="0"
+									role="button"
+								>
+									{ formatHours( row.watch_time ) }
 								</div>
-								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
-									{ row.views }
+								<div
+									className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric"
+									onClick={ () => showStat( 'views', row ) }
+									onKeyUp={ () => showStat( 'views', row ) }
+									tabIndex="0"
+									role="button"
+								>
+									{ numberFormat( row.views ) }
 								</div>
 							</div>
 						) ) }

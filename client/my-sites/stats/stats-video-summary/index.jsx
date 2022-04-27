@@ -66,8 +66,8 @@ class StatsVideoSummary extends Component {
 	}
 }
 
-const connectComponent = connect( ( state, { postId } ) => {
-	const query = { postId };
+const connectComponent = connect( ( state, { postId, statType } ) => {
+	const query = { postId, statType };
 	const siteId = getSelectedSiteId( state );
 
 	return {

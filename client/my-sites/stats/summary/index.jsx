@@ -170,6 +170,8 @@ class StatsSummary extends Component {
 					title = this.props.media.title;
 				}
 
+				const urlParams = new URLSearchParams( this.props.context.querystring );
+
 				// TODO: a separate StatsSectionTitle component should be created
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				chartTitle = (
@@ -185,10 +187,22 @@ class StatsSummary extends Component {
 					);
 				}
 				summaryViews.push( chartTitle );
-				barChart = <StatsVideoSummary key="video-chart" postId={ this.props.postId } />;
+				barChart = (
+					<StatsVideoSummary
+						key="video-chart"
+						postId={ this.props.postId }
+						statType={ urlParams.get( 'statType' ) }
+					/>
+				);
 
 				summaryViews.push( barChart );
-				summaryView = <VideoPlayDetails key="page-embeds" postId={ this.props.postId } />;
+				summaryView = (
+					<VideoPlayDetails
+						key="page-embeds"
+						postId={ this.props.postId }
+						statType={ urlParams.get( 'statType' ) }
+					/>
+				);
 				break;
 
 			case 'searchterms':
