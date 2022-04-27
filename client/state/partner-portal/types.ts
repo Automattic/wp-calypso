@@ -59,10 +59,20 @@ export interface APIPartnerKey {
 	has_licenses: boolean;
 }
 
+export interface APIPartnerAddress {
+	country: string | null;
+	city: string | null;
+	line1: string | null;
+	line2: string | null;
+	postal_code: string | number | null;
+	state: string | null;
+}
+
 export interface APIPartner {
 	id: number;
 	slug: string;
 	name: string;
+	address: APIPartnerAddress;
 	keys: APIPartnerKey[];
 	tos: string;
 	partner_type: string;
@@ -140,10 +150,20 @@ export interface PartnerKey {
 	hasLicenses: boolean;
 }
 
+export interface PartnerAddress {
+	country: string | null;
+	city: string | null;
+	line1: string | null;
+	line2: string | null;
+	postal_code: string | number | null;
+	state: string | null;
+}
+
 export interface Partner {
 	id: number;
 	slug: string;
 	name: string;
+	address: PartnerAddress;
 	keys: PartnerKey[];
 	tos: string;
 	partner_type: string;
