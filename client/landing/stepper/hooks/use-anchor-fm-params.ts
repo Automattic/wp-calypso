@@ -1,5 +1,5 @@
-import useAnchorParameter from './use-anchor-parameter';
 import { isAnchorPodcastIdValid } from './use-is-anchor-fm';
+import useParameter from './use-parameter';
 
 export interface AnchorFmParams {
 	anchorFmPodcastId: string | null;
@@ -12,7 +12,7 @@ export interface AnchorFmParams {
 }
 export function useAnchorFmParams(): AnchorFmParams {
 	const sanitizePodcast = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
-	const anchorFmPodcastId = useAnchorParameter( {
+	const anchorFmPodcastId = useParameter( {
 		queryParamName: 'anchor_podcast',
 		locationStateParamName: 'anchorFmPodcastId',
 		sanitize: sanitizePodcast,
@@ -24,7 +24,7 @@ export function useAnchorFmParams(): AnchorFmParams {
 	// Reserved characters: !*'();:@&=+$,/?#[]
 	// Unreserved: A-Za-z0-9_.~-    (possibly % as a part of percent-encoding)
 	const sanitizeEpisode = ( id: string ) => id.replace( /[^A-Za-z0-9_.\-~%]/g, '' );
-	const anchorFmEpisodeId = useAnchorParameter( {
+	const anchorFmEpisodeId = useParameter( {
 		queryParamName: 'anchor_episode',
 		locationStateParamName: 'anchorFmEpisodeId',
 		sanitize: sanitizeEpisode,
@@ -35,7 +35,7 @@ export function useAnchorFmParams(): AnchorFmParams {
 	// Unreserved: A-Za-z0-9_.~-    (possibly % as a part of percent-encoding)
 	const sanitizeShowUrl = ( id: string ) =>
 		id.replace( /[^A-Za-z0-9_.\-~%!*'();:@&=+$,/?#[\]]/g, '' );
-	const anchorFmSpotifyUrl = useAnchorParameter( {
+	const anchorFmSpotifyUrl = useParameter( {
 		queryParamName: 'spotify_url',
 		locationStateParamName: 'anchorFmSpotifyUrl',
 		sanitize: sanitizeShowUrl,
@@ -46,12 +46,12 @@ export function useAnchorFmParams(): AnchorFmParams {
 	// We store them as strings for consistency with the other param types
 	// and simplicity in code and type signatures.
 	const sanitizeNumberParam = ( id: string ) => id.replace( /^\D+$/g, '' );
-	const anchorFmSite = useAnchorParameter( {
+	const anchorFmSite = useParameter( {
 		queryParamName: 'site',
 		locationStateParamName: 'anchorFmSite',
 		sanitize: sanitizeNumberParam,
 	} );
-	const anchorFmPost = useAnchorParameter( {
+	const anchorFmPost = useParameter( {
 		queryParamName: 'post',
 		locationStateParamName: 'anchorFmPost',
 		sanitize: sanitizeNumberParam,
@@ -64,7 +64,7 @@ export function useAnchorFmParams(): AnchorFmParams {
 	// no matching site and redirect us to "/new?anchor_podcast=abcdef0&anchor_episode=1234-123456&anchor_is_new_site=true",
 	// because it found the last episode and wanted to pass that information to us.
 	// In this case, we don't need to ask the backend again after restarting gutenboarding.
-	const anchorFmIsNewSite = useAnchorParameter( {
+	const anchorFmIsNewSite = useParameter( {
 		queryParamName: 'anchor_is_new_site',
 		locationStateParamName: 'anchorFmIsNewSite',
 		sanitize: ( flag: string ) => ( flag === 'true' ? 'true' : 'false' ),
