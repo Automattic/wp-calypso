@@ -21,21 +21,9 @@ import './form.scss';
 const noop = () => {};
 
 class PostCommentForm extends Component {
-	constructor( props ) {
-		super();
-
-		this.state = {
-			commentText: props.commentText || '',
-			haveFocus: false,
-		};
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.setState( {
-			commentText: nextProps.commentText || '',
-		} );
-	}
+	state = {
+		haveFocus: false,
+	};
 
 	handleKeyDown = ( event ) => {
 		// Use Ctrl+Enter to submit comment
@@ -64,19 +52,15 @@ class PostCommentForm extends Component {
 	};
 
 	handleTextChange = ( event ) => {
-		const commentText = event.target.value;
-
-		this.setState( { commentText } );
-
 		// Update the comment text in the container's state
-		this.props.onUpdateCommentText( commentText );
+		this.props.onUpdateCommentText( event.target.value );
 	};
 
 	handleSubmit = ( event ) => {
 		event.preventDefault();
 
 		const post = this.props.post;
-		const commentText = this.state.commentText.trim();
+		const commentText = this.props.commentText.trim();
 
 		if ( ! commentText ) {
 			this.resetCommentText(); // Clean up any newlines
@@ -108,14 +92,12 @@ class PostCommentForm extends Component {
 	};
 
 	resetCommentText() {
-		this.setState( { commentText: '' } );
-
 		// Update the comment text in the container's state
 		this.props.onUpdateCommentText( '' );
 	}
 
 	hasCommentText() {
-		return this.state.commentText.trim().length > 0;
+		return this.props.commentText.trim().length > 0;
 	}
 
 	renderError() {
@@ -174,7 +156,7 @@ class PostCommentForm extends Component {
 			/>
 		) : (
 			<AutoresizingFormTextarea
-				value={ this.state.commentText }
+				value={ this.props.commentText }
 				placeholder={ translate( 'Enter your comment here…' ) }
 				onKeyUp={ this.handleKeyUp }
 				onKeyDown={ this.handleKeyDown }
@@ -195,7 +177,7 @@ class PostCommentForm extends Component {
 					{ formTextarea }
 					<Button
 						className={ buttonClasses }
-						disabled={ this.state.commentText.length === 0 }
+						disabled={ this.props.commentText.length === 0 }
 						onClick={ this.handleSubmit }
 					>
 						{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
@@ -223,6 +205,7 @@ PostCommentForm.propTypes = {
 };
 
 PostCommentForm.defaultProps = {
+	commentText: '',
 	onCommentSubmit: noop,
 };
 
