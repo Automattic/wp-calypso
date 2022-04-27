@@ -12,7 +12,7 @@ import { BASE_ROUTE } from '../import/config';
 import { getFinalImporterUrl } from '../import/helper';
 import './style.scss';
 
-const ImportList: Step = function ImportStep( props ) {
+const ImportReady: Step = function ImportStep( props ) {
 	const { navigation } = props;
 	const siteSlug = useSiteSlugParam();
 	const site = useSite();
@@ -59,4 +59,4 @@ const ImportList: Step = function ImportStep( props ) {
 	);
 };
 
-export default ImportList;
+export default ImportReady;
