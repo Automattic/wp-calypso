@@ -20,8 +20,8 @@ import {
 import { GoToStep } from 'calypso/signup/types';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { BASE_ROUTE } from './config';
-import { getFinalImporterUrl } from './helper';
-import { redirect, removeTrailingSlash } from './util';
+import { generateStepPath, getFinalImporterUrl } from './helper';
+import { redirect } from './util';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -75,10 +75,7 @@ const ImportStep: Step = function ImportStep( props ) {
 	 ↓ Methods
 	 */
 	const goToStep: GoToStep = function ( stepName, stepSectionName ) {
-		const routes = [ BASE_ROUTE, stepName, stepSectionName ];
-		const stepPath = removeTrailingSlash( routes.join( '/' ) ) as StepPath;
-
-		navigation.goToStep?.( stepPath );
+		navigation.goToStep?.( generateStepPath( stepName, stepSectionName ) );
 	};
 
 	function goToHomeStep() {

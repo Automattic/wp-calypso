@@ -5,6 +5,9 @@ import {
 	getWpComOnboardingUrl,
 	getWpOrgImporterUrl,
 } from 'calypso/signup/steps/import/util';
+import { BASE_ROUTE } from './config';
+import { removeTrailingSlash } from './util';
+import type { StepPath } from '../../steps-repository';
 
 export function getFinalImporterUrl(
 	targetSlug: string,
@@ -31,4 +34,10 @@ export function getFinalImporterUrl(
 	}
 
 	return importerUrl;
+}
+
+export function generateStepPath( stepName: string, stepSectionName?: string ): StepPath {
+	const routes = [ BASE_ROUTE, stepName, stepSectionName ];
+
+	return removeTrailingSlash( routes.join( '/' ) ) as StepPath;
 }
