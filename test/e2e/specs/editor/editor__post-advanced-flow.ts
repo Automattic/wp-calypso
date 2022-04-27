@@ -70,9 +70,11 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 			const testPage = await browser.newPage();
 			await testPage.goto( postURL.href );
 
-			await ElementHelper.reloadAndRetry( testPage, loadPublishedPage );
+			// Work around issue:
+			// https://github.com/Automattic/wp-calypso/issues/57503
+			await ElementHelper.reloadAndRetry( testPage, validatePublishedPage );
 
-			async function loadPublishedPage(): Promise< void > {
+			async function validatePublishedPage(): Promise< void > {
 				await ParagraphBlock.validatePublishedContent( testPage, [ originalContent ] );
 			}
 
