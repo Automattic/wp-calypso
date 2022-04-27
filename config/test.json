@@ -73,6 +73,7 @@
 		"settings/security/monitor": true,
 		"signup/anchor-fm": false,
 		"signup/social": true,
+		"signup/stepper-flow": true,
 		"site-indicator": true,
 		"stepper-woocommerce-poc": false,
 		"themes/premium": true,

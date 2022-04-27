@@ -140,6 +140,7 @@
 		"signup/hero-flow-non-en": true,
 		"signup/site-vertical-step": true,
 		"signup/starting-point-courses": true,
+		"signup/stepper-flow": true,
 		"site-indicator": true,
 		"stepper-woocommerce-poc": true,
 		"themes/premium": true,

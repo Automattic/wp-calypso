@@ -63,7 +63,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug }, localeSlug ) {
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
-	let queryParam = { siteSlug, loading_ellipsis: 1 };
+	let queryParam = { siteSlug };
 	if ( domainItem ) {
 		// If the user is purchasing a domain then the site's primary url might change from
 		// `siteSlug` to something else during the checkout process, which means the
@@ -73,8 +73,13 @@ function getSignupDestination( { domainItem, siteId, siteSlug }, localeSlug ) {
 		queryParam = { siteId };
 	}
 
+	if ( isEnabled( 'signup/stepper-flow' ) ) {
+		return addQueryArgs( queryParam, '/setup/intent' );
+	}
+
 	// Initially ship to English users only, then ship to all users when translations complete
 	if ( englishLocales.includes( localeSlug ) || isEnabled( 'signup/hero-flow-non-en' ) ) {
+		queryParam.loading_ellipsis = 1;
 		return addQueryArgs( queryParam, '/start/setup-site' );
 	}
 
