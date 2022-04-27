@@ -33,7 +33,7 @@ export default function ( phoneNumber ) {
 	}
 
 	// phone module validates mobile numbers
-	if ( ! phone( phoneNumber ).length ) {
+	if ( ! phone( phoneNumber ).isValid ) {
 		return {
 			error: 'phone_number_invalid',
 			message: i18n.translate( 'That phone number does not appear to be valid' ),

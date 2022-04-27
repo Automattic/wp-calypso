@@ -23,8 +23,8 @@ describe( 'Phone Validation Library', () => {
 	test( 'should pass a valid number', () => {
 		assert.strictEqual( phoneValidation( '+447941952721' ).info, 'phone_number_valid' );
 	} );
-	test( 'should fail an invalid 9-digit argentine number', () => {
-		assert.strictEqual( phoneValidation( '+54299123456' ).error, 'phone_number_invalid' );
+	test( 'should pass a valid number in US 463 area code', () => {
+		assert.strictEqual( phoneValidation( '+14631234567' ).info, 'phone_number_valid' );
 	} );
 	test( 'should pass a valid 10 digit argentine without leading 9 number', () => {
 		assert.strictEqual( phoneValidation( '+542231234567' ).info, 'phone_number_valid' );
@@ -65,7 +65,7 @@ describe( 'Phone Validation Library', () => {
 	test( 'should pass a valid myanmar number with 9 digits after leading 9', () => {
 		assert.strictEqual( phoneValidation( '+959426123456' ).info, 'phone_number_valid' );
 	} );
-	test( 'should pass a valid Brazilian number starting with 49', () => {
-		assert.strictEqual( phoneValidation( '+554912345678' ).info, 'phone_number_valid' );
+	test( 'should pass a valid Brazilian number starting with 119', () => {
+		assert.strictEqual( phoneValidation( '+5511961231234' ).info, 'phone_number_valid' );
 	} );
 } );
