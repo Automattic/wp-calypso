@@ -1,0 +1,73 @@
+.stats-module__placeholder {
+	display: block;
+	padding: 0 24px;
+	min-height: 140px;
+	clear: both;
+
+	// Block placeholder, primarily for SVGs and similar
+	&.is-block {
+		background: var( --color-neutral-0 );
+	}
+
+	// Spinner placeholder, to be used in Summary views, where we already have some data
+	&.is-void {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		opacity: 1;
+		-webkit-animation: delay-fade-in 2s 1; // Animating in this silly way to have the graphic actually be visible once the animation is completed
+	}
+
+	&.is-chart {
+		height: 244px;
+	}
+}
+
+// Module Placeholder
+
+@keyframes delay-fade-in {
+	0%,
+	66% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+.stats-module.is-loading {
+	// Hide elements
+	.module-header .site-icon,
+	.module-header .toggle-info,
+	.chart,
+	.module-content-table,
+	.stats-popular__item {
+		display: none;
+	}
+
+	.module-header-link,
+	.module-header-title {
+		max-width: 120px;
+		white-space: nowrap;
+		overflow: hidden;
+
+		.gridicon {
+			display: none;
+		}
+	}
+
+	// Make text invisible
+	.module-content-list-header .label,
+	.module-content-list-header .value,
+	.module-header-title,
+	ul.module-content-tabs li:hover .label,
+	ul.module-content-tabs li.module-tab.is-selected:hover .label {
+		color: rgba( var( --color-surface-rgb ), 0 );
+	}
+}
+
+// Show block placeholder on the summary page only
+.stats-module.is-loading.summary .module-placeholder.is-block {
+	display: block;
+}

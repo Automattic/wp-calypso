@@ -17,6 +17,7 @@ import StatsModule from '../stats-module';
 import statsStringsFactory from '../stats-strings';
 import VideoPlayDetails from '../stats-video-details';
 import StatsVideoSummary from '../stats-video-summary';
+import VideoPressStatsModule from '../videopress-stats-module';
 
 const StatsStrings = statsStringsFactory();
 
@@ -136,8 +137,8 @@ class StatsSummary extends Component {
 			case 'videoplays':
 				title = translate( 'Videos' );
 				summaryView = (
-					<StatsModule
-						key="videoplays-summary"
+					<VideoPressStatsModule
+						key="videopress-stats-module"
 						path="videoplays"
 						moduleStrings={ StatsStrings.videoplays }
 						period={ this.props.period }
