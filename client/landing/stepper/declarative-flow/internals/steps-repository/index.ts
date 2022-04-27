@@ -7,6 +7,7 @@ export { default as storeFeatures } from './store-features';
 export { default as designSetup } from './design-setup';
 export { default as import } from './import';
 export { default as importList } from './import-list';
+export { default as importReady } from './import-ready';
 export { default as businessInfo } from './business-info';
 export { default as storeAddress } from './store-address';
 export { default as vertical } from './site-vertical';
@@ -25,6 +26,7 @@ export type StepPath =
 	| 'designSetup'
 	| 'import'
 	| 'importList'
+	| 'importReady'
 	| 'import/list'
 	| 'import/ready'
 	| 'import/ready/not'

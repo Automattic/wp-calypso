@@ -27,6 +27,7 @@ export const siteSetupFlow: Flow = {
 			'storeFeatures',
 			'import',
 			'importList',
+			'importReady',
 			'businessInfo',
 			'storeAddress',
 			'processing',
