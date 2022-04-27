@@ -6,11 +6,13 @@ import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import Breadcrumb from 'calypso/components/breadcrumb';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAllDomains from 'calypso/components/data/query-all-domains';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
+import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -46,6 +48,7 @@ import {
 } from 'calypso/state/sites/domains/selectors';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import BulkEditContactInfo from './bulk-edit-contact-info';
+import DomainHeader from './domain-header';
 import DomainOnlyUpsellCarousel from './domain-only-upsell-carousel';
 import DomainsTable from './domains-table';
 import DomainsTableFilterButton from './domains-table-filter-button';
@@ -69,6 +72,7 @@ class AllDomains extends Component {
 		sites: PropTypes.object.isRequired,
 		requestingSiteDomains: PropTypes.object,
 		isContactEmailEditContext: PropTypes.bool,
+		isBreakpointActive: PropTypes.bool,
 	};
 
 	state = {
@@ -609,7 +613,7 @@ class AllDomains extends Component {
 		);
 	}
 
-	renderBreadcrumbs() {
+	renderHeader() {
 		const { translate } = this.props;
 
 		const item = {
@@ -635,14 +639,7 @@ class AllDomains extends Component {
 			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
 		];
 
-		return (
-			<Breadcrumbs
-				items={ [ item ] }
-				mobileItem={ item }
-				buttons={ buttons }
-				mobileButtons={ mobileButtons }
-			/>
-		);
+		return <DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ mobileButtons } />;
 	}
 
 	renderContent() {
@@ -684,7 +681,7 @@ class AllDomains extends Component {
 		return (
 			<Main wideLayout>
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-				{ this.renderBreadcrumbs() }
+				{ this.renderHeader() }
 				{ this.renderContent() }
 			</Main>
 		);
