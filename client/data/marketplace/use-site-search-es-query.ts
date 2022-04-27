@@ -9,10 +9,13 @@ import {
 	DEFAULT_CATEGORY,
 	BASE_STALE_TIME,
 	SITE_SEARCH_CACHE_KEY,
-	SITE_SEARCH_ENDPOINT,
+	WPORG_PLUGINS_BLOG_ID,
 } from './constants';
 import { ESHits, ESResponse, Plugin, PluginQueryOptions } from './types';
 import { getPluginsListKey } from './utils';
+
+const getSiteSearchEndpoint = ( blogId: string ) =>
+	`https://public-api.wordpress.com/rest/v1.1/sites/${ blogId }/search`;
 
 /**
  *
@@ -39,8 +42,8 @@ const createIconsObject = ( pluginSlug: string, iconsArray: string ) => {
 	);
 };
 
-const createAuthorUrl = ( header_author: string, header_author_uri: string ) =>
-	`<a href="${ header_author_uri }">${ header_author }</a>`;
+const createAuthorUrl = ( headerAuthor: string, headerAuthorUri: string ) =>
+	`<a href="${ headerAuthorUri }">${ headerAuthor }</a>`;
 
 const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	return results.map( ( { fields: hit } ) => {
@@ -85,7 +88,7 @@ async function postRequest( url: string, body: object ) {
 	throw new Error( await response.text() );
 }
 
-export async function fetchWPOrgPluginsFromSiteSearch( options: PluginQueryOptions ) {
+export async function fetchPluginsFromSiteSearch( options: PluginQueryOptions ) {
 	const category = options.category || DEFAULT_CATEGORY;
 	const search = options.searchTerm;
 	const author = options.author;
@@ -157,7 +160,7 @@ export async function fetchWPOrgPluginsFromSiteSearch( options: PluginQueryOptio
 		'slug',
 	];
 
-	const requestResult = await postRequest( SITE_SEARCH_ENDPOINT, {
+	const requestResult = await postRequest( getSiteSearchEndpoint( WPORG_PLUGINS_BLOG_ID ), {
 		query,
 		fields,
 		size,
@@ -178,7 +181,7 @@ const extractPages = ( pages: Array< { hits: ESHits } > = [] ) => {
  * @param options Optional options to pass to the underlying query
  * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
  */
-export const useSiteSearchWPORGPlugins = (
+export const useSiteSearchPlugins = (
 	options: PluginQueryOptions,
 	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = false }: UseQueryOptions = {}
 ): UseQueryResult => {
@@ -189,7 +192,7 @@ export const useSiteSearchWPORGPlugins = (
 	return useInfiniteQuery(
 		getPluginsListKey( SITE_SEARCH_CACHE_KEY, options, true ),
 		( { pageParam = DEFAULT_FIRST_PAGE } ) =>
-			fetchWPOrgPluginsFromSiteSearch( {
+			fetchPluginsFromSiteSearch( {
 				pageSize,
 				page: pageParam,
 				category: options.category,
