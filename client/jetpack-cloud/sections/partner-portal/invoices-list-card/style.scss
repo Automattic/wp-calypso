@@ -1,0 +1,17 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.invoices-list-card {
+	&__actions {
+		display: flex;
+		flex-direction: row-reverse;
+		justify-content: space-between;
+
+		button,
+		.button {
+			&:focus {
+				border-width: 1px;
+			}
+		}
+	}
+}

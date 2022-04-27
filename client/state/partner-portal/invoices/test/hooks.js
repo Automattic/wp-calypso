@@ -112,3 +112,21 @@ describe( 'useInvoicesQuery', () => {
 		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.status ).toBe( 'is-error' );
 	} );
 } );
+
+describe( 'usePayInvoiceMutation', () => {
+	beforeEach( () => {
+		// Prevent react-query from logging an error due to the failing requests.
+		setLogger( {
+			error: jest.fn(),
+		} );
+	} );
+
+	afterEach( () => {
+		// Restore react-query logger.
+		setLogger( console );
+	} );
+
+	it( '@todo implement', async () => {
+		// @todo implement
+	} );
+} );
