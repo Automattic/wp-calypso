@@ -181,7 +181,6 @@ class PostCommentForm extends Component {
 				onFocus={ this.handleFocus }
 				onBlur={ this.handleBlur }
 				onChange={ this.handleTextChange }
-				siteId={ this.props.post.site_ID }
 				enableAutoFocus={ isReply }
 			/>
 		);
