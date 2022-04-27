@@ -172,6 +172,16 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
+const anchorPodcastId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_ANCHOR_PODCAST_ID' ) {
+		return action.anchorPodcastId;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'ONBOARDING_START' ) {
 		return true;
@@ -277,6 +287,7 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 };
 
 const reducer = combineReducers( {
+	anchorPodcastId,
 	domain,
 	domainSearch,
 	domainCategory,

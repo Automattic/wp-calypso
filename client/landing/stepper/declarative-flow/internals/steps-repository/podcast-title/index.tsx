@@ -11,6 +11,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormInput from 'calypso/components/forms/form-text-input';
 import getTextWidth from 'calypso/landing/gutenboarding/onboarding-block/acquire-intent/get-text-width';
 import useDetectMatchingAnchorSite from 'calypso/landing/stepper/hooks/use-detect-matching-anchor-site';
+import { useAnchorFmParams } from 'calypso/landing/stepper/hooks/use-anchor-fm-params';
 import useSiteTitle from 'calypso/landing/stepper/hooks/use-site-title';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -32,13 +33,17 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 		const [ formTouched, setFormTouched ] = useState( false );
 		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 
+		const { anchorFmPodcastId, isAnchorFmPodcastIdError } = useAnchorFmParams();
+		const { setAnchorPodcastId } = useDispatch( ONBOARD_STORE );
+
 		const inputRef = useRef< HTMLInputElement >();
 		const underlineWidth = getTextWidth( ( siteTitle as string ) || '', inputRef.current );
 
-		const handleSubmit = async ( siteTitle: string ) => {
-			const providedDependencies = { siteTitle };
+		const handleSubmit = async ( siteTitle: string, podcastId: string | null ) => {
+			const providedDependencies = { siteTitle, podcastId };
 			setSiteTitle( siteTitle );
-			submit?.( providedDependencies, siteTitle );
+			setAnchorPodcastId( podcastId );
+			submit?.( providedDependencies, siteTitle, podcastId as string );
 		};
 
 		const handleChange = ( event: React.FormEvent< HTMLInputElement > ) => {
@@ -55,7 +60,7 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 			<form
 				className="podcast-title__form"
 				onSubmit={ () => {
-					handleSubmit?.( siteTitle );
+					handleSubmit?.( siteTitle, ! isAnchorFmPodcastIdError ? anchorFmPodcastId : null );
 				} }
 			>
 				<div

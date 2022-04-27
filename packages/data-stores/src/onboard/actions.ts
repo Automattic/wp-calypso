@@ -182,6 +182,11 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 	siteTitle,
 } );
 
+export const setAnchorPodcastId = ( anchorPodcastId: string | null ) => ( {
+	type: 'SET_ANCHOR_PODCAST_ID' as const,
+	anchorPodcastId,
+} );
+
 export function updatePlan( planProductId: number ) {
 	// keep updatePlan for backwards compat
 	return setPlanProductId( planProductId );
@@ -250,6 +255,7 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
+	| typeof setAnchorPodcastId
 	| typeof startOnboarding
 	| typeof setIntent
 	| typeof setStartingPoint
