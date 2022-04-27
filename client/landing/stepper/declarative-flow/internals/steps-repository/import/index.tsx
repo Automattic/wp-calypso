@@ -4,7 +4,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import { StepPath } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
