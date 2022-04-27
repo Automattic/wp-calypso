@@ -241,4 +241,70 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 			}
 		);
 	} );
+
+	describe( 'wpcom_block_editor_global_styles_save', function () {
+		let page: Page;
+		let testAccount: TestAccount;
+		let fullSiteEditorPage: FullSiteEditorPage;
+		let editorTracksEventManager: EditorTracksEventManager;
+
+		// We must make sure we have a new value to trigger the editor "dirty" state and enable saving.
+		// The main way we do that is by resetting the layouts at the end of each run.
+		// But, for the rare race condition we open the editor right as another test run is in the between state,
+		// we add some randomness to our padding. This makes it extraordinarily rare to have an unsavable state!
+		const padding = DataHelper.getRandomInteger( 1, 32 );
+
+		beforeAll( async () => {
+			page = await browser.newPage();
+
+			testAccount = new TestAccount( accountName );
+			await testAccount.authenticate( page );
+
+			editorTracksEventManager = new EditorTracksEventManager( page );
+			fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+		} );
+
+		it( 'Visit the site editor', async function () {
+			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+			await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+		} );
+
+		it( 'Open site styles', async function () {
+			await fullSiteEditorPage.openSiteStyles();
+		} );
+
+		it( 'Set global layout style', async function () {
+			await fullSiteEditorPage.setGlobalLayoutStyle( { padding: padding } );
+		} );
+
+		it( 'Save the editor', async function () {
+			// On mobile, site styles is a popover panel that blocks the Save button.
+			// So let's always close site styles first to be safe. :)
+			await fullSiteEditorPage.closeSiteStyles();
+			await fullSiteEditorPage.save();
+		} );
+
+		it( '"wpcom_block_editor_global_styles_save" event fires with correct style properties', async function () {
+			const eventDidFire = await editorTracksEventManager.didEventFire(
+				'wpcom_block_editor_global_styles_save',
+				{
+					matchingProperties: {
+						section: 'spacing',
+						field: 'padding',
+						field_value: `${ padding }px`,
+					},
+				}
+			);
+			expect( eventDidFire ).toBe( true );
+		} );
+
+		afterAll( async function () {
+			// Reset the layout back to empty to protect future runs.
+			// You can reset an already empty layout, so this is safe to do even if saving didn't go through.
+			await fullSiteEditorPage.openSiteStyles();
+			await fullSiteEditorPage.resetGlobalLayoutStyle();
+			await fullSiteEditorPage.closeSiteStyles();
+			await fullSiteEditorPage.save();
+		} );
+	} );
 } );
