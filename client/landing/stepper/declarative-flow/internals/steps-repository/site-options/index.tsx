@@ -30,13 +30,6 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
-	React.useEffect( () => {
-		if ( site ) {
-			setSiteTitle( site.name ?? '' );
-			setTagline( site.description );
-		}
-	}, [ site ] );
-
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
 		if ( site ) {
