@@ -28,6 +28,7 @@ export const siteSetupFlow: Flow = {
 			'import',
 			'importList',
 			'importReady',
+			'importReadyNot',
 			'importReadyPreview',
 			'businessInfo',
 			'storeAddress',
