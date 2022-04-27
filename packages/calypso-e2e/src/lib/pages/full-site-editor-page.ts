@@ -16,10 +16,12 @@ import {
 	TemplatePartListComponent,
 	FullSiteEditorNavSidebarComponent,
 	TemplatePartModalComponent,
+	OpenInlineInserter,
 } from '..';
 import { getCalypsoURL } from '../../data-helper';
 import { getIdFromBlock } from '../../element-helper';
 import envVariables from '../../env-variables';
+import { EditorInlineBlockInserterComponent } from '../components';
 
 const wpAdminPath = 'wp-admin/themes.php';
 
@@ -48,6 +50,7 @@ export class FullSiteEditorPage {
 
 	private editorToolbarComponent: EditorToolbarComponent;
 	private editorSidebarBlockInserterComponent: EditorSidebarBlockInserterComponent;
+	private editorInlineBlockInserterComponent: EditorInlineBlockInserterComponent;
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
 	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
 	private editorSiteStylesComponent: EditorSiteStylesComponent;
@@ -91,6 +94,10 @@ export class FullSiteEditorPage {
 			this.editor
 		);
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
+			page,
+			this.editor
+		);
+		this.editorInlineBlockInserterComponent = new EditorInlineBlockInserterComponent(
 			page,
 			this.editor
 		);
@@ -174,17 +181,7 @@ export class FullSiteEditorPage {
 	async addBlockFromSidebar( blockName: string, blockEditorSelector: string ): Promise< Locator > {
 		await this.editorToolbarComponent.openBlockInserter();
 		await this.addBlockFromInserter( blockName, this.editorSidebarBlockInserterComponent );
-
-		// The added block will always either be focused, or will be the parent of a focused block.
-		const addedBlockLocator = this.editorCanvas.locator(
-			`${ selectors.focusedBlock( blockEditorSelector ) },${ selectors.parentOfFocusedBlock(
-				blockEditorSelector
-			) }`
-		);
-		await addedBlockLocator.waitFor();
-		// Over time in the editor, the block's ID is going to be the most reliable way to select it.
-		// Let's grab it now for future use.
-		const addedBlockId = await getIdFromBlock( addedBlockLocator );
+		const addedBlockId = await this.getIdOfAddedBlock( blockEditorSelector );
 
 		// Dismiss the block inserter if viewport is larger than mobile to
 		// ensure no interference from the block inserter in subsequent actions on the editor.
@@ -193,6 +190,42 @@ export class FullSiteEditorPage {
 			await this.editorToolbarComponent.closeBlockInserter();
 		}
 
+		return this.editorCanvas.locator( `#${ addedBlockId }` );
+	}
+
+	/**
+	 * Adds a Gutenberg block from the inline block inserter.
+	 *
+	 * Because there are so many different ways to open the inline inserter, this function accepts a function to run first
+	 * that should open the inserter. This allows specs to get to the inserter in the way they need.
+	 *
+	 * The block name is expected to be formatted in the same manner as it
+	 * appears on the label when visible in the block inserter panel.
+	 *
+	 * Example:
+	 * 		- Click to Tweet
+	 * 		- Pay with Paypal
+	 * 		- SyntaxHighlighter Code
+	 *
+	 * The block editor selector should select the top level element of a block in the editor.
+	 * For reference, this element will almost always have the ".wp-block" class.
+	 * We recommend using the aria-label for the selector, e.g. '[aria-label="Block: Quote"]'.
+	 *
+	 * @param {string} blockName Name of the block as in inserter results.
+	 * @param {string} blockEditorSelector Selector to find the block once added.
+	 * @param {OpenInlineInserter} openInlineInserter Function to open the inline inserter.
+	 * @throws If the provided selector does not locate the added block correctly.
+	 * @returns A frame-safe locator to the top of the block.
+	 */
+	async addBlockInline(
+		blockName: string,
+		blockEditorSelector: string,
+		openInlineInserter: OpenInlineInserter
+	): Promise< Locator > {
+		// First, launch the inline inserter in the way expected by the script.
+		await openInlineInserter( this.editor ); // This needed button is almost always NOT in the canvas iframe.
+		await this.addBlockFromInserter( blockName, this.editorInlineBlockInserterComponent );
+		const addedBlockId = await this.getIdOfAddedBlock( blockEditorSelector );
 		return this.editorCanvas.locator( `#${ addedBlockId }` );
 	}
 
@@ -210,6 +243,26 @@ export class FullSiteEditorPage {
 		await inserter.selectBlockInserterResult( blockName );
 	}
 
+	/**
+	 * Shared submethod to wait for a just-added block and get its block ID.
+	 * The ID is the most reliable way to identify the block over time.
+	 *
+	 * @param {string} blockEditorSelector Selector to find the block once added.
+	 * @returns The ID of the recently added block.
+	 */
+	private async getIdOfAddedBlock( blockEditorSelector: string ): Promise< string > {
+		// The added block will always either be focused, or will be the parent of a focused block.
+		const addedBlockLocator = this.editorCanvas.locator(
+			`${ selectors.focusedBlock( blockEditorSelector ) },${ selectors.parentOfFocusedBlock(
+				blockEditorSelector
+			) }`
+		);
+		await addedBlockLocator.waitFor();
+
+		return await getIdFromBlock( addedBlockLocator );
+	}
+
+	// TODO: Add this to the Gutenberg component to make it re-usable across editors!
 	/**
 	 * Focus (select in a way that gives block-specific features) a block in the site editor.
 	 *
@@ -250,6 +303,8 @@ export class FullSiteEditorPage {
 			if ( ( await focusedBlockLocator.count() ) > 0 ) {
 				return;
 			}
+			// TODO -- we could check at this point if we've done the opposite here and selected
+			// a child block, and if so click the parent button the toolbar!
 			await originalBlockLocator.click();
 		}
 		// Do one last wait to let any async re-renders go through.

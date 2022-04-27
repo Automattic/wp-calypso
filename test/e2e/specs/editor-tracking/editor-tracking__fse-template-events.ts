@@ -12,6 +12,7 @@ import {
 	FullSiteEditorPage,
 	TemplatePartBlock,
 	ElementHelper,
+	HeaderBlock,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -102,10 +103,10 @@ describe(
 			it( 'Add a Header block', async function () {
 				// It's just a Template Part block with a different name in the sidebar, so we can re-use that POM class.
 				const block = await fullSiteEditorPage.addBlockFromSidebar(
-					'Header',
-					TemplatePartBlock.blockEditorSelector
+					HeaderBlock.blockName,
+					HeaderBlock.blockEditorSelector
 				);
-				headerBlock = new TemplatePartBlock( page, block );
+				headerBlock = new HeaderBlock( page, block );
 			} );
 
 			it( 'Choose an existing template ("header-minimal")', async function () {
