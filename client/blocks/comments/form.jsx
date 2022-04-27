@@ -37,11 +37,6 @@ class PostCommentForm extends Component {
 		} );
 	}
 
-	handleSubmit = ( event ) => {
-		event.preventDefault();
-		this.submit();
-	};
-
 	handleKeyDown = ( event ) => {
 		// Use Ctrl+Enter to submit comment
 		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
@@ -68,29 +63,18 @@ class PostCommentForm extends Component {
 		this.setState( { haveFocus: true } );
 	};
 
-	handleTextChange = ( commentText ) => {
+	handleTextChange = ( event ) => {
+		const commentText = event.target.value;
+
 		this.setState( { commentText } );
 
 		// Update the comment text in the container's state
 		this.props.onUpdateCommentText( commentText );
 	};
 
-	handleTextChangeEvent = ( event ) => {
-		this.handleTextChange( event.target.value );
-	};
+	handleSubmit = ( event ) => {
+		event.preventDefault();
 
-	resetCommentText() {
-		this.setState( { commentText: '' } );
-
-		// Update the comment text in the container's state
-		this.props.onUpdateCommentText( '' );
-	}
-
-	hasCommentText() {
-		return this.state.commentText.trim().length > 0;
-	}
-
-	submit() {
 		const post = this.props.post;
 		const commentText = this.state.commentText.trim();
 
@@ -121,6 +105,17 @@ class PostCommentForm extends Component {
 		this.props.onCommentSubmit();
 
 		return true;
+	};
+
+	resetCommentText() {
+		this.setState( { commentText: '' } );
+
+		// Update the comment text in the container's state
+		this.props.onUpdateCommentText( '' );
+	}
+
+	hasCommentText() {
+		return this.state.commentText.trim().length > 0;
 	}
 
 	renderError() {
@@ -185,7 +180,7 @@ class PostCommentForm extends Component {
 				onKeyDown={ this.handleKeyDown }
 				onFocus={ this.handleFocus }
 				onBlur={ this.handleBlur }
-				onChange={ this.handleTextChangeEvent }
+				onChange={ this.handleTextChange }
 				siteId={ this.props.post.site_ID }
 				enableAutoFocus={ isReply }
 			/>
