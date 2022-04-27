@@ -12,6 +12,8 @@ import {
 	TYPE_PREMIUM,
 	TYPE_SECURITY_DAILY,
 	TYPE_SECURITY_REALTIME,
+	TYPE_SECURITY_T1,
+	TYPE_SECURITY_T2,
 	TYPE_ALL,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
@@ -111,6 +113,14 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isSecurityRealTimePlan( planKey ) ) {
 		return 'is-realtime-security-plan';
+	}
+
+	if ( isSecurityT1Plan( planKey ) ) {
+		return 'is-security-t1';
+	}
+
+	if ( isSecurityT2Plan( planKey ) ) {
+		return 'is-security-t2';
 	}
 
 	if ( isCompletePlan( planKey ) ) {
@@ -275,6 +285,14 @@ export function isSecurityDailyPlan( planSlug: string ): boolean {
 
 export function isSecurityRealTimePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_SECURITY_REALTIME } );
+}
+
+export function isSecurityT1Plan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_SECURITY_T1 } );
+}
+
+export function isSecurityT2Plan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_SECURITY_T2 } );
 }
 
 export function isCompletePlan( planSlug: string ): boolean {
