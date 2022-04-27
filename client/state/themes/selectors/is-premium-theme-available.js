@@ -1,5 +1,5 @@
-import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import { FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 
 import 'calypso/state/themes/init';
@@ -15,6 +15,6 @@ import 'calypso/state/themes/init';
 export function isPremiumThemeAvailable( state, themeId, siteId ) {
 	return (
 		isThemePurchased( state, themeId, siteId ) ||
-		hasActiveSiteFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES )
+		hasFeature( state, siteId, FEATURE_PREMIUM_THEMES )
 	);
 }
