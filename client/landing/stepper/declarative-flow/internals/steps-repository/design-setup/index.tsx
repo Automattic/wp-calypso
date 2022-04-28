@@ -21,6 +21,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useAnchorFmEpisodeId } from '../../../../hooks/use-anchor-fm-params';
 import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -166,6 +167,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const categorization = useCategorization( designs, categorizationOptions );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
+	const anchorFmEpisodeId = useAnchorFmEpisodeId();
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
@@ -189,7 +191,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 					bearerToken: undefined,
 					visibility,
 					anchorFmPodcastId: anchorPodcastId,
-					anchorFmEpisodeId: null,
+					anchorFmEpisodeId,
 					anchorFmSpotifyUrl: null,
 				} );
 
