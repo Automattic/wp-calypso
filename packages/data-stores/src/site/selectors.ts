@@ -140,3 +140,7 @@ export function isEligibleForProPlan( state: State, siteId?: number ): boolean {
 
 	return true;
 }
+
+export function getHappyChatAvailability( state: State ) {
+	return state.happyChatAvailability;
+}

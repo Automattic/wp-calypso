@@ -384,3 +384,25 @@ export type AtomicSoftwareInstallState = Record<
 export enum AtomicSoftwareInstallError {
 	INTERNAL = 'internal',
 }
+
+interface Availability {
+	presale: boolean;
+	precancellation: boolean;
+}
+export interface HappyChatAvailability {
+	locale: string;
+	isUserEligible: boolean;
+	supportLevel:
+		| 'free'
+		| 'personal'
+		| 'personal-with-legacy-chat'
+		| 'premium'
+		| 'pro'
+		| 'business'
+		| 'ecommerce'
+		| 'jetpack-paid'
+		| 'p2-plus';
+	nickname: string;
+	isClosed: boolean;
+	availability: Availability;
+}
