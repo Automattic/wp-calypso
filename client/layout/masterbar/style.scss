@@ -343,6 +343,11 @@ $masterbar-color-secondary: #101517;
 		}
 	}
 
+	&.masterbar__item-help {
+		cursor: pointer;
+		flex: 0;
+	}
+
 	.is-support-session &.is-active {
 		background: var( --studio-orange-70 );
 	}
