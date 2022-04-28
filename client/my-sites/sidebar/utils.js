@@ -44,7 +44,8 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		}
 	}
 
-	// The Jetpack Licensing Portal follows a different pattern than other sections of Jetpack Cloud.
+	// All URLs in the Licensing Portal start with 'partner-portal', so we need to compare them at the
+	// second position (i.e., compare whatever comes after partner-portal/).
 	if ( isJetpackCloud() && pathIncludes( currentPath, 'partner-portal', 1 ) ) {
 		return fragmentIsEqual( path, currentPath, 2 );
 	}
