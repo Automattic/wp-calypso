@@ -85,7 +85,12 @@ const HelpCenterMoreResources = () => {
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
 						<Button isLink onClick={ () => setShowGuide( true ) }>
-							<MaterialIcon icon="new_releases" size={ 24 } fill="#003C56" />
+							<MaterialIcon
+								icon="new_releases"
+								size={ 24 }
+								className="inline-help__new-releases"
+								fill="#003C56"
+							/>
 							<span>{ __( "What's new" ) }</span>
 						</Button>
 					</div>
