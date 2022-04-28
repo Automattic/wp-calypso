@@ -60,6 +60,8 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 		if ( ! siteId ) return;
 
 		setPendingAction( async () => {
+			setProgress( 0 );
+
 			const startTime = new Date().getTime();
 			const totalTimeout = 1000 * 180;
 			const maxFinishTime = startTime + totalTimeout;
