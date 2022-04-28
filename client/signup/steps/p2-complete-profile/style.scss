@@ -31,8 +31,8 @@
 
 	&:hover {
 		background: none;
-		color: var( --p2-color-link-hover );
-		border-color: var( --p2-color-link-hover );
+		color: var( --p2-color-link-dark );
+		border-color: var( --p2-color-link-dark );
 		cursor: pointer;
 	}
 }
@@ -61,7 +61,7 @@
 
 	&:hover {
 		background: none;
-		color: var( --p2-color-link-hover );
+		color: var( --p2-color-link-dark );
 	}
 }
 
