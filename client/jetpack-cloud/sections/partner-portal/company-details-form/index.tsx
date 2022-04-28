@@ -5,28 +5,26 @@ import { useDispatch, useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import useUpdateCompanyDetailsMutation from 'calypso/state/partner-portal/partner/hooks/use-update-company-details';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import { APIError } from 'calypso/state/partner-portal/types';
-
-function castAsString( value: any ): string {
-	if ( value === null || typeof value === 'undefined' ) {
-		return '';
-	}
-
-	return String( value );
-}
+import { useCountriesAndStates } from './hooks/use-countries-and-states';
+import { castAsString } from './utils';
+import './style.scss';
 
 export default function CompanyDetailsForm(): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const submitNotificationId = 'company-details-form';
-
 	// The partner has already been fetched through e.g. the requireAccessContext
 	// controller function, so we do not have to do any further checks.
 	const partner = useSelector( getCurrentPartner );
+	const { countryOptions, stateOptions } = useCountriesAndStates();
+	const submitNotificationId = 'company-details-form';
+	const showCountryFields = countryOptions.length > 0;
 
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ name, setName ] = useState( castAsString( partner?.name ) );
@@ -123,16 +121,6 @@ export default function CompanyDetailsForm(): ReactElement {
 				/>
 			</FormFieldset>
 			<FormFieldset>
-				<FormLabel htmlFor="addressState">{ translate( 'State' ) }</FormLabel>
-				<FormTextInput
-					id="addressState"
-					name="addressState"
-					value={ addressState }
-					onChange={ ( event: any ) => setAddressState( event.target.value ) }
-					disabled={ isSubmitting }
-				/>
-			</FormFieldset>
-			<FormFieldset>
 				<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
 				<FormTextInput
 					id="postalCode"
@@ -143,16 +131,41 @@ export default function CompanyDetailsForm(): ReactElement {
 				/>
 			</FormFieldset>
 			<FormFieldset>
-				<FormLabel htmlFor="country">{ translate( 'Country' ) }</FormLabel>
-				<FormTextInput
-					id="country"
-					name="country"
-					value={ country }
-					onChange={ ( event: any ) => setCountry( event.target.value ) }
-					disabled={ isSubmitting }
-				/>
-			</FormFieldset>
+				<FormLabel>{ translate( 'Country' ) }</FormLabel>
+				{ showCountryFields && (
+					<SelectDropdown
+						className="company-details-form__dropdown"
+						initialSelected={ country }
+						options={ countryOptions }
+						onSelect={ ( option: any ) => {
+							setCountry( option.value );
+							// Reset the value of state since it no longer matches with the selected country.
+							setAddressState( '' );
+						} }
+						disabled={ isSubmitting }
+						isLoading={ countryOptions.length === 0 }
+					/>
+				) }
 
+				{ ! showCountryFields && <TextPlaceholder /> }
+			</FormFieldset>
+			<FormFieldset>
+				<FormLabel>{ translate( 'State' ) }</FormLabel>
+				{ showCountryFields && (
+					<SelectDropdown
+						className="company-details-form__dropdown"
+						initialSelected={ addressState }
+						options={ stateOptions.hasOwnProperty( country ) ? stateOptions[ country ] : [] }
+						onSelect={ ( option: any ) => {
+							setAddressState( option.value );
+						} }
+						disabled={ isSubmitting || ! stateOptions.hasOwnProperty( country ) }
+						isLoading={ Object.keys( stateOptions ).length === 0 }
+					/>
+				) }
+
+				{ ! showCountryFields && <TextPlaceholder /> }
+			</FormFieldset>
 			<div className="company-details-form__controls">
 				<Button
 					primary
