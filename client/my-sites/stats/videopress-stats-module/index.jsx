@@ -160,10 +160,6 @@ class VideoPressStatsModule extends Component {
 			page( url );
 		};
 
-		const formatHours = ( seconds ) => {
-			return ( seconds / 3600 ).toFixed( 1 );
-		};
-
 		return (
 			<div>
 				{ ! isAllTime && (
@@ -222,7 +218,7 @@ class VideoPressStatsModule extends Component {
 									tabIndex="0"
 									role="button"
 								>
-									{ formatHours( row.watch_time ) }
+									{ numberFormat( row.watch_time, 1 ) }
 								</div>
 								<div
 									className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric"
