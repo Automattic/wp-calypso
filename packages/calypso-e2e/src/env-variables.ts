@@ -1,4 +1,5 @@
 import path from 'path';
+import { TestAccountName } from '.';
 
 const VIEWPORT_NAMES = [ 'mobile', 'desktop' ] as const;
 export const TEST_LOCALES = [
@@ -37,7 +38,7 @@ export interface SupportedEnvVariables extends EnvVariables {
 	COBLOCKS_EDGE: boolean;
 	TEST_LOCALES: TestLocales;
 	COOKIES_PATH: string;
-	AUTHENTICATE_ACCOUNTS: string[];
+	AUTHENTICATE_ACCOUNTS: TestAccountName[];
 	ARTIFACTS_PATH: string;
 	HEADLESS: boolean;
 	SLOW_MO: number;
