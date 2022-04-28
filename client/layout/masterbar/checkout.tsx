@@ -14,6 +14,7 @@ import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import Item from './item';
 import Masterbar from './masterbar';
+import type { Article } from 'calypso/blocks/inline-help/inline-help-center-types';
 
 interface Props {
 	title: string;
@@ -38,7 +39,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const [ isHelpCenterVisible, setIsHelpCenterVisible ] = useState( false );
-	const [ selectedArticle, setSelectedArticle ] = useState( null );
+	const [ selectedArticle, setSelectedArticle ] = useState< Article | null >( null );
 	const [ footerContent, setFooterContent ] = useState( null );
 
 	const closeAndLeave = () =>
