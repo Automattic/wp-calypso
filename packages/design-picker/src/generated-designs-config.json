@@ -1,0 +1,43 @@
+[
+	{
+		"slug": "business",
+		"title": "Business",
+		"recipe": {
+			"stylesheet": "pub/winkel",
+			"patternIds": [ 1603, 162, 157 ]
+		},
+		"is_premium": false,
+		"categories": [],
+		"features": [],
+
+		"theme": "",
+		"template": ""
+	},
+	{
+		"slug": "portfolio",
+		"title": "Portfolio",
+		"recipe": {
+			"stylesheet": "pub/quadrat-white",
+			"patternIds": [ 1349 ]
+		},
+		"is_premium": false,
+		"categories": [],
+		"features": [],
+
+		"theme": "",
+		"template": ""
+	},
+	{
+		"slug": "blog",
+		"title": "Blog",
+		"recipe": {
+			"stylesheet": "pub/zoologist"
+		},
+		"is_premium": false,
+		"categories": [],
+		"features": [],
+
+		"theme": "",
+		"template": ""
+	}
+]

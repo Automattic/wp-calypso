@@ -258,18 +258,8 @@ export class Tweet extends PureComponent {
 	}
 
 	render() {
-		const {
-			isLast,
-			profileImage,
-			name,
-			screenName,
-			date,
-			text,
-			media,
-			tweet,
-			urls,
-			card,
-		} = this.props;
+		const { isLast, profileImage, name, screenName, date, text, media, tweet, urls, card } =
+			this.props;
 
 		return (
 			<div className="twitter-preview__container">

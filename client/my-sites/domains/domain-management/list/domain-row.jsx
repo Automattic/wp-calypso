@@ -94,7 +94,7 @@ class DomainRow extends PureComponent {
 		if ( site?.options?.is_domain_only ) {
 			return (
 				<div className="domain-row__site-cell">
-					<Button href={ createSiteFromDomainOnly( site?.slug, site?.siteId ) } plain>
+					<Button href={ createSiteFromDomainOnly( site?.slug, site?.ID ) } plain>
 						<MaterialIcon icon="add" /> { translate( 'Create site' ) }
 					</Button>
 				</div>
@@ -331,15 +331,8 @@ class DomainRow extends PureComponent {
 	};
 
 	renderEllipsisMenu() {
-		const {
-			isLoadingDomainDetails,
-			site,
-			domain,
-			showDomainDetails,
-			disabled,
-			isBusy,
-			translate,
-		} = this.props;
+		const { isLoadingDomainDetails, site, domain, showDomainDetails, disabled, isBusy, translate } =
+			this.props;
 
 		if ( ! showDomainDetails ) {
 			return <div className="domain-row__action-cell"></div>;

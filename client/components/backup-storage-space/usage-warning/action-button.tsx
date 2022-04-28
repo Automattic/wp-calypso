@@ -1,12 +1,12 @@
 import { Button } from '@wordpress/components';
 import classnames from 'classnames';
-import { StorageUsageLevels } from '../storage-usage-levels';
 import useStorageStatusText from './use-storage-status-text';
+import type { StorageUsageLevelName } from '../storage-usage-levels';
 import type { TranslateResult } from 'i18n-calypso';
 
 type OwnProps = {
 	className?: string;
-	usageLevel: StorageUsageLevels;
+	usageLevel: StorageUsageLevelName;
 	actionText: TranslateResult;
 	href?: string;
 	onClick?: React.MouseEventHandler;

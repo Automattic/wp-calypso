@@ -28,6 +28,7 @@ type OwnProps = {
 	buttonPrimary: boolean;
 	onButtonClick?: React.MouseEventHandler;
 	buttonURL?: string;
+	buttonDisabled?: boolean;
 	expiryDate?: Moment;
 	isFeatured?: boolean;
 	isOwned?: boolean;
@@ -44,6 +45,9 @@ type OwnProps = {
 	showAbovePriceText?: boolean;
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
 	collapseFeaturesOnMobile?: boolean;
+	isPricingPageTreatment202204?: boolean;
+	isPricingPageTest202204AssignmentLoading?: boolean;
+	belowButtonText?: string;
 };
 
 type HeaderLevel = 1 | 2 | 3 | 4 | 5 | 6;
@@ -67,6 +71,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	buttonPrimary,
 	onButtonClick,
 	buttonURL,
+	buttonDisabled,
 	expiryDate,
 	isFeatured,
 	isOwned,
@@ -83,6 +88,9 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	aboveButtonText = null,
 	scrollCardIntoView,
 	collapseFeaturesOnMobile,
+	isPricingPageTreatment202204,
+	isPricingPageTest202204AssignmentLoading,
+	belowButtonText,
 } ) => {
 	const isFree = item.isFree;
 
@@ -126,6 +134,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 				'is-deprecated': isDeprecated,
 				'is-aligned': isAligned,
 				'is-featured': isFeatured,
+				'jetpack-discount-price-focused': isPricingPageTreatment202204,
 			} ) }
 			data-e2e-product-slug={ item.productSlug }
 		>
@@ -172,6 +181,8 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 						tooltipText={ tooltipText }
 						productName={ item.displayName }
 						hideSavingLabel={ hideSavingLabel }
+						isPricingPageTreatment202204={ isPricingPageTreatment202204 }
+						isPricingPageTest202204AssignmentLoading={ isPricingPageTest202204AssignmentLoading }
 					/>
 				) }
 
@@ -188,8 +199,8 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 						primary={ buttonPrimary }
 						className="jetpack-product-card__button"
 						onClick={ onButtonClick }
-						href={ isDisabled ? '#' : buttonURL }
-						disabled={ isDisabled }
+						href={ isDisabled || buttonDisabled ? '#' : buttonURL }
+						disabled={ isDisabled || buttonDisabled }
 					>
 						{ buttonLabel }
 					</Button>
@@ -198,10 +209,13 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 						primary={ buttonPrimary }
 						className="jetpack-product-card__button"
 						onClick={ onButtonClick }
-						disabled={ isDisabled }
+						disabled={ isDisabled || buttonDisabled }
 					>
 						{ buttonLabel }
 					</Button>
+				) }
+				{ belowButtonText && (
+					<p className="jetpack-product-card__below-button">{ belowButtonText }</p>
 				) }
 
 				{ description && <p className="jetpack-product-card__description">{ description }</p> }

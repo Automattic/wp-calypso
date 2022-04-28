@@ -26,16 +26,8 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	};
 
 	render() {
-		const {
-			isWide,
-			isWoo,
-			className,
-			children,
-			partnerSlug,
-			translate,
-			wooDnaConfig,
-			pageTitle,
-		} = this.props;
+		const { isWide, isWoo, className, children, partnerSlug, translate, wooDnaConfig, pageTitle } =
+			this.props;
 
 		const isWooDna = wooDnaConfig && wooDnaConfig.isWooDnaFlow();
 

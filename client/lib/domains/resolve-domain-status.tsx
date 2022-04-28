@@ -13,8 +13,8 @@ import {
 	DOMAIN_EXPIRATION_AUCTION,
 } from 'calypso/lib/url/support';
 import {
+	domainManagementEdit,
 	domainManagementEditContactInfo,
-	domainManagementNameServers,
 	domainMappingSetup,
 } from 'calypso/my-sites/domains/paths';
 import { transferStatus, type as domainTypes, gdprConsentStatus } from './constants';
@@ -530,7 +530,7 @@ export function resolveDomainStatus(
 								strong: <strong />,
 								a: (
 									<a
-										href={ domainManagementNameServers( siteSlug as string, domain.domain ) }
+										href={ domainManagementEdit( siteSlug as string, domain.domain ) }
 										onClick={ ( e ) => e.stopPropagation() }
 									/>
 								),
@@ -542,7 +542,7 @@ export function resolveDomainStatus(
 						{
 							components: {
 								strong: <strong />,
-								a: <a href={ domainManagementNameServers( siteSlug as string, domain.domain ) } />,
+								a: <a href={ domainManagementEdit( siteSlug as string, domain.domain ) } />,
 							},
 						}
 					),

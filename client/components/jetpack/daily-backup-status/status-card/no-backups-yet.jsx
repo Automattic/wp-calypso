@@ -23,10 +23,10 @@ const NoBackupsYet = () => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const siteName = useSelector( ( state ) => getRawSite( state, siteId ) )?.name;
 	const dispatch = useDispatch();
-	const onSupportClick = useCallback( () => dispatch( selectSiteId( siteId ) ), [
-		dispatch,
-		siteId,
-	] );
+	const onSupportClick = useCallback(
+		() => dispatch( selectSiteId( siteId ) ),
+		[ dispatch, siteId ]
+	);
 
 	return (
 		<>

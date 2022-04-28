@@ -549,12 +549,8 @@ class AllDomains extends Component {
 	}
 
 	filteredDomains() {
-		const {
-			filteredDomainsList,
-			domainsList,
-			canManageSitesMap,
-			isContactEmailEditContext,
-		} = this.props;
+		const { filteredDomainsList, domainsList, canManageSitesMap, isContactEmailEditContext } =
+			this.props;
 		if ( ! domainsList ) {
 			return [];
 		}

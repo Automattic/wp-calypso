@@ -3,8 +3,6 @@ import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
-import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import phoneValidation from 'calypso/lib/phone-validation';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import userAgent from 'calypso/lib/user-agent';
@@ -165,8 +163,6 @@ class MobileDownloadCard extends Component {
 	render() {
 		const { translate } = this.props;
 
-		const hasAllData = this.userSettingsHaveBeenLoadedWithAccountRecoveryPhone();
-		const { countryCode, number, isValid } = this.getPreferredNumber();
 		const { isMobile } = userAgent;
 		const featureIsEnabled = ! isMobile;
 
@@ -188,45 +184,20 @@ class MobileDownloadCard extends Component {
 				</div>
 
 				{ featureIsEnabled && (
-					<div className="get-apps__sms-subpanel">
+					<div className="get-apps__qr-code-subpanel">
 						<p>
 							<strong>{ translate( 'Ready to WordPress on the go?' ) }</strong>
 							<br />
-							{ translate(
-								'We’ll send you an SMS message with a download link for the right app for your mobile device.'
-							) }
+							{ translate( 'Scan the code using your mobile phone to download the app.' ) }
 						</p>
 
-						<div className="get-apps__sms-field-wrapper">
-							<QuerySmsCountries />
-
-							{ hasAllData ? (
-								<FormPhoneInput
-									countriesList={ this.props.countriesList }
-									initialCountryCode={ countryCode }
-									initialPhoneNumber={ number }
-									phoneInputProps={ {
-										onKeyUp: this.onKeyUp,
-									} }
-									onChange={ this.onChange }
-								/>
-							) : (
-								<>
-									<FormPhoneInput countriesList={ this.props.countriesList } isDisabled={ true } />
-								</>
-							) }
-						</div>
-						<div className="get-apps__sms-button-wrapper">
-							<Button
-								className="get-apps__sms-button"
-								onClick={ this.onSubmit }
-								disabled={ ! isValid }
-							>
-								{ translate( 'Text me a link' ) }
-							</Button>
-
-							<p>{ translate( 'Standard SMS rates may apply' ) }</p>
-						</div>
+						<img
+							src="/calypso/images/me/qrcode-calypso.svg"
+							alt="QR code https://apps.wordpress.com/get/?campaign=calypso-qrcode-apps"
+							scale="0"
+							width="180"
+							height="180"
+						/>
 					</div>
 				) }
 

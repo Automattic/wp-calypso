@@ -607,6 +607,10 @@ export function generateSteps( {
 			fulfilledStepCallback: excludeStepIfProfileComplete,
 		},
 
+		'p2-join-workspace': {
+			stepName: 'p2-join-workspace',
+		},
+
 		'plans-personal-monthly': {
 			stepName: 'plans-personal-monthly',
 			apiRequestFunction: addPlanToCart,
@@ -733,21 +737,6 @@ export function generateSteps( {
 			props: {
 				hideSkip: true,
 			},
-		},
-		'site-info-collection': {
-			stepName: 'site-info-collection',
-			dependencies: [ 'newOrExistingSiteChoice' ],
-			providesDependencies: [
-				'siteTitle',
-				'siteDescription',
-				'twitterUrl',
-				'facebookUrl',
-				'linkedinUrl',
-				'instagramUrl',
-				'displayEmail',
-				'displayPhone',
-				'displayAddress',
-			],
 		},
 		'social-profiles': {
 			stepName: 'social-profiles',

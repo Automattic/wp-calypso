@@ -24,6 +24,7 @@ import { checkFormHandler } from 'calypso/lib/protect-form';
 import { setReduxStore as setReduxBridgeReduxStore } from 'calypso/lib/redux-bridge';
 import { getSiteFragment, normalize } from 'calypso/lib/route';
 import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
+import { addBreadcrumb, initSentry } from 'calypso/lib/sentry';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { isOutsideCalypso } from 'calypso/lib/url';
 import { JETPACK_PRICING_PAGE } from 'calypso/lib/url/support';
@@ -38,7 +39,7 @@ import { initConnection as initHappychatConnection } from 'calypso/state/happych
 import wasHappychatRecentlyActive from 'calypso/state/happychat/selectors/was-happychat-recently-active';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getHappychatAuth } from 'calypso/state/happychat/utils';
-import { getInitialState, persistOnChange } from 'calypso/state/initial-state';
+import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/state/initial-state';
 import { loadPersistedState } from 'calypso/state/persisted-state';
 import { init as pushNotificationsInit } from 'calypso/state/push-notifications/actions';
 import { createQueryClient } from 'calypso/state/query-client';
@@ -237,10 +238,28 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 };
 
 function setupErrorLogger( reduxStore ) {
+	// Add a bit of metadata from the redux store to the sentry event.
+	const beforeSend = ( event ) => {
+		const state = reduxStore.getState();
+		if ( ! event.tags ) {
+			event.tags = {};
+		}
+		event.tags.blog_id = getSelectedSiteId( state );
+		event.tags.calypso_section = getSectionName( state );
+		return event;
+	};
+
+	// Note that Sentry can disable itself and do some cleanup if needed, so we
+	// run it before the catch-js-errors check. (Otherwise, cleanup would never
+	// never happen.)
+	initSentry( { beforeSend, userId: getCurrentUserId( reduxStore.getState() ) } );
+
 	if ( ! config.isEnabled( 'catch-js-errors' ) ) {
 		return;
 	}
 
+	// At this point, the normal error logger is still set up so that logstash
+	// contains a definitive log of calypso errors.
 	const errorLogger = new Logger();
 
 	// Save errorLogger to a singleton for use in arbitrary logging.
@@ -264,10 +283,23 @@ function setupErrorLogger( reduxStore ) {
 		errorLogger.saveExtraData( { lastTracksEvent } )
 	);
 
+	let prevPath;
 	page( '*', function ( context, next ) {
-		errorLogger.saveNewPath(
-			context.canonicalPath.replace( getSiteFragment( context.canonicalPath ), ':siteId' )
+		const path = context.canonicalPath.replace(
+			getSiteFragment( context.canonicalPath ),
+			':siteId'
 		);
+		// Also save the context to Sentry for easier debugging.
+		addBreadcrumb( {
+			category: 'navigation',
+			data: {
+				from: prevPath ?? path,
+				to: path,
+				should_capture: true, // Hint that this is our own breadcrumb, not the default navigation one.
+			},
+		} );
+		prevPath = path;
+		errorLogger.saveNewPath( path );
 		next();
 	} );
 }
@@ -395,7 +427,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	const queryClient = await createQueryClient( currentUser?.ID );
 	const initialState = getInitialState( initialReducer, currentUser?.ID );
 	const reduxStore = createReduxStore( initialState, initialReducer );
-	setStore( reduxStore, currentUser?.ID );
+	setStore( reduxStore, getStateFromCache( currentUser?.ID ) );
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
 	setupLocale( currentUser, reduxStore );
 	configureReduxStore( currentUser, reduxStore );

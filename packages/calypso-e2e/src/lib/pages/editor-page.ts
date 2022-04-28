@@ -12,7 +12,10 @@ import {
 	EditorBlockListViewComponent,
 	EditorInlineBlockInserterComponent,
 	EditorSidebarBlockInserterComponent,
+	EditorWelcomeTourComponent,
+	EditorBlockToolbarComponent,
 } from '../components';
+import { BlockInserter, OpenInlineInserter } from './shared-types';
 import type { SiteType } from '../../lib/utils';
 import type { PreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from '../components';
 
@@ -33,15 +36,6 @@ const selectors = {
 };
 const EXTENDED_TIMEOUT = 90 * 1000;
 
-export type OpenInlineInserter = ( editor: Locator ) => Promise< void >;
-interface BlockInserter {
-	searchBlockInserter( blockName: string ): Promise< void >;
-	selectBlockInserterResult(
-		name: string,
-		options?: { type?: 'block' | 'pattern' }
-	): Promise< void >;
-}
-
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
  */
@@ -57,6 +51,8 @@ export class EditorPage {
 	private editorBlockListViewComponent: EditorBlockListViewComponent;
 	private editorSidebarBlockInserterComponent: EditorSidebarBlockInserterComponent;
 	private editorInlineBlockInserterComponent: EditorInlineBlockInserterComponent;
+	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
+	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -86,6 +82,8 @@ export class EditorPage {
 		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
 		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
 		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
+		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
+		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
 			page,
 			this.editor
@@ -124,35 +122,7 @@ export class EditorPage {
 		const titleLocator = editor.locator( selectors.editorTitle );
 		await titleLocator.waitFor( { timeout: EXTENDED_TIMEOUT } );
 
-		await this.forceDismissWelcomeTour();
-	}
-
-	/**
-	 * Forcefully dismisses the Welcome Tour via action dispatch.
-	 *
-	 * @see {@link https://github.com/Automattic/wp-calypso/issues/57660}
-	 */
-	async forceDismissWelcomeTour(): Promise< void > {
-		// Welcome Tour is not observed on Atomic sites.
-		if ( this.target === 'atomic' ) {
-			return;
-		}
-
-		const frame = await this.getEditorHandle();
-		await frame.waitForFunction(
-			async () =>
-				await ( window as any ).wp.data
-					.select( 'automattic/wpcom-welcome-guide' )
-					.isWelcomeGuideStatusLoaded()
-		);
-
-		await frame.waitForFunction( async () => {
-			const actionPayload = await ( window as any ).wp.data
-				.dispatch( 'automattic/wpcom-welcome-guide' )
-				.setShowWelcomeGuide( false );
-
-			return actionPayload.show === false;
-		} );
+		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
 	}
 
 	/**
@@ -199,7 +169,7 @@ export class EditorPage {
 	async closeAllPanels(): Promise< void > {
 		await Promise.allSettled( [
 			this.editorPublishPanelComponent.closePanel(),
-			this.editorNavSidebarComponent.closeSidebar(),
+			this.editorToolbarComponent.closeNavSidebar(),
 			this.editorToolbarComponent.closeSettings(),
 		] );
 	}
@@ -421,6 +391,20 @@ export class EditorPage {
 	async removeBlock( blockHandle: ElementHandle ): Promise< void > {
 		await blockHandle.click();
 		await this.page.keyboard.press( 'Backspace' );
+	}
+
+	/**
+	 * Move the currently selected block up one position with the block toolbar.
+	 */
+	async moveBlockUp(): Promise< void > {
+		await this.editorBlockToolbarComponent.moveUp();
+	}
+
+	/**
+	 * Move the currently selected block down one position with the block toolbar.
+	 */
+	async moveBlockDown(): Promise< void > {
+		await this.editorBlockToolbarComponent.moveDown();
 	}
 
 	//#endregion
@@ -666,9 +650,7 @@ export class EditorPage {
 		//
 		// Once https://github.com/Automattic/wp-calypso/issues/54421 is resolved,
 		// this listener can be removed.
-		this.page.once( 'dialog', async ( dialog ) => {
-			await dialog.accept();
-		} );
+		this.allowLeavingWithoutSaving();
 
 		await this.page.goto( url, { waitUntil: 'domcontentloaded' } );
 
@@ -762,8 +744,6 @@ export class EditorPage {
 	 * will have access to the Calyspo sidebar, allowing navigation around Calypso.
 	 */
 	async exitEditor(): Promise< void > {
-		await this.editorNavSidebarComponent.openSidebar();
-
 		// There are three different places to return to,
 		// depending on how the editor was entered.
 		const navigationPromise = Promise.race( [
@@ -780,11 +760,23 @@ export class EditorPage {
 			const navbarComponent = new NavbarComponent( this.page );
 			actions.push( navbarComponent.clickMySites() );
 		} else {
-			actions.push( this.editorNavSidebarComponent.exitEditor() );
+			actions.push(
+				this.editorToolbarComponent.openNavSidebar(),
+				this.editorNavSidebarComponent.exitEditor()
+			);
 		}
 
 		// Perform the actions and resolve promises.
 		await Promise.all( actions );
+	}
+
+	/**
+	 * Sets up a handler to accept the leave without saving warning.
+	 */
+	allowLeavingWithoutSaving(): void {
+		this.page.once( 'dialog', async ( dialog ) => {
+			await dialog.accept();
+		} );
 	}
 
 	/**

@@ -1,4 +1,5 @@
 import { combineReducers } from '@wordpress/data';
+import { StoreAddress } from '../shared-types';
 import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
@@ -221,6 +222,60 @@ const storeType: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
+const storeAddress: Reducer< StoreAddress, OnboardAction > = (
+	state = {
+		store_address_1: '',
+		store_address_2: '',
+		store_city: '',
+		store_postcode: '',
+		store_country: '',
+	},
+	action
+) => {
+	if ( action.type === 'SET_STORE_ADDRESS_VALUE' ) {
+		const { store_address_field, store_address_value } = action;
+
+		return {
+			...state,
+			[ store_address_field ]: store_address_value,
+		};
+	}
+	return state;
+};
+
+const pendingAction: Reducer< undefined | ( () => Promise< any > ), OnboardAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'SET_PENDING_ACTION' ) {
+		return action.pendingAction;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const progress: Reducer< number, OnboardAction > = ( state = -1, action ) => {
+	if ( action.type === 'SET_PROGRESS' ) {
+		return action.progress;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return -1;
+	}
+	return state;
+};
+
+const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_PROGRESS_TITLE' ) {
+		return action.progressTitle;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -241,6 +296,10 @@ const reducer = combineReducers( {
 	lastLocation,
 	intent,
 	startingPoint,
+	storeAddress,
+	pendingAction,
+	progress,
+	progressTitle,
 } );
 
 export type State = ReturnType< typeof reducer >;

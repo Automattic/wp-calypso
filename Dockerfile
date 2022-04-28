@@ -18,6 +18,14 @@ ENV READONLY_CACHE=true
 ###################
 FROM builder-cache-${use_cache} as builder
 
+# Information for Sentry Releases.
+ARG manual_sentry_release=false
+ARG is_default_branch=false
+ARG sentry_auth_token=''
+ENV MANUAL_SENTRY_RELEASE $manual_sentry_release
+ENV IS_DEFAULT_BRANCH $is_default_branch
+ENV SENTRY_AUTH_TOKEN $sentry_auth_token
+
 ARG commit_sha="(unknown)"
 ARG workers=4
 ARG node_memory=8192
@@ -66,6 +74,8 @@ RUN yarn install --immutable --check-cache
 ENV NODE_ENV production
 RUN yarn run build
 
+# Delete any sourcemaps which may have been generated to avoid creating a large artifact.
+RUN find /calypso/build /calypso/public -name "*.*.map" -exec rm {} \;
 
 ###################
 FROM node:${node_version}-alpine as app

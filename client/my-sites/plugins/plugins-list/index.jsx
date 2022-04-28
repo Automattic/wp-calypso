@@ -121,9 +121,8 @@ export class PluginsList extends Component {
 	};
 
 	canBulkSelect( plugin ) {
-		const { autoupdate: canAutoupdate, activation: canActivate } = this.getAllowedPluginActions(
-			plugin
-		);
+		const { autoupdate: canAutoupdate, activation: canActivate } =
+			this.getAllowedPluginActions( plugin );
 		return canAutoupdate || canActivate;
 	}
 

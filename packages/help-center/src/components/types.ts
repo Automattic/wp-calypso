@@ -3,6 +3,8 @@ import { ReactElement } from 'react';
 export interface Container {
 	content: ReactElement;
 	handleClose: () => void;
+	headerText?: string;
+	footerContent?: ReactElement;
 }
 
 export interface Content {
@@ -14,4 +16,5 @@ export interface Header {
 	onMinimize?: () => void;
 	onMaximize?: () => void;
 	onDismiss: () => void;
+	headerText: string;
 }

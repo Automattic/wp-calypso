@@ -17,9 +17,8 @@ export class FilterResetNotice extends Component {
 	};
 
 	hasActiveFilters() {
-		const {
-			lastFilters: { includeDashes, exactSldMatchesOnly, maxCharacters, tlds = [] } = {},
-		} = this.props;
+		const { lastFilters: { includeDashes, exactSldMatchesOnly, maxCharacters, tlds = [] } = {} } =
+			this.props;
 		return includeDashes || exactSldMatchesOnly || maxCharacters !== '' || tlds.length > 0;
 	}
 

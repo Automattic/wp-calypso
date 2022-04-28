@@ -60,148 +60,155 @@ export const setValidationError = ( message ) => ( {
 	message,
 } );
 
-export const startMappingSiteImporterAuthors = ( { importerStatus, site, targetSiteUrl } ) => (
-	dispatch,
-	getState
-) => {
-	const singleAuthorSite = get( site, 'single_user_site', true );
-	const siteId = site.ID;
-	const { importerId } = importerStatus;
+export const startMappingSiteImporterAuthors =
+	( { importerStatus, site, targetSiteUrl } ) =>
+	( dispatch, getState ) => {
+		const singleAuthorSite = get( site, 'single_user_site', true );
+		const siteId = site.ID;
+		const { importerId } = importerStatus;
 
-	// WXR was uploaded, map the authors
-	if ( singleAuthorSite ) {
-		const currentUserData = getCurrentUser( getState() );
-		const currentUser = {
-			...currentUserData,
-			name: currentUserData.display_name,
-		};
-		const sourceAuthors = get( importerStatus, 'customData.sourceAuthors', [] );
+		// WXR was uploaded, map the authors
+		if ( singleAuthorSite ) {
+			const currentUserData = getCurrentUser( getState() );
+			const currentUser = {
+				...currentUserData,
+				name: currentUserData.display_name,
+			};
+			const sourceAuthors = get( importerStatus, 'customData.sourceAuthors', [] );
 
-		// map all the authors to the current user
-		// TODO: when converting to redux, allow for multiple mappings in a single action
-		sourceAuthors.forEach( ( author ) => dispatch( mapAuthor( importerId, author, currentUser ) ) );
+			// map all the authors to the current user
+			// TODO: when converting to redux, allow for multiple mappings in a single action
+			sourceAuthors.forEach( ( author ) =>
+				dispatch( mapAuthor( importerId, author, currentUser ) )
+			);
 
-		// Check if all authors are mapped before starting the import.
-		const newState = getImporterStatus( getState(), importerId );
-		const areAllAuthorsMapped = get( newState, 'customData.sourceAuthors', [] ).every(
-			( { mappedTo } ) => mappedTo
-		);
+			// Check if all authors are mapped before starting the import.
+			const newState = getImporterStatus( getState(), importerId );
+			const areAllAuthorsMapped = get( newState, 'customData.sourceAuthors', [] ).every(
+				( { mappedTo } ) => mappedTo
+			);
 
-		if ( areAllAuthorsMapped ) {
-			dispatch( startImporting( newState ) );
+			if ( areAllAuthorsMapped ) {
+				dispatch( startImporting( newState ) );
+
+				dispatch(
+					recordTracksEvent( 'calypso_site_importer_map_authors_single', {
+						blog_id: siteId,
+						site_url: targetSiteUrl,
+					} )
+				);
+			}
+		} else {
+			dispatch( startMappingAuthors( importerId ) );
 
 			dispatch(
-				recordTracksEvent( 'calypso_site_importer_map_authors_single', {
+				recordTracksEvent( 'calypso_site_importer_map_authors_multi', {
 					blog_id: siteId,
 					site_url: targetSiteUrl,
 				} )
 			);
 		}
-	} else {
-		dispatch( startMappingAuthors( importerId ) );
+	};
+
+export const importSite =
+	( {
+		engine,
+		importerStatus,
+		params,
+		site,
+		supportedContent,
+		targetSiteUrl,
+		unsupportedContent,
+	} ) =>
+	( dispatch ) => {
+		const siteId = site.ID;
+		const trackingParams = {
+			blog_id: siteId,
+			site_url: targetSiteUrl,
+			supported_content: sortAndStringify( supportedContent ),
+			unsupported_content: sortAndStringify( unsupportedContent ),
+			site_engine: engine,
+		};
+
+		dispatch( recordTracksEvent( 'calypso_site_importer_start_import_request', trackingParams ) );
+		dispatch( startSiteImporterImport() );
+
+		wpcom.req
+			.post( {
+				path: `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }`,
+				apiNamespace: 'wpcom/v2',
+				formData: [
+					[ 'import_status', JSON.stringify( toApi( importerStatus ) ) ],
+					[ 'site_url', targetSiteUrl ],
+				],
+			} )
+			.then( ( response ) => {
+				dispatch(
+					recordTracksEvent( 'calypso_site_importer_start_import_success', trackingParams )
+				);
+				dispatch( siteImporterImportSuccessful( response ) );
+
+				const data = fromApi( response );
+				// Note: We're creating the finishUpload action using the locally generated ID here
+				// as opposed to the new import ID recieved in the API response.
+				dispatch( finishUpload( importerStatus.importerId, data ) );
+
+				dispatch(
+					startMappingSiteImporterAuthors( {
+						importerStatus: data,
+						site,
+						targetSiteUrl,
+					} )
+				);
+			} )
+			.catch( ( error ) => {
+				dispatch( recordTracksEvent( 'calypso_site_importer_start_import_fail', trackingParams ) );
+				dispatch( siteImporterImportFailed( error ) );
+			} );
+	};
+
+export const validateSiteIsImportable =
+	( { params, site, targetSiteUrl } ) =>
+	( dispatch ) => {
+		const siteId = site.ID;
+
+		prefetchmShotsPreview( targetSiteUrl );
 
 		dispatch(
-			recordTracksEvent( 'calypso_site_importer_map_authors_multi', {
+			recordTracksEvent( 'calypso_site_importer_validate_site_start', {
 				blog_id: siteId,
 				site_url: targetSiteUrl,
 			} )
 		);
-	}
-};
+		dispatch( startSiteImporterIsSiteImportable() );
 
-export const importSite = ( {
-	engine,
-	importerStatus,
-	params,
-	site,
-	supportedContent,
-	targetSiteUrl,
-	unsupportedContent,
-} ) => ( dispatch ) => {
-	const siteId = site.ID;
-	const trackingParams = {
-		blog_id: siteId,
-		site_url: targetSiteUrl,
-		supported_content: sortAndStringify( supportedContent ),
-		unsupported_content: sortAndStringify( unsupportedContent ),
-		site_engine: engine,
+		return wpcom.req
+			.get( {
+				path: `/sites/${ siteId }/site-importer/is-site-importable?${ stringify( params ) }`,
+				apiNamespace: 'wpcom/v2',
+			} )
+			.then( ( response ) => {
+				dispatch(
+					recordTracksEvent( 'calypso_site_importer_validate_site_success', {
+						blog_id: siteId,
+						site_url: response.site_url,
+						supported_content: sortAndStringify( response.supported_content ),
+						unsupported_content: sortAndStringify( response.unsupported_content ),
+						site_engine: response.engine,
+					} )
+				);
+				dispatch( siteImporterIsSiteImportableSuccessful( response ) );
+			} )
+			.catch( ( error ) => {
+				dispatch(
+					recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
+						blog_id: siteId,
+						site_url: targetSiteUrl,
+					} )
+				);
+				dispatch( siteImporterIsSiteImportableFailed( error ) );
+			} );
 	};
-
-	dispatch( recordTracksEvent( 'calypso_site_importer_start_import_request', trackingParams ) );
-	dispatch( startSiteImporterImport() );
-
-	wpcom.req
-		.post( {
-			path: `/sites/${ siteId }/site-importer/import-site?${ stringify( params ) }`,
-			apiNamespace: 'wpcom/v2',
-			formData: [
-				[ 'import_status', JSON.stringify( toApi( importerStatus ) ) ],
-				[ 'site_url', targetSiteUrl ],
-			],
-		} )
-		.then( ( response ) => {
-			dispatch( recordTracksEvent( 'calypso_site_importer_start_import_success', trackingParams ) );
-			dispatch( siteImporterImportSuccessful( response ) );
-
-			const data = fromApi( response );
-			// Note: We're creating the finishUpload action using the locally generated ID here
-			// as opposed to the new import ID recieved in the API response.
-			dispatch( finishUpload( importerStatus.importerId, data ) );
-
-			dispatch(
-				startMappingSiteImporterAuthors( {
-					importerStatus: data,
-					site,
-					targetSiteUrl,
-				} )
-			);
-		} )
-		.catch( ( error ) => {
-			dispatch( recordTracksEvent( 'calypso_site_importer_start_import_fail', trackingParams ) );
-			dispatch( siteImporterImportFailed( error ) );
-		} );
-};
-
-export const validateSiteIsImportable = ( { params, site, targetSiteUrl } ) => ( dispatch ) => {
-	const siteId = site.ID;
-
-	prefetchmShotsPreview( targetSiteUrl );
-
-	dispatch(
-		recordTracksEvent( 'calypso_site_importer_validate_site_start', {
-			blog_id: siteId,
-			site_url: targetSiteUrl,
-		} )
-	);
-	dispatch( startSiteImporterIsSiteImportable() );
-
-	return wpcom.req
-		.get( {
-			path: `/sites/${ siteId }/site-importer/is-site-importable?${ stringify( params ) }`,
-			apiNamespace: 'wpcom/v2',
-		} )
-		.then( ( response ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_site_importer_validate_site_success', {
-					blog_id: siteId,
-					site_url: response.site_url,
-					supported_content: sortAndStringify( response.supported_content ),
-					unsupported_content: sortAndStringify( response.unsupported_content ),
-					site_engine: response.engine,
-				} )
-			);
-			dispatch( siteImporterIsSiteImportableSuccessful( response ) );
-		} )
-		.catch( ( error ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
-					blog_id: siteId,
-					site_url: targetSiteUrl,
-				} )
-			);
-			dispatch( siteImporterIsSiteImportableFailed( error ) );
-		} );
-};
 
 export const resetSiteImporterImport = ( { importStage, site, targetSiteUrl } ) =>
 	withAnalytics(

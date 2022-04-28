@@ -7,8 +7,10 @@ import ActivityCard from 'calypso/components/activity-card';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
+import { getJetpackStorageUpgradeUrl } from 'calypso/state/plans/selectors';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useTrackUpsellView, useTrackUpgradeClick } from './hooks';
 import type { Activity } from 'calypso/components/activity-card/types';
 
@@ -46,7 +48,11 @@ const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
 	const trackUpgradeClick = useTrackUpgradeClick( siteId );
-	const siteSlug = useSelector( getSelectedSiteSlug );
+
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const storageUpgradeUrl = useSelector( ( state ) =>
+		getJetpackStorageUpgradeUrl( state, siteSlug )
+	);
 
 	const upsellRef = useTrackUpsellView( siteId );
 
@@ -98,9 +104,7 @@ const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 					ref={ upsellRef }
 					className="visible-days-limit-upsell__call-to-action-button"
 					onClick={ trackUpgradeClick }
-					href={
-						isJetpackCloud() ? `/pricing/storage/${ siteSlug }` : `/plans/storage/${ siteSlug }`
-					}
+					href={ storageUpgradeUrl }
 				>
 					{ translate( 'Upgrade storage' ) }
 				</Button>

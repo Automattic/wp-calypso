@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -25,9 +24,6 @@ const usePlanAvailable = (
 		selectedDomainName: selectedDomainName,
 	} );
 
-	const isMonthlyBillingSupported =
-		isEnabled( 'google-workspace-monthly' ) || intervalLength === IntervalLength.ANNUALLY;
-
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
 
 	if ( emailProviderSlug !== GOOGLE_WORKSPACE_PRODUCT_TYPE ) {
@@ -39,14 +35,10 @@ const usePlanAvailable = (
 	}
 
 	if ( isDomainInCart ) {
-		return isMonthlyBillingSupported;
+		return true;
 	}
 
-	if ( ! domain || ! hasGSuiteSupportedDomain( [ domain ] ) ) {
-		return false;
-	}
-
-	return isMonthlyBillingSupported;
+	return domain && hasGSuiteSupportedDomain( [ domain ] );
 };
 
 const SelectButton = ( {

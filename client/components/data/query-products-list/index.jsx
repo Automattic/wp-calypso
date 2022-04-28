@@ -3,16 +3,18 @@ import { useDispatch } from 'react-redux';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { isProductsListFetching, getProductsListType } from 'calypso/state/products-list/selectors';
 
-const request = ( { persist, ...props } ) => ( dispatch, getState ) => {
-	if (
-		isProductsListFetching( getState() ) ||
-		( persist && props.type === getProductsListType( getState() ) )
-	) {
-		return;
-	}
+const request =
+	( { persist, ...props } ) =>
+	( dispatch, getState ) => {
+		if (
+			isProductsListFetching( getState() ) ||
+			( persist && props.type === getProductsListType( getState() ) )
+		) {
+			return;
+		}
 
-	dispatch( requestProductsList( props ) );
-};
+		dispatch( requestProductsList( props ) );
+	};
 
 /**
  *

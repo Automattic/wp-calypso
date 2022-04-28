@@ -64,13 +64,8 @@ class SiteType extends Component {
 	}
 
 	render() {
-		const {
-			flowName,
-			positionInFlow,
-			stepName,
-			translate,
-			hasInitializedSitesBackUrl,
-		} = this.props;
+		const { flowName, positionInFlow, stepName, translate, hasInitializedSitesBackUrl } =
+			this.props;
 
 		const headerText = translate( 'What kind of site are you building?' );
 		const subHeaderText = translate(

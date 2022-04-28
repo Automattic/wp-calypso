@@ -1,7 +1,13 @@
 import { dispatch } from '@wordpress/data';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
-import type { SiteDetails, Domain } from './types';
+import type {
+	SiteDetails,
+	Domain,
+	SiteSettings,
+	HappyChatAvailability,
+	EmailSupportAvailability,
+} from './types';
 
 /**
  * Attempt to find a site based on its id, and if not return undefined.
@@ -36,5 +42,36 @@ export function* getSiteDomains( siteId: number ) {
 			apiVersion: '1.2',
 		} );
 		yield dispatch( STORE_KEY ).receiveSiteDomains( siteId, result?.domains );
+	} catch ( e ) {}
+}
+
+export function* getHappyChatAvailability() {
+	const userConfiguration: HappyChatAvailability = yield wpcomRequest( {
+		path: '/help/olark/mine',
+		apiVersion: '1.1',
+	} );
+	dispatch( STORE_KEY ).receiveHappyChatAvailability( userConfiguration );
+}
+
+export function* getEmailSupportAvailability() {
+	const userConfiguration: EmailSupportAvailability = yield wpcomRequest( {
+		path: '/help/tickets/kayako/mine',
+		apiVersion: '1.1',
+	} );
+	dispatch( STORE_KEY ).receiveEmailSupportAvailability( userConfiguration );
+}
+
+/**
+ * Get all site settings
+ *
+ * @param siteId {number} The site id
+ */
+export function* getSiteSettings( siteId: number ) {
+	try {
+		const result: { settings: SiteSettings } = yield wpcomRequest( {
+			path: '/sites/' + encodeURIComponent( siteId ) + '/settings',
+			apiVersion: '1.4',
+		} );
+		yield dispatch( STORE_KEY ).receiveSiteSettings( siteId, result?.settings );
 	} catch ( e ) {}
 }

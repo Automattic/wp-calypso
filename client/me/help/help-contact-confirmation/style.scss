@@ -1,3 +1,6 @@
+@import '../../../assets/stylesheets/shared/mixins/_breakpoints';
+@import '@automattic/typography/styles/variables';
+
 .help-contact-confirmation {
 	text-align: center;
 	display: table;
@@ -54,7 +57,7 @@
 }
 
 .help-contact-confirmation__message {
-	font: 14px/21px $sans;
+	font: 14px/21px $sans; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	color: var( --color-neutral-light );
 	max-width: 340px;
 	display: inline-block;

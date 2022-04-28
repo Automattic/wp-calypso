@@ -202,14 +202,8 @@ class EmailProvidersComparison extends Component {
 	};
 
 	onTitanConfirmNewMailboxes = () => {
-		const {
-			comparisonContext,
-			domain,
-			domainName,
-			hasCartDomain,
-			source,
-			titanMailProduct,
-		} = this.props;
+		const { comparisonContext, domain, domainName, hasCartDomain, source, titanMailProduct } =
+			this.props;
 		const { titanMailboxes } = this.state;
 
 		const validatedTitanMailboxes = validateTitanMailboxes( titanMailboxes );

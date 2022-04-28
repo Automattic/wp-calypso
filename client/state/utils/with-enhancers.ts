@@ -16,31 +16,34 @@ type Enhancer = ( action: AnyAction, getState: () => any ) => AnyAction;
  * @see client/state/analytics/actions/enhanceWithSiteType for an example
  * @see extendAction from @automattic/state-utils for a simpler alternative
  */
-export const withEnhancers = < TActionArguments extends any[] >(
-	actionCreator: ( ...args: TActionArguments ) => Action | AnyThunkAction,
-	enhancers: Enhancer | Enhancer[]
-) => ( ...args: TActionArguments ): AnyThunkAction => {
-	const action = actionCreator( ...args );
+export const withEnhancers =
+	< TActionArguments extends any[] >(
+		actionCreator: ( ...args: TActionArguments ) => Action | AnyThunkAction,
+		enhancers: Enhancer | Enhancer[]
+	) =>
+	( ...args: TActionArguments ): AnyThunkAction => {
+		const action = actionCreator( ...args );
 
-	if ( ! Array.isArray( enhancers ) ) {
-		enhancers = [ enhancers ];
-	}
+		if ( ! Array.isArray( enhancers ) ) {
+			enhancers = [ enhancers ];
+		}
 
-	return ( dispatch, getState, extraArguments ) => {
-		const enhanceAction = ( actionValue: AnyAction ) =>
-			( enhancers as Enhancer[] ).reduce(
-				( result: AnyAction, enhancer ) => enhancer( result, getState ),
-				actionValue
-			);
-		const enhancedDispatch = ( actionValue: AnyAction ) => dispatch( enhanceAction( actionValue ) );
-		const thunkDispatch = ( actionValue: AnyAction | AnyThunkAction ) => {
-			if ( typeof actionValue === 'function' ) {
-				return actionValue( thunkDispatch, getState, extraArguments );
-			}
+		return ( dispatch, getState, extraArguments ) => {
+			const enhanceAction = ( actionValue: AnyAction ) =>
+				( enhancers as Enhancer[] ).reduce(
+					( result: AnyAction, enhancer ) => enhancer( result, getState ),
+					actionValue
+				);
+			const enhancedDispatch = ( actionValue: AnyAction ) =>
+				dispatch( enhanceAction( actionValue ) );
+			const thunkDispatch = ( actionValue: AnyAction | AnyThunkAction ) => {
+				if ( typeof actionValue === 'function' ) {
+					return actionValue( thunkDispatch, getState, extraArguments );
+				}
 
-			return enhancedDispatch( actionValue );
+				return enhancedDispatch( actionValue );
+			};
+
+			return thunkDispatch( action );
 		};
-
-		return thunkDispatch( action );
 	};
-};

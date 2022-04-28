@@ -3,6 +3,7 @@ import {
 	isBloggerPlan,
 	isPersonalPlan,
 	isPremiumPlan,
+	isFreePlan,
 	isBusinessPlan,
 	isEcommercePlan,
 	GROUP_JETPACK,
@@ -19,7 +20,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { getCurrentPlan, hasFeature } from 'calypso/state/sites/plans/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -33,6 +34,7 @@ export const UpsellNudge = ( {
 	canUserUpgrade,
 	className,
 	compact,
+	currentPlan,
 	customerType,
 	description,
 	disableHref,
@@ -90,9 +92,21 @@ export const UpsellNudge = ( {
 	}
 
 	if ( ! href && siteSlug && canUserUpgrade ) {
-		href = addQueryArgs( { feature, plan }, `/plans/${ siteSlug }` );
-		if ( customerType ) {
-			href = `/plans/${ siteSlug }?customerType=${ customerType }`;
+		const currentPlanSlug = currentPlan?.productSlug;
+
+		// Redirect to the checkout page in case the Plans page can't be accessed by the plan.
+		if (
+			isFreePlan( currentPlanSlug ) ||
+			isBloggerPlan( currentPlanSlug ) ||
+			isPremiumPlan( currentPlanSlug ) ||
+			isPersonalPlan( currentPlanSlug )
+		) {
+			href = `/checkout/${ siteSlug }/pro`;
+		} else {
+			href = addQueryArgs( { feature, plan }, `/plans/${ siteSlug }` );
+			if ( customerType ) {
+				href = `/plans/${ siteSlug }?customerType=${ customerType }`;
+			}
 		}
 	}
 
@@ -164,6 +178,7 @@ export default connect( ( state, ownProps ) => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isVip: isVipSite( state, siteId ),
+		currentPlan: getCurrentPlan( state, siteId ),
 		siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
 		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 		siteIsWPForTeams: isSiteWPForTeams( state, getSelectedSiteId( state ) ),

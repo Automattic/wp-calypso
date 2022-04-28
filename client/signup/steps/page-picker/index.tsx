@@ -10,14 +10,14 @@ import {
 	CONTACT_PAGE,
 	ABOUT_PAGE,
 	PHOTO_GALLERY_PAGE,
-	SERVICE_SHOWCASE_PAGE,
 	VIDEO_GALLERY_PAGE,
-	PODCAST_PAGE,
 	PORTFOLIO_PAGE,
 	FAQ_PAGE,
 	SITEMAP_PAGE,
 	PROFILE_PAGE,
 	PAGE_LIMIT,
+	SERVICES_PAGE,
+	MENU_PAGE,
 } from 'calypso/signup/difm/constants';
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -74,7 +74,7 @@ const CellLabelContainer = styled.div`
 	}
 `;
 
-const PopularContainer = styled.div`
+const PageCellBadge = styled.div`
 	background: var( --studio-green-5 );
 	border-radius: 4px;
 	text-align: center;
@@ -92,9 +92,10 @@ interface PageCellType {
 	selectedPages: string[];
 	onClick: ( pageId: string ) => void;
 	popular?: boolean;
+	required?: boolean;
 }
 
-function PageCell( { pageId, popular, selectedPages, onClick }: PageCellType ) {
+function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCellType ) {
 	const translate = useTranslate();
 	const selectedIndex = selectedPages.indexOf( pageId );
 	const totalSelections = selectedPages.length;
@@ -113,7 +114,8 @@ function PageCell( { pageId, popular, selectedPages, onClick }: PageCellType ) {
 			/>
 			<CellLabelContainer>
 				<div>{ title }</div>
-				{ popular ? <PopularContainer>{ translate( 'Popular' ) }</PopularContainer> : null }
+				{ popular ? <PageCellBadge>{ translate( 'Popular' ) }</PageCellBadge> : null }
+				{ required ? <PageCellBadge>{ translate( 'Required' ) }</PageCellBadge> : null }
 			</CellLabelContainer>
 		</GridCellContainer>
 	);
@@ -141,7 +143,7 @@ function PageSelector( {
 	return (
 		<PageGrid>
 			<PageCell
-				popular
+				required
 				pageId={ HOME_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
@@ -171,17 +173,13 @@ function PageSelector( {
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
-			<PageCell
-				pageId={ SERVICE_SHOWCASE_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
+			<PageCell pageId={ SERVICES_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
 			<PageCell
 				pageId={ VIDEO_GALLERY_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
-			<PageCell pageId={ PODCAST_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+			<PageCell pageId={ MENU_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
 			<PageCell pageId={ PORTFOLIO_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
 			<PageCell pageId={ FAQ_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
 			<PageCell pageId={ SITEMAP_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
@@ -226,7 +224,12 @@ export default function DIFMPagePicker( props: StepProps ) {
 	const headerText = translate( 'Add pages to your {{wbr}}{{/wbr}}website', {
 		components: { wbr: <wbr /> },
 	} );
-	const subHeaderText = translate( 'You can add up to 5 pages' );
+	const subHeaderText = translate(
+		'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}You can select up to 5 pages.',
+		{
+			components: { br: <br /> },
+		}
+	);
 	return (
 		<StepWrapper
 			headerText={ headerText }

@@ -23,10 +23,6 @@ describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 			await testAccount.authenticate( page );
 		} );
 
-		afterAll( async () => {
-			await page.close();
-		} );
-
 		it( 'Search for help: Create a site', async function () {
 			supportComponent = new SupportComponent( page );
 			await supportComponent.showSupportCard();

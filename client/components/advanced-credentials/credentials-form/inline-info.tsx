@@ -7,7 +7,7 @@ interface Props {
 	field: string;
 	host: string;
 	info: HostInfo.Info[] | HostInfo.InfoSplit;
-	protocol: 'ftp' | 'ssh';
+	protocol: 'ftp' | 'ssh' | 'dynamic-ssh';
 }
 
 const InlineInfo: FunctionComponent< Props > = ( { field, host, info, protocol } ) => {

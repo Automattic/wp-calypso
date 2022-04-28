@@ -17,7 +17,7 @@ export default function useCreateAssignablePaymentMethods(
 	currentPaymentMethodId: string
 ): PaymentMethod[] {
 	const translate = useTranslate();
-	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
+	const { isStripeLoading, stripeLoadingError } = useStripe();
 
 	const {
 		isFetching: isLoadingAllowedPaymentMethods,
@@ -28,8 +28,6 @@ export default function useCreateAssignablePaymentMethods(
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
 		activePayButtonText: String( translate( 'Save card' ) ),

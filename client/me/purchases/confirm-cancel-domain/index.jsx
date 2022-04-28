@@ -66,22 +66,21 @@ class ConfirmCancelDomain extends Component {
 	};
 
 	componentDidMount() {
-		this.redirectIfDataIsInvalid( this.props );
+		this.redirectIfDataIsInvalid();
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.redirectIfDataIsInvalid( nextProps );
+	componentDidUpdate() {
+		this.redirectIfDataIsInvalid();
 	}
 
-	redirectIfDataIsInvalid = ( props ) => {
-		if ( isDataLoading( props ) || this.state.submitting ) {
+	redirectIfDataIsInvalid = () => {
+		if ( isDataLoading( this.props ) || this.state.submitting ) {
 			return null;
 		}
 
-		const { purchase } = props;
+		const { purchase, selectedSite } = this.props;
 
-		if ( ! purchase || ! isDomainRegistration( purchase ) || ! props.selectedSite ) {
+		if ( ! purchase || ! isDomainRegistration( purchase ) || ! selectedSite ) {
 			page.redirect( this.props.purchaseListUrl );
 		}
 	};

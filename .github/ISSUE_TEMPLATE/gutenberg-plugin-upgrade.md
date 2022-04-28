@@ -28,8 +28,8 @@ As you complete the tasks in this list, please update the relevant lines with di
 
 **Install and activate**
 
-- [ ] Install & activate [v#.#.#]-rc.1 on edge (######-code)
-- [ ] Install & activate [v#.#.#] on edge (######-code)
+- [ ] Install and activate [v#.#.#]-rc.1 on edge (######-code)
+- [ ] Install and activate [v#.#.#] on edge (######-code)
 - [ ] Activate [v#.#.#] on production (######-code)
 - [ ] Request [v#.#.#] AT upgrade (######-p2)
 

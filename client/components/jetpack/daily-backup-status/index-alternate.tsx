@@ -45,10 +45,10 @@ const DailyBackupStatusAlternate: React.FC< Props > = ( {
 	const today = useDateWithOffset( moment() );
 
 	const dispatch = useDispatch();
-	const refreshBackupProgress = useCallback( () => dispatch( requestRewindBackups( siteId ) ), [
-		dispatch,
-		siteId,
-	] );
+	const refreshBackupProgress = useCallback(
+		() => dispatch( requestRewindBackups( siteId ) ),
+		[ dispatch, siteId ]
+	);
 
 	const hasRealtimeBackups = useSelector( ( state ) => siteHasRealtimeBackups( state, siteId ) );
 

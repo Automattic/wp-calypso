@@ -40,6 +40,10 @@ describe( 'ContactDetailsFormFields', () => {
 				code: 'BR',
 				name: 'Brazil',
 			},
+			{
+				code: 'IT',
+				name: 'Italy',
+			},
 		],
 		onSubmit: noop,
 		translate: ( string ) => string,

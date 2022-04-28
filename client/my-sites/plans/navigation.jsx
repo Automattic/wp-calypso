@@ -39,7 +39,7 @@ class PlansNavigation extends Component {
 	}
 
 	render() {
-		const { site, shouldShowMyPlan, shouldShowPlans, translate, isFreeOrFlexible } = this.props;
+		const { site, shouldShowMyPlan, shouldShowPlans, translate } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
 		const hasPinnedItems = Boolean( site ) && isMobile();
@@ -63,7 +63,7 @@ class PlansNavigation extends Component {
 									path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
 								}
 							>
-								{ isFreeOrFlexible ? translate( 'New Plans' ) : translate( 'Plans' ) }
+								{ translate( 'Plans' ) }
 							</NavItem>
 						) }
 					</NavTabs>

@@ -20,10 +20,10 @@ class SrvRecord extends Component {
 	render() {
 		const { fieldValues, isValid, onChange, selectedDomainName, show, translate } = this.props;
 		const classes = classnames( { 'is-hidden': ! show } );
-		const options = [ 'tcp', 'udp', 'tls' ].map( ( protocol ) => {
+		const options = [ '_tcp', '_udp', '_tls' ].map( ( protocol ) => {
 			return (
 				<option key={ protocol } value={ protocol }>
-					{ protocol.toUpperCase() }
+					{ protocol }
 				</option>
 			);
 		} );

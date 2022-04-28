@@ -166,6 +166,8 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 	const setupURL =
 		pluginOnSiteData?.action_links?.Settings || fallbackSetupUrl || `${ siteAdminUrl }plugins.php`;
 
+	const documentationURL = wpComPluginData?.documentation_url;
+
 	const setupSection = {
 		sectionKey: 'setup_whats_next',
 		sectionTitle: translate( 'What’s next?' ),
@@ -186,6 +188,22 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 					</FullWidthButton>
 				),
 			},
+			...( documentationURL
+				? [
+						{
+							stepKey: 'whats_next_documentation',
+							stepTitle: translate( 'Documentation' ),
+							stepDescription: translate(
+								'Visit the step-by-step guide to learn how to use this plugin.'
+							),
+							stepCta: (
+								<FullWidthButton href={ documentationURL }>
+									{ translate( 'Visit guide' ) }
+								</FullWidthButton>
+							),
+						},
+				  ]
+				: [] ),
 			{
 				stepKey: 'whats_next_grow',
 				stepTitle: translate( 'Keep growing' ),
@@ -215,7 +233,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 			{ /* Using Global to override Global masterbar height */ }
 			<Global
 				styles={ css`
-					body.is-section-marketplace.is-nav-unification {
+					body.is-section-marketplace {
 						--masterbar-height: 72px;
 					}
 				` }

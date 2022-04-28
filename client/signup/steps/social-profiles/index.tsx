@@ -21,7 +21,7 @@ export default function SocialProfilesStep( props: Props ): React.ReactNode {
 	const { stepName, signupDependencies, goToNextStep } = props;
 
 	const headerText = translate( 'Do you have social media profiles?' );
-	const subHeaderText = translate( 'You can change your mind at any time.' );
+	const subHeaderText = translate( 'You can always add them later.' );
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName: stepName } ) );

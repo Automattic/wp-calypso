@@ -17,17 +17,8 @@ import { getImporterTypeForEngine } from '../util';
 
 export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( props ) => {
 	const importer: Importer = 'medium';
-	const {
-		job,
-		urlData,
-		siteId,
-		site,
-		siteSlug,
-		fromSite,
-		importSite,
-		startImport,
-		resetImport,
-	} = props;
+	const { job, urlData, siteId, site, siteSlug, fromSite, importSite, startImport, resetImport } =
+		props;
 
 	/**
 	 * Effects

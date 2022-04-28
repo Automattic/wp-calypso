@@ -59,13 +59,8 @@ function VatForm(): JSX.Element {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const [ currentVatDetails, setCurrentVatDetails ] = useState< VatDetails >( {} );
-	const {
-		vatDetails,
-		isUpdating,
-		isUpdateSuccessful,
-		setVatDetails,
-		updateError,
-	} = useVatDetails();
+	const { vatDetails, isUpdating, isUpdateSuccessful, setVatDetails, updateError } =
+		useVatDetails();
 
 	const saveDetails = () => {
 		reduxDispatch( recordTracksEvent( 'calypso_vat_details_update' ) );

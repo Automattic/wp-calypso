@@ -4,11 +4,13 @@ import {
 	isDomainMapping,
 	isDomainRegistration,
 	isDomainTransfer,
+	isGoogleWorkspaceExtraLicence,
+	isGSuiteExtraLicenseProductSlug,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+	isGSuiteOrGoogleWorkspaceProductSlug,
 	isPlan,
 	isSiteRedirect,
 	isTitanMail,
-	isGoogleWorkspaceExtraLicence,
 } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -18,10 +20,6 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
-import {
-	isGSuiteExtraLicenseProductSlug,
-	isGSuiteOrGoogleWorkspaceProductSlug,
-} from 'calypso/lib/gsuite';
 import { getTitanEmailUrl, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { getTitanAppsUrlPrefix } from 'calypso/lib/titan/get-titan-urls';
 import {
@@ -101,13 +99,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	getText() {
-		const {
-			translate,
-			isDataLoaded,
-			hasFailedPurchases,
-			primaryPurchase,
-			displayMode,
-		} = this.props;
+		const { translate, isDataLoaded, hasFailedPurchases, primaryPurchase, displayMode } =
+			this.props;
 
 		if ( hasFailedPurchases ) {
 			return translate( 'Some of the items in your cart could not be added.' );
@@ -481,12 +474,8 @@ export class CheckoutThankYouHeader extends PureComponent {
 	}
 
 	getSearchButtonProps() {
-		const {
-			translate,
-			selectedSite,
-			jetpackSearchCustomizeUrl,
-			jetpackSearchDashboardUrl,
-		} = this.props;
+		const { translate, selectedSite, jetpackSearchCustomizeUrl, jetpackSearchDashboardUrl } =
+			this.props;
 
 		const buttonTitle = selectedSite.jetpack
 			? translate( 'Go to Search Dashboard' )

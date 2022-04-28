@@ -4,13 +4,8 @@ import SocialLogo from 'calypso/components/social-logo';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 
 const PostShareConnection = ( { connection, isActive, onToggle } ) => {
-	const {
-		external_display,
-		external_profile_picture,
-		keyring_connection_ID,
-		service,
-		status,
-	} = connection;
+	const { external_display, external_profile_picture, keyring_connection_ID, service, status } =
+		connection;
 
 	const toggle = () => onToggle( keyring_connection_ID );
 

@@ -1,3 +1,8 @@
+import {
+	FEATURE_DONATIONS,
+	FEATURE_PREMIUM_CONTENT_CONTAINER,
+	FEATURE_RECURRING_PAYMENTS,
+} from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
@@ -9,6 +14,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -28,10 +34,12 @@ class MembershipsProductsSection extends Component {
 	renderEllipsisMenu( productId ) {
 		return (
 			<EllipsisMenu position="bottom left">
-				<PopoverMenuItem onClick={ () => this.openAddEditDialog( productId ) }>
-					<Gridicon size={ 18 } icon={ 'pencil' } />
-					{ this.props.translate( 'Edit' ) }
-				</PopoverMenuItem>
+				{ this.props.hasStripeFeature && (
+					<PopoverMenuItem onClick={ () => this.openAddEditDialog( productId ) }>
+						<Gridicon size={ 18 } icon={ 'pencil' } />
+						{ this.props.translate( 'Edit' ) }
+					</PopoverMenuItem>
+				) }
 				<PopoverMenuItem onClick={ () => this.openDeleteDialog( productId ) }>
 					<Gridicon size={ 18 } icon={ 'trash' } />
 					{ this.props.translate( 'Delete' ) }
@@ -66,11 +74,13 @@ class MembershipsProductsSection extends Component {
 					{ this.props.translate( 'Payment plans' ) }
 				</HeaderCake>
 
-				<SectionHeader>
-					<Button primary compact onClick={ () => this.openAddEditDialog( null ) }>
-						{ this.props.translate( 'Add a new payment plan' ) }
-					</Button>
-				</SectionHeader>
+				{ this.props.hasStripeFeature && (
+					<SectionHeader>
+						<Button primary compact onClick={ () => this.openAddEditDialog( null ) }>
+							{ this.props.translate( 'Add a new payment plan' ) }
+						</Button>
+					</SectionHeader>
+				) }
 				{ this.props.products.map( ( product ) => (
 					<CompactCard className="memberships__products-product-card" key={ product.ID }>
 						<div className="memberships__products-product-details">
@@ -108,5 +118,9 @@ export default connect( ( state ) => {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 		products: getProductsForSiteId( state, siteId ),
+		hasStripeFeature:
+			hasActiveSiteFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
+			hasActiveSiteFeature( state, siteId, FEATURE_DONATIONS ) ||
+			hasActiveSiteFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 	};
 } )( localize( MembershipsProductsSection ) );

@@ -1,5 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { localize } from 'i18n-calypso';
+import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -9,37 +8,55 @@ import './style.scss';
 
 class ReskinSideExplainer extends Component {
 	getStrings() {
-		const { type, eligibleForProPlan, selectedSiteId, translate } = this.props;
+		const { type, translate } = this.props;
 
 		let title;
 		let subtitle;
+		let subtitle2;
 		let ctaText;
 
-		// The special case latter is for handling the case in the sign-up flow.
-		// By that time, a site is not available yet, so we can only check the feature flag for now
-		const shouldShowProPlanTitle =
-			eligibleForProPlan || ( selectedSiteId == null && isEnabled( 'plans/pro-plan' ) );
+		const isEnLocale = [ 'en', 'en-gb' ].includes( getLocaleSlug() );
+		const showNewTitle =
+			i18n.hasTranslation( 'Get your domain {{b}}free{{/b}} with WordPress Pro' ) || isEnLocale;
+
+		const showNewSubtitle =
+			i18n.hasTranslation(
+				'Use the search tool on this page to find a domain you love, then select the {{b}}WordPress Pro{{/b}} plan.'
+			) || isEnLocale;
+
+		const newSubtitleCopy =
+			'pro' === this.props.flowName
+				? translate( 'Use the search tool on this page to find a domain you love.' )
+				: translate(
+						'Use the search tool on this page to find a domain you love, then select the {{b}}WordPress Pro{{/b}} plan.',
+						{
+							components: { b: <strong /> },
+						}
+				  );
 
 		switch ( type ) {
 			case 'free-domain-explainer':
-				title = shouldShowProPlanTitle
-					? translate(
-							'Get a {{b}}free{{/b}} one-year domain registration with your WordPress Pro annual plan.',
-							{
-								components: { b: <strong /> },
-							}
-					  )
+				title = showNewTitle
+					? translate( 'Get your domain {{b}}free{{/b}} with WordPress Pro', {
+							components: { b: <strong /> },
+					  } )
 					: translate(
-							'Get a {{b}}free{{/b}} one-year domain registration with any paid annual plan.',
+							'Get a {{b}}free{{/b}} one-year domain registration with your WordPress Pro annual plan.',
 							{
 								components: { b: <strong /> },
 							}
 					  );
 
-				subtitle = translate(
-					"You can claim your free custom domain later if you aren't ready yet."
-				);
-				ctaText = translate( 'Choose my domain later' );
+				subtitle = showNewSubtitle
+					? newSubtitleCopy
+					: translate( "You can claim your free custom domain later if you aren't ready yet." );
+
+				subtitle2 =
+					showNewSubtitle &&
+					translate(
+						'We’ll pay the first year’s domain registration fees for you, simple as that!'
+					);
+				ctaText = ! showNewSubtitle && translate( 'Choose my domain later' );
 				break;
 
 			case 'use-your-domain':
@@ -63,17 +80,20 @@ class ReskinSideExplainer extends Component {
 				break;
 		}
 
-		return { title, subtitle, ctaText };
+		return { title, subtitle, subtitle2, ctaText };
 	}
 
 	render() {
-		const { title, subtitle, ctaText } = this.getStrings();
+		const { title, subtitle, subtitle2, ctaText } = this.getStrings();
 
 		return (
 			/* eslint-disable jsx-a11y/click-events-have-key-events */
 			<div className="reskin-side-explainer">
 				<div className="reskin-side-explainer__title">{ title }</div>
-				<div className="reskin-side-explainer__subtitle">{ subtitle }</div>
+				<div className="reskin-side-explainer__subtitle">
+					<div>{ subtitle }</div>
+					{ subtitle2 && <div className="reskin-side-explainer__subtitle-2">{ subtitle2 }</div> }
+				</div>
 				{ ctaText && (
 					<div className="reskin-side-explainer__cta">
 						<span

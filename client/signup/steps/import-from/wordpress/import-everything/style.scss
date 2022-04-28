@@ -144,7 +144,8 @@
 			margin: 0;
 		}
 
-		.import__upgrade-plan-feature {
+		.import__upgrade-plan-feature,
+		.import__upgrade-plan-feature-more {
 			padding-left: 25px;
 			color: var( --studio-gray-40 );
 			flex-basis: 100%;
@@ -153,12 +154,24 @@
 				flex-basis: 50%;
 			}
 
+			button {
+				color: var( --studio-gray-40 );
+				line-height: 1.5em;
+				cursor: pointer;
+			}
+
 			span {
 				margin: 0;
 			}
 
 			svg {
 				fill: var( --color-success );
+			}
+		}
+
+		.import__upgrade-plan-feature-more {
+			svg {
+				fill: var( --studio-gray-60 );
 			}
 		}
 	}

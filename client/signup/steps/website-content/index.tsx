@@ -1,4 +1,3 @@
-import calypsoConfig from '@automattic/calypso-config';
 import { Button, Dialog } from '@automattic/components';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
@@ -106,14 +105,12 @@ function WebsiteContentStep( {
 			}
 		}
 
-		if ( calypsoConfig.isEnabled( 'signup/redesigned-difm-flow' ) ) {
-			if ( pageTitles && pageTitles.length > 0 ) {
-				const pages = pageTitles.map( ( pageTitle ) => ( {
-					id: pageTitle,
-					name: translatedPageTitles[ pageTitle ],
-				} ) );
-				dispatch( initializePages( pages ) );
-			}
+		if ( pageTitles && pageTitles.length > 0 ) {
+			const pages = pageTitles.map( ( pageTitle ) => ( {
+				id: pageTitle,
+				name: translatedPageTitles[ pageTitle ],
+			} ) );
+			dispatch( initializePages( pages ) );
 		} else if ( siteCategory ) {
 			dispatch(
 				initializePages( [
@@ -215,7 +212,7 @@ export default function WrapperWebsiteContent(
 	const dispatch = useDispatch();
 	const headerText = translate( 'Website Content' );
 	const subHeaderText = translate(
-		'In this step, you will add your brand visuals, pages and media to be used on your website.'
+		'Add your logo, page text and media to be used on your website.'
 	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 

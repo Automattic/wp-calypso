@@ -25,17 +25,15 @@ const combineDismissPreference = (
 	};
 };
 
-const dismiss = (
-	type: 'restore' | 'scan',
-	dismissedAt: number = Date.now(),
-	reviewed = false
-) => ( dispatch: CalypsoDispatch, getState: () => AppState ) =>
-	dispatch(
-		savePreference(
-			PREFERENCE_NAME,
-			combineDismissPreference( getState(), type, dismissedAt, reviewed )
-		)
-	);
+const dismiss =
+	( type: 'restore' | 'scan', dismissedAt: number = Date.now(), reviewed = false ) =>
+	( dispatch: CalypsoDispatch, getState: () => AppState ) =>
+		dispatch(
+			savePreference(
+				PREFERENCE_NAME,
+				combineDismissPreference( getState(), type, dismissedAt, reviewed )
+			)
+		);
 
 const combineValidPreference = (
 	state: AppState,
@@ -54,11 +52,10 @@ const combineValidPreference = (
 	};
 };
 
-const setValidFrom = ( type: 'restore' | 'scan', validFrom: number | null = null ) => (
-	dispatch: CalypsoDispatch,
-	getState: () => AppState
-) =>
-	dispatch(
-		savePreference( PREFERENCE_NAME, combineValidPreference( getState(), type, validFrom ) )
-	);
+const setValidFrom =
+	( type: 'restore' | 'scan', validFrom: number | null = null ) =>
+	( dispatch: CalypsoDispatch, getState: () => AppState ) =>
+		dispatch(
+			savePreference( PREFERENCE_NAME, combineValidPreference( getState(), type, validFrom ) )
+		);
 export { dismiss, setValidFrom, combineDismissPreference, combineValidPreference };

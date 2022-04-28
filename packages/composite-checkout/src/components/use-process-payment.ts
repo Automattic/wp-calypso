@@ -46,11 +46,8 @@ function useHandlePaymentProcessorResponse() {
 			),
 		[ __ ]
 	);
-	const {
-		setTransactionComplete,
-		setTransactionRedirecting,
-		setTransactionError,
-	} = useTransactionStatus();
+	const { setTransactionComplete, setTransactionRedirecting, setTransactionError } =
+		useTransactionStatus();
 
 	// processPayment may throw an error, but because it's an async function,
 	// that error will not trigger any React error boundaries around this

@@ -9,7 +9,7 @@ import classnames from 'classnames';
 import { useMemo } from 'react';
 import {
 	getAvailableDesigns,
-	getDesignUrl,
+	getDesignPreviewUrl,
 	mShotOptions,
 	isBlankCanvasDesign,
 	filterDesignsByCategory,
@@ -31,7 +31,7 @@ interface DesignPreviewImageProps {
 
 const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale, highRes } ) => (
 	<MShotsImage
-		url={ getDesignUrl( design, locale ) }
+		url={ getDesignPreviewUrl( design, { language: locale } ) }
 		aria-labelledby={ makeOptionId( design ) }
 		alt=""
 		options={ mShotOptions( design, highRes ) }
@@ -223,6 +223,7 @@ export interface DesignPickerProps {
 	highResThumbnails?: boolean;
 	categorization?: Categorization;
 	categoriesHeading?: React.ReactNode;
+	anchorHeading?: React.ReactNode;
 	categoriesFooter?: React.ReactNode;
 	recommendedCategorySlug: string | null;
 	hideFullScreenPreview?: boolean;
@@ -244,6 +245,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	className,
 	highResThumbnails = false,
 	categoriesHeading,
+	anchorHeading,
 	categoriesFooter,
 	categorization,
 	hideFullScreenPreview,
@@ -267,6 +269,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				'design-picker--has-categories': hasCategories,
 			} ) }
 		>
+			{ anchorHeading }
 			{ categorization && hasCategories && (
 				<DesignPickerCategoryFilter
 					categories={ categorization.categories }

@@ -5,3 +5,11 @@
 		}
 	}
 }
+
+.help-center__container {
+	&.is-mobile {
+		&.is-minimized {
+			margin-top: 0;
+		}
+	}
+}

@@ -18,8 +18,10 @@ import getRequest from 'calypso/state/selectors/get-request';
 import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
 import isRequestingJetpackSettings from 'calypso/state/selectors/is-requesting-jetpack-settings';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isUpdatingJetpackSettings from 'calypso/state/selectors/is-updating-jetpack-settings';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { saveP2SiteSettings } from 'calypso/state/site-settings/p2/actions';
 import {
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
@@ -171,6 +173,10 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 
 			if ( siteIsJetpack ) {
 				this.props.saveJetpackSettings( siteId, jetpackFieldsToUpdate );
+			}
+
+			if ( typeof fields?.p2_preapproved_domains !== 'undefined' ) {
+				return this.props.saveP2SiteSettings( siteId, fields );
 			}
 
 			const siteFields = pick( fields, settingsFields.site );
@@ -330,6 +336,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 				path,
 				siteIsJetpack: isJetpack,
 				siteIsAtomic: isSiteAutomatedTransfer( state, siteId ),
+				siteIsP2Hub: isSiteP2Hub( state, siteId ),
 				siteSettingsSaveError,
 				settings,
 				settingsFields,
@@ -346,6 +353,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					saveSiteSettings,
 					successNotice,
 					saveJetpackSettings,
+					saveP2SiteSettings,
 					activateModule,
 				},
 				dispatch

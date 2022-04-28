@@ -27,7 +27,7 @@ const P2PreapprovedDomainsForm = ( {
 	updateFields,
 } ) => {
 	const SETTING_KEY_PREAPPROVED_DOMAINS = 'p2_preapproved_domains';
-	const DEFAULT_ROLE = 'author';
+	const DEFAULT_ROLE = 'editor';
 
 	const isWPForTeamsSite = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
 	const isP2Hub = useSelector( ( state ) => isSiteP2Hub( state, siteId ) );
@@ -63,7 +63,7 @@ const P2PreapprovedDomainsForm = ( {
 		};
 
 		if ( ! domains?.[ 0 ] ) {
-			updateFields( { [ SETTING_KEY_PREAPPROVED_DOMAINS ]: '' } );
+			updateFields( { [ SETTING_KEY_PREAPPROVED_DOMAINS ]: { domains: [], role: '' } } );
 			return;
 		}
 

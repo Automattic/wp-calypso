@@ -13,10 +13,7 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import { getName } from 'calypso/lib/purchases';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import wpcom from 'calypso/lib/wp';
-import {
-	domainManagementTransferOut,
-	domainManagementNameServers,
-} from 'calypso/my-sites/domains/paths';
+import { domainManagementEdit, domainManagementTransferOut } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -56,9 +53,7 @@ class RemoveDomainDialog extends Component {
 							args: { domain: productName },
 							components: {
 								strong: <strong />,
-								moveAnchor: (
-									<a href={ domainManagementNameServers( slug, productName, currentRoute ) } />
-								),
+								moveAnchor: <a href={ domainManagementEdit( slug, productName, currentRoute ) } />,
 								transferAnchor: (
 									<a href={ domainManagementTransferOut( slug, productName, currentRoute ) } />
 								),

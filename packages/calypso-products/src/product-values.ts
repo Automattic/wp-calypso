@@ -35,15 +35,18 @@ export { isFreeJetpackPlan } from './is-free-jetpack-plan';
 export { isFreePlanProduct } from './is-free-plan';
 export { isFlexiblePlanProduct } from './is-flexible-plan';
 export { isFreeWordPressComDomain } from './is-free-wordpress-com-domain';
-export {
-	isGoogleWorkspace,
-	isGoogleWorkspaceExtraLicence,
-	isGSuite,
-	isGSuiteOrExtraLicense,
-	isGSuiteOrExtraLicenseOrGoogleWorkspace,
-	isGSuiteOrGoogleWorkspace,
-} from './is-gsuite';
+export { isGoogleWorkspace } from './is-google-workspace';
+export { isGoogleWorkspaceExtraLicence } from './is-google-workspace-extra-license';
 export { isGoogleWorkspaceMonthly } from './is-google-workspace-monthly';
+export { isGoogleWorkspaceProductSlug } from './is-google-workspace-product-slug';
+export { isGSuite } from './is-gsuite';
+export { isGSuiteExtraLicenseProductSlug } from './is-gsuite-extra-license-product-slug';
+export { isGSuiteOrExtraLicense } from './is-gsuite-or-extra-license';
+export { isGSuiteOrExtraLicenseOrGoogleWorkspace } from './is-gsuite-or-extra-license-or-google-workspace';
+export { isGSuiteOrExtraLicenseProductSlug } from './is-gsuite-or-extra-license-product-slug';
+export { isGSuiteOrGoogleWorkspace } from './is-gsuite-or-google-workspace';
+export { isGSuiteOrGoogleWorkspaceProductSlug } from './is-gsuite-or-google-workspace-product-slug';
+export { isGSuiteProductSlug } from './is-gsuite-product-slug';
 export { isJetpackAntiSpam } from './is-jetpack-anti-spam';
 export { isJetpackAntiSpamSlug } from './is-jetpack-anti-spam-slug';
 export { isJetpackBackup } from './is-jetpack-backup';
@@ -72,6 +75,8 @@ export { isSpaceUpgrade } from './is-space-upgrade';
 export * from './is-superseding-jetpack-item';
 export { isSecurityDaily } from './is-security-daily';
 export { isSecurityRealTime } from './is-security-realtime';
+export { isSecurityT1 } from './is-security-t1';
+export { isSecurityT2 } from './is-security-t2';
 export { isJetpackSecuritySlug } from './is-jetpack-security-slug';
 export { isTheme } from './is-theme';
 export { isTitanMail } from './is-titan-mail';

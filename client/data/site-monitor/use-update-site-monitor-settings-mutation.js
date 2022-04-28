@@ -17,9 +17,10 @@ function useUpdateSiteMonitorSettingsMutation( siteId, queryOptions = {} ) {
 
 	const { mutate } = mutation;
 
-	const updateSiteMonitorSettings = useCallback( ( settings ) => mutate( { settings } ), [
-		mutate,
-	] );
+	const updateSiteMonitorSettings = useCallback(
+		( settings ) => mutate( { settings } ),
+		[ mutate ]
+	);
 
 	return { updateSiteMonitorSettings, ...mutation };
 }

@@ -27,7 +27,6 @@ function mapStateToProps( state ) {
 		getStatus: getStatus( state ),
 		isBlocked: isBlocked( state ),
 		isEnabled: isEnabled( state ),
-		isNoticeDismissed: isNoticeDismissed( state ),
 		// etc.
 	};
 }

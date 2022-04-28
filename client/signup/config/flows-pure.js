@@ -225,7 +225,7 @@ export function generateFlows( {
 		{
 			// When adding steps, make sure that signup campaign ref's continue to work.
 			name: 'p2',
-			steps: [ 'user', 'p2-confirm-email', 'p2-complete-profile', 'p2-site' ],
+			steps: [ 'user', 'p2-confirm-email', 'p2-complete-profile', 'p2-join-workspace', 'p2-site' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'New P2 signup flow',
 			lastModified: '2021-12-27',
@@ -398,24 +398,15 @@ export function generateFlows( {
 		},
 		{
 			name: 'do-it-for-me',
-			steps: isEnabled( 'signup/redesigned-difm-flow' )
-				? [
-						// Add or replace new steps here
-						'user',
-						'new-or-existing-site',
-						'difm-site-picker',
-						'difm-options',
-						'social-profiles',
-						'difm-design-setup-site',
-						'difm-page-picker',
-				  ]
-				: [
-						'user',
-						'new-or-existing-site',
-						'difm-site-picker',
-						'site-info-collection',
-						'difm-design-setup-site',
-				  ],
+			steps: [
+				'user',
+				'new-or-existing-site',
+				'difm-site-picker',
+				'difm-options',
+				'social-profiles',
+				'difm-design-setup-site',
+				'difm-page-picker',
+			],
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			excludeFromManageSiteFlows: true,

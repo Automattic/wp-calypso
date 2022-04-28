@@ -1,8 +1,7 @@
-import i18n from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { createElement } from 'react';
+import DocumentHead from 'calypso/components/data/document-head';
 import { getSiteFragment } from 'calypso/lib/route';
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -56,15 +55,18 @@ function redirectToTeam( context ) {
 }
 
 function renderPeopleList( context, next ) {
-	const filter = context.params.filter;
+	const PeopleListTitle = () => {
+		const translate = useTranslate();
 
-	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Users', { textOnly: true } ) ) );
+		return <DocumentHead title={ translate( 'Users', { textOnly: true } ) } />;
+	};
 
-	context.primary = createElement( PeopleList, {
-		filter: filter,
-		search: context.query.s,
-	} );
+	context.primary = (
+		<>
+			<PeopleListTitle />
+			<PeopleList filter={ context.params.filter } search={ context.query.s } />
+		</>
+	);
 	next();
 }
 
@@ -72,36 +74,65 @@ function renderInvitePeople( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
-	context.store.dispatch( setTitle( i18n.translate( 'Invite People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
+	const InvitePeopleTitle = () => {
+		const translate = useTranslate();
 
-	context.primary = createElement( InvitePeople, {
-		key: site.ID,
-		site,
-	} );
+		return <DocumentHead title={ translate( 'Invite People', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<InvitePeopleTitle />
+			<InvitePeople key={ site.ID } site={ site } />
+		</>
+	);
 	next();
 }
 
 function renderPeopleInvites( context, next ) {
-	context.store.dispatch( setTitle( i18n.translate( 'Invites', { textOnly: true } ) ) );
+	const PeopleInvitesTitle = () => {
+		const translate = useTranslate();
 
-	context.primary = createElement( PeopleInvites );
+		return <DocumentHead title={ translate( 'Invites', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<PeopleInvitesTitle />
+			<PeopleInvites />
+		</>
+	);
 	next();
 }
 
 function renderPeopleInviteDetails( context, next ) {
-	context.store.dispatch( setTitle( i18n.translate( 'Invite Details', { textOnly: true } ) ) );
+	const PeopleInviteDetailsTitle = () => {
+		const translate = useTranslate();
 
-	context.primary = createElement( PeopleInviteDetails, {
-		inviteKey: context.params.invite_key,
-	} );
+		return <DocumentHead title={ translate( 'Invite Details', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<PeopleInviteDetailsTitle />
+			<PeopleInviteDetails inviteKey={ context.params.invite_key } />
+		</>
+	);
 	next();
 }
 
 function renderSingleTeamMember( context, next ) {
-	context.store.dispatch( setTitle( i18n.translate( 'View Team Member', { textOnly: true } ) ) ); // FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
+	const SingleTeamMemberTitle = () => {
+		const translate = useTranslate();
 
-	context.primary = createElement( EditTeamMember, {
-		userLogin: context.params.user_login,
-	} );
+		return <DocumentHead title={ translate( 'View Team Member', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<SingleTeamMemberTitle />
+			<EditTeamMember userLogin={ context.params.user_login } />
+		</>
+	);
 	next();
 }

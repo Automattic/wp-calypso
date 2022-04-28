@@ -7,6 +7,7 @@ import {
 	PLAN_WPCOM_FLEXIBLE,
 } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
+import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -26,6 +27,7 @@ import { useExperiment } from 'calypso/lib/explat';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansComparison, { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import legacyPlanNotice from 'calypso/my-sites/plans/legacy-plan-notice';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
@@ -118,10 +120,21 @@ class Plans extends Component {
 	}
 
 	onSelectPlan = ( item ) => {
-		const { selectedSite } = this.props;
+		const {
+			selectedSite,
+			context: {
+				query: { discount },
+			},
+		} = this.props;
 		const checkoutPath = `/checkout/${ selectedSite.slug }/${ item.product_slug }/`;
 
-		page( checkoutPath );
+		page(
+			discount
+				? addQueryArgs( checkoutPath, {
+						coupon: discount,
+				  } )
+				: checkoutPath
+		);
 	};
 
 	renderPlaceholder = () => {
@@ -223,6 +236,7 @@ class Plans extends Component {
 							/>
 							<div id="plans" className="plans plans__has-sidebar">
 								<PlansNavigation path={ this.props.context.path } />
+								{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
 								{ this.renderPlansMain() }
 								<PerformanceTrackerStop />
 							</div>

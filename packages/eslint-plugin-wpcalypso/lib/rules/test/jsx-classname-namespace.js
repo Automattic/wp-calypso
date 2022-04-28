@@ -56,23 +56,19 @@ new RuleTester( {
 			filename: '/tmp/foo/index.js',
 		},
 		{
-			code:
-				'import ReactDOM from "react-dom"; ReactDOM.render( <div className="quux" />, document.body );',
+			code: 'import ReactDOM from "react-dom"; ReactDOM.render( <div className="quux" />, document.body );',
 			filename: '/tmp/foo/index.js',
 		},
 		{
-			code:
-				'import ReactDOM from "react-dom"; ReactDOM.render( <div className="quux"><div className="quux__child" /></div>, document.body );',
+			code: 'import ReactDOM from "react-dom"; ReactDOM.render( <div className="quux"><div className="quux__child" /></div>, document.body );',
 			filename: '/tmp/foo/index.js',
 		},
 		{
-			code:
-				'import { render } from "react-dom"; render( <div className="quux" />, document.body );',
+			code: 'import { render } from "react-dom"; render( <div className="quux" />, document.body );',
 			filename: '/tmp/foo/index.js',
 		},
 		{
-			code:
-				'import { render } from "react-dom"; render( <div className="quux"><div className="quux__child" /></div>, document.body );',
+			code: 'import { render } from "react-dom"; render( <div className="quux"><div className="quux__child" /></div>, document.body );',
 			filename: '/tmp/foo/index.js',
 		},
 		{
@@ -97,8 +93,7 @@ new RuleTester( {
 			options: [ { rootFiles: [ 'bar.js' ] } ],
 		},
 		{
-			code:
-				'export default class Foo { child() { return <div className="foo" />; } render() { return this.child(); } };',
+			code: 'export default class Foo { child() { return <div className="foo" />; } render() { return this.child(); } };',
 			filename: '/tmp/foo/index.js',
 		},
 	],

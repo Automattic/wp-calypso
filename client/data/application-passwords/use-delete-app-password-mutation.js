@@ -18,9 +18,10 @@ const useDeleteAppPasswordMutation = ( queryOptions = {} ) => {
 
 	const { mutate } = mutation;
 
-	const deleteAppPassword = useCallback( ( appPasswordId ) => mutate( { appPasswordId } ), [
-		mutate,
-	] );
+	const deleteAppPassword = useCallback(
+		( appPasswordId ) => mutate( { appPasswordId } ),
+		[ mutate ]
+	);
 
 	return { deleteAppPassword, ...mutation };
 };

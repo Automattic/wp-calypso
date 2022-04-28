@@ -1,6 +1,6 @@
 import { CardHeader, Button, Flex } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { close, chevronUp, lineSolid } from '@wordpress/icons';
+import { closeSmall, chevronUp, lineSolid } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { Header } from './types';
 
@@ -9,34 +9,36 @@ const HelpCenterMobileHeader: React.FC< Header > = ( {
 	onMinimize,
 	onMaximize,
 	onDismiss,
+	headerText,
 } ) => {
 	const classNames = classnames( 'help-center__container-header' );
+	const { __ } = useI18n();
 
 	return (
 		<CardHeader className={ classNames }>
 			<Flex>
-				<h2>{ __( 'Help Center' ) }</h2>
+				<p style={ { fontSize: 14, fontWeight: 500 } }>{ headerText }</p>
 				<div>
 					{ isMinimized ? (
 						<Button
+							className={ 'help-center-header__maximize' }
 							label={ __( 'Maximize Help Center' ) }
 							icon={ chevronUp }
-							iconSize={ 24 }
 							onClick={ onMaximize }
 						/>
 					) : (
 						<Button
+							className={ 'help-center-header__minimize' }
 							label={ __( 'Minimize Help Center' ) }
 							icon={ lineSolid }
-							iconSize={ 24 }
 							onClick={ onMinimize }
 						/>
 					) }
 
 					<Button
+						className={ 'help-center-header__close' }
 						label={ __( 'Close Help Center' ) }
-						icon={ close }
-						iconSize={ 24 }
+						icon={ closeSmall }
 						onClick={ onDismiss }
 					/>
 				</div>

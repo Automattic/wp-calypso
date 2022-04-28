@@ -100,6 +100,8 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	onDurationChange,
 	scrollCardIntoView,
 	createButtonURL,
+	isPricingPageTreatment202204,
+	isPricingPageTest202204AssignmentLoading,
 } ) => {
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
@@ -135,9 +137,8 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	}, [ duration, currentPlanSlug, translate ] );
 
 	const { shouldWrap: shouldWrapGrid, gridRef } = useWrapGridForSmallScreens( 3 );
-	const { availableProducts, purchasedProducts, includedInPlanProducts } = useGetPlansGridProducts(
-		siteId
-	);
+	const { availableProducts, purchasedProducts, includedInPlanProducts } =
+		useGetPlansGridProducts( siteId );
 	const [ popularItems, otherItems ] = useMemo( () => {
 		const allItems = sortByGridPosition( [
 			...getProductsToDisplay( {
@@ -199,6 +200,8 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				scrollCardIntoView={ scrollCardIntoView }
 				createButtonURL={ createButtonURL }
 				collapseFeaturesOnMobile
+				isPricingPageTreatment202204={ isPricingPageTreatment202204 }
+				isPricingPageTest202204AssignmentLoading={ isPricingPageTest202204AssignmentLoading }
 			/>
 		</li>
 	);
@@ -251,6 +254,10 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 									isFeatured={ isFeatured }
 									scrollCardIntoView={ scrollCardIntoView }
 									createButtonURL={ createButtonURL }
+									isPricingPageTreatment202204={ isPricingPageTreatment202204 }
+									isPricingPageTest202204AssignmentLoading={
+										isPricingPageTest202204AssignmentLoading
+									}
 								/>
 							</li>
 						);

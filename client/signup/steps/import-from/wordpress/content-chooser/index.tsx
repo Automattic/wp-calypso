@@ -26,12 +26,8 @@ interface Props {
 export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
-	const {
-		fromSite,
-		onJetpackSelection,
-		onContentOnlySelection,
-		onContentEverythingSelection,
-	} = props;
+	const { fromSite, onJetpackSelection, onContentOnlySelection, onContentEverythingSelection } =
+		props;
 
 	/**
 	 ↓ Fields

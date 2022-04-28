@@ -1,3 +1,6 @@
+@import '@automattic/typography/styles/variables';
+@import '../../assets/stylesheets/shared/mixins/_long-content-fade';
+@import '../../assets/stylesheets/shared/mixins/_breakpoints';
 /**
  * Site
  *
@@ -180,7 +183,7 @@
 	color: var( --color-neutral-60 );
 	background-color: var( --color-neutral-5 );
 	font-size: $font-body-extra-small;
-	border-radius: 12px;
+	border-radius: 12px; /* stylelint-disable-line scales/radii */
 	clear: both;
 	display: inline-block;
 	margin-top: 6px;

@@ -67,13 +67,8 @@ class AccountSettingsClose extends Component {
 	};
 
 	render() {
-		const {
-			translate,
-			hasAtomicSites,
-			hasCancelablePurchases,
-			isLoading,
-			purchasedPremiumThemes,
-		} = this.props;
+		const { translate, hasAtomicSites, hasCancelablePurchases, isLoading, purchasedPremiumThemes } =
+			this.props;
 		const isDeletePossible = ! isLoading && ! hasAtomicSites && ! hasCancelablePurchases;
 		const containerClasses = classnames( 'account-close', 'main', 'is-wide-layout', {
 			'is-loading': isLoading,

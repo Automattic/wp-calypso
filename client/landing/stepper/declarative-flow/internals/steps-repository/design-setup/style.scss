@@ -32,6 +32,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	 */
 	.design-picker {
 		margin-top: 24px;
+		flex-wrap: wrap;
 
 		&.design-setup__has-categories {
 			@include break-medium {
@@ -52,44 +53,50 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			margin-top: 48px;
 		}
 
-		.design-picker-category-filter {
-			/* 
-				Header
-			*/
-			.formatted-header {
-				margin: 0;
-				flex-grow: 1;
+		/*
+		 * Header
+		 */
+		.formatted-header {
+			margin: 0;
+			flex-grow: 1;
+			text-align: left;
+
+			&.is-anchor-header {
+				flex-basis: 100%;
+				margin-top: 80px;
+				margin-bottom: 64px;
+			}
+
+			.formatted-header__title {
+				@include onboarding-font-recoleta;
+				color: $gray-100;
+				letter-spacing: 0.2px;
+				font-size: 2.15rem; /* stylelint-disable-line */
+				font-weight: 400;
+				padding: 0;
 				text-align: left;
+				margin: 0;
 
-				.formatted-header__title {
-					@include onboarding-font-recoleta;
-					color: $gray-100;
-					letter-spacing: 0.2px;
-					font-size: 2.15rem; /* stylelint-disable-line */
-					font-weight: 400;
-					padding: 0;
-					text-align: left;
-					margin: 0;
-
-					@include break-xlarge {
-						font-size: 2.75rem; /* stylelint-disable-line */
-					}
-				}
-
-				.formatted-header__subtitle {
-					padding: 0;
-					text-align: left;
-					color: $gray-60;
-					font-size: 1rem;
-					margin: 8px 0 0;
-					line-height: 24px;
-
-					@include breakpoint-deprecated( '<660px' ) {
-						margin-top: 16px;
-					}
+				@include break-xlarge {
+					font-size: 2.75rem; /* stylelint-disable-line */
 				}
 			}
 
+			.formatted-header__subtitle {
+				padding: 0;
+				text-align: left;
+				color: $gray-60;
+				font-size: 1rem;
+				margin: 8px 0 0;
+				line-height: 24px;
+
+				@include breakpoint-deprecated('<660px') {
+					margin-top: 16px;
+				}
+			}
+		}
+
+		.design-picker-category-filter {
 			&__menu-item {
 				align-items: center;
 				border: 0;
@@ -194,8 +201,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	 */
 	.design-setup__preview {
 		.step-container__header {
-			margin: 12px 0 24px;
-			transform: translateY( -48px );
+			margin-top: 40px;
 
 			.formatted-header {
 				margin-top: 0;
@@ -214,13 +220,20 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 					padding: 0;
 				}
 			}
+
+			@include break-mobile {
+				margin: 12px 0 24px;
+				transform: translateY( -48px );
+			}
 		}
 
 		.step-container__content {
 			height: calc( 100vh - 245px );
+			margin-top: 74px;
 
 			@include break-mobile {
 				height: calc( 100vh - 225px );
+				margin-top: 32px;
 			}
 
 			@include break-small {
@@ -232,20 +245,13 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			}
 
 			.web-preview__inner {
-				height: 100%;
-				display: flex;
-				flex-direction: column;
 				transform: translateY( -48px );
-			}
-			.web-preview__placeholder {
-				flex: 1;
 			}
 
 			.web-preview__frame-wrapper.is-resizable {
 				margin: 0;
 				padding: 0;
 				background-color: transparent;
-				height: 100%;
 			}
 
 			.web-preview__frame {
@@ -254,23 +260,6 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				/* stylelint-disable-next-line scales/radii */
 				border-radius: 0 0 6px 6px;
 				box-sizing: border-box;
-				height: 100%;
-				width: 100%;
-			}
-
-			.web-preview__loading-message-wrapper {
-				display: flex;
-				justify-content: center;
-				flex-direction: column;
-				position: absolute;
-				height: 100%;
-				width: 100%;
-				text-align: center;
-			}
-
-			.web-preview__loading-message {
-				color: var( --color-text-subtle );
-				font-size: $font-body;
 			}
 
 			.web-preview__inner .spinner-line {
@@ -279,7 +268,8 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				top: unset;
 				left: unset;
 				transform: unset;
-				margin: 0;
+				margin: 0 auto;
+				position: static;
 			}
 		}
 
@@ -288,5 +278,14 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				max-height: 1080px;
 			}
 		}
+	}
+}
+
+/* Hide categories from the sell intent */
+.design-picker__sell-intent {
+	.design-picker-category-filter__sidebar,
+	.design-picker-category-filter__dropdown,
+	.design-picker__category-heading-0 {
+		display: none;
 	}
 }

@@ -12,34 +12,36 @@ describe( 'selectors', () => {
 				domains: {
 					suggestions: {
 						items: {
-							'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-								{
-									domain_name: 'example.me',
-									cost: '$25.00',
-									product_id: 46,
-									product_slug: 'dotme_domain',
-								},
-								{
-									domain_name: 'example.org',
-									cost: '$18.00',
-									product_id: 6,
-									product_slug: 'domain_reg',
-								},
-							],
-							'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-								{
-									domain_name: 'foobar.me',
-									cost: '$25.00',
-									product_id: 46,
-									product_slug: 'dotme_domain',
-								},
-								{
-									domain_name: 'foobar.org',
-									cost: '$18.00',
-									product_id: 6,
-									product_slug: 'domain_reg',
-								},
-							],
+							'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+								[
+									{
+										domain_name: 'example.me',
+										cost: '$25.00',
+										product_id: 46,
+										product_slug: 'dotme_domain',
+									},
+									{
+										domain_name: 'example.org',
+										cost: '$18.00',
+										product_id: 6,
+										product_slug: 'domain_reg',
+									},
+								],
+							'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+								[
+									{
+										domain_name: 'foobar.me',
+										cost: '$25.00',
+										product_id: 46,
+										product_slug: 'dotme_domain',
+									},
+									{
+										domain_name: 'foobar.org',
+										cost: '$18.00',
+										product_id: 6,
+										product_slug: 'domain_reg',
+									},
+								],
 						},
 					},
 				},
@@ -105,8 +107,10 @@ describe( 'selectors', () => {
 					domains: {
 						suggestions: {
 							errors: {
-								'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
-								'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': null,
+								'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+									error,
+								'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+									null,
 							},
 						},
 					},

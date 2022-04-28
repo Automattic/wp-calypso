@@ -162,9 +162,8 @@ export const CheckoutSteps = ( {
 	const childrenArray = Children.toArray( children );
 	const steps = childrenArray.filter( isElementAStep );
 	const totalSteps = steps.length;
-	const { activeStepNumber, stepCompleteStatus, setTotalSteps } = useContext(
-		CheckoutStepDataContext
-	);
+	const { activeStepNumber, stepCompleteStatus, setTotalSteps } =
+		useContext( CheckoutStepDataContext );
 
 	useEffect( () => {
 		setTotalSteps( totalSteps );
@@ -290,9 +289,8 @@ export const CheckoutStep = ( {
 	validatingButtonAriaLabel,
 }: CheckoutStepProps ): JSX.Element => {
 	const { __ } = useI18n();
-	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
-		CheckoutStepDataContext
-	);
+	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } =
+		useContext( CheckoutStepDataContext );
 	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);

@@ -84,6 +84,16 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+
+		page(
+			`/partner-portal/invoices`,
+			controller.requireAccessContext,
+			controller.requireTermsOfServiceConsentContext,
+			controller.requireSelectedPartnerKeyContext,
+			controller.invoicesDashboardContext,
+			makeLayout,
+			clientRender
+		);
 	}
 
 	// Billing Dashboard.

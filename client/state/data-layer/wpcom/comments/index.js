@@ -108,15 +108,17 @@ export const addComments = ( action, { comments, found } ) => {
 	return receiveAction;
 };
 
-export const announceFailure = ( { siteId, postId } ) => ( dispatch, getState ) => {
-	const post = getSitePost( getState(), siteId, postId );
-	const postTitle = post && post.title && post.title.trim().slice( 0, 20 ).trim().concat( '…' );
-	const error = postTitle
-		? translate( 'Could not retrieve comments for “%(postTitle)s”', { args: { postTitle } } )
-		: translate( 'Could not retrieve comments for post' );
+export const announceFailure =
+	( { siteId, postId } ) =>
+	( dispatch, getState ) => {
+		const post = getSitePost( getState(), siteId, postId );
+		const postTitle = post && post.title && post.title.trim().slice( 0, 20 ).trim().concat( '…' );
+		const error = postTitle
+			? translate( 'Could not retrieve comments for “%(postTitle)s”', { args: { postTitle } } )
+			: translate( 'Could not retrieve comments for post' );
 
-	dispatch( errorNotice( error, { duration: 5000 } ) );
-};
+		dispatch( errorNotice( error, { duration: 5000 } ) );
+	};
 
 // @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/comments/%24comment_ID/delete/
 export const deleteComment = ( action ) => ( dispatch, getState ) => {

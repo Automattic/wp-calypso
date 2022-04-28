@@ -37,14 +37,15 @@ jest.mock( 'calypso/state/purchases/selectors', () => ( {
 } ) );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: ( Comp ) => ( props ) => (
-		<Comp
-			{ ...props }
-			translate={ function ( x ) {
-				return x;
-			} }
-		/>
-	),
+	localize: ( Comp ) => ( props ) =>
+		(
+			<Comp
+				{ ...props }
+				translate={ function ( x ) {
+					return x;
+				} }
+			/>
+		),
 	translate: ( x ) => x,
 	numberFormat: ( x ) => x,
 } ) );

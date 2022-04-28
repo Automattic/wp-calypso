@@ -4,8 +4,8 @@
 
 body.connect-domain-setup__body-white {
 	background: var( --studio-white );
-	&.is-nav-unification .sidebar .sidebar__heading::after,
-	&.is-nav-unification .sidebar .sidebar__menu-link::after {
+	.sidebar .sidebar__heading::after,
+	.sidebar .sidebar__menu-link::after {
 		border-right-color: var( --studio-white );
 	}
 }

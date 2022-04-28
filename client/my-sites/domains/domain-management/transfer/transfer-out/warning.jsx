@@ -2,8 +2,8 @@ import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import {
+	domainManagementEdit,
 	domainManagementEditContactInfo,
-	domainManagementNameServers,
 } from 'calypso/my-sites/domains/paths';
 
 export default function TransferOutWarning( { domainName, selectedSiteSlug } ) {
@@ -17,7 +17,7 @@ export default function TransferOutWarning( { domainName, selectedSiteSlug } ) {
 						nameserversLink: (
 							<a
 								rel="noopener noreferrer"
-								href={ domainManagementNameServers( selectedSiteSlug, domainName ) }
+								href={ domainManagementEdit( selectedSiteSlug, domainName ) }
 							/>
 						),
 						contactInformationEditLink: (

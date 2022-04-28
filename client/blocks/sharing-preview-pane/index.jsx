@@ -60,16 +60,8 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	renderPreview() {
-		const {
-			post,
-			site,
-			message,
-			connections,
-			translate,
-			seoTitle,
-			siteSlug,
-			siteIcon,
-		} = this.props;
+		const { post, site, message, connections, translate, seoTitle, siteSlug, siteIcon } =
+			this.props;
 		const { selectedService } = this.state;
 		const connection = find( connections, { service: selectedService } );
 		if ( ! connection ) {

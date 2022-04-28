@@ -1,6 +1,6 @@
 import { PaginationControl } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import type { WpcomTourStepRendererProps } from '../../../types';
 
 type Props = Omit< WpcomTourStepRendererProps, 'onMinimize' >;
@@ -14,6 +14,7 @@ const WpcomTourKitStepCardNavigation: React.FunctionComponent< Props > = ( {
 	setInitialFocusedElement,
 	steps,
 } ) => {
+	const { __ } = useI18n();
 	const isFirstStep = currentStepIndex === 0;
 	const lastStepIndex = steps.length - 1;
 
@@ -27,7 +28,7 @@ const WpcomTourKitStepCardNavigation: React.FunctionComponent< Props > = ( {
 				{ isFirstStep ? (
 					<div>
 						<Button isTertiary onClick={ onDismiss( 'no-thanks-btn' ) }>
-							{ __( 'Skip' ) }
+							{ __( 'Skip', __i18n_text_domain__ ) }
 						</Button>
 						<Button
 							className="wpcom-tour-kit-step-card-navigation__next-btn"
@@ -35,13 +36,13 @@ const WpcomTourKitStepCardNavigation: React.FunctionComponent< Props > = ( {
 							onClick={ onNextStep }
 							ref={ setInitialFocusedElement }
 						>
-							{ __( 'Try it out!' ) }
+							{ __( 'Try it out!', __i18n_text_domain__ ) }
 						</Button>
 					</div>
 				) : (
 					<div>
 						<Button isTertiary onClick={ onPreviousStep }>
-							{ __( 'Back' ) }
+							{ __( 'Back', __i18n_text_domain__ ) }
 						</Button>
 						<Button
 							className="wpcom-tour-kit-step-card-navigation__next-btn"
@@ -49,7 +50,7 @@ const WpcomTourKitStepCardNavigation: React.FunctionComponent< Props > = ( {
 							onClick={ onNextStep }
 							ref={ setInitialFocusedElement }
 						>
-							{ __( 'Next' ) }
+							{ __( 'Next', __i18n_text_domain__ ) }
 						</Button>
 					</div>
 				) }

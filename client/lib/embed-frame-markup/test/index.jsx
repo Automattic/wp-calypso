@@ -15,8 +15,7 @@ describe( '#generateEmbedFrameMarkup()', () => {
 	test( 'should generate markup with styles', () => {
 		const styles = {
 			'jetpack-carousel': {
-				src:
-					'https://s1.wp.com/wp-content/mu-plugins/carousel/jetpack-carousel.css?m=1458924076h&ver=20120629',
+				src: 'https://s1.wp.com/wp-content/mu-plugins/carousel/jetpack-carousel.css?m=1458924076h&ver=20120629',
 				media: 'all',
 			},
 		};

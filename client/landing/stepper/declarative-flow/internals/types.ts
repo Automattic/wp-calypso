@@ -33,11 +33,14 @@ export type UseStepNavigationHook = (
 	steps?: StepPath[]
 ) => NavigationControls;
 
+export type UseAssertConditionsHook = () => void;
+
 export type Flow = {
 	name: string;
 	classnames?: string | [ string ];
 	useSteps: UseStepHook;
 	useStepNavigation: UseStepNavigationHook;
+	useAssertConditions?: UseAssertConditionsHook;
 };
 
 export type StepProps = {

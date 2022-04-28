@@ -118,16 +118,8 @@ class JetpackConnectSiteUrlInput extends Component {
 	}
 
 	render() {
-		const {
-			candidateSites,
-			isFetching,
-			onChange,
-			onSubmit,
-			isSearch,
-			translate,
-			url,
-			autoFocus,
-		} = this.props;
+		const { candidateSites, isFetching, onChange, onSubmit, isSearch, translate, url, autoFocus } =
+			this.props;
 
 		return (
 			<div>

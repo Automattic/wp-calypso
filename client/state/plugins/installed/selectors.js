@@ -148,6 +148,11 @@ export function getSitesWithoutPlugin( state, siteIds, pluginSlug ) {
 	} );
 }
 
+export function getSiteObjectsWithoutPlugin( state, siteIds, pluginSlug ) {
+	const siteIdsWithoutPlugin = getSitesWithoutPlugin( state, siteIds, pluginSlug );
+	return siteIdsWithoutPlugin.map( ( siteId ) => getSite( state, siteId ) );
+}
+
 export function getStatusForPlugin( state, siteId, pluginId ) {
 	if ( typeof state.plugins.installed.status[ siteId ] === 'undefined' ) {
 		return false;

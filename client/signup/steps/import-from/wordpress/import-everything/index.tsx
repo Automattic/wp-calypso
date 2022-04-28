@@ -11,6 +11,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
 import { addQueryArgs } from 'calypso/lib/route';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
@@ -29,6 +30,7 @@ interface Props {
 	targetSite: SitesItem;
 	targetSiteId: number | null;
 	targetSiteSlug: string;
+	targetSiteEligibleForProPlan: boolean;
 }
 export class ImportEverything extends SectionMigrate {
 	getMigrationUrlPath = () => {
@@ -47,8 +49,9 @@ export class ImportEverything extends SectionMigrate {
 	};
 
 	getCheckoutUrlPath = ( redirectTo: string ) => {
-		const { targetSiteSlug } = this.props;
-		const path = `/checkout/${ targetSiteSlug }/business`;
+		const { targetSiteSlug, targetSiteEligibleForProPlan } = this.props;
+		const plan = targetSiteEligibleForProPlan ? 'pro' : 'business';
+		const path = `/checkout/${ targetSiteSlug }/${ plan }`;
 		const queryParams = { redirect_to: redirectTo };
 
 		return addQueryArgs( queryParams, path );
@@ -238,6 +241,7 @@ export const connector = connect(
 				ownProps.targetSiteId as number,
 				'import.php'
 			),
+			targetSiteEligibleForProPlan: isEligibleForProPlan( state, ownProps.targetSiteId as number ),
 		};
 	},
 	{

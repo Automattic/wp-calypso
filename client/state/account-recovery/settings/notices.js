@@ -114,8 +114,10 @@ const getResentFailedMessage = ( target ) => {
 export const onAccountRecoverySettingsFetchFailed = () =>
 	errorNotice( translate( 'An error occurred while fetching your account recovery settings.' ) );
 
-export const onAccountRecoverySettingsUpdateSuccess = ( { target } ) => ( dispatch, getState ) =>
-	dispatch( successNotice( getUpdateSuccessMessage( target, getState ) ) );
+export const onAccountRecoverySettingsUpdateSuccess =
+	( { target } ) =>
+	( dispatch, getState ) =>
+		dispatch( successNotice( getUpdateSuccessMessage( target, getState ) ) );
 
 export const onAccountRecoverySettingsUpdateFailed = ( { target } ) =>
 	errorNotice( getUpdateErrorMessage( target ) );

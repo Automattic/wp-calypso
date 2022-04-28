@@ -7,9 +7,8 @@ import type { DomainSuggestionQuery, DomainSuggestionSelectorOptions } from './t
  *
  * @see client/state/domains/suggestions/utils.js
  */
-export const stringifyDomainQueryObject: (
-	q: DomainSuggestionQuery
-) => string = deterministicStringify;
+export const stringifyDomainQueryObject: ( q: DomainSuggestionQuery ) => string =
+	deterministicStringify;
 
 /**
  * Formats the domain suggestion price according to 'format-currency' package rules
