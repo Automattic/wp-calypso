@@ -84,7 +84,7 @@ export default function BundledDomainNotice( { cart } ) {
 	);
 
 	return (
-		<CheckoutTermsItem className="checkout__bundled-domain-notice">
+		<CheckoutTermsItem>
 			{ hasBiennialPlan( cart ) ? twoYearCopy : oneYearCopy }{ ' ' }
 			{ hasDomainRegistration( cart ) ? null : registrationLink }{ ' ' }
 			{ hasBiennialPlan( cart ) ? afterFirstYear : null }

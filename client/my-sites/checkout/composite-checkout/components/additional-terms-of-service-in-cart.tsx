@@ -38,14 +38,7 @@ export default function AdditionalTermsOfServiceInCart(): JSX.Element | null {
 					return null;
 				}
 
-				return (
-					<CheckoutTermsItem
-						className="checkout__titan-terms-of-service"
-						key={ termsOfServiceRecord.key }
-					>
-						{ message }
-					</CheckoutTermsItem>
-				);
+				return <CheckoutTermsItem key={ termsOfServiceRecord.key }>{ message }</CheckoutTermsItem>;
 			} ) }
 		</>
 	);

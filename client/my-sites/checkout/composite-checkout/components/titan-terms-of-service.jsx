@@ -44,11 +44,7 @@ function TitanTermsOfService( { cart, translate } ) {
 		}
 	);
 
-	return (
-		<CheckoutTermsItem className="checkout__titan-terms-of-service">
-			{ titanTerms }
-		</CheckoutTermsItem>
-	);
+	return <CheckoutTermsItem>{ titanTerms }</CheckoutTermsItem>;
 }
 
 export default localize( TitanTermsOfService );

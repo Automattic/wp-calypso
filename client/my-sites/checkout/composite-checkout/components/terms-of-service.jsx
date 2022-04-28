@@ -37,7 +37,7 @@ class TermsOfService extends Component {
 
 	render() {
 		return (
-			<CheckoutTermsItem className="checkout__terms" onClick={ this.recordTermsAndConditionsClick }>
+			<CheckoutTermsItem onClick={ this.recordTermsAndConditionsClick }>
 				{ this.renderTerms() }
 			</CheckoutTermsItem>
 		);
