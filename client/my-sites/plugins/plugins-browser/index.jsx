@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	isBusiness,
 	isEcommerce,
@@ -333,11 +334,15 @@ const SearchListView = ( {
 } ) => {
 	const dispatch = useDispatch();
 
+	const searchHook = isEnabled( 'marketplace-jetpack-plugin-search' )
+		? useSiteSearchPlugins
+		: useWPORGInfinitePlugins;
+
 	const {
 		data: { plugins: pluginsBySearchTerm = [], pagination: pluginsPagination } = {},
 		isLoading: isFetchingPluginsBySearchTerm,
 		fetchNextPage,
-	} = useSiteSearchPlugins(
+	} = searchHook(
 		{ searchTerm },
 		{
 			enabled: !! searchTerm,
