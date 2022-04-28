@@ -46,6 +46,14 @@ class StatsVideoSummary extends Component {
 			selectedBar = data[ data.length - 1 ];
 		}
 
+		let tabLabel = translate( 'Views' );
+		if ( 'impressions' === query.statType ) {
+			tabLabel = translate( 'Impressions' );
+		}
+		if ( 'watch_time' === query.statType ) {
+			tabLabel = translate( 'Hours Watched' );
+		}
+
 		return (
 			<div>
 				<QuerySiteStats siteId={ siteId } statType="statsVideo" query={ query } />
@@ -59,7 +67,7 @@ class StatsVideoSummary extends Component {
 					sectionClass="is-video"
 					selected={ selectedBar }
 					onClick={ this.selectBar }
-					tabLabel={ translate( 'Plays' ) }
+					tabLabel={ tabLabel }
 				/>
 			</div>
 		);
