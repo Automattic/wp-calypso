@@ -162,8 +162,6 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 				if ( ! stopPollingSoftware ) await wait( 3000 );
 			}
 			setProgress( 1 );
-			// Allow progress bar to complete
-			await wait( 500 );
 		} );
 
 		submit?.();
