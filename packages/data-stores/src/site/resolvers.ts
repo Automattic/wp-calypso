@@ -1,7 +1,7 @@
 import { dispatch } from '@wordpress/data';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
-import type { SiteDetails, Domain, SiteSettings } from './types';
+import type { SiteDetails, Domain, SiteSettings, HappyChatAvailability } from './types';
 
 /**
  * Attempt to find a site based on its id, and if not return undefined.
@@ -37,6 +37,14 @@ export function* getSiteDomains( siteId: number ) {
 		} );
 		yield dispatch( STORE_KEY ).receiveSiteDomains( siteId, result?.domains );
 	} catch ( e ) {}
+}
+
+export function* getHappyChatAvailability() {
+	const userConfiguration: HappyChatAvailability = yield wpcomRequest( {
+		path: '/help/olark/mine',
+		apiVersion: '1.1',
+	} );
+	dispatch( STORE_KEY ).receiveHappyChatAvailability( userConfiguration );
 }
 
 /**
