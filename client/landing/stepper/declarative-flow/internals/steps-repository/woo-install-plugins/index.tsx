@@ -54,6 +54,7 @@ const WooInstallPlugins: Step = function WooInstallPlugins( { navigation } ) {
 
 		setPendingAction( async () => {
 			setProgressTitle( 'Installing WooCommerce' );
+			setProgress( 0 );
 			initiateSoftwareInstall( site.ID, softwareSet );
 
 			const timeoutMs = 1000 * 60 * 3;
