@@ -1,10 +1,12 @@
 .tools__header-body {
 	display: flex;
-	flex-direction: row;
-	padding: 11px 24px; // standard padding
+	flex-direction: column;
+	padding: 32px;
 
 	@include breakpoint-deprecated( '>1040px' ) {
 		max-height: 300px;
+		flex-direction: row;
+		padding: 0;
 	}
 }
 
@@ -12,13 +14,17 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	padding: 0;
+	@include breakpoint-deprecated( '>1040px' ) {
+		padding: 40px 40px 40px 0;
+	}
 }
 
 .tools__header-title {
-	font-size: $font-title-small;
-	font-weight: 400;
-	margin-bottom: 10px;
-	margin-top: 10px;
+	display: block;
+	color: var( --color-neutral-50 );
+	font-family: $brand-serif;
+	font-size: $font-title-large;
 }
 
 .tools__header-description {
@@ -41,16 +47,16 @@
 }
 
 .tools__header-image-wrapper {
-	display: none;
-
 	@include breakpoint-deprecated( '>1040px' ) {
 		display: flex;
-		min-width: 400px;
+		margin: 0 40px;
 	}
 
 	.tools__header-image {
 		position: relative;
-		left: -20px;
+		@include breakpoint-deprecated( '>1040px' ) {
+			max-width: 220px;
+		}
 	}
 }
 
