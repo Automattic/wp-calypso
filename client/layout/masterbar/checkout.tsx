@@ -40,7 +40,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const [ isHelpCenterVisible, setIsHelpCenterVisible ] = useState( false );
 	const [ selectedArticle, setSelectedArticle ] = useState< Article | null >( null );
-	const [ footerContent, setFooterContent ] = useState( null );
+	const [ footerContent, setFooterContent ] = useState( undefined );
 
 	const closeAndLeave = () =>
 		leaveCheckout( {
