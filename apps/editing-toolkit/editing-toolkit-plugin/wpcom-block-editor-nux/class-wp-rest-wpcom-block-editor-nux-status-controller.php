@@ -95,13 +95,13 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 			$reason     = 'P2s do not get a welcome tour';
 		} elseif ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
 			$nux_status = apply_filters( 'wpcom_block_editor_nux_get_status', false );
-			$reason     = 'wpcom_block_editor_nux_get_status filtered responded with: ' . $nux_status;
+			$reason     = 'wpcom_block_editor_nux_get_status filter responded with: ' . $nux_status;
 		} elseif ( ! metadata_exists( 'user', get_current_user_id(), 'wpcom_block_editor_nux_status' ) ) {
 			$nux_status = 'enabled';
 			$reason     = "Meta data for user_id didn't have wpcom_block_editor_nux_status record";
 		} else {
 			$nux_status = get_user_meta( get_current_user_id(), 'wpcom_block_editor_nux_status', true );
-			$reason     = "User's meta data had a value of: " . $nux_status;
+			$reason     = "User's meta data has a value of: " . $nux_status;
 		}
 
 		$show_welcome_guide = $this->show_wpcom_welcome_guide( $nux_status );
