@@ -1,0 +1,27 @@
+.card.company-details-form {
+	// We have to add some "invisible" spacing below the form so
+	// our country and state dropdown have enough space to fold out
+	// and be visible (using position: relative/absolute).
+	margin-bottom: 100px;
+}
+
+.company-details-form__dropdown {
+	.select-dropdown__container {
+		width: 100%;
+	}
+
+	&.is-open .select-dropdown__options {
+		position: absolute;
+		width: 100%;
+		height: 200px;
+		overflow: auto;
+	}
+
+	.select-dropdown__option {
+		user-select: none;
+	}
+}
+
+.company-details-form__controls {
+	margin-top: 2rem;
+}
