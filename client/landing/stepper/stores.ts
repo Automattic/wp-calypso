@@ -1,5 +1,11 @@
 import config from '@automattic/calypso-config';
-import { Onboard, Site, ProductsList, User, AutomatedTransferEligibility } from '@automattic/data-stores';
+import {
+	Onboard,
+	Site,
+	ProductsList,
+	User,
+	AutomatedTransferEligibility,
+} from '@automattic/data-stores';
 
 export const ONBOARD_STORE = Onboard.register();
 export const SITE_STORE = Site.register( {
