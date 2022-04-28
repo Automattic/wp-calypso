@@ -46,7 +46,7 @@
 	.inline-help__search {
 		.card.search-card {
 			box-shadow: 0 0 1px var( --studio-gray-10 );
-			border-radius: 3px;
+			border-radius: 4px;
 			margin-bottom: 30px;
 
 			.is-open.has-focus {
@@ -55,10 +55,6 @@
 
 			.search {
 				height: 40px;
-			}
-
-			input.search__input {
-				font-weight: 300;
 			}
 		}
 
@@ -136,7 +132,7 @@
 				display: flex;
 				flex-direction: row;
 				border: 1px solid var( --studio-gray-5 );
-				border-radius: 3px;
+				border-radius: 4px;
 				cursor: pointer;
 
 				&.chat {
