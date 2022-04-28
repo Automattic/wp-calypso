@@ -1,5 +1,4 @@
 import { registerStore } from '@wordpress/data';
-import { controls } from '../wpcom-request-controls';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { RootState as State } from './reducer';
@@ -17,7 +16,6 @@ export function register(): typeof STORE_KEY {
 		isRegistered = true;
 		registerStore< State >( STORE_KEY, {
 			actions,
-			controls: controls as any,
 			reducer,
 			resolvers,
 			selectors,
