@@ -142,6 +142,7 @@
 		"@automattic/languages": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
+		"@automattic/whats-new": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
 		"@types/cookie": "^0.4.1",
 		"@types/debug": "^4.1.7",
