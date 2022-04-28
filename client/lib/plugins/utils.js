@@ -93,6 +93,7 @@ export function getAllowedPluginData( plugin ) {
 		'short_description',
 		'detailsFetched',
 		'downloaded',
+		'documentation_url',
 		'homepage',
 		'icons',
 		'id',

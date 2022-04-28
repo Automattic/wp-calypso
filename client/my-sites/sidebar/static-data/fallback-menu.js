@@ -121,7 +121,7 @@ export default function buildFallbackResponse( {
 				{
 					parent: 'edit.php',
 					slug: 'post-new-php',
-					title: translate( 'Add New' ),
+					title: translate( 'Add New', { context: 'post' } ),
 					type: 'submenu-item',
 					url: `/post/${ siteDomain }`,
 				},
@@ -167,7 +167,7 @@ export default function buildFallbackResponse( {
 							{
 								parent: 'link-manager.php',
 								slug: 'link-add-php',
-								title: translate( 'Add New' ),
+								title: translate( 'Add New', { context: 'link' } ),
 								type: 'submenu-item',
 								url: `https://${ siteDomain }/wp-admin/link-add.php`,
 							},
@@ -199,7 +199,7 @@ export default function buildFallbackResponse( {
 				{
 					parent: 'edit.php?post_type=page',
 					slug: 'post-new-phppost_typepage',
-					title: translate( 'Add New' ),
+					title: translate( 'Add New', { context: 'page' } ),
 					type: 'submenu-item',
 					url: `/page/${ siteDomain }`,
 				},
@@ -224,7 +224,7 @@ export default function buildFallbackResponse( {
 							{
 								parent: 'testimonials',
 								slug: 'testimonials-add',
-								title: translate( 'Add New' ),
+								title: translate( 'Add New', { context: 'testimonial' } ),
 								type: 'submenu-item',
 								url: `/edit/jetpack-testimonial/${ siteDomain }`,
 							},
@@ -251,7 +251,7 @@ export default function buildFallbackResponse( {
 							{
 								parent: 'portfolio',
 								slug: 'portfolio-add',
-								title: translate( 'Add New' ),
+								title: translate( 'Add New', { context: 'portfolio' } ),
 								type: 'submenu-item',
 								url: `/edit/jetpack-portfolio/${ siteDomain }`,
 							},
@@ -442,7 +442,7 @@ export default function buildFallbackResponse( {
 				{
 					parent: 'users.php',
 					slug: 'users-add-new',
-					title: translate( 'Add New' ),
+					title: translate( 'Add New', { context: 'user' } ),
 					type: 'submenu-item',
 					url: `/people/new/${ siteDomain }`,
 				},

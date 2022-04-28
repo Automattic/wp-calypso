@@ -5,6 +5,7 @@ import {
 	AtomicTransferError,
 	LatestAtomicTransferError,
 	AtomicSoftwareStatusError,
+	AtomicSoftwareInstallError,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import type {
@@ -20,6 +21,7 @@ import type {
 	AtomicTransferError as AtomicTransferErrorType,
 	LatestAtomicTransferError as LatestAtomicTransferErrorType,
 	AtomicSoftwareStatusError as AtomicSoftwareStatusErrorType,
+	AtomicSoftwareInstallError as AtomicSoftwareInstallErrorType,
 	AtomicSoftwareStatus,
 	SiteSettings,
 } from './types';
@@ -387,6 +389,50 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 	}
 
+	const atomicSoftwareInstallStart = ( siteId: number, softwareSet: string ) => ( {
+		type: 'ATOMIC_SOFTWARE_INSTALL_START' as const,
+		siteId,
+		softwareSet,
+	} );
+
+	const atomicSoftwareInstallSuccess = ( siteId: number, softwareSet: string ) => ( {
+		type: 'ATOMIC_SOFTWARE_INSTALL_SUCCESS' as const,
+		siteId,
+		softwareSet,
+	} );
+
+	const atomicSoftwareInstallFailure = (
+		siteId: number,
+		softwareSet: string,
+		error: AtomicSoftwareInstallErrorType
+	) => ( {
+		type: 'ATOMIC_SOFTWARE_INSTALL_FAILURE' as const,
+		siteId,
+		softwareSet,
+		error,
+	} );
+
+	function* initiateSoftwareInstall( siteId: number, softwareSet: string ) {
+		yield atomicSoftwareInstallStart( siteId, softwareSet );
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/atomic/software/${ encodeURIComponent(
+					softwareSet
+				) }`,
+				apiNamespace: 'wpcom/v2',
+				method: 'POST',
+				body: {},
+			} );
+			yield atomicSoftwareInstallSuccess( siteId, softwareSet );
+		} catch ( _ ) {
+			yield atomicSoftwareInstallFailure(
+				siteId,
+				softwareSet,
+				AtomicSoftwareInstallError.INTERNAL
+			);
+		}
+	}
+
 	return {
 		receiveSiteDomains,
 		receiveSiteSettings,
@@ -427,6 +473,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		atomicSoftwareStatusSuccess,
 		atomicSoftwareStatusFailure,
 		requestAtomicSoftwareStatus,
+		initiateSoftwareInstall,
+		atomicSoftwareInstallStart,
+		atomicSoftwareInstallSuccess,
+		atomicSoftwareInstallFailure,
 	};
 }
 
@@ -459,6 +509,9 @@ export type Action =
 			| ActionCreators[ 'atomicSoftwareStatusStart' ]
 			| ActionCreators[ 'atomicSoftwareStatusSuccess' ]
 			| ActionCreators[ 'atomicSoftwareStatusFailure' ]
+			| ActionCreators[ 'atomicSoftwareInstallStart' ]
+			| ActionCreators[ 'atomicSoftwareInstallSuccess' ]
+			| ActionCreators[ 'atomicSoftwareInstallFailure' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

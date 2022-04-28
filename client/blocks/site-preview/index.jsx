@@ -1,110 +1,62 @@
-import debugFactory from 'debug';
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useReducer } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import WebPreview from 'calypso/components/web-preview';
 import { addQueryArgs } from 'calypso/lib/route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import { getSiteOption, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
+import { getSiteOption, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { closePreview } from 'calypso/state/ui/preview/actions';
-import {
-	getPreviewSite,
-	getPreviewSiteId,
-	getPreviewUrl,
-} from 'calypso/state/ui/preview/selectors';
+import { getPreviewSiteId, getPreviewUrl } from 'calypso/state/ui/preview/selectors';
 
-const debug = debugFactory( 'calypso:site-preview' );
+function SitePreviewInner( { siteId, className } ) {
+	const dispatch = useDispatch();
+	const [ previewCount, incrementPreviewCount ] = useReducer( ( n ) => n + 1, 0 );
 
-class SitePreview extends Component {
-	static propTypes = {
-		className: PropTypes.string,
-		showPreview: PropTypes.bool,
-		previewUrl: PropTypes.string,
-		selectedSite: PropTypes.object,
-		selectedSiteId: PropTypes.number,
-		selectedSiteNonce: PropTypes.string,
-		selectedSiteUrl: PropTypes.string,
-		closePreview: PropTypes.func.isRequired,
-	};
+	const showPreview = useSelector( ( state ) => getCurrentLayoutFocus( state ) === 'preview' );
+	const selectedSiteNonce = useSelector( ( state ) =>
+		getSiteOption( state, siteId, 'frame_nonce' )
+	);
+	const previewUrl = useSelector( getPreviewUrl );
+	const hideSEO = useSelector( ( state ) => isDomainOnlySite( state, siteId ) );
 
-	state = {
-		previewCount: 0,
-	};
-
-	previewCounter = 0;
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.selectedSiteId && this.props.selectedSiteId !== nextProps.selectedSiteId ) {
-			this.previewCounter = 0;
-		}
-
-		if ( ! this.props.showPreview && nextProps.showPreview ) {
-			debug( 'forcing refresh' );
-			this.previewCounter > 0 && this.setState( { previewCount: this.previewCounter } );
-			this.previewCounter += 1;
-		}
-	}
-
-	getPreviewUrl() {
-		if ( ! this.props.selectedSiteUrl && ! this.props.previewUrl ) {
-			debug( 'no preview url and no site url were found for this site' );
+	function formatPreviewUrl() {
+		if ( ! previewUrl ) {
 			return null;
 		}
-		const previewUrl = addQueryArgs(
+
+		return addQueryArgs(
 			{
 				iframe: true,
 				theme_preview: true,
-				'frame-nonce': this.props.selectedSiteNonce,
-				cachebust: this.state.previewCount,
+				'frame-nonce': selectedSiteNonce ?? '',
+				cachebust: previewCount,
 			},
-			this.getBasePreviewUrl()
-		);
-		debug( 'using this preview url', previewUrl );
-		return previewUrl;
-	}
-
-	getBasePreviewUrl() {
-		return this.props.previewUrl || this.props.selectedSiteUrl;
-	}
-
-	render() {
-		if ( ! this.props.selectedSitePreviewable ) {
-			debug( 'a preview is not available for this site' );
-			return null;
-		}
-
-		return (
-			<WebPreview
-				className={ this.props.className }
-				previewUrl={ this.getPreviewUrl() }
-				externalUrl={ this.getBasePreviewUrl() }
-				showExternal={ true }
-				showClose={ true }
-				showPreview={ this.props.showPreview }
-				onClose={ this.props.closePreview }
-				showSEO={ ! this.props.isDomainOnlySite }
-			/>
+			previewUrl
 		);
 	}
+
+	return (
+		<WebPreview
+			className={ className }
+			externalUrl={ previewUrl }
+			onClose={ () => {
+				dispatch( closePreview() );
+				incrementPreviewCount();
+			} }
+			previewUrl={ formatPreviewUrl() }
+			showClose
+			showExternal
+			showPreview={ showPreview }
+			showSEO={ ! hideSEO }
+		/>
+	);
 }
 
-function mapStateToProps( state ) {
-	const selectedSiteId = getPreviewSiteId( state );
-	// Force https to prevent mixed content errors in the iframe
-	const siteUrl = 'https://' + getSiteSlug( state, selectedSiteId );
+export default function SitePreview( props ) {
+	const siteId = useSelector( getPreviewSiteId );
+	const isPreviewable = useSelector( ( state ) => isSitePreviewable( state, siteId ) );
 
-	return {
-		showPreview: getCurrentLayoutFocus( state ) === 'preview',
-		selectedSite: getPreviewSite( state ),
-		selectedSiteId,
-		selectedSiteUrl: siteUrl.replace( /::/g, '/' ),
-		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ) || '',
-		selectedSitePreviewable: isSitePreviewable( state, selectedSiteId ),
-		previewUrl: getPreviewUrl( state ),
-		isDomainOnlySite: isDomainOnlySite( state, selectedSiteId ),
-	};
+	if ( ! isPreviewable ) return null;
+
+	return <SitePreviewInner key={ siteId } siteId={ siteId } { ...props } />;
 }
-
-export default connect( mapStateToProps, { closePreview } )( SitePreview );

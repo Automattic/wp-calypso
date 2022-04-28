@@ -572,10 +572,10 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/explat-client": "workspace:^"
     "@testing-library/react": ^12.1.3
-    "@testing-library/react-hooks": 7.0.2
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    tslib: ^2.3.0
+    "@testing-library/react-hooks": ^7.0.2
+    react: ">=16.8 <18"
+    react-dom: ">=16.8 <18"
+    tslib: ">=2.3.0"
     typescript: ^4.5.5
   languageName: unknown
   linkType: soft
@@ -1531,6 +1531,7 @@ __metadata:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
@@ -1590,6 +1591,7 @@ __metadata:
     "@wordpress/server-side-render": ^3.0.17
     "@wordpress/url": 3.3.2
     babel-jest: ^26.6.3
+    calypso: "workspace:^"
     classnames: ^2.3.1
     enzyme: ^3.11.0
     eslint: ^8.6.0
@@ -1602,8 +1604,11 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-popper: ^2.2.5
+    react-query: ^3.32.1
+    react-redux: ^7.2.6
     reakit-utils: ^0.15.1
     redux: ^4.1.2
+    redux-thunk: ^2.3.0
     utility-types: ^3.10.0
     wait-for-expect: ^3.0.2
     webpack: ^5.68.0
@@ -5078,6 +5083,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/cli@npm:^1.73.0":
+  version: 1.74.3
+  resolution: "@sentry/cli@npm:1.74.3"
+  dependencies:
+    https-proxy-agent: ^5.0.0
+    mkdirp: ^0.5.5
+    node-fetch: ^2.6.7
+    npmlog: ^4.1.2
+    progress: ^2.0.3
+    proxy-from-env: ^1.1.0
+    which: ^2.0.2
+  bin:
+    sentry-cli: bin/sentry-cli
+  checksum: 6e5ba95f9d7c756e8a7d6f6ec010cde8c39588dd19dc3994c628910a245db0feb32f411fb2410157a6af2c7352165625f58092f82d1191aa493d385eed7a2887
+  languageName: node
+  linkType: hard
+
 "@sentry/core@npm:6.19.6":
   version: 6.19.6
   resolution: "@sentry/core@npm:6.19.6"
@@ -5156,6 +5178,15 @@ __metadata:
     "@sentry/types": 6.19.6
     tslib: ^1.9.3
   checksum: 4e7afdf023f93ef7ddccd85ad7847342b030bdc1189110eeb7cb53349f89882e6184149ec29182e41d7fc45f161e19196f2b488138e75185b3fd114f84dac0d6
+  languageName: node
+  linkType: hard
+
+"@sentry/webpack-plugin@npm:^1.18.8":
+  version: 1.18.8
+  resolution: "@sentry/webpack-plugin@npm:1.18.8"
+  dependencies:
+    "@sentry/cli": ^1.73.0
+  checksum: cad2e8a03804889db9521b05cfd1ce24221d1598acc54f5922fc91d16a4bc96806e55b86b4f21f1d62b42b2358239454ba00f6d98d6d14662551048f5e126618
   languageName: node
   linkType: hard
 
@@ -6641,7 +6672,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react-hooks@npm:7.0.2":
+"@testing-library/react-hooks@npm:7.0.2, @testing-library/react-hooks@npm:^7.0.2":
   version: 7.0.2
   resolution: "@testing-library/react-hooks@npm:7.0.2"
   dependencies:
@@ -12714,6 +12745,7 @@ __metadata:
     "@emotion/styled": ^11.3.0
     "@github/webauthn-json": ^0.4.1
     "@sentry/react": ^6.19.4
+    "@sentry/webpack-plugin": ^1.18.8
     "@stripe/react-stripe-js": ^1.4.1
     "@stripe/stripe-js": ^1.17.1
     "@testing-library/jest-dom": ^5.16.2
@@ -12813,7 +12845,7 @@ __metadata:
     page: ^1.11.5
     path-browserify: ^1.0.1
     percentage-regex: ^3.0.0
-    phone: ^2.4.2
+    phone: ^3.1.17
     photon: "workspace:^"
     pkg-dir: ^5.0.0
     postcss: ^8.4.5
@@ -26942,12 +26974,17 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.2.0, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.6":
-  version: 2.6.6
-  resolution: "node-fetch@npm:2.6.6"
+"node-fetch@npm:^2.2.0, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.6, node-fetch@npm:^2.6.7":
+  version: 2.6.7
+  resolution: "node-fetch@npm:2.6.7"
   dependencies:
     whatwg-url: ^5.0.0
-  checksum: f9b5c8789c7bcd393a2fb70d752e36d5b5e84eb52bd5bffceb4fb64ac81dce1a1f55ca023a990e51bbf8594fc502ea9bea3004037e6eab65205cd84e8af94fc9
+  peerDependencies:
+    encoding: ^0.1.0
+  peerDependenciesMeta:
+    encoding:
+      optional: true
+  checksum: fcae80f5ac52fbf5012f5e19df2bd3915e67d3b3ad51cb5942943df2238d32ba15890fecabd0e166876a9f98a581ab50f3f10eb942b09405c49ef8da36b826c7
   languageName: node
   linkType: hard
 
@@ -28480,10 +28517,10 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"phone@npm:^2.4.2":
-  version: 2.4.2
-  resolution: "phone@npm:2.4.2"
-  checksum: 1ad1507f213b2f7709cff36912d78035f52b7c468f356abb14402da7e1be00768ad444d31f236f23b2105f08c59863d89f627f1b4a893f7007a74067f43e91f0
+"phone@npm:^3.1.17":
+  version: 3.1.17
+  resolution: "phone@npm:3.1.17"
+  checksum: fa74eed9f299df316d2b463e14432f3b1a4ba21909907c41e87cc9c602ba9ad18e8c7830feb67aae2e3bff35000656a2ccc9a60edc410792688fe5f2775c5d0c
   languageName: node
   linkType: hard
 
@@ -30430,7 +30467,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react-dom@npm:17.0.2, react-dom@npm:^17.0.1, react-dom@npm:^17.0.2":
+"react-dom@npm:17.0.2, react-dom@npm:>=16.8 <18, react-dom@npm:^17.0.1, react-dom@npm:^17.0.2":
   version: 17.0.2
   resolution: "react-dom@npm:17.0.2"
   dependencies:
@@ -31031,7 +31068,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"react@npm:17.0.2, react@npm:^17.0.1, react@npm:^17.0.2":
+"react@npm:17.0.2, react@npm:>=16.8 <18, react@npm:^17.0.1, react@npm:^17.0.2":
   version: 17.0.2
   resolution: "react@npm:17.0.2"
   dependencies:
@@ -36236,17 +36273,17 @@ testarmada-magellan@11.0.10:
   languageName: node
   linkType: hard
 
+"tslib@npm:>=2.3.0, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.1.0, tslib@npm:^2.3.0":
+  version: 2.4.0
+  resolution: "tslib@npm:2.4.0"
+  checksum: eb19bda3ae545b03caea6a244b34593468e23d53b26bf8649fbc20fce43e9b21a71127fd6d2b9662c0fe48ee6ff668ead48fd00d3b88b2b716b1c12edae25b5d
+  languageName: node
+  linkType: hard
+
 "tslib@npm:^1.10.0, tslib@npm:^1.8.1, tslib@npm:^1.9.0, tslib@npm:^1.9.3":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
   checksum: 69ae09c49eea644bc5ebe1bca4fa4cc2c82b7b3e02f43b84bd891504edf66dbc6b2ec0eef31a957042de2269139e4acff911e6d186a258fb14069cd7f6febce2
-  languageName: node
-  linkType: hard
-
-"tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.1.0, tslib@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "tslib@npm:2.3.0"
-  checksum: a845aed84e7e7dbb4c774582da60d7030ea39d67307250442d35c4c5dd77e4b44007098c37dd079e100029c76055f2a362734b8442ba828f8cc934f15ed9be61
   languageName: node
   linkType: hard
 
@@ -36479,22 +36516,22 @@ testarmada-magellan@11.0.10:
   linkType: hard
 
 "typescript@npm:^4.5.5":
-  version: 4.5.5
-  resolution: "typescript@npm:4.5.5"
+  version: 4.6.3
+  resolution: "typescript@npm:4.6.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: ac15b92f3dcd9a4233cab288a913ccbd96729fc488181396fa93c0297ccef3cd3c2f9a7a63340efb0d07bff3d5026028fc81b9c1ef08076029e057081eb5884b
+  checksum: 53e8bcf00abde8ecb2002d1f1e15160b21cb62b2dd0ff71bad2ef55fa96141f76316fce649a415758d3f17bd8e0c5676d8f017c34ec3e38b585812d4717a712c
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>":
-  version: 4.5.5
-  resolution: "typescript@patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"
+  version: 4.6.3
+  resolution: "typescript@patch:typescript@npm%3A4.6.3#~builtin<compat/typescript>::version=4.6.3&hash=493e53"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 6a8888c9fe41d0a19324125c636b1adb9ec5c984342fc7a26f2a389a432a94639c24b72e6e019ffbbb03cb614c1f008b4c31e48fb560b772e45e6581265c500b
+  checksum: d06fdd5852d0fe86f44b56507d37a3458812a1dff11c0fedaeedbe163e81646643669a5bc0dcc3500c72128267b384cda7567c53c568f94e7c753ac6b4cfbce3
   languageName: node
   linkType: hard
 

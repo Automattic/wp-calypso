@@ -5,6 +5,8 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { PinnedItems } from '@wordpress/interface';
 import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
+import { useEffect, useState } from 'react';
+import Contents from './contents';
 import './help-center.scss';
 
 function HelpCenterComponent() {
@@ -15,6 +17,14 @@ function HelpCenterComponent() {
 		};
 	} );
 	const setShowHelpCenter = useDispatch( 'automattic/help-center' )?.setShowHelpCenter;
+	const [ selectedArticle, setSelectedArticle ] = useState( null );
+	const [ footerContent, setFooterContent ] = useState( null );
+
+	useEffect( () => {
+		if ( ! show ) {
+			setSelectedArticle( null );
+		}
+	}, [ show ] );
 
 	return (
 		<>
@@ -31,8 +41,16 @@ function HelpCenterComponent() {
 			) }
 			{ show && (
 				<HelpCenter
-					content={ <h1>Help center</h1> }
+					content={
+						<Contents
+							selectedArticle={ selectedArticle }
+							setSelectedArticle={ setSelectedArticle }
+							setFooterContent={ setFooterContent }
+						/>
+					}
+					headerText={ selectedArticle?.title }
 					handleClose={ () => setShowHelpCenter( false ) }
+					footerContent={ footerContent }
 				/>
 			) }
 		</>

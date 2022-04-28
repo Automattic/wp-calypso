@@ -93,6 +93,7 @@ export interface SiteDetails {
 	description: string;
 	URL: string;
 	launch_status: string;
+	jetpack: boolean;
 	options: {
 		admin_url?: string;
 		advanced_seo_front_page_description?: string;
@@ -366,3 +367,20 @@ export type AtomicSoftwareStatusState = Record<
 		error: AtomicSoftwareStatusError | undefined;
 	}
 >;
+
+export enum AtomicSoftwareInstallStatus {
+	UNINITIALIZED = 'unintialized',
+	IN_PROGRESS = 'in_progress',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+}
+export type AtomicSoftwareInstallState = Record<
+	string,
+	{
+		status: AtomicSoftwareInstallStatus | undefined;
+		error: AtomicSoftwareInstallError | undefined;
+	}
+>;
+export enum AtomicSoftwareInstallError {
+	INTERNAL = 'internal',
+}

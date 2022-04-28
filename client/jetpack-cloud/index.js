@@ -6,6 +6,7 @@ import { sites, siteSelection } from 'calypso/my-sites/controller';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getPrimarySiteIsJetpack from 'calypso/state/selectors/get-primary-site-is-jetpack';
 import Landing from './sections/landing';
+import SiteLanding from './sections/site-landing';
 
 const debug = new Debug( 'calypso:jetpack-cloud:controller' );
 
@@ -26,15 +27,18 @@ const clearPageTitle = ( context, next ) => {
 	next();
 };
 
-const redirectToPrimarySiteLanding = ( context ) => {
+const redirectToPrimarySiteLanding = ( context, next ) => {
 	debug( 'controller: redirectToPrimarySiteLanding', context );
 	const state = context.store.getState();
 	const currentUser = getCurrentUser( state );
 	const isPrimarySiteJetpackSite = getPrimarySiteIsJetpack( state );
-
-	isPrimarySiteJetpackSite
-		? page( `/landing/${ currentUser.primarySiteSlug }` )
-		: page( `/landing` );
+	context.primary = (
+		<SiteLanding
+			primarySiteSlug={ currentUser.primarySiteSlug }
+			isPrimarySiteJetpackSite={ isPrimarySiteJetpackSite }
+		/>
+	);
+	next();
 };
 
 const landingController = ( context, next ) => {
@@ -54,5 +58,5 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-	page( '/', redirectToPrimarySiteLanding );
+	page( '/', redirectToPrimarySiteLanding, makeLayout, clientRender );
 }

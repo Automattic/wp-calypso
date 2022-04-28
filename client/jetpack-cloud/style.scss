@@ -288,6 +288,31 @@ html {
 	border-right: 1px solid var( --color-sidebar-border );
 }
 
+.layout.focus-content .layout__secondary {
+	@media only screen and ( max-width: 782px ) and ( min-width: 660px ) {
+		transform: none;
+		padding: 0;
+	}
+}
+
 .masterbar {
 	font-size: $font-body;
+}
+
+.sections__logo, .dashboard-overview__logo {
+	fill: var( --color-neutral-10 );
+	color: var( --color-neutral-10 );
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
+
+	path {
+		fill: var( --color-neutral-10 );
+	}
+
+	@include breakpoint-deprecated( '>960px' ) {
+		width: 100px;
+		height: 100px;
+	}
 }
