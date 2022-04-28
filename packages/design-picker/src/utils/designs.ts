@@ -16,11 +16,8 @@ export const getDesignPreviewUrl = (
 		pattern_ids: recipe?.patternIds?.join( ',' ),
 		language: options.language,
 		viewport_height: 700,
+		source_site: 'patternboilerplates.wordpress.com',
 	} );
-
-	if ( recipe?.patternIds?.length ) {
-		url += '&source_site=patternboilerplates.wordpress.com';
-	}
 
 	const siteTitle = options.siteTitle || design.title;
 	if ( siteTitle ) {
