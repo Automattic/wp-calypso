@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { transferStates } from 'calypso/state/atomic/transfers/constants';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 
@@ -14,6 +13,22 @@ export interface FailureInfo {
 	code: number | string;
 	error: string;
 }
+
+export const transferStates = {
+	PENDING: 'pending',
+	ACTIVE: 'active',
+	PROVISIONED: 'provisioned',
+	COMPLETED: 'completed',
+	ERROR: 'error',
+	REVERTED: 'reverted',
+	RELOCATING_REVERT: 'relocating_revert',
+	RELOCATING_SWITCHEROO: 'relocating_switcheroo',
+	REVERTING: 'reverting',
+	RENAMING: 'renaming',
+	EXPORTING: 'exporting',
+	IMPORTING: 'importing',
+	CLEANUP: 'cleanup',
+} as const;
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
