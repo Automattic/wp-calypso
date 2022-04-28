@@ -32,6 +32,7 @@ export const siteSetupFlow: Flow = {
 			'importReadyWpcom',
 			'importReadyPreview',
 			'importer',
+			'importerWordpress',
 			'businessInfo',
 			'storeAddress',
 			'processing',
@@ -235,6 +236,7 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'import' );
 
 				case 'importer':
+				case 'importerWordpress':
 				case 'importer/wordpress':
 					return navigate( 'import' );
 
