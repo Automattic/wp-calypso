@@ -165,7 +165,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	);
 	const categorization = useCategorization( designs, categorizationOptions );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
+	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
@@ -192,6 +192,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 					anchorFmEpisodeId: null,
 					anchorFmSpotifyUrl: null,
 				} );
+
+				const newSite = getNewSite();
 
 				if ( ! newSite || ! newSite.site_slug ) {
 					return;

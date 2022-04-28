@@ -1,4 +1,6 @@
+import { useSelect } from '@wordpress/data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
+import { SITE_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
@@ -15,10 +17,12 @@ export const anchorFmFlow: Flow = {
 	},
 
 	useStepNavigation( currentStep, navigate ) {
-		const siteSlug = useSiteSlugParam();
+		const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
+		const siteSlugParam = useSiteSlugParam();
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, 'anchor-fm', currentStep );
+			const siteSlug = siteSlugParam || getNewSite()?.site_slug;
 
 			switch ( currentStep ) {
 				case 'podcastTitle':
@@ -40,12 +44,13 @@ export const anchorFmFlow: Flow = {
 		};
 
 		const goNext = () => {
+			const siteSlug = siteSlugParam || getNewSite()?.site_slug;
+
 			switch ( currentStep ) {
 				case 'podcastTitle':
 					return navigate( 'designSetup' );
 				case 'designSetup':
 					return redirect( `/page/home/${ siteSlug }` );
-
 				default:
 					return navigate( 'podcastTitle' );
 			}
