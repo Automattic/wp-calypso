@@ -191,6 +191,7 @@ class StatsSummary extends Component {
 					<StatsVideoSummary
 						key="video-chart"
 						postId={ this.props.postId }
+						period={ this.props.period.period }
 						statType={ urlParams.get( 'statType' ) }
 					/>
 				);
@@ -200,6 +201,7 @@ class StatsSummary extends Component {
 					<VideoPlayDetails
 						key="page-embeds"
 						postId={ this.props.postId }
+						period={ this.props.period.period }
 						statType={ urlParams.get( 'statType' ) }
 					/>
 				);
