@@ -43,6 +43,7 @@ export interface SupportedEnvVariables extends EnvVariables {
 	SLOW_MO: number;
 	TEST_ON_ATOMIC: boolean;
 	TEST_ON_JETPACK: boolean;
+	CALYPSO_BASE_URL: string;
 }
 
 const defaultEnvVariables: SupportedEnvVariables = {
@@ -57,6 +58,7 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
 	TEST_ON_ATOMIC: false,
 	TEST_ON_JETPACK: false,
+	CALYPSO_BASE_URL: 'https://wordpress.com',
 };
 
 const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue => {
@@ -108,6 +110,17 @@ const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue =
 				);
 			}
 			break;
+		}
+		case 'CALYPSO_BASE_URL': {
+			try {
+				// Disabling eslint because this constructor is really the simplest way to validate a URL.
+				// eslint-disable-next-line no-new
+				new URL( output as string );
+			} catch ( error ) {
+				throw new Error(
+					`Invalid CALYPSO_BASE_URL value: ${ output }.\nYou must provide a valid URL.`
+				);
+			}
 		}
 	}
 

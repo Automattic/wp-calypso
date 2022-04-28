@@ -1,5 +1,6 @@
 import phrase from 'asana-phrase';
 import config from 'config';
+import envVariables from './env-variables';
 
 export type DateFormat = 'ISO';
 export { config };
@@ -87,7 +88,7 @@ export function getCalypsoURL(
 	route = '',
 	queryStrings: { [ key: string ]: string } = {}
 ): string {
-	const base: string = config.get( 'calypsoBaseURL' );
+	const base = envVariables.CALYPSO_BASE_URL;
 
 	const url = new URL( route, base );
 
@@ -246,7 +247,7 @@ export function getTestDomainRegistrarDetails( email: string ): RegistrarDetails
  */
 export function adjustInviteLink( inviteURL: string ): string {
 	const originalURL = new URL( inviteURL );
-	const adjustedURL = new URL( originalURL.pathname, config.get( 'calypsoBaseURL' ) );
+	const adjustedURL = new URL( originalURL.pathname, getCalypsoURL() );
 	return adjustedURL.href;
 }
 
