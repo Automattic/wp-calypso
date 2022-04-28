@@ -361,7 +361,7 @@ export const atomicSoftwareInstallStatus: Reducer<
 			[ action.siteId ]: {
 				[ action.softwareSet ]: {
 					status: AtomicSoftwareInstallStatus.FAILURE,
-					error: undefined,
+					error: action.error,
 				},
 			},
 		};

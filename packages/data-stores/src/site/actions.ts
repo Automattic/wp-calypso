@@ -430,12 +430,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				body: {},
 			} );
 			yield atomicSoftwareInstallSuccess( siteId, softwareSet );
-		} catch ( _ ) {
-			yield atomicSoftwareInstallFailure(
-				siteId,
-				softwareSet,
-				AtomicSoftwareInstallError.INTERNAL
-			);
+		} catch ( err ) {
+			yield atomicSoftwareInstallFailure( siteId, softwareSet, err as AtomicSoftwareInstallError );
 		}
 	}
 

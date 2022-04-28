@@ -91,6 +91,14 @@ export const getAtomicSoftwareError = ( state: State, siteId: number, softwareSe
 	return state.atomicSoftwareStatus[ siteId ]?.[ softwareSet ]?.error;
 };
 
+export const getAtomicSoftwareInstallError = (
+	state: State,
+	siteId: number,
+	softwareSet: string
+) => {
+	return state.atomicSoftwareInstallStatus[ siteId ]?.[ softwareSet ]?.error;
+};
+
 export const hasActiveSiteFeature = (
 	_: State,
 	siteId: number | undefined,

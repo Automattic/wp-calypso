@@ -381,8 +381,11 @@ export type AtomicSoftwareInstallState = Record<
 		error: AtomicSoftwareInstallError | undefined;
 	}
 >;
-export enum AtomicSoftwareInstallError {
-	INTERNAL = 'internal',
+export interface AtomicSoftwareInstallError {
+	name: string;
+	status: number;
+	message: string;
+	code: string;
 }
 
 interface Availability {
