@@ -2,13 +2,19 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import WhatsNewGuide from '@automattic/whats-new';
-import { Button } from '@wordpress/components';
+import { Button, SVG, Circle } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { Icon, captureVideo, desktop, formatListNumbered, video } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
+
+const circle = (
+	<SVG viewBox="0 0 24 24">
+		<Circle cx="12" cy="12" r="5" />
+	</SVG>
+);
 
 const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
@@ -84,14 +90,14 @@ const HelpCenterMoreResources = () => {
 				</li>
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
-						<Button isLink onClick={ () => setShowGuide( true ) }>
-							<MaterialIcon
-								icon="new_releases"
-								size={ 24 }
-								className="inline-help__new-releases"
-								fill="#003C56"
-							/>
+						<Button
+							isLink
+							onClick={ () => setShowGuide( true ) }
+							className="inline-help__new-releases"
+						>
+							<MaterialIcon icon="new_releases" size={ 24 } fill="#003C56" />
 							<span>{ __( "What's new" ) }</span>
+							<Icon icon={ circle } size={ 16 } fill="#0675C4" />
 						</Button>
 					</div>
 				</li>
