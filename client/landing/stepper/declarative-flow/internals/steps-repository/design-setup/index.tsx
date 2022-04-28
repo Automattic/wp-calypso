@@ -7,7 +7,7 @@ import DesignPicker, {
 	isBlankCanvasDesign,
 	getDesignPreviewUrl,
 	useGeneratedDesigns,
-	useThemeDesignsQuery,
+	useDesignsBySite,
 } from '@automattic/design-picker';
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
@@ -20,7 +20,6 @@ import { useMemo, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
@@ -83,21 +82,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		)
 	);
 
-	const tier =
-		isPremiumThemeAvailable || isEnabled( 'signup/design-picker-premium-themes-checkout' )
-			? 'all'
-			: 'free';
-
-	const { FSEEligible, isLoading } = useFSEStatus();
-	const themeFilters = FSEEligible
-		? 'auto-loading-homepage,full-site-editing'
-		: 'auto-loading-homepage';
-
-	const { data: themeDesigns = [] } = useThemeDesignsQuery(
-		{ filter: themeFilters, tier },
-		// Wait until block editor settings have loaded to load themes
-		{ enabled: ! isLoading }
-	);
+	const { data: themeDesigns = [] } = useDesignsBySite( site );
 
 	const staticDesigns = themeDesigns;
 

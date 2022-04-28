@@ -94,6 +94,8 @@ export interface SiteDetails {
 	URL: string;
 	launch_status: string;
 	jetpack: boolean;
+	is_fse_eligible: boolean;
+	is_fse_active: boolean;
 	options: {
 		admin_url?: string;
 		advanced_seo_front_page_description?: string;
