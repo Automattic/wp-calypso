@@ -10,6 +10,7 @@ import {
 	AtomicTransferStatus,
 	LatestAtomicTransferStatus,
 	HappyChatAvailability,
+	EmailSupportAvailability,
 } from './types';
 import {
 	AtomicTransferState,
@@ -88,6 +89,17 @@ export const happyChatAvailability: Reducer< HappyChatAvailability | undefined, 
 ) => {
 	switch ( action.type ) {
 		case 'RECEIVE_HAPPY_CHAT_AVAILABILITY':
+			return action.availability;
+	}
+	return state;
+};
+
+export const emailSupportAvailability: Reducer< EmailSupportAvailability | undefined, Action > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'RECEIVE_EMAIL_SUPPORT_AVAILABILITY':
 			return action.availability;
 	}
 	return state;
@@ -384,6 +396,7 @@ const reducer = combineReducers( {
 	sitesSettings,
 	siteSetupErrors,
 	happyChatAvailability,
+	emailSupportAvailability,
 	atomicTransferStatus,
 	latestAtomicTransferStatus,
 	atomicSoftwareStatus,

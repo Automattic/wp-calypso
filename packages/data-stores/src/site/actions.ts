@@ -7,6 +7,7 @@ import {
 	AtomicSoftwareStatusError,
 	AtomicSoftwareInstallError,
 	HappyChatAvailability,
+	EmailSupportAvailability,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import type {
@@ -48,6 +49,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 	const receiveHappyChatAvailability = ( availability: HappyChatAvailability ) => ( {
 		type: 'RECEIVE_HAPPY_CHAT_AVAILABILITY' as const,
+		availability,
+	} );
+
+	const receiveEmailSupportAvailability = ( availability: EmailSupportAvailability ) => ( {
+		type: 'RECEIVE_EMAIL_SUPPORT_AVAILABILITY' as const,
 		availability,
 	} );
 
@@ -456,6 +462,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveSite,
 		receiveSiteFailed,
 		receiveSiteTagline,
+		receiveEmailSupportAvailability,
 		receiveHappyChatAvailability,
 		receiveSiteVerticalId,
 		saveSiteTagline,
@@ -500,6 +507,7 @@ export type Action =
 			| ActionCreators[ 'receiveNewSiteFailed' ]
 			| ActionCreators[ 'receiveSiteTagline' ]
 			| ActionCreators[ 'receiveSiteVerticalId' ]
+			| ActionCreators[ 'receiveEmailSupportAvailability' ]
 			| ActionCreators[ 'receiveHappyChatAvailability' ]
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]

@@ -406,3 +406,7 @@ export interface HappyChatAvailability {
 	isClosed: boolean;
 	availability: Availability;
 }
+
+export interface EmailSupportAvailability {
+	is_user_eligible: boolean;
+}
