@@ -1,7 +1,13 @@
 import { dispatch } from '@wordpress/data';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { STORE_KEY } from './constants';
-import type { SiteDetails, Domain, SiteSettings, HappyChatAvailability } from './types';
+import type {
+	SiteDetails,
+	Domain,
+	SiteSettings,
+	HappyChatAvailability,
+	EmailSupportAvailability,
+} from './types';
 
 /**
  * Attempt to find a site based on its id, and if not return undefined.
@@ -45,6 +51,14 @@ export function* getHappyChatAvailability() {
 		apiVersion: '1.1',
 	} );
 	dispatch( STORE_KEY ).receiveHappyChatAvailability( userConfiguration );
+}
+
+export function* getEmailSupportAvailability() {
+	const userConfiguration: EmailSupportAvailability = yield wpcomRequest( {
+		path: '/help/tickets/kayako/mine',
+		apiVersion: '1.1',
+	} );
+	dispatch( STORE_KEY ).receiveEmailSupportAvailability( userConfiguration );
 }
 
 /**
