@@ -1,8 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
+import classnames from 'classnames';
 import InlineHelpSearchResults from './inline-help-search-results';
-
-import './inline-help-contact-page.scss';
 
 interface Props {
 	closeContactPage: () => void;
@@ -14,26 +13,30 @@ const InlineHelpContactPage: React.FC< Props > = ( { closeContactPage, onSelectR
 
 	return (
 		<div className="inline-help__contact-page">
-			<Button borderless={ true } onClick={ closeContactPage }>
+			<Button borderless={ true } onClick={ closeContactPage } className="inline-help__back-button">
 				<Gridicon icon={ 'chevron-left' } size={ 18 } />
 				{ __( 'Back' ) }
 			</Button>
 			<div className="inline-help__contact-content">
 				<h3>{ __( 'Contact our WordPress.com experts' ) }</h3>
 				<div className="inline-help__contact-boxes">
-					<div className="inline-help__contact-box">
-						<div style={ { backgroundColor: 'red' } }>
-							<Gridicon icon={ 'comment' } size={ 18 } />
+					<div className={ classnames( 'inline-help__contact-box', 'chat' ) }>
+						<div className="inline-help__contact-box-icon">
+							<Gridicon icon={ 'comment' } />
 						</div>
-						<h2>{ __( 'Live chat' ) }</h2>
-						<p>{ __( 'Get an immediate reply' ) }</p>
+						<div>
+							<h2>{ __( 'Live chat' ) }</h2>
+							<p>{ __( 'Get an immediate reply' ) }</p>
+						</div>
 					</div>
-					<div className="inline-help__contact-box">
-						<div style={ { backgroundColor: 'blue' } }>
-							<Gridicon icon={ 'mail' } size={ 18 } />
+					<div className={ classnames( 'inline-help__contact-box', 'email' ) }>
+						<div className="inline-help__contact-box-icon">
+							<Gridicon icon={ 'mail' } />
 						</div>
-						<h2>{ __( 'Email' ) }</h2>
-						<p>{ __( 'An expert will get back to you soon' ) }</p>
+						<div>
+							<h2>{ __( 'Email' ) }</h2>
+							<p>{ __( 'An expert will get back to you soon' ) }</p>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -47,7 +50,7 @@ export const InlineHelpContactPageButton: React.FC< { onClick: () => void } > = 
 
 	return (
 		<Button className="inline-help__contact-button" borderless={ false } onClick={ onClick }>
-			<Gridicon icon={ 'comment' } size={ 24 } fill="" />
+			<Gridicon icon={ 'comment' } size={ 24 } fill="transparent" strokeWidth="2px" />
 			<span>{ __( 'Still need help?' ) }</span>
 		</Button>
 	);

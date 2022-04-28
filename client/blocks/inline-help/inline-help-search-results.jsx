@@ -22,7 +22,6 @@ import {
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from './constants';
 import PlaceholderLines from './placeholder-lines';
-import './inline-help-search-results.scss';
 
 const noop = () => {};
 
@@ -143,7 +142,9 @@ function HelpSearchResults( {
 								rel: 'noreferrer',
 							} ) }
 						>
-							{ icon && <Gridicon icon={ icon } size={ 18 } /> }
+							{ /* Old stuff - leaving this incase we need to quick revert
+							{ icon && <Gridicon icon={ icon } size={ 18 } /> } */ }
+							<Gridicon icon={ icon ? icon : 'align-justify' } />
 							<span>{ preventWidows( decodeEntities( title ) ) }</span>
 						</a>
 					</div>
