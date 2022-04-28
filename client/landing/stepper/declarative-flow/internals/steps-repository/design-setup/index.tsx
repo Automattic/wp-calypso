@@ -19,11 +19,13 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
+import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useAnchorFmEpisodeId } from '../../../../hooks/use-anchor-fm-params';
 import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
-import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../../stores';
 import { getAnchorPodcastId } from '../../../get-anchor-podcast-id';
 import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { getCategorizationOptions, getGeneratedDesignsCategory } from './categories';
@@ -43,7 +45,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const site = useSite();
-	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setSelectedDesign, setPendingAction, createSite } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 
 	const anchorPodcastId = getAnchorPodcastId();
@@ -115,6 +117,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		[ staticDesigns, generatedDesigns ]
 	);
 
+	const visibility = useNewSiteVisibility();
+
 	function headerText() {
 		if ( showDesignPickerCategories ) {
 			return translate( 'Themes' );
@@ -161,6 +165,9 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		showGeneratedDesigns
 	);
 	const categorization = useCategorization( designs, categorizationOptions );
+	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
+	const anchorFmEpisodeId = useAnchorFmEpisodeId();
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
@@ -172,6 +179,31 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 				selectedSiteCategory: categorization.selection,
 			};
 			submit?.( providedDependencies );
+		} else if ( isAnchorSite && _selectedDesign ) {
+			setPendingAction( async () => {
+				if ( ! currentUser ) {
+					return;
+				}
+
+				await createSite( {
+					username: currentUser.username,
+					languageSlug: locale,
+					bearerToken: undefined,
+					visibility,
+					anchorFmPodcastId: anchorPodcastId,
+					anchorFmEpisodeId,
+					anchorFmSpotifyUrl: null,
+				} );
+
+				const newSite = getNewSite();
+
+				if ( ! newSite || ! newSite.site_slug ) {
+					return;
+				}
+
+				return setDesignOnSite( newSite.site_slug, _selectedDesign );
+			} );
+			submit?.();
 		}
 	}
 
