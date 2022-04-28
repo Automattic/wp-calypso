@@ -23,14 +23,12 @@ subscribe( () => {
 	}
 	if ( select( 'core/edit-post' )?.isFeatureActive( 'welcomeGuide' ) ) {
 		dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
-		dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( true, {
-			openedManually: true,
-		} );
+		// if core side has the welcome guide feature is on, ask WPCOM server if we should turn it on as well
+		dispatch( 'automattic/wpcom-welcome-guide' ).fetchWelcomeGuideStatus();
 	}
 	if ( select( 'core/edit-site' )?.isFeatureActive( 'welcomeGuide' ) ) {
 		dispatch( 'core/edit-site' ).toggleFeature( 'welcomeGuide' );
-		dispatch( 'automattic/wpcom-welcome-guide' ).setShowWelcomeGuide( true, {
-			openedManually: true,
-		} );
+		// if core side has the welcome guide feature is on, ask WPCOM server if we should turn it on as well
+		dispatch( 'automattic/wpcom-welcome-guide' ).fetchWelcomeGuideStatus();
 	}
 } );
