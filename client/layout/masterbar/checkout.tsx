@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -69,6 +70,8 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 		closeAndLeave();
 	};
 
+	const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
+
 	return (
 		<Masterbar>
 			<div className="masterbar__secure-checkout">
@@ -86,13 +89,15 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			<Item className="masterbar__item-title">{ title }</Item>
-			<Item
-				onClick={ () => setIsHelpCenterVisible( ! isHelpCenterVisible ) }
-				className={ classnames( 'masterbar__item-help', {
-					'is-active': isHelpCenterVisible,
-				} ) }
-				icon={ <HelpIcon newItems active={ isHelpCenterVisible } /> }
-			/>
+			{ isHelpCenterEnabled && (
+				<Item
+					onClick={ () => setIsHelpCenterVisible( ! isHelpCenterVisible ) }
+					className={ classnames( 'masterbar__item-help', {
+						'is-active': isHelpCenterVisible,
+					} ) }
+					icon={ <HelpIcon newItems active={ isHelpCenterVisible } /> }
+				/>
+			) }
 			<CheckoutModal
 				title={ modalTitleText }
 				copy={ modalBodyText }
@@ -103,7 +108,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 				secondaryButtonCTA={ modalSecondaryText }
 				secondaryAction={ clearCartAndLeave }
 			/>
-			{ isHelpCenterVisible && (
+			{ isHelpCenterEnabled && isHelpCenterVisible && (
 				<HelpCenter
 					content={
 						<InlineHelpCenterContent
