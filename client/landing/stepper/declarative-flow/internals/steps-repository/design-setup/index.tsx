@@ -186,7 +186,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 				}
 
 				await createSite( {
-					username: currentUser?.username,
+					username: currentUser.username,
 					languageSlug: locale,
 					bearerToken: undefined,
 					visibility,
