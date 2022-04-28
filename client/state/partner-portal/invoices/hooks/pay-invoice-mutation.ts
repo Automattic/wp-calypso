@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { sprintf, __ } from '@wordpress/i18n';
 import { useMutation, UseMutationOptions, UseMutationResult, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
@@ -21,7 +21,6 @@ export default function usePayInvoiceMutation< TContext = unknown >(
 	options?: UseMutationOptions< APIInvoice, Error, PayInvoiceMutationVariables, TContext >
 ): UseMutationResult< APIInvoice, Error, PayInvoiceMutationVariables, TContext > {
 	const dispatch = useDispatch();
-	const translate = useTranslate();
 	const queryClient = useQueryClient();
 	const activeKeyId = useSelector( getActivePartnerKeyId );
 
@@ -40,17 +39,25 @@ export default function usePayInvoiceMutation< TContext = unknown >(
 					const index = data.items.findIndex( ( apiInvoice ) => apiInvoice.id === invoice.id );
 
 					if ( index > -1 ) {
-						data.items.splice( index, 1, invoice );
+						const spliced = [ ...data.items ];
+						spliced.splice( index, 1, invoice );
 
-						// @todo this triggers component render but the data is still old for some reason.
 						queryClient.setQueryData( query[ 0 ], {
 							...data,
-							items: [ ...data.items ],
+							items: spliced,
 						} );
 					}
 				} );
 
-				dispatch( successNotice( translate( 'Invoice settled successfully.' ) ) );
+				dispatch(
+					successNotice(
+						sprintf(
+							/* translators: %s - the unique invoice number */
+							__( 'Invoice %s settled successfully.' ),
+							invoice.number
+						)
+					)
+				);
 			},
 			onError: ( error: Error ) => {
 				dispatch( errorNotice( error.message, { id: 'partner-portal-pay-invoice-failure' } ) );

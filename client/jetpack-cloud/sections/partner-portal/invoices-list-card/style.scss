@@ -3,14 +3,19 @@
 
 .invoices-list-card {
 	&__actions {
-		display: flex;
-		flex-direction: row-reverse;
-		justify-content: space-between;
+		text-align: left;
 
-		button,
+		@include break-xlarge() {
+			text-align: right;
+		}
+
 		.button {
 			&:focus {
 				border-width: 1px;
+			}
+
+			+ .button {
+				margin-left: 12px;
 			}
 		}
 	}

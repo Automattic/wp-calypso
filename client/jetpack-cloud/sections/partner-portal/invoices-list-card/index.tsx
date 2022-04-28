@@ -14,6 +14,7 @@ import './style.scss';
 
 function InvoicesListCard( {
 	id,
+	number,
 	dueDate,
 	status,
 	total,
@@ -24,10 +25,10 @@ function InvoicesListCard( {
 	const moment = useLocalizedMoment();
 	const dueDateMoment = moment( dueDate );
 	const payInvoice = usePayInvoiceMutation();
-	const pay = useCallback( () => payInvoice.mutate( { invoiceId: id } ), [
-		id,
-		payInvoice.mutate,
-	] );
+	const pay = useCallback(
+		() => payInvoice.mutate( { invoiceId: id } ),
+		[ id, payInvoice.mutate ]
+	);
 
 	let badgeType = 'info';
 	let badgeLabel = translate( 'Draft' );
@@ -61,6 +62,8 @@ function InvoicesListCard( {
 
 	return (
 		<InvoicesListRow>
+			<div>{ number }</div>
+
 			<div>
 				<FormattedDate date={ moment( dueDate ) } format="ll" />
 			</div>
@@ -72,15 +75,15 @@ function InvoicesListCard( {
 			<div>{ formatCurrency( total, currency.toUpperCase() ) }</div>
 
 			<div className="invoices-list-card__actions">
-				{ pdfUrl && (
-					<Button compact href={ pdfUrl } target="_blank" download>
-						{ translate( 'Download' ) }
-					</Button>
-				) }
-
 				{ status === 'open' && (
 					<Button compact primary busy={ payInvoice.isLoading } onClick={ pay }>
 						{ translate( 'Pay' ) }
+					</Button>
+				) }
+
+				{ pdfUrl && (
+					<Button compact href={ pdfUrl } target="_blank" download>
+						{ translate( 'Download' ) }
 					</Button>
 				) }
 			</div>

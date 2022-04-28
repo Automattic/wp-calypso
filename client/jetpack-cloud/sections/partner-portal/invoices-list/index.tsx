@@ -10,29 +10,31 @@ import useInvoicesQuery from 'calypso/state/partner-portal/invoices/hooks/use-in
 
 import './style.scss';
 
-const InvoicePlaceholderCard = memo(
-	(): ReactElement => {
-		return (
-			<InvoicesListRow>
-				<div>
-					<TextPlaceholder />
-				</div>
+const InvoicePlaceholderCard = memo( (): ReactElement => {
+	return (
+		<InvoicesListRow>
+			<div>
+				<TextPlaceholder />
+			</div>
 
-				<div>
-					<TextPlaceholder />
-				</div>
+			<div>
+				<TextPlaceholder />
+			</div>
 
-				<div>
-					<TextPlaceholder />
-				</div>
+			<div>
+				<TextPlaceholder />
+			</div>
 
-				<div>
-					<TextPlaceholder />
-				</div>
-			</InvoicesListRow>
-		);
-	}
-);
+			<div>
+				<TextPlaceholder />
+			</div>
+
+			<div>
+				<TextPlaceholder />
+			</div>
+		</InvoicesListRow>
+	);
+} );
 
 export default function InvoicesList(): ReactElement {
 	const translate = useTranslate();
@@ -78,6 +80,7 @@ export default function InvoicesList(): ReactElement {
 	return (
 		<div className="invoices-list">
 			<InvoicesListRow header>
+				<div>{ translate( 'Number' ) }</div>
 				<div>{ translate( 'Due Date' ) }</div>
 				<div>{ translate( 'Status' ) }</div>
 				<div>{ translate( 'Total' ) }</div>
@@ -90,6 +93,7 @@ export default function InvoicesList(): ReactElement {
 					<InvoicesListCard
 						key={ invoice.id }
 						id={ invoice.id }
+						number={ invoice.number }
 						dueDate={ invoice.dueDate }
 						status={ invoice.status }
 						total={ invoice.total }

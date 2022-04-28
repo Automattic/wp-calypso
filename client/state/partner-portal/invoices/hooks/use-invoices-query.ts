@@ -29,6 +29,7 @@ function selectInvoices( api: APIInvoices ): Invoices {
 	return {
 		items: api.items.map( ( apiInvoice ) => ( {
 			id: apiInvoice.id,
+			number: apiInvoice.number,
 			dueDate: apiInvoice.due_date,
 			status: apiInvoice.status,
 			total: apiInvoice.total,

@@ -18,13 +18,13 @@
 
 	&__content {
 		display: grid;
-		grid-template-columns: calc( 66% - 12px ) calc( 34% - 12px );
+		grid-template-columns: calc( 34% - 16px ) calc( 34% - 16px ) calc( 34% - 16px );
 		align-items: center;
 		grid-gap: 24px;
 		font-size: 1.25rem;
 
 		@include break-xlarge() {
-			grid-template-columns: 1fr 100px 100px 128px;
+			grid-template-columns: 160px 1fr 100px 100px 128px;
 		}
 	}
 }
