@@ -37,7 +37,7 @@ class StatsVideoSummary extends Component {
 				? summaryData.data.map( ( item ) => {
 						return {
 							...item,
-							period: moment( item.period ).format( 'MMM D' ),
+							period: moment( item.period ).format( 'year' === query.period ? 'MMM' : 'MMM D' ),
 						};
 				  } )
 				: [];
