@@ -13,6 +13,7 @@ const ImporterWordpress: Step = function ( props ) {
 		<ImporterWrapper importer={ 'wordpress' } { ...props } ref={ wrapperRef }>
 			{ refObj && (
 				<WordpressImporter
+					job={ refObj.job }
 					siteId={ refObj.siteId }
 					siteSlug={ refObj.siteSlug }
 					fromSite={ refObj.fromSite }

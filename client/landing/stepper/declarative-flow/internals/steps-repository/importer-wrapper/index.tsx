@@ -55,10 +55,10 @@ export const ImporterWrapper = forwardRef(
 
 		// Expose fields to the parent component
 		useImperativeHandle( ref, () => ( {
+			job: getImportJob( importer ),
 			site: site as SiteDetails,
 			siteId: siteId as number,
 			siteSlug: siteSlug as string,
-			siteImports,
 			fromSite,
 		} ) );
 
@@ -152,6 +152,7 @@ export const ImporterWrapper = forwardRef(
 				return <NotAuthorized siteSlug={ siteSlug } />;
 			}
 
+			// Provided importer
 			return <>{ children }</>;
 		}
 
