@@ -608,6 +608,13 @@ ul.module-header-actions {
 	text-align: right;
 }
 
+.videopress-stats-module__grid-cell span {
+	cursor: pointer;
+}
+.videopress-stats-module__grid-cell span:hover {
+	text-decoration: underline;
+}
+
 .videopress-stats-module__grid-link {
 	color: var( --color-primary );
 }
@@ -615,8 +622,6 @@ ul.module-header-actions {
 .videopress-stats-module__row-wrapper,
 .videopress-stats-module__header-row-wrapper {
 	display: contents;
-
-	cursor: pointer;
 
 	div:first-of-type {
 		padding-left: 24px;

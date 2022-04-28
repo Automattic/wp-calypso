@@ -193,41 +193,47 @@ class VideoPressStatsModule extends Component {
 						</div>
 						{ completeVideoStats.map( ( row ) => (
 							<div className="videopress-stats-module__row-wrapper">
-								<div
-									className="videopress-stats-module__grid-cell videopress-stats-module__grid-link"
-									onClick={ () => editVideo( row.post_id ) }
-									onKeyUp={ () => editVideo( row.post_id ) }
-									tabIndex="0"
-									role="button"
-								>
-									{ row.title }
+								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-link">
+									<span
+										onClick={ () => editVideo( row.post_id ) }
+										onKeyUp={ () => editVideo( row.post_id ) }
+										tabIndex="0"
+										role="button"
+									>
+										{ row.title }
+									</span>
 								</div>
-								<div
-									className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric"
-									onClick={ () => showStat( 'impressions', row ) }
-									onKeyUp={ () => showStat( 'impressions', row ) }
-									tabIndex="0"
-									role="button"
-								>
-									{ numberFormat( row.impressions ) }
+								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
+									<span
+										onClick={ () => showStat( 'impressions', row ) }
+										onKeyUp={ () => showStat( 'impressions', row ) }
+										tabIndex="0"
+										role="button"
+									>
+										{ numberFormat( row.impressions ) }
+									</span>
 								</div>
-								<div
-									className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric"
-									onClick={ () => showStat( 'watch_time', row ) }
-									onKeyUp={ () => showStat( 'watch_time', row ) }
-									tabIndex="0"
-									role="button"
-								>
-									{ numberFormat( row.watch_time, 1 ) }
+								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
+									<span
+										onClick={ () => showStat( 'watch_time', row ) }
+										onKeyUp={ () => showStat( 'watch_time', row ) }
+										tabIndex="0"
+										role="button"
+									>
+										{ row.watch_time > 1
+											? numberFormat( row.watch_time, 1 )
+											: `< ${ numberFormat( 1, 1 ) }` }
+									</span>
 								</div>
-								<div
-									className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric"
-									onClick={ () => showStat( 'views', row ) }
-									onKeyUp={ () => showStat( 'views', row ) }
-									tabIndex="0"
-									role="button"
-								>
-									{ numberFormat( row.views ) }
+								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
+									<span
+										onClick={ () => showStat( 'views', row ) }
+										onKeyUp={ () => showStat( 'views', row ) }
+										tabIndex="0"
+										role="button"
+									>
+										{ numberFormat( row.views ) }
+									</span>
 								</div>
 							</div>
 						) ) }
