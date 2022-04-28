@@ -8992,19 +8992,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dependency-extraction-webpack-plugin@npm:^3.2.1":
-  version: 3.2.1
-  resolution: "@wordpress/dependency-extraction-webpack-plugin@npm:3.2.1"
-  dependencies:
-    json2php: ^0.0.4
-    webpack-sources: ^2.2.0
-  peerDependencies:
-    webpack: ^4.8.3 || ^5.0.0
-  checksum: 4b240fe7e5c5443fb9511a2f2804c959052c8b6dec73cdbbefb68c845be00bad9174c3eee0cce978bcffa8d325d2d43c04cdd32734271483f3f7d7d0b5483064
-  languageName: node
-  linkType: hard
-
-"@wordpress/dependency-extraction-webpack-plugin@npm:^3.4.1":
+"@wordpress/dependency-extraction-webpack-plugin@npm:^3.2.1, @wordpress/dependency-extraction-webpack-plugin@npm:^3.4.1":
   version: 3.4.2
   resolution: "@wordpress/dependency-extraction-webpack-plugin@npm:3.4.2"
   dependencies:
@@ -34079,7 +34067,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"source-list-map@npm:^2.0.0, source-list-map@npm:^2.0.1":
+"source-list-map@npm:^2.0.0":
   version: 2.0.1
   resolution: "source-list-map@npm:2.0.1"
   checksum: 2e5e421b185dcd857f46c3c70e2e711a65d717b78c5f795e2e248c9d67757882ea989b80ebc08cf164eeeda5f4be8aa95d3b990225070b2daaaf3257c5958149
@@ -37853,16 +37841,6 @@ testarmada-magellan@11.0.10:
     source-list-map: ^2.0.0
     source-map: ~0.6.1
   checksum: 78dafb3e1e297d3f4eb6204311e8c64d28cd028f82887ba33aaf03fffc82482d8e1fdf6de25a60f4dde621d3565f4c3b1bfb350f09add8f4e54e00279ff3db5e
-  languageName: node
-  linkType: hard
-
-"webpack-sources@npm:^2.2.0":
-  version: 2.3.1
-  resolution: "webpack-sources@npm:2.3.1"
-  dependencies:
-    source-list-map: ^2.0.1
-    source-map: ^0.6.1
-  checksum: caf56a9a478eca7e77feca2b6ddc7673f1384eb870280014b300c40cf42abca656f639ff58a8d55a889a92a810ae3c22e71e578aa38fde416e8c2e6827a6ddfd
   languageName: node
   linkType: hard
 
