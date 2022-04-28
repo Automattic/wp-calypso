@@ -106,6 +106,10 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
               "code": "BR",
               "name": "Brazil",
             },
+            Object {
+              "code": "IT",
+              "name": "Italy",
+            },
           ]
         }
         countryCode="US"
@@ -140,6 +144,10 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
             Object {
               "code": "BR",
               "name": "Brazil",
+            },
+            Object {
+              "code": "IT",
+              "name": "Italy",
             },
           ]
         }
