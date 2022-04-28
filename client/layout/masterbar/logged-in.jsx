@@ -525,8 +525,8 @@ class MasterbarLoggedIn extends Component {
 					</div>
 					<div className="masterbar__section masterbar__section--right">
 						{ this.renderCart() }
-						{ this.renderMe() }
 						{ this.renderNotifications() }
+						{ this.renderMe() }
 					</div>
 				</Masterbar>
 			</>
