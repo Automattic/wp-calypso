@@ -44,5 +44,10 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		}
 	}
 
+	// The Jetpack Licensing Portal follows a different pattern than other sections of Jetpack Cloud.
+	if ( isJetpackCloud() && pathIncludes( currentPath, 'partner-portal', 1 ) ) {
+		return fragmentIsEqual( path, currentPath, 2 );
+	}
+
 	return fragmentIsEqual( path, currentPath, 1 );
 };

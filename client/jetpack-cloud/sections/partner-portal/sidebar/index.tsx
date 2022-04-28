@@ -7,6 +7,7 @@ import Sidebar from 'calypso/layout/sidebar';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
+import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import 'calypso/components/jetpack/sidebar/style.scss';
 
@@ -54,7 +55,7 @@ class PartnerPortalSidebar extends Component< Props > {
 							} ) }
 							link="/partner-portal/licenses"
 							onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Licenses' ) }
-							selected={ path === '/partner-portal/licenses' }
+							selected={ itemLinkMatches( '/partner-portal/licenses', path ) }
 						/>
 
 						{ config.isEnabled( 'jetpack/partner-portal-payment' ) && (
@@ -65,7 +66,7 @@ class PartnerPortalSidebar extends Component< Props > {
 								} ) }
 								link="/partner-portal/payment-methods"
 								onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Payment Methods' ) }
-								selected={ path === '/partner-portal/payment-methods' }
+								selected={ itemLinkMatches( '/partner-portal/payment-methods', path ) }
 							/>
 						) }
 
@@ -77,7 +78,7 @@ class PartnerPortalSidebar extends Component< Props > {
 								} ) }
 								link="/partner-portal/invoices"
 								onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Invoices' ) }
-								selected={ path === '/partner-portal/invoices' }
+								selected={ itemLinkMatches( '/partner-portal/invoices', path ) }
 							/>
 						) }
 					</SidebarMenu>
