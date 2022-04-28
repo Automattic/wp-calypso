@@ -1,0 +1,76 @@
+
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.site-actions {
+	&__actions-large-screen {
+		cursor: pointer;
+		display: none;
+		height: 100%;
+		text-align: center;
+		justify-content: center;
+		align-items: center;
+		@include break-large() {
+			display: block;
+		}
+	}
+	&__actions-small-screen {
+		cursor: pointer;
+		position: absolute;
+		right: 16px;
+		display: inline;
+		@include break-large() {
+			display: none;
+		}
+	}
+	&__all-actions {
+		vertical-align: middle;
+		display: flex;
+		color: #787c82;
+		margin: 0 0.1em;
+		@include break-large() {
+			display: inline-flex;
+			height: 100%;
+		}
+	}
+}
+
+button.site-actions__menu-item {
+	margin: 0 -1px;
+	border-style: solid;
+	border-color:  #aaaaaa;
+	border-width: 0 0 1px;
+	font-size: 0.875rem;
+	height: 40px;
+	box-sizing: border-box;
+	a {
+		color: #000000;
+	}
+	&:last-child {
+		margin-bottom: 0;
+		border-bottom-width: 0;
+
+	}
+	&:hover, &:focus {
+		border-style: solid;
+		border-color:  #aaaaaa;
+		border-width: 0 0 1px;
+		background: #000000;
+		cursor: pointer;
+		&:last-child {
+			margin-bottom: -1px;
+			border-bottom-width: 0;
+		}
+		a {
+			color: #ffffff;
+		}
+	}
+	.site-actions__table-action-icon {
+		vertical-align: middle;
+		position: absolute;
+		right: 10px;
+		top: unset;
+	}
+}
+
+

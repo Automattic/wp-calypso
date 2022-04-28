@@ -1,0 +1,43 @@
+.site-card {
+	&__vertical-align-middle {
+		vertical-align: middle;
+	}
+	&__header {
+		position: relative;
+		padding: 16px;
+		height: 50px;
+		box-sizing: border-box;
+		display: flex;
+    	align-items: center;
+	}
+	&__title {
+		display: inline-flex;
+		align-items: center;
+		width: 100%;
+	}
+	&__card.is-compact {
+		padding: 0;
+	}
+	&__expanded-content {
+		padding: 0 0.3em;
+	}
+	&__expanded-content-list {
+		margin: 0 -5px;
+		position: relative;
+		padding: 0.7em 1em;
+		&:nth-child( odd ) {
+			background: #f6f7f7;
+		}
+	}
+	&__expanded-content-key {
+		font-size: 0.875rem;
+		display: flex;
+	}
+	&__expanded-content-value {
+		position: absolute;
+    	right: 16px;
+		top: 50%;
+		transform: translateY( -50% );
+		display: flex;
+	}
+}
