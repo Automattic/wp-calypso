@@ -1,9 +1,11 @@
-@import '@automattic/typography/styles/variables';
-@import '../../assets/stylesheets/shared/mixins/_breakpoints';
-@import '../../assets/stylesheets/shared/mixins/hide-content-accessibly';
+/* stylelint-disable */
+@use '@automattic/typography/styles/variables';
+@use '../../assets/stylesheets/shared/mixins/_breakpoints';
+@use '../../assets/stylesheets/shared/mixins/hide-content-accessibly';
+
+@use './inline-help-center-content.scss';
 
 // GENERAL - Content
-/* Old stuff - leaving this incase we need to quick revert
 .inline-help {
 	position: fixed;
 	right: 24px;
@@ -598,4 +600,3 @@
 		display: none;
 	}
 }
-*/
