@@ -1,7 +1,6 @@
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
-import { includes } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -18,7 +17,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
-import AllTimeNav from '../stats-module/all-time-nav';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 
 import './style.scss';
@@ -95,18 +93,6 @@ class VideoPressStatsModule extends Component {
 		}
 	}
 
-	isAllTimeList() {
-		const { summary, statType } = this.props;
-		const summarizedTypes = [
-			'statsCountryViews',
-			'statsTopPosts',
-			'statsSearchTerms',
-			'statsClicks',
-			'statsReferrers',
-		];
-		return summary && includes( summarizedTypes, statType );
-	}
-
 	render() {
 		const {
 			className,
@@ -146,7 +132,6 @@ class VideoPressStatsModule extends Component {
 		);
 
 		const summaryLink = this.getHref();
-		const isAllTime = this.isAllTimeList();
 		const headerClass = classNames( 'stats-module__header', {
 			'is-refreshing': requesting && ! isLoading,
 		} );
@@ -170,25 +155,22 @@ class VideoPressStatsModule extends Component {
 
 		return (
 			<div>
-				{ ! isAllTime && (
-					<SectionHeader
-						className={ headerClass }
-						label={ this.getModuleLabel() }
-						href={ ! summary ? summaryLink : null }
-					>
-						{ summary && (
-							<DownloadCsv
-								statType={ statType }
-								data={ completeVideoStats }
-								query={ query }
-								path={ path }
-								period={ period }
-							/>
-						) }
-					</SectionHeader>
-				) }
+				<SectionHeader
+					className={ headerClass }
+					label={ this.getModuleLabel() }
+					href={ ! summary ? summaryLink : null }
+				>
+					{ summary && (
+						<DownloadCsv
+							statType={ statType }
+							data={ completeVideoStats }
+							query={ query }
+							path={ path }
+							period={ period }
+						/>
+					) }
+				</SectionHeader>
 				<Card compact className={ cardClasses }>
-					{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
 					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
 					{ hasError && <ErrorPanel /> }
 
@@ -257,18 +239,6 @@ class VideoPressStatsModule extends Component {
 					</div>
 					<StatsModulePlaceholder isLoading={ isLoading } />
 				</Card>
-				{ isAllTime && (
-					<div className="stats-module__footer-actions">
-						<DownloadCsv
-							statType={ statType }
-							data={ completeVideoStats }
-							query={ query }
-							path={ path }
-							borderless
-							period={ period }
-						/>
-					</div>
-				) }
 			</div>
 		);
 	}
