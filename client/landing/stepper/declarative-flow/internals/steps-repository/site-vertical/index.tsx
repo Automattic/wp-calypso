@@ -7,7 +7,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
-import { SITE_STORE } from '../../../../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import SiteVerticalForm from './form';
 import type { Step } from '../../types';
 import type { Vertical } from 'calypso/components/select-vertical/types';
@@ -25,6 +25,7 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const headerText = translate( 'What’s your website about?' );
 	const subHeaderText = translate( 'Choose a category that defines your website the best.' );
 	const isSkipSynonyms = useQuery().get( 'isSkipSynonyms' );
+	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 
 	const handleSiteVerticalSelect = ( vertical: Vertical ) => {
 		setVertical( vertical );
@@ -42,6 +43,7 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 				user_input: userInput,
 				vertical_id: value,
 				vertical_title: label,
+				intent: getIntent(),
 			} );
 			setIsBusy( false );
 			submit?.();
@@ -78,6 +80,7 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 					onSubmit={ handleSubmit }
 				/>
 			}
+			intent={ getIntent() }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

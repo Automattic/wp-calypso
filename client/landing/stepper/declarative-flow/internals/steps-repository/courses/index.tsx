@@ -3,6 +3,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import VideosUi from 'calypso/components/videos-ui';
 import { COURSE_SLUGS, useCourseData } from 'calypso/data/courses';
+import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CoursesFooter from './footer';
 import type { Step } from '../../types';
@@ -44,6 +45,7 @@ const CoursesStep: Step = function CoursesStep( { navigation } ) {
 					) }
 				/>
 			}
+			intent={ useIntent() }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

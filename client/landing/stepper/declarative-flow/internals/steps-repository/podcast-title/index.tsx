@@ -12,6 +12,7 @@ import FormInput from 'calypso/components/forms/form-text-input';
 import getTextWidth from 'calypso/landing/gutenboarding/onboarding-block/acquire-intent/get-text-width';
 import { useAnchorFmParams } from 'calypso/landing/stepper/hooks/use-anchor-fm-params';
 import useDetectMatchingAnchorSite from 'calypso/landing/stepper/hooks/use-detect-matching-anchor-site';
+import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
 import useSiteTitle from 'calypso/landing/stepper/hooks/use-site-title';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -109,6 +110,7 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 			hideBack
 			isFullLayout
 			stepContent={ <PodcastTitleForm /> }
+			intent={ useIntent() }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

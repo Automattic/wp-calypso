@@ -47,6 +47,7 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 		getAtomicSoftwareStatus,
 		getAtomicSoftwareError,
 	} = useSelect( ( select ) => select( SITE_STORE ) );
+	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 
 	const handleTransferFailure = ( failureInfo: FailureInfo ) => {
 		recordTracksEvent( 'calypso_woocommerce_dashboard_snag_error', {
@@ -54,6 +55,7 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 			site: site?.URL,
 			code: failureInfo.code,
 			error: failureInfo.error,
+			intent: getIntent(),
 		} );
 
 		logToLogstash( {
