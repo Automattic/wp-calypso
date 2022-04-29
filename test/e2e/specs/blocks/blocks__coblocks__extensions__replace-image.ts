@@ -13,9 +13,9 @@ import {
 	TestAccount,
 	getTestAccountByFeature,
 	envToFeatureKey,
-	skipDescribeIf,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { skipDescribeIf } from '../../jest-helpers';
 import { TEST_IMAGE_PATH } from '../constants';
 
 declare const browser: Browser;

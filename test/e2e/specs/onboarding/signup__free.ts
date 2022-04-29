@@ -15,9 +15,9 @@ import {
 	GeneralSettingsPage,
 	ComingSoonPage,
 	MyHomePage,
-	skipDescribeIf,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
