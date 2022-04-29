@@ -724,7 +724,7 @@ $masterbar-color-secondary: #101517;
 
 @keyframes bubble-unread-indication {
 	30% {
-		transform: scale3d( 1.4, 1.4 1.4 );
+		transform: scale3d( 1.5, 1.5, 1.5 );
 	}
 	60% {
 		transform: scale3d( 0.85, 0.85, 0.85 );
