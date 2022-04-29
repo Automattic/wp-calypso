@@ -37,7 +37,7 @@ class MailboxForm< T extends EmailProvider > {
 		this.provider = provider;
 	}
 
-	#getFormField< T >( fieldName: FormFieldNames ): MailboxFormFieldBase< T > | null {
+	private getFormField< T >( fieldName: FormFieldNames ): MailboxFormFieldBase< T > | null {
 		if ( fieldName in this.formFields ) {
 			const field = Reflect.get( this.formFields, fieldName );
 			if ( field ) {
@@ -48,7 +48,7 @@ class MailboxForm< T extends EmailProvider > {
 		return null;
 	}
 
-	#getValidators(): [ ValidatorFieldNames, Validator< unknown > ][] {
+	private getValidators(): [ ValidatorFieldNames, Validator< unknown > ][] {
 		const minimumPasswordLength = this.provider === EmailProvider.Titan ? 10 : 12;
 
 		return [
@@ -93,14 +93,14 @@ class MailboxForm< T extends EmailProvider > {
 	}
 
 	setFieldIsVisible( fieldName: FormFieldNames, isVisible: boolean ) {
-		const field = this.#getFormField( fieldName );
+		const field = this.getFormField( fieldName );
 		if ( field ) {
 			field.isVisible = isVisible;
 		}
 	}
 
 	setFieldIsRequired( fieldName: FormFieldNames, isRequired: boolean ) {
-		const field = this.#getFormField( fieldName );
+		const field = this.getFormField( fieldName );
 		if ( field ) {
 			field.isRequired = isRequired;
 		}
@@ -109,12 +109,12 @@ class MailboxForm< T extends EmailProvider > {
 	validate() {
 		this.clearErrors();
 
-		for ( const [ fieldName, validator ] of this.#getValidators() ) {
+		for ( const [ fieldName, validator ] of this.getValidators() ) {
 			if ( ! fieldName ) {
 				continue;
 			}
 
-			const field = this.#getFormField( fieldName );
+			const field = this.getFormField( fieldName );
 			if ( ! field || field.error ) {
 				continue;
 			}
