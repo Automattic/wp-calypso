@@ -7,7 +7,7 @@ interface WithRouteModalProps {
 
 export default function withRouteModal< ComponentProps >(
 	queryKey: string,
-	defaultValue?: unknown
+	defaultValue?: string
 ) {
 	return createHigherOrderComponent< ComponentProps, ComponentProps & WithRouteModalProps >(
 		( WrappedComponent ) => ( props ) => {
