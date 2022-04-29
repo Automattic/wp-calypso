@@ -1,6 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { Guide } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import wpcom from 'wpcom';
 import proxyRequest from 'wpcom-proxy-request';
@@ -9,7 +9,6 @@ import './style.scss';
 
 const WhatsNewGuide = ( { onClose } ) => {
 	const [ whatsNewData, setWhatsNewData ] = useState( null );
-	const __ = useI18n().__;
 	const locale = useLocale();
 
 	// Load What's New list on first site load

@@ -1,11 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, GuidePage } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 
 function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageNumber } ) {
-	const __ = useI18n().__;
-
 	useEffect( () => {
 		recordTracksEvent( 'wpcom_whats_new_slide_view', {
 			slide_number: pageNumber,
