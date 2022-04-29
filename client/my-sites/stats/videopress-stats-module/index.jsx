@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
@@ -157,6 +158,13 @@ class VideoPressStatsModule extends Component {
 		const showStat = ( queryStatType, row ) => {
 			const url = `/stats/${ data.period }/videodetails/${ siteSlug }?post=${ row.post_id }&statType=${ queryStatType }`;
 
+			recordTracksEvent( 'calypso_video_stats_details_clicked', {
+				blog_id: this.props.siteId,
+				post_id: row.postId,
+				stat_type: queryStatType,
+				period: data.period,
+			} );
+
 			page( url );
 		};
 
@@ -172,7 +180,7 @@ class VideoPressStatsModule extends Component {
 							<DownloadCsv
 								statType={ statType }
 								data={ completeVideoStats }
-								query={ null }
+								query={ query }
 								path={ path }
 								period={ period }
 							/>
@@ -253,6 +261,7 @@ class VideoPressStatsModule extends Component {
 					<div className="stats-module__footer-actions">
 						<DownloadCsv
 							statType={ statType }
+							data={ completeVideoStats }
 							query={ query }
 							path={ path }
 							borderless
