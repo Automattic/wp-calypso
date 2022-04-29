@@ -157,7 +157,7 @@ export const ImporterWrapper = forwardRef(
 				return <LoadingEllipsis />;
 			} else if ( ! siteSlug ) {
 				return <NotFound />;
-			} else if ( hasPermission() ) {
+			} else if ( ! hasPermission() ) {
 				return <NotAuthorized siteSlug={ siteSlug } navigator={ navigator } />;
 			}
 
