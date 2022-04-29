@@ -160,7 +160,7 @@ class VideoPressStatsModule extends Component {
 
 			recordTracksEvent( 'calypso_video_stats_details_clicked', {
 				blog_id: this.props.siteId,
-				post_id: row.postId,
+				post_id: row.post_id,
 				stat_type: queryStatType,
 				period: data.period,
 			} );
