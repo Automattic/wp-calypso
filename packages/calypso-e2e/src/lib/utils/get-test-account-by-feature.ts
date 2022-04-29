@@ -1,4 +1,4 @@
-import { TestAccountName } from '../secrets';
+import { TestAccountName } from '../../secrets';
 import defaultCriteria from './criteria-for-test-accounts';
 import type { SupportedEnvVariables } from '../../env-variables';
 

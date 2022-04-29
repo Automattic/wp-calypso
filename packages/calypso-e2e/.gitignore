@@ -1,8 +1,8 @@
 # We REALLY don't want these secrets accidentally getting commited.
 # So we take two careful approaches - both by name suffix, and an allowlist in the secrets directory.
 # This will protect against accidental moves and renames.
-**/*secrets.json
-src/lib/secrets/*
-!src/lib/secrets/secrets.ts
-!src/lib/secrets/index.ts
-!src/lib/secrets/encyrpted.enc
+**/*secret*.json
+src/secrets/*
+!src/secrets/secrets.ts
+!src/secrets/index.ts
+!src/secrets/encyrpted.enc

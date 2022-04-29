@@ -6,6 +6,7 @@ export * as MediaHelper from './media-helper';
 export { default as envVariables, TEST_LOCALES } from './env-variables';
 
 export * from './lib';
+export * from './secrets';
 export * from './email-client';
 export * from './totp-client';
 

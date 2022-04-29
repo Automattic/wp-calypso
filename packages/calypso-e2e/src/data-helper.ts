@@ -1,6 +1,6 @@
 import phrase from 'asana-phrase';
 import envVariables from './env-variables';
-import { secrets, TestAccountName } from './lib';
+import { secrets, TestAccountName } from './secrets';
 
 export type DateFormat = 'ISO';
 
