@@ -73,8 +73,6 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 
 		$should_open_patterns_panel = (bool) get_option( 'was_created_with_blank_canvas_design' );
 
-		$reason = '';
-
 		if ( $should_open_patterns_panel ) {
 			$variant = 'blank-canvas-tour';
 		} else {
@@ -92,16 +90,12 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 			// disable welcome tour for authoring P2s.
 			// see: https://github.com/Automattic/wp-calypso/issues/62973.
 			$nux_status = 'disabled';
-			$reason     = 'P2s do not get a welcome tour';
 		} elseif ( has_filter( 'wpcom_block_editor_nux_get_status' ) ) {
 			$nux_status = apply_filters( 'wpcom_block_editor_nux_get_status', false );
-			$reason     = 'wpcom_block_editor_nux_get_status filter responded with: ' . $nux_status;
 		} elseif ( ! metadata_exists( 'user', get_current_user_id(), 'wpcom_block_editor_nux_status' ) ) {
 			$nux_status = 'enabled';
-			$reason     = "Meta data for user_id didn't have wpcom_block_editor_nux_status record";
 		} else {
 			$nux_status = get_user_meta( get_current_user_id(), 'wpcom_block_editor_nux_status', true );
-			$reason     = "User's meta data has a value of: " . $nux_status;
 		}
 
 		$show_welcome_guide = $this->show_wpcom_welcome_guide( $nux_status );
@@ -110,7 +104,6 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 			array(
 				'show_welcome_guide' => $show_welcome_guide,
 				'variant'            => $variant,
-				'reason'             => $reason,
 			)
 		);
 	}
