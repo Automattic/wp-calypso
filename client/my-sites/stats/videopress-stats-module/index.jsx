@@ -18,6 +18,7 @@ import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 
+import '../stats-module/style.scss';
 import './style.scss';
 
 class VideoPressStatsModule extends Component {
