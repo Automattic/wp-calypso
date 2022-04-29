@@ -4,9 +4,9 @@ const path = require( 'path' );
 const config = {
 	globalSetup: path.join( __dirname, 'global-setup.ts' ),
 	runner: 'groups',
-	setupFilesAfterEnv: [ path.join( __dirname, 'setup.ts' ) ],
 	testEnvironment: path.join( __dirname, 'environment.ts' ),
 	testRunner: 'jest-circus/runner',
+	testTimeout: process.env.PWDEBUG === '1' ? 5 * 60 * 1000 : 60 * 1000,
 	verbose: true,
 };
 
