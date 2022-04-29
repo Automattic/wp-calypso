@@ -14,19 +14,16 @@ const addBlockSupportLinks = (
 	const isChild = settings[ 'parent' ];
 	const blockName = isChild ? settings[ 'parent' ].toString() : name;
 
-	if ( blockLinks.hasOwnProperty( blockName ) ) {
+	if ( blockLinks[ blockName ] ) {
 		const descriptionWithLink = createInterpolateElement( '<InlineSupportLink />', {
 			InlineSupportLink: (
-				<DescriptionSupportLink
-					title={ String( settings.title ) }
-					url={ blockLinks[ blockName ].url }
-				>
+				<DescriptionSupportLink title={ String( settings.title ) } url={ blockLinks[ blockName ] }>
 					{ settings.description }
 				</DescriptionSupportLink>
 			),
 		} );
 
-		settings.description = descriptionWithLink || settings.description;
+		settings.description = descriptionWithLink;
 	}
 
 	return settings;

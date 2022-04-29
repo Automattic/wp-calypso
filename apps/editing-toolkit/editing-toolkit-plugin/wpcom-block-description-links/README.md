@@ -2,7 +2,7 @@
 
 ## Summary
 
-This adds a "Learn more" link inline with the Block Description **ONLY** in displayed in the block editor.
+This adds a "Learn more" link inline with the Block Description **ONLY** when displayed in the block editor.
 
 ## Adding more
 
