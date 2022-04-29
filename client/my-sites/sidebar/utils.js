@@ -44,5 +44,11 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		}
 	}
 
+	// All URLs in the Licensing Portal start with 'partner-portal', so we need to compare them at the
+	// second position (i.e., compare whatever comes after partner-portal/).
+	if ( isJetpackCloud() && pathIncludes( currentPath, 'partner-portal', 1 ) ) {
+		return fragmentIsEqual( path, currentPath, 2 );
+	}
+
 	return fragmentIsEqual( path, currentPath, 1 );
 };
