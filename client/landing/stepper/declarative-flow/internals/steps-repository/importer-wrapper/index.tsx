@@ -57,6 +57,7 @@ export const ImporterWrapper = forwardRef(
 
 		// Expose fields to the parent component
 		useImperativeHandle( ref, () => ( {
+			run: runImportInitially,
 			job: getImportJob( importer ),
 			site: site as SiteDetails,
 			siteId: siteId as number,

@@ -4,6 +4,7 @@ import { StepProps } from 'calypso/landing/stepper/declarative-flow/internals/ty
 import { Importer, ImportJob } from 'calypso/signup/steps/import-from/types';
 
 export type ImporterWrapperRefAttr = {
+	run: boolean;
 	site: SiteDetails;
 	siteId: number;
 	siteSlug: string;

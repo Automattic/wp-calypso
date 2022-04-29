@@ -12,6 +12,7 @@ export { default as importReadyNot } from './import-ready-not';
 export { default as importReadyWpcom } from './import-ready-wpcom';
 export { default as importReadyPreview } from './import-ready-preview';
 export { default as importer } from './importer';
+export { default as importerWix } from './importer-wix';
 export { default as importerWordpress } from './importer-wordpress';
 export { default as businessInfo } from './business-info';
 export { default as storeAddress } from './store-address';
@@ -36,6 +37,7 @@ export type StepPath =
 	| 'importReadyWpcom'
 	| 'importReadyPreview'
 	| 'importer'
+	| 'importerWix'
 	| 'importerWordpress'
 	| 'importer/wordpress'
 	| 'businessInfo'
