@@ -106,12 +106,7 @@ class DomainRefundPolicy extends Component {
 		const policies = this.getApplicablePolicies();
 
 		return Object.entries( policies ).map( ( [ name, message ] ) => (
-			<CheckoutTermsItem
-				className="checkout__domain-refund-policy"
-				key={ 'domain-refund-policy-' + name }
-			>
-				{ message }
-			</CheckoutTermsItem>
+			<CheckoutTermsItem key={ 'domain-refund-policy-' + name }>{ message }</CheckoutTermsItem>
 		) );
 	}
 }

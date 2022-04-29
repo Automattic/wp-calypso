@@ -49,7 +49,7 @@ class DomainRegistrationHsts extends PureComponent {
 		const { translate } = this.props;
 
 		return (
-			<CheckoutTermsItem className="checkout__domain-registration-hsts">
+			<CheckoutTermsItem>
 				{ translate(
 					'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
 						'to host a website. When you host this domain at WordPress.com an SSL ' +

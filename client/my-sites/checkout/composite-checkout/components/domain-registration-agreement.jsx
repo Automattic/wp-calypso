@@ -129,12 +129,7 @@ class DomainRegistrationAgreement extends Component {
 		}
 
 		return (
-			<CheckoutTermsItem
-				className="checkout__domain-registration-agreement-link"
-				wrapChildren={ false }
-			>
-				{ this.renderAgreements() }
-			</CheckoutTermsItem>
+			<CheckoutTermsItem wrapChildren={ false }>{ this.renderAgreements() }</CheckoutTermsItem>
 		);
 	}
 }
