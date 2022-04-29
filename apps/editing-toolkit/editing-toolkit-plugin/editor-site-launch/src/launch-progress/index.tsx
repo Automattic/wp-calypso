@@ -1,14 +1,11 @@
 import { useSelect } from '@wordpress/data';
-import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@wordpress/react-i18n';
+import { sprintf, __ } from '@wordpress/i18n';
 import * as React from 'react';
 import { LAUNCH_STORE } from '../stores';
 
 import './styles.scss';
 
 const LaunchProgress: React.FunctionComponent = () => {
-	const { __ } = useI18n();
-
 	const { currentStep, LaunchSequence } = useSelect( ( select ) => {
 		const launchStore = select( LAUNCH_STORE );
 		return {

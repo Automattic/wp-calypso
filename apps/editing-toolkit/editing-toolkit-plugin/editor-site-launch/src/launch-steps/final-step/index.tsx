@@ -15,9 +15,8 @@ import { ThemeProvider } from '@emotion/react';
 import { Button, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
+import { sprintf, __, hasTranslation } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import * as React from 'react';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
@@ -41,7 +40,6 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 		}
 	);
 
-	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
 
 	const [ plan, planProduct ] = useSelect( ( select ) => [

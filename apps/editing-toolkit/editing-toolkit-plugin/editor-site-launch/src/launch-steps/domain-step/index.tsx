@@ -4,14 +4,13 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useDomainSelection, useSiteDomains, useDomainSearch } from '@automattic/launch';
 import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
-import { useI18n } from '@wordpress/react-i18n';
+import { __, hasTranslation } from '@wordpress/i18n';
 import * as React from 'react';
 import { FLOW_ID } from '../../constants';
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE } from '../../stores';
 
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
-	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
 
 	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();

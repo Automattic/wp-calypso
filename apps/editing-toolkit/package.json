@@ -96,7 +96,6 @@
 		"@wordpress/nux": "^5.0.17",
 		"@wordpress/plugins": "^4.0.7",
 		"@wordpress/primitives": "^3.0.4",
-		"@wordpress/react-i18n": "^3.0.4",
 		"@wordpress/rich-text": "^5.0.7",
 		"@wordpress/scripts": "^19.2.2",
 		"@wordpress/server-side-render": "^3.0.17",

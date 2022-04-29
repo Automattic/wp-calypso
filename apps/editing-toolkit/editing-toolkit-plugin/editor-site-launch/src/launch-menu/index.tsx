@@ -1,5 +1,5 @@
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import * as React from 'react';
 import { LAUNCH_STORE } from '../stores';
 import LaunchMenuItem from './item';
@@ -12,8 +12,6 @@ interface Props {
 }
 
 const LaunchMenu: React.FunctionComponent< Props > = ( { onMenuItemClick } ) => {
-	const { __ } = useI18n();
-
 	const { currentStep, LaunchStep, LaunchSequence, isStepCompleted, isFlowCompleted } = useSelect(
 		( select ) => {
 			const launchStore = select( LAUNCH_STORE );
