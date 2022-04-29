@@ -6,7 +6,7 @@ const config = {
 	runner: 'groups',
 	testEnvironment: path.join( __dirname, 'environment.ts' ),
 	testRunner: 'jest-circus/runner',
-	testTimeout: process.env.PWDEBUG === '1' ? 5 * 60 * 1000 : 60 * 1000,
+	testTimeout: process.env.PWDEBUG === '1' ? 10 * 60 * 1000 : 2 * 60 * 1000,
 	verbose: true,
 };
 
