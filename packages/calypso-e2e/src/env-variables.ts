@@ -1,4 +1,5 @@
 import path from 'path';
+import { TEST_ACCOUNT_NAMES } from './secrets';
 import { TestAccountName } from '.';
 
 const VIEWPORT_NAMES = [ 'mobile', 'desktop' ] as const;
@@ -108,6 +109,15 @@ const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue =
 			if ( ! ( output as string[] ).every( ( v ) => supportedValues.includes( v ) ) ) {
 				throw new Error(
 					`Unknown TEST_LOCALES value: ${ output }.\nSupported values: ${ TEST_LOCALES }`
+				);
+			}
+			break;
+		}
+		case 'AUTHENTICATE_ACCOUNTS': {
+			const supportedValues = new Set< TestAccountName >( TEST_ACCOUNT_NAMES );
+			if ( ! ( output as TestAccountName[] ).every( ( v ) => supportedValues.has( v ) ) ) {
+				throw new Error(
+					`Unknown AUTHENTICATE_ACCOUNTS value: ${ output }.\nSupported values: ${ TEST_ACCOUNT_NAMES }`
 				);
 			}
 			break;

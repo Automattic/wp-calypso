@@ -29,28 +29,31 @@ function initializeSecrets(): Secrets {
 
 export const secrets = initializeSecrets();
 
-export type TestAccountName =
-	| 'defaultUser'
-	| 'eCommerceUser'
-	| 'simpleSiteFreePlanUser'
-	| 'simpleSitePersonalPlanUser'
-	| 'gutenbergSimpleSiteUser'
-	| 'gutenbergSimpleSiteEdgeUser'
-	| 'gutenbergAtomicSiteUser'
-	| 'gutenbergAtomicSiteEdgeUser'
-	| 'coBlocksSimpleSiteEdgeUser'
-	| 'siteEditorSimpleSiteUser'
-	| 'siteEditorSimpleSiteEdgeUser'
-	| 'martechTosUser'
-	| 'calypsoPreReleaseUser'
-	| 'i18nUser'
-	| 'p2User'
-	| 'jetpackUser'
-	| 'jetpackUserPREMIUM'
-	| 'jetpackUserJN'
-	| 'commentingUser'
-	| 'notificationsUser'
-	| 'googleLoginUser';
+export const TEST_ACCOUNT_NAMES = [
+	'defaultUser',
+	'eCommerceUser',
+	'simpleSiteFreePlanUser',
+	'simpleSitePersonalPlanUser',
+	'gutenbergSimpleSiteUser',
+	'gutenbergSimpleSiteEdgeUser',
+	'gutenbergAtomicSiteUser',
+	'gutenbergAtomicSiteEdgeUser',
+	'coBlocksSimpleSiteEdgeUser',
+	'siteEditorSimpleSiteUser',
+	'siteEditorSimpleSiteEdgeUser',
+	'martechTosUser',
+	'calypsoPreReleaseUser',
+	'i18nUser',
+	'p2User',
+	'jetpackUser',
+	'jetpackUserPREMIUM',
+	'jetpackUserJN',
+	'commentingUser',
+	'notificationsUser',
+	'googleLoginUser',
+] as const;
+
+export type TestAccountName = typeof TEST_ACCOUNT_NAMES[ number ];
 
 export type OtherTestSiteName = 'notifications';
 
