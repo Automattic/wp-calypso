@@ -12,17 +12,17 @@ interface MailboxFormField< Type > {
 	error: FieldError;
 	value: Type;
 	readonly typeName: string;
-	readonly required: boolean;
+	readonly isRequired: boolean;
 }
 
 abstract class MailboxFormFieldBase< T > implements MailboxFormField< T > {
 	error: FieldError = null;
 	value!: T;
 	readonly typeName = String.name.toLowerCase();
-	readonly required;
+	readonly isRequired;
 
-	constructor( required = true ) {
-		this.required = required;
+	constructor( isRequired = true ) {
+		this.isRequired = isRequired;
 	}
 }
 
