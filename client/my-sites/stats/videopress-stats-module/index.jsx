@@ -169,7 +169,13 @@ class VideoPressStatsModule extends Component {
 						href={ ! summary ? summaryLink : null }
 					>
 						{ summary && (
-							<DownloadCsv statType={ statType } query={ query } path={ path } period={ period } />
+							<DownloadCsv
+								statType={ statType }
+								data={ completeVideoStats }
+								query={ null }
+								path={ path }
+								period={ period }
+							/>
 						) }
 					</SectionHeader>
 				) }
