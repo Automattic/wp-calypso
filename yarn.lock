@@ -12576,6 +12576,7 @@ __metadata:
     percentage-regex: ^3.0.0
     phone: ^3.1.17
     photon: "workspace:^"
+    phpunserialize: ^1.1.0
     pkg-dir: ^5.0.0
     postcss: ^8.4.5
     prismjs: ^1.26.0
@@ -27724,6 +27725,13 @@ __metadata:
   peerDependencies:
     pegjs: ^0.10.0
   checksum: 15cdc5b0cebc4958771c1c651e54e6a4e439c08998eca74f7c91294e364061a1e9c3050de80192f43197522bedd49489d02b200c34dcc8716209603dda1f7dab
+  languageName: node
+  linkType: hard
+
+"phpunserialize@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "phpunserialize@npm:1.1.0"
+  checksum: 6382e8d103092ee8644c821cd2b2d11b0674fe07e5b8adcb579aab834945fdf1ca2caeb4725591425cfec337d9e9dda7611f7c05f560798184f8fb82b240953b
   languageName: node
   linkType: hard
 
