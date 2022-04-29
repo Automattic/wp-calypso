@@ -1,6 +1,11 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import {
+	navigation,
+	siteSelection,
+	sites,
+	selectSiteIfLoggedIn,
+} from 'calypso/my-sites/controller';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	browsePlugins,
@@ -71,6 +76,16 @@ export default function () {
 
 	page(
 		'/plugins',
+		selectSiteIfLoggedIn,
+		siteSelection,
+		navigation,
+		browsePlugins,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/plugins/:site',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -80,7 +95,7 @@ export default function () {
 	);
 
 	page(
-		'/plugins/manage/:site?',
+		'/plugins/manage/:site',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -90,7 +105,7 @@ export default function () {
 	);
 
 	page(
-		'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
+		'/plugins/:pluginFilter(active|inactive|updates)/:site_id',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -101,7 +116,7 @@ export default function () {
 	);
 
 	page(
-		'/plugins/:plugin/:site_id?',
+		'/plugins/:plugin/:site_id',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
