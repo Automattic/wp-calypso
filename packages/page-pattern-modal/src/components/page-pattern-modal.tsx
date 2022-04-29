@@ -309,6 +309,9 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 			<Modal
 				title="" // We're providing the title with the `aria.labelledby` prop
 				className="page-pattern-modal"
+				// @ts-ignore `onRequestClose`'s type is () => void but ideally it should
+				// specify the `FocusEvent` object that's passed. Ignoring the error until
+				// the `Modal` component type is updated in Gutenberg.
 				onRequestClose={ this.closeModal }
 				aria={ {
 					labelledby: `page-pattern-modal__heading-${ instanceId }`,
