@@ -10,7 +10,7 @@ const ImporterWix: Step = function ( props ) {
 	const refObj = wrapperRef.current;
 
 	return (
-		<ImporterWrapper importer={ 'wordpress' } { ...props } ref={ wrapperRef }>
+		<ImporterWrapper importer={ 'wix' } { ...props } ref={ wrapperRef }>
 			{ refObj && (
 				<WixImporter
 					job={ refObj.job }
@@ -18,6 +18,7 @@ const ImporterWix: Step = function ( props ) {
 					siteId={ refObj.siteId }
 					siteSlug={ refObj.siteSlug }
 					fromSite={ refObj.fromSite }
+					navigator={ refObj.navigator }
 				/>
 			) }
 		</ImporterWrapper>
