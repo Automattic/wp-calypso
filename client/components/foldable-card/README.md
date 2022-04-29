@@ -11,9 +11,9 @@ import FoldableCard from 'calypso/components/foldable-card';
 
 function render() {
 	return (
-		<div>
-			<FoldableCard header="title" hideSummary>{ content }</FoldableCard>
-		</div>
+		<FoldableCard header="title" hideSummary>
+			{ content }
+		</FoldableCard>
 	);
 }
 ```
