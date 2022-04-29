@@ -1271,7 +1271,6 @@ __metadata:
     "@wordpress/i18n": ^4.3.0
     "@wordpress/icons": ^6.2.0
     "@wordpress/primitives": ^3.0.4
-    "@wordpress/react-i18n": ^3.0.4
     classnames: ^2.3.1
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -1386,7 +1385,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@wordpress/components": ^19.2.0
-    "@wordpress/react-i18n": ^3.0.4
+    "@wordpress/i18n": ^4.2.4
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
@@ -1557,7 +1556,6 @@ __metadata:
     "@wordpress/nux": ^5.0.17
     "@wordpress/plugins": ^4.0.7
     "@wordpress/primitives": ^3.0.4
-    "@wordpress/react-i18n": ^3.0.4
     "@wordpress/rich-text": ^5.0.7
     "@wordpress/scripts": ^19.2.2
     "@wordpress/server-side-render": ^3.0.17
