@@ -52,8 +52,8 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		it( 'Login to marTech user account', async function () {
 			const loginPage = new LoginPage( page );
 			await loginPage.visit( { path: 'new' } );
-			const credentials = DataHelper.getAccountCredential( 'martechTosUser' );
-			await loginPage.logInWithCredentials( ...credentials );
+			const { username, password } = DataHelper.getAccountCredential( 'martechTosUser' );
+			await loginPage.logInWithCredentials( username, password );
 		} );
 
 		it( 'Set store cookie', async function () {
