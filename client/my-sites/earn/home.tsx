@@ -3,18 +3,10 @@ import {
 	FEATURE_SIMPLE_PAYMENTS,
 	PLAN_PREMIUM,
 	PLAN_JETPACK_SECURITY_DAILY,
-	isPremiumPlan,
-	isBusinessPlan,
-	isEcommercePlan,
-	isJetpackPremiumPlan,
-	isJetpackBusinessPlan,
-	isSecurityDailyPlan,
-	isSecurityRealTimePlan,
-	isCompletePlan,
-	isProPlan,
 	FEATURE_PREMIUM_CONTENT_CONTAINER,
 	FEATURE_DONATIONS,
 	FEATURE_RECURRING_PAYMENTS,
+	WPCOM_FEATURES_WORDADS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
@@ -34,9 +26,9 @@ import wp from 'calypso/lib/wp';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { hasFeature, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -59,7 +51,6 @@ interface ConnectedProps {
 	trackUpgrade: ( plan: string, feature: string ) => void;
 	trackLearnLink: ( feature: string ) => void;
 	trackCtaButton: ( feature: string ) => void;
-	isPremiumOrBetterPlan?: boolean;
 	isUserAdmin?: boolean;
 	eligibleForProPlan?: boolean;
 	hasDonations: boolean;
@@ -67,18 +58,10 @@ interface ConnectedProps {
 	hasRecurringPayments: boolean;
 }
 
-type BoolFunction = ( arg: string ) => boolean;
-function overSome< F extends BoolFunction, T extends string >( ...checks: F[] ) {
-	return function ( item: T ) {
-		return checks.some( ( check ) => check( item ) );
-	};
-}
-
 const Home: FunctionComponent< ConnectedProps > = ( {
 	siteId,
 	selectedSiteSlug,
 	isFreePlan,
-	isPremiumOrBetterPlan,
 	isNonAtomicJetpack,
 	isUserAdmin,
 	isLoading,
@@ -489,7 +472,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
 				) }
-				{ ! isPremiumOrBetterPlan && <em>{ getPremiumPlanNames() }</em> }
+				{ ! hasWordAds && <em>{ getPremiumPlanNames() }</em> }
 			</>
 		);
 
@@ -584,43 +567,28 @@ export default connect(
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const isLoading = ( hasConnectedAccount === null && ! isFreePlan ) || sitePlanSlug === null;
-		const isPremiumOrBetterPlan = Boolean(
-			sitePlanSlug &&
-				overSome(
-					isPremiumPlan,
-					isBusinessPlan,
-					isEcommercePlan,
-					isJetpackPremiumPlan,
-					isJetpackBusinessPlan,
-					isSecurityDailyPlan,
-					isSecurityRealTimePlan,
-					isCompletePlan,
-					isProPlan
-				)( sitePlanSlug )
-		);
+
 		return {
 			siteId,
 			selectedSiteSlug,
 			isFreePlan,
-			isPremiumOrBetterPlan,
 			isNonAtomicJetpack: Boolean(
 				isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 			),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
-			hasWordAds: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
-			hasSimplePayments: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
+			hasWordAds: siteHasFeature( state, siteId, WPCOM_FEATURES_WORDADS ),
+			hasSimplePayments: siteHasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
 			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
 			isLoading,
 			hasSetupAds: Boolean(
 				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
 			),
-			hasDonations: hasConnectedAccount || hasActiveSiteFeature( state, siteId, FEATURE_DONATIONS ),
+			hasDonations: hasConnectedAccount || siteHasFeature( state, siteId, FEATURE_DONATIONS ),
 			hasPremiumContent:
-				hasConnectedAccount ||
-				hasActiveSiteFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ),
+				hasConnectedAccount || siteHasFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ),
 			hasRecurringPayments:
-				hasConnectedAccount || hasActiveSiteFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
+				hasConnectedAccount || siteHasFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 		};
 	},
 	( dispatch ) => ( {
