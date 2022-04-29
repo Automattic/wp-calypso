@@ -1,34 +1,21 @@
-import fs from 'fs/promises';
+import fs from 'fs';
 import path from 'path';
 
-let secrets: Secrets | null = null;
-
-/**
- * Get the secrets needed for E2E testing.
- *
- * @throws If the secrets have not been initialized.
- * @returns The E2E secrets.
- */
-export function getSecrets(): Secrets {
-	if ( ! secrets ) {
-		throw new Error(
-			'Secrets have not been initialized.\n' +
-				'Decrypt the secrets file and make sure "initializeSecrets" is called in the Jest setup.'
-		);
-	}
-
-	return secrets;
-}
+const SECRETS_FILE_NAME = 'decrypted-secrets.json';
 
 /**
  * Initializes the secrets needed for E2E testing.
  */
-export async function initializeSecrets(): Promise< void > {
+function initializeSecrets(): Secrets {
 	try {
-		const secretsJson = await fs.readFile( path.join( __dirname, 'decrypted-secrets.json' ), {
+		// Normally, any fs sync operations are a big no-no.
+		// However, this only runs once on module load, and should be safe to do.
+		// This is a more runtime deferred version of just having a '.json' module.
+		// Once we're on ES2022, this would be a perfect use case for a top-level-await.
+		const secretsJson = fs.readFileSync( path.join( __dirname, SECRETS_FILE_NAME ), {
 			encoding: 'utf-8',
 		} );
-		secrets = JSON.parse( secretsJson );
+		return JSON.parse( secretsJson );
 	} catch ( err ) {
 		const error: Error = err as Error;
 		throw new Error(
@@ -39,6 +26,8 @@ export async function initializeSecrets(): Promise< void > {
 		);
 	}
 }
+
+export const secrets = initializeSecrets();
 
 export type TestAccountName =
 	| 'defaultUser'

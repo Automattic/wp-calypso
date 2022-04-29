@@ -5,7 +5,6 @@ import { Context } from 'vm';
 import JestEnvironmentNode from 'jest-environment-node';
 import { Browser, BrowserContext, BrowserContextOptions, chromium, Page } from 'playwright';
 import env from '../env-variables';
-import { initializeSecrets } from '../lib/secrets/secrets';
 import config from './playwright-config';
 import type { Config, Circus } from '@jest/types';
 
@@ -43,8 +42,6 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 	 */
 	async setup() {
 		await super.setup();
-
-		await initializeSecrets();
 
 		// Create folders for test artefacts.
 		await fs.mkdir( env.ARTIFACTS_PATH, { recursive: true } );
