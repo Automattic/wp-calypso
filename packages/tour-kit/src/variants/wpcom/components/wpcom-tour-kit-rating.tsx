@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { useTourKitContext } from '../../../index';
 import thumbsDown from '../icons/thumbs_down';
@@ -12,7 +12,6 @@ const WpcomTourKitRating: React.FunctionComponent = () => {
 	const context = useTourKitContext();
 	const config = context.config as unknown as WpcomConfig;
 	const tourRating = config.options?.tourRating?.useTourRating?.() ?? tempRating;
-	const { __ } = useI18n();
 
 	let isDisabled = false;
 

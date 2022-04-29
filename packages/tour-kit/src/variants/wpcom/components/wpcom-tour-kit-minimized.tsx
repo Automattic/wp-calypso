@@ -1,8 +1,7 @@
 import { Button, Flex } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
+import { sprintf, __ } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
 import maximize from '../icons/maximize';
 import type { MinimizedTourRendererProps } from '../../../types';
 
@@ -12,7 +11,6 @@ const WpcomTourKitMinimized: React.FunctionComponent< MinimizedTourRendererProps
 	onDismiss,
 	currentStepIndex,
 } ) => {
-	const { __ } = useI18n();
 	const lastStepIndex = steps.length - 1;
 	const page = currentStepIndex + 1;
 	const numberOfPages = lastStepIndex + 1;
