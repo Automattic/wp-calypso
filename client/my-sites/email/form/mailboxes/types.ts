@@ -10,16 +10,18 @@ enum EmailProvider {
 
 interface MailboxFormField< Type > {
 	error: FieldError;
-	value: Type;
+	isRequired: boolean;
+	isVisible: boolean;
 	readonly typeName: string;
-	readonly isRequired: boolean;
+	value: Type;
 }
 
 abstract class MailboxFormFieldBase< T > implements MailboxFormField< T > {
 	error: FieldError = null;
 	value!: T;
+	isRequired;
+	isVisible = true;
 	readonly typeName = String.name.toLowerCase();
-	readonly isRequired;
 
 	constructor( isRequired = true ) {
 		this.isRequired = isRequired;
@@ -84,7 +86,8 @@ const MailboxFormFieldsMap = {
 	[ EmailProvider.Titan ]: TitanMailboxFormFields,
 };
 
-type ValidatorFieldNames = keyof GoogleMailboxFormFields | keyof TitanMailboxFormFields | null;
+type FormFieldNames = keyof GoogleMailboxFormFields | keyof TitanMailboxFormFields;
+type ValidatorFieldNames = FormFieldNames | null;
 
 type ProviderKeys = keyof typeof MailboxFormFieldsMap;
 type ProviderTypes = typeof MailboxFormFieldsMap[ ProviderKeys ];
@@ -97,6 +100,7 @@ class MailboxFormFieldsFactory {
 }
 
 export type {
+	FormFieldNames,
 	GoogleMailboxFormFields,
 	MailboxFormFieldBase,
 	MailboxFormFields,

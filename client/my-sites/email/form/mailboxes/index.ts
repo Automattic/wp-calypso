@@ -9,6 +9,7 @@ import {
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import {
 	EmailProvider,
+	MailboxFormFieldBase,
 	MailboxFormFieldsFactory,
 } from 'calypso/my-sites/email/form/mailboxes/types';
 import {
@@ -19,8 +20,9 @@ import {
 	RequiredValidator,
 } from 'calypso/my-sites/email/form/mailboxes/validators';
 import type {
-	ValidatorFieldNames,
+	FormFieldNames,
 	MailboxFormFields,
+	ValidatorFieldNames,
 } from 'calypso/my-sites/email/form/mailboxes/types';
 import type { Validator } from 'calypso/my-sites/email/form/mailboxes/validators';
 
@@ -28,23 +30,39 @@ class MailboxForm< T extends EmailProvider > {
 	existingMailboxes: string[];
 	formFields: MailboxFormFields;
 	provider: T;
-	validators: [ ValidatorFieldNames, Validator< unknown > ][] = [
-		[ FIELD_ALTERNATIVE_EMAIL, new AlternateEmailValidator< T >( this ) ],
-		[ FIELD_DOMAIN, new RequiredValidator< string >() ],
-		[ FIELD_FIRSTNAME, new RequiredValidator< string >() ],
-		[ FIELD_LASTNAME, new RequiredValidator< string >() ],
-		[ FIELD_MAILBOX, new RequiredValidator< string >() ],
-		[ FIELD_MAILBOX, new ExistingMailboxesValidator( this ) ],
-		[ FIELD_MAILBOX, new MailboxNameValidator< T >( this ) ],
-		[ FIELD_PASSWORD, new RequiredValidator< string >() ],
-		[ FIELD_PASSWORD, new PasswordValidator() ],
-		[ FIELD_UUID, new RequiredValidator< string >() ],
-	];
 
 	constructor( provider: T, domain: string, existingMailboxes: string[] = [] ) {
 		this.existingMailboxes = existingMailboxes;
 		this.formFields = MailboxFormFieldsFactory.create( provider, domain );
 		this.provider = provider;
+	}
+
+	#getFormField< T >( fieldName: FormFieldNames ): MailboxFormFieldBase< T > | null {
+		if ( fieldName in this.formFields ) {
+			const field = Reflect.get( this.formFields, fieldName );
+			if ( field ) {
+				return field;
+			}
+		}
+
+		return null;
+	}
+
+	#getValidators(): [ ValidatorFieldNames, Validator< unknown > ][] {
+		const minimumPasswordLength = this.provider === EmailProvider.Titan ? 10 : 12;
+
+		return [
+			[ FIELD_ALTERNATIVE_EMAIL, new AlternateEmailValidator< T >( this ) ],
+			[ FIELD_DOMAIN, new RequiredValidator< string >() ],
+			[ FIELD_FIRSTNAME, new RequiredValidator< string >() ],
+			[ FIELD_LASTNAME, new RequiredValidator< string >() ],
+			[ FIELD_MAILBOX, new RequiredValidator< string >() ],
+			[ FIELD_MAILBOX, new ExistingMailboxesValidator( this.existingMailboxes ) ],
+			[ FIELD_MAILBOX, new MailboxNameValidator< T >( this ) ],
+			[ FIELD_PASSWORD, new RequiredValidator< string >() ],
+			[ FIELD_PASSWORD, new PasswordValidator( minimumPasswordLength ) ],
+			[ FIELD_UUID, new RequiredValidator< string >() ],
+		];
 	}
 
 	clearErrors() {
@@ -74,15 +92,29 @@ class MailboxForm< T extends EmailProvider > {
 		return ! this.hasErrors() && this.hasValidValues();
 	}
 
+	setFieldIsVisible( fieldName: FormFieldNames, isVisible: boolean ) {
+		const field = this.#getFormField( fieldName );
+		if ( field ) {
+			field.isVisible = isVisible;
+		}
+	}
+
+	setFieldIsRequired( fieldName: FormFieldNames, isRequired: boolean ) {
+		const field = this.#getFormField( fieldName );
+		if ( field ) {
+			field.isRequired = isRequired;
+		}
+	}
+
 	validate() {
 		this.clearErrors();
 
-		for ( const [ fieldName, validator ] of this.validators ) {
+		for ( const [ fieldName, validator ] of this.#getValidators() ) {
 			if ( ! fieldName ) {
 				continue;
 			}
 
-			const field = Reflect.get( this.formFields, fieldName );
+			const field = this.#getFormField( fieldName );
 			if ( ! field || field.error ) {
 				continue;
 			}

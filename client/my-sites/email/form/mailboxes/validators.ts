@@ -1,7 +1,6 @@
 import emailValidator from 'email-validator';
 import i18n from 'i18n-calypso';
 import React from 'react';
-import { validatePasswordField } from 'calypso/lib/gsuite/new-users';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes/index';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import type { MailboxFormFieldBase } from 'calypso/my-sites/email/form/mailboxes/types';
@@ -101,26 +100,73 @@ class AlternateEmailValidator< T extends EmailProvider > implements Validator< s
 }
 
 class PasswordValidator implements Validator< string > {
+	private readonly minimumPasswordLength: number;
+
+	constructor( minimumPasswordLength = 12 ) {
+		this.minimumPasswordLength = minimumPasswordLength;
+	}
+
 	validate( field?: MailboxFormFieldBase< string > ): void {
 		if ( ! field || field.error ) {
 			return;
 		}
 
-		const { error } = validatePasswordField( { value: field.value, error: field.error }, 10 );
-		field.error = error;
+		const value = field.value;
+
+		if ( this.minimumPasswordLength > value.length ) {
+			field.error = i18n.translate( "This field can't be shorter than %s characters.", {
+				args: String( this.minimumPasswordLength ),
+			} );
+			return;
+		}
+
+		if ( 100 < value.length ) {
+			field.error = i18n.translate( "This field can't be longer than %s characters.", {
+				args: '100',
+			} );
+			return;
+		}
+
+		if ( value.startsWith( ' ' ) ) {
+			field.error = i18n.translate( "This field can't start with a white space." );
+			return;
+		}
+
+		// Checks that passwords only have ASCII characters (see https://en.wikipedia.org/wiki/ASCII#Character_set)
+		const regexp = /[^\x20-\x7E]/;
+
+		if ( regexp.test( value ) ) {
+			const firstForbiddenCharacter = [ ...value ].find( ( character ) =>
+				regexp.test( character )
+			);
+
+			field.error = i18n.translate( "This field can't accept '%s' as character.", {
+				args: firstForbiddenCharacter,
+				comment: '%s denotes a single character that is not allowed in this field',
+			} );
+			return;
+		}
+
+		if ( value.endsWith( ' ' ) ) {
+			field.error = i18n.translate( "This field can't end with a white space." );
+		}
 	}
 }
 
-class ExistingMailboxesValidator< T extends EmailProvider > implements Validator< string > {
-	form: MailboxForm< T >;
+class ExistingMailboxesValidator implements Validator< string > {
+	existingMailboxes: string[];
 
-	constructor( form: MailboxForm< T > ) {
-		this.form = form;
+	constructor( existingMailboxes: string[] ) {
+		this.existingMailboxes = existingMailboxes;
 	}
 
 	validate( field?: MailboxFormFieldBase< string > ): void {
-		const existingMailboxes = this.form.existingMailboxes ?? [];
-		if ( ! field || field.error || ! existingMailboxes ) {
+		if ( ! field || field.error ) {
+			return;
+		}
+
+		const existingMailboxes = this.existingMailboxes ?? [];
+		if ( ! existingMailboxes ) {
 			return;
 		}
 
