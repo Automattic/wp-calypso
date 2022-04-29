@@ -1,6 +1,6 @@
 import {
-	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	JETPACK_BACKUP_PRODUCTS,
+	WPCOM_FEATURES_UPLOAD_VIDEO_FILES,
 	isJetpackAntiSpam,
 	isJetpackBackupSlug,
 	isBusinessPlan,
@@ -32,7 +32,8 @@ import getJetpackWpAdminUrl from 'calypso/state/selectors/get-jetpack-wp-admin-u
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import isSiteOnPaidPlan from 'calypso/state/selectors/is-site-on-paid-plan';
-import { hasFeature, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteSlug,
 	getCustomizerUrl,
@@ -439,7 +440,7 @@ function mapStateToProps( state: AppState ) {
 		wpAdminUrl,
 		hasVideoHosting: !! (
 			siteId &&
-			hasFeature( state, siteId, FEATURE_VIDEO_UPLOADS_JETPACK_PRO ) &&
+			siteHasFeature( state, siteId, WPCOM_FEATURES_UPLOAD_VIDEO_FILES ) &&
 			( ! isJetpackOfferResetPlan( planSlug ?? '' ) || isMinimumVersion )
 		),
 		sitePurchases: getSitePurchases( state, siteId ),
