@@ -160,9 +160,9 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		// As of Gutenberg 13.1, the editor will auto-focus on the title block
 		// automatically. See: https://github.com/WordPress/gutenberg/pull/40195.
 		// This ends up triggering an `blur` event on the Modal that causes it
-		// to close just after the editor loads. To circunvent this, we check if
+		// to close just after the editor loads. To circumvent this, we check if
 		// the `blur` event is related to the title auto-focus and if so,
-		// we ignore it so that the Modal stays open. It's importnat to note
+		// we ignore it so that the Modal stays open. It's important to note
 		// that this callback handles more than the  event, though. See the
 		// `CloseModalEvent` type for more info.
 
