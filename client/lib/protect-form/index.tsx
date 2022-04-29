@@ -83,10 +83,7 @@ export const protectForm = createHigherOrderComponent< ProtectedFormProps >( ( C
 	return ( props ) => {
 		const { markChanged, markSaved } = useProtectForm();
 
-		// There is an issue with a type rework in the upstream package which causes
-		// this correct use to fail without an ignore. See https://github.com/WordPress/gutenberg/pull/37795
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore-next-line
+		// @ts-expect-error There is an issue an upstream type. See https://github.com/WordPress/gutenberg/pull/37795. May be fixed in an upcoming release.
 		return <Component { ...props } markChanged={ markChanged } markSaved={ markSaved } />;
 	};
 }, 'protectForm' );
