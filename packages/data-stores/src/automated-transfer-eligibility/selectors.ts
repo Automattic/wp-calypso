@@ -1,7 +1,11 @@
 import { select } from '@wordpress/data';
 import { STORE_KEY, statusMapping } from './constants';
-import { RootState as State } from './reducer';
-import { TransferEligibilityWarning, TransferEligibilityError, TransferEligibility } from './types';
+import {
+	State,
+	TransferEligibilityWarning,
+	TransferEligibilityError,
+	TransferEligibility,
+} from './types';
 
 export const getAutomatedTransferEligibility = (
 	state: State,
@@ -10,7 +14,7 @@ export const getAutomatedTransferEligibility = (
 	if ( ! siteId ) {
 		return null;
 	}
-	return state.transferEligibility[ siteId ];
+	return state[ siteId ];
 };
 
 export const getEligibilityHolds = (

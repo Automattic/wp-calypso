@@ -15,6 +15,4 @@ export const transferEligibility: Reducer< State, Action > = ( state = {}, actio
 	return state;
 };
 
-export type RootState = ReturnType< typeof transferEligibility >;
-
 export default transferEligibility;

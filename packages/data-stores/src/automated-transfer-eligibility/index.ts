@@ -1,9 +1,10 @@
 import { registerStore } from '@wordpress/data';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
-import reducer, { RootState as State } from './reducer';
+import reducer from './reducer';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';
+import { State } from './types';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 
 export * from './types';
