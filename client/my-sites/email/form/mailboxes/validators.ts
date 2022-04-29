@@ -48,10 +48,12 @@ class StringLengthValidator implements Validator< string > {
 class MailboxNameValidator implements Validator< string > {
 	domainName: string;
 	mailboxHasDomainError: boolean;
+	supportsApostrophes: boolean;
 
-	constructor( domainName: string, mailboxHasDomainError: boolean ) {
+	constructor( domainName: string, mailboxHasDomainError: boolean, supportsApostrophes: boolean ) {
 		this.domainName = domainName;
 		this.mailboxHasDomainError = mailboxHasDomainError;
+		this.supportsApostrophes = supportsApostrophes;
 	}
 
 	validate( field?: MailboxFormFieldBase< string > ): void {
@@ -59,10 +61,16 @@ class MailboxNameValidator implements Validator< string > {
 			return;
 		}
 
-		if ( ! /^[\da-z_-](\.?[\da-z_-])*$/i.test( field.value ) ) {
-			field.error = i18n.translate(
-				'Only numbers, letters, dashes, underscores, and periods are allowed.'
-			);
+		const regex = this.supportsApostrophes
+			? /^[\da-z_'-](\.?[\da-z_'-])*$/i
+			: /^[\da-z_-](\.?[\da-z_-])*$/i;
+
+		if ( ! regex.test( field.value ) ) {
+			field.error = this.supportsApostrophes
+				? i18n.translate(
+						'Only numbers, letters, dashes, underscores, apostrophes and periods are allowed.'
+				  )
+				: i18n.translate( 'Only numbers, letters, dashes, underscores, and periods are allowed.' );
 			return;
 		}
 
