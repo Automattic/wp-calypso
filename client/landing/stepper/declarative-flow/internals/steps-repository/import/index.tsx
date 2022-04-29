@@ -13,7 +13,6 @@ import './style.scss';
 
 export const ImportWrapper: Step = function ( props ) {
 	const { __ } = useI18n();
-	const BASE_STEPPER_ROUTE = 'setup';
 	const { navigation, children } = props;
 	const currentRoute = useCurrentRoute();
 	const shouldHideSkipBtn = currentRoute !== BASE_ROUTE;

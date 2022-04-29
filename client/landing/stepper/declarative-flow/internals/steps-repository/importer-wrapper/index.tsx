@@ -7,6 +7,7 @@ import React, { useEffect, useImperativeHandle, useState, forwardRef, ForwardedR
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { StepPath } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -25,7 +26,8 @@ import {
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { BASE_ROUTE } from '../import/config';
+import { BASE_ROUTE, BASE_STEPPER_ROUTE } from '../import/config';
+import { removeLeadingSlash } from '../import/util';
 import type { ImporterWrapperRefAttr, ImporterWrapperProps } from './types';
 
 export const ImporterWrapper = forwardRef(
@@ -60,6 +62,10 @@ export const ImporterWrapper = forwardRef(
 			siteId: siteId as number,
 			siteSlug: siteSlug as string,
 			fromSite,
+			navigator: ( path ) => {
+				const stepPath = removeLeadingSlash( path.replace( BASE_STEPPER_ROUTE, '' ) );
+				navigation.goToStep?.( stepPath as StepPath );
+			},
 		} ) );
 
 		/**

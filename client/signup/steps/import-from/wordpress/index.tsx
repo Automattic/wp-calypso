@@ -24,10 +24,12 @@ interface Props {
 	siteId: number;
 	siteSlug: string;
 	fromSite: string;
+	navigator?: ( path: string ) => void;
 }
 
 export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => {
 	const importer: Importer = 'wordpress';
+	const navigator = props.navigator || page;
 
 	/**
 	 ↓ Fields
@@ -91,15 +93,15 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	} ) {
 		const currentPath = window.location.pathname + window.location.search;
 
-		page( addQueryArgs( params, currentPath ) );
+		navigator( addQueryArgs( params, currentPath ) );
 	}
 
 	function redirectToWpAdminImportPage() {
-		return page( `/import/${ siteSlug }` );
+		return navigator( `/import/${ siteSlug }` );
 	}
 
 	function redirectToWpAdminWordPressImporter() {
-		return page( getWpOrgImporterUrl( siteSlug, 'wordpress' ) );
+		return navigator( getWpOrgImporterUrl( siteSlug, 'wordpress' ) );
 	}
 
 	/**

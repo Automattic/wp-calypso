@@ -9,6 +9,7 @@ export type ImporterWrapperRefAttr = {
 	siteSlug: string;
 	fromSite: string;
 	job?: ImportJob;
+	navigator?: ( path: string ) => void;
 };
 
 interface AdditionalProps {

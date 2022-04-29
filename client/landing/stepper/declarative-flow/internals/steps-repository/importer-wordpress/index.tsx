@@ -17,6 +17,7 @@ const ImporterWordpress: Step = function ( props ) {
 					siteId={ refObj.siteId }
 					siteSlug={ refObj.siteSlug }
 					fromSite={ refObj.fromSite }
+					navigator={ refObj.navigator }
 				/>
 			) }
 		</ImporterWrapper>
