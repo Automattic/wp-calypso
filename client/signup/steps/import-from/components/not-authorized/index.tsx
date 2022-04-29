@@ -10,20 +10,22 @@ import './style.scss';
 
 interface Props {
 	siteSlug: string;
+	navigator?: ( path: string ) => void;
 }
 
 const NotAuthorized: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
 	const { siteSlug } = props;
+	const navigator = props.navigator || page;
 
 	/**
 	 ↓ Methods
 	 */
 	const backToStart = (): void => {
-		page( getStepUrl( 'importer', 'capture', '', '', { siteSlug } ) );
+		navigator( getStepUrl( 'importer', 'capture', '', '', { siteSlug } ) );
 	};
 	const backToIntent = (): void => {
-		page( getStepUrl( 'setup-site', 'intent', '', '', { siteSlug } ) );
+		navigator( getStepUrl( 'setup-site', 'intent', '', '', { siteSlug } ) );
 	};
 
 	return (

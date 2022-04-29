@@ -62,10 +62,7 @@ export const ImporterWrapper = forwardRef(
 			siteId: siteId as number,
 			siteSlug: siteSlug as string,
 			fromSite,
-			navigator: ( path ) => {
-				const stepPath = removeLeadingSlash( path.replace( BASE_STEPPER_ROUTE, '' ) );
-				navigation.goToStep?.( stepPath as StepPath );
-			},
+			navigator,
 		} ) );
 
 		/**
@@ -94,6 +91,11 @@ export const ImporterWrapper = forwardRef(
 
 		function fetchImporters() {
 			siteId && dispatch( fetchImporterState( siteId ) );
+		}
+
+		function navigator( path: string ) {
+			const stepPath = removeLeadingSlash( path.replace( BASE_STEPPER_ROUTE, '' ) );
+			navigation.goToStep?.( stepPath as StepPath );
 		}
 
 		function getImportJob( importer: Importer ): ImportJob | undefined {
@@ -155,7 +157,7 @@ export const ImporterWrapper = forwardRef(
 			} else if ( ! siteSlug ) {
 				return <NotFound />;
 			} else if ( hasPermission() ) {
-				return <NotAuthorized siteSlug={ siteSlug } />;
+				return <NotAuthorized siteSlug={ siteSlug } navigator={ navigator } />;
 			}
 
 			// Provided importer
