@@ -10,7 +10,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
-	// getSiteStatsNormalizedData,
 	getVideoPressPlaysComplete,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -250,7 +249,6 @@ export default connect( ( state, ownProps ) => {
 	const { statType, query } = ownProps;
 
 	query.complete_stats = 1;
-	// const statType = 'statsVideoPlaysComplete';
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, statType, query ),
