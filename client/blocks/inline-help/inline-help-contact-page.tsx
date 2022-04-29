@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import InlineHelpSearchResults from './inline-help-search-results';
 
 import './inline-help-contact-page.scss';
@@ -10,8 +10,6 @@ interface Props {
 }
 
 const InlineHelpContactPage: React.FC< Props > = ( { closeContactPage, onSelectResource } ) => {
-	const { __ } = useI18n();
-
 	return (
 		<div className="inline-help__contact-page">
 			<Button borderless={ true } onClick={ closeContactPage }>

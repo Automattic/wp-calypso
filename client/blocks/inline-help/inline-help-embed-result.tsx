@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Gridicon } from '@automattic/components';
 import { Flex, FlexItem } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import React from 'react';
 import ArticleContent from 'calypso/blocks/support-article-dialog/dialog-content';
 import { RESULT_ARTICLE } from './constants';
@@ -21,8 +21,6 @@ interface Props {
 
 const InlineHelpEmbedResult: React.FC< Props > = ( { result, handleBackButton, searchQuery } ) => {
 	const { post_id: postId, link, type = RESULT_ARTICLE } = result;
-	const { __ } = useI18n();
-
 	useEffect( () => {
 		const tracksData = {
 			search_query: searchQuery,

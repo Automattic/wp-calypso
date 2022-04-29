@@ -1,6 +1,6 @@
 import { CardHeader, Button, Flex } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { closeSmall, chevronUp, lineSolid } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { Header } from './types';
 
@@ -12,7 +12,6 @@ const HelpCenterMobileHeader: React.FC< Header > = ( {
 	headerText,
 } ) => {
 	const classNames = classnames( 'help-center__container-header' );
-	const { __ } = useI18n();
 
 	return (
 		<CardHeader className={ classNames }>

@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 
@@ -26,7 +26,6 @@ const ResourceItem: React.FC< ItemProps > = ( { link, icon, text, svgColor, onCl
 );
 
 const HelpCenterMoreResources = () => {
-	const { __ } = useI18n();
 	const isBusinessOrEcomPlanUser = useSelector( ( state ) => {
 		const purchases = getUserPurchases( state );
 		const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
