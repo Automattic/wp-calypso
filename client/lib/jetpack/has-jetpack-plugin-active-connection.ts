@@ -1,3 +1,5 @@
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+
 type Site = {
 	options?: {
 		jetpack_connection_active_plugins?: Array< string >;
@@ -14,7 +16,9 @@ type Site = {
  */
 export default function hasJetpackPluginActiveConnection( site: Site ): boolean {
 	const activeJetpackPlugins = site?.options?.jetpack_connection_active_plugins;
-	const plugins = [ 'jetpack', 'jetpack-search', 'jetpack-backup', 'jetpack-social' ];
+	const plugins = [ 'jetpack' ].concat(
+		isJetpackCloud() ? [ 'jetpack-search', 'jetpack-backup', 'jetpack-social' ] : []
+	);
 	return (
 		! activeJetpackPlugins ||
 		activeJetpackPlugins.some( ( plugin: string ) => plugins.includes( plugin ) )
