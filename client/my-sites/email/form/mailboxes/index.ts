@@ -18,6 +18,7 @@ import {
 	MailboxNameValidator,
 	PasswordValidator,
 	RequiredValidator,
+	StringLengthValidator,
 } from 'calypso/my-sites/email/form/mailboxes/validators';
 import type {
 	FormFieldNames,
@@ -50,15 +51,20 @@ class MailboxForm< T extends EmailProvider > {
 
 	private getValidators(): [ ValidatorFieldNames, Validator< unknown > ][] {
 		const minimumPasswordLength = this.provider === EmailProvider.Titan ? 10 : 12;
+		const domainField = this.getFormField< string >( FIELD_DOMAIN );
+		const domainName = domainField?.value ?? '';
+		const mailboxHasDomainError = Boolean( domainField?.value );
 
 		return [
-			[ FIELD_ALTERNATIVE_EMAIL, new AlternateEmailValidator< T >( this ) ],
+			[ FIELD_ALTERNATIVE_EMAIL, new AlternateEmailValidator( domainName ) ],
 			[ FIELD_DOMAIN, new RequiredValidator< string >() ],
 			[ FIELD_FIRSTNAME, new RequiredValidator< string >() ],
+			[ FIELD_FIRSTNAME, new StringLengthValidator( 60 ) ],
 			[ FIELD_LASTNAME, new RequiredValidator< string >() ],
+			[ FIELD_LASTNAME, new StringLengthValidator( 60 ) ],
 			[ FIELD_MAILBOX, new RequiredValidator< string >() ],
 			[ FIELD_MAILBOX, new ExistingMailboxesValidator( this.existingMailboxes ) ],
-			[ FIELD_MAILBOX, new MailboxNameValidator< T >( this ) ],
+			[ FIELD_MAILBOX, new MailboxNameValidator( domainName, mailboxHasDomainError ) ],
 			[ FIELD_PASSWORD, new RequiredValidator< string >() ],
 			[ FIELD_PASSWORD, new PasswordValidator( minimumPasswordLength ) ],
 			[ FIELD_UUID, new RequiredValidator< string >() ],

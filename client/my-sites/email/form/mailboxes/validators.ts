@@ -1,8 +1,6 @@
 import emailValidator from 'email-validator';
-import i18n from 'i18n-calypso';
+import i18n, { translate } from 'i18n-calypso';
 import React from 'react';
-import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes/index';
-import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import type { MailboxFormFieldBase } from 'calypso/my-sites/email/form/mailboxes/types';
 
 interface Validator< T > {
@@ -27,11 +25,33 @@ class RequiredValidator< T > implements Validator< T > {
 	}
 }
 
-class MailboxNameValidator< T extends EmailProvider > implements Validator< string > {
-	form: MailboxForm< T >;
+class StringLengthValidator implements Validator< string > {
+	private readonly minimumStringLength: number;
 
-	constructor( form: MailboxForm< T > ) {
-		this.form = form;
+	constructor( minimumStringLength: number ) {
+		this.minimumStringLength = minimumStringLength;
+	}
+
+	validate( field?: MailboxFormFieldBase< string > ): void {
+		if ( ! field || field.error ) {
+			return;
+		}
+
+		if ( this.minimumStringLength < ( field.value?.length ?? 0 ) ) {
+			field.error = translate( "This field can't be longer than %s characters.", {
+				args: this.minimumStringLength,
+			} );
+		}
+	}
+}
+
+class MailboxNameValidator implements Validator< string > {
+	domainName: string;
+	mailboxHasDomainError: boolean;
+
+	constructor( domainName: string, mailboxHasDomainError: boolean ) {
+		this.domainName = domainName;
+		this.mailboxHasDomainError = mailboxHasDomainError;
 	}
 
 	validate( field?: MailboxFormFieldBase< string > ): void {
@@ -46,13 +66,10 @@ class MailboxNameValidator< T extends EmailProvider > implements Validator< stri
 			return;
 		}
 
-		const domain = this.form?.formFields?.domain ?? null;
-
 		if (
-			domain &&
-			! domain.error &&
-			domain.value &&
-			! emailValidator.validate( `${ field.value }@${ domain.value }` )
+			this.domainName &&
+			! this.mailboxHasDomainError &&
+			! emailValidator.validate( `${ field.value }@${ this.domainName }` )
 		) {
 			field.error = i18n.translate( 'Please supply a valid email address.' );
 			return;
@@ -60,11 +77,11 @@ class MailboxNameValidator< T extends EmailProvider > implements Validator< stri
 	}
 }
 
-class AlternateEmailValidator< T extends EmailProvider > implements Validator< string > {
-	form: MailboxForm< T >;
+class AlternateEmailValidator implements Validator< string > {
+	domainName: string;
 
-	constructor( form: MailboxForm< T > ) {
-		this.form = form;
+	constructor( domainName: string ) {
+		this.domainName = domainName;
 	}
 
 	validate( field?: MailboxFormFieldBase< string > ): void {
@@ -81,14 +98,17 @@ class AlternateEmailValidator< T extends EmailProvider > implements Validator< s
 		}
 
 		const parts = `${ value }`.split( '@' );
-		const domain = this.form?.formFields?.domain?.value ?? null;
 
-		if ( domain && parts.length > 1 && parts[ 1 ].toLowerCase() === domain?.toLowerCase() ) {
+		if (
+			this.domainName &&
+			parts.length > 1 &&
+			parts[ 1 ].toLowerCase() === this.domainName?.toLowerCase()
+		) {
 			field.error = i18n.translate(
 				'This email address must have a different domain than {{strong}}%(domain)s{{/strong}}. Please use a different email address.',
 				{
 					args: {
-						domain: domain,
+						domain: this.domainName,
 					},
 					components: {
 						strong: React.createElement( 'strong' ),
@@ -102,7 +122,7 @@ class AlternateEmailValidator< T extends EmailProvider > implements Validator< s
 class PasswordValidator implements Validator< string > {
 	private readonly minimumPasswordLength: number;
 
-	constructor( minimumPasswordLength = 12 ) {
+	constructor( minimumPasswordLength: number ) {
 		this.minimumPasswordLength = minimumPasswordLength;
 	}
 
@@ -188,4 +208,5 @@ export {
 	MailboxNameValidator,
 	PasswordValidator,
 	RequiredValidator,
+	StringLengthValidator,
 };
