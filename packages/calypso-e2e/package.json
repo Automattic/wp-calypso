@@ -40,6 +40,8 @@
 	},
 	"scripts": {
 		"clean": "yarn build --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json"
+		"build": "tsc --build ./tsconfig.json",
+		"encrypt-secrets": "openssl enc -md sha1 -aes-256-cbc -pass env:E2E_SECRETS_KEY -out ./src/secrets/encrypted.enc -in ./src/secrets/decrypted-secrets.json",
+		"decrypt-secrets": "openssl enc -md sha1 -aes-256-cbc -d -pass env:E2E_SECRETS_KEY -in ./src/secrets/encrypted.enc -out ./src/secrets/decrypted-secrets.json"
 	}
 }

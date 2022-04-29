@@ -5,4 +5,4 @@
 src/secrets/*
 !src/secrets/secrets.ts
 !src/secrets/index.ts
-!src/secrets/encyrpted.enc
+!src/secrets/encrypted.enc

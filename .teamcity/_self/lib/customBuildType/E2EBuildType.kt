@@ -127,8 +127,8 @@ open class E2EBuildType(
 					cd test/e2e
 					mkdir temp
 
-					# Decrypt config
-					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
+					# Decrypt secrets
+					E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn decrypt-secrets
 
 					# Run suite.
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=$testGroup
