@@ -1,4 +1,4 @@
-import { FEATURE_MEMBERSHIPS } from '@automattic/calypso-products';
+import { FEATURE_SIMPLE_PAYMENTS } from '@automattic/calypso-products';
 import referralImage from 'calypso/assets/images/earn/referral.svg';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCta from 'calypso/components/promo-section/promo-card/cta';
@@ -20,9 +20,9 @@ const PromoCardExample = () => {
 					</p>
 					<PromoCardCta
 						cta={ {
-							feature: FEATURE_MEMBERSHIPS,
+							feature: FEATURE_SIMPLE_PAYMENTS,
 							upgradeButton: { text: 'Upgrade!', action: clicked },
-							defaultButton: { text: 'Memberships', action: clicked },
+							defaultButton: { text: 'Simple Payments', action: clicked },
 						} }
 						learnMoreLink="/learn-more"
 					/>

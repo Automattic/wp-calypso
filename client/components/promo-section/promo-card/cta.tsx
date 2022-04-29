@@ -4,7 +4,7 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { connect } from 'react-redux';
 import ActionPanelCta from 'calypso/components/action-panel/cta';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { URL } from 'calypso/types';
 
@@ -32,7 +32,7 @@ export type Cta =
 	  };
 
 interface ConnectedProps {
-	hasPlanFeature: boolean;
+	selectedSiteHasFeature: boolean;
 }
 
 export interface Props {
@@ -80,7 +80,7 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 	cta,
 	learnMoreLink,
 	isPrimary,
-	hasPlanFeature,
+	selectedSiteHasFeature,
 } ) => {
 	const ctaBtnProps = ( button: CtaButton ) => buttonProps( button, true === isPrimary );
 	let ctaBtn;
@@ -103,7 +103,7 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 	if ( isCtaButton( cta ) ) {
 		ctaBtn = <Button { ...ctaBtnProps( cta ) }>{ cta.text }</Button>;
 	} else {
-		ctaBtn = hasPlanFeature ? (
+		ctaBtn = selectedSiteHasFeature ? (
 			<Button { ...ctaBtnProps( cta.defaultButton ) }>{ cta.defaultButton.text }</Button>
 		) : (
 			<Button { ...ctaBtnProps( cta.upgradeButton ) }>{ cta.upgradeButton.text }</Button>
@@ -125,9 +125,9 @@ export default connect< ConnectedProps, unknown, Props >( ( state, { cta } ) => 
 	const selectedSiteId = getSelectedSiteId( state );
 
 	return {
-		hasPlanFeature:
+		selectedSiteHasFeature:
 			selectedSiteId && ! isCtaButton( cta )
-				? hasFeature( state, selectedSiteId, cta.feature )
+				? siteHasFeature( state, selectedSiteId, cta.feature )
 				: false,
 	};
 } )( PromoCardCta );

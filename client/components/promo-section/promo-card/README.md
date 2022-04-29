@@ -22,9 +22,9 @@ const PromoCardExample = () => {
 			</p>
 			<PromoCardCta
 				cta={ {
-					feature: FEATURE_MEMBERSHIPS,
+					feature: FEATURE_SIMPLE_PAYMENTS,
 					upgradeButton: { text: 'Upgrade!', action: clicked },
-					defaultButton: { text: 'Memberships', action: clicked },
+					defaultButton: { text: 'Simple Payments', action: clicked },
 				} }
 				learnMoreLink="/learn-more"
 			/>
