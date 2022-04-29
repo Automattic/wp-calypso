@@ -121,6 +121,7 @@ class MasterbarItemNotifications extends Component {
 					tooltip={ this.props.tooltip }
 					className={ classes }
 					ref={ this.notificationLink }
+					key={ this.state.animationState }
 				/>
 				<div className="masterbar-notifications__panel" ref={ this.notificationPanel }>
 					<AsyncLoad
