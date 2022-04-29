@@ -106,14 +106,6 @@ export const getVideoPressPlaysComplete = treeSelect(
 	],
 	( [ siteStats, site ], siteId, statType, query ) => {
 		return siteStats;
-		// if ('statsVideoPlaysComplete' === statType ) {
-		// 	return
-		// }
-		// const normalizer = normalizers[ statType ];
-		// if ( typeof normalizer !== 'function' ) {
-		// 	return siteStats;
-		// }
-		// return normalizer( siteStats, query, siteId, site );
 	},
 	{
 		getCacheKey: ( siteId, statType, query ) =>
