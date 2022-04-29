@@ -12,6 +12,7 @@ import replacePlaceholders from '../utils/replace-placeholders';
 import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
 import PatternSelectorControl from './pattern-selector-control';
 import type { PatternCategory, PatternDefinition } from '../pattern-definition';
+import type { FocusEvent } from 'react';
 
 interface PagePatternModalProps {
 	areTipsEnabled?: boolean;
@@ -153,7 +154,18 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		this.setState( { selectedCategory } );
 	};
 
-	closeModal = () => {
+	closeModal = ( event: FocusEvent ) => {
+		// As of Gutenberg 13.1, the editor will auto-focus on the title block
+		// automatically. See: https://github.com/WordPress/gutenberg/pull/40195.
+		// This ends up triggering an `onBlur` event on the Modal that causes it
+		// to close just after the editor loads. To circunvent this, we check if
+		//the `onBlur` event is related to the title auto-focus and if so,
+		// we ignore it so that the Modal stays open.
+		if ( event.relatedTarget?.getAttribute( 'aria-label' ) === 'Add title' ) {
+			event.stopPropagation();
+			return;
+		}
+
 		trackDismiss();
 		this.props.onClose();
 	};
