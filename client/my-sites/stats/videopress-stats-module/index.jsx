@@ -18,8 +18,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
-import AllTimeNav from './all-time-nav';
-import StatsModulePlaceholder from './placeholder';
+import AllTimeNav from '../stats-module/all-time-nav';
+import StatsModulePlaceholder from '../stats-module/placeholder';
 
 import './style.scss';
 
