@@ -30,7 +30,7 @@ class VideoPressStatsModule extends Component {
 		path: PropTypes.string,
 		siteSlug: PropTypes.string,
 		siteId: PropTypes.number,
-		data: PropTypes.array,
+		data: PropTypes.object,
 		query: PropTypes.object,
 		statType: PropTypes.string,
 		showSummaryLink: PropTypes.bool,
@@ -191,8 +191,11 @@ class VideoPressStatsModule extends Component {
 								{ 'Views' }
 							</div>
 						</div>
-						{ completeVideoStats.map( ( row ) => (
-							<div className="videopress-stats-module__row-wrapper">
+						{ completeVideoStats.map( ( row, index ) => (
+							<div
+								key={ 'videopress-stats-row-' + index }
+								className="videopress-stats-module__row-wrapper"
+							>
 								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-link">
 									<span
 										onClick={ () => editVideo( row.post_id ) }
