@@ -309,7 +309,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 			<Modal
 				title="" // We're providing the title with the `aria.labelledby` prop
 				className="page-pattern-modal"
-				/* eslist-disable-next-line @typescript-eslint/ban-ts-comment */
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore `onRequestClose`'s type is () => void but ideally it should eslint-disable-line
 				// specify the `FocusEvent` object that's passed. Ignoring the error until
 				// the `Modal` component type is updated in Gutenberg.
