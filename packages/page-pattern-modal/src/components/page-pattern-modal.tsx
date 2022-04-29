@@ -161,7 +161,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		// to close just after the editor loads. To circunvent this, we check if
 		//the `onBlur` event is related to the title auto-focus and if so,
 		// we ignore it so that the Modal stays open.
-		if ( event.relatedTarget?.getAttribute( 'aria-label' ) === 'Add title' ) {
+		if ( event.relatedTarget?.className?.match( /wp-block-post-title/ ) ) {
 			event.stopPropagation();
 			return;
 		}
