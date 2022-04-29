@@ -721,8 +721,14 @@ $masterbar-color-secondary: #101517;
 		transform-origin: 20px 4px;
 
 		use {
+			transition: all 150ms ease-in;
 			transform-origin: 20px 4px;
 		}
+	}
+
+	&:hover use.border {
+		transition: all 150ms ease-in;
+		fill: var( --color-masterbar-item-active-background );
 	}
 }
 

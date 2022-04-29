@@ -15,6 +15,8 @@ export const BellIcon: React.FC< Props > = ( { active } ) => (
 			/>
 			<g className="notifications-bell-icon__bubble">
 				<use
+					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+					className="border"
 					xlinkHref="#bubble"
 					transform="scale( 1.5 )"
 					fill={
