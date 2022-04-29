@@ -12,7 +12,7 @@ import replacePlaceholders from '../utils/replace-placeholders';
 import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
 import PatternSelectorControl from './pattern-selector-control';
 import type { PatternCategory, PatternDefinition } from '../pattern-definition';
-import type { FocusEvent } from 'react';
+import type { KeyboardEvent, MouseEvent, FocusEvent } from 'react';
 
 interface PagePatternModalProps {
 	areTipsEnabled?: boolean;
@@ -34,6 +34,8 @@ interface PagePatternModalProps {
 interface PagePatternModalState {
 	selectedCategory: string | null;
 }
+
+type CloseModalEvent = KeyboardEvent | MouseEvent | FocusEvent;
 
 class PagePatternModal extends Component< PagePatternModalProps, PagePatternModalState > {
 	constructor( props: PagePatternModalProps ) {
@@ -154,16 +156,25 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		this.setState( { selectedCategory } );
 	};
 
-	closeModal = ( event: FocusEvent ) => {
+	closeModal = ( event: CloseModalEvent ) => {
 		// As of Gutenberg 13.1, the editor will auto-focus on the title block
 		// automatically. See: https://github.com/WordPress/gutenberg/pull/40195.
-		// This ends up triggering an `onBlur` event on the Modal that causes it
+		// This ends up triggering an `blur` event on the Modal that causes it
 		// to close just after the editor loads. To circunvent this, we check if
-		// the `onBlur` event is related to the title auto-focus and if so,
-		// we ignore it so that the Modal stays open.
-		if ( event.relatedTarget?.className?.match( /wp-block-post-title/ ) ) {
-			event.stopPropagation();
-			return;
+		// the `blur` event is related to the title auto-focus and if so,
+		// we ignore it so that the Modal stays open. It's importnat to note
+		// that this callback handles more than the  event, though. See the
+		// `CloseModalEvent` type for more info.
+
+		// Let's narrow-down the types to be able to safely handle the `blur` scenario
+		// `KeyboardEvent` doesn't have a `relatedTarget` property, and the `MouseEvent`'s
+		// relatedTarget type doesn't have a `className` property, though for those events
+		// the Modal can just close and we don't need the piece of logic below.
+		if ( 'relatedTarget' in event && event.relatedTarget && 'className' in event.relatedTarget ) {
+			if ( event.relatedTarget?.className?.match( /wp-block-post-title/ ) ) {
+				event.stopPropagation();
+				return;
+			}
 		}
 
 		trackDismiss();
