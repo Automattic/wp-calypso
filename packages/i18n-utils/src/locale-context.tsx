@@ -95,7 +95,7 @@ export function useLocale(): string {
 export const withLocale = createHigherOrderComponent< { locale: string } >( ( InnerComponent ) => {
 	return ( props ) => {
 		const locale = useLocale();
-		// @ts-expect-error There is an issue an upstream type. See https://github.com/WordPress/gutenberg/pull/37795. May be fixed in an upcoming release.
+		// @ts-expect-error Upstream type issue from https://github.com/WordPress/gutenberg/pull/37795. May be fixed in an upcoming release.
 		return <InnerComponent locale={ locale } { ...props } />;
 	};
 }, 'withLocale' );
