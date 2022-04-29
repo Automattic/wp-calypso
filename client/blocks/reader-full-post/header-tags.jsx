@@ -1,4 +1,4 @@
-import { take, values } from 'lodash';
+import { values } from 'lodash';
 import PropTypes from 'prop-types';
 
 const TAGS_TO_SHOW = 5;
@@ -6,7 +6,7 @@ const TAGS_TO_SHOW = 5;
 const ReaderFullPostHeaderTags = ( { tags } ) => {
 	let tagsInOccurrenceOrder = values( tags );
 	tagsInOccurrenceOrder.sort( ( a, b ) => b.post_count - a.post_count );
-	tagsInOccurrenceOrder = take( tagsInOccurrenceOrder, TAGS_TO_SHOW );
+	tagsInOccurrenceOrder = tagsInOccurrenceOrder.slice( 0, TAGS_TO_SHOW );
 
 	const listItems = tagsInOccurrenceOrder.map( ( tag ) => {
 		return (

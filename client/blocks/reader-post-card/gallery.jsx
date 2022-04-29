@@ -1,4 +1,4 @@
-import { map, take, filter } from 'lodash';
+import { map, filter } from 'lodash';
 import PropTypes from 'prop-types';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -17,7 +17,7 @@ function getGalleryWorthyImages( post ) {
 	}
 
 	const worthyImages = filter( images, imageIsBigEnoughForGallery );
-	return take( worthyImages, numberOfImagesToDisplay );
+	return worthyImages.slice( 0, numberOfImagesToDisplay );
 }
 
 const PostGallery = ( { post, children, isDiscover } ) => {
