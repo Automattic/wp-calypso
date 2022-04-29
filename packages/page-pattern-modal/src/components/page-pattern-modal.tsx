@@ -159,7 +159,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		// automatically. See: https://github.com/WordPress/gutenberg/pull/40195.
 		// This ends up triggering an `onBlur` event on the Modal that causes it
 		// to close just after the editor loads. To circunvent this, we check if
-		//the `onBlur` event is related to the title auto-focus and if so,
+		// the `onBlur` event is related to the title auto-focus and if so,
 		// we ignore it so that the Modal stays open.
 		if ( event.relatedTarget?.className?.match( /wp-block-post-title/ ) ) {
 			event.stopPropagation();
