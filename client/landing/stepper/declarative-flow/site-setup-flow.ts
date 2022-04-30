@@ -31,7 +31,6 @@ export const siteSetupFlow: Flow = {
 			'importReadyNot',
 			'importReadyWpcom',
 			'importReadyPreview',
-			'importer',
 			'importerWix',
 			'importerBlogger',
 			'importerMedium',
@@ -239,9 +238,7 @@ export const siteSetupFlow: Flow = {
 				case 'importReadyPreview':
 					return navigate( 'import' );
 
-				case 'importer':
 				case 'importerWordpress':
-				case 'importer/wordpress':
 					return navigate( 'import' );
 
 				default:
