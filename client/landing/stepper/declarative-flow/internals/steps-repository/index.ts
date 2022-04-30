@@ -14,6 +14,7 @@ export { default as importReadyPreview } from './import-ready-preview';
 export { default as importer } from './importer';
 export { default as importerWix } from './importer-wix';
 export { default as importerBlogger } from './importer-blogger';
+export { default as importerMedium } from './importer-medium';
 export { default as importerWordpress } from './importer-wordpress';
 export { default as businessInfo } from './business-info';
 export { default as storeAddress } from './store-address';
@@ -39,8 +40,9 @@ export type StepPath =
 	| 'importReadyPreview'
 	| 'importer'
 	| 'importerWix'
-	| 'importerWordpress'
 	| 'importerBlogger'
+	| 'importerMedium'
+	| 'importerWordpress'
 	| 'importer/wordpress'
 	| 'businessInfo'
 	| 'storeAddress'
