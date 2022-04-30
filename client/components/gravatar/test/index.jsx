@@ -3,6 +3,8 @@
  */
 import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { axe, toHaveNoViolations } from 'jest-axe';
+expect.extend( toHaveNoViolations );
 import { Gravatar } from '../';
 
 describe( 'Gravatar', () => {
@@ -161,6 +163,13 @@ describe( 'Gravatar', () => {
 				expect( span ).toBeUndefined();
 				expect( img.getAttribute( 'src' ) ).toEqual( 'tempImage' );
 				expect( img ).toHaveClass( 'gravatar' );
+			} );
+
+			test( 'should not have basic accessibility issues', async () => {
+				const { container } = render( <Gravatar tempImage={ 'tempImage' } user={ genericUser } /> );
+				const results = await axe( container );
+
+				expect( results ).toHaveNoViolations();
 			} );
 		} );
 	} );

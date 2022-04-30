@@ -192,7 +192,7 @@ export class Banner extends Component {
 		const prices = Array.isArray( price ) ? price : [ price ];
 
 		return (
-			<div className="banner__content">
+			<div className="banner__content" role="banner">
 				{ tracksImpressionName && event && (
 					<TrackComponentView
 						eventName={ tracksImpressionName }

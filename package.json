@@ -186,6 +186,7 @@
 		"debug": "^4.3.3",
 		"i18n-calypso": "workspace:^",
 		"i18n-calypso-cli": "workspace:^",
+		"jest-axe": "^6.0.0",
 		"lodash": "^4.17.21",
 		"photon": "workspace:^",
 		"react": "^17.0.2",

@@ -1,5 +1,10 @@
+/**
+ * @jest-environment jsdom
+ */
 import { Button } from '@automattic/components';
 import { shallow } from 'enzyme';
+import { axe, toHaveNoViolations } from 'jest-axe';
+expect.extend( toHaveNoViolations );
 import ButtonGroup from '..';
 
 describe( 'ButtonGroup', () => {
@@ -21,5 +26,17 @@ describe( 'ButtonGroup', () => {
 	test( 'should get the busy `is-busy` class when passed the `busy` prop', () => {
 		const buttonGroup = shallow( <ButtonGroup busy /> );
 		expect( buttonGroup.find( '.is-busy' ) ).toHaveLength( 1 );
+	} );
+
+	test( 'should not have basic accessibility issues', async () => {
+		const buttonGroup = shallow(
+			<ButtonGroup>
+				<Button>test</Button>
+				<Button>test2</Button>
+			</ButtonGroup>
+		);
+		const results = await axe( buttonGroup.html() );
+
+		expect( results ).toHaveNoViolations();
 	} );
 } );

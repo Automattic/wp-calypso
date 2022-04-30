@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 jest.mock( 'calypso/blocks/dismissible-card', () => {
 	return function DismissibleCard() {
 		return null;
@@ -12,6 +15,8 @@ jest.mock( 'calypso/lib/analytics/track-component-view', () => {
 
 import { Card, Button } from '@automattic/components';
 import { shallow } from 'enzyme';
+import { axe, toHaveNoViolations } from 'jest-axe';
+expect.extend( toHaveNoViolations );
 import PlanPrice from 'calypso/my-sites/plan-price/';
 import { Banner } from '../index';
 
@@ -161,5 +166,14 @@ describe( 'Banner basic tests', () => {
 		expect( comp.find( Button ) ).toHaveLength( 1 );
 		expect( comp.find( Button ).props().href ).toBeUndefined();
 		expect( comp.find( Button ).props().children ).toBe( 'Go\xA0WordPress!' ); //preventWidows adds \xA0 non-breaking space;
+	} );
+
+	test( 'should not have basic accessibility issues', async () => {
+		const comp = shallow(
+			<Banner { ...props } href={ '/' } callToAction="Go WordPress!" forceHref={ true } />
+		);
+		const results = await axe( comp.html() );
+
+		expect( results ).toHaveNoViolations();
 	} );
 } );
