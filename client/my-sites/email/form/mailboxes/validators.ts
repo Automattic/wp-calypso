@@ -181,11 +181,11 @@ class PasswordValidator implements Validator< string > {
 	}
 }
 
-class ExistingMailboxesValidator implements Validator< string > {
-	existingMailboxes: string[];
+class ExistingMailboxNamesValidator implements Validator< string > {
+	existingMailboxNames: string[];
 
-	constructor( existingMailboxes: string[] ) {
-		this.existingMailboxes = existingMailboxes;
+	constructor( existingMailboxNames: string[] ) {
+		this.existingMailboxNames = existingMailboxNames;
 	}
 
 	validate( field?: MailboxFormFieldBase< string > ): void {
@@ -193,13 +193,13 @@ class ExistingMailboxesValidator implements Validator< string > {
 			return;
 		}
 
-		const existingMailboxes = this.existingMailboxes ?? [];
-		if ( ! existingMailboxes ) {
+		const existingMailboxNames = this.existingMailboxNames ?? [];
+		if ( ! existingMailboxNames ) {
 			return;
 		}
 
 		if (
-			existingMailboxes
+			existingMailboxNames
 				.map( ( item ) => item.toLowerCase() )
 				.includes( field.value?.toLowerCase() ?? '' )
 		) {
@@ -212,7 +212,7 @@ export type { Validator };
 
 export {
 	AlternateEmailValidator,
-	ExistingMailboxesValidator,
+	ExistingMailboxNamesValidator,
 	MailboxNameValidator,
 	PasswordValidator,
 	RequiredValidator,

@@ -14,7 +14,7 @@ import {
 } from 'calypso/my-sites/email/form/mailboxes/types';
 import {
 	AlternateEmailValidator,
-	ExistingMailboxesValidator,
+	ExistingMailboxNamesValidator,
 	MailboxNameValidator,
 	PasswordValidator,
 	RequiredValidator,
@@ -28,12 +28,12 @@ import type {
 import type { Validator } from 'calypso/my-sites/email/form/mailboxes/validators';
 
 class MailboxForm< T extends EmailProvider > {
-	existingMailboxes: string[];
+	existingMailboxNames: string[];
 	formFields: MailboxFormFields;
 	provider: T;
 
-	constructor( provider: T, domain: string, existingMailboxes: string[] = [] ) {
-		this.existingMailboxes = existingMailboxes;
+	constructor( provider: T, domain: string, existingMailboxNames: string[] = [] ) {
+		this.existingMailboxNames = existingMailboxNames;
 		this.formFields = MailboxFormFieldsFactory.create( provider, domain );
 		this.provider = provider;
 	}
@@ -64,7 +64,7 @@ class MailboxForm< T extends EmailProvider > {
 			[ FIELD_LASTNAME, new RequiredValidator< string >() ],
 			[ FIELD_LASTNAME, new StringLengthValidator( 60 ) ],
 			[ FIELD_MAILBOX, new RequiredValidator< string >() ],
-			[ FIELD_MAILBOX, new ExistingMailboxesValidator( this.existingMailboxes ) ],
+			[ FIELD_MAILBOX, new ExistingMailboxNamesValidator( this.existingMailboxNames ) ],
 			[
 				FIELD_MAILBOX,
 				new MailboxNameValidator( domainName, mailboxHasDomainError, supportsApostrophes ),
