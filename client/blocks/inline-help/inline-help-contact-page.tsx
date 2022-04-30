@@ -41,8 +41,6 @@ const InlineHelpContactPage: React.FC< Props > = ( { closeContactPage, onSelectR
 };
 
 export const InlineHelpContactPageButton: React.FC< { onClick: () => void } > = ( { onClick } ) => {
-	const { __ } = useI18n();
-
 	return (
 		<Button className="inline-help__contact-button" borderless={ false } onClick={ onClick }>
 			<Gridicon icon={ 'comment' } size={ 24 } fill="" />
