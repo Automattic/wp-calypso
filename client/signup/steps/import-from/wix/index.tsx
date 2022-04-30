@@ -22,12 +22,14 @@ interface Props {
 	siteId: number;
 	siteSlug: string;
 	fromSite: string;
+	navigator?: ( path: string ) => void;
 	importSite: ( params: ImportJobParams ) => void;
 	startImport: ( siteId: number, type: string ) => void;
 	resetImport: ( siteId: number, importerId: string ) => void;
 }
 export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	const importer: Importer = 'wix';
+	const navigator = props.navigator || page;
 	const { job, error, run, siteId, siteSlug, fromSite, importSite, startImport, resetImport } =
 		props;
 
@@ -85,7 +87,7 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function redirectToImportCapturePage() {
-		page( getStepUrl( 'importer', 'capture', '', '', { siteSlug } ) );
+		navigator( getStepUrl( 'importer', 'capture', '', '', { siteSlug } ) );
 	}
 
 	function checkIsImporterReady() {
