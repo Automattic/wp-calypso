@@ -7,6 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import SiteSelector from 'calypso/components/site-selector';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import hasJetpackPluginActiveConnection from 'calypso/lib/jetpack/has-jetpack-plugin-active-connection';
 
 import './style.scss';
 
@@ -28,12 +29,7 @@ class Sites extends Component {
 
 	filterSites = ( site ) => {
 		// only show Jetpack sites with the full Plugin or Backup/Search Plugin
-		if (
-			site?.options?.jetpack_connection_active_plugins &&
-			! site.options.jetpack_connection_active_plugins.includes( 'jetpack' ) &&
-			! site.options.jetpack_connection_active_plugins.includes( 'jetpack-backup' ) &&
-			! site.options.jetpack_connection_active_plugins.includes( 'jetpack-search' )
-		) {
+		if ( ! hasJetpackPluginActiveConnection( site ) ) {
 			return false;
 		}
 

@@ -202,6 +202,9 @@ export const siteSetupFlow: Flow = {
 				case 'storeAddress':
 					return navigate( 'storeFeatures' );
 
+				case 'businessInfo':
+					return navigate( 'storeAddress' );
+
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );
 

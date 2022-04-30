@@ -61,6 +61,7 @@
 		"mailchimp": false,
 		"marketplace-test": false,
 		"marketplace-domain-bundle": false,
+		"marketplace-jetpack-plugin-search": false,
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
 		"network-connection": true,
