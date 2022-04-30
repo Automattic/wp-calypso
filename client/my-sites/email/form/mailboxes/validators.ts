@@ -8,12 +8,16 @@ interface Validator< T > {
 }
 
 class RequiredValidator< T > implements Validator< T > {
+	static getRequiredFieldError(): FieldError {
+		return i18n.translate( 'This field is required.' );
+	}
+
 	validate( field?: MailboxFormFieldBase< T > ): void {
 		if ( ! field || field.error || ! field.isRequired ) {
 			return;
 		}
 
-		const requiredFieldError = i18n.translate( 'This field is required.' );
+		const requiredFieldError = RequiredValidator.getRequiredFieldError();
 
 		if ( ! field.value ) {
 			field.error = requiredFieldError;
@@ -44,15 +48,19 @@ class MaximumStringLengthValidator implements Validator< string > {
 		this.maximumStringLength = maximumStringLength;
 	}
 
+	static getFieldTooLongError( maximumStringLength: number ): FieldError {
+		return i18n.translate( "This field can't be longer than %s characters.", {
+			args: maximumStringLength,
+		} );
+	}
+
 	validate( field?: MailboxFormFieldBase< string > ): void {
 		if ( ! field || field.error ) {
 			return;
 		}
 
 		if ( this.maximumStringLength < ( field.value?.length ?? 0 ) ) {
-			field.error = i18n.translate( "This field can't be longer than %s characters.", {
-				args: this.maximumStringLength,
-			} );
+			field.error = MaximumStringLengthValidator.getFieldTooLongError( this.maximumStringLength );
 		}
 	}
 }
@@ -66,6 +74,10 @@ class MailboxNameValidator implements Validator< string > {
 		this.domainName = domainName;
 		this.mailboxHasDomainError = mailboxHasDomainError;
 		this.supportsApostrophes = supportsApostrophes;
+	}
+
+	static getInvalidEmailError(): FieldError {
+		return i18n.translate( 'Please supply a valid email address.' );
 	}
 
 	static getUnsupportedCharacterError( supportsApostrophes: boolean ): FieldError {
@@ -95,7 +107,7 @@ class MailboxNameValidator implements Validator< string > {
 			! this.mailboxHasDomainError &&
 			! emailValidator.validate( `${ field.value }@${ this.domainName }` )
 		) {
-			field.error = i18n.translate( 'Please supply a valid email address.' );
+			field.error = MailboxNameValidator.getInvalidEmailError();
 			return;
 		}
 	}
@@ -106,6 +118,10 @@ class AlternateEmailValidator implements Validator< string > {
 
 	constructor( domainName: string ) {
 		this.domainName = domainName;
+	}
+
+	static getInvalidEmailError(): FieldError {
+		return i18n.translate( 'Please supply a valid email address.' );
 	}
 
 	static getSameDomainError( domainName: string ): FieldError {
@@ -130,7 +146,7 @@ class AlternateEmailValidator implements Validator< string > {
 		const value = `${ field.value }`;
 
 		if ( ! emailValidator.validate( value ) ) {
-			field.error = i18n.translate( 'Please supply a valid email address.' );
+			field.error = AlternateEmailValidator.getInvalidEmailError();
 
 			return;
 		}
@@ -149,9 +165,39 @@ class AlternateEmailValidator implements Validator< string > {
 
 class PasswordValidator implements Validator< string > {
 	private readonly minimumPasswordLength: number;
+	static readonly maximumPasswordLength = 100;
 
 	constructor( minimumPasswordLength: number ) {
 		this.minimumPasswordLength = minimumPasswordLength;
+	}
+
+	static getPasswordTooShortError( minimumPasswordLength: number ): FieldError {
+		return i18n.translate( "This field can't be shorter than %s characters.", {
+			args: String( minimumPasswordLength ),
+		} );
+	}
+
+	static getPasswordTooLongError(): FieldError {
+		return i18n.translate( "This field can't be longer than %s characters.", {
+			args: PasswordValidator.maximumPasswordLength,
+		} );
+	}
+
+	static getPasswordStartsWithSpaceError(): FieldError {
+		return i18n.translate( "This field can't start with a white space." );
+	}
+
+	static getPasswordEndsWithSpaceError(): FieldError {
+		return i18n.translate( "This field can't end with a white space." );
+	}
+
+	static getPasswordContainsForbiddenCharacterError(
+		firstForbiddenCharacter: string | undefined
+	): FieldError {
+		return i18n.translate( "This field can't accept '%s' as character.", {
+			args: firstForbiddenCharacter,
+			comment: '%s denotes a single character that is not allowed in this field',
+		} );
 	}
 
 	validate( field?: MailboxFormFieldBase< string > ): void {
@@ -162,21 +208,17 @@ class PasswordValidator implements Validator< string > {
 		const value = field.value;
 
 		if ( this.minimumPasswordLength > value.length ) {
-			field.error = i18n.translate( "This field can't be shorter than %s characters.", {
-				args: String( this.minimumPasswordLength ),
-			} );
+			field.error = PasswordValidator.getPasswordTooShortError( this.minimumPasswordLength );
 			return;
 		}
 
-		if ( 100 < value.length ) {
-			field.error = i18n.translate( "This field can't be longer than %s characters.", {
-				args: '100',
-			} );
+		if ( PasswordValidator.maximumPasswordLength < value.length ) {
+			field.error = PasswordValidator.getPasswordTooLongError();
 			return;
 		}
 
 		if ( value.startsWith( ' ' ) ) {
-			field.error = i18n.translate( "This field can't start with a white space." );
+			field.error = PasswordValidator.getPasswordStartsWithSpaceError();
 			return;
 		}
 
@@ -188,15 +230,13 @@ class PasswordValidator implements Validator< string > {
 				regexp.test( character )
 			);
 
-			field.error = i18n.translate( "This field can't accept '%s' as character.", {
-				args: firstForbiddenCharacter,
-				comment: '%s denotes a single character that is not allowed in this field',
-			} );
+			field.error =
+				PasswordValidator.getPasswordContainsForbiddenCharacterError( firstForbiddenCharacter );
 			return;
 		}
 
 		if ( value.endsWith( ' ' ) ) {
-			field.error = i18n.translate( "This field can't end with a white space." );
+			field.error = PasswordValidator.getPasswordEndsWithSpaceError();
 		}
 	}
 }
