@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import WixImporter from 'calypso/signup/steps/import-from/wix';
-import { ImporterWrapper } from '../importer-wrapper';
-import { ImporterWrapperRefAttr } from '../importer-wrapper/types';
+import { ImporterWrapper } from '../importer';
+import { ImporterWrapperRefAttr } from '../importer/types';
 import './style.scss';
 
 const ImporterWix: Step = function ( props ) {

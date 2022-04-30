@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import BloggerImporter from 'calypso/signup/steps/import-from/blogger';
-import { ImporterWrapper } from '../importer-wrapper';
-import { ImporterWrapperRefAttr } from '../importer-wrapper/types';
+import { ImporterWrapper } from '../importer';
+import { ImporterWrapperRefAttr } from '../importer/types';
 import './style.scss';
 
 const ImporterBlogger: Step = function ( props ) {
