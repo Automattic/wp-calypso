@@ -238,6 +238,10 @@ export const siteSetupFlow: Flow = {
 				case 'importReadyPreview':
 					return navigate( 'import' );
 
+				case 'importerWix':
+				case 'importerBlogger':
+				case 'importerMedium':
+				case 'importerSquarespace':
 				case 'importerWordpress':
 					return navigate( 'import' );
 
