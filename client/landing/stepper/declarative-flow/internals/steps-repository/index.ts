@@ -15,6 +15,7 @@ export { default as importer } from './importer';
 export { default as importerWix } from './importer-wix';
 export { default as importerBlogger } from './importer-blogger';
 export { default as importerMedium } from './importer-medium';
+export { default as importerSquarespace } from './importer-squarespace';
 export { default as importerWordpress } from './importer-wordpress';
 export { default as businessInfo } from './business-info';
 export { default as storeAddress } from './store-address';
@@ -42,6 +43,7 @@ export type StepPath =
 	| 'importerWix'
 	| 'importerBlogger'
 	| 'importerMedium'
+	| 'importerSquarespace'
 	| 'importerWordpress'
 	| 'importer/wordpress'
 	| 'businessInfo'

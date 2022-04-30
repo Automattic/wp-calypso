@@ -35,6 +35,7 @@ export const siteSetupFlow: Flow = {
 			'importerWix',
 			'importerBlogger',
 			'importerMedium',
+			'importerSquarespace',
 			'importerWordpress',
 			'businessInfo',
 			'storeAddress',
