@@ -33,6 +33,7 @@ export const siteSetupFlow: Flow = {
 			'importReadyPreview',
 			'importer',
 			'importerWix',
+			'importerBlogger',
 			'importerWordpress',
 			'businessInfo',
 			'storeAddress',

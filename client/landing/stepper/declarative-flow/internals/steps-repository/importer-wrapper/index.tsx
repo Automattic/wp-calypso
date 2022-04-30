@@ -62,6 +62,7 @@ export const ImporterWrapper = forwardRef(
 			site: site as SiteDetails,
 			siteId: siteId as number,
 			siteSlug: siteSlug as string,
+			urlData: fromSiteData,
 			fromSite,
 			navigator,
 		} ) );
