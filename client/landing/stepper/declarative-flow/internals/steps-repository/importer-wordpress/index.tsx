@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import { WordpressImporter } from 'calypso/signup/steps/import-from/wordpress';
+import WordpressImporter from 'calypso/signup/steps/import-from/wordpress';
 import { ImporterWrapper } from '../importer-wrapper';
 import { ImporterWrapperRefAttr } from '../importer-wrapper/types';
 import './style.scss';
