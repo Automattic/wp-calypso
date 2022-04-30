@@ -74,15 +74,7 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		'/plugins',
-		selectSiteIfLoggedIn,
-		siteSelection,
-		navigation,
-		browsePlugins,
-		makeLayout,
-		clientRender
-	);
+	page( '/plugins', selectSiteIfLoggedIn, siteSelection, navigation, makeLayout, clientRender );
 
 	page(
 		'/plugins/:site',
