@@ -5,7 +5,7 @@ import { ImporterWrapper } from '../importer-wrapper';
 import { ImporterWrapperRefAttr } from '../importer-wrapper/types';
 import './style.scss';
 
-const ImporterBlogger: Step = function ( props ) {
+const ImporterMedium: Step = function ( props ) {
 	const wrapperRef = useRef< ImporterWrapperRefAttr >();
 	const refObj = wrapperRef.current;
 
@@ -26,4 +26,4 @@ const ImporterBlogger: Step = function ( props ) {
 	);
 };
 
-export default ImporterBlogger;
+export default ImporterMedium;
