@@ -12,6 +12,7 @@ import replacePlaceholders from '../utils/replace-placeholders';
 import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
 import PatternSelectorControl from './pattern-selector-control';
 import type { PatternCategory, PatternDefinition } from '../pattern-definition';
+import type { KeyboardEvent, MouseEvent, FocusEvent } from 'react';
 
 interface PagePatternModalProps {
 	areTipsEnabled?: boolean;
@@ -33,6 +34,8 @@ interface PagePatternModalProps {
 interface PagePatternModalState {
 	selectedCategory: string | null;
 }
+
+type CloseModalEvent = KeyboardEvent | MouseEvent | FocusEvent;
 
 class PagePatternModal extends Component< PagePatternModalProps, PagePatternModalState > {
 	constructor( props: PagePatternModalProps ) {
@@ -153,7 +156,27 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		this.setState( { selectedCategory } );
 	};
 
-	closeModal = () => {
+	closeModal = ( event: CloseModalEvent ) => {
+		// As of Gutenberg 13.1, the editor will auto-focus on the title block
+		// automatically. See: https://github.com/WordPress/gutenberg/pull/40195.
+		// This ends up triggering a `blur` event on the Modal that causes it
+		// to close just after the editor loads. To circumvent this, we check if
+		// the `blur` event is related to the title auto-focus and if so,
+		// we ignore it so that the Modal stays open. It's important to note
+		// that this callback handles more than the  event, though. See the
+		// `CloseModalEvent` type for more info.
+
+		// Let's narrow-down the types to be able to safely handle the `blur` scenario
+		// `KeyboardEvent` doesn't have a `relatedTarget` property, and the `MouseEvent`'s
+		// `relatedTarget` type doesn't have a `className` property, though for those events
+		// the Modal can just close and we don't need the piece of logic below:
+		if ( 'relatedTarget' in event && event.relatedTarget && 'className' in event.relatedTarget ) {
+			if ( event.relatedTarget?.className?.match( /wp-block-post-title/ ) ) {
+				event.stopPropagation();
+				return;
+			}
+		}
+
 		trackDismiss();
 		this.props.onClose();
 	};
@@ -297,6 +320,11 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 			<Modal
 				title="" // We're providing the title with the `aria.labelledby` prop
 				className="page-pattern-modal"
+				// @ts-expect-error `onRequestClose`'s type is () => void but ideally but
+				// in reality, it might receive an event object that might be one of multiple
+				// types (see the `CloseModalEvent` type above for more info). We ignore the
+				// error for now until the type is updated in DefinitelyTyped.
+				// DT PR: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/60127.
 				onRequestClose={ this.closeModal }
 				aria={ {
 					labelledby: `page-pattern-modal__heading-${ instanceId }`,
