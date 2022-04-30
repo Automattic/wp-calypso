@@ -86,7 +86,9 @@ const MailboxFormFieldsMap = {
 	[ EmailProvider.Titan ]: TitanMailboxFormFields,
 };
 
-type FormFieldNames = keyof GoogleMailboxFormFields | keyof TitanMailboxFormFields;
+type GoogleFormFieldNames = keyof GoogleMailboxFormFields;
+type TitanFormFieldNames = keyof TitanMailboxFormFields;
+type FormFieldNames = GoogleFormFieldNames | TitanFormFieldNames;
 type ValidatorFieldNames = FormFieldNames | null;
 
 type ProviderKeys = keyof typeof MailboxFormFieldsMap;
@@ -100,10 +102,13 @@ class MailboxFormFieldsFactory {
 }
 
 export type {
+	FieldError,
 	FormFieldNames,
+	GoogleFormFieldNames,
 	GoogleMailboxFormFields,
 	MailboxFormFieldBase,
 	MailboxFormFields,
+	TitanFormFieldNames,
 	TitanMailboxFormFields,
 	ValidatorFieldNames,
 };

@@ -4,6 +4,7 @@ import {
 	FIELD_FIRSTNAME,
 	FIELD_LASTNAME,
 	FIELD_MAILBOX,
+	FIELD_NAME,
 	FIELD_PASSWORD,
 	FIELD_UUID,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
@@ -18,7 +19,8 @@ import {
 	MailboxNameValidator,
 	PasswordValidator,
 	RequiredValidator,
-	StringLengthValidator,
+	RequiredIfVisibleValidator,
+	MaximumStringLengthValidator,
 } from 'calypso/my-sites/email/form/mailboxes/validators';
 import type {
 	FormFieldNames,
@@ -57,13 +59,16 @@ class MailboxForm< T extends EmailProvider > {
 		const supportsApostrophes = this.provider === EmailProvider.Google;
 
 		return [
+			[ FIELD_ALTERNATIVE_EMAIL, new RequiredValidator< string >() ],
 			[ FIELD_ALTERNATIVE_EMAIL, new AlternateEmailValidator( domainName ) ],
 			[ FIELD_DOMAIN, new RequiredValidator< string >() ],
 			[ FIELD_FIRSTNAME, new RequiredValidator< string >() ],
-			[ FIELD_FIRSTNAME, new StringLengthValidator( 60 ) ],
+			[ FIELD_FIRSTNAME, new MaximumStringLengthValidator( 60 ) ],
 			[ FIELD_LASTNAME, new RequiredValidator< string >() ],
-			[ FIELD_LASTNAME, new StringLengthValidator( 60 ) ],
+			[ FIELD_LASTNAME, new MaximumStringLengthValidator( 60 ) ],
 			[ FIELD_MAILBOX, new RequiredValidator< string >() ],
+			[ FIELD_NAME, new RequiredIfVisibleValidator() ],
+			[ FIELD_NAME, new MaximumStringLengthValidator( 60 ) ],
 			[ FIELD_MAILBOX, new ExistingMailboxNamesValidator( this.existingMailboxNames ) ],
 			[
 				FIELD_MAILBOX,
