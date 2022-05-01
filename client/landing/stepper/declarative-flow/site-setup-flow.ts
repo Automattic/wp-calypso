@@ -199,7 +199,7 @@ export const siteSetupFlow: Flow = {
 
 				case 'importReady':
 				case 'importReadyPreview': {
-					return exitFlow( providedDependencies?.url as string );
+					return navigate( providedDependencies?.url as StepPath );
 				}
 			}
 		}

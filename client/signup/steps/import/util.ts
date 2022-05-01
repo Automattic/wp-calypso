@@ -1,3 +1,4 @@
+import { capitalize } from 'lodash';
 import { ImporterPlatform } from './types';
 
 export const CAPTURE_URL_RGX =
@@ -76,13 +77,13 @@ export function getWpComOnboardingUrl(
 
 		case 'stepper':
 		default:
-			route = '/setup/importer/{importer}?siteSlug={siteSlug}&from={fromSite}&run=true';
+			route = 'importer{importer}?siteSlug={siteSlug}&from={fromSite}&run=true';
 			break;
 	}
 
 	return route
 		.replace( '{siteSlug}', siteSlug )
-		.replace( '{importer}', getPlatformImporterName( platform ) )
+		.replace( '{importer}', capitalize( getPlatformImporterName( platform ) ) )
 		.replace( '{fromSite}', fromSite || '' );
 }
 
