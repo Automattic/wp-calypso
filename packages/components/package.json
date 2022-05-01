@@ -39,6 +39,7 @@
 		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {
+		"@wordpress/data": "^6.1.5",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2"
 	},
