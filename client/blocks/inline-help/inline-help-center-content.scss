@@ -2,29 +2,27 @@
 @import 'calypso/assets/stylesheets/shared/mixins/_breakpoints';
 @import 'calypso/assets/stylesheets/shared/mixins/hide-content-accessibly';
 
-
 .inline-help-center__content {
 	background-color: var( --color-surface );
 
-    &:not( .is-secondary-view-richresult ) {
-        p {
-            font-size: $font-body-extra-small;
-    
-            @include breakpoint-deprecated( '>660px' ) {
-                font-size: $font-body-small;
-            }
-        }
-    
-        a,
-        button {
-            font-size: $font-body-extra-small;
-    
-            @include breakpoint-deprecated( '>660px' ) {
-                font-size: $font-body-small;
-            }
-        }
-    }
-	
+	&:not( .is-secondary-view-richresult ) {
+		p {
+			font-size: $font-body-extra-small;
+
+			@include breakpoint-deprecated( '>660px' ) {
+				font-size: $font-body-small;
+			}
+		}
+
+		a,
+		button {
+			font-size: $font-body-extra-small;
+
+			@include breakpoint-deprecated( '>660px' ) {
+				font-size: $font-body-small;
+			}
+		}
+	}
 
 	&.is-secondary-view-active {
 		.inline-help__search {
@@ -64,6 +62,46 @@
 .inline-help__contact {
 	.inline-help__title {
 		@include hide-content-accessibly;
+	}
+
+	/**
+	* CONTACT FORM
+	*/
+	.inline-help__contact-page {
+		.inline-help__contact-boxes {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+
+			.inline-help__contact-box {
+				display: flex;
+				flex-direction: row;
+				border: 1px solid var( --studio-gray-5 );
+				border-radius: 4px;
+				cursor: pointer;
+				text-align: left;
+				background: white;
+
+				&.chat {
+					margin-bottom: 15px;
+
+					.inline-help__contact-box-icon {
+						background-color: var( --color-accent );
+					}
+				}
+
+				// Text box
+				:not( .inline-help__contact-box-icon ) {
+					padding: 0 15px;
+					margin: 15px 0;
+
+					> * {
+						padding: 0;
+						margin: 0;
+					}
+				}
+			}
+		}
 	}
 
 	.help-contact__form {
@@ -129,12 +167,12 @@
 		.inline-help__resource-cell {
 			width: 100%;
 		}
-	
+
 		@include breakpoint-deprecated( '>660px' ) {
 			font-size: $font-title-small;
 			line-height: 1.3;
 		}
-	
+
 		a {
 			color: #000;
 			text-decoration: none;
@@ -142,11 +180,11 @@
 			line-height: 1.4;
 			display: flex;
 			align-items: center;
-	
+
 			span {
 				flex-grow: 2;
 			}
-	
+
 			.gridicon {
 				align-self: baseline;
 				background: var( --color-neutral-0 );
@@ -156,20 +194,20 @@
 				padding: 10px;
 				position: relative;
 			}
-	
+
 			&:hover {
 				cursor: pointer;
 				background: var( --color-neutral-0 );
-	
+
 				.gridicon {
 					color: var( --color-neutral );
 				}
 			}
-	
+
 			&:focus {
 				background: var( --color-primary );
 				color: var( --color-text-inverted );
-	
+
 				.gridicon {
 					color: var( --color-text-inverted );
 				}

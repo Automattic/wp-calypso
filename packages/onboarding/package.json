@@ -30,6 +30,7 @@
 	},
 	"dependencies": {
 		"@automattic/data-stores": "workspace:^",
+		"@automattic/calypso-url": "workspace:^",
 		"@wordpress/components": "^19.2.0",
 		"@wordpress/data": "^6.1.5",
 		"@wordpress/icons": "^6.1.1",

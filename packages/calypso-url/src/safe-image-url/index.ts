@@ -1,12 +1,11 @@
-import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import photon from 'photon';
+import { getUrlParts, getUrlFromParts } from '../url-parts';
 
 /**
  * Pattern matching URLs to be left unmodified.
- *
- * @type {RegExp}
  */
-let REGEX_EXEMPT_URL;
+let REGEX_EXEMPT_URL: RegExp;
+
 if ( typeof globalThis.location === 'object' ) {
 	REGEX_EXEMPT_URL = new RegExp(
 		`^(/(?!/)|data:image/[^;]+;|blob:${ globalThis.location.origin }/)`
@@ -17,8 +16,6 @@ if ( typeof globalThis.location === 'object' ) {
 
 /**
  * Pattern matching Automattic-controlled hostnames
- *
- * @type {RegExp}
  */
 const REGEXP_A8C_HOST = /^([-a-zA-Z0-9_]+\.)*(gravatar\.com|wordpress\.com|wp\.com|a8c\.com)$/;
 
@@ -39,10 +36,10 @@ const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
  * NOTE: This function will return `null` for external URLs with query strings,
  * because Photon itself does not support this!
  *
- * @param  {string} url The URL to secure
- * @returns {?string}    The secured URL, or `null` if we couldn't make it safe
+ * @param  url The URL to secure
+ * @returns The secured URL, or `null` if we couldn't make it safe
  */
-export default function safeImageUrl( url ) {
+export function safeImageUrl( url: string ) {
 	if ( typeof url !== 'string' ) {
 		return null;
 	}
@@ -74,12 +71,12 @@ export default function safeImageUrl( url ) {
 		}
 
 		// There are still parameters left, since they might be needed to retrieve the image, bail out
-		if ( parsedUrl.searchParams.length ) {
+		if ( parsedUrl.searchParams ) {
 			return null;
 		}
 
 		// Ensure we're creating a new URL without the size parameters
-		delete parsedUrl.search;
+		parsedUrl.search = '';
 
 		// Force https since if there's a missing protocol it'll throw an error
 		if ( ! parsedUrl?.protocol ) {
