@@ -1,52 +1,11 @@
 import { useFocusTrap } from '@automattic/tour-kit';
-import { focus } from '@wordpress/dom';
 import { globe, Icon, chevronUp, chevronDown } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import cx from 'classnames';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
+import { useArrowNavigation } from './hooks';
 import type { FC } from 'react';
 import './style.scss';
-
-const useArrowNavigation = ( element: HTMLElement | null, open: boolean, onOpen: () => void ) => {
-	const handleTrapFocus = useCallback(
-		( event ) => {
-			const focusableElements = (
-				element ? focus.focusable.find( element ) : []
-			 ) as HTMLButtonElement[];
-
-			let focusedIndex = focusableElements.findIndex( ( el ) => document.activeElement === el );
-			focusedIndex = focusedIndex === -1 ? 0 : focusedIndex;
-
-			if ( event.key === 'ArrowUp' ) {
-				let index = focusedIndex - 1;
-				if ( index < 0 ) {
-					index = focusableElements.length - 1;
-				}
-				focusableElements[ index ]?.focus();
-			} else if ( event.key === 'ArrowDown' ) {
-				const index = ( focusedIndex + 1 ) % focusableElements.length;
-				focusableElements[ index ]?.focus();
-				if ( ! open ) {
-					onOpen();
-				}
-			}
-
-			if ( [ 'ArrowUp', 'ArrowDown' ].includes( event.key ) ) {
-				event.preventDefault();
-				event.stopPropagation();
-			}
-		},
-		[ element, open, onOpen ]
-	);
-
-	useEffect( () => {
-		document.addEventListener( 'keydown', handleTrapFocus );
-
-		return () => {
-			document.removeEventListener( 'keydown', handleTrapFocus );
-		};
-	}, [ handleTrapFocus ] );
-};
 
 type ItemProps = {
 	host: string;

@@ -71,7 +71,7 @@ export function safeImageUrl( url: string ) {
 		}
 
 		// There are still parameters left, since they might be needed to retrieve the image, bail out
-		if ( parsedUrl.searchParams ) {
+		if ( Array.from( parsedUrl.searchParams ).length ) {
 			return null;
 		}
 
