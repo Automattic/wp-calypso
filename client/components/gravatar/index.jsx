@@ -1,4 +1,4 @@
-import { Gravatar } from '@automattic/onboarding';
+import { Gravatar } from '@automattic/components';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
 import { getUserTempGravatar } from 'calypso/state/gravatar-status/selectors';
