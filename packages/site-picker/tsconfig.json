@@ -8,5 +8,6 @@
 		"rootDir": "src"
 	},
 	"include": [ "src" ],
+	"references": [ { "path": "../tour-kit" } ],
 	"exclude": [ "**/docs/*", "**/test/*" ]
 }

@@ -1,9 +1,5 @@
-import {
-	Button,
-	Gridicon,
-	HappinessEngineersTray,
-	SitePickerDropDown,
-} from '@automattic/components';
+import { Button, Gridicon, HappinessEngineersTray } from '@automattic/components';
+import { SitePickerDropDown } from '@automattic/site-picker';
 import { TextareaControl, TextControl, CheckboxControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';

@@ -1,6 +1,7 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 import { useFocusTrap } from '@automattic/tour-kit';
+import { __ } from '@wordpress/i18n';
 import { globe, Icon, chevronUp, chevronDown } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
 import cx from 'classnames';
 import { useEffect, useState } from 'react';
 import { useArrowNavigation } from './hooks';
@@ -70,7 +71,7 @@ type Site = {
 	logo: { id: string; sizes: []; url: string };
 };
 
-type Props = {
+export type Props = {
 	selectedSiteId: number | undefined;
 	options: Site[];
 	onPickSite: ( siteId: number ) => void;
@@ -83,7 +84,6 @@ export const SitePickerDropDown: FC< Props > = ( {
 }: Props ) => {
 	const [ ref, setRef ] = useState< HTMLDivElement | null >( null );
 	const [ open, setOpen ] = useState( false );
-	const { __ } = useI18n();
 
 	useFocusTrap( { current: ref } );
 	useArrowNavigation( ref, open, () => setOpen( true ) );

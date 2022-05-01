@@ -374,8 +374,6 @@ __metadata:
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
-    "@automattic/data-stores": "workspace:^"
-    "@automattic/tour-kit": "workspace:^"
     "@storybook/react": ^6.4.18
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
@@ -1051,8 +1049,6 @@ __metadata:
   resolution: "@automattic/onboarding@workspace:packages/onboarding"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/calypso-url": "workspace:^"
-    "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@testing-library/react": ^12.1.3
@@ -1226,6 +1222,26 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/site-picker@workspace:^, @automattic/site-picker@workspace:packages/site-picker":
+  version: 0.0.0-use.local
+  resolution: "@automattic/site-picker@workspace:packages/site-picker"
+  dependencies:
+    "@automattic/tour-kit": "workspace:^"
+    "@testing-library/jest-dom": ^5.16.2
+    "@testing-library/react": ^12.1.3
+    "@wordpress/dom": ^3.7.0
+    "@wordpress/i18n": ^4.2.4
+    "@wordpress/icons": ^6.1.1
+    classnames: ^2.3.1
+    typescript: ^4.5.5
+  peerDependencies:
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
 "@automattic/social-previews@workspace:^, @automattic/social-previews@workspace:packages/social-previews":
   version: 0.0.0-use.local
   resolution: "@automattic/social-previews@workspace:packages/social-previews"
@@ -1277,6 +1293,7 @@ __metadata:
     "@storybook/react": ^6.4.18
     "@wordpress/base-styles": ^4.0.4
     "@wordpress/components": ^19.2.0
+    "@wordpress/element": ^4.0.4
     "@wordpress/i18n": ^4.3.0
     "@wordpress/icons": ^6.2.0
     "@wordpress/primitives": ^3.0.4
@@ -1287,7 +1304,6 @@ __metadata:
     react-popper: ^2.2.5
     typescript: ^4.5.5
   peerDependencies:
-    "@wordpress/element": ^4.0.4
     react: ^17.0.2
     react-dom: ^17.0.2
     reakit-utils: ^0.15.1
@@ -1525,6 +1541,7 @@ __metadata:
     "@automattic/onboarding": "workspace:^"
     "@automattic/page-pattern-modal": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
+    "@automattic/site-picker": "workspace:^"
     "@automattic/tour-kit": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
@@ -8947,6 +8964,16 @@ __metadata:
     "@babel/runtime": ^7.16.0
     lodash: ^4.17.21
   checksum: 59d6c43083a9ebd481827366092464cc45a30402135200d9ae73605bf7c6e81c7418976ed0e0b11b6a258b32375c1186ef8538dfb90cb6825bbd2aea46651f8b
+  languageName: node
+  linkType: hard
+
+"@wordpress/dom@npm:^3.7.0":
+  version: 3.7.0
+  resolution: "@wordpress/dom@npm:3.7.0"
+  dependencies:
+    "@babel/runtime": ^7.16.0
+    lodash: ^4.17.21
+  checksum: 240ccfcfada58855672ba558fda71ea8749477a402f34c044a6ee730d50b5cfd62a3eeb359841672154fa423f56adc6f9e2d13282b937b72b48da8cc41337255
   languageName: node
   linkType: hard
 
@@ -37038,6 +37065,7 @@ swiper@4.5.1:
     "@wordpress/base-styles": ^4.0.4
     "@wordpress/components": ^19.2.0
     "@wordpress/data": ^6.1.5
+    "@wordpress/dom": ^3.7.0
     "@wordpress/element": ^4.0.4
     "@wordpress/eslint-plugin": ^9.3.0
     "@wordpress/i18n": ^4.2.4
