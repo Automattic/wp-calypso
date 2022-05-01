@@ -15,7 +15,7 @@ export type NavigationControls = {
 	/**
 	 * Call this function if you want to jump to a certain step.
 	 */
-	goToStep?: ( step: StepPath ) => void;
+	goToStep?: ( step: StepPath | `${ StepPath }?${ string }` ) => void;
 	/**
 	 * Submits the answers provided in the flow
 	 */
