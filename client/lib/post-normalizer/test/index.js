@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+import { safeImageUrl as safeImageUrlFake } from '@automattic/calypso-url';
 import { flow, trim } from 'lodash';
-import safeImageUrlFake from 'calypso/lib/safe-image-url';
 import detectMedia from '../rule-content-detect-media';
 import detectPolls from '../rule-content-detect-polls';
 import detectSurveys from '../rule-content-detect-surveys';
@@ -25,7 +25,9 @@ import safeImageProperties from '../rule-safe-image-properties';
 import stripHtml from '../rule-strip-html';
 import withContentDOM from '../rule-with-content-dom';
 
-jest.mock( 'calypso/lib/safe-image-url', () => require( './mocks/lib/safe-image-url' ) );
+jest.mock( '@automattic/calypso-url', () => ( {
+	safeImageUrl: require( './mocks/lib/safe-image-url' ),
+} ) );
 
 describe( 'index', () => {
 	test( 'should leave an empty object alone', () => {
