@@ -15,7 +15,7 @@ export type ImporterWrapperRefAttr = {
 	navigator?: ( path: string ) => void;
 };
 
-interface AdditionalProps {
+export interface AdditionalProps {
 	importer: Importer;
 }
 

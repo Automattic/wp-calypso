@@ -6,7 +6,7 @@ import { ImporterWrapperRefAttr } from '../importer/types';
 import './style.scss';
 
 const ImporterWordpress: Step = function ( props ) {
-	const wrapperRef = useRef< ImporterWrapperRefAttr >();
+	const wrapperRef = useRef< ImporterWrapperRefAttr >( null );
 	const refObj = wrapperRef.current;
 
 	return (

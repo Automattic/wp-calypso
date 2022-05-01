@@ -3,7 +3,14 @@ import { SiteDetails } from '@automattic/data-stores/dist/types/site';
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React, { useEffect, useImperativeHandle, useState, forwardRef, ForwardedRef } from 'react';
+import React, {
+	useEffect,
+	useImperativeHandle,
+	useState,
+	forwardRef,
+	ForwardedRef,
+	PropsWithChildren,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -31,7 +38,10 @@ import { removeLeadingSlash } from '../import/util';
 import type { ImporterWrapperRefAttr, ImporterWrapperProps } from './types';
 
 export const ImporterWrapper = forwardRef(
-	( props: ImporterWrapperProps, ref: ForwardedRef< ImporterWrapperRefAttr > ) => {
+	(
+		props: PropsWithChildren< ImporterWrapperProps >,
+		ref: ForwardedRef< ImporterWrapperRefAttr >
+	) => {
 		const { __ } = useI18n();
 		const dispatch = useDispatch();
 		const { importer, navigation, children } = props;
