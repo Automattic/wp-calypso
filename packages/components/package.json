@@ -42,9 +42,9 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
-		"@automattic/calypso-url": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/calypso-url": "workspace:^",
 		"@storybook/react": "^6.4.18",
 		"@testing-library/jest-dom": "^5.16.2",
 		"@testing-library/react": "^12.1.3",

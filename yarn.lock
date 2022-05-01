@@ -354,6 +354,7 @@ __metadata:
   resolution: "@automattic/calypso-url@workspace:packages/calypso-url"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    photon: "workspace:^"
     typescript: ^4.5.5
   languageName: unknown
   linkType: soft
@@ -372,6 +373,7 @@ __metadata:
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/calypso-url": "workspace:^"
     "@storybook/react": ^6.4.18
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
@@ -670,6 +672,7 @@ __metadata:
   resolution: "@automattic/i18n-utils@workspace:packages/i18n-utils"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/calypso-url": "workspace:^"
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": 7.0.2
