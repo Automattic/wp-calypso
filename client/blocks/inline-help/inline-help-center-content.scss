@@ -64,46 +64,6 @@
 		@include hide-content-accessibly;
 	}
 
-	/**
-	* CONTACT FORM
-	*/
-	.inline-help__contact-page {
-		.inline-help__contact-boxes {
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
-
-			.inline-help__contact-box {
-				display: flex;
-				flex-direction: row;
-				border: 1px solid var( --studio-gray-5 );
-				border-radius: 4px;
-				cursor: pointer;
-				text-align: left;
-				background: white;
-
-				&.chat {
-					margin-bottom: 15px;
-
-					.inline-help__contact-box-icon {
-						background-color: var( --color-accent );
-					}
-				}
-
-				// Text box
-				:not( .inline-help__contact-box-icon ) {
-					padding: 0 15px;
-					margin: 15px 0;
-
-					> * {
-						padding: 0;
-						margin: 0;
-					}
-				}
-			}
-		}
-	}
-
 	.help-contact__form {
 		margin: 0;
 		padding: 0;
