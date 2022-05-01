@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { HappinessEngineersTray, Gravatar } from '@automattic/components';
 import Buttons from '@automattic/components/src/button/docs/example';
 import Cards from '@automattic/components/src/card/docs/example';
 import Gridicon from '@automattic/components/src/gridicon/docs/example';
@@ -7,7 +8,6 @@ import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
 import Ribbon from '@automattic/components/src/ribbon/docs/example';
 import ScreenReaderTextExample from '@automattic/components/src/screen-reader-text/docs/example';
 import Suggestions from '@automattic/components/src/suggestions/docs/example';
-import { HappinessEngineersTray, Gravatar } from '@automattic/onboarding';
 import classnames from 'classnames';
 import { trim } from 'lodash';
 import page from 'page';

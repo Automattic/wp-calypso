@@ -12,3 +12,4 @@ export { default as ScreenReaderText } from './screen-reader-text';
 export { default as Suggestions } from './suggestions';
 export { default as PaginationControl } from './pagination-control';
 export { Gravatar } from './gravatar';
+export { HappinessEngineersTray } from './happiness-engineers-tray';
