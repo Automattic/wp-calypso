@@ -1,4 +1,4 @@
-import { HappinessEngineersTray } from '@automattic/onboarding';
+import { HappinessEngineersTray } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 

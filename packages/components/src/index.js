@@ -13,3 +13,4 @@ export { default as Suggestions } from './suggestions';
 export { default as PaginationControl } from './pagination-control';
 export { Gravatar } from './gravatar';
 export { HappinessEngineersTray } from './happiness-engineers-tray';
+export { SitePickerDropDown } from './site-picker';

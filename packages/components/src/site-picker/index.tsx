@@ -7,6 +7,8 @@ import { useArrowNavigation } from './hooks';
 import type { FC } from 'react';
 import './style.scss';
 
+declare const __i18n_text_domain__: string;
+
 type ItemProps = {
 	host: string;
 	name: string;
