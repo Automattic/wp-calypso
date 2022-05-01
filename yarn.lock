@@ -8962,17 +8962,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dom@npm:^3.2.7":
-  version: 3.2.7
-  resolution: "@wordpress/dom@npm:3.2.7"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-    lodash: ^4.17.21
-  checksum: 59d6c43083a9ebd481827366092464cc45a30402135200d9ae73605bf7c6e81c7418976ed0e0b11b6a258b32375c1186ef8538dfb90cb6825bbd2aea46651f8b
-  languageName: node
-  linkType: hard
-
-"@wordpress/dom@npm:^3.7.0":
+"@wordpress/dom@npm:^3.2.7, @wordpress/dom@npm:^3.7.0":
   version: 3.7.0
   resolution: "@wordpress/dom@npm:3.7.0"
   dependencies:
@@ -37070,7 +37060,7 @@ swiper@4.5.1:
     "@wordpress/base-styles": ^4.0.4
     "@wordpress/components": ^19.2.0
     "@wordpress/data": ^6.1.5
-    "@wordpress/dom": ^3.7.0
+    "@wordpress/dom": ^3.2.7
     "@wordpress/element": ^4.0.4
     "@wordpress/eslint-plugin": ^9.3.0
     "@wordpress/i18n": ^4.2.4
