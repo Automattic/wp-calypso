@@ -11,14 +11,24 @@ import './help-center.scss';
 
 function HelpCenterComponent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
-	const { show } = useSelect( ( select ) => {
+	const { show, hasSeenWhatsNewModal, hasFetchedHasSeenWhatsNewModal } = useSelect( ( select ) => {
+		const store = select( 'automattic/help-center' );
 		return {
-			show: select( 'automattic/help-center' ).isHelpCenterShown(),
+			show: store.isHelpCenterShown(),
+			hasSeenWhatsNewModal: store.hasSeenWhatsNewModal(),
+			hasFetchedHasSeenWhatsNewModal: store.hasFetchedHasSeenWhatsNewModal(),
 		};
 	} );
-	const setShowHelpCenter = useDispatch( 'automattic/help-center' )?.setShowHelpCenter;
+	const { setShowHelpCenter, fetchHasSeenWhatsNewModal } = useDispatch( 'automattic/help-center' );
 	const [ selectedArticle, setSelectedArticle ] = useState( null );
 	const [ footerContent, setFooterContent ] = useState( null );
+
+	// On mount check if the Whats New Modal Seen status exists in state (from local storage), otherwise fetch it from the API.
+	useEffect( () => {
+		if ( ! hasFetchedHasSeenWhatsNewModal ) {
+			fetchHasSeenWhatsNewModal();
+		}
+	}, [ hasFetchedHasSeenWhatsNewModal, fetchHasSeenWhatsNewModal ] );
 
 	useEffect( () => {
 		if ( ! show ) {
@@ -34,7 +44,7 @@ function HelpCenterComponent() {
 						<Button
 							className={ cx( 'entry-point-button', { 'is-active': show } ) }
 							onClick={ () => setShowHelpCenter( ! show ) }
-							icon={ <HelpIcon newItems active={ show } /> }
+							icon={ <HelpIcon newItems={ ! hasSeenWhatsNewModal } active={ show } /> }
 						></Button>
 					</span>
 				</PinnedItems>

@@ -3,6 +3,7 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-p
 import { localizeUrl } from '@automattic/i18n-utils';
 import WhatsNewGuide from '@automattic/whats-new';
 import { Button, SVG, Circle } from '@wordpress/components';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { Icon, captureVideo, desktop, formatListNumbered, video } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -18,6 +19,13 @@ const circle = (
 
 const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
+
+	const hasSeenWhatsNewModal = useSelect( ( select ) =>
+		select( 'automattic/help-center' ).hasSeenWhatsNewModal()
+	);
+
+	const setHasSeenWhatsNewModal = useDispatch( 'automattic/help-center' ).setHasSeenWhatsNewModal;
+
 	const isBusinessOrEcomPlanUser = useSelector( ( state ) => {
 		const purchases = getUserPurchases( state );
 		const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
@@ -27,12 +35,20 @@ const HelpCenterMoreResources = () => {
 			( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
 		);
 	} );
+
 	const [ showGuide, setShowGuide ] = useState( false );
 
 	const trackCoursesButtonClick = () => {
 		recordTracksEvent( 'calypso_help_courses_click', {
 			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
 		} );
+	};
+
+	const handleWhatsNewClick = () => {
+		if ( ! hasSeenWhatsNewModal ) {
+			setHasSeenWhatsNewModal( true );
+		}
+		setShowGuide( true );
 	};
 
 	return (
@@ -92,12 +108,12 @@ const HelpCenterMoreResources = () => {
 					<div className="inline-help__resource-cell">
 						<Button
 							isLink
-							onClick={ () => setShowGuide( true ) }
+							onClick={ () => handleWhatsNewClick() }
 							className="inline-help__new-releases"
 						>
 							<MaterialIcon icon="new_releases" size={ 24 } fill="#003C56" />
 							<span>{ __( "What's new" ) }</span>
-							<Icon icon={ circle } size={ 16 } fill="#0675C4" />
+							{ ! hasSeenWhatsNewModal && <Icon icon={ circle } size={ 16 } fill="#0675C4" /> }
 						</Button>
 					</div>
 				</li>
