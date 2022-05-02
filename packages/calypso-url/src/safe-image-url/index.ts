@@ -13,7 +13,6 @@ if ( typeof globalThis.location === 'object' ) {
 } else {
 	REGEX_EXEMPT_URL = /^(\/(?!\/)|data:image\/[^;]+;)/;
 }
-
 /**
  * Pattern matching Automattic-controlled hostnames
  */
@@ -21,8 +20,6 @@ const REGEXP_A8C_HOST = /^([-a-zA-Z0-9_]+\.)*(gravatar\.com|wordpress\.com|wp\.c
 
 /**
  * Query parameters to be treated as image dimensions
- *
- * @type {string[]}
  */
 const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
 

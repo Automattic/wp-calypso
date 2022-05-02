@@ -139,13 +139,19 @@ describe( 'safeImageUrl()', () => {
 
 	describe( 'browser', () => {
 		beforeAll( () => {
-			global.location = { origin: 'https://wordpress.com' };
+			// this allows overwriting location
+			global.window = Object.create( window );
+			Object.defineProperty( window, 'location', {
+				value: {
+					origin: 'https://wordpress.com',
+				},
+			} );
 			jest.resetModules();
 			safeImageUrl = require( '../' ).safeImageUrl;
 		} );
 
 		afterAll( () => {
-			delete global.location;
+			delete globalThis.location;
 			delete require.cache[ require.resolve( '../' ) ];
 		} );
 
