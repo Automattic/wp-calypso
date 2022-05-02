@@ -10,12 +10,18 @@
 
 	a {
 		font-size: $font-body-small !important;
-		color: #000;
+		color: var( --studio-gray-100 );
 		text-decoration: none;
+
+		&:hover {
+			color: var( --studio-gray-100 );
+		}
 	}
 
 	h3 {
-		font-size: 1rem;
+		font-size: 14;
+		font-weight: 500;
+		color: var( --studio-gray-100 );
 	}
 
 	&.is-secondary-view-active {
@@ -45,12 +51,14 @@
 	*/
 	.inline-help__search {
 		.card.search-card {
-			box-shadow: 0 0 1px var( --studio-gray-10 );
-			border-radius: 4px;
+			border: 1px solid var( --studio-gray-10 );
+			border-radius: 2px;
+			box-shadow: none;
 			margin-bottom: 30px;
 
 			.is-open.has-focus {
-				box-shadow: 0 0 0 2px var( --studio-gray-20 );
+				border: 1px var( --studio-gray-50 );
+				box-shadow: none;
 			}
 
 			.search {
@@ -59,10 +67,12 @@
 		}
 
 		.inline-help__results {
-			margin-bottom: 40px;
+			li:last-child {
+				margin-bottom: 40px;
+			}
 
 			.inline-help__results-item {
-				margin-bottom: 15px;
+				margin-bottom: 16px;
 
 				.inline-help__results-cell a {
 					display: flex;
@@ -90,7 +100,7 @@
 	.inline-help__secondary-view.inline-help__richresult {
 		button.button.is-borderless {
 			font-size: $font-body-small;
-			color: #000;
+			color: var( --studio-gray-100 );
 		}
 	}
 
@@ -99,7 +109,7 @@
 	*/
 	.inline-help__more-resources {
 		.inline-help__resource-item {
-			margin-bottom: 15px;
+			margin-bottom: 16px;
 
 			.inline-help__resource-cell a {
 				display: flex;
@@ -123,6 +133,10 @@
 	* CONTACT FORM
 	*/
 	.inline-help__contact-page {
+		.inline-help__contact-content {
+			margin-bottom: 40px;
+		}
+
 		.inline-help__contact-boxes {
 			display: flex;
 			flex-direction: column;
@@ -132,11 +146,25 @@
 				display: flex;
 				flex-direction: row;
 				border: 1px solid var( --studio-gray-5 );
-				border-radius: 4px;
+				overflow: hidden;
+				border-radius: 2px;
 				cursor: pointer;
 
+				.inline-help__contact-box-icon {
+					border-radius: 2px 0 0 2px;
+				}
+
+				h2 {
+					font-size: 14;
+				}
+
+				p {
+					font-size: 12;
+					color: var( --studio-gray-60 );
+				}
+
 				&.chat {
-					margin-bottom: 15px;
+					margin-bottom: 16px;
 
 					.inline-help__contact-box-icon {
 						background-color: var( --color-accent );
@@ -146,7 +174,7 @@
 				// Text box
 				:not( .inline-help__contact-box-icon ) {
 					padding: 0 15px;
-					margin: 15px 0;
+					margin: 16px 0;
 
 					> * {
 						padding: 0;
@@ -166,7 +194,7 @@
 				.inline-help__contact-box-icon {
 					display: flex;
 					background-color: var( --studio-blue-70 );
-					width: 60px;
+					width: 56px;
 
 					svg {
 						fill: white;
@@ -178,28 +206,28 @@
 		}
 
 		.inline-help__results {
-			margin-top: 40px;
-
-			> * {
-				margin: 0;
-			}
-
 			h3 {
-				margin-bottom: 15px;
+				margin-bottom: 16px;
+				
+				// stylelint-disable-next-line selector-max-id
+				&#inline-search--admin_section {
+					margin-top: 40px;
+				}
 			}
 
 			.inline-help__results-item {
-				margin-bottom: 15px;
+				margin-bottom: 16px;
 
 				.inline-help__results-cell a {
 					display: flex;
 
 					svg {
 						margin-right: 15px;
+						border-radius: 2px;
 						display: block;
-						padding: 5px;
+						padding: 8px;
 						background: var( --studio-gray-0 );
-						fill: var( --studio-blue-70 );
+						fill: var( --studio-blue-50 );
 					}
 
 					span {
@@ -222,26 +250,17 @@
 		padding: 5px;
 		width: 100%;
 
+		&:hover {
+			border-color: var( --studio-gray-50 );
+		}
+
 		svg {
-			stroke: #000;
 			margin-right: 10px;
+			vertical-align: middle;
 		}
 
 		span {
-			color: #000;
-		}
-
-		&:hover {
-			border: 1px solid var( --color-primary );
-
-			svg {
-				fill: transparent;
-				stroke: var( --color-primary );
-			}
-
-			span {
-				color: var( --color-primary );
-			}
+			color: var( --studio-gray-100 );
 		}
 	}
 }

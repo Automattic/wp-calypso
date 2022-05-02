@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import InlineHelpSearchResults from './inline-help-search-results';
@@ -22,7 +23,7 @@ const InlineHelpContactPage: React.FC< Props > = ( { closeContactPage, onSelectR
 				<div className="inline-help__contact-boxes">
 					<div className={ classnames( 'inline-help__contact-box', 'chat' ) }>
 						<div className="inline-help__contact-box-icon">
-							<Gridicon icon={ 'comment' } />
+							<Icon icon={ comment } />
 						</div>
 						<div>
 							<h2>{ __( 'Live chat' ) }</h2>
@@ -50,7 +51,7 @@ export const InlineHelpContactPageButton: React.FC< { onClick: () => void } > = 
 
 	return (
 		<Button className="inline-help__contact-button" borderless={ false } onClick={ onClick }>
-			<Gridicon icon={ 'comment' } size={ 24 } fill="transparent" strokeWidth="2px" />
+			<Icon icon={ comment } />
 			<span>{ __( 'Still need help?' ) }</span>
 		</Button>
 	);
