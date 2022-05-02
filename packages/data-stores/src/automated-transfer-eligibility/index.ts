@@ -19,6 +19,8 @@ export function register(): typeof STORE_KEY {
 			actions,
 			reducer,
 			resolvers,
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore Until createRegistrySelector is typed correctly
 			selectors,
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore Object literal may only specify known properties
