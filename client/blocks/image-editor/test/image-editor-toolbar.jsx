@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { ImageEditorToolbar } from '../image-editor-toolbar';
 
@@ -73,30 +73,26 @@ describe( 'ImageEditorToolbar', () => {
 	test(
 		'should show aspect ratio popover display ' +
 			'when image width and height meet the minimum dimensions',
-		async () => {
+		() => {
 			const { container } = render(
 				<ImageEditorToolbar { ...defaultProps } isAspectRatioDisabled={ false } />
 			);
 			fireEvent.click( container.getElementsByClassName( 'image-editor__toolbar-button' )[ 1 ] );
 
-			await waitFor( () => {
-				expect( screen.queryByRole( 'tooltip' ) ).toBeDefined();
-			} );
+			expect( screen.queryByRole( 'tooltip' ) ).toBeDefined();
 		}
 	);
 
 	test(
 		'should prevent aspect ratio popover display' +
 			'when image width and height do not meet the minimum dimensions',
-		async () => {
+		() => {
 			const { container } = render(
 				<ImageEditorToolbar { ...defaultProps } isAspectRatioDisabled />
 			);
 			fireEvent.click( container.getElementsByClassName( 'image-editor__toolbar-button' )[ 1 ] );
 
-			await waitFor( () => {
-				expect( screen.queryByRole( 'tooltip' ) ).toBeNull();
-			} );
+			expect( screen.queryByRole( 'tooltip' ) ).toBeNull();
 		}
 	);
 } );
