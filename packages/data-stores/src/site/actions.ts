@@ -250,12 +250,19 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			method: 'POST',
 		} );
 
-		yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
-			apiNamespace: 'wpcom/v2',
-			body: { trim_content: true },
-			method: 'POST',
-		} );
+		/*
+		 * Anchor themes are set up directly via Headstart on the server side
+		 * so exclude them from theme setup.
+		 */
+		const anchorDesigns = [ 'hannah', 'gilbert', 'riley' ];
+		if ( anchorDesigns.indexOf( selectedDesign.template ) < 0 ) {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
+				apiNamespace: 'wpcom/v2',
+				body: { trim_content: true },
+				method: 'POST',
+			} );
+		}
 
 		const data: { is_fse_active: boolean } = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/block-editor`,
