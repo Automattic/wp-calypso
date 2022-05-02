@@ -7,8 +7,6 @@ import { activateRewind } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import isRewindActivating from 'calypso/state/selectors/is-rewind-activating';
 
-import './activity-log-rewind-toggle.scss';
-
 class ActivityLogRewindToggle extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
@@ -40,7 +38,7 @@ class ActivityLogRewindToggle extends Component {
 
 		return (
 			<Button
-				className="activity-log__rewind-toggle"
+				className="rewind-migrate__toggle-button"
 				busy={ isSiteKnown && isActivating }
 				primary
 				disabled={ ! isSiteKnown || isActivating }

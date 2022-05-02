@@ -4,10 +4,10 @@ import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import ActivityLogRewindToggle from 'calypso/my-sites/activity/activity-log/activity-log-rewind-toggle';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import ToggleButton from './toggle';
 import './style.scss';
 
 class RewindMigrate extends Component {
@@ -53,7 +53,7 @@ class RewindMigrate extends Component {
 								"Are you ready to switch to our faster, more powerful system? Let's go!"
 						) }
 					</p>
-					<ActivityLogRewindToggle
+					<ToggleButton
 						siteId={ siteId }
 						label={ translate( 'Migrate your credentials' ) }
 						isVpMigrate={ true }

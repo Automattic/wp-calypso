@@ -4,7 +4,8 @@
 	display: none;
 }
 
-.rewind-switch__card, .rewind-auto-config__card {
+.rewind-switch__card,
+.rewind-auto-config__card {
 	text-align: center;
 	margin: 1px auto;
 	max-width: 670px;
@@ -58,4 +59,8 @@
 		font-size: $font-body-extra-small;
 		color: var( --color-text-inverted );
 	}
+}
+
+.rewind-migrate__toggle-button {
+	margin-bottom: 18px;
 }
