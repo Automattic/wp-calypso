@@ -14,10 +14,10 @@ import './style.scss';
 type Props = {
 	className: string;
 	user: {
-		display_name: string;
-		name: string;
+		display_name?: string;
+		name?: string;
 		avatar_URL: string;
-	};
+	} | null;
 	size?: number;
 	imgSize?: number;
 	// connected props:
