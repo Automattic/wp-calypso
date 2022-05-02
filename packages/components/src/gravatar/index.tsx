@@ -16,7 +16,7 @@ type Props = {
 	user: {
 		display_name?: string;
 		name?: string;
-		avatar_URL: string;
+		avatar_URL?: string;
 	} | null;
 	size?: number;
 	imgSize?: number;
