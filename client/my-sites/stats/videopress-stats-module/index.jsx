@@ -117,8 +117,6 @@ class VideoPressStatsModule extends Component {
 		const noData = data && this.state.loaded && ! completeVideoStats.length;
 		// Only show loading indicators when nothing is in state tree, and request in-flight
 		const isLoading = ! this.state.loaded && ! ( data && data.length );
-
-		// TODO: Support error state in redux store
 		const hasError = false;
 
 		const cardClasses = classNames(
