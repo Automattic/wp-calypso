@@ -20,6 +20,9 @@ export function register(): typeof STORE_KEY {
 			reducer,
 			resolvers,
 			selectors,
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore Object literal may only specify known properties
+			__experimentalUseThunks: true,
 		} );
 	}
 	return STORE_KEY;
