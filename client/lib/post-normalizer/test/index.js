@@ -26,7 +26,8 @@ import stripHtml from '../rule-strip-html';
 import withContentDOM from '../rule-with-content-dom';
 
 jest.mock( '@automattic/calypso-url', () => ( {
-	safeImageUrl: require( './mocks/lib/safe-image-url' ),
+	...jest.requireActual( '@automattic/calypso-url' ),
+	safeImageUrl: require( './mocks/lib/safe-image-url' ).default,
 } ) );
 
 describe( 'index', () => {
