@@ -1,5 +1,4 @@
-import { Button, Card } from '@automattic/components';
-import { HappinessEngineersTray } from '@automattic/onboarding';
+import { Button, Card, HappinessEngineersTray } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
