@@ -113,6 +113,16 @@ export class LoginLinks extends Component {
 		return login( loginParameters );
 	};
 
+	getQrCodeLoginLinkPageUrl = () => {
+		const loginParameters = {
+			locale: this.props.locale,
+			useQRCode: true,
+			signupUrl: this.props.query?.signup_url,
+		};
+
+		return login( loginParameters );
+	};
+
 	getLoginLinkText = () => {
 		if ( this.props.isP2Login ) {
 			return this.props.translate( 'Get a login link on your email' );
@@ -247,6 +257,40 @@ export class LoginLinks extends Component {
 		);
 	}
 
+	renderQrCodeLoginLink() {
+		if ( ! config.isEnabled( 'login/qr-code-login' ) || this.props.twoFactorAuthType ) {
+			return null;
+		}
+		if ( this.props.isLoggedIn ) {
+			return null;
+		}
+
+		// jetpack cloud cannot have users being sent to WordPress.com
+		if ( isJetpackCloudOAuth2Client( this.props.oauth2Client ) ) {
+			return null;
+		}
+
+		// @todo Implement a muriel version of the email login links for the WooCommerce onboarding flows
+		if ( isWooOAuth2Client( this.props.oauth2Client ) && this.props.wccomFrom ) {
+			return null;
+		}
+
+		if ( this.props.isJetpackWooCommerceFlow ) {
+			return null;
+		}
+
+		const loginUrl = login( {
+			locale: this.props.locale,
+			twoFactorAuthType: 'qr',
+			signupUrl: this.props.query?.signup_url,
+		} );
+		return (
+			<a href={ loginUrl } key="qr-code-login-link" data-e2e-link="qr-code-login-link">
+				{ this.props.translate( 'Login via the Mobile App' ) }
+			</a>
+		);
+	}
+
 	renderResetPasswordLink() {
 		if ( this.props.twoFactorAuthType || this.props.privateSite ) {
 			return null;
@@ -336,6 +380,7 @@ export class LoginLinks extends Component {
 				{ this.renderLostPhoneLink() }
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
+				{ this.renderQrCodeLoginLink() }
 				{ this.renderResetPasswordLink() }
 				{ ! config.isEnabled( 'desktop' ) && this.renderBackLink() }
 			</div>

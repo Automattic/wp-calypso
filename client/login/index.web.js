@@ -12,6 +12,7 @@ import LayoutLoggedOut from 'calypso/layout/logged-out';
 import {
 	login,
 	magicLogin,
+	qrCodeLogin,
 	magicLoginUse,
 	redirectJetpack,
 	redirectDefaultLocale,
@@ -76,6 +77,17 @@ export default ( router ) => {
 			setLocaleMiddleware(),
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 			magicLogin,
+			makeLoggedOutLayout
+		);
+	}
+
+	if ( config.isEnabled( 'login/qr-code-login' ) ) {
+		router(
+			[ `/log-in/qr/${ lang }` ],
+			redirectLoggedIn,
+			setLocaleMiddleware(),
+			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
+			qrCodeLogin,
 			makeLoggedOutLayout
 		);
 	}
