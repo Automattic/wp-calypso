@@ -1,12 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
 import { getJetpackStorageUpgradeUrl } from 'calypso/state/plans/selectors';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
@@ -60,20 +57,11 @@ const VisibleDaysLimitUpsell: React.FC< OwnProps > = ( { cardClassName } ) => {
 		return null;
 	}
 
-	const card =
-		isJetpackCloud() || isEnabled( 'activity-log/v2' ) ? (
-			<ActivityCard className={ cardClassName } activity={ PLACEHOLDER_ACTIVITY } />
-		) : (
-			<ActivityLogItem
-				className={ cardClassName }
-				siteId={ siteId }
-				activity={ PLACEHOLDER_ACTIVITY }
-			/>
-		);
-
 	return (
 		<div className="visible-days-limit-upsell">
-			<div className="visible-days-limit-upsell__next-activity">{ card }</div>
+			<div className="visible-days-limit-upsell__next-activity">
+				<ActivityCard className={ cardClassName } activity={ PLACEHOLDER_ACTIVITY } />
+			</div>
 			<div className="visible-days-limit-upsell__call-to-action">
 				<h3 className="visible-days-limit-upsell__call-to-action-header">
 					{ preventWidows(
