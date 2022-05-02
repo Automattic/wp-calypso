@@ -1,22 +1,12 @@
-import { SiteDetails } from '@automattic/data-stores/dist/types/site';
-import { PropsWithChildren } from 'react';
-import { StepProps } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import { Importer, ImportJob } from 'calypso/signup/steps/import-from/types';
-import { UrlData } from 'calypso/signup/steps/import/types';
+import BloggerImporter from 'calypso/signup/steps/import-from/blogger';
+import MediumImporter from 'calypso/signup/steps/import-from/medium';
+import SquarespaceImporter from 'calypso/signup/steps/import-from/squarespace';
+import WixImporter from 'calypso/signup/steps/import-from/wix';
+import WordpressImporter from 'calypso/signup/steps/import-from/wordpress';
 
-export type ImporterWrapperRefAttr = {
-	run: boolean;
-	site: SiteDetails;
-	siteId: number;
-	siteSlug: string;
-	fromSite: string;
-	urlData: UrlData;
-	job?: ImportJob;
-	navigator?: ( path: string ) => void;
-};
-
-export interface AdditionalProps {
-	importer: Importer;
-}
-
-export type ImporterWrapperProps = PropsWithChildren< StepProps & AdditionalProps >;
+export type ImporterCompType =
+	| typeof WixImporter
+	| typeof BloggerImporter
+	| typeof MediumImporter
+	| typeof WordpressImporter
+	| typeof SquarespaceImporter;

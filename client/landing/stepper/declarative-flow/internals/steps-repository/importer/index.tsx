@@ -3,14 +3,7 @@ import { SiteDetails } from '@automattic/data-stores/dist/types/site';
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React, {
-	useEffect,
-	useImperativeHandle,
-	useState,
-	forwardRef,
-	ForwardedRef,
-	PropsWithChildren,
-} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -33,18 +26,20 @@ import {
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { StepProps } from '../../types';
 import { BASE_ROUTE, BASE_STEPPER_ROUTE } from '../import/config';
 import { removeLeadingSlash } from '../import/util';
-import type { ImporterWrapperRefAttr, ImporterWrapperProps } from './types';
+import { ImporterCompType } from './types';
 
-export const ImporterWrapper = forwardRef(
-	(
-		props: PropsWithChildren< ImporterWrapperProps >,
-		ref: ForwardedRef< ImporterWrapperRefAttr >
-	) => {
+interface Props {
+	importer: Importer;
+}
+
+export function withImporterWrapper( Importer: ImporterCompType ) {
+	const ImporterWrapper = ( props: Props & StepProps ) => {
 		const { __ } = useI18n();
 		const dispatch = useDispatch();
-		const { importer, navigation, children } = props;
+		const { importer, navigation } = props;
 		const currentRoute = useCurrentRoute();
 		const currentSearchParams = useQuery();
 
@@ -64,18 +59,6 @@ export const ImporterWrapper = forwardRef(
 
 		const fromSite = currentSearchParams.get( 'from' ) as string;
 		const fromSiteData = useSelector( getUrlData );
-
-		// Expose fields to the parent component
-		useImperativeHandle( ref, () => ( {
-			run: runImportInitially,
-			job: getImportJob( importer ),
-			site: site as SiteDetails,
-			siteId: siteId as number,
-			siteSlug: siteSlug as string,
-			urlData: fromSiteData,
-			fromSite,
-			navigator,
-		} ) );
 
 		/**
 	 	↓ Effects
@@ -172,8 +155,18 @@ export const ImporterWrapper = forwardRef(
 				return <NotAuthorized siteSlug={ siteSlug } navigator={ navigator } />;
 			}
 
-			// Provided importer
-			return <>{ children }</>;
+			return (
+				<Importer
+					job={ getImportJob( importer ) }
+					run={ runImportInitially }
+					siteId={ siteId as number }
+					site={ site as SiteDetails }
+					siteSlug={ siteSlug as string }
+					fromSite={ fromSite }
+					urlData={ fromSiteData }
+					navigator={ navigator }
+				/>
+			);
 		}
 
 		return (
@@ -197,5 +190,7 @@ export const ImporterWrapper = forwardRef(
 				/>
 			</>
 		);
-	}
-);
+	};
+
+	return ImporterWrapper;
+}
