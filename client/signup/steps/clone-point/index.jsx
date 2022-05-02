@@ -11,10 +11,10 @@ import TileGrid from 'calypso/components/tile-grid';
 import Tile from 'calypso/components/tile-grid/tile';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
-import ActivityLogItem from 'calypso/my-sites/activity/activity-log-item';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
+import ActivityLogItem from './activity-log-item';
 import './style.scss';
 
 const PAGE_SIZE = 20;
