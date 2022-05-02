@@ -92,6 +92,8 @@ export function useCategories(): Record< string, Category > {
 			slug: 'donations',
 			tags: [
 				'donation',
+				'donation-plugin',
+				'donations',
 				'donate',
 				'fundraising',
 				'crowdfunding',
@@ -104,7 +106,7 @@ export function useCategories(): Record< string, Category > {
 			description: __( 'Ecommerce' ),
 			icon: 'grid',
 			slug: 'ecommerce',
-			tags: [ 'ecommerce', 'woocommerce', 'business' ],
+			tags: [ 'ecommerce', 'e-commerce', 'woocommerce', 'business', 'business-directory' ],
 		},
 		education: {
 			name: __( 'Education' ),
@@ -112,6 +114,13 @@ export function useCategories(): Record< string, Category > {
 			icon: 'grid',
 			slug: 'education',
 			tags: [ 'education' ],
+		},
+		email: {
+			name: __( 'Email' ),
+			description: __( 'Email' ),
+			icon: 'grid',
+			slug: 'email',
+			tags: [ 'email' ],
 		},
 		finance: {
 			name: __( 'Finance & Payments' ),
@@ -127,12 +136,33 @@ export function useCategories(): Record< string, Category > {
 			slug: 'marketing',
 			tags: [ 'marketing' ],
 		},
+		photo: {
+			name: __( 'Photo & Video' ),
+			description: __( 'Photo & Video' ),
+			icon: 'grid',
+			slug: 'photo',
+			tags: [ 'photo', 'video', 'media' ],
+		},
+		posts: {
+			name: __( 'Posts & Posting' ),
+			description: __( 'Posts & Posting' ),
+			icon: 'grid',
+			slug: 'posts',
+			tags: [ 'posts', 'post', 'page', 'pages' ],
+		},
 		seo: {
 			name: __( 'Search Optimization' ),
 			description: __( 'Search Optimization' ),
 			icon: 'grid',
 			slug: 'seo',
 			tags: [ 'seo' ],
+		},
+		security: {
+			name: __( 'Security' ),
+			description: __( 'Security' ),
+			icon: 'grid',
+			slug: 'security',
+			tags: [ 'security' ],
 		},
 		shipping: {
 			name: __( 'Shipping & Delivery' ),
@@ -150,13 +180,6 @@ export function useCategories(): Record< string, Category > {
 				'courier',
 			],
 		},
-		photo: {
-			name: __( 'Photo & Video' ),
-			description: __( 'Photo & Video' ),
-			icon: 'grid',
-			slug: 'photo',
-			tags: [ 'photo', 'video', 'media' ],
-		},
 		social: {
 			name: __( 'Social' ),
 			description: __( 'Social' ),
@@ -170,27 +193,6 @@ export function useCategories(): Record< string, Category > {
 			icon: 'grid',
 			slug: 'widgets',
 			tags: [ 'widgets' ],
-		},
-		email: {
-			name: __( 'Email' ),
-			description: __( 'Email' ),
-			icon: 'grid',
-			slug: 'email',
-			tags: [ 'email' ],
-		},
-		security: {
-			name: __( 'Security' ),
-			description: __( 'Security' ),
-			icon: 'grid',
-			slug: 'security',
-			tags: [ 'security' ],
-		},
-		posts: {
-			name: __( 'Posts & Posting' ),
-			description: __( 'Posts & Posting' ),
-			icon: 'grid',
-			slug: 'posts',
-			tags: [ 'posts', 'post', 'page', 'pages' ],
 		},
 	};
 
