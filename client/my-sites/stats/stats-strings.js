@@ -75,7 +75,7 @@ export default function () {
 		value: translate( 'Views', {
 			context: 'Stats: module row header for number of views per video.',
 		} ),
-		empty: translate( 'No videos views', {
+		empty: translate( 'No videos viewed', {
 			context: 'Stats: Info box label when the Videos module is empty',
 		} ),
 	};
