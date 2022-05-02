@@ -60,14 +60,14 @@ rawCurrentUserFetch()
 const queryClient = new QueryClient();
 
 export default function Content( { selectedArticle, setSelectedArticle, setFooterContent } ) {
-	const [ formOpen ] = useState( false );
+	const [ formOpen ] = useState( true );
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<Provider store={ store }>
 				<>
 					<QuerySites siteId={ window._currentSiteId } />
 					{ formOpen ? (
-						<ContactForm />
+						<ContactForm mode="CHAT" />
 					) : (
 						<InlineHelpCenterContent
 							selectedArticle={ selectedArticle }
