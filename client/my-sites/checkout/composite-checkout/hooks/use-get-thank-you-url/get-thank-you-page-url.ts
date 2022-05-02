@@ -52,7 +52,7 @@ import {
 	retrieveSignupDestination,
 } from 'calypso/signup/storageUtils';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
 
@@ -98,7 +98,7 @@ export default function getThankYouPageUrl( {
 	isJetpackCheckout?: boolean;
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
-	domains?: SiteDomain[];
+	domains?: ResponseDomain[];
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -500,7 +500,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideUpsell: boolean;
-	domains: SiteDomain[] | undefined;
+	domains: ResponseDomain[] | undefined;
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
@@ -566,7 +566,7 @@ function getProfessionalEmailUpsellUrl( {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	orderId: number | undefined;
-	domains: SiteDomain[] | undefined;
+	domains: ResponseDomain[] | undefined;
 } ): string | undefined {
 	if ( orderId || ! cart ) {
 		return;

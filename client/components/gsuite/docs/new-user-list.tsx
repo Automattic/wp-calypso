@@ -9,14 +9,15 @@ import {
 	GSuiteNewUserField,
 	newUsers,
 } from 'calypso/lib/gsuite/new-users';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
-const domainOne: SiteDomain = {
+// `GSuiteNewUserList` expects domains to use the `ResponseDomain` type, but we use `any` here to
+// avoid overly verboes declarations.
+const domainOne: any = {
 	name: 'example.blog',
 	domain: 'example.blog',
 	supportsGdprConsentManagement: true,
 };
-const domainTwo: SiteDomain = {
+const domainTwo: any = {
 	name: 'test.blog',
 	domain: 'test.blog',
 	supportsGdprConsentManagement: true,
