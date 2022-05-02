@@ -7,7 +7,6 @@ import {
 	useQuery,
 } from 'react-query';
 import { useSelector } from 'react-redux';
-import { truncateArticleContent } from 'calypso/components/share/helpers';
 import { extractSearchInformation, normalizePluginsList } from 'calypso/lib/plugins/utils';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
@@ -17,7 +16,6 @@ import {
 	BASE_STALE_TIME,
 	SITE_SEARCH_CACHE_KEY,
 	WPORG_PLUGINS_BLOG_ID,
-	WCCOM_PLUGINS_BLOG_ID,
 } from './constants';
 import { search } from './site-search-api';
 import { ESHits, ESResponse, Plugin, PluginQueryOptions } from './types';
@@ -313,8 +311,6 @@ export const useNewSiteSearchPlugins = (
 	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
-	const locale = useSelector( getCurrentUserLocale );
-	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
 
 	return useQuery(
 		getPluginsListKey( 'DEBUG-new-site-seach', options, true ),

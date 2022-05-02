@@ -66,13 +66,13 @@ function mapSortToApiValue( sort: string ) {
 /**
  * Generate the query string for an API request
  *
- * @param {object} options - Options object for the function
  * @returns {string} The generated query string.
  */
 function generateApiQueryString( {
 	author,
 	filter,
 	groupId,
+	pageHandle,
 	query,
 	sort,
 	postsPerPage = 10,
@@ -80,6 +80,7 @@ function generateApiQueryString( {
 	author?: string;
 	filter: Record< string, string[] >;
 	groupId: string;
+	pageHandle?: string;
 	query: string;
 	sort: string;
 	postsPerPage?: number;
@@ -110,27 +111,18 @@ function generateApiQueryString( {
 		'slug',
 	];
 
-	const fields = [
-		'date',
-		'permalink.url.raw',
-		'tag.name.default',
-		'category.name.default',
-		'post_type',
-		'has.image',
-		'shortcode_types',
-		'image.url.raw',
-	];
-
 	let params: {
 		fields: string[];
 		filter: { bool: { must: object[] } };
+		page_handle?: string;
 		query: string;
 		sort: string;
 		size: number;
 		group_id?: string;
 	} = {
-		fields: [ ...fields, ...WPORGFIELDS ],
+		fields: [ ...WPORGFIELDS ],
 		filter: buildFilterObject( filter ),
+		page_handle: pageHandle,
 		query: encodeURIComponent( query ),
 		sort: mapSortToApiValue( sort ),
 		size: postsPerPage,
@@ -154,7 +146,6 @@ function generateApiQueryString( {
  * Perform a search.
  *
  * @param {object} options - Search options
- * @param {number} requestId - Sequential ID used to determine recency of requests.
  * @returns {Promise} A promise to the JSON response object
  */
 export function search( options ) {
