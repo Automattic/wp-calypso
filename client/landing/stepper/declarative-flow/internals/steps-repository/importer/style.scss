@@ -1,0 +1,24 @@
+/**
+ * Common importer integration styles
+ */
+.site-setup {
+	.importer-wrapper:not( .importer-wrapper__wordpress ) {
+		max-width: 700px;
+		margin: auto;
+	}
+
+	.import__onboarding-page {
+		.onboarding-progress {
+			margin: auto;
+
+			@include break-small {
+				min-width: 465px;
+			}
+		}
+
+		.wpcom__loading-ellipsis {
+			display: block;
+			margin: auto;
+		}
+	}
+}
