@@ -17,8 +17,6 @@ const hasSeenWhatsNewModal: Reducer< boolean | undefined, HelpCenterAction > = (
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_HAS_SEEN_WHATS_NEW_MODAL':
 			return action.hasSeenWhatsNewModal;
-		case 'HELP_CENTER_FETCH_STATUS_SUCCESS':
-			return action.response.has_seen_whats_new_modal;
 	}
 	return state;
 };
