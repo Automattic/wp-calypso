@@ -42,6 +42,10 @@ abstract class MailboxFormFieldBase< T > implements MailboxFormField< T > {
 	hasError(): boolean {
 		return Boolean( this._error );
 	}
+
+	hasValidValue(): boolean {
+		return Boolean( this.value );
+	}
 }
 
 class DataMailboxFormField extends MailboxFormFieldBase< string > {
@@ -50,6 +54,10 @@ class DataMailboxFormField extends MailboxFormFieldBase< string > {
 
 class TextMailboxFormField extends MailboxFormFieldBase< string > {
 	value = '';
+
+	hasValidValue(): boolean {
+		return super.hasValidValue() && this.value.trim() !== '';
+	}
 }
 
 class BooleanMailboxFormField extends MailboxFormFieldBase< boolean > {

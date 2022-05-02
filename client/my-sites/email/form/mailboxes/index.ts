@@ -91,16 +91,13 @@ class MailboxForm< T extends EmailProvider > {
 	}
 
 	hasErrors() {
-		return Object.values( this.formFields ).some( ( field ) => field.error !== null );
+		return Object.values( this.formFields ).some( ( field ) => field.hasError() );
 	}
 
 	hasValidValues() {
 		return Object.values( this.formFields as MailboxFormFields )
-			.filter( ( field ) => field.required ?? false )
-			.every(
-				( field ) =>
-					field.typeName === Boolean.name.toLowerCase() || `${ field.value }`.trim() !== ''
-			);
+			.filter( ( field ) => field.isRequired ?? false )
+			.every( ( field ) => field.hasValidValue() );
 	}
 
 	isValid() {
