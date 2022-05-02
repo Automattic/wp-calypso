@@ -72,10 +72,10 @@ export default function () {
 	statsStrings.videoplays = {
 		title: translate( 'Videos', { context: 'Stats: title of module' } ),
 		item: translate( 'Video', { context: 'Stats: module row header for videos.' } ),
-		value: translate( 'Plays', {
-			context: 'Stats: module row header for number of plays per video.',
+		value: translate( 'Views', {
+			context: 'Stats: module row header for number of views per video.',
 		} ),
-		empty: translate( 'No videos played', {
+		empty: translate( 'No videos viewed', {
 			context: 'Stats: Info box label when the Videos module is empty',
 		} ),
 	};
