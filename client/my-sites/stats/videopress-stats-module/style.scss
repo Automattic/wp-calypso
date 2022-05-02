@@ -8,13 +8,21 @@
 	color: var( --color-text );
 }
 
+@media screen and ( max-width: 450px ) {
+	.videopress-stats-module__grid {
+		grid-template-columns: 40% auto auto auto;
+	}
+}
+
 .videopress-stats-module__grid-header {
 	font-weight: 600;
 	color: var( --color-text-subtle );
+	line-height: 20px;
 }
 
 .videopress-stats-module__grid-metric {
 	text-align: right;
+	padding-right: 8px;
 }
 
 .videopress-stats-module__grid-cell span {
@@ -26,6 +34,9 @@
 
 .videopress-stats-module__grid-link {
 	color: var( --color-primary );
+	overflow-x: clip;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .videopress-stats-module__row-wrapper,
