@@ -48,7 +48,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const isAnchorSite = 'anchor-fm' === flow;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
-	const { anchorPodcastId, anchorEpisodeId } = useSelect( ( select ) =>
+	const { anchorPodcastId, anchorEpisodeId, anchorSpotifyUrl } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
 	const siteSlug = useSiteSlugParam();
@@ -175,7 +175,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 					visibility,
 					anchorFmPodcastId: anchorPodcastId,
 					anchorFmEpisodeId: anchorEpisodeId,
-					anchorFmSpotifyUrl: null,
+					anchorFmSpotifyUrl: anchorSpotifyUrl,
 				} );
 
 				const newSite = getNewSite();
