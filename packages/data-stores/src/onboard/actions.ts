@@ -187,14 +187,14 @@ export const setAnchorPodcastId = ( anchorPodcastId: string | null ) => ( {
 	anchorPodcastId,
 } );
 
-export const setAnchorPodcastEpisodeId = ( anchorPodcastEpisodeId: string | null ) => ( {
+export const setAnchorEpisodeId = ( anchorEpisodeId: string | null ) => ( {
 	type: 'SET_ANCHOR_PODCAST_EPISODE_ID' as const,
-	anchorPodcastEpisodeId,
+	anchorEpisodeId,
 } );
 
-export const setAnchorPodcastSpotifyUrl = ( anchorPodcastSpotifyUrl: string | null ) => ( {
+export const setAnchorSpotifyUrl = ( anchorSpotifyUrl: string | null ) => ( {
 	type: 'SET_ANCHOR_PODCAST_SPOTIFY_URL' as const,
-	anchorPodcastSpotifyUrl,
+	anchorSpotifyUrl,
 } );
 
 export function updatePlan( planProductId: number ) {
@@ -266,8 +266,8 @@ export type OnboardAction = ReturnType<
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
 	| typeof setAnchorPodcastId
-	| typeof setAnchorPodcastEpisodeId
-	| typeof setAnchorPodcastSpotifyUrl
+	| typeof setAnchorEpisodeId
+	| typeof setAnchorSpotifyUrl
 	| typeof startOnboarding
 	| typeof setIntent
 	| typeof setStartingPoint

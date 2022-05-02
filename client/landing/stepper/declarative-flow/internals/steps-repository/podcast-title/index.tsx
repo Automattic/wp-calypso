@@ -32,12 +32,8 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 		const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 		const [ formTouched, setFormTouched ] = useState( false );
 
-		const {
-			setSiteTitle,
-			setAnchorPodcastId,
-			setAnchorPodcastEpisodeId,
-			setAnchorPodcastSpotifyUrl,
-		} = useDispatch( ONBOARD_STORE );
+		const { setSiteTitle, setAnchorPodcastId, setAnchorEpisodeId, setAnchorSpotifyUrl } =
+			useDispatch( ONBOARD_STORE );
 		const { anchorFmPodcastId, isAnchorFmPodcastIdError, anchorFmEpisodeId, anchorFmSpotifyUrl } =
 			useAnchorFmParams();
 
@@ -53,8 +49,8 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 			};
 			setSiteTitle( siteTitle );
 			setAnchorPodcastId( ! isAnchorFmPodcastIdError ? anchorFmPodcastId : null );
-			setAnchorPodcastEpisodeId( anchorFmEpisodeId );
-			setAnchorPodcastSpotifyUrl( anchorFmSpotifyUrl );
+			setAnchorEpisodeId( anchorFmEpisodeId );
+			setAnchorSpotifyUrl( anchorFmSpotifyUrl );
 			submit?.( providedDependencies );
 		};
 

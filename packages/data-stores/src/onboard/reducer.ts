@@ -182,9 +182,9 @@ const anchorPodcastId: Reducer< string | null, OnboardAction > = ( state = '', a
 	return state;
 };
 
-const anchorPodcastEpisodeId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
+const anchorEpisodeId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_ANCHOR_PODCAST_EPISODE_ID' ) {
-		return action.anchorPodcastEpisodeId;
+		return action.anchorEpisodeId;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return '';
@@ -192,9 +192,9 @@ const anchorPodcastEpisodeId: Reducer< string | null, OnboardAction > = ( state 
 	return state;
 };
 
-const anchorPodcastSpotifyUrl: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
+const anchorSpotifyUrl: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_ANCHOR_PODCAST_SPOTIFY_URL' ) {
-		return action.anchorPodcastSpotifyUrl;
+		return action.anchorSpotifyUrl;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return '';
@@ -308,8 +308,8 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 
 const reducer = combineReducers( {
 	anchorPodcastId,
-	anchorPodcastEpisodeId,
-	anchorPodcastSpotifyUrl,
+	anchorEpisodeId,
+	anchorSpotifyUrl,
 	domain,
 	domainSearch,
 	domainCategory,

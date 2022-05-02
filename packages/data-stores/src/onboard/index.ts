@@ -22,8 +22,8 @@ export function register(): typeof STORE_KEY {
 		selectors,
 		persist: [
 			'anchorPodcastId',
-			'anchorPodcastEpisodeId',
-			'anchorPodcastSpotifyUrl',
+			'anchorEpisodeId',
+			'anchorSpotifyUrl',
 			'domain',
 			'domainSearch',
 			'hasUsedDomainsStep',
