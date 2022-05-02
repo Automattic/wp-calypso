@@ -22,11 +22,9 @@ export function getFinalImporterUrl(
 	if ( isAtomicSite && platform !== 'wordpress' ) {
 		importerUrl = getWpOrgImporterUrl( targetSlug, platform );
 	} else if (
-		( platform === 'blogger' && isEnabled( 'onboarding/import-from-blogger' ) ) ||
-		( platform === 'medium' && isEnabled( 'onboarding/import-from-medium' ) ) ||
-		( platform === 'squarespace' && isEnabled( 'onboarding/import-from-squarespace' ) ) ||
-		( platform === 'wix' && isEnabled( 'onboarding/import-from-wix' ) ) ||
-		( platform === 'wordpress' && isEnabled( 'onboarding/import-from-wordpress' ) )
+		[ 'blogger', 'medium', 'squarespace', 'wix', 'wordpress' ].some( ( platform ) =>
+			isEnabled( `onboarding/import-from-${ platform }` )
+		)
 	) {
 		importerUrl = getWpComOnboardingUrl( targetSlug, platform, fromSite );
 	} else {
