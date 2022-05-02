@@ -7,13 +7,25 @@ interface Validator< T > {
 	validate( field?: MailboxFormFieldBase< T > ): void;
 }
 
-class RequiredValidator< T > implements Validator< T > {
+abstract class BaseValidator< T > implements Validator< T > {
+	validate( field?: MailboxFormFieldBase< T > ): void {
+		if ( ! field || field.hasError() ) {
+			return;
+		}
+
+		this.validateField( field );
+	}
+
+	abstract validateField( field: MailboxFormFieldBase< T > ): void;
+}
+
+class RequiredValidator< T > extends BaseValidator< T > {
 	static getRequiredFieldError(): FieldError {
 		return i18n.translate( 'This field is required.' );
 	}
 
-	validate( field?: MailboxFormFieldBase< T > ): void {
-		if ( ! field || field.error || ! field.isRequired ) {
+	validateField( field: MailboxFormFieldBase< T > ): void {
+		if ( ! field.isRequired ) {
 			return;
 		}
 
@@ -32,19 +44,20 @@ class RequiredValidator< T > implements Validator< T > {
 }
 
 class RequiredIfVisibleValidator extends RequiredValidator< string > {
-	validate( field?: MailboxFormFieldBase< string > ): void {
-		if ( ! field || field.error || ! field.isVisible ) {
+	validateField( field: MailboxFormFieldBase< string > ): void {
+		if ( ! field.isVisible ) {
 			return;
 		}
 
-		super.validate( field );
+		super.validateField( field );
 	}
 }
 
-class MaximumStringLengthValidator implements Validator< string > {
+class MaximumStringLengthValidator extends BaseValidator< string > {
 	private readonly maximumStringLength: number;
 
 	constructor( maximumStringLength: number ) {
+		super();
 		this.maximumStringLength = maximumStringLength;
 	}
 
@@ -54,23 +67,20 @@ class MaximumStringLengthValidator implements Validator< string > {
 		} );
 	}
 
-	validate( field?: MailboxFormFieldBase< string > ): void {
-		if ( ! field || field.error ) {
-			return;
-		}
-
+	validateField( field: MailboxFormFieldBase< string > ): void {
 		if ( this.maximumStringLength < ( field.value?.length ?? 0 ) ) {
 			field.error = MaximumStringLengthValidator.getFieldTooLongError( this.maximumStringLength );
 		}
 	}
 }
 
-class MailboxNameValidator implements Validator< string > {
+class MailboxNameValidator extends BaseValidator< string > {
 	domainName: string;
 	mailboxHasDomainError: boolean;
 	supportsApostrophes: boolean;
 
 	constructor( domainName: string, mailboxHasDomainError: boolean, supportsApostrophes: boolean ) {
+		super();
 		this.domainName = domainName;
 		this.mailboxHasDomainError = mailboxHasDomainError;
 		this.supportsApostrophes = supportsApostrophes;
@@ -88,11 +98,7 @@ class MailboxNameValidator implements Validator< string > {
 			: i18n.translate( 'Only numbers, letters, dashes, underscores, and periods are allowed.' );
 	}
 
-	validate( field?: MailboxFormFieldBase< string > ): void {
-		if ( ! field || field.error ) {
-			return;
-		}
-
+	validateField( field: MailboxFormFieldBase< string > ): void {
 		const regex = this.supportsApostrophes
 			? /^[\da-z_'-](\.?[\da-z_'-])*$/i
 			: /^[\da-z_-](\.?[\da-z_-])*$/i;
@@ -113,10 +119,11 @@ class MailboxNameValidator implements Validator< string > {
 	}
 }
 
-class AlternateEmailValidator implements Validator< string > {
+class AlternateEmailValidator extends BaseValidator< string > {
 	domainName: string;
 
 	constructor( domainName: string ) {
+		super();
 		this.domainName = domainName;
 	}
 
@@ -138,8 +145,8 @@ class AlternateEmailValidator implements Validator< string > {
 		);
 	}
 
-	validate( field?: MailboxFormFieldBase< string > ): void {
-		if ( ! field || field.error || ! field.value || field.value.trim() === '' ) {
+	validateField( field: MailboxFormFieldBase< string > ): void {
+		if ( ! field.value || field.value.trim() === '' ) {
 			return;
 		}
 
@@ -163,11 +170,12 @@ class AlternateEmailValidator implements Validator< string > {
 	}
 }
 
-class PasswordValidator implements Validator< string > {
+class PasswordValidator extends BaseValidator< string > {
 	private readonly minimumPasswordLength: number;
 	static readonly maximumPasswordLength = 100;
 
 	constructor( minimumPasswordLength: number ) {
+		super();
 		this.minimumPasswordLength = minimumPasswordLength;
 	}
 
@@ -200,11 +208,7 @@ class PasswordValidator implements Validator< string > {
 		} );
 	}
 
-	validate( field?: MailboxFormFieldBase< string > ): void {
-		if ( ! field || field.error ) {
-			return;
-		}
-
+	validateField( field: MailboxFormFieldBase< string > ): void {
 		const value = field.value;
 
 		if ( this.minimumPasswordLength > value.length ) {
@@ -241,10 +245,11 @@ class PasswordValidator implements Validator< string > {
 	}
 }
 
-class ExistingMailboxNamesValidator implements Validator< string > {
+class ExistingMailboxNamesValidator extends BaseValidator< string > {
 	existingMailboxNames: string[];
 
 	constructor( existingMailboxNames: string[] ) {
+		super();
 		this.existingMailboxNames = existingMailboxNames;
 	}
 
@@ -252,11 +257,7 @@ class ExistingMailboxNamesValidator implements Validator< string > {
 		return i18n.translate( 'Please use unique mailboxes' );
 	}
 
-	validate( field?: MailboxFormFieldBase< string > ): void {
-		if ( ! field || field.error ) {
-			return;
-		}
-
+	validateField( field: MailboxFormFieldBase< string > ): void {
 		const existingMailboxNames = this.existingMailboxNames ?? [];
 		if ( ! existingMailboxNames ) {
 			return;

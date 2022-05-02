@@ -17,7 +17,19 @@ interface MailboxFormField< Type > {
 }
 
 abstract class MailboxFormFieldBase< T > implements MailboxFormField< T > {
-	error: FieldError = null;
+	private _error: FieldError = null;
+
+	public get error() {
+		return this._error;
+	}
+
+	public set error( _error: FieldError ) {
+		if ( ! _error || ( typeof _error === 'string' && _error.trim() === '' ) ) {
+			_error = null;
+		}
+		this._error = _error;
+	}
+
 	value!: T;
 	isRequired;
 	isVisible = true;
@@ -25,6 +37,10 @@ abstract class MailboxFormFieldBase< T > implements MailboxFormField< T > {
 
 	constructor( isRequired = true ) {
 		this.isRequired = isRequired;
+	}
+
+	hasError(): boolean {
+		return Boolean( this._error );
 	}
 }
 
