@@ -10,6 +10,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import getTextWidth from 'calypso/landing/gutenboarding/onboarding-block/acquire-intent/get-text-width';
+import useDetectMatchingAnchorSite from 'calypso/landing/stepper/hooks/use-detect-matching-anchor-site';
 import useSiteTitle from 'calypso/landing/stepper/hooks/use-site-title';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -20,6 +21,9 @@ import './style.scss';
 const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 	const { goBack, submit } = navigation;
 	const { __ } = useI18n();
+
+	//Check to see if there is a site with a matching anchor podcast ID
+	const isLookingUpMatchingAnchorSites = useDetectMatchingAnchorSite();
 
 	const PodcastTitleForm: React.FC = () => {
 		//Sets the site title from the API on first load if a custom title has not been set
@@ -42,6 +46,12 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 			setFormTouched( true );
 			setSiteTitle( event.currentTarget.value );
 		};
+
+		//If we're still checking for matching Anchor sites, don't show the form
+		if ( isLookingUpMatchingAnchorSites ) {
+			return <div />;
+		}
+
 		return (
 			<form
 				className="podcast-title__form"
