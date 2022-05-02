@@ -12,7 +12,7 @@ import { Component } from 'react';
 import './style.scss';
 
 type Props = {
-	className: string;
+	className?: string;
 	user: {
 		display_name?: string;
 		name?: string;
