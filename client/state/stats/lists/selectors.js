@@ -104,7 +104,7 @@ export const getVideoPressPlaysComplete = treeSelect(
 		getSiteStatsForQuery( state, siteId, statType, query ),
 		getSite( state, siteId ),
 	],
-	( [ siteStats, site ], siteId, statType, query ) => {
+	( [ siteStats ] ) => {
 		return siteStats;
 	},
 	{
@@ -112,6 +112,7 @@ export const getVideoPressPlaysComplete = treeSelect(
 			[ siteId, statType, getSerializedStatsQuery( query ) ].join(),
 	}
 );
+
 /**
  * Returns normalized stats data for a given query and stat type, or the un-normalized response
  * from the API if no normalizer method for that stats type exists in ./utils

@@ -55,6 +55,7 @@ class StatsSummary extends Component {
 			date: endOf.format( 'YYYY-MM-DD' ),
 			max: 0,
 		};
+		const urlParams = new URLSearchParams( this.props.context.querystring );
 
 		switch ( this.props.context.params.module ) {
 			case 'referrers':
@@ -169,8 +170,6 @@ class StatsSummary extends Component {
 				if ( this.props.media ) {
 					title = this.props.media.title;
 				}
-
-				const urlParams = new URLSearchParams( this.props.context.querystring );
 
 				// TODO: a separate StatsSectionTitle component should be created
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
