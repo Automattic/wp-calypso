@@ -44,7 +44,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					<Route key={ path } path={ `/${ path }` }>
 						<div className={ classnames( flow.name, flow.classnames, pathToClass( path ) ) }>
 							<SignupHeader />
-							<StepComponent navigation={ stepNavigation } />
+							<StepComponent navigation={ stepNavigation } flow={ flow.name } />
 						</div>
 					</Route>
 				);

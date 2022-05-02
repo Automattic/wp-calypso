@@ -36,7 +36,7 @@ import type { Design } from '@automattic/design-picker';
 /**
  * The design picker step
  */
-const designSetup: Step = function DesignSetup( { navigation } ) {
+const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
@@ -47,9 +47,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const { setSelectedDesign, setPendingAction, createSite } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 	const { anchorFmEpisodeId, anchorFmPodcastId } = useAnchorFmParams();
-	const flowName =
-		isEnabled( 'signup/anchor-fm' ) && anchorFmPodcastId ? 'anchor-fm' : 'setup-site';
-	const isAnchorSite = 'anchor-fm' === flowName;
+	const isAnchorSite = 'anchor-fm' === flow;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const siteSlug = useSiteSlugParam();
@@ -154,7 +152,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		theme: design.recipe?.stylesheet,
 		template: design.template,
 		is_premium: design?.is_premium,
-		flow: flowName,
+		flow,
 		intent: intent,
 	} );
 
