@@ -20,13 +20,12 @@ import { useMemo, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
+import { useAnchorFmParams } from 'calypso/landing/stepper/hooks/use-anchor-fm-params';
+import { useFSEStatus } from 'calypso/landing/stepper/hooks/use-fse-status';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useAnchorFmEpisodeId } from '../../../../hooks/use-anchor-fm-params';
-import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../../stores';
-import { getAnchorPodcastId } from '../../../get-anchor-podcast-id';
 import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { getCategorizationOptions, getGeneratedDesignsCategory } from './categories';
 import PreviewToolbar from './preview-toolbar';
@@ -37,7 +36,7 @@ import type { Design } from '@automattic/design-picker';
 /**
  * The design picker step
  */
-const designSetup: Step = function DesignSetup( { navigation } ) {
+const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
@@ -47,10 +46,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const site = useSite();
 	const { setSelectedDesign, setPendingAction, createSite } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
-
-	const anchorPodcastId = getAnchorPodcastId();
-	const flowName = isEnabled( 'signup/anchor-fm' ) && anchorPodcastId ? 'anchor-fm' : 'setup-site';
-	const isAnchorSite = 'anchor-fm' === flowName;
+	const { anchorFmEpisodeId, anchorFmPodcastId } = useAnchorFmParams();
+	const isAnchorSite = 'anchor-fm' === flow;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const siteSlug = useSiteSlugParam();
@@ -155,7 +152,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		theme: design.recipe?.stylesheet,
 		template: design.template,
 		is_premium: design?.is_premium,
-		flow: flowName,
+		flow,
 		intent: intent,
 	} );
 
@@ -167,7 +164,6 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const categorization = useCategorization( designs, categorizationOptions );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
-	const anchorFmEpisodeId = useAnchorFmEpisodeId();
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
@@ -190,7 +186,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 					languageSlug: locale,
 					bearerToken: undefined,
 					visibility,
-					anchorFmPodcastId: anchorPodcastId,
+					anchorFmPodcastId,
 					anchorFmEpisodeId,
 					anchorFmSpotifyUrl: null,
 				} );
