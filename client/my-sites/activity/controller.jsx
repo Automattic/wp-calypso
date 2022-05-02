@@ -1,8 +1,6 @@
-import config from '@automattic/calypso-config';
 import { isEqual } from 'lodash';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
-import ActivityLog from 'calypso/my-sites/activity/activity-log';
 import ActivityLogV2 from 'calypso/my-sites/activity/activity-log-v2';
 import { recordTrack } from 'calypso/reader/stats';
 import { setFilter } from 'calypso/state/activity-log/actions';
@@ -59,11 +57,7 @@ export function activity( context, next ) {
 	}
 
 	recordTrack( 'calypso_activitylog_view', queryFilterToStats( queryFilter ) );
-	context.primary = config.isEnabled( 'activity-log/v2' ) ? (
-		<ActivityLogV2 />
-	) : (
-		<ActivityLog siteId={ siteId } context={ context } />
-	);
+	context.primary = <ActivityLogV2 />;
 
 	next();
 }
