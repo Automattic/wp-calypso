@@ -209,6 +209,10 @@ class ActivityCardList extends Component {
 		const pageLogs = this.splitLogsByDate( visibleLogs.slice( ( actualPage - 1 ) * pageSize ) );
 		const showLimitUpsell = visibleLogs.length < logs.length && actualPage >= pageCount;
 
+		if ( pageLogs.length === 0 ) {
+			return 'Empty!';
+		}
+
 		return (
 			<div className="activity-card-list">
 				{ showFilter && (
