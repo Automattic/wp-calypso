@@ -5,5 +5,6 @@ export const DEFAULT_CATEGORY = 'all';
 
 export const SITE_SEARCH_CACHE_KEY = 'wpcom-site-search-wporg-plugins';
 export const WPORG_PLUGINS_BLOG_ID = '108986944';
+export const WCCOM_PLUGINS_BLOG_ID = '113771570';
 
 export const WPORG_CACHE_KEY = 'wporg-plugins';

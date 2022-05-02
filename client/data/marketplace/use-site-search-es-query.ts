@@ -1,6 +1,13 @@
 import phpUnserialize from 'phpunserialize';
-import { UseQueryResult, UseQueryOptions, InfiniteData, useInfiniteQuery } from 'react-query';
+import {
+	UseQueryResult,
+	UseQueryOptions,
+	InfiniteData,
+	useInfiniteQuery,
+	useQuery,
+} from 'react-query';
 import { useSelector } from 'react-redux';
+import { truncateArticleContent } from 'calypso/components/share/helpers';
 import { extractSearchInformation, normalizePluginsList } from 'calypso/lib/plugins/utils';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
@@ -10,7 +17,9 @@ import {
 	BASE_STALE_TIME,
 	SITE_SEARCH_CACHE_KEY,
 	WPORG_PLUGINS_BLOG_ID,
+	WCCOM_PLUGINS_BLOG_ID,
 } from './constants';
+import { search } from './site-search-api';
 import { ESHits, ESResponse, Plugin, PluginQueryOptions } from './types';
 import { getPluginsListKey } from './utils';
 
@@ -292,6 +301,35 @@ export const useSiteSearchPlugins = (
 				const nextPage = allPages.length + 1;
 				return nextPage <= pages ? nextPage : undefined;
 			},
+			enabled,
+			staleTime,
+			refetchOnMount,
+		}
+	);
+};
+
+export const useNewSiteSearchPlugins = (
+	options: PluginQueryOptions,
+	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
+): UseQueryResult => {
+	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
+	const locale = useSelector( getCurrentUserLocale );
+	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
+
+	return useQuery(
+		getPluginsListKey( 'DEBUG-new-site-seach', options, true ),
+		() =>
+			search( {
+				author,
+				query: searchTerm,
+				siteId: WPORG_PLUGINS_BLOG_ID,
+				sort: 'relevance',
+				postsPerPage: 20,
+				filter: { post_types: [ 'plugin' ] },
+				groupIds: [ 'marketplace:wporg' ],
+				resultFormat: 'plugin',
+			} ),
+		{
 			enabled,
 			staleTime,
 			refetchOnMount,

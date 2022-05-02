@@ -50,3 +50,7 @@ export type ESIndexResult = {
 export type ESHits = Array< { fields: ESIndexResult } >;
 
 export type ESResponse = { hits: ESHits; total: number };
+
+export type ESTermFilter = { term: Record< string, string > };
+
+export type ESDateRangeFilter = { range: Record< string, { gte: string; lt: string } > };
