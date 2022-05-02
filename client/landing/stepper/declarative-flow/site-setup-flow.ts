@@ -84,7 +84,7 @@ export const siteSetupFlow: Flow = {
 					const processingResult = params[ 0 ] as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
-						// error page?
+						return navigate( 'error' );
 					}
 
 					// If the user skips starting point, redirect them to My Home
@@ -212,6 +212,9 @@ export const siteSetupFlow: Flow = {
 
 				case 'storeAddress':
 					return navigate( 'storeFeatures' );
+
+				case 'businessInfo':
+					return navigate( 'storeAddress' );
 
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );

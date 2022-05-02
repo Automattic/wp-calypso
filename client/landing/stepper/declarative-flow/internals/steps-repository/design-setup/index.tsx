@@ -19,12 +19,13 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
+import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
+import { useAnchorFmParams } from 'calypso/landing/stepper/hooks/use-anchor-fm-params';
+import { useFSEStatus } from 'calypso/landing/stepper/hooks/use-fse-status';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
-import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
-import { getAnchorPodcastId } from '../../../get-anchor-podcast-id';
+import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../../stores';
 import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { getCategorizationOptions, getGeneratedDesignsCategory } from './categories';
 import PreviewToolbar from './preview-toolbar';
@@ -35,7 +36,7 @@ import type { Design } from '@automattic/design-picker';
 /**
  * The design picker step
  */
-const designSetup: Step = function DesignSetup( { navigation } ) {
+const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
@@ -43,12 +44,10 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const site = useSite();
-	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setSelectedDesign, setPendingAction, createSite } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
-
-	const anchorPodcastId = getAnchorPodcastId();
-	const flowName = isEnabled( 'signup/anchor-fm' ) && anchorPodcastId ? 'anchor-fm' : 'setup-site';
-	const isAnchorSite = 'anchor-fm' === flowName;
+	const { anchorFmEpisodeId, anchorFmPodcastId } = useAnchorFmParams();
+	const isAnchorSite = 'anchor-fm' === flow;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const siteSlug = useSiteSlugParam();
@@ -63,10 +62,13 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		} ),
 		[]
 	);
-	const isPrivateAtomic = Boolean(
-		site?.launch_status === 'unlaunched' && site?.options?.is_automated_transfer
-	);
 
+	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
+	const isPrivateAtomic = Boolean( site?.launch_status === 'unlaunched' && isAtomic );
+
+	const isEligibleForProPlan = useSelect(
+		( select ) => site && select( SITE_STORE ).isEligibleForProPlan( site.ID )
+	);
 	const showDesignPickerCategories =
 		isEnabled( 'signup/design-picker-categories' ) && ! isAnchorSite;
 	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
@@ -112,6 +114,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		[ staticDesigns, generatedDesigns ]
 	);
 
+	const visibility = useNewSiteVisibility();
+
 	function headerText() {
 		if ( showDesignPickerCategories ) {
 			return translate( 'Themes' );
@@ -148,7 +152,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		theme: design.recipe?.stylesheet,
 		template: design.template,
 		is_premium: design?.is_premium,
-		flow: flowName,
+		flow,
 		intent: intent,
 	} );
 
@@ -158,6 +162,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		showGeneratedDesigns
 	);
 	const categorization = useCategorization( designs, categorizationOptions );
+	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
@@ -169,6 +175,31 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 				selectedSiteCategory: categorization.selection,
 			};
 			submit?.( providedDependencies );
+		} else if ( isAnchorSite && _selectedDesign ) {
+			setPendingAction( async () => {
+				if ( ! currentUser ) {
+					return;
+				}
+
+				await createSite( {
+					username: currentUser.username,
+					languageSlug: locale,
+					bearerToken: undefined,
+					visibility,
+					anchorFmPodcastId,
+					anchorFmEpisodeId,
+					anchorFmSpotifyUrl: null,
+				} );
+
+				const newSite = getNewSite();
+
+				if ( ! newSite || ! newSite.site_slug ) {
+					return;
+				}
+
+				return setDesignOnSite( newSite.site_slug, _selectedDesign );
+			} );
+			submit?.();
 		}
 	}
 
@@ -190,13 +221,16 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
 			return null;
 		}
+
+		const plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
+
 		if ( siteSlug ) {
 			const params = new URLSearchParams();
 			params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 			window.location.href = `/checkout/${ encodeURIComponent(
 				siteSlug
-			) }/premium?${ params.toString() }`;
+			) }/${ plan }?${ params.toString() }`;
 		}
 	}
 

@@ -45,6 +45,7 @@ export type Flow = {
 
 export type StepProps = {
 	navigation: NavigationControls;
+	flow: string | null;
 };
 
 export type Step = React.FC< StepProps >;

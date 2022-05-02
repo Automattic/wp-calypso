@@ -43,7 +43,13 @@ class StatsDownloadCsv extends Component {
 
 		const csvData = data
 			.map( ( row ) => {
-				return row.join( ',' );
+				if ( Array.isArray( row ) ) {
+					return row.join( ',' );
+				}
+
+				return Object.values( row )
+					.map( ( value ) => `"${ value.toString().replace( /"/g, '""' ) }"` )
+					.join( ',' );
 			} )
 			.join( '\n' );
 
@@ -69,7 +75,7 @@ class StatsDownloadCsv extends Component {
 				disabled={ disabled }
 				borderless={ borderless }
 			>
-				{ siteId && statType && (
+				{ siteId && statType && query && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 				<Gridicon icon="cloud-download" />{ ' ' }
@@ -83,9 +89,14 @@ class StatsDownloadCsv extends Component {
 
 const connectComponent = connect(
 	( state, ownProps ) => {
-		const { statType, query } = ownProps;
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
+
+		if ( ownProps.data ) {
+			return { data: ownProps.data, siteSlug, siteId, isLoading: false };
+		}
+
+		const { statType, query } = ownProps;
 		const data = getSiteStatsCSVData( state, siteId, statType, query );
 		const isLoading = isRequestingSiteStatsForQuery( state, siteId, statType, query );
 

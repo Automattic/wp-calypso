@@ -284,7 +284,9 @@ export class ManagedContactDetailsFormFields extends Component {
 	}
 
 	getCountryPostalCodeSupport = ( countryCode ) =>
-		getCountryPostalCodeSupport( this.props.countriesList, countryCode );
+		this.props.countriesList?.length && countryCode
+			? getCountryPostalCodeSupport( this.props.countriesList, countryCode )
+			: false;
 
 	renderContactDetailsFields() {
 		const { translate, hasCountryStates } = this.props;

@@ -25,3 +25,7 @@ export const settingsCredentialsPath = ( siteSlug: string, host: string ): strin
 export const purchasesBasePath = () => '/purchases';
 export const purchasesPath = ( siteSlug?: string ): string =>
 	siteSlug ? `${ purchasesBasePath() }/${ siteSlug }` : purchasesBasePath();
+
+export const socialBasePath = () => '/jetpack-social';
+export const socialPath = ( siteSlug?: string ): string =>
+	siteSlug ? `${ socialBasePath() }/${ siteSlug }` : socialBasePath();

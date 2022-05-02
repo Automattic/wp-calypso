@@ -20,19 +20,17 @@ const MarketingToolsHeader: FunctionComponent< Props > = ( { handleButtonClick }
 			</div>
 
 			<div className="tools__header-info">
-				<h1 className="tools__header-title">
-					{ translate( 'Explore our business tools marketplace' ) }
-				</h1>
+				<h1 className="tools__header-title">{ translate( 'Explore our premium plugins' ) }</h1>
 
 				<h2 className="tools__header-description">
 					{ translate(
-						'From finance services to productivity apps and marketing tools, our Business Tool hub includes hand-picked services that we think can help you grow your business.'
+						"We've added premium plugins to boost your site's capabilities. From bookings and subscriptions to email marketing and shipment tracking, we have you covered."
 					) }
 				</h2>
 
 				<div className="tools__header-button-row">
 					<Button onClick={ handleButtonClick } primary>
-						{ translate( 'Find new tools' ) }
+						{ translate( 'Explore now' ) }
 					</Button>
 				</div>
 			</div>

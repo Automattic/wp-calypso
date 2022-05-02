@@ -6,6 +6,8 @@ import {
 	LatestAtomicTransferError,
 	AtomicSoftwareStatusError,
 	AtomicSoftwareInstallError,
+	HappyChatAvailability,
+	EmailSupportAvailability,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import type {
@@ -43,6 +45,16 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	const receiveNewSiteFailed = ( error: NewSiteErrorResponse ) => ( {
 		type: 'RECEIVE_NEW_SITE_FAILED' as const,
 		error,
+	} );
+
+	const receiveHappyChatAvailability = ( availability: HappyChatAvailability ) => ( {
+		type: 'RECEIVE_HAPPY_CHAT_AVAILABILITY' as const,
+		availability,
+	} );
+
+	const receiveEmailSupportAvailability = ( availability: EmailSupportAvailability ) => ( {
+		type: 'RECEIVE_EMAIL_SUPPORT_AVAILABILITY' as const,
+		availability,
 	} );
 
 	function* createSite( params: CreateSiteParams ) {
@@ -424,12 +436,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				body: {},
 			} );
 			yield atomicSoftwareInstallSuccess( siteId, softwareSet );
-		} catch ( _ ) {
-			yield atomicSoftwareInstallFailure(
-				siteId,
-				softwareSet,
-				AtomicSoftwareInstallError.INTERNAL
-			);
+		} catch ( err ) {
+			yield atomicSoftwareInstallFailure( siteId, softwareSet, err as AtomicSoftwareInstallError );
 		}
 	}
 
@@ -450,6 +458,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveSite,
 		receiveSiteFailed,
 		receiveSiteTagline,
+		receiveEmailSupportAvailability,
+		receiveHappyChatAvailability,
 		receiveSiteVerticalId,
 		saveSiteTagline,
 		reset,
@@ -493,6 +503,8 @@ export type Action =
 			| ActionCreators[ 'receiveNewSiteFailed' ]
 			| ActionCreators[ 'receiveSiteTagline' ]
 			| ActionCreators[ 'receiveSiteVerticalId' ]
+			| ActionCreators[ 'receiveEmailSupportAvailability' ]
+			| ActionCreators[ 'receiveHappyChatAvailability' ]
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'reset' ]

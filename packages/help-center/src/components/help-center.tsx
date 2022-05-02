@@ -29,18 +29,14 @@ const HelpCenter: React.FC< Container > = ( {
 		};
 	}, [ portalParent ] );
 
-	return (
-		<div>
-			{ createPortal(
-				<HelpCenterContainer
-					handleClose={ handleClose }
-					content={ content }
-					headerText={ headerText }
-					footerContent={ footerContent }
-				/>,
-				portalParent
-			) }
-		</div>
+	return createPortal(
+		<HelpCenterContainer
+			handleClose={ handleClose }
+			content={ content }
+			headerText={ headerText }
+			footerContent={ footerContent }
+		/>,
+		portalParent
 	);
 };
 

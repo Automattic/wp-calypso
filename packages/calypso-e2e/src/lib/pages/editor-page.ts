@@ -13,6 +13,7 @@ import {
 	EditorInlineBlockInserterComponent,
 	EditorSidebarBlockInserterComponent,
 	EditorWelcomeTourComponent,
+	EditorBlockToolbarComponent,
 } from '../components';
 import { BlockInserter, OpenInlineInserter } from './shared-types';
 import type { SiteType } from '../../lib/utils';
@@ -51,6 +52,7 @@ export class EditorPage {
 	private editorSidebarBlockInserterComponent: EditorSidebarBlockInserterComponent;
 	private editorInlineBlockInserterComponent: EditorInlineBlockInserterComponent;
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
+	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -81,6 +83,7 @@ export class EditorPage {
 		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
 		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
 		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
+		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
 			page,
 			this.editor
@@ -388,6 +391,20 @@ export class EditorPage {
 	async removeBlock( blockHandle: ElementHandle ): Promise< void > {
 		await blockHandle.click();
 		await this.page.keyboard.press( 'Backspace' );
+	}
+
+	/**
+	 * Move the currently selected block up one position with the block toolbar.
+	 */
+	async moveBlockUp(): Promise< void > {
+		await this.editorBlockToolbarComponent.moveUp();
+	}
+
+	/**
+	 * Move the currently selected block down one position with the block toolbar.
+	 */
+	async moveBlockDown(): Promise< void > {
+		await this.editorBlockToolbarComponent.moveDown();
 	}
 
 	//#endregion

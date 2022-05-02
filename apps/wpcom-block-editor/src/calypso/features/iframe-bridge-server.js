@@ -589,7 +589,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 		}
 		e.preventDefault();
 		calypsoPort.postMessage( {
-			action: 'viewPost',
+			action: 'openLinkInParentFrame',
 			payload: { postUrl: e.target.href },
 		} );
 	} );
@@ -716,8 +716,26 @@ async function openLinksInParentFrame( calypsoPort ) {
 					const manageReusableBlocksAnchorElem = node.querySelector(
 						'a[href$="edit.php?post_type=wp_block"]'
 					);
+					const manageNavigationMenusAnchorElem = node.querySelector(
+						'a[href$="edit.php?post_type=wp_navigation"]'
+					);
+
 					manageReusableBlocksAnchorElem &&
 						replaceWithManageReusableBlocksHref( manageReusableBlocksAnchorElem );
+
+					if ( manageNavigationMenusAnchorElem ) {
+						manageNavigationMenusAnchorElem.addEventListener(
+							'click',
+							( e ) => {
+								calypsoPort.postMessage( {
+									action: 'openLinkInParentFrame',
+									payload: { postUrl: manageNavigationMenusAnchorElem.href },
+								} );
+								e.preventDefault();
+							},
+							false
+						);
+					}
 				}
 			}
 		}
