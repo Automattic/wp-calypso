@@ -3,7 +3,6 @@ import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteDomains } from '../../../../hooks/use-site-domains';
 import { useSiteSetupError } from '../../../../hooks/use-site-setup-error';
@@ -73,7 +72,6 @@ const ErrorStep: Step = function ErrorStep( { navigation, flow } ) {
 				</>
 			}
 			stepContent={ getContent() }
-			intent={ useIntent() }
 			recordTracksEvent={ recordTracksEvent }
 			hideBack
 			hideSkip

@@ -282,7 +282,6 @@ const BusinessInfo: Step = function ( props ): ReactElement | null {
 						/>
 					}
 					stepContent={ getContent() }
-					intent={ intent }
 					recordTracksEvent={ recordTracksEvent }
 				/>
 			</div>

@@ -40,7 +40,6 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 			recordTracksEvent( 'calypso_signup_site_options_submit', {
 				has_site_title: !! siteTitle,
 				has_tagline: !! tagline,
-				intent,
 			} );
 
 			submit?.( { siteTitle, tagline } );
@@ -136,7 +135,6 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 				<FormattedHeader id={ 'site-options-header' } headerText={ headerText } align={ 'left' } />
 			}
 			stepContent={ stepContent }
-			intent={ intent }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

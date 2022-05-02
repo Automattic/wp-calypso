@@ -303,7 +303,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 						) : undefined }
 					</>
 				}
-				intent={ intent }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		);
@@ -408,7 +407,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			hideFormattedHeader
 			skipLabelText={ intent === 'write' ? translate( 'Skip and draft first post' ) : undefined }
 			stepContent={ stepContent }
-			intent={ intent }
 			recordTracksEvent={ recordTracksEvent }
 			goNext={ () => submit?.() }
 			goBack={ handleBackClick }
