@@ -5,14 +5,13 @@ import {
 	normalizePluginData,
 } from 'calypso/lib/plugins/utils';
 import wpcom from 'calypso/lib/wp';
+import { BASE_STALE_TIME } from './constants';
 
 type Type = 'all' | 'featured';
 
 const plugisApiBase = '/marketplace/products';
 const featuredPluginsApiBase = '/plugins/featured';
 const pluginsApiNamespace = 'wpcom/v2';
-
-const baseStaleTime = 1000 * 60 * 60 * 2; // 2h
 
 const getCacheKey = ( key: string ): QueryKey => [ 'wpcom-plugins', key ];
 
@@ -46,7 +45,7 @@ export const useWPCOMPlugins = (
 	type: Type,
 	searchTerm?: string,
 	tag?: string,
-	{ enabled = true, staleTime = baseStaleTime, refetchOnMount = true }: UseQueryOptions = {}
+	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
 	return useQuery(
 		getCacheKey( type + searchTerm + tag + `${ enabled ? 'enabled' : 'disabled' }` ),
@@ -76,7 +75,7 @@ const fetchWPCOMPlugin = ( slug: string ) => {
  */
 export const useWPCOMPlugin = (
 	slug: string,
-	{ enabled = true, staleTime = baseStaleTime, refetchOnMount = true }: UseQueryOptions = {}
+	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult< any > => {
 	return useQuery( getCacheKey( slug ), () => fetchWPCOMPlugin( slug ), {
 		select: ( data ) => normalizePluginData( { detailsFetched: Date.now() }, data ),
@@ -94,7 +93,7 @@ export const useWPCOMPlugin = (
  */
 export const useWPCOMFeaturedPlugins = ( {
 	enabled = true,
-	staleTime = baseStaleTime,
+	staleTime = BASE_STALE_TIME,
 	refetchOnMount = true,
 }: UseQueryOptions = {} ): UseQueryResult => {
 	return useQuery(

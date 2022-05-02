@@ -115,6 +115,7 @@ enum EditorActions {
 	GetCheckoutModalStatus = 'getCheckoutModalStatus',
 	OpenRevisions = 'openRevisions',
 	PostStatusChange = 'postStatusChange',
+	OpenLinkInParentFrame = 'openLinkInParentFrame',
 	ViewPost = 'viewPost',
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
@@ -404,6 +405,11 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 
 		if ( EditorActions.ViewPost === action ) {
+			const { postUrl } = payload;
+			window.open( postUrl, '_top' );
+		}
+
+		if ( EditorActions.OpenLinkInParentFrame === action ) {
 			const { postUrl } = payload;
 			window.open( postUrl, '_top' );
 		}

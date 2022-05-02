@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	isBusiness,
 	isEcommerce,
@@ -24,6 +25,7 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { useSiteSearchPlugins } from 'calypso/data/marketplace/use-site-search-es-query';
 import {
 	useWPCOMPlugins,
 	useWPCOMFeaturedPlugins,
@@ -332,11 +334,15 @@ const SearchListView = ( {
 } ) => {
 	const dispatch = useDispatch();
 
+	const searchHook = isEnabled( 'marketplace-jetpack-plugin-search' )
+		? useSiteSearchPlugins
+		: useWPORGInfinitePlugins;
+
 	const {
 		data: { plugins: pluginsBySearchTerm = [], pagination: pluginsPagination } = {},
 		isLoading: isFetchingPluginsBySearchTerm,
 		fetchNextPage,
-	} = useWPORGInfinitePlugins(
+	} = searchHook(
 		{ searchTerm },
 		{
 			enabled: !! searchTerm,

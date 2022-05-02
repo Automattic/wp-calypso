@@ -62,6 +62,7 @@
 		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
 		"jetpack-search": true,
+		"jetpack-social": true,
 		"scan": true,
 		"site-purchases": true
 	},

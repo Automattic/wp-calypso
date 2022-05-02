@@ -79,4 +79,4 @@ export function useAnchorFmParams(): AnchorFmParams {
 		anchorFmPost,
 		anchorFmIsNewSite,
 	};
-}
+};

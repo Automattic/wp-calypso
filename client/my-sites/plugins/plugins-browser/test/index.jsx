@@ -23,6 +23,13 @@ jest.mock( 'calypso/data/marketplace/use-wporg-plugin-query', () => ( {
 	} ) ),
 } ) );
 
+jest.mock( 'calypso/data/marketplace/use-site-search-es-query', () => ( {
+	useSiteSearchPlugins: jest.fn( () => ( {
+		data: { plugins: mockPlugins },
+		fetchNextPage: jest.fn(),
+	} ) ),
+} ) );
+
 jest.mock( '@automattic/languages', () => [
 	{
 		value: 1,

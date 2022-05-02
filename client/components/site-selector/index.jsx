@@ -14,8 +14,10 @@ import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
 import searchSites from 'calypso/components/search-sites';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { showAgencyDashboard } from 'calypso/state/partner-portal/partner/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -463,13 +465,16 @@ const navigateToSite =
 	( siteId, { allSitesPath, allSitesSingleUser, siteBasePath } ) =>
 	( dispatch, getState ) => {
 		const state = getState();
+		const site = getSite( state, siteId );
+		if ( isJetpackCloud() && ! site && showAgencyDashboard( state ) ) {
+			return page.redirect( '/dashboard' );
+		}
 		const pathname = getPathnameForSite();
 		if ( pathname ) {
 			page( pathname );
 		}
 
 		function getPathnameForSite() {
-			const site = getSite( state, siteId );
 			debug( 'getPathnameForSite', siteId, site );
 
 			if ( siteId === ALL_SITES ) {
@@ -480,7 +485,7 @@ const navigateToSite =
 				// There is currently no "all sites" version of the insights page
 				return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
 			} else if ( siteBasePath ) {
-				const base = getSiteBasePath( site );
+				const base = getSiteBasePath();
 
 				// Record original URL type. The original URL should be a path-absolute URL, e.g. `/posts`.
 				const urlType = determineUrlType( base );
@@ -506,7 +511,7 @@ const navigateToSite =
 			}
 		}
 
-		function getSiteBasePath( site ) {
+		function getSiteBasePath() {
 			let path = siteBasePath;
 			const postsBase = site.jetpack || site.single_user_site ? '/posts' : '/posts/my';
 

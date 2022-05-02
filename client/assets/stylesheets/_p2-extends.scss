@@ -123,6 +123,18 @@
 	}
 }
 
+%p2-button-link {
+	background: none;
+	color: var( --p2-color-link );
+	text-decoration: underline;
+	font-family: var( --p2-font-inter );
+
+	&:hover:not( :disabled ):not( .disabled ) {
+		background: none;
+		color: var( --p2-color-link-dark );
+	}
+}
+
 %p2-link {
 	color: var( --p2-color-link );
 	text-decoration: none;
