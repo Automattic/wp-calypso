@@ -46,8 +46,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const site = useSite();
 	const { setSelectedDesign, setPendingAction, createSite } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
-
-	const { anchorFmPodcastId } = useAnchorFmParams();
+	const { anchorFmEpisodeId, anchorFmPodcastId } = useAnchorFmParams();
 	const flowName =
 		isEnabled( 'signup/anchor-fm' ) && anchorFmPodcastId ? 'anchor-fm' : 'setup-site';
 	const isAnchorSite = 'anchor-fm' === flowName;
