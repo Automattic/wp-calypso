@@ -78,7 +78,7 @@ export const siteSetupFlow: Flow = {
 					const processingResult = params[ 0 ] as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
-						// error page?
+						return navigate( 'error' );
 					}
 
 					// If the user skips starting point, redirect them to My Home
