@@ -141,7 +141,7 @@ describe( 'safeImageUrl()', () => {
 		beforeAll( () => {
 			global.location = { origin: 'https://wordpress.com' };
 			jest.resetModules();
-			safeImageUrl = require( '../' ).default;
+			safeImageUrl = require( '../' ).safeImageUrl;
 		} );
 
 		afterAll( () => {
@@ -166,7 +166,7 @@ describe( 'safeImageUrl()', () => {
 
 	describe( 'node', () => {
 		beforeAll( () => {
-			safeImageUrl = require( '../' ).default;
+			safeImageUrl = require( '../' ).safeImageUrl;
 		} );
 
 		test( 'should make a blob url safe', () => {
