@@ -5,7 +5,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
@@ -20,8 +20,9 @@ import type { Step } from '../../types';
 import './style.scss';
 
 const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
-	const { goBack, submit } = navigation;
+	const { goBack, submit, goToStep } = navigation;
 	const { __ } = useI18n();
+	const { isAnchorFmPodcastIdError } = useAnchorFmParams();
 
 	//Check to see if there is a site with a matching anchor podcast ID
 	const isLookingUpMatchingAnchorSites = useDetectMatchingAnchorSite();
@@ -101,6 +102,12 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 			</form>
 		);
 	};
+
+	useEffect( () => {
+		if ( isAnchorFmPodcastIdError ) {
+			return goToStep?.( 'error' );
+		}
+	}, [ isAnchorFmPodcastIdError ] );
 
 	return (
 		<StepContainer
