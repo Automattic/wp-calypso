@@ -47,7 +47,9 @@ describe( 'FormPhoneInput', () => {
 			expect( option.textContent ).toBe( countriesList[ 0 ].name );
 		} );
 
-		test( 'should update country on change', () => {
+		test( 'should update country on change', async () => {
+			const user = userEvent.setup();
+
 			const onChange = jest.fn();
 			const { container } = render(
 				<FormPhoneInput
@@ -59,7 +61,7 @@ describe( 'FormPhoneInput', () => {
 
 			const [ select ] = container.getElementsByClassName( 'form-country-select' );
 
-			userEvent.selectOptions( select, [ countriesList[ 1 ].code ] );
+			await user.selectOptions( select, [ countriesList[ 1 ].code ] );
 
 			expect( onChange ).toHaveBeenCalledWith(
 				expect.objectContaining( { countryData: countriesList[ 1 ] } )
