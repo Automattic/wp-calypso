@@ -58,7 +58,7 @@ const shouldCreateSentryRelease =
 	process.env.SENTRY_AUTH_TOKEN?.length > 1;
 let sourceMapType = process.env.SOURCEMAP;
 if ( ! sourceMapType && shouldCreateSentryRelease ) {
-	sourceMapType = 'hidden-source-map';
+	sourceMapType = 'hidden-cheap-source-map';
 } else if ( ! sourceMapType && isDevelopment ) {
 	sourceMapType = 'eval';
 }
