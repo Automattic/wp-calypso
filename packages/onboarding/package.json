@@ -51,7 +51,7 @@
 		"redux": "^4.1.2",
 		"sass-loader": "^10.1.1",
 		"style-loader": "^1.2.1",
-		"typescript": "^4.5.5",
+		"typescript": "^4.6.4",
 		"webpack": "^5.63.0"
 	},
 	"peerDependencies": {
