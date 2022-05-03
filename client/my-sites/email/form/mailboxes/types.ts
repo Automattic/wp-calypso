@@ -1,4 +1,5 @@
 import { v4 as uuid_v4 } from 'uuid';
+import { FIELD_DOMAIN, FIELD_UUID } from 'calypso/my-sites/email/form/mailboxes/constants';
 import type { TranslateResult } from 'i18n-calypso';
 
 type FieldError = TranslateResult | null;
@@ -66,7 +67,7 @@ class BooleanMailboxFormField extends MailboxFormFieldBase< boolean > {
 }
 
 interface IBaseMailboxFormFields {
-	readonly domain: TextMailboxFormField;
+	readonly domain: DataMailboxFormField;
 	mailbox: TextMailboxFormField;
 	password: TextMailboxFormField;
 	readonly uuid: DataMailboxFormField;
@@ -113,6 +114,7 @@ const MailboxFormFieldsMap = {
 type GoogleFormFieldNames = keyof GoogleMailboxFormFields;
 type TitanFormFieldNames = keyof TitanMailboxFormFields;
 type FormFieldNames = GoogleFormFieldNames | TitanFormFieldNames;
+type MutableFormFieldNames = Exclude< FormFieldNames, typeof FIELD_DOMAIN | typeof FIELD_UUID >;
 type ValidatorFieldNames = FormFieldNames | null;
 
 type ProviderKeys = keyof typeof MailboxFormFieldsMap;
@@ -132,6 +134,7 @@ export type {
 	GoogleMailboxFormFields,
 	MailboxFormFieldBase,
 	MailboxFormFields,
+	MutableFormFieldNames,
 	TitanFormFieldNames,
 	TitanMailboxFormFields,
 	ValidatorFieldNames,
