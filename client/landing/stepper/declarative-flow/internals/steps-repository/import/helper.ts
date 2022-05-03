@@ -27,7 +27,7 @@ export function getFinalImporterUrl(
 			isEnabled( `onboarding/import-from-${ platform }` )
 		)
 	) {
-		importerUrl = getWpComOnboardingUrl( targetSlug, platform, fromSite );
+		importerUrl = getWpComOnboardingUrl( targetSlug, platform, fromSite, framework );
 	} else {
 		importerUrl = getImporterUrl( targetSlug, platform, fromSite );
 	}
