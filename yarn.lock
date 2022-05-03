@@ -376,6 +376,8 @@ __metadata:
     "@automattic/calypso-url": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@storybook/react": ^6.4.18
+    "@testing-library/jest-dom": ^5.16.2
+    "@testing-library/react": ^12.1.3
     "@wordpress/base-styles": ^4.4.0
     classnames: ^2.3.1
     gridicons: ^3.4.0
@@ -659,6 +661,7 @@ __metadata:
     react-draggable: ^4.4.4
     typescript: ^4.5.5
   peerDependencies:
+    "@wordpress/data": ^6.1.5
     "@wordpress/element": ^4.5.0
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -1294,6 +1297,8 @@ __metadata:
     "@storybook/react": ^6.4.18
     "@wordpress/base-styles": ^4.4.0
     "@wordpress/components": ^19.9.0
+    "@wordpress/dom": ^3.2.7
+    "@wordpress/element": ^4.5.0
     "@wordpress/i18n": ^4.7.0
     "@wordpress/icons": ^8.3.0
     "@wordpress/primitives": ^3.5.0
@@ -1304,7 +1309,7 @@ __metadata:
     react-popper: ^2.2.5
     typescript: ^4.5.5
   peerDependencies:
-    "@wordpress/element": ^4.5.0
+    "@wordpress/data": ^6.1.5
     react: ^17.0.2
     react-dom: ^17.0.2
     reakit-utils: ^0.15.1
