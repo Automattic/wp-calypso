@@ -45,7 +45,7 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 	}, [ closeDialog, card, translate, reduxDispatch ] );
 
 	const renderDeleteButton = () => {
-		const text = isDeleting ? translate( 'Deleting…' ) : translate( 'Delete' );
+		const text = isDeleting ? translate( 'Deleting…' ) : translate( 'Delete this payment method' );
 
 		return (
 			<Button
