@@ -1,4 +1,5 @@
-import { apiFetch } from '@wordpress/data-controls';
+import apiFetch from '@wordpress/api-fetch';
+import type { Dispatch, HasSeenWhatsNewModalFetch } from './types';
 
 export const setShowHelpCenter = ( show: boolean ) =>
 	( {
@@ -12,13 +13,16 @@ export const setHasSeenWhatsNewModal = ( hasSeenWhatsNewModal: boolean ) =>
 		hasSeenWhatsNewModal,
 	} as const );
 
-export function* fetchHasSeenWhatsNewModal() {
-	const response: { has_seen_whats_new_modal: boolean } | undefined = yield apiFetch( {
-		path: '/wpcom/v2/block-editor/has-seen-whats-new-modal',
-	} );
+export const fetchHasSeenWhatsNewModal =
+	() =>
+	async ( { dispatch }: Dispatch ) => {
+		const response: { has_seen_whats_new_modal: boolean } | undefined =
+			await apiFetch< HasSeenWhatsNewModalFetch >( {
+				path: '/wpcom/v2/block-editor/has-seen-whats-new-modal',
+			} );
 
-	return setHasSeenWhatsNewModal( response?.has_seen_whats_new_modal ?? true );
-}
+		dispatch.setHasSeenWhatsNewModal( response?.has_seen_whats_new_modal ?? true );
+	};
 
 export type HelpCenterAction = ReturnType<
 	typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal
