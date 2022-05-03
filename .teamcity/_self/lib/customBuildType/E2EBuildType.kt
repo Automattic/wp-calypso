@@ -100,6 +100,10 @@ open class E2EBuildType(
 					# Install deps
 					yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
 
+					# Decrypt secrets
+					# Must do before build so the secrets are in the dist output
+					E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
+
 					# Build packages
 					yarn workspace @automattic/calypso-e2e build
 				""".trimIndent()
@@ -126,9 +130,6 @@ open class E2EBuildType(
 					# Enter testing directory.
 					cd test/e2e
 					mkdir temp
-
-					# Decrypt secrets
-					E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn decrypt-secrets
 
 					# Run suite.
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=$testGroup
