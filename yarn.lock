@@ -6499,15 +6499,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/user-event@npm:^14.1.1":
-  version: 14.1.1
-  resolution: "@testing-library/user-event@npm:14.1.1"
-  peerDependencies:
-    "@testing-library/dom": ">=7.21.4"
-  checksum: 96968b3e43b5a5b77d065318b20d1fa6c3753326f571bc56affe42ee00324353bccc411d384c7dd0f32ffb92ee4737ee39aa37acaa2d8a5ce9627b760658edff
-  languageName: node
-  linkType: hard
-
 "@tootallnate/once@npm:1":
   version: 1.1.2
   resolution: "@tootallnate/once@npm:1.1.2"
@@ -12561,7 +12552,6 @@ __metadata:
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": 7.0.2
-    "@testing-library/user-event": ^14.1.1
     "@types/jest": ^27.4.0
     "@wordpress/a11y": ^3.7.0
     "@wordpress/api-fetch": ^6.4.0
