@@ -21,7 +21,7 @@ index.php — main entry file, registers the blocks on backend
 blog-posts-block-editor.min.js — assets for the blog-posts-block editor
 blog-posts-block-view.min.js — assets for the blog-posts-block rendered on frontend
 carousel-block-editor.min.js — assets for the carousel-block editor
-carousel-block-view..min.js — assets for the carousel-block rendered on frontend
+carousel-block-view.min.js — assets for the carousel-block rendered on frontend
 synced-newspack-blocks/** — source code synced from the Newspack Blocks repository, not tracked in Calypso git repo
 ```
 
