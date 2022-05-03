@@ -1,5 +1,5 @@
+import { safeImageUrl } from '@automattic/calypso-url';
 import { decodeEntities as decode } from 'calypso/lib/formatting';
-import safeImageURL from 'calypso/lib/safe-image-url';
 
 const DEFAULT_FIELDS = [ 'excerpt', 'title', 'site_name' ];
 
@@ -22,7 +22,7 @@ export default function decodeEntities( post, fields = DEFAULT_FIELDS ) {
 			post.author.name = decode( post.author.name );
 		}
 		if ( post.author.avatar_URL ) {
-			post.author.avatar_URL = safeImageURL( post.author.avatar_URL );
+			post.author.avatar_URL = safeImageUrl( post.author.avatar_URL );
 		}
 	}
 

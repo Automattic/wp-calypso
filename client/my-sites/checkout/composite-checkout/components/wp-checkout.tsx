@@ -225,10 +225,10 @@ export default function WPCheckout( {
 
 	const { formStatus } = useFormStatus();
 
-	const arePostalCodesSupported = getCountryPostalCodeSupport(
-		countriesList,
-		contactInfo.countryCode?.value ?? ''
-	);
+	const arePostalCodesSupported =
+		countriesList.length && contactInfo.countryCode?.value
+			? getCountryPostalCodeSupport( countriesList, contactInfo.countryCode.value )
+			: false;
 
 	const updateCartContactDetails = useCallback( () => {
 		const nonTaxPaymentMethods = [ 'free-purchase' ];

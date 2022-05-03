@@ -32,7 +32,6 @@ export { default as FormattedHeader } from 'calypso/components/formatted-header/
 export { default as FormFields } from 'calypso/components/forms/docs/example';
 export { default as Gauge } from 'calypso/components/gauge/docs/example';
 export { default as GlobalNotices } from 'calypso/components/global-notices/docs/example';
-export { default as Gravatar } from 'calypso/components/gravatar/docs/example';
 export { default as HeaderButton } from 'calypso/components/header-button/docs/example';
 export { default as Headers } from 'calypso/components/header-cake/docs/example';
 export { default as ImagePreloader } from 'calypso/components/image-preloader/docs/example';

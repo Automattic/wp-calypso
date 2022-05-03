@@ -7,7 +7,9 @@ import { useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 
@@ -15,7 +17,8 @@ import { isAtomicSiteWithoutBusinessPlan } from './utils';
 function getHoldMessages(
 	context: string | null,
 	translate: LocalizeProps[ 'translate' ],
-	eligibleForProPlan: boolean
+	eligibleForProPlan: boolean,
+	billingPeriod?: string
 ) {
 	return {
 		NO_BUSINESS_PLAN: {
@@ -26,6 +29,12 @@ function getHoldMessages(
 				if ( context === 'themes' ) {
 					return translate(
 						"You'll also get to install custom plugins, have more storage, and access live support."
+					);
+				}
+
+				if ( billingPeriod === IntervalLength.MONTHLY ) {
+					return translate(
+						"You'll also get to install custom themes, have more storage, and access email support."
 					);
 				}
 
@@ -197,7 +206,8 @@ export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) 
 	const eligibleForProPlan = useSelector( ( state ) =>
 		isEligibleForProPlan( state, selectedSite?.ID )
 	);
-	const holdMessages = getHoldMessages( context, translate, eligibleForProPlan );
+	const billingPeriod = useSelector( getBillingInterval );
+	const holdMessages = getHoldMessages( context, translate, eligibleForProPlan, billingPeriod );
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );

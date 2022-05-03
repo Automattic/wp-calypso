@@ -196,4 +196,12 @@
 // -------- Search --------
 .section-nav .search {
 	overflow: hidden;
+
+	&.is-expanded-to-container {
+		height: 45px;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			height: 100%;
+		}
+	}
 }

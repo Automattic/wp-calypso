@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 import { getDefaultAspectRatio } from '../utils';
 
@@ -9,7 +8,7 @@ describe( 'getDefaultAspectRatio', () => {
 				const expected = 'ASPECT_1X1';
 				const actual = getDefaultAspectRatio( 'ASPECT_1X1' );
 
-				expect( actual ).to.equal( expected );
+				expect( actual ).toEqual( expected );
 			} );
 		} );
 
@@ -18,7 +17,7 @@ describe( 'getDefaultAspectRatio', () => {
 				const expected = AspectRatios.FREE;
 				const actual = getDefaultAspectRatio( 'INVALID_ASPECT' );
 
-				expect( actual ).to.equal( expected );
+				expect( actual ).toEqual( expected );
 			} );
 		} );
 	} );
@@ -29,7 +28,7 @@ describe( 'getDefaultAspectRatio', () => {
 				const expected = 'ASPECT_1X1';
 				const actual = getDefaultAspectRatio( null, [ 'ASPECT_1X1' ] );
 
-				expect( actual ).to.equal( expected );
+				expect( actual ).toEqual( expected );
 			} );
 		} );
 
@@ -38,7 +37,7 @@ describe( 'getDefaultAspectRatio', () => {
 				const expected = AspectRatios.FREE;
 				const actual = getDefaultAspectRatio( null, [ 'INVALID_ASPECT' ] );
 
-				expect( actual ).to.equal( expected );
+				expect( actual ).toEqual( expected );
 			} );
 		} );
 	} );
@@ -50,7 +49,7 @@ describe( 'getDefaultAspectRatio', () => {
 					const expected = 'ASPECT_1X1';
 					const actual = getDefaultAspectRatio( 'ASPECT_1X1', [ 'INVALID_ASPECT', 'ASPECT_1X1' ] );
 
-					expect( actual ).to.equal( expected );
+					expect( actual ).toEqual( expected );
 				} );
 			} );
 
@@ -62,7 +61,7 @@ describe( 'getDefaultAspectRatio', () => {
 						'ASPECT_1X1',
 					] );
 
-					expect( actual ).to.equal( expected );
+					expect( actual ).toEqual( expected );
 				} );
 			} );
 		} );
@@ -73,7 +72,7 @@ describe( 'getDefaultAspectRatio', () => {
 					const expected = 'ASPECT_1X1';
 					const actual = getDefaultAspectRatio( 'INVALID_ASPECT', [ 'ASPECT_1X1' ] );
 
-					expect( actual ).to.equal( expected );
+					expect( actual ).toEqual( expected );
 				} );
 			} );
 
@@ -82,7 +81,7 @@ describe( 'getDefaultAspectRatio', () => {
 					const expected = AspectRatios.FREE;
 					const actual = getDefaultAspectRatio( 'OTHER_INVALID_ASPECT', [ 'INVALID_ASPECT' ] );
 
-					expect( actual ).to.equal( expected );
+					expect( actual ).toEqual( expected );
 				} );
 			} );
 		} );

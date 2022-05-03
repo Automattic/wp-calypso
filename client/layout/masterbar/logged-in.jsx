@@ -39,7 +39,7 @@ import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import { MasterBarMobileMenu } from './masterbar-menu';
-import Notifications from './notifications';
+import Notifications from './masterbar-notifications/notifications-button';
 
 const NEW_MASTERBAR_SHIPPING_DATE = new Date( 2022, 3, 14 ).getTime();
 const MENU_POPOVER_PREFERENCE_KEY = 'dismissible-card-masterbar-collapsable-menu-popover';

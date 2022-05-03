@@ -3,6 +3,7 @@ import { Locator, Page } from 'playwright';
 const selectors = {
 	chooseButton: 'button:has-text("Choose")',
 	startBlankButton: 'button:has-text("Start blank")',
+	addBlockButton: 'button[aria-label="Add block"]',
 };
 
 /**
@@ -10,7 +11,7 @@ const selectors = {
  */
 export class TemplatePartBlock {
 	static blockName = 'Template Part';
-	static blockEditorSelector = '[aria-label="Block: Template Part"]';
+	static blockEditorSelector = 'div[aria-label="Block: Template Part"]';
 
 	/**
 	 * Creates an instance of the component.
@@ -35,4 +36,30 @@ export class TemplatePartBlock {
 		const locator = this.block.locator( selectors.chooseButton );
 		await locator.click();
 	}
+
+	/**
+	 * Clicks the add block button within this parent Template Part
+	 */
+	async clickAddBlockButton(): Promise< void > {
+		const locator = this.block.locator( selectors.addBlockButton );
+		await locator.click();
+	}
+}
+
+/**
+ * Represents a Header block in the full site editor.
+ * This is just a Template Part block with different name and slightly different parent element markup.
+ */
+export class HeaderBlock extends TemplatePartBlock {
+	static blockName = 'Header';
+	static blockEditorSelector = 'header[aria-label="Block: Template Part"]';
+}
+
+/**
+ * Represents a Footer block in the full site editor.
+ * This is just a Template Part block with different name and slightly different parent element markup.
+ */
+export class FooterBlock extends TemplatePartBlock {
+	static blockName = 'Footer';
+	static blockEditorSelector = 'footer[aria-label="Block: Template Part"]';
 }

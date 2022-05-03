@@ -11,7 +11,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
@@ -93,7 +93,7 @@ const Settings = ( {
 			showBackArrow: true,
 		};
 
-		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
+		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
 	};
 
 	const renderSecurityAccordion = () => {

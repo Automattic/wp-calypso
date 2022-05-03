@@ -99,7 +99,6 @@
 
 			@include breakpoint-deprecated( '>480px' ) {
 				@include mobile-link-element;
-				padding: 5px 0 10px;
 				@include clear-fix;
 				-webkit-touch-callout: none;
 			}

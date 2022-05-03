@@ -9,7 +9,7 @@ import SiteSelector from 'calypso/components/site-selector';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
@@ -181,7 +181,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 			showBackArrow: true,
 		};
 
-		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
+		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
 	};
 
 	renderSection(): JSX.Element {

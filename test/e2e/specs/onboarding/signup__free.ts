@@ -69,7 +69,7 @@ skipDescribeIf( isStagingOrProd )(
 
 			it( 'Select WordPress.com Free plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				await signupPickPlanPage.selectPlan( 'Free' );
+				await signupPickPlanPage.selectPlan( 'Start with Free' );
 			} );
 		} );
 
@@ -156,6 +156,11 @@ skipDescribeIf( isStagingOrProd )(
 				await generalSettingsPage.launchSite();
 			} );
 
+			it( 'Search for a domain to reveal Skip Purchase button', async function () {
+				domainSearchComponent = new DomainSearchComponent( page );
+				await domainSearchComponent.search( username + '.live' );
+			} );
+
 			it( 'Skip domain purchasse', async function () {
 				const domainSearchComponent = new DomainSearchComponent( page );
 				await domainSearchComponent.clickButton( 'Skip Purchase' );
@@ -163,7 +168,7 @@ skipDescribeIf( isStagingOrProd )(
 
 			it( 'Keep free plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				await signupPickPlanPage.selectPlan( 'Free' );
+				await signupPickPlanPage.selectPlan( 'Start with Free' );
 			} );
 
 			it( 'Confirm site is launched', async function () {

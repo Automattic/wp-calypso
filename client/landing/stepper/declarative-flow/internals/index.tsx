@@ -25,10 +25,12 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const history = useHistory();
 	const { search } = useLocation();
 	const stepNavigation = flow.useStepNavigation( currentRoute, ( path: StepPath ) =>
-		history.push( generatePath( path + search ), stepPaths )
+		history.push( generatePath( '/' + path + search ), stepPaths )
 	);
 	const pathToClass = ( path: string ) =>
 		path.replace( /([a-z0-9])([A-Z])/g, '$1-$2' ).toLowerCase();
+
+	flow.useSideEffect?.();
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
@@ -39,12 +41,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	return (
 		<Switch>
 			{ stepPaths.map( ( path ) => {
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore - steps with slash char cause type issue ( example: import/list )
 				const StepComponent = Steps[ path ];
 				return (
 					<Route key={ path } path={ `/${ path }` }>
 						<div className={ classnames( flow.name, flow.classnames, pathToClass( path ) ) }>
 							<SignupHeader />
-							<StepComponent navigation={ stepNavigation } />
+							<StepComponent navigation={ stepNavigation } flow={ flow.name } />
 						</div>
 					</Route>
 				);

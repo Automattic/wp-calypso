@@ -46,6 +46,23 @@
 	}
 }
 
+.p2-step-wrapper__header-step-indicator,
+.p2-step-wrapper__header-logout {
+	position: absolute;
+	right: 24px;
+	top: 24px;
+	font-size: 0.875rem;
+}
+
+.p2-step-wrapper__header-step-indicator {
+	color: var( --p2-color-text-light );
+	font-weight: 500;
+}
+
+.p2-step-wrapper__header-logout button {
+	@extend %p2-button-link;
+}
+
 .p2-step-wrapper button.is-primary {
 	@extend %p2-form-button;
 }

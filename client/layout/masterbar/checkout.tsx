@@ -1,8 +1,12 @@
+import config from '@automattic/calypso-config';
 import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
+import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState } from 'react';
+import InlineHelpCenterContent from 'calypso/blocks/inline-help/inline-help-center-content';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -11,6 +15,8 @@ import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import Item from './item';
 import Masterbar from './masterbar';
+import type { Article } from 'calypso/blocks/inline-help/inline-help-center-types';
+
 interface Props {
 	title: string;
 	isJetpackNotAtomic?: boolean;
@@ -33,6 +39,10 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
+	const [ isHelpCenterVisible, setIsHelpCenterVisible ] = useState( false );
+	const [ selectedArticle, setSelectedArticle ] = useState< Article | null >( null );
+	const [ footerContent, setFooterContent ] = useState( undefined );
+
 	const closeAndLeave = () =>
 		leaveCheckout( {
 			siteSlug,
@@ -60,6 +70,8 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 		closeAndLeave();
 	};
 
+	const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
+
 	return (
 		<Masterbar>
 			<div className="masterbar__secure-checkout">
@@ -77,6 +89,15 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			<Item className="masterbar__item-title">{ title }</Item>
+			{ isHelpCenterEnabled && (
+				<Item
+					onClick={ () => setIsHelpCenterVisible( ! isHelpCenterVisible ) }
+					className={ classnames( 'masterbar__item-help', {
+						'is-active': isHelpCenterVisible,
+					} ) }
+					icon={ <HelpIcon newItems active={ isHelpCenterVisible } /> }
+				/>
+			) }
 			<CheckoutModal
 				title={ modalTitleText }
 				copy={ modalBodyText }
@@ -87,6 +108,20 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 				secondaryButtonCTA={ modalSecondaryText }
 				secondaryAction={ clearCartAndLeave }
 			/>
+			{ isHelpCenterEnabled && isHelpCenterVisible && (
+				<HelpCenter
+					content={
+						<InlineHelpCenterContent
+							selectedArticle={ selectedArticle }
+							setSelectedArticle={ setSelectedArticle }
+							setHelpCenterFooter={ setFooterContent }
+						/>
+					}
+					headerText={ selectedArticle?.title }
+					handleClose={ () => setIsHelpCenterVisible( false ) }
+					footerContent={ footerContent }
+				/>
+			) }
 		</Masterbar>
 	);
 };

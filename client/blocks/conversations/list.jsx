@@ -64,10 +64,10 @@ export class ConversationCommentList extends Component {
 	};
 
 	state = {
-		commentText: null,
+		commentText: '',
 	};
 
-	onUpdateCommentText = ( commentText ) => this.setState( { commentText: commentText } );
+	onUpdateCommentText = ( commentText ) => this.setState( { commentText } );
 
 	onReplyClick = ( commentId ) => {
 		this.setActiveReplyComment( commentId );
@@ -80,7 +80,7 @@ export class ConversationCommentList extends Component {
 	};
 
 	onReplyCancel = () => {
-		this.setState( { commentText: null } );
+		this.setState( { commentText: '' } );
 		recordAction( 'comment_reply_cancel_click' );
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
 		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_cancel_click', {

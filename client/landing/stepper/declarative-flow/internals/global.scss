@@ -70,6 +70,10 @@ button {
 		}
 	}
 
+	.import-step {
+		@include onboarding-block-margin;
+	}
+
 	/**
  	 * Signup Header
  	 */

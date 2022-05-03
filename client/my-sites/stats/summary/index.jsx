@@ -17,6 +17,7 @@ import StatsModule from '../stats-module';
 import statsStringsFactory from '../stats-strings';
 import VideoPlayDetails from '../stats-video-details';
 import StatsVideoSummary from '../stats-video-summary';
+import VideoPressStatsModule from '../videopress-stats-module';
 
 const StatsStrings = statsStringsFactory();
 
@@ -54,6 +55,7 @@ class StatsSummary extends Component {
 			date: endOf.format( 'YYYY-MM-DD' ),
 			max: 0,
 		};
+		const urlParams = new URLSearchParams( this.props.context.querystring );
 
 		switch ( this.props.context.params.module ) {
 			case 'referrers':
@@ -136,8 +138,8 @@ class StatsSummary extends Component {
 			case 'videoplays':
 				title = translate( 'Videos' );
 				summaryView = (
-					<StatsModule
-						key="videoplays-summary"
+					<VideoPressStatsModule
+						key="videopress-stats-module"
 						path="videoplays"
 						moduleStrings={ StatsStrings.videoplays }
 						period={ this.props.period }
@@ -184,10 +186,24 @@ class StatsSummary extends Component {
 					);
 				}
 				summaryViews.push( chartTitle );
-				barChart = <StatsVideoSummary key="video-chart" postId={ this.props.postId } />;
+				barChart = (
+					<StatsVideoSummary
+						key="video-chart"
+						postId={ this.props.postId }
+						period={ this.props.period.period }
+						statType={ urlParams.get( 'statType' ) }
+					/>
+				);
 
 				summaryViews.push( barChart );
-				summaryView = <VideoPlayDetails key="page-embeds" postId={ this.props.postId } />;
+				summaryView = (
+					<VideoPlayDetails
+						key="page-embeds"
+						postId={ this.props.postId }
+						period={ this.props.period.period }
+						statType={ urlParams.get( 'statType' ) }
+					/>
+				);
 				break;
 
 			case 'searchterms':

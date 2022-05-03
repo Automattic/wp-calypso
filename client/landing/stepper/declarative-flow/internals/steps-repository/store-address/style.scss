@@ -2,6 +2,10 @@
 
 body.is-group-stepper.is-section-stepper {
 	.store-address__is-store-address {
+		.components-form-token-field__suggestions-list {
+			width: min-content;
+		}
+
 		.components-base-control__label {
 			display: block;
 			font-size: 0.875rem;

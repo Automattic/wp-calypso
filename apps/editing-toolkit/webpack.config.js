@@ -100,6 +100,12 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 								throw new Error( `Received unknown module request ${ request }.` );
 						}
 					}
+					// The extraction logic will only extract a package if requestToExternal
+					// explicitly returns undefined for the given request. Null
+					// shortcuts the logic such that react-i18n will be bundled.
+					if ( request === '@wordpress/react-i18n' ) {
+						return null;
+					}
 				},
 			} ),
 		],

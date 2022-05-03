@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import InlineHelpContactPage, { InlineHelpContactPageButton } from './inline-help-contact-page';
 import InlineHelpEmbedResult from './inline-help-embed-result';
+import InlineHelpMoreResources from './inline-help-more-resources';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpSearchResults from './inline-help-search-results';
 
@@ -104,6 +105,7 @@ const InlineHelpCenterContent = ( {
 						searchQuery={ searchQuery }
 						openAdminInNewTab={ true }
 					/>
+					{ ! searchQuery && <InlineHelpMoreResources /> }
 				</div>
 				{ renderSecondaryView() }
 			</>

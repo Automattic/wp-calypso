@@ -49,6 +49,10 @@ export const isSiteAtomic = ( state: State, siteId: number | string ) => {
 	return select( STORE_KEY ).getSite( siteId )?.options.is_wpcom_atomic === true;
 };
 
+export const isSiteWPForTeams = ( state: State, siteId: number | string ) => {
+	return select( STORE_KEY ).getSite( siteId )?.options.is_wpforteams_site === true;
+};
+
 export const getSiteDomains = ( state: State, siteId: number ) => {
 	return state.sitesDomains[ siteId ];
 };
@@ -87,6 +91,14 @@ export const getAtomicSoftwareError = ( state: State, siteId: number, softwareSe
 	return state.atomicSoftwareStatus[ siteId ]?.[ softwareSet ]?.error;
 };
 
+export const getAtomicSoftwareInstallError = (
+	state: State,
+	siteId: number,
+	softwareSet: string
+) => {
+	return state.atomicSoftwareInstallStatus[ siteId ]?.[ softwareSet ]?.error;
+};
+
 export const hasActiveSiteFeature = (
 	_: State,
 	siteId: number | undefined,
@@ -117,3 +129,30 @@ export const requiresUpgrade = ( state: State, siteId: number | null ) => {
 
 	return Boolean( ! isWoopFeatureActive && hasWoopFeatureAvailable );
 };
+
+export function isJetpackSite( state: State, siteId?: number ): boolean {
+	return Boolean( siteId && select( STORE_KEY ).getSite( siteId )?.jetpack );
+}
+
+export function isEligibleForProPlan( state: State, siteId?: number ): boolean {
+	if ( ! siteId ) {
+		return false;
+	}
+
+	if (
+		( isJetpackSite( state, siteId ) && ! isSiteAtomic( state, siteId ) ) ||
+		isSiteWPForTeams( state, siteId )
+	) {
+		return false;
+	}
+
+	return true;
+}
+
+export function getHappyChatAvailability( state: State ) {
+	return state.happyChatAvailability;
+}
+
+export function getEmailSupportAvailability( state: State ) {
+	return state.emailSupportAvailability;
+}

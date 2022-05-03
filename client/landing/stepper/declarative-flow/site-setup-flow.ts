@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { useDesignsBySite } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useFSEStatus } from '../hooks/use-fse-status';
+import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -25,6 +27,12 @@ export const siteSetupFlow: Flow = {
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
+			'import',
+			'importList',
+			'importReady',
+			'importReadyNot',
+			'importReadyWpcom',
+			'importReadyPreview',
 			'businessInfo',
 			'storeAddress',
 			'processing',
@@ -33,7 +41,11 @@ export const siteSetupFlow: Flow = {
 			'wooInstallPlugins',
 		] as StepPath[];
 	},
-
+	useSideEffect() {
+		const site = useSite();
+		// prefetch designs for a smooth design picker UX
+		useDesignsBySite( site );
+	},
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
@@ -78,7 +90,7 @@ export const siteSetupFlow: Flow = {
 					const processingResult = params[ 0 ] as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
-						// error page?
+						return navigate( 'error' );
 					}
 
 					// If the user skips starting point, redirect them to My Home
@@ -134,7 +146,7 @@ export const siteSetupFlow: Flow = {
 							return navigate( 'options' );
 						}
 						case 'import': {
-							return exitFlow( `/start/importer/capture?siteSlug=${ siteSlug }` );
+							return navigate( 'import' );
 						}
 						case 'write': {
 							return navigate( 'options' );
@@ -185,6 +197,11 @@ export const siteSetupFlow: Flow = {
 				case 'vertical': {
 					return navigate( 'intent' );
 				}
+
+				case 'importReady':
+				case 'importReadyPreview': {
+					return exitFlow( providedDependencies?.url as string );
+				}
 			}
 		}
 
@@ -202,6 +219,9 @@ export const siteSetupFlow: Flow = {
 				case 'storeAddress':
 					return navigate( 'storeFeatures' );
 
+				case 'businessInfo':
+					return navigate( 'storeAddress' );
+
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );
 
@@ -214,6 +234,13 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'bloggerStartingPoint' );
 					}
 					return navigate( 'intent' );
+
+				case 'importList':
+				case 'importReady':
+				case 'importReadyNot':
+				case 'importReadyWpcom':
+				case 'importReadyPreview':
+					return navigate( 'import' );
 
 				default:
 					return navigate( 'intent' );
@@ -233,6 +260,9 @@ export const siteSetupFlow: Flow = {
 
 				case 'vertical':
 					return exitFlow( `/home/${ siteSlug }` );
+
+				case 'import':
+					return navigate( 'importList' );
 
 				default:
 					return navigate( 'intent' );

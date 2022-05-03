@@ -611,11 +611,9 @@ export const normalizers = {
 
 		let data = [];
 		if ( payload.data ) {
-			data = payload.data
-				.map( ( item ) => {
-					return { period: item[ 0 ], value: item[ 1 ] };
-				} )
-				.slice( Math.max( payload.data.length - 10, 1 ) );
+			data = payload.data.map( ( item ) => {
+				return { period: item[ 0 ], value: item[ 1 ] };
+			} );
 		}
 
 		let pages = [];

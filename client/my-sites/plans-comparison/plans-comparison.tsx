@@ -9,7 +9,6 @@ import {
 import { Gridicon } from '@automattic/components';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -52,6 +51,7 @@ const getRowMobileLayout = ( breakpoint: number, pageClass: string ) => `
 			th,
 			td {
 				width: ${ ( { planCount }: { planCount: number } ) => `${ 100 / planCount }%` };
+				height: unset;
 			}
 		}
 	}
@@ -280,6 +280,21 @@ const ComparisonTable = styled.table< TableProps >`
 		}
 	}
 
+	tbody th,
+	tbody td {
+		padding: 0.78rem 1.25rem;
+		height: 4rem;
+	}
+
+	tbody th {
+		html[dir='ltr'] & {
+			padding-left: 0;
+		}
+		html[dir='rtl'] & {
+			padding-right: 0;
+		}
+	}
+
 	thead th,
 	thead td {
 		vertical-align: top;
@@ -323,27 +338,10 @@ const ComparisonTable = styled.table< TableProps >`
 		border-color: #055d9c;
 	}
 
-	.plans-comparison__rows tr:last-child {
-		th,
-		td {
-			border-bottom: none;
-		}
-	}
-
 	${ ( { hideFreePlan } ) =>
 		! hideFreePlan && getRowMobileLayout( SCREEN_BREAKPOINT_SIGNUP, '.is-section-signup' ) }
 	${ ( { hideFreePlan } ) =>
 		! hideFreePlan && getRowMobileLayout( SCREEN_BREAKPOINT_PLANS, '.is-section-plans' ) }
-
-	.plans-comparison__collapsible-rows {
-		display: none;
-		border-top: 1px solid rgba( 220, 220, 222, 0.2 );
-	}
-
-	.plans-comparison__collapsible-rows.is-active {
-		display: table-row-group;
-		animation: fade-in-rows 0.3s ease;
-	}
 
 	@keyframes fade-in-rows {
 		0% {
@@ -360,34 +358,53 @@ const THead = styled.thead< { isInSignup: boolean } >`
 	top: ${ ( { isInSignup } ) => ( isInSignup ? '0' : `var( --masterbar-height )` ) };
 `;
 
-const PlanComparisonToggle = styled.tr`
-	th,
-	td,
-	td:last-child {
-		padding: 0;
-		border-bottom: none;
-		background: none;
+const PlansComparisonRows = styled.tbody`
+	tr:last-child {
+		th,
+		td {
+			border-bottom: none;
+		}
 	}
+`;
 
-	${ getRowMobileLayout( SCREEN_BREAKPOINT_SIGNUP, '.is-section-signup' ) }
-	${ getRowMobileLayout( SCREEN_BREAKPOINT_PLANS, '.is-section-plans' ) }
+const PlansComparisonCollapsibleRows = styled( PlansComparisonRows )< {
+	collapsed: boolean;
+} >`
+	display: ${ ( props ) => ( props.collapsed ? 'table-row-group' : 'none' ) };
+	border-top: 1px solid rgba( 220, 220, 222, 0.2 );
+	animation: fade-in-rows 0.3s ease;
+`;
 
-	button {
-		background: rgba( 246, 247, 247, 0.5 );
-		display: block;
-		text-align: center;
-		border-radius: 2px;
-		padding: 15px;
-		width: 100%;
-		margin: 25px 0;
-		cursor: pointer;
+const PlansComparisonToggle = styled.tbody`
+	tr {
+		th,
+		td,
+		td:last-child {
+			padding: 0;
+			border-bottom: none;
+			background: none;
+		}
 
-		.gridicon.gridicon {
-			html[dir='ltr'] & {
-				margin-right: 4px;
-			}
-			html[dir='rtl'] & {
-				margin-left: 4px;
+		${ getRowMobileLayout( SCREEN_BREAKPOINT_SIGNUP, '.is-section-signup' ) }
+		${ getRowMobileLayout( SCREEN_BREAKPOINT_PLANS, '.is-section-plans' ) }
+
+		button {
+			background: rgba( 246, 247, 247, 0.5 );
+			display: block;
+			text-align: center;
+			border-radius: 2px;
+			padding: 15px;
+			width: 100%;
+			margin: 0;
+			cursor: pointer;
+
+			.gridicon.gridicon {
+				html[dir='ltr'] & {
+					margin-right: 4px;
+				}
+				html[dir='rtl'] & {
+					margin-left: 4px;
+				}
 			}
 		}
 	}
@@ -446,11 +463,6 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 		selectedSiteSlug && purchaseId
 			? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
 			: `/plans/${ selectedSiteSlug || '' }`;
-	const collapsibleRowsclassName = classNames(
-		'plans-comparison__rows',
-		'plans-comparison__collapsible-rows',
-		{ 'is-active': showCollapsibleRows }
-	);
 
 	return (
 		<>
@@ -491,7 +503,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 						) ) }
 					</tr>
 				</THead>
-				<tbody className="plans-comparison__rows">
+				<PlansComparisonRows>
 					{ planComparisonFeatures.slice( 0, 7 ).map( ( feature ) => (
 						<PlansComparisonRow
 							feature={ feature }
@@ -500,8 +512,8 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 							key={ feature.features[ 0 ] }
 						/>
 					) ) }
-				</tbody>
-				<tbody className={ collapsibleRowsclassName }>
+				</PlansComparisonRows>
+				<PlansComparisonCollapsibleRows collapsed={ showCollapsibleRows }>
 					{ planComparisonFeatures.slice( 7 ).map( ( feature ) => (
 						<PlansComparisonRow
 							feature={ feature }
@@ -510,9 +522,9 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 							key={ feature.features[ 0 ] }
 						/>
 					) ) }
-				</tbody>
-				<tbody>
-					<PlanComparisonToggle>
+				</PlansComparisonCollapsibleRows>
+				<PlansComparisonToggle>
+					<tr>
 						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 						<th className="is-first"></th>
 						<td colSpan={ 2 }>
@@ -530,8 +542,8 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 								) }
 							</button>
 						</td>
-					</PlanComparisonToggle>
-				</tbody>
+					</tr>
+				</PlansComparisonToggle>
 			</ComparisonTable>
 		</>
 	);

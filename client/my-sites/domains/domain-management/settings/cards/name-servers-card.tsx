@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -119,7 +120,7 @@ const NameServersCard = ( {
 
 		const link = (
 			<a
-				href={ CHANGE_NAME_SERVERS }
+				href={ localizeUrl( CHANGE_NAME_SERVERS ) }
 				target="_blank"
 				rel="noopener noreferrer"
 				onClick={ handleLearnMoreClick }

@@ -41,6 +41,8 @@ export default ( { path } ) => {
 					activityClicked: 'calypso_jetpack_sidebar_activity_clicked',
 					backupClicked: 'calypso_jetpack_sidebar_backup_clicked',
 					scanClicked: 'calypso_jetpack_sidebar_scan_clicked',
+					searchClicked: 'calypso_jetpack_sidebar_search_clicked',
+					socialClicked: 'calypso_jetpack_sidebar_social_clicked',
 				} }
 			/>
 			{ shouldShowSettings && (

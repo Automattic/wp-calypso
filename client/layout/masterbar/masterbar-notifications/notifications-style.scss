@@ -1,0 +1,21 @@
+
+.masterbar__item-notifications {
+	margin-right: 12px;
+
+	.masterbar__item-content {
+		display: block;
+	}
+
+	.masterbar__item-notifications-label {
+		display: none;
+	}
+
+	@include breakpoint-deprecated( '<480px' ) {
+		margin-right: 0;
+		margin-top: 0;
+
+		&:active, &:hover, &:focus {
+			color: var( --color-text-inverted );
+		}
+	}
+}
