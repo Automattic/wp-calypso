@@ -11,7 +11,6 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import Upsell from 'calypso/components/jetpack/upsell';
 import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
-import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
@@ -94,7 +93,10 @@ const BackupsUpsellBody: FunctionComponent = () => {
 	);
 };
 
-const BackupsUpsellPage: FunctionComponent< UpsellComponentProps > = ( { reason } ) => {
+type BackupsUpsellPageProps = {
+	reason?: string;
+};
+const BackupsUpsellPage: FunctionComponent< BackupsUpsellPageProps > = ( { reason } ) => {
 	let body;
 	switch ( reason ) {
 		case 'vp_active_on_site':
