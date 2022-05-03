@@ -172,7 +172,7 @@ __metadata:
     mini-css-extract-plugin: ^1.6.2
     postcss-custom-properties: ^11.0.0
     postcss-loader: ^6.2.0
-    recursive-copy: ^2.0.10
+    recursive-copy: ^2.0.14
     sass: ^1.37.5
     sass-loader: ^12.1.0
     semver: ^7.3.2
@@ -15304,21 +15304,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"del@npm:^2.2.0":
-  version: 2.2.2
-  resolution: "del@npm:2.2.2"
-  dependencies:
-    globby: ^5.0.0
-    is-path-cwd: ^1.0.0
-    is-path-in-cwd: ^1.0.0
-    object-assign: ^4.0.1
-    pify: ^2.0.0
-    pinkie-promise: ^2.0.0
-    rimraf: ^2.2.8
-  checksum: f20cbf3629df2dec4778b33e38a2b8fbc1d8a77cee07ae6e79c415a3afcb8fecd06e2170182a991aed21122988df9d745f07e8b68311dd6084e251bf6e667a47
-  languageName: node
-  linkType: hard
-
 "del@npm:^4.1.1":
   version: 4.1.1
   resolution: "del@npm:4.1.1"
@@ -16179,13 +16164,6 @@ __metadata:
   version: 2.0.4
   resolution: "email-validator@npm:2.0.4"
   checksum: 580ac50374b006805589cad39b3ed2a016b95e625072f507bfa8fba2d405ba25ffe6686c3f4b06f73380da2106041415387c0dee5b06709d03e56d94013205b1
-  languageName: node
-  linkType: hard
-
-"emitter-mixin@npm:0.0.3":
-  version: 0.0.3
-  resolution: "emitter-mixin@npm:0.0.3"
-  checksum: 43e8d17448b19ed0c5501ce9fed873a87d1526ddb278d57a598bbec7db23c0fb5e549a6191727802a861883211b27cd29e2f2a3604e27488e75b77f4e689434d
   languageName: node
   linkType: hard
 
@@ -19184,20 +19162,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globby@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "globby@npm:5.0.0"
-  dependencies:
-    array-union: ^1.0.1
-    arrify: ^1.0.0
-    glob: ^7.0.3
-    object-assign: ^4.0.1
-    pify: ^2.0.0
-    pinkie-promise: ^2.0.0
-  checksum: 5ac35ff5d4614dbf2926b08cefa3c835d530c2080416bdcdee304598255f9c30a1296b93118400c308f520d7118dbfc87d46c9c2f4f4cbb976be00cceb94573f
-  languageName: node
-  linkType: hard
-
 "globby@npm:^6.1.0":
   version: 6.1.0
   resolution: "globby@npm:6.1.0"
@@ -21103,26 +21067,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-path-cwd@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "is-path-cwd@npm:1.0.0"
-  checksum: 8cc3acd4cbe5dd1c2932651ffa37a3d64765405bde2d4b61f76f9fa77d195fedae42d8b8aed2027ea6f7e2cc4ce7d7f8cb875e036c6113174193f6f7467393fc
-  languageName: node
-  linkType: hard
-
 "is-path-cwd@npm:^2.0.0, is-path-cwd@npm:^2.2.0":
   version: 2.2.0
   resolution: "is-path-cwd@npm:2.2.0"
   checksum: afce71533a427a759cd0329301c18950333d7589533c2c90205bd3fdcf7b91eb92d1940493190567a433134d2128ec9325de2fd281e05be1920fbee9edd22e0a
-  languageName: node
-  linkType: hard
-
-"is-path-in-cwd@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "is-path-in-cwd@npm:1.0.1"
-  dependencies:
-    is-path-inside: ^1.0.0
-  checksum: d459e591f71ff1006791a1639c8bf7d2d668b60a489ec6ab84500182d265fde8058ddff1ca795d2c30ca044c522954b1293171760528f720046aa3dd20cf08bc
   languageName: node
   linkType: hard
 
@@ -21132,15 +21080,6 @@ __metadata:
   dependencies:
     is-path-inside: ^2.1.0
   checksum: 674a4282fb3732cf4b4e9ea31e06380d8b074fb8106c4c1742a9f0f3d5650bf059b2c45e5c4cfa7abe847ca88474de63abec323a7fe1eb14f8ec4de2fa951d3a
-  languageName: node
-  linkType: hard
-
-"is-path-inside@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "is-path-inside@npm:1.0.1"
-  dependencies:
-    path-is-inside: ^1.0.1
-  checksum: 093ab1324e33a95c2d057e1450e1936ee7a3ed25b78c8dc42f576f3dc3489dd8788d431ea2969bb0e081f005de1571792ea99cf7b1b69ab2dd4ca477ae7a8e51
   languageName: node
   linkType: hard
 
@@ -27004,7 +26943,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-is-inside@npm:^1.0.1, path-is-inside@npm:^1.0.2":
+"path-is-inside@npm:^1.0.2":
   version: 1.0.2
   resolution: "path-is-inside@npm:1.0.2"
   checksum: 7fdd4b41672c70461cce734fc222b33e7b447fa489c7c4377c95e7e6852d83d69741f307d88ec0cc3b385b41cb4accc6efac3c7c511cd18512e95424f5fa980c
@@ -29988,12 +29927,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recursive-copy@npm:^2.0.10":
-  version: 2.0.10
-  resolution: "recursive-copy@npm:2.0.10"
+"recursive-copy@npm:^2.0.10, recursive-copy@npm:^2.0.14":
+  version: 2.0.14
+  resolution: "recursive-copy@npm:2.0.14"
   dependencies:
-    del: ^2.2.0
-    emitter-mixin: 0.0.3
     errno: ^0.1.2
     graceful-fs: ^4.1.4
     junk: ^1.0.1
@@ -30001,8 +29938,9 @@ __metadata:
     mkdirp: ^0.5.1
     pify: ^2.3.0
     promise: ^7.0.1
+    rimraf: ^2.7.1
     slash: ^1.0.0
-  checksum: 1e9764ddb6250c92fd1f120cd0269c09dc7beb8efecb98c629577143448f22d27943c66d24f89b70d6be522e01af9ec07d66c9b757d97f6f5b12acaf13e10689
+  checksum: 1d7f048eb4a58fff655f2367fcd128ed0c716cfd9fe8c058fa986160ec743e18ee35f1d60d501bf2ba68d53648f24eaea048dc67f27cd29fb2985a04c9afd2bb
   languageName: node
   linkType: hard
 
@@ -31388,7 +31326,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"rimraf@npm:^2.2.8, rimraf@npm:^2.5.4, rimraf@npm:^2.6.3":
+"rimraf@npm:^2.2.8, rimraf@npm:^2.5.4, rimraf@npm:^2.6.3, rimraf@npm:^2.7.1":
   version: 2.7.1
   resolution: "rimraf@npm:2.7.1"
   dependencies:
