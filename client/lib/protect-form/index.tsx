@@ -79,11 +79,13 @@ export interface ProtectedFormProps {
 /*
  * HOC that passes markChanged/markSaved props to the wrapped component instance
  */
-export const protectForm = createHigherOrderComponent< ProtectedFormProps >( ( Component ) => {
+export const protectForm = createHigherOrderComponent< ProtectedFormProps >( ( InnerComponent ) => {
 	return ( props ) => {
 		const { markChanged, markSaved } = useProtectForm();
-		// @ts-expect-error Upstream type issue from https://github.com/WordPress/gutenberg/pull/37795. May be fixed in an upcoming release.
-		return <Component { ...props } markChanged={ markChanged } markSaved={ markSaved } />;
+		const innerProps = { markChanged, markSaved, ...props } as React.ComponentProps<
+			typeof InnerComponent
+		>;
+		return <InnerComponent { ...innerProps } />;
 	};
 }, 'protectForm' );
 

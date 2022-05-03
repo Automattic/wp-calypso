@@ -221,7 +221,7 @@ export const withLocalizeUrl = createHigherOrderComponent< {
 } >( ( InnerComponent ) => {
 	return ( props ) => {
 		const localizeUrl = useLocalizeUrl();
-		// @ts-expect-error Upstream type issue from https://github.com/WordPress/gutenberg/pull/37795. May be fixed in an upcoming release.
-		return <InnerComponent localizeUrl={ localizeUrl } { ...props } />;
+		const innerProps = { localizeUrl, ...props } as React.ComponentProps< typeof InnerComponent >;
+		return <InnerComponent { ...innerProps } />;
 	};
 }, 'withLocalizeUrl' );
