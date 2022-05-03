@@ -1,0 +1,7 @@
+@import 'signup/steps/import/style/base';
+
+.site-setup.import {
+	.import__onboarding-page {
+		@include onboarding-block-margin;
+	}
+}

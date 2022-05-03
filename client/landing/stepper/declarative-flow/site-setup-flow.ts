@@ -27,6 +27,12 @@ export const siteSetupFlow: Flow = {
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
+			'import',
+			'importList',
+			'importReady',
+			'importReadyNot',
+			'importReadyWpcom',
+			'importReadyPreview',
 			'businessInfo',
 			'storeAddress',
 			'processing',
@@ -140,7 +146,7 @@ export const siteSetupFlow: Flow = {
 							return navigate( 'options' );
 						}
 						case 'import': {
-							return exitFlow( `/start/importer/capture?siteSlug=${ siteSlug }` );
+							return navigate( 'import' );
 						}
 						case 'write': {
 							return navigate( 'options' );
@@ -191,6 +197,11 @@ export const siteSetupFlow: Flow = {
 				case 'vertical': {
 					return navigate( 'intent' );
 				}
+
+				case 'importReady':
+				case 'importReadyPreview': {
+					return exitFlow( providedDependencies?.url as string );
+				}
 			}
 		}
 
@@ -224,6 +235,13 @@ export const siteSetupFlow: Flow = {
 					}
 					return navigate( 'intent' );
 
+				case 'importList':
+				case 'importReady':
+				case 'importReadyNot':
+				case 'importReadyWpcom':
+				case 'importReadyPreview':
+					return navigate( 'import' );
+
 				default:
 					return navigate( 'intent' );
 			}
@@ -242,6 +260,9 @@ export const siteSetupFlow: Flow = {
 
 				case 'vertical':
 					return exitFlow( `/home/${ siteSlug }` );
+
+				case 'import':
+					return navigate( 'importList' );
 
 				default:
 					return navigate( 'intent' );
