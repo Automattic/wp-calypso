@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { filter, isEqual } from 'lodash';
@@ -18,7 +19,6 @@ class SharingButtonsPreviewButtons extends Component {
 		style: PropTypes.oneOf( [ 'icon', 'icon-text', 'text', 'official' ] ),
 		onButtonClick: PropTypes.func,
 		showMore: PropTypes.bool,
-		forceMorePreviewVisible: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -26,7 +26,6 @@ class SharingButtonsPreviewButtons extends Component {
 		style: 'icon',
 		onButtonClick: function () {},
 		showMore: false,
-		forceMorePreviewVisible: false,
 	};
 
 	previewIframeRef = createRef();
@@ -47,7 +46,7 @@ class SharingButtonsPreviewButtons extends Component {
 		this.maybeListenForWidgetMorePreview();
 
 		if (
-			prevProps.forceMorePreviewVisible !== this.props.forceMorePreviewVisible ||
+			prevProps.showMore !== this.props.showMore ||
 			! isEqual( prevProps.buttons, this.props.buttons )
 		) {
 			// We trigger an update to the preview visibility if buttons have
@@ -106,7 +105,7 @@ class SharingButtonsPreviewButtons extends Component {
 	};
 
 	updateMorePreviewVisibility = () => {
-		if ( ! this.props.forceMorePreviewVisible ) {
+		if ( ! this.props.showMore ) {
 			this.hideMorePreview();
 		} else {
 			this.showMorePreview();
@@ -159,7 +158,7 @@ class SharingButtonsPreviewButtons extends Component {
 	};
 
 	hideMorePreview = () => {
-		if ( ! this.props.forceMorePreviewVisible && this.state.morePreviewVisible ) {
+		if ( ! this.props.showMore && this.state.morePreviewVisible ) {
 			this.setState( { morePreviewVisible: false } );
 		}
 	};
