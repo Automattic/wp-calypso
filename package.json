@@ -178,7 +178,7 @@
 		"@wordpress/jest-preset-default": "^8.1.1",
 		"@wordpress/url": "^3.8.0",
 		"backstopjs": "5.1.0",
-		"browserslist": "^4.16.0",
+		"browserslist": "^4.20.3",
 		"calypso": "workspace:^",
 		"calypso-codemods": "workspace:^",
 		"config": "^3.3.6",
