@@ -12611,7 +12611,7 @@ __metadata:
     email-validator: ^2.0.4
     emoji-text: ^0.2.6
     enzyme: ^3.11.0
-    express: ^4.17.1
+    express: ^4.18.1
     express-async-handler: ^1.1.4
     express-useragent: ^1.0.15
     fake-indexeddb: ^3.1.7
@@ -17580,9 +17580,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:^4.16.3, express@npm:^4.17.1, express@npm:^4.17.3":
-  version: 4.18.0
-  resolution: "express@npm:4.18.0"
+"express@npm:^4.16.3, express@npm:^4.17.1, express@npm:^4.17.3, express@npm:^4.18.1":
+  version: 4.18.1
+  resolution: "express@npm:4.18.1"
   dependencies:
     accepts: ~1.3.8
     array-flatten: 1.1.1
@@ -17615,7 +17615,7 @@ __metadata:
     type-is: ~1.6.18
     utils-merge: 1.0.1
     vary: ~1.1.2
-  checksum: 4af72cf1129c817ed8cd69824292ca8bc3c76e9630a9bf1f2b6646b5859eea948ea76317203213af84e30e46a0a3ae93a75bb4fd4f1240e83d3864664c21ba1c
+  checksum: eeca44d91a73a8aa9101b36d1fb2dc7942d994a3ea471664daf35a42f2d498c3d43bb4e8541667d9b46d1773756d256bc5eed59632a1205773e40e468e60b6d3
   languageName: node
   linkType: hard
 
