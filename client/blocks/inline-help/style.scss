@@ -1,9 +1,9 @@
 /* stylelint-disable */
+@use './inline-help-center-content.scss';
+
 @import '@automattic/typography/styles/variables';
 @import '../../assets/stylesheets/shared/mixins/_breakpoints';
 @import '../../assets/stylesheets/shared/mixins/hide-content-accessibly';
-
-@use './inline-help-center-content.scss';
 
 // GENERAL - Content
 .inline-help {
