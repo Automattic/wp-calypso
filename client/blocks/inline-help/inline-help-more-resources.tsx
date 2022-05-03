@@ -61,8 +61,9 @@ const HelpCenterMoreResources = () => {
 							href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
 							rel="noreferrer"
 							target="_blank"
+							className="inline-help__video"
 						>
-							<Icon icon={ video } size={ 24 } fill="#C9356E" />
+							<Icon icon={ video } size={ 24 } />
 							<span>{ __( 'Video tutorials' ) }</span>
 						</a>
 					</div>
@@ -74,8 +75,9 @@ const HelpCenterMoreResources = () => {
 							rel="noreferrer"
 							target="_blank"
 							onClick={ trackCoursesButtonClick }
+							className="inline-help__capture-video"
 						>
-							<Icon icon={ captureVideo } size={ 24 } fill="#E68B28" />
+							<Icon icon={ captureVideo } size={ 24 } />
 							<span>{ __( 'Webinars' ) }</span>
 						</a>
 					</div>
@@ -86,8 +88,9 @@ const HelpCenterMoreResources = () => {
 							href={ localizeUrl( 'https://wpcourses.com/?ref=wpcom-help-more-resources' ) }
 							rel="noreferrer"
 							target="_blank"
+							className="inline-help__desktop"
 						>
-							<Icon icon={ desktop } size={ 24 } fill="#09B585" />
+							<Icon icon={ desktop } size={ 24 } />
 							<span>{ __( 'Courses' ) }</span>
 						</a>
 					</div>
@@ -98,8 +101,9 @@ const HelpCenterMoreResources = () => {
 							href={ localizeUrl( 'https://learn.wordpress.com' ) }
 							rel="noreferrer"
 							target="_blank"
+							className="inline-help__format-list-numbered"
 						>
-							<Icon icon={ formatListNumbered } size={ 24 } fill="#B35EB1" />
+							<Icon icon={ formatListNumbered } size={ 24 } />
 							<span>{ __( 'Step-by-step guides' ) }</span>
 						</a>
 					</div>
@@ -111,7 +115,7 @@ const HelpCenterMoreResources = () => {
 							onClick={ () => handleWhatsNewClick() }
 							className="inline-help__new-releases"
 						>
-							<MaterialIcon icon="new_releases" size={ 24 } fill="#003C56" />
+							<MaterialIcon icon="new_releases" size={ 24 } />
 							<span>{ __( "What's new" ) }</span>
 							{ ! hasSeenWhatsNewModal && <Icon icon={ circle } size={ 16 } fill="#0675C4" /> }
 						</Button>

@@ -123,7 +123,8 @@
 		.inline-help__resource-item {
 			margin-bottom: 16px;
 
-			.inline-help__resource-cell a {
+			.inline-help__resource-cell a,
+			.inline-help__resource-cell button {
 				display: flex;
 
 				svg {
@@ -136,6 +137,51 @@
 				span {
 					display: block;
 					align-self: center;
+				}
+
+				&.inline-help__video {
+					svg {
+						fill: var( --studio-pink-50 );
+					}
+				}
+
+				&.inline-help__capture-video {
+					svg {
+						fill: var( --studio-orange-30 );
+					}
+				}
+
+				&.inline-help__desktop {
+					svg {
+						fill: var( --studio-celadon-30 );
+					}
+				}
+
+				&.inline-help__format-list-numbered {
+					svg {
+						fill: var( --studio-purple-40 );
+					}
+				}
+
+				&.inline-help__new-releases {
+					padding: 0;
+					font-size: $font-body-small !important;
+					color: var( --studio-gray-100 );
+					text-decoration: none !important;
+
+					> :first-child {
+						fill: var( --studio-blue-70 );
+					}
+					span {
+						text-decoration: none;
+						color: var( --studio-gray-100 );
+					} 
+					> :last-child {
+						align-self: auto;
+						background: none;
+						color: var( --color-accent );
+						padding-left: 8px;
+					}
 				}
 			}
 		}
