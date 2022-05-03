@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+// import { isEnabled } from '@automattic/calypso-config';
 import {
 	isBusiness,
 	isEcommerce,
@@ -25,9 +25,7 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { useSiteSearchPlugins } from 'calypso/data/marketplace/use-site-search-es-query';
-import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import { useWPORGInfinitePlugins } from 'calypso/data/marketplace/use-wporg-plugin-query';
+// import { useSiteSearchPlugins } from 'calypso/data/marketplace/use-site-search-es-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
@@ -71,21 +69,6 @@ import {
 } from 'calypso/state/ui/selectors';
 import './style.scss';
 import usePlugins from '../use-plugins';
-
-/**
- * Multiply the wpcom rating to match the wporg value.
- * wpcom rating is from 1 to 5 while wporg is from 1 to 100.
- *
- * @param plugin
- * @returns
- */
-function updateWpComRating( plugin ) {
-	if ( ! plugin || ! plugin.rating ) return plugin;
-
-	plugin.rating *= 20;
-
-	return plugin;
-}
 
 /**
  * Module variables
@@ -360,10 +343,32 @@ const SearchListView = ( {
 } ) => {
 	const dispatch = useDispatch();
 
-	const paidPluginsBySearchTerm = useMemo(
-		() => paidPluginsBySearchTermRaw.map( updateWpComRating ),
-		[ paidPluginsBySearchTermRaw ]
+	/* TODO: move this inside usePlugins
+	const searchHook = isEnabled( 'marketplace-jetpack-plugin-search' )
+		? useSiteSearchPlugins
+		: useWPORGInfinitePlugins;
+
+	const {
+		data: { plugins: pluginsBySearchTerm = [], pagination: pluginsPagination } = {},
+		isLoading: isFetchingPluginsBySearchTerm,
+		fetchNextPage,
+	} = searchHook(
+		{ searchTerm },
+		{
+			enabled: !! searchTerm,
+		}
 	);
+	*/
+
+	const {
+		plugins: pluginsBySearchTerm = [],
+		isFetching: isFetchingPaidPluginsBySearchTerm,
+		pluginsPagination: pluginsPagination,
+		fetchNextPage,
+	} = usePlugins( {
+		search: searchTerm,
+	} );
+
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -371,7 +376,7 @@ const SearchListView = ( {
 			dispatch(
 				recordTracksEvent( 'calypso_plugins_search_results_show', {
 					search_term: searchTerm,
-					results_count: pluginsPagination?.results,
+					results_count: pluginsPagination?.dotOrgResults,
 					blog_id: siteId,
 				} )
 			);
@@ -382,19 +387,14 @@ const SearchListView = ( {
 				recordTracksEvent( 'calypso_plugins_search_results_page', {
 					search_term: searchTerm,
 					page: pluginsPagination.page,
-					results_count: pluginsPagination.results,
+					results_count: pluginsPagination.dotOrgResults,
 					blog_id: siteId,
 				} )
 			);
 		}
-	}, [ searchTerm, pluginsPagination?.page ] );
+	}, [ searchTerm, pluginsPagination, dispatch, siteId ] );
 
-	if (
-		pluginsBySearchTerm.length > 0 ||
-		paidPluginsBySearchTerm.length > 0 ||
-		isFetchingPluginsBySearchTerm ||
-		isFetchingPaidPluginsBySearchTerm
-	) {
+	if ( pluginsBySearchTerm.length > 0 || isFetchingPaidPluginsBySearchTerm ) {
 		const searchTitle =
 			searchTitleTerm ||
 			( searchTerm &&
@@ -411,22 +411,22 @@ const SearchListView = ( {
 		const subtitle =
 			pluginsPagination &&
 			translate( '%(total)s plugin', '%(total)s plugins', {
-				count: pluginsPagination.results + paidPluginsBySearchTerm?.length,
+				count: pluginsPagination.results,
 				textOnly: true,
 				args: {
-					total: pluginsPagination.results + paidPluginsBySearchTerm?.length,
+					total: pluginsPagination.results,
 				},
 			} );
 
 		return (
 			<>
 				<PluginsBrowserList
-					plugins={ [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ].filter( isNotBlocked ) }
+					plugins={ pluginsBySearchTerm.filter( isNotBlocked ) }
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
 					title={ searchTitle }
 					subtitle={ subtitle }
 					site={ siteSlug }
-					showPlaceholders={ isFetchingPluginsBySearchTerm || isFetchingPaidPluginsBySearchTerm }
+					showPlaceholders={ isFetchingPaidPluginsBySearchTerm }
 					currentSites={ sites }
 					variant={ PluginsBrowserListVariant.Paginated }
 					extended

@@ -44,6 +44,7 @@ const usePlugins = ( {
 } ) => {
 	let plugins = [];
 	let isFetching = false;
+	let results = 0;
 
 	const categories = useCategories();
 	const categoryTags = categories[ category || '' ]?.tags || [];
@@ -53,19 +54,18 @@ const usePlugins = ( {
 		locale,
 		category,
 		tag,
-		search,
+		searchTerm: search,
 	};
 
-	const { data: { plugins: wporgPlugins = [] } = {}, isLoading: isFetchingWPORG } = useWPORGPlugins(
-		wporgPluginsOptions,
-		{
-			enabled:
-				! infinite && ! WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) && wporgEnabled,
-		}
-	);
+	const {
+		data: { plugins: wporgPlugins = [], pagination: wporgPagination } = {},
+		isLoading: isFetchingWPORG,
+	} = useWPORGPlugins( wporgPluginsOptions, {
+		enabled: ! infinite && ! WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) && wporgEnabled,
+	} );
 
 	const {
-		data: { plugins: wporgPluginsInfinite = [] } = {},
+		data: { plugins: wporgPluginsInfinite = [], pagination: wporgPaginationInfinite } = {},
 		isLoading: isFetchingWPORGInfinite,
 		fetchNextPage,
 	} = useWPORGInfinitePlugins( wporgPluginsOptions, {
@@ -74,6 +74,7 @@ const usePlugins = ( {
 
 	const dotOrgPlugins = infinite ? wporgPluginsInfinite : wporgPlugins;
 	const isFetchingDotOrg = infinite ? isFetchingWPORGInfinite : isFetchingWPORG;
+	const dotOrgPagination = infinite ? wporgPaginationInfinite : wporgPagination;
 
 	const { data: wpcomPluginsRaw = [], isLoading: isFetchingDotCom } = useWPCOMPlugins(
 		'all',
@@ -103,18 +104,22 @@ const usePlugins = ( {
 		case 'paid':
 			plugins = dotComPlugins;
 			isFetching = isFetchingDotCom;
+			results = dotComPlugins?.length ?? 0;
 			break;
 		case 'popular':
 			plugins = dotOrgPlugins;
 			isFetching = isFetchingDotOrg;
+			results = dotOrgPagination?.results ?? 0;
 			break;
 		case 'featured':
 			plugins = featuredPlugins;
 			isFetching = isFetchingDotComFeatured;
+			results = featuredPlugins?.length ?? 0;
 			break;
 		default:
 			plugins = [ ...dotComPlugins, ...dotOrgPlugins ];
 			isFetching = isFetchingDotCom || isFetchingDotOrg;
+			results = dotOrgPagination?.results + dotComPlugins.length ?? 0;
 			break;
 	}
 
@@ -122,6 +127,11 @@ const usePlugins = ( {
 		plugins,
 		isFetching,
 		fetchNextPage,
+		pagination: {
+			page: dotOrgPagination,
+			results,
+			dotOrgResults: dotOrgPagination?.results,
+		},
 	};
 };
 
