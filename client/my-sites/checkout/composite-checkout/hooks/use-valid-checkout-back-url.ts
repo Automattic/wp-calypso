@@ -4,8 +4,9 @@ import { useSelector } from 'react-redux';
 import { resemblesUrl } from 'calypso/lib/url';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 
-const getAllowedHosts = ( siteSlug: string ) => {
-	const basicHosts = [ 'jetpack.com', 'jetpack.cloud.localhost', 'cloud.jetpack.com', siteSlug ];
+const getAllowedHosts = ( siteSlug?: string ) => {
+	const basicHosts = [ 'jetpack.com', 'jetpack.cloud.localhost', 'cloud.jetpack.com' ];
+	siteSlug && basicHosts.push( siteSlug );
 
 	const languageSpecificJetpackHosts = getLanguageSlugs().map(
 		( lang: string ) => `${ lang }.jetpack.com`
@@ -18,7 +19,7 @@ const useValidCheckoutBackUrl = ( siteSlug: string | undefined ): string | undef
 	const { checkoutBackUrl } = useSelector( getInitialQueryArguments ) ?? {};
 
 	return useMemo( () => {
-		if ( ! siteSlug || ! checkoutBackUrl ) {
+		if ( ! siteSlug && ! checkoutBackUrl ) {
 			return undefined;
 		}
 
