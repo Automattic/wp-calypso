@@ -6,6 +6,7 @@ import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import {
 	FIELD_FIRSTNAME,
 	FIELD_MAILBOX,
+	FIELD_NAME,
 	FIELD_UUID,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import {
@@ -53,7 +54,11 @@ const NewMailboxList = ( {
 
 	const onMailboxValueChange =
 		( uuid: string ) =>
-		( fieldName: FormFieldNames, fieldValue: string | boolean, mailBoxFieldTouched = false ) => {
+		(
+			fieldName: FormFieldNames,
+			fieldValue: string | boolean,
+			mailBoxFieldTouched = false
+		): void => {
 			const updatedMailboxes = mailboxes.map( ( mailbox ) => {
 				if ( getFormFieldValue( mailbox, FIELD_UUID ) !== uuid ) {
 					return mailbox;
@@ -62,7 +67,7 @@ const NewMailboxList = ( {
 				const formField = getFormField( mailbox, fieldName );
 				formField.value = fieldValue;
 
-				if ( FIELD_FIRSTNAME === fieldName && ! mailBoxFieldTouched ) {
+				if ( [ FIELD_FIRSTNAME, FIELD_NAME ].includes( fieldName ) && ! mailBoxFieldTouched ) {
 					const mailboxField = getFormField( mailbox, FIELD_MAILBOX );
 					if ( mailboxField ) {
 						mailboxField.value = sanitizeMailboxValue( fieldValue as string );
@@ -77,7 +82,7 @@ const NewMailboxList = ( {
 			onMailboxesChange( updatedMailboxes );
 		};
 
-	const onMailboxAdd = () => {
+	const onMailboxAdd = (): void => {
 		onMailboxesChange( [ ...mailboxes, new MailboxForm( provider, selectedDomainName ) ] );
 	};
 
@@ -111,7 +116,11 @@ const NewMailboxList = ( {
 
 					<NewMailbox
 						domains={
-							domains ? domains.map( ( domain ) => domain.name ?? '' ) : [ selectedDomainName ]
+							domains
+								? domains
+										.map( ( domain ) => domain.name ?? '' )
+										.filter( ( domainName ) => Boolean( domainName ) )
+								: [ selectedDomainName ]
 						}
 						onMailboxValueChange={ onMailboxValueChange(
 							getFormFieldValue( mailbox, FIELD_UUID ) as string
