@@ -30,7 +30,7 @@ export const anchorFmFlow: Flow = {
 				case 'designSetup':
 					return navigate( 'processing' );
 				case 'processing':
-					return redirect( `/page/home/${ siteSlug }` );
+					return redirect( `/page/${ siteSlug }/home` );
 			}
 		}
 
@@ -50,7 +50,9 @@ export const anchorFmFlow: Flow = {
 				case 'podcastTitle':
 					return navigate( 'designSetup' );
 				case 'designSetup':
-					return redirect( `/page/home/${ siteSlug }` );
+					return navigate( 'processing' );
+				case 'processing':
+					return redirect( `/page/${ siteSlug }/home` );
 				default:
 					return navigate( 'podcastTitle' );
 			}
