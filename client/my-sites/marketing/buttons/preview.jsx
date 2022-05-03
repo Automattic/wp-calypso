@@ -178,10 +178,7 @@ class SharingButtonsPreview extends Component {
 					buttons={ enabledButtons }
 					visibility="visible"
 					style={ this.props.style }
-					showMore={
-						'hidden' === this.state.buttonsTrayVisibility ||
-						some( this.props.buttons, { visibility: 'hidden' } )
-					}
+					showMore={ some( this.props.buttons, { visibility: 'hidden' } ) }
 				/>
 			);
 		}
