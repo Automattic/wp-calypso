@@ -31,12 +31,12 @@ const CheckoutTermsItem = ( {
 	children,
 	className,
 	onClick,
-	wrapChildren = true,
+	prewrappedChildren,
 }: {
 	children: React.ReactNode;
 	className?: string;
-	onClick?: () => void;
-	wrapChildren?: boolean;
+	onClick?: React.MouseEventHandler< HTMLDivElement >;
+	prewrappedChildren?: boolean;
 } ): JSX.Element => {
 	return (
 		<Wrapper
@@ -45,7 +45,7 @@ const CheckoutTermsItem = ( {
 			role="presentation"
 		>
 			<Gridicon icon="info-outline" size={ 18 } />
-			{ wrapChildren ? <p>{ children }</p> : children }
+			{ prewrappedChildren ? children : <p>{ children }</p> }
 		</Wrapper>
 	);
 };
