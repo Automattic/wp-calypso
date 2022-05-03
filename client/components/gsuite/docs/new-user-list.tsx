@@ -11,15 +11,15 @@ import {
 } from 'calypso/lib/gsuite/new-users';
 
 // `GSuiteNewUserList` expects domains to use the `ResponseDomain` type, but we use `any` here to
-// avoid overly verboes declarations.
+// avoid overly verbose declarations.
 const domainOne: any = {
-	name: 'example.blog',
 	domain: 'example.blog',
+	name: 'example.blog',
 	supportsGdprConsentManagement: true,
 };
 const domainTwo: any = {
-	name: 'test.blog',
 	domain: 'test.blog',
+	name: 'test.blog',
 	supportsGdprConsentManagement: true,
 };
 
