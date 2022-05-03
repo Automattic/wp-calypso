@@ -20,7 +20,6 @@ import { useMemo, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
-import { useFSEStatus } from 'calypso/landing/stepper/hooks/use-fse-status';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
