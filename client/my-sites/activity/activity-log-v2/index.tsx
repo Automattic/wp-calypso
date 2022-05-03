@@ -95,9 +95,10 @@ const ActivityLogV2: FunctionComponent = () => {
 				jetpackCloudHeader
 			) : (
 				<FormattedHeader
+					brandFont
 					headerText="Activity"
 					subHeaderText={ translate(
-						'This is the complete event history for your site. Filter by date range and/or activity type.'
+						"Keep tabs on all your site's activity — plugin and theme updates, user logins, setting modifications, and more."
 					) }
 					align="left"
 				/>
