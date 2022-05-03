@@ -63,7 +63,6 @@ window.AppBoot = async () => {
 
 	const queryClient = new QueryClient();
 
-<<<<<<< HEAD
 	await loadPersistedState();
 	const user = ( await initializeCurrentUser() ) as unknown;
 	const userId = ( user as CurrentUser ).ID;
@@ -82,16 +81,6 @@ window.AppBoot = async () => {
 					</BrowserRouter>
 				</QueryClientProvider>
 			</Provider>
-=======
-	ReactDom.render(
-		<LocaleContext>
-			<QueryClientProvider client={ queryClient }>
-				<WindowLocaleEffectManager />
-				<BrowserRouter basename="setup">
-					<FlowWrapper />
-				</BrowserRouter>
-			</QueryClientProvider>
->>>>>>> 9dac995278 (Allow Anchor flow to pull podcast title from API initially)
 		</LocaleContext>,
 		document.getElementById( 'wpcom' )
 	);
