@@ -19,105 +19,155 @@ import {
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
-	FIELD_UUID,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
+import {
+	getFormField,
+	getFormFieldError,
+	getFormFieldIsVisible,
+	getFormFieldValue,
+} from 'calypso/my-sites/email/form/mailboxes/field-selectors';
 import {
 	EmailProvider,
 	FormFieldNames,
-	GoogleMailboxFormFields,
-	TitanMailboxFormFields,
+	MutableFormFieldNames,
 } from 'calypso/my-sites/email/form/mailboxes/types';
 import DomainSelect from 'calypso/my-sites/email/form/new-mailbox-list/domain-select';
-import { useFieldsDirty } from 'calypso/my-sites/email/form/new-mailbox-list/fields-dirty';
+import { useFieldsTouched } from 'calypso/my-sites/email/form/new-mailbox-list/fields-touched';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 
 interface NewMailboxProps {
 	domains: string[];
-	hiddenFieldNames: string[];
 	mailbox: MailboxForm< EmailProvider >;
-	onMailboxValueChange: ( field: string, value: unknown, mailBoxFieldTouched?: boolean ) => void;
+	onMailboxValueChange: (
+		field: FormFieldNames,
+		value: string | boolean,
+		mailBoxFieldTouched?: boolean
+	) => void;
 	onReturnKeyPress: ( event: Event ) => void;
 	provider: EmailProvider;
 	selectedDomainName: string;
 	showAllErrors?: boolean;
 }
 
-interface MailboxFieldProps {
-	fieldName: FormFieldNames;
-	mailbox: MailboxForm< EmailProvider >;
-	onReturnKeyPress: ( event: Event ) => void;
-	showAllErrors?: boolean;
+interface MailboxFormFieldProps extends NewMailboxProps {
+	fieldName: MutableFormFieldNames;
+	isPasswordField?: boolean;
+	propagateMailboxDirtyState?: boolean;
 }
 
 const getInputValue = ( event: ChangeEvent< HTMLInputElement > ) => event?.target?.value;
 
-const useFieldDisplayText = (
-	fieldName: Exclude< FormFieldNames, typeof FIELD_DOMAIN | typeof FIELD_UUID >
-) => {
+const useGetFieldDisplayText = ( fieldName: MutableFormFieldNames ): TranslateResult => {
 	const translate = useTranslate();
 
-	return {
+	const textMap: Record< MutableFormFieldNames, TranslateResult > = {
 		[ FIELD_ALTERNATIVE_EMAIL ]: translate( 'Password reset email address', {
 			comment: 'This is the email address we will send password reset emails to',
 		} ),
-		[ FIELD_FIRSTNAME ]: 1,
-		[ FIELD_IS_ADMIN ]: 1,
-		[ FIELD_LASTNAME ]: 1,
-		[ FIELD_MAILBOX ]: 1,
-		[ FIELD_NAME ]: 1,
-		[ FIELD_PASSWORD ]: 1,
-	}[ fieldName ];
+		[ FIELD_FIRSTNAME ]: translate( 'First name' ),
+		[ FIELD_IS_ADMIN ]: translate( 'Is admin?' ),
+		[ FIELD_LASTNAME ]: translate( 'Last name' ),
+		[ FIELD_MAILBOX ]: translate( 'Email address' ),
+		[ FIELD_NAME ]: translate( 'Full name' ),
+		[ FIELD_PASSWORD ]: translate( 'Password' ),
+	};
+
+	return textMap[ fieldName ];
 };
 
 const useFieldHasError = (
-	fieldName: FormFieldNames,
+	fieldName: MutableFormFieldNames,
 	mailbox: MailboxForm< EmailProvider >,
 	showAllErrors?: boolean
 ) => {
-	const dirtyFields = useFieldsDirty();
-	const formFields: GoogleMailboxFormFields | TitanMailboxFormFields = mailbox.formFields;
-	const formField = Reflect.get( formFields, fieldName );
+	const dirtyFields = useFieldsTouched();
+	const formField = getFormField( mailbox, fieldName );
 	const formFieldHasError = formField?.hasError() ?? false;
 
 	return ( dirtyFields.state[ fieldName ] || showAllErrors ) && formFieldHasError;
 };
 
-const Field = ( {
+const TextInput = ( {
 	fieldName,
 	mailbox,
+	onMailboxValueChange,
 	onReturnKeyPress,
-	showAllErrors = true,
-}: MailboxFieldProps ): JSX.Element => {
-	const dirtyFields = useFieldsDirty();
-	const hasMailboxError = useFieldHasError( fieldName, mailbox, showAllErrors );
+	propagateMailboxDirtyState = false,
+	showAllErrors,
+}: MailboxFormFieldProps ): JSX.Element => {
+	const fieldsTouched = useFieldsTouched();
+	const hasFieldError = useFieldHasError( fieldName, mailbox, showAllErrors );
+	const setFieldTouched = fieldsTouched.setFieldTouched[ fieldName ];
 
 	return (
-		<>
-			<div className="new-mailbox__firstname-and-remove">
-				<FormFieldset>
-					<FormLabel>
-						{ firstNameText }
-						<FormTextInput
-							value={ firstName }
-							required
-							isError={ hasFirstnameError }
-							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-								onMailboxValueChange(
-									FIELD_FIRSTNAME,
-									getInputValue( event ),
-									mailboxFieldTouched
-								);
-							} }
-							onBlur={ () => {
-								setFirstNameFieldTouched( hasBeenValidated );
-							} }
-							onKeyUp={ onReturnKeyPress }
-						/>
-					</FormLabel>
-					{ hasFirstnameError && <FormInputValidation text={ firstNameError } isError /> }
-				</FormFieldset>
-			</div>
-		</>
+		<FormTextInput
+			value={ getFormFieldValue( mailbox, fieldName ) }
+			required
+			isError={ hasFieldError }
+			onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+				onMailboxValueChange(
+					fieldName,
+					getInputValue( event ),
+					propagateMailboxDirtyState ? fieldsTouched.state.mailbox : undefined
+				);
+			} }
+			onBlur={ () => {
+				setFieldTouched( mailbox.isValid() );
+			} }
+			onKeyUp={ onReturnKeyPress }
+		/>
+	);
+};
+
+const PasswordInput = ( {
+	fieldName,
+	mailbox,
+	onMailboxValueChange,
+	onReturnKeyPress,
+	showAllErrors,
+}: MailboxFormFieldProps ): JSX.Element => {
+	const fieldsTouched = useFieldsTouched();
+	const hasFieldError = useFieldHasError( fieldName, mailbox, showAllErrors );
+	const setFieldTouched = fieldsTouched.setFieldTouched[ fieldName ];
+
+	return (
+		<FormPasswordInput
+			autoCapitalize="off"
+			autoCorrect="off"
+			value={ getFormFieldValue( mailbox, fieldName ) }
+			maxLength={ 100 }
+			isError={ hasFieldError }
+			onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+				onMailboxValueChange( fieldName, getInputValue( event ) );
+			} }
+			onBlur={ () => {
+				setFieldTouched( mailbox.isValid() );
+			} }
+			onKeyUp={ onReturnKeyPress }
+		/>
+	);
+};
+
+const TextField = ( props: MailboxFormFieldProps ): JSX.Element => {
+	const { fieldName, isPasswordField = false, mailbox, showAllErrors } = props;
+
+	const hasFieldError = useFieldHasError( fieldName, mailbox, showAllErrors );
+	const fieldText = useGetFieldDisplayText( fieldName );
+
+	if ( ! getFormFieldIsVisible( mailbox, fieldName ) ) {
+		return <></>;
+	}
+
+	return (
+		<FormFieldset>
+			<FormLabel>
+				{ fieldText }
+				{ isPasswordField ? <PasswordInput { ...props } /> : <TextInput { ...props } /> }
+			</FormLabel>
+			{ hasFieldError && (
+				<FormInputValidation text={ getFormFieldError( mailbox, fieldName ) } isError />
+			) }
+		</FormFieldset>
 	);
 };
 
@@ -128,22 +178,22 @@ const SingleDomain = ( {
 	selectedDomainName,
 	showAllErrors,
 }: NewMailboxProps ): JSX.Element => {
-	const isRtl = useRtl();
-	const translate = useTranslate();
-	const dirtyFields = useFieldsDirty();
+	const fieldsTouched = useFieldsTouched();
 	const hasMailboxError = useFieldHasError( FIELD_MAILBOX, mailbox, showAllErrors );
+	const fieldText = useGetFieldDisplayText( FIELD_MAILBOX );
+	const isRtl = useRtl();
 
 	return (
 		<FormLabel>
-			{ translate( 'Email address' ) }
+			{ fieldText }
 			<FormTextInputWithAffixes
-				value={ mailbox }
+				value={ getFormFieldValue( mailbox, FIELD_MAILBOX ) }
 				isError={ hasMailboxError }
 				onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
 					onMailboxValueChange( FIELD_MAILBOX, getInputValue( event )?.toLowerCase() );
 				} }
 				onBlur={ () => {
-					dirtyFields.actions.setMailboxFieldDirty( mailbox.isValid() );
+					fieldsTouched.setFieldTouched.mailbox( mailbox.isValid() );
 				} }
 				onKeyUp={ onReturnKeyPress }
 				prefix={ isRtl ? `\u200e@${ selectedDomainName }\u202c` : null }
@@ -161,169 +211,85 @@ const MultipleDomain = ( {
 	selectedDomainName,
 	showAllErrors,
 }: NewMailboxProps ): JSX.Element => {
-	const translate = useTranslate();
-	const dirtyFields = useFieldsDirty();
+	const dirtyFields = useFieldsTouched();
+	const fieldText = useGetFieldDisplayText( FIELD_MAILBOX );
 	const hasMailboxError = useFieldHasError( FIELD_MAILBOX, mailbox, showAllErrors );
 
 	return (
-		<FormLabel>
-			{ translate( 'Email address' ) }
-			<FormTextInput
-				value={ mailbox }
-				isError={ hasMailboxError }
-				onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-					onMailboxValueChange( FIELD_MAILBOX, getInputValue( event )?.toLowerCase() );
-				} }
-				onBlur={ () => {
-					dirtyFields.actions.setMailboxFieldDirty( mailbox.isValid() );
-				} }
-				onKeyUp={ onReturnKeyPress }
-			/>
+		<>
+			<FormLabel>
+				{ fieldText }
+				<FormTextInput
+					value={ getFormFieldValue( mailbox, FIELD_MAILBOX ) }
+					isError={ hasMailboxError }
+					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+						onMailboxValueChange( FIELD_MAILBOX, getInputValue( event )?.toLowerCase() );
+					} }
+					onBlur={ () => {
+						dirtyFields.setFieldTouched.mailbox( mailbox.isValid() );
+					} }
+					onKeyUp={ onReturnKeyPress }
+				/>
 
-			<DomainSelect
-				domains={ domains }
-				onChange={ ( event ) => {
-					onMailboxValueChange( FIELD_DOMAIN, getInputValue( event ) );
-				} }
-				value={ selectedDomainName }
-			/>
-		</FormLabel>
+				<DomainSelect
+					domains={ domains }
+					onChange={ ( event ) => {
+						onMailboxValueChange( FIELD_DOMAIN, getInputValue( event ) );
+					} }
+					value={ selectedDomainName }
+				/>
+			</FormLabel>
+			{ hasMailboxError && (
+				<FormInputValidation text={ getFormFieldError( mailbox, FIELD_MAILBOX ) } isError />
+			) }
+		</>
 	);
 };
 
 const NewMailbox = ( props: NewMailboxProps ): JSX.Element => {
-	const {
-		domains,
-		hiddenFieldNames,
-		mailbox,
-		onMailboxValueChange,
-		onReturnKeyPress,
-		provider,
-		showAllErrors = true,
-	} = props;
-
 	const translate = useTranslate();
 
-	const hasBeenValidated = mailbox.isValid();
-
-	const [ alternativeEmailFieldTouched, setAlternativeEmailFieldTouched ] = useState( false );
-
-	const [ firstNameFieldTouched, setFirstNameFieldTouched ] = useState( false );
-	const [ lastNameFieldTouched, setLastNameFieldTouched ] = useState( false );
-	const [ passwordFieldTouched, setPasswordFieldTouched ] = useState( false );
 	const [ showAlternateEmail, setShowAlternateEmail ] = useState( false );
 
 	const userEmail = useSelector( getCurrentUserEmail );
 
-	const hasAlternativeEmailError =
-		( alternativeEmailFieldTouched || showAllErrors ) &&
-		mailbox.hasErrors() &&
-		! hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL );
+	const dirtyFields = useFieldsTouched();
 
-	const hasFirstnameError =
-		( firstNameFieldTouched || showAllErrors ) &&
-		null !== firstNameError &&
-		! hiddenFieldNames.includes( FIELD_FIRSTNAME );
-	const hasLastnameError =
-		( lastNameFieldTouched || showAllErrors ) &&
-		null !== lastNameError &&
-		! hiddenFieldNames.includes( FIELD_LASTNAME );
-	const hasPasswordError = ( passwordFieldTouched || showAllErrors ) && null !== passwordError;
-
-	const showIsAdminToggle = false;
+	const { domains, mailbox, onMailboxValueChange } = props;
 
 	const showAlternateEmailField = () => {
 		setShowAlternateEmail( true );
-		onMailboxValueChange( 'alternativeEmail', userEmail );
-		setAlternativeEmailFieldTouched( true );
+		onMailboxValueChange( FIELD_ALTERNATIVE_EMAIL, userEmail );
+		dirtyFields.setFieldTouched.alternativeEmail( true );
 	};
-
-	const isTitan = provider === EmailProvider.Titan;
-	const firstNameText = isTitan ? translate( 'Full name' ) : translate( 'First name' );
-	// Always hide the last name for Titan
-	if ( isTitan ) {
-		hiddenFieldNames.push( FIELD_LASTNAME );
-	}
 
 	return (
 		<>
 			<div className="new-mailbox">
-				{ ! hiddenFieldNames.includes( FIELD_FIRSTNAME ) && (
-					<div className="new-mailbox__firstname-and-remove">
-						<FormFieldset>
-							<FormLabel>
-								{ firstNameText }
-								<FormTextInput
-									value={ firstName }
-									required
-									isError={ hasFirstnameError }
-									onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-										onMailboxValueChange(
-											FIELD_FIRSTNAME,
-											getInputValue( event ),
-											mailboxFieldTouched
-										);
-									} }
-									onBlur={ () => {
-										setFirstNameFieldTouched( hasBeenValidated );
-									} }
-									onKeyUp={ onReturnKeyPress }
-								/>
-							</FormLabel>
-							{ hasFirstnameError && <FormInputValidation text={ firstNameError } isError /> }
-						</FormFieldset>
-					</div>
-				) }
-				{ ! hiddenFieldNames.includes( FIELD_LASTNAME ) && (
-					<div className="new-mailbox__lastname-and-remove">
-						<FormFieldset>
-							<FormLabel>
-								{ translate( 'Last name' ) }
-								<FormTextInput
-									value={ lastName }
-									required
-									isError={ hasLastnameError }
-									onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-										onMailboxValueChange(
-											FIELD_LASTNAME,
-											getInputValue( event ),
-											mailboxFieldTouched
-										);
-									} }
-									onBlur={ () => {
-										setLastNameFieldTouched( hasBeenValidated );
-									} }
-									onKeyUp={ onReturnKeyPress }
-								/>
-							</FormLabel>
-							{ hasLastnameError && <FormInputValidation text={ lastNameError } isError /> }
-						</FormFieldset>
-					</div>
-				) }
+				<div className="new-mailbox__firstname">
+					<TextField
+						{ ...props }
+						fieldName={ FIELD_FIRSTNAME }
+						propagateMailboxDirtyState={ true }
+					/>
+				</div>
+				<div className="new-mailbox__lastname">
+					<TextField
+						{ ...props }
+						fieldName={ FIELD_LASTNAME }
+						propagateMailboxDirtyState={ true }
+					/>
+				</div>
+				<div className="new-mailbox__mailbox">
+					<FormFieldset>
+						{ domains.length > 1 ? <MultipleDomain { ...props } /> : <SingleDomain { ...props } /> }
+					</FormFieldset>
+				</div>
+				<div className="new-mailbox__password">
+					<TextField { ...props } fieldName={ FIELD_PASSWORD } isPasswordField />
+				</div>
 				<FormFieldset>
-					{ domains.length > 1 ? <MultipleDomain { ...props } /> : <SingleDomain { ...props } /> }
-					{ hasMailboxError && <FormInputValidation text={ mailboxError } isError /> }
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel>
-						{ translate( 'Password' ) }
-						<FormPasswordInput
-							autoCapitalize="off"
-							autoCorrect="off"
-							value={ password }
-							maxLength={ 100 }
-							isError={ hasPasswordError }
-							onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-								onMailboxValueChange( FIELD_PASSWORD, getInputValue( event ) );
-							} }
-							onBlur={ () => {
-								setPasswordFieldTouched( hasBeenValidated );
-							} }
-							onKeyUp={ onReturnKeyPress }
-						/>
-					</FormLabel>
-					{ hasPasswordError && <FormInputValidation text={ passwordError } isError /> }
-					{ hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) && ! showAlternateEmail && (
+					{ getFormFieldIsVisible( mailbox, FIELD_ALTERNATIVE_EMAIL ) && ! showAlternateEmail && (
 						<FormSettingExplanation>
 							{ translate(
 								'Your password reset email is {{strong}}%(userEmail)s{{/strong}}. {{a}}Change it{{/a}}.',
@@ -341,10 +307,10 @@ const NewMailbox = ( props: NewMailboxProps ): JSX.Element => {
 						</FormSettingExplanation>
 					) }
 				</FormFieldset>
-				{ showIsAdminToggle && (
+				{ getFormFieldIsVisible( mailbox, FIELD_IS_ADMIN ) && (
 					<FormFieldset>
 						<ToggleControl
-							checked={ isAdmin as boolean }
+							checked={ getFormFieldValue( mailbox, FIELD_IS_ADMIN ) as boolean }
 							onChange={ ( newValue ) => {
 								onMailboxValueChange( 'isAdmin', newValue );
 							} }
@@ -353,29 +319,9 @@ const NewMailbox = ( props: NewMailboxProps ): JSX.Element => {
 						/>
 					</FormFieldset>
 				) }
-				{ ( ! hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) || showAlternateEmail ) && (
-					<FormFieldset>
-						<FormLabel>
-							{ translate( 'Password reset email address', {
-								comment: 'This is the email address we will send password reset emails to',
-							} ) }
-							<FormTextInput
-								value={ alternativeEmail }
-								isError={ hasAlternativeEmailError }
-								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-									onMailboxValueChange( 'alternativeEmail', getInputValue( event ) );
-								} }
-								onBlur={ () => {
-									setAlternativeEmailFieldTouched( hasBeenValidated );
-								} }
-								onKeyUp={ onReturnKeyPress }
-							/>
-						</FormLabel>
-						{ hasAlternativeEmailError && (
-							<FormInputValidation text={ alternativeEmailError } isError />
-						) }
-					</FormFieldset>
-				) }
+				<div className="new-mailbox__alternative-email">
+					<TextField { ...props } fieldName={ FIELD_ALTERNATIVE_EMAIL } />
+				</div>
 			</div>
 		</>
 	);

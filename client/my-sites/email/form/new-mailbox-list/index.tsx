@@ -2,30 +2,30 @@ import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import CardHeading from 'calypso/components/card-heading';
-import { FIELD_FIRSTNAME, FIELD_UUID } from 'calypso/my-sites/email/new-mailbox-list/constants';
-import NewMailbox from 'calypso/my-sites/email/new-mailbox-list/new-mailbox';
+import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import {
-	getNewMailbox,
-	sanitizeValueForEmail,
-	validateMailboxes,
-} from 'calypso/my-sites/email/new-mailbox-list/utilities';
-import type {
-	Mailbox,
-	Provider,
-	StringOrBoolean,
-} from 'calypso/my-sites/email/new-mailbox-list/types';
+	FIELD_FIRSTNAME,
+	FIELD_MAILBOX,
+	FIELD_UUID,
+} from 'calypso/my-sites/email/form/mailboxes/constants';
+import {
+	getFormField,
+	getFormFieldValue,
+} from 'calypso/my-sites/email/form/mailboxes/field-selectors';
+import NewMailbox from 'calypso/my-sites/email/form/new-mailbox-list/new-mailbox';
+import { sanitizeMailboxValue } from 'calypso/my-sites/email/form/new-mailbox-list/sanitize-mailbox-value';
+import type { EmailProvider, FormFieldNames } from 'calypso/my-sites/email/form/mailboxes/types';
 import type { SiteDomain } from 'calypso/state/sites/domains/types';
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface NewMailboxListProps {
 	children?: ReactNode;
 	domains?: SiteDomain[];
-	extraValidation?: ( mailbox: Mailbox ) => Mailbox;
-	hiddenFieldNames: string[];
-	mailboxes: Mailbox[];
-	onMailboxesChange: ( mailboxes: Mailbox[] ) => void;
+	hiddenFieldNames: FormFieldNames[];
+	mailboxes: MailboxForm< EmailProvider >[];
+	onMailboxesChange: ( mailboxes: MailboxForm< EmailProvider >[] ) => void;
 	onReturnKeyPress: ( event: Event ) => void;
-	provider: Provider;
+	provider: EmailProvider;
 	selectedDomainName: string;
 	showAddAnotherMailboxButton?: boolean;
 	validatedMailboxUuids?: string[];
@@ -34,7 +34,6 @@ interface NewMailboxListProps {
 const NewMailboxList = ( {
 	children,
 	domains,
-	extraValidation = ( mailbox: Mailbox ) => mailbox,
 	hiddenFieldNames = [],
 	mailboxes = [],
 	onMailboxesChange,
@@ -43,51 +42,63 @@ const NewMailboxList = ( {
 	selectedDomainName,
 	showAddAnotherMailboxButton = false,
 	validatedMailboxUuids = [],
-}: NewMailboxListProps ): ReactElement => {
+}: NewMailboxListProps ): JSX.Element => {
 	const translate = useTranslate();
+
+	mailboxes.forEach( ( mailbox ) => {
+		hiddenFieldNames.forEach( ( hiddenFieldName ) =>
+			mailbox.setFieldIsVisible( hiddenFieldName, false )
+		);
+	} );
 
 	const onMailboxValueChange =
 		( uuid: string ) =>
-		( fieldName: string, fieldValue: StringOrBoolean, mailBoxFieldTouched = false ) => {
+		( fieldName: FormFieldNames, fieldValue: string | boolean, mailBoxFieldTouched = false ) => {
 			const updatedMailboxes = mailboxes.map( ( mailbox ) => {
-				if ( mailbox[ FIELD_UUID ] !== uuid ) {
+				if ( getFormFieldValue( mailbox, FIELD_UUID ) !== uuid ) {
 					return mailbox;
 				}
 
-				const updatedMailbox = { ...mailbox, [ fieldName ]: { value: fieldValue, error: null } };
+				const formField = getFormField( mailbox, fieldName );
+				formField.value = fieldValue;
 
 				if ( FIELD_FIRSTNAME === fieldName && ! mailBoxFieldTouched ) {
-					return {
-						...updatedMailbox,
-						mailBox: { value: sanitizeValueForEmail( fieldValue as string ), error: null },
-					};
+					const mailboxField = getFormField( mailbox, FIELD_MAILBOX );
+					if ( mailboxField ) {
+						mailboxField.value = sanitizeMailboxValue( fieldValue as string );
+					}
 				}
 
-				return updatedMailbox;
+				mailbox.validate();
+
+				return mailbox;
 			} );
 
-			onMailboxesChange( validateMailboxes( updatedMailboxes, extraValidation, hiddenFieldNames ) );
+			onMailboxesChange( updatedMailboxes );
 		};
 
 	const onMailboxAdd = () => {
-		onMailboxesChange( [ ...mailboxes, getNewMailbox( selectedDomainName ) ] );
+		onMailboxesChange( [ ...mailboxes, new MailboxForm( provider, selectedDomainName ) ] );
 	};
 
-	const onMailboxRemove = ( currentMailboxes: Mailbox[], uuid: string ) => () => {
-		const remainingMailboxes = currentMailboxes.filter(
-			( mailbox ) => mailbox[ FIELD_UUID ] !== uuid
-		);
+	const onMailboxRemove =
+		( currentMailboxes: MailboxForm< EmailProvider >[], uuid: string ) => () => {
+			const remainingMailboxes = currentMailboxes.filter(
+				( mailbox ) => getFormFieldValue( mailbox, FIELD_UUID ) !== uuid
+			);
 
-		const updatedMailboxes =
-			0 < remainingMailboxes.length ? remainingMailboxes : [ getNewMailbox( selectedDomainName ) ];
+			const updatedMailboxes =
+				0 < remainingMailboxes.length
+					? remainingMailboxes
+					: [ new MailboxForm( provider, selectedDomainName ) ];
 
-		onMailboxesChange( updatedMailboxes );
-	};
+			onMailboxesChange( updatedMailboxes );
+		};
 
 	return (
 		<div className="new-mailbox-list__main">
 			{ mailboxes.map( ( mailbox, index ) => (
-				<Fragment key={ `${ index }:${ mailbox.uuid }` }>
+				<Fragment key={ `${ index }:${ getFormFieldValue( mailbox, FIELD_UUID ) }` }>
 					{ index > 0 && (
 						<CardHeading className="new-mailbox-list__numbered-heading" tagName="h3" size={ 20 }>
 							{ translate( 'Mailbox %(position)s', {
@@ -102,20 +113,26 @@ const NewMailboxList = ( {
 						domains={
 							domains ? domains.map( ( domain ) => domain.name ?? '' ) : [ selectedDomainName ]
 						}
-						hiddenFieldNames={ hiddenFieldNames }
-						onMailboxValueChange={ onMailboxValueChange( mailbox.uuid ) }
+						onMailboxValueChange={ onMailboxValueChange(
+							getFormFieldValue( mailbox, FIELD_UUID ) as string
+						) }
 						mailbox={ mailbox }
 						onReturnKeyPress={ onReturnKeyPress }
 						provider={ provider }
 						selectedDomainName={ selectedDomainName }
-						showAllErrors={ validatedMailboxUuids.includes( mailbox.uuid ) }
+						showAllErrors={ validatedMailboxUuids.includes(
+							getFormFieldValue( mailbox, FIELD_UUID ) as string
+						) }
 					/>
 
 					<div className="new-mailbox-list__actions">
 						{ index > 0 && (
 							<Button
 								className="new-mailbox-list__action-remove"
-								onClick={ onMailboxRemove( mailboxes, mailbox.uuid ) }
+								onClick={ onMailboxRemove(
+									mailboxes,
+									getFormFieldValue( mailbox, FIELD_UUID ) as string
+								) }
 							>
 								<Gridicon icon="trash" />
 								<span>{ translate( 'Remove this mailbox' ) }</span>

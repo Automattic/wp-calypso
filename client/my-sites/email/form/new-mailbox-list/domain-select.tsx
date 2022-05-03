@@ -10,13 +10,11 @@ interface Props {
 const DomainsSelect = ( { domains, onChange, value }: Props ) => {
 	return (
 		<FormSelect className="new-mailbox-list__domain-select" onChange={ onChange } value={ value }>
-			{ domains.map( ( domain ) => {
-				return (
-					<option value={ domain } key={ domain }>
-						@{ domain }
-					</option>
-				);
-			} ) }
+			{ domains.map( ( domain ) => (
+				<option value={ domain } key={ domain }>
+					@{ domain }
+				</option>
+			) ) }
 		</FormSelect>
 	);
 };
