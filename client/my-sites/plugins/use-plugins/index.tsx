@@ -47,7 +47,7 @@ const usePlugins = ( {
 
 	const categories = useCategories();
 	const categoryTags = categories[ category || '' ]?.tags || [];
-	const tag = categoryTags.join( '' );
+	const tag = categoryTags.join( ',' );
 
 	const wporgPluginsOptions = {
 		locale,
@@ -59,7 +59,8 @@ const usePlugins = ( {
 	const { data: { plugins: wporgPlugins = [] } = {}, isLoading: isFetchingWPORG } = useWPORGPlugins(
 		wporgPluginsOptions,
 		{
-			enabled: ! infinite && WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) && wporgEnabled,
+			enabled:
+				! infinite && ! WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) && wporgEnabled,
 		}
 	);
 
@@ -79,24 +80,24 @@ const usePlugins = ( {
 		search,
 		tag,
 		{
-			enabled: WPCOM_CATEGORIES_BLOCKLIST.includes( category || '' ) && wpcomEnabled,
+			enabled: ! WPCOM_CATEGORIES_BLOCKLIST.includes( category || '' ) && wpcomEnabled,
 		}
 	);
 
-	const {
-		data: featuredPluginsRaw = [],
-		isLoading: isFetchingDotComFeatured,
-	} = useWPCOMFeaturedPlugins( {
-		enabled: category === 'featured' && wpcomEnabled,
-	} );
+	const { data: featuredPluginsRaw = [], isLoading: isFetchingDotComFeatured } =
+		useWPCOMFeaturedPlugins( {
+			enabled: category === 'featured' && wpcomEnabled,
+		} );
 
-	const featuredPlugins = useMemo( () => featuredPluginsRaw.map( updateWpComRating ), [
-		featuredPluginsRaw,
-	] );
+	const featuredPlugins = useMemo(
+		() => featuredPluginsRaw.map( updateWpComRating ),
+		[ featuredPluginsRaw ]
+	);
 
-	const dotComPlugins = useMemo( () => wpcomPluginsRaw.map( updateWpComRating ), [
-		wpcomPluginsRaw,
-	] );
+	const dotComPlugins = useMemo(
+		() => wpcomPluginsRaw.map( updateWpComRating ),
+		[ wpcomPluginsRaw ]
+	);
 
 	switch ( category ) {
 		case 'paid':
@@ -108,8 +109,8 @@ const usePlugins = ( {
 			isFetching = isFetchingDotOrg;
 			break;
 		case 'featured':
-			isFetching = isFetchingDotComFeatured;
 			plugins = featuredPlugins;
+			isFetching = isFetchingDotComFeatured;
 			break;
 		default:
 			plugins = [ ...dotComPlugins, ...dotOrgPlugins ];

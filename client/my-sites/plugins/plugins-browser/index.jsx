@@ -26,14 +26,8 @@ import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useSiteSearchPlugins } from 'calypso/data/marketplace/use-site-search-es-query';
-import {
-	useWPCOMPlugins,
-	useWPCOMFeaturedPlugins,
-} from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import {
-	useWPORGPlugins,
-	useWPORGInfinitePlugins,
-} from 'calypso/data/marketplace/use-wporg-plugin-query';
+import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import { useWPORGInfinitePlugins } from 'calypso/data/marketplace/use-wporg-plugin-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
@@ -76,6 +70,22 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import './style.scss';
+import usePlugins from '../use-plugins';
+
+/**
+ * Multiply the wpcom rating to match the wporg value.
+ * wpcom rating is from 1 to 5 while wporg is from 1 to 100.
+ *
+ * @param plugin
+ * @returns
+ */
+function updateWpComRating( plugin ) {
+	if ( ! plugin || ! plugin.rating ) return plugin;
+
+	plugin.rating *= 20;
+
+	return plugin;
+}
 
 /**
  * Module variables
@@ -111,33 +121,9 @@ const PluginsBrowser = ( {
 			isEcommerce( sitePlan ) ||
 			isPro( sitePlan ) );
 
-	const { data: paidPluginsRawList = [], isLoading: isFetchingPaidPlugins } =
-		useWPCOMPlugins( 'all' );
-
-	const searchHook = isEnabled( 'marketplace-jetpack-plugin-search' )
-		? useSiteSearchPlugins
-		: useWPORGInfinitePlugins;
-
-	const {
-		data: { plugins: pluginsBySearchTerm = [], pagination: pluginsPagination } = {},
-		isLoading: isFetchingPluginsBySearchTerm,
-		fetchNextPage,
-	} = searchHook(
-		{ searchTerm: search },
-		{
-			enabled: !! search,
-		}
-	);
-
-	const { data: paidPluginsBySearchTermRaw = [], isLoading: isFetchingPaidPluginsBySearchTerm } =
-		useWPCOMPlugins( 'all', search, undefined, {
-			enabled: !! search,
-		} );
-
-	const paidPlugins = useMemo(
-		() => paidPluginsRawList.map( updateWpComRating ),
-		[ paidPluginsRawList ]
-	);
+	const { plugins: paidPlugins = [], isFetching: isFetchingPaidPlugins } = usePlugins( {
+		category: 'paid',
+	} );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const jetpackNonAtomic = useSelector(
@@ -158,13 +144,19 @@ const PluginsBrowser = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
-	const { data: pluginsByCategoryFeatured = [], isLoading: isFetchingPluginsByCategoryFeatured } =
-		useWPCOMFeaturedPlugins();
 
 	const {
-		data: { plugins: popularPlugins = [] } = {},
-		isLoading: isFetchingPluginsByCategoryPopular,
-	} = useWPORGPlugins( { category: 'popular' } );
+		plugins: pluginsByCategoryFeatured = [],
+		isFetching: isFetchingPluginsByCategoryFeatured,
+	} = usePlugins( {
+		category: 'featured',
+	} );
+
+	const { plugins: popularPlugins = [], isFetching: isFetchingPluginsByCategoryPopular } =
+		usePlugins( {
+			category: 'popular',
+		} );
+
 	const pluginsByCategoryPopular = filterPopularPlugins(
 		popularPlugins,
 		pluginsByCategoryFeatured
@@ -456,66 +448,8 @@ const SearchListView = ( {
 };
 
 const FullListView = ( { category, siteSlug, sites, billingPeriod, setBillingPeriod } ) => {
-	const categories = useCategories();
-	const categoryTags = categories[ category ]?.tags || [];
-
-	const {
-		data: { plugins: wporgPlugins = [] } = {},
-		isLoading: isFetchingDotOrg,
-		fetchNextPage,
-	} = useWPORGInfinitePlugins( {
-		tag: category !== 'popular' ? categoryTags.join( ',' ) : undefined,
-		enabled: category !== 'paid' && category !== 'featured',
-		category: category === 'popular' ? category : undefined,
-	} );
-
-	const { data: wpcomPluginsRaw = [], isLoading: isFetchingDotCom } = useWPCOMPlugins(
-		'all',
-		'',
-		categoryTags.join( ',' ),
-		{
-			enabled: category !== 'popular' && category !== 'featured',
-		}
-	);
-
-	const { data: featuredPluginsRaw = [], isLoading: isFetchingFeaturedPlugins } =
-		useWPCOMFeaturedPlugins( {
-			enabled: category === 'featured',
-		} );
-
-	const featuredPlugins = useMemo(
-		() => featuredPluginsRaw.map( updateWpComRating ),
-		[ featuredPluginsRaw ]
-	);
-
-	const wpcomPlugins = useMemo(
-		() => wpcomPluginsRaw.map( updateWpComRating ),
-		[ wpcomPluginsRaw ]
-	);
-
 	const isPaidCategory = category === 'paid';
-
-	let plugins = [];
-	let isFetching = false;
-
-	switch ( category ) {
-		case 'paid':
-			plugins = wpcomPlugins;
-			isFetching = isFetchingDotCom;
-			break;
-		case 'popular':
-			plugins = wporgPlugins;
-			isFetching = isFetchingDotOrg;
-			break;
-		case 'featured':
-			isFetching = isFetchingFeaturedPlugins;
-			plugins = featuredPlugins;
-			break;
-		default:
-			plugins = [ ...wpcomPlugins, ...wporgPlugins ];
-			isFetching = isFetchingDotCom || isFetchingDotOrg;
-			break;
-	}
+	const { plugins, isFetching, fetchNextPage } = usePlugins( { category, infinite: true } );
 
 	return (
 		<>
@@ -721,21 +655,6 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) 
 
 	return null;
 };
-
-/**
- * Multiply the wpcom rating to match the wporg value.
- * wpcom rating is from 1 to 5 while wporg is from 1 to 100.
- *
- * @param plugin
- * @returns
- */
-function updateWpComRating( plugin ) {
-	if ( ! plugin || ! plugin.rating ) return plugin;
-
-	plugin.rating *= 20;
-
-	return plugin;
-}
 
 /**
  * Filter the popular plugins list.
