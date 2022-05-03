@@ -19,7 +19,7 @@
 	}
 
 	h3 {
-		font-size: 14;
+		font-size: $font-body-small !important;
 		font-weight: 500;
 		color: var( --studio-gray-100 );
 	}
@@ -165,11 +165,11 @@
 				}
 
 				h2 {
-					font-size: 14;
+					font-size: $font-body-small !important;
 				}
 
 				p {
-					font-size: 12;
+					font-size: $font-body-extra-small !important;
 					color: var( --studio-gray-60 );
 				}
 
