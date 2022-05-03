@@ -10,7 +10,7 @@ import {
 	INCOMING_DOMAIN_TRANSFER_STATUSES,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	GDPR_POLICIES,
-	DOMAIN_EXPIRATION_AUCTION,
+	DOMAIN_EXPIRATION,
 } from 'calypso/lib/url/support';
 import {
 	domainManagementEdit,
@@ -220,20 +220,18 @@ export function resolveDomainStatus(
 
 		case domainTypes.REGISTERED:
 			if ( domain.aftermarketAuction ) {
-				const statusMessage = translate( 'Expiry auction' );
+				const statusMessage = translate( 'Expired' );
 				return {
 					statusText: statusMessage,
 					statusClass: 'status-warning',
 					status: statusMessage,
 					icon: 'info',
 					noticeText: translate(
-						'Your domain expired over 30 days ago and has been offered for sale at auction. If it is not sold you may be able to restore the domain to your account by paying a redemption fee starting on {{strong}}%(renewableUntil)s{{/strong}}. Until then, you will not be able to make any changes or transfer the domain. {{a}}Learn more{{/a}}',
+						'This domain expired more than 30 days ago and is no longer available to manage or renew. We may be able to restore it after {{strong}}%(renewableUntil)s{{/strong}}. {{a}}Learn more{{/a}}',
 						{
 							components: {
 								strong: <strong />,
-								a: (
-									<a href={ DOMAIN_EXPIRATION_AUCTION } rel="noopener noreferrer" target="_blank" />
-								),
+								a: <a href={ DOMAIN_EXPIRATION } rel="noopener noreferrer" target="_blank" />,
 							},
 							args: {
 								renewableUntil: moment.utc( domain.renewableUntil ).format( 'LL' ),

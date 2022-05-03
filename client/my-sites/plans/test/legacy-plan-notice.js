@@ -1,92 +1,45 @@
+import { shallow } from 'enzyme';
 import legacyPlanNotice from 'calypso/my-sites/plans/legacy-plan-notice';
 
 describe( 'Shows legacy plan notice for ex-plans', () => {
-	let fakeLegacySiteSlice;
-
-	beforeAll( () => {
-		// Sites from store.
-		fakeLegacySiteSlice = {
-			sites: {
-				items: {
-					// Free plan site.
-					1: {
-						ID: 1,
-						name: 'Free Inc.',
-						jetpack: false,
-						is_wpcom_atomic: false,
-						options: {},
-						plan: {
-							product_id: 1,
-							product_slug: 'FREE_PLAN',
-							product_name_short: 'free',
-							expired: false,
-							user_is_owner: false,
-							is_free: true,
-						},
-					},
-					// Legacy Business plan site.
-					2: {
-						ID: 2,
-						name: 'Business Inc.',
-						jetpack: false,
-						is_wpcom_atomic: true,
-						options: {},
-						plan: {
-							product_id: 1008,
-							product_slug: 'value_bundle',
-							product_name_short: 'Business',
-							expired: false,
-							user_is_owner: false,
-							is_free: false,
-						},
-					},
-					// Site with pro plan.
-					3: {
-						ID: 3,
-						name: 'Pro Inc.',
-						jetpack: false,
-						is_wpcom_atomic: true,
-						options: {},
-						plan: {
-							product_id: 1032,
-							product_slug: 'pro-plan',
-							product_name_short: 'Pro',
-							expired: false,
-							user_is_owner: true,
-							is_free: false,
-						},
-					},
-				},
-			},
-		};
+	test( 'Do not show legacy plan notice for sites on Free plan', () => {
+		expect(
+			legacyPlanNotice( true, { plan: { product_slug: 'free_plan', is_free: true } } )
+		).toBeUndefined();
 	} );
 
-	test( 'Do not show legacy plan notice for users on Free plan', () => {
-		const freePlanSite = fakeLegacySiteSlice.sites.items[ '1' ];
-		const siteIsEligibleForProPlan = true;
-		const legacyPlanNoticeComponent = legacyPlanNotice( siteIsEligibleForProPlan, freePlanSite );
-
-		expect( legacyPlanNoticeComponent ).toBeUndefined;
+	test( 'Do not show legacy plan notice to sites on Business plan', () => {
+		expect(
+			legacyPlanNotice( true, { plan: { product_slug: 'business-bundle' } } )
+		).toBeUndefined();
 	} );
 
-	test( 'Show legacy plan notice to users on Business plan', () => {
-		const legacyBusinessPlanSite = fakeLegacySiteSlice.sites.items[ '2' ];
-		const siteIsEligibleForProPlan = true;
-		const legacyPlanNoticeComponent = legacyPlanNotice(
-			siteIsEligibleForProPlan,
-			legacyBusinessPlanSite
+	test( 'Do not show legacy plan notice to sites on eCommerce plan', () => {
+		expect(
+			legacyPlanNotice( true, { plan: { product_slug: 'ecommerce-bundle' } } )
+		).toBeUndefined();
+	} );
+
+	test( 'Do not show legacy plan notice to sites on Pro plan', () => {
+		expect( legacyPlanNotice( true, { plan: { product_slug: 'pro-plan' } } ) ).toBeUndefined();
+	} );
+
+	test( 'Show legacy plan notice to sites on Blogger plan', () => {
+		const wrapper = shallow(
+			legacyPlanNotice( true, { plan: { product_slug: 'blogger-bundle' } } )
 		);
-
-		expect( legacyPlanNoticeComponent.props.text ).toContain( 'You’re currently on a legacy plan' );
+		expect( wrapper.is( 'Notice' ) ).toBe( true );
 	} );
 
-	test( 'Do not show legacy plan notice to users on Pro plan', () => {
-		const proPlanSite = fakeLegacySiteSlice.sites.items[ '3' ];
+	test( 'Show legacy plan notice to sites on Personal plan', () => {
+		const wrapper = shallow(
+			legacyPlanNotice( true, { plan: { product_slug: 'personal-bundle' } } )
+		);
+		expect( wrapper.is( 'Notice' ) ).toBe( true );
+	} );
 
-		// Even with this set to true, the notice should not show as the plan is checked for whether it's "pro-plan" or not.
-		const siteIsEligibleForProPlan = true;
-		const legacyPlanNoticeComponent = legacyPlanNotice( siteIsEligibleForProPlan, proPlanSite );
-
-		expect( legacyPlanNoticeComponent ).toBeUndefined;
+	test( 'Show legacy plan notice to sites on Premium plan', () => {
+		const wrapper = shallow( legacyPlanNotice( true, { plan: { product_slug: 'value_bundle' } } ) );
+		expect( wrapper.is( 'Notice' ) ).toBe( true );
 	} );
 } );

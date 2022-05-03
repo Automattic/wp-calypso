@@ -54,4 +54,20 @@ export class EditorBlockToolbarComponent {
 		const locator = await this.editor.locator( selectors.button( { ariaLabel: 'Options' } ) );
 		await locator.click();
 	}
+
+	/**
+	 * Click the up arrow button to move the current block up.
+	 */
+	async moveUp(): Promise< void > {
+		const locator = await this.editor.locator( selectors.button( { ariaLabel: 'Move up' } ) );
+		await locator.click();
+	}
+
+	/**
+	 * Click the down arrow button to move the current block down.
+	 */
+	async moveDown(): Promise< void > {
+		const locator = await this.editor.locator( selectors.button( { ariaLabel: 'Move down' } ) );
+		await locator.click();
+	}
 }

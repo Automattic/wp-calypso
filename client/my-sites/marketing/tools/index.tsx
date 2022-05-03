@@ -17,8 +17,8 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import {
 	marketingConnections,
-	marketingBusinessTools,
 	marketingUltimateTrafficGuide,
+	pluginsPath,
 } from 'calypso/my-sites/marketing/paths';
 import { hasTrafficGuidePurchase } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -47,7 +47,7 @@ export const MarketingTools: FunctionComponent = () => {
 	const handleBusinessToolsClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
 
-		page( marketingBusinessTools( selectedSiteSlug ) );
+		page( pluginsPath( selectedSiteSlug ) );
 	};
 
 	const handleEarnClick = () => {

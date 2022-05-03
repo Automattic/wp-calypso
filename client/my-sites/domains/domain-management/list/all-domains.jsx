@@ -22,7 +22,7 @@ import {
 } from 'calypso/lib/domains';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import {
@@ -609,7 +609,7 @@ class AllDomains extends Component {
 		);
 	}
 
-	renderBreadcrumbs() {
+	renderHeader() {
 		const { translate } = this.props;
 
 		const item = {
@@ -635,14 +635,7 @@ class AllDomains extends Component {
 			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
 		];
 
-		return (
-			<Breadcrumbs
-				items={ [ item ] }
-				mobileItem={ item }
-				buttons={ buttons }
-				mobileButtons={ mobileButtons }
-			/>
-		);
+		return <DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ mobileButtons } />;
 	}
 
 	renderContent() {
@@ -684,7 +677,7 @@ class AllDomains extends Component {
 		return (
 			<Main wideLayout>
 				<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-				{ this.renderBreadcrumbs() }
+				{ this.renderHeader() }
 				{ this.renderContent() }
 			</Main>
 		);

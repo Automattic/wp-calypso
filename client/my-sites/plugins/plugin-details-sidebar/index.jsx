@@ -63,7 +63,7 @@ const PluginDetailsSidebar = ( {
 	];
 	documentation_url &&
 		supportLinks.unshift( {
-			href: { documentation_url },
+			href: documentation_url,
 			label: translate( 'View documentation' ),
 		} );
 

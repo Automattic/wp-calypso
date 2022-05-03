@@ -1,39 +1,21 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import { ImageEditorCanvas } from '../image-editor-canvas';
 
-jest.mock( 'calypso/blocks/image-editor/image-editor-crop', () => {
-	const { Component } = require( 'react' );
-
-	class ImageEditorCropMock extends Component {
-		render() {
-			return <dfn />;
-		}
-	}
-
-	return ImageEditorCropMock;
-} );
+jest.mock( 'calypso/blocks/image-editor/image-editor-crop', () => () => (
+	<div data-testid="image-editor-crop-mock" />
+) );
 
 describe( 'ImageEditorToolbar', () => {
-	let wrapper;
-
-	beforeEach( () => {
-		wrapper = shallow( <ImageEditorCanvas isImageLoaded={ true } />, {
-			disableLifecycleMethods: true,
-		} );
-	} );
-
 	test( 'should render cropping area when the image meets the minimum height and width', () => {
-		wrapper.setProps( { showCrop: true } );
-		expect( wrapper.find( 'ImageEditorCropMock' ) ).to.have.length( 1 );
+		render( <ImageEditorCanvas isImageLoaded showCrop /> );
+		expect( screen.queryByTestId( 'image-editor-crop-mock' ) ).toBeDefined();
 	} );
 
 	test( 'should not render cropping area when the image is smaller than the minimum dimensions', () => {
-		wrapper.setProps( { showCrop: false } );
-		expect( wrapper.find( 'ImageEditorCropMock' ) ).to.have.length( 0 );
+		render( <ImageEditorCanvas isImageLoaded showCrop={ false } /> );
+		expect( screen.queryByTestId( 'image-editor-crop-mock' ) ).toBeNull();
 	} );
 } );

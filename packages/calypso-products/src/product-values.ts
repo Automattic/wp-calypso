@@ -75,6 +75,8 @@ export { isSpaceUpgrade } from './is-space-upgrade';
 export * from './is-superseding-jetpack-item';
 export { isSecurityDaily } from './is-security-daily';
 export { isSecurityRealTime } from './is-security-realtime';
+export { isSecurityT1 } from './is-security-t1';
+export { isSecurityT2 } from './is-security-t2';
 export { isJetpackSecuritySlug } from './is-jetpack-security-slug';
 export { isTheme } from './is-theme';
 export { isTitanMail } from './is-titan-mail';

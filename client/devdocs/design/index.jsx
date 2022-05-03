@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { HappinessEngineersTray, Gravatar } from '@automattic/components';
 import Buttons from '@automattic/components/src/button/docs/example';
 import Cards from '@automattic/components/src/card/docs/example';
 import Gridicon from '@automattic/components/src/gridicon/docs/example';
@@ -53,9 +54,7 @@ import Ranges from 'calypso/components/forms/range/docs/example';
 import Gauge from 'calypso/components/gauge/docs/example';
 import GlobalNotices from 'calypso/components/global-notices/docs/example';
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar/docs/example';
-import Gravatar from 'calypso/components/gravatar/docs/example';
 import GSuiteExamples from 'calypso/components/gsuite/docs/example';
-import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray/docs/example';
 import HeaderButton from 'calypso/components/header-button/docs/example';
 import HeaderCake from 'calypso/components/header-cake';
 import Headers from 'calypso/components/header-cake/docs/example';

@@ -1,9 +1,11 @@
-import { Path, SVG } from '@wordpress/components';
+import { Path, SVG, Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { redirectToLogout } from 'calypso/state/current-user/actions';
 import './style.scss';
 function P2StepWrapper( {
 	flowName,
@@ -11,11 +13,14 @@ function P2StepWrapper( {
 	headerIcon,
 	headerText,
 	subHeaderText,
+	stepIndicator,
+	showHeaderLogout,
 	positionInFlow,
 	children,
 	className,
 } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	return (
 		<div className={ classnames( 'p2-step-wrapper', className ) }>
@@ -47,6 +52,20 @@ function P2StepWrapper( {
 				) }
 				{ headerText && <h1 className="p2-step-wrapper__header-text">{ headerText }</h1> }
 				{ subHeaderText && <p className="p2-step-wrapper__subheader-text">{ subHeaderText }</p> }
+				{ stepIndicator && (
+					<div className="p2-step-wrapper__header-step-indicator">{ stepIndicator }</div>
+				) }
+				{ ! stepIndicator && showHeaderLogout && (
+					<div className="p2-step-wrapper__header-logout">
+						<Button
+							onClick={ () => {
+								dispatch( redirectToLogout() );
+							} }
+						>
+							{ translate( 'Log out' ) }
+						</Button>
+					</div>
+				) }
 			</div>
 			<StepWrapper
 				hideFormattedHeader
@@ -74,6 +93,8 @@ function P2StepWrapper( {
 P2StepWrapper.propTypes = {
 	headerText: PropTypes.node,
 	subHeaderText: PropTypes.node,
+	stepIndicator: PropTypes.string,
+	showHeaderLogout: PropTypes.bool,
 	flowName: PropTypes.string,
 	stepName: PropTypes.string,
 	positionInFlow: PropTypes.number,

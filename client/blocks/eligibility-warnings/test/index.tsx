@@ -49,6 +49,7 @@ function createState( {
 		siteSettings: {
 			saveRequests: {},
 		},
+		marketplace: { billingInterval: { interval: 'ANNUALLY' } },
 	};
 }
 

@@ -48,10 +48,10 @@ export default function TaxFields( {
 } ): JSX.Element {
 	const translate = useTranslate();
 	const { postalCode, countryCode } = taxInfo;
-	const arePostalCodesSupported = getCountryPostalCodeSupport(
-		countriesList,
-		countryCode?.value ?? ''
-	);
+	const arePostalCodesSupported =
+		countriesList.length && countryCode?.value
+			? getCountryPostalCodeSupport( countriesList, countryCode.value )
+			: false;
 
 	return (
 		<FieldRow>
@@ -107,10 +107,10 @@ function updatePostalCodeForCountry(
 	countryCode: ManagedValue | undefined,
 	countriesList: CountryListItem[]
 ): ManagedValue | undefined {
-	const arePostalCodesSupported = getCountryPostalCodeSupport(
-		countriesList,
-		countryCode?.value ?? ''
-	);
+	const arePostalCodesSupported =
+		countriesList.length && countryCode?.value
+			? getCountryPostalCodeSupport( countriesList, countryCode.value )
+			: false;
 	if ( ! arePostalCodesSupported ) {
 		return { value: '', errors: [], isTouched: true };
 	}

@@ -19,10 +19,10 @@ import { LocaleContext } from '../gutenboarding/components/locale-context';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
 import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
-import { getAnchorPodcastId } from './declarative-flow/get-anchor-podcast-id';
 import { FlowRenderer } from './declarative-flow/internals';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';
+import { useAnchorFmParams } from './hooks/use-anchor-fm-params';
 
 function generateGetSuperProps() {
 	return () => ( {
@@ -33,6 +33,16 @@ function generateGetSuperProps() {
 	} );
 }
 
+const FlowWrapper: React.FC = () => {
+	const { anchorFmPodcastId } = useAnchorFmParams();
+	let flow = siteSetupFlow;
+
+	if ( anchorFmPodcastId && config.isEnabled( 'signup/anchor-fm' ) ) {
+		flow = anchorFmFlow;
+	}
+
+	return <FlowRenderer flow={ flow } />;
+};
 interface AppWindow extends Window {
 	BUILD_TARGET?: string;
 }
@@ -67,21 +77,13 @@ window.AppBoot = async () => {
 		reduxStore.dispatch( setCurrentUser( user as CurrentUser ) );
 	}
 
-	let flow = siteSetupFlow;
-
-	const anchorPodcastId = getAnchorPodcastId();
-
-	if ( anchorPodcastId && config.isEnabled( 'signup/anchor-fm' ) ) {
-		flow = anchorFmFlow;
-	}
-
 	ReactDom.render(
 		<LocaleContext>
 			<Provider store={ reduxStore }>
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<FlowRenderer flow={ flow } />
+						<FlowWrapper />
 					</BrowserRouter>
 				</QueryClientProvider>
 			</Provider>

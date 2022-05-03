@@ -15,3 +15,4 @@ export type { FontPair, Design, Category } from './types';
 export { useCategorization } from './hooks/use-categorization';
 export { useGeneratedDesigns } from './hooks/use-generated-designs';
 export { useThemeDesignsQuery } from './hooks/use-theme-designs-query';
+export { useDesignsBySite } from '././hooks/use-designs-by-site';

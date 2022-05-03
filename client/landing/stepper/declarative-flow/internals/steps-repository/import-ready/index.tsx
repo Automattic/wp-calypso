@@ -38,9 +38,7 @@ const ImportReady: Step = function ImportStep( props ) {
 			'stepper'
 		);
 
-		navigation.submit?.( {
-			url,
-		} );
+		navigation.submit?.( { url } );
 	}
 
 	function goToHomeStep() {

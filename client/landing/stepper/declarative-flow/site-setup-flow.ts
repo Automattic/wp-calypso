@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { useDesignsBySite } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useFSEStatus } from '../hooks/use-fse-status';
+import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -44,7 +46,11 @@ export const siteSetupFlow: Flow = {
 			'wooInstallPlugins',
 		] as StepPath[];
 	},
-
+	useSideEffect() {
+		const site = useSite();
+		// prefetch designs for a smooth design picker UX
+		useDesignsBySite( site );
+	},
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
@@ -89,7 +95,7 @@ export const siteSetupFlow: Flow = {
 					const processingResult = params[ 0 ] as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
-						// error page?
+						return navigate( 'error' );
 					}
 
 					// If the user skips starting point, redirect them to My Home
@@ -217,6 +223,9 @@ export const siteSetupFlow: Flow = {
 
 				case 'storeAddress':
 					return navigate( 'storeFeatures' );
+
+				case 'businessInfo':
+					return navigate( 'storeAddress' );
 
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );

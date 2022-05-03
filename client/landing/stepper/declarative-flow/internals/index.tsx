@@ -34,6 +34,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const pathToClass = ( path: string ) =>
 		path.replace( /([a-z0-9])([A-Z])/g, '$1-$2' ).toLowerCase();
 
+	flow.useSideEffect?.();
+
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
 	}, [ location ] );
@@ -50,7 +52,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					<Route key={ path } path={ `/${ path }` }>
 						<div className={ classnames( flow.name, flow.classnames, pathToClass( path ) ) }>
 							<SignupHeader />
-							<StepComponent navigation={ stepNavigation } />
+							<StepComponent navigation={ stepNavigation } flow={ flow.name } />
 						</div>
 					</Route>
 				);

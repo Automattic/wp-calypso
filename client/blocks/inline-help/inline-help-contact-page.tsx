@@ -19,7 +19,7 @@ const InlineHelpContactPage: React.FC< Props > = ( { closeContactPage, onSelectR
 				{ __( 'Back' ) }
 			</Button>
 			<div className="inline-help__contact-content">
-				<h3>{ __( 'Contact our Wordpress.com experts' ) }</h3>
+				<h3>{ __( 'Contact our WordPress.com experts' ) }</h3>
 				<div className="inline-help__contact-boxes">
 					<div className="inline-help__contact-box">
 						<div style={ { backgroundColor: 'red' } }>

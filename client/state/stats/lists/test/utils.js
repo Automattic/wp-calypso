@@ -1103,6 +1103,10 @@ describe( 'utils', () => {
 				).toEqual( {
 					data: [
 						{
+							period: '2016-11-12',
+							value: 1,
+						},
+						{
 							period: '2016-11-13',
 							value: 0,
 						},
