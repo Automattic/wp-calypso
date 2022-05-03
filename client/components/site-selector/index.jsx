@@ -34,7 +34,7 @@ const ALL_SITES = 'ALL_SITES';
 const noop = () => {};
 const debug = debugFactory( 'calypso:site-selector' );
 
-class SiteSelector extends Component {
+export class SiteSelector extends Component {
 	static propTypes = {
 		isPlaceholder: PropTypes.bool,
 		sites: PropTypes.array,

@@ -14,6 +14,7 @@ import * as User from './user';
 import * as Verticals from './verticals';
 import * as VerticalsTemplates from './verticals-templates';
 import * as WPCOMFeatures from './wpcom-features';
+export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
 
 export {
 	Auth,

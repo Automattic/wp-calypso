@@ -8,7 +8,7 @@ If it is not on an Automattic-controlled CDN, the URL is routed through photon.
 ## Example
 
 ```js
-import safeImageUrl from 'calypso/lib/safe-image-url';
+import { safeImageUrl } from '@automattic/calypso-url';
 
 safeImageUrl( '//example.com/foo.png' );
 // "https://i1.wp.com/example.com/foo.png"

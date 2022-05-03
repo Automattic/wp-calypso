@@ -1,4 +1,4 @@
-import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
+import { HappinessEngineersTray } from '../index';
 
 function HappinessEngineersTrayExample() {
 	return <HappinessEngineersTray />;

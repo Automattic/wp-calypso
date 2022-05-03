@@ -1,6 +1,5 @@
-import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
+import { getUrlParts, getUrlFromParts, safeImageUrl } from '@automattic/calypso-url';
 import { forEach, startsWith, some, includes, filter } from 'lodash';
-import safeImageURL from 'calypso/lib/safe-image-url';
 import { resolveRelativePath } from 'calypso/lib/url';
 import { maxWidthPhotonishURL } from './utils';
 
@@ -75,8 +74,8 @@ function makeImageSafe( post, image, maxWidth ) {
 	}
 
 	let safeSource = maxWidth
-		? maxWidthPhotonishURL( safeImageURL( imgSource ), maxWidth )
-		: safeImageURL( imgSource );
+		? maxWidthPhotonishURL( safeImageUrl( imgSource ), maxWidth )
+		: safeImageUrl( imgSource );
 
 	// When the image URL is not photoned, try providing protocol
 	if ( ! safeSource ) {

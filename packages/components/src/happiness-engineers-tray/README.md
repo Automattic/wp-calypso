@@ -5,7 +5,7 @@ Renders a row of Happiness Engineers' Gravatars.
 ## How to use
 
 ```jsx
-import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
+import HappinessEngineersTray from '@automattic/components';
 
 function render() {
 	return <HappinessEngineersTray />;

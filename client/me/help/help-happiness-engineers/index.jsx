@@ -1,6 +1,6 @@
+import { HappinessEngineersTray } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
 
 import './style.scss';
 

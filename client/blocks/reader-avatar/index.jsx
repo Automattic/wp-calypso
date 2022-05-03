@@ -1,10 +1,10 @@
+import { safeImageUrl } from '@automattic/calypso-url';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { startsWith, get } from 'lodash';
 import PropTypes from 'prop-types';
 import SiteIcon from 'calypso/blocks/site-icon';
 import Gravatar from 'calypso/components/gravatar';
-import safeImageUrl from 'calypso/lib/safe-image-url';
 
 import './style.scss';
 
