@@ -82,7 +82,7 @@ const renderHelpBubble = ( item: Item ) => {
 	);
 };
 
-type Item = { label: string; href?: string; helpBubble?: React.ReactElement };
+export type Item = { label: string; href?: string; helpBubble?: React.ReactElement };
 interface Props {
 	items: Item[];
 	mobileItem?: Item;

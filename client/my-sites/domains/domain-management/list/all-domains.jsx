@@ -69,7 +69,6 @@ class AllDomains extends Component {
 		sites: PropTypes.object.isRequired,
 		requestingSiteDomains: PropTypes.object,
 		isContactEmailEditContext: PropTypes.bool,
-		isBreakpointActive: PropTypes.bool,
 	};
 
 	state = {
