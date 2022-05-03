@@ -67,20 +67,22 @@ export interface Secrets {
 }
 
 /**
- *
+ * Static class that gives you access to secrets needed for E2E testing.
+ * You must first decrypt the encrypted secrets for tests to be able to access them.
+ * All checking happens at runtime.
  */
 export class SecretsManager {
-	private static _secrets: Secrets;
+	private static _secretsCache: Secrets;
 
 	/**
-	 * Get the secrets. If this is the first time accessed in the node process, it will initialize the secrets.
+	 * Get the secrets. If this is the first time accessed in the node process, it will initialize and cache the secrets.
 	 */
 	public static get secrets(): Secrets {
-		if ( ! this._secrets ) {
-			this._secrets = this.initializeSecrets();
+		if ( ! this._secretsCache ) {
+			this._secretsCache = this.initializeSecrets();
 		}
 
-		return this._secrets;
+		return this._secretsCache;
 	}
 
 	/**
