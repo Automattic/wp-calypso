@@ -13,21 +13,21 @@ import {
 	Roles,
 	CloseAccountFlow,
 	TestAccount,
-	secrets,
+	SecretsManager,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
-	const inboxId = secrets.mailosaur.inviteInboxId;
+	const inboxId = SecretsManager.secrets.mailosaur.inviteInboxId;
 	const role = 'Editor';
 	const username = `e2eflowtestingeditor${ DataHelper.getTimestamp() }`;
 	const email = DataHelper.getTestEmailAddress( {
 		inboxId: inboxId,
 		prefix: username,
 	} );
-	const signupPassword = secrets.passwordForNewTestSignUps;
+	const signupPassword = SecretsManager.secrets.passwordForNewTestSignUps;
 	const invitingUser = 'calypsoPreReleaseUser';
 
 	let adjustedInviteLink: string;

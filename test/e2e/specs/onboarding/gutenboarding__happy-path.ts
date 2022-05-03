@@ -7,7 +7,7 @@ import {
 	CloseAccountFlow,
 	GutenboardingFlow,
 	FullSiteEditorPage,
-	secrets,
+	SecretsManager,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -16,10 +16,10 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 	const siteTitle = DataHelper.getBlogName();
 	const email = DataHelper.getTestEmailAddress( {
-		inboxId: secrets.mailosaur.signupInboxId,
+		inboxId: SecretsManager.secrets.mailosaur.signupInboxId,
 		prefix: `e2eflowtestinggutenboarding${ DataHelper.getTimestamp() }`,
 	} );
-	const signupPassword = secrets.passwordForNewTestSignUps;
+	const signupPassword = SecretsManager.secrets.passwordForNewTestSignUps;
 	const themeName = 'Twenty Twenty-Two Red';
 
 	let gutenboardingFlow: GutenboardingFlow;

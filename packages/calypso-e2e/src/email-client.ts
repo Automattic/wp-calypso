@@ -1,5 +1,5 @@
-import config from 'config';
 import MailosaurClient from 'mailosaur';
+import { SecretsManager } from './secrets';
 import type { Message, Link } from 'mailosaur/lib/models';
 
 /**
@@ -12,7 +12,7 @@ export class EmailClient {
 	 * Construct and instance of the EmailClient.
 	 */
 	constructor() {
-		this.client = new MailosaurClient( config.get( 'mailosaurAPIKey' ) );
+		this.client = new MailosaurClient( SecretsManager.secrets.mailosaur.apiKey );
 	}
 
 	/**

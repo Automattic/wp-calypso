@@ -1,1 +1,1 @@
-export * from './secrets';
+export * from './secrets-manager';

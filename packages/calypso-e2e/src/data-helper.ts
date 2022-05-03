@@ -1,6 +1,6 @@
 import phrase from 'asana-phrase';
 import envVariables from './env-variables';
-import { secrets, TestAccountName } from './secrets';
+import { SecretsManager, TestAccountName } from './secrets';
 
 export type DateFormat = 'ISO';
 
@@ -112,7 +112,7 @@ export interface AccountCredentials {
  * @throws {Error} If accountType does not correspond to a valid entry in the file.
  */
 export function getAccountCredential( accountType: TestAccountName ): AccountCredentials {
-	const testAccount = secrets.testAccounts[ accountType ];
+	const testAccount = SecretsManager.secrets.testAccounts[ accountType ];
 	if ( ! testAccount ) {
 		throw new Error(
 			`Secrets file did not contain credentials for requested user ${ accountType }. Update typings or the secrets file.`
@@ -139,7 +139,7 @@ export function getAccountSiteURL(
 	accountType: TestAccountName,
 	{ protocol = true }: { protocol?: boolean } = {}
 ): string {
-	const testAccount = secrets.testAccounts[ accountType ];
+	const testAccount = SecretsManager.secrets.testAccounts[ accountType ];
 	if ( ! testAccount ) {
 		throw new Error(
 			`Secrets file did not contain credentials for requested user ${ accountType }. Update typings or the secrets file.`
@@ -165,7 +165,7 @@ export function getAccountSiteURL(
  * @returns {string} Bearer token for the user allowed to make uploads.
  */
 export function getTosUploadToken(): string {
-	return secrets.martechTosUploadCredentials.bearer_token;
+	return SecretsManager.secrets.martechTosUploadCredentials.bearer_token;
 }
 
 /**

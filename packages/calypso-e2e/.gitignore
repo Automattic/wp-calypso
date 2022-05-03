@@ -3,6 +3,6 @@
 # This will protect against accidental moves and renames.
 **/*secret*.json
 src/secrets/*
-!src/secrets/secrets.ts
+!src/secrets/secrets-manager.ts
 !src/secrets/index.ts
 !src/secrets/encrypted.enc

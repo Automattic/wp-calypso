@@ -15,7 +15,7 @@ import {
 	GeneralSettingsPage,
 	ComingSoonPage,
 	MyHomePage,
-	secrets,
+	SecretsManager,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { skipDescribeIf } from '../../jest-helpers';
@@ -30,13 +30,13 @@ const isStagingOrProd = DataHelper.getCalypsoURL()
 skipDescribeIf( isStagingOrProd )(
 	DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ),
 	function () {
-		const inboxId = secrets.mailosaur.inviteInboxId;
+		const inboxId = SecretsManager.secrets.mailosaur.inviteInboxId;
 		const username = `e2eflowtestingfree${ DataHelper.getTimestamp() }`;
 		const email = DataHelper.getTestEmailAddress( {
 			inboxId: inboxId,
 			prefix: username,
 		} );
-		const signupPassword = secrets.passwordForNewTestSignUps;
+		const signupPassword = SecretsManager.secrets.passwordForNewTestSignUps;
 		const blogName = DataHelper.getBlogName();
 		const tagline = `${ blogName } tagline`;
 
