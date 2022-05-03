@@ -41,6 +41,10 @@ export type Flow = {
 	useSteps: UseStepHook;
 	useStepNavigation: UseStepNavigationHook;
 	useAssertConditions?: UseAssertConditionsHook;
+	/**
+	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
+	 */
+	useSideEffect?: () => void;
 };
 
 export type StepProps = {

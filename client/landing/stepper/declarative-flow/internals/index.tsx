@@ -30,6 +30,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const pathToClass = ( path: string ) =>
 		path.replace( /([a-z0-9])([A-Z])/g, '$1-$2' ).toLowerCase();
 
+	flow.useSideEffect?.();
+
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
 	}, [ location ] );
