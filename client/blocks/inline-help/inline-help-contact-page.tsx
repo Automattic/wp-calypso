@@ -3,6 +3,7 @@ import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import InlineHelpSearchResults from './inline-help-search-results';
+import Mail from './mail-icon';
 
 interface Props {
 	closeContactPage: () => void;
@@ -32,7 +33,7 @@ const InlineHelpContactPage: React.FC< Props > = ( { closeContactPage, onSelectR
 					</div>
 					<div className={ classnames( 'inline-help__contact-box', 'email' ) }>
 						<div className="inline-help__contact-box-icon">
-							<Gridicon icon={ 'mail' } />
+							<Icon icon={ <Mail /> } />
 						</div>
 						<div>
 							<h2>{ __( 'Email' ) }</h2>

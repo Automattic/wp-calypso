@@ -60,7 +60,7 @@ rawCurrentUserFetch()
 const queryClient = new QueryClient();
 
 export default function Content( { selectedArticle, setSelectedArticle, setFooterContent } ) {
-	const [ formOpen ] = useState( true );
+	const [ formOpen ] = useState( false );
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<Provider store={ store }>
