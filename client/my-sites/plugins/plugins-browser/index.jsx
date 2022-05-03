@@ -1,4 +1,3 @@
-// import { isEnabled } from '@automattic/calypso-config';
 import {
 	isBusiness,
 	isEcommerce,
@@ -25,7 +24,6 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-// import { useSiteSearchPlugins } from 'calypso/data/marketplace/use-site-search-es-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import UrlSearch from 'calypso/lib/url-search';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
@@ -342,23 +340,6 @@ const SearchListView = ( {
 	billingPeriod,
 } ) => {
 	const dispatch = useDispatch();
-
-	/* TODO: move this inside usePlugins
-	const searchHook = isEnabled( 'marketplace-jetpack-plugin-search' )
-		? useSiteSearchPlugins
-		: useWPORGInfinitePlugins;
-
-	const {
-		data: { plugins: pluginsBySearchTerm = [], pagination: pluginsPagination } = {},
-		isLoading: isFetchingPluginsBySearchTerm,
-		fetchNextPage,
-	} = searchHook(
-		{ searchTerm },
-		{
-			enabled: !! searchTerm,
-		}
-	);
-	*/
 
 	const {
 		plugins: pluginsBySearchTerm = [],
