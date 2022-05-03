@@ -40,7 +40,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 	const type = cardType?.toLocaleLowerCase() || paymentPartner || '';
 
 	return (
-		<>
+		<div className="payment-method-details">
 			<img
 				src={ getPaymentMethodImageURL( type ) }
 				className="payment-method-details__image"
@@ -72,7 +72,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 				) }
 				<span className="payment-method-details__name">{ name }</span>
 			</div>
-		</>
+		</div>
 	);
 };
 

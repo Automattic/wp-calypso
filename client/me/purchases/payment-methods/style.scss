@@ -1,5 +1,9 @@
-.payment-method__wrapper {
-	margin-bottom: 0;
+.payment-method-list__payment-methods {
+	margin-top: 12px;
+}
+
+.payment-method-list__payment-methods > div {
+	width: 100%;
 }
 
 .payment-method-list__loader {
@@ -17,10 +21,22 @@
 
 .payment-method {
 	margin-bottom: 0;
-	display: flex;
+	display: grid;
+	grid-template-columns: 1fr;
 	align-items: center;
 	justify-content: space-between;
 	flex-wrap: wrap;
+	width: 100%;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.payment-method-details {
+	display: flex;
+	align-items: center;
+	order: 1;
 }
 
 .payment-method-details__image {
@@ -77,6 +93,24 @@
 	font-size: 0.875rem;
 }
 
+.payment-method .payment-method-tax-info {
+	order: 2;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		order: 3;
+		width: auto;
+	}
+}
+
+.payment-method-delete {
+	order: 4;
+}
+
+.payment-method-delete__button {
+	text-decoration: underline;
+	padding: 0;
+}
+
 .payment-method-delete-dialog {
 	&.dialog {
 		max-width: 440px;
@@ -88,20 +122,23 @@
 }
 
 .payment-method-backup-toggle {
-	margin: 6px 16px 4px 76px;
-	order: 4;
+	order: 3;
 	width: 100%;
+	padding-top: 8px;
 
-	@include breakpoint-deprecated( '>660px' ) {
-		margin: 4px 32px 4px 16px;
-		order: unset;
+	@include breakpoint-deprecated( '>480px' ) {
+		order: 2;
 		width: auto;
 	}
 }
 
+.payment-method__wrapper {
+	margin-bottom: 0;
+}
+
 /* Jetpack cloud overwrites */
 
-.payment-method__wrapper.is-jetpack-cloud {
+.payment-method__wrapper--jetpack-cloud {
 	.components-checkbox-control__input[type='checkbox']:checked {
 		background-color: var( --studio-jetpack-green-50 );
 	}
