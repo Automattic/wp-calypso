@@ -1,5 +1,6 @@
 import { isAnchorPodcastIdValid } from './use-is-anchor-fm';
 import useParameter from './use-parameter';
+
 export interface AnchorFmParams {
 	anchorFmPodcastId: string | null;
 	anchorFmEpisodeId: string | null;
@@ -11,7 +12,6 @@ export interface AnchorFmParams {
 }
 export function useAnchorFmParams(): AnchorFmParams {
 	const sanitizePodcast = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
-
 	const anchorFmPodcastId = useParameter( {
 		queryParamName: 'anchor_podcast',
 		locationStateParamName: 'anchorFmPodcastId',
@@ -35,7 +35,6 @@ export function useAnchorFmParams(): AnchorFmParams {
 	// Unreserved: A-Za-z0-9_.~-    (possibly % as a part of percent-encoding)
 	const sanitizeShowUrl = ( id: string ) =>
 		id.replace( /[^A-Za-z0-9_.\-~%!*'();:@&=+$,/?#[\]]/g, '' );
-
 	const anchorFmSpotifyUrl = useParameter( {
 		queryParamName: 'spotify_url',
 		locationStateParamName: 'anchorFmSpotifyUrl',
@@ -47,13 +46,11 @@ export function useAnchorFmParams(): AnchorFmParams {
 	// We store them as strings for consistency with the other param types
 	// and simplicity in code and type signatures.
 	const sanitizeNumberParam = ( id: string ) => id.replace( /^\D+$/g, '' );
-
 	const anchorFmSite = useParameter( {
 		queryParamName: 'site',
 		locationStateParamName: 'anchorFmSite',
 		sanitize: sanitizeNumberParam,
 	} );
-
 	const anchorFmPost = useParameter( {
 		queryParamName: 'post',
 		locationStateParamName: 'anchorFmPost',
