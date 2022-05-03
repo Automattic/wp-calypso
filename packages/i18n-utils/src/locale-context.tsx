@@ -95,7 +95,7 @@ export function useLocale(): string {
 export const withLocale = createHigherOrderComponent< { locale: string } >( ( InnerComponent ) => {
 	return ( props ) => {
 		const locale = useLocale();
-		const innerProps = { locale, ...props } as React.ComponentProps< typeof InnerComponent >;
+		const innerProps = { ...props, locale } as React.ComponentProps< typeof InnerComponent >;
 		return <InnerComponent { ...innerProps } />;
 	};
 }, 'withLocale' );

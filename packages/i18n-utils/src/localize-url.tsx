@@ -221,7 +221,7 @@ export const withLocalizeUrl = createHigherOrderComponent< {
 } >( ( InnerComponent ) => {
 	return ( props ) => {
 		const localizeUrl = useLocalizeUrl();
-		const innerProps = { localizeUrl, ...props } as React.ComponentProps< typeof InnerComponent >;
+		const innerProps = { ...props, localizeUrl } as React.ComponentProps< typeof InnerComponent >;
 		return <InnerComponent { ...innerProps } />;
 	};
 }, 'withLocalizeUrl' );

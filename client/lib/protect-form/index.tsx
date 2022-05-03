@@ -82,7 +82,7 @@ export interface ProtectedFormProps {
 export const protectForm = createHigherOrderComponent< ProtectedFormProps >( ( InnerComponent ) => {
 	return ( props ) => {
 		const { markChanged, markSaved } = useProtectForm();
-		const innerProps = { markChanged, markSaved, ...props } as React.ComponentProps<
+		const innerProps = { ...props, markChanged, markSaved } as React.ComponentProps<
 			typeof InnerComponent
 		>;
 		return <InnerComponent { ...innerProps } />;

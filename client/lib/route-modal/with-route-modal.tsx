@@ -5,7 +5,7 @@ export default function withRouteModal( queryKey: string, defaultValue?: string 
 	return createHigherOrderComponent< { routeModalData: RouteModalData } >(
 		( InnerComponent ) => ( props ) => {
 			const routeModalData = useRouteModal( queryKey, defaultValue );
-			const innerProps = { routeModalData, ...props } as React.ComponentProps<
+			const innerProps = { ...props, routeModalData } as React.ComponentProps<
 				typeof InnerComponent
 			>;
 			return <InnerComponent { ...innerProps } />;
