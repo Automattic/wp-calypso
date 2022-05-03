@@ -60,7 +60,7 @@ export default function () {
 
 	page( '/plugins/upload', scrollTopIfNoHash, siteSelection, sites, makeLayout, clientRender );
 	page(
-		'/plugins/upload/:site_id',
+		'/plugins/upload/:site',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -69,7 +69,7 @@ export default function () {
 		clientRender
 	);
 
-	page( '/plugins', scrollTopIfNoHash, siteSelection, sites, makeLayout, clientRender );
+	page( '/plugins', selectSiteIfLoggedIn, navigation, makeLayout, clientRender );
 
 	page(
 		'/plugins/:site',
@@ -92,7 +92,7 @@ export default function () {
 	);
 
 	page(
-		'/plugins/:pluginFilter(active|inactive|updates)/:site_id',
+		'/plugins/:pluginFilter(active|inactive|updates)/:site',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -103,7 +103,7 @@ export default function () {
 	);
 
 	page(
-		'/plugins/:plugin/:site_id',
+		'/plugins/:plugin/:site',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -113,7 +113,7 @@ export default function () {
 	);
 
 	page(
-		'/plugins/:plugin/eligibility/:site_id',
+		'/plugins/:plugin/eligibility/:site',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
