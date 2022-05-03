@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { sslStatuses } from 'calypso/lib/domains/constants';
@@ -29,7 +30,7 @@ const DomainSecurityDetails = ( { domain }: DetailsCardProps ): JSX.Element | nu
 			default:
 				return translate(
 					'There is an issue with your certificate. Contact us to {{a}}learn more{{/a}}.',
-					{ components: { a: <a href={ CONTACT } /> } }
+					{ components: { a: <a href={ localizeUrl( CONTACT ) } /> } }
 				);
 		}
 	};
@@ -55,7 +56,7 @@ const DomainSecurityDetails = ( { domain }: DetailsCardProps ): JSX.Element | nu
 				<div className="domain-security-details__description-help-text">
 					{ translate(
 						'We give you strong HTTPS encryption with your domain for free. This provides a trust indicator for your visitors and keeps their connection to your site secure. {{a}}Learn more{{/a}}',
-						{ components: { a: <a href={ HTTPS_SSL } /> } }
+						{ components: { a: <a href={ localizeUrl( HTTPS_SSL ) } /> } }
 					) }
 				</div>
 			</div>
