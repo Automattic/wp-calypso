@@ -50,6 +50,8 @@ export const anchorFmFlow: Flow = {
 				case 'podcastTitle':
 					return navigate( 'designSetup' );
 				case 'designSetup':
+					return navigate( 'processing' );
+				case 'processing':
 					return redirect( `/page/${ siteSlug }/home` );
 				default:
 					return navigate( 'podcastTitle' );
