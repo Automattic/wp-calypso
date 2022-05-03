@@ -23,7 +23,7 @@ const useValidCheckoutBackUrl = ( siteSlug: string | undefined ): string | undef
 	const { checkoutBackUrl } = useSelector( getInitialQueryArguments ) ?? {};
 
 	return useMemo( () => {
-		if ( ! siteSlug && ! checkoutBackUrl ) {
+		if ( ! checkoutBackUrl ) {
 			return undefined;
 		}
 
