@@ -48,14 +48,20 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 		const text = isDeleting ? translate( 'Deleting…' ) : translate( 'Delete' );
 
 		return (
-			<Button disabled={ isDeleting } onClick={ () => setIsDialogVisible( true ) }>
+			<Button
+				className="payment-method-delete__button"
+				disabled={ isDeleting }
+				onClick={ () => setIsDialogVisible( true ) }
+				scary
+				borderless
+			>
 				{ text }
 			</Button>
 		);
 	};
 
 	return (
-		<>
+		<div className="payment-method-delete">
 			<PaymentMethodDeleteDialog
 				paymentMethodSummary={
 					<PaymentMethodSummary
@@ -69,7 +75,7 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 				onConfirm={ handleDelete }
 			/>
 			{ renderDeleteButton() }
-		</>
+		</div>
 	);
 };
 
