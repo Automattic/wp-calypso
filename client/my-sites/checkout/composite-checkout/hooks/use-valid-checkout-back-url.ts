@@ -5,8 +5,12 @@ import { resemblesUrl } from 'calypso/lib/url';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 
 const getAllowedHosts = ( siteSlug?: string ) => {
-	const basicHosts = [ 'jetpack.com', 'jetpack.cloud.localhost', 'cloud.jetpack.com' ];
-	siteSlug && basicHosts.push( siteSlug );
+	const basicHosts = [
+		'jetpack.com',
+		'jetpack.cloud.localhost',
+		'cloud.jetpack.com',
+		...( ( siteSlug && [ siteSlug ] ) || [] ),
+	];
 
 	const languageSpecificJetpackHosts = getLanguageSlugs().map(
 		( lang: string ) => `${ lang }.jetpack.com`
