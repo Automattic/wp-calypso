@@ -6,22 +6,24 @@
 * GENERAL STYLING - Content
 */
 .inline-help-center__content {
-	background-color: var( --color-surface );
+	&:not( .is-secondary-view-richresult ) {
+		background-color: var( --color-surface );
 
-	a {
-		font-size: $font-body-small !important;
-		color: var( --studio-gray-100 );
-		text-decoration: none;
+		a {
+			font-size: $font-body-small !important;
+			color: var( --studio-gray-100 );
+			text-decoration: none;
 
-		&:hover {
+			&:hover {
+				color: var( --studio-gray-100 );
+			}
+		}
+
+		h3 {
+			font-size: $font-body-small !important;
+			font-weight: 500;
 			color: var( --studio-gray-100 );
 		}
-	}
-
-	h3 {
-		font-size: $font-body-small !important;
-		font-weight: 500;
-		color: var( --studio-gray-100 );
 	}
 
 	&.is-secondary-view-active {
