@@ -50,6 +50,16 @@
 	* SEARCH
 	*/
 	.inline-help__search {
+		.search__icon-navigation .gridicons-search use {
+			transform: rotate( 90deg );
+			transform-origin: 50% 50%;
+			stroke: white;
+		}
+
+		.search__icon-navigation .gridicons-cross use {
+			stroke: white;
+		}
+
 		.card.search-card {
 			border: 1px solid var( --studio-gray-10 );
 			border-radius: 2px;
@@ -208,7 +218,7 @@
 		.inline-help__results {
 			h3 {
 				margin-bottom: 16px;
-				
+
 				// stylelint-disable-next-line selector-max-id
 				&#inline-search--admin_section {
 					margin-top: 40px;
