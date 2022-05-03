@@ -27,6 +27,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	const isMobile = useMobileBreakpoint();
 	const classNames = classnames( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
+		'no-footer': ! footerContent,
 	} );
 
 	const onDismiss = () => {
