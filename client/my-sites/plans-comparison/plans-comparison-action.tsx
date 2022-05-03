@@ -5,6 +5,7 @@ import {
 	PLAN_WPCOM_PRO,
 	PLAN_FREE,
 	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_STARTER,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
@@ -39,6 +40,8 @@ function getButtonText( props: Partial< Props >, translate: TranslateFunc ): Tra
 		return 'en' === i18n.getLocaleSlug() || i18n.hasTranslation( 'Start with Pro' )
 			? translate( 'Start with Pro' )
 			: translate( 'Try Pro risk-free' );
+	} else if ( planSlug === PLAN_WPCOM_STARTER ) {
+		return translate( 'Start with Starter' );
 	} else if ( planSlug === PLAN_FREE || planSlug === PLAN_WPCOM_FLEXIBLE ) {
 		return translate( 'Start with Free' );
 	}

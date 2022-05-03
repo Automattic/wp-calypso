@@ -86,6 +86,7 @@ export default connect( ( state ) => {
 	let isFreeOrFlexible = false;
 
 	if ( eligibleForProPlan && currentPlan ) {
+		// @todo clk
 		isFreeOrFlexible = isFreePlanProduct( currentPlan ) || isFlexiblePlanProduct( currentPlan );
 		shouldShowMyPlan = isFreeOrFlexible ? false : true;
 		shouldShowPlans = isFreeOrFlexible || ! isPro( currentPlan ) ? true : false;

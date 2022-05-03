@@ -7,6 +7,7 @@ import {
 	TYPE_PRO,
 	TYPE_FREE,
 	TYPE_FLEXIBLE,
+	TYPE_STARTER,
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -81,6 +82,10 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isFlexiblePlan( planKey ) ) {
 		return 'is-flexible-plan';
+	}
+
+	if ( isStarterPlan( planKey ) ) {
+		return 'is-starter-plan';
 	}
 
 	if ( isBloggerPlan( planKey ) ) {
@@ -276,7 +281,12 @@ export function isFreePlan( planSlug: string ): boolean {
 }
 
 export function isFlexiblePlan( planSlug: string ): boolean {
+	// @todo clk
 	return planMatches( planSlug, { type: TYPE_FLEXIBLE } );
+}
+
+export function isStarterPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_STARTER } );
 }
 
 export function isSecurityDailyPlan( planSlug: string ): boolean {

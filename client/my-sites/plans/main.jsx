@@ -5,9 +5,9 @@ import {
 	PLAN_FREE,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_STARTER,
 } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
-import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -120,21 +120,10 @@ class Plans extends Component {
 	}
 
 	onSelectPlan = ( item ) => {
-		const {
-			selectedSite,
-			context: {
-				query: { discount },
-			},
-		} = this.props;
+		const { selectedSite } = this.props;
 		const checkoutPath = `/checkout/${ selectedSite.slug }/${ item.product_slug }/`;
 
-		page(
-			discount
-				? addQueryArgs( checkoutPath, {
-						coupon: discount,
-				  } )
-				: checkoutPath
-		);
+		page( checkoutPath );
 	};
 
 	renderPlaceholder = () => {
@@ -170,7 +159,9 @@ class Plans extends Component {
 
 		if (
 			eligibleForProPlan &&
-			[ PLAN_FREE, PLAN_WPCOM_FLEXIBLE, PLAN_WPCOM_PRO ].includes( currentPlan?.productSlug )
+			[ PLAN_FREE, PLAN_WPCOM_FLEXIBLE, PLAN_WPCOM_STARTER, PLAN_WPCOM_PRO ].includes(
+				currentPlan?.productSlug
+			)
 		) {
 			return (
 				<PlansComparison

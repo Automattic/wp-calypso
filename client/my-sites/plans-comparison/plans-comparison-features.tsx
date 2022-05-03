@@ -1,5 +1,5 @@
 import {
-	FEATURE_1GB_STORAGE,
+	FEATURE_6GB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_UNLIMITED_ADMINS,
 	FEATURE_INSTALL_PLUGINS,
@@ -129,6 +129,144 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	},
 	{
 		get title() {
+			return translate( 'Storage' );
+		},
+		get description() {
+			return translate(
+				'The Starter plan allows a maximum storage of 6GB, which equals to approximately 1200 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
+			);
+		},
+		features: [ FEATURE_6GB_STORAGE, FEATURE_50GB_STORAGE ],
+		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
+			let storageSize = '1';
+			const legacyStorageSize = '3';
+
+			if ( feature === FEATURE_6GB_STORAGE ) {
+				storageSize = '6';
+			}
+
+			if ( feature === FEATURE_50GB_STORAGE ) {
+				storageSize = '50';
+			}
+
+			if ( isMobile ) {
+				if (
+					isLegacySiteWithHigherLimits &&
+					feature === FEATURE_6GB_STORAGE &&
+					Number( legacyStorageSize ) > Number( storageSize )
+				) {
+					return translate(
+						'{{del}}%(originalStorage)sGB of storage{{/del}} %(modifiedStorage)sGB on this site',
+						{
+							components: {
+								del: <del />,
+							},
+							args: {
+								originalStorage: storageSize,
+								modifiedStorage: legacyStorageSize,
+							},
+						}
+					);
+				}
+
+				return translate( '%sGB of storage', {
+					args: [ storageSize ],
+				} );
+			}
+
+			if (
+				isLegacySiteWithHigherLimits &&
+				feature === FEATURE_6GB_STORAGE &&
+				Number( legacyStorageSize ) > Number( storageSize )
+			) {
+				return translate(
+					'{{del}}%(originalStorage)sGB{{/del}} %(modifiedStorage)sGB on this site',
+					{
+						components: {
+							del: <del />,
+						},
+						args: {
+							originalStorage: storageSize,
+							modifiedStorage: legacyStorageSize,
+						},
+					}
+				);
+			}
+
+			return translate( '%sGB', {
+				args: [ storageSize ],
+				comment: '%s is a number of gigabytes.',
+			} );
+		},
+	},
+	{
+		get title() {
+			return translate( 'Website Administrator' );
+		},
+		get description() {
+			return translate(
+				'Pro WordPress lets you have unlimited users editing your site. This is ideal for having multiple collaborators help you have your website built and maintained.'
+			);
+		},
+		features: [ FEATURE_UNLIMITED_ADMINS ],
+		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
+			const adminCount = 1;
+
+			if ( ! isMobile ) {
+				if ( feature ) {
+					return translate( 'Unlimited' );
+				}
+
+				if ( isLegacySiteWithHigherLimits ) {
+					// Adding "administrator" is redundant here (and differs from the non-legacy
+					// case below), but we're adding it because just having the number crossed
+					// out is hard to read.
+					return translate(
+						'{{del}}%(adminCount)s administrator{{/del}} Unlimited on this site',
+						'{{del}}%(adminCount)s administrators{{/del}} Unlimited on this site',
+						{
+							count: adminCount,
+							components: {
+								del: <del />,
+							},
+							args: { adminCount: numberFormat( adminCount, 0 ) },
+						}
+					);
+				}
+
+				return String( adminCount );
+			}
+
+			if ( feature ) {
+				return translate( 'Unlimited Website Administrators' );
+			}
+
+			if ( isLegacySiteWithHigherLimits ) {
+				return translate(
+					'{{del}}%(adminCount)s Website Administrator{{/del}} Unlimited on this site',
+					'{{del}}%(adminCount)s Website Administrators{{/del}} Unlimited on this site',
+					{
+						count: adminCount,
+						components: {
+							del: <del />,
+						},
+						args: { adminCount: numberFormat( adminCount, 0 ) },
+					}
+				);
+			}
+
+			return translate(
+				'%(adminCount)s Website Administrator',
+				'%(adminCount)s Website Administrators',
+				{
+					count: adminCount,
+					args: { adminCount: numberFormat( adminCount, 0 ) },
+				}
+			);
+		},
+	},
+	{
+		get title() {
 			return translate( 'Premium themes' );
 		},
 		get description() {
@@ -237,66 +375,6 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	},
 	{
 		get title() {
-			return translate( 'Storage' );
-		},
-		get description() {
-			return translate(
-				'The free plan allows a maximum storage of 1GB, which equals to approximately 200 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
-			);
-		},
-		features: [ FEATURE_1GB_STORAGE, FEATURE_50GB_STORAGE ],
-		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
-			let storageSize = '1';
-			const legacyStorageSize = '3';
-
-			if ( feature === FEATURE_50GB_STORAGE ) {
-				storageSize = '50';
-			}
-
-			if ( isMobile ) {
-				if ( isLegacySiteWithHigherLimits && feature === FEATURE_1GB_STORAGE ) {
-					return translate(
-						'{{del}}%(originalStorage)sGB of storage{{/del}} %(modifiedStorage)sGB on this site',
-						{
-							components: {
-								del: <del />,
-							},
-							args: {
-								originalStorage: storageSize,
-								modifiedStorage: legacyStorageSize,
-							},
-						}
-					);
-				}
-
-				return translate( '%sGB of storage', {
-					args: [ storageSize ],
-				} );
-			}
-
-			if ( isLegacySiteWithHigherLimits && feature === FEATURE_1GB_STORAGE ) {
-				return translate(
-					'{{del}}%(originalStorage)sGB{{/del}} %(modifiedStorage)sGB on this site',
-					{
-						components: {
-							del: <del />,
-						},
-						args: {
-							originalStorage: storageSize,
-							modifiedStorage: legacyStorageSize,
-						},
-					}
-				);
-			}
-
-			return translate( '%sGB', {
-				args: [ storageSize ],
-				comment: '%s is a number of gigabytes.',
-			} );
-		},
-	},
-	{
-		get title() {
 			return translate( 'Remove ads' );
 		},
 		get description() {
@@ -338,72 +416,6 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 					  } );
 			}
 			return cellText;
-		},
-	},
-	{
-		get title() {
-			return translate( 'Website Administrator' );
-		},
-		get description() {
-			return translate(
-				'Pro WordPress lets you have unlimited users editing your site. This is ideal for having multiple collaborators help you have your website built and maintained.'
-			);
-		},
-		features: [ FEATURE_UNLIMITED_ADMINS ],
-		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
-			const adminCount = 1;
-
-			if ( ! isMobile ) {
-				if ( feature ) {
-					return translate( 'Unlimited' );
-				}
-
-				if ( isLegacySiteWithHigherLimits ) {
-					// Adding "administrator" is redundant here (and differs from the non-legacy
-					// case below), but we're adding it because just having the number crossed
-					// out is hard to read.
-					return translate(
-						'{{del}}%(adminCount)s administrator{{/del}} Unlimited on this site',
-						'{{del}}%(adminCount)s administrators{{/del}} Unlimited on this site',
-						{
-							count: adminCount,
-							components: {
-								del: <del />,
-							},
-							args: { adminCount: numberFormat( adminCount, 0 ) },
-						}
-					);
-				}
-
-				return String( adminCount );
-			}
-
-			if ( feature ) {
-				return translate( 'Unlimited Website Administrators' );
-			}
-
-			if ( isLegacySiteWithHigherLimits ) {
-				return translate(
-					'{{del}}%(adminCount)s Website Administrator{{/del}} Unlimited on this site',
-					'{{del}}%(adminCount)s Website Administrators{{/del}} Unlimited on this site',
-					{
-						count: adminCount,
-						components: {
-							del: <del />,
-						},
-						args: { adminCount: numberFormat( adminCount, 0 ) },
-					}
-				);
-			}
-
-			return translate(
-				'%(adminCount)s Website Administrator',
-				'%(adminCount)s Website Administrators',
-				{
-					count: adminCount,
-					args: { adminCount: numberFormat( adminCount, 0 ) },
-				}
-			);
 		},
 	},
 	{

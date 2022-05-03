@@ -1,6 +1,7 @@
 import {
 	getPlan,
 	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_STARTER,
 	PLAN_WPCOM_PRO,
 	TYPE_FREE,
 	TYPE_FLEXIBLE,
@@ -445,8 +446,16 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSiteId || null ) );
 	const [ showCollapsibleRows, setShowCollapsibleRows ] = useState( false );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? '';
-	const plans = [ getPlan( PLAN_WPCOM_FLEXIBLE ), getPlan( PLAN_WPCOM_PRO ) ] as WPComPlan[];
-	const prices: PlanPrices[] = [ { price: 0 }, usePlanPrices( plans[ 1 ] ) ];
+	const plans = [
+		getPlan( PLAN_WPCOM_FLEXIBLE ),
+		getPlan( PLAN_WPCOM_STARTER ),
+		getPlan( PLAN_WPCOM_PRO ),
+	] as WPComPlan[];
+	const prices: PlanPrices[] = [
+		usePlanPrices( plans[ 0 ] ),
+		usePlanPrices( plans[ 1 ] ),
+		usePlanPrices( plans[ 2 ] ),
+	];
 
 	if ( hideFreePlan ) {
 		plans.shift();

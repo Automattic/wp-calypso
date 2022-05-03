@@ -176,6 +176,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_STARTER,
 	PLAN_WPCOM_PRO,
 	PREMIUM_DESIGN_FOR_STORES,
 	TERM_ANNUALLY,
@@ -195,6 +196,7 @@ import {
 	TYPE_SECURITY_T2,
 	TYPE_FLEXIBLE,
 	TYPE_PRO,
+	TYPE_STARTER,
 	FEATURE_TITAN_EMAIL,
 	FEATURE_SOCIAL_MEDIA_TOOLS,
 } from './constants';
@@ -1574,16 +1576,36 @@ PLANS_LIST[ PLAN_P2_FREE ] = {
 };
 
 // Brand new WPCOM plans
-PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
-	// Inherits the free plan
-	...PLANS_LIST[ PLAN_FREE ],
+PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
+	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
-	type: TYPE_FLEXIBLE,
+	type: TYPE_STARTER,
+	term: TERM_ANNUALLY,
+	getTitle: () => i18n.translate( 'WordPress Starter' ),
+	getProductId: () => 1032,
+	getStoreSlug: () => PLAN_WPCOM_STARTER,
+	getPathSlug: () => 'starter',
+	getDescription: () =>
+		i18n.translate( 'Start your WordPress.com website. Limited functionality and storage.' ),
+	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+	getPlanCompareFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_UNLIMITED_ADMINS,
+		FEATURE_6GB_STORAGE,
+	],
+	getIncludedFeatures: () => [],
+	getInferiorFeatures: () => [],
+};
+
+PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
+	// Inherits the free or starter plan
+	...PLANS_LIST[ PLAN_FREE ],
 	getTitle: () => i18n.translate( 'WordPress Free' ),
 	getBillingTimeFrame: () => i18n.translate( 'upgrade when you need' ),
 	getDescription: () =>
 		i18n.translate( 'Start your free WordPress.com website. Limited functionality and storage.' ),
 	getPlanCompareFeatures: () => [ FEATURE_1GB_STORAGE ],
+	type: TYPE_FLEXIBLE,
 };
 
 PLANS_LIST[ PLAN_WPCOM_PRO ] = {
