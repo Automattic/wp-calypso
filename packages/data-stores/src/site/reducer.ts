@@ -196,32 +196,27 @@ export const launchStatus: Reducer< { [ key: number ]: SiteLaunchState }, Action
 };
 
 export const siteSetupErrors: Reducer<
-	{ [ key: number ]: any | undefined },
+	{
+		error?: string;
+		message?: string;
+	},
 	{
 		type: string;
-		siteId: number;
 		error?: string;
 		message?: string;
 	}
 > = ( state = {}, action ) => {
 	if ( action.type === 'SET_SITE_SETUP_ERROR' ) {
-		const { siteId, error, message } = action;
+		const { error, message } = action;
 
 		return {
-			...state,
-			[ siteId ]: {
-				error,
-				message,
-			},
+			error,
+			message,
 		};
 	}
 
 	if ( action.type === 'CLEAR_SITE_SETUP_ERROR' ) {
-		const newState = {
-			...state,
-		};
-
-		delete newState[ action.siteId ];
+		return {};
 	}
 
 	return state;
