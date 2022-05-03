@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
 import { FormPhoneInput } from '../';
 
@@ -34,9 +33,7 @@ describe( 'FormPhoneInput', () => {
 				/>
 			);
 
-			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
-				countriesList[ 1 ]
-			);
+			expect( phoneComponent.instance().getValue().countryData ).toEqual( countriesList[ 1 ] );
 		} );
 
 		test( 'should set country to first element when not specified', () => {
@@ -44,9 +41,7 @@ describe( 'FormPhoneInput', () => {
 				<FormPhoneInput countriesList={ countriesList } { ...localizeProps } />
 			);
 
-			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
-				countriesList[ 0 ]
-			);
+			expect( phoneComponent.instance().getValue().countryData ).toEqual( countriesList[ 0 ] );
 		} );
 
 		test( 'should update country on change', () => {
@@ -60,9 +55,7 @@ describe( 'FormPhoneInput', () => {
 				},
 			} );
 
-			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
-				countriesList[ 1 ]
-			);
+			expect( phoneComponent.instance().getValue().countryData ).toEqual( countriesList[ 1 ] );
 		} );
 
 		test( 'should have no country with empty countryList', () => {
@@ -70,7 +63,7 @@ describe( 'FormPhoneInput', () => {
 				<FormPhoneInput countriesList={ [] } { ...localizeProps } />
 			);
 
-			expect( phoneComponent.instance().getValue().countryData ).to.equal( undefined );
+			expect( phoneComponent.instance().getValue().countryData ).toBeUndefined();
 		} );
 	} );
 } );
