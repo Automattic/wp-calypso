@@ -52,9 +52,10 @@ const usePlugins = ( {
 	const categoryTags = categories[ category || '' ]?.tags || [];
 	const tag = categoryTags.join( ',' );
 
-	const searchHook = isEnabled( 'marketplace-jetpack-plugin-search' )
-		? useSiteSearchPlugins
-		: useWPORGInfinitePlugins;
+	const searchHook =
+		isEnabled( 'marketplace-jetpack-plugin-search' ) && search
+			? useSiteSearchPlugins
+			: useWPORGInfinitePlugins;
 
 	const wporgPluginsOptions = {
 		locale,
