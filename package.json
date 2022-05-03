@@ -255,7 +255,7 @@
 		"postcss-custom-properties": "^11.0.0",
 		"prettier": "npm:wp-prettier@2.6.2-beta-1",
 		"readline-sync": "^1.4.10",
-		"recursive-copy": "^2.0.10",
+		"recursive-copy": "^2.0.14",
 		"replace": "^1.1.5",
 		"sass": "^1.37.5",
 		"sass-loader": "^12.1.0",

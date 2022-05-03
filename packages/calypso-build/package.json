@@ -49,7 +49,7 @@
 		"mini-css-extract-plugin": "^1.6.2",
 		"postcss-custom-properties": "^11.0.0",
 		"postcss-loader": "^6.2.0",
-		"recursive-copy": "^2.0.10",
+		"recursive-copy": "^2.0.14",
 		"sass": "^1.37.5",
 		"sass-loader": "^12.1.0",
 		"semver": "^7.3.2",
