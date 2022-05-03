@@ -1,6 +1,11 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import {
+	navigation,
+	siteSelection,
+	sites,
+	selectSiteIfLoggedIn,
+} from 'calypso/my-sites/controller';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	browsePlugins,
