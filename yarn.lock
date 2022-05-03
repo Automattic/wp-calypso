@@ -169,7 +169,7 @@ __metadata:
     css-loader: ^6.5.1
     css-minimizer-webpack-plugin: ^3.2.0
     duplicate-package-checker-webpack-plugin: ^3.0.0
-    mini-css-extract-plugin: ^1.6.2
+    mini-css-extract-plugin: ^2.6.0
     postcss-custom-properties: ^11.0.0
     postcss-loader: ^6.2.0
     recursive-copy: ^2.0.10
@@ -25012,7 +25012,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mini-css-extract-plugin@npm:^2.5.1":
+"mini-css-extract-plugin@npm:^2.5.1, mini-css-extract-plugin@npm:^2.6.0":
   version: 2.6.0
   resolution: "mini-css-extract-plugin@npm:2.6.0"
   dependencies:
