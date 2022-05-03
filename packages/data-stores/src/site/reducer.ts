@@ -9,8 +9,6 @@ import {
 	SiteSettings,
 	AtomicTransferStatus,
 	LatestAtomicTransferStatus,
-	HappyChatAvailability,
-	EmailSupportAvailability,
 } from './types';
 import {
 	AtomicTransferState,
@@ -79,28 +77,6 @@ export const isFetchingSiteDetails: Reducer< boolean | undefined, Action > = (
 		case 'RECEIVE_SITE':
 		case 'RECEIVE_SITE_FAILED':
 			return false;
-	}
-	return state;
-};
-
-export const happyChatAvailability: Reducer< HappyChatAvailability | undefined, Action > = (
-	state,
-	action
-) => {
-	switch ( action.type ) {
-		case 'RECEIVE_HAPPY_CHAT_AVAILABILITY':
-			return action.availability;
-	}
-	return state;
-};
-
-export const emailSupportAvailability: Reducer< EmailSupportAvailability | undefined, Action > = (
-	state,
-	action
-) => {
-	switch ( action.type ) {
-		case 'RECEIVE_EMAIL_SUPPORT_AVAILABILITY':
-			return action.availability;
 	}
 	return state;
 };
@@ -390,8 +366,6 @@ const reducer = combineReducers( {
 	sitesDomains,
 	sitesSettings,
 	siteSetupErrors,
-	happyChatAvailability,
-	emailSupportAvailability,
 	atomicTransferStatus,
 	latestAtomicTransferStatus,
 	atomicSoftwareStatus,
