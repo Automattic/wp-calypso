@@ -1,5 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
+import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -13,7 +14,7 @@ const WarningsOrHoldsSection = styled.div`
 	margin-top: 40px;
 `;
 
-const ErrorStep: Step = function ErrorStep( { navigation } ) {
+const ErrorStep: Step = function ErrorStep( { navigation, flow } ) {
 	const { goBack, goNext } = navigation;
 	const { __ } = useI18n();
 	const siteDomains = useSiteDomains();
@@ -33,6 +34,19 @@ const ErrorStep: Step = function ErrorStep( { navigation } ) {
 		);
 
 	const getContent = () => {
+		if ( flow === 'anchor-fm' ) {
+			return (
+				<WarningsOrHoldsSection>
+					<Button isPrimary href="/setup">
+						<span>{ __( 'Continue' ) }</span>
+					</Button>
+					<Button className="error-step__link" isLink href="https://anchor.fm">
+						<span>{ __( 'Back to Anchor.fm' ) }</span>
+					</Button>
+				</WarningsOrHoldsSection>
+			);
+		}
+
 		return (
 			<WarningsOrHoldsSection>
 				<SupportCard domain={ domain } />

@@ -19,7 +19,7 @@ export const anchorFmFlow: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [ 'podcastTitle', 'designSetup', 'processing' ] as StepPath[];
+		return [ 'podcastTitle', 'designSetup', 'processing', 'error' ] as StepPath[];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
