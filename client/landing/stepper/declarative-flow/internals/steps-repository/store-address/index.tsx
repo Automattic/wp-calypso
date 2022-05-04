@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { ComboboxControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
+import emailValidator from 'email-validator';
 import { FormEvent, ReactElement, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -23,7 +24,8 @@ type FormFields =
 	| 'store_address_2'
 	| 'store_city'
 	| 'store_postcode'
-	| 'store_country';
+	| 'store_country'
+	| 'store_email';
 
 const CityZipRow = styled.div`
 	display: -ms-grid;
@@ -48,6 +50,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 	const [ storeCity, setStoreCity ] = useState( storeAddress.store_city );
 	const [ storePostcode, setStorePostcode ] = useState( storeAddress.store_postcode );
 	const [ storeCountry, setStoreCountry ] = useState( storeAddress.store_country );
+	const [ storeEmail, setStoreEmail ] = useState( storeAddress.store_email );
 	const { setStoreAddressValue } = useDispatch( ONBOARD_STORE );
 
 	if ( ! countries ) {
@@ -79,6 +82,10 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 					setStorePostcode( event.currentTarget.value );
 					errors[ 'store_postcode' ] = '';
 					break;
+				case 'store_email':
+					setStoreEmail( event.currentTarget.value );
+					errors[ 'store_email' ] = '';
+					break;
 			}
 
 			setErrors( errors );
@@ -91,6 +98,9 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 		errors[ 'store_address_1' ] = ! storeAddress1 ? __( 'Please add an address' ) : '';
 		errors[ 'store_city' ] = ! storeCity ? __( 'Please add a city' ) : '';
 		errors[ 'store_country' ] = ! storeCountry ? __( 'Please select a country / region' ) : '';
+		errors[ 'store_email' ] = ! emailValidator.validate( storeEmail )
+			? __( 'Please add a valid email address' )
+			: '';
 
 		setErrors( errors );
 
@@ -105,19 +115,14 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 				return;
 			}
 
-			await setStoreAddressValue( 'store_address_1', storeAddress1 );
-			await setStoreAddressValue( 'store_address_2', storeAddress2 || '' );
-			await setStoreAddressValue( 'store_city', storeCity );
-			await setStoreAddressValue( 'store_postcode', storePostcode );
-			await setStoreAddressValue( 'store_country', storeCountry );
+			setStoreAddressValue( 'store_address_1', storeAddress1 );
+			setStoreAddressValue( 'store_address_2', storeAddress2 || '' );
+			setStoreAddressValue( 'store_city', storeCity );
+			setStoreAddressValue( 'store_postcode', storePostcode );
+			setStoreAddressValue( 'store_country', storeCountry );
+			setStoreAddressValue( 'store_email', storeEmail );
 
-			submit?.( {
-				storeAddress1,
-				storeAddress2,
-				storeCity,
-				storePostcode,
-				storeCountry,
-			} );
+			submit?.();
 		}
 	};
 
@@ -180,8 +185,8 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 					</CityZipRow>
 
 					<FormFieldset>
+						<FormLabel htmlFor="store_postcode">{ __( 'Country / State' ) }</FormLabel>
 						<ComboboxControl
-							label={ __( 'Country / State' ) }
 							value={ storeCountry }
 							onChange={ ( value: string | null ) => {
 								if ( value ) {
@@ -196,6 +201,18 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 							className={ errors[ 'store_country' ] ? 'is-error' : '' }
 						/>
 						<ControlError error={ errors[ 'store_country' ] || '' } />
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="store_email">{ __( 'Email address' ) }</FormLabel>
+						<FormInput
+							value={ storeEmail }
+							name="store_email"
+							id="store_email"
+							onChange={ onChange }
+							className={ errors[ 'store_email' ] ? 'is-error' : '' }
+						/>
+						<ControlError error={ errors[ 'store_email' ] } />
 					</FormFieldset>
 
 					<ActionSection>
@@ -213,30 +230,26 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 	};
 
 	return (
-		<div className="store-address__signup is-woocommerce-install">
-			<div className="store-address__is-store-address">
-				<StepContainer
-					stepName={ 'store-address' }
-					className={ `is-step-${ intent }` }
-					skipButtonAlign={ 'top' }
-					goBack={ goBack }
-					goNext={ goNext }
-					isHorizontalLayout={ true }
-					formattedHeader={
-						<FormattedHeader
-							id={ 'site-options-header' }
-							headerText={ headerText }
-							subHeaderText={ __(
-								'This will be used as your default business address. You can change it later if you need to.'
-							) }
-							align={ 'left' }
-						/>
-					}
-					stepContent={ getContent() }
-					recordTracksEvent={ recordTracksEvent }
+		<StepContainer
+			stepName={ 'store-address' }
+			className={ `is-step-${ intent }` }
+			skipButtonAlign={ 'top' }
+			goBack={ goBack }
+			goNext={ goNext }
+			isHorizontalLayout={ true }
+			formattedHeader={
+				<FormattedHeader
+					id={ 'site-options-header' }
+					headerText={ headerText }
+					subHeaderText={ __(
+						'This will be used as your default business address. You can change it later if you need to.'
+					) }
+					align={ 'left' }
 				/>
-			</div>
-		</div>
+			}
+			stepContent={ getContent() }
+			recordTracksEvent={ recordTracksEvent }
+		/>
 	);
 };
 

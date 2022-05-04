@@ -259,6 +259,7 @@ const storeAddress: Reducer< StoreAddress, OnboardAction > = (
 		store_city: '',
 		store_postcode: '',
 		store_country: '',
+		store_email: '',
 	},
 	action
 ) => {
