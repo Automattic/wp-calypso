@@ -4,8 +4,10 @@ ARG base_image=registry.a8c.com/calypso/base:latest
 
 # Used to load extra git context from TeamCity so that git commands work.
 ARG extra_git_dir
-# true if has dir, empty otherwise
-ENV has_git_dir=${extra_git_dir:+true} 
+# It's difficult to infer this in Docker, because we'd need to set an environment
+# variable to do so. And if we can't do that before running the FROM steps. But
+# we need the variable to be defined before doing FROM. It's easier to pass it.
+ARG has_extra_git_dir=false
 
 ###################
 FROM node:${node_version}-buster as builder-cache-false
@@ -28,16 +30,14 @@ ENV READONLY_CACHE=true
 FROM builder-cache-${use_cache} as builder-git-context-false
 
 ###################
-# This image contains a directory /calypso/.cache which includes caches
-# for yarn, terser, css-loader and babel.
 FROM builder-cache-${use_cache} as builder-git-context-true
 
 COPY $extra_git_dir $extra_git_dir
 
 ###################
 # run "true" variant if dir exists, run false variant otherwise. The cache variants
-# are handled be either git variant as well.
-FROM builder-git-context-${has_git_dir:-false} as builder
+# are handled in either git variant as well.
+FROM builder-git-context-${has_extra_git_dir} as builder
 
 # Information for Sentry Releases.
 ARG manual_sentry_release=false

@@ -102,8 +102,6 @@ object BuildDockerImage : BuildType({
 				#!/usr/bin/env bash
 				sudo apt-get install -y git-restore-mtime
 				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
-
-				echo %teamcity.agent.home.dir%
 			"""
 			dockerImage = "%docker_image_e2e%"
 			dockerRunParameters = "-u %env.UID%"
@@ -135,6 +133,7 @@ object BuildDockerImage : BuildType({
 					--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 					--build-arg is_default_branch=%teamcity.build.branch.is_default%
 					--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
+					--build-arg has_extra_git_dir=true
 					--build-arg extra_git_dir=%teamcity.agent.home.dir%/system/git
 				""".trimIndent().replace("\n"," ")
 			}
