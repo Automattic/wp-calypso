@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useSupportAvailability } from '@automattic/data-stores';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useState, useEffect, useRef } from 'react';
@@ -24,6 +25,10 @@ const InlineHelpCenterContent = ( {
 		openInContactPage ? VIEW_CONTACT : null
 	);
 	const secondaryViewRef = useRef();
+
+	//prefetch the values
+	useSupportAvailability( 'CHAT' );
+	useSupportAvailability( 'EMAIL' );
 
 	const openSecondaryView = ( secondaryViewKey ) => {
 		recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show`, {
