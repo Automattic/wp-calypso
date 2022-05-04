@@ -80,8 +80,8 @@ function user_in_sentry_test_segment( $user_id ) {
 /**
  * Return whether Sentry should be activated for a given user.
  *
- * In this phase, a12s have the possibility of configuring what error reporter to choose
- * through the sticker. a12s shouldn not be covered by the segment logic.
+ * In this phase, a12s have the possibility of configuring what error reporter to use
+ * through the sticker. a12s should not be covered by the segment logic.
  *
  * Regular users have the error reporter chosen based on the segmentation logic, only.
  *
