@@ -108,10 +108,6 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		}
 	}
 
-	function shouldHideBackBtn() {
-		return false;
-	}
-
 	function getBackUrl() {
 		if ( stepName === 'importing' ) {
 			return getStepUrl( 'importer', 'capture', '', '', { siteSlug } );
@@ -213,7 +209,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 				flowName={ 'importer' }
 				stepName={ stepName }
 				hideSkip={ true }
-				hideBack={ shouldHideBackBtn() }
+				hideBack={ false }
 				backUrl={ getBackUrl() }
 				goToPreviousStep={ goToPreviousStep }
 				hideNext={ true }
