@@ -1,6 +1,5 @@
-import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
+import { getUrlParts, getUrlFromParts, safeImageUrl } from '@automattic/calypso-url';
 import { maxWidthPhotonishURL } from 'calypso/lib/post-normalizer/utils/max-width-photonish-url';
-import safeImageURL from 'calypso/lib/safe-image-url';
 import { resolveRelativePath } from 'calypso/lib/url';
 
 export function makeImageURLSafe( object, propName, maxWidth, baseURL ) {
@@ -16,7 +15,7 @@ export function makeImageURLSafe( object, propName, maxWidth, baseURL ) {
 				pathname: resolvedPath,
 			} ).href;
 		}
-		object[ propName ] = safeImageURL( object[ propName ] );
+		object[ propName ] = safeImageUrl( object[ propName ] );
 
 		if ( maxWidth ) {
 			object[ propName ] = maxWidthPhotonishURL( object[ propName ], maxWidth );

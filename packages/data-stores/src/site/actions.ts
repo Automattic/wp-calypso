@@ -243,19 +243,28 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	}
 
 	function* setDesignOnSite( siteSlug: string, selectedDesign: Design ) {
+		const { theme, recipe } = selectedDesign;
+
 		yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
-			body: { theme: selectedDesign.theme, dont_change_homepage: true },
+			body: { theme: recipe?.stylesheet?.split( '/' )[ 1 ] || theme, dont_change_homepage: true },
 			method: 'POST',
 		} );
 
-		yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
-			apiNamespace: 'wpcom/v2',
-			body: { trim_content: true },
-			method: 'POST',
-		} );
+		/*
+		 * Anchor themes are set up directly via Headstart on the server side
+		 * so exclude them from theme setup.
+		 */
+		const anchorDesigns = [ 'hannah', 'gilbert', 'riley' ];
+		if ( anchorDesigns.indexOf( selectedDesign.template ) < 0 ) {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
+				apiNamespace: 'wpcom/v2',
+				body: { trim_content: true, pattern_ids: recipe?.patternIds },
+				method: 'POST',
+			} );
+		}
 
 		const data: { is_fse_active: boolean } = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/block-editor`,
@@ -266,9 +275,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return data?.is_fse_active ?? false;
 	}
 
-	const setSiteSetupError = ( siteId: number, error: string, message: string ) => ( {
+	const setSiteSetupError = ( error: string, message: string ) => ( {
 		type: 'SET_SITE_SETUP_ERROR',
-		siteId,
 		error,
 		message,
 	} );

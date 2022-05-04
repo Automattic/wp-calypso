@@ -79,11 +79,13 @@ export interface ProtectedFormProps {
 /*
  * HOC that passes markChanged/markSaved props to the wrapped component instance
  */
-export const protectForm = createHigherOrderComponent< ProtectedFormProps, any >( ( Component ) => {
+export const protectForm = createHigherOrderComponent< ProtectedFormProps >( ( InnerComponent ) => {
 	return ( props ) => {
 		const { markChanged, markSaved } = useProtectForm();
-
-		return <Component { ...props } markChanged={ markChanged } markSaved={ markSaved } />;
+		const innerProps = { ...props, markChanged, markSaved } as React.ComponentProps<
+			typeof InnerComponent
+		>;
+		return <InnerComponent { ...innerProps } />;
 	};
 }, 'protectForm' );
 

@@ -167,7 +167,7 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 		submit?.();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	}, [ siteId ] );
 
 	return null;
 };

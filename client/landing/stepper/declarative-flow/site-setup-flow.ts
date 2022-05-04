@@ -1,6 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { useDesignsBySite } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useDispatch as reduxDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useFSEStatus } from '../hooks/use-fse-status';
+import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
@@ -25,15 +29,26 @@ export const siteSetupFlow: Flow = {
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
+			'import',
+			'importList',
+			'importReady',
+			'importReadyNot',
+			'importReadyWpcom',
+			'importReadyPreview',
 			'businessInfo',
 			'storeAddress',
 			'processing',
 			'error',
 			'wooTransfer',
 			'wooInstallPlugins',
+			'wooConfirm',
 		] as StepPath[];
 	},
-
+	useSideEffect() {
+		const site = useSite();
+		// prefetch designs for a smooth design picker UX
+		useDesignsBySite( site );
+	},
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
@@ -48,6 +63,7 @@ export const siteSetupFlow: Flow = {
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite } = useDispatch( SITE_STORE );
 		const { FSEActive } = useFSEStatus();
+		const dispatch = reduxDispatch();
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction(
@@ -78,7 +94,7 @@ export const siteSetupFlow: Flow = {
 					const processingResult = params[ 0 ] as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
-						// error page?
+						return navigate( 'error' );
 					}
 
 					// If the user skips starting point, redirect them to My Home
@@ -92,8 +108,7 @@ export const siteSetupFlow: Flow = {
 
 					// End of woo flow
 					if ( storeType === 'power' ) {
-						// eslint-disable-next-line no-console
-						console.log( 'end woo flow here' );
+						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
 					}
 
 					if ( FSEActive && intent !== 'write' ) {
@@ -134,7 +149,7 @@ export const siteSetupFlow: Flow = {
 							return navigate( 'options' );
 						}
 						case 'import': {
-							return exitFlow( `/start/importer/capture?siteSlug=${ siteSlug }` );
+							return navigate( 'import' );
 						}
 						case 'write': {
 							return navigate( 'options' );
@@ -169,6 +184,16 @@ export const siteSetupFlow: Flow = {
 					if ( isAtomic ) {
 						return navigate( 'wooInstallPlugins' );
 					}
+					return navigate( 'wooConfirm' );
+				}
+
+				case 'wooConfirm': {
+					const [ checkoutUrl ] = params;
+
+					if ( checkoutUrl ) {
+						return exitFlow( checkoutUrl.toString() );
+					}
+
 					return navigate( 'wooTransfer' );
 				}
 
@@ -184,6 +209,11 @@ export const siteSetupFlow: Flow = {
 
 				case 'vertical': {
 					return navigate( 'intent' );
+				}
+
+				case 'importReady':
+				case 'importReadyPreview': {
+					return exitFlow( providedDependencies?.url as string );
 				}
 			}
 		}
@@ -202,6 +232,12 @@ export const siteSetupFlow: Flow = {
 				case 'storeAddress':
 					return navigate( 'storeFeatures' );
 
+				case 'businessInfo':
+					return navigate( 'storeAddress' );
+
+				case 'wooConfirm':
+					return navigate( 'businessInfo' );
+
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );
 
@@ -214,6 +250,13 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'bloggerStartingPoint' );
 					}
 					return navigate( 'intent' );
+
+				case 'importList':
+				case 'importReady':
+				case 'importReadyNot':
+				case 'importReadyWpcom':
+				case 'importReadyPreview':
+					return navigate( 'import' );
 
 				default:
 					return navigate( 'intent' );
@@ -233,6 +276,9 @@ export const siteSetupFlow: Flow = {
 
 				case 'vertical':
 					return exitFlow( `/home/${ siteSlug }` );
+
+				case 'import':
+					return navigate( 'importList' );
 
 				default:
 					return navigate( 'intent' );

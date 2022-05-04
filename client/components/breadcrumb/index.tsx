@@ -82,10 +82,10 @@ const renderHelpBubble = ( item: Item ) => {
 	);
 };
 
-type Item = { label: string; href?: string; helpBubble?: React.ReactElement };
+export type Item = { label: string; href?: string; helpBubble?: React.ReactElement };
 interface Props {
 	items: Item[];
-	mobileItem?: string;
+	mobileItem?: Item;
 	compact?: boolean;
 }
 
@@ -104,11 +104,12 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	if ( compact && items.length > 1 ) {
+		const urlBack = mobileItem?.href ?? items[ items.length - 2 ].href;
+		const label = mobileItem?.label ?? translate( 'Back' );
 		return (
-			<StyledBackLink href={ items[ items.length - 2 ].href }>
+			<StyledBackLink href={ urlBack }>
 				<Gridicon icon="chevron-left" size={ 18 } />
-				{ /*  Show the exactly previous page with items[ items.length - 2 ] */ }
-				{ mobileItem ? mobileItem : translate( 'Back' ) }
+				{ label }
 			</StyledBackLink>
 		);
 	}

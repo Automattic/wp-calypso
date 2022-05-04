@@ -21,6 +21,9 @@ export function register(): typeof STORE_KEY {
 		reducer: reducer as any, // eslint-disable-line @typescript-eslint/no-explicit-any
 		selectors,
 		persist: [
+			'anchorPodcastId',
+			'anchorEpisodeId',
+			'anchorSpotifyUrl',
 			'domain',
 			'domainSearch',
 			'hasUsedDomainsStep',

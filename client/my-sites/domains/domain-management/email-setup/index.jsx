@@ -58,7 +58,7 @@ class EmailSetup extends Component {
 					dnsTemplateService: dnsTemplates.MICROSOFT_OFFICE365.SERVICE,
 					modifyVariables: ( variables ) =>
 						Object.assign( {}, variables, {
-							mxdata: variables.domain.replace( '.', '-' ) + '.mail.protection.outlook.com',
+							mxdata: variables.domain.replaceAll( '.', '-' ) + '.mail.protection.outlook.com',
 						} ),
 				},
 				{

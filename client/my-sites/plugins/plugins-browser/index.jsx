@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	isBusiness,
 	isEcommerce,
@@ -24,6 +25,7 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { useSiteSearchPlugins } from 'calypso/data/marketplace/use-site-search-es-query';
 import {
 	useWPCOMPlugins,
 	useWPCOMFeaturedPlugins,
@@ -111,6 +113,27 @@ const PluginsBrowser = ( {
 
 	const { data: paidPluginsRawList = [], isLoading: isFetchingPaidPlugins } =
 		useWPCOMPlugins( 'all' );
+
+	const searchHook = isEnabled( 'marketplace-jetpack-plugin-search' )
+		? useSiteSearchPlugins
+		: useWPORGInfinitePlugins;
+
+	const {
+		data: { plugins: pluginsBySearchTerm = [], pagination: pluginsPagination } = {},
+		isLoading: isFetchingPluginsBySearchTerm,
+		fetchNextPage,
+	} = searchHook(
+		{ searchTerm: search },
+		{
+			enabled: !! search,
+		}
+	);
+
+	const { data: paidPluginsBySearchTermRaw = [], isLoading: isFetchingPaidPluginsBySearchTerm } =
+		useWPCOMPlugins( 'all', search, undefined, {
+			enabled: !! search,
+		} );
+
 	const paidPlugins = useMemo(
 		() => paidPluginsRawList.map( updateWpComRating ),
 		[ paidPluginsRawList ]
@@ -294,6 +317,7 @@ const PluginsBrowser = ( {
 				isSticky={ isAboveElement }
 				doSearch={ doSearch }
 				searchTerm={ search }
+				isSearching={ isFetchingPluginsBySearchTerm || isFetchingPaidPluginsBySearchTerm }
 				title={ translate( 'Plugins you need to get your projects done' ) }
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 			/>
@@ -303,6 +327,12 @@ const PluginsBrowser = ( {
 			<PluginBrowserContent
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
 				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
+				paidPluginsBySearchTermRaw={ paidPluginsBySearchTermRaw }
+				isFetchingPaidPluginsBySearchTerm={ isFetchingPaidPluginsBySearchTerm }
+				fetchNextPage={ fetchNextPage }
+				pluginsBySearchTerm={ pluginsBySearchTerm }
+				isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
+				pluginsPagination={ pluginsPagination }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
 				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
 				search={ search }
@@ -324,6 +354,12 @@ const PluginsBrowser = ( {
 
 const SearchListView = ( {
 	search: searchTerm,
+	paidPluginsBySearchTermRaw,
+	pluginsPagination,
+	pluginsBySearchTerm,
+	isFetchingPaidPluginsBySearchTerm,
+	isFetchingPluginsBySearchTerm,
+	fetchNextPage,
 	searchTitle: searchTitleTerm,
 	siteSlug,
 	siteId,
@@ -331,22 +367,6 @@ const SearchListView = ( {
 	billingPeriod,
 } ) => {
 	const dispatch = useDispatch();
-
-	const {
-		data: { plugins: pluginsBySearchTerm = [], pagination: pluginsPagination } = {},
-		isLoading: isFetchingPluginsBySearchTerm,
-		fetchNextPage,
-	} = useWPORGInfinitePlugins(
-		{ searchTerm },
-		{
-			enabled: !! searchTerm,
-		}
-	);
-
-	const { data: paidPluginsBySearchTermRaw = [], isLoading: isFetchingPaidPluginsBySearchTerm } =
-		useWPCOMPlugins( 'all', searchTerm, undefined, {
-			enabled: !! searchTerm,
-		} );
 
 	const paidPluginsBySearchTerm = useMemo(
 		() => paidPluginsBySearchTermRaw.map( updateWpComRating ),

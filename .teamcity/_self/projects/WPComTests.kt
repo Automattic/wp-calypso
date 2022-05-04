@@ -31,11 +31,18 @@ object WPComTests : Project({
 		}
 	}
 
-	// Keep the previous ID in order to preserve the historical data
-	buildType(gutenbergPlaywrightBuildType("desktop", "fab2e82e-d27b-4ba2-bbd7-232df944e75c"));
-	buildType(gutenbergPlaywrightBuildType("mobile", "77a5a0f1-9644-4c04-9d27-0066cd2d4ada"));
-	buildType(gutenbergPlaywrightBuildType("desktop", "c341e9b9-1118-48e9-a569-325100f5fd9" , true));
-	buildType(gutenbergPlaywrightBuildType("mobile", "e0f7e412-ae6c-41d3-9eec-c57c94dd8385", true));
+	// Gutenberg Simple
+	buildType(gutenbergPlaywrightBuildType("desktop", "fab2e82e-d27b-4ba2-bbd7-232df944e75c", atomic=false, edge=false));
+	buildType(gutenbergPlaywrightBuildType("mobile", "77a5a0f1-9644-4c04-9d27-0066cd2d4ada", atomic=false, edge=false));
+	// Gutenberg Simple Edge
+	buildType(gutenbergPlaywrightBuildType("desktop", "e8817ab4-ec4e-4d58-a215-d1f87b2227b6", atomic=false, edge=true));
+	buildType(gutenbergPlaywrightBuildType("mobile", "a655d304-4dcf-4864-8d82-8b22dba29feb", atomic=false, edge=true));
+	// Gutenberg Atomic
+	buildType(gutenbergPlaywrightBuildType("desktop", "c341e9b9-1118-48e9-a569-325100f5fd9" , atomic=true, edge=false));
+	buildType(gutenbergPlaywrightBuildType("mobile", "e0f7e412-ae6c-41d3-9eec-c57c94dd8385", atomic=true, edge=false));
+	// Gutenberg Atomic Edge
+	buildType(gutenbergPlaywrightBuildType("desktop", "4c66d90d-99c6-4ecb-9507-18bc2f44b551" , atomic=true, edge=true));
+	buildType(gutenbergPlaywrightBuildType("mobile", "ba0f925b-497b-4156-977e-5bfbe94f5744", atomic=true, edge=true));
 
 	buildType(coblocksPlaywrightBuildType("desktop", "08f88b93-993e-4de8-8d80-4a94981d9af4"));
 	buildType(coblocksPlaywrightBuildType("mobile", "cbcd44d5-4d31-4adc-b1b5-97f1225c6a7c"));
@@ -47,13 +54,14 @@ object WPComTests : Project({
 	buildType(P2E2ETests)
 })
 
-fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false ): E2EBuildType {
+fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false ): E2EBuildType {
 	var siteType = if (atomic) "atomic" else "simple";
+	var edgeType = if (edge) "edge" else "production";
 
     return E2EBuildType (
-		buildId = "WPComTests_gutenberg_Playwright_${siteType}_$targetDevice",
+		buildId = "WPComTests_gutenberg_${siteType}_${edgeType}_$targetDevice",
 		buildUuid = buildUuid,
-		buildName = "Gutenberg $siteType E2E tests ($targetDevice)",
+		buildName = "Gutenberg $siteType E2E tests $edgeType ($targetDevice)",
 		buildDescription = "Runs Gutenberg $siteType E2E tests on $targetDevice size",
 		testGroup = "gutenberg",
 		buildParams = {
@@ -65,14 +73,6 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				allowEmpty = false
 			)
 			checkbox(
-				name = "env.GUTENBERG_EDGE",
-				value = "false",
-				label = "Use gutenberg-edge",
-				description = "Use a blog with gutenberg-edge sticker",
-				checked = "true",
-				unchecked = "false"
-			)
-			checkbox(
 				name = "env.COBLOCKS_EDGE",
 				value = "false",
 				label = "Use coblocks-edge",
@@ -80,17 +80,14 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				checked = "true",
 				unchecked = "false"
 			)
-			checkbox(
-				name = "env.TEST_ON_ATOMIC",
-				value = "false",
-				label = "Test on Atomic",
-				description = "Use an Atomic blog to test against",
-				checked = "true",
-				unchecked = "false"
-			)
 			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser,simpleSitePersonalPlanUser")
 			param("env.VIEWPORT_NAME", "$targetDevice")
-			if (atomic) param("env.TEST_ON_ATOMIC", "true")
+			if (atomic) {
+				param("env.TEST_ON_ATOMIC", "true")
+			}
+			if (edge) {
+				param("env.GUTENBERG_EDGE", "true")
+			}
 		},
 		buildFeatures = {
 			notifications {

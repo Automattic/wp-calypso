@@ -1,16 +1,21 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import {
+	navigation,
+	siteSelection,
+	sites,
+	selectSiteIfLoggedIn,
+} from 'calypso/my-sites/controller';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	browsePlugins,
 	browsePluginsOrPlugin,
-	eligibility,
+	renderPluginWarnings,
+	renderProvisionPlugins,
 	jetpackCanUpdate,
 	plugins,
 	resetHistory,
 	scrollTopIfNoHash,
-	setupPlugins,
 	upload,
 } from './controller';
 
@@ -19,7 +24,7 @@ export default function () {
 		'/plugins/setup',
 		scrollTopIfNoHash,
 		siteSelection,
-		setupPlugins,
+		renderProvisionPlugins,
 		makeLayout,
 		clientRender
 	);
@@ -28,7 +33,7 @@ export default function () {
 		'/plugins/setup/:site',
 		scrollTopIfNoHash,
 		siteSelection,
-		setupPlugins,
+		renderProvisionPlugins,
 		makeLayout,
 		clientRender
 	);
@@ -60,7 +65,7 @@ export default function () {
 
 	page( '/plugins/upload', scrollTopIfNoHash, siteSelection, sites, makeLayout, clientRender );
 	page(
-		'/plugins/upload/:site_id',
+		'/plugins/upload/:site',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -69,8 +74,10 @@ export default function () {
 		clientRender
 	);
 
+	page( '/plugins', selectSiteIfLoggedIn, navigation, makeLayout, clientRender );
+
 	page(
-		'/plugins',
+		'/plugins/:site',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -80,7 +87,7 @@ export default function () {
 	);
 
 	page(
-		'/plugins/manage/:site?',
+		'/plugins/manage/:site',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -90,7 +97,7 @@ export default function () {
 	);
 
 	page(
-		'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
+		'/plugins/:pluginFilter(active|inactive|updates)/:site',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -101,7 +108,7 @@ export default function () {
 	);
 
 	page(
-		'/plugins/:plugin/:site_id?',
+		'/plugins/:plugin/:site',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -111,11 +118,11 @@ export default function () {
 	);
 
 	page(
-		'/plugins/:plugin/eligibility/:site_id',
+		'/plugins/:plugin/eligibility/:site',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
-		eligibility,
+		renderPluginWarnings,
 		makeLayout,
 		clientRender
 	);

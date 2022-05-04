@@ -2,6 +2,7 @@
  * Global polyfills
  */
 import '@automattic/calypso-polyfills';
+import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -22,6 +23,7 @@ import sites from 'calypso/state/sites/reducer';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { setSection } from 'calypso/state/ui/section/actions';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
+import ContactForm from './contact-form';
 
 const rootReducer = combineReducers( {
 	currentUser,
@@ -58,16 +60,21 @@ rawCurrentUserFetch()
 const queryClient = new QueryClient();
 
 export default function Content( { selectedArticle, setSelectedArticle, setFooterContent } ) {
+	const [ formOpen ] = useState( false );
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<Provider store={ store }>
 				<>
 					<QuerySites siteId={ window._currentSiteId } />
-					<InlineHelpCenterContent
-						selectedArticle={ selectedArticle }
-						setSelectedArticle={ setSelectedArticle }
-						setHelpCenterFooter={ setFooterContent }
-					/>
+					{ formOpen ? (
+						<ContactForm mode="CHAT" />
+					) : (
+						<InlineHelpCenterContent
+							selectedArticle={ selectedArticle }
+							setSelectedArticle={ setSelectedArticle }
+							setHelpCenterFooter={ setFooterContent }
+						/>
+					) }
 				</>
 			</Provider>
 		</QueryClientProvider>

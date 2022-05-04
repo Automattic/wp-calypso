@@ -63,7 +63,13 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 		output: {
 			...webpackConfig.output,
 			path: outputPath,
-			filename: '[name].js', // dynamic filename
+			// Unfortunately, we can't set the name to `[name].js` for the
+			// dev env because at runtime we'd also need a way to detect
+			// if the env was dev or prod, as the file is enqueued in WP
+			// and there's no way to do that now. The simpler alternative
+			// is to generate a .min.js for dev and prod, even though the
+			// file is not really minified in the dev env.
+			filename: '[name].min.js', // dynamic filename
 			library: 'EditingToolkit',
 		},
 		optimization: {
@@ -80,6 +86,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			} ),
 			new DependencyExtractionWebpackPlugin( {
 				injectPolyfill: true,
+				outputFilename: '[name].asset.php',
 				requestToExternal( request ) {
 					if ( request.startsWith( FSE_MODULE_PREFIX ) ) {
 						switch ( request ) {
@@ -92,6 +99,12 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 							default:
 								throw new Error( `Received unknown module request ${ request }.` );
 						}
+					}
+					// The extraction logic will only extract a package if requestToExternal
+					// explicitly returns undefined for the given request. Null
+					// shortcuts the logic such that react-i18n will be bundled.
+					if ( request === '@wordpress/react-i18n' ) {
+						return null;
 					}
 				},
 			} ),

@@ -1,83 +1,85 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { ImageEditorToolbar } from '../image-editor-toolbar';
 
 describe( 'ImageEditorToolbar', () => {
 	let defaultProps;
-	let wrapper;
 
 	useSandbox( ( sandbox ) => {
 		defaultProps = {
 			onShowNotice: sandbox.spy(),
+			translate: ( string ) => string,
 		};
 	} );
 
-	beforeEach( () => {
-		wrapper = shallow(
-			<ImageEditorToolbar { ...defaultProps } translate={ ( string ) => string } />
-		);
-	} );
-
 	test( 'should not add `is-disabled` class to aspect ratio toolbar button by default', () => {
-		expect( wrapper.find( '.image-editor__toolbar-button' ).at( 1 ).hasClass( 'is-disabled' ) ).to
-			.be.false;
+		const { container } = render( <ImageEditorToolbar { ...defaultProps } /> );
+		expect(
+			container
+				.getElementsByClassName( 'image-editor__toolbar-button' )[ 1 ]
+				.classList.contains( 'is-disabled' )
+		).toBe( false );
 	} );
 
 	test(
-		'should add `is-disabled` class to aspect ratio toolbar button' +
+		'should add `is-disabled` class to aspect ratio toolbar button ' +
 			'when image is smaller than minimum dimensions',
 		() => {
-			wrapper.setProps( { isAspectRatioDisabled: true } );
-			expect( wrapper.find( '.image-editor__toolbar-button' ).at( 1 ).hasClass( 'is-disabled' ) ).to
-				.be.true;
+			const { container } = render(
+				<ImageEditorToolbar { ...defaultProps } isAspectRatioDisabled />
+			);
+			expect(
+				container
+					.getElementsByClassName( 'image-editor__toolbar-button' )[ 1 ]
+					.classList.contains( 'is-disabled' )
+			).toBe( true );
 		}
 	);
 
 	test(
-		'should not trigger the method `onShowNotice`' +
+		'should not trigger the method `onShowNotice` ' +
 			'when image width and height meet the minimum dimensions',
 		() => {
-			wrapper.setProps( { isAspectRatioDisabled: false } );
-			wrapper
-				.find( '.image-editor__toolbar-button' )
-				.at( 1 )
-				.simulate( 'click', { preventDefault() {} } );
-			expect( defaultProps.onShowNotice.called ).to.be.false;
+			const { container } = render(
+				<ImageEditorToolbar { ...defaultProps } isAspectRatioDisabled={ false } />
+			);
+
+			fireEvent.click( container.getElementsByClassName( 'image-editor__toolbar-button' )[ 1 ] );
+
+			expect( defaultProps.onShowNotice.called ).toBe( false );
 		}
 	);
 
 	test(
-		'should trigger the method `onShowNotice` with correct translation string' +
+		'should trigger the method `onShowNotice` with correct translation string ' +
 			'when the user clicks on a disabled aspect ratio toolbar button',
 		() => {
-			wrapper.setProps( { isAspectRatioDisabled: true } );
-			wrapper
-				.find( '.image-editor__toolbar-button' )
-				.at( 1 )
-				.simulate( 'click', { preventDefault() {} } );
+			const { container } = render(
+				<ImageEditorToolbar { ...defaultProps } isAspectRatioDisabled />
+			);
+			fireEvent.click( container.getElementsByClassName( 'image-editor__toolbar-button' )[ 1 ] );
+
 			expect(
 				defaultProps.onShowNotice.calledWith(
 					'To change the aspect ratio, the height and width must be bigger than {{strong}}%(width)dpx{{/strong}}.'
 				)
-			).to.be.true;
+			).toBe( true );
 		}
 	);
 
 	test(
-		'should show aspect ratio popover display' +
+		'should show aspect ratio popover display ' +
 			'when image width and height meet the minimum dimensions',
 		() => {
-			wrapper.setProps( { isAspectRatioDisabled: false } );
-			wrapper
-				.find( '.image-editor__toolbar-button' )
-				.at( 1 )
-				.simulate( 'click', { preventDefault() {} } );
-			expect( wrapper.state( 'showAspectPopover' ) ).to.be.true;
+			const { container } = render(
+				<ImageEditorToolbar { ...defaultProps } isAspectRatioDisabled={ false } />
+			);
+			fireEvent.click( container.getElementsByClassName( 'image-editor__toolbar-button' )[ 1 ] );
+
+			expect( screen.queryByRole( 'tooltip' ) ).toBeDefined();
 		}
 	);
 
@@ -85,12 +87,12 @@ describe( 'ImageEditorToolbar', () => {
 		'should prevent aspect ratio popover display' +
 			'when image width and height do not meet the minimum dimensions',
 		() => {
-			wrapper.setProps( { isAspectRatioDisabled: true } );
-			wrapper
-				.find( '.image-editor__toolbar-button' )
-				.at( 1 )
-				.simulate( 'click', { preventDefault() {} } );
-			expect( wrapper.state( 'showAspectPopover' ) ).to.be.false;
+			const { container } = render(
+				<ImageEditorToolbar { ...defaultProps } isAspectRatioDisabled />
+			);
+			fireEvent.click( container.getElementsByClassName( 'image-editor__toolbar-button' )[ 1 ] );
+
+			expect( screen.queryByRole( 'tooltip' ) ).toBeNull();
 		}
 	);
 } );

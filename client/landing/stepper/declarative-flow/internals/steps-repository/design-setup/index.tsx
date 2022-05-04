@@ -7,7 +7,7 @@ import DesignPicker, {
 	isBlankCanvasDesign,
 	getDesignPreviewUrl,
 	useGeneratedDesigns,
-	useThemeDesignsQuery,
+	useDesignsBySite,
 } from '@automattic/design-picker';
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
@@ -19,12 +19,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
+import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useFSEStatus } from '../../../../hooks/use-fse-status';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
-import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
-import { getAnchorPodcastId } from '../../../get-anchor-podcast-id';
+import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../../stores';
 import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { getCategorizationOptions, getGeneratedDesignsCategory } from './categories';
 import PreviewToolbar from './preview-toolbar';
@@ -35,7 +34,7 @@ import type { Design } from '@automattic/design-picker';
 /**
  * The design picker step
  */
-const designSetup: Step = function DesignSetup( { navigation } ) {
+const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
@@ -43,14 +42,14 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const site = useSite();
-	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setSelectedDesign, setPendingAction, createSite } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
-
-	const anchorPodcastId = getAnchorPodcastId();
-	const flowName = isEnabled( 'signup/anchor-fm' ) && anchorPodcastId ? 'anchor-fm' : 'setup-site';
-	const isAnchorSite = 'anchor-fm' === flowName;
+	const isAnchorSite = 'anchor-fm' === flow;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const { anchorPodcastId, anchorEpisodeId, anchorSpotifyUrl } = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getState()
+	);
 	const siteSlug = useSiteSlugParam();
 	const siteTitle = site?.name;
 	const isReskinned = true;
@@ -83,21 +82,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		)
 	);
 
-	const tier =
-		isPremiumThemeAvailable || isEnabled( 'signup/design-picker-premium-themes-checkout' )
-			? 'all'
-			: 'free';
-
-	const { FSEEligible, isLoading } = useFSEStatus();
-	const themeFilters = FSEEligible
-		? 'auto-loading-homepage,full-site-editing'
-		: 'auto-loading-homepage';
-
-	const { data: themeDesigns = [] } = useThemeDesignsQuery(
-		{ filter: themeFilters, tier },
-		// Wait until block editor settings have loaded to load themes
-		{ enabled: ! isLoading }
-	);
+	const { data: themeDesigns = [] } = useDesignsBySite( site );
 
 	const staticDesigns = themeDesigns;
 
@@ -114,6 +99,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		],
 		[ staticDesigns, generatedDesigns ]
 	);
+
+	const visibility = useNewSiteVisibility();
 
 	function headerText() {
 		if ( showDesignPickerCategories ) {
@@ -151,7 +138,7 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		theme: design.recipe?.stylesheet,
 		template: design.template,
 		is_premium: design?.is_premium,
-		flow: flowName,
+		flow,
 		intent: intent,
 	} );
 
@@ -161,6 +148,8 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 		showGeneratedDesigns
 	);
 	const categorization = useCategorization( designs, categorizationOptions );
+	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
@@ -172,6 +161,31 @@ const designSetup: Step = function DesignSetup( { navigation } ) {
 				selectedSiteCategory: categorization.selection,
 			};
 			submit?.( providedDependencies );
+		} else if ( isAnchorSite && _selectedDesign ) {
+			setPendingAction( async () => {
+				if ( ! currentUser ) {
+					return;
+				}
+
+				await createSite( {
+					username: currentUser.username,
+					languageSlug: locale,
+					bearerToken: undefined,
+					visibility,
+					anchorFmPodcastId: anchorPodcastId,
+					anchorFmEpisodeId: anchorEpisodeId,
+					anchorFmSpotifyUrl: anchorSpotifyUrl,
+				} );
+
+				const newSite = getNewSite();
+
+				if ( ! newSite || ! newSite.site_slug ) {
+					return;
+				}
+
+				return setDesignOnSite( newSite.site_slug, _selectedDesign );
+			} );
+			submit?.();
 		}
 	}
 

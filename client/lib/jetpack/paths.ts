@@ -13,15 +13,19 @@ export const scanPath = ( siteSlug?: string ): string =>
 
 const settingsBasePath = () => ( isJetpackCloud() ? '/settings' : '/settings/jetpack' );
 
-export const settingsPath = ( siteSlug?: string, section?: string ): string =>
+export const settingsPath = ( siteSlug: string | null, section?: string ): string =>
 	`${ settingsBasePath() }${ section ? '/' + section : '' }${ siteSlug ? '/' + siteSlug : '' }`;
 
-export const settingsHostSelectionPath = ( siteSlug?: string ): string =>
+export const settingsHostSelectionPath = ( siteSlug: string | null ): string =>
 	settingsPath( siteSlug, 'host-selection' );
 
 export const settingsCredentialsPath = ( siteSlug: string, host: string ): string =>
 	settingsPath( siteSlug, `credentials/${ host }` );
 
 export const purchasesBasePath = () => '/purchases';
-export const purchasesPath = ( siteSlug?: string ): string =>
+export const purchasesPath = ( siteSlug: string | null ): string =>
 	siteSlug ? `${ purchasesBasePath() }/${ siteSlug }` : purchasesBasePath();
+
+export const socialBasePath = () => '/jetpack-social';
+export const socialPath = ( siteSlug?: string ): string =>
+	siteSlug ? `${ socialBasePath() }/${ siteSlug }` : socialBasePath();

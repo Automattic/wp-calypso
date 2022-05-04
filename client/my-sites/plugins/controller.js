@@ -87,7 +87,7 @@ function renderPluginsBrowser( context ) {
 	} );
 }
 
-function renderPluginWarnings( context ) {
+export function renderPluginWarnings( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 	const pluginSlug = decodeURIComponent( context.params.plugin );
@@ -96,12 +96,14 @@ function renderPluginWarnings( context ) {
 		siteSlug: site.slug,
 		pluginSlug,
 	} );
+	next();
 }
 
-function renderProvisionPlugins( context ) {
+export function renderProvisionPlugins( context, next ) {
 	context.primary = createElement( PlanSetup, {
 		forSpecificPlugin: context.query.only || false,
 	} );
+	next();
 }
 
 export function plugins( context, next ) {
@@ -165,16 +167,6 @@ export function jetpackCanUpdate( context, next ) {
 			return;
 		}
 	}
-	next();
-}
-
-export function setupPlugins( context, next ) {
-	renderProvisionPlugins( context );
-	next();
-}
-
-export function eligibility( context, next ) {
-	renderPluginWarnings( context );
 	next();
 }
 

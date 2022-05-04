@@ -4,6 +4,7 @@ import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import CloseOnEscape from 'calypso/components/close-on-escape';
 import SiteSelector from 'calypso/components/site-selector';
+import hasJetpackPluginActiveConnection from 'calypso/lib/jetpack/has-jetpack-plugin-active-connection';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { setNextLayoutFocus, setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -77,12 +78,6 @@ class SitePicker extends Component {
 		this.closePicker( null );
 	};
 
-	filterSites = ( site ) => {
-		return site?.options?.jetpack_connection_active_plugins
-			? site.options.jetpack_connection_active_plugins.includes( 'jetpack' )
-			: true;
-	};
-
 	render() {
 		return (
 			<div>
@@ -98,7 +93,7 @@ class SitePicker extends Component {
 					autoFocus={ this.state.isAutoFocused }
 					onClose={ this.onClose }
 					groups={ true }
-					filter={ this.filterSites }
+					filter={ hasJetpackPluginActiveConnection }
 				/>
 			</div>
 		);
