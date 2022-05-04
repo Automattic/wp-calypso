@@ -236,6 +236,10 @@
 
 						.inline-help__contact-box-icon {
 							background-color: #f6f7f7;
+
+							svg {
+								fill: var( --studio-gray-20 );
+							}
 						}
 
 						h2,
