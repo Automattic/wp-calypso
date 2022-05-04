@@ -253,7 +253,6 @@ function useAddRenewalItems( {
 	addHandler: AddHandler;
 } ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const isFetchingProducts = useSelector( isProductsListFetching );
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -290,15 +289,7 @@ function useAddRenewalItems( {
 		}
 		debug( 'preparing renewals requested in url', productsForCart );
 		dispatch( { type: 'RENEWALS_ADD', products: productsForCart } );
-	}, [
-		addHandler,
-		translate,
-		isFetchingProducts,
-		originalPurchaseId,
-		productAlias,
-		dispatch,
-		selectedSiteSlug,
-	] );
+	}, [ addHandler, translate, originalPurchaseId, productAlias, dispatch, selectedSiteSlug ] );
 }
 
 function useAddProductFromSlug( {
