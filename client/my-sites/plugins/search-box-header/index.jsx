@@ -82,15 +82,8 @@ const PopularSearches = ( props ) => {
 };
 
 const SearchBoxHeader = ( props ) => {
-	const {
-		doSearch,
-		searchTerm,
-		title,
-		searchTerms,
-		isSticky,
-		popularSearchesRef,
-		isSearching,
-	} = props;
+	const { doSearch, searchTerm, title, searchTerms, isSticky, popularSearchesRef, isSearching } =
+		props;
 	const searchBoxRef = useRef( null );
 
 	// since the search input is an uncontrolled component we need to tap in into the component api and trigger an update
