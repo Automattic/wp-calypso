@@ -13,6 +13,18 @@ export const setHasSeenWhatsNewModal = ( hasSeenWhatsNewModal: boolean ) =>
 		hasSeenWhatsNewModal,
 	} as const );
 
+export const updateHasSeenWhatsNewModal =
+	( hasSeenWhatsNewModal: boolean ) =>
+	async ( { dispatch }: Dispatch ) => {
+		apiFetch( {
+			method: 'PUT',
+			path: '/wpcom/v2/block-editor/has-seen-whats-new-modal',
+			data: { has_seen_whats_new_modal: hasSeenWhatsNewModal },
+		} ).finally( () => {
+			dispatch.setHasSeenWhatsNewModal( hasSeenWhatsNewModal );
+		} );
+	};
+
 export const fetchHasSeenWhatsNewModal =
 	() =>
 	async ( { dispatch }: Dispatch ) => {
@@ -20,7 +32,6 @@ export const fetchHasSeenWhatsNewModal =
 			await apiFetch< HasSeenWhatsNewModalFetch >( {
 				path: '/wpcom/v2/block-editor/has-seen-whats-new-modal',
 			} );
-
 		dispatch.setHasSeenWhatsNewModal( response?.has_seen_whats_new_modal ?? true );
 	};
 

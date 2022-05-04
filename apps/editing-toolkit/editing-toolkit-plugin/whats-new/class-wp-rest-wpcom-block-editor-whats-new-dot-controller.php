@@ -69,7 +69,11 @@ class WP_REST_WPCOM_Block_Editor_Whats_New_Dot_Controller extends \WP_REST_Contr
 	 * @return WP_REST_Response
 	 */
 	public function has_seen_whats_new_modal() {
-		$has_seen_whats_new_modal = (bool) get_user_meta( get_current_user_id(), 'has_seen_whats_new_modal', false );
+		if ( ! metadata_exists( 'user', get_current_user_id(), 'has_seen_whats_new_modal' ) ) {
+			$has_seen_whats_new_modal = false;
+		} else {
+			$has_seen_whats_new_modal = filter_var( get_user_meta( get_current_user_id(), 'has_seen_whats_new_modal', true ), FILTER_VALIDATE_BOOLEAN );
+		}
 
 		return rest_ensure_response(
 			array(

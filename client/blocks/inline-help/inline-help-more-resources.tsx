@@ -24,7 +24,8 @@ const HelpCenterMoreResources = () => {
 		select( 'automattic/help-center' ).hasSeenWhatsNewModal()
 	);
 
-	const setHasSeenWhatsNewModal = useDispatch( 'automattic/help-center' ).setHasSeenWhatsNewModal;
+	const updateHasSeenWhatsNewModal =
+		useDispatch( 'automattic/help-center' ).updateHasSeenWhatsNewModal;
 
 	const isBusinessOrEcomPlanUser = useSelector( ( state ) => {
 		const purchases = getUserPurchases( state );
@@ -46,7 +47,7 @@ const HelpCenterMoreResources = () => {
 
 	const handleWhatsNewClick = () => {
 		if ( ! hasSeenWhatsNewModal ) {
-			setHasSeenWhatsNewModal( true );
+			updateHasSeenWhatsNewModal( true );
 		}
 		setShowGuide( true );
 	};
