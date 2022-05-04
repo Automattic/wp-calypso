@@ -242,8 +242,16 @@ export class PlansStep extends Component {
 		const { hideFreePlan, subHeaderText, translate, eligibleForProPlan, locale } = this.props;
 
 		if ( eligibleForProPlan ) {
-			if ( isStarterPlanEnabled ) {
-				return '@todo clk';
+			if ( isStarterPlanEnabled() ) {
+				return translate(
+					'Try risk-free with a 14-day money back guarantee.{{free}}Do you want a free plan? {{link}}Click here{{/link}}.{{/free}}',
+					{
+						components: {
+							free: hideFreePlan ? null : <p />,
+							link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+						},
+					}
+				);
 			}
 
 			return 'en' === locale ||
