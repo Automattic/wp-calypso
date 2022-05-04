@@ -1,5 +1,8 @@
 import { isGoodDefaultDomainQuery } from '@automattic/domain-utils';
 import type { State } from './reducer';
+export const getAnchorPodcastId = ( state: State ) => state.anchorPodcastId;
+export const getAnchorEpisodeId = ( state: State ) => state.anchorEpisodeId;
+export const getAnchorSpotifyUrl = ( state: State ) => state.anchorSpotifyUrl;
 export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getPlanProductId = ( state: State ) => state.planProductId;
 export const getLastLocation = ( state: State ) => state.lastLocation;

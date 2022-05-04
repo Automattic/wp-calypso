@@ -20,8 +20,6 @@ import { useMemo, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
-import { useAnchorFmParams } from 'calypso/landing/stepper/hooks/use-anchor-fm-params';
-import { useFSEStatus } from 'calypso/landing/stepper/hooks/use-fse-status';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -46,10 +44,12 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const site = useSite();
 	const { setSelectedDesign, setPendingAction, createSite } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
-	const { anchorFmEpisodeId, anchorFmPodcastId } = useAnchorFmParams();
 	const isAnchorSite = 'anchor-fm' === flow;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const { anchorPodcastId, anchorEpisodeId, anchorSpotifyUrl } = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getState()
+	);
 	const siteSlug = useSiteSlugParam();
 	const siteTitle = site?.name;
 	const isReskinned = true;
@@ -172,9 +172,9 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 					languageSlug: locale,
 					bearerToken: undefined,
 					visibility,
-					anchorFmPodcastId,
-					anchorFmEpisodeId,
-					anchorFmSpotifyUrl: null,
+					anchorFmPodcastId: anchorPodcastId,
+					anchorFmEpisodeId: anchorEpisodeId,
+					anchorFmSpotifyUrl: anchorSpotifyUrl,
 				} );
 
 				const newSite = getNewSite();

@@ -10,6 +10,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import getTextWidth from 'calypso/landing/gutenboarding/onboarding-block/acquire-intent/get-text-width';
+import { useAnchorFmParams } from 'calypso/landing/stepper/hooks/use-anchor-fm-params';
 import useDetectMatchingAnchorSite from 'calypso/landing/stepper/hooks/use-detect-matching-anchor-site';
 import useSiteTitle from 'calypso/landing/stepper/hooks/use-site-title';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -29,17 +30,28 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 		//Sets the site title from the API on first load if a custom title has not been set
 		useSiteTitle();
 		const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
-		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
+		const [ formTouched, setFormTouched ] = useState( false );
+
+		const { setSiteTitle, setAnchorPodcastId, setAnchorEpisodeId, setAnchorSpotifyUrl } =
+			useDispatch( ONBOARD_STORE );
+		const { anchorFmPodcastId, isAnchorFmPodcastIdError, anchorFmEpisodeId, anchorFmSpotifyUrl } =
+			useAnchorFmParams();
 
 		const inputRef = useRef< HTMLInputElement >();
 		const underlineWidth = getTextWidth( ( siteTitle as string ) || '', inputRef.current );
 
-		const [ formTouched, setFormTouched ] = useState( false );
-
-		const handleSubmit = async ( siteTitle: string ) => {
-			const providedDependencies = { siteTitle };
+		const handleSubmit = ( siteTitle: string ) => {
+			const providedDependencies = {
+				siteTitle,
+				anchorFmPodcastId,
+				anchorFmEpisodeId,
+				anchorFmSpotifyUrl,
+			};
 			setSiteTitle( siteTitle );
-			submit?.( providedDependencies, siteTitle );
+			setAnchorPodcastId( ! isAnchorFmPodcastIdError ? anchorFmPodcastId : null );
+			setAnchorEpisodeId( anchorFmEpisodeId );
+			setAnchorSpotifyUrl( anchorFmSpotifyUrl );
+			submit?.( providedDependencies );
 		};
 
 		const handleChange = ( event: React.FormEvent< HTMLInputElement > ) => {
