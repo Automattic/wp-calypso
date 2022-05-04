@@ -18,6 +18,13 @@ import {
 	upload,
 } from './controller';
 
+function trackViewRef( context, next ) {
+	if ( context?.query?.ref === 'wpcom-masterbar-redirect' ) {
+		context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_view_click' ) );
+	}
+	next();
+}
+
 export default function () {
 	page(
 		'/plugins/setup',
@@ -36,21 +43,6 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-
-	page( '/plugins/wpcom-masterbar-redirect/:site', ( context ) => {
-		context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_view_click' ) );
-		page.redirect( `/plugins/${ context.params.site }` );
-	} );
-
-	page( '/plugins/browse/wpcom-masterbar-redirect/:site', ( context ) => {
-		context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_add_click' ) );
-		page.redirect( `/plugins/browse/${ context.params.site }` );
-	} );
-
-	page( '/plugins/manage/wpcom-masterbar-redirect/:site', ( context ) => {
-		context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_manage_click' ) );
-		page.redirect( `/plugins/manage/${ context.params.site }` );
-	} );
 
 	page( '/plugins/browse/:category/:site', ( context ) => {
 		const { category, site } = context.params;
@@ -79,6 +71,7 @@ export default function () {
 		'/plugins/:site',
 		scrollTopIfNoHash,
 		siteSelection,
+		trackViewRef,
 		navigation,
 		browsePlugins,
 		makeLayout,
