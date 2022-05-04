@@ -4,7 +4,6 @@ bin/build-docker.sh
 /.tsc-cache
 /.cache
 .dockerignore
-.git
 .npm-debug.log*
 .vscode
 /.babel-cache
