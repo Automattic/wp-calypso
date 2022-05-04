@@ -24,13 +24,6 @@ describe( '<FormTextInput />', () => {
 		expect( input ).toHaveClass( 'form-text-input' );
 	} );
 
-	test( "should not pass component's own props down to the input", () => {
-		const spy = jest.spyOn( console, 'error' );
-		render( <FormTextInput isValid isError selectOnFocus /> );
-
-		expect( spy ).not.toHaveBeenCalled();
-	} );
-
 	test( "should pass props aside from component's own to the input", () => {
 		render( <FormTextInput placeholder="test placeholder" /> );
 
