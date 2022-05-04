@@ -37,6 +37,13 @@
 					color: var( --studio-black );
 				}
 
+				&.is-searching {
+					.components-spinner {
+						margin: 5px 0;
+						width: 50px;
+					}
+				}
+
 			}
 		}
 	}
