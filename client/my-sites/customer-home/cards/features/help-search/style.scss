@@ -114,10 +114,11 @@ $min_results_height: 180px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 
-			.gridicon {
+			.gridicon,
+			svg {
 				margin: 0 5px -3px 0;
 				position: relative;
-				top: 0;
+				top: 2px;
 			}
 
 			&:hover,
