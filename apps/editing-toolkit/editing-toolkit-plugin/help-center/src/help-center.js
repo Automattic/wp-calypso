@@ -44,7 +44,12 @@ function HelpCenterComponent() {
 						<Button
 							className={ cx( 'entry-point-button', { 'is-active': show } ) }
 							onClick={ () => setShowHelpCenter( ! show ) }
-							icon={ <HelpIcon newItems={ ! hasSeenWhatsNewModal ?? false } active={ show } /> }
+							icon={
+								<HelpIcon
+									newItems={ typeof hasSeenWhatsNewModal !== 'undefined' && ! hasSeenWhatsNewModal }
+									active={ show }
+								/>
+							}
 						></Button>
 					</span>
 				</PinnedItems>
