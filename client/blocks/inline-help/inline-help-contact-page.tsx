@@ -51,7 +51,9 @@ const InlineHelpContactPage: React.FC< Props > = ( {
 			<div className="inline-help__contact-content">
 				<h3>{ __( 'Contact our WordPress.com experts' ) }</h3>
 				<div
-					className={ classnames( 'inline-help__contact-boxes', { 'is-reversed': chatAvailable } ) }
+					className={ classnames( 'inline-help__contact-boxes', {
+						'is-reversed': ! chatAvailable,
+					} ) }
 				>
 					<div
 						className={ classnames( 'inline-help__contact-box', 'chat', {
