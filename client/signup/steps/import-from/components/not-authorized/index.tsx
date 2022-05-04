@@ -1,32 +1,19 @@
 import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import page from 'page';
 import React from 'react';
-import { getStepUrl } from 'calypso/signup/utils';
 
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface Props {
-	siteSlug: string;
-	navigator?: ( path: string ) => void;
+	onBackToStart?: () => void;
+	onStartBuilding?: () => void;
 }
 
 const NotAuthorized: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const { siteSlug } = props;
-	const navigator = props.navigator || page;
-
-	/**
-	 ↓ Methods
-	 */
-	const backToStart = (): void => {
-		navigator( getStepUrl( 'importer', 'capture', '', '', { siteSlug } ) );
-	};
-	const backToIntent = (): void => {
-		navigator( getStepUrl( 'setup-site', 'intent', '', '', { siteSlug } ) );
-	};
+	const { onBackToStart, onStartBuilding } = props;
 
 	return (
 		<div className="import-layout__center">
@@ -36,10 +23,14 @@ const NotAuthorized: React.FunctionComponent< Props > = ( props ) => {
 					<SubTitle>{ __( 'Please check with your site admin.' ) }</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton onClick={ backToIntent }>{ __( 'Start building' ) }</NextButton>
-						<div>
-							<BackButton onClick={ backToStart }>{ __( 'Back to start' ) }</BackButton>
-						</div>
+						{ onStartBuilding && (
+							<NextButton onClick={ onStartBuilding }>{ __( 'Start building' ) }</NextButton>
+						) }
+						{ onBackToStart && (
+							<div>
+								<BackButton onClick={ onBackToStart }>{ __( 'Back to start' ) }</BackButton>
+							</div>
+						) }
 					</div>
 				</div>
 			</div>

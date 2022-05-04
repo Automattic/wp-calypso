@@ -131,6 +131,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 							targetSite={ siteItem as SitesItem }
 							targetSiteId={ siteId }
 							targetSiteSlug={ siteSlug }
+							stepNavigator={ stepNavigator }
 						/>
 					);
 				} else if ( WPImportOption.CONTENT_ONLY === option ) {

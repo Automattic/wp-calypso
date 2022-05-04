@@ -160,7 +160,12 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			} else if ( ! siteSlug ) {
 				return <NotFound />;
 			} else if ( ! hasPermission() ) {
-				return <NotAuthorized siteSlug={ siteSlug } navigator={ navigator } />;
+				return (
+					<NotAuthorized
+						onStartBuilding={ stepNavigator?.goToIntentPage }
+						onBackToStart={ stepNavigator?.goToImportCapturePage }
+					/>
+				);
 			}
 
 			return (

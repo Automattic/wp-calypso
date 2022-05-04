@@ -248,7 +248,12 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 								} else if ( ! siteSlug ) {
 									return <NotFound />;
 								} else if ( ! hasPermission() ) {
-									return <NotAuthorized siteSlug={ siteSlug } />;
+									return (
+										<NotAuthorized
+											onStartBuilding={ stepNavigator?.goToIntentPage }
+											onBackToStart={ stepNavigator?.goToImportCapturePage }
+										/>
+									);
 								} else if (
 									engine === 'blogger' &&
 									isEnabled( 'onboarding/import-from-blogger' )

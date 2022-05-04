@@ -12,6 +12,7 @@ import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
 import { addQueryArgs } from 'calypso/lib/route';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import { StepNavigator } from 'calypso/signup/steps/import-from/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
@@ -31,6 +32,7 @@ interface Props {
 	targetSiteId: number | null;
 	targetSiteSlug: string;
 	targetSiteEligibleForProPlan: boolean;
+	stepNavigator?: StepNavigator;
 }
 export class ImportEverything extends SectionMigrate {
 	getMigrationUrlPath = () => {
@@ -113,6 +115,7 @@ export class ImportEverything extends SectionMigrate {
 			targetSiteSlug,
 			sourceUrlAnalyzedData,
 			isTargetSitePlanCompatible,
+			stepNavigator,
 		} = this.props;
 
 		if ( sourceSite ) {
@@ -129,7 +132,12 @@ export class ImportEverything extends SectionMigrate {
 			);
 		}
 
-		return <NotAuthorized siteSlug={ targetSiteSlug } />;
+		return (
+			<NotAuthorized
+				onStartBuilding={ stepNavigator?.goToIntentPage }
+				onBackToStart={ stepNavigator?.goToImportCapturePage }
+			/>
+		);
 	}
 
 	renderMigrationProgress() {
