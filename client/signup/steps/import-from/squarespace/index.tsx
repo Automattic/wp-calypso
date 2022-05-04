@@ -121,6 +121,7 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 								siteSlug={ siteSlug }
 								job={ job as ImportJob }
 								resetImport={ resetImport }
+								onSiteViewClick={ stepNavigator?.goToSiteViewPage }
 							/>
 						);
 					} else if ( checkIsFailed() ) {

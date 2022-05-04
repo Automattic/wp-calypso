@@ -121,6 +121,7 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 								siteSlug={ siteSlug }
 								job={ job as ImportJob }
 								resetImport={ resetImport }
+								onSiteViewClick={ stepNavigator?.goToSiteViewPage }
 							/>
 						);
 					} else if ( checkIsFailed() ) {

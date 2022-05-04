@@ -10,6 +10,7 @@ export type QueryObject = {
 export type StepNavigator = {
 	goToIntentPage?: () => void;
 	goToImportCapturePage?: () => void;
+	goToSiteViewPage?: () => void;
 };
 
 export interface ImportError {

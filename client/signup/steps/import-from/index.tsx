@@ -66,6 +66,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const stepNavigator: StepNavigator = {
 		goToIntentPage,
 		goToImportCapturePage,
+		goToSiteViewPage,
 	};
 
 	/**
@@ -119,6 +120,10 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 
 	function goToImportCapturePage() {
 		page( getStepUrl( 'importer', 'capture', '', '', { siteSlug } ) );
+	}
+
+	function goToSiteViewPage() {
+		page( '/view/' + ( siteSlug || '' ) );
 	}
 
 	function getBackUrl() {

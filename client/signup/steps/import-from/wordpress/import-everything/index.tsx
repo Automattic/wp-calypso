@@ -173,7 +173,7 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	renderMigrationComplete() {
-		const { translate, targetSiteSlug } = this.props;
+		const { translate, stepNavigator } = this.props;
 
 		return (
 			<>
@@ -182,7 +182,7 @@ export class ImportEverything extends SectionMigrate {
 					<SubTitle>
 						{ translate( 'Congratulations. Your content was successfully imported.' ) }
 					</SubTitle>
-					<DoneButton siteSlug={ targetSiteSlug } />
+					<DoneButton onSiteViewClick={ stepNavigator?.goToSiteViewPage } />
 				</Hooray>
 				<GettingStartedVideo />
 			</>

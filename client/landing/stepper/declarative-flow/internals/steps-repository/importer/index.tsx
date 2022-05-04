@@ -28,7 +28,7 @@ import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { StepProps } from '../../types';
 import { BASE_STEPPER_ROUTE } from '../import/config';
-import { removeLeadingSlash } from '../import/util';
+import { redirect, removeLeadingSlash } from '../import/util';
 import { ImporterCompType } from './types';
 
 interface Props {
@@ -62,6 +62,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const stepNavigator: StepNavigator = {
 			goToIntentPage,
 			goToImportCapturePage,
+			goToSiteViewPage,
 		};
 
 		/**
@@ -85,6 +86,10 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 
 		function goToImportCapturePage() {
 			navigation.goToStep?.( 'import' );
+		}
+
+		function goToSiteViewPage() {
+			redirect( `/view/${ siteSlug || '' }` );
 		}
 
 		function onGoBack() {

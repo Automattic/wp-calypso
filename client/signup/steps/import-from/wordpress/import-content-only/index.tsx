@@ -131,6 +131,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 				resetImport={ () => {
 					dispatch( resetImport( siteItem?.ID, job?.importerId ) );
 				} }
+				onSiteViewClick={ stepNavigator?.goToSiteViewPage }
 			/>
 		);
 	}

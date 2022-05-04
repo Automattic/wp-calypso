@@ -140,6 +140,7 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 								siteSlug={ siteSlug }
 								job={ job as ImportJob }
 								resetImport={ resetImport }
+								onSiteViewClick={ stepNavigator?.goToSiteViewPage }
 							/>
 						);
 					}
