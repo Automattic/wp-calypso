@@ -15,7 +15,7 @@ import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-pa
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import NotAuthorized from 'calypso/signup/steps/import-from/components/not-authorized';
 import NotFound from 'calypso/signup/steps/import-from/components/not-found';
-import { Importer, ImportJob } from 'calypso/signup/steps/import-from/types';
+import { Importer, ImportJob, StepNavigator } from 'calypso/signup/steps/import-from/types';
 import { getImporterTypeForEngine } from 'calypso/signup/steps/import-from/util';
 import { fetchImporterState, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
@@ -27,7 +27,7 @@ import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { StepProps } from '../../types';
-import { BASE_ROUTE, BASE_STEPPER_ROUTE } from '../import/config';
+import { BASE_STEPPER_ROUTE } from '../import/config';
 import { removeLeadingSlash } from '../import/util';
 import { ImporterCompType } from './types';
 
@@ -59,6 +59,10 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 
 		const fromSite = currentSearchParams.get( 'from' ) as string;
 		const fromSiteData = useSelector( getUrlData );
+		const stepNavigator: StepNavigator = {
+			goToIntentPage,
+			goToImportCapturePage,
+		};
 
 		/**
 	 	↓ Effects
@@ -68,15 +72,19 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		useEffect( checkSiteSlugUpdate, [ site?.URL ] );
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
 		if ( ! importer ) {
-			goToHomeStep();
+			goToImportCapturePage();
 			return null;
 		}
 
 		/**
 	 	↓ Methods
 	 	*/
-		function goToHomeStep() {
-			navigation.goToStep?.( BASE_ROUTE );
+		function goToIntentPage() {
+			navigation.goToStep?.( 'intent' );
+		}
+
+		function goToImportCapturePage() {
+			navigation.goToStep?.( 'import' );
 		}
 
 		function onGoBack() {
@@ -165,6 +173,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					fromSite={ fromSite }
 					urlData={ fromSiteData }
 					navigator={ navigator }
+					stepNavigator={ stepNavigator }
 				/>
 			);
 		}

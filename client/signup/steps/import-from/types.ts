@@ -7,6 +7,11 @@ export type QueryObject = {
 	to: string;
 };
 
+export type StepNavigator = {
+	goToIntentPage?: () => void;
+	goToImportCapturePage?: () => void;
+};
+
 export interface ImportError {
 	error: boolean;
 	errorType: string;
@@ -53,4 +58,5 @@ export interface ImporterBaseProps {
 	importSite: ( params: ImportJobParams ) => void;
 	startImport: ( siteId: number, type: string ) => void;
 	resetImport: ( siteId: number, importerId: string ) => void;
+	stepNavigator?: StepNavigator;
 }

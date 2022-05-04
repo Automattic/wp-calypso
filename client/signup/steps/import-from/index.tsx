@@ -23,7 +23,7 @@ import NotAuthorized from './components/not-authorized';
 import NotFound from './components/not-found';
 import MediumImporter from './medium';
 import SquarespaceImporter from './squarespace';
-import { Importer, ImportJob } from './types';
+import { Importer, ImportJob, StepNavigator } from './types';
 import { getImporterTypeForEngine } from './util';
 import WixImporter from './wix';
 import WordpressImporter from './wordpress';
@@ -61,6 +61,11 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
 	const getImportJob = ( engine: Importer ): ImportJob | undefined => {
 		return siteImports.find( ( x ) => x.type === getImporterTypeForEngine( engine ) );
+	};
+
+	const stepNavigator: StepNavigator = {
+		goToIntentPage,
+		goToImportCapturePage,
 	};
 
 	/**
@@ -108,6 +113,14 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		}
 	}
 
+	function goToIntentPage() {
+		page( getStepUrl( 'setup-site', 'intent', '', '', { siteSlug } ) );
+	}
+
+	function goToImportCapturePage() {
+		page( getStepUrl( 'importer', 'capture', '', '', { siteSlug } ) );
+	}
+
 	function getBackUrl() {
 		if ( stepName === 'importing' ) {
 			return getStepUrl( 'importer', 'capture', '', '', { siteSlug } );
@@ -146,6 +159,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 				siteSlug={ siteSlug }
 				fromSite={ fromSite }
 				urlData={ urlData }
+				stepNavigator={ stepNavigator }
 			/>
 		);
 	}
@@ -160,6 +174,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 				siteSlug={ siteSlug }
 				fromSite={ fromSite }
 				urlData={ urlData }
+				stepNavigator={ stepNavigator }
 			/>
 		);
 	}
@@ -174,6 +189,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 				siteSlug={ siteSlug }
 				fromSite={ fromSite }
 				urlData={ urlData }
+				stepNavigator={ stepNavigator }
 			/>
 		);
 	}
@@ -186,6 +202,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 				siteId={ siteId }
 				siteSlug={ siteSlug }
 				fromSite={ fromSite }
+				stepNavigator={ stepNavigator }
 			/>
 		);
 	}
@@ -197,6 +214,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 				siteId={ siteId }
 				siteSlug={ siteSlug }
 				fromSite={ fromSite }
+				stepNavigator={ stepNavigator }
 			/>
 		);
 	}

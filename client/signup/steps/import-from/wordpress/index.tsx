@@ -9,7 +9,7 @@ import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteBySlug, getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getWpOrgImporterUrl } from '../../import/util';
-import { Importer, ImportJob } from '../types';
+import { Importer, ImportJob, StepNavigator } from '../types';
 import { ContentChooser } from './content-chooser';
 import ImportContentOnly from './import-content-only';
 import ImportEverything from './import-everything';
@@ -25,6 +25,7 @@ interface Props {
 	siteSlug: string;
 	fromSite: string;
 	navigator?: ( path: string ) => void;
+	stepNavigator?: StepNavigator;
 }
 
 export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => {
@@ -35,7 +36,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 ↓ Fields
 	 */
 	const [ option, setOption ] = useState< WPImportOption >();
-	const { job, fromSite, siteSlug, siteId } = props;
+	const { job, fromSite, siteSlug, siteId, stepNavigator } = props;
 	const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
 	const fromSiteItem = useSelector( ( state ) =>
 		getSiteBySlug( state, fromSite ? convertToFriendlyWebsiteName( fromSite ) : '' )
@@ -140,6 +141,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 							siteItem={ siteItem as SitesItem }
 							siteSlug={ siteSlug }
 							siteAnalyzedData={ fromSiteAnalyzedData }
+							stepNavigator={ stepNavigator }
 						/>
 					);
 				}
