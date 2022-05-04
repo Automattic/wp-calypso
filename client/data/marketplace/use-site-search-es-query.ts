@@ -322,7 +322,7 @@ export const useNewSiteSearchPlugins = (
 				sort: 'relevance',
 				postsPerPage: 20,
 				filter: { post_types: [ 'plugin' ] },
-				groupIds: [ 'marketplace:wporg' ],
+				groupId: 'marketplace:wporg',
 				resultFormat: 'plugin',
 			} ),
 		{

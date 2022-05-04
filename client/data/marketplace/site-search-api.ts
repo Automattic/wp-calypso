@@ -109,6 +109,9 @@ function generateApiQueryString( {
 		'active_installs',
 		'last_updated',
 		'slug',
+		// test fields
+		'post_type',
+		'title',
 	];
 
 	let params: {
