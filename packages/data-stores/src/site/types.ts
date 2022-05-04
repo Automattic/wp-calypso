@@ -193,6 +193,8 @@ export interface SiteDetails {
 	};
 }
 
+export type SiteOption = keyof SiteDetails[ 'options' ];
+
 export interface SiteError {
 	error: string;
 	message: string;

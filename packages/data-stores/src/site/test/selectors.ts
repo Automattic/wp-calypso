@@ -9,7 +9,13 @@
 import { dispatch, select, subscribe } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
 import { AtomicSoftwareStatus, AtomicSoftwareStatusError, register } from '..';
-import { getAtomicSoftwareStatus, getAtomicSoftwareError } from '../selectors';
+import {
+	getAtomicSoftwareStatus,
+	getAtomicSoftwareError,
+	getSiteOptions,
+	getSiteOption,
+} from '../selectors';
+import { SiteDetails } from '../types';
 import type { State } from '../reducer';
 
 jest.mock( 'wpcom-proxy-request', () => ( {
@@ -210,5 +216,68 @@ describe( 'getAtomicSoftwareStatus', () => {
 
 		// Successfuly returns the status
 		expect( getAtomicSoftwareError( state, siteId, softwareSet ) ).toEqual( error );
+	} );
+} );
+
+describe( 'getSiteOptions', () => {
+	const siteId = 1234;
+	const adminUrl = 'https://test.wordpress.com/wp-admin';
+	const options = {
+		admin_url: adminUrl,
+	};
+	const site: SiteDetails = {
+		ID: siteId,
+		name: 'test',
+		description: 'test site',
+		URL: 'https://test.wordpress.com',
+		launch_status: '',
+		jetpack: false,
+		is_fse_eligible: false,
+		is_fse_active: false,
+		options,
+		capabilities: {
+			edit_pages: true,
+			edit_posts: true,
+			edit_others_posts: true,
+			edit_others_pages: true,
+			delete_posts: true,
+			delete_others_posts: true,
+			edit_theme_options: true,
+			edit_users: true,
+			list_users: true,
+			manage_categories: true,
+			manage_options: true,
+			moderate_comments: true,
+			activate_wordads: true,
+			promote_users: true,
+			publish_posts: true,
+			upload_files: true,
+			delete_users: true,
+			remove_users: true,
+			own_site: true,
+			view_hosting: true,
+			view_stats: true,
+			activate_plugins: true,
+		},
+	};
+
+	it( 'Tries to retrive the site options', async () => {
+		const state: State = {
+			sites: {
+				[ siteId ]: site,
+			},
+		};
+
+		expect( getSiteOptions( state, siteId ) ).toEqual( options );
+	} );
+
+	it( 'Tries to retrive a specific site option', async () => {
+		const state: State = {
+			sites: {
+				[ siteId ]: site,
+			},
+		};
+
+		expect( getSiteOption( state, siteId, 'admin_url' ) ).toEqual( adminUrl );
 	} );
 } );
