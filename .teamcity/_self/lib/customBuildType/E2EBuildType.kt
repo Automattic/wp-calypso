@@ -119,7 +119,10 @@ open class E2EBuildType(
 
 					# For Calypso E2E build configurations, the URL environment variable
 					# is computed and exported by a script that must be executed at runtime.
-					# This script ultimately sets the CALYPSO_LIVE_URL environment variable for Calypso E2E only.
+					# Unset variables throw an error, so we initialize CALYPSO_LIVE_URL as empty first.
+					export CALYPSO_LIVE_URL=''
+
+					# This script, if provided, will ultimately sets the CALYPSO_LIVE_URL environment variable.
 					$getCalypsoLiveURL
 
 					# We only want to override the Calypso URL if we have a live one to use!
