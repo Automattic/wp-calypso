@@ -465,7 +465,6 @@ function createItemToAddToCart( {
 	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
-	privacy,
 	source,
 }: {
 	productSlug: string;
@@ -473,7 +472,6 @@ function createItemToAddToCart( {
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
-	privacy?: boolean;
 	source?: string;
 } ): RequestCartProduct {
 	// Allow setting meta (theme name or domain name) from products in the URL by
@@ -482,16 +480,7 @@ function createItemToAddToCart( {
 	// Some meta values contain slashes, so we decode them
 	const cartMeta = meta ? decodeProductFromUrl( meta ) : '';
 
-	debug(
-		'creating product with',
-		productSlug,
-		'from alias',
-		productAlias,
-		'with meta',
-		cartMeta,
-		'and privacy',
-		privacy
-	);
+	debug( 'creating product with', productSlug, 'from alias', productAlias, 'with meta', cartMeta );
 
 	return createRequestCartProduct( {
 		product_slug: productSlug,
@@ -499,7 +488,6 @@ function createItemToAddToCart( {
 			isJetpackCheckout,
 			jetpackSiteSlug,
 			jetpackPurchaseToken,
-			privacy,
 			context: 'calypstore',
 			source: source ?? undefined,
 		},
