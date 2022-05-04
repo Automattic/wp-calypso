@@ -123,7 +123,7 @@ const PluginsBrowser = ( {
 		isLoading: isFetchingPluginsBySearchTerm,
 		fetchNextPage,
 	} = searchHook(
-		{ search },
+		{ searchTerm: search },
 		{
 			enabled: !! search,
 		}
