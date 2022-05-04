@@ -2,8 +2,6 @@ ARG use_cache=false
 ARG node_version=16.13.2
 ARG base_image=registry.a8c.com/calypso/base:latest
 
-# Used to load extra git context from TeamCity so that git commands work.
-ARG extra_git_dir
 # It's difficult to infer this in Docker, because we'd need to set an environment
 # variable to do so. And if we can't do that before running the FROM steps. But
 # we need the variable to be defined before doing FROM. It's easier to pass it.
@@ -31,7 +29,7 @@ FROM builder-cache-${use_cache} as builder-git-context-false
 
 ###################
 FROM builder-cache-${use_cache} as builder-git-context-true
-
+ARG extra_git_dir
 COPY ${extra_git_dir} ${extra_git_dir}
 
 ###################
