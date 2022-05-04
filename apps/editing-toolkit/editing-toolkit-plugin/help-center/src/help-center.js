@@ -1,3 +1,4 @@
+import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
@@ -6,29 +7,23 @@ import { PinnedItems } from '@wordpress/interface';
 import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
 import { useEffect, useState } from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import Contents from './contents';
 import './help-center.scss';
 
-function HelpCenterComponent() {
+function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
-	const { show, hasSeenWhatsNewModal, hasFetchedHasSeenWhatsNewModal } = useSelect( ( select ) => {
-		const store = select( 'automattic/help-center' );
-		return {
-			show: store.isHelpCenterShown(),
-			hasSeenWhatsNewModal: store.hasSeenWhatsNewModal(),
-			hasFetchedHasSeenWhatsNewModal: store.hasFetchedHasSeenWhatsNewModal(),
-		};
-	} );
-	const { setShowHelpCenter, fetchHasSeenWhatsNewModal } = useDispatch( 'automattic/help-center' );
+	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
+	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
 	const [ selectedArticle, setSelectedArticle ] = useState( null );
 	const [ footerContent, setFooterContent ] = useState( null );
-
-	// On mount check if the Whats New Modal Seen status exists in state (from local storage), otherwise fetch it from the API.
+	const [ showHelpIconDot, setShowHelpIconDot ] = useState( false );
+	const { data, isLoading } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
 	useEffect( () => {
-		if ( ! hasFetchedHasSeenWhatsNewModal ) {
-			fetchHasSeenWhatsNewModal();
+		if ( ! isLoading && data ) {
+			setShowHelpIconDot( ! data.has_seen_whats_new_modal );
 		}
-	}, [ hasFetchedHasSeenWhatsNewModal, fetchHasSeenWhatsNewModal ] );
+	}, [ data, isLoading ] );
 
 	useEffect( () => {
 		if ( ! show ) {
@@ -44,12 +39,7 @@ function HelpCenterComponent() {
 						<Button
 							className={ cx( 'entry-point-button', { 'is-active': show } ) }
 							onClick={ () => setShowHelpCenter( ! show ) }
-							icon={
-								<HelpIcon
-									newItems={ typeof hasSeenWhatsNewModal !== 'undefined' && ! hasSeenWhatsNewModal }
-									active={ show }
-								/>
-							}
+							icon={ <HelpIcon newItems={ showHelpIconDot } active={ show } /> }
 						></Button>
 					</span>
 				</PinnedItems>
@@ -73,5 +63,12 @@ function HelpCenterComponent() {
 }
 
 registerPlugin( 'etk-help-center', {
-	render: () => <HelpCenterComponent />,
+	render: () => {
+		const queryClient = new QueryClient();
+		return (
+			<QueryClientProvider client={ queryClient }>
+				<HelpCenterContent />,
+			</QueryClientProvider>
+		);
+	},
 } );

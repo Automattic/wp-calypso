@@ -3,7 +3,6 @@
  */
 import '@automattic/calypso-polyfills';
 import { useState } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
@@ -57,26 +56,22 @@ rawCurrentUserFetch()
 		store.dispatch( requestHappychatEligibility() );
 	} );
 
-const queryClient = new QueryClient();
-
 export default function Content( { selectedArticle, setSelectedArticle, setFooterContent } ) {
 	const [ formOpen ] = useState( false );
 	return (
-		<QueryClientProvider client={ queryClient }>
-			<Provider store={ store }>
-				<>
-					<QuerySites siteId={ window._currentSiteId } />
-					{ formOpen ? (
-						<ContactForm mode="CHAT" />
-					) : (
-						<InlineHelpCenterContent
-							selectedArticle={ selectedArticle }
-							setSelectedArticle={ setSelectedArticle }
-							setHelpCenterFooter={ setFooterContent }
-						/>
-					) }
-				</>
-			</Provider>
-		</QueryClientProvider>
+		<Provider store={ store }>
+			<>
+				<QuerySites siteId={ window._currentSiteId } />
+				{ formOpen ? (
+					<ContactForm mode="CHAT" />
+				) : (
+					<InlineHelpCenterContent
+						selectedArticle={ selectedArticle }
+						setSelectedArticle={ setSelectedArticle }
+						setHelpCenterFooter={ setFooterContent }
+					/>
+				) }
+			</>
+		</Provider>
 	);
 }

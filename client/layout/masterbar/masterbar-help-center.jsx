@@ -1,8 +1,8 @@
+import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import { HelpIcon } from '@automattic/help-center';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHasSeenWhatsNewModalQuery } from 'calypso/data/block-editor/use-has-seen-whats-new-modal-query';
 import { setHelpCenterVisible } from 'calypso/state/ui/actions';
 import isHelpCenterVisible from 'calypso/state/ui/selectors/help-center-is-visible';
 import Item from './item';

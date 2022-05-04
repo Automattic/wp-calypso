@@ -60,7 +60,7 @@ class WP_REST_WPCOM_Block_Editor_Whats_New_Dot_Controller extends \WP_REST_Contr
 	 * @return boolean
 	 */
 	public function permission_callback() {
-		return current_user_can( 'read' );
+		return is_user_logged_in();
 	}
 
 	/**
@@ -89,8 +89,9 @@ class WP_REST_WPCOM_Block_Editor_Whats_New_Dot_Controller extends \WP_REST_Contr
 	 * @return WP_REST_Response
 	 */
 	public function set_has_seen_whats_new_modal( $request ) {
-		$params = $request->get_json_params();
-		update_user_meta( get_current_user_id(), 'has_seen_whats_new_modal', $params['has_seen_whats_new_modal'] );
-		return rest_ensure_response( array( 'has_seen_whats_new_modal' => $params['has_seen_whats_new_modal'] ) );
+		$params   = $request->get_json_params();
+		$has_seen = (bool) $params['has_seen_whats_new_modal'];
+		update_user_meta( get_current_user_id(), 'has_seen_whats_new_modal', $has_seen );
+		return rest_ensure_response( array( 'has_seen_whats_new_modal' => $has_seen ) );
 	}
 }

@@ -1,15 +1,16 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
+import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import WhatsNewGuide from '@automattic/whats-new';
 import { Button, SVG, Circle } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { Icon, captureVideo, desktop, formatListNumbered, video } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const circle = (
 	<SVG viewBox="0 0 24 24">
@@ -19,23 +20,26 @@ const circle = (
 
 const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
+	const [ showWhatsNewDot, setShowWhatsNewDot ] = useState( false );
 
-	const hasSeenWhatsNewModal = useSelect( ( select ) =>
-		select( 'automattic/help-center' ).hasSeenWhatsNewModal()
-	);
-
-	const updateHasSeenWhatsNewModal =
-		useDispatch( 'automattic/help-center' ).updateHasSeenWhatsNewModal;
-
-	const isBusinessOrEcomPlanUser = useSelector( ( state ) => {
+	const { isBusinessOrEcomPlanUser, siteId } = useSelector( ( state ) => {
 		const purchases = getUserPurchases( state );
 		const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
 
-		return !! (
-			purchaseSlugs &&
-			( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
-		);
+		return {
+			isBusinessOrEcomPlanUser: !! (
+				purchaseSlugs &&
+				( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
+			),
+			siteId: getSelectedSiteId( state ),
+		};
 	} );
+	const { data, isLoading, setHasSeenWhatsNewModal } = useHasSeenWhatsNewModalQuery( siteId );
+	useEffect( () => {
+		if ( ! isLoading && data ) {
+			setShowWhatsNewDot( ! data.has_seen_whats_new_modal );
+		}
+	}, [ data, isLoading ] );
 
 	const [ showGuide, setShowGuide ] = useState( false );
 
@@ -46,8 +50,8 @@ const HelpCenterMoreResources = () => {
 	};
 
 	const handleWhatsNewClick = () => {
-		if ( ! hasSeenWhatsNewModal ) {
-			updateHasSeenWhatsNewModal( true );
+		if ( ! data?.has_seen_whats_new_modal ) {
+			setHasSeenWhatsNewModal( true );
 		}
 		setShowGuide( true );
 	};
@@ -118,7 +122,7 @@ const HelpCenterMoreResources = () => {
 						>
 							<MaterialIcon icon="new_releases" size={ 24 } />
 							<span>{ __( "What's new" ) }</span>
-							{ ! hasSeenWhatsNewModal && <Icon icon={ circle } size={ 16 } fill="#0675C4" /> }
+							{ showWhatsNewDot && <Icon icon={ circle } size={ 16 } fill="#0675C4" /> }
 						</Button>
 					</div>
 				</li>

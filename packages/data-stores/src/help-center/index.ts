@@ -9,13 +9,10 @@ import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 
 export function register(): typeof STORE_KEY {
 	registerStore< State >( STORE_KEY, {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore Thunks in actions
 		actions,
 		reducer: reducer as any, // eslint-disable-line @typescript-eslint/no-explicit-any
 		controls,
 		selectors,
-		persist: true,
 	} );
 
 	return STORE_KEY;
