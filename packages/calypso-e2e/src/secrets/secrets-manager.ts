@@ -35,13 +35,6 @@ export interface Secrets {
 	storeSandboxCookieValue: string;
 	testCouponCode: string;
 	wpccAuthPath: string;
-	restApiApplication: {
-		user: string;
-		client_id: string;
-		redirect_uri: string;
-		client_secret: string;
-		access_code: string;
-	};
 	martechTosUploadCredentials: {
 		bearer_token: string;
 	};
@@ -171,13 +164,6 @@ export class SecretsManager {
 			storeSandboxCookieValue: 'FAKE_VALUE',
 			testCouponCode: 'FAKE_VALUE',
 			wpccAuthPath: 'FAKE_VALUE',
-			restApiApplication: {
-				user: 'FAKE_VALUE',
-				client_id: 'FAKE_VALUE',
-				redirect_uri: 'FAKE_VALUE',
-				client_secret: 'FAKE_VALUE',
-				access_code: 'FAKE_VALUE',
-			},
 			martechTosUploadCredentials: {
 				bearer_token: 'FAKE_VALUE',
 			},
