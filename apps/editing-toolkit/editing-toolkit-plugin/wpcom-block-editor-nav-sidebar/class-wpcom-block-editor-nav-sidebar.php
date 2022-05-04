@@ -47,7 +47,7 @@ class WPCOM_Block_Editor_Nav_Sidebar {
 
 		wp_enqueue_script(
 			'wpcom-block-editor-nav-sidebar-script',
-			plugins_url( 'dist/wpcom-block-editor-nav-sidebar.js', __FILE__ ),
+			plugins_url( 'dist/wpcom-block-editor-nav-sidebar.min.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			$version,
 			true

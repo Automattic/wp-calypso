@@ -49,7 +49,7 @@ class Whats_New {
 
 		wp_enqueue_script(
 			'whats-new-script',
-			plugins_url( 'dist/whats-new.js', __FILE__ ),
+			plugins_url( 'dist/whats-new.min.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			$version,
 			true

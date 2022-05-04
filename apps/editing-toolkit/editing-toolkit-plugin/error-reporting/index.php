@@ -101,12 +101,12 @@ function should_activate_sentry( $user_id, $blog_id ) {
 function enqueue_script() {
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/error-reporting.asset.php';
 	$script_dependencies = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
-	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/error-reporting.js' );
+	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/error-reporting.min.js' );
 	$script_id           = 'a8c-fse-error-reporting-script';
 
 	wp_enqueue_script(
 		$script_id,
-		plugins_url( 'dist/error-reporting.js', __FILE__ ),
+		plugins_url( 'dist/error-reporting.min.js', __FILE__ ),
 		$script_dependencies,
 		$script_version,
 		true

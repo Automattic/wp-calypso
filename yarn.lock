@@ -1571,7 +1571,7 @@ __metadata:
     "@wordpress/data": ^6.7.0
     "@wordpress/data-controls": ^2.7.0
     "@wordpress/date": ^4.7.0
-    "@wordpress/dependency-extraction-webpack-plugin": ^3.2.1
+    "@wordpress/dependency-extraction-webpack-plugin": ^3.4.1
     "@wordpress/dom-ready": ^3.7.0
     "@wordpress/edit-post": ^6.4.0
     "@wordpress/editor": ^12.6.0
