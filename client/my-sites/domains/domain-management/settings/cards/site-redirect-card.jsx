@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -134,7 +135,11 @@ class SiteRedirectCard extends Component {
 							{
 								components: {
 									learnMoreLink: (
-										<a href={ SITE_REDIRECT } target="_blank" rel="noopener noreferrer" />
+										<a
+											href={ localizeUrl( SITE_REDIRECT ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
 									),
 								},
 							}

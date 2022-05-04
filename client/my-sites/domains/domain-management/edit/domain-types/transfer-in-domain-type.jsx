@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { Component } from 'react';
@@ -99,7 +100,7 @@ class TransferInDomainType extends Component {
 										strong: <strong />,
 										a: (
 											<a
-												href={ INCOMING_DOMAIN_TRANSFER_STATUSES }
+												href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES ) }
 												target="_blank"
 												rel="noopener noreferrer"
 											/>

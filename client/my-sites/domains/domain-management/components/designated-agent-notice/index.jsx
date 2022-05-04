@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { DESIGNATED_AGENT, DOMAIN_REGISTRATION_AGREEMENTS } from 'calypso/lib/url/support';
 
@@ -21,12 +22,21 @@ const DesignatedAgentNotice = ( props ) => (
 						strong: <strong />,
 						draLink: (
 							<a
-								href={ props.domainRegistrationAgreementUrl || DOMAIN_REGISTRATION_AGREEMENTS }
+								href={
+									props.domainRegistrationAgreementUrl ||
+									localizeUrl( DOMAIN_REGISTRATION_AGREEMENTS )
+								}
 								target="_blank"
 								rel="noopener noreferrer"
 							/>
 						),
-						supportLink: <a href={ DESIGNATED_AGENT } target="_blank" rel="noopener noreferrer" />,
+						supportLink: (
+							<a
+								href={ localizeUrl( DESIGNATED_AGENT ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
 					},
 				}
 			) }

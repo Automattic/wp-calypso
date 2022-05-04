@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { isEmpty, merge, reduce } from 'lodash';
 import { PureComponent } from 'react';
@@ -60,7 +61,9 @@ class DomainRegistrationHsts extends PureComponent {
 								tld: tlds,
 							},
 							components: {
-								a: <a href={ HTTPS_SSL } target="_blank" rel="noopener noreferrer" />,
+								a: (
+									<a href={ localizeUrl( HTTPS_SSL ) } target="_blank" rel="noopener noreferrer" />
+								),
 								strong: <strong />,
 							},
 						}
