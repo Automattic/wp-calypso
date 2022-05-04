@@ -1,18 +1,19 @@
 /*** THIS MUST BE THE FIRST THING EVALUATED IN THIS SCRIPT *****/
 import './public-path';
-
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import WhatsNewGuide from '@automattic/whats-new';
 import { Fill, MenuItem } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { useState } from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 function WhatsNewMenuItem() {
 	const [ showGuide, setShowGuide ] = useState( false );
-	const { setHasSeenWhatsNewModal } = useDispatch( 'automattic/help-center' );
+	const { setHasSeenWhatsNewModal } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
+
 	const openWhatsNew = () => {
 		setHasSeenWhatsNewModal( true );
 		setShowGuide( true );
@@ -39,7 +40,12 @@ function WhatsNewMenuItem() {
 export default WhatsNewMenuItem;
 
 registerPlugin( 'whats-new', {
-	render() {
-		return <WhatsNewMenuItem />;
+	render: () => {
+		const queryClient = new QueryClient();
+		return (
+			<QueryClientProvider client={ queryClient }>
+				<WhatsNewMenuItem />,
+			</QueryClientProvider>
+		);
 	},
 } );
