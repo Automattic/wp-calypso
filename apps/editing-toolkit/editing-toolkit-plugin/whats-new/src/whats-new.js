@@ -16,7 +16,7 @@ function WhatsNewMenuItem() {
 	const { setHasSeenWhatsNewModal } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
 
 	const openWhatsNew = () => {
-		setHasSeenWhatsNewModal( false );
+		setHasSeenWhatsNewModal( true );
 		setShowGuide( true );
 	};
 	const closeWhatsNew = () => setShowGuide( false );
