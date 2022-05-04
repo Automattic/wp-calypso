@@ -54,13 +54,12 @@ class BlogSettingsHeader extends PureComponent {
 		} );
 
 		const allSettings = [
-			...Object.values( filteredSettings )
-				.map( ( set ) => Object.values( set ) )
-				.flat(),
-			...Object.values( devicesSettings )
-				.map( ( device ) => Object.values( device ) )
-				.flat(),
-		];
+			...Object.values( filteredSettings ),
+			...Object.values( devicesSettings ),
+		]
+			.map( ( set ) => Object.values( set ) )
+			.flat();
+
 		const { onCount, offCount } = allSettings.reduce(
 			( acc, isOn ) => {
 				const key = isOn ? 'onCount' : 'offCount';
