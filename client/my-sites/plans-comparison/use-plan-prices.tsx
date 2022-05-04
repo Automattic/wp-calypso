@@ -11,25 +11,29 @@ function toMonthlyPrice( yearlyPrice: number ) {
 	return yearlyPrice ? yearlyPrice / 12 : 0;
 }
 
-export function usePlanPrices( plan: WPComPlan ): PlanPrices {
-	const productId = plan.getProductId();
-	const [ price, discountPrice ] = useSelector( ( state ) => {
-		// @todo clk
-		// if ( plan.type === TYPE_FREE || plan.type === TYPE_FLEXIBLE ) {
-		// 	return [ 0 ];
-		// }
+export function usePlanPrices( plans: WPComPlan[] ): PlanPrices[] {
+	return useSelector( ( state ) => {
+		return plans.map( ( plan ) => {
+			const productId = plan.getProductId();
 
-		return [ getPlanRawPrice( state, productId ), getDiscountedRawPrice( state, productId ) ].map(
-			toMonthlyPrice
-		);
+			// @todo clk
+			// if ( plan.type === TYPE_FREE || plan.type === TYPE_FLEXIBLE ) {
+			// 	return [ 0 ];
+			// }
+
+			const [ price, discountPrice ] = [
+				getPlanRawPrice( state, productId ),
+				getDiscountedRawPrice( state, productId ),
+			].map( toMonthlyPrice );
+
+			if ( ! discountPrice ) {
+				return { price };
+			}
+
+			return {
+				price: discountPrice,
+				originalPrice: price,
+			};
+		} );
 	} );
-
-	if ( ! discountPrice ) {
-		return { price };
-	}
-
-	return {
-		price: discountPrice,
-		originalPrice: price,
-	};
 }
