@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { countBy, flatten } from 'lodash';
+import { countBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import SiteInfo from 'calypso/blocks/site';
@@ -53,12 +53,17 @@ class BlogSettingsHeader extends PureComponent {
 			const { device_id, ...restDevice } = device;
 			return restDevice;
 		} );
+
 		const { true: onCount, false: offCount } = countBy(
 			// Here we're flattening the values of both sets of settings
 			// as both sets have two 'streams' of settings: 'email' and 'timeline'
 			[
-				...flatten( Object.values( filteredSettings ).map( ( set ) => Object.values( set ) ) ),
-				...flatten( Object.values( devicesSettings ).map( ( device ) => Object.values( device ) ) ),
+				...Object.values( filteredSettings )
+					.map( ( set ) => Object.values( set ) )
+					.flat(),
+				...Object.values( devicesSettings )
+					.map( ( device ) => Object.values( device ) )
+					.flat(),
 			]
 		);
 
