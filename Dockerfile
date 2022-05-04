@@ -66,7 +66,7 @@ RUN bash /tmp/env-config.sh
 # /apps/notifications is not removed because it is required by Calypso
 COPY . /calypso/
 RUN yarn install --immutable --check-cache
-
+RUN git log
 # Build the final layer
 #
 # This contains built environments of Calypso. It will
