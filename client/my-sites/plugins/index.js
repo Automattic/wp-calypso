@@ -10,12 +10,12 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	browsePlugins,
 	browsePluginsOrPlugin,
-	eligibility,
+	renderPluginWarnings,
+	renderProvisionPlugins,
 	jetpackCanUpdate,
 	plugins,
 	resetHistory,
 	scrollTopIfNoHash,
-	setupPlugins,
 	upload,
 } from './controller';
 
@@ -24,7 +24,7 @@ export default function () {
 		'/plugins/setup',
 		scrollTopIfNoHash,
 		siteSelection,
-		setupPlugins,
+		renderProvisionPlugins,
 		makeLayout,
 		clientRender
 	);
@@ -33,7 +33,7 @@ export default function () {
 		'/plugins/setup/:site',
 		scrollTopIfNoHash,
 		siteSelection,
-		setupPlugins,
+		renderProvisionPlugins,
 		makeLayout,
 		clientRender
 	);
@@ -122,7 +122,7 @@ export default function () {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
-		eligibility,
+		renderPluginWarnings,
 		makeLayout,
 		clientRender
 	);
