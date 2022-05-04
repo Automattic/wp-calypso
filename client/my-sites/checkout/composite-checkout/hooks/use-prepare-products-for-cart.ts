@@ -12,7 +12,6 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useReducer } from 'react';
 import { useSelector } from 'react-redux';
-import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
@@ -313,9 +312,7 @@ function useAddProductFromSlug( {
 	jetpackPurchaseToken?: string;
 	source?: string;
 } ) {
-	const products = useSelector( getProductsList );
 	const translate = useTranslate();
-	const isFetchingProducts = useSelector( isProductsListFetching );
 
 	// If `productAliasFromUrl` has a comma ',' in it, we will assume it's because it's
 	// referencing more than one product. Because of this, the rest of this function will
@@ -330,36 +327,25 @@ function useAddProductFromSlug( {
 				// its product alias which we may need to get additional information like
 				// the domain name or theme (eg: 'theme:ovation').
 				.map( ( productAlias ) => {
-					const validProduct = products[ getProductSlugFromAlias( productAlias ) ];
-					return validProduct
-						? { ...validProduct, internal_product_alias: productAlias }
-						: undefined;
-				} )
-				.filter( isValueTruthy ) ?? [],
-		[ isJetpackNotAtomic, productAliasFromUrl, products ]
+					const productSlug = getProductSlugFromAlias( productAlias );
+					return { productSlug, productAlias };
+				} ) ?? [],
+		[ isJetpackNotAtomic, productAliasFromUrl ]
 	);
 
 	useEffect( () => {
 		if ( addHandler !== 'addProductFromSlug' ) {
 			return;
 		}
-		// There is a selector for isFetchingProducts, but it seems to be sometimes
-		// inaccurate (possibly before the fetch has started) so instead we just
-		// wait for there to be products.
-		if ( isFetchingProducts || Object.keys( products || {} ).length < 1 ) {
-			debug( 'waiting on products fetch' );
-			return;
-		}
 
 		const cartProducts = validProducts.map( ( product ) =>
 			// Transform the product data into a RequestCartProduct
 			createItemToAddToCart( {
-				productSlug: product.product_slug,
-				productAlias: product.internal_product_alias,
+				productSlug: product.productSlug,
+				productAlias: product.productAlias,
 				isJetpackCheckout,
 				jetpackSiteSlug,
 				jetpackPurchaseToken,
-				privacy: product.is_privacy_protection_product_purchase_allowed,
 				source,
 			} )
 		);
@@ -389,11 +375,9 @@ function useAddProductFromSlug( {
 		);
 		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
 	}, [
-		isFetchingProducts,
 		addHandler,
 		translate,
 		isPrivate,
-		products,
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		validProducts,
