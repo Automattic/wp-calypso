@@ -15,7 +15,6 @@ import {
 	getSelectedDomain,
 } from 'calypso/lib/domains';
 import { getTitanProductName } from 'calypso/lib/titan';
-import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import ProfessionalEmailPrice from 'calypso/my-sites/email/email-providers-comparison/price/professional-email';
@@ -133,7 +132,7 @@ const ProfessionalEmailCard = ( {
 			comparisonContext,
 			validatedMailboxUuids,
 			mailboxesAreValid,
-			TITAN_PROVIDER_NAME,
+			EmailProvider.Titan.toLowerCase(),
 			source ?? '',
 			userCanAddEmail,
 			userCannotAddEmailReason

@@ -249,16 +249,20 @@ const MultipleDomain = ( {
 const NewMailbox = ( props: NewMailboxProps ): JSX.Element => {
 	const translate = useTranslate();
 
-	const [ showAlternateEmail, setShowAlternateEmail ] = useState( false );
+	const { domains, mailbox, onMailboxValueChange } = props;
+
+	const [ alternativeEmailIsVisible, setAlternativeEmailIsVisible ] = useState(
+		getFormFieldIsVisible( mailbox, FIELD_ALTERNATIVE_EMAIL )
+	);
 
 	const userEmail = useSelector( getCurrentUserEmail );
 
 	const dirtyFields = useFieldsTouched();
 
-	const { domains, mailbox, onMailboxValueChange } = props;
+	mailbox.setFieldIsVisible( FIELD_ALTERNATIVE_EMAIL, alternativeEmailIsVisible );
 
-	const showAlternateEmailField = () => {
-		setShowAlternateEmail( true );
+	const displayAlternativeEmailField = () => {
+		setAlternativeEmailIsVisible( true );
 		onMailboxValueChange( FIELD_ALTERNATIVE_EMAIL, userEmail );
 		dirtyFields.setFieldTouched.alternativeEmail( true );
 	};
@@ -289,7 +293,7 @@ const NewMailbox = ( props: NewMailboxProps ): JSX.Element => {
 					<TextField { ...props } fieldName={ FIELD_PASSWORD } isPasswordField />
 				</div>
 				<FormFieldset>
-					{ getFormFieldIsVisible( mailbox, FIELD_ALTERNATIVE_EMAIL ) && ! showAlternateEmail && (
+					{ ! alternativeEmailIsVisible && (
 						<FormSettingExplanation>
 							{ translate(
 								'Your password reset email is {{strong}}%(userEmail)s{{/strong}}. {{a}}Change it{{/a}}.',
@@ -300,7 +304,7 @@ const NewMailbox = ( props: NewMailboxProps ): JSX.Element => {
 									components: {
 										strong: <strong />,
 										// eslint-disable-next-line jsx-a11y/anchor-is-valid
-										a: <a href="#" onClick={ showAlternateEmailField } />,
+										a: <a href="#" onClick={ displayAlternativeEmailField } />,
 									},
 								}
 							) }
