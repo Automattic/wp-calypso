@@ -97,6 +97,7 @@ COPY --from=builder --chown=nobody:nobody /calypso/build /calypso/build
 COPY --from=builder --chown=nobody:nobody /calypso/public /calypso/public
 COPY --from=builder --chown=nobody:nobody /calypso/config /calypso/config
 COPY --from=builder --chown=nobody:nobody /calypso/package.json /calypso/package.json
+RUN ls /calypso
 
 USER nobody
 ENTRYPOINT ["/sbin/tini", "--"]
