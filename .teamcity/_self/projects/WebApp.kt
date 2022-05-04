@@ -120,12 +120,8 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:commit-${Settings.WpCalypso.paramRefs.buildVcsNumber}
 					registry.a8c.com/calypso/app:latest
 				""".trimIndent()
-				// /etc/buildAgent is added based on https://github.com/akkadotnet/akka.net/issues/2834#issuecomment-494795604.
-				// The way TeamCity caches VCS info means this directory is needed
-				// for git commands to work, so we mount it as a volume.
 				commandArgs = """
 					--pull
-					--volume /etc/buildAgent/system/git:/etc/buildAgent/system/git
 					--label com.a8c.image-builder=teamcity
 					--label com.a8c.target=calypso-live
 					--label com.a8c.build-id=%teamcity.build.id%

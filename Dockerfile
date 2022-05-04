@@ -65,8 +65,13 @@ RUN bash /tmp/env-config.sh
 # dependencies which end up bloating the image.
 # /apps/notifications is not removed because it is required by Calypso
 COPY . /calypso/
-RUN ls .git
+
+# /etc/buildAgent is added based on https://github.com/akkadotnet/akka.net/issues/2834#issuecomment-494795604.
+# The way TeamCity caches VCS info means this directory is needed
+# for git commands to work, so we mount it as a volume.
+COPY /etc/buildAgent/system/git /etc/buildAgent/system/git
 RUN git log
+
 RUN yarn install --immutable --check-cache
 
 # Build the final layer
