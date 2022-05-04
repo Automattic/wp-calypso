@@ -254,15 +254,10 @@ function useAddRenewalItems( {
 } ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const isFetchingProducts = useSelector( isProductsListFetching );
-	const products = useSelector( getProductsList );
 	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( addHandler !== 'addRenewalItems' ) {
-			return;
-		}
-		if ( isFetchingProducts || Object.keys( products || {} ).length < 1 ) {
-			debug( 'waiting on products fetch for renewal' );
 			return;
 		}
 		const productSlugs = productAlias?.split( ',' ) ?? [];
@@ -299,7 +294,6 @@ function useAddRenewalItems( {
 		addHandler,
 		translate,
 		isFetchingProducts,
-		products,
 		originalPurchaseId,
 		productAlias,
 		dispatch,
