@@ -92,20 +92,20 @@ const usePlugins = ( {
 		}
 	);
 
-	const { data: featuredPluginsRaw = [], isLoading: isFetchingDotComFeatured } =
-		useWPCOMFeaturedPlugins( {
-			enabled: category === 'featured' && wpcomEnabled,
-		} );
+	const {
+		data: featuredPluginsRaw = [],
+		isLoading: isFetchingDotComFeatured,
+	} = useWPCOMFeaturedPlugins( {
+		enabled: category === 'featured' && wpcomEnabled,
+	} );
 
-	const featuredPlugins = useMemo(
-		() => featuredPluginsRaw.map( updateWpComRating ),
-		[ featuredPluginsRaw ]
-	);
+	const featuredPlugins = useMemo( () => featuredPluginsRaw.map( updateWpComRating ), [
+		featuredPluginsRaw,
+	] );
 
-	const dotComPlugins = useMemo(
-		() => wpcomPluginsRaw.map( updateWpComRating ),
-		[ wpcomPluginsRaw ]
-	);
+	const dotComPlugins = useMemo( () => wpcomPluginsRaw.map( updateWpComRating ), [
+		wpcomPluginsRaw,
+	] );
 
 	switch ( category ) {
 		case 'paid':
