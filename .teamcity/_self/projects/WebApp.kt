@@ -59,12 +59,11 @@ object BuildDockerImage : BuildType({
 	}
 
 	steps {
-
 		script {
 			name = "Webhook Start"
 			scriptContent = """
 				#!/usr/bin/env bash
-
+				ls .git
 				if [[ "%teamcity.build.branch.is_default%" != "true" ]]; then
 					exit 0
 				fi
