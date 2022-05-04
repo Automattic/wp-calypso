@@ -28,7 +28,8 @@
 		}
 
 		&.is-visible {
-			position: static;
+			position: relative;
+			z-index: z-index( 'root', '.comments__form .button:not(.components-button)' );
 			float: right;
 			opacity: 1;
 		}
