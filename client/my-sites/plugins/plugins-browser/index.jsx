@@ -138,6 +138,17 @@ const PluginsBrowser = ( {
 			category: 'popular',
 		} );
 
+	const {
+		plugins: pluginsBySearchTerm = [],
+		isFetching: isFetchingPluginsBySearchTerm,
+		pluginsPagination: pluginsPagination,
+		fetchNextPage,
+	} = usePlugins( {
+		search,
+		wpcomEnabled: !! search,
+		wporgEnabled: !! search,
+	} );
+
 	const pluginsByCategoryPopular = filterPopularPlugins(
 		popularPlugins,
 		pluginsByCategoryFeatured
@@ -290,7 +301,7 @@ const PluginsBrowser = ( {
 				isSticky={ isAboveElement }
 				doSearch={ doSearch }
 				searchTerm={ search }
-				isSearching={ isFetchingPluginsBySearchTerm || isFetchingPaidPluginsBySearchTerm }
+				isSearching={ isFetchingPluginsBySearchTerm }
 				title={ translate( 'Plugins you need to get your projects done' ) }
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 			/>
@@ -300,11 +311,9 @@ const PluginsBrowser = ( {
 			<PluginBrowserContent
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
 				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
-				paidPluginsBySearchTermRaw={ paidPluginsBySearchTermRaw }
-				isFetchingPaidPluginsBySearchTerm={ isFetchingPaidPluginsBySearchTerm }
+				isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
 				fetchNextPage={ fetchNextPage }
 				pluginsBySearchTerm={ pluginsBySearchTerm }
-				isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
 				pluginsPagination={ pluginsPagination }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
 				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
@@ -327,12 +336,10 @@ const PluginsBrowser = ( {
 
 const SearchListView = ( {
 	search: searchTerm,
-	paidPluginsBySearchTermRaw,
 	pluginsPagination,
 	pluginsBySearchTerm,
-	isFetchingPaidPluginsBySearchTerm,
-	isFetchingPluginsBySearchTerm,
 	fetchNextPage,
+	isFetchingPluginsBySearchTerm,
 	searchTitle: searchTitleTerm,
 	siteSlug,
 	siteId,
@@ -340,15 +347,6 @@ const SearchListView = ( {
 	billingPeriod,
 } ) => {
 	const dispatch = useDispatch();
-
-	const {
-		plugins: pluginsBySearchTerm = [],
-		isFetching: isFetchingPaidPluginsBySearchTerm,
-		pluginsPagination: pluginsPagination,
-		fetchNextPage,
-	} = usePlugins( {
-		search: searchTerm,
-	} );
 
 	const translate = useTranslate();
 
@@ -375,7 +373,7 @@ const SearchListView = ( {
 		}
 	}, [ searchTerm, pluginsPagination, dispatch, siteId ] );
 
-	if ( pluginsBySearchTerm.length > 0 || isFetchingPaidPluginsBySearchTerm ) {
+	if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
 		const searchTitle =
 			searchTitleTerm ||
 			( searchTerm &&
@@ -407,7 +405,7 @@ const SearchListView = ( {
 					title={ searchTitle }
 					subtitle={ subtitle }
 					site={ siteSlug }
-					showPlaceholders={ isFetchingPaidPluginsBySearchTerm }
+					showPlaceholders={ isFetchingPluginsBySearchTerm }
 					currentSites={ sites }
 					variant={ PluginsBrowserListVariant.Paginated }
 					extended
