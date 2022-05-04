@@ -243,10 +243,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	}
 
 	function* setDesignOnSite( siteSlug: string, selectedDesign: Design ) {
+		const { theme, recipe } = selectedDesign;
+
 		yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
-			body: { theme: selectedDesign.theme, dont_change_homepage: true },
+			body: { theme: recipe?.stylesheet?.split( '/' )[ 1 ] || theme, dont_change_homepage: true },
 			method: 'POST',
 		} );
 
@@ -259,7 +261,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
-				body: { trim_content: true },
+				body: { trim_content: true, pattern_ids: recipe?.patternIds },
 				method: 'POST',
 			} );
 		}
