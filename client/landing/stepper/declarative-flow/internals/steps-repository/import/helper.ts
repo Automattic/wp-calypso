@@ -38,7 +38,7 @@ export function getFinalImporterUrl(
 export function generateStepPath( stepName: string, stepSectionName?: string ): StepPath {
 	// In the stepper framework, the capture screen is on `import` route (instead of `importCapture`)
 	const excludeStepName = 'capture';
-	const routes = [ BASE_ROUTE, stepName, stepSectionName ].filter( ( x ) => x !== 'capture' );
+	const routes = [ BASE_ROUTE, stepName, stepSectionName ].filter( ( x ) => x !== excludeStepName );
 	const path = routes.join( '_' ).replace( excludeStepName, '' );
 
 	return camelCase( path ) as StepPath;
