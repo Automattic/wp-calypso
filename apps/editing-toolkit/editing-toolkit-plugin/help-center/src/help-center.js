@@ -11,6 +11,8 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import Contents from './contents';
 import './help-center.scss';
 
+export const whatsNewQueryClient = new QueryClient();
+
 function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
@@ -64,9 +66,8 @@ function HelpCenterContent() {
 
 registerPlugin( 'etk-help-center', {
 	render: () => {
-		const queryClient = new QueryClient();
 		return (
-			<QueryClientProvider client={ queryClient }>
+			<QueryClientProvider client={ whatsNewQueryClient }>
 				<HelpCenterContent />,
 			</QueryClientProvider>
 		);

@@ -8,14 +8,15 @@ import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { useState } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
+import { whatsNewQueryClient } from '../../help-center';
 
 function WhatsNewMenuItem() {
 	const [ showGuide, setShowGuide ] = useState( false );
 	const { setHasSeenWhatsNewModal } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
 
 	const openWhatsNew = () => {
-		setHasSeenWhatsNewModal( true );
+		setHasSeenWhatsNewModal( false );
 		setShowGuide( true );
 	};
 	const closeWhatsNew = () => setShowGuide( false );
@@ -41,9 +42,8 @@ export default WhatsNewMenuItem;
 
 registerPlugin( 'whats-new', {
 	render: () => {
-		const queryClient = new QueryClient();
 		return (
-			<QueryClientProvider client={ queryClient }>
+			<QueryClientProvider client={ whatsNewQueryClient }>
 				<WhatsNewMenuItem />,
 			</QueryClientProvider>
 		);
