@@ -35,7 +35,7 @@ import {
 	useWPORGInfinitePlugins,
 } from 'calypso/data/marketplace/use-wporg-plugin-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import UrlSearch from 'calypso/lib/url-search';
+import useUrlSearch from 'calypso/lib/url-search/use-url-search';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import NoResults from 'calypso/my-sites/no-results';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -82,20 +82,14 @@ import './style.scss';
  */
 const SHORT_LIST_LENGTH = 6;
 
-const PluginsBrowser = ( {
-	trackPageViews = true,
-	category,
-	search,
-	searchTitle,
-	hideHeader,
-	doSearch,
-} ) => {
+const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle, hideHeader } ) => {
 	const {
 		isAboveElement,
 		targetRef: searchHeaderRef,
 		referenceRef: navigationHeaderRef,
 	} = useScrollAboveElement();
 
+	const { doSearch } = useUrlSearch();
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -751,4 +745,4 @@ function isNotBlocked( plugin ) {
 	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
 }
 
-export default UrlSearch( PluginsBrowser );
+export default PluginsBrowser;
