@@ -24,7 +24,7 @@ describe( 'FormPhoneInput', () => {
 	const localizeProps = { translate: ( string ) => string };
 
 	describe( 'getValue()', () => {
-		test( 'should set country from props', async () => {
+		test( 'should set country from props', () => {
 			render(
 				<FormPhoneInput
 					countriesList={ countriesList }
