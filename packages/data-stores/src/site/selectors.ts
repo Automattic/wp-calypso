@@ -61,8 +61,8 @@ export const getSiteSettings = ( state: State, siteId: number ) => {
 	return state.sitesSettings[ siteId ];
 };
 
-export const getSiteSetupError = ( state: State, siteId: number ) => {
-	return state.siteSetupErrors[ siteId ] || null;
+export const getSiteSetupError = ( state: State ) => {
+	return state.siteSetupErrors;
 };
 
 export const getPrimarySiteDomain = ( _: State, siteId: number ) =>

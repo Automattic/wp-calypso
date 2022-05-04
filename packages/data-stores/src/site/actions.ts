@@ -275,9 +275,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return data?.is_fse_active ?? false;
 	}
 
-	const setSiteSetupError = ( siteId: number, error: string, message: string ) => ( {
+	const setSiteSetupError = ( error: string, message: string ) => ( {
 		type: 'SET_SITE_SETUP_ERROR',
-		siteId,
 		error,
 		message,
 	} );
