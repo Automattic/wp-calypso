@@ -52,53 +52,56 @@ const NewMailboxList = ( {
 		);
 	} );
 
-	const onMailboxValueChange = ( uuid: string ) => (
-		fieldName: FormFieldNames,
-		fieldValue: string | boolean,
-		mailBoxFieldTouched = false
-	): void => {
-		const updatedMailboxes = mailboxes.map( ( mailbox ) => {
-			if ( getFormFieldValue( mailbox, FIELD_UUID ) !== uuid ) {
-				return mailbox;
-			}
-
-			const formField = getFormField( mailbox, fieldName );
-			formField.value = fieldValue;
-
-			if ( [ FIELD_FIRSTNAME, FIELD_NAME ].includes( fieldName ) && ! mailBoxFieldTouched ) {
-				const mailboxField = getFormField( mailbox, FIELD_MAILBOX );
-				if ( mailboxField ) {
-					mailboxField.value = sanitizeMailboxValue( fieldValue as string );
+	const onMailboxValueChange =
+		( uuid: string ) =>
+		(
+			fieldName: FormFieldNames,
+			fieldValue: string | boolean,
+			mailBoxFieldTouched = false
+		): void => {
+			const updatedMailboxes = mailboxes.map( ( mailbox ) => {
+				if ( getFormFieldValue( mailbox, FIELD_UUID ) !== uuid ) {
+					return mailbox;
 				}
-			}
 
-			mailbox.validate();
+				const formField = getFormField( mailbox, fieldName );
+				formField.value = fieldValue;
 
-			return mailbox;
-		} );
+				if ( [ FIELD_FIRSTNAME, FIELD_NAME ].includes( fieldName ) && ! mailBoxFieldTouched ) {
+					const mailboxField = getFormField( mailbox, FIELD_MAILBOX );
+					if ( mailboxField ) {
+						mailboxField.value = sanitizeMailboxValue( fieldValue as string );
+					}
+				}
 
-		onMailboxesChange( updatedMailboxes );
-	};
+				mailbox.validate();
+
+				return mailbox;
+			} );
+
+			onMailboxesChange( updatedMailboxes );
+		};
 
 	const onMailboxAdd = (): void => {
-		onMailboxesChange( [ ...mailboxes, new MailboxForm( provider, selectedDomainName ) ] );
+		onMailboxesChange( [
+			...mailboxes,
+			new MailboxForm< EmailProvider >( provider, selectedDomainName ),
+		] );
 	};
 
-	const onMailboxRemove = (
-		currentMailboxes: MailboxForm< EmailProvider >[],
-		uuid: string
-	) => () => {
-		const remainingMailboxes = currentMailboxes.filter(
-			( mailbox ) => getFormFieldValue( mailbox, FIELD_UUID ) !== uuid
-		);
+	const onMailboxRemove =
+		( currentMailboxes: MailboxForm< EmailProvider >[], uuid: string ) => () => {
+			const remainingMailboxes = currentMailboxes.filter(
+				( mailbox ) => getFormFieldValue( mailbox, FIELD_UUID ) !== uuid
+			);
 
-		const updatedMailboxes =
-			0 < remainingMailboxes.length
-				? remainingMailboxes
-				: [ new MailboxForm( provider, selectedDomainName ) ];
+			const updatedMailboxes =
+				0 < remainingMailboxes.length
+					? remainingMailboxes
+					: [ new MailboxForm< EmailProvider >( provider, selectedDomainName ) ];
 
-		onMailboxesChange( updatedMailboxes );
-	};
+			onMailboxesChange( updatedMailboxes );
+		};
 
 	return (
 		<div className="new-mailbox-list__main">

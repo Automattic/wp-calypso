@@ -24,6 +24,7 @@ import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparis
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
+import ProfessionalEmailCardNew from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card-new';
 import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -165,8 +166,11 @@ const EmailProvidersStackedComparison = ( {
 
 	const hasExistingEmailForwards = ! isDomainInCart && hasEmailForwards( domain );
 
+	const ProfessionalEmailCardComponent =
+		selectedEmailProviderSlug === 'titan-new' ? ProfessionalEmailCardNew : ProfessionalEmailCard;
+
 	const emailProviderCards = [
-		<ProfessionalEmailCard
+		<ProfessionalEmailCardComponent
 			comparisonContext={ comparisonContext }
 			detailsExpanded={ detailsExpanded.titan }
 			intervalLength={ selectedIntervalLength }
