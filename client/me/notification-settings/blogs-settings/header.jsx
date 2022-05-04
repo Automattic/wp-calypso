@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { countBy, map, values, flatten } from 'lodash';
+import { countBy, flatten } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import SiteInfo from 'calypso/blocks/site';
@@ -49,7 +49,7 @@ class BlogSettingsHeader extends PureComponent {
 			...filteredSettings
 		} = settings;
 		// Ignore the device_id of each device found.
-		const devicesSettings = map( settings.devices, ( device ) => {
+		const devicesSettings = Object.values( settings.devices ).map( ( device ) => {
 			const { device_id, ...restDevice } = device;
 			return restDevice;
 		} );
@@ -57,8 +57,8 @@ class BlogSettingsHeader extends PureComponent {
 			// Here we're flattening the values of both sets of settings
 			// as both sets have two 'streams' of settings: 'email' and 'timeline'
 			[
-				...flatten( map( filteredSettings, values ) ),
-				...flatten( map( devicesSettings, values ) ),
+				...flatten( Object.values( filteredSettings ).map( ( set ) => Object.values( set ) ) ),
+				...flatten( Object.values( devicesSettings ).map( ( device ) => Object.values( device ) ) ),
 			]
 		);
 
