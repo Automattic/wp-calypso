@@ -315,6 +315,7 @@ function useAddProductFromSlug( {
 } ) {
 	const products = useSelector( getProductsList );
 	const translate = useTranslate();
+	const isFetchingProducts = useSelector( isProductsListFetching );
 
 	// If `productAliasFromUrl` has a comma ',' in it, we will assume it's because it's
 	// referencing more than one product. Because of this, the rest of this function will
@@ -345,7 +346,7 @@ function useAddProductFromSlug( {
 		// There is a selector for isFetchingProducts, but it seems to be sometimes
 		// inaccurate (possibly before the fetch has started) so instead we just
 		// wait for there to be products.
-		if ( Object.keys( products || {} ).length < 1 ) {
+		if ( isFetchingProducts || Object.keys( products || {} ).length < 1 ) {
 			debug( 'waiting on products fetch' );
 			return;
 		}
@@ -388,6 +389,7 @@ function useAddProductFromSlug( {
 		);
 		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
 	}, [
+		isFetchingProducts,
 		addHandler,
 		translate,
 		isPrivate,
