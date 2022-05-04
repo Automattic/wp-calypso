@@ -284,24 +284,6 @@ function useAddRenewalItems( {
 				if ( ! productSlug ) {
 					return null;
 				}
-				const [ encodedSlug ] = productSlug.split( ':' );
-				const decodedSlug = decodeProductFromUrl( encodedSlug );
-				const product = products[ decodedSlug ];
-				if ( ! product ) {
-					debug( 'no renewal product found with slug', productSlug );
-					dispatch( {
-						type: 'PRODUCTS_ADD_ERROR',
-						message: String(
-							translate(
-								"I tried and failed to create a renewal product matching the identifier '%(productSlug)s'",
-								{
-									args: { productSlug },
-								}
-							)
-						),
-					} );
-					return null;
-				}
 				return createRenewalItemToAddToCart( productSlug, subscriptionId );
 			} )
 			.filter( isValueTruthy );
