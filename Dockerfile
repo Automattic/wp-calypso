@@ -2,6 +2,11 @@ ARG use_cache=false
 ARG node_version=16.13.2
 ARG base_image=registry.a8c.com/calypso/base:latest
 
+# Used to load extra git context from TeamCity so that git commands work.
+ARG extra_git_dir
+# true if has dir, empty otherwise
+ENV has_git_dir=${extra_git_dir:+true} 
+
 ###################
 FROM node:${node_version}-buster as builder-cache-false
 
@@ -15,8 +20,24 @@ ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PERSISTENT_CACHE=true
 ENV READONLY_CACHE=true
 
+# The git context layer is needed to handle mapping extra git context from TeamCity.
+# It does nothing if the git context directory is not passed as an argument. If
+# the directory is passed then the *-true variant runs, copying the context
+# directory into the image. This allows basic git commands to work correctly.
 ###################
-FROM builder-cache-${use_cache} as builder
+FROM builder-cache-${use_cache} as builder-git-context-false
+
+###################
+# This image contains a directory /calypso/.cache which includes caches
+# for yarn, terser, css-loader and babel.
+FROM builder-cache-${use_cache} as builder-git-context-true
+
+COPY $extra_git_dir $extra_git_dir
+
+###################
+# run "true" variant if dir exists, run false variant otherwise. The cache variants
+# are handled be either git variant as well.
+FROM builder-git-context-${has_git_dir:-false} as builder
 
 # Information for Sentry Releases.
 ARG manual_sentry_release=false
@@ -25,6 +46,7 @@ ARG sentry_auth_token=''
 ENV MANUAL_SENTRY_RELEASE $manual_sentry_release
 ENV IS_DEFAULT_BRANCH $is_default_branch
 ENV SENTRY_AUTH_TOKEN $sentry_auth_token
+
 
 ARG commit_sha="(unknown)"
 ARG workers=4
@@ -65,11 +87,6 @@ RUN bash /tmp/env-config.sh
 # dependencies which end up bloating the image.
 # /apps/notifications is not removed because it is required by Calypso
 COPY . /calypso/
-
-# /etc/buildAgent is added based on https://github.com/akkadotnet/akka.net/issues/2834#issuecomment-494795604.
-# The way TeamCity caches VCS info means this directory is needed
-# for git commands to work, so we mount it as a volume.
-COPY /etc/buildAgent/system/git /etc/buildAgent/system/git
 RUN git log
 
 RUN yarn install --immutable --check-cache
