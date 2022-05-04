@@ -200,6 +200,10 @@
 			flex-direction: column;
 			justify-content: space-between;
 
+			&.is-reversed {
+				flex-direction: column-reverse;
+			}
+
 			.inline-help__contact-box {
 				display: flex;
 				flex-direction: row;
@@ -207,6 +211,7 @@
 				overflow: hidden;
 				border-radius: 2px;
 				cursor: pointer;
+				margin-bottom: 16px;
 
 				.inline-help__contact-box-icon {
 					border-radius: 2px 0 0 2px;
@@ -222,10 +227,21 @@
 				}
 
 				&.chat {
-					margin-bottom: 16px;
-
 					.inline-help__contact-box-icon {
 						background-color: var( --color-accent );
+					}
+
+					&.is-disabled {
+						cursor: auto;
+
+						.inline-help__contact-box-icon {
+							background-color: #f6f7f7;
+						}
+
+						h2,
+						p {
+							color: var( --studio-gray-60 );
+						}
 					}
 				}
 
