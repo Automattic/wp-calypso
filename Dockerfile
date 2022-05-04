@@ -32,7 +32,7 @@ FROM builder-cache-${use_cache} as builder-git-context-false
 ###################
 FROM builder-cache-${use_cache} as builder-git-context-true
 
-COPY $extra_git_dir $extra_git_dir
+COPY ${extra_git_dir} ${extra_git_dir}
 
 ###################
 # run "true" variant if dir exists, run false variant otherwise. The cache variants
