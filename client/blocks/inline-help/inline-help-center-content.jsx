@@ -15,10 +15,14 @@ const InlineHelpCenterContent = ( {
 	selectedArticle,
 	setSelectedArticle,
 	setHelpCenterFooter,
+	setContactFormOpen,
+	openInContactPage,
 } ) => {
 	const isMobile = useMobileBreakpoint();
 	const [ searchQuery, setSearchQuery ] = useState( '' );
-	const [ activeSecondaryView, setActiveSecondaryView ] = useState( null );
+	const [ activeSecondaryView, setActiveSecondaryView ] = useState(
+		openInContactPage ? VIEW_CONTACT : null
+	);
 	const secondaryViewRef = useRef();
 
 	const openSecondaryView = ( secondaryViewKey ) => {
@@ -75,6 +79,7 @@ const InlineHelpCenterContent = ( {
 							<InlineHelpContactPage
 								closeContactPage={ closeSecondaryView }
 								onSelectResource={ openResultView }
+								setContactFormOpen={ setContactFormOpen }
 							/>
 						),
 						[ VIEW_RICH_RESULT ]: (

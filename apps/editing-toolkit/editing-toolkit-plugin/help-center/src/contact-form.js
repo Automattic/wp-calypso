@@ -52,7 +52,7 @@ const titles = {
 	},
 };
 
-export default function ContactForm( { mode } ) {
+export default function ContactForm( { mode, onBackClick } ) {
 	const [ selectedSiteId, setSelectedSiteId ] = useState();
 
 	const formTitles = titles[ mode ];
@@ -60,7 +60,7 @@ export default function ContactForm( { mode } ) {
 	return (
 		<main className="help-center__contact-form">
 			<header>
-				<Button borderless={ true }>
+				<Button borderless={ true } onClick={ onBackClick }>
 					<Gridicon icon={ 'chevron-left' } size={ 18 } />
 					{ __( 'Back', 'full-site-editing' ) }
 				</Button>

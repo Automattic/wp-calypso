@@ -57,18 +57,28 @@ rawCurrentUserFetch()
 	} );
 
 export default function Content( { selectedArticle, setSelectedArticle, setFooterContent } ) {
-	const [ formOpen ] = useState( false );
+	const [ contactForm, setContactForm ] = useState( null );
+	const [ openInContactPage, setOpenInContactPage ] = useState( null );
+
 	return (
 		<Provider store={ store }>
 			<>
 				<QuerySites siteId={ window._currentSiteId } />
-				{ formOpen ? (
-					<ContactForm mode="CHAT" />
+				{ contactForm ? (
+					<ContactForm
+						mode={ contactForm }
+						onBackClick={ () => {
+							setOpenInContactPage( true );
+							setContactForm( null );
+						} }
+					/>
 				) : (
 					<InlineHelpCenterContent
 						selectedArticle={ selectedArticle }
 						setSelectedArticle={ setSelectedArticle }
 						setHelpCenterFooter={ setFooterContent }
+						setContactFormOpen={ setContactForm }
+						openInContactPage={ openInContactPage }
 					/>
 				) }
 			</>
