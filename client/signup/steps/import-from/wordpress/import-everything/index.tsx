@@ -59,25 +59,15 @@ export class ImportEverything extends SectionMigrate {
 		return addQueryArgs( queryParams, path );
 	};
 
-	getCaptureUrlPath = () => {
-		const { targetSiteSlug } = this.props;
-		const path = '/start/importer/capture';
-		const queryParams = { siteSlug: targetSiteSlug };
-
-		return addQueryArgs( queryParams, path );
-	};
-
 	goToCart = () => {
 		page( this.getCheckoutUrlPath( this.getMigrationUrlPath() ) );
 	};
 
-	goToCapture = () => {
-		page( this.getCaptureUrlPath() );
-	};
-
 	resetMigration = () => {
+		const { stepNavigator } = this.props;
+
 		this.requestMigrationReset( this.props.targetSiteId ).finally( () => {
-			this.goToCapture();
+			stepNavigator?.goToImportCapturePage?.();
 			/**
 			 * Note this migrationStatus is local, thus the setState vs setMigrationState.
 			 * Call to updateFromAPI will update both local and non-local state.
