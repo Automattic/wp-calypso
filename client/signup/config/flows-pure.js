@@ -424,7 +424,6 @@ export function generateFlows( {
 		{
 			name: 'website-design-services',
 			steps: [
-				'user',
 				'choose-service',
 				'difm-options',
 				'social-profiles',

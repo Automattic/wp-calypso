@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { preventWidows } from 'calypso/lib/formatting';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getStepUrl } from 'calypso/signup/utils';
 import {
 	getProductDisplayCost,
 	isProductsListFetching,
@@ -131,6 +132,11 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 						intentsAlt={ [] }
 					/>
 				}
+				backUrl={ getStepUrl( 'setup-site', 'intent', undefined, '', {
+					siteSlug: props.queryObject.siteSlug,
+				} ) }
+				hideBack={ false }
+				allowBackFirstStep={ true }
 				align={ 'left' }
 				hideSkip
 				isHorizontalLayout={ true }
