@@ -1,3 +1,4 @@
+import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
@@ -6,19 +7,25 @@ import { PinnedItems } from '@wordpress/interface';
 import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
 import { useEffect, useState } from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import Contents from './contents';
 import './help-center.scss';
 
-function HelpCenterComponent() {
+export const whatsNewQueryClient = new QueryClient();
+
+function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
-	const { show } = useSelect( ( select ) => {
-		return {
-			show: select( 'automattic/help-center' ).isHelpCenterShown(),
-		};
-	} );
-	const setShowHelpCenter = useDispatch( 'automattic/help-center' )?.setShowHelpCenter;
+	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
+	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
 	const [ selectedArticle, setSelectedArticle ] = useState( null );
 	const [ footerContent, setFooterContent ] = useState( null );
+	const [ showHelpIconDot, setShowHelpIconDot ] = useState( false );
+	const { data, isLoading } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
+	useEffect( () => {
+		if ( ! isLoading && data ) {
+			setShowHelpIconDot( ! data.has_seen_whats_new_modal );
+		}
+	}, [ data, isLoading ] );
 
 	useEffect( () => {
 		if ( ! show ) {
@@ -34,7 +41,7 @@ function HelpCenterComponent() {
 						<Button
 							className={ cx( 'entry-point-button', { 'is-active': show } ) }
 							onClick={ () => setShowHelpCenter( ! show ) }
-							icon={ <HelpIcon newItems active={ show } /> }
+							icon={ <HelpIcon newItems={ showHelpIconDot } active={ show } /> }
 						></Button>
 					</span>
 				</PinnedItems>
@@ -58,5 +65,11 @@ function HelpCenterComponent() {
 }
 
 registerPlugin( 'etk-help-center', {
-	render: () => <HelpCenterComponent />,
+	render: () => {
+		return (
+			<QueryClientProvider client={ whatsNewQueryClient }>
+				<HelpCenterContent />,
+			</QueryClientProvider>
+		);
+	},
 } );
