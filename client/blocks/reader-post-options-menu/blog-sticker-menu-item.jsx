@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { addBlogSticker, removeBlogSticker } from 'calypso/state/sites/blog-stickers/actions';
+import { addBlogSticker, removeBlogSticker } from 'calypso/state/blog-stickers/actions';
 
 class ReaderPostOptionsMenuBlogStickerMenuItem extends Component {
 	static propTypes = {

@@ -4,11 +4,9 @@ import getBlogStickers from 'calypso/state/selectors/get-blog-stickers';
 describe( 'getBlogStickers()', () => {
 	test( 'should return stickers for a known blog', () => {
 		const prevState = {
-			sites: {
-				blogStickers: {
-					items: {
-						123: [ 'dont-recommend' ],
-					},
+			blogStickers: {
+				items: {
+					123: [ 'dont-recommend' ],
 				},
 			},
 		};
@@ -19,11 +17,9 @@ describe( 'getBlogStickers()', () => {
 
 	test( 'should return null for an unknown blog', () => {
 		const prevState = {
-			sites: {
-				blogStickers: {
-					items: {
-						123: [ 'dont-recommend' ],
-					},
+			blogStickers: {
+				items: {
+					123: [ 'dont-recommend' ],
 				},
 			},
 		};

@@ -10,7 +10,7 @@ import {
 	removeBlogSticker,
 	listBlogStickers,
 	receiveBlogStickers,
-} from 'calypso/state/sites/blog-stickers/actions';
+} from 'calypso/state/blog-stickers/actions';
 
 describe( 'actions', () => {
 	describe( '#addBlogSticker', () => {
