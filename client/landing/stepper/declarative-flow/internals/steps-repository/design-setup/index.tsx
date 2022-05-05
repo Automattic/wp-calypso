@@ -157,10 +157,9 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	const categorizationOptions = getCategorizationOptions(
 		intent,
-		showDesignPickerCategoriesAllFilter,
-		showGeneratedDesigns
+		showDesignPickerCategoriesAllFilter || showGeneratedDesigns
 	);
-	const categorization = useCategorization( shuffledStaticDesigns, categorizationOptions );
+	const categorization = useCategorization( staticDesigns, categorizationOptions );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
 
