@@ -37,7 +37,7 @@ import type { Design } from '@automattic/design-picker';
  */
 const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
-	const [ isForceDesignPicker, setIsForceDesignPicker ] = useState( false );
+	const [ isForceStaticDesigns, setIsForceStaticDesigns ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
 	const { goBack, submit } = navigation;
@@ -77,7 +77,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		isEnabled( 'signup/design-picker-generated-designs' ) &&
 		intent === 'build' &&
 		!! siteVertical &&
-		! isForceDesignPicker;
+		! isForceStaticDesigns;
 	const showDesignPickerCategoriesAllFilter =
 		isEnabled( 'signup/design-picker-categories' ) && ! showGeneratedDesigns;
 
@@ -91,13 +91,16 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const { data: themeDesigns = [] } = useDesignsBySite( site );
 
 	const staticDesigns = themeDesigns;
-	const generatedDesigns = useGeneratedDesigns();
+	const shuffledStaticDesigns = useMemo(
+		() => shuffle( staticDesigns.filter( ( design ) => ! isBlankCanvasDesign( design ) ) ),
+		[ staticDesigns, isForceStaticDesigns ]
+	);
 
-	const designs = useMemo( () => {
-		return showGeneratedDesigns
-			? shuffle( generatedDesigns )
-			: shuffle( staticDesigns.filter( ( design ) => ! isBlankCanvasDesign( design ) ) );
-	}, [ staticDesigns, generatedDesigns, showGeneratedDesigns ] );
+	const generatedDesigns = useGeneratedDesigns();
+	const shuffledGeneratedDesigns = useMemo(
+		() => shuffle( generatedDesigns ),
+		[ generatedDesigns, isForceStaticDesigns ]
+	);
 
 	const visibility = useNewSiteVisibility();
 
@@ -157,7 +160,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		showDesignPickerCategoriesAllFilter,
 		showGeneratedDesigns
 	);
-	const categorization = useCategorization( designs, categorizationOptions );
+	const categorization = useCategorization( shuffledStaticDesigns, categorizationOptions );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
 
@@ -210,9 +213,9 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	}
 
 	function viewMoreDesigns() {
-		setSelectedDesign( null );
-		setIsPreviewingDesign( true );
-		setIsForceDesignPicker( true );
+		setSelectedDesign( undefined );
+		setIsPreviewingDesign( false );
+		setIsForceStaticDesigns( true );
 	}
 
 	function upgradePlan() {
@@ -320,8 +323,8 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	stepContent = showGeneratedDesigns ? (
 		<GeneratedDesignPicker
-			selectedDesign={ selectedDesign || designs[ 0 ] }
-			designs={ designs }
+			selectedDesign={ selectedDesign || shuffledGeneratedDesigns[ 0 ] }
+			designs={ shuffledGeneratedDesigns }
 			locale={ locale }
 			heading={
 				<div className={ classnames( 'step-container__header', 'design-setup__header' ) }>
@@ -334,7 +337,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		/>
 	) : (
 		<DesignPicker
-			designs={ isAnchorSite ? ( ANCHOR_FM_THEMES as Design[] ) : designs }
+			designs={ isAnchorSite ? ( ANCHOR_FM_THEMES as Design[] ) : shuffledStaticDesigns }
 			theme={ isReskinned ? 'light' : 'dark' }
 			locale={ locale }
 			onSelect={ pickDesign }
