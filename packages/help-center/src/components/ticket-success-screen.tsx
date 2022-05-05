@@ -17,7 +17,7 @@ export const SuccessScreen: React.FC< SuccessScreenProps > = ( { onBack } ) => {
 				</h1>
 				<p className="ticket-success-screen__help-center-message">
 					{ __(
-						"We've received your message, and you'll hear back from one of our Happiness Engineers Shortly.",
+						"We've received your message, and you'll hear back from one of our Happiness Engineers shortly.",
 						__i18n_text_domain__
 					) }
 				</p>
