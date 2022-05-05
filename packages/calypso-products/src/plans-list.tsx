@@ -1582,7 +1582,7 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 	type: TYPE_STARTER,
 	term: TERM_ANNUALLY,
 	getTitle: () => i18n.translate( 'WordPress Starter' ),
-	getProductId: () => 1009,
+	getProductId: () => 1033,
 	getStoreSlug: () => PLAN_WPCOM_STARTER,
 	getPathSlug: () => 'starter',
 	getDescription: () =>
