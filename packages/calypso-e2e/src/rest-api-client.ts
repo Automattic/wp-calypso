@@ -44,6 +44,8 @@ export class RestAPIClient {
 		this.bearerToken = null;
 	}
 
+	/* Request builder methods */
+
 	/**
 	 * Returns the bearer token for the user.
 	 *
