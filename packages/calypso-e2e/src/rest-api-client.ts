@@ -1,12 +1,23 @@
 import fetch, { RequestInit } from 'node-fetch';
 
-type GenericDict = { [ key: string ]: string | number };
 type RequestMethods = 'post' | 'get';
 type RequestParams = {
 	method: 'post' | 'get';
 	headers: GenericDict;
 	body?: GenericDict;
 };
+type GenericDict = { [ key: string ]: string | number };
+
+interface Site {
+	ID: string;
+	name: string;
+	description: string;
+	URL: string;
+	site_owner: string;
+}
+interface MySitesResponse {
+	sites: Site[];
+}
 
 const BASE_URL = 'https://public-api.wordpress.com/rest/v1.1/';
 
@@ -53,11 +64,28 @@ export class RestAPIClient {
 	/**
 	 * Sends the request to the endpoint.
 	 *
-	 * @param {string} url URL endpoint to send the request.
+	 * @param {string} endpoint Endpoint to send the request.
 	 * @param {RequestParams} params Parameters for the request.
 	 */
-	private async sendRequest( url: string, params: RequestParams ): Promise< string > {
-		const response = await fetch( new URL( url, BASE_URL ), params as RequestInit );
+	private async sendRequest( endpoint: string, params: RequestParams ): Promise< any > {
+		// Trim the initial forward slash.
+		if ( endpoint.startsWith( '/' ) ) {
+			endpoint = endpoint.slice( 1 );
+		}
+
+		const response = await fetch( new URL( endpoint, BASE_URL ), params as RequestInit );
 		return response.json();
+	}
+
+	/**
+	 *
+	 */
+	async getMySites(): Promise< Site[] > {
+		const response: MySitesResponse = await this.sendRequest(
+			'/me/sites',
+			this.buildRequestParams( 'get' )
+		);
+
+		return response[ 'sites' ];
 	}
 }
