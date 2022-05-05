@@ -194,20 +194,6 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 		name = "Upload Gutenberg Source Maps to Sentry";
 		id("WPComPlugins_GutenbergUploadSourceMapsToSentry");
 
-		// vcs {
-		//	GitVcsRoot {
-		//		name = "gutenberg"
-		//		url = "git@github.com:fullofcaffeine/gutenberg.git"
-		//		pushUrl = "git@github.com:fullofcaffeine/gutenberg.git"
-		//		branch = "refs/heads/trunk"
-		//		branchSpec = "+:refs/heads/*"
-		//		useTagsAsBranches = true
-		//		authMethod = uploadedKey {
-		//			uploadedKey = "matticbot"
-		//		}
-		//	}
-		// }
-
 		params {
 			text(
 				name = "GUTENBERG_VERSION",
