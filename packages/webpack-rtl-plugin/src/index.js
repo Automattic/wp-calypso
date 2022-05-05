@@ -1,6 +1,6 @@
-const cssDiff = require( '@romainberger/css-diff' );
 const rtlcss = require( 'rtlcss' );
 const { ConcatSource } = require( 'webpack' ).sources;
+const cssDiff = require( './css-diff.js' );
 
 const pluginName = 'WebpackRTLPlugin';
 

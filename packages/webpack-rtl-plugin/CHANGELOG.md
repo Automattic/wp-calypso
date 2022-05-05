@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Merged in code from [@romainberger/css-diff](https://github.com/romainberger/css-diff) to update the postcss dependency version.
+
 ## 5.1.0 - 2021-11-02
 
 ### Added

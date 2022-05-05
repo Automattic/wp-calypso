@@ -1,4 +1,4 @@
-webpack-rtl-plugin adapted from [webpack-rtl-plugin](https://github.com/romainberger/webpack-rtl-plugin), released by Romain Berger under the MIT License (MIT):
+webpack-rtl-plugin adapted from [webpack-rtl-plugin](https://github.com/romainberger/webpack-rtl-plugin) and [@romainberger/css-diff](https://github.com/romainberger/css-diff), released by Romain Berger under the MIT License (MIT):
 
 MIT License
 
