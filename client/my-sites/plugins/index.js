@@ -6,7 +6,6 @@ import {
 	sites,
 	selectSiteIfLoggedIn,
 } from 'calypso/my-sites/controller';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	browsePlugins,
 	browsePluginsOrPlugin,
@@ -17,13 +16,6 @@ import {
 	scrollTopIfNoHash,
 	upload,
 } from './controller';
-
-function trackViewRef( context, next ) {
-	if ( context?.query?.ref === 'wpcom-masterbar-redirect' ) {
-		context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_view_click' ) );
-	}
-	next();
-}
 
 export default function () {
 	page(
@@ -71,7 +63,6 @@ export default function () {
 		'/plugins/:site',
 		scrollTopIfNoHash,
 		siteSelection,
-		trackViewRef,
 		navigation,
 		browsePlugins,
 		makeLayout,
