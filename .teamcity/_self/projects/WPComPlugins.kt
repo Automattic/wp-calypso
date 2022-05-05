@@ -205,7 +205,6 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 		}
 
 		steps {
-			mergeTrunk()
 			bashNodeScript {
 				name = "Upload source maps to Sentry"
 				scriptContent = """
