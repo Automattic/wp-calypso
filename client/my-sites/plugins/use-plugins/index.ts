@@ -56,7 +56,7 @@ const usePlugins = ( {
 	wpcomEnabled,
 	wporgEnabled,
 }: {
-	category?: string;
+	category: string;
 	search?: string;
 	infinite?: boolean;
 	locale?: string;
