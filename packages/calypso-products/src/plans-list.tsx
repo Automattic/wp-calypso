@@ -1593,19 +1593,20 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 		FEATURE_UNLIMITED_ADMINS,
 		FEATURE_6GB_STORAGE,
 	],
-	getIncludedFeatures: () => [],
+	getIncludedFeatures: () => [], // @todo clk ?
 	getInferiorFeatures: () => [],
 };
 
 PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
-	// Inherits the free or starter plan
+	// Inherits the free plan
 	...PLANS_LIST[ PLAN_FREE ],
+	group: GROUP_WPCOM,
+	type: TYPE_FLEXIBLE,
 	getTitle: () => i18n.translate( 'WordPress Free' ),
 	getBillingTimeFrame: () => i18n.translate( 'upgrade when you need' ),
 	getDescription: () =>
 		i18n.translate( 'Start your free WordPress.com website. Limited functionality and storage.' ),
 	getPlanCompareFeatures: () => [ FEATURE_1GB_STORAGE ],
-	type: TYPE_FLEXIBLE,
 };
 
 PLANS_LIST[ PLAN_WPCOM_PRO ] = {
