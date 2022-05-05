@@ -12,6 +12,24 @@ import {
 } from 'calypso/data/marketplace/use-wporg-plugin-query';
 import { useCategories } from '../categories/use-categories';
 
+interface WPORGResponse {
+	data?: {
+		plugins: Plugin[];
+		pagination: {
+			results: number;
+			page: number;
+		};
+	};
+	isLoading: boolean;
+	fetchNextPage?: () => void;
+}
+
+interface WPCOMResponse {
+	data?: Plugin[];
+	isLoading: boolean;
+	fetchNextPage?: () => void;
+}
+
 /**
  * Multiply the wpcom rating to match the wporg value.
  * wpcom rating is from 1 to 5 while wporg is from 1 to 100.
@@ -66,19 +84,19 @@ const usePlugins = ( {
 	};
 
 	const {
-		data: { plugins: wporgPlugins = [], pagination: wporgPagination = {} } = {},
+		data: { plugins: wporgPlugins = [], pagination: wporgPagination } = {},
 		isLoading: isFetchingWPORG,
-	}: any = useWPORGPlugins( wporgPluginsOptions, {
+	} = useWPORGPlugins( wporgPluginsOptions, {
 		enabled: ! infinite && ! WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) && wporgEnabled,
-	} );
+	} ) as WPORGResponse;
 
 	const {
-		data: { plugins: wporgPluginsInfinite = [], pagination: wporgPaginationInfinite = {} } = {},
+		data: { plugins: wporgPluginsInfinite = [], pagination: wporgPaginationInfinite } = {},
 		isLoading: isFetchingWPORGInfinite,
 		fetchNextPage,
-	}: any = searchHook( wporgPluginsOptions, {
+	} = searchHook( wporgPluginsOptions, {
 		enabled: infinite && WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) && wporgEnabled,
-	} );
+	} ) as WPORGResponse;
 
 	const dotOrgPlugins = infinite ? wporgPluginsInfinite : wporgPlugins;
 	const isFetchingDotOrg = infinite ? isFetchingWPORGInfinite : isFetchingWPORG;
@@ -91,12 +109,12 @@ const usePlugins = ( {
 		{
 			enabled: ! WPCOM_CATEGORIES_BLOCKLIST.includes( category || '' ) && wpcomEnabled,
 		}
-	);
+	) as WPCOMResponse;
 
 	const { data: featuredPluginsRaw = [], isLoading: isFetchingDotComFeatured } =
 		useWPCOMFeaturedPlugins( {
 			enabled: category === 'featured' && wpcomEnabled,
-		} );
+		} ) as WPCOMResponse;
 
 	const featuredPlugins = useMemo(
 		() => ( featuredPluginsRaw as Plugin[] ).map( updateWpComRating ),
@@ -127,7 +145,7 @@ const usePlugins = ( {
 		default:
 			plugins = [ ...dotComPlugins, ...dotOrgPlugins ];
 			isFetching = isFetchingDotCom || isFetchingDotOrg;
-			results = dotOrgPagination?.results + dotComPlugins.length ?? 0;
+			results = ( dotOrgPagination?.results ?? 0 ) + dotComPlugins.length;
 			break;
 	}
 
