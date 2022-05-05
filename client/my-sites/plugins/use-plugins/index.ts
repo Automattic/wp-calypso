@@ -137,7 +137,6 @@ const usePlugins = ( {
 		pagination: {
 			page: dotOrgPagination?.page,
 			results,
-			dotOrgResults: dotOrgPagination?.results.length,
 		},
 	};
 };

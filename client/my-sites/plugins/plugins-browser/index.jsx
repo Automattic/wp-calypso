@@ -355,7 +355,7 @@ const SearchListView = ( {
 			dispatch(
 				recordTracksEvent( 'calypso_plugins_search_results_show', {
 					search_term: searchTerm,
-					results_count: pluginsPagination?.dotOrgResults,
+					results_count: pluginsPagination?.results,
 					blog_id: siteId,
 				} )
 			);
@@ -366,7 +366,7 @@ const SearchListView = ( {
 				recordTracksEvent( 'calypso_plugins_search_results_page', {
 					search_term: searchTerm,
 					page: pluginsPagination.page,
-					results_count: pluginsPagination.dotOrgResults,
+					results_count: pluginsPagination?.results,
 					blog_id: siteId,
 				} )
 			);
