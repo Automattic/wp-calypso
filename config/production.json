@@ -38,6 +38,7 @@
 		"fullstory": true,
 		"gdpr-banner": true,
 		"google-my-business": true,
+		"onboarding/difm": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,
