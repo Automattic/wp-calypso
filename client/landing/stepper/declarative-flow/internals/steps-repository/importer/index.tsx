@@ -71,6 +71,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			goToCheckoutPage,
 			goToWpAdminImportPage,
 			goToWpAdminWordPressPluginPage,
+			navigate: ( path ) => navigator( path ),
 		};
 
 		/**
@@ -220,7 +221,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					siteSlug={ siteSlug as string }
 					fromSite={ fromSite }
 					urlData={ fromSiteData }
-					navigator={ navigator }
 					stepNavigator={ stepNavigator }
 				/>
 			);

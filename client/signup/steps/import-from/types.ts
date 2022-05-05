@@ -14,6 +14,7 @@ export type StepNavigator = {
 	goToCheckoutPage?: () => void;
 	goToWpAdminImportPage?: () => void;
 	goToWpAdminWordPressPluginPage?: () => void;
+	navigate?: ( path: string ) => void;
 };
 
 export interface ImportError {

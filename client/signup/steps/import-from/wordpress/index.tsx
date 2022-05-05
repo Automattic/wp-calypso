@@ -1,4 +1,3 @@
-import page from 'page';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -23,13 +22,11 @@ interface Props {
 	siteId: number;
 	siteSlug: string;
 	fromSite: string;
-	navigator?: ( path: string ) => void;
 	stepNavigator?: StepNavigator;
 }
 
 export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => {
 	const importer: Importer = 'wordpress';
-	const navigator = props.navigator || page;
 
 	/**
 	 ↓ Fields
@@ -93,7 +90,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	} ) {
 		const currentPath = window.location.pathname + window.location.search;
 
-		navigator( addQueryArgs( params, currentPath ) );
+		stepNavigator?.navigate?.( addQueryArgs( params, currentPath ) );
 	}
 
 	function redirectToWpAdminImportPage() {

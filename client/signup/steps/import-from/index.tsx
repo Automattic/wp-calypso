@@ -76,6 +76,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		goToCheckoutPage,
 		goToWpAdminImportPage,
 		goToWpAdminWordPressPluginPage,
+		navigate: ( path ) => page( path ),
 	};
 
 	/**
