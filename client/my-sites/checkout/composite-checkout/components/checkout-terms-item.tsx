@@ -31,21 +31,17 @@ const CheckoutTermsItem = ( {
 	children,
 	className,
 	onClick,
-	prewrappedChildren,
+	isPrewrappedChildren,
 }: {
 	children: React.ReactNode;
 	className?: string;
 	onClick?: React.MouseEventHandler< HTMLDivElement >;
-	prewrappedChildren?: boolean;
+	isPrewrappedChildren?: boolean;
 } ): JSX.Element => {
 	return (
-		<Wrapper
-			className={ classNames( 'checkout__terms-item', className ) }
-			onClick={ onClick }
-			role="presentation"
-		>
+		<Wrapper className={ classNames( 'checkout__terms-item', className ) } onClick={ onClick }>
 			<Gridicon icon="info-outline" size={ 18 } />
-			{ prewrappedChildren ? children : <p>{ children }</p> }
+			{ isPrewrappedChildren ? children : <p>{ children }</p> }
 		</Wrapper>
 	);
 };

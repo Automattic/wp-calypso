@@ -128,7 +128,7 @@ class DomainRegistrationAgreement extends Component {
 			return null;
 		}
 
-		return <CheckoutTermsItem prewrappedChildren>{ this.renderAgreements() }</CheckoutTermsItem>;
+		return <CheckoutTermsItem isPrewrappedChildren>{ this.renderAgreements() }</CheckoutTermsItem>;
 	}
 }
 
