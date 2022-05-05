@@ -1,0 +1,75 @@
+import { addQueryArgs } from 'calypso/lib/route';
+import { useCheckoutUrl } from 'calypso/signup/steps/import-from/hooks/use-checkout-url';
+import { WPImportOption } from 'calypso/signup/steps/import-from/wordpress/types';
+import { getWpOrgImporterUrl } from 'calypso/signup/steps/import/util';
+import { StepPath } from '../../../steps-repository';
+import { BASE_STEPPER_ROUTE } from '../../import/config';
+import { redirect, removeLeadingSlash } from '../../import/util';
+import type { NavigationControls } from '../../../types';
+import type { StepNavigator } from 'calypso/signup/steps/import-from/types';
+
+export function useStepNavigator(
+	navigation: NavigationControls,
+	siteId: number,
+	siteSlug: string,
+	fromSite: string
+): StepNavigator {
+	const checkoutUrl = useCheckoutUrl( siteId as number, siteSlug as string );
+
+	function navigator( path: string ) {
+		const stepPath = removeLeadingSlash( path.replace( BASE_STEPPER_ROUTE, '' ) );
+		navigation.goToStep?.( stepPath as StepPath );
+	}
+
+	function goToIntentPage() {
+		navigation.goToStep?.( 'intent' );
+	}
+
+	function goToImportCapturePage() {
+		navigation.goToStep?.( 'import' );
+	}
+
+	function goToSiteViewPage() {
+		redirect( `/view/${ siteSlug || '' }` );
+	}
+
+	function goToCheckoutPage() {
+		navigation.submit?.( { url: getCheckoutUrl() } );
+	}
+
+	function goToWpAdminImportPage() {
+		redirect( `/import/${ siteSlug }` );
+	}
+
+	function goToWpAdminWordPressPluginPage() {
+		redirect( getWpOrgImporterUrl( siteSlug as string, 'wordpress' ) );
+	}
+
+	function getWordpressImportEverythingUrl(): string {
+		const queryParams = {
+			from: fromSite,
+			to: siteSlug,
+			option: WPImportOption.EVERYTHING,
+			run: true,
+		};
+
+		return addQueryArgs( queryParams, `/${ BASE_STEPPER_ROUTE }/importerWordpress` );
+	}
+
+	function getCheckoutUrl() {
+		const path = checkoutUrl;
+		const queryParams = { redirect_to: getWordpressImportEverythingUrl() };
+
+		return addQueryArgs( queryParams, path );
+	}
+
+	return {
+		goToIntentPage,
+		goToImportCapturePage,
+		goToSiteViewPage,
+		goToCheckoutPage,
+		goToWpAdminImportPage,
+		goToWpAdminWordPressPluginPage,
+		navigate: ( path ) => navigator( path ),
+	};
+}

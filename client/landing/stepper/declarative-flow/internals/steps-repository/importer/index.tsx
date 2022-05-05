@@ -7,20 +7,15 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { StepPath } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { addQueryArgs } from 'calypso/lib/route';
 import NotAuthorized from 'calypso/signup/steps/import-from/components/not-authorized';
 import NotFound from 'calypso/signup/steps/import-from/components/not-found';
-import { useCheckoutUrl } from 'calypso/signup/steps/import-from/hooks/use-checkout-url';
 import { Importer, ImportJob, StepNavigator } from 'calypso/signup/steps/import-from/types';
 import { getImporterTypeForEngine } from 'calypso/signup/steps/import-from/util';
-import { WPImportOption } from 'calypso/signup/steps/import-from/wordpress/types';
-import { getWpOrgImporterUrl } from 'calypso/signup/steps/import/util';
 import { fetchImporterState, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
@@ -31,8 +26,7 @@ import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { StepProps } from '../../types';
-import { BASE_STEPPER_ROUTE } from '../import/config';
-import { redirect, removeLeadingSlash } from '../import/util';
+import { useStepNavigator } from './hooks/use-step-navigator';
 import { ImporterCompType } from './types';
 
 interface Props {
@@ -60,19 +54,15 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		);
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
-		const checkoutUrl = useCheckoutUrl( siteId as number, siteSlug as string );
 
 		const fromSite = currentSearchParams.get( 'from' ) as string;
 		const fromSiteData = useSelector( getUrlData );
-		const stepNavigator: StepNavigator = {
-			goToIntentPage,
-			goToImportCapturePage,
-			goToSiteViewPage,
-			goToCheckoutPage,
-			goToWpAdminImportPage,
-			goToWpAdminWordPressPluginPage,
-			navigate: ( path ) => navigator( path ),
-		};
+		const stepNavigator: StepNavigator = useStepNavigator(
+			navigation,
+			siteId as number,
+			siteSlug as string,
+			fromSite
+		);
 
 		/**
 	 	↓ Effects
@@ -82,55 +72,13 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		useEffect( checkSiteSlugUpdate, [ site?.URL ] );
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
 		if ( ! importer ) {
-			goToImportCapturePage();
+			stepNavigator.goToImportCapturePage?.();
 			return null;
 		}
 
 		/**
 	 	↓ Methods
 	 	*/
-		function goToIntentPage() {
-			navigation.goToStep?.( 'intent' );
-		}
-
-		function goToImportCapturePage() {
-			navigation.goToStep?.( 'import' );
-		}
-
-		function goToSiteViewPage() {
-			redirect( `/view/${ siteSlug || '' }` );
-		}
-
-		function goToCheckoutPage() {
-			navigation.submit?.( { url: getCheckoutUrl() } );
-		}
-
-		function goToWpAdminImportPage() {
-			redirect( `/import/${ siteSlug }` );
-		}
-
-		function goToWpAdminWordPressPluginPage() {
-			redirect( getWpOrgImporterUrl( siteSlug as string, 'wordpress' ) );
-		}
-
-		function getWordpressImportEverythingUrl(): string {
-			const queryParams = {
-				from: fromSite,
-				to: siteSlug,
-				option: WPImportOption.EVERYTHING,
-				run: true,
-			};
-
-			return addQueryArgs( queryParams, `/${ BASE_STEPPER_ROUTE }/importerWordpress` );
-		}
-
-		function getCheckoutUrl() {
-			const path = checkoutUrl;
-			const queryParams = { redirect_to: getWordpressImportEverythingUrl() };
-
-			return addQueryArgs( queryParams, path );
-		}
-
 		function onGoBack() {
 			resetImportJob( getImportJob( importer as Importer ) );
 			navigation.goBack();
@@ -138,11 +86,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 
 		function fetchImporters() {
 			siteId && dispatch( fetchImporterState( siteId ) );
-		}
-
-		function navigator( path: string ) {
-			const stepPath = removeLeadingSlash( path.replace( BASE_STEPPER_ROUTE, '' ) );
-			navigation.goToStep?.( stepPath as StepPath );
 		}
 
 		function getImportJob( importer: Importer ): ImportJob | undefined {
