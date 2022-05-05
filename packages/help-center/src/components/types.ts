@@ -19,3 +19,8 @@ export interface Header {
 	onDismiss: () => void;
 	headerText: string;
 }
+
+export interface SitePicker {
+	selectedSiteId: number | undefined;
+	onSetSelectedSiteId: React.Dispatch< React.SetStateAction< number | undefined > >;
+}

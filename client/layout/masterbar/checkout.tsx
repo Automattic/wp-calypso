@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
 import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
-import HelpCenter, { HelpIcon } from '@automattic/help-center';
+import HelpCenter, { HelpIcon, ContactForm } from '@automattic/help-center';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
 import classnames from 'classnames';
@@ -49,6 +49,8 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	const [ isHelpCenterVisible, setIsHelpCenterVisible ] = useState( false );
 	const [ selectedArticle, setSelectedArticle ] = useState< Article | null >( null );
 	const [ footerContent, setFooterContent ] = useState( undefined );
+	const [ contactForm, setContactForm ] = useState( null );
+	const [ openInContactPage, setOpenInContactPage ] = useState< boolean >( false );
 
 	const closeAndLeave = () =>
 		leaveCheckout( {
@@ -120,11 +122,23 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 			{ isHelpCenterEnabled && isHelpCenterVisible && (
 				<HelpCenter
 					content={
-						<InlineHelpCenterContent
-							selectedArticle={ selectedArticle }
-							setSelectedArticle={ setSelectedArticle }
-							setHelpCenterFooter={ setFooterContent }
-						/>
+						contactForm ? (
+							<ContactForm
+								mode={ contactForm }
+								onBackClick={ () => {
+									setOpenInContactPage( true );
+									setContactForm( null );
+								} }
+							/>
+						) : (
+							<InlineHelpCenterContent
+								selectedArticle={ selectedArticle }
+								setSelectedArticle={ setSelectedArticle }
+								setHelpCenterFooter={ setFooterContent }
+								setContactFormOpen={ setContactForm }
+								openInContactPage={ openInContactPage }
+							/>
+						)
 					}
 					headerText={ selectedArticle?.title }
 					handleClose={ () => setIsHelpCenterVisible( false ) }

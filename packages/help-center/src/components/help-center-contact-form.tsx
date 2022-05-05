@@ -1,13 +1,25 @@
+/**
+ * External Dependencies
+ */
 import { Button, Gridicon, HappinessEngineersTray } from '@automattic/components';
 import { SitePickerDropDown } from '@automattic/site-picker';
 import { TextareaControl, TextControl, CheckboxControl } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+/**
+ * Internal Dependencies
+ */
+import { SitePicker } from './types';
+
+import './help-center-contact-form.scss';
 
 export const SITE_STORE = 'automattic/site';
 
-const SitePicker = ( { selectedSiteId, onSetSelectedSiteId } ) => {
+const HelpCenterSitePicker: React.FC< SitePicker > = ( {
+	selectedSiteId,
+	onSetSelectedSiteId,
+} ) => {
 	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( window._currentSiteId ) );
 
 	const otherSite = {
@@ -16,7 +28,7 @@ const SitePicker = ( { selectedSiteId, onSetSelectedSiteId } ) => {
 		logo: {},
 	};
 
-	function pickSite( ID ) {
+	function pickSite( ID: number ) {
 		onSetSelectedSiteId( ID );
 	}
 
@@ -31,7 +43,14 @@ const SitePicker = ( { selectedSiteId, onSetSelectedSiteId } ) => {
 	);
 };
 
-const titles = {
+const titles: {
+	[ key: string ]: {
+		formTitle: string;
+		trayText?: string;
+		formDisclaimer?: string;
+		buttonLabel: string;
+	};
+} = {
 	CHAT: {
 		formTitle: __( 'Start live chat', 'full-site-editing' ),
 		trayText: __( 'Our WordPress experts will be with you right away', 'full-site-editing' ),
@@ -52,8 +71,13 @@ const titles = {
 	},
 };
 
-export default function ContactForm( { mode, onBackClick } ) {
-	const [ selectedSiteId, setSelectedSiteId ] = useState();
+interface ContactFormProps {
+	mode: string;
+	onBackClick: () => void;
+}
+
+const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
+	const [ selectedSiteId, setSelectedSiteId ] = useState< number >();
 
 	const formTitles = titles[ mode ];
 
@@ -70,7 +94,10 @@ export default function ContactForm( { mode, onBackClick } ) {
 				<p className="site-picker-form-warning">{ formTitles.formDisclaimer }</p>
 			) }
 			<section>
-				<SitePicker selectedSiteId={ selectedSiteId } onSetSelectedSiteId={ setSelectedSiteId } />
+				<HelpCenterSitePicker
+					selectedSiteId={ selectedSiteId }
+					onSetSelectedSiteId={ setSelectedSiteId }
+				/>
 			</section>
 			{ selectedSiteId === 0 && (
 				<section>
@@ -114,4 +141,6 @@ export default function ContactForm( { mode, onBackClick } ) {
 			) }
 		</main>
 	);
-}
+};
+
+export default ContactForm;
