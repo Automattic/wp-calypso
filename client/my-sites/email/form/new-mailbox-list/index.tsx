@@ -29,6 +29,7 @@ interface NewMailboxListProps {
 	provider: EmailProvider;
 	selectedDomainName: string;
 	showAddAnotherMailboxButton?: boolean;
+	submitAttempted?: boolean;
 	validatedMailboxUuids?: string[];
 }
 
@@ -42,6 +43,7 @@ const NewMailboxList = ( {
 	provider,
 	selectedDomainName,
 	showAddAnotherMailboxButton = false,
+	submitAttempted = false,
 	validatedMailboxUuids = [],
 }: NewMailboxListProps ): JSX.Element => {
 	const translate = useTranslate();
@@ -135,6 +137,7 @@ const NewMailboxList = ( {
 						showAllErrors={ validatedMailboxUuids.includes(
 							getFormFieldValue( mailbox, FIELD_UUID ) as string
 						) }
+						submitAttempted={ submitAttempted }
 					/>
 
 					<div className="new-mailbox-list__actions">

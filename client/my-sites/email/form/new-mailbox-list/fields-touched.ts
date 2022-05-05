@@ -18,13 +18,11 @@ class Observable< T > {
 	set( newValue: T ): void {
 		if ( this.value === newValue ) return;
 		this.value = newValue;
-
 		this.subscribers.forEach( ( listener ) => listener( this.value ) );
 	}
 
 	subscribe( subscriber: Subscriber< T > ): () => void {
 		this.subscribers.add( subscriber );
-
 		return () => this.unsubscribe( subscriber ); // will be used inside React.useEffect
 	}
 

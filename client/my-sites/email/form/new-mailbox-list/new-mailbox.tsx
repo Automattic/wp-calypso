@@ -19,10 +19,12 @@ import {
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
+	FIELD_UUID,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import {
 	getFormField,
 	getFormFieldError,
+	getFormFieldIsRequired,
 	getFormFieldIsVisible,
 	getFormFieldValue,
 } from 'calypso/my-sites/email/form/mailboxes/field-selectors';
@@ -47,15 +49,42 @@ interface NewMailboxProps {
 	provider: EmailProvider;
 	selectedDomainName: string;
 	showAllErrors?: boolean;
+	submitAttempted?: boolean;
 }
 
 interface MailboxFormFieldProps extends NewMailboxProps {
 	fieldName: MutableFormFieldNames;
 	isPasswordField?: boolean;
+	lowerCaseChangeValue?: boolean;
 	propagateMailboxDirtyState?: boolean;
+	textInputPrefix?: string;
+	textInputSuffix?: string;
 }
 
-const getInputValue = ( event: ChangeEvent< HTMLInputElement > ) => event?.target?.value;
+const getInputValue = ( event: ChangeEvent< HTMLInputElement >, lowerCaseChangeValue = false ) => {
+	let value = event?.target?.value;
+	if ( value && lowerCaseChangeValue ) {
+		value = value.toLowerCase();
+	}
+	return value;
+};
+
+const mailboxHasAnyValidField = ( mailbox: MailboxForm< EmailProvider > ): boolean => {
+	return ( Object.keys( mailbox.formFields ) as FormFieldNames[] )
+		.filter( ( key ) => FIELD_UUID === key )
+		.some( ( key ) => {
+			const field = getFormField( mailbox, key );
+			if ( ! field ) {
+				return false;
+			}
+
+			if ( field.hasError() ) {
+				return true;
+			}
+
+			return ( field.isRequired ?? false ) && field.hasValidValue();
+		} );
+};
 
 const useGetFieldDisplayText = ( fieldName: MutableFormFieldNames ): TranslateResult => {
 	const translate = useTranslate();
@@ -78,43 +107,64 @@ const useGetFieldDisplayText = ( fieldName: MutableFormFieldNames ): TranslateRe
 const useFieldHasError = (
 	fieldName: MutableFormFieldNames,
 	mailbox: MailboxForm< EmailProvider >,
-	showAllErrors?: boolean
+	showAllErrors?: boolean,
+	submitAttempted?: boolean
 ) => {
-	const dirtyFields = useFieldsTouched();
-	const formField = getFormField( mailbox, fieldName );
-	const formFieldHasError = formField?.hasError() ?? false;
+	const fieldsTouched = useFieldsTouched();
 
-	return ( dirtyFields.state[ fieldName ] || showAllErrors ) && formFieldHasError;
+	return (
+		( fieldsTouched.state[ fieldName ] || showAllErrors || submitAttempted ) &&
+		getFormFieldError( mailbox, fieldName )
+	);
 };
 
 const TextInput = ( {
 	fieldName,
+	lowerCaseChangeValue,
 	mailbox,
 	onMailboxValueChange,
 	onReturnKeyPress,
 	propagateMailboxDirtyState = false,
 	showAllErrors,
+	submitAttempted,
+	textInputPrefix,
+	textInputSuffix,
 }: MailboxFormFieldProps ): JSX.Element => {
 	const fieldsTouched = useFieldsTouched();
-	const hasFieldError = useFieldHasError( fieldName, mailbox, showAllErrors );
+	const hasFieldError = useFieldHasError( fieldName, mailbox, showAllErrors, submitAttempted );
 	const setFieldTouched = fieldsTouched.setFieldTouched[ fieldName ];
 
+	const hasAffix = Boolean( textInputPrefix ) || Boolean( textInputSuffix );
+	const FormTextComponent = hasAffix ? FormTextInputWithAffixes : FormTextInput;
+
+	window.console.log( 'ZZZ', {
+		fieldName,
+		fieldValue: getFormFieldValue( mailbox, fieldName ),
+		fieldError: getFormFieldError( mailbox, fieldName ),
+		hasFieldError: Boolean( getFormFieldError( mailbox, fieldName ) ),
+		mailboxFieldTouched: fieldsTouched.state.mailbox,
+		fieldTouched: fieldsTouched.state[ fieldName ],
+		submitAttempted,
+	} );
+
 	return (
-		<FormTextInput
+		<FormTextComponent
 			value={ getFormFieldValue( mailbox, fieldName ) }
-			required
+			required={ getFormFieldIsRequired( mailbox, fieldName ) }
 			isError={ hasFieldError }
 			onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
 				onMailboxValueChange(
 					fieldName,
-					getInputValue( event ),
+					getInputValue( event, lowerCaseChangeValue ),
 					propagateMailboxDirtyState ? fieldsTouched.state.mailbox : undefined
 				);
 			} }
 			onBlur={ () => {
-				setFieldTouched( mailbox.isValid() );
+				setFieldTouched( mailboxHasAnyValidField( mailbox ) );
 			} }
 			onKeyUp={ onReturnKeyPress }
+			prefix={ textInputPrefix }
+			suffix={ textInputSuffix }
 		/>
 	);
 };
@@ -125,9 +175,10 @@ const PasswordInput = ( {
 	onMailboxValueChange,
 	onReturnKeyPress,
 	showAllErrors,
+	submitAttempted,
 }: MailboxFormFieldProps ): JSX.Element => {
 	const fieldsTouched = useFieldsTouched();
-	const hasFieldError = useFieldHasError( fieldName, mailbox, showAllErrors );
+	const hasFieldError = useFieldHasError( fieldName, mailbox, showAllErrors, submitAttempted );
 	const setFieldTouched = fieldsTouched.setFieldTouched[ fieldName ];
 
 	return (
@@ -141,7 +192,7 @@ const PasswordInput = ( {
 				onMailboxValueChange( fieldName, getInputValue( event ) );
 			} }
 			onBlur={ () => {
-				setFieldTouched( mailbox.isValid() );
+				setFieldTouched( mailboxHasAnyValidField( mailbox ) );
 			} }
 			onKeyUp={ onReturnKeyPress }
 		/>
@@ -149,9 +200,9 @@ const PasswordInput = ( {
 };
 
 const TextField = ( props: MailboxFormFieldProps ): JSX.Element => {
-	const { fieldName, isPasswordField = false, mailbox, showAllErrors } = props;
+	const { fieldName, isPasswordField = false, mailbox, showAllErrors, submitAttempted } = props;
 
-	const hasFieldError = useFieldHasError( fieldName, mailbox, showAllErrors );
+	const hasFieldError = useFieldHasError( fieldName, mailbox, showAllErrors, submitAttempted );
 	const fieldText = useGetFieldDisplayText( fieldName );
 
 	if ( ! getFormFieldIsVisible( mailbox, fieldName ) ) {
@@ -171,64 +222,65 @@ const TextField = ( props: MailboxFormFieldProps ): JSX.Element => {
 	);
 };
 
-const SingleDomain = ( {
-	mailbox,
-	onMailboxValueChange,
-	onReturnKeyPress,
-	selectedDomainName,
-	showAllErrors,
-}: NewMailboxProps ): JSX.Element => {
-	const fieldsTouched = useFieldsTouched();
-	const hasMailboxError = useFieldHasError( FIELD_MAILBOX, mailbox, showAllErrors );
+const SingleDomain = ( props: NewMailboxProps ): JSX.Element => {
+	const { mailbox, selectedDomainName, showAllErrors, submitAttempted } = props;
+
+	const hasMailboxError = useFieldHasError(
+		FIELD_MAILBOX,
+		mailbox,
+		showAllErrors,
+		submitAttempted
+	);
 	const fieldText = useGetFieldDisplayText( FIELD_MAILBOX );
 	const isRtl = useRtl();
-
-	return (
-		<FormLabel>
-			{ fieldText }
-			<FormTextInputWithAffixes
-				value={ getFormFieldValue( mailbox, FIELD_MAILBOX ) }
-				isError={ hasMailboxError }
-				onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-					onMailboxValueChange( FIELD_MAILBOX, getInputValue( event )?.toLowerCase() );
-				} }
-				onBlur={ () => {
-					fieldsTouched.setFieldTouched.mailbox( mailbox.isValid() );
-				} }
-				onKeyUp={ onReturnKeyPress }
-				prefix={ isRtl ? `\u200e@${ selectedDomainName }\u202c` : null }
-				suffix={ isRtl ? null : `\u200e@${ selectedDomainName }\u202c` }
-			/>
-		</FormLabel>
-	);
-};
-
-const MultipleDomain = ( {
-	domains,
-	mailbox,
-	onMailboxValueChange,
-	onReturnKeyPress,
-	selectedDomainName,
-	showAllErrors,
-}: NewMailboxProps ): JSX.Element => {
-	const dirtyFields = useFieldsTouched();
-	const fieldText = useGetFieldDisplayText( FIELD_MAILBOX );
-	const hasMailboxError = useFieldHasError( FIELD_MAILBOX, mailbox, showAllErrors );
 
 	return (
 		<>
 			<FormLabel>
 				{ fieldText }
-				<FormTextInput
-					value={ getFormFieldValue( mailbox, FIELD_MAILBOX ) }
-					isError={ hasMailboxError }
-					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-						onMailboxValueChange( FIELD_MAILBOX, getInputValue( event )?.toLowerCase() );
-					} }
-					onBlur={ () => {
-						dirtyFields.setFieldTouched.mailbox( mailbox.isValid() );
-					} }
-					onKeyUp={ onReturnKeyPress }
+				<TextInput
+					{ ...props }
+					fieldName={ FIELD_MAILBOX }
+					lowerCaseChangeValue
+					propagateMailboxDirtyState={ false }
+					textInputPrefix={ isRtl ? `\u200e@${ selectedDomainName }\u202c` : undefined }
+					textInputSuffix={ isRtl ? undefined : `\u200e@${ selectedDomainName }\u202c` }
+				/>
+			</FormLabel>
+			{ hasMailboxError && (
+				<FormInputValidation text={ getFormFieldError( mailbox, FIELD_MAILBOX ) } isError />
+			) }
+		</>
+	);
+};
+
+const MultipleDomain = ( props: NewMailboxProps ): JSX.Element => {
+	const {
+		domains,
+		mailbox,
+		onMailboxValueChange,
+		selectedDomainName,
+		showAllErrors,
+		submitAttempted,
+	} = props;
+
+	const fieldText = useGetFieldDisplayText( FIELD_MAILBOX );
+	const hasMailboxError = useFieldHasError(
+		FIELD_MAILBOX,
+		mailbox,
+		showAllErrors,
+		submitAttempted
+	);
+
+	return (
+		<>
+			<FormLabel>
+				{ fieldText }
+				<TextInput
+					{ ...props }
+					fieldName={ FIELD_MAILBOX }
+					lowerCaseChangeValue
+					propagateMailboxDirtyState={ false }
 				/>
 
 				<DomainSelect
@@ -257,14 +309,14 @@ const NewMailbox = ( props: NewMailboxProps ): JSX.Element => {
 
 	const userEmail = useSelector( getCurrentUserEmail );
 
-	const dirtyFields = useFieldsTouched();
+	const fieldsTouched = useFieldsTouched();
 
 	mailbox.setFieldIsVisible( FIELD_ALTERNATIVE_EMAIL, alternativeEmailIsVisible );
 
 	const displayAlternativeEmailField = () => {
 		setAlternativeEmailIsVisible( true );
 		onMailboxValueChange( FIELD_ALTERNATIVE_EMAIL, userEmail );
-		dirtyFields.setFieldTouched.alternativeEmail( true );
+		fieldsTouched.setFieldTouched.alternativeEmail( true );
 	};
 
 	return (
@@ -283,6 +335,9 @@ const NewMailbox = ( props: NewMailboxProps ): JSX.Element => {
 						fieldName={ FIELD_LASTNAME }
 						propagateMailboxDirtyState={ true }
 					/>
+				</div>
+				<div className="new-mailbox__name">
+					<TextField { ...props } fieldName={ FIELD_NAME } propagateMailboxDirtyState={ true } />
 				</div>
 				<div className="new-mailbox__mailbox">
 					<FormFieldset>

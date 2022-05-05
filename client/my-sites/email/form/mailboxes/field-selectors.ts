@@ -31,4 +31,15 @@ const getFormFieldIsVisible = (
 	fieldName: FormFieldNames
 ): boolean => Boolean( getFormField( mailbox, fieldName )?.isVisible );
 
-export { getFormField, getFormFieldValue, getFormFieldError, getFormFieldIsVisible };
+const getFormFieldIsRequired = (
+	mailbox: MailboxForm< EmailProvider >,
+	fieldName: FormFieldNames
+): boolean => Boolean( getFormField( mailbox, fieldName )?.isRequired );
+
+export {
+	getFormField,
+	getFormFieldError,
+	getFormFieldIsRequired,
+	getFormFieldIsVisible,
+	getFormFieldValue,
+};

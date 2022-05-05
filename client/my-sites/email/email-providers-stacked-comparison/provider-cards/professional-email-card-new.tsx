@@ -109,11 +109,14 @@ const ProfessionalEmailCard = ( {
 	] );
 	const [ addingToCart, setAddingToCart ] = useState( false );
 	const [ validatedTitanMailboxUuids, setValidatedTitanMailboxUuids ] = useState( [ '' ] );
+	const [ submitAttempted, setSubmitAttempted ] = useState( false );
 
 	const professionalEmail: ProviderCardProps = { ...professionalEmailCardInformation };
 	professionalEmail.detailsExpanded = detailsExpanded;
 
 	const onTitanConfirmNewMailboxes = () => {
+		setSubmitAttempted( true );
+
 		mailboxes.forEach( ( mailbox ) => mailbox.validate() );
 
 		const validMailboxes = mailboxes.filter( ( mailbox ) => mailbox.isValid() );
@@ -138,7 +141,7 @@ const ProfessionalEmailCard = ( {
 			userCannotAddEmailReason
 		);
 
-		setMailboxes( validMailboxes );
+		setMailboxes( mailboxes );
 		setValidatedTitanMailboxUuids( validatedMailboxUuids );
 
 		if ( ! mailboxesAreValid || ! userCanAddEmail ) {
@@ -180,6 +183,7 @@ const ProfessionalEmailCard = ( {
 			mailboxes={ mailboxes }
 			selectedDomainName={ selectedDomainName }
 			onReturnKeyPress={ onTitanFormReturnKeyPress }
+			submitAttempted={ submitAttempted }
 			validatedMailboxUuids={ validatedTitanMailboxUuids }
 			showAddAnotherMailboxButton={ false }
 			hiddenFieldNames={ [ FIELD_NAME, FIELD_ALTERNATIVE_EMAIL, FIELD_IS_ADMIN ] }
