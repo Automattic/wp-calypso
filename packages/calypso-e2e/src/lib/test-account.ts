@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
+import fetch from 'node-fetch';
 import { BrowserContext, Page } from 'playwright';
 import { TestAccountName } from '..';
 import {
@@ -10,8 +11,17 @@ import {
 	getCalypsoURL,
 } from '../data-helper';
 import envVariables from '../env-variables';
+import { SecretsManager } from '../secrets';
 import { TOTPClient } from '../totp-client';
 import { LoginPage } from './pages/login-page';
+
+interface BearerTokenResponse {
+	success: string;
+	data: {
+		bearer_token: string;
+		token_links: string[];
+	};
+}
 
 /**
  * Represents the WPCOM test account.
@@ -19,6 +29,7 @@ import { LoginPage } from './pages/login-page';
 export class TestAccount {
 	readonly accountName: TestAccountName;
 	readonly credentials: AccountCredentials;
+	private bearerToken: string | null;
 
 	/**
 	 * Constructs an instance of the TestAccount for the given account name.
@@ -27,6 +38,7 @@ export class TestAccount {
 	constructor( accountName: TestAccountName ) {
 		this.accountName = accountName;
 		this.credentials = getAccountCredential( accountName );
+		this.bearerToken = null;
 	}
 
 	/**
@@ -149,6 +161,40 @@ export class TestAccount {
 		const { cookies } = JSON.parse( storageStateFile );
 
 		return cookies;
+	}
+
+	/**
+	 * Returns the bearer token for the user.
+	 *
+	 * If the token has been previously obtained, this method returns the value.
+	 * Otherwise, an API call is made to obtain the bearer token.
+	 *
+	 * @returns {Promise<string>} String representing the bearer token.
+	 */
+	async getBearerToken(): Promise< string > {
+		if ( ! this.bearerToken === null ) {
+			return this.bearerToken as string;
+		}
+
+		const loginEndpoint = 'https://wordpress.com/wp-login.php?action=login-endpoint';
+
+		// Set the form parameters
+		const params = new URLSearchParams();
+		params.append( 'username', this.credentials.username );
+		params.append( 'password', this.credentials.password );
+		params.append( 'client_id', SecretsManager.secrets.calypsoOauthApplication.client_id );
+		params.append( 'client_secret', SecretsManager.secrets.calypsoOauthApplication.client_secret );
+		params.append( 'get_bearer_token', '1' );
+
+		// Request the bearer token for the user.
+		const response = await fetch( loginEndpoint, {
+			method: 'post',
+			body: params,
+		} );
+		const decodedResponse: BearerTokenResponse = await response.json();
+
+		this.bearerToken = decodedResponse.data.bearer_token;
+		return this.bearerToken;
 	}
 
 	/**
