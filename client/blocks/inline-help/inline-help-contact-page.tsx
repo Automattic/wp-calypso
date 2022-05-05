@@ -3,7 +3,7 @@ import { useSupportAvailability } from '@automattic/data-stores';
 import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import InlineHelpSearchResults from './inline-help-search-results';
 import Mail from './mail-icon';
 
@@ -19,11 +19,12 @@ const InlineHelpContactPage: React.FC< Props > = ( {
 	setContactFormOpen,
 } ) => {
 	const { __ } = useI18n();
-	const [ chatAvailable, setChatAvailable ] = useState( false );
 
 	const { data: dataChat, isLoading: isLoadingChat } = useSupportAvailability( 'CHAT' );
 	const { data: dataEmail, isLoading: isLoadingEmail } = useSupportAvailability( 'EMAIL' );
 
+	// If user has both chat and email options, we show him the contact-page to choose
+	// If instead the user has one option, we show him the contact form directly
 	useEffect( () => {
 		if ( ! isLoadingChat && ! isLoadingEmail ) {
 			if ( ! dataChat?.isUserEligible ) {
@@ -32,8 +33,6 @@ const InlineHelpContactPage: React.FC< Props > = ( {
 				} else {
 					setContactFormOpen( 'FORUM' );
 				}
-			} else {
-				setChatAvailable( ! dataChat.isClosed );
 			}
 		}
 	}, [ isLoadingChat, isLoadingEmail, dataChat, dataEmail, setContactFormOpen ] );
@@ -52,12 +51,12 @@ const InlineHelpContactPage: React.FC< Props > = ( {
 				<h3>{ __( 'Contact our WordPress.com experts' ) }</h3>
 				<div
 					className={ classnames( 'inline-help__contact-boxes', {
-						'is-reversed': ! chatAvailable,
+						'is-reversed': dataChat?.isClosed,
 					} ) }
 				>
 					<div
 						className={ classnames( 'inline-help__contact-box', 'chat', {
-							'is-disabled': ! chatAvailable,
+							'is-disabled': dataChat?.isClosed,
 						} ) }
 						onClick={ () => setContactFormOpen( 'CHAT' ) }
 						onKeyDown={ () => setContactFormOpen( 'CHAT' ) }
@@ -70,9 +69,9 @@ const InlineHelpContactPage: React.FC< Props > = ( {
 						<div>
 							<h2>{ __( 'Live chat' ) }</h2>
 							<p>
-								{ chatAvailable
-									? __( 'Get an immediate reply' )
-									: __( 'Chat is unavailable right now' ) }
+								{ dataChat?.isClosed
+									? __( 'Chat is unavailable right now' )
+									: __( 'Get an immediate reply' ) }
 							</p>
 						</div>
 					</div>
