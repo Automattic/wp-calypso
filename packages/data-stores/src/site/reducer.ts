@@ -140,6 +140,15 @@ export const sitesSettings: Reducer< { [ key: number ]: SiteSettings }, Action >
 	if ( action.type === 'RECEIVE_SITE_SETTINGS' ) {
 		return { ...state, [ action.siteId ]: action.settings };
 	}
+	if ( action.type === 'UPDATE_SITE_SETTINGS' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				...state?.[ action.siteId ],
+				...action.settings,
+			},
+		};
+	}
 	return state;
 };
 
