@@ -207,6 +207,10 @@ export const siteSetupFlow: Flow = {
 				case 'importReadyPreview': {
 					return navigate( providedDependencies?.url as StepPath );
 				}
+
+				case 'importerWordpress': {
+					return exitFlow( providedDependencies?.url as string );
+				}
 			}
 		}
 

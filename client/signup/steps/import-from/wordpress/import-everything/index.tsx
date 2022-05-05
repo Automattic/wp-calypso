@@ -4,12 +4,10 @@ import { sprintf } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import page from 'page';
 import React from 'react';
 import { connect } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
-import { addQueryArgs } from 'calypso/lib/route';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { StepNavigator } from 'calypso/signup/steps/import-from/types';
@@ -23,7 +21,7 @@ import DoneButton from '../../components/done-button';
 import GettingStartedVideo from '../../components/getting-started-video';
 import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
-import { MigrationStatus, WPImportOption } from '../types';
+import { MigrationStatus } from '../types';
 import { Confirm } from './confirm';
 
 interface Props {
@@ -35,32 +33,10 @@ interface Props {
 	stepNavigator?: StepNavigator;
 }
 export class ImportEverything extends SectionMigrate {
-	getMigrationUrlPath = () => {
-		const { sourceSite, targetSiteSlug } = this.props;
-		const sourceSiteSlug = get( sourceSite, 'slug' );
-
-		const path = '/start/from/importing/wordpress';
-		const queryParams = {
-			from: sourceSiteSlug,
-			to: targetSiteSlug,
-			option: WPImportOption.EVERYTHING,
-			run: true,
-		};
-
-		return addQueryArgs( queryParams, path );
-	};
-
-	getCheckoutUrlPath = ( redirectTo: string ) => {
-		const { targetSiteSlug, targetSiteEligibleForProPlan } = this.props;
-		const plan = targetSiteEligibleForProPlan ? 'pro' : 'business';
-		const path = `/checkout/${ targetSiteSlug }/${ plan }`;
-		const queryParams = { redirect_to: redirectTo };
-
-		return addQueryArgs( queryParams, path );
-	};
-
 	goToCart = () => {
-		page( this.getCheckoutUrlPath( this.getMigrationUrlPath() ) );
+		const { stepNavigator } = this.props;
+
+		stepNavigator?.goToCheckoutPage();
 	};
 
 	resetMigration = () => {

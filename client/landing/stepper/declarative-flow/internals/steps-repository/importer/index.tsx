@@ -13,10 +13,13 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { addQueryArgs } from 'calypso/lib/route';
 import NotAuthorized from 'calypso/signup/steps/import-from/components/not-authorized';
 import NotFound from 'calypso/signup/steps/import-from/components/not-found';
+import { useCheckoutUrl } from 'calypso/signup/steps/import-from/hooks/use-checkout-url';
 import { Importer, ImportJob, StepNavigator } from 'calypso/signup/steps/import-from/types';
 import { getImporterTypeForEngine } from 'calypso/signup/steps/import-from/util';
+import { WPImportOption } from 'calypso/signup/steps/import-from/wordpress/types';
 import { fetchImporterState, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
@@ -56,6 +59,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		);
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
+		const checkoutUrl = useCheckoutUrl( siteId as number, siteSlug as string );
 
 		const fromSite = currentSearchParams.get( 'from' ) as string;
 		const fromSiteData = useSelector( getUrlData );
@@ -63,6 +67,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			goToIntentPage,
 			goToImportCapturePage,
 			goToSiteViewPage,
+			goToCheckoutPage,
 		};
 
 		/**
@@ -90,6 +95,28 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 
 		function goToSiteViewPage() {
 			redirect( `/view/${ siteSlug || '' }` );
+		}
+
+		function goToCheckoutPage() {
+			navigation.submit?.( { url: getCheckoutUrl() } );
+		}
+
+		function getWordpressImportEverythingUrl(): string {
+			const queryParams = {
+				from: fromSite,
+				to: siteSlug,
+				option: WPImportOption.EVERYTHING,
+				run: true,
+			};
+
+			return addQueryArgs( queryParams, `/${ BASE_STEPPER_ROUTE }/importerWordpress` );
+		}
+
+		function getCheckoutUrl() {
+			const path = checkoutUrl;
+			const queryParams = { redirect_to: getWordpressImportEverythingUrl() };
+
+			return addQueryArgs( queryParams, path );
 		}
 
 		function onGoBack() {

@@ -11,6 +11,7 @@ export type StepNavigator = {
 	goToIntentPage?: () => void;
 	goToImportCapturePage?: () => void;
 	goToSiteViewPage?: () => void;
+	goToCheckoutPage?: () => void;
 };
 
 export interface ImportError {
