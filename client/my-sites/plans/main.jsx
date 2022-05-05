@@ -8,6 +8,7 @@ import {
 	PLAN_WPCOM_STARTER,
 } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
+import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -120,10 +121,21 @@ class Plans extends Component {
 	}
 
 	onSelectPlan = ( item ) => {
-		const { selectedSite } = this.props;
+		const {
+			selectedSite,
+			context: {
+				query: { discount },
+			},
+		} = this.props;
 		const checkoutPath = `/checkout/${ selectedSite.slug }/${ item.product_slug }/`;
 
-		page( checkoutPath );
+		page(
+			discount
+				? addQueryArgs( checkoutPath, {
+						coupon: discount,
+				  } )
+				: checkoutPath
+		);
 	};
 
 	renderPlaceholder = () => {
