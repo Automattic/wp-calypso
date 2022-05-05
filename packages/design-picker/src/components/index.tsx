@@ -301,4 +301,4 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	);
 };
 
-export default DesignPicker;
+export { DesignPicker as default, DesignPreviewImage };

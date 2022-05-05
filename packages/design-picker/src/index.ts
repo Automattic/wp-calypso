@@ -1,4 +1,5 @@
 export { default } from './components';
+export { default as GeneratedDesignPicker } from './components/generated-design-picker';
 
 export { default as FeaturedPicksButtons } from './components/featured-picks-buttons';
 export { default as PremiumBadge } from './components/premium-badge';
@@ -9,6 +10,7 @@ export {
 	getDesignUrl,
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
+	mShotOptions,
 } from './utils';
 export { FONT_PAIRINGS, ANCHORFM_FONT_PAIRINGS } from './constants';
 export type { FontPair, Design, Category } from './types';

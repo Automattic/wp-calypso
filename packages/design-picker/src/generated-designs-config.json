@@ -7,7 +7,7 @@
 			"patternIds": [ 1707, 1163, 1190, 1163, 1538, 655 ]
 		},
 		"is_premium": false,
-		"categories": [],
+		"categories": [ { "slug": "business", "name": "Business" } ],
 		"features": [],
 		"theme": "",
 		"template": ""
@@ -20,7 +20,7 @@
 			"patternIds": [ 2077, 2080, 2082, 1768, 2088 ]
 		},
 		"is_premium": false,
-		"categories": [],
+		"categories": [ { "slug": "portfolio", "name": "Portfolio" } ],
 		"features": [],
 		"theme": "",
 		"template": ""
@@ -33,7 +33,7 @@
 			"patternIds": [ 1243, 2118, 2266, 2121, 1812 ]
 		},
 		"is_premium": false,
-		"categories": [],
+		"categories": [ { "slug": "blog", "name": "Blog" } ],
 		"features": [],
 		"theme": "",
 		"template": ""
