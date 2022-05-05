@@ -48,7 +48,7 @@ class BlogSettingsHeader extends PureComponent {
 			...filteredSettings
 		} = settings;
 		// Ignore the device_id of each device found.
-		const devicesSettings = Object.values( settings.devices ).map( ( device ) => {
+		const devicesSettings = Object.values( devices ).map( ( device ) => {
 			const { device_id, ...restDevice } = device;
 			return restDevice;
 		} );
