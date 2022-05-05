@@ -428,7 +428,7 @@
 		}
 	}
 
-	@include break-medium {
+	@include break-small {
 		border-radius: 2px;
 		height: 170px;
 		padding: 8px;
@@ -472,7 +472,7 @@
 		width: 100%;
 	}
 
-	@include break-medium {
+	@include break-small {
 		.generated-design-preview__header {
 			border-radius: 8px 8px 0 0; /* stylelint-disable-line scales/radii */
 			height: 34px;

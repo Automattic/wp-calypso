@@ -313,11 +313,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 	.generated_design-picker__content {
 		display: flex;
-		flex-direction: column;
-
-		@include break-small {
-			flex-direction: row;
-		}
+		flex-direction: row;
 	}
 
 	.generated-design-picker__thumbnails {
@@ -326,6 +322,11 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		flex-grow: 1;
 		margin-bottom: 98px;
 		row-gap: 24px;
+
+		@include break-small {
+			flex: 0 154px;
+			padding-right: 1.5rem;
+		}
 
 		@include break-medium {
 			flex: 0 248px;
@@ -341,7 +342,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			width: 100%;
 		}
 
-		@include break-medium {
+		@include break-small {
 			display: flex;
 			flex: 1;
 			flex-direction: column;

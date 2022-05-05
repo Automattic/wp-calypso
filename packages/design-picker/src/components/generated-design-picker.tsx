@@ -4,7 +4,6 @@ import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { getDesignPreviewUrl } from '../utils';
-import { DesignPreviewImage } from './index';
 import type { Design } from '../types';
 import type { MShotsOptions } from '@automattic/onboarding';
 import './style.scss';
@@ -13,6 +12,13 @@ const thumbnailImageOptions: MShotsOptions = {
 	vpw: 1600,
 	vph: 1040,
 	w: 600,
+	screen_height: 3600,
+};
+
+const previewImageOptions: MShotsOptions = {
+	vpw: 1600,
+	vph: 1040,
+	w: 2399,
 	screen_height: 3600,
 };
 
@@ -40,7 +46,7 @@ const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
 				<MShotsImage
 					url={ thumbnailUrl }
 					alt=""
-					aria-labelledby={ `design-picker-category-filter__item-thumbnail__${ slug }` }
+					aria-labelledby={ `generated-design-thumbnail__image__${ slug }` }
 					options={ thumbnailImageOptions }
 					scrollable={ false }
 				/>
@@ -50,11 +56,14 @@ const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
 };
 
 interface GeneratedDesignPreviewProps {
-	design: Design;
-	locale: string;
+	slug: string;
+	previewUrl: string;
 }
 
-const GeneratedDesignPreview: React.FC< GeneratedDesignPreviewProps > = ( { design, locale } ) => {
+const GeneratedDesignPreview: React.FC< GeneratedDesignPreviewProps > = ( {
+	slug,
+	previewUrl,
+} ) => {
 	return (
 		<div className="generated-design-preview">
 			<div className="generated-design-preview__header">
@@ -67,7 +76,13 @@ const GeneratedDesignPreview: React.FC< GeneratedDesignPreviewProps > = ( { desi
 				</svg>
 			</div>
 			<div className="generated-design-preview__frame">
-				<DesignPreviewImage design={ design } locale={ locale } highRes />
+				<MShotsImage
+					url={ previewUrl }
+					alt=""
+					aria-labelledby={ `generated-design-preview__image__${ slug }` }
+					options={ previewImageOptions }
+					scrollable={ false }
+				/>
 			</div>
 		</div>
 	);
@@ -106,7 +121,11 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 				<div className="generated-design-picker__previews">
 					{ designs &&
 						designs.map( ( design ) => (
-							<GeneratedDesignPreview key={ design.slug } design={ design } locale={ locale } />
+							<GeneratedDesignPreview
+								key={ design.slug }
+								slug={ design.slug }
+								previewUrl={ getDesignPreviewUrl( design, { language: locale } ) }
+							/>
 						) ) }
 				</div>
 			</div>
