@@ -77,7 +77,7 @@ const titles: {
 interface ContactFormProps {
 	mode: string;
 	onBackClick: () => void;
-	siteId: number;
+	siteId: number | null;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
