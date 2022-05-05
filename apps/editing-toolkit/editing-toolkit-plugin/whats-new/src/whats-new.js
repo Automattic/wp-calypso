@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { useState } from 'react';
 import { QueryClientProvider } from 'react-query';
-import { whatsNewQueryClient } from '../../help-center';
+import { whatsNewQueryClient } from '../../common/what-new-query-client';
 
 function WhatsNewMenuItem() {
 	const [ showGuide, setShowGuide ] = useState( false );

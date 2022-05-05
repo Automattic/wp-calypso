@@ -7,11 +7,10 @@ import { PinnedItems } from '@wordpress/interface';
 import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
 import { useEffect, useState } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
+import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import Contents from './contents';
 import './help-center.scss';
-
-export const whatsNewQueryClient = new QueryClient();
 
 function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
