@@ -7,5 +7,5 @@
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
-	"references": [ { "path": "../viewport" } ]
+	"references": [ { "path": "../viewport" }, { "path": "../site-picker" } ]
 }

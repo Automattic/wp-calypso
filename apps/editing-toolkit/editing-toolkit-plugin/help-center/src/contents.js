@@ -2,6 +2,7 @@
  * Global polyfills
  */
 import '@automattic/calypso-polyfills';
+import { ContactForm } from '@automattic/help-center';
 import { useState } from 'react';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -22,7 +23,6 @@ import sites from 'calypso/state/sites/reducer';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { setSection } from 'calypso/state/ui/section/actions';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
-import ContactForm from './contact-form';
 
 const rootReducer = combineReducers( {
 	currentUser,
@@ -57,18 +57,29 @@ rawCurrentUserFetch()
 	} );
 
 export default function Content( { selectedArticle, setSelectedArticle, setFooterContent } ) {
-	const [ formOpen ] = useState( false );
+	const [ contactForm, setContactForm ] = useState( null );
+	const [ openInContactPage, setOpenInContactPage ] = useState( null );
+
 	return (
 		<Provider store={ store }>
 			<>
 				<QuerySites siteId={ window._currentSiteId } />
-				{ formOpen ? (
-					<ContactForm mode="CHAT" />
+				{ contactForm ? (
+					<ContactForm
+						mode={ contactForm }
+						onBackClick={ () => {
+							setOpenInContactPage( true );
+							setContactForm( null );
+						} }
+						siteId={ window._currentSiteId }
+					/>
 				) : (
 					<InlineHelpCenterContent
 						selectedArticle={ selectedArticle }
 						setSelectedArticle={ setSelectedArticle }
 						setHelpCenterFooter={ setFooterContent }
+						setContactFormOpen={ setContactForm }
+						openInContactPage={ openInContactPage }
 					/>
 				) }
 			</>

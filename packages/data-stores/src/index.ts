@@ -16,6 +16,8 @@ import * as VerticalsTemplates from './verticals-templates';
 import * as WPCOMFeatures from './wpcom-features';
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
 export { useHasSeenWhatsNewModalQuery } from './queries/use-has-seen-whats-new-modal-query';
+export { useSupportAvailability } from './support-queries/use-support-availability';
+export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 
 export {
 	Auth,
