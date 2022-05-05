@@ -9,4 +9,5 @@ export interface StoreAddress {
 	store_city: string;
 	store_postcode: string;
 	store_country: string;
+	store_email: string;
 }
