@@ -7,6 +7,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { addQueryArgs } from 'calypso/lib/route';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getWpOrgImporterUrl } from 'calypso/signup/steps/import/util';
 import { getStepUrl } from 'calypso/signup/utils';
 import { fetchImporterState, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
@@ -73,6 +74,8 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		goToImportCapturePage,
 		goToSiteViewPage,
 		goToCheckoutPage,
+		goToWpAdminImportPage,
+		goToWpAdminWordPressPluginPage,
 	};
 
 	/**
@@ -134,6 +137,14 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 
 	function goToCheckoutPage() {
 		page( getCheckoutUrl() );
+	}
+
+	function goToWpAdminImportPage() {
+		page( `/import/${ siteSlug }` );
+	}
+
+	function goToWpAdminWordPressPluginPage() {
+		page( getWpOrgImporterUrl( siteSlug, 'wordpress' ) );
 	}
 
 	function getWordpressImportEverythingUrl() {

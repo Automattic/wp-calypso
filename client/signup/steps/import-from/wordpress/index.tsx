@@ -8,7 +8,6 @@ import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteBySlug, getSite, isJetpackSite } from 'calypso/state/sites/selectors';
-import { getWpOrgImporterUrl } from '../../import/util';
 import { Importer, ImportJob, StepNavigator } from '../types';
 import { ContentChooser } from './content-chooser';
 import ImportContentOnly from './import-content-only';
@@ -98,11 +97,11 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	}
 
 	function redirectToWpAdminImportPage() {
-		return navigator( `/import/${ siteSlug }` );
+		stepNavigator?.goToWpAdminImportPage?.();
 	}
 
 	function redirectToWpAdminWordPressImporter() {
-		return navigator( getWpOrgImporterUrl( siteSlug, 'wordpress' ) );
+		stepNavigator?.goToWpAdminWordPressPluginPage?.();
 	}
 
 	/**

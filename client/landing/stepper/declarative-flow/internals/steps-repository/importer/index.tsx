@@ -20,6 +20,7 @@ import { useCheckoutUrl } from 'calypso/signup/steps/import-from/hooks/use-check
 import { Importer, ImportJob, StepNavigator } from 'calypso/signup/steps/import-from/types';
 import { getImporterTypeForEngine } from 'calypso/signup/steps/import-from/util';
 import { WPImportOption } from 'calypso/signup/steps/import-from/wordpress/types';
+import { getWpOrgImporterUrl } from 'calypso/signup/steps/import/util';
 import { fetchImporterState, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
@@ -68,6 +69,8 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			goToImportCapturePage,
 			goToSiteViewPage,
 			goToCheckoutPage,
+			goToWpAdminImportPage,
+			goToWpAdminWordPressPluginPage,
 		};
 
 		/**
@@ -99,6 +102,14 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 
 		function goToCheckoutPage() {
 			navigation.submit?.( { url: getCheckoutUrl() } );
+		}
+
+		function goToWpAdminImportPage() {
+			redirect( `/import/${ siteSlug }` );
+		}
+
+		function goToWpAdminWordPressPluginPage() {
+			redirect( getWpOrgImporterUrl( siteSlug as string, 'wordpress' ) );
 		}
 
 		function getWordpressImportEverythingUrl(): string {
