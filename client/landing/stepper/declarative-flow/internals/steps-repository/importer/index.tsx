@@ -7,7 +7,6 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -26,6 +25,7 @@ import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { StepProps } from '../../types';
+import { useInitialQueryRun } from './hooks/use-initial-query-run';
 import { useStepNavigator } from './hooks/use-step-navigator';
 import { ImporterCompType } from './types';
 
@@ -38,7 +38,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const { __ } = useI18n();
 		const dispatch = useDispatch();
 		const { importer, navigation } = props;
-		const currentRoute = useCurrentRoute();
 		const currentSearchParams = useQuery();
 
 		/**
@@ -48,7 +47,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const siteSlug = useSiteSlugParam();
 		const [ siteId, setSiteId ] = useState( site?.ID );
 		! siteId && site?.ID && setSiteId( site?.ID );
-		const [ runImportInitially, setRunImportInitially ] = useState( false );
+		const runImportInitially = useInitialQueryRun( siteId );
 		const canImport = useSelector( ( state ) =>
 			canCurrentUser( state, site?.ID as number, 'manage_options' )
 		);
@@ -68,7 +67,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 	 	↓ Effects
 	 	*/
 		useEffect( fetchImporters, [ siteId ] );
-		useEffect( checkInitialRunState, [ siteId ] );
 		useEffect( checkSiteSlugUpdate, [ site?.URL ] );
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
 		if ( ! importer ) {
@@ -119,18 +117,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		function checkFromSiteData(): void {
 			if ( fromSite !== fromSiteData?.url ) {
 				dispatch( analyzeUrl( fromSite ) );
-			}
-		}
-
-		function checkInitialRunState() {
-			// run query param indicates that the import process can be run immediately,
-			// but before proceeding, remove it from the URL path
-			// because of the browser's back or refresh edge cases
-			if ( currentSearchParams.get( 'run' ) === 'true' ) {
-				setRunImportInitially( true );
-				currentSearchParams.delete( 'run' );
-
-				navigation.goToStep?.( `${ currentRoute }?${ currentSearchParams.toString() }` );
 			}
 		}
 
