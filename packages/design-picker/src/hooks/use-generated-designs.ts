@@ -1,16 +1,14 @@
 import { useMemo } from 'react';
 import rawGeneratedDesignsConfig from '../generated-designs-config.json';
-import { Category, Design } from '../types';
+import { Design } from '../types';
 
-export function useGeneratedDesigns( category?: Category ): Design[] {
+export function useGeneratedDesigns(): Design[] {
 	// TODO: fetch designs from backend
 	return useMemo( () => {
-		if ( ! category ) {
-			return [];
-		}
 		return ( rawGeneratedDesignsConfig as Design[] ).map( ( design ) => ( {
 			...design,
-			categories: [ ...design.categories, category ],
+			preview: 'static',
+			categories: [ ...design.categories ],
 		} ) );
-	}, [ category ] );
+	}, [] );
 }

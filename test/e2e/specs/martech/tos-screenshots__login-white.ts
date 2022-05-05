@@ -1,12 +1,9 @@
 /**
  * @group legal
  */
-import fs from 'fs';
 import { DataHelper, LoginPage } from '@automattic/calypso-e2e';
-import archiver from 'archiver';
-import FormData from 'form-data';
-import fetch from 'node-fetch';
 import { Page, Browser } from 'playwright';
+import uploadScreenshotsToBlog from '../../lib/martech-tos-helper';
 
 const selectors = {
 	isWhiteLogin: '.is-section-login.is-white-login',
@@ -73,31 +70,12 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		} );
 
 		it( 'Zip screenshots and upload', async function () {
-			const zipFilename = 'tos-screenshots-login-white.zip';
-			const archive = archiver( 'zip', {
-				zlib: { level: 9 }, // Sets the compression level.
-			} );
-			const output = fs.createWriteStream( zipFilename );
-			archive.pipe( output );
-			archive.glob( 'tos_white_login_*' );
-			archive.finalize();
+			const filetnameTitle = 'tos-screenshots-login-white';
+			const zipFilename = `${ filetnameTitle }.zip`;
+			const result = await uploadScreenshotsToBlog( zipFilename, 'tos_white_login_*' );
 
-			output.on( 'close', function () {
-				const form = new FormData();
-				const bearerToken = DataHelper.getTosUploadToken();
-				form.append( 'zip_file', fs.createReadStream( zipFilename ) );
-				fetch( 'https://public-api.wordpress.com/wpcom/v2/tos-screenshots', {
-					method: 'POST',
-					body: form,
-					headers: {
-						Authorization: `Bearer ${ bearerToken }`,
-					},
-				} )
-					.then( ( response ) => response.json() )
-					.then( ( response ) =>
-						expect( response?.data?.upload_status ).toStrictEqual( 'success' )
-					);
-			} );
+			expect( result?.media?.[ 0 ]?.title ).toStrictEqual( filetnameTitle );
+			expect( result?.media?.[ 0 ]?.mime_type ).toStrictEqual( 'application/zip' );
 		} );
 	} );
 } );

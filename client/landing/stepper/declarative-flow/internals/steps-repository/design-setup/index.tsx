@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { planHasFeature, FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import DesignPicker, {
+	GeneratedDesignPicker,
 	PremiumBadge,
 	useCategorization,
 	isBlankCanvasDesign,
@@ -25,7 +26,7 @@ import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../../stores';
 import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
-import { getCategorizationOptions, getGeneratedDesignsCategory } from './categories';
+import { getCategorizationOptions } from './categories';
 import PreviewToolbar from './preview-toolbar';
 import type { Step } from '../../types';
 import './style.scss';
@@ -71,9 +72,10 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	);
 	const showDesignPickerCategories =
 		isEnabled( 'signup/design-picker-categories' ) && ! isAnchorSite;
-	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
 	const showGeneratedDesigns =
 		isEnabled( 'signup/design-picker-generated-designs' ) && intent === 'build' && !! siteVertical;
+	const showDesignPickerCategoriesAllFilter =
+		isEnabled( 'signup/design-picker-categories' ) && ! showGeneratedDesigns;
 
 	const isPremiumThemeAvailable = Boolean(
 		useMemo(
@@ -85,24 +87,23 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const { data: themeDesigns = [] } = useDesignsBySite( site );
 
 	const staticDesigns = themeDesigns;
-
-	const generatedDesignsCategory = useMemo(
-		() => ( showGeneratedDesigns ? getGeneratedDesignsCategory( siteVertical.name ) : undefined ),
-		[ showGeneratedDesigns, siteVertical ]
-	);
-	const generatedDesigns = useGeneratedDesigns( generatedDesignsCategory );
+	const generatedDesigns = useGeneratedDesigns();
 
 	const designs = useMemo(
-		() => [
-			...generatedDesigns,
-			...shuffle( staticDesigns.filter( ( design ) => ! isBlankCanvasDesign( design ) ) ),
-		],
+		() =>
+			showGeneratedDesigns
+				? generatedDesigns
+				: shuffle( staticDesigns.filter( ( design ) => ! isBlankCanvasDesign( design ) ) ),
 		[ staticDesigns, generatedDesigns ]
 	);
 
 	const visibility = useNewSiteVisibility();
 
 	function headerText() {
+		if ( showGeneratedDesigns ) {
+			return translate( 'Pick a design' );
+		}
+
 		if ( showDesignPickerCategories ) {
 			return translate( 'Themes' );
 		}
@@ -116,6 +117,13 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 				'Pick a homepage layout for your podcast site. You can customize or change it later.'
 			);
 		}
+
+		if ( showGeneratedDesigns ) {
+			return translate(
+				'One of these homepage options could be great to start with. You can always change later.'
+			);
+		}
+
 		if ( ! showDesignPickerCategories ) {
 			return translate(
 				'Pick your favorite homepage layout. You can customize or change it later.'
@@ -302,35 +310,45 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		/>
 	);
 
-	stepContent = (
-		<>
-			<DesignPicker
-				designs={ isAnchorSite ? ( ANCHOR_FM_THEMES as Design[] ) : designs }
-				theme={ isReskinned ? 'light' : 'dark' }
-				locale={ locale }
-				onSelect={ pickDesign }
-				onPreview={ previewDesign }
-				onUpgrade={ upgradePlan }
-				className={ classnames( {
-					'design-setup__has-categories': showDesignPickerCategories,
-				} ) }
-				isGridMinimal={ isAnchorSite }
-				highResThumbnails
-				hideFullScreenPreview={ isAnchorSite }
-				premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ !! isPremiumThemeAvailable } /> }
-				categorization={ showDesignPickerCategories ? categorization : undefined }
-				recommendedCategorySlug={ categorizationOptions.defaultSelection }
-				categoriesHeading={ heading }
-				anchorHeading={ isAnchorSite && heading }
-				isPremiumThemeAvailable={ isPremiumThemeAvailable }
-			/>
-		</>
+	stepContent = showGeneratedDesigns ? (
+		<GeneratedDesignPicker
+			designs={ designs }
+			locale={ locale }
+			heading={
+				<div className={ classnames( 'step-container__header', 'design-setup__header' ) }>
+					{ heading }
+					<Button primary>{ translate( 'Continue' ) }</Button>
+				</div>
+			}
+		/>
+	) : (
+		<DesignPicker
+			designs={ isAnchorSite ? ( ANCHOR_FM_THEMES as Design[] ) : designs }
+			theme={ isReskinned ? 'light' : 'dark' }
+			locale={ locale }
+			onSelect={ pickDesign }
+			onPreview={ previewDesign }
+			onUpgrade={ upgradePlan }
+			className={ classnames( {
+				'design-setup__has-categories': showDesignPickerCategories,
+			} ) }
+			isGridMinimal={ isAnchorSite }
+			highResThumbnails
+			hideFullScreenPreview={ isAnchorSite }
+			premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ !! isPremiumThemeAvailable } /> }
+			categorization={ showDesignPickerCategories ? categorization : undefined }
+			recommendedCategorySlug={ categorizationOptions.defaultSelection }
+			categoriesHeading={ heading }
+			anchorHeading={ isAnchorSite && heading }
+			isPremiumThemeAvailable={ isPremiumThemeAvailable }
+		/>
 	);
 
 	return (
 		<StepContainer
 			stepName={ 'design-step' }
 			className={ classnames( {
+				'design-picker__is-generated': showGeneratedDesigns,
 				'design-picker__has-categories': showDesignPickerCategories,
 				'design-picker__sell-intent': 'sell' === intent,
 			} ) }
