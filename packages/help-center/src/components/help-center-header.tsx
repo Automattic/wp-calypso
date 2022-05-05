@@ -23,14 +23,14 @@ const HelpCenterMobileHeader: React.FC< Header > = ( {
 					{ isMinimized ? (
 						<Button
 							className={ 'help-center-header__maximize' }
-							label={ __( 'Maximize Help Center' ) }
+							label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
 							icon={ chevronUp }
 							onClick={ onMaximize }
 						/>
 					) : (
 						<Button
 							className={ 'help-center-header__minimize' }
-							label={ __( 'Minimize Help Center' ) }
+							label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
 							icon={ lineSolid }
 							onClick={ onMinimize }
 						/>
@@ -38,7 +38,7 @@ const HelpCenterMobileHeader: React.FC< Header > = ( {
 
 					<Button
 						className={ 'help-center-header__close' }
-						label={ __( 'Close Help Center' ) }
+						label={ __( 'Close Help Center', __i18n_text_domain__ ) }
 						icon={ closeSmall }
 						onClick={ onDismiss }
 					/>

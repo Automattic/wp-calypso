@@ -19,3 +19,7 @@ export interface Header {
 	onDismiss: () => void;
 	headerText: string;
 }
+
+export interface SuccessScreenProps {
+	onBack: () => void;
+}
