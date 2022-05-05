@@ -249,6 +249,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 			}
 			stepContent={ getContent() }
 			recordTracksEvent={ recordTracksEvent }
+			hideSkip
 		/>
 	);
 };
