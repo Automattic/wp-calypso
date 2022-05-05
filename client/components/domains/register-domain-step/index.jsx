@@ -411,6 +411,7 @@ class RegisterDomainStep extends Component {
 						/>
 					) }
 					{ this.renderFilterContent() }
+					{ this.renderBrowserChrome() }
 					{ this.renderSideContent() }
 					<QueryContactDetailsCache />
 				</div>
@@ -586,6 +587,23 @@ class RegisterDomainStep extends Component {
 					illustrationWidth={ 280 }
 				/>
 			</>
+		);
+	}
+
+	renderBrowserChrome() {
+		return (
+			<div className="register-domain-step__domain-side-content-container-browser-chrome">
+				<span></span>
+				<span></span>
+				<span className="register-domain-step__domain-side-content-container-browser-chrome-url">
+					https://
+					{ this.props.translate( 'yoursitename', {
+						comment: 'example url used to explain what a domain is.',
+					} ) }
+					.com
+				</span>
+				<span></span>
+			</div>
 		);
 	}
 
