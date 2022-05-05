@@ -1,9 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-
-import { assert } from 'chai';
-import { mount, shallow } from 'enzyme';
+import { fireEvent, render } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { BulkSelect } from '../index';
 
 const noop = () => {};
@@ -11,7 +10,7 @@ const translate = ( string ) => string;
 
 describe( 'index', () => {
 	test( 'should have BulkSelect class', () => {
-		const bulkSelect = shallow(
+		const { container } = render(
 			<BulkSelect
 				translate={ translate }
 				selectedElements={ 0 }
@@ -19,11 +18,11 @@ describe( 'index', () => {
 				onToggle={ noop }
 			/>
 		);
-		assert.equal( 1, bulkSelect.find( '.bulk-select' ).length );
+		expect( container.firstChild ).toHaveClass( 'bulk-select' );
 	} );
 
 	test( 'should not be checked when initialized without selectedElements', () => {
-		const bulkSelect = shallow(
+		const { container } = render(
 			<BulkSelect
 				translate={ translate }
 				selectedElements={ 0 }
@@ -31,11 +30,11 @@ describe( 'index', () => {
 				onToggle={ noop }
 			/>
 		);
-		assert.equal( 0, bulkSelect.find( '.is-checked' ).length );
+		expect( container.firstChild ).not.toHaveClass( 'is-checked' );
 	} );
 
 	test( 'should be checked when initialized with all elements selected', () => {
-		const bulkSelect = shallow(
+		const { container } = render(
 			<BulkSelect
 				translate={ translate }
 				selectedElements={ 3 }
@@ -43,11 +42,11 @@ describe( 'index', () => {
 				onToggle={ noop }
 			/>
 		);
-		assert.equal( 1, bulkSelect.find( '.is-checked' ).length );
+		expect( container.querySelectorAll( 'input:checked' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should not be checked when initialized with some elements selected', () => {
-		const bulkSelect = shallow(
+		const { container } = render(
 			<BulkSelect
 				translate={ translate }
 				selectedElements={ 2 }
@@ -55,11 +54,11 @@ describe( 'index', () => {
 				onToggle={ noop }
 			/>
 		);
-		assert.equal( 0, bulkSelect.find( '.is-checked' ).length );
+		expect( container.querySelectorAll( 'input:checked' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should render line gridicon when initialized with some elements selected', () => {
-		const bulkSelect = shallow(
+		const { container } = render(
 			<BulkSelect
 				translate={ translate }
 				selectedElements={ 2 }
@@ -67,11 +66,13 @@ describe( 'index', () => {
 				onToggle={ noop }
 			/>
 		);
-		assert.equal( 1, bulkSelect.find( '.bulk-select__some-checked-icon' ).length );
+		expect( container.getElementsByClassName( 'bulk-select__some-checked-icon' ) ).toHaveLength(
+			1
+		);
 	} );
 
 	test( 'should add the aria-label to the input', () => {
-		const bulkSelect = mount(
+		const { container } = render(
 			<BulkSelect
 				translate={ translate }
 				selectedElements={ 2 }
@@ -80,11 +81,13 @@ describe( 'index', () => {
 				ariaLabel="Select All"
 			/>
 		);
-		assert.equal( 'Select All', bulkSelect.find( 'input' ).prop( 'aria-label' ) );
+		expect( container.querySelectorAll( 'input' )[ 0 ].getAttribute( 'aria-label' ) ).toBe(
+			'Select All'
+		);
 	} );
 
 	test( 'should not mark the input readOnly', () => {
-		const bulkSelect = mount(
+		const { container } = render(
 			<BulkSelect
 				translate={ translate }
 				selectedElements={ 2 }
@@ -92,34 +95,32 @@ describe( 'index', () => {
 				onToggle={ noop }
 			/>
 		);
-		// There is no prop readOnly, so this is undefined
-		assert.equal( undefined, bulkSelect.find( 'input' ).prop( 'readOnly' ) );
+		// There is no prop readOnly, so this is null
+		expect( container.querySelectorAll( 'input' )[ 0 ].getAttribute( 'readonly' ) ).toBeNull();
 	} );
 
 	test( 'should be call onToggle when clicked', () => {
-		let hasBeenCalled = false;
-		const callback = function () {
-			hasBeenCalled = true;
-		};
-		const bulkSelect = mount(
+		const handleToggle = jest.fn();
+
+		const { container } = render(
 			<BulkSelect
 				translate={ translate }
 				selectedElements={ 0 }
 				totalElements={ 3 }
-				onToggle={ callback }
+				onToggle={ handleToggle }
 			/>
 		);
-		bulkSelect.find( 'input' ).simulate( 'change' );
-		assert.equal( hasBeenCalled, true );
+		fireEvent.click( container.querySelectorAll( 'input' )[ 0 ] );
+		expect( handleToggle ).toHaveBeenCalled();
 	} );
 
 	test( 'should be call onToggle with the new state when there are no selected elements', () => {
 		return new Promise( ( done ) => {
 			const callback = function ( newState ) {
-				assert.equal( newState, true );
+				expect( newState ).toBe( true );
 				done();
 			};
-			const bulkSelect = mount(
+			const { container } = render(
 				<BulkSelect
 					translate={ translate }
 					selectedElements={ 0 }
@@ -127,17 +128,17 @@ describe( 'index', () => {
 					onToggle={ callback }
 				/>
 			);
-			bulkSelect.find( 'input' ).simulate( 'change' );
+			fireEvent.click( container.querySelectorAll( 'input' )[ 0 ] );
 		} );
 	} );
 
 	test( 'should be call onToggle with the new state when there are some selected elements', () => {
 		return new Promise( ( done ) => {
 			const callback = function ( newState ) {
-				assert.equal( newState, false );
+				expect( newState ).toBe( false );
 				done();
 			};
-			const bulkSelect = mount(
+			const { container } = render(
 				<BulkSelect
 					translate={ translate }
 					selectedElements={ 1 }
@@ -145,17 +146,17 @@ describe( 'index', () => {
 					onToggle={ callback }
 				/>
 			);
-			bulkSelect.find( 'input' ).simulate( 'change' );
+			fireEvent.click( container.querySelectorAll( 'input' )[ 0 ] );
 		} );
 	} );
 
 	test( 'should be call onToggle with the new state when there all elements are selected', () => {
 		return new Promise( ( done ) => {
 			const callback = function ( newState ) {
-				assert.equal( newState, false );
+				expect( newState ).toBe( false );
 				done();
 			};
-			const bulkSelect = mount(
+			const { container } = render(
 				<BulkSelect
 					translate={ translate }
 					selectedElements={ 3 }
@@ -163,7 +164,7 @@ describe( 'index', () => {
 					onToggle={ callback }
 				/>
 			);
-			bulkSelect.find( 'input' ).simulate( 'change' );
+			fireEvent.click( container.querySelectorAll( 'input' )[ 0 ] );
 		} );
 	} );
 } );
