@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
  * Internal Dependencies
  */
 import { SitePicker } from './types';
+import type { SitePickerSite } from '@automattic/site-picker';
 
 import './help-center-contact-form.scss';
 
@@ -21,12 +22,13 @@ const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 	onSetSelectedSiteId,
 	siteId,
 } ) => {
-	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
+	const site: SitePickerSite = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
 
 	const otherSite = {
 		name: __( 'Other site', 'full-site-editing' ),
 		ID: 0,
-		logo: {},
+		logo: { id: '', sizes: [], url: '' },
+		URL: '',
 	};
 
 	function pickSite( ID: number ) {
