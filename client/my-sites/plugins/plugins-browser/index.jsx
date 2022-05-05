@@ -141,7 +141,7 @@ const PluginsBrowser = ( {
 	const {
 		plugins: pluginsBySearchTerm = [],
 		isFetching: isFetchingPluginsBySearchTerm,
-		pluginsPagination: pluginsPagination,
+		pagination: pluginsPagination,
 		fetchNextPage,
 	} = usePlugins( {
 		search,
