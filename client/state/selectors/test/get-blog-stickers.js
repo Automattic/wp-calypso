@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getBlogStickers from 'calypso/state/selectors/get-blog-stickers';
 
 describe( 'getBlogStickers()', () => {
@@ -12,7 +11,7 @@ describe( 'getBlogStickers()', () => {
 		};
 		const blogId = 123;
 		const nextState = getBlogStickers( prevState, blogId );
-		expect( nextState ).to.eql( [ 'dont-recommend' ] );
+		expect( nextState ).toEqual( [ 'dont-recommend' ] );
 	} );
 
 	test( 'should return null for an unknown blog', () => {
@@ -25,6 +24,6 @@ describe( 'getBlogStickers()', () => {
 		};
 		const blogId = 124;
 		const nextState = getBlogStickers( prevState, blogId );
-		expect( nextState ).to.eql( null );
+		expect( nextState ).toEqual( null );
 	} );
 } );
