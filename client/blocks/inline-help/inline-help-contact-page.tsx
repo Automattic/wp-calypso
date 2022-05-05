@@ -3,9 +3,35 @@ import { useSupportAvailability } from '@automattic/data-stores';
 import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import InlineHelpSearchResults from './inline-help-search-results';
 import Mail from './mail-icon';
+
+/*
+const POPUP_TOP_BAR_HEIGHT = 60;
+
+function openPopup( event: React.MouseEvent< HTMLDivElement > ): Window {
+	const helpCenterContainer = event.currentTarget.closest(
+		'.help-center__container'
+	) as HTMLDivElement;
+
+	const HCRect = helpCenterContainer.getBoundingClientRect();
+	const windowTop = event.screenY - event.clientY;
+
+	const popupTop = windowTop + HCRect.top - POPUP_TOP_BAR_HEIGHT;
+	const popupLeft = window.screenLeft + HCRect.left;
+	const popupWidth = HCRect.width;
+	const popupHeight = HCRect.height - POPUP_TOP_BAR_HEIGHT;
+
+	const popup = window.open(
+		'https://widgets.wp.com/calypso-happychat/',
+		'happy-chat-window',
+		`toolbar=no,scrollbars=yes,location=no,addressbar=no,width=${ popupWidth },height=${ popupHeight },left=${ popupLeft },top=${ popupTop }`
+	) as Window;
+
+	return popup;
+}
+*/
 
 interface Props {
 	closeContactPage: () => void;

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Composer from 'calypso/components/happychat/composer';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
@@ -21,8 +21,16 @@ import isHappychatServerReachable from 'calypso/state/happychat/selectors/is-hap
 import { setCurrentMessage } from 'calypso/state/happychat/ui/actions';
 import './happychat.scss';
 
-function ParentConnection( { chatStatus } ) {
+function getMessagesOlderThan( timestamp, messages ) {
+	if ( ! timestamp ) {
+		return [];
+	}
+	return messages.filter( ( m ) => m.timestamp >= timestamp );
+}
+
+function ParentConnection( { chatStatus, timeline } ) {
 	const dispatch = useDispatch();
+	const [ blurredAt, setBlurredAt ] = useState( Date.now() );
 
 	// listen to messages from parent window
 	useEffect( () => {
@@ -51,6 +59,76 @@ function ParentConnection( { chatStatus } ) {
 		window.parent.postMessage( { chatStatus }, '*' );
 	}, [ chatStatus ] );
 
+	useEffect( () => {
+		function visibilityHandler() {
+			if ( document.visibilityState === 'hidden' ) {
+				setBlurredAt( Date.now() );
+			} else {
+				setBlurredAt( 0 );
+			}
+			( window.opener || window.parent )?.postMessage(
+				{
+					type: 'window-state-change',
+					state: document.visibilityState === 'visible' ? 'open' : 'blurred',
+				},
+				'*'
+			);
+		}
+		function focusHandler( event ) {
+			if ( event.type === 'focus' ) {
+				setBlurredAt( 0 );
+			} else {
+				setBlurredAt( Date.now() );
+			}
+			( window.opener || window.parent )?.postMessage(
+				{
+					type: 'window-state-change',
+					state: event.type === 'focus' ? 'open' : 'blurred',
+				},
+				'*'
+			);
+		}
+		function closeHandler() {
+			( window.opener || window.parent )?.postMessage(
+				{
+					type: 'window-state-change',
+					state: 'closed',
+				},
+				'*'
+			);
+		}
+		window.addEventListener( 'blur', focusHandler );
+		window.addEventListener( 'focus', focusHandler );
+		window.addEventListener( 'visibilitychange', visibilityHandler );
+		window.addEventListener( 'beforeunload', closeHandler );
+
+		// send open state on load
+		( window.opener || window.parent )?.postMessage(
+			{
+				type: 'window-state-change',
+				state: 'open',
+			},
+			'*'
+		);
+
+		return () => {
+			window.removeEventListener( 'blur', focusHandler );
+			window.removeEventListener( 'visibilitychange', visibilityHandler );
+			window.removeEventListener( 'close', closeHandler );
+		};
+	}, [] );
+
+	useEffect( () => {
+		const unreadMessageCount = getMessagesOlderThan( blurredAt, timeline ).length;
+		( window.opener || window.parent )?.postMessage(
+			{
+				type: 'calypso-happy-chat-unread-messages',
+				state: unreadMessageCount,
+			},
+			'*'
+		);
+	}, [ blurredAt, timeline ] );
+
 	return null;
 }
 
@@ -71,7 +149,7 @@ export default function Happychat() {
 	return (
 		<div className="happychat__container">
 			<HappychatConnection />
-			<ParentConnection chatStatus={ chatStatus } />
+			<ParentConnection timeline={ timeline } chatStatus={ chatStatus } />
 			<Timeline
 				currentUserEmail={ currentUser.email }
 				isCurrentUser={ isMessageFromCurrentUser }

@@ -29,3 +29,5 @@ export interface SitePicker {
 	onSetSelectedSiteId: React.Dispatch< React.SetStateAction< number | undefined > >;
 	siteId: number | null;
 }
+
+export type WindowState = 'open' | 'closed' | 'blurred';
