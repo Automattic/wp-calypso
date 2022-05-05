@@ -12,6 +12,15 @@
 	}
 }
 
+// Retain horizontal padding on Jetpack Cloud,
+// otherwise the product grid reach the edge of the screen
+.is-jetpack-cloud.product-grid__section {
+	@include breakpoint-deprecated( '>660px' ) {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+}
+
 .product-grid__section:first-of-type > .product-grid__section-title {
 	margin-bottom: 15px;
 }
