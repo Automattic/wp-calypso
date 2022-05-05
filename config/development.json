@@ -110,6 +110,7 @@
 		"oauth": false,
 		"p2/p2-plus": true,
 		"page/export": true,
+		"plans/starter-plan": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": true,
 		"post-editor/checkout-overlay": true,
