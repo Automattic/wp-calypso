@@ -14,7 +14,6 @@ import {
 	renderProvisionPlugins,
 	jetpackCanUpdate,
 	plugins,
-	resetHistory,
 	scrollTopIfNoHash,
 	upload,
 } from './controller';
@@ -126,12 +125,4 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-
-	page.exit( '/plugins/*', ( context, next ) => {
-		if ( 0 !== page.current.indexOf( '/plugins/' ) ) {
-			resetHistory();
-		}
-
-		next();
-	} );
 }

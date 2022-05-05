@@ -13,42 +13,19 @@ import PluginEligibility from './plugin-eligibility';
 import PluginUpload from './plugin-upload';
 import PluginBrowser from './plugins-browser';
 
-let lastPluginsListVisited;
-let lastPluginsQuerystring;
-
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
 
-	let prevPath;
-	if ( lastPluginsListVisited ) {
-		prevPath = lastPluginsListVisited;
-	} else if ( context.prevPath ) {
-		prevPath = sectionify( context.prevPath );
-	}
 	// Render single plugin component
 	context.primary = createElement( PluginDetails, {
 		path: context.path,
-		prevQuerystring: lastPluginsQuerystring,
-		prevPath,
 		pluginSlug,
 		siteUrl,
 	} );
 }
 
-function getPathWithoutSiteSlug( context, site ) {
-	let path = context.pathname;
-	if ( site && site.slug ) {
-		path = path.replace( '/' + site.slug, '' );
-	}
-	return path;
-}
-
 function renderPluginList( context, basePath ) {
 	const search = context.query.s;
-	const site = getSelectedSite( context.store.getState() );
-
-	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
-	lastPluginsQuerystring = context.querystring;
 
 	context.primary = createElement( PluginListComponent, {
 		path: basePath,
@@ -74,11 +51,7 @@ function getCategoryForPluginsBrowser( context ) {
 
 function renderPluginsBrowser( context ) {
 	const searchTerm = context.query.s;
-	const site = getSelectedSite( context.store.getState() );
 	const category = getCategoryForPluginsBrowser( context );
-
-	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
-	lastPluginsQuerystring = context.querystring;
 
 	context.primary = createElement( PluginBrowser, {
 		path: context.path,
@@ -168,11 +141,6 @@ export function jetpackCanUpdate( context, next ) {
 		}
 	}
 	next();
-}
-
-export function resetHistory() {
-	lastPluginsListVisited = null;
-	lastPluginsQuerystring = null;
 }
 
 export function scrollTopIfNoHash( context, next ) {
