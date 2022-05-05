@@ -9,6 +9,7 @@ export interface Container {
 
 export interface Content {
 	content: ReactElement;
+	isMinimized: boolean;
 }
 
 export interface Header {

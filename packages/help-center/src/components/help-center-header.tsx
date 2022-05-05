@@ -2,6 +2,7 @@ import { CardHeader, Button, Flex } from '@wordpress/components';
 import { closeSmall, chevronUp, lineSolid } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import React from 'react';
 import { Header } from './types';
 
 const HelpCenterMobileHeader: React.FC< Header > = ( {
