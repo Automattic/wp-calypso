@@ -65,17 +65,17 @@ const usePlugins = ( {
 	};
 
 	const {
-		data: { plugins: wporgPlugins = [], pagination: wporgPagination } = {},
+		data: { plugins: wporgPlugins = [], pagination: wporgPagination = {} } = {},
 		isLoading: isFetchingWPORG,
-	} = useWPORGPlugins( wporgPluginsOptions, {
+	}: any = useWPORGPlugins( wporgPluginsOptions, {
 		enabled: ! infinite && ! WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) && wporgEnabled,
 	} );
 
 	const {
-		data: { plugins: wporgPluginsInfinite = [], pagination: wporgPaginationInfinite } = {},
+		data: { plugins: wporgPluginsInfinite = [], pagination: wporgPaginationInfinite = {} } = {},
 		isLoading: isFetchingWPORGInfinite,
 		fetchNextPage,
-	} = searchHook( wporgPluginsOptions, {
+	}: any = searchHook( wporgPluginsOptions, {
 		enabled: infinite && WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) && wporgEnabled,
 	} );
 
