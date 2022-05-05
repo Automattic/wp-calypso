@@ -216,7 +216,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				) }
 				<>
 					<br />
-					<br />
 					<em>{ getAnyPlanNames() }</em>
 				</>
 			</>
@@ -230,6 +229,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			: {
 					url: 'https://wordpress.com/support/wordpress-editor/blocks/payments/#payment-button-block',
 					onClick: () => trackLearnLink( 'recurring-payments' ),
+					label: translate( 'Support documentation' ),
 			  };
 		return {
 			title,
@@ -275,7 +275,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				) }
 				<>
 					<br />
-					<br />
 					<em>{ getAnyPlanNames() }</em>
 				</>
 			</>
@@ -289,6 +288,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			: {
 					url: localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/donations/' ),
 					onClick: () => trackLearnLink( 'donations' ),
+					label: translate( 'Support documentation' ),
 			  };
 
 		return {
@@ -343,7 +343,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ bodyText }
 				<>
 					<br />
-					<br />
 					<em>{ getAnyPlanNames() }</em>
 				</>
 			</>
@@ -351,6 +350,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		const learnMoreLink = {
 			url: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/',
 			onClick: () => trackLearnLink( 'premium-content' ),
+			label: hasConnectedAccount ? translate( 'Support documentation' ) : null,
 		};
 
 		return {

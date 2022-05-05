@@ -14,6 +14,7 @@ interface CtaAction {
 	url: URL;
 	onClick: ClickCallback;
 	selfTarget?: boolean;
+	label?: string;
 }
 
 export interface CtaButton {
@@ -114,7 +115,7 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 			{ ctaBtn }
 			{ learnMore && (
 				<Button borderless className="promo-card__cta-learn-more" { ...learnMore }>
-					{ translate( 'Learn more' ) }
+					{ learnMoreLink && learnMoreLink.label ? learnMoreLink.label : translate( 'Learn More' ) }
 				</Button>
 			) }
 		</ActionPanelCta>
