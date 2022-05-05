@@ -269,7 +269,7 @@ export const award: ReactElement = (
 	</svg>
 );
 
-export const headset: ReactElement = (
+export const frame: ReactElement = (
 	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<mask id="mask0_2727_2533" maskUnits="userSpaceOnUse" x="3" y="4" width="18" height="16">
 			<path
@@ -282,5 +282,71 @@ export const headset: ReactElement = (
 		<g mask="url(#mask0_2727_2533)">
 			<rect width="24" height="24" fill="#8C8F94" />
 		</g>
+	</svg>
+);
+
+export const headset: ReactElement = (
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path
+			d="M7 17C8.105 17 9 16.105 9 15V11C9 9.895 8.105 9 7 9C5.895 9 5 9.895 5 11V15C5 16.105 5.895 17 7 17Z"
+			stroke="#8C8F94"
+			stroke-width="1.6"
+			stroke-miterlimit="10"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+		<path
+			d="M17 17C18.105 17 19 16.105 19 15V11C19 9.895 18.105 9 17 9C15.895 9 15 9.895 15 11V15C15 16.105 15.895 17 17 17Z"
+			stroke="#8C8F94"
+			stroke-width="1.6"
+			stroke-miterlimit="10"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+		<path
+			d="M1 13V12C1 5.925 5.925 1 12 1C18.075 1 23 5.925 23 12V17C23 19.209 21.209 21 19 21H14"
+			stroke="#8C8F94"
+			stroke-width="1.6"
+			stroke-miterlimit="10"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+		<path
+			d="M12 23C13.1046 23 14 22.1046 14 21C14 19.8954 13.1046 19 12 19C10.8954 19 10 19.8954 10 21C10 22.1046 10.8954 23 12 23Z"
+			stroke="#8C8F94"
+			stroke-width="1.6"
+			stroke-miterlimit="10"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+	</svg>
+);
+
+export const mouse: ReactElement = (
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path
+			d="M5 9H19"
+			stroke="#8C8F94"
+			stroke-width="1.6"
+			stroke-miterlimit="10"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+		<path
+			d="M12 1V9"
+			stroke="#8C8F94"
+			stroke-width="1.6"
+			stroke-miterlimit="10"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
+		<path
+			d="M12 23C8.134 23 5 19.866 5 16V5C5 2.791 6.791 1 9 1H15C17.209 1 19 2.791 19 5V16C19 19.866 15.866 23 12 23Z"
+			stroke="#8C8F94"
+			stroke-width="1.6"
+			stroke-miterlimit="10"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+		/>
 	</svg>
 );

@@ -43,6 +43,7 @@ export const EXCLUDED_STEPS: { [ key: string ]: string[] } = {
 
 const EXTERNAL_FLOW: { [ key: string ]: string } = {
 	import: 'importer',
+	difm: 'website-design-services',
 };
 
 const getExcludedSteps = ( providedDependencies?: Dependencies ) =>

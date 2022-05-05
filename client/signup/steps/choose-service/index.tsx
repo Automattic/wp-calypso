@@ -9,107 +9,106 @@ import { IntentScreen } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import difmImage from 'calypso/assets/images/difm/difm.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { preventWidows } from 'calypso/lib/formatting';
-import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
 	getProductDisplayCost,
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
-import { removeSiteSlugDependency } from 'calypso/state/signup/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { award, frame } from '../../icons';
+import { mouse, headset } from '../../icons';
 import { ChoiceType } from './types';
 import type { SelectItem } from '@automattic/onboarding';
 
 import './style.scss';
 
 interface Props {
+	signupDependencies: any;
+	existingSiteCount: number;
 	goToNextStep: () => void;
 	submitSignupStep: ( { stepName, wasSkipped }: { stepName: string; wasSkipped: boolean } ) => void;
 	goToStep: ( stepName: string ) => void;
 	stepName: string;
+	queryObject: {
+		siteSlug?: string;
+		siteId?: string;
+	};
 }
 
-type NewOrExistingSiteIntent = SelectItem< ChoiceType >;
+type DIFMOrBuiltByIntent = SelectItem< ChoiceType >;
 
-const Placeholder = () => <span className="new-or-existing-site__placeholder">&nbsp;</span>;
+const Placeholder = () => <span className="choose-service__placeholder">&nbsp;</span>;
 
-export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
+export default function ChooseServiceStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const displayCost = useSelector( ( state ) => getProductDisplayCost( state, WPCOM_DIFM_LITE ) );
 	const isLoading = useSelector( isProductsListFetching );
 
-	const headerText = translate( 'Do It For Me' );
+	const headerText = translate( 'Let our experts create your dream site' );
 
 	const subHeaderText = translate(
-		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}} plus a one year subscription of the %(plan)s plan.',
-		{
-			args: {
-				displayCost,
-				fulfillmentDays: 4,
-				plan: isEnabled( 'plans/pro-plan' )
-					? getPlan( PLAN_WPCOM_PRO )?.getTitle()
-					: getPlan( PLAN_PREMIUM )?.getTitle(),
-			},
-			components: {
-				PriceWrapper: isLoading ? <Placeholder /> : <strong />,
-			},
-		}
+		'Get your business up quickly with our experts building your responsive, professional website. Select your best option.'
 	);
 
-	const intents: NewOrExistingSiteIntent[] = [
+	const intents: DIFMOrBuiltByIntent[] = [
 		{
-			key: 'new-site',
-			title: translate( 'New site' ),
+			key: 'difm',
+			title: translate( 'Do It For Me' ),
 			description: (
 				<p>
 					{ translate(
-						'Start fresh. We will build your new site from scratch using the content you provide in the following steps.'
+						'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}} plus a one year subscription of the %(plan)s plan.',
+						{
+							args: {
+								displayCost,
+								fulfillmentDays: 4,
+								plan: isEnabled( 'plans/pro-plan' )
+									? getPlan( PLAN_WPCOM_PRO )?.getTitle()
+									: getPlan( PLAN_PREMIUM )?.getTitle(),
+							},
+							components: {
+								PriceWrapper: isLoading ? <Placeholder /> : <strong />,
+							},
+						}
 					) }
 				</p>
 			),
-			icon: award,
-			value: 'new-site',
-			actionText: translate( 'Start a new site' ),
+			icon: mouse,
+			value: 'difm',
+			actionText: translate( 'Get Started' ),
 		},
 		{
-			key: 'existing-site',
-			title: translate( 'Existing WordPress.com site' ),
+			key: 'builtby',
+			title: translate( 'Built by WordPress.com - Concierge' ),
 			description: (
 				<p>
 					{ translate(
-						'Use an existing site. Any existing content will be deleted, but you will be able to submit your content for your new site in later steps.'
+						'Curabitur elementum lectus mi, quis venenatis metus tincidunt ac. Integer non lorem erat.'
 					) }
 				</p>
 			),
-			icon: frame,
-			value: 'existing-site',
-			actionText: translate( 'Select a site' ),
+			icon: headset,
+			value: 'builtby',
+			actionText: translate( 'Learn More' ),
 		},
 	];
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName: props.stepName } ) );
-	}, [ dispatch, props.stepName ] );
+	}, [] );
 
-	const branchSteps = useBranchSteps( props.stepName, () => [ 'difm-site-picker' ] );
-
-	const newOrExistingSiteSelected = ( value: ChoiceType ) => {
-		// If 'new-site' is selected, skip the `difm-site-picker` step.
-		if ( 'new-site' === value ) {
-			branchSteps( {} );
-			dispatch( removeSiteSlugDependency() );
+	const onSelect = ( value: ChoiceType ) => {
+		if ( 'builtby' === value ) {
+			window.location.href = 'https://builtbywp.com/';
+			return;
 		}
 		dispatch(
 			submitSignupStep(
 				{ stepName: props.stepName },
 				{
-					newOrExistingSiteChoice: value,
-					forceAutoGeneratedBlogName: true,
+					siteSlug: props.queryObject.siteSlug || props.queryObject.siteId,
 				}
 			)
 		);
@@ -127,7 +126,7 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 				stepContent={
 					<IntentScreen
 						intents={ intents }
-						onSelect={ newOrExistingSiteSelected }
+						onSelect={ onSelect }
 						preventWidows={ preventWidows }
 						intentsAlt={ [] }
 					/>
@@ -136,7 +135,6 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 				hideSkip
 				isHorizontalLayout={ true }
 				isWideLayout={ true }
-				headerImageUrl={ difmImage }
 				{ ...props }
 			/>
 		</>

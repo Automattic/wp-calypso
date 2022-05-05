@@ -421,6 +421,21 @@ export function generateFlows( {
 			lastModified: '2022-03-10',
 			enableBranchSteps: true,
 		},
+		{
+			name: 'website-design-services',
+			steps: [
+				'user',
+				'choose-service',
+				'difm-options',
+				'social-profiles',
+				'difm-design-setup-site',
+				'difm-page-picker',
+			],
+			destination: getDIFMSignupDestination,
+			description: 'A flow for DIFM onboarding',
+			excludeFromManageSiteFlows: true,
+			lastModified: '2022-05-02',
+		},
 
 		{
 			name: 'site-content-collection',

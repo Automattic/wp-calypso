@@ -72,5 +72,14 @@ export const useIntentsAlt = ( canImport: boolean ): IntentAlt[] => {
 				}
 			),
 		},
+		{
+			show: true,
+			key: 'difm',
+			description: translate( 'Let our experts create your dream site' ),
+			value: 'difm',
+			actionText: translate( 'Let our experts create your dream site' ),
+			disable: false,
+			disableText: <></>,
+		},
 	];
 };
