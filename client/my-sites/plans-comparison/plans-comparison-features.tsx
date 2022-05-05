@@ -1,4 +1,5 @@
 import {
+	FEATURE_1GB_STORAGE,
 	FEATURE_6GB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_UNLIMITED_ADMINS,
@@ -20,6 +21,7 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { translate, numberFormat } from 'i18n-calypso';
+import isStarterPlanEnabled from './is-starter-plan-enabled';
 import type { TranslateResult } from 'i18n-calypso';
 
 export interface PlanComparisonFeature {
@@ -132,11 +134,18 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			return translate( 'Storage' );
 		},
 		get description() {
+			if ( isStarterPlanEnabled() ) {
+				return translate(
+					'The Starter plan allows a maximum storage of 6GB, which equals to approximately 1200 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
+				);
+			}
+
+			// @todo clk remove or update once there's settlement on how many plans we'd ever show in the grid
 			return translate(
-				'The Starter plan allows a maximum storage of 6GB, which equals to approximately 1200 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
+				'The free plan allows a maximum storage of 1GB, which equals to approximately 200 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
 			);
 		},
-		features: [ FEATURE_6GB_STORAGE, FEATURE_50GB_STORAGE ],
+		features: [ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE, FEATURE_50GB_STORAGE ],
 		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
 			let storageSize = '1';
 			const legacyStorageSize = '3';
@@ -152,7 +161,8 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				if (
 					isLegacySiteWithHigherLimits &&
-					feature === FEATURE_6GB_STORAGE &&
+					feature &&
+					[ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE ].includes( feature ) &&
 					Number( legacyStorageSize ) > Number( storageSize )
 				) {
 					return translate(
@@ -176,7 +186,8 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 
 			if (
 				isLegacySiteWithHigherLimits &&
-				feature === FEATURE_6GB_STORAGE &&
+				feature &&
+				[ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE ].includes( feature ) &&
 				Number( legacyStorageSize ) > Number( storageSize )
 			) {
 				return translate(
