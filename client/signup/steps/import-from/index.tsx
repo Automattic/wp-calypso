@@ -5,9 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
-import { addQueryArgs } from 'calypso/lib/route';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getWpOrgImporterUrl } from 'calypso/signup/steps/import/util';
 import { getStepUrl } from 'calypso/signup/utils';
 import { fetchImporterState, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
@@ -23,14 +21,13 @@ import { getSite, getSiteId } from 'calypso/state/sites/selectors';
 import BloggerImporter from './blogger';
 import NotAuthorized from './components/not-authorized';
 import NotFound from './components/not-found';
-import { useCheckoutUrl } from './hooks/use-checkout-url';
+import { useSignupStepNavigator } from './hooks/use-signup-step-navigator';
 import MediumImporter from './medium';
 import SquarespaceImporter from './squarespace';
-import { Importer, ImportJob, StepNavigator } from './types';
+import { Importer, ImportJob } from './types';
 import { getImporterTypeForEngine } from './util';
 import WixImporter from './wix';
 import WordpressImporter from './wordpress';
-import { WPImportOption } from './wordpress/types';
 import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import './style.scss';
 
@@ -66,18 +63,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const getImportJob = ( engine: Importer ): ImportJob | undefined => {
 		return siteImports.find( ( x ) => x.type === getImporterTypeForEngine( engine ) );
 	};
-
-	const checkoutUrl = useCheckoutUrl( siteId, siteSlug );
-
-	const stepNavigator: StepNavigator = {
-		goToIntentPage,
-		goToImportCapturePage,
-		goToSiteViewPage,
-		goToCheckoutPage,
-		goToWpAdminImportPage,
-		goToWpAdminWordPressPluginPage,
-		navigate: ( path ) => page( path ),
-	};
+	const stepNavigator = useSignupStepNavigator( siteId, siteSlug, fromSite );
 
 	/**
 	 ↓ Effects
@@ -122,48 +108,6 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 			page.replace( path.replace( `to=${ siteSlug }`, `to=${ site.slug }` ) );
 			siteSlug = site.slug;
 		}
-	}
-
-	function goToIntentPage() {
-		page( getStepUrl( 'setup-site', 'intent', '', '', { siteSlug } ) );
-	}
-
-	function goToImportCapturePage() {
-		page( getStepUrl( 'importer', 'capture', '', '', { siteSlug } ) );
-	}
-
-	function goToSiteViewPage() {
-		page( '/view/' + ( siteSlug || '' ) );
-	}
-
-	function goToCheckoutPage() {
-		page( getCheckoutUrl() );
-	}
-
-	function goToWpAdminImportPage() {
-		page( `/import/${ siteSlug }` );
-	}
-
-	function goToWpAdminWordPressPluginPage() {
-		page( getWpOrgImporterUrl( siteSlug, 'wordpress' ) );
-	}
-
-	function getWordpressImportEverythingUrl() {
-		const queryParams = {
-			from: fromSite,
-			to: siteSlug,
-			option: WPImportOption.EVERYTHING,
-			run: true,
-		};
-
-		return getStepUrl( 'from', 'importing', 'wordpress', '', queryParams );
-	}
-
-	function getCheckoutUrl() {
-		const path = checkoutUrl;
-		const queryParams = { redirect_to: getWordpressImportEverythingUrl() };
-
-		return addQueryArgs( queryParams, path );
 	}
 
 	function getBackUrl() {
