@@ -23,4 +23,5 @@ export interface Header {
 export interface SitePicker {
 	selectedSiteId: number | undefined;
 	onSetSelectedSiteId: React.Dispatch< React.SetStateAction< number | undefined > >;
+	siteId: number;
 }

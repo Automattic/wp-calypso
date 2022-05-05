@@ -19,8 +19,9 @@ export const SITE_STORE = 'automattic/site';
 const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 	selectedSiteId,
 	onSetSelectedSiteId,
+	siteId,
 } ) => {
-	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( window._currentSiteId ) );
+	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
 
 	const otherSite = {
 		name: __( 'Other site', 'full-site-editing' ),
@@ -74,47 +75,64 @@ const titles: {
 interface ContactFormProps {
 	mode: string;
 	onBackClick: () => void;
+	siteId: number;
 }
 
-const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+
+const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, siteId } ) => {
 	const [ selectedSiteId, setSelectedSiteId ] = useState< number >();
 
 	const formTitles = titles[ mode ];
 
 	return (
-		<main className="help-center__contact-form">
+		<main className="help-center-contact-form">
 			<header>
 				<Button borderless={ true } onClick={ onBackClick }>
 					<Gridicon icon={ 'chevron-left' } size={ 18 } />
 					{ __( 'Back', 'full-site-editing' ) }
 				</Button>
 			</header>
-			<h1 className="site-picker-title">{ formTitles.formTitle }</h1>
+			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
 			{ formTitles.formDisclaimer && (
-				<p className="site-picker-form-warning">{ formTitles.formDisclaimer }</p>
+				<p className="help-center-contact-form__site-picker-form-warning">
+					{ formTitles.formDisclaimer }
+				</p>
 			) }
 			<section>
 				<HelpCenterSitePicker
 					selectedSiteId={ selectedSiteId }
 					onSetSelectedSiteId={ setSelectedSiteId }
+					siteId={ siteId }
 				/>
 			</section>
 			{ selectedSiteId === 0 && (
 				<section>
-					<TextControl label={ __( 'Site address', 'full-site-editing' ) } />
+					<TextControl
+						label={ __( 'Site address', 'full-site-editing' ) }
+						value={ '' }
+						onChange={ noop }
+					/>
 				</section>
 			) }
 
 			{ [ 'FORUM', 'EMAIL' ].includes( mode ) && (
 				<section>
-					<TextControl label={ __( 'Subject', 'full-site-editing' ) } />
+					<TextControl
+						label={ __( 'Subject', 'full-site-editing' ) }
+						value={ '' }
+						onChange={ noop }
+					/>
 				</section>
 			) }
 
 			<section>
 				<TextareaControl
-					rows="10"
+					rows={ 10 }
 					label={ __( 'How can we help you today?', 'full-site-editing' ) }
+					value={ '' }
+					onChange={ noop }
 				/>
 			</section>
 
@@ -123,19 +141,22 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
 					<CheckboxControl
 						checked
 						label={ __( 'Don’t display my site’s URL publicly', 'full-site-editing' ) }
+						onChange={ noop }
 					/>
 				</section>
 			) }
 			<section>
-				<Button primary className="site-picker__cta">
+				<Button primary className="help-center-contact-form__site-picker-cta">
 					{ formTitles.buttonLabel }
 				</Button>
 			</section>
 			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && (
 				<section>
-					<div className="site-picker__hes-tray">
+					<div className="help-center-contact-form__site-picker-hes-tray">
 						<HappinessEngineersTray count={ 2 } />
-						<p className="site-picker__hes-tray-text">{ formTitles.trayText }</p>
+						<p className="help-center-contact-form__site-picker-hes-tray-text">
+							{ formTitles.trayText }
+						</p>
 					</div>
 				</section>
 			) }

@@ -71,6 +71,7 @@ export default function Content( { selectedArticle, setSelectedArticle, setFoote
 							setOpenInContactPage( true );
 							setContactForm( null );
 						} }
+						siteId={ window._currentSiteId }
 					/>
 				) : (
 					<InlineHelpCenterContent

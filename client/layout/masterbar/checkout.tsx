@@ -129,6 +129,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 									setOpenInContactPage( true );
 									setContactForm( null );
 								} }
+								siteId={ siteId }
 							/>
 						) : (
 							<InlineHelpCenterContent
