@@ -20,8 +20,8 @@ export const useHasSeenWhatsNewModalQuery = ( siteId: number | null ) => {
 
 	const { data, isLoading } = useQuery< { has_seen_whats_new_modal: boolean } >(
 		queryKey,
-		async () =>
-			await wpcomRequest( {
+		() =>
+			wpcomRequest( {
 				path: `/sites/${ siteId }/block-editor/has-seen-whats-new-modal`,
 				apiNamespace: 'wpcom/v2',
 			} ),
@@ -32,8 +32,8 @@ export const useHasSeenWhatsNewModalQuery = ( siteId: number | null ) => {
 
 	const queryClient = useQueryClient();
 	const mutation = useMutation< HasSeenWhatsNewModalResult, UpdateError, HasSeenWhatsNewModal >(
-		async ( { hasSeenWhatsNewModal } ) =>
-			await wpcomRequest( {
+		( { hasSeenWhatsNewModal } ) =>
+			wpcomRequest( {
 				path: `/sites/${ siteId }/block-editor/has-seen-whats-new-modal`,
 				apiNamespace: 'wpcom/v2',
 				method: 'post',
@@ -50,13 +50,13 @@ export const useHasSeenWhatsNewModalQuery = ( siteId: number | null ) => {
 		}
 	);
 
-	const { mutate } = mutation;
+	const { mutateAsync } = mutation;
 
 	const setHasSeenWhatsNewModal = useCallback(
 		( hasSeenWhatsNewModal: boolean ) => {
-			mutate( { hasSeenWhatsNewModal } );
+			return mutateAsync( { hasSeenWhatsNewModal } );
 		},
-		[ mutate ]
+		[ mutateAsync ]
 	);
 
 	return {

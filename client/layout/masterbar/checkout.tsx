@@ -6,7 +6,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useState, useEffect } from 'react';
+import { FunctionComponent, useState } from 'react';
 import { useSelector } from 'react-redux';
 import InlineHelpCenterContent from 'calypso/blocks/inline-help/inline-help-center-content';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -37,11 +37,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
-	const { siteId } = useSelector( ( state ) => {
-		return {
-			siteId: getSelectedSiteId( state ),
-		};
-	} );
+	const siteId = useSelector( getSelectedSiteId );
 
 	const { isLoading, data } = useHasSeenWhatsNewModalQuery( siteId );
 
@@ -53,7 +49,6 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	const [ isHelpCenterVisible, setIsHelpCenterVisible ] = useState( false );
 	const [ selectedArticle, setSelectedArticle ] = useState< Article | null >( null );
 	const [ footerContent, setFooterContent ] = useState( undefined );
-	const [ newItems, setNewItems ] = useState( false );
 
 	const closeAndLeave = () =>
 		leaveCheckout( {
@@ -84,11 +79,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 
 	const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
 
-	useEffect( () => {
-		if ( ! isLoading && data ) {
-			setNewItems( ! data.has_seen_whats_new_modal );
-		}
-	}, [ data, isLoading ] );
+	const newItems = ! isLoading && ! data?.has_seen_whats_new_modal;
 
 	return (
 		<Masterbar>

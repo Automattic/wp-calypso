@@ -122,7 +122,7 @@ const HelpCenterMoreResources = () => {
 						>
 							<MaterialIcon icon="new_releases" size={ 24 } />
 							<span>{ __( "What's new" ) }</span>
-							{ showWhatsNewDot && <Icon icon={ circle } size={ 16 } fill="#0675C4" /> }
+							{ showWhatsNewDot && <Icon icon={ circle } size={ 16 } /> }
 						</Button>
 					</div>
 				</li>
