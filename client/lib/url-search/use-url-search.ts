@@ -1,7 +1,6 @@
-import url from 'url';
 import { useState } from '@wordpress/element';
+import { addQueryArgs } from '@wordpress/url';
 import debugFactory from 'debug';
-import { pick } from 'lodash';
 import page from 'page';
 
 const debug = debugFactory( 'calypso:url-search' );
@@ -27,18 +26,22 @@ export const buildSearchUrl = ( {
 	queryKey = 's',
 }: {
 	uri: string;
-	search: string;
-	queryKey: string;
+	search?: string;
+	queryKey?: string;
 } ) => {
-	const parsedUrl = pick( url.parse( uri, true ), 'pathname', 'hash', 'query' );
+	const query = addQueryArgs( uri, { [ queryKey ]: search } );
 
-	if ( search ) {
-		parsedUrl.query[ queryKey ] = search;
-	} else {
-		delete parsedUrl.query[ queryKey ];
+	if ( ! search ) {
+		const queryStringIndex = uri.indexOf( '?' );
+
+		if ( queryStringIndex !== -1 ) {
+			return uri.substring( 0, queryStringIndex );
+		}
+
+		return uri;
 	}
 
-	return url.format( parsedUrl ).replace( /%20/g, '+' );
+	return query.replace( /%20/g, '+' );
 };
 
 function useUrlSearch( queryKey = 's' ) {
