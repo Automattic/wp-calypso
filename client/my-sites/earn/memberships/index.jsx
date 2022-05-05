@@ -530,11 +530,13 @@ class MembershipsSection extends Component {
 						</p>
 						<p className="memberships__onboarding-paragraph">{ cta }</p>
 						<p className="memberships__onboarding-paragraph memberships__onboarding-paragraph-disclaimer">
-							{ preventWidows(
-								translate(
-									'All credit and debit card payments made through these blocks are securely and seamlessly processed by Stripe.'
-								)
-							) }
+							<em>
+								{ preventWidows(
+									translate(
+										'All credit and debit card payments made through these blocks are securely and seamlessly processed by Stripe.'
+									)
+								) }
+							</em>
 						</p>
 					</div>
 					<div className="memberships__onboarding-column-image">

@@ -209,25 +209,28 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			  };
 		const title = translate( 'Collect payments' );
 
-		const hasConnectionBody = translate(
-			"Manage your customers and subscribers, or your current subscription options and review the total revenue that you've made from payments."
-		);
-		const noConnectionBody = (
+		const body = (
 			<>
 				{ translate(
 					'Let visitors pay for digital goods and services or make quick, pre-set donations by enabling the Payment Button block.'
 				) }
-				{ isFreePlan && <em>{ getAnyPlanNames() }</em> }
+				<>
+					<br />
+					<br />
+					<em>{ getAnyPlanNames() }</em>
+				</>
 			</>
 		);
-		const body = hasConnectedAccount ? hasConnectionBody : noConnectionBody;
 
-		const learnMoreLink = isFreePlan
+		const learnMoreLink = ! hasConnectedAccount
 			? {
 					url: 'https://wordpress.com/payments-donations/',
 					onClick: () => trackLearnLink( 'recurring-payments' ),
 			  }
-			: null;
+			: {
+					url: 'https://wordpress.com/support/wordpress-editor/blocks/payments/#payment-button-block',
+					onClick: () => trackLearnLink( 'recurring-payments' ),
+			  };
 		return {
 			title,
 			body,
@@ -270,14 +273,23 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Accept one-time and recurring donations by enabling the Donations Form block.'
 				) }
-				{ isFreePlan && <em>{ getAnyPlanNames() }</em> }
+				<>
+					<br />
+					<br />
+					<em>{ getAnyPlanNames() }</em>
+				</>
 			</>
 		);
 
-		const learnMoreLink = {
-			url: localizeUrl( 'https://wordpress.com/payments-donations/' ),
-			onClick: () => trackLearnLink( 'donations' ),
-		};
+		const learnMoreLink = ! hasConnectedAccount
+			? {
+					url: localizeUrl( 'https://wordpress.com/payments-donations/' ),
+					onClick: () => trackLearnLink( 'donations' ),
+			  }
+			: {
+					url: localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/donations/' ),
+					onClick: () => trackLearnLink( 'donations' ),
+			  };
 
 		return {
 			title,
@@ -318,35 +330,29 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  };
 		const title = translate( 'Profit from subscriber-only content' );
-		const body = hasConnectedAccount ? (
-			translate(
-				'Create paid subscriptions so only subscribers can see selected content on your site — everyone else will see a paywall.',
-				{
-					components: {
-						a: (
-							<a
-								href="https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/"
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-					},
-				}
-			)
-		) : (
+		const hasConnectionBodyText = translate(
+			'Create paid subscriptions so only subscribers can see selected content on your site — everyone else will see a paywall.'
+		);
+		const noConnectionBodyText = translate(
+			'Create paid subscription options to share premium content like text, images, video, and any other content on your website.'
+		);
+		const bodyText = hasConnectedAccount ? hasConnectionBodyText : noConnectionBodyText;
+
+		const body = (
 			<>
-				{ translate(
-					'Create paid subscription options to share premium content like text, images, video, and any other content on your website.'
-				) }
-				{ isFreePlan && <em>{ getAnyPlanNames() }</em> }
+				{ bodyText }
+				<>
+					<br />
+					<br />
+					<em>{ getAnyPlanNames() }</em>
+				</>
 			</>
 		);
-		const learnMoreLink = isFreePlan
-			? {
-					url: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/',
-					onClick: () => trackLearnLink( 'premium-content' ),
-			  }
-			: null;
+		const learnMoreLink = {
+			url: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/',
+			onClick: () => trackLearnLink( 'premium-content' ),
+		};
+
 		return {
 			title,
 			body,
@@ -393,7 +399,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Share premium content with paying subscribers automatically through email.'
 				) }
-				{ <em>{ getAnyPlanNames() }</em> }
 			</>
 		) : (
 			translate( 'Share premium content with paying subscribers automatically through email.' )
