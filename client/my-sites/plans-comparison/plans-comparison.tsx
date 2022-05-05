@@ -16,7 +16,7 @@ import { PlansComparisonColHeader } from './plans-comparison-col-header';
 import { planComparisonFeatures } from './plans-comparison-features';
 import { PlansComparisonRow, DesktopContent, MobileContent } from './plans-comparison-row';
 import { PlansDomainConnectionInfo } from './plans-domain-connection-info';
-import { usePlanPrices, PlanPrices } from './use-plan-prices';
+import usePlanPrices from './use-plan-prices';
 import usePlans from './use-plans';
 import type { WPComPlan } from '@automattic/calypso-products';
 import type { RequestCartProduct as CartItem } from '@automattic/shopping-cart';
@@ -445,7 +445,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	 * Potentially remove `hideFreePlan` logic alltogether when plans are finalised.
 	 */
 	const plans = usePlans( hideFreePlan );
-	const prices: PlanPrices[] = usePlanPrices( plans );
+	const prices = usePlanPrices( plans );
 	const translate = useTranslate();
 
 	const toggleCollapsibleRows = useCallback( () => {

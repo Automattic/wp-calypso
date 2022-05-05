@@ -1584,7 +1584,7 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 	getTitle: () => i18n.translate( 'WordPress Starter' ),
 	getProductId: () => 1033,
 	getStoreSlug: () => PLAN_WPCOM_STARTER,
-	getPathSlug: () => 'starter',
+	getPathSlug: () => 'starter-plan',
 	getDescription: () =>
 		i18n.translate( 'Start your WordPress.com website. Limited functionality and storage.' ),
 	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),

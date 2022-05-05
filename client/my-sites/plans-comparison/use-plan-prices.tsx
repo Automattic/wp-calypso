@@ -11,7 +11,7 @@ function toMonthlyPrice( yearlyPrice: number ) {
 	return yearlyPrice ? yearlyPrice / 12 : 0;
 }
 
-export function usePlanPrices( plans: WPComPlan[] ): PlanPrices[] {
+export default function usePlanPrices( plans: WPComPlan[] ): PlanPrices[] {
 	return useSelector( ( state ) => {
 		return plans.map( ( plan ) => {
 			const productId = plan.getProductId();
