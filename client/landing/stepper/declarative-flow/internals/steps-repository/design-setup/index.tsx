@@ -37,6 +37,7 @@ import type { Design } from '@automattic/design-picker';
  */
 const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
+	const [ isForceDesignPicker, setIsForceDesignPicker ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
 	const { goBack, submit } = navigation;
@@ -73,7 +74,10 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const showDesignPickerCategories =
 		isEnabled( 'signup/design-picker-categories' ) && ! isAnchorSite;
 	const showGeneratedDesigns =
-		isEnabled( 'signup/design-picker-generated-designs' ) && intent === 'build' && !! siteVertical;
+		isEnabled( 'signup/design-picker-generated-designs' ) &&
+		intent === 'build' &&
+		!! siteVertical &&
+		! isForceDesignPicker;
 	const showDesignPickerCategoriesAllFilter =
 		isEnabled( 'signup/design-picker-categories' ) && ! showGeneratedDesigns;
 
@@ -89,13 +93,11 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const staticDesigns = themeDesigns;
 	const generatedDesigns = useGeneratedDesigns();
 
-	const designs = useMemo(
-		() =>
-			showGeneratedDesigns
-				? generatedDesigns
-				: shuffle( staticDesigns.filter( ( design ) => ! isBlankCanvasDesign( design ) ) ),
-		[ staticDesigns, generatedDesigns ]
-	);
+	const designs = useMemo( () => {
+		return showGeneratedDesigns
+			? shuffle( generatedDesigns )
+			: shuffle( staticDesigns.filter( ( design ) => ! isBlankCanvasDesign( design ) ) );
+	}, [ staticDesigns, generatedDesigns, showGeneratedDesigns ] );
 
 	const visibility = useNewSiteVisibility();
 
@@ -207,6 +209,12 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		setIsPreviewingDesign( true );
 	}
 
+	function viewMoreDesigns() {
+		setSelectedDesign( null );
+		setIsPreviewingDesign( true );
+		setIsForceDesignPicker( true );
+	}
+
 	function upgradePlan() {
 		goToCheckout();
 	}
@@ -229,7 +237,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	}
 
 	const handleBackClick = () => {
-		if ( selectedDesign ) {
+		if ( selectedDesign && ! showGeneratedDesigns ) {
 			setSelectedDesign( undefined );
 			setIsPreviewingDesign( false );
 		} else {
@@ -239,7 +247,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	let stepContent = <div />;
 
-	if ( selectedDesign && isPreviewingDesign ) {
+	if ( selectedDesign && isPreviewingDesign && ! showGeneratedDesigns ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
@@ -312,6 +320,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	stepContent = showGeneratedDesigns ? (
 		<GeneratedDesignPicker
+			selectedDesign={ selectedDesign || designs[ 0 ] }
 			designs={ designs }
 			locale={ locale }
 			heading={
@@ -320,6 +329,8 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 					<Button primary>{ translate( 'Continue' ) }</Button>
 				</div>
 			}
+			onPreview={ previewDesign }
+			onViewMore={ viewMoreDesigns }
 		/>
 	) : (
 		<DesignPicker
