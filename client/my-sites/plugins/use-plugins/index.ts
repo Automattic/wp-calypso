@@ -135,9 +135,9 @@ const usePlugins = ( {
 		isFetching,
 		fetchNextPage,
 		pagination: {
-			page: dotOrgPagination,
+			page: dotOrgPagination?.page,
 			results,
-			dotOrgResults: dotOrgPagination?.results,
+			dotOrgResults: dotOrgPagination?.results.length,
 		},
 	};
 };
