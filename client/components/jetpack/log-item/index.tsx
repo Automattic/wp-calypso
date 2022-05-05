@@ -34,15 +34,8 @@ class LogItem extends PureComponent< Props > {
 	}
 
 	render() {
-		const {
-			clickableHeader,
-			highlight,
-			children,
-			className,
-			expandedSummary,
-			summary,
-			onClick,
-		} = this.props;
+		const { clickableHeader, highlight, children, className, expandedSummary, summary, onClick } =
+			this.props;
 		return (
 			<FoldableCard
 				header={ this.renderHeader() }

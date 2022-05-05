@@ -35,13 +35,8 @@ export default async function existingCardProcessor(
 	if ( ! isValidTransactionData( transactionData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
-	const {
-		stripe,
-		includeDomainDetails,
-		includeGSuiteDetails,
-		contactDetails,
-		reduxDispatch,
-	} = dataForProcessor;
+	const { stripe, includeDomainDetails, includeGSuiteDetails, contactDetails, reduxDispatch } =
+		dataForProcessor;
 	if ( ! stripe ) {
 		throw new Error( 'Stripe is required to submit an existing card payment' );
 	}

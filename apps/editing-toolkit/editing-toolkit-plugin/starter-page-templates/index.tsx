@@ -19,8 +19,13 @@ declare global {
 }
 
 // Load config passed from backend.
-const { templates: patterns = [], tracksUserData, screenAction, theme, locale } =
-	window.starterPageTemplatesConfig ?? {};
+const {
+	templates: patterns = [],
+	tracksUserData,
+	screenAction,
+	theme,
+	locale,
+} = window.starterPageTemplatesConfig ?? {};
 
 if ( tracksUserData ) {
 	initializeTracksWithIdentity( tracksUserData );

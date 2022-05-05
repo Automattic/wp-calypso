@@ -24,8 +24,15 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			pluginsPage = new PluginsPage( page );
 			await pluginsPage.visit();
 		} );
+	} );
 
-		it.each( [ 'Premium', 'Featured', 'Popular' ] )(
+	describe( 'Plugins page /plugins/:wpcom-site', function () {
+		it( 'Visit plugins page', async function () {
+			pluginsPage = new PluginsPage( page );
+			await pluginsPage.visit( siteUrl );
+		} );
+
+		it.each( [ 'Top paid plugins', 'Editor’s pick', 'Top free plugins' ] )(
 			'Plugins page loads %s section',
 			async function ( section: string ) {
 				await pluginsPage.validateHasSection( section );
@@ -34,7 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 
 		it( 'Can browse all popular plugins', async function () {
 			await pluginsPage.clickBrowseAllPopular();
-			await pluginsPage.validateHasSection( 'All Popular Plugins' );
+			await pluginsPage.validateSelectedCategory( 'Top free plugins' );
 		} );
 
 		it( 'Can return via breadcrumb', async function () {
@@ -43,7 +50,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			} else {
 				await pluginsPage.clickBackBreadcrumb();
 			}
-			await pluginsPage.validateHasSection( 'Premium' );
+			await pluginsPage.validateHasSection( 'Top paid plugins' );
 		} );
 
 		it.each( [
@@ -56,19 +63,5 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		] )( 'Featured Plugins section should show the %s plugin', async function ( plugin: string ) {
 			await pluginsPage.validateHasPluginOnSection( 'featured', plugin );
 		} );
-	} );
-
-	describe( 'Plugins page /plugins/:wpcom-site', function () {
-		it( 'Visit plugins page', async function () {
-			pluginsPage = new PluginsPage( page );
-			await pluginsPage.visit( siteUrl );
-		} );
-
-		it.each( [ 'Premium', 'Featured', 'Popular' ] )(
-			'Plugins page loads %s section',
-			async function ( section: string ) {
-				await pluginsPage.validateHasSection( section );
-			}
-		);
 	} );
 } );

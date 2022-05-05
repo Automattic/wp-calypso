@@ -51,4 +51,15 @@ describe( 'selectors', () => {
 			expect( getIncompleteFieldKeys( state ) ).toEqual( [ 'card' ] );
 		} );
 	} );
+
+	describe( '#useAsPrimaryPaymentMethod()', () => {
+		test( 'should return the boolean value of useAsPrimaryPaymentMethod', () => {
+			const { useAsPrimaryPaymentMethod } = selectors;
+			const state = {
+				useAsPrimaryPaymentMethod: true,
+			};
+
+			expect( useAsPrimaryPaymentMethod( state ) ).toEqual( state.useAsPrimaryPaymentMethod );
+		} );
+	} );
 } );

@@ -106,14 +106,8 @@ class PeopleInvites extends PureComponent {
 	}
 
 	renderInvitesList() {
-		const {
-			acceptedInvites,
-			pendingInvites,
-			totalInvitesFound,
-			requesting,
-			site,
-			translate,
-		} = this.props;
+		const { acceptedInvites, pendingInvites, totalInvitesFound, requesting, site, translate } =
+			this.props;
 
 		if ( ! site || ! site.ID ) {
 			return this.renderPlaceholder();

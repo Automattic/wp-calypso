@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
-import { translate } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -20,35 +20,23 @@ import './form.scss';
 
 const noop = () => {};
 
+function PostCommentFormError( { type } ) {
+	const translate = useTranslate();
+
+	const message =
+		type === 'comment_duplicate'
+			? translate( "Duplicate comment detected. It looks like you've already said that!" )
+			: translate( 'Sorry - there was a problem posting your comment.' );
+
+	return <FormInputValidation isError text={ message } />;
+}
+
 class PostCommentForm extends Component {
-	constructor( props ) {
-		super();
+	state = {
+		haveFocus: false,
+	};
 
-		this.state = {
-			commentText: props.commentText || '',
-			haveFocus: false,
-		};
-
-		// bind event handlers to this instance
-		Object.getOwnPropertyNames( PostCommentForm.prototype )
-			.filter( ( prop ) => prop.indexOf( 'handle' ) === 0 )
-			.filter( ( prop ) => typeof this[ prop ] === 'function' )
-			.forEach( ( prop ) => ( this[ prop ] = this[ prop ].bind( this ) ) );
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.setState( {
-			commentText: nextProps.commentText || '',
-		} );
-	}
-
-	handleSubmit( event ) {
-		event.preventDefault();
-		this.submit();
-	}
-
-	handleKeyDown( event ) {
+	handleKeyDown = ( event ) => {
 		// Use Ctrl+Enter to submit comment
 		if ( event.keyCode === 13 && ( event.ctrlKey || event.metaKey ) ) {
 			event.preventDefault();
@@ -68,37 +56,22 @@ class PostCommentForm extends Component {
 				);
 			}
 		}
-	}
-
-	handleFocus() {
-		this.setState( { haveFocus: true } );
-	}
-
-	handleTextChange( commentText ) {
-		this.setState( { commentText } );
-
-		// Update the comment text in the container's state
-		this.props.onUpdateCommentText( commentText );
-	}
-
-	handleTextChangeEvent = ( event ) => {
-		this.handleTextChange( event.target.value );
 	};
 
-	resetCommentText() {
-		this.setState( { commentText: '' } );
+	handleFocus = () => {
+		this.setState( { haveFocus: true } );
+	};
 
+	handleTextChange = ( event ) => {
 		// Update the comment text in the container's state
-		this.props.onUpdateCommentText( '' );
-	}
+		this.props.onUpdateCommentText( event.target.value );
+	};
 
-	hasCommentText() {
-		return this.state.commentText.trim().length > 0;
-	}
+	handleSubmit = ( event ) => {
+		event.preventDefault();
 
-	submit() {
 		const post = this.props.post;
-		const commentText = this.state.commentText.trim();
+		const commentText = this.props.commentText.trim();
 
 		if ( ! commentText ) {
 			this.resetCommentText(); // Clean up any newlines
@@ -127,33 +100,19 @@ class PostCommentForm extends Component {
 		this.props.onCommentSubmit();
 
 		return true;
+	};
+
+	resetCommentText() {
+		// Update the comment text in the container's state
+		this.props.onUpdateCommentText( '' );
 	}
 
-	renderError() {
-		const error = this.props.error;
-		let message;
-
-		if ( ! error ) {
-			return null;
-		}
-
-		switch ( this.props.errorType ) {
-			case 'comment_duplicate':
-				message = translate(
-					"Duplicate comment detected. It looks like you've already said that!"
-				);
-				break;
-
-			default:
-				message = translate( 'Sorry - there was a problem posting your comment.' );
-				break;
-		}
-
-		return <FormInputValidation isError text={ message } />;
+	hasCommentText() {
+		return this.props.commentText.trim().length > 0;
 	}
 
 	render() {
-		const post = this.props.post;
+		const { post, error, errorType, translate } = this.props;
 
 		// Don't display the form if comments are closed
 		if (
@@ -185,14 +144,13 @@ class PostCommentForm extends Component {
 			/>
 		) : (
 			<AutoresizingFormTextarea
-				value={ this.state.commentText }
+				value={ this.props.commentText }
 				placeholder={ translate( 'Enter your comment here…' ) }
 				onKeyUp={ this.handleKeyUp }
 				onKeyDown={ this.handleKeyDown }
 				onFocus={ this.handleFocus }
 				onBlur={ this.handleBlur }
-				onChange={ this.handleTextChangeEvent }
-				siteId={ this.props.post.site_ID }
+				onChange={ this.handleTextChange }
 				enableAutoFocus={ isReply }
 			/>
 		);
@@ -207,12 +165,12 @@ class PostCommentForm extends Component {
 					{ formTextarea }
 					<Button
 						className={ buttonClasses }
-						disabled={ this.state.commentText.length === 0 }
+						disabled={ this.props.commentText.length === 0 }
 						onClick={ this.handleSubmit }
 					>
 						{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
 					</Button>
-					{ this.renderError() }
+					{ error && <PostCommentFormError type={ errorType } /> }
 				</FormFieldset>
 			</form>
 		);
@@ -235,6 +193,7 @@ PostCommentForm.propTypes = {
 };
 
 PostCommentForm.defaultProps = {
+	commentText: '',
 	onCommentSubmit: noop,
 };
 
@@ -243,4 +202,4 @@ export default connect(
 		currentUser: getCurrentUser( state ),
 	} ),
 	{ writeComment, deleteComment, replyComment }
-)( PostCommentForm );
+)( localize( PostCommentForm ) );

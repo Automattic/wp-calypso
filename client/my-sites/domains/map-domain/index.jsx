@@ -196,13 +196,8 @@ export class MapDomain extends Component {
 			return this.trademarkClaimsNotice();
 		}
 
-		const {
-			domainsWithPlansOnly,
-			initialQuery,
-			productsList,
-			selectedSite,
-			translate,
-		} = this.props;
+		const { domainsWithPlansOnly, initialQuery, productsList, selectedSite, translate } =
+			this.props;
 
 		const { errorMessage } = this.state;
 

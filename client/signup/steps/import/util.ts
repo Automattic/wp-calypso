@@ -1,6 +1,7 @@
 import { ImporterPlatform } from './types';
 
-export const CAPTURE_URL_RGX = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i;
+export const CAPTURE_URL_RGX =
+	/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i;
 
 const platformMap: { [ key in ImporterPlatform ]: string } = {
 	wordpress: 'WordPress',
@@ -64,9 +65,22 @@ export function getWpComMigrateUrl( siteSlug: string, fromSite?: string ): strin
 export function getWpComOnboardingUrl(
 	siteSlug: string,
 	platform: ImporterPlatform,
-	fromSite?: string
+	fromSite?: string,
+	framework: 'signup' | 'stepper' = 'signup'
 ): string {
-	return '/start/from/importing/{importer}?from={fromSite}&to={siteSlug}&run=true'
+	let baseRoute;
+	switch ( framework ) {
+		case 'signup':
+			baseRoute = '/start/from';
+			break;
+
+		case 'stepper':
+		default:
+			baseRoute = '/setup/import/from';
+			break;
+	}
+
+	return `${ baseRoute }/importing/{importer}?from={fromSite}&to={siteSlug}&run=true`
 		.replace( '{siteSlug}', siteSlug )
 		.replace( '{importer}', getPlatformImporterName( platform ) )
 		.replace( '{fromSite}', fromSite || '' );

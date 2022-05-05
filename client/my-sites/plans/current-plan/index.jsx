@@ -14,7 +14,6 @@ import {
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	isFreeJetpackPlan,
 	isFreePlanProduct,
-	isPro,
 } from '@automattic/calypso-products';
 import { Dialog } from '@automattic/components';
 import classNames from 'classnames';
@@ -42,6 +41,7 @@ import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings'
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
+import legacyPlanNotice from 'calypso/my-sites/plans/legacy-plan-notice';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
@@ -181,19 +181,10 @@ class CurrentPlan extends Component {
 
 		let showExpiryNotice = false;
 		let purchase = null;
-		let showLegacyPlanNotice = false;
 
 		if ( JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ) {
 			purchase = getPurchaseByProductSlug( purchases, currentPlanSlug );
 			showExpiryNotice = purchase && isCloseToExpiration( purchase );
-		}
-
-		if (
-			eligibleForProPlan &&
-			! isFreePlanProduct( selectedSite.plan ) &&
-			! isPro( selectedSite.plan )
-		) {
-			showLegacyPlanNotice = true;
 		}
 
 		// Ensures the Plan tab is shown in case the plan changes after the controller redirect.
@@ -262,16 +253,7 @@ class CurrentPlan extends Component {
 						</Notice>
 					) }
 
-					{ showLegacyPlanNotice && (
-						<Notice
-							status="is-info"
-							text={ translate(
-								'You’re currently on a legacy plan. If you’d like to learn about your eligibility to switch to a Pro plan please contact support.'
-							) }
-							icon="info-outline"
-							showDismiss={ false }
-						></Notice>
-					) }
+					{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
 
 					<PurchasesListing />
 

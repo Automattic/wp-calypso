@@ -589,7 +589,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 		}
 		e.preventDefault();
 		calypsoPort.postMessage( {
-			action: 'viewPost',
+			action: 'openLinkInParentFrame',
 			payload: { postUrl: e.target.href },
 		} );
 	} );
@@ -716,8 +716,26 @@ async function openLinksInParentFrame( calypsoPort ) {
 					const manageReusableBlocksAnchorElem = node.querySelector(
 						'a[href$="edit.php?post_type=wp_block"]'
 					);
+					const manageNavigationMenusAnchorElem = node.querySelector(
+						'a[href$="edit.php?post_type=wp_navigation"]'
+					);
+
 					manageReusableBlocksAnchorElem &&
 						replaceWithManageReusableBlocksHref( manageReusableBlocksAnchorElem );
+
+					if ( manageNavigationMenusAnchorElem ) {
+						manageNavigationMenusAnchorElem.addEventListener(
+							'click',
+							( e ) => {
+								calypsoPort.postMessage( {
+									action: 'openLinkInParentFrame',
+									payload: { postUrl: manageNavigationMenusAnchorElem.href },
+								} );
+								e.preventDefault();
+							},
+							false
+						);
+					}
 				}
 			}
 		}
@@ -1072,6 +1090,23 @@ function handleAppBannerShowing( calypsoPort ) {
 	};
 }
 
+function handleHelpCenterShowing( calypsoPort ) {
+	const { port1, port2 } = new MessageChannel();
+
+	calypsoPort.postMessage(
+		{
+			action: 'getIsHelpCenterShown',
+			payload: {},
+		},
+		[ port2 ]
+	);
+
+	port1.onmessage = ( { data } ) => {
+		const { isHelpCenterVisible } = data;
+		dispatch( 'automattic/help-center' )?.setShowHelpCenter?.( isHelpCenterVisible );
+	};
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1174,6 +1209,8 @@ function initPort( message ) {
 		handleInlineHelpButton( calypsoPort );
 
 		handleAppBannerShowing( calypsoPort );
+
+		handleHelpCenterShowing( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

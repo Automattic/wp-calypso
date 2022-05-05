@@ -65,6 +65,7 @@ export interface APIPartner {
 	name: string;
 	keys: APIPartnerKey[];
 	tos: string;
+	partner_type: string;
 }
 
 // The API-returned license object is not quite consistent right now so we only define the properties we actively rely on.
@@ -97,6 +98,7 @@ export interface APIError {
 
 export interface APIInvoices {
 	items: APIInvoice[];
+	has_more: boolean;
 }
 
 export interface APIInvoice {
@@ -113,6 +115,7 @@ export interface APIInvoice {
  */
 export interface Invoices {
 	items: Invoice[];
+	hasMore: boolean;
 }
 
 export interface Invoice {
@@ -141,6 +144,7 @@ export interface Partner {
 	name: string;
 	keys: PartnerKey[];
 	tos: string;
+	partner_type: string;
 }
 
 export interface PartnerStore {

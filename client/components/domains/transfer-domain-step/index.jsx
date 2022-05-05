@@ -354,12 +354,8 @@ class TransferDomainStep extends Component {
 
 	getTransferRestrictionMessage() {
 		const { domain, inboundTransferStatus } = this.state;
-		const {
-			creationDate,
-			termMaximumInYears,
-			transferEligibleDate,
-			transferRestrictionStatus,
-		} = inboundTransferStatus;
+		const { creationDate, termMaximumInYears, transferEligibleDate, transferRestrictionStatus } =
+			inboundTransferStatus;
 
 		return (
 			<TransferRestrictionMessage

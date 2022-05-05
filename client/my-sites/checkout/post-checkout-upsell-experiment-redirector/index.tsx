@@ -28,9 +28,8 @@ export default function PostCheckoutUpsellExperimentRedirector( {
 }: PostCheckoutUpsellRedirectorProps ): null {
 	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( {} );
 
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		upsellExperimentName
-	);
+	const [ isLoadingExperimentAssignment, experimentAssignment ] =
+		useExperiment( upsellExperimentName );
 
 	const getThankYouUrl = useCallback( () => {
 		const getThankYouPageUrlArguments = {

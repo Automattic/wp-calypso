@@ -17,7 +17,7 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type } from 'calypso/lib/domains/constants';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
 import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
@@ -292,7 +292,7 @@ export class SiteDomains extends Component {
 		];
 
 		return (
-			<Breadcrumbs
+			<DomainHeader
 				items={ [ item ] }
 				mobileItem={ item }
 				buttons={ buttons }
@@ -451,12 +451,8 @@ export class SiteDomains extends Component {
 
 	// TODO: maybe move this to utils?
 	shouldUpgradeToMakeDomainPrimary = ( domain ) => {
-		const {
-			isDomainOnly,
-			isOnFreePlan,
-			hasNonPrimaryDomainsFlag,
-			canSetPrimaryDomain,
-		} = this.props;
+		const { isDomainOnly, isOnFreePlan, hasNonPrimaryDomainsFlag, canSetPrimaryDomain } =
+			this.props;
 
 		return (
 			hasNonPrimaryDomainsFlag &&

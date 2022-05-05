@@ -157,10 +157,12 @@
 	"enable_all_sections": true,
 	"sections": {
 		"jetpack-cloud": false,
-		"jetpack-cloud-settings": false,
+		"jetpack-cloud-agency-dashboard": false,
 		"jetpack-cloud-auth": false,
+		"jetpack-cloud-partner-portal": false,
 		"jetpack-cloud-pricing": false,
-		"jetpack-cloud-partner-portal": false
+		"jetpack-cloud-settings": false,
+		"jetpack-social": false
 	},
 	"site_filter": [],
 	"theme": "default",

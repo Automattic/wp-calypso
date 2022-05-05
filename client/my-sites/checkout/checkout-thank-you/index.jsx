@@ -131,14 +131,8 @@ export class CheckoutThankYou extends Component {
 	componentDidMount() {
 		this.redirectIfThemePurchased();
 
-		const {
-			gsuiteReceipt,
-			gsuiteReceiptId,
-			receipt,
-			receiptId,
-			selectedSite,
-			sitePlans,
-		} = this.props;
+		const { gsuiteReceipt, gsuiteReceiptId, receipt, receiptId, selectedSite, sitePlans } =
+			this.props;
 
 		if ( selectedSite ) {
 			this.props.fetchAtomicTransfer?.( selectedSite.ID );
@@ -168,22 +162,19 @@ export class CheckoutThankYou extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
+		const { receiptId, selectedSiteSlug, domainOnlySiteFlow } = this.props;
+
 		this.redirectIfThemePurchased();
 
 		if (
-			! this.props.receipt.hasLoadedFromServer &&
-			nextProps.receipt.hasLoadedFromServer &&
-			this.hasPlanOrDomainProduct( nextProps ) &&
+			! prevProps.receipt.hasLoadedFromServer &&
+			this.props.receipt.hasLoadedFromServer &&
+			this.hasPlanOrDomainProduct() &&
 			this.props.selectedSite
 		) {
 			this.props.refreshSitePlans( this.props.selectedSite.ID );
 		}
-	}
-
-	componentDidUpdate( prevProps ) {
-		const { receiptId, selectedSiteSlug, domainOnlySiteFlow } = this.props;
 
 		// Update route when an ecommerce site goes Atomic and site slug changes
 		// from 'wordpress.com` to `wpcomstaging.com`.
@@ -197,8 +188,8 @@ export class CheckoutThankYou extends Component {
 		}
 	}
 
-	hasPlanOrDomainProduct = ( props = this.props ) => {
-		return getPurchases( props ).some(
+	hasPlanOrDomainProduct = () => {
+		return getPurchases( this.props ).some(
 			( purchase ) => isPlan( purchase ) || isDomainProduct( purchase )
 		);
 	};
@@ -625,11 +616,8 @@ export class CheckoutThankYou extends Component {
 		const purchases = getPurchases( this.props );
 		const failedPurchases = getFailedPurchases( this.props );
 		const hasFailedPurchases = failedPurchases.length > 0;
-		const [
-			ComponentClass,
-			primaryPurchase,
-			domain,
-		] = this.getComponentAndPrimaryPurchaseAndDomain();
+		const [ ComponentClass, primaryPurchase, domain ] =
+			this.getComponentAndPrimaryPurchaseAndDomain();
 		const registrarSupportUrl =
 			! ComponentClass || this.isGenericReceipt() || hasFailedPurchases
 				? null

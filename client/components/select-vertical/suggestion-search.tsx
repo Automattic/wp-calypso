@@ -1,7 +1,8 @@
-import { Suggestions } from '@automattic/components';
+import { Gridicon, Suggestions } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { FC, ChangeEvent, useCallback, useMemo, useRef, useState } from 'react';
+import { FC, useMemo, useRef, useState } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Spinner from 'calypso/components/spinner';
 import type { Vertical } from './types';
@@ -28,59 +29,87 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 } ) => {
 	const [ isShowSuggestions, setIsShowSuggestions ] = useState( false );
 	const [ isFocused, setIsFocused ] = useState( false );
+	const inputRef = useRef( null );
 	const suggestionsRef = useRef( null );
+	const toggleIconRef = useRef( null );
 	const translate = useTranslate();
 
-	const handleTextInputBlur = useCallback( () => {
-		setIsFocused( false );
-		setIsShowSuggestions( false );
-	}, [ setIsShowSuggestions, setIsFocused ] );
-
-	const handleTextInputFocus = useCallback( () => {
-		if ( suggestions.length > 0 ) {
-			setIsShowSuggestions( true );
+	const handleTextInputBlur = ( event: React.FocusEvent ) => {
+		// Hide the suggestion dropdown unless the focus is moved to the toggle icon.
+		if ( event && event.relatedTarget?.contains( toggleIconRef.current ) ) {
+			return;
 		}
 
+		setIsShowSuggestions( false );
+		setIsFocused( false );
+	};
+
+	const handleTextInputFocus = () => {
+		setIsShowSuggestions( true );
 		setIsFocused( true );
-	}, [ suggestions, setIsFocused, setIsShowSuggestions ] );
+	};
 
-	const handleTextInputChange = useCallback(
-		( event: ChangeEvent< HTMLInputElement > ) => {
-			setIsShowSuggestions( event.target.value.trim().length > 0 );
-			onInputChange?.( event.target.value );
-		},
-		[ setIsShowSuggestions, onInputChange ]
-	);
+	const handleTextInputChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		// Reset the vertical selection if input field is empty.
+		// This is so users don't need to explicitly select "Something else" to clear previous selection.
+		if ( event.target.value.trim().length === 0 ) {
+			onSelect?.( { value: '', label: '' } );
+		}
 
-	const handleTextInputKeyDown = useCallback(
-		( event: KeyboardEvent ) => {
-			if ( event.key === 'Enter' && isShowSuggestions ) {
-				event.preventDefault();
-			}
+		setIsShowSuggestions( true );
+		onInputChange?.( event.target.value );
+	};
 
-			if ( event.key === 'Escape' ) {
-				setIsShowSuggestions( false );
-			}
+	const handleToggleSuggestionsBlur = ( event: React.FocusEvent ) => {
+		// Hide the suggestion dropdown unless the focus is moved to the input field.
+		if ( event && event.relatedTarget?.contains( inputRef.current ) ) {
+			return;
+		}
 
-			if ( suggestionsRef.current ) {
-				( suggestionsRef.current as Suggestions ).handleKeyEvent( event );
-			}
-		},
-		[ setIsShowSuggestions, isShowSuggestions, suggestionsRef ]
-	);
+		setIsShowSuggestions( false );
+		setIsFocused( false );
+	};
 
-	const handleSuggestionsSelect = useCallback(
-		( { label, value }: { label: string; value?: string } ) => {
+	const handleToggleSuggestionsClick = () => {
+		if ( isDisableInput ) {
+			return;
+		}
+
+		setIsShowSuggestions( ! isShowSuggestions );
+	};
+
+	const handleToggleSuggestionsKeyDown = ( event: React.KeyboardEvent< HTMLButtonElement > ) => {
+		if ( event.key === 'Escape' || event.key === 'Tab' ) {
 			setIsShowSuggestions( false );
-			onInputChange?.( label );
-			onSelect?.( { label, value } as Vertical );
-		},
-		[ setIsShowSuggestions, onInputChange ]
-	);
+		}
+	};
+
+	const handleTextInputKeyDown = ( event: KeyboardEvent ) => {
+		if ( event.key === 'Enter' && isShowSuggestions ) {
+			event.preventDefault();
+		}
+
+		if ( event.key === 'Escape' ) {
+			setIsShowSuggestions( false );
+		}
+
+		if ( suggestionsRef.current ) {
+			( suggestionsRef.current as Suggestions ).handleKeyEvent( event );
+		}
+	};
+
+	const handleSuggestionsSelect = ( { label, value }: { label: string; value?: string } ) => {
+		setIsShowSuggestions( false );
+		onSelect?.( { label, value } as Vertical );
+	};
 
 	const getSuggestions = useMemo( () => {
 		if ( isLoading || ! isShowSuggestions ) {
 			return [];
+		}
+
+		if ( searchTerm === '' ) {
+			return suggestions || [];
 		}
 
 		return suggestions.concat( [
@@ -90,26 +119,39 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 				category: 0 < suggestions.length ? '—' : '',
 			},
 		] );
-	}, [ translate, suggestions, isLoading, isShowSuggestions ] );
+	}, [ translate, searchTerm, suggestions, isLoading, isShowSuggestions ] );
 
 	return (
 		<div
 			className={ classnames( 'select-vertical__suggestion-search', {
 				'is-focused': isFocused,
-				'is-show-suggestions': isShowSuggestions,
+				'is-show-suggestions': isShowSuggestions && ! isLoading,
 			} ) }
+			aria-expanded={ isShowSuggestions }
 		>
-			{ isLoading && isShowSuggestions && <Spinner /> }
-			<FormTextInput
-				value={ searchTerm }
-				placeholder={ placeholder }
-				disabled={ isDisableInput }
-				onBlur={ handleTextInputBlur }
-				onFocus={ handleTextInputFocus }
-				onChange={ handleTextInputChange }
-				onKeyDown={ handleTextInputKeyDown }
-				autoComplete="off"
-			/>
+			<div className="select-vertical__suggestion-input">
+				{ isLoading && isShowSuggestions && <Spinner /> }
+				<FormTextInput
+					inputRef={ inputRef }
+					value={ searchTerm }
+					placeholder={ placeholder }
+					disabled={ isDisableInput }
+					onBlur={ handleTextInputBlur }
+					onFocus={ handleTextInputFocus }
+					onChange={ handleTextInputChange }
+					onKeyDown={ handleTextInputKeyDown }
+					autoComplete="off"
+				/>
+				<Button
+					ref={ toggleIconRef }
+					onFocus={ () => setIsFocused( true ) }
+					onBlur={ handleToggleSuggestionsBlur }
+					onClick={ handleToggleSuggestionsClick }
+					onKeyDown={ handleToggleSuggestionsKeyDown }
+				>
+					<Gridicon size={ 18 } icon="chevron-down" />
+				</Button>
+			</div>
 			<Suggestions
 				className="select-vertical__suggestion-search-dropdown"
 				ref={ suggestionsRef }

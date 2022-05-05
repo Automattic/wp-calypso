@@ -12,6 +12,7 @@ import {
 	EditorTracksEventManager,
 	skipDescribeIf,
 	FullSiteEditorPage,
+	HeaderBlock,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -155,7 +156,10 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 			} );
 
 			it( 'Add a Header block', async function () {
-				await fullSiteEditorPage.addBlockFromSidebar( 'Header' );
+				await fullSiteEditorPage.addBlockFromSidebar(
+					HeaderBlock.blockName,
+					HeaderBlock.blockEditorSelector
+				);
 			} );
 
 			it( 'Undo action', async function () {

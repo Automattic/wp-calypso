@@ -20,7 +20,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, getTopLevelOfTld, isMappedDomain } from 'calypso/lib/domains';
 import { DESIGNATED_AGENT, TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import NonTransferrableDomainNotice from 'calypso/my-sites/domains/domain-management/components/domain/non-transferrable-domain-notice';
@@ -104,7 +104,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			showBackArrow: true,
 		};
 
-		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
+		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
 	};
 
 	const renderTransferOptions = () => {

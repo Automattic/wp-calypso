@@ -21,14 +21,8 @@ export default function PlanFeaturesActionsWrapper( {
 } ) {
 	const translate = useTranslate();
 	let { availableForPurchase } = planPropertiesPlan;
-	const {
-		current,
-		planName,
-		primaryUpgrade,
-		isPlaceholder,
-		planConstantObj,
-		popular,
-	} = planPropertiesPlan;
+	const { current, planName, primaryUpgrade, isPlaceholder, planConstantObj, popular } =
+		planPropertiesPlan;
 
 	const classes = classNames( 'plan-features__table-item', 'has-border-bottom', className );
 	let buttonText;

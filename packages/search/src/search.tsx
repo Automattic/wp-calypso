@@ -30,16 +30,16 @@ type KeyboardOrMouseEvent =
 	| MouseEvent< HTMLButtonElement | HTMLInputElement >
 	| KeyboardEvent< HTMLButtonElement | HTMLInputElement >;
 
-const keyListener = ( methodToCall: ( e: KeyboardOrMouseEvent ) => void ) => (
-	event: KeyboardEvent< HTMLButtonElement | HTMLInputElement >
-) => {
-	switch ( event.key ) {
-		case ' ':
-		case 'Enter':
-			methodToCall( event );
-			break;
-	}
-};
+const keyListener =
+	( methodToCall: ( e: KeyboardOrMouseEvent ) => void ) =>
+	( event: KeyboardEvent< HTMLButtonElement | HTMLInputElement > ) => {
+		switch ( event.key ) {
+			case ' ':
+			case 'Enter':
+				methodToCall( event );
+				break;
+		}
+	};
 
 type Props = {
 	autoFocus?: boolean;

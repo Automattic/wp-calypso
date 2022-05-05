@@ -248,11 +248,9 @@ class MembershipsSection extends Component {
 					<Card>
 						<div className="memberships__module-content module-content">
 							<div>
-								{ orderBy(
-									Object.values( this.props.subscribers ),
-									[ 'id' ],
-									[ 'desc' ]
-								).map( ( sub ) => this.renderSubscriber( sub ) ) }
+								{ orderBy( Object.values( this.props.subscribers ), [ 'id' ], [ 'desc' ] ).map(
+									( sub ) => this.renderSubscriber( sub )
+								) }
 							</div>
 							<InfiniteScroll
 								nextPageMethod={ ( triggeredByInteraction ) =>

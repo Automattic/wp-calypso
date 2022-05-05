@@ -46,7 +46,10 @@ import { isSiteWordadsUnsafe } from 'calypso/state/wordads/status/selectors';
 import './style.scss';
 import 'calypso/my-sites/stats/stats-module/style.scss';
 
-const overSome = ( ...checks ) => ( item ) => checks.some( ( check ) => check( item ) );
+const overSome =
+	( ...checks ) =>
+	( item ) =>
+		checks.some( ( check ) => check( item ) );
 const isEligbleJetpackPlan = overSome( isPremium, isBusiness, isEcommerce, isSecurityDaily );
 
 class AdsWrapper extends Component {

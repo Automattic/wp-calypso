@@ -30,13 +30,6 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
-	React.useEffect( () => {
-		if ( site ) {
-			setSiteTitle( site.name ?? '' );
-			setTagline( site.description );
-		}
-	}, [ site ] );
-
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
 		if ( site ) {
@@ -88,13 +81,12 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 	const siteTitleError = null;
 	const taglineError = null;
 
-	const { headerText, headerImage, siteTitleLabel, taglineExplanation } = getTextsFromIntent(
-		intent
-	);
+	const { headerText, headerImage, siteTitleLabel, taglineExplanation } =
+		getTextsFromIntent( intent );
 
 	const stepContent = (
 		<form className="site-options__form" onSubmit={ handleSubmit }>
-			<FormFieldset className="site-options__form-fieldset">
+			<FormFieldset disabled={ ! site } className="site-options__form-fieldset">
 				<FormLabel htmlFor="siteTitle" optional={ ! isSiteTitleRequired }>
 					{ siteTitleLabel }
 				</FormLabel>
@@ -107,7 +99,7 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 				/>
 				{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
 			</FormFieldset>
-			<FormFieldset className="site-options__form-fieldset">
+			<FormFieldset disabled={ ! site } className="site-options__form-fieldset">
 				<FormLabel htmlFor="tagline" optional={ ! isTaglineRequired }>
 					{ translate( 'Tagline' ) }
 				</FormLabel>
@@ -124,7 +116,7 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 					{ taglineExplanation }
 				</FormSettingExplanation>
 			</FormFieldset>
-			<Button className="site-options__submit-button" type="submit" primary>
+			<Button disabled={ ! site } className="site-options__submit-button" type="submit" primary>
 				{ translate( 'Continue' ) }
 			</Button>
 		</form>

@@ -38,9 +38,10 @@ const getTrackLinkClick = ( link: string ) => () => {
 const JetpackComFooter: React.FC = () => {
 	const translate = useTranslate();
 	const region = useGeoLocationQuery()?.data?.region;
-	const hideCaliforniaNotice = useMemo( () => region && region.toLowerCase() !== 'california', [
-		region,
-	] );
+	const hideCaliforniaNotice = useMemo(
+		() => region && region.toLowerCase() !== 'california',
+		[ region ]
+	);
 	const defaultLocale = useLocale();
 	const [ isLocaleSwitcherVisible, setLocaleSwitcherVisibility ] = useState( false );
 	const { sitemap, socialProps } = useMemo( () => {
@@ -204,12 +205,14 @@ const JetpackComFooter: React.FC = () => {
 		};
 	}, [ translate, hideCaliforniaNotice ] );
 
-	const onLanguageClick = useCallback( () => setLocaleSwitcherVisibility( true ), [
-		setLocaleSwitcherVisibility,
-	] );
-	const onLocaleSwitcherClose = useCallback( () => setLocaleSwitcherVisibility( false ), [
-		setLocaleSwitcherVisibility,
-	] );
+	const onLanguageClick = useCallback(
+		() => setLocaleSwitcherVisibility( true ),
+		[ setLocaleSwitcherVisibility ]
+	);
+	const onLocaleSwitcherClose = useCallback(
+		() => setLocaleSwitcherVisibility( false ),
+		[ setLocaleSwitcherVisibility ]
+	);
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (

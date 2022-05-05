@@ -1,4 +1,3 @@
-import { compact } from 'lodash';
 import aquaticImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-aquatic.svg';
 import blueImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-blue.svg';
 import classicBlueImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-classic-blue.svg';
@@ -25,7 +24,7 @@ import sunsetImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnai
  */
 
 export default function ( translate ) {
-	return compact( [
+	return [
 		{
 			label: translate( 'Default' ),
 			value: 'classic-dark',
@@ -162,5 +161,5 @@ export default function ( translate ) {
 				imageUrl: sunsetImg,
 			},
 		},
-	] );
+	];
 }

@@ -282,7 +282,7 @@ export const getThreatPayloadDescription = ( threat: Threat ): TranslateResult |
 			);
 		case 'seospam':
 			return translate(
-				"Compromised websites may be used by attackers to act as part of a link farm, this is done to increase a website's Search Engine rank in detriment of causing harm on the affected sites."
+				"Compromised websites may be used by attackers to act as part of a link farm; this is done to increase a website's Search Engine rank and causes harm on the affected sites."
 			);
 		case 'suspicious':
 			return translate(

@@ -2,7 +2,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import FormLabel from 'calypso/components/forms/form-label';
-import { useSiteVerticalQueryById, useSiteVerticalsQuery } from 'calypso/data/site-verticals';
+import {
+	useSiteVerticalQueryById,
+	useSiteVerticalsQuery,
+	useSiteVerticalsFeatured,
+} from 'calypso/data/site-verticals';
 import SuggestionSearch from './suggestion-search';
 import type { Vertical } from './types';
 import type { SiteVerticalsResponse } from 'calypso/data/site-verticals';
@@ -10,10 +14,16 @@ import type { SiteVerticalsResponse } from 'calypso/data/site-verticals';
 interface Props {
 	defaultVertical?: string;
 	isSkipSynonyms?: boolean;
+	onInputChange?: ( searchTerm: string ) => void;
 	onSelect?: ( vertical: Vertical ) => void;
 }
 
-const SelectVertical: React.FC< Props > = ( { defaultVertical, isSkipSynonyms, onSelect } ) => {
+const SelectVertical: React.FC< Props > = ( {
+	defaultVertical,
+	isSkipSynonyms,
+	onInputChange,
+	onSelect,
+} ) => {
 	const translate = useTranslate();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 150 );
@@ -22,10 +32,13 @@ const SelectVertical: React.FC< Props > = ( { defaultVertical, isSkipSynonyms, o
 	const { data: defaultValue, isLoading: isLoadingDefaultVertical } = useSiteVerticalQueryById(
 		defaultVertical || ''
 	);
+
 	const { data: suggestions, isLoading: isLoadingSuggestions } = useSiteVerticalsQuery( {
 		term: debouncedSearchTerm,
 		skip_synonyms: isSkipSynonyms,
 	} );
+
+	const { data: featured } = useSiteVerticalsFeatured();
 
 	const mapOneSiteVerticalsResponseToVertical = ( vertical: SiteVerticalsResponse ): Vertical => ( {
 		value: vertical.id,
@@ -55,12 +68,22 @@ const SelectVertical: React.FC< Props > = ( { defaultVertical, isSkipSynonyms, o
 				placeholder={ String( translate( 'Ex. Cafe, Education, Photography' ) ) }
 				searchTerm={ searchTerm }
 				suggestions={
-					! isDebouncing ? mapManySiteVerticalsResponseToVertical( suggestions || [] ) : []
+					! isDebouncing
+						? mapManySiteVerticalsResponseToVertical(
+								( searchTerm === '' ? featured : suggestions ) || []
+						  )
+						: []
 				}
 				isLoading={ isDebouncing || isLoadingDefaultVertical || isLoadingSuggestions }
 				isDisableInput={ isLoadingDefaultVertical }
-				onInputChange={ setSearchTerm }
-				onSelect={ onSelect }
+				onInputChange={ ( searchTerm: string ) => {
+					setSearchTerm( searchTerm );
+					onInputChange?.( searchTerm );
+				} }
+				onSelect={ ( vertical: Vertical ) => {
+					setSearchTerm( vertical.label );
+					onSelect?.( vertical );
+				} }
 			/>
 		</>
 	);

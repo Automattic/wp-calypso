@@ -283,14 +283,14 @@ class Global_Styles {
 	 */
 	public function enqueue_tracks_events_fonts_section_control() {
 		$handle = 'tracks_events_fonts_section_control';
-		$src    = plugins_url( 'dist/customizer-fonts.js', __FILE__ );
+		$src    = plugins_url( 'dist/customizer-fonts.min.js', __FILE__ );
 		$deps   = array();
 
 		wp_enqueue_script(
 			$handle,
 			$src,
 			$deps,
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/customizer-fonts.js' ),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/customizer-fonts.min.js' ),
 			true
 		);
 
@@ -404,11 +404,11 @@ class Global_Styles {
 			array();
 		$version      = isset( $asset['version'] ) ?
 			$asset['version'] :
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/global-styles.js' );
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/global-styles.min.js' );
 
 		wp_enqueue_script(
 			'jetpack-global-styles-editor-script',
-			plugins_url( 'dist/global-styles.js', __FILE__ ),
+			plugins_url( 'dist/global-styles.min.js', __FILE__ ),
 			$dependencies,
 			$version,
 			true

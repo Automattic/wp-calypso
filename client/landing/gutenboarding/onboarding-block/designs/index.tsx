@@ -42,9 +42,8 @@ const Header: React.FunctionComponent< HeaderProps > = ( { isAnchorFmSignup } ) 
 const Designs: React.FunctionComponent = () => {
 	const locale = useLocale();
 	const { goNext } = useStepNavigation();
-	const { setSelectedDesign, setFonts, resetFonts, setRandomizedDesigns } = useDispatch(
-		ONBOARD_STORE
-	);
+	const { setSelectedDesign, setFonts, resetFonts, setRandomizedDesigns } =
+		useDispatch( ONBOARD_STORE );
 	const { selectedDesign, hasPaidDesign, randomizedDesigns } = useSelect( ( select ) => {
 		const onboardSelect = select( ONBOARD_STORE );
 

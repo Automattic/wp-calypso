@@ -10,7 +10,7 @@ import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 interface ExternalProps {
 	status?: string;
 	siteId: number | null;
-	settingsUrl: string;
+	settingsUrl?: string | null;
 }
 
 export const TimeMismatchWarning: FC< ExternalProps > = ( {

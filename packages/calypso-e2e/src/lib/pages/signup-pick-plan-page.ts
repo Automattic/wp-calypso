@@ -1,16 +1,14 @@
 import { Page } from 'playwright';
-import type { Plans } from '../../types';
-
-const selectors = {
-	freePlan: 'button:text("start with a free site")',
-	paidPlan: ( target: Plans ) => `button.is-${ target.toLowerCase() }-plan`,
-};
+import { PlansPage, Plans } from './plans-page';
 
 /**
- * Class representing Signup > Pick a Plan page.
+ * Represents the Signup > Pick a Plan page.
+ *
+ * With the overhauled Plans, this class is a thin wrapper around the PlansPage object.
  */
 export class SignupPickPlanPage {
 	private page: Page;
+	private plansPage: PlansPage;
 
 	/**
 	 * Constructs an instance of the component.
@@ -19,6 +17,7 @@ export class SignupPickPlanPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.plansPage = new PlansPage( page, 'current' );
 	}
 
 	/**
@@ -27,17 +26,6 @@ export class SignupPickPlanPage {
 	 * @param {Plans} name Name of the plan.
 	 */
 	async selectPlan( name: Plans ): Promise< void > {
-		if ( name === 'Free' ) {
-			await Promise.all( [
-				this.page.waitForNavigation( { timeout: 60000, waitUntil: 'load' } ),
-				this.page.click( selectors.freePlan ),
-			] );
-		} else {
-			await Promise.all( [
-				// Extend timeout in case the site creation step takes longer than expected.
-				this.page.waitForNavigation( { timeout: 60000, waitUntil: 'load' } ),
-				this.page.click( selectors.paidPlan( name ) ),
-			] );
-		}
+		await this.plansPage.selectPlan( name );
 	}
 }

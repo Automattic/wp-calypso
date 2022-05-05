@@ -399,6 +399,11 @@
 			padding: 12px 0;
 			width: auto;
 		}
+
+		&.login__form-change-username:hover:not( :disabled ):not( .disabled ) {
+			background: none;
+			color: var( --p2-color-link-dark );
+		}
 	}
 
 	.wp-login__links {

@@ -10,7 +10,12 @@ import { Container } from './types';
 
 import '../styles.scss';
 
-const HelpCenter: React.FC< Container > = ( { content, handleClose } ) => {
+const HelpCenter: React.FC< Container > = ( {
+	content,
+	handleClose,
+	headerText,
+	footerContent,
+} ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
 	useEffect( () => {
@@ -24,13 +29,14 @@ const HelpCenter: React.FC< Container > = ( { content, handleClose } ) => {
 		};
 	}, [ portalParent ] );
 
-	return (
-		<div>
-			{ createPortal(
-				<HelpCenterContainer handleClose={ handleClose } content={ content } />,
-				portalParent
-			) }
-		</div>
+	return createPortal(
+		<HelpCenterContainer
+			handleClose={ handleClose }
+			content={ content }
+			headerText={ headerText }
+			footerContent={ footerContent }
+		/>,
+		portalParent
 	);
 };
 

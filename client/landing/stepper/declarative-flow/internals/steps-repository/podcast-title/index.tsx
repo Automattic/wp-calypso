@@ -10,35 +10,67 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import getTextWidth from 'calypso/landing/gutenboarding/onboarding-block/acquire-intent/get-text-width';
+import { useAnchorFmParams } from 'calypso/landing/stepper/hooks/use-anchor-fm-params';
+import useDetectMatchingAnchorSite from 'calypso/landing/stepper/hooks/use-detect-matching-anchor-site';
+import useSiteTitle from 'calypso/landing/stepper/hooks/use-site-title';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import type { Step } from '../../types';
-
 import './style.scss';
 
 const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 	const { goBack, submit } = navigation;
 	const { __ } = useI18n();
 
+	//Check to see if there is a site with a matching anchor podcast ID
+	const isLookingUpMatchingAnchorSites = useDetectMatchingAnchorSite();
+
 	const PodcastTitleForm: React.FC = () => {
-		const [ formTouched, setFormTouched ] = useState( false );
+		//Sets the site title from the API on first load if a custom title has not been set
+		useSiteTitle();
 		const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
-		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
+		const [ formTouched, setFormTouched ] = useState( false );
+
+		const { setSiteTitle, setAnchorPodcastId, setAnchorEpisodeId, setAnchorSpotifyUrl } =
+			useDispatch( ONBOARD_STORE );
+		const { anchorFmPodcastId, isAnchorFmPodcastIdError, anchorFmEpisodeId, anchorFmSpotifyUrl } =
+			useAnchorFmParams();
+
 		const inputRef = useRef< HTMLInputElement >();
-
-		const handleSubmit = () => {
-			submit?.();
-		};
-
 		const underlineWidth = getTextWidth( ( siteTitle as string ) || '', inputRef.current );
+
+		const handleSubmit = ( siteTitle: string ) => {
+			const providedDependencies = {
+				siteTitle,
+				anchorFmPodcastId,
+				anchorFmEpisodeId,
+				anchorFmSpotifyUrl,
+			};
+			setSiteTitle( siteTitle );
+			setAnchorPodcastId( ! isAnchorFmPodcastIdError ? anchorFmPodcastId : null );
+			setAnchorEpisodeId( anchorFmEpisodeId );
+			setAnchorSpotifyUrl( anchorFmSpotifyUrl );
+			submit?.( providedDependencies );
+		};
 
 		const handleChange = ( event: React.FormEvent< HTMLInputElement > ) => {
 			setFormTouched( true );
 			setSiteTitle( event.currentTarget.value );
 		};
+
+		//If we're still checking for matching Anchor sites, don't show the form
+		if ( isLookingUpMatchingAnchorSites ) {
+			return <div />;
+		}
+
 		return (
-			<form className="podcast-title__form" onSubmit={ handleSubmit }>
+			<form
+				className="podcast-title__form"
+				onSubmit={ () => {
+					handleSubmit?.( siteTitle );
+				} }
+			>
 				<div
 					className={ classNames( 'podcast-title__input-wrapper', { 'is-touched': formTouched } ) }
 				>

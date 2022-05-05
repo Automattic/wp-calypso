@@ -21,17 +21,6 @@ body.is-section-plugins.theme-default.color-scheme {
 	margin-bottom: 16px;
 }
 
-// Fix for Jetpack not having nav-unification styles yet.
-body.is-section-plugins:not( .is-nav-unification ) {
-	.plugins-browser__header,
-	.plugins__page-heading {
-		@media ( min-width: 661px ) and ( max-width: 782px ) {
-			left: calc( var( --sidebar-width-min ) + 1px ); // 1px is the sidebar border.
-			width: calc( 100% - var( --sidebar-width-min ) - 1px ); // 1px is the sidebar border.
-		}
-	}
-}
-
 .upsell-nudge.is-jetpack {
 	margin-top: 51px;
 	margin-bottom: -20px;

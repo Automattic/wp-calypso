@@ -7,7 +7,18 @@ import {
 	SiteLaunchState,
 	SiteLaunchStatus,
 	SiteSettings,
+	AtomicTransferStatus,
+	LatestAtomicTransferStatus,
+	HappyChatAvailability,
+	EmailSupportAvailability,
 } from './types';
+import {
+	AtomicTransferState,
+	LatestAtomicTransferState,
+	AtomicSoftwareStatusState,
+	AtomicSoftwareInstallState,
+	AtomicSoftwareInstallStatus,
+} from '.';
 import type { Action } from './actions';
 import type { Reducer } from 'redux';
 
@@ -68,6 +79,28 @@ export const isFetchingSiteDetails: Reducer< boolean | undefined, Action > = (
 		case 'RECEIVE_SITE':
 		case 'RECEIVE_SITE_FAILED':
 			return false;
+	}
+	return state;
+};
+
+export const happyChatAvailability: Reducer< HappyChatAvailability | undefined, Action > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'RECEIVE_HAPPY_CHAT_AVAILABILITY':
+			return action.availability;
+	}
+	return state;
+};
+
+export const emailSupportAvailability: Reducer< EmailSupportAvailability | undefined, Action > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'RECEIVE_EMAIL_SUPPORT_AVAILABILITY':
+			return action.availability;
 	}
 	return state;
 };
@@ -162,6 +195,187 @@ export const launchStatus: Reducer< { [ key: number ]: SiteLaunchState }, Action
 	return state;
 };
 
+export const siteSetupErrors: Reducer<
+	{
+		error?: string;
+		message?: string;
+	},
+	{
+		type: string;
+		error?: string;
+		message?: string;
+	}
+> = ( state = {}, action ) => {
+	if ( action.type === 'SET_SITE_SETUP_ERROR' ) {
+		const { error, message } = action;
+
+		return {
+			error,
+			message,
+		};
+	}
+
+	if ( action.type === 'CLEAR_SITE_SETUP_ERROR' ) {
+		return {};
+	}
+
+	return state;
+};
+
+export const atomicTransferStatus: Reducer< { [ key: number ]: AtomicTransferState }, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'ATOMIC_TRANSFER_START' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				status: AtomicTransferStatus.IN_PROGRESS,
+				softwareSet: action.softwareSet,
+				errorCode: undefined,
+			},
+		};
+	}
+	if ( action.type === 'ATOMIC_TRANSFER_SUCCESS' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				status: AtomicTransferStatus.SUCCESS,
+				softwareSet: action.softwareSet,
+				errorCode: undefined,
+			},
+		};
+	}
+	if ( action.type === 'ATOMIC_TRANSFER_FAILURE' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				status: AtomicTransferStatus.FAILURE,
+				softwareSet: action.softwareSet,
+				errorCode: action.error,
+			},
+		};
+	}
+	return state;
+};
+
+export const latestAtomicTransferStatus: Reducer<
+	{ [ key: number ]: LatestAtomicTransferState },
+	Action
+> = ( state = {}, action ) => {
+	if ( action.type === 'LATEST_ATOMIC_TRANSFER_START' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				status: LatestAtomicTransferStatus.IN_PROGRESS,
+				transfer: undefined,
+				errorCode: undefined,
+			},
+		};
+	}
+	if ( action.type === 'LATEST_ATOMIC_TRANSFER_SUCCESS' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				status: LatestAtomicTransferStatus.SUCCESS,
+				transfer: action.transfer,
+				errorCode: undefined,
+			},
+		};
+	}
+	if ( action.type === 'LATEST_ATOMIC_TRANSFER_FAILURE' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				status: LatestAtomicTransferStatus.FAILURE,
+				transfer: undefined,
+				errorCode: action.error,
+			},
+		};
+	}
+	return state;
+};
+
+export const atomicSoftwareStatus: Reducer<
+	{ [ key: number ]: AtomicSoftwareStatusState },
+	Action
+> = ( state = {}, action ) => {
+	if ( action.type === 'ATOMIC_SOFTWARE_STATUS_START' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				[ action.softwareSet ]: {
+					status: undefined,
+					error: undefined,
+				},
+			},
+		};
+	}
+	if ( action.type === 'ATOMIC_SOFTWARE_STATUS_SUCCESS' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				[ action.softwareSet ]: {
+					status: action.status,
+					error: undefined,
+				},
+			},
+		};
+	}
+	if ( action.type === 'ATOMIC_SOFTWARE_STATUS_FAILURE' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				[ action.softwareSet ]: {
+					status: undefined,
+					error: action.error,
+				},
+			},
+		};
+	}
+	return state;
+};
+
+export const atomicSoftwareInstallStatus: Reducer<
+	{ [ key: number ]: AtomicSoftwareInstallState },
+	Action
+> = ( state = {}, action ) => {
+	if ( action.type === 'ATOMIC_SOFTWARE_INSTALL_START' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				[ action.softwareSet ]: {
+					status: AtomicSoftwareInstallStatus.IN_PROGRESS,
+					error: undefined,
+				},
+			},
+		};
+	}
+	if ( action.type === 'ATOMIC_SOFTWARE_INSTALL_SUCCESS' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				[ action.softwareSet ]: {
+					status: AtomicSoftwareInstallStatus.SUCCESS,
+					error: undefined,
+				},
+			},
+		};
+	}
+	if ( action.type === 'ATOMIC_SOFTWARE_INSTALL_FAILURE' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				[ action.softwareSet ]: {
+					status: AtomicSoftwareInstallStatus.FAILURE,
+					error: action.error,
+				},
+			},
+		};
+	}
+	return state;
+};
+
 const newSite = combineReducers( {
 	data: newSiteData,
 	error: newSiteError,
@@ -175,6 +389,13 @@ const reducer = combineReducers( {
 	launchStatus,
 	sitesDomains,
 	sitesSettings,
+	siteSetupErrors,
+	happyChatAvailability,
+	emailSupportAvailability,
+	atomicTransferStatus,
+	latestAtomicTransferStatus,
+	atomicSoftwareStatus,
+	atomicSoftwareInstallStatus,
 } );
 
 export type State = ReturnType< typeof reducer >;

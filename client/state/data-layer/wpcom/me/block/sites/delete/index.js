@@ -37,10 +37,12 @@ export function receiveSiteUnblock() {
 }
 
 // need to dispatch multiple times so use a redux-thunk
-export const receiveSiteUnblockError = ( { payload: { siteId } } ) => ( dispatch ) => {
-	dispatch( errorNotice( translate( 'Sorry, there was a problem unblocking that site.' ) ) );
-	dispatch( bypassDataLayer( blockSite( siteId ) ) );
-};
+export const receiveSiteUnblockError =
+	( { payload: { siteId } } ) =>
+	( dispatch ) => {
+		dispatch( errorNotice( translate( 'Sorry, there was a problem unblocking that site.' ) ) );
+		dispatch( bypassDataLayer( blockSite( siteId ) ) );
+	};
 
 registerHandlers( 'state/data-layer/wpcom/me/block/sites/delete/index.js', {
 	[ READER_SITE_UNBLOCK ]: [

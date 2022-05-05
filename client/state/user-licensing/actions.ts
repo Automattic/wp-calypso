@@ -63,34 +63,36 @@ export const licensesRequestSuccessAction = (): AnyAction => {
 	return { type: USER_LICENSES_REQUEST_SUCCESS };
 };
 
-export const licensesRequestFailureAction = (
-	error: string | undefined
-): UserLicensingThunkAction => ( dispatch ) => {
-	dispatch( {
-		type: USER_LICENSES_REQUEST_FAILURE,
-		error,
-	} );
-	return dispatch(
-		errorNotice( translate( 'Failed to retrieve your licenses. Please try again later.' ) )
-	);
-};
+export const licensesRequestFailureAction =
+	( error: string | undefined ): UserLicensingThunkAction =>
+	( dispatch ) => {
+		dispatch( {
+			type: USER_LICENSES_REQUEST_FAILURE,
+			error,
+		} );
+		return dispatch(
+			errorNotice( translate( 'Failed to retrieve your licenses. Please try again later.' ) )
+		);
+	};
 
-export const requestLicenses = (
-	filter?: LicenseFilter,
-	search?: string,
-	sortField?: LicenseSortField,
-	sortDirection?: LicenseSortDirection,
-	page?: number
-): UserLicensingThunkAction => ( dispatch ) => {
-	dispatch( {
-		type: USER_LICENSES_REQUEST,
-		filter,
-		search,
-		sortField,
-		sortDirection,
-		page,
-		perPage: LICENSES_PER_PAGE,
-	} );
+export const requestLicenses =
+	(
+		filter?: LicenseFilter,
+		search?: string,
+		sortField?: LicenseSortField,
+		sortDirection?: LicenseSortDirection,
+		page?: number
+	): UserLicensingThunkAction =>
+	( dispatch ) => {
+		dispatch( {
+			type: USER_LICENSES_REQUEST,
+			filter,
+			search,
+			sortField,
+			sortDirection,
+			page,
+			perPage: LICENSES_PER_PAGE,
+		} );
 
-	dispatch( requestLicensesCounts() );
-};
+		dispatch( requestLicensesCounts() );
+	};

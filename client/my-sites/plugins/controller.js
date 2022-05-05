@@ -5,53 +5,27 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { allowedCategories } from './categories/use-categories';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
 import PluginUpload from './plugin-upload';
 import PluginBrowser from './plugins-browser';
-/**
- * Module variables
- */
-const allowedCategoryNames = [ 'new', 'popular', 'featured', 'paid' ];
-
-let lastPluginsListVisited;
-let lastPluginsQuerystring;
 
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
 
-	let prevPath;
-	if ( lastPluginsListVisited ) {
-		prevPath = lastPluginsListVisited;
-	} else if ( context.prevPath ) {
-		prevPath = sectionify( context.prevPath );
-	}
 	// Render single plugin component
 	context.primary = createElement( PluginDetails, {
 		path: context.path,
-		prevQuerystring: lastPluginsQuerystring,
-		prevPath,
 		pluginSlug,
 		siteUrl,
 	} );
 }
 
-function getPathWithoutSiteSlug( context, site ) {
-	let path = context.pathname;
-	if ( site && site.slug ) {
-		path = path.replace( '/' + site.slug, '' );
-	}
-	return path;
-}
-
 function renderPluginList( context, basePath ) {
 	const search = context.query.s;
-	const site = getSelectedSite( context.store.getState() );
-
-	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
-	lastPluginsQuerystring = context.querystring;
 
 	context.primary = createElement( PluginListComponent, {
 		path: basePath,
@@ -68,7 +42,7 @@ function renderPluginList( context, basePath ) {
 // The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route. In that case,
 // the `:plugin` param is actually the side ID or category.
 function getCategoryForPluginsBrowser( context ) {
-	if ( context.params.plugin && includes( allowedCategoryNames, context.params.plugin ) ) {
+	if ( context.params.plugin && includes( allowedCategories, context.params.plugin ) ) {
 		return context.params.plugin;
 	}
 
@@ -77,11 +51,7 @@ function getCategoryForPluginsBrowser( context ) {
 
 function renderPluginsBrowser( context ) {
 	const searchTerm = context.query.s;
-	const site = getSelectedSite( context.store.getState() );
 	const category = getCategoryForPluginsBrowser( context );
-
-	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
-	lastPluginsQuerystring = context.querystring;
 
 	context.primary = createElement( PluginBrowser, {
 		path: context.path,
@@ -90,7 +60,7 @@ function renderPluginsBrowser( context ) {
 	} );
 }
 
-function renderPluginWarnings( context ) {
+export function renderPluginWarnings( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 	const pluginSlug = decodeURIComponent( context.params.plugin );
@@ -99,12 +69,14 @@ function renderPluginWarnings( context ) {
 		siteSlug: site.slug,
 		pluginSlug,
 	} );
+	next();
 }
 
-function renderProvisionPlugins( context ) {
+export function renderProvisionPlugins( context, next ) {
 	context.primary = createElement( PlanSetup, {
 		forSpecificPlugin: context.query.only || false,
 	} );
+	next();
 }
 
 export function plugins( context, next ) {
@@ -130,7 +102,7 @@ export function browsePluginsOrPlugin( context, next ) {
 	if (
 		( context.params.plugin &&
 			( ( siteUrl && context.params.plugin === siteUrl.toString() ) ||
-				includes( allowedCategoryNames, context.params.plugin ) ) ) ||
+				includes( allowedCategories, context.params.plugin ) ) ) ||
 		context.query?.s
 	) {
 		browsePlugins( context, next );
@@ -169,21 +141,6 @@ export function jetpackCanUpdate( context, next ) {
 		}
 	}
 	next();
-}
-
-export function setupPlugins( context, next ) {
-	renderProvisionPlugins( context );
-	next();
-}
-
-export function eligibility( context, next ) {
-	renderPluginWarnings( context );
-	next();
-}
-
-export function resetHistory() {
-	lastPluginsListVisited = null;
-	lastPluginsQuerystring = null;
 }
 
 export function scrollTopIfNoHash( context, next ) {

@@ -14,9 +14,9 @@ export default function getBestIntroOfferDiscount(
 ): number {
 	const siteIdKey = siteId && typeof siteId === 'number' && siteId > 0 ? siteId : 'none';
 
-	return ( Object.values(
-		state.sites?.introOffers?.items?.[ siteIdKey ] || {}
-	) as IntroOffer[] ).reduce(
+	return (
+		Object.values( state.sites?.introOffers?.items?.[ siteIdKey ] || {} ) as IntroOffer[]
+	 ).reduce(
 		( previousBest, currentOffer ) =>
 			currentOffer.discountPercentage > previousBest &&
 			productSlugs.includes( currentOffer.productSlug )

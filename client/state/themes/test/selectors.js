@@ -3,6 +3,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
+	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { expect } from 'chai';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
@@ -2348,6 +2349,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		test( 'given a premium squared theme and a site with the premium upgrade, should return true', () => {
+			const active = [ WPCOM_FEATURES_PREMIUM_THEMES ];
 			const isAvailable = isPremiumThemeAvailable(
 				{
 					sites: {
@@ -2362,6 +2364,13 @@ describe( 'themes selectors', () => {
 										productSlug: PLAN_PREMIUM,
 									},
 								],
+							},
+						},
+						features: {
+							2916284: {
+								data: {
+									active,
+								},
 							},
 						},
 					},
@@ -2384,6 +2393,7 @@ describe( 'themes selectors', () => {
 		} );
 
 		test( 'given a site with the unlimited premium themes bundle, should return true', () => {
+			const active = [ WPCOM_FEATURES_PREMIUM_THEMES ];
 			[ PLAN_BUSINESS, PLAN_ECOMMERCE ].forEach( ( plan ) => {
 				const isAvailable = isPremiumThemeAvailable(
 					{
@@ -2399,6 +2409,13 @@ describe( 'themes selectors', () => {
 											productSlug: plan,
 										},
 									],
+								},
+							},
+							features: {
+								2916284: {
+									data: {
+										active,
+									},
 								},
 							},
 						},

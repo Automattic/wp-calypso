@@ -134,8 +134,8 @@ describe( 'fetchExperimentAssignment', () => {
 					ttl: 60,
 					variations: {
 						[ validExperimentAssignment.experimentName ]: validExperimentAssignment.variationName,
-						[ validExperimentAssignment.experimentName +
-						'_repeat' ]: validExperimentAssignment.variationName,
+						[ validExperimentAssignment.experimentName + '_repeat' ]:
+							validExperimentAssignment.variationName,
 					},
 				},
 				ONE_DELAY

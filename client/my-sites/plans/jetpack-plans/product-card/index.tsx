@@ -52,6 +52,8 @@ interface ProductCardProps {
 	hideSavingLabel?: boolean;
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
 	collapseFeaturesOnMobile?: boolean;
+	isPricingPageTreatment202204?: boolean;
+	isPricingPageTest202204AssignmentLoading?: boolean;
 }
 
 const ProductCard: React.FC< ProductCardProps > = ( {
@@ -67,6 +69,8 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	hideSavingLabel,
 	scrollCardIntoView,
 	collapseFeaturesOnMobile,
+	isPricingPageTreatment202204,
+	isPricingPageTest202204AssignmentLoading,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -149,10 +153,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 				planHasFeature( item.productSlug, productSlug )
 			).length;
 		}
-		return ! ( [
-			...JETPACK_BACKUP_PRODUCTS,
-			...JETPACK_SCAN_PRODUCTS,
-		] as ReadonlyArray< string > ).includes( item.productSlug );
+		return ! (
+			[ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ] as ReadonlyArray< string >
+		 ).includes( item.productSlug );
 	}, [ item.productSlug ] );
 
 	/**
@@ -240,6 +243,11 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			scrollCardIntoView={ scrollCardIntoView }
 			collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
 			pricesAreFetching={ pricesAreFetching }
+			isPricingPageTreatment202204={ isPricingPageTreatment202204 }
+			isPricingPageTest202204AssignmentLoading={ isPricingPageTest202204AssignmentLoading }
+			belowButtonText={
+				isPricingPageTreatment202204 ? translate( 'Renews at the normal rate.' ).toString() : ''
+			}
 		/>
 	);
 };

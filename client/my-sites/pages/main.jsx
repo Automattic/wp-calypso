@@ -125,9 +125,9 @@ class PagesMain extends Component {
 				 * Assumes users have a somewhat working clock but shouldn't be a problem if they don't.
 				 */ }
 				<Experiment
-					name={ `explat_test_aa_weekly_calypso_${ moment
+					name={ `explat_test_aa_weekly_calypso_${ moment.utc().format( 'GGGG' ) }_week_${ moment
 						.utc()
-						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }` }
+						.format( 'WW' ) }` }
 					defaultExperience={ null }
 					treatmentExperience={ null }
 					loadingExperience={ null }

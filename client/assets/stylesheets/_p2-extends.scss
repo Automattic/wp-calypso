@@ -92,7 +92,7 @@
 	height: auto;
 	width: 100%;
 
-	&:hover {
+	&:hover:not( :disabled ):not( .disabled ) {
 		background-color: var( --p2-color-button-dark );
 		color: var( --p2-color-text );
 	}
@@ -101,22 +101,37 @@
 		background-color: var( --p2-color-link );
 		color: var( --p2-color-white );
 
-		&:hover:not( :disabled ),
-		&:focus:not( :disabled ) {
+		&:hover:not( :disabled ):not( .disabled ),
+		&:focus:not( :disabled ):not( .disabled ) {
 			background-color: var( --p2-color-link-dark );
+			color: var( --p2-color-white );
 		}
 
-		&[disabled] {
+		&[disabled],
+		&.disabled {
 			opacity: 0.5;
 			background-color: var( --p2-color-link );
 			color: var( --p2-color-white );
 		}
 	}
 
-	&[disabled] {
+	&[disabled],
+	&.disabled {
 		background-color: var( --p2-color-button );
 		color: var( --p2-color-text-light );
 		cursor: default;
+	}
+}
+
+%p2-button-link {
+	background: none;
+	color: var( --p2-color-link );
+	text-decoration: underline;
+	font-family: var( --p2-font-inter );
+
+	&:hover:not( :disabled ):not( .disabled ) {
+		background: none;
+		color: var( --p2-color-link-dark );
 	}
 }
 

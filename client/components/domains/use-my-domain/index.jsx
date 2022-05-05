@@ -100,11 +100,15 @@ function UseMyDomain( props ) {
 		}
 	};
 
-	const validateDomainName = useCallback( () => {
-		const errorMessage = getDomainNameValidationErrorMessage( domainName );
+	const validateDomainName = useCallback( ( domain ) => {
+		const errorMessage = getDomainNameValidationErrorMessage( domain );
 		setDomainNameValidationError( errorMessage );
 		return ! errorMessage;
-	}, [ domainName ] );
+	}, [] );
+
+	const filterDomainName = useCallback( ( domain ) => {
+		return domain.replace( /(?:^http(?:s)?:)?(?:[/]*)([^/?]*)(?:.*)$/gi, '$1' );
+	}, [] );
 
 	const setTransferStepsAndLockStatus = useCallback(
 		( isDomainUnlocked ) => {
@@ -155,7 +159,8 @@ function UseMyDomain( props ) {
 	}, [ domainName, setTransferStepsAndLockStatus ] );
 
 	const onNext = useCallback( async () => {
-		if ( ! validateDomainName() ) {
+		const filteredDomainName = filterDomainName( domainName );
+		if ( ! validateDomainName( filteredDomainName ) ) {
 			return;
 		}
 
@@ -164,21 +169,22 @@ function UseMyDomain( props ) {
 
 		try {
 			const availabilityData = await wpcom
-				.domain( domainName )
+				.domain( filteredDomainName )
 				.isAvailable( { apiVersion: '1.3', blog_id: selectedSite?.ID, is_cart_pre_check: false } );
 
+			setDomainName( filteredDomainName );
 			await setDomainTransferData();
 
 			const availabilityErrorMessage = getAvailabilityErrorMessage( {
 				availabilityData,
-				domainName,
+				filteredDomainName,
 				selectedSite,
 			} );
 
 			if ( availabilityErrorMessage ) {
 				setDomainNameValidationError( availabilityErrorMessage );
 			} else {
-				onNextStep?.( { mode: inputMode.transferOrConnect, domain: domainName } );
+				onNextStep?.( { mode: inputMode.transferOrConnect, domain: filteredDomainName } );
 				setMode( inputMode.transferOrConnect );
 				setDomainAvailabilityData( availabilityData );
 			}
@@ -187,7 +193,14 @@ function UseMyDomain( props ) {
 		} finally {
 			setIsFetchingAvailability( false );
 		}
-	}, [ domainName, selectedSite, setDomainTransferData, validateDomainName, onNextStep ] );
+	}, [
+		filterDomainName,
+		domainName,
+		validateDomainName,
+		selectedSite,
+		setDomainTransferData,
+		onNextStep,
+	] );
 
 	const onDomainNameChange = ( event ) => {
 		setDomainName( event.target.value.trim() );

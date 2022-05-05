@@ -29,10 +29,10 @@ const HasSitePurchasesSwitch: React.FC< Props > = ( {
 	const hasLoaded = useSelector( hasLoadedSitePurchasesFromServer );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 
-	const loadingCondition = useCallback( () => ! hasLoaded || isFetching, [
-		hasLoaded,
-		isFetching,
-	] );
+	const loadingCondition = useCallback(
+		() => ! hasLoaded || isFetching,
+		[ hasLoaded, isFetching ]
+	);
 	const renderCondition = useCallback( () => purchases.length > 0, [ purchases ] );
 
 	useEffect( () => {

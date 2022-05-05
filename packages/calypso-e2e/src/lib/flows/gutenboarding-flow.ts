@@ -1,6 +1,6 @@
 import { Page } from 'playwright';
 import envVariables from '../../env-variables';
-import type { Plans } from '../../types';
+import { LegacyPlans } from '../pages/plans-page';
 
 export type Features =
 	| 'Custom domains'
@@ -231,7 +231,7 @@ export class GutenboardingFlow {
 	 *
 	 * @param {string} name Name of the plan.
 	 */
-	async selectPlan( name: Plans ): Promise< void > {
+	async selectPlan( name: LegacyPlans ): Promise< void > {
 		// First, expand the accordion.
 		await this.expandAllPlans();
 		await this.page.click( selectors.selectPlanButton( name ) );
@@ -240,9 +240,9 @@ export class GutenboardingFlow {
 	/**
 	 * Checks if the recommended plan matches the expected name.
 	 *
-	 * @param {Plans} name Name of the plan.
+	 * @param {LegacyPlans} name Name of the plan.
 	 */
-	async validateRecommendedPlan( name: Plans ): Promise< void > {
+	async validateRecommendedPlan( name: LegacyPlans ): Promise< void > {
 		// The plan item with the `has-badge` attribute is the one that is recommended based on features.
 		const elementHandle = await this.page.waitForSelector( `${ selectors.planItem }.has-badge` );
 		await elementHandle.waitForSelector( `div:text-is("${ name }")` );

@@ -49,14 +49,8 @@ class ConciergeCancel extends Component {
 	}
 
 	getDisplayComponent = () => {
-		const {
-			appointmentId,
-			appointmentDetails,
-			scheduleId,
-			siteSlug,
-			signupForm,
-			translate,
-		} = this.props;
+		const { appointmentId, appointmentDetails, scheduleId, siteSlug, signupForm, translate } =
+			this.props;
 
 		switch ( signupForm.status ) {
 			case CONCIERGE_STATUS_CANCELLED:

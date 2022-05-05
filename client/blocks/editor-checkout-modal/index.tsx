@@ -24,14 +24,8 @@ function removeHashFromUrl(): void {
 }
 
 const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
-	const {
-		isOpen,
-		onClose,
-		cartData,
-		redirectTo,
-		isFocusedLaunch,
-		checkoutOnSuccessCallback,
-	} = props;
+	const { isOpen, onClose, cartData, redirectTo, isFocusedLaunch, checkoutOnSuccessCallback } =
+		props;
 
 	const translate = useTranslate();
 

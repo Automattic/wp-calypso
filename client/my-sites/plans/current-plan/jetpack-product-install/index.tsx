@@ -151,10 +151,8 @@ export class JetpackProductInstall extends Component< Props, State > {
 				: null
 		);
 
-		const [
-			akismetKeyIfRequestedAndPresent,
-			vaultpressKeyIfRequestedAndPresent,
-		] = startJetpackProductInstallArgs;
+		const [ akismetKeyIfRequestedAndPresent, vaultpressKeyIfRequestedAndPresent ] =
+			startJetpackProductInstallArgs;
 
 		// Start installation if we requested a plugin and have its key
 		if ( akismetKeyIfRequestedAndPresent || vaultpressKeyIfRequestedAndPresent ) {

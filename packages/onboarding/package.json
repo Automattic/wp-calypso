@@ -30,9 +30,9 @@
 	},
 	"dependencies": {
 		"@automattic/data-stores": "workspace:^",
-		"@wordpress/components": "^19.2.0",
-		"@wordpress/data": "^6.1.5",
-		"@wordpress/icons": "^6.1.1",
+		"@wordpress/components": "^19.9.0",
+		"@wordpress/data": "^6.7.0",
+		"@wordpress/icons": "^8.3.0",
 		"@wordpress/react-i18n": "^3.0.4",
 		"classnames": "^2.3.1",
 		"react-router-dom": "^5.1.2",
@@ -55,7 +55,7 @@
 		"webpack": "^5.63.0"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^4.2.4",
+		"@wordpress/i18n": "^4.7.0",
 		"react": "^17.0.2",
 		"reakit-utils": "^0.15.1"
 	},

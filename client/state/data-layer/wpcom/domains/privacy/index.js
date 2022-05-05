@@ -44,41 +44,45 @@ const getSuccessMessage = ( type ) => {
 	}
 };
 
-const handleDomainPrivacySettingsSuccess = ( type ) => ( { siteId, domain } ) => {
-	const notice = getSuccessMessage( type );
+const handleDomainPrivacySettingsSuccess =
+	( type ) =>
+	( { siteId, domain } ) => {
+		const notice = getSuccessMessage( type );
 
-	return [
-		{
-			type: type,
-			siteId,
-			domain,
-		},
-		successNotice( notice, { duration: 5000 } ),
-	];
-};
+		return [
+			{
+				type: type,
+				siteId,
+				domain,
+			},
+			successNotice( notice, { duration: 5000 } ),
+		];
+	};
 
-const handleDomainPrivacySettingsFailure = ( type ) => ( { siteId, domain }, data ) => {
-	const notice = get(
-		data,
-		'message',
-		translate( 'Unknown error when updating the domain privacy settings' )
-	);
-	return [
-		{
-			type: type,
-			siteId,
-			domain,
-		},
-		errorNotice( notice, {
-			duration: 20000,
-			id: 'domain-privacy-settings-save-failure-notice',
-			isPersistent: true,
-			href: 'https://wordpress.com/help/contact',
-			button: translate( 'Get Help' ),
-			showDismiss: false,
-		} ),
-	];
-};
+const handleDomainPrivacySettingsFailure =
+	( type ) =>
+	( { siteId, domain }, data ) => {
+		const notice = get(
+			data,
+			'message',
+			translate( 'Unknown error when updating the domain privacy settings' )
+		);
+		return [
+			{
+				type: type,
+				siteId,
+				domain,
+			},
+			errorNotice( notice, {
+				duration: 20000,
+				id: 'domain-privacy-settings-save-failure-notice',
+				isPersistent: true,
+				href: 'https://wordpress.com/help/contact',
+				button: translate( 'Get Help' ),
+				showDismiss: false,
+			} ),
+		];
+	};
 
 registerHandlers( 'state/data-layer/wpcom/domains/privacy/index.js', {
 	[ DOMAIN_PRIVACY_ENABLE ]: [

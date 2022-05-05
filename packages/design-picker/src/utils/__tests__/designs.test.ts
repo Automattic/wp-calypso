@@ -13,7 +13,7 @@ describe( 'Design Picker designs utils', () => {
 
 		it( 'should return the block-previews/site endpoint with the correct query params', () => {
 			expect( getDesignPreviewUrl( design, {} ) ).toEqual(
-				'https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&viewport_height=700&site_title=Zoologist'
+				'https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&viewport_height=700&source_site=patternboilerplates.wordpress.com&site_title=Zoologist'
 			);
 		} );
 
@@ -24,7 +24,7 @@ describe( 'Design Picker designs utils', () => {
 			};
 
 			expect( getDesignPreviewUrl( design, options ) ).toEqual(
-				'https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&language=id&viewport_height=700&site_title=Design%20Title'
+				'https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&language=id&viewport_height=700&source_site=patternboilerplates.wordpress.com&site_title=Design%20Title'
 			);
 		} );
 
@@ -36,7 +36,7 @@ describe( 'Design Picker designs utils', () => {
 			};
 
 			expect( getDesignPreviewUrl( design, options ) ).toEqual(
-				'https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&viewport_height=700&site_title=Mock%28Design%29%28Title%29'
+				'https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&viewport_height=700&source_site=patternboilerplates.wordpress.com&site_title=Mock%28Design%29%28Title%29'
 			);
 		} );
 	} );

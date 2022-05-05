@@ -42,17 +42,19 @@ class PublicizeActionsList extends PureComponent {
 		this.setState( { selectedShareTab } );
 	};
 
-	togglePreviewModal = ( message = '', service = '' ) => () => {
-		if ( this.state.showPreviewModal ) {
-			return this.setState( { showPreviewModal: false } );
-		}
+	togglePreviewModal =
+		( message = '', service = '' ) =>
+		() => {
+			if ( this.state.showPreviewModal ) {
+				return this.setState( { showPreviewModal: false } );
+			}
 
-		this.setState( {
-			showPreviewModal: true,
-			previewMessage: message,
-			previewService: service,
-		} );
-	};
+			this.setState( {
+				showPreviewModal: true,
+				previewMessage: message,
+				previewService: service,
+			} );
+		};
 
 	renderActionItem( item, index ) {
 		const { service, connectionName, date, message } = item;

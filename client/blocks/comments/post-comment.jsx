@@ -232,6 +232,7 @@ class PostComment extends PureComponent {
 								onReplyClick={ this.props.onReplyClick }
 								onReplyCancel={ this.props.onReplyCancel }
 								activeReplyCommentId={ this.props.activeReplyCommentId }
+								commentText={ this.props.commentText }
 								onUpdateCommentText={ this.props.onUpdateCommentText }
 								onCommentSubmit={ this.props.onCommentSubmit }
 								shouldHighlightNew={ this.props.shouldHighlightNew }
@@ -372,10 +373,8 @@ class PostComment extends PureComponent {
 		// Author Details
 		const parentCommentId = get( comment, 'parent.ID' );
 		const { commentAuthorUrl, commentAuthorName } = this.getAuthorDetails( commentId );
-		const {
-			commentAuthorUrl: parentAuthorUrl,
-			commentAuthorName: parentAuthorName,
-		} = this.getAuthorDetails( parentCommentId );
+		const { commentAuthorUrl: parentAuthorUrl, commentAuthorName: parentAuthorName } =
+			this.getAuthorDetails( parentCommentId );
 
 		// highlight comments not older than 10s
 		const isHighlighted =

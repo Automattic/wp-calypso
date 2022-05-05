@@ -10,16 +10,18 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Plugins page pricing toggle' ), function () {
 	let page: Page;
 	let pluginsPage: PluginsPage;
+	let siteUrl: string;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		const testAccount = new TestAccount( 'defaultUser' );
 		await testAccount.authenticate( page );
+		siteUrl = testAccount.getSiteURL( { protocol: false } );
 	} );
 
 	it( 'Visit plugins page', async function () {
 		pluginsPage = new PluginsPage( page );
-		await pluginsPage.visit();
+		await pluginsPage.visit( siteUrl );
 		await pluginsPage.validateIsMonthlyPricing();
 	} );
 

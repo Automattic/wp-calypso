@@ -6,14 +6,14 @@
 
 	margin: 24px 0;
 	padding: 30px 15px 26px;
-	border-radius: 8px;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
 
 	text-align: center;
 
 	@include break-small {
 		margin: 0 30px;
 
-		border-radius: 0 0 8px 8px;
+		border-radius: 0 0 8px 8px; /* stylelint-disable-line scales/radii */
 	}
 }
 
@@ -29,7 +29,6 @@
 	align-items: center;
 
 	margin: 0 auto;
-	padding: 10px 16px 10px 40px;
 
 	border: solid 2px currentColor;
 	border-radius: 4px;

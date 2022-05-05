@@ -4,6 +4,8 @@ import {
 	isEcommerce,
 	isSecurityDaily,
 	isSecurityRealTime,
+	isSecurityT1,
+	isSecurityT2,
 	isComplete,
 	isPro,
 } from '@automattic/calypso-products';
@@ -16,6 +18,8 @@ export function hasWordAdsPlan( site ) {
 		isEcommerce( site.plan ) ||
 		isSecurityDaily( site.plan ) ||
 		isSecurityRealTime( site.plan ) ||
+		isSecurityT1( site.plan ) ||
+		isSecurityT2( site.plan ) ||
 		isComplete( site.plan ) ||
 		isPro( site.plan )
 	);

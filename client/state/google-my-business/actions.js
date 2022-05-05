@@ -26,24 +26,23 @@ export const disconnectAllGoogleMyBusinessAccounts = ( siteId ) => ( dispatch, g
 		)
 	);
 
-export const connectGoogleMyBusinessAccount = ( siteId, keyringId, locationId = null ) => (
-	dispatch,
-	getState
-) => {
-	if ( getSiteKeyringConnection( getState(), siteId, keyringId ) ) {
-		return Promise.resolve();
-	}
+export const connectGoogleMyBusinessAccount =
+	( siteId, keyringId, locationId = null ) =>
+	( dispatch, getState ) => {
+		if ( getSiteKeyringConnection( getState(), siteId, keyringId ) ) {
+			return Promise.resolve();
+		}
 
-	return dispatch( disconnectAllGoogleMyBusinessAccounts( siteId ) ).then( () =>
-		dispatch(
-			createSiteKeyring( siteId, {
-				keyring_id: keyringId,
-				service: 'google_my_business',
-				external_user_id: locationId,
-			} )
-		)
-	);
-};
+		return dispatch( disconnectAllGoogleMyBusinessAccounts( siteId ) ).then( () =>
+			dispatch(
+				createSiteKeyring( siteId, {
+					keyring_id: keyringId,
+					service: 'google_my_business',
+					external_user_id: locationId,
+				} )
+			)
+		);
+	};
 
 export const connectGoogleMyBusinessLocation = ( siteId, keyringId, locationId ) => ( dispatch ) =>
 	dispatch( updateSiteKeyring( siteId, keyringId, locationId ) );

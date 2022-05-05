@@ -99,6 +99,30 @@ export const getSiteStatsPostStreakData = treeSelect(
  * @param   {object}  query    Stats query object
  * @returns {*}                Normalized Data for the query, typically an array or object
  */
+export const getVideoPressPlaysComplete = treeSelect(
+	( state, siteId, statType, query ) => [
+		getSiteStatsForQuery( state, siteId, statType, query ),
+		getSite( state, siteId ),
+	],
+	( [ siteStats ] ) => {
+		return siteStats;
+	},
+	{
+		getCacheKey: ( siteId, statType, query ) =>
+			[ siteId, statType, getSerializedStatsQuery( query ) ].join(),
+	}
+);
+
+/**
+ * Returns normalized stats data for a given query and stat type, or the un-normalized response
+ * from the API if no normalizer method for that stats type exists in ./utils
+ *
+ * @param   {object}  state    Global state tree
+ * @param   {number}  siteId   Site ID
+ * @param   {string}  statType Type of stat
+ * @param   {object}  query    Stats query object
+ * @returns {*}                Normalized Data for the query, typically an array or object
+ */
 export const getSiteStatsNormalizedData = treeSelect(
 	( state, siteId, statType, query ) => [
 		getSiteStatsForQuery( state, siteId, statType, query ),

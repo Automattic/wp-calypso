@@ -30,15 +30,16 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 		setVertical( vertical );
 	};
 
-	const handleSubmit = async ( event: React.FormEvent ) => {
+	const handleSubmit = async ( event: React.FormEvent, userInput: string ) => {
 		event.preventDefault();
 
-		if ( site && vertical ) {
-			const { value, label } = vertical;
+		if ( site ) {
+			const { value = '', label = '' } = vertical || {};
 
 			setIsBusy( true );
 			await saveSiteSettings( site.ID, { site_vertical_id: value } );
 			recordTracksEvent( 'calypso_signup_site_vertical_submit', {
+				user_input: userInput,
 				vertical_id: value,
 				vertical_title: label,
 			} );

@@ -9,9 +9,10 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 } ) );
 
 import { TERM_MONTHLY } from '@automattic/calypso-products';
+import { screen } from '@testing-library/react';
 import productsList from 'calypso/state/products-list/reducer';
 import { reducer as purchases } from 'calypso/state/purchases/reducer';
-import { render, screen } from 'calypso/test-helpers/config/testing-library';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import PlanUpgradeSection from '../index';
 
 const initialState = {
@@ -29,7 +30,7 @@ const initialState = {
 
 describe( '<PlanUpgradeSection />', () => {
 	it( 'renders one legacy product card and one new plan product card', () => {
-		render(
+		renderWithProvider(
 			<PlanUpgradeSection
 				planRecommendation={ [ 'jetpack_personal', [ 'jetpack_scan' ] ] }
 				duration={ TERM_MONTHLY }
@@ -53,7 +54,7 @@ describe( '<PlanUpgradeSection />', () => {
 	} );
 
 	it( 'renders one legacy product card and two new plan product cards', () => {
-		render(
+		renderWithProvider(
 			<PlanUpgradeSection
 				planRecommendation={ [
 					'jetpack_premium',

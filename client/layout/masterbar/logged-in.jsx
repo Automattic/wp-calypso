@@ -14,7 +14,11 @@ import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserSiteCount, getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserSiteCount,
+	getCurrentUser,
+	getCurrentUserDate,
+} from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -35,11 +39,13 @@ import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import { MasterBarMobileMenu } from './masterbar-menu';
-import Notifications from './notifications';
+import Notifications from './masterbar-notifications/notifications-button';
 
+const NEW_MASTERBAR_SHIPPING_DATE = new Date( 2022, 3, 14 ).getTime();
 const MENU_POPOVER_PREFERENCE_KEY = 'dismissible-card-masterbar-collapsable-menu-popover';
 
 const MOBILE_BREAKPOINT = '<480px';
+
 class MasterbarLoggedIn extends Component {
 	state = {
 		isActionSearchVisible: false,
@@ -60,6 +66,8 @@ class MasterbarLoggedIn extends Component {
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
 		isInEditor: PropTypes.bool,
+		hasDismissedThePopover: PropTypes.bool,
+		isUserNewerThanNewNavigation: PropTypes.bool,
 	};
 
 	subscribeToViewPortChanges() {
@@ -188,6 +196,7 @@ class MasterbarLoggedIn extends Component {
 		return 'my-sites';
 	};
 
+	// will render as back button on mobile and in editor
 	renderMySites() {
 		const {
 			domainOnlySite,
@@ -359,16 +368,14 @@ class MasterbarLoggedIn extends Component {
 			>
 				<Gravatar
 					className="masterbar__item-me-gravatar"
-					user={ this.props.user }
+					user={ user }
 					alt={ translate( 'My Profile' ) }
 					size={ 18 }
 				/>
 				<span className="masterbar__item-me-label">
-					{ isMobile
-						? user?.display_name
-						: translate( 'My Profile', {
-								context: 'Toolbar, must be shorter than ~12 chars',
-						  } ) }
+					{ translate( 'My Profile', {
+						context: 'Toolbar, must be shorter than ~12 chars',
+					} ) }
 				</span>
 			</Item>
 		);
@@ -394,7 +401,8 @@ class MasterbarLoggedIn extends Component {
 
 	renderMenu() {
 		const { menuBtnRef } = this.state;
-		const { translate, hasDismissedThePopover, isFetchingPrefs } = this.props;
+		const { translate, hasDismissedThePopover, isFetchingPrefs, isUserNewerThanNewNavigation } =
+			this.props;
 		return (
 			<>
 				<Item
@@ -414,7 +422,9 @@ class MasterbarLoggedIn extends Component {
 				{ menuBtnRef && (
 					<Popover
 						className="masterbar__new-menu-popover"
-						isVisible={ ! isFetchingPrefs && ! hasDismissedThePopover }
+						isVisible={
+							! isFetchingPrefs && ! hasDismissedThePopover && ! isUserNewerThanNewNavigation
+						}
 						context={ menuBtnRef }
 						onClose={ this.dismissPopover }
 						position="bottom left"
@@ -456,6 +466,10 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	renderHelpCenter() {
+		return <AsyncLoad require="./masterbar-help-center" placeholder={ null } />;
+	}
+
 	render() {
 		const { isCheckout, isCheckoutPending } = this.props;
 		const { isMobile } = this.state;
@@ -463,14 +477,13 @@ class MasterbarLoggedIn extends Component {
 		if ( isCheckout || isCheckoutPending ) {
 			return this.renderCheckout();
 		}
-
 		if ( isMobile ) {
-			/* TODO: implement this when help center is ready
-			if ( isInEditor ) {
+			const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
+			if ( this.props.isInEditor && isHelpCenterEnabled ) {
 				return (
 					<Masterbar>
 						<div className="masterbar__section masterbar__section--left">
-							{ this.renderBackButton() }
+							{ this.renderMySites() }
 						</div>
 						<div className="masterbar__section masterbar__section--right">
 							{ this.renderHelpCenter() }
@@ -478,7 +491,6 @@ class MasterbarLoggedIn extends Component {
 					</Masterbar>
 				);
 			}
-			 */
 			return (
 				<>
 					{ this.renderPopupSearch() }
@@ -552,6 +564,9 @@ export default connect(
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			hasDismissedThePopover: getPreference( state, MENU_POPOVER_PREFERENCE_KEY ),
 			isFetchingPrefs: isFetchingPreferences( state ),
+			// If the user is newer than new navigation shipping date, don't tell them this nav is new. Everything is new to them.
+			isUserNewerThanNewNavigation:
+				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 		};
 	},
 	{

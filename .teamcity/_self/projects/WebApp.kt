@@ -43,6 +43,14 @@ object BuildDockerImage : BuildType({
 
 	params {
 		text("base_image", "registry.a8c.com/calypso/base:latest", label = "Base docker image", description = "Base docker image", allowEmpty = false)
+		checkbox(
+			name = "MANUAL_SENTRY_RELEASE",
+			value = "false",
+			label = "Create a sentry release.",
+			description = "Generate and upload sourcemaps to Sentry as a new release for this commit.",
+			checked = "true",
+			unchecked = "false"
+		)
 	}
 
 	vcs {
@@ -123,6 +131,10 @@ object BuildDockerImage : BuildType({
 					--build-arg node_memory=32768
 					--build-arg use_cache=true
 					--build-arg base_image=%base_image%
+					--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
+					--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
+					--build-arg is_default_branch=%teamcity.build.branch.is_default%
+					--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
 				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")
@@ -335,6 +347,7 @@ object RunAllUnitTests : BuildType({
 				yarn tsc --build packages/*/tsconfig.json
 				yarn tsc --build apps/editing-toolkit/tsconfig.json
 				yarn tsc --build client/tsconfig.json
+				yarn tsc --build test/e2e/tsconfig.json
 			"""
 		}
 		bashNodeScript {

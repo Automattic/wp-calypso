@@ -8,9 +8,7 @@ import type { PlanProductForFlow } from '../utils';
 import type { Plans } from '@automattic/data-stores';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
-export function usePlans(
-	billingPeriod: Plans.PlanBillingPeriod = 'ANNUALLY'
-): {
+export function usePlans( billingPeriod: Plans.PlanBillingPeriod = 'ANNUALLY' ): {
 	defaultPaidPlan: Plans.Plan | undefined;
 	defaultFreePlan: Plans.Plan | undefined;
 	defaultFreePlanProduct: Plans.PlanProduct | undefined;

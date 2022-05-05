@@ -41,6 +41,8 @@ export default ( { path } ) => {
 					activityClicked: 'calypso_jetpack_sidebar_activity_clicked',
 					backupClicked: 'calypso_jetpack_sidebar_backup_clicked',
 					scanClicked: 'calypso_jetpack_sidebar_scan_clicked',
+					searchClicked: 'calypso_jetpack_sidebar_search_clicked',
+					socialClicked: 'calypso_jetpack_sidebar_social_clicked',
 				} }
 			/>
 			{ shouldShowSettings && (
@@ -51,7 +53,7 @@ export default ( { path } ) => {
 					} ) }
 					link={ settingsPath( siteSlug ) }
 					onNavigate={ onNavigate }
-					selected={ itemLinkMatches( [ settingsPath( siteSlug ) ], path ) }
+					selected={ itemLinkMatches( settingsPath( siteSlug ), path ) }
 				/>
 			) }
 			{ shouldShowPurchases && (
@@ -62,7 +64,7 @@ export default ( { path } ) => {
 					} ) }
 					link={ purchasesPath( siteSlug ) }
 					onNavigate={ onNavigate }
-					selected={ itemLinkMatches( [ purchasesBasePath() ], path ) }
+					selected={ itemLinkMatches( purchasesBasePath(), path ) }
 				/>
 			) }
 		</>

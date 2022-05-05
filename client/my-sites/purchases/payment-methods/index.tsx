@@ -111,9 +111,10 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 		allowUseForAllSubscriptions: true,
 		initialUseForAllSubscriptions: true,
 	} );
-	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( isValueTruthy ), [
-		stripeMethod,
-	] );
+	const paymentMethodList = useMemo(
+		() => [ stripeMethod ].filter( isValueTruthy ),
+		[ stripeMethod ]
+	);
 	const reduxDispatch = useDispatch();
 	useEffect( () => {
 		if ( stripeLoadingError ) {

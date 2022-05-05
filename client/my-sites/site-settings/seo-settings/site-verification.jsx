@@ -245,13 +245,8 @@ class SiteVerification extends Component {
 	};
 
 	render() {
-		const {
-			isVerificationToolsActive,
-			jetpackVersion,
-			siteId,
-			siteIsJetpack,
-			translate,
-		} = this.props;
+		const { isVerificationToolsActive, jetpackVersion, siteId, siteIsJetpack, translate } =
+			this.props;
 		const {
 			isSubmittingForm,
 			isFetchingSettings,

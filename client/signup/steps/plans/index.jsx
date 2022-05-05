@@ -272,14 +272,8 @@ export class PlansStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			translate,
-			hasInitializedSitesBackUrl,
-			steps,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, translate, hasInitializedSitesBackUrl, steps } =
+			this.props;
 
 		const headerText = this.getHeaderText();
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;

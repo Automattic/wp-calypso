@@ -1,8 +1,9 @@
 import { isJetpackLegacyItem } from '@automattic/calypso-products';
 import debugFactory from 'debug';
-import i18n from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
+import DocumentHead from 'calypso/components/data/document-head';
 import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
@@ -24,7 +25,6 @@ import {
 	getCurrentUserVisibleSiteCount,
 	isUserLoggedIn,
 } from 'calypso/state/current-user/selectors';
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	COMPARE_PLANS_QUERY_PARAM,
@@ -51,26 +51,32 @@ export function checkoutSiteless( context, next ) {
 	const { productSlug: product } = context.params;
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
 
-	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
-
 	setSectionMiddleware( { name: 'checkout' } )( context );
 
 	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
+	const CheckoutSitelessDocumentTitle = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'Checkout' ) } />;
+	};
+
 	context.primary = (
-		<CheckoutSystemDecider
-			productAliasFromUrl={ product }
-			productSourceFromUrl={ context.query.source }
-			couponCode={ couponCode }
-			isComingFromUpsell={ !! context.query.upgrade }
-			redirectTo={ context.query.redirect_to }
-			isLoggedOutCart={ isLoggedOut }
-			isNoSiteCart={ true }
-			isJetpackCheckout={ true }
-			isUserComingFromLoginForm={ isUserComingFromLoginForm }
-		/>
+		<>
+			<CheckoutSitelessDocumentTitle />
+
+			<CheckoutSystemDecider
+				productAliasFromUrl={ product }
+				productSourceFromUrl={ context.query.source }
+				couponCode={ couponCode }
+				isComingFromUpsell={ !! context.query.upgrade }
+				redirectTo={ context.query.redirect_to }
+				isLoggedOutCart={ isLoggedOut }
+				isNoSiteCart={ true }
+				isJetpackCheckout={ true }
+				isUserComingFromLoginForm={ isUserComingFromLoginForm }
+			/>
+		</>
 	);
 
 	next();
@@ -118,8 +124,10 @@ export function checkout( context, next ) {
 		return;
 	}
 
-	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
+	const CheckoutDocumentTitle = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'Checkout' ) } />;
+	};
 
 	setSectionMiddleware( { name: 'checkout' } )( context );
 
@@ -147,23 +155,27 @@ export function checkout( context, next ) {
 	}
 
 	context.primary = (
-		<CheckoutSystemDecider
-			productAliasFromUrl={ product }
-			productSourceFromUrl={ context.query.source }
-			purchaseId={ purchaseId }
-			selectedFeature={ feature }
-			couponCode={ couponCode }
-			isComingFromUpsell={ !! context.query.upgrade }
-			plan={ plan }
-			selectedSite={ selectedSite }
-			redirectTo={ context.query.redirect_to }
-			isLoggedOutCart={ isLoggedOutCart }
-			isNoSiteCart={ isNoSiteCart }
-			isJetpackCheckout={ isJetpackCheckout }
-			jetpackSiteSlug={ jetpackSiteSlug }
-			jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
-			isUserComingFromLoginForm={ isUserComingFromLoginForm }
-		/>
+		<>
+			<CheckoutDocumentTitle />
+
+			<CheckoutSystemDecider
+				productAliasFromUrl={ product }
+				productSourceFromUrl={ context.query.source }
+				purchaseId={ purchaseId }
+				selectedFeature={ feature }
+				couponCode={ couponCode }
+				isComingFromUpsell={ !! context.query.upgrade }
+				plan={ plan }
+				selectedSite={ selectedSite }
+				redirectTo={ context.query.redirect_to }
+				isLoggedOutCart={ isLoggedOutCart }
+				isNoSiteCart={ isNoSiteCart }
+				isJetpackCheckout={ isJetpackCheckout }
+				jetpackSiteSlug={ jetpackSiteSlug }
+				jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
+				isUserComingFromLoginForm={ isUserComingFromLoginForm }
+			/>
+		</>
 	);
 
 	next();
@@ -216,21 +228,27 @@ export function checkoutThankYou( context, next ) {
 
 	setSectionMiddleware( { name: 'checkout-thank-you' } )( context );
 
-	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
+	const CheckoutThankYouDocumentTitle = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'Thank You' ) } />;
+	};
 
 	context.primary = (
-		<CheckoutThankYouComponent
-			receiptId={ receiptId }
-			gsuiteReceiptId={ gsuiteReceiptId }
-			domainOnlySiteFlow={ isEmpty( context.params.site ) }
-			selectedFeature={ context.params.feature }
-			redirectTo={ context.query.redirect_to }
-			upgradeIntent={ context.query.intent }
-			siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
-			selectedSite={ selectedSite }
-			displayMode={ displayMode }
-		/>
+		<>
+			<CheckoutThankYouDocumentTitle />
+
+			<CheckoutThankYouComponent
+				receiptId={ receiptId }
+				gsuiteReceiptId={ gsuiteReceiptId }
+				domainOnlySiteFlow={ isEmpty( context.params.site ) }
+				selectedFeature={ context.params.feature }
+				redirectTo={ context.query.redirect_to }
+				upgradeIntent={ context.query.intent }
+				siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
+				selectedSite={ selectedSite }
+				displayMode={ displayMode }
+			/>
+		</>
 	);
 
 	next();

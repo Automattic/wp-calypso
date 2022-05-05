@@ -172,6 +172,36 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
+const anchorPodcastId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_ANCHOR_PODCAST_ID' ) {
+		return action.anchorPodcastId;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const anchorEpisodeId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_ANCHOR_PODCAST_EPISODE_ID' ) {
+		return action.anchorEpisodeId;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const anchorSpotifyUrl: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_ANCHOR_PODCAST_SPOTIFY_URL' ) {
+		return action.anchorSpotifyUrl;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'ONBOARDING_START' ) {
 		return true;
@@ -243,7 +273,10 @@ const storeAddress: Reducer< StoreAddress, OnboardAction > = (
 	return state;
 };
 
-const pendingAction: Reducer< Promise< any > | undefined, OnboardAction > = ( state, action ) => {
+const pendingAction: Reducer< undefined | ( () => Promise< any > ), OnboardAction > = (
+	state,
+	action
+) => {
 	if ( action.type === 'SET_PENDING_ACTION' ) {
 		return action.pendingAction;
 	}
@@ -253,7 +286,30 @@ const pendingAction: Reducer< Promise< any > | undefined, OnboardAction > = ( st
 	return state;
 };
 
+const progress: Reducer< number, OnboardAction > = ( state = -1, action ) => {
+	if ( action.type === 'SET_PROGRESS' ) {
+		return action.progress;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return -1;
+	}
+	return state;
+};
+
+const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_PROGRESS_TITLE' ) {
+		return action.progressTitle;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
+	anchorPodcastId,
+	anchorEpisodeId,
+	anchorSpotifyUrl,
 	domain,
 	domainSearch,
 	domainCategory,
@@ -275,6 +331,8 @@ const reducer = combineReducers( {
 	startingPoint,
 	storeAddress,
 	pendingAction,
+	progress,
+	progressTitle,
 } );
 
 export type State = ReturnType< typeof reducer >;

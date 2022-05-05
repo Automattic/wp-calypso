@@ -393,14 +393,8 @@ class PostSelectorPosts extends Component {
 	};
 
 	render() {
-		const {
-			className,
-			siteId,
-			queryWithVersion,
-			suppressFirstPageLoad,
-			posts,
-			postTypes,
-		} = this.props;
+		const { className, siteId, queryWithVersion, suppressFirstPageLoad, posts, postTypes } =
+			this.props;
 		const { requestedPages, searchTerm } = this.state;
 		const isCompact = this.isCompact();
 		const isTypeLabelsVisible = this.isTypeLabelsVisible();

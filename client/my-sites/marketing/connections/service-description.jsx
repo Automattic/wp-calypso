@@ -214,9 +214,8 @@ class SharingServiceDescription extends Component {
 		} else if (
 			'function' === typeof this.props.descriptions[ this.props.service.ID.replace( /-/g, '_' ) ]
 		) {
-			description = this.props.descriptions[ this.props.service.ID.replace( /-/g, '_' ) ].call(
-				this
-			);
+			description =
+				this.props.descriptions[ this.props.service.ID.replace( /-/g, '_' ) ].call( this );
 		}
 
 		/**

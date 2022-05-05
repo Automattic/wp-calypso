@@ -46,13 +46,8 @@ export function* createSite( {
 	anchorFmEpisodeId = null,
 	anchorFmSpotifyUrl = null,
 }: CreateSiteActionParameters ) {
-	const {
-		domain,
-		selectedDesign,
-		selectedFonts,
-		siteTitle,
-		selectedFeatures,
-	}: State = yield select( STORE_KEY, 'getState' );
+	const { domain, selectedDesign, selectedFonts, siteTitle, selectedFeatures }: State =
+		yield select( STORE_KEY, 'getState' );
 
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
@@ -187,6 +182,21 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 	siteTitle,
 } );
 
+export const setAnchorPodcastId = ( anchorPodcastId: string | null ) => ( {
+	type: 'SET_ANCHOR_PODCAST_ID' as const,
+	anchorPodcastId,
+} );
+
+export const setAnchorEpisodeId = ( anchorEpisodeId: string | null ) => ( {
+	type: 'SET_ANCHOR_PODCAST_EPISODE_ID' as const,
+	anchorEpisodeId,
+} );
+
+export const setAnchorSpotifyUrl = ( anchorSpotifyUrl: string | null ) => ( {
+	type: 'SET_ANCHOR_PODCAST_SPOTIFY_URL' as const,
+	anchorSpotifyUrl,
+} );
+
 export function updatePlan( planProductId: number ) {
 	// keep updatePlan for backwards compat
 	return setPlanProductId( planProductId );
@@ -220,9 +230,19 @@ export const setStoreAddressValue = (
 	store_address_value,
 } );
 
-export const setPendingAction = ( pendingAction: Promise< any > ) => ( {
+export const setPendingAction = ( pendingAction: undefined | ( () => Promise< any > ) ) => ( {
 	type: 'SET_PENDING_ACTION' as const,
 	pendingAction,
+} );
+
+export const setProgress = ( progress: number ) => ( {
+	type: 'SET_PROGRESS' as const,
+	progress,
+} );
+
+export const setProgressTitle = ( progressTitle: string | undefined ) => ( {
+	type: 'SET_PROGRESS_TITLE' as const,
+	progressTitle,
 } );
 
 export type OnboardAction = ReturnType<
@@ -245,9 +265,14 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
+	| typeof setAnchorPodcastId
+	| typeof setAnchorEpisodeId
+	| typeof setAnchorSpotifyUrl
 	| typeof startOnboarding
 	| typeof setIntent
 	| typeof setStartingPoint
 	| typeof setStoreAddressValue
 	| typeof setPendingAction
+	| typeof setProgress
+	| typeof setProgressTitle
 >;
