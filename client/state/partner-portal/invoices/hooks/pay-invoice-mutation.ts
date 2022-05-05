@@ -55,7 +55,10 @@ export default function usePayInvoiceMutation< TContext = unknown >(
 							/* translators: %s - the unique invoice number */
 							__( 'Invoice %s settled successfully.' ),
 							invoice.number
-						)
+						),
+						{
+							id: 'partner-portal-pay-invoice-success',
+						}
 					)
 				);
 			},
