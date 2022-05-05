@@ -19,7 +19,6 @@ const thumbnailImageOptions: MShotsOptions = {
 interface GeneratedDesignThumbnailProps {
 	slug: string;
 	thumbnailUrl: string;
-	onSelect: ( selectedSlug: string | null ) => void;
 }
 
 const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
@@ -78,15 +77,12 @@ export interface GeneratedDesignPickerProps {
 	designs: Design[];
 	locale: string;
 	heading?: React.ReactElement;
-	viewMoreFooter?: React.ReactNode;
-	onSelect: ( selectedSlug: string | null ) => void;
 }
 
 const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 	designs,
 	locale,
 	heading,
-	onSelect,
 } ) => {
 	const { __ } = useI18n();
 
@@ -101,7 +97,6 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 								key={ design.slug }
 								slug={ design.slug }
 								thumbnailUrl={ getDesignPreviewUrl( design, { language: locale } ) }
-								onSelect={ onSelect }
 							/>
 						) ) }
 					<Button className="generated-design-picker__view-more">
