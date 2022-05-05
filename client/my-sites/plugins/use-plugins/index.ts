@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useMemo } from 'react';
+import { Plugin } from 'calypso/data/marketplace/types';
 import { useSiteSearchPlugins } from 'calypso/data/marketplace/use-site-search-es-query';
 import {
 	useWPCOMFeaturedPlugins,
@@ -18,7 +19,7 @@ import { useCategories } from '../categories/use-categories';
  * @param plugin
  * @returns
  */
-function updateWpComRating( plugin: any ) {
+function updateWpComRating( plugin: Plugin ) {
 	if ( ! plugin || ! plugin.rating ) return plugin;
 
 	plugin.rating *= 20;
@@ -98,12 +99,12 @@ const usePlugins = ( {
 		} );
 
 	const featuredPlugins = useMemo(
-		() => featuredPluginsRaw.map( updateWpComRating ),
+		() => ( featuredPluginsRaw as Plugin[] ).map( updateWpComRating ),
 		[ featuredPluginsRaw ]
 	);
 
 	const dotComPlugins = useMemo(
-		() => wpcomPluginsRaw.map( updateWpComRating ),
+		() => ( wpcomPluginsRaw as Plugin[] ).map( updateWpComRating ),
 		[ wpcomPluginsRaw ]
 	);
 
