@@ -14,7 +14,7 @@ import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-pa
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import NotAuthorized from 'calypso/signup/steps/import-from/components/not-authorized';
 import NotFound from 'calypso/signup/steps/import-from/components/not-found';
-import { Importer, ImportJob, StepNavigator } from 'calypso/signup/steps/import-from/types';
+import { Importer, ImportJob } from 'calypso/signup/steps/import-from/types';
 import { getImporterTypeForEngine } from 'calypso/signup/steps/import-from/util';
 import { fetchImporterState, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
@@ -57,7 +57,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 
 		const fromSite = currentSearchParams.get( 'from' ) as string;
 		const fromSiteData = useSelector( getUrlData );
-		const stepNavigator: StepNavigator = useStepNavigator(
+		const stepNavigator = useStepNavigator(
 			navigation,
 			siteId as number,
 			siteSlug as string,
