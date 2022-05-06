@@ -374,14 +374,6 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			flex-direction: column;
 			row-gap: 24px;
 			margin-bottom: 162px;
-
-			> div {
-				display: none;
-
-				&:first-of-type {
-					display: block;
-				}
-			}
 		}
 	}
 

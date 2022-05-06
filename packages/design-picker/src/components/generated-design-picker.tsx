@@ -67,14 +67,16 @@ const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
 interface GeneratedDesignPreviewProps {
 	slug: string;
 	previewUrl: string;
+	isSelected: boolean;
 }
 
 const GeneratedDesignPreview: React.FC< GeneratedDesignPreviewProps > = ( {
 	slug,
 	previewUrl,
+	isSelected,
 } ) => {
 	return (
-		<div className="generated-design-preview">
+		<div className={ classnames( 'generated-design-preview', { 'is-selected': isSelected } ) }>
 			<div className="generated-design-preview__header">
 				<svg width="36" height="8">
 					<g>
@@ -136,13 +138,15 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 					</Button>
 				</div>
 				<div className="generated-design-picker__previews">
-					{ selectedDesign && (
-						<GeneratedDesignPreview
-							key={ selectedDesign.slug }
-							slug={ selectedDesign.slug }
-							previewUrl={ getDesignPreviewUrl( selectedDesign, { language: locale } ) }
-						/>
-					) }
+					{ designs &&
+						designs.map( ( design ) => (
+							<GeneratedDesignPreview
+								key={ design.slug }
+								slug={ design.slug }
+								isSelected={ selectedDesign?.slug === design.slug }
+								previewUrl={ getDesignPreviewUrl( design, { language: locale } ) }
+							/>
+						) ) }
 				</div>
 			</div>
 		</div>

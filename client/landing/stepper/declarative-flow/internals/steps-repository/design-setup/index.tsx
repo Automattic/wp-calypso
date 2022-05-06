@@ -79,8 +79,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		intent === 'build' &&
 		!! siteVertical &&
 		! isForceStaticDesigns;
-	const showDesignPickerCategoriesAllFilter =
-		isEnabled( 'signup/design-picker-categories' ) && ! showGeneratedDesigns;
+	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
 
 	const isPremiumThemeAvailable = Boolean(
 		useMemo(
@@ -94,13 +93,13 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const staticDesigns = themeDesigns;
 	const shuffledStaticDesigns = useMemo(
 		() => shuffle( staticDesigns.filter( ( design ) => ! isBlankCanvasDesign( design ) ) ),
-		[ staticDesigns, isForceStaticDesigns ]
+		[ staticDesigns ]
 	);
 
 	const generatedDesigns = useGeneratedDesigns();
 	const shuffledGeneratedDesigns = useMemo(
 		() => shuffle( generatedDesigns ),
-		[ generatedDesigns, isForceStaticDesigns ]
+		[ generatedDesigns ]
 	);
 
 	const visibility = useNewSiteVisibility();
@@ -158,7 +157,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	const categorizationOptions = getCategorizationOptions(
 		intent,
-		showDesignPickerCategoriesAllFilter || showGeneratedDesigns
+		showDesignPickerCategoriesAllFilter
 	);
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
@@ -240,13 +239,18 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	}
 
 	const handleBackClick = () => {
-		if ( ! selectedDesign || ( showGeneratedDesigns && ! isMobile ) ) {
-			goBack();
-			return null;
+		if ( isPreviewingDesign && ( ! showGeneratedDesigns || isMobile ) ) {
+			setSelectedDesign( undefined );
+			setIsPreviewingDesign( false );
+			return;
 		}
 
-		setSelectedDesign( undefined );
-		setIsPreviewingDesign( false );
+		if ( isForceStaticDesigns ) {
+			setIsForceStaticDesigns( false );
+			return;
+		}
+
+		goBack();
 	};
 
 	function previewStaticDesign( design: Design ) {
@@ -334,8 +338,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		);
 	}
 
-	let stepContent = <div />;
-
 	if ( selectedDesign && isPreviewingDesign ) {
 		if ( showGeneratedDesigns && isMobile ) {
 			return previewGeneratedDesign( selectedDesign );
@@ -356,9 +358,9 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		/>
 	);
 
-	stepContent = showGeneratedDesigns ? (
+	const stepContent = showGeneratedDesigns ? (
 		<GeneratedDesignPicker
-			selectedDesign={ selectedDesign || shuffledGeneratedDesigns[ 0 ] }
+			selectedDesign={ ! isMobile ? selectedDesign || shuffledGeneratedDesigns[ 0 ] : null }
 			designs={ shuffledGeneratedDesigns }
 			locale={ locale }
 			heading={
