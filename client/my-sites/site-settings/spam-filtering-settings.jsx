@@ -3,6 +3,7 @@ import {
 	FEATURE_JETPACK_ANTI_SPAM,
 	FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
+	WPCOM_FEATURES_ANTISPAM,
 	isJetpackAntiSpam,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
@@ -70,7 +71,7 @@ const SpamFilteringSettings = ( {
 					'Save time, get more responses, give your visitors a better experience - all without lifting a finger.'
 				) }
 				event={ 'calypso_akismet_settings_upgrade_nudge' }
-				feature={ FEATURE_SPAM_AKISMET_PLUS }
+				feature={ WPCOM_FEATURES_ANTISPAM }
 				showIcon={ true }
 				href={ `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_ANTI_SPAM }` }
 			/>

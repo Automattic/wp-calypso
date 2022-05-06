@@ -3,6 +3,7 @@ import {
 	FEATURE_PREMIUM_THEMES,
 	FEATURE_UPLOAD_THEMES,
 	PLAN_WPCOM_PRO,
+	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -736,7 +737,7 @@ class ThemeSheet extends Component {
 						)
 					) }
 					event="themes_plan_particular_free_with_plan"
-					feature={ FEATURE_PREMIUM_THEMES }
+					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
 					forceHref={ true }
 					href={ plansUrl }
 					showIcon={ true }
