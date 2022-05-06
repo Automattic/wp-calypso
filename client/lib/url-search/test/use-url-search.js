@@ -1,42 +1,36 @@
-import { useState } from '@wordpress/element';
 import page from 'page';
+import { useState } from 'react';
 import useUrlSearch, { buildSearchUrl } from '../use-url-search';
 
-jest.mock( '@wordpress/element' );
+jest.mock( 'react' );
 jest.mock( 'page' );
 
 describe( '#buildSearchUrl', () => {
 	test( 'should return original url if there is no search', () => {
-		const params = { uri: 'https://wordpress.com/plugins' };
-		expect( buildSearchUrl( params ) ).toBe( '/plugins' );
+		const uri = 'https://wordpress.com/plugins';
+		expect( buildSearchUrl( uri ) ).toBe( '/plugins' );
 	} );
 
 	test( 'should add add the default params of s to built query', () => {
-		const params = {
-			uri: 'https://wordpress.com',
-			search: 'hello',
-		};
+		const uri = 'https://wordpress.com';
+		const search = 'hello';
 		const expectedResult = '?s=hello';
-		expect( buildSearchUrl( params ) ).toBe( expectedResult );
+		expect( buildSearchUrl( uri, search ) ).toBe( expectedResult );
 	} );
 
 	test( 'should replace current query with new one even when using custom query key', () => {
-		const params = {
-			uri: 'https://wordpress.com/read/search?q=reader+is+awesome',
-			search: 'reader is super awesome',
-			queryKey: 'q',
-		};
+		const uri = 'https://wordpress.com/read/search?q=reader+is+awesome';
+		const search = 'reader is super awesome';
+		const queryKey = 'q';
 		const expectedResult = '/read/search?q=reader+is+super+awesome';
-		expect( buildSearchUrl( params ) ).toBe( expectedResult );
+		expect( buildSearchUrl( uri, search, queryKey ) ).toBe( expectedResult );
 	} );
 
 	test( 'should remove the query if search is empty', () => {
-		const params = {
-			uri: 'https://wordpress.com/read/search?q=reader+is+awesome',
-			queryKey: 'q',
-		};
+		const uri = 'https://wordpress.com/read/search?q=reader+is+awesome';
+		const queryKey = 'q';
 		const expectedResult = '/read/search';
-		expect( buildSearchUrl( params ) ).toBe( expectedResult );
+		expect( buildSearchUrl( uri, '', queryKey ) ).toBe( expectedResult );
 	} );
 } );
 
@@ -75,6 +69,18 @@ describe( '#useUrlSearch', () => {
 
 		expect( mockSetSearchOpen ).toHaveBeenLastCalledWith( true );
 		expect( page.replace ).toHaveBeenLastCalledWith( expectedUrl );
+	} );
+
+	test( 'searchTerm should contain the last searchTerm performed on doSearch', () => {
+		const newSearchTerm = 'replaced-search-term';
+		const mockSetSearch = jest.fn();
+		useState.mockImplementation( () => [ newSearchTerm, mockSetSearch ] );
+
+		const urlSearchHook2 = useUrlSearch();
+		urlSearchHook2.doSearch( newSearchTerm );
+
+		expect( mockSetSearch ).toBeCalledWith( newSearchTerm );
+		expect( urlSearchHook2.searchTerm ).toBe( 'replaced-search-term' );
 	} );
 
 	test( 'should return the correct values for getSearchOpen accordingly to isSearchOpen and queryKey values', () => {

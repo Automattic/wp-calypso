@@ -1,7 +1,7 @@
-import { useState } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import debugFactory from 'debug';
 import page from 'page';
+import { useState } from 'react';
 const debug = debugFactory( 'calypso:url-search' );
 
 /**
@@ -13,21 +13,12 @@ const debug = debugFactory( 'calypso:url-search' );
  *     queryKey: 'q',
  *    } --> '/read/search?q=reader+is+super+awesome'
  *
- * @param {object} options the options object
- * @param {string} options.uri the uri to modify and add a query to
- * @param {string} options.search the search term
- * @param {string} [options.queryKey = s] the key to place in the url.  defaults to s
+ * @param {string} uri the uri to modify and add a query to
+ * @param {string} search the search term
+ * @param {string} [queryKey = s] the key to place in the url.  defaults to s
  * @returns {string} The built search url
  */
-export const buildSearchUrl = ( {
-	uri,
-	search,
-	queryKey = 's',
-}: {
-	uri: string;
-	search: string;
-	queryKey?: string;
-} ) => {
+export const buildSearchUrl = ( uri: string, search: string, queryKey = 's' ) => {
 	const parsedUrl = new URL( uri );
 
 	if ( search ) {
@@ -41,15 +32,13 @@ export const buildSearchUrl = ( {
 
 function useUrlSearch( queryKey = 's' ) {
 	const [ isSearchOpen, setSearchOpen ] = useState( false );
+	const [ searchTerm, setSearchTerm ] = useState( '' );
 
 	function doSearch( query: string ) {
+		setSearchTerm( query );
 		setSearchOpen( '' !== query );
 
-		const searchURL = buildSearchUrl( {
-			uri: window.location.href,
-			search: query,
-			queryKey: queryKey,
-		} );
+		const searchURL = buildSearchUrl( window.location.href, query, queryKey );
 
 		debug( 'search for: %s', query );
 		if ( queryKey && query ) {
@@ -62,12 +51,13 @@ function useUrlSearch( queryKey = 's' ) {
 	}
 
 	function getSearchOpen() {
-		return isSearchOpen !== false || !! queryKey;
+		return isSearchOpen || !! queryKey;
 	}
 
 	return {
-		doSearch: doSearch,
-		getSearchOpen: getSearchOpen,
+		doSearch,
+		getSearchOpen,
+		searchTerm,
 	};
 }
 
