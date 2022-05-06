@@ -95,7 +95,6 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 				page.setViewportSize( { width: 1280, height: 720 } );
 				await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
 				await changeUILanguageFlow.changeUILanguage( locale as LanguageSlug );
-				await page.goto( DataHelper.getCalypsoURL( 'home' ) );
 				await page.reload( { waitUntil: 'networkidle' } );
 				await cartCheckoutPage.visit( blogName );
 				await cartCheckoutPage.validatePaymentForm();
