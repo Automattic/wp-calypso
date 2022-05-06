@@ -73,7 +73,6 @@ export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
 export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
 export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
 export const PROFESSIONAL_EMAIL_UPSELL = 'professional-email-upsell';
-export const ANNUAL_PLAN_UPGRADE = 'annual-plan-upgrade-upsell';
 
 export class UpsellNudge extends Component {
 	static propTypes = {
