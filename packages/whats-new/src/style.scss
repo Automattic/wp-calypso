@@ -54,6 +54,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		justify-content: center;
 		background: var( --studio-white );
 		border-top: 1px solid var( --studio-gray-5 );
+		box-sizing: border-box;
 
 		@media ( min-width: $wpcom-modal-breakpoint ) {
 			border-top: none;
@@ -114,6 +115,8 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 .whats-new-page__text,
 .whats-new-page__visual {
+	box-sizing: border-box;
+
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		flex: 1 auto;
 		min-width: 290px;

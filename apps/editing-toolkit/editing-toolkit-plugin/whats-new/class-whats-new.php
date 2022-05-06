@@ -25,6 +25,7 @@ class Whats_New {
 	 */
 	public function __construct() {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script_and_style' ), 100 );
+		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
 	}
 
 	/**
@@ -70,6 +71,15 @@ class Whats_New {
 			array(),
 			filemtime( plugin_dir_path( __FILE__ ) . $style_path )
 		);
+	}
+
+	/**
+	 * Register the WPCOM Block Editor Whats New endpoints.
+	 */
+	public function register_rest_api() {
+		require_once __DIR__ . '/class-wp-rest-wpcom-block-editor-whats-new-dot-controller.php';
+		$controller = new WP_REST_WPCOM_Block_Editor_Whats_New_Dot_Controller();
+		$controller->register_rest_route();
 	}
 }
 add_action( 'init', array( __NAMESPACE__ . '\Whats_New', 'init' ) );

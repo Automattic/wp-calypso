@@ -2,6 +2,8 @@
 
 This component is used to display a box that can be clicked to expand a hidden section with its contents.
 
+The component's header contains two adjacent content areas that are set by the `header` and `summary` props (also see the `expandedSummary` prop); both are optional, but both areas take up space inside the card even if they are not set. To cause the `header` content area to take up the whole header card, set the `hideSummary` prop.
+
 ## Usage
 
 ```js
@@ -9,9 +11,9 @@ import FoldableCard from 'calypso/components/foldable-card';
 
 function render() {
 	return (
-		<div>
-			<FoldableCard header="title">{ content }</FoldableCard>
-		</div>
+		<FoldableCard header="title" hideSummary>
+			{ content }
+		</FoldableCard>
 	);
 }
 ```
@@ -34,5 +36,6 @@ function render() {
 | `onClose`              | `function`  | null           | Function to be executed in addition to the expand action when the card is closed.                                                                    |
 | `onOpen`               | `function`  | null           | Function to be executed in addition to the expand action when the card is opened.                                                                    |
 | `summary`              | `string`    | null           | A string or component to show next to the action button when closed.                                                                                 |
+| `hideSummary`          | `bool`      | false          | Indicates if the summary area should be hidden.                                                                                                      |
 | `clickableHeader`      | `bool`      | false          | Indicates if the whole header can be clicked to open the card.                                                                                       |
 | `highlight`            | `string`    | null           | Displays a colored highlight. If specified (default is no highlight), can be one of `info`, `success`, `error`, or `warning`.                        |

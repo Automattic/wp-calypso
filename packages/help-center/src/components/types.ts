@@ -23,3 +23,9 @@ export interface Header {
 export interface SuccessScreenProps {
 	onBack: () => void;
 }
+
+export interface SitePicker {
+	selectedSiteId: number | undefined;
+	onSetSelectedSiteId: React.Dispatch< React.SetStateAction< number | undefined > >;
+	siteId: number | null;
+}

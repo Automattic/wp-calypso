@@ -3,6 +3,7 @@ package _self.projects
 import _self.bashNodeScript
 import _self.lib.wpcom.WPComPluginBuild
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 
 object WPComPlugins : Project({
 	id("WPComPlugins")
@@ -29,6 +30,7 @@ object WPComPlugins : Project({
 	buildType(O2Blocks)
 	buildType(Happychat)
 	buildType(InlineHelp)
+	buildType(GutenbergUploadSourceMapsToSentry);
 
 	cleanup {
 		keepRule {
@@ -138,7 +140,7 @@ private object Notifications : WPComPluginBuild(
 		else
 			old_cache_buster=`cat ./release-archive/cache-buster.txt`
 		fi
-		
+
 		new_cache_buster=`jq -r '.cache_buster' ./dist/build_meta.json`
 		sed -i "s~${'$'}old_cache_buster~${'$'}new_cache_buster~g" release-archive/index.html release-archive/rtl.html
 	""".trimIndent(),
@@ -184,3 +186,39 @@ private object InlineHelp : WPComPluginBuild(
 	docsLink = "TODO",
 	withPRNotify = "false",
 )
+
+private object GutenbergUploadSourceMapsToSentry: BuildType() {
+	init {
+		name = "Upload Gutenberg Source Maps to Sentry";
+		id("WPComPlugins_GutenbergUploadSourceMapsToSentry");
+
+		params {
+			text(
+				name = "GUTENBERG_VERSION",
+				value = "",
+				label = "Gutenberg version",
+				description = "The Gutenberg version to upload source maps for (include the whole string, including the `v` prefix)",
+				allowEmpty = false
+			)
+		}
+
+		steps {
+			bashNodeScript {
+				name = "Upload source maps to Sentry"
+				scriptContent = """
+					# Install the Sentry CLI binary
+					curl -sL https://sentry.io/get-cli/ | bash
+
+					rm -rf gutenberg gutenberg.zip
+
+					wget https://github.com/WordPress/gutenberg/releases/download/%GUTENBERG_VERSION%/gutenberg.zip
+					unzip gutenberg.zip -d gutenberg
+					cd gutenberg
+
+					# Upload the .js and .js.map files to Sentry (`wpcom-test-01` release)
+					sentry-cli --auth-token %SENTRY_AUTH_TOKEN% releases --org a8c --project wpcom-gutenberg-wp-admin files wpcom-test-01 upload-sourcemaps . --url-prefix "~/wp-content/plugins/gutenberg-core/v13.1.0/"
+				"""
+			}
+		}
+	}
+}
