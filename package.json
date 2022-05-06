@@ -182,7 +182,7 @@
 		"browserslist": "^4.16.0",
 		"calypso": "workspace:^",
 		"calypso-codemods": "workspace:^",
-		"config": "^3.3.6",
+		"config": "^3.3.7",
 		"debug": "^4.3.3",
 		"i18n-calypso": "workspace:^",
 		"i18n-calypso-cli": "workspace:^",

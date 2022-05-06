@@ -13893,12 +13893,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"config@npm:^3.3.6":
-  version: 3.3.6
-  resolution: "config@npm:3.3.6"
+"config@npm:^3.3.7":
+  version: 3.3.7
+  resolution: "config@npm:3.3.7"
   dependencies:
     json5: ^2.1.1
-  checksum: 436bac634b5e298c298250fecb22a9972170cdf7ead633323780a1bdcf9501be9e8ac0a88dce51fbbf6b1e7716073ad2ee736d6600a6fd1b1fa0a08d4e3a39c5
+  checksum: 5223c946ceb1047c0df9fc60673f726818859d948c17a3dcc4a631c985905049c5862d704d6e2d8e0f93a9eb31f90b8b76e5e9502662c7a7f37d71423caaab44
   languageName: node
   linkType: hard
 
@@ -36314,7 +36314,7 @@ swiper@4.5.1:
     chalk: ^4.1.2
     check-node-version: ^4.0.2
     chroma-js: ^2.1.2
-    config: ^3.3.6
+    config: ^3.3.7
     css-loader: ^6.5.1
     debug: ^4.3.3
     doctrine: ^3.0.0
