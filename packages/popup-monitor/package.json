@@ -32,6 +32,7 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
+		"events": "^3.3.0",
 		"lodash": "^4.17.21"
 	},
 	"devDependencies": {
