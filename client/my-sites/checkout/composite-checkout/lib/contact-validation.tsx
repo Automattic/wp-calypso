@@ -127,6 +127,8 @@ export async function validateContactDetails(
 ): Promise< boolean > {
 	debug( 'validating contact details; shouldDisplayErrors', shouldDisplayErrors );
 
+	reduxDispatch( recordTracksEvent( 'calypso_checkout_validating_contact_info', contactInfo ) );
+
 	const completeValidationCheck = ( validationResult: unknown ): boolean => {
 		debug( 'validating contact details result', validationResult );
 		if ( shouldDisplayErrors ) {
