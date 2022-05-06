@@ -11,6 +11,7 @@ import {
 	sendMessage,
 	sendNotTyping,
 	sendTyping,
+	setChatCustomFields,
 } from 'calypso/state/happychat/connection/actions';
 import canUserSendMessages from 'calypso/state/happychat/selectors/can-user-send-messages';
 import getHappychatChatStatus from 'calypso/state/happychat/selectors/get-happychat-chat-status';
@@ -47,6 +48,27 @@ function ParentConnection( { chatStatus, timeline } ) {
 				case 'route':
 					dispatch( sendEvent( `Looking at ${ message.route }` ) );
 					break;
+				case 'happy-chat-introduction-data': {
+					if ( message.siteId ) {
+						dispatch(
+							setChatCustomFields( {
+								calypsoSectionName: 'gutenberg-editor',
+								wpcomSiteId: message.siteId.toString(),
+								wpcomSitePlan: message.planSlug,
+							} )
+						);
+					} else {
+						// the user needs help with another site whose ID we don't know.
+						dispatch(
+							sendEvent(
+								`Note: the user needs help with ${ message.otherSiteURL }. This URL is user-entered so it can be inaccurate or non-WPCOM at all.`
+							)
+						);
+					}
+					// send the user's message
+					dispatch( sendMessage( message.message ) );
+					break;
+				}
 			}
 		}
 
@@ -92,7 +114,7 @@ function ParentConnection( { chatStatus, timeline } ) {
 			( window.opener || window.parent )?.postMessage(
 				{
 					type: 'window-state-change',
-					state: 'closed',
+					state: 'ended',
 				},
 				'*'
 			);
@@ -107,6 +129,14 @@ function ParentConnection( { chatStatus, timeline } ) {
 			{
 				type: 'window-state-change',
 				state: 'open',
+			},
+			'*'
+		);
+
+		// request intro data
+		( window.opener || window.parent )?.postMessage(
+			{
+				type: 'happy-chat-introduction-data',
 			},
 			'*'
 		);
@@ -128,6 +158,15 @@ function ParentConnection( { chatStatus, timeline } ) {
 			'*'
 		);
 	}, [ blurredAt, timeline ] );
+
+	useEffect( () => {
+		// blurredAt is 0 when the user is looking
+		if ( blurredAt ) {
+			dispatch( sendEvent( `Stopped looking at Happychat` ) );
+		} else {
+			dispatch( sendEvent( `Started looking at Happychat` ) );
+		}
+	}, [ blurredAt, dispatch ] );
 
 	return null;
 }

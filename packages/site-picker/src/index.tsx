@@ -67,28 +67,24 @@ const SitePickerItem: FC< ItemProps > = ( {
 export type SitePickerSite = {
 	ID: number;
 	URL: string;
-	name: string;
+	name: string | undefined;
 	logo: { id: string; sizes: string[]; url: string };
 };
 
 export type Props = {
-	selectedSiteId: number | undefined;
+	siteId: number | undefined | null;
 	options: SitePickerSite[];
 	onPickSite: ( siteId: number ) => void;
 };
 
-export const SitePickerDropDown: FC< Props > = ( {
-	selectedSiteId,
-	options,
-	onPickSite,
-}: Props ) => {
+export const SitePickerDropDown: FC< Props > = ( { siteId, options, onPickSite }: Props ) => {
 	const [ ref, setRef ] = useState< HTMLDivElement | null >( null );
 	const [ open, setOpen ] = useState( false );
 
 	useFocusTrap( { current: ref } );
 	useArrowNavigation( ref, open, () => setOpen( true ) );
 
-	const selectedSite = options.find( ( s ) => s?.ID === selectedSiteId ) || options[ 0 ];
+	const selectedSite = options.find( ( s ) => s?.ID === siteId ) || options[ 0 ];
 
 	// close on clicking outside
 	useEffect( () => {
@@ -103,7 +99,7 @@ export const SitePickerDropDown: FC< Props > = ( {
 				window.removeEventListener( 'click', onClickOutside );
 			};
 		}
-	}, [ selectedSiteId, options, open, ref ] );
+	}, [ siteId, options, open, ref ] );
 
 	return (
 		<>
@@ -113,7 +109,12 @@ export const SitePickerDropDown: FC< Props > = ( {
 			<div className={ cx( 'site-picker__site-dropdown', { open } ) }>
 				<SitePickerItem
 					host={ selectedSite?.URL?.replace( 'https://', '' ) }
-					name={ selectedSite?.name }
+					name={
+						selectedSite?.name ??
+						// if site has no name, show URL
+						selectedSite?.URL?.replace( 'https://', '' ) ??
+						__( 'Unknown site', __i18n_text_domain__ )
+					}
 					logo={ selectedSite?.logo }
 					mainItem
 					open={ open }
@@ -126,14 +127,14 @@ export const SitePickerDropDown: FC< Props > = ( {
 						{ options.map( ( option, index ) => (
 							<SitePickerItem
 								host={ option?.URL?.replace( 'https://', '' ) }
-								name={ option?.name }
+								name={ option?.name ?? '' }
 								open={ open }
 								logo={ option?.logo }
 								onClick={ () => {
 									onPickSite( option.ID );
 									setOpen( false );
 								} }
-								selected={ option?.ID === selectedSiteId }
+								selected={ option?.ID === siteId }
 								id={ `site-picker-button-item-${ index }` }
 							/>
 						) ) }
