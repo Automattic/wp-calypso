@@ -56,9 +56,9 @@ export E2E_SECRETS_KEY='<secret key from the secret store>'
 
 Then, either here or in the `@automattic/calypso-e2e` workspace, run `yarn decrypt-secrets`.
 
-**The decrypted version of these secrets must NEVER be committed. There are .gitignore rules to protect against this, but be vigilant nonetheless!**
+The decrypted version of these secrets must **NEVER be committed.** There are .gitignore rules to protect against this, but be vigilant nonetheless!
 
-**Automatticians**: please refer to the Field Guide page for instructions on decrypting/encrypting this file. 
+**Automatticians**: please refer to the Field Guide page for instructions on decrypting/encrypting this file.
 
 **Trialmatticians**: please contact a team member in your Slack chat for the decryption key.
 
@@ -73,6 +73,5 @@ import { SecretsManager } from '@automattic/calypso-e2e';
 
 // Later
 
-const x = SecretsManager.secrets.keyName
-
+const x = SecretsManager.secrets.keyName;
 ```
