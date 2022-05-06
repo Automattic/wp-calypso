@@ -3,6 +3,7 @@ import HasSitePurchasesSwitch from 'calypso/components/has-site-purchases-switch
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
 import DisconnectSite from 'calypso/my-sites/site-settings/disconnect-site';
+import ConfirmDisconnection from 'calypso/my-sites/site-settings/disconnect-site/confirm';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NoSitesPurchasesMessage from './empty-content';
 import HasSiteCredentialsSwitch from './has-site-credentials-switch';
@@ -51,5 +52,18 @@ export const showNotAuthorizedForNonAdmins: PageJS.Callback = ( context, next ) 
 
 export const disconnectSite: PageJS.Callback = ( context, next ) => {
 	context.primary = <DisconnectSite reason={ context.params.reason } type={ context.query.type } />;
+	next();
+};
+
+export const disconnectSiteConfirm: PageJS.Callback = ( context, next ) => {
+	const { reason, type, text } = context.query;
+	context.primary = (
+		<ConfirmDisconnection
+			reason={ reason }
+			type={ type }
+			text={ text }
+			disconnectHref={ '/dashboard' }
+		/>
+	);
 	next();
 };

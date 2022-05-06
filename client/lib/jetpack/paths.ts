@@ -25,6 +25,9 @@ export const settingsCredentialsPath = ( siteSlug: string, host: string ): strin
 export const disconnectPath = ( siteSlug: string ): string =>
 	settingsPath( siteSlug, 'disconnect-site' );
 
+export const confirmDisconnectPath = ( siteSlug: string ): string =>
+	settingsPath( siteSlug, 'disconnect-site/confirm' );
+
 export const purchasesBasePath = () => '/purchases';
 export const purchasesPath = ( siteSlug: string | null ): string =>
 	siteSlug ? `${ purchasesBasePath() }/${ siteSlug }` : purchasesBasePath();

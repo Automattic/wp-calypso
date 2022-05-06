@@ -4,11 +4,12 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	advancedCredentials,
 	disconnectSite,
+	disconnectSiteConfirm,
 	showNotAuthorizedForNonAdmins,
 	settings,
 } from 'calypso/jetpack-cloud/sections/settings/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { settingsPath, disconnectPath } from 'calypso/lib/jetpack/paths';
+import { confirmDisconnectPath, disconnectPath, settingsPath } from 'calypso/lib/jetpack/paths';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 
 export default function () {
@@ -24,5 +25,12 @@ export default function () {
 			clientRender
 		);
 		page( disconnectPath( ':site' ), disconnectSite, siteSelection, makeLayout, clientRender );
+		page(
+			confirmDisconnectPath( ':site' ),
+			disconnectSiteConfirm,
+			siteSelection,
+			makeLayout,
+			clientRender
+		);
 	}
 }
