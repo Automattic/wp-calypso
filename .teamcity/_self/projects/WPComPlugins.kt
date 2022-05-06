@@ -214,8 +214,7 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 					wget https://github.com/WordPress/gutenberg/releases/tag/%GUTENBERG_VERSION%/gutenberg.zip
 					unzip gutenberg.zip -d gutenberg
 					cd gutenberg
-
-					sentry-cli --auth-token %SENTRY_AUTH_TOKEN% releases --org a8c files "wpcom-test-01" delete --all
+					
 					# Upload the .js and .js.map files to Sentry (`wpcom-test-01` release)
 					sentry-cli --auth-token %SENTRY_AUTH_TOKEN% releases --org a8c --project wpcom-gutenberg-wp-admin files wpcom-test-01 upload-sourcemaps . --url-prefix "~/wp-content/plugins/gutenberg-core/v13.1.0/"
 				"""
