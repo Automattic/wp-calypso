@@ -102,7 +102,7 @@ export interface GeneratedDesignPickerProps {
 	designs: Design[];
 	locale: string;
 	heading?: React.ReactElement;
-	onPreview: ( slug: string ) => void;
+	onPreview: ( design: Design ) => void;
 	onViewMore: () => void;
 }
 
