@@ -149,4 +149,4 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 	);
 };
 
-export default GeneratedDesignPicker;
+export { GeneratedDesignPicker as default, GeneratedDesignPreview };

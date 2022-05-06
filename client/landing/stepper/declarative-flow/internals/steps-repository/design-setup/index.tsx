@@ -3,6 +3,7 @@ import { planHasFeature, FEATURE_PREMIUM_THEMES } from '@automattic/calypso-prod
 import { Button } from '@automattic/components';
 import DesignPicker, {
 	GeneratedDesignPicker,
+	GeneratedDesignPreview,
 	PremiumBadge,
 	useCategorization,
 	isBlankCanvasDesign,
@@ -239,17 +240,16 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	}
 
 	const handleBackClick = () => {
-		if ( selectedDesign && ! showGeneratedDesigns ) {
-			setSelectedDesign( undefined );
-			setIsPreviewingDesign( false );
-		} else {
+		if ( ! selectedDesign || ( showGeneratedDesigns && ! isMobile ) ) {
 			goBack();
+			return null;
 		}
+
+		setSelectedDesign( undefined );
+		setIsPreviewingDesign( false );
 	};
 
-	let stepContent = <div />;
-
-	if ( selectedDesign && isPreviewingDesign && ! showGeneratedDesigns ) {
+	function previewStaticDesign() {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
@@ -259,7 +259,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			siteTitle: intent === 'write' ? siteTitle : undefined,
 		} );
 
-		stepContent = (
+		const stepContent = (
 			<WebPreview
 				showPreview
 				showClose={ false }
@@ -308,6 +308,42 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		);
+	}
+
+	function previewGeneratedDesign() {
+		const stepContent = (
+			<GeneratedDesignPreview
+				slug={ selectedDesign.slug }
+				previewUrl={ getDesignPreviewUrl( selectedDesign, { language: locale } ) }
+			/>
+		);
+
+		return (
+			<StepContainer
+				stepName={ 'design-setup' }
+				stepContent={ stepContent }
+				hideSkip
+				hideNext={ false }
+				className={ classnames( 'design-setup__preview', 'design-picker__is-generated' ) }
+				nextLabelText={ 'Continue' }
+				backLabelText={ 'Pick another' }
+				goBack={ handleBackClick }
+				goNext={ () => pickDesign() }
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		);
+	}
+
+	let stepContent = <div />;
+
+	if ( selectedDesign && isPreviewingDesign ) {
+		if ( showGeneratedDesigns && isMobile ) {
+			return previewGeneratedDesign();
+		}
+
+		if ( ! showGeneratedDesigns ) {
+			return previewStaticDesign();
+		}
 	}
 
 	const heading = (
