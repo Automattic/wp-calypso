@@ -8,7 +8,7 @@ export const SuccessScreen: React.FC< SuccessScreenProps > = ( { onBack } ) => {
 	const { __ } = useI18n();
 
 	return (
-		<>
+		<div>
 			<BackButton onClick={ onBack } />
 			<div className="ticket-success-screen__help-center">
 				<SuccessIcon />
@@ -22,6 +22,6 @@ export const SuccessScreen: React.FC< SuccessScreenProps > = ( { onBack } ) => {
 					) }
 				</p>
 			</div>
-		</>
+		</div>
 	);
 };
