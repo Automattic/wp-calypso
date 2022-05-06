@@ -11,6 +11,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import NotAuthorized from 'calypso/signup/steps/import-from/components/not-authorized';
 import NotFound from 'calypso/signup/steps/import-from/components/not-found';
 import { Importer, ImportJob } from 'calypso/signup/steps/import-from/types';
@@ -158,6 +159,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		return (
 			<>
 				<DocumentHead title={ __( 'Import your site content' ) } />
+				<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 
 				<StepContainer
 					className={ classnames(
