@@ -2,12 +2,13 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
-	settings,
 	advancedCredentials,
+	disconnectSite,
 	showNotAuthorizedForNonAdmins,
+	settings,
 } from 'calypso/jetpack-cloud/sections/settings/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { settingsPath } from 'calypso/lib/jetpack/paths';
+import { settingsPath, disconnectPath } from 'calypso/lib/jetpack/paths';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 
 export default function () {
@@ -22,5 +23,6 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+		page( disconnectPath( ':site' ), disconnectSite, siteSelection, makeLayout, clientRender );
 	}
 }
