@@ -115,7 +115,7 @@ const PromoCardCta: FunctionComponent< Props & ConnectedProps > = ( {
 			{ ctaBtn }
 			{ learnMore && (
 				<Button borderless className="promo-card__cta-learn-more" { ...learnMore }>
-					{ learnMoreLink && learnMoreLink.label ? learnMoreLink.label : translate( 'Learn More' ) }
+					{ learnMoreLink?.label || translate( 'Learn more' ) }
 				</Button>
 			) }
 		</ActionPanelCta>
