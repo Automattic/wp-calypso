@@ -1,12 +1,20 @@
 import fetch, { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
+import { SecretsManager } from './secrets';
+import type { AccountCredentials } from './data-helper';
 
 type EndpointVersions = '1' | '1.1' | '1.2' | '1.3';
-type RequestParams = {
+interface BearerTokenResponse {
+	success: string;
+	data: {
+		bearer_token: string;
+		token_links: string[];
+	};
+}
+interface RequestParams {
 	method: 'post' | 'get';
-	headers: HeadersInit;
+	headers?: HeadersInit;
 	body?: BodyInit;
-};
-
+}
 interface Site {
 	ID: string;
 	name: string;
@@ -18,19 +26,53 @@ interface MySitesResponse {
 	sites: Site[];
 }
 
-const BASE_URL = 'https://public-api.wordpress.com';
+const BEARER_TOKEN_URL = 'https://wordpress.com/wp-login.php?action=login-endpoint';
+const REST_API_BASE_URL = 'https://public-api.wordpress.com';
 
 /**
  * Client to interact with the WordPress.com REST API.
  */
 export class RestAPIClient {
-	readonly bearerToken: string;
+	readonly credentials: AccountCredentials;
+	private bearerToken: string | null;
 
 	/**
 	 * Constructs an instance of the API client.
 	 */
-	constructor( bearerToken: string ) {
-		this.bearerToken = bearerToken;
+	constructor( credentials: AccountCredentials ) {
+		this.credentials = credentials;
+		this.bearerToken = null;
+	}
+
+	/**
+	 * Returns the bearer token for the user.
+	 *
+	 * If the token has been previously obtained, this method returns the value.
+	 * Otherwise, an API call is made to obtain the bearer token.
+	 *
+	 * @returns {Promise<string>} String representing the bearer token.
+	 */
+	async getBearerToken(): Promise< void > {
+		if ( ! this.bearerToken === null ) {
+			return;
+		}
+
+		// Bearer Token generation is done via a URL query param.
+		const params = new URLSearchParams();
+		params.append( 'username', this.credentials.username );
+		params.append( 'password', this.credentials.password );
+		params.append( 'client_id', SecretsManager.secrets.calypsoOauthApplication.client_id );
+		params.append( 'client_secret', SecretsManager.secrets.calypsoOauthApplication.client_secret );
+		params.append( 'get_bearer_token', '1' );
+
+		// Request the bearer token for the user.
+		const response: BearerTokenResponse = await this.sendRequest( new URL( BEARER_TOKEN_URL ), {
+			method: 'post',
+			body: params,
+		} );
+
+		console.log( response );
+		this.bearerToken = response.data.bearer_token;
 	}
 
 	/* Request builder methods */
@@ -67,7 +109,7 @@ export class RestAPIClient {
 	 */
 	private getRequestURL( version: EndpointVersions, endpoint: string ): URL {
 		const path = `/rest/${ version }/${ endpoint }`.replace( /([^:]\/)\/+/g, '$1' );
-		return new URL( path, BASE_URL );
+		return new URL( path, REST_API_BASE_URL );
 	}
 
 	/**
@@ -77,7 +119,7 @@ export class RestAPIClient {
 	 * @param {RequestParams} params Parameters for the request.
 	 * @returns {Promise<any>} Decoded JSON response.
 	 */
-	private async sendRequest( url: URL, params: RequestParams ): Promise< any > {
+	private async sendRequest( url: URL, params: RequestParams | URLSearchParams ): Promise< any > {
 		const response = await fetch( url, params as RequestInit );
 		return response.json();
 	}
