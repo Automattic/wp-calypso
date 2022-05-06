@@ -1,4 +1,7 @@
 @import '@wordpress/base-styles/variables';
+@import '@automattic/onboarding/styles/variables';
+@import '@automattic/color-studio/dist/color-variables';
+
 $head-foot-height: 50px;
 
 .components-card.help-center__container {
@@ -97,6 +100,21 @@ $head-foot-height: 50px;
 	}
 }
 
+.ticket-success-screen__help-center {
+	text-align: center;
+	.ticket-success-screen__help-center-heading {
+		font-size: $font-title-small;
+		color: $studio-gray-100;
+		margin: 16px;
+		font-weight: 400;
+	}
+	.ticket-success-screen__help-center-message {
+		font-size: $font-body-small;
+		color: $studio-gray-50;
+		margin: 0;
+	}
+}
+
 @keyframes fadeIn {
 	0% {
 		opacity: 0;
@@ -115,4 +133,8 @@ $head-foot-height: 50px;
 	100% {
 		opacity: 0;
 	}
+}
+
+button.button.back-button__help-center.is-borderless {
+	color: $studio-gray-80;
 }
