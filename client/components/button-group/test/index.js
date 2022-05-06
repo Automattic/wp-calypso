@@ -9,7 +9,7 @@ import ButtonGroup from '..';
 describe( 'ButtonGroup', () => {
 	test( 'should have ButtonGroup class', () => {
 		render( <ButtonGroup /> );
-		expect( screen.getByTestId( 'button-group-id' ) ).toHaveClass( 'button-group' );
+		expect( screen.getByRole( 'button' ) ).toHaveClass( 'button-group' );
 	} );
 	test( 'should contains the same number of .button nodes than <Button>s it receives', () => {
 		render(
@@ -18,10 +18,10 @@ describe( 'ButtonGroup', () => {
 				<Button>test2</Button>
 			</ButtonGroup>
 		);
-		expect( screen.getAllByRole( 'button' ).length ).toBe( 2 );
+		expect( screen.getAllByRole( 'button' ) ).toHaveLength( 3 );
 	} );
 	test( 'should get the busy `is-busy` class when passed the `busy` prop', () => {
 		render( <ButtonGroup busy /> );
-		expect( screen.getByTestId( 'button-group-id' ) ).toHaveClass( 'is-busy' );
+		expect( screen.getByRole( 'button' ) ).toHaveClass( 'is-busy' );
 	} );
 } );
