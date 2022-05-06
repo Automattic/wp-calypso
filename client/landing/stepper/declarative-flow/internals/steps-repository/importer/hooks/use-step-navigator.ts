@@ -4,7 +4,7 @@ import { WPImportOption } from 'calypso/signup/steps/import-from/wordpress/types
 import { getWpOrgImporterUrl } from 'calypso/signup/steps/import/util';
 import { StepPath } from '../../../steps-repository';
 import { BASE_STEPPER_ROUTE } from '../../import/config';
-import { redirect, removeLeadingSlash } from '../../import/util';
+import { removeLeadingSlash } from '../../import/util';
 import type { NavigationControls } from '../../../types';
 import type { StepNavigator } from 'calypso/signup/steps/import-from/types';
 
@@ -30,7 +30,10 @@ export function useStepNavigator(
 	}
 
 	function goToSiteViewPage() {
-		redirect( `/view/${ siteSlug || '' }` );
+		navigation.submit?.( {
+			type: 'redirect',
+			url: `/view/${ siteSlug || '' }`,
+		} );
 	}
 
 	function goToCheckoutPage() {
@@ -38,11 +41,17 @@ export function useStepNavigator(
 	}
 
 	function goToWpAdminImportPage() {
-		redirect( `/import/${ siteSlug }` );
+		navigation.submit?.( {
+			type: 'redirect',
+			url: `/import/${ siteSlug }`,
+		} );
 	}
 
 	function goToWpAdminWordPressPluginPage() {
-		redirect( getWpOrgImporterUrl( siteSlug as string, 'wordpress' ) );
+		navigation.submit?.( {
+			type: 'redirect',
+			url: getWpOrgImporterUrl( siteSlug as string, 'wordpress' ),
+		} );
 	}
 
 	function getWordpressImportEverythingUrl(): string {

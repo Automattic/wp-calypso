@@ -208,8 +208,16 @@ export const siteSetupFlow: Flow = {
 					return navigate( providedDependencies?.url as StepPath );
 				}
 
+				case 'importerWix':
+				case 'importerBlogger':
+				case 'importerMedium':
+				case 'importerSquarespace':
 				case 'importerWordpress': {
-					return exitFlow( providedDependencies?.url as string );
+					if ( providedDependencies?.type === 'redirect' ) {
+						return exitFlow( providedDependencies?.url as string );
+					}
+
+					return navigate( providedDependencies?.url as StepPath );
 				}
 			}
 		}
