@@ -6,7 +6,7 @@ const selectors = {
 	blockInserterResultItem: '.block-editor-block-types-list__list-item',
 
 	// Publish
-	postButton: 'a:text("Post")',
+	postButton: 'button:text("Publish")',
 };
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
