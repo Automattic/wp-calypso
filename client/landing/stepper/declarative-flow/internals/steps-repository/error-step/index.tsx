@@ -26,12 +26,17 @@ const ErrorStep: Step = function ErrorStep( { navigation, flow } ) {
 		domain = siteDomains[ 0 ].domain;
 	}
 
+	const defaultBodyText =
+		flow !== 'anchor-fm'
+			? __(
+					'It looks like something went wrong while setting up your store. Please contact support so that we can help you out.'
+			  )
+			: __(
+					'It looks like something went wrong while setting up your site. Return to Anchor or continue with site creation.'
+			  );
+
 	const headerText = siteSetupError?.error || __( "We've hit a snag" );
-	const bodyText =
-		siteSetupError?.message ||
-		__(
-			'It looks like something went wrong while setting up your store. Please contact support so that we can help you out.'
-		);
+	const bodyText = siteSetupError?.message || defaultBodyText;
 
 	const getContent = () => {
 		if ( flow === 'anchor-fm' ) {
