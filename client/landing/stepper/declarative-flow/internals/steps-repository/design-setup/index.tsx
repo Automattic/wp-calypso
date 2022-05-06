@@ -319,6 +319,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			<GeneratedDesignPreview
 				slug={ design.slug }
 				previewUrl={ getDesignPreviewUrl( design, { language: locale } ) }
+				isSelected
 			/>
 		);
 
@@ -360,7 +361,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	const stepContent = showGeneratedDesigns ? (
 		<GeneratedDesignPicker
-			selectedDesign={ ! isMobile ? selectedDesign || shuffledGeneratedDesigns[ 0 ] : null }
+			selectedDesign={ ! isMobile ? selectedDesign || shuffledGeneratedDesigns[ 0 ] : undefined }
 			designs={ shuffledGeneratedDesigns }
 			locale={ locale }
 			heading={
