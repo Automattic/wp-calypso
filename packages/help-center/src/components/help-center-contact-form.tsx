@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { Button, Gridicon, HappinessEngineersTray } from '@automattic/components';
+import { useHas3PC } from '@automattic/data-stores';
 import { SitePickerDropDown } from '@automattic/site-picker';
 import { TextareaControl, TextControl, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -16,8 +17,6 @@ import InlineChat from './help-center-inline-chat';
 import './help-center-contact-form.scss';
 
 export const SITE_STORE = 'automattic/site';
-
-const thirdPartyCookiesAvailable = true;
 
 const HelpCenterSitePicker: React.FC< SitePicker > = ( { onSelect, siteId } ) => {
 	const currentSite = useSelect( ( select ) =>
@@ -113,6 +112,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
 			otherSiteURL: select( STORE_KEY ).getOtherSiteURL(),
 		};
 	} );
+	const { hasCookies, isLoading } = useHas3PC();
 
 	const { setSiteId, setOtherSiteURL, setSubject, setMessage, setPopup } = useDispatch( STORE_KEY );
 
@@ -121,7 +121,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
 	function handleCTA( event: React.MouseEvent< HTMLButtonElement > ) {
 		switch ( mode ) {
 			case 'CHAT': {
-				if ( thirdPartyCookiesAvailable ) {
+				if ( hasCookies ) {
 					setOpenChat( true );
 					break;
 				} else {
@@ -191,7 +191,12 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
 				</section>
 			) }
 			<section>
-				<Button onClick={ handleCTA } primary className="help-center-contact-form__site-picker-cta">
+				<Button
+					disabled={ isLoading }
+					onClick={ handleCTA }
+					primary
+					className="help-center-contact-form__site-picker-cta"
+				>
 					{ formTitles.buttonLabel }
 				</Button>
 			</section>

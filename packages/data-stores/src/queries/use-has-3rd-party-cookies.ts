@@ -11,6 +11,7 @@ export function useHas3PC() {
 		function handler( event: MessageEvent ) {
 			const { data } = event;
 			if ( data.type === 'widgets.wp.com-cookie-check' ) {
+				result = data.result;
 				setHasCookies( data.result );
 				window.removeEventListener( 'message', handler );
 				iframe.remove();
