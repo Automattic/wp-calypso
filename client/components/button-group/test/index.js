@@ -20,7 +20,6 @@ describe( 'ButtonGroup', () => {
 		);
 		expect( screen.getAllByRole( 'button' ).length ).toBe( 2 );
 	} );
-
 	test( 'should get the busy `is-busy` class when passed the `busy` prop', () => {
 		render( <ButtonGroup busy /> );
 		expect( screen.getByTestId( 'button-group-id' ) ).toHaveClass( 'is-busy' );

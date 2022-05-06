@@ -10,7 +10,7 @@ const ButtonGroup = ( { busy = false, children, className = '', primary = false 
 	} );
 
 	return (
-		<span data-testid="button-group-id" className={ buttonGroupClasses }>
+		<span className={ buttonGroupClasses } data-testid="button-group-id">
 			{ children }
 		</span>
 	);
