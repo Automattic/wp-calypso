@@ -47,7 +47,7 @@ class Help_Center {
 
 		wp_enqueue_script(
 			'help-center-script',
-			plugins_url( 'dist/help-center.js', __FILE__ ),
+			plugins_url( 'dist/help-center.min.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			$version,
 			true

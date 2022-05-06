@@ -25,10 +25,6 @@ const sortBlogToTop = makeSortCategoryToTop( CATEGORY_BLOG );
 const sortStoreToTop = makeSortCategoryToTop( CATEGORY_STORE );
 const sortGeneratedToTop = makeSortCategoryToTop( CATEGORY_GENERATED );
 
-export function getGeneratedDesignsCategory( name: string ): Category {
-	return { slug: CATEGORY_GENERATED, name };
-}
-
 export function getCategorizationOptions(
 	intent: string,
 	showAllFilter: boolean,

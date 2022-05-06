@@ -1,5 +1,5 @@
+import { safeImageUrl } from '@automattic/calypso-url';
 import { find, get } from 'lodash';
-import safeImageUrl from 'calypso/lib/safe-image-url';
 import { isUrlLikelyAnImage } from './utils';
 
 /** Returns true if an image is large enough to be a featured asset

@@ -9,6 +9,7 @@ export interface Container {
 
 export interface Content {
 	content: ReactElement;
+	isMinimized: boolean;
 }
 
 export interface Header {
@@ -17,4 +18,10 @@ export interface Header {
 	onMaximize?: () => void;
 	onDismiss: () => void;
 	headerText: string;
+}
+
+export interface SitePicker {
+	selectedSiteId: number | undefined;
+	onSetSelectedSiteId: React.Dispatch< React.SetStateAction< number | undefined > >;
+	siteId: number | null;
 }

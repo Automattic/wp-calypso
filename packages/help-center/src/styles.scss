@@ -31,7 +31,7 @@ $head-foot-height: 50px;
 	}
 
 	.help-center__container-footer {
-		height: $head-foot-height;
+		height: auto;
 		padding: 16px;
 	}
 
@@ -54,8 +54,9 @@ $head-foot-height: 50px;
 
 		&.is-minimized {
 			min-height: $head-foot-height;
-			top: calc( 100vh - 91px ); // height of header + bottom breadcrumb bar in the editor + 16px
-
+			top: unset;
+			bottom: 41px;
+			transform: unset !important; // revert dragging translation when minimized
 			.help-center__container-header {
 				cursor: default;
 			}
@@ -71,6 +72,10 @@ $head-foot-height: 50px;
 
 		.help-center__container-content {
 			height: calc( 100% - $head-foot-height * 2 );
+		}
+
+		&.no-footer .help-center__container-content {
+			height: auto;
 		}
 
 		&.is-minimized {

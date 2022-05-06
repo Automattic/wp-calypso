@@ -1,5 +1,6 @@
 // import { TourKitContextProvider } from './tour-kit-context';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
+import React from 'react';
 import ErrorBoundary from '../error-boundary';
 import TourKitContextProvider from './tour-kit-context';
 import TourKitFrame from './tour-kit-frame';

@@ -47,7 +47,7 @@ class Tags_Education {
 
 		wp_enqueue_script(
 			'tags-education-script',
-			plugins_url( 'dist/tags-education.js', __FILE__ ),
+			plugins_url( 'dist/tags-education.min.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			$version,
 			true

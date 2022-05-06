@@ -94,6 +94,8 @@ export interface SiteDetails {
 	URL: string;
 	launch_status: string;
 	jetpack: boolean;
+	is_fse_eligible: boolean;
+	is_fse_active: boolean;
 	options: {
 		admin_url?: string;
 		advanced_seo_front_page_description?: string;
@@ -190,6 +192,8 @@ export interface SiteDetails {
 		activate_plugins: boolean;
 	};
 }
+
+export type SiteOption = keyof SiteDetails[ 'options' ];
 
 export interface SiteError {
 	error: string;
@@ -386,30 +390,4 @@ export interface AtomicSoftwareInstallError {
 	status: number;
 	message: string;
 	code: string;
-}
-
-interface Availability {
-	presale: boolean;
-	precancellation: boolean;
-}
-export interface HappyChatAvailability {
-	locale: string;
-	isUserEligible: boolean;
-	supportLevel:
-		| 'free'
-		| 'personal'
-		| 'personal-with-legacy-chat'
-		| 'premium'
-		| 'pro'
-		| 'business'
-		| 'ecommerce'
-		| 'jetpack-paid'
-		| 'p2-plus';
-	nickname: string;
-	isClosed: boolean;
-	availability: Availability;
-}
-
-export interface EmailSupportAvailability {
-	is_user_eligible: boolean;
 }

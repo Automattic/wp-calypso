@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -50,7 +51,7 @@ class CustomNameserversForm extends PureComponent {
 			<div className="name-servers__custom-nameservers-form-explanation">
 				{ translate( 'Not sure what name servers to use?' ) }{ ' ' }
 				<a
-					href={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
+					href={ localizeUrl( CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS ) }
 					target="_blank"
 					rel="noopener noreferrer"
 					onClick={ this.handleLookUpClick }
@@ -142,7 +143,7 @@ class CustomNameserversForm extends PureComponent {
 			components: {
 				link: (
 					<a
-						href={ CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
+						href={ localizeUrl( CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS ) }
 						target="_blank"
 						rel="noopener noreferrer"
 						onClick={ this.handleLookUpClick }

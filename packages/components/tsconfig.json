@@ -8,5 +8,6 @@
 		"rootDir": "src"
 	},
 	"include": [ "src" ],
-	"exclude": [ "**/docs/*", "**/test/*" ]
+	"exclude": [ "**/docs/*", "**/test/*" ],
+	"references": [ { "path": "../calypso-url" }, { "path": "../data-stores" } ]
 }

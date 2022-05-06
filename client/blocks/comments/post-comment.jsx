@@ -232,6 +232,7 @@ class PostComment extends PureComponent {
 								onReplyClick={ this.props.onReplyClick }
 								onReplyCancel={ this.props.onReplyCancel }
 								activeReplyCommentId={ this.props.activeReplyCommentId }
+								commentText={ this.props.commentText }
 								onUpdateCommentText={ this.props.onUpdateCommentText }
 								onCommentSubmit={ this.props.onCommentSubmit }
 								shouldHighlightNew={ this.props.shouldHighlightNew }

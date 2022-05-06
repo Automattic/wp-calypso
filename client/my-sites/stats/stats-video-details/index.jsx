@@ -33,9 +33,9 @@ const StatModuleVideoDetails = ( props ) => {
 	);
 };
 
-export default connect( ( state, { postId } ) => {
+export default connect( ( state, { postId, statType } ) => {
 	const siteId = getSelectedSiteId( state );
-	const query = { postId };
+	const query = { postId, statType };
 
 	return {
 		requesting: isRequestingSiteStatsForQuery( state, siteId, 'statsVideo', query ),

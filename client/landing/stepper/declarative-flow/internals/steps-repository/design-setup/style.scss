@@ -289,3 +289,81 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		display: none;
 	}
 }
+
+/**
+ * Generated Design Picker
+ */
+.design-picker__is-generated {
+	.step-container__header {
+		align-items: center;
+		display: flex;
+		margin: 48px 0;
+		row-gap: 1.5rem;
+		flex-wrap: wrap;
+
+		.button {
+			border-radius: 4px;
+			font-weight: 500;
+			padding: 9px 48px;
+
+			// Override unnecessary super specificity added by another class.
+			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+		}
+	}
+
+	.generated_design-picker__content {
+		display: flex;
+		flex-direction: row;
+	}
+
+	.generated-design-picker__thumbnails {
+		display: flex;
+		flex-direction: column;
+		flex-grow: 1;
+		margin-bottom: 98px;
+		row-gap: 24px;
+
+		@include break-small {
+			flex: 0 154px;
+			padding-right: 1.5rem;
+		}
+
+		@include break-medium {
+			flex: 0 248px;
+			margin-bottom: 0;
+			padding-right: 2rem;
+		}
+	}
+
+	.generated-design-picker__previews {
+		display: none;
+
+		.mshots-image__container {
+			width: 100%;
+		}
+
+		@include break-small {
+			display: flex;
+			flex: 1;
+			flex-direction: column;
+			row-gap: 24px;
+			margin-bottom: 162px;
+
+			> div {
+				display: none;
+
+				&:first-of-type {
+					display: block;
+				}
+			}
+		}
+	}
+
+	.generated-design-picker__view-more {
+		border-radius: 4px;
+		font-weight: 500;
+		line-height: 1.25rem;
+		margin: 8px 0;
+		width: 100%;
+	}
+}

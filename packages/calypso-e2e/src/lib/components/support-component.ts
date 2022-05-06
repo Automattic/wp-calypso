@@ -14,7 +14,7 @@ const selectors = {
 	// Results
 	resultsPlaceholder: '.inline-help__results-placeholder-item',
 	results: ( category: string ) => `[aria-labelledby="${ category }"] .inline-help__results-item`,
-	defaultResultsMessage: 'h3:text("This might interest you")',
+	defaultResultsMessage: 'h3:text("Recommended resources")',
 
 	// Result types
 	supportCategory: 'inline-search--api_help',

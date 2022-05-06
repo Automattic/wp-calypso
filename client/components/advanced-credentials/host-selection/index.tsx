@@ -93,7 +93,7 @@ const HostSelection: FunctionComponent = () => {
 							isLoading ? 'host-selection__list-item-placeholder' : 'host-selection__list-item'
 						}
 						key={ id }
-						href={ `${ settingsPath( siteSlug ?? undefined ) }?host=${ id }` }
+						href={ `${ settingsPath( siteSlug ) }?host=${ id }` }
 						onClick={ () => recordHostSelectionEvent( id ) }
 					>
 						<span>{ name }</span>
@@ -113,7 +113,7 @@ const HostSelection: FunctionComponent = () => {
 					className={
 						isLoading ? 'host-selection__list-item-placeholder' : 'host-selection__list-item'
 					}
-					href={ `${ settingsPath( siteSlug ?? undefined ) }?host=generic` }
+					href={ `${ settingsPath( siteSlug ) }?host=generic` }
 					onClick={ () => recordHostSelectionEvent( 'generic' ) }
 				>
 					{ isMobile

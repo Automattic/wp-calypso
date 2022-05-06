@@ -1,6 +1,4 @@
-import { localizeUrl } from '@automattic/i18n-utils';
-
-const root = localizeUrl( 'https://wordpress.com/support/' ).replace( /\/$/, '' );
+const root = 'https://wordpress.com/support';
 
 export const ADDING_GSUITE_TO_YOUR_SITE = `${ root }/add-email/adding-google-workspace-to-your-site/`;
 export const ADDING_TITAN_TO_YOUR_SITE = `${ root }/add-email/adding-professional-email-to-your-site/`;

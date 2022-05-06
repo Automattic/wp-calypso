@@ -1,24 +1,24 @@
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+import { render } from '@testing-library/react';
 import { FormCountrySelect } from 'calypso/components/forms/form-country-select';
 
 describe( 'FormCountrySelect', () => {
 	const translate = ( string ) => string;
 
 	test( 'should render a select box with a placeholder when the country list provided is empty', () => {
-		const select = shallow( <FormCountrySelect countriesList={ [] } translate={ translate } /> );
+		const { container } = render(
+			<FormCountrySelect countriesList={ [] } translate={ translate } />
+		);
+		const options = container.getElementsByTagName( 'option' );
 
-		const options = select.find( 'option' );
-
-		expect( options ).to.have.length( 1 );
-
-		const option = options.first();
-
-		expect( option.equals( <option>Loading…</option> ) ).to.be.true;
+		expect( options ).toHaveLength( 1 );
+		expect( options[ 0 ].textContent ).toEqual( 'Loading…' );
 	} );
 
 	test( 'should render a select box with options matching the country list provided', () => {
-		const select = shallow(
+		const { container } = render(
 			<FormCountrySelect
 				countriesList={ [
 					{
@@ -38,18 +38,10 @@ describe( 'FormCountrySelect', () => {
 			/>
 		);
 
-		const options = select.find( 'option' );
+		const options = container.getElementsByTagName( 'option' );
 
-		expect( options ).to.have.length( 2 );
-
-		const option = options.first();
-
-		expect(
-			option.equals(
-				<option value="US" disabled={ false }>
-					United States (+1)
-				</option>
-			)
-		).to.be.true;
+		expect( options ).toHaveLength( 2 );
+		expect( options[ 0 ].value ).toEqual( 'US' );
+		expect( options[ 0 ].textContent ).toEqual( 'United States (+1)' );
 	} );
 } );

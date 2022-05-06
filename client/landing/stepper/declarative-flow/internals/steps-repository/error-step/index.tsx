@@ -25,12 +25,12 @@ const ErrorStep: Step = function ErrorStep( { navigation } ) {
 		domain = siteDomains[ 0 ].domain;
 	}
 
-	const headerText = siteSetupError ? siteSetupError.error : __( "We've hit a snag" );
-	const bodyText = siteSetupError
-		? siteSetupError.message
-		: __(
-				'It looks like something went wrong while setting up your store. Please contact support so that we can help you out.'
-		  );
+	const headerText = siteSetupError?.error || __( "We've hit a snag" );
+	const bodyText =
+		siteSetupError?.message ||
+		__(
+			'It looks like something went wrong while setting up your store. Please contact support so that we can help you out.'
+		);
 
 	const getContent = () => {
 		return (

@@ -1,11 +1,13 @@
 import config from '@automattic/calypso-config';
 import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
-import HelpCenter, { HelpIcon } from '@automattic/help-center';
+import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
+import HelpCenter, { HelpIcon, ContactForm } from '@automattic/help-center';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState } from 'react';
+import { useSelector } from 'react-redux';
 import InlineHelpCenterContent from 'calypso/blocks/inline-help/inline-help-center-content';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
@@ -13,6 +15,7 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import type { Article } from 'calypso/blocks/inline-help/inline-help-center-types';
@@ -34,6 +37,10 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
+	const siteId = useSelector( getSelectedSiteId );
+
+	const { isLoading, data } = useHasSeenWhatsNewModalQuery( siteId );
+
 	const isJetpackCheckout = window.location.pathname.startsWith( '/checkout/jetpack' );
 	const isJetpack = isJetpackCheckout || isJetpackNotAtomic;
 	const cartKey = useCartKey();
@@ -42,6 +49,8 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	const [ isHelpCenterVisible, setIsHelpCenterVisible ] = useState( false );
 	const [ selectedArticle, setSelectedArticle ] = useState< Article | null >( null );
 	const [ footerContent, setFooterContent ] = useState( undefined );
+	const [ contactForm, setContactForm ] = useState( null );
+	const [ openInContactPage, setOpenInContactPage ] = useState< boolean >( false );
 
 	const closeAndLeave = () =>
 		leaveCheckout( {
@@ -72,6 +81,8 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 
 	const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
 
+	const newItems = ! isLoading && ! data?.has_seen_whats_new_modal;
+
 	return (
 		<Masterbar>
 			<div className="masterbar__secure-checkout">
@@ -95,7 +106,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 					className={ classnames( 'masterbar__item-help', {
 						'is-active': isHelpCenterVisible,
 					} ) }
-					icon={ <HelpIcon newItems active={ isHelpCenterVisible } /> }
+					icon={ <HelpIcon newItems={ newItems } active={ isHelpCenterVisible } /> }
 				/>
 			) }
 			<CheckoutModal
@@ -111,11 +122,24 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 			{ isHelpCenterEnabled && isHelpCenterVisible && (
 				<HelpCenter
 					content={
-						<InlineHelpCenterContent
-							selectedArticle={ selectedArticle }
-							setSelectedArticle={ setSelectedArticle }
-							setHelpCenterFooter={ setFooterContent }
-						/>
+						contactForm ? (
+							<ContactForm
+								mode={ contactForm }
+								onBackClick={ () => {
+									setOpenInContactPage( true );
+									setContactForm( null );
+								} }
+								siteId={ siteId }
+							/>
+						) : (
+							<InlineHelpCenterContent
+								selectedArticle={ selectedArticle }
+								setSelectedArticle={ setSelectedArticle }
+								setHelpCenterFooter={ setFooterContent }
+								setContactFormOpen={ setContactForm }
+								openInContactPage={ openInContactPage }
+							/>
+						)
 					}
 					headerText={ selectedArticle?.title }
 					handleClose={ () => setIsHelpCenterVisible( false ) }
