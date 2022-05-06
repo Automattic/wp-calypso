@@ -7,35 +7,35 @@ jest.mock( 'page' );
 
 describe( '#buildSearchUrl', () => {
 	test( 'should return original url if there is no search', () => {
-		const params = { uri: 'chicken.com' };
-		expect( buildSearchUrl( params ) ).toBe( 'chicken.com' );
+		const params = { uri: 'https://wordpress.com/plugins' };
+		expect( buildSearchUrl( params ) ).toBe( '/plugins' );
 	} );
 
 	test( 'should add add the default params of s to built query', () => {
 		const params = {
-			uri: 'google.com',
+			uri: 'https://wordpress.com',
 			search: 'hello',
 		};
-		const expectedResult = 'google.com?s=hello';
+		const expectedResult = '?s=hello';
 		expect( buildSearchUrl( params ) ).toBe( expectedResult );
 	} );
 
 	test( 'should replace current query with new one even when using custom query key', () => {
 		const params = {
-			uri: 'wordpress.com/read/search?q=reader+is+awesome',
+			uri: 'https://wordpress.com/read/search?q=reader+is+awesome',
 			search: 'reader is super awesome',
 			queryKey: 'q',
 		};
-		const expectedResult = 'wordpress.com/read/search?q=reader+is+super+awesome';
+		const expectedResult = '/read/search?q=reader+is+super+awesome';
 		expect( buildSearchUrl( params ) ).toBe( expectedResult );
 	} );
 
 	test( 'should remove the query if search is empty', () => {
 		const params = {
-			uri: 'wordpress.com/read/search?q=reader+is+awesome',
+			uri: 'https://wordpress.com/read/search?q=reader+is+awesome',
 			queryKey: 'q',
 		};
-		const expectedResult = 'wordpress.com/read/search';
+		const expectedResult = '/read/search';
 		expect( buildSearchUrl( params ) ).toBe( expectedResult );
 	} );
 } );
@@ -55,20 +55,20 @@ describe( '#useUrlSearch', () => {
 	};
 
 	test( 'should navigate to a page without a query search', () => {
-		global.window.location.href = 'wordpress.com';
+		global.window.location.href = 'https://wordpress.com';
 		page.mockImplementation( jest.fn() );
 		urlSearchHook.doSearch( '' );
 
 		expect( mockSetSearchOpen ).toBeCalledWith( false );
-		expect( page ).toBeCalledWith( global.window.location.href );
+		expect( page ).toBeCalledWith( '/' );
 	} );
 
 	test( 'should replace page url on a query search', () => {
-		const baseUrl = 'wordpress.com';
+		const baseUrl = 'https://wordpress.com';
 		global.window.location.href = baseUrl + '?s=test';
 
 		const newSearchTerm = 'replaced-search-term';
-		const expectedUrl = baseUrl + '?s=' + newSearchTerm;
+		const expectedUrl = '?s=' + newSearchTerm;
 
 		page.replace.mockImplementation( () => {} );
 		urlSearchHook.doSearch( newSearchTerm );

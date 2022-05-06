@@ -2,20 +2,19 @@ import { useState } from '@wordpress/element';
 import { addQueryArgs } from '@wordpress/url';
 import debugFactory from 'debug';
 import page from 'page';
-
 const debug = debugFactory( 'calypso:url-search' );
 
 /**
  * Function for constructing the url to page to. Here are some examples:
- * 1. { uri: 'google.com', search:'hello' } --> 'google.com?s=hello'
+ * 1. { uri: 'https://wordpress.com/plugins', search:'hello' } --> '/plugins?s=hello'
  * 2. {
- *     uri: 'wordpress.com/read/search?q=reader+is+awesome',
+ *     uri: 'https://wordpress.com/read/search?q=reader+is+awesome',
  *     search: 'reader is super awesome'
  *     queryKey: 'q',
- *    } --> 'wordpress.com/read/search?q=reader+is+super+awesome'
+ *    } --> '/read/search?q=reader+is+super+awesome'
  *
  * @param {object} options the options object
- * @param {string} options.uri the base uri to modify and add a query to
+ * @param {string} options.uri the uri to modify and add a query to
  * @param {string} options.search the search term
  * @param {string} [options.queryKey = s] the key to place in the url.  defaults to s
  * @returns {string} The built search url
@@ -26,22 +25,18 @@ export const buildSearchUrl = ( {
 	queryKey = 's',
 }: {
 	uri: string;
-	search?: string;
+	search: string;
 	queryKey?: string;
 } ) => {
-	const query = addQueryArgs( uri, { [ queryKey ]: search } );
+	const parsedUrl = new URL( uri );
 
-	if ( ! search ) {
-		const queryStringIndex = uri.indexOf( '?' );
-
-		if ( queryStringIndex !== -1 ) {
-			return uri.substring( 0, queryStringIndex );
-		}
-
-		return uri;
+	if ( search ) {
+		const baseUrl = uri.replace( parsedUrl.origin, '' );
+		const query = addQueryArgs( baseUrl, { [ queryKey ]: search } );
+		return query.replace( /%20/g, '+' );
 	}
 
-	return query.replace( /%20/g, '+' );
+	return parsedUrl.pathname;
 };
 
 function useUrlSearch( queryKey = 's' ) {
