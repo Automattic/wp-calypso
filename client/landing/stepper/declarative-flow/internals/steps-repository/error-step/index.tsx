@@ -1,6 +1,6 @@
+import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
-import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -37,11 +37,11 @@ const ErrorStep: Step = function ErrorStep( { navigation, flow } ) {
 		if ( flow === 'anchor-fm' ) {
 			return (
 				<WarningsOrHoldsSection>
-					<Button isPrimary href="/setup">
-						<span>{ __( 'Continue' ) }</span>
+					<Button className="error-step__button" href="/setup" primary>
+						{ __( 'Continue' ) }
 					</Button>
-					<Button className="error-step__link" isLink href="https://anchor.fm">
-						<span>{ __( 'Back to Anchor.fm' ) }</span>
+					<Button className="error-step__link" borderless href="https://anchor.fm">
+						{ __( 'Back to Anchor.fm' ) }
 					</Button>
 				</WarningsOrHoldsSection>
 			);
