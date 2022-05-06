@@ -1,25 +1,28 @@
+/**
+ * @jest-environment jsdom
+ */
+import '@testing-library/jest-dom';
 import { Button } from '@automattic/components';
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import ButtonGroup from '..';
 
 describe( 'ButtonGroup', () => {
 	test( 'should have ButtonGroup class', () => {
-		const buttonGroup = shallow( <ButtonGroup /> );
-		expect( buttonGroup.find( '.button-group' ) ).toHaveLength( 1 );
+		render( <ButtonGroup /> );
+		expect( screen.getByTestId( 'button-group-id' ) ).toHaveClass( 'button-group' );
 	} );
-
 	test( 'should contains the same number of .button nodes than <Button>s it receives', () => {
-		const buttonGroup = shallow(
+		render(
 			<ButtonGroup>
 				<Button>test</Button>
 				<Button>test2</Button>
 			</ButtonGroup>
 		);
-		expect( buttonGroup.find( Button ) ).toHaveLength( 2 );
+		expect( screen.getAllByRole( 'button' ).length ).toBe( 2 );
 	} );
 
 	test( 'should get the busy `is-busy` class when passed the `busy` prop', () => {
-		const buttonGroup = shallow( <ButtonGroup busy /> );
-		expect( buttonGroup.find( '.is-busy' ) ).toHaveLength( 1 );
+		render( <ButtonGroup busy /> );
+		expect( screen.getByTestId( 'button-group-id' ) ).toHaveClass( 'is-busy' );
 	} );
 } );

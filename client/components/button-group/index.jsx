@@ -9,7 +9,11 @@ const ButtonGroup = ( { busy = false, children, className = '', primary = false 
 		'is-primary': primary,
 	} );
 
-	return <span className={ buttonGroupClasses }>{ children }</span>;
+	return (
+		<span data-testid="button-group-id" className={ buttonGroupClasses }>
+			{ children }
+		</span>
+	);
 };
 
 export default memo( ButtonGroup );
