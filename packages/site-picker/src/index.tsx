@@ -18,7 +18,7 @@ type ItemProps = {
 	mainItem?: boolean;
 	selected?: boolean;
 	onKeyDown?: React.KeyboardEventHandler< HTMLButtonElement >;
-	logo: { id: string; sizes: string[]; url: string };
+	logo: { id: string; sizes: string[]; url: string } | undefined;
 	id: string;
 };
 
@@ -73,7 +73,7 @@ export type SitePickerSite = {
 
 export type Props = {
 	siteId: string | number | undefined | null;
-	options: SitePickerSite[];
+	options: ( SitePickerSite | undefined )[];
 	onPickSite: ( siteId: number ) => void;
 };
 
@@ -108,7 +108,7 @@ export const SitePickerDropDown: FC< Props > = ( { siteId, options, onPickSite }
 			</label>
 			<div className={ cx( 'site-picker__site-dropdown', { open } ) }>
 				<SitePickerItem
-					host={ selectedSite?.URL?.replace( 'https://', '' ) }
+					host={ selectedSite?.URL?.replace( 'https://', '' ) ?? '' }
 					name={
 						selectedSite?.name ??
 						// if site has no name, show URL

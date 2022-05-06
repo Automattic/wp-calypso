@@ -13,8 +13,6 @@ import InlineChat from './help-center-inline-chat';
 /**
  * Internal Dependencies
  */
-import type { SitePickerSite } from '@automattic/site-picker';
-
 import './help-center-contact-form.scss';
 
 export const SITE_STORE = 'automattic/site';
@@ -22,12 +20,9 @@ export const SITE_STORE = 'automattic/site';
 const thirdPartyCookiesAvailable = true;
 
 const HelpCenterSitePicker: React.FC< SitePicker > = ( { onSelect, siteId } ) => {
-	const site: SitePickerSite | undefined | null = useSelect( ( select ) => {
-		if ( siteId ) {
-			return select( SITE_STORE ).getSite( siteId );
-		}
-		return null;
-	} );
+	const currentSite = useSelect( ( select ) =>
+		select( SITE_STORE ).getSite( window._currentSiteId )
+	);
 
 	const otherSite = {
 		name: __( 'Other site', 'full-site-editing' ),
@@ -40,15 +35,7 @@ const HelpCenterSitePicker: React.FC< SitePicker > = ( { onSelect, siteId } ) =>
 		onSelect( ID );
 	}
 
-	if ( ! site ) {
-		return null;
-	}
-
-	if ( ! siteId && siteId !== 0 ) {
-		return null;
-	}
-
-	const options = [ site, otherSite ];
+	const options = [ currentSite, otherSite ];
 
 	return <SitePickerDropDown onPickSite={ pickSite } options={ options } siteId={ siteId } />;
 };
