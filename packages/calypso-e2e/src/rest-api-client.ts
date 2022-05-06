@@ -1,12 +1,11 @@
-import fetch, { RequestInit } from 'node-fetch';
+import fetch, { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
-type RequestMethods = 'post' | 'get';
+type EndpointVersions = '1' | '1.1' | '1.2' | '1.3';
 type RequestParams = {
 	method: 'post' | 'get';
-	headers: GenericDict;
-	body?: GenericDict;
+	headers: HeadersInit;
+	body?: BodyInit;
 };
-type GenericDict = { [ key: string ]: string | number };
 
 interface Site {
 	ID: string;
@@ -19,7 +18,7 @@ interface MySitesResponse {
 	sites: Site[];
 }
 
-const BASE_URL = 'https://public-api.wordpress.com/rest/v1.1/';
+const BASE_URL = 'https://public-api.wordpress.com';
 
 /**
  * Client to interact with the WordPress.com REST API.
@@ -34,56 +33,81 @@ export class RestAPIClient {
 		this.bearerToken = bearerToken;
 	}
 
-	/**
-	 * Builds and returns the request parameters.
-	 *
-	 * @param {RequestMethods} method Supported request methods.
-	 * @param {GenericDict} [body] Request body.
-	 * @returns {RequestParams} Completed request parameter.
-	 */
-	private buildRequestParams( method: RequestMethods, body?: GenericDict ): RequestParams {
-		const params: RequestParams = {
-			method: method,
-			headers: {
-				Authorization: `Bearer ${ this.bearerToken }`,
-				'Content-Type': 'application/json',
-			},
-		};
+	/* Request builder methods */
 
-		// POST requests require a body.
-		if ( method === 'post' ) {
-			if ( ! body ) {
-				throw new Error( 'Cannot build a POST request with undefined body.' );
-			}
-			params[ 'body' ] = body;
+	/**
+	 * Returns the appropriate authorization header.
+	 *
+	 * @returns {string} Authorization header in the requested scheme.
+	 * @throws {Error} If a scheme not yet implemented is requested.
+	 */
+	private getAuthorizationHeader( scheme: 'bearer' ): string {
+		if ( scheme === 'bearer' ) {
+			return `Bearer ${ this.bearerToken }`;
 		}
 
-		return params;
+		throw new Error( 'Authorization scheme not yet implemented.' );
 	}
 
 	/**
-	 * Sends the request to the endpoint.
+	 * Returns the formatted Content-Type header string.
 	 *
-	 * @param {string} endpoint Endpoint to send the request.
-	 * @param {RequestParams} params Parameters for the request.
+	 * @returns {string} Content-Type header string.
 	 */
-	private async sendRequest( endpoint: string, params: RequestParams ): Promise< any > {
-		// Trim the initial forward slash.
-		if ( endpoint.startsWith( '/' ) ) {
-			endpoint = endpoint.slice( 1 );
-		}
+	private getContentTypeHeader( value: 'json' ): string {
+		return `application/${ value }`;
+	}
 
-		const response = await fetch( new URL( endpoint, BASE_URL ), params as RequestInit );
+	/**
+	 * Returns a fully constructed URL object pointing to the request endpoint.
+	 *
+	 * @param {EndpointVersions} version Version of the API to use.
+	 * @param {string} endpoint REST API path.
+	 * @returns {URL} Full URL to the endpoint.
+	 */
+	private getRequestURL( version: EndpointVersions, endpoint: string ): URL {
+		const path = `/rest/${ version }/${ endpoint }`.replace( /([^:]\/)\/+/g, '$1' );
+		return new URL( path, BASE_URL );
+	}
+
+	/**
+	 * Sends the request to the endpoint, then returns the decoded JSON.
+	 *
+	 * @param {URL} url URL of the endpoint.
+	 * @param {RequestParams} params Parameters for the request.
+	 * @returns {Promise<any>} Decoded JSON response.
+	 */
+	private async sendRequest( url: URL, params: RequestParams ): Promise< any > {
+		const response = await fetch( url, params as RequestInit );
 		return response.json();
 	}
 
 	/**
+	 * Gets the list of users's sites.
 	 *
+	 * This method returns an array of Site objects, where
+	 * each Site object exposes a few key pieces of data from
+	 * the response JSON:
+	 * 	- ID
+	 * 	- name
+	 * 	- site description
+	 * 	- URL
+	 * 	- site owner
+	 *
+	 * @returns {Site[]} Array of Sites.
 	 */
 	async getMySites(): Promise< Site[] > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
 		const response: MySitesResponse = await this.sendRequest(
-			'/me/sites',
-			this.buildRequestParams( 'get' )
+			this.getRequestURL( '1.1', '/me/sites' ),
+			params
 		);
 
 		return response[ 'sites' ];
