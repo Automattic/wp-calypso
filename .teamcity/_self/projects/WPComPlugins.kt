@@ -209,6 +209,8 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 					# Install the Sentry CLI binary
 					curl -sL https://sentry.io/get-cli/ | bash
 
+					rm -rf gutenberg gutenberg.zip
+
 					wget https://github.com/WordPress/gutenberg/releases/download/%GUTENBERG_VERSION%/gutenberg.zip
 					unzip gutenberg.zip -d gutenberg
 					cd gutenberg
