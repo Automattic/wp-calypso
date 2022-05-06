@@ -14,14 +14,8 @@
 	text-align: center;
 }
 
-.qr-code-login__card canvas {
-    width: 100%;
-    height: auto;
-}
-
 .qr-code-login__footer {
     a {
-		border-bottom: 1px solid #c8d7e1;
 		color: var( --color-neutral-50 );
 		display: block;
 		line-height: 4em;
@@ -34,15 +28,13 @@
 		&:hover {
 			color: var( --color-primary );
 		}
-		&:last-of-type {
-			border-bottom: none;
-		}
-
-		body.is-section-signup & {
-			color: var( --color-text-inverted );
-		}
 	}
 	.gridicon {
 		vertical-align: text-bottom;
 	}
+}
+
+.qr-code-login__placeholder {
+	width: 352px;
+	height: 352px;
 }

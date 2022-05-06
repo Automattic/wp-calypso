@@ -67,7 +67,6 @@
 		"layout/query-selected-editor": true,
 		"legal-updates-banner": false,
 		"login/magic-login": true,
-		"login/qr-code-login": false,
 		"mailchimp": true,
 		"marketplace-test": false,
 		"marketplace-domain-bundle": false,
