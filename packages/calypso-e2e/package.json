@@ -19,7 +19,6 @@
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
 		"@types/totp-generator": "^0.0.3",
-		"config": "^3.3.6",
 		"mailosaur": "^7.3.1",
 		"playwright": "^1.19.2",
 		"totp-generator": "^0.0.12"
@@ -29,7 +28,6 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@jest/globals": "^27.3.1",
-		"@types/config": "^0.0.41",
 		"@types/jest": "^27.4.0",
 		"@types/node": "^16.11.26",
 		"@types/node-fetch": "^2.6.1",
@@ -40,6 +38,8 @@
 	},
 	"scripts": {
 		"clean": "yarn build --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json"
+		"build": "tsc --build ./tsconfig.json",
+		"encrypt-secrets": "openssl enc -md sha1 -aes-256-cbc -pass env:E2E_SECRETS_KEY -out ./src/secrets/encrypted.enc -in ./src/secrets/decrypted-secrets.json",
+		"decrypt-secrets": "openssl enc -md sha1 -aes-256-cbc -d -pass env:E2E_SECRETS_KEY -in ./src/secrets/encrypted.enc -out ./src/secrets/decrypted-secrets.json"
 	}
 }

@@ -5,5 +5,5 @@
 		"noEmit": true, // just type checking, no output. The output is handled by babel.
 		"types": [ "jest", "node" ]
 	},
-	"include": [ "specs", "lib/martech-tos-helper.js" ]
+	"include": [ "specs", "lib/martech-tos-helper.js", "jest-helpers" ]
 }

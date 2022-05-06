@@ -13,8 +13,8 @@
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"scripts": {
-		"encryptconfig": "openssl enc -md sha1 -aes-256-cbc -pass env:CONFIG_KEY -out ./config/encrypted.enc -in ./config/local-$NODE_CONFIG_ENV.json",
-		"decryptconfig": "openssl enc -md sha1 -aes-256-cbc -d -pass env:CONFIG_KEY -in ./config/encrypted.enc -out ./config/local-$NODE_CONFIG_ENV.json"
+		"encrypt-secrets": "yarn workspace @automattic/calypso-e2e run encrypt-secrets",
+		"decrypt-secrets": "yarn workspace @automattic/calypso-e2e run decrypt-secrets"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
@@ -34,7 +34,6 @@
 		"babel-jest": "^27.2.4",
 		"babel-plugin-dynamic-import-node": "^2.3.0",
 		"chromedriver": "^89.0.0",
-		"config": "^1.28.0",
 		"eslint": "^7.28.0",
 		"eslint-plugin-jest": "^25.3.0",
 		"esm": "^3.2.25",

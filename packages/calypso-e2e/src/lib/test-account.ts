@@ -2,7 +2,13 @@ import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
 import { BrowserContext, Page } from 'playwright';
-import { getAccountCredential, getAccountSiteURL, getCalypsoURL, config } from '../data-helper';
+import { TestAccountName } from '..';
+import {
+	AccountCredentials,
+	getAccountCredential,
+	getAccountSiteURL,
+	getCalypsoURL,
+} from '../data-helper';
 import envVariables from '../env-variables';
 import { TOTPClient } from '../totp-client';
 import { LoginPage } from './pages/login-page';
@@ -11,14 +17,14 @@ import { LoginPage } from './pages/login-page';
  * Represents the WPCOM test account.
  */
 export class TestAccount {
-	readonly accountName: string;
-	readonly credentials: [ string, string ];
+	readonly accountName: TestAccountName;
+	readonly credentials: AccountCredentials;
 
 	/**
 	 * Constructs an instance of the TestAccount for the given account name.
-	 * Available test accounts should be defined in the e2e config file.
+	 * Available test accounts should be defined in the e2e secrets file.
 	 */
-	constructor( accountName: string ) {
+	constructor( accountName: TestAccountName ) {
 		this.accountName = accountName;
 		this.credentials = getAccountCredential( accountName );
 	}
@@ -43,7 +49,7 @@ export class TestAccount {
 
 	/**
 	 * Logs in via the login page UI. The verification code will be submitted
-	 * automatically if it's defined in the config file.
+	 * automatically if it's defined in the secrets file.
 	 *
 	 * @param {Page} page on which actions are to take place.
 	 */
@@ -51,7 +57,7 @@ export class TestAccount {
 		const loginPage = new LoginPage( page );
 
 		await loginPage.visit();
-		await loginPage.logInWithCredentials( ...this.credentials );
+		await loginPage.logInWithCredentials( this.credentials.username, this.credentials.password );
 
 		const verificationCode = this.getTOTP();
 		if ( verificationCode ) {
@@ -67,7 +73,7 @@ export class TestAccount {
 	async logInViaPopupPage( page: Page ): Promise< void > {
 		const loginPage = new LoginPage( page );
 
-		const [ username, password ] = this.credentials;
+		const { username, password } = this.credentials;
 		await loginPage.fillUsername( username );
 		await loginPage.clickSubmit();
 		await loginPage.fillPassword( password );
@@ -78,15 +84,14 @@ export class TestAccount {
 
 	/**
 	 * Retrieves the Time-based One-Time Password (a.k.a. verification code) from
-	 * the config file if defined for the current account.
+	 * the secret file if defined for the current account.
 	 */
 	getTOTP(): string | undefined {
-		const configKey = `${ this.accountName }TOTP`;
-		if ( ! config.has( configKey ) ) {
+		if ( ! this.credentials.totpKey ) {
 			return undefined;
 		}
 
-		const totpClient = new TOTPClient( config.get( configKey ) );
+		const totpClient = new TOTPClient( this.credentials.totpKey );
 		return totpClient.getToken();
 	}
 

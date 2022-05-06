@@ -238,14 +238,12 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@jest/globals": ^27.3.1
-    "@types/config": ^0.0.41
     "@types/jest": ^27.4.0
     "@types/node": ^16.11.26
     "@types/node-fetch": ^2.6.1
     "@types/totp-generator": ^0.0.3
     "@wordpress/i18n": ^4.2.4
     asana-phrase: ^0.0.8
-    config: ^3.3.6
     mailosaur: ^7.3.1
     node-fetch: ^2.6.6
     playwright: ^1.19.2
@@ -6641,13 +6639,6 @@ __metadata:
   version: 1.1.1
   resolution: "@types/color-name@npm:1.1.1"
   checksum: 2abeac8d8d833e0622c66f21487cc8b522792abb2eff2e40df0e3e53261728cb65bab590edf24953eb8d8653ec88044dc801d9a4e58c489a0f10c025de522868
-  languageName: node
-  linkType: hard
-
-"@types/config@npm:^0.0.41":
-  version: 0.0.41
-  resolution: "@types/config@npm:0.0.41"
-  checksum: b25deafde197039358ec93e5f97841701ad2079023d73ea8c8736ba52c61196efdeec17ccef1de57b4ddd1d1624e53099e5d0e881218482ca2b0dc1ad2a21c3c
   languageName: node
   linkType: hard
 
@@ -13899,16 +13890,6 @@ __metadata:
     ini: ^1.3.4
     proto-list: ~1.2.1
   checksum: 39d1df18739d7088736cc75695e98d7087aea43646351b028dfabd5508d79cf6ef4c5bcd90471f52cd87ae470d1c5490c0a8c1a292fbe6ee9ff688061ea0963e
-  languageName: node
-  linkType: hard
-
-"config@npm:^1.28.0":
-  version: 1.28.0
-  resolution: "config@npm:1.28.0"
-  dependencies:
-    json5: 0.4.0
-    os-homedir: 1.0.2
-  checksum: b56cc083a555a91fda03869ab6639b4e36fdde6a7b634bb58263badce9dd7382edfaa6fe2854a4dab29a65cb5afa9c519a1757e4b1f8a5320406f9a0a9626fec
   languageName: node
   linkType: hard
 
@@ -22770,15 +22751,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json5@npm:0.4.0":
-  version: 0.4.0
-  resolution: "json5@npm:0.4.0"
-  bin:
-    json5: lib/cli.js
-  checksum: 639ad195df2f83316413befff7480b981b5fbd0e58aabd6f6262a60624359ccb47c5fc99d88baab1f022e5e8678209c5cdf9e5eaa72978c7626e340626870c86
-  languageName: node
-  linkType: hard
-
 "json5@npm:^1.0.1":
   version: 1.0.1
   resolution: "json5@npm:1.0.1"
@@ -26408,7 +26380,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"os-homedir@npm:1.0.2, os-homedir@npm:^1.0.1":
+"os-homedir@npm:^1.0.1":
   version: 1.0.2
   resolution: "os-homedir@npm:1.0.2"
   checksum: 6be4aa67317ee247b8d46142e243fb4ef1d2d65d3067f54bfc5079257a2f4d4d76b2da78cba7af3cb3f56dbb2e4202e0c47f26171d11ca1ed4008d842c90363f
@@ -36438,7 +36410,6 @@ swiper@4.5.1:
     babel-jest: ^27.2.4
     babel-plugin-dynamic-import-node: ^2.3.0
     chromedriver: ^89.0.0
-    config: ^1.28.0
     eslint: ^7.28.0
     eslint-plugin-jest: ^25.3.0
     esm: ^3.2.25
