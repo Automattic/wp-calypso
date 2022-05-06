@@ -12,6 +12,7 @@ const selectors = {
 
 	// Buttons and links within Sidebar
 	linkWithText: ( text: string ) => `a:has-text("${ text }")`,
+	planName: '.sidebar__inline-text',
 };
 
 /**
@@ -130,6 +131,29 @@ export class SidebarComponent {
 			this.page.waitForNavigation(),
 			this.page.click( selectors.linkWithText( 'Add New Site' ) ),
 		] );
+	}
+
+	/**
+	 * Returns the current plan name as shown on the sidebar.
+	 *
+	 * Note, the plan name shown in the sidebar may not be
+	 * accurate.
+	 *
+	 * On mobile viewports, if the page is on Upgrades > Plans
+	 * the plan name is hidden from view. It is suggested to
+	 * use this method while the page is not displaying Plans.
+	 *
+	 * @returns {Promise<string>} Name of the plan.
+	 */
+	async getCurrentPlanName(): Promise< string > {
+		await this.waitForSidebarInitialization();
+
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			await this.openMobileSidebar();
+		}
+
+		const planNameLocator = this.page.locator( selectors.planName );
+		return await planNameLocator.innerText();
 	}
 
 	/* Viewport-specific methods */

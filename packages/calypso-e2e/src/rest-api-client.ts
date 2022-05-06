@@ -16,14 +16,33 @@ interface RequestParams {
 	body?: BodyInit;
 }
 interface Site {
-	ID: string;
+	ID: number;
 	name: string;
 	description: string;
 	URL: string;
-	site_owner: string;
+	site_owner: number;
 }
-interface MySitesResponse {
+interface AllSitesResponse {
 	sites: Site[];
+}
+interface CalypsoPreferencesResponse {
+	calypso_preferences: {
+		recentSites: number[];
+	};
+}
+interface MyAccountInformationResponse {
+	ID: number;
+	username: string;
+	email: string;
+}
+export interface NewUserResponse {
+	code: number;
+	body: {
+		success: boolean;
+		user_id: number;
+		username: string;
+		bearer_token: string;
+	};
 }
 
 const BEARER_TOKEN_URL = 'https://wordpress.com/wp-login.php?action=login-endpoint';
@@ -39,9 +58,9 @@ export class RestAPIClient {
 	/**
 	 * Constructs an instance of the API client.
 	 */
-	constructor( credentials: AccountCredentials ) {
+	constructor( credentials: AccountCredentials, bearerToken?: string ) {
 		this.credentials = credentials;
-		this.bearerToken = null;
+		this.bearerToken = bearerToken ? bearerToken : null;
 	}
 
 	/* Request builder methods */
@@ -126,6 +145,8 @@ export class RestAPIClient {
 		return response.json();
 	}
 
+	/* Sites */
+
 	/**
 	 * Gets the list of users's sites.
 	 *
@@ -140,7 +161,7 @@ export class RestAPIClient {
 	 *
 	 * @returns {Site[]} Array of Sites.
 	 */
-	async getMySites(): Promise< Site[] > {
+	async getAllSites(): Promise< AllSitesResponse > {
 		const params: RequestParams = {
 			method: 'get',
 			headers: {
@@ -149,11 +170,90 @@ export class RestAPIClient {
 			},
 		};
 
-		const response: MySitesResponse = await this.sendRequest(
-			this.getRequestURL( '1.1', '/me/sites' ),
-			params
-		);
+		return await this.sendRequest( this.getRequestURL( '1.1', '/me/sites' ), params );
+	}
 
-		return response[ 'sites' ];
+	/**
+	 * Returns the account information for the user authenticated
+	 * via the bearer token.
+	 *
+	 * @returns {MyAccountInformationResponse} Response containing user details.
+	 */
+	async getMyAccountInformation(): Promise< MyAccountInformationResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		return await this.sendRequest( this.getRequestURL( '1.1', '/me' ), params );
+	}
+
+	/**
+	 * Closes the account.
+	 *
+	 * Prior to the account being closed, this method performs
+	 * multiple checks to ensure the operation is safe and that
+	 * the correct account is being closed.
+	 *
+	 * The userID, username and email of the account that is
+	 * authenticated via the bearer token is checked against the
+	 * supplied parameters.
+	 */
+	async closeUserAccount(
+		userID: number,
+		username: string,
+		email: string
+	): Promise< { success: boolean } > {
+		const accountInformation = await this.getMyAccountInformation();
+
+		// Guards to ensure we do not unwittingly close the
+		// wrong account.
+		if ( ! accountInformation.email.includes( 'mailosaur' ) ) {
+			throw new Error( 'Aborting account closure: email address provided is not for a test user.' );
+		}
+
+		if ( ! accountInformation.username.includes( 'e2eflowtesting' ) ) {
+			throw new Error( 'Aborting account closure: username is not for a test user.' );
+		}
+
+		if ( userID !== accountInformation.ID ) {
+			throw new Error( `Failed to close account: target account user ID did not match.` );
+		}
+
+		if ( username !== accountInformation.username ) {
+			throw new Error( `Failed to close account: target account username did not match.` );
+		}
+
+		if ( email !== accountInformation.email ) {
+			throw new Error( `Failed to close account: target account email did not match.` );
+		}
+
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		return await this.sendRequest( this.getRequestURL( '1.1', '/me/account/close' ), params );
+	}
+
+	/**
+	 *
+	 */
+	async getCalypsoPreferences(): Promise< CalypsoPreferencesResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		return await this.sendRequest( this.getRequestURL( '1.1', '/me/preferences' ), params );
 	}
 }
