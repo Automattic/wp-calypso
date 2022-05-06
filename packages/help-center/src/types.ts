@@ -25,7 +25,9 @@ export interface SuccessScreenProps {
 }
 
 export interface SitePicker {
-	selectedSiteId: number | undefined;
-	onSetSelectedSiteId: React.Dispatch< React.SetStateAction< number | undefined > >;
-	siteId: number | null;
+	onSelect: ( siteId: number | string ) => void;
+	siteId: string | number | null | undefined;
 }
+
+// ended means the user closed the popup
+export type WindowState = 'open' | 'closed' | 'blurred' | 'ended';

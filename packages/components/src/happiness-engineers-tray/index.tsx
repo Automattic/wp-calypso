@@ -4,13 +4,13 @@ import { Gravatar } from '../gravatar';
 
 import './style.scss';
 
-export const HappinessEngineersTray = ( { count = 5 } ) => {
+export const HappinessEngineersTray = ( { count = 5, shuffled = true } ) => {
 	const { data } = useHappinessEngineersQuery();
 
 	return (
 		<div className="happiness-engineers-tray">
 			{ data &&
-				shuffle( data )
+				( shuffled ? shuffle( data ) : data )
 					.slice( 0, count )
 					.map( ( user ) => (
 						<Gravatar

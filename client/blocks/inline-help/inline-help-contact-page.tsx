@@ -3,10 +3,9 @@ import { useSupportAvailability } from '@automattic/data-stores';
 import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import InlineHelpSearchResults from './inline-help-search-results';
 import Mail from './mail-icon';
-
 interface Props {
 	closeContactPage: () => void;
 	onSelectResource: () => void;
