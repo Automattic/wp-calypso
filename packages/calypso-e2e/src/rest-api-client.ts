@@ -48,13 +48,13 @@ export class RestAPIClient {
 	 * Returns the bearer token for the user.
 	 *
 	 * If the token has been previously obtained, this method returns the value.
-	 * Otherwise, an API call is made to obtain the bearer token.
+	 * Otherwise, an API call is made to obtain the bearer token and the resulting value is returned
 	 *
 	 * @returns {Promise<string>} String representing the bearer token.
 	 */
-	async getBearerToken(): Promise< void > {
-		if ( ! this.bearerToken === null ) {
-			return;
+	private async getBearerToken(): Promise< string > {
+		if ( this.bearerToken !== null ) {
+			return this.bearerToken;
 		}
 
 		// Bearer Token generation is done via a URL query param.
@@ -71,8 +71,8 @@ export class RestAPIClient {
 			body: params,
 		} );
 
-		console.log( response );
 		this.bearerToken = response.data.bearer_token;
+		return this.bearerToken;
 	}
 
 	/* Request builder methods */
@@ -80,15 +80,15 @@ export class RestAPIClient {
 	/**
 	 * Returns the appropriate authorization header.
 	 *
-	 * @returns {string} Authorization header in the requested scheme.
+	 * @returns {Promise<string>} Authorization header in the requested scheme.
 	 * @throws {Error} If a scheme not yet implemented is requested.
 	 */
-	private getAuthorizationHeader( scheme: 'bearer' ): string {
+	private async getAuthorizationHeader( scheme: 'bearer' ): Promise< string > {
 		if ( scheme === 'bearer' ) {
-			return `Bearer ${ this.bearerToken }`;
+			return `Bearer ${ await this.getBearerToken() }`;
 		}
 
-		throw new Error( 'Authorization scheme not yet implemented.' );
+		throw new Error( 'Unsupported authorization scheme specified.' );
 	}
 
 	/**
@@ -108,7 +108,7 @@ export class RestAPIClient {
 	 * @returns {URL} Full URL to the endpoint.
 	 */
 	private getRequestURL( version: EndpointVersions, endpoint: string ): URL {
-		const path = `/rest/${ version }/${ endpoint }`.replace( /([^:]\/)\/+/g, '$1' );
+		const path = `/rest/v${ version }/${ endpoint }`.replace( /([^:]\/)\/+/g, '$1' );
 		return new URL( path, REST_API_BASE_URL );
 	}
 
@@ -142,7 +142,7 @@ export class RestAPIClient {
 		const params: RequestParams = {
 			method: 'get',
 			headers: {
-				Authorization: this.getAuthorizationHeader( 'bearer' ),
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
 				'Content-Type': this.getContentTypeHeader( 'json' ),
 			},
 		};
