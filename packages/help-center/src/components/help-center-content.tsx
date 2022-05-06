@@ -7,7 +7,7 @@ const HelpCenterContent: React.FC< Content > = ( { content, isMinimized } ) => {
 
 	return (
 		<CardBody hidden={ isMinimized } className={ className }>
-			<div>{ content }</div>
+			{ content }
 		</CardBody>
 	);
 };

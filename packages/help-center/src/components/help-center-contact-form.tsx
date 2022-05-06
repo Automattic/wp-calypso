@@ -6,16 +6,20 @@ import { SitePickerDropDown } from '@automattic/site-picker';
 import { TextareaControl, TextControl, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
+import { STORE_KEY } from '../store';
+import { SitePicker } from '../types';
+import InlineChat from './help-center-inline-chat';
 /**
  * Internal Dependencies
  */
-import { STORE_KEY } from '../store';
-import { SitePicker } from '../types';
 import type { SitePickerSite } from '@automattic/site-picker';
 
 import './help-center-contact-form.scss';
 
 export const SITE_STORE = 'automattic/site';
+
+const thirdPartyCookiesAvailable = true;
 
 const HelpCenterSitePicker: React.FC< SitePicker > = ( { onSelect, siteId } ) => {
 	const site: SitePickerSite | undefined | null = useSelect( ( select ) => {
@@ -37,6 +41,10 @@ const HelpCenterSitePicker: React.FC< SitePicker > = ( { onSelect, siteId } ) =>
 	}
 
 	if ( ! site ) {
+		return null;
+	}
+
+	if ( ! siteId && siteId !== 0 ) {
 		return null;
 	}
 
@@ -108,7 +116,8 @@ function openPopup( event: React.MouseEvent< HTMLButtonElement > ): Window {
 	return popup;
 }
 
-const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onPopupOpen } ) => {
+const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
+	const [ openChat, setOpenChat ] = useState( false );
 	const { siteId, subject, message, otherSiteURL } = useSelect( ( select ) => {
 		return {
 			siteId: select( STORE_KEY ).getSiteId(),
@@ -125,12 +134,18 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onPopup
 	function handleCTA( event: React.MouseEvent< HTMLButtonElement > ) {
 		switch ( mode ) {
 			case 'CHAT': {
-				const popup = openPopup( event );
-				setPopup( popup );
-				onPopupOpen?.();
-				break;
+				if ( thirdPartyCookiesAvailable ) {
+					setOpenChat( true );
+					break;
+				} else {
+					const popup = openPopup( event );
+					setPopup( popup );
+				}
 			}
 		}
+	}
+	if ( openChat ) {
+		return <InlineChat />;
 	}
 
 	return (

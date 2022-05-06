@@ -23,10 +23,10 @@ const HelpCenterMobileHeader: React.FC< Header > = ( {
 	const popup = useSelect( ( select ) => select( STORE_KEY ).getPopup() );
 
 	useEffect( () => {
-		if ( chatWindowStatus === 'open' ) {
+		if ( chatWindowStatus === 'open' && popup ) {
 			onMinimize?.();
 		}
-	}, [ chatWindowStatus, onMinimize ] );
+	}, [ chatWindowStatus, onMinimize, popup ] );
 
 	// if the chat is open in a popup, and the user tried to maximize the help-center
 	// show them the popup instead

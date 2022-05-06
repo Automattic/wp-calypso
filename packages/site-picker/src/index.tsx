@@ -72,7 +72,7 @@ export type SitePickerSite = {
 };
 
 export type Props = {
-	siteId: number | undefined | null;
+	siteId: string | number | undefined | null;
 	options: SitePickerSite[];
 	onPickSite: ( siteId: number ) => void;
 };
