@@ -2,13 +2,13 @@ import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import { BackButton } from './back-button';
 import { SuccessIcon } from './success-icon';
-import type { SuccessScreenProps } from './types';
+import type { SuccessScreenProps } from '../types';
 
 export const SuccessScreen: React.FC< SuccessScreenProps > = ( { onBack } ) => {
 	const { __ } = useI18n();
 
 	return (
-		<>
+		<div>
 			<BackButton onClick={ onBack } />
 			<div className="ticket-success-screen__help-center">
 				<SuccessIcon />
@@ -22,6 +22,6 @@ export const SuccessScreen: React.FC< SuccessScreenProps > = ( { onBack } ) => {
 					) }
 				</p>
 			</div>
-		</>
+		</div>
 	);
 };

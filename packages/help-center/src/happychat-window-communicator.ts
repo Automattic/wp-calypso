@@ -61,5 +61,14 @@ export function useHCWindowCommunicator(
 		return () => {
 			window.removeEventListener( 'message', messageHandler, false );
 		};
-	}, [ onStateChange, onUnreadChange, siteId, subject, message, otherSiteURL, planSlug ] );
+	}, [
+		onStateChange,
+		onUnreadChange,
+		siteId,
+		subject,
+		message,
+		otherSiteURL,
+		planSlug,
+		resetPopup,
+	] );
 }

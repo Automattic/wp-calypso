@@ -1,20 +1,23 @@
 /**
  * External Dependencies
  */
-import { Button, Gridicon, HappinessEngineersTray } from '@automattic/components';
-import { useHas3PC } from '@automattic/data-stores';
+import { Button, HappinessEngineersTray } from '@automattic/components';
+import { useHas3PC, useSubmitTicketMutation } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown } from '@automattic/site-picker';
 import { TextareaControl, TextControl, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
-import { STORE_KEY } from '../store';
-import { SitePicker } from '../types';
-import InlineChat from './help-center-inline-chat';
 /**
  * Internal Dependencies
  */
 import './help-center-contact-form.scss';
+import { useState } from 'react';
+import { STORE_KEY } from '../store';
+import { SitePicker } from '../types';
+import { BackButton } from './back-button';
+import InlineChat from './help-center-inline-chat';
+import { SuccessScreen } from './ticket-success-screen';
 
 export const SITE_STORE = 'automattic/site';
 
@@ -104,6 +107,9 @@ function openPopup( event: React.MouseEvent< HTMLButtonElement > ): Window {
 
 const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
 	const [ openChat, setOpenChat ] = useState( false );
+	const [ contactSuccess, setContactSuccess ] = useState( false );
+	const locale = useLocale();
+	const { isLoading: submittingTicket, mutateAsync } = useSubmitTicketMutation();
 	const { siteId, subject, message, otherSiteURL } = useSelect( ( select ) => {
 		return {
 			siteId: select( STORE_KEY ).getSiteId(),
@@ -112,7 +118,9 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
 			otherSiteURL: select( STORE_KEY ).getOtherSiteURL(),
 		};
 	} );
-	const { hasCookies, isLoading } = useHas3PC();
+	const { hasCookies, isLoading: loadingCookies } = useHas3PC();
+
+	const isLoading = loadingCookies || submittingTicket;
 
 	const { setSiteId, setOtherSiteURL, setSubject, setMessage, setPopup } = useDispatch( STORE_KEY );
 
@@ -129,19 +137,29 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
 					setPopup( popup );
 				}
 			}
+			case 'EMAIL': {
+				mutateAsync( {
+					subject: subject ?? '',
+					message: message ?? '',
+					locale,
+					client: 'browser:help-center',
+					is_chat_overflow: false,
+				} ).then( () => setContactSuccess( true ) );
+			}
 		}
 	}
 	if ( openChat ) {
 		return <InlineChat />;
 	}
 
+	if ( contactSuccess ) {
+		return <SuccessScreen onBack={ onBackClick } />;
+	}
+
 	return (
 		<main className="help-center-contact-form">
 			<header>
-				<Button borderless={ true } onClick={ onBackClick }>
-					<Gridicon icon={ 'chevron-left' } size={ 18 } />
-					{ __( 'Back', 'full-site-editing' ) }
-				</Button>
+				<BackButton onClick={ onBackClick } />
 			</header>
 			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
 			{ formTitles.formDisclaimer && (

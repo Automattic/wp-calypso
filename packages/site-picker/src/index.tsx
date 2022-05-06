@@ -126,13 +126,15 @@ export const SitePickerDropDown: FC< Props > = ( { siteId, options, onPickSite }
 					<div ref={ ( r ) => r !== ref && setRef( r ) } className="site-picker__site-drawer">
 						{ options.map( ( option, index ) => (
 							<SitePickerItem
-								host={ option?.URL?.replace( 'https://', '' ) }
+								host={ option?.URL?.replace( 'https://', '' ) ?? '' }
 								name={ option?.name ?? '' }
 								open={ open }
 								logo={ option?.logo }
 								onClick={ () => {
-									onPickSite( option.ID );
-									setOpen( false );
+									if ( option ) {
+										onPickSite( option?.ID );
+										setOpen( false );
+									}
 								} }
 								selected={ option?.ID === siteId }
 								id={ `site-picker-button-item-${ index }` }
