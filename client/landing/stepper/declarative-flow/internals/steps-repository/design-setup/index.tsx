@@ -249,11 +249,11 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		setIsPreviewingDesign( false );
 	};
 
-	function previewStaticDesign() {
-		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
-		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
-		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
-		const previewUrl = getDesignPreviewUrl( selectedDesign, {
+	function previewStaticDesign( design: Design ) {
+		const isBlankCanvas = isBlankCanvasDesign( design );
+		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : design.title;
+		const shouldUpgrade = design.is_premium && ! isPremiumThemeAvailable;
+		const previewUrl = getDesignPreviewUrl( design, {
 			language: locale,
 			// If the user fills out the site title with write intent, we show it on the design preview
 			siteTitle: intent === 'write' ? siteTitle : undefined,
@@ -310,11 +310,11 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		);
 	}
 
-	function previewGeneratedDesign() {
+	function previewGeneratedDesign( design: Design ) {
 		const stepContent = (
 			<GeneratedDesignPreview
-				slug={ selectedDesign.slug }
-				previewUrl={ getDesignPreviewUrl( selectedDesign, { language: locale } ) }
+				slug={ design.slug }
+				previewUrl={ getDesignPreviewUrl( design, { language: locale } ) }
 			/>
 		);
 
@@ -338,11 +338,11 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	if ( selectedDesign && isPreviewingDesign ) {
 		if ( showGeneratedDesigns && isMobile ) {
-			return previewGeneratedDesign();
+			return previewGeneratedDesign( selectedDesign );
 		}
 
 		if ( ! showGeneratedDesigns ) {
-			return previewStaticDesign();
+			return previewStaticDesign( selectedDesign );
 		}
 	}
 
