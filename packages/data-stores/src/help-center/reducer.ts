@@ -1,4 +1,5 @@
 import { combineReducers } from '@wordpress/data';
+import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
 import type { Reducer } from 'redux';
 
@@ -10,12 +11,9 @@ const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
-const siteId: Reducer< string | number | undefined, HelpCenterAction > = (
-	state = window._currentSiteId,
-	action
-) => {
-	if ( action.type === 'HELP_CENTER_SET_SITE_ID' ) {
-		return action.siteId;
+const site: Reducer< SiteDetails | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_SITE' ) {
+		return action.site;
 	}
 	return state;
 };
@@ -34,9 +32,18 @@ const message: Reducer< string | undefined, HelpCenterAction > = ( state, action
 	return state;
 };
 
-const otherSiteURL: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
-	if ( action.type === 'HELP_CENTER_SET_OTHER_SITE_URL' ) {
+const userDeclaredSiteUrl: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_USER_DECLARED_SITE_URL' ) {
 		return action.url;
+	}
+	return state;
+};
+const userDeclaredSite: Reducer< SiteDetails | undefined, HelpCenterAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'HELP_CENTER_SET_USER_DECLARED_SITE' ) {
+		return action.site;
 	}
 	return state;
 };
@@ -52,10 +59,11 @@ const popup: Reducer< Window | undefined, HelpCenterAction > = ( state, action )
 
 const reducer = combineReducers( {
 	showHelpCenter,
-	siteId,
+	site,
 	subject,
 	message,
-	otherSiteURL,
+	userDeclaredSite,
+	userDeclaredSiteUrl,
 	popup,
 } );
 

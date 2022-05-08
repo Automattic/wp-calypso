@@ -26,7 +26,7 @@ const InlineHelpCenterContent = ( {
 	);
 	const secondaryViewRef = useRef();
 
-	//prefetch the values
+	// prefetch the values
 	useSupportAvailability( 'CHAT' );
 	useSupportAvailability( 'EMAIL' );
 

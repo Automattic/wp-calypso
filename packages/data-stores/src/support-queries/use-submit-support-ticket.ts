@@ -9,7 +9,13 @@ type Ticket = {
 	is_chat_overflow: boolean;
 };
 
-export function useSubmitTicketMutation() {
+// for some reason, useMutation isn't returning mutateAsync, this is a bandage for that
+type MutationResult = {
+	isLoading: boolean;
+	mutateAsync: ( ticket: Ticket ) => Promise< void >;
+};
+
+export function useSubmitTicketMutation(): MutationResult {
 	return useMutation( ( newTicket: Ticket ) =>
 		wpcomRequest( {
 			path: '/help/tickets/kayako/new',
@@ -17,5 +23,5 @@ export function useSubmitTicketMutation() {
 			method: 'POST',
 			body: newTicket,
 		} )
-	);
+	) as unknown as MutationResult;
 }
