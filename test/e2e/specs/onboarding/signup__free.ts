@@ -81,7 +81,7 @@ skipDescribeIf( isStagingOrProd )(
 			} );
 
 			it( 'Enter blog name', async function () {
-				await startSiteFlow.enterBlogName( blogName );
+				await startSiteFlow.enterSiteName( blogName );
 			} );
 
 			it( 'Enter tagline', async function () {

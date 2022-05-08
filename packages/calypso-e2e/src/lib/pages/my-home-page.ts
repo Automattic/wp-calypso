@@ -2,6 +2,7 @@ import { Page } from 'playwright';
 
 const selectors = {
 	visitSiteButton: '.button >> text=Visit site',
+	myHomeContainer: '.customer-home__main',
 
 	// Task card (topmost card)
 	taskHeadingMessage: ( message: string ) => `div.task h2:has-text("${ message }")`,
@@ -42,5 +43,12 @@ export class MyHomePage {
 	 */
 	async validateTaskHeadingMessage( message: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.taskHeadingMessage( message ) );
+	}
+
+	/**
+	 * Validates we've landed on the home page.
+	 */
+	async validateOnMyHomePage(): Promise< void > {
+		await this.page.waitForSelector( selectors.myHomeContainer );
 	}
 }

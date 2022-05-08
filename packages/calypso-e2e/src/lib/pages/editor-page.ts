@@ -126,6 +126,13 @@ export class EditorPage {
 	}
 
 	/**
+	 * Validates we've landed on the editor page after navigation.
+	 */
+	async validateOnEditorPage(): Promise< void > {
+		await this.page.waitForSelector( selectors.editorFrame );
+	}
+
+	/**
 	 * Return the editor frame. Could be the top-level frame (i.e WPAdmin).
 	 * an iframe (Calypso/Gutenframe).
 	 *

@@ -12,6 +12,8 @@ const selectors = {
 	launchSiteButton: 'a:text("Launch site")',
 
 	// Site Tools
+	siteSearchInput: `input[type="search"]`,
+	confirmSiteLink: ( title: string ) => `a[title="${ title }"]`,
 	deleteSiteLinkItem: `p:text-is("Delete your site permanently")`,
 	deleteSiteConfirmInput: `input[id="confirmDomainChangeInput"]`,
 	deleteSiteConfirmationSpan: 'span:has-text("is being deleted")',
@@ -40,6 +42,24 @@ export class GeneralSettingsPage {
 			this.page.waitForNavigation(),
 			this.page.click( selectors.launchSiteButton ),
 		] );
+	}
+
+	/**
+	 * Given title, clicks on the first instance of the link with the text.
+	 *
+	 * @param {string} title User-visible text on the button.
+	 */
+	async clickConfirmSiteLink( title: string ): Promise< void > {
+		await this.page.click( selectors.confirmSiteLink( title ) );
+	}
+
+	/**
+	 * Given text, clicks on the first instance of the link with the text.
+	 *
+	 * @param {string} url URL of the site to be deleted.
+	 */
+	async confirmSiteToDelete( url: string ): Promise< void > {
+		await this.page.fill( selectors.siteSearchInput, url );
 	}
 
 	/**

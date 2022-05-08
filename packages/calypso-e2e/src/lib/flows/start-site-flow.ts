@@ -7,7 +7,7 @@ const selectors = {
 	backLink: 'button:text("Back")',
 
 	// Inputs
-	blogNameInput: 'input#siteTitle:not(:disabled)',
+	siteTitleInput: 'input#siteTitle:not(:disabled)',
 	taglineInput: 'input#tagline:not(:disabled)',
 
 	// Themes
@@ -17,6 +17,14 @@ const selectors = {
 	previewThemeButtonMobile: ( name: string ) =>
 		`button.design-picker__design-option:has-text("${ name }")`,
 	themePreviewIframe: 'iframe[title=Preview]',
+	startWithThemeButton: ( name: string ) => `button:has-text("Start with ${ name }")`,
+
+	// Store
+	storeFeaturesContainer: 'div.signup__step.is-store-features',
+	wooCommerceSignupContainer: '.signup.is-woocommerce-install',
+
+	// Blog
+	coursesContianer: 'div.signup__step.is-courses',
 };
 
 /**
@@ -44,21 +52,42 @@ export class StartSiteFlow {
 	}
 
 	/**
-	 * Enter blog name.
+	 * Enter optional site title.
 	 *
-	 * @param {string} name Name for the blog.
+	 * @param {string} name Name for the blog or store.
 	 */
-	async enterBlogName( name: string ): Promise< void > {
-		await this.page.fill( selectors.blogNameInput, name );
+	async enterSiteName( name: string ): Promise< void > {
+		await this.page.fill( selectors.siteTitleInput, name );
 	}
 
 	/**
-	 * Enter blog tagline.
+	 * Enter optional tagline.
 	 *
-	 * @param {string} tagline Tagline for the blog.
+	 * @param {string} tagline Tagline for the blog or store flow.
 	 */
 	async enterTagline( tagline: string ): Promise< void > {
 		await this.page.fill( selectors.taglineInput, tagline );
+	}
+
+	/**
+	 * Validates we've landed on the courses screen.
+	 */
+	async validateOnCoursesScreen(): Promise< void > {
+		await this.page.waitForSelector( selectors.coursesContianer );
+	}
+
+	/**
+	 * Validates we've landed on the store features screen.
+	 */
+	async validateOnStoreFeaturesScreen(): Promise< void > {
+		await this.page.waitForSelector( selectors.storeFeaturesContainer );
+	}
+
+	/**
+	 * Validates we've landed on the WooCommerce signup screen.
+	 */
+	async validateOnWooCommerceScreen(): Promise< void > {
+		await this.page.waitForSelector( selectors.wooCommerceSignupContainer );
 	}
 
 	/**
@@ -97,5 +126,20 @@ export class StartSiteFlow {
 	async getThemePreviewIframe(): Promise< Frame > {
 		const elementHandle = await this.page.waitForSelector( selectors.themePreviewIframe );
 		return ( await elementHandle.contentFrame() ) as Frame;
+	}
+
+	/**
+	 * Clicks button to select a specific theme from theme selection screen.
+	 *
+	 * @param {string} themeName Name of theme, e.g. "Zoologist".
+	 */
+	async selectTheme( themeName: string ): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+			await this.page.hover( selectors.individualThemeContainer( themeName ) );
+			await this.page.click( selectors.startWithThemeButton( themeName ) );
+		} else {
+			await this.page.click( selectors.previewThemeButtonMobile( themeName ) );
+			await this.page.click( selectors.startWithThemeButton( themeName ) );
+		}
 	}
 }
