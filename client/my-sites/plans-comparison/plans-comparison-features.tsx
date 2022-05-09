@@ -162,8 +162,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 				if (
 					isLegacySiteWithHigherLimits &&
 					feature &&
-					[ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE ].includes( feature ) &&
-					Number( legacyStorageSize ) > Number( storageSize )
+					[ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE ].includes( feature )
 				) {
 					return translate(
 						'{{del}}%(originalStorage)sGB of storage{{/del}} %(modifiedStorage)sGB on this site',
@@ -187,8 +186,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if (
 				isLegacySiteWithHigherLimits &&
 				feature &&
-				[ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE ].includes( feature ) &&
-				Number( legacyStorageSize ) > Number( storageSize )
+				[ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE ].includes( feature )
 			) {
 				return translate(
 					'{{del}}%(originalStorage)sGB{{/del}} %(modifiedStorage)sGB on this site',
