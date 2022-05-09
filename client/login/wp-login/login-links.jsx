@@ -269,7 +269,7 @@ export class LoginLinks extends Component {
 			twoFactorAuthType: 'qr',
 			signupUrl: this.props.query?.signup_url,
 		} );
-		return <a href={ loginUrl }>{ this.props.translate( 'Login via the Mobile App' ) }</a>;
+		return <a href={ loginUrl }>{ this.props.translate( 'Login via the mobile app' ) }</a>;
 	}
 
 	renderResetPasswordLink() {
