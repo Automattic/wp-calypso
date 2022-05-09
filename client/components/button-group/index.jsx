@@ -10,7 +10,7 @@ const ButtonGroup = ( { busy = false, children, className = '', primary = false 
 	} );
 
 	return (
-		<span className={ buttonGroupClasses } role="button">
+		<span className={ buttonGroupClasses } role="group">
 			{ children }
 		</span>
 	);
