@@ -6,8 +6,6 @@ import {
 	LatestAtomicTransferError,
 	AtomicSoftwareStatusError,
 	AtomicSoftwareInstallError,
-	HappyChatAvailability,
-	EmailSupportAvailability,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import type {
@@ -45,16 +43,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	const receiveNewSiteFailed = ( error: NewSiteErrorResponse ) => ( {
 		type: 'RECEIVE_NEW_SITE_FAILED' as const,
 		error,
-	} );
-
-	const receiveHappyChatAvailability = ( availability: HappyChatAvailability ) => ( {
-		type: 'RECEIVE_HAPPY_CHAT_AVAILABILITY' as const,
-		availability,
-	} );
-
-	const receiveEmailSupportAvailability = ( availability: EmailSupportAvailability ) => ( {
-		type: 'RECEIVE_EMAIL_SUPPORT_AVAILABILITY' as const,
-		availability,
 	} );
 
 	function* createSite( params: CreateSiteParams ) {
@@ -184,6 +172,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		settings,
 	} );
 
+	const updateSiteSettings = ( siteId: number, settings: SiteSettings ) => ( {
+		type: 'UPDATE_SITE_SETTINGS' as const,
+		siteId,
+		settings,
+	} );
+
 	function* setCart( siteId: number, cartData: Cart ) {
 		const success: Cart = yield wpcomRequest( {
 			path: '/me/shopping-cart/' + siteId,
@@ -200,6 +194,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			blogname?: string;
 			blogdescription?: string;
 			site_vertical_id?: string;
+			woocommerce_store_address?: string;
+			woocommerce_store_address_2?: string;
+			woocommerce_store_city?: string;
+			woocommerce_store_postcode?: string;
+			woocommerce_defaut_country?: string;
 			woocommerce_onboarding_profile?: { [ key: string ]: any };
 		}
 	) {
@@ -220,6 +219,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			if ( 'site_vertical_id' in settings ) {
 				yield receiveSiteVerticalId( siteId, settings.site_vertical_id );
 			}
+			yield updateSiteSettings( siteId, settings );
 		} catch ( e ) {}
 	}
 
@@ -466,9 +466,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveSite,
 		receiveSiteFailed,
 		receiveSiteTagline,
-		receiveEmailSupportAvailability,
-		receiveHappyChatAvailability,
 		receiveSiteVerticalId,
+		updateSiteSettings,
 		saveSiteTagline,
 		reset,
 		launchSite,
@@ -511,10 +510,9 @@ export type Action =
 			| ActionCreators[ 'receiveNewSiteFailed' ]
 			| ActionCreators[ 'receiveSiteTagline' ]
 			| ActionCreators[ 'receiveSiteVerticalId' ]
-			| ActionCreators[ 'receiveEmailSupportAvailability' ]
-			| ActionCreators[ 'receiveHappyChatAvailability' ]
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]
+			| ActionCreators[ 'updateSiteSettings' ]
 			| ActionCreators[ 'reset' ]
 			| ActionCreators[ 'resetNewSiteFailed' ]
 			| ActionCreators[ 'launchSiteStart' ]

@@ -1,3 +1,4 @@
+import { TestAccountName } from '../../secrets';
 import defaultCriteria from './criteria-for-test-accounts';
 import type { SupportedEnvVariables } from '../../env-variables';
 
@@ -17,8 +18,8 @@ export type FeatureKey = { [ key in Feature ]?: Env | undefined } & {
 	siteType: SiteType;
 	variant?: Variant;
 };
-export type FeatureCriteria = FeatureKey & { accountName: string };
-type FeatureMap = Map< string, string >;
+export type FeatureCriteria = FeatureKey & { accountName: TestAccountName };
+type FeatureMap = Map< string, TestAccountName >;
 
 /**
  * Sort the keys of the `FeatureKey` structure and finally converts it
@@ -71,7 +72,7 @@ const defaultAccountsTable = criteriaToMap( defaultCriteria, new Map() );
  * be merged into the default one. Useful to do one-off criteria->account overrides for
  * specifis tests inline. The entries passed here will replace any matched (by key) entries
  * in the default table.
- * @returns {string} the account name that can be used to build a new `TestAccount` instance.
+ * @returns {TestAccountName} the account name that can be used to build a new `TestAccount` instance.
  */
 export function getTestAccountByFeature(
 	feature: FeatureKey,

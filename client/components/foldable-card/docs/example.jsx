@@ -15,6 +15,25 @@ export default class FoldableCardExample extends PureComponent {
 				</div>
 
 				<div>
+					<FoldableCard
+						header="This is a foldable card with a really long header content area that might wrap depending on the page width of the browser being used to view this page when the summary area is not hidden."
+						screenReaderText="More"
+					>
+						These are the card's contents.
+					</FoldableCard>
+				</div>
+
+				<div>
+					<FoldableCard
+						header="This is a foldable card with a really long header content area that might wrap depending on the page width of the browser being used to view this page when the summary area is hidden."
+						hideSummary
+						screenReaderText="More"
+					>
+						These are the card's contents.
+					</FoldableCard>
+				</div>
+
+				<div>
 					<FoldableCard header="This is a compact card" compact screenReaderText="More">
 						I'm tiny! :D
 					</FoldableCard>

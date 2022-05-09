@@ -13,7 +13,7 @@ import Draggable, { DraggableProps } from 'react-draggable';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
-import { Container } from './types';
+import type { Container } from '../types';
 
 interface OptionalDraggableProps extends Partial< DraggableProps > {
 	draggable: boolean;

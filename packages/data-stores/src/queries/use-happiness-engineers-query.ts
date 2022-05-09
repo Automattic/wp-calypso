@@ -13,5 +13,6 @@ export const useHappinessEngineersQuery = () =>
 		async () => await wpcomRequest( { path: '/meta/happiness-engineers/', apiVersion: '1.1' } ),
 		{
 			refetchOnWindowFocus: false,
+			staleTime: Infinity,
 		}
 	);

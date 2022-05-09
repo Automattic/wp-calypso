@@ -5,6 +5,8 @@ import {
 	SITES_BLOG_STICKER_LIST_RECEIVE,
 } from 'calypso/state/action-types';
 
+import 'calypso/state/blog-stickers/init';
+
 import 'calypso/state/data-layer/wpcom/sites/blog-stickers';
 import 'calypso/state/data-layer/wpcom/sites/blog-stickers/add';
 import 'calypso/state/data-layer/wpcom/sites/blog-stickers/remove';

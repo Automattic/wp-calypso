@@ -96,6 +96,7 @@ export interface SiteDetails {
 	jetpack: boolean;
 	is_fse_eligible: boolean;
 	is_fse_active: boolean;
+	logo: { id: string; sizes: string[]; url: string };
 	options: {
 		admin_url?: string;
 		advanced_seo_front_page_description?: string;
@@ -390,30 +391,4 @@ export interface AtomicSoftwareInstallError {
 	status: number;
 	message: string;
 	code: string;
-}
-
-interface Availability {
-	presale: boolean;
-	precancellation: boolean;
-}
-export interface HappyChatAvailability {
-	locale: string;
-	isUserEligible: boolean;
-	supportLevel:
-		| 'free'
-		| 'personal'
-		| 'personal-with-legacy-chat'
-		| 'premium'
-		| 'pro'
-		| 'business'
-		| 'ecommerce'
-		| 'jetpack-paid'
-		| 'p2-plus';
-	nickname: string;
-	isClosed: boolean;
-	availability: Availability;
-}
-
-export interface EmailSupportAvailability {
-	is_user_eligible: boolean;
 }

@@ -5,8 +5,8 @@ import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
+import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
-import { Container } from './types';
 
 import '../styles.scss';
 

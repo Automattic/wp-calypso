@@ -19,3 +19,15 @@ export interface Header {
 	onDismiss: () => void;
 	headerText: string;
 }
+
+export interface SuccessScreenProps {
+	onBack: () => void;
+}
+
+export interface SitePicker {
+	onSelect: ( siteId: number | string ) => void;
+	siteId: string | number | null | undefined;
+}
+
+// ended means the user closed the popup
+export type WindowState = 'open' | 'closed' | 'blurred' | 'ended';

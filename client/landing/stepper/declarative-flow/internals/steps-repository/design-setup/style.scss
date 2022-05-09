@@ -294,6 +294,32 @@ $design-button-primary-color: rgb( 17, 122, 201 );
  * Generated Design Picker
  */
 .design-picker__is-generated {
+	&.design-setup__preview {
+		padding: 0;
+
+		.step-container__header {
+			margin: 0;
+		}
+
+		.step-container__content {
+			height: calc( 100vh - 157px );
+			margin-top: 48px;
+			overflow: scroll;
+			padding: 0 24px;
+		}
+
+		.generated-design-preview__frame {
+			max-height: none;
+			margin-bottom: 24px;
+
+			.mshots-image__container {
+				object-fit: cover;
+				object-position: top;
+				width: 100%;
+			}
+		}
+	}
+
 	.step-container__header {
 		align-items: center;
 		display: flex;
@@ -348,14 +374,6 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			flex-direction: column;
 			row-gap: 24px;
 			margin-bottom: 162px;
-
-			> div {
-				display: none;
-
-				&:first-of-type {
-					display: block;
-				}
-			}
 		}
 	}
 

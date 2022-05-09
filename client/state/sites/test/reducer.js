@@ -36,7 +36,6 @@ describe( 'reducer', () => {
 			'plans',
 			'products',
 			'requesting',
-			'blogStickers',
 			'hasAllSitesList',
 			'features',
 			'introOffers',

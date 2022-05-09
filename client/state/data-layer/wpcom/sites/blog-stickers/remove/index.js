@@ -1,11 +1,11 @@
 import { translate } from 'i18n-calypso';
 import { SITES_BLOG_STICKER_REMOVE } from 'calypso/state/action-types';
+import { addBlogSticker } from 'calypso/state/blog-stickers/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, plainNotice } from 'calypso/state/notices/actions';
-import { addBlogSticker } from 'calypso/state/sites/blog-stickers/actions';
 
 export const requestBlogStickerRemove = ( action ) =>
 	http(

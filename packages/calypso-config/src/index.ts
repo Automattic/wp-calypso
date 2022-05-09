@@ -72,9 +72,13 @@ if (
 		applyFlags( cookies.flags, 'cookie' );
 	}
 
-	const session = window.sessionStorage.getItem( 'flags' );
-	if ( session ) {
-		applyFlags( session, 'sessionStorage' );
+	try {
+		const session = window.sessionStorage.getItem( 'flags' );
+		if ( session ) {
+			applyFlags( session, 'sessionStorage' );
+		}
+	} catch ( e ) {
+		// in private context, accessing session storage can throw
 	}
 
 	const match =

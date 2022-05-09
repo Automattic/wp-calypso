@@ -1,5 +1,4 @@
 import { combineReducers } from '@wordpress/data';
-import { StoreAddress } from '../shared-types';
 import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
@@ -252,27 +251,6 @@ const storeType: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
-const storeAddress: Reducer< StoreAddress, OnboardAction > = (
-	state = {
-		store_address_1: '',
-		store_address_2: '',
-		store_city: '',
-		store_postcode: '',
-		store_country: '',
-	},
-	action
-) => {
-	if ( action.type === 'SET_STORE_ADDRESS_VALUE' ) {
-		const { store_address_field, store_address_value } = action;
-
-		return {
-			...state,
-			[ store_address_field ]: store_address_value,
-		};
-	}
-	return state;
-};
-
 const pendingAction: Reducer< undefined | ( () => Promise< any > ), OnboardAction > = (
 	state,
 	action
@@ -329,7 +307,6 @@ const reducer = combineReducers( {
 	lastLocation,
 	intent,
 	startingPoint,
-	storeAddress,
 	pendingAction,
 	progress,
 	progressTitle,

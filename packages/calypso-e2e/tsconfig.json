@@ -4,6 +4,6 @@
 		"outDir": "dist/esm",
 		"declarationDir": "dist/types"
 	},
-	"include": [ "src", "test" ],
+	"include": [ "src", "test", "src/secrets/decrypted-secrets.json" ],
 	"references": [ { "path": "../languages" } ]
 }

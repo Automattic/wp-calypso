@@ -1,4 +1,3 @@
-import { includes, concat, compact, reject } from 'lodash';
 import {
 	SITES_BLOG_STICKER_LIST_RECEIVE,
 	SITES_BLOG_STICKER_ADD,
@@ -18,26 +17,26 @@ export const items = ( state = {}, action ) => {
 			const { blogId, stickerName } = action.payload;
 
 			// If the blog already has this sticker, do nothing
-			if ( includes( state[ blogId ], stickerName ) ) {
+			if ( state[ blogId ] && Object.values( state[ blogId ] ).includes( stickerName ) ) {
 				return state;
 			}
 
 			return {
 				...state,
-				[ blogId ]: compact( concat( stickerName, state[ blogId ] ) ),
+				[ blogId ]: [ stickerName, ...( state[ blogId ] ?? [] ) ].filter( Boolean ),
 			};
 		}
 		case SITES_BLOG_STICKER_REMOVE: {
 			const { blogId, stickerName } = action.payload;
 
 			// If the blog doesn't have this sticker, do nothing
-			if ( ! includes( state[ blogId ], stickerName ) ) {
+			if ( ! state[ blogId ] || ! Object.values( state[ blogId ] ).includes( stickerName ) ) {
 				return state;
 			}
 
 			return {
 				...state,
-				[ blogId ]: reject( state[ blogId ], ( sticker ) => sticker === stickerName ),
+				[ blogId ]: state[ blogId ].filter( ( sticker ) => sticker !== stickerName ),
 			};
 		}
 	}
