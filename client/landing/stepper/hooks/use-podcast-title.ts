@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { ONBOARD_STORE } from '../stores';
 import { useAnchorFmParams } from './use-anchor-fm-params';
 
-export function usePodcastTitle(): string | null {
+export default function usePodcastTitle(): string | null {
 	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 	const { anchorFmPodcastId } = useAnchorFmParams();
