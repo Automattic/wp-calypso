@@ -166,7 +166,6 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan?.product_slug ?? '' }`
 		),
-		productName,
 		description: __( 'Upgrade to the Pro plan and set up your WooCommerce store.' ),
 	};
 
