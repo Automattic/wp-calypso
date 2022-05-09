@@ -14,13 +14,7 @@ type Response = {
 	topic_URL: string;
 };
 
-// for some reason, useMutation isn't returning mutateAsync in its type, this is a bandage for that
-type MutationResult = {
-	isLoading: boolean;
-	mutateAsync: ( topic: ForumTopic ) => Promise< Response >;
-};
-
-export function useSubmitForumsMutation(): MutationResult {
+export function useSubmitForumsMutation() {
 	return useMutation( ( { site, message, subject, locale, hideInfo }: ForumTopic ) => {
 		const blogHelpMessages = [ message ];
 
@@ -51,5 +45,5 @@ export function useSubmitForumsMutation(): MutationResult {
 			method: 'POST',
 			body: requestData,
 		} );
-	} ) as unknown as MutationResult;
+	} );
 }
