@@ -40,7 +40,7 @@ const VideosUi = ( {
 		recordTracksEvent( 'calypso_courses_play_click', {
 			course: course.slug,
 			video: videoSlug,
-			intent,
+			...( intent ? { intent } : [] ),
 		} );
 
 		setCurrentVideoKey( videoSlug );
@@ -92,7 +92,7 @@ const VideosUi = ( {
 		if ( course ) {
 			recordTracksEvent( 'calypso_courses_view', {
 				course: course.slug,
-				intent,
+				...( intent ? { intent } : [] ),
 			} );
 		}
 	}, [ course ] );

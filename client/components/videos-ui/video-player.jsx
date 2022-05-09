@@ -7,7 +7,7 @@ const VideoPlayer = ( {
 	course,
 	onVideoPlayStatusChanged,
 	onVideoCompleted,
-	intent,
+	intent = undefined,
 } ) => {
 	const [ shouldCheckForVideoComplete, setShouldCheckForVideoComplete ] = useState( true );
 
@@ -47,7 +47,7 @@ const VideoPlayer = ( {
 		recordTracksEvent( 'calypso_courses_video_player_play_click', {
 			course: course.slug,
 			video: videoData.slug,
-			intent,
+			...( intent ? { intent } : [] ),
 		} );
 	};
 
