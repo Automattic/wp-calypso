@@ -29,7 +29,7 @@ function isHost( string: string | undefined ) {
 }
 
 /**
- * Analyses a site to determine without its a WPCOM site, and if yes, it would give the site information (SiteDetails).
+ * Analyses a site to determine whether its a WPCOM site, and if yes, it would fetch and return the site information (SiteDetails).
  *
  * @param siteURL the site URL
  */
@@ -46,9 +46,7 @@ export function useSiteAnalysis( siteURL: string | undefined ) {
 			( async () => {
 				try {
 					const analysis = await wpcomRequest< Analysis >( {
-						path: `/imports/analyze-url?site_url=${ encodeURIComponent(
-							debouncedSiteUrl as string
-						) }`,
+						path: `/imports/analyze-url?site_url=${ encodeURIComponent( debouncedSiteUrl ) }`,
 						apiNamespace: 'wpcom/v2',
 					} );
 
