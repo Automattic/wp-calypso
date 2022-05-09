@@ -76,6 +76,7 @@ type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 interface ContactFormProps {
 	mode: Mode;
 	onBackClick: () => void;
+	onGoHome: () => void;
 	siteId: number | null;
 	onPopupOpen?: () => void;
 }
@@ -104,7 +105,7 @@ function openPopup( event: React.MouseEvent< HTMLButtonElement > ): Window {
 	return popup;
 }
 
-const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
+const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHome } ) => {
 	const [ openChat, setOpenChat ] = useState( false );
 	const [ contactSuccess, setContactSuccess ] = useState( false );
 	const [ forumTopicUrl, setForumTopicUrl ] = useState( '' );
@@ -209,13 +210,14 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
 	}
 
 	if ( contactSuccess || forumTopicUrl ) {
-		return <SuccessScreen forumTopicUrl={ forumTopicUrl } onBack={ onBackClick } />;
+		return <SuccessScreen forumTopicUrl={ forumTopicUrl } onBack={ onGoHome } />;
 	}
 
 	return (
 		<main className="help-center-contact-form">
 			<header>
-				<BackButton onClick={ onBackClick } />
+				{ /* forum users don't have other support options, send them back to home, not the support options screen */ }
+				<BackButton onClick={ mode === 'FORUM' ? onGoHome : onBackClick } />
 			</header>
 			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
 			{ formTitles.formDisclaimer && (
