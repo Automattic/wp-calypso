@@ -2,30 +2,32 @@
  * External Dependencies
  */
 import { Button, HappinessEngineersTray } from '@automattic/components';
-import { useHas3PC, useSubmitTicketMutation } from '@automattic/data-stores';
+import {
+	useHas3PC,
+	useSubmitTicketMutation,
+	useSubmitForumsMutation,
+	useSiteAnalysis,
+} from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown } from '@automattic/site-picker';
-import { TextareaControl, TextControl, CheckboxControl } from '@wordpress/components';
+import { TextControl, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 /**
  * Internal Dependencies
  */
-import './help-center-contact-form.scss';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { STORE_KEY } from '../store';
 import { SitePicker } from '../types';
 import { BackButton } from './back-button';
 import InlineChat from './help-center-inline-chat';
+import { HelpCenterOwnershipNotice } from './help-center-notice';
 import { SuccessScreen } from './ticket-success-screen';
+import './help-center-contact-form.scss';
 
 export const SITE_STORE = 'automattic/site';
 
-const HelpCenterSitePicker: React.FC< SitePicker > = ( { onSelect, siteId } ) => {
-	const currentSite = useSelect( ( select ) =>
-		select( SITE_STORE ).getSite( window._currentSiteId )
-	);
-
+const HelpCenterSitePicker: React.FC< SitePicker > = ( { onSelect, currentSite, siteId } ) => {
 	const otherSite = {
 		name: __( 'Other site', 'full-site-editing' ),
 		ID: 0,
@@ -74,12 +76,10 @@ type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 interface ContactFormProps {
 	mode: Mode;
 	onBackClick: () => void;
+	onGoHome: () => void;
 	siteId: number | null;
 	onPopupOpen?: () => void;
 }
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
 
 const POPUP_TOP_BAR_HEIGHT = 60;
 
@@ -105,46 +105,103 @@ function openPopup( event: React.MouseEvent< HTMLButtonElement > ): Window {
 	return popup;
 }
 
-const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
+const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHome } ) => {
 	const [ openChat, setOpenChat ] = useState( false );
 	const [ contactSuccess, setContactSuccess ] = useState( false );
+	const [ forumTopicUrl, setForumTopicUrl ] = useState( '' );
+	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
 	const locale = useLocale();
-	const { isLoading: submittingTicket, mutateAsync } = useSubmitTicketMutation();
-	const { siteId, subject, message, otherSiteURL } = useSelect( ( select ) => {
+	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
+	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
+	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
+		'CURRENT_SITE'
+	);
+
+	const { selectedSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
 		return {
-			siteId: select( STORE_KEY ).getSiteId(),
+			selectedSite: select( STORE_KEY ).getSite(),
 			subject: select( STORE_KEY ).getSubject(),
 			message: select( STORE_KEY ).getMessage(),
-			otherSiteURL: select( STORE_KEY ).getOtherSiteURL(),
+			userDeclaredSiteUrl: select( STORE_KEY ).getUserDeclaredSiteUrl(),
 		};
 	} );
+
+	const { setSite, setUserDeclaredSiteUrl, setUserDeclaredSite, setSubject, setMessage, setPopup } =
+		useDispatch( STORE_KEY );
+
+	const {
+		result: ownershipResult,
+		isLoading: isAnalysisLoading,
+		site: userDeclaredSite,
+	} = useSiteAnalysis( userDeclaredSiteUrl );
+
+	// record the resolved site
+	useEffect( () => {
+		if ( userDeclaredSite ) {
+			setUserDeclaredSite( userDeclaredSite );
+		}
+	}, [ userDeclaredSite, setUserDeclaredSite ] );
+
 	const { hasCookies, isLoading: loadingCookies } = useHas3PC();
 
-	const isLoading = loadingCookies || submittingTicket;
-
-	const { setSiteId, setOtherSiteURL, setSubject, setMessage, setPopup } = useDispatch( STORE_KEY );
+	const isLoading = loadingCookies || submittingTicket || submittingTopic;
 
 	const formTitles = titles[ mode ];
 
+	const currentSite = useSelect( ( select ) =>
+		select( SITE_STORE ).getSite( window._currentSiteId )
+	);
+
+	let supportSite: typeof currentSite;
+
+	// if the user picked "other site", force them to declare a site
+	if ( sitePickerChoice === 'OTHER_SITE' ) {
+		supportSite = userDeclaredSite;
+	} else {
+		supportSite = selectedSite || currentSite;
+	}
+
 	function handleCTA( event: React.MouseEvent< HTMLButtonElement > ) {
-		switch ( mode ) {
-			case 'CHAT': {
-				if ( hasCookies ) {
-					setOpenChat( true );
+		if ( supportSite ) {
+			switch ( mode ) {
+				case 'CHAT': {
+					if ( hasCookies ) {
+						setOpenChat( true );
+						break;
+					} else {
+						const popup = openPopup( event );
+						setPopup( popup );
+					}
 					break;
-				} else {
-					const popup = openPopup( event );
-					setPopup( popup );
 				}
-			}
-			case 'EMAIL': {
-				mutateAsync( {
-					subject: subject ?? '',
-					message: message ?? '',
-					locale,
-					client: 'browser:help-center',
-					is_chat_overflow: false,
-				} ).then( () => setContactSuccess( true ) );
+				case 'EMAIL': {
+					const ticketMeta = [
+						'How can you help: ' + message,
+						'Site I need help with: ' + supportSite?.URL,
+						'Plan: ' + supportSite?.plan?.product_slug,
+					];
+
+					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
+
+					submitTicket( {
+						subject: subject ?? '',
+						message: kayakoMessage,
+						locale,
+						client: 'browser:help-center',
+						is_chat_overflow: false,
+					} ).then( () => setContactSuccess( true ) );
+					break;
+				}
+				case 'FORUM': {
+					submitTopic( {
+						site: supportSite,
+						message: message ?? '',
+						subject: subject ?? '',
+						locale,
+						hideInfo: hideSiteInfo,
+					} ).then( ( response ) => setForumTopicUrl( response.topic_URL ) );
+					break;
+				}
 			}
 		}
 	}
@@ -152,14 +209,15 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
 		return <InlineChat />;
 	}
 
-	if ( contactSuccess ) {
-		return <SuccessScreen onBack={ onBackClick } />;
+	if ( contactSuccess || forumTopicUrl ) {
+		return <SuccessScreen forumTopicUrl={ forumTopicUrl } onBack={ onGoHome } />;
 	}
 
 	return (
 		<main className="help-center-contact-form">
 			<header>
-				<BackButton onClick={ onBackClick } />
+				{ /* forum users don't have other support options, send them back to home, not the support options screen */ }
+				<BackButton onClick={ mode === 'FORUM' ? onGoHome : onBackClick } />
 			</header>
 			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
 			{ formTitles.formDisclaimer && (
@@ -168,16 +226,34 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
 				</p>
 			) }
 			<section>
-				<HelpCenterSitePicker onSelect={ setSiteId } siteId={ siteId } />
+				<HelpCenterSitePicker
+					currentSite={ currentSite }
+					onSelect={ ( id: string | number ) => {
+						if ( id !== 0 ) {
+							setSite( currentSite );
+						}
+						setSitePickerChoice( id === 0 ? 'OTHER_SITE' : 'CURRENT_SITE' );
+					} }
+					siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
+				/>
 			</section>
-			{ siteId === 0 && (
-				<section>
-					<TextControl
-						label={ __( 'Site address', 'full-site-editing' ) }
-						value={ otherSiteURL ?? '' }
-						onChange={ setOtherSiteURL }
-					/>
-				</section>
+			{ sitePickerChoice === 'OTHER_SITE' && (
+				<>
+					<section>
+						<TextControl
+							label={ __( 'Site address', 'full-site-editing' ) }
+							value={ userDeclaredSiteUrl ?? '' }
+							onChange={ setUserDeclaredSiteUrl }
+						/>
+					</section>
+					{ ownershipResult && (
+						<HelpCenterOwnershipNotice
+							ownershipResult={ ownershipResult }
+							isAnalysisLoading={ isAnalysisLoading }
+							userDeclaredSite={ userDeclaredSite }
+						/>
+					) }
+				</>
 			) }
 
 			{ [ 'FORUM', 'EMAIL' ].includes( mode ) && (
@@ -191,26 +267,33 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick } ) => {
 			) }
 
 			<section>
-				<TextareaControl
+				<label
+					className="help-center-contact-form__label"
+					htmlFor="help-center-contact-form__message"
+				>
+					{ __( 'How can we help you today?', 'full-site-editing' ) }
+				</label>
+				<textarea
+					id="help-center-contact-form__message"
 					rows={ 10 }
-					label={ __( 'How can we help you today?', 'full-site-editing' ) }
 					value={ message ?? '' }
-					onChange={ setMessage }
+					onChange={ ( event ) => setMessage( event.target.value ) }
+					className="help-center-contact-form__message"
 				/>
 			</section>
 
 			{ mode === 'FORUM' && (
 				<section>
 					<CheckboxControl
-						checked
+						checked={ hideSiteInfo }
 						label={ __( 'Don’t display my site’s URL publicly', 'full-site-editing' ) }
-						onChange={ noop }
+						onChange={ ( value ) => setHideSiteInfo( value ) }
 					/>
 				</section>
 			) }
 			<section>
 				<Button
-					disabled={ isLoading }
+					disabled={ isLoading || ! supportSite || ! message }
 					onClick={ handleCTA }
 					primary
 					className="help-center-contact-form__site-picker-cta"

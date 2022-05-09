@@ -57,13 +57,6 @@ function ParentConnection( { chatStatus, timeline } ) {
 								wpcomSitePlan: message.planSlug,
 							} )
 						);
-					} else {
-						// the user needs help with another site whose ID we don't know.
-						dispatch(
-							sendEvent(
-								`Note: the user needs help with ${ message.otherSiteURL }. This URL is user-entered so it can be inaccurate or non-WPCOM at all.`
-							)
-						);
 					}
 					// send the user's message
 					dispatch( sendMessage( message.message ) );

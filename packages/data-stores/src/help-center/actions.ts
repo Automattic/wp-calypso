@@ -1,13 +1,15 @@
+import { SiteDetails } from '../site';
+
 export const setShowHelpCenter = ( show: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_SHOW',
 		show,
 	} as const );
 
-export const setSiteId = ( siteId: string | number ) =>
+export const setSite = ( site: SiteDetails | undefined ) =>
 	( {
-		type: 'HELP_CENTER_SET_SITE_ID',
-		siteId,
+		type: 'HELP_CENTER_SET_SITE',
+		site,
 	} as const );
 
 export const setSubject = ( subject: string ) =>
@@ -33,18 +35,25 @@ export const resetPopup = () =>
 		type: 'HELP_CENTER_RESET_POPUP',
 	} as const );
 
-export const setOtherSiteURL = ( url: string ) =>
+export const setUserDeclaredSiteUrl = ( url: string ) =>
 	( {
-		type: 'HELP_CENTER_SET_OTHER_SITE_URL',
+		type: 'HELP_CENTER_SET_USER_DECLARED_SITE_URL',
 		url,
+	} as const );
+
+export const setUserDeclaredSite = ( site: SiteDetails | undefined ) =>
+	( {
+		type: 'HELP_CENTER_SET_USER_DECLARED_SITE',
+		site,
 	} as const );
 
 export type HelpCenterAction = ReturnType<
 	| typeof setShowHelpCenter
-	| typeof setSiteId
+	| typeof setSite
 	| typeof setSubject
 	| typeof setMessage
-	| typeof setOtherSiteURL
+	| typeof setUserDeclaredSite
+	| typeof setUserDeclaredSiteUrl
 	| typeof resetPopup
 	| typeof setPopup
 >;

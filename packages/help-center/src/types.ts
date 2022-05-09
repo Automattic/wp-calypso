@@ -1,3 +1,4 @@
+import { SiteDetails } from '@automattic/data-stores/dist/types/site';
 import { ReactElement } from 'react';
 
 export interface Container {
@@ -22,9 +23,11 @@ export interface Header {
 
 export interface SuccessScreenProps {
 	onBack: () => void;
+	forumTopicUrl?: string;
 }
 
 export interface SitePicker {
+	currentSite: SiteDetails | undefined;
 	onSelect: ( siteId: number | string ) => void;
 	siteId: string | number | null | undefined;
 }

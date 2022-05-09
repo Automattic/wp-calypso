@@ -129,6 +129,10 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 									setOpenInContactPage( true );
 									setContactForm( null );
 								} }
+								onGoHome={ () => {
+									setOpenInContactPage( false );
+									setContactForm( null );
+								} }
 								siteId={ siteId }
 							/>
 						) : (

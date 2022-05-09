@@ -71,6 +71,10 @@ export default function Content( { selectedArticle, setSelectedArticle, setFoote
 							setOpenInContactPage( true );
 							setContactForm( null );
 						} }
+						onGoHome={ () => {
+							setOpenInContactPage( false );
+							setContactForm( null );
+						} }
 						siteId={ window._currentSiteId }
 					/>
 				) : (

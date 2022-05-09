@@ -1,6 +1,5 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
-import { SITE_STORE } from './components/help-center-contact-form';
 import { STORE_KEY } from './store';
 import type { WindowState } from './types';
 
@@ -8,20 +7,17 @@ export function useHCWindowCommunicator(
 	onStateChange: ( state: WindowState ) => void,
 	onUnreadChange: ( unreadCount: number ) => void
 ) {
-	const { siteId, subject, message, otherSiteURL } = useSelect( ( select ) => {
+	const { selectedSite, subject, message, userDeclaredSite } = useSelect( ( select ) => {
 		return {
-			siteId: select( STORE_KEY ).getSiteId(),
+			selectedSite: select( STORE_KEY ).getSite(),
+			userDeclaredSite: select( STORE_KEY ).getUserDeclaredSite(),
 			subject: select( STORE_KEY ).getSubject(),
 			message: select( STORE_KEY ).getMessage(),
-			otherSiteURL: select( STORE_KEY ).getOtherSiteURL(),
 		};
 	} );
-	const { resetPopup } = useDispatch( STORE_KEY );
 
-	const planSlug = useSelect(
-		( select ) =>
-			( siteId && select( SITE_STORE ).getSite( siteId )?.plan?.product_slug ) || 'Unknown plan'
-	);
+	const supportSite = selectedSite || userDeclaredSite;
+	const { resetPopup } = useDispatch( STORE_KEY );
 
 	useEffect( () => {
 		const messageHandler = ( event: MessageEvent ) => {
@@ -43,11 +39,11 @@ export function useHCWindowCommunicator(
 						event.source?.postMessage(
 							{
 								type: 'happy-chat-introduction-data',
-								siteId,
+								siteId: supportSite?.ID.toString(),
 								subject,
 								message,
-								planSlug,
-								otherSiteURL,
+								planSlug: supportSite?.plan?.product_slug,
+								siteUrl: supportSite?.URL,
 							},
 							{ targetOrigin: event.origin }
 						);
@@ -61,14 +57,5 @@ export function useHCWindowCommunicator(
 		return () => {
 			window.removeEventListener( 'message', messageHandler, false );
 		};
-	}, [
-		onStateChange,
-		onUnreadChange,
-		siteId,
-		subject,
-		message,
-		otherSiteURL,
-		planSlug,
-		resetPopup,
-	] );
+	}, [ onStateChange, onUnreadChange, supportSite, subject, message, resetPopup ] );
 }
