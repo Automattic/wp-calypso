@@ -592,9 +592,11 @@
 
 				:first-child {
 					margin-left: auto;
+					margin-right: 8px;
 				}
 
 				:last-child {
+					margin-left: 8px;
 					margin-right: auto;
 				}
 			}
