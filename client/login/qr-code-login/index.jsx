@@ -16,7 +16,7 @@ function QrCodeLoginPage( { locale } ) {
 	return (
 		<Main className="qr-code-login">
 			<div className="qr-code-login__form">
-				<h1 className="qr-code-login__heading">{ 'Login via the Mobile App' }</h1>
+				<h1 className="qr-code-login__heading">{ 'Login via the mobile app' }</h1>
 				<Card className="qr-code-login__card">
 					<AsyncLoad
 						require="calypso/components/qr-code-login"
