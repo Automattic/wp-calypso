@@ -9,7 +9,6 @@ import {
 import {
 	browsePlugins,
 	browsePluginsOrPlugin,
-	renderPluginWarnings,
 	renderProvisionPlugins,
 	jetpackCanUpdate,
 	plugins,
@@ -91,16 +90,6 @@ export default function () {
 		siteSelection,
 		navigation,
 		browsePluginsOrPlugin,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/plugins/:plugin/eligibility/:site',
-		scrollTopIfNoHash,
-		siteSelection,
-		navigation,
-		renderPluginWarnings,
 		makeLayout,
 		clientRender
 	);
