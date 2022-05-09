@@ -1,11 +1,6 @@
 import page from 'page';
 import { makeLayout, render } from 'calypso/controller';
-import {
-	navigation,
-	siteSelection,
-	sites,
-	selectSiteIfLoggedIn,
-} from 'calypso/my-sites/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	browsePlugins,
 	browsePluginsOrPlugin,
@@ -51,7 +46,7 @@ export default function () {
 		render
 	);
 
-	page( '/plugins', selectSiteIfLoggedIn, navigation, makeLayout, render );
+	page( '/plugins', scrollTopIfNoHash, siteSelection, sites, makeLayout, render );
 
 	page(
 		'/plugins/:site',
