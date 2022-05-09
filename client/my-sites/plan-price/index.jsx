@@ -28,11 +28,6 @@ export class PlanPrice extends Component {
 		if ( ! currencyCode || rawPrice === undefined ) {
 			return null;
 		}
-		// Dangerously set innerHTML display price
-		// eslint-disable-next-line no-unused-vars
-		function setDisplayPrice() {
-			return { __html: productDisplayPrice };
-		}
 
 		// "Normalize" the input price or price range.
 		const rawPriceRange = Array.isArray( rawPrice ) ? rawPrice.slice( 0, 2 ) : [ rawPrice ];
@@ -76,6 +71,18 @@ export class PlanPrice extends Component {
 							comment: 'The price range for a particular product',
 						} ) }
 				</span>
+			);
+		}
+
+		if ( productDisplayPrice ) {
+			return (
+				<h4 className={ classes }>
+					<span
+						className="plan-price__integer"
+						// eslint-disable-next-line react/no-danger
+						dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
+					/>
+				</h4>
 			);
 		}
 
