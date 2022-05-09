@@ -391,7 +391,13 @@ class UseYourDomainStep extends Component {
 		const buttonText = translate( 'Map your domain' );
 		const learnMore = translate( '{{a}}Learn more about domain mapping{{/a}}', {
 			components: {
-				a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
+				a: (
+					<a
+						href={ localizeUrl( MAP_EXISTING_DOMAIN ) }
+						rel="noopener noreferrer"
+						target="_blank"
+					/>
+				),
 			},
 		} );
 

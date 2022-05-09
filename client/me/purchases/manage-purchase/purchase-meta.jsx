@@ -12,6 +12,7 @@ import {
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { getIntroductoryOfferIntervalDisplay } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -370,7 +371,8 @@ function RenewErrorMessage( { purchase, translate, site } ) {
 							supportPageLink: (
 								<a
 									href={
-										JETPACK_SUPPORT + 'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
+										localizeUrl( JETPACK_SUPPORT ) +
+										'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
 									}
 								/>
 							),

@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -50,7 +51,7 @@ const JetpackDisconnected: FunctionComponent = () => {
 			buttonText={ translate( 'Reconnect Jetpack' ) }
 			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_backup_reconnect_click' ) ) }
 			iconComponent={ <JetpackDisconnectedIcon /> }
-			secondaryButtonLink={ JETPACK_SUPPORT_CONNECTION_ISSUES }
+			secondaryButtonLink={ localizeUrl( JETPACK_SUPPORT_CONNECTION_ISSUES ) }
 			secondaryButtonText={ translate( 'I need help' ) }
 			secondaryOnClick={ () =>
 				dispatch( recordTracksEvent( 'calypso_jetpack_backup_support_click' ) )

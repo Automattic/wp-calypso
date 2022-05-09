@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { TermsOfServiceRecord, useShoppingCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 import i18n, { useTranslate, TranslateResult } from 'i18n-calypso';
@@ -95,7 +95,11 @@ function getMessageForTermsOfServiceRecord(
 							},
 							components: {
 								updatePaymentMethodLink: (
-									<a href={ EDIT_PAYMENT_DETAILS } target="_blank" rel="noopener noreferrer" />
+									<a
+										href={ localizeUrl( EDIT_PAYMENT_DETAILS ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
 								),
 								manageSubscriptionLink: (
 									<a
@@ -121,7 +125,11 @@ function getMessageForTermsOfServiceRecord(
 						},
 						components: {
 							updatePaymentMethodLink: (
-								<a href={ EDIT_PAYMENT_DETAILS } target="_blank" rel="noopener noreferrer" />
+								<a
+									href={ localizeUrl( EDIT_PAYMENT_DETAILS ) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
 							),
 							manageSubscriptionLink: (
 								<a
@@ -192,7 +200,11 @@ function getMessageForTermsOfServiceRecord(
 							},
 							components: {
 								updatePaymentMethodLink: (
-									<a href={ EDIT_PAYMENT_DETAILS } target="_blank" rel="noopener noreferrer" />
+									<a
+										href={ localizeUrl( EDIT_PAYMENT_DETAILS ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
 								),
 								manageSubscriptionLink: (
 									<a
@@ -219,7 +231,11 @@ function getMessageForTermsOfServiceRecord(
 						},
 						components: {
 							updatePaymentMethodLink: (
-								<a href={ EDIT_PAYMENT_DETAILS } target="_blank" rel="noopener noreferrer" />
+								<a
+									href={ localizeUrl( EDIT_PAYMENT_DETAILS ) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
 							),
 							manageSubscriptionLink: (
 								<a
@@ -278,7 +294,11 @@ function getMessageForTermsOfServiceRecord(
 								/>
 							),
 							updatePaymentMethodLink: (
-								<a href={ EDIT_PAYMENT_DETAILS } target="_blank" rel="noopener noreferrer" />
+								<a
+									href={ localizeUrl( EDIT_PAYMENT_DETAILS ) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
 							),
 						},
 					};
@@ -322,7 +342,11 @@ function getMessageForTermsOfServiceRecord(
 							/>
 						),
 						updatePaymentMethodLink: (
-							<a href={ EDIT_PAYMENT_DETAILS } target="_blank" rel="noopener noreferrer" />
+							<a
+								href={ localizeUrl( EDIT_PAYMENT_DETAILS ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
 						),
 					},
 				};
