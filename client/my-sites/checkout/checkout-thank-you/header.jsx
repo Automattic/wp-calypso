@@ -517,6 +517,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		if (
 			isDataLoaded &&
+			! isTrafficGuidePurchase &&
 			( ! primaryPurchase || ! selectedSite || ( selectedSite.jetpack && ! isAtomic ) )
 		) {
 			return (

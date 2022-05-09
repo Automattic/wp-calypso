@@ -23,6 +23,9 @@ const translate = ( x ) => x;
 describe( 'CheckoutThankYouHeader', () => {
 	const defaultProps = {
 		translate,
+		recordTracksEvent: () => {},
+		recordStartTransferClickInThankYou: () => {},
+		titanAppsUrlPrefix: '',
 		primaryPurchase: {
 			product_slug: 'business-bundle',
 		},
@@ -70,6 +73,23 @@ describe( 'CheckoutThankYouHeader', () => {
 				comp.find( '.checkout-thank-you__success-message-item:last-child div' ).text()
 			).toEqual(
 				"Your site has been launched. You can share it with the world whenever you're ready."
+			);
+		} );
+	} );
+
+	describe( 'Traffic Guide Purchases', () => {
+		test( 'should display the download button', () => {
+			const comp = shallow(
+				<CheckoutThankYouHeader
+					{ ...defaultProps }
+					primaryPurchase={ null }
+					isDataLoaded={ true }
+					translate={ translate }
+					displayMode="traffic-guide"
+				/>
+			);
+			expect( comp.find( '.checkout-thank-you__header-button > button' ).text() ).toEqual(
+				'Click here to download your copy now.'
 			);
 		} );
 	} );
