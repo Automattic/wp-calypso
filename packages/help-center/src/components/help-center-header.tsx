@@ -52,6 +52,12 @@ const HelpCenterMobileHeader: React.FC< Header > = ( {
 			<Flex>
 				<p style={ { fontSize: 14, fontWeight: 500 } }>
 					{ headerText }
+					<span
+						className="help-center-header__a8c-only-badge"
+						title="The help center is only visible to Automatticians at this stage."
+					>
+						a8c only
+					</span>
 					{ isMinimized && unreadCount ? (
 						<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
 					) : null }
