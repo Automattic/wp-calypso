@@ -587,6 +587,15 @@
 
 				.social-buttons__button {
 					margin-top: 0;
+					margin-inline: 0;
+				}
+
+				:first-child {
+					margin-left: auto;
+				}
+
+				:last-child {
+					margin-right: auto;
 				}
 			}
 		}
