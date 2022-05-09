@@ -72,6 +72,10 @@
 			border: solid 1px var( --studio-gray-5 );
 			height: 40px !important;
 			width: 40px !important;
+
+			img {
+				max-width: 100%;
+			}
 		}
 
 		span, small {
