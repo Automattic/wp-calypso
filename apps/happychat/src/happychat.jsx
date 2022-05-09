@@ -49,7 +49,7 @@ function ParentConnection( { chatStatus, timeline } ) {
 					dispatch( sendEvent( `Looking at ${ message.route }` ) );
 					break;
 				case 'happy-chat-introduction-data': {
-					if ( message.site ) {
+					if ( message.siteId ) {
 						dispatch(
 							setChatCustomFields( {
 								calypsoSectionName: 'gutenberg-editor',
