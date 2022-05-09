@@ -35,15 +35,26 @@ function HelpCenterContent() {
 	return (
 		<>
 			{ isDesktop && (
-				<PinnedItems scope="core/edit-post">
-					<span className="etk-help-center">
-						<Button
-							className={ cx( 'entry-point-button', { 'is-active': show } ) }
-							onClick={ () => setShowHelpCenter( ! show ) }
-							icon={ <HelpIcon newItems={ showHelpIconDot } active={ show } /> }
-						></Button>
-					</span>
-				</PinnedItems>
+				<>
+					<PinnedItems scope="core/edit-post">
+						<span className="etk-help-center">
+							<Button
+								className={ cx( 'entry-point-button', { 'is-active': show } ) }
+								onClick={ () => setShowHelpCenter( ! show ) }
+								icon={ <HelpIcon newItems={ showHelpIconDot } active={ show } /> }
+							></Button>
+						</span>
+					</PinnedItems>
+					<PinnedItems scope="core/edit-site">
+						<span className="etk-help-center">
+							<Button
+								className={ cx( 'entry-point-button', { 'is-active': show } ) }
+								onClick={ () => setShowHelpCenter( ! show ) }
+								icon={ <HelpIcon newItems={ showHelpIconDot } active={ show } /> }
+							></Button>
+						</span>
+					</PinnedItems>
+				</>
 			) }
 			{ show && (
 				<HelpCenter
@@ -63,12 +74,19 @@ function HelpCenterContent() {
 	);
 }
 
+const HelpCenterRender = () => {
+	return (
+		<QueryClientProvider client={ whatsNewQueryClient }>
+			<HelpCenterContent />,
+		</QueryClientProvider>
+	);
+};
+
 registerPlugin( 'etk-help-center', {
-	render: () => {
-		return (
-			<QueryClientProvider client={ whatsNewQueryClient }>
-				<HelpCenterContent />,
-			</QueryClientProvider>
-		);
-	},
+	render: HelpCenterRender,
+} );
+
+registerPlugin( 'etk-help-center-fse', {
+	render: HelpCenterRender,
+	scope: 'core/edit-site',
 } );
