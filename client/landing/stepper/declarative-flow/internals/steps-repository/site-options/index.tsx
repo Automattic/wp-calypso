@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { Button } from '@automattic/components';
-import { useHas3PC } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Icon } from '@wordpress/icons';
@@ -120,10 +119,6 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 			<Button disabled={ ! site } className="site-options__submit-button" type="submit" primary>
 				{ translate( 'Continue' ) }
 			</Button>
-			<p>
-				<strong>Has 3PC: </strong>
-				{ useHas3PC().hasCookies ? 'yes' : 'no' }
-			</p>
 		</form>
 	);
 
