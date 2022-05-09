@@ -12,8 +12,8 @@ import FormInput from 'calypso/components/forms/form-text-input';
 import getTextWidth from 'calypso/landing/gutenboarding/onboarding-block/acquire-intent/get-text-width';
 import { useAnchorFmParams } from 'calypso/landing/stepper/hooks/use-anchor-fm-params';
 import useDetectMatchingAnchorSite from 'calypso/landing/stepper/hooks/use-detect-matching-anchor-site';
-import useSiteTitle from 'calypso/landing/stepper/hooks/use-site-title';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import usePodcastTitle from 'calypso/landing/stepper/hooks/use-podcast-title';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import type { Step } from '../../types';
@@ -29,9 +29,9 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 	const isLookingUpMatchingAnchorSites = useDetectMatchingAnchorSite();
 
 	const PodcastTitleForm: React.FC = () => {
-		//Sets the site title from the API on first load if a custom title has not been set
-		useSiteTitle();
+		const podcastTitle = usePodcastTitle();
 		const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+		const hasSiteTitle = siteTitle.length > 0;
 		const [ formTouched, setFormTouched ] = useState( false );
 
 		const { setSiteTitle, setAnchorPodcastId, setAnchorEpisodeId, setAnchorSpotifyUrl } =
@@ -41,6 +41,13 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 
 		const inputRef = useRef< HTMLInputElement >();
 		const underlineWidth = getTextWidth( ( siteTitle as string ) || '', inputRef.current );
+
+		useEffect( () => {
+			if ( podcastTitle && ! hasSiteTitle ) {
+				// Set initial site title to podcast title
+				setSiteTitle( podcastTitle );
+			}
+		}, [ setSiteTitle, hasSiteTitle, podcastTitle ] );
 
 		const handleSubmit = ( siteTitle: string ) => {
 			const providedDependencies = {
