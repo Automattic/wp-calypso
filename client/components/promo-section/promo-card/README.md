@@ -20,13 +20,15 @@ const PromoCardExample = () => {
 				This is a description of the action. It gives a bit more detail and explains what we are
 				inviting the user to do.
 			</p>
-			<PromoCardCta
+			<PromoCardCTA
 				cta={ {
-					feature: FEATURE_SIMPLE_PAYMENTS,
-					upgradeButton: { text: 'Upgrade!', action: clicked },
-					defaultButton: { text: 'Simple Payments', action: clicked },
+					text: translate( 'Upgrade to Pro Plan' ),
+					action: {
+						url: `/checkout/${ siteSlug }/pro`,
+						onClick: onUpgradeClick,
+						selfTarget: true,
+					},
 				} }
-				learnMoreLink="/learn-more"
 			/>
 		</PromoCard>
 	);
