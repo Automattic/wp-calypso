@@ -2,9 +2,9 @@ import {
 	isBusiness,
 	isPro,
 	isWpComAnnualPlan,
-	FEATURE_NO_BRANDING,
 	PLAN_BUSINESS,
 	PLAN_WPCOM_PRO,
+	WPCOM_FEATURES_NO_WPCOM_BRANDING,
 } from '@automattic/calypso-products';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import { guessTimezone } from '@automattic/i18n-utils';
@@ -669,7 +669,7 @@ export class SiteSettingsFormGeneral extends Component {
 						</CompactCard>
 						{ upsellPlan && (
 							<UpsellNudge
-								feature={ FEATURE_NO_BRANDING }
+								feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
 								plan={ upsellPlan }
 								title={ translate( 'Remove the footer credit entirely with WordPress.com Pro' ) }
 								description={ translate(

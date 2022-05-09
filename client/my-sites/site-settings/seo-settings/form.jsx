@@ -1,7 +1,6 @@
 import {
 	isWpComAnnualPlan,
 	FEATURE_ADVANCED_SEO,
-	FEATURE_SEO_PREVIEW_TOOLS,
 	TYPE_BUSINESS,
 	TYPE_PRO,
 	findFirstSimilarPlanKey,
@@ -48,7 +47,6 @@ import {
 	isSavingSiteSettings,
 } from 'calypso/state/site-settings/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import {
 	getSeoTitleFormatsForSite,
 	isJetpackSite,
@@ -269,12 +267,10 @@ export class SiteSettingsFormSEO extends Component {
 			siteIsJetpack && ! isAtomic
 				? {
 						title: translate( 'Boost your search engine ranking' ),
-						feature: FEATURE_SEO_PREVIEW_TOOLS,
 						href: `/checkout/${ slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ADVANCED_SEO ] }`,
 				  }
 				: {
 						title: upsellTitle,
-						feature: FEATURE_ADVANCED_SEO,
 						plan:
 							selectedSite.plan &&
 							findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
@@ -328,6 +324,7 @@ export class SiteSettingsFormSEO extends Component {
 				) }
 				{ ! showAdvancedSeo && selectedSite.plan && (
 					<UpsellNudge
+						feature={ FEATURE_ADVANCED_SEO }
 						forceDisplay={ siteIsJetpack }
 						{ ...upsellProps }
 						description={ translate(
@@ -465,8 +462,6 @@ const mapStateToProps = ( state ) => {
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
 		siteIsComingSoon: isSiteComingSoon( state, siteId ),
-		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
-		hasSeoPreviewFeature: hasFeature( state, siteId, FEATURE_SEO_PREVIEW_TOOLS ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 		saveError: getSiteSettingsSaveError( state, siteId ),
 		path: getCurrentRouteParameterized( state, siteId ),

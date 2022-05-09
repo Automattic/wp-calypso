@@ -213,4 +213,13 @@ export const FEATURE_WOOCOMMERCE = 'woocommerce';
 export const FEATURE_SOCIAL_MEDIA_TOOLS = 'social-media-tools';
 
 // From class-wpcom-features.php in WPCOM
+export const WPCOM_FEATURES_ANTISPAM = 'antispam';
+export const WPCOM_FEATURES_FULL_ACTIVITY_LOG = 'full-activity-log';
+export const WPCOM_FEATURES_INSTANT_SEARCH = 'instant-search';
+export const WPCOM_FEATURES_NO_ADVERTS = 'no-adverts/no-adverts.php';
+export const WPCOM_FEATURES_NO_WPCOM_BRANDING = 'no-wpcom-branding';
 export const WPCOM_FEATURES_PREMIUM_THEMES = 'premium-themes';
+export const WPCOM_FEATURES_UPLOAD_AUDIO_FILES = 'upload-audio-files';
+export const WPCOM_FEATURES_UPLOAD_VIDEO_FILES = 'upload-video-files';
+export const WPCOM_FEATURES_VIDEOPRESS = 'videopress';
+export const WPCOM_FEATURES_WORDADS = 'wordads';

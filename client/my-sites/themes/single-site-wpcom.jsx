@@ -1,11 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	FEATURE_PREMIUM_THEMES,
 	FEATURE_UPLOAD_THEMES,
 	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_WPCOM_PRO,
+	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -34,7 +34,7 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 					<UpsellNudge
 						className="themes__showcase-banner"
 						event="calypso_themes_list_premium_themes"
-						feature={ FEATURE_PREMIUM_THEMES }
+						feature={ WPCOM_FEATURES_PREMIUM_THEMES }
 						plan={ PLAN_WPCOM_PRO }
 						title={ translate( 'Unlock ALL premium themes with our Pro plan!' ) }
 						forceHref={ true }
