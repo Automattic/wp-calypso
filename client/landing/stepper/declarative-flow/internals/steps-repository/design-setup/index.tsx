@@ -25,7 +25,7 @@ import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-se
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
-import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../../stores';
+import { ONBOARD_STORE, SITE_STORE, USER_STORE, BLOCK_RECIPES_STORE } from '../../../../stores';
 import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { getCategorizationOptions } from './categories';
 import PreviewToolbar from './preview-toolbar';
@@ -53,6 +53,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const { anchorPodcastId, anchorEpisodeId, anchorSpotifyUrl } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
+	const blockRecipes = useSelect( ( select ) => select( BLOCK_RECIPES_STORE ).getBlockRecipes() );
 	const siteSlug = useSiteSlugParam();
 	const siteTitle = site?.name;
 	const isReskinned = true;
@@ -90,7 +91,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		[ staticDesigns ]
 	);
 
-	const generatedDesigns = useGeneratedDesigns();
+	const generatedDesigns = useGeneratedDesigns( blockRecipes );
 	const shuffledGeneratedDesigns = useMemo(
 		() => shuffle( generatedDesigns ),
 		[ generatedDesigns ]
@@ -344,6 +345,11 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		if ( ! showGeneratedDesigns ) {
 			return previewStaticDesign( selectedDesign );
 		}
+	}
+
+	// Still fetching from API.
+	if ( showGeneratedDesigns && shuffledGeneratedDesigns.length === 0 ) {
+		return null;
 	}
 
 	const heading = (

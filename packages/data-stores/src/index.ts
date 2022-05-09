@@ -1,5 +1,6 @@
 import * as Auth from './auth';
 import * as AutomatedTransferEligibility from './automated-transfer-eligibility';
+import * as BlockRecipes from './block-recipes';
 import * as DomainSuggestions from './domain-suggestions';
 import * as HelpCenter from './help-center';
 import * as I18n from './i18n';
@@ -40,6 +41,7 @@ export {
 	persistenceConfigFactory,
 	ProductsList,
 	AutomatedTransferEligibility,
+	BlockRecipes,
 };
 
 /**
