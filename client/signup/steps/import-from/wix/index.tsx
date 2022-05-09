@@ -1,9 +1,7 @@
 import classnames from 'classnames';
-import page from 'page';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { getStepUrl } from 'calypso/signup/utils';
 import { resetImport, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
@@ -12,7 +10,7 @@ import CompleteScreen from '../components/complete-screen';
 import ErrorMessage from '../components/error-message';
 import GettingStartedVideo from '../components/getting-started-video';
 import ProgressScreen from '../components/progress-screen';
-import { Importer, ImportError, ImportJob, ImportJobParams } from '../types';
+import { Importer, ImportError, ImportJob, ImportJobParams, StepNavigator } from '../types';
 import { getImporterTypeForEngine } from '../util';
 
 interface Props {
@@ -25,11 +23,22 @@ interface Props {
 	importSite: ( params: ImportJobParams ) => void;
 	startImport: ( siteId: number, type: string ) => void;
 	resetImport: ( siteId: number, importerId: string ) => void;
+	stepNavigator?: StepNavigator;
 }
 export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	const importer: Importer = 'wix';
-	const { job, error, run, siteId, siteSlug, fromSite, importSite, startImport, resetImport } =
-		props;
+	const {
+		job,
+		error,
+		run,
+		siteId,
+		siteSlug,
+		fromSite,
+		importSite,
+		startImport,
+		resetImport,
+		stepNavigator,
+	} = props;
 
 	/**
 	 ↓ Effects
@@ -43,7 +52,7 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	 */
 	function handleImporterReadiness() {
 		if ( ! checkIsImporterReady() ) {
-			redirectToImportCapturePage();
+			stepNavigator?.goToImportCapturePage?.();
 		}
 	}
 
@@ -84,10 +93,6 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}
 
-	function redirectToImportCapturePage() {
-		page( getStepUrl( 'importer', 'capture', '', '', { siteSlug } ) );
-	}
-
 	function checkIsImporterReady() {
 		return job || run;
 	}
@@ -120,7 +125,12 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 			<div className={ classnames( `importer-${ importer }`, 'import-layout__center' ) }>
 				{ ( () => {
 					if ( checkIsFailed() ) {
-						return <ErrorMessage siteSlug={ siteSlug } />;
+						return (
+							<ErrorMessage
+								onStartBuilding={ stepNavigator?.goToIntentPage }
+								onBackToStart={ stepNavigator?.goToImportCapturePage }
+							/>
+						);
 					} else if ( checkProgress() ) {
 						return <ProgressScreen job={ job } />;
 					} else if ( checkIsSuccess() ) {
@@ -130,6 +140,7 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 								siteSlug={ siteSlug }
 								job={ job as ImportJob }
 								resetImport={ resetImport }
+								onSiteViewClick={ stepNavigator?.goToSiteViewPage }
 							/>
 						);
 					}
