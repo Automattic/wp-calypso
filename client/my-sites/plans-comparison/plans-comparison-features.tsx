@@ -131,85 +131,6 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	},
 	{
 		get title() {
-			return translate( 'Storage' );
-		},
-		get description() {
-			if ( isStarterPlanEnabled() ) {
-				return translate(
-					'The Starter plan allows a maximum storage of 6GB, which equals to approximately 1200 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
-				);
-			}
-
-			// @todo clk remove or update once there's settlement on how many plans we'd ever show in the grid
-			return translate(
-				'The free plan allows a maximum storage of 1GB, which equals to approximately 200 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
-			);
-		},
-		features: [ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE, FEATURE_50GB_STORAGE ],
-		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
-			let storageSize = '1';
-			const legacyStorageSize = '3';
-
-			if ( feature === FEATURE_6GB_STORAGE ) {
-				storageSize = '6';
-			}
-
-			if ( feature === FEATURE_50GB_STORAGE ) {
-				storageSize = '50';
-			}
-
-			if ( isMobile ) {
-				if (
-					isLegacySiteWithHigherLimits &&
-					feature &&
-					[ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE ].includes( feature )
-				) {
-					return translate(
-						'{{del}}%(originalStorage)sGB of storage{{/del}} %(modifiedStorage)sGB on this site',
-						{
-							components: {
-								del: <del />,
-							},
-							args: {
-								originalStorage: storageSize,
-								modifiedStorage: legacyStorageSize,
-							},
-						}
-					);
-				}
-
-				return translate( '%sGB of storage', {
-					args: [ storageSize ],
-				} );
-			}
-
-			if (
-				isLegacySiteWithHigherLimits &&
-				feature &&
-				[ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE ].includes( feature )
-			) {
-				return translate(
-					'{{del}}%(originalStorage)sGB{{/del}} %(modifiedStorage)sGB on this site',
-					{
-						components: {
-							del: <del />,
-						},
-						args: {
-							originalStorage: storageSize,
-							modifiedStorage: legacyStorageSize,
-						},
-					}
-				);
-			}
-
-			return translate( '%sGB', {
-				args: [ storageSize ],
-				comment: '%s is a number of gigabytes.',
-			} );
-		},
-	},
-	{
-		get title() {
 			return translate( 'Website Administrator' );
 		},
 		get description() {
@@ -380,6 +301,85 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 					  } );
 			}
 			return cellText;
+		},
+	},
+	{
+		get title() {
+			return translate( 'Storage' );
+		},
+		get description() {
+			if ( isStarterPlanEnabled() ) {
+				return translate(
+					'The Starter plan allows a maximum storage of 6GB, which equals to approximately 1200 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
+				);
+			}
+
+			// @todo clk remove or update once there's settlement on how many plans we'd ever show in the grid
+			return translate(
+				'The free plan allows a maximum storage of 1GB, which equals to approximately 200 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
+			);
+		},
+		features: [ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE, FEATURE_50GB_STORAGE ],
+		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
+			let storageSize = '1';
+			const legacyStorageSize = '3';
+
+			if ( feature === FEATURE_6GB_STORAGE ) {
+				storageSize = '6';
+			}
+
+			if ( feature === FEATURE_50GB_STORAGE ) {
+				storageSize = '50';
+			}
+
+			if ( isMobile ) {
+				if (
+					isLegacySiteWithHigherLimits &&
+					feature &&
+					[ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE ].includes( feature )
+				) {
+					return translate(
+						'{{del}}%(originalStorage)sGB of storage{{/del}} %(modifiedStorage)sGB on this site',
+						{
+							components: {
+								del: <del />,
+							},
+							args: {
+								originalStorage: storageSize,
+								modifiedStorage: legacyStorageSize,
+							},
+						}
+					);
+				}
+
+				return translate( '%sGB of storage', {
+					args: [ storageSize ],
+				} );
+			}
+
+			if (
+				isLegacySiteWithHigherLimits &&
+				feature &&
+				[ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE ].includes( feature )
+			) {
+				return translate(
+					'{{del}}%(originalStorage)sGB{{/del}} %(modifiedStorage)sGB on this site',
+					{
+						components: {
+							del: <del />,
+						},
+						args: {
+							originalStorage: storageSize,
+							modifiedStorage: legacyStorageSize,
+						},
+					}
+				);
+			}
+
+			return translate( '%sGB', {
+				args: [ storageSize ],
+				comment: '%s is a number of gigabytes.',
+			} );
 		},
 	},
 	{
