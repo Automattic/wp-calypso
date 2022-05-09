@@ -20,7 +20,6 @@ import {
 } from 'calypso/state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import blogStickers from './blog-stickers/reducer';
 import connection from './connection/reducer';
 import domains from './domains/reducer';
 import { featuresReducer as features } from './features/reducer';
@@ -347,6 +346,5 @@ export default combineReducers( {
 	products,
 	features,
 	requesting,
-	blogStickers,
 	hasAllSitesList,
 } );

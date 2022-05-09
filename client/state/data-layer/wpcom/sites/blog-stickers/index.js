@@ -1,10 +1,10 @@
 import { translate } from 'i18n-calypso';
 import { SITES_BLOG_STICKER_LIST } from 'calypso/state/action-types';
+import { receiveBlogStickers } from 'calypso/state/blog-stickers/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { receiveBlogStickers } from 'calypso/state/sites/blog-stickers/actions';
 
 export const requestBlogStickerList = ( action ) =>
 	http(

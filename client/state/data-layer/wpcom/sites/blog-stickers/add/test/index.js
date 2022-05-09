@@ -1,6 +1,6 @@
+import { addBlogSticker, removeBlogSticker } from 'calypso/state/blog-stickers/actions';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { addBlogSticker, removeBlogSticker } from 'calypso/state/sites/blog-stickers/actions';
 import {
 	requestBlogStickerAdd,
 	receiveBlogStickerAdd,

@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import 'calypso/state/blog-stickers/init';
 
 /**
  * Returns the blog stickers for a certain site.
@@ -8,5 +8,5 @@ import { get } from 'lodash';
  * @returns {Array} Blog stickers
  */
 export default function getBlogStickers( state, blogId ) {
-	return get( state.sites.blogStickers.items, blogId, null );
+	return state.blogStickers.items?.[ blogId ] ?? null;
 }
