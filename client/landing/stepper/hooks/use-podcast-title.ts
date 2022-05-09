@@ -13,8 +13,11 @@ export default function usePodcastTitle(): string | null {
 		if ( ! anchorFmPodcastId ) {
 			return;
 		}
+
+		//Prevent memory leak when API has not finished fetching/component has not mounted
 		const controller = new AbortController();
 		const signal = controller.signal;
+
 		// Fetch podcast title from /podcast-details endpoint
 		apiFetch< PodcastDetails >( {
 			path: `https://public-api.wordpress.com/wpcom/v2/podcast-details?url=https://anchor.fm/s/${ encodeURIComponent(
@@ -30,8 +33,8 @@ export default function usePodcastTitle(): string | null {
 			.catch( () => {
 				setSiteTitle( '' );
 			} );
-		return () => controller.abort();
-	}, [ anchorFmPodcastId, siteTitle ] );
+		return () => controller.abort(); //Cleanup when we've finished mounting
+	}, [ anchorFmPodcastId ] );
 
 	return siteTitle;
 }

@@ -29,25 +29,27 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 	const isLookingUpMatchingAnchorSites = useDetectMatchingAnchorSite();
 
 	const PodcastTitleForm: React.FC = () => {
+		//Get the podcast title from the API
 		const podcastTitle = usePodcastTitle();
 		const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 		const hasSiteTitle = siteTitle.length > 0;
-		const [ formTouched, setFormTouched ] = useState( false );
-
 		const { setSiteTitle, setAnchorPodcastId, setAnchorEpisodeId, setAnchorSpotifyUrl } =
 			useDispatch( ONBOARD_STORE );
 		const { anchorFmPodcastId, isAnchorFmPodcastIdError, anchorFmEpisodeId, anchorFmSpotifyUrl } =
 			useAnchorFmParams();
 
-		const inputRef = useRef< HTMLInputElement >();
-		const underlineWidth = getTextWidth( ( siteTitle as string ) || '', inputRef.current );
-
+		//If we don't have a custom title in the store, use the podcast title from the API
 		useEffect( () => {
 			if ( podcastTitle && ! hasSiteTitle ) {
 				// Set initial site title to podcast title
 				setSiteTitle( podcastTitle );
 			}
 		}, [ setSiteTitle, hasSiteTitle, podcastTitle ] );
+
+		const [ formTouched, setFormTouched ] = useState( false );
+
+		const inputRef = useRef< HTMLInputElement >();
+		const underlineWidth = getTextWidth( ( siteTitle as string ) || '', inputRef.current );
 
 		const handleSubmit = ( siteTitle: string ) => {
 			const providedDependencies = {
