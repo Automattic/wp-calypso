@@ -1,5 +1,3 @@
-import { get } from 'lodash';
-
 import 'calypso/state/blog-stickers/init';
 
 /**
@@ -10,5 +8,5 @@ import 'calypso/state/blog-stickers/init';
  * @returns {Array} Blog stickers
  */
 export default function getBlogStickers( state, blogId ) {
-	return get( state.blogStickers.items, blogId, null );
+	return state.blogStickers.items?.[ blogId ] ?? null;
 }
