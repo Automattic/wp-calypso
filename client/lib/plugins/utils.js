@@ -338,6 +338,7 @@ export function getPluginAuthorProfileKeyword( plugin ) {
  * @returns the correct business plan slug depending on current plan and pluginBillingPeriod
  */
 export function businessPlanToAdd( currentPlan, pluginBillingPeriod, eligibleForProPlan ) {
+	// @todo clk any rule for Starter plan?
 	if ( eligibleForProPlan ) {
 		return PLAN_WPCOM_PRO;
 	}
