@@ -390,12 +390,10 @@ export default connect(
 			scanPageVisitCount,
 		};
 	},
-	() => ( {
-		// Typescript is unhappy with the object shorthand notation, but a function
-		// returning that same object is apparently ok.
+	{
 		dispatchRecordTracksEvent: recordTracksEvent,
 		dispatchScanRun: triggerScanRun,
 		dispatchIncrementCounter: incrementCounter,
 		dispatchSetReviewPromptValid: setValidFrom,
-	} )
+	}
 )( withLocalizedMoment( withApplySiteOffset( ScanPage ) ) );
