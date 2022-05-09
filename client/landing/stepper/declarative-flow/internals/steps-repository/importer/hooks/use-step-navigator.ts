@@ -37,7 +37,10 @@ export function useStepNavigator(
 	}
 
 	function goToCheckoutPage() {
-		navigation.submit?.( { url: getCheckoutUrl() } );
+		navigation.submit?.( {
+			type: 'redirect',
+			url: getCheckoutUrl(),
+		} );
 	}
 
 	function goToWpAdminImportPage() {
