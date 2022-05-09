@@ -47,15 +47,6 @@ export const useIntentsAlt = ( canImport: boolean ): IntentAlt[] => {
 
 	return [
 		{
-			show: true,
-			key: 'wpadmin',
-			description: translate( "Know what you're doing?" ),
-			value: 'wpadmin',
-			disable: false,
-			disableText: '',
-			actionText: translate( 'Start from scratch' ),
-		},
-		{
 			show: isEnabled( 'onboarding/import' ),
 			key: 'import',
 			description: translate( 'Already have an existing website?' ),
@@ -76,7 +67,7 @@ export const useIntentsAlt = ( canImport: boolean ): IntentAlt[] => {
 			key: 'difm',
 			description: translate( 'Let our experts create your dream site' ),
 			value: 'difm',
-			actionText: translate( 'Let our experts create your dream site' ),
+			actionText: translate( 'Get Started' ),
 			disable: false,
 			disableText: <></>,
 		},
