@@ -9,10 +9,11 @@ interface Props {
 	siteId: number;
 	siteSlug: string;
 	resetImport: ( siteId: number, importerId: string ) => void;
+	onSiteViewClick?: () => void;
 }
 const CompleteScreen: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const { job, siteId, siteSlug, resetImport } = props;
+	const { job, siteId, resetImport, onSiteViewClick } = props;
 
 	return (
 		<Hooray>
@@ -20,9 +21,9 @@ const CompleteScreen: React.FunctionComponent< Props > = ( props ) => {
 			<SubTitle>{ __( 'Congratulations. Your content was successfully imported.' ) }</SubTitle>
 			<DoneButton
 				siteId={ siteId }
-				siteSlug={ siteSlug }
 				job={ job as ImportJob }
 				resetImport={ resetImport }
+				onSiteViewClick={ onSiteViewClick }
 			/>
 		</Hooray>
 	);
