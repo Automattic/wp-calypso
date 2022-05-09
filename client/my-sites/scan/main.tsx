@@ -55,9 +55,9 @@ interface Props {
 	};
 	applySiteOffset: applySiteOffsetType | null;
 	dispatchRecordTracksEvent: typeof recordTracksEvent;
-	dispatchScanRun: typeof triggerScanRun;
-	dispatchIncrementCounter: typeof incrementCounter;
-	dispatchSetReviewPromptValid: typeof setValidFrom;
+	dispatchScanRun: ( arg0: number ) => void;
+	dispatchIncrementCounter: ( arg0: string, arg1: boolean, arg2: boolean ) => void;
+	dispatchSetReviewPromptValid: ( arg0: 'restore' | 'scan', arg1: number | null ) => void;
 
 	isAdmin: boolean;
 	siteSettingsUrl?: string | null;
