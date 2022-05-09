@@ -19,9 +19,9 @@ function QrCodeLoginPage( { locale } ) {
 				<h1 className="qr-code-login__heading">{ 'Login via the Mobile App' }</h1>
 				<Card className="qr-code-login__card">
 					<AsyncLoad
-						props={ { size: 352 } }
 						require="calypso/components/qr-code-login"
 						placeholder={ <QrCodeLoginPlaceholder /> }
+						size={ 352 }
 					/>
 				</Card>
 				<div className="qr-code-login__footer">
