@@ -102,6 +102,7 @@ const GeneratedDesignPreview: React.FC< GeneratedDesignPreviewProps > = ( {
 export interface GeneratedDesignPickerProps {
 	selectedDesign?: Design;
 	designs: Design[];
+	verticalId: string;
 	locale: string;
 	heading?: React.ReactElement;
 	onPreview: ( design: Design ) => void;
@@ -111,6 +112,7 @@ export interface GeneratedDesignPickerProps {
 const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 	selectedDesign,
 	designs,
+	verticalId,
 	locale,
 	heading,
 	onPreview,
@@ -128,7 +130,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 							<GeneratedDesignThumbnail
 								key={ design.slug }
 								slug={ design.slug }
-								thumbnailUrl={ getDesignPreviewUrl( design, { language: locale } ) }
+								thumbnailUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
 								isSelected={ selectedDesign?.slug === design.slug }
 								onPreview={ () => onPreview( design ) }
 							/>
@@ -144,7 +146,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 								key={ design.slug }
 								slug={ design.slug }
 								isSelected={ selectedDesign?.slug === design.slug }
-								previewUrl={ getDesignPreviewUrl( design, { language: locale } ) }
+								previewUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
 							/>
 						) ) }
 				</div>
