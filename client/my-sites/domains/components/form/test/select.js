@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import Select from '../select';
 
 describe( '<Select />', () => {
@@ -20,8 +20,8 @@ describe( '<Select />', () => {
 	};
 
 	test( 'should render expected output', () => {
-		const wrapper = shallow( <Select { ...defaultProps } /> );
-		expect( wrapper ).toMatchSnapshot();
+		const { container } = render( <Select { ...defaultProps } /> );
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( 'should render form validation when there is an error', () => {
@@ -29,7 +29,7 @@ describe( '<Select />', () => {
 			...defaultProps,
 			errorMessage: 'Duh duh duh!',
 		};
-		const wrapper = shallow( <Select { ...newProps } /> );
-		expect( wrapper.find( 'FormInputValidation' ) ).toHaveLength( 1 );
+		render( <Select { ...newProps } /> );
+		expect( screen.getByText( 'Duh duh duh!' ) ).toBeVisible();
 	} );
 } );

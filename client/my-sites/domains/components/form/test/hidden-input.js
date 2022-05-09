@@ -1,43 +1,37 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
+import '@testing-library/jest-dom';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { HiddenInput } from '../hidden-input';
 
 describe( 'HiddenInput', () => {
 	const defaultProps = {
 		text: 'Love cannot be hidden.',
+		label: 'Your name',
 	};
+	window.scroll = jest.fn();
 
 	test( 'it should return expected elements with defaultProps and no props value', () => {
-		const wrapper = shallow( <HiddenInput { ...defaultProps } /> );
-		expect( wrapper.state( 'toggled' ) ).to.be.false;
-		expect( wrapper.find( '.form__hidden-input' ) ).to.have.length( 1 );
-		expect( wrapper.find( '.form__hidden-input a' ).text() ).to.equal( defaultProps.text );
-		const inputComponent = wrapper.find( 'Input' );
-		expect( inputComponent ).to.have.length( 0 );
+		render( <HiddenInput { ...defaultProps } /> );
+		expect( screen.queryByText( 'Love cannot be hidden.' ) ).toBeVisible();
+		expect( screen.queryByPlaceholderText( 'Your name' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'it should hide toggle link and render a full input field when the field value is not empty', () => {
 		const fieldValue = 'Not empty';
-		const wrapper = shallow( <HiddenInput { ...defaultProps } value={ fieldValue } /> );
-		expect( wrapper.state( 'toggled' ) ).to.be.true;
-		expect( wrapper.find( '.form__hidden-input' ) ).to.have.length( 0 );
-		const inputComponent = wrapper.find( 'Input' );
-		expect( inputComponent ).to.have.length( 1 );
-		expect( inputComponent.get( 0 ).props.value ).to.equal( fieldValue );
+		render( <HiddenInput { ...defaultProps } value={ fieldValue } /> );
+		expect( screen.queryByText( 'Love cannot be hidden.' ) ).not.toBeInTheDocument();
+		expect( screen.queryByPlaceholderText( 'Your name' ).getAttribute( 'value' ) ).toEqual(
+			fieldValue
+		);
 	} );
 
 	test( 'it should toggle input field when the toggle link is clicked', () => {
-		const wrapper = shallow( <HiddenInput { ...defaultProps } /> );
-		expect( wrapper.state( 'toggled' ) ).to.be.false;
-		expect( wrapper.find( '.form__hidden-input' ) ).to.have.length( 1 );
-		wrapper.find( '.form__hidden-input a' ).simulate( 'click', { preventDefault() {} } );
-		expect( wrapper.state( 'toggled' ) ).to.be.true;
-		expect( wrapper.find( '.form__hidden-input' ) ).to.have.length( 0 );
-		const inputComponent = wrapper.find( 'Input' );
-		expect( inputComponent ).to.have.length( 1 );
+		const { container } = render( <HiddenInput { ...defaultProps } /> );
+		expect( screen.queryByText( 'Love cannot be hidden.' ) ).toBeVisible();
+		fireEvent.click( container.getElementsByTagName( 'a' )[ 0 ] );
+		expect( screen.queryByText( 'Love cannot be hidden.' ) ).not.toBeInTheDocument();
+		expect( screen.queryByPlaceholderText( 'Your name' ) ).toBeVisible();
 	} );
 } );
