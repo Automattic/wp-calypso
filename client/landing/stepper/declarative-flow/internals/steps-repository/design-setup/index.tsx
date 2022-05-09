@@ -57,15 +57,9 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const siteTitle = site?.name;
 	const isReskinned = true;
 	const sitePlanSlug = site?.plan?.product_slug;
-	const siteVertical = useMemo(
-		() => ( {
-			// TODO: fetch from store/site settings
-			id: '439',
-			name: 'Photographic & Digital Arts',
-		} ),
-		[]
+	const siteVerticalId = useSelect(
+		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site.ID ) ) || undefined
 	);
-
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
 	const isPrivateAtomic = Boolean( site?.launch_status === 'unlaunched' && isAtomic );
 
@@ -77,7 +71,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const showGeneratedDesigns =
 		isEnabled( 'signup/design-picker-generated-designs' ) &&
 		intent === 'build' &&
-		!! siteVertical &&
+		!! siteVerticalId &&
 		! isForceStaticDesigns;
 	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
 
@@ -318,7 +312,10 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		const stepContent = (
 			<GeneratedDesignPreview
 				slug={ design.slug }
-				previewUrl={ getDesignPreviewUrl( design, { language: locale } ) }
+				previewUrl={ getDesignPreviewUrl( design, {
+					language: locale,
+					verticalId: siteVerticalId,
+				} ) }
 				isSelected
 			/>
 		);
@@ -363,6 +360,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		<GeneratedDesignPicker
 			selectedDesign={ ! isMobile ? selectedDesign || shuffledGeneratedDesigns[ 0 ] : undefined }
 			designs={ shuffledGeneratedDesigns }
+			verticalId={ siteVerticalId }
 			locale={ locale }
 			heading={
 				<div className={ classnames( 'step-container__header', 'design-setup__header' ) }>

@@ -50,6 +50,7 @@ export interface Design {
 
 export interface DesignPreviewOptions {
 	language?: string;
+	verticalId?: string;
 	siteTitle?: string;
 }
 

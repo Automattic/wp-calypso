@@ -20,11 +20,12 @@ describe( 'Design Picker designs utils', () => {
 		it( 'should append the preview options to the query params', () => {
 			const options: DesignPreviewOptions = {
 				language: 'id',
+				verticalId: '3',
 				siteTitle: 'Design Title',
 			};
 
 			expect( getDesignPreviewUrl( design, options ) ).toEqual(
-				'https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&language=id&viewport_height=700&source_site=patternboilerplates.wordpress.com&site_title=Design%20Title'
+				'https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&vertical_id=3&language=id&viewport_height=700&source_site=patternboilerplates.wordpress.com&site_title=Design%20Title'
 			);
 		} );
 
