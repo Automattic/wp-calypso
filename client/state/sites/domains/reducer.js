@@ -60,9 +60,6 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 	const { siteId } = action;
 	switch ( action.type ) {
 		case ALL_DOMAINS_TEST_REQUEST_SUCCESS: {
-			// const newState = Object.assign( {}, state, {
-			// 	allDomains: ( action.domains ?? [] ).map( createLightSiteDomainObject ),
-			// } );
 			const newState = Object.assign( {}, state );
 			action.domains.forEach( ( domain ) => {
 				if ( ! newState[ domain.blog_id ] ) {
@@ -153,6 +150,13 @@ export const updatingPrivacy = ( state = {}, action ) => {
  */
 export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
+		case ALL_DOMAINS_TEST_REQUEST_SUCCESS:
+		case ALL_DOMAINS_TEST_REQUEST_FAILURE:
+			const newState = Object.assign( {}, state );
+			action.domains.forEach( ( domain ) => {
+				newState[ domain.blog_id ] = false;
+			} );
+			return newState;
 		case SITE_DOMAINS_REQUEST:
 		case SITE_DOMAINS_REQUEST_SUCCESS:
 		case SITE_DOMAINS_REQUEST_FAILURE:
