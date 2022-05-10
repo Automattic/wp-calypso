@@ -63,6 +63,7 @@ export const disconnectSiteConfirm: PageJS.Callback = ( context, next ) => {
 			type={ type }
 			text={ text }
 			disconnectHref={ '/dashboard' }
+			stayConnectedHref={ '/dashboard' }
 		/>
 	);
 	next();
