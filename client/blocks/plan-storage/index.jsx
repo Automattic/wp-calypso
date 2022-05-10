@@ -1,10 +1,8 @@
 import {
+	FEATURE_200GB_STORAGE,
 	FEATURE_UNLIMITED_STORAGE,
-	planHasFeature,
-	isBusinessPlan,
-	isEcommercePlan,
+	FEATURE_50GB_STORAGE,
 	PLAN_FREE,
-	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_STARTER,
 	isProPlan,
@@ -18,6 +16,7 @@ import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import PlanStorageBar from './bar';
 import Tooltip from './tooltip';
@@ -39,16 +38,27 @@ export function PlanStorage( { children, className, siteId } ) {
 	const legacySiteWithHigherLimits = useSelector( ( state ) =>
 		isLegacySiteWithHigherLimits( state, siteId )
 	);
+	const hasUnlimitedStorage = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, FEATURE_UNLIMITED_STORAGE )
+	);
+	const has50GBStorage = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, FEATURE_50GB_STORAGE )
+	);
+	const has200GBStorage = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, FEATURE_200GB_STORAGE )
+	);
 
 	if ( ( jetpackSite && ! atomicSite ) || ! canViewBar || ! sitePlanSlug ) {
 		return null;
 	}
 
-	if ( planHasFeature( sitePlanSlug, FEATURE_UNLIMITED_STORAGE ) ) {
+	if ( hasUnlimitedStorage ) {
 		return null;
 	}
 
 	if ( eligibleForProPlan && mediaStorage ) {
+		const GB = 1024 * 1024 * 1024;
+
 		// Only override the storage for non-legacy sites that are on a free
 		// plan. Even if the site is on a free plan, it could have a space
 		// upgrade product on top of that, so also check that it is using the
@@ -57,13 +67,13 @@ export function PlanStorage( { children, className, siteId } ) {
 		if (
 			( sitePlanSlug === PLAN_FREE || sitePlanSlug === PLAN_WPCOM_FLEXIBLE ) &&
 			! legacySiteWithHigherLimits &&
-			mediaStorage.max_storage_bytes === 3072 * 1024 * 1024
+			mediaStorage.max_storage_bytes === 3 * GB
 		) {
-			mediaStorage.max_storage_bytes = 1024 * 1024 * 1024;
+			mediaStorage.max_storage_bytes = GB;
 		}
 
-		if ( sitePlanSlug === PLAN_WPCOM_PRO ) {
-			mediaStorage.max_storage_bytes = 50 * 1024 * 1024 * 1024;
+		if ( has50GBStorage ) {
+			mediaStorage.max_storage_bytes = 50 * GB;
 		}
 
 		if ( sitePlanSlug === PLAN_WPCOM_STARTER ) {
@@ -71,9 +81,7 @@ export function PlanStorage( { children, className, siteId } ) {
 		}
 	}
 
-	const planHasTopStorageSpace =
-		isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug ) || isProPlan( sitePlanSlug );
-
+	const planHasTopStorageSpace = has200GBStorage || isProPlan( sitePlanSlug );
 	const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace;
 
 	const planStorageComponents = (
