@@ -30,7 +30,9 @@ export class PlanPrice extends Component {
 
 		// "Normalize" the input price or price range.
 		const rawPriceRange = Array.isArray( rawPrice ) ? rawPrice.slice( 0, 2 ) : [ rawPrice ];
-		if ( rawPrice > 0 && rawPriceRange.includes( 0 ) ) {
+
+		// If zero is in an array of length 2, render nothing
+		if ( Array.isArray( rawPrice ) && rawPriceRange.includes( 0 ) ) {
 			return null;
 		}
 
