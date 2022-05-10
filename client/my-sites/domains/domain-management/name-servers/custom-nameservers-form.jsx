@@ -113,7 +113,7 @@ class CustomNameserversForm extends PureComponent {
 
 	handleChange = ( nameserver, index ) => {
 		const nameservers = [ ...this.props.nameservers ];
-		nameservers[ index ] = nameserver;
+		nameservers[ index ] = ( nameserver || '' ).trim();
 		this.props.onChange( nameservers );
 	};
 
