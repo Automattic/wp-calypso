@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { planHasFeature, FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { useVerticalImagesQuery } from '@automattic/data-stores';
 import DesignPicker, {
 	GeneratedDesignPicker,
 	GeneratedDesignPreview,
@@ -60,6 +61,9 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const siteVerticalId = useSelect(
 		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site.ID ) ) || undefined
 	);
+	const { data: siteVerticalImages = [], isLoading: isLoadingSiteVerticalImages } =
+		useVerticalImagesQuery( siteVerticalId || '' );
+	const isVerticalizedWithImages = !! siteVerticalId && siteVerticalImages.length > 0;
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
 	const isPrivateAtomic = Boolean( site?.launch_status === 'unlaunched' && isAtomic );
 
@@ -71,7 +75,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const showGeneratedDesigns =
 		isEnabled( 'signup/design-picker-generated-designs' ) &&
 		intent === 'build' &&
-		!! siteVerticalId &&
+		isVerticalizedWithImages &&
 		! isForceStaticDesigns;
 	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
 
@@ -347,7 +351,12 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		}
 	}
 
-	if ( showGeneratedDesigns && isLoadingGeneratedDesigns ) {
+	// When the intent is build, we can potentially show the generated design picker.
+	// Additional data is needed from the backend to determine whether to show it or not.
+	if (
+		intent === 'build' &&
+		( isLoadingSiteVerticalImages || ( showGeneratedDesigns && isLoadingGeneratedDesigns ) )
+	) {
 		return null;
 	}
 

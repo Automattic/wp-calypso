@@ -22,6 +22,7 @@ export { useHasSeenWhatsNewModalQuery } from './queries/use-has-seen-whats-new-m
 export { useSupportAvailability } from './support-queries/use-support-availability';
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
+export { useVerticalImagesQuery } from './verticals-queries/use-vertical-images-query';
 
 export {
 	Auth,

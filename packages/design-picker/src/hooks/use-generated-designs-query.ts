@@ -31,5 +31,3 @@ function apiBlockRecipeToDesign( recipe: BlockRecipe ): Design {
 		theme: '',
 	};
 }
-
-export default useGeneratedDesignsQuery;
