@@ -6,7 +6,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, ReactElement, useState } from 'react';
 import { useSelector } from 'react-redux';
 import InlineHelpCenterContent from 'calypso/blocks/inline-help/inline-help-center-content';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -51,6 +51,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	const [ footerContent, setFooterContent ] = useState( undefined );
 	const [ contactForm, setContactForm ] = useState( null );
 	const [ openInContactPage, setOpenInContactPage ] = useState< boolean >( false );
+	const [ headerText, setHeaderText ] = useState< ReactElement | string | null >( null );
 
 	const closeAndLeave = () =>
 		leaveCheckout( {
@@ -142,10 +143,11 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 								setHelpCenterFooter={ setFooterContent }
 								setContactFormOpen={ setContactForm }
 								openInContactPage={ openInContactPage }
+								setHeaderText={ setHeaderText }
 							/>
 						)
 					}
-					headerText={ selectedArticle?.title }
+					headerText={ headerText }
 					handleClose={ () => setIsHelpCenterVisible( false ) }
 					footerContent={ footerContent }
 				/>
