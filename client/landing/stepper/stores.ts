@@ -5,7 +5,6 @@ import {
 	ProductsList,
 	User,
 	AutomatedTransferEligibility,
-	BlockRecipes,
 } from '@automattic/data-stores';
 
 export const ONBOARD_STORE = Onboard.register();
@@ -23,5 +22,3 @@ export const USER_STORE = User.register( {
 } );
 
 export const AUTOMATED_ELIGIBILITY_STORE = AutomatedTransferEligibility.register();
-
-export const BLOCK_RECIPES_STORE = BlockRecipes.register();

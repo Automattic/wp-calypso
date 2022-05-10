@@ -8,7 +8,7 @@ import DesignPicker, {
 	useCategorization,
 	isBlankCanvasDesign,
 	getDesignPreviewUrl,
-	useGeneratedDesigns,
+	useGeneratedDesignsQuery,
 	useDesignsBySite,
 } from '@automattic/design-picker';
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
@@ -25,7 +25,7 @@ import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-se
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
-import { ONBOARD_STORE, SITE_STORE, USER_STORE, BLOCK_RECIPES_STORE } from '../../../../stores';
+import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../../stores';
 import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { getCategorizationOptions } from './categories';
 import PreviewToolbar from './preview-toolbar';
@@ -53,7 +53,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const { anchorPodcastId, anchorEpisodeId, anchorSpotifyUrl } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
-	const blockRecipes = useSelect( ( select ) => select( BLOCK_RECIPES_STORE ).getBlockRecipes() );
 	const siteSlug = useSiteSlugParam();
 	const siteTitle = site?.name;
 	const isReskinned = true;
@@ -91,10 +90,11 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		[ staticDesigns ]
 	);
 
-	const generatedDesigns = useGeneratedDesigns( blockRecipes );
+	const { data: generatedDesigns, isLoading: isLoadingGeneratedDesigns } =
+		useGeneratedDesignsQuery();
 	const shuffledGeneratedDesigns = useMemo(
-		() => shuffle( generatedDesigns ),
-		[ generatedDesigns ]
+		() => ( ! isLoadingGeneratedDesigns ? shuffle( generatedDesigns ) : [] ),
+		[ generatedDesigns, isLoadingGeneratedDesigns ]
 	);
 
 	const visibility = useNewSiteVisibility();
@@ -347,8 +347,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		}
 	}
 
-	// Still fetching from API.
-	if ( showGeneratedDesigns && shuffledGeneratedDesigns.length === 0 ) {
+	if ( showGeneratedDesigns && isLoadingGeneratedDesigns ) {
 		return null;
 	}
 
