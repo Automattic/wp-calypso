@@ -65,6 +65,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 			disabled={ isMinimized }
 			draggable={ ! isMobile }
 			handle=".help-center__container-header"
+			bounds="body"
 		>
 			<Card className={ classNames } { ...animationProps }>
 				<HelpCenterHeader
