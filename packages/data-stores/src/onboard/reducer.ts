@@ -284,10 +284,10 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 	return state;
 };
 
-const stepProgress: Reducer<
-	{ flowLength: number; currentStep: number } | undefined,
-	OnboardAction
-> = ( state, action ) => {
+const stepProgress: Reducer< { count: number; progress: number } | undefined, OnboardAction > = (
+	state,
+	action
+) => {
 	if ( action.type === 'SET_STEP_PROGRESS' ) {
 		return action.stepProgress;
 	}

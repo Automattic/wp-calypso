@@ -246,7 +246,7 @@ export const setProgressTitle = ( progressTitle: string | undefined ) => ( {
 } );
 
 export const setStepProgress = (
-	stepProgress: { flowLength: number; currentStep: number } | undefined
+	stepProgress: { count: number; progress: number } | undefined
 ) => ( {
 	type: 'SET_STEP_PROGRESS' as const,
 	stepProgress,
