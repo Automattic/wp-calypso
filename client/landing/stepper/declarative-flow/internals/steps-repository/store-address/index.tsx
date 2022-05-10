@@ -291,6 +291,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 					align={ 'left' }
 				/>
 			}
+			intent={ intent }
 			stepContent={ getContent() }
 			recordTracksEvent={ recordTracksEvent }
 			hideSkip
