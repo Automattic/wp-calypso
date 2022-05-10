@@ -375,7 +375,7 @@ function RenewErrorMessage( { purchase, translate, site } ) {
 					  } ) }
 				&nbsp;
 				{ translate(
-					'Now sure how to reconnect? {{supportPageLink}}Here are the instructions{{/supportPageLink}}.',
+					'Not sure how to reconnect? {{supportPageLink}}Here are the instructions{{/supportPageLink}}.',
 					{
 						args: {
 							siteSlug: purchase.domain,
