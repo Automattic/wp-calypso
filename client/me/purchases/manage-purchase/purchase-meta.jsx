@@ -360,7 +360,7 @@ function RenewErrorMessage( { purchase, translate, site } ) {
 				{ isExpired( purchase )
 					? translate(
 							'%(purchaseName)s expired on %(siteSlug)s, and the site is no longer connected to WordPress.com. ' +
-								'To renew this purchase, please reconnect %(siteSlug)s to your WordPress.com account, then complete your purchase. ',
+								'To renew this purchase, please reconnect %(siteSlug)s to your WordPress.com account, then complete your purchase.',
 							{
 								args: {
 									purchaseName: getName( purchase ),
@@ -368,12 +368,12 @@ function RenewErrorMessage( { purchase, translate, site } ) {
 								},
 							}
 					  )
-					: translate( 'The site %(siteSlug)s is no longer connected to WordPress.com. ', {
+					: translate( 'The site %(siteSlug)s is no longer connected to WordPress.com.', {
 							args: {
 								siteSlug: purchase.domain,
 							},
 					  } ) }
-
+				&nbsp;
 				{ translate(
 					'Now sure how to reconnect? {{supportPageLink}}Here are the instructions{{/supportPageLink}}.',
 					{
