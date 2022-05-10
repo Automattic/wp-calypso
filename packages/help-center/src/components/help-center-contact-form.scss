@@ -130,5 +130,9 @@
 	.components-base-control__help {
 		margin: 0;
 		padding-left: 8px;
+
+		svg {
+			fill: var( --studio-gray-50 );
+		}
 	}
 }
