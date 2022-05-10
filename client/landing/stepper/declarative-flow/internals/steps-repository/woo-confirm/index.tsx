@@ -244,7 +244,10 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 								const providedDependencies = {
 									checkoutUrl: siteUpgrading.checkoutUrl,
 								};
-								submit?.( providedDependencies, siteUpgrading.checkoutUrl );
+								submit?.(
+									providedDependencies,
+									siteUpgrading.required ? siteUpgrading.checkoutUrl : ''
+								);
 							} }
 						>
 							{ __( 'Confirm' ) }
