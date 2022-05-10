@@ -1,4 +1,5 @@
 import { Button, Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -289,7 +290,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 					moment( domain.transferAwayEligibleAt ).format( 'LL' )
 				),
 				{
-					a: createElement( 'a', { href: supportLink } ),
+					a: createElement( 'a', { href: localizeUrl( supportLink ) } ),
 				}
 			);
 		}
@@ -390,7 +391,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 									'However, transferring a domain to another provider can take five to seven days during which no changes to the domain can be made. Read <a>this important information</a> before starting a transfer.'
 								),
 								{
-									a: createElement( 'a', { href: TRANSFER_DOMAIN_REGISTRATION } ),
+									a: createElement( 'a', { href: localizeUrl( TRANSFER_DOMAIN_REGISTRATION ) } ),
 								}
 							) }
 						</p>

@@ -98,7 +98,7 @@ export const QuickstartSessionsRetirement = ( props ) => {
 							</ExternalLink>
 						</li>
 						<li>
-							<a href={ SUPPORT_ROOT }>{ translate( 'WordPress.com Support' ) }</a>
+							<a href={ localizeUrl( SUPPORT_ROOT ) }>{ translate( 'WordPress.com Support' ) }</a>
 						</li>
 					</ul>
 				</div>

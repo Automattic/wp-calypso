@@ -1,5 +1,6 @@
 import { isMonthly, getYearlyPlanByMonthly } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -116,7 +117,8 @@ export class PlanBillingPeriod extends Component {
 									supportPageLink: (
 										<a
 											href={
-												JETPACK_SUPPORT + 'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
+												localizeUrl( JETPACK_SUPPORT ) +
+												'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
 											}
 										/>
 									),
