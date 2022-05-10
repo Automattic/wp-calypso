@@ -68,14 +68,12 @@ function HelpCenterContent() {
 	);
 }
 
-const HelpCenterRender = () => {
-	return (
-		<QueryClientProvider client={ whatsNewQueryClient }>
-			<HelpCenterContent />,
-		</QueryClientProvider>
-	);
-};
-
 registerPlugin( 'etk-help-center', {
-	render: HelpCenterRender,
+	render: () => {
+		return (
+			<QueryClientProvider client={ whatsNewQueryClient }>
+				<HelpCenterContent />,
+			</QueryClientProvider>
+		);
+	},
 } );
