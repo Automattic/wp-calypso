@@ -114,3 +114,21 @@
 		display: none;
 	}
 }
+
+.popover.is-top-left {
+	z-index: 9999;
+
+	.popover__inner span {
+		display: block;
+		padding: 16px;
+	}
+}
+
+.help-center-contact-form__domain-sharing .components-checkbox-control {
+	display: flex;
+
+	.components-base-control__help {
+		margin: 0;
+		padding-left: 8px;
+	}
+}

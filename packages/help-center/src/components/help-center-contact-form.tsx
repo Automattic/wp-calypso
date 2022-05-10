@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { Button } from '@automattic/components';
+import { Button, Popover } from '@automattic/components';
 import {
 	useHas3PC,
 	useSubmitTicketMutation,
@@ -13,7 +13,7 @@ import { SitePickerDropDown } from '@automattic/site-picker';
 import { TextControl, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { Icon, page as pageIcon } from '@wordpress/icons';
+import { Icon, info, page as pageIcon } from '@wordpress/icons';
 import React, { useEffect, useState, useContext } from 'react';
 /**
  * Internal Dependencies
@@ -250,6 +250,36 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 		return <SuccessScreen forumTopicUrl={ forumTopicUrl } onBack={ onGoHome } />;
 	}
 
+	const InfoTip = () => {
+		const [ ref, setRef ] = useState< any >();
+		const [ isOpen, setOpen ] = useState( false );
+
+		return (
+			<>
+				<Button
+					borderless
+					ref={ ( reference ) => ref !== reference && setRef( reference ) }
+					aria-haspopup
+					aria-label={ __( 'More information' ) }
+					onClick={ () => setOpen( ! isOpen ) }
+					onMouseEnter={ () => setOpen( true ) }
+					onMouseLeave={ () => setOpen( false ) }
+				>
+					<Icon icon={ info } size={ 18 } />
+				</Button>
+				<Popover isVisible={ isOpen } context={ ref } position="top left">
+					<span>
+						This may result in a longer response time,
+						<br />
+						but WordPress.com staff in the forums will
+						<br />
+						still be able to view your site's URL.
+					</span>
+				</Popover>
+			</>
+		);
+	};
+
 	return (
 		<main className="help-center-contact-form">
 			<header>
@@ -321,11 +351,14 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 
 			{ mode === 'FORUM' && (
 				<section>
-					<CheckboxControl
-						checked={ hideSiteInfo }
-						label={ __( 'Don’t display my site’s URL publicly', 'full-site-editing' ) }
-						onChange={ ( value ) => setHideSiteInfo( value ) }
-					/>
+					<div className="help-center-contact-form__domain-sharing">
+						<CheckboxControl
+							checked={ hideSiteInfo }
+							label={ __( 'Don’t display my site’s URL publicly', 'full-site-editing' ) }
+							help={ <InfoTip /> }
+							onChange={ ( value ) => setHideSiteInfo( value ) }
+						/>
+					</div>
 				</section>
 			) }
 			<section>
