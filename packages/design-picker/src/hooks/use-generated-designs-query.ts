@@ -1,4 +1,5 @@
 import { useQuery, UseQueryResult } from 'react-query';
+import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
 import type { BlockRecipe, Design } from '../types';
 
 export function useGeneratedDesignsQuery(): UseQueryResult< Design[] > {
