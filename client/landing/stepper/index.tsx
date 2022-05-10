@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
+import AsyncLoad from 'calypso/components/async-load';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
@@ -79,6 +80,7 @@ window.AppBoot = async () => {
 					<BrowserRouter basename="setup">
 						<FlowWrapper />
 					</BrowserRouter>
+					<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
 				</QueryClientProvider>
 			</Provider>
 		</LocaleContext>,
