@@ -92,9 +92,9 @@
 					svg {
 						margin-right: 15px;
 						display: block;
-						padding: 5px;
+						padding: 8px;
 						background: var( --studio-gray-0 );
-						fill: var( --studio-blue-70 );
+						fill: var( --studio-blue-50 );
 					}
 
 					span {
@@ -103,16 +103,6 @@
 					}
 				}
 			}
-		}
-	}
-
-	/**
-	* RICH RESULTS
-	*/
-	.inline-help__secondary-view.inline-help__richresult {
-		button.button.is-borderless {
-			font-size: $font-body-small;
-			color: var( --studio-gray-100 );
 		}
 	}
 
@@ -127,10 +117,10 @@
 			.inline-help__resource-cell button {
 				display: flex;
 
-				svg {
+				svg:first-of-type {
 					margin-right: 15px;
 					display: block;
-					padding: 5px;
+					padding: 8px;
 					background: var( --studio-gray-0 );
 				}
 
@@ -172,10 +162,12 @@
 					> :first-child {
 						fill: var( --studio-blue-70 );
 					}
+
 					span {
 						text-decoration: none;
 						color: var( --studio-gray-100 );
 					}
+
 					> svg:last-child {
 						align-self: auto;
 						background: none;
@@ -183,6 +175,21 @@
 						padding-left: 8px;
 					}
 				}
+			}
+		}
+	}
+
+	/**
+	* SECONDARY-VIEW HEADER
+	*/
+	.inline-help__secondary-view {
+		&.inline-help__richresult,
+		&.inline-help__contact {
+			button.button.is-borderless {
+				display: flex;
+				align-items: center;
+				font-size: $font-body-small;
+				color: var( --studio-gray-100 );
 			}
 		}
 	}
@@ -322,11 +329,6 @@
 * ARTICLE EMBED
 */
 .help-center .help-center__container .inline-help__embed-result {
-	svg.gridicons-external {
-		height: 20px;
-		width: 20px;
-	}
-
 	h1.support-article-dialog__header-title-link {
 		font-size: $font-title-medium;
 	}
@@ -415,7 +417,12 @@
 		padding: 16px 0;
 	}
 
-	.wp-block-button__link {
+	:where( .wp-block-group.has-background ) {
+		padding: 0;
+	}
+
+	.wp-block-button__link,
+	.button-primary {
 		background-color: transparent;
 		border: 1px solid var( --studio-gray-10 );
 		border-radius: 2px;
