@@ -18,6 +18,6 @@ export {
 export { FONT_PAIRINGS, ANCHORFM_FONT_PAIRINGS } from './constants';
 export type { FontPair, Design, Category } from './types';
 export { useCategorization } from './hooks/use-categorization';
-export { useGeneratedDesigns } from './hooks/use-generated-designs';
+export { useGeneratedDesignsQuery } from './hooks/use-generated-designs-query';
 export { useThemeDesignsQuery } from './hooks/use-theme-designs-query';
 export { useDesignsBySite } from '././hooks/use-designs-by-site';

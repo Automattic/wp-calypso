@@ -8,7 +8,7 @@ import DesignPicker, {
 	useCategorization,
 	isBlankCanvasDesign,
 	getDesignPreviewUrl,
-	useGeneratedDesigns,
+	useGeneratedDesignsQuery,
 	useDesignsBySite,
 } from '@automattic/design-picker';
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
@@ -90,7 +90,8 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		[ staticDesigns ]
 	);
 
-	const generatedDesigns = useGeneratedDesigns();
+	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
+		useGeneratedDesignsQuery();
 	const shuffledGeneratedDesigns = useMemo(
 		() => shuffle( generatedDesigns ),
 		[ generatedDesigns ]
@@ -344,6 +345,10 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		if ( ! showGeneratedDesigns ) {
 			return previewStaticDesign( selectedDesign );
 		}
+	}
+
+	if ( showGeneratedDesigns && isLoadingGeneratedDesigns ) {
+		return null;
 	}
 
 	const heading = (
