@@ -3,7 +3,7 @@ import { SiteDetails } from '@automattic/data-stores/dist/types/site';
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -47,8 +47,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 	 	*/
 		const site = useSite();
 		const siteSlug = useSiteSlugParam();
-		const [ siteId, setSiteId ] = useState( site?.ID );
-		! siteId && site?.ID && setSiteId( site?.ID );
+		const siteId = site?.ID;
 		const runImportInitially = useInitialQueryRun( siteId );
 		const canImport = useSelector( ( state ) =>
 			canCurrentUser( state, site?.ID as number, 'manage_options' )
@@ -69,7 +68,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 	 	↓ Effects
 	 	*/
 		useEffect( fetchImporters, [ siteId ] );
-		useEffect( checkSiteSlugUpdate, [ site?.URL ] );
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
 		if ( ! importer ) {
 			stepNavigator.goToImportCapturePage?.();
@@ -120,10 +118,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			if ( fromSite !== fromSiteData?.url ) {
 				dispatch( analyzeUrl( fromSite ) );
 			}
-		}
-
-		function checkSiteSlugUpdate() {
-			// update site slug when destination site is in transition from simple to atomic
 		}
 
 		/**
