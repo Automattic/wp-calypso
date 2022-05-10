@@ -1,5 +1,5 @@
-import { useQuery, UseQueryResult } from 'react-query';
-import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
+import { useQuery, UseQueryResult, QueryKey } from 'react-query';
+import wpcomRequest from 'wpcom-proxy-request';
 import type { VerticalImage } from './types';
 
 export function useVerticalImagesQuery( id: string ): UseQueryResult< VerticalImage[] > {
@@ -10,9 +10,10 @@ export function useVerticalImagesQuery( id: string ): UseQueryResult< VerticalIm
 }
 
 function fetchVerticalImages( id: string ): Promise< VerticalImage[] > {
-	return wpcom.req.get( {
+	return wpcomRequest( {
 		apiNamespace: 'wpcom/v2',
 		path: `/site-verticals/${ id }/images`,
+		query: { include_parents: true },
 	} );
 }
 
