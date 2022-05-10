@@ -1,6 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSupportAvailability } from '@automattic/data-stores';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { Icon, page as pageIcon } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useState, useEffect, useRef } from 'react';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
@@ -18,8 +20,10 @@ const InlineHelpCenterContent = ( {
 	setHelpCenterFooter,
 	setContactFormOpen,
 	openInContactPage,
+	setHeaderText,
 } ) => {
 	const isMobile = useMobileBreakpoint();
+	const { __ } = useI18n();
 	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const [ activeSecondaryView, setActiveSecondaryView ] = useState(
 		openInContactPage ? VIEW_CONTACT : null
@@ -44,7 +48,20 @@ const InlineHelpCenterContent = ( {
 		if ( contentTitle ) {
 			contentTitle.focus();
 		}
-	}, [ activeSecondaryView ] );
+
+		if ( activeSecondaryView === VIEW_CONTACT ) {
+			setHeaderText( __( 'Contact our WordPress.com experts', 'full-site-editing' ) );
+		} else if ( activeSecondaryView === VIEW_RICH_RESULT ) {
+			setHeaderText(
+				<>
+					<Icon icon={ pageIcon } />
+					{ selectedArticle?.title }
+				</>
+			);
+		} else {
+			setHeaderText( null );
+		}
+	}, [ activeSecondaryView, selectedArticle, setHeaderText, __ ] );
 
 	const openResultView = ( event, result ) => {
 		event.preventDefault();

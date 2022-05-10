@@ -50,7 +50,7 @@ const HelpCenterMobileHeader: React.FC< Header > = ( {
 	return (
 		<CardHeader className={ classNames }>
 			<Flex>
-				<p style={ { fontSize: 14, fontWeight: 500 } }>
+				<p style={ { fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center' } }>
 					{ headerText }
 					<span
 						className="help-center-header__a8c-only-badge"
