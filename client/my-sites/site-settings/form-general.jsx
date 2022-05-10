@@ -1,6 +1,4 @@
 import {
-	isBusiness,
-	isPro,
 	isWpComAnnualPlan,
 	PLAN_BUSINESS,
 	PLAN_WPCOM_PRO,
@@ -37,7 +35,7 @@ import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import {
@@ -600,13 +598,13 @@ export class SiteSettingsFormGeneral extends Component {
 		const {
 			customizerUrl,
 			handleSubmitForm,
+			hasNoWpcomBranding,
 			isRequestingSettings,
 			isSavingSettings,
 			isWPForTeamsSite,
 			site,
 			siteIsJetpack,
 			siteIsAtomic,
-			siteIsVip,
 			translate,
 		} = this.props;
 
@@ -615,12 +613,7 @@ export class SiteSettingsFormGeneral extends Component {
 		} );
 
 		// We currently don't have a monthly or a biennial pro plan, hence keeping the business plan upsell for those cases.
-		const upsellPlan =
-			site &&
-			! isBusiness( site.plan ) &&
-			! isPro( site.plan ) &&
-			! siteIsVip &&
-			( isWpComAnnualPlan( site.plan.product_slug ) ? PLAN_WPCOM_PRO : PLAN_BUSINESS );
+		const upsellPlan = isWpComAnnualPlan( site.plan.product_slug ) ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
 
 		return (
 			<div className={ classNames( classes ) }>
@@ -667,7 +660,7 @@ export class SiteSettingsFormGeneral extends Component {
 								</Button>
 							</div>
 						</CompactCard>
-						{ upsellPlan && (
+						{ ! hasNoWpcomBranding && (
 							<UpsellNudge
 								feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
 								plan={ upsellPlan }
@@ -697,20 +690,20 @@ const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
-		isComingSoon: isSiteComingSoon( state, siteId ),
-		siteIsJetpack: isJetpackSite( state, siteId ),
-		siteIsVip: isVipSite( state, siteId ),
-		siteSlug: getSelectedSiteSlug( state ),
-		selectedSite: getSelectedSite( state ),
-		isPaidPlan: isCurrentPlanPaid( state, siteId ),
-		siteDomains: getDomainsBySiteId( state, siteId ),
-		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
-		isP2HubSite: isSiteP2Hub( state, siteId ),
 		customizerUrl: getCustomizerUrl( state, siteId, 'identity' ),
+		hasNoWpcomBranding: siteHasFeature( state, siteId, WPCOM_FEATURES_NO_WPCOM_BRANDING ),
 		isAtomicAndEditingToolkitDeactivated:
 			isAtomicSite( state, siteId ) &&
 			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
+		isComingSoon: isSiteComingSoon( state, siteId ),
+		isP2HubSite: isSiteP2Hub( state, siteId ),
+		isPaidPlan: isCurrentPlanPaid( state, siteId ),
+		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
+		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+		selectedSite: getSelectedSite( state ),
+		siteDomains: getDomainsBySiteId( state, siteId ),
+		siteIsJetpack: isJetpackSite( state, siteId ),
+		siteSlug: getSelectedSiteSlug( state ),
 	};
 }, mapDispatchToProps );
 
