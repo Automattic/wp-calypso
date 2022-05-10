@@ -59,8 +59,8 @@ export function useStepNavigator(
 
 	function getWordpressImportEverythingUrl(): string {
 		const queryParams = {
+			siteSlug: siteSlug,
 			from: fromSite,
-			to: siteSlug,
 			option: WPImportOption.EVERYTHING,
 			run: true,
 		};
@@ -70,7 +70,10 @@ export function useStepNavigator(
 
 	function getCheckoutUrl() {
 		const path = checkoutUrl;
-		const queryParams = { redirect_to: getWordpressImportEverythingUrl() };
+		const queryParams = {
+			redirect_to: getWordpressImportEverythingUrl(),
+			cancel_to: getWordpressImportEverythingUrl(),
+		};
 
 		return addQueryArgs( queryParams, path );
 	}
