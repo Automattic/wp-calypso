@@ -197,7 +197,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 		get description() {
 			return translate(
-				'Customer service isn’t just something we offer. It’s who we are. Over 30% of WordPress.com is dedicated to service. We call it Happiness—real support delivered by real human beings who specialize in launching and fine-tuning WordPress sites.'
+				'Over 30% of WordPress.com is dedicated to customer service. We call it Happiness — real support delivered by real human beings, experts in WordPress sites.'
 			);
 		},
 		features: [ FEATURE_PREMIUM_SUPPORT ],
@@ -455,7 +455,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	},
 	{
 		get title() {
-			return translate( 'Built in social media tools' );
+			return translate( 'Advanced social media tools' );
 		},
 		get description() {
 			return translate( 'Amplify your voice with our built-in social tools.' );
