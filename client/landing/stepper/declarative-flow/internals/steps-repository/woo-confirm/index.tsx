@@ -148,7 +148,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		latestAtomicTransfer && ( ! transferringDataIsAvailable || transferringBlockers?.length > 0 );
 
 	// when the site is not Atomic, ...
-	if ( isReadyToStart && ! isAtomicSite ) {
+	if ( ! isAtomicSite ) {
 		isReadyToStart =
 			isReadyToStart &&
 			! isTransferringBlocked && // there is no blockers from eligibility (holds).
