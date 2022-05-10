@@ -36,10 +36,10 @@ export default function SearchMain(): ReactElement {
 		getSiteOption( state, siteId, 'jetpack_version' )
 	);
 
-	let searchDashboardUrl = 'admin.php?page=jetpack-search';
-	if ( siteJetpackVersion && versionCompare( siteJetpackVersion, '10.0-beta', '<' ) ) {
-		searchDashboardUrl = 'admin.php?page=jetpack#/performance';
-	}
+	const searchDashboardUrl =
+		siteJetpackVersion && versionCompare( siteJetpackVersion, '10.0-beta', '<' )
+			? 'admin.php?page=jetpack#/performance'
+			: 'admin.php?page=jetpack-search';
 
 	// Send Jetpack Cloud users to wp-admin settings and everyone else to Calypso blue
 	const settingsUrl =
