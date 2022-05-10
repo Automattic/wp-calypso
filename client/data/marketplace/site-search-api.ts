@@ -1,5 +1,6 @@
 import { flatten } from 'q-flat';
 import { encode } from 'qss';
+import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from './constants';
 import { ESDateRangeFilter, ESTermFilter } from './types';
 
 const isLengthyArray = ( array: Array< unknown > ) => Array.isArray( array ) && array.length > 0;
@@ -75,6 +76,7 @@ function generateApiQueryString( {
 	pageHandle,
 	query,
 	sort,
+	page = 0,
 	postsPerPage = 10,
 }: {
 	author?: string;
@@ -83,11 +85,15 @@ function generateApiQueryString( {
 	pageHandle?: string;
 	query: string;
 	sort: string;
+	page?: number;
 	postsPerPage?: number;
 } ) {
 	if ( query === null ) {
 		query = '';
 	}
+
+	const size = postsPerPage || DEFAULT_PAGE_SIZE;
+	const from = ( ( page || DEFAULT_FIRST_PAGE ) - 1 ) * size;
 
 	const WPORGFIELDS = [
 		'rating',
@@ -122,6 +128,7 @@ function generateApiQueryString( {
 		sort: string;
 		size: number;
 		group_id?: string;
+		from?: number;
 	} = {
 		fields: [ ...WPORGFIELDS ],
 		filter: buildFilterObject( filter ),
@@ -129,6 +136,7 @@ function generateApiQueryString( {
 		query: encodeURIComponent( query ),
 		sort: mapSortToApiValue( sort ),
 		size: postsPerPage,
+		from,
 	};
 
 	if ( groupId ) {

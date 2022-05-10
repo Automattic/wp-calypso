@@ -313,7 +313,7 @@ export const useNewSiteSearchPlugins = (
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 
 	return useQuery(
-		getPluginsListKey( 'DEBUG-new-site-seach', options, true ),
+		getPluginsListKey( 'DEBUG-new-site-seach', options, false ),
 		() =>
 			search( {
 				author,
@@ -326,6 +326,49 @@ export const useNewSiteSearchPlugins = (
 				resultFormat: 'plugin',
 			} ),
 		{
+			enabled,
+			staleTime,
+			refetchOnMount,
+		}
+	);
+};
+
+export const useNewSiteSearchPluginsInfinite = (
+	options: PluginQueryOptions,
+	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
+): UseQueryResult => {
+	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
+	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
+
+	return useInfiniteQuery(
+		getPluginsListKey( 'DEBUG-new-site-seach', options, true ),
+		( { pageParam = DEFAULT_FIRST_PAGE } ) =>
+			search( {
+				author,
+				query: searchTerm,
+				siteId: WPORG_PLUGINS_BLOG_ID,
+				sort: 'relevance',
+				postsPerPage: pageSize,
+				filter: { post_types: [ 'plugin' ] },
+				groupId: 'marketplace:wporg',
+				resultFormat: 'plugin',
+				page: pageParam,
+			} ),
+		{
+			select: ( data ) => {
+				return {
+					...data,
+					// data will need to be normalized once all fields are received
+					plugins: data.pages.flatMap( ( page ) =>
+						page.results.map( ( result ) => result.fields )
+					),
+				};
+			},
+			getNextPageParam: ( lastPage, allPages ) => {
+				const pages = Math.ceil( lastPage.total / pageSize );
+				const nextPage = allPages.length + 1;
+				return nextPage <= pages ? nextPage : undefined;
+			},
 			enabled,
 			staleTime,
 			refetchOnMount,

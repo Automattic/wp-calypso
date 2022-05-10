@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect } from 'react';
-import { ReactQueryDevtools } from 'react-query/devtools';
 import { useSelector, useDispatch } from 'react-redux';
 import { getBlockingMessages } from 'calypso/blocks/eligibility-warnings/hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from 'calypso/blocks/eligibility-warnings/utils';
@@ -12,7 +11,7 @@ import { WarningList } from 'calypso/blocks/eligibility-warnings/warning-list';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
-import { useNewSiteSearchPlugins } from 'calypso/data/marketplace/use-site-search-es-query';
+import { useNewSiteSearchPluginsInfinite } from 'calypso/data/marketplace/use-site-search-es-query';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
@@ -55,11 +54,17 @@ export default function MarketplaceTest() {
 	const pluginDetails = useSelector( ( state ) => getPlugins( state, [ selectedSiteId ] ) );
 	const { data = [], isFetching } = useWPCOMPlugins( 'all' );
 
-	const { data: dataSearch = [], isFetching: isFetchingSearch } = useNewSiteSearchPlugins( {
+	const {
+		data: dataSearch = [],
+		isFetching: isFetchingSearch,
+		fetchNextPage,
+	} = useNewSiteSearchPluginsInfinite( {
 		category: 'all',
 		searchTerm: 'woocommerce',
+		pageSize: 20,
 	} );
 
+	// eslint-disable-next-line no-console
 	console.log( { dataSearch, isFetchingSearch } );
 
 	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
@@ -123,7 +128,7 @@ export default function MarketplaceTest() {
 
 	return (
 		<Container>
-			{ /* <ReactQueryDevtools initialIsOpen={ true } /> */ }
+			<button onClick={ fetchNextPage }>Fetch next page</button>
 			{ selectedSiteId && <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> }
 			<Card key="wpcom-plugins">
 				<PluginsBrowserList
