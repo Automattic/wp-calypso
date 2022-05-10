@@ -79,7 +79,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 		closeAndLeave();
 	};
 
-	const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
+	const isHelpCenterEnabled = config.isEnabled( 'checkout/help-center' );
 
 	const newItems = ! isLoading && ! data?.has_seen_whats_new_modal;
 
