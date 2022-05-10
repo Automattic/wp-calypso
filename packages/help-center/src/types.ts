@@ -1,11 +1,11 @@
 import { SiteDetails } from '@automattic/data-stores/dist/types/site';
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode } from 'react';
 
 export interface Container {
 	content: ReactElement;
 	handleClose: () => void;
-	headerText?: string;
-	footerContent?: ReactElement;
+	defaultHeaderText?: string;
+	defaultFooterContext?: ReactElement;
 }
 
 export interface Content {
@@ -18,7 +18,7 @@ export interface Header {
 	onMinimize?: () => void;
 	onMaximize?: () => void;
 	onDismiss: () => void;
-	headerText: string;
+	headerText: ReactNode;
 }
 
 export interface SuccessScreenProps {

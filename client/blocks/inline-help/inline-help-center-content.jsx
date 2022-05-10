@@ -1,10 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSupportAvailability } from '@automattic/data-stores';
+import { HelpCenterContext } from '@automattic/help-center';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Icon, page as pageIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import InlineHelpContactPage, { InlineHelpContactPageButton } from './inline-help-contact-page';
 import InlineHelpEmbedResult from './inline-help-embed-result';
@@ -17,10 +18,8 @@ import './inline-help-center-content.scss';
 const InlineHelpCenterContent = ( {
 	selectedArticle,
 	setSelectedArticle,
-	setHelpCenterFooter,
 	setContactFormOpen,
 	openInContactPage,
-	setHeaderText,
 } ) => {
 	const isMobile = useMobileBreakpoint();
 	const { __ } = useI18n();
@@ -28,6 +27,7 @@ const InlineHelpCenterContent = ( {
 	const [ activeSecondaryView, setActiveSecondaryView ] = useState(
 		openInContactPage ? VIEW_CONTACT : null
 	);
+	const { setHeaderText, setFooterContent } = useContext( HelpCenterContext );
 	const secondaryViewRef = useRef();
 
 	// prefetch the values
@@ -50,7 +50,7 @@ const InlineHelpCenterContent = ( {
 		}
 
 		if ( activeSecondaryView === VIEW_CONTACT ) {
-			setHeaderText( __( 'Contact our WordPress.com experts', 'full-site-editing' ) );
+			setHeaderText( __( 'Contact our WordPress.com experts' ) );
 		} else if ( activeSecondaryView === VIEW_RICH_RESULT ) {
 			setHeaderText(
 				<>
@@ -140,7 +140,7 @@ const InlineHelpCenterContent = ( {
 	};
 
 	useEffect( () => {
-		setHelpCenterFooter(
+		setFooterContent(
 			activeSecondaryView ? null : (
 				<InlineHelpContactPageButton
 					onClick={ openContactView }

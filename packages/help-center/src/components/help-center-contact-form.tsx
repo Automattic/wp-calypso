@@ -14,10 +14,11 @@ import { TextControl, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, page as pageIcon } from '@wordpress/icons';
+import React, { useEffect, useState, useContext } from 'react';
 /**
  * Internal Dependencies
  */
-import React, { useEffect, useState } from 'react';
+import { HelpCenterContext } from '../help-center-context';
 import { STORE_KEY } from '../store';
 import { SitePicker } from '../types';
 import { BackButton } from './back-button';
@@ -80,7 +81,6 @@ interface ContactFormProps {
 	onGoHome: () => void;
 	siteId: number | null;
 	onPopupOpen?: () => void;
-	setHeaderText: ( content: React.ReactElement | string ) => void;
 }
 
 const POPUP_TOP_BAR_HEIGHT = 60;
@@ -107,12 +107,7 @@ function openPopup( event: React.MouseEvent< HTMLButtonElement > ): Window {
 	return popup;
 }
 
-const ContactForm: React.FC< ContactFormProps > = ( {
-	mode,
-	onBackClick,
-	onGoHome,
-	setHeaderText,
-} ) => {
+const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHome } ) => {
 	const [ openChat, setOpenChat ] = useState( false );
 	const [ contactSuccess, setContactSuccess ] = useState( false );
 	const [ forumTopicUrl, setForumTopicUrl ] = useState( '' );
@@ -123,7 +118,7 @@ const ContactForm: React.FC< ContactFormProps > = ( {
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
-
+	const { setHeaderText } = useContext( HelpCenterContext );
 	const { selectedSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
 		return {
 			selectedSite: select( STORE_KEY ).getSite(),

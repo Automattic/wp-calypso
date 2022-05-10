@@ -17,8 +17,6 @@ function HelpCenterContent() {
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
 	const [ selectedArticle, setSelectedArticle ] = useState( null );
-	const [ footerContent, setFooterContent ] = useState( null );
-	const [ headerText, setHeaderText ] = useState( null );
 	const [ showHelpIconDot, setShowHelpIconDot ] = useState( false );
 	const { data, isLoading } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
 	useEffect( () => {
@@ -57,13 +55,9 @@ function HelpCenterContent() {
 						<Contents
 							selectedArticle={ selectedArticle }
 							setSelectedArticle={ setSelectedArticle }
-							setFooterContent={ setFooterContent }
-							setHeaderText={ setHeaderText }
 						/>
 					}
-					headerText={ headerText }
 					handleClose={ () => setShowHelpCenter( false ) }
-					footerContent={ footerContent }
 				/>
 			) }
 		</>

@@ -56,12 +56,7 @@ rawCurrentUserFetch()
 		store.dispatch( requestHappychatEligibility() );
 	} );
 
-export default function Content( {
-	selectedArticle,
-	setSelectedArticle,
-	setFooterContent,
-	setHeaderText,
-} ) {
+export default function Content( { selectedArticle, setSelectedArticle } ) {
 	const [ contactForm, setContactForm ] = useState( null );
 	const [ openInContactPage, setOpenInContactPage ] = useState( null );
 
@@ -81,16 +76,13 @@ export default function Content( {
 							setContactForm( null );
 						} }
 						siteId={ window._currentSiteId }
-						setHeaderText={ setHeaderText }
 					/>
 				) : (
 					<InlineHelpCenterContent
 						selectedArticle={ selectedArticle }
 						setSelectedArticle={ setSelectedArticle }
-						setHelpCenterFooter={ setFooterContent }
 						setContactFormOpen={ setContactForm }
 						openInContactPage={ openInContactPage }
-						setHeaderText={ setHeaderText }
 					/>
 				) }
 			</>
