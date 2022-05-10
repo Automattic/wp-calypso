@@ -13,6 +13,8 @@ import {
 } from 'calypso/state/analytics/actions';
 import CustomNameserversRow from './custom-nameservers-row';
 
+import './style.scss';
+
 const MIN_NAMESERVER_LENGTH = 2;
 const MAX_NAMESERVER_LENGTH = 4;
 
