@@ -53,6 +53,9 @@ export const showNotAuthorizedForNonAdmins: PageJS.Callback = ( context, next ) 
 export const disconnectSite: PageJS.Callback = ( context, next ) => {
 	context.primary = (
 		<DisconnectSite
+			// Ignore type checking because TypeScript is incorrectly inferring the prop type due to the redirectNonJetpack HOC.
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			//@ts-ignore
 			reason={ context.params.reason }
 			type={ context.query.type }
 			backHref={ '/dashboard' }
@@ -65,6 +68,9 @@ export const disconnectSiteConfirm: PageJS.Callback = ( context, next ) => {
 	const { reason, type, text } = context.query;
 	context.primary = (
 		<ConfirmDisconnection
+			// Ignore type checking because TypeScript is incorrectly inferring the prop type due to the redirectNonJetpack HOC.
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			//@ts-ignore
 			reason={ reason }
 			type={ type }
 			text={ text }
