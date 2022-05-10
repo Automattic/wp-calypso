@@ -90,11 +90,11 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		[ staticDesigns ]
 	);
 
-	const { data: generatedDesigns, isLoading: isLoadingGeneratedDesigns } =
+	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
 		useGeneratedDesignsQuery();
 	const shuffledGeneratedDesigns = useMemo(
-		() => ( ! isLoadingGeneratedDesigns ? shuffle( generatedDesigns ) : [] ),
-		[ generatedDesigns, isLoadingGeneratedDesigns ]
+		() => shuffle( generatedDesigns ),
+		[ generatedDesigns ]
 	);
 
 	const visibility = useNewSiteVisibility();
