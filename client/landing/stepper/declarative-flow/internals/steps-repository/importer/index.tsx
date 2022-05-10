@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -158,6 +159,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 
 		return (
 			<>
+				<QuerySites allSites />
 				<DocumentHead title={ __( 'Import your site content' ) } />
 				<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 
