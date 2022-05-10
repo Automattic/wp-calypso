@@ -51,7 +51,13 @@ export const showNotAuthorizedForNonAdmins: PageJS.Callback = ( context, next ) 
 };
 
 export const disconnectSite: PageJS.Callback = ( context, next ) => {
-	context.primary = <DisconnectSite reason={ context.params.reason } type={ context.query.type } />;
+	context.primary = (
+		<DisconnectSite
+			reason={ context.params.reason }
+			type={ context.query.type }
+			backHref={ '/dashboard' }
+		/>
+	);
 	next();
 };
 
