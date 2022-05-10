@@ -42,7 +42,7 @@ const ErrorStep: Step = function ErrorStep( { navigation, flow } ) {
 		if ( flow === 'anchor-fm' ) {
 			return (
 				<WarningsOrHoldsSection>
-					<Button className="error-step__button" href="/setup" primary>
+					<Button className="error-step__button" href="/start" primary>
 						{ __( 'Continue' ) }
 					</Button>
 					<Button className="error-step__link" borderless href="https://anchor.fm">
