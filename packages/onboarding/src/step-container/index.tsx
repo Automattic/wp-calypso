@@ -35,7 +35,7 @@ interface Props {
 	goNext?: () => void;
 	flowName?: string;
 	intent?: string;
-	stepProgress?: { flowLength: number; currentStep: number };
+	stepProgress?: { count: number; progress: number };
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 }
 
@@ -131,13 +131,7 @@ const StepContainer: React.FC< Props > = ( {
 
 	function ProgressIndicator() {
 		if ( ! stepProgress ) return null;
-		return (
-			<FlowProgress
-				flowLength={ stepProgress?.flowLength }
-				positionInFlow={ stepProgress?.currentStep }
-				translate={ translate }
-			/>
-		);
+		return <FlowProgress count={ stepProgress?.count } progress={ stepProgress?.progress } />;
 	}
 
 	function NextButton() {

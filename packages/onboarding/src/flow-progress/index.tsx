@@ -1,21 +1,17 @@
+import { useTranslate } from 'i18n-calypso';
 import './style.scss';
 
 interface Props {
-	flowLength: number;
-	positionInFlow: number;
-	translate: any;
+	count: number;
+	progress: number;
 }
 
-const FlowProgress: React.FC< Props > = ( { flowLength, positionInFlow, translate } ) => {
-	if ( flowLength > 1 ) {
+const FlowProgress: React.FC< Props > = ( { count, progress } ) => {
+	const translate = useTranslate();
+	if ( count > 1 ) {
 		return (
 			<div className="flow-progress">
-				{ translate( 'Step %(stepNumber)d of %(stepTotal)d', {
-					args: {
-						stepNumber: positionInFlow + 1,
-						stepTotal: flowLength,
-					},
-				} ) }
+				{ translate( 'Step %(progress)d of %(count)d', { args: { progress, count } } ) }
 			</div>
 		);
 	}
