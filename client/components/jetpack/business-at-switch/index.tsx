@@ -38,7 +38,7 @@ const Placeholder = () => (
 const BusinessATSwitch = ( { UpsellComponent }: Props ): ReactElement => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	const featuresLoaded: boolean = useSelector(
+	const featuresNotLoaded: boolean = useSelector(
 		( state ) =>
 			null === getFeaturesBySiteId( state, siteId ) && ! isRequestingSiteFeatures( state, siteId )
 	);
@@ -47,7 +47,7 @@ const BusinessATSwitch = ( { UpsellComponent }: Props ): ReactElement => {
 	);
 
 	// If we're not sure, show a loading screen.
-	if ( ! featuresLoaded ) {
+	if ( featuresNotLoaded ) {
 		return (
 			<Main className="business-at-switch__loading">
 				<QuerySiteFeatures siteIds={ [ siteId ] } />
