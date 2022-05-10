@@ -1,3 +1,4 @@
+import { stringify } from 'qs';
 import { useQuery, UseQueryResult, QueryKey } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { VerticalImage } from './types';
@@ -10,10 +11,10 @@ export function useVerticalImagesQuery( id: string ): UseQueryResult< VerticalIm
 }
 
 function fetchVerticalImages( id: string ): Promise< VerticalImage[] > {
-	return wpcomRequest( {
+	return wpcomRequest< VerticalImage[] >( {
 		apiNamespace: 'wpcom/v2',
 		path: `/site-verticals/${ id }/images`,
-		query: { include_parents: true },
+		query: stringify( { include_parents: true } ),
 	} );
 }
 
