@@ -1,5 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink, Icon } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import type { AnalysisReport } from '@automattic/data-stores';
 
@@ -25,9 +26,19 @@ const responses: Record< AnalysisReport[ 'result' ], React.ReactChild > = {
 	WPCOM: '',
 	WPORG: (
 		<p>
-			{ __(
-				'Your site is not hosted on our services. Support for the self-hosted version of WordPress is provided by the WordPress.org community forums, or if the problem relates to a specific plugin or theme, contact support for that product instead. If you’re not sure, share you question with a link, and we’ll point you in the right direction!',
-				__i18n_text_domain__
+			{ createInterpolateElement(
+				__(
+					'Your site is not <hosted_on_our_services>hosted on our services</hosted_on_our_services>. Support for the self-hosted version of WordPress is provided by the <wordpress_org_community_forums>WordPress.org community forums</wordpress_org_community_forums>, or if the problem relates to a specific plugin or theme, contact support for that product instead. If you’re not sure, share you question with a link, and we’ll point you in the right direction!',
+					__i18n_text_domain__
+				),
+				{
+					hosted_on_our_services: (
+						<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/com-vs-org/' ) } />
+					),
+					wordpress_org_community_forums: (
+						<ExternalLink href={ localizeUrl( 'https://wordpress.org/support/forums/' ) } />
+					),
+				}
 			) }
 		</p>
 	),
