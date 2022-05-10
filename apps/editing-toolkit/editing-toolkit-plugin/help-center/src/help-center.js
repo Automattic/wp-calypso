@@ -32,28 +32,22 @@ function HelpCenterContent() {
 		}
 	}, [ show ] );
 
+	const content = (
+		<span className="etk-help-center">
+			<Button
+				className={ cx( 'entry-point-button', { 'is-active': show } ) }
+				onClick={ () => setShowHelpCenter( ! show ) }
+				icon={ <HelpIcon newItems={ showHelpIconDot } active={ show } /> }
+			></Button>
+		</span>
+	);
+
 	return (
 		<>
 			{ isDesktop && (
 				<>
-					<PinnedItems scope="core/edit-post">
-						<span className="etk-help-center">
-							<Button
-								className={ cx( 'entry-point-button', { 'is-active': show } ) }
-								onClick={ () => setShowHelpCenter( ! show ) }
-								icon={ <HelpIcon newItems={ showHelpIconDot } active={ show } /> }
-							></Button>
-						</span>
-					</PinnedItems>
-					<PinnedItems scope="core/edit-site">
-						<span className="etk-help-center">
-							<Button
-								className={ cx( 'entry-point-button', { 'is-active': show } ) }
-								onClick={ () => setShowHelpCenter( ! show ) }
-								icon={ <HelpIcon newItems={ showHelpIconDot } active={ show } /> }
-							></Button>
-						</span>
-					</PinnedItems>
+					<PinnedItems scope="core/edit-post">{ content }</PinnedItems>
+					<PinnedItems scope="core/edit-site">{ content }</PinnedItems>
 				</>
 			) }
 			{ show && (
