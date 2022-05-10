@@ -15,7 +15,9 @@ const DomainEmailInfoCard = ( {
 }: DomainInfoCardProps ): JSX.Element | null => {
 	const translate = useTranslate();
 	const typesUnableToAddEmail = [ domainType.TRANSFER, domainType.SITE_REDIRECT ] as const;
-	const { data, error, isLoading } = useEmailAccountsQuery( selectedSite.ID, domain.name );
+	const { data, error, isLoading } = useEmailAccountsQuery( selectedSite.ID, domain.name, {
+		retry: false,
+	} );
 
 	let emailAddresses: string[] = [];
 
@@ -26,7 +28,7 @@ const DomainEmailInfoCard = ( {
 	if ( ! isLoading && ! error ) {
 		const emailAccounts: EmailAccount[] = data?.accounts;
 
-		if ( emailAccounts.length ) {
+		if ( emailAccounts?.length ) {
 			emailAddresses = emailAccounts
 				.map( ( a ) => a.emails )
 				.flat()
