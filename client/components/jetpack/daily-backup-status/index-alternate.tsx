@@ -1,4 +1,3 @@
-import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { useCallback, useEffect, useRef } from 'react';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,8 +17,7 @@ import {
 } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
-import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getInProgressBackupForSite, siteHasRealtimeBackups } from 'calypso/state/rewind/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import type { Activity } from 'calypso/state/activity-log/types';
 import type { Moment } from 'moment';
@@ -52,9 +50,7 @@ const DailyBackupStatusAlternate: React.FC< Props > = ( {
 		[ dispatch, siteId ]
 	);
 
-	const hasRealtimeBackups = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS )
-	);
+	const hasRealtimeBackups = useSelector( ( state ) => siteHasRealtimeBackups( state, siteId ) );
 
 	const backupCurrentlyInProgress = useSelector( ( state ) =>
 		getInProgressBackupForSite( state, siteId )
