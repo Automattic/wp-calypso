@@ -1,7 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
@@ -167,14 +166,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan?.product_slug ?? '' }`
 		),
-		productName,
-		description: productName
-			? sprintf(
-					/* translators: %s: The upgrading plan name (ex.: WordPress.com Business) */
-					__( 'Upgrade to the %s plan and set up your WooCommerce store.' ),
-					productName
-			  )
-			: __( 'Upgrade to set up your WooCommerce store.' ),
+		description: __( 'Upgrade to the Pro plan and set up your WooCommerce store.' ),
 	};
 
 	const domain = stagingDomain;
