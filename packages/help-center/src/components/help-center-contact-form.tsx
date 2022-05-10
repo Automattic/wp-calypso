@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { Button, HappinessEngineersTray } from '@automattic/components';
+import { Button } from '@automattic/components';
 import {
 	useHas3PC,
 	useSubmitTicketMutation,
@@ -26,6 +26,12 @@ import { SuccessScreen } from './ticket-success-screen';
 import './help-center-contact-form.scss';
 
 export const SITE_STORE = 'automattic/site';
+
+const fakeFaces = Array.from(
+	{ length: 10 },
+	( _, index ) => `https://s0.wp.com/i/face-${ index }.jpg`
+);
+const randomTwoFaces = fakeFaces.sort( () => Math.random() - 0.5 ).slice( 0, 2 );
 
 const HelpCenterSitePicker: React.FC< SitePicker > = ( { onSelect, currentSite, siteId } ) => {
 	const otherSite = {
@@ -304,7 +310,9 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && (
 				<section>
 					<div className="help-center-contact-form__site-picker-hes-tray">
-						<HappinessEngineersTray key="happiness-tray" count={ 2 } shuffled={ false } />
+						{ randomTwoFaces.map( ( f ) => (
+							<img src={ f } aria-hidden="true" alt=""></img>
+						) ) }
 						<p className="help-center-contact-form__site-picker-hes-tray-text">
 							{ formTitles.trayText }
 						</p>
