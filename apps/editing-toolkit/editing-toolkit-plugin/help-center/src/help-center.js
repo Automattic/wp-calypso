@@ -79,8 +79,3 @@ const HelpCenterRender = () => {
 registerPlugin( 'etk-help-center', {
 	render: HelpCenterRender,
 } );
-
-registerPlugin( 'etk-help-center-fse', {
-	render: HelpCenterRender,
-	scope: 'core/edit-site',
-} );
