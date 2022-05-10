@@ -281,7 +281,6 @@ export function isFreePlan( planSlug: string ): boolean {
 }
 
 export function isFlexiblePlan( planSlug: string ): boolean {
-	// @todo clk
 	return planMatches( planSlug, { type: TYPE_FLEXIBLE } );
 }
 
