@@ -2,10 +2,6 @@ import {
 	PLAN_WPCOM_PRO,
 	PLAN_JETPACK_SECURITY_DAILY,
 	WPCOM_FEATURES_WORDADS,
-	isPremium,
-	isBusiness,
-	isEcommerce,
-	isSecurityDaily,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -21,11 +17,7 @@ import FeatureExample from 'calypso/components/feature-example';
 import FormButton from 'calypso/components/forms/form-button';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import {
-	isWordadsInstantActivationEligible,
-	canUpgradeToUseWordAds,
-	canAccessAds,
-} from 'calypso/lib/ads/utils';
+import { isWordadsInstantActivationEligible, canAccessAds } from 'calypso/lib/ads/utils';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -45,12 +37,6 @@ import { isSiteWordadsUnsafe } from 'calypso/state/wordads/status/selectors';
 
 import './style.scss';
 import 'calypso/my-sites/stats/stats-module/style.scss';
-
-const overSome =
-	( ...checks ) =>
-	( item ) =>
-		checks.some( ( check ) => check( item ) );
-const isEligbleJetpackPlan = overSome( isPremium, isBusiness, isEcommerce, isSecurityDaily );
 
 class AdsWrapper extends Component {
 	static propTypes = {
@@ -268,8 +254,8 @@ class AdsWrapper extends Component {
 	}
 
 	render() {
-		const { isWordadsInstantEligibleButNotOwner, site, translate } = this.props;
-		const jetpackPremium = site.jetpack && isEligbleJetpackPlan( site.plan );
+		const { canUpgradeToUseWordAds, isWordadsInstantEligibleButNotOwner, site, translate } =
+			this.props;
 
 		let component = this.props.children;
 		let notice = null;
@@ -282,15 +268,15 @@ class AdsWrapper extends Component {
 			);
 		} else if ( ! site.options.wordads && isWordadsInstantActivationEligible( site ) ) {
 			component = this.renderInstantActivationToggle( component );
-		} else if ( ! site.options.wordads && isWordadsInstantEligibleButNotOwner ) {
+		} else if ( isWordadsInstantEligibleButNotOwner ) {
 			component = this.renderOwnerRequiredMessage( component );
-		} else if ( canUpgradeToUseWordAds( site ) && site.jetpack && ! jetpackPremium ) {
+		} else if ( canUpgradeToUseWordAds && site.jetpack ) {
 			component = this.renderjetpackUpsell();
-		} else if ( canUpgradeToUseWordAds( site ) ) {
+		} else if ( canUpgradeToUseWordAds ) {
 			component = this.renderUpsell();
 		} else if ( ! canAccessAds( site ) ) {
 			component = this.renderEmptyContent();
-		} else if ( ! ( site.options.wordads || jetpackPremium ) ) {
+		} else if ( ! canUpgradeToUseWordAds ) {
 			component = null;
 		} else if ( site.options.wordads && site.is_private ) {
 			notice = this.renderNoticeSiteIsPrivate();
@@ -308,17 +294,21 @@ class AdsWrapper extends Component {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
+	const hasWordAdsFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_WORDADS );
+
 	return {
 		site,
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
+		canUpgradeToUseWordAds: ! site.options.wordads && ! hasWordAdsFeature,
 		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, site ),
 		wordAdsError: getWordAdsErrorForSite( state, site ),
 		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
 		isUnsafe: isSiteWordadsUnsafe( state, siteId ),
 		isWordadsInstantEligibleButNotOwner:
-			siteHasFeature( state, siteId, WPCOM_FEATURES_WORDADS ) &&
+			! site.options.wordads &&
+			hasWordAdsFeature &&
 			! canCurrentUser( state, siteId, 'activate_wordads' ),
 		adsProgramName: isJetpackSite( state, siteId ) ? 'Ads' : 'WordAds',
 	};

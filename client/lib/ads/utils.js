@@ -50,19 +50,12 @@ export function canAccessWordads( site ) {
 
 export function canAccessAds( site ) {
 	return (
-		( canAccessWordads( site ) || canUpgradeToUseWordAds( site ) ) &&
+		( canAccessWordads( site ) ||
+			( site && ! site.options.wordads && ! hasWordAdsPlan( site ) ) ) &&
 		userCan( 'manage_options', site )
 	);
 }
 
 export function isWordadsInstantActivationEligible( site ) {
 	return hasWordAdsPlan( site ) && userCan( 'activate_wordads', site );
-}
-
-export function canUpgradeToUseWordAds( site ) {
-	if ( site && ! site.options.wordads && ! hasWordAdsPlan( site ) ) {
-		return true;
-	}
-
-	return false;
 }
