@@ -243,16 +243,16 @@ export class PlansStep extends Component {
 
 		if ( eligibleForProPlan ) {
 			if ( isStarterPlanEnabled() ) {
-				return translate(
-					'Try risk-free with a 14-day money back guarantee.{{free}}{{break/}}Do you want a free plan? {{link}}Click here{{/link}}.{{/free}}',
-					{
-						components: {
-							break: <br />,
-							free: hideFreePlan ? null : <span />,
-							link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
-						},
-					}
-				);
+				return hideFreePlan
+					? translate( 'Try risk-free with a 14-day money-back guarantee.' )
+					: translate(
+							'Try risk-free with a 14-day money-back guarantee or {{link}}start with a free site{{/link}}.',
+							{
+								components: {
+									link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+								},
+							}
+					  );
 			}
 
 			return 'en' === locale ||
