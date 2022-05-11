@@ -8,7 +8,7 @@ import {
 	validateUsers,
 } from 'calypso/lib/gsuite/new-users';
 import GSuiteNewUser from './new-user';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { ReactElement } from 'react';
 
 import './style.scss';
@@ -16,7 +16,7 @@ import './style.scss';
 interface GSuiteNewUserListProps {
 	autoFocus?: boolean;
 	children?: ReactNode;
-	domains?: SiteDomain[];
+	domains?: ResponseDomain[];
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
 	showAddAnotherMailboxButton?: boolean;

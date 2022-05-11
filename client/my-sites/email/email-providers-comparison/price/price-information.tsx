@@ -13,8 +13,8 @@ import {
 import { formatPrice } from 'calypso/lib/gsuite/utils/format-price';
 import { isDomainEligibleForTitanFreeTrial, isTitanMonthlyProduct } from 'calypso/lib/titan';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
 import type { ReactElement } from 'react';
 
 import './style.scss';
@@ -111,7 +111,7 @@ const PriceInformation = ( {
 	domain,
 	product,
 }: {
-	domain?: SiteDomain;
+	domain?: ResponseDomain;
 	product: ProductListItem | null;
 } ): ReactElement | null => {
 	if ( ! product ) {
