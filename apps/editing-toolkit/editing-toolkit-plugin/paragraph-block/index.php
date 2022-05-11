@@ -17,7 +17,7 @@ function paragraph_block_script() {
 
 	wp_enqueue_script(
 		'paragraph-block-script',
-		plugins_url( 'dist/paragraph-block.js', __FILE__ ),
+		plugins_url( 'dist/paragraph-block.min.js', __FILE__ ),
 		is_array( $script_dependencies ) ? $script_dependencies : array(),
 		$version,
 		true

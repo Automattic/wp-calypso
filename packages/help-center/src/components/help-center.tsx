@@ -1,13 +1,14 @@
 /**
  * External Dependencies
  */
+import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
+import { Container } from '../types';
+import { SITE_STORE } from './help-center-contact-form';
 import HelpCenterContainer from './help-center-container';
-import { Container } from './types';
-
 import '../styles.scss';
 
 const HelpCenter: React.FC< Container > = ( {
@@ -17,6 +18,9 @@ const HelpCenter: React.FC< Container > = ( {
 	footerContent,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
+
+	// prefetch the current site
+	useSelect( ( select ) => select( SITE_STORE ).getSite( window._currentSiteId ) );
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];

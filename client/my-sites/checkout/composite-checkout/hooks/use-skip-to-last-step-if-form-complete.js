@@ -1,12 +1,15 @@
 import { useSetStepComplete } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-skip-to-last-step-if-form-complete' );
 
 export default function useSkipToLastStepIfFormComplete( isCachedContactFormValid ) {
 	const hasDecided = useRef( false );
 	const setStepCompleteStatus = useSetStepComplete();
+	const reduxDispatch = useDispatch();
 
 	useEffect( () => {
 		if ( ! isCachedContactFormValid ) {
@@ -19,9 +22,11 @@ export default function useSkipToLastStepIfFormComplete( isCachedContactFormVali
 				debug( 'Contact details are already populated; skipping to payment method step' );
 				saveStepNumberToUrl( 2 ); // TODO: can we do this dynamically somehow in case the step numbers change?
 				setStepCompleteStatus( 1, true ); // TODO: can we do this dynamically somehow in case the step numbers change?
+
+				reduxDispatch( recordTracksEvent( 'calypso_checkout_skip_to_last_step' ) );
 			}
 		}
-	}, [ isCachedContactFormValid, setStepCompleteStatus ] );
+	}, [ isCachedContactFormValid, setStepCompleteStatus, reduxDispatch ] );
 }
 
 function saveStepNumberToUrl( stepNumber ) {

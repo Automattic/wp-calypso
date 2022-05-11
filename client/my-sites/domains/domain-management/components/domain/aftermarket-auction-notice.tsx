@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import { DOMAIN_EXPIRATION_AUCTION } from 'calypso/lib/url/support';
@@ -9,7 +10,13 @@ const AftermarketAutcionNotice = ( { domainName }: { domainName: string } ): JSX
 
 		{
 			components: {
-				a: <a href={ DOMAIN_EXPIRATION_AUCTION } target="_blank" rel="noopener noreferrer" />,
+				a: (
+					<a
+						href={ localizeUrl( DOMAIN_EXPIRATION_AUCTION ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
 				strong: <strong />,
 			},
 			args: {

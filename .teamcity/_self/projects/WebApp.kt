@@ -693,10 +693,10 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 		buildDescription = "Runs Calypso e2e tests on $targetDevice size",
 		getCalypsoLiveURL = """
 			chmod +x ./bin/get-calypso-live-url.sh
-			URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
+			CALYPSO_LIVE_URL=${'$'}(./bin/get-calypso-live-url.sh ${BuildDockerImage.depParamRefs.buildNumber})
 			if [[ ${'$'}? -ne 0 ]]; then
-				// Command failed. URL contains stderr
-				echo ${'$'}URL
+				// Command failed. CALYPSO_LIVE_URL contains stderr
+				echo ${'$'}CALYPSO_LIVE_URL
 				exit 1
 			fi
 		""".trimIndent(),
@@ -743,7 +743,7 @@ object PreReleaseE2ETests : E2EBuildType(
 	testGroup = "calypso-release",
 	buildParams = {
 		param("env.VIEWPORT_NAME", "desktop")
-		param("env.URL", "https://wpcalypso.wordpress.com")
+		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
 	},
 	buildFeatures = {
 		notifications {
@@ -769,7 +769,7 @@ object QuarantinedE2ETests: E2EBuildType(
 	testGroup = "quarantined",
 	buildParams = {
 		param("env.VIEWPORT_NAME", "desktop")
-		param("env.URL", "https://wpcalypso.wordpress.com")
+		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
 	},
 	buildFeatures = {
 		notifications {

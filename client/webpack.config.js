@@ -405,7 +405,6 @@ const webpackConfig = {
 						shouldMinify,
 						process.env.ENTRY_LIMIT,
 						process.env.SECTION_LIMIT,
-						sourceMapType,
 						process.env.NODE_ENV,
 						process.env.CALYPSO_ENV,
 					].join( '-' ),

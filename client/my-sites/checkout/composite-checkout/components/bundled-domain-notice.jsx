@@ -1,6 +1,6 @@
 import { isMonthly, getPlan, getBillingMonthsForTerm } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { translationExists } from '@automattic/i18n-utils';
+import { localizeUrl, translationExists } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import {
 	hasDomainRegistration,
@@ -57,7 +57,7 @@ export default function BundledDomainNotice( { cart } ) {
 	}
 
 	const domainRegistrationLink = (
-		<a href={ REGISTER_DOMAIN } target="_blank" rel="noopener noreferrer" />
+		<a href={ localizeUrl( REGISTER_DOMAIN ) } target="_blank" rel="noopener noreferrer" />
 	);
 
 	const oneYearCopy = translate(

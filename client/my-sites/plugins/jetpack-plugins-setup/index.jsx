@@ -1,4 +1,5 @@
 import { CompactCard } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { filter, get, range } from 'lodash';
 import page from 'page';
@@ -330,7 +331,7 @@ class PlansSetup extends Component {
 		statusProps.children = (
 			<NoticeAction
 				key="notice_action"
-				href={ helpLinks[ plugin.slug ] }
+				href={ localizeUrl( helpLinks[ plugin.slug ] ) }
 				onClick={ this.trackManualInstall }
 			>
 				{ translate( 'Manual Installation' ) }
@@ -423,7 +424,7 @@ class PlansSetup extends Component {
 						plugin: pluginsWithErrors[ 0 ].name,
 					},
 					components: {
-						a: <a href={ JETPACK_SUPPORT } onClick={ this.trackManualInstall } />,
+						a: <a href={ localizeUrl( JETPACK_SUPPORT ) } onClick={ this.trackManualInstall } />,
 					},
 				}
 			);
@@ -433,14 +434,17 @@ class PlansSetup extends Component {
 					'It may be possible to fix this by {{a}}manually installing{{/a}} the plugins.',
 				{
 					components: {
-						a: <a href={ JETPACK_SUPPORT } onClick={ this.trackManualInstall } />,
+						a: <a href={ localizeUrl( JETPACK_SUPPORT ) } onClick={ this.trackManualInstall } />,
 					},
 				}
 			);
 		}
 		return (
 			<Notice status="is-error" text={ noticeText } showDismiss={ false }>
-				<NoticeAction href={ JETPACK_CONTACT_SUPPORT } onClick={ this.trackContactSupport }>
+				<NoticeAction
+					href={ localizeUrl( JETPACK_CONTACT_SUPPORT ) }
+					onClick={ this.trackContactSupport }
+				>
 					{ translate( 'Contact Support' ) }
 				</NoticeAction>
 			</Notice>

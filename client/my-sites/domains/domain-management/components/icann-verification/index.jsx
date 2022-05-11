@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -50,7 +51,7 @@ class IcannVerificationCard extends Component {
 				components: {
 					learnMoreLink: (
 						<a
-							href={ EMAIL_VALIDATION_AND_VERIFICATION }
+							href={ localizeUrl( EMAIL_VALIDATION_AND_VERIFICATION ) }
 							target="_blank"
 							rel="noopener noreferrer"
 						/>

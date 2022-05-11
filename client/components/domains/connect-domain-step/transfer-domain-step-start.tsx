@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -34,7 +35,7 @@ function TransferDomainStepStart( {
 	selectedSite,
 }: StartStepProps ): JSX.Element {
 	const { __ } = useI18n();
-	const switchToDomainConnect = () => page( MAP_EXISTING_DOMAIN );
+	const switchToDomainConnect = () => page( localizeUrl( MAP_EXISTING_DOMAIN ) );
 	const [ inboundTransferStatusInfo, setInboundTransferStatusInfo ] = useState<
 		Maybe< typeof domainInboundTransferStatusInfo >
 	>( domainInboundTransferStatusInfo );

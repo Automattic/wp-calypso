@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { PureComponent } from 'react';
 import { CUSTOM_DNS } from 'calypso/lib/url/support';
@@ -14,7 +15,9 @@ class DnsDetails extends PureComponent {
 						'{{customDnsLink}}Learn more{{/customDnsLink}}.',
 					{
 						components: {
-							customDnsLink: <a href={ CUSTOM_DNS } target="_blank" rel="noopener noreferrer" />,
+							customDnsLink: (
+								<a href={ localizeUrl( CUSTOM_DNS ) } target="_blank" rel="noopener noreferrer" />
+							),
 						},
 					}
 				) }

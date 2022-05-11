@@ -1,5 +1,10 @@
 import phpUnserialize from 'phpunserialize';
-import { UseQueryResult, UseQueryOptions, InfiniteData, useInfiniteQuery } from 'react-query';
+import {
+	UseQueryOptions,
+	InfiniteData,
+	useInfiniteQuery,
+	UseInfiniteQueryResult,
+} from 'react-query';
 import { useSelector } from 'react-redux';
 import { extractSearchInformation, normalizePluginsList } from 'calypso/lib/plugins/utils';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -264,7 +269,7 @@ const extractPages = ( pages: Array< { hits: ESHits } > = [] ) => {
 export const useSiteSearchPlugins = (
 	options: PluginQueryOptions,
 	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = false }: UseQueryOptions = {}
-): UseQueryResult => {
+): UseInfiniteQueryResult => {
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
 	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;

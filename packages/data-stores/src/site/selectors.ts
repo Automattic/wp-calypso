@@ -1,6 +1,6 @@
 import { select } from '@wordpress/data';
 import { STORE_KEY } from './constants';
-import { SiteLaunchStatus } from './types';
+import { SiteLaunchStatus, SiteOption } from './types';
 import type { State } from './reducer';
 
 export const getState = ( state: State ) => state;
@@ -61,8 +61,16 @@ export const getSiteSettings = ( state: State, siteId: number ) => {
 	return state.sitesSettings[ siteId ];
 };
 
-export const getSiteSetupError = ( state: State, siteId: number ) => {
-	return state.siteSetupErrors[ siteId ] || null;
+export const getSiteSetupError = ( state: State ) => {
+	return state.siteSetupErrors;
+};
+
+export const getSiteOptions = ( state: State, siteId: number ) => {
+	return state.sites[ siteId ]?.options;
+};
+
+export const getSiteOption = ( state: State, siteId: number, optionName: SiteOption ) => {
+	return state.sites[ siteId ]?.options?.[ optionName ];
 };
 
 export const getPrimarySiteDomain = ( _: State, siteId: number ) =>
@@ -147,12 +155,4 @@ export function isEligibleForProPlan( state: State, siteId?: number ): boolean {
 	}
 
 	return true;
-}
-
-export function getHappyChatAvailability( state: State ) {
-	return state.happyChatAvailability;
-}
-
-export function getEmailSupportAvailability( state: State ) {
-	return state.emailSupportAvailability;
 }

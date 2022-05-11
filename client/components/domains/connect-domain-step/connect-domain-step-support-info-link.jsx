@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
@@ -35,7 +36,7 @@ export default function ConnectDomainStepSupportInfoLink( { baseClassName, mode 
 				{ createInterpolateElement(
 					__( 'Not finding your way? You can read our detailed <a>support documentation</a>.' ),
 					{
-						a: createElement( 'a', { href: supportLink[ mode ], target: '_blank' } ),
+						a: createElement( 'a', { href: localizeUrl( supportLink[ mode ] ), target: '_blank' } ),
 					}
 				) }
 			</span>

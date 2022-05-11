@@ -1,7 +1,6 @@
 import { Dialog, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
-import { sample } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -45,7 +44,7 @@ const getRandomPromo = () => {
 		},
 	];
 
-	return sample( promoOptions );
+	return promoOptions[ Math.floor( Math.random() * promoOptions.length ) ];
 };
 
 export const getPromoLink = ( location, promoDetails ) => {

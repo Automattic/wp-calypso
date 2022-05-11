@@ -1,7 +1,6 @@
 /**
  * @group legal
  */
-import fs from 'fs';
 import {
 	ChangeUILanguageFlow,
 	DataHelper,
@@ -12,17 +11,15 @@ import {
 	SidebarComponent,
 	BrowserManager,
 } from '@automattic/calypso-e2e';
-import archiver from 'archiver';
-import FormData from 'form-data';
-import fetch from 'node-fetch';
 import { Page, Browser } from 'playwright';
+import uploadScreenshotsToBlog from '../../lib/martech-tos-helper';
 import type { LanguageSlug } from '@automattic/languages';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), function () {
 	const blogName = 'e2eflowtestingtos1.wordpress.com';
-	const cartItemForBusinessPlan = 'WordPress.com Business';
+	const cartItemForProPlan = 'WordPress.com Pro';
 	let page: Page;
 	let plansPage: PlansPage;
 
@@ -55,8 +52,8 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		it( 'Login to marTech user account', async function () {
 			const loginPage = new LoginPage( page );
 			await loginPage.visit( { path: 'new' } );
-			const credentials = DataHelper.getAccountCredential( 'martechTosUser' );
-			await loginPage.logInWithCredentials( ...credentials );
+			const { username, password } = DataHelper.getAccountCredential( 'martechTosUser' );
+			await loginPage.logInWithCredentials( username, password );
 		} );
 
 		it( 'Set store cookie', async function () {
@@ -67,7 +64,8 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 			await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
 			const changeUILanguageFlow = new ChangeUILanguageFlow( page );
 			await changeUILanguageFlow.changeUILanguage( 'en' as LanguageSlug );
-			await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
+			await page.goto( DataHelper.getCalypsoURL( 'home' ) );
+			await page.reload( { waitUntil: 'networkidle' } );
 		} );
 
 		it( 'Navigate to Upgrades > Plans', async function () {
@@ -82,13 +80,13 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 			await plansPage.clickTab( 'Plans' );
 		} );
 
-		it( 'Click on "Upgrade" button for WordPress.com Business plan', async function () {
-			await plansPage.clickPlanActionButton( { plan: 'Business', buttonText: 'Upgrade' } );
+		it( 'Click on "Upgrade" button for WordPress.com Pro plan', async function () {
+			await plansPage.selectPlan( 'Pro' );
 		} );
 
-		it( 'WordPress.com Business is added to cart', async function () {
+		it( 'WordPress.com Pro is added to cart', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
-			await cartCheckoutPage.validateCartItem( cartItemForBusinessPlan );
+			await cartCheckoutPage.validateCartItem( cartItemForProPlan );
 		} );
 
 		it( 'Screenshot checkout page for all en and non-en locales', async function () {
@@ -97,9 +95,8 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 				page.setViewportSize( { width: 1280, height: 720 } );
 				await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
 				await changeUILanguageFlow.changeUILanguage( locale as LanguageSlug );
+				await page.reload( { waitUntil: 'networkidle' } );
 				await cartCheckoutPage.visit( blogName );
-				const paymentDetails = DataHelper.getTestPaymentDetails();
-				await cartCheckoutPage.enterBillingDetails( paymentDetails );
 				await cartCheckoutPage.validatePaymentForm();
 				await page.screenshot( {
 					path: `tos_checkout_desktop_${ locale }.png`,
@@ -125,31 +122,12 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		} );
 
 		it( 'Zip screenshots and upload', async function () {
-			const zipFilename = 'tos-screenshots-checkout.zip';
-			const archive = archiver( 'zip', {
-				zlib: { level: 9 }, // Sets the compression level.
-			} );
-			const output = fs.createWriteStream( zipFilename );
-			archive.pipe( output );
-			archive.glob( 'tos_checkout_*' );
-			archive.finalize();
+			const filetnameTitle = 'tos-screenshots-checkout';
+			const zipFilename = `${ filetnameTitle }.zip`;
+			const result = await uploadScreenshotsToBlog( zipFilename, 'tos_checkout_*' );
 
-			output.on( 'close', function () {
-				const form = new FormData();
-				const bearerToken = DataHelper.getTosUploadToken();
-				form.append( 'zip_file', fs.createReadStream( zipFilename ) );
-				fetch( 'https://public-api.wordpress.com/wpcom/v2/tos-screenshots', {
-					method: 'POST',
-					body: form,
-					headers: {
-						Authorization: `Bearer ${ bearerToken }`,
-					},
-				} )
-					.then( ( response ) => response.json() )
-					.then( ( response ) =>
-						expect( response?.data?.upload_status ).toStrictEqual( 'success' )
-					);
-			} );
+			expect( result?.media?.[ 0 ]?.title ).toStrictEqual( filetnameTitle );
+			expect( result?.media?.[ 0 ]?.mime_type ).toStrictEqual( 'application/zip' );
 		} );
 	} );
 } );

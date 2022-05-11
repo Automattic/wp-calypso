@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -21,7 +22,7 @@ const TransferLockOptOutForm = ( props ) => (
 					components: {
 						link: (
 							<a
-								href={ UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES }
+								href={ localizeUrl( UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES ) }
 								target="_blank"
 								rel="noopener noreferrer"
 							/>

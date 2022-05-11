@@ -12,7 +12,6 @@ import { register } from '..';
 jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
 	default: jest.fn(),
-	requestAllBlogsAccess: jest.fn( () => Promise.resolve() ),
 } ) );
 
 let store: ReturnType< typeof register >;
@@ -27,27 +26,42 @@ beforeEach( () => {
 
 describe( 'selectors', () => {
 	it( 'resolves the state via an API call', async () => {
-		const apiResponse = {};
+		const apiResponse = {
+			free_plan: {
+				product_id: 1,
+				product_name: 'WordPress.com Free',
+				product_slug: 'free_plan',
+				description: '',
+				product_type: 'bundle',
+				available: true,
+				is_domain_registration: false,
+				cost_display: '$0.00',
+				combined_cost_display: '$0.00',
+				cost: 0,
+				currency_code: 'USD',
+				price_tier_list: [],
+				price_tier_usage_quantity: null,
+				product_term: 'one time',
+				price_tiers: [],
+				price_tier_slug: '',
+			},
+		};
 
 		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
-
-		const listenForStateUpdate = () => {
-			return new Promise( ( resolve ) => {
-				const unsubscribe = subscribe( () => {
-					unsubscribe();
-					resolve();
-				} );
-			} );
-		};
 
 		// First call returns undefined
 		expect( select( store ).getProductsList() ).toEqual( undefined );
 
-		// In the first state update, the resolver starts resolving
-		await listenForStateUpdate();
+		await new Promise( ( resolve ) => {
+			const unsubscribe = subscribe( () => {
+				if ( select( store ).getProductsList() === undefined ) {
+					return;
+				}
 
-		// In the second update, the resolver is finished resolving and we can read the result in state
-		await listenForStateUpdate();
+				unsubscribe();
+				resolve();
+			} );
+		} );
 
 		expect( select( store ).getProductsList() ).toEqual( apiResponse );
 	} );

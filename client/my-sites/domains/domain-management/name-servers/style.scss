@@ -1,9 +1,3 @@
-.name-servers .notice {
-	font-size: $font-body-extra-small;
-	margin-top: 10px;
-	padding-right: 15px;
-}
-
 .name-servers__dns {
 	.name-servers__toggle {
 		.components-base-control__field {
@@ -24,29 +18,6 @@
 		font-size: $font-body-small;
 		font-style: italic;
 		margin-bottom: 0;
-	}
-}
-
-.name-servers.is-placeholder {
-	.name-servers__dns {
-		.name-servers__toggle {
-			display: none;
-		}
-
-		.name-servers__explanation,
-		.name-servers__explanation a {
-			@include placeholder();
-		}
-	}
-
-	.vertical-nav-item {
-		span:nth-of-type( 1 ) {
-			@include placeholder();
-		}
-
-		span:nth-of-type( 2 ) {
-			display: none;
-		}
 	}
 }
 

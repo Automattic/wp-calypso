@@ -1,5 +1,6 @@
 import { Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -36,7 +37,9 @@ import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 class RegisteredDomainType extends Component {
 	renderExpired() {
 		const { domain, purchase, isLoadingPurchase, translate, moment } = this.props;
-		const domainsLink = ( link ) => <a href={ link } target="_blank" rel="noopener noreferrer" />;
+		const domainsLink = ( link ) => (
+			<a href={ localizeUrl( link ) } target="_blank" rel="noopener noreferrer" />
+		);
 
 		if ( ! domain.expired || domain.pendingTransfer ) {
 			return null;
@@ -129,7 +132,11 @@ class RegisteredDomainType extends Component {
 		const { domain, translate } = this.props;
 		const { registrationDate, name: domain_name } = domain;
 		const domainsLink = (
-			<a href={ DOMAIN_RECENTLY_REGISTERED } target="_blank" rel="noopener noreferrer" />
+			<a
+				href={ localizeUrl( DOMAIN_RECENTLY_REGISTERED ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			/>
 		);
 
 		const recentlyRegistered = isRecentlyRegistered( registrationDate );

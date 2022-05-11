@@ -1,4 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
+import { TestAccountName } from '../../../src';
 import {
 	getTestAccountByFeature,
 	envToFeatureKey,
@@ -15,18 +16,18 @@ describe( 'getTestAccountByFeature', function () {
 			gutenberg: 'edge',
 			coblocks: 'stable',
 			siteType: 'simple',
-			accountName: 'multipleFeaturesRightAccountName',
+			accountName: 'multipleFeaturesRightAccountName' as TestAccountName,
 		},
 		{
 			gutenberg: 'edge',
 			siteType: 'simple',
-			accountName: 'multipleFeaturesUndefinedRightAccountName',
+			accountName: 'multipleFeaturesUndefinedRightAccountName' as TestAccountName,
 		},
 		{
 			gutenberg: 'stable',
 			coblocks: 'stable',
 			siteType: 'simple',
-			accountName: 'wrongAccountName',
+			accountName: 'wrongAccountName' as TestAccountName,
 		},
 	];
 
@@ -75,12 +76,12 @@ describe( 'getTestAccountByFeature', function () {
 			{
 				siteType: 'simple',
 				gutenberg: 'edge',
-				accountName: 'wrongAccount',
+				accountName: 'wrongAccount' as TestAccountName,
 			},
 			{
 				gutenberg: 'edge',
 				siteType: 'simple',
-				accountName: 'rightAccount',
+				accountName: 'rightAccount' as TestAccountName,
 			},
 		];
 
@@ -110,7 +111,7 @@ describe( 'getTestAccountByFeature', function () {
 				gutenberg: 'edge',
 				siteType: 'simple',
 				variant: 'siteEditor',
-				accountName: 'siteEditorEdgeAccount',
+				accountName: 'siteEditorEdgeAccount' as TestAccountName,
 			},
 		];
 		const siteEditorAccountName = getTestAccountByFeature(
@@ -139,7 +140,7 @@ describe( 'getTestAccountByFeature', function () {
 			{
 				gutenberg: 'edge',
 				siteType: 'simple',
-				accountName: 'aNewAccount',
+				accountName: 'aNewAccount' as TestAccountName,
 			},
 		];
 

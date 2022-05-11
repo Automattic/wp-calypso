@@ -467,7 +467,15 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderHelpCenter() {
-		return <AsyncLoad require="./masterbar-help-center" placeholder={ null } />;
+		const { currentSelectedSiteId } = this.props;
+
+		return (
+			<AsyncLoad
+				require="./masterbar-help-center"
+				siteId={ currentSelectedSiteId }
+				placeholder={ null }
+			/>
+		);
 	}
 
 	render() {

@@ -4,10 +4,11 @@ import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual, some } from 'lodash';
 import photon from 'photon';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
 import PulsingDot from 'calypso/components/pulsing-dot';
+import Tootlip from 'calypso/components/tooltip';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -78,7 +79,20 @@ export class Theme extends Component {
 		active: false,
 	};
 
+	prevThemeThumbnailRef = createRef( null );
+	themeThumbnailRef = createRef( null );
+
+	state = {
+		descriptionTooltipVisible: false,
+	};
+
 	shouldComponentUpdate( nextProps ) {
+		const themeThumbnailRefUpdated = this.themeThumbnailRef.current !== this.themeThumbnailRef.prev;
+
+		if ( themeThumbnailRefUpdated ) {
+			this.prevThemeThumbnailRef.current = this.themeThumbnailRef.current;
+		}
+
 		return (
 			nextProps.theme.id !== this.props.theme.id ||
 			nextProps.active !== this.props.active ||
@@ -90,9 +104,18 @@ export class Theme extends Component {
 			) ||
 			nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ||
 			nextProps.onScreenshotClick !== this.props.onScreenshotClick ||
-			nextProps.onMoreButtonClick !== this.props.onMoreButtonClick
+			nextProps.onMoreButtonClick !== this.props.onMoreButtonClick ||
+			themeThumbnailRefUpdated
 		);
 	}
+
+	showDescriptionTooltip = () => {
+		this.setState( { descriptionTooltipVisible: true } );
+	};
+
+	hideDescriptionTooltip = () => {
+		this.setState( { descriptionTooltipVisible: false } );
+	};
 
 	onScreenshotClick = () => {
 		const { onScreenshotClick } = this.props;
@@ -226,13 +249,14 @@ export class Theme extends Component {
 						{ translate( 'Beginner' ) }
 					</Ribbon>
 				) }
-				<div className="theme__content" { ...bookmarkRef }>
+				<div ref={ this.themeThumbnailRef } className="theme__content" { ...bookmarkRef }>
 					<a
 						aria-label={ name }
 						className="theme__thumbnail"
 						href={ this.props.screenshotClickUrl || 'javascript:;' /* fallback for a11y */ }
 						onClick={ this.onScreenshotClick }
-						title={ themeDescription }
+						onMouseEnter={ this.showDescriptionTooltip }
+						onMouseLeave={ this.hideDescriptionTooltip }
 					>
 						{ isActionable && (
 							<div className="theme__thumbnail-label">{ this.props.actionLabel }</div>
@@ -252,6 +276,14 @@ export class Theme extends Component {
 							</div>
 						) }
 					</a>
+
+					<Tootlip
+						context={ this.themeThumbnailRef.current }
+						isVisible={ this.state.descriptionTooltipVisible }
+						showDelay={ 1000 }
+					>
+						<div className="theme__tooltip">{ themeDescription }</div>
+					</Tootlip>
 
 					<div className="theme__info">
 						<h2 className="theme__info-title">{ name }</h2>

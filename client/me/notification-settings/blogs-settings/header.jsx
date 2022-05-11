@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { countBy, map, omit, values, flatten } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import SiteInfo from 'calypso/blocks/site';
@@ -39,23 +38,35 @@ class BlogSettingsHeader extends PureComponent {
 
 	getLegend = () => {
 		const { settings } = this.props;
-		const filteredSettings = omit( settings, [
-			'blog_id',
-			'devices',
-			'email.achievement',
-			'email.store_order',
-			'email.scheduled_publicize',
-			'timeline.store_order',
-		] );
+		const {
+			blog_id,
+			devices,
+			'email.achievement': emailAchievement,
+			'email.store_order': emailStoreOrder,
+			'email.scheduled_publicize': emailScheduledPublicize,
+			'timeline.store_order': timelineStoreOrder,
+			...filteredSettings
+		} = settings;
 		// Ignore the device_id of each device found.
-		const devicesSettings = map( settings.devices, ( device ) => omit( device, 'device_id' ) );
-		const { true: onCount, false: offCount } = countBy(
-			// Here we're flattening the values of both sets of settings
-			// as both sets have two 'streams' of settings: 'email' and 'timeline'
-			[
-				...flatten( map( filteredSettings, values ) ),
-				...flatten( map( devicesSettings, values ) ),
-			]
+		const devicesSettings = Object.values( devices ).map( ( device ) => {
+			const { device_id, ...restDevice } = device;
+			return restDevice;
+		} );
+
+		const allSettings = [
+			...Object.values( filteredSettings ),
+			...Object.values( devicesSettings ),
+		]
+			.map( ( set ) => Object.values( set ) )
+			.flat();
+
+		const { onCount, offCount } = allSettings.reduce(
+			( acc, isOn ) => {
+				const key = isOn ? 'onCount' : 'offCount';
+				acc[ key ] += 1;
+				return acc;
+			},
+			{ onCount: 0, offCount: 0 }
 		);
 
 		if ( ! onCount ) {

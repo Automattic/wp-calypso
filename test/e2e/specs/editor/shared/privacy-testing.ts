@@ -87,31 +87,31 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 				testPage = await browser.newPage();
 			} );
 
-			it.each( [ 'defaultUser', 'public' ] )(
-				`View ${ visibility } page as %s`,
-				async function ( user ) {
-					try {
-						const testAccount = new TestAccount( user );
-						await testAccount.authenticate( testPage );
-					} catch {
-						// noop - public user, which is state of not logged in, does not
-						// have an entry in the secrets file.
-					}
-					await testPage.goto( url.href );
-					const publishedPostPage = new PublishedPostPage( testPage );
+			const viewPageAsNonAuthor = async () => {
+				await testPage.goto( url.href );
+				const publishedPostPage = new PublishedPostPage( testPage );
 
-					// If target article is private, only the posting user can see that it even exists.
-					if ( visibility === 'Private' ) {
-						return await publishedPostPage.validateTextInPost( 'Nothing here' );
-					}
-
-					// If target article is password protected, unlock it first.
-					if ( visibility === 'Password' ) {
-						await publishedPostPage.enterPostPassword( pagePassword );
-					}
-					await publishedPostPage.validateTextInPost( pageContent );
+				// If target article is private, only the posting user can see that it even exists.
+				if ( visibility === 'Private' ) {
+					return await publishedPostPage.validateTextInPost( 'Nothing here' );
 				}
-			);
+
+				// If target article is password protected, unlock it first.
+				if ( visibility === 'Password' ) {
+					await publishedPostPage.enterPostPassword( pagePassword );
+				}
+				await publishedPostPage.validateTextInPost( pageContent );
+			};
+
+			it( `View ${ visibility } page as 'defaultUser'`, async function () {
+				const testAccount = new TestAccount( 'defaultUser' );
+				await testAccount.authenticate( testPage );
+				await viewPageAsNonAuthor();
+			} );
+
+			it( `View ${ visibility } page as a public user that is not logged in.`, async function () {
+				await viewPageAsNonAuthor();
+			} );
 
 			it( `View ${ visibility } page as publishing user`, async function () {
 				const testAccount = new TestAccount( accountName );

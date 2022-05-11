@@ -1,4 +1,5 @@
 import { Button, Card, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -173,7 +174,7 @@ class TransferDomainPrecheck extends Component {
 					br: <br />,
 					a: (
 						<a
-							href={ INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
+							href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK ) }
 							rel="noopener noreferrer"
 							target="_blank"
 						/>
@@ -193,7 +194,7 @@ class TransferDomainPrecheck extends Component {
 					components: {
 						a: (
 							<a
-								href={ INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK }
+								href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK ) }
 								rel="noopener noreferrer"
 								target="_blank"
 							/>
@@ -263,7 +264,7 @@ class TransferDomainPrecheck extends Component {
 				components: {
 					a: (
 						<a
-							href={ INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE }
+							href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE ) }
 							rel="noopener noreferrer"
 							target="_blank"
 						/>
@@ -294,7 +295,7 @@ class TransferDomainPrecheck extends Component {
 									components: {
 										a: (
 											<a
-												href={ INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID }
+												href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID ) }
 												rel="noopener noreferrer"
 												target="_blank"
 											/>

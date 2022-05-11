@@ -6,22 +6,24 @@
 * GENERAL STYLING - Content
 */
 .inline-help-center__content {
-	background-color: var( --color-surface );
+	&:not( .is-secondary-view-richresult ) {
+		background-color: var( --color-surface );
 
-	a {
-		font-size: $font-body-small !important;
-		color: var( --studio-gray-100 );
-		text-decoration: none;
+		a {
+			font-size: $font-body-small !important;
+			color: var( --studio-gray-100 );
+			text-decoration: none;
 
-		&:hover {
+			&:hover {
+				color: var( --studio-gray-100 );
+			}
+		}
+
+		h3 {
+			font-size: $font-body-small !important;
+			font-weight: 500;
 			color: var( --studio-gray-100 );
 		}
-	}
-
-	h3 {
-		font-size: $font-body-small !important;
-		font-weight: 500;
-		color: var( --studio-gray-100 );
 	}
 
 	&.is-secondary-view-active {
@@ -90,9 +92,9 @@
 					svg {
 						margin-right: 15px;
 						display: block;
-						padding: 5px;
+						padding: 8px;
 						background: var( --studio-gray-0 );
-						fill: var( --studio-blue-70 );
+						fill: var( --studio-blue-50 );
 					}
 
 					span {
@@ -105,29 +107,20 @@
 	}
 
 	/**
-	* RICH RESULTS
-	*/
-	.inline-help__secondary-view.inline-help__richresult {
-		button.button.is-borderless {
-			font-size: $font-body-small;
-			color: var( --studio-gray-100 );
-		}
-	}
-
-	/**
 	* MORE RESOURCES
 	*/
 	.inline-help__more-resources {
 		.inline-help__resource-item {
 			margin-bottom: 16px;
 
-			.inline-help__resource-cell a {
+			.inline-help__resource-cell a,
+			.inline-help__resource-cell button {
 				display: flex;
 
-				svg {
+				svg:first-of-type {
 					margin-right: 15px;
 					display: block;
-					padding: 5px;
+					padding: 8px;
 					background: var( --studio-gray-0 );
 				}
 
@@ -135,6 +128,68 @@
 					display: block;
 					align-self: center;
 				}
+
+				&.inline-help__video {
+					svg {
+						fill: var( --studio-pink-50 );
+					}
+				}
+
+				&.inline-help__capture-video {
+					svg {
+						fill: var( --studio-orange-30 );
+					}
+				}
+
+				&.inline-help__desktop {
+					svg {
+						fill: var( --studio-celadon-30 );
+					}
+				}
+
+				&.inline-help__format-list-numbered {
+					svg {
+						fill: var( --studio-purple-40 );
+					}
+				}
+
+				&.inline-help__new-releases {
+					padding: 0;
+					font-size: $font-body-small !important;
+					color: var( --studio-gray-100 );
+					text-decoration: none !important;
+
+					> :first-child {
+						fill: var( --studio-blue-70 );
+					}
+
+					span {
+						text-decoration: none;
+						color: var( --studio-gray-100 );
+					}
+
+					> svg:last-child {
+						align-self: auto;
+						background: none;
+						color: var( --color-masterbar-unread-dot-background );
+						padding-left: 8px;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	* SECONDARY-VIEW HEADER
+	*/
+	.inline-help__secondary-view {
+		&.inline-help__richresult,
+		&.inline-help__contact {
+			button.button.is-borderless {
+				display: flex;
+				align-items: center;
+				font-size: $font-body-small;
+				color: var( --studio-gray-100 );
 			}
 		}
 	}
@@ -152,6 +207,10 @@
 			flex-direction: column;
 			justify-content: space-between;
 
+			&.is-reversed {
+				flex-direction: column-reverse;
+			}
+
 			.inline-help__contact-box {
 				display: flex;
 				flex-direction: row;
@@ -159,6 +218,7 @@
 				overflow: hidden;
 				border-radius: 2px;
 				cursor: pointer;
+				margin-bottom: 16px;
 
 				.inline-help__contact-box-icon {
 					border-radius: 2px 0 0 2px;
@@ -174,10 +234,25 @@
 				}
 
 				&.chat {
-					margin-bottom: 16px;
-
 					.inline-help__contact-box-icon {
 						background-color: var( --color-accent );
+					}
+
+					&.is-disabled {
+						cursor: auto;
+
+						.inline-help__contact-box-icon {
+							background-color: #f6f7f7;
+
+							svg {
+								fill: var( --studio-gray-20 );
+							}
+						}
+
+						h2,
+						p {
+							color: var( --studio-gray-60 );
+						}
 					}
 				}
 
@@ -250,6 +325,119 @@
 	}
 }
 
+/**
+* ARTICLE EMBED
+*/
+.help-center .help-center__container .inline-help__embed-result {
+	h1.support-article-dialog__header-title-link {
+		font-size: $font-title-medium;
+	}
+
+	h2 {
+		font-size: $font-title-small;
+	}
+
+	h3,
+	h4 {
+		font-size: $font-body;
+	}
+
+	h5 {
+		font-size: $font-body-small;
+	}
+
+	h2,
+	h3,
+	h4,
+	h5 {
+		font-weight: 600;
+		color: var( --color-neutral-100 );
+		margin: 8px 0;
+	}
+
+	a:not( .support-article-dialog__header-title-link ) {
+		color: var( --studio-blue-50 );
+		text-decoration: none;
+	}
+
+	a[name='toc'] span {
+		color: var( --color-neutral-80 );
+		font-size: $font-body;
+	}
+
+	.wp-block-a8c-support-table-of-contents {
+		background-color: var( --studio-blue-0 );
+		padding: 16px;
+
+		ol {
+			list-style-type: none;
+			margin: 0;
+		}
+
+		li a {
+			font-size: $font-body-small;
+		}
+	}
+
+	p {
+		font-size: $font-body-small;
+		color: var( --color-neutral-80 );
+	}
+
+	.support-article-dialog__story {
+		padding: 0;
+	}
+
+	ul {
+		font-size: $font-body-small;
+		color: var( --color-neutral-80 );
+		list-style-type: circle;
+		list-style-position: inside;
+	}
+
+	span.noticon.noticon-star {
+		color: var( --studio-yellow-20 );
+	}
+
+	.wp-block-quote {
+		background-color: var( --color-neutral-0 );
+		border-left: none;
+		padding: 16px;
+		color: var( --color-neutral-80 );
+	}
+
+	.wp-block-separator {
+		margin: auto;
+		border-bottom: 1px solid var( --color-neutral-10 );
+		width: 100%;
+	}
+
+	.wp-block-group__inner-container {
+		background-color: ( var( --color-neutral-0 ) );
+		padding: 16px 0;
+	}
+
+	:where( .wp-block-group.has-background ) {
+		padding: 0;
+	}
+
+	.wp-block-button__link,
+	.button-primary {
+		background-color: transparent;
+		border: 1px solid var( --studio-gray-10 );
+		border-radius: 2px;
+		padding: 5px;
+		width: 100%;
+	}
+
+	.callout .wp-block-column {
+		background-color: var( --color-neutral-0 );
+
+		.wp-block-quote {
+			margin: 0;
+		}
+	}
+}
 /**
 * FOOTER - high specificity to overwrite base styling
 */

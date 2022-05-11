@@ -245,7 +245,7 @@ const EmailPlan = ( props ) => {
 	function renderAddNewMailboxesOrRenewNavItem() {
 		const { canAddMailboxes, domain, hasSubscription, purchase, translate } = props;
 
-		if ( hasTitanMailWithUs( domain ) && ! hasSubscription && canAddMailboxes ) {
+		if ( hasTitanMailWithUs( domain ) && ! hasSubscription ) {
 			return (
 				<VerticalNavItem { ...getAddMailboxProps() }>
 					{ translate( 'Add new mailboxes' ) }

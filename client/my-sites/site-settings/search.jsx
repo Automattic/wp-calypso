@@ -2,9 +2,9 @@ import {
 	isJetpackSearch,
 	isP2Plus,
 	planHasJetpackSearch,
-	FEATURE_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
+	WPCOM_FEATURES_INSTANT_SEARCH,
 	planHasJetpackClassicSearch,
 } from '@automattic/calypso-products';
 import { CompactCard } from '@automattic/components';
@@ -129,7 +129,7 @@ class Search extends Component {
 					) }
 					href={ href }
 					event={ 'calypso_jetpack_search_settings_upgrade_nudge' }
-					feature={ FEATURE_SEARCH }
+					feature={ WPCOM_FEATURES_INSTANT_SEARCH }
 					plan={ siteIsJetpack ? PRODUCT_JETPACK_SEARCH_MONTHLY : PRODUCT_WPCOM_SEARCH_MONTHLY }
 					showIcon={ true }
 				/>

@@ -39,6 +39,7 @@ export function login( {
 	from = undefined,
 	allowSiteConnection = undefined,
 	signupUrl = undefined,
+	useQRCode = undefined,
 } = {} ) {
 	let url = '/log-in';
 
@@ -58,6 +59,8 @@ export function login( {
 		url += '/new';
 	} else if ( useMagicLink ) {
 		url += '/link';
+	} else if ( useQRCode ) {
+		url += '/qr';
 	}
 
 	if ( locale && locale !== 'en' ) {

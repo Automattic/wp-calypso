@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSelectedDomain } from 'calypso/lib/domains';
@@ -24,7 +25,7 @@ const TransferLock = ( props ) => {
 							strong: <strong />,
 							learnMoreLink: (
 								<a
-									href={ UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES }
+									href={ localizeUrl( UPDATE_CONTACT_INFORMATION_EMAIL_OR_NAME_CHANGES ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>
