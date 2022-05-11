@@ -1,0 +1,78 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.qr-code-login {
+	display: flex;
+	justify-content: space-between;
+	flex-direction: column;
+
+	@include break-small {
+		flex-direction: row;
+	}
+
+	canvas {
+		max-width: 100%;
+		margin-bottom: 20px;
+	}
+
+	.qr-code-login__instructions {
+		text-align: left;
+		margin-left: 3em;
+		font-size: $font-body-small;
+
+		.qr-code-login__heading {
+			font-size: $font-title-small;
+			text-align: center;
+			margin-bottom: 12px;
+			font-weight: bold;
+
+			@include break-small {
+				text-align: left;
+			}
+		}
+
+		ol {
+			margin-left: 0;
+
+			li {
+				margin-bottom: 0.75em;
+			}
+		}
+
+		a {
+			font-weight: 500;
+		}
+	}
+}
+
+.qr-code-login__placeholder {
+	min-width: 352px;
+	min-height: 352px;
+	position: relative;
+	background-color: var( --color-neutral-0 );
+	margin-bottom: 8px;
+
+	@include placeholder( --color-neutral-0 );
+
+	:nth-child( 2 ) {
+		left: auto;
+		right: 0;
+	}
+	:nth-child( 3 ) {
+		top: auto;
+		bottom: 0;
+	}
+}
+.qr-code-login__help-text.is-placeholder {
+	@include placeholder( --color-neutral-0 );
+}
+.qr-code-login__corner-box {
+	position: absolute;
+	border: 5px solid var( --color-neutral-0 );
+	outline: 5px solid #fff;
+	background-color: var( --color-neutral-0 );
+	width: 16px;
+	height: 16px;
+	top: 0;
+	left: 0;
+}

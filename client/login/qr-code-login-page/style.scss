@@ -1,20 +1,20 @@
 @import '@automattic/onboarding/styles/mixins';
 @import '@wordpress/base-styles/mixins';
 
-.qr-code-login {
+.qr-code-login-page {
     margin: 0 auto;
-	max-width: 400px;
+	max-width: 700px;
     text-align: center;
 }
 
-.qr-code-login__heading {
+.qr-code-login-page__heading {
     font-size: $font-title-small;
 	margin-bottom: 32px;
 	margin-top: 16px;
 	text-align: center;
 }
 
-.qr-code-login__footer {
+.qr-code-login-page__footer {
     a {
 		color: var( --color-neutral-50 );
 		display: block;
@@ -34,7 +34,7 @@
 	}
 }
 
-.qr-code-login__placeholder {
-	width: 352px;
+.qr-code-login-page__placeholder {
+	width: 100%;
 	height: 352px;
 }
