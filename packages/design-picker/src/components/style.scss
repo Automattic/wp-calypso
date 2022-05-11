@@ -507,3 +507,40 @@
 		}
 	}
 }
+
+.generated-design-picker__cta {
+	background-color: #ffffff;
+	bottom: 0;
+	display: none;
+	margin: 0 auto;
+	left: 0;
+	right: 0;
+
+	.button {
+		border-radius: 4px;
+		font-weight: 500;
+		padding: 9px 48px;
+
+		// Override unnecessary super specificity added by another class.
+		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+	}
+
+	@include break-small {
+		align-items: center;
+		display: flex;
+		height: 118px;
+		justify-content: flex-end;
+		max-width: 1440px;
+		opacity: 0;
+		pointer-events: none;
+		position: sticky;
+		transform: translateY( 118px );
+		transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+
+		&.is-visible {
+			opacity: 1;
+			pointer-events: auto;
+			transform: translateY( 0 );
+		}
+	}
+}

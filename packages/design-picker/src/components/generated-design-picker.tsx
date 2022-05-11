@@ -4,6 +4,7 @@ import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { useEffect, useRef, useState } from 'react';
 import { getDesignPreviewUrl } from '../utils';
 import type { Design } from '../types';
 import type { MShotsOptions } from '@automattic/onboarding';
@@ -119,10 +120,33 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 	onViewMore,
 } ) => {
 	const { __ } = useI18n();
+	const headingRef = useRef< HTMLDivElement >();
+	const observerRef = useRef< IntersectionObserver >();
+	const [ isHeadingInViewport, setIsHeadingInViewport ] = useState( true );
+
+	useEffect( () => {
+		if ( ! headingRef.current || observerRef.current ) {
+			return;
+		}
+
+		const handler = ( entries: IntersectionObserverEntry[] ) => {
+			if ( ! entries.length ) {
+				return;
+			}
+
+			const [ entry ] = entries;
+			setIsHeadingInViewport( entry.isIntersecting );
+		};
+
+		observerRef.current = new IntersectionObserver( handler, { threshold: 1 } );
+		observerRef.current.observe( headingRef.current );
+
+		return () => observerRef.current?.disconnect?.();
+	}, [] );
 
 	return (
 		<div className="generated-design-picker">
-			{ heading }
+			<div ref={ headingRef }>{ heading }</div>
 			<div className="generated_design-picker__content">
 				<div className="generated-design-picker__thumbnails">
 					{ designs &&
@@ -150,6 +174,13 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 							/>
 						) ) }
 				</div>
+			</div>
+			<div
+				className={ classnames( 'generated-design-picker__cta', {
+					'is-visible': ! isHeadingInViewport,
+				} ) }
+			>
+				<Button primary>{ __( 'Continue' ) }</Button>
 			</div>
 		</div>
 	);
