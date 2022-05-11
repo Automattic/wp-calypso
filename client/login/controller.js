@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import page from 'page';
+import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
@@ -121,12 +122,34 @@ export function magicLoginUse( context, next ) {
 }
 
 export function redirectDefaultLocale( context, next ) {
-	if ( context.pathname === '/log-in/jetpack/en' ) {
-		context.redirect( '/log-in/jetpack' );
-	} else if ( context.pathname === '/log-in/en' ) {
-		context.redirect( '/log-in' );
+	// Only handle simple routes
+	if ( context.pathname !== '/log-in/en' && context.pathname !== '/log-in/jetpack/en' ) {
+		if ( ! isUserLoggedIn( context.store.getState() ) && ! context.params.lang ) {
+			context.params.lang = 'en';
+		}
+		return next();
 	}
-	next();
+
+	// Do not redirect if user bootrapping is disabled
+	if (
+		! isUserLoggedIn( context.store.getState() ) &&
+		! config.isEnabled( 'wpcom-user-bootstrap' )
+	) {
+		return next();
+	}
+
+	// Do not redirect if user is logged in and the locale is different than english
+	// so we force the page to display in english
+	const currentUserLocale = getCurrentUserLocale( context.store.getState() );
+	if ( currentUserLocale && currentUserLocale !== 'en' ) {
+		return next();
+	}
+
+	if ( context.params.isJetpack === 'jetpack' ) {
+		page.redirect( '/log-in/jetpack' );
+	} else {
+		page.redirect( '/log-in' );
+	}
 }
 
 export function redirectJetpack( context, next ) {

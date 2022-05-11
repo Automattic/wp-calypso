@@ -92,12 +92,12 @@ export default ( router ) => {
 			`/log-in/${ lang }`,
 		],
 		redirectJetpack,
+		redirectDefaultLocale,
 		setLocaleMiddleware(),
 		setHrefLangLinks,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		login,
 		setShouldServerSideRenderLogin,
-		makeLoggedOutLayout,
-		redirectDefaultLocale
+		makeLoggedOutLayout
 	);
 };
