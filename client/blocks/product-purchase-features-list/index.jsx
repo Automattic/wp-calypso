@@ -9,6 +9,7 @@ import {
 	TYPE_PERSONAL,
 	TYPE_BLOGGER,
 	TYPE_FREE,
+	TYPE_STARTER,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_ONBOARDING_EXPIRE,
 	PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE,
@@ -242,6 +243,20 @@ export class ProductPurchaseFeaturesList extends Component {
 		);
 	}
 
+	getStarterFeatuers() {
+		const { isPlaceholder, selectedSite, planHasDomainCredit } = this.props;
+
+		return (
+			<Fragment>
+				<HappinessSupportCard isPlaceholder={ isPlaceholder } />
+				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
+				<SiteActivity />
+				<MobileApps onClick={ this.handleMobileAppsClick } />
+			</Fragment>
+		);
+	}
+
 	getJetpackFreeFeatures() {
 		const { isAutomatedTransfer, isPlaceholder, selectedSite } = this.props;
 		return (
@@ -379,6 +394,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_PERSONAL ]: () => this.getPersonalFeatures(),
 				[ TYPE_BLOGGER ]: () => this.getBloggerFeatures(),
 				[ TYPE_PRO ]: () => this.getProFeatuers(),
+				[ TYPE_STARTER ]: () => this.getStarterFeatuers(),
 			},
 			[ GROUP_JETPACK ]: {
 				[ TYPE_BUSINESS ]: () => this.getJetpackBusinessFeatures(),
