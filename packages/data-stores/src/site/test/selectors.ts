@@ -114,6 +114,45 @@ describe( 'getSite', () => {
 	} );
 } );
 
+describe( 'siteHasFeature', () => {
+	it( 'Test if site has features', async () => {
+		const siteId = 12345;
+		const apiResponse = {
+			URL: 'http://mytestsite12345.wordpress.com',
+			ID: siteId,
+			plan: {
+				features: {
+					active: [ 'woop' ],
+				},
+			},
+		};
+
+		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+
+		// First call returns undefined
+		expect( select( store ).getSite( 'plan' ) ).toEqual( undefined );
+
+		const listenForStateUpdate = () => {
+			return new Promise( ( resolve ) => {
+				const unsubscribe = subscribe( () => {
+					unsubscribe();
+					resolve();
+				} );
+			} );
+		};
+
+		// In the first state update, the resolver starts resolving
+		await listenForStateUpdate();
+
+		// In the second update, the resolver is finished resolving and we can read the result in state
+		await listenForStateUpdate();
+
+		expect( select( store ).siteHasFeature( siteId, 'woop' ) ).toEqual( true );
+
+		expect( select( store ).siteHasFeature( siteId, 'loop' ) ).toEqual( false );
+	} );
+} );
+
 describe( 'requiresUpgrade', () => {
 	it( 'Retrieves an available site feature from the store', async () => {
 		const siteId = 12345;
