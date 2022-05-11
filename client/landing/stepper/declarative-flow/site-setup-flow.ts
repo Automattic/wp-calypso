@@ -56,6 +56,9 @@ export const siteSetupFlow: Flow = {
 		const siteId = useSelect(
 			( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug )
 		);
+		const adminUrl = useSelect(
+			( select ) => siteSlug && select( SITE_STORE ).getSiteOption( siteId as number, 'admin_url' )
+		);
 		const isAtomic = useSelect( ( select ) =>
 			select( SITE_STORE ).isSiteAtomic( siteId as number )
 		);
@@ -109,6 +112,8 @@ export const siteSetupFlow: Flow = {
 					// End of woo flow
 					if ( storeType === 'power' ) {
 						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
+
+						return exitFlow( `${ adminUrl }/wp-admin/admin.php?page=wc-admin` );
 					}
 
 					if ( FSEActive && intent !== 'write' ) {
