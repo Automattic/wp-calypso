@@ -8,9 +8,9 @@ import { useState, useEffect } from '@wordpress/element';
 import { Icon, captureVideo, desktop, formatListNumbered, video } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
-import MaterialIcon from 'calypso/components/material-icon';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import NewReleases from './icons/new-releases';
 
 const circle = (
 	<SVG viewBox="0 0 24 24">
@@ -120,7 +120,7 @@ const HelpCenterMoreResources = () => {
 							onClick={ () => handleWhatsNewClick() }
 							className="inline-help__new-releases"
 						>
-							<MaterialIcon icon="new_releases" size={ 24 } />
+							<Icon icon={ <NewReleases /> } size={ 24 } />
 							<span>{ __( "What's new" ) }</span>
 							{ showWhatsNewDot && <Icon icon={ circle } size={ 16 } /> }
 						</Button>
