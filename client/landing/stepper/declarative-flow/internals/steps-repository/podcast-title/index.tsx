@@ -37,16 +37,18 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 			useDispatch( ONBOARD_STORE );
 		const { anchorFmPodcastId, isAnchorFmPodcastIdError, anchorFmEpisodeId, anchorFmSpotifyUrl } =
 			useAnchorFmParams();
+		const [ formTouched, setFormTouched ] = useState( false );
 
-		//If we don't have a custom title in the store, use the podcast title from the API
+		/*
+		 * If we don't have a custom title in the store and we haven't touched the form input,
+		 * use the podcast title from the API
+		 */
 		useEffect( () => {
-			if ( podcastTitle && ! hasSiteTitle ) {
+			if ( podcastTitle && ! hasSiteTitle && ! formTouched ) {
 				// Set initial site title to podcast title
 				setSiteTitle( podcastTitle );
 			}
 		}, [ setSiteTitle, hasSiteTitle, podcastTitle ] );
-
-		const [ formTouched, setFormTouched ] = useState( false );
 
 		const inputRef = useRef< HTMLInputElement >();
 		const underlineWidth = getTextWidth( ( siteTitle as string ) || '', inputRef.current );
