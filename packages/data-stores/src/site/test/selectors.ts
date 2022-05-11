@@ -114,12 +114,12 @@ describe( 'getSite', () => {
 	} );
 } );
 
-describe( 'hasAvailableSiteFeature', () => {
+describe( 'requiresUpgrade', () => {
 	it( 'Retrieves an available site feature from the store', async () => {
 		const siteId = 12345;
 		const apiResponse = {
 			URL: 'http://mytestsite12345.wordpress.com',
-			ID: 12345,
+			ID: siteId,
 			plan: {
 				features: {
 					active: [],
@@ -129,8 +129,10 @@ describe( 'hasAvailableSiteFeature', () => {
 				},
 			},
 		};
-
 		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+
+		// First call returns undefined
+		expect( select( store ).getSite( 'plan' ) ).toEqual( undefined );
 
 		const listenForStateUpdate = () => {
 			return new Promise( ( resolve ) => {
@@ -141,8 +143,43 @@ describe( 'hasAvailableSiteFeature', () => {
 			} );
 		};
 
-		// First call returns false
-		expect( select( store ).hasAvailableSiteFeature( siteId, 'woop' ) ).toEqual( false );
+		// In the first state update, the resolver starts resolving
+		await listenForStateUpdate();
+
+		// In the second update, the resolver is finished resolving and we can read the result in state
+		await listenForStateUpdate();
+
+		// Site requires upgrade
+		expect( select( store ).requiresUpgrade( siteId ) ).toEqual( true );
+	} );
+
+	it( 'Does not requires upgrade', async () => {
+		const siteId = 12345;
+		const apiResponse = {
+			URL: 'http://mytestsite12345.wordpress.com',
+			ID: siteId,
+			plan: {
+				features: {
+					active: [ 'woop' ],
+					available: {
+						woop: 'This is a test feature',
+					},
+				},
+			},
+		};
+		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+
+		// First call returns undefined
+		expect( select( store ).getSite( 'plan' ) ).toEqual( undefined );
+
+		const listenForStateUpdate = () => {
+			return new Promise( ( resolve ) => {
+				const unsubscribe = subscribe( () => {
+					unsubscribe();
+					resolve();
+				} );
+			} );
+		};
 
 		// In the first state update, the resolver starts resolving
 		await listenForStateUpdate();
@@ -150,14 +187,8 @@ describe( 'hasAvailableSiteFeature', () => {
 		// In the second update, the resolver is finished resolving and we can read the result in state
 		await listenForStateUpdate();
 
-		// The woop feature exists
-		expect( select( store ).hasAvailableSiteFeature( siteId, 'woop' ) ).toEqual( true );
-
-		// The foo feature does not exist
-		expect( select( store ).hasAvailableSiteFeature( siteId, 'foo' ) ).toEqual( false );
-
 		// Site requires upgrade
-		expect( select( store ).requiresUpgrade( siteId ) ).toEqual( true );
+		expect( select( store ).requiresUpgrade( siteId ) ).toEqual( false );
 	} );
 } );
 
