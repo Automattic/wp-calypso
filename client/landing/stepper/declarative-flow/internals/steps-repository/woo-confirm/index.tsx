@@ -13,6 +13,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import {
 	AUTOMATED_ELIGIBILITY_STORE,
 	SITE_STORE,
+	ONBOARD_STORE,
 	PRODUCTS_LIST_STORE,
 } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -50,6 +51,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		select( SITE_STORE ).isSiteAtomic( siteId )
 	);
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
+	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 
 	useEffect( () => {
 		if ( ! siteId ) {
@@ -286,6 +288,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 				/>
 			}
 			stepContent={ getContent() }
+			stepProgress={ stepProgress }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
