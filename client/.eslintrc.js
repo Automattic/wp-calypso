@@ -12,6 +12,19 @@ module.exports = {
 			'error',
 			{ packageDir: [ __dirname, path.join( __dirname, '..' ) ] },
 		],
+		// No need to import @testing-library/jest-dom - it is already globally provided by our test setup framework.
+		'no-restricted-imports': [
+			'error',
+			{
+				patterns: [
+					{
+						group: [ '@testing-library/jest-dom*' ],
+						message:
+							'@testing-library/jest-dom is already globally provided by our test setup framework.',
+					},
+				],
+			},
+		],
 	},
 	overrides: [
 		{
