@@ -3,7 +3,6 @@
  */
 import { render } from '@testing-library/react';
 import PlanPrice from '../index';
-import '@testing-library/jest-dom/extend-expect';
 
 describe( 'PlanPrice', () => {
 	it( 'renders a zero when rawPrice is passed a "0"', () => {

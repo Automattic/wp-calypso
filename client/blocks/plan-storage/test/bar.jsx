@@ -16,7 +16,6 @@ import {
 	PLAN_FREE,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { PlanStorageBar } from '../bar';
 
 describe( 'PlanStorageBar basic tests', () => {

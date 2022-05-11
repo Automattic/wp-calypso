@@ -6,7 +6,6 @@ import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automatt
 import { render, fireEvent, screen, within, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
-import '@testing-library/jest-dom/extend-expect';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';

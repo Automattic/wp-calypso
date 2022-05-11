@@ -7,7 +7,6 @@ import {
 	createShoppingCartManagerClient,
 	getEmptyResponseCart,
 } from '@automattic/shopping-cart';
-import '@testing-library/jest-dom/extend-expect';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
 import { useState } from 'react';
