@@ -62,7 +62,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site.ID ) ) || undefined
 	);
 	const { data: siteVerticalImages = [], isLoading: isLoadingSiteVerticalImages } =
-		useVerticalImagesQuery( siteVerticalId || '' );
+		useVerticalImagesQuery( siteVerticalId || '', { limit: 1 } );
 	const isVerticalizedWithImages = !! siteVerticalId && siteVerticalImages.length > 0;
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
 	const isPrivateAtomic = Boolean( site?.launch_status === 'unlaunched' && isAtomic );
