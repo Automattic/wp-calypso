@@ -2,7 +2,7 @@ import { Card, Gridicon } from '@automattic/components';
 import { useState } from 'react';
 import './style.scss';
 import SiteActions from '../site-actions';
-import { errorContent } from '../utils';
+import SiteErrorContent from '../site-error-content';
 
 const SiteCard = ( { rows, columns } ) => {
 	const [ isExpanded, setIsExpanded ] = useState( false );
@@ -44,7 +44,7 @@ const SiteCard = ( { rows, columns } ) => {
 
 			{ isExpanded && (
 				<div className="site-card__expanded-content">
-					{ siteError && errorContent( siteUrl ) }
+					{ siteError && <SiteErrorContent siteUrl={ siteUrl } /> }
 					{ expandedContentItems.map( ( key, index ) => {
 						if ( rows[ key ].formatter ) {
 							return (

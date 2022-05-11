@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import SiteActions from '../site-actions';
-import { errorContent } from '../utils';
+import SiteErrorContent from '../site-error-content';
 import './style.scss';
 
 const SiteTable = ( { isFetching, columns, sites, isFetchingFailed } ) => {
@@ -58,7 +58,7 @@ const SiteTable = ( { isFetching, columns, sites, isFetchingFailed } ) => {
 								{ site.error ? (
 									<tr className="site-table__connection-error">
 										<td colSpan={ Object.keys( rows ).length + 1 }>
-											{ errorContent( site.value.url ) }
+											{ <SiteErrorContent siteUrl={ site.value.url } /> }
 										</td>
 									</tr>
 								) : null }

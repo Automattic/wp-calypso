@@ -35,7 +35,7 @@
 	}
 }
 
-button.site-actions__menu-item {
+a.site-actions__menu-item {
 	margin: 0 -1px;
 	border-style: solid;
 	border-color:  #aaaaaa;
@@ -43,13 +43,12 @@ button.site-actions__menu-item {
 	font-size: 0.875rem;
 	height: 40px;
 	box-sizing: border-box;
-	a {
-		color: #000000;
-	}
+	color: #000000;
+	display: inline-flex;
+    align-items: center;
 	&:last-child {
 		margin-bottom: 0;
 		border-bottom-width: 0;
-
 	}
 	&:hover, &:focus {
 		border-style: solid;
@@ -57,15 +56,13 @@ button.site-actions__menu-item {
 		border-width: 0 0 1px;
 		background: #000000;
 		cursor: pointer;
+		color: #ffffff;
 		&:last-child {
 			margin-bottom: -1px;
 			border-bottom-width: 0;
 		}
-		a {
-			color: #ffffff;
-		}
 	}
-	.site-actions__table-action-icon {
+	svg.gridicon {
 		vertical-align: middle;
 		position: absolute;
 		right: 10px;

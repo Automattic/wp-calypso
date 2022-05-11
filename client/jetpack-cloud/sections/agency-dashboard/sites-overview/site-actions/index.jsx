@@ -25,6 +25,10 @@ const SiteActions = ( { isLargeScreen, site } ) => {
 	const siteError = site?.error;
 	const siteId = site?.value?.blog_id;
 
+	const handleClickMenuItem = () => {
+		// Handle track event here
+	};
+
 	return (
 		<>
 			<div
@@ -49,39 +53,39 @@ const SiteActions = ( { isLargeScreen, site } ) => {
 			>
 				{ ! siteError && (
 					<>
-						<PopoverMenuItem className="site-actions__menu-item">
-							<a href={ `/partner-portal/issue-license/?site_id=${ siteId }` }>
-								{ translate( 'Issue new license' ) }
-								<Gridicon
-									icon="chevron-right"
-									className="site-actions__table-action-icon"
-									size={ 18 }
-								/>
-							</a>
+						<PopoverMenuItem
+							onClick={ () => handleClickMenuItem( 'issue-new-license' ) }
+							href={ `/partner-portal/issue-license/?site_id=${ siteId }` }
+							className="site-actions__menu-item"
+							icon="chevron-right"
+						>
+							{ translate( 'Issue new license' ) }
 						</PopoverMenuItem>
-						<PopoverMenuItem className="site-actions__menu-item">
-							<a href={ `/activity-log/${ siteUrl }` }>
-								{ translate( 'View activity' ) }
-								<Gridicon
-									icon="chevron-right"
-									className="site-actions__table-action-icon"
-									size={ 18 }
-								/>
-							</a>
+						<PopoverMenuItem
+							onClick={ () => handleClickMenuItem( 'view-activity' ) }
+							href={ `/activity-log/${ siteUrl }` }
+							className="site-actions__menu-item"
+							icon="chevron-right"
+						>
+							{ translate( 'View activity' ) }
 						</PopoverMenuItem>
 					</>
 				) }
-				<PopoverMenuItem className="site-actions__menu-item">
-					<a href={ `https://${ siteUrl }/` }>
-						{ translate( 'View site' ) }
-						<Gridicon icon="external" className="site-actions__table-action-icon" size={ 18 } />
-					</a>
+				<PopoverMenuItem
+					isExternalLink
+					onClick={ () => handleClickMenuItem( 'view-site' ) }
+					href={ `https://${ siteUrl }` }
+					className="site-actions__menu-item"
+				>
+					{ translate( 'View site' ) }
 				</PopoverMenuItem>
-				<PopoverMenuItem className="site-actions__menu-item">
-					<a href={ `https://${ siteUrl }/wp-admin/admin.php?page=jetpack#/dashboard` }>
-						{ translate( 'Visit WP Admin' ) }
-						<Gridicon icon="external" className="site-actions__table-action-icon" size={ 18 } />
-					</a>
+				<PopoverMenuItem
+					isExternalLink
+					onClick={ () => handleClickMenuItem( 'visit-wp-admin' ) }
+					href={ `https://${ siteUrl }/wp-admin/admin.php?page=jetpack#/dashboard` }
+					className="site-actions__menu-item"
+				>
+					{ translate( 'Visit WP Admin' ) }
 				</PopoverMenuItem>
 			</PopoverMenu>
 		</>

@@ -8,12 +8,15 @@ import Tooltip from 'calypso/components/tooltip';
 const getLinks = ( type, status, siteUrl, siteId ) => {
 	let link = '';
 	let tooltip = '';
+	let eventId = '';
 	switch ( type ) {
 		case 'backup': {
 			if ( status === 'inactive' ) {
 				link = `/partner-portal/issue-license/?site_id=${ siteId }`;
+				eventId = 'issue-license';
 			} else {
 				link = `/backup/${ siteUrl }`;
+				eventId = 'visit-site';
 			}
 			if ( status === 'progress' ) {
 				tooltip = translate( 'Backup in progress' );
@@ -23,8 +26,10 @@ const getLinks = ( type, status, siteUrl, siteId ) => {
 		case 'scan': {
 			if ( status === 'inactive' ) {
 				link = `/partner-portal/issue-license/?site_id=${ siteId }`;
+				eventId = 'issue-license';
 			} else {
 				link = `/scan/${ siteUrl }`;
+				eventId = 'visit-site';
 			}
 			if ( status === 'progress' ) {
 				tooltip = translate( 'Scan in progress' );
@@ -34,6 +39,7 @@ const getLinks = ( type, status, siteUrl, siteId ) => {
 		case 'monitor': {
 			if ( status === 'failed' ) {
 				link = `https://jptools.wordpress.com/debug/?url=${ siteUrl }`;
+				eventId = 'visit-jp-debugger';
 			}
 			if ( status === 'success' ) {
 				tooltip = translate( 'Monitor is on and your site is online' );
@@ -43,6 +49,7 @@ const getLinks = ( type, status, siteUrl, siteId ) => {
 		case 'plugin': {
 			if ( status === 'warning' ) {
 				link = `https://wordpress.com/plugins/updates/${ siteUrl }`;
+				eventId = 'visit-wp-plugin-updates';
 			}
 			break;
 		}
@@ -50,59 +57,79 @@ const getLinks = ( type, status, siteUrl, siteId ) => {
 			break;
 		}
 	}
-	return { link, tooltip };
+	return { link, tooltip, eventId };
 };
-
-export default function StatusContent( { content, tooltip, tooltipId } ) {
-	const ref = useRef();
-	const [ showTooltip, setShowTooltip ] = useState( false );
-	const handleShowTooltip = () => {
-		if ( tooltip ) {
-			setShowTooltip( true );
-		}
-	};
-	const handleHideTooltip = () => {
-		if ( tooltip ) {
-			setShowTooltip( false );
-		}
-	};
-	return (
-		<>
-			<span ref={ ref } onMouseEnter={ handleShowTooltip } onMouseLeave={ handleHideTooltip }>
-				{ content }
-			</span>
-			{ tooltip && (
-				<Tooltip
-					id={ tooltipId }
-					context={ ref.current }
-					isVisible={ showTooltip }
-					position="bottom"
-					className="sites-overview__tooltip"
-				>
-					{ tooltip }
-				</Tooltip>
-			) }
-		</>
-	);
-}
 
 const getRowMetaData = ( rows, type ) => {
 	const row = rows[ type ];
 	const siteUrl = rows.site?.value?.url;
 	const siteError = rows.site?.error;
 	const siteId = rows.site?.value?.blog_id;
-	const { link, tooltip } = getLinks( type, row.status, siteUrl, siteId );
+	const { link, tooltip, eventId } = getLinks( type, row.status, siteUrl, siteId );
 	return {
 		row,
 		link,
 		siteError,
 		tooltip,
 		tooltipId: `${ siteId }-${ type }`,
+		eventId,
 	};
 };
 
+export default function StatusContent( { content, tooltip, tooltipId, link, siteError } ) {
+	const ref = useRef();
+	const [ showTooltip, setShowTooltip ] = useState( false );
+	const handleShowTooltip = () => {
+		setShowTooltip( true );
+	};
+	const handleHideTooltip = () => {
+		setShowTooltip( false );
+	};
+
+	const handleClickRowAction = () => {
+		// Handle track event here
+	};
+
+	let updatedContent = content;
+
+	if ( link ) {
+		updatedContent = (
+			<a onClick={ handleClickRowAction } href={ link }>
+				{ content }
+			</a>
+		);
+	}
+
+	if ( siteError ) {
+		updatedContent = <span className="sites-overview__disabled">{ content } </span>;
+	}
+
+	return (
+		<>
+			{ tooltip && ! siteError ? (
+				<>
+					<span ref={ ref } onMouseEnter={ handleShowTooltip } onMouseLeave={ handleHideTooltip }>
+						{ updatedContent }
+					</span>
+					<Tooltip
+						id={ tooltipId }
+						context={ ref.current }
+						isVisible={ showTooltip }
+						position="bottom"
+						className="sites-overview__tooltip"
+					>
+						{ tooltip }
+					</Tooltip>
+				</>
+			) : (
+				updatedContent
+			) }
+		</>
+	);
+}
+
 const statusFormatter = ( rows, type ) => {
-	const { link, row, siteError, tooltip, tooltipId } = getRowMetaData( rows, type );
+	const { link, row, siteError, tooltip, tooltipId, eventId } = getRowMetaData( rows, type );
 	const { value, status } = row;
 	let content;
 	switch ( status ) {
@@ -167,17 +194,16 @@ const statusFormatter = ( rows, type ) => {
 			break;
 		}
 	}
-	let updatedContent = content;
-	if ( link ) {
-		updatedContent = <a href={ link }>{ content }</a>;
-	}
-	if ( siteError ) {
-		updatedContent = <span className="sites-overview__disabled">{ content } </span>;
-	}
-	return tooltip && ! siteError ? (
-		<StatusContent content={ updatedContent } tooltip={ tooltip } tooltipId={ tooltipId } />
-	) : (
-		updatedContent
+	return (
+		<StatusContent
+			content={ content }
+			tooltip={ tooltip }
+			tooltipId={ tooltipId }
+			link={ link }
+			siteError={ siteError }
+			type={ type }
+			eventId={ eventId }
+		/>
 	);
 };
 
@@ -274,30 +300,4 @@ export const getFormattedSites = ( sites ) => {
 		} );
 	}
 	return [];
-};
-
-export const errorContent = ( siteUrl ) => {
-	return (
-		<div className="sites-overview__error-container">
-			<span className="sites-overview__error-icon">
-				<Gridicon size={ 18 } icon="notice-outline" />
-			</span>
-			<span className="sites-overview__error-message sites-overview__error-message-large-screen">
-				{ translate( 'Jetpack is unable to connect to %(siteUrl)s', {
-					args: {
-						siteUrl,
-					},
-				} ) }
-			</span>
-			<span className="sites-overview__error-message sites-overview__error-message-small-screen">
-				{ translate( 'Jetpack is unable to connect' ) }
-			</span>
-			<a
-				className="sites-overview__error-message-link"
-				href={ `https://wordpress.com/settings/disconnect-site/${ siteUrl }?type=down` }
-			>
-				{ translate( 'Fix now' ) }
-			</a>
-		</div>
-	);
 };
