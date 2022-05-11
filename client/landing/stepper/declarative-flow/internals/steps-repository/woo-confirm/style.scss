@@ -1,0 +1,124 @@
+@import '@wordpress/base-styles/variables';
+
+body.is-section-stepper {
+	// Two column layout.
+	.step-container.woo-confirm {
+			@media ( min-width: 660px ) {
+				display: flex;
+			}
+
+			.step-container__header {
+				@media ( min-width: 660px ) {
+					margin-top: 0 !important;
+				}
+
+				.formatted-header {
+					text-align: inherit;
+
+					@media ( min-width: 1024px ) {
+						margin-left: 24px;
+					}
+
+					.formatted-header__title {
+						text-align: inherit;
+
+						@media ( max-width: 660px ) {
+							padding: 0 10px 0 0;
+						}
+					}
+
+					.formatted-header__subtitle {
+						@media ( max-width: 660px ) {
+							margin-top: 8px;
+							padding: 0 10px 0 0;
+						}
+
+						margin-top: 20px;
+						text-align: inherit;
+						max-width: 448px;
+					}
+				}
+			}
+
+		.step-container__content {
+			@media ( min-width: 660px ) {
+				display: flex;
+				margin: 0 24px;
+			}
+
+			.woo-confirm__instructions-container {
+				font-size: 0.875rem;
+				letter-spacing: -0.16px;
+				color: var( --studio-gray-60 );
+				flex-direction: column;
+				max-width: 520px;
+
+				@media ( max-width: 660px ) {
+					max-width: 90vw;
+				}
+
+				p {
+					margin-top: 16px;
+				}
+
+				.woo-confirm__upgrade-required {
+					margin-top: 1rem;
+				}
+
+				.components-base-control {
+					font-size: $default-font-size;
+					line-height: $default-line-height;
+					margin-bottom: $grid-unit-30;
+
+					.components-base-control__label,
+					.components-input-control__label {
+						font-size: $editor-font-size;
+						margin-bottom: $grid-unit;
+						padding: 0;
+					}
+
+					.components-checkbox-control__label,
+					.components-select-control__input,
+					.components-text-control__input,
+					.components-combobox-control__input {
+						color: var( --color-neutral-70 );
+					}
+
+					.components-combobox-control__suggestions-container,
+					.components-select-control__input,
+					.components-text-control__input {
+						line-height: 18px;
+						padding: $grid-unit-15 $grid-unit-20;
+					}
+
+					.components-select-control__input {
+						box-sizing: initial;
+						height: auto;
+						line-height: 20px;
+						min-height: auto;
+					}
+
+					.components-combobox-control__input {
+						padding: 0;
+					}
+				}
+
+				.components-text-control__input {
+					box-sizing: border-box;
+				}
+			}
+		}
+	}
+}
+
+.site-setup.woo-confirm {
+		.woo-confirm__info-section {
+			display: flex;
+			justify-content: center;
+
+			.wpcom__loading-ellipsis {
+				display: block;
+				margin: 0 auto;
+			}
+		}
+}

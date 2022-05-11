@@ -19,6 +19,7 @@ const VideosUi = ( {
 	HeaderBar,
 	FooterBar,
 	areVideosTranslated = true,
+	intent = undefined,
 } ) => {
 	const translate = useTranslate();
 	const isEnglish = config( 'english_locales' ).includes( translate.localeSlug );
@@ -39,6 +40,7 @@ const VideosUi = ( {
 		recordTracksEvent( 'calypso_courses_play_click', {
 			course: course.slug,
 			video: videoSlug,
+			...( intent ? { intent } : [] ),
 		} );
 
 		setCurrentVideoKey( videoSlug );
@@ -90,6 +92,7 @@ const VideosUi = ( {
 		if ( course ) {
 			recordTracksEvent( 'calypso_courses_view', {
 				course: course.slug,
+				...( intent ? { intent } : [] ),
 			} );
 		}
 	}, [ course ] );
@@ -155,6 +158,7 @@ const VideosUi = ( {
 							onVideoPlayStatusChanged={ ( isVideoPlaying ) => setIsPlaying( isVideoPlaying ) }
 							isPlaying={ isPlaying }
 							course={ course }
+							intent={ intent }
 							onVideoCompleted={ markVideoCompleted }
 						/>
 					) }

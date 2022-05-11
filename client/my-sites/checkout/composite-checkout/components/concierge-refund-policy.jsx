@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -22,7 +23,7 @@ class ConciergeRefundPolicy extends Component {
 				components: {
 					refundsSupportPage: (
 						<a
-							href={ REFUNDS }
+							href={ localizeUrl( REFUNDS ) }
 							target="_blank"
 							rel="noopener noreferrer"
 							onClick={ this.recordRefundsSupportClick }

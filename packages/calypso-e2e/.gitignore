@@ -1,0 +1,11 @@
+# We REALLY don't want these secrets accidentally getting commited.
+# So we take two careful approaches - both by name suffix, and an allowlist in the secrets directory.
+# This will protect against accidental moves and renames.
+# We use the ** directory match to match these folders in the dist/ directory as well.
+# This provides fallback protection if someone were to try to publish the package:
+# https://docs.npmjs.com/cli/v8/using-npm/developers#keeping-files-out-of-your-package
+**/*secret*.json
+**/src/secrets/*
+!**/src/secrets/secrets-manager.ts
+!**/src/secrets/index.ts
+!**/src/secrets/encrypted.enc

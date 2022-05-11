@@ -8,18 +8,7 @@ import withPasteToLink from 'calypso/lib/paste-to-link';
 import './autoresizing-form-textarea.scss';
 
 const AutoresizingFormTextarea = (
-	{
-		hasFocus,
-		value,
-		placeholder,
-		onKeyUp,
-		onKeyDown,
-		onFocus,
-		onBlur,
-		onChange,
-		siteId,
-		enableAutoFocus,
-	},
+	{ hasFocus, value, placeholder, onKeyUp, onKeyDown, onFocus, onBlur, onChange, enableAutoFocus },
 	forwardedRef
 ) => {
 	const classes = classnames( 'expanding-area', { focused: hasFocus } );
@@ -39,7 +28,6 @@ const AutoresizingFormTextarea = (
 					onFocus={ onFocus }
 					onBlur={ onBlur }
 					onChange={ onChange }
-					siteId={ siteId }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
 					autoFocus={ enableAutoFocus }
 					forwardedRef={ forwardedRef }

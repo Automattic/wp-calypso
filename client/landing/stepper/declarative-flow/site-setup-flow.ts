@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useDesignsBySite } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useDispatch as reduxDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useFSEStatus } from '../hooks/use-fse-status';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
@@ -44,6 +46,7 @@ export const siteSetupFlow: Flow = {
 			'error',
 			'wooTransfer',
 			'wooInstallPlugins',
+			'wooConfirm',
 		] as StepPath[];
 	},
 	useSideEffect() {
@@ -65,6 +68,7 @@ export const siteSetupFlow: Flow = {
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite } = useDispatch( SITE_STORE );
 		const { FSEActive } = useFSEStatus();
+		const dispatch = reduxDispatch();
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction(
@@ -98,7 +102,7 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'error' );
 					}
 
-					// If the user skips starting point, redirect them to My Home
+					// If the user skips starting point, redirect them to the post editor
 					if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
 						if ( startingPoint !== 'write' ) {
 							window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
@@ -109,8 +113,7 @@ export const siteSetupFlow: Flow = {
 
 					// End of woo flow
 					if ( storeType === 'power' ) {
-						// eslint-disable-next-line no-console
-						console.log( 'end woo flow here' );
+						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
 					}
 
 					if ( FSEActive && intent !== 'write' ) {
@@ -186,6 +189,16 @@ export const siteSetupFlow: Flow = {
 					if ( isAtomic ) {
 						return navigate( 'wooInstallPlugins' );
 					}
+					return navigate( 'wooConfirm' );
+				}
+
+				case 'wooConfirm': {
+					const [ checkoutUrl ] = params;
+
+					if ( checkoutUrl ) {
+						return exitFlow( checkoutUrl.toString() );
+					}
+
 					return navigate( 'wooTransfer' );
 				}
 
@@ -238,6 +251,9 @@ export const siteSetupFlow: Flow = {
 
 				case 'businessInfo':
 					return navigate( 'storeAddress' );
+
+				case 'wooConfirm':
+					return navigate( 'businessInfo' );
 
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );

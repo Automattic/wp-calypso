@@ -2,8 +2,8 @@
  * Global polyfills
  */
 import '@automattic/calypso-polyfills';
+import { ContactForm } from '@automattic/help-center';
 import { useState } from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
@@ -23,7 +23,6 @@ import sites from 'calypso/state/sites/reducer';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { setSection } from 'calypso/state/ui/section/actions';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
-import ContactForm from './contact-form';
 
 const rootReducer = combineReducers( {
 	currentUser,
@@ -57,26 +56,34 @@ rawCurrentUserFetch()
 		store.dispatch( requestHappychatEligibility() );
 	} );
 
-const queryClient = new QueryClient();
+export default function Content() {
+	const [ contactForm, setContactForm ] = useState( null );
+	const [ openInContactPage, setOpenInContactPage ] = useState( null );
 
-export default function Content( { selectedArticle, setSelectedArticle, setFooterContent } ) {
-	const [ formOpen ] = useState( true );
 	return (
-		<QueryClientProvider client={ queryClient }>
-			<Provider store={ store }>
-				<>
-					<QuerySites siteId={ window._currentSiteId } />
-					{ formOpen ? (
-						<ContactForm mode="CHAT" />
-					) : (
-						<InlineHelpCenterContent
-							selectedArticle={ selectedArticle }
-							setSelectedArticle={ setSelectedArticle }
-							setHelpCenterFooter={ setFooterContent }
-						/>
-					) }
-				</>
-			</Provider>
-		</QueryClientProvider>
+		<Provider store={ store }>
+			<>
+				<QuerySites siteId={ window._currentSiteId } />
+				{ contactForm ? (
+					<ContactForm
+						mode={ contactForm }
+						onBackClick={ () => {
+							setOpenInContactPage( true );
+							setContactForm( null );
+						} }
+						onGoHome={ () => {
+							setOpenInContactPage( false );
+							setContactForm( null );
+						} }
+						siteId={ window._currentSiteId }
+					/>
+				) : (
+					<InlineHelpCenterContent
+						setContactFormOpen={ setContactForm }
+						openInContactPage={ openInContactPage }
+					/>
+				) }
+			</>
+		</Provider>
 	);
 }

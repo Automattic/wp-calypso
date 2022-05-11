@@ -3,19 +3,19 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-site-domains' );
 
-export default function useSiteDomains( siteId: number | undefined ): SiteDomain[] {
+export default function useSiteDomains( siteId: number | undefined ): ResponseDomain[] {
 	const dispatch = useDispatch();
 
-	const [ siteDomains, setSiteDomains ] = useState< SiteDomain[] >( [] );
+	const [ siteDomains, setSiteDomains ] = useState< ResponseDomain[] >( [] );
 
 	const areDomainsLoaded = useSelector( ( state ) =>
 		siteId ? hasLoadedSiteDomains( state, siteId ) : false
 	);
-	const domains: SiteDomain[] = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
+	const domains: ResponseDomain[] = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 
 	useEffect( () => {
 		if ( areDomainsLoaded && domains.length > 0 ) {

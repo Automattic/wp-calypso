@@ -1,5 +1,5 @@
-import { PLAN_JETPACK_COMPLETE, FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { PLAN_JETPACK_COMPLETE, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 
@@ -17,7 +17,7 @@ export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
 	if (
 		isJetpackSite( state, siteId ) &&
 		isThemePremium( state, themeId ) &&
-		! hasFeature( state, siteId, FEATURE_PREMIUM_THEMES )
+		! siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES )
 	) {
 		return `/checkout/${ getSiteSlug( state, siteId ) }/${ PLAN_JETPACK_COMPLETE }`;
 	}

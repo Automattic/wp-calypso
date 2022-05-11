@@ -14,6 +14,8 @@ exports[`Theme rendering with default display buttonContents should match snapsh
       className="theme__thumbnail"
       href="javascript:;"
       onClick={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
     >
       <div
         className="theme__thumbnail-label"
@@ -25,6 +27,17 @@ exports[`Theme rendering with default display buttonContents should match snapsh
         srcSet="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
       />
     </a>
+    <Tooltip
+      context={null}
+      isVisible={false}
+      position="top"
+      showDelay={1000}
+      showOnMobile={false}
+    >
+      <div
+        className="theme__tooltip"
+      />
+    </Tooltip>
     <div
       className="theme__info"
     >

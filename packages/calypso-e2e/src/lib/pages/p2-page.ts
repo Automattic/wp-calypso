@@ -1,7 +1,7 @@
 import { Page } from 'playwright';
 
 const selectors = {
-	inputPrompt: 'span.p2020-editor-placeholder__prompt',
+	newPostButton: 'button:has-text("New Post")',
 	publishedPost: ( postContent: string ) => `.entry-content:has-text("${ postContent }")`,
 };
 
@@ -21,14 +21,10 @@ export class P2Page {
 	}
 
 	/**
-	 * Click on the front-end (inline) editor on top of the P2.
-	 *
-	 * Without this step, the IsolatedBlockEditorComponent will not be
-	 * able to locate the editor.
-	 *
+	 * Click 'New post' to show the editor.
 	 */
-	async focusInlineEditor(): Promise< void > {
-		await this.page.click( selectors.inputPrompt );
+	async clickNewPost(): Promise< void > {
+		await this.page.click( selectors.newPostButton );
 	}
 
 	/**

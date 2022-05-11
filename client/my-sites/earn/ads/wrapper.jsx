@@ -1,7 +1,7 @@
 import {
 	PLAN_WPCOM_PRO,
 	PLAN_JETPACK_SECURITY_DAILY,
-	FEATURE_WORDADS_INSTANT,
+	WPCOM_FEATURES_WORDADS,
 	isPremium,
 	isBusiness,
 	isEcommerce,
@@ -213,7 +213,7 @@ class AdsWrapper extends Component {
 				description={ translate(
 					"By upgrading to the Pro plan, you'll be able to monetize your site through the WordAds program."
 				) }
-				feature={ FEATURE_WORDADS_INSTANT }
+				feature={ WPCOM_FEATURES_WORDADS }
 				href={ bannerURL }
 				showIcon
 				event="calypso_upgrade_nudge_impression"
@@ -241,7 +241,7 @@ class AdsWrapper extends Component {
 					'Make money each time someone visits your site by displaying ads on all your posts and pages.'
 				) }
 				href={ bannerURL }
-				feature={ FEATURE_WORDADS_INSTANT }
+				feature={ WPCOM_FEATURES_WORDADS }
 				showIcon
 				event="calypso_upgrade_nudge_impression"
 				tracksImpressionName="calypso_upgrade_nudge_impression"

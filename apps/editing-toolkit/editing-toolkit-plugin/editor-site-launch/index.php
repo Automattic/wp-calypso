@@ -18,7 +18,7 @@ namespace A8C\FSE\EditorSiteLaunch;
  */
 function enqueue_launch_button_script_and_style( $site_launch_options ) {
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/launch-button.asset.php';
-	$script_file         = 'dist/launch-button.js';
+	$script_file         = 'dist/launch-button.min.js';
 	$script_dependencies = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
 	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $script_file );
 
@@ -88,7 +88,7 @@ function enqueue_launch_flow_script_and_style( $site_launch_options ) {
 
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/' . $script_name . '.asset.php';
 	$script_dependencies = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
-	$script_file         = 'dist/' . $script_name . '.js';
+	$script_file         = 'dist/' . $script_name . '.min.js';
 	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . $script_file );
 
 	wp_enqueue_script(

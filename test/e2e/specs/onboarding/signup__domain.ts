@@ -11,19 +11,20 @@ import {
 	CartCheckoutPage,
 	NavbarComponent,
 	IndividualPurchasePage,
+	SecretsManager,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), function () {
-	const inboxId = DataHelper.config.get( 'signupInboxId' ) as string;
+	const inboxId = SecretsManager.secrets.mailosaur.signupInboxId;
 	const username = `e2eflowtestingdomainonly${ DataHelper.getTimestamp() }`;
 	const email = DataHelper.getTestEmailAddress( {
 		inboxId: inboxId,
 		prefix: username,
 	} );
-	const signupPassword = DataHelper.config.get( 'passwordForNewTestSignUps' ) as string;
+	const signupPassword = SecretsManager.secrets.passwordForNewTestSignUps;
 
 	let page: Page;
 	let selectedDomain: string;

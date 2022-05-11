@@ -153,6 +153,7 @@ import {
 	FEATURE_ADDITIONAL_SITES,
 	FEATURE_WOOCOMMERCE,
 } from '@automattic/calypso-products';
+import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
@@ -290,7 +291,7 @@ export const FEATURES_LIST = {
 					components: {
 						a: (
 							<a
-								href={ DOMAIN_PRICING_AND_AVAILABLE_TLDS }
+								href={ localizeUrl( DOMAIN_PRICING_AND_AVAILABLE_TLDS ) }
 								target="_blank"
 								rel="noopener noreferrer"
 							/>
@@ -484,7 +485,7 @@ export const FEATURES_LIST = {
 					components: {
 						a: (
 							<a
-								href={ DOMAIN_PRICING_AND_AVAILABLE_TLDS }
+								href={ localizeUrl( DOMAIN_PRICING_AND_AVAILABLE_TLDS ) }
 								target="_blank"
 								rel="noopener noreferrer"
 							/>

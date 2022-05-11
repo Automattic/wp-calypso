@@ -8,11 +8,13 @@ import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import HeaderCake from 'calypso/components/header-cake';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
+import { bumpStat } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import {
@@ -74,6 +76,23 @@ class MembershipsProductsSection extends Component {
 					{ this.props.translate( 'Payment plans' ) }
 				</HeaderCake>
 
+				{ ! this.props.hasStripeFeature && (
+					// Purposefully isn't a dismissible nudge as without this nudge, the page would appear to be
+					// broken as it only does listing and deleting of plans and it wouldn't be clear how to change that.
+					<UpsellNudge
+						title={ this.props.translate( 'Upgrade to modify payment plans or add new plans' ) }
+						href={ '/plans/' + this.props.siteSlug }
+						showIcon={ true }
+						onClick={ () => this.props.trackUpgrade() }
+						// This could be any stripe payment features (see `hasStripeFeature`) but UpsellNudge only
+						// supports 1. They're all available on the same plans anyway, so practically it's ok to pick 1.
+						feature={ FEATURE_RECURRING_PAYMENTS }
+						event="calypso_earn_page_payment_plans_upgrade_nudge"
+						tracksClickName="calypso_earn_page_payment_plans_upgrade_button_click"
+						tracksImpressionName="calypso_earn_page_payment_plans_upgrade_button_view"
+					/>
+				) }
+
 				{ this.props.hasStripeFeature && (
 					<SectionHeader>
 						<Button primary compact onClick={ () => this.openAddEditDialog( null ) }>
@@ -110,17 +129,22 @@ class MembershipsProductsSection extends Component {
 	}
 }
 
-export default connect( ( state ) => {
-	const site = getSelectedSite( state );
-	const siteId = getSelectedSiteId( state );
-	return {
-		site,
-		siteId,
-		siteSlug: getSelectedSiteSlug( state ),
-		products: getProductsForSiteId( state, siteId ),
-		hasStripeFeature:
-			hasActiveSiteFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
-			hasActiveSiteFeature( state, siteId, FEATURE_DONATIONS ) ||
-			hasActiveSiteFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
-	};
-} )( localize( MembershipsProductsSection ) );
+export default connect(
+	( state ) => {
+		const site = getSelectedSite( state );
+		const siteId = getSelectedSiteId( state );
+		return {
+			site,
+			siteId,
+			siteSlug: getSelectedSiteSlug( state ),
+			products: getProductsForSiteId( state, siteId ),
+			hasStripeFeature:
+				hasActiveSiteFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
+				hasActiveSiteFeature( state, siteId, FEATURE_DONATIONS ) ||
+				hasActiveSiteFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
+		};
+	},
+	( dispatch ) => ( {
+		trackUpgrade: () => dispatch( bumpStat( 'calypso_earn_page', 'payment-plans-upgrade-button' ) ),
+	} )
+)( localize( MembershipsProductsSection ) );

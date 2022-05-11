@@ -100,6 +100,10 @@ open class E2EBuildType(
 					# Install deps
 					yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
 
+					# Decrypt secrets
+					# Must do before build so the secrets are in the dist output
+					E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
+
 					# Build packages
 					yarn workspace @automattic/calypso-e2e build
 				""".trimIndent()
@@ -115,21 +119,20 @@ open class E2EBuildType(
 
 					# For Calypso E2E build configurations, the URL environment variable
 					# is computed and exported by a script that must be executed at runtime.
-					# This script ultimately sets the URL environment variable for Calypso E2E only.
+					# Unset variables throw an error, so we initialize CALYPSO_LIVE_URL as empty first.
+					export CALYPSO_LIVE_URL=''
+
+					# This script, if provided, will ultimately sets the CALYPSO_LIVE_URL environment variable.
 					$getCalypsoLiveURL
+
+					# We only want to override the Calypso URL if we have a live one to use!
+					if [[ -n ${'$'}CALYPSO_LIVE_URL ]]; then
+						export CALYPSO_BASE_URL=${'$'}CALYPSO_LIVE_URL
+					fi
 
 					# Enter testing directory.
 					cd test/e2e
 					mkdir temp
-
-					# Decrypt config
-					openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
-
-					# As noted above, Calypso E2E build configuration exports the URL
-					# environment variable in the Run tests step. Therefore, the export
-					# for NODE_CONFIG variable has to be done here instead of
-					# within the Kotlin DSL as a param() value.
-					export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL/}\"}"
 
 					# Run suite.
 					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=$testGroup

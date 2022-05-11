@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -134,7 +135,13 @@ class MapDomainStep extends Component {
 							"We'll add your domain and help you change its settings so it points to your site. Keep your domain renewed with your current provider. (They'll remind you when it's time.) {{a}}Learn more about mapping a domain{{/a}}.",
 							{
 								components: {
-									a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
+									a: (
+										<a
+											href={ localizeUrl( MAP_EXISTING_DOMAIN ) }
+											rel="noopener noreferrer"
+											target="_blank"
+										/>
+									),
 								},
 							}
 						) }
@@ -146,7 +153,7 @@ class MapDomainStep extends Component {
 								components: {
 									a: (
 										<a
-											href={ INCOMING_DOMAIN_TRANSFER }
+											href={ localizeUrl( INCOMING_DOMAIN_TRANSFER ) }
 											rel="noopener noreferrer"
 											target="_blank"
 										/>

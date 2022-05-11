@@ -62,6 +62,6 @@ export function useSignupStepNavigator(
 		goToCheckoutPage,
 		goToWpAdminImportPage,
 		goToWpAdminWordPressPluginPage,
-		navigate: ( path ) => page( path ),
+		navigate: ( path: string ) => page( path ),
 	};
 }

@@ -50,6 +50,7 @@ export interface Design {
 
 export interface DesignPreviewOptions {
 	language?: string;
+	verticalId?: string;
 	siteTitle?: string;
 }
 
@@ -57,4 +58,13 @@ export interface DesignPreviewOptions {
 export interface DesignUrlOptions {
 	iframe?: boolean;
 	site_title?: string;
+}
+
+export interface BlockRecipe {
+	id: number;
+	slug: string;
+	title: string;
+	stylesheet: string;
+	pattern_ids: number[];
+	modified_date: string;
 }

@@ -3,7 +3,6 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import type { EmailCost, ResponseDomain } from 'calypso/lib/domains/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 const doesAdditionalPriceMatchStandardPrice = (
@@ -139,7 +138,7 @@ function getPriceMessageRenewal( {
 }
 
 interface MailboxPricingNoticeProps {
-	domain: ResponseDomain | SiteDomain | null;
+	domain: ResponseDomain | null;
 	expiryDate: string | null;
 	isMonthlyBilling?: boolean;
 	mailboxPurchaseCost: EmailCost | null;

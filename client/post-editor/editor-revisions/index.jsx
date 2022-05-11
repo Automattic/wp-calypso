@@ -12,6 +12,7 @@ import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { getPostRevisions } from 'calypso/state/posts/selectors/get-post-revisions';
 import { getPostRevisionsAuthorsId } from 'calypso/state/posts/selectors/get-post-revisions-authors-id';
 import { getPostRevisionsComparisons } from 'calypso/state/posts/selectors/get-post-revisions-comparisons';
+import { getPostRevisionsDiffView } from 'calypso/state/posts/selectors/get-post-revisions-diff-view';
 import { getPostRevisionsSelectedRevisionId } from 'calypso/state/posts/selectors/get-post-revisions-selected-revision-id';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
@@ -22,8 +23,16 @@ class EditorRevisions extends Component {
 	}
 
 	render() {
-		const { authorsIds, comparisons, postId, revisions, selectedDiff, selectedRevisionId, siteId } =
-			this.props;
+		const {
+			authorsIds,
+			comparisons,
+			diffView,
+			postId,
+			revisions,
+			selectedDiff,
+			selectedRevisionId,
+			siteId,
+		} = this.props;
 
 		return (
 			<div className="editor-revisions">
@@ -35,9 +44,11 @@ class EditorRevisions extends Component {
 				<QueryPostRevisionAuthors siteId={ siteId } userIds={ authorsIds } />
 				<EditorDiffViewer
 					diff={ selectedDiff }
+					diffView={ diffView }
 					postId={ postId }
 					selectedRevisionId={ selectedRevisionId }
 					siteId={ siteId }
+					key={ `editor-diff-viewer-${ diffView }-${ selectedRevisionId }` }
 				/>
 				<EditorRevisionsList
 					comparisons={ comparisons }
@@ -55,6 +66,7 @@ EditorRevisions.propTypes = {
 	// connected to state
 	authorsIds: PropTypes.array.isRequired,
 	comparisons: PropTypes.object,
+	diffView: PropTypes.string,
 	postId: PropTypes.number.isRequired,
 	revisions: PropTypes.array.isRequired,
 	selectedDiff: PropTypes.object,
@@ -81,6 +93,7 @@ export default connect(
 		return {
 			authorsIds: getPostRevisionsAuthorsId( state, siteId, postId ),
 			comparisons,
+			diffView: getPostRevisionsDiffView( state ),
 			postId,
 			revisions,
 			selectedDiff,

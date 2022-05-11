@@ -2,7 +2,7 @@
  * @group calypso-pr
  */
 
-import { DataHelper, TestAccount, ReaderPage } from '@automattic/calypso-e2e';
+import { DataHelper, TestAccount, ReaderPage, SecretsManager } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
@@ -20,7 +20,7 @@ describe( DataHelper.createSuiteTitle( 'Reader: View' ), function () {
 
 	it( 'View the Reader stream', async function () {
 		readerPage = new ReaderPage( page );
-		const testSiteForNotifications = DataHelper.config.get( 'testSiteForNotifications' );
+		const testSiteForNotifications = SecretsManager.secrets.otherTestSites.notifications;
 		const siteOfLatestPost = await readerPage.siteOfLatestPost();
 		expect( siteOfLatestPost ).toEqual( testSiteForNotifications );
 	} );

@@ -21,4 +21,4 @@ export const USER_STORE = User.register( {
 	client_secret: config( 'wpcom_signup_key' ),
 } );
 
-export const WOOCOMMERCE_ELIGIBILITY_STORE = AutomatedTransferEligibility.register();
+export const AUTOMATED_ELIGIBILITY_STORE = AutomatedTransferEligibility.register();

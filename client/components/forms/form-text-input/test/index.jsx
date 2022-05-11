@@ -1,62 +1,58 @@
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
-import { spy } from 'sinon';
+/**
+ * @jest-environment jsdom
+ */
+import '@testing-library/jest-dom';
+import { fireEvent, render, screen } from '@testing-library/react';
 import FormTextInput from '../';
 
 describe( '<FormTextInput />', () => {
 	test( 'should add the provided class names', () => {
-		const wrapper = shallow( <FormTextInput className="test" isError isValid /> );
+		render( <FormTextInput className="test" isError isValid /> );
 
-		expect( wrapper.hasClass( 'test' ) ).to.equal( true );
-		expect( wrapper.hasClass( 'is-error' ) ).to.equal( true );
-		expect( wrapper.hasClass( 'is-valid' ) ).to.equal( true );
+		const input = screen.getByRole( 'textbox' );
+
+		expect( input ).toHaveClass( 'test' );
+		expect( input ).toHaveClass( 'is-error' );
+		expect( input ).toHaveClass( 'is-valid' );
 	} );
 
 	test( 'should have form-text-input class name', () => {
-		const wrapper = shallow( <FormTextInput /> );
+		render( <FormTextInput /> );
 
-		expect( wrapper.hasClass( 'form-text-input' ) ).to.equal( true );
-	} );
+		const input = screen.getByRole( 'textbox' );
 
-	test( "should not pass component's own props down to the input", () => {
-		const wrapper = shallow( <FormTextInput isValid isError selectOnFocus /> );
-
-		expect( wrapper.prop( 'isValid' ) ).to.equal( undefined );
-		expect( wrapper.prop( 'isError' ) ).to.equal( undefined );
-		expect( wrapper.prop( 'selectOnFocus' ) ).to.equal( undefined );
+		expect( input ).toHaveClass( 'form-text-input' );
 	} );
 
 	test( "should pass props aside from component's own to the input", () => {
-		const wrapper = shallow( <FormTextInput placeholder="test placeholder" /> );
+		render( <FormTextInput placeholder="test placeholder" /> );
 
-		expect( wrapper.prop( 'placeholder' ) ).to.equal( 'test placeholder' );
+		const input = screen.getByRole( 'textbox' );
+
+		expect( input ).toHaveAttribute( 'placeholder', 'test placeholder' );
 	} );
 
 	test( 'should call select if selectOnFocus is true', () => {
-		const wrapper = shallow( <FormTextInput selectOnFocus={ true } /> );
-		const event = {
-			target: {
-				select: () => {},
-			},
-		};
+		render( <FormTextInput selectOnFocus={ true } /> );
+		const select = jest.fn();
+		const event = { target: { select } };
 
-		spy( event.target, 'select' );
-		wrapper.simulate( 'click', event );
+		const input = screen.getByRole( 'textbox' );
 
-		expect( event.target.select ).to.have.been.calledOnce;
+		fireEvent.click( input, event );
+
+		expect( select ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'should not call select if selectOnFocus is false', () => {
-		const wrapper = shallow( <FormTextInput selectOnFocus={ false } /> );
-		const event = {
-			target: {
-				select: () => {},
-			},
-		};
+		render( <FormTextInput selectOnFocus={ false } /> );
+		const select = jest.fn();
+		const event = { target: { select } };
 
-		spy( event.target, 'select' );
-		wrapper.simulate( 'click', event );
+		const input = screen.getByRole( 'textbox' );
 
-		expect( event.target.select ).to.not.have.been.called;
+		fireEvent.click( input, event );
+
+		expect( select ).not.toHaveBeenCalled();
 	} );
 } );

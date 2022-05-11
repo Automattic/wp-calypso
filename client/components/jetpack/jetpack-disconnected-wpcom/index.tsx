@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
@@ -54,7 +55,7 @@ const JetpackDisconnectedWPCOM: FunctionComponent = () => {
 				</Button>
 				<Button
 					className="jetpack-disconnected-wpcom__cta"
-					href={ JETPACK_SUPPORT_CONNECTION_ISSUES }
+					href={ localizeUrl( JETPACK_SUPPORT_CONNECTION_ISSUES ) }
 					onClick={ onSupportClick }
 				>
 					{ translate( 'I need help' ) }

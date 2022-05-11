@@ -1,4 +1,4 @@
-import { FEATURE_NO_ADS } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_NO_ADVERTS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -280,7 +280,7 @@ class PostTypeList extends Component {
 					<UpsellNudge
 						title={ translate( 'No Ads with WordPress.com Pro' ) }
 						description={ translate( 'Prevent ads from showing on your site.' ) }
-						feature={ FEATURE_NO_ADS }
+						feature={ WPCOM_FEATURES_NO_ADVERTS }
 						event="published_posts_no_ads"
 						tracksImpressionName="calypso_upgrade_nudge_impression"
 						tracksClickName="calypso_upgrade_nudge_cta_click"

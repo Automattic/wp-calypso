@@ -29,6 +29,7 @@ import getScheduledPublicizeShareActionTime from 'calypso/state/selectors/get-sc
 import isPublicizeEnabled from 'calypso/state/selectors/is-publicize-enabled';
 import isSchedulingPublicizeShareAction from 'calypso/state/selectors/is-scheduling-publicize-share-action';
 import isSchedulingPublicizeShareActionError from 'calypso/state/selectors/is-scheduling-publicize-share-action-error';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	fetchConnections as requestConnections,
 	sharePost,
@@ -42,10 +43,7 @@ import {
 	sharePostFailure,
 	sharePostSuccessMessage,
 } from 'calypso/state/sharing/publicize/selectors';
-import {
-	hasFeature,
-	isRequestingSitePlans as siteIsRequestingPlans,
-} from 'calypso/state/sites/plans/selectors';
+import { isRequestingSitePlans as siteIsRequestingPlans } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, getSitePlanSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import ConnectionsList from './connections-list';
 import NoConnectionsNotice from './no-connections-notice';
@@ -630,7 +628,7 @@ export default connect(
 			isJetpack: isJetpackSite( state, siteId ),
 			hasFetchedConnections: siteHasFetchedConnections( state, siteId ),
 			isRequestingSitePlans: siteIsRequestingPlans( state, siteId ),
-			hasRepublicizeFeature: hasFeature( state, siteId, FEATURE_REPUBLICIZE ),
+			hasRepublicizeFeature: siteHasFeature( state, siteId, FEATURE_REPUBLICIZE ),
 			siteSlug: getSiteSlug( state, siteId ),
 			isPublicizeEnabled: isPublicizeEnabled( state, siteId, postType ),
 			scheduling: isSchedulingPublicizeShareAction( state, siteId, postId ),

@@ -60,9 +60,9 @@ class Posts_List_Block {
 		$script_dependencies = $asset_file['dependencies'];
 		wp_enqueue_script(
 			'a8c-posts-list-script',
-			plugins_url( 'dist/posts-list-block.js', __FILE__ ),
+			plugins_url( 'dist/posts-list-block.min.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/posts-list-block.js' ),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/posts-list-block.min.js' ),
 			true
 		);
 

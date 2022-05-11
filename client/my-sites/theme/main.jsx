@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
 import {
-	FEATURE_PREMIUM_THEMES,
 	FEATURE_UPLOAD_THEMES,
 	PLAN_WPCOM_PRO,
+	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -45,7 +45,7 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
@@ -736,7 +736,7 @@ class ThemeSheet extends Component {
 						)
 					) }
 					event="themes_plan_particular_free_with_plan"
-					feature={ FEATURE_PREMIUM_THEMES }
+					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
 					forceHref={ true }
 					href={ plansUrl }
 					showIcon={ true }
@@ -899,9 +899,9 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
-			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_PREMIUM_THEMES ),
+			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, id, siteId ),
-			canUserUploadThemes: hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
+			canUserUploadThemes: siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
