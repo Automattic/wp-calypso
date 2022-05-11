@@ -13,6 +13,11 @@
 	canvas {
 		max-width: 100%;
 		margin-bottom: 20px;
+        height: auto !important;
+        
+        @include break-small {
+            margin-bottom: 0;
+        }
 	}
 
 	.qr-code-login__instructions {

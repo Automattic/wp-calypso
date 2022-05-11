@@ -155,7 +155,7 @@ function QRCodeLogin() {
 	}, [ authState ] );
 
 	const steps = [
-		translate( 'Open the {{link/}}on your phone.', {
+		translate( 'Open the {{link/}} on your phone.', {
 			components: {
 				link: (
 					<a href="https://apps.wordpress.com/get/?campaign=calypso-qrcode-apps">WordPress App</a>
