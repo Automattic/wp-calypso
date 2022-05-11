@@ -1,5 +1,6 @@
 /** @jest-environment jsdom */
 
+jest.mock( 'page' );
 jest.mock( 'react-query', () => ( {
 	useQuery: () => [],
 } ) );
