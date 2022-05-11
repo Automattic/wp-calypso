@@ -8,7 +8,13 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-const shouldUpgradeCheck = ( state: IAppState, siteId: number | null ) => {
+/*
+ * shouldUpgradeCheck:
+ * Does the selected blog need an upgrade before installing marketplace addons?
+ * If it's missing the FEATURE_INSTALL_PLUGINS, shouldUpgradeCheck returns true,
+ * except standalone jetpack and VIP sites always return false.
+ */
+const shouldUpgradeCheck = ( state: IAppState, siteId: number | null ): boolean | null => {
 	if ( ! siteId ) {
 		return null;
 	}
@@ -19,7 +25,15 @@ const shouldUpgradeCheck = ( state: IAppState, siteId: number | null ) => {
 	return ! canInstallPlugins && ! isStandaloneJetpack && ! isVip;
 };
 
-export const isAnnualPlanOrUpgradeableAnnualPeriod = ( state: IAppState ) => {
+/*
+ * hasOrIntendsToBuyLiveSupport:
+ * - Does the selected blog already have a plan or product providing the LIVE_SUPPORT feature?
+ * OR
+ * - Does the user need to purchase an upgrade before installing Marketplace Addons
+ * and do they have the Annual purchase selected?
+ *   ( We assume this means they'll be buying a plan that includes Live Support ).
+ */
+export const hasOrIntendsToBuyLiveSupport = ( state: IAppState ): boolean => {
 	const siteId = getSelectedSiteId( state );
 
 	const hasLiveSupport = siteHasFeature( state, siteId, WPCOM_FEATURES_LIVE_SUPPORT );

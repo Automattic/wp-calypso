@@ -6,7 +6,7 @@ import support from 'calypso/assets/images/marketplace/support.svg';
 import wooLogo from 'calypso/assets/images/marketplace/woo-logo.svg';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
-import { isAnnualPlanOrUpgradeableAnnualPeriod } from 'calypso/state/marketplace/selectors';
+import { hasOrIntendsToBuyLiveSupport } from 'calypso/state/marketplace/selectors';
 
 const PluginDetailsSidebar = ( {
 	plugin: {
@@ -20,7 +20,7 @@ const PluginDetailsSidebar = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const isAnnualPlan = useSelector( isAnnualPlanOrUpgradeableAnnualPeriod );
+	const isAnnualPlan = useSelector( hasOrIntendsToBuyLiveSupport );
 	const isWooCommercePluginRequired = requirements.plugins?.some(
 		( pluginName ) => pluginName === 'plugins/woocommerce'
 	);

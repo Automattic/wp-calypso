@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
-import { isAnnualPlanOrUpgradeableAnnualPeriod } from 'calypso/state/marketplace/selectors';
+import { hasOrIntendsToBuyLiveSupport } from 'calypso/state/marketplace/selectors';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -49,7 +49,7 @@ const USPS: React.FC< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const isAnnualPlan = useSelector( isAnnualPlanOrUpgradeableAnnualPeriod );
+	const isLiveSupport = useSelector( hasOrIntendsToBuyLiveSupport );
 
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 
@@ -63,7 +63,7 @@ const USPS: React.FC< Props > = ( {
 		return getProductDisplayCost( state, eligibleForProPlan ? PLAN_WPCOM_PRO : productSlug );
 	} );
 
-	const supportText = isAnnualPlan
+	const supportText = isLiveSupport
 		? translate( 'Live chat support 24x7' )
 		: translate( 'Unlimited Email Support' );
 
