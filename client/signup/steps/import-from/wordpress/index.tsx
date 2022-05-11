@@ -1,4 +1,3 @@
-import page from 'page';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -8,8 +7,7 @@ import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteBySlug, getSite, isJetpackSite } from 'calypso/state/sites/selectors';
-import { getWpOrgImporterUrl } from '../../import/util';
-import { Importer, ImportJob } from '../types';
+import { Importer, ImportJob, StepNavigator } from '../types';
 import { ContentChooser } from './content-chooser';
 import ImportContentOnly from './import-content-only';
 import ImportEverything from './import-everything';
@@ -24,6 +22,7 @@ interface Props {
 	siteId: number;
 	siteSlug: string;
 	fromSite: string;
+	stepNavigator?: StepNavigator;
 }
 
 export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => {
@@ -33,7 +32,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 ↓ Fields
 	 */
 	const [ option, setOption ] = useState< WPImportOption >();
-	const { job, fromSite, siteSlug, siteId } = props;
+	const { job, fromSite, siteSlug, siteId, stepNavigator } = props;
 	const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
 	const fromSiteItem = useSelector( ( state ) =>
 		getSiteBySlug( state, fromSite ? convertToFriendlyWebsiteName( fromSite ) : '' )
@@ -91,15 +90,15 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	} ) {
 		const currentPath = window.location.pathname + window.location.search;
 
-		page( addQueryArgs( params, currentPath ) );
+		stepNavigator?.navigate?.( addQueryArgs( params, currentPath ) );
 	}
 
 	function redirectToWpAdminImportPage() {
-		return page( `/import/${ siteSlug }` );
+		stepNavigator?.goToWpAdminImportPage?.();
 	}
 
 	function redirectToWpAdminWordPressImporter() {
-		return page( getWpOrgImporterUrl( siteSlug, 'wordpress' ) );
+		stepNavigator?.goToWpAdminWordPressPluginPage?.();
 	}
 
 	/**
@@ -128,6 +127,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 							targetSite={ siteItem as SitesItem }
 							targetSiteId={ siteId }
 							targetSiteSlug={ siteSlug }
+							stepNavigator={ stepNavigator }
 						/>
 					);
 				} else if ( WPImportOption.CONTENT_ONLY === option ) {
@@ -138,6 +138,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 							siteItem={ siteItem as SitesItem }
 							siteSlug={ siteSlug }
 							siteAnalyzedData={ fromSiteAnalyzedData }
+							stepNavigator={ stepNavigator }
 						/>
 					);
 				}

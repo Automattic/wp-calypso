@@ -73,7 +73,7 @@ class ImporterAuthorMapping extends Component {
 				<span className="importer__source-author">
 					{ icon ? (
 						<img
-							class="importer__icon"
+							className="importer__icon"
 							alt={ name }
 							title={ name }
 							src={ icon }

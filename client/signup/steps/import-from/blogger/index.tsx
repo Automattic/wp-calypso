@@ -17,8 +17,18 @@ import { getImporterTypeForEngine } from '../util';
 
 export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( props ) => {
 	const importer: Importer = 'blogger';
-	const { job, urlData, siteId, site, siteSlug, fromSite, importSite, startImport, resetImport } =
-		props;
+	const {
+		job,
+		urlData,
+		siteId,
+		site,
+		siteSlug,
+		fromSite,
+		importSite,
+		startImport,
+		resetImport,
+		stepNavigator,
+	} = props;
 
 	/**
 	 * Effects
@@ -111,10 +121,16 @@ export const BloggerImporter: React.FunctionComponent< ImporterBaseProps > = ( p
 								siteSlug={ siteSlug }
 								job={ job as ImportJob }
 								resetImport={ resetImport }
+								onSiteViewClick={ stepNavigator?.goToSiteViewPage }
 							/>
 						);
 					} else if ( checkIsFailed() ) {
-						return <ErrorMessage siteSlug={ siteSlug } />;
+						return (
+							<ErrorMessage
+								onStartBuilding={ stepNavigator?.goToIntentPage }
+								onBackToStart={ stepNavigator?.goToImportCapturePage }
+							/>
+						);
 					} else if ( checkProgress() ) {
 						return <ProgressScreen job={ job } />;
 					}
