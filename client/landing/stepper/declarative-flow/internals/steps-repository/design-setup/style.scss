@@ -297,11 +297,11 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	&.design-setup__preview {
 		padding: 0;
 
-		.step-container__header {
+		.design-setup_header {
 			margin: 0;
 		}
 
-		.step-container__content {
+		.design-setup__content {
 			height: calc( 100vh - 157px );
 			margin-top: 48px;
 			overflow: scroll;
@@ -320,8 +320,8 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		}
 	}
 
-	.step-container__header,
-	.step-container__footer {
+	.design-setup__header,
+	.design-setup__footer {
 		.button {
 			border-radius: 4px;
 			font-weight: 500;
@@ -332,7 +332,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		}
 	}
 
-	.step-container__header {
+	.design-setup__header {
 		align-items: center;
 		display: flex;
 		margin: 48px 0;
@@ -340,10 +340,25 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		flex-wrap: wrap;
 	}
 
-	.step-container__footer {
-		background-color: #ffffff;
+	.design-setup__footer {
 		display: none;
 		margin: 0 auto;
+
+		.design-setup__footer-inner {
+			align-self: stretch;
+			align-items: center;
+			background-color: #ffffff;
+			display: flex;
+			justify-content: flex-end;
+
+			@include break-small {
+				flex-basis: calc( 100% - 154px );
+			}
+
+			@include break-medium {
+				flex-basis: calc( 100% - 248px );
+			}
+		}
 
 		&.is-sticky {
 			@include break-small {
@@ -358,8 +373,11 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 				&.is-visible {
 					opacity: 1;
-					pointer-events: auto;
 					transform: translateY( 0 );
+
+					.design-setup__footer-inner {
+						pointer-events: auto;
+					}
 				}
 			}
 		}

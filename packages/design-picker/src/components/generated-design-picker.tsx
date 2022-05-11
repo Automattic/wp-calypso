@@ -142,15 +142,27 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 			setIsHeadingInViewport( entry.isIntersecting );
 		};
 
+		let buttonEl;
+		for ( const childEl of headingRef.current.children ) {
+			if ( childEl.tagName.toLowerCase() === 'button' ) {
+				buttonEl = childEl;
+				break;
+			}
+		}
+
+		if ( ! buttonEl ) {
+			return;
+		}
+
 		observerRef.current = new IntersectionObserver( handler );
-		observerRef.current.observe( headingRef.current );
+		observerRef.current.observe( buttonEl );
 
 		return () => observerRef.current?.disconnect?.();
 	}, [ isStickyFooter ] );
 
 	return (
 		<div className="generated-design-picker">
-			{ heading && <div ref={ headingRef }>{ heading }</div> }
+			{ heading && cloneElement( heading, { ref: headingRef } ) }
 			<div className="generated_design-picker__content">
 				<div className="generated-design-picker__thumbnails">
 					{ designs &&

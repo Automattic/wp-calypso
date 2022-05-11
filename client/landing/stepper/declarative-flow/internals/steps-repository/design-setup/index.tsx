@@ -375,7 +375,9 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			}
 			footer={
 				<div className={ classnames( 'step-container__footer', 'design-setup__footer' ) }>
-					<Button primary>{ translate( 'Continue' ) }</Button>
+					<div className={ 'design-setup__footer-inner' }>
+						<Button primary>{ translate( 'Continue' ) }</Button>
+					</div>
 				</div>
 			}
 			isStickyFooter
