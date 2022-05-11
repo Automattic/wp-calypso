@@ -22,6 +22,11 @@
 .payment-method {
 	margin-bottom: 0;
 	display: grid;
+	grid-template-areas:
+		'payment-method-details'
+		'payment-method-billing-information'
+		'payment-method-backup'
+		'payment-method-delete';
 	grid-template-columns: 1fr;
 	align-items: center;
 	justify-content: space-between;
@@ -29,14 +34,17 @@
 	width: 100%;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		grid-template-columns: 1fr 1fr;
+		grid-template-areas:
+		'payment-method-details payment-method-backup'
+		'payment-method-billing-information payment-method-delete';
+		grid-template-columns: 2fr 1fr;
 	}
 }
 
 .payment-method-details {
 	display: flex;
 	align-items: center;
-	order: 1;
+	grid-area: payment-method-details;
 }
 
 .payment-method-details__image {
@@ -74,7 +82,7 @@
 	display: block;
 
 	@include breakpoint-deprecated( '>960px' ) {
-		display: inline;
+		display: inline-block;
 	}
 
 	.gridicon {
@@ -94,16 +102,23 @@
 }
 
 .payment-method .payment-method-tax-info {
-	order: 2;
+	font-size: 0.875rem;
+	grid-area: payment-method-billing-information;
+	margin-left: 76px;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		order: 3;
 		width: auto;
 	}
 }
 
 .payment-method-delete {
-	order: 4;
+	grid-area: payment-method-delete;
+	margin-top: 12px;
+	text-align: right;
+
+	@include breakpoint-deprecated( '>480px' ) {
+		margin-top: 0;
+	}
 }
 
 .payment-method-delete__button {
@@ -122,12 +137,15 @@
 }
 
 .payment-method-backup-toggle {
-	order: 3;
+	grid-area: payment-method-backup;
+	margin-left: 76px;
+	margin-top: 6px;
 	width: 100%;
-	padding-top: 8px;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		order: 2;
+		margin-left: 0;
+		margin-top: 0;
+		text-align: right;
 		width: auto;
 	}
 }
