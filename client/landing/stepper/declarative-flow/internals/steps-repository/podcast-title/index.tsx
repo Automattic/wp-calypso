@@ -94,7 +94,7 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 							inputRef={ inputRef }
 							value={ siteTitle }
 							onChange={ handleChange }
-							placeholder="Good Fun"
+							placeholder="At the Fork"
 						/>
 						<div
 							className={ classNames( 'podcast-title__underline', {
