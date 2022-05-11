@@ -1,9 +1,13 @@
+import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Fragment } from 'react';
+import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-const JetpackChecklistHeader = ( { isPaidPlan, translate } ) => (
+const JetpackChecklistHeader = ( { hasBackups, translate } ) => (
 	<Fragment>
 		<Card compact className="jetpack-checklist__top">
 			<strong>{ translate( 'My Checklist' ) }</strong>
@@ -21,7 +25,7 @@ const JetpackChecklistHeader = ( { isPaidPlan, translate } ) => (
 						"Let's start by securing your site with a few essential security features"
 					) }
 				</CardHeading>
-				{ isPaidPlan && (
+				{ hasBackups && (
 					<p>
 						{ translate(
 							'These security features ensure that your site is secured and backed up.'
@@ -33,4 +37,6 @@ const JetpackChecklistHeader = ( { isPaidPlan, translate } ) => (
 	</Fragment>
 );
 
-export default localize( JetpackChecklistHeader );
+export default connect( ( state ) => ( {
+	hasBackups: siteHasFeature( state, getSelectedSiteId( state ), WPCOM_FEATURES_BACKUPS ),
+} ) )( localize( JetpackChecklistHeader ) );
