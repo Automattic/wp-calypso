@@ -373,6 +373,12 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 					<Button primary>{ translate( 'Continue' ) }</Button>
 				</div>
 			}
+			footer={
+				<div className={ classnames( 'step-container__footer', 'design-setup__footer' ) }>
+					<Button primary>{ translate( 'Continue' ) }</Button>
+				</div>
+			}
+			isStickyFooter
 			onPreview={ previewDesign }
 			onViewMore={ viewMoreDesigns }
 		/>

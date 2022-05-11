@@ -320,13 +320,8 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		}
 	}
 
-	.step-container__header {
-		align-items: center;
-		display: flex;
-		margin: 48px 0;
-		row-gap: 1.5rem;
-		flex-wrap: wrap;
-
+	.step-container__header,
+	.step-container__footer {
 		.button {
 			border-radius: 4px;
 			font-weight: 500;
@@ -334,6 +329,47 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 			// Override unnecessary super specificity added by another class.
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+		}
+	}
+
+	.step-container__header {
+		align-items: center;
+		display: flex;
+		margin: 48px 0;
+		row-gap: 1.5rem;
+		flex-wrap: wrap;
+	}
+
+	.step-container__footer {
+		background-color: #ffffff;
+		display: none;
+		margin: 0 auto;
+
+		&.is-sticky {
+			@include break-small {
+				bottom: 0;
+				left: 0;
+				opacity: 0;
+				pointer-events: none;
+				position: sticky;
+				right: 0;
+				transform: translateY( 118px );
+				transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+
+				&.is-visible {
+					opacity: 1;
+					pointer-events: auto;
+					transform: translateY( 0 );
+				}
+			}
+		}
+
+		@include break-small {
+			align-items: center;
+			display: flex;
+			height: 118px;
+			justify-content: flex-end;
+			max-width: 1440px;
 		}
 	}
 

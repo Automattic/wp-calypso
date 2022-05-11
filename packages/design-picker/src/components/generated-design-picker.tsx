@@ -4,7 +4,7 @@ import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect, useRef, useState } from 'react';
+import { cloneElement, useEffect, useRef, useState } from 'react';
 import { getDesignPreviewUrl } from '../utils';
 import type { Design } from '../types';
 import type { MShotsOptions } from '@automattic/onboarding';
@@ -106,6 +106,8 @@ export interface GeneratedDesignPickerProps {
 	verticalId: string;
 	locale: string;
 	heading?: React.ReactElement;
+	footer?: React.ReactElement;
+	isStickyFooter: boolean;
 	onPreview: ( design: Design ) => void;
 	onViewMore: () => void;
 }
@@ -116,16 +118,18 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 	verticalId,
 	locale,
 	heading,
+	footer,
+	isStickyFooter,
 	onPreview,
 	onViewMore,
 } ) => {
 	const { __ } = useI18n();
-	const headingRef = useRef< HTMLDivElement >();
+	const headingRef = useRef< HTMLDivElement >( null );
 	const observerRef = useRef< IntersectionObserver >();
 	const [ isHeadingInViewport, setIsHeadingInViewport ] = useState( true );
 
 	useEffect( () => {
-		if ( ! headingRef.current || observerRef.current ) {
+		if ( ! headingRef.current || observerRef.current || ! isStickyFooter ) {
 			return;
 		}
 
@@ -142,11 +146,11 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 		observerRef.current.observe( headingRef.current );
 
 		return () => observerRef.current?.disconnect?.();
-	}, [] );
+	}, [ isStickyFooter ] );
 
 	return (
 		<div className="generated-design-picker">
-			<div ref={ headingRef }>{ heading }</div>
+			{ heading && <div ref={ headingRef }>{ heading }</div> }
 			<div className="generated_design-picker__content">
 				<div className="generated-design-picker__thumbnails">
 					{ designs &&
@@ -175,13 +179,13 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 						) ) }
 				</div>
 			</div>
-			<div
-				className={ classnames( 'generated-design-picker__cta', {
-					'is-visible': ! isHeadingInViewport,
+			{ footer &&
+				cloneElement( footer, {
+					className: classnames( footer.props.className, {
+						'is-sticky': isStickyFooter,
+						'is-visible': ! isHeadingInViewport,
+					} ),
 				} ) }
-			>
-				<Button primary>{ __( 'Continue' ) }</Button>
-			</div>
 		</div>
 	);
 };
