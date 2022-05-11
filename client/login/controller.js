@@ -132,7 +132,7 @@ export function redirectDefaultLocale( context, next ) {
 	// Only handle simple routes
 	if ( context.pathname !== '/log-in/en' && context.pathname !== '/log-in/jetpack/en' ) {
 		if ( ! isUserLoggedIn( context.store.getState() ) && ! context.params.lang ) {
-			context.params.lang = 'en';
+			context.params.lang = config( 'i18n_default_locale_slug' );
 		}
 		return next();
 	}
