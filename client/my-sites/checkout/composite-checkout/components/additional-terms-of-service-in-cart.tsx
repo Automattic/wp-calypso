@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { TermsOfServiceRecord, useShoppingCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
@@ -6,6 +5,7 @@ import i18n, { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { EDIT_PAYMENT_DETAILS } from 'calypso/lib/url/support';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -38,12 +38,7 @@ export default function AdditionalTermsOfServiceInCart(): JSX.Element | null {
 					return null;
 				}
 
-				return (
-					<div className="checkout__titan-terms-of-service" key={ termsOfServiceRecord.key }>
-						<Gridicon icon="info-outline" size={ 18 } />
-						<p>{ message }</p>
-					</div>
-				);
+				return <CheckoutTermsItem key={ termsOfServiceRecord.key }>{ message }</CheckoutTermsItem>;
 			} ) }
 		</>
 	);

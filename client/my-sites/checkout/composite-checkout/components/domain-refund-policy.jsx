@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -10,6 +9,7 @@ import {
 	hasNewDomainRegistration,
 } from 'calypso/lib/cart-values/cart-items';
 import { DOMAIN_CANCEL, REFUNDS } from 'calypso/lib/url/support';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -106,10 +106,7 @@ class DomainRefundPolicy extends Component {
 		const policies = this.getApplicablePolicies();
 
 		return Object.entries( policies ).map( ( [ name, message ] ) => (
-			<div className="checkout__domain-refund-policy" key={ 'domain-refund-policy-' + name }>
-				<Gridicon icon="info-outline" size={ 18 } />
-				<p>{ message }</p>
-			</div>
+			<CheckoutTermsItem key={ 'domain-refund-policy-' + name }>{ message }</CheckoutTermsItem>
 		) );
 	}
 }
