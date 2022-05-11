@@ -50,20 +50,20 @@ const titles: {
 		trayText?: string;
 		formDisclaimer?: string;
 		buttonLabel: string;
-		buttonDisabledLabel: string;
+		buttonLoadingLabel: string;
 	};
 } = {
 	CHAT: {
 		formTitle: __( 'Start live chat', 'full-site-editing' ),
 		trayText: __( 'Our WordPress experts will be with you right away', 'full-site-editing' ),
 		buttonLabel: __( 'Chat with us', 'full-site-editing' ),
-		buttonDisabledLabel: __( 'Connecting to chat', 'full-site-editing' ),
+		buttonLoadingLabel: __( 'Connecting to chat', 'full-site-editing' ),
 	},
 	EMAIL: {
 		formTitle: __( 'Send us an email', 'full-site-editing' ),
 		trayText: __( 'Our WordPress experts will get back to you soon', 'full-site-editing' ),
 		buttonLabel: __( 'Email us', 'full-site-editing' ),
-		buttonDisabledLabel: __( 'Sending email', 'full-site-editing' ),
+		buttonLoadingLabel: __( 'Sending email', 'full-site-editing' ),
 	},
 	FORUM: {
 		formTitle: __( 'Ask in our community forums', 'full-site-editing' ),
@@ -72,7 +72,7 @@ const titles: {
 			'full-site-editing'
 		),
 		buttonLabel: __( 'Ask in the forums', 'full-site-editing' ),
-		buttonDisabledLabel: __( 'Posting in the forums', 'full-site-editing' ),
+		buttonLoadingLabel: __( 'Posting in the forums', 'full-site-editing' ),
 	},
 };
 
@@ -303,7 +303,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					primary
 					className="help-center-contact-form__site-picker-cta"
 				>
-					{ isSubmitting ? formTitles.buttonDisabledLabel : formTitles.buttonLabel }
+					{ isSubmitting ? formTitles.buttonLoadingLabel : formTitles.buttonLabel }
 				</Button>
 			</section>
 			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && (
