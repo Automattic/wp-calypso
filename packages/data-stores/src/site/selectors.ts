@@ -107,7 +107,7 @@ export const getAtomicSoftwareInstallError = (
 	return state.atomicSoftwareInstallStatus[ siteId ]?.[ softwareSet ]?.error;
 };
 
-export const hasActiveSiteFeature = (
+export const siteHasFeature = (
 	_: State,
 	siteId: number | undefined,
 	featureKey: string
@@ -118,7 +118,7 @@ export const hasActiveSiteFeature = (
 };
 
 export const requiresUpgrade = ( state: State, siteId: number | null ) => {
-	return siteId && ! select( STORE_KEY ).hasActiveSiteFeature( siteId, 'woop' );
+	return siteId && ! select( STORE_KEY ).siteHasFeature( siteId, 'woop' );
 };
 
 export function isJetpackSite( state: State, siteId?: number ): boolean {
