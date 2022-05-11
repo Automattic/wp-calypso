@@ -14,7 +14,7 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import {
@@ -332,14 +332,7 @@ class AllDomainsTest extends Component {
 			<OptionsDomainButton key="breadcrumb_button_3" ellipsisButton borderless />,
 		];
 
-		return (
-			<Breadcrumbs
-				items={ [ item ] }
-				mobileItem={ item }
-				buttons={ buttons }
-				mobileButtons={ mobileButtons }
-			/>
-		);
+		return <DomainHeader items={ [ item ] } buttons={ buttons } mobileButtons={ mobileButtons } />;
 	}
 
 	renderContent() {
