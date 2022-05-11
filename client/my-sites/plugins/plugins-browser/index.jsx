@@ -1,10 +1,6 @@
 import {
-	isBusiness,
-	isEcommerce,
-	isEnterprise,
-	isPro,
+	FEATURE_INSTALL_PLUGINS,
 	findFirstSimilarPlanKey,
-	FEATURE_UPLOAD_PLUGINS,
 	TYPE_BUSINESS,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
@@ -94,13 +90,6 @@ const PluginsBrowser = ( {
 
 	// Billing period switcher.
 	const billingPeriod = useSelector( getBillingInterval );
-
-	const hasBusinessPlan =
-		sitePlan &&
-		( isBusiness( sitePlan ) ||
-			isEnterprise( sitePlan ) ||
-			isEcommerce( sitePlan ) ||
-			isPro( sitePlan ) );
 
 	const { plugins: paidPlugins = [], isFetching: isFetchingPaidPlugins } = usePlugins( {
 		category: 'paid',
@@ -292,7 +281,6 @@ const PluginsBrowser = ( {
 				sitePlan={ sitePlan }
 				isVip={ isVip }
 				jetpackNonAtomic={ jetpackNonAtomic }
-				hasBusinessPlan={ hasBusinessPlan }
 				siteSlug={ siteSlug }
 			/>
 
@@ -533,20 +521,13 @@ const PluginBrowserContent = ( props ) => {
 	);
 };
 
-const UpgradeNudge = ( {
-	selectedSite,
-	sitePlan,
-	isVip,
-	jetpackNonAtomic,
-	hasBusinessPlan,
-	siteSlug,
-} ) => {
+const UpgradeNudge = ( { selectedSite, sitePlan, isVip, jetpackNonAtomic, siteSlug } ) => {
 	const translate = useTranslate();
 	const eligibleForProPlan = useSelector( ( state ) =>
 		isEligibleForProPlan( state, selectedSite?.ID )
 	);
 
-	if ( ! selectedSite?.ID || ! sitePlan || isVip || jetpackNonAtomic || hasBusinessPlan ) {
+	if ( ! selectedSite?.ID || ! sitePlan || isVip || jetpackNonAtomic ) {
 		return null;
 	}
 
@@ -565,7 +546,7 @@ const UpgradeNudge = ( {
 			event="calypso_plugins_browser_upgrade_nudge"
 			showIcon={ true }
 			href={ bannerURL }
-			feature={ FEATURE_UPLOAD_PLUGINS }
+			feature={ FEATURE_INSTALL_PLUGINS }
 			plan={ plan }
 			title={ title }
 		/>
