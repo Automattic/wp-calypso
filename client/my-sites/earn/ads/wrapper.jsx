@@ -23,11 +23,11 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import {
 	isWordadsInstantActivationEligible,
-	isWordadsInstantActivationEligibleButNotOwner,
 	canUpgradeToUseWordAds,
 	canAccessAds,
 } from 'calypso/lib/ads/utils';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -268,7 +268,7 @@ class AdsWrapper extends Component {
 	}
 
 	render() {
-		const { site, translate } = this.props;
+		const { isWordadsInstantEligibleButNotOwner, site, translate } = this.props;
 		const jetpackPremium = site.jetpack && isEligbleJetpackPlan( site.plan );
 
 		let component = this.props.children;
@@ -282,7 +282,7 @@ class AdsWrapper extends Component {
 			);
 		} else if ( ! site.options.wordads && isWordadsInstantActivationEligible( site ) ) {
 			component = this.renderInstantActivationToggle( component );
-		} else if ( ! site.options.wordads && isWordadsInstantActivationEligibleButNotOwner( site ) ) {
+		} else if ( ! site.options.wordads && isWordadsInstantEligibleButNotOwner ) {
 			component = this.renderOwnerRequiredMessage( component );
 		} else if ( canUpgradeToUseWordAds( site ) && site.jetpack && ! jetpackPremium ) {
 			component = this.renderjetpackUpsell();
@@ -317,6 +317,9 @@ const mapStateToProps = ( state ) => {
 		wordAdsError: getWordAdsErrorForSite( state, site ),
 		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
 		isUnsafe: isSiteWordadsUnsafe( state, siteId ),
+		isWordadsInstantEligibleButNotOwner:
+			siteHasFeature( state, siteId, WPCOM_FEATURES_WORDADS ) &&
+			! canCurrentUser( state, siteId, 'activate_wordads' ),
 		adsProgramName: isJetpackSite( state, siteId ) ? 'Ads' : 'WordAds',
 	};
 };

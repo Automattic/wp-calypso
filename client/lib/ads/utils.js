@@ -26,16 +26,6 @@ export function hasWordAdsPlan( site ) {
 }
 
 /**
- * Returns true if the site is approved for WordAds.
- *
- * @param site Site object
- * @returns {boolean} true if site is approved for WordAds.
- */
-export function isWordAdsApproved( site ) {
-	return !! site.options.wordads;
-}
-
-/**
  * Returns true if the site has WordAds access
  *
  * @param  site Site object
@@ -67,10 +57,6 @@ export function canAccessAds( site ) {
 
 export function isWordadsInstantActivationEligible( site ) {
 	return hasWordAdsPlan( site ) && userCan( 'activate_wordads', site );
-}
-
-export function isWordadsInstantActivationEligibleButNotOwner( site ) {
-	return hasWordAdsPlan( site ) && ! userCan( 'activate_wordads', site );
 }
 
 export function canUpgradeToUseWordAds( site ) {
