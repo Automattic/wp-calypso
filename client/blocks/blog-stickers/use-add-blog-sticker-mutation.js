@@ -5,8 +5,15 @@ import wp from 'calypso/lib/wp';
 export const useAddBlogStickerMutation = ( options = {} ) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation(
-		( { blogId, stickerName } ) =>
-			wp.req.post( `/sites/${ blogId }/blog-stickers/add/${ stickerName }` ),
+		async ( { blogId, stickerName } ) => {
+			const response = await wp.req.post( `/sites/${ blogId }/blog-stickers/add/${ stickerName }` );
+
+			if ( ! response.success ) {
+				throw new Error( 'Adding blog sticker was unsuccessful', response );
+			}
+
+			return response;
+		},
 		{
 			...options,
 			onSuccess( ...args ) {

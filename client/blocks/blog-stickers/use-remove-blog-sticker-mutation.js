@@ -5,8 +5,17 @@ import wp from 'calypso/lib/wp';
 export const useRemoveBlogStickerMutation = ( options = {} ) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation(
-		( { blogId, stickerName } ) =>
-			wp.req.post( `/sites/${ blogId }/blog-stickers/remove/${ stickerName }` ),
+		async ( { blogId, stickerName } ) => {
+			const response = await wp.req.post(
+				`/sites/${ blogId }/blog-stickers/remove/${ stickerName }`
+			);
+
+			if ( ! response.success ) {
+				throw new Error( 'Blog sticker removal was unsuccessful on the server', response );
+			}
+
+			return response;
+		},
 		{
 			...options,
 			onSuccess( ...args ) {
