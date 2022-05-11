@@ -10,6 +10,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
+import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import { loadPersistedState } from 'calypso/state/persisted-state';
 import initialReducer from 'calypso/state/reducer';
@@ -70,6 +71,11 @@ window.AppBoot = async () => {
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( userId ) );
+
+	if ( user ) {
+		// Set current user in Redux store
+		reduxStore.dispatch( setCurrentUser( user as CurrentUser ) );
+	}
 
 	ReactDom.render(
 		<LocaleContext>
