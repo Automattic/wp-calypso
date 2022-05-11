@@ -24,7 +24,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const currentRoute = location.pathname.substring( 1 ) as StepPath;
 	const history = useHistory();
 	const { search } = useLocation();
-	const stepNavigation = flow.useStepNavigation( currentRoute, ( path: StepPath ) => {
+	const stepNavigation = flow.useStepNavigation( currentRoute, ( path ) => {
 		const _path = path.includes( '?' ) // does path contain search params
 			? generatePath( '/' + path )
 			: generatePath( '/' + path + search );

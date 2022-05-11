@@ -29,7 +29,7 @@ export type UseStepHook = () => StepPath[];
 
 export type UseStepNavigationHook = (
 	currentStep: StepPath,
-	navigate: ( stepName: StepPath ) => void,
+	navigate: ( stepName: StepPath | `${ StepPath }?${ string }` ) => void,
 	steps?: StepPath[]
 ) => NavigationControls;
 
