@@ -4,8 +4,8 @@ import { Icon, comment, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React, { useEffect } from 'react';
+import Mail from './icons/mail';
 import InlineHelpSearchResults from './inline-help-search-results';
-import Mail from './mail-icon';
 interface Props {
 	closeContactPage: () => void;
 	onSelectResource: () => void;
