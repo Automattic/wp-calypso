@@ -1,38 +1,9 @@
 import page from 'page';
 import { useState } from 'react';
-import useUrlSearch, { buildSearchUrl } from '../use-url-search';
+import useUrlSearch from '../use-url-search';
 
 jest.mock( 'react' );
 jest.mock( 'page' );
-
-describe( '#buildSearchUrl', () => {
-	test( 'should return original url if there is no search', () => {
-		const uri = 'https://wordpress.com/plugins';
-		expect( buildSearchUrl( uri ) ).toBe( '/plugins' );
-	} );
-
-	test( 'should add add the default params of s to built query', () => {
-		const uri = 'https://wordpress.com';
-		const search = 'hello';
-		const expectedResult = '?s=hello';
-		expect( buildSearchUrl( uri, search ) ).toBe( expectedResult );
-	} );
-
-	test( 'should replace current query with new one even when using custom query key', () => {
-		const uri = 'https://wordpress.com/read/search?q=reader+is+awesome';
-		const search = 'reader is super awesome';
-		const queryKey = 'q';
-		const expectedResult = '/read/search?q=reader+is+super+awesome';
-		expect( buildSearchUrl( uri, search, queryKey ) ).toBe( expectedResult );
-	} );
-
-	test( 'should remove the query if search is empty', () => {
-		const uri = 'https://wordpress.com/read/search?q=reader+is+awesome';
-		const queryKey = 'q';
-		const expectedResult = '/read/search';
-		expect( buildSearchUrl( uri, '', queryKey ) ).toBe( expectedResult );
-	} );
-} );
 
 describe( '#useUrlSearch', () => {
 	const mockSetSearchOpen = jest.fn();
@@ -48,9 +19,35 @@ describe( '#useUrlSearch', () => {
 		},
 	};
 
+	test( 'should remove the query if search is empty', () => {
+		global.window.location.href = 'https://wordpress.com/read/search?q=test';
+		const expectedResult = '/read/search';
+		urlSearchHook.doSearch( '' );
+
+		expect( page ).toBeCalledWith( expectedResult );
+	} );
+
+	test( 'should navigate to original url if there is no search', () => {
+		global.window.location.href = 'https://wordpress.com/plugins';
+		urlSearchHook.doSearch( '' );
+
+		expect( mockSetSearchOpen ).toBeCalledWith( false );
+		expect( page ).toBeCalledWith( '/plugins' );
+	} );
+
+	test( 'should replace current query with new one even when using custom query key', () => {
+		global.window.location.href = 'https://wordpress.com/read/search?q=test';
+		const expectedResult = '/read/search?q=reader+is+super+awesome';
+		const newSearchTerm = 'reader is super awesome';
+
+		const urlSearchHook2 = useUrlSearch( 'q' );
+		urlSearchHook2.doSearch( newSearchTerm );
+
+		expect( page.replace ).toHaveBeenLastCalledWith( expectedResult );
+	} );
+
 	test( 'should navigate to a page without a query search', () => {
 		global.window.location.href = 'https://wordpress.com';
-		page.mockImplementation( jest.fn() );
 		urlSearchHook.doSearch( '' );
 
 		expect( mockSetSearchOpen ).toBeCalledWith( false );
@@ -64,7 +61,6 @@ describe( '#useUrlSearch', () => {
 		const newSearchTerm = 'replaced-search-term';
 		const expectedUrl = '?s=' + newSearchTerm;
 
-		page.replace.mockImplementation( () => {} );
 		urlSearchHook.doSearch( newSearchTerm );
 
 		expect( mockSetSearchOpen ).toHaveBeenLastCalledWith( true );

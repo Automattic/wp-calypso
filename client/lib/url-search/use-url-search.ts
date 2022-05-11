@@ -18,7 +18,7 @@ const debug = debugFactory( 'calypso:url-search' );
  * @param {string} [queryKey = s] the key to place in the url.  defaults to s
  * @returns {string} The built search url
  */
-export const buildSearchUrl = ( uri: string, search: string, queryKey = 's' ) => {
+function buildSearchUrl( uri: string, search: string, queryKey = 's' ): string {
 	const parsedUrl = new URL( uri );
 
 	if ( search ) {
@@ -28,7 +28,7 @@ export const buildSearchUrl = ( uri: string, search: string, queryKey = 's' ) =>
 	}
 
 	return parsedUrl.pathname;
-};
+}
 
 function useUrlSearch( queryKey = 's' ) {
 	const [ isSearchOpen, setSearchOpen ] = useState( false );
