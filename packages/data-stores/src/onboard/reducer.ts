@@ -284,6 +284,16 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 	return state;
 };
 
+const stepProgress: Reducer< { count: number; progress: number } | undefined, OnboardAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'SET_STEP_PROGRESS' ) {
+		return action.stepProgress;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -310,6 +320,7 @@ const reducer = combineReducers( {
 	pendingAction,
 	progress,
 	progressTitle,
+	stepProgress,
 } );
 
 export type State = ReturnType< typeof reducer >;
