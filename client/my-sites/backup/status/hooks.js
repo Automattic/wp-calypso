@@ -4,7 +4,6 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import {
 	DELTA_ACTIVITIES,
-	getDeltaActivities,
 	getDeltaActivitiesByType,
 	isActivityBackup,
 	isSuccessfulRealtimeBackup,
@@ -40,26 +39,6 @@ const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, enabled
 	return {
 		isLoading,
 		deltas: getDeltaActivitiesByType( data ?? [] ),
-	};
-};
-
-const useRawBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, enabled = true ) => {
-	const filter = {
-		name: DELTA_ACTIVITIES,
-		before: before ? before.toISOString() : undefined,
-		after: after ? after.toISOString() : undefined,
-		number,
-	};
-
-	const isValidRequest = filter.before && filter.after;
-
-	const { data, isLoading } = useActivityLogQuery( siteId, filter, {
-		enabled: isValidRequest && enabled,
-	} );
-
-	return {
-		isLoading,
-		deltas: getDeltaActivities( data ?? [] ),
 	};
 };
 
@@ -126,10 +105,6 @@ export const useDailyBackupStatus = ( siteId, selectedDate ) => {
 		before: moment( selectedDate ).endOf( 'day' ),
 	} );
 
-	const mostRecentBackupEver = useLatestBackupAttempt( siteId, {
-		successOnly: true,
-	} );
-
 	const hasPreviousBackup = ! lastBackupBeforeDate.isLoading && lastBackupBeforeDate.backupAttempt;
 	const successfulLastAttempt =
 		! lastAttemptOnDate.isLoading && lastAttemptOnDate.backupAttempt?.activityIsRewindable;
@@ -143,37 +118,17 @@ export const useDailyBackupStatus = ( siteId, selectedDate ) => {
 		!! ( hasPreviousBackup && successfulLastAttempt )
 	);
 
-	const rawBackupDeltas = useRawBackupDeltas(
-		siteId,
-		{
-			after: moment( lastBackupBeforeDate.backupAttempt?.activityTs ),
-			before: moment( lastAttemptOnDate.backupAttempt?.activityTs ),
-		},
-		!! ( hasPreviousBackup && successfulLastAttempt )
-	);
-
 	return {
 		isLoading:
-			mostRecentBackupEver.isLoading ||
-			lastBackupBeforeDate.isLoading ||
-			lastAttemptOnDate.isLoading ||
-			backupDeltas.isLoading ||
-			rawBackupDeltas.isLoading,
-		mostRecentBackupEver: mostRecentBackupEver.backupAttempt,
+			lastBackupBeforeDate.isLoading || lastAttemptOnDate.isLoading || backupDeltas.isLoading,
 		lastBackupBeforeDate: lastBackupBeforeDate.backupAttempt,
 		lastBackupAttemptOnDate: lastAttemptOnDate.backupAttempt,
-		lastSuccessfulBackupOnDate: successfulLastAttempt ? lastAttemptOnDate.backupAttempt : undefined,
 		deltas: backupDeltas.deltas,
-		rawDeltas: rawBackupDeltas.deltas,
 	};
 };
 
 export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 	const moment = useLocalizedMoment();
-
-	const mostRecentBackupEver = useLatestBackupAttempt( siteId, {
-		successOnly: true,
-	} );
 
 	// This is the last attempt irrespective of date
 	const lastBackupAttempt = useLatestBackupAttempt( siteId );
@@ -198,32 +153,13 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 	const backupAttemptsOnDate = activityLog.data ?? [];
 	const lastBackupAttemptOnDate = backupAttemptsOnDate[ 0 ];
 	const lastSuccessfulBackupOnDate = backupAttemptsOnDate.find( isSuccessfulRealtimeBackup );
-	const lastAttemptWasSuccessful =
-		lastBackupAttemptOnDate && isSuccessfulRealtimeBackup( lastBackupAttemptOnDate );
-
-	const hasPreviousBackup = ! lastBackupBeforeDate.isLoading && lastBackupBeforeDate.backupAttempt;
-
-	const rawDeltas = useRawBackupDeltas(
-		siteId,
-		{
-			before: moment( lastBackupAttemptOnDate?.activityTs ),
-			after: moment( lastBackupBeforeDate.backupAttempt?.activityTs ),
-		},
-		!! ( hasPreviousBackup && lastAttemptWasSuccessful )
-	);
 
 	return {
-		isLoading:
-			mostRecentBackupEver.isLoading ||
-			lastBackupBeforeDate.isLoading ||
-			activityLog.isLoading ||
-			rawDeltas.isLoading,
-		mostRecentBackupEver: mostRecentBackupEver.backupAttempt,
+		isLoading: lastBackupBeforeDate.isLoading || activityLog.isLoading,
 		lastBackupBeforeDate: lastBackupBeforeDate.backupAttempt,
 		lastBackupAttempt: lastBackupAttempt.backupAttempt,
 		lastBackupAttemptOnDate,
 		lastSuccessfulBackupOnDate,
 		backupAttemptsOnDate,
-		rawDeltas: rawDeltas.deltas,
 	};
 };
