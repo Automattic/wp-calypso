@@ -1,4 +1,5 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
+import { Icon, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import type { FC } from 'react';
 import '../styles.scss';
@@ -10,7 +11,7 @@ export const BackButton: FC< Props > = ( { onClick } ) => {
 
 	return (
 		<Button className="back-button__help-center" borderless={ true } onClick={ onClick }>
-			<Gridicon icon={ 'chevron-left' } size={ 18 } />
+			<Icon icon={ chevronLeft } size={ 18 } />
 			{ __( 'Back', __i18n_text_domain__ ) }
 		</Button>
 	);
