@@ -47,11 +47,3 @@ export function canAccessWordads( site ) {
 
 	return false;
 }
-
-export function canAccessAds( site ) {
-	return (
-		( canAccessWordads( site ) ||
-			( site && ! site.options.wordads && ! hasWordAdsPlan( site ) ) ) &&
-		userCan( 'manage_options', site )
-	);
-}

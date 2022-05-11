@@ -17,7 +17,7 @@ import FeatureExample from 'calypso/components/feature-example';
 import FormButton from 'calypso/components/forms/form-button';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { canAccessAds } from 'calypso/lib/ads/utils';
+import { canAccessWordads } from 'calypso/lib/ads/utils';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -279,7 +279,7 @@ class AdsWrapper extends Component {
 			component = this.renderjetpackUpsell();
 		} else if ( canUpgradeToUseWordAds ) {
 			component = this.renderUpsell();
-		} else if ( ! canAccessAds( site ) ) {
+		} else if ( ! canAccessWordads( site ) ) {
 			component = this.renderEmptyContent();
 		} else if ( ! canUpgradeToUseWordAds ) {
 			component = null;

@@ -11,7 +11,7 @@ import Main from 'calypso/components/main';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { canAccessAds } from 'calypso/lib/ads/utils';
+import { canAccessWordads } from 'calypso/lib/ads/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AdsSettings from 'calypso/my-sites/earn/ads/form-settings';
 import WordAdsPayments from 'calypso/my-sites/earn/ads/payments';
@@ -48,7 +48,7 @@ class EarningsMain extends Component {
 		const pathSuffix = siteSlug ? '/' + siteSlug : '';
 		const tabs = [];
 
-		if ( canAccessAds( this.props.site ) ) {
+		if ( canAccessWordads( this.props.site ) ) {
 			tabs.push( {
 				title: translate( 'Earnings' ),
 				path: '/earn/ads-earnings' + pathSuffix,
