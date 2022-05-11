@@ -6437,6 +6437,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@testing-library/dom@npm:^8.11.1":
+  version: 8.13.0
+  resolution: "@testing-library/dom@npm:8.13.0"
+  dependencies:
+    "@babel/code-frame": ^7.10.4
+    "@babel/runtime": ^7.12.5
+    "@types/aria-query": ^4.2.0
+    aria-query: ^5.0.0
+    chalk: ^4.1.0
+    dom-accessibility-api: ^0.5.9
+    lz-string: ^1.4.4
+    pretty-format: ^27.0.2
+  checksum: f44edebe5e0ee30678f40255371c542d119c901e9aca86e58804ba81583c302ee0d970f32f09a00598db87af24a631727acb3efdf7fe140d3f824faed0210bfb
+  languageName: node
+  linkType: hard
+
 "@testing-library/jest-dom@npm:^5.16.2":
   version: 5.16.2
   resolution: "@testing-library/jest-dom@npm:5.16.2"
@@ -7709,6 +7725,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/scope-manager@npm:5.23.0":
+  version: 5.23.0
+  resolution: "@typescript-eslint/scope-manager@npm:5.23.0"
+  dependencies:
+    "@typescript-eslint/types": 5.23.0
+    "@typescript-eslint/visitor-keys": 5.23.0
+  checksum: 8db061998dec41002a6650f4a029b14dc1a1ed98443ae0634ba1382f2b5010a6441b6396e6879c7bbf9a2ab4269c0f76770845435cdcacf90d15577f66f6cd52
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/scope-manager@npm:5.7.0":
   version: 5.7.0
   resolution: "@typescript-eslint/scope-manager@npm:5.7.0"
@@ -7742,6 +7768,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/types@npm:5.23.0":
+  version: 5.23.0
+  resolution: "@typescript-eslint/types@npm:5.23.0"
+  checksum: 3709c5b5d78c2850835f98a2e8c5367516ce0dd901e1fbdbc63c5fe9822149673c236e8c48e2057ea88e8cadc2951cbff5b78377a566dca0a8baa0d8ef6250bd
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/types@npm:5.7.0":
   version: 5.7.0
   resolution: "@typescript-eslint/types@npm:5.7.0"
@@ -7764,6 +7797,24 @@ __metadata:
     typescript:
       optional: true
   checksum: 7f8fe85601665492f2c31699fd26af70c4cb8df3430f4644603ebf014bd2a323c420cc1ec3887e2e9046308dad32ef19ccdf44c7171a0a8d1b883da3b66e945c
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/typescript-estree@npm:5.23.0":
+  version: 5.23.0
+  resolution: "@typescript-eslint/typescript-estree@npm:5.23.0"
+  dependencies:
+    "@typescript-eslint/types": 5.23.0
+    "@typescript-eslint/visitor-keys": 5.23.0
+    debug: ^4.3.2
+    globby: ^11.0.4
+    is-glob: ^4.0.3
+    semver: ^7.3.5
+    tsutils: ^3.21.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 005448fd4408fbf865c72368ad8a513e1031bcb19d0fd04c5199b8088dee94121ca2246a445b2ab654d8c1baf547c6b449264c26f27d2e4cd475515b48b8ae2c
   languageName: node
   linkType: hard
 
@@ -7801,6 +7852,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/utils@npm:^5.13.0":
+  version: 5.23.0
+  resolution: "@typescript-eslint/utils@npm:5.23.0"
+  dependencies:
+    "@types/json-schema": ^7.0.9
+    "@typescript-eslint/scope-manager": 5.23.0
+    "@typescript-eslint/types": 5.23.0
+    "@typescript-eslint/typescript-estree": 5.23.0
+    eslint-scope: ^5.1.1
+    eslint-utils: ^3.0.0
+  peerDependencies:
+    eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
+  checksum: 3fa8c95485763046150dd45c2d8cc8e1e79998a64c96bbcddbeab11858e7234eea4257ad89af40469d0f401ef50315bdb83cc0e62a856d28127ff1c4f5dfaebd
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/visitor-keys@npm:5.21.0":
   version: 5.21.0
   resolution: "@typescript-eslint/visitor-keys@npm:5.21.0"
@@ -7808,6 +7875,16 @@ __metadata:
     "@typescript-eslint/types": 5.21.0
     eslint-visitor-keys: ^3.0.0
   checksum: f0fce55915ce62d68e65272afc634eac6e72425a7a26b9d1d3c58a2ab65f94b7cc2092354fca56936b8bff864745094b5306763e12b76be1c848caedbba3100e
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/visitor-keys@npm:5.23.0":
+  version: 5.23.0
+  resolution: "@typescript-eslint/visitor-keys@npm:5.23.0"
+  dependencies:
+    "@typescript-eslint/types": 5.23.0
+    eslint-visitor-keys: ^3.0.0
+  checksum: 3b12f3acb7bcd18a66fa091b914d3fb8c3e61f06ffedf65a3c30f405cb8353167076300e56fb59136dab8916c97b3dfc2d40d4a51b5babcfd8ff84a23f2e683e
   languageName: node
   linkType: hard
 
@@ -16780,6 +16857,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-jest-dom@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "eslint-plugin-jest-dom@npm:4.0.1"
+  dependencies:
+    "@babel/runtime": ^7.16.3
+    "@testing-library/dom": ^8.11.1
+    requireindex: ^1.2.0
+  peerDependencies:
+    eslint: ">=6.8"
+  checksum: 4708d44d64ed7ef84475324445a56e816d3aba557205a5d18b9eb8e65d6d701b3a0008f579c303c7de81652f610f31ed8e4d48634de4a8aba6a364d4ff45b1da
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-jest@npm:^25.2.3, eslint-plugin-jest@npm:^25.3.0, eslint-plugin-jest@npm:^25.3.4":
   version: 25.7.0
   resolution: "eslint-plugin-jest@npm:25.7.0"
@@ -16947,6 +17037,17 @@ __metadata:
   peerDependencies:
     eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
   checksum: d15a77f524c59cd82be821c0aa97d4e4499cd37c783e985e0f7869041d4345ef95c9c444c4a27f6158b82dbdecf7b65aa7805dcac8c73a71a832fee82418172e
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-testing-library@npm:^5.5.0":
+  version: 5.5.0
+  resolution: "eslint-plugin-testing-library@npm:5.5.0"
+  dependencies:
+    "@typescript-eslint/utils": ^5.13.0
+  peerDependencies:
+    eslint: ^7.5.0 || ^8.0.0
+  checksum: f6e0ec048bad1b27ccbe3861bdf2afdb9a6958c589fe42e065abd273ffac932aecff651d06f3d2b607143d260e97c5d1eda3be705a050f4b04a0c96fc2c04f95
   languageName: node
   linkType: hard
 
@@ -36328,6 +36429,7 @@ swiper@4.5.1:
     eslint-plugin-import: ^2.25.4
     eslint-plugin-inclusive-language: ^2.2.0
     eslint-plugin-jest: ^25.3.4
+    eslint-plugin-jest-dom: ^4.0.1
     eslint-plugin-jsdoc: ^37.5.1
     eslint-plugin-jsx-a11y: ^6.5.1
     eslint-plugin-md: ^1.0.19
@@ -36335,6 +36437,7 @@ swiper@4.5.1:
     eslint-plugin-prettier: ^4.0.0
     eslint-plugin-react: ^7.28.0
     eslint-plugin-react-hooks: ^4.3.0
+    eslint-plugin-testing-library: ^5.5.0
     eslint-plugin-wpcalypso: "workspace:^"
     eslint-plugin-you-dont-need-lodash-underscore: ^6.12.0
     fsevents: ^2.3.2

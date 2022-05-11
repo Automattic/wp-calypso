@@ -14,8 +14,10 @@ module.exports = {
 		'plugin:wpcalypso/react',
 		'plugin:jsx-a11y/recommended',
 		'plugin:jest/recommended',
+		'plugin:jest-dom/recommended',
 		'plugin:prettier/recommended',
 		'plugin:md/prettier',
+		'plugin:testing-library/react',
 		'plugin:@wordpress/eslint-plugin/i18n',
 	],
 	overrides: [
