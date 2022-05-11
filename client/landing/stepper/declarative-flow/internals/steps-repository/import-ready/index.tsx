@@ -34,7 +34,8 @@ const ImportReady: Step = function ImportStep( props ) {
 			siteSlug as string,
 			urlData.url,
 			urlData.platform,
-			isAtomicSite
+			isAtomicSite,
+			'stepper'
 		);
 
 		navigation.submit?.( { url } );
