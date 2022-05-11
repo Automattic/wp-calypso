@@ -10,30 +10,29 @@ export default function usePodcastTitle(): string | null {
 	}
 
 	useEffect( () => {
+		let isMounted = true;
+
 		if ( ! anchorFmPodcastId ) {
 			return;
 		}
-
-		//Prevent memory leak when API has not finished fetching/component has not mounted
-		const controller = new AbortController();
-		const signal = controller.signal;
 
 		// Fetch podcast title from /podcast-details endpoint
 		apiFetch< PodcastDetails >( {
 			path: `https://public-api.wordpress.com/wpcom/v2/podcast-details?url=https://anchor.fm/s/${ encodeURIComponent(
 				anchorFmPodcastId
 			) }/podcast/rss&_fields=title`,
-			signal: signal,
 		} )
 			.then( ( response ) => {
-				if ( response?.title ) {
+				if ( response?.title && isMounted ) {
 					setSiteTitle( response.title );
 				}
 			} )
 			.catch( () => {
-				setSiteTitle( '' );
+				isMounted && setSiteTitle( '' );
 			} );
-		return () => controller.abort(); //Cleanup when we've finished mounting
+		return () => {
+			isMounted = false;
+		}; //Cleanup when we've finished mounting
 	}, [ anchorFmPodcastId ] );
 
 	return siteTitle;
