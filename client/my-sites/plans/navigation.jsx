@@ -85,8 +85,8 @@ export default connect( ( state ) => {
 	let shouldShowPlans = true;
 	let isFreeOrFlexible = false;
 
+	// do not show the Plans tab if user is on a Pro plan
 	if ( eligibleForProPlan && currentPlan ) {
-		// @todo clk
 		isFreeOrFlexible = isFreePlanProduct( currentPlan ) || isFlexiblePlanProduct( currentPlan );
 		shouldShowMyPlan = isFreeOrFlexible ? false : true;
 		shouldShowPlans = isFreeOrFlexible || ! isPro( currentPlan ) ? true : false;
