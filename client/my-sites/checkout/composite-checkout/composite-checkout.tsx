@@ -498,6 +498,7 @@ export default function CompositeCheckout( {
 		arePaymentMethodsLoading ||
 		paymentMethods.length < 1 ||
 		responseCart.products.length < 1 ||
+		countriesList.length < 1 ||
 		isLoadingIntroOffers;
 	if ( isLoading ) {
 		debug( 'still loading because one of these is true', {
@@ -505,6 +506,7 @@ export default function CompositeCheckout( {
 			paymentMethods: paymentMethods.length < 1,
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: responseCart.products.length < 1,
+			countriesList: countriesList.length < 1,
 			isLoadingIntroOffers,
 		} );
 	} else {
