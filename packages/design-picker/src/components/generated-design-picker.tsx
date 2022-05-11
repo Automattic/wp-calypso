@@ -142,7 +142,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 			setIsHeadingInViewport( entry.isIntersecting );
 		};
 
-		observerRef.current = new IntersectionObserver( handler, { threshold: 1 } );
+		observerRef.current = new IntersectionObserver( handler );
 		observerRef.current.observe( headingRef.current );
 
 		return () => observerRef.current?.disconnect?.();
