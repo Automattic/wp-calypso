@@ -14,10 +14,6 @@ export const DELTA_ACTIVITIES = [
 	'user__invite_accepted',
 ];
 
-export const getDeltaActivities = ( logs ) => {
-	return logs.filter( ( { activityName } ) => DELTA_ACTIVITIES.includes( activityName ) );
-};
-
 export const getDeltaActivitiesByType = ( logs ) => {
 	return {
 		mediaCreated: logs.filter( ( event ) => 'attachment__uploaded' === event.activityName ),
