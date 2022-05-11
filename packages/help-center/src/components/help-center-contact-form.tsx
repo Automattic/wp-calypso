@@ -13,10 +13,12 @@ import { SitePickerDropDown } from '@automattic/site-picker';
 import { TextControl, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { Icon, page as pageIcon } from '@wordpress/icons';
+import React, { useEffect, useState, useContext } from 'react';
 /**
  * Internal Dependencies
  */
-import { useEffect, useState } from 'react';
+import { HelpCenterContext } from '../help-center-context';
 import { STORE_KEY } from '../store';
 import { SitePicker } from '../types';
 import { BackButton } from './back-button';
@@ -120,7 +122,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
-
+	const { setHeaderText } = useContext( HelpCenterContext );
 	const { selectedSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
 		return {
 			selectedSite: select( STORE_KEY ).getSite(),
@@ -145,6 +147,29 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 			setUserDeclaredSite( userDeclaredSite );
 		}
 	}, [ userDeclaredSite, setUserDeclaredSite ] );
+
+	useEffect( () => {
+		switch ( mode ) {
+			case 'CHAT':
+				if ( openChat ) {
+					setHeaderText(
+						<>
+							<Icon icon={ pageIcon } />
+							{ __( 'Live chat', 'full-site-editing' ) }
+						</>
+					);
+				} else {
+					setHeaderText( __( 'Start live chat', 'full-site-editing' ) );
+				}
+				break;
+			case 'EMAIL':
+				setHeaderText( __( 'Send us an email', 'full-site-editing' ) );
+				break;
+			case 'FORUM':
+				setHeaderText( __( 'Ask in our community forums', 'full-site-editing' ) );
+				break;
+		}
+	}, [ mode, openChat, setHeaderText ] );
 
 	const { hasCookies, isLoading: loadingCookies } = useHas3PC();
 

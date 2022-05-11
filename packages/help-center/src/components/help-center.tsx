@@ -14,8 +14,8 @@ import '../styles.scss';
 const HelpCenter: React.FC< Container > = ( {
 	content,
 	handleClose,
-	headerText,
-	footerContent,
+	defaultHeaderText,
+	defaultFooterContent,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
@@ -37,8 +37,8 @@ const HelpCenter: React.FC< Container > = ( {
 		<HelpCenterContainer
 			handleClose={ handleClose }
 			content={ content }
-			headerText={ headerText }
-			footerContent={ footerContent }
+			defaultHeaderText={ defaultHeaderText }
+			defaultFooterContent={ defaultFooterContent }
 		/>,
 		portalParent
 	);

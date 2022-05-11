@@ -56,7 +56,7 @@ rawCurrentUserFetch()
 		store.dispatch( requestHappychatEligibility() );
 	} );
 
-export default function Content( { selectedArticle, setSelectedArticle, setFooterContent } ) {
+export default function Content() {
 	const [ contactForm, setContactForm ] = useState( null );
 	const [ openInContactPage, setOpenInContactPage ] = useState( null );
 
@@ -79,9 +79,6 @@ export default function Content( { selectedArticle, setSelectedArticle, setFoote
 					/>
 				) : (
 					<InlineHelpCenterContent
-						selectedArticle={ selectedArticle }
-						setSelectedArticle={ setSelectedArticle }
-						setHelpCenterFooter={ setFooterContent }
 						setContactFormOpen={ setContactForm }
 						openInContactPage={ openInContactPage }
 					/>
