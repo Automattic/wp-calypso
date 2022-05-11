@@ -17,7 +17,7 @@ import FeatureExample from 'calypso/components/feature-example';
 import FormButton from 'calypso/components/forms/form-button';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { isWordadsInstantActivationEligible, canAccessAds } from 'calypso/lib/ads/utils';
+import { canAccessAds } from 'calypso/lib/ads/utils';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -254,8 +254,13 @@ class AdsWrapper extends Component {
 	}
 
 	render() {
-		const { canUpgradeToUseWordAds, isWordadsInstantEligibleButNotOwner, site, translate } =
-			this.props;
+		const {
+			canActivateWordadsInstant,
+			canUpgradeToUseWordAds,
+			isWordadsInstantEligibleButNotOwner,
+			site,
+			translate,
+		} = this.props;
 
 		let component = this.props.children;
 		let notice = null;
@@ -266,7 +271,7 @@ class AdsWrapper extends Component {
 					{ translate( 'You have joined the WordAds program. Please review these settings:' ) }
 				</Notice>
 			);
-		} else if ( ! site.options.wordads && isWordadsInstantActivationEligible( site ) ) {
+		} else if ( canActivateWordadsInstant ) {
 			component = this.renderInstantActivationToggle( component );
 		} else if ( isWordadsInstantEligibleButNotOwner ) {
 			component = this.renderOwnerRequiredMessage( component );
@@ -295,11 +300,13 @@ const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const hasWordAdsFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_WORDADS );
+	const canActivateWordAds = canCurrentUser( state, siteId, 'activate_wordads' );
 
 	return {
 		site,
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
+		canActivateWordadsInstant: ! site.options.wordads && canActivateWordAds && hasWordAdsFeature,
 		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		canUpgradeToUseWordAds: ! site.options.wordads && ! hasWordAdsFeature,
 		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, site ),
@@ -307,9 +314,7 @@ const mapStateToProps = ( state ) => {
 		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
 		isUnsafe: isSiteWordadsUnsafe( state, siteId ),
 		isWordadsInstantEligibleButNotOwner:
-			! site.options.wordads &&
-			hasWordAdsFeature &&
-			! canCurrentUser( state, siteId, 'activate_wordads' ),
+			! site.options.wordads && hasWordAdsFeature && ! canActivateWordAds,
 		adsProgramName: isJetpackSite( state, siteId ) ? 'Ads' : 'WordAds',
 	};
 };

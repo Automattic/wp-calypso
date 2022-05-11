@@ -33,7 +33,7 @@ export function hasWordAdsPlan( site ) {
  */
 export function canAccessWordads( site ) {
 	if ( site ) {
-		if ( isWordadsInstantActivationEligible( site ) ) {
+		if ( hasWordAdsPlan( site ) && userCan( 'activate_wordads', site ) ) {
 			return true;
 		}
 
@@ -54,8 +54,4 @@ export function canAccessAds( site ) {
 			( site && ! site.options.wordads && ! hasWordAdsPlan( site ) ) ) &&
 		userCan( 'manage_options', site )
 	);
-}
-
-export function isWordadsInstantActivationEligible( site ) {
-	return hasWordAdsPlan( site ) && userCan( 'activate_wordads', site );
 }
