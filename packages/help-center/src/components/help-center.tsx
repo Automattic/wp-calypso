@@ -15,7 +15,7 @@ const HelpCenter: React.FC< Container > = ( {
 	content,
 	handleClose,
 	defaultHeaderText,
-	defaultFooterContext,
+	defaultFooterContent,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
@@ -38,7 +38,7 @@ const HelpCenter: React.FC< Container > = ( {
 			handleClose={ handleClose }
 			content={ content }
 			defaultHeaderText={ defaultHeaderText }
-			defaultFooterContext={ defaultFooterContext }
+			defaultFooterContent={ defaultFooterContent }
 		/>,
 		portalParent
 	);

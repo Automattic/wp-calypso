@@ -18,7 +18,6 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
-import type { Article } from 'calypso/blocks/inline-help/inline-help-center-types';
 
 interface Props {
 	title: string;
@@ -47,7 +46,6 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const [ isHelpCenterVisible, setIsHelpCenterVisible ] = useState( false );
-	const [ selectedArticle, setSelectedArticle ] = useState< Article | null >( null );
 	const [ contactForm, setContactForm ] = useState( null );
 	const [ openInContactPage, setOpenInContactPage ] = useState< boolean >( false );
 
@@ -136,8 +134,6 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 							/>
 						) : (
 							<InlineHelpCenterContent
-								selectedArticle={ selectedArticle }
-								setSelectedArticle={ setSelectedArticle }
 								setContactFormOpen={ setContactForm }
 								openInContactPage={ openInContactPage }
 							/>

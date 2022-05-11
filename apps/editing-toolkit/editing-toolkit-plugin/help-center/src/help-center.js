@@ -16,7 +16,6 @@ function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
-	const [ selectedArticle, setSelectedArticle ] = useState( null );
 	const [ showHelpIconDot, setShowHelpIconDot ] = useState( false );
 	const { data, isLoading } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
 	useEffect( () => {
@@ -24,12 +23,6 @@ function HelpCenterContent() {
 			setShowHelpIconDot( ! data.has_seen_whats_new_modal );
 		}
 	}, [ data, isLoading ] );
-
-	useEffect( () => {
-		if ( ! show ) {
-			setSelectedArticle( null );
-		}
-	}, [ show ] );
 
 	const content = (
 		<span className="etk-help-center">
@@ -50,15 +43,7 @@ function HelpCenterContent() {
 				</>
 			) }
 			{ show && (
-				<HelpCenter
-					content={
-						<Contents
-							selectedArticle={ selectedArticle }
-							setSelectedArticle={ setSelectedArticle }
-						/>
-					}
-					handleClose={ () => setShowHelpCenter( false ) }
-				/>
+				<HelpCenter content={ <Contents /> } handleClose={ () => setShowHelpCenter( false ) } />
 			) }
 		</>
 	);

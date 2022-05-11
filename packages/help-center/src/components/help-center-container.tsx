@@ -11,10 +11,10 @@ import Draggable, { DraggableProps } from 'react-draggable';
  * Internal Dependencies
  */
 import { HelpCenterContext } from '../help-center-context';
+import { Article, Container } from '../types';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
-import type { Container } from '../types';
 
 interface OptionalDraggableProps extends Partial< DraggableProps > {
 	draggable: boolean;
@@ -31,14 +31,15 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	content,
 	handleClose,
 	defaultHeaderText,
-	defaultFooterContext,
+	defaultFooterContent,
 } ) => {
 	const { __ } = useI18n();
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
 	const [ headerText, setHeaderText ] = useState< React.ReactNode >( defaultHeaderText );
-	const [ footerContent, setFooterContent ] = useState< React.ReactNode >( defaultFooterContext );
+	const [ footerContent, setFooterContent ] = useState< React.ReactNode >( defaultFooterContent );
+	const [ selectedArticle, setSelectedArticle ] = useState< Article | null >( null );
 	const classNames = classnames( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
 		'no-footer': ! footerContent,
@@ -72,7 +73,14 @@ const HelpCenterContainer: React.FC< Container > = ( {
 		>
 			<Card className={ classNames } { ...animationProps }>
 				<HelpCenterContext.Provider
-					value={ { headerText, setHeaderText, footerContent, setFooterContent } }
+					value={ {
+						headerText,
+						setHeaderText,
+						footerContent,
+						setFooterContent,
+						selectedArticle,
+						setSelectedArticle,
+					} }
 				>
 					<HelpCenterHeader
 						isMinimized={ isMinimized }

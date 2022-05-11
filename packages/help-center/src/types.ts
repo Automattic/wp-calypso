@@ -5,7 +5,7 @@ export interface Container {
 	content: ReactElement;
 	handleClose: () => void;
 	defaultHeaderText?: string;
-	defaultFooterContext?: ReactElement;
+	defaultFooterContent?: ReactElement;
 }
 
 export interface Content {
@@ -34,3 +34,9 @@ export interface SitePicker {
 
 // ended means the user closed the popup
 export type WindowState = 'open' | 'closed' | 'blurred' | 'ended';
+
+export interface Article {
+	title: string;
+	link?: string;
+	icon?: string;
+}

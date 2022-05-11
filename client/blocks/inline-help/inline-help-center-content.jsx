@@ -15,19 +15,15 @@ import InlineHelpSearchResults from './inline-help-search-results';
 
 import './inline-help-center-content.scss';
 
-const InlineHelpCenterContent = ( {
-	selectedArticle,
-	setSelectedArticle,
-	setContactFormOpen,
-	openInContactPage,
-} ) => {
+const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) => {
 	const isMobile = useMobileBreakpoint();
 	const { __ } = useI18n();
 	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const [ activeSecondaryView, setActiveSecondaryView ] = useState(
 		openInContactPage ? VIEW_CONTACT : null
 	);
-	const { setHeaderText, setFooterContent } = useContext( HelpCenterContext );
+	const { setHeaderText, setFooterContent, selectedArticle, setSelectedArticle } =
+		useContext( HelpCenterContext );
 	const secondaryViewRef = useRef();
 
 	// prefetch the values
