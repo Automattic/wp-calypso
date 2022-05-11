@@ -2,7 +2,6 @@ import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryUserDevices from 'calypso/components/data/query-user-devices';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -53,7 +52,6 @@ class NotificationSettings extends Component {
 		return (
 			<Main wideLayout className="notification-settings">
 				<PageViewTracker path="/me/notifications" title="Me > Notifications" />
-				<QueryUserDevices />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<FormattedHeader
 					brandFont
