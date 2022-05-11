@@ -14,7 +14,7 @@
 		max-width: 100%;
 		margin-bottom: 20px;
         height: auto !important;
-        
+
         @include break-small {
             margin-bottom: 0;
         }
@@ -29,20 +29,20 @@
 			font-size: $font-title-small;
 			text-align: center;
 			margin-bottom: 12px;
-			font-weight: bold;
+			font-weight: 500;
 
 			@include break-small {
 				text-align: left;
 			}
 		}
 
-		ol {
+		.qr-code-login__steps {
 			margin-left: 0;
-
-			li {
-				margin-bottom: 0.75em;
-			}
 		}
+
+        .qr-code-login__step {
+            margin-bottom: 0.75em;
+        }
 
 		a {
 			font-weight: 500;
