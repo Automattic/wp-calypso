@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { memo, useCallback } from 'react';
@@ -65,7 +65,8 @@ function InvoicesListCard( {
 			<div>{ number }</div>
 
 			<div>
-				<FormattedDate date={ moment( dueDate ) } format="ll" />
+				{ dueDate && <FormattedDate date={ moment( dueDate ) } format="ll" /> }
+				{ ! dueDate && <Gridicon icon="minus" /> }
 			</div>
 
 			<div>
