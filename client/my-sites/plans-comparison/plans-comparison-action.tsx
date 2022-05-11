@@ -38,11 +38,11 @@ function getButtonText( props: Partial< Props >, translate: TranslateFunc ): Tra
 	const planSlug = plan?.getStoreSlug();
 
 	if ( planSlug === PLAN_WPCOM_PRO ) {
-		return 'en' === i18n.getLocaleSlug() || i18n.hasTranslation( 'Start with Pro' )
-			? translate( 'Start with Pro' )
+		return 'en' === i18n.getLocaleSlug() || i18n.hasTranslation( 'Choose Pro' )
+			? translate( 'Choose Pro' )
 			: translate( 'Try Pro risk-free' );
 	} else if ( planSlug === PLAN_WPCOM_STARTER ) {
-		return translate( 'Start with Starter' );
+		return translate( 'Choose Starter' );
 	} else if ( planSlug === PLAN_FREE || planSlug === PLAN_WPCOM_FLEXIBLE ) {
 		return translate( 'Start with Free' );
 	}
