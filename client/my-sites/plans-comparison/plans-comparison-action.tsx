@@ -6,7 +6,6 @@ import {
 	PLAN_FREE,
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_STARTER,
-	TYPE_STARTER,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
@@ -92,12 +91,14 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 		manageHref = undefined;
 	}
 
-	if ( ! isInSignup && [ TYPE_FLEXIBLE, TYPE_FREE, TYPE_STARTER ].includes( plan.type ) ) {
+	if ( ! isInSignup ) {
 		if ( isCurrentPlan ) {
 			return <Button disabled>{ translate( 'This is your plan' ) }</Button>;
 		}
 
-		return null;
+		if ( [ TYPE_FLEXIBLE, TYPE_FREE ].includes( plan.type ) ) {
+			return null;
+		}
 	}
 
 	return (
