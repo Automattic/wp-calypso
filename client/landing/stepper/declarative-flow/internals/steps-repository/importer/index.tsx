@@ -1,9 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { SiteDetails } from '@automattic/data-stores/dist/types/site';
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -26,10 +25,13 @@ import {
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import { getSite } from 'calypso/state/sites/selectors';
 import { StepProps } from '../../types';
+import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-query-param-update';
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
 import { useStepNavigator } from './hooks/use-step-navigator';
-import { ImporterCompType } from './types';
+import type { ImporterCompType } from './types';
+import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
 interface Props {
 	importer: Importer;
@@ -47,11 +49,13 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 	 	*/
 		const site = useSite();
 		const siteSlug = useSiteSlugParam();
-		const siteId = site?.ID;
+		const [ siteId, setSiteId ] = useState( site?.ID );
+		! siteId && site?.ID && setSiteId( site?.ID );
 		const runImportInitially = useInitialQueryRun( siteId );
 		const canImport = useSelector( ( state ) =>
 			canCurrentUser( state, site?.ID as number, 'manage_options' )
 		);
+		const siteItem = useSelector( ( state ) => getSite( state, siteId as number ) );
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
 
@@ -67,6 +71,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		/**
 	 	↓ Effects
 	 	*/
+		useAtomicTransferQueryParamUpdate( siteId );
 		useEffect( fetchImporters, [ siteId ] );
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
 		if ( ! importer ) {
@@ -142,7 +147,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					job={ getImportJob( importer ) }
 					run={ runImportInitially }
 					siteId={ siteId as number }
-					site={ site as SiteDetails }
+					site={ siteItem as SitesItem }
 					siteSlug={ siteSlug as string }
 					fromSite={ fromSite }
 					urlData={ fromSiteData }
