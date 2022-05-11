@@ -23,6 +23,8 @@ export { useSupportAvailability } from './support-queries/use-support-availabili
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
 export { useVerticalImagesQuery } from './verticals-queries/use-vertical-images-query';
+export { useSibylQuery } from './support-queries/use-sibyl-query';
+export * from './site/types';
 
 export {
 	Auth,

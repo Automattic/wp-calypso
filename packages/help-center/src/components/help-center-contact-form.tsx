@@ -24,6 +24,7 @@ import { SitePicker } from '../types';
 import { BackButton } from './back-button';
 import InlineChat from './help-center-inline-chat';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
+import { SibylArticles } from './help-center-sibyl-articles';
 import { SuccessScreen } from './ticket-success-screen';
 import './help-center-contact-form.scss';
 
@@ -321,6 +322,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					/>
 				</section>
 			) }
+			<SibylArticles supportSite={ supportSite } message={ message } />
 			<section>
 				<Button
 					disabled={ isLoading || ! supportSite || ! message }
