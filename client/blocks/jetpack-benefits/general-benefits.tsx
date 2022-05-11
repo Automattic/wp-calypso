@@ -1,12 +1,12 @@
 import {
 	planHasFeature,
 	FEATURE_GOOGLE_ANALYTICS,
+	FEATURE_JETPACK_VIDEOPRESS,
 	FEATURE_PREMIUM_SUPPORT,
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_STANDARD_SECURITY_TOOLS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	FEATURE_WORDADS_INSTANT,
-	WPCOM_FEATURES_VIDEOPRESS,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
@@ -80,11 +80,11 @@ const JetpackGeneralBenefits: React.FC< Props > = ( { productSlug } ) => {
 		);
 	}
 
-	// 13GB of video hosting
-	if ( planHasFeature( productSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO ) ) {
+	// 1TB of Video Hosting
+	if ( planHasFeature( productSlug, FEATURE_JETPACK_VIDEOPRESS ) ) {
 		benefits.push(
 			<React.Fragment>
-				{ translate( 'Up to 13GB of {{strong}}high-speed video hosting{{/strong}}.', {
+				{ translate( 'Up to 1TB of {{strong}}high-speed video hosting{{/strong}}.', {
 					components: {
 						strong: <strong />,
 					},
@@ -92,12 +92,11 @@ const JetpackGeneralBenefits: React.FC< Props > = ( { productSlug } ) => {
 			</React.Fragment>
 		);
 	}
-
-	// Unlimited Video Hosting
-	if ( planHasFeature( productSlug, WPCOM_FEATURES_VIDEOPRESS ) ) {
+	// 13GB of Video Hosting
+	else if ( planHasFeature( productSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO ) ) {
 		benefits.push(
 			<React.Fragment>
-				{ translate( 'Unlimited {{strong}}high-speed video hosting{{/strong}}.', {
+				{ translate( 'Up to 13GB of {{strong}}high-speed video hosting{{/strong}}.', {
 					components: {
 						strong: <strong />,
 					},
