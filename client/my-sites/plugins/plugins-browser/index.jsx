@@ -122,6 +122,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 		pagination: pluginsPagination,
 		fetchNextPage,
 	} = usePlugins( {
+		infinite: true,
 		search,
 		wpcomEnabled: !! search,
 		wporgEnabled: !! search,
