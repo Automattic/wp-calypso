@@ -31,9 +31,9 @@
 	},
 	"dependencies": {
 		"@automattic/components": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/site-picker": "workspace:^",
 		"@automattic/viewport": "workspace:^",
-		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@popperjs/core": "^2.10.2",
 		"@wordpress/base-styles": "^4.4.0",
