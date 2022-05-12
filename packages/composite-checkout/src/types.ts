@@ -25,6 +25,8 @@ export interface CheckoutStepProps {
 
 export type IsCompleteCallback = () => boolean | Promise< boolean >;
 
+export type StepCompleteCallback = () => Promise< void >;
+
 export interface OrderSummaryData {
 	className: string;
 	summaryContent: React.ReactNode;

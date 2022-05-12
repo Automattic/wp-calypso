@@ -17,7 +17,7 @@ import CheckoutContext from '../lib/checkout-context';
 import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';
 import { usePaymentMethod } from '../lib/payment-methods';
-import { FormStatus, CheckoutStepProps } from '../types';
+import { FormStatus, CheckoutStepProps, StepCompleteCallback } from '../types';
 import Button from './button';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import CheckoutNextStepButton from './checkout-next-step-button';
@@ -36,8 +36,8 @@ interface StepCompleteStatus {
 	[ key: string ]: boolean;
 }
 
-interface StepCompleteCallbackState {
-	[ key: string ]: () => void;
+interface StepCompleteCallbackMap {
+	[ key: string ]: StepCompleteCallback;
 }
 
 interface CheckoutStepDataContextType {
@@ -46,8 +46,8 @@ interface CheckoutStepDataContextType {
 	totalSteps: number;
 	setActiveStepNumber: ( stepNumber: number ) => void;
 	setStepCompleteStatus: Dispatch< SetStateAction< StepCompleteStatus > >;
-	setStepCompleteCallback: ( stepNumber: number, callback: () => void ) => void;
-	getStepCompleteCallback: ( stepNumber: number ) => () => void;
+	setStepCompleteCallback: ( stepNumber: number, callback: StepCompleteCallback ) => void;
+	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
 	setTotalSteps: ( totalSteps: number ) => void;
 }
 
@@ -67,7 +67,7 @@ const CheckoutStepDataContext = createContext< CheckoutStepDataContextType >( {
 	setActiveStepNumber: noop,
 	setStepCompleteStatus: noop,
 	setStepCompleteCallback: noop,
-	getStepCompleteCallback: () => () => undefined,
+	getStepCompleteCallback: () => () => Promise.resolve(),
 	setTotalSteps: noop,
 } );
 
@@ -237,12 +237,12 @@ export function Checkout( {
 	const { formStatus } = useFormStatus();
 	const [ activeStepNumber, setActiveStepNumber ] = useState< number >( 1 );
 	const [ stepCompleteStatus, setStepCompleteStatus ] = useState< StepCompleteStatus >( {} );
-	const stepCompleteCallbackState = useRef< StepCompleteCallbackState >( {} );
-	const setStepCompleteCallback = ( stepNumber: number, callback: () => void ) => {
-		stepCompleteCallbackState.current[ stepNumber ] = callback;
+	const stepCompleteCallbackMap = useRef< StepCompleteCallbackMap >( {} );
+	const setStepCompleteCallback = ( stepNumber: number, callback: StepCompleteCallback ) => {
+		stepCompleteCallbackMap.current[ stepNumber ] = callback;
 	};
 	const getStepCompleteCallback = ( stepNumber: number ) => {
-		return stepCompleteCallbackState.current[ stepNumber ] ?? noop;
+		return stepCompleteCallbackMap.current[ stepNumber ] ?? noop;
 	};
 	const [ totalSteps, setTotalSteps ] = useState( 0 );
 	const actualActiveStepNumber =
@@ -712,19 +712,14 @@ export function useIsStepComplete(): boolean {
 	return !! stepCompleteStatus[ stepNumber ];
 }
 
-export function useSetStepComplete(): ( stepNumber: number, newStatus: boolean ) => void {
-	const { setStepCompleteStatus } = useContext( CheckoutStepDataContext );
-	const setTargetStepCompleteStatus = useCallback(
-		( stepNumber: number, newStatus: boolean ) =>
-			setStepCompleteStatus(
-				( stepCompleteStatus: StepCompleteStatus ): StepCompleteStatus => ( {
-					...stepCompleteStatus,
-					[ stepNumber ]: newStatus,
-				} )
-			),
-		[ setStepCompleteStatus ]
+export function useSetStepComplete(): ( stepNumber: number ) => Promise< void > {
+	const { getStepCompleteCallback } = useContext( CheckoutStepDataContext );
+	return useCallback(
+		async ( stepNumber: number ) => {
+			await getStepCompleteCallback( stepNumber )();
+		},
+		[ getStepCompleteCallback ]
 	);
-	return setTargetStepCompleteStatus;
 }
 
 const StepTitle = styled.span< StepTitleProps & HTMLAttributes< HTMLSpanElement > >`
