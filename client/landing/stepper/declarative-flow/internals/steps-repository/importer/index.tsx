@@ -120,6 +120,8 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		}
 
 		function checkFromSiteData(): void {
+			if ( ! fromSite ) return;
+
 			if ( fromSite !== fromSiteData?.url ) {
 				dispatch( analyzeUrl( fromSite ) );
 			}
