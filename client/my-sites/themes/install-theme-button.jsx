@@ -70,13 +70,15 @@ const InstallThemeButton = ( {
 
 const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
+	const atomicSite = isAtomicSite( state, selectedSiteId );
 	return {
 		siteSlug: getSelectedSiteSlug( state ),
 		isLoggedIn: isUserLoggedIn( state ),
 		isMultisite: isJetpackSiteMultiSite( state, selectedSiteId ),
 		jetpackSite: isJetpackSite( state, selectedSiteId ),
-		siteCanInstallThemes: siteHasFeature( state, selectedSiteId, FEATURE_INSTALL_THEMES ),
-		atomicSite: isAtomicSite( state, selectedSiteId ),
+		siteCanInstallThemes:
+			siteHasFeature( state, selectedSiteId, FEATURE_INSTALL_THEMES ) && atomicSite,
+		atomicSite,
 	};
 };
 
