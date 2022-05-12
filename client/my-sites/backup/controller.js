@@ -1,4 +1,4 @@
-import { isJetpackBackupSlug, JETPACK_BACKUP_PRODUCTS } from '@automattic/calypso-products';
+import { isJetpackBackupSlug, WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products';
 import Debug from 'debug';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -12,7 +12,7 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { setFilter } from 'calypso/state/activity-log/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
-import siteHasSubscription from 'calypso/state/selectors/site-has-subscription';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupUpsell from './backup-upsell';
@@ -101,7 +101,7 @@ export function showUnavailableForMultisites( context, next ) {
 
 	if (
 		isJetpackSiteMultiSite( state, siteId ) &&
-		! siteHasSubscription( state, siteId, JETPACK_BACKUP_PRODUCTS )
+		! siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
 	) {
 		// Only show "Multisite not supported" card if the multisite does Not already own a Backup subscription.
 		// https://href.li/?https://wp.me/pbuNQi-1jg
