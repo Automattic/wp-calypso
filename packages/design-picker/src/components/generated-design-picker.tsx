@@ -4,7 +4,6 @@ import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { cloneElement, useEffect, useRef, useState } from 'react';
 import { getDesignPreviewUrl } from '../utils';
 import type { Design } from '../types';
 import type { MShotsOptions } from '@automattic/onboarding';
@@ -119,50 +118,14 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 	locale,
 	heading,
 	footer,
-	isStickyFooter,
 	onPreview,
 	onViewMore,
 } ) => {
 	const { __ } = useI18n();
-	const headingRef = useRef< HTMLDivElement >( null );
-	const observerRef = useRef< IntersectionObserver >();
-	const [ isHeadingInViewport, setIsHeadingInViewport ] = useState( true );
-
-	useEffect( () => {
-		if ( ! headingRef.current || observerRef.current || ! isStickyFooter ) {
-			return;
-		}
-
-		const handler = ( entries: IntersectionObserverEntry[] ) => {
-			if ( ! entries.length ) {
-				return;
-			}
-
-			const [ entry ] = entries;
-			setIsHeadingInViewport( entry.isIntersecting );
-		};
-
-		let buttonEl;
-		for ( const childEl of headingRef.current.children ) {
-			if ( childEl.tagName.toLowerCase() === 'button' ) {
-				buttonEl = childEl;
-				break;
-			}
-		}
-
-		if ( ! buttonEl ) {
-			return;
-		}
-
-		observerRef.current = new IntersectionObserver( handler );
-		observerRef.current.observe( buttonEl );
-
-		return () => observerRef.current?.disconnect?.();
-	}, [ isStickyFooter ] );
 
 	return (
 		<div className="generated-design-picker">
-			{ heading && cloneElement( heading, { ref: headingRef } ) }
+			{ heading }
 			<div className="generated_design-picker__content">
 				<div className="generated-design-picker__thumbnails">
 					{ designs &&
@@ -191,13 +154,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 						) ) }
 				</div>
 			</div>
-			{ footer &&
-				cloneElement( footer, {
-					className: classnames( footer.props.className, {
-						'is-sticky': isStickyFooter,
-						'is-visible': ! isHeadingInViewport,
-					} ),
-				} ) }
+			{ footer }
 		</div>
 	);
 };

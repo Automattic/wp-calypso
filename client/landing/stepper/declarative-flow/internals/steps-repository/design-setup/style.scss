@@ -350,44 +350,40 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			background-color: #ffffff;
 			display: flex;
 			justify-content: flex-end;
+			width: 100%;
 
 			@include break-small {
-				flex-basis: calc( 100% - 154px );
+				margin-left: 154px;
 			}
 
 			@include break-medium {
-				flex-basis: calc( 100% - 248px );
-			}
-		}
-
-		&.is-sticky {
-			@include break-small {
-				bottom: 0;
-				left: 0;
-				opacity: 0;
-				pointer-events: none;
-				position: sticky;
-				right: 0;
-				transform: translateY( 118px );
-				transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
-
-				&.is-visible {
-					opacity: 1;
-					transform: translateY( 0 );
-
-					.design-setup__footer-inner {
-						pointer-events: auto;
-					}
-				}
+				margin-left: 248px;
 			}
 		}
 
 		@include break-small {
 			align-items: center;
+			bottom: 0;
 			display: flex;
 			height: 118px;
 			justify-content: flex-end;
+			left: 0;
 			max-width: 1440px;
+			opacity: 0;
+			pointer-events: none;
+			position: sticky;
+			right: 0;
+			transform: translateY( 118px );
+			transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+
+			&.is-visible {
+				opacity: 1;
+				transform: translateY( 0 );
+
+				.design-setup__footer-inner {
+					pointer-events: auto;
+				}
+			}
 		}
 	}
 
