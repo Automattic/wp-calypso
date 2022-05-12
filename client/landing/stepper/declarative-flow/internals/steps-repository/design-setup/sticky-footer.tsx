@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 
 interface StickyFooterProps {
 	className: string;
-	targetRef: RefObject< HTMLElement | null >;
-	children: ReactNode;
+	targetRef: React.RefObject< HTMLElement | null >;
+	children: React.ReactNode;
 }
 
 const StickyFooter: React.FC< StickyFooterProps > = ( { className, targetRef, children } ) => {

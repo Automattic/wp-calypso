@@ -106,7 +106,6 @@ export interface GeneratedDesignPickerProps {
 	locale: string;
 	heading?: React.ReactElement;
 	footer?: React.ReactElement;
-	isStickyFooter: boolean;
 	onPreview: ( design: Design ) => void;
 	onViewMore: () => void;
 }
