@@ -29,7 +29,7 @@ export const SITE_STORE = 'automattic/site';
 
 const fakeFaces = Array.from(
 	{ length: 10 },
-	( _, index ) => `https://s0.wp.com/i/face-${ index }.jpg`
+	( _, index ) => `https://s0.wp.com/i/fake-faces/face-${ index }.jpg`
 );
 const randomTwoFaces = fakeFaces.sort( () => Math.random() - 0.5 ).slice( 0, 2 );
 
