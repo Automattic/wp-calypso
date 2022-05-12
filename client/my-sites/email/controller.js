@@ -115,6 +115,7 @@ export default {
 					referrer={ pageContext.query.referrer }
 					selectedDomainName={ pageContext.params.domain }
 					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
+					source={ pageContext.query.source }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
