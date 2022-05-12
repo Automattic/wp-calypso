@@ -53,7 +53,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		! siteId && site?.ID && setSiteId( site?.ID );
 		const runImportInitially = useInitialQueryRun( siteId );
 		const canImport = useSelector( ( state ) =>
-			canCurrentUser( state, site?.ID as number, 'manage_options' )
+			canCurrentUser( state, siteId as number, 'manage_options' )
 		);
 		const siteItem = useSelector( ( state ) => getSite( state, siteId as number ) );
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
