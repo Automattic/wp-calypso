@@ -117,7 +117,7 @@ function QRCodePlaceholder() {
 
 function QRCodeLogin() {
 	const translate = useTranslate();
-	const [ tokenData, setTokenData ] = useState( getLocalTokenData() );
+	const [ tokenData, setTokenData ] = useState( () => getLocalTokenData() );
 	const [ authState, setAuthState ] = useState( false );
 	const currentTimer = useRef( null );
 
