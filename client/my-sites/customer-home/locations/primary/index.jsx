@@ -9,6 +9,7 @@ import {
 	NOTICE_CELEBRATE_SITE_LAUNCH,
 	NOTICE_CELEBRATE_SITE_MIGRATION,
 	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
+	NOTICE_PLAN_ANNOUNCEMENT,
 	TASK_CLOUDFLARE,
 	TASK_CONNECT_ACCOUNTS,
 	TASK_EARN_FEATURES,
@@ -29,6 +30,7 @@ import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
 import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
 import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
+import PlanAnnouncement from 'calypso/my-sites/customer-home/cards/notices/plan-announcement';
 import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices/site-launch-seller-upsell';
 import Cloudflare from 'calypso/my-sites/customer-home/cards/tasks/cloudflare';
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
@@ -51,6 +53,7 @@ const cardComponents = {
 	[ NOTICE_CELEBRATE_SITE_LAUNCH ]: CelebrateSiteLaunch,
 	[ NOTICE_CELEBRATE_SITE_MIGRATION ]: CelebrateSiteMigration,
 	[ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE ]: CelebrateSiteSetupComplete,
+	[ NOTICE_PLAN_ANNOUNCEMENT ]: PlanAnnouncement,
 	[ TASK_CLOUDFLARE ]: Cloudflare,
 	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,
 	[ TASK_EARN_FEATURES ]: EarnFeatures,
