@@ -29,7 +29,6 @@ import {
 	getAllDomains,
 	getAllRequestingSiteDomains,
 	getFlatDomainsList,
-	getFlatDomainsList2,
 } from 'calypso/state/sites/domains/selectors';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import DomainOnlyUpsellCarousel from './domain-only-upsell-carousel';

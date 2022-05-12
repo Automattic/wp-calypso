@@ -2,6 +2,7 @@
 
 import { find } from 'lodash';
 import {
+	ALL_DOMAINS_TEST_REQUEST,
 	ALL_DOMAINS_TEST_REQUEST_SUCCESS,
 	ALL_DOMAINS_TEST_REQUEST_FAILURE,
 	SITE_DOMAINS_RECEIVE,
@@ -192,9 +193,20 @@ export const errors = ( state = {}, action ) => {
 	return state;
 };
 
+export const isRequestingAllDomainsWithDetails = ( state = false, action ) => {
+	switch ( action.type ) {
+		case ALL_DOMAINS_TEST_REQUEST:
+		case ALL_DOMAINS_TEST_REQUEST_SUCCESS:
+		case ALL_DOMAINS_TEST_REQUEST_FAILURE:
+			return action.type === ALL_DOMAINS_TEST_REQUEST;
+	}
+	return state;
+};
+
 export default combineReducers( {
 	errors,
 	items,
 	requesting,
 	updatingPrivacy,
+	isRequestingAllDomainsWithDetails,
 } );
