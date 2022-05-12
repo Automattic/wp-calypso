@@ -10,6 +10,7 @@ import {
 	useEffect,
 	useState,
 	createContext,
+	useRef,
 } from 'react';
 import { getDefaultPaymentMethodStep } from '../components/default-steps';
 import CheckoutContext from '../lib/checkout-context';
@@ -35,12 +36,18 @@ interface StepCompleteStatus {
 	[ key: string ]: boolean;
 }
 
+interface StepCompleteCallbackState {
+	[ key: string ]: () => void;
+}
+
 interface CheckoutStepDataContext {
 	activeStepNumber: number;
 	stepCompleteStatus: StepCompleteStatus;
 	totalSteps: number;
 	setActiveStepNumber: ( stepNumber: number ) => void;
 	setStepCompleteStatus: Dispatch< SetStateAction< StepCompleteStatus > >;
+	setStepCompleteCallback: ( stepNumber: number, callback: () => void ) => void;
+	getStepCompleteCallback: ( stepNumber: number ) => () => void;
 	setTotalSteps: ( totalSteps: number ) => void;
 }
 
@@ -52,13 +59,16 @@ interface CheckoutSingleStepDataContext {
 	areStepsActive: boolean;
 }
 
+const noop = () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
 const CheckoutStepDataContext = createContext< CheckoutStepDataContext >( {
 	activeStepNumber: 0,
 	stepCompleteStatus: {},
 	totalSteps: 0,
-	setActiveStepNumber: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
-	setStepCompleteStatus: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
-	setTotalSteps: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+	setActiveStepNumber: noop,
+	setStepCompleteStatus: noop,
+	setStepCompleteCallback: noop,
+	getStepCompleteCallback: () => () => undefined,
+	setTotalSteps: noop,
 } );
 
 const CheckoutSingleStepDataContext = createContext< CheckoutSingleStepDataContext >( {
@@ -227,6 +237,13 @@ export function Checkout( {
 	const { formStatus } = useFormStatus();
 	const [ activeStepNumber, setActiveStepNumber ] = useState< number >( 1 );
 	const [ stepCompleteStatus, setStepCompleteStatus ] = useState< StepCompleteStatus >( {} );
+	const stepCompleteCallbackState = useRef< StepCompleteCallbackState >( {} );
+	const setStepCompleteCallback = ( stepNumber: number, callback: () => void ) => {
+		stepCompleteCallbackState.current[ stepNumber ] = callback;
+	};
+	const getStepCompleteCallback = ( stepNumber: number ) => {
+		return stepCompleteCallbackState.current[ stepNumber ] ?? noop;
+	};
 	const [ totalSteps, setTotalSteps ] = useState( 0 );
 	const actualActiveStepNumber =
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
@@ -263,6 +280,8 @@ export function Checkout( {
 						totalSteps,
 						setActiveStepNumber,
 						setStepCompleteStatus,
+						setStepCompleteCallback,
+						getStepCompleteCallback,
 						setTotalSteps,
 					} }
 				>
@@ -289,8 +308,13 @@ export const CheckoutStep = ( {
 	validatingButtonAriaLabel,
 }: CheckoutStepProps ): JSX.Element => {
 	const { __ } = useI18n();
-	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } =
-		useContext( CheckoutStepDataContext );
+	const {
+		setActiveStepNumber,
+		setStepCompleteStatus,
+		stepCompleteStatus,
+		setStepCompleteCallback,
+		getStepCompleteCallback,
+	} = useContext( CheckoutStepDataContext );
 	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);
@@ -321,6 +345,7 @@ export const CheckoutStep = ( {
 		}
 		setFormReady();
 	};
+	setStepCompleteCallback( stepNumber, goToNextStep );
 
 	const classNames = [
 		'checkout-step',
@@ -349,7 +374,9 @@ export const CheckoutStep = ( {
 			stepId={ stepId }
 			titleContent={ titleContent }
 			goToThisStep={ areStepsActive ? goToThisStep : undefined }
-			goToNextStep={ nextStepNumber && nextStepNumber > 0 ? goToNextStep : undefined }
+			goToNextStep={
+				nextStepNumber && nextStepNumber > 0 ? getStepCompleteCallback( stepNumber ) : undefined
+			}
 			activeStepContent={
 				<>
 					{ activeStepContent }
