@@ -84,7 +84,7 @@ const Form = styled.div`
 `;
 
 const contactStore = {
-	subscibers: [],
+	subscribers: [],
 	data: {
 		country: {
 			value: '',
@@ -95,11 +95,15 @@ const contactStore = {
 		return contactStore.data;
 	},
 	subscribe( callback: () => void ): () => void {
-		contactStore.subscibers.push( callback );
-		return () => void contactStore.subscibers.filter( ( client ) => client !== callback );
+		contactStore.subscribers.push( callback );
+		return () => {
+			contactStore.subscribers = contactStore.subscribers.filter(
+				( client ) => client !== callback
+			);
+		};
 	},
 	notify() {
-		setTimeout( () => contactStore.subscibers.forEach( ( callback ) => callback() ) );
+		setTimeout( () => contactStore.subscribers.forEach( ( callback ) => callback() ) );
 	},
 };
 
@@ -114,7 +118,7 @@ function setCountryError( error: string ) {
 }
 
 function useCountry() {
-	const [ state, setState ] = useState( { value: '', error: '' } );
+	const [ state, setState ] = useState( contactStore.getData().country );
 	useEffect( () => {
 		return contactStore.subscribe( () => {
 			const { value, error } = contactStore.getData().country;
@@ -164,9 +168,15 @@ const contactFormStep = {
 	completeStepContent: <ContactFormSummary />,
 };
 
-export function CheckoutDemo() {
+function CheckoutDemo( { preFilledCountry }: { preFilledCountry?: string } ) {
 	const [ items ] = useState( initialItems );
 	const total = useMemo( () => getTotal( items ), [ items ] );
+
+	useEffect( () => {
+		if ( preFilledCountry ) {
+			setCountry( preFilledCountry );
+		}
+	}, [ preFilledCountry ] );
 
 	const [ isLoading, setIsLoading ] = useState( true );
 	useEffect( () => {
@@ -248,3 +258,6 @@ export default {
 	title: 'composite-checkout',
 	component: CheckoutDemo,
 };
+
+export const Basic = () => <CheckoutDemo />;
+export const Prefilled = () => <CheckoutDemo preFilledCountry="Canada" />;
