@@ -28,7 +28,7 @@ const responses: Record< AnalysisReport[ 'result' ], React.ReactChild > = {
 		<p>
 			{ createInterpolateElement(
 				__(
-					'Your site is not <hosted_on_our_services>hosted on our services</hosted_on_our_services>. Support for the self-hosted version of WordPress is provided by the <wordpress_org_community_forums>WordPress.org community forums</wordpress_org_community_forums>, or if the problem relates to a specific plugin or theme, contact support for that product instead. If you’re not sure, share you question with a link, and we’ll point you in the right direction!',
+					'Your site is not <hosted_on_our_services>hosted on our services</hosted_on_our_services>. Support for the self-hosted version of WordPress is provided by the <wordpress_org_community_forums>WordPress.org community forums</wordpress_org_community_forums>, or if the problem relates to a specific plugin or theme, contact support for that product instead. If you’re not sure, share your question with a link, and we’ll point you in the right direction!',
 					__i18n_text_domain__
 				),
 				{
