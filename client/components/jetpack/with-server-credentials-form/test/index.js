@@ -139,7 +139,7 @@ describe( 'useWithServerCredentials HOC', () => {
 			expect( input.value ).toBe( inputName );
 		} );
 		fireEvent.click( submitButton );
-		expect( errorMessagesContainer.innerHTML ).toBe( '' );
+		expect( errorMessagesContainer ).toBeEmptyDOMElement();
 		expect( actions.updateCredentials ).toHaveBeenCalledTimes( 1 );
 		expect( actions.updateCredentials ).toBeCalledWith(
 			9999,

@@ -9,7 +9,7 @@ import { ProductExpiration } from '../index';
 describe( 'ProductExpiration', () => {
 	it( 'should return null if not provided dates', () => {
 		const { container } = render( <ProductExpiration translate={ translate } /> );
-		expect( container.firstChild ).toBeNull();
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	it( 'should return the purchase date when refundable', () => {
@@ -66,7 +66,7 @@ describe( 'ProductExpiration', () => {
 		const { container } = render(
 			<ProductExpiration expiryDateMoment={ date } translate={ translate } />
 		);
-		expect( container.firstChild ).toBeNull();
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	it( 'should return null when provided an invalid purchase date and no expiry date', () => {
@@ -74,6 +74,6 @@ describe( 'ProductExpiration', () => {
 		const { container } = render(
 			<ProductExpiration purchaseDateMoment={ date } translate={ translate } />
 		);
-		expect( container.firstChild ).toBeNull();
+		expect( container ).toBeEmptyDOMElement();
 	} );
 } );
