@@ -49,8 +49,8 @@ export default {
 			<DomainManagementData
 				analyticsPath={ domainManagementRoot() }
 				analyticsTitle="Domain Management > All Domains"
-				// component={ DomainManagement.AllDomains }
-				component={ DomainManagement.AllDomainsTest }
+				component={ DomainManagement.AllDomains }
+				// component={ DomainManagement.AllDomainsTest }
 				context={ pageContext }
 			/>
 		);
