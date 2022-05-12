@@ -2,16 +2,17 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
-import './style.scss';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+
+import './style.scss';
 
 const SiteActions = ( { isLargeScreen, site } ) => {
 	const translate = useTranslate();
 
 	const [ isOpen, setIsOpen ] = useState( false );
 
-	const ref = useRef();
+	const buttonActionRef = useRef();
 
 	const showActions = () => {
 		setIsOpen( true );
@@ -36,7 +37,7 @@ const SiteActions = ( { isLargeScreen, site } ) => {
 				onKeyPress={ showActions }
 				role="button"
 				tabIndex="0"
-				ref={ ref }
+				ref={ buttonActionRef }
 				className={ classNames(
 					isLargeScreen
 						? 'site-actions__actions-large-screen'
@@ -46,7 +47,7 @@ const SiteActions = ( { isLargeScreen, site } ) => {
 				<Gridicon icon="ellipsis" size={ 18 } className="site-actions__all-actions" />
 			</div>
 			<PopoverMenu
-				context={ ref.current }
+				context={ buttonActionRef.current }
 				isVisible={ isOpen }
 				onClose={ closeDropdown }
 				position="bottom"

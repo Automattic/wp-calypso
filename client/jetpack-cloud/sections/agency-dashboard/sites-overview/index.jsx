@@ -1,4 +1,5 @@
 import SiteContent from './site-content';
+
 import './style.scss';
 
 export default function SitesOverview() {

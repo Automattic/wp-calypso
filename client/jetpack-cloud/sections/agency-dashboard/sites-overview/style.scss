@@ -11,7 +11,7 @@
 		padding: 16px;
 	}
 	&__status-critical {
-		color: #d63638;
+		color: var( --studio-red-50 );
 		position: absolute;
 		right: 42px;
 		top: 50%;
@@ -40,11 +40,11 @@
 		}
 	}
 	&__status-failed {
-		border-color: #d63638;
-		color: #d63638;
+		border-color: var( --studio-red-50 );
+		color: var( --studio-red-50 );
 	}
 	&__status-warning {
-		border-color: #f0c930;
+		border-color:  var( --studio-yellow-20 );;
 	}
 	&__status-add-new {
 		display: inline-flex;
@@ -53,14 +53,14 @@
 		align-items: center;
 		width: fit-content;
 		height: 22px;
-		background: #ffffff;
+		background: var( --studio-white );
 		box-sizing: border-box;
 		border-radius: 12px; /* stylelint-disable-line scales/radii */
 		font-weight: 500;
 		font-size: 0.75rem;
 		vertical-align: middle;
-		color: #2c3338;
-		border: 1px solid #dcdcde;
+		color: var( --studio-gray-80 );
+		border: 1px solid var( --studio-gray-5 );
 		padding: 2px 11px;
 		span {
 			margin: 0 0.2em;
@@ -69,20 +69,20 @@
 			margin-left: -0.4em;
 		}
 		&:hover {
-			background: #2c3338;
-			color: #ffffff;
+			background: var( --studio-gray-80 );
+			color: var( --studio-white );
 		}
 	}
 	&__grey-icon {
 		vertical-align: middle;
-		color: #787c82;
+		color: var( --studio-gray-40 );
 	}
 	&__icon-active {
 		vertical-align: middle;
-		color: #dcdcde;
+		color: var( --studio-gray-5 );
 	}
 	&__disabled {
-		color: #dcdcde;
+		color: var( --studio-gray-5 );
 		cursor: not-allowed;
 		opacity: 0.5;
 	}
@@ -93,7 +93,7 @@
 		overflow: hidden;
 		text-overflow: clip;
 		vertical-align: middle;
-		color: #101517;
+		color: var( --studio-gray-100 );
 		@include break-zoomed-in {
 			width: calc( 100% - 100px );
 			margin-left: 24px;
@@ -128,7 +128,7 @@
 	&__error-icon {
 		background: #d94f4f;
 		padding: 11px;
-		color: #ffffff;
+		color: var( --studio-white );
 		width: 5%;
 		display: flex;
 		align-items: center;
@@ -139,7 +139,7 @@
 	}
 	&__error-message {
 		font-size: 0.75rem;
-		color: #ffffff;
+		color: var( --studio-white );
 		padding:0.5em;
 		margin: auto 0;
 	}
@@ -178,13 +178,13 @@
 	&__tooltip {
 		.popover__arrow {
 			&::before {
-				border-bottom-color: #50575e!important;
+				border-bottom-color: var( --studio-gray-60 )!important;
 				top: 1px!important;
 			}
 		}
 		.popover__inner {
-			background: #50575e;
-			color: #ffffff;
+			background: var( --studio-gray-60 );
+			color: var( --studio-white );
     		padding: 10px 12px;
 			border: none;
 		}

@@ -26,7 +26,7 @@
 	&__all-actions {
 		vertical-align: middle;
 		display: flex;
-		color: #787c82;
+		color: var( --studio-gray-40 );
 		margin: 0 0.1em;
 		@include break-large() {
 			display: inline-flex;
@@ -38,12 +38,12 @@
 a.site-actions__menu-item {
 	margin: 0 -1px;
 	border-style: solid;
-	border-color:  #aaaaaa;
+	border-color:  var( --studio-gray-5 );
 	border-width: 0 0 1px;
 	font-size: 0.875rem;
 	height: 40px;
 	box-sizing: border-box;
-	color: #000000;
+	color: var( --studio-black );
 	display: inline-flex;
     align-items: center;
 	&:last-child {
@@ -52,11 +52,11 @@ a.site-actions__menu-item {
 	}
 	&:hover, &:focus {
 		border-style: solid;
-		border-color:  #aaaaaa;
+		border-color:  var( --studio-gray-5 );
 		border-width: 0 0 1px;
-		background: #000000;
+		background: var( --studio-black );
 		cursor: pointer;
-		color: #ffffff;
+		color: var( --studio-white );
 		&:last-child {
 			margin-bottom: -1px;
 			border-bottom-width: 0;

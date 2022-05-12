@@ -53,9 +53,6 @@ const getLinks = ( type, status, siteUrl, siteId ) => {
 			}
 			break;
 		}
-		default: {
-			break;
-		}
 	}
 	return { link, tooltip, eventId };
 };
@@ -77,7 +74,7 @@ const getRowMetaData = ( rows, type ) => {
 };
 
 export default function StatusContent( { content, tooltip, tooltipId, link, siteError } ) {
-	const ref = useRef();
+	const statusContentRef = useRef();
 	const [ showTooltip, setShowTooltip ] = useState( false );
 	const handleShowTooltip = () => {
 		setShowTooltip( true );
@@ -108,12 +105,16 @@ export default function StatusContent( { content, tooltip, tooltipId, link, site
 		<>
 			{ tooltip && ! siteError ? (
 				<>
-					<span ref={ ref } onMouseEnter={ handleShowTooltip } onMouseLeave={ handleHideTooltip }>
+					<span
+						ref={ statusContentRef }
+						onMouseEnter={ handleShowTooltip }
+						onMouseLeave={ handleHideTooltip }
+					>
 						{ updatedContent }
 					</span>
 					<Tooltip
 						id={ tooltipId }
-						context={ ref.current }
+						context={ statusContentRef.current }
 						isVisible={ showTooltip }
 						position="bottom"
 						className="sites-overview__tooltip"
@@ -188,9 +189,6 @@ const statusFormatter = ( rows, type ) => {
 					<span>{ translate( 'Add' ) }</span>
 				</span>
 			);
-			break;
-		}
-		default: {
 			break;
 		}
 	}

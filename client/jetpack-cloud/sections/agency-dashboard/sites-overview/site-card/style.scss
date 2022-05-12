@@ -25,8 +25,12 @@
 		margin: 0 -5px;
 		position: relative;
 		padding: 0.7em 1em;
+		opacity: 0.5;
+	}
+	&__content-list-no-error {
+		opacity: 1;
 		&:nth-child( odd ) {
-			background: #f6f7f7;
+			background: var( --studio-gray-0 );
 		}
 	}
 	&__expanded-content-key {

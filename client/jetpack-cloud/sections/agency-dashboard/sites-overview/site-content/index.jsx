@@ -11,6 +11,7 @@ import {
 import SiteCard from '../site-card';
 import SiteTable from '../site-table';
 import { getFormattedSites } from '../utils';
+
 import './style.scss';
 
 const SiteContent = () => {

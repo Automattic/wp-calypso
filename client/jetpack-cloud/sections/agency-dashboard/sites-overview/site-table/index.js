@@ -3,6 +3,7 @@ import React from 'react';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
+
 import './style.scss';
 
 const SiteTable = ( { isFetching, columns, sites, isFetchingFailed } ) => {
