@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { fireEvent, render } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { BulkSelect } from '../index';
 
 const noop = () => {};

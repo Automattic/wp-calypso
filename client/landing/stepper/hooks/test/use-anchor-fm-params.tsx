@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import '@testing-library/jest-dom/extend-expect';
 import { renderHook } from '@testing-library/react-hooks';
 import React from 'react';
 import { MemoryRouter as Router } from 'react-router-dom';

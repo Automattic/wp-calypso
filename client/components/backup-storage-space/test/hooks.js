@@ -14,7 +14,6 @@ jest.mock( 'calypso/state/ui/selectors/get-selected-site-slug', () =>
 );
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 
-import '@testing-library/jest-dom/extend-expect';
 import { render } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { useStorageUsageText } from 'calypso/components/backup-storage-space/hooks';

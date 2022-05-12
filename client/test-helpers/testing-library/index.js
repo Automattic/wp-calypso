@@ -1,4 +1,5 @@
 import { render as rtlRender } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
@@ -8,6 +9,8 @@ export const renderWithProvider = (
 	ui,
 	{ initialState, store, reducers, ...renderOptions } = {}
 ) => {
+	const queryClient = new QueryClient();
+
 	if ( ! store ) {
 		let reducer = initialReducer;
 
@@ -20,7 +23,11 @@ export const renderWithProvider = (
 		store = createStore( reducer, initialState, applyMiddleware( thunkMiddleware ) );
 	}
 
-	const Wrapper = ( { children } ) => <Provider store={ store }>{ children }</Provider>;
+	const Wrapper = ( { children } ) => (
+		<QueryClientProvider client={ queryClient }>
+			<Provider store={ store }>{ children }</Provider>
+		</QueryClientProvider>
+	);
 
 	return rtlRender( ui, { wrapper: Wrapper, ...renderOptions } );
 };

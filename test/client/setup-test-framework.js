@@ -1,3 +1,5 @@
+import '@testing-library/jest-dom';
+
 const nock = require( 'nock' );
 
 // Disables all network requests for all tests.

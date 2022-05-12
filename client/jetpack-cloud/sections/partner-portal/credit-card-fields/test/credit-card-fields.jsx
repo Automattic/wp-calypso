@@ -7,7 +7,6 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { render } from '@testing-library/react';
 import { useSelect, useDispatch } from '@wordpress/data';
-import '@testing-library/jest-dom/extend-expect';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import CreditCardFields from '../index';

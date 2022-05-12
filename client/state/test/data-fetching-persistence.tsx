@@ -1,8 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
-import '@testing-library/jest-dom/extend-expect';
 import { render, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider, useQuery, setLogger } from 'react-query';
 import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental';
