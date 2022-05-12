@@ -300,8 +300,14 @@ export const CheckoutStep = ( {
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
 	const activePaymentMethod = usePaymentMethod();
-	const finishIsCompleteCallback = ( completeResult: boolean ) => {
-		setThisStepCompleteStatus( !! completeResult );
+
+	// This is the callback called when you press "Continue" on a step.
+	const goToNextStep = async () => {
+		setFormValidating();
+		// Wrapping isCompleteCallback in Promise.resolve allows it to return a Promise or boolean.
+		const completeResult = Boolean( await Promise.resolve( isCompleteCallback() ) );
+		debug( `isCompleteCallback for step ${ stepNumber } finished with`, completeResult );
+		setThisStepCompleteStatus( completeResult );
 		if ( completeResult ) {
 			onStepChanged?.( {
 				stepNumber: nextStepNumber,
@@ -314,14 +320,6 @@ export const CheckoutStep = ( {
 			}
 		}
 		setFormReady();
-	};
-	const goToNextStep = async () => {
-		// Wrapping this in Promise.resolve allows it to be a Promise or boolean
-		const completeResult = Promise.resolve( isCompleteCallback() );
-		setFormValidating();
-		const delayedCompleteResult = await completeResult;
-		debug( `isCompleteCallback for step ${ stepNumber } finished with`, delayedCompleteResult );
-		finishIsCompleteCallback( delayedCompleteResult );
 	};
 
 	const classNames = [
