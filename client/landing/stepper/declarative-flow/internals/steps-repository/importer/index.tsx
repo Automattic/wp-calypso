@@ -160,7 +160,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 
 		return (
 			<>
-				<QuerySites allSites />
+				<QuerySites siteId={ siteId } />
 				<DocumentHead title={ __( 'Import your site content' ) } />
 				<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 
