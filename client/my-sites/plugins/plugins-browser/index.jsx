@@ -128,6 +128,11 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 		wporgEnabled: !! search,
 	} );
 
+	// Triggers initial search result rendering
+	useEffect( () => {
+		fetchNextPage && fetchNextPage();
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps -- Run only once on mount
+
 	const pluginsByCategoryPopular = filterPopularPlugins(
 		popularPlugins,
 		pluginsByCategoryFeatured
