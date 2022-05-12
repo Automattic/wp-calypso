@@ -88,7 +88,7 @@ export function fetchSiteDomainsInBulk() {
 		dispatch( siteDomainsInBulkRequestAction() );
 
 		return wpcom.req
-			.get( `/all-domains-with-details`, { apiVersion: '1.1' } )
+			.get( `/site-domains-in-bulk`, { apiVersion: '1.1' } )
 			.then( ( data ) => {
 				const { domains = [], error, message } = data;
 
