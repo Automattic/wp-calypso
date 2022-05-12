@@ -105,6 +105,7 @@ export interface GeneratedDesignPickerProps {
 	verticalId: string;
 	locale: string;
 	heading?: React.ReactElement;
+	footer?: React.ReactElement;
 	onPreview: ( design: Design ) => void;
 	onViewMore: () => void;
 }
@@ -115,6 +116,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 	verticalId,
 	locale,
 	heading,
+	footer,
 	onPreview,
 	onViewMore,
 } ) => {
@@ -151,6 +153,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 						) ) }
 				</div>
 			</div>
+			{ footer }
 		</div>
 	);
 };

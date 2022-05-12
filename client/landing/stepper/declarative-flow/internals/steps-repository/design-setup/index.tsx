@@ -19,7 +19,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
@@ -30,6 +30,7 @@ import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../../stores';
 import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { getCategorizationOptions } from './categories';
 import PreviewToolbar from './preview-toolbar';
+import StickyFooter from './sticky-footer';
 import type { Step } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
@@ -38,6 +39,7 @@ import type { Design } from '@automattic/design-picker';
  * The design picker step
  */
 const designSetup: Step = function DesignSetup( { navigation, flow } ) {
+	const continueButtonRef = useRef( null );
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
 	const [ isForceStaticDesigns, setIsForceStaticDesigns ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
@@ -379,8 +381,20 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			heading={
 				<div className={ classnames( 'step-container__header', 'design-setup__header' ) }>
 					{ heading }
-					<Button primary>{ translate( 'Continue' ) }</Button>
+					<Button ref={ continueButtonRef } primary>
+						{ translate( 'Continue' ) }
+					</Button>
 				</div>
+			}
+			footer={
+				<StickyFooter
+					className={ classnames( 'step-container__footer', 'design-setup__footer' ) }
+					targetRef={ continueButtonRef }
+				>
+					<div className={ 'design-setup__footer-inner' }>
+						<Button primary>{ translate( 'Continue' ) }</Button>
+					</div>
+				</StickyFooter>
 			}
 			onPreview={ previewDesign }
 			onViewMore={ viewMoreDesigns }
