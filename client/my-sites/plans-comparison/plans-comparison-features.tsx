@@ -321,23 +321,19 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 		features: [ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE, FEATURE_50GB_STORAGE ],
 		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
-			let storageSize = '1';
-			const legacyStorageSize = '3';
+			const legacyStorageSize = 3;
+			let storageSize = 1;
 
 			if ( feature === FEATURE_6GB_STORAGE ) {
-				storageSize = '6';
+				storageSize = 6;
 			}
 
 			if ( feature === FEATURE_50GB_STORAGE ) {
-				storageSize = '50';
+				storageSize = 50;
 			}
 
 			if ( isMobile ) {
-				if (
-					isLegacySiteWithHigherLimits &&
-					feature &&
-					[ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE ].includes( feature )
-				) {
+				if ( isLegacySiteWithHigherLimits && legacyStorageSize > storageSize ) {
 					return translate(
 						'{{del}}%(originalStorage)sGB of storage{{/del}} %(modifiedStorage)sGB on this site',
 						{
@@ -357,11 +353,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 				} );
 			}
 
-			if (
-				isLegacySiteWithHigherLimits &&
-				feature &&
-				[ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE ].includes( feature )
-			) {
+			if ( isLegacySiteWithHigherLimits && legacyStorageSize > storageSize ) {
 				return translate(
 					'{{del}}%(originalStorage)sGB{{/del}} %(modifiedStorage)sGB on this site',
 					{
