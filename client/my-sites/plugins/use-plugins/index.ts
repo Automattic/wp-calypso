@@ -18,6 +18,7 @@ interface WPORGResponse {
 		pagination: {
 			results: number;
 			page: number;
+			pages: number;
 		};
 	};
 	isLoading: boolean;
@@ -149,12 +150,25 @@ const usePlugins = ( {
 			break;
 	}
 
+	function fetchNextPageAndStop() {
+		if (
+			dotOrgPagination?.page &&
+			dotOrgPagination?.pages &&
+			dotOrgPagination.page >= dotOrgPagination.pages
+		) {
+			return;
+		}
+
+		fetchNextPage && fetchNextPage();
+	}
+
 	return {
 		plugins,
 		isFetching,
-		fetchNextPage,
+		fetchNextPage: fetchNextPageAndStop,
 		pagination: {
 			page: dotOrgPagination?.page,
+			pages: dotOrgPagination?.pages,
 			results,
 		},
 	};
