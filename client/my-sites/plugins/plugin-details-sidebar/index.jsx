@@ -1,14 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
-import { useSelector } from 'react-redux';
 import eye from 'calypso/assets/images/marketplace/eye.svg';
 import support from 'calypso/assets/images/marketplace/support.svg';
 import wooLogo from 'calypso/assets/images/marketplace/woo-logo.svg';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
-import { hasOrIntendsToBuyLiveSupport } from 'calypso/state/marketplace/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text/';
 
 const PluginDetailsSidebar = ( {
 	plugin: {
@@ -26,15 +23,7 @@ const PluginDetailsSidebar = ( {
 		( pluginName ) => pluginName === 'plugins/woocommerce'
 	);
 
-	const selectedSite = useSelector( getSelectedSite );
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, selectedSite?.ID )
-	);
-	const isLiveSupport = useSelector( hasOrIntendsToBuyLiveSupport );
-	const supportTextNonPro = isLiveSupport
-		? translate( 'Live chat support 24x7' )
-		: translate( 'Unlimited Email Support' );
-	const supportText = eligibleForProPlan ? translate( 'Premium support' ) : supportTextNonPro;
+	const supportText = usePluginsSupportText();
 
 	if ( ! isMarketplaceProduct ) {
 		return (

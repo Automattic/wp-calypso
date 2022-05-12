@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
-import { hasOrIntendsToBuyLiveSupport } from 'calypso/state/marketplace/selectors';
+import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text/';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -61,11 +61,7 @@ const USPS: React.FC< Props > = ( {
 		return getProductDisplayCost( state, eligibleForProPlan ? PLAN_WPCOM_PRO : productSlug );
 	} );
 
-	const isLiveSupport = useSelector( hasOrIntendsToBuyLiveSupport );
-	const supportTextNonPro = isLiveSupport
-		? translate( 'Live chat support 24x7' )
-		: translate( 'Unlimited Email Support' );
-	const supportText = eligibleForProPlan ? translate( 'Premium support' ) : supportTextNonPro;
+	const supportText = usePluginsSupportText();
 
 	const filteredUSPS = [
 		...( isMarketplaceProduct
@@ -131,7 +127,7 @@ const USPS: React.FC< Props > = ( {
 					{
 						id: 'support',
 						image: <Gridicon icon="chat" size={ 16 } />,
-						text: eligibleForProPlan ? translate( 'Premium support' ) : supportText,
+						text: supportText,
 						eligibilities: [ 'needs-upgrade', 'marketplace' ],
 					},
 			  ]
