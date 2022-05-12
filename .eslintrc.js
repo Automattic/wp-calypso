@@ -276,7 +276,7 @@ module.exports = {
 		// this is when Webpack last built the bundle
 		BUILD_TIMESTAMP: true,
 	},
-	plugins: [ 'import', 'you-dont-need-lodash-underscore' ],
+	plugins: [ 'import', 'you-dont-need-lodash-underscore', 'testing-library', 'jest-dom' ],
 	settings: {
 		react: {
 			version: reactVersion,
