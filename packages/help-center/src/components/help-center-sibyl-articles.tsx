@@ -28,7 +28,7 @@ export function SibylArticles( { message, supportSite }: Props ) {
 
 	const articles = sibylArticles?.length
 		? sibylArticles
-		: getContextResults( 'gutenberg-editor', intent?.site_intent );
+		: getContextResults( 'gutenberg-editor', intent?.site_intent ?? '' );
 
 	return (
 		<div className="help-center-sibyl-articles__container">
