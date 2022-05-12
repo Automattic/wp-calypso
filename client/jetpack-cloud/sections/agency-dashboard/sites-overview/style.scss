@@ -8,7 +8,24 @@
 		padding: 0;
 	}
 	@include break-wide() {
-		padding: 16px;
+		padding: 6px 16px;
+	}
+	&__page-title {
+		color: #2c3338;
+		font-weight: 400;
+		display: none;
+		@include break-large() {
+			display: block;
+		}
+	}
+	&__page-subtitle {
+		font-size: 0.875rem;
+		color: #50575e;
+		margin-bottom: 1.5rem;
+		display: none;
+		@include break-large() {
+			display: block;
+		}
 	}
 	&__status-critical {
 		color: var( --studio-red-50 );
