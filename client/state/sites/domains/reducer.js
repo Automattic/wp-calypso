@@ -189,7 +189,7 @@ export const errors = ( state = {}, action ) => {
 	return state;
 };
 
-export const isRequestingAllDomainsWithDetails = ( state = false, action ) => {
+export const isRequestingSiteDomainsInBulk = ( state = false, action ) => {
 	switch ( action.type ) {
 		case SITE_DOMAINS_IN_BULK_REQUEST:
 		case SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS:
@@ -204,5 +204,5 @@ export default combineReducers( {
 	items,
 	requesting,
 	updatingPrivacy,
-	isRequestingAllDomainsWithDetails,
+	isRequestingSiteDomainsInBulk,
 } );

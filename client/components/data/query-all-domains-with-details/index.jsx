@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchTestSiteDomains } from 'calypso/state/sites/domains/actions';
-import { isRequestingAllDomainsWithDetails } from 'calypso/state/sites/domains/selectors';
+import { isRequestingSiteDomainsInBulk } from 'calypso/state/sites/domains/selectors';
 
 const request = () => ( dispatch, getState ) => {
-	if ( ! isRequestingAllDomainsWithDetails( getState() ) ) {
+	if ( ! isRequestingSiteDomainsInBulk( getState() ) ) {
 		dispatch( fetchTestSiteDomains() );
 	}
 };
