@@ -35,6 +35,17 @@ export default function ( { currentStep }: { currentStep: number } ): ReactEleme
 					<span>2</span>
 				</span>
 				<span className="assign-license-step-progress__step-name">
+					{ translate( 'Add Payment Method' ) }
+				</span>
+			</div>
+			<div className="assign-license-step-progress__step-separator" />
+			<div
+				className={ `assign-license-step-progress__step ${ getStepClassName( currentStep, 3 ) }` }
+			>
+				<span className="assign-license-step-progress__step-circle">
+					<span>3</span>
+				</span>
+				<span className="assign-license-step-progress__step-name">
 					{ translate( 'Assign license' ) }
 				</span>
 			</div>
