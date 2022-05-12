@@ -125,14 +125,14 @@ export function resolveDomainStatus(
 					);
 				}
 
-				if ( isExpiringSoon( domain, 5 ) ) {
+				if ( isExpiringSoon( domain, 7 ) ) {
 					return {
 						statusText: expiresMessage,
-						statusClass: 'status-error',
-						status: translate( 'Expiring soon' ),
+						statusClass: `status-${ domain.autoRenewing ? 'success' : 'error' }`,
+						status: domain.autoRenewing ? translate( 'Active' ) : translate( 'Expiring soon' ),
 						icon: 'info',
 						listStatusText: expiresMessage,
-						listStatusClass: 'alert',
+						listStatusClass: domain.autoRenewing ? 'info' : 'alert',
 						listStatusWeight: 1000,
 						noticeText,
 					};
