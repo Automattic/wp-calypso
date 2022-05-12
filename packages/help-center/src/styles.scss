@@ -171,3 +171,40 @@ button.button.back-button__help-center.is-borderless {
 		padding: 16px;
 	}
 }
+
+.help-center-sibyl-articles__list {
+	list-style: none;
+	box-sizing: border-box;
+	padding: 0;
+
+	> li {
+		padding: 0;
+
+		> a {
+			display: flex;
+			align-items: center;
+			text-decoration: none;
+			color: var( --studio-gray-100 );
+			margin-bottom: 16px;
+		}
+	}
+
+	svg {
+		margin-right: 15px;
+		border-radius: 2px;
+		display: block;
+		padding: 8px;
+		background: var( --studio-gray-0 );
+		fill: var( --studio-blue-50 );
+		flex-shrink: 0;
+	}
+}
+.help-center-sibyl-articles__title {
+	font-size: $font-body-small;
+	font-weight: 500;
+	color: var( --studio-gray-100 );
+}
+
+.help-center-sibyl-articles__container {
+	padding-top: 0;
+}
