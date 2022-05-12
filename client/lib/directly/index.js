@@ -22,7 +22,6 @@ let directlyPromise;
  * on the module scope, to prevent import-time errors errors that could crash Calypso.
  *
  * @see https://cloudup.com/cySVQ9R_O6S for all configuration options
- *
  * @returns {object} The default configuration options
  */
 function getDefaultOptions() {
