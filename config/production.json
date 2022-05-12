@@ -21,7 +21,7 @@
 		"cloudflare": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
-		"current-site/stale-cart-notice": true,
+		"current-site/stale-cart-notice": false,
 		"checkout/google-pay": true,
 		"desktop-promo": true,
 		"domains/gdpr-consent-page": true,
