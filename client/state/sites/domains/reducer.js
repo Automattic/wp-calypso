@@ -22,9 +22,8 @@ import {
 	DOMAIN_CONTACT_INFO_REDACT_SUCCESS,
 	DOMAIN_CONTACT_INFO_REDACT_FAILURE,
 } from 'calypso/state/action-types';
-import { createLightSiteDomainObject } from 'calypso/state/all-domains/helpers';
-import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -70,9 +69,6 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 			} );
 			return newState;
 		}
-		case ALL_DOMAINS_TEST_REQUEST_FAILURE:
-			// TODO: Implement
-			return state;
 		case SITE_DOMAINS_RECEIVE:
 			return Object.assign( {}, state, {
 				[ siteId ]: action.domains,
@@ -178,6 +174,15 @@ export const requesting = ( state = {}, action ) => {
  */
 export const errors = ( state = {}, action ) => {
 	switch ( action.type ) {
+		case ALL_DOMAINS_TEST_REQUEST:
+		case ALL_DOMAINS_TEST_REQUEST_SUCCESS:
+		case ALL_DOMAINS_TEST_REQUEST_FAILURE:
+			const newState = Object.assign( {}, state );
+			action.domains.forEach( ( domain ) => {
+				newState[ domain.blog_id ] =
+					action.type !== ALL_DOMAINS_TEST_REQUEST_FAILURE ? null : action.error;
+			} );
+			return newState;
 		case SITE_DOMAINS_REQUEST:
 		case SITE_DOMAINS_REQUEST_SUCCESS:
 			return Object.assign( {}, state, {
