@@ -40,7 +40,7 @@ interface StepCompleteCallbackState {
 	[ key: string ]: () => void;
 }
 
-interface CheckoutStepDataContext {
+interface CheckoutStepDataContextType {
 	activeStepNumber: number;
 	stepCompleteStatus: StepCompleteStatus;
 	totalSteps: number;
@@ -60,7 +60,7 @@ interface CheckoutSingleStepDataContext {
 }
 
 const noop = () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
-const CheckoutStepDataContext = createContext< CheckoutStepDataContext >( {
+const CheckoutStepDataContext = createContext< CheckoutStepDataContextType >( {
 	activeStepNumber: 0,
 	stepCompleteStatus: {},
 	totalSteps: 0,
