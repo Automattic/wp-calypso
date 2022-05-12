@@ -33,7 +33,7 @@ const noop = () => {};
  *
  * @returns {object} - action object
  */
-export const domainsTestRequestAction = () => {
+export const siteDomainsInBulkRequestAction = () => {
 	const action = {
 		type: SITE_DOMAINS_IN_BULK_REQUEST,
 	};
@@ -50,7 +50,7 @@ export const domainsTestRequestAction = () => {
  * @param {Array} domains - domains information for all sites of the user
  * @returns {object} - action object
  */
-export const domainsTestRequestSuccessAction = ( domains ) => {
+export const siteDomainsInBulkRequestSuccessAction = ( domains ) => {
 	const action = {
 		type: SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS,
 		domains,
@@ -68,7 +68,7 @@ export const domainsTestRequestSuccessAction = ( domains ) => {
  * @param {object} error - error message according to REST-API error response
  * @returns {object} action object
  */
-export const domainsTestRequestFailureAction = ( error ) => {
+export const siteDomainsInBulkRequestFailureAction = ( error ) => {
 	const action = {
 		type: SITE_DOMAINS_IN_BULK_REQUEST_FAILURE,
 		error,
@@ -85,7 +85,7 @@ export const domainsTestRequestFailureAction = ( error ) => {
  */
 export function fetchTestSiteDomains() {
 	return ( dispatch ) => {
-		dispatch( domainsTestRequestAction() );
+		dispatch( siteDomainsInBulkRequestAction() );
 
 		return wpcom.req
 			.get( `/all-domains-with-details`, { apiVersion: '1.1' } )
@@ -96,7 +96,7 @@ export function fetchTestSiteDomains() {
 					throw new Error( message );
 				}
 
-				dispatch( domainsTestRequestSuccessAction( domains ) );
+				dispatch( siteDomainsInBulkRequestSuccessAction( domains ) );
 			} )
 			.catch( ( error ) => {
 				const message =
@@ -106,7 +106,7 @@ export function fetchTestSiteDomains() {
 								'There was a problem fetching domains. Please try again later or contact support.'
 						  );
 
-				dispatch( domainsTestRequestFailureAction( message ) );
+				dispatch( siteDomainsInBulkRequestFailureAction( message ) );
 			} );
 	};
 }
