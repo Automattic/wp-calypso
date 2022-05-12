@@ -18,15 +18,17 @@ import {
 	TERM_MONTHLY,
 	getPlans,
 	TYPE_PRO,
+	WPCOM_FEATURES_WORDADS,
 } from '@automattic/calypso-products';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { isWordadsInstantActivationEligible } from 'calypso/lib/ads/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { hasDomainCredit, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AdvertisingRemoved from './advertising-removed';
@@ -88,6 +90,7 @@ export class ProductPurchaseFeaturesList extends Component {
 
 	getBusinessFeatures() {
 		const {
+			canActivateWordadsInstant,
 			isPlaceholder,
 			isMonthlyPlan,
 			plan,
@@ -132,9 +135,7 @@ export class ProductPurchaseFeaturesList extends Component {
 						link={ `/me/quickstart/${ selectedSite.slug }/book` }
 					/>
 				) }
-				{ isWordadsInstantActivationEligible( selectedSite ) && (
-					<MonetizeSite selectedSite={ selectedSite } />
-				) }
+				{ canActivateWordadsInstant && <MonetizeSite selectedSite={ selectedSite } /> }
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
@@ -151,7 +152,14 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getPremiumFeatures() {
-		const { isPlaceholder, isMonthlyPlan, plan, planHasDomainCredit, selectedSite } = this.props;
+		const {
+			canActivateWordadsInstant,
+			isPlaceholder,
+			isMonthlyPlan,
+			plan,
+			planHasDomainCredit,
+			selectedSite,
+		} = this.props;
 
 		return (
 			<Fragment>
@@ -163,9 +171,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<AdvertisingRemoved isEligiblePlan={ false } selectedSite={ selectedSite } />
 				<CustomizeTheme selectedSite={ selectedSite } />
 				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
-				{ isWordadsInstantActivationEligible( selectedSite ) && (
-					<MonetizeSite selectedSite={ selectedSite } />
-				) }
+				{ canActivateWordadsInstant && <MonetizeSite selectedSite={ selectedSite } /> }
 				{ isEnabled( 'themes/premium' ) && <FindNewTheme selectedSite={ selectedSite } /> }
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
@@ -209,7 +215,8 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getProFeatuers() {
-		const { isPlaceholder, selectedSite, plan, planHasDomainCredit } = this.props;
+		const { canActivateWordadsInstant, isPlaceholder, selectedSite, plan, planHasDomainCredit } =
+			this.props;
 
 		return (
 			<Fragment>
@@ -219,9 +226,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_pro' }
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				{ isWordadsInstantActivationEligible( selectedSite ) && (
-					<MonetizeSite selectedSite={ selectedSite } />
-				) }
+				{ canActivateWordadsInstant && <MonetizeSite selectedSite={ selectedSite } /> }
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
@@ -411,6 +416,9 @@ export default connect(
 		const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
 		return {
+			canActivateWordadsInstant:
+				canCurrentUser( state, selectedSiteId, 'activate_wordads' ) &&
+				siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_WORDADS ),
 			isAutomatedTransfer,
 			selectedSite,
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId ),
