@@ -11,11 +11,7 @@ const AUTH_PULL_INTERVAL = 5000; // 5 seconds
 const LOCALE_STORAGE_KEY = 'qr-login-token';
 
 const isStillValidToken = ( tokenData ) => {
-	if ( ! tokenData ) {
-		return false;
-	}
-	const { expires } = tokenData;
-	if ( ! expires ) {
+	if ( ! tokenData?.expires ) {
 		return false;
 	}
 	return expires > Date.now() / 1000;
