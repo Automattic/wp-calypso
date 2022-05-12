@@ -8,7 +8,6 @@ import { getMimeType } from 'calypso/lib/media/utils/get-mime-type';
  * getMimeType( { URL: 'https://wordpress.com/example.gif' } );
  * getMimeType( { mime_type: 'image/gif' } );
  * // All examples return 'image'
- *
  * @param  {(string|window.File|object)} media Media object or mime type string
  * @returns {string}       The MIME type prefix
  */

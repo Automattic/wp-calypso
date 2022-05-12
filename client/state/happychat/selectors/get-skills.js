@@ -10,7 +10,6 @@ import getGroups from 'calypso/state/happychat/selectors/get-groups';
  *
  * @param {object} state Global state tree
  * @param {string} siteId Id of the selected site used to determine the product (wpcom, jetpack)
- *
  * @returns {string} Current user geo location
  */
 export default ( state, siteId ) => {
