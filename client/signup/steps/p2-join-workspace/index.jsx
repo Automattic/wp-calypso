@@ -4,8 +4,8 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, chevronRight } from '@wordpress/icons';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import request from 'wpcom-proxy-request';
 import Spinner from 'calypso/components/spinner';
+import wpcom from 'calypso/lib/wp';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
@@ -35,10 +35,9 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 
 		setIsLoading( true );
 
-		const workspaceList = await request( {
+		const workspaceList = await wpcom.req.get( {
 			path: '/p2/preapproved-joining/list-workspaces',
 			apiNamespace: 'wpcom/v2',
-			global: true,
 		} );
 
 		setEligibleWorkspaces( workspaceList );
@@ -57,11 +56,10 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 			requesting: id,
 		} );
 
-		const response = await request( {
+		const response = await wpcom.req.post( {
 			path: '/p2/preapproved-joining/request-code',
 			apiNamespace: 'wpcom/v2',
 			global: true,
-			method: 'POST',
 			body: {
 				hub_id: parseInt( id ),
 			},
