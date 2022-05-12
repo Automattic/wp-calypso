@@ -139,15 +139,9 @@ function QRCodeLogin() {
 	}, [ setAuthState, setTokenData, tokenData, anonymousUserId, currentTimer ] );
 
 	useEffect( () => {
-		if ( ! authState ) {
-			return;
-		}
-		if ( authState.auth_url ) {
+		if ( authState?.auth_url ) {
 			window.location.replace( authState.auth_url );
-			return;
 		}
-
-		return null;
 	}, [ authState ] );
 
 	const steps = [
