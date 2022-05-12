@@ -9,7 +9,7 @@ const request = () => ( dispatch, getState ) => {
 	}
 };
 
-export default function QueryAllDomainsWithDetails() {
+export default function QuerySiteDomainsInBulk() {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
