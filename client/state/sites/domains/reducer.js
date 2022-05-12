@@ -2,9 +2,9 @@
 
 import { find } from 'lodash';
 import {
-	ALL_DOMAINS_TEST_REQUEST,
-	ALL_DOMAINS_TEST_REQUEST_SUCCESS,
-	ALL_DOMAINS_TEST_REQUEST_FAILURE,
+	SITE_DOMAINS_IN_BULK_REQUEST,
+	SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS,
+	SITE_DOMAINS_IN_BULK_REQUEST_FAILURE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
@@ -59,7 +59,7 @@ const modifySiteDomainObjectImmutable = ( state, siteId, domain, modifyDomainPro
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	const { siteId } = action;
 	switch ( action.type ) {
-		case ALL_DOMAINS_TEST_REQUEST_SUCCESS: {
+		case SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS: {
 			const newState = Object.assign( {}, state );
 			action.domains.forEach( ( domain ) => {
 				if ( ! newState[ domain.blog_id ] ) {
@@ -147,8 +147,8 @@ export const updatingPrivacy = ( state = {}, action ) => {
  */
 export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case ALL_DOMAINS_TEST_REQUEST_SUCCESS:
-		case ALL_DOMAINS_TEST_REQUEST_FAILURE:
+		case SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS:
+		case SITE_DOMAINS_IN_BULK_REQUEST_FAILURE:
 			const newState = Object.assign( {}, state );
 			action.domains.forEach( ( domain ) => {
 				newState[ domain.blog_id ] = false;
@@ -174,15 +174,6 @@ export const requesting = ( state = {}, action ) => {
  */
 export const errors = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case ALL_DOMAINS_TEST_REQUEST:
-		case ALL_DOMAINS_TEST_REQUEST_SUCCESS:
-		case ALL_DOMAINS_TEST_REQUEST_FAILURE:
-			const newState = Object.assign( {}, state );
-			action.domains.forEach( ( domain ) => {
-				newState[ domain.blog_id ] =
-					action.type !== ALL_DOMAINS_TEST_REQUEST_FAILURE ? null : action.error;
-			} );
-			return newState;
 		case SITE_DOMAINS_REQUEST:
 		case SITE_DOMAINS_REQUEST_SUCCESS:
 			return Object.assign( {}, state, {
@@ -200,10 +191,10 @@ export const errors = ( state = {}, action ) => {
 
 export const isRequestingAllDomainsWithDetails = ( state = false, action ) => {
 	switch ( action.type ) {
-		case ALL_DOMAINS_TEST_REQUEST:
-		case ALL_DOMAINS_TEST_REQUEST_SUCCESS:
-		case ALL_DOMAINS_TEST_REQUEST_FAILURE:
-			return action.type === ALL_DOMAINS_TEST_REQUEST;
+		case SITE_DOMAINS_IN_BULK_REQUEST:
+		case SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS:
+		case SITE_DOMAINS_IN_BULK_REQUEST_FAILURE:
+			return action.type === SITE_DOMAINS_IN_BULK_REQUEST;
 	}
 	return state;
 };

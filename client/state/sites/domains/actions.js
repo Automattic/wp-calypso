@@ -5,9 +5,9 @@ import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_PRIVACY_ENABLE,
 	DOMAIN_PRIVACY_DISABLE,
-	ALL_DOMAINS_TEST_REQUEST,
-	ALL_DOMAINS_TEST_REQUEST_SUCCESS,
-	ALL_DOMAINS_TEST_REQUEST_FAILURE,
+	SITE_DOMAINS_IN_BULK_REQUEST,
+	SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS,
+	SITE_DOMAINS_IN_BULK_REQUEST_FAILURE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
@@ -29,14 +29,13 @@ const noop = () => {};
 /**
  * Action creator function
  *
- * Return SITE_DOMAINS_REQUEST action object
+ * Return SITE_DOMAINS_IN_BULK_REQUEST action object
  *
- * @param {number} siteId - side identifier
- * @returns {object} siteId - action object
+ * @returns {object} - action object
  */
 export const domainsTestRequestAction = () => {
 	const action = {
-		type: ALL_DOMAINS_TEST_REQUEST,
+		type: SITE_DOMAINS_IN_BULK_REQUEST,
 	};
 
 	debug( 'returning action: %o', action );
@@ -46,14 +45,14 @@ export const domainsTestRequestAction = () => {
 /**
  * Action creator function
  *
- * Return SITE_DOMAINS_REQUEST_SUCCESS action object
+ * Return SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS action object
  *
- * @param {number} siteId - side identifier
- * @returns {object} siteId - action object
+ * @param {Array} domains - domains information for all sites of the user
+ * @returns {object} - action object
  */
 export const domainsTestRequestSuccessAction = ( domains ) => {
 	const action = {
-		type: ALL_DOMAINS_TEST_REQUEST_SUCCESS,
+		type: SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS,
 		domains,
 	};
 
@@ -64,15 +63,14 @@ export const domainsTestRequestSuccessAction = ( domains ) => {
 /**
  * Action creator function
  *
- * Return SITE_DOMAINS_REQUEST_FAILURE action object
+ * Return SITE_DOMAINS_IN_BULK_REQUEST_FAILURE action object
  *
- * @param {number} siteId - site identifier
  * @param {object} error - error message according to REST-API error response
  * @returns {object} action object
  */
 export const domainsTestRequestFailureAction = ( error ) => {
 	const action = {
-		type: ALL_DOMAINS_TEST_REQUEST_FAILURE,
+		type: SITE_DOMAINS_IN_BULK_REQUEST_FAILURE,
 		error,
 	};
 
@@ -108,7 +106,7 @@ export function fetchTestSiteDomains() {
 								'There was a problem fetching domains. Please try again later or contact support.'
 						  );
 
-				dispatch( domainsTestRequestFailureAction( siteId, message ) );
+				dispatch( domainsTestRequestFailureAction( message ) );
 			} );
 	};
 }
