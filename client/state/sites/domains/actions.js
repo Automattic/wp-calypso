@@ -79,11 +79,11 @@ export const siteDomainsInBulkRequestFailureAction = ( error ) => {
 };
 
 /**
- * Fetches domains for the given site.
+ * Fetches domains for all sites of the current user.
  *
  * @returns {Function} a promise that will resolve once fetching is completed
  */
-export function fetchTestSiteDomains() {
+export function fetchSiteDomainsInBulk() {
 	return ( dispatch ) => {
 		dispatch( siteDomainsInBulkRequestAction() );
 
