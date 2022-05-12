@@ -35,7 +35,7 @@ import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-cur
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSectionName, getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import { MasterBarMobileMenu } from './masterbar-menu';
@@ -338,7 +338,11 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderCart() {
-		const { currentSelectedSiteSlug, currentSelectedSiteId } = this.props;
+		const { currentSelectedSiteSlug, currentSelectedSiteId, sectionGroup } = this.props;
+		// Only display the masterbar cart when we are viewing a site-specific page.
+		if ( sectionGroup !== 'sites' ) {
+			return null;
+		}
 		return (
 			<AsyncLoad
 				require="./masterbar-cart/masterbar-cart-wrapper"
@@ -544,6 +548,7 @@ class MasterbarLoggedIn extends Component {
 
 export default connect(
 	( state ) => {
+		const sectionGroup = getSectionGroup( state );
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
 		const currentSelectedSiteId = getSelectedSiteId( state );
@@ -556,6 +561,7 @@ export default connect(
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			siteSlug: getSiteSlug( state, siteId ),
+			sectionGroup,
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			user: getCurrentUser( state ),
