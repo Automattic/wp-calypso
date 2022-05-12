@@ -47,10 +47,16 @@ export const setUserDeclaredSite = ( site: SiteDetails | undefined ) =>
 		site,
 	} as const );
 
+export const resetStore = () =>
+	( {
+		type: 'HELP_CENTER_RESET_STORE',
+	} as const );
+
 export type HelpCenterAction = ReturnType<
 	| typeof setShowHelpCenter
 	| typeof setSite
 	| typeof setSubject
+	| typeof resetStore
 	| typeof setMessage
 	| typeof setUserDeclaredSite
 	| typeof setUserDeclaredSiteUrl
