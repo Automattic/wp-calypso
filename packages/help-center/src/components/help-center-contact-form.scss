@@ -16,6 +16,7 @@
 		width: 32px;
 		height: 32px;
 		border: 2px solid white;
+		border-radius: 50%; // stylelint-disable-line declaration-property-unit-allowed-list
 	}
 
 	img + img {
@@ -25,6 +26,7 @@
 	.help-center-contact-form__site-picker-hes-tray-text {
 		color: #50575e;
 		margin: 0;
+		margin-left: 8px;
 	}
 }
 
