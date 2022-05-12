@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
+import { FEATURE_GOOGLE_MY_BUSINESS } from '@automattic/calypso-products';
 import { filter } from 'lodash';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import isSiteGoogleMyBusinessEligible from 'calypso/state/selectors/is-site-google-my-business-eligible';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 import 'calypso/state/sharing/init';
@@ -85,7 +86,7 @@ export function getEligibleKeyringServices( state, siteId, type ) {
 		if (
 			'google_my_business' === service.ID &&
 			( ! canCurrentUser( state, siteId, 'manage_options' ) ||
-				! isSiteGoogleMyBusinessEligible( state, siteId ) ||
+				! siteHasFeature( state, siteId, FEATURE_GOOGLE_MY_BUSINESS ) ||
 				! config.isEnabled( 'google-my-business' ) )
 		) {
 			return false;
