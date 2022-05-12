@@ -1,5 +1,17 @@
-const merge = require( 'lodash.merge' );
 const { parse: postcssParse } = require( 'postcss' );
+
+// Simple merge for JS builtin types. That's all we need here, no need for lodash.
+const mergeObjects = ( a, b ) => {
+	if ( typeof a === 'object' && a !== null && typeof b === 'object' && b !== null ) {
+		const ret = Array.isArray( a ) ? [ ...a ] : { ...a };
+		for ( const k of Object.keys( b ) ) {
+			ret[ k ] = mergeObjects( ret[ k ], b[ k ] );
+		}
+		return ret;
+	}
+
+	return typeof b === 'undefined' ? a : b;
+};
 
 const parse = ( css ) => {
 	const ast = postcssParse( css );
@@ -16,7 +28,7 @@ const parse = ( css ) => {
 				declarations[ dcl.prop ] = dcl.value;
 			} );
 
-			result = merge( result, { [ node.selector ]: declarations } );
+			result = mergeObjects( result, { [ node.selector ]: declarations } );
 		}
 	} );
 

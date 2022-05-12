@@ -1400,7 +1400,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     css-loader: ^6.5.1
-    lodash.merge: ^4.6.2
     mini-css-extract-plugin: ^1.6.2
     postcss: ^8.4.5
     rtlcss: ^3.1.2

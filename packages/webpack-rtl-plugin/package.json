@@ -33,7 +33,6 @@
 		"webpack": "^5.68.0"
 	},
 	"dependencies": {
-		"lodash.merge": "^4.6.2",
 		"postcss": "^8.4.5",
 		"rtlcss": "^3.1.2"
 	}
