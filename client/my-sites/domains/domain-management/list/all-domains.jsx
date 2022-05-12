@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAllDomains from 'calypso/components/data/query-all-domains';
-import QuerySiteDomainsInBulk from 'calypso/components/data/query-all-domains-with-details';
+import QuerySiteDomainsInBulk from 'calypso/components/data/query-site-domains-in-bulk';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
