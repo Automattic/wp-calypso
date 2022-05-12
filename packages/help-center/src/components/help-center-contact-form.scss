@@ -118,6 +118,10 @@
 .popover.is-top-left {
 	z-index: 9999;
 
+	.popover__arrow {
+		z-index: 1;
+	}
+
 	.popover__inner span {
 		display: block;
 		padding: 16px;

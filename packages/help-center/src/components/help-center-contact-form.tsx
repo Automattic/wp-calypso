@@ -262,8 +262,6 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					aria-haspopup
 					aria-label={ __( 'More information' ) }
 					onClick={ () => setOpen( ! isOpen ) }
-					onMouseEnter={ () => setOpen( true ) }
-					onMouseLeave={ () => setOpen( false ) }
 				>
 					<Icon icon={ info } size={ 18 } />
 				</Button>
@@ -349,16 +347,19 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 				/>
 			</section>
 
-			{ mode === 'FORUM' && <section></section> }
+			{ mode === 'FORUM' && (
+				<section>
+					<div className="help-center-contact-form__domain-sharing">
+						<CheckboxControl
+							checked={ hideSiteInfo }
+							label={ __( 'Don’t display my site’s URL publicly', 'full-site-editing' ) }
+							help={ <InfoTip /> }
+							onChange={ ( value ) => setHideSiteInfo( value ) }
+						/>
+					</div>
+				</section>
+			) }
 			<section>
-				<div className="help-center-contact-form__domain-sharing">
-					<CheckboxControl
-						checked={ hideSiteInfo }
-						label={ __( 'Don’t display my site’s URL publicly', 'full-site-editing' ) }
-						help={ <InfoTip /> }
-						onChange={ ( value ) => setHideSiteInfo( value ) }
-					/>
-				</div>
 				<Button
 					disabled={ isLoading || ! supportSite || ! message }
 					onClick={ handleCTA }
