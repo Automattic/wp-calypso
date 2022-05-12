@@ -1,28 +1,16 @@
-import { includes, some } from 'lodash';
+import { some } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { allowedCategories } from './categories/use-categories';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
 import PluginUpload from './plugin-upload';
 import PluginBrowser from './plugins-browser';
-
-function renderSinglePlugin( context, siteUrl ) {
-	const pluginSlug = decodeURIComponent( context.params.plugin );
-
-	// Render single plugin component
-	context.primary = createElement( PluginDetails, {
-		path: context.path,
-		pluginSlug,
-		siteUrl,
-	} );
-}
 
 function renderPluginList( context, basePath ) {
 	const search = context.query.s;
@@ -37,27 +25,6 @@ function renderPluginList( context, basePath ) {
 	if ( search ) {
 		gaRecordEvent( 'Plugins', 'Search', 'Search term', search );
 	}
-}
-
-// The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route. In that case,
-// the `:plugin` param is actually the side ID or category.
-function getCategoryForPluginsBrowser( context ) {
-	if ( context.params.plugin && includes( allowedCategories, context.params.plugin ) ) {
-		return context.params.plugin;
-	}
-
-	return context.params.category;
-}
-
-function renderPluginsBrowser( context ) {
-	const searchTerm = context.query.s;
-	const category = getCategoryForPluginsBrowser( context );
-
-	context.primary = createElement( PluginBrowser, {
-		path: context.path,
-		category,
-		search: searchTerm,
-	} );
 }
 
 export function renderPluginWarnings( context, next ) {
@@ -79,7 +46,7 @@ export function renderProvisionPlugins( context, next ) {
 	next();
 }
 
-export function plugins( context, next ) {
+export function renderPlugins( context, next ) {
 	const { pluginFilter: filter = 'all' } = context.params;
 	const basePath = sectionify( context.path ).replace( '/' + filter, '' );
 
@@ -88,32 +55,25 @@ export function plugins( context, next ) {
 	next();
 }
 
-function plugin( context, next ) {
+export function renderPlugin( context, next ) {
 	const siteUrl = getSiteFragment( context.path );
-	renderSinglePlugin( context, siteUrl );
+	const pluginSlug = decodeURIComponent( context.params.plugin );
+
+	// Render single plugin component
+	context.primary = createElement( PluginDetails, {
+		path: context.path,
+		pluginSlug,
+		siteUrl,
+	} );
 	next();
 }
 
-// The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route.
-// If the "plugin" part of the route is actually a site,
-// render the plugin browser for that site. Otherwise render plugin.
-export function browsePluginsOrPlugin( context, next ) {
-	const siteUrl = getSiteFragment( context.path );
-	if (
-		( context.params.plugin &&
-			( ( siteUrl && context.params.plugin === siteUrl.toString() ) ||
-				includes( allowedCategories, context.params.plugin ) ) ) ||
-		context.query?.s
-	) {
-		browsePlugins( context, next );
-		return;
-	}
-
-	plugin( context, next );
-}
-
-export function browsePlugins( context, next ) {
-	renderPluginsBrowser( context );
+export function renderBrowsePlugins( context, next ) {
+	context.primary = createElement( PluginBrowser, {
+		path: context.path,
+		category: context.params.category,
+		search: context.query.s,
+	} );
 	next();
 }
 

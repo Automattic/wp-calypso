@@ -7,12 +7,12 @@ import {
 	selectSiteIfLoggedIn,
 } from 'calypso/my-sites/controller';
 import {
-	browsePlugins,
-	browsePluginsOrPlugin,
+	renderPlugin,
+	renderBrowsePlugins,
 	renderPluginWarnings,
 	renderProvisionPlugins,
 	jetpackCanUpdate,
-	plugins,
+	renderPlugins,
 	scrollTopIfNoHash,
 	upload,
 } from './controller';
@@ -36,17 +36,24 @@ export default function () {
 		clientRender
 	);
 
-	page( '/plugins/browse/:category/:site', ( context ) => {
-		const { category, site } = context.params;
-		page.redirect( `/plugins/${ category }/${ site }` );
-	} );
+	page(
+		'/plugins/browse/:category/:site',
+		scrollTopIfNoHash,
+		siteSelection,
+		navigation,
+		renderBrowsePlugins,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/plugins/browse/:category',
+		scrollTopIfNoHash,
+		siteSelection,
+		sites,
+		makeLayout,
+		clientRender
+	);
 
-	page( '/plugins/browse/:siteOrCategory?', ( context ) => {
-		const { siteOrCategory } = context.params;
-		page.redirect( '/plugins' + ( siteOrCategory ? '/' + siteOrCategory : '' ) );
-	} );
-
-	page( '/plugins/upload', scrollTopIfNoHash, siteSelection, sites, makeLayout, clientRender );
 	page(
 		'/plugins/upload/:site',
 		scrollTopIfNoHash,
@@ -56,46 +63,24 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-
-	page( '/plugins', selectSiteIfLoggedIn, navigation, makeLayout, clientRender );
-
-	page(
-		'/plugins/:site',
-		scrollTopIfNoHash,
-		siteSelection,
-		navigation,
-		browsePlugins,
-		makeLayout,
-		clientRender
-	);
+	page( '/plugins/upload', scrollTopIfNoHash, siteSelection, sites, makeLayout, clientRender );
 
 	page(
 		'/plugins/manage/:site',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
-		plugins,
+		renderPlugins,
 		makeLayout,
 		clientRender
 	);
-
 	page(
 		'/plugins/:pluginFilter(active|inactive|updates)/:site',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
 		jetpackCanUpdate,
-		plugins,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/plugins/:plugin/:site',
-		scrollTopIfNoHash,
-		siteSelection,
-		navigation,
-		browsePluginsOrPlugin,
+		renderPlugins,
 		makeLayout,
 		clientRender
 	);
@@ -109,4 +94,24 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+	page(
+		'/plugins/:plugin/:site',
+		scrollTopIfNoHash,
+		siteSelection,
+		navigation,
+		renderPlugin,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/plugins/:site',
+		scrollTopIfNoHash,
+		siteSelection,
+		navigation,
+		renderBrowsePlugins,
+		makeLayout,
+		clientRender
+	);
+	page( '/plugins', selectSiteIfLoggedIn, navigation, makeLayout, clientRender );
 }
