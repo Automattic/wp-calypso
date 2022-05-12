@@ -1,7 +1,6 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Fragment, PureComponent } from 'react';
-import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import DomainRow from './domain-row';
 import DomainsTableHeader from './domains-table-header';
@@ -77,14 +76,6 @@ class DomainsTable extends PureComponent {
 		return <QuerySitePurchases key={ `query-purchases-${ blogId }` } siteId={ blogId } />;
 	}
 
-	renderQuerySiteDomainsOnce( blogId ) {
-		if ( this.renderedQuerySiteDomains[ blogId ] ) {
-			return null;
-		}
-		this.renderedQuerySiteDomains[ blogId ] = true;
-		return <QuerySiteDomains key={ `query-purchases-${ blogId }` } siteId={ blogId } />;
-	}
-
 	render() {
 		const {
 			currentRoute,
@@ -117,6 +108,7 @@ class DomainsTable extends PureComponent {
 			];
 		}
 
+		// This is already done in AllDomains, this should only be necessary if DomainsTable is called from somewhere else
 		const domainItems = filterOutWpcomDomains( domains );
 
 		const selectedColumnDefinition = domainsTableColumns.find(
@@ -147,9 +139,6 @@ class DomainsTable extends PureComponent {
 					{ ! isManagingAllSites &&
 						domain.blogId &&
 						this.renderQuerySitePurchasesOnce( domain.blogId ) }
-					{ isManagingAllSites &&
-						domain.blogId &&
-						this.renderQuerySiteDomainsOnce( domain.blogId ) }
 					<DomainRow
 						currentRoute={ currentRoute }
 						showCheckbox={ isContactEmailEditContext }
