@@ -312,3 +312,46 @@ describe( 'getSiteOptions', () => {
 		expect( getSiteOption( state, siteId, 'admin_url' ) ).toEqual( adminUrl );
 	} );
 } );
+
+describe( 'siteHasFeature', () => {
+	it( 'Test if site has features', async () => {
+		const siteId = 924785;
+		const siteSlug = `http://mytestsite${ siteId }.wordpress.com`;
+		const apiResponse = {
+			URL: siteSlug,
+			ID: siteId,
+			plan: {
+				features: {
+					active: [ 'woop' ],
+					available: {
+						woop: 'This is a test feature',
+					},
+				},
+			},
+		};
+
+		( wpcomRequest as jest.Mock ).mockResolvedValue( apiResponse );
+
+		const listenForStateUpdate = () => {
+			return new Promise( ( resolve ) => {
+				const unsubscribe = subscribe( () => {
+					unsubscribe();
+					resolve();
+				} );
+			} );
+		};
+
+		// First call returns undefined
+		expect( select( store ).getSite( siteId ) ).toEqual( undefined );
+
+		// In the first state update, the resolver starts resolving
+		await listenForStateUpdate();
+
+		// In the second update, the resolver is finished resolving and we can read the result in state
+		await listenForStateUpdate();
+
+		expect( select( store ).siteHasFeature( siteId, 'woop' ) ).toEqual( true );
+
+		expect( select( store ).siteHasFeature( siteId, 'loop' ) ).toEqual( false );
+	} );
+} );

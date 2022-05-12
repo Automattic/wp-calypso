@@ -27,10 +27,10 @@ const StoreFeatures: Step = function StartingPointStep( { navigation } ) {
 	const siteSlug = useSiteSlugParam();
 	const site = useSite();
 	const hasPaymentsFeature = useSelect( ( select ) =>
-		select( SITE_STORE ).hasActiveSiteFeature( site?.ID, FEATURE_SIMPLE_PAYMENTS )
+		select( SITE_STORE ).siteHasFeature( site?.ID, FEATURE_SIMPLE_PAYMENTS )
 	);
 	const hasWooFeature = useSelect( ( select ) =>
-		select( SITE_STORE ).hasActiveSiteFeature( site?.ID, FEATURE_WOOP )
+		select( SITE_STORE ).siteHasFeature( site?.ID, FEATURE_WOOP )
 	);
 	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const trackSupportLinkClick = ( storeType: StoreFeatureSet ) => {
