@@ -37,8 +37,8 @@ describe( 'Region Address Fieldsets', () => {
 	test( 'should render `<UsAddressFieldset />` with default props', () => {
 		const { container } = renderWithProvider( <RegionAddressFieldsets { ...defaultProps } /> );
 		expect( container.getElementsByClassName( 'us-address-fieldset' ) ).toHaveLength( 1 );
-		expect( screen.queryByLabelText( 'Address' ) ).toBeDefined();
-		expect( screen.queryByText( '+ Add Address Line 2' ) ).toBeDefined();
+		expect( screen.queryByLabelText( 'Address' ) ).toBeInTheDocument();
+		expect( screen.queryByText( '+ Add Address Line 2' ) ).toBeInTheDocument();
 	} );
 
 	test( 'should render `<UkAddressFieldset />` with a UK region countryCode', () => {
