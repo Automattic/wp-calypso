@@ -83,7 +83,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const isPremiumThemeAvailable = Boolean(
 		useSelect(
 			( select ) =>
-				site && select( SITE_STORE ).hasActiveSiteFeature( site.ID, WPCOM_FEATURES_PREMIUM_THEMES )
+				site && select( SITE_STORE ).siteHasFeature( site.ID, WPCOM_FEATURES_PREMIUM_THEMES )
 		)
 	);
 
