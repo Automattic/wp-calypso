@@ -180,24 +180,30 @@ button.button.back-button__help-center.is-borderless {
 		padding: 0;
 
 		> a {
-			border: 1px solid #eee;
 			display: flex;
 			align-items: center;
-			padding: 16px;
 			text-decoration: none;
-			color: black;
-
-			&:hover {
-				background-color: #f6f7f7;
-			}
+			color: var( --studio-gray-100 );
+			margin-bottom: 16px;
 		}
 	}
 
 	svg {
-		margin-right: 8px;
-		fill: rgb( 6, 117, 196 );
+		margin-right: 15px;
+		border-radius: 2px;
+		display: block;
+		padding: 8px;
+		background: var( --studio-gray-0 );
+		fill: var( --studio-blue-50 );
+		flex-shrink: 0;
 	}
 }
 .help-center-sibyl-articles__title {
 	font-size: $font-body-small;
+	font-weight: 500;
+	color: var( --studio-gray-100 );
+}
+
+.help-center-sibyl-articles__container {
+	padding-top: 0;
 }

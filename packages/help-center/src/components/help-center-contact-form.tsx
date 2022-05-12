@@ -322,7 +322,6 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					/>
 				</section>
 			) }
-			<SibylArticles supportSite={ supportSite } message={ message } />
 			<section>
 				<Button
 					disabled={ isLoading || ! supportSite || ! message }
@@ -343,6 +342,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					</div>
 				</section>
 			) }
+			<SibylArticles supportSite={ supportSite } message={ message } />
 		</main>
 	);
 };

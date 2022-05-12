@@ -1,8 +1,9 @@
-import { Gridicon } from '@automattic/components';
-import { useSibylQuery, SiteDetails } from '@automattic/data-stores';
+import { useSibylQuery, SiteDetails, useSiteIntent } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { Icon, page } from '@wordpress/icons';
 import { useDebounce } from 'use-debounce';
+import { getContextResults } from '../contextual-help/contextual-help';
 
 export const SITE_STORE = 'automattic/site' as const;
 
@@ -23,25 +24,30 @@ export function SibylArticles( { message, supportSite }: Props ) {
 
 	const { data: sibylArticles } = useSibylQuery( debouncedMessage, isJetpack, isAtomic );
 
-	if ( ! sibylArticles?.length ) {
-		return null;
-	}
+	const { data: intent } = useSiteIntent( supportSite?.ID );
+
+	const articles = sibylArticles?.length
+		? sibylArticles
+		: getContextResults( 'gutenberg-editor', intent?.site_intent );
 
 	return (
-		<>
-			<h3 className="help-center-sibyl-articles__title">
-				{ __( 'Do you want the answer to any of these questions?', __i18n_text_domain__ ) }
+		<div className="help-center-sibyl-articles__container">
+			<h3 id="help-center--contextual_help" className="help-center-sibyl-articles__title">
+				{ __( 'Recommended resources', __i18n_text_domain__ ) }
 			</h3>
-			<ul className="help-center-sibyl-articles__list">
-				{ sibylArticles.map( ( article ) => (
+			<ul
+				className="help-center-sibyl-articles__list"
+				aria-labelledby="help-center--contextual_help"
+			>
+				{ articles.map( ( article ) => (
 					<li>
 						<a href={ article.link } target="_blank" rel="noreferrer noopener">
-							<Gridicon icon="book"></Gridicon>
+							<Icon icon={ page } />
 							{ article.title }
 						</a>
 					</li>
 				) ) }
 			</ul>
-		</>
+		</div>
 	);
 }
