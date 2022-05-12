@@ -15,14 +15,8 @@ import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import {
-	marketingConnections,
-	marketingUltimateTrafficGuide,
-	pluginsPath,
-} from 'calypso/my-sites/marketing/paths';
-import { hasTrafficGuidePurchase } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
+import { marketingConnections, pluginsPath } from 'calypso/my-sites/marketing/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import * as T from 'calypso/types';
@@ -37,7 +31,6 @@ export const MarketingTools: FunctionComponent = () => {
 	const recordTracksEvent = ( event: string ) => dispatch( recordTracksEventAction( event ) );
 
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
-	const purchases = useSelector( getUserPurchases );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
 	const sitePlan = useSelector( ( state ) => getSitePlanSlug( state, siteId ) ) || '';
 	const showFacebookUpsell = [ 'value_bundle', 'personal-bundle', 'free_plan' ].includes(
@@ -86,10 +79,8 @@ export const MarketingTools: FunctionComponent = () => {
 		page( marketingConnections( selectedSiteSlug ) );
 	};
 
-	const handleUltimateTrafficGuideClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_ultimate_traffic_guide_button_click' );
-
-		page( marketingUltimateTrafficGuide( selectedSiteSlug ) );
+	const handleSEOCourseClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_seo_course_button_click' );
 	};
 
 	const isEnglish = ( config( 'english_locales' ) as string[] ).includes( getLocaleSlug() ?? '' );
@@ -234,17 +225,18 @@ export const MarketingTools: FunctionComponent = () => {
 
 				{ isEnglish && (
 					<MarketingToolsFeature
-						title={ translate( 'Introducing the WordPress.com Ultimate Traffic Guide' ) }
+						title={ translate( 'Increase traffic to your WordPress.com site' ) }
 						description={ translate(
-							"Our brand new Ultimate Traffic Guide reveals more than a dozen of today's most effective traffic techniques. " +
-								'The guide is appropriate for beginner to intermediate users.'
+							'Take our free introductory course about search engine optimization (SEO) and learn how to improve your site or blog for both search engines and humans.'
 						) }
 						imagePath={ rocket }
 					>
-						<Button onClick={ handleUltimateTrafficGuideClick }>
-							{ hasTrafficGuidePurchase( purchases )
-								? translate( 'Download now' )
-								: translate( 'Learn more' ) }
+						<Button
+							onClick={ handleSEOCourseClick }
+							href="https://wpcourses.com/course/intro-to-search-engine-optimization-seo/"
+							target="_blank"
+						>
+							{ translate( 'Register now' ) }
 						</Button>
 					</MarketingToolsFeature>
 				) }
