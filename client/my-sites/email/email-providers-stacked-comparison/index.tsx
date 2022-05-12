@@ -78,18 +78,15 @@ const EmailProvidersStackedComparison = ( {
 		)
 	);
 
+	const isGSuiteSupported =
+		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
+
+	const shouldPromoteGoogleWorkspace = isGSuiteSupported && source === 'google-sale';
+
 	const [ detailsExpanded, setDetailsExpanded ] = useState( () => {
 		const hasDiscountForGSuite = hasDiscount( gSuiteProduct );
 
-		const isGSuiteSupported =
-			domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
-
-		if (
-			isGSuiteSupported &&
-			source === 'google-sale' &&
-			hasDiscountForGSuite &&
-			! selectedEmailProviderSlug
-		) {
+		if ( shouldPromoteGoogleWorkspace && ! selectedEmailProviderSlug && hasDiscountForGSuite ) {
 			return {
 				google: true,
 				titan: false,
@@ -168,6 +165,27 @@ const EmailProvidersStackedComparison = ( {
 
 	const hasExistingEmailForwards = ! isDomainInCart && hasEmailForwards( domain );
 
+	const emailProviderCards = [
+		<ProfessionalEmailCard
+			comparisonContext={ comparisonContext }
+			detailsExpanded={ detailsExpanded.titan }
+			intervalLength={ selectedIntervalLength }
+			isDomainInCart={ isDomainInCart }
+			onExpandedChange={ changeExpandedState }
+			selectedDomainName={ selectedDomainName }
+			source={ source }
+		/>,
+		<GoogleWorkspaceCard
+			comparisonContext={ comparisonContext }
+			detailsExpanded={ detailsExpanded.google }
+			intervalLength={ selectedIntervalLength }
+			isDomainInCart={ isDomainInCart }
+			onExpandedChange={ changeExpandedState }
+			selectedDomainName={ selectedDomainName }
+			source={ source }
+		/>,
+	];
+
 	return (
 		<Main wideLayout>
 			<QueryProductsList />
@@ -215,25 +233,9 @@ const EmailProvidersStackedComparison = ( {
 
 			{ ! isDomainInCart && domain && <EmailExistingPaidServiceNotice domain={ domain } /> }
 
-			<ProfessionalEmailCard
-				comparisonContext={ comparisonContext }
-				detailsExpanded={ detailsExpanded.titan }
-				intervalLength={ selectedIntervalLength }
-				isDomainInCart={ isDomainInCart }
-				onExpandedChange={ changeExpandedState }
-				selectedDomainName={ selectedDomainName }
-				source={ source }
-			/>
-
-			<GoogleWorkspaceCard
-				comparisonContext={ comparisonContext }
-				detailsExpanded={ detailsExpanded.google }
-				intervalLength={ selectedIntervalLength }
-				isDomainInCart={ isDomainInCart }
-				onExpandedChange={ changeExpandedState }
-				selectedDomainName={ selectedDomainName }
-				source={ source }
-			/>
+			<>
+				{ shouldPromoteGoogleWorkspace ? [ ...emailProviderCards ].reverse() : emailProviderCards }
+			</>
 
 			{ ! isDomainInCart && <EmailForwardingLink selectedDomainName={ selectedDomainName } /> }
 
