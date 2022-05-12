@@ -25,6 +25,18 @@ interface Props {
 	config: Config;
 }
 
+function getEditorElement( selector: string ): HTMLElement | null {
+	const iFrameEditor = document.querySelector(
+		'.edit-site-visual-editor__editor-canvas'
+	) as HTMLIFrameElement;
+
+	// We will need a better way to disambiguate that this is a selector inside the Editor
+	// Ideas: a flag in meta to say so, perhaps a token like `EDITOR` as a parent selector
+	return (
+		iFrameEditor?.contentDocument?.querySelector( selector ) || document.querySelector( selector )
+	);
+}
+
 const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const [ currentStepIndex, setCurrentStepIndex ] = useState( 0 );
 	const [ initialFocusedElement, setInitialFocusedElement ] = useState< HTMLElement | null >(
@@ -39,8 +51,9 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const lastStepIndex = config.steps.length - 1;
 	const referenceElementSelector =
 		config.steps[ currentStepIndex ].referenceElements?.[ isMobile ? 'mobile' : 'desktop' ] || null;
+
 	const referenceElement = referenceElementSelector
-		? document.querySelector< HTMLElement >( referenceElementSelector )
+		? getEditorElement( referenceElementSelector )
 		: null;
 
 	useEffect( () => {

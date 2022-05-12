@@ -148,7 +148,7 @@ function WelcomeTour() {
 									const boundary = document.querySelector( '.edit-post-header' );
 
 									if ( ! boundary ) {
-										return;
+										return [ 0, 0 ];
 									}
 
 									const boundaryRect = boundary.getBoundingClientRect();

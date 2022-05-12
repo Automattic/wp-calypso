@@ -79,6 +79,9 @@ function getTourSteps(
 		},
 		{
 			slug: 'everything-is-a-block',
+			referenceElements: {
+				desktop: '.wp-block-site-title',
+			},
 			meta: {
 				heading: __( 'Everything is a block', 'full-site-editing' ),
 				descriptions: {
