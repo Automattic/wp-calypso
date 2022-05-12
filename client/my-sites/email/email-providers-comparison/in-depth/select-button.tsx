@@ -1,9 +1,12 @@
 import { Button } from '@automattic/components';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -45,11 +48,14 @@ const SelectButton = ( {
 	className,
 	emailProviderSlug,
 	intervalLength,
-	isDomainInCart,
 	onSelectEmailProvider,
 	selectedDomainName,
 }: SelectButtonProps ): ReactElement => {
 	const translate = useTranslate();
+
+	const cartKey = useCartKey();
+	const shoppingCartManager = useShoppingCart( cartKey );
+	const isDomainInCart = hasDomainInCart( shoppingCartManager.responseCart, selectedDomainName );
 
 	const isPlanAvailable = usePlanAvailable(
 		emailProviderSlug,
