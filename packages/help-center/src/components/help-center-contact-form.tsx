@@ -213,7 +213,6 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 				}
 				case 'EMAIL': {
 					const ticketMeta = [
-						'How can you help: ' + message,
 						'Site I need help with: ' + supportSite?.URL,
 						'Plan: ' + supportSite?.plan?.product_slug,
 					];
