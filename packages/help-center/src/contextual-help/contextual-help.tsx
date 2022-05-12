@@ -743,9 +743,9 @@ const contextLinksForSection: Record< string, LinksForSection | LinksForSection[
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/adding-users/' );
+				return localizeUrl( 'https://wordpress.com/support/user-roles/' );
 			},
-			post_id: 2160,
+			post_id: 1221,
 			get title() {
 				return __( 'Inviting Contributors, Followers, and Viewers', __i18n_text_domain__ );
 			},
@@ -1441,9 +1441,9 @@ const contextLinksForSection: Record< string, LinksForSection | LinksForSection[
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/adding-users/' );
+				return localizeUrl( 'https://wordpress.com/support/user-roles/' );
 			},
-			post_id: 2160,
+			post_id: 1221,
 			get title() {
 				return __( 'Inviting Contributors, Followers, and Viewers', __i18n_text_domain__ );
 			},
