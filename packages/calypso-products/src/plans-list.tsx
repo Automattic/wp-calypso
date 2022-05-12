@@ -1593,8 +1593,6 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 		FEATURE_UNLIMITED_ADMINS,
 		FEATURE_6GB_STORAGE,
 	],
-	getIncludedFeatures: () => [], // @todo clk ?
-	getInferiorFeatures: () => [],
 };
 
 PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
