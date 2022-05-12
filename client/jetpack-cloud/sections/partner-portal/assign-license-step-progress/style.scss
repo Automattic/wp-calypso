@@ -3,13 +3,9 @@
 
 .assign-license-step-progress {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     margin-bottom: 40px;
-
-    @include break-medium {
-        justify-content: flex-start;
-    }
 
     &__step {
         display: flex;
@@ -60,5 +56,23 @@
         background-color: var( --studio-jetpack-green-50 );
         border: 2px solid var( --studio-jetpack-green-50 );
         color: var( --studio-white );
+    }
+
+    &__step.step-next > &__step-name {
+        display: none;
+
+        @include break-medium {
+            display: flex;
+        }
+    }
+
+    &__step.step-complete > &__step-name,
+    &__step.step-complete > &__step-circle,
+    &__step.step-complete + &__step-separator {
+        display: none;
+
+        @include break-medium {
+            display: flex;
+        }
     }
 }
