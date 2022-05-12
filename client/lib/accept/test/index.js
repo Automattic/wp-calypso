@@ -17,7 +17,7 @@ describe( '#accept()', () => {
 
 		const dialog = document.querySelector( '.accept__dialog' );
 		expect( dialog ).toBeInstanceOf( window.Element );
-		expect( dialog.textContent ).toEqual( message );
+		expect( dialog ).toHaveTextContent( message );
 	} );
 
 	test( 'should trigger the callback with an accepted prompt', () => {
