@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { planHasFeature, FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useVerticalImagesQuery } from '@automattic/data-stores';
 import DesignPicker, {
@@ -59,7 +59,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const siteSlug = useSiteSlugParam();
 	const siteTitle = site?.name;
 	const isReskinned = true;
-	const sitePlanSlug = site?.plan?.product_slug;
 	const siteVerticalId = useSelect(
 		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site.ID ) ) || undefined
 	);
@@ -82,9 +81,9 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
 
 	const isPremiumThemeAvailable = Boolean(
-		useMemo(
-			() => sitePlanSlug && planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
-			[ sitePlanSlug ]
+		useSelect(
+			( select ) =>
+				site && select( SITE_STORE ).hasActiveSiteFeature( site.ID, WPCOM_FEATURES_PREMIUM_THEMES )
 		)
 	);
 
@@ -413,7 +412,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			isGridMinimal={ isAnchorSite }
 			highResThumbnails
 			hideFullScreenPreview={ isAnchorSite }
-			premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ !! isPremiumThemeAvailable } /> }
+			premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
 			categorization={ showDesignPickerCategories ? categorization : undefined }
 			recommendedCategorySlug={ categorizationOptions.defaultSelection }
 			categoriesHeading={ heading }
