@@ -31,7 +31,7 @@ describe( 'HiddenInput', () => {
 		const fieldValue = 'Not empty';
 		render( <HiddenInput { ...defaultProps } value={ fieldValue } /> );
 		expect( screen.queryByText( 'Love cannot be hidden.' ) ).not.toBeInTheDocument();
-		expect( screen.queryByPlaceholderText( 'Your name' ) ).toHaveAttribute( 'value', fieldValue );
+		expect( screen.queryByPlaceholderText( 'Your name' ) ).toHaveValue( fieldValue );
 	} );
 
 	test( 'it should toggle input field when the toggle link is clicked', () => {
