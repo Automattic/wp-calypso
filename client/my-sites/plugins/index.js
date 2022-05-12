@@ -1,15 +1,9 @@
 import page from 'page';
-import { makeLayout, render as clientRender } from 'calypso/controller';
-import {
-	navigation,
-	siteSelection,
-	sites,
-	selectSiteIfLoggedIn,
-} from 'calypso/my-sites/controller';
+import { makeLayout, render } from 'calypso/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	browsePlugins,
 	browsePluginsOrPlugin,
-	renderPluginWarnings,
 	renderProvisionPlugins,
 	jetpackCanUpdate,
 	plugins,
@@ -24,7 +18,7 @@ export default function () {
 		siteSelection,
 		renderProvisionPlugins,
 		makeLayout,
-		clientRender
+		render
 	);
 
 	page(
@@ -33,20 +27,15 @@ export default function () {
 		siteSelection,
 		renderProvisionPlugins,
 		makeLayout,
-		clientRender
+		render
 	);
-
-	page( '/plugins/browse/:category/:site', ( context ) => {
-		const { category, site } = context.params;
-		page.redirect( `/plugins/${ category }/${ site }` );
-	} );
 
 	page( '/plugins/browse/:siteOrCategory?', ( context ) => {
 		const { siteOrCategory } = context.params;
 		page.redirect( '/plugins' + ( siteOrCategory ? '/' + siteOrCategory : '' ) );
 	} );
 
-	page( '/plugins/upload', scrollTopIfNoHash, siteSelection, sites, makeLayout, clientRender );
+	page( '/plugins/upload', scrollTopIfNoHash, siteSelection, sites, makeLayout, render );
 	page(
 		'/plugins/upload/:site',
 		scrollTopIfNoHash,
@@ -54,10 +43,10 @@ export default function () {
 		navigation,
 		upload,
 		makeLayout,
-		clientRender
+		render
 	);
 
-	page( '/plugins', selectSiteIfLoggedIn, navigation, makeLayout, clientRender );
+	page( '/plugins', scrollTopIfNoHash, siteSelection, sites, makeLayout, render );
 
 	page(
 		'/plugins/:site',
@@ -66,7 +55,7 @@ export default function () {
 		navigation,
 		browsePlugins,
 		makeLayout,
-		clientRender
+		render
 	);
 
 	page(
@@ -76,7 +65,7 @@ export default function () {
 		navigation,
 		plugins,
 		makeLayout,
-		clientRender
+		render
 	);
 
 	page(
@@ -87,7 +76,7 @@ export default function () {
 		jetpackCanUpdate,
 		plugins,
 		makeLayout,
-		clientRender
+		render
 	);
 
 	page(
@@ -97,16 +86,6 @@ export default function () {
 		navigation,
 		browsePluginsOrPlugin,
 		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/plugins/:plugin/eligibility/:site',
-		scrollTopIfNoHash,
-		siteSelection,
-		navigation,
-		renderPluginWarnings,
-		makeLayout,
-		clientRender
+		render
 	);
 }
