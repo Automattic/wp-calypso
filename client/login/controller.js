@@ -131,6 +131,9 @@ export function magicLoginUse( context, next ) {
 export function redirectDefaultLocale( context, next ) {
 	// Only handle simple routes
 	if ( context.pathname !== '/log-in/en' && context.pathname !== '/log-in/jetpack/en' ) {
+		if ( ! isUserLoggedIn( context.store.getState() ) && ! context.params.lang ) {
+			context.params.lang = config( 'i18n_default_locale_slug' );
+		}
 		return next();
 	}
 
@@ -150,9 +153,9 @@ export function redirectDefaultLocale( context, next ) {
 	}
 
 	if ( context.params.isJetpack === 'jetpack' ) {
-		context.redirect( '/log-in/jetpack' );
+		page.redirect( '/log-in/jetpack' );
 	} else {
-		context.redirect( '/log-in' );
+		page.redirect( '/log-in' );
 	}
 }
 
