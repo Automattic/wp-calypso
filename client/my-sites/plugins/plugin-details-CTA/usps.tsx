@@ -49,8 +49,6 @@ const USPS: React.FC< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const isLiveSupport = useSelector( hasOrIntendsToBuyLiveSupport );
-
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -63,9 +61,11 @@ const USPS: React.FC< Props > = ( {
 		return getProductDisplayCost( state, eligibleForProPlan ? PLAN_WPCOM_PRO : productSlug );
 	} );
 
-	const supportText = isLiveSupport
+	const isLiveSupport = useSelector( hasOrIntendsToBuyLiveSupport );
+	const supportTextNonPro = isLiveSupport
 		? translate( 'Live chat support 24x7' )
 		: translate( 'Unlimited Email Support' );
+	const supportText = eligibleForProPlan ? translate( 'Premium support' ) : supportTextNonPro;
 
 	const filteredUSPS = [
 		...( isMarketplaceProduct

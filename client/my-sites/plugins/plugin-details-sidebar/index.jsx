@@ -5,8 +5,10 @@ import eye from 'calypso/assets/images/marketplace/eye.svg';
 import support from 'calypso/assets/images/marketplace/support.svg';
 import wooLogo from 'calypso/assets/images/marketplace/woo-logo.svg';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
 import { hasOrIntendsToBuyLiveSupport } from 'calypso/state/marketplace/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const PluginDetailsSidebar = ( {
 	plugin: {
@@ -20,10 +22,19 @@ const PluginDetailsSidebar = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const isAnnualPlan = useSelector( hasOrIntendsToBuyLiveSupport );
 	const isWooCommercePluginRequired = requirements.plugins?.some(
 		( pluginName ) => pluginName === 'plugins/woocommerce'
 	);
+
+	const selectedSite = useSelector( getSelectedSite );
+	const eligibleForProPlan = useSelector( ( state ) =>
+		isEligibleForProPlan( state, selectedSite?.ID )
+	);
+	const isLiveSupport = useSelector( hasOrIntendsToBuyLiveSupport );
+	const supportTextNonPro = isLiveSupport
+		? translate( 'Live chat support 24x7' )
+		: translate( 'Unlimited Email Support' );
+	const supportText = eligibleForProPlan ? translate( 'Premium support' ) : supportTextNonPro;
 
 	if ( ! isMarketplaceProduct ) {
 		return (
@@ -102,11 +113,7 @@ const PluginDetailsSidebar = ( {
 				id="support"
 				icon={ { src: support } }
 				title={ translate( 'Support' ) }
-				description={
-					isAnnualPlan
-						? translate( 'Live chat support 24x7' )
-						: translate( 'Unlimited Email Support' )
-				}
+				description={ supportText }
 				links={ supportLinks }
 				first={ ! isWooCommercePluginRequired && ! demo_url }
 			/>
