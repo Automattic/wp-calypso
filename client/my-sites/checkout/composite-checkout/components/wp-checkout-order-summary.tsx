@@ -212,16 +212,18 @@ function CheckoutSummaryFeaturesList( props: {
 			{ ! hasPlanInCart && <CheckoutSummaryChatIfAvailable siteId={ siteId } /> }
 
 			{ uniqueRefundableProducts.length &&
-				uniqueRefundableProducts.map( ( product ) => (
-					<CheckoutSummaryFeaturesListItem key={ product.uuid }>
-						<WPCheckoutCheckIcon id="features-list-refund-text" />
-						{ getRefundText(
-							getRefundDays( product ),
-							isDomainProduct( product ) ? 'Domain Registration' : product.product_name,
-							translate
-						) }
-					</CheckoutSummaryFeaturesListItem>
-				) ) }
+				uniqueRefundableProducts.map( ( product ) => {
+					const productName = isDomainProduct( product )
+						? translate( 'Domain Registration', { textOnly: true } )
+						: product.product_name;
+
+					return (
+						<CheckoutSummaryFeaturesListItem key={ product.uuid }>
+							<WPCheckoutCheckIcon id="features-list-refund-text" />
+							{ getRefundText( getRefundDays( product ), productName, translate ) }
+						</CheckoutSummaryFeaturesListItem>
+					);
+				} ) }
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }
