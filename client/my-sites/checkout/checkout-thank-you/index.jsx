@@ -17,6 +17,7 @@ import {
 	isBusiness,
 	isSiteRedirect,
 	isTheme,
+	isStarter,
 	isTitanMail,
 	isJetpackBusinessPlan,
 	shouldFetchSitePlans,
@@ -48,6 +49,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
+import { isStarterPlanEnabled } from 'calypso/my-sites/plans-comparison';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import {
@@ -85,8 +87,8 @@ import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
 import SiteRedirectDetails from './site-redirect-details';
+import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
-
 import './style.scss';
 
 function getPurchases( props ) {
@@ -377,6 +379,7 @@ export class CheckoutThankYou extends Component {
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
+		let showHappinessSupport = ! this.props.isSimplified;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
 		let wasDomainProduct = false;
@@ -392,6 +395,7 @@ export class CheckoutThankYou extends Component {
 			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
+			showHappinessSupport = showHappinessSupport && ! purchases.some( isStarter ); // Don't show support if Starter was purchased
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 			wasDomainProduct = purchases.some(
 				( purchase ) =>
@@ -401,6 +405,9 @@ export class CheckoutThankYou extends Component {
 			);
 			wasDIFMProduct = purchases.some( isDIFMProduct );
 			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
+		} else if ( isStarterPlanEnabled() ) {
+			// Don't show the Happiness support until we figure out the user doesn't have a starter plan
+			showHappinessSupport = false;
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
@@ -503,7 +510,7 @@ export class CheckoutThankYou extends Component {
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
-				{ ! this.props.isSimplified && (
+				{ showHappinessSupport && (
 					<Card className="checkout-thank-you__footer">
 						<HappinessSupport
 							isJetpack={ wasJetpackPlanPurchased }
@@ -569,6 +576,8 @@ export class CheckoutThankYou extends Component {
 				return [ BloggerPlanDetails, find( purchases, isBlogger ) ];
 			} else if ( purchases.some( isPersonal ) ) {
 				return [ PersonalPlanDetails, find( purchases, isPersonal ) ];
+			} else if ( purchases.some( isStarter ) ) {
+				return [ StarterPlanDetails, find( purchases, isStarter ) ];
 			} else if ( purchases.some( isPremium ) ) {
 				return [ PremiumPlanDetails, find( purchases, isPremium ) ];
 			} else if ( purchases.some( isBusiness ) ) {

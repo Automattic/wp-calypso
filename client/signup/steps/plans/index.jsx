@@ -20,7 +20,10 @@ import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import wp from 'calypso/lib/wp';
-import PlansComparison, { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import PlansComparison, {
+	isEligibleForProPlan,
+	isStarterPlanEnabled,
+} from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -239,6 +242,19 @@ export class PlansStep extends Component {
 		const { hideFreePlan, subHeaderText, translate, eligibleForProPlan, locale } = this.props;
 
 		if ( eligibleForProPlan ) {
+			if ( isStarterPlanEnabled() ) {
+				return hideFreePlan
+					? translate( 'Try risk-free with a 14-day money-back guarantee.' )
+					: translate(
+							'Try risk-free with a 14-day money-back guarantee or {{link}}start with a free site{{/link}}.',
+							{
+								components: {
+									link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+								},
+							}
+					  );
+			}
+
 			return 'en' === locale ||
 				i18n.hasTranslation( 'he WordPress Pro plan comes with a 14-day money back guarantee' )
 				? translate( 'The WordPress Pro plan comes with a 14-day money back guarantee' )

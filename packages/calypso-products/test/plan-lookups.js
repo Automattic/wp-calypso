@@ -44,6 +44,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_PRO,
+	PLAN_WPCOM_STARTER,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
@@ -122,6 +123,7 @@ describe( 'isFlexiblePlan', () => {
 		expect( isFlexiblePlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
 		expect( isFlexiblePlan( PLAN_BUSINESS ) ).to.equal( false );
 		expect( isFlexiblePlan( PLAN_WPCOM_PRO ) ).to.equal( false );
+		expect( isFlexiblePlan( PLAN_WPCOM_STARTER ) ).to.equal( false );
 		expect( isFlexiblePlan( PLAN_JETPACK_BUSINESS ) ).to.equal( false );
 		expect( isFlexiblePlan( PLAN_ECOMMERCE ) ).to.equal( false );
 		expect( isFlexiblePlan( 'non-existing plan' ) ).to.equal( false );
@@ -214,6 +216,7 @@ describe( 'isProPlan', () => {
 		expect( isProPlan( PLAN_PREMIUM ) ).to.equal( false );
 		expect( isProPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
 		expect( isProPlan( PLAN_ECOMMERCE ) ).to.equal( false );
+		expect( isProPlan( PLAN_WPCOM_STARTER ) ).to.equal( false );
 		expect( isProPlan( 'non-existing plan' ) ).to.equal( false );
 	} );
 } );
@@ -344,6 +347,7 @@ describe( 'isWpComProPlan', () => {
 		expect( isWpComProPlan( PLAN_JETPACK_PREMIUM ) ).to.equal( false );
 		expect( isWpComProPlan( PLAN_BUSINESS ) ).to.equal( false );
 		expect( isWpComProPlan( PLAN_BUSINESS_2_YEARS ) ).to.equal( false );
+		expect( isWpComProPlan( PLAN_WPCOM_STARTER ) ).to.equal( false );
 		expect( isWpComProPlan( 'non-exisWpComting plan' ) ).to.equal( false );
 	} );
 } );
@@ -351,6 +355,7 @@ describe( 'isWpComProPlan', () => {
 describe( 'isWpComAnnualPlan', () => {
 	test( 'should return true for annual plans', () => {
 		expect( isWpComAnnualPlan( PLAN_WPCOM_PRO ) ).to.equal( true );
+		expect( isWpComAnnualPlan( PLAN_WPCOM_STARTER ) ).to.equal( true );
 		expect( isWpComAnnualPlan( PLAN_PERSONAL ) ).to.equal( true );
 		expect( isWpComAnnualPlan( PLAN_PREMIUM ) ).to.equal( true );
 		expect( isWpComAnnualPlan( PLAN_BUSINESS ) ).to.equal( true );
@@ -386,6 +391,7 @@ describe( 'isWpComBiennialPlan', () => {
 
 	test( 'should return false for non-biennial plans', () => {
 		expect( isWpComBiennialPlan( PLAN_WPCOM_PRO ) ).to.equal( false );
+		expect( isWpComBiennialPlan( PLAN_WPCOM_STARTER ) ).to.equal( false );
 		expect( isWpComBiennialPlan( PLAN_PERSONAL ) ).to.equal( false );
 		expect( isWpComBiennialPlan( PLAN_PREMIUM ) ).to.equal( false );
 		expect( isWpComBiennialPlan( PLAN_BUSINESS ) ).to.equal( false );
@@ -412,6 +418,7 @@ describe( 'isWpComMonthlyPlan', () => {
 
 	test( 'should return false for non-monthly plans', () => {
 		expect( isWpComMonthlyPlan( PLAN_WPCOM_PRO ) ).to.equal( false );
+		expect( isWpComMonthlyPlan( PLAN_WPCOM_STARTER ) ).to.equal( false );
 		expect( isWpComMonthlyPlan( PLAN_PERSONAL ) ).to.equal( false );
 		expect( isWpComMonthlyPlan( PLAN_PREMIUM ) ).to.equal( false );
 		expect( isWpComMonthlyPlan( PLAN_BUSINESS ) ).to.equal( false );
@@ -829,6 +836,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_SECURITY_T1_YEARLY,
 			PLAN_JETPACK_SECURITY_T2_YEARLY,
 			PLAN_P2_FREE,
+			PLAN_WPCOM_STARTER,
 			PLAN_WPCOM_FLEXIBLE,
 			PLAN_WPCOM_PRO,
 		] );
@@ -901,6 +909,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_ECOMMERCE_2_YEARS,
 			PLAN_P2_PLUS,
 			PLAN_P2_FREE,
+			PLAN_WPCOM_STARTER,
 			PLAN_WPCOM_FLEXIBLE,
 			PLAN_WPCOM_PRO,
 		] );
