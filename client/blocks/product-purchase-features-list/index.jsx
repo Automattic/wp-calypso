@@ -244,13 +244,11 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getStarterFeatuers() {
-		const { isPlaceholder, selectedSite, planHasDomainCredit } = this.props;
+		const { selectedSite, planHasDomainCredit } = this.props;
 
 		return (
 			<Fragment>
-				<HappinessSupportCard isPlaceholder={ isPlaceholder } />
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
-				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
 			</Fragment>
