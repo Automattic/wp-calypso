@@ -10,11 +10,11 @@
 	}
 
 	.responsive-toolbar-group__grouped-list {
-		visibility: hidden;
+		opacity: 0;
 	}
 
 	.is-visible {
-		visibility: visible;
+		opacity: 1;
 	}
 
 	.responsive-toolbar-group__full-list {
@@ -25,9 +25,10 @@
 		top: 0;
 		left: 0;
 		right: 0;
-		z-index: 2;
+		z-index: -1;
 
 		// for testing purposes only
+		// z-index: 2 !important
 		// height: auto !important;
 		// filter: alpha(opacity=50);
 		// opacity:0.5;
