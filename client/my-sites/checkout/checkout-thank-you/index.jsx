@@ -17,6 +17,7 @@ import {
 	isBusiness,
 	isSiteRedirect,
 	isTheme,
+	isStarter,
 	isTitanMail,
 	isJetpackBusinessPlan,
 	shouldFetchSitePlans,
@@ -85,6 +86,7 @@ import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
 import SiteRedirectDetails from './site-redirect-details';
+import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
 
 import './style.scss';
@@ -569,6 +571,8 @@ export class CheckoutThankYou extends Component {
 				return [ BloggerPlanDetails, find( purchases, isBlogger ) ];
 			} else if ( purchases.some( isPersonal ) ) {
 				return [ PersonalPlanDetails, find( purchases, isPersonal ) ];
+			} else if ( purchases.some( isStarter ) ) {
+				return [ StarterPlanDetails, find( purchases, isStarter ) ];
 			} else if ( purchases.some( isPremium ) ) {
 				return [ PremiumPlanDetails, find( purchases, isPremium ) ];
 			} else if ( purchases.some( isBusiness ) ) {
