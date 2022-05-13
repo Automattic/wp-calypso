@@ -1,9 +1,8 @@
 import SiteContent from './site-content';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
-export default function SitesOverview(): ReactElement {
+export default function SitesOverview() {
 	return (
 		<div className="sites-overview">
 			<SiteContent />
