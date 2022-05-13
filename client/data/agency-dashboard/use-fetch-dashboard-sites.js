@@ -5,6 +5,12 @@ import { formatSites } from 'calypso/jetpack-cloud/sections/agency-dashboard/sit
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 
+/**
+ * Fetch all sites for the partner(agency)
+ *
+ * @returns {data, error, isLoading} Returns an object with the
+ * data associated to sites
+ */
 const useFetchDashboardSites = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
