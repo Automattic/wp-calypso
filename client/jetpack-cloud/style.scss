@@ -299,7 +299,7 @@ html {
 	font-size: $font-body;
 }
 
-.sections__logo, .dashboard-overview__logo {
+.sections__logo, .dashboard-overview__logo, .site-content__logo {
 	fill: var( --color-neutral-10 );
 	color: var( --color-neutral-10 );
 	position: fixed;
