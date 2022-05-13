@@ -4,18 +4,27 @@ import { useRef, useState } from 'react';
 import Badge from 'calypso/components/badge';
 import Tooltip from 'calypso/components/tooltip';
 
+/**
+ * Returns link and tooltip for each feature based on status
+ * which will be used to format row values. link will be used
+ * to redirect the user when clicked on the row and tooltip is
+ * used to show the tooltip when hovered over the row
+ *
+ * @param  {type} type  Feature type
+ * @param  {status} status Feature status
+ * @param  {siteUrl} siteUrl Site URL
+ * @param  {siteId} siteId Site ID
+ * @returns {object} link & tooltip
+ */
 const getLinks = ( type, status, siteUrl, siteId ) => {
 	let link = '';
 	let tooltip = '';
-	let eventId = '';
 	switch ( type ) {
 		case 'backup': {
 			if ( status === 'inactive' ) {
 				link = `/partner-portal/issue-license/?site_id=${ siteId }`;
-				eventId = 'issue-license';
 			} else {
 				link = `/backup/${ siteUrl }`;
-				eventId = 'visit-site';
 			}
 			if ( status === 'progress' ) {
 				tooltip = translate( 'Backup in progress' );
@@ -25,10 +34,8 @@ const getLinks = ( type, status, siteUrl, siteId ) => {
 		case 'scan': {
 			if ( status === 'inactive' ) {
 				link = `/partner-portal/issue-license/?site_id=${ siteId }`;
-				eventId = 'issue-license';
 			} else {
 				link = `/scan/${ siteUrl }`;
-				eventId = 'visit-site';
 			}
 			if ( status === 'progress' ) {
 				tooltip = translate( 'Scan in progress' );
@@ -38,7 +45,6 @@ const getLinks = ( type, status, siteUrl, siteId ) => {
 		case 'monitor': {
 			if ( status === 'failed' ) {
 				link = `https://jptools.wordpress.com/debug/?url=${ siteUrl }`;
-				eventId = 'visit-jp-debugger';
 			}
 			if ( status === 'success' ) {
 				tooltip = translate( 'Monitor is on and your site is online' );
@@ -48,27 +54,34 @@ const getLinks = ( type, status, siteUrl, siteId ) => {
 		case 'plugin': {
 			if ( status === 'warning' ) {
 				link = `https://wordpress.com/plugins/updates/${ siteUrl }`;
-				eventId = 'visit-wp-plugin-updates';
 			}
 			break;
 		}
 	}
-	return { link, tooltip, eventId };
+	return { link, tooltip };
 };
 
+/**
+ * Returns an object which holds meta data required to format
+ * the row
+ *
+ * @param  {rows} rows  Holds row objects(sites)
+ * @param  {type} type Feature type
+ * @returns {object} Object that holds row(individual row based on type), link(to redirect on click), siteError,
+ * tooltip & tooltip id
+ */
 const getRowMetaData = ( rows, type ) => {
 	const row = rows[ type ];
 	const siteUrl = rows.site?.value?.url;
 	const siteError = rows.site?.error;
 	const siteId = rows.site?.value?.blog_id;
-	const { link, tooltip, eventId } = getLinks( type, row.status, siteUrl, siteId );
+	const { link, tooltip } = getLinks( type, row.status, siteUrl, siteId );
 	return {
 		row,
 		link,
 		siteError,
 		tooltip,
 		tooltipId: `${ siteId }-${ type }`,
-		eventId,
 	};
 };
 
@@ -128,8 +141,16 @@ export default function StatusContent( { content, tooltip, tooltipId, link, site
 	);
 }
 
+/**
+ * Returns content based on the status
+ *
+ * @param  {rows} rows  Holds row objects(sites)
+ * @param  {type} type Feature type
+ * @returns {StatusContent} Returns HTML content based on the status
+ */
+
 const statusFormatter = ( rows, type ) => {
-	const { link, row, siteError, tooltip, tooltipId, eventId } = getRowMetaData( rows, type );
+	const { link, row, siteError, tooltip, tooltipId } = getRowMetaData( rows, type );
 	const { value, status } = row;
 	let content;
 	switch ( status ) {
@@ -198,8 +219,6 @@ const statusFormatter = ( rows, type ) => {
 			tooltipId={ tooltipId }
 			link={ link }
 			siteError={ siteError }
-			type={ type }
-			eventId={ eventId }
 		/>
 	);
 };
@@ -211,6 +230,14 @@ const siteFormatter = ( rows ) => {
 
 	return <span className="sites-overview__row-text">{ value }</span>;
 };
+
+/**
+ * Returns formatted sites
+ *
+ * @param  {data} data Object that holds sites as items
+ * @returns {Array} An empty array if no sites are found or
+ * formatted sites based on status and feature type
+ */
 
 export const formatSites = ( data ) => {
 	const sites = data?.items;
