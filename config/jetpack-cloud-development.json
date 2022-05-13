@@ -64,6 +64,7 @@
 		"backup": true,
 		"jetpack-cloud": true,
 		"jetpack-cloud-agency-dashboard": true,
+		"jetpack-cloud-agency-signup": true,
 		"jetpack-cloud-auth": true,
 		"jetpack-cloud-partner-portal": true,
 		"jetpack-cloud-pricing": true,
