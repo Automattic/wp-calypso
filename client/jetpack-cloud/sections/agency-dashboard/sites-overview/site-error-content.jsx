@@ -20,6 +20,9 @@ const ErrorContent = ( { siteUrl } ) => {
 					},
 				} ) }
 			</span>
+			<span className="sites-overview__error-message sites-overview__error-message-small-screen">
+				{ translate( 'Jetpack is unable to connect' ) }
+			</span>
 			<a
 				onClick={ handleClickFixNow }
 				className="sites-overview__error-message-link"

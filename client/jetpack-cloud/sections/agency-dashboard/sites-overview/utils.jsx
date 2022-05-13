@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import Badge from 'calypso/components/badge';
@@ -208,8 +209,36 @@ const siteFormatter = ( rows ) => {
 	const { row } = getRowMetaData( rows, 'site' );
 	const site = row.value;
 	const value = site.url;
+	const error = row.error;
+	const siteIssues = rows.scan.threats || rows.plugin.updates;
 
-	return <span className="sites-overview__row-text">{ value }</span>;
+	let errorContent;
+
+	if ( error ) {
+		errorContent = (
+			<span className="sites-overview__status-critical">
+				<Gridicon size={ 24 } icon="notice-outline" />
+			</span>
+		);
+	} else if ( siteIssues ) {
+		errorContent = (
+			<span
+				className={ classNames(
+					'sites-overview__status-count',
+					rows.scan.threats ? 'sites-overview__status-failed' : 'sites-overview__status-warning'
+				) }
+			>
+				{ siteIssues }
+			</span>
+		);
+	}
+
+	return (
+		<>
+			<span className="sites-overview__row-text">{ value }</span>
+			{ errorContent && errorContent }
+		</>
+	);
 };
 
 export const formatSites = ( data ) => {
