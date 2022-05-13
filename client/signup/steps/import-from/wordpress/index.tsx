@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { addQueryArgs } from 'calypso/lib/route';
-import { convertToFriendlyWebsiteName } from 'calypso/signup/steps/import/util';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';

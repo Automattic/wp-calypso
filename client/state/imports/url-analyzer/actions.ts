@@ -8,7 +8,7 @@ import {
 	URL_ANALYZER_RESET_ERROR,
 	URL_ANALYZER_URL_DATA_UPDATE,
 } from '../../action-types';
-import type { UrlData } from 'calypso/signup/steps/import/types';
+import type { UrlData } from 'calypso/blocks/import/types';
 import type { AnyAction, Dispatch } from 'redux';
 
 export const analyzeUrl =

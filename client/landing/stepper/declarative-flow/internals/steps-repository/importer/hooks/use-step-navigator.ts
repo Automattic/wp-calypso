@@ -1,7 +1,7 @@
+import { getWpOrgImporterUrl } from 'calypso/blocks/import/util';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useCheckoutUrl } from 'calypso/signup/steps/import-from/hooks/use-checkout-url';
 import { WPImportOption } from 'calypso/signup/steps/import-from/wordpress/types';
-import { getWpOrgImporterUrl } from 'calypso/signup/steps/import/util';
 import { StepPath } from '../../../steps-repository';
 import { BASE_STEPPER_ROUTE } from '../../import/config';
 import { removeLeadingSlash } from '../../import/util';

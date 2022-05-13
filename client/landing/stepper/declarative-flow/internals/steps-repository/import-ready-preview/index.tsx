@@ -1,10 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { ReadyPreviewStep } from 'calypso/blocks/import/ready';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { ReadyPreviewStep } from 'calypso/signup/steps/import/ready';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { ImportWrapper } from '../import';
 import { BASE_ROUTE } from '../import/config';
