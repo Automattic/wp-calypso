@@ -3,7 +3,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { SiteDetails } from '../site';
 
 type ForumTopic = {
-	site: SiteDetails;
+	site?: SiteDetails;
 	message: string;
 	subject: string;
 	locale: string;
@@ -16,18 +16,20 @@ type Response = {
 
 export function useSubmitForumsMutation() {
 	return useMutation( ( { site, message, subject, locale, hideInfo }: ForumTopic ) => {
-		const blogHelpMessages = [ message ];
+		const blogHelpMessages = [];
 
-		if ( site.jetpack ) {
-			blogHelpMessages.push( 'WP.com: Unknown' );
-			blogHelpMessages.push( 'Jetpack: Yes' );
-		} else {
-			blogHelpMessages.push( 'WP.com: Yes' );
+		if ( site ) {
+			if ( site.jetpack ) {
+				blogHelpMessages.push( 'WP.com: Unknown' );
+				blogHelpMessages.push( 'Jetpack: Yes' );
+			} else {
+				blogHelpMessages.push( 'WP.com: Yes' );
+			}
+
+			blogHelpMessages.push( 'Correct account: yes' );
 		}
 
-		blogHelpMessages.push( 'Correct account: yes' );
-
-		const forumMessage = message + '\n\n' + 'Correct account: yes';
+		const forumMessage = message + '\n\n' + blogHelpMessages.join( '\n' );
 
 		const requestData = {
 			subject,
@@ -35,8 +37,8 @@ export function useSubmitForumsMutation() {
 			locale,
 			client: 'help-center',
 			hide_blog_info: hideInfo,
-			blog_id: site.ID,
-			blog_url: site.URL,
+			blog_id: site?.ID,
+			blog_url: site?.URL,
 		};
 
 		return wpcomRequest< Response >( {
