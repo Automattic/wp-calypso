@@ -214,10 +214,11 @@ export const FEATURE_SOCIAL_MEDIA_TOOLS = 'social-media-tools';
 
 // From class-wpcom-features.php in WPCOM
 export const WPCOM_FEATURES_AKISMET = 'akismet';
-export const WPCOM_FEATURES_ATOMIC = 'atomic';
 export const WPCOM_FEATURES_ANTISPAM = 'antispam';
+export const WPCOM_FEATURES_ATOMIC = 'atomic';
 export const WPCOM_FEATURES_FULL_ACTIVITY_LOG = 'full-activity-log';
 export const WPCOM_FEATURES_INSTANT_SEARCH = 'instant-search';
+export const WPCOM_FEATURES_LIVE_SUPPORT = 'live_support';
 export const WPCOM_FEATURES_NO_ADVERTS = 'no-adverts/no-adverts.php';
 export const WPCOM_FEATURES_NO_WPCOM_BRANDING = 'no-wpcom-branding';
 export const WPCOM_FEATURES_PREMIUM_THEMES = 'premium-themes';
