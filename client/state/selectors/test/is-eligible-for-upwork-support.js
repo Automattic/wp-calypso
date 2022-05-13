@@ -1,10 +1,4 @@
 import config from '@automattic/calypso-config';
-import {
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-	PLAN_FREE,
-	PLAN_PREMIUM,
-} from '@automattic/calypso-products';
 import isEligibleForUpworkSupport from 'calypso/state/selectors/is-eligible-for-upwork-support';
 
 describe( 'isEligibleForUpworkSupport()', () => {
@@ -13,46 +7,51 @@ describe( 'isEligibleForUpworkSupport()', () => {
 			currentUser: { id: 1, user: { ID: 1, localeSlug: 'en' } },
 			sites: {
 				items: {
-					111: { plan: { product_slug: PLAN_FREE } },
-					222: { plan: { product_slug: PLAN_PREMIUM } },
+					111: { ID: 111 },
+					222: { ID: 222 },
+				},
+				features: {
+					111: { data: { active: [] } },
+					222: { data: { active: [] } },
 				},
 			},
 		};
 		expect( isEligibleForUpworkSupport( state ) ).toBe( false );
 	} );
 
-	/**
-	 * If any plan listed below in user's account then not eligible
-	 * for upwork support.
-	 */
-	const nonUpworkPlans = [ PLAN_BUSINESS, PLAN_ECOMMERCE ];
-
 	describe.each( config( 'upwork_support_locales' ) )( 'when locale %s', ( localeSlug ) => {
-		test( 'returns true for users without Business and E-Commerce plans', () => {
+		test( 'returns true for users without higher support levels', () => {
 			const state = {
 				currentUser: { id: 1, user: { localeSlug } },
 				sites: {
 					items: {
-						111: { plan: { product_slug: PLAN_FREE } },
-						222: { plan: { product_slug: PLAN_PREMIUM } },
+						111: { ID: 111 },
+						222: { ID: 222 },
+					},
+					features: {
+						111: { data: { active: [ 'upwork-support' ] } },
+						222: { data: { active: [] } },
 					},
 				},
 			};
 			expect( isEligibleForUpworkSupport( state ) ).toBe( true );
 		} );
 
-		describe.each( nonUpworkPlans )( 'with plan %s', ( product_slug ) => {
-			test( 'returns false', () => {
-				const state = {
-					currentUser: { id: 1, user: { localeSlug } },
-					sites: {
-						items: {
-							333: { plan: { product_slug } },
-						},
+		test( 'returns false for users with higher support levels', () => {
+			const state = {
+				currentUser: { id: 1, user: { localeSlug } },
+				sites: {
+					items: {
+						111: { ID: 111 },
+						222: { ID: 222 },
 					},
-				};
-				expect( isEligibleForUpworkSupport( state ) ).toBe( false );
-			} );
+					features: {
+						111: { data: { active: [ 'upwork-support' ] } },
+						222: { data: { active: [ 'live-support' ] } },
+					},
+				},
+			};
+			expect( isEligibleForUpworkSupport( state ) ).toBe( false );
 		} );
 	} );
 } );
