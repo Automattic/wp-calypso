@@ -159,24 +159,32 @@ function CheckoutSummaryFeaturesList( props: {
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 	const hasPlanInCart = plans.length > 0;
 
+	const refundablePredicates = [
+		isDomainProduct,
+		isDomainTransfer,
+		isPlan,
+		isGoogleWorkspace,
+		isTitanMail,
+	];
 	const refundableProducts = responseCart.products.filter(
 		( product ) =>
-			product.cost &&
-			( isDomainProduct( product ) ||
-				isDomainTransfer( product ) ||
-				isPlan( product ) ||
-				isGoogleWorkspace( product ) ||
-				isTitanMail( product ) )
+			product.cost && refundablePredicates.some( ( predicate ) => predicate( product ) )
 	);
 	const uniqueRefundableProducts = refundableProducts.reduce< ResponseCartProduct[] >(
-		( acc, p ) => {
-			if ( ! acc.some( ( pp ) => pp.product_name === p.product_name ) ) {
-				acc.push( p );
+		( result, product ) => {
+			const predicate = refundablePredicates.find( ( predicate ) => predicate( product ) );
+			const predicateAlreadySatisfied =
+				predicate && result.some( ( existingProduct ) => predicate( existingProduct ) );
+
+			if ( ! predicateAlreadySatisfied ) {
+				result.push( product );
 			}
-			return acc;
+
+			return result;
 		},
 		[]
 	);
+
 	const translate = useTranslate();
 
 	const hasOnlyStarterPlan =
@@ -207,7 +215,11 @@ function CheckoutSummaryFeaturesList( props: {
 				uniqueRefundableProducts.map( ( product ) => (
 					<CheckoutSummaryFeaturesListItem key={ product.uuid }>
 						<WPCheckoutCheckIcon id="features-list-refund-text" />
-						{ getRefundText( getRefundDays( product ), product.product_name, translate ) }
+						{ getRefundText(
+							getRefundDays( product ),
+							isDomainProduct( product ) ? 'Domain Registration' : product.product_name,
+							translate
+						) }
 					</CheckoutSummaryFeaturesListItem>
 				) ) }
 		</CheckoutSummaryFeaturesListWrapper>
