@@ -35,11 +35,19 @@ export function getFinalImporterUrl(
 	return importerUrl;
 }
 
-export function generateStepPath( stepName: string, stepSectionName?: string ): StepPath {
-	// In the stepper framework, the capture screen is on `import` route (instead of `importCapture`)
-	const excludeStepName = 'capture';
-	const routes = [ BASE_ROUTE, stepName, stepSectionName ].filter( ( x ) => x !== excludeStepName );
-	const path = routes.join( '_' ).replace( excludeStepName, '' );
+/**
+ * Stepper's redirection handlers
+ * generateStepPath share the same interface/params between 'signup' & 'stepper' frameworks
+ */
+export function generateStepPath(
+	stepName: string | StepPath,
+	stepSectionName?: string
+): StepPath {
+	if ( stepName === 'intent' ) return 'intent';
+	else if ( stepName === 'capture' ) return BASE_ROUTE;
+
+	const routes = [ BASE_ROUTE, stepName, stepSectionName ];
+	const path = routes.join( '_' );
 
 	return camelCase( path ) as StepPath;
 }
