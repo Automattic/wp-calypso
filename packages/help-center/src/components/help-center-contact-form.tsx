@@ -366,7 +366,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					<div className="help-center-contact-form__domain-sharing">
 						<CheckboxControl
 							checked={ hideSiteInfo }
-							label={ __( 'Don’t display my site’s URL publicly', 'full-site-editing' ) }
+							label={ __( 'Don’t display my site’s URL publicly', __i18n_text_domain__ ) }
 							help={ <InfoTip /> }
 							onChange={ ( value ) => setHideSiteInfo( value ) }
 						/>
