@@ -1,0 +1,58 @@
+@import '@wordpress/base-styles/colors';
+
+.signup-success {
+	margin: auto;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		padding-top: 100px;
+		width: 30%;
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		padding-top: 20px;
+		width: 90%;
+	}
+
+	.signup-success__header-title {
+		font-size: 44px;
+	}
+
+	.intouch__header-subtitle {
+		font-size: 16px;
+		color: var( --studio-gray-60 );
+	}
+	
+	.signup-success__header {
+		margin-top: var( --masterbar-height );
+		text-align: center;
+		min-height: 300px;
+
+		img {
+			margin-bottom: 14px;
+		}
+	}
+
+	.signup-success__row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.signup-success__row-icon {
+		width: 10%;
+	}
+
+	.signup-success__row-content {
+		width: 70%;
+	}
+
+	a {
+		font-size: 16px;
+	}
+
+	hr {
+		margin: 30px 0 30px 10%;
+	}
+	
+}
+

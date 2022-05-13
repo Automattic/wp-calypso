@@ -1,6 +1,7 @@
 import page from 'page';
 import { getSiteFragment } from 'calypso/lib/route';
 import MarketplaceThankYou from 'calypso/my-sites/checkout/checkout-thank-you/marketplace/marketplace-thank-you';
+import SignupSuccess from 'calypso/my-sites/checkout/checkout-thank-you/marketplace/signup-success';
 import MarketplaceDomainUpsell from 'calypso/my-sites/marketplace/pages/marketplace-domain-upsell';
 import MarketplacePluginInstall from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install';
 import MarketplaceTest from 'calypso/my-sites/marketplace/pages/marketplace-test';
@@ -20,6 +21,13 @@ export function renderMarketplaceThankYou( context, next ) {
 	const { productSlug } = context.params;
 
 	context.primary = <MarketplaceThankYou productSlug={ productSlug } />;
+	next();
+}
+
+export function renderMarketplaceSignupSuccess( context, next ) {
+	const { productSlug } = context.params;
+
+	context.primary = <SignupSuccess productSlug={ productSlug } />;
 	next();
 }
 
