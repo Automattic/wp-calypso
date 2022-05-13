@@ -293,6 +293,10 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 		);
 	};
 
+	const isCTADisabled = () => {
+		return isLoading || ( mode !== 'FORUM' && ! supportSite ) || ! message;
+	};
+
 	return (
 		<main className="help-center-contact-form">
 			<header>
@@ -376,7 +380,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 			) }
 			<section>
 				<Button
-					disabled={ isLoading || ( mode !== 'FORUM' && ! supportSite ) || ! message }
+					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
 					primary
 					className="help-center-contact-form__site-picker-cta"
