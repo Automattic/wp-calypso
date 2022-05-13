@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.2 (2022-05-13)
+
+- Dependency updates and internal code cleanup.
+
 ## v1.1.1 (2021-04-05)
 
 - Ensure that lengthy text doesn't overflow in the Twitter preview.
