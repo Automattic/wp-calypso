@@ -14,7 +14,7 @@ const SiteContent = () => {
 		backup: translate( 'Backup' ),
 		scan: translate( 'Scan' ),
 		monitor: translate( 'Monitor' ),
-		plugin: translate( 'Plugins' ),
+		plugin: translate( 'Plugin Updates' ),
 	};
 
 	if ( ! isLoading && ! error && ! data.length ) {
