@@ -10,7 +10,7 @@ import { useMemo } from 'react';
 import {
 	getAvailableDesigns,
 	getDesignPreviewUrl,
-	mShotOptions,
+	getMShotOptions,
 	isBlankCanvasDesign,
 	filterDesignsByCategory,
 	sortDesigns,
@@ -29,15 +29,20 @@ interface DesignPreviewImageProps {
 	highRes: boolean;
 }
 
-const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale, highRes } ) => (
-	<MShotsImage
-		url={ getDesignPreviewUrl( design, { language: locale } ) }
-		aria-labelledby={ makeOptionId( design ) }
-		alt=""
-		options={ mShotOptions( design, highRes ) }
-		scrollable={ design.preview !== 'static' }
-	/>
-);
+const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale, highRes } ) => {
+	const scrollable = design.preview !== 'static';
+	const isMobile = useViewportMatch( 'small', '<' );
+
+	return (
+		<MShotsImage
+			url={ getDesignPreviewUrl( design, { language: locale } ) }
+			aria-labelledby={ makeOptionId( design ) }
+			alt=""
+			options={ getMShotOptions( { scrollable, highRes, isMobile } ) }
+			scrollable={ scrollable }
+		/>
+	);
+};
 
 interface DesignButtonProps {
 	design: Design;
