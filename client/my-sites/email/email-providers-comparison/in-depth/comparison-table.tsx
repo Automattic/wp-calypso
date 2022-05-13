@@ -12,7 +12,6 @@ import './style.scss';
 const ComparisonTable = ( {
 	emailProviders,
 	intervalLength,
-	isDomainInCart,
 	onSelectEmailProvider,
 	selectedDomainName,
 }: ComparisonListOrTableProps ): ReactElement => {
@@ -137,7 +136,6 @@ const ComparisonTable = ( {
 									className="email-providers-in-depth-comparison-table__button"
 									emailProviderSlug={ emailProviderFeatures.slug }
 									intervalLength={ intervalLength }
-									isDomainInCart={ isDomainInCart }
 									onSelectEmailProvider={ onSelectEmailProvider }
 									selectedDomainName={ selectedDomainName }
 								/>
