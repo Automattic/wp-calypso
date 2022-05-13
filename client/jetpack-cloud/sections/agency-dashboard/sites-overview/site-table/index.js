@@ -30,10 +30,11 @@ const SiteTable = ( { isFetching, columns, sites } ) => {
 						</td>
 					</tr>
 				) : (
-					sites.map( ( rows, i ) => {
+					sites.map( ( rows ) => {
 						const site = rows.site;
+						const blogId = site?.value?.blog_id;
 						return (
-							<React.Fragment key={ i }>
+							<React.Fragment key={ blogId }>
 								<tr className="site-table__table-row">
 									{ Object.keys( rows ).map( ( key, index ) => {
 										if ( rows[ key ].formatter ) {

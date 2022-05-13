@@ -214,60 +214,68 @@ const siteFormatter = ( rows ) => {
 
 export const formatSites = ( data ) => {
 	const sites = data?.items;
-	if ( Array.isArray( sites ) && sites.length > 0 ) {
-		return sites.map( ( site ) => {
-			const pluginUpdates = site.awaiting_plugin_updates;
-			let scanValue = '';
-			if ( site.latest_scan_status === 'failed' ) {
-				scanValue = translate( 'Failed' );
-				if ( site.latest_scan_threats_found.length > 0 ) {
-					scanValue = translate( '%(threats) Threats', {
-						args: {
-							threats: site.latest_scan_threats_found.length,
-						},
-					} );
-				}
-			}
-			let error = '';
-			if (
-				! site.is_connection_healthy ||
-				! site.access_xmlrpc ||
-				! site.valid_xmlrpc ||
-				! site.authenticated_xmlrpc ||
-				! site.has_credentials
-			) {
-				error = translate( 'FIX CONNECTION' );
-			}
-			return {
-				site: {
-					value: site,
-					formatter: siteFormatter,
-					error,
-				},
-				backup: {
-					value: site.latest_backup_status === 'failed' ? translate( 'Failed' ) : '',
-					status: site.backup_enabled ? site.latest_backup_status : 'inactive',
-					formatter: ( rows ) => statusFormatter( rows, 'backup' ),
-				},
-				scan: {
-					value: scanValue,
-					status: site.scan_enabled ? site.latest_scan_status : 'inactive',
-					formatter: ( rows ) => statusFormatter( rows, 'scan' ),
-					threats: site.latest_scan_threats_found.length,
-				},
-				monitor: {
-					value: site.monitor_status === 'failed' ? translate( 'Site Down' ) : '',
-					status: site.monitor_status === 'accessible' ? 'success' : site.monitor_status,
-					formatter: ( rows ) => statusFormatter( rows, 'monitor' ),
-				},
-				plugin: {
-					value: `${ pluginUpdates.length } ${ translate( 'Available' ) }`,
-					status: pluginUpdates.length > 0 ? 'warning' : 'active',
-					formatter: ( rows ) => statusFormatter( rows, 'plugin' ),
-					updates: pluginUpdates.length,
-				},
-			};
-		} );
+	if ( ! Array.isArray( sites ) ) {
+		return [];
 	}
-	return [];
+	return sites.map( ( site ) => {
+		const pluginUpdates = site.awaiting_plugin_updates;
+		let scanValue = '';
+		if ( site.latest_scan_status === 'failed' ) {
+			scanValue = translate( 'Failed' );
+		}
+		const scanThreats = site.latest_scan_threats_found.length;
+		if ( scanThreats > 0 ) {
+			scanValue =
+				scanThreats > 1
+					? translate( '%(threats)d Threats', {
+							args: {
+								threats: scanThreats,
+							},
+					  } )
+					: translate( '%(threats)d Threat', {
+							args: {
+								threats: scanThreats,
+							},
+					  } );
+		}
+		let error = '';
+		if (
+			! site.is_connection_healthy ||
+			! site.access_xmlrpc ||
+			! site.valid_xmlrpc ||
+			! site.authenticated_xmlrpc ||
+			! site.has_credentials
+		) {
+			error = translate( 'FIX CONNECTION' );
+		}
+		return {
+			site: {
+				value: site,
+				formatter: siteFormatter,
+				error,
+			},
+			backup: {
+				value: site.latest_backup_status === 'failed' ? translate( 'Failed' ) : '',
+				status: site.backup_enabled ? site.latest_backup_status : 'inactive',
+				formatter: ( rows ) => statusFormatter( rows, 'backup' ),
+			},
+			scan: {
+				value: scanValue,
+				status: site.scan_enabled ? site.latest_scan_status : 'inactive',
+				formatter: ( rows ) => statusFormatter( rows, 'scan' ),
+				threats: site.latest_scan_threats_found.length,
+			},
+			monitor: {
+				value: site.monitor_status === 'failed' ? translate( 'Site Down' ) : '',
+				status: site.monitor_status === 'accessible' ? 'success' : site.monitor_status,
+				formatter: ( rows ) => statusFormatter( rows, 'monitor' ),
+			},
+			plugin: {
+				value: `${ pluginUpdates.length } ${ translate( 'Available' ) }`,
+				status: pluginUpdates.length > 0 ? 'warning' : 'active',
+				formatter: ( rows ) => statusFormatter( rows, 'plugin' ),
+				updates: pluginUpdates.length,
+			},
+		};
+	} );
 };

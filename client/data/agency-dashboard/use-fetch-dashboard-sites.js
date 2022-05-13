@@ -9,7 +9,7 @@ const useFetchDashboardSites = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	return useQuery(
-		[ 'dashboard-sites' ],
+		[ 'jetpack-cloud', 'agency-dashboard', 'sites' ],
 		() =>
 			wpcomJpl.req.get( {
 				path: '/jetpack-partner/dashboard/sites-mock',
