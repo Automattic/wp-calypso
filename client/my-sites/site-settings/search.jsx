@@ -108,7 +108,7 @@ class Search extends Component {
 	}
 
 	renderUpgradeNotice() {
-		const { siteIsJetpack, siteSlug, translate, isJetpackClassicSearchIncluded } = this.props;
+		const { siteIsJetpack, siteSlug, translate, hasClassicSearch } = this.props;
 
 		const href = siteIsJetpack
 			? `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_SEARCH_MONTHLY }`
@@ -118,7 +118,7 @@ class Search extends Component {
 			<Fragment>
 				<UpsellNudge
 					title={
-						isJetpackClassicSearchIncluded
+						hasClassicSearch
 							? translate( 'Upgrade your Jetpack Search and get the instant search experience' )
 							: translate( 'Upgrade to Jetpack Search and get the instant search experience' )
 					}
@@ -335,12 +335,8 @@ class Search extends Component {
 export default connect( ( state, { isRequestingSettings } ) => {
 	const siteId = getSelectedSiteId( state );
 	const hasInstantSearch = siteHasFeature( state, siteId, WPCOM_FEATURES_INSTANT_SEARCH );
-	const isJetpackClassicSearchIncluded = siteHasFeature(
-		state,
-		siteId,
-		WPCOM_FEATURES_CLASSIC_SEARCH
-	); // hasClassicSearch
-	const isSearchEligible = isJetpackClassicSearchIncluded || hasInstantSearch;
+	const hasClassicSearch = siteHasFeature( state, siteId, WPCOM_FEATURES_CLASSIC_SEARCH ); // hasClassicSearch
+	const isSearchEligible = hasClassicSearch || hasInstantSearch;
 	const upgradeLink =
 		'/checkout/' +
 		getSelectedSiteSlug( state ) +
@@ -363,6 +359,6 @@ export default connect( ( state, { isRequestingSettings } ) => {
 		upgradeLink,
 		isSearchModuleActive:
 			( isSearchModuleActive && ! deactivating ) || ( ! isSearchModuleActive && activating ),
-		isJetpackClassicSearchIncluded,
+		hasClassicSearch,
 	};
 } )( localize( Search ) );
