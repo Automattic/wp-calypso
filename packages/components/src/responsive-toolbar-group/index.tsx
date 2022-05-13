@@ -20,7 +20,7 @@ const ResponsiveToolbarGroup = ( {
 	const classes = classnames( 'responsive-toolbar-group', className );
 
 	const containerRef = useRef< HTMLDivElement >( null );
-	const [ calculatedOnce, setCalcualtedOnce ] = useState< boolean >( false );
+	const [ calculatedOnce, setCalculatedOnce ] = useState< boolean >( false );
 	const [ activeIndex, setActiveIndex ] = useState< number | string >( -1 );
 	const [ groupedIndexes, setGroupedIndexes ] = useState< any >( {} );
 	const { current: shadowListItems } = useRef< HTMLButtonElement[] >( [] );
@@ -33,6 +33,7 @@ const ResponsiveToolbarGroup = ( {
 		if ( type === 'all' ) {
 			return children.map( ( child, index ) => (
 				<ToolbarButton
+					key={ `shadow-item-${ index }` }
 					ref={ ( el: HTMLButtonElement ) => assignRef( index, el ) }
 					className="responsive-toolbar-group__button-item"
 				>
@@ -45,6 +46,7 @@ const ResponsiveToolbarGroup = ( {
 			.filter( ( _child, index ) => ! groupedIndexes[ index ] )
 			.map( ( child, index ) => (
 				<ToolbarButton
+					key={ `shadow-item-${ index }` }
 					isActive={ activeIndex === index }
 					onClick={ () => {
 						setActiveIndex( index );
@@ -74,6 +76,7 @@ const ResponsiveToolbarGroup = ( {
 		return;
 	};
 
+	// I have to optimize this callback so it doesn't do unnecesary updates
 	const interceptionCallback = useCallback(
 		( index: number, entries: IntersectionObserverEntry[] ) => {
 			const entry = entries[ 0 ];
@@ -105,7 +108,7 @@ const ResponsiveToolbarGroup = ( {
 			}
 
 			if ( ! calculatedOnce ) {
-				setCalcualtedOnce( true );
+				setCalculatedOnce( true );
 			}
 		},
 		[ children ]
@@ -116,7 +119,7 @@ const ResponsiveToolbarGroup = ( {
 
 		const observers: IntersectionObserver[] = [];
 
-		setCalcualtedOnce( false );
+		setCalculatedOnce( false );
 
 		shadowListItems.forEach( ( listItem, index ) => {
 			observers[ index ] = new IntersectionObserver(
