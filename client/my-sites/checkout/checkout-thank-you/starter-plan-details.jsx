@@ -3,7 +3,6 @@ import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
-import adsRemovedImage from 'calypso/assets/images/illustrations/removed-ads.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
@@ -30,15 +29,6 @@ const StarterPlanDetails = ( { translate, selectedSite, sitePlans, purchases } )
 				) }
 				buttonText={ translate( 'Start Earning' ) }
 				href={ '/earn/' + selectedSite.slug }
-			/>
-
-			<PurchaseDetail
-				icon={ <img alt="" src={ adsRemovedImage } /> }
-				title={ translate( 'Advertising Removed' ) }
-				description={ translate(
-					'With your plan, all WordPress.com advertising has been removed from your site. ' +
-						'You can upgrade to a Pro plan to also remove the WordPress.com footer credit.'
-				) }
 			/>
 		</div>
 	);
