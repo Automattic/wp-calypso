@@ -216,8 +216,8 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 						const popup = openPopup( event );
 						setPopup( popup );
 					}
-					// wait 10s then reset the store, to make sure the info is sent to the chat
-					setTimeout( resetStore, 10000 );
+					// in chat, we don't need to reset the store here, the Happychat communicator will take care of that
+					// this is to make sure we only reset the store after we communicated everything to Happychat.
 					break;
 				}
 				case 'EMAIL': {
