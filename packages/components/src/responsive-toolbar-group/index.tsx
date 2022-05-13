@@ -85,7 +85,7 @@ const ResponsiveToolbarGroup = ( {
 				return;
 			}
 
-			if ( entry.intersectionRatio >= 1 ) {
+			if ( entry.intersectionRatio >= showRatio ) {
 				// is last child becoming visible just showcase it.
 				if ( index === children.length - 1 ) {
 					setGroupedIndexes( ( state: any ) => ( {
@@ -99,7 +99,7 @@ const ResponsiveToolbarGroup = ( {
 			}
 
 			// always hide sets of two to give space to the "more" item.
-			if ( entry.intersectionRatio <= 0.99 ) {
+			if ( entry.intersectionRatio <= hideRatio ) {
 				setGroupedIndexes( ( state: any ) => ( {
 					...state,
 					[ index ]: true,
