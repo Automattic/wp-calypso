@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Removed
+
+- BREAKING: Removed the `diffOnly` option.
+
 ## 5.1.0 - 2021-11-02
 
 ### Added

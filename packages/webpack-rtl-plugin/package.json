@@ -33,7 +33,6 @@
 		"webpack": "^5.68.0"
 	},
 	"dependencies": {
-		"@romainberger/css-diff": "^1.0.3",
 		"rtlcss": "^3.1.2"
 	}
 }
