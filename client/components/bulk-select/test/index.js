@@ -80,7 +80,8 @@ describe( 'index', () => {
 				ariaLabel="Select All"
 			/>
 		);
-		expect( container.querySelectorAll( 'input' )[ 0 ].getAttribute( 'aria-label' ) ).toBe(
+		expect( container.querySelectorAll( 'input' )[ 0 ] ).toHaveAttribute(
+			'aria-label',
 			'Select All'
 		);
 	} );
@@ -95,7 +96,7 @@ describe( 'index', () => {
 			/>
 		);
 		// There is no prop readOnly, so this is null
-		expect( container.querySelectorAll( 'input' )[ 0 ].getAttribute( 'readonly' ) ).toBeNull();
+		expect( container.querySelectorAll( 'input' )[ 0 ] ).not.toHaveAttribute( 'readonly' );
 	} );
 
 	test( 'should be call onToggle when clicked', () => {

@@ -28,18 +28,18 @@ describe( 'EU Address Fieldset', () => {
 
 	test( 'should render expected input components', () => {
 		render( <EuAddressFieldset { ...defaultProps } /> );
-		expect( screen.queryByLabelText( 'City' ) ).toBeDefined();
-		expect( screen.queryByLabelText( 'Postal Code' ) ).toBeDefined();
+		expect( screen.queryByLabelText( 'City' ) ).toBeInTheDocument();
+		expect( screen.queryByLabelText( 'Postal Code' ) ).toBeInTheDocument();
 	} );
 
 	test( 'should not render a state select components', () => {
 		render( <EuAddressFieldset { ...defaultProps } /> );
-		expect( screen.queryByLabelText( 'State' ) ).toBeNull();
+		expect( screen.queryByLabelText( 'State' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render all expected input components but postal code', () => {
 		render( <EuAddressFieldset { ...propsWithoutPostalCode } /> );
-		expect( screen.queryByLabelText( 'City' ) ).toBeDefined();
-		expect( screen.queryByLabelText( 'Postal Code' ) ).toBeNull();
+		expect( screen.queryByLabelText( 'City' ) ).toBeInTheDocument();
+		expect( screen.queryByLabelText( 'Postal Code' ) ).not.toBeInTheDocument();
 	} );
 } );

@@ -586,7 +586,7 @@ describe( 'CompositeCheckout', () => {
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
 		fireEvent.click( confirmButton );
 		await waitFor( () => {
-			expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
+			expect( screen.queryByLabelText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -603,7 +603,7 @@ describe( 'CompositeCheckout', () => {
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
 		fireEvent.click( confirmButton );
 		await waitFor( async () => {
-			expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
+			expect( screen.queryByLabelText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
 		} );
 	} );
 

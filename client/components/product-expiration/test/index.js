@@ -9,7 +9,7 @@ import { ProductExpiration } from '../index';
 describe( 'ProductExpiration', () => {
 	it( 'should return null if not provided dates', () => {
 		const { container } = render( <ProductExpiration translate={ translate } /> );
-		expect( container.firstChild ).toBeNull();
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	it( 'should return the purchase date when refundable', () => {
@@ -17,7 +17,7 @@ describe( 'ProductExpiration', () => {
 		const { container } = render(
 			<ProductExpiration purchaseDateMoment={ date } translate={ translate } isRefundable />
 		);
-		expect( container.textContent ).toEqual( 'Purchased on November 10, 2009' );
+		expect( container ).toHaveTextContent( 'Purchased on November 10, 2009' );
 	} );
 
 	it( 'should return the expiry date in past tense when date is in past', () => {
@@ -25,7 +25,7 @@ describe( 'ProductExpiration', () => {
 		const { container } = render(
 			<ProductExpiration expiryDateMoment={ date } translate={ translate } />
 		);
-		expect( container.textContent ).toEqual( 'Expired on November 10, 2009' );
+		expect( container ).toHaveTextContent( 'Expired on November 10, 2009' );
 	} );
 
 	it( 'should return the expiry date in future tense when date is in future', () => {
@@ -33,7 +33,7 @@ describe( 'ProductExpiration', () => {
 		const { container } = render(
 			<ProductExpiration expiryDateMoment={ date } translate={ translate } />
 		);
-		expect( container.textContent ).toEqual( 'Expires on November 10, 2100' );
+		expect( container ).toHaveTextContent( 'Expires on November 10, 2100' );
 	} );
 
 	it( 'should return the renewal date (same as the expiry date) in when the date is in the future', () => {
@@ -45,7 +45,7 @@ describe( 'ProductExpiration', () => {
 				translate={ translate }
 			/>
 		);
-		expect( container.textContent ).toEqual( 'Renews on November 10, 2100' );
+		expect( container ).toHaveTextContent( 'Renews on November 10, 2100' );
 	} );
 
 	it( 'should return the renewal date in when the date is in the future', () => {
@@ -58,7 +58,7 @@ describe( 'ProductExpiration', () => {
 				translate={ translate }
 			/>
 		);
-		expect( container.textContent ).toEqual( 'Renews on November 10, 2100' );
+		expect( container ).toHaveTextContent( 'Renews on November 10, 2100' );
 	} );
 
 	it( 'should return null when provided an invalid expiry date', () => {
@@ -66,7 +66,7 @@ describe( 'ProductExpiration', () => {
 		const { container } = render(
 			<ProductExpiration expiryDateMoment={ date } translate={ translate } />
 		);
-		expect( container.firstChild ).toBeNull();
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	it( 'should return null when provided an invalid purchase date and no expiry date', () => {
@@ -74,6 +74,6 @@ describe( 'ProductExpiration', () => {
 		const { container } = render(
 			<ProductExpiration purchaseDateMoment={ date } translate={ translate } />
 		);
-		expect( container.firstChild ).toBeNull();
+		expect( container ).toBeEmptyDOMElement();
 	} );
 } );

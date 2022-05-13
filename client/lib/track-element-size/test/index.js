@@ -185,7 +185,7 @@ describe( 'useWindowResizeRect', () => {
 			ReactDOM.render( <TestComponent />, container );
 		} );
 
-		expect( container.textContent ).toBe( initialRect.width.toString() );
+		expect( container ).toHaveTextContent( initialRect.width.toString() );
 		expect( lastRect ).toBe( initialRect );
 
 		// We expect 2 renders:
@@ -209,7 +209,7 @@ describe( 'useWindowResizeRect', () => {
 			ReactDOM.render( <TestComponent />, container );
 		} );
 
-		expect( container.textContent ).toBe( initialRect.width.toString() );
+		expect( container ).toHaveTextContent( initialRect.width.toString() );
 		expect( lastRect ).toBe( initialRect );
 
 		// Fire resize event.
@@ -222,7 +222,7 @@ describe( 'useWindowResizeRect', () => {
 			clock.tick( THROTTLE_RATE );
 		} );
 
-		expect( container.textContent ).toBe( secondRect.width.toString() );
+		expect( container ).toHaveTextContent( secondRect.width.toString() );
 		expect( lastRect ).toBe( secondRect );
 
 		// We expect 3 renders:
@@ -246,7 +246,7 @@ describe( 'useWindowResizeRect', () => {
 			ReactDOM.render( <TestComponent />, container );
 		} );
 
-		expect( container.textContent ).toBe( initialRect.width.toString() );
+		expect( container ).toHaveTextContent( initialRect.width.toString() );
 		expect( lastRect ).toBe( initialRect );
 
 		// Fire resize event.
@@ -259,7 +259,7 @@ describe( 'useWindowResizeRect', () => {
 			clock.tick( THROTTLE_RATE );
 		} );
 
-		expect( container.textContent ).toBe( initialRect.width.toString() );
+		expect( container ).toHaveTextContent( initialRect.width.toString() );
 		expect( lastRect ).toBe( initialRect );
 
 		// We expect 2 renders:
