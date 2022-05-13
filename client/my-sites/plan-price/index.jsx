@@ -31,7 +31,7 @@ export class PlanPrice extends Component {
 		} );
 
 		// productDisplayPrice is returned from Store Price and provides a geo-IDed currency format
-		if ( productDisplayPrice && ! Array.isArray( rawPrice ) ) {
+		if ( ( productDisplayPrice && ! Array.isArray( rawPrice ) ) || rawPrice.length === 1 ) {
 			return (
 				<h4 className={ classes }>
 					<span
