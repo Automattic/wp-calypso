@@ -9,8 +9,7 @@
 .signup__step .is-choose-service {
 	.select-items__item:first-child {
 		.button {
-			background-color: var( --color-accent );
-			color: #ffffff;
+			color: var( --color-text-inverted );
 		}
 	}
 }

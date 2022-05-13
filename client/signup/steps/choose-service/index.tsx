@@ -57,38 +57,31 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 		{
 			key: 'difm',
 			title: translate( 'Do It For Me' ),
-			description: (
-				<p>
-					{ translate(
-						'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}} plus a one year subscription of the %(plan)s plan.',
-						{
-							args: {
-								displayCost,
-								fulfillmentDays: 4,
-								plan: isEnabled( 'plans/pro-plan' )
-									? getPlan( PLAN_WPCOM_PRO )?.getTitle()
-									: getPlan( PLAN_PREMIUM )?.getTitle(),
-							},
-							components: {
-								PriceWrapper: isLoading ? <Placeholder /> : <strong />,
-							},
-						}
-					) }
-				</p>
+			description: translate(
+				'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}} plus a one year subscription of the %(plan)s plan.',
+				{
+					args: {
+						displayCost,
+						fulfillmentDays: 4,
+						plan: isEnabled( 'plans/pro-plan' )
+							? getPlan( PLAN_WPCOM_PRO )?.getTitle()
+							: getPlan( PLAN_PREMIUM )?.getTitle(),
+					},
+					components: {
+						PriceWrapper: isLoading ? <Placeholder /> : <strong />,
+					},
+				}
 			),
 			icon: mouse,
 			value: 'difm',
 			actionText: translate( 'Get Started' ),
+			isPrimary: true,
 		},
 		{
 			key: 'builtby',
 			title: translate( 'Built by WordPress.com - Concierge' ),
-			description: (
-				<p>
-					{ translate(
-						'Curabitur elementum lectus mi, quis venenatis metus tincidunt ac. Integer non lorem erat.'
-					) }
-				</p>
+			description: translate(
+				'Curabitur elementum lectus mi, quis venenatis metus tincidunt ac. Integer non lorem erat.'
 			),
 			icon: headset,
 			value: 'builtby',
