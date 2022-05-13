@@ -335,7 +335,7 @@ class Search extends Component {
 export default connect( ( state, { isRequestingSettings } ) => {
 	const siteId = getSelectedSiteId( state );
 	const hasInstantSearch = siteHasFeature( state, siteId, WPCOM_FEATURES_INSTANT_SEARCH );
-	const hasClassicSearch = siteHasFeature( state, siteId, WPCOM_FEATURES_CLASSIC_SEARCH ); // hasClassicSearch
+	const hasClassicSearch = siteHasFeature( state, siteId, WPCOM_FEATURES_CLASSIC_SEARCH );
 	const isSearchEligible = hasClassicSearch || hasInstantSearch;
 	const upgradeLink =
 		'/checkout/' +
