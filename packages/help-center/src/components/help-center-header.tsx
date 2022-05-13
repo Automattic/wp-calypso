@@ -50,8 +50,8 @@ const HelpCenterMobileHeader: React.FC< Header > = ( {
 	return (
 		<CardHeader className={ classNames }>
 			<Flex>
-				<p style={ { fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center' } }>
-					{ headerText }
+				<p className="help-center-header__text">
+					<span className="help-center-header__icon">{ headerText }</span>
 					<span
 						className="help-center-header__a8c-only-badge"
 						title="The help center is only visible to Automatticians at this stage."

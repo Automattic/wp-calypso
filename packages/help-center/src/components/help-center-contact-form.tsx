@@ -13,7 +13,7 @@ import { SitePickerDropDown } from '@automattic/site-picker';
 import { TextControl, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { Icon, info, page as pageIcon } from '@wordpress/icons';
+import { Icon, info, commentContent } from '@wordpress/icons';
 import React, { useEffect, useState, useContext } from 'react';
 /**
  * Internal Dependencies
@@ -161,7 +161,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 				if ( openChat ) {
 					setHeaderText(
 						<>
-							<Icon icon={ pageIcon } />
+							<Icon icon={ commentContent } />
 							{ __( 'Live chat', 'full-site-editing' ) }
 						</>
 					);
