@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 
 describe( 'selectors', () => {
@@ -18,7 +17,7 @@ describe( 'selectors', () => {
 			};
 
 			const activeFeature = hasActiveSiteFeature( state );
-			expect( activeFeature ).to.eql( false );
+			expect( activeFeature ).toEqual( false );
 		} );
 
 		test( 'should return False when site does not exist', () => {
@@ -37,7 +36,7 @@ describe( 'selectors', () => {
 			};
 
 			const activeFeature = hasActiveSiteFeature( state, 'unknown' );
-			expect( activeFeature ).to.eql( false );
+			expect( activeFeature ).toEqual( false );
 		} );
 
 		test( 'should return False when feature param is not defined', () => {
@@ -56,7 +55,7 @@ describe( 'selectors', () => {
 			};
 
 			const activeFeature = hasActiveSiteFeature( state, 123001 );
-			expect( activeFeature ).to.eql( false );
+			expect( activeFeature ).toEqual( false );
 		} );
 
 		test( 'should return False when feature is not defined in the active array', () => {
@@ -75,7 +74,7 @@ describe( 'selectors', () => {
 			};
 
 			const activeFeature = hasActiveSiteFeature( state, 123001, 'unknown-feature' );
-			expect( activeFeature ).to.eql( false );
+			expect( activeFeature ).toEqual( false );
 		} );
 
 		test( 'should return True when feature is defined in the active array', () => {
@@ -94,7 +93,7 @@ describe( 'selectors', () => {
 			};
 
 			const activeFeature = hasActiveSiteFeature( state, 123001, 'feature_active_01' );
-			expect( activeFeature ).to.eql( true );
+			expect( activeFeature ).toEqual( true );
 		} );
 	} );
 } );

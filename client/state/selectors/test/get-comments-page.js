@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getCommentsPage from 'calypso/state/selectors/get-comments-page';
 
 const SITE_ID = 12345678;
@@ -26,17 +25,17 @@ describe( 'getCommentsPage()', () => {
 
 	test( 'should return undefined if the state is not initialized for the requested filter', () => {
 		const commentsPage = getCommentsPage( state, SITE_ID, { page: 10, status: 'all' } );
-		expect( commentsPage ).to.be.undefined;
+		expect( commentsPage ).toBeUndefined();
 	} );
 
 	test( 'should return an empty array if the state is empty for the requested filters', () => {
 		const commentsPage = getCommentsPage( state, SITE_ID, { page: 1, status: 'trash' } );
-		expect( commentsPage ).to.eql( [] );
+		expect( commentsPage ).toEqual( [] );
 	} );
 
 	test( 'should return the first comments page of site view', () => {
 		const commentsPage = getCommentsPage( state, SITE_ID, {} );
-		expect( commentsPage ).to.eql( [ 1, 2, 3, 4, 5 ] );
+		expect( commentsPage ).toEqual( [ 1, 2, 3, 4, 5 ] );
 	} );
 
 	test( 'should return the first comments page of post view', () => {
@@ -45,7 +44,7 @@ describe( 'getCommentsPage()', () => {
 			postId: POST_ID,
 			status: 'all',
 		} );
-		expect( commentsPage ).to.eql( [ 6, 7, 8, 9, 10 ] );
+		expect( commentsPage ).toEqual( [ 6, 7, 8, 9, 10 ] );
 	} );
 
 	test( 'should return a comments page based on several filters', () => {
@@ -56,6 +55,6 @@ describe( 'getCommentsPage()', () => {
 			search: 'foo',
 			status: 'spam',
 		} );
-		expect( commentsPage ).to.eql( [ 11, 12, 13, 14, 15 ] );
+		expect( commentsPage ).toEqual( [ 11, 12, 13, 14, 15 ] );
 	} );
 } );

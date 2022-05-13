@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 
 const siteId = 77203074;
@@ -12,7 +11,7 @@ describe( 'getPluginUploadProgress', () => {
 				},
 			},
 		};
-		expect( getPluginUploadProgress( state, siteId ) ).to.equal( 0 );
+		expect( getPluginUploadProgress( state, siteId ) ).toEqual( 0 );
 	} );
 
 	test( 'should return current value for site', () => {
@@ -25,6 +24,6 @@ describe( 'getPluginUploadProgress', () => {
 				},
 			},
 		};
-		expect( getPluginUploadProgress( state, siteId ) ).to.equal( 73 );
+		expect( getPluginUploadProgress( state, siteId ) ).toEqual( 73 );
 	} );
 } );

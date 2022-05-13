@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 
 describe( 'selectors', () => {
@@ -24,7 +23,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isRequestingSiteFeatures( state, 123001 ) ).to.equal( true );
+			expect( isRequestingSiteFeatures( state, 123001 ) ).toEqual( true );
 		} );
 
 		test( 'should return False if we are not fetching features', () => {
@@ -48,7 +47,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isRequestingSiteFeatures( state, 123002 ) ).to.equal( false );
+			expect( isRequestingSiteFeatures( state, 123002 ) ).toEqual( false );
 		} );
 
 		test( 'should return False when site has not been synced', () => {
@@ -72,7 +71,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isRequestingSiteFeatures( state, 'unknown' ) ).to.equal( false );
+			expect( isRequestingSiteFeatures( state, 'unknown' ) ).toEqual( false );
 		} );
 
 		test( 'should return False when no site id', () => {
@@ -96,7 +95,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isRequestingSiteFeatures( state ) ).to.equal( false );
+			expect( isRequestingSiteFeatures( state ) ).toEqual( false );
 		} );
 	} );
 } );

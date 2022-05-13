@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
 import { regeneratePostByEmail } from 'calypso/state/jetpack/settings/actions';
 import isRegeneratingJetpackPostByEmail from 'calypso/state/selectors/is-regenerating-jetpack-post-by-email';
@@ -16,7 +15,7 @@ describe( 'isRegeneratingJetpackPostByEmail()', () => {
 		};
 
 		const output = isRegeneratingJetpackPostByEmail( state, siteId );
-		expect( output ).to.be.true;
+		expect( output ).toBe( true );
 	} );
 
 	test( 'should return false if post by email is currently not being regenerated', () => {
@@ -31,7 +30,7 @@ describe( 'isRegeneratingJetpackPostByEmail()', () => {
 		};
 
 		const output = isRegeneratingJetpackPostByEmail( state, siteId );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return false if that site is not known', () => {
@@ -46,6 +45,6 @@ describe( 'isRegeneratingJetpackPostByEmail()', () => {
 		};
 
 		const output = isRegeneratingJetpackPostByEmail( state, siteId );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 } );

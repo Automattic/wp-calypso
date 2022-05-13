@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getJetpackSetting from 'calypso/state/selectors/get-jetpack-setting';
 import { settings as SETTINGS_FIXTURE } from './fixtures/jetpack-settings';
 
@@ -12,7 +11,7 @@ describe( 'getJetpackSetting()', () => {
 		const siteId = 12345678;
 		const setting = 'setting_1';
 		const output = getJetpackSetting( stateIn, siteId, setting );
-		expect( output ).to.eql( SETTINGS_FIXTURE[ siteId ][ setting ] );
+		expect( output ).toEqual( SETTINGS_FIXTURE[ siteId ][ setting ] );
 	} );
 
 	test( 'should return null for an unknown site', () => {
@@ -26,7 +25,7 @@ describe( 'getJetpackSetting()', () => {
 		const siteId = 12345678;
 		const setting = 'setting_1';
 		const output = getJetpackSetting( stateIn, siteId, setting );
-		expect( output ).to.be.null;
+		expect( output ).toBeNull();
 	} );
 
 	test( 'should return null for an unknown setting', () => {
@@ -40,6 +39,6 @@ describe( 'getJetpackSetting()', () => {
 		const siteId = 12345678;
 		const setting = 'unexisting_setting';
 		const output = getJetpackSetting( stateIn, siteId, setting );
-		expect( output ).to.be.null;
+		expect( output ).toBeNull();
 	} );
 } );

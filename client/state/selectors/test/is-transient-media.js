@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import isTransientMedia from 'calypso/state/selectors/is-transient-media';
 
@@ -14,7 +13,7 @@ describe( 'isTransientMedia()', () => {
 			42
 		);
 
-		expect( isTransient ).to.be.false;
+		expect( isTransient ).toBe( false );
 	} );
 
 	test( 'should return false if the media has no transient flag', () => {
@@ -34,7 +33,7 @@ describe( 'isTransientMedia()', () => {
 			42
 		);
 
-		expect( isTransient ).to.be.false;
+		expect( isTransient ).toBe( false );
 	} );
 
 	test( 'should return the true if truthy transient flag on media', () => {
@@ -59,6 +58,6 @@ describe( 'isTransientMedia()', () => {
 			42
 		);
 
-		expect( isTransient ).to.be.true;
+		expect( isTransient ).toBe( true );
 	} );
 } );
