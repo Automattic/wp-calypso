@@ -139,8 +139,15 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 		};
 	} );
 
-	const { setSite, setUserDeclaredSiteUrl, setUserDeclaredSite, setSubject, setMessage, setPopup } =
-		useDispatch( STORE_KEY );
+	const {
+		setSite,
+		resetStore,
+		setUserDeclaredSiteUrl,
+		setUserDeclaredSite,
+		setSubject,
+		setMessage,
+		setPopup,
+	} = useDispatch( STORE_KEY );
 
 	const {
 		result: ownershipResult,
@@ -209,6 +216,8 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 						const popup = openPopup( event );
 						setPopup( popup );
 					}
+					// in chat, we don't need to reset the store here, the Happychat communicator will take care of that
+					// this is to make sure we only reset the store after we communicated everything to Happychat.
 					break;
 				}
 				case 'EMAIL': {
@@ -225,7 +234,10 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 						locale,
 						client: 'browser:help-center',
 						is_chat_overflow: false,
-					} ).then( () => setContactSuccess( true ) );
+					} ).then( () => {
+						setContactSuccess( true );
+						resetStore();
+					} );
 					break;
 				}
 				case 'FORUM': {
@@ -235,7 +247,10 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 						subject: subject ?? '',
 						locale,
 						hideInfo: hideSiteInfo,
-					} ).then( ( response ) => setForumTopicUrl( response.topic_URL ) );
+					} ).then( ( response ) => {
+						setForumTopicUrl( response.topic_URL );
+						resetStore();
+					} );
 					break;
 				}
 			}
