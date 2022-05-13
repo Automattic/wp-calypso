@@ -41,4 +41,4 @@ in the root of the repository to get the required `devDependencies`.
 
 ### Using [Storybook](https://storybook.js.org/)
 
-`yarn run components:storybook:start`
+`yarn workspace @automattic/components run storybook`
