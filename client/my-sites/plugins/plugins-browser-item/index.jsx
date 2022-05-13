@@ -25,7 +25,7 @@ import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
 
-const PREINSTALLED_PLUGINS = [ 'Jetpack by WordPress.com', 'Akismet', 'VaultPress' ];
+const PREINSTALLED_PLUGINS = [ 'jetpack', 'akismet', 'vaultpress' ];
 
 const PluginsBrowserListElement = ( props ) => {
 	const {
@@ -89,7 +89,7 @@ const PluginsBrowserListElement = ( props ) => {
 			return false;
 		}
 
-		return ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.name );
+		return ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug );
 	}, [ isJetpack, site, plugin ] );
 
 	const isUntestedVersion = useMemo( () => {
