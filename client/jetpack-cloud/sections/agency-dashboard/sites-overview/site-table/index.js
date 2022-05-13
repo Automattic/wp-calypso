@@ -6,7 +6,7 @@ import SiteErrorContent from '../site-error-content';
 
 import './style.scss';
 
-const SiteTable = ( { isFetching, columns, sites, isFetchingFailed } ) => {
+const SiteTable = ( { isFetching, columns, sites } ) => {
 	return (
 		<table className="site-table__table">
 			<thead>
@@ -18,7 +18,7 @@ const SiteTable = ( { isFetching, columns, sites, isFetchingFailed } ) => {
 				</tr>
 			</thead>
 			<tbody>
-				{ isFetching || isFetchingFailed ? (
+				{ isFetching ? (
 					<tr>
 						{ Object.keys( columns ).map( ( key, index ) => (
 							<td key={ index }>

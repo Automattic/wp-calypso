@@ -212,7 +212,8 @@ const siteFormatter = ( rows ) => {
 	return <span className="sites-overview__row-text">{ value }</span>;
 };
 
-export const getFormattedSites = ( sites ) => {
+export const formatSites = ( data ) => {
+	const sites = data?.items;
 	if ( Array.isArray( sites ) && sites.length > 0 ) {
 		return sites.map( ( site ) => {
 			const pluginUpdates = site.awaiting_plugin_updates;
