@@ -1,7 +1,7 @@
-import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { ReactElement, Fragment } from 'react';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
 import SiteStatusContent from '../site-status-content';
 import type { SiteData, SiteColumns } from '../types';
@@ -63,7 +63,7 @@ export default function SiteTable( { isFetching, columns, items }: Props ): Reac
 											'site-table__actions'
 										) }
 									>
-										<Gridicon icon="ellipsis" size={ 18 } className="site-table__all-actions" />
+										<SiteActions isLargeScreen site={ site } />
 									</td>
 								</tr>
 								{ site.error ? (

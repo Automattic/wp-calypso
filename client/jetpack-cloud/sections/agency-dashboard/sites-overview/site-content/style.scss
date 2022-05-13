@@ -9,9 +9,6 @@
 	@include break-large() {
 		display: none;
 	}
-	&__card.is-compact {
-		padding: 0;
-	}
 }
 .site-content__card.is-compact {
 	padding: 0;
