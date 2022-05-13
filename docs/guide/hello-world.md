@@ -112,7 +112,7 @@ Now it's time to configure our section. Open `client/sections.js` and add the fo
 
 The array should look something like:
 
-```
+```javascript
 const sections = [
 	// All of the other sections are here
 	// ...
