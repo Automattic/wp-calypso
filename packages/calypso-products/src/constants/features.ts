@@ -217,6 +217,7 @@ export const WPCOM_FEATURES_AKISMET = 'akismet';
 export const WPCOM_FEATURES_ANTISPAM = 'antispam';
 export const WPCOM_FEATURES_ATOMIC = 'atomic';
 export const WPCOM_FEATURES_BACKUPS = 'backups';
+export const WPCOM_FEATURES_CLASSIC_SEARCH = 'search';
 export const WPCOM_FEATURES_FULL_ACTIVITY_LOG = 'full-activity-log';
 export const WPCOM_FEATURES_INSTANT_SEARCH = 'instant-search';
 export const WPCOM_FEATURES_LIVE_SUPPORT = 'live_support';
