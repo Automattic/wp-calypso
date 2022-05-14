@@ -743,18 +743,15 @@ export function useIsStepComplete(): boolean {
 
 export function useSetStepComplete(): ( stepNumber: number ) => Promise< void > {
 	const { getStepCompleteCallback, stepCompleteStatus } = useContext( CheckoutStepDataContext );
-	return useCallback(
-		async ( stepNumber: number ) => {
-			// To try to complete a step, we must try to complete all previous steps
-			// first, ignoring steps that are already complete.
-			for ( let step = 1; step <= stepNumber; step++ ) {
-				if ( ! stepCompleteStatus[ step ] ) {
-					await getStepCompleteCallback( step )();
-				}
+	return useEvent( async ( stepNumber: number ) => {
+		// To try to complete a step, we must try to complete all previous steps
+		// first, ignoring steps that are already complete.
+		for ( let step = 1; step <= stepNumber; step++ ) {
+			if ( ! stepCompleteStatus[ step ] ) {
+				await getStepCompleteCallback( step )();
 			}
-		},
-		[ getStepCompleteCallback, stepCompleteStatus ]
-	);
+		}
+	} );
 }
 
 const StepTitle = styled.span< StepTitleProps & HTMLAttributes< HTMLSpanElement > >`
