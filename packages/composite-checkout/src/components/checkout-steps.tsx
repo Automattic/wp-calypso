@@ -55,13 +55,22 @@ interface StepCompleteCallbackMap {
 	[ key: string ]: StepCompleteCallback;
 }
 
+interface StepIdMap {
+	[ key: string ]: number;
+}
+
 interface CheckoutStepDataContextType {
 	activeStepNumber: number;
 	stepCompleteStatus: StepCompleteStatus;
 	totalSteps: number;
 	setActiveStepNumber: ( stepNumber: number ) => void;
 	setStepCompleteStatus: Dispatch< SetStateAction< StepCompleteStatus > >;
-	setStepCompleteCallback: ( stepNumber: number, callback: StepCompleteCallback ) => void;
+	getStepNumberFromId: ( stepId: string ) => number | undefined;
+	setStepCompleteCallback: (
+		stepNumber: number,
+		stepId: string,
+		callback: StepCompleteCallback
+	) => void;
 	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
 	setTotalSteps: ( totalSteps: number ) => void;
 }
@@ -88,6 +97,7 @@ const CheckoutStepDataContext = createContext< CheckoutStepDataContextType >( {
 	setStepCompleteStatus: noop,
 	setStepCompleteCallback: noop,
 	getStepCompleteCallback: noopPromise,
+	getStepNumberFromId: noop,
 	setTotalSteps: noop,
 } );
 
@@ -258,8 +268,11 @@ export function Checkout( {
 	const [ activeStepNumber, setActiveStepNumber ] = useState< number >( 1 );
 	const [ stepCompleteStatus, setStepCompleteStatus ] = useState< StepCompleteStatus >( {} );
 	const stepCompleteCallbackMap = useRef< StepCompleteCallbackMap >( {} );
+	const stepIdMap = useRef< StepIdMap >( {} );
+	const getStepNumberFromId = useCallback( ( id: string ) => stepIdMap.current[ id ], [] );
 	const setStepCompleteCallback = useCallback(
-		( stepNumber: number, callback: StepCompleteCallback ) => {
+		( stepNumber: number, stepId: string, callback: StepCompleteCallback ) => {
+			stepIdMap.current[ stepId ] = stepNumber;
 			stepCompleteCallbackMap.current[ stepNumber ] = callback;
 		},
 		[]
@@ -310,6 +323,7 @@ export function Checkout( {
 						setStepCompleteStatus,
 						setStepCompleteCallback,
 						getStepCompleteCallback,
+						getStepNumberFromId,
 						setTotalSteps,
 					} }
 				>
@@ -374,7 +388,7 @@ export const CheckoutStep = ( {
 		setFormReady();
 		return completeResult;
 	};
-	setStepCompleteCallback( stepNumber, goToNextStep );
+	setStepCompleteCallback( stepNumber, stepId, goToNextStep );
 
 	const classNames = [
 		'checkout-step',
@@ -741,9 +755,14 @@ export function useIsStepComplete(): boolean {
 	return !! stepCompleteStatus[ stepNumber ];
 }
 
-export function useSetStepComplete(): ( stepNumber: number ) => Promise< void > {
-	const { getStepCompleteCallback, stepCompleteStatus } = useContext( CheckoutStepDataContext );
-	return useEvent( async ( stepNumber: number ) => {
+export function useSetStepComplete(): ( stepId: string ) => Promise< void > {
+	const { getStepCompleteCallback, stepCompleteStatus, getStepNumberFromId } =
+		useContext( CheckoutStepDataContext );
+	return useEvent( async ( stepId: string ) => {
+		const stepNumber = getStepNumberFromId( stepId );
+		if ( ! stepNumber ) {
+			throw new Error( `Cannot find step with id ${ stepId }` );
+		}
 		// To try to complete a step, we must try to complete all previous steps
 		// first, ignoring steps that are already complete.
 		for ( let step = 1; step <= stepNumber; step++ ) {
