@@ -107,3 +107,16 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 		</>
 	);
 };
+
+/*{ false && isAdmin && ! isWPCOM && ! isWPForTeamsSite && (
+<SidebarItem
+	customIcon={ showIcons && <JetpackIcons icon="scan" /> }
+	label={ translate( 'Clone Settings', {
+		comment: 'Jetpack sidebar menu item',
+	} ) }
+	link={ `/jetpack-clone-settings/${ siteSlug }` }
+	onNavigate={ onNavigate( tracksEventNames.cloneSettingsClicked ) }
+	selected={ currentPathMatches( `/jetpack-clone-settings/${ siteSlug }` ) }
+	expandSection={ expandSection }
+/>
+) }*/

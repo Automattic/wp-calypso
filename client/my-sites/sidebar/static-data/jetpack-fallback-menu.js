@@ -115,6 +115,13 @@ export default function jetpackMenu( { siteDomain } ) {
 					type: 'submenu-item',
 					url: `/jetpack-search/${ siteDomain }`,
 				},
+				{
+					parent: 'jetpack',
+					slug: 'jetpack-clone-settings',
+					title: translate( 'Clone Settings' ),
+					type: 'submenu-item',
+					url: `/jetpack-clone-settings/${ siteDomain }`,
+				},
 			],
 		},
 		{

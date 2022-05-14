@@ -1,0 +1,98 @@
+import { Button, Card } from '@automattic/components';
+import { translate } from 'i18n-calypso';
+import { ReactElement, useState, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
+import getSites from 'calypso/state/selectors/get-sites';
+import FormattedHeader from 'calypso/components/formatted-header';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { cloneJetpackSettings } from 'calypso/state/jetpack/settings/actions';
+
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import './style.scss';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormSelect from 'calypso/components/forms/form-select';
+
+function chooseSite( siteId, sites, onSelect ) {
+	return (
+		<FormFieldset>
+			<FormLabel id="jetpack-clone-settings__choose-site">
+				{ translate( 'Copy settings from:' ) }
+			</FormLabel>
+
+			<FormSelect onChange={ onSelect }>
+				<option value="0"> - </option>
+				{ sites
+					.filter( ( site ) => site.jetpack && site.ID !== siteId )
+					.sort( ( siteA, siteB ) => siteA.name.toLowerCase() > siteB.name.toLowerCase() )
+					.map( ( site ) => (
+						<option value={ site.ID } key={ site.ID }>
+							{ site.name } ({ site.domain })
+						</option>
+					) ) }
+			</FormSelect>
+
+			<FormSettingExplanation>
+				{ translate( 'Choose a Jetpack site to copy settings from.' ) }{ ' ' }
+			</FormSettingExplanation>
+		</FormFieldset>
+	);
+}
+
+export default function CloneSettingsMain(): ReactElement {
+	const siteId = useSelector( getSelectedSiteId );
+	const sites = useSelector( getSites ) || [];
+	const dispatch = useDispatch();
+
+	const [ sourceSiteId, setSourceSiteId ] = useState( 0 );
+
+	const onSelect = useCallback( ( select ) => {
+		const id = parseInt( select.target.value );
+		if ( id ) {
+			setSourceSiteId( select.target.value );
+		}
+		console.log( select.target.value );
+	}, [] );
+
+	const cloneSettingsCallback = useCallback( () => {
+		console.log( siteId, sourceSiteId );
+		if ( siteId && sourceSiteId ) {
+			console.log( 'dispatching' );
+			dispatch( cloneJetpackSettings( siteId, sourceSiteId ) );
+		}
+	}, [ siteId, sourceSiteId ] );
+
+	console.log( 'sites', sites );
+
+	return (
+		<Main className="jetpack-clone-settings">
+			<DocumentHead title="Jetpack Clone Settings" />
+			<PageViewTracker path="/jetpack-clone-settings/:site" title="Jetpack Clone Settings" />
+
+			<FormattedHeader
+				brandFont
+				className="jetpack-clone-settings__page-heading"
+				headerText={ translate( 'Activity' ) }
+				subHeaderText={ translate( 'Clone Jetpack settings from another site.' ) }
+				align="left"
+			/>
+
+			<Card>
+				<form>
+					{ chooseSite( siteId, sites, onSelect ) }
+
+					<Button primary onClick={ cloneSettingsCallback }>
+						Clone Settings
+					</Button>
+				</form>
+			</Card>
+		</Main>
+	);
+}

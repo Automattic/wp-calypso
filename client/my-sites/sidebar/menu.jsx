@@ -36,6 +36,14 @@ export const MySitesSidebarUnifiedMenu = ( {
 		Array.isArray( children ) &&
 		children.find( ( menuItem ) => menuItem?.url && itemLinkMatches( menuItem.url, path ) );
 	const childIsSelected = !! selectedMenuItem;
+	/*if (false && sectionId === 'SIDEBAR_SECTION_paid-upgrades-php') {
+		console.log(itemLinkMatches("/plans/hh8.jurassic.tube", '/jetpack-clone-settings/hh8.jurassic.tube '));
+		console.log(children.find( ( menuItem ) => {
+			console.log(menuItem?.url, path, itemLinkMatches( menuItem.url, path ));
+			return menuItem?.url && itemLinkMatches( menuItem.url, path );
+		} ));
+		//console.log(sectionId, children, path, selectedMenuItem, childIsSelected);
+	}*/
 	const isDesktop = isWithinBreakpoint( '>782px' );
 	const isMobile = ! isDesktop;
 	const showAsExpanded =

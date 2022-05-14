@@ -9,6 +9,7 @@ export default ( { path, expandSection } ) => {
 				activityClicked: 'calypso_mysites_jetpack_sidebar_activity_clicked',
 				backupClicked: 'calypso_mysites_jetpack_sidebar_backup_clicked',
 				scanClicked: 'calypso_mysites_jetpack_sidebar_scan_clicked',
+				cloneSettingsClicked: 'calypso_mysites_jetpack_sidebar_clone_settings_clicked',
 			} }
 			expandSection={ expandSection }
 		/>
