@@ -32,7 +32,7 @@ const SiteTable = ( { isFetching, columns, sites } ) => {
 				) : (
 					sites.map( ( rows ) => {
 						const site = rows.site;
-						const blogId = site?.value?.blog_id;
+						const blogId = site.value.blog_id;
 						return (
 							<React.Fragment key={ blogId }>
 								<tr className="site-table__table-row">
