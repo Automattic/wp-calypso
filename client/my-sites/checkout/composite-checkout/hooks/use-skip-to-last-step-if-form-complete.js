@@ -21,7 +21,7 @@ export default function useSkipToLastStepIfFormComplete( isCachedContactFormVali
 			if ( isCachedContactFormValid ) {
 				debug( 'Contact details are already populated; skipping to payment method step' );
 				saveStepNumberToUrl( 2 ); // TODO: can we do this dynamically somehow in case the step numbers change?
-				setStepCompleteStatus( 1, true ); // TODO: can we do this dynamically somehow in case the step numbers change?
+				setStepCompleteStatus( 1 ); // TODO: can we do this dynamically somehow in case the step numbers change?
 
 				reduxDispatch( recordTracksEvent( 'calypso_checkout_skip_to_last_step' ) );
 			}
