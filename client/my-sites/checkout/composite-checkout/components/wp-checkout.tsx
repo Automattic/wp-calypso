@@ -230,39 +230,37 @@ export default function WPCheckout( {
 			? getCountryPostalCodeSupport( countriesList, contactInfo.countryCode.value )
 			: false;
 
-	const updateCartContactDetails = useCallback( () => {
-		const nonTaxPaymentMethods = [ 'free-purchase' ];
-		if ( ! activePaymentMethod || ! contactInfo ) {
-			return;
-		}
+	const updateCartContactDetails = useCallback(
+		( contactInfoForCart: ManagedContactDetails ) => {
+			const nonTaxPaymentMethods = [ 'free-purchase' ];
+			if ( ! activePaymentMethod || ! contactInfoForCart ) {
+				return;
+			}
 
-		// When the contact details change, update the tax location in cart if the
-		// active payment method is taxable.
-		if ( nonTaxPaymentMethods.includes( activePaymentMethod.id ) ) {
-			// This data is intentionally empty so we do not charge taxes
-			updateLocation( {
-				countryCode: '',
-				postalCode: '',
-				subdivisionCode: '',
-			} );
-		} else {
-			// The tax form does not include a subdivisionCode field but the server
-			// will sometimes fill in the value on the cart itself so we should not
-			// try to update it when the field does not exist.
-			const subdivisionCode = contactDetailsType === 'tax' ? undefined : contactInfo.state?.value;
-			updateLocation( {
-				countryCode: contactInfo.countryCode?.value,
-				postalCode: arePostalCodesSupported ? contactInfo.postalCode?.value : '',
-				subdivisionCode,
-			} );
-		}
-	}, [
-		activePaymentMethod,
-		updateLocation,
-		contactInfo,
-		contactDetailsType,
-		arePostalCodesSupported,
-	] );
+			// When the contact details change, update the tax location in cart if the
+			// active payment method is taxable.
+			if ( nonTaxPaymentMethods.includes( activePaymentMethod.id ) ) {
+				// This data is intentionally empty so we do not charge taxes
+				updateLocation( {
+					countryCode: '',
+					postalCode: '',
+					subdivisionCode: '',
+				} );
+			} else {
+				// The tax form does not include a subdivisionCode field but the server
+				// will sometimes fill in the value on the cart itself so we should not
+				// try to update it when the field does not exist.
+				const subdivisionCode =
+					contactDetailsType === 'tax' ? undefined : contactInfoForCart.state?.value;
+				updateLocation( {
+					countryCode: contactInfoForCart.countryCode?.value,
+					postalCode: arePostalCodesSupported ? contactInfoForCart.postalCode?.value : '',
+					subdivisionCode,
+				} );
+			}
+		},
+		[ activePaymentMethod, updateLocation, contactDetailsType, arePostalCodesSupported ]
+	);
 
 	useUpdateCartLocationWhenPaymentMethodChanges( activePaymentMethod, updateCartContactDetails );
 
@@ -452,7 +450,7 @@ export default function WPCheckout( {
 						setShouldShowContactDetailsValidationErrors( true );
 						// Touch the fields so they display validation errors
 						touchContactFields();
-						updateCartContactDetails();
+						updateCartContactDetails( contactInfo );
 						return validateContactDetails(
 							contactInfo,
 							isLoggedOutCart,
