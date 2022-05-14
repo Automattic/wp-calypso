@@ -23,7 +23,7 @@ const ErrorContent = ( { siteUrl } ) => {
 			<a
 				onClick={ handleClickFixNow }
 				className="sites-overview__error-message-link"
-				href={ `https://wordpress.com/settings/disconnect-site/${ siteUrl }?type=down` }
+				href={ `/settings/disconnect-site/${ siteUrl }?type=down` }
 			>
 				{ translate( 'Fix now' ) }
 			</a>

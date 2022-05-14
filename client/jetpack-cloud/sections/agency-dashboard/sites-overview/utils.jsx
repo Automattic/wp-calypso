@@ -1,8 +1,5 @@
-import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
-import Badge from 'calypso/components/badge';
-import Tooltip from 'calypso/components/tooltip';
+import SiteStatusContent from './site-status-content';
 
 /**
  * Returns link and tooltip for each feature based on status
@@ -67,10 +64,11 @@ const getLinks = ( type, status, siteUrl, siteId ) => {
  *
  * @param  {rows} rows  Holds row objects(sites)
  * @param  {type} type Feature type
- * @returns {object} Object that holds row(individual row based on type), link(to redirect on click), siteError,
+ * @returns {{row, link, siteError, tooltip, tooltipId}} Object that holds
+ * row(individual row based on type), link(to redirect on click), siteError,
  * tooltip & tooltip id
  */
-const getRowMetaData = ( rows, type ) => {
+export const getRowMetaData = ( rows, type ) => {
 	const row = rows[ type ];
 	const siteUrl = rows.site?.value?.url;
 	const siteError = rows.site?.error;
@@ -85,149 +83,10 @@ const getRowMetaData = ( rows, type ) => {
 	};
 };
 
-export default function StatusContent( { content, tooltip, tooltipId, link, siteError } ) {
-	const statusContentRef = useRef();
-	const [ showTooltip, setShowTooltip ] = useState( false );
-	const handleShowTooltip = () => {
-		setShowTooltip( true );
-	};
-	const handleHideTooltip = () => {
-		setShowTooltip( false );
-	};
-
-	const handleClickRowAction = () => {
-		// Handle track event here
-	};
-
-	let updatedContent = content;
-
-	if ( link ) {
-		updatedContent = (
-			<a onClick={ handleClickRowAction } href={ link }>
-				{ content }
-			</a>
-		);
-	}
-
-	if ( siteError ) {
-		updatedContent = <span className="sites-overview__disabled">{ content } </span>;
-	}
-
-	return (
-		<>
-			{ tooltip && ! siteError ? (
-				<>
-					<span
-						ref={ statusContentRef }
-						onMouseEnter={ handleShowTooltip }
-						onMouseLeave={ handleHideTooltip }
-					>
-						{ updatedContent }
-					</span>
-					<Tooltip
-						id={ tooltipId }
-						context={ statusContentRef.current }
-						isVisible={ showTooltip }
-						position="bottom"
-						className="sites-overview__tooltip"
-					>
-						{ tooltip }
-					</Tooltip>
-				</>
-			) : (
-				updatedContent
-			) }
-		</>
-	);
-}
-
-/**
- * Returns content based on the status
- *
- * @param  {rows} rows  Holds row objects(sites)
- * @param  {type} type Feature type
- * @returns {StatusContent} Returns HTML content based on the status
- */
-
-const statusFormatter = ( rows, type ) => {
-	const { link, row, siteError, tooltip, tooltipId } = getRowMetaData( rows, type );
-	const { value, status } = row;
-	let content;
-	switch ( status ) {
-		case 'failed': {
-			content = (
-				<Badge className="sites-overview__badge" type="error">
-					{ value }
-				</Badge>
-			);
-			break;
-		}
-		case 'warning': {
-			content = (
-				<Badge className="sites-overview__badge" type="warning">
-					{ value }
-				</Badge>
-			);
-			break;
-		}
-		case 'success': {
-			content = <Gridicon icon="checkmark" size={ 18 } className="sites-overview__grey-icon" />;
-			break;
-		}
-		case 'active': {
-			content = <Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />;
-			break;
-		}
-		case 'progress': {
-			content = (
-				<svg
-					className="sites-overview__vertical-align-middle"
-					width="16"
-					height="16"
-					viewBox="0 0 16 16"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<circle cx="8" cy="8" r="7.25" stroke="black" strokeWidth="1.5" />
-					<rect x="7" y="4" width="1.5" height="5" fill="#1E1E1E" />
-					<rect
-						x="10.8901"
-						y="10.77"
-						width="1.5"
-						height="4"
-						transform="rotate(135 10.8901 10.77)"
-						fill="#1E1E1E"
-					/>
-				</svg>
-			);
-			break;
-		}
-		case 'inactive': {
-			content = (
-				<span className="sites-overview__status-add-new">
-					<Gridicon icon="plus-small" size={ 16 } />
-					<span>{ translate( 'Add' ) }</span>
-				</span>
-			);
-			break;
-		}
-	}
-	return (
-		<StatusContent
-			content={ content }
-			tooltip={ tooltip }
-			tooltipId={ tooltipId }
-			link={ link }
-			siteError={ siteError }
-		/>
-	);
-};
-
 const siteFormatter = ( rows ) => {
 	const { row } = getRowMetaData( rows, 'site' );
 	const site = row.value;
 	const value = site.url;
-
 	return <span className="sites-overview__row-text">{ value }</span>;
 };
 
@@ -252,18 +111,16 @@ export const formatSites = ( data ) => {
 		}
 		const scanThreats = site.latest_scan_threats_found.length;
 		if ( scanThreats > 0 ) {
-			scanValue =
-				scanThreats > 1
-					? translate( '%(threats)d Threats', {
-							args: {
-								threats: scanThreats,
-							},
-					  } )
-					: translate( '%(threats)d Threat', {
-							args: {
-								threats: scanThreats,
-							},
-					  } );
+			scanValue = translate(
+				'%(threats)d Threat',
+				'%(threats)d Threats', // plural version of the string
+				{
+					count: scanThreats,
+					args: {
+						threats: scanThreats,
+					},
+				}
+			);
 		}
 		let error = '';
 		if (
@@ -282,25 +139,25 @@ export const formatSites = ( data ) => {
 				error,
 			},
 			backup: {
-				value: site.latest_backup_status === 'failed' ? translate( 'Failed' ) : '',
+				value: 'failed' === site.latest_backup_status ? translate( 'Failed' ) : '',
 				status: site.backup_enabled ? site.latest_backup_status : 'inactive',
-				formatter: ( rows ) => statusFormatter( rows, 'backup' ),
+				formatter: ( rows ) => <SiteStatusContent rows={ rows } type="backup" />,
 			},
 			scan: {
 				value: scanValue,
 				status: site.scan_enabled ? site.latest_scan_status : 'inactive',
-				formatter: ( rows ) => statusFormatter( rows, 'scan' ),
+				formatter: ( rows ) => <SiteStatusContent rows={ rows } type="scan" />,
 				threats: site.latest_scan_threats_found.length,
 			},
 			monitor: {
-				value: site.monitor_status === 'failed' ? translate( 'Site Down' ) : '',
+				value: 'failed' === site.monitor_status ? translate( 'Site Down' ) : '',
 				status: site.monitor_status === 'accessible' ? 'success' : site.monitor_status,
-				formatter: ( rows ) => statusFormatter( rows, 'monitor' ),
+				formatter: ( rows ) => <SiteStatusContent rows={ rows } type="monitor" />,
 			},
 			plugin: {
 				value: `${ pluginUpdates.length } ${ translate( 'Available' ) }`,
 				status: pluginUpdates.length > 0 ? 'warning' : 'active',
-				formatter: ( rows ) => statusFormatter( rows, 'plugin' ),
+				formatter: ( rows ) => <SiteStatusContent rows={ rows } type="plugin" />,
 				updates: pluginUpdates.length,
 			},
 		};
