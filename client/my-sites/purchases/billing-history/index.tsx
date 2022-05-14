@@ -33,7 +33,7 @@ import './style.scss';
 
 function useLogBillingHistoryError( message: string ) {
 	return useCallback(
-		( error ) => {
+		( error: Error ) => {
 			logToLogstash( {
 				feature: 'calypso_client',
 				message,
@@ -41,7 +41,7 @@ function useLogBillingHistoryError( message: string ) {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'site_level_billing_history',
-					message: String( error ),
+					message: error.message + '; Stack: ' + error.stack,
 				},
 			} );
 		},

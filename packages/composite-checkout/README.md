@@ -108,7 +108,7 @@ Requires an `id` prop, which is a string that is used to construct the SVG `id`.
 A [React error boundary](https://reactjs.org/docs/error-boundaries.html) that can be used to wrap any components you like. There are several layers of these already built-in to `CheckoutProvider` and its children, but you may use this to manually wrap components. It has the following props.
 
 - `errorMessage: React.ReactNode`. The error message to display to the user if there is a problem; typically a string but can also be a component.
-- `onError?: (string) => void`. A function to be called when there is an error. Can be used for logging.
+- `onError?: (error: Error) => void`. A function to be called when there is an error. Can be used for logging.
 
 ### CheckoutProvider
 

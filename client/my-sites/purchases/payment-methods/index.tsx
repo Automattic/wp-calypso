@@ -36,7 +36,7 @@ import { getAddNewPaymentMethodUrlFor, getPaymentMethodsUrlFor } from '../paths'
 
 function useLogPaymentMethodsError( message: string ) {
 	return useCallback(
-		( error ) => {
+		( error: Error ) => {
 			logToLogstash( {
 				feature: 'calypso_client',
 				message,
@@ -44,7 +44,7 @@ function useLogPaymentMethodsError( message: string ) {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'site_level_payment_methods',
-					message: String( error ),
+					message: error.message + '; Stack: ' + error.stack,
 				},
 			} );
 		},

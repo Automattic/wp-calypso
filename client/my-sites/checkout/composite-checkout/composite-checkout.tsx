@@ -523,8 +523,8 @@ export default function CompositeCheckout( {
 	} );
 
 	const onPageLoadError: CheckoutPageErrorCallback = useCallback(
-		( errorType, errorMessage, errorData ) => {
-			logStashLoadErrorEvent( errorType, errorMessage, errorData );
+		( errorType, error, errorData ) => {
+			logStashLoadErrorEvent( errorType, error, errorData );
 			function errorTypeToTracksEventName( type: string ): string {
 				switch ( type ) {
 					case 'page_load':
@@ -543,7 +543,7 @@ export default function CompositeCheckout( {
 			}
 			reduxDispatch(
 				recordTracksEvent( errorTypeToTracksEventName( errorType ), {
-					error_message: errorMessage,
+					error_message: error.message + '; Stack: ' + error.stack,
 					...errorData,
 				} )
 			);

@@ -133,7 +133,7 @@ export type PaymentErrorCallback = ( args: {
 } ) => void;
 export type CheckoutPageErrorCallback = (
 	errorType: string,
-	errorMessage: string,
+	error: Error,
 	errorData?: Record< string, string | number | undefined >
 ) => void;
 

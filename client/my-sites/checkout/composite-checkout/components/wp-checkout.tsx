@@ -267,16 +267,16 @@ export default function WPCheckout( {
 	useUpdateCartLocationWhenPaymentMethodChanges( activePaymentMethod, updateCartContactDetails );
 
 	const onReviewError = useCallback(
-		( error ) =>
-			onPageLoadError( 'step_load', String( error ), {
+		( error: Error ) =>
+			onPageLoadError( 'step_load', error, {
 				step_id: 'review',
 			} ),
 		[ onPageLoadError ]
 	);
 
 	const onSummaryError = useCallback(
-		( error ) =>
-			onPageLoadError( 'step_load', String( error ), {
+		( error: Error ) =>
+			onPageLoadError( 'step_load', error, {
 				step_id: 'summary',
 			} ),
 		[ onPageLoadError ]

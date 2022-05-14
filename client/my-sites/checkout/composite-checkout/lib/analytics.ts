@@ -10,13 +10,13 @@ import type { CalypsoDispatch } from 'calypso/state/types';
 
 export function logStashLoadErrorEvent(
 	errorType: string,
-	errorMessage: string,
+	error: Error,
 	additionalData: Record< string, string | number | undefined > = {}
 ): Promise< void > {
 	return logStashEvent( 'composite checkout load error', {
 		...additionalData,
 		type: errorType,
-		message: errorMessage,
+		message: error.message + '; Stack: ' + error.stack,
 	} );
 }
 
@@ -36,7 +36,7 @@ export function logStashEvent(
 }
 
 export const recordCompositeCheckoutErrorDuringAnalytics =
-	( { errorObject, failureDescription }: { errorObject: unknown; failureDescription: string } ) =>
+	( { errorObject, failureDescription }: { errorObject: Error; failureDescription: string } ) =>
 	( dispatch: CalypsoDispatch ): void => {
 		// This is a fallback to catch any errors caused by the analytics code
 		// Anything in this block should remain very simple and extremely
@@ -48,7 +48,7 @@ export const recordCompositeCheckoutErrorDuringAnalytics =
 				action_type: failureDescription,
 			} )
 		);
-		logStashLoadErrorEvent( 'calypso_checkout_composite_error', ( errorObject as Error ).message, {
+		logStashLoadErrorEvent( 'calypso_checkout_composite_error', errorObject, {
 			action_type: failureDescription,
 		} );
 	};
@@ -94,7 +94,7 @@ export const recordTransactionBeginAnalytics =
 		} catch ( errorObject ) {
 			dispatch(
 				recordCompositeCheckoutErrorDuringAnalytics( {
-					errorObject,
+					errorObject: errorObject as Error,
 					failureDescription: `transaction-begin: ${ paymentMethodId }`,
 				} )
 			);
