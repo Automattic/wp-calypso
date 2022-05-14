@@ -748,7 +748,10 @@ export function useSetStepComplete(): ( stepNumber: number ) => Promise< void > 
 		// first, ignoring steps that are already complete.
 		for ( let step = 1; step <= stepNumber; step++ ) {
 			if ( ! stepCompleteStatus[ step ] ) {
-				await getStepCompleteCallback( step )();
+				const didStepComplete = await getStepCompleteCallback( step )();
+				if ( ! didStepComplete ) {
+					break;
+				}
 			}
 		}
 	} );
