@@ -191,7 +191,6 @@ function usePrefilledCountry( preFilledCountry?: string ) {
 			// we have to wait for a render to occur. Therefore we use setTimeout to
 			// defer the calls to setStepComplete.
 			setTimeout( () => {
-				setStepComplete( 1 );
 				setStepComplete( 2 );
 			} );
 		}
