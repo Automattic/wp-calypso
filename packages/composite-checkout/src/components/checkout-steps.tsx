@@ -33,6 +33,7 @@ const debug = debugFactory( 'composite-checkout:checkout-steps' );
 
 const customPropertyForSubmitButtonHeight = '--submit-button-height';
 
+// See https://github.com/reactjs/rfcs/blob/useevent/text/0000-useevent.md
 function useEvent< A, R >( handler: ( ...args: A[] ) => R ): ( ...args: A[] ) => R {
 	const handlerRef = useRef( handler );
 
@@ -371,6 +372,7 @@ export const CheckoutStep = ( {
 			}
 		}
 		setFormReady();
+		return completeResult;
 	};
 	setStepCompleteCallback( stepNumber, goToNextStep );
 
@@ -740,12 +742,18 @@ export function useIsStepComplete(): boolean {
 }
 
 export function useSetStepComplete(): ( stepNumber: number ) => Promise< void > {
-	const { getStepCompleteCallback } = useContext( CheckoutStepDataContext );
+	const { getStepCompleteCallback, stepCompleteStatus } = useContext( CheckoutStepDataContext );
 	return useCallback(
 		async ( stepNumber: number ) => {
-			await getStepCompleteCallback( stepNumber )();
+			// To try to complete a step, we must try to complete all previous steps
+			// first, ignoring steps that are already complete.
+			for ( let step = 1; step <= stepNumber; step++ ) {
+				if ( ! stepCompleteStatus[ step ] ) {
+					await getStepCompleteCallback( step )();
+				}
+			}
 		},
-		[ getStepCompleteCallback ]
+		[ getStepCompleteCallback, stepCompleteStatus ]
 	);
 }
 
