@@ -1,5 +1,5 @@
+import WordpressImporter from 'calypso/blocks/importer/wordpress';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import WordpressImporter from 'calypso/signup/steps/import-from/wordpress';
 import { withImporterWrapper } from '../importer';
 import './style.scss';
 

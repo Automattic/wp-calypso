@@ -1,5 +1,5 @@
+import BloggerImporter from 'calypso/blocks/importer/blogger';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import BloggerImporter from 'calypso/signup/steps/import-from/blogger';
 import { withImporterWrapper } from '../importer';
 import './style.scss';
 

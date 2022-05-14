@@ -10,7 +10,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
-import { StepNavigator } from 'calypso/signup/steps/import-from/types';
+import { StepNavigator } from 'calypso/blocks/importer/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';

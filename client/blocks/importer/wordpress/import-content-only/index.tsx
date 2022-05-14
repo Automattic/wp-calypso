@@ -10,8 +10,8 @@ import {
 	ImportJob,
 	ImportJobParams,
 	StepNavigator,
-} from 'calypso/signup/steps/import-from/types';
-import { getImporterTypeForEngine } from 'calypso/signup/steps/import-from/util';
+} from 'calypso/blocks/importer/types';
+import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
 import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
