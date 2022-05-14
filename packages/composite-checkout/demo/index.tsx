@@ -248,7 +248,7 @@ function MyCheckoutBody( { preFilledCountry }: { preFilledCountry?: string } ) {
 					new Promise( ( resolve ) =>
 						// Simulate async validation
 						setTimeout( () => {
-							if ( value.length === 0 ) {
+							if ( value.trim() === '' || value.trim().toLowerCase() === 'unknown' ) {
 								setCountryError( 'Invalid country' );
 								resolve( false );
 								return;
@@ -288,3 +288,4 @@ export default {
 
 export const Basic = () => <CheckoutDemo />;
 export const Prefilled = () => <CheckoutDemo preFilledCountry="Canada" />;
+export const PrefilledFailure = () => <CheckoutDemo preFilledCountry="Unknown" />;
