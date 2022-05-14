@@ -11,6 +11,7 @@ import {
 	useState,
 	createContext,
 	useRef,
+	useLayoutEffect,
 } from 'react';
 import { getDefaultPaymentMethodStep } from '../components/default-steps';
 import CheckoutContext from '../lib/checkout-context';
@@ -31,6 +32,19 @@ import type { Dispatch, ReactNode, HTMLAttributes, SetStateAction, ReactElement 
 const debug = debugFactory( 'composite-checkout:checkout-steps' );
 
 const customPropertyForSubmitButtonHeight = '--submit-button-height';
+
+function useEvent< A, R >( handler: ( ...args: A[] ) => R ): ( ...args: A[] ) => R {
+	const handlerRef = useRef( handler );
+
+	useLayoutEffect( () => {
+		handlerRef.current = handler;
+	} );
+
+	return useCallback( ( ...args: A[] ): R => {
+		const fn = handlerRef.current;
+		return fn( ...args );
+	}, [] );
+}
 
 interface StepCompleteStatus {
 	[ key: string ]: boolean;
@@ -59,15 +73,20 @@ interface CheckoutSingleStepDataContext {
 	areStepsActive: boolean;
 }
 
-const noop = () => {}; // eslint-disable-line @typescript-eslint/no-empty-function
+const noop = () => {
+	throw new Error( 'Cannot use CheckoutStepDataContext without a provider.' );
+};
+const noopPromise = () => () =>
+	Promise.reject( 'Cannot use CheckoutStepDataContext without a provider.' );
+const emptyStepCompleteStatus = {};
 const CheckoutStepDataContext = createContext< CheckoutStepDataContextType >( {
 	activeStepNumber: 0,
-	stepCompleteStatus: {},
+	stepCompleteStatus: emptyStepCompleteStatus,
 	totalSteps: 0,
 	setActiveStepNumber: noop,
 	setStepCompleteStatus: noop,
 	setStepCompleteCallback: noop,
-	getStepCompleteCallback: () => () => Promise.resolve(),
+	getStepCompleteCallback: noopPromise,
 	setTotalSteps: noop,
 } );
 
@@ -238,12 +257,20 @@ export function Checkout( {
 	const [ activeStepNumber, setActiveStepNumber ] = useState< number >( 1 );
 	const [ stepCompleteStatus, setStepCompleteStatus ] = useState< StepCompleteStatus >( {} );
 	const stepCompleteCallbackMap = useRef< StepCompleteCallbackMap >( {} );
-	const setStepCompleteCallback = ( stepNumber: number, callback: StepCompleteCallback ) => {
-		stepCompleteCallbackMap.current[ stepNumber ] = callback;
-	};
-	const getStepCompleteCallback = ( stepNumber: number ) => {
-		return stepCompleteCallbackMap.current[ stepNumber ] ?? noop;
-	};
+	const setStepCompleteCallback = useCallback(
+		( stepNumber: number, callback: StepCompleteCallback ) => {
+			stepCompleteCallbackMap.current[ stepNumber ] = callback;
+		},
+		[]
+	);
+	const getStepCompleteCallback = useEvent( ( stepNumber: number ) => {
+		return (
+			stepCompleteCallbackMap.current[ stepNumber ] ??
+			( () => {
+				throw new Error( `No isCompleteCallback found for step ${ stepNumber }` );
+			} )
+		);
+	} );
 	const [ totalSteps, setTotalSteps ] = useState( 0 );
 	const actualActiveStepNumber =
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
