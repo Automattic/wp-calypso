@@ -1,11 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
+import { ReactElement } from 'react';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import SiteTable from '../site-table';
 import { formatSites } from '../utils';
 
 import './style.scss';
 
-const SiteContent = () => {
+export default function SiteContent(): ReactElement {
 	const translate = useTranslate();
 
 	const { data, error, isLoading } = useFetchDashboardSites();
@@ -25,14 +26,7 @@ const SiteContent = () => {
 	}
 	return (
 		<>
-			<SiteTable
-				isFetching={ isLoading }
-				columns={ columns }
-				sites={ sites }
-				isFetchingFailed={ error }
-			/>
+			<SiteTable isFetching={ isLoading } columns={ columns } items={ sites } />
 		</>
 	);
-};
-
-export default SiteContent;
+}

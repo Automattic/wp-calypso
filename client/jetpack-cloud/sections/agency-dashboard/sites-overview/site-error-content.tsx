@@ -1,7 +1,8 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { ReactElement } from 'react';
 
-const ErrorContent = ( { siteUrl } ) => {
+export default function SiteErrorContent( { siteUrl }: { siteUrl: string } ): ReactElement {
 	const translate = useTranslate();
 
 	const handleClickFixNow = () => {
@@ -29,6 +30,4 @@ const ErrorContent = ( { siteUrl } ) => {
 			</a>
 		</div>
 	);
-};
-
-export default ErrorContent;
+}

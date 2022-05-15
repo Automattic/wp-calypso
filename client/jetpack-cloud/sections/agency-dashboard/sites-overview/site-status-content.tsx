@@ -5,8 +5,13 @@ import Badge from 'calypso/components/badge';
 import Tooltip from 'calypso/components/tooltip';
 import { getRowMetaData } from './utils';
 
+interface RowArguments {
+	value: { url: string; blog_id: number };
+	error: string;
+	status: string;
+}
 interface Props {
-	rows: object;
+	rows: { site: RowArguments };
 	type: string;
 }
 
@@ -32,6 +37,10 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 	const handleClickRowAction = () => {
 		// Handle track event here
 	};
+
+	if ( type === 'site' ) {
+		return <span className="sites-overview__row-text">{ value.url }</span>;
+	}
 
 	let content;
 

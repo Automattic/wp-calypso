@@ -1,12 +1,22 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import React from 'react';
+import { ReactElement, Fragment } from 'react';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import SiteErrorContent from '../site-error-content';
+import SiteStatusContent from '../site-status-content';
 
 import './style.scss';
 
-const SiteTable = ( { isFetching, columns, sites } ) => {
+interface Props {
+	isFetching: boolean;
+	columns: object;
+	items: Array< {
+		site: { value: { blog_id: number; url: string }; error: string; type: string; status: string };
+		[ key: string ]: { type: string };
+	} >;
+}
+
+export default function SiteTable( { isFetching, columns, items }: Props ): ReactElement {
 	return (
 		<table className="site-table__table">
 			<thead>
@@ -30,20 +40,21 @@ const SiteTable = ( { isFetching, columns, sites } ) => {
 						</td>
 					</tr>
 				) : (
-					sites.map( ( rows ) => {
-						const site = rows.site;
+					items.map( ( item ) => {
+						const site = item.site;
 						const blogId = site.value.blog_id;
 						return (
-							<React.Fragment key={ blogId }>
+							<Fragment key={ `table-row-${ blogId }` }>
 								<tr className="site-table__table-row">
-									{ Object.keys( rows ).map( ( key, index ) => {
-										if ( rows[ key ].formatter ) {
+									{ Object.keys( item ).map( ( key ) => {
+										const row = item[ key ];
+										if ( row.type ) {
 											return (
 												<td
 													className={ classNames( site.error && 'site-table__td-with-error' ) }
-													key={ index }
+													key={ `table-data-${ row.type }-${ blogId }` }
 												>
-													{ rows[ key ].formatter( rows ) }
+													<SiteStatusContent rows={ item } type={ row.type } />
 												</td>
 											);
 										}
@@ -59,18 +70,16 @@ const SiteTable = ( { isFetching, columns, sites } ) => {
 								</tr>
 								{ site.error ? (
 									<tr className="site-table__connection-error">
-										<td colSpan={ Object.keys( rows ).length + 1 }>
+										<td colSpan={ Object.keys( item ).length + 1 }>
 											{ <SiteErrorContent siteUrl={ site.value.url } /> }
 										</td>
 									</tr>
 								) : null }
-							</React.Fragment>
+							</Fragment>
 						);
 					} )
 				) }
 			</tbody>
 		</table>
 	);
-};
-
-export default SiteTable;
+}
