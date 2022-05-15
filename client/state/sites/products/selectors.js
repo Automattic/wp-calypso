@@ -21,6 +21,11 @@ export function isRequestingSiteProducts( state, siteId ) {
 	return products.isRequesting;
 }
 
+export function hasLoadedSiteProductsFromServer( state, siteId ) {
+	const products = getProductsBySiteId( state, siteId );
+	return products.hasLoadedFromServer;
+}
+
 export function getSiteAvailableProduct( state, siteId, productSlug ) {
 	const { data } = getAvailableProductsBySiteId( state, siteId );
 
@@ -31,4 +36,12 @@ export function getSiteAvailableProduct( state, siteId, productSlug ) {
 
 export function getSiteAvailableProductCost( state, siteId, productSlug ) {
 	return getSiteAvailableProduct( state, siteId, productSlug )?.cost;
+}
+
+export function getSiteAvailableProductSaleCouponDiscount( state, siteId, productSlug ) {
+	return getSiteAvailableProduct( state, siteId, productSlug )?.sale_coupon?.discount;
+}
+
+export function getSiteAvailableProductSaleCouponCost( state, siteId, productSlug ) {
+	return getSiteAvailableProduct( state, siteId, productSlug )?.sale_cost;
 }

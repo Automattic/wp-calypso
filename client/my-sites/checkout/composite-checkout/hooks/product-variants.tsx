@@ -22,6 +22,7 @@ import { requestPlans } from 'calypso/state/plans/actions';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
+import { fetchSiteProducts } from 'calypso/state/sites/products/actions';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { Plan, Product } from '@automattic/calypso-products';
 
@@ -91,10 +92,12 @@ export function useGetProductVariants(
 		if ( shouldFetchProducts && ! haveFetchedProducts ) {
 			debug( 'dispatching request for product variant data' );
 			reduxDispatch( requestPlans() );
-			reduxDispatch( requestProductsList() );
+			siteId
+				? reduxDispatch( fetchSiteProducts( siteId ) )
+				: reduxDispatch( requestProductsList() );
 			setHaveFetchedProducts( true );
 		}
-	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
+	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch, siteId ] );
 
 	const getProductVariantFromAvailableVariant = useCallback(
 		( variant: AvailableProductVariantAndCompared ): WPCOMProductVariant => {
