@@ -85,10 +85,20 @@ const ResponsiveToolbarGroup = ( {
 					) }
 					renderContent={ ( { onClose } ) => (
 						<MenuGroup>
-							<MenuItem onClick={ onClose }>Up</MenuItem>
-							<MenuItem onClick={ onClose }>Down</MenuItem>
-							<MenuItem onClick={ onClose }>Left</MenuItem>
-							<MenuItem onClick={ onClose }>Right</MenuItem>
+							{ children
+								.filter( ( _child, index ) => groupedIndexes[ index ] )
+								.map( ( child, index ) => (
+									<MenuItem
+										key={ `menu-item-${ index }` }
+										onClick={ () => {
+											setActiveIndex( index );
+											onClose();
+										} }
+										className="responsive-toolbar-group__menu-item"
+									>
+										{ child }
+									</MenuItem>
+								) ) }
 						</MenuGroup>
 					) }
 				/>
