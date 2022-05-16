@@ -14,7 +14,7 @@ import './style.scss';
 const ResponsiveToolbarGroup = ( {
 	children,
 	className = '',
-	hideRatio = 0.9,
+	hideRatio = 0.99,
 	showRatio = 1,
 	rootMargin = '0px',
 }: {
