@@ -1,11 +1,16 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
 import ExternalLink from 'calypso/components/external-link';
+import Button from 'calypso/components/forms/form-button';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
+import { getBackupWarnings } from 'calypso/lib/jetpack/backup-utils';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { rewindBackupSite } from 'calypso/state/activity-log/actions';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
@@ -15,17 +20,33 @@ import ActionButtons from '../action-buttons';
 import BackupChanges from '../backup-changes';
 import useGetDisplayDate from '../use-get-display-date';
 import cloudSuccessIcon from './icons/cloud-success.svg';
+import cloudWarningIcon from './icons/cloud-warning.svg';
 
 import './style.scss';
 
 const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
 	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 	const hasRealtimeBackups = useSelector( ( state ) => {
 		const capabilities = getRewindCapabilities( state, siteId );
 		return Array.isArray( capabilities ) && capabilities.includes( 'backup-realtime' );
 	} );
+
+	const warnings = getBackupWarnings( backup );
+	const hasWarnings = Object.keys( warnings ).length !== 0;
+
+	const requestBackupSite = useCallback(
+		() => dispatch( rewindBackupSite( siteId ) ),
+		[ dispatch, siteId ]
+	);
+	const trackedRequestBackupSite = useTrackCallback(
+		requestBackupSite,
+		'calypso_jetpack_backup_retry_click'
+	);
+
+	/* End Warning Logic */
 
 	const moment = useLocalizedMoment();
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
@@ -40,6 +61,8 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 		gmtOffset: gmtOffset,
 	} );
 	const isToday = selectedDate.isSame( today, 'day' );
+
+	const cloudIcon = hasWarnings ? cloudWarningIcon : cloudSuccessIcon;
 
 	const meta = backup?.activityDescription?.[ 2 ]?.children?.[ 0 ] ?? '';
 
@@ -56,7 +79,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	return (
 		<>
 			<div className="status-card__message-head">
-				<img src={ cloudSuccessIcon } alt="" role="presentation" />
+				<img src={ cloudIcon } alt="" role="presentation" />
 				<div className="status-card__hide-mobile">
 					{ isToday ? translate( 'Latest backup' ) : translate( 'Latest backup on this day' ) }
 				</div>
@@ -100,6 +123,22 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 				<div className="status-card__realtime-details">
 					<div className="status-card__realtime-details-card">
 						<ActivityCard activity={ backup } summarize />
+					</div>
+				</div>
+			) }
+			{ hasWarnings && (
+				<div className="backup-successful__retry-wrapper">
+					<div className="backup-successful__retry-info">
+						Some files failed to backup. <a href="https://jetpack.com">Learn why.</a>
+					</div>
+					<div className="backup-successful__retry-button-wrapper">
+						<Button
+							isPrimary
+							className="backup-successful__retry-button"
+							onClick={ trackedRequestBackupSite }
+						>
+							{ translate( 'Retry' ) }
+						</Button>
 					</div>
 				</div>
 			) }
