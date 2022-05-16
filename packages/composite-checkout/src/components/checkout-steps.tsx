@@ -33,8 +33,18 @@ const debug = debugFactory( 'composite-checkout:checkout-steps' );
 
 const customPropertyForSubmitButtonHeight = '--submit-button-height';
 
-// See https://github.com/reactjs/rfcs/blob/useevent/text/0000-useevent.md
-function useEvent< A, R >( handler: ( ...args: A[] ) => R ): ( ...args: A[] ) => R {
+/*
+ * Return a stable callback function whose identity does not change.
+ *
+ * Even if the dependencies of the callback argument change, the returned
+ * callback will keep the same identity. In effect, the returned callback will
+ * always use the most recent version of the variables in the callback's
+ * closure.
+ *
+ * See https://github.com/reactjs/rfcs/blob/useevent/text/0000-useevent.md for
+ * more explanation of why this is helpful.
+ */
+function useJITCallback< A, R >( handler: ( ...args: A[] ) => R ): ( ...args: A[] ) => R {
 	const handlerRef = useRef( handler );
 
 	useLayoutEffect( () => {
@@ -277,7 +287,7 @@ export function Checkout( {
 		},
 		[]
 	);
-	const getStepCompleteCallback = useEvent( ( stepNumber: number ) => {
+	const getStepCompleteCallback = useJITCallback( ( stepNumber: number ) => {
 		return (
 			stepCompleteCallbackMap.current[ stepNumber ] ??
 			( () => {
@@ -758,7 +768,7 @@ export function useIsStepComplete(): boolean {
 export function useSetStepComplete(): ( stepId: string ) => Promise< void > {
 	const { getStepCompleteCallback, stepCompleteStatus, getStepNumberFromId } =
 		useContext( CheckoutStepDataContext );
-	return useEvent( async ( stepId: string ) => {
+	return useJITCallback( async ( stepId: string ) => {
 		const stepNumber = getStepNumberFromId( stepId );
 		if ( ! stepNumber ) {
 			throw new Error( `Cannot find step with id ${ stepId }` );
