@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_WORDADS } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
