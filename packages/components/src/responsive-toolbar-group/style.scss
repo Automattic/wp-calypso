@@ -1,3 +1,6 @@
+// used for arrow down icon
+@import url( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' );
+
 .responsive-toolbar-group {
 	position: relative;
 	width: 100%;
@@ -14,10 +17,12 @@
 		justify-content: space-between;
 		flex-wrap: nowrap;
 		display: flex;
-	}
-
-	.responsive-toolbar-group__grouped-list {
 		opacity: 0;
+
+		.responsive-toolbar-group__menu-item.is-selected {
+			background-color: #1e1e1e;
+			color: var( --color-text-inverted );
+		}
 	}
 
 	.is-visible {
