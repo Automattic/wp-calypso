@@ -1,55 +1,12 @@
 import { ThemeProvider, Global, css } from '@emotion/react';
-import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import WordPressLogo from 'calypso/components/wordpress-logo';
-import Item from 'calypso/layout/masterbar/item';
-import Masterbar from 'calypso/layout/masterbar/masterbar';
 import theme from 'calypso/my-sites/marketplace/theme';
 import './style.scss';
+import MasterbarStyled from '../../components/masterbar-styled';
 import { WelcomeCartIcon } from './welcome-cart-icon';
 import { WelcomeConfigIcon } from './welcome-config-icon';
 import { WelcomeLogoIcon } from './welcome-logo-icon';
-
-const MasterbarStyled = styled( Masterbar )`
-	--color-masterbar-background: var( --studio-white );
-	--color-masterbar-text: var( --studio-gray-60 );
-	border-bottom: 0;
-`;
-
-const WordPressLogoStyled = styled( WordPressLogo )`
-	max-height: calc( 100% - 47px );
-	align-self: center;
-	fill: rgb( 54, 54, 54 );
-`;
-
-const ItemStyled = styled( Item )`
-	cursor: pointer;
-	font-size: 14px;
-	font-weight: 500;
-	padding: 0;
-	justify-content: left;
-
-	&:hover {
-		background: var( --studio-white );
-		text-decoration: underline;
-	}
-
-	.gridicon {
-		height: 17px;
-		fill: var( --studio-black );
-
-		@media ( max-width: 480px ) {
-			margin: 0;
-		}
-	}
-
-	@media ( max-width: 480px ) {
-		.masterbar__item-content {
-			display: block;
-		}
-	}
-`;
 
 const SignupSuccess = (): JSX.Element => {
 	const translate = useTranslate();
@@ -64,15 +21,10 @@ const SignupSuccess = (): JSX.Element => {
 					}
 				` }
 			/>
-			<MasterbarStyled>
-				<WordPressLogoStyled />
-				<ItemStyled
-					icon="chevron-left"
-					onClick={ () => ( document.location.href = `${ document.location.origin }` ) }
-				>
-					{ translate( 'Back to WordPress.com' ) }
-				</ItemStyled>
-			</MasterbarStyled>
+			<MasterbarStyled
+				onClick={ () => ( document.location.href = `${ document.location.origin }` ) }
+				backText={ translate( 'Back to WordPress.com' ) }
+			/>
 			<div className="signup-success">
 				<div className="signup-success__header">
 					<WelcomeLogoIcon />
