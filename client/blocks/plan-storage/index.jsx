@@ -1,10 +1,10 @@
 import {
+	FEATURE_6GB_STORAGE,
+	FEATURE_50GB_STORAGE,
 	FEATURE_200GB_STORAGE,
 	FEATURE_UNLIMITED_STORAGE,
-	FEATURE_50GB_STORAGE,
 	PLAN_FREE,
 	PLAN_WPCOM_FLEXIBLE,
-	PLAN_WPCOM_STARTER,
 	isProPlan,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
@@ -41,6 +41,9 @@ export function PlanStorage( { children, className, siteId } ) {
 	const hasUnlimitedStorage = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, FEATURE_UNLIMITED_STORAGE )
 	);
+	const has6GBStorage = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, FEATURE_6GB_STORAGE )
+	);
 	const has50GBStorage = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, FEATURE_50GB_STORAGE )
 	);
@@ -72,12 +75,12 @@ export function PlanStorage( { children, className, siteId } ) {
 			mediaStorage.max_storage_bytes = GB;
 		}
 
-		if ( has50GBStorage ) {
-			mediaStorage.max_storage_bytes = 50 * GB;
+		if ( has6GBStorage ) {
+			mediaStorage.max_storage_bytes = 6 * GB;
 		}
 
-		if ( sitePlanSlug === PLAN_WPCOM_STARTER ) {
-			mediaStorage.max_storage_bytes = 6 * 1024 * 1024 * 1024;
+		if ( has50GBStorage ) {
+			mediaStorage.max_storage_bytes = 50 * GB;
 		}
 	}
 
