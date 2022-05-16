@@ -2,12 +2,14 @@ import { ThemeProvider, Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import welcomeLogo from 'calypso/assets/images/marketplace/signup-success/welcome-logo.svg';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import theme from 'calypso/my-sites/marketplace/theme';
 import './style.scss';
+import { WelcomeCartIcon } from './welcome-cart-icon';
+import { WelcomeConfigIcon } from './welcome-config-icon';
+import { WelcomeLogoIcon } from './welcome-logo-icon';
 
 const MasterbarStyled = styled( Masterbar )`
 	--color-masterbar-background: var( --studio-white );
@@ -73,7 +75,7 @@ const SignupSuccess = (): JSX.Element => {
 			</MasterbarStyled>
 			<div className="signup-success">
 				<div className="signup-success__header">
-					<img src={ welcomeLogo } alt="signup success logo" />
+					<WelcomeLogoIcon />
 					<h1 className="signup-success__header-title wp-brand-font">
 						{ translate( 'We’ ll be in touch' ) }
 					</h1>
@@ -85,7 +87,9 @@ const SignupSuccess = (): JSX.Element => {
 				</div>
 				<div className="signup-success__body">
 					<div className="signup-success__row">
-						<div className="signup-success__row-icon"></div>
+						<div className="signup-success__row-icon">
+							<WelcomeCartIcon />
+						</div>
 						<div className="signup-success__row-content">
 							<h2>{ translate( 'Learn More' ) }</h2>
 							<p>{ translate( 'Read more about selling on the WordPress.com marketplace.' ) }</p>
@@ -96,7 +100,9 @@ const SignupSuccess = (): JSX.Element => {
 					</div>
 					<hr />
 					<div className="signup-success__row">
-						<div className="signup-success__row-icon"></div>
+						<div className="signup-success__row-icon">
+							<WelcomeConfigIcon />
+						</div>
 						<div className="signup-success__row-content">
 							<h2>{ translate( 'View the marketplace' ) }</h2>
 							<p>{ translate( 'Sign in to see what the marketplace has to offer.' ) }</p>

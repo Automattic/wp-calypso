@@ -1,4 +1,9 @@
 @import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+.masterbar__item {
+    flex: 1;
+}
 
 .signup-success {
 	margin: auto;
@@ -6,6 +11,7 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		padding-top: 100px;
 		width: 30%;
+		min-width: 500px;
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
@@ -13,13 +19,12 @@
 		width: 90%;
 	}
 
-	.signup-success__header-title {
-		font-size: 44px;
+	h1 {
+		font-size: $font-title-large;
 	}
 
-	.intouch__header-subtitle {
-		font-size: 16px;
-		color: var( --studio-gray-60 );
+	h2 {
+		font-size: $font-title-small;
 	}
 	
 	.signup-success__header {
@@ -27,7 +32,7 @@
 		text-align: center;
 		min-height: 300px;
 
-		img {
+		svg {
 			margin-bottom: 14px;
 		}
 	}
@@ -40,19 +45,27 @@
 
 	.signup-success__row-icon {
 		width: 10%;
+		display: block;
+		height: 95px;
 	}
 
 	.signup-success__row-content {
 		width: 70%;
+		height: 100px;
+
+		p {
+			color: var( --studio-gray-60 );
+			font-size: $font-body-small;
+			margin-top: 5px;
+			padding-right: 10px;
+		}
 	}
 
 	a {
-		font-size: 16px;
+		font-size: $font-body;
 	}
 
 	hr {
 		margin: 30px 0 30px 10%;
 	}
-	
 }
-
