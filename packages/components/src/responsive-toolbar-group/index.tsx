@@ -17,18 +17,22 @@ const ResponsiveToolbarGroup = ( {
 	hideRatio = 0.99,
 	showRatio = 1,
 	rootMargin = '0px',
+	onClick = () => null,
+	initialActiveIndex = -1,
 }: {
 	children: any[];
 	className?: string;
 	hideRatio?: number;
 	showRatio?: number;
 	rootMargin?: string;
+	onClick?: ( index: number ) => void;
+	initialActiveIndex?: number;
 } ) => {
 	const classes = classnames( 'responsive-toolbar-group', className );
 
 	const containerRef = useRef< HTMLDivElement >( null );
 	const [ calculatedOnce, setCalculatedOnce ] = useState< boolean >( false );
-	const [ activeIndex, setActiveIndex ] = useState< number >( -1 );
+	const [ activeIndex, setActiveIndex ] = useState< number >( initialActiveIndex );
 	const [ groupedIndexes, setGroupedIndexes ] = useState< any >( {} );
 	const { current: shadowListItems } = useRef< HTMLButtonElement[] >( [] );
 
@@ -64,6 +68,7 @@ const ResponsiveToolbarGroup = ( {
 					isActive={ activeIndex === parseInt( index ) }
 					onClick={ () => {
 						setActiveIndex( parseInt( index ) );
+						onClick( parseInt( index ) );
 					} }
 					className="responsive-toolbar-group__button-item"
 				>
@@ -100,6 +105,7 @@ const ResponsiveToolbarGroup = ( {
 										key={ `menu-item-${ index }` }
 										onClick={ () => {
 											setActiveIndex( parseInt( index ) );
+											onClick( parseInt( index ) );
 											onClose();
 										} }
 										isSelected={ activeIndex === parseInt( index ) }
