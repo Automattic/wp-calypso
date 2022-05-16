@@ -54,3 +54,8 @@ export function isAgencyUser( state: PartnerPortalStore ): boolean {
 export function showAgencyDashboard( state: PartnerPortalStore ): boolean {
 	return config.isEnabled( 'jetpack/agency-dashboard' ) && isAgencyUser( state );
 }
+
+export function hasValidPaymentMethod( state: PartnerPortalStore ): boolean {
+	const partner = getCurrentPartner( state );
+	return partner?.has_valid_payment_method || false;
+}
