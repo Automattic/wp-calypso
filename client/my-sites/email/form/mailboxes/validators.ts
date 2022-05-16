@@ -260,7 +260,7 @@ class ExistingMailboxNamesValidator extends BaseValidator< string > {
 	}
 
 	static getExistingMailboxError(): FieldError {
-		return i18n.translate( 'Please use unique mailboxes' );
+		return i18n.translate( 'Please use unique mailboxes.' );
 	}
 
 	validateField( field: MailboxFormFieldBase< string > ): void {

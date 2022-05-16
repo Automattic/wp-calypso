@@ -108,17 +108,17 @@ const finalTestDataForAllCases = [
 	provideGoogleTestData( 'Valid fields', createTestDataForGoogle() ),
 	provideTitanTestData( 'Valid fields', createTestDataForTitan() ),
 	provideGoogleTestData(
-		'Empty value for required fields should fail validation',
+		'Empty value for the password field should fail validation',
 		createTestDataForGoogle( { [ FIELD_PASSWORD ]: null } ),
 		{ [ FIELD_PASSWORD ]: RequiredValidator.getRequiredFieldError() }
 	),
 	provideTitanTestData(
-		'Empty value for required fields should fail validation',
+		'Empty value for the mailbox field should fail validation',
 		createTestDataForTitan( { [ FIELD_MAILBOX ]: null } ),
 		{ [ FIELD_MAILBOX ]: RequiredValidator.getRequiredFieldError() }
 	),
 	provideTitanTestData(
-		'Empty value for required fields should fail validation',
+		'Empty value for the name field should fail validation',
 		createTestDataForTitan( { [ FIELD_NAME ]: null } ),
 		{ [ FIELD_NAME ]: RequiredValidator.getRequiredFieldError() }
 	),
