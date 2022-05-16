@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
 import {
 	POST_STATS_RECEIVE,
 	POST_STATS_REQUEST,
@@ -10,17 +8,17 @@ import useNock from 'calypso/test-helpers/use-nock';
 import { receivePostStats, requestPostStats } from '../actions';
 
 describe( 'actions', () => {
-	const spy = sinon.spy();
+	let spy;
 
 	beforeEach( () => {
-		spy.resetHistory();
+		spy = jest.fn();
 	} );
 
 	describe( '#receivePostStat()', () => {
 		test( 'should return an action object', () => {
 			const action = receivePostStats( 2916284, 2454, { views: 2 } );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: POST_STATS_RECEIVE,
 				siteId: 2916284,
 				postId: 2454,
@@ -45,7 +43,7 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestPostStats( 2916284, 2454, [ 'views', 'years' ] )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toBeCalledWith( {
 				type: POST_STATS_REQUEST,
 				siteId: 2916284,
 				postId: 2454,
@@ -55,15 +53,13 @@ describe( 'actions', () => {
 
 		test( 'should dispatch receive action when request completes', () => {
 			return requestPostStats( 2916284, 2454, [ 'views', 'years' ] )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith(
-					receivePostStats( 2916284, 2454, { views: 2, years: {} } )
-				);
+				expect( spy ).toBeCalledWith( receivePostStats( 2916284, 2454, { views: 2, years: {} } ) );
 			} );
 		} );
 
 		test( 'should dispatch request success action when request completes', () => {
 			return requestPostStats( 2916284, 2454, [ 'views', 'years' ] )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: POST_STATS_REQUEST_SUCCESS,
 					siteId: 2916284,
 					postId: 2454,
@@ -74,12 +70,12 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return requestPostStats( 2916285, 2455, [ 'views' ] )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: POST_STATS_REQUEST_FAILURE,
 					siteId: 2916285,
 					postId: 2455,
 					fields: [ 'views' ],
-					error: sinon.match( { message: 'User cannot access this private blog.' } ),
+					error: expect.objectContaining( { message: 'User cannot access this private blog.' } ),
 				} );
 			} );
 		} );

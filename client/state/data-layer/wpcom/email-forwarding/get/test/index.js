@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	EMAIL_FORWARDING_REQUEST,
 	EMAIL_FORWARDING_REQUEST_SUCCESS,
@@ -18,7 +17,7 @@ describe( 'wpcom-api', () => {
 
 		describe( '#getEmailForwards', () => {
 			test( 'should dispatch an HTTP request to the get email forwards endpoint', () => {
-				expect( getEmailForwards( action ) ).to.eql(
+				expect( getEmailForwards( action ) ).toEqual(
 					http(
 						{
 							method: 'GET',
@@ -35,9 +34,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a get email forwards failure action on error', () => {
 				const resultActions = getEmailForwardsFailure( action, { message } );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_REQUEST_FAILURE,
 					domainName,
 					error: { message },
@@ -60,7 +59,7 @@ describe( 'wpcom-api', () => {
 					],
 					type: 'forward',
 				};
-				expect( getEmailForwardsSuccess( action, response ) ).to.eql( {
+				expect( getEmailForwardsSuccess( action, response ) ).toEqual( {
 					type: EMAIL_FORWARDING_REQUEST_SUCCESS,
 					domainName,
 					response,
@@ -77,7 +76,7 @@ describe( 'wpcom-api', () => {
 					],
 					type: 'custom',
 				};
-				expect( getEmailForwardsSuccess( action, response ) ).to.eql( {
+				expect( getEmailForwardsSuccess( action, response ) ).toEqual( {
 					type: EMAIL_FORWARDING_REQUEST_SUCCESS,
 					domainName,
 					response,
@@ -88,7 +87,7 @@ describe( 'wpcom-api', () => {
 				const response = {
 					type: 'google-apps',
 				};
-				expect( getEmailForwardsSuccess( action, response ) ).to.eql( {
+				expect( getEmailForwardsSuccess( action, response ) ).toEqual( {
 					type: EMAIL_FORWARDING_REQUEST_SUCCESS,
 					domainName,
 					response,
@@ -99,7 +98,7 @@ describe( 'wpcom-api', () => {
 				const response = {
 					type: 'google-apps-another-provider',
 				};
-				expect( getEmailForwardsSuccess( action, response ) ).to.eql( {
+				expect( getEmailForwardsSuccess( action, response ) ).toEqual( {
 					type: EMAIL_FORWARDING_REQUEST_SUCCESS,
 					domainName,
 					response,
@@ -108,9 +107,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a get email forwards failure action on no response', () => {
 				const resultActions = getEmailForwardsSuccess( action, undefined );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_REQUEST_FAILURE,
 					domainName,
 					error: { message: 'No `type` in get forwards response.' },
@@ -119,9 +118,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a get email forwards failure action on response with no type', () => {
 				const resultActions = getEmailForwardsSuccess( action, {} );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_REQUEST_FAILURE,
 					domainName,
 					error: { message: 'No `type` in get forwards response.' },
@@ -134,9 +133,9 @@ describe( 'wpcom-api', () => {
 				};
 
 				const resultActions = getEmailForwardsSuccess( action, response );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_REQUEST_FAILURE,
 					domainName,
 					error: { message: 'No forwards in `forward` type response' },
@@ -149,9 +148,9 @@ describe( 'wpcom-api', () => {
 				};
 
 				const resultActions = getEmailForwardsSuccess( action, response );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_REQUEST_FAILURE,
 					domainName,
 					error: {

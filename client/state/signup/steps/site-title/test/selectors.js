@@ -1,9 +1,8 @@
-import { expect } from 'chai';
 import { getSiteTitle } from '../selectors';
 
 describe( 'selectors', () => {
 	test( 'should return empty string as a default state', () => {
-		expect( getSiteTitle( { signup: undefined } ) ).to.be.eql( '' );
+		expect( getSiteTitle( { signup: undefined } ) ).toEqual( '' );
 	} );
 
 	test( 'should return Site Title from the state', () => {
@@ -15,6 +14,6 @@ describe( 'selectors', () => {
 					},
 				},
 			} )
-		).to.be.eql( 'Site Title' );
+		).toEqual( 'Site Title' );
 	} );
 } );

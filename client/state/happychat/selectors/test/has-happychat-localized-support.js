@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
@@ -16,7 +15,7 @@ describe( '#hasHappychatLocalizedSupport', () => {
 				},
 			},
 		} );
-		expect( hasHappychatLocalizedSupport( state ) ).to.be.false;
+		expect( hasHappychatLocalizedSupport( state ) ).toBe( false );
 	} );
 
 	it( "should be false if Happychat isn't accepting new localized chat connections", () => {
@@ -28,7 +27,7 @@ describe( '#hasHappychatLocalizedSupport', () => {
 				},
 			},
 		} );
-		expect( hasHappychatLocalizedSupport( state ) ).to.be.false;
+		expect( hasHappychatLocalizedSupport( state ) ).toBe( false );
 	} );
 
 	it( "should be true when there's a connection and connections are being accepted", () => {
@@ -40,6 +39,6 @@ describe( '#hasHappychatLocalizedSupport', () => {
 				},
 			},
 		} );
-		expect( hasHappychatLocalizedSupport( state ) ).to.be.true;
+		expect( hasHappychatLocalizedSupport( state ) ).toBe( true );
 	} );
 } );

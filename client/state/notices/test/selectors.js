@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getNotices } from '../selectors';
 
 describe( 'selectors', () => {
@@ -18,7 +17,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( notices ).to.eql( [ { noticeId: 1 }, { noticeId: 2 }, { noticeId: 3 } ] );
+			expect( notices ).toEqual( [ { noticeId: 1 }, { noticeId: 2 }, { noticeId: 3 } ] );
 		} );
 	} );
 } );

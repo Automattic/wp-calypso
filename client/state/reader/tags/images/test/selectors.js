@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getTagImages, shouldRequestTagImages } from '../selectors';
 
 describe( 'selectors', () => {
@@ -13,7 +12,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getTagImages( state, 'banana' ) ).to.equal( undefined );
+			expect( getTagImages( state, 'banana' ) ).toBeUndefined();
 		} );
 
 		test( 'should return the an image if images exist for a tag', () => {
@@ -30,8 +29,8 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getTagImages( state, 'banana' ) ).to.have.length( 2 );
-			expect( getTagImages( state, 'apple' ) ).to.eql( undefined );
+			expect( getTagImages( state, 'banana' ) ).toHaveLength( 2 );
+			expect( getTagImages( state, 'apple' ) ).toBeUndefined();
 		} );
 	} );
 
@@ -52,10 +51,10 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( shouldRequestTagImages( state, 'banana' ) ).to.equal( false );
-			expect( shouldRequestTagImages( state, 'feijoa' ) ).to.equal( true );
-			expect( shouldRequestTagImages( state, 'unknown' ) ).to.equal( true );
-			expect( shouldRequestTagImages( state, 'pants' ) ).to.equal( false );
+			expect( shouldRequestTagImages( state, 'banana' ) ).toEqual( false );
+			expect( shouldRequestTagImages( state, 'feijoa' ) ).toEqual( true );
+			expect( shouldRequestTagImages( state, 'unknown' ) ).toEqual( true );
+			expect( shouldRequestTagImages( state, 'pants' ) ).toEqual( false );
 		} );
 	} );
 } );

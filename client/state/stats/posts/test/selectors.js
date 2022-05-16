@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { isRequestingPostStats, getPostStat, getPostStats } from '../selectors';
 
 describe( 'selectors', () => {
@@ -17,7 +16,7 @@ describe( 'selectors', () => {
 			};
 			const isRequesting = isRequestingPostStats( state, 2916284, 2454, [ 'countComments' ] );
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBe( false );
 		} );
 
 		test( 'should return false if the stat is not fetching', () => {
@@ -34,7 +33,7 @@ describe( 'selectors', () => {
 			};
 			const isRequesting = isRequestingPostStats( state, 2916284, 2454, [ 'views', 'years' ] );
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBe( false );
 		} );
 
 		test( 'should return true if the site is fetching', () => {
@@ -51,7 +50,7 @@ describe( 'selectors', () => {
 			};
 			const isRequesting = isRequestingPostStats( state, 2916284, 2454, [ 'views', 'years' ] );
 
-			expect( isRequesting ).to.be.true;
+			expect( isRequesting ).toBe( true );
 		} );
 	} );
 
@@ -70,7 +69,7 @@ describe( 'selectors', () => {
 			};
 			const statValue = getPostStat( state, 2916284, 2454, 'countComments' );
 
-			expect( statValue ).to.be.null;
+			expect( statValue ).toBeNull();
 		} );
 
 		test( 'should return the post stat for a siteId, postId and stat key', () => {
@@ -87,7 +86,7 @@ describe( 'selectors', () => {
 			};
 			const statValue = getPostStat( state, 2916284, 2454, 'views' );
 
-			expect( statValue ).to.eql( 2 );
+			expect( statValue ).toEqual( 2 );
 		} );
 	} );
 
@@ -106,7 +105,7 @@ describe( 'selectors', () => {
 			};
 			const statValue = getPostStats( state, 2916285, 2454 );
 
-			expect( statValue ).to.be.null;
+			expect( statValue ).toBeNull();
 		} );
 
 		test( 'should return the post stats for a siteId, postId', () => {
@@ -123,7 +122,7 @@ describe( 'selectors', () => {
 			};
 			const statValue = getPostStats( state, 2916284, 2454 );
 
-			expect( statValue ).to.eql( { views: 2 } );
+			expect( statValue ).toEqual( { views: 2 } );
 		} );
 	} );
 } );

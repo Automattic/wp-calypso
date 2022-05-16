@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	IMAGE_EDITOR_CROP,
@@ -27,23 +26,25 @@ import reducer, {
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'hasChanges',
-			'fileInfo',
-			'transform',
-			'cropBounds',
-			'crop',
-			'aspectRatio',
-			'imageIsLoading',
-			'originalAspectRatio',
-		] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [
+				'hasChanges',
+				'fileInfo',
+				'transform',
+				'cropBounds',
+				'crop',
+				'aspectRatio',
+				'imageIsLoading',
+				'originalAspectRatio',
+			] )
+		);
 	} );
 
 	describe( '#hasChanges()', () => {
 		test( 'should default to false', () => {
 			const state = hasChanges( undefined, {} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 
 		test( 'should change to true on rotate', () => {
@@ -51,7 +52,7 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE,
 			} );
 
-			expect( state ).to.be.true;
+			expect( state ).toBe( true );
 		} );
 
 		test( 'should change to true on flip', () => {
@@ -59,7 +60,7 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_FLIP,
 			} );
 
-			expect( state ).to.be.true;
+			expect( state ).toBe( true );
 		} );
 
 		test( 'should change to true on crop', () => {
@@ -67,7 +68,7 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_CROP,
 			} );
 
-			expect( state ).to.be.true;
+			expect( state ).toBe( true );
 		} );
 
 		test( 'should change to true on aspect ratio change', () => {
@@ -75,7 +76,7 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_SET_ASPECT_RATIO,
 			} );
 
-			expect( state ).to.be.true;
+			expect( state ).toBe( true );
 		} );
 
 		test( 'should change to false on reset', () => {
@@ -83,7 +84,7 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_STATE_RESET,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 
 		test( 'should change to false on reset all', () => {
@@ -91,7 +92,7 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_STATE_RESET_ALL,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 
 		test( 'should remain the same on computed crop', () => {
@@ -107,9 +108,9 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_COMPUTED_CROP,
 			} );
 
-			expect( init ).to.be.false;
-			expect( withChanges ).to.be.true;
-			expect( noChanges ).to.be.false;
+			expect( init ).toBe( false );
+			expect( withChanges ).toBe( true );
+			expect( noChanges ).toBe( false );
 		} );
 
 		test( 'should remain the same on default aspect ratio', () => {
@@ -125,9 +126,9 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_SET_DEFAULT_ASPECT_RATIO,
 			} );
 
-			expect( init ).to.be.false;
-			expect( withChanges ).to.be.true;
-			expect( noChanges ).to.be.false;
+			expect( init ).toBe( false );
+			expect( withChanges ).toBe( true );
+			expect( noChanges ).toBe( false );
 		} );
 	} );
 
@@ -135,7 +136,7 @@ describe( 'reducer', () => {
 		test( 'should default to free aspect', () => {
 			const state = aspectRatio( undefined, {} );
 
-			expect( state ).to.eql( AspectRatios.FREE );
+			expect( state ).toEqual( AspectRatios.FREE );
 		} );
 
 		test( 'should update the aspect ratio', () => {
@@ -144,7 +145,7 @@ describe( 'reducer', () => {
 				ratio: AspectRatios.ORIGINAL,
 			} );
 
-			expect( state ).to.eql( AspectRatios.ORIGINAL );
+			expect( state ).toEqual( AspectRatios.ORIGINAL );
 		} );
 
 		test( 'should update the default aspect ratio', () => {
@@ -153,7 +154,7 @@ describe( 'reducer', () => {
 				ratio: AspectRatios.ORIGINAL,
 			} );
 
-			expect( state ).to.eql( AspectRatios.ORIGINAL );
+			expect( state ).toEqual( AspectRatios.ORIGINAL );
 		} );
 
 		test( 'should reset to free on reset', () => {
@@ -161,7 +162,7 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_STATE_RESET,
 			} );
 
-			expect( state ).to.eql( AspectRatios.FREE );
+			expect( state ).toEqual( AspectRatios.FREE );
 		} );
 
 		test( 'should reset to free on reset all', () => {
@@ -169,7 +170,7 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_STATE_RESET_ALL,
 			} );
 
-			expect( state ).to.eql( AspectRatios.FREE );
+			expect( state ).toEqual( AspectRatios.FREE );
 		} );
 	} );
 
@@ -177,7 +178,7 @@ describe( 'reducer', () => {
 		test( 'should return defaults initially', () => {
 			const state = cropBounds( undefined, {} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				topBound: 0,
 				leftBound: 0,
 				bottomBound: 100,
@@ -194,7 +195,7 @@ describe( 'reducer', () => {
 				rightBound: 400,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				topBound: 100,
 				leftBound: 200,
 				bottomBound: 300,
@@ -207,7 +208,7 @@ describe( 'reducer', () => {
 		test( 'should return the whole image by default', () => {
 			const state = crop( undefined, {} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				topRatio: 0,
 				leftRatio: 0,
 				widthRatio: 1,
@@ -224,7 +225,7 @@ describe( 'reducer', () => {
 				heightRatio: 0.7,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				topRatio: 0.4,
 				leftRatio: 0.5,
 				widthRatio: 0.6,
@@ -241,7 +242,7 @@ describe( 'reducer', () => {
 				heightRatio: 0.7,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				topRatio: 0.4,
 				leftRatio: 0.5,
 				widthRatio: 0.6,
@@ -262,12 +263,19 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.have.all.keys( 'topRatio', 'leftRatio', 'widthRatio', 'heightRatio' );
+			expect( Object.keys( state ) ).toEqual(
+				expect.arrayContaining( [ 'topRatio', 'leftRatio', 'widthRatio', 'heightRatio' ] )
+			);
 
-			expect( state.topRatio ).to.be.within( 0.09, 0.11 );
-			expect( state.leftRatio ).to.be.within( 0.39, 0.41 );
-			expect( state.widthRatio ).to.be.within( 0.69, 0.71 );
-			expect( state.heightRatio ).to.be.within( 0.39, 0.41 );
+			expect( state.topRatio ).toBeGreaterThanOrEqual( 0.09 );
+
+			expect( state.topRatio ).toBeLessThanOrEqual( 0.11 );
+			expect( state.leftRatio ).toBeGreaterThanOrEqual( 0.39 );
+			expect( state.leftRatio ).toBeLessThanOrEqual( 0.41 );
+			expect( state.widthRatio ).toBeGreaterThanOrEqual( 0.69 );
+			expect( state.widthRatio ).toBeLessThanOrEqual( 0.71 );
+			expect( state.heightRatio ).toBeGreaterThanOrEqual( 0.39 );
+			expect( state.heightRatio ).toBeLessThanOrEqual( 0.41 );
 		} );
 
 		test( 'should update on flip', () => {
@@ -283,12 +291,19 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.have.all.keys( 'topRatio', 'leftRatio', 'widthRatio', 'heightRatio' );
+			expect( Object.keys( state ) ).toEqual(
+				expect.arrayContaining( [ 'topRatio', 'leftRatio', 'widthRatio', 'heightRatio' ] )
+			);
 
-			expect( state.topRatio ).to.be.within( 0.39, 0.41 );
-			expect( state.leftRatio ).to.be.within( 0.09, 0.11 );
-			expect( state.widthRatio ).to.be.within( 0.39, 0.41 );
-			expect( state.heightRatio ).to.be.within( 0.69, 0.71 );
+			expect( state.topRatio ).toBeGreaterThanOrEqual( 0.39 );
+
+			expect( state.topRatio ).toBeLessThanOrEqual( 0.41 );
+			expect( state.leftRatio ).toBeGreaterThanOrEqual( 0.09 );
+			expect( state.leftRatio ).toBeLessThanOrEqual( 0.11 );
+			expect( state.widthRatio ).toBeGreaterThanOrEqual( 0.39 );
+			expect( state.widthRatio ).toBeLessThanOrEqual( 0.41 );
+			expect( state.heightRatio ).toBeGreaterThanOrEqual( 0.69 );
+			expect( state.heightRatio ).toBeLessThanOrEqual( 0.71 );
 		} );
 
 		test( 'should reset on reset', () => {
@@ -296,7 +311,7 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_STATE_RESET,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				topRatio: 0,
 				leftRatio: 0,
 				widthRatio: 1,
@@ -309,7 +324,7 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_STATE_RESET_ALL,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				topRatio: 0,
 				leftRatio: 0,
 				widthRatio: 1,
@@ -322,7 +337,7 @@ describe( 'reducer', () => {
 		test( 'should default to empty source, default file name and type', () => {
 			const state = fileInfo( undefined, {} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				src: '',
 				fileName: 'default',
 				mimeType: 'image/png',
@@ -339,7 +354,7 @@ describe( 'reducer', () => {
 				title: 'My Title',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				src: 'testSrc',
 				fileName: 'testFileName',
 				mimeType: 'image/jpg',
@@ -352,7 +367,7 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_STATE_RESET_ALL,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				src: '',
 				fileName: 'default',
 				mimeType: 'image/png',
@@ -365,7 +380,7 @@ describe( 'reducer', () => {
 		test( 'should default to no rotation or scale', () => {
 			const state = transform( undefined, {} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				degrees: 0,
 				scaleX: 1,
 				scaleY: 1,
@@ -382,7 +397,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				degrees: -90,
 			} );
 		} );
@@ -397,7 +412,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				degrees: -180,
 			} );
 		} );
@@ -412,7 +427,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				degrees: -30,
 			} );
 		} );
@@ -427,7 +442,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				scaleX: -1,
 			} );
 		} );
@@ -442,7 +457,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				scaleX: 1,
 			} );
 		} );
@@ -459,7 +474,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				degrees: 0,
 				scaleX: 1,
 				scaleY: 1,
@@ -478,7 +493,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				degrees: 0,
 				scaleX: 1,
 				scaleY: 1,
@@ -490,7 +505,7 @@ describe( 'reducer', () => {
 		test( 'should default to true', () => {
 			const state = imageIsLoading( undefined, {} );
 
-			expect( state ).to.be.true;
+			expect( state ).toBe( true );
 		} );
 
 		test( 'should change to false after image is loaded', () => {
@@ -498,7 +513,7 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_IMAGE_HAS_LOADED,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 
 		test( 'should change to true on reset all', () => {
@@ -506,7 +521,7 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_STATE_RESET_ALL,
 			} );
 
-			expect( state ).to.be.true;
+			expect( state ).toBe( true );
 		} );
 	} );
 
@@ -514,7 +529,7 @@ describe( 'reducer', () => {
 		test( 'should default to null', () => {
 			const state = originalAspectRatio( undefined, {} );
 
-			expect( state ).to.equal( null );
+			expect( state ).toBeNull();
 		} );
 
 		test( 'should update when an image is loaded', () => {
@@ -524,7 +539,7 @@ describe( 'reducer', () => {
 				height: 200,
 			} );
 
-			expect( state ).to.eql( { width: 100, height: 200 } );
+			expect( state ).toEqual( { width: 100, height: 200 } );
 		} );
 
 		test( 'should reset to null on reset all', () => {
@@ -533,7 +548,7 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_STATE_RESET_ALL,
 			} );
 
-			expect( state ).to.equal( null );
+			expect( state ).toBeNull();
 		} );
 	} );
 } );

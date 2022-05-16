@@ -1,6 +1,4 @@
-import { expect } from 'chai';
 import { omit, mapValues } from 'lodash';
-import sinon from 'sinon';
 import {
 	JETPACK_MODULE_ACTIVATE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
@@ -18,10 +16,10 @@ import { activateModule, deactivateModule, fetchModuleList } from '../actions';
 import { api_module_list_response as API_MODULE_LIST_RESPONSE_FIXTURE } from './fixture';
 
 describe( 'actions', () => {
-	const spy = sinon.spy();
+	let spy;
 
 	beforeEach( () => {
-		spy.resetHistory();
+		spy = jest.fn();
 	} );
 
 	describe( '#activateJetpackModule', () => {
@@ -31,7 +29,7 @@ describe( 'actions', () => {
 		test( 'should dispatch JETPACK_MODULE_ACTIVATE when trying to activate a module', () => {
 			activateModule( siteId, 'module-a', silent )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toBeCalledWith( {
 				type: JETPACK_MODULE_ACTIVATE,
 				siteId,
 				moduleSlug: 'module-a',
@@ -57,7 +55,7 @@ describe( 'actions', () => {
 			test( 'should dispatch JETPACK_MODULE_ACTIVATE_SUCCESS when API activates a module', () => {
 				const result = activateModule( siteId, 'module-a', silent )( spy );
 				return result.then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: JETPACK_MODULE_ACTIVATE_SUCCESS,
 						siteId,
 						moduleSlug: 'module-a',
@@ -83,7 +81,7 @@ describe( 'actions', () => {
 			test( 'should dispatch JETPACK_MODULE_ACTIVATE_FAILURE when activating a module fails', () => {
 				const result = activateModule( siteId, 'module-a', silent )( spy );
 				return result.then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: JETPACK_MODULE_ACTIVATE_FAILURE,
 						siteId,
 						moduleSlug: 'module-a',
@@ -102,7 +100,7 @@ describe( 'actions', () => {
 		test( 'should dispatch JETPACK_MODULE_DEACTIVATE when trying to deactivate a module', () => {
 			deactivateModule( siteId, 'module-b', silent )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toBeCalledWith( {
 				type: JETPACK_MODULE_DEACTIVATE,
 				siteId,
 				moduleSlug: 'module-b',
@@ -128,7 +126,7 @@ describe( 'actions', () => {
 			test( 'should dispatch JETPACK_MODULE_DEACTIVATE_SUCCESS when API deactivates a module', () => {
 				const result = deactivateModule( siteId, 'module-b', silent )( spy );
 				return result.then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: JETPACK_MODULE_DEACTIVATE_SUCCESS,
 						siteId,
 						moduleSlug: 'module-b',
@@ -154,7 +152,7 @@ describe( 'actions', () => {
 			test( 'should dispatch JETPACK_MODULE_DEACTIVATE_FAILURE when deactivating a module fails', () => {
 				const result = deactivateModule( siteId, 'module-b', silent )( spy );
 				return result.then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: JETPACK_MODULE_DEACTIVATE_FAILURE,
 						siteId,
 						moduleSlug: 'module-b',
@@ -183,7 +181,7 @@ describe( 'actions', () => {
 			test( 'should dispatch JETPACK_MODULES_REQUEST when trying to fetch the list of jetpack modules', () => {
 				fetchModuleList( siteId )( spy );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: JETPACK_MODULES_REQUEST,
 					siteId,
 				} );
@@ -192,7 +190,7 @@ describe( 'actions', () => {
 			test( 'should dispatch JETPACK_MODULES_RECEIVE when we get the response from the API', () => {
 				const result = fetchModuleList( siteId )( spy );
 				return result.then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: JETPACK_MODULES_RECEIVE,
 						siteId,
 						modules: mapValues( API_MODULE_LIST_RESPONSE_FIXTURE.data, ( module ) => ( {
@@ -206,7 +204,7 @@ describe( 'actions', () => {
 			test( 'should dispatch JETPACK_MODULES_REQUEST_SUCCESS when we get the response from the API', () => {
 				const result = fetchModuleList( siteId )( spy );
 				return result.then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: JETPACK_MODULES_REQUEST_SUCCESS,
 						siteId,
 					} );
@@ -230,7 +228,7 @@ describe( 'actions', () => {
 			test( 'should dispatch JETPACK_MODULES_REQUEST_FAILURE when the requests fails', () => {
 				const result = fetchModuleList( siteId )( spy );
 				return result.then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: JETPACK_MODULES_REQUEST_FAILURE,
 						siteId,
 						error: 'Invalid request.',

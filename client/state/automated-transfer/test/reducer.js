@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	AUTOMATED_TRANSFER_ELIGIBILITY_UPDATE as ELIGIBILITY_UPDATE,
 	AUTOMATED_TRANSFER_STATUS_REQUEST as REQUEST_STATUS,
@@ -15,27 +14,27 @@ describe( 'state', () => {
 				const update = { type: ELIGIBILITY_UPDATE };
 
 				test( 'should set inquiring status when first polling eligibility', () => {
-					expect( status( null, update ) ).to.equal( transferStates.INQUIRING );
+					expect( status( null, update ) ).toEqual( transferStates.INQUIRING );
 				} );
 
 				test( 'should not overwrite the status when a valid state already exists', () => {
-					expect( status( transferStates.START, update ) ).to.equal( transferStates.START );
+					expect( status( transferStates.START, update ) ).toEqual( transferStates.START );
 				} );
 			} );
 
 			describe( 'fetchingStatus', () => {
 				test( 'should be false when irrelevant action is supplied', () => {
-					expect( fetchingStatus( false, { type: ELIGIBILITY_UPDATE } ) ).to.be.false;
+					expect( fetchingStatus( false, { type: ELIGIBILITY_UPDATE } ) ).toBe( false );
 				} );
 
 				test( 'should be false when fetching the status is unsuccessful', () => {
-					expect( fetchingStatus( true, { type: REQUEST_STATUS_FAILURE } ) ).to.be.false;
+					expect( fetchingStatus( true, { type: REQUEST_STATUS_FAILURE } ) ).toBe( false );
 				} );
 
 				test( 'should be truthy when fetching transfer status', () => {
 					const action = { type: REQUEST_STATUS };
 
-					expect( fetchingStatus( null, action ) ).to.be.true;
+					expect( fetchingStatus( null, action ) ).toBe( true );
 				} );
 			} );
 
@@ -54,15 +53,15 @@ describe( 'state', () => {
 				};
 
 				const serialized = serialize( reducer, AT_STATE ).root();
-				expect( serialized[ SITE_ID ] ).to.have.property( 'status' );
-				expect( serialized[ SITE_ID ] ).to.have.property( 'eligibility' );
-				expect( serialized[ SITE_ID ] ).to.not.have.property( 'fetchingStatus' );
+				expect( serialized[ SITE_ID ] ).toHaveProperty( 'status' );
+				expect( serialized[ SITE_ID ] ).toHaveProperty( 'eligibility' );
+				expect( serialized[ SITE_ID ] ).not.toHaveProperty( 'fetchingStatus' );
 
 				const deserialized = deserialize( reducer, AT_STATE );
-				expect( deserialized[ SITE_ID ] ).to.have.property( 'status' );
-				expect( deserialized[ SITE_ID ] ).to.have.property( 'eligibility' );
+				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'status' );
+				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'eligibility' );
 				// The non-persisted property has default value, persisted value is ignored
-				expect( deserialized[ SITE_ID ] ).to.have.property( 'fetchingStatus', false );
+				expect( deserialized[ SITE_ID ] ).toHaveProperty( 'fetchingStatus', false );
 			} );
 		} );
 	} );
