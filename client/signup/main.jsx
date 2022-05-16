@@ -465,12 +465,12 @@ class Signup extends Component {
 		this.handleLogin( dependencies, destination );
 	};
 
-	handleLogin( dependencies, destination, clearSignupFlowController = true ) {
+	handleLogin( dependencies, destination, resetSignupFlowController = true ) {
 		const userIsLoggedIn = this.props.isLoggedIn;
 
 		debug( `Logging you in to "${ destination }"` );
 
-		if ( clearSignupFlowController ) {
+		if ( resetSignupFlowController ) {
 			this.signupFlowController.reset();
 
 			if ( ! this.state.controllerHasReset ) {
