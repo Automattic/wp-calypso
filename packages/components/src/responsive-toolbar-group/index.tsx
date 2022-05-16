@@ -28,13 +28,20 @@ const ResponsiveToolbarGroup = ( {
 
 	const containerRef = useRef< HTMLDivElement >( null );
 	const [ calculatedOnce, setCalculatedOnce ] = useState< boolean >( false );
-	const [ activeIndex, setActiveIndex ] = useState< number | string >( -1 );
+	const [ activeIndex, setActiveIndex ] = useState< number >( -1 );
 	const [ groupedIndexes, setGroupedIndexes ] = useState< any >( {} );
 	const { current: shadowListItems } = useRef< HTMLButtonElement[] >( [] );
 
 	const assignRef = ( index: number, element: HTMLButtonElement ) => {
 		shadowListItems[ index ] = element;
 	};
+
+	const getChildrenToRender = () =>
+		Object.keys( groupedIndexes ).map( ( index ) => ( {
+			index,
+			grouped: groupedIndexes[ index ],
+			child: children[ parseInt( index ) ],
+		} ) );
 
 	const renderChildren = ( type = 'grouped' ) => {
 		if ( type === 'all' ) {
@@ -49,14 +56,14 @@ const ResponsiveToolbarGroup = ( {
 			) );
 		}
 
-		return children
-			.filter( ( _child, index ) => ! groupedIndexes[ index ] )
-			.map( ( child, index ) => (
+		return getChildrenToRender()
+			.filter( ( { grouped } ) => ! grouped )
+			.map( ( { index, child } ) => (
 				<ToolbarButton
 					key={ `shadow-item-${ index }` }
-					isActive={ activeIndex === index }
+					isActive={ activeIndex === parseInt( index ) }
 					onClick={ () => {
-						setActiveIndex( index );
+						setActiveIndex( parseInt( index ) );
 					} }
 					className="responsive-toolbar-group__button-item"
 				>
@@ -69,31 +76,33 @@ const ResponsiveToolbarGroup = ( {
 		const containGroupedIndexes = !! Object.values( groupedIndexes ).find( ( index ) => index );
 
 		if ( containGroupedIndexes || always ) {
+			const label = groupedIndexes[ activeIndex ] ? children[ activeIndex ] : 'More';
+
 			return (
 				<Dropdown
 					renderToggle={ ( { onToggle } ) => (
 						<ToolbarButton
-							isActive={ activeIndex === 'more' }
+							isActive={ groupedIndexes[ activeIndex ] }
 							onClick={ () => {
-								setActiveIndex( 'more' );
 								onToggle();
 							} }
 						>
-							More
+							{ label }
 							<Icon icon="arrow-down" />
 						</ToolbarButton>
 					) }
 					renderContent={ ( { onClose } ) => (
 						<MenuGroup>
-							{ children
-								.filter( ( _child, index ) => groupedIndexes[ index ] )
-								.map( ( child, index ) => (
+							{ getChildrenToRender()
+								.filter( ( { grouped } ) => grouped )
+								.map( ( { index, child } ) => (
 									<MenuItem
 										key={ `menu-item-${ index }` }
 										onClick={ () => {
-											setActiveIndex( index );
+											setActiveIndex( parseInt( index ) );
 											onClose();
 										} }
+										isSelected={ activeIndex === parseInt( index ) }
 										className="responsive-toolbar-group__menu-item"
 									>
 										{ child }
