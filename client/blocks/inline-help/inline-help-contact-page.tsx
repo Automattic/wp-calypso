@@ -28,13 +28,17 @@ const InlineHelpContactPage: React.FC< Props > = ( {
 	// If instead the user has one option, we show him the contact form directly
 	useEffect( () => {
 		if ( ! isLoadingChat && ! isLoadingEmail ) {
-			if ( ! dataChat?.isUserEligible ) {
-				if ( dataEmail?.is_user_eligible ) {
-					setContactFormOpen( 'EMAIL' );
-				} else {
-					setContactFormOpen( 'FORUM' );
-				}
-			}
+			setContactFormOpen( 'DIRECTLY' );
+
+			// if ( ! dataChat?.isUserEligible ) {
+			// 	if ( dataEmail?.is_user_eligible ) {
+			// 		setContactFormOpen( 'EMAIL' );
+			// 	} else if ( directlyAvailable ) {
+			// 		setContactFormOpen( 'DIRECTLY' );
+			// 	} else {
+			// 		setContactFormOpen( 'FORUM' );
+			// 	}
+			// }
 		}
 	}, [ isLoadingChat, isLoadingEmail, dataChat, dataEmail, setContactFormOpen ] );
 

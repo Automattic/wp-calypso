@@ -11,6 +11,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 import './style.scss';
 const DIRECTLY_RTM_SCRIPT_URL = 'https://widgets.wp.com/directly/embed.js';
 const DIRECTLY_ASSETS_BASE_URL = 'https://www.directly.com';
+
 /**
  * Gets the default set of options to configure the Directly RTM widget.
  * It's important to keep this config in a getter function, rather than a constant
@@ -31,7 +32,7 @@ function getDefaultOptions() {
 type Options = Record< string, string | boolean | number > | string;
 
 type DTM = {
-	( key: string, options: Options ): void;
+	( args: [ key: string, command: Options ] ): void;
 	cq?: [ command: string, options?: Options ];
 };
 
@@ -60,8 +61,9 @@ function configureGlobals() {
 	}
 	// Since we can only configure once per pageload, this library only provides a
 	// single global configuration.
-	window.DirectlyRTM( 'config', getDefaultOptions() );
+	window.DirectlyRTM( [ 'config', getDefaultOptions() ] );
 }
+
 /**
  * Inserts a dummy DOM element that the widget uses to calculate the base URL for its assets.
  *
@@ -76,21 +78,23 @@ function insertDOM() {
 	if ( null !== document.getElementById( 'directlyRTMScript' ) ) {
 		return;
 	}
-	const d = document.createElement( 'img' );
+	const d = document.createElement( 'div' );
 	d.id = 'directlyRTMScript';
 	d.src = DIRECTLY_ASSETS_BASE_URL;
 	document.body.appendChild( d );
 }
+
 /**
  * Initializes the RTM widget if it hasn't already been initialized, and then executes the
  * command by passing the arguments to window.DirectlyRTM
  *
  * @returns Promise that resolves after initialization and command execution
  */
-async function execute( ...args: [ string, Options ] ) {
+async function execute( args: [ string, Options ] ) {
 	await initializeDirectly();
 	return window.DirectlyRTM( ...args );
 }
+
 /**
  * Make the request for Directly's remote JavaScript.
  *
@@ -100,6 +104,7 @@ function loadDirectlyScript() {
 	return loadScript( DIRECTLY_RTM_SCRIPT_URL );
 }
 let directlyPromise: Promise< void >;
+
 /**
  * Initializes the RTM widget if it hasn't already been initialized. This sets up global
  * objects and DOM elements and requests the vendor script.
@@ -122,6 +127,7 @@ export function checkAPIThenInitializeDirectly() {
 	} );
 	return directlyPromise;
 }
+
 /**
  * Initializes the RTM widget if it hasn't already been initialized. This sets up global
  * objects and DOM elements and requests the vendor script.
@@ -137,6 +143,7 @@ export function initializeDirectly() {
 	directlyPromise = loadDirectlyScript();
 	return directlyPromise;
 }
+
 /**
  * Ask a question to the Directly RTM widget.
  *
@@ -154,6 +161,6 @@ export async function askDirectlyQuestion( questionText: string, name: string, e
 	// appears to be on their end. Their suggested stopgap is to "nagivate" out of the
 	// active chat before the "askQuestion" fires, hence the solution here. Note that
 	// "navigate" is an undocumented API, so you won't see it in the config guide.
-	await execute( 'navigate', '/ask' );
-	return execute( 'askQuestion', { questionText, name, email } );
+	await execute( [ 'navigate', '/ask' ] );
+	return execute( [ 'askQuestion', { questionText, name, email } ] );
 }

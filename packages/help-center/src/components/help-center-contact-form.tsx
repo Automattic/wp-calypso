@@ -18,6 +18,7 @@ import React, { useEffect, useState, useContext } from 'react';
 /**
  * Internal Dependencies
  */
+import { askDirectlyQuestion, initializeDirectly } from '../directly';
 import { HelpCenterContext } from '../help-center-context';
 import { STORE_KEY } from '../store';
 import { SitePicker } from '../types';
@@ -86,6 +87,16 @@ const titles: {
 		buttonLabel: __( 'Email us', __i18n_text_domain__ ),
 		buttonLoadingLabel: __( 'Sending email', __i18n_text_domain__ ),
 	},
+	DIRECTLY: {
+		formTitle: __( 'Start live chat with an expert', 'full-site-editing' ),
+		trayText: __( 'An expert user will be with you right away', 'full-site-editing' ),
+		formDisclaimer: __(
+			'Please do not provide financial or contact information when submitting this form.',
+			'full-site-editing'
+		),
+		buttonLabel: __( 'Ask an expert', 'full-site-editing' ),
+		buttonLoadingLabel: __( 'Connecting you to an expert', 'full-site-editing' ),
+	},
 	FORUM: {
 		formTitle: __( 'Ask in our community forums', __i18n_text_domain__ ),
 		formDisclaimer: __(
@@ -97,7 +108,7 @@ const titles: {
 	},
 };
 
-type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
+type Mode = 'CHAT' | 'EMAIL' | 'DIRECTLY' | 'FORUM';
 interface ContactFormProps {
 	mode: Mode;
 	onBackClick: () => void;
@@ -176,6 +187,12 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 	}, [ userDeclaredSite, setUserDeclaredSite ] );
 
 	useEffect( () => {
+		if ( mode === 'DIRECTLY' ) {
+			initializeDirectly();
+		}
+	}, [] );
+
+	useEffect( () => {
 		switch ( mode ) {
 			case 'CHAT':
 				if ( openChat ) {
@@ -191,6 +208,9 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 				break;
 			case 'EMAIL':
 				setHeaderText( __( 'Send us an email', __i18n_text_domain__ ) );
+				break;
+			case 'DIRECTLY':
+				setHeaderText( __( 'Start live chat with an expert', 'full-site-editing' ) );
 				break;
 			case 'FORUM':
 				setHeaderText( __( 'Ask in our community forums', __i18n_text_domain__ ) );
@@ -232,6 +252,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 				}
 				break;
 			}
+
 			case 'EMAIL': {
 				if ( supportSite ) {
 					const ticketMeta = [
@@ -258,6 +279,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 				}
 				break;
 			}
+
 			case 'FORUM': {
 				submitTopic( {
 					site: supportSite,
@@ -274,6 +296,11 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					.catch( () => {
 						setHasSubmittingError( true );
 					} );
+				break;
+			}
+
+			case 'DIRECTLY': {
+				askDirectlyQuestion( message ?? '', 'test', 'email@email.com' );
 				break;
 			}
 		}
@@ -333,7 +360,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 		<main className="help-center-contact-form">
 			<header>
 				{ /* forum users don't have other support options, send them back to home, not the support options screen */ }
-				<BackButton onClick={ mode === 'FORUM' ? onGoHome : onBackClick } />
+				<BackButton onClick={ mode === 'FORUM' || mode === 'DIRECTLY' ? onGoHome : onBackClick } />
 			</header>
 			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
 			{ formTitles.formDisclaimer && (
