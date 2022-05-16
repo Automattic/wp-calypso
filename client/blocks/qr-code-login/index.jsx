@@ -133,7 +133,13 @@ function QRCodeLogin() {
 		translate( 'Open the {{link/}} on your phone.', {
 			components: {
 				link: (
-					<a href="https://apps.wordpress.com/get/?campaign=calypso-qrcode-apps">WordPress App</a>
+					<a
+						target="_blank"
+						rel="noopener noreferrer"
+						href="https://apps.wordpress.com/get/?campaign=calypso-qrcode-apps"
+					>
+						WordPress App
+					</a>
 				),
 			},
 		} ),
@@ -163,7 +169,11 @@ function QRCodeLogin() {
 					) ) }
 				</ol>
 				<p>
-					<a href="https://apps.wordpress.com/mobile/login-via-qr-code">
+					<a
+						target="_blank"
+						rel="noopener noreferrer"
+						href="https://apps.wordpress.com/mobile/login-via-qr-code"
+					>
 						{ translate( 'Need help?' ) }
 					</a>
 				</p>
