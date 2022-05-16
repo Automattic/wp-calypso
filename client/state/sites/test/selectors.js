@@ -1,10 +1,4 @@
-import config from '@automattic/calypso-config';
-import {
-	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
-	PLAN_FREE,
-	WPCOM_FEATURES_WORDADS,
-} from '@automattic/calypso-products';
+import { WPCOM_FEATURES_WORDADS } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
@@ -37,8 +31,6 @@ import {
 	getSiteFrontPageType,
 	hasStaticFrontPage,
 	canCurrentUserUseCustomerHome,
-	canCurrentUserUseAnyWooCommerceBasedStore,
-	canCurrentUserUseWooCommerceCoreStore,
 	canJetpackSiteUpdateFiles,
 	canJetpackSiteAutoUpdateFiles,
 	canJetpackSiteAutoUpdateCore,
@@ -3528,143 +3520,6 @@ describe( 'selectors', () => {
 				wpcom_url: 'unmapped-url.wordpress.com',
 				URL: 'https://unmapped-url.wordpress.com',
 			} );
-		} );
-	} );
-
-	describe( 'canCurrentUserUseAnyWooCommerceBasedStore()', () => {
-		const createState = (
-			manage_options,
-			is_automated_transfer,
-			has_pending_automated_transfer
-		) => ( {
-			ui: {
-				selectedSiteId: 1,
-			},
-			currentUser: {
-				capabilities: {
-					1: {
-						manage_options,
-					},
-				},
-			},
-			sites: {
-				items: {
-					1: {
-						options: {
-							is_automated_transfer,
-							has_pending_automated_transfer,
-						},
-					},
-				},
-			},
-		} );
-
-		test( 'should return true if site is AT and user can manage it', () => {
-			expect( canCurrentUserUseAnyWooCommerceBasedStore( createState( true, true, false ) ) ).toBe(
-				true
-			);
-		} );
-
-		test( 'should return false if site is not AT and user can manage it', () => {
-			expect( canCurrentUserUseAnyWooCommerceBasedStore( createState( true, false, false ) ) ).toBe(
-				false
-			);
-		} );
-
-		test( "should return false if site is AT and user can't manage it", () => {
-			expect( canCurrentUserUseAnyWooCommerceBasedStore( createState( false, true, false ) ) ).toBe(
-				false
-			);
-		} );
-
-		test( "should return true if user can't manage a site, but it has background transfer", () => {
-			expect( canCurrentUserUseAnyWooCommerceBasedStore( createState( false, false, true ) ) ).toBe(
-				true
-			);
-		} );
-	} );
-
-	describe( 'canCurrentUserUseWooCommerceCoreStore()', () => {
-		const createState = (
-			manage_options,
-			is_automated_transfer,
-			has_pending_automated_transfer,
-			product_slug
-		) => ( {
-			ui: {
-				selectedSiteId: 1,
-			},
-			currentUser: {
-				capabilities: {
-					1: {
-						manage_options,
-					},
-				},
-			},
-			sites: {
-				items: {
-					1: {
-						options: {
-							is_automated_transfer,
-							has_pending_automated_transfer,
-						},
-						plan: {
-							product_slug,
-						},
-					},
-				},
-				plans: {
-					1: {
-						data: {
-							0: {
-								currentPlan: true,
-								productSlug: product_slug,
-							},
-						},
-					},
-				},
-			},
-		} );
-
-		beforeEach( () => {
-			// Enable all features
-			config.isEnabled.mockImplementation( () => true );
-		} );
-
-		test( 'should return true if site is AT and user can manage it', () => {
-			expect(
-				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_ECOMMERCE ) )
-			).toBe( true );
-		} );
-
-		test( 'should return false if site is not AT and user can manage it', () => {
-			expect(
-				canCurrentUserUseWooCommerceCoreStore( createState( true, false, false, PLAN_ECOMMERCE ) )
-			).toBe( false );
-		} );
-
-		test( "should return false if site is AT and user can't manage it", () => {
-			expect(
-				canCurrentUserUseWooCommerceCoreStore( createState( false, true, false, PLAN_ECOMMERCE ) )
-			).toBe( false );
-		} );
-
-		test( "should return true if user can't manage a site, but it has background transfer", () => {
-			expect(
-				canCurrentUserUseWooCommerceCoreStore( createState( false, false, true, PLAN_ECOMMERCE ) )
-			).toBe( true );
-		} );
-
-		test( 'should return false if site is not eCommerce or Business', () => {
-			expect(
-				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_FREE ) )
-			).toBe( false );
-		} );
-
-		test( 'should return true if site is Business and Store is not deprecated but is removed', () => {
-			expect(
-				canCurrentUserUseWooCommerceCoreStore( createState( true, true, false, PLAN_BUSINESS ) )
-			).toBe( true );
 		} );
 	} );
 
