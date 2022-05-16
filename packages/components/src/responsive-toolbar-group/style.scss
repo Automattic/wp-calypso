@@ -2,11 +2,17 @@
 	position: relative;
 	width: 100%;
 
-	.responsive-toolbar-group__full-list, .responsive-toolbar-group__grouped-list {
+	.responsive-toolbar-group__full-list {
 		width: 100%;
 		display: grid;
 		grid-auto-columns: max-content;
     	grid-auto-flow: column;
+	}
+
+	.responsive-toolbar-group__grouped-list {
+		width: 100%;
+		justify-content: space-between;
+		display: flex;
 	}
 
 	.responsive-toolbar-group__grouped-list {
