@@ -1007,13 +1007,16 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 	   we need to display it again when the user comes back to the flow
 	   after verification. */
 	if ( nextProps.flowName === 'p2' && nextProps?.progress[ stepName ]?.status === 'in-progress' ) {
+		debug( 'User email verification is in progress, do not skip this step' );
 		return;
 	}
 
+	debug( 'User email is verified:  = %s', nextProps?.isEmailVerified );
 	if ( ! nextProps.isEmailVerified ) {
 		return;
 	}
 
+	debug( 'Skipping P2 email confirmation step' );
 	nextProps.submitSignupStep( { stepName, wasSkipped: true } );
 	flows.excludeStep( stepName );
 }
