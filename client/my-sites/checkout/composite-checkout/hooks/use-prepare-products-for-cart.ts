@@ -370,7 +370,7 @@ function useAddProductFromSlug( {
 		}
 		debug(
 			'preparing products that were requested in url',
-			{ productAliasFromUrl, isJetpackNotAtomic },
+			{ productAliasFromUrl, usesJetpackProducts },
 			cartProducts
 		);
 		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
@@ -378,7 +378,7 @@ function useAddProductFromSlug( {
 		addHandler,
 		translate,
 		isPrivate,
-		isJetpackNotAtomic,
+		usesJetpackProducts,
 		productAliasFromUrl,
 		validProducts,
 		isJetpackCheckout,
