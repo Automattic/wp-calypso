@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Remove unnecessary peer dependencies on `@wordpress/data`, `reakit-utils`, and `redux`.
+- Add missing peer dependency on `react-dom`.
+
 ## v1.1.2 (2022-05-13)
 
 - Dependency updates and internal code cleanup.
