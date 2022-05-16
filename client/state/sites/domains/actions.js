@@ -5,6 +5,9 @@ import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_PRIVACY_ENABLE,
 	DOMAIN_PRIVACY_DISABLE,
+	SITE_DOMAINS_IN_BULK_REQUEST,
+	SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS,
+	SITE_DOMAINS_IN_BULK_REQUEST_FAILURE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
@@ -22,6 +25,91 @@ import 'calypso/state/data-layer/wpcom/domains/privacy/index.js';
  */
 const debug = debugFactory( 'calypso:state:sites:domains:actions' );
 const noop = () => {};
+
+/**
+ * Action creator function
+ *
+ * Return SITE_DOMAINS_IN_BULK_REQUEST action object
+ *
+ * @returns {object} - action object
+ */
+export const siteDomainsInBulkRequestAction = () => {
+	const action = {
+		type: SITE_DOMAINS_IN_BULK_REQUEST,
+	};
+
+	debug( 'returning action: %o', action );
+	return action;
+};
+
+/**
+ * Action creator function
+ *
+ * Return SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS action object
+ *
+ * @param {Array} domains - domains information for all sites of the user
+ * @returns {object} - action object
+ */
+export const siteDomainsInBulkRequestSuccessAction = ( domains ) => {
+	const action = {
+		type: SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS,
+		domains,
+	};
+
+	debug( 'returning action: %o', action );
+	return action;
+};
+
+/**
+ * Action creator function
+ *
+ * Return SITE_DOMAINS_IN_BULK_REQUEST_FAILURE action object
+ *
+ * @param {object} error - error message according to REST-API error response
+ * @returns {object} action object
+ */
+export const siteDomainsInBulkRequestFailureAction = ( error ) => {
+	const action = {
+		type: SITE_DOMAINS_IN_BULK_REQUEST_FAILURE,
+		error,
+	};
+
+	debug( 'returning action: %o', action );
+	return action;
+};
+
+/**
+ * Fetches domains for all sites of the current user.
+ *
+ * @returns {Function} a promise that will resolve once fetching is completed
+ */
+export function fetchSiteDomainsInBulk() {
+	return ( dispatch ) => {
+		dispatch( siteDomainsInBulkRequestAction() );
+
+		return wpcom.req
+			.get( `/site-domains-in-bulk`, { apiVersion: '1.1' } )
+			.then( ( data ) => {
+				const { domains = [], error, message } = data;
+
+				if ( error ) {
+					throw new Error( message );
+				}
+
+				dispatch( siteDomainsInBulkRequestSuccessAction( domains ) );
+			} )
+			.catch( ( error ) => {
+				const message =
+					error instanceof Error
+						? error.message
+						: translate(
+								'There was a problem fetching domains. Please try again later or contact support.'
+						  );
+
+				dispatch( siteDomainsInBulkRequestFailureAction( message ) );
+			} );
+	};
+}
 
 /**
  * Action creator function

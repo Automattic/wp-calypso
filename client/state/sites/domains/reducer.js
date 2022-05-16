@@ -2,6 +2,9 @@
 
 import { find } from 'lodash';
 import {
+	SITE_DOMAINS_IN_BULK_REQUEST,
+	SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS,
+	SITE_DOMAINS_IN_BULK_REQUEST_FAILURE,
 	SITE_DOMAINS_RECEIVE,
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
@@ -19,6 +22,7 @@ import {
 	DOMAIN_CONTACT_INFO_REDACT_SUCCESS,
 	DOMAIN_CONTACT_INFO_REDACT_FAILURE,
 } from 'calypso/state/action-types';
+import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
@@ -55,6 +59,16 @@ const modifySiteDomainObjectImmutable = ( state, siteId, domain, modifyDomainPro
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	const { siteId } = action;
 	switch ( action.type ) {
+		case SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS: {
+			const newState = Object.assign( {}, state );
+			action.domains.forEach( ( domain ) => {
+				if ( ! newState[ domain.blog_id ] ) {
+					newState[ domain.blog_id ] = [];
+				}
+				newState[ domain.blog_id ].push( createSiteDomainObject( domain ) );
+			} );
+			return newState;
+		}
 		case SITE_DOMAINS_RECEIVE:
 			return Object.assign( {}, state, {
 				[ siteId ]: action.domains,
@@ -133,6 +147,13 @@ export const updatingPrivacy = ( state = {}, action ) => {
  */
 export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
+		case SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS:
+		case SITE_DOMAINS_IN_BULK_REQUEST_FAILURE:
+			const newState = Object.assign( {}, state );
+			action.domains.forEach( ( domain ) => {
+				newState[ domain.blog_id ] = false;
+			} );
+			return newState;
 		case SITE_DOMAINS_REQUEST:
 		case SITE_DOMAINS_REQUEST_SUCCESS:
 		case SITE_DOMAINS_REQUEST_FAILURE:
@@ -168,9 +189,20 @@ export const errors = ( state = {}, action ) => {
 	return state;
 };
 
+export const isRequestingSiteDomainsInBulk = ( state = false, action ) => {
+	switch ( action.type ) {
+		case SITE_DOMAINS_IN_BULK_REQUEST:
+		case SITE_DOMAINS_IN_BULK_REQUEST_SUCCESS:
+		case SITE_DOMAINS_IN_BULK_REQUEST_FAILURE:
+			return action.type === SITE_DOMAINS_IN_BULK_REQUEST;
+	}
+	return state;
+};
+
 export default combineReducers( {
 	errors,
 	items,
 	requesting,
 	updatingPrivacy,
+	isRequestingSiteDomainsInBulk,
 } );

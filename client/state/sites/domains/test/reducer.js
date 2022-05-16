@@ -44,6 +44,7 @@ describe( 'reducer', () => {
 			'requesting',
 			'errors',
 			'updatingPrivacy',
+			'isRequestingSiteDomainsInBulk',
 		] );
 	} );
 

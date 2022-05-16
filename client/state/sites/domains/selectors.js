@@ -92,3 +92,7 @@ export const getAllRequestingSiteDomains = ( state ) => {
 export const isUpdatingDomainPrivacy = ( state, siteId, domain ) => {
 	return state?.sites?.domains?.updatingPrivacy?.[ siteId ]?.[ domain ];
 };
+
+export const isRequestingSiteDomainsInBulk = ( state ) => {
+	return state.sites?.domains?.isRequestingSiteDomainsInBulk || false;
+};
