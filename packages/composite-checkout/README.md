@@ -108,7 +108,7 @@ Requires an `id` prop, which is a string that is used to construct the SVG `id`.
 A [React error boundary](https://reactjs.org/docs/error-boundaries.html) that can be used to wrap any components you like. There are several layers of these already built-in to `CheckoutProvider` and its children, but you may use this to manually wrap components. It has the following props.
 
 - `errorMessage: React.ReactNode`. The error message to display to the user if there is a problem; typically a string but can also be a component.
-- `onError?: (string) => void`. A function to be called when there is an error. Can be used for logging.
+- `onError?: (error: Error) => void`. A function to be called when there is an error. Can be used for logging.
 
 ### CheckoutProvider
 
@@ -191,7 +191,7 @@ This component's props are:
 - `stepNumber: number`. The step number to display for the step.
 - `totalSteps: number`. The total number of steps in the current connected group of steps.
 - `errorMessage?: string`. The error message to display in the React error boundary if there is an error thrown by any component in this step.
-- `onError?: (string) => void`. A callback to be called from the React error boundary if there is an error thrown by any component in this step.
+- `onError?: (error: Error) => void`. A callback to be called from the React error boundary if there is an error thrown by any component in this step.
 - `editButtonText?: string`. The text to display instead of "Edit" for the edit step button.
 - `editButtonAriaLabel?: string`. The text to display for `aria-label` instead of "Edit" for the edit step button.
 - `nextStepButtonText?: string`. Like `editButtonText` but for the "Continue" button.

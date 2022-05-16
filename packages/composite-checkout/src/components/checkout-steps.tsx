@@ -332,7 +332,7 @@ export const CheckoutStep = ( {
 	];
 
 	const onError = useCallback(
-		( error ) => onPageLoadError?.( 'step_load', error, { step_id: stepId } ),
+		( error: Error ) => onPageLoadError?.( 'step_load', error, { step_id: stepId } ),
 		[ onPageLoadError, stepId ]
 	);
 
@@ -633,7 +633,7 @@ export function CheckoutStepBody( {
 
 interface CheckoutStepBodyProps {
 	errorMessage?: string;
-	onError?: ( message: string ) => void;
+	onError?: ( error: Error ) => void;
 	editButtonAriaLabel?: string;
 	editButtonText?: string;
 	nextStepButtonText?: string;

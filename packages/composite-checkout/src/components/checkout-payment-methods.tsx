@@ -37,7 +37,7 @@ export default function CheckoutPaymentMethods( {
 	const { __ } = useI18n();
 	const { onPageLoadError, onPaymentMethodChanged } = useContext( CheckoutContext );
 	const onError = useCallback(
-		( error ) => onPageLoadError?.( 'payment_method_load', error ),
+		( error: Error ) => onPageLoadError?.( 'payment_method_load', error ),
 		[ onPageLoadError ]
 	);
 

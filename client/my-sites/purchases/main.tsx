@@ -30,7 +30,7 @@ import { getChangeOrAddPaymentMethodUrlFor } from './utils';
 
 function useLogPurchasesError( message: string ) {
 	return useCallback(
-		( error ) => {
+		( error: Error ) => {
 			logToLogstash( {
 				feature: 'calypso_client',
 				message,
@@ -38,7 +38,7 @@ function useLogPurchasesError( message: string ) {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'site_level_purchases',
-					message: String( error ),
+					message: error.message + '; Stack: ' + error.stack,
 				},
 			} );
 		},

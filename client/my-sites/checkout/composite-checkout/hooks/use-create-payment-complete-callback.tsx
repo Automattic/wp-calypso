@@ -155,7 +155,7 @@ export default function useCreatePaymentCompleteCallback( {
 				console.error( err );
 				reduxDispatch(
 					recordCompositeCheckoutErrorDuringAnalytics( {
-						errorObject: err,
+						errorObject: err as Error,
 						failureDescription: 'useCreatePaymentCompleteCallback',
 					} )
 				);
