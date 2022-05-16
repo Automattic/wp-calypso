@@ -129,7 +129,9 @@ export function resolveDomainStatus(
 					return {
 						statusText: expiresMessage,
 						statusClass: `status-${ domain.autoRenewing ? 'success' : 'error' }`,
-						status: domain.autoRenewing ? translate( 'Active' ) : translate( 'Expiring soon' ),
+						status: domain.autoRenewing
+							? translate( 'Active' )
+							: translate( 'Domain connection expiring soon' ),
 						icon: 'info',
 						listStatusText: expiresMessage,
 						listStatusClass: domain.autoRenewing ? 'info' : 'alert',
@@ -140,8 +142,10 @@ export function resolveDomainStatus(
 
 				return {
 					statusText: expiresMessage,
-					statusClass: 'status-warning',
-					status: translate( 'Expiring soon' ),
+					statusClass: `status-${ domain.autoRenewing ? 'success' : 'error' }`,
+					status: domain.autoRenewing
+						? translate( 'Active' )
+						: translate( 'Domain connection expiring soon' ),
 					icon: 'info',
 					listStatusText: expiresMessage,
 					listStatusClass: 'warning',
