@@ -1,5 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { planHasFeature, FEATURE_PREMIUM_THEMES, PLAN_PREMIUM } from '@automattic/calypso-products';
+import {
+	planHasFeature,
+	FEATURE_PREMIUM_THEMES,
+	PLAN_PREMIUM,
+	WPCOM_FEATURES_PREMIUM_THEMES,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import DesignPicker, {
 	PremiumBadge,
@@ -26,6 +31,7 @@ import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import LetUsChoose from './let-us-choose';
@@ -65,6 +71,10 @@ export default function DesignPickerStep( props ) {
 
 	// Limit themes to those that support the Site editor, if site is fse eligible
 	const siteId = useSelector( ( state ) => getSiteId( state, dependencies.siteSlug ) );
+	const isPremiumThemeAvailable2 = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES )
+	);
+	console.log( { isPremiumThemeAvailable, isPremiumThemeAvailable2 } );
 	const { isLoading: blockEditorSettingsAreLoading, data: blockEditorSettings } =
 		useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.useDIFMThemes );
 	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
@@ -226,6 +236,7 @@ export default function DesignPickerStep( props ) {
 	function renderDesignPicker() {
 		return (
 			<>
+				<div>DesignPicker Below</div>
 				<DesignPicker
 					designs={ designs }
 					theme={ isReskinned ? 'light' : 'dark' }
@@ -257,6 +268,7 @@ export default function DesignPickerStep( props ) {
 					hideDesignTitle={ hideDesignTitle }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				/>
+				<div>DesignPicker Above</div>
 				{ renderCheckoutModal() }
 			</>
 		);

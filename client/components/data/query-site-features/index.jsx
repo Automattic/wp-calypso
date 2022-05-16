@@ -18,6 +18,7 @@ export default function QuerySiteFeatures( { siteIds } ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
+		console.log( 'Querying Site Features', siteIds );
 		siteIds.forEach( ( siteId ) => dispatch( request( siteId ) ) );
 	}, [ dispatch, siteIdsHash( siteIds ) ] );
 
