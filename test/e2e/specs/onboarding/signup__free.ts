@@ -70,7 +70,7 @@ skipDescribeIf( isStagingOrProd )(
 
 			it( 'Select WordPress.com Free plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				await signupPickPlanPage.selectPlan( 'start with a free site' );
+				await signupPickPlanPage.selectPlan( 'Start with Free' );
 			} );
 		} );
 
@@ -169,7 +169,7 @@ skipDescribeIf( isStagingOrProd )(
 
 			it( 'Keep free plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				await signupPickPlanPage.selectPlan( 'start with a free site' );
+				await signupPickPlanPage.selectPlan( 'Start with Free' );
 			} );
 
 			it( 'Confirm site is launched', async function () {
