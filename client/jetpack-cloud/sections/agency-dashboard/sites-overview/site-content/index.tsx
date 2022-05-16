@@ -15,13 +15,28 @@ export default function SiteContent(): ReactElement {
 
 	const sites = formatSites( data );
 
-	const columns = {
-		site: translate( 'Site' ),
-		backup: translate( 'Backup' ),
-		scan: translate( 'Scan' ),
-		monitor: translate( 'Monitor' ),
-		plugin: translate( 'Plugin Updates' ),
-	};
+	const columns = [
+		{
+			key: 'site',
+			title: translate( 'Site' ),
+		},
+		{
+			key: 'backup',
+			title: translate( 'Backup' ),
+		},
+		{
+			key: 'scan',
+			title: translate( 'Scan' ),
+		},
+		{
+			key: 'monitor',
+			title: translate( 'Monitor' ),
+		},
+		{
+			key: 'plugin',
+			title: translate( 'Plugin Updates' ),
+		},
+	];
 
 	if ( ! isLoading && ! error && ! sites.length ) {
 		return <div className="site-content__no-sites">{ translate( 'No active sites' ) }</div>;

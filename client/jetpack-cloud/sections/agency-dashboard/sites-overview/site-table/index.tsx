@@ -11,13 +11,7 @@ import './style.scss';
 
 interface Props {
 	isFetching: boolean;
-	columns: {
-		site: ReactChild;
-		backup: ReactChild;
-		scan: ReactChild;
-		monitor: ReactChild;
-		plugin: ReactChild;
-	};
+	columns: Array< { key: string; title: ReactChild } >;
 	items: Array< {
 		site: {
 			value: { blog_id: number; url: string };
@@ -36,8 +30,8 @@ export default function SiteTable( { isFetching, columns, items }: Props ): Reac
 		<table className="site-table__table">
 			<thead>
 				<tr>
-					{ Object.values( columns ).map( ( column, index ) => (
-						<th key={ index }>{ column }</th>
+					{ columns.map( ( column ) => (
+						<th key={ column.key }>{ column.title }</th>
 					) ) }
 					<th></th>
 				</tr>
@@ -45,8 +39,8 @@ export default function SiteTable( { isFetching, columns, items }: Props ): Reac
 			<tbody>
 				{ isFetching ? (
 					<tr>
-						{ Object.keys( columns ).map( ( key, index ) => (
-							<td key={ index }>
+						{ columns.map( ( column ) => (
+							<td key={ column.key }>
 								<TextPlaceholder />
 							</td>
 						) ) }
@@ -61,8 +55,8 @@ export default function SiteTable( { isFetching, columns, items }: Props ): Reac
 						return (
 							<Fragment key={ `table-row-${ blogId }` }>
 								<tr className="site-table__table-row">
-									{ Object.keys( item ).map( ( key ) => {
-										const row = item[ key ];
+									{ columns.map( ( column ) => {
+										const row = item[ column.key ];
 										if ( row.type ) {
 											return (
 												<td

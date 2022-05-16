@@ -3,32 +3,31 @@ import classNames from 'classnames';
 import { useState, ReactElement } from 'react';
 import SiteErrorContent from '../site-error-content';
 import SiteStatusContent from '../site-status-content';
+import type { AllowedTypes } from '../types';
 import type { ReactChild } from 'react';
 
 import './style.scss';
 
 interface Props {
 	rows: {
-		site: { value: { blog_id: number; url: string }; error: string; type: string; status: string };
+		site: {
+			value: { blog_id: number; url: string };
+			error: string;
+			type: AllowedTypes;
+			status: string;
+		};
 		scan: { threats: number };
 		plugin: { updates: number };
 		[ key: string ]: any;
 	};
-	columns: {
-		site: ReactChild;
-		backup: ReactChild;
-		scan: ReactChild;
-		monitor: ReactChild;
-		plugin: ReactChild;
-		[ key: string ]: any;
-	};
+	columns: Array< { key: string; title: ReactChild } >;
 }
 
 export default function SiteCard( { rows, columns }: Props ): ReactElement {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	const toggleIsExpanded = () => {
-		setIsExpanded( ! isExpanded );
+		setIsExpanded( ( prevValue ) => ! prevValue );
 	};
 
 	const toggleContent = isExpanded ? (
@@ -37,10 +36,7 @@ export default function SiteCard( { rows, columns }: Props ): ReactElement {
 		<Gridicon icon="chevron-down" className="site-card__vertical-align-middle" size={ 18 } />
 	);
 
-	const rowKeys = Object.keys( rows );
-
-	const headerItem = rowKeys[ 0 ];
-	const expandedContentItems = rowKeys.filter( ( row, index ) => index > 0 );
+	const headerItem = rows[ 'site' ];
 
 	const site = rows.site;
 	const siteError = site.error;
@@ -57,7 +53,7 @@ export default function SiteCard( { rows, columns }: Props ): ReactElement {
 					tabIndex={ 0 }
 				>
 					{ toggleContent }
-					<SiteStatusContent rows={ rows } type={ rows[ headerItem ].type } />
+					<SiteStatusContent rows={ rows } type={ headerItem.type } />
 				</span>
 				<div className="site-card__actions-small-screen">
 					<Gridicon icon="ellipsis" size={ 18 } className="site-card__all-actions" />
@@ -67,25 +63,27 @@ export default function SiteCard( { rows, columns }: Props ): ReactElement {
 			{ isExpanded && (
 				<div className="site-card__expanded-content">
 					{ siteError && <SiteErrorContent siteUrl={ siteUrl } /> }
-					{ expandedContentItems.map( ( key, index ) => {
-						const row = rows[ key ];
-						if ( row.type ) {
-							return (
-								<div
-									className={ classNames(
-										'site-card__expanded-content-list',
-										! siteError && 'site-card__content-list-no-error'
-									) }
-									key={ index }
-								>
-									<span className="site-card__expanded-content-key">{ columns[ key ] }</span>
-									<span className="site-card__expanded-content-value">
-										<SiteStatusContent rows={ rows } type={ row.type } />
-									</span>
-								</div>
-							);
-						}
-					} ) }
+					{ columns
+						.filter( ( column ) => column.key !== 'site' )
+						.map( ( column, index ) => {
+							const row = rows[ column.key ];
+							if ( row.type ) {
+								return (
+									<div
+										className={ classNames(
+											'site-card__expanded-content-list',
+											! siteError && 'site-card__content-list-no-error'
+										) }
+										key={ index }
+									>
+										<span className="site-card__expanded-content-key">{ column.title }</span>
+										<span className="site-card__expanded-content-value">
+											<SiteStatusContent rows={ rows } type={ row.type } />
+										</span>
+									</div>
+								);
+							}
+						} ) }
 				</div>
 			) }
 		</Card>
