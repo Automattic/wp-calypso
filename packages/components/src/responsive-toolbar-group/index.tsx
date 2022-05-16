@@ -94,7 +94,7 @@ const ResponsiveToolbarGroup = ( {
 					renderContent={ ( { onClose } ) => (
 						<MenuGroup>
 							{ getChildrenToRender()
-								.filter( ( { grouped } ) => grouped )
+								.filter( ( { grouped, index } ) => grouped && parseInt( index ) !== activeIndex )
 								.map( ( { index, child } ) => (
 									<MenuItem
 										key={ `menu-item-${ index }` }
