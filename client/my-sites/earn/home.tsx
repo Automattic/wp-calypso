@@ -211,9 +211,13 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 		const body = (
 			<>
-				{ translate(
-					'Let visitors pay for digital goods and services or make quick, pre-set donations by enabling the Payment Button block.'
-				) }
+				{ hasConnectedAccount
+					? translate(
+							'Let visitors pay for digital goods and services or make quick, pre-set donations by inserting the Payment Button block.'
+					  )
+					: translate(
+							'Let visitors pay for digital goods and services or make quick, pre-set donations by enabling the Payment Button block.'
+					  ) }
 				<>
 					<br />
 					<em>{ getAnyPlanNames() }</em>
@@ -270,9 +274,13 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 		const body = (
 			<>
-				{ translate(
-					'Accept one-time and recurring donations by enabling the Donations Form block.'
-				) }
+				{ hasConnectedAccount
+					? translate(
+							'Accept one-time and recurring donations by inserting the Donations Form block.'
+					  )
+					: translate(
+							'Accept one-time and recurring donations by enabling the Donations Form block.'
+					  ) }
 				<>
 					<br />
 					<em>{ getAnyPlanNames() }</em>
