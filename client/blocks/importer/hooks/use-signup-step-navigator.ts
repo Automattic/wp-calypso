@@ -1,9 +1,9 @@
 import page from 'page';
 import { getWpOrgImporterUrl } from 'calypso/blocks/import/util';
-import { addQueryArgs } from 'calypso/lib/route';
 import { useCheckoutUrl } from 'calypso/blocks/importer/hooks/use-checkout-url';
 import { StepNavigator } from 'calypso/blocks/importer/types';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
+import { addQueryArgs } from 'calypso/lib/route';
 import { getStepUrl } from 'calypso/signup/utils';
 
 export function useSignupStepNavigator(
