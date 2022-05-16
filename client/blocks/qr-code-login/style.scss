@@ -48,6 +48,13 @@
 		height: 300px;
 		flex: 0 0 300px;
 		margin: 0 auto 20px;
+		max-width: 100%;
+		max-height: calc( 100vw - 48px );
+
+		canvas {
+			max-width: 100%;
+			max-height: calc( 100vw - 48px );
+		}
 
 		@include break-small {
             margin: 0;
