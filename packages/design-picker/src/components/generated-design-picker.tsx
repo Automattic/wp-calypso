@@ -102,7 +102,7 @@ export interface GeneratedDesignPickerProps {
 	locale: string;
 	heading?: React.ReactElement;
 	footer?: React.ReactElement;
-	onPreview: ( design: Design ) => void;
+	onPreview: ( design: Design, positionIndex: number ) => void;
 	onViewMore: () => void;
 }
 
@@ -124,13 +124,13 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 			<div className="generated_design-picker__content">
 				<div className="generated-design-picker__thumbnails">
 					{ designs &&
-						designs.map( ( design ) => (
+						designs.map( ( design, index ) => (
 							<GeneratedDesignThumbnail
 								key={ design.slug }
 								slug={ design.slug }
 								thumbnailUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
 								isSelected={ selectedDesign?.slug === design.slug }
-								onPreview={ () => onPreview( design ) }
+								onPreview={ () => onPreview( design, index ) }
 							/>
 						) ) }
 					<Button className="generated-design-picker__view-more" onClick={ onViewMore }>
