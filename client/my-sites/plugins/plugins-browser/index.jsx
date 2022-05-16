@@ -43,6 +43,7 @@ import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
+import { getPlugins, getPluginsOnSites } from 'calypso/state/plugins/installed/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
@@ -483,6 +484,13 @@ const PluginSingleListView = ( {
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
 
+	const installedPlugins = useSelector( ( state ) =>
+		getPlugins( state, siteObjectsToSiteIds( sites ) )
+	);
+	const aggregatedInstalledPlugins = useSelector( ( state ) =>
+		getPluginsOnSites( state, installedPlugins )
+	);
+
 	let plugins;
 	let isFetching;
 	if ( category === 'popular' ) {
@@ -498,7 +506,9 @@ const PluginSingleListView = ( {
 		return null;
 	}
 
-	plugins = plugins.filter( isNotBlocked );
+	plugins = plugins
+		.filter( isNotBlocked )
+		.filter( ( plugin ) => isNotInstalled( plugin, aggregatedInstalledPlugins ) );
 
 	let listLink = '/plugins/' + category;
 	if ( domain ) {
@@ -667,6 +677,17 @@ const PLUGIN_SLUGS_BLOCKLIST = [];
 
 function isNotBlocked( plugin ) {
 	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
+}
+
+/**
+ * Returns a boolean indicating if a plugin is already installed or not
+ *
+ * @param plugin plugin object to be tested
+ * @param installedPlugins list of installed plugins aggregated by plugin slug
+ * @returns Boolean weather a plugin is not installed on not
+ */
+function isNotInstalled( plugin, installedPlugins ) {
+	return ! installedPlugins[ plugin.slug ];
 }
 
 export default PluginsBrowser;
