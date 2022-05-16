@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -86,10 +87,13 @@ const getTitanMenuItems = ( {
 	translate,
 } ) => {
 	const email = getEmailAddress( mailbox );
+	const embeddedMailbox = isEnabled( 'emails/embedded-inbox-testing' );
+
+	const emeddedMailbox = embeddedMailbox ? 'https://webmail-qa.riva.co/0.2361' : titanAppsUrlPrefix;
 
 	return [
 		{
-			href: getTitanEmailUrl( titanAppsUrlPrefix, email ),
+			href: getTitanEmailUrl( emeddedMailbox, email, false, window.location.href ),
 			image: titanMailIcon,
 			imageAltText: translate( 'Titan Mail icon' ),
 			title: translate( 'View Mail', {

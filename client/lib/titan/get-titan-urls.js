@@ -30,12 +30,17 @@ function getTitanUrl(
 	titanAppsUrlPrefix,
 	email,
 	app = TITAN_APPS.EMAIL,
-	clearPreviousSessions = false
+	clearPreviousSessions = false,
+	redirectUrl = null
 ) {
 	const titanAppUrl = new URL( `${ titanAppsUrlPrefix }/${ app }/` );
 
 	if ( email?.includes( '@' ) ) {
 		titanAppUrl.searchParams.append( 'email_account', email );
+	}
+
+	if ( redirectUrl ) {
+		titanAppUrl.searchParams.append( 'topbar.redirect_url', redirectUrl );
 	}
 
 	if ( clearPreviousSessions ) {
@@ -53,6 +58,17 @@ export function getTitanContactsUrl( titanAppsUrlPrefix, email ) {
 	return getTitanUrl( titanAppsUrlPrefix, email, TITAN_APPS.CONTACTS );
 }
 
-export function getTitanEmailUrl( titanAppsUrlPrefix, email, clearPreviousSessions = false ) {
-	return getTitanUrl( titanAppsUrlPrefix, email, TITAN_APPS.EMAIL, clearPreviousSessions );
+export function getTitanEmailUrl(
+	titanAppsUrlPrefix,
+	email,
+	clearPreviousSessions = false,
+	redirectUrl = null
+) {
+	return getTitanUrl(
+		titanAppsUrlPrefix,
+		email,
+		TITAN_APPS.EMAIL,
+		clearPreviousSessions,
+		redirectUrl
+	);
 }
