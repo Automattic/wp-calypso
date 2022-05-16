@@ -61,14 +61,17 @@ function dispatchSentryMethodCall< Method extends SupportedMethods >(
 	args: Parameters< typeof SentryApi[ Method ] >
 ) {
 	const { state: status } = state;
+	if ( status === 'error' || status === 'disabled' ) {
+		return;
+	}
+
 	if ( status === 'loaded' ) {
 		// @ts-expect-error We have a union of tuples and TypeScript wants a Tuple. It's OK.
 		state.sentry[ method ]( ...args );
 		return;
 	}
-	if ( status === 'error' || status === 'disabled' ) {
-		return;
-	}
+
+	// Since we haven't yet loaded, queue the event for processing.
 	callQueue.push( { f: method, a: args } );
 }
 export function addBreadcrumb( ...args: Parameters< typeof SentryApi.addBreadcrumb > ) {
