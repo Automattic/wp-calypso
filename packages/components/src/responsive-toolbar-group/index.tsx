@@ -1,4 +1,11 @@
-import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
+import {
+	ToolbarGroup,
+	ToolbarButton,
+	Dropdown,
+	MenuItem,
+	MenuGroup,
+	Icon,
+} from '@wordpress/components';
 import classnames from 'classnames';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -63,13 +70,28 @@ const ResponsiveToolbarGroup = ( {
 
 		if ( containGroupedIndexes || always ) {
 			return (
-				<ToolbarButton
-					isActive={ activeIndex === 'more' }
-					onClick={ () => setActiveIndex( 'more' ) }
-				>
-					{ ' ' }
-					More{ ' ' }
-				</ToolbarButton>
+				<Dropdown
+					renderToggle={ ( { onToggle } ) => (
+						<ToolbarButton
+							isActive={ activeIndex === 'more' }
+							onClick={ () => {
+								setActiveIndex( 'more' );
+								onToggle();
+							} }
+						>
+							More
+							<Icon icon="arrow-down" />
+						</ToolbarButton>
+					) }
+					renderContent={ ( { onClose } ) => (
+						<MenuGroup>
+							<MenuItem onClick={ onClose }>Up</MenuItem>
+							<MenuItem onClick={ onClose }>Down</MenuItem>
+							<MenuItem onClick={ onClose }>Left</MenuItem>
+							<MenuItem onClick={ onClose }>Right</MenuItem>
+						</MenuGroup>
+					) }
+				/>
 			);
 		}
 
@@ -107,11 +129,9 @@ const ResponsiveToolbarGroup = ( {
 				} ) );
 			}
 
-			if ( ! calculatedOnce ) {
-				setCalculatedOnce( true );
-			}
+			setCalculatedOnce( true );
 		},
-		[ calculatedOnce, children, hideRatio, showRatio ]
+		[ children, hideRatio, showRatio ]
 	);
 
 	useEffect( () => {
