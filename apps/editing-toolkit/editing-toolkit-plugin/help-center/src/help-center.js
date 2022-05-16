@@ -40,6 +40,7 @@ function HelpCenterContent() {
 				<>
 					<PinnedItems scope="core/edit-post">{ content }</PinnedItems>
 					<PinnedItems scope="core/edit-site">{ content }</PinnedItems>
+					<PinnedItems scope="core/edit-widgets">{ content }</PinnedItems>
 				</>
 			) }
 			{ show && (
