@@ -14,12 +14,12 @@ const siteIdsHash = ( siteIds ) => {
 	siteIds.sort();
 	return siteIds.join( '_' );
 };
-export default function QuerySiteFeatures( { siteIds } ) {
+export default function QuerySiteFeatures( { siteIds, cacheBust = '' } ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
 		siteIds.forEach( ( siteId ) => dispatch( request( siteId ) ) );
-	}, [ dispatch, siteIdsHash( siteIds ) ] );
+	}, [ dispatch, siteIdsHash( siteIds ), cacheBust ] );
 
 	return null;
 }
