@@ -169,7 +169,7 @@ skipDescribeIf( isStagingOrProd )(
 
 			it( 'Keep free plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				await signupPickPlanPage.selectPlan( 'start with free' );
+				await signupPickPlanPage.selectPlan( 'start with a free site' );
 			} );
 
 			it( 'Confirm site is launched', async function () {
