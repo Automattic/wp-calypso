@@ -140,7 +140,7 @@ export async function initSentry( { beforeSend, userId }: SentryOptions ) {
 		// available for the environment, enable for 10% of requests.
 		if (
 			! (
-				config( 'env_id' ) === 'development' ||
+				config( 'env_id' ) === 'wpcalypso' ||
 				( config.isEnabled( 'catch-js-errors' ) && Math.floor( Math.random() * 10 ) === 1 )
 			)
 		) {
