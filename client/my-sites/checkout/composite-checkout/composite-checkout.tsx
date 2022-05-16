@@ -29,7 +29,7 @@ import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getIsIntroOfferRequesting from 'calypso/state/selectors/get-is-requesting-into-offers';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, isJetpackProductSite } from 'calypso/state/sites/selectors';
 import WPCheckout from './components/wp-checkout';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from './hooks/use-add-products-from-url';
@@ -126,6 +126,9 @@ export default function CompositeCheckout( {
 		) ||
 		isJetpackCheckout ||
 		false;
+	const hasJetpackStandalonePlugins =
+		useSelector( ( state ) => siteId && isJetpackProductSite( state, siteId ) ) || false;
+	const usesJetpackProducts = isJetpackNotAtomic || hasJetpackStandalonePlugins;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const isLoadingIntroOffers = useSelector( ( state ) =>
 		getIsIntroOfferRequesting( state, siteId )
@@ -168,7 +171,7 @@ export default function CompositeCheckout( {
 		productAliasFromUrl,
 		purchaseId,
 		isInModal,
-		isJetpackNotAtomic,
+		usesJetpackProducts,
 		isPrivate,
 		siteSlug: updatedSiteSlug,
 		isLoggedOutCart,
