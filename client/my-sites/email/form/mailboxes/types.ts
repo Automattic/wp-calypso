@@ -18,17 +18,17 @@ interface MailboxFormField< Type > {
 }
 
 abstract class MailboxFormFieldBase< T > implements MailboxFormField< T > {
-	private _error: FieldError = null;
+	private fieldError: FieldError = null;
 
 	public get error() {
-		return this._error;
+		return this.fieldError;
 	}
 
-	public set error( _error: FieldError ) {
-		if ( ! _error || ( typeof _error === 'string' && _error.trim() === '' ) ) {
-			_error = null;
+	public set error( error: FieldError ) {
+		if ( ! error || ( typeof error === 'string' && error.trim() === '' ) ) {
+			error = null;
 		}
-		this._error = _error;
+		this.fieldError = error;
 	}
 
 	value!: T;
@@ -41,7 +41,7 @@ abstract class MailboxFormFieldBase< T > implements MailboxFormField< T > {
 	}
 
 	hasError(): boolean {
-		return Boolean( this._error );
+		return Boolean( this.fieldError );
 	}
 
 	hasValidValue(): boolean {

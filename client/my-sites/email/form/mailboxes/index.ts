@@ -56,7 +56,7 @@ class MailboxForm< T extends EmailProvider > {
 		const domainName = domainField?.value ?? '';
 		const mailboxHasDomainError = Boolean( domainField?.error );
 		const minimumPasswordLength = this.provider === EmailProvider.Titan ? 10 : 12;
-		const supportsApostrophes = this.provider === EmailProvider.Google;
+		const areApostrophesSupported = this.provider === EmailProvider.Google;
 
 		return [
 			[ FIELD_ALTERNATIVE_EMAIL, new RequiredValidator< string >() ],
@@ -72,7 +72,7 @@ class MailboxForm< T extends EmailProvider > {
 			[ FIELD_MAILBOX, new ExistingMailboxNamesValidator( this.existingMailboxNames ) ],
 			[
 				FIELD_MAILBOX,
-				new MailboxNameValidator( domainName, mailboxHasDomainError, supportsApostrophes ),
+				new MailboxNameValidator( domainName, mailboxHasDomainError, areApostrophesSupported ),
 			],
 			[ FIELD_PASSWORD, new RequiredValidator< string >() ],
 			[ FIELD_PASSWORD, new PasswordValidator( minimumPasswordLength ) ],

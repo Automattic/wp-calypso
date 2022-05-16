@@ -75,15 +75,19 @@ class MaximumStringLengthValidator extends BaseValidator< string > {
 }
 
 class MailboxNameValidator extends BaseValidator< string > {
+	areApostrophesSupported: boolean;
 	domainName: string;
 	mailboxHasDomainError: boolean;
-	supportsApostrophes: boolean;
 
-	constructor( domainName: string, mailboxHasDomainError: boolean, supportsApostrophes: boolean ) {
+	constructor(
+		domainName: string,
+		mailboxHasDomainError: boolean,
+		areApostrophesSupported: boolean
+	) {
 		super();
 		this.domainName = domainName;
 		this.mailboxHasDomainError = mailboxHasDomainError;
-		this.supportsApostrophes = supportsApostrophes;
+		this.areApostrophesSupported = areApostrophesSupported;
 	}
 
 	static getInvalidEmailError(): FieldError {
@@ -99,12 +103,14 @@ class MailboxNameValidator extends BaseValidator< string > {
 	}
 
 	validateField( field: MailboxFormFieldBase< string > ): void {
-		const regex = this.supportsApostrophes
+		const regex = this.areApostrophesSupported
 			? /^[\da-z_'-](\.?[\da-z_'-])*$/i
 			: /^[\da-z_-](\.?[\da-z_-])*$/i;
 
 		if ( ! regex.test( field.value ) ) {
-			field.error = MailboxNameValidator.getUnsupportedCharacterError( this.supportsApostrophes );
+			field.error = MailboxNameValidator.getUnsupportedCharacterError(
+				this.areApostrophesSupported
+			);
 			return;
 		}
 
