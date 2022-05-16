@@ -4,6 +4,7 @@ import { ReactElement, useRef, useState } from 'react';
 import Badge from 'calypso/components/badge';
 import Tooltip from 'calypso/components/tooltip';
 import { getRowMetaData } from './utils';
+import type { AllowedTypes } from './types';
 
 interface RowArguments {
 	value: { url: string; blog_id: number };
@@ -12,7 +13,7 @@ interface RowArguments {
 }
 interface Props {
 	rows: { site: RowArguments };
-	type: string;
+	type: AllowedTypes;
 }
 
 export default function SiteStatusContent( { rows, type }: Props ): ReactElement {

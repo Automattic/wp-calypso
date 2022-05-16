@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import SiteTable from '../site-table';
 import { formatSites } from '../utils';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 

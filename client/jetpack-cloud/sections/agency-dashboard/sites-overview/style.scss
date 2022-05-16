@@ -101,13 +101,13 @@
 }
 .sites-overview__error-message-link {
 	font-size: 0.75rem;
-	color: #bbbbbb!important;
+	color: #bbbbbb !important;
 	padding: 6px;
 	position: absolute;
 	right: 16px;
 }
 .sites-overview__badge {
-	font-size: 0.75rem!important;
+	font-size: 0.75rem !important;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -122,8 +122,8 @@
 .sites-overview__tooltip {
 	.popover__arrow {
 		&::before {
-			border-bottom-color: var( --studio-gray-60 )!important;
-			top: 1px!important;
+			border-bottom-color: var( --studio-gray-60 ) !important;
+			top: 1px !important;
 		}
 	}
 	.popover__inner {

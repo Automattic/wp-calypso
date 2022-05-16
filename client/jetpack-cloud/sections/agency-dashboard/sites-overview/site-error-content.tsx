@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
+import type { ReactElement } from 'react';
 
 export default function SiteErrorContent( { siteUrl }: { siteUrl: string } ): ReactElement {
 	const translate = useTranslate();

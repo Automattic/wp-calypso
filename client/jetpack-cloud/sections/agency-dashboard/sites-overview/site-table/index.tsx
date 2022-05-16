@@ -4,15 +4,28 @@ import { ReactElement, Fragment } from 'react';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import SiteErrorContent from '../site-error-content';
 import SiteStatusContent from '../site-status-content';
+import type { AllowedTypes } from '../types';
+import type { ReactChild } from 'react';
 
 import './style.scss';
 
 interface Props {
 	isFetching: boolean;
-	columns: object;
+	columns: {
+		site: ReactChild;
+		backup: ReactChild;
+		scan: ReactChild;
+		monitor: ReactChild;
+		plugin: ReactChild;
+	};
 	items: Array< {
-		site: { value: { blog_id: number; url: string }; error: string; type: string; status: string };
-		[ key: string ]: { type: string };
+		site: {
+			value: { blog_id: number; url: string };
+			error: string;
+			type: AllowedTypes;
+			status: string;
+		};
+		[ key: string ]: { type: AllowedTypes };
 	} >;
 }
 

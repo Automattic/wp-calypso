@@ -1,5 +1,6 @@
 import { translate } from 'i18n-calypso';
-import { ReactChild } from 'react';
+import type { AllowedTypes } from './types';
+import type { ReactChild } from 'react';
 
 /**
  * Returns link and tooltip for each feature based on status
@@ -8,7 +9,7 @@ import { ReactChild } from 'react';
  * used to show the tooltip when hovered over the row
  */
 const getLinks = (
-	type: string,
+	type: AllowedTypes,
 	status: string,
 	siteUrl: string,
 	siteId: number
@@ -72,7 +73,7 @@ export const getRowMetaData = (
 		site: RowArguments;
 		[ key: string ]: RowArguments;
 	},
-	type: string
+	type: AllowedTypes
 ): {
 	row: { value: { url: string }; status: string };
 	link: string;
@@ -127,8 +128,7 @@ export const formatSites = ( data: { items: object } ): Array< any > => {
 			! site.is_connection_healthy ||
 			! site.access_xmlrpc ||
 			! site.valid_xmlrpc ||
-			! site.authenticated_xmlrpc ||
-			! site.has_credentials
+			! site.authenticated_xmlrpc
 		) {
 			error = translate( 'FIX CONNECTION' );
 		}
