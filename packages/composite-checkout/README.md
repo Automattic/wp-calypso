@@ -191,7 +191,7 @@ This component's props are:
 - `stepNumber: number`. The step number to display for the step.
 - `totalSteps: number`. The total number of steps in the current connected group of steps.
 - `errorMessage?: string`. The error message to display in the React error boundary if there is an error thrown by any component in this step.
-- `onError?: (string) => void`. A callback to be called from the React error boundary if there is an error thrown by any component in this step.
+- `onError?: (error: Error) => void`. A callback to be called from the React error boundary if there is an error thrown by any component in this step.
 - `editButtonText?: string`. The text to display instead of "Edit" for the edit step button.
 - `editButtonAriaLabel?: string`. The text to display for `aria-label` instead of "Edit" for the edit step button.
 - `nextStepButtonText?: string`. Like `editButtonText` but for the "Continue" button.
