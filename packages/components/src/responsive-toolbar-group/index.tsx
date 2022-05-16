@@ -111,7 +111,7 @@ const ResponsiveToolbarGroup = ( {
 				setCalculatedOnce( true );
 			}
 		},
-		[ children ]
+		[ calculatedOnce, children, hideRatio, showRatio ]
 	);
 
 	useEffect( () => {
