@@ -32,7 +32,12 @@ const ImportPreview: FunctionComponent< Props > = ( { website } ) => {
 				}
 				{ /* iframe-mask is a transparent cover it disallows the user to navigate inside iframed website */ }
 				<div className="import__preview-iframe-mask" />
-				<iframe title={ 'Preview' } className="import__preview-iframe" src={ website } />
+				<iframe
+					title={ 'Preview' }
+					className="import__preview-iframe"
+					src={ website }
+					loading="eager"
+				/>
 			</div>
 		</div>
 	);
