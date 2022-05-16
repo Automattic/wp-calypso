@@ -5,7 +5,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { Category } from '.';
 
-export const allowedCategories = [
+export const ALLOWED_CATEGORIES = [
 	'discover',
 	'paid',
 	'popular',
@@ -29,7 +29,9 @@ export const allowedCategories = [
 	'posts',
 ];
 
-export function useCategories(): Record< string, Category > {
+export function useCategories(
+	allowedCategories = ALLOWED_CATEGORIES
+): Record< string, Category > {
 	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 

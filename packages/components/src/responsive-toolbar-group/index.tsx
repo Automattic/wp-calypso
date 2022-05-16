@@ -161,7 +161,13 @@ const ResponsiveToolbarGroup = ( {
 				} ) );
 			}
 
-			setCalculatedOnce( true );
+			setCalculatedOnce( ( calculated ) => {
+				if ( ! calculated ) {
+					return true;
+				}
+
+				return calculated;
+			} );
 		},
 		[ children, hideRatio, showRatio ]
 	);
@@ -170,8 +176,6 @@ const ResponsiveToolbarGroup = ( {
 		if ( ! containerRef.current ) return;
 
 		const observers: IntersectionObserver[] = [];
-
-		setCalculatedOnce( false );
 
 		shadowListItems.forEach( ( listItem, index ) => {
 			observers[ index ] = new IntersectionObserver(
