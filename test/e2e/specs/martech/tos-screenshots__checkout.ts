@@ -81,7 +81,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		} );
 
 		it( 'Click on "Upgrade" button for WordPress.com Pro plan', async function () {
-			await plansPage.selectPlan( 'Pro' );
+			await plansPage.selectPlan( 'choose pro' );
 		} );
 
 		it( 'WordPress.com Pro is added to cart', async function () {

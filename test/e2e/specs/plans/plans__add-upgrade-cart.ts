@@ -39,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Plans: Add Upgrade to Cart' ), function 
 
 	describe( 'Add WordPress.com Pro to cart', function () {
 		it( `Click button to upgrade to WordPress.com Pro`, async function () {
-			await plansPage.selectPlan( 'Pro' );
+			await plansPage.selectPlan( 'choose pro' );
 		} );
 
 		it( `WordPress.com Pro is added to cart`, async function () {
