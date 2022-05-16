@@ -76,6 +76,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	const actionableRewindId = useActionableRewindId( backup );
 
 	const multiSiteInfoLink = `https://jetpack.com/redirect?source=jetpack-support-backup&anchor=does-jetpack-backup-support-multisite`;
+	const warningInfoLink = `https://jetpack.com/redirect?source=jetpack-support-backup`;
 
 	return (
 		<>
@@ -131,7 +132,21 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 				<div className="backup-successful__retry-wrapper">
 					<div className="backup-successful__retry-info">
 						<Gridicon icon="notice-outline" />
-						Some files failed to backup. <a href="https://jetpack.com">Learn why.</a>
+						{ translate(
+							'Some files failed to backup. {{ExternalLink}}Learn why.{{/ExternalLink}}',
+							{
+								components: {
+									ExternalLink: (
+										<ExternalLink
+											href={ warningInfoLink }
+											target="_blank"
+											rel="noopener noreferrer"
+											icon={ false }
+										/>
+									),
+								},
+							}
+						) }
 					</div>
 					<div className="backup-successful__retry-button-wrapper">
 						<Button
