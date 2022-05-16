@@ -316,17 +316,30 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 	);
 };
 
+const ClearSearch = () => {
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const translate = useTranslate();
+
+	return (
+		<a
+			className={ 'plugins-browser__clear-filters' }
+			href={ '/plugins' + ( siteSlug ? '/' + siteSlug : '' ) }
+		>
+			{ translate( 'Clear' ) }
+		</a>
+	);
+};
 const SearchListView = ( {
 	search: searchTerm,
 	pluginsPagination,
 	pluginsBySearchTerm,
 	fetchNextPage,
 	isFetchingPluginsBySearchTerm,
-	searchTitle: searchTitleTerm,
 	siteSlug,
 	siteId,
 	sites,
 	billingPeriod,
+	categoryName,
 } ) => {
 	const dispatch = useDispatch();
 
@@ -356,36 +369,54 @@ const SearchListView = ( {
 	}, [ searchTerm, pluginsPagination, dispatch, siteId ] );
 
 	if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
-		const searchTitle =
-			searchTitleTerm ||
-			( searchTerm &&
-				translate( 'Search results for {{b}}%(searchTerm)s{{/b}}', {
+		let title = translate( 'Search results for "%(searchTerm)"', {
+			textOnly: true,
+			args: { searchTerm },
+		} );
+
+		if ( pluginsPagination ) {
+			title = translate(
+				'Found %(total)s plugin for "%(searchTerm)s"',
+				'Found %(total)s plugins for "%(searchTerm)s"',
+				{
+					count: pluginsPagination.results,
 					textOnly: true,
 					args: {
+						total: pluginsPagination.results,
 						searchTerm,
 					},
-					components: {
-						b: <b />,
-					},
-				} ) );
+				}
+			);
 
-		const subtitle =
-			pluginsPagination &&
-			translate( '%(total)s plugin', '%(total)s plugins', {
-				count: pluginsPagination.results,
-				textOnly: true,
-				args: {
-					total: pluginsPagination.results,
-				},
-			} );
+			if ( categoryName ) {
+				title = translate(
+					'Found %(total)s plugin for "%(searchTerm)s" under "%(categoryName)s"',
+					'Found %(total)s plugins for "%(searchTerm)s" under "%(categoryName)s"',
+					{
+						count: pluginsPagination.results,
+						textOnly: true,
+						args: {
+							total: pluginsPagination.results,
+							searchTerm,
+							categoryName,
+						},
+					}
+				);
+			}
+		}
 
 		return (
 			<>
 				<PluginsBrowserList
 					plugins={ pluginsBySearchTerm.filter( isNotBlocked ) }
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
-					title={ searchTitle }
-					subtitle={ subtitle }
+					subtitle={
+						<>
+							{ title }
+							<ClearSearch />
+						</>
+					}
+					showReset={ true }
 					site={ siteSlug }
 					showPlaceholders={ isFetchingPluginsBySearchTerm }
 					currentSites={ sites }
