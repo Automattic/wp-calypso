@@ -227,20 +227,18 @@ function PurchaseMetaPrice( { purchase } ) {
 	let period = translate( 'year' );
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
-		return (
-			<>
-				<span
-					// eslint-disable-next-line react/no-danger
-					dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
-				/>
-
-				{ translate( '{{period}} (one-time){{/period}}', {
-					components: {
-						period: <span className="manage-purchase__time-period" />,
-					},
-				} ) }
-			</>
-		);
+		// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10")
+		return translate( '{{displayPrice/}} {{period}}(one-time){{/period}}', {
+			components: {
+				displayPrice: (
+					<span
+						// eslint-disable-next-line react/no-danger
+						dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
+					/>
+				),
+				period: <span className="manage-purchase__time-period" />,
+			},
+		} );
 	}
 
 	if ( isIncludedWithPlan( purchase ) ) {
@@ -263,22 +261,19 @@ function PurchaseMetaPrice( { purchase } ) {
 		period = translate( 'month' );
 	}
 
-	// translators: %(period)s is how long the plan is active (i.e. "year")
-	return (
-		<>
-			<span
-				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
-			/>
-
-			{ translate( '{{period}} / %(period)s{{/period}}', {
-				args: { period },
-				components: {
-					period: <span className="manage-purchase__time-period" />,
-				},
-			} ) }
-		</>
-	);
+	// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
+	return translate( '{{displayPrice/}} {{period}}/ %(period)s{{/period}}', {
+		args: { period },
+		components: {
+			displayPrice: (
+				<span
+					// eslint-disable-next-line react/no-danger
+					dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
+				/>
+			),
+			period: <span className="manage-purchase__time-period" />,
+		},
+	} );
 }
 
 function PurchaseMetaIntroductoryOfferDetail( { purchase } ) {
