@@ -22,6 +22,7 @@ export default class WebPreviewContent extends Component {
 	state = {
 		iframeUrl: null,
 		device: this.props.defaultViewportDevice || 'computer',
+		viewport: null,
 		loaded: false,
 		isLoadingSubpage: false,
 	};
@@ -103,6 +104,11 @@ export default class WebPreviewContent extends Component {
 				return;
 			case 'loading':
 				this.setState( { isLoadingSubpage: true } );
+				return;
+			case 'page-dimensions-on-load':
+				if ( this.props.autoHeight ) {
+					this.setState( { viewport: data.payload } );
+				}
 				return;
 		}
 	};
@@ -289,7 +295,10 @@ export default class WebPreviewContent extends Component {
 				/>
 				{ this.props.belowToolbar }
 				{ ( ! this.state.loaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
-				<div className="web-preview__placeholder">
+				<div
+					className="web-preview__placeholder"
+					style={ this.state.viewport ? { minHeight: this.state.viewport.height } : null }
+				>
 					{ showLoadingMessage && (
 						<div className="web-preview__loading-message-wrapper">
 							<span className="web-preview__loading-message">{ this.props.loadingMessage }</span>
@@ -307,6 +316,7 @@ export default class WebPreviewContent extends Component {
 								src="about:blank"
 								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
 								title={ this.props.iframeTitle || translate( 'Preview' ) }
+								scrolling={ this.props.autoHeight ? 'no' : undefined }
 							/>
 						</div>
 					) }
@@ -380,6 +390,8 @@ WebPreviewContent.propTypes = {
 	overridePost: PropTypes.object,
 	// A customized Toolbar element
 	toolbarComponent: PropTypes.elementType,
+	// Set height based on page content. This requires the page to post it's dimensions as message.
+	autoHeight: PropTypes.bool,
 };
 
 WebPreviewContent.defaultProps = {
@@ -402,4 +414,5 @@ WebPreviewContent.defaultProps = {
 	isModalWindow: false,
 	overridePost: null,
 	toolbarComponent: Toolbar,
+	autoHeight: false,
 };

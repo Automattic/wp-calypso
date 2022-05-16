@@ -4,7 +4,6 @@ import { Button } from '@automattic/components';
 import { useVerticalImagesQuery } from '@automattic/data-stores';
 import DesignPicker, {
 	GeneratedDesignPicker,
-	GeneratedDesignPreview,
 	PremiumBadge,
 	useCategorization,
 	isBlankCanvasDesign,
@@ -349,13 +348,26 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	function previewGeneratedDesign( design: Design ) {
 		const stepContent = (
-			<GeneratedDesignPreview
-				slug={ design.slug }
+			<WebPreview
+				key={ design.slug }
+				showPreview
+				showClose={ false }
+				showEdit={ false }
+				showDeviceSwitcher={ false }
 				previewUrl={ getDesignPreviewUrl( design, {
 					language: locale,
 					verticalId: siteVerticalId,
 				} ) }
-				isSelected
+				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
+					components: { strong: <strong /> },
+				} ) }
+				toolbarComponent={ PreviewToolbar }
+				autoHeight
+				siteId={ site?.ID }
+				url={ site?.URL }
+				isPrivateAtomic={ isPrivateAtomic }
+				translate={ translate }
+				recordTracksEvent={ recordTracksEvent }
 			/>
 		);
 
@@ -410,6 +422,35 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			designs={ shuffledGeneratedDesigns }
 			verticalId={ siteVerticalId }
 			locale={ locale }
+			previews={ shuffledGeneratedDesigns.map( ( design ) => (
+				<WebPreview
+					key={ design.slug }
+					className={ classnames( {
+						'is-selected': design.slug === selectedGeneratedDesign?.slug,
+					} ) }
+					showPreview
+					showClose={ false }
+					showEdit={ false }
+					showDeviceSwitcher={ false }
+					previewUrl={ getDesignPreviewUrl( design, {
+						language: locale,
+						verticalId: siteVerticalId,
+					} ) }
+					loadingMessage={ translate(
+						'{{strong}}One moment, please…{{/strong}} loading your site.',
+						{
+							components: { strong: <strong /> },
+						}
+					) }
+					toolbarComponent={ PreviewToolbar }
+					autoHeight
+					siteId={ site?.ID }
+					url={ site?.URL }
+					isPrivateAtomic={ isPrivateAtomic }
+					translate={ translate }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			) ) }
 			heading={
 				<div className={ classnames( 'step-container__header', 'design-setup__header' ) }>
 					{ heading }

@@ -55,6 +55,8 @@ export class WebPreviewModal extends Component {
 		frontPageMetaDescription: PropTypes.string,
 		// A post object used to override the selected post in the SEO preview
 		overridePost: PropTypes.object,
+		// Set height based on page content. This requires the page to post it's dimensions as message.
+		autoHeight: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -71,6 +73,7 @@ export class WebPreviewModal extends Component {
 		onEdit: noop,
 		hasSidebar: false,
 		overridePost: null,
+		autoHeight: false,
 	};
 
 	constructor( props ) {
