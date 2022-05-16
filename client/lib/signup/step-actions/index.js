@@ -1011,7 +1011,7 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 		return;
 	}
 
-	debug( 'User email is verified:  = %s', nextProps?.isEmailVerified );
+	debug( 'User email is verified: %s', nextProps?.isEmailVerified );
 	if ( ! nextProps.isEmailVerified ) {
 		return;
 	}
@@ -1033,10 +1033,10 @@ export function excludeStepIfProfileComplete( stepName, defaultDependencies, nex
 	}
 
 	const currentUser = getCurrentUser( state );
-
+	debug( 'Checking profile for current user', currentUser );
 	if ( currentUser?.display_name !== currentUser?.username ) {
+		debug( 'Skipping P2 complete profile step' );
 		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
-
 		flows.excludeStep( stepName );
 	}
 }
