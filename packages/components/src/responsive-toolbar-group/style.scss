@@ -12,6 +12,7 @@
 	.responsive-toolbar-group__grouped-list {
 		width: 100%;
 		justify-content: space-between;
+		flex-wrap: nowrap;
 		display: flex;
 	}
 
