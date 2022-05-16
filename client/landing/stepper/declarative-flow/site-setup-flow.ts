@@ -63,10 +63,30 @@ export const siteSetupFlow: Flow = {
 			select( SITE_STORE ).isSiteAtomic( siteId as number )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const { setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { setPendingAction, setStepProgress } = useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite } = useDispatch( SITE_STORE );
 		const { FSEActive } = useFSEStatus();
 		const dispatch = reduxDispatch();
+
+		// Set up Step progress for Woo flow - "Step 2 of 4"
+		if ( intent === 'sell' && storeType === 'power' ) {
+			switch ( currentStep ) {
+				case 'storeAddress':
+					setStepProgress( { progress: 1, count: 4 } );
+					break;
+				case 'businessInfo':
+					setStepProgress( { progress: 2, count: 4 } );
+					break;
+				case 'wooConfirm':
+					setStepProgress( { progress: 3, count: 4 } );
+					break;
+				case 'processing':
+					setStepProgress( { progress: 4, count: 4 } );
+					break;
+			}
+		} else {
+			setStepProgress( undefined );
+		}
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction(
