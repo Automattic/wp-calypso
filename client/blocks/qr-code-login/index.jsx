@@ -2,8 +2,10 @@ import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QRCode from 'qrcode.react';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import qrCenter from 'calypso/assets/images/qr-login/wp.png';
+import { setStoredItem, getStoredItem } from 'calypso/lib/browser-storage';
+import { useInterval } from 'calypso/lib/interval';
 
 import './style.scss';
 
@@ -14,29 +16,7 @@ const isStillValidToken = ( tokenData ) => {
 	if ( ! tokenData?.expires ) {
 		return false;
 	}
-	return expires > Date.now() / 1000;
-};
-
-const setLocalTokenData = ( data ) => {
-	try {
-		window.localStorage.setItem( LOCALE_STORAGE_KEY, JSON.stringify( data ) );
-	} catch ( e ) {}
-};
-
-const getLocalTokenData = () => {
-	try {
-		const valueString = window.localStorage.getItem( LOCALE_STORAGE_KEY );
-		if ( valueString === undefined || valueString === null ) {
-			return false;
-		}
-
-		const tokenData = JSON.parse( valueString );
-		if ( isStillValidToken( tokenData ) ) {
-			return tokenData;
-		}
-	} catch ( e ) {}
-
-	return false;
+	return tokenData.expires > Date.now() / 1000;
 };
 
 const getLoginActionResponse = async ( action, args ) => {
@@ -55,13 +35,18 @@ const fetchQRCodeData = async ( setTokenData, tokenData, anonymousUserId ) => {
 	if ( isStillValidToken( tokenData ) ) {
 		return tokenData;
 	}
+	// tokenData is set to null initially.
+	// Lets wait till it is set to false when the local data is the just yet.
+	if ( tokenData === null ) {
+		return null;
+	}
 
 	const responseData = await getLoginActionResponse( 'qr-code-token-request-endpoint', {
 		anon_id: anonymousUserId,
 	} );
 
 	setTokenData( responseData.data );
-	setLocalTokenData( responseData.data );
+	setStoredItem( LOCALE_STORAGE_KEY, responseData.data );
 };
 
 const fetchAuthState = async ( setAuthState, setTokenData, tokenData, anonymousUserId ) => {
@@ -99,7 +84,7 @@ function TokenQRCode( { tokenData } ) {
 	return (
 		<QRCode
 			value={ `https://apps.wordpress.com/get/?campaign=login-qr-code#qr-code-login?token=${ token }&data=${ encrypted }` }
-			size={ 352 }
+			size={ 300 }
 			imageSettings={ imageSettings }
 		/>
 	);
@@ -117,9 +102,8 @@ function QRCodePlaceholder() {
 
 function QRCodeLogin() {
 	const translate = useTranslate();
-	const [ tokenData, setTokenData ] = useState( () => getLocalTokenData() );
+	const [ tokenData, setTokenData ] = useState( null );
 	const [ authState, setAuthState ] = useState( false );
-	const currentTimer = useRef( null );
 
 	const anonymousUserId = getTracksAnonymousUserId();
 
@@ -129,20 +113,21 @@ function QRCodeLogin() {
 	}, [ setTokenData, tokenData, anonymousUserId ] );
 
 	// Fetch the Auth Data.
-	useEffect( () => {
-		clearInterval( currentTimer.current );
-		currentTimer.current = setInterval( () => {
-			fetchAuthState( setAuthState, setTokenData, tokenData, anonymousUserId );
-		}, AUTH_PULL_INTERVAL );
-
-		return () => clearInterval( currentTimer.current );
-	}, [ setAuthState, setTokenData, tokenData, anonymousUserId, currentTimer ] );
+	useInterval( () => {
+		fetchAuthState( setAuthState, setTokenData, tokenData, anonymousUserId );
+	}, AUTH_PULL_INTERVAL );
 
 	useEffect( () => {
 		if ( authState?.auth_url ) {
 			window.location.replace( authState.auth_url );
 		}
 	}, [ authState ] );
+
+	useEffect( () => {
+		getStoredItem( LOCALE_STORAGE_KEY ).then( ( localTokenData ) =>
+			setTokenData( localTokenData ?? false )
+		);
+	}, [] );
 
 	const steps = [
 		translate( 'Open the {{link/}} on your phone.', {
@@ -164,7 +149,7 @@ function QRCodeLogin() {
 
 	return (
 		<Card className="qr-code-login">
-			<div className="qr-code-login__container">
+			<div className="qr-code-login__token">
 				<TokenQRCode tokenData={ tokenData } />
 			</div>
 
@@ -178,7 +163,9 @@ function QRCodeLogin() {
 					) ) }
 				</ol>
 				<p>
-					<a href="https://apps.wordpress.com/mobile/login-via-qr-code">Need help?</a>
+					<a href="https://apps.wordpress.com/mobile/login-via-qr-code">
+						{ translate( 'Need help?' ) }
+					</a>
 				</p>
 			</div>
 		</Card>

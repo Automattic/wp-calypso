@@ -3,7 +3,7 @@
 
 .qr-code-login-page {
     margin: 0 auto;
-	max-width: 700px;
+	max-width: 780px;
     text-align: center;
 }
 
@@ -36,5 +36,5 @@
 
 .qr-code-login-page__placeholder {
 	width: 100%;
-	height: 352px;
+	height: 348px; /* 300px + ( 2 * 24px ) */
 }

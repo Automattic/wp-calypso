@@ -3,26 +3,16 @@
 
 .qr-code-login {
 	display: flex;
-	justify-content: space-between;
 	flex-direction: column;
+	clear: left;
 
 	@include break-small {
-		flex-direction: row;
-	}
-
-	canvas {
-		max-width: 100%;
-		margin-bottom: 20px;
-        height: auto !important;
-
-        @include break-small {
-            margin-bottom: 0;
-        }
+		flex-direction: row-reverse;
 	}
 
 	.qr-code-login__instructions {
 		text-align: left;
-		margin-left: 3em;
+		padding-right: 20px;
 		font-size: $font-body-small;
 
 		.qr-code-login__heading {
@@ -37,7 +27,7 @@
 		}
 
 		.qr-code-login__steps {
-			margin-left: 0;
+			margin-left: 16px;
 		}
 
         .qr-code-login__step {
@@ -47,12 +37,31 @@
 		a {
 			font-weight: 500;
 		}
+
+		 p {
+			 margin-bottom: 0;
+		 }
+	}
+
+	.qr-code-login__token {
+		width: 300px;
+		height: 300px;
+		flex: 0 0 300px;
+		margin: 0 auto 20px;
+
+		@include break-small {
+            margin: 0;
+        }
+	}
+
+	::after {
+		flex: 0 0 0;
 	}
 }
 
 .qr-code-login__placeholder {
-	min-width: 352px;
-	min-height: 352px;
+	width: 100%;
+	height: 100%;
 	position: relative;
 	background-color: var( --color-neutral-0 );
 	margin-bottom: 8px;

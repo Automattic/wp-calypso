@@ -20,7 +20,7 @@ function QrCodeLoginPage( { locale } ) {
 				<AsyncLoad
 					require="calypso/blocks/qr-code-login"
 					placeholder={ <QrCodeLoginPlaceholder /> }
-					size={ 352 }
+					size={ 300 }
 				/>
 				<div className="qr-code-login-page__footer">
 					<a href={ login( { locale } ) }>
