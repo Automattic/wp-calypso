@@ -38,7 +38,7 @@ const randomTwoFaces = fakeFaces.sort( () => Math.random() - 0.5 ).slice( 0, 2 )
 
 const HelpCenterSitePicker: React.FC< SitePicker > = ( { onSelect, currentSite, siteId } ) => {
 	const otherSite = {
-		name: __( 'Other site', 'full-site-editing' ),
+		name: __( 'Other site', __i18n_text_domain__ ),
 		ID: 0,
 		logo: { id: '', sizes: [], url: '' },
 		URL: '',
@@ -63,25 +63,25 @@ const titles: {
 	};
 } = {
 	CHAT: {
-		formTitle: __( 'Start live chat', 'full-site-editing' ),
-		trayText: __( 'Our WordPress experts will be with you right away', 'full-site-editing' ),
-		buttonLabel: __( 'Chat with us', 'full-site-editing' ),
-		buttonLoadingLabel: __( 'Connecting to chat', 'full-site-editing' ),
+		formTitle: __( 'Start live chat', __i18n_text_domain__ ),
+		trayText: __( 'Our WordPress experts will be with you right away', __i18n_text_domain__ ),
+		buttonLabel: __( 'Chat with us', __i18n_text_domain__ ),
+		buttonLoadingLabel: __( 'Connecting to chat', __i18n_text_domain__ ),
 	},
 	EMAIL: {
-		formTitle: __( 'Send us an email', 'full-site-editing' ),
-		trayText: __( 'Our WordPress experts will get back to you soon', 'full-site-editing' ),
-		buttonLabel: __( 'Email us', 'full-site-editing' ),
-		buttonLoadingLabel: __( 'Sending email', 'full-site-editing' ),
+		formTitle: __( 'Send us an email', __i18n_text_domain__ ),
+		trayText: __( 'Our WordPress experts will get back to you soon', __i18n_text_domain__ ),
+		buttonLabel: __( 'Email us', __i18n_text_domain__ ),
+		buttonLoadingLabel: __( 'Sending email', __i18n_text_domain__ ),
 	},
 	FORUM: {
-		formTitle: __( 'Ask in our community forums', 'full-site-editing' ),
+		formTitle: __( 'Ask in our community forums', __i18n_text_domain__ ),
 		formDisclaimer: __(
 			'Please do not provide financial or contact information when submitting this form.',
-			'full-site-editing'
+			__i18n_text_domain__
 		),
-		buttonLabel: __( 'Ask in the forums', 'full-site-editing' ),
-		buttonLoadingLabel: __( 'Posting in the forums', 'full-site-editing' ),
+		buttonLabel: __( 'Ask in the forums', __i18n_text_domain__ ),
+		buttonLoadingLabel: __( 'Posting in the forums', __i18n_text_domain__ ),
 	},
 };
 
@@ -169,18 +169,18 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					setHeaderText(
 						<>
 							<Icon icon={ commentContent } />
-							{ __( 'Live chat', 'full-site-editing' ) }
+							{ __( 'Live chat', __i18n_text_domain__ ) }
 						</>
 					);
 				} else {
-					setHeaderText( __( 'Start live chat', 'full-site-editing' ) );
+					setHeaderText( __( 'Start live chat', __i18n_text_domain__ ) );
 				}
 				break;
 			case 'EMAIL':
-				setHeaderText( __( 'Send us an email', 'full-site-editing' ) );
+				setHeaderText( __( 'Send us an email', __i18n_text_domain__ ) );
 				break;
 			case 'FORUM':
-				setHeaderText( __( 'Ask in our community forums', 'full-site-editing' ) );
+				setHeaderText( __( 'Ask in our community forums', __i18n_text_domain__ ) );
 				break;
 		}
 	}, [ mode, openChat, setHeaderText ] );
@@ -320,7 +320,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 				<>
 					<section>
 						<TextControl
-							label={ __( 'Site address', 'full-site-editing' ) }
+							label={ __( 'Site address', __i18n_text_domain__ ) }
 							value={ userDeclaredSiteUrl ?? '' }
 							onChange={ setUserDeclaredSiteUrl }
 						/>
@@ -338,7 +338,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 			{ [ 'FORUM', 'EMAIL' ].includes( mode ) && (
 				<section>
 					<TextControl
-						label={ __( 'Subject', 'full-site-editing' ) }
+						label={ __( 'Subject', __i18n_text_domain__ ) }
 						value={ subject ?? '' }
 						onChange={ setSubject }
 					/>
@@ -350,7 +350,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					className="help-center-contact-form__label"
 					htmlFor="help-center-contact-form__message"
 				>
-					{ __( 'How can we help you today?', 'full-site-editing' ) }
+					{ __( 'How can we help you today?', __i18n_text_domain__ ) }
 				</label>
 				<textarea
 					id="help-center-contact-form__message"
@@ -366,7 +366,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					<div className="help-center-contact-form__domain-sharing">
 						<CheckboxControl
 							checked={ hideSiteInfo }
-							label={ __( 'Don’t display my site’s URL publicly', 'full-site-editing' ) }
+							label={ __( 'Don’t display my site’s URL publicly', __i18n_text_domain__ ) }
 							help={ <InfoTip /> }
 							onChange={ ( value ) => setHideSiteInfo( value ) }
 						/>
