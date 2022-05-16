@@ -8,7 +8,7 @@ type PlansGridVersion = 'current' | 'legacy';
 type PlansComparisonAction = 'show' | 'hide';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
-export type Plans = 'start with a free site' | 'choose pro';
+export type Plans = 'start with a free site' | 'Pro';
 export type LegacyPlans = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
 export type PlansPageTab = 'My Plan' | 'Plans';
 export type PlanActionButton = 'Manage plan' | 'Upgrade';
