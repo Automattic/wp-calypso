@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import { userState } from './fixtures/user-state';
 
@@ -10,7 +9,7 @@ describe( 'getVisibleSites()', () => {
 			},
 		};
 		const sites = getVisibleSites( state );
-		expect( sites ).to.eql( [] );
+		expect( sites ).toEqual( [] );
 	} );
 
 	test( 'should return the visibles sites in state', () => {
@@ -43,7 +42,7 @@ describe( 'getVisibleSites()', () => {
 			},
 		};
 		const sites = getVisibleSites( state );
-		expect( sites ).to.eql( [
+		expect( sites ).toEqual( [
 			{
 				ID: 2916284,
 				visible: true,

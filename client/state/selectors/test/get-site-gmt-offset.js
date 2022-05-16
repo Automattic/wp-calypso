@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 
 describe( 'getSiteGmtOffset()', () => {
@@ -10,7 +9,7 @@ describe( 'getSiteGmtOffset()', () => {
 		};
 
 		const offset = getSiteGmtOffset( stateTree, 2916284 );
-		expect( offset ).to.be.null;
+		expect( offset ).toBeNull();
 	} );
 
 	test( 'should return null if the site-settings has never been fetched', () => {
@@ -23,7 +22,7 @@ describe( 'getSiteGmtOffset()', () => {
 		};
 
 		const offset = getSiteGmtOffset( stateTree, 2916284 );
-		expect( offset ).to.be.null;
+		expect( offset ).toBeNull();
 	} );
 
 	test( 'should return the site-settings utc offset', () => {
@@ -38,6 +37,6 @@ describe( 'getSiteGmtOffset()', () => {
 		};
 
 		const offset = getSiteGmtOffset( stateTree, 2916284 );
-		expect( offset ).to.eql( 11 );
+		expect( offset ).toEqual( 11 );
 	} );
 } );

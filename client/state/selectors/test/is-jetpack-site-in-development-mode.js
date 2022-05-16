@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
 import { items as ITEMS_FIXTURE } from './fixtures/jetpack-connection';
 
@@ -13,7 +12,7 @@ describe( 'isJetpackSiteInDevelopmentMode()', () => {
 		};
 		const siteId = 87654321;
 		const output = isJetpackSiteInDevelopmentMode( stateIn, siteId );
-		expect( output ).to.be.true;
+		expect( output ).toBe( true );
 	} );
 
 	test( 'should return false if the site is not in development mode', () => {
@@ -26,7 +25,7 @@ describe( 'isJetpackSiteInDevelopmentMode()', () => {
 		};
 		const siteId = 12345678;
 		const output = isJetpackSiteInDevelopmentMode( stateIn, siteId );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return false if the site is not in development mode with isActive: 0', () => {
@@ -39,7 +38,7 @@ describe( 'isJetpackSiteInDevelopmentMode()', () => {
 		};
 		const siteId = 987654321;
 		const output = isJetpackSiteInDevelopmentMode( stateIn, siteId );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return null if the site is not known yet', () => {
@@ -52,6 +51,6 @@ describe( 'isJetpackSiteInDevelopmentMode()', () => {
 		};
 		const siteId = 88888888;
 		const output = isJetpackSiteInDevelopmentMode( stateIn, siteId );
-		expect( output ).to.be.null;
+		expect( output ).toBeNull();
 	} );
 } );

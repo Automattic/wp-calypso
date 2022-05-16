@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getSiteStatsQueryDate } from 'calypso/state/stats/lists/selectors';
 
 describe( 'getSiteStatsQueryDate()', () => {
@@ -16,7 +15,7 @@ describe( 'getSiteStatsQueryDate()', () => {
 			{}
 		);
 
-		expect( date ).to.be.undefined;
+		expect( date ).toBeUndefined();
 	} );
 
 	test( 'should return the query date properly', () => {
@@ -40,6 +39,6 @@ describe( 'getSiteStatsQueryDate()', () => {
 			{ startDate: '2015-06-01', endDate: '2016-06-01' }
 		);
 
-		expect( date ).to.eql( today );
+		expect( date ).toEqual( today );
 	} );
 } );

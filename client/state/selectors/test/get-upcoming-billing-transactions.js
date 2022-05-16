@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getUpcomingBillingTransactions from 'calypso/state/selectors/get-upcoming-billing-transactions';
 
 describe( 'getUpcomingBillingTransactions()', () => {
@@ -28,7 +27,7 @@ describe( 'getUpcomingBillingTransactions()', () => {
 			return transaction;
 		} );
 		const output = getUpcomingBillingTransactions( state );
-		expect( output ).to.eql( expected );
+		expect( output ).toEqual( expected );
 	} );
 
 	test( 'should return null if billing transactions have not been fetched yet', () => {
@@ -37,6 +36,6 @@ describe( 'getUpcomingBillingTransactions()', () => {
 				items: {},
 			},
 		} );
-		expect( output ).to.be.null;
+		expect( output ).toBeNull();
 	} );
 } );

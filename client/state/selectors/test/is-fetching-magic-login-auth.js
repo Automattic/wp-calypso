@@ -1,10 +1,9 @@
-import { expect } from 'chai';
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
 
 describe( 'isFetchingMagicLoginAuth()', () => {
 	test( 'should return false if there is no fetching information yet', () => {
 		const isFetching = isFetchingMagicLoginAuth( undefined );
-		expect( isFetching ).to.be.false;
+		expect( isFetching ).toBe( false );
 	} );
 
 	test( 'should return true if client is requesting auth', () => {
@@ -15,7 +14,7 @@ describe( 'isFetchingMagicLoginAuth()', () => {
 				},
 			},
 		} );
-		expect( isFetching ).to.be.true;
+		expect( isFetching ).toBe( true );
 	} );
 
 	test( 'should return false when finished requesting auth', () => {
@@ -26,6 +25,6 @@ describe( 'isFetchingMagicLoginAuth()', () => {
 				},
 			},
 		} );
-		expect( isFetching ).to.be.false;
+		expect( isFetching ).toBe( false );
 	} );
 } );

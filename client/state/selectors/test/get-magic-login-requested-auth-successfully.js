@@ -1,10 +1,9 @@
-import { expect } from 'chai';
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
 
 describe( 'getMagicLoginRequestedAuthSuccessfully()', () => {
 	test( 'should return false if there is no information yet', () => {
 		const status = getMagicLoginRequestedAuthSuccessfully( undefined );
-		expect( status ).to.be.false;
+		expect( status ).toBe( false );
 	} );
 
 	test( 'should return true if requested auth succeeded', () => {
@@ -15,7 +14,7 @@ describe( 'getMagicLoginRequestedAuthSuccessfully()', () => {
 				},
 			},
 		} );
-		expect( status ).to.be.true;
+		expect( status ).toBe( true );
 	} );
 
 	test( 'should return false if requested auth failed', () => {
@@ -26,6 +25,6 @@ describe( 'getMagicLoginRequestedAuthSuccessfully()', () => {
 				},
 			},
 		} );
-		expect( status ).to.be.false;
+		expect( status ).toBe( false );
 	} );
 } );
