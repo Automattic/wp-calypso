@@ -11,6 +11,7 @@ import {
 	getProductDisplayCost,
 	getProductSaleCouponCost,
 	getProductSaleCouponDiscount,
+	getProductPriceTierList,
 	isProductsListFetching,
 	planSlugToPlanProduct,
 } from '../selectors';
@@ -25,6 +26,10 @@ jest.mock( 'calypso/state/products-list/selectors/get-product-sale-coupon-cost',
 
 jest.mock( 'calypso/state/products-list/selectors/get-product-sale-coupon-discount', () => ( {
 	getProductSaleCouponDiscount: jest.fn( () => null ),
+} ) );
+
+jest.mock( 'calypso/state/products-list/selectors/get-product-price-tiers', () => ( {
+	getProductPriceTierList: jest.fn( () => null ),
 } ) );
 
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
@@ -178,6 +183,76 @@ describe( 'selectors', () => {
 				introductoryOfferPrice: null,
 				priceFull: 120,
 				priceFinal: 120,
+			} );
+		} );
+
+		test( 'Should return the correct tier 1 price for Jetpack Search product with < 100 posts', () => {
+			const state = {
+				posts: {
+					counts: {
+						counts: {
+							1: {
+								post: {
+									all: {
+										publish: 10, // only 10 posts
+									},
+								},
+							},
+						},
+					},
+				},
+			};
+			const SEARCH_PRICE_TIER_LIST = [
+				{ minimum_units: 0, maximum_units: 100, minimum_price: 5995 },
+				{ minimum_units: 101, maximum_units: 1000, minimum_price: 11900 },
+			];
+			const plan = { getStoreSlug: () => 'jetpack_search', getProductId: () => '2104' };
+			// JP Search is a "product" not a plan, so `getPlanDiscountedRawPrice()` & `getPlanRawPrice()` should return null.
+			getPlanDiscountedRawPrice.mockImplementation( () => null );
+			getPlanRawPrice.mockImplementation( () => null );
+
+			getIntroOfferPrice.mockImplementation( () => null );
+			getIntroOfferIsEligible.mockImplementation( () => false );
+			getProductPriceTierList.mockImplementation( () => SEARCH_PRICE_TIER_LIST );
+			expect( computeFullAndMonthlyPricesForPlan( state, 1, plan ) ).toEqual( {
+				introductoryOfferPrice: null,
+				priceFull: 59.95,
+				priceFinal: 59.95,
+			} );
+		} );
+
+		test( 'Should return the correct tier 2 price for Jetpack Search product with > 100 posts', () => {
+			const state = {
+				posts: {
+					counts: {
+						counts: {
+							1: {
+								post: {
+									all: {
+										publish: 101, // 101 posts
+									},
+								},
+							},
+						},
+					},
+				},
+			};
+			const SEARCH_PRICE_TIER_LIST = [
+				{ minimum_units: 0, maximum_units: 100, minimum_price: 5995 },
+				{ minimum_units: 101, maximum_units: 1000, minimum_price: 11900 },
+			];
+			const plan = { getStoreSlug: () => 'jetpack_search', getProductId: () => '2104' };
+			// JP Search is a "product" not a plan, so `getPlanDiscountedRawPrice()` & `getPlanRawPrice()` should return null.
+			getPlanDiscountedRawPrice.mockImplementation( () => null );
+			getPlanRawPrice.mockImplementation( () => null );
+
+			getIntroOfferPrice.mockImplementation( () => null );
+			getIntroOfferIsEligible.mockImplementation( () => false );
+			getProductPriceTierList.mockImplementation( () => SEARCH_PRICE_TIER_LIST );
+			expect( computeFullAndMonthlyPricesForPlan( state, 1, plan ) ).toEqual( {
+				introductoryOfferPrice: null,
+				priceFull: 119,
+				priceFinal: 119,
 			} );
 		} );
 	} );
