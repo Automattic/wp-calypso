@@ -147,6 +147,7 @@ export interface Partner {
 	keys: PartnerKey[];
 	tos: string;
 	partner_type: string;
+	has_valid_payment_method: boolean;
 }
 
 export interface PartnerStore {
