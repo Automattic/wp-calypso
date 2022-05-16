@@ -16,6 +16,7 @@ export default function isEligibleForUpworkSupport( state: AppState ): boolean {
 		return false;
 	}
 
+	// If any site has an Upwork Support exemption, the user is not eligible.
 	return ! Object.values( getSitesItems( state ) ).some( ( { ID } ) =>
 		siteHasFeature( state, ID ?? 0, WPCOM_FEATURES_UPWORK_SUPPORT_EXEMPT )
 	);
