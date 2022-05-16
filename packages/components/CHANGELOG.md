@@ -30,3 +30,7 @@
 
 - Add ProgressBar
 - Add ScreenReaderText
+
+## 1.1.0
+
+- Add ResponsiveToolbarGroup
