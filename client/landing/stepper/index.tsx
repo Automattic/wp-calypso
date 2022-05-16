@@ -11,10 +11,13 @@ import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import AsyncLoad from 'calypso/components/async-load';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
+import { setCurrentUser } from 'calypso/state/current-user/actions';
+import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import { loadPersistedState } from 'calypso/state/persisted-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import { requestSites } from 'calypso/state/sites/actions';
 import { LocaleContext } from '../gutenboarding/components/locale-context';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
@@ -31,6 +34,12 @@ function generateGetSuperProps() {
 		site_id_label: 'wpcom',
 		client: config( 'client_slug' ),
 	} );
+}
+
+function setupHappyChat( reduxStore: any, user: CurrentUser ) {
+	reduxStore.dispatch( requestHappychatEligibility() );
+	reduxStore.dispatch( setCurrentUser( user ) );
+	reduxStore.dispatch( requestSites() );
 }
 
 const FlowWrapper: React.FC = () => {
@@ -71,6 +80,7 @@ window.AppBoot = async () => {
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( userId ) );
+	user && setupHappyChat( reduxStore, user as CurrentUser );
 
 	ReactDom.render(
 		<LocaleContext>
