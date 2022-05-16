@@ -71,11 +71,13 @@ interface RowArguments {
 export const getRowMetaData = (
 	rows: {
 		site: RowArguments;
-		[ key: string ]: RowArguments;
+		scan: { threats: number };
+		plugin: { updates: number };
+		[ key: string ]: any;
 	},
 	type: AllowedTypes
 ): {
-	row: { value: { url: string }; status: string };
+	row: { value: { url: string }; status: string; error: string };
 	link: string;
 	siteError: string;
 	tooltip: ReactChild | undefined;
@@ -132,6 +134,7 @@ export const formatSites = ( data: { items: Array< any > } ): Array< any > => {
 			site: {
 				value: site,
 				error,
+				status: '',
 				type: 'site',
 			},
 			backup: {

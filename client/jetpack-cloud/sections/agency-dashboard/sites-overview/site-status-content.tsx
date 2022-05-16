@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { ReactElement, useRef, useState } from 'react';
 import Badge from 'calypso/components/badge';
@@ -12,14 +13,14 @@ interface RowArguments {
 	status: string;
 }
 interface Props {
-	rows: { site: RowArguments };
+	rows: { site: RowArguments; scan: { threats: number }; plugin: { updates: number } };
 	type: AllowedTypes;
 }
 
 export default function SiteStatusContent( { rows, type }: Props ): ReactElement {
 	const {
 		link,
-		row: { value, status },
+		row: { value, status, error },
 		siteError,
 		tooltip,
 		tooltipId,
@@ -40,7 +41,32 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 	};
 
 	if ( type === 'site' ) {
-		return <span className="sites-overview__row-text">{ value.url }</span>;
+		const siteIssues = rows.scan.threats || rows.plugin.updates;
+		let errorContent;
+		if ( error ) {
+			errorContent = (
+				<span className="sites-overview__status-critical">
+					<Gridicon size={ 24 } icon="notice-outline" />
+				</span>
+			);
+		} else if ( siteIssues ) {
+			errorContent = (
+				<span
+					className={ classNames(
+						'sites-overview__status-count',
+						rows.scan.threats ? 'sites-overview__status-failed' : 'sites-overview__status-warning'
+					) }
+				>
+					{ siteIssues }
+				</span>
+			);
+		}
+		return (
+			<>
+				<span className="sites-overview__row-text">{ value.url }</span>
+				{ errorContent }
+			</>
+		);
 	}
 
 	let content;

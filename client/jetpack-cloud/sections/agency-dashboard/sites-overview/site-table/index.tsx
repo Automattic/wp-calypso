@@ -25,7 +25,9 @@ interface Props {
 			type: AllowedTypes;
 			status: string;
 		};
-		[ key: string ]: { type: AllowedTypes };
+		scan: { threats: number };
+		plugin: { updates: number };
+		[ key: string ]: any;
 	} >;
 }
 

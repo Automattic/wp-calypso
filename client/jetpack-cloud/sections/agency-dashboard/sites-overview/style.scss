@@ -59,6 +59,12 @@
 	text-overflow: clip;
 	vertical-align: middle;
 	color: var( --studio-gray-100 );
+	@include break-zoomed-in {
+		width: calc( 100% - 100px );
+		margin-left: 24px;
+		margin-right: 5px;
+		font-size: 1rem;
+	}
 	@include break-large() {
 		width: 100%;
 		margin-left: 0;
@@ -97,7 +103,16 @@
 	margin: auto 0;
 }
 .sites-overview__error-message-large-screen {
+	display: none;
+	@include break-large() {
+		display: inline-block;
+	}
+}
+.sites-overview__error-message-small-screen {
 	display: inline-block;
+	@include break-large() {
+		display: none;
+	}
 }
 .sites-overview__error-message-link {
 	font-size: 0.75rem;
@@ -133,4 +148,39 @@
 		border: none;
 	}
 }
-
+.sites-overview__status-critical {
+	color: var( --studio-red-50 );
+	position: absolute;
+	right: 42px;
+	top: 50%;
+	transform: translateY( -50% );
+	display: inline-flex;
+	@include break-large() {
+		display: none;
+	}
+}
+.sites-overview__status-count {
+	position: absolute;
+	right: 42px;
+	top: 50%;
+	transform: translateY( -50% );
+	border-radius: 50%;  /* stylelint-disable-line */
+	border-width: 2px;
+	border-style: solid;
+	width: 24px;
+	height: 24px;
+	text-align: center;
+	font-size: 0.75rem;
+	line-height: 20px;
+	box-sizing: border-box;
+	@include break-large() {
+		display: none;
+	}
+}
+.sites-overview__status-failed {
+	border-color: var( --studio-red-50 );
+	color: var( --studio-red-50 );
+}
+.sites-overview__status-warning {
+	border-color:  var( --studio-yellow-20 );;
+}
