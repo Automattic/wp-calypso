@@ -447,7 +447,7 @@ export default function WPCheckout( {
 			/>
 			{ contactDetailsType !== 'none' && (
 				<CheckoutStep
-					stepId={ 'contact-form' }
+					stepId="contact-form"
 					isCompleteCallback={ async () => {
 						setShouldShowContactDetailsValidationErrors( true );
 						// Touch the fields so they display validation errors

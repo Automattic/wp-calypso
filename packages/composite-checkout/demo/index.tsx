@@ -10,9 +10,10 @@ import {
 	makeSuccessResponse,
 	useFormStatus,
 	useIsStepActive,
+	useSetStepComplete,
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { createPayPalMethod } from './pay-pal';
 
 const initialItems = [
@@ -83,25 +84,38 @@ const Form = styled.div`
 	margin-bottom: 0.5em;
 `;
 
-const contactStore = {
-	subscibers: [],
-	data: {
+function getInitialContactStoreData() {
+	return {
 		country: {
 			value: '',
 			error: '',
 		},
-	},
+	};
+}
+
+const contactStore = {
+	subscribers: [],
+	data: getInitialContactStoreData(),
 	getData() {
 		return contactStore.data;
 	},
 	subscribe( callback: () => void ): () => void {
-		contactStore.subscibers.push( callback );
-		return () => void contactStore.subscibers.filter( ( client ) => client !== callback );
+		contactStore.subscribers.push( callback );
+		return () => {
+			contactStore.subscribers = contactStore.subscribers.filter(
+				( client ) => client !== callback
+			);
+		};
 	},
 	notify() {
-		setTimeout( () => contactStore.subscibers.forEach( ( callback ) => callback() ) );
+		setTimeout( () => contactStore.subscribers.forEach( ( callback ) => callback() ) );
 	},
 };
+
+function resetContactStore() {
+	contactStore.data = getInitialContactStoreData();
+	contactStore.notify();
+}
 
 function setCountry( value: string ) {
 	contactStore.data.country.value = value;
@@ -114,7 +128,7 @@ function setCountryError( error: string ) {
 }
 
 function useCountry() {
-	const [ state, setState ] = useState( { value: '', error: '' } );
+	const [ state, setState ] = useState( contactStore.getData().country );
 	useEffect( () => {
 		return contactStore.subscribe( () => {
 			const { value, error } = contactStore.getData().country;
@@ -135,10 +149,11 @@ function ContactFormSummary() {
 	);
 }
 
-function ContactForm() {
+function ContactForm( { preFilledCountry }: { preFilledCountry?: string } ) {
 	const onChangeCountry = ( event ) => setCountry( event.target.value );
 	const { formStatus } = useFormStatus();
 	const { value, error } = useCountry();
+	usePrefilledCountry( preFilledCountry );
 
 	return (
 		<Form>
@@ -156,19 +171,41 @@ function ContactForm() {
 }
 
 const reviewOrderStep = getDefaultOrderReviewStep();
-const contactFormStep = {
-	id: 'contact-form',
-	className: 'checkout__billing-details-step',
-	titleContent: <ContactFormTitle />,
-	activeStepContent: <ContactForm />,
-	completeStepContent: <ContactFormSummary />,
-};
 
-export function CheckoutDemo() {
+function usePrefilledCountry( preFilledCountry?: string ) {
+	const setStepComplete = useSetStepComplete();
+	const didRun = useRef( false );
+
+	useEffect( () => {
+		if ( didRun.current ) {
+			return;
+		}
+		didRun.current = true;
+		if ( ! preFilledCountry ) {
+			setCountry( '' );
+		}
+		if ( preFilledCountry ) {
+			setCountry( preFilledCountry );
+			// In order for the isCompleteCallback closure to get access to the
+			// updated country and therefore to pass when we try to complete step 2,
+			// we have to wait for a render to occur. Therefore we use setTimeout to
+			// defer the calls to setStepComplete.
+			setTimeout( () => {
+				setStepComplete( 'contact-form' );
+			} );
+		}
+	}, [ preFilledCountry, setStepComplete ] );
+}
+
+function CheckoutDemo( { preFilledCountry }: { preFilledCountry?: string } ) {
 	const [ items ] = useState( initialItems );
 	const total = useMemo( () => getTotal( items ), [ items ] );
-
 	const [ isLoading, setIsLoading ] = useState( true );
+
+	useEffect( () => {
+		resetContactStore();
+	}, [] );
+
 	useEffect( () => {
 		// This simulates an additional loading delay
 		setTimeout( () => setIsLoading( false ), 1500 );
@@ -188,12 +225,12 @@ export function CheckoutDemo() {
 			paymentProcessors={ { paypal: payPalProcessor } }
 			initiallySelectedPaymentMethodId={ payPalMethod.id }
 		>
-			<MyCheckoutBody />
+			<MyCheckoutBody preFilledCountry={ preFilledCountry } />
 		</CheckoutProvider>
 	);
 }
 
-function MyCheckoutBody() {
+function MyCheckoutBody( { preFilledCountry }: { preFilledCountry?: string } ) {
 	const { value } = useCountry();
 
 	return (
@@ -206,12 +243,12 @@ function MyCheckoutBody() {
 				titleContent={ reviewOrderStep.titleContent }
 			/>
 			<CheckoutStep
-				stepId={ contactFormStep.id }
+				stepId="contact-form"
 				isCompleteCallback={ () =>
 					new Promise( ( resolve ) =>
 						// Simulate async validation
 						setTimeout( () => {
-							if ( value.length === 0 ) {
+							if ( value.trim() === '' || value.trim().toLowerCase() === 'unknown' ) {
 								setCountryError( 'Invalid country' );
 								resolve( false );
 								return;
@@ -221,9 +258,9 @@ function MyCheckoutBody() {
 						}, 1500 )
 					)
 				}
-				activeStepContent={ contactFormStep.activeStepContent }
-				completeStepContent={ contactFormStep.completeStepContent }
-				titleContent={ contactFormStep.titleContent }
+				activeStepContent={ <ContactForm preFilledCountry={ preFilledCountry } /> }
+				completeStepContent={ <ContactFormSummary /> }
+				titleContent={ <ContactFormTitle /> }
 			/>
 			<PaymentMethodStep />
 			<CheckoutFormSubmit />
@@ -248,3 +285,7 @@ export default {
 	title: 'composite-checkout',
 	component: CheckoutDemo,
 };
+
+export const Basic = () => <CheckoutDemo />;
+export const Prefilled = () => <CheckoutDemo preFilledCountry="Canada" />;
+export const PrefilledFailure = () => <CheckoutDemo preFilledCountry="Unknown" />;
