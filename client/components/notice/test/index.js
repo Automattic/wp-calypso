@@ -1,59 +1,59 @@
-import { assert } from 'chai';
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+import { render, screen } from '@testing-library/react';
 import { Notice } from '../index';
 
 describe( 'Notice', () => {
 	const translate = ( string ) => string;
 
 	test( 'should output the component', () => {
-		const wrapper = shallow( <Notice translate={ translate } /> );
-		assert.isOk( wrapper.find( '.notice' ).length );
+		render( <Notice translate={ translate } /> );
+		expect( screen.queryByRole( 'status' ) ).toHaveClass( 'notice' );
 	} );
 
 	test( 'should have dismiss button when showDismiss passed as true', () => {
-		const wrapper = shallow( <Notice showDismiss={ true } translate={ translate } /> );
-		assert.isOk( wrapper.find( '.is-dismissable' ).length );
+		render( <Notice showDismiss={ true } translate={ translate } /> );
+		expect( screen.queryByRole( 'status' ) ).toHaveClass( 'is-dismissable' );
 	} );
 
 	test( 'should have dismiss button by default if isCompact is false', () => {
-		const wrapper = shallow( <Notice isCompact={ false } translate={ translate } /> );
-		assert.isOk( wrapper.find( '.is-dismissable' ).length );
+		render( <Notice isCompact={ false } translate={ translate } /> );
+		expect( screen.queryByRole( 'status' ) ).toHaveClass( 'is-dismissable' );
 	} );
 
 	test( 'should have compact look when isCompact passed as true', () => {
-		const wrapper = shallow( <Notice isCompact={ true } translate={ translate } /> );
-		assert.isOk( wrapper.find( '.is-compact' ).length );
+		render( <Notice isCompact={ true } translate={ translate } /> );
+		expect( screen.queryByRole( 'status' ) ).toHaveClass( 'is-compact' );
 	} );
 
 	test( 'should not have dismiss button by default if isCompact is true', () => {
-		const wrapper = shallow( <Notice isCompact={ true } translate={ translate } /> );
-		assert.isOk( wrapper.find( '.is-dismissable' ).length === 0 );
+		render( <Notice isCompact={ true } translate={ translate } /> );
+		expect( screen.queryByRole( 'status' ) ).not.toHaveClass( 'is-dismissable' );
 	} );
 
 	test( 'should have dismiss button when showDismiss is true and isCompact is true', () => {
-		const wrapper = shallow(
-			<Notice isCompact={ true } showDismiss={ true } translate={ translate } />
-		);
-		assert.isOk( wrapper.find( '.is-dismissable' ).length );
+		render( <Notice isCompact={ true } showDismiss={ true } translate={ translate } /> );
+		expect( screen.queryByRole( 'status' ) ).toHaveClass( 'is-dismissable' );
 	} );
 
 	test( 'should have proper class for is-info status parameter', () => {
-		const wrapper = shallow( <Notice status="is-info" translate={ translate } /> );
-		assert.isOk( wrapper.find( '.is-info' ).length );
+		render( <Notice status="is-info" translate={ translate } /> );
+		expect( screen.queryByRole( 'status' ) ).toHaveClass( 'is-info' );
 	} );
 
 	test( 'should have proper class for is-success status parameter', () => {
-		const wrapper = shallow( <Notice status="is-success" translate={ translate } /> );
-		assert.isOk( wrapper.find( '.is-success' ).length );
+		render( <Notice status="is-success" translate={ translate } /> );
+		expect( screen.queryByRole( 'status' ) ).toHaveClass( 'is-success' );
 	} );
 
 	test( 'should have proper class for is-error status parameter', () => {
-		const wrapper = shallow( <Notice status="is-error" translate={ translate } /> );
-		assert.isOk( wrapper.find( '.is-error' ).length );
+		render( <Notice status="is-error" translate={ translate } /> );
+		expect( screen.queryByRole( 'status' ) ).toHaveClass( 'is-error' );
 	} );
 
 	test( 'should have proper class for is-warning status parameter', () => {
-		const wrapper = shallow( <Notice status="is-warning" translate={ translate } /> );
-		assert.isOk( wrapper.find( '.is-warning' ).length );
+		render( <Notice status="is-warning" translate={ translate } /> );
+		expect( screen.queryByRole( 'status' ) ).toHaveClass( 'is-warning' );
 	} );
 } );

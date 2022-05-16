@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
 
 describe( 'getRemovableConnections()', () => {
@@ -43,13 +42,13 @@ describe( 'getRemovableConnections()', () => {
 	test( 'should return an empty array for a service without connections', () => {
 		const connections = getRemovableConnections( state, 'path' );
 
-		expect( connections ).to.eql( [] );
+		expect( connections ).toEqual( [] );
 	} );
 
 	test( 'should return an array of connection objects that are removable by the current user without duplicates', () => {
 		const twitterConnections = getRemovableConnections( state, 'twitter' );
 
-		expect( twitterConnections ).to.eql( [
+		expect( twitterConnections ).toEqual( [
 			{ ID: 1, site_ID: 2916284, shared: true, service: 'twitter', user_ID: 0 },
 			{
 				ID: 2,
@@ -62,7 +61,7 @@ describe( 'getRemovableConnections()', () => {
 
 		const instagramConnections = getRemovableConnections( state, 'instagram-basic-display' );
 
-		expect( instagramConnections ).to.eql( [
+		expect( instagramConnections ).toEqual( [
 			{ ID: 4, type: 'other', service: 'instagram-basic-display', user_ID: 26957695 },
 		] );
 	} );

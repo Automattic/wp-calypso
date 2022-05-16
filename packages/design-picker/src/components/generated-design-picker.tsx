@@ -2,19 +2,13 @@
 
 import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
+import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { getDesignPreviewUrl } from '../utils';
+import { getDesignPreviewUrl, getMShotOptions } from '../utils';
 import type { Design } from '../types';
 import type { MShotsOptions } from '@automattic/onboarding';
 import './style.scss';
-
-const thumbnailImageOptions: MShotsOptions = {
-	vpw: 1600,
-	vph: 1040,
-	w: 600,
-	screen_height: 3600,
-};
 
 const previewImageOptions: MShotsOptions = {
 	vpw: 1600,
@@ -36,6 +30,8 @@ const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
 	isSelected,
 	onPreview,
 } ) => {
+	const isMobile = useViewportMatch( 'small', '<' );
+
 	return (
 		<button
 			type="button"
@@ -56,7 +52,7 @@ const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
 					url={ thumbnailUrl }
 					alt=""
 					aria-labelledby={ `generated-design-thumbnail__image__${ slug }` }
-					options={ thumbnailImageOptions }
+					options={ getMShotOptions( { isMobile } ) }
 					scrollable={ false }
 				/>
 			</span>

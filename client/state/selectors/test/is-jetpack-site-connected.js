@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import isJetpackSiteConnected from 'calypso/state/selectors/is-jetpack-site-connected';
 import { items as ITEMS_FIXTURE } from './fixtures/jetpack-connection';
 
@@ -13,7 +12,7 @@ describe( 'isJetpackSiteConnected()', () => {
 		};
 		const siteId = 87654321;
 		const output = isJetpackSiteConnected( stateIn, siteId );
-		expect( output ).to.be.true;
+		expect( output ).toBe( true );
 	} );
 
 	test( 'should return false if the site is not connected', () => {
@@ -26,7 +25,7 @@ describe( 'isJetpackSiteConnected()', () => {
 		};
 		const siteId = 12345678;
 		const output = isJetpackSiteConnected( stateIn, siteId );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return null if the site is not known yet', () => {
@@ -39,6 +38,6 @@ describe( 'isJetpackSiteConnected()', () => {
 		};
 		const siteId = 88888888;
 		const output = isJetpackSiteConnected( stateIn, siteId );
-		expect( output ).to.be.null;
+		expect( output ).toBeNull();
 	} );
 } );

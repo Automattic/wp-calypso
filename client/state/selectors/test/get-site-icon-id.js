@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getSiteIconId from 'calypso/state/selectors/get-site-icon-id';
 
 describe( 'getSiteIconId()', () => {
@@ -15,7 +14,7 @@ describe( 'getSiteIconId()', () => {
 			2916284
 		);
 
-		expect( id ).to.be.null;
+		expect( id ).toBeNull();
 	} );
 
 	test( 'should prefer site state', () => {
@@ -43,7 +42,7 @@ describe( 'getSiteIconId()', () => {
 			2916284
 		);
 
-		expect( id ).to.equal( 42 );
+		expect( id ).toEqual( 42 );
 	} );
 
 	test( 'should prefer site state, even if unset', () => {
@@ -68,7 +67,7 @@ describe( 'getSiteIconId()', () => {
 			2916284
 		);
 
-		expect( id ).to.be.null;
+		expect( id ).toBeNull();
 	} );
 
 	test( 'should fall back to settings state', () => {
@@ -88,6 +87,6 @@ describe( 'getSiteIconId()', () => {
 			2916284
 		);
 
-		expect( id ).to.equal( 42 );
+		expect( id ).toEqual( 42 );
 	} );
 } );

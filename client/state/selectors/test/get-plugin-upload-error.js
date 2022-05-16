@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
 
 const siteId = 77203074;
@@ -16,7 +15,7 @@ describe( 'getPluginUploadError', () => {
 				},
 			},
 		};
-		expect( getPluginUploadError( state, siteId ) ).to.be.null;
+		expect( getPluginUploadError( state, siteId ) ).toBeNull();
 	} );
 
 	test( 'should return current value for site', () => {
@@ -29,6 +28,6 @@ describe( 'getPluginUploadError', () => {
 				},
 			},
 		};
-		expect( getPluginUploadError( state, siteId ) ).to.deep.equal( error );
+		expect( getPluginUploadError( state, siteId ) ).toEqual( error );
 	} );
 } );

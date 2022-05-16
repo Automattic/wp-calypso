@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	MEDIA_DELETE,
@@ -19,34 +18,39 @@ import {
 } from 'calypso/state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import reducer, { items, requestingAll, requesting, hasAllSitesList } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
+	beforeAll( () => {
+		jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+	} );
+
+	afterAll( () => {
+		jest.clearAllMocks();
 	} );
 
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'connection',
-			'domains',
-			'requestingAll',
-			'items',
-			'plans',
-			'products',
-			'requesting',
-			'hasAllSitesList',
-			'features',
-			'introOffers',
-		] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [
+				'connection',
+				'domains',
+				'requestingAll',
+				'items',
+				'plans',
+				'products',
+				'requesting',
+				'hasAllSitesList',
+				'features',
+				'introOffers',
+			] )
+		);
 	} );
 
 	describe( 'requestingAll()', () => {
 		test( 'should default false', () => {
 			const state = requestingAll( undefined, {} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 
 		test( 'should update fetching state on fetch', () => {
@@ -54,7 +58,7 @@ describe( 'reducer', () => {
 				type: SITES_REQUEST,
 			} );
 
-			expect( state ).to.be.true;
+			expect( state ).toBe( true );
 		} );
 
 		test( 'should update fetching state on success', () => {
@@ -62,7 +66,7 @@ describe( 'reducer', () => {
 				type: SITES_REQUEST_SUCCESS,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 
 		test( 'should update fetching state on failure', () => {
@@ -70,7 +74,7 @@ describe( 'reducer', () => {
 				type: SITES_REQUEST_FAILURE,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 	} );
 
@@ -78,7 +82,7 @@ describe( 'reducer', () => {
 		test( 'should default to null', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.be.null;
+			expect( state ).toBeNull();
 		} );
 
 		test( 'can receive all sites', () => {
@@ -89,7 +93,7 @@ describe( 'reducer', () => {
 					{ ID: 77203074, name: 'Another test site' },
 				],
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 				77203074: { ID: 77203074, name: 'Another test site' },
 			} );
@@ -104,7 +108,7 @@ describe( 'reducer', () => {
 				type: SITES_RECEIVE,
 				sites: [ { ID: 77203074, name: 'A Bowl of Pho' } ],
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				77203074: { ID: 77203074, name: 'A Bowl of Pho' },
 			} );
 		} );
@@ -118,7 +122,7 @@ describe( 'reducer', () => {
 				sites: [ { ID: 2916284, name: 'WordPress.com Example Blog' } ],
 			} );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should index sites by ID', () => {
@@ -127,7 +131,7 @@ describe( 'reducer', () => {
 				site: { ID: 2916284, name: 'WordPress.com Example Blog' },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 			} );
 		} );
@@ -141,7 +145,7 @@ describe( 'reducer', () => {
 				site: { ID: 77203074, name: 'Just You Wait' },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 				77203074: { ID: 77203074, name: 'Just You Wait' },
 			} );
@@ -158,7 +162,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				77203074: { ID: 77203074, name: 'Just You Wait' },
 			} );
 		} );
@@ -175,7 +179,7 @@ describe( 'reducer', () => {
 				status: {},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				77203074: { ID: 77203074, name: 'Just You Wait' },
 			} );
 		} );
@@ -191,7 +195,7 @@ describe( 'reducer', () => {
 				siteId: 1337,
 			} );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should override previous site of same ID', () => {
@@ -203,7 +207,7 @@ describe( 'reducer', () => {
 				site: { ID: 2916284, name: 'Just You Wait' },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: { ID: 2916284, name: 'Just You Wait' },
 			} );
 		} );
@@ -217,7 +221,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					ID: 2916284,
 					name: 'WordPress.com Example Blog',
@@ -235,7 +239,7 @@ describe( 'reducer', () => {
 				siteId: 77203074,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' },
 			} );
 		} );
@@ -256,7 +260,7 @@ describe( 'reducer', () => {
 				themeStylesheet: 'pub/twentysixteen',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					ID: 2916284,
 					name: 'WordPress.com Example Blog',
@@ -275,7 +279,7 @@ describe( 'reducer', () => {
 				settings: {},
 			} );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return same state when site settings received with icon for untracked site', () => {
@@ -288,7 +292,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return same state if received icon setting and matches current value', () => {
@@ -309,7 +313,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return same state if received privacy setting and matches current value', () => {
@@ -328,7 +332,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return same state if received null icon setting and already unset', () => {
@@ -346,7 +350,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return site having blavatar with unset icon property if received null icon setting', () => {
@@ -368,7 +372,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					ID: 2916284,
 					name: 'WordPress.com Example Blog',
@@ -394,7 +398,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					ID: 2916284,
 					name: 'WordPress.com Example Blog',
@@ -417,7 +421,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					ID: 2916284,
 					name: 'WordPress.com Example Blog',
@@ -444,7 +448,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					ID: 2916284,
 					name: 'WordPress.com Example Blog',
@@ -469,7 +473,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					ID: 2916284,
 					name: 'WordPress.com Example Blog',
@@ -497,7 +501,7 @@ describe( 'reducer', () => {
 				mediaIds: [ 36 ],
 			} );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return site with unset icon property if media deleted includes icon setting', () => {
@@ -516,7 +520,7 @@ describe( 'reducer', () => {
 				mediaIds: [ 42 ],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					ID: 2916284,
 					name: 'WordPress.com Example Blog',
@@ -533,7 +537,7 @@ describe( 'reducer', () => {
 			} );
 			const state = serialize( items, original );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should load valid persisted state', () => {
@@ -545,7 +549,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( items, original );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return initial state when state is invalid', () => {
@@ -554,7 +558,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( items, original );
 
-			expect( state ).to.be.null;
+			expect( state ).toBeNull();
 		} );
 	} );
 
@@ -562,7 +566,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track site request started', () => {
@@ -571,7 +575,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: true,
 			} );
 		} );
@@ -585,7 +589,7 @@ describe( 'reducer', () => {
 				siteId: 77203074,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: true,
 				77203074: true,
 			} );
@@ -601,7 +605,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: false,
 				77203074: true,
 			} );
@@ -617,7 +621,7 @@ describe( 'reducer', () => {
 				siteId: 77203074,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: false,
 				77203074: false,
 			} );
@@ -628,7 +632,7 @@ describe( 'reducer', () => {
 		test( 'should default false', () => {
 			const state = hasAllSitesList( undefined, {} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 
 		test( 'should update on receiving all sites', () => {
@@ -636,7 +640,7 @@ describe( 'reducer', () => {
 				type: SITES_RECEIVE,
 			} );
 
-			expect( state ).to.be.true;
+			expect( state ).toBe( true );
 		} );
 
 		test( 'should not update on receiving a single site', () => {
@@ -644,7 +648,7 @@ describe( 'reducer', () => {
 				type: SITE_RECEIVE,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 	} );
 
@@ -678,7 +682,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					updates: {
 						plugins: 0,
@@ -704,7 +708,7 @@ describe( 'reducer', () => {
 			} );
 
 			const state = deserialize( items, original );
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return initial state when persisted state has invalid updates', () => {
@@ -717,7 +721,7 @@ describe( 'reducer', () => {
 			} );
 
 			const state = deserialize( items, original );
-			expect( state ).to.be.null;
+			expect( state ).toBeNull();
 		} );
 	} );
 } );

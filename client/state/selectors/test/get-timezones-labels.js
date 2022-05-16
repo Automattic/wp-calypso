@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getTimezonesLabels from 'calypso/state/selectors/get-timezones-labels';
 
 describe( 'getTimezonesLabels()', () => {
@@ -13,7 +12,7 @@ describe( 'getTimezonesLabels()', () => {
 
 		const timezonesLabels = getTimezonesLabels( state );
 
-		expect( timezonesLabels ).to.eql( {} );
+		expect( timezonesLabels ).toEqual( {} );
 	} );
 
 	test( 'should return timezones by contienent object data', () => {
@@ -31,7 +30,7 @@ describe( 'getTimezonesLabels()', () => {
 
 		const labels = getTimezonesLabels( state );
 
-		expect( labels ).to.eql( {
+		expect( labels ).toEqual( {
 			'Asia/Aqtobe': 'Aqtobe',
 			'America/Boa_Vista': 'Boa Vista',
 			'Indian/Comoro': 'Comoro',

@@ -120,7 +120,7 @@ export class Notice extends Component {
 		const iconNeedsDrop = GRIDICONS_WITH_DROP.includes( iconName );
 
 		return (
-			<div className={ classes }>
+			<div className={ classes } role="status" aria-label={ translate( 'Notice' ) }>
 				<span className="notice__icon-wrapper">
 					{ iconNeedsDrop && <span className="notice__icon-wrapper-drop" /> }
 					<Gridicon className="notice__icon" icon={ iconName } size={ 24 } />

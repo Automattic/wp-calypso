@@ -6,7 +6,6 @@ import {
 	FEATURE_ADVANCED_DESIGN,
 	FEATURE_UPLOAD_PLUGINS,
 } from '@automattic/calypso-products';
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
@@ -44,7 +43,7 @@ describe( 'selectors', () => {
 			};
 			const plans = getPlansBySite( state, { ID: 77203074 } );
 
-			expect( plans ).to.eql( plans2 );
+			expect( plans ).toEqual( plans2 );
 		} );
 	} );
 	describe( '#getPlansBySiteId()', () => {
@@ -65,7 +64,7 @@ describe( 'selectors', () => {
 			};
 			const plans = getPlansBySiteId( state, 2916284 );
 
-			expect( plans ).to.eql( plans1 );
+			expect( plans ).toEqual( plans1 );
 		} );
 	} );
 	describe( '#getCurrentPlan()', () => {
@@ -82,7 +81,7 @@ describe( 'selectors', () => {
 
 			test( 'returns null', () => {
 				const plan = getCurrentPlan( state, siteId );
-				expect( plan ).to.eql( null );
+				expect( plan ).toBeNull();
 			} );
 		} );
 
@@ -108,7 +107,7 @@ describe( 'selectors', () => {
 
 				test( 'returns the currentPlan', () => {
 					const plan = getCurrentPlan( state, siteId );
-					expect( plan ).to.eql( plan1 );
+					expect( plan ).toEqual( plan1 );
 				} );
 			} );
 
@@ -136,7 +135,7 @@ describe( 'selectors', () => {
 
 				test( 'returns a new sitePlanObject', () => {
 					const plan = getCurrentPlan( state, siteId );
-					expect( plan ).to.eql( {} );
+					expect( plan ).toEqual( {} );
 				} );
 			} );
 		} );
@@ -179,7 +178,7 @@ describe( 'selectors', () => {
 				},
 			};
 			const plan = getSitePlan( state, 77203074, 'gold' );
-			expect( plan ).to.eql( { currentPlan: true, productSlug: 'gold' } );
+			expect( plan ).toEqual( { currentPlan: true, productSlug: 'gold' } );
 		} );
 		test( 'should return falsey when plan is not found', () => {
 			const plans1 = {
@@ -223,7 +222,7 @@ describe( 'selectors', () => {
 				},
 			};
 			const plan = getSitePlan( state, 77203074, 'circle' );
-			expect( plan ).to.eql( undefined );
+			expect( plan ).toBeUndefined();
 		} );
 		test( 'should return falsey when siteId is not found', () => {
 			const plans1 = {
@@ -250,7 +249,7 @@ describe( 'selectors', () => {
 				},
 			};
 			const plan = getSitePlan( state, 77203074, 'gold' );
-			expect( plan ).to.eql( null );
+			expect( plan ).toBeNull();
 		} );
 	} );
 	describe( '#getPlanRawPrice()', () => {
@@ -297,29 +296,29 @@ describe( 'selectors', () => {
 		};
 		test( 'should return a plan price', () => {
 			const rawPrice = getSitePlanRawPrice( state, 77203074, 'personal-bundle' );
-			expect( rawPrice ).to.equal( 199 );
+			expect( rawPrice ).toEqual( 199 );
 		} );
 		test( 'should return a monthly price - annual term', () => {
 			const rawPrice = getSitePlanRawPrice( state, 77203074, 'personal-bundle', {
 				isMonthly: true,
 			} );
-			expect( rawPrice ).to.equal( 16.58 );
+			expect( rawPrice ).toEqual( 16.58 );
 		} );
 		test( 'should return a monthly price - biennial term', () => {
 			const rawPrice = getSitePlanRawPrice( state, 77203074, 'value_bundle-2y', {
 				isMonthly: true,
 			} );
-			expect( rawPrice ).to.equal( 11 );
+			expect( rawPrice ).toEqual( 11 );
 		} );
 		test( 'should return a monthly price - monthly term', () => {
 			const rawPrice = getSitePlanRawPrice( state, 77203074, 'jetpack_premium_monthly', {
 				isMonthly: true,
 			} );
-			expect( rawPrice ).to.equal( 40 );
+			expect( rawPrice ).toEqual( 40 );
 		} );
 		test( 'should return raw price, if no discount is available', () => {
 			const rawPrice = getSitePlanRawPrice( state, 77203074, 'value_bundle', { isMonthly: false } );
-			expect( rawPrice ).to.equal( 199 );
+			expect( rawPrice ).toEqual( 199 );
 		} );
 	} );
 	describe( '#getPlanDiscountedRawPrice()', () => {
@@ -373,37 +372,37 @@ describe( 'selectors', () => {
 
 		test( 'should return a discount price', () => {
 			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'personal-bundle' );
-			expect( discountPrice ).to.equal( 99 );
+			expect( discountPrice ).toEqual( 99 );
 		} );
 		test( 'should return a monthly discount price - annual term', () => {
 			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'personal-bundle', {
 				isMonthly: true,
 			} );
-			expect( discountPrice ).to.equal( 8.25 );
+			expect( discountPrice ).toEqual( 8.25 );
 		} );
 		test( 'should return a monthly discount price - biennial term', () => {
 			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'value_bundle-2y', {
 				isMonthly: true,
 			} );
-			expect( discountPrice ).to.equal( 10 );
+			expect( discountPrice ).toEqual( 10 );
 		} );
 		test( 'should return a monthly discount price - monthly term (isMonthly: true)', () => {
 			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'jetpack_premium_monthly', {
 				isMonthly: true,
 			} );
-			expect( discountPrice ).to.equal( 30 );
+			expect( discountPrice ).toEqual( 30 );
 		} );
 		test( 'should return a monthly discount price - monthly term (isMonthly: false)', () => {
 			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'jetpack_premium_monthly', {
 				isMonthly: false,
 			} );
-			expect( discountPrice ).to.equal( 30 );
+			expect( discountPrice ).toEqual( 30 );
 		} );
 		test( 'should return null, if no discount is available', () => {
 			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'value_bundle', {
 				isMonthly: true,
 			} );
-			expect( discountPrice ).to.equal( null );
+			expect( discountPrice ).toBeNull();
 		} );
 	} );
 
@@ -452,35 +451,35 @@ describe( 'selectors', () => {
 		};
 		test( 'should return a raw discount', () => {
 			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'personal-bundle' );
-			expect( planRawDiscount ).to.equal( 100 );
+			expect( planRawDiscount ).toEqual( 100 );
 		} );
 
 		test( 'should return a monthly raw discount - annual term', () => {
 			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'personal-bundle', {
 				isMonthly: true,
 			} );
-			expect( planRawDiscount ).to.equal( 8.33 );
+			expect( planRawDiscount ).toEqual( 8.33 );
 		} );
 
 		test( 'should return a monthly raw discount - biennial term', () => {
 			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'value_bundle-2y', {
 				isMonthly: true,
 			} );
-			expect( planRawDiscount ).to.equal( 10 );
+			expect( planRawDiscount ).toEqual( 10 );
 		} );
 
 		test( 'should return a monthly raw discount - monthly term', () => {
 			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'jetpack_premium_monthly', {
 				isMonthly: true,
 			} );
-			expect( planRawDiscount ).to.equal( 240 );
+			expect( planRawDiscount ).toEqual( 240 );
 		} );
 
 		test( 'should return null, if no raw discount is available', () => {
 			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'value_bundle', {
 				isMonthly: true,
 			} );
-			expect( planRawDiscount ).to.equal( null );
+			expect( planRawDiscount ).toBeNull();
 		} );
 	} );
 
@@ -507,8 +506,8 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( hasDomainCredit( state, 77203074 ) ).to.equal( true );
-			expect( hasDomainCredit( state, 2916284 ) ).to.equal( false );
+			expect( hasDomainCredit( state, 77203074 ) ).toEqual( true );
+			expect( hasDomainCredit( state, 2916284 ) ).toEqual( false );
 		} );
 	} );
 	describe( '#isRequestingSitePlans()', () => {
@@ -532,9 +531,9 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isRequestingSitePlans( state, 2916284 ) ).to.equal( true );
-			expect( isRequestingSitePlans( state, 77203074 ) ).to.equal( false );
-			expect( isRequestingSitePlans( state, 'unknown' ) ).to.equal( false );
+			expect( isRequestingSitePlans( state, 2916284 ) ).toEqual( true );
+			expect( isRequestingSitePlans( state, 77203074 ) ).toEqual( false );
+			expect( isRequestingSitePlans( state, 'unknown' ) ).toEqual( false );
 		} );
 	} );
 	describe( '#isPlanDiscounted', () => {
@@ -569,7 +568,7 @@ describe( 'selectors', () => {
 				},
 			};
 			const discountPrice = isSitePlanDiscounted( state, 77203074, 'silver' );
-			expect( discountPrice ).to.equal( false );
+			expect( discountPrice ).toEqual( false );
 		} );
 		test( 'should return true, if discount is available', () => {
 			const plans = {
@@ -602,7 +601,7 @@ describe( 'selectors', () => {
 				},
 			};
 			const isDiscounted = isSitePlanDiscounted( state, 77203074, 'bronze' );
-			expect( isDiscounted ).to.equal( true );
+			expect( isDiscounted ).toEqual( true );
 		} );
 		test( 'should return null, if plan is unknown', () => {
 			const plans = {
@@ -635,7 +634,7 @@ describe( 'selectors', () => {
 				},
 			};
 			const isDiscounted = isSitePlanDiscounted( state, 77203074, 'diamond' );
-			expect( isDiscounted ).to.equal( null );
+			expect( isDiscounted ).toBeNull();
 		} );
 	} );
 
@@ -658,11 +657,11 @@ describe( 'selectors', () => {
 		};
 
 		test( 'should return false if user is not a plan owner', () => {
-			expect( isCurrentUserCurrentPlanOwner( state, 2916284 ) ).to.be.false;
+			expect( isCurrentUserCurrentPlanOwner( state, 2916284 ) ).toBe( false );
 		} );
 
 		test( 'should return true if user is a plan owner', () => {
-			expect( isCurrentUserCurrentPlanOwner( state, 77203074 ) ).to.be.true;
+			expect( isCurrentUserCurrentPlanOwner( state, 77203074 ) ).toBe( true );
 		} );
 	} );
 
@@ -679,7 +678,7 @@ describe( 'selectors', () => {
 					},
 					2916284
 				)
-			).to.be.null;
+			).toBeNull();
 		} );
 
 		test( "should return the given site's current plan's product slug", () => {
@@ -701,7 +700,7 @@ describe( 'selectors', () => {
 					},
 					2916284
 				)
-			).to.equal( PLAN_PREMIUM );
+			).toEqual( PLAN_PREMIUM );
 		} );
 	} );
 
@@ -726,7 +725,7 @@ describe( 'selectors', () => {
 					null,
 					FEATURE_ADVANCED_DESIGN
 				)
-			).to.be.false;
+			).toBe( false );
 		} );
 
 		test( 'should return false if no feature is given', () => {
@@ -748,7 +747,7 @@ describe( 'selectors', () => {
 					},
 					2916284
 				)
-			).to.be.false;
+			).toBe( false );
 		} );
 
 		test( 'should return false if no plan data is found for the given siteId', () => {
@@ -764,7 +763,7 @@ describe( 'selectors', () => {
 					2916284,
 					FEATURE_ADVANCED_DESIGN
 				)
-			).to.be.false;
+			).toBe( false );
 		} );
 
 		test( "should return false if the site's current plan doesn't include the specified feature", () => {
@@ -787,7 +786,7 @@ describe( 'selectors', () => {
 					2916284,
 					FEATURE_UPLOAD_PLUGINS
 				)
-			).to.be.false;
+			).toBe( false );
 		} );
 
 		test( "should return true if the site's current plan includes the specified feature", () => {
@@ -810,7 +809,7 @@ describe( 'selectors', () => {
 					2916284,
 					FEATURE_ADVANCED_DESIGN
 				)
-			).to.be.true;
+			).toBe( true );
 		} );
 
 		test( "should return true if the site's current plan includes a hidden feature", () => {
@@ -833,7 +832,7 @@ describe( 'selectors', () => {
 					2916284,
 					FEATURE_AUDIO_UPLOADS
 				)
-			).to.be.true;
+			).toBe( true );
 		} );
 	} );
 } );
