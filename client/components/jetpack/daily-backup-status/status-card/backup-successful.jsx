@@ -1,17 +1,13 @@
-import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
 import ExternalLink from 'calypso/components/external-link';
-import Button from 'calypso/components/forms/form-button';
+import BackupWarningRetry from 'calypso/components/jetpack/backup-warning-retry';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
 import { getBackupWarnings } from 'calypso/lib/jetpack/backup-utils';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
-import { rewindBackupSite } from 'calypso/state/activity-log/actions';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
@@ -27,7 +23,6 @@ import './style.scss';
 
 const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
 	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
 	const hasRealtimeBackups = useSelector( ( state ) => {
@@ -37,17 +32,6 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 
 	const warnings = getBackupWarnings( backup );
 	const hasWarnings = Object.keys( warnings ).length !== 0;
-
-	const requestBackupSite = useCallback(
-		() => dispatch( rewindBackupSite( siteId ) ),
-		[ dispatch, siteId ]
-	);
-	const trackedRequestBackupSite = useTrackCallback(
-		requestBackupSite,
-		'calypso_jetpack_backup_retry_click'
-	);
-
-	/* End Warning Logic */
 
 	const moment = useLocalizedMoment();
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
@@ -76,7 +60,6 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	const actionableRewindId = useActionableRewindId( backup );
 
 	const multiSiteInfoLink = `https://jetpack.com/redirect?source=jetpack-support-backup&anchor=does-jetpack-backup-support-multisite`;
-	const warningInfoLink = `https://jetpack.com/redirect?source=jetpack-support-backup`;
 
 	return (
 		<>
@@ -128,37 +111,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 					</div>
 				</div>
 			) }
-			{ hasWarnings && (
-				<div className="backup-successful__retry-wrapper">
-					<div className="backup-successful__retry-info">
-						<Gridicon icon="notice-outline" />
-						{ translate(
-							'Some files failed to backup. {{ExternalLink}}Learn why.{{/ExternalLink}}',
-							{
-								components: {
-									ExternalLink: (
-										<ExternalLink
-											href={ warningInfoLink }
-											target="_blank"
-											rel="noopener noreferrer"
-											icon={ false }
-										/>
-									),
-								},
-							}
-						) }
-					</div>
-					<div className="backup-successful__retry-button-wrapper">
-						<Button
-							isPrimary
-							className="backup-successful__retry-button"
-							onClick={ trackedRequestBackupSite }
-						>
-							{ translate( 'Retry' ) }
-						</Button>
-					</div>
-				</div>
-			) }
+			{ hasWarnings && <BackupWarningRetry siteId={ siteId } /> }
 			{ ! hasRealtimeBackups && <BackupChanges deltas={ deltas } /* metaDiff={ metaDiff */ /> }
 		</>
 	);
