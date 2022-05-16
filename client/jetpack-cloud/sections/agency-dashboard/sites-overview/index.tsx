@@ -1,5 +1,5 @@
-import { ReactElement } from 'react';
 import SiteContent from './site-content';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 
