@@ -39,7 +39,7 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		}
 
 		// Account for rest of settings pages.
-		if ( fragmentIsEqual( currentPath, 'settings', 1 ) ) {
+		if ( fragmentIsEqual( currentPath, '/settings', 1 ) ) {
 			return fragmentIsEqual( path, currentPath, 2 );
 		}
 	}

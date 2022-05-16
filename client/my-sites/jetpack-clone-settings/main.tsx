@@ -3,22 +3,16 @@ import { translate } from 'i18n-calypso';
 import { ReactElement, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
-import getSites from 'calypso/state/selectors/get-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { cloneJetpackSettings } from 'calypso/state/jetpack/settings/actions';
-
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
-import './style.scss';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { cloneJetpackSettings } from 'calypso/state/jetpack/settings/actions';
+import getSites from 'calypso/state/selectors/get-sites';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function chooseSite( siteId, sites, onSelect ) {
 	return (
@@ -58,18 +52,13 @@ export default function CloneSettingsMain(): ReactElement {
 		if ( id ) {
 			setSourceSiteId( select.target.value );
 		}
-		console.log( select.target.value );
 	}, [] );
 
 	const cloneSettingsCallback = useCallback( () => {
-		console.log( siteId, sourceSiteId );
 		if ( siteId && sourceSiteId ) {
-			console.log( 'dispatching' );
 			dispatch( cloneJetpackSettings( siteId, sourceSiteId ) );
 		}
 	}, [ siteId, sourceSiteId ] );
-
-	console.log( 'sites', sites );
 
 	return (
 		<Main className="jetpack-clone-settings">
