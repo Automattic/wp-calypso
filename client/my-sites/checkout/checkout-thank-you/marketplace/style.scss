@@ -9,7 +9,7 @@
 	margin: auto;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		padding-top: 100px;
+		padding-top: 30px;
 		width: 30%;
 		min-width: 500px;
 	}
@@ -30,10 +30,10 @@
 	.signup-success__header {
 		margin-top: var( --masterbar-height );
 		text-align: center;
-		min-height: 300px;
+		min-height: 270px;
 
 		svg {
-			margin-bottom: 14px;
+			margin-bottom: 20px;
 		}
 	}
 
@@ -46,12 +46,12 @@
 	.signup-success__row-icon {
 		width: 10%;
 		display: block;
-		height: 95px;
+		height: 70px;
 	}
 
 	.signup-success__row-content {
 		width: 70%;
-		height: 100px;
+		height: 80px;
 
 		p {
 			color: var( --studio-gray-60 );
@@ -66,6 +66,7 @@
 	}
 
 	hr {
+		background-color: var( --studio-gray-5 );
 		margin: 30px 0 30px 10%;
 	}
 }
