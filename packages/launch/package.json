@@ -61,7 +61,7 @@
 		"@wordpress/element": "^4.5.0",
 		"@wordpress/i18n": "^4.7.0",
 		"reakit-utils": "^0.15.1",
-		"redux": "^4.1.2"
+		"redux": "^4.2.0"
 	},
 	"private": true
 }

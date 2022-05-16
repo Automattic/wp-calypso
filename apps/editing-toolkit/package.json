@@ -116,10 +116,10 @@
 		"react-dom": "^17.0.2",
 		"react-popper": "^2.2.5",
 		"react-query": "^3.32.1",
-		"react-redux": "^7.2.6",
+		"react-redux": "^7.2.8",
 		"reakit-utils": "^0.15.1",
-		"redux": "^4.1.2",
-		"redux-thunk": "^2.3.0",
+		"redux": "^4.2.0",
+		"redux-thunk": "^2.4.1",
 		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {
