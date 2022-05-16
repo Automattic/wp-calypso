@@ -126,9 +126,8 @@ export default function CompositeCheckout( {
 		) ||
 		isJetpackCheckout ||
 		false;
-	const hasJetpackStandalonePlugins = useSelector(
-		( state ) => siteId && isJetpackProductSite( state, siteId )
-	);
+	const hasJetpackStandalonePlugins =
+		useSelector( ( state ) => siteId && isJetpackProductSite( state, siteId ) ) || false;
 	const usesJetpackProducts = isJetpackNotAtomic || hasJetpackStandalonePlugins;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const isLoadingIntroOffers = useSelector( ( state ) =>
