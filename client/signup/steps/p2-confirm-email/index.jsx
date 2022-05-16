@@ -45,9 +45,11 @@ function P2ConfirmEmail( {
 	// We also need to store the original refParameter, as the redirect on email verification
 	// loses it.
 	useEffect( () => {
-		dispatch(
-			saveSignupStep( { stepName, ...( refParameter && { storedRefParameter: refParameter } ) } )
-		);
+		if ( userEmail ) {
+			dispatch(
+				saveSignupStep( { stepName, ...( refParameter && { storedRefParameter: refParameter } ) } )
+			);
+		}
 	}, [ dispatch, stepName, refParameter ] );
 
 	const handleResendEmailClick = () => {
