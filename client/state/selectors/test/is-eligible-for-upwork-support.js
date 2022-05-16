@@ -20,7 +20,7 @@ describe( 'isEligibleForUpworkSupport()', () => {
 	} );
 
 	describe.each( config( 'upwork_support_locales' ) )( 'when locale %s', ( localeSlug ) => {
-		test( 'returns true for users without higher support levels', () => {
+		test( 'returns true for users without plans that exempts them from upwork support', () => {
 			const state = {
 				currentUser: { id: 1, user: { localeSlug } },
 				sites: {
@@ -29,7 +29,7 @@ describe( 'isEligibleForUpworkSupport()', () => {
 						222: { ID: 222 },
 					},
 					features: {
-						111: { data: { active: [ 'upwork-support' ] } },
+						111: { data: { active: [ 'live-chat' ] } },
 						222: { data: { active: [] } },
 					},
 				},
@@ -46,7 +46,7 @@ describe( 'isEligibleForUpworkSupport()', () => {
 						222: { ID: 222 },
 					},
 					features: {
-						111: { data: { active: [ 'upwork-support' ] } },
+						111: { data: { active: [ 'upwork-support-exempt' ] } },
 						222: { data: { active: [ 'live-support' ] } },
 					},
 				},

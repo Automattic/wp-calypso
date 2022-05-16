@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { WPCOM_FEATURES_UPWORK_SUPPORT } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_UPWORK_SUPPORT_EXEMPT } from '@automattic/calypso-products';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -16,7 +16,7 @@ export default function isEligibleForUpworkSupport( state: AppState ): boolean {
 		return false;
 	}
 
-	return Object.values( getSitesItems( state ) ).every( ( { ID } ) =>
-		siteHasFeature( state, ID ?? 0, WPCOM_FEATURES_UPWORK_SUPPORT )
+	return ! Object.values( getSitesItems( state ) ).some( ( { ID } ) =>
+		siteHasFeature( state, ID ?? 0, WPCOM_FEATURES_UPWORK_SUPPORT_EXEMPT )
 	);
 }
