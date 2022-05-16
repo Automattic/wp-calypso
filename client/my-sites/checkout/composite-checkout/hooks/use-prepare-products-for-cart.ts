@@ -37,6 +37,7 @@ export default function usePrepareProductsForCart( {
 	purchaseId: originalPurchaseId,
 	isInModal,
 	isJetpackNotAtomic,
+	hasJetpackStandalonePlugins,
 	isPrivate,
 	siteSlug,
 	isLoggedOutCart,
@@ -50,6 +51,7 @@ export default function usePrepareProductsForCart( {
 	purchaseId: string | number | null | undefined;
 	isInModal?: boolean;
 	isJetpackNotAtomic: boolean;
+	hasJetpackStandalonePlugins: boolean;
 	isPrivate: boolean;
 	siteSlug: string | undefined;
 	isLoggedOutCart?: boolean;
@@ -101,6 +103,7 @@ export default function usePrepareProductsForCart( {
 		productAliasFromUrl,
 		dispatch,
 		isJetpackNotAtomic,
+		hasJetpackStandalonePlugins,
 		isPrivate,
 		addHandler,
 		isJetpackCheckout,
@@ -295,6 +298,7 @@ function useAddProductFromSlug( {
 	productAliasFromUrl,
 	dispatch,
 	isJetpackNotAtomic,
+	hasJetpackStandalonePlugins,
 	isPrivate,
 	addHandler,
 	isJetpackCheckout,
@@ -305,6 +309,7 @@ function useAddProductFromSlug( {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	isJetpackNotAtomic: boolean;
+	hasJetpackStandalonePlugins: boolean;
 	isPrivate: boolean;
 	addHandler: AddHandler;
 	isJetpackCheckout?: boolean;
@@ -322,7 +327,9 @@ function useAddProductFromSlug( {
 			productAliasFromUrl
 				?.split( ',' )
 				// Special treatment for Jetpack Search products
-				.map( ( productAlias ) => getJetpackSearchForSite( productAlias, isJetpackNotAtomic ) )
+				.map( ( productAlias ) =>
+					getJetpackSearchForSite( productAlias, isJetpackNotAtomic || hasJetpackStandalonePlugins )
+				)
 				// Get the product information if it exists, and keep a reference to
 				// its product alias which we may need to get additional information like
 				// the domain name or theme (eg: 'theme:ovation').
@@ -441,12 +448,12 @@ function createRenewalItemToAddToCart(
  * redirect to a valid checkout URL for a search purchase without worrying
  * about which type of site the user has.
  */
-function getJetpackSearchForSite( productAlias: string, isJetpackNotAtomic: boolean ): string {
+function getJetpackSearchForSite( productAlias: string, isJetpackProduct: boolean ): string {
 	if (
 		productAlias &&
 		JETPACK_SEARCH_PRODUCTS.includes( productAlias as typeof JETPACK_SEARCH_PRODUCTS[ number ] )
 	) {
-		if ( isJetpackNotAtomic ) {
+		if ( isJetpackProduct ) {
 			productAlias = productAlias.includes( 'monthly' )
 				? PRODUCT_JETPACK_SEARCH_MONTHLY
 				: PRODUCT_JETPACK_SEARCH;
