@@ -161,9 +161,8 @@ export const retryOrAnnounceSaveFailure = ( action, { message: errorMessage } ) 
 	};
 };
 
-export const cloneJetpackSettings = ( action ) => ( dispatch, getState ) => {
+export const cloneJetpackSettings = ( action ) => ( dispatch ) => {
 	const { sourceSiteId, siteId } = action;
-	const previousSettings = getJetpackSettings( getState(), siteId );
 
 	dispatch(
 		http(
