@@ -98,12 +98,8 @@ export const getRowMetaData = (
 /**
  * Returns formatted sites
  */
-
-export const formatSites = ( data: { items: object } ): Array< any > => {
-	const sites = data?.items;
-	if ( ! Array.isArray( sites ) ) {
-		return [];
-	}
+export const formatSites = ( data: { items: Array< any > } ): Array< any > => {
+	const sites = data?.items || [];
 	return sites.map( ( site ) => {
 		const pluginUpdates = site.awaiting_plugin_updates;
 		let scanValue;
