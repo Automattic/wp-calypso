@@ -7,9 +7,13 @@ import {
 	Icon,
 } from '@wordpress/components';
 import classnames from 'classnames';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { ReactChild, useCallback, useEffect, useRef, useState } from 'react';
 
 import './style.scss';
+
+interface GroupedIndexStore {
+	[ key: string ]: boolean;
+}
 
 const ResponsiveToolbarGroup = ( {
 	children,
@@ -20,7 +24,7 @@ const ResponsiveToolbarGroup = ( {
 	onClick = () => null,
 	initialActiveIndex = -1,
 }: {
-	children: any[];
+	children: ReactChild[];
 	className?: string;
 	hideRatio?: number;
 	showRatio?: number;
@@ -33,7 +37,7 @@ const ResponsiveToolbarGroup = ( {
 	const containerRef = useRef< HTMLDivElement >( null );
 	const [ calculatedOnce, setCalculatedOnce ] = useState< boolean >( false );
 	const [ activeIndex, setActiveIndex ] = useState< number >( initialActiveIndex );
-	const [ groupedIndexes, setGroupedIndexes ] = useState< any >( {} );
+	const [ groupedIndexes, setGroupedIndexes ] = useState< GroupedIndexStore >( {} );
 	const { current: shadowListItems } = useRef< HTMLButtonElement[] >( [] );
 
 	const assignRef = ( index: number, element: HTMLButtonElement ) => {
@@ -135,19 +139,22 @@ const ResponsiveToolbarGroup = ( {
 			if ( entry.intersectionRatio >= showRatio ) {
 				// is last child becoming visible just showcase it.
 				if ( index === children.length - 1 ) {
-					setGroupedIndexes( ( state: any ) => ( {
+					setGroupedIndexes( ( state: GroupedIndexStore ) => ( {
 						...state,
 						[ index ]: false,
 						[ index - 1 ]: false,
 					} ) );
 				} else {
-					setGroupedIndexes( ( state: any ) => ( { ...state, [ index - 1 ]: false } ) );
+					setGroupedIndexes( ( state: GroupedIndexStore ) => ( {
+						...state,
+						[ index - 1 ]: false,
+					} ) );
 				}
 			}
 
 			// always hide sets of two to give space to the "more" item.
 			if ( entry.intersectionRatio <= hideRatio ) {
-				setGroupedIndexes( ( state: any ) => ( {
+				setGroupedIndexes( ( state: GroupedIndexStore ) => ( {
 					...state,
 					[ index ]: true,
 					[ index - 1 ]: true,
