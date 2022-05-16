@@ -129,6 +129,10 @@ export function magicLoginUse( context, next ) {
 }
 
 export function redirectDefaultLocale( context, next ) {
+	// Do not redirect if it's server side
+	if ( context.isServerSide ) {
+		return next();
+	}
 	// Only handle simple routes
 	if ( context.pathname !== '/log-in/en' && context.pathname !== '/log-in/jetpack/en' ) {
 		if ( ! isUserLoggedIn( context.store.getState() ) && ! context.params.lang ) {
