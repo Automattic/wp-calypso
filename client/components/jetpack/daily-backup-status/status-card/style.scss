@@ -240,9 +240,14 @@
 	font-weight: 400;
 	font-size: $font-body;
 	line-height: 24px;
+	display: flex;
+	column-gap: 8px;
 	a {
 		color: #101517;
 		text-decoration: underline;
+	}
+	.gridicons-notice-outline {
+		color: #7d5600;
 	}
 }
 

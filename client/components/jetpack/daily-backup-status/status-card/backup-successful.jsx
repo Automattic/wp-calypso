@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -129,6 +130,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 			{ hasWarnings && (
 				<div className="backup-successful__retry-wrapper">
 					<div className="backup-successful__retry-info">
+						<Gridicon icon="notice-outline" />
 						Some files failed to backup. <a href="https://jetpack.com">Learn why.</a>
 					</div>
 					<div className="backup-successful__retry-button-wrapper">
