@@ -1,5 +1,4 @@
 import { withStorageKey } from '@automattic/state-utils';
-import { find, matches } from 'lodash';
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
@@ -25,59 +24,65 @@ const initialState = {
 	hasLoadedUserPurchasesFromServer: false,
 };
 
-/**
- * Overwrites the purchases in the store with the purchases from the new purchases array
- * that share the same `id` value.
- *
- * @param {Array} existingPurchases - an array of purchases in the store
- * @param {Array} newPurchases - an array of purchases fetched from the API
- * @returns {Array} An array of purchases
- */
-function overwriteExistingPurchases( existingPurchases, newPurchases ) {
-	let purchases = newPurchases;
-
-	existingPurchases.forEach( ( purchase ) => {
-		if ( ! find( purchases, { ID: purchase.ID } ) ) {
-			purchases = purchases.concat( purchase );
+function mergePurchase( existingPurchases, newPurchase ) {
+	// Update any matching existing purchase in place.
+	let foundMatch = false;
+	const merged = existingPurchases.map( ( purchase ) => {
+		if ( newPurchase.ID === purchase.ID ) {
+			foundMatch = true;
+			return newPurchase;
 		}
+		return purchase;
 	} );
-
-	return purchases;
+	if ( foundMatch ) {
+		return merged;
+	}
+	// If there is no matching existing purchase, append the new purchase.
+	return [ ...merged, newPurchase ];
 }
 
 /**
- * Removes purchases that are missing from the new purchases array and match the given predicate.
+ * Merges a new array of purchases with the existing array and updates items
+ * in-place if they change.
  *
  * @param {Array} existingPurchases - an array of purchases in the store
  * @param {Array} newPurchases - an array of purchases fetched from the API
- * @param {object} predicate - the predicate to check before removing the item from the array.
  * @returns {Array} An array of purchases
  */
-function removeMissingPurchasesByPredicate( existingPurchases, newPurchases, predicate ) {
-	return existingPurchases.filter(
-		( purchase ) => ! matches( predicate )( purchase ) || find( newPurchases, { ID: purchase.ID } )
+function mergePurchases( existingPurchases, newPurchases ) {
+	return newPurchases.reduce(
+		( merged, newPurchase ) => mergePurchase( merged, newPurchase ),
+		existingPurchases
 	);
 }
 
 function updatePurchases( existingPurchases, action ) {
-	let purchases;
-	let predicate;
-
-	if ( PURCHASES_SITE_FETCH_COMPLETED === action.type ) {
-		predicate = { blog_id: String( action.siteId ) };
+	// If the action is to update a user, replace all the data.
+	if ( action.type === PURCHASES_USER_FETCH_COMPLETED ) {
+		return action.purchases;
 	}
-
-	if (
-		PURCHASES_USER_FETCH_COMPLETED === action.type ||
-		PURCHASE_REMOVE_COMPLETED === action.type
-	) {
-		predicate = { user_id: String( action.userId ) };
+	// If the action is to update a site, remove all existing purchases for that site that are not in the new purchases array.
+	if ( action.type === PURCHASES_SITE_FETCH_COMPLETED ) {
+		existingPurchases = existingPurchases.filter( ( purchase ) => {
+			if ( parseInt( purchase.blog_id, 10 ) !== parseInt( action.siteId, 10 ) ) {
+				return true;
+			}
+			if ( action.purchases.some( ( newPurchase ) => newPurchase.ID === purchase.ID ) ) {
+				return true;
+			}
+			return false;
+		} );
 	}
-
-	purchases = removeMissingPurchasesByPredicate( existingPurchases, action.purchases, predicate );
-	purchases = overwriteExistingPurchases( purchases, action.purchases );
-
-	return purchases;
+	// If the action is to remove purchases, remove all existing purchases that are not in the new purchases array.
+	if ( action.type === PURCHASE_REMOVE_COMPLETED ) {
+		existingPurchases = existingPurchases.filter( ( purchase ) => {
+			if ( action.purchases.some( ( newPurchase ) => newPurchase.ID === purchase.ID ) ) {
+				return true;
+			}
+			return false;
+		} );
+	}
+	return mergePurchases( existingPurchases, action.purchases );
 }
 
 const reducer = ( state = initialState, action ) => {
