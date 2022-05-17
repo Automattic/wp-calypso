@@ -26,7 +26,7 @@
 	h2 {
 		font-size: $font-title-small;
 	}
-	
+
 	.signup-success__header {
 		margin-top: var( --masterbar-height );
 		text-align: center;
@@ -47,6 +47,7 @@
 		width: 10%;
 		display: block;
 		height: 70px;
+		color: var( --studio-gray-30 );
 	}
 
 	.signup-success__row-content {

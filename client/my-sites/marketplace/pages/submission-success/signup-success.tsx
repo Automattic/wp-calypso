@@ -1,12 +1,11 @@
+import { Gridicon } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import theme from 'calypso/my-sites/marketplace/theme';
-import './style.scss';
 import MasterbarStyled from '../../components/masterbar-styled';
-import { WelcomeCartIcon } from './welcome-cart-icon';
-import { WelcomeConfigIcon } from './welcome-config-icon';
 import { WelcomeLogoIcon } from './welcome-logo-icon';
+import './style.scss';
 
 const SignupSuccess = (): JSX.Element => {
 	const translate = useTranslate();
@@ -40,7 +39,7 @@ const SignupSuccess = (): JSX.Element => {
 				<div className="signup-success__body">
 					<div className="signup-success__row">
 						<div className="signup-success__row-icon">
-							<WelcomeCartIcon />
+							<Gridicon icon="cart" />
 						</div>
 						<div className="signup-success__row-content">
 							<h2>{ translate( 'Learn More' ) }</h2>
@@ -53,7 +52,7 @@ const SignupSuccess = (): JSX.Element => {
 					<hr />
 					<div className="signup-success__row">
 						<div className="signup-success__row-icon">
-							<WelcomeConfigIcon />
+							<Gridicon icon="cog" />
 						</div>
 						<div className="signup-success__row-content">
 							<h2>{ translate( 'View the marketplace' ) }</h2>
