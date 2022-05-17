@@ -64,6 +64,10 @@ const Categories = ( { selected }: { selected?: string } ) => {
 		page( url );
 	};
 
+	if ( selected && ! ALLOWED_CATEGORIES.includes( selected ) ) {
+		return <div></div>;
+	}
+
 	const current = selected ? categories.findIndex( ( { slug } ) => slug === selected ) : 0;
 
 	return (
