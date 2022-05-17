@@ -7,7 +7,7 @@ import { useFSEStatus } from '../hooks/use-fse-status';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { ONBOARD_STORE, SITE_STORE } from '../stores';
+import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step';
 import type { StepPath } from './internals/steps-repository';
@@ -320,6 +320,12 @@ export const siteSetupFlow: Flow = {
 	useAssertConditions() {
 		const siteSlug = useSiteSlugParam();
 		const siteId = useSiteIdParam();
+		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+
+		if ( ! userIsLoggedIn ) {
+			redirect( '/start' );
+			throw new Error( 'site-setup requires a logged in user' );
+		}
 
 		if ( ! siteSlug && ! siteId ) {
 			throw new Error( 'site-setup did not provide the site slug or site id it is configured to.' );
