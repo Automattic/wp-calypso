@@ -1,17 +1,18 @@
-import { expect } from 'chai';
 import { ROUTE_SET } from 'calypso/state/action-types';
 import reducer, { currentClientId } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'currentClientId' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'currentClientId' ] )
+		);
 	} );
 
 	describe( 'currentClientId', () => {
 		test( 'should default to undefined', () => {
 			const state = currentClientId( undefined, {} );
 
-			expect( state ).to.be.null;
+			expect( state ).toBeNull();
 		} );
 
 		test( 'should be updated on ROUTE_SET when the route starts with /log-in', () => {
@@ -24,7 +25,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.equal( 42 );
+			expect( state ).toEqual( 42 );
 		} );
 	} );
 } );

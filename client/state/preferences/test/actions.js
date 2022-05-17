@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	PREFERENCES_RECEIVE,
 	PREFERENCES_FETCH,
@@ -8,18 +7,16 @@ import {
 	PREFERENCES_SAVE_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { receivePreferences, fetchPreferences, savePreference, setPreference } from '../actions';
 import { DEFAULT_PREFERENCE_VALUES, USER_SETTING_KEY } from '../constants';
 
 describe( 'actions', () => {
-	let sandbox;
 	let spy;
 
-	useSandbox( ( newSandbox ) => {
-		sandbox = newSandbox;
-		spy = sandbox.spy();
+	beforeEach( () => {
+		spy = jest.fn();
 	} );
+
 	const responseShape = {
 		[ USER_SETTING_KEY ]: DEFAULT_PREFERENCE_VALUES,
 	};
@@ -28,7 +25,7 @@ describe( 'actions', () => {
 		test( 'should return an action object', () => {
 			const action = receivePreferences( { foo: 'bar' } );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: PREFERENCES_RECEIVE,
 				values: {
 					foo: 'bar',
@@ -47,25 +44,29 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			fetchPreferences()( spy );
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toBeCalledWith( {
 				type: PREFERENCES_FETCH,
 			} );
 		} );
 
 		test( 'should dispatch PREFERENCES_RECEIVE when request completes', () => {
 			return fetchPreferences()( spy ).then( () => {
-				expect( spy ).to.have.been.calledWithMatch( {
-					type: PREFERENCES_RECEIVE,
-					values: responseShape[ USER_SETTING_KEY ],
-				} );
+				expect( spy ).toBeCalledWith(
+					expect.objectContaining( {
+						type: PREFERENCES_RECEIVE,
+						values: responseShape[ USER_SETTING_KEY ],
+					} )
+				);
 			} );
 		} );
 
 		test( 'should dispatch success action when request completes', () => {
 			return fetchPreferences()( spy ).then( () => {
-				expect( spy ).to.have.been.calledWithMatch( {
-					type: PREFERENCES_FETCH_SUCCESS,
-				} );
+				expect( spy ).toBeCalledWith(
+					expect.objectContaining( {
+						type: PREFERENCES_FETCH_SUCCESS,
+					} )
+				);
 			} );
 		} );
 	} );
@@ -80,16 +81,18 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return fetchPreferences()( spy ).then( () => {
-				expect( spy ).to.have.been.calledWithMatch( {
-					type: PREFERENCES_FETCH_FAILURE,
-				} );
+				expect( spy ).toBeCalledWith(
+					expect.objectContaining( {
+						type: PREFERENCES_FETCH_FAILURE,
+					} )
+				);
 			} );
 		} );
 	} );
 
 	describe( 'setPreference()', () => {
 		test( 'should return PREFERENCES_SET with correct payload', () => {
-			expect( setPreference( 'preferenceKey', 'preferenceValue' ) ).to.deep.equal( {
+			expect( setPreference( 'preferenceKey', 'preferenceValue' ) ).toEqual( {
 				type: PREFERENCES_SET,
 				key: 'preferenceKey',
 				value: 'preferenceValue',
@@ -120,11 +123,13 @@ describe( 'actions', () => {
 
 		test( 'should dispatch PREFERENCES_SET action when thunk triggered', () => {
 			savePreference( 'preferenceKey', 'preferenceValue' )( spy );
-			expect( spy ).to.have.been.calledWithMatch( {
-				type: PREFERENCES_SET,
-				key: 'preferenceKey',
-				value: 'preferenceValue',
-			} );
+			expect( spy ).toBeCalledWith(
+				expect.objectContaining( {
+					type: PREFERENCES_SET,
+					key: 'preferenceKey',
+					value: 'preferenceValue',
+				} )
+			);
 		} );
 
 		test( 'should dispatch PREFERENCES_RECEIVE action when request completes', () => {
@@ -132,10 +137,12 @@ describe( 'actions', () => {
 				'preferenceKey',
 				'preferenceValue'
 			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWithMatch( {
-					type: PREFERENCES_RECEIVE,
-					values: responseShape[ USER_SETTING_KEY ],
-				} );
+				expect( spy ).toBeCalledWith(
+					expect.objectContaining( {
+						type: PREFERENCES_RECEIVE,
+						values: responseShape[ USER_SETTING_KEY ],
+					} )
+				);
 			} );
 		} );
 
@@ -144,11 +151,13 @@ describe( 'actions', () => {
 				'preferenceKey',
 				'preferenceValue'
 			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWithMatch( {
-					type: PREFERENCES_SAVE_SUCCESS,
-					key: 'preferenceKey',
-					value: 'preferenceValue',
-				} );
+				expect( spy ).toBeCalledWith(
+					expect.objectContaining( {
+						type: PREFERENCES_SAVE_SUCCESS,
+						key: 'preferenceKey',
+						value: 'preferenceValue',
+					} )
+				);
 			} );
 		} );
 	} );

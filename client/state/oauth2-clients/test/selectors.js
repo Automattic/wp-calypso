@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getOAuth2Client } from '../selectors';
 
 describe( 'selectors', () => {
@@ -6,7 +5,7 @@ describe( 'selectors', () => {
 		test( 'should return null if empty state provided', () => {
 			const client = getOAuth2Client( { oauth2Clients: { clients: {} } } );
 
-			expect( client ).to.be.null;
+			expect( client ).toBeNull();
 		} );
 
 		test( 'should return null if wrong client id provided', () => {
@@ -26,7 +25,7 @@ describe( 'selectors', () => {
 				2
 			);
 
-			expect( client ).to.be.null;
+			expect( client ).toBeNull();
 		} );
 
 		test( 'should return data', () => {
@@ -46,7 +45,7 @@ describe( 'selectors', () => {
 				1
 			);
 
-			expect( client ).to.deep.equal( {
+			expect( client ).toEqual( {
 				id: 1,
 				name: 'test',
 				title: 'WordPress.com Test Client',

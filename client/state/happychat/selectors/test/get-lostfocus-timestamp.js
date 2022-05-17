@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import getLostFocusTimestamp from '../get-lostfocus-timestamp';
 
@@ -8,6 +7,6 @@ const NOW = 1488173100125;
 describe( '#getLostFocusTimestamp', () => {
 	test( 'returns the current timestamp', () => {
 		const state = deepFreeze( { happychat: { ui: { lostFocusAt: NOW } } } );
-		expect( getLostFocusTimestamp( state ) ).to.eql( NOW );
+		expect( getLostFocusTimestamp( state ) ).toEqual( NOW );
 	} );
 } );

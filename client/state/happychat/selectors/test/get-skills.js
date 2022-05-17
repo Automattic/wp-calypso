@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	HAPPYCHAT_GROUP_WPCOM,
 	HAPPYCHAT_GROUP_JPOP,
@@ -28,7 +27,7 @@ describe( '#getSkills()', () => {
 				items: {},
 			},
 		};
-		expect( getSkills( state, siteId ) ).to.eql( {
+		expect( getSkills( state, siteId ) ).toEqual( {
 			[ HAPPYCHAT_SKILL_PRODUCT ]: [ HAPPYCHAT_GROUP_WPCOM ],
 			[ HAPPYCHAT_SKILL_LANGUAGE ]: [ 'en' ],
 		} );
@@ -46,7 +45,7 @@ describe( '#getSkills()', () => {
 				items: {},
 			},
 		};
-		expect( getSkills( state, siteId ) ).to.eql( {
+		expect( getSkills( state, siteId ) ).toEqual( {
 			[ HAPPYCHAT_SKILL_PRODUCT ]: [ HAPPYCHAT_GROUP_WPCOM ],
 		} );
 	} );
@@ -77,7 +76,7 @@ describe( '#getSkills()', () => {
 			},
 		};
 
-		expect( getSkills( state, siteId ) ).to.eql( {
+		expect( getSkills( state, siteId ) ).toEqual( {
 			[ HAPPYCHAT_SKILL_PRODUCT ]: [ HAPPYCHAT_GROUP_JPOP ],
 			[ HAPPYCHAT_SKILL_LANGUAGE ]: [ 'fr' ],
 		} );

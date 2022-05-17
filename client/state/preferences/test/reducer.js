@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	PREFERENCES_SET,
@@ -12,19 +11,21 @@ import reducer, { localValues, remoteValues, fetching } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'localValues',
-			'remoteValues',
-			'fetching',
-			'lastFetchedTimestamp',
-		] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [
+				'localValues',
+				'remoteValues',
+				'fetching',
+				'lastFetchedTimestamp',
+			] )
+		);
 	} );
 
 	describe( 'localValues()', () => {
 		test( 'should default to an empty object', () => {
 			const state = localValues( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track preference values set by key', () => {
@@ -34,7 +35,7 @@ describe( 'reducer', () => {
 				value: 'bar',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				foo: 'bar',
 			} );
 		} );
@@ -49,7 +50,7 @@ describe( 'reducer', () => {
 				value: 'qux',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				foo: 'bar',
 				baz: 'qux',
 			} );
@@ -65,7 +66,7 @@ describe( 'reducer', () => {
 				value: 'bar',
 			} );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should remove a preference key on a successful preference save', () => {
@@ -79,7 +80,7 @@ describe( 'reducer', () => {
 				value: 'bar',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				baz: 'qux',
 			} );
 		} );
@@ -89,7 +90,7 @@ describe( 'reducer', () => {
 		test( 'should default to null', () => {
 			const state = remoteValues( undefined, {} );
 
-			expect( state ).to.be.null;
+			expect( state ).toBeNull();
 		} );
 
 		test( 'should set its state to received preferences values', () => {
@@ -100,7 +101,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				foo: 'bar',
 			} );
 		} );
@@ -116,7 +117,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				baz: 'qux',
 			} );
 		} );
@@ -125,26 +126,26 @@ describe( 'reducer', () => {
 	describe( 'fetching()', () => {
 		test( 'should default to false', () => {
 			const state = fetching( undefined, {} );
-			expect( state ).to.eql( false );
+			expect( state ).toEqual( false );
 		} );
 		test( 'should update fetching state on fetch', () => {
 			const state = fetching( undefined, {
 				type: PREFERENCES_FETCH,
 			} );
-			expect( state ).to.eql( true );
+			expect( state ).toEqual( true );
 		} );
 		test( 'should update fetching state on success', () => {
 			const state = fetching( true, {
 				type: PREFERENCES_FETCH_SUCCESS,
 			} );
-			expect( state ).to.eql( false );
+			expect( state ).toEqual( false );
 		} );
 		test( 'should update fetching state on failure', () => {
 			const original = { all: true };
 			const state = fetching( original, {
 				type: PREFERENCES_FETCH_FAILURE,
 			} );
-			expect( state ).to.eql( false );
+			expect( state ).toEqual( false );
 		} );
 	} );
 } );

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import freeze from 'deep-freeze';
 import { keyToString } from 'calypso/reader/post-key';
 import {
@@ -14,7 +13,7 @@ describe( 'reducer', () => {
 		const action = freeze( {} );
 		const prevState = undefined;
 		const nextState = reducer( prevState, action );
-		expect( nextState ).eql( {} );
+		expect( nextState ).toEqual( {} );
 	} );
 
 	test( 'should add a newly expanded card to state', () => {
@@ -24,7 +23,7 @@ describe( 'reducer', () => {
 		} );
 		const prevState = freeze( {} );
 		const nextState = reducer( prevState, action );
-		expect( nextState ).eql( {
+		expect( nextState ).toEqual( {
 			[ keyToString( postKey ) ]: true,
 		} );
 	} );
@@ -35,6 +34,6 @@ describe( 'reducer', () => {
 			[ keyToString( postKey ) ]: true,
 		} );
 		const nextState = reducer( prevState, action );
-		expect( nextState ).eql( {} );
+		expect( nextState ).toEqual( {} );
 	} );
 } );

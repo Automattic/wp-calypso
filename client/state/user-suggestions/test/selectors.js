@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getUserSuggestions, isRequestingUserSuggestions } from '../selectors';
 
 describe( 'selectors', () => {
@@ -9,7 +8,7 @@ describe( 'selectors', () => {
 					items: {},
 				},
 			};
-			expect( getUserSuggestions( state, 123 ) ).to.eql( [] );
+			expect( getUserSuggestions( state, 123 ) ).toEqual( [] );
 		} );
 
 		test( 'should return suggestions if they exist for a site ID', () => {
@@ -22,7 +21,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getUserSuggestions( state, 123 ) ).to.have.length( 2 );
+			expect( getUserSuggestions( state, 123 ) ).toHaveLength( 2 );
 		} );
 	} );
 
@@ -36,8 +35,8 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isRequestingUserSuggestions( state, 123 ) ).to.equal( true );
-			expect( isRequestingUserSuggestions( state, 124 ) ).to.equal( false );
+			expect( isRequestingUserSuggestions( state, 123 ) ).toEqual( true );
+			expect( isRequestingUserSuggestions( state, 124 ) ).toEqual( false );
 		} );
 	} );
 } );

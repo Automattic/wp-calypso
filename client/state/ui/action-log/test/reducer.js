@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { ROUTE_SET, COMMENTS_LIKE } from 'calypso/state/action-types';
 import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 import reducer from '../reducer';
@@ -9,7 +8,7 @@ describe( 'reducer', () => {
 	test( 'should default to an empty list', () => {
 		const state = reducer( undefined, {} );
 
-		expect( state ).to.eql( [] );
+		expect( state ).toEqual( [] );
 	} );
 
 	test( 'should add actions to the log', () => {
@@ -25,7 +24,7 @@ describe( 'reducer', () => {
 		];
 		const state = actions.reduce( reducer, undefined );
 
-		expect( state ).to.eql( [
+		expect( state ).toEqual( [
 			{ ...actions[ 0 ], timestamp: 1337 },
 			{ ...actions[ 1 ], timestamp: 1337 },
 		] );
@@ -44,7 +43,7 @@ describe( 'reducer', () => {
 		];
 		const state = actions.reduce( reducer, undefined );
 
-		expect( state ).to.eql( [] );
+		expect( state ).toEqual( [] );
 	} );
 
 	test( 'should log actions with relevant analytics meta', () => {
@@ -84,7 +83,7 @@ describe( 'reducer', () => {
 		];
 		const state = actions.reduce( reducer, undefined );
 
-		expect( state ).to.eql( [
+		expect( state ).toEqual( [
 			{ ...actions[ 0 ], timestamp: 1337 },
 			{ ...actions[ 1 ], timestamp: 1337 },
 		] );
@@ -127,6 +126,6 @@ describe( 'reducer', () => {
 		];
 		const state = actions.reduce( reducer, undefined );
 
-		expect( state ).to.eql( [ { ...actions[ 0 ], timestamp: 1337 } ] );
+		expect( state ).toEqual( [ { ...actions[ 0 ], timestamp: 1337 } ] );
 	} );
 } );

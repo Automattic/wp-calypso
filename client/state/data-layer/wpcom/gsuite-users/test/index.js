@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	GSUITE_USERS_REQUEST,
 	GSUITE_USERS_REQUEST_SUCCESS,
@@ -18,7 +17,7 @@ describe( 'wpcom-api', () => {
 
 		describe( '#getGSuiteUsers', () => {
 			test( 'should dispatch an HTTP request to the get google-apps endpoint', () => {
-				expect( getGSuiteUsers( action ) ).to.eql(
+				expect( getGSuiteUsers( action ) ).toEqual(
 					http(
 						{
 							method: 'GET',
@@ -35,9 +34,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a get g suite users failure action on error', () => {
 				const resultActions = getGSuiteUsersFailure( action, { message } );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: GSUITE_USERS_REQUEST_FAILURE,
 					siteId,
 					error: { message },
@@ -57,7 +56,7 @@ describe( 'wpcom-api', () => {
 						},
 					],
 				};
-				expect( getGSuiteUsersSuccess( action, response ) ).to.eql( {
+				expect( getGSuiteUsersSuccess( action, response ) ).toEqual( {
 					type: GSUITE_USERS_REQUEST_SUCCESS,
 					siteId,
 					response,
@@ -66,9 +65,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a get gsuite users failure action on no response', () => {
 				const resultActions = getGSuiteUsersSuccess( action, undefined );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: GSUITE_USERS_REQUEST_FAILURE,
 					siteId,
 					error: { message: 'No response.' },

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { HELP_CONTACT_FORM_SITE_SELECT } from 'calypso/state/action-types';
 import { selectedSiteId } from '../reducer';
 
@@ -7,7 +6,7 @@ describe( 'reducer', () => {
 		test( 'should default to null', () => {
 			const state = selectedSiteId( undefined, {} );
 
-			expect( state ).to.eql( null );
+			expect( state ).toBeNull();
 		} );
 
 		test( 'should store the site id received', () => {
@@ -19,7 +18,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( 1 );
+			expect( state ).toEqual( 1 );
 		} );
 	} );
 } );

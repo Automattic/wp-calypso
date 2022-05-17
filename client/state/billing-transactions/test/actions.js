@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
 import {
 	BILLING_RECEIPT_EMAIL_SEND,
 	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
@@ -10,12 +8,14 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { requestBillingTransactions, sendBillingReceiptEmail } from '../actions';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
+
+	beforeEach( () => {
+		spy = jest.fn();
+	} );
 
 	describe( '#requestBillingTransactions()', () => {
 		describe( 'success', () => {
@@ -50,14 +50,14 @@ describe( 'actions', () => {
 			test( 'should dispatch fetch action when thunk triggered', () => {
 				requestBillingTransactions()( spy );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: BILLING_TRANSACTIONS_REQUEST,
 				} );
 			} );
 
 			test( 'should dispatch receive action when request completes', () => {
 				return requestBillingTransactions()( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: BILLING_TRANSACTIONS_RECEIVE,
 						past: successResponse.billing_history,
 						upcoming: successResponse.upcoming_charges,
@@ -67,7 +67,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch request success action when request completes', () => {
 				return requestBillingTransactions()( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 					} );
 				} );
@@ -90,9 +90,9 @@ describe( 'actions', () => {
 
 			test( 'should dispatch request failure action when request fails', () => {
 				return requestBillingTransactions( 87654321 )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: BILLING_TRANSACTIONS_REQUEST_FAILURE,
-						error: sinon.match( {
+						error: expect.objectContaining( {
 							message,
 						} ),
 					} );
@@ -115,7 +115,7 @@ describe( 'actions', () => {
 			test( 'should dispatch send action when thunk triggered', () => {
 				sendBillingReceiptEmail( receiptId )( spy );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: BILLING_RECEIPT_EMAIL_SEND,
 					receiptId,
 				} );
@@ -123,7 +123,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch send success action when request completes', () => {
 				return sendBillingReceiptEmail( receiptId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
 						receiptId,
 					} );
@@ -147,10 +147,10 @@ describe( 'actions', () => {
 
 			test( 'should dispatch send failure action when request fails', () => {
 				return sendBillingReceiptEmail( receiptId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: BILLING_RECEIPT_EMAIL_SEND_FAILURE,
 						receiptId,
-						error: sinon.match( {
+						error: expect.objectContaining( {
 							message,
 						} ),
 					} );

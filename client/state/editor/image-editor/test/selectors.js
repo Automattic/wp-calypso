@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { AspectRatios } from '../constants';
 import {
 	getImageEditorTransform,
@@ -25,7 +24,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( transform ).to.eql( {
+			expect( transform ).toEqual( {
 				degrees: 180,
 				scaleX: -1,
 				scaleY: 2,
@@ -46,7 +45,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( fileInfo ).to.eql( {
+			expect( fileInfo ).toEqual( {
 				src: 'testSrc',
 				fileName: 'testFileName',
 			} );
@@ -63,7 +62,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( hasChanges ).to.be.true;
+			expect( hasChanges ).toBe( true );
 		} );
 	} );
 
@@ -82,7 +81,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( bounds ).to.eql( {
+			expect( bounds ).toEqual( {
 				topBound: 100,
 				leftBound: 200,
 				bottomBound: 300,
@@ -106,7 +105,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( hasChanges ).to.eql( {
+			expect( hasChanges ).toEqual( {
 				topRatio: 0.2,
 				leftRatio: 0.3,
 				widthRatio: 0.4,
@@ -125,7 +124,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( hasChanges ).to.eql( AspectRatios.FREE );
+			expect( hasChanges ).toEqual( AspectRatios.FREE );
 		} );
 	} );
 
@@ -141,7 +140,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( isImageLoaded ).to.eql( ! imageIsLoading );
+			expect( isImageLoaded ).toEqual( ! imageIsLoading );
 		} );
 	} );
 } );

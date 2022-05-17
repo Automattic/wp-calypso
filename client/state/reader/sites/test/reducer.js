@@ -1,4 +1,3 @@
-import { expect as chaiExpect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	READER_SITE_BLOCKS_RECEIVE,
@@ -12,11 +11,11 @@ import { items, queuedRequests, lastFetched } from '../reducer';
 describe( 'reducer', () => {
 	describe( 'items', () => {
 		test( 'should return an empty map by default', () => {
-			chaiExpect( items( undefined, {} ) ).to.deep.equal( {} );
+			expect( items( undefined, {} ) ).toEqual( {} );
 		} );
 
 		test( 'should update the state when receiving a feed', () => {
-			chaiExpect(
+			expect(
 				items(
 					{},
 					{
@@ -27,7 +26,7 @@ describe( 'reducer', () => {
 						},
 					}
 				)[ 1 ]
-			).to.deep.equal( {
+			).toEqual( {
 				ID: 1,
 				name: 'my site',
 				title: 'my site',
@@ -35,7 +34,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should fallback to using the domain for the title if name is missing', () => {
-			chaiExpect(
+			expect(
 				items(
 					{},
 					{
@@ -46,7 +45,7 @@ describe( 'reducer', () => {
 						},
 					}
 				)[ 1 ]
-			).to.deep.equal( {
+			).toEqual( {
 				ID: 1,
 				URL: 'http://example.com/foo/bar',
 				domain: 'example.com/foo/bar',
@@ -56,7 +55,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should set the domain and slug from the url', () => {
-			chaiExpect(
+			expect(
 				items(
 					{},
 					{
@@ -68,7 +67,7 @@ describe( 'reducer', () => {
 						},
 					}
 				)[ 1 ]
-			).to.deep.equal( {
+			).toEqual( {
 				ID: 1,
 				URL: 'http://example.com/foo/bar',
 				domain: 'example.com/foo/bar',
@@ -79,7 +78,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should set the domain and slug from the url unless it is a site redirect', () => {
-			chaiExpect(
+			expect(
 				items(
 					{},
 					{
@@ -95,7 +94,7 @@ describe( 'reducer', () => {
 						},
 					}
 				)[ 1 ]
-			).to.deep.equal( {
+			).toEqual( {
 				ID: 1,
 				URL: 'http://example.com/foo/bar',
 				domain: 'formerlyexample.com/foo/bar',
@@ -110,7 +109,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should decode entities in the site description', () => {
-			chaiExpect(
+			expect(
 				items(
 					{},
 					{
@@ -121,14 +120,12 @@ describe( 'reducer', () => {
 						},
 					}
 				)[ 1 ]
-			)
-				.to.have.a.property( 'description' )
-				.that.equals( 'Apples&Pears' );
+			).toHaveProperty( 'description', 'Apples&Pears' );
 		} );
 
 		test( 'should serialize site entries', () => {
 			const unvalidatedObject = deepFreeze( { hi: 'there' } );
-			chaiExpect( serialize( items, unvalidatedObject ) ).to.deep.equal( unvalidatedObject );
+			expect( serialize( items, unvalidatedObject ) ).toEqual( unvalidatedObject );
 		} );
 
 		test( 'should not serialize errors', () => {
@@ -139,7 +136,7 @@ describe( 'reducer', () => {
 					is_error: true,
 				},
 			} );
-			chaiExpect( serialize( items, stateWithErrors ) ).to.deep.equal( {
+			expect( serialize( items, stateWithErrors ) ).toEqual( {
 				12: { ID: 12, name: 'yes' },
 			} );
 		} );
@@ -147,7 +144,7 @@ describe( 'reducer', () => {
 		test( 'should reject deserializing entries it cannot validate', () => {
 			const consoleSpy = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
 			const unvalidatedObject = deepFreeze( { hi: 'there' } );
-			chaiExpect( deserialize( items, unvalidatedObject ) ).to.deep.equal( {} );
+			expect( deserialize( items, unvalidatedObject ) ).toEqual( {} );
 			consoleSpy.mockRestore();
 		} );
 
@@ -158,11 +155,11 @@ describe( 'reducer', () => {
 					name: 'Example Dot Com',
 				},
 			} );
-			chaiExpect( deserialize( items, validState ) ).to.deep.equal( validState );
+			expect( deserialize( items, validState ) ).toEqual( validState );
 		} );
 
 		test( 'should stash an error object in the map if the request fails with a 410', () => {
-			chaiExpect(
+			expect(
 				items(
 					{},
 					{
@@ -171,12 +168,12 @@ describe( 'reducer', () => {
 						payload: { ID: 666 },
 					}
 				)
-			).to.deep.equal( { 666: { ID: 666, is_error: true, error: { statusCode: 410 } } } );
+			).toEqual( { 666: { ID: 666, is_error: true, error: { statusCode: 410 } } } );
 		} );
 
 		test( 'should overwrite an existing entry on receiving a new feed', () => {
 			const startingState = deepFreeze( { 666: { ID: 666, name: 'valid' } } );
-			chaiExpect(
+			expect(
 				items( startingState, {
 					type: READER_SITE_REQUEST_SUCCESS,
 					payload: {
@@ -184,18 +181,18 @@ describe( 'reducer', () => {
 						name: 'new',
 					},
 				} )
-			).to.deep.equal( { 666: { ID: 666, name: 'new', title: 'new' } } );
+			).toEqual( { 666: { ID: 666, name: 'new', title: 'new' } } );
 		} );
 
 		test( 'should leave an existing entry alone if an error is received', () => {
 			const startingState = deepFreeze( { 666: { ID: 666, name: 'valid' } } );
-			chaiExpect(
+			expect(
 				items( startingState, {
 					type: READER_SITE_REQUEST_FAILURE,
 					error: { statusCode: 500 },
 					payload: { ID: 666 },
 				} )
-			).to.deep.equal( startingState );
+			).toEqual( startingState );
 		} );
 
 		test( 'should accept site details from site blocks', () => {
@@ -224,7 +221,7 @@ describe( 'reducer', () => {
 
 	describe( 'isRequestingFeed', () => {
 		test( 'should add to the set of feeds inflight', () => {
-			chaiExpect(
+			expect(
 				queuedRequests(
 					{},
 					{
@@ -232,16 +229,16 @@ describe( 'reducer', () => {
 						payload: { ID: 1 },
 					}
 				)
-			).to.deep.equal( { 1: true } );
+			).toEqual( { 1: true } );
 		} );
 
 		test( 'should remove the feed from the set inflight', () => {
-			chaiExpect(
+			expect(
 				queuedRequests( deepFreeze( { 1: true } ), {
 					type: READER_SITE_REQUEST_SUCCESS,
 					payload: { ID: 1 },
 				} )
-			).to.deep.equal( {} );
+			).toEqual( {} );
 		} );
 	} );
 
@@ -252,7 +249,9 @@ describe( 'reducer', () => {
 				type: READER_SITE_REQUEST_SUCCESS,
 				payload: { ID: 1 },
 			};
-			chaiExpect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
+			const result = lastFetched( original, action );
+			expect( result ).toHaveProperty( '1' );
+			expect( result[ 1 ] ).toEqual( expect.any( Number ) );
 		} );
 	} );
 } );

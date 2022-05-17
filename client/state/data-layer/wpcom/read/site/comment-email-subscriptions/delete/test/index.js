@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
@@ -16,7 +15,7 @@ describe( 'comment-email-subscriptions', () => {
 		test( 'should dispatch an http request and call through next', () => {
 			const action = unsubscribeToNewCommentEmail( 1234 );
 			const result = requestCommentEmailUnsubscription( action );
-			expect( result ).to.eql(
+			expect( result ).toEqual(
 				http(
 					{
 						method: 'POST',
@@ -33,7 +32,7 @@ describe( 'comment-email-subscriptions', () => {
 	describe( 'receiveCommentEmailUnsubscription', () => {
 		test( 'should do nothing if successful', () => {
 			const result = receiveCommentEmailUnsubscription( null, { subscribed: false } );
-			expect( result ).to.be.undefined;
+			expect( result ).toBeUndefined();
 		} );
 
 		test( 'should  a subscribe if it fails using next', () => {
@@ -41,20 +40,20 @@ describe( 'comment-email-subscriptions', () => {
 				{ payload: { blogId: 1234 } },
 				{ subscribed: true }
 			);
-			expect( result[ 0 ].notice.text ).to.eql(
+			expect( result[ 0 ].notice.text ).toEqual(
 				'Sorry, we had a problem unsubscribing. Please try again.'
 			);
-			expect( result[ 1 ] ).to.eql( bypassDataLayer( subscribeToNewCommentEmail( 1234 ) ) );
+			expect( result[ 1 ] ).toEqual( bypassDataLayer( subscribeToNewCommentEmail( 1234 ) ) );
 		} );
 	} );
 
 	describe( 'receiveCommentEmailUnsubscriptionError', () => {
 		test( 'should dispatch an error notice and subscribe action through next', () => {
 			const result = receiveCommentEmailUnsubscriptionError( { payload: { blogId: 1234 } } );
-			expect( result[ 0 ].notice.text ).to.eql(
+			expect( result[ 0 ].notice.text ).toEqual(
 				'Sorry, we had a problem unsubscribing. Please try again.'
 			);
-			expect( result[ 1 ] ).to.eql( bypassDataLayer( subscribeToNewCommentEmail( 1234 ) ) );
+			expect( result[ 1 ] ).toEqual( bypassDataLayer( subscribeToNewCommentEmail( 1234 ) ) );
 		} );
 	} );
 } );

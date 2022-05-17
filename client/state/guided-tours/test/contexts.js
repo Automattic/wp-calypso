@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { expect } from 'chai';
 import moment from 'moment';
 import { isUserNewerThan } from '../contexts';
 
@@ -29,11 +28,11 @@ describe( 'selectors', () => {
 		};
 
 		test( 'should return false for users registered before a week ago', () => {
-			expect( isUserNewerThan( WEEK_IN_MILLISECONDS )( oldUser ) ).to.be.false;
+			expect( isUserNewerThan( WEEK_IN_MILLISECONDS )( oldUser ) ).toBe( false );
 		} );
 
 		test( 'should return true for users registered in the last week', () => {
-			expect( isUserNewerThan( WEEK_IN_MILLISECONDS )( newUser ) ).to.be.true;
+			expect( isUserNewerThan( WEEK_IN_MILLISECONDS )( newUser ) ).toBe( true );
 		} );
 	} );
 } );

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { combineDismissPreference, combineValidPreference } from '../actions';
 
 describe( 'actions', () => {
@@ -16,7 +15,7 @@ describe( 'actions', () => {
 						dismissDate,
 						false
 					).scan
-				).to.have.property( 'dismissedAt', dismissDate );
+				).toHaveProperty( 'dismissedAt', dismissDate );
 			} );
 
 			test( 'should set dismissCount to 1 on initial dismiss', () => {
@@ -29,7 +28,7 @@ describe( 'actions', () => {
 						Date.now(),
 						false
 					).scan
-				).to.have.property( 'dismissCount', 1 );
+				).toHaveProperty( 'dismissCount', 1 );
 			} );
 
 			test( 'should increment dismissCount', () => {
@@ -53,7 +52,7 @@ describe( 'actions', () => {
 						Date.now(),
 						false
 					).scan
-				).to.have.property( 'dismissCount', 2 );
+				).toHaveProperty( 'dismissCount', 2 );
 			} );
 
 			test( 'should set reviewed', () => {
@@ -66,7 +65,7 @@ describe( 'actions', () => {
 						Date.now(),
 						true
 					).scan
-				).to.have.property( 'reviewed', true );
+				).toHaveProperty( 'reviewed', true );
 			} );
 
 			describe( 'combineValidPreference()', () => {
@@ -81,7 +80,7 @@ describe( 'actions', () => {
 							'scan',
 							validFrom
 						).scan
-					).to.have.property( 'validFrom', validFrom );
+					).toHaveProperty( 'validFrom', validFrom );
 				} );
 			} );
 		} );
@@ -100,7 +99,7 @@ describe( 'actions', () => {
 						dismissDate,
 						false
 					).restore
-				).to.have.property( 'dismissedAt', dismissDate );
+				).toHaveProperty( 'dismissedAt', dismissDate );
 			} );
 
 			test( 'should set dismissCount to 1 on initial dismiss', () => {
@@ -113,7 +112,7 @@ describe( 'actions', () => {
 						Date.now(),
 						false
 					).restore
-				).to.have.property( 'dismissCount', 1 );
+				).toHaveProperty( 'dismissCount', 1 );
 			} );
 
 			test( 'should increment dismissCount', () => {
@@ -137,7 +136,7 @@ describe( 'actions', () => {
 						Date.now(),
 						false
 					).restore
-				).to.have.property( 'dismissCount', 2 );
+				).toHaveProperty( 'dismissCount', 2 );
 			} );
 
 			test( 'should set reviewed', () => {
@@ -150,7 +149,7 @@ describe( 'actions', () => {
 						Date.now(),
 						true
 					).restore
-				).to.have.property( 'reviewed', true );
+				).toHaveProperty( 'reviewed', true );
 			} );
 		} );
 
@@ -166,7 +165,7 @@ describe( 'actions', () => {
 						'restore',
 						validFrom
 					).restore
-				).to.have.property( 'validFrom', validFrom );
+				).toHaveProperty( 'validFrom', validFrom );
 			} );
 		} );
 	} );
