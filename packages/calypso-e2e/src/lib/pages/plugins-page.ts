@@ -27,7 +27,7 @@ const selectors = {
 	searchInput: 'input.search-component__input',
 	searchResult: ( text: string ) => `.plugins-browser-item__title:text("${ text }")`,
 	// eslint-disable-next-line no-useless-escape
-	searchResultTitle: ( text: string ) => `:text("Found /[0-9]+/ plugins for \"${ text }\"")`,
+	searchResultTitle: ( text: string ) => `:text('plugins for "${ text }"')`,
 
 	// Plugin view
 	pluginHamburgerMenu: `.plugin-site-jetpack__action`,
