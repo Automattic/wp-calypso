@@ -22,6 +22,8 @@ class ConfirmDisconnection extends Component {
 		reason: PropTypes.string,
 		type: PropTypes.string,
 		text: PropTypes.oneOfType( [ PropTypes.string, PropTypes.arrayOf( PropTypes.string ) ] ),
+		disconnectHref: PropTypes.string,
+		stayConnectedHref: PropTypes.string,
 		// Provided by HOCs
 		purchase: PropTypes.object,
 		siteId: PropTypes.number,
@@ -60,7 +62,7 @@ class ConfirmDisconnection extends Component {
 	};
 
 	render() {
-		const { type, siteId, siteSlug, translate } = this.props;
+		const { disconnectHref, siteId, siteSlug, stayConnectedHref, translate, type } = this.props;
 
 		const backHref =
 			`/settings/disconnect-site/${ siteSlug }` +
@@ -76,12 +78,12 @@ class ConfirmDisconnection extends Component {
 					) }
 				/>
 				<DisconnectJetpack
-					disconnectHref="/stats"
+					disconnectHref={ disconnectHref ?? '/stats' }
 					isBroken={ false }
 					onDisconnectClick={ this.submitSurvey }
 					showTitle={ false }
 					siteId={ siteId }
-					stayConnectedHref={ '/settings/manage-connection/' + siteSlug }
+					stayConnectedHref={ stayConnectedHref ?? '/settings/manage-connection/' + siteSlug }
 				/>
 				<div className="disconnect-site__navigation-links">
 					<NavigationLink href={ backHref } direction="back" />

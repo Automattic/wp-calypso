@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	SITE_PLANS_FETCH,
 	SITE_PLANS_FETCH_COMPLETED,
@@ -12,14 +11,14 @@ describe( 'reducer', () => {
 		test( 'should return an empty state when original state is undefined and action is empty', () => {
 			const state = plans( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should return an empty state when original state and action are empty', () => {
 			const original = Object.freeze( {} );
 			const state = plans( original, {} );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return an empty state when original state is undefined and action is unknown', () => {
@@ -28,7 +27,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should return the original state when action is unknown', () => {
@@ -45,7 +44,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return the initial state with requesting enabled when fetching is triggered', () => {
@@ -54,7 +53,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: null,
 					error: null,
@@ -79,7 +78,7 @@ describe( 'reducer', () => {
 				error: 'Unable to fetch site plans',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: [],
 					error: 'Unable to fetch site plans',
@@ -96,7 +95,7 @@ describe( 'reducer', () => {
 				plans: [],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: [],
 					error: null,
@@ -120,7 +119,7 @@ describe( 'reducer', () => {
 				siteId: 55555555,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: [],
 					error: null,
@@ -150,7 +149,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: null,
 					error: null,
@@ -166,7 +165,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should return the original state when removal is triggered for an unknown site', () => {
@@ -183,7 +182,7 @@ describe( 'reducer', () => {
 				siteId: 22222222,
 			} );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should remove plans for a given site when removal is triggered', () => {
@@ -206,7 +205,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				22222222: {
 					data: [],
 					error: null,

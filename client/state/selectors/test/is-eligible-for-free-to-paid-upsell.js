@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isMappedDomainSite from 'calypso/state/selectors/is-mapped-domain-site';
 import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
@@ -31,35 +30,35 @@ describe( 'isEligibleForFreeToPaidUpsell', () => {
 	test( 'should return false when user can not manage options', () => {
 		meetAllConditions();
 		canCurrentUser.withArgs( state, siteId, 'manage_options' ).returns( false );
-		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).to.be.false;
+		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return false when site is Jetpack', () => {
 		meetAllConditions();
 		isJetpackSite.withArgs( state, siteId ).returns( true );
-		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).to.be.false;
+		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return false when site has mapped domain', () => {
 		meetAllConditions();
 		isMappedDomainSite.withArgs( state, siteId ).returns( true );
-		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).to.be.false;
+		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return false when site is not on a free plan', () => {
 		meetAllConditions();
 		isSiteOnFreePlan.withArgs( state, siteId ).returns( false );
-		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).to.be.false;
+		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return false when site is a vip site', () => {
 		meetAllConditions();
 		isVipSite.withArgs( state, siteId ).returns( true );
-		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).to.be.false;
+		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return true when all conditions are met', () => {
 		meetAllConditions();
-		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).to.be.true;
+		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( true );
 	} );
 } );

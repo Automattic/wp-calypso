@@ -1,11 +1,10 @@
-import { expect } from 'chai';
 import getUserDevices from 'calypso/state/selectors/get-user-devices';
 
 describe( '#getUserDevices()', () => {
 	test( 'should return an empty array if there are no devices', () => {
 		const result = getUserDevices( {} );
 
-		expect( result ).to.be.empty;
+		expect( Object.keys( result ) ).toHaveLength( 0 );
 	} );
 	test( 'should return all available user devices', () => {
 		const userDevices = {
@@ -14,7 +13,7 @@ describe( '#getUserDevices()', () => {
 		};
 		const result = getUserDevices( { userDevices } );
 
-		expect( result ).to.deep.equal( [
+		expect( result ).toEqual( [
 			{ device_id: 1, device_name: 'Mobile Phone' },
 			{ device_id: 2, device_name: 'Tablet' },
 		] );

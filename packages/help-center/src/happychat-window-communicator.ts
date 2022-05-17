@@ -17,7 +17,7 @@ export function useHCWindowCommunicator(
 	} );
 
 	const supportSite = selectedSite || userDeclaredSite;
-	const { resetPopup } = useDispatch( STORE_KEY );
+	const { resetPopup, resetStore } = useDispatch( STORE_KEY );
 
 	useEffect( () => {
 		const messageHandler = ( event: MessageEvent ) => {
@@ -47,6 +47,8 @@ export function useHCWindowCommunicator(
 							},
 							{ targetOrigin: event.origin }
 						);
+						// now clear the store, since we sent everything
+						resetStore();
 						break;
 					}
 				}

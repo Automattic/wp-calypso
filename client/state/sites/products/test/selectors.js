@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	getAvailableProductsBySiteId,
 	getProductsBySiteId,
@@ -24,7 +23,7 @@ describe( 'selectors', () => {
 			};
 			const products = getProductsBySiteId( state, 2916284 );
 
-			expect( products ).to.eql( products1 );
+			expect( products ).toEqual( products1 );
 		} );
 	} );
 
@@ -46,7 +45,7 @@ describe( 'selectors', () => {
 			};
 			const products = getAvailableProductsBySiteId( state, 2916284 );
 
-			expect( products ).to.eql( {
+			expect( products ).toEqual( {
 				data: { first_product: { available: true }, third_product: { available: true } },
 			} );
 		} );
@@ -73,9 +72,9 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( isRequestingSiteProducts( state, 2916284 ) ).to.equal( true );
-			expect( isRequestingSiteProducts( state, 77203074 ) ).to.equal( false );
-			expect( isRequestingSiteProducts( state, 'unknown' ) ).to.equal( false );
+			expect( isRequestingSiteProducts( state, 2916284 ) ).toEqual( true );
+			expect( isRequestingSiteProducts( state, 77203074 ) ).toEqual( false );
+			expect( isRequestingSiteProducts( state, 'unknown' ) ).toEqual( false );
 		} );
 	} );
 } );

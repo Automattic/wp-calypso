@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 
 describe( 'getCurrentPlanPurchaseId()', () => {
@@ -24,8 +23,8 @@ describe( 'getCurrentPlanPurchaseId()', () => {
 			},
 		};
 
-		expect( getCurrentPlanPurchaseId( state ) ).to.be.null;
-		expect( getCurrentPlanPurchaseId( state, 123 ) ).to.be.null;
+		expect( getCurrentPlanPurchaseId( state ) ).toBeNull();
+		expect( getCurrentPlanPurchaseId( state, 123 ) ).toBeNull();
 	} );
 
 	it( 'should return null if the current purchase ID is unknown', () => {
@@ -54,7 +53,7 @@ describe( 'getCurrentPlanPurchaseId()', () => {
 			},
 		};
 
-		expect( getCurrentPlanPurchaseId( state, siteId ) ).to.be.null;
+		expect( getCurrentPlanPurchaseId( state, siteId ) ).toBeNull();
 	} );
 
 	it( 'should return null if there is no plans data, but there is site plan data', () => {
@@ -77,7 +76,7 @@ describe( 'getCurrentPlanPurchaseId()', () => {
 			},
 		};
 
-		expect( getCurrentPlanPurchaseId( state, siteId ) ).to.be.null;
+		expect( getCurrentPlanPurchaseId( state, siteId ) ).toBeNull();
 	} );
 
 	it( 'should return the purchase ID for a site', () => {
@@ -106,6 +105,6 @@ describe( 'getCurrentPlanPurchaseId()', () => {
 			},
 		};
 
-		expect( getCurrentPlanPurchaseId( state, siteId ) ).to.equal( purchaseId );
+		expect( getCurrentPlanPurchaseId( state, siteId ) ).toEqual( purchaseId );
 	} );
 } );

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 
 describe( 'countPostLikes()', () => {
@@ -15,7 +14,7 @@ describe( 'countPostLikes()', () => {
 			50
 		);
 
-		expect( count ).to.be.null;
+		expect( count ).toBeNull();
 	} );
 
 	test( 'should return null if the post has never been fetched', () => {
@@ -35,7 +34,7 @@ describe( 'countPostLikes()', () => {
 			50
 		);
 
-		expect( count ).to.be.null;
+		expect( count ).toBeNull();
 	} );
 
 	test( 'should return the total of post likes', () => {
@@ -55,6 +54,6 @@ describe( 'countPostLikes()', () => {
 			50
 		);
 
-		expect( count ).to.eql( 42 );
+		expect( count ).toEqual( 42 );
 	} );
 } );

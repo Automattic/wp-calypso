@@ -242,7 +242,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		yield saveSiteSettings( siteId, { blogdescription } );
 	}
 
-	function* setDesignOnSite( siteSlug: string, selectedDesign: Design ) {
+	function* setDesignOnSite(
+		siteSlug: string,
+		selectedDesign: Design,
+		siteVerticalId: string | undefined
+	) {
 		const { theme, recipe } = selectedDesign;
 
 		yield wpcomRequest( {
@@ -261,7 +265,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
-				body: { trim_content: true, pattern_ids: recipe?.patternIds },
+				body: {
+					trim_content: true,
+					pattern_ids: recipe?.patternIds,
+					vertical_id: siteVerticalId,
+				},
 				method: 'POST',
 			} );
 		}

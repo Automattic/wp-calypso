@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import isRequestingJetpackUserConnection from 'calypso/state/selectors/is-requesting-jetpack-user-connection';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-connection';
 
@@ -13,7 +12,7 @@ describe( 'isRequestingJetpackUserConnection()', () => {
 		};
 		const siteId = 87654321;
 		const output = isRequestingJetpackUserConnection( stateIn, siteId );
-		expect( output ).to.be.true;
+		expect( output ).toBe( true );
 	} );
 
 	test( 'should return false if the user connection data is not being fetched', () => {
@@ -26,7 +25,7 @@ describe( 'isRequestingJetpackUserConnection()', () => {
 		};
 		const siteId = 12345678;
 		const output = isRequestingJetpackUserConnection( stateIn, siteId );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return false if the site is not known yet', () => {
@@ -39,6 +38,6 @@ describe( 'isRequestingJetpackUserConnection()', () => {
 		};
 		const siteId = 88888888;
 		const output = isRequestingJetpackUserConnection( stateIn, siteId );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 } );

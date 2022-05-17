@@ -8,7 +8,7 @@ type PlansGridVersion = 'current' | 'legacy';
 type PlansComparisonAction = 'show' | 'hide';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
-export type Plans = 'Start with Free' | 'Pro';
+export type Plans = 'start with a free site' | 'start with free' | 'Pro';
 export type LegacyPlans = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
 export type PlansPageTab = 'My Plan' | 'Plans';
 export type PlanActionButton = 'Manage plan' | 'Upgrade';
@@ -31,7 +31,8 @@ const selectors = {
 	},
 
 	// Overhauled plans view
-	selectPlanButton: ( type: Plans ) => `tr th button.button:has-text("${ type }")`,
+	selectPlanButton: ( type: Plans ) =>
+		`.formatted-header button.button:has-text("${ type }"), tr th button.button:has-text("${ type }")`,
 	// upgradeToProButton: 'th button.is-primary',
 	planComparisonActionButton: ( action: PlansComparisonAction ) => {
 		const buttonText = `${ toTitleCase( action ) } full plan comparison`;

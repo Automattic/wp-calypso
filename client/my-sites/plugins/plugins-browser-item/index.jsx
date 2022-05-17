@@ -112,7 +112,7 @@ const PluginsBrowserListElement = ( props ) => {
 		return ! isCompatiblePlugin( plugin.slug ) && ! jetpackNonAtomic;
 	} );
 
-	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite?.ID ) );
 
 	if ( isPlaceholder ) {
 		return <Placeholder iconSize={ iconSize } />;

@@ -1,6 +1,6 @@
 #### Unreleased
 
-#### trunk
+#### v6.0.0 (2022-05-13)
 
 - Breaking: Migrated from `babel-eslint` to `@babel/eslint-parser`. This requires `@babel/core` to be
   installed (added as a `peerDependency` to this package) and a valid Babel configuration file to exist.
