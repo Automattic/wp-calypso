@@ -58,7 +58,7 @@ export default function CloneSettingsMain(): ReactElement {
 		if ( siteId && sourceSiteId ) {
 			dispatch( cloneJetpackSettings( siteId, sourceSiteId ) );
 		}
-	}, [ siteId, sourceSiteId ] );
+	}, [ siteId, sourceSiteId, dispatch ] );
 
 	return (
 		<Main className="jetpack-clone-settings">

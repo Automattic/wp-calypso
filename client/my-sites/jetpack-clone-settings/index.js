@@ -1,12 +1,12 @@
 import Debug from 'debug';
 import page from 'page';
-import { makeLayout, render as clientRender } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { jetpackCloneSettingsMainPath } from './paths';
 import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import JetpackCloneSettingsDisconnected from './disconnected';
 import CloneSettingsMain from './main';
+import { jetpackCloneSettingsMainPath } from './paths';
 
 const debug = new Debug( 'calypso:my-sites:jetpack-clone-settings:controller' );
 
