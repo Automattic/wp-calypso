@@ -1,25 +1,21 @@
 import { Gridicon } from '@automattic/components';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { ReactElement, useRef, useState } from 'react';
 import Badge from 'calypso/components/badge';
 import Tooltip from 'calypso/components/tooltip';
 import { getRowMetaData } from './utils';
-import type { AllowedTypes } from './types';
+import type { AllowedTypes, SiteData } from './types';
 
-interface RowArguments {
-	value: { url: string; blog_id: number };
-	error: string;
-	status: string;
-}
 interface Props {
-	rows: { site: RowArguments };
+	rows: SiteData;
 	type: AllowedTypes;
 }
 
 export default function SiteStatusContent( { rows, type }: Props ): ReactElement {
 	const {
 		link,
-		row: { value, status },
+		row: { value, status, error },
 		siteError,
 		tooltip,
 		tooltipId,
@@ -40,7 +36,32 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 	};
 
 	if ( type === 'site' ) {
-		return <span className="sites-overview__row-text">{ value.url }</span>;
+		const siteIssues = rows.scan.threats || rows.plugin.updates;
+		let errorContent;
+		if ( error ) {
+			errorContent = (
+				<span className="sites-overview__status-critical">
+					<Gridicon size={ 24 } icon="notice-outline" />
+				</span>
+			);
+		} else if ( siteIssues ) {
+			errorContent = (
+				<span
+					className={ classNames(
+						'sites-overview__status-count',
+						rows.scan.threats ? 'sites-overview__status-failed' : 'sites-overview__status-warning'
+					) }
+				>
+					{ siteIssues }
+				</span>
+			);
+		}
+		return (
+			<>
+				<span className="sites-overview__row-text">{ value.url }</span>
+				{ errorContent }
+			</>
+		);
 	}
 
 	let content;
