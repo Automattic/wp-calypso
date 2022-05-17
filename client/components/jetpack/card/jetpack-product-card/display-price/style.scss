@@ -39,6 +39,12 @@
 
 	.plan-price {
 		display: inline-flex;
+
+		// inline-flex causes *everything* to flow right-to-left in right-to-left locales,
+		// so we override currency displays by setting the direction explicitly
+		/* rtl:ignore */
+		direction: ltr;
+
 		color: var( --studio-gray-100 );
 
 		&.display-price__original-price {
