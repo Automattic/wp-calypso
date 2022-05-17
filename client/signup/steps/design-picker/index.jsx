@@ -1,10 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import {
-	planHasFeature,
-	FEATURE_PREMIUM_THEMES,
-	PLAN_PREMIUM,
-	WPCOM_FEATURES_PREMIUM_THEMES,
-} from '@automattic/calypso-products';
+import { PLAN_PREMIUM, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import DesignPicker, {
 	PremiumBadge,
@@ -49,12 +44,11 @@ export default function DesignPickerStep( props ) {
 		hideFullScreenPreview,
 		hideDesignTitle,
 		signupDependencies: dependencies,
-		sitePlanSlug,
 	} = props;
 
-	const isPremiumThemeAvailable = useMemo(
-		() => planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES ),
-		[ sitePlanSlug ]
+	const siteId = useSelector( ( state ) => getSiteId( state, dependencies.siteSlug ) );
+	const isPremiumThemeAvailable = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES )
 	);
 
 	const userLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
@@ -70,11 +64,6 @@ export default function DesignPickerStep( props ) {
 			: 'free';
 
 	// Limit themes to those that support the Site editor, if site is fse eligible
-	const siteId = useSelector( ( state ) => getSiteId( state, dependencies.siteSlug ) );
-	const isPremiumThemeAvailable2 = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES )
-	);
-	console.log( { isPremiumThemeAvailable, isPremiumThemeAvailable2 } );
 	const { isLoading: blockEditorSettingsAreLoading, data: blockEditorSettings } =
 		useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.useDIFMThemes );
 	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
