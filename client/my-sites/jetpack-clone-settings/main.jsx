@@ -40,7 +40,7 @@ function chooseSite( siteId, sites, onSelect ) {
 	);
 }
 
-export default function CloneSettingsMain(): ReactElement {
+export default function CloneSettingsMain() {
 	const siteId = useSelector( getSelectedSiteId );
 	const sites = useSelector( getSites ) || [];
 	const dispatch = useDispatch();
