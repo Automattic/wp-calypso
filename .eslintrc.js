@@ -14,8 +14,10 @@ module.exports = {
 		'plugin:wpcalypso/react',
 		'plugin:jsx-a11y/recommended',
 		'plugin:jest/recommended',
+		'plugin:jest-dom/recommended',
 		'plugin:prettier/recommended',
 		'plugin:md/prettier',
+		'plugin:testing-library/react',
 		'plugin:@wordpress/eslint-plugin/i18n',
 	],
 	overrides: [
@@ -274,7 +276,7 @@ module.exports = {
 		// this is when Webpack last built the bundle
 		BUILD_TIMESTAMP: true,
 	},
-	plugins: [ 'import', 'you-dont-need-lodash-underscore' ],
+	plugins: [ 'import', 'you-dont-need-lodash-underscore', 'testing-library', 'jest-dom' ],
 	settings: {
 		react: {
 			version: reactVersion,
