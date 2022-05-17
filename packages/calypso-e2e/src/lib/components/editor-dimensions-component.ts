@@ -3,8 +3,7 @@ import { EditorPopoverMenuComponent } from './editor-popover-menu-component';
 
 const selectors = {
 	paddingInput: 'input[aria-label="Padding"]',
-	optionsButton:
-		'.components-tools-panel-header:has-text("Dimensions") button[aria-label="View options"]',
+	optionsButton: 'button[aria-label="Dimensions options"]',
 };
 
 export interface DimensionsSettings {
