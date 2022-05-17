@@ -9,16 +9,16 @@
 <!-- TOC -->
 
 - [Running tests on your machine](#running-tests-on-your-machine)
-    - [Prerequisites](#prerequisites)
-    - [Running tests](#running-tests)
-        - [Individual spec files](#individual-spec-files)
-        - [Test Group](#test-group)
-    - [Advanced techniques](#advanced-techniques)
-        - [Save authentication cookies](#save-authentication-cookies)
-        - [Use the mobile viewport](#use-the-mobile-viewport)
-        - [Target a different environment](#target-a-different-environment)
-        - [Debug mode](#debug-mode)
-            - [Notes on TypeScript](#notes-on-typescript)
+  - [Prerequisites](#prerequisites)
+  - [Running tests](#running-tests)
+    - [Individual spec files](#individual-spec-files)
+    - [Test Group](#test-group)
+  - [Advanced techniques](#advanced-techniques)
+    - [Save authentication cookies](#save-authentication-cookies)
+    - [Use the mobile viewport](#use-the-mobile-viewport)
+    - [Target a different environment](#target-a-different-environment)
+    - [Debug mode](#debug-mode)
+      - [Notes on TypeScript](#notes-on-typescript)
 
 <!-- /TOC -->
 
@@ -79,9 +79,9 @@ By default, tests run against the `desktop` viewport size, approximately 1920x10
 
 To specify the viewport size:
 
-	a. set the viewport size to persist in the shell: `export VIEWPORT_NAME=<viewport>`
+    a. set the viewport size to persist in the shell: `export VIEWPORT_NAME=<viewport>`
 
-	b. set the viewport size for the command only: `VIEWPORT_NAME=<viewport> yarn jest <test_path>`
+    b. set the viewport size for the command only: `VIEWPORT_NAME=<viewport> yarn jest <test_path>`
 
 ```
 VIEWPORT_NAME=mobile yarn jest ...
@@ -93,15 +93,15 @@ To target a webapp running in a different environment:
 
 1. determine the base URL to use for the appropriate environment.
 
-	- for local webapp: `http://calypso.localhost:3000`
-	- for staging webapp: `https://wordpress.com`
-	- for wpcalypso webapp: `https://wpcalypso.wordpress.com`
+   - for local webapp: `http://calypso.localhost:3000`
+   - for staging webapp: `https://wordpress.com`
+   - for wpcalypso webapp: `https://wpcalypso.wordpress.com`
 
 2. set the `CALYPSO_BASE_URL` environment variable:
 
-	a. set the variable to persist in the shell: `export CALYPSO_BASE_URL=<url>`
+   a. set the variable to persist in the shell: `export CALYPSO_BASE_URL=<url>`
 
-	b. set the variable for the command only: `CALYPSO_BASE_URL=<url> yarn jest <test_path>`
+   b. set the variable for the command only: `CALYPSO_BASE_URL=<url> yarn jest <test_path>`
 
 <img alt="Local Calypso Webapp" src="https://cldup.com/1WwDmUXWen.png" />
 <sup><center>Example: webapp running on localhost.</center></sup>
