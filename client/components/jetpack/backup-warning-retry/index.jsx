@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Button from 'calypso/components/forms/form-button';
@@ -12,6 +12,7 @@ import './style.scss';
 export default function BackupWarningRetry( { siteId } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const [ disable, setDisable ] = useState( false );
 	const requestBackupSite = useCallback(
 		() => dispatch( rewindBackupSite( siteId ) ),
 		[ dispatch, siteId ]
@@ -20,6 +21,12 @@ export default function BackupWarningRetry( { siteId } ) {
 		requestBackupSite,
 		'calypso_jetpack_backup_retry_click'
 	);
+	const retryText = translate( 'Retry' );
+	const queuedText = translate( 'Queued' );
+	const enqueueRetry = () => {
+		trackedRequestBackupSite();
+		setDisable( true );
+	};
 	const warningInfoLink = `https://jetpack.com/redirect?source=jetpack-support-backup`;
 
 	return (
@@ -43,9 +50,10 @@ export default function BackupWarningRetry( { siteId } ) {
 				<Button
 					isPrimary
 					className="backup-warning-retry__button"
-					onClick={ trackedRequestBackupSite }
+					onClick={ enqueueRetry }
+					disabled={ disable }
 				>
-					{ translate( 'Retry' ) }
+					{ disable ? queuedText : retryText }
 				</Button>
 			</div>
 		</div>
