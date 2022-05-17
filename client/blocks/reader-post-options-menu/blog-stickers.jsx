@@ -2,8 +2,9 @@ import PropTypes from 'prop-types';
 import { useBlogStickersQuery } from 'calypso/blocks/blog-stickers/use-blog-stickers-query';
 import ReaderPostOptionsMenuBlogStickerMenuItem from './blog-sticker-menu-item';
 
+const blogStickersOffered = [ 'dont-recommend', 'broken-in-reader', 'a8c-test-blog' ];
+
 function ReaderPostOptionsMenuBlogStickers( { blogId } ) {
-	const blogStickersOffered = [ 'dont-recommend', 'broken-in-reader', 'a8c-test-blog' ];
 	const { data: stickers = [] } = useBlogStickersQuery( blogId );
 
 	return (
