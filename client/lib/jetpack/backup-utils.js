@@ -76,7 +76,7 @@ export const getBackupErrorCode = ( activity ) => {
  */
 export const getBackupWarnings = ( backup ) => {
 	if ( ! backup.activityWarnings ) {
-		return null;
+		return {};
 	}
 	const warnings = {};
 
