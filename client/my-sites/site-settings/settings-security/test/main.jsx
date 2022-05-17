@@ -14,15 +14,11 @@ const props = {
 
 describe( 'SiteSettingsSecurity basic tests', () => {
 	test( 'error page should not show if active security settings feature', () => {
-		const comp = shallow(
-			<SiteSettingsSecurity { ...props } hasActiveSecuritySettingsFeature={ true } />
-		);
+		const comp = shallow( <SiteSettingsSecurity { ...props } hasSecuritySettings={ true } /> );
 		expect( comp.find( 'EmptyContent' ) ).toHaveLength( 0 );
 	} );
 	test( 'error page should show if no active security settings feature', () => {
-		const comp = shallow(
-			<SiteSettingsSecurity { ...props } hasActiveSecuritySettingsFeature={ false } />
-		);
+		const comp = shallow( <SiteSettingsSecurity { ...props } hasSecuritySettings={ false } /> );
 		expect( comp.find( 'EmptyContent' ) ).toHaveLength( 1 );
 	} );
 } );
