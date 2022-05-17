@@ -2,9 +2,9 @@ import { Gridicon } from '@automattic/components';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import submissionSuccessImage from 'calypso/assets/images/marketplace/submission-success.png';
 import theme from 'calypso/my-sites/marketplace/theme';
 import MasterbarStyled from '../../components/masterbar-styled';
-import { WelcomeLogoIcon } from './welcome-logo-icon';
 import './style.scss';
 
 const SignupSuccess = (): JSX.Element => {
@@ -26,7 +26,7 @@ const SignupSuccess = (): JSX.Element => {
 			/>
 			<div className="signup-success">
 				<div className="signup-success__header">
-					<WelcomeLogoIcon />
+					<img src={ submissionSuccessImage } alt="Submission success" />
 					<h1 className="signup-success__header-title wp-brand-font">
 						{ translate( 'We’ ll be in touch' ) }
 					</h1>
