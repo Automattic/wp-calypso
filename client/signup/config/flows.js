@@ -73,11 +73,9 @@ function getSignupDestination( { domainItem, siteId, siteSlug }, localeSlug ) {
 		queryParam = { siteId };
 	}
 
-	/*
 	if ( isEnabled( 'signup/stepper-flow' ) ) {
 		return addQueryArgs( queryParam, '/setup/intent' );
 	}
-	*/
 
 	// Initially ship to English users only, then ship to all users when translations complete
 	if ( englishLocales.includes( localeSlug ) || isEnabled( 'signup/hero-flow-non-en' ) ) {
