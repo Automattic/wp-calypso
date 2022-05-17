@@ -1,6 +1,6 @@
 import { Button, Card } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import { ReactElement, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
