@@ -52,7 +52,7 @@ import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-act
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import {
 	getDowngradePlanRawPrice,
-	shouldRevertAtomicSiteBeforeDeactivation,
+	willAtomicSiteRevertAfterPurchaseDeactivation,
 } from 'calypso/state/purchases/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import getSupportVariation, {
@@ -1255,7 +1255,7 @@ export default connect(
 		downgradePlanPrice: getDowngradePlanRawPrice( state, purchase ),
 		supportVariation: getSupportVariation( state ),
 		site: getSite( state, purchase.siteId ),
-		shouldRevertAtomicSite: shouldRevertAtomicSiteBeforeDeactivation( state, purchase.id ),
+		shouldRevertAtomicSite: willAtomicSiteRevertAfterPurchaseDeactivation( state, purchase.id ),
 		atomicTransfer: getAtomicTransfer( state, purchase.siteId ),
 	} ),
 	{
