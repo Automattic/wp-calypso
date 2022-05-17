@@ -22,9 +22,11 @@ import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
-const isStagingOrProd = DataHelper.getCalypsoURL()
-	.toLowerCase()
-	.includes( 'https://wordpress.com' );
+// const isStagingOrProd = DataHelper.getCalypsoURL()
+// 	.toLowerCase()
+// 	.includes( 'https://wordpress.com' );
+
+const isStagingOrProd = false;
 
 // Skipping while new onboarding flows are in transition and we map the new tests
 skipDescribeIf( isStagingOrProd )(
@@ -122,6 +124,7 @@ skipDescribeIf( isStagingOrProd )(
 		describe( 'Validate site metadata', function () {
 			it( 'Return to Calypso dashboard', async function () {
 				editorPage = new EditorPage( page );
+				editorPage.visit();
 				await editorPage.exitEditor();
 			} );
 
