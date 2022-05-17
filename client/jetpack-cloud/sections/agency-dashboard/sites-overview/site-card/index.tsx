@@ -1,6 +1,7 @@
 import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useState, ReactElement } from 'react';
+import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
 import SiteStatusContent from '../site-status-content';
 import type { SiteData, SiteColumns } from '../types';
@@ -44,9 +45,7 @@ export default function SiteCard( { rows, columns }: Props ): ReactElement {
 					{ toggleContent }
 					<SiteStatusContent rows={ rows } type={ headerItem.type } />
 				</span>
-				<div className="site-card__actions-small-screen">
-					<Gridicon icon="ellipsis" size={ 18 } className="site-card__all-actions" />
-				</div>
+				<SiteActions site={ site } />
 			</div>
 
 			{ isExpanded && (
