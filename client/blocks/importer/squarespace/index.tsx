@@ -1,9 +1,6 @@
 import classnames from 'classnames';
-import { translate, TranslateOptions, TranslateOptionsText } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import InlineSupportLink from 'calypso/components/inline-support-link';
-import importerConfig from 'calypso/lib/importer/importer-config';
 import { resetImport, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
@@ -11,6 +8,7 @@ import CompleteScreen from '../components/complete-screen';
 import ErrorMessage from '../components/error-message';
 import GettingStartedVideo from '../components/getting-started-video';
 import ImporterDrag from '../components/importer-drag';
+import { getImportDragConfig } from '../components/importer-drag/config';
 import ProgressScreen from '../components/progress-screen';
 import { Importer, ImporterBaseProps, ImportJob, ImportJobParams } from '../types';
 import { getImporterTypeForEngine } from '../util';
@@ -63,35 +61,6 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 		};
 	}
 
-	function getImportDragConfig() {
-		const importerData = importerConfig()[ importer ];
-
-		const options: TranslateOptions = {
-			args: {
-				importerName: 'Squarespace',
-			},
-			components: {
-				supportLink: (
-					<InlineSupportLink supportContext="importers-squarespace" showIcon={ false }>
-						{ translate( 'Need help exporting your content?' ) }
-					</InlineSupportLink>
-				),
-			},
-		};
-
-		importerData.title = translate( 'Import content from %(importerName)s', {
-			...options,
-			textOnly: true,
-		} as TranslateOptionsText ) as string;
-
-		importerData.description = translate(
-			'Import posts, pages, comments, tags, and images from a %(importerName)s export file.',
-			options
-		);
-
-		return importerData;
-	}
-
 	function checkProgress() {
 		return job?.importerState === appStates.IMPORTING;
 	}
@@ -142,7 +111,7 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 						<ImporterDrag
 							urlData={ urlData }
 							site={ site }
-							importerData={ getImportDragConfig() }
+							importerData={ getImportDragConfig( importer, stepNavigator?.supportLinkModal ) }
 							importerStatus={ job }
 						/>
 					);
