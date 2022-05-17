@@ -225,7 +225,6 @@ export default function DesignPickerStep( props ) {
 	function renderDesignPicker() {
 		return (
 			<>
-				<div>DesignPicker Below</div>
 				<DesignPicker
 					designs={ designs }
 					theme={ isReskinned ? 'light' : 'dark' }
@@ -257,7 +256,6 @@ export default function DesignPickerStep( props ) {
 					hideDesignTitle={ hideDesignTitle }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				/>
-				<div>DesignPicker Above</div>
 				{ renderCheckoutModal() }
 			</>
 		);

@@ -650,7 +650,7 @@ class DomainsStep extends Component {
 		}
 
 		if ( isReskinned ) {
-			return ! stepSectionName && translate( 'Enter some descriptive keywords to get started2' );
+			return ! stepSectionName && translate( 'Enter some descriptive keywords to get started' );
 		}
 
 		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
