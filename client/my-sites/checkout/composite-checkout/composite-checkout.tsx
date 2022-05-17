@@ -667,10 +667,10 @@ export default function CompositeCheckout( {
 
 	const cartHasSearchProduct = useMemo(
 		() =>
-			items.some( ( { type } ) =>
-				JETPACK_SEARCH_PRODUCTS.includes( type as typeof JETPACK_SEARCH_PRODUCTS[ number ] )
+			responseCart.products.some( ( { product_slug } ) =>
+				JETPACK_SEARCH_PRODUCTS.includes( product_slug as typeof JETPACK_SEARCH_PRODUCTS[ number ] )
 			),
-		[ items ]
+		[ responseCart.products ]
 	);
 
 	return (
