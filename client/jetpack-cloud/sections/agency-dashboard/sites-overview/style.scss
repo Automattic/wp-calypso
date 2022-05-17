@@ -8,8 +8,24 @@
 		padding: 0;
 	}
 	@include break-wide() {
-		padding: 16px;
+		padding: 6px 16px;
 	}
+}
+.sites-overview__page-title-container {
+	display: none;
+	@include break-large() {
+		display: block;
+	}
+}
+.sites-overview__page-title {
+	color: var( --studio-gray-80 );
+	font-weight: 400;
+
+}
+.sites-overview__page-subtitle {
+	font-size: 0.875rem;
+	color: var( --studio-gray-60 );
+	margin-bottom: 1.5rem;
 }
 .sites-overview__status-add-new {
 	display: inline-flex;
