@@ -103,7 +103,11 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 					</p>
 				</div>
 			) }
-			<ActionButtons rewindId={ actionableRewindId } isMultiSite={ isMultiSite } />
+			<ActionButtons
+				rewindId={ actionableRewindId }
+				isMultiSite={ isMultiSite }
+				hasWarnings={ hasWarnings }
+			/>
 			{ showBackupDetails && (
 				<div className="status-card__realtime-details">
 					<div className="status-card__realtime-details-card">

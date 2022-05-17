@@ -22,7 +22,7 @@ export default function BackupWarningRetry( { siteId } ) {
 		'calypso_jetpack_backup_retry_click'
 	);
 	const retryText = translate( 'Retry' );
-	const queuedText = translate( 'Queued' );
+	const queuedText = translate( 'Retry queued' );
 	const enqueueRetry = () => {
 		trackedRequestBackupSite();
 		setDisable( true );
