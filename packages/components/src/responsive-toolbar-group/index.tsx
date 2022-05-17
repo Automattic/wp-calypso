@@ -83,6 +83,10 @@ const ResponsiveToolbarGroup = ( {
 				<Dropdown
 					renderToggle={ ( { onToggle } ) => (
 						<ToolbarButton
+							className={ classnames(
+								'responsive-toolbar-group__more-item',
+								'responsive-toolbar-group__button-item'
+							) }
 							isActive={ groupedIndexes[ activeIndex ] }
 							onClick={ () => {
 								onToggle();
