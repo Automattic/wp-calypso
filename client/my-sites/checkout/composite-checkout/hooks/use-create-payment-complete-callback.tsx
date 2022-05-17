@@ -31,6 +31,7 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { requestSite } from 'calypso/state/sites/actions';
+import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import {
 	isJetpackSite,
 	getJetpackCheckoutRedirectUrl,
@@ -192,6 +193,7 @@ export default function useCreatePaymentCompleteCallback( {
 
 			if ( siteId ) {
 				reduxDispatch( requestSite( siteId ) );
+				reduxDispatch( fetchSiteFeatures( siteId ) );
 			}
 
 			if (
