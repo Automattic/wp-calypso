@@ -1,11 +1,5 @@
-import {
-	ToolbarGroup,
-	ToolbarButton,
-	Dropdown,
-	MenuItem,
-	MenuGroup,
-	Icon,
-} from '@wordpress/components';
+import { ToolbarGroup, ToolbarButton, Dropdown, MenuItem, MenuGroup } from '@wordpress/components';
+import { Icon, chevronDown } from '@wordpress/icons';
 import classnames from 'classnames';
 import { ReactChild, useCallback, useEffect, useRef, useState } from 'react';
 
@@ -68,7 +62,7 @@ const ResponsiveToolbarGroup = ( {
 			.filter( ( { grouped } ) => ! grouped )
 			.map( ( { index, child } ) => (
 				<ToolbarButton
-					key={ `shadow-item-${ index }` }
+					key={ `button-item-${ index }` }
 					isActive={ activeIndex === parseInt( index ) }
 					onClick={ () => {
 						setActiveIndex( parseInt( index ) );
@@ -95,7 +89,7 @@ const ResponsiveToolbarGroup = ( {
 							} }
 						>
 							More
-							<Icon icon="arrow-down" />
+							<Icon icon={ chevronDown } />
 						</ToolbarButton>
 					) }
 					renderContent={ ( { onClose } ) => (
