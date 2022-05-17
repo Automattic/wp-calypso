@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import type { AllowedTypes } from './types';
+import type { AllowedTypes, SiteData } from './types';
 import type { ReactChild } from 'react';
 
 /**
@@ -58,23 +58,12 @@ const getLinks = (
 	return { link, tooltip };
 };
 
-interface RowArguments {
-	value: { url: string; blog_id: number };
-	error: string;
-	status: string;
-}
-
 /**
  * Returns an object which holds meta data required to format
  * the row
  */
 export const getRowMetaData = (
-	rows: {
-		site: RowArguments;
-		scan: { threats: number };
-		plugin: { updates: number };
-		[ key: string ]: any;
-	},
+	rows: SiteData,
 	type: AllowedTypes
 ): {
 	row: { value: { url: string }; status: string; error: string };

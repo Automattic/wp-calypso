@@ -4,25 +4,14 @@ import { ReactElement, Fragment } from 'react';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import SiteErrorContent from '../site-error-content';
 import SiteStatusContent from '../site-status-content';
-import type { AllowedTypes } from '../types';
-import type { ReactChild } from 'react';
+import type { SiteData, SiteColumns } from '../types';
 
 import './style.scss';
 
 interface Props {
 	isFetching: boolean;
-	columns: Array< { key: string; title: ReactChild } >;
-	items: Array< {
-		site: {
-			value: { blog_id: number; url: string };
-			error: string;
-			type: AllowedTypes;
-			status: string;
-		};
-		scan: { threats: number };
-		plugin: { updates: number };
-		[ key: string ]: any;
-	} >;
+	columns: SiteColumns;
+	items: Array< SiteData >;
 }
 
 export default function SiteTable( { isFetching, columns, items }: Props ): ReactElement {

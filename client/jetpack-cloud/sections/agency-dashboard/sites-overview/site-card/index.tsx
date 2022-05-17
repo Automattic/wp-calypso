@@ -3,24 +3,13 @@ import classNames from 'classnames';
 import { useState, ReactElement } from 'react';
 import SiteErrorContent from '../site-error-content';
 import SiteStatusContent from '../site-status-content';
-import type { AllowedTypes } from '../types';
-import type { ReactChild } from 'react';
+import type { SiteData, SiteColumns } from '../types';
 
 import './style.scss';
 
 interface Props {
-	rows: {
-		site: {
-			value: { blog_id: number; url: string };
-			error: string;
-			type: AllowedTypes;
-			status: string;
-		};
-		scan: { threats: number };
-		plugin: { updates: number };
-		[ key: string ]: any;
-	};
-	columns: Array< { key: string; title: ReactChild } >;
+	rows: SiteData;
+	columns: SiteColumns;
 }
 
 export default function SiteCard( { rows, columns }: Props ): ReactElement {

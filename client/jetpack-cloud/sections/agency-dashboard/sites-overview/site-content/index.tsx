@@ -52,7 +52,7 @@ export default function SiteContent(): ReactElement {
 					) : (
 						<>
 							{ sites.length > 0 &&
-								sites.map( ( rows: any, index: number ) => (
+								sites.map( ( rows, index ) => (
 									<SiteCard key={ index } columns={ columns } rows={ rows } />
 								) ) }
 						</>

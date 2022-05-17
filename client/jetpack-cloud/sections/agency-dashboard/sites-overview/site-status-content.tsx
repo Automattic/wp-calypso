@@ -5,15 +5,10 @@ import { ReactElement, useRef, useState } from 'react';
 import Badge from 'calypso/components/badge';
 import Tooltip from 'calypso/components/tooltip';
 import { getRowMetaData } from './utils';
-import type { AllowedTypes } from './types';
+import type { AllowedTypes, SiteData } from './types';
 
-interface RowArguments {
-	value: { url: string; blog_id: number };
-	error: string;
-	status: string;
-}
 interface Props {
-	rows: { site: RowArguments; scan: { threats: number }; plugin: { updates: number } };
+	rows: SiteData;
 	type: AllowedTypes;
 }
 
