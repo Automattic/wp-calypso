@@ -19,4 +19,3 @@ export { isUserPaid } from './is-user-paid';
 export { shouldRevertAtomicSiteBeforeDeactivation } from './should-revert-atomic-site-before-deactivation';
 export { siteHasJetpackProductPurchase } from './site-has-jetpack-product-purchase';
 export { siteHasScanProductPurchase } from './site-has-scan-product-purchase';
-export { siteHasSearchProductPurchase } from './site-has-search-product-purchase';
