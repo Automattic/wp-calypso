@@ -1,5 +1,4 @@
 import { isMobile } from '@automattic/viewport';
-import { expect } from 'chai';
 import { isE2ETest } from 'calypso/lib/e2e';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { shouldDisplayAppBanner } from 'calypso/state/selectors/should-display-app-banner';
@@ -31,7 +30,7 @@ describe( 'shouldDisplayAppBanner()', () => {
 			},
 		};
 		const output = shouldDisplayAppBanner( state );
-		expect( output ).to.be.true;
+		expect( output ).toBe( true );
 	} );
 
 	test( 'should return false if ToS update banner is displayed', () => {
@@ -55,7 +54,7 @@ describe( 'shouldDisplayAppBanner()', () => {
 			},
 		};
 		const output = shouldDisplayAppBanner( state );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return false if the app banner is not enabled', () => {
@@ -74,7 +73,7 @@ describe( 'shouldDisplayAppBanner()', () => {
 			},
 		};
 		const output = shouldDisplayAppBanner( state );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return false if current layout focus is sidebar', () => {
@@ -93,7 +92,7 @@ describe( 'shouldDisplayAppBanner()', () => {
 			},
 		};
 		const output = shouldDisplayAppBanner( state );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return false if has not received remote preferences', () => {
@@ -112,7 +111,7 @@ describe( 'shouldDisplayAppBanner()', () => {
 			},
 		};
 		const output = shouldDisplayAppBanner( state );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return false if in section not allowed', () => {
@@ -131,7 +130,7 @@ describe( 'shouldDisplayAppBanner()', () => {
 			},
 		};
 		const output = shouldDisplayAppBanner( state );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return false if in e2e test', () => {
@@ -151,7 +150,7 @@ describe( 'shouldDisplayAppBanner()', () => {
 			},
 		};
 		const output = shouldDisplayAppBanner( state );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return false if not on mobile', () => {
@@ -171,7 +170,7 @@ describe( 'shouldDisplayAppBanner()', () => {
 			},
 		};
 		const output = shouldDisplayAppBanner( state );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return false if in the app', () => {
@@ -191,6 +190,6 @@ describe( 'shouldDisplayAppBanner()', () => {
 			},
 		};
 		const output = shouldDisplayAppBanner( state );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 } );

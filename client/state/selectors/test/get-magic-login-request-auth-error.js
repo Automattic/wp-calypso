@@ -1,10 +1,9 @@
-import { expect } from 'chai';
 import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
 
 describe( 'getMagicLoginRequestAuthError()', () => {
 	test( 'should return null if there is no information yet', () => {
 		const error = getMagicLoginRequestAuthError( undefined );
-		expect( error ).to.be.null;
+		expect( error ).toBeNull();
 	} );
 
 	test( 'should return the error if set', () => {
@@ -15,6 +14,6 @@ describe( 'getMagicLoginRequestAuthError()', () => {
 				},
 			},
 		} );
-		expect( error ).to.equal( 'to err is human' );
+		expect( error ).toEqual( 'to err is human' );
 	} );
 } );

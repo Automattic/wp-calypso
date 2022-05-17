@@ -15,6 +15,7 @@ export { isBlogger } from './is-blogger';
 export { isBundled } from './is-bundled';
 export { isBusiness } from './is-business';
 export { isPro } from './is-pro';
+export { isStarter } from './is-starter';
 export { isChargeback } from './is-chargeback';
 export { isConciergeSession } from './is-concierge-session';
 export { isCredits } from './is-credits';

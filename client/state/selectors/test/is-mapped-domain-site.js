@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import isMappedDomainSite from 'calypso/state/selectors/is-mapped-domain-site';
 
 describe( '#isMappedDomainSite()', () => {
@@ -35,7 +34,7 @@ describe( '#isMappedDomainSite()', () => {
 			siteId
 		);
 
-		expect( result ).to.be.null;
+		expect( result ).toBeNull();
 	} );
 
 	test( 'should return null if no domain is found', () => {
@@ -51,7 +50,7 @@ describe( '#isMappedDomainSite()', () => {
 			siteId
 		);
 
-		expect( result ).to.be.null;
+		expect( result ).toBeNull();
 	} );
 
 	test( 'it should return false if the site does not have the mapped domain option set to true', () => {
@@ -73,7 +72,7 @@ describe( '#isMappedDomainSite()', () => {
 			siteId
 		);
 
-		expect( result ).to.be.false;
+		expect( result ).toBe( false );
 	} );
 
 	test( 'it should return false if the site has the mapped domain option set to true', () => {
@@ -95,6 +94,6 @@ describe( '#isMappedDomainSite()', () => {
 			siteId
 		);
 
-		expect( result ).to.be.true;
+		expect( result ).toBe( true );
 	} );
 } );

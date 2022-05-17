@@ -13,7 +13,7 @@ export {
 	getDesignUrl,
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
-	mShotOptions,
+	getMShotOptions,
 } from './utils';
 export { FONT_PAIRINGS, ANCHORFM_FONT_PAIRINGS } from './constants';
 export type { FontPair, Design, Category } from './types';

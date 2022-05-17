@@ -184,10 +184,6 @@ class Signup extends Component {
 
 		this.updateShouldShowLoadingScreen();
 
-		// Only applies to the P2 signup flow (/start/p2) and only after logging in to
-		// a WP.com account during the signup flow.
-		this.completeP2FlowAfterLoggingIn();
-
 		if ( canResumeFlow( this.props.flowName, this.props.progress, this.props.isLoggedIn ) ) {
 			// Resume from the current window location
 			return;
@@ -278,6 +274,22 @@ class Signup extends Component {
 				sitePlanName,
 				sitePlanSlug
 			);
+		}
+
+		// Several steps in the P2 signup flow require a logged in user.
+		if ( isP2Flow( this.props.flowName ) && ! this.props.isLoggedIn && stepName !== 'user' ) {
+			debug( 'P2 signup: logging in user', this.props.signupDependencies );
+
+			// We want to be redirected to the next step.
+			const destinationStep = flows.getFlow( this.props.flowName, this.props.isLoggedIn )
+				.steps[ 1 ];
+			const stepUrl = getStepUrl(
+				this.props.flowName,
+				destinationStep,
+				undefined,
+				this.props.locale
+			);
+			this.handleLogin( this.props.signupDependencies, stepUrl, false );
 		}
 	}
 
@@ -453,15 +465,17 @@ class Signup extends Component {
 		this.handleLogin( dependencies, destination );
 	};
 
-	handleLogin( dependencies, destination ) {
+	handleLogin( dependencies, destination, resetSignupFlowController = true ) {
 		const userIsLoggedIn = this.props.isLoggedIn;
 
 		debug( `Logging you in to "${ destination }"` );
 
-		this.signupFlowController.reset();
+		if ( resetSignupFlowController ) {
+			this.signupFlowController.reset();
 
-		if ( ! this.state.controllerHasReset ) {
-			this.setState( { controllerHasReset: true } );
+			if ( ! this.state.controllerHasReset ) {
+				this.setState( { controllerHasReset: true } );
+			}
 		}
 
 		if ( userIsLoggedIn ) {
@@ -499,6 +513,7 @@ class Signup extends Component {
 			}
 
 			if ( this.state.bearerToken !== bearerToken && this.state.username !== username ) {
+				debug( 'Performing regular login' );
 				this.setState( {
 					bearerToken: dependencies.bearer_token,
 					username: dependencies.username,

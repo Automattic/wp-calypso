@@ -166,7 +166,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlug && _selectedDesign ) {
-			setPendingAction( () => setDesignOnSite( siteSlug, _selectedDesign ) );
+			setPendingAction( () => setDesignOnSite( siteSlug, _selectedDesign, siteVerticalId ) );
 			recordTracksEvent( 'calypso_signup_select_design', getEventPropsByDesign( _selectedDesign ) );
 			const providedDependencies = {
 				selectedDesign: _selectedDesign,
@@ -195,7 +195,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 					return;
 				}
 
-				return setDesignOnSite( newSite.site_slug, _selectedDesign );
+				return setDesignOnSite( newSite.site_slug, _selectedDesign, siteVerticalId );
 			} );
 			submit?.();
 		}

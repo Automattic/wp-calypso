@@ -176,6 +176,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_STARTER,
 	PLAN_WPCOM_PRO,
 	PREMIUM_DESIGN_FOR_STORES,
 	TERM_ANNUALLY,
@@ -195,6 +196,7 @@ import {
 	TYPE_SECURITY_T2,
 	TYPE_FLEXIBLE,
 	TYPE_PRO,
+	TYPE_STARTER,
 	FEATURE_TITAN_EMAIL,
 	FEATURE_SOCIAL_MEDIA_TOOLS,
 } from './constants';
@@ -1574,6 +1576,25 @@ PLANS_LIST[ PLAN_P2_FREE ] = {
 };
 
 // Brand new WPCOM plans
+PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
+	...getDotcomPlanDetails(),
+	group: GROUP_WPCOM,
+	type: TYPE_STARTER,
+	term: TERM_ANNUALLY,
+	getTitle: () => i18n.translate( 'WordPress Starter' ),
+	getProductId: () => 1033,
+	getStoreSlug: () => PLAN_WPCOM_STARTER,
+	getPathSlug: () => 'starter',
+	getDescription: () =>
+		i18n.translate( 'Start your WordPress.com website. Limited functionality and storage.' ),
+	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+	getPlanCompareFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_UNLIMITED_ADMINS,
+		FEATURE_6GB_STORAGE,
+	],
+};
+
 PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
 	// Inherits the free plan
 	...PLANS_LIST[ PLAN_FREE ],

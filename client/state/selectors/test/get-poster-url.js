@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getPosterUrl from 'calypso/state/selectors/get-poster-url';
 
 describe( 'getPosterUrl()', () => {
@@ -12,6 +11,6 @@ describe( 'getPosterUrl()', () => {
 			},
 		} );
 
-		expect( poster ).to.eql( url );
+		expect( poster ).toEqual( url );
 	} );
 } );

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 
 describe( 'getSiteTimezoneValue()', () => {
@@ -10,7 +9,7 @@ describe( 'getSiteTimezoneValue()', () => {
 		};
 
 		const timezone = getSiteTimezoneValue( stateTree, 2916284 );
-		expect( timezone ).to.be.null;
+		expect( timezone ).toBeNull();
 	} );
 
 	test( 'should return null if the site-settings has never been fetched', () => {
@@ -23,7 +22,7 @@ describe( 'getSiteTimezoneValue()', () => {
 		};
 
 		const timezone = getSiteTimezoneValue( stateTree, 2916284 );
-		expect( timezone ).to.be.null;
+		expect( timezone ).toBeNull();
 	} );
 
 	test( 'should return null if the timezone_string is an empty string', () => {
@@ -38,7 +37,7 @@ describe( 'getSiteTimezoneValue()', () => {
 		};
 
 		const timezone = getSiteTimezoneValue( stateTree, 2916284 );
-		expect( timezone ).to.be.null;
+		expect( timezone ).toBeNull();
 	} );
 
 	test( 'should return site-settings timezone', () => {
@@ -53,6 +52,6 @@ describe( 'getSiteTimezoneValue()', () => {
 		};
 
 		const timezone = getSiteTimezoneValue( stateTree, 2916284 );
-		expect( timezone ).to.eql( 'Europe/Skopje' );
+		expect( timezone ).toEqual( 'Europe/Skopje' );
 	} );
 } );

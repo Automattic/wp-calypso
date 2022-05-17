@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 
@@ -19,7 +18,7 @@ describe( 'getSiteIconUrl()', () => {
 			2916284
 		);
 
-		expect( iconUrl ).to.be.null;
+		expect( iconUrl ).toBeNull();
 	} );
 
 	test( 'should the site icon image as a fallback if the media is not known for the assigned icon ID', () => {
@@ -44,7 +43,7 @@ describe( 'getSiteIconUrl()', () => {
 			2916284
 		);
 
-		expect( iconUrl ).to.equal(
+		expect( iconUrl ).toEqual(
 			'https://secure.gravatar.com/blavatar/0d6c430459af115394a012d20b6711d6'
 		);
 	} );
@@ -80,6 +79,6 @@ describe( 'getSiteIconUrl()', () => {
 			2916284
 		);
 
-		expect( iconUrl ).to.equal( 'https://example.files.wordpress.com/2014/06/flower.gif' );
+		expect( iconUrl ).toEqual( 'https://example.files.wordpress.com/2014/06/flower.gif' );
 	} );
 } );
