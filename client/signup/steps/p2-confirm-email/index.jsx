@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { check } from '@wordpress/icons';
@@ -49,6 +50,9 @@ function P2ConfirmEmail( {
 			dispatch(
 				saveSignupStep( { stepName, ...( refParameter && { storedRefParameter: refParameter } ) } )
 			);
+
+			debug( 'Email confirmation step loaded for %s', userEmail );
+			recordTracksEvent( 'calypso_signup_p2_confirm_email_load', { userEmail, isEmailVerified } );
 		}
 	}, [ dispatch, stepName, refParameter ] );
 
@@ -76,6 +80,9 @@ function P2ConfirmEmail( {
 	};
 
 	const handleNextStepClick = () => {
+		debug( 'Email confirmation step completed for %s', userEmail );
+		recordTracksEvent( 'calypso_signup_p2_confirm_email_complete', { userEmail, isEmailVerified } );
+
 		submitSignupStep( { stepName } );
 
 		goToNextStep();
