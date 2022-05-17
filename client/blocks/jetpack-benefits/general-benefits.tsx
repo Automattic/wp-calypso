@@ -4,7 +4,6 @@ import {
 	FEATURE_JETPACK_VIDEOPRESS,
 	FEATURE_PREMIUM_SUPPORT,
 	FEATURE_SIMPLE_PAYMENTS,
-	FEATURE_STANDARD_SECURITY_TOOLS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	FEATURE_WORDADS_INSTANT,
 } from '@automattic/calypso-products';
@@ -106,32 +105,26 @@ const JetpackGeneralBenefits: React.FC< Props > = ( { productSlug } ) => {
 	}
 
 	// General benefits of all Jetpack Plans (brute force protection, CDN)
-	if ( planHasFeature( productSlug, FEATURE_STANDARD_SECURITY_TOOLS ) ) {
-		benefits.push(
-			<React.Fragment>
-				{ translate(
-					'Brute force {{strong}}attack protection{{/strong}} and {{strong}}downtime monitoring{{/strong}}.',
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
-			</React.Fragment>
-		);
-	}
+	benefits.push(
+		<React.Fragment>
+			{ translate(
+				'Brute force {{strong}}attack protection{{/strong}} and {{strong}}downtime monitoring{{/strong}}.',
+				{
+					components: {
+						strong: <strong />,
+					},
+				}
+			) }
+		</React.Fragment>
+	);
 
-	if ( benefits.length > 0 ) {
-		return (
-			<ul className="jetpack-benefits__general-benefit-list">
-				{ benefits.map( ( benefit, idx ) => {
-					return <li key={ idx }>{ benefit }</li>;
-				} ) }
-			</ul>
-		);
-	}
-
-	return null;
+	return (
+		<ul className="jetpack-benefits__general-benefit-list">
+			{ benefits.map( ( benefit, idx ) => {
+				return <li key={ idx }>{ benefit }</li>;
+			} ) }
+		</ul>
+	);
 };
 
 export default JetpackGeneralBenefits;
