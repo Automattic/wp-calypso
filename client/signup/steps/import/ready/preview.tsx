@@ -1,7 +1,4 @@
-import { memo, useState } from 'react';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { MShotParams } from '../types';
-import useWindowDimensions from '../windowDimensions.effect';
+import { memo } from 'react';
 import type { FunctionComponent } from 'react';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -13,53 +10,7 @@ interface Props {
 const protocolRgx = /(?<protocol>https?:\/\/)?(?<address>.*)/i;
 
 const ImportPreview: FunctionComponent< Props > = ( { website } ) => {
-	const [ mShotUrl, setMShotUrl ] = useState( '' );
-	const { width } = useWindowDimensions();
-	const mShotParams: MShotParams = {
-		scale: 2,
-		vpw: width <= 640 ? 640 : undefined,
-	};
 	const websiteMatch = website.match( protocolRgx );
-
-	const checkScreenshot = ( screenShotUrl: string ) => {
-		const http = new XMLHttpRequest();
-		http.open( 'GET', screenShotUrl );
-		http.onreadystatechange = () => {
-			if ( http.readyState !== http.HEADERS_RECEIVED ) {
-				return;
-			}
-
-			if ( http.getResponseHeader( 'Content-Type' ) !== 'image/jpeg' ) {
-				setTimeout( () => {
-					checkScreenshot( screenShotUrl );
-				}, 5000 );
-			} else {
-				setMShotUrl( screenShotUrl );
-			}
-		};
-		http.send();
-	};
-
-	checkScreenshot(
-		`https://s0.wp.com/mshots/v1/${ website }?${ Object.entries( mShotParams )
-			.filter( ( entry ) => !! entry[ 1 ] )
-			.map( ( [ key, val ] ) => key + '=' + val )
-			.join( '&' ) }`
-	);
-
-	const Screenshot = () => {
-		if ( mShotUrl !== '' ) {
-			return (
-				<img src={ mShotUrl } alt="Website screenshot preview" className={ 'import__screenshot' } />
-			);
-		}
-
-		return (
-			<div className="import__screenshot-loading">
-				<LoadingEllipsis />
-			</div>
-		);
-	};
 
 	return (
 		<div className={ `import__preview` }>
@@ -79,7 +30,14 @@ const ImportPreview: FunctionComponent< Props > = ( { website } ) => {
 						) }
 					</div>
 				}
-				<Screenshot />
+				{ /* iframe-mask is a transparent cover it disallows the user to navigate inside iframed website */ }
+				<div className="import__preview-iframe-mask" />
+				<iframe
+					title={ 'Preview' }
+					className="import__preview-iframe"
+					src={ website }
+					loading="eager"
+				/>
 			</div>
 		</div>
 	);
