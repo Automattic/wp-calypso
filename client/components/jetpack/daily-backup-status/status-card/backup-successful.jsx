@@ -31,7 +31,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	} );
 
 	const warnings = getBackupWarnings( backup );
-	const hasWarnings = warnings ? Object.keys( warnings ).length !== 0 : false;
+	const hasWarnings = Object.keys( warnings ).length !== 0;
 
 	const moment = useLocalizedMoment();
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
