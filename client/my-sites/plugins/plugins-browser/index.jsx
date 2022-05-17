@@ -43,7 +43,7 @@ import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
-import { getPlugins, getPluginsOnSites } from 'calypso/state/plugins/installed/selectors';
+import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
@@ -487,9 +487,6 @@ const PluginSingleListView = ( {
 	const installedPlugins = useSelector( ( state ) =>
 		getPlugins( state, siteObjectsToSiteIds( sites ) )
 	);
-	const aggregatedInstalledPlugins = useSelector( ( state ) =>
-		getPluginsOnSites( state, installedPlugins )
-	);
 
 	let plugins;
 	let isFetching;
@@ -508,7 +505,7 @@ const PluginSingleListView = ( {
 
 	plugins = plugins
 		.filter( isNotBlocked )
-		.filter( ( plugin ) => isNotInstalled( plugin, aggregatedInstalledPlugins ) );
+		.filter( ( plugin ) => isNotInstalled( plugin, installedPlugins ) );
 
 	let listLink = '/plugins/' + category;
 	if ( domain ) {
@@ -692,7 +689,7 @@ function isNotBlocked( plugin ) {
  * @returns Boolean weather a plugin is not installed on not
  */
 function isNotInstalled( plugin, installedPlugins ) {
-	return ! installedPlugins[ plugin.slug ];
+	return ! installedPlugins.find( ( item ) => item.slug === plugin.slug );
 }
 
 export default PluginsBrowser;
