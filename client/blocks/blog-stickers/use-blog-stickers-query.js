@@ -6,7 +6,4 @@ export const useBlogStickersQuery = ( blogId, queryOptions = {} ) =>
 		...queryOptions,
 		enabled: !! blogId,
 		staleTime: 1000 * 60 * 5, // 5 minutes
-		meta: {
-			persist: false,
-		},
 	} );
