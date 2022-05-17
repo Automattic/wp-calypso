@@ -1,3 +1,4 @@
+import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
@@ -12,6 +13,7 @@ import QueryContactDetailsCache from 'calypso/components/data/query-contact-deta
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
+import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -663,6 +665,14 @@ export default function CompositeCheckout( {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
+	const cartHasSearchProduct = useMemo(
+		() =>
+			responseCart.products.some( ( { product_slug } ) =>
+				JETPACK_SEARCH_PRODUCTS.includes( product_slug as typeof JETPACK_SEARCH_PRODUCTS[ number ] )
+			),
+		[ responseCart.products ]
+	);
+
 	return (
 		<Fragment>
 			<QueryIntroOffers siteId={ updatedSiteId } />
@@ -672,6 +682,7 @@ export default function CompositeCheckout( {
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
+			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type={ 'post' } /> }
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"
