@@ -228,9 +228,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	}
 
 	function viewMoreDesigns() {
-		recordTracksEvent( 'calypso_signup_design_view_more_select', {
-			flow: showGeneratedDesigns ? 'generated-design-step' : flow,
-		} );
+		recordTracksEvent( 'calypso_signup_design_view_more_select' );
 
 		setSelectedDesign( undefined );
 		setIsPreviewingDesign( false );
@@ -264,7 +262,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			intent: intent,
 		};
 
-		if ( isForceStaticDesigns ) {
+		if ( ! isPreviewingDesign && isForceStaticDesigns ) {
 			recordTracksEvent( 'calypso_signup_back_to_generated_design_step' );
 		}
 
