@@ -514,6 +514,11 @@ const PluginSingleListView = ( {
 	if ( domain ) {
 		listLink = '/plugins/' + category + '/' + domain;
 	}
+
+	if ( ! isFetching && plugins.length === 0 ) {
+		return null;
+	}
+
 	return (
 		<PluginsBrowserList
 			plugins={ plugins.slice( 0, SHORT_LIST_LENGTH ) }
