@@ -320,7 +320,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     sass-loader: ^12.1.0
-    style-loader: ^1.2.1
+    style-loader: ^3.3.1
     webpack: ^5.68.0
   peerDependencies:
     "@storybook/react": ^6.4.18
@@ -10015,7 +10015,7 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     archiver: ^3.1.1
-    copy-webpack-plugin: ^10.1.0
+    copy-webpack-plugin: ^11.0.0
     cross-env: ^7.0.3
     electron: 12.2.3
     electron-builder: ^22.11.7
@@ -14052,7 +14052,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"copy-webpack-plugin@npm:^10.1.0, copy-webpack-plugin@npm:^10.2.0":
+"copy-webpack-plugin@npm:^10.2.0":
   version: 10.2.4
   resolution: "copy-webpack-plugin@npm:10.2.4"
   dependencies:
@@ -14065,6 +14065,22 @@ __metadata:
   peerDependencies:
     webpack: ^5.1.0
   checksum: d4501aa2d813eadc906318ed301707240fc7bfeb250813e2e4d93e95bc9896822c136e49de01dfe612ea5334a1f04cb8fbed4412b91117666a92607c0deba624
+  languageName: node
+  linkType: hard
+
+"copy-webpack-plugin@npm:^11.0.0":
+  version: 11.0.0
+  resolution: "copy-webpack-plugin@npm:11.0.0"
+  dependencies:
+    fast-glob: ^3.2.11
+    glob-parent: ^6.0.1
+    globby: ^13.1.1
+    normalize-path: ^3.0.0
+    schema-utils: ^4.0.0
+    serialize-javascript: ^6.0.0
+  peerDependencies:
+    webpack: ^5.1.0
+  checksum: a667dd226b26f148584a35fb705f5af926d872584912cf9fd203c14f2b3a68f473a1f5cf768ec1dd5da23820823b850e5d50458b685c468e4a224b25c12a15b4
   languageName: node
   linkType: hard
 
@@ -19131,6 +19147,19 @@ __metadata:
     merge2: ^1.4.1
     slash: ^4.0.0
   checksum: 61057effcc7edc7ca7ba9e27a435f08e05b2b8d80c13d2a18e14804936efcc7b1fae528536b6e6f85969f0a76fb0c86d65b3003f39e060457a2e524a3016b704
+  languageName: node
+  linkType: hard
+
+"globby@npm:^13.1.1":
+  version: 13.1.1
+  resolution: "globby@npm:13.1.1"
+  dependencies:
+    dir-glob: ^3.0.1
+    fast-glob: ^3.2.11
+    ignore: ^5.2.0
+    merge2: ^1.4.1
+    slash: ^4.0.0
+  checksum: 773f3391c9579995252f692f107521f11c6b376993e7aa00accc36da145113d68481e80a7a2f9eb09835e0f9b0bb4658adae5424acb2ce02644e2dab08ea35bf
   languageName: node
   linkType: hard
 
@@ -33108,6 +33137,15 @@ resolve@^2.0.0-next.3:
   peerDependencies:
     webpack: ^4.0.0 || ^5.0.0
   checksum: 6febd1809b4f67a722e4e366fa3b3f8e1083425f7214b7a8962cf53aa7cc9c522623fb55a5e64049e46d637bbbda3b29ebbe14ec9f7652b27345450fcef6ea80
+  languageName: node
+  linkType: hard
+
+"style-loader@npm:^3.3.1":
+  version: 3.3.1
+  resolution: "style-loader@npm:3.3.1"
+  peerDependencies:
+    webpack: ^5.0.0
+  checksum: b325f4ce5d0ee9797878d9db42a5c45ef6d757ad42de85bc550ef90c2fb78b762bbdff3214ddf1f4c8e1307fe1879fc47ea34ee48f8f56191309f8fc28f4d2b6
   languageName: node
   linkType: hard
 
