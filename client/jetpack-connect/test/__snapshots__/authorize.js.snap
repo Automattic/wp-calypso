@@ -19,12 +19,12 @@ exports[`JetpackAuthorize renders as expected 1`] = `
     <div
       className="jetpack-connect__logged-in-form"
     >
-     <QuerySiteFeatures
-       siteIds={
-         Array [
-           98765,
-         ]
-       }
+      <QuerySiteFeatures
+        siteIds={
+          Array [
+            98765,
+          ]
+        }
       />
       <QuerySitePurchases
         siteId={98765}
@@ -106,7 +106,7 @@ exports[`JetpackAuthorize renders as expected 1`] = `
             icon="arrow-left"
             size={18}
           />
-
+           
           Return to %(sitename)s
         </LoggedOutFormLinkItem>
         <LoggedOutFormLinkItem
