@@ -7,7 +7,7 @@ export type AllowedTypes = 'site' | 'backup' | 'scan' | 'monitor' | 'plugin';
 export type SiteColumns = Array< { key: string; title: ReactChild } >;
 
 export interface SiteNode {
-	value: { blog_id: number; url: string };
+	value: { blog_id: number; url: string; url_with_scheme: string };
 	error: string;
 	type: AllowedTypes;
 	status: string;

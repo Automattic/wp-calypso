@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
@@ -19,7 +19,7 @@ export default function SiteActions( { isLargeScreen, site }: Props ): ReactElem
 
 	const [ isOpen, setIsOpen ] = useState( false );
 
-	const buttonActionRef = useRef< HTMLDivElement | null >( null );
+	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
 	const showActions = () => {
 		setIsOpen( true );
@@ -30,6 +30,7 @@ export default function SiteActions( { isLargeScreen, site }: Props ): ReactElem
 	};
 
 	const siteUrl = site?.value?.url;
+	const siteUrlWithScheme = site?.value?.url_with_scheme;
 	const siteError = site?.error;
 	const siteId = site?.value?.blog_id;
 
@@ -39,11 +40,10 @@ export default function SiteActions( { isLargeScreen, site }: Props ): ReactElem
 
 	return (
 		<>
-			<div
+			<Button
+				borderless
+				compact
 				onClick={ showActions }
-				onKeyPress={ showActions }
-				role="button"
-				tabIndex={ 0 }
 				ref={ buttonActionRef }
 				className={ classNames(
 					isLargeScreen
@@ -52,7 +52,7 @@ export default function SiteActions( { isLargeScreen, site }: Props ): ReactElem
 				) }
 			>
 				<Gridicon icon="ellipsis" size={ 18 } className="site-actions__all-actions" />
-			</div>
+			</Button>
 			<PopoverMenu
 				context={ buttonActionRef.current }
 				isVisible={ isOpen }
@@ -82,7 +82,7 @@ export default function SiteActions( { isLargeScreen, site }: Props ): ReactElem
 				<PopoverMenuItem
 					isExternalLink
 					onClick={ handleClickMenuItem }
-					href={ `https://${ siteUrl }` }
+					href={ siteUrlWithScheme }
 					className="site-actions__menu-item"
 				>
 					{ translate( 'View site' ) }
@@ -90,7 +90,7 @@ export default function SiteActions( { isLargeScreen, site }: Props ): ReactElem
 				<PopoverMenuItem
 					isExternalLink
 					onClick={ handleClickMenuItem }
-					href={ `https://${ siteUrl }/wp-admin/admin.php?page=jetpack#/dashboard` }
+					href={ `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack#/dashboard` }
 					className="site-actions__menu-item"
 				>
 					{ translate( 'Visit WP Admin' ) }
