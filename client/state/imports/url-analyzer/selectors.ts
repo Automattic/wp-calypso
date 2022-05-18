@@ -1,4 +1,4 @@
-import { UrlData } from 'calypso/signup/steps/import/types';
+import { UrlData } from 'calypso/blocks/import/types';
 import 'calypso/state/imports/init';
 import type { State } from './reducer';
 

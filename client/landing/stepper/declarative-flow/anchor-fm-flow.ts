@@ -64,7 +64,7 @@ export const anchorFmFlow: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath ) => {
+		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
 			navigate( step );
 		};
 

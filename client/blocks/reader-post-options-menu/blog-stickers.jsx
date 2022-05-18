@@ -1,38 +1,30 @@
-import { map, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
-import QueryBlogStickers from 'calypso/components/data/query-blog-stickers';
-import getBlogStickers from 'calypso/state/selectors/get-blog-stickers';
+import { useBlogStickersQuery } from 'calypso/blocks/blog-stickers/use-blog-stickers-query';
 import ReaderPostOptionsMenuBlogStickerMenuItem from './blog-sticker-menu-item';
 
-class ReaderPostOptionsMenuBlogStickers extends Component {
-	static propTypes = {
-		blogId: PropTypes.number.isRequired,
-	};
+const blogStickersOffered = [ 'dont-recommend', 'broken-in-reader', 'a8c-test-blog' ];
 
-	render() {
-		const blogStickersOffered = [ 'dont-recommend', 'broken-in-reader', 'a8c-test-blog' ];
-		const { blogId, stickers } = this.props;
+function ReaderPostOptionsMenuBlogStickers( { blogId } ) {
+	const { data: stickers = [] } = useBlogStickersQuery( blogId );
 
-		return (
-			<div className="reader-post-options-menu__blog-stickers">
-				<QueryBlogStickers blogId={ blogId } />
-				{ map( blogStickersOffered, ( blogStickerName ) => (
-					<ReaderPostOptionsMenuBlogStickerMenuItem
-						key={ blogStickerName }
-						blogId={ blogId }
-						blogStickerName={ blogStickerName }
-						hasSticker={ includes( stickers, blogStickerName ) }
-					>
-						{ blogStickerName }
-					</ReaderPostOptionsMenuBlogStickerMenuItem>
-				) ) }
-			</div>
-		);
-	}
+	return (
+		<div className="reader-post-options-menu__blog-stickers">
+			{ blogStickersOffered.map( ( blogStickerName ) => (
+				<ReaderPostOptionsMenuBlogStickerMenuItem
+					key={ blogStickerName }
+					blogId={ blogId }
+					blogStickerName={ blogStickerName }
+					hasSticker={ stickers.includes( blogStickerName ) }
+				>
+					{ blogStickerName }
+				</ReaderPostOptionsMenuBlogStickerMenuItem>
+			) ) }
+		</div>
+	);
 }
 
-export default connect( ( state, { blogId } ) => ( {
-	stickers: getBlogStickers( state, blogId ),
-} ) )( ReaderPostOptionsMenuBlogStickers );
+ReaderPostOptionsMenuBlogStickers.propTypes = {
+	blogId: PropTypes.number.isRequired,
+};
+
+export default ReaderPostOptionsMenuBlogStickers;

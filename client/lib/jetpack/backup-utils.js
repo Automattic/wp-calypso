@@ -70,6 +70,39 @@ export const getBackupErrorCode = ( activity ) => {
 };
 
 /**
+ * Retrieve any warnings from a backup activity object.
+ *
+ * @param backup {object} Backup to check
+ */
+export const getBackupWarnings = ( backup ) => {
+	if ( ! backup.activityWarnings ) {
+		return {};
+	}
+	const warnings = {};
+
+	Object.keys( backup.activityWarnings ).forEach( function ( itemType ) {
+		const typeWarnings = backup.activityWarnings[ itemType ];
+		typeWarnings.forEach( ( typeWarning ) => {
+			if ( ! warnings.hasOwnProperty( typeWarning.name ) ) {
+				warnings[ typeWarning.name ] = {
+					category: typeWarning.category,
+					items: [],
+				};
+			}
+
+			const warningItem = {
+				code: typeWarning.code,
+				item: typeWarning.itemName,
+			};
+
+			warnings[ typeWarning.name ].items.push( warningItem );
+		} );
+	} );
+
+	return warnings;
+};
+
+/**
  * Check if the backup is completed
  *
  * @param backup {object} Backup to check

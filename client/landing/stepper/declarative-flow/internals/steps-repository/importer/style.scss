@@ -1,0 +1,75 @@
+/**
+ * Common importer integration styles
+ */
+.site-setup {
+	.importer-wrapper:not( .importer-wrapper__wordpress ) {
+		max-width: 700px;
+		margin: auto;
+	}
+
+	.import__onboarding-page {
+		.onboarding-progress {
+			max-width: 465px;
+			margin: auto;
+
+			@include break-small {
+				min-width: 465px;
+			}
+		}
+
+		.wpcom__loading-ellipsis {
+			display: block;
+			margin: auto;
+		}
+	}
+}
+
+/**
+ * Formatted Header
+ */
+.formatted-header {
+	margin: 0 !important;
+	flex-grow: 1;
+
+	.formatted-header__title {
+		@include onboarding-font-recoleta;
+		color: var( --studio-gray-100 );
+		letter-spacing: 0.2px;
+		font-size: 2.15rem; /* stylelint-disable-line */
+		font-weight: 400;
+		padding: 0;
+		margin: 0;
+
+		@include break-xlarge {
+			font-size: 2.75rem; /* stylelint-disable-line */
+		}
+	}
+
+	.formatted-header__subtitle {
+		padding: 0;
+		text-align: left;
+		color: var( --studio-gray-60 );
+		font-size: 1rem;
+		margin-top: 16px;
+		line-height: 24px;
+
+		@include break-small {
+			margin-top: 8px;
+		}
+	}
+}
+
+.step-wrapper__header-image {
+	margin-top: 64px;
+	display: none;
+
+	@include break-small {
+		display: block;
+
+		// Fix overflow caused by header_image
+		img {
+			height: auto;
+			max-width: 100%;
+		}
+	}
+}

@@ -1,11 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { camelCase } from 'lodash';
-import { ImporterPlatform } from 'calypso/signup/steps/import/types';
+import { ImporterPlatform } from 'calypso/blocks/import/types';
 import {
 	getImporterUrl,
 	getWpComOnboardingUrl,
 	getWpOrgImporterUrl,
-} from 'calypso/signup/steps/import/util';
+} from 'calypso/blocks/import/util';
 import { BASE_ROUTE } from './config';
 import type { StepPath } from '../../steps-repository';
 
@@ -13,7 +13,8 @@ export function getFinalImporterUrl(
 	targetSlug: string,
 	fromSite: string,
 	platform: ImporterPlatform,
-	isAtomicSite: boolean | null
+	isAtomicSite: boolean | null,
+	framework: 'signup' | 'stepper' = 'signup'
 ) {
 	let importerUrl;
 
@@ -26,7 +27,7 @@ export function getFinalImporterUrl(
 			isEnabled( `onboarding/import-from-${ platform }` )
 		)
 	) {
-		importerUrl = getWpComOnboardingUrl( targetSlug, platform, fromSite );
+		importerUrl = getWpComOnboardingUrl( targetSlug, platform, fromSite, framework );
 	} else {
 		importerUrl = getImporterUrl( targetSlug, platform, fromSite );
 	}
@@ -34,11 +35,19 @@ export function getFinalImporterUrl(
 	return importerUrl;
 }
 
-export function generateStepPath( stepName: string, stepSectionName?: string ): StepPath {
-	// In the stepper framework, the capture screen is on `import` route (instead of `importCapture`)
-	const excludeStepName = 'capture';
-	const routes = [ BASE_ROUTE, stepName, stepSectionName ].filter( ( x ) => x !== 'capture' );
-	const path = routes.join( '_' ).replace( excludeStepName, '' );
+/**
+ * Stepper's redirection handlers
+ * generateStepPath share the same interface/params between 'signup' & 'stepper' frameworks
+ */
+export function generateStepPath(
+	stepName: string | StepPath,
+	stepSectionName?: string
+): StepPath {
+	if ( stepName === 'intent' ) return 'intent';
+	else if ( stepName === 'capture' ) return BASE_ROUTE;
+
+	const routes = [ BASE_ROUTE, stepName, stepSectionName ];
+	const path = routes.join( '_' );
 
 	return camelCase( path ) as StepPath;
 }

@@ -32,7 +32,7 @@ const DownloadButton = ( { disabled, rewindId, primary } ) => {
 	);
 };
 
-const RestoreButton = ( { disabled, rewindId } ) => {
+const RestoreButton = ( { disabled, rewindId, primary } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -50,7 +50,7 @@ const RestoreButton = ( { disabled, rewindId } ) => {
 
 	return (
 		<Button
-			isPrimary
+			isPrimary={ primary }
 			className="daily-backup-status__restore-button"
 			href={ href }
 			disabled={ isRestoreDisabled }
@@ -61,14 +61,20 @@ const RestoreButton = ( { disabled, rewindId } ) => {
 	);
 };
 
-const ActionButtons = ( { rewindId, disabled, isMultiSite } ) => (
+const ActionButtons = ( { rewindId, disabled, isMultiSite, hasWarnings = false } ) => (
 	<>
 		<DownloadButton
 			disabled={ disabled || ! rewindId }
 			rewindId={ rewindId }
 			primary={ isMultiSite }
 		/>
-		{ ! isMultiSite && <RestoreButton disabled={ disabled || ! rewindId } rewindId={ rewindId } /> }
+		{ ! isMultiSite && (
+			<RestoreButton
+				disabled={ disabled || ! rewindId }
+				rewindId={ rewindId }
+				primary={ ! hasWarnings }
+			/>
+		) }
 	</>
 );
 

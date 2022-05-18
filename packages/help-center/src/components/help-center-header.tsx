@@ -51,7 +51,7 @@ const HelpCenterMobileHeader: React.FC< Header > = ( {
 		<CardHeader className={ classNames }>
 			<Flex>
 				<p className="help-center-header__text">
-					<span className="help-center-header__icon">{ headerText }</span>
+					<span className="help-center-header__title">{ headerText }</span>
 					<span
 						className="help-center-header__a8c-only-badge"
 						title="The help center is only visible to Automatticians at this stage."
