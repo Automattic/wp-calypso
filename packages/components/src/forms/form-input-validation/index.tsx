@@ -8,6 +8,7 @@ interface Props {
 	isError: boolean;
 	isWarning?: boolean;
 	isHidden?: boolean;
+	isValid?: boolean;
 	text: ReactNode;
 	icon?: string;
 	id?: string;
