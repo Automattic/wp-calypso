@@ -200,7 +200,7 @@ $theme-info-height: 54px;
 	overflow: hidden;
 }
 
-.theme__test {
+.theme__update-alert {
 	position:absolute;
 	top: 0;
 	left: 0;
@@ -208,9 +208,22 @@ $theme-info-height: 54px;
 	z-index: 1;
 	padding: 1px;
 	font-size: 0.75rem;
-	.theme__test-content {
+	.theme__update-alert-content {
+		svg {
+			margin: 0 0.5rem -0.25rem;
+		}
+		span {
+			line-height: 30px;
+		}
 		background-color: #fcf9e8;
 		border-left: 4px #dba617 solid;
+	}
+
+	.theme__button-link.button.is-borderless {
+		float: right;
+		font-size: 0.75rem;
+		line-height: 30px;
+		margin-right: 0.5em;
 	}
 }
 

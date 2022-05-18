@@ -161,6 +161,10 @@ export class Theme extends Component {
 		this.props.setThemesBookmark( this.props.theme.id );
 	};
 
+	updateTheme = ( theme ) => {
+		return theme;
+	};
+
 	render() {
 		const { active, price, theme, translate, upsellUrl } = this.props;
 		const { name, description, screenshot } = theme;
@@ -251,12 +255,19 @@ export class Theme extends Component {
 				) }
 				<div ref={ this.themeThumbnailRef } className="theme__content" { ...bookmarkRef }>
 					{ theme.update && (
-						<div className="theme__test">
-							<div className="theme__test-content">
-								<Gridicon icon="refresh" size={ 18 } />
-								New version available.
-								<Button className="theme__button-link" borderless>
-									Update now
+						<div className="theme__update-alert">
+							<div className="theme__update-alert-content">
+								<span>
+									<Gridicon icon="refresh" size={ 18 } />
+									{ translate( 'New version available.' ) }
+								</span>
+								<Button
+									onClick={ this.updateTheme( theme ) }
+									primary
+									className="theme__button-link"
+									borderless
+								>
+									{ translate( 'Update now' ) }
 								</Button>
 							</div>
 						</div>
