@@ -104,7 +104,12 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const selectedGeneratedDesign = ! isMobile
 		? selectedDesign || shuffledGeneratedDesigns[ 0 ]
 		: undefined;
+
 	const visibility = useNewSiteVisibility();
+	const previewLoadingMessage = translate(
+		'{{strong}}One moment, please…{{/strong}} loading your site.',
+		{ components: { strong: <strong /> } }
+	);
 
 	function headerText() {
 		if ( showGeneratedDesigns ) {
@@ -303,9 +308,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 				externalUrl={ siteSlug }
 				showExternal={ true }
 				previewUrl={ previewUrl }
-				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
-					components: { strong: <strong /> },
-				} ) }
+				loadingMessage={ previewLoadingMessage }
 				toolbarComponent={ PreviewToolbar }
 				siteId={ site?.ID }
 				isPrivateAtomic={ isPrivateAtomic }
@@ -358,9 +361,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 					language: locale,
 					verticalId: siteVerticalId,
 				} ) }
-				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
-					components: { strong: <strong /> },
-				} ) }
+				loadingMessage={ previewLoadingMessage }
 				toolbarComponent={ PreviewToolbar }
 				autoHeight
 				siteId={ site?.ID }
@@ -422,35 +423,32 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			designs={ shuffledGeneratedDesigns }
 			verticalId={ siteVerticalId }
 			locale={ locale }
-			previews={ shuffledGeneratedDesigns.map( ( design ) => (
-				<WebPreview
-					key={ design.slug }
-					className={ classnames( {
-						'is-selected': design.slug === selectedGeneratedDesign?.slug,
-					} ) }
-					showPreview
-					showClose={ false }
-					showEdit={ false }
-					showDeviceSwitcher={ false }
-					previewUrl={ getDesignPreviewUrl( design, {
-						language: locale,
-						verticalId: siteVerticalId,
-					} ) }
-					loadingMessage={ translate(
-						'{{strong}}One moment, please…{{/strong}} loading your site.',
-						{
-							components: { strong: <strong /> },
-						}
-					) }
-					toolbarComponent={ PreviewToolbar }
-					autoHeight
-					siteId={ site?.ID }
-					url={ site?.URL }
-					isPrivateAtomic={ isPrivateAtomic }
-					translate={ translate }
-					recordTracksEvent={ recordTracksEvent }
-				/>
-			) ) }
+			previews={ shuffledGeneratedDesigns.map( ( design ) => {
+				const isSelected = design.slug === selectedGeneratedDesign?.slug;
+				return (
+					<WebPreview
+						key={ design.slug }
+						className={ classnames( { 'is-selected': isSelected } ) }
+						showPreview
+						showClose={ false }
+						showEdit={ false }
+						showDeviceSwitcher={ false }
+						previewUrl={ getDesignPreviewUrl( design, {
+							language: locale,
+							verticalId: siteVerticalId,
+						} ) }
+						loadingMessage={ previewLoadingMessage }
+						fetchPriority={ isSelected ? 'high' : 'low' }
+						toolbarComponent={ PreviewToolbar }
+						autoHeight
+						siteId={ site?.ID }
+						url={ site?.URL }
+						isPrivateAtomic={ isPrivateAtomic }
+						translate={ translate }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				);
+			} ) }
 			heading={
 				<div className={ classnames( 'step-container__header', 'design-setup__header' ) }>
 					{ heading }

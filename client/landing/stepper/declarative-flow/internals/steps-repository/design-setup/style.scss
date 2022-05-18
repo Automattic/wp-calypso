@@ -447,6 +447,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				opacity: 1;
 				pointer-events: auto;
 				position: relative;
+				z-index: 1;
 			}
 
 			.preview-toolbar__browser-header {
