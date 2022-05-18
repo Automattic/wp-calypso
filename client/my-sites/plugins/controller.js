@@ -5,7 +5,7 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { allowedCategories } from './categories/use-categories';
+import { ALLOWED_CATEGORIES } from './categories/use-categories';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
@@ -42,7 +42,7 @@ function renderPluginList( context, basePath ) {
 // The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route. In that case,
 // the `:plugin` param is actually the side ID or category.
 function getCategoryForPluginsBrowser( context ) {
-	if ( context.params.plugin && includes( allowedCategories, context.params.plugin ) ) {
+	if ( context.params.plugin && includes( ALLOWED_CATEGORIES, context.params.plugin ) ) {
 		return context.params.plugin;
 	}
 
@@ -102,7 +102,7 @@ export function browsePluginsOrPlugin( context, next ) {
 	if (
 		( context.params.plugin &&
 			( ( siteUrl && context.params.plugin === siteUrl.toString() ) ||
-				includes( allowedCategories, context.params.plugin ) ) ) ||
+				includes( ALLOWED_CATEGORIES, context.params.plugin ) ) ) ||
 		context.query?.s
 	) {
 		browsePlugins( context, next );

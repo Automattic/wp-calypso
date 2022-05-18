@@ -34,7 +34,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 
 		it( 'Can browse all popular plugins', async function () {
 			await pluginsPage.clickBrowseAllPopular();
-			await pluginsPage.validateSelectedCategory( 'Top free plugins' );
+			await pluginsPage.validateHasSection( 'Top free plugins' );
 		} );
 
 		it( 'Can return via breadcrumb', async function () {

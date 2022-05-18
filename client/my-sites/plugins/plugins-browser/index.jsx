@@ -444,11 +444,17 @@ const FullListView = ( { category, siteSlug, sites, billingPeriod, setBillingPer
 	const isPaidCategory = category === 'paid';
 	const { plugins, isFetching, fetchNextPage } = usePlugins( { category, infinite: true } );
 
+	const categories = useCategories();
+	const categoryName = [ 'paid', 'popular' ].includes( category )
+		? categories[ category ]?.name
+		: null;
+
 	return (
 		<>
 			<PluginsBrowserList
 				plugins={ plugins }
 				listName={ category }
+				title={ categoryName }
 				site={ siteSlug }
 				showPlaceholders={ isFetching }
 				currentSites={ sites }

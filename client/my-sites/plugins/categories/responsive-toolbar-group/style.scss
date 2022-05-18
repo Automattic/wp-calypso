@@ -1,0 +1,61 @@
+.responsive-toolbar-group {
+	position: relative;
+	width: 100%;
+
+	.responsive-toolbar-group__full-list {
+		width: 100%;
+		display: grid;
+		grid-auto-columns: max-content;
+    	grid-auto-flow: column;
+	}
+
+	.responsive-toolbar-group__grouped-list {
+		width: 100%;
+		justify-content: space-between;
+		flex-wrap: nowrap;
+		display: flex;
+		opacity: 0;
+
+		.responsive-toolbar-group__menu-item.is-selected {
+			background-color: #1e1e1e;
+			color: var( --color-text-inverted );
+		}
+	}
+
+	.is-visible {
+		opacity: 1;
+	}
+
+	.responsive-toolbar-group__full-list {
+		overflow: hidden;
+		position: absolute;
+		height: 0;
+		visibility: hidden;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: -1;
+
+		// for testing purposes only
+		// z-index: 2 !important
+		// height: auto !important;
+		// filter: alpha(opacity=50);
+		// opacity:0.5;
+	}
+		
+		.responsive-toolbar-group__button-item {
+			flex-basis: max-content;
+			white-space: nowrap;
+			z-index: 0;
+		}
+
+		.responsive-toolbar-group__button-item, .responsive-toolbar-group__menu-item {
+			&:focus {
+				&::before {
+					// disable blue box on focus
+					box-shadow: none !important;
+					outline: none !important;
+				}
+			}
+		}
+	}
