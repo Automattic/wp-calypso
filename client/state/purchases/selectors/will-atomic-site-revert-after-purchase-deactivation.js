@@ -1,9 +1,4 @@
-import {
-	isWpComBusinessPlan,
-	isWpComEcommercePlan,
-	isWpComProPlan,
-} from '@automattic/calypso-products';
-import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
+import { planHasFeature, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getByPurchaseId } from './get-by-purchase-id';
 import { getSitePurchases } from './get-site-purchases';
@@ -28,10 +23,7 @@ export const willAtomicSiteRevertAfterPurchaseDeactivation = ( state, purchaseId
 	const purchase = getByPurchaseId( state, purchaseId );
 
 	const isAtomicSupportedProduct = ( productSlug ) =>
-		isWpComProPlan( productSlug ) ||
-		isWpComBusinessPlan( productSlug ) ||
-		isWpComEcommercePlan( productSlug ) ||
-		isMarketplaceProduct( state, productSlug );
+		planHasFeature( productSlug, WPCOM_FEATURES_ATOMIC );
 
 	if (
 		! purchase ||
