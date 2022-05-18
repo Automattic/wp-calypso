@@ -1,3 +1,4 @@
+import { FEATURE_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
@@ -18,6 +19,7 @@ import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -215,19 +217,23 @@ const InstalledInOrPricing = ( {
 	const isPluginAtive = useSelector( ( state ) =>
 		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
 	)?.active;
+	const pluginInstallationNotAllowed = useSelector(
+		( state ) => ! hasActiveSiteFeature( state, selectedSiteId, FEATURE_INSTALL_PLUGINS )
+	);
+	const active = ( pluginInstallationNotAllowed && isWpcomPreinstalled ) || isPluginAtive;
 
 	let checkmarkColorClass = 'checkmark--active';
 
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		if ( selectedSiteId ) {
-			checkmarkColorClass = isPluginAtive ? 'checkmark--active' : 'checkmark--inactive';
+			checkmarkColorClass = active ? 'checkmark--active' : 'checkmark--inactive';
 		}
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
 				<div className="plugins-browser-item__installed ">
 					<Gridicon icon="checkmark" className={ checkmarkColorClass } size={ 14 } />
-					{ isWpcomPreinstalled || currentSites?.length === 1
+					{ ( pluginInstallationNotAllowed && isWpcomPreinstalled ) || currentSites?.length === 1
 						? translate( 'Installed' )
 						: translate( 'Installed on %d site', 'Installed on %d sites', {
 								args: [ sitesWithPlugin.length ],
@@ -236,8 +242,8 @@ const InstalledInOrPricing = ( {
 				</div>
 				{ selectedSiteId && (
 					<div className="plugins-browser-item__active">
-						<Badge type={ isPluginAtive ? 'success' : 'info' }>
-							{ isPluginAtive ? translate( 'Active' ) : translate( 'Inactive' ) }
+						<Badge type={ active ? 'success' : 'info' }>
+							{ active ? translate( 'Active' ) : translate( 'Inactive' ) }
 						</Badge>
 					</div>
 				) }
