@@ -1,9 +1,9 @@
 import { translate, TranslateOptions, TranslateOptionsText } from 'i18n-calypso';
 import React from 'react';
 import { convertPlatformName } from 'calypso/blocks/import/util';
-import type { Importer } from 'calypso/blocks/importer/types';
 import importerConfig, { ImporterConfig } from 'calypso/lib/importer/importer-config';
-import SupportLink from 'calypso/signup/steps/import-from/components/support-link';
+import SupportLink from '../support-link';
+import type { Importer } from 'calypso/blocks/importer/types';
 
 const translateConfig: { [ key: string ]: Partial< ImporterConfig > } = {
 	blogger: {
@@ -59,11 +59,13 @@ export function getImportDragConfig( importer: Importer, supportLinkModal?: bool
 	} as TranslateOptionsText ) as string;
 
 	importerData.description = translate(
+		// eslint-disable-next-line wpcalypso/i18n-no-variables
 		translateConfig[ importer ].description as string,
 		options
 	);
 
 	importerData.uploadDescription = translate(
+		// eslint-disable-next-line wpcalypso/i18n-no-variables
 		translateConfig[ importer ].uploadDescription as string,
 		options
 	);
