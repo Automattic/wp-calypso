@@ -11,13 +11,16 @@ import { getSitePurchases } from './get-site-purchases';
 import 'calypso/state/purchases/init';
 
 /**
- * Whether a purchase needs to trigger an Atomic revert prior its cancellation/removal.
+ * Whether a purchase will trigger an Atomic revert when it is canceled or removed.
+ * The backend has the final say on if this actually happens, see:
+ * revert_atomic_site_on_subscription_removal() and deactivate_product().
+ * This is a helper for UI elements only, it does not control actual revert decisions.
  *
  * @param   {object} state       global state
  * @param   {number} purchaseId  the purchase id
- * @returns {boolean} True if the Atomic revert is needed, false otherwise.
+ * @returns {boolean} True if the Atomic revert will happen, false otherwise.
  */
-export const shouldRevertAtomicSiteBeforeDeactivation = ( state, purchaseId ) => {
+export const willAtomicSiteRevertAfterPurchaseDeactivation = ( state, purchaseId ) => {
 	if ( ! purchaseId ) {
 		return false;
 	}
@@ -40,7 +43,7 @@ export const shouldRevertAtomicSiteBeforeDeactivation = ( state, purchaseId ) =>
 
 	// Retrieves all Atomic supported purchases for the site.
 	// If there is at least one active subscription except the given one,
-	// the site needs to be kept in the Atomic infra.
+	// the site will be kept in the Atomic infra.
 	return ! getSitePurchases( state, purchase.siteId ).some(
 		( sitePurchase ) =>
 			sitePurchase.id !== purchaseId && isAtomicSupportedProduct( sitePurchase.productSlug )
