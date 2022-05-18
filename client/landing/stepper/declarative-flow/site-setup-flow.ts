@@ -35,6 +35,11 @@ export const siteSetupFlow: Flow = {
 			'importReadyNot',
 			'importReadyWpcom',
 			'importReadyPreview',
+			'importerWix',
+			'importerBlogger',
+			'importerMedium',
+			'importerSquarespace',
+			'importerWordpress',
 			'businessInfo',
 			'storeAddress',
 			'processing',
@@ -238,7 +243,19 @@ export const siteSetupFlow: Flow = {
 
 				case 'importReady':
 				case 'importReadyPreview': {
-					return exitFlow( providedDependencies?.url as string );
+					return navigate( providedDependencies?.url as StepPath );
+				}
+
+				case 'importerWix':
+				case 'importerBlogger':
+				case 'importerMedium':
+				case 'importerSquarespace':
+				case 'importerWordpress': {
+					if ( providedDependencies?.type === 'redirect' ) {
+						return exitFlow( providedDependencies?.url as string );
+					}
+
+					return navigate( providedDependencies?.url as StepPath );
 				}
 			}
 		}
@@ -283,6 +300,13 @@ export const siteSetupFlow: Flow = {
 				case 'importReadyPreview':
 					return navigate( 'import' );
 
+				case 'importerWix':
+				case 'importerBlogger':
+				case 'importerMedium':
+				case 'importerSquarespace':
+				case 'importerWordpress':
+					return navigate( 'import' );
+
 				default:
 					return navigate( 'intent' );
 			}
@@ -310,7 +334,7 @@ export const siteSetupFlow: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath ) => {
+		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
 			navigate( step );
 		};
 

@@ -71,7 +71,13 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	const queryClient = new QueryClient();
+	const queryClient = new QueryClient( {
+		defaultOptions: {
+			queries: {
+				refetchOnWindowFocus: false,
+			},
+		},
+	} );
 
 	await loadPersistedState();
 	const user = ( await initializeCurrentUser() ) as unknown;
