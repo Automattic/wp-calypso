@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { Button, Popover } from '@automattic/components';
+import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
 	useHas3PC,
 	useSubmitTicketMutation,
@@ -123,6 +123,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 	const [ contactSuccess, setContactSuccess ] = useState( false );
 	const [ forumTopicUrl, setForumTopicUrl ] = useState( '' );
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
+	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 	const locale = useLocale();
 	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
 	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
@@ -234,10 +235,14 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 						locale,
 						client: 'browser:help-center',
 						is_chat_overflow: false,
-					} ).then( () => {
-						setContactSuccess( true );
-						resetStore();
-					} );
+					} )
+						.then( () => {
+							setContactSuccess( true );
+							resetStore();
+						} )
+						.catch( () => {
+							setHasSubmittingError( true );
+						} );
 				}
 				break;
 			}
@@ -249,10 +254,14 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					locale,
 					hideInfo: hideSiteInfo,
 					userDeclaredSiteUrl,
-				} ).then( ( response ) => {
-					setForumTopicUrl( response.topic_URL );
-					resetStore();
-				} );
+				} )
+					.then( ( response ) => {
+						setForumTopicUrl( response.topic_URL );
+						resetStore();
+					} )
+					.catch( () => {
+						setHasSubmittingError( true );
+					} );
 				break;
 			}
 		}
@@ -294,7 +303,12 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 	};
 
 	const isCTADisabled = () => {
-		return isLoading || ( mode !== 'FORUM' && ! supportSite ) || ! message;
+		return (
+			isLoading ||
+			( mode !== 'FORUM' && ! supportSite ) ||
+			( mode !== 'CHAT' && ! subject ) ||
+			! message
+		);
 	};
 
 	return (
@@ -378,6 +392,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					</div>
 				</section>
 			) }
+
 			<section>
 				<Button
 					disabled={ isCTADisabled() }
@@ -387,6 +402,12 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 				>
 					{ isSubmitting ? formTitles.buttonLoadingLabel : formTitles.buttonLabel }
 				</Button>
+				{ hasSubmittingError && (
+					<FormInputValidation
+						isError
+						text={ __( 'Something went wrong, please try again later', __i18n_text_domain__ ) }
+					/>
+				) }
 			</section>
 			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && (
 				<section>

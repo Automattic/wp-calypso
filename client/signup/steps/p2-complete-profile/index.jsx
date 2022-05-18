@@ -1,3 +1,4 @@
+import { FormInputValidation } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -5,7 +6,6 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import EditGravatar from 'calypso/blocks/edit-gravatar';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';

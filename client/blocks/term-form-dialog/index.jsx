@@ -1,4 +1,4 @@
-import { Dialog } from '@automattic/components';
+import { Dialog, FormInputValidation } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -7,7 +7,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import TermTreeSelectorTerms from 'calypso/blocks/term-tree-selector/terms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormTextInput from 'calypso/components/forms/form-text-input';
