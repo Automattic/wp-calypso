@@ -1,41 +1,94 @@
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-blog-sticker-mutation';
+import { useRemoveBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-remove-blog-sticker-mutation';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { addBlogSticker, removeBlogSticker } from 'calypso/state/blog-stickers/actions';
+import { errorNotice, plainNotice, successNotice } from 'calypso/state/notices/actions';
 
-class ReaderPostOptionsMenuBlogStickerMenuItem extends Component {
-	static propTypes = {
-		blogId: PropTypes.number,
-		blogStickerName: PropTypes.string,
-		hasSticker: PropTypes.bool,
+function ReaderPostOptionsMenuBlogStickerMenuItem( {
+	blogId,
+	blogStickerName,
+	hasSticker,
+	children,
+} ) {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+
+	const { addBlogSticker } = useAddBlogStickerMutation( {
+		onError() {
+			dispatch(
+				errorNotice( translate( 'Sorry, we had a problem adding that sticker. Please try again.' ) )
+			);
+		},
+		onSuccess( data, { stickerName } ) {
+			dispatch(
+				successNotice(
+					translate( 'The sticker {{i}}%s{{/i}} has been successfully added.', {
+						args: stickerName,
+						components: {
+							i: <i />,
+						},
+					} ),
+					{
+						duration: 5000,
+					}
+				)
+			);
+		},
+	} );
+
+	const { removeBlogSticker } = useRemoveBlogStickerMutation( {
+		onError() {
+			dispatch(
+				errorNotice(
+					translate( 'Sorry, we had a problem removing that sticker. Please try again.' )
+				)
+			);
+		},
+		onSuccess( data, { stickerName } ) {
+			dispatch(
+				plainNotice(
+					translate( 'The sticker {{i}}%s{{/i}} has been removed.', {
+						args: stickerName,
+						components: {
+							i: <i />,
+						},
+					} ),
+					{
+						duration: 5000,
+					}
+				)
+			);
+		},
+	} );
+
+	const toggleSticker = () => {
+		const toggle = hasSticker ? removeBlogSticker : addBlogSticker;
+		toggle( blogId, blogStickerName );
 	};
 
-	toggleSticker = () => {
-		const toggle = this.props.hasSticker ? this.props.removeBlogSticker : this.props.addBlogSticker;
-		toggle( this.props.blogId, this.props.blogStickerName );
-	};
+	const classes = classnames( 'reader-post-options-menu__blog-sticker-menu-item', {
+		'has-sticker': hasSticker,
+	} );
 
-	render() {
-		const { hasSticker, blogStickerName, children } = this.props;
-		const classes = classnames( 'reader-post-options-menu__blog-sticker-menu-item', {
-			'has-sticker': hasSticker,
-		} );
-
-		return (
-			<PopoverMenuItem
-				icon="flag"
-				key={ blogStickerName }
-				className={ classes }
-				onClick={ this.toggleSticker }
-			>
-				{ children }
-			</PopoverMenuItem>
-		);
-	}
+	return (
+		<PopoverMenuItem
+			icon="flag"
+			key={ blogStickerName }
+			className={ classes }
+			onClick={ toggleSticker }
+		>
+			{ children }
+		</PopoverMenuItem>
+	);
 }
 
-export default connect( null, { addBlogSticker, removeBlogSticker } )(
-	ReaderPostOptionsMenuBlogStickerMenuItem
-);
+ReaderPostOptionsMenuBlogStickerMenuItem.propTypes = {
+	blogId: PropTypes.number,
+	blogStickerName: PropTypes.string,
+	hasSticker: PropTypes.bool,
+};
+
+export default ReaderPostOptionsMenuBlogStickerMenuItem;
