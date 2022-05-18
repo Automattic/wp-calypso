@@ -1,5 +1,4 @@
 import events from 'events';
-import sinon from 'sinon';
 import { logSectionResponse } from 'calypso/server/pages/analytics';
 import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 import analytics from '../../lib/analytics';
@@ -29,15 +28,15 @@ describe( 'index', () => {
 			useFakeTimers( ( newClock ) => ( clock = newClock ) );
 
 			beforeEach( () => {
-				sinon.stub( analytics.statsd, 'recordTiming' );
-				sinon.stub( analytics.statsd, 'recordCounting' );
+				jest.spyOn( analytics.statsd, 'recordTiming' );
+				jest.spyOn( analytics.statsd, 'recordCounting' );
 				request.context.sectionName = 'reader';
 				request.context.target = 'evergreen';
 			} );
 
 			afterEach( () => {
-				analytics.statsd.recordTiming.restore();
-				analytics.statsd.recordCounting.restore();
+				analytics.statsd.recordTiming.mockReset();
+				analytics.statsd.recordCounting.mockReset();
 			} );
 
 			test( 'logs response analytics', () => {
@@ -104,13 +103,13 @@ describe( 'index', () => {
 
 		describe( 'when not rendering a section', () => {
 			beforeEach( () => {
-				sinon.stub( analytics.statsd, 'recordTiming' );
-				sinon.stub( analytics.statsd, 'recordCounting' );
+				jest.spyOn( analytics.statsd, 'recordTiming' );
+				jest.spyOn( analytics.statsd, 'recordCounting' );
 			} );
 
 			afterEach( () => {
-				analytics.statsd.recordTiming.restore();
-				analytics.statsd.recordCounting.restore();
+				analytics.statsd.recordTiming.mockReset();
+				analytics.statsd.recordCounting.mockReset();
 			} );
 
 			test( 'does not log response time analytics', () => {
