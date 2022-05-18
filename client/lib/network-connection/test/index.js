@@ -1,32 +1,31 @@
-import config from '@automattic/calypso-config';
-import { expect } from 'chai';
-import sinon from 'sinon';
 import NetworkConnectionApp from 'calypso/lib/network-connection';
 
 describe( 'index', () => {
-	let configStub;
-
 	beforeEach( () => {
-		configStub = sinon.stub( config, 'isEnabled' ).returns( true );
-	} );
+		jest.mock( '@automattic/calypso-config', () => {
+			const originalModule = jest.requireActual( '@automattic/calypso-config' );
 
-	afterEach( () => {
-		configStub.restore();
+			return {
+				__esModule: true,
+				...originalModule,
+				isEnabled: () => true,
+			};
+		} );
 	} );
 
 	test( 'has to be enabled when config flag is enabled', () => {
-		expect( NetworkConnectionApp.isEnabled() ).to.be.true;
+		expect( NetworkConnectionApp.isEnabled() ).toBe( true );
 	} );
 
 	test( 'has initial state connected', () => {
-		expect( NetworkConnectionApp.isConnected() ).to.be.true;
+		expect( NetworkConnectionApp.isConnected() ).toBe( true );
 	} );
 
 	describe( 'Events', () => {
 		let changeSpy;
 
 		beforeEach( () => {
-			changeSpy = sinon.spy();
+			changeSpy = jest.fn();
 			NetworkConnectionApp.on( 'change', changeSpy );
 		} );
 
@@ -37,31 +36,31 @@ describe( 'index', () => {
 		test( 'has to persist connected state when connected event sent', () => {
 			NetworkConnectionApp.emitConnected();
 
-			expect( NetworkConnectionApp.isConnected() ).to.be.true;
-			expect( changeSpy ).to.have.not.been.called;
+			expect( NetworkConnectionApp.isConnected() ).toBe( true );
+			expect( changeSpy ).not.toBeCalled();
 		} );
 
 		test( 'has to change state to disconnected when disconnected event sent', () => {
 			NetworkConnectionApp.emitDisconnected();
 
-			expect( NetworkConnectionApp.isConnected() ).to.be.false;
-			expect( changeSpy ).to.have.been.calledOnce;
+			expect( NetworkConnectionApp.isConnected() ).toBe( false );
+			expect( changeSpy ).toBeCalledTimes( 1 );
 		} );
 
 		test( 'has to change state to connected only once when connected event sent twice', () => {
 			NetworkConnectionApp.emitConnected();
 			NetworkConnectionApp.emitConnected();
 
-			expect( NetworkConnectionApp.isConnected() ).to.be.true;
-			expect( changeSpy ).to.have.been.calledOnce;
+			expect( NetworkConnectionApp.isConnected() ).toBe( true );
+			expect( changeSpy ).toBeCalledTimes( 1 );
 		} );
 
 		test( 'has to change state to disconnected and then back to connected when disconnected and then connected events sent', () => {
 			NetworkConnectionApp.emitDisconnected();
 			NetworkConnectionApp.emitConnected();
 
-			expect( NetworkConnectionApp.isConnected() ).to.be.true;
-			expect( changeSpy ).to.have.been.calledTwice;
+			expect( NetworkConnectionApp.isConnected() ).toBe( true );
+			expect( changeSpy ).toBeCalledTimes( 2 );
 		} );
 	} );
 } );
