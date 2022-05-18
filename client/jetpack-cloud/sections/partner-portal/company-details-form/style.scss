@@ -11,14 +11,21 @@
 	}
 
 	&.is-open .select-dropdown__options {
-		position: absolute;
 		width: 100%;
 		height: 200px;
 		overflow: auto;
 	}
 
+	.select-dropdown__options {
+		position: absolute;
+	}
+
 	.select-dropdown__option {
 		user-select: none;
+	}
+
+	.select-dropdown__item {
+		padding: 0 16px;
 	}
 }
 
