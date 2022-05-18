@@ -18,6 +18,7 @@ import {
 	FEATURE_TITAN_EMAIL,
 	FEATURE_MONETISE,
 	FEATURE_JETPACK_ESSENTIAL,
+	FEATURE_GOOGLE_ANALYTICS,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { translate, numberFormat } from 'i18n-calypso';
@@ -372,6 +373,42 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 				args: [ storageSize ],
 				comment: '%s is a number of gigabytes.',
 			} );
+		},
+	},
+	{
+		get title() {
+			return translate( 'Google Analytics integration' );
+		},
+		get description() {
+			return translate(
+				"Track your site's stats with Google Analytics for a deeper understanding of your visitors and customers."
+			);
+		},
+		features: [ FEATURE_GOOGLE_ANALYTICS ],
+		getCellText: ( feature, isMobile = false ) => {
+			if ( ! isMobile ) {
+				if ( feature ) {
+					return (
+						<>
+							<Gridicon icon="checkmark" />
+							{ translate( 'Included' ) }
+						</>
+					);
+				}
+
+				return (
+					<>
+						<Gridicon icon="cross" />
+						{ translate( 'Not included' ) }
+					</>
+				);
+			}
+
+			return feature
+				? translate( 'Google Analytics integration' )
+				: translate( 'Google Analytics integration is {{strong}}not{{/strong}} included', {
+						components: { strong: <strong /> },
+				  } );
 		},
 	},
 	{
