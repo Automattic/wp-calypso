@@ -67,7 +67,7 @@ function NotificationSettingsForm( { blogId, settingKeys, settings, onToggle } )
 					/>
 				) }
 				<Stream
-					key={ 'selected-stream' }
+					key="selected-stream"
 					className="selected-stream"
 					blogId={ blogId }
 					stream={ selectedStream }

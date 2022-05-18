@@ -15,7 +15,7 @@ function NotificationSettingsFormDeviceSelector( { selectedDeviceId, onChange } 
 			<div className="notification-settings-form-header__title">
 				<FormSelect value={ selectedDeviceId } onChange={ onChange }>
 					{ devices.map( ( { id, name } ) => (
-						<option key={ id } value={ id }>
+						<option key={ `device-notifications-${ id }` } value={ id }>
 							{ name }
 						</option>
 					) ) }
