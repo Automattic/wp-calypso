@@ -11,6 +11,7 @@ import accept from 'calypso/lib/accept';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import InviteButton from './invite-button';
 
 class Viewers extends Component {
 	infiniteList = createRef();
@@ -82,6 +83,10 @@ class Viewers extends Component {
 					? this.props.translate( "Oops, Jetpack sites don't support viewers." )
 					: this.props.translate( "You don't have any viewers yet." ),
 		};
+
+		if ( this.props.site && ! this.props.site.jetpack ) {
+			emptyContentArgs.action = <InviteButton siteSlug={ this.props.site.slug } />;
+		}
 
 		if ( ! this.props.viewers.length && ! this.props.isFetching ) {
 			if ( this.props.site && ! this.props.site.jetpack && ! this.props.site.is_private ) {
