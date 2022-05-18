@@ -16,7 +16,7 @@ import InlineHelpSearchResults from './inline-help-search-results';
 
 import './inline-help-center-content.scss';
 
-const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) => {
+const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage, closeHelpCenter } ) => {
 	const isMobile = useMobileBreakpoint();
 	const { __ } = useI18n();
 	const [ directly, updateDirectly ] = useState( { isLoaded: false, hasSession: false } );
@@ -92,10 +92,10 @@ const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) =>
 	const openContactView = () => {
 		if ( directly.isLoaded && directly.hasSession ) {
 			DirectlyRTM( [ 'maximize' ] );
-			// Need to close HelpCenter as well
+			closeHelpCenter();
+		} else {
+			openSecondaryView( VIEW_CONTACT );
 		}
-
-		openSecondaryView( VIEW_CONTACT );
 	};
 
 	const setAdminSection = () => {

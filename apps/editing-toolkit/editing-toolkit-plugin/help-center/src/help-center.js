@@ -44,7 +44,10 @@ function HelpCenterContent() {
 				</>
 			) }
 			{ show && (
-				<HelpCenter content={ <Contents /> } handleClose={ () => setShowHelpCenter( false ) } />
+				<HelpCenter
+					content={ <Contents handleClose={ () => setShowHelpCenter( false ) } /> }
+					handleClose={ () => setShowHelpCenter( false ) }
+				/>
 			) }
 		</>
 	);
