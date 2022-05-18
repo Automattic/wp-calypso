@@ -1,14 +1,9 @@
 import classnames from 'classnames';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-	Importer,
-	ImportJob,
-	ImportJobParams,
-	StepNavigator,
-} from 'calypso/blocks/importer/types';
-import { getImporterTypeForEngine } from 'calypso/blocks/importer/types';
 import { UrlData } from 'calypso/blocks/import/types';
+import { Importer, ImportJob, ImportJobParams, StepNavigator } from 'calypso/blocks/importer/types';
+import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
 import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';

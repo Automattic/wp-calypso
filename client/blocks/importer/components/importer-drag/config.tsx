@@ -1,9 +1,9 @@
 import { translate, TranslateOptions, TranslateOptionsText } from 'i18n-calypso';
 import React from 'react';
+import { convertPlatformName } from 'calypso/blocks/import/util';
+import type { Importer } from 'calypso/blocks/importer/types';
 import importerConfig, { ImporterConfig } from 'calypso/lib/importer/importer-config';
 import SupportLink from 'calypso/signup/steps/import-from/components/support-link';
-import { convertPlatformName } from 'calypso/signup/steps/import/util';
-import type { Importer } from 'calypso/signup/steps/import-from/types';
 
 const translateConfig: { [ key: string ]: Partial< ImporterConfig > } = {
 	blogger: {
