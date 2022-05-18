@@ -1,0 +1,15 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.site-content__no-sites {
+	text-align: center;
+	font-size: 1.5rem;
+}
+.site-content__mobile-view {
+	@include break-large() {
+		display: none;
+	}
+}
+.site-content__card.is-compact {
+	padding: 0;
+}

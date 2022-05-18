@@ -1,3 +1,4 @@
+import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
@@ -12,6 +13,7 @@ import QueryContactDetailsCache from 'calypso/components/data/query-contact-deta
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
+import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -29,7 +31,7 @@ import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getIsIntroOfferRequesting from 'calypso/state/selectors/get-is-requesting-into-offers';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, isJetpackProductSite } from 'calypso/state/sites/selectors';
 import WPCheckout from './components/wp-checkout';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from './hooks/use-add-products-from-url';
@@ -126,6 +128,9 @@ export default function CompositeCheckout( {
 		) ||
 		isJetpackCheckout ||
 		false;
+	const hasJetpackStandalonePlugins =
+		useSelector( ( state ) => siteId && isJetpackProductSite( state, siteId ) ) || false;
+	const usesJetpackProducts = isJetpackNotAtomic || hasJetpackStandalonePlugins;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const isLoadingIntroOffers = useSelector( ( state ) =>
 		getIsIntroOfferRequesting( state, siteId )
@@ -168,7 +173,7 @@ export default function CompositeCheckout( {
 		productAliasFromUrl,
 		purchaseId,
 		isInModal,
-		isJetpackNotAtomic,
+		usesJetpackProducts,
 		isPrivate,
 		siteSlug: updatedSiteSlug,
 		isLoggedOutCart,
@@ -523,8 +528,8 @@ export default function CompositeCheckout( {
 	} );
 
 	const onPageLoadError: CheckoutPageErrorCallback = useCallback(
-		( errorType, errorMessage, errorData ) => {
-			logStashLoadErrorEvent( errorType, errorMessage, errorData );
+		( errorType, error, errorData ) => {
+			logStashLoadErrorEvent( errorType, error, errorData );
 			function errorTypeToTracksEventName( type: string ): string {
 				switch ( type ) {
 					case 'page_load':
@@ -543,7 +548,7 @@ export default function CompositeCheckout( {
 			}
 			reduxDispatch(
 				recordTracksEvent( errorTypeToTracksEventName( errorType ), {
-					error_message: errorMessage,
+					error_message: error.message + '; Stack: ' + error.stack,
 					...errorData,
 				} )
 			);
@@ -660,6 +665,14 @@ export default function CompositeCheckout( {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
+	const cartHasSearchProduct = useMemo(
+		() =>
+			responseCart.products.some( ( { product_slug } ) =>
+				JETPACK_SEARCH_PRODUCTS.includes( product_slug as typeof JETPACK_SEARCH_PRODUCTS[ number ] )
+			),
+		[ responseCart.products ]
+	);
+
 	return (
 		<Fragment>
 			<QueryIntroOffers siteId={ updatedSiteId } />
@@ -669,6 +682,7 @@ export default function CompositeCheckout( {
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
+			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type={ 'post' } /> }
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { EMAIL_ACCOUNTS_REQUEST_SUCCESS } from 'calypso/state/action-types';
 import { emailAccountsReducer } from '../reducer';
 
@@ -23,7 +22,7 @@ describe( "emailAccountsReducer's", () => {
 		test( 'should default to null', () => {
 			const state = emailAccountsReducer( undefined, {} );
 
-			expect( state ).to.eql( null );
+			expect( state ).toBeNull();
 		} );
 
 		test( 'should return new items received', () => {
@@ -32,7 +31,7 @@ describe( "emailAccountsReducer's", () => {
 				response: { accounts: [ account ] },
 			} );
 
-			expect( state ).to.eql( [ account ] );
+			expect( state ).toEqual( [ account ] );
 		} );
 	} );
 } );

@@ -36,7 +36,7 @@ export default function usePrepareProductsForCart( {
 	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
 	isInModal,
-	isJetpackNotAtomic,
+	usesJetpackProducts,
 	isPrivate,
 	siteSlug,
 	isLoggedOutCart,
@@ -49,7 +49,7 @@ export default function usePrepareProductsForCart( {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
 	isInModal?: boolean;
-	isJetpackNotAtomic: boolean;
+	usesJetpackProducts: boolean;
 	isPrivate: boolean;
 	siteSlug: string | undefined;
 	isLoggedOutCart?: boolean;
@@ -100,7 +100,7 @@ export default function usePrepareProductsForCart( {
 	useAddProductFromSlug( {
 		productAliasFromUrl,
 		dispatch,
-		isJetpackNotAtomic,
+		usesJetpackProducts,
 		isPrivate,
 		addHandler,
 		isJetpackCheckout,
@@ -294,7 +294,7 @@ function useAddRenewalItems( {
 function useAddProductFromSlug( {
 	productAliasFromUrl,
 	dispatch,
-	isJetpackNotAtomic,
+	usesJetpackProducts,
 	isPrivate,
 	addHandler,
 	isJetpackCheckout,
@@ -304,7 +304,7 @@ function useAddProductFromSlug( {
 }: {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
-	isJetpackNotAtomic: boolean;
+	usesJetpackProducts: boolean;
 	isPrivate: boolean;
 	addHandler: AddHandler;
 	isJetpackCheckout?: boolean;
@@ -322,7 +322,7 @@ function useAddProductFromSlug( {
 			productAliasFromUrl
 				?.split( ',' )
 				// Special treatment for Jetpack Search products
-				.map( ( productAlias ) => getJetpackSearchForSite( productAlias, isJetpackNotAtomic ) )
+				.map( ( productAlias ) => getJetpackSearchForSite( productAlias, usesJetpackProducts ) )
 				// Get the product information if it exists, and keep a reference to
 				// its product alias which we may need to get additional information like
 				// the domain name or theme (eg: 'theme:ovation').
@@ -330,7 +330,7 @@ function useAddProductFromSlug( {
 					const productSlug = getProductSlugFromAlias( productAlias );
 					return { productSlug, productAlias };
 				} ) ?? [],
-		[ isJetpackNotAtomic, productAliasFromUrl ]
+		[ usesJetpackProducts, productAliasFromUrl ]
 	);
 
 	useEffect( () => {
@@ -370,7 +370,7 @@ function useAddProductFromSlug( {
 		}
 		debug(
 			'preparing products that were requested in url',
-			{ productAliasFromUrl, isJetpackNotAtomic },
+			{ productAliasFromUrl, usesJetpackProducts },
 			cartProducts
 		);
 		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
@@ -378,7 +378,7 @@ function useAddProductFromSlug( {
 		addHandler,
 		translate,
 		isPrivate,
-		isJetpackNotAtomic,
+		usesJetpackProducts,
 		productAliasFromUrl,
 		validProducts,
 		isJetpackCheckout,
@@ -441,12 +441,12 @@ function createRenewalItemToAddToCart(
  * redirect to a valid checkout URL for a search purchase without worrying
  * about which type of site the user has.
  */
-function getJetpackSearchForSite( productAlias: string, isJetpackNotAtomic: boolean ): string {
+function getJetpackSearchForSite( productAlias: string, usesJetpackProducts: boolean ): string {
 	if (
 		productAlias &&
 		JETPACK_SEARCH_PRODUCTS.includes( productAlias as typeof JETPACK_SEARCH_PRODUCTS[ number ] )
 	) {
-		if ( isJetpackNotAtomic ) {
+		if ( usesJetpackProducts ) {
 			productAlias = productAlias.includes( 'monthly' )
 				? PRODUCT_JETPACK_SEARCH_MONTHLY
 				: PRODUCT_JETPACK_SEARCH;

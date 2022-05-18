@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	getSelectedSite,
@@ -19,7 +18,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( selected ).to.be.null;
+			expect( selected ).toBeNull();
 		} );
 
 		test( 'should return the object for the selected site', () => {
@@ -42,7 +41,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( selected ).to.eql( {
+			expect( selected ).toEqual( {
 				ID: 2916284,
 				name: 'WordPress.com Example Blog',
 				URL: 'https://example.com',
@@ -63,7 +62,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( selected ).to.be.null;
+			expect( selected ).toBeNull();
 		} );
 
 		test( 'should return ID for the selected site', () => {
@@ -73,7 +72,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( selected ).to.eql( 2916284 );
+			expect( selected ).toEqual( 2916284 );
 		} );
 	} );
 
@@ -85,7 +84,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( slug ).to.be.null;
+			expect( slug ).toBeNull();
 		} );
 
 		test( 'should return slug for the selected site', () => {
@@ -104,7 +103,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( slug ).to.eql( 'example.com' );
+			expect( slug ).toEqual( 'example.com' );
 		} );
 	} );
 
@@ -116,7 +115,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( section ).to.eql( false );
+			expect( section ).toEqual( false );
 		} );
 
 		test( 'should return the current section if there is one assigned', () => {
@@ -132,7 +131,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( section ).to.equal( sectionObj );
+			expect( section ).toEqual( sectionObj );
 		} );
 	} );
 
@@ -144,7 +143,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( sectionName ).to.be.null;
+			expect( sectionName ).toBeNull();
 		} );
 
 		test( 'should return the name of the current section', () => {
@@ -159,7 +158,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( sectionName ).to.equal( 'post-editor' );
+			expect( sectionName ).toEqual( 'post-editor' );
 		} );
 	} );
 
@@ -171,7 +170,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( sectionName ).to.be.null;
+			expect( sectionName ).toBeNull();
 		} );
 
 		test( 'should return the name of the current section', () => {
@@ -186,7 +185,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( sectionName ).to.equal( 'editor' );
+			expect( sectionName ).toEqual( 'editor' );
 		} );
 	} );
 
@@ -198,7 +197,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( siteSection ).to.be.false;
+			expect( siteSection ).toBe( false );
 		} );
 
 		test( 'should return false if the current section is not site-specific', () => {
@@ -213,7 +212,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( siteSection ).to.be.false;
+			expect( siteSection ).toBe( false );
 		} );
 
 		test( 'should return true if the current section is site-specific', () => {
@@ -228,7 +227,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( siteSection ).to.be.true;
+			expect( siteSection ).toBe( true );
 		} );
 	} );
 } );

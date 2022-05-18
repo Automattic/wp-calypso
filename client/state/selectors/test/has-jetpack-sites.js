@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 
 describe( 'hasJetpackSites()', () => {
@@ -9,7 +8,7 @@ describe( 'hasJetpackSites()', () => {
 					items: {},
 				},
 			} )
-		).to.be.false;
+		).toBe( false );
 	} );
 
 	test( 'it should return false if one site exists and the site is not a Jetpack site', () => {
@@ -21,7 +20,7 @@ describe( 'hasJetpackSites()', () => {
 					},
 				},
 			} )
-		).to.be.false;
+		).toBe( false );
 	} );
 
 	test( 'it should return false if several sites exist and none of them is a Jetpack site', () => {
@@ -35,7 +34,7 @@ describe( 'hasJetpackSites()', () => {
 					},
 				},
 			} )
-		).to.be.false;
+		).toBe( false );
 	} );
 
 	test( 'it should return true if one site is a Jetpack site and the others are not', () => {
@@ -49,7 +48,7 @@ describe( 'hasJetpackSites()', () => {
 					},
 				},
 			} )
-		).to.be.true;
+		).toBe( true );
 	} );
 
 	test( 'it should return true if several sites exist and all of them are Jetpack sites', () => {
@@ -63,6 +62,6 @@ describe( 'hasJetpackSites()', () => {
 					},
 				},
 			} )
-		).to.be.true;
+		).toBe( true );
 	} );
 } );

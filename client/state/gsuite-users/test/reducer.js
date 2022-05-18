@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { GSUITE_USERS_REQUEST_SUCCESS } from 'calypso/state/action-types';
 import { usersReducer } from '../reducer';
 
@@ -20,7 +19,7 @@ describe( "gsuiteUsersReducer's", () => {
 		test( 'should default to null', () => {
 			const state = usersReducer( undefined, {} );
 
-			expect( state ).to.eql( null );
+			expect( state ).toBeNull();
 		} );
 
 		test( 'should return new items received', () => {
@@ -29,7 +28,7 @@ describe( "gsuiteUsersReducer's", () => {
 				response: { accounts: [ account ] },
 			} );
 
-			expect( state ).to.eql( [ account ] );
+			expect( state ).toEqual( [ account ] );
 		} );
 	} );
 } );

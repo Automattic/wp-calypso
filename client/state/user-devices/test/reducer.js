@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import { USER_DEVICES_ADD } from 'calypso/state/action-types';
 import items from '../reducer';
@@ -7,7 +6,7 @@ describe( 'reducer', () => {
 	describe( 'items', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should add devices to the initial state', () => {
@@ -19,7 +18,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				1: { id: 1, name: 'Mobile Phone' },
 				2: { id: 2, name: 'Tablet' },
 			} );
@@ -38,7 +37,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( newState ).to.eql( {
+			expect( newState ).toEqual( {
 				1: { id: 1, name: 'Mobile Phone' },
 				2: { id: 2, name: 'Tablet' },
 				3: { id: 3, name: 'Refrigerator' },

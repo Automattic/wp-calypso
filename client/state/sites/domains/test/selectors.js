@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getDomainsBySite, getDomainsBySiteId, isRequestingSiteDomains } from '../selectors';
 import {
 	SITE_ID_FIRST as firstSiteId,
@@ -15,11 +14,11 @@ describe( 'selectors', () => {
 
 			const firstDomains = getDomainsBySite( state, { ID: firstSiteId } );
 
-			expect( firstDomains ).to.eql( [ DOMAIN_PRIMARY ] );
+			expect( firstDomains ).toEqual( [ DOMAIN_PRIMARY ] );
 
 			const secondDomains = getDomainsBySite( state, { ID: secondSiteId } );
 
-			expect( secondDomains ).to.eql( [ DOMAIN_NOT_PRIMARY ] );
+			expect( secondDomains ).toEqual( [ DOMAIN_NOT_PRIMARY ] );
 		} );
 	} );
 
@@ -27,7 +26,7 @@ describe( 'selectors', () => {
 		test( 'should return domains by site id', () => {
 			const state = getStateInstance();
 			const domains = getDomainsBySiteId( state, firstSiteId );
-			expect( domains ).to.eql( [ DOMAIN_PRIMARY ] );
+			expect( domains ).toEqual( [ DOMAIN_PRIMARY ] );
 		} );
 	} );
 
@@ -35,9 +34,9 @@ describe( 'selectors', () => {
 		test( 'should return true if we are fetching domains', () => {
 			const state = getStateInstance();
 
-			expect( isRequestingSiteDomains( state, firstSiteId ) ).to.equal( false );
-			expect( isRequestingSiteDomains( state, secondSiteId ) ).to.equal( true );
-			expect( isRequestingSiteDomains( state, 'unknown' ) ).to.equal( false );
+			expect( isRequestingSiteDomains( state, firstSiteId ) ).toEqual( false );
+			expect( isRequestingSiteDomains( state, secondSiteId ) ).toEqual( true );
+			expect( isRequestingSiteDomains( state, 'unknown' ) ).toEqual( false );
 		} );
 	} );
 } );

@@ -1,6 +1,4 @@
-import { expect } from 'chai';
 import nock from 'nock';
-import sinon from 'sinon';
 import {
 	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_DELETE,
@@ -13,11 +11,11 @@ import {
 import { addStoredCard, deleteStoredCard, fetchStoredCards } from '../actions';
 
 describe( 'actions', () => {
-	const spy = sinon.spy();
+	let spy;
 
 	beforeEach( () => {
 		nock.cleanAll();
-		spy.resetHistory();
+		spy = jest.fn();
 	} );
 
 	const error = {
@@ -40,7 +38,7 @@ describe( 'actions', () => {
 			const result = addStoredCard( cardData )( spy );
 
 			return result.then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: STORED_CARDS_ADD_COMPLETED,
 					item,
 				} );
@@ -62,12 +60,12 @@ describe( 'actions', () => {
 			test( 'should dispatch fetch/complete actions', () => {
 				const promise = fetchStoredCards()( spy );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: STORED_CARDS_FETCH,
 				} );
 
 				return promise.then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: STORED_CARDS_FETCH_COMPLETED,
 						list: cards,
 					} );
@@ -86,7 +84,7 @@ describe( 'actions', () => {
 			test( 'should dispatch fetch/fail actions', async () => {
 				const promise = fetchStoredCards()( spy );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: STORED_CARDS_FETCH,
 				} );
 
@@ -97,9 +95,9 @@ describe( 'actions', () => {
 					didFail = true;
 				}
 
-				expect( didFail ).to.be.true;
+				expect( didFail ).toBe( true );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: STORED_CARDS_FETCH_FAILED,
 					error: error.message,
 				} );
@@ -128,13 +126,13 @@ describe( 'actions', () => {
 			test( 'should dispatch fetch/complete actions', () => {
 				const promise = deleteStoredCard( card )( spy );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: STORED_CARDS_DELETE,
 					card,
 				} );
 
 				return promise.then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: STORED_CARDS_DELETE_COMPLETED,
 						card,
 					} );
@@ -157,7 +155,7 @@ describe( 'actions', () => {
 			test( 'should dispatch fetch/fail actions', async () => {
 				const promise = deleteStoredCard( card )( spy );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: STORED_CARDS_DELETE,
 					card,
 				} );
@@ -169,9 +167,9 @@ describe( 'actions', () => {
 					didFail = true;
 				}
 
-				expect( didFail ).to.be.true;
+				expect( didFail ).toBe( true );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: STORED_CARDS_DELETE_FAILED,
 					card,
 					error: error.message,

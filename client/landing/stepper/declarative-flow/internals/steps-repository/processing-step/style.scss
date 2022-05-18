@@ -7,7 +7,7 @@ $progress-duration: 800ms;
 	padding: 1em;
 	max-width: 540px;
 	text-align: center;
-	margin: 32vh auto;
+	margin: 16vh auto 0;
 
 	&__progress-step {
 		@include onboarding-font-recoleta;
@@ -48,4 +48,7 @@ $progress-duration: 800ms;
 		bottom: 0;
 		transition: transform $progress-duration ease-out;
 	}
+}
+.site-setup.processing .step-container__content {
+	width: 100%;
 }

@@ -1,11 +1,4 @@
-import {
-	getPlan,
-	PLAN_WPCOM_FLEXIBLE,
-	PLAN_WPCOM_PRO,
-	TYPE_FREE,
-	TYPE_FLEXIBLE,
-	TYPE_PRO,
-} from '@automattic/calypso-products';
+import { TYPE_FREE, TYPE_FLEXIBLE, TYPE_PRO } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -17,12 +10,14 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
+import isStarterPlanEnabled from './is-starter-plan-enabled';
 import { PlansComparisonAction } from './plans-comparison-action';
 import { PlansComparisonColHeader } from './plans-comparison-col-header';
 import { planComparisonFeatures } from './plans-comparison-features';
 import { PlansComparisonRow, DesktopContent, MobileContent } from './plans-comparison-row';
 import { PlansDomainConnectionInfo } from './plans-domain-connection-info';
-import { usePlanPrices, PlanPrices } from './use-plan-prices';
+import usePlanPrices from './use-plan-prices';
+import usePlans from './use-plans';
 import type { WPComPlan } from '@automattic/calypso-products';
 import type { RequestCartProduct as CartItem } from '@automattic/shopping-cart';
 
@@ -445,14 +440,12 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSiteId || null ) );
 	const [ showCollapsibleRows, setShowCollapsibleRows ] = useState( false );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) ?? '';
-	const plans = [ getPlan( PLAN_WPCOM_FLEXIBLE ), getPlan( PLAN_WPCOM_PRO ) ] as WPComPlan[];
-	const prices: PlanPrices[] = [ { price: 0 }, usePlanPrices( plans[ 1 ] ) ];
-
-	if ( hideFreePlan ) {
-		plans.shift();
-		prices.shift();
-	}
-
+	/*
+	 * @todo clk Use of `hideFreePlan` will cause breakage if we are not showing the free plan at all.
+	 * Potentially remove `hideFreePlan` logic alltogether when plans are finalised.
+	 */
+	const plans = usePlans( hideFreePlan );
+	const prices = usePlanPrices( plans );
 	const translate = useTranslate();
 
 	const toggleCollapsibleRows = useCallback( () => {
@@ -470,7 +463,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 			<ComparisonTable
 				firstColWidth={ 32 }
 				planCount={ plans.length }
-				hideFreePlan={ hideFreePlan }
+				hideFreePlan={ hideFreePlan && ! isStarterPlanEnabled() }
 			>
 				<THead isInSignup={ isInSignup }>
 					<tr>

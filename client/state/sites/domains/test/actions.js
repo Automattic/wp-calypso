@@ -1,6 +1,4 @@
-import { expect } from 'chai';
 import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import {
 	domainsReceiveAction,
 	domainsRequestAction,
@@ -20,34 +18,32 @@ import {
 } from './fixture';
 
 describe( 'actions', () => {
-	let sandbox;
 	let spy;
 
-	useSandbox( ( newSandbox ) => {
-		sandbox = newSandbox;
-		spy = sandbox.spy();
+	beforeEach( () => {
+		spy = jest.fn();
 	} );
 
 	describe( 'Actions creators', () => {
 		test( '#domainsReceiveAction()', () => {
 			const { domains } = wpcomResponse;
 			const action = domainsReceiveAction( siteId, domains );
-			expect( action ).to.eql( ACTION_SITE_DOMAIN_RECEIVE );
+			expect( action ).toEqual( ACTION_SITE_DOMAIN_RECEIVE );
 		} );
 
 		test( '#domainsRequestAction()', () => {
 			const action = domainsRequestAction( siteId );
-			expect( action ).to.eql( ACTION_SITE_DOMAIN_REQUEST );
+			expect( action ).toEqual( ACTION_SITE_DOMAIN_REQUEST );
 		} );
 
 		test( '#domainsRequestSuccessAction()', () => {
 			const action = domainsRequestSuccessAction( siteId );
-			expect( action ).to.eql( ACTION_SITE_DOMAIN_REQUEST_SUCCESS );
+			expect( action ).toEqual( ACTION_SITE_DOMAIN_REQUEST_SUCCESS );
 		} );
 
 		test( '#domainsRequestFailureAction()', () => {
 			const action = domainsRequestFailureAction( siteId, errorResponse );
-			expect( action ).to.eql( ACTION_SITE_DOMAIN_REQUEST_FAILURE );
+			expect( action ).toEqual( ACTION_SITE_DOMAIN_REQUEST_FAILURE );
 		} );
 	} );
 
@@ -62,7 +58,7 @@ describe( 'actions', () => {
 		test( 'should dispatch REQUEST action when thunk triggered', () => {
 			const action = domainsRequestAction( siteId );
 			fetchSiteDomains( siteId )( spy );
-			expect( spy ).to.have.been.calledWith( action );
+			expect( spy ).toBeCalledWith( action );
 		} );
 
 		test( 'should dispatch RECEIVE action when request completes', () => {
@@ -70,7 +66,7 @@ describe( 'actions', () => {
 			const action = domainsReceiveAction( siteId, domains );
 
 			return fetchSiteDomains( siteId )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( action );
+				expect( spy ).toBeCalledWith( action );
 			} );
 		} );
 	} );
@@ -89,10 +85,10 @@ describe( 'actions', () => {
 			const failureAction = domainsRequestFailureAction( siteId, message );
 
 			const promise = fetchSiteDomains( siteId )( spy );
-			expect( spy ).to.have.been.calledWith( requestAction );
+			expect( spy ).toBeCalledWith( requestAction );
 
 			return promise.then( () => {
-				expect( spy ).to.have.been.calledWith( failureAction );
+				expect( spy ).toBeCalledWith( failureAction );
 			} );
 		} );
 	} );

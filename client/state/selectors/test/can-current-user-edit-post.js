@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
 
 describe( 'canCurrentUserEditPost()', () => {
@@ -17,7 +16,7 @@ describe( 'canCurrentUserEditPost()', () => {
 			fakeGlobalId
 		);
 
-		expect( canEdit ).to.be.null;
+		expect( canEdit ).toBeNull();
 	} );
 
 	test( 'should return null if the post capabilities are not known', () => {
@@ -45,7 +44,7 @@ describe( 'canCurrentUserEditPost()', () => {
 			fakeGlobalId
 		);
 
-		expect( canEdit ).to.be.null;
+		expect( canEdit ).toBeNull();
 	} );
 
 	test( 'should allow based on the post capabilities', () => {
@@ -76,7 +75,7 @@ describe( 'canCurrentUserEditPost()', () => {
 			fakeGlobalId
 		);
 
-		expect( canEdit ).to.be.true;
+		expect( canEdit ).toBe( true );
 	} );
 
 	test( 'should deny based on the post capabilities', () => {
@@ -107,6 +106,6 @@ describe( 'canCurrentUserEditPost()', () => {
 			fakeGlobalId
 		);
 
-		expect( canEdit ).to.be.false;
+		expect( canEdit ).toBe( false );
 	} );
 } );

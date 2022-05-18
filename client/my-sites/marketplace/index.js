@@ -8,6 +8,7 @@ import {
 	renderMarketplaceThankYou,
 	renderPluginsInstallPage,
 	redirectToHome,
+	renderMarketplaceSignupSuccess,
 } from './controller';
 
 export default function () {
@@ -37,6 +38,13 @@ export default function () {
 		'/marketplace/thank-you/:productSlug/:site?',
 		siteSelection,
 		renderMarketplaceThankYou,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/marketplace/submission-success',
+		renderMarketplaceSignupSuccess,
 		makeLayout,
 		clientRender
 	);

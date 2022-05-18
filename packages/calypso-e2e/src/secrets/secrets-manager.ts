@@ -35,6 +35,10 @@ export interface Secrets {
 	storeSandboxCookieValue: string;
 	testCouponCode: string;
 	wpccAuthPath: string;
+	calypsoOauthApplication: {
+		client_id: string;
+		client_secret: string;
+	};
 	martechTosUploadCredentials: {
 		bearer_token: string;
 	};
@@ -164,6 +168,10 @@ export class SecretsManager {
 			storeSandboxCookieValue: 'FAKE_VALUE',
 			testCouponCode: 'FAKE_VALUE',
 			wpccAuthPath: 'FAKE_VALUE',
+			calypsoOauthApplication: {
+				client_id: 'FAKE_VALUE',
+				client_secret: 'FAKE_VALUE',
+			},
 			martechTosUploadCredentials: {
 				bearer_token: 'FAKE_VALUE',
 			},

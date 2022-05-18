@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { shouldFetchRelated, relatedPostsForPost } from '../selectors';
 
 describe( 'selectors', () => {
@@ -17,7 +16,7 @@ describe( 'selectors', () => {
 					1,
 					1
 				)
-			).to.be.true;
+			).toBe( true );
 		} );
 		test( 'should return false if key present', () => {
 			expect(
@@ -35,7 +34,7 @@ describe( 'selectors', () => {
 					1,
 					1
 				)
-			).to.be.false;
+			).toBe( false );
 		} );
 
 		test( 'should return false if we have a value', () => {
@@ -54,7 +53,7 @@ describe( 'selectors', () => {
 					1,
 					1
 				)
-			).to.be.false;
+			).toBe( false );
 		} );
 	} );
 
@@ -74,7 +73,7 @@ describe( 'selectors', () => {
 					1,
 					1
 				)
-			).to.eql( [ 1, 2 ] );
+			).toEqual( [ 1, 2 ] );
 		} );
 
 		test( 'should return undefined if nothing present', () => {
@@ -92,7 +91,7 @@ describe( 'selectors', () => {
 					1,
 					1
 				)
-			).to.be.undefined;
+			).toBeUndefined();
 		} );
 	} );
 } );

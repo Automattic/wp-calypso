@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
 import {
 	PRODUCTS_LIST_RECEIVE,
 	PRODUCTS_LIST_REQUEST,
@@ -9,10 +7,10 @@ import useNock from 'calypso/test-helpers/use-nock';
 import { receiveProductsList, requestProductsList } from '../actions';
 
 describe( 'actions', () => {
-	const spy = sinon.spy();
+	let spy;
 
 	beforeEach( () => {
-		spy.resetHistory();
+		spy = jest.fn();
 	} );
 
 	const businessPlan = {
@@ -29,7 +27,7 @@ describe( 'actions', () => {
 		test( 'should return an action object', () => {
 			const action = receiveProductsList( { businessPlan } );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: PRODUCTS_LIST_RECEIVE,
 				productsList: { businessPlan },
 				productsListType: null,
@@ -53,12 +51,12 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestProductsList()( spy );
 
-			expect( spy ).to.have.been.calledWith( { type: PRODUCTS_LIST_REQUEST } );
+			expect( spy ).toBeCalledWith( { type: PRODUCTS_LIST_REQUEST } );
 		} );
 
 		test( 'should dispatch product list receive action when request completes', () => {
 			return requestProductsList()( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: PRODUCTS_LIST_RECEIVE,
 					productsList: { businessPlan },
 					productsListType: null,
@@ -68,9 +66,9 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return requestProductsList()( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: PRODUCTS_LIST_REQUEST_FAILURE,
-					error: sinon.match( { message: 'A server error occurred' } ),
+					error: expect.objectContaining( { message: 'A server error occurred' } ),
 				} );
 			} );
 		} );

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	plansReceiveAction,
 	plansRequestSuccessAction,
@@ -19,21 +18,21 @@ describe( 'actions', () => {
 		test( '#plansReceiveAction()', () => {
 			const plans = wpcomResponse;
 			const action = plansReceiveAction( plans );
-			expect( action ).to.eql( ACTION_PLANS_RECEIVE );
+			expect( action ).toEqual( ACTION_PLANS_RECEIVE );
 		} );
 
 		test( '#plansRequestSuccessAction()', () => {
 			const action = plansRequestSuccessAction();
-			expect( action ).to.eql( ACTION_PLANS_REQUEST_SUCCESS );
+			expect( action ).toEqual( ACTION_PLANS_REQUEST_SUCCESS );
 		} );
 
 		test( '#plansRequestFailureAction()', () => {
 			const action = plansRequestFailureAction( errorResponse );
-			expect( action ).to.eql( ACTION_PLANS_REQUEST_FAILURE );
+			expect( action ).toEqual( ACTION_PLANS_REQUEST_FAILURE );
 		} );
 
 		test( '#requestPlans()', () => {
-			expect( requestPlans() ).to.eql( ACTION_PLANS_REQUEST );
+			expect( requestPlans() ).toEqual( ACTION_PLANS_REQUEST );
 		} );
 	} );
 } );

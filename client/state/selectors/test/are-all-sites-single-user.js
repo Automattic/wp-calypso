@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
 import { userState } from './fixtures/user-state';
 
@@ -12,7 +11,7 @@ describe( 'areAllSitesSingleUser()', () => {
 		};
 
 		const allAreSingleUser = areAllSitesSingleUser( state );
-		expect( allAreSingleUser ).to.be.false;
+		expect( allAreSingleUser ).toBe( false );
 	} );
 
 	test( "should return false if single_user_site isn't true for all sites", () => {
@@ -36,7 +35,7 @@ describe( 'areAllSitesSingleUser()', () => {
 		};
 
 		const allAreSingleUser = areAllSitesSingleUser( state );
-		expect( allAreSingleUser ).to.be.false;
+		expect( allAreSingleUser ).toBe( false );
 	} );
 
 	test( 'should return true if single_user_site is true for all sites', () => {
@@ -60,6 +59,6 @@ describe( 'areAllSitesSingleUser()', () => {
 		};
 
 		const allAreSingleUser = areAllSitesSingleUser( state );
-		expect( allAreSingleUser ).to.be.true;
+		expect( allAreSingleUser ).toBe( true );
 	} );
 } );

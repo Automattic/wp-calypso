@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 
 describe( 'getSiteUrl()', () => {
@@ -11,8 +10,8 @@ describe( 'getSiteUrl()', () => {
 			},
 		};
 
-		expect( getSiteUrl( state ) ).to.be.null;
-		expect( getSiteUrl( state, 123 ) ).to.be.null;
+		expect( getSiteUrl( state ) ).toBeNull();
+		expect( getSiteUrl( state, 123 ) ).toBeNull();
 	} );
 
 	test( 'should return null if the Url is unknown', () => {
@@ -24,7 +23,7 @@ describe( 'getSiteUrl()', () => {
 				},
 			},
 		};
-		expect( getSiteUrl( state, 123 ) ).to.be.null;
+		expect( getSiteUrl( state, 123 ) ).toBeNull();
 	} );
 
 	test( 'should return the Url for a site', () => {
@@ -42,6 +41,6 @@ describe( 'getSiteUrl()', () => {
 			123
 		);
 
-		expect( result ).to.equal( URL );
+		expect( result ).toEqual( URL );
 	} );
 } );

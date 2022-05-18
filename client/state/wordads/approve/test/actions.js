@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	WORDADS_SITE_APPROVE_REQUEST,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
@@ -7,21 +6,18 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { dismissWordAdsError, dismissWordAdsSuccess, requestWordAdsApproval } from '../actions';
 
 describe( 'actions', () => {
-	let sandbox;
 	let spy;
 
-	useSandbox( ( newSandbox ) => {
-		sandbox = newSandbox;
-		spy = sandbox.spy();
+	beforeEach( () => {
+		spy = jest.fn();
 	} );
 
 	describe( '#dismissWordAdsError()', () => {
 		test( 'should return a dismiss error action', () => {
-			expect( dismissWordAdsError( 2916284 ) ).to.eql( {
+			expect( dismissWordAdsError( 2916284 ) ).toEqual( {
 				type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 				siteId: 2916284,
 			} );
@@ -30,7 +26,7 @@ describe( 'actions', () => {
 
 	describe( '#dismissWordAdsSuccess()', () => {
 		test( 'should return a dismiss Success action', () => {
-			expect( dismissWordAdsSuccess( 2916284 ) ).to.eql( {
+			expect( dismissWordAdsSuccess( 2916284 ) ).toEqual( {
 				type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 				siteId: 2916284,
 			} );
@@ -54,7 +50,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestWordAdsApproval( 2916284 )( spy );
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toBeCalledWith( {
 				type: WORDADS_SITE_APPROVE_REQUEST,
 				siteId: 2916284,
 			} );
@@ -62,7 +58,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch success action when request completes', () => {
 			return requestWordAdsApproval( 2916284 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 					approved: true,
 					siteId: 2916284,
@@ -72,10 +68,10 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return requestWordAdsApproval( 77203074 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 					siteId: 77203074,
-					error: sandbox.match( 'An active access token must be used to approve wordads.' ),
+					error: expect.stringMatching( 'An active access token must be used to approve wordads.' ),
 				} );
 			} );
 		} );

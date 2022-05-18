@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	POST_EDIT,
@@ -15,13 +14,15 @@ const TEST_POST_ID = 165;
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'diffs', 'selection', 'ui', 'authors' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'diffs', 'selection', 'ui', 'authors' ] )
+		);
 	} );
 
 	describe( '#diffs', () => {
 		test( 'should default to an empty object', () => {
 			const state = diffs( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		const validState = deepFreeze( {
@@ -119,7 +120,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state ).to.eql( validState );
+			expect( state ).toEqual( validState );
 		} );
 
 		test( 'should merge diff & revisions', () => {
@@ -164,7 +165,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				[ TEST_SITE_ID ]: {
 					[ TEST_POST_ID ]: {
 						revisions: {
@@ -276,7 +277,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = selection( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should select provided revision id when none is selected', () => {
@@ -284,7 +285,7 @@ describe( 'reducer', () => {
 				type: POST_REVISIONS_SELECT,
 				revisionId: 1215,
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				revisionId: 1215,
 			} );
 		} );
@@ -299,7 +300,7 @@ describe( 'reducer', () => {
 					revisionId: 1492,
 				}
 			);
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				revisionId: 1492,
 			} );
 		} );
@@ -313,7 +314,7 @@ describe( 'reducer', () => {
 					type: SELECTED_SITE_SET,
 				}
 			);
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				revisionId: null,
 			} );
 		} );
@@ -327,7 +328,7 @@ describe( 'reducer', () => {
 					type: POST_EDIT,
 				}
 			);
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				revisionId: null,
 			} );
 		} );
@@ -337,7 +338,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = ui( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		describe( 'when POST_REVISIONS_DIALOG_OPEN action is disptached', () => {
@@ -350,7 +351,7 @@ describe( 'reducer', () => {
 						type: POST_REVISIONS_DIALOG_OPEN,
 					}
 				);
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					isDialogVisible: true,
 				} );
 			} );
@@ -366,7 +367,7 @@ describe( 'reducer', () => {
 						type: POST_REVISIONS_DIALOG_CLOSE,
 					}
 				);
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					isDialogVisible: false,
 				} );
 			} );

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { HAPPYCHAT_IO_RECEIVE_INIT } from 'calypso/state/action-types';
 import { receiveInit } from '../actions';
 
@@ -7,7 +6,7 @@ describe( 'actions', () => {
 		test( 'should return an action object', () => {
 			const action = receiveInit( { geoLocation: { country_long: 'Romania' } } );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: HAPPYCHAT_IO_RECEIVE_INIT,
 				user: { geoLocation: { country_long: 'Romania' } },
 			} );

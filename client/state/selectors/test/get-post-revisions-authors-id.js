@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getPostRevisionsAuthorsId } from 'calypso/state/posts/selectors/get-post-revisions-authors-id';
 
 describe( 'getPostRevisionsAuthorsId', () => {
@@ -21,7 +20,7 @@ describe( 'getPostRevisionsAuthorsId', () => {
 				12345678,
 				10
 			)
-		).to.eql( [] );
+		).toEqual( [] );
 	} );
 
 	test( 'should return an array of post revisions authors ID', () => {
@@ -47,6 +46,6 @@ describe( 'getPostRevisionsAuthorsId', () => {
 				12345678,
 				10
 			)
-		).to.eql( [ 123 ] );
+		).toEqual( [ 123 ] );
 	} );
 } );
