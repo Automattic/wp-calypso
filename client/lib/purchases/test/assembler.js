@@ -1,17 +1,16 @@
-import { expect } from 'chai';
 import { createPurchasesArray } from '../assembler';
 
 describe( 'assembler', () => {
 	test( 'should be a function', () => {
-		expect( createPurchasesArray ).to.be.an( 'function' );
+		expect( createPurchasesArray ).toBeInstanceOf( Function );
 	} );
 
 	test( 'should return an empty array when data transfer object is undefined', () => {
-		expect( createPurchasesArray() ).to.be.eql( [] );
+		expect( createPurchasesArray() ).toEqual( [] );
 	} );
 
 	test( 'should return an empty array when data transfer object is null', () => {
-		expect( createPurchasesArray( null ) ).to.be.eql( [] );
+		expect( createPurchasesArray( null ) ).toEqual( [] );
 	} );
 
 	test( 'should convert the payment credit card data to the right data structure', () => {
@@ -31,15 +30,15 @@ describe( 'assembler', () => {
 		] );
 		const payment = purchase[ 0 ].payment;
 		const creditCard = payment.creditCard;
-		expect( creditCard.expiryDate ).to.equal( '11/16' );
-		expect( creditCard.id ).to.equal( 1234 );
-		expect( creditCard.number ).to.equal( 7890 );
-		expect( creditCard.type ).to.equal( 'visa' );
-		expect( creditCard.processor ).to.equal( 'WPCOM_Billing_Stripe_Payment_Method' );
-		expect( payment.type ).to.equal( 'credit_card' );
-		expect( payment.countryCode ).to.equal( 'US' );
-		expect( payment.countryName ).to.equal( 'United States' );
-		expect( payment.name ).to.equal( 'My VISA' );
-		expect( payment.storedDetailsId ).to.equal( 1234 );
+		expect( creditCard.expiryDate ).toEqual( '11/16' );
+		expect( creditCard.id ).toEqual( 1234 );
+		expect( creditCard.number ).toEqual( 7890 );
+		expect( creditCard.type ).toEqual( 'visa' );
+		expect( creditCard.processor ).toEqual( 'WPCOM_Billing_Stripe_Payment_Method' );
+		expect( payment.type ).toEqual( 'credit_card' );
+		expect( payment.countryCode ).toEqual( 'US' );
+		expect( payment.countryName ).toEqual( 'United States' );
+		expect( payment.name ).toEqual( 'My VISA' );
+		expect( payment.storedDetailsId ).toEqual( 1234 );
 	} );
 } );

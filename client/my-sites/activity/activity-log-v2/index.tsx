@@ -1,7 +1,6 @@
-import { isFreePlan } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { get } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import ActivityCardList from 'calypso/components/activity-card-list';
@@ -16,14 +15,9 @@ import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-quer
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	siteHasBackupProductPurchase,
-	siteHasScanProductPurchase,
-} from 'calypso/state/purchases/selectors';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { FunctionComponent } from 'react';
 
@@ -37,24 +31,22 @@ const ActivityLogV2: FunctionComponent = () => {
 	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
 	const { data: logs } = useActivityLogQuery( siteId, filter );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const siteIsOnFreePlan = useSelector(
-		( state ) =>
-			siteId &&
-			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
-			! isVipSite( state, siteId )
-	);
-	const siteHasBackupPurchase = useSelector(
-		( state ) => siteId && siteHasBackupProductPurchase( state, siteId )
-	);
-	const siteHasScanPurchase = useSelector(
-		( state ) => siteId && siteHasScanProductPurchase( state, siteId )
+
+	const siteHasFullActivityLog = useSelector(
+		( state ) => siteId && siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG )
 	);
 	const settingsUrl = useSelector( ( state ) => getSettingsUrl( state, siteId, 'general' ) );
 
-	const showUpgrade = siteIsOnFreePlan && ! siteHasBackupPurchase && ! siteHasScanPurchase;
-	const showFilter = ! showUpgrade;
-
-	const jetpackCloudHeader = showUpgrade ? (
+	const jetpackCloudHeader = siteHasFullActivityLog ? (
+		<div className="activity-log-v2__header">
+			<h2>{ translate( 'Find a backup or restore point' ) }</h2>
+			<p>
+				{ translate(
+					'This is the complete event history for your site. Filter by date range and/or activity type.'
+				) }
+			</p>
+		</div>
+	) : (
 		<Upsell
 			headerText={ translate( 'Activity Log' ) }
 			bodyText={ translate(
@@ -67,15 +59,6 @@ const ActivityLogV2: FunctionComponent = () => {
 			}
 			openButtonLinkOnNewTab={ false }
 		/>
-	) : (
-		<div className="activity-log-v2__header">
-			<h2>{ translate( 'Find a backup or restore point' ) }</h2>
-			<p>
-				{ translate(
-					'This is the complete event history for your site. Filter by date range and/or activity type.'
-				) }
-			</p>
-		</div>
 	);
 
 	return (
@@ -103,7 +86,7 @@ const ActivityLogV2: FunctionComponent = () => {
 				/>
 			) }
 			<div className="activity-log-v2__content">
-				<ActivityCardList logs={ logs } pageSize={ 10 } showFilter={ showFilter } />
+				<ActivityCardList logs={ logs } pageSize={ 10 } showFilter={ siteHasFullActivityLog } />
 			</div>
 		</Main>
 	);

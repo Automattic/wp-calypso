@@ -1,6 +1,6 @@
 import React from 'react';
+import ListStep from 'calypso/blocks/import/list';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import ListStep from 'calypso/signup/steps/import/list';
 import { ImportWrapper } from '../import';
 import { generateStepPath } from '../import/helper';
 import './style.scss';

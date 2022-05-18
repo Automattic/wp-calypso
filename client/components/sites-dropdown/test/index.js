@@ -1,10 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import sinon from 'sinon';
 import { SitesDropdown } from '..';
 
 const noop = () => {};
@@ -13,46 +10,46 @@ describe( 'index', () => {
 	describe( 'component rendering', () => {
 		test( 'should render a dropdown component initially closed', () => {
 			const sitesDropdown = shallow( <SitesDropdown /> );
-			expect( sitesDropdown.hasClass( 'sites-dropdown' ) ).to.equal( true );
-			expect( sitesDropdown.hasClass( 'is-open' ) ).to.equal( false );
+			expect( sitesDropdown.hasClass( 'sites-dropdown' ) ).toEqual( true );
+			expect( sitesDropdown.hasClass( 'is-open' ) ).toEqual( false );
 		} );
 
 		test( 'with multiple sites, should toggle the dropdown when it is clicked', () => {
-			const toggleOpenSpy = sinon.spy( SitesDropdown.prototype, 'toggleOpen' );
+			const toggleOpenSpy = jest.spyOn( SitesDropdown.prototype, 'toggleOpen' );
 			const sitesDropdown = shallow( <SitesDropdown hasMultipleSites={ true } /> );
 
 			sitesDropdown.find( '.sites-dropdown__selected' ).simulate( 'click' );
-			sinon.assert.calledOnce( toggleOpenSpy );
-			expect( sitesDropdown.hasClass( 'has-multiple-sites' ) ).to.equal( true );
-			expect( sitesDropdown.hasClass( 'is-open' ) ).to.equal( true );
+			expect( toggleOpenSpy ).toBeCalledTimes( 1 );
+			expect( sitesDropdown.hasClass( 'has-multiple-sites' ) ).toEqual( true );
+			expect( sitesDropdown.hasClass( 'is-open' ) ).toEqual( true );
 
-			toggleOpenSpy.restore();
+			toggleOpenSpy.mockRestore();
 		} );
 
 		test( 'with only one site, nothing should happen when it is clicked', () => {
-			const toggleOpenSpy = sinon.spy( SitesDropdown.prototype, 'toggleOpen' );
+			const toggleOpenSpy = jest.spyOn( SitesDropdown.prototype, 'toggleOpen' );
 			const sitesDropdown = shallow( <SitesDropdown hasMultipleSites={ false } /> );
 
 			sitesDropdown.find( '.sites-dropdown__selected' ).simulate( 'click' );
-			sinon.assert.calledOnce( toggleOpenSpy );
-			expect( sitesDropdown.hasClass( 'has-multiple-sites' ) ).to.equal( false );
-			expect( sitesDropdown.hasClass( 'is-open' ) ).to.equal( false );
+			expect( toggleOpenSpy ).toBeCalledTimes( 1 );
+			expect( sitesDropdown.hasClass( 'has-multiple-sites' ) ).toEqual( false );
+			expect( sitesDropdown.hasClass( 'is-open' ) ).toEqual( false );
 
-			toggleOpenSpy.restore();
+			toggleOpenSpy.mockRestore();
 		} );
 	} );
 
 	describe( 'component state', () => {
 		test( 'should initially consider as selected the selectedOrPrimarySiteId prop', () => {
 			const sitesDropdown = shallow( <SitesDropdown selectedSiteId={ 1234567 } /> );
-			expect( sitesDropdown.instance().state.selectedSiteId ).to.be.equal( 1234567 );
+			expect( sitesDropdown.instance().state.selectedSiteId ).toEqual( 1234567 );
 		} );
 	} );
 
 	describe( 'selectSite', () => {
 		test( 'should update the `selectedSiteSlug`, and `open` state properties', () => {
-			const setStateSpy = sinon.spy();
-			const siteSelectedSpy = sinon.spy();
+			const setStateSpy = jest.fn();
+			const siteSelectedSpy = jest.fn();
 			const fakeContext = {
 				setState: setStateSpy,
 				props: {
@@ -62,17 +59,17 @@ describe( 'index', () => {
 
 			SitesDropdown.prototype.selectSite.call( fakeContext, 12345 );
 
-			sinon.assert.calledOnce( siteSelectedSpy );
-			sinon.assert.calledWith( siteSelectedSpy, 12345 );
+			expect( siteSelectedSpy ).toBeCalledTimes( 1 );
+			expect( siteSelectedSpy ).toHaveBeenCalledWith( 12345 );
 
-			sinon.assert.calledOnce( setStateSpy );
-			sinon.assert.calledWith( setStateSpy, { open: false, selectedSiteId: 12345 } );
+			expect( setStateSpy ).toBeCalledTimes( 1 );
+			expect( setStateSpy ).toHaveBeenCalledWith( { open: false, selectedSiteId: 12345 } );
 		} );
 	} );
 
 	describe( 'onClose', () => {
 		test( 'should set `open` state property to false', () => {
-			const setStateSpy = sinon.spy();
+			const setStateSpy = jest.fn();
 			const fakeContext = {
 				setState: setStateSpy,
 				props: {
@@ -82,12 +79,12 @@ describe( 'index', () => {
 
 			SitesDropdown.prototype.onClose.call( fakeContext );
 
-			sinon.assert.calledOnce( setStateSpy );
-			sinon.assert.calledWith( setStateSpy, { open: false } );
+			expect( setStateSpy ).toBeCalledTimes( 1 );
+			expect( setStateSpy ).toHaveBeenCalledWith( { open: false } );
 		} );
 
 		test( 'should run the component `onClose` hook, when it is provided', () => {
-			const onCloseSpy = sinon.spy();
+			const onCloseSpy = jest.fn();
 			const fakeContext = {
 				setState: noop,
 				props: {
@@ -96,7 +93,7 @@ describe( 'index', () => {
 			};
 
 			SitesDropdown.prototype.onClose.call( fakeContext );
-			sinon.assert.calledOnce( onCloseSpy );
+			expect( onCloseSpy ).toBeCalledTimes( 1 );
 		} );
 	} );
 } );

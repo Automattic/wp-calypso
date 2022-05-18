@@ -49,10 +49,10 @@ const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) =>
 			setHeaderText( __( 'Contact our WordPress.com experts' ) );
 		} else if ( activeSecondaryView === VIEW_RICH_RESULT ) {
 			setHeaderText(
-				<>
+				<div className="inline-help__rich-result-header">
 					<Icon icon={ pageIcon } />
 					{ selectedArticle?.title }
-				</>
+				</div>
 			);
 		} else {
 			setHeaderText( null );

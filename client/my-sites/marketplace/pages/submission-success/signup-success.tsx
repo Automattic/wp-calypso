@@ -28,7 +28,7 @@ const SignupSuccess = (): JSX.Element => {
 				<div className="signup-success__header">
 					<img src={ submissionSuccessImage } alt="Submission success" />
 					<h1 className="signup-success__header-title wp-brand-font">
-						{ translate( 'We’ ll be in touch' ) }
+						{ translate( 'We’ll be in touch' ) }
 					</h1>
 					<p>
 						{ translate(

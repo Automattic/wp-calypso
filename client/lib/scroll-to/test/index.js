@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { expect } from 'chai';
 import sinon from 'sinon';
 import scrollTo from '../';
 
@@ -22,8 +21,8 @@ describe( 'scroll-to', () => {
 				y: 300,
 				duration: 1,
 				onComplete: () => {
-					expect( window.scrollTo.lastCall.args[ 0 ] ).to.equal( 500 );
-					expect( window.scrollTo.lastCall.args[ 1 ] ).to.equal( 300 );
+					expect( window.scrollTo.lastCall.args[ 0 ] ).toEqual( 500 );
+					expect( window.scrollTo.lastCall.args[ 1 ] ).toEqual( 300 );
 					done();
 				},
 			} );
@@ -36,8 +35,8 @@ describe( 'scroll-to', () => {
 				y: 100,
 				duration: 1,
 				onComplete: () => {
-					expect( window.scrollTo.lastCall.args[ 0 ] ).to.equal( 0 );
-					expect( window.scrollTo.lastCall.args[ 1 ] ).to.equal( 100 );
+					expect( window.scrollTo.lastCall.args[ 0 ] ).toEqual( 0 );
+					expect( window.scrollTo.lastCall.args[ 1 ] ).toEqual( 100 );
 					done();
 				},
 			} );
