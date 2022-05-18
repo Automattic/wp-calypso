@@ -145,18 +145,22 @@ class EditContactInfoFormCard extends Component {
 
 	renderTransferLockOptOut() {
 		const { domainRegistrationAgreementUrl, translate } = this.props;
-		return (
-			<>
-				<TransferLockOptOutForm
-					disabled={ this.state.formSubmitting }
-					onChange={ this.onTransferLockOptOutChange }
-				/>
-				<DesignatedAgentNotice
-					domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
-					saveButtonLabel={ translate( 'Save contact info' ) }
-				/>
-			</>
-		);
+		const transferLockExpiration = this.props.selectedDomain.transferAwayEligibleAt;
+
+		if ( ! transferLockExpiration ) {
+			return (
+				<>
+					<TransferLockOptOutForm
+						disabled={ this.state.formSubmitting }
+						onChange={ this.onTransferLockOptOutChange }
+					/>
+					<DesignatedAgentNotice
+						domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }
+						saveButtonLabel={ translate( 'Save contact info' ) }
+					/>
+				</>
+			);
+		}
 	}
 
 	renderBackupEmail() {
