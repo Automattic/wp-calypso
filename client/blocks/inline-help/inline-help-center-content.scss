@@ -331,6 +331,11 @@
 						display: block;
 						align-self: center;
 					}
+
+					&:focus {
+						box-shadow: none;
+						outline: none;
+					}
 				}
 			}
 		}
@@ -341,7 +346,7 @@
 * ARTICLE EMBED
 */
 .help-center .help-center__container .inline-help__embed-result {
-	h1.support-article-dialog__header-title {
+	h1.support-article-dialog__header-title > a {
 		font-size: $font-title-medium;
 	}
 
@@ -365,6 +370,12 @@
 		font-weight: 600;
 		color: var( --color-neutral-100 );
 		margin: 8px 0;
+	}
+
+	button.button.is-borderless:focus,
+	a.button.is-borderless:focus {
+		border: none;
+		box-shadow: none;
 	}
 
 	a:not( .support-article-dialog__header-title-link ) {
