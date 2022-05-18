@@ -21,4 +21,11 @@ in the root of the repository to get the required `devDependencies`.
 
 ### Using [Storybook](https://storybook.js.org/)
 
-`yarn run components:storybook:start`
+`yarn workspace @automattic/components run storybook`
+
+### Search Modes
+
+There are 2 search modes that can be used through the `searchMode` prop:
+
+- `when-typing` (default): The search component calls the `onSearch` prop while the user is typing.
+- `on-enter`: The search component only triggers the `onSearch` prop when the user hits the `Enter` key.

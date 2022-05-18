@@ -334,12 +334,8 @@ export class JetpackSignup extends Component {
 
 	renderWooDna() {
 		const { authQuery, isFullLoginFormVisible, locale, translate, usernameOrEmail } = this.props;
-		const {
-			isCreatingAccount,
-			signUpUsernameOrEmail,
-			loginSocialConnect,
-			loginTwoFactorAuthType,
-		} = this.state;
+		const { isCreatingAccount, signUpUsernameOrEmail, loginSocialConnect, loginTwoFactorAuthType } =
+			this.state;
 		let header;
 		let subHeader;
 		let content;

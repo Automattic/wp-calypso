@@ -84,7 +84,6 @@ export const addResponder = ( list, item ) => ( {
  * already in transit over the network.
  *
  * @see applyDuplicateHandlers
- *
  * @param {object} outboundData request info
  * @returns {object} filtered request info
  */
@@ -115,7 +114,6 @@ export const removeDuplicateGets = ( outboundData ) => {
  * response stream so that each caller gets called
  *
  * @see removeDuplicateGets
- *
  * @param {object} inboundData request info
  * @returns {object} processed request info
  */

@@ -68,41 +68,8 @@ export function items( state = {}, action ) {
 	}
 }
 
-export function lists( state = {}, action ) {
-	const { category, data, page, searchTerm, type } = action;
-	switch ( type ) {
-		case PLUGINS_WPORG_LIST_RECEIVE:
-			if ( ! data ) {
-				return state;
-			}
-
-			// We only need lists by category and search terms.
-			if ( category ) {
-				// If this is the first page, reset before appending the data.
-				const prevCategoryState = page > 1 ? state.category?.[ category ] ?? [] : [];
-				return {
-					...state,
-					category: {
-						...state.category,
-						[ category ]: [ ...prevCategoryState, ...data ],
-					},
-				};
-			} else if ( searchTerm ) {
-				return {
-					...state,
-					search: {
-						...state.search,
-						[ searchTerm ]: data,
-					},
-				};
-			}
-		default:
-			return state;
-	}
-}
-
 export function listsPagination( state = {}, action ) {
-	const { category, pagination, searchTerm } = action;
+	const { category, pagination } = action;
 	switch ( action.type ) {
 		case PLUGINS_WPORG_LIST_RECEIVE:
 			if ( pagination ) {
@@ -112,14 +79,6 @@ export function listsPagination( state = {}, action ) {
 						category: {
 							...state.category,
 							[ category ]: pagination,
-						},
-					};
-				} else if ( searchTerm ) {
-					return {
-						...state,
-						search: {
-							...state.search,
-							[ searchTerm ]: pagination,
 						},
 					};
 				}
@@ -132,6 +91,5 @@ export default combineReducers( {
 	fetchingItems,
 	fetchingLists,
 	items,
-	lists,
 	listsPagination,
 } );

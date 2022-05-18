@@ -3,6 +3,10 @@ import UseYourDomainItem from '../use-your-domain-item';
 
 jest.mock( '@automattic/calypso-config', () => ( {
 	config: () => '',
+	__esModule: true,
+	default: function config( key: string ) {
+		return key;
+	},
 } ) );
 
 describe( '<UseYourDomainItem />', () => {

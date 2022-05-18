@@ -1,15 +1,17 @@
 import { Button } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { check } from '@wordpress/icons';
+import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
-import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import './style.scss';
+
+const debug = debugFactory( 'calypso:signup:p2-confirm-email' );
 
 function P2ConfirmEmail( {
 	flowName,
@@ -23,9 +25,7 @@ function P2ConfirmEmail( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const userEmail = useSelector( getCurrentUserEmail );
-	if ( ! userEmail ) {
-		dispatch( fetchCurrentUser() );
-	}
+	debug( 'User email: %s', userEmail );
 
 	const [ emailResendCount, setEmailResendCount ] = useState( 0 );
 	const EMAIL_RESEND_MAX = 3;
@@ -45,9 +45,13 @@ function P2ConfirmEmail( {
 	// We also need to store the original refParameter, as the redirect on email verification
 	// loses it.
 	useEffect( () => {
-		dispatch(
-			saveSignupStep( { stepName, ...( refParameter && { storedRefParameter: refParameter } ) } )
-		);
+		if ( userEmail ) {
+			dispatch(
+				saveSignupStep( { stepName, ...( refParameter && { storedRefParameter: refParameter } ) } )
+			);
+
+			debug( 'Email confirmation step loaded for %s', userEmail );
+		}
 	}, [ dispatch, stepName, refParameter ] );
 
 	const handleResendEmailClick = () => {
@@ -73,11 +77,10 @@ function P2ConfirmEmail( {
 			} );
 	};
 
-	const handleNextStepClick = ( option ) => {
-		submitSignupStep( {
-			stepName,
-			option,
-		} );
+	const handleNextStepClick = () => {
+		debug( 'Email confirmation step completed for %s', userEmail );
+
+		submitSignupStep( { stepName } );
 
 		goToNextStep();
 	};
@@ -141,6 +144,12 @@ function P2ConfirmEmail( {
 				headerText={
 					isEmailVerified ? translate( 'Email confirmed' ) : translate( 'Check your email' )
 				}
+				stepIndicator={ translate( 'Step %(currentStep)s of %(totalSteps)s', {
+					args: {
+						currentStep: 2,
+						totalSteps: 3,
+					},
+				} ) }
 			>
 				<div className="p2-confirm-email">
 					{ isEmailVerified ? renderPostConfirmationNotice() : renderCheckEmailNotice() }

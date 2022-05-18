@@ -27,6 +27,7 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 		importSite,
 		startImport,
 		resetImport,
+		stepNavigator,
 	} = props;
 
 	/**
@@ -126,10 +127,16 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 								siteSlug={ siteSlug }
 								job={ job as ImportJob }
 								resetImport={ resetImport }
+								onSiteViewClick={ stepNavigator?.goToSiteViewPage }
 							/>
 						);
 					} else if ( checkIsFailed() ) {
-						return <ErrorMessage siteSlug={ siteSlug } />;
+						return (
+							<ErrorMessage
+								onStartBuilding={ stepNavigator?.goToIntentPage }
+								onBackToStart={ stepNavigator?.goToImportCapturePage }
+							/>
+						);
 					} else if ( checkProgress() ) {
 						return <ProgressScreen job={ job } />;
 					}

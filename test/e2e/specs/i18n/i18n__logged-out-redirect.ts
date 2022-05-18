@@ -19,9 +19,6 @@ describe( 'I18N: Homepage Redirect', function () {
 			// Locale slug for English is not included in the path name.
 			const localePath = locale === 'en' ? '' : `${ locale }/`;
 			await page.waitForURL( DataHelper.getCalypsoURL( localePath ) );
-
-			// Close the page/context.
-			await page.close();
 		}
 	);
 } );

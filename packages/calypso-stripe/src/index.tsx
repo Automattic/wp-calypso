@@ -427,9 +427,7 @@ const setupIntentRequestArgs = { needs_intent: true };
  * since a Setup Intent may need to be recreated. You can force the
  * configuration to reload by calling `reload()`.
  */
-function useFetchSetupIntentId(
-	fetchStripeConfiguration: GetStripeSetupIntentId
-): {
+function useFetchSetupIntentId( fetchStripeConfiguration: GetStripeSetupIntentId ): {
 	setupIntentId: StripeSetupIntentId | undefined;
 	error: undefined | Error;
 	reload: ReloadSetupIntentId;

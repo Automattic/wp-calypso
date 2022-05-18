@@ -426,7 +426,8 @@ function refreshNotes() {
 }
 
 function handleStorageEvent( event ) {
-	if ( ! event ) {
+	// Both event and its key property should exist.
+	if ( ! event?.key ) {
 		return;
 	}
 

@@ -1,11 +1,12 @@
 import {
-	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGoogleWorkspaceExtraLicence,
+	isGSuiteExtraLicenseProductSlug,
+	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import PurchaseDetail from 'calypso/components/purchase-detail';
-import { getGoogleMailServiceFamily, isGSuiteExtraLicenseProductSlug } from 'calypso/lib/gsuite';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { CONTACT, GSUITE_LEARNING_CENTER } from 'calypso/lib/url/support';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 

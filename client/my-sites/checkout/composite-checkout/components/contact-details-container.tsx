@@ -52,14 +52,14 @@ export default function ContactDetailsContainer( {
 		.filter( ( product ) => isDomainProduct( product ) || isDomainTransfer( product ) )
 		.filter( ( product ) => ! isDomainMapping( product ) )
 		.map( getDomain );
-	const {
-		updateDomainContactFields,
-		updateCountryCode,
-		updatePostalCode,
-		updateEmail,
-	} = useDispatch( 'wpcom-checkout' );
+	const { updateDomainContactFields, updateCountryCode, updatePostalCode, updateEmail } =
+		useDispatch( 'wpcom-checkout' );
 	const contactDetails = prepareDomainContactDetails( contactInfo );
 	const contactDetailsErrors = prepareDomainContactDetailsErrors( contactInfo );
+	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {
+		updateCountryCode( newInfo.countryCode?.value ?? '' );
+		updatePostalCode( newInfo.postalCode?.value ?? '' );
+	};
 	const { email } = useSelect( ( select ) => select( 'wpcom-checkout' ).getContactInfo() );
 
 	const updateDomainContactRelatedData = ( details: DomainContactDetailsData ) => {
@@ -129,8 +129,7 @@ export default function ContactDetailsContainer( {
 					<TaxFields
 						section="contact"
 						taxInfo={ contactInfo }
-						updateCountryCode={ updateCountryCode }
-						updatePostalCode={ updatePostalCode }
+						onChange={ onChangeContactInfo }
 						countriesList={ countriesList }
 						isDisabled={ isDisabled }
 					/>

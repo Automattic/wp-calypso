@@ -1,6 +1,6 @@
 import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
@@ -110,11 +110,9 @@ const GoogleWorkspaceCard = ( {
 	const isGSuiteSupported =
 		canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
 
-	const isGSuiteAvailable = intervalLength === IntervalLength.ANNUALLY && isGSuiteSupported;
-
 	const googleWorkspace: ProviderCardProps = { ...googleWorkspaceCardInformation };
-	googleWorkspace.detailsExpanded = isGSuiteAvailable && detailsExpanded;
-	googleWorkspace.showExpandButton = isGSuiteAvailable;
+	googleWorkspace.detailsExpanded = isGSuiteSupported && detailsExpanded;
+	googleWorkspace.showExpandButton = isGSuiteSupported;
 	googleWorkspace.priceBadge = (
 		<GoogleWorkspacePrice
 			domain={ domain }

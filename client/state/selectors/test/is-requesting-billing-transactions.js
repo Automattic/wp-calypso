@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import isRequestingBillingTransactions from 'calypso/state/selectors/is-requesting-billing-transactions';
 
 describe( 'isRequestingBillingTransactions()', () => {
@@ -9,7 +8,7 @@ describe( 'isRequestingBillingTransactions()', () => {
 			},
 		};
 		const output = isRequestingBillingTransactions( state );
-		expect( output ).to.be.true;
+		expect( output ).toBe( true );
 	} );
 
 	test( 'should return false if the billing transactions are currently not being fetched', () => {
@@ -19,11 +18,11 @@ describe( 'isRequestingBillingTransactions()', () => {
 			},
 		};
 		const output = isRequestingBillingTransactions( state );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return false if the billing transactions have never been requested', () => {
 		const output = isRequestingBillingTransactions( {} );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 } );

@@ -26,10 +26,6 @@ import {
 	createCreditCardPaymentMethodStore,
 	createCreditCardMethod,
 } from '../../payment-methods/credit-card';
-import {
-	createEbanxTefPaymentMethodStore,
-	createEbanxTefMethod,
-} from '../../payment-methods/ebanx-tef';
 import { createFreePaymentMethod } from '../../payment-methods/free-purchase';
 import { createFullCreditsMethod } from '../../payment-methods/full-credits';
 import {
@@ -64,8 +60,6 @@ export function useCreatePayPal( {
 export function useCreateCreditCard( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 	shouldUseEbanx,
 	shouldShowTaxFields = false,
 	activePayButtonText = undefined,
@@ -74,8 +68,6 @@ export function useCreateCreditCard( {
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 	shouldUseEbanx: boolean;
 	shouldShowTaxFields?: boolean;
 	activePayButtonText?: string | undefined;
@@ -96,8 +88,6 @@ export function useCreateCreditCard( {
 			shouldLoadStripeMethod
 				? createCreditCardMethod( {
 						store: stripePaymentMethodStore,
-						stripe,
-						stripeConfiguration,
 						shouldUseEbanx,
 						shouldShowTaxFields,
 						activePayButtonText,
@@ -107,8 +97,6 @@ export function useCreateCreditCard( {
 		[
 			shouldLoadStripeMethod,
 			stripePaymentMethodStore,
-			stripe,
-			stripeConfiguration,
 			shouldUseEbanx,
 			shouldShowTaxFields,
 			activePayButtonText,
@@ -298,17 +286,6 @@ function useCreateNetbanking(): PaymentMethod {
 	);
 }
 
-function useCreateEbanxTef() {
-	const paymentMethodStore = useMemo( () => createEbanxTefPaymentMethodStore(), [] );
-	return useMemo(
-		() =>
-			createEbanxTefMethod( {
-				store: paymentMethodStore,
-			} ),
-		[ paymentMethodStore ]
-	);
-}
-
 function useCreateFullCredits() {
 	return useMemo( () => createFullCreditsMethod(), [] );
 }
@@ -432,8 +409,6 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 	} );
 
-	const ebanxTefMethod = useCreateEbanxTef();
-
 	const netbankingMethod = useCreateNetbanking();
 
 	const sofortMethod = useCreateSofort( {
@@ -456,8 +431,6 @@ export default function useCreatePaymentMethods( {
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 		shouldUseEbanx,
 		allowUseForAllSubscriptions,
 	} );
@@ -501,7 +474,6 @@ export default function useCreatePaymentMethods( {
 		idealMethod,
 		giropayMethod,
 		sofortMethod,
-		ebanxTefMethod,
 		netbankingMethod,
 		alipayMethod,
 		p24Method,

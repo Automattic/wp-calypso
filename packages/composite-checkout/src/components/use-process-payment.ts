@@ -17,13 +17,13 @@ import {
 
 const debug = debugFactory( 'composite-checkout:use-create-payment-processor-on-click' );
 
-export default function useProcessPayment(): ProcessPayment {
+export default function useProcessPayment( paymentProcessorId: string ): ProcessPayment {
 	const paymentProcessors = usePaymentProcessors();
 	const { setTransactionPending } = useTransactionStatus();
 	const handlePaymentProcessorPromise = useHandlePaymentProcessorResponse();
 
 	return useCallback(
-		async ( paymentProcessorId, submitData ) => {
+		async ( submitData ) => {
 			debug( 'beginning payment processor onClick handler' );
 			if ( ! paymentProcessors[ paymentProcessorId ] ) {
 				throw new Error( `No payment processor found with key: ${ paymentProcessorId }` );
@@ -33,7 +33,7 @@ export default function useProcessPayment(): ProcessPayment {
 			const response = paymentProcessors[ paymentProcessorId ]( submitData );
 			return handlePaymentProcessorPromise( paymentProcessorId, response );
 		},
-		[ handlePaymentProcessorPromise, paymentProcessors, setTransactionPending ]
+		[ paymentProcessorId, handlePaymentProcessorPromise, paymentProcessors, setTransactionPending ]
 	);
 }
 
@@ -46,11 +46,8 @@ function useHandlePaymentProcessorResponse() {
 			),
 		[ __ ]
 	);
-	const {
-		setTransactionComplete,
-		setTransactionRedirecting,
-		setTransactionError,
-	} = useTransactionStatus();
+	const { setTransactionComplete, setTransactionRedirecting, setTransactionError } =
+		useTransactionStatus();
 
 	// processPayment may throw an error, but because it's an async function,
 	// that error will not trigger any React error boundaries around this

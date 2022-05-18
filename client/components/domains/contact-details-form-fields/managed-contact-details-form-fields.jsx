@@ -284,7 +284,9 @@ export class ManagedContactDetailsFormFields extends Component {
 	}
 
 	getCountryPostalCodeSupport = ( countryCode ) =>
-		getCountryPostalCodeSupport( this.props.countriesList, countryCode );
+		this.props.countriesList?.length && countryCode
+			? getCountryPostalCodeSupport( this.props.countriesList, countryCode )
+			: false;
 
 	renderContactDetailsFields() {
 		const { translate, hasCountryStates } = this.props;
@@ -294,7 +296,22 @@ export class ManagedContactDetailsFormFields extends Component {
 		);
 		const countryCode = form.countryCode?.value ?? '';
 		const arePostalCodesSupported = this.getCountryPostalCodeSupport( countryCode );
-		const isOrganizationFieldRequired = form.extra?.value?.ca?.legalType === 'CCO';
+		const isOrganizationFieldRequired = [
+			'CCO',
+			'GOV',
+			'EDU',
+			'ASS',
+			'HOP',
+			'PRT',
+			'TDM',
+			'TRD',
+			'PLT',
+			'LAM',
+			'TRS',
+			'INB',
+			'OMK',
+			'MAJ',
+		].includes( form.extra?.value?.ca?.legalType );
 
 		return (
 			<div className="contact-details-form-fields__contact-details">

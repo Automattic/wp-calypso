@@ -74,10 +74,13 @@ const handler = async ( dispatch, action, getState ) => {
 	}
 };
 
-export const libraryMiddleware = ( { dispatch, getState } ) => ( next ) => ( action ) => {
-	handler( dispatch, action, getState );
+export const libraryMiddleware =
+	( { dispatch, getState } ) =>
+	( next ) =>
+	( action ) => {
+		handler( dispatch, action, getState );
 
-	return next( action );
-};
+		return next( action );
+	};
 
 export default libraryMiddleware;

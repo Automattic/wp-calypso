@@ -9,6 +9,7 @@ import EnvironmentBadge, {
 	DevDocsLink,
 	PreferencesHelper,
 	FeaturesHelper,
+	ReactQueryDevtoolsHelper,
 } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -41,6 +42,7 @@ class Document extends Component {
 			env,
 			badge,
 			preferencesHelper,
+			reactQueryDevtoolsHelper,
 			branchName,
 			commitChecksum,
 			devDocs,
@@ -147,6 +149,7 @@ class Document extends Component {
 					) }
 					{ badge && (
 						<EnvironmentBadge badge={ badge } feedbackURL={ feedbackURL }>
+							{ reactQueryDevtoolsHelper && <ReactQueryDevtoolsHelper /> }
 							{ preferencesHelper && <PreferencesHelper /> }
 							{ featuresHelper && <FeaturesHelper /> }
 							{ authHelper && <AuthHelper /> }

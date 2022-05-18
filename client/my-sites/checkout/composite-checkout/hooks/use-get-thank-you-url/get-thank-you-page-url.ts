@@ -1,4 +1,3 @@
-import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
@@ -9,10 +8,14 @@ import {
 	getPlan,
 	isPlan,
 	isWpComPremiumPlan,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
+import {
+	URL_TYPE,
+	determineUrlType,
+	format as formatUrl,
+	getUrlParts,
+	getUrlFromParts,
+} from '@automattic/calypso-url';
 import debugFactory from 'debug';
 import {
 	hasRenewalItem,
@@ -30,15 +33,13 @@ import {
 	hasTitanMail,
 	hasTrafficGuide,
 	hasDIFMProduct,
-	hasMonthlyCartItem,
+	hasProPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
-import { addQueryArgs, isExternal, resemblesUrl, urlToSlug } from 'calypso/lib/url';
+import { addQueryArgs, isExternal, resemblesUrl } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';
-import { PROFESSIONAL_EMAIL_OFFER } from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
 import {
 	clearSignupCompleteFlowName,
 	getSignupCompleteFlowName,
@@ -46,7 +47,7 @@ import {
 	retrieveSignupDestination,
 } from 'calypso/signup/storageUtils';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
 
@@ -92,7 +93,7 @@ export default function getThankYouPageUrl( {
 	isJetpackCheckout?: boolean;
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
-	domains?: SiteDomain[];
+	domains?: ResponseDomain[];
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -101,9 +102,9 @@ export default function getThankYouPageUrl( {
 	// or a Jetpack or WP.com site's block editor (in wp-admin). This is required for Jetpack's
 	// (and WP.com's) paid blocks Upgrade Nudge.
 	if ( redirectTo ) {
-		const { protocol, hostname, port, pathname, query } = parseUrl( redirectTo, true, true );
+		const { protocol, hostname, port, pathname, searchParams } = getUrlParts( redirectTo );
 
-		if ( resemblesUrl( redirectTo ) && hostname && urlToSlug( hostname ) === siteSlug ) {
+		if ( resemblesUrl( redirectTo ) && isRedirectSameSite( redirectTo, siteSlug ) ) {
 			debug( 'has same site redirectTo, so returning that', redirectTo );
 			return redirectTo;
 		}
@@ -114,18 +115,18 @@ export default function getThankYouPageUrl( {
 		// We cannot simply compare `hostname` to `siteSlug`, since the latter
 		// might contain a path in the case of Jetpack subdirectory installs.
 		if ( adminUrl && redirectTo.startsWith( `${ adminUrl }post.php?` ) ) {
-			const sanitizedRedirectTo = formatUrl( {
-				protocol,
-				hostname,
-				port,
-				pathname,
-				query: {
-					post: parseInt( String( query.post ), 10 ),
+			const sanitizedRedirectTo = getUrlFromParts( {
+				protocol: protocol,
+				hostname: hostname,
+				port: port,
+				pathname: pathname,
+				searchParams: new URLSearchParams( {
+					post: searchParams.get( 'post' ) as string,
 					action: 'edit',
-					plan_upgraded: 1,
-				},
-			} );
-			debug( 'returning sanitized internal redirectTo', redirectTo );
+					plan_upgraded: '1',
+				} ),
+			} ).href;
+			debug( 'returning sanitized internal redirectTo', sanitizedRedirectTo );
 			return sanitizedRedirectTo;
 		}
 
@@ -412,49 +413,6 @@ function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
 	return;
 }
 
-function getMonthlyToAnnualUpsellUrl( {
-	pendingOrReceiptId,
-	cart,
-	siteSlug,
-	orderId,
-}: {
-	pendingOrReceiptId: string;
-	orderId: number | undefined;
-	cart: ResponseCart | undefined;
-	siteSlug: string | undefined;
-} ): string | undefined {
-	if ( orderId ) {
-		return;
-	}
-
-	const monthlyPlansDefaultExperiment = dangerouslyGetExperimentAssignment(
-		'calypso_signup_monthly_plans_default_202201_v2'
-	);
-	if ( monthlyPlansDefaultExperiment?.variationName === null ) {
-		return;
-	}
-
-	if ( cart && hasMonthlyCartItem( cart ) ) {
-		let planType;
-		if ( hasPersonalPlan( cart ) ) {
-			planType = PLAN_PERSONAL;
-		} else if ( hasPremiumPlan( cart ) ) {
-			planType = PLAN_PREMIUM;
-		} else if ( hasBusinessPlan( cart ) ) {
-			planType = PLAN_BUSINESS;
-		} else if ( hasEcommercePlan( cart ) ) {
-			planType = PLAN_ECOMMERCE;
-		}
-
-		if ( ! planType ) {
-			return;
-		}
-
-		return `/checkout/${ siteSlug }/offer-annual-upgrade/${ planType }/${ pendingOrReceiptId }`;
-	}
-
-	return;
-}
 function getPlanUpgradeUpsellUrl( {
 	pendingOrReceiptId,
 	cart,
@@ -494,23 +452,11 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideUpsell: boolean;
-	domains: SiteDomain[] | undefined;
+	domains: ResponseDomain[] | undefined;
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
 	}
-
-	const monthlyToAnnualUpsellExperimentUrl = getMonthlyToAnnualUpsellUrl( {
-		pendingOrReceiptId,
-		cart,
-		orderId,
-		siteSlug,
-	} );
-
-	if ( monthlyToAnnualUpsellExperimentUrl ) {
-		return monthlyToAnnualUpsellExperimentUrl;
-	}
-
 	const professionalEmailUpsellUrl = getProfessionalEmailUpsellUrl( {
 		pendingOrReceiptId,
 		cart,
@@ -560,7 +506,7 @@ function getProfessionalEmailUpsellUrl( {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	orderId: number | undefined;
-	domains: SiteDomain[] | undefined;
+	domains: ResponseDomain[] | undefined;
 } ): string | undefined {
 	if ( orderId || ! cart ) {
 		return;
@@ -578,7 +524,8 @@ function getProfessionalEmailUpsellUrl( {
 		! hasBloggerPlan( cart ) &&
 		! hasPersonalPlan( cart ) &&
 		! hasBusinessPlan( cart ) &&
-		! hasEcommercePlan( cart )
+		! hasEcommercePlan( cart ) &&
+		! hasProPlan( cart )
 	) {
 		return;
 	}
@@ -602,7 +549,7 @@ function getProfessionalEmailUpsellUrl( {
 		return;
 	}
 
-	return `/checkout/offer/${ PROFESSIONAL_EMAIL_OFFER }/${ domainName }/${ pendingOrReceiptId }/${ siteSlug }`;
+	return `/checkout/offer-professional-email/${ domainName }/${ pendingOrReceiptId }/${ siteSlug }`;
 }
 
 function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< string, string > {
@@ -623,20 +570,27 @@ function getNoticeType( cart: ResponseCart | undefined ): Record< string, string
 	return {};
 }
 
-function getUrlWithQueryParam( url: string, queryParams: Record< string, string > ): string {
-	const { protocol, hostname, port, pathname, query, hash } = parseUrl( url, true );
+function getUrlWithQueryParam( url = '/', queryParams: Record< string, string > = {} ): string {
+	const urlType = determineUrlType( url );
+	if ( urlType === URL_TYPE.INVALID || urlType === URL_TYPE.PATH_RELATIVE ) {
+		return url;
+	}
+	const { search, origin, host, ...parsedURL } = getUrlParts( url );
 
-	return formatUrl( {
-		protocol,
-		hostname,
-		port,
-		pathname,
-		query: {
-			...query,
+	// getUrlFromParts can only handle absolute URLs, so add dummy data if needed.
+	// formatUrl will remove it away, to match the previous url type.
+	parsedURL.protocol = parsedURL.protocol || 'https:';
+	parsedURL.hostname = parsedURL.hostname || '__domain__.invalid';
+
+	const urlParts = {
+		...parsedURL,
+		searchParams: new URLSearchParams( {
+			...Object.fromEntries( new URLSearchParams( search ) ),
 			...queryParams,
-		},
-		hash,
-	} );
+		} ),
+	};
+
+	return formatUrl( getUrlFromParts( urlParts ), urlType );
 }
 
 /**
@@ -718,4 +672,22 @@ function getRedirectUrlFromCart( cart: ResponseCart ): string | null {
 		firstProductWithUrl?.extra.afterPurchaseUrl
 	);
 	return firstProductWithUrl?.extra.afterPurchaseUrl ?? null;
+}
+
+function isRedirectSameSite( redirectTo: string, siteSlug?: string ) {
+	if ( ! siteSlug ) {
+		return false;
+	}
+	const { hostname, pathname } = getUrlParts( redirectTo );
+	// For subdirectory site, check that both hostname and subdirectory matches the siteSlug (host.name::subdirectory).
+	if ( siteSlug.indexOf( '::' ) !== -1 ) {
+		const slugParts = siteSlug.split( '::' );
+		const hostnameFromSlug = slugParts[ 0 ];
+		const subDirectoryPathFromSlug = slugParts.splice( 1 ).join( '/' );
+		return (
+			hostname === hostnameFromSlug && pathname?.startsWith( `/${ subDirectoryPathFromSlug }` )
+		);
+	}
+	// For standard non-subdirectory site, check that hostname matches the siteSlug.
+	return hostname === siteSlug;
 }

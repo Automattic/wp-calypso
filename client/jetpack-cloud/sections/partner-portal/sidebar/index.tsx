@@ -55,7 +55,7 @@ class PartnerPortalSidebar extends Component< Props > {
 							} ) }
 							link="/partner-portal/licenses"
 							onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Licenses' ) }
-							selected={ itemLinkMatches( [ '/partner-portal/licenses' ], path ) }
+							selected={ itemLinkMatches( '/partner-portal/licenses', path ) }
 						/>
 
 						{ config.isEnabled( 'jetpack/partner-portal-payment' ) && (
@@ -66,7 +66,19 @@ class PartnerPortalSidebar extends Component< Props > {
 								} ) }
 								link="/partner-portal/payment-methods"
 								onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Payment Methods' ) }
-								selected={ itemLinkMatches( [ '/partner-portal/payment-methods' ], path ) }
+								selected={ itemLinkMatches( '/partner-portal/payment-methods', path ) }
+							/>
+						) }
+
+						{ config.isEnabled( 'jetpack/partner-portal-payment' ) && (
+							<SidebarItem
+								customIcon={ <JetpackIcons icon="page" /> }
+								label={ translate( 'Invoices', {
+									comment: 'Jeptack sidebar navigation item',
+								} ) }
+								link="/partner-portal/invoices"
+								onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Invoices' ) }
+								selected={ itemLinkMatches( '/partner-portal/invoices', path ) }
 							/>
 						) }
 					</SidebarMenu>

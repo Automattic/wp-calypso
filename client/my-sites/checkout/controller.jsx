@@ -1,8 +1,9 @@
 import { isJetpackLegacyItem } from '@automattic/calypso-products';
 import debugFactory from 'debug';
-import i18n from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import page from 'page';
+import DocumentHead from 'calypso/components/data/document-head';
 import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
@@ -13,9 +14,7 @@ import LicensingThankYouAutoActivationCompleted from 'calypso/my-sites/checkout/
 import LicensingThankYouManualActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation';
 import LicensingThankYouManualActivationInstructions from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-instructions';
 import LicensingThankYouManualActivationLicenseKey from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-license-key';
-import PostCheckoutUpsellExperimentRedirector, {
-	PROFESSIONAL_EMAIL_OFFER,
-} from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
+import PostCheckoutUpsellExperimentRedirector from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
 import { sites } from 'calypso/my-sites/controller';
 import {
 	retrieveSignupDestination,
@@ -26,7 +25,6 @@ import {
 	getCurrentUserVisibleSiteCount,
 	isUserLoggedIn,
 } from 'calypso/state/current-user/selectors';
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	COMPARE_PLANS_QUERY_PARAM,
@@ -38,7 +36,6 @@ import CheckoutThankYouComponent from './checkout-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import UpsellNudge, {
-	ANNUAL_PLAN_UPGRADE,
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
@@ -54,26 +51,32 @@ export function checkoutSiteless( context, next ) {
 	const { productSlug: product } = context.params;
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
 
-	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
-
 	setSectionMiddleware( { name: 'checkout' } )( context );
 
 	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
 
+	const CheckoutSitelessDocumentTitle = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'Checkout' ) } />;
+	};
+
 	context.primary = (
-		<CheckoutSystemDecider
-			productAliasFromUrl={ product }
-			productSourceFromUrl={ context.query.source }
-			couponCode={ couponCode }
-			isComingFromUpsell={ !! context.query.upgrade }
-			redirectTo={ context.query.redirect_to }
-			isLoggedOutCart={ isLoggedOut }
-			isNoSiteCart={ true }
-			isJetpackCheckout={ true }
-			isUserComingFromLoginForm={ isUserComingFromLoginForm }
-		/>
+		<>
+			<CheckoutSitelessDocumentTitle />
+
+			<CheckoutSystemDecider
+				productAliasFromUrl={ product }
+				productSourceFromUrl={ context.query.source }
+				couponCode={ couponCode }
+				isComingFromUpsell={ !! context.query.upgrade }
+				redirectTo={ context.query.redirect_to }
+				isLoggedOutCart={ isLoggedOut }
+				isNoSiteCart={ true }
+				isJetpackCheckout={ true }
+				isUserComingFromLoginForm={ isUserComingFromLoginForm }
+			/>
+		</>
 	);
 
 	next();
@@ -121,8 +124,10 @@ export function checkout( context, next ) {
 		return;
 	}
 
-	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
+	const CheckoutDocumentTitle = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'Checkout' ) } />;
+	};
 
 	setSectionMiddleware( { name: 'checkout' } )( context );
 
@@ -150,23 +155,27 @@ export function checkout( context, next ) {
 	}
 
 	context.primary = (
-		<CheckoutSystemDecider
-			productAliasFromUrl={ product }
-			productSourceFromUrl={ context.query.source }
-			purchaseId={ purchaseId }
-			selectedFeature={ feature }
-			couponCode={ couponCode }
-			isComingFromUpsell={ !! context.query.upgrade }
-			plan={ plan }
-			selectedSite={ selectedSite }
-			redirectTo={ context.query.redirect_to }
-			isLoggedOutCart={ isLoggedOutCart }
-			isNoSiteCart={ isNoSiteCart }
-			isJetpackCheckout={ isJetpackCheckout }
-			jetpackSiteSlug={ jetpackSiteSlug }
-			jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
-			isUserComingFromLoginForm={ isUserComingFromLoginForm }
-		/>
+		<>
+			<CheckoutDocumentTitle />
+
+			<CheckoutSystemDecider
+				productAliasFromUrl={ product }
+				productSourceFromUrl={ context.query.source }
+				purchaseId={ purchaseId }
+				selectedFeature={ feature }
+				couponCode={ couponCode }
+				isComingFromUpsell={ !! context.query.upgrade }
+				plan={ plan }
+				selectedSite={ selectedSite }
+				redirectTo={ context.query.redirect_to }
+				isLoggedOutCart={ isLoggedOutCart }
+				isNoSiteCart={ isNoSiteCart }
+				isJetpackCheckout={ isJetpackCheckout }
+				jetpackSiteSlug={ jetpackSiteSlug }
+				jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
+				isUserComingFromLoginForm={ isUserComingFromLoginForm }
+			/>
+		</>
 	);
 
 	next();
@@ -219,21 +228,27 @@ export function checkoutThankYou( context, next ) {
 
 	setSectionMiddleware( { name: 'checkout-thank-you' } )( context );
 
-	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
+	const CheckoutThankYouDocumentTitle = () => {
+		const translate = useTranslate();
+		return <DocumentHead title={ translate( 'Thank You' ) } />;
+	};
 
 	context.primary = (
-		<CheckoutThankYouComponent
-			receiptId={ receiptId }
-			gsuiteReceiptId={ gsuiteReceiptId }
-			domainOnlySiteFlow={ isEmpty( context.params.site ) }
-			selectedFeature={ context.params.feature }
-			redirectTo={ context.query.redirect_to }
-			upgradeIntent={ context.query.intent }
-			siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
-			selectedSite={ selectedSite }
-			displayMode={ displayMode }
-		/>
+		<>
+			<CheckoutThankYouDocumentTitle />
+
+			<CheckoutThankYouComponent
+				receiptId={ receiptId }
+				gsuiteReceiptId={ gsuiteReceiptId }
+				domainOnlySiteFlow={ isEmpty( context.params.site ) }
+				selectedFeature={ context.params.feature }
+				redirectTo={ context.query.redirect_to }
+				upgradeIntent={ context.query.intent }
+				siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
+				selectedSite={ selectedSite }
+				displayMode={ displayMode }
+			/>
+		</>
 	);
 
 	next();
@@ -266,9 +281,6 @@ export function upsellNudge( context, next ) {
 	} else if ( context.path.includes( 'offer-professional-email' ) ) {
 		upsellType = PROFESSIONAL_EMAIL_UPSELL;
 		upgradeItem = context.params.domain;
-	} else if ( context.path.includes( 'offer-annual-upgrade' ) ) {
-		upsellType = ANNUAL_PLAN_UPGRADE;
-		upgradeItem = context.params.upgradeItem;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );
@@ -288,7 +300,7 @@ export function upsellNudge( context, next ) {
 }
 
 export function upsellRedirect( context, next ) {
-	const { receiptId, site, upsellMeta, upsellType } = context.params;
+	const { receiptId, site /*, upsellMeta, upsellType */ } = context.params;
 
 	setSectionMiddleware( { name: 'checkout-offer-redirect' } )( context );
 
@@ -296,11 +308,16 @@ export function upsellRedirect( context, next ) {
 	let upsellExperimentAssignmentName;
 	let upsellUrl;
 
+	/*
+	 * When next we need a redirect based on A/B test, add any logic based on upsellType here
+	 * While this code block is empty, this function is effectively a no-op.
+
 	if ( PROFESSIONAL_EMAIL_OFFER === upsellType ) {
 		upsellExperimentName = 'calypso_promote_professional_email_post_checkout_2022_02';
 		upsellExperimentAssignmentName = 'treatment';
 		upsellUrl = `/checkout/offer-professional-email/${ upsellMeta }/${ receiptId }/${ site }`;
 	}
+	*/
 
 	if ( upsellExperimentName && upsellExperimentAssignmentName && upsellUrl ) {
 		context.primary = (

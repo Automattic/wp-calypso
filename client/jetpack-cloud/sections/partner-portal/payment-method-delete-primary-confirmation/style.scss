@@ -16,7 +16,7 @@
 		&-details {
 			display: flex;
 			margin-top: 1rem;
-	
+
 			& > div {
 				margin-right: 32px;
 			}
@@ -40,4 +40,8 @@
 		}
 	}
 
+	&__notice {
+		margin: 1rem 0 0;
+		font-size: 1rem;
+	}
 }

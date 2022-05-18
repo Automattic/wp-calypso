@@ -7,6 +7,16 @@
 
 	&:hover .environment {
 		display: inline-block;
+
+		// hide everything inside each tab
+		& > * {
+			display: none;
+		}
+
+		// only show the tab's title (first child)
+		& > *:first-child {
+			display: block;
+		}
 	}
 
 	.bug-report {
@@ -56,8 +66,8 @@
 		}
 
 		@mixin env-bug-style( $color-name ) {
-			background-color: var( --studio-#{ $color-name }-20 );
-			color: var( --studio-#{ $color-name }-90 );
+			background-color: var( --studio-#{$color-name}-20 );
+			color: var( --studio-#{$color-name}-90 );
 		}
 
 		&.is-staging {

@@ -5,10 +5,11 @@ import {
 	PLAN_WPCOM_PRO,
 	PLAN_FREE,
 	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_STARTER,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import i18n, { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import type { WPComPlan } from '@automattic/calypso-products';
 import type { TranslateResult } from 'i18n-calypso';
@@ -24,6 +25,7 @@ interface Props {
 	isPrimary?: boolean;
 	manageHref?: string;
 	onClick?: () => void;
+	disabled?: boolean;
 }
 
 type TranslateFunc = ReturnType< typeof useTranslate >;
@@ -35,7 +37,11 @@ function getButtonText( props: Partial< Props >, translate: TranslateFunc ): Tra
 	const planSlug = plan?.getStoreSlug();
 
 	if ( planSlug === PLAN_WPCOM_PRO ) {
-		return translate( 'Try Pro risk-free' );
+		return 'en' === i18n.getLocaleSlug() || i18n.hasTranslation( 'Choose Pro' )
+			? translate( 'Choose Pro' )
+			: translate( 'Try Pro risk-free' );
+	} else if ( planSlug === PLAN_WPCOM_STARTER ) {
+		return translate( 'Choose Starter' );
 	} else if ( planSlug === PLAN_FREE || planSlug === PLAN_WPCOM_FLEXIBLE ) {
 		return translate( 'Start with Free' );
 	}
@@ -56,6 +62,7 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 	currentSitePlanSlug,
 	manageHref,
 	onClick,
+	disabled,
 	...props
 } ) => {
 	const { plan } = props;
@@ -84,12 +91,23 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 		manageHref = undefined;
 	}
 
-	if ( ! isInSignup && [ TYPE_FLEXIBLE, TYPE_FREE ].includes( plan.type ) ) {
-		return null;
+	if ( ! isInSignup ) {
+		if ( isCurrentPlan ) {
+			return <Button disabled>{ translate( 'This is your plan' ) }</Button>;
+		}
+
+		if ( [ TYPE_FLEXIBLE, TYPE_FREE ].includes( plan.type ) ) {
+			return null;
+		}
 	}
 
 	return (
-		<Button className={ className } onClick={ handleClick } href={ manageHref }>
+		<Button
+			className={ className }
+			onClick={ handleClick }
+			href={ manageHref }
+			disabled={ disabled }
+		>
 			{ buttonText }
 		</Button>
 	);

@@ -1,4 +1,3 @@
-import { assert, expect } from 'chai';
 import deepfreeze from 'deep-freeze';
 import { TEAMS_REQUEST, TEAMS_RECEIVE } from 'calypso/state/teams/action-types';
 import { deserialize } from 'calypso/state/utils';
@@ -20,7 +19,7 @@ describe( 'reducer', () => {
 
 	describe( 'items', () => {
 		test( 'should return an empty list by default', () => {
-			expect( items( undefined, {} ) ).to.deep.equal( [] );
+			expect( items( undefined, {} ) ).toEqual( [] );
 		} );
 
 		test( 'should append a single teams when received', () => {
@@ -32,7 +31,7 @@ describe( 'reducer', () => {
 						payload: { teams: [ TEAM1 ] },
 					}
 				)
-			).to.deep.equal( [ TEAM1 ] );
+			).toEqual( [ TEAM1 ] );
 		} );
 
 		test( 'should append teams when received', () => {
@@ -44,7 +43,7 @@ describe( 'reducer', () => {
 						payload: { teams: [ TEAM1, TEAM2 ] },
 					}
 				)
-			).to.deep.equal( [ TEAM1, TEAM2 ] );
+			).toEqual( [ TEAM1, TEAM2 ] );
 		} );
 
 		test( 'should ignore errors', () => {
@@ -55,21 +54,16 @@ describe( 'reducer', () => {
 					payload: { some: 'error' },
 					error: true,
 				} )
-			).to.equal( initialState );
+			).toEqual( initialState );
 		} );
 
 		test( 'deserialize: should succeed with good data', () => {
-			assert.deepEqual( validState, deserialize( items, validState ) );
+			expect( validState ).toEqual( deserialize( items, validState ) );
 		} );
 
 		test( 'deserialize: should ignore bad data', () => {
-			let state;
-			try {
-				state = deserialize( items, invalidState );
-				assert.fail();
-			} catch ( err ) {
-				assert.deepEqual( [], state );
-			}
+			const state = deserialize( items, invalidState );
+			expect( [] ).toEqual( state );
 		} );
 	} );
 
@@ -79,7 +73,7 @@ describe( 'reducer', () => {
 				isRequesting( false, {
 					type: TEAMS_REQUEST,
 				} )
-			).to.equal( true );
+			).toEqual( true );
 		} );
 
 		test( 'successful request should set requesting to false', () => {
@@ -88,7 +82,7 @@ describe( 'reducer', () => {
 					type: TEAMS_RECEIVE,
 					teams: [ {}, {}, {} ],
 				} )
-			).to.equal( false );
+			).toEqual( false );
 		} );
 
 		test( 'failed request should set requesting to false', () => {
@@ -97,7 +91,7 @@ describe( 'reducer', () => {
 					type: TEAMS_RECEIVE,
 					error: new Error( 'test error' ),
 				} )
-			).to.equal( false );
+			).toEqual( false );
 		} );
 	} );
 } );

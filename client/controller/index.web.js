@@ -11,6 +11,7 @@ import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { login } from 'calypso/lib/paths';
+import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import { getSiteFragment } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
@@ -56,6 +57,7 @@ export const ProviderWrappedLayout = ( {
 					<ReduxProvider store={ store }>
 						<MomentProvider>{ layout }</MomentProvider>
 					</ReduxProvider>
+					<CalypsoReactQueryDevtools />
 				</QueryClientProvider>
 			</RouteProvider>
 		</CalypsoI18nProvider>

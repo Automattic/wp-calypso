@@ -1,16 +1,13 @@
 import styled from '@emotion/styled';
-import debugFactory from 'debug';
-import { ErrorInfo } from 'react';
-import * as React from 'react';
-
-const debug = debugFactory( 'composite-checkout:checkout-error-boundary' );
+import { Component } from 'react';
+import type { ReactNode } from 'react';
 
 const ErrorContainer = styled.div`
 	margin: 2em;
 	text-align: center;
 `;
 
-export default class CheckoutErrorBoundary extends React.Component< CheckoutErrorBoundaryProps > {
+export default class CheckoutErrorBoundary extends Component< CheckoutErrorBoundaryProps > {
 	constructor( props: CheckoutErrorBoundaryProps ) {
 		super( props );
 	}
@@ -21,15 +18,13 @@ export default class CheckoutErrorBoundary extends React.Component< CheckoutErro
 		return { hasError: true };
 	}
 
-	componentDidCatch( error: Error, errorInfo: ErrorInfo ): void {
+	componentDidCatch( error: Error ): void {
 		if ( this.props.onError ) {
-			const errorMessage = `${ error.message }; Stack: ${ error.stack }; Component Stack: ${ errorInfo.componentStack }`;
-			debug( 'reporting the error', errorMessage );
-			this.props.onError( errorMessage );
+			this.props.onError( error );
 		}
 	}
 
-	render(): React.ReactNode {
+	render(): ReactNode {
 		if ( this.state.hasError ) {
 			return <ErrorFallback errorMessage={ this.props.errorMessage } />;
 		}
@@ -38,11 +33,11 @@ export default class CheckoutErrorBoundary extends React.Component< CheckoutErro
 }
 
 interface CheckoutErrorBoundaryProps {
-	errorMessage: React.ReactNode;
-	onError?: ( message: string ) => void | undefined;
-	children?: React.ReactNode;
+	errorMessage: ReactNode;
+	onError?: ( error: Error ) => void;
+	children?: ReactNode;
 }
 
-function ErrorFallback( { errorMessage }: { errorMessage: React.ReactNode } ) {
+function ErrorFallback( { errorMessage }: { errorMessage: ReactNode } ) {
 	return <ErrorContainer>{ errorMessage }</ErrorContainer>;
 }

@@ -9,6 +9,7 @@ import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_WPCOM_PRO,
+	PLAN_WPCOM_STARTER,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -42,6 +43,7 @@ export function generateSteps( {
 	isNewOrExistingSiteFulfilled = noop,
 	setDIFMLiteDesign = noop,
 	excludeStepIfEmailVerified = noop,
+	excludeStepIfProfileComplete = noop,
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
@@ -288,6 +290,17 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			defaultDependencies: {
 				cartItem: PLAN_WPCOM_PRO,
+			},
+		},
+
+		'plans-starter': {
+			stepName: 'plans-starter',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_WPCOM_STARTER,
 			},
 		},
 
@@ -601,6 +614,15 @@ export function generateSteps( {
 			fulfilledStepCallback: excludeStepIfEmailVerified,
 		},
 
+		'p2-complete-profile': {
+			stepName: 'p2-complete-profile',
+			fulfilledStepCallback: excludeStepIfProfileComplete,
+		},
+
+		'p2-join-workspace': {
+			stepName: 'p2-join-workspace',
+		},
+
 		'plans-personal-monthly': {
 			stepName: 'plans-personal-monthly',
 			apiRequestFunction: addPlanToCart,
@@ -721,20 +743,16 @@ export function generateSteps( {
 				hideSkip: true,
 			},
 		},
-		'site-info-collection': {
-			stepName: 'site-info-collection',
-			dependencies: [ 'newOrExistingSiteChoice' ],
-			providesDependencies: [
-				'siteTitle',
-				'siteDescription',
-				'twitterUrl',
-				'facebookUrl',
-				'linkedinUrl',
-				'instagramUrl',
-				'displayEmail',
-				'displayPhone',
-				'displayAddress',
-			],
+		'difm-page-picker': {
+			stepName: 'difm-page-picker',
+			providesDependencies: [ 'selectedPageTitles' ],
+			props: {
+				hideSkip: true,
+			},
+		},
+		'social-profiles': {
+			stepName: 'social-profiles',
+			providesDependencies: [ 'twitterUrl', 'facebookUrl', 'linkedinUrl', 'instagramUrl' ],
 		},
 		'website-content': {
 			stepName: 'website-content',

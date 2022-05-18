@@ -1,20 +1,32 @@
 .threat-item-header {
   &__card-container {
-    flex-direction: column;
+    display: flex;
+    flex-wrap: wrap;
     margin-bottom: auto;
     margin-top: auto;
     margin-right: auto;
-		max-width: 435px;
-    @include breakpoint-deprecated( '<960px' ) {
-			max-width: 263px;
-		}
+    padding-right: 24px;
+    width: 100%;
+    overflow: hidden;
+
+    @include breakpoint-deprecated( '>960px' ) {
+      flex-wrap: nowrap;
+    }
+  }
+
+  &__titles {
+    overflow: hidden;
+  }
+
+  &__autofix-container {
+    min-width: 18px;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 36px;
+    margin-left: auto;
   }
 
   &__autofix_badge {
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-right: 72px;
-    margin-left: auto;
     fill: #008710;
   }
 
@@ -23,7 +35,6 @@
     font-weight: 600;
     font-size: $font-body-large;
     line-height: 24px;
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }

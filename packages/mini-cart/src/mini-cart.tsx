@@ -112,13 +112,8 @@ export function MiniCart( {
 	onRemoveProduct?: ( uuid: string ) => void;
 	onRemoveCoupon?: () => void;
 } ): JSX.Element | null {
-	const {
-		responseCart,
-		removeCoupon,
-		removeProductFromCart,
-		isLoading,
-		isPendingUpdate,
-	} = useShoppingCart( cartKey ? cartKey : undefined );
+	const { responseCart, removeCoupon, removeProductFromCart, isLoading, isPendingUpdate } =
+		useShoppingCart( cartKey ? cartKey : undefined );
 	const { __ } = useI18n();
 	const isDisabled = isLoading || isPendingUpdate;
 

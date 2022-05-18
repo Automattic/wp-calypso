@@ -1,3 +1,4 @@
+import { FEATURE_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
@@ -6,6 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import MainComponent from 'calypso/components/main';
@@ -32,12 +34,11 @@ import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
-import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import {
 	getPluginOnSite,
 	getPluginOnSites,
 	getSiteObjectsWithPlugin,
-	getSitesWithoutPlugin,
+	getSiteObjectsWithoutPlugin,
 	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
@@ -52,8 +53,10 @@ import {
 } from 'calypso/state/products-list/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
+import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import {
 	isJetpackSite,
@@ -73,6 +76,7 @@ function PluginDetails( props ) {
 	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
+	const selectedOrAllSites = useSelector( getSelectedOrAllSites );
 	const isRequestingSites = useSelector( checkRequestingSites );
 	const requestingPluginsForSites = useSelector( ( state ) =>
 		isRequestingForSites( state, siteIds )
@@ -105,7 +109,6 @@ function PluginDetails( props ) {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isWpcom = selectedSite && ! isJetpack;
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
-	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
 	const isSiteConnected = useSelector( ( state ) =>
 		getSiteConnectionStatus( state, selectedSite?.ID )
 	);
@@ -245,18 +248,17 @@ function PluginDetails( props ) {
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
 			<QueryJetpackPlugins siteIds={ siteIds } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
+			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist />
 			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs }>
-				{ ( isMarketplaceProduct || shouldUpgrade ) &&
-					! requestingPluginsForSites &&
-					! isPluginInstalledOnsite && (
-						<BillingIntervalSwitcher
-							billingPeriod={ billingPeriod }
-							onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
-							compact={ ! isWide }
-							plugin={ fullPlugin }
-						/>
-					) }
+				{ isMarketplaceProduct && ! requestingPluginsForSites && ! isPluginInstalledOnsite && (
+					<BillingIntervalSwitcher
+						billingPeriod={ billingPeriod }
+						onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
+						compact={ ! isWide }
+						plugin={ fullPlugin }
+					/>
+				) }
 			</FixedNavigationHeader>
 			<PluginNotices
 				pluginId={ fullPlugin.id }
@@ -366,16 +368,23 @@ function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, billingPe
 		getSiteObjectsWithPlugin( state, siteIds, props.pluginSlug )
 	);
 	const sitesWithoutPlugin = useSelector( ( state ) =>
-		getSitesWithoutPlugin( state, siteIds, props.pluginSlug )
+		getSiteObjectsWithoutPlugin( state, siteIds, props.pluginSlug )
+	);
+
+	const availableOnSites = useSelector( ( state ) =>
+		sitesWithoutPlugin.filter( ( site ) =>
+			hasActiveSiteFeature( state, site.ID, FEATURE_INSTALL_PLUGINS )
+		)
+	);
+	const upgradeNeededSites = useSelector( ( state ) =>
+		sitesWithoutPlugin.filter(
+			( site ) => ! hasActiveSiteFeature( state, site.ID, FEATURE_INSTALL_PLUGINS )
+		)
 	);
 
 	if ( isFetching || ( props.siteUrl && ! isPluginInstalledOnsite ) ) {
 		return null;
 	}
-
-	const notInstalledSites = sitesWithoutPlugin.map( ( siteId ) =>
-		sitesWithPlugins.find( ( site ) => site.ID === siteId )
-	);
 
 	return (
 		<div className="plugin-details__sites-list-background">
@@ -399,7 +408,15 @@ function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, billingPe
 						translate,
 						selectedSite,
 					} ) }
-					sites={ notInstalledSites }
+					sites={ availableOnSites }
+					plugin={ plugin }
+					billingPeriod={ billingPeriod }
+				/>
+
+				<PluginSiteList
+					className="plugin-details__not-installed-on"
+					title={ translate( 'Upgrade needed' ) }
+					sites={ upgradeNeededSites }
 					plugin={ plugin }
 					billingPeriod={ billingPeriod }
 				/>

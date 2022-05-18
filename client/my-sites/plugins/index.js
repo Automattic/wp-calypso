@@ -1,16 +1,14 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	browsePlugins,
 	browsePluginsOrPlugin,
-	eligibility,
+	renderPluginWarnings,
+	renderProvisionPlugins,
 	jetpackCanUpdate,
 	plugins,
-	resetHistory,
 	scrollTopIfNoHash,
-	setupPlugins,
 	upload,
 } from './controller';
 
@@ -19,7 +17,7 @@ export default function () {
 		'/plugins/setup',
 		scrollTopIfNoHash,
 		siteSelection,
-		setupPlugins,
+		renderProvisionPlugins,
 		makeLayout,
 		clientRender
 	);
@@ -28,25 +26,10 @@ export default function () {
 		'/plugins/setup/:site',
 		scrollTopIfNoHash,
 		siteSelection,
-		setupPlugins,
+		renderProvisionPlugins,
 		makeLayout,
 		clientRender
 	);
-
-	page( '/plugins/wpcom-masterbar-redirect/:site', ( context ) => {
-		context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_view_click' ) );
-		page.redirect( `/plugins/${ context.params.site }` );
-	} );
-
-	page( '/plugins/browse/wpcom-masterbar-redirect/:site', ( context ) => {
-		context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_add_click' ) );
-		page.redirect( `/plugins/browse/${ context.params.site }` );
-	} );
-
-	page( '/plugins/manage/wpcom-masterbar-redirect/:site', ( context ) => {
-		context.store.dispatch( recordTracksEvent( 'calypso_wpcom_masterbar_plugins_manage_click' ) );
-		page.redirect( `/plugins/manage/${ context.params.site }` );
-	} );
 
 	page( '/plugins/browse/:category/:site', ( context ) => {
 		const { category, site } = context.params;
@@ -115,16 +98,8 @@ export default function () {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
-		eligibility,
+		renderPluginWarnings,
 		makeLayout,
 		clientRender
 	);
-
-	page.exit( '/plugins/*', ( context, next ) => {
-		if ( 0 !== page.current.indexOf( '/plugins/' ) ) {
-			resetHistory();
-		}
-
-		next();
-	} );
 }

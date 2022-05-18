@@ -1,0 +1,11 @@
+/**
+ * @component Gravatar
+ */
+
+.gravatar {
+	border-radius: 50%;
+
+	&.is-placeholder {
+		display: inline-block;
+	}
+}

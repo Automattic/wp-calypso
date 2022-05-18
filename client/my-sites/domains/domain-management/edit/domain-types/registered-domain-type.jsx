@@ -1,5 +1,6 @@
 import { Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -31,13 +32,14 @@ import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainOnlyNotice from '../domain-only-notice';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
-import { recordPaymentSettingsClick } from '../payment-settings-analytics';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 
 class RegisteredDomainType extends Component {
 	renderExpired() {
 		const { domain, purchase, isLoadingPurchase, translate, moment } = this.props;
-		const domainsLink = ( link ) => <a href={ link } target="_blank" rel="noopener noreferrer" />;
+		const domainsLink = ( link ) => (
+			<a href={ localizeUrl( link ) } target="_blank" rel="noopener noreferrer" />
+		);
 
 		if ( ! domain.expired || domain.pendingTransfer ) {
 			return null;
@@ -130,7 +132,11 @@ class RegisteredDomainType extends Component {
 		const { domain, translate } = this.props;
 		const { registrationDate, name: domain_name } = domain;
 		const domainsLink = (
-			<a href={ DOMAIN_RECENTLY_REGISTERED } target="_blank" rel="noopener noreferrer" />
+			<a
+				href={ localizeUrl( DOMAIN_RECENTLY_REGISTERED ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			/>
 		);
 
 		const recentlyRegistered = isRecentlyRegistered( registrationDate );
@@ -264,10 +270,6 @@ class RegisteredDomainType extends Component {
 		);
 	}
 
-	handlePaymentSettingsClick = () => {
-		this.props.recordPaymentSettingsClick( this.props.domain );
-	};
-
 	render() {
 		const { domain, selectedSite, purchase, isLoadingPurchase, isDomainOnlySite } = this.props;
 		const { name: domain_name } = domain;
@@ -328,23 +330,16 @@ class RegisteredDomainType extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const { subscriptionId } = ownProps.domain;
-		const currentUserId = getCurrentUserId( state );
-		const purchase = subscriptionId
-			? getByPurchaseId( state, parseInt( subscriptionId, 10 ) )
-			: null;
+export default connect( ( state, ownProps ) => {
+	const { subscriptionId } = ownProps.domain;
+	const currentUserId = getCurrentUserId( state );
+	const purchase = subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null;
 
-		return {
-			isDomainOnlySite: getSiteIsDomainOnly( state, ownProps.selectedSite.ID ),
-			isLoadingPurchase:
-				isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
-			purchase: purchase && purchase.userId === currentUserId ? purchase : null,
-			redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
-		};
-	},
-	{
-		recordPaymentSettingsClick,
-	}
-)( withLocalizedMoment( localize( RegisteredDomainType ) ) );
+	return {
+		isDomainOnlySite: getSiteIsDomainOnly( state, ownProps.selectedSite.ID ),
+		isLoadingPurchase:
+			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
+		purchase: purchase && purchase.userId === currentUserId ? purchase : null,
+		redemptionProduct: getProductBySlug( state, 'domain_redemption' ),
+	};
+} )( withLocalizedMoment( localize( RegisteredDomainType ) ) );

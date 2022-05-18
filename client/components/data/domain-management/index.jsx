@@ -37,13 +37,8 @@ class DomainManagementData extends Component {
 	};
 
 	render() {
-		const {
-			needsContactDetails,
-			needsDomains,
-			needsPlans,
-			needsProductsList,
-			selectedSite,
-		} = this.props;
+		const { needsContactDetails, needsDomains, needsPlans, needsProductsList, selectedSite } =
+			this.props;
 
 		return (
 			<div>

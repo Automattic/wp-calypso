@@ -1,10 +1,31 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .upsell {
+	padding: 16px;
+	box-sizing: border-box;
+	background: var( --color-surface );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+
+	@include break-mobile {
+		margin-bottom: 16px;
+		padding: 24px;
+	}
+
 	& > *:first-child {
-		margin-bottom: 32px;
+		margin-bottom: 16px;
 	}
 
 	& > *:not( :first-child ):not( :last-child ) {
 		margin-bottom: 24px;
+	}
+
+	& > *:last-child {
+		margin-bottom: 6px;
+	}
+
+	&__body-text {
+		font-size: 1rem;
 	}
 }
 

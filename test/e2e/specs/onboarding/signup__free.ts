@@ -15,9 +15,10 @@ import {
 	GeneralSettingsPage,
 	ComingSoonPage,
 	MyHomePage,
-	skipDescribeIf,
+	SecretsManager,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
@@ -29,13 +30,13 @@ const isStagingOrProd = DataHelper.getCalypsoURL()
 skipDescribeIf( isStagingOrProd )(
 	DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ),
 	function () {
-		const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
+		const inboxId = SecretsManager.secrets.mailosaur.inviteInboxId;
 		const username = `e2eflowtestingfree${ DataHelper.getTimestamp() }`;
 		const email = DataHelper.getTestEmailAddress( {
 			inboxId: inboxId,
 			prefix: username,
 		} );
-		const signupPassword = DataHelper.config.get( 'passwordForNewTestSignUps' ) as string;
+		const signupPassword = SecretsManager.secrets.passwordForNewTestSignUps;
 		const blogName = DataHelper.getBlogName();
 		const tagline = `${ blogName } tagline`;
 
@@ -69,7 +70,7 @@ skipDescribeIf( isStagingOrProd )(
 
 			it( 'Select WordPress.com Free plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				await signupPickPlanPage.selectPlan( 'Free' );
+				await signupPickPlanPage.selectPlan( 'start with a free site' );
 			} );
 		} );
 
@@ -156,6 +157,11 @@ skipDescribeIf( isStagingOrProd )(
 				await generalSettingsPage.launchSite();
 			} );
 
+			it( 'Search for a domain to reveal Skip Purchase button', async function () {
+				domainSearchComponent = new DomainSearchComponent( page );
+				await domainSearchComponent.search( username + '.live' );
+			} );
+
 			it( 'Skip domain purchasse', async function () {
 				const domainSearchComponent = new DomainSearchComponent( page );
 				await domainSearchComponent.clickButton( 'Skip Purchase' );
@@ -163,7 +169,7 @@ skipDescribeIf( isStagingOrProd )(
 
 			it( 'Keep free plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				await signupPickPlanPage.selectPlan( 'Free' );
+				await signupPickPlanPage.selectPlan( 'start with free' );
 			} );
 
 			it( 'Confirm site is launched', async function () {

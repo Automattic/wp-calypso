@@ -1,5 +1,5 @@
-import config from 'config';
 import { Page } from 'playwright';
+import { SecretsManager } from './secrets';
 
 /**
  * Sets the store cookie, used for simulating payment processing.
@@ -18,7 +18,7 @@ export async function setStoreCookie(
 	await browserContext.addCookies( [
 		{
 			name: 'store_sandbox',
-			value: config.get( 'storeSandboxCookieValue' ) as string,
+			value: SecretsManager.secrets.storeSandboxCookieValue,
 			domain: '.wordpress.com',
 			path: '/',
 			sameSite: 'None',

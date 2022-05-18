@@ -1,5 +1,8 @@
 import { isGoodDefaultDomainQuery } from '@automattic/domain-utils';
 import type { State } from './reducer';
+export const getAnchorPodcastId = ( state: State ) => state.anchorPodcastId;
+export const getAnchorEpisodeId = ( state: State ) => state.anchorEpisodeId;
+export const getAnchorSpotifyUrl = ( state: State ) => state.anchorSpotifyUrl;
 export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getPlanProductId = ( state: State ) => state.planProductId;
 export const getLastLocation = ( state: State ) => state.lastLocation;
@@ -10,6 +13,13 @@ export const getSelectedFeatures = ( state: State ) => state.selectedFeatures;
 export const getSelectedFonts = ( state: State ) => state.selectedFonts;
 export const getSelectedSite = ( state: State ) => state.selectedSite;
 export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
+export const getIntent = ( state: State ) => state.intent;
+export const getStartingPoint = ( state: State ) => state.startingPoint;
+export const getStoreType = ( state: State ) => state.storeType;
+export const getPendingAction = ( state: State ) => state.pendingAction;
+export const getProgress = ( state: State ) => state.progress;
+export const getProgressTitle = ( state: State ) => state.progressTitle;
+export const getStepProgress = ( state: State ) => state.stepProgress;
 export const getState = ( state: State ) => state;
 export const hasPaidDesign = ( state: State ): boolean => {
 	if ( ! state.selectedDesign ) {

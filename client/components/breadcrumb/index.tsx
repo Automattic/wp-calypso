@@ -20,6 +20,9 @@ const StyledLi = styled.li`
 	font-size: 13px;
 	font-weight: 400;
 	--color-link: var( --studio-gray-50 );
+	& .info-popover {
+		align-self: flex-start;
+	}
 
 	:last-of-type:not( :first-of-type ) {
 		--color-link: var( --studio-gray-80 );
@@ -60,6 +63,8 @@ const StyledGridicon = styled( Gridicon )`
 
 const HelpBuble = styled( InfoPopover )`
 	margin-left: 7px;
+	display: flex;
+	align-items: center;
 	& .gridicon {
 		color: var( --studio-gray-30 );
 	}
@@ -77,10 +82,10 @@ const renderHelpBubble = ( item: Item ) => {
 	);
 };
 
-type Item = { label: string; href?: string; helpBubble?: React.ReactElement };
+export type Item = { label: string; href?: string; helpBubble?: React.ReactElement };
 interface Props {
 	items: Item[];
-	mobileItem?: string;
+	mobileItem?: Item;
 	compact?: boolean;
 }
 
@@ -99,11 +104,12 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	if ( compact && items.length > 1 ) {
+		const urlBack = mobileItem?.href ?? items[ items.length - 2 ].href;
+		const label = mobileItem?.label ?? translate( 'Back' );
 		return (
-			<StyledBackLink href={ items[ items.length - 2 ].href }>
+			<StyledBackLink href={ urlBack }>
 				<Gridicon icon="chevron-left" size={ 18 } />
-				{ /*  Show the exactly previous page with items[ items.length - 2 ] */ }
-				{ mobileItem ? mobileItem : translate( 'Back' ) }
+				{ label }
 			</StyledBackLink>
 		);
 	}

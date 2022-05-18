@@ -91,24 +91,26 @@ export const showSaveErrorNotice = () =>
 		id: 'notif-settings-save',
 	} );
 
-export const saveSettings = ( source, settings, applyToAll = false ) => ( dispatch ) => {
-	dispatch( { type: NOTIFICATION_SETTINGS_SAVE } );
+export const saveSettings =
+	( source, settings, applyToAll = false ) =>
+	( dispatch ) => {
+		dispatch( { type: NOTIFICATION_SETTINGS_SAVE } );
 
-	const query = applyToAll ? { applyToAll: true } : {};
+		const query = applyToAll ? { applyToAll: true } : {};
 
-	wpcom.req
-		.post( '/me/notifications/settings/', query, buildSavePayload( source, settings ) )
-		.then( ( data ) => {
-			dispatch( showSaveSuccessNotice() );
-			dispatch( {
-				type: NOTIFICATION_SETTINGS_SAVE_COMPLETE,
-				data,
+		wpcom.req
+			.post( '/me/notifications/settings/', query, buildSavePayload( source, settings ) )
+			.then( ( data ) => {
+				dispatch( showSaveSuccessNotice() );
+				dispatch( {
+					type: NOTIFICATION_SETTINGS_SAVE_COMPLETE,
+					data,
+				} );
+			} )
+			.catch( () => {
+				dispatch( showSaveErrorNotice() );
+				dispatch( {
+					type: NOTIFICATION_SETTINGS_SAVE_FAILED,
+				} );
 			} );
-		} )
-		.catch( () => {
-			dispatch( showSaveErrorNotice() );
-			dispatch( {
-				type: NOTIFICATION_SETTINGS_SAVE_FAILED,
-			} );
-		} );
-};
+	};

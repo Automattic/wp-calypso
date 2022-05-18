@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	SITE_PRODUCTS_FETCH,
 	SITE_PRODUCTS_FETCH_COMPLETED,
@@ -11,14 +10,14 @@ describe( 'reducer', () => {
 		test( 'should return an empty state when original state is undefined and action is empty', () => {
 			const state = products( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should return an empty state when original state and action are empty', () => {
 			const original = Object.freeze( {} );
 			const state = products( original, {} );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return an empty state when original state is undefined and action is unknown', () => {
@@ -27,7 +26,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should return the original state when action is unknown', () => {
@@ -44,7 +43,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return the initial state with requesting enabled when fetching is triggered', () => {
@@ -53,7 +52,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: null,
 					error: null,
@@ -78,7 +77,7 @@ describe( 'reducer', () => {
 				error: 'Unable to fetch site products',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: {},
 					error: 'Unable to fetch site products',
@@ -95,7 +94,7 @@ describe( 'reducer', () => {
 				products: {},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: {},
 					error: null,
@@ -119,7 +118,7 @@ describe( 'reducer', () => {
 				siteId: 55555555,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: {},
 					error: null,
@@ -149,7 +148,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: null,
 					error: null,

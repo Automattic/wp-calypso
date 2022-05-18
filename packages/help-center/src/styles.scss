@@ -1,0 +1,228 @@
+@import '@wordpress/base-styles/variables';
+@import '@automattic/onboarding/styles/variables';
+@import '@automattic/color-studio/dist/color-variables';
+@import '@automattic/typography/styles/variables';
+
+$head-foot-height: 50px;
+
+.components-card.help-center__container {
+	position: absolute;
+	background-color: #fff;
+	color: #000;
+	z-index: 9999;
+	cursor: default;
+
+	& > div {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.help-center__container-header {
+		height: $head-foot-height;
+		padding: 16px 8px 16px 16px;
+
+		// This icon does not accept size prop due to a bug - https://github.com/WordPress/gutenberg/pull/40315
+		// We can remove this when the bug is fixed
+		.help-center-header__minimize svg {
+			transform: scale( 0.7, 1 );
+			transform-origin: right;
+		}
+
+		.help-center-header__text {
+			font-size: $font-body-small;
+			font-weight: 500;
+			display: flex;
+			align-items: center;
+
+			.help-center-header__icon {
+				display: flex;
+				align-items: center;
+				margin-right: 4px;
+
+				svg {
+					font-size: $font-title-small;
+					margin-right: 4px;
+				}
+			}
+		}
+	}
+
+	.help-center__container-content {
+		overflow-y: auto;
+		padding: 16px;
+	}
+
+	.help-center__container-footer {
+		height: auto;
+		padding: 16px;
+	}
+
+	&.is-desktop {
+		top: calc( $header-height + 16px );
+		right: 16px;
+		width: 410px;
+		height: 800px;
+		box-shadow: 0 0 3px 0 rgba( 0, 0, 0, 0.25 );
+		overflow: auto;
+
+		.help-center__container-header {
+			cursor: move;
+		}
+
+		.help-center__container-content {
+			flex-grow: 1;
+			height: calc( 80vh - $head-foot-height * 2 );
+			position: relative;
+		}
+
+		&.is-minimized {
+			min-height: $head-foot-height;
+			top: unset;
+			bottom: 41px;
+			transform: unset !important; // revert dragging translation when minimized
+			.help-center__container-header {
+				cursor: default;
+			}
+		}
+	}
+
+	&.is-mobile {
+		top: 47px;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		max-height: 100%;
+
+		.help-center__container-content {
+			height: calc( 100% - $head-foot-height * 2 );
+		}
+
+		&.no-footer .help-center__container-content {
+			height: auto;
+		}
+
+		&.is-minimized {
+			min-height: $head-foot-height;
+			top: calc( 100vh - $head-foot-height );
+		}
+	}
+
+	.components-button {
+		&:hover {
+			box-shadow: none;
+			color: inherit;
+		}
+	}
+
+	&.is-mobile.is-minimized,
+	&.is-desktop.is-minimized {
+		max-height: $head-foot-height;
+	}
+	w .help-center-header__unread-count {
+		display: inline-block;
+		margin-left: 8px;
+		padding: 2px 6px;
+		background: #c9356e;
+		border-radius: 20px; // stylelint-disable-line scales/radii
+		font-size: $font-body-extra-small;
+		color: white;
+	}
+
+	.help-center-header__a8c-only-badge {
+		display: inline-block;
+		margin-left: 8px;
+		padding: 2px 6px;
+		background: lightgray;
+		border-radius: 4px;
+		font-size: $font-body-extra-small;
+		color: #595959;
+		text-transform: uppercase;
+	}
+}
+
+.ticket-success-screen__help-center {
+	text-align: center;
+	.ticket-success-screen__help-center-heading {
+		font-size: $font-title-small;
+		color: $studio-gray-100;
+		margin: 16px;
+		font-weight: 400;
+	}
+	.ticket-success-screen__help-center-message {
+		font-size: $font-body-small;
+		color: $studio-gray-50;
+		margin: 0;
+	}
+}
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes fadeOut {
+	0% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0;
+	}
+}
+
+button.button.back-button__help-center.is-borderless {
+	display: flex;
+	align-items: center;
+	color: black;
+	font-size: $font-body-small;
+}
+
+.help-center__container-content {
+	padding: 0 !important;
+
+	> *:not( iframe ) {
+		padding: 16px;
+	}
+}
+
+.help-center-sibyl-articles__list {
+	list-style: none;
+	box-sizing: border-box;
+	padding: 0;
+
+	> li {
+		padding: 0;
+
+		> a {
+			display: flex;
+			align-items: center;
+			text-decoration: none;
+			color: var( --studio-gray-100 );
+			margin-bottom: 16px;
+		}
+	}
+
+	svg {
+		margin-right: 15px;
+		border-radius: 2px;
+		display: block;
+		padding: 8px;
+		background: var( --studio-gray-0 );
+		fill: var( --studio-blue-50 );
+		flex-shrink: 0;
+	}
+}
+.help-center-sibyl-articles__title {
+	font-size: $font-body-small;
+	font-weight: 500;
+	color: var( --studio-gray-100 );
+}
+
+.help-center-sibyl-articles__container {
+	padding-top: 0;
+}

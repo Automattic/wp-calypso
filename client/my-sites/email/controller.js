@@ -34,7 +34,6 @@ export default {
 			<CalypsoShoppingCartProvider>
 				<GSuiteAddUsers
 					source={ pageContext.query.source }
-					productType={ pageContext.params.productType }
 					selectedDomainName={ pageContext.params.domain }
 				/>
 			</CalypsoShoppingCartProvider>
@@ -113,6 +112,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<EmailProvidersInDepthComparison
+					referrer={ pageContext.query.referrer }
 					selectedDomainName={ pageContext.params.domain }
 					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
 				/>
@@ -155,6 +155,8 @@ export default {
 				<EmailManagementHomePage
 					source={ pageContext.query.source }
 					selectedDomainName={ pageContext.params.domain }
+					selectedEmailProviderSlug={ pageContext.query.provider }
+					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -163,7 +165,11 @@ export default {
 	},
 
 	emailManagementInbox( pageContext, next ) {
-		pageContext.primary = <InboxManagement />;
+		pageContext.primary = (
+			<InboxManagement
+				selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
+			/>
+		);
 		next();
 	},
 };

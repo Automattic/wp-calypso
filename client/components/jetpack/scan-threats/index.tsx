@@ -114,13 +114,8 @@ const getThreatCountMessage = (
 };
 
 const ScanThreats = ( { error, site, threats }: Props ) => {
-	const {
-		updatingThreats,
-		selectedThreat,
-		setSelectedThreat,
-		fixThreats,
-		updateThreat,
-	} = useThreats( site.ID );
+	const { updatingThreats, selectedThreat, setSelectedThreat, fixThreats, updateThreat } =
+		useThreats( site.ID );
 	const [ showThreatDialog, setShowThreatDialog ] = React.useState( false );
 	const [ showFixAllThreatsDialog, setShowFixAllThreatsDialog ] = React.useState( false );
 	const [ actionToPerform, setActionToPerform ] = React.useState< ThreatAction >( 'fix' );
@@ -217,7 +212,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 	let securityIcon = 'error';
 
 	if ( maxSeverity < 3 ) {
-		headerMessage = translate( 'Your site it not at risk' );
+		headerMessage = translate( 'Your site is not at risk' );
 		securityIcon = 'okay';
 	}
 
@@ -236,7 +231,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 					{ maxSeverity < 3 && (
 						<InfoPopover position="top" screenReaderText={ translate( 'Learn more' ) }>
 							{ translate(
-								"Low risk items don't have a negative impact on your site and can be safely ignored."
+								'Low risk items could have a negative impact on your site and should either be fixed or ignored at your convenience.'
 							) }
 						</InfoPopover>
 					) }

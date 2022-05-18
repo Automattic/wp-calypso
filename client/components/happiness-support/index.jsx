@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -127,7 +128,7 @@ export class HappinessSupport extends Component {
 	}
 
 	renderSupportButton() {
-		let url = SUPPORT_ROOT;
+		let url = localizeUrl( SUPPORT_ROOT );
 
 		if ( this.props.isJetpack ) {
 			url = JETPACK_SUPPORT;

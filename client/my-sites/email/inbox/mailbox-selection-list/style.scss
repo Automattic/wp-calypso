@@ -199,7 +199,7 @@ body.is-section-inbox .layout.is-section-inbox > .layout__content {
 
 		.mailbox-selection-list__item {
 			align-items: center;
-			border-color: #e7e9ea;
+			border-color: var( --p2-color-border-light );
 			border-style: solid;
 			border-width: 1px 0 0;
 			box-shadow: none;

@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import { ExternalLink } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -11,6 +11,7 @@ import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabi
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
@@ -23,22 +24,21 @@ import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filte
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import BackupDatePicker from './backup-date-picker';
 import EnableRestoresBanner from './enable-restores-banner';
 import { backupMainPath } from './paths';
 import SearchResults from './search-results';
 import { DailyStatus, RealtimeStatus } from './status';
-import {
-	DailyStatus as DailyStatusSimplifiedI4,
-	RealtimeStatus as RealtimeStatusSimplifiedI4,
-} from './status/simplified-i4';
 
 import './style.scss';
 
 const BackupPage = ( { queryDate } ) => {
+	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSettingsUrl = useSelector( ( state ) => getSettingsUrl( state, siteId, 'general' ) );
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 
 	const moment = useLocalizedMoment();
 	const parsedQueryDate = queryDate ? moment( queryDate, INDEX_FORMAT ) : moment();
@@ -54,6 +54,12 @@ const BackupPage = ( { queryDate } ) => {
 		keepLocalTime: !! queryDate,
 	} );
 
+	const supportLink = isAtomic ? (
+		<InlineSupportLink supportContext={ 'backups' } showIcon={ false } />
+	) : (
+		<ExternalLink href={ 'https://jetpack.com/support/backup/' }>{ 'Learn more' }</ExternalLink>
+	);
+
 	return (
 		<div
 			className={ classNames( 'backup__page', {
@@ -68,7 +74,19 @@ const BackupPage = ( { queryDate } ) => {
 				{ isJetpackCloud() && <SidebarNavigation /> }
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ ! isJetpackCloud() && (
-					<FormattedHeader headerText="Jetpack Backup" align="left" brandFont />
+					<FormattedHeader
+						headerText="Jetpack Backup"
+						subHeaderText={ translate(
+							'Restore or download a backup of your site from a specific moment in time. {{learnMoreLink/}}',
+							{
+								components: {
+									learnMoreLink: supportLink,
+								},
+							}
+						) }
+						align="left"
+						brandFont
+					/>
 				) }
 
 				<AdminContent selectedDate={ selectedDate } />
@@ -147,14 +165,6 @@ const BackupStatus = ( { selectedDate } ) => {
 	}
 
 	const hasRealtimeBackups = rewindCapabilities.includes( 'backup-realtime' );
-
-	if ( isEnabled( 'jetpack/backup-simplified-screens-i4' ) ) {
-		return hasRealtimeBackups ? (
-			<RealtimeStatusSimplifiedI4 selectedDate={ selectedDate } />
-		) : (
-			<DailyStatusSimplifiedI4 selectedDate={ selectedDate } />
-		);
-	}
 
 	return hasRealtimeBackups ? (
 		<RealtimeStatus selectedDate={ selectedDate } />

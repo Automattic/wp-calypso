@@ -1,18 +1,22 @@
 import config from '@automattic/calypso-config';
-import {
-	getEmptyResponseCart,
-	getEmptyResponseCartProduct,
-	RequestCartProduct,
-} from '@automattic/shopping-cart';
+import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import { prettyDOM } from '@testing-library/react';
 import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
+import domainManagementReducer from 'calypso/state/domains/management/reducer';
 import type {
+	CartKey,
 	SetCart,
 	RequestCart,
 	ResponseCart,
 	ResponseCartProduct,
+	RequestCartProduct,
 } from '@automattic/shopping-cart';
+import type {
+	CountryListItem,
+	PossiblyCompleteDomainContactDetails,
+} from '@automattic/wpcom-checkout';
 
 export const stripeConfiguration = {
 	processor_id: 'IE',
@@ -35,7 +39,23 @@ export const processorOptions = {
 	stripe: undefined,
 };
 
-export const countryList = [
+export const cachedContactDetails: PossiblyCompleteDomainContactDetails = {
+	firstName: null,
+	lastName: null,
+	organization: null,
+	email: null,
+	alternateEmail: null,
+	phone: null,
+	address1: null,
+	address2: null,
+	city: null,
+	state: null,
+	postalCode: null,
+	countryCode: null,
+	fax: null,
+};
+
+export const countryList: CountryListItem[] = [
 	{
 		code: 'US',
 		name: 'United States',
@@ -259,14 +279,7 @@ export const planLevel2Biannual = {
 	item_subtotal_display: 'R$144',
 };
 
-export const fetchStripeConfiguration = async () => {
-	return {
-		public_key: 'abc123',
-		js_url: 'https://js.stripe.com/v3/',
-		processor_id: 'test',
-		setup_intent_id: '',
-	};
-};
+export const fetchStripeConfiguration = async () => stripeConfiguration;
 
 export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 	return async ( _: number, requestCart: RequestCart ) => {
@@ -303,7 +316,10 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 			sub_total_integer: totalInteger - taxInteger,
 			sub_total_with_taxes_display: 'R$156',
 			sub_total_with_taxes_integer: totalInteger,
-			tax: { location: {}, display_taxes: true },
+			tax: {
+				location: requestCart.tax?.location ?? {},
+				display_taxes: !! requestCart.tax?.location?.postal_code,
+			},
 			total_cost: 0,
 			total_cost_display: 'R$156',
 			total_cost_integer: totalInteger,
@@ -481,6 +497,20 @@ function convertRequestProductToResponseProduct(
 	};
 }
 
+export function mockCartEndpoint( initialCart: ResponseCart, currency: string, locale: string ) {
+	let cart = initialCart;
+	const mockSetCart = mockSetCartEndpointWith( { currency, locale } );
+	const setCart = async ( cartKey: CartKey, val: RequestCart ) => {
+		cart = await mockSetCart( cartKey, val );
+		return cart;
+	};
+
+	return {
+		getCart: async () => cart,
+		setCart,
+	};
+}
+
 export function mockGetCartEndpointWith( initialCart: ResponseCart ) {
 	return async () => {
 		return initialCart;
@@ -625,8 +655,9 @@ export function getPlansItemsState() {
 }
 
 export function createTestReduxStore() {
-	return applyMiddleware( thunk )( createStore )( () => {
+	const rootReducer = ( state, action ) => {
 		return {
+			...state,
 			plans: {
 				items: getPlansItemsState(),
 			},
@@ -723,8 +754,10 @@ export function createTestReduxStore() {
 			},
 			purchases: {},
 			countries: { payments: countryList, domains: countryList },
+			domains: { management: domainManagementReducer( state?.domains?.management ?? {}, action ) },
 		};
-	} );
+	};
+	return createStore( rootReducer, applyMiddleware( thunk ) );
 }
 
 export function mockPayPalEndpoint( endpointResponse ) {
@@ -857,3 +890,61 @@ export const expectedCreateAccountRequest = {
 	client_id: config( 'wpcom_signup_id' ),
 	client_secret: config( 'wpcom_signup_key' ),
 };
+
+export function mockCachedContactDetailsEndpoint( data ): void {
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+	const mockDomainContactResponse = () => [ 200, data ];
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/domain-contact-information' )
+		.reply( mockDomainContactResponse );
+}
+
+// Add the below custom Jest assertion to TypeScript.
+declare global {
+	// eslint-disable-next-line @typescript-eslint/no-namespace
+	namespace jest {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		interface Matchers< R > {
+			toNeverAppear(): Promise< CustomMatcherResult >;
+		}
+	}
+}
+
+expect.extend( {
+	/**
+	 * Assert that a DOM element never appears, even after some time passes.
+	 *
+	 * The argument should be a call to one of testing-library's `findBy...`
+	 * methods which will throw if they do not find a result.
+	 *
+	 * This is an async matcher so you must await its result.
+	 *
+	 * Example:
+	 * `await expect( screen.findByText( 'Bad things' ) ).toNeverAppear();`
+	 *
+	 * This is a little tricky because we need to keep checking over time, so we
+	 * use this slightly convoluted technique:
+	 * https://stackoverflow.com/a/68318058/2615868
+	 */
+	async toNeverAppear( elementPromise: Promise< HTMLElement > ) {
+		let pass = false;
+		let element = null;
+		try {
+			element = await elementPromise;
+		} catch {
+			pass = true;
+		}
+		if ( pass ) {
+			return {
+				message: () => `expected element to appear but it did not.`,
+				pass: true,
+			};
+		}
+		const elementPretty = element ? prettyDOM( element ) : '';
+		return {
+			message: () => `expected element to never appear but it did:\n${ elementPretty }`,
+			pass: false,
+		};
+	},
+} );

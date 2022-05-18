@@ -147,6 +147,8 @@
 .jetpack-product-card__disabled-message {
 	color: var( --color-accent );
 	font-weight: 600;
+	margin-block-start: 32px;
+	margin-block-end: 0;
 }
 
 .jetpack-product-card__button {
@@ -161,6 +163,11 @@
 
 	em {
 		font-style: normal;
+	}
+	.info-popover.owner-info__pop-over {
+		> .gridicon {
+			color: var( --color-accent );
+		}
 	}
 }
 

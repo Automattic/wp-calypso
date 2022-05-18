@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	isRequestingPostCounts,
 	getAllPostCounts,
@@ -24,7 +23,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBe( false );
 		} );
 
 		test( 'should return false if a request has finished', () => {
@@ -43,7 +42,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBe( false );
 		} );
 
 		test( 'should return true if a request is in progress', () => {
@@ -62,7 +61,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBe( false );
 		} );
 	} );
 
@@ -78,7 +77,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( postCounts ).to.be.null;
+			expect( postCounts ).toBeNull();
 		} );
 
 		test( 'should return post counts for all statuses', () => {
@@ -103,7 +102,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( postCounts ).to.eql( {
+			expect( postCounts ).toEqual( {
 				publish: 2,
 			} );
 		} );
@@ -124,7 +123,7 @@ describe( 'selectors', () => {
 				'publish'
 			);
 
-			expect( postCount ).to.be.null;
+			expect( postCount ).toBeNull();
 		} );
 
 		test( 'should return post count for status', () => {
@@ -150,7 +149,7 @@ describe( 'selectors', () => {
 				'publish'
 			);
 
-			expect( postCount ).to.equal( 2 );
+			expect( postCount ).toEqual( 2 );
 		} );
 
 		test( 'should return 0 if post counts have been received for site, but no status key exists', () => {
@@ -176,7 +175,7 @@ describe( 'selectors', () => {
 				'draft'
 			);
 
-			expect( postCount ).to.equal( 0 );
+			expect( postCount ).toEqual( 0 );
 		} );
 	} );
 
@@ -192,7 +191,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( postCounts ).to.be.null;
+			expect( postCounts ).toBeNull();
 		} );
 
 		test( 'should return post counts for all statuses', () => {
@@ -217,7 +216,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( postCounts ).to.eql( {
+			expect( postCounts ).toEqual( {
 				publish: 1,
 			} );
 		} );
@@ -238,7 +237,7 @@ describe( 'selectors', () => {
 				'publish'
 			);
 
-			expect( postCount ).to.be.null;
+			expect( postCount ).toBeNull();
 		} );
 
 		test( 'should return post count for status', () => {
@@ -264,7 +263,7 @@ describe( 'selectors', () => {
 				'publish'
 			);
 
-			expect( postCount ).to.equal( 1 );
+			expect( postCount ).toEqual( 1 );
 		} );
 
 		test( 'should return 0 if post counts have been received for site, but no status key exists', () => {
@@ -290,7 +289,7 @@ describe( 'selectors', () => {
 				'draft'
 			);
 
-			expect( postCount ).to.equal( 0 );
+			expect( postCount ).toEqual( 0 );
 		} );
 	} );
 
@@ -323,7 +322,7 @@ describe( 'selectors', () => {
 				getMyPostCounts
 			);
 
-			expect( postCounts ).to.eql( {
+			expect( postCounts ).toEqual( {
 				publish: 2,
 				draft: 3,
 				future: 2,
@@ -353,7 +352,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( postCounts ).to.eql( {
+			expect( postCounts ).toEqual( {
 				publish: 1,
 				draft: 0,
 				future: 0,
@@ -385,7 +384,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( postCounts ).to.eql( {
+			expect( postCounts ).toEqual( {
 				publish: 1,
 				draft: 0,
 				future: 0,

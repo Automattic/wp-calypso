@@ -15,11 +15,11 @@ import { getSiteName } from 'calypso/reader/get-helpers';
 import { keysAreEqual, keyForPost } from 'calypso/reader/post-key';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
 import ReaderCombinedCardPost from './post';
 
 import './style.scss';
@@ -37,7 +37,7 @@ class ReaderCombinedCardComponent extends Component {
 		showFollowButton: PropTypes.bool,
 		followSource: PropTypes.string,
 		blockedSites: PropTypes.array,
-		teams: PropTypes.array,
+		hasOrganization: PropTypes.bool,
 		isWPForTeamsItem: PropTypes.bool,
 	};
 
@@ -84,7 +84,7 @@ class ReaderCombinedCardComponent extends Component {
 			isDiscover,
 			blockedSites,
 			translate,
-			teams,
+			hasOrganization,
 			isWPForTeamsItem,
 		} = this.props;
 		const feedId = postKey.feedId;
@@ -95,8 +95,10 @@ class ReaderCombinedCardComponent extends Component {
 		const siteName = getSiteName( { site, post: posts[ 0 ] } );
 		const isSelectedPost = ( post ) => keysAreEqual( keyForPost( post ), selectedPostKey );
 		const followUrl = ( feed && feed.URL ) || ( site && site.URL );
-		const mediaCount = filter( posts, ( post ) => post && ! isEmpty( post.canonical_media ) )
-			.length;
+		const mediaCount = filter(
+			posts,
+			( post ) => post && ! isEmpty( post.canonical_media )
+		).length;
 
 		// Handle blocked sites here rather than in the post lifecycle, because we don't have the posts there
 		if ( posts[ 0 ] && ! posts[ 0 ].is_external && includes( blockedSites, +posts[ 0 ].site_ID ) ) {
@@ -146,7 +148,7 @@ class ReaderCombinedCardComponent extends Component {
 							isDiscover={ isDiscover }
 							isSelected={ isSelectedPost( post ) }
 							showFeaturedAsset={ mediaCount > 0 }
-							teams={ teams }
+							hasOrganization={ hasOrganization }
 							isWPForTeamsItem={ isWPForTeamsItem }
 						/>
 					) ) }
@@ -204,13 +206,16 @@ function mapStateToProps( st, ownProps ) {
 
 	return ( state ) => {
 		const postKeys = combinedCardPostKeyToKeys( ownProps.postKey, memoized );
-
 		return {
 			currentRoute: getCurrentRoute( state ),
 			isWPForTeamsItem:
 				isFeedWPForTeams( state, ownProps.postKey.feedId ) ||
 				isSiteWPForTeams( state, ownProps.postKey.blogId ),
-			teams: getReaderTeams( state ),
+			hasOrganization: hasReaderFollowOrganization(
+				state,
+				ownProps.postKey.feedId,
+				ownProps.postKey.blogId
+			),
 			posts: getPostsByKeys( state, postKeys ),
 			postKeys,
 		};

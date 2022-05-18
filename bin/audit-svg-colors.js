@@ -71,7 +71,7 @@ const SVG_IGNORE_PATHS = [
 
 	// Credit card and payment gateway logos (the disabled versions are allowed)
 	/upgrades\/cc-(?:amex|diners|discover|jcb|mastercard|unionpay|visa)\.svg$/,
-	/upgrades\/(?:alipay|bancontact|brazil-tef|emergent-paywall|eps|giropay|ideal|netbanking|p24|paypal|paytm|sofort|tef|wechat)/,
+	/upgrades\/(?:alipay|bancontact|emergent-paywall|eps|giropay|ideal|netbanking|p24|paypal|paytm|sofort|tef|wechat)/,
 
 	// Color scheme thumbnails that rely on .org colors
 	/color-scheme-thumbnail-(?:blue|classic-dark|coffee|ectoplasm|light|modern|ocean|sunrise)\.svg$/,
@@ -105,8 +105,10 @@ const SVG_APP_PATHS = [
 ];
 
 // The regular expressions used to identify color values
-const SVG_VALUE_EXPRESSION = /(?:fill|flood-color|lighting-color|stop-color|stroke)="([a-z0-9#]*?)"/gi;
-const SVG_STYLE_EXPRESSION = /(?:fill|flood-color|lighting-color|stop-color|stroke):\s*([a-z0-9#]*?)\s*[;}]/gi;
+const SVG_VALUE_EXPRESSION =
+	/(?:fill|flood-color|lighting-color|stop-color|stroke)="([a-z0-9#]*?)"/gi;
+const SVG_STYLE_EXPRESSION =
+	/(?:fill|flood-color|lighting-color|stop-color|stroke):\s*([a-z0-9#]*?)\s*[;}]/gi;
 
 // The specific color values to ignore, including other variations of white
 // primarily to decrease the amount of noise in the output

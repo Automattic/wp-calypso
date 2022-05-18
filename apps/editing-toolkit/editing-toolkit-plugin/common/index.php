@@ -15,7 +15,7 @@ namespace A8C\FSE\Common;
  * Register data stores that may be useful for a variety of concerns
  */
 function register_data_stores() {
-	$path         = plugin_dir_path( __FILE__ ) . 'dist/data_stores.js';
+	$path         = plugin_dir_path( __FILE__ ) . 'dist/data_stores.min.js';
 	$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/data-stores.asset.php';
 	$asset        = file_exists( $asset_file ) ? require $asset_file : null;
 	$dependencies = isset( $asset['dependencies'] ) ? $asset['dependencies'] : array();
@@ -23,7 +23,7 @@ function register_data_stores() {
 
 	wp_register_script(
 		'a8c-fse-common-data-stores',
-		plugins_url( 'dist/data-stores.js', __FILE__ ),
+		plugins_url( 'dist/data-stores.min.js', __FILE__ ),
 		$dependencies,
 		$version,
 		true
@@ -147,9 +147,9 @@ function enqueue_script_and_style() {
 	$script_dependencies = $asset_file['dependencies'];
 	wp_enqueue_script(
 		'a8c-fse-common-script',
-		plugins_url( 'dist/common.js', __FILE__ ),
+		plugins_url( 'dist/common.min.js', __FILE__ ),
 		is_array( $script_dependencies ) ? $script_dependencies : array(),
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/common.js' ),
+		filemtime( plugin_dir_path( __FILE__ ) . 'dist/common.min.js' ),
 		true
 	);
 
@@ -234,9 +234,9 @@ function enqueue_disable_heic_images_script() {
 	if ( apply_filters( 'a8c_disable_heic_images', true ) ) {
 		wp_enqueue_script(
 			'a8c-disable-heic-images',
-			plugins_url( 'dist/disable-heic-images.js', __FILE__ ),
+			plugins_url( 'dist/disable-heic-images.min.js', __FILE__ ),
 			array(),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/disable-heic-images.js' ),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/disable-heic-images.min.js' ),
 			true
 		);
 	}

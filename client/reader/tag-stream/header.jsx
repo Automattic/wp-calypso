@@ -1,7 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { sample } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -14,6 +13,10 @@ import { getTagImages } from 'calypso/state/reader/tags/images/selectors';
 
 const TAG_HEADER_WIDTH = 800;
 const TAG_HEADER_HEIGHT = 140;
+
+function sample( array ) {
+	return array[ Math.floor( Math.random() * array.length ) ];
+}
 
 class TagStreamHeader extends Component {
 	static propTypes = {

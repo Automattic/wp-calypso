@@ -1,5 +1,6 @@
 export { login } from './login';
 export { lostPassword } from './lost-password';
+export { onboardingUrl } from './onboarding-url';
 
 function editorPathFromSite( site ) {
 	if ( ! site ) {

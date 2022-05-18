@@ -12,12 +12,9 @@ function Tooltip( props ) {
 		return null;
 	}
 
-	const classes = classnames(
-		'tooltip',
-		`is-${ props.status }`,
-		`is-${ props.position }`,
-		props.className
-	);
+	const classes = classnames( [ 'tooltip', props.className ], {
+		[ `is-${ props.status }` ]: props.status,
+	} );
 
 	return (
 		<Popover

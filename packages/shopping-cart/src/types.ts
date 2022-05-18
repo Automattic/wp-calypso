@@ -363,7 +363,6 @@ export interface ResponseCartProductExtra {
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;
 	purchaseType?: string;
-	privacy?: boolean;
 	afterPurchaseUrl?: string;
 	isJetpackCheckout?: boolean;
 	is_marketplace_product?: boolean;

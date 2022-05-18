@@ -42,4 +42,18 @@
 		max-width: 230px;
 		margin: 0 auto;
 	}
+
+	&__threats {
+		.foldable-card {
+			margin-bottom: 0;
+		}
+
+		.foldable-card.card.is-expanded {
+			margin: 0;
+		}
+
+		.foldable-card.is-expanded .foldable-card__content {
+			padding: 0;
+		}
+	}
 }

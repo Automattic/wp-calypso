@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getAvailableExternalAccounts } from '../selectors';
 
 describe( 'selectors', () => {
@@ -92,13 +91,13 @@ describe( 'selectors', () => {
 		test( 'should return an empty array for a site which has not yet been fetched', () => {
 			const connections = getAvailableExternalAccounts( state, 'path' );
 
-			expect( connections ).to.eql( [] );
+			expect( connections ).toEqual( [] );
 		} );
 
 		test( 'should return an array of available accounts', () => {
 			const connections = getAvailableExternalAccounts( state, 'twitter' );
 
-			expect( connections ).to.eql( [
+			expect( connections ).toEqual( [
 				{
 					ID: '23455664',
 					isConnected: false,
@@ -113,7 +112,7 @@ describe( 'selectors', () => {
 		test( 'should return an array of available accounts including external users', () => {
 			const connections = getAvailableExternalAccounts( state, 'facebook' );
 
-			expect( connections ).to.eql( [
+			expect( connections ).toEqual( [
 				{
 					ID: '1222',
 					isConnected: false,

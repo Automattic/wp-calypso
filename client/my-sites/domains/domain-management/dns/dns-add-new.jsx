@@ -21,6 +21,11 @@ import MxRecord from './mx-record';
 import SrvRecord from './srv-record';
 import TxtRecord from './txt-record';
 
+const initialState = {
+	fields: null,
+	type: 'A',
+};
+
 class DnsAddNew extends React.Component {
 	static propTypes = {
 		isSubmittingForm: PropTypes.bool.isRequired,
@@ -32,12 +37,7 @@ class DnsAddNew extends React.Component {
 
 	constructor( props ) {
 		super( props );
-		const { translate } = props;
-
-		this.state = {
-			fields: null,
-			type: 'A',
-		};
+		const { translate, selectedDomainName } = props;
 
 		this.dnsRecords = [
 			{
@@ -98,10 +98,23 @@ class DnsAddNew extends React.Component {
 					weight: 10,
 					target: '',
 					port: '',
-					protocol: 'tcp',
+					protocol: '_tcp',
 				},
 			},
 		];
+
+		this.formStateController = formState.Controller( {
+			initialFields: this.getFieldsForType( initialState.type ),
+			onNewState: this.setFormState,
+			validatorFunction: ( fieldValues, onComplete ) => {
+				onComplete( null, validateAllFields( fieldValues, selectedDomainName ) );
+			},
+		} );
+
+		this.state = {
+			...initialState,
+			fields: this.formStateController.getInitialState(),
+		};
 	}
 
 	getFieldsForType( type ) {
@@ -115,20 +128,9 @@ class DnsAddNew extends React.Component {
 		};
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		this.formStateController = formState.Controller( {
-			initialFields: this.getFieldsForType( this.state.type ),
-			onNewState: this.setFormState,
-			validatorFunction: ( fieldValues, onComplete ) => {
-				onComplete( null, validateAllFields( fieldValues, this.props.selectedDomainName ) );
-			},
-		} );
-
+	componentDidMount() {
 		if ( this.props.recordToEdit ) {
 			this.loadRecord();
-		} else {
-			this.setFormState( this.formStateController.getInitialState() );
 		}
 	}
 
@@ -155,6 +157,11 @@ class DnsAddNew extends React.Component {
 
 		if ( [ 'data', 'target' ].includes( field ) && 'TXT' !== recordToEdit.type ) {
 			return recordToEdit[ field ].replace( /\.$/, '' );
+		}
+
+		// Make sure we can handle protocols with and without a leading underscore
+		if ( 'SRV' === recordToEdit.type && 'protocol' === field ) {
+			return recordToEdit[ field ].replace( /^_*/, '_' );
 		}
 
 		return recordToEdit[ field ];
@@ -204,7 +211,7 @@ class DnsAddNew extends React.Component {
 		const { selectedSite, selectedDomainName } = this.props;
 
 		page( domainManagementDns( selectedSite.slug, selectedDomainName ) );
-		this.props.successNotice( message, { duration: 5000 } );
+		this.props.successNotice( message, { duration: 3000 } );
 	};
 
 	handleError = ( error, message ) => {

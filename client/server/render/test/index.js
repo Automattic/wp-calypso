@@ -6,7 +6,6 @@ import { shouldServerSideRender, setShouldServerSideRender } from '..';
  * function.
  *
  * @see remock function for the default values.
- *
  * @type {{ojbect}}
  */
 let mockReturnValues = {};
@@ -16,7 +15,6 @@ let mockReturnValues = {};
  * tests can focus on what they really want to change and express that in the code.
  *
  * @see mockReturnValues
- *
  * @param {{object}} newReturnValues A key value set of properties that are combined with the defaults.
  */
 function remock( newReturnValues ) {

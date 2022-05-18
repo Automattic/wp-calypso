@@ -1,10 +1,11 @@
 import { CompactCard as Card } from '@automattic/components';
+import { createHigherOrderComponent } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -48,15 +49,6 @@ class SiteRedirect extends Component {
 
 	componentDidMount() {
 		this.props.fetchSiteRedirect( this.props.selectedSite.domain );
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.location.value !== nextProps.location.value ) {
-			this.setState( {
-				redirectUrl: nextProps.location.value,
-			} );
-		}
 	}
 
 	componentWillUnmount() {
@@ -234,6 +226,15 @@ const recordUpdateSiteRedirectClick = ( domainName, location, success ) =>
 		} )
 	);
 
+const withLocationAsKey = createHigherOrderComponent( ( Wrapped ) => ( props ) => {
+	const selectedSite = useSelector( getSelectedSite );
+	const location = useSelector( ( state ) =>
+		getSiteRedirectLocation( state, selectedSite?.domain )
+	);
+
+	return <Wrapped { ...props } key={ `redirect-${ location.value }` } />;
+} );
+
 export default connect(
 	( state ) => {
 		const selectedSite = getSelectedSite( state );
@@ -249,4 +250,4 @@ export default connect(
 		recordLocationFocus,
 		recordUpdateSiteRedirectClick,
 	}
-)( localize( SiteRedirect ) );
+)( localize( withLocationAsKey( SiteRedirect ) ) );

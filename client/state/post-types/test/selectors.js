@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getPostTypes, getPostType, postTypeSupports, isPostTypeSupported } from '../selectors';
 
 describe( 'selectors', () => {
@@ -13,7 +12,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( postTypes ).to.be.null;
+			expect( postTypes ).toBeNull();
 		} );
 
 		test( 'should return the post types for a site', () => {
@@ -30,7 +29,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( postTypes ).to.eql( {
+			expect( postTypes ).toEqual( {
 				post: { name: 'post', label: 'Posts' },
 			} );
 		} );
@@ -48,7 +47,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( postType ).to.be.null;
+			expect( postType ).toBeNull();
 		} );
 
 		test( 'should return null if the post type slug is unknown for the site', () => {
@@ -64,7 +63,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( postType ).to.be.null;
+			expect( postType ).toBeNull();
 		} );
 
 		test( 'should return the post type', () => {
@@ -82,7 +81,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( postType ).to.eql( { name: 'post', label: 'Posts' } );
+			expect( postType ).toEqual( { name: 'post', label: 'Posts' } );
 		} );
 	} );
 
@@ -99,7 +98,7 @@ describe( 'selectors', () => {
 				'publicize'
 			);
 
-			expect( isSupported ).to.be.true;
+			expect( isSupported ).toBe( true );
 		} );
 
 		test( 'should return true for post publicize even if type is known', () => {
@@ -124,7 +123,7 @@ describe( 'selectors', () => {
 				'publicize'
 			);
 
-			expect( isSupported ).to.be.true;
+			expect( isSupported ).toBe( true );
 		} );
 
 		test( 'should return null if post type is not known', () => {
@@ -139,7 +138,7 @@ describe( 'selectors', () => {
 				'publicize'
 			);
 
-			expect( isSupported ).to.be.null;
+			expect( isSupported ).toBeNull();
 		} );
 
 		test( 'should return false if post type support omits feature', () => {
@@ -162,7 +161,7 @@ describe( 'selectors', () => {
 				'publicize'
 			);
 
-			expect( isSupported ).to.be.false;
+			expect( isSupported ).toBe( false );
 		} );
 
 		test( 'should return true if post type supports feature', () => {
@@ -187,13 +186,13 @@ describe( 'selectors', () => {
 				'publicize'
 			);
 
-			expect( isSupported ).to.be.true;
+			expect( isSupported ).toBe( true );
 		} );
 
 		test( 'should return hard-coded fallback values for unknown post types', () => {
 			const state = { postTypes: { items: {} } };
 
-			expect( postTypeSupports( state, 2916284, 'page', 'publicize' ) ).to.be.false;
+			expect( postTypeSupports( state, 2916284, 'page', 'publicize' ) ).toBe( false );
 		} );
 	} );
 
@@ -209,7 +208,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( isSupported ).to.be.false;
+			expect( isSupported ).toBe( false );
 		} );
 
 		test( 'should return false if the post type is not supported', () => {
@@ -227,7 +226,7 @@ describe( 'selectors', () => {
 				'unknown-type'
 			);
 
-			expect( isSupported ).to.be.false;
+			expect( isSupported ).toBe( false );
 		} );
 
 		test( 'should return true if the post type is supported', () => {
@@ -245,7 +244,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( isSupported ).to.be.true;
+			expect( isSupported ).toBe( true );
 		} );
 	} );
 } );

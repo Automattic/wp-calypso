@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { sample } from 'lodash';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
@@ -28,7 +27,8 @@ const FollowingVoteBanner = ( props ) => {
 	];
 
 	// Show the early voting message if it's not election day yet
-	const electionDayMessage = sample( electionDayMessages );
+	const electionDayMessage =
+		electionDayMessages[ Math.floor( Math.random() * electionDayMessages.length ) ];
 	const description = now < electionDayStart ? earlyVotingMessage : electionDayMessage;
 
 	return (

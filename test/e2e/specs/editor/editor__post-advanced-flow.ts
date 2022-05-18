@@ -12,19 +12,18 @@ import {
 	ParagraphBlock,
 	SnackbarNotificationComponent,
 	getTestAccountByFeature,
+	envToFeatureKey,
+	ElementHelper,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function () {
-	const accountName = getTestAccountByFeature(
-		{
-			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-		},
-		[ { gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
-	);
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features, [
+		{ gutenberg: 'edge', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+	] );
 
 	const postTitle = `Post Life Cycle: ${ DataHelper.getTimestamp() }`;
 	const originalContent = DataHelper.getRandomPhrase();
@@ -49,12 +48,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 
 	describe( 'Publish post', function () {
 		it( 'Enter post title', async function () {
-			editorPage = new EditorPage( page );
+			editorPage = new EditorPage( page, { target: features.siteType } );
 			await editorPage.enterTitle( postTitle );
 		} );
 
 		it( 'Enter post content', async function () {
-			const blockHandle = await editorPage.addBlock(
+			const blockHandle = await editorPage.addBlockFromSidebar(
 				ParagraphBlock.blockName,
 				ParagraphBlock.blockEditorSelector
 			);
@@ -71,7 +70,14 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 			const testPage = await browser.newPage();
 			await testPage.goto( postURL.href );
 
-			await ParagraphBlock.validatePublishedContent( testPage, [ originalContent ] );
+			// Work around issue:
+			// https://github.com/Automattic/wp-calypso/issues/57503
+			await ElementHelper.reloadAndRetry( testPage, validatePublishedPage );
+
+			async function validatePublishedPage(): Promise< void > {
+				await ParagraphBlock.validatePublishedContent( testPage, [ originalContent ] );
+			}
+
 			await testPage.close();
 		} );
 	} );
@@ -86,12 +92,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Editor is shown', async function () {
-			editorPage = new EditorPage( page );
+			editorPage = new EditorPage( page, { target: features.siteType } );
 			await editorPage.waitUntilLoaded();
 		} );
 
 		it( 'Append additional content', async function () {
-			const blockHandle = await editorPage.addBlock(
+			const blockHandle = await editorPage.addBlockFromSidebar(
 				ParagraphBlock.blockName,
 				ParagraphBlock.blockEditorSelector
 			);

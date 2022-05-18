@@ -28,6 +28,7 @@ A tour is made up of the following components:
   - a step renderer (React component/function passed a set of properties)
   - a minimized view renderer (for rendering a minimized view instead of closing)
 - A close handler
+- A boolean to minimize the tour
 - Some optional properties
 
 See [types.ts](./src/types.ts) for the full definition of the various entities.
@@ -103,7 +104,7 @@ function FooBar() {
 
 See it in action with some basic configurations (includes both the plain Tour Kit and the WPCOM Tour Kit variant):
 
-`yarn run tour-kit:storybook:start`
+`yarn workspace @automattic/tour-kit run storybook`
 
 ## Accessibility
 
@@ -126,6 +127,8 @@ The main API for configuring a tour is the config object. See example usage and 
 - `classNames` (optional): An array or CSV of CSS classes applied to a step.
 
 `config.closeHandler`: The callback responsible for closing the tour.
+
+`config.isMinimized`: The optional boolean value responsible for minimizing the tour.
 
 `config.renderers` (omitted in the WPCOM Tour Kit variant):
 
@@ -164,5 +167,6 @@ The main API for configuring a tour is the config object. See example usage and 
   - `useTourRating`: (optional) A hook to provide the rating from an external source/state (see [types.ts](./src/types.ts)).
   - `onTourRate`: (optional) A callback to fire off when a rating is submitted.
 
+- `portalElementId`: A string that lets you customize under which DOM element the Tour will be appended.
 
 

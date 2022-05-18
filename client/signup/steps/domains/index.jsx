@@ -1,3 +1,4 @@
+import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
@@ -20,10 +21,12 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getDomainProductSlug, TRUENAME_COUPONS, TRUENAME_TLDS } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl, isPlanSelectionAvailableLaterInFlow } from 'calypso/signup/utils';
 import {
@@ -427,33 +430,79 @@ class DomainsStep extends Component {
 	};
 
 	getSideContent = () => {
-		return (
-			<div className="domains__domain-side-content-container">
-				{ ! this.shouldHideDomainExplainer() && this.props.isPlanSelectionAvailableLaterInFlow && (
-					<div className="domains__domain-side-content">
-						<ReskinSideExplainer
-							onClick={ this.handleDomainExplainerClick }
-							type={ 'free-domain-explainer' }
-						/>
-					</div>
-				) }
-				{ ! this.shouldHideUseYourDomain() && (
-					<div className="domains__domain-side-content">
-						<ReskinSideExplainer
-							onClick={ this.handleUseYourDomainClick }
-							type={ 'use-your-domain' }
-						/>
-					</div>
-				) }
-				{ this.shouldDisplayDomainOnlyExplainer() && (
-					<div className="domains__domain-side-content">
-						<ReskinSideExplainer
-							onClick={ this.handleDomainExplainerClick }
-							type={ 'free-domain-only-explainer' }
-						/>
-					</div>
-				) }
+		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
+			<div className="domains__domain-side-content">
+				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type={ 'use-your-domain' } />
 			</div>
+		) : null;
+
+		return (
+			<ProvideExperimentData
+				name="calypso_signup_domain_mobile_browser_chrome_added_v4"
+				options={ {
+					isEligible:
+						isMobile() &&
+						[ 'onboarding', 'launch-site', 'free', 'pro' ].includes( this.props.flowName ),
+				} }
+			>
+				{ ( isLoading, experimentAssignment ) => {
+					if ( isLoading ) {
+						return null;
+					}
+
+					if ( experimentAssignment?.variationName === 'treatment' ) {
+						return (
+							<div className="domains__domain-side-content-container domains__domain-side-content-container-mobile-experiment">
+								<div className="domains__domain-side-content-container-browser-chrome">
+									<span></span>
+									<span></span>
+									<span className="domains__domain-side-content-container-browser-chrome-url">
+										https://
+										{ this.props.translate( 'yoursitename', {
+											comment: 'example url used to explain what a domain is.',
+										} ) }
+										.com
+									</span>
+									<span></span>
+								</div>
+								{ ! this.shouldHideDomainExplainer() &&
+									this.props.isPlanSelectionAvailableLaterInFlow && (
+										<div className="domains__domain-side-content domains__free-domain">
+											<ReskinSideExplainer
+												onClick={ this.handleDomainExplainerClick }
+												type={ 'free-domain-explainer' }
+											/>
+										</div>
+									) }
+								{ useYourDomain }
+							</div>
+						);
+					}
+					return (
+						<div className="domains__domain-side-content-container">
+							{ ! this.shouldHideDomainExplainer() &&
+								this.props.isPlanSelectionAvailableLaterInFlow && (
+									<div className="domains__domain-side-content domains__free-domain">
+										<ReskinSideExplainer
+											onClick={ this.handleDomainExplainerClick }
+											type={ 'free-domain-explainer' }
+											flowName={ this.props.flowName }
+										/>
+									</div>
+								) }
+							{ useYourDomain }
+							{ this.shouldDisplayDomainOnlyExplainer() && (
+								<div className="domains__domain-side-content">
+									<ReskinSideExplainer
+										onClick={ this.handleDomainExplainerClick }
+										type={ 'free-domain-only-explainer' }
+									/>
+								</div>
+							) }
+						</div>
+					);
+				} }
+			</ProvideExperimentData>
 		);
 	};
 
@@ -593,14 +642,8 @@ class DomainsStep extends Component {
 	};
 
 	getSubHeaderText() {
-		const {
-			flowName,
-			isAllDomains,
-			siteType,
-			stepSectionName,
-			isReskinned,
-			translate,
-		} = this.props;
+		const { flowName, isAllDomains, siteType, stepSectionName, isReskinned, translate } =
+			this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -626,14 +669,8 @@ class DomainsStep extends Component {
 	}
 
 	getHeaderText() {
-		const {
-			headerText,
-			isAllDomains,
-			siteType,
-			isReskinned,
-			stepSectionName,
-			translate,
-		} = this.props;
+		const { headerText, isAllDomains, siteType, isReskinned, stepSectionName, translate } =
+			this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Your next big idea starts here' );
@@ -826,10 +863,12 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 };
 
 export default connect(
-	( state, { steps } ) => {
+	( state, { steps, flowName } ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
+		const selectedSite = getSelectedSite( state );
+		const eligibleForProPlan = isEligibleForProPlan( state, selectedSite?.ID );
 
 		return {
 			designType: getDesignType( state ),
@@ -837,11 +876,13 @@ export default connect(
 			productsLoaded,
 			siteType: getSiteType( state ),
 			vertical: getVerticalForDomainSuggestions( state ),
-			selectedSite: getSelectedSite( state ),
+			selectedSite,
 			sites: getSitesItems( state ),
 			isPlanSelectionAvailableLaterInFlow:
-				! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ),
+				( ! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ) ) ||
+				( eligibleForProPlan && 'pro' === flowName ),
 			userLoggedIn: isUserLoggedIn( state ),
+			eligibleForProPlan,
 		};
 	},
 	{

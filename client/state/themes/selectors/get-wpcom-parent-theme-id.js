@@ -7,7 +7,6 @@ import 'calypso/state/themes/init';
  *
  * @param {object} state Global state tree
  * @param {string} themeId Child theme ID
- *
  * @returns {?string} Parent theme id if it exists
  */
 export function getWpcomParentThemeId( state, themeId ) {

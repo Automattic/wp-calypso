@@ -1,4 +1,9 @@
-import { isBusiness, FEATURE_NO_BRANDING, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	isWpComAnnualPlan,
+	PLAN_BUSINESS,
+	PLAN_WPCOM_PRO,
+	WPCOM_FEATURES_NO_WPCOM_BRANDING,
+} from '@automattic/calypso-products';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import { guessTimezone } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
@@ -30,7 +35,7 @@ import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import {
@@ -260,8 +265,7 @@ export class SiteSettingsFormGeneral extends Component {
 				text: translate(
 					'The Site Language setting is disabled because your site has the WPLANG constant set.'
 				),
-				link:
-					'https://codex.wordpress.org/Installing_WordPress_in_Your_Language#Setting_the_language_for_your_site',
+				link: 'https://codex.wordpress.org/Installing_WordPress_in_Your_Language#Setting_the_language_for_your_site',
 				//don't know if this will ever trigger on a .com site?
 				linkText: translate( 'More info' ),
 			},
@@ -285,14 +289,8 @@ export class SiteSettingsFormGeneral extends Component {
 	};
 
 	languageOptions() {
-		const {
-			eventTracker,
-			fields,
-			isRequestingSettings,
-			onChangeField,
-			siteIsJetpack,
-			translate,
-		} = this.props;
+		const { eventTracker, fields, isRequestingSettings, onChangeField, siteIsJetpack, translate } =
+			this.props;
 		const errorNotice = this.renderLanguagePickerNotice();
 
 		return (
@@ -517,15 +515,8 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderLaunchSite() {
-		const {
-			translate,
-			siteDomains,
-			siteSlug,
-			siteId,
-			isPaidPlan,
-			isComingSoon,
-			fields,
-		} = this.props;
+		const { translate, siteDomains, siteSlug, siteId, isPaidPlan, isComingSoon, fields } =
+			this.props;
 
 		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
 			'site-settings__disable-privacy-settings': ! siteDomains.length,
@@ -575,13 +566,8 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	privacySettings() {
-		const {
-			isRequestingSettings,
-			translate,
-			handleSubmitForm,
-			isSavingSettings,
-			isP2HubSite,
-		} = this.props;
+		const { isRequestingSettings, translate, handleSubmitForm, isSavingSettings, isP2HubSite } =
+			this.props;
 
 		if ( isP2HubSite ) {
 			return <></>;
@@ -612,19 +598,22 @@ export class SiteSettingsFormGeneral extends Component {
 		const {
 			customizerUrl,
 			handleSubmitForm,
+			hasNoWpcomBranding,
 			isRequestingSettings,
 			isSavingSettings,
 			isWPForTeamsSite,
 			site,
 			siteIsJetpack,
 			siteIsAtomic,
-			siteIsVip,
 			translate,
 		} = this.props;
 
 		const classes = classNames( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
 		} );
+
+		// We currently don't have a monthly or a biennial pro plan, hence keeping the business plan upsell for those cases.
+		const upsellPlan = isWpComAnnualPlan( site.plan.product_slug ) ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
 
 		return (
 			<div className={ classNames( classes ) }>
@@ -671,13 +660,11 @@ export class SiteSettingsFormGeneral extends Component {
 								</Button>
 							</div>
 						</CompactCard>
-						{ site && ! isBusiness( site.plan ) && ! siteIsVip && (
+						{ ! hasNoWpcomBranding && (
 							<UpsellNudge
-								feature={ FEATURE_NO_BRANDING }
-								plan={ PLAN_BUSINESS }
-								title={ translate(
-									'Remove the footer credit entirely with WordPress.com Business'
-								) }
+								feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
+								plan={ upsellPlan }
+								title={ translate( 'Remove the footer credit entirely with WordPress.com Pro' ) }
 								description={ translate(
 									'Upgrade to remove the footer credit, use advanced SEO tools and more'
 								) }
@@ -703,20 +690,20 @@ const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
-		isComingSoon: isSiteComingSoon( state, siteId ),
-		siteIsJetpack: isJetpackSite( state, siteId ),
-		siteIsVip: isVipSite( state, siteId ),
-		siteSlug: getSelectedSiteSlug( state ),
-		selectedSite: getSelectedSite( state ),
-		isPaidPlan: isCurrentPlanPaid( state, siteId ),
-		siteDomains: getDomainsBySiteId( state, siteId ),
-		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
-		isP2HubSite: isSiteP2Hub( state, siteId ),
 		customizerUrl: getCustomizerUrl( state, siteId, 'identity' ),
+		hasNoWpcomBranding: siteHasFeature( state, siteId, WPCOM_FEATURES_NO_WPCOM_BRANDING ),
 		isAtomicAndEditingToolkitDeactivated:
 			isAtomicSite( state, siteId ) &&
 			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
+		isComingSoon: isSiteComingSoon( state, siteId ),
+		isP2HubSite: isSiteP2Hub( state, siteId ),
+		isPaidPlan: isCurrentPlanPaid( state, siteId ),
+		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
+		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+		selectedSite: getSelectedSite( state ),
+		siteDomains: getDomainsBySiteId( state, siteId ),
+		siteIsJetpack: isJetpackSite( state, siteId ),
+		siteSlug: getSelectedSiteSlug( state ),
 	};
 }, mapDispatchToProps );
 

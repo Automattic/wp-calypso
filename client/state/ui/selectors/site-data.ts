@@ -30,6 +30,7 @@ export interface SiteDataPlan {
 export interface DIFMLiteSiteOptions {
 	site_category?: string;
 	is_website_content_submitted?: boolean;
+	selected_page_titles: string[];
 }
 
 export interface SiteDataOptions {

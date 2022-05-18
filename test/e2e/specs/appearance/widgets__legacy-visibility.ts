@@ -8,15 +8,13 @@ import {
 	SidebarComponent,
 	TestAccount,
 	BlockWidgetEditorComponent,
-	skipDescribeIf,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
+import { skipDescribeIf } from '../../jest-helpers';
 
-const accountName = getTestAccountByFeature( {
-	gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-	siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-} );
+const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 
 declare const browser: Browser;
 

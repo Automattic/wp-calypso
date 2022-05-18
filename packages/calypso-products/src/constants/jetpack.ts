@@ -3,6 +3,8 @@ import { PRODUCT_WPCOM_SEARCH, PRODUCT_WPCOM_SEARCH_MONTHLY } from './wpcom';
 export const GROUP_JETPACK = 'GROUP_JETPACK';
 
 // Products
+export const PRODUCT_JETPACK_BOOST = 'jetpack_boost_yearly';
+export const PRODUCT_JETPACK_BOOST_MONTHLY = 'jetpack_boost_monthly';
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
 export const PRODUCT_JETPACK_BACKUP_T1_YEARLY = 'jetpack_backup_t1_yearly';
 export const PRODUCT_JETPACK_BACKUP_T1_MONTHLY = 'jetpack_backup_t1_monthly';
@@ -51,6 +53,12 @@ export const JETPACK_BACKUP_T1_PRODUCTS = <const>[
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 ];
 
+// Boost
+export const JETPACK_BOOST_PRODUCTS = <const>[
+	PRODUCT_JETPACK_BOOST,
+	PRODUCT_JETPACK_BOOST_MONTHLY,
+];
+
 // Scan
 export const JETPACK_SCAN_PRODUCTS = <const>[
 	PRODUCT_JETPACK_SCAN,
@@ -88,6 +96,7 @@ export const JETPACK_VIDEOPRESS_PRODUCTS = <const>[
 
 export const JETPACK_PRODUCTS_LIST = <const>[
 	...JETPACK_BACKUP_PRODUCTS,
+	...JETPACK_BOOST_PRODUCTS,
 	...JETPACK_SCAN_PRODUCTS,
 	...JETPACK_ANTI_SPAM_PRODUCTS,
 	...JETPACK_SEARCH_PRODUCTS,
@@ -138,6 +147,10 @@ export const JETPACK_PRODUCTS_BY_TERM = <const>[
 		yearly: PRODUCT_JETPACK_VIDEOPRESS,
 		monthly: PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	},
+	{
+		yearly: PRODUCT_JETPACK_BOOST,
+		monthly: PRODUCT_JETPACK_BOOST_MONTHLY,
+	},
 ];
 export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
@@ -154,6 +167,10 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
 	},
 	[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: {
 		relatedProduct: PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+		ratio: 12,
+	},
+	[ PRODUCT_JETPACK_BOOST ]: {
+		relatedProduct: PRODUCT_JETPACK_BOOST_MONTHLY,
 		ratio: 12,
 	},
 	[ PRODUCT_JETPACK_SEARCH ]: {

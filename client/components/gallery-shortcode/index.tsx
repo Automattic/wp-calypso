@@ -106,18 +106,8 @@ export default class GalleryShortcode extends Component< Props > {
 
 		debug( shortcode );
 
-		const {
-			siteId,
-			items,
-			type,
-			columns,
-			orderBy,
-			link,
-			size,
-			className,
-			children,
-			...restProps
-		} = this.props;
+		const { siteId, items, type, columns, orderBy, link, size, className, children, ...restProps } =
+			this.props;
 
 		const classes = classNames( 'gallery-shortcode', className );
 

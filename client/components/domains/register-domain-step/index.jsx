@@ -20,7 +20,6 @@ import {
 	pickBy,
 	reject,
 	snakeCase,
-	times,
 } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -30,12 +29,7 @@ import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import Illustration from 'calypso/assets/images/domains/domain.svg';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
-import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
-import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 import DomainSearchResults from 'calypso/components/domains/domain-search-results';
-import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
-import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
-import DomainTransferSuggestion from 'calypso/components/domains/domain-transfer-suggestion';
 import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
 import FreeDomainExplainer from 'calypso/components/domains/free-domain-explainer';
 import {
@@ -81,10 +75,6 @@ import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import {
-	getDomainsSuggestions,
-	getDomainsSuggestionsError,
-} from 'calypso/state/domains/suggestions/selectors';
 import AlreadyOwnADomain from './already-own-a-domain';
 import tip from './tip';
 
@@ -99,7 +89,6 @@ const noop = () => {};
 const domains = wpcom.domains();
 
 // max amount of domain suggestions we should fetch/display
-const INITIAL_SUGGESTION_QUANTITY = 2;
 const PAGE_SIZE = 10;
 const EXACT_MATCH_PAGE_SIZE = 4;
 const MAX_PAGES = 3;
@@ -108,20 +97,6 @@ const MIN_QUERY_LENGTH = 2;
 
 // session storage key for query cache
 const SESSION_STORAGE_QUERY_KEY = 'domain_step_query';
-
-function getQueryObject( props ) {
-	if ( ! props.selectedSite || ! props.selectedSite.domain ) {
-		return null;
-	}
-
-	return {
-		query: props.selectedSite.domain.split( '.' )[ 0 ],
-		quantity: SUGGESTION_QUANTITY,
-		vendor: props.vendor,
-		includeSubdomain: props.includeWordPressDotCom || props.includeDotBlogSubdomain,
-		vertical: props.vertical,
-	};
-}
 
 class RegisterDomainStep extends Component {
 	static propTypes = {
@@ -277,33 +252,6 @@ class RegisterDomainStep extends Component {
 			this.setState( this.getState( nextProps ) );
 			nextProps.suggestion && this.onSearch( nextProps.suggestion );
 		}
-
-		if (
-			this.props.defaultSuggestionsError === nextProps.defaultSuggestionsError ||
-			( ! this.props.defaultSuggestionsError && ! nextProps.defaultSuggestionsError )
-		) {
-			return;
-		}
-
-		const error = nextProps.defaultSuggestionsError;
-
-		if ( ! error ) {
-			return nextProps.onDomainsAvailabilityChange( true );
-		}
-		if ( error && error.statusCode === 503 ) {
-			return nextProps.onDomainsAvailabilityChange(
-				false,
-				get( nextProps, 'defaultSuggestionsError.data.maintenance_end_time', null )
-			);
-		}
-
-		if ( error && error.error ) {
-			// don't modify global state
-			const queryObject = getQueryObject( nextProps );
-			if ( queryObject ) {
-				this.showSuggestionErrorMessage( queryObject.query, error.error );
-			}
-		}
 	}
 
 	checkForBloggerPlan() {
@@ -366,10 +314,6 @@ class RegisterDomainStep extends Component {
 		this.searchCard.focus();
 	};
 
-	isLoadingSuggestions() {
-		return ! this.props.defaultSuggestions && ! this.props.defaultSuggestionsError;
-	}
-
 	bindSearchCardReference = ( searchCard ) => {
 		this.searchCard = searchCard;
 	};
@@ -388,9 +332,9 @@ class RegisterDomainStep extends Component {
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
-				const freeSubdomainPlaceholders = Array(
-					this.getFreeSubdomainSuggestionsQuantity()
-				).fill( { is_placeholder: true } );
+				const freeSubdomainPlaceholders = Array( this.getFreeSubdomainSuggestionsQuantity() ).fill(
+					{ is_placeholder: true }
+				);
 				suggestions.unshift( ...freeSubdomainPlaceholders );
 			} else if ( ! isEmpty( this.state.subdomainSearchResults ) ) {
 				suggestions.unshift( ...this.state.subdomainSearchResults );
@@ -400,7 +344,6 @@ class RegisterDomainStep extends Component {
 	}
 
 	render() {
-		const queryObject = getQueryObject( this.props );
 		const { isSignupStep, showAlreadyOwnADomain } = this.props;
 
 		const {
@@ -469,7 +412,6 @@ class RegisterDomainStep extends Component {
 					) }
 					{ this.renderFilterContent() }
 					{ this.renderSideContent() }
-					{ queryObject && <QueryDomainsSuggestions { ...queryObject } /> }
 					<QueryContactDetailsCache />
 				</div>
 				{ showAlreadyOwnADomain && <AlreadyOwnADomain onClick={ this.useYourDomainFunction() } /> }
@@ -656,7 +598,7 @@ class RegisterDomainStep extends Component {
 			return this.renderExampleSuggestions();
 		}
 
-		return this.renderInitialSuggestions( false );
+		return null;
 	}
 
 	save = () => {
@@ -1230,65 +1172,6 @@ class RegisterDomainStep extends Component {
 		this.setState( { pageNumber, pageSize: PAGE_SIZE }, this.save );
 	};
 
-	renderInitialSuggestions() {
-		let domainRegistrationSuggestions;
-		let domainUnavailableSuggestion;
-		let suggestions;
-		let domainSkipPurchase;
-
-		if ( this.isLoadingSuggestions() || isEmpty( this.props.products ) ) {
-			domainRegistrationSuggestions = times( INITIAL_SUGGESTION_QUANTITY + 1, function ( n ) {
-				return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
-			} );
-		} else {
-			// only display two suggestions initially
-			suggestions = ( this.props.defaultSuggestions || [] ).slice( 0, INITIAL_SUGGESTION_QUANTITY );
-
-			domainRegistrationSuggestions = suggestions.map( function ( suggestion ) {
-				return (
-					<DomainRegistrationSuggestion
-						isSignupStep={ this.props.isSignupStep }
-						suggestion={ suggestion }
-						key={ suggestion.domain_name }
-						cart={ this.props.cart }
-						isCartPendingUpdate={ this.props.isCartPendingUpdate }
-						selectedSite={ this.props.selectedSite }
-						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-						onButtonClick={ this.onAddDomain }
-						pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
-						unavailableDomains={ this.state.unavailableDomains }
-						isReskinned={ this.props.isReskinned }
-					/>
-				);
-			}, this );
-
-			domainUnavailableSuggestion = (
-				<DomainTransferSuggestion
-					onButtonClick={ this.goToUseYourDomainStep }
-					tracksButtonClickSource="initial-suggestions-bottom"
-				/>
-			);
-
-			domainSkipPurchase = (
-				<DomainSkipSuggestion
-					selectedSiteSlug={ this.props.selectedSite.slug }
-					onButtonClick={ () => this.props.onSkip() }
-				/>
-			);
-		}
-
-		return (
-			<div
-				key="initial-suggestions" // Key is required for CSS transition of content.
-				className="register-domain-step__domain-suggestions"
-			>
-				{ domainRegistrationSuggestions }
-				{ domainUnavailableSuggestion }
-				{ this.props.showSkipButton && domainSkipPurchase }
-			</div>
-		);
-	}
-
 	renderBestNamesPrompt() {
 		const { translate } = this.props;
 		return (
@@ -1300,13 +1183,8 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderExampleSuggestions() {
-		const {
-			isReskinned,
-			domainsWithPlansOnly,
-			offerUnavailableOption,
-			products,
-			path,
-		} = this.props;
+		const { isReskinned, domainsWithPlansOnly, offerUnavailableOption, products, path } =
+			this.props;
 
 		if ( isReskinned ) {
 			return this.renderBestNamesPrompt();
@@ -1586,12 +1464,9 @@ class RegisterDomainStep extends Component {
 }
 
 export default connect(
-	( state, props ) => {
-		const queryObject = getQueryObject( props );
+	( state ) => {
 		return {
 			currentUser: getCurrentUser( state ),
-			defaultSuggestions: getDomainsSuggestions( state, queryObject ),
-			defaultSuggestionsError: getDomainsSuggestionsError( state, queryObject ),
 		};
 	},
 	{

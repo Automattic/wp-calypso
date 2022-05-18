@@ -3,13 +3,20 @@ import {
 	planHasFeature,
 	isBusinessPlan,
 	isEcommercePlan,
+	PLAN_FREE,
+	PLAN_WPCOM_PRO,
+	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_STARTER,
+	isProPlan,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import PlanStorageBar from './bar';
@@ -28,6 +35,10 @@ export function PlanStorage( { children, className, siteId } ) {
 	const canViewBar = useSelector( ( state ) => canCurrentUser( state, siteId, 'publish_posts' ) );
 	const translate = useTranslate();
 	const { data: mediaStorage } = useMediaStorageQuery( siteId );
+	const eligibleForProPlan = useSelector( ( state ) => isEligibleForProPlan( state, siteId ) );
+	const legacySiteWithHigherLimits = useSelector( ( state ) =>
+		isLegacySiteWithHigherLimits( state, siteId )
+	);
 
 	if ( ( jetpackSite && ! atomicSite ) || ! canViewBar || ! sitePlanSlug ) {
 		return null;
@@ -37,7 +48,31 @@ export function PlanStorage( { children, className, siteId } ) {
 		return null;
 	}
 
-	const planHasTopStorageSpace = isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug );
+	if ( eligibleForProPlan && mediaStorage ) {
+		// Only override the storage for non-legacy sites that are on a free
+		// plan. Even if the site is on a free plan, it could have a space
+		// upgrade product on top of that, so also check that it is using the
+		// default free space before overriding it (that is somewhat fragile,
+		// but this code is expected to be temporary anyway).
+		if (
+			( sitePlanSlug === PLAN_FREE || sitePlanSlug === PLAN_WPCOM_FLEXIBLE ) &&
+			! legacySiteWithHigherLimits &&
+			mediaStorage.max_storage_bytes === 3072 * 1024 * 1024
+		) {
+			mediaStorage.max_storage_bytes = 1024 * 1024 * 1024;
+		}
+
+		if ( sitePlanSlug === PLAN_WPCOM_PRO ) {
+			mediaStorage.max_storage_bytes = 50 * 1024 * 1024 * 1024;
+		}
+
+		if ( sitePlanSlug === PLAN_WPCOM_STARTER ) {
+			mediaStorage.max_storage_bytes = 6 * 1024 * 1024 * 1024;
+		}
+	}
+
+	const planHasTopStorageSpace =
+		isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug ) || isProPlan( sitePlanSlug );
 
 	const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace;
 

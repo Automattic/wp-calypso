@@ -20,3 +20,4 @@ export { shouldRevertAtomicSiteBeforeDeactivation } from './should-revert-atomic
 export { siteHasBackupProductPurchase } from './site-has-backup-product-purchase';
 export { siteHasJetpackProductPurchase } from './site-has-jetpack-product-purchase';
 export { siteHasScanProductPurchase } from './site-has-scan-product-purchase';
+export { siteHasSearchProductPurchase } from './site-has-search-product-purchase';

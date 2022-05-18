@@ -52,6 +52,8 @@ interface ProductCardProps {
 	hideSavingLabel?: boolean;
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
 	collapseFeaturesOnMobile?: boolean;
+	isPricingPageTreatment202204?: boolean;
+	isPricingPageTest202204AssignmentLoading?: boolean;
 }
 
 const ProductCard: React.FC< ProductCardProps > = ( {
@@ -67,6 +69,8 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	hideSavingLabel,
 	scrollCardIntoView,
 	collapseFeaturesOnMobile,
+	isPricingPageTreatment202204,
+	isPricingPageTest202204AssignmentLoading,
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -149,10 +153,9 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 				planHasFeature( item.productSlug, productSlug )
 			).length;
 		}
-		return ! ( [
-			...JETPACK_BACKUP_PRODUCTS,
-			...JETPACK_SCAN_PRODUCTS,
-		] as ReadonlyArray< string > ).includes( item.productSlug );
+		return ! (
+			[ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ] as ReadonlyArray< string >
+		 ).includes( item.productSlug );
 	}, [ item.productSlug ] );
 
 	/**
@@ -165,12 +168,15 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	const isDisabled =
 		( ( isMultisite && ! isMultisiteCompatible ) ||
 			isCrmMonthlyProduct ||
-			( ! purchase && item.type === ITEM_TYPE_PLAN && jetpackUpgradesLocked ) ||
-			( purchase && isNotPlanOwner ) ) ??
+			( ! purchase && item.type === ITEM_TYPE_PLAN && jetpackUpgradesLocked ) ) ??
 		false;
 
+	// Disable the button CTA if the overall product card is disabled, or disable
+	//  the "Manage Plan/Subscription" button if the user is not the purchase owner.
+	const buttonDisabled = isOwned || isIncludedInPlan ? isDisabled || isNotPlanOwner : isDisabled;
+
 	let disabledMessage;
-	if ( isDisabled && ! isNotPlanOwner ) {
+	if ( isDisabled ) {
 		if ( ! isMultisiteCompatible && ! isDeprecated ) {
 			disabledMessage = translate( 'Not available for multisite WordPress installs' );
 		} else if ( isCrmMonthlyProduct ) {
@@ -220,6 +226,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			buttonURL={
 				createButtonURL ? createButtonURL( item, isUpgradeableToYearly, purchase ) : undefined
 			}
+			buttonDisabled={ isDisabled || buttonDisabled }
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isFeatured={ isFeatured }
 			isOwned={ isOwned }
@@ -236,6 +243,11 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			scrollCardIntoView={ scrollCardIntoView }
 			collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
 			pricesAreFetching={ pricesAreFetching }
+			isPricingPageTreatment202204={ isPricingPageTreatment202204 }
+			isPricingPageTest202204AssignmentLoading={ isPricingPageTest202204AssignmentLoading }
+			belowButtonText={
+				isPricingPageTreatment202204 ? translate( 'Renews at the normal rate.' ).toString() : ''
+			}
 		/>
 	);
 };

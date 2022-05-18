@@ -17,6 +17,7 @@ export function createApplePayMethod(
 ): PaymentMethod {
 	return {
 		id: 'apple-pay',
+		paymentProcessorId: 'apple-pay',
 		label: <ApplePayLabel />,
 		submitButton: (
 			<ApplePaySubmitButton stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
@@ -59,7 +60,7 @@ export function ApplePaySubmitButton( {
 					'Missing onClick prop; ApplePaySubmitButton must be used as a payment button in CheckoutSubmitButton'
 				);
 			}
-			onClick( 'apple-pay', {
+			onClick( {
 				stripe,
 				paymentMethodToken,
 				name,

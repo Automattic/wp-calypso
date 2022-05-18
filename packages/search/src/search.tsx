@@ -30,16 +30,16 @@ type KeyboardOrMouseEvent =
 	| MouseEvent< HTMLButtonElement | HTMLInputElement >
 	| KeyboardEvent< HTMLButtonElement | HTMLInputElement >;
 
-const keyListener = ( methodToCall: ( e: KeyboardOrMouseEvent ) => void ) => (
-	event: KeyboardEvent< HTMLButtonElement | HTMLInputElement >
-) => {
-	switch ( event.key ) {
-		case ' ':
-		case 'Enter':
-			methodToCall( event );
-			break;
-	}
-};
+const keyListener =
+	( methodToCall: ( e: KeyboardOrMouseEvent ) => void ) =>
+	( event: KeyboardEvent< HTMLButtonElement | HTMLInputElement > ) => {
+		switch ( event.key ) {
+			case ' ':
+			case 'Enter':
+				methodToCall( event );
+				break;
+		}
+	};
 
 type Props = {
 	autoFocus?: boolean;
@@ -75,6 +75,7 @@ type Props = {
 	recordEvent?: ( eventName: string ) => void;
 	searching?: boolean;
 	value?: string;
+	searchMode?: 'when-typing' | 'on-enter';
 };
 
 //This is fix for IE11. Does not work on Edge.
@@ -104,6 +105,7 @@ type ImperativeHandle = {
 	focus: () => void;
 	blur: () => void;
 	clear: () => void;
+	setKeyword: ( value: string ) => void;
 };
 
 const InnerSearch = (
@@ -140,6 +142,7 @@ const InnerSearch = (
 		maxLength,
 		hideClose = false,
 		isReskinned = false,
+		searchMode = 'when-typing',
 	}: Props,
 	forwardedRef: Ref< ImperativeHandle >
 ) => {
@@ -162,6 +165,9 @@ const InnerSearch = (
 			},
 			blur() {
 				searchInput.current?.blur();
+			},
+			setKeyword( value: string ) {
+				setKeyword( value );
 			},
 			clear() {
 				setKeyword( '' );
@@ -191,6 +197,10 @@ const InnerSearch = (
 	}, [] );
 
 	useUpdateEffect( () => {
+		if ( searchMode === 'on-enter' ) {
+			return;
+		}
+
 		if ( keyword ) {
 			doSearch( keyword );
 		} else {
@@ -224,6 +234,10 @@ const InnerSearch = (
 		}
 
 		setKeyword( '' );
+		if ( 'on-enter' === searchMode ) {
+			onSearch?.( '' );
+			onSearchChange?.( '' );
+		}
 		setIsOpen( false );
 
 		if ( searchInput.current ) {
@@ -330,6 +344,10 @@ const InnerSearch = (
 	};
 
 	const handleSubmit = ( event: FormEvent ) => {
+		if ( 'on-enter' === searchMode ) {
+			onSearch?.( keyword );
+			onSearchChange?.( keyword );
+		}
 		event.preventDefault();
 		event.stopPropagation();
 	};

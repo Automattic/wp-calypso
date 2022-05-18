@@ -6,7 +6,6 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
  *
  * @param {object} state redux state
  * @param {number} feedId feed identifier
- *
  * @returns {boolean} whether or not the feed is for a wpforteams site
  */
 export default function isFeedWPForTeams( state, feedId ) {

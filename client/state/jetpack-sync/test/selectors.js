@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import selectors from '../selectors';
 
 const {
@@ -317,34 +316,34 @@ describe( 'selectors', () => {
 	describe( '#getSyncStatus()', () => {
 		test( 'should return undefined when state is {}', () => {
 			const syncStatus = getSyncStatus( {}, nonExistentId );
-			expect( syncStatus ).to.be.eql( undefined );
+			expect( syncStatus ).toBeUndefined();
 		} );
 
 		test( 'should return undefined if site is not in state', () => {
 			const syncStatus = getSyncStatus( testState, nonExistentId );
-			expect( syncStatus ).to.be.eql( undefined );
+			expect( syncStatus ).toBeUndefined();
 		} );
 
 		test( 'should return sync status for site if site in state', () => {
 			const syncStatus = getSyncStatus( testState, successfulSiteId );
-			expect( syncStatus ).to.be.eql( testState.jetpackSync.syncStatus[ successfulSiteId ] );
+			expect( syncStatus ).toEqual( testState.jetpackSync.syncStatus[ successfulSiteId ] );
 		} );
 	} );
 
 	describe( '#getFullSyncRequest()', () => {
 		test( 'should return undefined when state is {}', () => {
 			const fullSyncRequest = getFullSyncRequest( {}, nonExistentId );
-			expect( fullSyncRequest ).to.be.eql( undefined );
+			expect( fullSyncRequest ).toBeUndefined();
 		} );
 
 		test( 'should return undefined if site is not in state', () => {
 			const fullSyncRequest = getFullSyncRequest( testState, nonExistentId );
-			expect( fullSyncRequest ).to.be.eql( undefined );
+			expect( fullSyncRequest ).toBeUndefined();
 		} );
 
 		test( 'should return full sync status for a site if in state', () => {
 			const fullSyncRequest = getFullSyncRequest( testState, successfulSiteId );
-			expect( fullSyncRequest ).to.be.eql(
+			expect( fullSyncRequest ).toEqual(
 				testState.jetpackSync.fullSyncRequest[ successfulSiteId ]
 			);
 		} );
@@ -353,75 +352,75 @@ describe( 'selectors', () => {
 	describe( '#isPendingSyncStart()', () => {
 		test( 'should return true if a sync is scheduled', () => {
 			const test = isPendingSyncStart( testState, syncScheduledSiteID );
-			expect( test ).to.be.true;
+			expect( test ).toBe( true );
 		} );
 
 		test( 'should return false if sync status and full sync request show not scheduled', () => {
 			const test = isPendingSyncStart( testState, errorSiteId );
-			expect( test ).to.be.false;
+			expect( test ).toBe( false );
 		} );
 
 		test( 'should return true if a sync has been requested, but before sync status has updated', () => {
 			const test = isPendingSyncStart( testState, successfulSiteId );
-			expect( test ).to.be.true;
+			expect( test ).toBe( true );
 		} );
 
 		test( 'should be false if a sync has been requested, but sync has already finished', () => {
 			const test = isPendingSyncStart( testState, oldSyncSiteId );
-			expect( test ).to.be.false;
+			expect( test ).toBe( false );
 		} );
 	} );
 
 	describe( '#isFullSyncing()', () => {
 		test( 'should return false if no sync status for a site', () => {
 			const test = isFullSyncing( testState, nonExistentId );
-			expect( test ).to.be.false;
+			expect( test ).toBe( false );
 		} );
 
 		test( 'should return false if syncing is has finished', () => {
 			const test = isFullSyncing( testState, successfulSiteId );
-			expect( test ).to.be.false;
+			expect( test ).toBe( false );
 		} );
 
 		test( 'should return false if syncing is scheduled but not started', () => {
 			const test = isFullSyncing( testState, syncScheduledSiteID );
-			expect( test ).to.be.false;
+			expect( test ).toBe( false );
 		} );
 
 		test( 'should return true if sync has started and not finished', () => {
 			const test = isFullSyncing( testState, syncStartedSiteId );
-			expect( test ).to.be.true;
+			expect( test ).toBe( true );
 		} );
 	} );
 
 	describe( '#getSyncProgressPercentage()', () => {
 		test( 'should return 0 if no sync status for a site', () => {
 			const test = getSyncProgressPercentage( testState, nonExistentId );
-			expect( test ).to.be.eql( 0 );
+			expect( test ).toEqual( 0 );
 		} );
 
 		test( 'should return a non-zero integer if site has sent data to be synced', () => {
 			const test = getSyncProgressPercentage( testState, syncInProgressSiteId );
-			expect( test ).to.be.eql( 11 );
+			expect( test ).toEqual( 11 );
 		} );
 	} );
 
 	describe( '#getImmediateSyncProgressPercentage', () => {
 		test( 'should return accurate percent based on progress propety', () => {
 			const test = getSyncProgressPercentage( testState, immediateSyncId );
-			expect( test ).to.be.eql( 7 );
+			expect( test ).toEqual( 7 );
 		} );
 	} );
 
 	describe( '#isImmediateFullSync', () => {
 		test( 'should return false for sites running legacy sync', () => {
-			expect( isImmediateFullSync( testState, successfulSiteId ) ).to.be.false;
-			expect( isImmediateFullSync( testState, syncScheduledSiteID ) ).to.be.false;
-			expect( isImmediateFullSync( testState, syncStartedSiteId ) ).to.be.false;
-			expect( isImmediateFullSync( testState, syncInProgressSiteId ) ).to.be.false;
+			expect( isImmediateFullSync( testState, successfulSiteId ) ).toBe( false );
+			expect( isImmediateFullSync( testState, syncScheduledSiteID ) ).toBe( false );
+			expect( isImmediateFullSync( testState, syncStartedSiteId ) ).toBe( false );
+			expect( isImmediateFullSync( testState, syncInProgressSiteId ) ).toBe( false );
 		} );
 		test( 'should return true for sites running immediate sync', () => {
-			expect( isImmediateFullSync( testState, immediateSyncId ) ).to.be.true;
+			expect( isImmediateFullSync( testState, immediateSyncId ) ).toBe( true );
 		} );
 	} );
 } );

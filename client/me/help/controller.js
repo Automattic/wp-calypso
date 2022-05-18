@@ -1,8 +1,9 @@
-import i18n from 'i18n-calypso';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { useTranslate } from 'i18n-calypso';
+import DocumentHead from 'calypso/components/data/document-head';
 import { login } from 'calypso/lib/paths';
 import { CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import ContactComponent from './help-contact';
 import CoursesComponent from './help-courses';
 import HelpComponent from './main';
@@ -15,10 +16,10 @@ export function loggedOut( context, next ) {
 	let url;
 	switch ( context.path ) {
 		case '/help':
-			url = SUPPORT_ROOT;
+			url = localizeUrl( SUPPORT_ROOT );
 			break;
 		case '/help/contact':
-			url = CONTACT;
+			url = localizeUrl( CONTACT );
 			break;
 		default:
 			url = login( { redirectTo: window.location.href } );
@@ -34,10 +35,18 @@ export function help( context, next ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( i18n.translate( 'Help', { textOnly: true } ) ) );
+	const HelpTitle = () => {
+		const translate = useTranslate();
 
-	context.primary = <HelpComponent />;
+		return <DocumentHead title={ translate( 'Help', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<HelpTitle />
+			<HelpComponent path={ context.path } />
+		</>
+	);
 	next();
 }
 

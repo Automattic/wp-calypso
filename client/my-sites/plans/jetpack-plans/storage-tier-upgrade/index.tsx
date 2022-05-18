@@ -12,12 +12,14 @@ interface Props {
 	duration: Duration;
 	urlQueryArgs: QueryArgs;
 	siteSlug?: string;
+	locale?: string;
 }
 
 export const StorageTierUpgrade: React.FC< Props > = ( {
 	duration,
 	urlQueryArgs,
 	siteSlug: siteSlugProp,
+	locale,
 } ) => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) );
@@ -30,7 +32,7 @@ export const StorageTierUpgrade: React.FC< Props > = ( {
 		// Do nothing
 	};
 
-	const createButtonURL = getPurchaseURLCallback( siteSlug, urlQueryArgs );
+	const createButtonURL = getPurchaseURLCallback( siteSlug, urlQueryArgs, locale );
 
 	return (
 		<div className="storage-tier-upgrade">

@@ -17,12 +17,8 @@ class SecurityCheckupTwoFactorBackupCodes extends Component {
 	};
 
 	render() {
-		const {
-			areBackupCodesPrinted,
-			areUserSettingsLoaded,
-			hasTwoStepEnabled,
-			translate,
-		} = this.props;
+		const { areBackupCodesPrinted, areUserSettingsLoaded, hasTwoStepEnabled, translate } =
+			this.props;
 
 		if ( ! areUserSettingsLoaded ) {
 			return <SecurityCheckupNavigationItem isPlaceholder={ true } />;

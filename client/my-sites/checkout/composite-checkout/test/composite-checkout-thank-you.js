@@ -903,7 +903,7 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe(
-				'/checkout/offer/professional-email-offer/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
 			);
 		} );
 
@@ -925,7 +925,7 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe(
-				'/checkout/offer/professional-email-offer/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
 			);
 		} );
 
@@ -947,7 +947,7 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe(
-				'/checkout/offer/professional-email-offer/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
 			);
 		} );
 
@@ -969,7 +969,7 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe(
-				'/checkout/offer/professional-email-offer/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
+				'/checkout/offer-professional-email/domain-eligible-for-free-trial.com/1234abcd/foo.bar'
 			);
 		} );
 
@@ -995,7 +995,7 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 
 			expect( url ).toBe(
-				'/checkout/offer/professional-email-offer/domain-from-cart.com/1234abcd/foo.bar'
+				'/checkout/offer-professional-email/domain-from-cart.com/1234abcd/foo.bar'
 			);
 		} );
 
@@ -1162,12 +1162,22 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=traffic-guide' );
 	} );
 
-	it( 'redirects to a url on the site we are checking out', () => {
+	it( 'redirects to a url on the same site we are checking out', () => {
 		const redirectTo = 'https://foo.bar/some-path?with-args=yes';
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			redirectTo,
 			siteSlug: 'foo.bar',
+		} );
+		expect( url ).toBe( redirectTo );
+	} );
+
+	it( 'redirects to a url on the same subdirectory site we are checking out', () => {
+		const redirectTo = 'https://foo.bar/subdirectory/some-path?with-args=yes';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			redirectTo,
+			siteSlug: 'foo.bar::subdirectory',
 		} );
 		expect( url ).toBe( redirectTo );
 	} );

@@ -55,13 +55,8 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 
 // Convert a backend cart item to a checkout cart item
 function translateReponseCartProductToLineItem( serverCartItem: ResponseCartProduct ): LineItem {
-	const {
-		product_slug,
-		currency,
-		item_subtotal_display,
-		item_subtotal_integer,
-		uuid,
-	} = serverCartItem;
+	const { product_slug, currency, item_subtotal_display, item_subtotal_integer, uuid } =
+		serverCartItem;
 
 	const label = getLabel( serverCartItem );
 
@@ -188,7 +183,6 @@ export function createTransactionEndpointRequestPayload( {
 	cancelUrl,
 	successUrl,
 	idealBank,
-	tefBank,
 	pan,
 	gstin,
 	nik,
@@ -219,7 +213,6 @@ export function createTransactionEndpointRequestPayload( {
 			successUrl,
 			cancelUrl,
 			idealBank,
-			tefBank,
 			pan,
 			gstin,
 			nik,

@@ -1,9 +1,8 @@
-import { expect } from 'chai';
 import getGoogleMyBusinessStats from 'calypso/state/selectors/get-google-my-business-stats';
 
 describe( 'getGoogleMyBusinessStats', () => {
 	test( 'should return null if data not available', () => {
-		expect( getGoogleMyBusinessStats( {}, 123, 'actions', 'month' ) ).to.be.null;
+		expect( getGoogleMyBusinessStats( {}, 123, 'actions', 'month' ) ).toBeNull();
 	} );
 
 	test( 'should return stats data', () => {
@@ -29,7 +28,7 @@ describe( 'getGoogleMyBusinessStats', () => {
 			},
 		};
 
-		expect( getGoogleMyBusinessStats( state, 123, 'actions', 'month', 'total' ) ).to.eql( {
+		expect( getGoogleMyBusinessStats( state, 123, 'actions', 'month', 'total' ) ).toEqual( {
 			interval: 'month',
 			statType: 'actions',
 			aggregation: 'total',

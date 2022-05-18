@@ -1,5 +1,6 @@
 /**
  * @group calypso-pr
+ * @group jetpack
  */
 
 import {
@@ -24,9 +25,10 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 	} );
 
 	describe.each`
-		siteType      | accountName
-		${ 'Simple' } | ${ 'simpleSitePersonalPlanUser' }
-		${ 'Atomic' } | ${ 'eCommerceUser' }
+		siteType       | accountName
+		${ 'Simple' }  | ${ 'simpleSitePersonalPlanUser' }
+		${ 'Atomic' }  | ${ 'eCommerceUser' }
+		${ 'Jetpack' } | ${ 'jetpackUser' }
 	`( 'Edit Image ($siteType)', function ( { accountName } ) {
 		let mediaPage: MediaPage;
 
@@ -35,10 +37,6 @@ describe( DataHelper.createSuiteTitle( 'Media: Edit Media' ), function () {
 
 			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
-		} );
-
-		afterAll( async () => {
-			await page.close();
 		} );
 
 		it( 'Navigate to Media', async function () {

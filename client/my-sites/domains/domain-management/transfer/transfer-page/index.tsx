@@ -1,4 +1,5 @@
-import { Card, Button } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -20,7 +21,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, getTopLevelOfTld, isMappedDomain } from 'calypso/lib/domains';
 import { DESIGNATED_AGENT, TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import NonTransferrableDomainNotice from 'calypso/my-sites/domains/domain-management/components/domain/non-transferrable-domain-notice';
@@ -45,6 +46,7 @@ import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-b
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import TransferUnavailableNotice from '../transfer-unavailable-notice';
 import type { TransferPageProps } from './types';
 import type { AppState } from 'calypso/types';
 
@@ -103,7 +105,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 			showBackArrow: true,
 		};
 
-		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
+		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
 	};
 
 	const renderTransferOptions = () => {
@@ -128,6 +130,16 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 					headerText={ __( 'To another user' ) }
 					mainText={ mainText }
 				/>
+			);
+		}
+
+		if ( domain?.pendingRegistration ) {
+			return (
+				<TransferUnavailableNotice
+					message={ __(
+						'We are still setting up your domain. You will not be able to transfer it until the registration setup is done.'
+					) }
+				></TransferUnavailableNotice>
 			);
 		}
 
@@ -278,7 +290,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 					moment( domain.transferAwayEligibleAt ).format( 'LL' )
 				),
 				{
-					a: createElement( 'a', { href: supportLink } ),
+					a: createElement( 'a', { href: localizeUrl( supportLink ) } ),
 				}
 			);
 		}
@@ -379,7 +391,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 									'However, transferring a domain to another provider can take five to seven days during which no changes to the domain can be made. Read <a>this important information</a> before starting a transfer.'
 								),
 								{
-									a: createElement( 'a', { href: TRANSFER_DOMAIN_REGISTRATION } ),
+									a: createElement( 'a', { href: localizeUrl( TRANSFER_DOMAIN_REGISTRATION ) } ),
 								}
 							) }
 						</p>

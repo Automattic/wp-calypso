@@ -57,14 +57,8 @@ class DomainSuggestion extends Component {
 	}
 
 	render() {
-		const {
-			children,
-			extraClasses,
-			isAdded,
-			isFeatured,
-			showStrikedOutPrice,
-			isReskinned,
-		} = this.props;
+		const { children, extraClasses, isAdded, isFeatured, showStrikedOutPrice, isReskinned } =
+			this.props;
 		const classes = classNames(
 			'domain-suggestion',
 			'card',

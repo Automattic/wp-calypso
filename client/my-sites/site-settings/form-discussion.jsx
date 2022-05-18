@@ -36,13 +36,8 @@ class SiteSettingsFormDiscussion extends Component {
 	};
 
 	defaultArticleSettings() {
-		const {
-			fields,
-			handleAutosavingToggle,
-			isRequestingSettings,
-			isSavingSettings,
-			translate,
-		} = this.props;
+		const { fields, handleAutosavingToggle, isRequestingSettings, isSavingSettings, translate } =
+			this.props;
 		return (
 			<FormFieldset>
 				<ToggleControl
@@ -250,13 +245,8 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	renderInputThreadDepth() {
-		const {
-			eventTracker,
-			fields,
-			isRequestingSettings,
-			isSavingSettings,
-			onChangeField,
-		} = this.props;
+		const { eventTracker, fields, isRequestingSettings, isSavingSettings, onChangeField } =
+			this.props;
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<FormSelect
@@ -333,13 +323,8 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	emailMeSettings() {
-		const {
-			fields,
-			handleAutosavingToggle,
-			isRequestingSettings,
-			isSavingSettings,
-			translate,
-		} = this.props;
+		const { fields, handleAutosavingToggle, isRequestingSettings, isSavingSettings, translate } =
+			this.props;
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'E-mail me whenever' ) }</FormLegend>
@@ -412,13 +397,8 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	emailMeFollows() {
-		const {
-			fields,
-			handleAutosavingToggle,
-			isRequestingSettings,
-			isSavingSettings,
-			translate,
-		} = this.props;
+		const { fields, handleAutosavingToggle, isRequestingSettings, isSavingSettings, translate } =
+			this.props;
 
 		return (
 			<ToggleControl
@@ -431,13 +411,8 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	beforeCommentSettings() {
-		const {
-			fields,
-			handleAutosavingToggle,
-			isRequestingSettings,
-			isSavingSettings,
-			translate,
-		} = this.props;
+		const { fields, handleAutosavingToggle, isRequestingSettings, isSavingSettings, translate } =
+			this.props;
 		return (
 			<FormFieldset>
 				<FormLegend>{ translate( 'Before a comment appears' ) }</FormLegend>

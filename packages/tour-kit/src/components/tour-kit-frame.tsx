@@ -30,7 +30,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const [ initialFocusedElement, setInitialFocusedElement ] = useState< HTMLElement | null >(
 		null
 	);
-	const [ isMinimized, setIsMinimized ] = useState( false );
+	const [ isMinimized, setIsMinimized ] = useState( config.isMinimized ?? false );
 
 	const [ popperElement, setPopperElement ] = useState< HTMLElement | null >( null );
 	const [ tourReady, setTourReady ] = useState( false );
@@ -42,6 +42,12 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 	const referenceElement = referenceElementSelector
 		? document.querySelector< HTMLElement >( referenceElementSelector )
 		: null;
+
+	useEffect( () => {
+		if ( config.isMinimized ) {
+			setIsMinimized( true );
+		}
+	}, [ config.isMinimized ] );
 
 	const showArrowIndicator = useCallback( () => {
 		if ( config.options?.effects?.arrowIndicator === false ) {
@@ -106,42 +112,42 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		handleCallback( currentStepIndex, config.options?.callbacks?.onMaximize );
 	}, [ config.options?.callbacks?.onMaximize, currentStepIndex ] );
 
-	const { styles: popperStyles, attributes: popperAttributes, update: popperUpdate } = usePopper(
-		referenceElement,
-		popperElement,
-		{
-			strategy: 'fixed',
-			placement: 'bottom',
-			modifiers: [
-				{
-					name: 'preventOverflow',
-					options: {
-						rootBoundary: 'document',
-						padding: 16, // same as the left/margin of the tour frame
-					},
+	const {
+		styles: popperStyles,
+		attributes: popperAttributes,
+		update: popperUpdate,
+	} = usePopper( referenceElement, popperElement, {
+		strategy: 'fixed',
+		placement: 'bottom',
+		modifiers: [
+			{
+				name: 'preventOverflow',
+				options: {
+					rootBoundary: 'document',
+					padding: 16, // same as the left/margin of the tour frame
 				},
-				{
-					name: 'arrow',
-					options: {
-						padding: 12,
-					},
+			},
+			{
+				name: 'arrow',
+				options: {
+					padding: 12,
 				},
-				{
-					name: 'offset',
-					options: {
-						offset: [ 0, showArrowIndicator() ? 12 : 10 ],
-					},
+			},
+			{
+				name: 'offset',
+				options: {
+					offset: [ 0, showArrowIndicator() ? 12 : 10 ],
 				},
-				{
-					name: 'flip',
-					options: {
-						fallbackPlacements: [ 'top', 'left', 'right' ],
-					},
+			},
+			{
+				name: 'flip',
+				options: {
+					fallbackPlacements: [ 'top', 'left', 'right' ],
 				},
-				...( config.options?.popperModifiers || [] ),
-			],
-		}
-	);
+			},
+			...( config.options?.popperModifiers || [] ),
+		],
+	} );
 
 	const stepRepositionProps =
 		! isMinimized && referenceElement && tourReady

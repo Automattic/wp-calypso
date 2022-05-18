@@ -5,10 +5,12 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
+import ExternalLink from 'calypso/components/external-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import version_compare from 'calypso/lib/version-compare';
+import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
@@ -16,6 +18,7 @@ import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PluginsBrowserElementVariant } from './types';
@@ -72,8 +75,10 @@ const PluginsBrowserListElement = ( props ) => {
 			site: site,
 			plugin: plugin.slug,
 			list_name: props.listName,
+			grid_position: props.gridPosition,
+			blog_id: selectedSite?.ID,
 		} );
-	}, [ site, plugin, props.listName ] );
+	}, [ site, plugin, selectedSite, props.listName ] );
 
 	const isWpcomPreinstalled = useMemo( () => {
 		if ( plugin.isPreinstalled ) {
@@ -98,13 +103,24 @@ const PluginsBrowserListElement = ( props ) => {
 		return version_compare( wpVersion, pluginTestedVersion, '>' );
 	}, [ selectedSite, plugin ] );
 
-	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
+	const jetpackNonAtomic = useSelector(
+		( state ) =>
+			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
+	);
+
+	const isPluginIncompatible = useMemo( () => {
+		return ! isCompatiblePlugin( plugin.slug ) && ! jetpackNonAtomic;
+	} );
+
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite?.ID ) );
 
 	if ( isPlaceholder ) {
 		return <Placeholder iconSize={ iconSize } />;
 	}
 
-	const classNames = classnames( 'plugins-browser-item', variant );
+	const classNames = classnames( 'plugins-browser-item', variant, {
+		incompatible: isPluginIncompatible,
+	} );
 	return (
 		<li className={ classNames }>
 			<a
@@ -144,6 +160,11 @@ const PluginsBrowserListElement = ( props ) => {
 						</span>
 					</div>
 				) }
+				{ isPluginIncompatible && (
+					<ExternalLink icon={ false } href="https://wordpress.com/support/incompatible-plugins/">
+						{ translate( 'Why is this plugin not compatible with WordPress.com?' ) }
+					</ExternalLink>
+				) }
 				<div className="plugins-browser-item__footer">
 					{ variant === PluginsBrowserElementVariant.Extended && (
 						<InstalledInOrPricing
@@ -169,7 +190,8 @@ const PluginsBrowserListElement = ( props ) => {
 						{ !! plugin.active_installs && (
 							<div className="plugins-browser-item__active-installs">
 								<span className="plugins-browser-item__active-installs-value">{ `${ formatNumberMetric(
-									plugin.active_installs
+									plugin.active_installs,
+									0
 								) }${ plugin.active_installs > 1000 ? '+' : '' }` }</span>
 								{ translate( ' Active Installs' ) }
 							</div>

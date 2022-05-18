@@ -7,6 +7,7 @@ import {
 	SidebarComponent,
 	SupportComponent,
 	TestAccount,
+	TestAccountName,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -16,8 +17,8 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover/Invalid Keywords' ), fu
 	let page: Page;
 
 	describe.each( [
-		{ siteType: 'Simple', accountName: 'defaultUser' },
-		{ siteType: 'Atomic', accountName: 'eCommerceUser' },
+		{ siteType: 'Simple', accountName: 'defaultUser' as TestAccountName },
+		{ siteType: 'Atomic', accountName: 'eCommerceUser' as TestAccountName },
 	] )( 'Unsupported search keywords ($siteType)', function ( { accountName } ) {
 		let supportComponent: SupportComponent;
 
@@ -26,10 +27,6 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover/Invalid Keywords' ), fu
 
 			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
-		} );
-
-		afterAll( async () => {
-			await page.close();
 		} );
 
 		it( 'Open Settings page', async function () {

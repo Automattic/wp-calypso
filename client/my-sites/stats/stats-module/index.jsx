@@ -51,13 +51,14 @@ class StatsModule extends Component {
 		loaded: false,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.requesting && this.props.requesting ) {
+	componentDidUpdate( prevProps ) {
+		if ( ! this.props.requesting && prevProps.requesting ) {
+			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: true } );
 		}
 
-		if ( nextProps.query !== this.props.query && this.state.loaded ) {
+		if ( this.props.query !== prevProps.query && this.state.loaded ) {
+			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: false } );
 		}
 	}
@@ -187,9 +188,7 @@ class StatsModule extends Component {
 					{ summary && 'countryviews' === path && (
 						<UpsellNudge
 							title={ translate( 'Add Google Analytics' ) }
-							description={ translate(
-								'Upgrade to a Premium Plan for Google Analytics integration.'
-							) }
+							description={ translate( 'Upgrade to a Pro Plan for Google Analytics integration.' ) }
 							event="googleAnalytics-stats-countries"
 							feature={ FEATURE_GOOGLE_ANALYTICS }
 							plan={ PLAN_PREMIUM }

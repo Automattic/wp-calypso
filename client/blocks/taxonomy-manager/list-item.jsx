@@ -120,14 +120,8 @@ class TaxonomyManagerListItem extends Component {
 	};
 
 	render() {
-		const {
-			canSetAsDefault,
-			isDefault,
-			onClick,
-			term,
-			isPodcastingCategory,
-			translate,
-		} = this.props;
+		const { canSetAsDefault, isDefault, onClick, term, isPodcastingCategory, translate } =
+			this.props;
 		const name = this.getName();
 		const hasPosts = get( term, 'post_count', 0 ) > 0;
 		const className = classNames( 'taxonomy-manager__item', {
@@ -138,9 +132,21 @@ class TaxonomyManagerListItem extends Component {
 			{ action: 'delete', label: translate( 'OK' ), isPrimary: true },
 		];
 
+		const onKeyUp = ( event ) => {
+			if ( event.key === 'Enter' ) {
+				onClick();
+			}
+		};
+
 		return (
 			<div className={ className }>
-				<span className="taxonomy-manager__icon" onClick={ onClick }>
+				<span
+					className="taxonomy-manager__icon"
+					role="button"
+					tabIndex={ 0 }
+					onKeyUp={ onKeyUp }
+					onClick={ onClick }
+				>
 					<Gridicon icon={ isDefault ? 'checkmark-circle' : 'folder' } />
 				</span>
 				{ /* FIXME: jsx-a11y issues */ }
@@ -159,7 +165,7 @@ class TaxonomyManagerListItem extends Component {
 				{ typeof term.post_count !== 'undefined' && (
 					<div className="taxonomy-manager__count">
 						<Count
-							ref={ this.countRef }
+							forwardRef={ this.countRef }
 							count={ term.post_count }
 							onMouseEnter={ this.showTooltip }
 							onMouseLeave={ this.hideTooltip }

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { SITE_INTRO_OFFER_RECEIVE } from 'calypso/state/action-types';
 import { items, IntroOfferReceiveAction } from '../reducer';
 
@@ -8,7 +7,7 @@ describe( 'reducer', () => {
 			test( 'should return an empty state when original state is undefined and action is empty', () => {
 				const state = items( undefined, { type: undefined } );
 
-				expect( state ).to.eql( {} );
+				expect( state ).toEqual( {} );
 			} );
 
 			test( 'should return the transformed introductory offer with no siteId', () => {
@@ -28,7 +27,7 @@ describe( 'reducer', () => {
 					],
 				} as IntroOfferReceiveAction );
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					none: {
 						2010: {
 							productId: 2010,
@@ -60,7 +59,7 @@ describe( 'reducer', () => {
 					],
 				} as IntroOfferReceiveAction );
 
-				expect( state ).to.eql( {
+				expect( state ).toEqual( {
 					12345: {
 						2010: {
 							productId: 2010,

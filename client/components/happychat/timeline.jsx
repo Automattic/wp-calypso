@@ -230,6 +230,8 @@ function Timeline( props ) {
 
 	const prevUnreadMessagesCount = useRef( unreadMessagesCount );
 
+	const translate = useTranslate();
+
 	useEffect( () => {
 		if ( prevUnreadMessagesCount.current === 0 && unreadMessagesCount > 0 ) {
 			recordTracksEvent( 'calypso_happychat_unread_messages_button_show' );
@@ -277,7 +279,16 @@ function Timeline( props ) {
 						className="happychat__unread-messages-button"
 						onClick={ handleUnreadMessagesButtonClick }
 					>
-						{ unreadMessagesCount } new message{ unreadMessagesCount ? 's' : '' }
+						{ translate(
+							'%(unreadMessagesCount)d new message',
+							'%(unreadMessagesCount)d new messages',
+							{
+								count: unreadMessagesCount,
+								args: {
+									unreadMessagesCount: unreadMessagesCount,
+								},
+							}
+						) }
 						<Gridicon icon="arrow-down" />
 					</Button>
 				</div>

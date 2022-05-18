@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
 
 const siteId = 77203074;
@@ -12,7 +11,7 @@ describe( 'getUploadedPluginId', () => {
 				},
 			},
 		};
-		expect( getUploadedPluginId( state, siteId ) ).to.be.null;
+		expect( getUploadedPluginId( state, siteId ) ).toBeNull();
 	} );
 
 	test( 'should return current value for site', () => {
@@ -25,6 +24,6 @@ describe( 'getUploadedPluginId', () => {
 				},
 			},
 		};
-		expect( getUploadedPluginId( state, siteId ) ).to.be.equal( 'hello-dolly' );
+		expect( getUploadedPluginId( state, siteId ) ).toEqual( 'hello-dolly' );
 	} );
 } );

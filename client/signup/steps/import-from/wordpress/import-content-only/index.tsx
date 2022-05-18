@@ -4,7 +4,12 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import importerConfig from 'calypso/lib/importer/importer-config';
-import { Importer, ImportJob, ImportJobParams } from 'calypso/signup/steps/import-from/types';
+import {
+	Importer,
+	ImportJob,
+	ImportJobParams,
+	StepNavigator,
+} from 'calypso/signup/steps/import-from/types';
 import { getImporterTypeForEngine } from 'calypso/signup/steps/import-from/util';
 import { UrlData } from 'calypso/signup/steps/import/types';
 import { startImport, resetImport } from 'calypso/state/imports/actions';
@@ -25,6 +30,7 @@ interface Props {
 	siteItem: SitesItem | null;
 	siteSlug: string;
 	siteAnalyzedData: UrlData;
+	stepNavigator?: StepNavigator;
 }
 
 const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
@@ -33,7 +39,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Fields
 	 */
-	const { job, importer, siteItem, siteSlug, siteAnalyzedData } = props;
+	const { job, importer, siteItem, siteSlug, siteAnalyzedData, stepNavigator } = props;
 
 	/**
 	 ↓ Effects
@@ -125,6 +131,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 				resetImport={ () => {
 					dispatch( resetImport( siteItem?.ID, job?.importerId ) );
 				} }
+				onSiteViewClick={ stepNavigator?.goToSiteViewPage }
 			/>
 		);
 	}
@@ -153,7 +160,12 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 					if ( checkIsSuccess() ) {
 						return renderHooray();
 					} else if ( checkIsFailed() ) {
-						return <ErrorMessage siteSlug={ siteSlug } />;
+						return (
+							<ErrorMessage
+								onStartBuilding={ stepNavigator?.goToIntentPage }
+								onBackToStart={ stepNavigator?.goToImportCapturePage }
+							/>
+						);
 					} else if ( checkProgress() ) {
 						return renderProgress();
 					}

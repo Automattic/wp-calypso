@@ -9,7 +9,7 @@ import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import {
 	domainManagementDns,
 	domainManagementEdit,
@@ -71,9 +71,7 @@ class AddDnsRecord extends Component {
 			showBackArrow: true,
 		};
 
-		return (
-			<Breadcrumbs items={ items } mobileItem={ mobileItem } buttons={ [] } mobileButtons={ [] } />
-		);
+		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
 	}
 
 	goBack = () => {

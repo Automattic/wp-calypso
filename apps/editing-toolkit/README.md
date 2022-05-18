@@ -31,7 +31,7 @@ The following items did not change:
   - `block-patterns/`: Additional block patterns for Gutenberg.
   - `coming-soon/`: Coming Soon page and associated functionality.
   - `common/`: General functionality which doesn't fit a specific feature and is always executed.
-  - `dotcom-fse/`: (_deprecated_) An early experiment for a consistent site editing experience in Gutenberg. (Superceeded by the site-editor work in Gutenberg.)
+  - `dotcom-fse/`: (_deprecated_) An early experiment for a consistent site editing experience in Gutenberg. ([Superceeded by the site-editor work in Gutenberg](https://github.com/WordPress/gutenberg/tree/trunk/packages/edit-site)).
   - `e2e-test-helpers/`: Functions to assist with e2e tests in Puppeteer.
   - `event-countdown-block/`: A block which counts down to a specified date.
   - `global-styles/`: (_deprecated_) A plugin which adds a global font picker to the editor. (Superceeded by global style work in Gutenberg.)

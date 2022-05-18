@@ -1,4 +1,7 @@
-import { FEATURE_VIDEO_UPLOADS, FEATURE_AUDIO_UPLOADS } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_UPLOAD_AUDIO_FILES,
+	WPCOM_FEATURES_UPLOAD_VIDEO_FILES,
+} from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -6,21 +9,21 @@ import ListPlanPromo from './list-plan-promo';
 
 function getTitle( filter, translate ) {
 	if ( filter === 'audio' ) {
-		return translate( 'Upgrade to the Personal Plan to Enable Audio Uploads' );
+		return translate( 'Upgrade to the Pro Plan to Enable Audio Uploads' );
 	}
 
-	return translate( 'Upgrade to the Premium Plan to Enable VideoPress' );
+	return translate( 'Upgrade to the Pro Plan to Enable VideoPress' );
 }
 
 function getSubtitle( filter, translate ) {
 	if ( filter === 'audio' ) {
 		return translate(
-			"By upgrading to the Personal plan, you'll enable audio upload support on your site."
+			"By upgrading to the Pro plan, you'll enable audio upload support on your site."
 		);
 	}
 
 	return translate(
-		"By upgrading to the Premium plan, you'll enable VideoPress support on your site."
+		"By upgrading to the Pro plan, you'll enable VideoPress support on your site."
 	);
 }
 
@@ -31,7 +34,9 @@ export const MediaLibraryUpgradeNudge = ( { translate, filter, site } ) => (
 				className="media-library__videopress-nudge-regular"
 				title={ getTitle( filter, translate ) }
 				description={ getSubtitle( filter, translate ) }
-				feature={ 'audio' === filter ? FEATURE_AUDIO_UPLOADS : FEATURE_VIDEO_UPLOADS }
+				feature={
+					'audio' === filter ? WPCOM_FEATURES_UPLOAD_AUDIO_FILES : WPCOM_FEATURES_UPLOAD_VIDEO_FILES
+				}
 				event="calypso_media_uploads_upgrade_nudge"
 				tracksImpressionName="calypso_upgrade_nudge_impression"
 				tracksClickName="calypso_upgrade_nudge_cta_click"

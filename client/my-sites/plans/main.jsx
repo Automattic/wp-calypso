@@ -5,9 +5,10 @@ import {
 	PLAN_FREE,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_STARTER,
 } from '@automattic/calypso-products';
-import { Global } from '@emotion/react';
 import styled from '@emotion/styled';
+import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -25,11 +26,9 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { useExperiment } from 'calypso/lib/explat';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import PlansComparison, {
-	globalOverrides,
-	isEligibleForProPlan,
-} from 'calypso/my-sites/plans-comparison';
+import PlansComparison, { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import legacyPlanNotice from 'calypso/my-sites/plans/legacy-plan-notice';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
@@ -122,10 +121,21 @@ class Plans extends Component {
 	}
 
 	onSelectPlan = ( item ) => {
-		const { selectedSite } = this.props;
+		const {
+			selectedSite,
+			context: {
+				query: { discount },
+			},
+		} = this.props;
 		const checkoutPath = `/checkout/${ selectedSite.slug }/${ item.product_slug }/`;
 
-		page( checkoutPath );
+		page(
+			discount
+				? addQueryArgs( checkoutPath, {
+						coupon: discount,
+				  } )
+				: checkoutPath
+		);
 	};
 
 	renderPlaceholder = () => {
@@ -161,7 +171,9 @@ class Plans extends Component {
 
 		if (
 			eligibleForProPlan &&
-			[ PLAN_FREE, PLAN_WPCOM_FLEXIBLE, PLAN_WPCOM_PRO ].includes( currentPlan?.productSlug )
+			[ PLAN_FREE, PLAN_WPCOM_FLEXIBLE, PLAN_WPCOM_STARTER, PLAN_WPCOM_PRO ].includes(
+				currentPlan?.productSlug
+			)
 		) {
 			return (
 				<PlansComparison
@@ -206,7 +218,6 @@ class Plans extends Component {
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
-				{ eligibleForProPlan && <Global styles={ globalOverrides } /> }
 				<QueryContactDetailsCache />
 				<QueryPlans />
 				<TrackComponentView eventName="calypso_plans_view" />
@@ -228,6 +239,7 @@ class Plans extends Component {
 							/>
 							<div id="plans" className="plans plans__has-sidebar">
 								<PlansNavigation path={ this.props.context.path } />
+								{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
 								{ this.renderPlansMain() }
 								<PerformanceTrackerStop />
 							</div>

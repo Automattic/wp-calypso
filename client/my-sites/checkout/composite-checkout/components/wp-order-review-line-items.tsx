@@ -15,7 +15,6 @@ import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
-import { useExperiment } from 'calypso/lib/explat';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
@@ -87,10 +86,6 @@ export function WPOrderReviewLineItems( {
 		coupon: responseCart.coupon,
 		products: responseCart.products,
 	} );
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'calypso_jetpack_cart_with_dropdown_variant_selector_2'
-	);
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -122,12 +117,7 @@ export function WPOrderReviewLineItems( {
 									isDisabled={ isDisabled }
 									siteId={ siteId }
 									productSlug={ product.product_slug }
-									type={
-										isJetpackCheckout && experimentAssignment?.variationName === 'treatment'
-											? 'dropdown'
-											: 'buttons'
-									}
-									isLoading={ isJetpackCheckout && isLoadingExperimentAssignment }
+									type={ isJetpackCheckout ? 'dropdown' : 'buttons' }
 								/>
 							) }
 						</LineItem>

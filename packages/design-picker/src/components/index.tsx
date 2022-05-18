@@ -9,8 +9,8 @@ import classnames from 'classnames';
 import { useMemo } from 'react';
 import {
 	getAvailableDesigns,
-	getDesignUrl,
-	mShotOptions,
+	getDesignPreviewUrl,
+	getMShotOptions,
 	isBlankCanvasDesign,
 	filterDesignsByCategory,
 	sortDesigns,
@@ -29,15 +29,20 @@ interface DesignPreviewImageProps {
 	highRes: boolean;
 }
 
-const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale, highRes } ) => (
-	<MShotsImage
-		url={ getDesignUrl( design, locale ) }
-		aria-labelledby={ makeOptionId( design ) }
-		alt=""
-		options={ mShotOptions( design, highRes ) }
-		scrollable={ design.preview !== 'static' }
-	/>
-);
+const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale, highRes } ) => {
+	const scrollable = design.preview !== 'static';
+	const isMobile = useViewportMatch( 'small', '<' );
+
+	return (
+		<MShotsImage
+			url={ getDesignPreviewUrl( design, { language: locale } ) }
+			aria-labelledby={ makeOptionId( design ) }
+			alt=""
+			options={ getMShotOptions( { scrollable, highRes, isMobile } ) }
+			scrollable={ scrollable }
+		/>
+	);
+};
 
 interface DesignButtonProps {
 	design: Design;
@@ -118,7 +123,7 @@ interface DesignButtonCoverProps {
 	isPremiumThemeAvailable?: boolean;
 	onSelect: ( design: Design ) => void;
 	onPreview: ( design: Design ) => void;
-	onUpgrade?: () => void;
+	onUpgrade?: ( design: Design ) => void;
 }
 
 const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
@@ -143,7 +148,7 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 				<Button
 					className="design-button-cover__button"
 					isPrimary
-					onClick={ () => ( shouldUpgrade ? onUpgrade?.() : onSelect( design ) ) }
+					onClick={ () => ( shouldUpgrade ? onUpgrade?.( design ) : onSelect( design ) ) }
 				>
 					{ shouldUpgrade
 						? __( 'Upgrade Plan', __i18n_text_domain__ )
@@ -223,6 +228,7 @@ export interface DesignPickerProps {
 	highResThumbnails?: boolean;
 	categorization?: Categorization;
 	categoriesHeading?: React.ReactNode;
+	anchorHeading?: React.ReactNode;
 	categoriesFooter?: React.ReactNode;
 	recommendedCategorySlug: string | null;
 	hideFullScreenPreview?: boolean;
@@ -244,6 +250,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	className,
 	highResThumbnails = false,
 	categoriesHeading,
+	anchorHeading,
 	categoriesFooter,
 	categorization,
 	hideFullScreenPreview,
@@ -267,6 +274,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				'design-picker--has-categories': hasCategories,
 			} ) }
 		>
+			{ anchorHeading }
 			{ categorization && hasCategories && (
 				<DesignPickerCategoryFilter
 					categories={ categorization.categories }
@@ -298,4 +306,4 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	);
 };
 
-export default DesignPicker;
+export { DesignPicker as default, DesignPreviewImage };

@@ -128,8 +128,7 @@ export class ContactDetailsFormFields extends Component {
 		);
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.formStateController = formState.Controller( {
 			debounceWait: 500,
 			fieldNames: CONTACT_DETAILS_FORM_FIELDS,
@@ -356,7 +355,9 @@ export class ContactDetailsFormFields extends Component {
 	}
 
 	getCountryPostalCodeSupport = ( countryCode ) =>
-		getCountryPostalCodeSupport( this.props.countriesList, countryCode );
+		this.props.countriesList?.length && countryCode
+			? getCountryPostalCodeSupport( this.props.countriesList, countryCode )
+			: false;
 
 	renderContactDetailsFields() {
 		const { translate, needsFax, hasCountryStates, labelTexts } = this.props;
@@ -517,13 +518,13 @@ export class ContactDetailsFormFields extends Component {
 	}
 
 	render() {
-		const {
-			translate,
-			onCancel,
-			disableSubmitButton,
-			labelTexts,
-			contactDetailsErrors,
-		} = this.props;
+		const { translate, onCancel, disableSubmitButton, labelTexts, contactDetailsErrors } =
+			this.props;
+
+		if ( ! this.state.form ) {
+			return null;
+		}
+
 		const countryCode = this.getCountryCode();
 
 		const isFooterVisible = !! ( this.props.onSubmit || onCancel );

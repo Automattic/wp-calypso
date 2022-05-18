@@ -171,6 +171,36 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
+const anchorPodcastId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_ANCHOR_PODCAST_ID' ) {
+		return action.anchorPodcastId;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const anchorEpisodeId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_ANCHOR_PODCAST_EPISODE_ID' ) {
+		return action.anchorEpisodeId;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const anchorSpotifyUrl: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_ANCHOR_PODCAST_SPOTIFY_URL' ) {
+		return action.anchorSpotifyUrl;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'ONBOARDING_START' ) {
 		return true;
@@ -191,7 +221,83 @@ const lastLocation: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	return state;
 };
 
+const intent: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_INTENT' ) {
+		return action.intent;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const startingPoint: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_STARTING_POINT' ) {
+		return action.startingPoint;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const storeType: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_STORE_TYPE' ) {
+		return action.storeType;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const pendingAction: Reducer< undefined | ( () => Promise< any > ), OnboardAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'SET_PENDING_ACTION' ) {
+		return action.pendingAction;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const progress: Reducer< number, OnboardAction > = ( state = -1, action ) => {
+	if ( action.type === 'SET_PROGRESS' ) {
+		return action.progress;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return -1;
+	}
+	return state;
+};
+
+const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_PROGRESS_TITLE' ) {
+		return action.progressTitle;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const stepProgress: Reducer< { count: number; progress: number } | undefined, OnboardAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'SET_STEP_PROGRESS' ) {
+		return action.stepProgress;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
+	anchorPodcastId,
+	anchorEpisodeId,
+	anchorSpotifyUrl,
 	domain,
 	domainSearch,
 	domainCategory,
@@ -199,6 +305,7 @@ const reducer = combineReducers( {
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
 	selectedFeatures,
+	storeType,
 	selectedFonts,
 	selectedDesign,
 	selectedSite,
@@ -208,6 +315,12 @@ const reducer = combineReducers( {
 	randomizedDesigns,
 	hasOnboardingStarted,
 	lastLocation,
+	intent,
+	startingPoint,
+	pendingAction,
+	progress,
+	progressTitle,
+	stepProgress,
 } );
 
 export type State = ReturnType< typeof reducer >;

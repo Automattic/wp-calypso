@@ -43,7 +43,6 @@ function buildCheckoutURL(
 			urlQueryArgs.checkoutBackUrl = window.location.href;
 		}
 	}
-
 	// host maybe needed in either siteless or userless checkout below
 	const host =
 		'development' === urlQueryArgs.calypso_env
@@ -87,26 +86,24 @@ function buildCheckoutURL(
  * @param {string} siteSlug Slug of the site
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url
  */
-export const getPurchaseURLCallback = (
-	siteSlug: string,
-	urlQueryArgs: QueryArgs
-): PurchaseURLCallback => (
-	product: SelectorProduct,
-	isUpgradeableToYearly?,
-	purchase?: Purchase
-) => {
-	if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
-		return product.externalUrl || '';
-	}
-	if ( purchase && isUpgradeableToYearly ) {
-		const { productSlug: slug } = product;
-		const yearlySlug = getYearlySlugFromMonthly( slug );
-		return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs ) : undefined;
-	}
-	if ( purchase ) {
-		const relativePath = managePurchase( siteSlug, purchase.id );
-		return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
-	}
+export const getPurchaseURLCallback =
+	( siteSlug: string, urlQueryArgs: QueryArgs, locale?: string ): PurchaseURLCallback =>
+	( product: SelectorProduct, isUpgradeableToYearly?, purchase?: Purchase ) => {
+		if ( locale ) {
+			urlQueryArgs.lang = locale;
+		}
+		if ( EXTERNAL_PRODUCTS_LIST.includes( product.productSlug ) ) {
+			return product.externalUrl || '';
+		}
+		if ( purchase && isUpgradeableToYearly ) {
+			const { productSlug: slug } = product;
+			const yearlySlug = getYearlySlugFromMonthly( slug );
+			return yearlySlug ? buildCheckoutURL( siteSlug, yearlySlug, urlQueryArgs ) : undefined;
+		}
+		if ( purchase ) {
+			const relativePath = managePurchase( siteSlug, purchase.id );
+			return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
+		}
 
-	return buildCheckoutURL( siteSlug, product.productSlug, urlQueryArgs );
-};
+		return buildCheckoutURL( siteSlug, product.productSlug, urlQueryArgs );
+	};

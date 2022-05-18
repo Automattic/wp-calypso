@@ -1,10 +1,10 @@
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { includes } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import AsyncLoad from 'calypso/components/async-load';
+import DocumentHead from 'calypso/components/data/document-head';
 import StatsPagePlaceholder from 'calypso/my-sites/stats/stats-page-placeholder';
-import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { recordTrack } from '../../lib/analytics';
 import { getQueryDate } from './utils';
 
@@ -34,8 +34,12 @@ export default function StatsController( context, next ) {
 		selectedDate: context.query.startDate || moment().format( 'YYYY-MM-DD' ),
 		queryParams: context.query || {},
 	};
-	// FIXME: Auto-converted from the setTitle action. Please use <DocumentHead> instead.
-	context.store.dispatch( setTitle( translate( 'Stats', { textOnly: true } ) ) );
+
+	const StatsTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'Stats', { textOnly: true } ) } />;
+	};
 
 	let tracksEvent;
 	switch ( props.type ) {
@@ -86,6 +90,11 @@ export default function StatsController( context, next ) {
 			break;
 	}
 
-	context.primary = asyncComponent;
+	context.primary = (
+		<>
+			<StatsTitle />
+			{ asyncComponent }
+		</>
+	);
 	next();
 }

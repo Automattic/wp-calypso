@@ -6,19 +6,20 @@ import {
 	fireEvent,
 	act,
 } from '@testing-library/react';
-import { createContext, Fragment, useState, useContext } from 'react';
+import { createContext, useState, useContext } from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import {
-	Checkout,
 	CheckoutProvider,
 	CheckoutStep,
-	CheckoutStepArea,
 	CheckoutStepBody,
-	CheckoutSteps,
 	useIsStepComplete,
 	useTransactionStatus,
 	usePaymentProcessor,
+	CheckoutFormSubmit,
+	CheckoutStepGroup,
+	useSetStepComplete,
 } from '../src/public-api';
+import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
 
 const myContext = createContext();
 const usePaymentData = () => useContext( myContext );
@@ -39,7 +40,7 @@ describe( 'Checkout', () => {
 						paymentProcessors={ getMockPaymentProcessors() }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
-						<Checkout />
+						<DefaultCheckoutSteps />
 					</CheckoutProvider>
 				);
 			} );
@@ -100,11 +101,16 @@ describe( 'Checkout', () => {
 						paymentProcessors={ getMockPaymentProcessors() }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
-						<Checkout />
+						<DefaultCheckoutSteps />
 					</CheckoutProvider>
 				);
 				const renderResult = render( <MyCheckout /> );
 				container = renderResult.container;
+			} );
+
+			it( 'renders steps', () => {
+				const activeSteps = container.querySelectorAll( '.checkout-step' );
+				expect( activeSteps ).toHaveLength( 2 );
 			} );
 
 			it( 'makes the review step active', () => {
@@ -114,7 +120,7 @@ describe( 'Checkout', () => {
 			} );
 
 			it( 'makes the payment method step invisible', () => {
-				const firstStep = container.querySelector( '.checkout__payment-methods-step' );
+				const firstStep = container.querySelector( '.checkout__payment-method-step' );
 				const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 				expect( firstStepContent ).toHaveStyle( 'display: none' );
 			} );
@@ -141,7 +147,7 @@ describe( 'Checkout', () => {
 						paymentProcessors={ getMockPaymentProcessors() }
 						initiallySelectedPaymentMethodId={ mockMethod.id }
 					>
-						<Checkout />
+						<DefaultCheckoutSteps />
 					</CheckoutProvider>
 				);
 				const renderResult = render( <MyCheckout /> );
@@ -159,7 +165,7 @@ describe( 'Checkout', () => {
 			} );
 
 			it( 'makes the next step visible', () => {
-				const reviewStep = container.querySelector( '.checkout__payment-methods-step' );
+				const reviewStep = container.querySelector( '.checkout__payment-method-step' );
 				const reviewStepContent = reviewStep.querySelector( '.checkout-steps__step-content' );
 				expect( reviewStepContent ).toHaveStyle( 'display: block' );
 			} );
@@ -175,6 +181,9 @@ describe( 'Checkout', () => {
 		beforeEach( () => {
 			MyCheckout = ( props ) => {
 				const [ paymentData, setPaymentData ] = useState( {} );
+				const { stepObjectsWithStepNumber, stepObjectsWithoutStepNumber } =
+					createStepsFromStepObjects( props.steps || steps );
+				const createStepFromStepObject = createStepObjectConverter( paymentData );
 				return (
 					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
 						<CheckoutProvider
@@ -184,9 +193,11 @@ describe( 'Checkout', () => {
 							paymentProcessors={ getMockPaymentProcessors() }
 							initiallySelectedPaymentMethodId={ mockMethod.id }
 						>
-							<Checkout>
-								{ createStepsFromStepObjects( props.steps || steps, paymentData ) }
-							</Checkout>
+							<CheckoutStepGroup>
+								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+								{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+								<CheckoutFormSubmit />
+							</CheckoutStepGroup>
 						</CheckoutProvider>
 					</myContext.Provider>
 				);
@@ -356,6 +367,85 @@ describe( 'Checkout', () => {
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
 		} );
 
+		it( 'does change steps if useSetStepComplete is used and the step becomes complete after a Promise resolves', async () => {
+			function ManualStepCompleteButton( { stepId } ) {
+				const setStepComplete = useSetStepComplete();
+				return <button onClick={ () => setStepComplete( stepId ) }>Complete manually</button>;
+			}
+			const stepWillPass = {
+				...steps[ 1 ],
+				id: 'step-will-pass',
+				className: 'step-will-pass',
+				isCompleteCallback: () => Promise.resolve( true ),
+			};
+			const stepWithAsyncIsComplete = {
+				...steps[ 1 ],
+				isCompleteCallback: () => Promise.resolve( true ),
+				activeStepContent: (
+					<div>
+						<span>Custom Step - Summary Active</span>
+						<ManualStepCompleteButton stepId={ steps[ 1 ].id } />
+					</div>
+				),
+			};
+			const { container, getAllByText } = render(
+				<MyCheckout steps={ [ stepWillPass, stepWithAsyncIsComplete, steps[ 4 ], steps[ 2 ] ] } />
+			);
+			const manualContinue = getAllByText( 'Complete manually' )[ 0 ];
+			const firstStep = container.querySelector( '.' + stepWillPass.className );
+			const secondStep = container.querySelector( '.' + stepWithAsyncIsComplete.className );
+			const thirdStep = container.querySelector( '.' + steps[ 4 ].className );
+			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
+			const secondStepContent = secondStep.querySelector( '.checkout-steps__step-content' );
+			const thirdStepContent = thirdStep.querySelector( '.checkout-steps__step-content' );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			expect( secondStepContent ).toHaveStyle( 'display: none' );
+			await act( async () => {
+				return fireEvent.click( manualContinue );
+			} );
+			expect( firstStepContent ).toHaveStyle( 'display: none' );
+			expect( secondStepContent ).toHaveStyle( 'display: none' );
+			expect( thirdStepContent ).toHaveStyle( 'display: block' );
+		} );
+
+		it( 'does not change steps if useSetStepComplete is used and the previous step remains incomplete', async () => {
+			function ManualStepCompleteButton( { stepId } ) {
+				const setStepComplete = useSetStepComplete();
+				return <button onClick={ () => setStepComplete( stepId ) }>Complete manually</button>;
+			}
+			const stepWillFail = {
+				...steps[ 1 ],
+				id: 'step-will-fail',
+				className: 'step-will-fail',
+				isCompleteCallback: () => Promise.resolve( false ),
+			};
+			const stepWithAsyncIsComplete = {
+				...steps[ 1 ],
+				isCompleteCallback: () => Promise.resolve( true ),
+				activeStepContent: (
+					<div>
+						<span>Custom Step - Summary Active</span>
+						<ManualStepCompleteButton stepId={ steps[ 1 ].id } />
+					</div>
+				),
+			};
+			const { container, getAllByText } = render(
+				<MyCheckout steps={ [ stepWillFail, stepWithAsyncIsComplete, steps[ 4 ], steps[ 2 ] ] } />
+			);
+			const manualContinue = getAllByText( 'Complete manually' )[ 0 ];
+			const firstStep = container.querySelector( '.' + stepWillFail.className );
+			const secondStep = container.querySelector( '.' + stepWithAsyncIsComplete.className );
+			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
+			const secondStepContent = secondStep.querySelector( '.checkout-steps__step-content' );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			expect( secondStepContent ).toHaveStyle( 'display: none' );
+			await act( async () => {
+				return fireEvent.click( manualContinue );
+			} );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			expect( secondStepContent ).toHaveStyle( 'display: none' );
+		} );
+
 		it( 'does not change steps if the continue button is clicked and the step remains incomplete after a Promise resolves', async () => {
 			const stepWithAsyncIsComplete = {
 				...steps[ 1 ],
@@ -370,6 +460,34 @@ describe( 'Checkout', () => {
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 			await act( async () => {
 				return fireEvent.click( firstStepContinue );
+			} );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+		} );
+
+		it( 'does not change steps if useSetStepComplete is used and the step remains incomplete after a Promise resolves', async () => {
+			function ManualStepCompleteButton( { stepId } ) {
+				const setStepComplete = useSetStepComplete();
+				return <button onClick={ () => setStepComplete( stepId ) }>Complete manually</button>;
+			}
+			const stepWithAsyncIsComplete = {
+				...steps[ 1 ],
+				isCompleteCallback: () => Promise.resolve( false ),
+				activeStepContent: (
+					<div>
+						<span>Custom Step - Summary Active</span>
+						<ManualStepCompleteButton stepId={ steps[ 1 ].id } />
+					</div>
+				),
+			};
+			const { container, getAllByText } = render(
+				<MyCheckout steps={ [ stepWithAsyncIsComplete, steps[ 4 ], steps[ 2 ] ] } />
+			);
+			const manualContinue = getAllByText( 'Complete manually' )[ 0 ];
+			const firstStep = container.querySelector( '.' + steps[ 1 ].className );
+			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			await act( async () => {
+				return fireEvent.click( manualContinue );
 			} );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
@@ -537,22 +655,17 @@ function createMockItems() {
 	return { items, total };
 }
 
-function createStepsFromStepObjects( stepObjects, paymentData ) {
-	const createStepFromStepObject = createStepObjectConverter( paymentData );
+function createStepsFromStepObjects( stepObjects ) {
 	const stepObjectsWithoutStepNumber = stepObjects.filter(
 		( stepObject ) => ! stepObject.hasStepNumber
 	);
 	const stepObjectsWithStepNumber = stepObjects.filter(
 		( stepObject ) => stepObject.hasStepNumber
 	);
-	return (
-		<Fragment>
-			{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
-			<CheckoutStepArea>
-				<CheckoutSteps>{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }</CheckoutSteps>
-			</CheckoutStepArea>
-		</Fragment>
-	);
+	return {
+		stepObjectsWithStepNumber,
+		stepObjectsWithoutStepNumber,
+	};
 }
 
 function createStepObjectConverter( paymentData ) {

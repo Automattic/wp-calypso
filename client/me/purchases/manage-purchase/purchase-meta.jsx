@@ -1,16 +1,18 @@
 import {
 	getPlan,
-	TERM_BIENNIALLY,
-	TERM_MONTHLY,
-	JETPACK_LEGACY_PLANS,
+	getProductFromSlug,
+	isConciergeSession,
 	isDomainRegistration,
 	isDomainTransfer,
-	isConciergeSession,
+	isEmailMonthly,
 	isJetpackPlan,
 	isJetpackProduct,
-	getProductFromSlug,
+	JETPACK_LEGACY_PLANS,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { getIntroductoryOfferIntervalDisplay } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -38,7 +40,6 @@ import {
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
 } from 'calypso/lib/purchases';
-import { TITAN_MAIL_MONTHLY_SLUG } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
@@ -251,7 +252,7 @@ function PurchaseMetaPrice( { purchase } ) {
 		}
 	}
 
-	if ( productSlug === TITAN_MAIL_MONTHLY_SLUG ) {
+	if ( isEmailMonthly( purchase ) ) {
 		period = translate( 'month' );
 	}
 
@@ -357,20 +358,35 @@ function RenewErrorMessage( { purchase, translate, site } ) {
 	if ( isJetpack ) {
 		return (
 			<div className="manage-purchase__footnotes">
+				{ isExpired( purchase )
+					? translate(
+							'%(purchaseName)s expired on %(siteSlug)s, and the site is no longer connected to WordPress.com. ' +
+								'To renew this purchase, please reconnect %(siteSlug)s to your WordPress.com account, then complete your purchase.',
+							{
+								args: {
+									purchaseName: getName( purchase ),
+									siteSlug: purchase.domain,
+								},
+							}
+					  )
+					: translate( 'The site %(siteSlug)s is no longer connected to WordPress.com.', {
+							args: {
+								siteSlug: purchase.domain,
+							},
+					  } ) }
+				&nbsp;
 				{ translate(
-					'%(purchaseName)s expired on %(siteSlug)s, and the site is no longer connected to WordPress.com. ' +
-						'To renew this purchase, please reconnect %(siteSlug)s to your WordPress.com account, then complete your purchase. ' +
-						'Now sure how to reconnect? {{supportPageLink}}Here are the instructions{{/supportPageLink}}.',
+					'Not sure how to reconnect? {{supportPageLink}}Here are the instructions{{/supportPageLink}}.',
 					{
 						args: {
-							purchaseName: getName( purchase ),
 							siteSlug: purchase.domain,
 						},
 						components: {
 							supportPageLink: (
 								<a
 									href={
-										JETPACK_SUPPORT + 'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
+										localizeUrl( JETPACK_SUPPORT ) +
+										'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
 									}
 								/>
 							),

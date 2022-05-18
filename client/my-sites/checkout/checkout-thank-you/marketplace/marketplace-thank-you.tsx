@@ -1,15 +1,13 @@
-import { ThemeProvider } from '@emotion/react';
+import { ThemeProvider, Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import { ThankYou } from 'calypso/components/thank-you';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import Item from 'calypso/layout/masterbar/item';
-import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
+import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
@@ -38,47 +36,6 @@ const ThankYouContainer = styled.div`
 	.thank-you__header-subtitle {
 		font-size: 16px;
 		color: var( --studio-gray-60 );
-	}
-`;
-
-const MasterbarStyled = styled( Masterbar )`
-	--color-masterbar-background: var( --studio-white );
-	--color-masterbar-text: var( --studio-gray-60 );
-	--masterbar-height: 72px;
-	border-bottom: 0;
-`;
-
-const WordPressLogoStyled = styled( WordPressLogo )`
-	max-height: calc( 100% - 47px );
-	align-self: center;
-	fill: rgb( 54, 54, 54 );
-`;
-
-const ItemStyled = styled( Item )`
-	cursor: pointer;
-	font-size: 14px;
-	font-weight: 500;
-	padding: 0;
-	justify-content: left;
-
-	&:hover {
-		background: var( --studio-white );
-		text-decoration: underline;
-	}
-
-	.gridicon {
-		height: 17px;
-		fill: var( --studio-black );
-
-		@media ( max-width: 480px ) {
-			margin: 0;
-		}
-	}
-
-	@media ( max-width: 480px ) {
-		.masterbar__item-content {
-			display: block;
-		}
 	}
 `;
 
@@ -167,6 +124,8 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 	const setupURL =
 		pluginOnSiteData?.action_links?.Settings || fallbackSetupUrl || `${ siteAdminUrl }plugins.php`;
 
+	const documentationURL = wpComPluginData?.documentation_url;
+
 	const setupSection = {
 		sectionKey: 'setup_whats_next',
 		sectionTitle: translate( 'What’s next?' ),
@@ -187,6 +146,22 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 					</FullWidthButton>
 				),
 			},
+			...( documentationURL
+				? [
+						{
+							stepKey: 'whats_next_documentation',
+							stepTitle: translate( 'Documentation' ),
+							stepDescription: translate(
+								'Visit the step-by-step guide to learn how to use this plugin.'
+							),
+							stepCta: (
+								<FullWidthButton href={ documentationURL }>
+									{ translate( 'Visit guide' ) }
+								</FullWidthButton>
+							),
+						},
+				  ]
+				: [] ),
 			{
 				stepKey: 'whats_next_grow',
 				stepTitle: translate( 'Keep growing' ),
@@ -213,17 +188,20 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 
 	return (
 		<ThemeProvider theme={ theme }>
-			<MasterbarStyled>
-				<WordPressLogoStyled />
-				<ItemStyled
-					icon="chevron-left"
-					onClick={ () =>
-						( document.location.href = `${ document.location.origin }/plugins/${ siteSlug }` )
-					} // Force reload the page.
-				>
-					{ translate( 'Back to plugins' ) }
-				</ItemStyled>
-			</MasterbarStyled>
+			{ /* Using Global to override Global masterbar height */ }
+			<Global
+				styles={ css`
+					body.is-section-marketplace {
+						--masterbar-height: 72px;
+					}
+				` }
+			/>
+			<MasterbarStyled
+				onClick={ () =>
+					( document.location.href = `${ document.location.origin }/plugins/${ siteSlug }` )
+				}
+				backText={ translate( 'Back to plugins' ) }
+			/>
 			<ThankYouContainer>
 				<ThankYou
 					containerClassName="marketplace-thank-you"

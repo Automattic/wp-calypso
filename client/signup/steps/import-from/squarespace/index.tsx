@@ -27,6 +27,7 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 		importSite,
 		startImport,
 		resetImport,
+		stepNavigator,
 	} = props;
 
 	/**
@@ -120,10 +121,16 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 								siteSlug={ siteSlug }
 								job={ job as ImportJob }
 								resetImport={ resetImport }
+								onSiteViewClick={ stepNavigator?.goToSiteViewPage }
 							/>
 						);
 					} else if ( checkIsFailed() ) {
-						return <ErrorMessage siteSlug={ siteSlug } />;
+						return (
+							<ErrorMessage
+								onStartBuilding={ stepNavigator?.goToIntentPage }
+								onBackToStart={ stepNavigator?.goToImportCapturePage }
+							/>
+						);
 					} else if ( checkProgress() ) {
 						return <ProgressScreen job={ job } />;
 					}

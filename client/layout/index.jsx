@@ -231,11 +231,6 @@ class Layout extends Component {
 		const optionalBodyProps = () => {
 			const bodyClass = [ 'font-smoothing-antialiased' ];
 
-			if ( ! config.isEnabled( 'jetpack-cloud' ) ) {
-				// Jetpack cloud hasn't yet aligned with WPCOM.
-				bodyClass.push( 'is-nav-unification' );
-			}
-
 			if ( this.props.sidebarIsCollapsed && isWithinBreakpoint( '>800px' ) ) {
 				bodyClass.push( 'is-sidebar-collapsed' );
 			}
@@ -261,7 +256,7 @@ class Layout extends Component {
 				<QuerySites primaryAndRecent={ ! config.isEnabled( 'jetpack-cloud' ) } />
 				{ this.props.shouldQueryAllSites && <QuerySites allSites /> }
 				<QueryPreferences />
-				<QuerySiteFeatures siteId={ this.props.siteId } />
+				<QuerySiteFeatures siteIds={ [ this.props.siteId ] } />
 				{ config.isEnabled( 'layout/query-selected-editor' ) && (
 					<QuerySiteSelectedEditor siteId={ this.props.siteId } />
 				) }

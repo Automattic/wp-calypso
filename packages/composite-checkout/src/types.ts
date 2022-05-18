@@ -12,6 +12,7 @@ export interface CheckoutStepProps {
 	titleContent: React.ReactNode;
 	isCompleteCallback: IsCompleteCallback;
 	activeStepContent?: React.ReactNode;
+	activeStepFooter?: React.ReactNode;
 	completeStepContent?: React.ReactNode;
 	className?: string;
 	editButtonText?: string;
@@ -24,6 +25,8 @@ export interface CheckoutStepProps {
 
 export type IsCompleteCallback = () => boolean | Promise< boolean >;
 
+export type StepCompleteCallback = () => Promise< boolean >;
+
 export interface OrderSummaryData {
 	className: string;
 	summaryContent: React.ReactNode;
@@ -31,6 +34,7 @@ export interface OrderSummaryData {
 
 export interface PaymentMethod {
 	id: string;
+	paymentProcessorId: string;
 	label?: React.ReactNode;
 	activeContent?: React.ReactNode;
 	inactiveContent?: React.ReactNode;
@@ -131,7 +135,7 @@ export type PaymentErrorCallback = ( args: {
 } ) => void;
 export type CheckoutPageErrorCallback = (
 	errorType: string,
-	errorMessage: string,
+	error: Error,
 	errorData?: Record< string, string | number | undefined >
 ) => void;
 
@@ -250,7 +254,6 @@ export interface TransactionStatusManager extends TransactionStatusState {
 }
 
 export type ProcessPayment = (
-	paymentProcessorId: string,
 	processorData: PaymentProcessorSubmitData
 ) => Promise< PaymentProcessorResponse >;
 

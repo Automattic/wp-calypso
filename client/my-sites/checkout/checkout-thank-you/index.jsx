@@ -17,10 +17,12 @@ import {
 	isBusiness,
 	isSiteRedirect,
 	isTheme,
+	isStarter,
 	isTitanMail,
 	isJetpackBusinessPlan,
 	shouldFetchSitePlans,
 	isDIFMProduct,
+	isPro,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -47,6 +49,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
+import { isStarterPlanEnabled } from 'calypso/my-sites/plans-comparison';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import {
@@ -82,9 +85,10 @@ import CheckoutThankYouHeader from './header';
 import JetpackPlanDetails from './jetpack-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
+import ProPlanDetails from './pro-plan-details';
 import SiteRedirectDetails from './site-redirect-details';
+import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
-
 import './style.scss';
 
 function getPurchases( props ) {
@@ -129,14 +133,8 @@ export class CheckoutThankYou extends Component {
 	componentDidMount() {
 		this.redirectIfThemePurchased();
 
-		const {
-			gsuiteReceipt,
-			gsuiteReceiptId,
-			receipt,
-			receiptId,
-			selectedSite,
-			sitePlans,
-		} = this.props;
+		const { gsuiteReceipt, gsuiteReceiptId, receipt, receiptId, selectedSite, sitePlans } =
+			this.props;
 
 		if ( selectedSite ) {
 			this.props.fetchAtomicTransfer?.( selectedSite.ID );
@@ -166,22 +164,19 @@ export class CheckoutThankYou extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	componentDidUpdate( prevProps ) {
+		const { receiptId, selectedSiteSlug, domainOnlySiteFlow } = this.props;
+
 		this.redirectIfThemePurchased();
 
 		if (
-			! this.props.receipt.hasLoadedFromServer &&
-			nextProps.receipt.hasLoadedFromServer &&
-			this.hasPlanOrDomainProduct( nextProps ) &&
+			! prevProps.receipt.hasLoadedFromServer &&
+			this.props.receipt.hasLoadedFromServer &&
+			this.hasPlanOrDomainProduct() &&
 			this.props.selectedSite
 		) {
 			this.props.refreshSitePlans( this.props.selectedSite.ID );
 		}
-	}
-
-	componentDidUpdate( prevProps ) {
-		const { receiptId, selectedSiteSlug, domainOnlySiteFlow } = this.props;
 
 		// Update route when an ecommerce site goes Atomic and site slug changes
 		// from 'wordpress.com` to `wpcomstaging.com`.
@@ -195,8 +190,8 @@ export class CheckoutThankYou extends Component {
 		}
 	}
 
-	hasPlanOrDomainProduct = ( props = this.props ) => {
-		return getPurchases( props ).some(
+	hasPlanOrDomainProduct = () => {
+		return getPurchases( this.props ).some(
 			( purchase ) => isPlan( purchase ) || isDomainProduct( purchase )
 		);
 	};
@@ -384,6 +379,7 @@ export class CheckoutThankYou extends Component {
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
+		let showHappinessSupport = ! this.props.isSimplified;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
 		let wasDomainProduct = false;
@@ -399,6 +395,7 @@ export class CheckoutThankYou extends Component {
 			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
+			showHappinessSupport = showHappinessSupport && ! purchases.some( isStarter ); // Don't show support if Starter was purchased
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 			wasDomainProduct = purchases.some(
 				( purchase ) =>
@@ -408,6 +405,9 @@ export class CheckoutThankYou extends Component {
 			);
 			wasDIFMProduct = purchases.some( isDIFMProduct );
 			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
+		} else if ( isStarterPlanEnabled() ) {
+			// Don't show the Happiness support until we figure out the user doesn't have a starter plan
+			showHappinessSupport = false;
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
@@ -510,7 +510,7 @@ export class CheckoutThankYou extends Component {
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
-				{ ! this.props.isSimplified && (
+				{ showHappinessSupport && (
 					<Card className="checkout-thank-you__footer">
 						<HappinessSupport
 							isJetpack={ wasJetpackPlanPurchased }
@@ -576,10 +576,14 @@ export class CheckoutThankYou extends Component {
 				return [ BloggerPlanDetails, find( purchases, isBlogger ) ];
 			} else if ( purchases.some( isPersonal ) ) {
 				return [ PersonalPlanDetails, find( purchases, isPersonal ) ];
+			} else if ( purchases.some( isStarter ) ) {
+				return [ StarterPlanDetails, find( purchases, isStarter ) ];
 			} else if ( purchases.some( isPremium ) ) {
 				return [ PremiumPlanDetails, find( purchases, isPremium ) ];
 			} else if ( purchases.some( isBusiness ) ) {
 				return [ BusinessPlanDetails, find( purchases, isBusiness ) ];
+			} else if ( purchases.some( isPro ) ) {
+				return [ ProPlanDetails, find( purchases, isPro ) ];
 			} else if ( purchases.some( isEcommerce ) ) {
 				return [ EcommercePlanDetails, find( purchases, isEcommerce ) ];
 			} else if ( purchases.some( isDomainRegistration ) ) {
@@ -621,11 +625,8 @@ export class CheckoutThankYou extends Component {
 		const purchases = getPurchases( this.props );
 		const failedPurchases = getFailedPurchases( this.props );
 		const hasFailedPurchases = failedPurchases.length > 0;
-		const [
-			ComponentClass,
-			primaryPurchase,
-			domain,
-		] = this.getComponentAndPrimaryPurchaseAndDomain();
+		const [ ComponentClass, primaryPurchase, domain ] =
+			this.getComponentAndPrimaryPurchaseAndDomain();
 		const registrarSupportUrl =
 			! ComponentClass || this.isGenericReceipt() || hasFailedPurchases
 				? null

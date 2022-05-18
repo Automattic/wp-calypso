@@ -21,7 +21,7 @@ const logCheckoutError = ( error ) => {
 		extra: {
 			env: config( 'env_id' ),
 			type: 'checkout_system_decider',
-			message: String( error ),
+			message: error.message + '; Stack: ' + error.stack,
 		},
 	} );
 };

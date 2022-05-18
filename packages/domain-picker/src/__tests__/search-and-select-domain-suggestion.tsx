@@ -14,6 +14,10 @@ const mockUseDomainSuggestionsResult: ReturnType< typeof useDomainSuggestions > 
 
 jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: () => false,
+	__esModule: true,
+	default: function config( key: string ) {
+		return key;
+	},
 } ) );
 
 jest.mock( '../hooks/use-domain-suggestions', () => ( {

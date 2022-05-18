@@ -50,7 +50,7 @@ function getWebpackConfig(
 
 	return {
 		...webpackConfig,
-		devtool: isDevelopment ? 'inline-cheap-source-map' : false,
+		devtool: isDevelopment ? 'inline-cheap-source-map' : 'source-map',
 		optimization: {
 			...webpackConfig.optimization,
 			// disable module concatenation so that instances of `__()` are not renamed

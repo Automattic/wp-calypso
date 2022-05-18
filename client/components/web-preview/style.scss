@@ -310,10 +310,3 @@ a.web-preview__external.button {
 	width: 100%;
 	z-index: z-index( 'root', '.web-preview__inner .spinner-line' );
 }
-
-.web-preview__inner .spinner-line {
-	position: absolute;
-	top: 22px;
-	width: 100%;
-	z-index: z-index( 'root', '.web-preview__inner .spinner-line' );
-}

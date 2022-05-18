@@ -1,6 +1,16 @@
 import {
 	camelOrSnakeSlug,
+	getPlan,
+	getTermDuration,
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_EXTRA_LICENSE_SLUG,
+	isBiennially,
+	isBlogger,
+	isBloggerPlan,
+	isBusiness,
+	isConciergeSession,
 	isCustomDesign,
+	isDIFMProduct,
 	isDomainMapping,
 	isDomainProduct,
 	isDomainRegistration,
@@ -11,39 +21,29 @@ import {
 	isGSuiteOrGoogleWorkspace,
 	isJetpackPlan,
 	isJetpackProduct,
+	isMonthlyProduct,
 	isNoAds,
-	isPlan,
-	isBlogger,
+	isP2Plus,
 	isPersonal,
+	isPlan,
 	isPremium,
-	isBusiness,
+	isPro,
+	isRenewable,
 	isSiteRedirect,
 	isSpaceUpgrade,
+	isTitanMail,
+	isTrafficGuide,
 	isUnlimitedSpace,
 	isUnlimitedThemes,
 	isVideoPress,
-	isConciergeSession,
-	isTrafficGuide,
-	isTitanMail,
-	isP2Plus,
-	isMonthlyProduct,
-	isBiennially,
-	getTermDuration,
-	getPlan,
-	isBloggerPlan,
-	isWpComFreePlan,
 	isWpComBloggerPlan,
-	isDIFMProduct,
+	isWpComFreePlan,
 	TITAN_MAIL_MONTHLY_SLUG,
 	TITAN_MAIL_YEARLY_SLUG,
 } from '@automattic/calypso-products';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
-import {
-	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
-	GSUITE_EXTRA_LICENSE_SLUG,
-} from 'calypso/lib/gsuite/constants';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type {
 	ResponseCart,
@@ -107,6 +107,10 @@ export function hasPersonalPlan( cart: ResponseCart ): boolean {
 
 export function hasPremiumPlan( cart: ResponseCart ): boolean {
 	return getAllCartItems( cart ).some( isPremium );
+}
+
+export function hasProPlan( cart: ResponseCart ): boolean {
+	return getAllCartItems( cart ).some( isPro );
 }
 
 export function hasBusinessPlan( cart: ResponseCart ): boolean {
@@ -494,6 +498,15 @@ export function jetpackProductItem( slug: string ): MinimalRequestCartProduct {
 }
 
 /**
+ * Creates a new shopping cart item for a renewable product.
+ */
+export function renewableProductItem( slug: string ): MinimalRequestCartProduct {
+	return {
+		product_slug: slug,
+	};
+}
+
+/**
  * Retrieves all the domain registration items in the specified shopping cart.
  */
 export function getDomainRegistrations( cart: ResponseCart ): ResponseCartProduct[] {
@@ -507,6 +520,75 @@ export function getDomainMappings( cart: ResponseCart ): ResponseCartProduct[] {
 	return getAllCartItems( cart ).filter( ( product ) => product.product_slug === 'domain_map' );
 }
 
+function createRenewalCartItemFromProduct(
+	product: ( WithCamelCaseSlug | WithSnakeCaseSlug ) & {
+		is_domain_registration?: boolean;
+		isDomainRegistration?: boolean;
+		id: string | number;
+		isRenewable?: boolean;
+	} & Partial< RequestCartProduct > & {
+			domain?: string;
+			users?: GSuiteProductUser[];
+		},
+	properties: { domain?: string }
+) {
+	const slug = camelOrSnakeSlug( product );
+
+	if ( isSpaceUpgrade( product ) ) {
+		return spaceUpgradeItem( slug );
+	}
+
+	if ( isJetpackProduct( product ) ) {
+		return jetpackProductItem( slug );
+	}
+
+	if ( isUnlimitedThemes( product ) ) {
+		return unlimitedThemesItem();
+	}
+
+	if ( isUnlimitedSpace( product ) ) {
+		return unlimitedSpaceItem();
+	}
+
+	if ( isVideoPress( product ) ) {
+		return videoPressItem();
+	}
+
+	if ( isCustomDesign( product ) ) {
+		return customDesignItem();
+	}
+
+	if ( isNoAds( product ) ) {
+		return noAdsItem();
+	}
+
+	if ( isSiteRedirect( product ) ) {
+		return siteRedirect( properties );
+	}
+
+	if ( isTitanMail( product ) ) {
+		return titanMailProduct( product, slug );
+	}
+
+	if ( isGSuiteOrGoogleWorkspace( product ) ) {
+		return googleApps( product );
+	}
+
+	if ( isPlan( product ) ) {
+		return planItem( slug );
+	}
+
+	if ( isDomainProduct( product ) ) {
+		return domainItem( slug, properties.domain ?? '' );
+	}
+
+	if ( isRenewable( product ) ) {
+		return renewableProductItem( slug );
+	}
+
+	return undefined;
+}
+
 /**
  * Returns a renewal CartItem object with the given properties and product slug.
  */
@@ -515,67 +597,17 @@ export function getRenewalItemFromProduct(
 		is_domain_registration?: boolean;
 		isDomainRegistration?: boolean;
 		id: string | number;
+		isRenewable?: boolean;
 	} & Partial< RequestCartProduct > & {
 			domain?: string;
 			users?: GSuiteProductUser[];
 		},
-	properties: { domain?: string }
+	properties: { domain?: string; isMarketplaceProduct?: boolean }
 ): MinimalRequestCartProduct {
-	const slug = camelOrSnakeSlug( product );
-	let cartItem;
-
-	if ( isDomainProduct( product ) ) {
-		cartItem = domainItem( slug, properties.domain ?? '' );
-	}
-
-	if ( isPlan( product ) ) {
-		cartItem = planItem( slug );
-	}
-
-	if ( isGSuiteOrGoogleWorkspace( product ) ) {
-		cartItem = googleApps( product );
-	}
-
-	if ( isTitanMail( product ) ) {
-		cartItem = titanMailProduct( product, slug );
-	}
-
-	if ( isSiteRedirect( product ) ) {
-		cartItem = siteRedirect( properties );
-	}
-
-	if ( isNoAds( product ) ) {
-		cartItem = noAdsItem();
-	}
-
-	if ( isCustomDesign( product ) ) {
-		cartItem = customDesignItem();
-	}
-
-	if ( isVideoPress( product ) ) {
-		cartItem = videoPressItem();
-	}
-
-	if ( isUnlimitedSpace( product ) ) {
-		cartItem = unlimitedSpaceItem();
-	}
-
-	if ( isUnlimitedThemes( product ) ) {
-		cartItem = unlimitedThemesItem();
-	}
-
-	if ( isJetpackProduct( product ) ) {
-		cartItem = jetpackProductItem( slug );
-	}
-
-	if ( isSpaceUpgrade( product ) ) {
-		cartItem = spaceUpgradeItem( slug );
-	}
-
+	const cartItem = createRenewalCartItemFromProduct( product, properties );
 	if ( ! cartItem ) {
 		throw new Error( 'This product cannot be renewed.' );
 	}
-
 	return getRenewalItemFromCartItem( cartItem, product );
 }
 

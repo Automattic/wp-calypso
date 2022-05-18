@@ -6,12 +6,13 @@ import {
 	DataHelper,
 	EditorPage,
 	PublishedPostPage,
-	skipItIf,
 	TestAccount,
 	envVariables,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { skipItIf } from '../../jest-helpers';
 
 const quote =
 	'The problem with quotes on the Internet is that it is hard to verify their authenticity.\n- Abraham Lincoln';
@@ -22,20 +23,18 @@ const tag = 'test-tag';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( features, [
+		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+	] );
+
 	let page: Page;
 	let editorPage: EditorPage;
 	let publishedPostPage: PublishedPostPage;
-	const accountName = getTestAccountByFeature(
-		{
-			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-		},
-		[ { gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
-	);
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
@@ -59,7 +58,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		const patternName = 'About Me';
 
 		it( `Add ${ patternName } pattern`, async function () {
-			await editorPage.addPattern( patternName );
+			await editorPage.addPatternFromSidebar( patternName );
 		} );
 	} );
 

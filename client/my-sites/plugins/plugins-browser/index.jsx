@@ -1,18 +1,13 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
-	isBusiness,
-	isEcommerce,
-	isEnterprise,
+	FEATURE_INSTALL_PLUGINS,
 	findFirstSimilarPlanKey,
-	FEATURE_UPLOAD_PLUGINS,
 	TYPE_BUSINESS,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import Search from '@automattic/search';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
@@ -25,22 +20,19 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import Pagination from 'calypso/components/pagination';
-import { PaginationVariant } from 'calypso/components/pagination/constants';
-import {
-	useWPCOMPlugin,
-	useWPCOMPlugins,
-	useWPCOMFeaturedPlugins,
-} from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import { useWPORGPlugins } from 'calypso/data/marketplace/use-wporg-plugin-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import UrlSearch from 'calypso/lib/url-search';
+import useUrlSearch from 'calypso/lib/url-search/use-url-search';
+import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import NoResults from 'calypso/my-sites/no-results';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import Categories from 'calypso/my-sites/plugins/categories';
+import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import EducationFooter from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
+import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import {
 	recordTracksEvent,
@@ -51,7 +43,6 @@ import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
-import { fetchPluginsCategoryNextPage } from 'calypso/state/plugins/wporg/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
@@ -70,61 +61,22 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-
 import './style.scss';
+import usePlugins from '../use-plugins';
 
 /**
  * Module variables
  */
 const SHORT_LIST_LENGTH = 6;
-const SEARCH_RESULTS_LIST_LENGTH = 12;
 
-const translateCategory = ( { category, translate } ) => {
-	switch ( category ) {
-		case 'new':
-			return translate( 'New', {
-				context: 'Category description for the plugin browser.',
-			} );
-		case 'popular':
-			return translate( 'Popular', {
-				context: 'Category description for the plugin browser.',
-			} );
-		case 'featured':
-			return translate( 'Featured', {
-				context: 'Category description for the plugin browser.',
-			} );
-		case 'paid':
-			return translate( 'Premium', {
-				context: 'Category description for the plugin browser.',
-			} );
-		default:
-			return translate( 'Plugins' );
-	}
-};
+const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle, hideHeader } ) => {
+	const {
+		isAboveElement,
+		targetRef: searchHeaderRef,
+		referenceRef: navigationHeaderRef,
+	} = useScrollAboveElement();
 
-const translateCategoryTitle = ( { category, translate } ) => {
-	switch ( category ) {
-		case 'new':
-			return translate( 'All New Plugins' );
-		case 'popular':
-			return translate( 'All Popular Plugins' );
-		case 'featured':
-			return translate( 'All Featured Plugins' );
-		case 'paid':
-			return translate( 'All Premium Plugins' );
-		default:
-			return translate( 'Plugins' );
-	}
-};
-
-const PluginsBrowser = ( {
-	trackPageViews = true,
-	category,
-	search,
-	searchTitle,
-	hideHeader,
-	doSearch,
-} ) => {
+	const { doSearch } = useUrlSearch();
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -133,15 +85,9 @@ const PluginsBrowser = ( {
 	// Billing period switcher.
 	const billingPeriod = useSelector( getBillingInterval );
 
-	const hasBusinessPlan =
-		sitePlan && ( isBusiness( sitePlan ) || isEnterprise( sitePlan ) || isEcommerce( sitePlan ) );
-
-	const { data: paidPluginsRawList = [], isLoading: isFetchingPaidPlugins } = useWPCOMPlugins(
-		'featured'
-	);
-	const paidPlugins = useMemo( () => paidPluginsRawList.map( updateWpComRating ), [
-		paidPluginsRawList,
-	] );
+	const { plugins: paidPlugins = [], isFetching: isFetchingPaidPlugins } = usePlugins( {
+		category: 'paid',
+	} );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const jetpackNonAtomic = useSelector(
@@ -159,25 +105,33 @@ const PluginsBrowser = ( {
 			!! selectedSite?.ID && ! canCurrentUser( state, selectedSite?.ID, 'manage_options' )
 	);
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
-	const {
-		data: { plugins: pluginsByCategory = [] } = {},
-		isLoading: isFetchingPluginsByCategory,
-	} = useWPORGPlugins( { category } );
-	const {
-		data: { plugins: pluginsByCategoryNew = [] } = {},
-		isLoading: isFetchingPluginsByCategoryNew,
-	} = useWPORGPlugins( { category: 'new' } );
-	const {
-		data: pluginsByCategoryFeatured = [],
-		isLoading: isFetchingPluginsByCategoryFeatured,
-	} = useWPCOMFeaturedPlugins();
 
 	const {
-		data: { plugins: popularPlugins = [] } = {},
-		isLoading: isFetchingPluginsByCategoryPopular,
-	} = useWPORGPlugins( { category: 'popular' } );
+		plugins: pluginsByCategoryFeatured = [],
+		isFetching: isFetchingPluginsByCategoryFeatured,
+	} = usePlugins( {
+		category: 'featured',
+	} );
+
+	const { plugins: popularPlugins = [], isFetching: isFetchingPluginsByCategoryPopular } =
+		usePlugins( {
+			category: 'popular',
+		} );
+
+	const {
+		plugins: pluginsBySearchTerm = [],
+		isFetching: isFetchingPluginsBySearchTerm,
+		pagination: pluginsPagination,
+		fetchNextPage,
+	} = usePlugins( {
+		search,
+		wpcomEnabled: !! search,
+		wporgEnabled: !! search,
+	} );
+
 	const pluginsByCategoryPopular = filterPopularPlugins(
 		popularPlugins,
 		pluginsByCategoryFeatured
@@ -197,6 +151,9 @@ const PluginsBrowser = ( {
 		return ! selectedSite?.ID && hasJetpack;
 	}, [ isJetpack, selectedSite, hasJetpack ] );
 
+	const categories = useCategories();
+	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
+
 	useEffect( () => {
 		const items = [
 			{
@@ -208,6 +165,15 @@ const PluginsBrowser = ( {
 				),
 			},
 		];
+
+		if ( category ) {
+			items.push( {
+				label: categoryName,
+				href: `/plugins/${ category }/${ siteSlug || '' }`,
+				id: 'category',
+			} );
+		}
+
 		if ( search ) {
 			items.push( {
 				label: translate( 'Search Results' ),
@@ -215,16 +181,9 @@ const PluginsBrowser = ( {
 				id: 'plugins-search',
 			} );
 		}
-		if ( category ) {
-			items.push( {
-				label: translateCategoryTitle( { category, translate } ),
-				href: `/plugins/${ category }/${ siteSlug || '' }`,
-				id: 'category',
-			} );
-		}
 
 		dispatch( updateBreadcrumbs( items ) );
-	}, [ siteSlug, search, category, dispatch, translate ] );
+	}, [ siteSlug, search, category, categoryName, dispatch, translate ] );
 
 	const trackSiteDisconnect = () =>
 		composeAnalytics(
@@ -251,19 +210,6 @@ const PluginsBrowser = ( {
 			);
 		}
 	}, [] );
-
-	const fetchNextPagePlugins = useCallback( () => {
-		if ( ! category ) {
-			return;
-		}
-
-		// If a request for this category is in progress, don't issue a new one
-		if ( isFetchingPluginsByCategory ) {
-			return;
-		}
-
-		dispatch( fetchPluginsCategoryNextPage( category ) );
-	}, [ category, isFetchingPluginsByCategory ] );
 
 	if ( ! isRequestingSitesData && noPermissionsError ) {
 		return <NoPermissionsError title={ translate( 'Plugins', { textOnly: true } ) } />;
@@ -292,6 +238,7 @@ const PluginsBrowser = ( {
 					className="plugins-browser__header"
 					navigationItems={ breadcrumbs }
 					compactBreadcrumb={ isMobile }
+					ref={ navigationHeaderRef }
 				>
 					<div className="plugins-browser__main-buttons">
 						<ManageButton
@@ -302,9 +249,6 @@ const PluginsBrowser = ( {
 						/>
 
 						<UploadPluginButton isMobile={ isMobile } siteSlug={ siteSlug } />
-					</div>
-					<div className="plugins-browser__searchbox">
-						{ <SearchBox isMobile={ isMobile } doSearch={ doSearch } search={ search } /> }
 					</div>
 				</FixedNavigationHeader>
 			) }
@@ -331,142 +275,156 @@ const PluginsBrowser = ( {
 				sitePlan={ sitePlan }
 				isVip={ isVip }
 				jetpackNonAtomic={ jetpackNonAtomic }
-				hasBusinessPlan={ hasBusinessPlan }
 				siteSlug={ siteSlug }
 			/>
 
+			<SearchBoxHeader
+				popularSearchesRef={ searchHeaderRef }
+				isSticky={ isAboveElement }
+				doSearch={ doSearch }
+				searchTerm={ search }
+				isSearching={ isFetchingPluginsBySearchTerm }
+				title={ translate( 'Plugins you need to get your projects done' ) }
+				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
+			/>
+
+			{ ! search && <Categories selected={ category } /> }
+
 			<PluginBrowserContent
-				pluginsByCategoryNew={ pluginsByCategoryNew }
-				isFetchingPluginsByCategoryNew={ isFetchingPluginsByCategoryNew }
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
 				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
+				isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
+				fetchNextPage={ fetchNextPage }
+				pluginsBySearchTerm={ pluginsBySearchTerm }
+				pluginsPagination={ pluginsPagination }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
 				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
 				search={ search }
 				category={ category }
-				pluginsByCategory={ pluginsByCategory }
-				isFetchingPluginsByCategory={ isFetchingPluginsByCategory }
 				paidPlugins={ paidPlugins }
 				isFetchingPaidPlugins={ isFetchingPaidPlugins }
 				sites={ sites }
 				searchTitle={ searchTitle }
 				siteSlug={ siteSlug }
+				siteId={ siteId }
 				jetpackNonAtomic={ jetpackNonAtomic }
 				billingPeriod={ billingPeriod }
 				setBillingPeriod={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
 			/>
-			<InfiniteScroll nextPageMethod={ fetchNextPagePlugins } />
 			<EducationFooter />
 		</MainComponent>
 	);
 };
 
-const WrappedSearch = ( props ) => <Search { ...props } />;
-
-const SearchListView = ( {
-	search: searchTerm,
-	searchTitle: searchTitleTerm,
-	siteSlug,
-	sites,
-	billingPeriod,
-} ) => {
-	const [ page, setPage ] = useState( 1 );
-	const [ pageSize, setPageSize ] = useState( SEARCH_RESULTS_LIST_LENGTH );
-
-	useEffect( () => {
-		setPage( 1 );
-	}, [ searchTerm ] );
-
-	const {
-		data: { plugins: pluginsBySearchTerm = [], pagination: pluginsPagination } = {},
-		isLoading: isFetchingPluginsBySearchTerm,
-	} = useWPORGPlugins(
-		{ searchTerm, page, pageSize },
-		{
-			enabled: !! searchTerm,
-		}
-	);
-	const {
-		data: paidPluginsBySearchTermRaw = [],
-		isLoading: isFetchingPaidPluginsBySearchTerm,
-	} = useWPCOMPlugins( 'all', searchTerm, {
-		enabled: !! searchTerm,
-	} );
-	const paidPluginsBySearchTerm = useMemo(
-		() => paidPluginsBySearchTermRaw.map( updateWpComRating ),
-		[ paidPluginsBySearchTermRaw ]
-	);
+const ClearSearch = () => {
+	const siteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 
-	const pluginItemsFetch = ( currentPage ) => {
-		return currentPage === 1
-			? SEARCH_RESULTS_LIST_LENGTH + ( paidPluginsBySearchTerm?.length % 2 )
-			: SEARCH_RESULTS_LIST_LENGTH;
-	};
+	return (
+		<a
+			className={ 'plugins-browser__clear-filters' }
+			href={ '/plugins' + ( siteSlug ? '/' + siteSlug : '' ) }
+		>
+			{ translate( 'Clear' ) }
+		</a>
+	);
+};
+const SearchListView = ( {
+	search: searchTerm,
+	pluginsPagination,
+	pluginsBySearchTerm,
+	fetchNextPage,
+	isFetchingPluginsBySearchTerm,
+	siteSlug,
+	siteId,
+	sites,
+	billingPeriod,
+	categoryName,
+} ) => {
+	const dispatch = useDispatch();
+
+	const translate = useTranslate();
 
 	useEffect( () => {
-		setPageSize( pluginItemsFetch( page ) );
-	}, [ paidPluginsBySearchTerm ] );
+		if ( searchTerm && pluginsPagination?.page === 1 ) {
+			dispatch(
+				recordTracksEvent( 'calypso_plugins_search_results_show', {
+					search_term: searchTerm,
+					results_count: pluginsPagination?.results,
+					blog_id: siteId,
+				} )
+			);
+		}
 
-	if (
-		pluginsBySearchTerm.length > 0 ||
-		paidPluginsBySearchTerm.length > 0 ||
-		isFetchingPluginsBySearchTerm ||
-		isFetchingPaidPluginsBySearchTerm
-	) {
-		const searchTitle =
-			searchTitleTerm ||
-			translate( 'Search results for {{b}}%(searchTerm)s{{/b}}', {
-				textOnly: true,
-				args: {
-					searchTerm,
-				},
-				components: {
-					b: <b />,
-				},
-			} );
+		if ( searchTerm && pluginsPagination ) {
+			dispatch(
+				recordTracksEvent( 'calypso_plugins_search_results_page', {
+					search_term: searchTerm,
+					page: pluginsPagination.page,
+					results_count: pluginsPagination?.results,
+					blog_id: siteId,
+				} )
+			);
+		}
+	}, [ searchTerm, pluginsPagination, dispatch, siteId ] );
 
-		const subtitle =
-			pluginsPagination &&
-			translate( '%(total)s plugin', '%(total)s plugins', {
-				count: pluginsPagination.results + paidPluginsBySearchTerm?.length,
-				textOnly: true,
-				args: {
-					total: pluginsPagination.results + paidPluginsBySearchTerm?.length,
-				},
-			} );
+	if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
+		let title = translate( 'Search results for "%(searchTerm)"', {
+			textOnly: true,
+			args: { searchTerm },
+		} );
+
+		if ( pluginsPagination ) {
+			title = translate(
+				'Found %(total)s plugin for "%(searchTerm)s"',
+				'Found %(total)s plugins for "%(searchTerm)s"',
+				{
+					count: pluginsPagination.results,
+					textOnly: true,
+					args: {
+						total: pluginsPagination.results,
+						searchTerm,
+					},
+				}
+			);
+
+			if ( categoryName ) {
+				title = translate(
+					'Found %(total)s plugin for "%(searchTerm)s" under "%(categoryName)s"',
+					'Found %(total)s plugins for "%(searchTerm)s" under "%(categoryName)s"',
+					{
+						count: pluginsPagination.results,
+						textOnly: true,
+						args: {
+							total: pluginsPagination.results,
+							searchTerm,
+							categoryName,
+						},
+					}
+				);
+			}
+		}
 
 		return (
 			<>
 				<PluginsBrowserList
-					plugins={
-						pluginsPagination?.page === 1
-							? [ ...paidPluginsBySearchTerm, ...pluginsBySearchTerm ]
-							: pluginsBySearchTerm
-					}
+					plugins={ pluginsBySearchTerm.filter( isNotBlocked ) }
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
-					title={ searchTitle }
-					subtitle={ subtitle }
+					subtitle={
+						<>
+							{ title }
+							<ClearSearch />
+						</>
+					}
+					showReset={ true }
 					site={ siteSlug }
-					showPlaceholders={ isFetchingPluginsBySearchTerm || isFetchingPaidPluginsBySearchTerm }
-					size={ pageSize }
+					showPlaceholders={ isFetchingPluginsBySearchTerm }
 					currentSites={ sites }
 					variant={ PluginsBrowserListVariant.Paginated }
 					extended
 					billingPeriod={ billingPeriod }
 				/>
-				{ pluginsPagination && (
-					<Pagination
-						page={ pluginsPagination.page }
-						perPage={ pluginItemsFetch( pluginsPagination?.page ) }
-						total={ pluginsPagination.results }
-						pageClick={ ( clickedPage ) => {
-							setPage( clickedPage );
-							setPageSize( pluginItemsFetch( clickedPage ) );
-						} }
-						variant={ PaginationVariant.minimal }
-					/>
-				) }
+				<InfiniteScroll nextPageMethod={ fetchNextPage } />
 			</>
 		);
 	}
@@ -481,57 +439,31 @@ const SearchListView = ( {
 	);
 };
 
-const FullListView = ( {
-	category,
-	isFetchingPluginsByCategory,
-	pluginsByCategory,
-	siteSlug,
-	sites,
-	paidPlugins,
-	isFetchingPaidPlugins,
-	billingPeriod,
-	setBillingPeriod,
-} ) => {
-	const translate = useTranslate();
+const FullListView = ( { category, siteSlug, sites, billingPeriod, setBillingPeriod } ) => {
+	const isPaidCategory = category === 'paid';
+	const { plugins, isFetching, fetchNextPage } = usePlugins( { category, infinite: true } );
 
-	let plugins = pluginsByCategory;
-	let isFetching = isFetchingPluginsByCategory;
-	if ( category === 'paid' ) {
-		plugins = paidPlugins;
-		isFetching = isFetchingPaidPlugins;
-	}
-
-	if ( plugins.length > 0 || isFetching ) {
-		return (
+	return (
+		<>
 			<PluginsBrowserList
 				plugins={ plugins }
 				listName={ category }
-				title={ translateCategoryTitle( { category, translate } ) }
 				site={ siteSlug }
 				showPlaceholders={ isFetching }
 				currentSites={ sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
 				billingPeriod={ billingPeriod }
-				setBillingPeriod={ category === 'paid' && setBillingPeriod }
+				setBillingPeriod={ isPaidCategory && setBillingPeriod }
 				extended
 			/>
-		);
-	}
 
-	// This shouldn't ever render but we can't return void/null here.
-	return (
-		<NoResults
-			text={ translate( 'No plugins available.', {
-				textOnly: true,
-			} ) }
-		/>
+			<InfiniteScroll nextPageMethod={ fetchNextPage } />
+		</>
 	);
 };
 
 const PluginSingleListView = ( {
 	category,
-	pluginsByCategoryNew,
-	isFetchingPluginsByCategoryNew,
 	pluginsByCategoryPopular,
 	isFetchingPluginsByCategoryPopular,
 	pluginsByCategoryFeatured,
@@ -547,16 +479,13 @@ const PluginSingleListView = ( {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
-	const { data: spotlightPlugin, isFetched: spotlightPluginFetched } =
-		useWPCOMPlugin( 'wordpress-seo-premium', { enabled: isEnabled( 'marketplace-spotlight' ) } ) ||
-		{};
+
+	const categories = useCategories();
+	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
 
 	let plugins;
 	let isFetching;
-	if ( category === 'new' ) {
-		plugins = pluginsByCategoryNew;
-		isFetching = isFetchingPluginsByCategoryNew;
-	} else if ( category === 'popular' ) {
+	if ( category === 'popular' ) {
 		plugins = pluginsByCategoryPopular;
 		isFetching = isFetchingPluginsByCategoryPopular;
 	} else if ( category === 'featured' ) {
@@ -569,6 +498,8 @@ const PluginSingleListView = ( {
 		return null;
 	}
 
+	plugins = plugins.filter( isNotBlocked );
+
 	let listLink = '/plugins/' + category;
 	if ( domain ) {
 		listLink = '/plugins/' + category + '/' + domain;
@@ -577,7 +508,7 @@ const PluginSingleListView = ( {
 		<PluginsBrowserList
 			plugins={ plugins.slice( 0, SHORT_LIST_LENGTH ) }
 			listName={ category }
-			title={ translateCategory( { category, translate } ) }
+			title={ categoryName }
 			site={ siteSlug }
 			expandedListLink={ plugins.length > SHORT_LIST_LENGTH ? listLink : false }
 			size={ SHORT_LIST_LENGTH }
@@ -586,8 +517,6 @@ const PluginSingleListView = ( {
 			variant={ PluginsBrowserListVariant.Fixed }
 			billingPeriod={ billingPeriod }
 			setBillingPeriod={ category === 'paid' && setBillingPeriod }
-			spotlightPlugin={ spotlightPlugin }
-			spotlightPluginFetched={ spotlightPluginFetched }
 			extended
 		/>
 	);
@@ -613,37 +542,36 @@ const PluginBrowserContent = ( props ) => {
 			) }
 
 			<PluginSingleListView { ...props } category="popular" />
-			<PluginSingleListView { ...props } category="new" />
 		</>
 	);
 };
 
-const UpgradeNudge = ( {
-	selectedSite,
-	sitePlan,
-	isVip,
-	jetpackNonAtomic,
-	hasBusinessPlan,
-	siteSlug,
-} ) => {
+const UpgradeNudge = ( { selectedSite, sitePlan, isVip, jetpackNonAtomic, siteSlug } ) => {
 	const translate = useTranslate();
+	const eligibleForProPlan = useSelector( ( state ) =>
+		isEligibleForProPlan( state, selectedSite?.ID )
+	);
 
-	if ( ! selectedSite?.ID || ! sitePlan || isVip || jetpackNonAtomic || hasBusinessPlan ) {
+	if ( ! selectedSite?.ID || ! sitePlan || isVip || jetpackNonAtomic ) {
 		return null;
 	}
 
-	const bannerURL = `/checkout/${ siteSlug }/business`;
+	const checkoutPlan = eligibleForProPlan ? 'pro' : 'business';
+	const bannerURL = `/checkout/${ siteSlug }/${ checkoutPlan }`;
 	const plan = findFirstSimilarPlanKey( sitePlan.product_slug, {
 		type: TYPE_BUSINESS,
 	} );
-	const title = translate( 'Upgrade to the Business plan to install plugins.' );
+
+	const title = eligibleForProPlan
+		? translate( 'Upgrade to the Pro plan to install plugins.' )
+		: translate( 'Upgrade to the Business plan to install plugins.' );
 
 	return (
 		<UpsellNudge
 			event="calypso_plugins_browser_upgrade_nudge"
 			showIcon={ true }
 			href={ bannerURL }
-			feature={ FEATURE_UPLOAD_PLUGINS }
+			feature={ FEATURE_INSTALL_PLUGINS }
 			plan={ plan }
 			title={ title }
 		/>
@@ -671,26 +599,6 @@ const UploadPluginButton = ( { isMobile, siteSlug } ) => {
 				<span className="plugins-browser__button-text">{ translate( 'Upload' ) }</span>
 			) }
 		</Button>
-	);
-};
-
-const SearchBox = ( { isMobile, doSearch, search } ) => {
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-
-	const recordSearchEvent = ( eventName ) =>
-		dispatch( recordGoogleEvent( 'PluginsBrowser', eventName ) );
-
-	return (
-		<WrappedSearch
-			pinned={ isMobile }
-			fitsContainer={ isMobile }
-			onSearch={ doSearch }
-			initialValue={ search }
-			placeholder={ translate( 'Try searching ‘ecommerce’' ) }
-			delaySearch={ true }
-			recordEvent={ recordSearchEvent }
-		/>
 	);
 };
 
@@ -734,21 +642,6 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) 
 };
 
 /**
- * Multiply the wpcom rating to match the wporg value.
- * wpcom rating is from 1 to 5 while wporg is from 1 to 100.
- *
- * @param plugin
- * @returns
- */
-function updateWpComRating( plugin ) {
-	if ( ! plugin || ! plugin.rating ) return plugin;
-
-	plugin.rating *= 20;
-
-	return plugin;
-}
-
-/**
  * Filter the popular plugins list.
  *
  * Remove the incompatible plugins and the displayed featured
@@ -770,4 +663,10 @@ function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 	);
 }
 
-export default UrlSearch( PluginsBrowser );
+const PLUGIN_SLUGS_BLOCKLIST = [];
+
+function isNotBlocked( plugin ) {
+	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
+}
+
+export default PluginsBrowser;

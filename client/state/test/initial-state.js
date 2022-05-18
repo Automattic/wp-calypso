@@ -352,7 +352,7 @@ describe( 'initial-state', () => {
 					.spyOn( browserStorage, 'getAllStoredItems' )
 					.mockResolvedValue( savedState );
 				await loadPersistedState();
-				state = getStateFromCache( reader, 'reader', 123456789 );
+				state = getStateFromCache( 123456789 )( reader, 'reader' );
 			} );
 
 			afterAll( () => {
@@ -394,7 +394,7 @@ describe( 'initial-state', () => {
 					.spyOn( browserStorage, 'getAllStoredItems' )
 					.mockResolvedValue( savedState );
 				await loadPersistedState();
-				state = getStateFromCache( reader, 'reader' );
+				state = getStateFromCache()( reader, 'reader' );
 			} );
 
 			afterAll( () => {
@@ -444,7 +444,7 @@ describe( 'initial-state', () => {
 					.spyOn( browserStorage, 'getAllStoredItems' )
 					.mockResolvedValue( savedState );
 				await loadPersistedState();
-				state = getStateFromCache( reader, 'reader', 123456789 );
+				state = getStateFromCache( 123456789 )( reader, 'reader' );
 			} );
 
 			afterAll( () => {
@@ -494,7 +494,7 @@ describe( 'initial-state', () => {
 					.spyOn( browserStorage, 'getAllStoredItems' )
 					.mockResolvedValue( savedState );
 				await loadPersistedState();
-				state = getStateFromCache( reader, 'reader', 123456789 );
+				state = getStateFromCache( 123456789 )( reader, 'reader' );
 			} );
 
 			afterAll( () => {
@@ -547,7 +547,7 @@ describe( 'initial-state', () => {
 					.mockResolvedValue( storedState );
 
 				await loadPersistedState();
-				state = getStateFromCache( signupReducer, 'signup' );
+				state = getStateFromCache()( signupReducer, 'signup' );
 			} );
 
 			afterAll( () => {
@@ -616,7 +616,7 @@ describe( 'initial-state', () => {
 					.mockResolvedValue( storedState );
 
 				await loadPersistedState();
-				state = getStateFromCache( signupReducer, 'signup', 123456789 );
+				state = getStateFromCache( 123456789 )( signupReducer, 'signup' );
 			} );
 
 			afterAll( () => {
@@ -899,7 +899,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load a reducer dynamically
 		const aReducer = withStorageKey( 'A', withKeyPrefix( 'A' ) );
-		addReducerToStore( store, userId )( [ 'a' ], aReducer );
+		addReducerToStore( store, getStateFromCache( userId ) )( [ 'a' ], aReducer );
 
 		// verify that the Redux store contains the stored state for `A` now
 		expect( store.getState() ).toEqual( {
@@ -934,7 +934,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load a reducer dynamically
 		const cdReducer = withStorageKey( 'CD', withKeyPrefix( 'CD' ) );
-		addReducerToStore( store, userId )( [ 'c', 'd' ], cdReducer );
+		addReducerToStore( store, getStateFromCache( userId ) )( [ 'c', 'd' ], cdReducer );
 
 		// verify that the Redux store contains the stored state for `A` now
 		expect( store.getState() ).toEqual( {
@@ -971,8 +971,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 
 		// load a reducer dynamically
 		const eReducer = withStorageKey( 'E', withKeyPrefix( 'E' ) );
-		addReducerToStore( store, userId )( [ 'e' ], eReducer );
-		addReducerToStore( store, userId )( [ 'e' ], eReducer );
+		addReducerToStore( store, getStateFromCache( userId ) )( [ 'e' ], eReducer );
+		addReducerToStore( store, getStateFromCache( userId ) )( [ 'e' ], eReducer );
 
 		// verify that the Redux store contains the stored state for `E` now
 		expect( store.getState() ).toEqual( {
@@ -1010,8 +1010,8 @@ describe( 'loading stored state with dynamic reducers', () => {
 		const cReducer = withStorageKey( 'C', withKeyPrefix( 'C' ) );
 
 		expect( () => {
-			addReducerToStore( store, userId )( [ 'b' ], bReducer );
-			addReducerToStore( store, userId )( [ 'b' ], cReducer );
+			addReducerToStore( store, getStateFromCache( userId ) )( [ 'b' ], bReducer );
+			addReducerToStore( store, getStateFromCache( userId ) )( [ 'b' ], cReducer );
 		} ).toThrow();
 	} );
 } );

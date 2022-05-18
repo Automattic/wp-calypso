@@ -9,7 +9,7 @@ import SiteSelector from 'calypso/components/site-selector';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
@@ -26,6 +26,7 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { requestSites } from 'calypso/state/sites/actions';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import TransferUnavailableNotice from '../transfer-unavailable-notice';
 import TransferConfirmationDialog from './confirmation-dialog';
 import type {
 	TransferDomainToOtherSitePassedProps,
@@ -180,11 +181,12 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 			showBackArrow: true,
 		};
 
-		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
+		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
 	};
 
 	renderSection(): JSX.Element {
-		const { currentUserCanManage, selectedDomainName, aftermarketAuction, domain } = this.props;
+		const { currentUserCanManage, selectedDomainName, aftermarketAuction, translate, domain } =
+			this.props;
 		const { children, ...propsWithoutChildren } = this.props;
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...propsWithoutChildren } />;
@@ -196,6 +198,16 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 
 		if ( domain && domain.isRedeemable ) {
 			return <NonTransferrableDomainNotice domainName={ selectedDomainName } />;
+		}
+
+		if ( domain?.pendingRegistration ) {
+			return (
+				<TransferUnavailableNotice
+					message={ translate(
+						'We are still setting up your domain. You will not be able to transfer it until the registration setup is done.'
+					) }
+				></TransferUnavailableNotice>
+			);
 		}
 
 		return (

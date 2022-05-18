@@ -15,7 +15,11 @@ export type NavigationControls = {
 	/**
 	 * Call this function if you want to jump to a certain step.
 	 */
-	goToStep?: ( step: StepPath ) => void;
+	goToStep?: ( step: StepPath | `${ StepPath }?${ string }` ) => void;
+	/**
+	 * Submits the answers provided in the flow
+	 */
+	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
 };
 
 /**
@@ -25,17 +29,29 @@ export type UseStepHook = () => StepPath[];
 
 export type UseStepNavigationHook = (
 	currentStep: StepPath,
-	navigate: ( stepName: StepPath ) => void,
+	navigate: ( stepName: StepPath | `${ StepPath }?${ string }` ) => void,
 	steps?: StepPath[]
 ) => NavigationControls;
 
+export type UseAssertConditionsHook = () => void;
+
 export type Flow = {
+	name: string;
+	classnames?: string | [ string ];
 	useSteps: UseStepHook;
 	useStepNavigation: UseStepNavigationHook;
+	useAssertConditions?: UseAssertConditionsHook;
+	/**
+	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
+	 */
+	useSideEffect?: () => void;
 };
 
 export type StepProps = {
 	navigation: NavigationControls;
+	flow: string | null;
 };
 
 export type Step = React.FC< StepProps >;
+
+export type ProvidedDependencies = Record< string, unknown >;

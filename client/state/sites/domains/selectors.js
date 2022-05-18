@@ -7,7 +7,7 @@ const EMPTY_SITE_DOMAINS = Object.freeze( [] );
  *
  * @param {object} state - global state tree
  * @param {number|undefined} siteId - identifier of the site
- * @returns {import('./types').SiteDomain[]} the list of domains
+ * @returns {import('./types').ResponseDomain[]} the list of domains
  */
 export const getDomainsBySiteId = ( state, siteId ) => {
 	if ( ! siteId ) {
@@ -22,7 +22,7 @@ export const getDomainsBySiteId = ( state, siteId ) => {
  *
  * @param {object} state - global state tree
  * @param {number | undefined} siteId - identifier of the site
- * @returns {null|import('./types').SiteDomain} the wpcom domain
+ * @returns {null|import('./types').ResponseDomain} the wpcom domain
  */
 export const getWpComDomainBySiteId = ( state, siteId ) => {
 	const domains = getDomainsBySiteId( state, siteId );

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import isRewindActivating from 'calypso/state/selectors/is-rewind-activating';
 
@@ -11,7 +10,7 @@ describe( 'isRewindActivating()', () => {
 				activationRequesting: {},
 			},
 		} );
-		expect( isRewindActivating( stateNoSite, siteId ) ).to.be.false;
+		expect( isRewindActivating( stateNoSite, siteId ) ).toBe( false );
 
 		const stateNoValue = deepFreeze( {
 			activityLog: {
@@ -20,7 +19,7 @@ describe( 'isRewindActivating()', () => {
 				},
 			},
 		} );
-		expect( isRewindActivating( stateNoValue, siteId ) ).to.be.false;
+		expect( isRewindActivating( stateNoValue, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return the value for a site', () => {
@@ -31,7 +30,7 @@ describe( 'isRewindActivating()', () => {
 				},
 			},
 		} );
-		expect( isRewindActivating( stateTrue, siteId ) ).to.be.true;
+		expect( isRewindActivating( stateTrue, siteId ) ).toBe( true );
 
 		const stateFalse = deepFreeze( {
 			activityLog: {
@@ -41,6 +40,6 @@ describe( 'isRewindActivating()', () => {
 			},
 		} );
 
-		expect( isRewindActivating( stateFalse, siteId ) ).to.be.false;
+		expect( isRewindActivating( stateFalse, siteId ) ).toBe( false );
 	} );
 } );

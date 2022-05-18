@@ -2,9 +2,9 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { getTld } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
+import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import {
 	getMappingFreeText,
-	getMappingPriceText,
 	getTransferFreeText,
 	getTransferPriceText,
 	getTransferRestrictionMessage,
@@ -47,7 +47,6 @@ export function getOptionInfo( {
 	cart,
 	currencyCode,
 	domain,
-	domainInboundTransferStatusInfo,
 	isSignupStep,
 	onConnect,
 	onTransfer,
@@ -63,14 +62,6 @@ export function getOptionInfo( {
 		primaryWithPlansOnly,
 		selectedSite,
 		isSignupStep,
-	} );
-
-	const mappingPriceText = getMappingPriceText( {
-		cart,
-		currencyCode,
-		domain,
-		productsList,
-		selectedSite,
 	} );
 
 	const transferFreeText = getTransferFreeText( {
@@ -102,14 +93,8 @@ export function getOptionInfo( {
 	};
 
 	const mappingPricing = {
-		cost: mappingPriceText,
 		text: mappingFreeText,
 	};
-
-	const {
-		transferrable: isDomainTransferrable,
-		domainTransferContent,
-	} = getDomainTransferrability( { ...domainInboundTransferStatusInfo, domain } );
 
 	let transferContent;
 	switch ( availability.status ) {
@@ -137,12 +122,26 @@ export function getOptionInfo( {
 				),
 			};
 			break;
-		default:
-			transferContent = optionInfo.transferNotSupported;
-	}
-
-	if ( ! isDomainTransferrable ) {
-		transferContent = domainTransferContent;
+		case domainAvailability.MAPPABLE:
+			transferContent = {
+				...optionInfo.transferNotSupported,
+				topText: createInterpolateElement(
+					sprintf(
+						/* translators: %s - the domain the user wanted to transfer */
+						__( "<strong>%s</strong> can't be transferred, but you can connect it instead." ),
+						domain
+					),
+					{ strong: createElement( 'strong' ) }
+				),
+			};
+			break;
+		default: {
+			const availabilityNotice = getAvailabilityNotice( domain, availability.status );
+			transferContent = {
+				...optionInfo.transferNotSupported,
+				topText: availabilityNotice.message,
+			};
+		}
 	}
 
 	let connectContent;

@@ -5,6 +5,7 @@ import ScanBadge from 'calypso/components/jetpack/scan-badge';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import { backupPath, scanPath } from 'calypso/lib/jetpack/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
+import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
@@ -34,7 +35,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 		setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
 	};
-	const currentPathMatches = ( url ) => itemLinkMatches( [ url ], path );
+	const currentPathMatches = ( url ) => itemLinkMatches( url, path );
 
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 
@@ -91,6 +92,18 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 				selected={ currentPathMatches( `/jetpack-search/${ siteSlug }` ) }
 				expandSection={ expandSection }
 			/>
+			{ isSectionNameEnabled( 'jetpack-social' ) && isAdmin && ! isWPForTeamsSite && (
+				<SidebarItem
+					customIcon={ showIcons && <JetpackIcons icon="social" /> }
+					label={ translate( 'Social', {
+						comment: 'Jetpack sidebar menu item',
+					} ) }
+					link={ `/jetpack-social/${ siteSlug }` }
+					onNavigate={ onNavigate( tracksEventNames.socialClicked ) }
+					selected={ currentPathMatches( `/jetpack-social/${ siteSlug }` ) }
+					expandSection={ expandSection }
+				/>
+			) }
 		</>
 	);
 };

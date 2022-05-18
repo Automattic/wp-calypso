@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	getDocumentHeadTitle,
 	getDocumentHeadUnreadCount,
@@ -21,7 +20,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( title ).to.equal( 'My Section Title' );
+			expect( title ).toEqual( 'My Section Title' );
 		} );
 	} );
 
@@ -33,7 +32,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( unreadCount ).to.equal( 3 );
+			expect( unreadCount ).toEqual( 3 );
 		} );
 	} );
 
@@ -45,7 +44,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( unreadCount ).to.equal( '40+' );
+			expect( unreadCount ).toEqual( '40+' );
 		} );
 	} );
 
@@ -74,7 +73,7 @@ describe( 'selectors', () => {
 					},
 				} );
 
-				expect( formattedTitle ).to.equal( 'WordPress.com' );
+				expect( formattedTitle ).toEqual( 'WordPress.com' );
 			} );
 
 			test( 'should return formatted title made up of section but not site name', () => {
@@ -102,7 +101,7 @@ describe( 'selectors', () => {
 					},
 				} );
 
-				expect( formattedTitle ).to.equal( 'Reader — WordPress.com' );
+				expect( formattedTitle ).toEqual( 'Reader — WordPress.com' );
 			} );
 
 			test( 'should return formatted title made up of section and unread count but not site name', () => {
@@ -131,7 +130,7 @@ describe( 'selectors', () => {
 					},
 				} );
 
-				expect( formattedTitle ).to.equal( '(12) Reader — WordPress.com' );
+				expect( formattedTitle ).toEqual( '(12) Reader — WordPress.com' );
 			} );
 		} );
 
@@ -159,7 +158,7 @@ describe( 'selectors', () => {
 					},
 				} );
 
-				expect( formattedTitle ).to.equal( 'WordPress.com' );
+				expect( formattedTitle ).toEqual( 'WordPress.com' );
 			} );
 
 			test( 'should return formatted title made up of section only, for no selected site', () => {
@@ -187,7 +186,7 @@ describe( 'selectors', () => {
 					},
 				} );
 
-				expect( formattedTitle ).to.equal( 'Themes — WordPress.com' );
+				expect( formattedTitle ).toEqual( 'Themes — WordPress.com' );
 			} );
 
 			test( 'should return formatted title made up of site only, for unset title', () => {
@@ -213,7 +212,7 @@ describe( 'selectors', () => {
 					},
 				} );
 
-				expect( formattedTitle ).to.equal( 'WordPress.com Example Blog — WordPress.com' );
+				expect( formattedTitle ).toEqual( 'WordPress.com Example Blog — WordPress.com' );
 			} );
 
 			test( 'should return formatted title made up of section and site name', () => {
@@ -241,7 +240,7 @@ describe( 'selectors', () => {
 					},
 				} );
 
-				expect( formattedTitle ).to.equal( 'Themes ‹ WordPress.com Example Blog — WordPress.com' );
+				expect( formattedTitle ).toEqual( 'Themes ‹ WordPress.com Example Blog — WordPress.com' );
 			} );
 		} );
 	} );
@@ -257,7 +256,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( meta ).to.eql( [
+			expect( meta ).toEqual( [
 				{ property: 'og:site_name', content: 'WordPress.com' },
 				{ property: 'og:type', content: 'website' },
 			] );
@@ -272,7 +271,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( link ).to.eql( [ { rel: 'canonical', href: 'https://wordpress.com' } ] );
+			expect( link ).toEqual( [ { rel: 'canonical', href: 'https://wordpress.com' } ] );
 		} );
 	} );
 } );

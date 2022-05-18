@@ -27,6 +27,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import OlarkChat from 'calypso/components/olark-chat';
 import {
 	recordSignupStart,
 	recordSignupComplete,
@@ -183,10 +184,6 @@ class Signup extends Component {
 
 		this.updateShouldShowLoadingScreen();
 
-		// Only applies to the P2 signup flow (/start/p2) and only after logging in to
-		// a WP.com account during the signup flow.
-		this.completeP2FlowAfterLoggingIn();
-
 		if ( canResumeFlow( this.props.flowName, this.props.progress, this.props.isLoggedIn ) ) {
 			// Resume from the current window location
 			return;
@@ -277,6 +274,22 @@ class Signup extends Component {
 				sitePlanName,
 				sitePlanSlug
 			);
+		}
+
+		// Several steps in the P2 signup flow require a logged in user.
+		if ( isP2Flow( this.props.flowName ) && ! this.props.isLoggedIn && stepName !== 'user' ) {
+			debug( 'P2 signup: logging in user', this.props.signupDependencies );
+
+			// We want to be redirected to the next step.
+			const destinationStep = flows.getFlow( this.props.flowName, this.props.isLoggedIn )
+				.steps[ 1 ];
+			const stepUrl = getStepUrl(
+				this.props.flowName,
+				destinationStep,
+				undefined,
+				this.props.locale
+			);
+			this.handleLogin( this.props.signupDependencies, stepUrl, false );
 		}
 	}
 
@@ -452,15 +465,17 @@ class Signup extends Component {
 		this.handleLogin( dependencies, destination );
 	};
 
-	handleLogin( dependencies, destination ) {
+	handleLogin( dependencies, destination, resetSignupFlowController = true ) {
 		const userIsLoggedIn = this.props.isLoggedIn;
 
 		debug( `Logging you in to "${ destination }"` );
 
-		this.signupFlowController.reset();
+		if ( resetSignupFlowController ) {
+			this.signupFlowController.reset();
 
-		if ( ! this.state.controllerHasReset ) {
-			this.setState( { controllerHasReset: true } );
+			if ( ! this.state.controllerHasReset ) {
+				this.setState( { controllerHasReset: true } );
+			}
 		}
 
 		if ( userIsLoggedIn ) {
@@ -498,6 +513,7 @@ class Signup extends Component {
 			}
 
 			if ( this.state.bearerToken !== bearerToken && this.state.username !== username ) {
+				debug( 'Performing regular login' );
 				this.setState( {
 					bearerToken: dependencies.bearer_token,
 					username: dependencies.username,
@@ -724,34 +740,49 @@ class Signup extends Component {
 		}
 
 		const isReskinned = isReskinnedFlow( this.props.flowName );
+		const olarkIdentity = config( 'olark_chat_identity' );
+		const olarkSystemsGroupId = '2dfd76a39ce77758f128b93942ae44b5';
+		const isEligibleForOlarkChat =
+			'onboarding' === this.props.flowName &&
+			[ 'en', 'en-gb' ].includes( this.props.localeSlug ) &&
+			this.props.existingSiteCount < 1;
 
 		return (
-			<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
-				<DocumentHead title={ this.props.pageTitle } />
-				{ ! isP2Flow( this.props.flowName ) && (
-					<SignupHeader
-						shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
-						isReskinned={ isReskinned }
-						rightComponent={
-							showProgressIndicator( this.props.flowName ) && (
-								<FlowProgressIndicator
-									positionInFlow={ this.getPositionInFlow() }
-									flowLength={ this.getInteractiveStepsCount() }
-									flowName={ this.props.flowName }
-								/>
-							)
-						}
+			<>
+				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
+					<DocumentHead title={ this.props.pageTitle } />
+					{ ! isP2Flow( this.props.flowName ) && (
+						<SignupHeader
+							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
+							isReskinned={ isReskinned }
+							rightComponent={
+								showProgressIndicator( this.props.flowName ) && (
+									<FlowProgressIndicator
+										positionInFlow={ this.getPositionInFlow() }
+										flowLength={ this.getInteractiveStepsCount() }
+										flowName={ this.props.flowName }
+									/>
+								)
+							}
+						/>
+					) }
+					<div className="signup__steps">{ this.renderCurrentStep( isReskinned ) }</div>
+					{ this.state.bearerToken && (
+						<WpcomLoginForm
+							authorization={ 'Bearer ' + this.state.bearerToken }
+							log={ this.state.username }
+							redirectTo={ this.state.redirectTo }
+						/>
+					) }
+				</div>
+				{ isEligibleForOlarkChat && (
+					<OlarkChat
+						systemsGroupId={ olarkSystemsGroupId }
+						identity={ olarkIdentity }
+						shouldDisablePreChatSurvey
 					/>
 				) }
-				<div className="signup__steps">{ this.renderCurrentStep( isReskinned ) }</div>
-				{ this.state.bearerToken && (
-					<WpcomLoginForm
-						authorization={ 'Bearer ' + this.state.bearerToken }
-						log={ this.state.username }
-						redirectTo={ this.state.redirectTo }
-					/>
-				) }
-			</div>
+			</>
 		);
 	}
 }

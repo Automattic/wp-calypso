@@ -1,5 +1,5 @@
-import { FEATURE_PREMIUM_THEMES, planHasFeature } from '@automattic/calypso-products';
-import { compact, isEqual, property, snakeCase } from 'lodash';
+import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import { compact, property, snakeCase } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import * as React from 'react';
@@ -9,7 +9,8 @@ import ThemesList from 'calypso/components/themes-list';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer.js';
-import { getSiteSlug, isJetpackSite, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
 	arePremiumThemesEnabled,
@@ -211,8 +212,11 @@ export const ConnectedThemesSelection = connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
-		const sitePlanSlug = getSitePlanSlug( state, siteId );
-		const hasUnlimitedPremiumThemes = planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES );
+		const hasUnlimitedPremiumThemes = siteHasFeature(
+			state,
+			siteId,
+			WPCOM_FEATURES_PREMIUM_THEMES
+		);
 
 		let sourceSiteId;
 		if ( source === 'wpcom' || source === 'wporg' ) {
@@ -275,24 +279,8 @@ class ThemesSelectionWithPage extends React.Component {
 		page: 1,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if (
-			nextProps.search !== this.props.search ||
-			nextProps.tier !== this.props.tier ||
-			! isEqual( nextProps.filter, this.props.filter ) ||
-			! isEqual( nextProps.vertical, this.props.vertical )
-		) {
-			this.resetPage();
-		}
-	}
-
 	incrementPage = () => {
-		this.setState( { page: this.state.page + 1 } );
-	};
-
-	resetPage = () => {
-		this.setState( { page: 1 } );
+		this.setState( ( prevState ) => ( { page: prevState.page + 1 } ) );
 	};
 
 	render() {
@@ -306,4 +294,21 @@ class ThemesSelectionWithPage extends React.Component {
 	}
 }
 
-export default ThemesSelectionWithPage;
+/**
+ * Key component instances by search, tier, filter and vertical
+ * to ensure that as any of them is changed, pagination is reset.
+ */
+function KeyedThemesSelectionWithPage( { search, tier, filter, vertical, ...restProps } ) {
+	return (
+		<ThemesSelectionWithPage
+			key={ `themes-selection-${ search }-${ tier }-${ filter }-${ vertical }` }
+			search={ search }
+			tier={ tier }
+			filter={ filter }
+			vertical={ vertical }
+			{ ...restProps }
+		/>
+	);
+}
+
+export default KeyedThemesSelectionWithPage;

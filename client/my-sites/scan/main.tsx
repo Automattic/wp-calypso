@@ -46,24 +46,21 @@ interface Props {
 	scanState?: Scan;
 	scanProgress?: number;
 	isInitialScan?: boolean;
-	isRequestingScan: boolean;
-	scanPageVisitCount: number;
+	isRequestingScan?: boolean;
+	scanPageVisitCount?: number;
 	timezone: string | null;
 	gmtOffset: number | null;
 	moment: {
 		utc: typeof utc;
 	};
 	applySiteOffset: applySiteOffsetType | null;
-	dispatchRecordTracksEvent: ( arg0: string, arg1: Record< string, unknown > ) => null;
-	dispatchScanRun: ( arg0: number ) => null;
-	dispatchIncrementCounter: (
-		counterName: string,
-		keyedToSiteId?: boolean,
-		countSameDay?: boolean
-	) => null;
-	dispatchSetReviewPromptValid: ( type: string, validFrom: number ) => null;
+	dispatchRecordTracksEvent: typeof recordTracksEvent;
+	dispatchScanRun: ( arg0: number ) => void;
+	dispatchIncrementCounter: ( arg0: string, arg1: boolean, arg2: boolean ) => void;
+	dispatchSetReviewPromptValid: ( arg0: 'restore' | 'scan', arg1: number | null ) => void;
+
 	isAdmin: boolean;
-	siteSettingsUrl: string;
+	siteSettingsUrl?: string | null;
 }
 
 const SCAN_VISIT_COUNTER_NAME = 'scan-page-visit';
@@ -377,7 +374,7 @@ export default connect(
 		const siteSettingsUrl = getSettingsUrl( state, siteId, 'general' );
 		const scanState = ( getSiteScanState( state, siteId ) as Scan ) ?? undefined;
 		const scanProgress = getSiteScanProgress( state, siteId ) ?? undefined;
-		const isRequestingScan = isRequestingJetpackScan( state, siteId );
+		const isRequestingScan = !! isRequestingJetpackScan( state, siteId );
 		const isInitialScan = getSiteScanIsInitial( state, siteId );
 		const scanPageVisitCount = getCount( state, SCAN_VISIT_COUNTER_NAME, false );
 

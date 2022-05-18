@@ -44,14 +44,8 @@ EmailListActiveWarning.propTypes = {
 
 class EmailListActive extends Component {
 	render() {
-		const {
-			currentRoute,
-			domains,
-			selectedSiteSlug,
-			translate,
-			selectedSiteId,
-			source,
-		} = this.props;
+		const { currentRoute, domains, selectedSiteSlug, translate, selectedSiteId, source } =
+			this.props;
 
 		if ( domains.length < 1 ) {
 			return null;

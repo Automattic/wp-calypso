@@ -1,4 +1,3 @@
-import { assert } from 'chai';
 import {
 	isTicketSupportEligible,
 	isTicketSupportConfigurationReady,
@@ -32,27 +31,27 @@ describe( 'ticket-support/configuration/selectors', () => {
 
 	describe( '#isTicketSupportEligible', () => {
 		test( 'should default to false', () => {
-			assert.isFalse( isTicketSupportEligible( uninitState ) );
+			expect( isTicketSupportEligible( uninitState ) ).toBe( false );
 		} );
 
 		test( 'should return true', () => {
-			assert.isTrue( isTicketSupportEligible( initedState ) );
+			expect( isTicketSupportEligible( initedState ) ).toBe( true );
 		} );
 	} );
 
 	describe( '#isTicketSupportConfigurationReady', () => {
 		test( 'should return false', () => {
-			assert.isFalse( isTicketSupportConfigurationReady( uninitState ) );
+			expect( isTicketSupportConfigurationReady( uninitState ) ).toBe( false );
 		} );
 
 		test( 'should return true', () => {
-			assert.isTrue( isTicketSupportConfigurationReady( initedState ) );
+			expect( isTicketSupportConfigurationReady( initedState ) ).toBe( true );
 		} );
 	} );
 
 	describe( '#isRequestingTicketSupportConfiguration', () => {
 		test( 'should return true', () => {
-			assert.isTrue(
+			expect(
 				isRequestingTicketSupportConfiguration( {
 					help: {
 						ticket: {
@@ -60,7 +59,7 @@ describe( 'ticket-support/configuration/selectors', () => {
 						},
 					},
 				} )
-			);
+			).toBe( true );
 		} );
 	} );
 
@@ -74,7 +73,7 @@ describe( 'ticket-support/configuration/selectors', () => {
 				},
 			};
 
-			assert.deepEqual( getTicketSupportRequestError( errorState ), dummyError );
+			expect( getTicketSupportRequestError( errorState ) ).toEqual( dummyError );
 		} );
 	} );
 } );

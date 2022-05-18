@@ -1,17 +1,14 @@
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+import { render } from '@testing-library/react';
 import { QueryVerticals } from '../';
 
 describe( 'QueryVerticals', () => {
-	test( 'should mount as an empty object', () => {
-		const wrapped = shallow( <QueryVerticals /> );
-
-		expect( wrapped ).toEqual( {} );
-	} );
-
 	test( 'should call request on mount.', () => {
 		const requestVerticals = jest.fn();
 
-		shallow( <QueryVerticals requestVerticals={ requestVerticals } searchTerm="Foo" /> );
+		render( <QueryVerticals requestVerticals={ requestVerticals } searchTerm="Foo" /> );
 
 		expect( requestVerticals ).toHaveBeenCalled();
 	} );
@@ -19,7 +16,7 @@ describe( 'QueryVerticals', () => {
 	test( 'should not call request on mount if no search term is given.', () => {
 		const requestVerticals = jest.fn();
 
-		shallow( <QueryVerticals requestVerticals={ requestVerticals } /> );
+		render( <QueryVerticals requestVerticals={ requestVerticals } /> );
 
 		expect( requestVerticals ).not.toHaveBeenCalled();
 	} );
@@ -27,7 +24,7 @@ describe( 'QueryVerticals', () => {
 	test( 'should not call request on mount if a matching fetched result is found in state.', () => {
 		const requestVerticals = jest.fn();
 
-		shallow( <QueryVerticals requestVerticals={ requestVerticals } isFetched={ true } /> );
+		render( <QueryVerticals requestVerticals={ requestVerticals } isFetched={ true } /> );
 
 		expect( requestVerticals ).not.toHaveBeenCalled();
 	} );
@@ -35,7 +32,7 @@ describe( 'QueryVerticals', () => {
 	test( 'should call request on update if no matching fetched result is found in state.', () => {
 		const requestVerticals = jest.fn();
 
-		const wrapped = shallow( <QueryVerticals requestVerticals={ requestVerticals } /> );
+		const { rerender } = render( <QueryVerticals requestVerticals={ requestVerticals } /> );
 
 		const updatedProps = {
 			siteType: '',
@@ -44,7 +41,7 @@ describe( 'QueryVerticals', () => {
 			isFetched: false,
 		};
 
-		wrapped.setProps( updatedProps );
+		rerender( <QueryVerticals requestVerticals={ requestVerticals } { ...updatedProps } /> );
 
 		expect( requestVerticals ).toHaveBeenCalledWith(
 			updatedProps.searchTerm,
@@ -56,7 +53,7 @@ describe( 'QueryVerticals', () => {
 	test( 'should not call request on update if a matching fetched result is found in state.', () => {
 		const requestVerticals = jest.fn();
 
-		const wrapped = shallow( <QueryVerticals requestVerticals={ requestVerticals } /> );
+		const { rerender } = render( <QueryVerticals requestVerticals={ requestVerticals } /> );
 
 		const updatedProps = {
 			searchTerm: 'Foo',
@@ -64,7 +61,7 @@ describe( 'QueryVerticals', () => {
 			isFetched: true,
 		};
 
-		wrapped.setProps( updatedProps );
+		rerender( <QueryVerticals requestVerticals={ requestVerticals } { ...updatedProps } /> );
 
 		expect( requestVerticals ).not.toHaveBeenCalled();
 	} );
@@ -74,7 +71,7 @@ describe( 'QueryVerticals', () => {
 		const debounceFunc = jest.fn();
 		const debounceTime = 100;
 
-		shallow(
+		render(
 			<QueryVerticals
 				requestVerticals={ requestVerticals }
 				debounceFunc={ debounceFunc }
@@ -89,7 +86,7 @@ describe( 'QueryVerticals', () => {
 		const requestVerticals = jest.fn();
 		const debounceFunc = jest.fn();
 
-		shallow(
+		render(
 			<QueryVerticals
 				requestVerticals={ requestVerticals }
 				debounceFunc={ debounceFunc }
@@ -104,19 +101,17 @@ describe( 'QueryVerticals', () => {
 		const requestVerticals = jest.fn();
 		const debounceFunc = jest.fn();
 
-		const wrapped = shallow(
-			<QueryVerticals
-				requestVerticals={ requestVerticals }
-				debounceFunc={ debounceFunc }
-				debounceTime={ 100 }
-			/>
-		);
+		const props = {
+			requestVerticals,
+			debounceFunc,
+			debounceTime: 100,
+		};
+
+		const { rerender } = render( <QueryVerticals { ...props } /> );
 
 		const updatedDebounceTime = 200;
 
-		wrapped.setProps( {
-			debounceTime: updatedDebounceTime,
-		} );
+		rerender( <QueryVerticals { ...props } debounceTime={ updatedDebounceTime } /> );
 
 		expect( debounceFunc ).toHaveBeenCalledWith( requestVerticals, updatedDebounceTime );
 	} );
@@ -126,19 +121,17 @@ describe( 'QueryVerticals', () => {
 		const debounceFunc = jest.fn();
 		const debounceTime = 100;
 
-		const wrapped = shallow(
-			<QueryVerticals
-				requestVerticals={ requestVerticals }
-				debounceFunc={ debounceFunc }
-				debounceTime={ debounceTime }
-			/>
-		);
+		const props = {
+			requestVerticals,
+			debounceFunc,
+			debounceTime,
+		};
+
+		const { rerender } = render( <QueryVerticals { ...props } /> );
 
 		debounceFunc.mockClear();
 
-		wrapped.setProps( {
-			debounceTime,
-		} );
+		rerender( <QueryVerticals { ...props } /> );
 
 		expect( debounceFunc ).not.toHaveBeenCalled();
 	} );

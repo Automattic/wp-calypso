@@ -38,7 +38,6 @@ const statusMapping = {
  * @param {Array} response.errors List of { code, message } pairs describing issues
  * @param {object} options object
  * @returns {Array} list of hold constants associated with issues listed in API response
- *
  */
 export const eligibilityHoldsFromApi = ( { errors = [] }, options = {} ) =>
 	errors
@@ -112,7 +111,6 @@ const trackEligibility = ( data ) => {
  * Issues an API request to fetch eligibility information for a site
  *
  * @param {Function} action dispatcher
- *
  * @returns {object} action
  */
 export const requestAutomatedTransferEligibility = ( action ) =>
@@ -125,18 +123,17 @@ export const requestAutomatedTransferEligibility = ( action ) =>
 		action
 	);
 
-export const updateAutomatedTransferEligibility = ( { siteId }, data ) => (
-	dispatch,
-	getState
-) => {
-	const siteIsUnlaunched = isUnlaunchedSite( getState(), siteId );
-	dispatch(
-		withAnalytics(
-			trackEligibility( data ),
-			updateEligibility( siteId, fromApi( data, { sitePrivateUnlaunched: siteIsUnlaunched } ) )
-		)
-	);
-};
+export const updateAutomatedTransferEligibility =
+	( { siteId }, data ) =>
+	( dispatch, getState ) => {
+		const siteIsUnlaunched = isUnlaunchedSite( getState(), siteId );
+		dispatch(
+			withAnalytics(
+				trackEligibility( data ),
+				updateEligibility( siteId, fromApi( data, { sitePrivateUnlaunched: siteIsUnlaunched } ) )
+			)
+		);
+	};
 
 registerHandlers( 'state/data-layer/wpcom/sites/automated-transfer/eligibility/index.js', {
 	[ AUTOMATED_TRANSFER_ELIGIBILITY_REQUEST ]: [

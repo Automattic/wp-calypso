@@ -298,14 +298,8 @@ class TermTreeSelectorList extends Component {
 		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
 		const children = this.getTermChildren( item.ID );
 
-		const {
-			multiple,
-			defaultTermId,
-			translate,
-			selected,
-			taxonomy,
-			podcastingCategoryId,
-		} = this.props;
+		const { multiple, defaultTermId, translate, selected, taxonomy, podcastingCategoryId } =
+			this.props;
 		const itemId = item.ID;
 		const isPodcastingCategory = taxonomy === 'category' && podcastingCategoryId === itemId;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );

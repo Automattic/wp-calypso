@@ -1,16 +1,25 @@
+import { TestAccountName } from '../../secrets';
+import defaultCriteria from './criteria-for-test-accounts';
+import type { SupportedEnvVariables } from '../../env-variables';
+
+export type TestAccountEnvVariables = Pick<
+	SupportedEnvVariables,
+	'GUTENBERG_EDGE' | 'COBLOCKS_EDGE' | 'TEST_ON_ATOMIC'
+>;
+
 type Env = 'edge' | 'stable';
 
-type SiteType = 'simple' | 'atomic';
+export type SiteType = 'simple' | 'atomic';
 
-type Variant = 'siteEditor';
+type Variant = 'siteEditor' | 'i18n';
 
 type Feature = 'gutenberg' | 'coblocks';
-type FeatureKey = { [ key in Feature ]?: Env | undefined } & {
+export type FeatureKey = { [ key in Feature ]?: Env | undefined } & {
 	siteType: SiteType;
 	variant?: Variant;
 };
-export type FeatureCriteria = FeatureKey & { accountName: string };
-type FeatureMap = Map< string, string >;
+export type FeatureCriteria = FeatureKey & { accountName: TestAccountName };
+type FeatureMap = Map< string, TestAccountName >;
 
 /**
  * Sort the keys of the `FeatureKey` structure and finally converts it
@@ -47,53 +56,6 @@ function criteriaToMap( criteria: FeatureCriteria[], map: FeatureMap ): FeatureM
 	}, map );
 }
 
-// NOTE If this gets too big, move to its own dedicated module.
-const defaultCriteria: FeatureCriteria[] = [
-	{
-		gutenberg: 'edge',
-		siteType: 'simple',
-		accountName: 'gutenbergSimpleSiteEdgeUser',
-	},
-	{ gutenberg: 'stable', siteType: 'simple', accountName: 'gutenbergSimpleSiteUser' },
-	// The CoBlocks account name takes precedence if CoBlocks edge
-	// is present. We have two definitions below to effectivelly
-	// ignore gutenberg in this case:
-	{
-		coblocks: 'edge',
-		gutenberg: 'stable',
-		siteType: 'simple',
-		accountName: 'coBlocksSimpleSiteEdgeUser',
-	},
-	{
-		coblocks: 'edge',
-		gutenberg: 'edge',
-		siteType: 'simple',
-		accountName: 'coBlocksSimpleSiteEdgeUser',
-	},
-	{
-		gutenberg: 'stable',
-		siteType: 'simple',
-		variant: 'siteEditor',
-		accountName: 'siteEditorSimpleSiteUser',
-	},
-	{
-		gutenberg: 'edge',
-		siteType: 'simple',
-		variant: 'siteEditor',
-		accountName: 'siteEditorSimpleSiteEdgeUser',
-	},
-	{
-		gutenberg: 'stable',
-		siteType: 'atomic',
-		accountName: 'gutenbergAtomicSiteUser',
-	},
-	{
-		gutenberg: 'edge',
-		siteType: 'atomic',
-		accountName: 'gutenbergAtomicSiteEdgeUser',
-	},
-];
-
 const defaultAccountsTable = criteriaToMap( defaultCriteria, new Map() );
 
 /**
@@ -110,7 +72,7 @@ const defaultAccountsTable = criteriaToMap( defaultCriteria, new Map() );
  * be merged into the default one. Useful to do one-off criteria->account overrides for
  * specifis tests inline. The entries passed here will replace any matched (by key) entries
  * in the default table.
- * @returns {string} the account name that can be used to build a new `TestAccount` instance.
+ * @returns {TestAccountName} the account name that can be used to build a new `TestAccount` instance.
  */
 export function getTestAccountByFeature(
 	feature: FeatureKey,
@@ -131,4 +93,31 @@ export function getTestAccountByFeature(
 	if ( ! accountName ) throw Error( 'No account found for this feature' );
 
 	return accountName;
+}
+
+/**
+ * Ad-hoc helper to convert the env object to a `FeatureKey` object that can
+ * then be passed over to `getTestAccountByFeature`. Most data passed to that
+ * function will come from env variables, so it makes sense to provide a helper
+ * to DRY things up.
+ *
+ * This helper doesn't attempt to be generic and is very dependant on the current
+ * feature "layout" (types and criteria definition). Though it shouldn't happen
+ * often, changes to the former might require the logic here to be updated, so
+ * beware :)
+ *
+ * @param {TestAccountEnvVariables} envVariables
+ * @returns {FeatureKey}
+ */
+export function envToFeatureKey( envVariables: TestAccountEnvVariables ): FeatureKey {
+	return {
+		// CoBlocks doesn't have any rule for "stable" as it re-uses the regular
+		// Gutenberg stable test site, so we just pass `undefined` if the env
+		// var value is `false`. This has the nice-side effect of keeping the
+		// `defaultCriteria` table smaller (as we don't need to declare the
+		// criteria for CoBlocks stable)
+		coblocks: envVariables.COBLOCKS_EDGE ? 'edge' : undefined,
+		gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
+		siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
+	};
 }

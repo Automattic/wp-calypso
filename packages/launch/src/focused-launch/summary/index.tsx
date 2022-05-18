@@ -299,12 +299,8 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		PlanProduct | undefined
 	>();
 
-	const {
-		defaultPaidPlan,
-		defaultFreePlan,
-		defaultPaidPlanProduct,
-		defaultFreePlanProduct,
-	} = usePlans( billingPeriod );
+	const { defaultPaidPlan, defaultFreePlan, defaultPaidPlanProduct, defaultFreePlanProduct } =
+		usePlans( billingPeriod );
 
 	React.useEffect( () => {
 		if (
@@ -397,7 +393,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 							<span>
 								{ createInterpolateElement(
 									__(
-										'Grow your business with <strong>WordPress Business</strong>',
+										'Grow your business with <strong>WordPress.com Pro</strong>',
 										__i18n_text_domain__
 									),
 									{
@@ -481,7 +477,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						<p className="focused-launch-summary__side-commentary-title">
 							{ createInterpolateElement(
 								__(
-									'Monetize your site with <strong>WordPress Premium</strong>',
+									'Monetize your site with <strong>WordPress.com Pro</strong>',
 									__i18n_text_domain__
 								),
 								{
@@ -514,22 +510,18 @@ type StepIndexRenderFunction = ( renderOptions: {
 const Summary: React.FunctionComponent = () => {
 	const { siteId } = React.useContext( LaunchContext );
 
-	const [
-		hasSelectedDomain,
-		isSiteTitleStepVisible,
-		selectedDomain,
-		selectedPlanProductId,
-	] = useSelect( ( select ) => {
-		const launchStore = select( LAUNCH_STORE );
-		const { isSiteTitleStepVisible, domain, planProductId } = launchStore.getState();
+	const [ hasSelectedDomain, isSiteTitleStepVisible, selectedDomain, selectedPlanProductId ] =
+		useSelect( ( select ) => {
+			const launchStore = select( LAUNCH_STORE );
+			const { isSiteTitleStepVisible, domain, planProductId } = launchStore.getState();
 
-		return [
-			launchStore.hasSelectedDomainOrSubdomain(),
-			isSiteTitleStepVisible,
-			domain,
-			planProductId,
-		];
-	}, [] );
+			return [
+				launchStore.hasSelectedDomainOrSubdomain(),
+				isSiteTitleStepVisible,
+				domain,
+				planProductId,
+			];
+		}, [] );
 
 	const isSelectedPlanPaid = useSelect(
 		( select ) => select( LAUNCH_STORE ).isSelectedPlanPaid(),
@@ -537,12 +529,8 @@ const Summary: React.FunctionComponent = () => {
 	);
 
 	const { launchSite } = useDispatch( SITE_STORE );
-	const {
-		setModalDismissible,
-		unsetModalDismissible,
-		showModalTitle,
-		showSiteTitleStep,
-	} = useDispatch( LAUNCH_STORE );
+	const { setModalDismissible, unsetModalDismissible, showModalTitle, showSiteTitleStep } =
+		useDispatch( LAUNCH_STORE );
 
 	const { title, isValidTitle, isDefaultTitle, updateTitle } = useTitle();
 	const { siteSubdomain, hasPaidDomain } = useSiteDomains();

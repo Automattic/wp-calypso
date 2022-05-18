@@ -7,30 +7,76 @@ import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/li
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import {
+	APIError,
+	APIProductFamily,
+	APIProductFamilyProduct,
+} from 'calypso/state/partner-portal/types';
 import './style.scss';
 
 function selectProductOptions( families: APIProductFamily[] ): APIProductFamilyProduct[] {
 	return families.flatMap( ( family ) => family.products );
 }
 
-export default function IssueLicenseForm(): ReactElement {
+interface Props {
+	selectedSite?: number | null;
+}
+
+export default function IssueLicenseForm( { selectedSite }: Props ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const products = useProductsQuery( {
 		select: selectProductOptions,
 	} );
 
-	const issueLicense = useIssueLicenseMutation( {
-		onSuccess: ( license ) => {
+	const assignLicense = useAssignLicenseMutation( {
+		onSuccess: ( license: any ) => {
 			page.redirect(
-				addQueryArgs( { key: license.license_key }, '/partner-portal/assign-license' )
+				addQueryArgs( { highlight: license.license_key }, '/partner-portal/licenses' )
 			);
 		},
 		onError: ( error: Error ) => {
 			dispatch( errorNotice( error.message ) );
+		},
+	} );
+
+	const issueLicense = useIssueLicenseMutation( {
+		onSuccess: ( license ) => {
+			const licenseKey = license.license_key;
+			if ( selectedSite ) {
+				assignLicense.mutate( { licenseKey, selectedSite } );
+			} else {
+				page.redirect(
+					addQueryArgs( { key: license.license_key }, '/partner-portal/assign-license' )
+				);
+			}
+		},
+		onError: ( error: APIError ) => {
+			let errorMessage;
+
+			switch ( error.code ) {
+				case 'missing_valid_payment_method':
+					errorMessage = translate(
+						'We could not find a valid payment method.{{br/}} ' +
+							'{{a}}Try adding a new payment method{{/a}} or contact support.',
+						{
+							components: {
+								a: <a href={ '/partner-portal/payment-methods/add' } />,
+								br: <br />,
+							},
+						}
+					);
+					break;
+
+				default:
+					errorMessage = error.message;
+					break;
+			}
+
+			dispatch( errorNotice( errorMessage ) );
 		},
 	} );
 	const [ product, setProduct ] = useState( '' );

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getPublicSites from 'calypso/state/selectors/get-public-sites';
 import { userState } from './fixtures/user-state';
 
@@ -11,7 +10,7 @@ describe( 'getPublicSites()', () => {
 			},
 		};
 		const sites = getPublicSites( state );
-		expect( sites ).to.eql( [] );
+		expect( sites ).toEqual( [] );
 	} );
 
 	test( 'should return the public sites in state', () => {
@@ -44,7 +43,7 @@ describe( 'getPublicSites()', () => {
 			},
 		};
 		const sites = getPublicSites( state );
-		expect( sites ).to.eql( [
+		expect( sites ).toEqual( [
 			{
 				ID: 2916284,
 				is_private: false,

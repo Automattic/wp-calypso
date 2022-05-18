@@ -17,9 +17,10 @@ function useRemoveViewer() {
 	);
 
 	const { mutate } = mutation;
-	const removeViewer = useCallback( ( siteId, viewerId ) => mutate( { siteId, viewerId } ), [
-		mutate,
-	] );
+	const removeViewer = useCallback(
+		( siteId, viewerId ) => mutate( { siteId, viewerId } ),
+		[ mutate ]
+	);
 
 	return { removeViewer, ...mutation };
 }

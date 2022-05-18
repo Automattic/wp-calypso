@@ -71,10 +71,8 @@ const SellerCelebrationModal = () => {
 		};
 	} );
 	const intent = useSiteIntent();
-	const {
-		hasSeenSellerCelebrationModal,
-		updateHasSeenSellerCelebrationModal,
-	} = useHasSeenSellerCelebrationModal();
+	const { hasSeenSellerCelebrationModal, updateHasSeenSellerCelebrationModal } =
+		useHasSeenSellerCelebrationModal();
 
 	useEffect( () => {
 		if (

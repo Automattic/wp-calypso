@@ -1,8 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import '@testing-library/jest-dom/extend-expect';
-
 import config from '@automattic/calypso-config';
 import { createStore } from 'redux';
 import {

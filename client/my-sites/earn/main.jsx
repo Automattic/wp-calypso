@@ -11,10 +11,11 @@ import Main from 'calypso/components/main';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { canAccessAds } from 'calypso/lib/ads/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AdsSettings from 'calypso/my-sites/earn/ads/form-settings';
+import WordAdsPayments from 'calypso/my-sites/earn/ads/payments';
 import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
+import { canAccessWordAds } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -43,15 +44,20 @@ class EarningsMain extends Component {
 	}
 
 	getFilters() {
-		const { siteSlug, translate } = this.props;
+		const { canAccessAds, siteSlug, translate } = this.props;
 		const pathSuffix = siteSlug ? '/' + siteSlug : '';
 		const tabs = [];
 
-		if ( canAccessAds( this.props.site ) ) {
+		if ( canAccessAds ) {
 			tabs.push( {
 				title: translate( 'Earnings' ),
 				path: '/earn/ads-earnings' + pathSuffix,
 				id: 'ads-earnings',
+			} );
+			tabs.push( {
+				title: translate( 'Payments' ),
+				path: '/earn/ads-payments' + pathSuffix,
+				id: 'ads-payments',
 			} );
 			tabs.push( {
 				title: translate( 'Settings' ),
@@ -69,6 +75,12 @@ class EarningsMain extends Component {
 				return (
 					<AdsWrapper section={ this.props.section }>
 						<WordAdsEarnings site={ this.props.site } />
+					</AdsWrapper>
+				);
+			case 'ads-payments':
+				return (
+					<AdsWrapper section={ this.props.section }>
+						<WordAdsPayments site={ this.props.site } />
 					</AdsWrapper>
 				);
 			case 'ads-settings':
@@ -122,6 +134,7 @@ class EarningsMain extends Component {
 			case 'payments':
 				return translate( 'Payments' );
 			case 'ads-earnings':
+			case 'ads-payments':
 			case 'ads-settings':
 				return translate( 'Ads' );
 
@@ -211,8 +224,13 @@ class EarningsMain extends Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	site: getSelectedSite( state ),
-	siteId: getSelectedSiteId( state ),
-	siteSlug: getSelectedSiteSlug( state ),
-} ) )( localize( EarningsMain ) );
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		canAccessAds: canAccessWordAds( state, siteId ),
+		site: getSelectedSite( state ),
+		siteId,
+		siteSlug: getSelectedSiteSlug( state ),
+	};
+} )( localize( EarningsMain ) );

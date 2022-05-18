@@ -43,14 +43,8 @@ class TitanManagementIframe extends Component {
 	}
 
 	render() {
-		const {
-			canManageSite,
-			currentRoute,
-			domainName,
-			selectedSiteId,
-			selectedSiteSlug,
-			translate,
-		} = this.props;
+		const { canManageSite, currentRoute, domainName, selectedSiteId, selectedSiteSlug, translate } =
+			this.props;
 
 		if ( ! canManageSite ) {
 			return (

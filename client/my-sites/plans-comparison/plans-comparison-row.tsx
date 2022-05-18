@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { intersection } from 'lodash';
-import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
 import { PlansComparisonRowHeader } from './plans-comparison-row-header';
 import type { PlanComparisonFeature } from './plans-comparison-features';
 import type { WPComPlan } from '@automattic/calypso-products';
@@ -8,40 +7,17 @@ import type { WPComPlan } from '@automattic/calypso-products';
 interface Props {
 	feature: PlanComparisonFeature;
 	plans: WPComPlan[];
+	isLegacySiteWithHigherLimits: boolean;
 }
 
-const DesktopContent = styled.div`
+export const DesktopContent = styled.div`
 	display: flex;
 	flex-direction: column;
-
-	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
-		.is-section-signup & {
-			display: none;
-		}
-	}
-
-	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_PLANS }px ) {
-		.is-section-plans & {
-			display: none;
-		}
-	}
 `;
 
-const MobileContent = styled.div`
+export const MobileContent = styled.div`
 	display: none;
 	font-weight: 400;
-
-	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
-		.is-section-signup & {
-			display: block;
-		}
-	}
-
-	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_PLANS }px ) {
-		.is-section-plans & {
-			display: block;
-		}
-	}
 `;
 
 const Title = styled.div`
@@ -86,7 +62,11 @@ function renderContent( content: ReturnType< PlanComparisonFeature[ 'getCellText
 	);
 }
 
-export const PlansComparisonRow: React.FunctionComponent< Props > = ( { feature, plans } ) => {
+export const PlansComparisonRow: React.FunctionComponent< Props > = ( {
+	feature,
+	plans,
+	isLegacySiteWithHigherLimits,
+} ) => {
 	return (
 		<tr>
 			<PlansComparisonRowHeader
@@ -104,10 +84,14 @@ export const PlansComparisonRow: React.FunctionComponent< Props > = ( { feature,
 				return (
 					<td key={ plan.getProductId() }>
 						<DesktopContent>
-							{ renderContent( feature.getCellText( includedFeature, false ) ) }
+							{ renderContent(
+								feature.getCellText( includedFeature, false, isLegacySiteWithHigherLimits )
+							) }
 						</DesktopContent>
 						<MobileContent>
-							{ renderContent( feature.getCellText( includedFeature, true ) ) }
+							{ renderContent(
+								feature.getCellText( includedFeature, true, isLegacySiteWithHigherLimits )
+							) }
 						</MobileContent>
 					</td>
 				);

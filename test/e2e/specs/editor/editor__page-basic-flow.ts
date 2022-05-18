@@ -7,6 +7,7 @@ import {
 	PagesPage,
 	PageTemplateModalComponent,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Browser, Page, Frame } from 'playwright';
 
@@ -21,17 +22,9 @@ const customUrlSlug = `about-${ DataHelper.getTimestamp() }-${ DataHelper.getRan
 ) }`;
 
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
-	let page: Page;
-	let editorPage: EditorPage;
-	let editorIframe: Frame;
-	let pagesPage: PagesPage;
-	let publishedUrl: URL;
-
+	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature(
-		{
-			gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-			siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-		},
+		features,
 		// The default accounts for gutenberg+simple are `gutenbergSimpleSiteEdgeUser` for GB edge
 		// and `gutenbergSimpleSiteUser` for stable. The criteria below conflicts with the default
 		// one that would return the `gutenbergSimpleSiteUser`. We also can't define it as part of
@@ -40,6 +33,12 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		// is simple.
 		[ { gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
 	);
+
+	let page: Page;
+	let editorPage: EditorPage;
+	let editorIframe: Frame;
+	let pagesPage: PagesPage;
+	let publishedUrl: URL;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -58,7 +57,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Select page template', async function () {
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 		// @TODO Consider moving this to EditorPage.
 		await editorPage.waitUntilLoaded();
 		const editorIframe = await editorPage.getEditorHandle();

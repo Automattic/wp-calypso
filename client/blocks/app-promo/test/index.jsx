@@ -1,9 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
-import { shallow, mount } from 'enzyme';
+import { render } from '@testing-library/react';
 
 describe( 'AppPromo', () => {
 	const appPromoDetails = {
@@ -31,25 +29,25 @@ describe( 'AppPromo', () => {
 
 	describe( 'readering', () => {
 		test( 'should render the primary components', () => {
-			const wrapper = shallow( AppPromoComponent );
+			const { container } = render( AppPromoComponent );
 
-			expect( wrapper.find( '.app-promo' ) ).to.have.lengthOf( 1 );
-			expect( wrapper.find( '.app-promo__dismiss' ) ).to.have.lengthOf( 1 );
-			expect( wrapper.find( '.app-promo__icon' ) ).to.have.lengthOf( 1 );
+			expect( container.getElementsByClassName( 'app-promo' ) ).toHaveLength( 1 );
+			expect( container.getElementsByClassName( 'app-promo__dismiss' ) ).toHaveLength( 1 );
+			expect( container.getElementsByClassName( 'app-promo__icon' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should render the promo text', () => {
-			const wrapper = mount( AppPromoComponent );
+			const { container } = render( AppPromoComponent );
 
-			expect( wrapper.text() ).to.contain( appPromoDetails.message );
+			expect( container.textContent ).toEqual( expect.stringContaining( appPromoDetails.message ) );
 		} );
 
 		test( 'should render the promo link', () => {
-			const wrapper = shallow( AppPromoComponent );
+			const { container } = render( AppPromoComponent );
 
-			const promoLink = wrapper.find( '.app-promo__link' );
-			expect( promoLink ).to.have.lengthOf( 1 );
-			expect( promoLink.prop( 'href' ) ).to.equal( appPromoLink );
+			const promoLink = container.getElementsByClassName( 'app-promo__link' );
+			expect( promoLink ).toHaveLength( 1 );
+			expect( promoLink[ 0 ].getAttribute( 'href' ) ).toBe( appPromoLink );
 		} );
 	} );
 
@@ -67,11 +65,15 @@ describe( 'AppPromo', () => {
 		};
 
 		test( 'should render a mobile link when the mobile promo code is passed in', () => {
-			expect( getPromoLink( 'reader', mobilePromo ) ).to.include( 'mobile' );
+			expect( getPromoLink( 'reader', mobilePromo ) ).toEqual(
+				expect.stringContaining( 'mobile' )
+			);
 		} );
 
 		test( 'should render a desktop link when the desktop promo code is passed in', () => {
-			expect( getPromoLink( 'reader', desktopPromo ) ).to.include( 'desktop' );
+			expect( getPromoLink( 'reader', desktopPromo ) ).toEqual(
+				expect.stringContaining( 'desktop' )
+			);
 		} );
 	} );
 } );

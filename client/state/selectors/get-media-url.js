@@ -1,4 +1,4 @@
-import safeImageUrl from 'calypso/lib/safe-image-url';
+import { safeImageUrl } from '@automattic/calypso-url';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 
 /**

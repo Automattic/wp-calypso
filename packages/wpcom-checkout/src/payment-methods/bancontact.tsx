@@ -68,6 +68,7 @@ export function createBancontactPaymentMethodStore(): BancontactStore {
 export function createBancontactMethod( { store }: { store: BancontactStore } ): PaymentMethod {
 	return {
 		id: 'bancontact',
+		paymentProcessorId: 'bancontact',
 		label: <BancontactLabel />,
 		activeContent: <BancontactFields />,
 		inactiveContent: <BancontactSummary />,
@@ -154,7 +155,7 @@ function BancontactPayButton( {
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting bancontact payment' );
-					onClick( 'bancontact', {
+					onClick( {
 						name: customerName.value,
 					} );
 				}

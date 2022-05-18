@@ -8,6 +8,8 @@ import {
 	EditorPage,
 	TestAccount,
 	envVariables,
+	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Frame, Browser } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
@@ -210,10 +212,13 @@ const translations: Translations = {
 declare const browser: Browser;
 
 describe( 'I18N: Editor', function () {
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( { ...features, variant: 'i18n' } );
+
 	// Filter out the locales that do not have valid translation content defined above.
-	const locales = Object.keys( translations ).filter( ( locale ) =>
+	const locales: LanguageSlug[] = Object.keys( translations ).filter( ( locale ) =>
 		( envVariables.TEST_LOCALES as ReadonlyArray< string > ).includes( locale )
-	);
+	) as LanguageSlug[];
 	let page: Page;
 	let editorPage: EditorPage;
 
@@ -226,10 +231,10 @@ describe( 'I18N: Editor', function () {
 			}
 		} );
 
-		const testAccount = new TestAccount( 'i18nUser' );
+		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 
-		editorPage = new EditorPage( page );
+		editorPage = new EditorPage( page, { target: features.siteType } );
 	} );
 
 	describe.each( locales )( `Locale: %s`, function ( locale ) {
@@ -254,25 +259,27 @@ describe( 'I18N: Editor', function () {
 			} );
 		} );
 
-		describe.each( translations[ locale ].blocks )(
+		// We know these are all defined because of the filtering above. Non-null asserting is safe here.
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		describe.each( translations[ locale ]!.blocks! )(
 			'Translations for block: $blockName',
 			( ...args ) => {
 				const block = args[ 0 ]; // Makes TS stop complaining about incompatible args type
-				let frame: Frame;
+				let frame: Page | Frame;
 				let editorPage: EditorPage;
 
 				const blockTimeout = 10 * 1000;
 
 				it( 'Insert test block', async function () {
-					editorPage = new EditorPage( page );
-					await editorPage.addBlock( block.blockName, block.blockEditorSelector );
+					editorPage = new EditorPage( page, { target: features.siteType } );
+					await editorPage.addBlockFromSidebar( block.blockName, block.blockEditorSelector );
 				} );
 
 				it( 'Render block content translations', async function () {
 					frame = await editorPage.getEditorHandle();
 					// Ensure block contents are translated as expected.
 					await Promise.all(
-						block.blockEditorContent.map( ( content: any ) =>
+						block.blockEditorContent.map( ( content ) =>
 							frame.waitForSelector( `${ block.blockEditorSelector } ${ content }`, {
 								timeout: blockTimeout,
 							} )

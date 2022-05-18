@@ -183,7 +183,6 @@ function attemptLoad( loader ) {
  * Returns the URL for Quantcast's Purchase Confirmation Tag
  *
  * @see https://www.quantcast.com/help/guides/using-the-quantcast-asynchronous-tag/
- *
  * @returns {string} The URL
  */
 function quantcastAsynchronousTagURL() {

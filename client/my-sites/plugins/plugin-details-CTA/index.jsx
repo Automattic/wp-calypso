@@ -1,15 +1,4 @@
-import {
-	PLAN_BUSINESS_MONTHLY,
-	PLAN_BUSINESS,
-	PLAN_PREMIUM,
-	PLAN_PERSONAL,
-	PLAN_BLOGGER,
-	PLAN_PREMIUM_2_YEARS,
-	PLAN_BUSINESS_2_YEARS,
-	PLAN_BLOGGER_2_YEARS,
-	PLAN_PERSONAL_2_YEARS,
-	isFreePlanProduct,
-} from '@automattic/calypso-products';
+import { isFreePlanProduct, FEATURE_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -17,8 +6,9 @@ import page from 'page';
 import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
+import { businessPlanToAdd } from 'calypso/lib/plugins/utils';
 import { userCan } from 'calypso/lib/site/utils';
-import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -27,12 +17,12 @@ import {
 } from 'calypso/state/automated-transfer/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
-import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -64,7 +54,10 @@ const PluginDetailsCTA = ( {
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 	const isFreePlan = selectedSite && isFreePlanProduct( selectedSite.plan );
 
-	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
+	const shouldUpgrade =
+		useSelector(
+			( state ) => ! hasActiveSiteFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
+		) && ! isJetpackSelfHosted;
 
 	// Eligibilities for Simple Sites.
 	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
@@ -107,7 +100,7 @@ const PluginDetailsCTA = ( {
 								)
 							}
 						</PluginPrice>
-						{ shouldUpgrade && (
+						{ selectedSite && shouldUpgrade && (
 							<span className="plugin-details-CTA__uprade-required">
 								{ translate( 'Plan upgrade required' ) }
 							</span>
@@ -164,14 +157,21 @@ const PluginDetailsCTA = ( {
 					isSiteConnected={ isSiteConnected }
 				/>
 			</div>
-			{ ( ! isJetpackSelfHosted || ! isMarketplaceProduct ) && (
+			{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 				<div className="plugin-details-CTA__t-and-c">
 					{ translate(
-						'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the Third-Party plugin Terms.',
+						'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the {{thirdPartyTos}}Third-Party plugin Terms{{/thirdPartyTos}}.',
 						{
 							components: {
 								a: (
 									<a target="_blank" rel="noopener noreferrer" href="https://wordpress.com/tos/" />
+								),
+								thirdPartyTos: (
+									<a
+										target="_blank"
+										rel="noopener noreferrer"
+										href="https://wordpress.com/third-party-plugins-terms/"
+									/>
 								),
 							},
 						}
@@ -228,6 +228,10 @@ const CTAButton = ( {
 		getPrimaryDomainBySiteId( state, selectedSite?.ID )
 	);
 
+	const eligibleForProPlan = useSelector( ( state ) =>
+		isEligibleForProPlan( state, selectedSite?.ID )
+	);
+
 	const pluginRequiresCustomPrimaryDomain =
 		( primaryDomain?.isWPCOMDomain || primaryDomain?.isWpcomStagingDomain ) &&
 		plugin?.requirements?.required_primary_domain;
@@ -260,6 +264,7 @@ const CTAButton = ( {
 						upgradeAndInstall: shouldUpgrade,
 						isMarketplaceProduct,
 						billingPeriod,
+						eligibleForProPlan,
 					} );
 				} }
 				isDialogVisible={ showAddCustomDomain }
@@ -285,6 +290,7 @@ const CTAButton = ( {
 							upgradeAndInstall: shouldUpgrade,
 							isMarketplaceProduct,
 							billingPeriod,
+							eligibleForProPlan,
 						} )
 					}
 				/>
@@ -306,6 +312,7 @@ const CTAButton = ( {
 						upgradeAndInstall: shouldUpgrade,
 						isMarketplaceProduct,
 						billingPeriod,
+						eligibleForProPlan,
 					} );
 				} }
 				disabled={ ( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false }
@@ -348,6 +355,7 @@ function onClickInstallPlugin( {
 	upgradeAndInstall,
 	isMarketplaceProduct,
 	billingPeriod,
+	eligibleForProPlan,
 } ) {
 	dispatch( removePluginStatuses( 'completed', 'error' ) );
 
@@ -360,6 +368,14 @@ function onClickInstallPlugin( {
 			plugin: plugin.slug,
 		} )
 	);
+	dispatch(
+		recordTracksEvent( 'calypso_plugin_install_activate_click', {
+			plugin: plugin.slug,
+			blog_id: selectedSite?.ID,
+			marketplace_product: isMarketplaceProduct,
+			needs_plan_upgrade: upgradeAndInstall,
+		} )
+	);
 
 	dispatch( productToBeInstalled( plugin.slug, selectedSite.slug ) );
 
@@ -368,15 +384,17 @@ function onClickInstallPlugin( {
 		// Plugin install is handled on the backend by activating the subscription.
 		const variationPeriod = getPeriodVariationValue( billingPeriod );
 		const product_slug = plugin?.variations?.[ variationPeriod ]?.product_slug;
+
 		if ( upgradeAndInstall ) {
 			// We also need to add a business plan to the cart.
 			return page(
 				`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
 					selectedSite?.plan,
-					billingPeriod
+					billingPeriod,
+					eligibleForProPlan
 				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
 					selectedSite.slug
-				}#step2`
+				}`
 			);
 		}
 
@@ -392,32 +410,14 @@ function onClickInstallPlugin( {
 		return page(
 			`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
 				selectedSite?.plan,
-				billingPeriod
+				billingPeriod,
+				eligibleForProPlan
 			) }?redirect_to=${ installPluginURL }#step2`
 		);
 	}
 
 	// No need to go through chekout, go to install page directly.
 	return page( installPluginURL );
-}
-
-// Return the correct business plan slug depending on current plan and pluginBillingPeriod
-function businessPlanToAdd( currentPlan, pluginBillingPeriod ) {
-	switch ( currentPlan.product_slug ) {
-		case PLAN_PERSONAL_2_YEARS:
-		case PLAN_PREMIUM_2_YEARS:
-		case PLAN_BLOGGER_2_YEARS:
-			return PLAN_BUSINESS_2_YEARS;
-		case PLAN_PERSONAL:
-		case PLAN_PREMIUM:
-		case PLAN_BLOGGER:
-			return PLAN_BUSINESS;
-		default:
-			// Return annual plan if selected, monthly otherwise.
-			return pluginBillingPeriod === IntervalLength.ANNUALLY
-				? PLAN_BUSINESS
-				: PLAN_BUSINESS_MONTHLY;
-	}
 }
 
 export default PluginDetailsCTA;

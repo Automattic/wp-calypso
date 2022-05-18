@@ -10,7 +10,7 @@ import domReady from '@wordpress/dom-ready';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-import { comment, wordpress } from '@wordpress/icons';
+import { wordpress } from '@wordpress/icons';
 import { registerPlugin } from '@wordpress/plugins';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
@@ -19,13 +19,12 @@ import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
 import {
+	getPages,
 	inIframe,
 	isEditorReady,
 	isEditorReadyWithBlocks,
 	sendMessage,
-	getPages,
 } from '../../utils';
-import FeedbackForm from './fse-beta/feedback-form';
 /**
  * Conditional dependency.  We cannot use the standard 'import' since this package is
  * not available in the post editor and causes WSOD in that case.  Instead, we can
@@ -37,8 +36,7 @@ const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
 const clickOverrides = {};
 let addedListener = false;
-// Replicates basic '$( el ).on( selector, cb )'. Includes preventDefault to override
-// the default event handlers.
+// Replicates basic '$( el ).on( selector, cb )'.
 function addEditorListener( selector, cb ) {
 	clickOverrides[ selector ] = cb;
 
@@ -63,10 +61,7 @@ function triggerOverrideHandler( e ) {
 
 	// Find the correct callback to use for this clicked element.
 	for ( const [ selector, cb ] of Object.entries( clickOverrides ) ) {
-		if ( matchingElement.matches( selector ) ) {
-			e.preventDefault();
-			cb( e );
-		}
+		matchingElement.matches( selector ) && cb( e );
 	}
 }
 
@@ -129,7 +124,8 @@ function handlePostTrash( calypsoPort ) {
 }
 
 function overrideRevisions( calypsoPort ) {
-	addEditorListener( '[href*="revision.php"]', () => {
+	addEditorListener( '[href*="revision.php"]', ( e ) => {
+		e.preventDefault();
 		calypsoPort.postMessage( { action: 'openRevisions' } );
 
 		calypsoPort.addEventListener( 'message', onLoadRevision, false );
@@ -464,7 +460,23 @@ function handleCloseEditor( calypsoPort ) {
 	// Add back to dashboard fill for Site Editor when edit-site package is available.
 	if ( editSitePackage ) {
 		registerPlugin( 'a8c-wpcom-block-editor-site-editor-back-to-dashboard-override', {
-			render: () => {
+			render: function SiteEditorCloseFill() {
+				const [ closeUrl, setCloseUrl ] = useState( calypsoifyGutenberg.closeUrl );
+
+				useEffect( () => {
+					addAction(
+						'updateCloseButtonOverrides',
+						'a8c/wpcom-block-editor/SiteEditorCloseFill',
+						( data ) => {
+							setCloseUrl( data.closeUrl );
+						}
+					);
+					return () =>
+						removeAction(
+							'updateCloseButtonOverrides',
+							'a8c/wpcom-block-editor/SiteEditorCloseFill'
+						);
+				} );
 				const SiteEditorDashboardFill = editSitePackage?.__experimentalMainDashboardButton;
 				if ( ! SiteEditorDashboardFill || ! NavigationBackButton ) {
 					return null;
@@ -476,7 +488,7 @@ function handleCloseEditor( calypsoPort ) {
 							backButtonLabel={ __( 'Dashboard' ) }
 							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 							className="edit-site-navigation-panel__back-to-dashboard"
-							href={ calypsoifyGutenberg.closeUrl }
+							href={ closeUrl }
 							onClick={ dispatchAction }
 						/>
 					</SiteEditorDashboardFill>
@@ -571,13 +583,13 @@ async function openLinksInParentFrame( calypsoPort ) {
 	].join( ',' );
 
 	addEditorListener( viewPostLinks, ( e ) => {
-		// Ignore if the click has modifier
+		// Allows modifiers to open links outside of the current tab using the default behavior.
 		if ( e.shiftKey || e.ctrlKey || e.metaKey ) {
 			return;
 		}
-
+		e.preventDefault();
 		calypsoPort.postMessage( {
-			action: 'viewPost',
+			action: 'openLinkInParentFrame',
 			payload: { postUrl: e.target.href },
 		} );
 	} );
@@ -690,30 +702,46 @@ async function openLinksInParentFrame( calypsoPort ) {
 	const body = document.querySelector( '.interface-interface-skeleton__body' );
 	sidebarsObserver.observe( body, { childList: true } );
 
-	// Manage reusable blocks link in the 3 dots more menu, post and site editors
-	if ( manageReusableBlocksUrl ) {
-		const toggleButton = document.querySelector(
-			'.edit-post-more-menu button, .edit-site-more-menu button'
-		);
-		const moreMenuManageReusableBlocksObserver = new window.MutationObserver( () => {
-			const isExpanded =
-				toggleButton.attributes.getNamedItem( 'aria-expanded' )?.nodeValue === 'true';
-			if ( isExpanded ) {
-				// The menu has not expanded at this point in Safari, so modify the link
-				// after the call stack has cleared and the menu has rendered.
-				setTimeout( () => {
-					const hyperlink = document.querySelector(
-						'a.components-menu-item__button[href*="post_type=wp_block"]'
+	const popoverSlotObserver = new window.MutationObserver( ( mutations ) => {
+		const isComponentsPopover = ( node ) => node.classList.contains( 'components-popover' );
+
+		const replaceWithManageReusableBlocksHref = ( anchorElem ) => {
+			anchorElem.href = manageReusableBlocksUrl;
+			anchorElem.target = '_top';
+		};
+
+		for ( const record of mutations ) {
+			for ( const node of record.addedNodes ) {
+				if ( isComponentsPopover( node ) ) {
+					const manageReusableBlocksAnchorElem = node.querySelector(
+						'a[href$="edit.php?post_type=wp_block"]'
 					);
-					hyperlink.href = manageReusableBlocksUrl;
-					hyperlink.target = '_top';
-				} );
+					const manageNavigationMenusAnchorElem = node.querySelector(
+						'a[href$="edit.php?post_type=wp_navigation"]'
+					);
+
+					manageReusableBlocksAnchorElem &&
+						replaceWithManageReusableBlocksHref( manageReusableBlocksAnchorElem );
+
+					if ( manageNavigationMenusAnchorElem ) {
+						manageNavigationMenusAnchorElem.addEventListener(
+							'click',
+							( e ) => {
+								calypsoPort.postMessage( {
+									action: 'openLinkInParentFrame',
+									payload: { postUrl: manageNavigationMenusAnchorElem.href },
+								} );
+								e.preventDefault();
+							},
+							false
+						);
+					}
+				}
 			}
-		} );
-		moreMenuManageReusableBlocksObserver.observe( toggleButton, {
-			attributeFilter: [ 'aria-expanded' ],
-		} );
-	}
+		}
+	} );
+	const popoverSlotElem = document.querySelector( '.interface-interface-skeleton ~ .popover-slot' );
+	popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
 
 	// Sidebar might already be open before this script is executed.
 	// post and site editors
@@ -738,6 +766,7 @@ async function openLinksInParentFrame( calypsoPort ) {
  */
 function openCustomizer( calypsoPort ) {
 	addEditorListener( '[href*="customize.php"]', ( e ) => {
+		e.preventDefault();
 		calypsoPort.postMessage( {
 			action: 'openCustomizer',
 			payload: {
@@ -756,6 +785,7 @@ function openCustomizer( calypsoPort ) {
  */
 function openTemplatePartLinks( calypsoPort ) {
 	addEditorListener( '.template__block-container .template-block__overlay a', ( e ) => {
+		e.preventDefault();
 		e.stopPropagation(); // Otherwise it will port the message twice.
 
 		// Get the template part ID from the current href.
@@ -964,25 +994,6 @@ async function preselectParentPage() {
 	}
 }
 
-function handleSiteEditorFeedbackPlugin( calypsoPort ) {
-	const PluginSidebar = editSitePackage?.PluginSidebar;
-	if ( PluginSidebar ) {
-		registerPlugin( 'a8c-fse-beta-feedback-plugin', {
-			render: () => (
-				<PluginSidebar
-					name="a8c-fse-beta-feedback-plugin"
-					title={ __( 'Site Editor Beta Feedback', 'full-site-editing' ) }
-					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-					className="a8c-site-editor-feedback-plugin"
-					icon={ comment }
-				>
-					<FeedbackForm calypsoPort={ calypsoPort } />
-				</PluginSidebar>
-			),
-		} );
-	}
-}
-
 function handleCheckoutModalOpened( calypsoPort, data ) {
 	const { port1, port2 } = new MessageChannel();
 
@@ -1076,6 +1087,23 @@ function handleAppBannerShowing( calypsoPort ) {
 				onlyLocal: true,
 			} );
 		}
+	};
+}
+
+function handleHelpCenterShowing( calypsoPort ) {
+	const { port1, port2 } = new MessageChannel();
+
+	calypsoPort.postMessage(
+		{
+			action: 'getIsHelpCenterShown',
+			payload: {},
+		},
+		[ port2 ]
+	);
+
+	port1.onmessage = ( { data } ) => {
+		const { isHelpCenterVisible } = data;
+		dispatch( 'automattic/help-center' )?.setShowHelpCenter?.( isHelpCenterVisible );
 	};
 }
 
@@ -1180,9 +1208,9 @@ function initPort( message ) {
 
 		handleInlineHelpButton( calypsoPort );
 
-		handleSiteEditorFeedbackPlugin( calypsoPort );
-
 		handleAppBannerShowing( calypsoPort );
+
+		handleHelpCenterShowing( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

@@ -2,7 +2,15 @@
  * @group gutenberg
  */
 
-import { DataHelper, EditorPage, PublishedPostPage, TestAccount } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	EditorPage,
+	PublishedPostPage,
+	TestAccount,
+	envVariables,
+	getTestAccountByFeature,
+	envToFeatureKey,
+} from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
@@ -14,7 +22,18 @@ const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 
 describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
-	const postingUser = new TestAccount( 'simpleSitePersonalPlanUser' );
+	const features = envToFeatureKey( envVariables );
+	// @todo Does it make sense to create a `simpleSitePersonalPlanUserEdge` with GB edge?
+	// for now, it will pick up the default `gutenbergAtomicSiteEdgeUser` if edge is set.
+	const accountName = getTestAccountByFeature( features, [
+		{
+			gutenberg: 'stable',
+			siteType: 'simple',
+			accountName: 'simpleSitePersonalPlanUser',
+		},
+	] );
+
+	const postingUser = new TestAccount( accountName );
 	const likeUser = new TestAccount( 'defaultUser' );
 	let page: Page;
 	let publishedURL: URL;
@@ -25,7 +44,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 
 		beforeAll( async () => {
 			page = await browser.newPage();
-			editorPage = new EditorPage( page );
+			editorPage = new EditorPage( page, { target: features.siteType } );
 			await postingUser.authenticate( page );
 		} );
 

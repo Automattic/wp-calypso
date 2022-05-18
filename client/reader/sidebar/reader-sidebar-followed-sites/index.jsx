@@ -13,10 +13,10 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
 import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getReaderTeams } from 'calypso/state/teams/selectors';
 import ReaderSidebarFollowingItem from './item';
 import '../style.scss';
 
@@ -36,7 +36,7 @@ export class ReaderSidebarFollowedSites extends Component {
 		path: PropTypes.string.isRequired,
 		sites: PropTypes.array,
 		isWPForTeamsItem: PropTypes.bool,
-		teams: PropTypes.array,
+		hasOrganization: PropTypes.bool,
 		isFollowingOpen: PropTypes.bool,
 		sitesPerPage: PropTypes.number,
 	};
@@ -48,8 +48,8 @@ export class ReaderSidebarFollowedSites extends Component {
 	};
 
 	isUnseen = () => {
-		const { teams, isWPForTeamsItem } = this.props;
-		return isEligibleForUnseen( { teams, isWPForTeamsItem } );
+		const { isWPForTeamsItem, hasOrganization } = this.props;
+		return isEligibleForUnseen( { isWPForTeamsItem, hasOrganization } );
 	};
 
 	renderAll() {
@@ -149,7 +149,11 @@ export default connect(
 			isWPForTeamsItem:
 				isSiteWPForTeams( state, ownProps.site && ownProps.site.ID ) ||
 				isFeedWPForTeams( state, ownProps.feed && ownProps.feed.feed_ID ),
-			teams: getReaderTeams( state ),
+			hasOrganization: hasReaderFollowOrganization(
+				state,
+				ownProps.feed && ownProps.feed.feed_ID,
+				ownProps.site && ownProps.site.ID
+			),
 			isFollowingOpen: isFollowingOpen( state, ownProps.path ),
 			sites: getReaderFollowedSites( state ),
 		};

@@ -67,9 +67,9 @@ class Starter_Page_Templates {
 	public function register_scripts() {
 		wp_register_script(
 			'starter-page-templates',
-			plugins_url( 'dist/starter-page-templates.js', __FILE__ ),
+			plugins_url( 'dist/starter-page-templates.min.js', __FILE__ ),
 			array( 'wp-plugins', 'wp-edit-post', 'wp-element' ),
-			filemtime( plugin_dir_path( __FILE__ ) . 'dist/starter-page-templates.js' ),
+			filemtime( plugin_dir_path( __FILE__ ) . 'dist/starter-page-templates.min.js' ),
 			true
 		);
 	}

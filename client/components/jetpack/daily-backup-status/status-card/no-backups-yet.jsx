@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -23,10 +24,10 @@ const NoBackupsYet = () => {
 	const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const siteName = useSelector( ( state ) => getRawSite( state, siteId ) )?.name;
 	const dispatch = useDispatch();
-	const onSupportClick = useCallback( () => dispatch( selectSiteId( siteId ) ), [
-		dispatch,
-		siteId,
-	] );
+	const onSupportClick = useCallback(
+		() => dispatch( selectSiteId( siteId ) ),
+		[ dispatch, siteId ]
+	);
 
 	return (
 		<>
@@ -52,7 +53,10 @@ const NoBackupsYet = () => {
 								<a
 									{ ...( isJetpackCloud()
 										? {
-												href: addQueryArgs( { url: siteUrl }, JETPACK_CONTACT_SUPPORT ),
+												href: addQueryArgs(
+													{ url: siteUrl },
+													localizeUrl( JETPACK_CONTACT_SUPPORT )
+												),
 												target: '_blank',
 												rel: 'noopener noreferrer',
 										  }

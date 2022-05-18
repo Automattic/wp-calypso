@@ -36,7 +36,7 @@ import { getAddNewPaymentMethodUrlFor, getPaymentMethodsUrlFor } from '../paths'
 
 function useLogPaymentMethodsError( message: string ) {
 	return useCallback(
-		( error ) => {
+		( error: Error ) => {
 			logToLogstash( {
 				feature: 'calypso_client',
 				message,
@@ -44,7 +44,7 @@ function useLogPaymentMethodsError( message: string ) {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'site_level_payment_methods',
-					message: String( error ),
+					message: error.message + '; Stack: ' + error.stack,
 				},
 			} );
 		},
@@ -82,7 +82,7 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 					align="left"
 				/>
 			) }
-			<PurchasesNavigation sectionTitle={ 'Payment Methods' } siteSlug={ siteSlug } />
+			<PurchasesNavigation section={ 'paymentMethods' } siteSlug={ siteSlug } />
 
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
@@ -101,21 +101,20 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 		'site level add new payment method load error'
 	);
 
-	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
+	const { isStripeLoading, stripeLoadingError } = useStripe();
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
 		activePayButtonText: String( translate( 'Save card' ) ),
 		allowUseForAllSubscriptions: true,
 		initialUseForAllSubscriptions: true,
 	} );
-	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( isValueTruthy ), [
-		stripeMethod,
-	] );
+	const paymentMethodList = useMemo(
+		() => [ stripeMethod ].filter( isValueTruthy ),
+		[ stripeMethod ]
+	);
 	const reduxDispatch = useDispatch();
 	useEffect( () => {
 		if ( stripeLoadingError ) {

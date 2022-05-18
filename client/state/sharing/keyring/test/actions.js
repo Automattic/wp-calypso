@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
 import {
 	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTION_DELETE_FAILURE,
@@ -9,7 +7,6 @@ import {
 	KEYRING_CONNECTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import {
 	requestKeyringConnections,
 	deleteKeyringConnection,
@@ -18,7 +15,10 @@ import {
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
+
+	beforeEach( () => {
+		spy = jest.fn();
+	} );
 
 	describe( 'requestKeyringConnections()', () => {
 		describe( 'successful requests', () => {
@@ -34,14 +34,14 @@ describe( 'actions', () => {
 			test( 'should dispatch fetch action when thunk triggered', () => {
 				requestKeyringConnections()( spy );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: KEYRING_CONNECTIONS_REQUEST,
 				} );
 			} );
 
 			test( 'should dispatch keyring connections receive action when request completes', () => {
 				return requestKeyringConnections()( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: KEYRING_CONNECTIONS_RECEIVE,
 						connections: [ { ID: 4306907 }, { ID: 7589550 } ],
 					} );
@@ -50,7 +50,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch keyring connections request success action when request completes', () => {
 				return requestKeyringConnections()( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: KEYRING_CONNECTIONS_REQUEST_SUCCESS,
 					} );
 				} );
@@ -71,16 +71,16 @@ describe( 'actions', () => {
 			test( 'should dispatch fetch action when thunk triggered', () => {
 				requestKeyringConnections()( spy );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: KEYRING_CONNECTIONS_REQUEST,
 				} );
 			} );
 
 			test( 'should dispatch keyring connections request fail action when request fails', () => {
 				return requestKeyringConnections()( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: KEYRING_CONNECTIONS_REQUEST_FAILURE,
-						error: sinon.match( { message: 'A server error occurred' } ),
+						error: expect.objectContaining( { message: 'A server error occurred' } ),
 					} );
 				} );
 			} );
@@ -91,7 +91,7 @@ describe( 'actions', () => {
 		test( 'should dispatch delete action', () => {
 			const action = deleteKeyringConnection( { ID: 2 } );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: KEYRING_CONNECTION_DELETE,
 				connection: {
 					ID: 2,
@@ -117,7 +117,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch delete action when request completes', () => {
 			return deleteStoredKeyringConnection( { ID: 2 } )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: KEYRING_CONNECTION_DELETE,
 					connection: {
 						ID: 2,
@@ -128,9 +128,9 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return deleteStoredKeyringConnection( { ID: 34 } )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: KEYRING_CONNECTION_DELETE_FAILURE,
-					error: sinon.match( {
+					error: expect.objectContaining( {
 						message: 'You do not have permission to access this Keyring connection.',
 					} ),
 				} );

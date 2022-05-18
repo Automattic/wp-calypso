@@ -1,9 +1,12 @@
 import { Button } from '@automattic/components';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -14,6 +17,7 @@ import type { ReactElement } from 'react';
 const usePlanAvailable = (
 	emailProviderSlug: string,
 	intervalLength: IntervalLength,
+	isDomainInCart: boolean,
 	selectedDomainName: string
 ) => {
 	const selectedSite = useSelector( getSelectedSite );
@@ -29,11 +33,15 @@ const usePlanAvailable = (
 		return true;
 	}
 
-	if ( ! canPurchaseGSuite || ! hasGSuiteSupportedDomain( [ domain ] ) ) {
+	if ( ! canPurchaseGSuite ) {
 		return false;
 	}
 
-	return intervalLength === IntervalLength.ANNUALLY;
+	if ( isDomainInCart ) {
+		return true;
+	}
+
+	return domain && hasGSuiteSupportedDomain( [ domain ] );
 };
 
 const SelectButton = ( {
@@ -45,7 +53,16 @@ const SelectButton = ( {
 }: SelectButtonProps ): ReactElement => {
 	const translate = useTranslate();
 
-	const isPlanAvailable = usePlanAvailable( emailProviderSlug, intervalLength, selectedDomainName );
+	const cartKey = useCartKey();
+	const shoppingCartManager = useShoppingCart( cartKey );
+	const isDomainInCart = hasDomainInCart( shoppingCartManager.responseCart, selectedDomainName );
+
+	const isPlanAvailable = usePlanAvailable(
+		emailProviderSlug,
+		intervalLength,
+		isDomainInCart,
+		selectedDomainName
+	);
 
 	return (
 		<Button

@@ -20,16 +20,8 @@ class StatsTabs extends Component {
 	};
 
 	render() {
-		const {
-			children,
-			data,
-			activeIndex,
-			activeKey,
-			tabs,
-			switchTab,
-			selectedTab,
-			borderless,
-		} = this.props;
+		const { children, data, activeIndex, activeKey, tabs, switchTab, selectedTab, borderless } =
+			this.props;
 		let statsTabs;
 
 		if ( data && ! children ) {

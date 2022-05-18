@@ -12,7 +12,6 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useReducer } from 'react';
 import { useSelector } from 'react-redux';
-import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
@@ -37,7 +36,7 @@ export default function usePrepareProductsForCart( {
 	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
 	isInModal,
-	isJetpackNotAtomic,
+	usesJetpackProducts,
 	isPrivate,
 	siteSlug,
 	isLoggedOutCart,
@@ -50,7 +49,7 @@ export default function usePrepareProductsForCart( {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
 	isInModal?: boolean;
-	isJetpackNotAtomic: boolean;
+	usesJetpackProducts: boolean;
 	isPrivate: boolean;
 	siteSlug: string | undefined;
 	isLoggedOutCart?: boolean;
@@ -101,7 +100,7 @@ export default function usePrepareProductsForCart( {
 	useAddProductFromSlug( {
 		productAliasFromUrl,
 		dispatch,
-		isJetpackNotAtomic,
+		usesJetpackProducts,
 		isPrivate,
 		addHandler,
 		isJetpackCheckout,
@@ -217,19 +216,9 @@ function useAddProductsFromLocalStorage( {
 	addHandler: AddHandler;
 } ) {
 	const translate = useTranslate();
-	const products: Record<
-		string,
-		{
-			product_slug: string;
-		}
-	> = useSelector( getProductsList );
 
 	useEffect( () => {
 		if ( addHandler !== 'addFromLocalStorage' ) {
-			return;
-		}
-		if ( Object.keys( products || {} ).length < 1 ) {
-			debug( 'waiting on products fetch' );
 			return;
 		}
 
@@ -248,7 +237,7 @@ function useAddProductsFromLocalStorage( {
 
 		debug( 'preparing products requested in localStorage', productsForCart );
 		dispatch( { type: 'PRODUCTS_ADD', products: productsForCart } );
-	}, [ addHandler, dispatch, translate, products ] );
+	}, [ addHandler, dispatch, translate ] );
 }
 
 function useAddRenewalItems( {
@@ -263,16 +252,10 @@ function useAddRenewalItems( {
 	addHandler: AddHandler;
 } ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
-	const isFetchingProducts = useSelector( isProductsListFetching );
-	const products = useSelector( getProductsList );
 	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( addHandler !== 'addRenewalItems' ) {
-			return;
-		}
-		if ( isFetchingProducts || Object.keys( products || {} ).length < 1 ) {
-			debug( 'waiting on products fetch for renewal' );
 			return;
 		}
 		const productSlugs = productAlias?.split( ',' ) ?? [];
@@ -282,24 +265,6 @@ function useAddRenewalItems( {
 			.map( ( subscriptionId, currentIndex ) => {
 				const productSlug = productSlugs[ currentIndex ];
 				if ( ! productSlug ) {
-					return null;
-				}
-				const [ encodedSlug ] = productSlug.split( ':' );
-				const decodedSlug = decodeProductFromUrl( encodedSlug );
-				const product = products[ decodedSlug ];
-				if ( ! product ) {
-					debug( 'no renewal product found with slug', productSlug );
-					dispatch( {
-						type: 'PRODUCTS_ADD_ERROR',
-						message: String(
-							translate(
-								"I tried and failed to create a renewal product matching the identifier '%(productSlug)s'",
-								{
-									args: { productSlug },
-								}
-							)
-						),
-					} );
 					return null;
 				}
 				return createRenewalItemToAddToCart( productSlug, subscriptionId );
@@ -323,22 +288,13 @@ function useAddRenewalItems( {
 		}
 		debug( 'preparing renewals requested in url', productsForCart );
 		dispatch( { type: 'RENEWALS_ADD', products: productsForCart } );
-	}, [
-		addHandler,
-		translate,
-		isFetchingProducts,
-		products,
-		originalPurchaseId,
-		productAlias,
-		dispatch,
-		selectedSiteSlug,
-	] );
+	}, [ addHandler, translate, originalPurchaseId, productAlias, dispatch, selectedSiteSlug ] );
 }
 
 function useAddProductFromSlug( {
 	productAliasFromUrl,
 	dispatch,
-	isJetpackNotAtomic,
+	usesJetpackProducts,
 	isPrivate,
 	addHandler,
 	isJetpackCheckout,
@@ -348,7 +304,7 @@ function useAddProductFromSlug( {
 }: {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
-	isJetpackNotAtomic: boolean;
+	usesJetpackProducts: boolean;
 	isPrivate: boolean;
 	addHandler: AddHandler;
 	isJetpackCheckout?: boolean;
@@ -356,7 +312,6 @@ function useAddProductFromSlug( {
 	jetpackPurchaseToken?: string;
 	source?: string;
 } ) {
-	const products = useSelector( getProductsList );
 	const translate = useTranslate();
 
 	// If `productAliasFromUrl` has a comma ',' in it, we will assume it's because it's
@@ -367,41 +322,30 @@ function useAddProductFromSlug( {
 			productAliasFromUrl
 				?.split( ',' )
 				// Special treatment for Jetpack Search products
-				.map( ( productAlias ) => getJetpackSearchForSite( productAlias, isJetpackNotAtomic ) )
+				.map( ( productAlias ) => getJetpackSearchForSite( productAlias, usesJetpackProducts ) )
 				// Get the product information if it exists, and keep a reference to
 				// its product alias which we may need to get additional information like
 				// the domain name or theme (eg: 'theme:ovation').
 				.map( ( productAlias ) => {
-					const validProduct = products[ getProductSlugFromAlias( productAlias ) ];
-					return validProduct
-						? { ...validProduct, internal_product_alias: productAlias }
-						: undefined;
-				} )
-				.filter( isValueTruthy ) ?? [],
-		[ isJetpackNotAtomic, productAliasFromUrl, products ]
+					const productSlug = getProductSlugFromAlias( productAlias );
+					return { productSlug, productAlias };
+				} ) ?? [],
+		[ usesJetpackProducts, productAliasFromUrl ]
 	);
 
 	useEffect( () => {
 		if ( addHandler !== 'addProductFromSlug' ) {
 			return;
 		}
-		// There is a selector for isFetchingProducts, but it seems to be sometimes
-		// inaccurate (possibly before the fetch has started) so instead we just
-		// wait for there to be products.
-		if ( Object.keys( products || {} ).length < 1 ) {
-			debug( 'waiting on products fetch' );
-			return;
-		}
 
 		const cartProducts = validProducts.map( ( product ) =>
 			// Transform the product data into a RequestCartProduct
 			createItemToAddToCart( {
-				productSlug: product.product_slug,
-				productAlias: product.internal_product_alias,
+				productSlug: product.productSlug,
+				productAlias: product.productAlias,
 				isJetpackCheckout,
 				jetpackSiteSlug,
 				jetpackPurchaseToken,
-				privacy: product.is_privacy_protection_product_purchase_allowed,
 				source,
 			} )
 		);
@@ -426,7 +370,7 @@ function useAddProductFromSlug( {
 		}
 		debug(
 			'preparing products that were requested in url',
-			{ productAliasFromUrl, isJetpackNotAtomic },
+			{ productAliasFromUrl, usesJetpackProducts },
 			cartProducts
 		);
 		dispatch( { type: 'PRODUCTS_ADD', products: cartProducts } );
@@ -434,8 +378,7 @@ function useAddProductFromSlug( {
 		addHandler,
 		translate,
 		isPrivate,
-		products,
-		isJetpackNotAtomic,
+		usesJetpackProducts,
 		productAliasFromUrl,
 		validProducts,
 		isJetpackCheckout,
@@ -498,12 +441,12 @@ function createRenewalItemToAddToCart(
  * redirect to a valid checkout URL for a search purchase without worrying
  * about which type of site the user has.
  */
-function getJetpackSearchForSite( productAlias: string, isJetpackNotAtomic: boolean ): string {
+function getJetpackSearchForSite( productAlias: string, usesJetpackProducts: boolean ): string {
 	if (
 		productAlias &&
 		JETPACK_SEARCH_PRODUCTS.includes( productAlias as typeof JETPACK_SEARCH_PRODUCTS[ number ] )
 	) {
-		if ( isJetpackNotAtomic ) {
+		if ( usesJetpackProducts ) {
 			productAlias = productAlias.includes( 'monthly' )
 				? PRODUCT_JETPACK_SEARCH_MONTHLY
 				: PRODUCT_JETPACK_SEARCH;
@@ -522,7 +465,6 @@ function createItemToAddToCart( {
 	isJetpackCheckout,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
-	privacy,
 	source,
 }: {
 	productSlug: string;
@@ -530,7 +472,6 @@ function createItemToAddToCart( {
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
-	privacy?: boolean;
 	source?: string;
 } ): RequestCartProduct {
 	// Allow setting meta (theme name or domain name) from products in the URL by
@@ -539,16 +480,7 @@ function createItemToAddToCart( {
 	// Some meta values contain slashes, so we decode them
 	const cartMeta = meta ? decodeProductFromUrl( meta ) : '';
 
-	debug(
-		'creating product with',
-		productSlug,
-		'from alias',
-		productAlias,
-		'with meta',
-		cartMeta,
-		'and privacy',
-		privacy
-	);
+	debug( 'creating product with', productSlug, 'from alias', productAlias, 'with meta', cartMeta );
 
 	return createRequestCartProduct( {
 		product_slug: productSlug,
@@ -556,7 +488,6 @@ function createItemToAddToCart( {
 			isJetpackCheckout,
 			jetpackSiteSlug,
 			jetpackPurchaseToken,
-			privacy,
 			context: 'calypstore',
 			source: source ?? undefined,
 		},

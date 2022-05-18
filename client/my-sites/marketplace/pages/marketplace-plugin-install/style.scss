@@ -17,9 +17,22 @@ body.is-section-marketplace.theme-default.color-scheme {
 	}
 }
 
-.marketplace-plugin-install__wpcom-wordmark {
-	align-self: center;
-	margin-left: 10px;
+.marketplace-plugin-install__masterbar {
+	display: flex;
+	align-items: baseline;
+	justify-content: flex-start;
+
+	.marketplace-plugin-install__wpcom-wordmark {
+		align-self: center;
+		margin-left: 10px;
+	}
+
+	.masterbar__item,
+	.masterbar__item:hover {
+		color: var( --color-primary-5 );
+		flex-grow: 0;
+		background: var( --color-masterbar-background );
+	}
 }
 
 .marketplace-plugin-install__root {

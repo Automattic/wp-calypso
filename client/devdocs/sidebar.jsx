@@ -3,6 +3,7 @@ import Sidebar from 'calypso/layout/sidebar';
 import SidebarHeading from 'calypso/layout/sidebar/heading';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
+import SidebarSeparator from 'calypso/layout/sidebar/separator';
 
 export default class DevdocsSidebar extends PureComponent {
 	static displayName = 'DevdocsSidebar';
@@ -87,6 +88,14 @@ export default class DevdocsSidebar extends PureComponent {
 						link="/devdocs/docs/i18n.md"
 						selected={ this.isItemSelected( '/devdocs/docs/i18n.md' ) }
 					/>
+					<SidebarItem
+						className="devdocs__navigation-item"
+						icon="bug"
+						label="Testing"
+						link="/devdocs/docs/testing/index.md"
+						selected={ this.isItemSelected( '/devdocs/docs/testing', false ) }
+					/>
+					<SidebarSeparator />
 
 					<SidebarHeading>Live Docs</SidebarHeading>
 
@@ -118,6 +127,7 @@ export default class DevdocsSidebar extends PureComponent {
 						link="/devdocs/wordpress-components-gallery"
 						selected={ this.isItemSelected( '/devdocs/wordpress-components-gallery', false ) }
 					/>
+					<SidebarSeparator />
 
 					<SidebarHeading>Developer Tools</SidebarHeading>
 					<SidebarItem

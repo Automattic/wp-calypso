@@ -1,6 +1,7 @@
 import classnames from 'classnames';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
+import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement } from 'react';
 
 export interface Props {

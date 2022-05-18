@@ -1,0 +1,132 @@
+@import '@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+@mixin woocommerce-install-two-column-layout {
+	min-height: 95vh;
+	display: flex;
+	align-items: center;
+
+	@media ( max-width: 660px ) {
+		min-height: 0;
+	}
+
+	// Two column layout.
+	.step-wrapper {
+		display: flex;
+
+		.step-wrapper__header {
+			@media ( min-width: 660px ) {
+				margin-top: 0 !important;
+			}
+
+			.formatted-header {
+				text-align: inherit;
+
+				@media ( min-width: 1024px ) {
+					margin-left: 24px;
+				}
+
+				.formatted-header__title {
+					text-align: inherit;
+
+					@media ( max-width: 660px ) {
+						padding: 0 10px 0 0;
+					}
+				}
+
+				.formatted-header__subtitle {
+					@media ( max-width: 660px ) {
+						margin-top: 8px;
+						padding: 0 10px 0 0;
+					}
+
+					margin-top: 20px;
+					text-align: inherit;
+					max-width: 448px;
+				}
+			}
+		}
+	}
+
+	.is-wide-layout {
+		max-width: 1024px;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		align-items: flex-start;
+		justify-content: center;
+		column-gap: 2%;
+
+		@media ( max-width: 660px ) {
+			max-width: 90vw;
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.step-wrapper__content {
+		display: flex;
+		margin: 0 24px;
+
+		.step-business-info__instructions-container,
+		.step-store-address__instructions-container,
+		.confirm__instructions-container {
+			font-size: 0.875rem;
+			letter-spacing: -0.16px;
+			color: var( --studio-gray-60 );
+			flex-direction: column;
+			max-width: 520px;
+			min-width: 380px;
+
+			@media ( max-width: 660px ) {
+				max-width: 90vw;
+			}
+
+			p {
+				margin-top: 16px;
+			}
+
+			.components-base-control {
+				font-size: $default-font-size;
+				line-height: $default-line-height;
+				margin-bottom: $grid-unit-30;
+
+				.components-base-control__label,
+				.components-input-control__label {
+					font-size: $editor-font-size;
+					margin-bottom: $grid-unit;
+					padding: 0;
+				}
+
+				.components-checkbox-control__label,
+				.components-select-control__input,
+				.components-text-control__input,
+				.components-combobox-control__input {
+					color: var( --color-neutral-70 );
+				}
+
+				.components-combobox-control__suggestions-container,
+				.components-select-control__input,
+				.components-text-control__input {
+					line-height: 18px;
+					padding: $grid-unit-15 $grid-unit-20;
+				}
+
+				.components-select-control__input {
+					box-sizing: initial;
+					height: auto;
+					line-height: 20px;
+					min-height: auto;
+				}
+
+				.components-combobox-control__input {
+					padding: 0;
+				}
+			}
+
+			.components-text-control__input {
+				box-sizing: border-box;
+			}
+		}
+	}
+}

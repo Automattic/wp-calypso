@@ -105,11 +105,6 @@ export default function () {
 	);
 
 	registerStandardDomainManagementPages(
-		paths.domainManagementNameServers,
-		domainManagementController.domainManagementNameServers
-	);
-
-	registerStandardDomainManagementPages(
 		paths.domainManagementTransfer,
 		domainManagementController.domainManagementTransfer
 	);
@@ -314,6 +309,13 @@ export default function () {
 		domainsController.redirectIfNoSite( '/domains/manage' ),
 		domainsController.jetpackNoDomainsWarning,
 		domainsController.transferDomainPrecheck,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementRoot() + '/:domain/edit',
+		domainsController.redirectDomainToSite,
 		makeLayout,
 		clientRender
 	);

@@ -81,22 +81,26 @@ const getThreatMessage = ( threat: Threat ) => {
 const ThreatItemHeader: React.FC< Props > = ( { threat } ) => {
 	return (
 		<>
-			<ThreatSeverityBadge severity={ threat.severity } />
 			<div className="threat-item-header__card-container">
-				<div className="threat-item-header__card-top">{ getThreatMessage( threat ) }</div>
-				<span
-					className={ classnames(
-						'threat-item-header__card-bottom',
-						severityClassNames( threat.severity )
-					) }
-				>
-					<ThreatItemSubheader threat={ threat } />
-				</span>
+				<ThreatSeverityBadge severity={ threat.severity } />
+				<div className="threat-item-header__titles">
+					<div className="threat-item-header__card-top">{ getThreatMessage( threat ) }</div>
+					<div
+						className={ classnames(
+							'threat-item-header__card-bottom',
+							severityClassNames( threat.severity )
+						) }
+					>
+						<ThreatItemSubheader threat={ threat } />
+					</div>
+				</div>
 			</div>
-			{ threat.fixable && (
-				/* eslint-disable wpcalypso/jsx-classname-namespace */
-				<Gridicon className="threat-item-header__autofix_badge" icon="checkmark" size={ 18 } />
-			) }
+			<div className="threat-item-header__autofix-container">
+				{ threat.fixable && (
+					/* eslint-disable wpcalypso/jsx-classname-namespace */
+					<Gridicon className="threat-item-header__autofix_badge" icon="checkmark" size={ 18 } />
+				) }
+			</div>
 		</>
 	);
 };

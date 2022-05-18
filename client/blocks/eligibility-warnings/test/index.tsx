@@ -9,8 +9,6 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import EligibilityWarnings from '..';
 
-import '@testing-library/jest-dom/extend-expect';
-
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
@@ -49,6 +47,7 @@ function createState( {
 		siteSettings: {
 			saveRequests: {},
 		},
+		marketplace: { billingInterval: { interval: 'ANNUALLY' } },
 	};
 }
 
@@ -166,7 +165,9 @@ describe( '<EligibilityWarnings>', () => {
 
 		expect( handleProceed ).not.toHaveBeenCalled();
 		expect( page.redirect ).toHaveBeenCalledTimes( 1 );
-		expect( page.redirect ).toHaveBeenCalledWith( '/checkout/example.wordpress.com/business' );
+		expect( page.redirect ).toHaveBeenCalledWith(
+			'/checkout/example.wordpress.com/business-bundle'
+		);
 	} );
 
 	it( `disables the "Continue" button if holds can't be handled automatically`, () => {

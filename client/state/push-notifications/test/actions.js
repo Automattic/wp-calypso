@@ -1,31 +1,23 @@
-import { expect } from 'chai';
 import {
 	PUSH_NOTIFICATIONS_API_NOT_READY,
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { apiNotReady, receiveUnregisterDevice, sendSubscriptionToWPCOM } from '../actions';
 
 const API_DOMAIN = 'https://public-api.wordpress.com:443';
 
 describe( 'actions', () => {
-	let sandbox;
 	let spy;
 
-	useSandbox( ( newSandbox ) => {
-		sandbox = newSandbox;
-		spy = sandbox.spy();
-	} );
-
 	beforeEach( () => {
-		spy.resetHistory();
+		spy = jest.fn();
 	} );
 
 	describe( 'receiveUnregisterDevice()', () => {
 		test( 'should return an action object with empty data for empty input', () => {
-			expect( receiveUnregisterDevice() ).to.eql( {
+			expect( receiveUnregisterDevice() ).toEqual( {
 				type: PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 				data: {},
 			} );
@@ -35,7 +27,7 @@ describe( 'actions', () => {
 			const data = {
 				devicestuff: 'some_value',
 			};
-			expect( receiveUnregisterDevice( data ) ).to.eql( {
+			expect( receiveUnregisterDevice( data ) ).toEqual( {
 				type: PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 				data,
 			} );
@@ -44,7 +36,7 @@ describe( 'actions', () => {
 
 	describe( 'apiNotReady()', () => {
 		test( 'should return an action object', () => {
-			expect( apiNotReady() ).to.eql( {
+			expect( apiNotReady() ).toEqual( {
 				type: PUSH_NOTIFICATIONS_API_NOT_READY,
 			} );
 		} );
@@ -65,10 +57,15 @@ describe( 'actions', () => {
 
 			test( 'should dispatch receive action when request completes', () => {
 				return sendSubscriptionToWPCOM( 'someTruthyValue' )( spy, getState ).then( () => {
-					expect( spy ).to.have.been.calledWithMatch( {
-						type: PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
-						data: {},
-					} );
+					expect( spy ).toBeCalledWith(
+						expect.objectContaining( {
+							type: PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
+							data: expect.objectContaining( {
+								ID: 123,
+								settings: {},
+							} ),
+						} )
+					);
 				} );
 			} );
 		} );

@@ -22,7 +22,9 @@ export function generateFlows( {
 			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
 			lastModified: '2020-08-12',
-			pageTitle: translate( 'Create an account' ),
+			get pageTitle() {
+				return translate( 'Create an account' );
+			},
 			showRecaptcha: true,
 		},
 		{
@@ -55,6 +57,14 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and then add the pro plan to the users cart.',
 			lastModified: '2022-03-08',
+			showRecaptcha: true,
+		},
+		{
+			name: 'starter',
+			steps: [ 'user', 'domains', 'plans-starter' ],
+			destination: getSignupDestination,
+			description: 'Create an account and a blog and then add the starter plan to the users cart.',
+			lastModified: '2022-05-05',
 			showRecaptcha: true,
 		},
 		{
@@ -223,7 +233,7 @@ export function generateFlows( {
 		{
 			// When adding steps, make sure that signup campaign ref's continue to work.
 			name: 'p2',
-			steps: [ 'user', 'p2-confirm-email', 'p2-site' ],
+			steps: [ 'user', 'p2-confirm-email', 'p2-complete-profile', 'p2-join-workspace', 'p2-site' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'New P2 signup flow',
 			lastModified: '2021-12-27',
@@ -270,13 +280,17 @@ export function generateFlows( {
 			description: 'A flow to launch a private site.',
 			providesDependenciesInQuery: [ 'siteSlug' ],
 			lastModified: '2019-11-22',
-			pageTitle: translate( 'Launch your site' ),
+			get pageTitle() {
+				return translate( 'Launch your site' );
+			},
 		},
 		{
 			name: 'importer',
 			steps: isEnabled( 'onboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
 			destination: '/',
-			pageTitle: translate( 'Import your site content' ),
+			get pageTitle() {
+				return translate( 'Import your site content' );
+			},
 			description: 'A new import flow that can be used from the onboarding flow',
 			lastModified: '2021-10-18',
 			disallowResume: true,
@@ -286,7 +300,9 @@ export function generateFlows( {
 			name: 'from',
 			steps: [ 'importing' ],
 			destination: '/',
-			pageTitle: translate( 'Import your site content' ),
+			get pageTitle() {
+				return translate( 'Import your site content' );
+			},
 			description: 'Onboarding - start from importer',
 			lastModified: '2021-11-15',
 			enableBranchSteps: true,
@@ -295,7 +311,9 @@ export function generateFlows( {
 			name: 'import-light',
 			steps: isEnabled( 'onboarding/import-light' ) ? [ 'static' ] : [],
 			destination: '/',
-			pageTitle: translate( 'Import light' ),
+			get pageTitle() {
+				return translate( 'Import light' );
+			},
 			description: 'Import light',
 			lastModified: '2022-02-25',
 			enableBranchSteps: true,
@@ -332,7 +350,9 @@ export function generateFlows( {
 			description:
 				'Launch flow without domain or plan selected, used for sites that already have a paid plan and domain (e.g. via the launch banner in the site preview)',
 			lastModified: '2020-11-30',
-			pageTitle: translate( 'Launch your site' ),
+			get pageTitle() {
+				return translate( 'Launch your site' );
+			},
 			providesDependenciesInQuery: [ 'siteSlug' ],
 		},
 		{
@@ -379,27 +399,22 @@ export function generateFlows( {
 			lastModified: '2021-10-14',
 			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
 			optionalDependenciesInQuery: [ 'siteId' ],
-			pageTitle: translate( 'Set up your site' ),
+			get pageTitle() {
+				return translate( 'Set up your site' );
+			},
 			enableBranchSteps: true,
 		},
 		{
 			name: 'do-it-for-me',
-			steps: isEnabled( 'signup/redesigned-difm-flow' )
-				? [
-						// Add or replace new steps here
-						'user',
-						'new-or-existing-site',
-						'difm-site-picker',
-						'difm-options',
-						'difm-design-setup-site',
-				  ]
-				: [
-						'user',
-						'new-or-existing-site',
-						'difm-site-picker',
-						'site-info-collection',
-						'difm-design-setup-site',
-				  ],
+			steps: [
+				'user',
+				'new-or-existing-site',
+				'difm-site-picker',
+				'difm-options',
+				'social-profiles',
+				'difm-design-setup-site',
+				'difm-page-picker',
+			],
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			excludeFromManageSiteFlows: true,
@@ -418,7 +433,9 @@ export function generateFlows( {
 		},
 		{
 			name: 'woocommerce-install',
-			pageTitle: translate( 'Add WooCommerce to your site' ),
+			get pageTitle() {
+				return translate( 'Add WooCommerce to your site' );
+			},
 			steps: [ 'store-address', 'business-info', 'confirm', 'transfer' ],
 			destination: '/',
 			description: 'Onboarding and installation flow for woocommerce on all plans.',

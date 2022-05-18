@@ -1,4 +1,5 @@
 import { Button, Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -56,7 +57,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ): JSX.Element => {
 						'Privacy protection is not available due to the registry’s policies. {{a}}Learn more{{/a}}',
 						{
 							components: {
-								a: <a href={ PRIVACY_PROTECTION } target="blank" />,
+								a: <a href={ localizeUrl( PRIVACY_PROTECTION ) } target="blank" />,
 							},
 						}
 					) }
@@ -69,7 +70,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ): JSX.Element => {
 							"Privacy protection must be enabled due to the registry's policies. {{a}}Learn more{{/a}}",
 							{
 								components: {
-									a: <a href={ PRIVACY_PROTECTION } target="blank" />,
+									a: <a href={ localizeUrl( PRIVACY_PROTECTION ) } target="blank" />,
 								},
 							}
 						) }
@@ -99,7 +100,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ): JSX.Element => {
 			<p className="contact-information__toggle-item">
 				{ translate( 'We recommend keeping privacy protection on. {{a}}Learn more{{/a}}', {
 					components: {
-						a: <a href={ PUBLIC_VS_PRIVATE } target="blank" />,
+						a: <a href={ localizeUrl( PUBLIC_VS_PRIVATE ) } target="blank" />,
 					},
 				} ) }
 			</p>

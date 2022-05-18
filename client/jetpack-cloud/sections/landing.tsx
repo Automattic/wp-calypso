@@ -3,18 +3,26 @@ import { useEffect } from 'react';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import {
+	isFetchingSitePurchases as isFetchingSitePurchasesSelector,
+	siteHasSearchProductPurchase,
+} from 'calypso/state/purchases/selectors';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isBackupPluginActive from 'calypso/state/sites/selectors/is-backup-plugin-active';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
+import isSearchPluginActive from 'calypso/state/sites/selectors/is-search-plugin-active';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import { AppState } from 'calypso/types';
 
 const siteIsEligible = ( state: AppState, siteId: number | null ) =>
 	siteId
-		? ( isJetpackSite( state, siteId ) || isBackupPluginActive( state, siteId ) ) &&
+		? ( isJetpackSite( state, siteId ) ||
+				isBackupPluginActive( state, siteId ) ||
+				isSearchPluginActive( state, siteId ) ) &&
 		  ! isSiteAtomic( state, siteId ) &&
 		  ! isJetpackSiteMultiSite( state, siteId )
 		: null;
@@ -25,10 +33,14 @@ const Landing: React.FC = () => {
 
 	const isEligible = useSelector( ( state ) => siteIsEligible( state, siteId ) );
 	const capabilities = useSelector( ( state ) => getRewindCapabilities( state, siteId ) );
+	const hasSearch = useSelector( ( state ) => siteHasSearchProductPurchase( state, siteId ) );
+	const isFetchingSitePurchases = useSelector( ( state ) =>
+		isFetchingSitePurchasesSelector( state )
+	);
 
 	useEffect( () => {
 		// early return while we wait to retrieve information
-		if ( isEligible === null || capabilities === undefined ) {
+		if ( isEligible === null || capabilities === undefined || isFetchingSitePurchases === true ) {
 			return;
 		}
 
@@ -42,19 +54,26 @@ const Landing: React.FC = () => {
 
 		const redirectUrl = new URL( window.location.href );
 
-		// For sites with Scan but not Backup, redirect to Scan
-		if ( hasScan && ! hasBackup ) {
+		if ( hasBackup ) {
+			redirectUrl.pathname = `/backup/${ siteSlug ?? '' }`;
+		} else if ( hasScan ) {
 			redirectUrl.pathname = `/scan/${ siteSlug ?? '' }`;
-			return page.redirect( redirectUrl.toString() );
+		} else if ( hasSearch ) {
+			redirectUrl.pathname = `/jetpack-search/${ siteSlug ?? '' }`;
+		} else {
+			// For sites with no eligibile capabilities, show the Backup upsell page.
+			redirectUrl.pathname = `/backup/${ siteSlug ?? '' }`;
 		}
 
-		// For sites with Backup, show the Backup page;
-		// for sites with neither Backup nor Scan, show the Backup upsell page
-		redirectUrl.pathname = `/backup/${ siteSlug ?? '' }`;
-		page.redirect( redirectUrl.toString() );
-	}, [ isEligible, siteSlug, capabilities ] );
+		return page.redirect( redirectUrl.toString() );
+	}, [ capabilities, hasSearch, isEligible, isFetchingSitePurchases, siteSlug ] );
 
-	return <QueryRewindCapabilities siteId={ siteId } />;
+	return (
+		<>
+			<QueryRewindCapabilities siteId={ siteId } />
+			<QuerySitePurchases siteId={ siteId } />
+		</>
+	);
 };
 
 export default Landing;

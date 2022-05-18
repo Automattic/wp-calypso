@@ -1,4 +1,4 @@
-import { PLAN_PERSONAL, FEATURE_AUDIO_UPLOADS } from '@automattic/calypso-products';
+import { PLAN_WPCOM_PRO, WPCOM_FEATURES_UPLOAD_AUDIO_FILES } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -53,13 +53,8 @@ class PodcastingDetails extends Component {
 	}
 
 	renderExplicitContent() {
-		const {
-			fields,
-			handleSelect,
-			isRequestingSettings,
-			translate,
-			isPodcastingEnabled,
-		} = this.props;
+		const { fields, handleSelect, isRequestingSettings, translate, isPodcastingEnabled } =
+			this.props;
 
 		return (
 			<FormFieldset>
@@ -225,12 +220,12 @@ class PodcastingDetails extends Component {
 					</HeaderCake>
 					{ ! error && plansDataLoaded && (
 						<UpsellNudge
-							plan={ PLAN_PERSONAL }
-							title={ translate( 'Upload Audio with WordPress.com Personal' ) }
+							plan={ PLAN_WPCOM_PRO }
+							title={ translate( 'Upload Audio with WordPress.com Pro' ) }
 							description={ translate(
 								'Embed podcast episodes directly from your media library.'
 							) }
-							feature={ FEATURE_AUDIO_UPLOADS }
+							feature={ WPCOM_FEATURES_UPLOAD_AUDIO_FILES }
 							event="podcasting_details_upload_audio"
 							tracksImpressionName="calypso_upgrade_nudge_impression"
 							tracksClickName="calypso_upgrade_nudge_cta_click"

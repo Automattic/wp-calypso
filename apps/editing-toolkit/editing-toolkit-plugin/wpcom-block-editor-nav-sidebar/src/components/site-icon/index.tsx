@@ -11,7 +11,7 @@ export default function SiteIcon(): JSX.Element {
 		// getEntityRecord usually takes a key to get a specific entity, but here we pass undefined to get the "root" entity.
 		// While this works, the function isn't typed this way, so casting undefined as number to prevent compiler errors.
 		const siteData =
-			getEntityRecord( 'root', '__unstableBase', ( undefined as unknown ) as number ) || {};
+			getEntityRecord( 'root', '__unstableBase', undefined as unknown as number ) || {};
 		return siteData.site_icon_url;
 	}, [] );
 

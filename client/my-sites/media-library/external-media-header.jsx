@@ -15,7 +15,7 @@ const DEBOUNCE_TIME = 250;
 
 class MediaLibraryExternalHeader extends Component {
 	static propTypes = {
-		addExternalMedia: PropTypes.function,
+		addExternalMedia: PropTypes.func,
 		canCopy: PropTypes.bool,
 		hasAttribution: PropTypes.bool,
 		hasRefreshButton: PropTypes.bool,

@@ -66,21 +66,6 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
-// eslint-disable-next-line no-unused-vars -- Used for a planned experiment rerun, see newUsersWithFreePlan below.
-const gutenbergRedirect = function ( flowName, locale ) {
-	const url = new URL( window.location );
-	let path = '/new';
-	if ( [ 'free', 'personal', 'premium', 'business', 'ecommerce' ].includes( flowName ) ) {
-		path += `/${ flowName }`;
-	}
-	if ( locale ) {
-		path += `/${ locale }`;
-	}
-
-	url.pathname = path;
-	window.location.replace( url.toString() );
-};
-
 export const addP2SignupClassName = () => {
 	if ( ! document ) {
 		return;
@@ -123,48 +108,6 @@ export default {
 		} else {
 			next();
 			return;
-
-			// Code for the newUsersWithFreePlan experiment, previously implemented in calypso-abtest.
-			// Planned to be rerun see pbxNRc-xd-p2#comment-1949
-			// Commented out for eslint, to rerun next() has to be placed below this.
-			// const localeFromParams = context.params.lang;
-			// const flowName = getFlowName( context.params, isLoggedIn );
-			// if (
-			// 	flowName === 'free' &&
-			//  	// Checking for treatment variation previously happened here:
-			// 	false
-			// ) {
-			// 	gutenbergRedirect( flowName, localeFromParams );
-			// 	return;
-			// }
-
-			// Code for the variantUserless experiment, previously implemented in calypso-abtest.
-			// Planned to be rerun, see pbmo2S-Bv-p2#comment-1382
-			// Commented out for eslint, to rerun next() has to be placed below this.
-			// if (
-			// 	! isLoggedIn &&
-			// 	-1 === context.pathname.indexOf( 'free' ) &&
-			// 	-1 === context.pathname.indexOf( 'personal' ) &&
-			// 	-1 === context.pathname.indexOf( 'premium' ) &&
-			// 	-1 === context.pathname.indexOf( 'business' ) &&
-			// 	-1 === context.pathname.indexOf( 'ecommerce' ) &&
-			// 	-1 === context.pathname.indexOf( 'with-theme' ) &&
-			// 	// Checking for treatment variation previously happened here:
-			// 	false
-			// ) {
-			// 	removeWhiteBackground();
-			// 	const stepName = getStepName( context.params );
-			// 	const stepSectionName = getStepSectionName( context.params );
-			// 	const urlWithLocale = getStepUrl(
-			// 		'onboarding-registrationless',
-			// 		stepName,
-			// 		stepSectionName,
-			// 		localeFromParams
-			// 	);
-			// 	window.location = urlWithLocale;
-			// } else {
-			// 	next();
-			// }
 		}
 	},
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
@@ -338,12 +281,8 @@ export default {
 		}
 
 		// Pre-fetching the experiment
-		if ( flowName === 'onboarding' || flowName === 'launch-site' ) {
-			loadExperimentAssignment( 'calypso_signup_monthly_plans_default_202201_v2' );
-		}
-
-		if ( isMobile() && 'wpcc' !== flowName ) {
-			loadExperimentAssignment( 'registration_social_login_first_on_mobile_v3' );
+		if ( isMobile() && [ 'onboarding', 'launch-site', 'free', 'pro' ].includes( flowName ) ) {
+			loadExperimentAssignment( 'calypso_signup_domain_mobile_browser_chrome_added_v4' );
 		}
 
 		context.primary = createElement( SignupComponent, {

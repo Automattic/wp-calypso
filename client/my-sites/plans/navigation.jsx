@@ -39,10 +39,10 @@ class PlansNavigation extends Component {
 	}
 
 	render() {
-		const { site, shouldShowMyPlan, shouldShowPlans, translate, isFreeOrFlexible } = this.props;
+		const { site, shouldShowMyPlan, shouldShowPlans, translate } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
-		const hasPinnedItems = isMobile() && site;
+		const hasPinnedItems = Boolean( site ) && isMobile();
 
 		return (
 			site && (
@@ -63,7 +63,7 @@ class PlansNavigation extends Component {
 									path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
 								}
 							>
-								{ isFreeOrFlexible ? translate( 'New Plans' ) : translate( 'Plans' ) }
+								{ translate( 'Plans' ) }
 							</NavItem>
 						) }
 					</NavTabs>
@@ -85,6 +85,7 @@ export default connect( ( state ) => {
 	let shouldShowPlans = true;
 	let isFreeOrFlexible = false;
 
+	// do not show the Plans tab if user is on a Pro plan
 	if ( eligibleForProPlan && currentPlan ) {
 		isFreeOrFlexible = isFreePlanProduct( currentPlan ) || isFlexiblePlanProduct( currentPlan );
 		shouldShowMyPlan = isFreeOrFlexible ? false : true;

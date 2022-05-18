@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { IMAGE_UPLOAD_STATES } from '../reducer';
 import { initialState } from '../schema';
 import {
@@ -9,7 +8,7 @@ import {
 
 describe( 'selectors', () => {
 	test( 'should return the initial state as a default state', () => {
-		expect( getWebsiteContent( { signup: undefined } ) ).to.be.eql( {
+		expect( getWebsiteContent( { signup: undefined } ) ).toEqual( {
 			pages: [],
 			siteLogoUrl: '',
 		} );
@@ -27,7 +26,7 @@ describe( 'selectors', () => {
 					},
 				},
 			} )
-		).to.be.eql( 100 );
+		).toEqual( 100 );
 	} );
 
 	test( 'isImageUploadInProgress should return true if at least one image is uploading', () => {
@@ -52,7 +51,7 @@ describe( 'selectors', () => {
 					},
 				},
 			} )
-		).to.be.eql( true );
+		).toEqual( true );
 
 		// Should return false since no images are currently uploading
 		expect(
@@ -76,6 +75,6 @@ describe( 'selectors', () => {
 					},
 				},
 			} )
-		).to.be.eql( false );
+		).toEqual( false );
 	} );
 } );

@@ -1,0 +1,59 @@
+.videopress-stats-module__grid {
+	display: grid;
+	grid-template-columns: 50% auto auto auto;
+	padding: 0.5em 0;
+	line-height: 40px;
+	font-size: 0.875rem;
+
+	color: var( --color-text );
+}
+
+@media screen and ( max-width: 450px ) {
+	.videopress-stats-module__grid {
+		grid-template-columns: 40% auto auto auto;
+	}
+}
+
+.videopress-stats-module__grid-header {
+	font-weight: 600;
+	color: var( --color-text-subtle );
+	line-height: 20px;
+}
+
+.videopress-stats-module__grid-metric {
+	text-align: right;
+	padding-right: 8px;
+}
+
+.videopress-stats-module__grid-cell span {
+	cursor: pointer;
+}
+.videopress-stats-module__grid-cell span:hover {
+	text-decoration: underline;
+}
+
+.videopress-stats-module__grid-link {
+	color: var( --color-primary );
+	overflow-x: clip;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.videopress-stats-module__row-wrapper,
+.videopress-stats-module__header-row-wrapper {
+	display: contents;
+
+	div:first-of-type {
+		padding-left: 24px;
+	}
+
+	div:last-of-type {
+		padding-right: 24px;
+	}
+}
+
+.videopress-stats-module__row-wrapper {
+	&:hover div {
+		background-color: var( --color-neutral-0 );
+	}
+}

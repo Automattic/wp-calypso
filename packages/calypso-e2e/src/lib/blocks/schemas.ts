@@ -1,4 +1,5 @@
-import { ElementHandle, Frame, Page } from 'playwright';
+import { Locator, Page } from 'playwright';
+import { EditorPage } from '../pages';
 
 /**
  * An interface for block-based flows to enable iterating the same smoke test cases for a set of blocks.
@@ -15,8 +16,12 @@ export interface BlockFlow {
  */
 export interface EditorContext {
 	page: Page;
-	editorIframe: Frame;
-	blockHandle: ElementHandle;
+	// Technically, we don't necessarily need to include these next properties in this interface.
+	// We could make the EditorPage from the Playwright page and our ENV variables.
+	// We could also then get the editorLocator off of the EditorPage.
+	// However, they are provided in this context for convenience to simplify the writing of block flows!
+	editorPage: EditorPage;
+	editorLocator: Locator;
 }
 
 /**

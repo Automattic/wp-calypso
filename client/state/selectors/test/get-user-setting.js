@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 describe( 'getUserSetting()', () => {
@@ -13,7 +12,7 @@ describe( 'getUserSetting()', () => {
 			'__unknown'
 		);
 
-		expect( setting ).to.be.null;
+		expect( setting ).toBeNull();
 	} );
 
 	test( 'should prefer an unsaved setting over the server one', () => {
@@ -27,7 +26,7 @@ describe( 'getUserSetting()', () => {
 			'foo'
 		);
 
-		expect( setting ).to.eql( 'unsavedBar' );
+		expect( setting ).toEqual( 'unsavedBar' );
 	} );
 
 	test( 'should ignore an unsaved setting if there is no server value for the same key', () => {
@@ -41,7 +40,7 @@ describe( 'getUserSetting()', () => {
 			'foo'
 		);
 
-		expect( setting ).to.be.null;
+		expect( setting ).toBeNull();
 	} );
 
 	test( 'should return a server value if there is no unsaved one', () => {
@@ -55,6 +54,6 @@ describe( 'getUserSetting()', () => {
 			'foo'
 		);
 
-		expect( setting ).to.eql( 'bar' );
+		expect( setting ).toEqual( 'bar' );
 	} );
 } );

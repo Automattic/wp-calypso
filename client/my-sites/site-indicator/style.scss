@@ -1,3 +1,4 @@
+@import '@automattic/typography/styles/variables';
 /**
  * Site Indicator
  */
@@ -15,7 +16,7 @@
 	align-self: center;
 	background: var( --color-neutral-0 );
 	border: none;
-	border-radius: 50%;
+	border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	box-shadow: none;
 	color: var( --color-neutral-light );
 	cursor: default;

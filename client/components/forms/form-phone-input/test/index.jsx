@@ -2,8 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { expect } from 'chai';
-import { shallow, mount } from 'enzyme';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { FormPhoneInput } from '../';
 
 const countriesList = [
@@ -26,7 +25,7 @@ describe( 'FormPhoneInput', () => {
 
 	describe( 'getValue()', () => {
 		test( 'should set country from props', () => {
-			const phoneComponent = shallow(
+			render(
 				<FormPhoneInput
 					countriesList={ countriesList }
 					initialCountryCode={ countriesList[ 1 ].code }
@@ -34,43 +33,44 @@ describe( 'FormPhoneInput', () => {
 				/>
 			);
 
-			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
-				countriesList[ 1 ]
-			);
+			const option = screen.getByRole( 'option', { selected: true } );
+
+			expect( option.textContent ).toBe( countriesList[ 1 ].name );
 		} );
 
 		test( 'should set country to first element when not specified', () => {
-			const phoneComponent = shallow(
-				<FormPhoneInput countriesList={ countriesList } { ...localizeProps } />
-			);
+			render( <FormPhoneInput countriesList={ countriesList } { ...localizeProps } /> );
 
-			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
-				countriesList[ 0 ]
-			);
+			const option = screen.getByRole( 'option', { selected: true } );
+
+			expect( option.textContent ).toBe( countriesList[ 0 ].name );
 		} );
 
 		test( 'should update country on change', () => {
-			const phoneComponent = mount(
-				<FormPhoneInput countriesList={ countriesList } { ...localizeProps } />
+			const onChange = jest.fn();
+			const { container } = render(
+				<FormPhoneInput
+					onChange={ onChange }
+					countriesList={ countriesList }
+					{ ...localizeProps }
+				/>
 			);
 
-			phoneComponent.find( 'select' ).simulate( 'change', {
-				target: {
-					value: countriesList[ 1 ].code,
-				},
-			} );
+			const [ select ] = container.getElementsByClassName( 'form-country-select' );
 
-			expect( phoneComponent.instance().getValue().countryData ).to.deep.equal(
-				countriesList[ 1 ]
+			fireEvent.change( select, { target: { value: countriesList[ 1 ].code } } );
+
+			expect( onChange ).toHaveBeenCalledWith(
+				expect.objectContaining( { countryData: countriesList[ 1 ] } )
 			);
 		} );
 
 		test( 'should have no country with empty countryList', () => {
-			const phoneComponent = shallow(
-				<FormPhoneInput countriesList={ [] } { ...localizeProps } />
-			);
+			render( <FormPhoneInput countriesList={ [] } { ...localizeProps } /> );
 
-			expect( phoneComponent.instance().getValue().countryData ).to.equal( undefined );
+			const option = screen.getByRole( 'option', { selected: true } );
+
+			expect( option.textContent ).toBe( 'Loading…' );
 		} );
 	} );
 } );

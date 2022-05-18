@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card, Gridicon } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useI18n } from '@wordpress/react-i18n';
@@ -39,6 +38,7 @@ const PluginsBrowserList = ( {
 				<PluginBrowserItem
 					site={ site }
 					key={ plugin.slug + n }
+					gridPosition={ n + 1 }
 					plugin={ plugin }
 					currentSites={ currentSites }
 					listName={ listName }
@@ -108,7 +108,7 @@ const PluginsBrowserList = ( {
 					) }
 				</div>
 			</div>
-			{ listName === 'paid' && isEnabled( 'marketplace-spotlight' ) && (
+			{ listName === 'paid' && (
 				<AsyncLoad
 					require="calypso/blocks/jitm"
 					template="spotlight"

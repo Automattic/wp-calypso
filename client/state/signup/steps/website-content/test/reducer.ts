@@ -1,15 +1,16 @@
-import { expect } from 'chai';
 import { SIGNUP_COMPLETE_RESET } from 'calypso/state/action-types';
 import {
 	updateWebsiteContentCurrentIndex,
 	imageUploaded,
-	textChanged,
+	websiteContentFieldChanged,
 	initializePages,
 	imageUploadInitiated,
 	imageUploadFailed,
 	logoUploadStarted,
 	logoUploadFailed,
 	logoUploadCompleted,
+	imageRemoved,
+	logoRemoved,
 } from '../actions';
 import websiteContentCollectionReducer, { IMAGE_UPLOAD_STATES, LOGO_SECTION_ID } from '../reducer';
 import { initialState } from '../schema';
@@ -61,7 +62,7 @@ describe( 'reducer', () => {
 				{ ...initialTestState },
 				updateWebsiteContentCurrentIndex( 5 )
 			)
-		).to.be.eql( {
+		).toEqual( {
 			...initialTestState,
 			currentIndex: 5,
 		} );
@@ -86,7 +87,7 @@ describe( 'reducer', () => {
 					},
 				] )
 			)
-		).to.be.eql( {
+		).toEqual( {
 			...initialTestState,
 			websiteContent: {
 				...initialTestState.websiteContent,
@@ -183,7 +184,7 @@ describe( 'reducer', () => {
 					},
 				] )
 			)
-		).to.be.eql( {
+		).toEqual( {
 			...initialTestState,
 			websiteContent: {
 				...initialTestState.websiteContent,
@@ -230,7 +231,7 @@ describe( 'reducer', () => {
 			image: { caption: 'test', url: 'www.test.com/test.test.jpg' },
 		} );
 		const recieved = websiteContentCollectionReducer( { ...initialTestState }, action );
-		expect( recieved ).to.be.eql( {
+		expect( recieved ).toEqual( {
 			...initialTestState,
 			imageUploadStates: {
 				Home: {
@@ -284,7 +285,7 @@ describe( 'reducer', () => {
 			mediaIndex: 2,
 		} );
 		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
-		expect( nextState ).to.be.eql( {
+		expect( nextState ).toEqual( {
 			...initialTestState,
 			imageUploadStates: {
 				About: {
@@ -298,7 +299,7 @@ describe( 'reducer', () => {
 			{ ...initialTestState },
 			failedAction
 		);
-		expect( nextAfterFailedState ).to.be.eql( {
+		expect( nextAfterFailedState ).toEqual( {
 			...initialTestState,
 			imageUploadStates: {
 				About: {
@@ -308,10 +309,97 @@ describe( 'reducer', () => {
 		} );
 	} );
 
+	test( 'should remove the in memory image state details correctly', () => {
+		// First simulate an image upload completion
+		const actionImageUploaded = imageUploaded( {
+			pageId: 'Home',
+			mediaIndex: 0,
+			image: { caption: 'test', url: 'www.test.com/test.test.jpg' },
+		} );
+		const secondActionImageUploaded = imageUploaded( {
+			pageId: 'Home',
+			mediaIndex: 1,
+			image: { caption: 'secondtest', url: 'www.testwo.com/testwo.testwo.jpg' },
+		} );
+
+		let nextState = websiteContentCollectionReducer( { ...initialTestState }, actionImageUploaded );
+		nextState = websiteContentCollectionReducer( nextState, secondActionImageUploaded );
+
+		expect( nextState ).toEqual( {
+			...initialTestState,
+			websiteContent: {
+				...initialTestState.websiteContent,
+				pages: [
+					{
+						id: 'Home',
+						title: 'Homepage',
+						content: '',
+						images: [
+							{
+								caption: 'test',
+								url: 'www.test.com/test.test.jpg',
+							},
+							{
+								caption: 'secondtest',
+								url: 'www.testwo.com/testwo.testwo.jpg',
+							},
+							{ caption: '', url: '' },
+						],
+					},
+					...initialTestState.websiteContent.pages.slice( 1 ),
+				],
+			},
+			imageUploadStates: {
+				Home: {
+					0: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+					1: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+				},
+			},
+		} );
+
+		// Now remove the image and check state
+		const actionRemoveInMemoryImage = imageRemoved( {
+			pageId: 'Home',
+			mediaIndex: 1,
+		} );
+		nextState = websiteContentCollectionReducer( nextState, actionRemoveInMemoryImage );
+		expect( nextState ).toEqual( {
+			...initialTestState,
+			websiteContent: {
+				...initialTestState.websiteContent,
+				pages: [
+					{
+						id: 'Home',
+						title: 'Homepage',
+						content: '',
+						images: [
+							{
+								caption: 'test',
+								url: 'www.test.com/test.test.jpg',
+							},
+							{
+								caption: '',
+								url: '',
+							},
+							{ caption: '', url: '' },
+						],
+					},
+					...initialTestState.websiteContent.pages.slice( 1 ),
+				],
+			},
+			imageUploadStates: {
+				Home: {
+					0: IMAGE_UPLOAD_STATES.UPLOAD_COMPLETED,
+					1: IMAGE_UPLOAD_STATES.UPLOAD_REMOVED,
+				},
+			},
+		} );
+	} );
+
 	test( 'should update relevent state when the logo uploading is completed', () => {
 		const action = logoUploadCompleted( 'wp.me/some-random-image.png' );
 		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
-		expect( nextState ).to.be.eql( {
+		expect( nextState ).toEqual( {
 			...initialTestState,
 			imageUploadStates: {
 				[ LOGO_SECTION_ID ]: {
@@ -328,7 +416,7 @@ describe( 'reducer', () => {
 	test( 'should update the logo uploading started/failed state correctly', () => {
 		const action = logoUploadStarted();
 		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
-		expect( nextState ).to.be.eql( {
+		expect( nextState ).toEqual( {
 			...initialTestState,
 			imageUploadStates: {
 				[ LOGO_SECTION_ID ]: {
@@ -342,7 +430,7 @@ describe( 'reducer', () => {
 			{ ...initialTestState },
 			failedAction
 		);
-		expect( nextAfterFailedState ).to.be.eql( {
+		expect( nextAfterFailedState ).toEqual( {
 			...initialTestState,
 			imageUploadStates: {
 				[ LOGO_SECTION_ID ]: {
@@ -352,12 +440,30 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	test( 'text content should be accurately updated', () => {
-		const action = textChanged( {
-			pageId: 'About',
-			content: 'Testing Content',
+	test( 'should update relevent state when in memory logo information is removed', () => {
+		const action = logoRemoved();
+		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
+		expect( nextState ).toEqual( {
+			...initialTestState,
+			imageUploadStates: {
+				[ LOGO_SECTION_ID ]: {
+					0: IMAGE_UPLOAD_STATES.UPLOAD_REMOVED,
+				},
+			},
+			websiteContent: {
+				...initialTestState.websiteContent,
+				siteLogoUrl: '',
+			},
 		} );
-		expect( websiteContentCollectionReducer( { ...initialTestState }, action ) ).to.be.eql( {
+	} );
+
+	test( 'text content should be accurately updated', () => {
+		const action = websiteContentFieldChanged( {
+			pageId: 'About',
+			fieldValue: 'Testing Content',
+			fieldName: 'content',
+		} );
+		expect( websiteContentCollectionReducer( { ...initialTestState }, action ) ).toEqual( {
 			...initialTestState,
 			websiteContent: {
 				...initialState.websiteContent,
@@ -403,6 +509,6 @@ describe( 'reducer', () => {
 				type: SIGNUP_COMPLETE_RESET,
 				action: {},
 			} )
-		).to.be.eql( initialState );
+		).toEqual( initialState );
 	} );
 } );

@@ -269,7 +269,7 @@ describe( 'useTOSConsentMutation', () => {
 
 describe( 'useBillingDashboardQuery', () => {
 	beforeEach( () => {
-		// Prevent react-query from loggging an error due to the failing requests.
+		// Prevent react-query from logging an error due to the failing requests.
 		setLogger( {
 			error: jest.fn(),
 		} );
@@ -291,6 +291,7 @@ describe( 'useBillingDashboardQuery', () => {
 				{
 					product_slug: 'foo',
 					product_name: 'Foo',
+					product_quantity: 6,
 					product_cost: 3,
 					product_total_cost: 18,
 					counts: {
@@ -310,6 +311,7 @@ describe( 'useBillingDashboardQuery', () => {
 				assigned: 200,
 				unassigned: 100,
 			},
+			price_interval: 'month',
 		};
 
 		const formattedStub = {
@@ -318,6 +320,7 @@ describe( 'useBillingDashboardQuery', () => {
 				{
 					productSlug: 'foo',
 					productName: 'Foo',
+					productQuantity: 6,
 					productCost: 3,
 					productTotalCost: 18,
 					counts: {
@@ -337,6 +340,7 @@ describe( 'useBillingDashboardQuery', () => {
 				assigned: 200,
 				unassigned: 100,
 			},
+			priceInterval: 'month',
 		};
 
 		nock( 'https://public-api.wordpress.com' )

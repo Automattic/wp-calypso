@@ -30,8 +30,9 @@ jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteSlug: () => 'site-slug',
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-jetpack-credentials-update-status', () => () =>
-	'unsubmitted'
+jest.mock(
+	'calypso/state/selectors/get-jetpack-credentials-update-status',
+	() => () => 'unsubmitted'
 );
 
 jest.mock( 'calypso/state/jetpack/credentials/actions', () => ( {
@@ -138,7 +139,7 @@ describe( 'useWithServerCredentials HOC', () => {
 			expect( input.value ).toBe( inputName );
 		} );
 		fireEvent.click( submitButton );
-		expect( errorMessagesContainer.innerHTML ).toBe( '' );
+		expect( errorMessagesContainer ).toBeEmptyDOMElement();
 		expect( actions.updateCredentials ).toHaveBeenCalledTimes( 1 );
 		expect( actions.updateCredentials ).toBeCalledWith(
 			9999,

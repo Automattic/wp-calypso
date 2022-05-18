@@ -7,8 +7,18 @@ import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
+import {
+	PORTFOLIO_PAGE,
+	HOME_PAGE,
+	ABOUT_PAGE,
+	CONTACT_PAGE,
+	MENU_PAGE,
+	SERVICES_PAGE,
+} from 'calypso/signup/difm/constants';
+import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import getDIFMLiteSiteCategory from 'calypso/state/selectors/get-difm-lite-site-category';
+import getDIFMLiteSitePageTitles from 'calypso/state/selectors/get-difm-lite-site-page-titles';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import isDIFMLiteWebsiteContentSubmitted from 'calypso/state/selectors/is-difm-lite-website-content-submitted';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
@@ -75,35 +85,43 @@ function WebsiteContentStep( {
 	const websiteContent = useSelector( getWebsiteContent );
 	const currentIndex = useSelector( getWebsiteContentDataCollectionIndex );
 	const siteCategory = useSelector( ( state ) => getDIFMLiteSiteCategory( state, siteId ) );
+	const pageTitles = useSelector( ( state ) => getDIFMLiteSitePageTitles( state, siteId ) );
 	const isImageUploading = useSelector( ( state ) =>
 		isImageUploadInProgress( state as WebsiteContentStateModel )
 	);
 
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
+	const translatedPageTitles = useTranslatedPageTitles();
 
 	useEffect( () => {
 		function getPageFromCategory( category: string | null ) {
 			switch ( category ) {
 				case 'creative-arts':
-					return { id: 'Portfolio', name: translate( 'Portfolio' ) };
+					return { id: PORTFOLIO_PAGE, name: translatedPageTitles[ PORTFOLIO_PAGE ] };
 				case 'restaurant':
-					return { id: 'Menu', name: translate( 'Menu' ) };
+					return { id: MENU_PAGE, name: translatedPageTitles[ MENU_PAGE ] };
 				default:
-					return { id: 'Services', name: translate( 'Services' ) };
+					return { id: SERVICES_PAGE, name: translatedPageTitles[ SERVICES_PAGE ] };
 			}
 		}
 
-		if ( siteCategory ) {
+		if ( pageTitles && pageTitles.length > 0 ) {
+			const pages = pageTitles.map( ( pageTitle ) => ( {
+				id: pageTitle,
+				name: translatedPageTitles[ pageTitle ],
+			} ) );
+			dispatch( initializePages( pages ) );
+		} else if ( siteCategory ) {
 			dispatch(
 				initializePages( [
-					{ id: 'Home', name: translate( 'Home' ) },
-					{ id: 'About', name: translate( 'About' ) },
-					{ id: 'Contact', name: translate( 'Contact' ) },
+					{ id: HOME_PAGE, name: translatedPageTitles[ HOME_PAGE ] },
+					{ id: ABOUT_PAGE, name: translatedPageTitles[ ABOUT_PAGE ] },
+					{ id: CONTACT_PAGE, name: translatedPageTitles[ CONTACT_PAGE ] },
 					getPageFromCategory( siteCategory ),
 				] )
 			);
 		}
-	}, [ dispatch, siteCategory, translate ] );
+	}, [ dispatch, siteCategory, pageTitles, translatedPageTitles ] );
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
@@ -194,7 +212,7 @@ export default function WrapperWebsiteContent(
 	const dispatch = useDispatch();
 	const headerText = translate( 'Website Content' );
 	const subHeaderText = translate(
-		'In this step, you will add your brand visuals, pages and media to be used on your website.'
+		'Add your logo, page text and media to be used on your website.'
 	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 

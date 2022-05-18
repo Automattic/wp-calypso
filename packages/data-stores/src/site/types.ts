@@ -1,4 +1,10 @@
+import type { DispatchFromMap } from '../mapped-types';
 import type { FeatureId } from '../wpcom-features';
+import type { ActionCreators } from './actions';
+
+export interface Dispatch {
+	dispatch: DispatchFromMap< ActionCreators >;
+}
 
 export interface NewSiteBlogDetails {
 	url: string;
@@ -75,6 +81,16 @@ export interface SiteDetailsPlan {
 	billing_period: string;
 	user_is_owner: boolean;
 	is_free: boolean;
+	features: {
+		active: string[];
+		available: Record< string, string[] >;
+	};
+}
+
+export interface DifmLiteSiteOptions {
+	site_category?: string;
+	is_website_content_submitted?: boolean;
+	selected_page_titles: string[];
 }
 
 export interface SiteDetails {
@@ -83,12 +99,108 @@ export interface SiteDetails {
 	description: string;
 	URL: string;
 	launch_status: string;
+	jetpack: boolean;
+	is_fse_eligible: boolean;
+	is_fse_active: boolean;
+	logo: { id: string; sizes: string[]; url: string };
 	options: {
-		created_at: string;
+		admin_url?: string;
+		advanced_seo_front_page_description?: string;
+		advanced_seo_title_formats?: string[];
+		ak_vp_bundle_enabled?: boolean;
+		allowed_file_types?: string[];
+		anchor_podcast?: boolean;
+		background_color?: boolean;
+		blog_public?: number;
+		created_at?: Date;
+		default_category?: number;
+		default_comment_status?: boolean;
+		default_likes_enabled?: boolean;
+		default_ping_status?: boolean;
+		default_post_format?: string;
+		default_sharing_status?: boolean;
+		design_type?: string;
+		difm_lite_site_options?: DifmLiteSiteOptions;
+		editing_toolkit_is_active?: boolean;
+		featured_images_enabled?: boolean;
+		frame_nonce?: string;
+		gmt_offset?: number;
+		header_image?: boolean;
+		headstart_is_fresh?: boolean;
+		headstart?: boolean;
+		image_default_link_type?: string;
+		image_large_height?: number;
+		image_large_width?: number;
+		image_medium_height?: number;
+		image_medium_width?: number;
+		image_thumbnail_crop?: number;
+		image_thumbnail_height?: number;
+		image_thumbnail_width?: number;
+		import_engine?: string;
+		is_automated_transfer?: boolean;
+		is_cloud_eligible?: boolean;
+		is_difm_lite_in_progress?: boolean;
+		is_domain_only?: boolean;
+		is_mapped_domain?: boolean;
+		is_pending_plan?: boolean;
+		is_redirect?: boolean;
+		is_wpcom_atomic?: boolean;
+		is_wpcom_store?: boolean;
+		is_wpforteams_site?: boolean;
+		jetpack_frame_nonce?: string;
+		login_url?: string;
+		p2_hub_blog_id?: number;
+		page_for_posts?: number;
+		page_on_front?: number;
+		permalink_structure?: string;
+		podcasting_archive?: boolean;
+		post_formats?: string[];
+		publicize_permanently_disabled?: boolean;
+		show_on_front?: string;
+		site_intent?: string;
+		site_segment?: string;
+		site_vertical_id?: string;
+		software_version?: string;
 		selected_features?: FeatureId[];
+		theme_slug?: string;
+		timezone?: string;
+		unmapped_url?: string;
+		upgraded_filetypes_enabled?: boolean;
+		verification_services_codes?: string;
+		videopress_enabled?: boolean;
+		videopress_storage_used?: number;
+		was_created_with_blank_canvas_design?: boolean;
+		woocommerce_is_active?: boolean;
+		wordads?: boolean;
 	};
 	plan?: SiteDetailsPlan;
+	capabilities: {
+		edit_pages: boolean;
+		edit_posts: boolean;
+		edit_others_posts: boolean;
+		edit_others_pages: boolean;
+		delete_posts: boolean;
+		delete_others_posts: boolean;
+		edit_theme_options: boolean;
+		edit_users: boolean;
+		list_users: boolean;
+		manage_categories: boolean;
+		manage_options: boolean;
+		moderate_comments: boolean;
+		activate_wordads: boolean;
+		promote_users: boolean;
+		publish_posts: boolean;
+		upload_files: boolean;
+		delete_users: boolean;
+		remove_users: boolean;
+		own_site: boolean;
+		view_hosting: boolean;
+		view_stats: boolean;
+		activate_plugins: boolean;
+	};
 }
+
+export type SiteOption = keyof SiteDetails[ 'options' ];
 
 export interface SiteError {
 	error: string;
@@ -180,6 +292,10 @@ export interface Domain {
 	owner: string;
 }
 
+export interface SiteSettings {
+	[ key: string ]: any;
+}
+
 export interface SiteLaunchState {
 	status: SiteLaunchStatus;
 	errorCode: SiteLaunchError | undefined;
@@ -194,4 +310,91 @@ export enum SiteLaunchStatus {
 	IN_PROGRESS = 'in_progress',
 	SUCCESS = 'success',
 	FAILURE = 'failure',
+}
+
+export interface AtomicTransferState {
+	status: AtomicTransferStatus;
+	errorCode: AtomicTransferError | undefined;
+}
+
+export enum AtomicTransferStatus {
+	UNINITIALIZED = 'unintialized',
+	IN_PROGRESS = 'in_progress',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+}
+
+export enum AtomicTransferError {
+	INTERNAL = 'internal',
+}
+
+export interface LatestAtomicTransfer {
+	atomic_transfer_id: number;
+	blog_id: number;
+	status: string;
+	created_at: string;
+	is_stuck: boolean;
+	is_stuck_reset: boolean;
+	in_lossless_revert: boolean;
+}
+
+export interface LatestAtomicTransferState {
+	status: LatestAtomicTransferStatus;
+	transfer: LatestAtomicTransfer | undefined;
+	errorCode: LatestAtomicTransferError | undefined;
+}
+
+export enum LatestAtomicTransferStatus {
+	UNINITIALIZED = 'unintialized',
+	IN_PROGRESS = 'in_progress',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+}
+
+export interface LatestAtomicTransferError {
+	name: string; // "NotFoundError"
+	status: number; // 404
+	message: string; // "Transfer not found"
+	code: string; // "no_transfer_record"
+}
+
+export interface AtomicSoftwareStatus {
+	blog_id: number;
+	software_set: Record< string, { path: string; state: string } >;
+	applied: boolean;
+}
+
+export interface AtomicSoftwareStatusError {
+	name: string; // "NotFoundError"
+	status: number; // 404
+	message: string; // "Transfer not found"
+	code: string; // "no_transfer_record"
+}
+
+export type AtomicSoftwareStatusState = Record<
+	string,
+	{
+		status: AtomicSoftwareStatus | undefined;
+		error: AtomicSoftwareStatusError | undefined;
+	}
+>;
+
+export enum AtomicSoftwareInstallStatus {
+	UNINITIALIZED = 'unintialized',
+	IN_PROGRESS = 'in_progress',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+}
+export type AtomicSoftwareInstallState = Record<
+	string,
+	{
+		status: AtomicSoftwareInstallStatus | undefined;
+		error: AtomicSoftwareInstallError | undefined;
+	}
+>;
+export interface AtomicSoftwareInstallError {
+	name: string;
+	status: number;
+	message: string;
+	code: string;
 }

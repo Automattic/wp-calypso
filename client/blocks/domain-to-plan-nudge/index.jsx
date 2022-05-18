@@ -1,4 +1,9 @@
-import { getPlan, PLAN_PERSONAL, FEATURE_NO_ADS } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PLAN_WPCOM_PRO,
+	PLAN_PERSONAL,
+	WPCOM_FEATURES_NO_ADVERTS,
+} from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -57,17 +62,17 @@ class DomainToPlanNudge extends Component {
 				} ) }
 				event="domain_to_personal_nudge" //actually cta_name
 				dismissPreferenceName="domain-to-plan-nudge"
-				feature={ FEATURE_NO_ADS }
+				feature={ WPCOM_FEATURES_NO_ADVERTS }
 				href={ `/checkout/${ siteId }/personal` }
 				list={ [
 					translate( 'Remove WordPress.com Ads' ),
 					translate( 'Access unlimited customer support via email' ),
 					translate( 'Use with your Current Custom Domain' ),
 				] }
-				plan={ PLAN_PERSONAL }
+				plan={ PLAN_WPCOM_PRO }
 				price={ prices }
 				showIcon
-				title={ translate( 'Upgrade to a Personal Plan and Save!' ) }
+				title={ translate( 'Upgrade to a Pro Plan and Save!' ) }
 			/>
 		);
 	}

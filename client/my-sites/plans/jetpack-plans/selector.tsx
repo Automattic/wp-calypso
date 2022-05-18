@@ -16,6 +16,7 @@ import LicensingPromptDialog from 'calypso/components/jetpack/licensing-prompt-d
 import Main from 'calypso/components/main';
 import { MAIN_CONTENT_ID } from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useExperiment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -32,7 +33,6 @@ import type {
 	SelectorProduct,
 	PurchaseCallback,
 } from 'calypso/my-sites/plans/jetpack-plans/types';
-
 import './style.scss';
 
 const SelectorPage: React.FC< SelectorPageProps > = ( {
@@ -43,6 +43,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	nav,
 	header,
 	footer,
+	locale,
 	planRecommendation,
 	highlightedProducts = [],
 	enableUserLicensesDialog = false,
@@ -122,7 +123,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		[]
 	);
 
-	const createProductURL = getPurchaseURLCallback( siteSlug, urlQueryArgs );
+	const createProductURL = getPurchaseURLCallback( siteSlug, urlQueryArgs, locale );
 
 	// Sends a user to a page based on whether there are subtypes.
 	const selectProduct: PurchaseCallback = (
@@ -182,6 +183,12 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		( variation: Iterations | null ) => `jetpack-plans__iteration--${ variation ?? 'default' }`
 	);
 
+	// Set up pricing display test
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+		'calypso_jetpack_pricing_page_focus_on_intro_rate_202204_v1'
+	);
+	const isPricingPageTreatment202204 = experimentAssignment?.variationName === 'treatment';
+
 	return (
 		<>
 			<QueryJetpackSaleCoupon />
@@ -216,6 +223,8 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 					onDurationChange={ trackDurationChange }
 					scrollCardIntoView={ scrollCardIntoView }
 					createButtonURL={ createProductURL }
+					isPricingPageTreatment202204={ isPricingPageTreatment202204 }
+					isPricingPageTest202204AssignmentLoading={ isLoadingExperimentAssignment }
 				/>
 
 				<QueryProductsList type="jetpack" />

@@ -2,31 +2,24 @@ Return to [Top Page](../README.md).
 
 # Environment Variables
 
-Environment Variables are values that are defined at the system level to serve as configuration for programs.
+Environment Variables control much of the runtime configuration for E2E tests.
 
-## Required
+## Current Environment Variables
 
-| Name            | Description                                         |
-| --------------- | --------------------------------------------------- |
-| CONFIG_KEY      | Secrets decryption key obtained from a8c key store. |
-| NODE_CONFIG_ENV | Name of decrypted secrets file.                     |
-
-## Framework
-
-| Name                  | Description                                         | Default                                                          |
-| --------------------- | --------------------------------------------------- | ---------------------------------------------------------------- |
-| HEADLESS              | Configure browser headless/headful mode.            | false                                                            |
-| SLOW_MO               | Slow down the execution by given milliseconds.      | 0                                                                |
-| AUTHENTICATE_ACCOUNTS | List of accounts to pre-authenticate for later use. | [ 'simpleSitePersonalPlanUser', 'eCommerceUser', 'defaultUser' ] |
-| COOKIES_PATH          | Path on disk to the saved authenticated cookies.    | ./cookies/                                                       |
-| VIEWPORT_NAME         | Specify the viewport to be used.                    | desktop                                                          |
-
-## CI
-
-| Name           | Description                            | Example | Required |
-| -------------- | -------------------------------------- | ------- | -------- |
-| COBLOCKS_EDGE  | Use the bleeding edge CoBlocks build.  | true    | No       |
-| GUTENBERG_EDGE | Use the bleeding edge Gutenberg build. | true    | No       |
+| Name                  | Description                                                         | Default                                              |
+| --------------------- | ------------------------------------------------------------------- | ---------------------------------------------------- |
+| ARTIFACTS_PATH        | Path on disk to test artifacts (screenshots, logs, etc).            | ./results/                                           |
+| AUTHENTICATE_ACCOUNTS | Comma-delimited list of accounts to pre-authenticate for later use. | simpleSitePersonalPlanUser,eCommerceUser,defaultUser |
+| CALYPSO_BASE_URL      | The base URL to use for Calypso                                     | <https://wordpress.com>                              |
+| COBLOCKS_EDGE         | Use the bleeding edge CoBlocks build.                               | false                                                |
+| COOKIES_PATH          | Path on disk to the saved authenticated cookies.                    | ./cookies/                                           |
+| GUTENBERG_EDGE        | Use the bleeding edge Gutenberg build.                              | false                                                |
+| HEADLESS              | Configure browser headless/headful mode.                            | false                                                |
+| SLOW_MO               | Slow down the execution by given milliseconds.                      | 0                                                    |
+| TEST_LOCALES          | The locales to target for I18N testing                              | A long list of currenlty supported locales.          |
+| TEST_ON_ATOMIC        | Use a user with an Atomic site.                                     | false                                                |
+| TEST_ON_JETPACK       | Use a user with a jetpack connected site.                           | false                                                |
+| VIEWPORT_NAME         | Specify the viewport to be used.                                    | desktop                                              |
 
 <!-- When adding new rows, run the following command to sort the resulting sub-table in alphabetical order:
 

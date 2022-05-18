@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	DOMAINS_SUGGESTIONS_RECEIVE,
@@ -19,13 +18,15 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting', 'errors' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'items', 'requesting', 'errors' ] )
+		);
 	} );
 
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should index suggestions by serialized query', () => {
@@ -45,7 +46,7 @@ describe( 'reducer', () => {
 				suggestions,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
 					{
 						domain_name: 'example.me',
@@ -86,7 +87,7 @@ describe( 'reducer', () => {
 				suggestions,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
 					{
 						domain_name: 'example.me',
@@ -152,7 +153,7 @@ describe( 'reducer', () => {
 				suggestions,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
 					{
 						domain_name: 'example.me',
@@ -182,55 +183,58 @@ describe( 'reducer', () => {
 		describe( 'persistence', () => {
 			test( 'persists state', () => {
 				const original = deepFreeze( {
-					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-						{
-							domain_name: 'example.me',
-							cost: '$25.00',
-							product_id: 46,
-							product_slug: 'dotme_domain',
-						},
-						{
-							domain_name: 'example.org',
-							cost: '$18.00',
-							product_id: 6,
-							product_slug: 'domain_reg',
-						},
-					],
+					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+						[
+							{
+								domain_name: 'example.me',
+								cost: '$25.00',
+								product_id: 46,
+								product_slug: 'dotme_domain',
+							},
+							{
+								domain_name: 'example.org',
+								cost: '$18.00',
+								product_id: 6,
+								product_slug: 'domain_reg',
+							},
+						],
 				} );
 				const state = serialize( items, original );
-				expect( state ).to.eql( original );
+				expect( state ).toEqual( original );
 			} );
 
 			test( 'loads valid persisted state', () => {
 				const original = deepFreeze( {
-					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-						{
-							domain_name: 'example.me',
-							cost: '$25.00',
-							product_id: 46,
-							product_slug: 'dotme_domain',
-						},
-						{
-							domain_name: 'example.org',
-							cost: '$18.00',
-							product_id: 6,
-							product_slug: 'domain_reg',
-						},
-					],
+					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+						[
+							{
+								domain_name: 'example.me',
+								cost: '$25.00',
+								product_id: 46,
+								product_slug: 'dotme_domain',
+							},
+							{
+								domain_name: 'example.org',
+								cost: '$18.00',
+								product_id: 6,
+								product_slug: 'domain_reg',
+							},
+						],
 				} );
 				const state = deserialize( items, original );
-				expect( state ).to.eql( original );
+				expect( state ).toEqual( original );
 			} );
 
 			test( 'loads default state when schema does not match', () => {
 				const original = deepFreeze( {
-					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': [
-						{ cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
-						{ cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
-					],
+					'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+						[
+							{ cost: '$25.00', product_id: 46, product_slug: 'dotme_domain' },
+							{ cost: '$18.00', product_id: 6, product_slug: 'domain_reg' },
+						],
 				} );
 				const state = deserialize( items, original );
-				expect( state ).to.eql( {} );
+				expect( state ).toEqual( {} );
 			} );
 		} );
 	} );
@@ -238,7 +242,7 @@ describe( 'reducer', () => {
 	describe( '#requesting()', () => {
 		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should index requesting state by serialized query', () => {
@@ -252,7 +256,7 @@ describe( 'reducer', () => {
 				type: DOMAINS_SUGGESTIONS_REQUEST,
 				queryObject,
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );
 		} );
@@ -272,7 +276,7 @@ describe( 'reducer', () => {
 				queryObject,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': false,
 			} );
 		} );
@@ -292,7 +296,7 @@ describe( 'reducer', () => {
 				queryObject,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': false,
 			} );
 		} );
@@ -312,7 +316,7 @@ describe( 'reducer', () => {
 				queryObject,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 				'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': true,
 			} );
@@ -322,7 +326,7 @@ describe( 'reducer', () => {
 	describe( '#errors()', () => {
 		test( 'should default to an empty object', () => {
 			const state = errors( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should update errors on failure', () => {
@@ -342,15 +346,17 @@ describe( 'reducer', () => {
 				error,
 			} );
 
-			expect( state ).to.eql( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
+			expect( state ).toEqual( {
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+					error,
 			} );
 		} );
 
 		test( 'should update errors on success', () => {
 			const error = new Error( 'something bad happened' );
 			const originalState = deepFreeze( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+					error,
 			} );
 			const queryObject = {
 				query: 'example',
@@ -363,15 +369,17 @@ describe( 'reducer', () => {
 				queryObject,
 			} );
 
-			expect( state ).to.eql( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': null,
+			expect( state ).toEqual( {
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+					null,
 			} );
 		} );
 
 		test( 'should update errors on request', () => {
 			const error = new Error( 'something bad happened' );
 			const originalState = deepFreeze( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+					error,
 			} );
 			const queryObject = {
 				query: 'example',
@@ -384,8 +392,9 @@ describe( 'reducer', () => {
 				queryObject,
 			} );
 
-			expect( state ).to.eql( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': null,
+			expect( state ).toEqual( {
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+					null,
 			} );
 		} );
 
@@ -406,15 +415,17 @@ describe( 'reducer', () => {
 				error,
 			} );
 
-			expect( state ).to.eql( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
+			expect( state ).toEqual( {
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+					error,
 			} );
 		} );
 
 		test( 'should accumulate errors by queries', () => {
 			const error = new Error( 'something bad happened' );
 			const originalState = deepFreeze( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+					error,
 			} );
 			const queryObject = {
 				query: 'foobar',
@@ -429,9 +440,11 @@ describe( 'reducer', () => {
 				error: error2,
 			} );
 
-			expect( state ).to.eql( {
-				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error,
-				'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}': error2,
+			expect( state ).toEqual( {
+				'{"query":"example","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+					error,
+				'{"query":"foobar","quantity":2,"vendor":"domainsbot","include_wordpressdotcom":false}':
+					error2,
 			} );
 		} );
 	} );

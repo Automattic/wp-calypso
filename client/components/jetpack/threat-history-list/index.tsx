@@ -6,6 +6,7 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryJetpackScanHistory from 'calypso/components/data/query-jetpack-scan-history';
 import QueryJetpackScanThreatCounts from 'calypso/components/data/query-jetpack-scan-threat-counts';
+import ThreatListHeader from 'calypso/components/jetpack/threat-list-header';
 import Pagination from 'calypso/components/pagination';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSiteScanHistory from 'calypso/state/selectors/get-site-scan-history';
@@ -159,7 +160,11 @@ const ThreatHistoryList: React.FC< ThreatHistoryListProps > = ( { filter } ) => 
 								/>
 							) }
 
-							<ListItems items={ currentPageThreats } />
+							<ThreatListHeader />
+
+							<div className="threat-history-list__threats">
+								<ListItems items={ currentPageThreats } />
+							</div>
 
 							{ showPagination && (
 								<Pagination

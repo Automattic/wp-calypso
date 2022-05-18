@@ -80,8 +80,8 @@ function user_in_sentry_test_segment( $user_id ) {
 /**
  * Return whether Sentry should be activated for a given user.
  *
- * In this phase, a12s have the possibility of configuring what error reporter to choose
- * through the sticker. a12s shouldn not be covered by the segment logic.
+ * In this phase, a12s have the possibility of configuring what error reporter to use
+ * through the sticker. a12s should not be covered by the segment logic.
  *
  * Regular users have the error reporter chosen based on the segmentation logic, only.
  *
@@ -101,12 +101,12 @@ function should_activate_sentry( $user_id, $blog_id ) {
 function enqueue_script() {
 	$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/error-reporting.asset.php';
 	$script_dependencies = isset( $asset_file['dependencies'] ) ? $asset_file['dependencies'] : array();
-	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/error-reporting.js' );
+	$script_version      = isset( $asset_file['version'] ) ? $asset_file['version'] : filemtime( plugin_dir_path( __FILE__ ) . 'dist/error-reporting.min.js' );
 	$script_id           = 'a8c-fse-error-reporting-script';
 
 	wp_enqueue_script(
 		$script_id,
-		plugins_url( 'dist/error-reporting.js', __FILE__ ),
+		plugins_url( 'dist/error-reporting.min.js', __FILE__ ),
 		$script_dependencies,
 		$script_version,
 		true

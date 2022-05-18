@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getPreviewSiteId } from '../selectors';
 
 describe( 'getPreviewSiteId', () => {
@@ -15,7 +14,7 @@ describe( 'getPreviewSiteId', () => {
 			},
 		};
 
-		expect( getPreviewSiteId( state ) ).to.eql( selectedSiteId );
+		expect( getPreviewSiteId( state ) ).toEqual( selectedSiteId );
 	} );
 
 	test( 'should return the current preview site id when in "All My Sites" mode', () => {
@@ -28,7 +27,7 @@ describe( 'getPreviewSiteId', () => {
 			},
 		};
 
-		expect( getPreviewSiteId( state ) ).to.eql( currentPreviewSiteId );
+		expect( getPreviewSiteId( state ) ).toEqual( currentPreviewSiteId );
 	} );
 
 	test( 'should return null when in "All My Sites" mode and the current preview site id is unset', () => {
@@ -41,6 +40,6 @@ describe( 'getPreviewSiteId', () => {
 			},
 		};
 
-		expect( getPreviewSiteId( state ) ).to.eql( null );
+		expect( getPreviewSiteId( state ) ).toBeNull();
 	} );
 } );

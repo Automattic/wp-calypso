@@ -89,7 +89,7 @@ class StepImportOrMigrate extends Component {
 		}
 
 		if ( ! isTargetSiteAtomic ) {
-			return <p>{ translate( 'Import your entire site with the Business Plan.' ) }</p>;
+			return <p>{ translate( 'Import your entire site with the Pro Plan.' ) }</p>;
 		}
 	};
 
@@ -98,14 +98,8 @@ class StepImportOrMigrate extends Component {
 	}
 
 	render() {
-		const {
-			targetSite,
-			targetSiteSlug,
-			sourceHasJetpack,
-			sourceSite,
-			sourceSiteInfo,
-			translate,
-		} = this.props;
+		const { targetSite, targetSiteSlug, sourceHasJetpack, sourceSite, sourceSiteInfo, translate } =
+			this.props;
 		const backHref = `/migrate/${ targetSiteSlug }`;
 
 		const everythingLabels = [];

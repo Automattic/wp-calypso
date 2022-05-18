@@ -1,4 +1,4 @@
-import { isFreePlan } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
@@ -16,7 +16,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSitePlan } from 'calypso/state/sites/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -30,8 +30,9 @@ export default function WPCOMUpsellPage(): ReactElement {
 	const isAdmin = useSelector( ( state ) =>
 		canCurrentUser( state, siteId ?? 0, 'manage_options' )
 	);
-	const { product_slug: planSlug = '' } =
-		useSelector( ( state ) => getSitePlan( state, siteId ) ) ?? {};
+	const hasFullActivityLogFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG )
+	);
 	const translate = useTranslate();
 	const promos: PromoSectionProps = {
 		promos: [
@@ -72,16 +73,16 @@ export default function WPCOMUpsellPage(): ReactElement {
 				{ ! isAdmin && (
 					<Notice
 						status="is-warning"
-						text={ translate( 'Only site administrators can upgrade to the Business plan.' ) }
+						text={ translate( 'Only site administrators can upgrade to the Pro plan.' ) }
 						showDismiss={ false }
 					/>
 				) }
 				{ isAdmin && (
 					<PromoCardCTA
 						cta={ {
-							text: translate( 'Upgrade to Business Plan' ),
+							text: translate( 'Upgrade to Pro Plan' ),
 							action: {
-								url: `/checkout/${ siteSlug }/business`,
+								url: `/checkout/${ siteSlug }/pro`,
 								onClick: onUpgradeClick,
 								selfTarget: true,
 							},
@@ -90,11 +91,9 @@ export default function WPCOMUpsellPage(): ReactElement {
 				) }
 			</PromoCard>
 
-			{ isFreePlan( planSlug ) && (
+			{ ! hasFullActivityLogFeature && (
 				<>
-					<h2 className="backup__subheader">
-						{ translate( 'Also included in the Business Plan' ) }
-					</h2>
+					<h2 className="backup__subheader">{ translate( 'Also included in the Pro Plan' ) }</h2>
 
 					<PromoSection { ...promos } />
 				</>

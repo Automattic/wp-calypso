@@ -50,7 +50,6 @@ export class SiteAddressChanger extends Component {
 
 	state = {
 		step: 0,
-		showDialog: false,
 		domainFieldValue: '',
 		newDomainSuffix: this.props.currentDomainSuffix,
 	};
@@ -329,14 +328,8 @@ export class SiteAddressChanger extends Component {
 	};
 
 	renderNewAddressForm = () => {
-		const {
-			currentDomain,
-			isAvailable,
-			siteId,
-			selectedSiteSlug,
-			translate,
-			isAtomicSite,
-		} = this.props;
+		const { currentDomain, isAvailable, siteId, selectedSiteSlug, translate, isAtomicSite } =
+			this.props;
 
 		if ( isAtomicSite ) {
 			return (

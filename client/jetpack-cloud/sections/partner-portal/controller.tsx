@@ -1,6 +1,7 @@
 import page from 'page';
 import AssignLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/assign-license';
 import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
+import InvoicesDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/invoices-dashboard';
 import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import LandingPage from 'calypso/jetpack-cloud/sections/partner-portal/primary/landing-page';
 import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
@@ -28,6 +29,7 @@ import {
 } from 'calypso/state/partner-portal/partner/selectors';
 import { ToSConsent } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import Header from './header';
 import type PageJS from 'page';
 
@@ -82,9 +84,14 @@ export function licensesContext( context: PageJS.Context, next: () => void ): vo
 }
 
 export function issueLicenseContext( context: PageJS.Context, next: () => void ): void {
+	const { site_id: siteId } = context.query;
+	const state = context.store.getState();
+	const sites = getSitesItems( state );
+	const selectedSite = sites[ siteId ] ? siteId : null;
+
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <IssueLicense />;
+	context.primary = <IssueLicense selectedSite={ selectedSite } />;
 	next();
 }
 
@@ -113,6 +120,13 @@ export function paymentMethodAddContext( context: PageJS.Context, next: () => vo
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <PaymentMethodAdd />;
+	next();
+}
+
+export function invoicesDashboardContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <InvoicesDashboard />;
 	next();
 }
 

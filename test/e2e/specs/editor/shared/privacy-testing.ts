@@ -7,6 +7,7 @@ import {
 	PublishedPostPage,
 	PageTemplateModalComponent,
 	getTestAccountByFeature,
+	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -25,13 +26,10 @@ const pagePassword = 'cat';
  */
 export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions } ): void {
 	describe( DataHelper.createSuiteTitle( `Editor: Privacy (${ visibility })` ), function () {
-		const accountName = getTestAccountByFeature(
-			{
-				gutenberg: envVariables.GUTENBERG_EDGE ? 'edge' : 'stable',
-				siteType: envVariables.TEST_ON_ATOMIC ? 'atomic' : 'simple',
-			},
-			[ { gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' } ]
-		);
+		const features = envToFeatureKey( envVariables );
+		const accountName = getTestAccountByFeature( features, [
+			{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+		] );
 
 		let page: Page;
 		let url: URL;
@@ -46,7 +44,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 			} );
 
 			it( 'Start new page', async function () {
-				editorPage = new EditorPage( page );
+				editorPage = new EditorPage( page, { target: features.siteType } );
 				await editorPage.visit( 'page' );
 				await editorPage.waitUntilLoaded();
 				const editorIframe = await editorPage.getEditorHandle();
@@ -55,7 +53,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 			} );
 
 			it( 'Enter page title', async function () {
-				editorPage = new EditorPage( page );
+				editorPage = new EditorPage( page, { target: features.siteType } );
 				await editorPage.enterTitle( `Privacy: ${ visibility } - ${ DataHelper.getTimestamp() }` );
 			} );
 
@@ -89,31 +87,31 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 				testPage = await browser.newPage();
 			} );
 
-			it.each( [ 'defaultUser', 'public' ] )(
-				`View ${ visibility } page as %s`,
-				async function ( user ) {
-					try {
-						const testAccount = new TestAccount( user );
-						await testAccount.authenticate( testPage );
-					} catch {
-						// noop - public user, which is state of not logged in, does not
-						// have an entry in the secrets file.
-					}
-					await testPage.goto( url.href );
-					const publishedPostPage = new PublishedPostPage( testPage );
+			const viewPageAsNonAuthor = async () => {
+				await testPage.goto( url.href );
+				const publishedPostPage = new PublishedPostPage( testPage );
 
-					// If target article is private, only the posting user can see that it even exists.
-					if ( visibility === 'Private' ) {
-						return await publishedPostPage.validateTextInPost( 'Nothing here' );
-					}
-
-					// If target article is password protected, unlock it first.
-					if ( visibility === 'Password' ) {
-						await publishedPostPage.enterPostPassword( pagePassword );
-					}
-					await publishedPostPage.validateTextInPost( pageContent );
+				// If target article is private, only the posting user can see that it even exists.
+				if ( visibility === 'Private' ) {
+					return await publishedPostPage.validateTextInPost( 'Nothing here' );
 				}
-			);
+
+				// If target article is password protected, unlock it first.
+				if ( visibility === 'Password' ) {
+					await publishedPostPage.enterPostPassword( pagePassword );
+				}
+				await publishedPostPage.validateTextInPost( pageContent );
+			};
+
+			it( `View ${ visibility } page as 'defaultUser'`, async function () {
+				const testAccount = new TestAccount( 'defaultUser' );
+				await testAccount.authenticate( testPage );
+				await viewPageAsNonAuthor();
+			} );
+
+			it( `View ${ visibility } page as a public user that is not logged in.`, async function () {
+				await viewPageAsNonAuthor();
+			} );
 
 			it( `View ${ visibility } page as publishing user`, async function () {
 				const testAccount = new TestAccount( accountName );

@@ -71,14 +71,8 @@ class FileImporter extends PureComponent {
 	};
 
 	render() {
-		const {
-			title,
-			icon,
-			description,
-			overrideDestination,
-			uploadDescription,
-			optionalUrl,
-		} = this.props.importerData;
+		const { title, icon, description, overrideDestination, uploadDescription, optionalUrl } =
+			this.props.importerData;
 		const { importerStatus, site } = this.props;
 		const { errorData, importerState } = importerStatus;
 		const isEnabled = appStates.DISABLED !== importerState;

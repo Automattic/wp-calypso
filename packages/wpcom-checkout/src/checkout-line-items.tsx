@@ -338,7 +338,7 @@ function EmailMeta( {
 		);
 	}
 
-	let mailboxes: GSuiteProductUser[] | TitanProductUser[] | [  ] = [];
+	let mailboxes: GSuiteProductUser[] | TitanProductUser[] | [] = [];
 
 	if (
 		isGoogleWorkspaceProductSlug( product.product_slug ) ||

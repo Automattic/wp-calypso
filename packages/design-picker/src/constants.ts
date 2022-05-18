@@ -51,3 +51,9 @@ export const ANCHORFM_FONT_PAIRINGS = [
 		base: 'Cabin',
 	},
 ] as const;
+
+/**
+ * mShot options
+ */
+export const DEFAULT_VIEWPORT_WIDTH = 1600;
+export const MOBILE_VIEWPORT_WIDTH = 599;

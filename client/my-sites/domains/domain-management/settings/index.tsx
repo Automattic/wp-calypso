@@ -11,10 +11,11 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isDomainInGracePeriod, isDomainUpdateable } from 'calypso/lib/domains';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import DomainDeleteInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/delete';
 import DomainEmailInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/email';
 import DomainTransferInfoCard from 'calypso/my-sites/domains/domain-management/components/domain/domain-info-card/transfer';
+import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import { WPCOM_DEFAULT_NAMESERVERS_REGEX } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 import withDomainNameservers from 'calypso/my-sites/domains/domain-management/name-servers/with-domain-nameservers';
@@ -66,7 +67,6 @@ const Settings = ( {
 }: SettingsPageProps ): JSX.Element => {
 	const translate = useTranslate();
 	const contactInformation = findRegistrantWhois( whoisData );
-	const isDomainOnly = selectedSite.options?.is_domain_only;
 
 	useEffect( () => {
 		if ( ! contactInformation ) {
@@ -93,7 +93,7 @@ const Settings = ( {
 			showBackArrow: true,
 		};
 
-		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
+		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
 	};
 
 	const renderSecurityAccordion = () => {
@@ -119,7 +119,7 @@ const Settings = ( {
 	};
 
 	const renderStatusSection = () => {
-		if ( ! ( domain && isDomainOnly ) ) {
+		if ( ! ( domain && selectedSite.options?.is_domain_only ) ) {
 			return null;
 		}
 
@@ -144,7 +144,7 @@ const Settings = ( {
 					title={ translate( 'Details', { textOnly: true } ) }
 					subtitle={ translate( 'Registration and auto-renew', { textOnly: true } ) }
 					key="main"
-					expanded={ ! isDomainOnly }
+					expanded={ ! selectedSite.options?.is_domain_only }
 				>
 					<RegisteredDomainDetails
 						domain={ domain }
@@ -243,15 +243,19 @@ const Settings = ( {
 				title={ translate( 'Name servers', { textOnly: true } ) }
 				subtitle={ getNameServerSectionSubtitle() }
 			>
-				<NameServersCard
-					domain={ domain }
-					isLoadingNameservers={ isLoadingNameservers }
-					loadingNameserversError={ loadingNameserversError }
-					nameservers={ nameservers }
-					selectedSite={ selectedSite }
-					selectedDomainName={ selectedDomainName }
-					updateNameservers={ updateNameservers }
-				/>
+				{ domain.canManageNameServers ? (
+					<NameServersCard
+						domain={ domain }
+						isLoadingNameservers={ isLoadingNameservers }
+						loadingNameserversError={ loadingNameserversError }
+						nameservers={ nameservers }
+						selectedSite={ selectedSite }
+						selectedDomainName={ selectedDomainName }
+						updateNameservers={ updateNameservers }
+					/>
+				) : (
+					<InfoNotice redesigned text={ domain.cannotManageNameServersReason } />
+				) }
 			</Accordion>
 		);
 	};
@@ -266,12 +270,16 @@ const Settings = ( {
 				title={ translate( 'DNS records', { textOnly: true } ) }
 				subtitle={ translate( 'Connect your domain to other services', { textOnly: true } ) }
 			>
-				<DnsRecords
-					dns={ dns }
-					selectedDomainName={ selectedDomainName }
-					selectedSite={ selectedSite }
-					currentRoute={ currentRoute }
-				/>
+				{ domain.canManageDnsRecords ? (
+					<DnsRecords
+						dns={ dns }
+						selectedDomainName={ selectedDomainName }
+						selectedSite={ selectedSite }
+						currentRoute={ currentRoute }
+					/>
+				) : (
+					<InfoNotice redesigned text={ domain.cannotManageDnsRecordsReason } />
+				) }
 			</Accordion>
 		);
 	};

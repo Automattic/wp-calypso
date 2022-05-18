@@ -1,5 +1,6 @@
 /** @jest-environment jsdom */
 
+jest.mock( 'page' );
 jest.mock( 'react-query', () => ( {
 	useQuery: () => [],
 } ) );
@@ -7,6 +8,9 @@ jest.mock( 'calypso/lib/wporg', () => ( {
 	getWporgLocaleCode: () => 'it_US',
 	fetchPluginsList: () => Promise.resolve( [] ),
 } ) );
+jest.mock( 'calypso/lib/url-search', () => ( Component ) => ( props ) => (
+	<Component { ...props } doSearch={ jest.fn() } />
+) );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/blocks/upsell-nudge', () => 'upsell-nudge' );
@@ -14,6 +18,17 @@ jest.mock( 'calypso/blocks/upsell-nudge', () => 'upsell-nudge' );
 let mockPlugins = [];
 jest.mock( 'calypso/data/marketplace/use-wporg-plugin-query', () => ( {
 	useWPORGPlugins: jest.fn( () => ( { data: { plugins: mockPlugins } } ) ),
+	useWPORGInfinitePlugins: jest.fn( () => ( {
+		data: { plugins: mockPlugins },
+		fetchNextPage: jest.fn(),
+	} ) ),
+} ) );
+
+jest.mock( 'calypso/data/marketplace/use-site-search-es-query', () => ( {
+	useSiteSearchPlugins: jest.fn( () => ( {
+		data: { plugins: mockPlugins },
+		fetchNextPage: jest.fn(),
+	} ) ),
 } ) );
 
 jest.mock( '@automattic/languages', () => [

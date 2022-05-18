@@ -30,21 +30,20 @@ function AddNewPaymentMethod() {
 	const addPaymentMethodTitle = String( titles.addPaymentMethod );
 
 	const translate = useTranslate();
-	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
+	const { isStripeLoading, stripeLoadingError } = useStripe();
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
 		activePayButtonText: String( translate( 'Save card' ) ),
 		allowUseForAllSubscriptions: true,
 		initialUseForAllSubscriptions: true,
 	} );
-	const paymentMethodList = useMemo( () => [ stripeMethod ].filter( isValueTruthy ), [
-		stripeMethod,
-	] );
+	const paymentMethodList = useMemo(
+		() => [ stripeMethod ].filter( isValueTruthy ),
+		[ stripeMethod ]
+	);
 	const reduxDispatch = useDispatch();
 	useEffect( () => {
 		if ( stripeLoadingError ) {

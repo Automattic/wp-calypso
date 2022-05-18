@@ -125,17 +125,6 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	const isTransferringBlocked = ! transferringDataIsAvailable || transferringBlockers?.length > 0;
 
 	/*
-	 * Plan site and `woop` site feature.
-	 * If the eligibility holds contains `NO_BUSINESS_PLAN`,
-	 * if the site doesn't have the `woop` feature,
-	 * and if the site has the `woop` feature upgradaable,
-	 * then the site needs to be upgraded.
-	 */
-	const eligibilityNoProperPlan = eligibilityHolds?.includes(
-		eligibilityHoldsConstants.NO_BUSINESS_PLAN
-	);
-
-	/*
 	 * Check whether the `woop` feature is actve.`
 	 * It's defined by wpcom in the store product list.
 	 */
@@ -152,9 +141,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	);
 
 	// The site requires upgrading when the feature is not active and available.
-	const requiresUpgrade = Boolean(
-		eligibilityNoProperPlan && ! isWoopFeatureActive && hasWoopFeatureAvailable.length
-	);
+	const requiresUpgrade = Boolean( ! isWoopFeatureActive && hasWoopFeatureAvailable.length );
 
 	/*
 	 * We pick the first plan from the available plans list.

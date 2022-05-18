@@ -34,7 +34,7 @@ import {
 } from 'calypso/lib/titan/new-mailbox';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
-import MailboxPricingNotice from 'calypso/my-sites/email/email-pricing-notice';
+import EmailPricingNotice from 'calypso/my-sites/email/email-pricing-notice';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
 import {
 	emailManagement,
@@ -84,13 +84,8 @@ class TitanAddMailboxes extends Component {
 	};
 
 	goToEmail = () => {
-		const {
-			currentRoute,
-			isSelectedDomainNameValid,
-			selectedDomainName,
-			selectedSite,
-			source,
-		} = this.props;
+		const { currentRoute, isSelectedDomainNameValid, selectedDomainName, selectedSite, source } =
+			this.props;
 
 		page(
 			emailManagement(
@@ -182,12 +177,8 @@ class TitanAddMailboxes extends Component {
 	};
 
 	handleUnusedMailboxFinishSetupClick = () => {
-		const {
-			currentRoute,
-			isSelectedDomainNameValid,
-			selectedDomainName,
-			selectedSite,
-		} = this.props;
+		const { currentRoute, isSelectedDomainNameValid, selectedDomainName, selectedSite } =
+			this.props;
 
 		this.recordClickEvent( 'calypso_email_management_titan_add_mailboxes_create_mailbox_click' );
 
@@ -285,13 +276,13 @@ class TitanAddMailboxes extends Component {
 					) }
 
 					{ selectedDomain && titanMailProduct && hasTitanMailWithUs( selectedDomain ) && (
-						<MailboxPricingNotice
+						<EmailPricingNotice
 							domain={ selectedDomain }
 							expiryDate={ getTitanExpiryDate( selectedDomain ) }
 							mailboxRenewalCost={ getTitanMailboxRenewalCost( selectedDomain ) }
 							mailboxPurchaseCost={ getTitanMailboxPurchaseCost( selectedDomain ) }
 							product={ titanMailProduct }
-							isMonthlyProduct={ isTitanMonthlyProduct( titanMailProduct ) }
+							isMonthlyBilling={ isTitanMonthlyProduct( titanMailProduct ) }
 						/>
 					) }
 					{ this.renderForm() }

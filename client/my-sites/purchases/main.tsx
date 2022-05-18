@@ -30,7 +30,7 @@ import { getChangeOrAddPaymentMethodUrlFor } from './utils';
 
 function useLogPurchasesError( message: string ) {
 	return useCallback(
-		( error ) => {
+		( error: Error ) => {
 			logToLogstash( {
 				feature: 'calypso_client',
 				message,
@@ -38,7 +38,7 @@ function useLogPurchasesError( message: string ) {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'site_level_purchases',
-					message: String( error ),
+					message: error.message + '; Stack: ' + error.stack,
 				},
 			} );
 		},
@@ -71,7 +71,10 @@ export function Purchases(): JSX.Element {
 					align="left"
 				/>
 			) }
-			<PurchasesNavigation sectionTitle={ 'Active Upgrades' } siteSlug={ siteSlug } />
+			<PurchasesNavigation
+				section={ isJetpackCloud() ? 'myPlan' : 'activeUpgrades' }
+				siteSlug={ siteSlug }
+			/>
 
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
@@ -117,6 +120,7 @@ export function PurchaseDetails( {
 				<ManagePurchase
 					cardTitle={ titles.managePurchase }
 					purchaseId={ purchaseId }
+					isSiteLevel
 					siteSlug={ siteSlug }
 					showHeader={ false }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }

@@ -17,6 +17,7 @@ export function createGooglePayMethod(
 ): PaymentMethod {
 	return {
 		id: 'google-pay',
+		paymentProcessorId: 'google-pay',
 		label: <GooglePayLabel />,
 		submitButton: (
 			<GooglePaySubmitButton stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
@@ -57,7 +58,7 @@ export function GooglePaySubmitButton( {
 					'Missing onClick prop; GooglePaySubmitButton must be used as a payment button in CheckoutSubmitButton'
 				);
 			}
-			onClick( 'google-pay', {
+			onClick( {
 				stripe,
 				paymentMethodToken,
 				name,

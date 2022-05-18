@@ -41,6 +41,8 @@ export interface LicenseListContext {
 	sortDirection: LicenseSortDirection;
 }
 
+export type InvoiceStatus = 'draft' | 'open' | 'paid' | 'void' | 'uncollectible';
+
 /**
  * API schemas.
  */
@@ -63,6 +65,7 @@ export interface APIPartner {
 	name: string;
 	keys: APIPartnerKey[];
 	tos: string;
+	partner_type: string;
 }
 
 // The API-returned license object is not quite consistent right now so we only define the properties we actively rely on.
@@ -78,6 +81,7 @@ export interface APIProductFamilyProduct {
 	product_id: number;
 	currency: string;
 	amount: number;
+	price_interval: string;
 }
 
 export interface APIProductFamily {
@@ -90,6 +94,39 @@ export interface APIError {
 	status: number;
 	code: string | null;
 	message: string;
+}
+
+export interface APIInvoices {
+	items: APIInvoice[];
+	has_more: boolean;
+}
+
+export interface APIInvoice {
+	id: string;
+	number: string;
+	due_date: string | null;
+	status: InvoiceStatus;
+	total: number;
+	currency: string;
+	invoice_pdf: string;
+}
+
+/**
+ * Calypso.
+ */
+export interface Invoices {
+	items: Invoice[];
+	hasMore: boolean;
+}
+
+export interface Invoice {
+	id: string;
+	number: string;
+	dueDate: string | null;
+	status: InvoiceStatus;
+	total: number;
+	currency: string;
+	pdfUrl: string;
 }
 
 /**
@@ -109,6 +146,7 @@ export interface Partner {
 	name: string;
 	keys: PartnerKey[];
 	tos: string;
+	partner_type: string;
 }
 
 export interface PartnerStore {

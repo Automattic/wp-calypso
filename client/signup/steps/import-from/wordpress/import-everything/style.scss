@@ -1,6 +1,14 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
+[dir='rtl'] {
+	.import__import-everything {
+		.import_site-mapper-name .site-icon {
+			left: auto;
+			right: 0;
+		}
+	}
+}
 .import__import-everything {
 	max-width: 700px;
 	margin: auto;
@@ -53,7 +61,7 @@
 		position: relative;
 
 		&.with-favicon {
-			padding-left: 56px;
+			padding-inline-start: 56px;
 		}
 
 		.site-icon {
@@ -64,6 +72,10 @@
 			border: solid 1px var( --studio-gray-5 );
 			height: 40px !important;
 			width: 40px !important;
+
+			img {
+				max-width: 100%;
+			}
 		}
 
 		span, small {
@@ -136,7 +148,8 @@
 			margin: 0;
 		}
 
-		.import__upgrade-plan-feature {
+		.import__upgrade-plan-feature,
+		.import__upgrade-plan-feature-more {
 			padding-left: 25px;
 			color: var( --studio-gray-40 );
 			flex-basis: 100%;
@@ -145,12 +158,24 @@
 				flex-basis: 50%;
 			}
 
+			button {
+				color: var( --studio-gray-40 );
+				line-height: 1.5em;
+				cursor: pointer;
+			}
+
 			span {
 				margin: 0;
 			}
 
 			svg {
 				fill: var( --color-success );
+			}
+		}
+
+		.import__upgrade-plan-feature-more {
+			svg {
+				fill: var( --studio-gray-60 );
 			}
 		}
 	}
