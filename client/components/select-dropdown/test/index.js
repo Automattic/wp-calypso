@@ -1,10 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
-import sinon from 'sinon';
 import SelectDropdown from '../index';
 
 describe( 'index', () => {
@@ -13,43 +10,43 @@ describe( 'index', () => {
 			const dropdown = mountDropdown();
 			expect(
 				dropdown.find( '.select-dropdown__options li.select-dropdown__label' ).text()
-			).to.eql( 'Statuses' );
+			).toEqual( 'Statuses' );
 			expect(
 				dropdown.find( '.select-dropdown__options li.select-dropdown__option' )
-			).to.have.lengthOf( 4 );
+			).toHaveLength( 4 );
 		} );
 
 		test( 'should render a separator in place of any falsy option', () => {
 			const dropdown = mountDropdown();
 			expect(
 				dropdown.find( '.select-dropdown__options li.select-dropdown__separator' )
-			).to.have.lengthOf( 1 );
+			).toHaveLength( 1 );
 		} );
 
 		test( 'should be initially closed', () => {
 			const dropdown = shallowRenderDropdown();
-			expect( dropdown.find( '.select-dropdown' ) ).to.have.lengthOf( 1 );
-			expect( dropdown.find( '.select-dropdown.is-open' ) ).to.be.empty;
+			expect( dropdown.find( '.select-dropdown' ) ).toHaveLength( 1 );
+			expect( dropdown.find( '.select-dropdown.is-open' ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should execute toggleDropdown when clicked', () => {
 			const dropdown = shallowRenderDropdown();
 
 			dropdown.find( '.select-dropdown__container' ).simulate( 'click' );
-			expect( dropdown.find( '.select-dropdown.is-open' ) ).to.have.lengthOf( 1 );
+			expect( dropdown.find( '.select-dropdown.is-open' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should not respond when clicked when disabled', () => {
 			const dropdown = shallowRenderDropdown( { disabled: true } );
 
-			expect( dropdown.find( '.select-dropdown.is-disabled' ) ).to.have.lengthOf( 1 );
+			expect( dropdown.find( '.select-dropdown.is-disabled' ) ).toHaveLength( 1 );
 
 			dropdown.find( '.select-dropdown__container' ).simulate( 'click' );
-			expect( dropdown.find( '.select-dropdown.is-open' ) ).to.be.empty;
+			expect( dropdown.find( '.select-dropdown.is-open' ) ).toHaveLength( 0 );
 
 			// Repeat to be sure
 			dropdown.find( '.select-dropdown__container' ).simulate( 'click' );
-			expect( dropdown.find( '.select-dropdown.is-open' ) ).to.be.empty;
+			expect( dropdown.find( '.select-dropdown.is-open' ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should be possible to open the dropdown via keyboard', () => {
@@ -57,7 +54,7 @@ describe( 'index', () => {
 
 			// simulate pressing 'space' key
 			dropdown.find( '.select-dropdown__container' ).simulate( 'keydown', createKeyEvent( 32 ) );
-			expect( dropdown.find( '.select-dropdown.is-open' ) ).to.have.lengthOf( 1 );
+			expect( dropdown.find( '.select-dropdown.is-open' ) ).toHaveLength( 1 );
 		} );
 	} );
 
@@ -65,18 +62,18 @@ describe( 'index', () => {
 		test( 'should return the initially selected value (if any)', () => {
 			const dropdown = shallowRenderDropdown( { initialSelected: 'drafts' } );
 			const initialSelectedValue = dropdown.instance().getInitialSelectedItem();
-			expect( initialSelectedValue ).to.equal( 'drafts' );
+			expect( initialSelectedValue ).toEqual( 'drafts' );
 		} );
 
 		test( "should return `undefined`, when there aren't options", () => {
 			const dropdown = shallow( <SelectDropdown /> );
-			expect( dropdown.instance().getInitialSelectedItem() ).to.be.undefined;
+			expect( dropdown.instance().getInitialSelectedItem() ).toBeUndefined();
 		} );
 
 		test( "should return the first not-label option, when there isn't a preselected value", () => {
 			const dropdown = shallowRenderDropdown();
 			const initialSelectedValue = dropdown.instance().getInitialSelectedItem();
-			expect( initialSelectedValue ).to.equal( 'published' );
+			expect( initialSelectedValue ).toEqual( 'published' );
 		} );
 	} );
 
@@ -84,33 +81,33 @@ describe( 'index', () => {
 		test( 'should return the initially selected text (if any)', () => {
 			const dropdown = shallowRenderDropdown( { selectedText: 'Drafts' } );
 			const initialSelectedText = dropdown.instance().getSelectedText();
-			expect( initialSelectedText ).to.equal( 'Drafts' );
+			expect( initialSelectedText ).toEqual( 'Drafts' );
 		} );
 
 		test( 'should return the `label` associated to the selected option', () => {
 			const dropdown = shallowRenderDropdown();
 			const initialSelectedText = dropdown.instance().getSelectedText();
-			expect( initialSelectedText ).to.equal( 'Published' );
+			expect( initialSelectedText ).toEqual( 'Published' );
 		} );
 
 		test( 'should return the `label` associated to the initial selected option', () => {
 			const dropdown = shallowRenderDropdown( { initialSelected: 'scheduled' } );
 			const initialSelectedText = dropdown.instance().getSelectedText();
-			expect( initialSelectedText ).to.equal( 'Scheduled' );
+			expect( initialSelectedText ).toEqual( 'Scheduled' );
 		} );
 	} );
 
 	describe( 'selectItem', () => {
 		test( 'should run the `onSelect` hook, and then update the state', () => {
 			const dropdownOptions = getDropdownOptions();
-			const onSelectSpy = sinon.spy();
+			const onSelectSpy = jest.fn();
 			const dropdown = mount(
 				<SelectDropdown options={ dropdownOptions } onSelect={ onSelectSpy } />
 			);
 
 			const newSelectedOption = dropdownOptions[ 2 ];
 			dropdown.instance().selectItem( newSelectedOption );
-			expect( dropdown.state( 'selected' ) ).to.equal( newSelectedOption.value );
+			expect( dropdown.state( 'selected' ) ).toEqual( newSelectedOption.value );
 		} );
 	} );
 
@@ -121,7 +118,7 @@ describe( 'index', () => {
 				dropdown.setState( { isOpen: isCurrentlyOpen } );
 
 				dropdown.instance().toggleDropdown();
-				expect( dropdown.state( 'isOpen' ) ).to.equal( ! isCurrentlyOpen );
+				expect( dropdown.state( 'isOpen' ) ).toEqual( ! isCurrentlyOpen );
 			}
 
 			runToggleDropdownTest( true );
@@ -133,7 +130,7 @@ describe( 'index', () => {
 		test( 'should set the `isOpen` state property equal `true`', () => {
 			const dropdown = shallowRenderDropdown();
 			dropdown.instance().openDropdown();
-			expect( dropdown.state( 'isOpen' ) ).to.equal( true );
+			expect( dropdown.state( 'isOpen' ) ).toEqual( true );
 		} );
 	} );
 
@@ -141,7 +138,7 @@ describe( 'index', () => {
 		test( "shouldn't do anything when the dropdown is already closed", () => {
 			const dropdown = shallowRenderDropdown();
 			dropdown.instance().closeDropdown();
-			expect( dropdown.state( 'isOpen' ) ).to.equal( false );
+			expect( dropdown.state( 'isOpen' ) ).toEqual( false );
 		} );
 
 		test( 'should set the `isOpen` state property equal `false`', () => {
@@ -150,8 +147,8 @@ describe( 'index', () => {
 			dropdown.instance().focused = 1;
 
 			dropdown.instance().closeDropdown();
-			expect( dropdown.state( 'isOpen' ) ).to.equal( false );
-			expect( dropdown.instance().focused ).to.be.undefined;
+			expect( dropdown.state( 'isOpen' ) ).toEqual( false );
+			expect( dropdown.instance().focused ).toBeUndefined();
 		} );
 	} );
 
@@ -164,19 +161,18 @@ describe( 'index', () => {
 			dropdown.setState( { isOpen: true } );
 
 			dropdown.find( '.select-dropdown__container' ).simulate( 'keydown', tabEvent );
-			expect( dropdown.instance().focused ).to.equal( 1 );
+			expect( dropdown.instance().focused ).toEqual( 1 );
 		} );
 
 		test( 'permits to select an option by pressing ENTER, or SPACE', () => {
 			function runNavigateItemTest( keyCode ) {
 				const dropdown = shallowRenderDropdown();
-				const activateItemSpy = sinon.spy( dropdown.instance(), 'activateItem' );
+				const activateItemSpy = jest.spyOn( dropdown.instance(), 'activateItem' );
 				const keyEvent = createKeyEvent( keyCode );
 
 				dropdown.find( '.select-dropdown__container' ).simulate( 'keydown', keyEvent );
-				expect( dropdown.state( 'isOpen' ) ).to.equal( true );
-				sinon.assert.calledOnce( keyEvent.preventDefault );
-				sinon.assert.calledOnce( activateItemSpy );
+				expect( dropdown.state( 'isOpen' ) ).toEqual( true );
+				expect( activateItemSpy ).toBeCalledTimes( 1 );
 			}
 
 			const enterKeyCode = 13;
@@ -194,10 +190,9 @@ describe( 'index', () => {
 
 			const container = dropdown.find( '.select-dropdown__container' );
 			container.simulate( 'keydown', escEvent );
-			expect( dropdown.state( 'isOpen' ) ).to.equal( false );
-			sinon.assert.calledOnce( escEvent.preventDefault );
+			expect( dropdown.state( 'isOpen' ) ).toEqual( false );
 			// check that container was focused
-			expect( container.instance() ).to.equal( document.activeElement );
+			expect( container.instance() ).toEqual( document.activeElement );
 			dropdown.unmount();
 		} );
 
@@ -208,10 +203,10 @@ describe( 'index', () => {
 				dropdown.instance().focused = 1;
 
 				dropdown.find( '.select-dropdown__container' ).simulate( 'keydown', keyEvent );
-				expect( dropdown.state( 'isOpen' ) ).to.equal( true );
+				expect( dropdown.state( 'isOpen' ) ).toEqual( true );
 
 				dropdown.find( '.select-dropdown__container' ).simulate( 'keydown', keyEvent );
-				expect( dropdown.instance().focused ).to.equal( nextFocused );
+				expect( dropdown.instance().focused ).toEqual( nextFocused );
 			}
 
 			const arrowUp = { keyCode: 38, nextFocused: 0 };
@@ -252,7 +247,7 @@ describe( 'index', () => {
 	function createKeyEvent( keyCode ) {
 		return {
 			keyCode,
-			preventDefault: sinon.spy(),
+			preventDefault: jest.fn(),
 		};
 	}
 } );
