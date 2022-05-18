@@ -13,6 +13,7 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 	const { submit, goNext } = navigation;
 	const { __ } = useI18n();
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 
 	const LoginForm: React.FC = () => {
 		const handleSubmit = () => {
@@ -33,12 +34,15 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 		);
 	};
 
-	//If we have a current user, proceed to the next step; no need to log in.
+	/*
+	 * If we have a current user and they're logged in,
+	 * proceed to the next step; no need to log in.
+	 */
 	useEffect( () => {
-		if ( currentUser ) {
+		if ( currentUser && userIsLoggedIn ) {
 			goNext?.();
 		}
-	}, [ currentUser ] );
+	}, [ currentUser, userIsLoggedIn ] );
 
 	return (
 		<StepContainer
