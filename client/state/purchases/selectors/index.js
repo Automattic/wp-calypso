@@ -16,6 +16,6 @@ export { getRenewableSitePurchases } from './get-renewable-site-purchases';
 export { getSitePurchases } from './get-site-purchases';
 export { getUserPurchases } from './get-user-purchases';
 export { isUserPaid } from './is-user-paid';
-export { shouldRevertAtomicSiteBeforeDeactivation } from './should-revert-atomic-site-before-deactivation';
+export { willAtomicSiteRevertAfterPurchaseDeactivation } from './will-atomic-site-revert-after-purchase-deactivation';
 export { siteHasJetpackProductPurchase } from './site-has-jetpack-product-purchase';
 export { siteHasScanProductPurchase } from './site-has-scan-product-purchase';

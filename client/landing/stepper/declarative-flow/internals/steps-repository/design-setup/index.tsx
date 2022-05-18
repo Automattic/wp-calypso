@@ -102,6 +102,9 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		[ generatedDesigns ]
 	);
 
+	const selectedGeneratedDesign = ! isMobile
+		? selectedDesign || shuffledGeneratedDesigns[ 0 ]
+		: undefined;
 	const visibility = useNewSiteVisibility();
 
 	function headerText() {
@@ -148,11 +151,14 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	}
 
 	const getEventPropsByDesign = ( design: Design ) => ( {
-		theme: design.recipe?.stylesheet,
-		template: design.template,
-		is_premium: design?.is_premium,
+		slug: design?.slug,
+		theme: design?.recipe?.stylesheet,
+		template: design?.template,
 		flow,
-		intent: intent,
+		intent,
+		is_premium: design?.is_premium,
+		is_generated: showGeneratedDesigns,
+		...( design?.recipe?.patternIds && { pattern_ids: design.recipe.patternIds.join( ',' ) } ),
 	} );
 
 	const categorizationOptions = getCategorizationOptions(
@@ -163,11 +169,23 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
 
-	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
+	function pickDesign(
+		_selectedDesign: Design | undefined = selectedDesign,
+		buttonLocation?: string
+	) {
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlug && _selectedDesign ) {
+			const positionIndex = showGeneratedDesigns
+				? shuffledGeneratedDesigns.findIndex( ( design ) => design.slug === _selectedDesign.slug )
+				: -1;
+
 			setPendingAction( () => setDesignOnSite( siteSlug, _selectedDesign, siteVerticalId ) );
-			recordTracksEvent( 'calypso_signup_select_design', getEventPropsByDesign( _selectedDesign ) );
+			recordTracksEvent( 'calypso_signup_select_design', {
+				...getEventPropsByDesign( _selectedDesign ),
+				...( buttonLocation && { button_location: buttonLocation } ),
+				...( showGeneratedDesigns && positionIndex >= 0 && { position_index: positionIndex } ),
+			} );
+
 			const providedDependencies = {
 				selectedDesign: _selectedDesign,
 				selectedSiteCategory: categorization.selection,
@@ -201,17 +219,19 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		}
 	}
 
-	function previewDesign( _selectedDesign: Design ) {
-		recordTracksEvent(
-			'calypso_signup_design_preview_select',
-			getEventPropsByDesign( _selectedDesign )
-		);
+	function previewDesign( _selectedDesign: Design, positionIndex?: number ) {
+		recordTracksEvent( 'calypso_signup_design_preview_select', {
+			...getEventPropsByDesign( _selectedDesign ),
+			...( positionIndex && { position_index: positionIndex } ),
+		} );
 
 		setSelectedDesign( _selectedDesign );
 		setIsPreviewingDesign( true );
 	}
 
 	function viewMoreDesigns() {
+		recordTracksEvent( 'calypso_signup_design_view_more_select' );
+
 		setSelectedDesign( undefined );
 		setIsPreviewingDesign( false );
 		setIsForceStaticDesigns( true );
@@ -236,6 +256,19 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 				siteSlug
 			) }/${ plan }?${ params.toString() }`;
 		}
+	}
+
+	function recordStepContainerTracksEvent( eventName: string ) {
+		const tracksProps = {
+			step: showGeneratedDesigns ? 'generated-design-step' : 'design-step',
+			intent: intent,
+		};
+
+		if ( ! isPreviewingDesign && isForceStaticDesigns ) {
+			recordTracksEvent( 'calypso_signup_back_to_generated_design_step' );
+		}
+
+		recordTracksEvent( eventName, tracksProps );
 	}
 
 	const handleBackClick = () => {
@@ -309,7 +342,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 						) : undefined }
 					</>
 				}
-				recordTracksEvent={ recordTracksEvent }
+				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
 		);
 	}
@@ -337,7 +370,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 				backLabelText={ 'Pick another' }
 				goBack={ handleBackClick }
 				goNext={ () => pickDesign() }
-				recordTracksEvent={ recordTracksEvent }
+				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
 		);
 	}
@@ -373,14 +406,18 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	const stepContent = showGeneratedDesigns ? (
 		<GeneratedDesignPicker
-			selectedDesign={ ! isMobile ? selectedDesign || shuffledGeneratedDesigns[ 0 ] : undefined }
+			selectedDesign={ selectedGeneratedDesign }
 			designs={ shuffledGeneratedDesigns }
 			verticalId={ siteVerticalId }
 			locale={ locale }
 			heading={
 				<div className={ classnames( 'step-container__header', 'design-setup__header' ) }>
 					{ heading }
-					<Button ref={ continueButtonRef } primary>
+					<Button
+						ref={ continueButtonRef }
+						primary
+						onClick={ () => pickDesign( selectedGeneratedDesign, 'top' ) }
+					>
 						{ translate( 'Continue' ) }
 					</Button>
 				</div>
@@ -391,7 +428,9 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 					targetRef={ continueButtonRef }
 				>
 					<div className={ 'design-setup__footer-inner' }>
-						<Button primary>{ translate( 'Continue' ) }</Button>
+						<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'bottom' ) }>
+							{ translate( 'Continue' ) }
+						</Button>
 					</div>
 				</StickyFooter>
 			}
@@ -434,7 +473,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			hideFormattedHeader
 			skipLabelText={ intent === 'write' ? translate( 'Skip and draft first post' ) : undefined }
 			stepContent={ stepContent }
-			recordTracksEvent={ recordTracksEvent }
+			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ () => submit?.() }
 			goBack={ handleBackClick }
 		/>

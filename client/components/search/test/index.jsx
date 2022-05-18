@@ -1,8 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
 import { createElement } from 'react';
 import TestUtils from 'react-dom/test-utils';
 import sinon from 'sinon';
@@ -31,7 +29,7 @@ describe( 'Search', () => {
 			} );
 
 			test( 'should set state.keyword with the initialValue after mount', () => {
-				expect( rendered.state.keyword ).to.equal( initialValue );
+				expect( rendered.state.keyword ).toEqual( initialValue );
 			} );
 		} );
 
@@ -44,7 +42,7 @@ describe( 'Search', () => {
 			} );
 
 			test( 'should set state.keyword empty string after mount', () => {
-				expect( rendered.state.keyword ).to.equal( '' );
+				expect( rendered.state.keyword ).toEqual( '' );
 			} );
 		} );
 	} );

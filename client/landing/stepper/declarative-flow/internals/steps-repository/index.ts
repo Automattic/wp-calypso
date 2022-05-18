@@ -11,6 +11,11 @@ export { default as importReady } from './import-ready';
 export { default as importReadyNot } from './import-ready-not';
 export { default as importReadyWpcom } from './import-ready-wpcom';
 export { default as importReadyPreview } from './import-ready-preview';
+export { default as importerWix } from './importer-wix';
+export { default as importerBlogger } from './importer-blogger';
+export { default as importerMedium } from './importer-medium';
+export { default as importerSquarespace } from './importer-squarespace';
+export { default as importerWordpress } from './importer-wordpress';
 export { default as businessInfo } from './business-info';
 export { default as storeAddress } from './store-address';
 export { default as vertical } from './site-vertical';
@@ -34,6 +39,11 @@ export type StepPath =
 	| 'importReadyNot'
 	| 'importReadyWpcom'
 	| 'importReadyPreview'
+	| 'importerWix'
+	| 'importerBlogger'
+	| 'importerMedium'
+	| 'importerSquarespace'
+	| 'importerWordpress'
 	| 'businessInfo'
 	| 'storeAddress'
 	| 'processing'

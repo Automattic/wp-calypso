@@ -41,7 +41,6 @@ import './style.scss';
 interface ConnectedProps {
 	siteId: number;
 	selectedSiteSlug: SiteSlug | null;
-	isFreePlan: boolean;
 	isNonAtomicJetpack: boolean;
 	isLoading: boolean;
 	hasSimplePayments: boolean;
@@ -61,7 +60,6 @@ interface ConnectedProps {
 const Home: FunctionComponent< ConnectedProps > = ( {
 	siteId,
 	selectedSiteSlug,
-	isFreePlan,
 	isNonAtomicJetpack,
 	isUserAdmin,
 	isLoading,
@@ -199,12 +197,12 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Accept one-time and recurring credit card payments for physical products, services, memberships, subscriptions, and donations.'
 				) }
-				{ isFreePlan && <em>{ getAnyPlanNames() }</em> }
+				{ ! hasRecurringPayments && <em>{ getAnyPlanNames() }</em> }
 			</>
 		);
 		const body = hasConnectedAccount ? hasConnectionBody : noConnectionBody;
 
-		const learnMoreLink = isFreePlan
+		const learnMoreLink = ! hasRecurringPayments
 			? {
 					url: 'https://wordpress.com/support/recurring-payments/',
 					onClick: () => trackLearnLink( 'recurring-payments' ),
@@ -249,7 +247,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Collect donations, tips, and contributions for your creative pursuits, organization, or whatever your website is about.'
 				) }
-				{ isFreePlan && <em>{ getAnyPlanNames() }</em> }
+				{ ! hasDonations && <em>{ getAnyPlanNames() }</em> }
 			</>
 		);
 
@@ -316,10 +314,10 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Create paid subscription options to share premium content like text, images, video, and any other content on your website.'
 				) }
-				{ isFreePlan && <em>{ getAnyPlanNames() }</em> }
+				{ ! hasPremiumContent && <em>{ getAnyPlanNames() }</em> }
 			</>
 		);
-		const learnMoreLink = isFreePlan
+		const learnMoreLink = ! hasPremiumContent
 			? {
 					url: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/',
 					onClick: () => trackLearnLink( 'premium-content' ),
@@ -365,7 +363,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  };
 		const title = translate( 'Send paid email newsletters' );
-		const body = isFreePlan ? (
+		const body = ! hasPremiumContent ? (
 			<>
 				{ ' ' }
 				{ translate(
@@ -561,17 +559,16 @@ export default connect(
 		const siteId = getSelectedSiteId( state ) ?? 0;
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
-		const isFreePlan = ! isCurrentPlanPaid( state, siteId );
 
 		const hasConnectedAccount =
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
-		const isLoading = ( hasConnectedAccount === null && ! isFreePlan ) || sitePlanSlug === null;
+		const hasPaidPlan = isCurrentPlanPaid( state, siteId );
+		const isLoading = ( hasConnectedAccount === null && hasPaidPlan ) || sitePlanSlug === null;
 
 		return {
 			siteId,
 			selectedSiteSlug,
-			isFreePlan,
 			isNonAtomicJetpack: Boolean(
 				isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 			),

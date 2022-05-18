@@ -2,10 +2,10 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { ReactElement } from 'react';
+import CaptureStep from 'calypso/blocks/import/capture';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import CaptureStep from 'calypso/signup/steps/import/capture';
 import { BASE_ROUTE } from './config';
 import { generateStepPath } from './helper';
 import type { Step } from '../../types';

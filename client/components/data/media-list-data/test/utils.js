@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import utils from '../utils';
 
 describe( 'utils', () => {
@@ -6,31 +5,31 @@ describe( 'utils', () => {
 		test( 'should return an empty string for an unknown filter', () => {
 			const baseType = utils.getMimeBaseTypeFromFilter( 'unknown' );
 
-			expect( baseType ).to.equal( '' );
+			expect( baseType ).toEqual( '' );
 		} );
 
 		test( 'should return "image/" for "images"', () => {
 			const baseType = utils.getMimeBaseTypeFromFilter( 'images' );
 
-			expect( baseType ).to.equal( 'image/' );
+			expect( baseType ).toEqual( 'image/' );
 		} );
 
 		test( 'should return "audio/" for "audio"', () => {
 			const baseType = utils.getMimeBaseTypeFromFilter( 'audio' );
 
-			expect( baseType ).to.equal( 'audio/' );
+			expect( baseType ).toEqual( 'audio/' );
 		} );
 
 		test( 'should return "video/" for "videos"', () => {
 			const baseType = utils.getMimeBaseTypeFromFilter( 'videos' );
 
-			expect( baseType ).to.equal( 'video/' );
+			expect( baseType ).toEqual( 'video/' );
 		} );
 
 		test( 'should return "application/" for "documents"', () => {
 			const baseType = utils.getMimeBaseTypeFromFilter( 'documents' );
 
-			expect( baseType ).to.equal( 'application/' );
+			expect( baseType ).toEqual( 'application/' );
 		} );
 	} );
 
@@ -38,19 +37,19 @@ describe( 'utils', () => {
 		test( 'show return video for videos type', () => {
 			const filter = utils.convertMimeFilter( 'videos' );
 
-			expect( filter ).to.equal( 'video' );
+			expect( filter ).toEqual( 'video' );
 		} );
 
 		test( 'show return photo for images type', () => {
 			const filter = utils.convertMimeFilter( 'images' );
 
-			expect( filter ).to.equal( 'photo' );
+			expect( filter ).toEqual( 'photo' );
 		} );
 
 		test( 'show return null for unsupported type', () => {
 			const filter = utils.convertMimeFilter( 'cats' );
 
-			expect( filter ).to.equal( null );
+			expect( filter ).toBeNull();
 		} );
 	} );
 
@@ -59,7 +58,7 @@ describe( 'utils', () => {
 			const original = { source: 'google_photos' };
 			const google = utils.getGoogleQuery( original, {} );
 
-			expect( google ).to.eql( original );
+			expect( google ).toEqual( original );
 		} );
 
 		test( 'show return media type filter when supplied', () => {
@@ -67,7 +66,7 @@ describe( 'utils', () => {
 			const expected = { filter: [ 'mediaType=video' ] };
 			const google = utils.getGoogleQuery( {}, original );
 
-			expect( google ).to.eql( expected );
+			expect( google ).toEqual( expected );
 		} );
 
 		test( 'show return category filter when supplied', () => {
@@ -75,7 +74,7 @@ describe( 'utils', () => {
 			const expected = { filter: [ 'categoryInclude=cats' ] };
 			const google = utils.getGoogleQuery( {}, original );
 
-			expect( google ).to.eql( expected );
+			expect( google ).toEqual( expected );
 		} );
 
 		test( 'show return category and media type filter when supplied', () => {
@@ -83,7 +82,7 @@ describe( 'utils', () => {
 			const expected = { filter: [ 'mediaType=video', 'categoryInclude=cats' ] };
 			const google = utils.getGoogleQuery( {}, original );
 
-			expect( google ).to.eql( expected );
+			expect( google ).toEqual( expected );
 		} );
 	} );
 } );

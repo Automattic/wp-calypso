@@ -24,9 +24,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const currentRoute = location.pathname.substring( 1 ) as StepPath;
 	const history = useHistory();
 	const { search } = useLocation();
-	const stepNavigation = flow.useStepNavigation( currentRoute, ( path: StepPath ) =>
-		history.push( generatePath( '/' + path + search ), stepPaths )
-	);
+	const stepNavigation = flow.useStepNavigation( currentRoute, ( path ) => {
+		const _path = path.includes( '?' ) // does path contain search params
+			? generatePath( '/' + path )
+			: generatePath( '/' + path + search );
+
+		history.push( _path, stepPaths );
+	} );
 	const pathToClass = ( path: string ) =>
 		path.replace( /([a-z0-9])([A-Z])/g, '$1-$2' ).toLowerCase();
 
@@ -41,8 +45,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	return (
 		<Switch>
 			{ stepPaths.map( ( path ) => {
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore - steps with slash char cause type issue ( example: import/list )
 				const StepComponent = Steps[ path ];
 				return (
 					<Route key={ path } path={ `/${ path }` }>
