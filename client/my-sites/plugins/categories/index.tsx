@@ -1,4 +1,5 @@
 import { ResponsiveToolbarGroup } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
 import page from 'page';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -39,6 +40,7 @@ const ALLOWED_CATEGORIES = [
 
 const Categories = ( { selected }: { selected?: string } ) => {
 	const dispatch = useDispatch();
+	const isSwippeable = useBreakpoint( '<660px' );
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
@@ -69,6 +71,11 @@ const Categories = ( { selected }: { selected?: string } ) => {
 	}
 
 	const current = selected ? categories.findIndex( ( { slug } ) => slug === selected ) : 0;
+
+	if ( isSwippeable ) {
+		//return mobile view
+		return <div></div>;
+	}
 
 	return (
 		<ResponsiveToolbarGroup
