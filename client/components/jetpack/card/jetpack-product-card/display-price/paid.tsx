@@ -55,19 +55,25 @@ const Paid: React.FC< OwnProps > = ( {
 		 */
 		return (
 			<>
-				<PlanPrice
-					original
-					className="display-price__original-price"
-					rawPrice={ originalPrice as number }
-					currencyCode={ currencyCode }
-				/>
-				<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
+				<span dir="ltr">
+					<PlanPrice
+						original
+						className="display-price__original-price"
+						rawPrice={ originalPrice as number }
+						currencyCode={ currencyCode }
+					/>
+				</span>
+				<span dir="ltr">
+					<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
+				</span>
 			</>
 		);
 	};
 
 	const renderNonDiscountedPrice = () => (
-		<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
+		<span dir="ltr">
+			<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
+		</span>
 	);
 
 	const renderPrice = () =>
