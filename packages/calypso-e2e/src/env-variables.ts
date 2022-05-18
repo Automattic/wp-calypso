@@ -60,7 +60,7 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
 	TEST_ON_ATOMIC: false,
 	TEST_ON_JETPACK: false,
-	CALYPSO_BASE_URL: 'http://calypso.localhost:3000',
+	CALYPSO_BASE_URL: 'https://wordpress.com',
 };
 
 const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue => {
