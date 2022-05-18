@@ -136,19 +136,28 @@ export class SidebarComponent {
 	/**
 	 * Returns the current plan name as shown on the sidebar.
 	 *
-	 * Note, the plan name shown in the sidebar may not be
-	 * accurate.
+	 * Note, the plan name shown in the sidebar may not always be
+	 * accurate due to race conditions. Consider this method as
+	 * secondary validation.
 	 *
-	 * On mobile viewports, if the page is on Upgrades > Plans
-	 * the plan name is hidden from view. It is suggested to
-	 * use this method while the page is not displaying Plans.
+	 * Additionally, on mobile viewports if the current page is
+	 * Upgrades > Plans the plan name is not visible in the sidebar.
+	 * This method should be used after navigating away from the
+	 * Plans page.
 	 *
 	 * @returns {Promise<string>} Name of the plan.
+	 * @throws {Error} If the viewport is mobile and the currently displayed page is Upgrades > Plans.
 	 */
 	async getCurrentPlanName(): Promise< string > {
 		await this.waitForSidebarInitialization();
 
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			if ( this.page.url().includes( getCalypsoURL( 'plans' ) ) ) {
+				throw new Error(
+					'Unable to retrieve current plan name on mobile sidebar.\nNavigate away from Upgrades > Plans page and try again.'
+				);
+			}
+
 			await this.openMobileSidebar();
 		}
 

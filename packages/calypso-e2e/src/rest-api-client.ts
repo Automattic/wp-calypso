@@ -50,6 +50,9 @@ const REST_API_BASE_URL = 'https://public-api.wordpress.com';
 
 /**
  * Client to interact with the WordPress.com REST API.
+ *
+ * Each instance of the RestAPIClient represents a specific user,
+ * represented by the credentials and bearer token.
  */
 export class RestAPIClient {
 	readonly credentials: AccountCredentials;
@@ -62,8 +65,6 @@ export class RestAPIClient {
 		this.credentials = credentials;
 		this.bearerToken = bearerToken ? bearerToken : null;
 	}
-
-	/* Request builder methods */
 
 	/**
 	 * Returns the bearer token for the user.
@@ -159,7 +160,7 @@ export class RestAPIClient {
 	 * 	- URL
 	 * 	- site owner
 	 *
-	 * @returns {Site[]} Array of Sites.
+	 * @returns {Promise<AllSitesResponse} JSON array of sites.
 	 */
 	async getAllSites(): Promise< AllSitesResponse > {
 		const params: RequestParams = {
@@ -173,11 +174,13 @@ export class RestAPIClient {
 		return await this.sendRequest( this.getRequestURL( '1.1', '/me/sites' ), params );
 	}
 
+	/* Me */
+
 	/**
 	 * Returns the account information for the user authenticated
 	 * via the bearer token.
 	 *
-	 * @returns {MyAccountInformationResponse} Response containing user details.
+	 * @returns {Promise<MyAccountInformationResponse>} Response containing user details.
 	 */
 	async getMyAccountInformation(): Promise< MyAccountInformationResponse > {
 		const params: RequestParams = {
@@ -201,18 +204,22 @@ export class RestAPIClient {
 	 * The userID, username and email of the account that is
 	 * authenticated via the bearer token is checked against the
 	 * supplied parameters.
+	 *
+	 * @returns {Promise<boolean>} True if account closure was successful. False otherwise.
 	 */
-	async closeUserAccount(
+	async closeAccount(
 		userID: number,
 		username: string,
 		email: string
 	): Promise< { success: boolean } > {
 		const accountInformation = await this.getMyAccountInformation();
 
-		// Guards to ensure we do not unwittingly close the
-		// wrong account.
+		// Multiple guards to ensure we are operating on the intended
+		// account.
 		if ( ! accountInformation.email.includes( 'mailosaur' ) ) {
-			throw new Error( 'Aborting account closure: email address provided is not for a test user.' );
+			throw new Error(
+				'Aborting account closure: email address provided is not for an e2e test user.'
+			);
 		}
 
 		if ( ! accountInformation.username.includes( 'e2eflowtesting' ) ) {
@@ -243,7 +250,9 @@ export class RestAPIClient {
 	}
 
 	/**
+	 * Returns Calypso preferences for the user.
 	 *
+	 * @returns {Promise<CalypsoPreferencesResponse>} JSON response containing Calypso preferences.
 	 */
 	async getCalypsoPreferences(): Promise< CalypsoPreferencesResponse > {
 		const params: RequestParams = {

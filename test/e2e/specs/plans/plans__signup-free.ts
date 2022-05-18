@@ -19,7 +19,7 @@ import { Page, Browser } from 'playwright';
 declare const browser: Browser;
 
 describe(
-	DataHelper.createSuiteTitle( 'Plans: Create a WordPress.com Free site as new user' ),
+	DataHelper.createSuiteTitle( 'Plans: Create a WordPress.com Free site as a new user' ),
 	function () {
 		const username = `e2eflowtestingfree${ DataHelper.getTimestamp() }`;
 		const password = SecretsManager.secrets.passwordForNewTestSignUps;
@@ -64,7 +64,7 @@ describe(
 
 			it( 'Select WordPress.com Free plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				await signupPickPlanPage.selectPlan( 'Start with Free' );
+				await signupPickPlanPage.selectPlan( 'start with a free site' );
 			} );
 
 			it( 'Skip to dashboard', async function () {
@@ -106,7 +106,7 @@ describe(
 				bearerToken
 			);
 
-			const response = await restAPIClient.closeUserAccount( userID, username, email );
+			const response = await restAPIClient.closeAccount( userID, username, email );
 
 			if ( response.success !== true ) {
 				console.log( `Failed to delete user ID ${ userID }` );
