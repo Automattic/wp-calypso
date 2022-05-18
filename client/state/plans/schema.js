@@ -32,6 +32,7 @@ export const itemsSchema = {
 			product_name: { type: 'string' },
 			product_name_en: { type: 'string' },
 			product_name_short: { type: [ 'string', 'null' ] },
+			product_display_price: { type: 'string' },
 			product_slug: { type: 'string' },
 			product_type: { type: 'string' },
 			raw_price: { type: 'number' },
