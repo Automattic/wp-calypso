@@ -1,4 +1,3 @@
-import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { useUserDevicesQuery } from 'calypso/data/user-devices/use-user-devices-query';
@@ -21,12 +20,10 @@ function NotificationSettingsForm( { blogId, settingKeys, settings, onToggle } )
 
 	const getSelectedStreamSettings = () => {
 		if ( isNaN( selectedStream ) ) {
-			return get( settings, selectedStream );
+			return settings[ selectedStream ];
 		}
 
-		return find( get( settings, 'devices' ), {
-			device_id: parseInt( selectedStream, 10 ),
-		} );
+		return settings.devices?.find( ( { device_id } ) => device_id === parseInt( selectedStream ) );
 	};
 
 	const selectedStreamSettings = getSelectedStreamSettings();
@@ -45,7 +42,7 @@ function NotificationSettingsForm( { blogId, settingKeys, settings, onToggle } )
 					blogId={ blogId }
 					stream={ streams.TIMELINE }
 					settingKeys={ settingKeys }
-					settings={ get( settings, streams.TIMELINE ) }
+					settings={ settings[ streams.TIMELINE ] }
 					onToggle={ onToggle }
 				/>
 				<Stream
@@ -53,7 +50,7 @@ function NotificationSettingsForm( { blogId, settingKeys, settings, onToggle } )
 					blogId={ blogId }
 					stream={ streams.EMAIL }
 					settingKeys={ settingKeys }
-					settings={ get( settings, streams.EMAIL ) }
+					settings={ settings[ streams.EMAIL ] }
 					onToggle={ onToggle }
 				/>
 				{ devices && devices.length > 0 && (
@@ -62,7 +59,7 @@ function NotificationSettingsForm( { blogId, settingKeys, settings, onToggle } )
 						blogId={ blogId }
 						devices={ devices }
 						settingKeys={ settingKeys }
-						settings={ get( settings, streams.DEVICES ) }
+						settings={ settings[ streams.DEVICES ] }
 						onToggle={ onToggle }
 					/>
 				) }
