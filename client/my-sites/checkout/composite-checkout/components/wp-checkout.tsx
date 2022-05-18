@@ -24,7 +24,7 @@ import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout'
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
@@ -666,7 +666,7 @@ const SubmitButtonFooter = () => {
 
 	const show7DayGuarantee = responseCart?.products?.every( isMonthlyProduct );
 	const show14DayGuarantee = responseCart?.products?.every( isYearly );
-	const content =
+	const guaranteeContent =
 		show7DayGuarantee || show14DayGuarantee ? (
 			translate( '%(dayCount)s day money back guarantee', {
 				args: {
@@ -680,6 +680,13 @@ const SubmitButtonFooter = () => {
 				{ translate( '7 day money back guarantee on monthly subscriptions' ) }
 			</>
 		);
+
+	const disclaimerContent = responseCart?.products?.some( ( product ) => {
+		return !! product?.introductory_offer_terms?.enabled;
+	} )
+		? translate( '* All discounts are for the first term only, renewals are at full price.' )
+		: null;
+
 	let imgSrc = badgeGenericSrc;
 
 	if ( show7DayGuarantee ) {
@@ -691,15 +698,25 @@ const SubmitButtonFooter = () => {
 	return (
 		<SubmitButtonFooterWrapper>
 			<img src={ imgSrc } alt="" />
-			<span>{ content }</span>
+			<span>{ guaranteeContent }</span>
+
+			<SubmitButtonFooterDisclaimer>{ disclaimerContent }</SubmitButtonFooterDisclaimer>
 		</SubmitButtonFooterWrapper>
 	);
 };
+
+const SubmitButtonFooterDisclaimer = styled.span< React.HTMLAttributes< HTMLSpanElement > >`
+	flex-basis: 100%;
+	text-align: center;
+
+	font-size: 9px;
+`;
 
 const SubmitButtonFooterWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
+	flex-wrap: wrap;
 
 	margin-top: 1.25rem;
 
