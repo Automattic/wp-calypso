@@ -76,23 +76,23 @@ class Viewers extends Component {
 	getViewerRef = ( viewer ) => 'viewer-' + viewer.ID;
 
 	render() {
+		const isJetpackSite = this.props.site?.jetpack;
 		let viewers;
 		let emptyContentArgs = {
-			title:
-				this.props.site && this.props.site.jetpack
-					? this.props.translate( "Oops, Jetpack sites don't support viewers." )
-					: this.props.translate( "You don't have any viewers yet." ),
+			title: isJetpackSite
+				? this.props.translate( "Oops, Jetpack sites don't support viewers." )
+				: this.props.translate( "You don't have any viewers yet." ),
 		};
 
-		if ( this.props.site && ! this.props.site.jetpack ) {
+		if ( ! isJetpackSite ) {
 			emptyContentArgs = {
-				...emptyContentArgs, 
-				action: <InviteButton siteSlug={ this.props.site.slug } />
+				...emptyContentArgs,
+				action: <InviteButton siteSlug={ this.props.site?.slug } />,
 			};
 		}
 
 		if ( ! this.props.viewers.length && ! this.props.isFetching ) {
-			if ( this.props.site && ! this.props.site.jetpack && ! this.props.site.is_private ) {
+			if ( this.props.site && ! isJetpackSite && ! this.props.site.is_private ) {
 				emptyContentArgs = Object.assign( emptyContentArgs, {
 					line: this.props.translate(
 						'Only private sites can have viewers. You can make your site private by ' +

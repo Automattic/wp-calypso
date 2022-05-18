@@ -3,6 +3,11 @@ import { useTranslate } from 'i18n-calypso';
 
 const InviteButton = ( { siteSlug } ) => {
 	const translate = useTranslate();
+
+	if ( ! siteSlug ) {
+		return null;
+	}
+
 	return (
 		<Button primary href={ `/people/new/${ siteSlug }` }>
 			<Gridicon icon="user-add" />
