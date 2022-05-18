@@ -79,11 +79,11 @@ By default, tests run against the `desktop` viewport size, approximately 1920x10
 
 To specify the viewport size:
 
-    a. set the viewport size to persist in the shell: `export VIEWPORT_NAME=<viewport>`
+a. set the viewport size to persist in the shell: `export VIEWPORT_NAME=<viewport>`
 
-    b. set the viewport size for the command only: `VIEWPORT_NAME=<viewport> yarn jest <test_path>`
+b. set the viewport size for the command only: `VIEWPORT_NAME=<viewport> yarn jest <test_path>`
 
-```
+```bash
 VIEWPORT_NAME=mobile yarn jest ...
 ```
 
