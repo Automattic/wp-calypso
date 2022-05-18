@@ -6,6 +6,7 @@ import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
+import { USER_KEY } from '../store';
 import { Container } from '../types';
 import { SITE_STORE } from './help-center-contact-form';
 import HelpCenterContainer from './help-center-container';
@@ -19,8 +20,9 @@ const HelpCenter: React.FC< Container > = ( {
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
-	// prefetch the current site
+	// prefetch the current site and user
 	useSelect( ( select ) => select( SITE_STORE ).getSite( window._currentSiteId ) );
+	useSelect( ( select ) => select( USER_KEY ).getCurrentUser() );
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];

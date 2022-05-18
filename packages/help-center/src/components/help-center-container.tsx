@@ -5,7 +5,7 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React, { useState, FC } from 'react';
+import { ReactNode, useState, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
 /**
  * Internal Dependencies
@@ -37,8 +37,8 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
-	const [ headerText, setHeaderText ] = useState< React.ReactNode >( defaultHeaderText );
-	const [ footerContent, setFooterContent ] = useState< React.ReactNode >( defaultFooterContent );
+	const [ headerText, setHeaderText ] = useState< ReactNode >( defaultHeaderText );
+	const [ footerContent, setFooterContent ] = useState< ReactNode >( defaultFooterContent );
 	const [ selectedArticle, setSelectedArticle ] = useState< Article | null >( null );
 	const classNames = classnames( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,

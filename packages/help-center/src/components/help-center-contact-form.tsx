@@ -18,9 +18,9 @@ import React, { useEffect, useState, useContext } from 'react';
 /**
  * Internal Dependencies
  */
-import { askDirectlyQuestion, initializeDirectly } from '../directly';
+import { askDirectlyQuestion } from '../directly';
 import { HelpCenterContext } from '../help-center-context';
-import { STORE_KEY } from '../store';
+import { STORE_KEY, USER_KEY } from '../store';
 import { SitePicker } from '../types';
 import { BackButton } from './back-button';
 import InlineChat from './help-center-inline-chat';
@@ -69,6 +69,7 @@ const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 const titles: {
 	[ key: string ]: {
 		formTitle: string;
+		formSubtitle?: string;
 		trayText?: string;
 		formDisclaimer?: string;
 		buttonLabel: string;
@@ -89,6 +90,10 @@ const titles: {
 	},
 	DIRECTLY: {
 		formTitle: __( 'Start live chat with an expert', 'full-site-editing' ),
+		formSubtitle: __(
+			'These are others, like yourself, who have been selected because of their WordPress.com knowledge to help answer questions.',
+			'full-site-editing'
+		),
 		trayText: __( 'An expert user will be with you right away', 'full-site-editing' ),
 		formDisclaimer: __(
 			'Please do not provide financial or contact information when submitting this form.',
@@ -162,10 +167,12 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 			userDeclaredSiteUrl: select( STORE_KEY ).getUserDeclaredSiteUrl(),
 		};
 	} );
+	const userData = useSelect( ( select ) => select( USER_KEY ).getCurrentUser() );
 
 	const {
 		setSite,
 		resetStore,
+		setShowHelpCenter,
 		setUserDeclaredSiteUrl,
 		setUserDeclaredSite,
 		setSubject,
@@ -185,12 +192,6 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 			setUserDeclaredSite( userDeclaredSite );
 		}
 	}, [ userDeclaredSite, setUserDeclaredSite ] );
-
-	useEffect( () => {
-		if ( mode === 'DIRECTLY' ) {
-			initializeDirectly();
-		}
-	}, [] );
 
 	useEffect( () => {
 		switch ( mode ) {
@@ -298,13 +299,14 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					} );
 				break;
 			}
-
 			case 'DIRECTLY': {
-				askDirectlyQuestion( message ?? '', 'test', 'email@email.com' );
+				askDirectlyQuestion( message ?? '', userData?.display_name ?? '', userData?.email ?? '' );
+				setShowHelpCenter( false );
 				break;
 			}
 		}
 	}
+
 	if ( openChat ) {
 		return <InlineChat />;
 	}
@@ -363,26 +365,31 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 				<BackButton onClick={ mode === 'FORUM' || mode === 'DIRECTLY' ? onGoHome : onBackClick } />
 			</header>
 			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
+			{ formTitles.formSubtitle && (
+				<p className="help-center-contact-form__site-picker-form-subtitle">
+					{ formTitles.formSubtitle }
+				</p>
+			) }
 			{ formTitles.formDisclaimer && (
 				<p className="help-center-contact-form__site-picker-form-warning">
 					{ formTitles.formDisclaimer }
 				</p>
 			) }
-
-			<section>
-				<HelpCenterSitePicker
-					enabled={ mode === 'FORUM' }
-					currentSite={ currentSite }
-					onSelect={ ( id: string | number ) => {
-						if ( id !== 0 ) {
-							setSite( currentSite );
-						}
-						setSitePickerChoice( id === 0 ? 'OTHER_SITE' : 'CURRENT_SITE' );
-					} }
-					siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
-				/>
-			</section>
-
+			{ mode !== 'DIRECTLY' && (
+				<section>
+					<HelpCenterSitePicker
+						enabled={ mode === 'FORUM' }
+						currentSite={ currentSite }
+						onSelect={ ( id: string | number ) => {
+							if ( id !== 0 ) {
+								setSite( currentSite );
+							}
+							setSitePickerChoice( id === 0 ? 'OTHER_SITE' : 'CURRENT_SITE' );
+						} }
+						siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
+					/>
+				</section>
+			) }
 			{ sitePickerChoice === 'OTHER_SITE' && (
 				<>
 					<section>

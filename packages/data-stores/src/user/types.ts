@@ -4,7 +4,7 @@ export interface CurrentUser {
 	ID: number;
 	display_name: string;
 	username: string;
-
+	email: string;
 	/**
 	 * The user's locale slug, e.g. `es`.
 	 */
