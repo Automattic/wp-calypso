@@ -21,11 +21,10 @@ import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/st
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { PREINSTALLED_PLUGINS } from '../constants';
 import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
-
-const PREINSTALLED_PLUGINS = [ 'jetpack', 'akismet', 'vaultpress' ];
 
 const PluginsBrowserListElement = ( props ) => {
 	const {
