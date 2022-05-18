@@ -41,9 +41,10 @@
 		display: inline-flex;
 
 		// inline-flex causes *everything* to flow right-to-left in right-to-left locales,
-		// so we override currency displays by setting the direction explicitly
-		/* rtl:ignore */
-		direction: ltr;
+		// so we override currency displays by setting the direction explicitly;
+		// the special comment syntax is important so the SASS compiler doesn't remove it
+		// too early in the build process
+		direction: ltr #{'/* rtl:ignore */'};
 
 		color: var( --studio-gray-100 );
 
