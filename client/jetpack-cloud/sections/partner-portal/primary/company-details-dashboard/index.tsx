@@ -20,7 +20,7 @@ export default function CompanyDetailsDashboard(): ReactElement {
 
 				<p className="company-details-dashboard__description">
 					{ translate(
-						'Update your company details. Updates will appear on all future receipts.'
+						'Update your company details. Changes will be applied to all future invoices.'
 					) }
 				</p>
 			</div>

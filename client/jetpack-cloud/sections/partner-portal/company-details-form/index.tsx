@@ -13,7 +13,6 @@ import useUpdateCompanyDetailsMutation from 'calypso/state/partner-portal/partne
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import { APIError } from 'calypso/state/partner-portal/types';
 import { useCountriesAndStates } from './hooks/use-countries-and-states';
-import { castAsString } from './utils';
 import './style.scss';
 
 export default function CompanyDetailsForm(): ReactElement {
@@ -22,18 +21,22 @@ export default function CompanyDetailsForm(): ReactElement {
 	// The partner has already been fetched through e.g. the requireAccessContext
 	// controller function, so we do not have to do any further checks.
 	const partner = useSelector( getCurrentPartner );
-	const { countryOptions, stateOptions } = useCountriesAndStates();
+	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
 	const submitNotificationId = 'company-details-form';
 	const showCountryFields = countryOptions.length > 0;
 
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const [ name, setName ] = useState( castAsString( partner?.name ) );
-	const [ country, setCountry ] = useState( castAsString( partner?.address.country ) );
-	const [ city, setCity ] = useState( castAsString( partner?.address.city ) );
-	const [ line1, setLine1 ] = useState( castAsString( partner?.address.line1 ) );
-	const [ line2, setLine2 ] = useState( castAsString( partner?.address.line2 ) );
-	const [ postalCode, setPostalCode ] = useState( castAsString( partner?.address.postal_code ) );
-	const [ addressState, setAddressState ] = useState( castAsString( partner?.address.state ) );
+	const [ name, setName ] = useState( partner?.name ?? '' );
+	const [ country, setCountry ] = useState( partner?.address.country ?? '' );
+	const [ city, setCity ] = useState( partner?.address.city ?? '' );
+	const [ line1, setLine1 ] = useState( partner?.address.line1 ?? '' );
+	const [ line2, setLine2 ] = useState( partner?.address.line2 ?? '' );
+	const [ postalCode, setPostalCode ] = useState( partner?.address.postal_code ?? '' );
+	const [ addressState, setAddressState ] = useState( partner?.address.state ?? '' );
+
+	const stateOptions = stateOptionsMap.hasOwnProperty( country )
+		? stateOptionsMap[ country ]
+		: false;
 
 	const updateCompanyDetails = useUpdateCompanyDetailsMutation( {
 		onSuccess: () => {
@@ -150,21 +153,24 @@ export default function CompanyDetailsForm(): ReactElement {
 				{ ! showCountryFields && <TextPlaceholder /> }
 			</FormFieldset>
 			<FormFieldset>
-				<FormLabel>{ translate( 'State' ) }</FormLabel>
-				{ showCountryFields && (
-					<SelectDropdown
-						className="company-details-form__dropdown"
-						initialSelected={ addressState }
-						options={ stateOptions.hasOwnProperty( country ) ? stateOptions[ country ] : [] }
-						onSelect={ ( option: any ) => {
-							setAddressState( option.value );
-						} }
-						disabled={ isSubmitting || ! stateOptions.hasOwnProperty( country ) }
-						isLoading={ Object.keys( stateOptions ).length === 0 }
-					/>
+				{ showCountryFields && stateOptions && (
+					<>
+						<FormLabel>{ translate( 'State' ) }</FormLabel>
+						<SelectDropdown
+							className="company-details-form__dropdown"
+							initialSelected={ addressState }
+							options={ stateOptions }
+							onSelect={ ( option: any ) => {
+								setAddressState( option.value );
+							} }
+							disabled={ isSubmitting }
+						/>
+					</>
 				) }
 
-				{ ! showCountryFields && <TextPlaceholder /> }
+				{ ! showCountryFields && Object.keys( stateOptionsMap ).length === 0 && (
+					<TextPlaceholder />
+				) }
 			</FormFieldset>
 			<div className="company-details-form__controls">
 				<Button
