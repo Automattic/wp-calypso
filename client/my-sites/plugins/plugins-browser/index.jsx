@@ -43,7 +43,7 @@ import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
-import { getPlugins } from 'calypso/state/plugins/installed/selectors';
+import { getPlugins, isEqualSlugOrId } from 'calypso/state/plugins/installed/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
@@ -689,7 +689,9 @@ function isNotBlocked( plugin ) {
  * @returns Boolean weather a plugin is not installed on not
  */
 function isNotInstalled( plugin, installedPlugins ) {
-	return ! installedPlugins.find( ( item ) => item.slug === plugin.slug );
+	return ! installedPlugins.find( ( installedPlugin ) =>
+		isEqualSlugOrId( plugin.slug, installedPlugin )
+	);
 }
 
 export default PluginsBrowser;
