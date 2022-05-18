@@ -1,7 +1,8 @@
 import { Button, Gridicon } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
-const InviteButton = ( { siteSlug, translate } ) => {
+const InviteButton = ( { siteSlug } ) => {
+	const translate = useTranslate();
 	return (
 		<Button primary href={ `/people/new/${ siteSlug }` }>
 			<Gridicon icon="user-add" />
@@ -10,4 +11,4 @@ const InviteButton = ( { siteSlug, translate } ) => {
 	);
 };
 
-export default localize( InviteButton );
+export default InviteButton;
