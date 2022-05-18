@@ -1,15 +1,16 @@
+import { WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import { settingsPath, purchasesPath, purchasesBasePath } from 'calypso/lib/jetpack/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isRewindActive from 'calypso/state/selectors/is-rewind-active';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import JetpackIcons from './jetpack-icons';
@@ -20,7 +21,7 @@ export default ( { path } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const hasScanProduct = useSelector( ( state ) => siteHasScanProductPurchase( state, siteId ) );
+	const hasScan = useSelector( ( state ) => siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ) );
 	const hasActiveRewind = useSelector( ( state ) => isRewindActive( state, siteId ) );
 
 	const onNavigate = () => {
@@ -32,7 +33,7 @@ export default ( { path } ) => {
 
 	const shouldShowSettings =
 		useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) ) &&
-		( hasActiveRewind || hasScanProduct );
+		( hasActiveRewind || hasScan );
 
 	const shouldShowPurchases =
 		isSectionNameEnabled( 'site-purchases' ) &&
@@ -41,7 +42,7 @@ export default ( { path } ) => {
 	return (
 		<>
 			<QueryRewindState siteId={ siteId } />
-			<QuerySitePurchases siteId={ siteId } />
+			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			<JetpackSidebarMenuItems
 				path={ path }
 				showIcons={ true }
