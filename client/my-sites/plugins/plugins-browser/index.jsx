@@ -369,7 +369,7 @@ const SearchListView = ( {
 	}, [ searchTerm, pluginsPagination, dispatch, siteId ] );
 
 	if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
-		let title = translate( 'Search results for "%(searchTerm)"', {
+		let title = translate( 'Search results for "%(searchTerm)s"', {
 			textOnly: true,
 			args: { searchTerm },
 		} );
