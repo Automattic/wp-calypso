@@ -709,15 +709,15 @@ function FirstTermDiscountCallout( {
 	}
 
 	if ( isMonthlyProduct( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first month' ) }</DiscountCallout>;
+		return <DiscountCallout>{ translate( 'Discount for first month *' ) }</DiscountCallout>;
 	}
 
 	if ( isYearly( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
+		return <DiscountCallout>{ translate( 'Discount for first year *' ) }</DiscountCallout>;
 	}
 
 	if ( isBiennially( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first term' ) }</DiscountCallout>;
+		return <DiscountCallout>{ translate( 'Discount for first term *' ) }</DiscountCallout>;
 	}
 
 	return null;
@@ -775,7 +775,7 @@ function DomainDiscountCallout( {
 
 	const isFreeBundledDomainRegistration = product.is_bundled && product.item_subtotal_integer === 0;
 	if ( isFreeBundledDomainRegistration ) {
-		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
+		return <DiscountCallout>{ translate( 'Discount for first year *' ) }</DiscountCallout>;
 	}
 
 	const isFreeDomainMapping =
@@ -813,7 +813,7 @@ function GSuiteDiscountCallout( {
 		product.item_original_subtotal_integer < product.item_original_subtotal_integer &&
 		product.is_sale_coupon_applied
 	) {
-		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
+		return <DiscountCallout>{ translate( 'Discount for first year *' ) }</DiscountCallout>;
 	}
 	return null;
 }

@@ -8,7 +8,7 @@ export function getIntroductoryOfferIntervalDisplay(
 	context: string,
 	remainingRenewalsUsingOffer = 0
 ): string {
-	let text = String( translate( 'Discount for first period' ) );
+	let text = String( translate( 'Discount for first period *' ) );
 	if ( isFreeTrial ) {
 		if ( intervalUnit === 'month' ) {
 			if ( intervalCount === 1 ) {
@@ -39,10 +39,10 @@ export function getIntroductoryOfferIntervalDisplay(
 	} else {
 		if ( intervalUnit === 'month' ) {
 			if ( intervalCount === 1 ) {
-				text = String( translate( 'Discount for first month' ) );
+				text = String( translate( 'Discount for first month *' ) );
 			} else {
 				text = String(
-					translate( 'Discount for first %(numberOfMonths)d months', {
+					translate( 'Discount for first %(numberOfMonths)d months *', {
 						args: {
 							numberOfMonths: intervalCount,
 						},
@@ -52,10 +52,10 @@ export function getIntroductoryOfferIntervalDisplay(
 		}
 		if ( intervalUnit === 'year' ) {
 			if ( intervalCount === 1 ) {
-				text = String( translate( 'Discount for first year' ) );
+				text = String( translate( 'Discount for first year *' ) );
 			} else {
 				text = String(
-					translate( 'Discount for first %(numberOfYears)d years', {
+					translate( 'Discount for first %(numberOfYears)d years *', {
 						args: {
 							numberOfYears: intervalCount,
 						},
