@@ -11,9 +11,8 @@ class ReskinSideExplainer extends Component {
 		const { translate } = this.props;
 
 		const hasTitle =
-			i18n.hasTranslation(
-				'Get a {{b}}free{{/b}} one-year domain registration with any paid plan.'
-			) || isEnLocale;
+			i18n.hasTranslation( 'Get a {{b}}free{{/b}} one-year domain registration with your plan.' ) ||
+			isEnLocale;
 
 		const hasFreeSubtitle =
 			i18n.hasTranslation(
@@ -27,7 +26,7 @@ class ReskinSideExplainer extends Component {
 			);
 
 		const title = hasTitle
-			? translate( 'Get a {{b}}free{{/b}} one-year domain registration with any paid plan.', {
+			? translate( 'Get a {{b}}free{{/b}} one-year domain registration with your plan.', {
 					components: { b: <strong /> },
 			  } )
 			: translate( 'Get a free one-year domain registration with any paid plan.' );
