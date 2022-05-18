@@ -3,6 +3,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_SEARCH,
 	WPCOM_FEATURES_BACKUPS,
+	WPCOM_FEATURES_INSTANT_SEARCH,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
@@ -45,7 +46,6 @@ import {
 import {
 	isFetchingSitePurchases,
 	siteHasJetpackProductPurchase,
-	siteHasSearchProductPurchase,
 } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
@@ -223,8 +223,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	redirect() {
-		const { isMobileAppFlow, mobileAppRedirect, siteHasBackups, siteHasJetpackSearchProduct } =
-			this.props;
+		const { isMobileAppFlow, mobileAppRedirect, siteHasBackups, siteHasInstantSearch } = this.props;
 		const { from, homeUrl, redirectAfterAuth, scope, closeWindowAfterAuthorize } =
 			this.props.authQuery;
 		const { isRedirecting } = this.state;
@@ -285,7 +284,7 @@ export class JetpackAuthorize extends Component {
 		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasBackups ) {
 			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
-		} else if ( this.isFromJetpackSearchPlugin() && ! siteHasJetpackSearchProduct ) {
+		} else if ( this.isFromJetpackSearchPlugin() && ! siteHasInstantSearch ) {
 			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_SEARCH } in cart.` );
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_SEARCH }` );
 		} else {
@@ -939,7 +938,11 @@ const connectComponent = connect(
 			selectedPlanSlug,
 			siteHasJetpackPaidProduct: siteHasJetpackProductPurchase( state, authQuery.clientId ),
 			siteHasBackups: siteHasFeature( state, authQuery.clientId, WPCOM_FEATURES_BACKUPS ),
-			siteHasJetpackSearchProduct: siteHasSearchProductPurchase( state, authQuery.clientId ),
+			siteHasInstantSearch: siteHasFeature(
+				state,
+				authQuery.clientId,
+				WPCOM_FEATURES_INSTANT_SEARCH
+			),
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
 		};
