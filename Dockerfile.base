@@ -86,6 +86,7 @@ ENV DISPLAY=:99
 RUN apt update \
 	&& apt-get install -y \
 		fonts-liberation \
+		fonts-noto \
 		git-restore-mtime \
 		gtk2-engines-pixbuf \
 		libappindicator3-1 \
