@@ -1,4 +1,3 @@
-import { FEATURE_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
@@ -19,7 +18,6 @@ import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -217,10 +215,7 @@ const InstalledInOrPricing = ( {
 	const isPluginAtive = useSelector( ( state ) =>
 		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
 	)?.active;
-	const pluginInstallationNotAllowed = useSelector(
-		( state ) => ! hasActiveSiteFeature( state, selectedSiteId, FEATURE_INSTALL_PLUGINS )
-	);
-	const active = ( pluginInstallationNotAllowed && isWpcomPreinstalled ) || isPluginAtive;
+	const active = isWpcomPreinstalled || isPluginAtive;
 
 	let checkmarkColorClass = 'checkmark--active';
 
@@ -233,7 +228,7 @@ const InstalledInOrPricing = ( {
 			<div className="plugins-browser-item__installed-and-active-container">
 				<div className="plugins-browser-item__installed ">
 					<Gridicon icon="checkmark" className={ checkmarkColorClass } size={ 14 } />
-					{ ( pluginInstallationNotAllowed && isWpcomPreinstalled ) || currentSites?.length === 1
+					{ isWpcomPreinstalled || currentSites?.length === 1
 						? translate( 'Installed' )
 						: translate( 'Installed on %d site', 'Installed on %d sites', {
 								args: [ sitesWithPlugin.length ],
