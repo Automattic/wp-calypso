@@ -24,7 +24,6 @@ import type { SelectItem } from '@automattic/onboarding';
 import './style.scss';
 
 interface Props {
-	signupDependencies: any;
 	existingSiteCount: number;
 	goToNextStep: () => void;
 	submitSignupStep: ( { stepName, wasSkipped }: { stepName: string; wasSkipped: boolean } ) => void;
@@ -89,7 +88,13 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 	];
 
 	useEffect( () => {
+		if ( ! props.queryObject.siteSlug && ! props.queryObject.siteId ) {
+			throw new Error(
+				'website-design-services did not provide the site slug or site id it is configured to.'
+			);
+		}
 		dispatch( saveSignupStep( { stepName: props.stepName } ) );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
 	const onSelect = ( value: ChoiceType ) => {
