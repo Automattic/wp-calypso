@@ -55,6 +55,8 @@ export const anchorFmFlow: Flow = {
 			const siteSlug = siteSlugParam || getNewSite()?.site_slug;
 
 			switch ( currentStep ) {
+				case 'login':
+					return navigate( 'podcastTitle' );
 				case 'podcastTitle':
 					return navigate( 'designSetup' );
 				case 'designSetup':
