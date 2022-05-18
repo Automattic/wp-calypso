@@ -25,20 +25,15 @@ function getDefaultOptions() {
 	const env = config( 'directly_rtm_widget_environment' ) as string;
 	return {
 		id: ids[ env ],
-		displayAskQuestion: false,
+		displayAskQuestion: true,
 	};
 }
 
 type Options = Record< string, string | boolean | number > | string;
 
-type DTM = {
-	( args: [ key: string, command: Options ] ): void;
-	cq?: [ command: string, options?: Options ];
-};
-
 declare global {
 	interface Window {
-		DirectlyRTM: DTM;
+		DirectlyRTM: any;
 	}
 }
 
@@ -51,7 +46,7 @@ function configureGlobals() {
 	// Set up the global DirectlyRTM function, required for the RTM widget.
 	// This snippet is pasted from Directly's setup code.
 	if ( ! window.DirectlyRTM ) {
-		window.DirectlyRTM = function ( ...args ) {
+		window.DirectlyRTM = function ( ...args: any ) {
 			if ( window.DirectlyRTM.cq ) {
 				window.DirectlyRTM.cq.push( ...args );
 			} else {
@@ -78,7 +73,7 @@ function insertDOM() {
 	if ( null !== document.getElementById( 'directlyRTMScript' ) ) {
 		return;
 	}
-	const d = document.createElement( 'div' );
+	const d = document.createElement( 'img' );
 	d.id = 'directlyRTMScript';
 	d.src = DIRECTLY_ASSETS_BASE_URL;
 	document.body.appendChild( d );
@@ -90,7 +85,7 @@ function insertDOM() {
  *
  * @returns Promise that resolves after initialization and command execution
  */
-async function execute( args: [ string, Options ] ) {
+export async function execute( args: [ string, Options ] ) {
 	await initializeDirectly();
 	return window.DirectlyRTM( ...args );
 }

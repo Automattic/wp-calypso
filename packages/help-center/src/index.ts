@@ -6,4 +6,5 @@ export { BackButton } from './components/back-button';
 export { default as ContactForm } from './components/help-center-contact-form';
 export { useHCWindowCommunicator } from './happychat-window-communicator';
 export { HelpCenterContext } from './help-center-context';
+export { execute } from './directly';
 export { getContextResults } from './contextual-help/contextual-help';

@@ -1,12 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSupportAvailability } from '@automattic/data-stores';
 import { useHappychatAuth } from '@automattic/happychat-connection';
-import { HelpCenterContext } from '@automattic/help-center';
+import { HelpCenterContext, execute as DirectlyRTM } from '@automattic/help-center';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useState, useEffect, useRef, useContext } from '@wordpress/element';
 import { Icon, page as pageIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { useState, useEffect, useRef, useContext } from 'react';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import InlineHelpContactPage, { InlineHelpContactPageButton } from './inline-help-contact-page';
 import InlineHelpEmbedResult from './inline-help-embed-result';
@@ -19,6 +19,7 @@ import './inline-help-center-content.scss';
 const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) => {
 	const isMobile = useMobileBreakpoint();
 	const { __ } = useI18n();
+	const [ directly, updateDirectly ] = useState( { isLoaded: false, hasSession: false } );
 	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const [ activeSecondaryView, setActiveSecondaryView ] = useState(
 		openInContactPage ? VIEW_CONTACT : null
@@ -31,6 +32,19 @@ const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) =>
 	useSupportAvailability( 'CHAT' );
 	useSupportAvailability( 'EMAIL' );
 	useHappychatAuth();
+
+	// Load Directly if needed
+	useEffect( () => {
+		// Not sure how we want to determine this
+		const hasDirectlySupport = true;
+
+		if ( hasDirectlySupport ) {
+			DirectlyRTM( [
+				'onReady',
+				( { session } ) => updateDirectly( { isLoaded: true, hasSession: session } ),
+			] );
+		}
+	}, [] );
 
 	const openSecondaryView = ( secondaryViewKey ) => {
 		recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show`, {
@@ -76,6 +90,11 @@ const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) =>
 	};
 
 	const openContactView = () => {
+		if ( directly.isLoaded && directly.hasSession ) {
+			DirectlyRTM( [ 'maximize' ] );
+			// Need to close HelpCenter as well
+		}
+
 		openSecondaryView( VIEW_CONTACT );
 	};
 
