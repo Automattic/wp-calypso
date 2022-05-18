@@ -28,6 +28,7 @@ const EmailProvidersInDepthComparison = ( {
 	referrer,
 	selectedDomainName,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
+	source,
 }: EmailProvidersInDepthComparisonProps ): JSX.Element => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -45,6 +46,7 @@ const EmailProvidersInDepthComparison = ( {
 			recordTracksEvent( 'calypso_email_providers_in_depth_billing_interval_toggle_click', {
 				domain_name: selectedDomainName,
 				new_interval: newIntervalLength,
+				source,
 			} )
 		);
 
@@ -53,7 +55,7 @@ const EmailProvidersInDepthComparison = ( {
 				selectedSite.slug,
 				selectedDomainName,
 				referrer,
-				null,
+				source,
 				newIntervalLength
 			)
 		);
@@ -68,11 +70,13 @@ const EmailProvidersInDepthComparison = ( {
 			recordTracksEvent( 'calypso_email_providers_in_depth_select_provider_click', {
 				domain_name: selectedDomainName,
 				provider: emailProviderSlug,
+				source,
 			} )
 		);
 		const path = `${ referrer }?${ stringify( {
 			interval: selectedIntervalLength,
 			provider: emailProviderSlug,
+			source,
 		} ) }`;
 
 		page( path );
@@ -83,7 +87,7 @@ const EmailProvidersInDepthComparison = ( {
 	return (
 		<Main wideLayout>
 			<PageViewTracker
-				path={ emailManagementInDepthComparison( ':site', ':domain' ) }
+				path={ emailManagementInDepthComparison( ':site', ':domain', null, source ) }
 				title="Email Comparison > In-Depth Comparison"
 			/>
 
