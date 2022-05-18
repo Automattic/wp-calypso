@@ -10,9 +10,33 @@ class ReskinSideExplainer extends Component {
 	getStarterPlanOverrides( isEnLocale ) {
 		const { translate } = this.props;
 
-		const hasTitle =
+		const fallbackTitle = translate(
+			'Get a free one-year domain registration with any paid plan.'
+		);
+
+		const isPaidPlan = [ 'starter', 'pro' ].includes( this.props.flowName );
+		const hasFreeTitle =
+			i18n.hasTranslation(
+				'Get a {{b}}free{{/b}} one-year domain registration with any paid plan.'
+			) || isEnLocale;
+
+		const freeTitle = hasFreeTitle
+			? translate( 'Get a {{b}}free{{/b}} one-year domain registration with any paid plan.', {
+					components: { b: <strong /> },
+			  } )
+			: fallbackTitle;
+
+		const hasPaidTitle =
 			i18n.hasTranslation( 'Get a {{b}}free{{/b}} one-year domain registration with your plan.' ) ||
 			isEnLocale;
+
+		const paidTitle = hasPaidTitle
+			? translate( 'Get a {{b}}free{{/b}} one-year domain registration with your plan.', {
+					components: { b: <strong /> },
+			  } )
+			: fallbackTitle;
+
+		const title = isPaidPlan ? paidTitle : freeTitle;
 
 		const hasFreeSubtitle =
 			i18n.hasTranslation(
@@ -25,15 +49,9 @@ class ReskinSideExplainer extends Component {
 				'Use the search tool on this page to find a domain you love, then select a paid plan.'
 			);
 
-		const title = hasTitle
-			? translate( 'Get a {{b}}free{{/b}} one-year domain registration with your plan.', {
-					components: { b: <strong /> },
-			  } )
-			: translate( 'Get a free one-year domain registration with any paid plan.' );
+		const paidSubtitle = translate( 'Use the search tool on this page to find a domain you love.' );
 
-		let subtitle = [ 'starter', 'pro' ].includes( this.props.flowName )
-			? translate( 'Use the search tool on this page to find a domain you love.' )
-			: freeSubtitle;
+		let subtitle = isPaidPlan ? paidSubtitle : freeSubtitle;
 
 		let subtitle2 = translate(
 			'We’ll pay the first year’s domain registration fees for you, simple as that!'
