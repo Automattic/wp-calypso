@@ -48,4 +48,14 @@
 			white-space: nowrap;
 			z-index: 0;
 		}
+
+		.responsive-toolbar-group__button-item, .responsive-toolbar-group__menu-item {
+			&:focus {
+				&::before {
+					// disable blue box on focus
+					box-shadow: none !important;
+					outline: none !important;
+				}
+			}
+		}
 	}
