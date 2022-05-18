@@ -1,7 +1,7 @@
-import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
+import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
 
 describe( 'selectors', () => {
-	describe( '#hasAvailableSiteFeature()', () => {
+	describe( '#getPlansForFeature()', () => {
 		test( 'should return False when no site id', () => {
 			const available = {
 				'feature-available-01': [ 'plan-01', 'plan-02', 'plan-03' ],
@@ -21,7 +21,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const availableFeature = hasAvailableSiteFeature( state );
+			const availableFeature = getPlansForFeature( state );
 			expect( availableFeature ).toEqual( false );
 		} );
 
@@ -44,7 +44,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const availableFeature = hasAvailableSiteFeature( state, 'unknown' );
+			const availableFeature = getPlansForFeature( state, 'unknown' );
 			expect( availableFeature ).toEqual( false );
 		} );
 
@@ -53,7 +53,7 @@ describe( 'selectors', () => {
 				sites: {},
 			};
 
-			const availableFeature = hasAvailableSiteFeature( state, 123001 );
+			const availableFeature = getPlansForFeature( state, 123001 );
 			expect( availableFeature ).toEqual( false );
 		} );
 
@@ -68,7 +68,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const availableFeature = hasAvailableSiteFeature( state, 123001 );
+			const availableFeature = getPlansForFeature( state, 123001 );
 			expect( availableFeature ).toEqual( false );
 		} );
 
@@ -91,7 +91,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const availableFeature = hasAvailableSiteFeature( state, 123001 );
+			const availableFeature = getPlansForFeature( state, 123001 );
 			expect( availableFeature ).toEqual( false );
 		} );
 
@@ -114,7 +114,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const availableFeature = hasAvailableSiteFeature( state, 123001, 'not-available-feature' );
+			const availableFeature = getPlansForFeature( state, 123001, 'not-available-feature' );
 			expect( availableFeature ).toEqual( false );
 		} );
 
@@ -137,7 +137,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const availableFeature = hasAvailableSiteFeature( state, 123001, 'feature-available-01' );
+			const availableFeature = getPlansForFeature( state, 123001, 'feature-available-01' );
 			expect( availableFeature ).toEqual( [ 'plan-01', 'plan-02', 'plan-03' ] );
 		} );
 	} );

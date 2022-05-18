@@ -18,8 +18,8 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
 import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
-import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
 import isAtomicSiteSelector from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 
@@ -128,28 +128,19 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	 * Check whether the `woop` feature is actve.`
 	 * It's defined by wpcom in the store product list.
 	 */
-	const isWoopFeatureActive = useSelector( ( state ) =>
+	const hasWoopFeature = useSelector( ( state ) =>
 		hasActiveSiteFeature( state, siteId, FEATURE_WOOP )
 	);
-
-	/*
-	 * Feature available means although the site doesn't have the feature active,
-	 * it's available to be activated via buying a plan.
-	 */
-	const hasWoopFeatureAvailable = useSelector(
-		( state ) => hasAvailableSiteFeature( state, siteId, FEATURE_WOOP ) || []
-	);
-
-	// The site requires upgrading when the feature is not active and available.
-	const requiresUpgrade = Boolean( ! isWoopFeatureActive && hasWoopFeatureAvailable.length );
 
 	/*
 	 * We pick the first plan from the available plans list.
 	 * The priority is defined by the store products list.
 	 */
-	const upgradingPlan = useSelector( ( state ) =>
-		getProductBySlug( state, hasWoopFeatureAvailable[ 0 ] )
-	);
+	const upgradingPlan = useSelector( ( state ) => {
+		const plans = getPlansForFeature( state, siteId, FEATURE_WOOP ) || [];
+
+		return getProductBySlug( state, plans[ 0 ] );
+	} );
 
 	const productName = upgradingPlan?.product_name ?? '';
 
@@ -161,7 +152,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	 * - data is ready
 	 * - does not require an upgrade, based on store `woop` feature
 	 */
-	let isReadyToStart = !! ( siteId && transferringDataIsAvailable && ! requiresUpgrade );
+	let isReadyToStart = !! ( siteId && transferringDataIsAvailable && hasWoopFeature );
 
 	// when the site is not Atomic, ...
 	if ( isReadyToStart && ! isAtomicSite ) {
@@ -172,7 +163,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	}
 
 	const siteUpgrading = {
-		required: requiresUpgrade,
+		required: ! hasWoopFeature,
 		checkoutUrl: addQueryArgs(
 			{
 				redirect_to: addQueryArgs(
