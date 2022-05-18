@@ -250,6 +250,17 @@ export class Theme extends Component {
 					</Ribbon>
 				) }
 				<div ref={ this.themeThumbnailRef } className="theme__content" { ...bookmarkRef }>
+					{ theme.update && (
+						<div className="theme__test">
+							<div className="theme__test-content">
+								<Gridicon icon="refresh" size={ 18 } />
+								New version available.
+								<Button className="theme__button-link" borderless>
+									Update now
+								</Button>
+							</div>
+						</div>
+					) }
 					<a
 						aria-label={ name }
 						className="theme__thumbnail"

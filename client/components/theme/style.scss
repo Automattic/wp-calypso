@@ -200,6 +200,34 @@ $theme-info-height: 54px;
 	overflow: hidden;
 }
 
+.theme__test {
+	position:absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1;
+	padding: 1px;
+	font-size: 0.75rem;
+	.theme__test-content {
+		background-color: #fcf9e8;
+		border-left: 4px #dba617 solid;
+	}
+}
+
+.theme__button-link {
+	&.button.is-borderless {
+		padding: 0;
+	}
+	&.components-button.is-link:not( :disabled ),
+	&.components-button.is-link:not( :disabled ) {
+		color: var( --studio-gray-40 );
+	}
+	&.components-button.is-link:hover:not( :disabled ),
+	&.components-button.is-link:active:not( :disabled ) {
+		color: var( --studio-gray-60 );
+	}
+}
+
 .theme__img {
 	position: absolute;
 	top: 0;

@@ -32,6 +32,7 @@ import {
 	getThemeShowcaseDescription,
 	getThemeShowcaseTitle,
 	prependThemeFilterKeys,
+	getOutdatedThemes,
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import { addTracking, trackClick, localizeThemesPath } from './helpers';
@@ -95,6 +96,7 @@ class ThemeShowcase extends Component {
 		loggedOutComponent: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		isJetpackSite: PropTypes.bool,
+		outdatedThemes: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -266,6 +268,17 @@ class ThemeShowcase extends Component {
 		}
 	};
 
+	notificationCount = ( key ) => {
+		switch ( key ) {
+			case this.tabFilters.MYTHEMES.key:
+				return this.props.outdatedThemes.length || null;
+			case this.tabFilters.RECOMMENDED.key:
+			case this.tabFilters.TRENDING.key:
+			case this.tabFilters.ALL.key:
+				return null;
+		}
+	};
+
 	render() {
 		const {
 			siteId,
@@ -366,6 +379,7 @@ class ThemeShowcase extends Component {
 													key={ tabFilter.key }
 													onClick={ () => this.onFilterClick( tabFilter ) }
 													selected={ tabFilter.key === this.state.tabFilter.key }
+													count={ this.notificationCount( tabFilter.key ) }
 												>
 													{ tabFilter.text }
 												</NavItem>
@@ -410,6 +424,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		filterString: prependThemeFilterKeys( state, filter ),
 		filterToTermTable: getThemeFilterToTermTable( state ),
 		themesBookmark: getThemesBookmark( state ),
+		outdatedThemes: getOutdatedThemes( state, siteId ) || [],
 	};
 };
 
