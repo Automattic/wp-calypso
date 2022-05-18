@@ -3,7 +3,7 @@ import { key, clear, setItem, getItem, removeItem, length } from '..';
 describe( 'localstorage-bypass', () => {
 	// Spy on the original localStorage functions
 	const _setItem = jest.fn();
-	const _getItem = jest.fn().mockImplementation( ( x ) => x );
+	const _getItem = jest.fn( ( x ) => x );
 	const _removeItem = jest.fn();
 	let db;
 
