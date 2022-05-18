@@ -151,11 +151,13 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	}
 
 	const getEventPropsByDesign = ( design: Design ) => ( {
-		theme: design.recipe?.stylesheet,
+		slug: design?.slug,
+		theme: design?.recipe?.stylesheet,
 		template: design?.template,
+		flow,
+		intent,
 		is_premium: design?.is_premium,
-		flow: showGeneratedDesigns ? 'generated-design-step' : flow,
-		intent: intent,
+		is_generated: showGeneratedDesigns,
 		...( design?.recipe?.patternIds && { pattern_ids: design.recipe.patternIds.join( ',' ) } ),
 	} );
 
