@@ -199,6 +199,7 @@ import {
 	TYPE_STARTER,
 	FEATURE_TITAN_EMAIL,
 	FEATURE_SOCIAL_MEDIA_TOOLS,
+	WPCOM_FEATURES_ATOMIC,
 } from './constants';
 import type {
 	BillingTerm,
@@ -478,6 +479,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UPLOAD_THEMES_PLUGINS,
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
+		WPCOM_FEATURES_ATOMIC,
 	],
 	getInferiorFeatures: () => [],
 } );
@@ -668,6 +670,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CLOUDFLARE_ANALYTICS,
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
+		WPCOM_FEATURES_ATOMIC,
 	],
 	getInferiorFeatures: () => [],
 } );
@@ -1660,5 +1663,6 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 		FEATURE_UPLOAD_PLUGINS,
 		FEATURE_UPLOAD_THEMES,
 		FEATURE_UPLOAD_THEMES_PLUGINS,
+		WPCOM_FEATURES_ATOMIC,
 	],
 };
