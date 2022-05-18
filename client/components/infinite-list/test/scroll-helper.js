@@ -1,4 +1,3 @@
-import { assert } from 'chai';
 import { range } from 'lodash';
 import ScrollHelper from '../scroll-helper';
 
@@ -17,19 +16,19 @@ describe( 'scroll-helper', () => {
 			helper.updateContextHeight( 1000 );
 
 			test( 'top hard hide levels is 1 vh above context', () => {
-				assert.equal( helper.topHideLevelHard, -1000 );
+				expect( helper.topHideLevelHard ).toEqual( -1000 );
 			} );
 			test( 'top soft hide level is 2 vh above context', () => {
-				assert.equal( helper.topHideLevelSoft, -2000 );
+				expect( helper.topHideLevelSoft ).toEqual( -2000 );
 			} );
 			test( 'bottom hard hide level is 1 vh below context', () => {
-				assert.equal( helper.bottomHideLevelHard, 2000 );
+				expect( helper.bottomHideLevelHard ).toEqual( 2000 );
 			} );
 			test( 'bottom soft hide level is 2 vh below context', () => {
-				assert.equal( helper.bottomHideLevelSoft, 3000 );
+				expect( helper.bottomHideLevelSoft ).toEqual( 3000 );
 			} );
 			test( 'bottom 3rd hide level is 3 vh below context', () => {
-				assert.equal( helper.bottomHideLevelUltraSoft, 4000 );
+				expect( helper.bottomHideLevelUltraSoft ).toEqual( 4000 );
 			} );
 		} );
 
@@ -42,19 +41,19 @@ describe( 'scroll-helper', () => {
 			helper.updateContextHeight( 200 );
 
 			test( 'top hard hide levels is 5 items above context', () => {
-				assert.equal( helper.topHideLevelHard, -500 );
+				expect( helper.topHideLevelHard ).toEqual( -500 );
 			} );
 			test( 'top soft hide level is 10 items above context', () => {
-				assert.equal( helper.topHideLevelSoft, -1000 );
+				expect( helper.topHideLevelSoft ).toEqual( -1000 );
 			} );
 			test( 'bottom hard hide level is 5 items below context', () => {
-				assert.equal( helper.bottomHideLevelHard, 700 );
+				expect( helper.bottomHideLevelHard ).toEqual( 700 );
 			} );
 			test( 'bottom soft hide level is 10 items below context', () => {
-				assert.equal( helper.bottomHideLevelSoft, 1200 );
+				expect( helper.bottomHideLevelSoft ).toEqual( 1200 );
 			} );
 			test( 'bottom 3rd hide level is 15 items below context', () => {
-				assert.equal( helper.bottomHideLevelUltraSoft, 1700 );
+				expect( helper.bottomHideLevelUltraSoft ).toEqual( 1700 );
 			} );
 		} );
 	} );
@@ -68,16 +67,16 @@ describe( 'scroll-helper', () => {
 		helper.updatePlaceholderDimensions();
 
 		test( 'Placeholders height determined using their bounds', () => {
-			assert.equal( helper.topPlaceholderHeight, 1000 );
-			assert.equal( helper.bottomPlaceholderHeight, 2000 );
+			expect( helper.topPlaceholderHeight ).toEqual( 1000 );
+			expect( helper.bottomPlaceholderHeight ).toEqual( 2000 );
 		} );
 
 		test( 'Container top determined using top placeholder bounds', () => {
-			assert.equal( helper.containerTop, -2000 );
+			expect( helper.containerTop ).toEqual( -2000 );
 		} );
 
 		test( 'Container bottom determined using bottom placeholder bounds', () => {
-			assert.equal( helper.containerBottom, 4000 );
+			expect( helper.containerBottom ).toEqual( 4000 );
 		} );
 	} );
 
@@ -94,12 +93,12 @@ describe( 'scroll-helper', () => {
 
 		test( 'renders only up to bottom soft hide level', () => {
 			helper.props.items = range( 100 );
-			assert.equal( helper.initialLastRenderedIndex(), 14 ); // 3000 / 200 - 1
+			expect( helper.initialLastRenderedIndex() ).toEqual( 14 ); // 3000 / 200 - 1
 		} );
 
 		test( 'renders everything if it should fit', () => {
 			helper.props.items = range( 10 );
-			assert.equal( helper.initialLastRenderedIndex(), 9 );
+			expect( helper.initialLastRenderedIndex() ).toEqual( 9 );
 		} );
 	} );
 
@@ -110,10 +109,10 @@ describe( 'scroll-helper', () => {
 			helper.topPlaceholderHeight = 500;
 			helper.topHideLevelSoft = -2000;
 
-			assert.ok( helper.shouldHideItemsAbove() );
+			expect( helper.shouldHideItemsAbove() ).toBeTruthy();
 
 			helper.topPlaceholderHeight = 1500;
-			assert.notOk( helper.shouldHideItemsAbove() );
+			expect( helper.shouldHideItemsAbove() ).toBeFalsy();
 		} );
 
 		describe( 'Hiding batch of items', () => {
@@ -148,26 +147,23 @@ describe( 'scroll-helper', () => {
 			helper.hideItemsAbove();
 
 			test( 'updated state', () => {
-				assert( helper.stateUpdated );
+				expect( helper.stateUpdated ).toBeTruthy();
 			} );
 
 			test( 'created placeholder for 3 items', () => {
-				assert.equal( 900, helper.topPlaceholderHeight );
+				expect( 900 ).toEqual( helper.topPlaceholderHeight );
 			} );
 
 			test( 'hid 3 items', () => {
-				assert.equal( 3, helper.firstRenderedIndex );
+				expect( 3 ).toEqual( helper.firstRenderedIndex );
 			} );
 
 			test( 'stored hidden items height', () => {
-				assert.deepEqual(
-					{
-						i0: 250,
-						i1: 350,
-						i2: 300,
-					},
-					helper.itemHeights
-				);
+				expect( {
+					i0: 250,
+					i1: 350,
+					i2: 300,
+				} ).toEqual( helper.itemHeights );
 			} );
 		} );
 
@@ -201,11 +197,11 @@ describe( 'scroll-helper', () => {
 			helper.hideItemsAbove();
 
 			test( 'created placeholder for 2 items', () => {
-				assert.equal( 600, helper.topPlaceholderHeight );
+				expect( 600 ).toEqual( helper.topPlaceholderHeight );
 			} );
 
 			test( 'hid 2 items', () => {
-				assert.equal( 2, helper.firstRenderedIndex );
+				expect( 2 ).toEqual( helper.firstRenderedIndex );
 			} );
 		} );
 
@@ -215,10 +211,10 @@ describe( 'scroll-helper', () => {
 			helper.topPlaceholderHeight = 2500;
 			helper.topHideLevelHard = -1000;
 
-			assert.ok( helper.shouldShowItemsAbove() );
+			expect( helper.shouldShowItemsAbove() ).toBeTruthy();
 
 			helper.topPlaceholderHeight = 1500;
-			assert.notOk( helper.shouldShowItemsAbove() );
+			expect( helper.shouldShowItemsAbove() ).toBeFalsy();
 		} );
 
 		describe( 'Showing batch of items', () => {
@@ -246,24 +242,21 @@ describe( 'scroll-helper', () => {
 			helper.showItemsAbove();
 
 			test( 'updated state', () => {
-				assert( helper.stateUpdated );
+				expect( helper.stateUpdated ).toBeTruthy();
 			} );
 
 			test( 'reduced placeholder height', () => {
-				assert.equal( 250, helper.topPlaceholderHeight );
+				expect( 250 ).toEqual( helper.topPlaceholderHeight );
 			} );
 
 			test( 'shown 4 items', () => {
-				assert.equal( 1, helper.firstRenderedIndex );
+				expect( 1 ).toEqual( helper.firstRenderedIndex );
 			} );
 
 			test( 'removed shown items height', () => {
-				assert.deepEqual(
-					{
-						i0: 250,
-					},
-					helper.itemHeights
-				);
+				expect( {
+					i0: 250,
+				} ).toEqual( helper.itemHeights );
 			} );
 		} );
 
@@ -287,11 +280,11 @@ describe( 'scroll-helper', () => {
 			helper.showItemsAbove();
 
 			test( 'placeholder height is never negative', () => {
-				assert.equal( 0, helper.topPlaceholderHeight );
+				expect( 0 ).toEqual( helper.topPlaceholderHeight );
 			} );
 
 			test( 'shown all items', () => {
-				assert.equal( 0, helper.firstRenderedIndex );
+				expect( 0 ).toEqual( helper.firstRenderedIndex );
 			} );
 		} );
 
@@ -313,7 +306,7 @@ describe( 'scroll-helper', () => {
 
 			helper.showItemsAbove();
 
-			assert.equal( 0, helper.topPlaceholderHeight );
+			expect( 0 ).toEqual( helper.topPlaceholderHeight );
 		} );
 	} );
 
@@ -324,10 +317,10 @@ describe( 'scroll-helper', () => {
 			helper.bottomPlaceholderHeight = 500;
 			helper.bottomHideLevelUltraSoft = 4000;
 
-			assert.ok( helper.shouldHideItemsBelow() );
+			expect( helper.shouldHideItemsBelow() ).toBeTruthy();
 
 			helper.bottomPlaceholderHeight = 1500;
-			assert.notOk( helper.shouldHideItemsBelow() );
+			expect( helper.shouldHideItemsBelow() ).toBeFalsy();
 		} );
 
 		describe( 'Hiding batch of items', () => {
@@ -366,27 +359,24 @@ describe( 'scroll-helper', () => {
 			helper.hideItemsBelow();
 
 			test( 'updated state', () => {
-				assert.ok( helper.stateUpdated );
+				expect( helper.stateUpdated ).toBeTruthy();
 			} );
 
 			test( 'created placeholder for 3 items', () => {
-				assert.equal( 2800, helper.bottomPlaceholderHeight );
+				expect( 2800 ).toEqual( helper.bottomPlaceholderHeight );
 			} );
 
 			test( 'hid 4 items', () => {
-				assert.equal( 5, helper.lastRenderedIndex );
+				expect( 5 ).toEqual( helper.lastRenderedIndex );
 			} );
 
 			test( 'stored hidden items height', () => {
-				assert.deepEqual(
-					{
-						i6: 300,
-						i7: 900,
-						i8: 300,
-						i9: 500,
-					},
-					helper.itemHeights
-				);
+				expect( {
+					i6: 300,
+					i7: 900,
+					i8: 300,
+					i9: 500,
+				} ).toEqual( helper.itemHeights );
 			} );
 		} );
 
@@ -413,11 +403,11 @@ describe( 'scroll-helper', () => {
 			helper.hideItemsBelow();
 
 			test( 'created placeholder for 2 items', () => {
-				assert.equal( 1400, helper.bottomPlaceholderHeight );
+				expect( 1400 ).toEqual( helper.bottomPlaceholderHeight );
 			} );
 
 			test( 'hid all items', () => {
-				assert.equal( -1, helper.lastRenderedIndex );
+				expect( -1 ).toEqual( helper.lastRenderedIndex );
 			} );
 		} );
 
@@ -427,10 +417,10 @@ describe( 'scroll-helper', () => {
 			helper.bottomPlaceholderHeight = 3500;
 			helper.bottomHideLevelHard = 2000;
 
-			assert.ok( helper.shouldShowItemsBelow() );
+			expect( helper.shouldShowItemsBelow() ).toBeTruthy();
 
 			helper.bottomPlaceholderHeight = 2500;
-			assert.notOk( helper.shouldShowItemsBelow() );
+			expect( helper.shouldShowItemsBelow() ).toBeFalsy();
 		} );
 
 		describe( 'Showing batch of items', () => {
@@ -459,24 +449,21 @@ describe( 'scroll-helper', () => {
 			helper.showItemsBelow();
 
 			test( 'updated state', () => {
-				assert( helper.stateUpdated );
+				expect( helper.stateUpdated ).toBeTruthy();
 			} );
 
 			test( 'reduced placeholder height', () => {
-				assert.equal( 2500, helper.bottomPlaceholderHeight );
+				expect( 2500 ).toEqual( helper.bottomPlaceholderHeight );
 			} );
 
 			test( 'shown 2 items', () => {
-				assert.equal( 6, helper.lastRenderedIndex );
+				expect( 6 ).toEqual( helper.lastRenderedIndex );
 			} );
 
 			test( 'removed shown items height', () => {
-				assert.deepEqual(
-					{
-						i7: 900,
-					},
-					helper.itemHeights
-				);
+				expect( {
+					i7: 900,
+				} ).toEqual( helper.itemHeights );
 			} );
 		} );
 
@@ -505,11 +492,11 @@ describe( 'scroll-helper', () => {
 			helper.showItemsBelow();
 
 			test( 'reduced placeholder height', () => {
-				assert.equal( 1900, helper.bottomPlaceholderHeight );
+				expect( 1900 ).toEqual( helper.bottomPlaceholderHeight );
 			} );
 
 			test( 'shown 2 items', () => {
-				assert.equal( 5, helper.lastRenderedIndex );
+				expect( 5 ).toEqual( helper.lastRenderedIndex );
 			} );
 		} );
 
@@ -533,15 +520,15 @@ describe( 'scroll-helper', () => {
 			helper.showItemsBelow();
 
 			test( 'placeholder height is never negative', () => {
-				assert.equal( 0, helper.bottomPlaceholderHeight );
+				expect( 0 ).toEqual( helper.bottomPlaceholderHeight );
 			} );
 
 			test( 'container bottom is increased', () => {
-				assert.equal( 1600, helper.containerBottom );
+				expect( 1600 ).toEqual( helper.containerBottom );
 			} );
 
 			test( 'shown 3 items', () => {
-				assert.equal( 7, helper.lastRenderedIndex );
+				expect( 7 ).toEqual( helper.lastRenderedIndex );
 			} );
 		} );
 
@@ -565,8 +552,8 @@ describe( 'scroll-helper', () => {
 
 			helper.showItemsBelow();
 
-			assert.equal( 0, helper.bottomPlaceholderHeight );
-			assert.equal( 7, helper.lastRenderedIndex );
+			expect( 0 ).toEqual( helper.bottomPlaceholderHeight );
+			expect( 7 ).toEqual( helper.lastRenderedIndex );
 		} );
 	} );
 
@@ -586,22 +573,22 @@ describe( 'scroll-helper', () => {
 		} );
 
 		test( 'loaded when container bottom above hard limit', () => {
-			assert.ok( helper.shouldLoadNextPage() );
+			expect( helper.shouldLoadNextPage() ).toBeTruthy();
 		} );
 
 		test( 'not loaded when loading previous', () => {
 			helper.props.fetchingNextPage = true;
-			assert.notOk( helper.shouldLoadNextPage() );
+			expect( helper.shouldLoadNextPage() ).toBeFalsy();
 		} );
 
 		test( 'not loaded on last page', () => {
 			helper.props.lastPage = true;
-			assert.notOk( helper.shouldLoadNextPage() );
+			expect( helper.shouldLoadNextPage() ).toBeFalsy();
 		} );
 
 		test( 'not loaded if some items hidden', () => {
 			helper.bottomPlaceholderHeight = 100;
-			assert.notOk( helper.shouldLoadNextPage() );
+			expect( helper.shouldLoadNextPage() ).toBeFalsy();
 		} );
 	} );
 } );
