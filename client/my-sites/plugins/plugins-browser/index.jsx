@@ -521,7 +521,7 @@ const PluginSingleListView = ( {
 	if ( ! isFetching && plugins.length === 0 ) {
 		return null;
 	}
- 
+
 	return (
 		<PluginsBrowserList
 			plugins={ plugins.slice( 0, SHORT_LIST_LENGTH ) }
