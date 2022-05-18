@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_SEARCH,
+	WPCOM_FEATURES_BACKUPS,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import debugModule from 'debug';
@@ -10,6 +11,7 @@ import { flowRight, get, includes, startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -43,13 +45,13 @@ import {
 import {
 	isFetchingSitePurchases,
 	siteHasJetpackProductPurchase,
-	siteHasBackupProductPurchase,
 	siteHasSearchProductPurchase,
 } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import AuthFormHeader from './auth-form-header';
 import {
@@ -221,12 +223,8 @@ export class JetpackAuthorize extends Component {
 	}
 
 	redirect() {
-		const {
-			isMobileAppFlow,
-			mobileAppRedirect,
-			siteHasJetpackBackupProduct,
-			siteHasJetpackSearchProduct,
-		} = this.props;
+		const { isMobileAppFlow, mobileAppRedirect, siteHasBackups, siteHasJetpackSearchProduct } =
+			this.props;
 		const { from, homeUrl, redirectAfterAuth, scope, closeWindowAfterAuthorize } =
 			this.props.authQuery;
 		const { isRedirecting } = this.state;
@@ -284,7 +282,7 @@ export class JetpackAuthorize extends Component {
 				this.isSso()
 			);
 			this.externalRedirectOnce( redirectAfterAuth );
-		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasJetpackBackupProduct ) {
+		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasBackups ) {
 			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
 		} else if ( this.isFromJetpackSearchPlugin() && ! siteHasJetpackSearchProduct ) {
@@ -888,6 +886,7 @@ export class JetpackAuthorize extends Component {
 			>
 				<div className="jetpack-connect__authorize-form">
 					<div className="jetpack-connect__logged-in-form">
+						<QuerySiteFeatures siteIds={ [ authSiteId ] } />
 						<QuerySitePurchases siteId={ authSiteId } />
 						<QueryUserConnection
 							siteId={ authSiteId }
@@ -939,7 +938,7 @@ const connectComponent = connect(
 			partnerSlug: getPartnerSlugFromQuery( state ),
 			selectedPlanSlug,
 			siteHasJetpackPaidProduct: siteHasJetpackProductPurchase( state, authQuery.clientId ),
-			siteHasJetpackBackupProduct: siteHasBackupProductPurchase( state, authQuery.clientId ),
+			siteHasBackups: siteHasFeature( state, authQuery.clientId, WPCOM_FEATURES_BACKUPS ),
 			siteHasJetpackSearchProduct: siteHasSearchProductPurchase( state, authQuery.clientId ),
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
