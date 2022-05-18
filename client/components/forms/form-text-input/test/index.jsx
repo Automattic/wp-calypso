@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import FormTextInput from '../';
 
 describe( '<FormTextInput />', () => {
@@ -38,7 +39,7 @@ describe( '<FormTextInput />', () => {
 
 		const input = screen.getByRole( 'textbox' );
 
-		fireEvent.click( input, event );
+		userEvent.click( input, event );
 
 		expect( select ).toHaveBeenCalledTimes( 1 );
 	} );
@@ -50,7 +51,7 @@ describe( '<FormTextInput />', () => {
 
 		const input = screen.getByRole( 'textbox' );
 
-		fireEvent.click( input, event );
+		userEvent.click( input, event );
 
 		expect( select ).not.toHaveBeenCalled();
 	} );
