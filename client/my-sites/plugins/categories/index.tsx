@@ -1,10 +1,10 @@
-import { ResponsiveToolbarGroup } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import page from 'page';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ResponsiveToolbarGroup from './responsive-toolbar-group';
 import { useCategories } from './use-categories';
 import './style.scss';
 
