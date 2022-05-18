@@ -124,7 +124,7 @@ const MarketplacePluginInstall = ( {
 	);
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 
-	const supportsAtomicUpgrade = useSelector( ( state ) =>
+	const hasAtomicFeature = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID ?? null, WPCOM_FEATURES_ATOMIC )
 	);
 
@@ -138,9 +138,9 @@ const MarketplacePluginInstall = ( {
 	// Check if the user plan is enough for installation or it is a self-hosted jetpack site
 	// if not, check again in 2s and show an error message
 	useEffect( () => {
-		if ( ! supportsAtomicUpgrade && ! isJetpackSelfHosted ) {
+		if ( ! hasAtomicFeature && ! isJetpackSelfHosted ) {
 			waitFor( 2 ).then( () => {
-				if ( ! supportsAtomicUpgrade && ! isJetpackSelfHosted ) {
+				if ( ! hasAtomicFeature && ! isJetpackSelfHosted ) {
 					setNonInstallablePlanError( true );
 				}
 			} );
@@ -185,7 +185,7 @@ const MarketplacePluginInstall = ( {
 				dispatch( installPlugin( siteId, wporgPlugin, false ) );
 
 				triggerInstallFlow();
-			} else if ( supportsAtomicUpgrade ) {
+			} else if ( hasAtomicFeature ) {
 				// initialize atomic flow
 				setAtomicFlow( true );
 				dispatch( initiateTransfer( siteId, null, productSlug ) );
@@ -203,7 +203,7 @@ const MarketplacePluginInstall = ( {
 		wporgPlugin,
 		productSlug,
 		dispatch,
-		supportsAtomicUpgrade,
+		hasAtomicFeature,
 	] );
 
 	// Validate completition of atomic transfer flow
