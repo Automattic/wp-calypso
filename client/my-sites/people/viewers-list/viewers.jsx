@@ -85,7 +85,10 @@ class Viewers extends Component {
 		};
 
 		if ( this.props.site && ! this.props.site.jetpack ) {
-			emptyContentArgs.action = <InviteButton siteSlug={ this.props.site.slug } />;
+			emptyContentArgs = {
+				...emptyContentArgs, 
+				action: <InviteButton siteSlug={ this.props.site.slug } />
+			};
 		}
 
 		if ( ! this.props.viewers.length && ! this.props.isFetching ) {
