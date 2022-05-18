@@ -1,25 +1,19 @@
-import { expect } from 'chai';
-import { spy } from 'sinon';
 import { recordTrack } from '../tracks-utils';
 
 const noop = () => {};
 
 describe( 'recordTrack', () => {
-	it( 'should be a function', () => {
-		expect( recordTrack ).to.be.a( 'function' );
-	} );
-
 	it( 'should curry the tracks object', () => {
 		const tracksSpy = {
-			recordTracksEvent: spy(),
+			recordTracksEvent: jest.fn(),
 		};
 
-		expect( recordTrack( tracksSpy, noop ) ).to.be.a( 'function' );
+		expect( recordTrack( tracksSpy, noop ) ).toBeInstanceOf( Function );
 	} );
 
 	it( 'should call tracks to record an event with properties', () => {
 		const tracksSpy = {
-			recordTracksEvent: spy(),
+			recordTracksEvent: jest.fn(),
 		};
 
 		const eventProps = {
@@ -30,14 +24,14 @@ describe( 'recordTrack', () => {
 
 		recordTrack( tracksSpy, noop )( 'calypso_woocommerce_tracks_utils_test', eventProps );
 
-		expect( tracksSpy.recordTracksEvent ).to.have.been.calledWith(
+		expect( tracksSpy.recordTracksEvent ).toBeCalledWith(
 			'calypso_woocommerce_tracks_utils_test',
 			eventProps
 		);
 	} );
 
 	it( 'should log tracks via debug', () => {
-		const debugSpy = spy();
+		const debugSpy = jest.fn();
 
 		const eventProps = { a: 1 };
 
@@ -46,7 +40,7 @@ describe( 'recordTrack', () => {
 			eventProps
 		);
 
-		expect( debugSpy ).to.have.been.calledWith(
+		expect( debugSpy ).toBeCalledWith(
 			"track 'calypso_woocommerce_tracks_utils_test': ",
 			eventProps
 		);
@@ -54,14 +48,14 @@ describe( 'recordTrack', () => {
 
 	it( 'should ignore and debug log tracks with an improper event name', () => {
 		const tracksSpy = {
-			recordTracksEvent: spy(),
+			recordTracksEvent: jest.fn(),
 		};
-		const debugSpy = spy();
+		const debugSpy = jest.fn();
 
 		recordTrack( tracksSpy, debugSpy )( 'calypso_somethingelse_invalid_name', { a: 1 } );
 
-		expect( tracksSpy.recordTracksEvent ).to.not.have.been.called;
-		expect( debugSpy ).to.have.been.calledWith(
+		expect( tracksSpy.recordTracksEvent ).not.toBeCalled();
+		expect( debugSpy ).toBeCalledWith(
 			"invalid store track name: 'calypso_somethingelse_invalid_name', must start with 'calypso_woocommerce_'"
 		);
 	} );

@@ -1,8 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
 import { mount, shallow } from 'enzyme';
 import PluginAction from '../plugin-action';
 
@@ -15,13 +13,13 @@ describe( 'PluginAction', () => {
 		test( 'should have plugin-action class', () => {
 			const wrapper = shallow( <PluginAction /> );
 
-			expect( wrapper.find( '.plugin-action' ) ).to.have.lengthOf( 1 );
+			expect( wrapper.find( '.plugin-action' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should render compact form toggle when no children passed', () => {
 			const wrapper = mount( <PluginAction /> );
 
-			expect( wrapper.find( 'input.components-form-toggle__input' ) ).to.have.lengthOf( 1 );
+			expect( wrapper.find( 'input.components-form-toggle__input' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should render a plugin action label', () => {
@@ -31,7 +29,7 @@ describe( 'PluginAction', () => {
 				</PluginAction>
 			);
 
-			expect( wrapper.find( '.plugin-action__label' ) ).to.have.lengthOf( 1 );
+			expect( wrapper.find( '.plugin-action__label' ) ).toHaveLength( 1 );
 		} );
 	} );
 
@@ -43,7 +41,7 @@ describe( 'PluginAction', () => {
 				</PluginAction>
 			);
 
-			expect( wrapper.find( '.components-form-toggle__input' ) ).to.have.lengthOf( 0 );
+			expect( wrapper.find( '.components-form-toggle__input' ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should render child within plugin-action__children container', () => {
@@ -54,8 +52,8 @@ describe( 'PluginAction', () => {
 			);
 			const children = wrapper.find( '.plugin-action__children' );
 
-			expect( children.length ).to.equal( 1 );
-			expect( children.props().children[ 0 ].type ).to.equal( 'span' );
+			expect( children.length ).toEqual( 1 );
+			expect( children.props().children[ 0 ].type ).toEqual( 'span' );
 		} );
 
 		test( 'should render a plugin action label', () => {
@@ -65,7 +63,7 @@ describe( 'PluginAction', () => {
 				</PluginAction>
 			);
 
-			expect( wrapper.find( '.plugin-action__label' ) ).to.have.lengthOf( 1 );
+			expect( wrapper.find( '.plugin-action__label' ) ).toHaveLength( 1 );
 		} );
 	} );
 } );

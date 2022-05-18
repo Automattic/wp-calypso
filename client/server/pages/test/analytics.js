@@ -1,5 +1,4 @@
 import events from 'events';
-import { expect } from 'chai';
 import sinon from 'sinon';
 import { logSectionResponse } from 'calypso/server/pages/analytics';
 import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
@@ -51,16 +50,13 @@ describe( 'index', () => {
 				clock.tick( TWO_SECONDS );
 				response.emit( 'finish' );
 
-				expect( analytics.statsd.recordTiming ).to.have.been.calledWith(
+				expect( analytics.statsd.recordTiming ).toBeCalledWith(
 					'reader',
 					'response-time',
 					TWO_SECONDS
 				);
 
-				expect( analytics.statsd.recordCounting ).to.have.been.calledWith(
-					'reader',
-					'target.evergreen'
-				);
+				expect( analytics.statsd.recordCounting ).toBeCalledWith( 'reader', 'target.evergreen' );
 			} );
 
 			test( 'does not log build target if not defined', () => {
@@ -75,13 +71,13 @@ describe( 'index', () => {
 				clock.tick( TWO_SECONDS );
 				response.emit( 'finish' );
 
-				expect( analytics.statsd.recordTiming ).to.have.been.calledWith(
+				expect( analytics.statsd.recordTiming ).toBeCalledWith(
 					'reader',
 					'response-time',
 					TWO_SECONDS
 				);
 
-				expect( analytics.statsd.recordCounting ).not.to.have.been.called;
+				expect( analytics.statsd.recordCounting ).not.toBeCalled();
 			} );
 
 			test( 'throttles calls to log analytics', () => {
@@ -94,15 +90,15 @@ describe( 'index', () => {
 				response.emit( 'finish' );
 				response2.emit( 'finish' );
 
-				expect( analytics.statsd.recordTiming ).to.have.been.calledOnce;
-				expect( analytics.statsd.recordCounting ).to.have.been.calledOnce;
+				expect( analytics.statsd.recordTiming ).toBeCalledTimes( 1 );
+				expect( analytics.statsd.recordCounting ).toBeCalledTimes( 1 );
 
 				clock.tick( TWO_SECONDS );
 				response.emit( 'finish' );
 				response2.emit( 'finish' );
 
-				expect( analytics.statsd.recordTiming ).to.have.been.calledTwice;
-				expect( analytics.statsd.recordCounting ).to.have.been.calledTwice;
+				expect( analytics.statsd.recordTiming ).toBeCalledTimes( 2 );
+				expect( analytics.statsd.recordCounting ).toBeCalledTimes( 2 );
 			} );
 		} );
 
@@ -123,8 +119,8 @@ describe( 'index', () => {
 				// Mock the "finish" event
 				response.emit( 'finish' );
 
-				expect( analytics.statsd.recordTiming ).not.to.have.been.called;
-				expect( analytics.statsd.recordCounting ).not.to.have.been.called;
+				expect( analytics.statsd.recordTiming ).not.toBeCalled();
+				expect( analytics.statsd.recordCounting ).not.toBeCalled();
 			} );
 		} );
 	} );
