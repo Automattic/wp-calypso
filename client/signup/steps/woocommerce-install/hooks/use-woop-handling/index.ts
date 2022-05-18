@@ -18,9 +18,9 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
 import isAtomicSiteSelector from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 
 const TRANSFERRING_NOT_BLOCKERS = [
@@ -129,7 +129,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	 * It's defined by wpcom in the store product list.
 	 */
 	const isWoopFeatureActive = useSelector( ( state ) =>
-		hasActiveSiteFeature( state, siteId, FEATURE_WOOP )
+		siteHasFeature( state, siteId, FEATURE_WOOP )
 	);
 
 	/*
