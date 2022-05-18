@@ -1,12 +1,51 @@
 import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import { isStarterPlanEnabled } from 'calypso/my-sites/plans-comparison';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
 class ReskinSideExplainer extends Component {
+	getStarterPlanOverrides( isEnLocale ) {
+		const { translate } = this.props;
+
+		const hasTitle =
+			i18n.hasTranslation(
+				'Get a {{b}}free{{/b}} one-year domain registration with any paid plan.'
+			) || isEnLocale;
+
+		const hasFreeSubtitle =
+			i18n.hasTranslation(
+				'Use the search tool on this page to find a domain you love, then select a paid plan.'
+			) || isEnLocale;
+
+		const freeSubtitle =
+			hasFreeSubtitle &&
+			translate(
+				'Use the search tool on this page to find a domain you love, then select a paid plan.'
+			);
+
+		const title = hasTitle
+			? translate( 'Get a {{b}}free{{/b}} one-year domain registration with any paid plan.', {
+					components: { b: <strong /> },
+			  } )
+			: translate( 'Get a free one-year domain registration with any paid plan.' );
+
+		let subtitle = [ 'starter', 'pro' ].includes( this.props.flowName )
+			? translate( 'Use the search tool on this page to find a domain you love.' )
+			: freeSubtitle;
+
+		let subtitle2 = translate(
+			'We’ll pay the first year’s domain registration fees for you, simple as that!'
+		);
+
+		if ( ! subtitle ) {
+			subtitle = subtitle2;
+			subtitle2 = null;
+		}
+		return { title, subtitle, subtitle2, ctaText: false };
+	}
 	getStrings() {
 		const { type, translate } = this.props;
 
@@ -57,6 +96,16 @@ class ReskinSideExplainer extends Component {
 						'We’ll pay the first year’s domain registration fees for you, simple as that!'
 					);
 				ctaText = ! showNewSubtitle && translate( 'Choose my domain later' );
+
+				//todo: use only getStarterPlanOverrides() after Starter plan deploy
+				if ( isStarterPlanEnabled() ) {
+					const overrides = this.getStarterPlanOverrides( isEnLocale );
+					title = overrides.title;
+					subtitle = overrides.subtitle;
+					subtitle2 = overrides.subtitle2;
+					ctaText = overrides.ctaText;
+				}
+
 				break;
 
 			case 'use-your-domain':
@@ -117,6 +166,5 @@ export default connect( ( state ) => {
 
 	return {
 		selectedSiteId,
-		eligibleForProPlan: isEligibleForProPlan( state, selectedSiteId ),
 	};
 } )( localize( ReskinSideExplainer ) );
