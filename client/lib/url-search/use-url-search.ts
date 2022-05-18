@@ -1,7 +1,6 @@
-import { addQueryArgs } from '@wordpress/url';
+import { getQueryArgs } from '@wordpress/url';
 import debugFactory from 'debug';
 import page from 'page';
-import { useState } from 'react';
 const debug = debugFactory( 'calypso:url-search' );
 
 /**
@@ -13,51 +12,47 @@ const debug = debugFactory( 'calypso:url-search' );
  *     queryKey: 'q',
  *    } --> '/read/search?q=reader+is+super+awesome'
  *
- * @param {string} uri the uri to modify and add a query to
- * @param {string} search the search term
- * @param {string} [queryKey = s] the key to place in the url.  defaults to s
+ * @param {string} defaultSearchKey Default search key to add search string to
+ * @param {string | object} querySearch search string or search object
+ * If a string is provided on querySearch, the default search key 's' will be used
+ * If an object is provided, every object key found in the URL will be replaced.
  * @returns {string} The built search url
  */
-function buildSearchUrl( uri: string, search: string, queryKey = 's' ): string {
-	const parsedUrl = new URL( uri );
+function buildSearchUrl( defaultSearchKey: string, querySearch: string | object ): string {
+	const urlSearch = new URLSearchParams( window.location.search );
 
-	if ( search ) {
-		const baseUrl = uri.replace( parsedUrl.origin, '' );
-		const query = addQueryArgs( baseUrl, { [ queryKey ]: search } );
-		return query.replace( /%20/g, '+' );
-	}
-
-	return parsedUrl.pathname;
-}
-
-function useUrlSearch( queryKey = 's' ) {
-	const [ isSearchOpen, setSearchOpen ] = useState( false );
-	const [ searchTerm, setSearchTerm ] = useState( '' );
-
-	function doSearch( query: string ) {
-		setSearchTerm( query );
-		setSearchOpen( '' !== query );
-
-		const searchURL = buildSearchUrl( window.location.href, query, queryKey );
-
-		debug( 'search for: %s', query );
-		if ( queryKey && query ) {
-			debug( 'replacing URL: %s', searchURL );
-			page.replace( searchURL );
-		} else {
-			debug( 'setting URL: %s', searchURL );
-			page( searchURL );
+	if ( typeof querySearch === 'string' ) {
+		urlSearch.set( defaultSearchKey, querySearch );
+	} else {
+		for ( const [ key, value ] of Object.entries( querySearch ) ) {
+			urlSearch.set( key, value );
 		}
 	}
 
-	function getSearchOpen() {
-		return isSearchOpen || !! queryKey;
+	return window.location.pathname + '?' + urlSearch.toString();
+}
+
+function useUrlSearch() {
+	/**
+	 * Performs URL search by adding or replacing terms in the URL
+	 *
+	 * @param querySearch search string or search object
+	 * If a string is provided on querySearch, the default search key 's' will be used
+	 * If an object is provided, every object key found in the URL will be replaced
+	 */
+	function doSearch( querySearch: string | object ) {
+		debug( 'search for: %s', querySearch );
+
+		const defaultSearchKey = 's';
+		const searchWithoutBaseURL = buildSearchUrl( defaultSearchKey, querySearch );
+
+		debug( 'setting URL: %s', searchWithoutBaseURL );
+		page.replace( searchWithoutBaseURL );
 	}
 
 	return {
 		doSearch,
-		getSearchOpen,
-		searchTerm,
+		getQueryArgs: () => getQueryArgs( window.location.href ),
 	};
 }
 
