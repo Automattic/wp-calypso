@@ -1,4 +1,4 @@
-import { UrlData } from '../import/types';
+import { UrlData } from 'calypso/blocks/import/types';
 import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
 export type Importer = 'blogger' | 'medium' | 'squarespace' | 'wix' | 'wordpress';

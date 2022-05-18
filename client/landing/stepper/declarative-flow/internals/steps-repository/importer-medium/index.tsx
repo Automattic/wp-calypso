@@ -1,5 +1,5 @@
+import MediumImporter from 'calypso/blocks/importer/medium';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import MediumImporter from 'calypso/signup/steps/import-from/medium';
 import { withImporterWrapper } from '../importer';
 import './style.scss';
 

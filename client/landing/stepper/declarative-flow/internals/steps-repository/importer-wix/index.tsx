@@ -1,5 +1,5 @@
+import WixImporter from 'calypso/blocks/importer/wix';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import WixImporter from 'calypso/signup/steps/import-from/wix';
 import { withImporterWrapper } from '../importer';
 import './style.scss';
 

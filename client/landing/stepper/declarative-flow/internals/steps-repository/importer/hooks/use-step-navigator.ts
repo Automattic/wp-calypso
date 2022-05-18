@@ -1,12 +1,12 @@
+import { getWpOrgImporterUrl } from 'calypso/blocks/import/util';
+import { useCheckoutUrl } from 'calypso/blocks/importer/hooks/use-checkout-url';
+import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { addQueryArgs } from 'calypso/lib/route';
-import { useCheckoutUrl } from 'calypso/signup/steps/import-from/hooks/use-checkout-url';
-import { WPImportOption } from 'calypso/signup/steps/import-from/wordpress/types';
-import { getWpOrgImporterUrl } from 'calypso/signup/steps/import/util';
 import { StepPath } from '../../../steps-repository';
 import { BASE_STEPPER_ROUTE } from '../../import/config';
 import { removeLeadingSlash } from '../../import/util';
 import type { NavigationControls } from '../../../types';
-import type { StepNavigator } from 'calypso/signup/steps/import-from/types';
+import type { StepNavigator } from 'calypso/blocks/importer/types';
 
 export function useStepNavigator(
 	navigation: NavigationControls,

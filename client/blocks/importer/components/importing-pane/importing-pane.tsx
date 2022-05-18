@@ -2,6 +2,7 @@ import { ProgressBar } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { UrlData } from 'calypso/blocks/import/types';
 import Spinner from 'calypso/components/spinner';
 import AuthorMappingPane from 'calypso/my-sites/importer/author-mapping-pane';
 import {
@@ -10,7 +11,6 @@ import {
 	ImportingPane as ImportingPaneBase,
 	resourcesRemaining,
 } from 'calypso/my-sites/importer/importing-pane';
-import { UrlData } from 'calypso/signup/steps/import/types';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { mapAuthor, startImporting } from 'calypso/state/imports/actions';
 import './importing-pane.scss';

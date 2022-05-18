@@ -2,16 +2,11 @@ import classnames from 'classnames';
 import { translate, TranslateOptions, TranslateOptionsText } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { UrlData } from 'calypso/blocks/import/types';
+import { Importer, ImportJob, ImportJobParams, StepNavigator } from 'calypso/blocks/importer/types';
+import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import importerConfig from 'calypso/lib/importer/importer-config';
-import {
-	Importer,
-	ImportJob,
-	ImportJobParams,
-	StepNavigator,
-} from 'calypso/signup/steps/import-from/types';
-import { getImporterTypeForEngine } from 'calypso/signup/steps/import-from/util';
-import { UrlData } from 'calypso/signup/steps/import/types';
 import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';

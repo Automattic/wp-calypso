@@ -1,11 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { camelCase } from 'lodash';
-import { ImporterPlatform } from 'calypso/signup/steps/import/types';
+import { ImporterPlatform } from 'calypso/blocks/import/types';
 import {
 	getImporterUrl,
 	getWpComOnboardingUrl,
 	getWpOrgImporterUrl,
-} from 'calypso/signup/steps/import/util';
+} from 'calypso/blocks/import/util';
 import { BASE_ROUTE } from './config';
 import type { StepPath } from '../../steps-repository';
 
