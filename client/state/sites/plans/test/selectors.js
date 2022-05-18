@@ -1,11 +1,4 @@
-import {
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	FEATURE_AUDIO_UPLOADS,
-	FEATURE_ADVANCED_DESIGN,
-	FEATURE_UPLOAD_PLUGINS,
-} from '@automattic/calypso-products';
+import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
@@ -21,7 +14,6 @@ import {
 	isRequestingSitePlans,
 	isSitePlanDiscounted,
 	getSitePlanSlug,
-	hasFeature,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -701,138 +693,6 @@ describe( 'selectors', () => {
 					2916284
 				)
 			).toEqual( PLAN_PREMIUM );
-		} );
-	} );
-
-	describe( '#hasFeature()', () => {
-		test( 'should return false if no siteId is given', () => {
-			expect(
-				hasFeature(
-					{
-						sites: {
-							plans: {
-								2916284: {
-									data: [
-										{
-											currentPlan: true,
-											productSlug: PLAN_BUSINESS,
-										},
-									],
-								},
-							},
-						},
-					},
-					null,
-					FEATURE_ADVANCED_DESIGN
-				)
-			).toBe( false );
-		} );
-
-		test( 'should return false if no feature is given', () => {
-			expect(
-				hasFeature(
-					{
-						sites: {
-							plans: {
-								2916284: {
-									data: [
-										{
-											currentPlan: true,
-											productSlug: PLAN_BUSINESS,
-										},
-									],
-								},
-							},
-						},
-					},
-					2916284
-				)
-			).toBe( false );
-		} );
-
-		test( 'should return false if no plan data is found for the given siteId', () => {
-			expect(
-				hasFeature(
-					{
-						sites: {
-							plans: {
-								2916284: {},
-							},
-						},
-					},
-					2916284,
-					FEATURE_ADVANCED_DESIGN
-				)
-			).toBe( false );
-		} );
-
-		test( "should return false if the site's current plan doesn't include the specified feature", () => {
-			expect(
-				hasFeature(
-					{
-						sites: {
-							plans: {
-								2916284: {
-									data: [
-										{
-											currentPlan: true,
-											productSlug: PLAN_PREMIUM,
-										},
-									],
-								},
-							},
-						},
-					},
-					2916284,
-					FEATURE_UPLOAD_PLUGINS
-				)
-			).toBe( false );
-		} );
-
-		test( "should return true if the site's current plan includes the specified feature", () => {
-			expect(
-				hasFeature(
-					{
-						sites: {
-							plans: {
-								2916284: {
-									data: [
-										{
-											currentPlan: true,
-											productSlug: PLAN_BUSINESS,
-										},
-									],
-								},
-							},
-						},
-					},
-					2916284,
-					FEATURE_ADVANCED_DESIGN
-				)
-			).toBe( true );
-		} );
-
-		test( "should return true if the site's current plan includes a hidden feature", () => {
-			expect(
-				hasFeature(
-					{
-						sites: {
-							plans: {
-								2916284: {
-									data: [
-										{
-											currentPlan: true,
-											productSlug: PLAN_PERSONAL,
-										},
-									],
-								},
-							},
-						},
-					},
-					2916284,
-					FEATURE_AUDIO_UPLOADS
-				)
-			).toBe( true );
 		} );
 	} );
 } );
