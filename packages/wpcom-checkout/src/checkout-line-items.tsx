@@ -57,6 +57,7 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	border-bottom: ${ ( { theme, total } ) =>
 		total ? 0 : '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
+
 	.checkout-line-item__price {
 		position: relative;
 	}
@@ -74,6 +75,7 @@ export const LineItem = styled( WPLineItem )< {
 	padding: 20px 0;
 	border-bottom: ${ ( { theme } ) => '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
+
 	.checkout-line-item__price {
 		position: relative;
 	}
@@ -83,12 +85,15 @@ export const CouponLineItem = styled( WPCouponLineItem )< {
 	theme?: Theme;
 } >`
 	border-bottom: ${ ( { theme } ) => '1px solid ' + theme.colors.borderColorLight };
+
 	&[data-partner-coupon='true'] ${ NonProductLineItem } {
 		border-bottom: none;
 	}
+
 	&:last-child {
 		border-bottom: none;
 	}
+
 	.jetpack-partner-logo {
 		padding-bottom: 20px;
 	}
@@ -125,6 +130,7 @@ const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
 	margin-left: 12px;
 	font-size: 16px;
+
 	.rtl & {
 		margin-right: 12px;
 		margin-left: 0;

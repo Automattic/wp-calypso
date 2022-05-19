@@ -559,16 +559,20 @@ const CheckoutSummaryTitleLink = styled.button`
 	justify-content: space-between;
 	padding: 20px 23px 20px 14px;
 	width: 100%;
+
 	.rtl & {
 		padding: 20px 14px 20px 23px;
 	}
+
 	.is-visible & {
 		border-bottom: none;
 	}
+
 	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		border-bottom: none 0;
 	}
+
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		display: none;
 	}
@@ -580,6 +584,7 @@ const CheckoutSummaryTitle = styled.span`
 
 const CheckoutSummaryTitleIcon = styled( Gridicon )`
 	margin-right: 4px;
+
 	.rtl & {
 		margin-right: 0;
 		margin-left: 4px;
@@ -593,10 +598,12 @@ const CheckoutSummaryTitleToggle = styled( MaterialIcon )`
 	width: 18px;
 	height: 18px;
 	vertical-align: bottom;
+
 	.rtl & {
 		margin-right: 0;
 		margin-left: 4px;
 	}
+
 	.is-visible & {
 		transform: rotate( 180deg );
 	}
@@ -611,12 +618,15 @@ const CheckoutSummaryTitlePrice = styled.span`
 const CheckoutSummaryBody = styled.div`
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	display: none;
+
 	.is-visible & {
 		display: block;
 	}
+
 	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
 		border-bottom: none;
 	}
+
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		display: block;
 		max-width: 328px;
@@ -706,12 +716,17 @@ const SubmitButtonFooterWrapper = styled.div< React.HTMLAttributes< HTMLDivEleme
 	justify-content: center;
 	align-items: flex-start;
 	flex-wrap: wrap;
+
 	margin-top: 1.25rem;
+
 	color: ${ ( props ) => props.theme.colors.textColor };
+
 	font-weight: 500;
+
 	img {
 		margin-right: 0.5rem;
 	}
+
 	span {
 		padding-top: 3px;
 	}
@@ -723,18 +738,22 @@ const SubmitButtonHeaderWrapper = styled.div`
 	margin-top: -5px;
 	margin-bottom: 10px;
 	text-align: center;
+
 	.checkout__step-wrapper--last-step & {
 		display: block;
+
 		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 			display: none;
 		}
 	}
+
 	button {
 		color: ${ ( props ) => props.theme.colors.highlight };
 		display: inline;
 		font-size: 13px;
 		text-decoration: underline;
 		width: auto;
+
 		&:hover {
 			color: ${ ( props ) => props.theme.colors.highlightOver };
 		}
@@ -743,6 +762,7 @@ const SubmitButtonHeaderWrapper = styled.div`
 
 const NonCheckoutContentWrapper = styled.div`
 	display: flex;
+
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		align-items: flex-start;
 		flex-direction: row;
@@ -754,11 +774,13 @@ const NonCheckoutContentWrapper = styled.div`
 const NonCheckoutContentInnerWrapper = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
 	width: 100%;
+
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		max-width: 556px;
 		margin: 0 auto;
 	}
+
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin: 0;
 	}
