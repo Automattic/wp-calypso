@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import '@testing-library/jest-dom';
 import { Button } from '@automattic/components';
 import { render, screen } from '@testing-library/react';
 import ButtonGroup from '..';
