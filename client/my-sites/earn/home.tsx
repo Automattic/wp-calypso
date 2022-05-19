@@ -201,12 +201,12 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					  ) }
 				<>
 					<br />
-					{ ! hasRecurringPayments && <em>{ getAnyPlanNames() }</em> }
+					<em>{ getAnyPlanNames() }</em>
 				</>
 			</>
 		);
 
-		const learnMoreLink = ! hasRecurringPayments
+		const learnMoreLink = ! hasConnectedAccount
 			? {
 					url: 'https://wordpress.com/payments-donations/',
 					onClick: () => trackLearnLink( 'recurring-payments' ),
@@ -264,7 +264,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					  ) }
 				<>
 					<br />
-					{ ! hasDonations && <em>{ getAnyPlanNames() }</em> }
+					<em>{ getAnyPlanNames() }</em>
 				</>
 			</>
 		);
