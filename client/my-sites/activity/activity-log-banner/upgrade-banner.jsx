@@ -1,8 +1,8 @@
 import {
 	FEATURE_JETPACK_ESSENTIAL,
-	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 	FEATURE_ACTIVITY_LOG,
 	PLAN_PERSONAL,
+	WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -23,7 +23,7 @@ class UpgradeBanner extends Component {
 					<UpsellNudge
 						callToAction={ translate( 'Upgrade now' ) }
 						event="activity_log_upgrade_click_jetpack"
-						feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
+						feature={ WPCOM_FEATURES_FULL_ACTIVITY_LOG }
 						href={ `/checkout/${ siteSlug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ACTIVITY_LOG ] }` }
 						title={ translate( 'Unlock more activities now' ) }
 						description={ translate(

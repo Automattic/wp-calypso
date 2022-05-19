@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { requestFeedSearch, SORT_BY_LAST_UPDATED } from '../actions';
 import queryKey from '../query-key';
 
@@ -13,7 +12,7 @@ describe( 'query-key', () => {
 				'one-A-last_updated',
 			],
 		].forEach( ( [ action, expectedKey ] ) => {
-			expect( queryKey( action.payload ) ).to.equal( expectedKey );
+			expect( queryKey( action.payload ) ).toEqual( expectedKey );
 		} );
 	} );
 } );

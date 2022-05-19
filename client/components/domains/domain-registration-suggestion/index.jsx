@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
@@ -258,7 +259,7 @@ class DomainRegistrationSuggestion extends Component {
 						components: {
 							a: (
 								<a
-									href={ HTTPS_SSL }
+									href={ localizeUrl( HTTPS_SSL ) }
 									target="_blank"
 									rel="noopener noreferrer"
 									onClick={ ( event ) => {

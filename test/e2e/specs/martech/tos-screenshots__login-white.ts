@@ -65,8 +65,8 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 					quality: 20,
 				} );
 			}
-			const credentials = DataHelper.getAccountCredential( 'martechTosUser' );
-			await loginPage.logInWithCredentials( ...credentials );
+			const { username, password } = DataHelper.getAccountCredential( 'martechTosUser' );
+			await loginPage.logInWithCredentials( username, password );
 		} );
 
 		it( 'Zip screenshots and upload', async function () {

@@ -1,8 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { MediaListData } from 'calypso/components/data/media-list-data';
 
@@ -26,7 +24,7 @@ describe( 'EditorMediaModal', () => {
 		const query = { search: true };
 		const result = tree.getQuery( query );
 
-		expect( result ).to.eql( query );
+		expect( result ).toEqual( query );
 	} );
 
 	test( 'should pass and process filter parameter to media query', () => {
@@ -38,7 +36,7 @@ describe( 'EditorMediaModal', () => {
 		const query = { filter: 'images' };
 		const result = tree.getQuery( query );
 
-		expect( result ).to.eql( { mime_type: 'image/' } );
+		expect( result ).toEqual( { mime_type: 'image/' } );
 	} );
 
 	test( 'should pass and process filter parameter for google photos', () => {
@@ -50,7 +48,7 @@ describe( 'EditorMediaModal', () => {
 		const query = { filter: 'images', source: 'google_photos' };
 		const result = tree.getQuery( query );
 
-		expect( result ).to.eql( {
+		expect( result ).toEqual( {
 			source: 'google_photos',
 			path: 'recent',
 			filter: [ 'mediaType=photo' ],
@@ -66,7 +64,7 @@ describe( 'EditorMediaModal', () => {
 		const query = { filter: 'images', source: 'pexels' };
 		const result = tree.getQuery( query );
 
-		expect( result ).to.eql( { source: 'pexels', path: 'recent' } );
+		expect( result ).toEqual( { source: 'pexels', path: 'recent' } );
 	} );
 
 	test( 'should pass source parameter and set recent path to media query', () => {
@@ -78,7 +76,7 @@ describe( 'EditorMediaModal', () => {
 		const query = { source: 'anything' };
 		const result = tree.getQuery( query );
 
-		expect( result ).to.eql( { path: 'recent', source: 'anything' } );
+		expect( result ).toEqual( { path: 'recent', source: 'anything' } );
 	} );
 
 	test( 'should pass categoryFilter parameter to media query for Google Photos', () => {
@@ -90,7 +88,7 @@ describe( 'EditorMediaModal', () => {
 		const query = { categoryFilter: 'cats', source: 'google_photos' };
 		const result = tree.getQuery( query );
 
-		expect( result ).to.eql( {
+		expect( result ).toEqual( {
 			filter: [ 'categoryInclude=cats' ],
 			path: 'recent',
 			source: 'google_photos',
@@ -106,6 +104,6 @@ describe( 'EditorMediaModal', () => {
 		const query = { categoryFilter: 'cats', source: '' };
 		const result = tree.getQuery( query );
 
-		expect( result ).to.eql( {} );
+		expect( result ).toEqual( {} );
 	} );
 } );

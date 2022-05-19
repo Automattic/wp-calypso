@@ -5,7 +5,6 @@ import type { ReactNode } from 'react';
 export type ComparisonListOrTableProps = {
 	emailProviders: EmailProviderFeatures[];
 	intervalLength: IntervalLength;
-	isDomainInCart: boolean;
 	onSelectEmailProvider: ( emailProviderSlug: string ) => void;
 	selectedDomainName: string;
 };
@@ -41,6 +40,7 @@ export type EmailProvidersInDepthComparisonProps = {
 	referrer: string;
 	selectedDomainName: string;
 	selectedIntervalLength?: IntervalLength;
+	source?: string;
 };
 
 export type LearnMoreLinkProps = {
@@ -51,7 +51,6 @@ export type SelectButtonProps = {
 	className: string;
 	emailProviderSlug: string;
 	intervalLength: IntervalLength;
-	isDomainInCart: boolean;
 	onSelectEmailProvider: ( emailProviderSlug: string ) => void;
 	selectedDomainName: string;
 };

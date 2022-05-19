@@ -70,7 +70,8 @@ button {
 		}
 	}
 
-	.import-step {
+	.import-step,
+	.importer-step {
 		@include onboarding-block-margin;
 	}
 

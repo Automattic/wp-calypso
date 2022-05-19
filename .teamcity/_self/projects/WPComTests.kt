@@ -66,7 +66,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 		testGroup = "gutenberg",
 		buildParams = {
 			text(
-				name = "env.URL",
+				name = "env.CALYPSO_BASE_URL",
 				value = "https://wordpress.com",
 				label = "Test URL",
 				description = "URL to test against",
@@ -129,7 +129,7 @@ fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2EB
 		testGroup = "coblocks",
 		buildParams = {
 			text(
-				name = "env.URL",
+				name = "env.CALYPSO_BASE_URL",
 				value = "https://wordpress.com",
 				label = "Test URL",
 				description = "URL to test against",
@@ -174,7 +174,7 @@ fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String): E2EBui
 		testGroup = "jetpack",
 		buildParams = {
 			text(
-				name = "env.URL",
+				name = "env.CALYPSO_BASE_URL",
 				value = "https://wordpress.com",
 				label = "Test URL",
 				description = "URL to test against",
@@ -214,7 +214,7 @@ private object I18NTests : E2EBuildType(
 	testGroup = "i18n",
 	buildParams = {
 		text(
-			name = "env.URL",
+			name = "env.CALYPSO_BASE_URL",
 			value = "https://wordpress.com",
 			label = "Test URL",
 			description = "URL to test against",
@@ -266,7 +266,7 @@ object P2E2ETests : E2EBuildType(
 	testGroup = "p2",
 	buildParams = {
 		param("env.VIEWPORT_NAME", "desktop")
-		param("env.URL", "https://wpcalypso.wordpress.com")
+		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
 	},
 	buildFeatures = {
 		notifications {

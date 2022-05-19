@@ -1,7 +1,9 @@
-import { FEATURE_MEMBERSHIPS } from '@automattic/calypso-products';
+import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import referralImage from 'calypso/assets/images/earn/referral.svg';
 import PromoCard from 'calypso/components/promo-section/promo-card';
-import PromoCardCta from 'calypso/components/promo-section/promo-card/cta';
+import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const PromoCardExample = () => {
@@ -9,6 +11,10 @@ const PromoCardExample = () => {
 		path: referralImage,
 		alt: 'Using Props',
 	};
+	const siteSlug = useSelector( getSelectedSiteSlug );
+
+	const translate = useTranslate();
+
 	const clicked = () => alert( 'Clicked!' );
 	return (
 		<div className="design-assets__group">
@@ -18,13 +24,15 @@ const PromoCardExample = () => {
 						This is a description of the action. It gives a bit more detail and explains what we are
 						inviting the user to do.
 					</p>
-					<PromoCardCta
+					<PromoCardCTA
 						cta={ {
-							feature: FEATURE_MEMBERSHIPS,
-							upgradeButton: { text: 'Upgrade!', action: clicked },
-							defaultButton: { text: 'Memberships', action: clicked },
+							text: translate( 'Upgrade to Pro Plan' ),
+							action: {
+								url: `/checkout/${ siteSlug }/pro`,
+								onClick: clicked,
+								selfTarget: true,
+							},
 						} }
-						learnMoreLink="/learn-more"
 					/>
 				</PromoCard>
 			</div>

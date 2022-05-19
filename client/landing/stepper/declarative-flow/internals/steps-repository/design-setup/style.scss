@@ -294,13 +294,34 @@ $design-button-primary-color: rgb( 17, 122, 201 );
  * Generated Design Picker
  */
 .design-picker__is-generated {
-	.step-container__header {
-		align-items: center;
-		display: flex;
-		margin: 48px 0;
-		row-gap: 1.5rem;
-		flex-wrap: wrap;
+	&.design-setup__preview {
+		padding: 0;
 
+		.design-setup_header {
+			margin: 0;
+		}
+
+		.design-setup__content {
+			height: calc( 100vh - 157px );
+			margin-top: 48px;
+			overflow: scroll;
+			padding: 0 24px;
+		}
+
+		.generated-design-preview__frame {
+			max-height: none;
+			margin-bottom: 24px;
+
+			.mshots-image__container {
+				object-fit: cover;
+				object-position: top;
+				width: 100%;
+			}
+		}
+	}
+
+	.design-setup__header,
+	.design-setup__footer {
 		.button {
 			border-radius: 4px;
 			font-weight: 500;
@@ -308,6 +329,61 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 			// Override unnecessary super specificity added by another class.
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+		}
+	}
+
+	.design-setup__header {
+		align-items: center;
+		display: flex;
+		margin: 48px 0;
+		row-gap: 1.5rem;
+		flex-wrap: wrap;
+	}
+
+	.design-setup__footer {
+		display: none;
+		margin: 0 auto;
+
+		.design-setup__footer-inner {
+			align-self: stretch;
+			align-items: center;
+			background-color: #ffffff;
+			display: flex;
+			justify-content: flex-end;
+			width: 100%;
+
+			@include break-small {
+				margin-left: 154px;
+			}
+
+			@include break-medium {
+				margin-left: 248px;
+			}
+		}
+
+		@include break-small {
+			align-items: center;
+			bottom: 0;
+			display: flex;
+			height: 118px;
+			justify-content: flex-end;
+			left: 0;
+			max-width: 1440px;
+			opacity: 0;
+			pointer-events: none;
+			position: sticky;
+			right: 0;
+			transform: translateY( 118px );
+			transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+
+			&.is-visible {
+				opacity: 1;
+				transform: translateY( 0 );
+
+				.design-setup__footer-inner {
+					pointer-events: auto;
+				}
+			}
 		}
 	}
 
@@ -347,15 +423,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			flex: 1;
 			flex-direction: column;
 			row-gap: 24px;
-			margin-bottom: 162px;
-
-			> div {
-				display: none;
-
-				&:first-of-type {
-					display: block;
-				}
-			}
+			margin-bottom: 44px;
 		}
 	}
 

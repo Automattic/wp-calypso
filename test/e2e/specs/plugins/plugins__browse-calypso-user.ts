@@ -24,13 +24,6 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			pluginsPage = new PluginsPage( page );
 			await pluginsPage.visit();
 		} );
-	} );
-
-	describe( 'Plugins page /plugins/:wpcom-site', function () {
-		it( 'Visit plugins page', async function () {
-			pluginsPage = new PluginsPage( page );
-			await pluginsPage.visit( siteUrl );
-		} );
 
 		it.each( [ 'Top paid plugins', 'Editor’s pick', 'Top free plugins' ] )(
 			'Plugins page loads %s section',
@@ -41,7 +34,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 
 		it( 'Can browse all popular plugins', async function () {
 			await pluginsPage.clickBrowseAllPopular();
-			await pluginsPage.validateSelectedCategory( 'Top free plugins' );
+			await pluginsPage.validateHasSection( 'Top free plugins' );
 		} );
 
 		it( 'Can return via breadcrumb', async function () {
@@ -63,5 +56,19 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		] )( 'Featured Plugins section should show the %s plugin', async function ( plugin: string ) {
 			await pluginsPage.validateHasPluginOnSection( 'featured', plugin );
 		} );
+	} );
+
+	describe( 'Plugins page /plugins/:wpcom-site', function () {
+		it( 'Visit plugins page', async function () {
+			pluginsPage = new PluginsPage( page );
+			await pluginsPage.visit( siteUrl );
+		} );
+
+		it.each( [ 'Top paid plugins', 'Editor’s pick', 'Top free plugins' ] )(
+			'Plugins page loads %s section',
+			async function ( section: string ) {
+				await pluginsPage.validateHasSection( section );
+			}
+		);
 	} );
 } );

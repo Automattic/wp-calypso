@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import store from 'store';
 import {
 	deleteOldTicket,
@@ -22,7 +21,7 @@ describe( 'guest-sandbox-ticket', () => {
 
 			deleteOldTicket();
 
-			expect( store.get( GUEST_TICKET_LOCALFORAGE_KEY ) ).to.be.undefined;
+			expect( store.get( GUEST_TICKET_LOCALFORAGE_KEY ) ).toBeUndefined();
 		} );
 
 		test( 'should not remove tickets younger than two hours', () => {
@@ -35,7 +34,7 @@ describe( 'guest-sandbox-ticket', () => {
 
 			deleteOldTicket();
 
-			expect( store.get( GUEST_TICKET_LOCALFORAGE_KEY ) ).to.equal( ticket );
+			expect( store.get( GUEST_TICKET_LOCALFORAGE_KEY ) ).toEqual( ticket );
 		} );
 	} );
 
@@ -51,7 +50,7 @@ describe( 'guest-sandbox-ticket', () => {
 
 				const wpcom = {
 					request( params ) {
-						expect( params.query ).to.equal( 'search=whatever&store_sandbox_ticket=foo' );
+						expect( params.query ).toEqual( 'search=whatever&store_sandbox_ticket=foo' );
 						done();
 					},
 				};
@@ -66,7 +65,7 @@ describe( 'guest-sandbox-ticket', () => {
 			return new Promise( ( done ) => {
 				const wpcom = {
 					request( params ) {
-						expect( params.query ).to.equal( 'search=whatever' );
+						expect( params.query ).toEqual( 'search=whatever' );
 						done();
 					},
 				};

@@ -1,10 +1,9 @@
-import { expect } from 'chai';
 import { getSignupProgress, isPlanStepExistsAndSkipped } from '../selectors';
 
 describe( 'selectors', () => {
 	test( 'should return empty, plain object as a default state', () => {
 		const state = { signup: undefined };
-		expect( getSignupProgress( state ) ).to.be.eql( {} );
+		expect( getSignupProgress( state ) ).toEqual( {} );
 	} );
 
 	test( 'should select progress from the state', () => {
@@ -16,7 +15,7 @@ describe( 'selectors', () => {
 		};
 		const state = { signup: { progress } };
 
-		expect( getSignupProgress( state ) ).to.be.eql( progress );
+		expect( getSignupProgress( state ) ).toEqual( progress );
 	} );
 
 	test( 'isPlanStepExistsAndSkipped : An aliased skipped step should return true', () => {
@@ -27,7 +26,7 @@ describe( 'selectors', () => {
 		};
 		const state = { signup: { progress } };
 
-		expect( isPlanStepExistsAndSkipped( state ) ).to.be.eql( true );
+		expect( isPlanStepExistsAndSkipped( state ) ).toEqual( true );
 	} );
 
 	test( 'isPlanStepExistsAndSkipped : An aliased unskipped step should return true', () => {
@@ -38,7 +37,7 @@ describe( 'selectors', () => {
 		};
 		const state = { signup: { progress } };
 
-		expect( isPlanStepExistsAndSkipped( state ) ).to.be.eql( false );
+		expect( isPlanStepExistsAndSkipped( state ) ).toEqual( false );
 	} );
 
 	test( 'isPlanStepExistsAndSkipped : Should return false if no plans step in progress', () => {
@@ -49,6 +48,6 @@ describe( 'selectors', () => {
 		};
 		const state = { signup: { progress } };
 
-		expect( isPlanStepExistsAndSkipped( state ) ).to.be.eql( false );
+		expect( isPlanStepExistsAndSkipped( state ) ).toEqual( false );
 	} );
 } );

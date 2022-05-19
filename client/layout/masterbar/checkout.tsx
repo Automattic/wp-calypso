@@ -18,7 +18,6 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
-import type { Article } from 'calypso/blocks/inline-help/inline-help-center-types';
 
 interface Props {
 	title: string;
@@ -47,8 +46,6 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const [ isHelpCenterVisible, setIsHelpCenterVisible ] = useState( false );
-	const [ selectedArticle, setSelectedArticle ] = useState< Article | null >( null );
-	const [ footerContent, setFooterContent ] = useState( undefined );
 	const [ contactForm, setContactForm ] = useState( null );
 	const [ openInContactPage, setOpenInContactPage ] = useState< boolean >( false );
 
@@ -79,7 +76,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 		closeAndLeave();
 	};
 
-	const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
+	const isHelpCenterEnabled = config.isEnabled( 'checkout/help-center' );
 
 	const newItems = ! isLoading && ! data?.has_seen_whats_new_modal;
 
@@ -129,21 +126,20 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 									setOpenInContactPage( true );
 									setContactForm( null );
 								} }
+								onGoHome={ () => {
+									setOpenInContactPage( false );
+									setContactForm( null );
+								} }
 								siteId={ siteId }
 							/>
 						) : (
 							<InlineHelpCenterContent
-								selectedArticle={ selectedArticle }
-								setSelectedArticle={ setSelectedArticle }
-								setHelpCenterFooter={ setFooterContent }
 								setContactFormOpen={ setContactForm }
 								openInContactPage={ openInContactPage }
 							/>
 						)
 					}
-					headerText={ selectedArticle?.title }
 					handleClose={ () => setIsHelpCenterVisible( false ) }
-					footerContent={ footerContent }
 				/>
 			) }
 		</Masterbar>

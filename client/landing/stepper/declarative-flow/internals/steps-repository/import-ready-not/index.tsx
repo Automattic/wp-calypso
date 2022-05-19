@@ -1,7 +1,7 @@
 import React from 'react';
+import { ReadyNotStep } from 'calypso/blocks/import/ready';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { ReadyNotStep } from 'calypso/signup/steps/import/ready';
 import { ImportWrapper } from '../import';
 import { generateStepPath } from '../import/helper';
 import './style.scss';

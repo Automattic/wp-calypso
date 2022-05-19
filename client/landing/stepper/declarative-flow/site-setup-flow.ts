@@ -35,6 +35,11 @@ export const siteSetupFlow: Flow = {
 			'importReadyNot',
 			'importReadyWpcom',
 			'importReadyPreview',
+			'importerWix',
+			'importerBlogger',
+			'importerMedium',
+			'importerSquarespace',
+			'importerWordpress',
 			'businessInfo',
 			'storeAddress',
 			'processing',
@@ -56,14 +61,37 @@ export const siteSetupFlow: Flow = {
 		const siteId = useSelect(
 			( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug )
 		);
+		const adminUrl = useSelect(
+			( select ) => siteSlug && select( SITE_STORE ).getSiteOption( siteId as number, 'admin_url' )
+		);
 		const isAtomic = useSelect( ( select ) =>
 			select( SITE_STORE ).isSiteAtomic( siteId as number )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const { setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { setPendingAction, setStepProgress } = useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite } = useDispatch( SITE_STORE );
 		const { FSEActive } = useFSEStatus();
 		const dispatch = reduxDispatch();
+
+		// Set up Step progress for Woo flow - "Step 2 of 4"
+		if ( intent === 'sell' && storeType === 'power' ) {
+			switch ( currentStep ) {
+				case 'storeAddress':
+					setStepProgress( { progress: 1, count: 4 } );
+					break;
+				case 'businessInfo':
+					setStepProgress( { progress: 2, count: 4 } );
+					break;
+				case 'wooConfirm':
+					setStepProgress( { progress: 3, count: 4 } );
+					break;
+				case 'processing':
+					setStepProgress( { progress: 4, count: 4 } );
+					break;
+			}
+		} else {
+			setStepProgress( undefined );
+		}
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction(
@@ -97,7 +125,7 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'error' );
 					}
 
-					// If the user skips starting point, redirect them to My Home
+					// If the user skips starting point, redirect them to the post editor
 					if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
 						if ( startingPoint !== 'write' ) {
 							window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
@@ -109,6 +137,8 @@ export const siteSetupFlow: Flow = {
 					// End of woo flow
 					if ( storeType === 'power' ) {
 						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
+
+						return exitFlow( `${ adminUrl }/wp-admin/admin.php?page=wc-admin` );
 					}
 
 					if ( FSEActive && intent !== 'write' ) {
@@ -213,7 +243,19 @@ export const siteSetupFlow: Flow = {
 
 				case 'importReady':
 				case 'importReadyPreview': {
-					return exitFlow( providedDependencies?.url as string );
+					return navigate( providedDependencies?.url as StepPath );
+				}
+
+				case 'importerWix':
+				case 'importerBlogger':
+				case 'importerMedium':
+				case 'importerSquarespace':
+				case 'importerWordpress': {
+					if ( providedDependencies?.type === 'redirect' ) {
+						return exitFlow( providedDependencies?.url as string );
+					}
+
+					return navigate( providedDependencies?.url as StepPath );
 				}
 			}
 		}
@@ -258,6 +300,13 @@ export const siteSetupFlow: Flow = {
 				case 'importReadyPreview':
 					return navigate( 'import' );
 
+				case 'importerWix':
+				case 'importerBlogger':
+				case 'importerMedium':
+				case 'importerSquarespace':
+				case 'importerWordpress':
+					return navigate( 'import' );
+
 				default:
 					return navigate( 'intent' );
 			}
@@ -285,7 +334,7 @@ export const siteSetupFlow: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath ) => {
+		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
 			navigate( step );
 		};
 

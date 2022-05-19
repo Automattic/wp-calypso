@@ -27,6 +27,7 @@ export const useHasSeenWhatsNewModalQuery = ( siteId: number | null ) => {
 			} ),
 		{
 			enabled: !! siteId,
+			refetchOnWindowFocus: false,
 		}
 	);
 

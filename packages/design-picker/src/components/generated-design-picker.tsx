@@ -2,18 +2,13 @@
 
 import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
+import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
-import { getDesignPreviewUrl } from '../utils';
+import classnames from 'classnames';
+import { getDesignPreviewUrl, getMShotOptions } from '../utils';
 import type { Design } from '../types';
 import type { MShotsOptions } from '@automattic/onboarding';
 import './style.scss';
-
-const thumbnailImageOptions: MShotsOptions = {
-	vpw: 1600,
-	vph: 1040,
-	w: 600,
-	screen_height: 3600,
-};
 
 const previewImageOptions: MShotsOptions = {
 	vpw: 1600,
@@ -25,14 +20,24 @@ const previewImageOptions: MShotsOptions = {
 interface GeneratedDesignThumbnailProps {
 	slug: string;
 	thumbnailUrl: string;
+	isSelected: boolean;
+	onPreview: () => void;
 }
 
 const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
 	slug,
 	thumbnailUrl,
+	isSelected,
+	onPreview,
 } ) => {
+	const isMobile = useViewportMatch( 'small', '<' );
+
 	return (
-		<button type="button" className="generated-design-thumbnail">
+		<button
+			type="button"
+			className={ classnames( 'generated-design-thumbnail', { 'is-selected': isSelected } ) }
+			onClick={ onPreview }
+		>
 			<span className="generated-design-thumbnail__header">
 				<svg width="28" height="6">
 					<g>
@@ -47,7 +52,7 @@ const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
 					url={ thumbnailUrl }
 					alt=""
 					aria-labelledby={ `generated-design-thumbnail__image__${ slug }` }
-					options={ thumbnailImageOptions }
+					options={ getMShotOptions( { isMobile } ) }
 					scrollable={ false }
 				/>
 			</span>
@@ -58,14 +63,16 @@ const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
 interface GeneratedDesignPreviewProps {
 	slug: string;
 	previewUrl: string;
+	isSelected: boolean;
 }
 
 const GeneratedDesignPreview: React.FC< GeneratedDesignPreviewProps > = ( {
 	slug,
 	previewUrl,
+	isSelected,
 } ) => {
 	return (
-		<div className="generated-design-preview">
+		<div className={ classnames( 'generated-design-preview', { 'is-selected': isSelected } ) }>
 			<div className="generated-design-preview__header">
 				<svg width="36" height="8">
 					<g>
@@ -89,15 +96,25 @@ const GeneratedDesignPreview: React.FC< GeneratedDesignPreviewProps > = ( {
 };
 
 export interface GeneratedDesignPickerProps {
+	selectedDesign?: Design;
 	designs: Design[];
+	verticalId: string;
 	locale: string;
 	heading?: React.ReactElement;
+	footer?: React.ReactElement;
+	onPreview: ( design: Design, positionIndex: number ) => void;
+	onViewMore: () => void;
 }
 
 const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
+	selectedDesign,
 	designs,
+	verticalId,
 	locale,
 	heading,
+	footer,
+	onPreview,
+	onViewMore,
 } ) => {
 	const { __ } = useI18n();
 
@@ -107,14 +124,16 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 			<div className="generated_design-picker__content">
 				<div className="generated-design-picker__thumbnails">
 					{ designs &&
-						designs.map( ( design ) => (
+						designs.map( ( design, index ) => (
 							<GeneratedDesignThumbnail
 								key={ design.slug }
 								slug={ design.slug }
-								thumbnailUrl={ getDesignPreviewUrl( design, { language: locale } ) }
+								thumbnailUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
+								isSelected={ selectedDesign?.slug === design.slug }
+								onPreview={ () => onPreview( design, index ) }
 							/>
 						) ) }
-					<Button className="generated-design-picker__view-more">
+					<Button className="generated-design-picker__view-more" onClick={ onViewMore }>
 						{ __( 'View more options' ) }
 					</Button>
 				</div>
@@ -124,13 +143,15 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 							<GeneratedDesignPreview
 								key={ design.slug }
 								slug={ design.slug }
-								previewUrl={ getDesignPreviewUrl( design, { language: locale } ) }
+								isSelected={ selectedDesign?.slug === design.slug }
+								previewUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
 							/>
 						) ) }
 				</div>
 			</div>
+			{ footer }
 		</div>
 	);
 };
 
-export default GeneratedDesignPicker;
+export { GeneratedDesignPicker as default, GeneratedDesignPreview };

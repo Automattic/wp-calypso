@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	STORED_CARDS_ADD_COMPLETED,
@@ -21,7 +20,7 @@ describe( 'items', () => {
 	} );
 
 	test( 'should return an object with the initial state', () => {
-		expect( reducer( undefined, { type: 'UNRELATED' } ) ).to.be.eql( {
+		expect( reducer( undefined, { type: 'UNRELATED' } ) ).toEqual( {
 			items: [],
 			isFetching: false,
 			isDeleting: {},
@@ -30,7 +29,7 @@ describe( 'items', () => {
 	} );
 
 	test( 'should return an object with an empty list and fetching enabled when fetching is triggered', () => {
-		expect( reducer( undefined, { type: STORED_CARDS_FETCH } ) ).to.be.eql( {
+		expect( reducer( undefined, { type: STORED_CARDS_FETCH } ) ).toEqual( {
 			items: [],
 			isFetching: true,
 			isDeleting: {},
@@ -44,7 +43,7 @@ describe( 'items', () => {
 			list: STORED_CARDS_FROM_API,
 		} );
 
-		expect( state ).to.be.eql( {
+		expect( state ).toEqual( {
 			items: STORED_CARDS_FROM_API,
 			isFetching: false,
 			isDeleting: {},
@@ -57,7 +56,7 @@ describe( 'items', () => {
 			type: STORED_CARDS_FETCH_FAILED,
 		} );
 
-		expect( state ).to.be.eql( {
+		expect( state ).toEqual( {
 			items: [],
 			isFetching: false,
 			isDeleting: {},
@@ -78,7 +77,7 @@ describe( 'items', () => {
 			}
 		);
 
-		expect( state ).to.be.eql( {
+		expect( state ).toEqual( {
 			items: STORED_CARDS_FROM_API,
 			isFetching: false,
 			isDeleting: {},
@@ -100,7 +99,7 @@ describe( 'items', () => {
 			}
 		);
 
-		expect( state ).to.be.eql( {
+		expect( state ).toEqual( {
 			items: STORED_CARDS_FROM_API,
 			isFetching: false,
 			isDeleting: { 1234567: true },
@@ -122,7 +121,7 @@ describe( 'items', () => {
 			}
 		);
 
-		expect( state ).to.be.eql( {
+		expect( state ).toEqual( {
 			items: STORED_CARDS_FROM_API.slice( 1, 4 ),
 			isFetching: false,
 			isDeleting: {},
@@ -144,7 +143,7 @@ describe( 'items', () => {
 			}
 		);
 
-		expect( state ).to.be.eql( {
+		expect( state ).toEqual( {
 			items: STORED_CARDS_FROM_API,
 			isFetching: false,
 			isDeleting: {},
@@ -168,7 +167,7 @@ describe( 'items', () => {
 
 		expect(
 			state.items[ 0 ].meta.find( ( meta ) => meta.meta_key === 'is_backup' ).meta_value
-		).to.be.eql( 'backup' );
+		).toEqual( 'backup' );
 	} );
 
 	test( 'should modify the stored card is_backup property correctly when is_backup is disabled', () => {
@@ -187,7 +186,7 @@ describe( 'items', () => {
 
 		expect(
 			state.items[ 0 ].meta.find( ( meta ) => meta.meta_key === 'is_backup' ).meta_value
-		).to.be.eql( null );
+		).toBeNull();
 	} );
 
 	describe( 'persistence', () => {
@@ -196,7 +195,7 @@ describe( 'items', () => {
 
 			const state = serialize( items, originalState );
 
-			expect( state ).to.eql( originalState );
+			expect( state ).toEqual( originalState );
 		} );
 
 		test( 'should load valid persisted state', () => {
@@ -204,7 +203,7 @@ describe( 'items', () => {
 
 			const state = deserialize( items, originalState );
 
-			expect( state ).to.eql( originalState );
+			expect( state ).toEqual( originalState );
 		} );
 
 		test( 'should load default state when schema does not match', () => {
@@ -218,7 +217,7 @@ describe( 'items', () => {
 
 			const state = deserialize( items, originalState );
 
-			expect( state ).to.eql( [] );
+			expect( state ).toEqual( [] );
 		} );
 	} );
 } );

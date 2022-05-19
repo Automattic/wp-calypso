@@ -1,5 +1,6 @@
 import {
 	FEATURE_1GB_STORAGE,
+	FEATURE_6GB_STORAGE,
 	FEATURE_50GB_STORAGE,
 	FEATURE_UNLIMITED_ADMINS,
 	FEATURE_INSTALL_PLUGINS,
@@ -20,6 +21,7 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { translate, numberFormat } from 'i18n-calypso';
+import isStarterPlanEnabled from './is-starter-plan-enabled';
 import type { TranslateResult } from 'i18n-calypso';
 
 export interface PlanComparisonFeature {
@@ -122,208 +124,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 
 			return feature
 				? translate( 'Custom domain name is free for one year!' )
-				: translate( 'Custom domain name is not included' );
-		},
-	},
-	{
-		get title() {
-			return translate( 'Premium themes' );
-		},
-		get description() {
-			return translate(
-				'Gain access to advanced, professional & beautiful premium design templates including themes specifically tailored for businesses.'
-			);
-		},
-		features: [ FEATURE_PREMIUM_THEMES ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Premium themes' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Premium themes are included' )
-					: translate( 'Premium themes are not included' );
-			}
-			return cellText;
-		},
-	},
-	{
-		get title() {
-			return translate( 'WordPress plugins' );
-		},
-		get subtitle() {
-			return translate( 'Be able to add forms, calendar, and more.' );
-		},
-		get description() {
-			return translate(
-				'Install WordPress plugins and extend functionality for your site with access to more than 50,000 WordPress plugins.'
-			);
-		},
-		features: [ FEATURE_INSTALL_PLUGINS ],
-		getCellText: ( feature, isMobile = false ) => {
-			if ( ! isMobile ) {
-				if ( feature ) {
-					return (
-						<>
-							<Gridicon icon="checkmark" />
-							{ translate( 'Unlimited plugins' ) }
-						</>
-					);
-				}
-
-				return (
-					<>
-						<Gridicon icon="cross" />
-						{ translate( 'Not included' ) }
-					</>
-				);
-			}
-
-			return feature
-				? translate( 'Unlimited WordPress plugins' )
-				: translate( 'WordPress plugins are not included' );
-		},
-	},
-	{
-		get title() {
-			return translate( 'Premium support' );
-		},
-		get subtitle() {
-			return translate( 'Get expert help to build your site.' );
-		},
-		get description() {
-			return translate(
-				'Customer service isn’t just something we offer. It’s who we are. Over 30% of WordPress.com is dedicated to service. We call it Happiness—real support delivered by real human beings who specialize in launching and fine-tuning WordPress sites.'
-			);
-		},
-		features: [ FEATURE_PREMIUM_SUPPORT ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Premium support' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Premium support is included' )
-					: translate( 'Premium support is not included' );
-			}
-			return cellText;
-		},
-	},
-	{
-		get title() {
-			return translate( 'Sell products with WooCommerce' );
-		},
-		get description() {
-			return translate(
-				'Includes one-click payments, premium store designs and personalized expert support.'
-			);
-		},
-		features: [ FEATURE_WOOCOMMERCE ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'WooCommerce' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'WooCommerce is included' )
-					: translate( 'WooCommerce is not included' );
-			}
-			return cellText;
-		},
-	},
-	{
-		get title() {
-			return translate( 'Storage' );
-		},
-		get description() {
-			return translate(
-				'The free plan allows a maximum storage of 1GB, which equals to approximately 200 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
-			);
-		},
-		features: [ FEATURE_1GB_STORAGE, FEATURE_50GB_STORAGE ],
-		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
-			let storageSize = '1';
-			const legacyStorageSize = '3';
-
-			if ( feature === FEATURE_50GB_STORAGE ) {
-				storageSize = '50';
-			}
-
-			if ( isMobile ) {
-				if ( isLegacySiteWithHigherLimits && feature === FEATURE_1GB_STORAGE ) {
-					return translate(
-						'{{del}}%(originalStorage)sGB of storage{{/del}} %(modifiedStorage)sGB on this site',
-						{
-							components: {
-								del: <del />,
-							},
-							args: {
-								originalStorage: storageSize,
-								modifiedStorage: legacyStorageSize,
-							},
-						}
-					);
-				}
-
-				return translate( '%sGB of storage', {
-					args: [ storageSize ],
-				} );
-			}
-
-			if ( isLegacySiteWithHigherLimits && feature === FEATURE_1GB_STORAGE ) {
-				return translate(
-					'{{del}}%(originalStorage)sGB{{/del}} %(modifiedStorage)sGB on this site',
-					{
-						components: {
-							del: <del />,
-						},
-						args: {
-							originalStorage: storageSize,
-							modifiedStorage: legacyStorageSize,
-						},
-					}
-				);
-			}
-
-			return translate( '%sGB', {
-				args: [ storageSize ],
-				comment: '%s is a number of gigabytes.',
-			} );
-		},
-	},
-	{
-		get title() {
-			return translate( 'Remove ads' );
-		},
-		get description() {
-			return translate(
-				'Free sites include ads. The WordPress Pro plan allows you to remove these to keep your website clean of ads.'
-			);
-		},
-		features: [ FEATURE_NO_ADS ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Remove ads' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Remove ads is included' )
-					: translate( 'Remove ads is not included' );
-			}
-			return cellText;
-		},
-	},
-	{
-		get title() {
-			return translate( 'Advanced SEO tools' );
-		},
-		get subtitle() {
-			return translate( 'Get found on search engines.' );
-		},
-		get description() {
-			return translate( 'Get found faster with built-in SEO tools.' );
-		},
-		features: [ FEATURE_ADVANCED_SEO ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Advanced SEO tools' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Advanced SEO tools are included' )
-					: translate( 'Advanced SEO tools are not included' );
-			}
-			return cellText;
+				: translate( 'Custom domain name is {{strong}}not{{/strong}} included', {
+						components: { strong: <strong /> },
+				  } );
 		},
 	},
 	{
@@ -394,6 +197,230 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	},
 	{
 		get title() {
+			return translate( 'Premium themes' );
+		},
+		get description() {
+			return translate(
+				'Gain access to advanced, professional & beautiful premium design templates including themes specifically tailored for businesses.'
+			);
+		},
+		features: [ FEATURE_PREMIUM_THEMES ],
+		getCellText: ( feature, isMobile = false ) => {
+			let cellText = defaultGetCellText( translate( 'Premium themes' ) )( feature, isMobile );
+			if ( isMobile ) {
+				cellText = feature
+					? translate( 'Premium themes are included' )
+					: translate( 'Premium themes are {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
+			}
+			return cellText;
+		},
+	},
+	{
+		get title() {
+			return translate( 'WordPress plugins' );
+		},
+		get subtitle() {
+			return translate( 'Be able to add forms, calendar, and more.' );
+		},
+		get description() {
+			return translate(
+				'Install WordPress plugins and extend functionality for your site with access to more than 50,000 WordPress plugins.'
+			);
+		},
+		features: [ FEATURE_INSTALL_PLUGINS ],
+		getCellText: ( feature, isMobile = false ) => {
+			if ( ! isMobile ) {
+				if ( feature ) {
+					return (
+						<>
+							<Gridicon icon="checkmark" />
+							{ translate( 'Unlimited plugins' ) }
+						</>
+					);
+				}
+
+				return (
+					<>
+						<Gridicon icon="cross" />
+						{ translate( 'Not included' ) }
+					</>
+				);
+			}
+
+			return feature
+				? translate( 'Unlimited WordPress plugins' )
+				: translate( 'WordPress plugins are {{strong}}not{{/strong}} included', {
+						components: { strong: <strong /> },
+				  } );
+		},
+	},
+	{
+		get title() {
+			return translate( 'Premium support' );
+		},
+		get subtitle() {
+			return translate( 'Get expert help to build your site.' );
+		},
+		get description() {
+			return translate(
+				'Over 30% of WordPress.com is dedicated to customer service. We call it Happiness — real support delivered by real human beings, experts in WordPress sites.'
+			);
+		},
+		features: [ FEATURE_PREMIUM_SUPPORT ],
+		getCellText: ( feature, isMobile = false ) => {
+			let cellText = defaultGetCellText( translate( 'Premium support' ) )( feature, isMobile );
+			if ( isMobile ) {
+				cellText = feature
+					? translate( 'Premium support is included' )
+					: translate( 'Premium support is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
+			}
+			return cellText;
+		},
+	},
+	{
+		get title() {
+			return translate( 'Sell products with WooCommerce' );
+		},
+		get description() {
+			return translate(
+				'Includes one-click payments, premium store designs and personalized expert support.'
+			);
+		},
+		features: [ FEATURE_WOOCOMMERCE ],
+		getCellText: ( feature, isMobile = false ) => {
+			let cellText = defaultGetCellText( translate( 'WooCommerce' ) )( feature, isMobile );
+			if ( isMobile ) {
+				cellText = feature
+					? translate( 'WooCommerce is included' )
+					: translate( 'WooCommerce is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
+			}
+			return cellText;
+		},
+	},
+	{
+		get title() {
+			return translate( 'Storage' );
+		},
+		get description() {
+			if ( isStarterPlanEnabled() ) {
+				return translate(
+					'The Starter plan allows a maximum storage of 6GB, which equals to approximately 1200 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
+				);
+			}
+
+			// @todo clk remove or update once there's settlement on how many plans we'd ever show in the grid
+			return translate(
+				'The free plan allows a maximum storage of 1GB, which equals to approximately 200 high quality images. With WordPress Pro you may go all the way up to 50GB, enough space for 10,000 high quality images of the same size.'
+			);
+		},
+		features: [ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE, FEATURE_50GB_STORAGE ],
+		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
+			const legacyStorageSize = 3;
+			let storageSize = 1;
+
+			if ( feature === FEATURE_6GB_STORAGE ) {
+				storageSize = 6;
+			}
+
+			if ( feature === FEATURE_50GB_STORAGE ) {
+				storageSize = 50;
+			}
+
+			if ( isMobile ) {
+				if ( isLegacySiteWithHigherLimits && legacyStorageSize > storageSize ) {
+					return translate(
+						'{{del}}%(originalStorage)sGB of storage{{/del}} %(modifiedStorage)sGB on this site',
+						{
+							components: {
+								del: <del />,
+							},
+							args: {
+								originalStorage: storageSize,
+								modifiedStorage: legacyStorageSize,
+							},
+						}
+					);
+				}
+
+				return translate( '%sGB of storage', {
+					args: [ storageSize ],
+				} );
+			}
+
+			if ( isLegacySiteWithHigherLimits && legacyStorageSize > storageSize ) {
+				return translate(
+					'{{del}}%(originalStorage)sGB{{/del}} %(modifiedStorage)sGB on this site',
+					{
+						components: {
+							del: <del />,
+						},
+						args: {
+							originalStorage: storageSize,
+							modifiedStorage: legacyStorageSize,
+						},
+					}
+				);
+			}
+
+			return translate( '%sGB', {
+				args: [ storageSize ],
+				comment: '%s is a number of gigabytes.',
+			} );
+		},
+	},
+	{
+		get title() {
+			return translate( 'Remove ads' );
+		},
+		get description() {
+			return translate(
+				'Free sites include ads. The WordPress Pro plan allows you to remove these to keep your website clean of ads.'
+			);
+		},
+		features: [ FEATURE_NO_ADS ],
+		getCellText: ( feature, isMobile = false ) => {
+			let cellText = defaultGetCellText( translate( 'Remove ads' ) )( feature, isMobile );
+			if ( isMobile ) {
+				cellText = feature
+					? translate( 'Remove ads is included' )
+					: translate( 'Remove ads is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
+			}
+			return cellText;
+		},
+	},
+	{
+		get title() {
+			return translate( 'Advanced SEO tools' );
+		},
+		get subtitle() {
+			return translate( 'Get found on search engines.' );
+		},
+		get description() {
+			return translate( 'Get found faster with built-in SEO tools.' );
+		},
+		features: [ FEATURE_ADVANCED_SEO ],
+		getCellText: ( feature, isMobile = false ) => {
+			let cellText = defaultGetCellText( translate( 'Advanced SEO tools' ) )( feature, isMobile );
+			if ( isMobile ) {
+				cellText = feature
+					? translate( 'Advanced SEO tools are included' )
+					: translate( 'Advanced SEO tools are {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
+			}
+			return cellText;
+		},
+	},
+	{
+		get title() {
 			return translate( 'Upload videos' );
 		},
 		get description() {
@@ -407,7 +434,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Upload videos is included' )
-					: translate( 'Upload videos is not included' );
+					: translate( 'Upload videos is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -430,14 +459,16 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Collect payments is included' )
-					: translate( 'Collect payments is not included' );
+					: translate( 'Collect payments is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
 	},
 	{
 		get title() {
-			return translate( 'Built in social media tools' );
+			return translate( 'Advanced social media tools' );
 		},
 		get description() {
 			return translate( 'Amplify your voice with our built-in social tools.' );
@@ -451,7 +482,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Built in social media tools are included' )
-					: translate( 'Built in social media tools are not included' );
+					: translate( 'Built in social media tools are {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -490,7 +523,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 
 			return feature
 				? translate( 'Professional Email is free for 3 months' )
-				: translate( 'Professional Email is not included' );
+				: translate( 'Professional Email is {{strong}}not{{/strong}} included', {
+						components: { strong: <strong /> },
+				  } );
 		},
 	},
 	{
@@ -511,7 +546,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Earn money from ads is included' )
-					: translate( 'Earn money from ads is not included' );
+					: translate( 'Earn money from ads is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -534,7 +571,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'SFTP, Database access is included' )
-					: translate( 'SFTP, Database access is not included' );
+					: translate( 'SFTP, Database access is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -557,7 +596,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Automated website backups are included' )
-					: translate( 'Automated website backups are not included' );
+					: translate( 'Automated website backups are {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},
@@ -577,7 +618,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			if ( isMobile ) {
 				cellText = feature
 					? translate( 'Jetpack essentials are included' )
-					: translate( 'Jetpack essentials are not included' );
+					: translate( 'Jetpack essentials are {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
 			}
 			return cellText;
 		},

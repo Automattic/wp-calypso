@@ -1,4 +1,3 @@
-import { assert } from 'chai';
 import localStoragePolyfill from '..';
 
 describe( 'localStorage', () => {
@@ -10,13 +9,13 @@ describe( 'localStorage', () => {
 		} );
 
 		test( 'should create a window.localStorage instance', () => {
-			assert( window.localStorage );
+			expect( window.localStorage ).toBeTruthy();
 		} );
 
 		test( 'should correctly store and retrieve data', () => {
 			window.localStorage.setItem( 'foo', 'bar' );
-			assert.equal( window.localStorage.getItem( 'foo' ), 'bar' );
-			assert.equal( window.localStorage.length, 1 );
+			expect( window.localStorage.getItem( 'foo' ) ).toEqual( 'bar' );
+			expect( window.localStorage.length ).toEqual( 1 );
 		} );
 	} );
 
@@ -30,16 +29,16 @@ describe( 'localStorage', () => {
 		} );
 
 		test( 'should overwrite broken or missing methods', () => {
-			assert( window.localStorage.setItem );
-			assert( window.localStorage.getItem );
-			assert( window.localStorage.removeItem );
-			assert( window.localStorage.clear );
+			expect( window.localStorage.setItem ).toBeTruthy();
+			expect( window.localStorage.getItem ).toBeTruthy();
+			expect( window.localStorage.removeItem ).toBeTruthy();
+			expect( window.localStorage.clear ).toBeTruthy();
 		} );
 
 		test( 'should correctly store and retrieve data', () => {
 			window.localStorage.setItem( 'foo', 'bar' );
-			assert.equal( window.localStorage.getItem( 'foo' ), 'bar' );
-			assert.equal( window.localStorage.length, 1 );
+			expect( window.localStorage.getItem( 'foo' ) ).toEqual( 'bar' );
+			expect( window.localStorage.length ).toEqual( 1 );
 		} );
 	} );
 } );

@@ -238,14 +238,12 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@jest/globals": ^27.3.1
-    "@types/config": ^0.0.41
     "@types/jest": ^27.4.0
     "@types/node": ^16.11.26
     "@types/node-fetch": ^2.6.1
     "@types/totp-generator": ^0.0.3
     "@wordpress/i18n": ^4.2.4
     asana-phrase: ^0.0.8
-    config: ^3.3.6
     mailosaur: ^7.3.1
     node-fetch: ^2.6.6
     playwright: ^1.19.2
@@ -645,6 +643,7 @@ __metadata:
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
     "@automattic/site-picker": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
@@ -1148,6 +1147,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     chai: ^4.3.4
+    events: ^3.3.0
     lodash: ^4.17.21
   languageName: unknown
   linkType: soft
@@ -1263,10 +1263,8 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
   peerDependencies:
-    "@wordpress/data": ^6.7.0
     react: ^17.0.2
-    reakit-utils: ^0.15.1
-    redux: ^4.1.2
+    react-dom: ^17.0.2
   languageName: unknown
   linkType: soft
 
@@ -1399,7 +1397,6 @@ __metadata:
   resolution: "@automattic/webpack-rtl-plugin@workspace:packages/webpack-rtl-plugin"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@romainberger/css-diff": ^1.0.3
     css-loader: ^6.5.1
     mini-css-extract-plugin: ^1.6.2
     rtlcss: ^3.1.2
@@ -4829,16 +4826,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@romainberger/css-diff@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "@romainberger/css-diff@npm:1.0.3"
-  dependencies:
-    lodash.merge: ^4.4.0
-    postcss: ^5.0.21
-  checksum: 6d7891d5c46060e0735f0d09ebddd7c3228834f0c8150795d7c4c6a64c0c205009cfa06b1db04e234fe143054078157ba459abd5f26206b37ea470565fd60fec
-  languageName: node
-  linkType: hard
-
 "@sentry/browser@npm:6.19.6, @sentry/browser@npm:^6.19.6":
   version: 6.19.6
   resolution: "@sentry/browser@npm:6.19.6"
@@ -6641,13 +6628,6 @@ __metadata:
   version: 1.1.1
   resolution: "@types/color-name@npm:1.1.1"
   checksum: 2abeac8d8d833e0622c66f21487cc8b522792abb2eff2e40df0e3e53261728cb65bab590edf24953eb8d8653ec88044dc801d9a4e58c489a0f10c025de522868
-  languageName: node
-  linkType: hard
-
-"@types/config@npm:^0.0.41":
-  version: 0.0.41
-  resolution: "@types/config@npm:0.0.41"
-  checksum: b25deafde197039358ec93e5f97841701ad2079023d73ea8c8736ba52c61196efdeec17ccef1de57b4ddd1d1624e53099e5d0e881218482ca2b0dc1ad2a21c3c
   languageName: node
   linkType: hard
 
@@ -13902,16 +13882,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"config@npm:^1.28.0":
-  version: 1.28.0
-  resolution: "config@npm:1.28.0"
-  dependencies:
-    json5: 0.4.0
-    os-homedir: 1.0.2
-  checksum: b56cc083a555a91fda03869ab6639b4e36fdde6a7b634bb58263badce9dd7382edfaa6fe2854a4dab29a65cb5afa9c519a1757e4b1f8a5320406f9a0a9626fec
-  languageName: node
-  linkType: hard
-
 "config@npm:^3.3.6":
   version: 3.3.6
   resolution: "config@npm:3.3.6"
@@ -17360,10 +17330,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"events@npm:^3.0.0, events@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "events@npm:3.2.0"
-  checksum: 8bd3ca31bd0b3ae3f7e1d5e6e6a2eaca826b4a3e1094eff498d887b83f07c9c0cf04871be1f7020405ed43eb8c9a2ded6f6ea01e373fca5d03b9d92f10e78d5c
+"events@npm:^3.0.0, events@npm:^3.2.0, events@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "events@npm:3.3.0"
+  checksum: d6b6f2adbccbcda74ddbab52ed07db727ef52e31a61ed26db9feb7dc62af7fc8e060defa65e5f8af9449b86b52cc1a1f6a79f2eafcf4e62add2b7a1fa4a432f6
   languageName: node
   linkType: hard
 
@@ -19400,13 +19370,6 @@ __metadata:
   version: 1.1.0
   resolution: "has-cors@npm:1.1.0"
   checksum: 5ca44b97681cb05c4fde04bf3d8d84d0b0a95d6134eb5821e057ea3b09f4c658c8b499bcdfc4d8ad669253b5249767062e2882eba40950eb73e4465748d4f3cf
-  languageName: node
-  linkType: hard
-
-"has-flag@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "has-flag@npm:1.0.0"
-  checksum: d0ad4bebbbc005edccfa1e2c0600c89375be5663d23f49a129e0f817187405748b0b515abfc5b3c209c92692e39bb0481c83c0ee4df69433d6ffd0242183100b
   languageName: node
   linkType: hard
 
@@ -22437,7 +22400,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-base64@npm:^2.1.9, js-base64@npm:^2.6.1":
+"js-base64@npm:^2.6.1":
   version: 2.6.4
   resolution: "js-base64@npm:2.6.4"
   checksum: 95d93c4eca0bbe0f2d5ffe8682d9acd23051e5c0ad71873ff5a48dd46a5f19025de9f7b36e63fa3f02f342ae4a8ca4c56e7b590d7300ebb6639ce09675e0fd02
@@ -22767,15 +22730,6 @@ __metadata:
   version: 0.0.4
   resolution: "json2php@npm:0.0.4"
   checksum: 772f3bb4ce9ffcbdbed79c4a547933ea8134623c6f337377818921baf096b52e6c23babcfa3598791be4ff8310028684e4f0c396dce37b9baa65458cc46e355e
-  languageName: node
-  linkType: hard
-
-"json5@npm:0.4.0":
-  version: 0.4.0
-  resolution: "json5@npm:0.4.0"
-  bin:
-    json5: lib/cli.js
-  checksum: 639ad195df2f83316413befff7480b981b5fbd0e58aabd6f6262a60624359ccb47c5fc99d88baab1f022e5e8678209c5cdf9e5eaa72978c7626e340626870c86
   languageName: node
   linkType: hard
 
@@ -26408,7 +26362,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"os-homedir@npm:1.0.2, os-homedir@npm:^1.0.1":
+"os-homedir@npm:^1.0.1":
   version: 1.0.2
   resolution: "os-homedir@npm:1.0.2"
   checksum: 6be4aa67317ee247b8d46142e243fb4ef1d2d65d3067f54bfc5079257a2f4d4d76b2da78cba7af3cb3f56dbb2e4202e0c47f26171d11ca1ed4008d842c90363f
@@ -28038,18 +27992,6 @@ __metadata:
     picocolors: ^0.2.1
     source-map: ^0.6.1
   checksum: fd27ee808c0d02407582cccfad4729033e2b439d56cd45534fb39aaad308bb35a290f3b7db5f2394980e8756f9381b458a625618550808c5ff01a125f51efc53
-  languageName: node
-  linkType: hard
-
-"postcss@npm:^5.0.21":
-  version: 5.2.18
-  resolution: "postcss@npm:5.2.18"
-  dependencies:
-    chalk: ^1.1.3
-    js-base64: ^2.1.9
-    source-map: ^0.5.6
-    supports-color: ^3.2.3
-  checksum: 1f9f6673dd24d52f1ed33b800248e6ef752d6b6a092fe268021e398df0d7e0956f00fb961781647264d659240c3d67f5bfd3df9bf1b7af985aa996be619d30b1
   languageName: node
   linkType: hard
 
@@ -33482,15 +33424,6 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"supports-color@npm:^3.2.3":
-  version: 3.2.3
-  resolution: "supports-color@npm:3.2.3"
-  dependencies:
-    has-flag: ^1.0.0
-  checksum: d39a57dbd75c3b5740654f8ec16aaf7203b8d12b8a51314507bed590c9081120805f105b4ce741db13105e6f842ac09700e4bd665b9ffc46eb0b34ba54720bd3
-  languageName: node
-  linkType: hard
-
 "supports-color@npm:^5.3.0, supports-color@npm:^5.4.0":
   version: 5.5.0
   resolution: "supports-color@npm:5.5.0"
@@ -36282,6 +36215,7 @@ swiper@4.5.1:
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/eslint-plugin-json": "workspace:^"
+    "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/typography": "workspace:^"
@@ -36294,6 +36228,7 @@ swiper@4.5.1:
     "@babel/runtime": ^7.17.2
     "@bartekbp/typescript-checkstyle": ^5.0.0
     "@signal-noise/stylelint-scales": ^2.0.3
+    "@testing-library/jest-dom": ^5.16.2
     "@types/cookie": ^0.4.1
     "@types/debug": ^4.1.7
     "@types/enzyme": ^3.10.11
@@ -36438,7 +36373,6 @@ swiper@4.5.1:
     babel-jest: ^27.2.4
     babel-plugin-dynamic-import-node: ^2.3.0
     chromedriver: ^89.0.0
-    config: ^1.28.0
     eslint: ^7.28.0
     eslint-plugin-jest: ^25.3.0
     esm: ^3.2.25

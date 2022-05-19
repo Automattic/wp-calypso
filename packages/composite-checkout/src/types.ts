@@ -25,6 +25,8 @@ export interface CheckoutStepProps {
 
 export type IsCompleteCallback = () => boolean | Promise< boolean >;
 
+export type StepCompleteCallback = () => Promise< boolean >;
+
 export interface OrderSummaryData {
 	className: string;
 	summaryContent: React.ReactNode;
@@ -133,7 +135,7 @@ export type PaymentErrorCallback = ( args: {
 } ) => void;
 export type CheckoutPageErrorCallback = (
 	errorType: string,
-	errorMessage: string,
+	error: Error,
 	errorData?: Record< string, string | number | undefined >
 ) => void;
 

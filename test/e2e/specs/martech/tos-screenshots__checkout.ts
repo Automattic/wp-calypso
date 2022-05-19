@@ -52,8 +52,8 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		it( 'Login to marTech user account', async function () {
 			const loginPage = new LoginPage( page );
 			await loginPage.visit( { path: 'new' } );
-			const credentials = DataHelper.getAccountCredential( 'martechTosUser' );
-			await loginPage.logInWithCredentials( ...credentials );
+			const { username, password } = DataHelper.getAccountCredential( 'martechTosUser' );
+			await loginPage.logInWithCredentials( username, password );
 		} );
 
 		it( 'Set store cookie', async function () {
@@ -95,7 +95,6 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 				page.setViewportSize( { width: 1280, height: 720 } );
 				await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
 				await changeUILanguageFlow.changeUILanguage( locale as LanguageSlug );
-				await page.goto( DataHelper.getCalypsoURL( 'home' ) );
 				await page.reload( { waitUntil: 'networkidle' } );
 				await cartCheckoutPage.visit( blogName );
 				await cartCheckoutPage.validatePaymentForm();

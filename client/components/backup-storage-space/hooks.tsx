@@ -1,6 +1,7 @@
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getJetpackStorageUpgradeUrl from 'calypso/state/plans/selectors/get-jetpack-storage-upgrade-url';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 
@@ -24,11 +25,21 @@ export const useStorageUsageText = (
 	bytesAvailable: number | undefined
 ): TranslateResult | null => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const storageUpgradeUrl = useSelector( ( state ) =>
 		getJetpackStorageUpgradeUrl( state, siteSlug )
 	);
+
+	const onClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_storage_usage_upgrade_click', {
+				bytes_used: bytesUsed,
+				bytes_available: bytesAvailable,
+			} )
+		);
+	}, [ dispatch, bytesUsed, bytesAvailable ] );
 
 	return useMemo( () => {
 		if ( bytesUsed === undefined ) {
@@ -59,7 +70,7 @@ export const useStorageUsageText = (
 					comment:
 						'Must use unit abbreviation; describes used vs available storage amounts (e.g., 20.0GB of 30GB used, 0.5GB of 20GB used)',
 					components: {
-						a: <a href={ storageUpgradeUrl } />,
+						a: <a onClick={ onClick } href={ storageUpgradeUrl } />,
 					},
 				}
 			);
@@ -75,5 +86,5 @@ export const useStorageUsageText = (
 					'Must use unit abbreviation; describes used vs available storage amounts (e.g., 20.0GB of 1TB used, 0.5GB of 2TB used)',
 			}
 		);
-	}, [ translate, storageUpgradeUrl, bytesUsed, bytesAvailable ] );
+	}, [ translate, storageUpgradeUrl, bytesUsed, bytesAvailable, onClick ] );
 };

@@ -1,4 +1,10 @@
+import type { DispatchFromMap } from '../mapped-types';
 import type { FeatureId } from '../wpcom-features';
+import type { ActionCreators } from './actions';
+
+export interface Dispatch {
+	dispatch: DispatchFromMap< ActionCreators >;
+}
 
 export interface NewSiteBlogDetails {
 	url: string;
@@ -96,6 +102,7 @@ export interface SiteDetails {
 	jetpack: boolean;
 	is_fse_eligible: boolean;
 	is_fse_active: boolean;
+	logo: { id: string; sizes: string[]; url: string };
 	options: {
 		admin_url?: string;
 		advanced_seo_front_page_description?: string;

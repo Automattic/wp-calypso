@@ -10,7 +10,6 @@ import TextDiff from 'calypso/components/text-diff';
 import scrollTo from 'calypso/lib/scroll-to';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPostRevision } from 'calypso/state/posts/selectors/get-post-revision';
-import { getPostRevisionsDiffView } from 'calypso/state/posts/selectors/get-post-revisions-diff-view';
 import './style.scss';
 
 const getCenterOffset = ( node ) =>
@@ -59,16 +58,6 @@ class EditorDiffViewer extends PureComponent {
 
 	componentDidUpdate() {
 		this.tryScrollingToFirstChangeOrTop();
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( nextProps.selectedRevisionId !== this.props.selectedRevisionId ) {
-			this.setState( { changeOffsets: [] } );
-		}
-		if ( nextProps.diffView !== this.props.diffView ) {
-			this.recomputeChanges( null );
-		}
 	}
 
 	lastScolledRevisionId = null;
@@ -231,7 +220,6 @@ class EditorDiffViewer extends PureComponent {
 export default connect(
 	( state, { siteId, postId, selectedRevisionId } ) => ( {
 		revision: getPostRevision( state, siteId, postId, selectedRevisionId, 'display' ),
-		diffView: getPostRevisionsDiffView( state ),
 	} ),
 	{ recordTracksEvent }
 )( localize( EditorDiffViewer ) );

@@ -14,7 +14,6 @@ const noop = () => {};
  * @param {string} action.postId of the revisions
  * @param {object} response from the server
  * @param {object} response.diffs raw data containing a set of diffs for the site & post
- *
  * @returns {Array} An array of Redux actions
  */
 export const receiveSuccess = ( { siteId, postId }, response ) =>

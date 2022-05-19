@@ -1,7 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
@@ -14,6 +13,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import {
 	AUTOMATED_ELIGIBILITY_STORE,
 	SITE_STORE,
+	ONBOARD_STORE,
 	PRODUCTS_LIST_STORE,
 } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -51,6 +51,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		select( SITE_STORE ).isSiteAtomic( siteId )
 	);
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
+	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 
 	useEffect( () => {
 		if ( ! siteId ) {
@@ -149,7 +150,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		latestAtomicTransfer && ( ! transferringDataIsAvailable || transferringBlockers?.length > 0 );
 
 	// when the site is not Atomic, ...
-	if ( isReadyToStart && ! isAtomicSite ) {
+	if ( ! isAtomicSite ) {
 		isReadyToStart =
 			isReadyToStart &&
 			! isTransferringBlocked && // there is no blockers from eligibility (holds).
@@ -167,14 +168,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan?.product_slug ?? '' }`
 		),
-		productName,
-		description: productName
-			? sprintf(
-					/* translators: %s: The upgrading plan name (ex.: WordPress.com Business) */
-					__( 'Upgrade to the %s plan and set up your WooCommerce store.' ),
-					productName
-			  )
-			: __( 'Upgrade to set up your WooCommerce store.' ),
+		description: __( 'Upgrade to the Pro plan and set up your WooCommerce store.' ),
 	};
 
 	const domain = stagingDomain;
@@ -252,7 +246,10 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 								const providedDependencies = {
 									checkoutUrl: siteUpgrading.checkoutUrl,
 								};
-								submit?.( providedDependencies, siteUpgrading.checkoutUrl );
+								submit?.(
+									providedDependencies,
+									siteUpgrading.required ? siteUpgrading.checkoutUrl : ''
+								);
 							} }
 						>
 							{ __( 'Confirm' ) }
@@ -291,6 +288,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 				/>
 			}
 			stepContent={ getContent() }
+			stepProgress={ stepProgress }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

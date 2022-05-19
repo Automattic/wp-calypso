@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	EMAIL_FORWARDING_REMOVE_REQUEST,
 	EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS,
@@ -20,7 +19,7 @@ describe( 'wpcom-api', () => {
 
 		describe( '#removeEmailForward', () => {
 			test( 'should dispatch an HTTP request to the email forward delete endpoint', () => {
-				expect( removeEmailForward( action ) ).to.eql(
+				expect( removeEmailForward( action ) ).toEqual(
 					http(
 						{
 							method: 'POST',
@@ -38,9 +37,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a error notice and a remove email forward failure action on error', () => {
 				const resultActions = removeEmailForwardFailure( action, { message } );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE,
 					domainName,
 					mailbox,
@@ -52,15 +51,15 @@ describe( 'wpcom-api', () => {
 		describe( '#removeEmailForwardSuccess', () => {
 			test( 'should dispatch a success notice and a remove email forward success action on a good response', () => {
 				const resultActions = removeEmailForwardSuccess( action, { deleted: true } );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isSuccessNotice( resultActions[ 0 ] ) ).to.be.true;
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isSuccessNotice( resultActions[ 0 ] ) ).toBe( true );
 				expect(
 					noticeHasText(
 						resultActions[ 0 ],
 						'Email forward test@example.com has been successfully removed.'
 					)
-				).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS,
 					domainName,
 					mailbox,
@@ -69,9 +68,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a error notice and a remove email forward failure action on response with deleted: false', () => {
 				const resultActions = removeEmailForwardSuccess( action, { deleted: false } );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE,
 					domainName,
 					mailbox,
@@ -81,9 +80,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a error notice and a remove email forward failure action on no response', () => {
 				const resultActions = removeEmailForwardSuccess( action, undefined );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE,
 					domainName,
 					mailbox,

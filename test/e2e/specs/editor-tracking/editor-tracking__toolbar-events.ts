@@ -10,11 +10,11 @@ import {
 	envToFeatureKey,
 	TestAccount,
 	EditorTracksEventManager,
-	skipDescribeIf,
 	FullSiteEditorPage,
 	HeaderBlock,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
+import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 

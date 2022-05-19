@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { SIGNUP_STEPS_DESIGN_TYPE_SET } from 'calypso/state/action-types';
 import reducer from '../reducer';
 
@@ -12,6 +11,6 @@ describe( 'reducer', () => {
 					designType: 'design type',
 				}
 			)
-		).to.be.eql( 'design type' );
+		).toEqual( 'design type' );
 	} );
 } );

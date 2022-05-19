@@ -1,11 +1,7 @@
 import {
 	PLAN_WPCOM_PRO,
 	PLAN_JETPACK_SECURITY_DAILY,
-	FEATURE_WORDADS_INSTANT,
-	isPremium,
-	isBusiness,
-	isEcommerce,
-	isSecurityDaily,
+	WPCOM_FEATURES_WORDADS,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -21,14 +17,9 @@ import FeatureExample from 'calypso/components/feature-example';
 import FormButton from 'calypso/components/forms/form-button';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import {
-	isWordadsInstantActivationEligible,
-	isWordadsInstantActivationEligibleButNotOwner,
-	canUpgradeToUseWordAds,
-	canAccessAds,
-} from 'calypso/lib/ads/utils';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { canAccessWordAds, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -45,12 +36,6 @@ import { isSiteWordadsUnsafe } from 'calypso/state/wordads/status/selectors';
 
 import './style.scss';
 import 'calypso/my-sites/stats/stats-module/style.scss';
-
-const overSome =
-	( ...checks ) =>
-	( item ) =>
-		checks.some( ( check ) => check( item ) );
-const isEligbleJetpackPlan = overSome( isPremium, isBusiness, isEcommerce, isSecurityDaily );
 
 class AdsWrapper extends Component {
 	static propTypes = {
@@ -213,7 +198,7 @@ class AdsWrapper extends Component {
 				description={ translate(
 					"By upgrading to the Pro plan, you'll be able to monetize your site through the WordAds program."
 				) }
-				feature={ FEATURE_WORDADS_INSTANT }
+				feature={ WPCOM_FEATURES_WORDADS }
 				href={ bannerURL }
 				showIcon
 				event="calypso_upgrade_nudge_impression"
@@ -241,7 +226,7 @@ class AdsWrapper extends Component {
 					'Make money each time someone visits your site by displaying ads on all your posts and pages.'
 				) }
 				href={ bannerURL }
-				feature={ FEATURE_WORDADS_INSTANT }
+				feature={ WPCOM_FEATURES_WORDADS }
 				showIcon
 				event="calypso_upgrade_nudge_impression"
 				tracksImpressionName="calypso_upgrade_nudge_impression"
@@ -268,8 +253,14 @@ class AdsWrapper extends Component {
 	}
 
 	render() {
-		const { site, translate } = this.props;
-		const jetpackPremium = site.jetpack && isEligbleJetpackPlan( site.plan );
+		const {
+			canAccessAds,
+			canActivateWordadsInstant,
+			canUpgradeToUseWordAds,
+			isWordadsInstantEligibleButNotOwner,
+			site,
+			translate,
+		} = this.props;
 
 		let component = this.props.children;
 		let notice = null;
@@ -280,17 +271,17 @@ class AdsWrapper extends Component {
 					{ translate( 'You have joined the WordAds program. Please review these settings:' ) }
 				</Notice>
 			);
-		} else if ( ! site.options.wordads && isWordadsInstantActivationEligible( site ) ) {
+		} else if ( canActivateWordadsInstant ) {
 			component = this.renderInstantActivationToggle( component );
-		} else if ( ! site.options.wordads && isWordadsInstantActivationEligibleButNotOwner( site ) ) {
+		} else if ( isWordadsInstantEligibleButNotOwner ) {
 			component = this.renderOwnerRequiredMessage( component );
-		} else if ( canUpgradeToUseWordAds( site ) && site.jetpack && ! jetpackPremium ) {
+		} else if ( canUpgradeToUseWordAds && site.jetpack ) {
 			component = this.renderjetpackUpsell();
-		} else if ( canUpgradeToUseWordAds( site ) ) {
+		} else if ( canUpgradeToUseWordAds ) {
 			component = this.renderUpsell();
-		} else if ( ! canAccessAds( site ) ) {
+		} else if ( ! canAccessAds ) {
 			component = this.renderEmptyContent();
-		} else if ( ! ( site.options.wordads || jetpackPremium ) ) {
+		} else if ( ! site.options.wordads && ! ( site.jetpack && canUpgradeToUseWordAds ) ) {
 			component = null;
 		} else if ( site.options.wordads && site.is_private ) {
 			notice = this.renderNoticeSiteIsPrivate();
@@ -308,15 +299,23 @@ class AdsWrapper extends Component {
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
+	const hasWordAdsFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_WORDADS );
+	const canActivateWordAds = canCurrentUser( state, siteId, 'activate_wordads' );
+
 	return {
 		site,
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
+		canAccessAds: canAccessWordAds( state, siteId ),
+		canActivateWordadsInstant: ! site.options.wordads && canActivateWordAds && hasWordAdsFeature,
 		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
+		canUpgradeToUseWordAds: ! site.options.wordads && ! hasWordAdsFeature,
 		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, site ),
 		wordAdsError: getWordAdsErrorForSite( state, site ),
 		wordAdsSuccess: getWordAdsSuccessForSite( state, site ),
 		isUnsafe: isSiteWordadsUnsafe( state, siteId ),
+		isWordadsInstantEligibleButNotOwner:
+			! site.options.wordads && hasWordAdsFeature && ! canActivateWordAds,
 		adsProgramName: isJetpackSite( state, siteId ) ? 'Ads' : 'WordAds',
 	};
 };

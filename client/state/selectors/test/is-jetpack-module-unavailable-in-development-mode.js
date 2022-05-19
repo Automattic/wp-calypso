@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 
 describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
@@ -16,7 +15,7 @@ describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 			12345678,
 			'module-a'
 		);
-		expect( unavailable ).to.be.null;
+		expect( unavailable ).toBeNull();
 	} );
 
 	test( 'should return true for a module that requires connection', () => {
@@ -40,7 +39,7 @@ describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 			12345678,
 			'module-a'
 		);
-		expect( unavailable ).to.be.true;
+		expect( unavailable ).toBe( true );
 	} );
 
 	test( 'should return false for a module that does not require connection', () => {
@@ -64,7 +63,7 @@ describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 			12345678,
 			'module-a'
 		);
-		expect( unavailable ).to.be.false;
+		expect( unavailable ).toBe( false );
 	} );
 
 	test( 'should return false for a module that does not specify whether it requires connection', () => {
@@ -87,6 +86,6 @@ describe( 'isJetpackModuleUnavailableInDevelopmentMode()', () => {
 			12345678,
 			'module-a'
 		);
-		expect( unavailable ).to.be.false;
+		expect( unavailable ).toBe( false );
 	} );
 } );

@@ -8,7 +8,7 @@ import {
 	isEcommercePlan,
 	GROUP_JETPACK,
 	GROUP_WPCOM,
-	FEATURE_NO_ADS,
+	WPCOM_FEATURES_NO_ADVERTS,
 	isFreePlanProduct,
 } from '@automattic/calypso-products';
 import classnames from 'classnames';
@@ -20,7 +20,8 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { getCurrentPlan, hasFeature } from 'calypso/state/sites/plans/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -55,9 +56,9 @@ export const UpsellNudge = ( {
 	onClick,
 	onDismissClick,
 	plan,
-	planHasFeature,
 	price,
 	primaryButton,
+	selectedSiteHasFeature,
 	showIcon = false,
 	site,
 	siteSlug,
@@ -76,9 +77,9 @@ export const UpsellNudge = ( {
 		! site ||
 		typeof site !== 'object' ||
 		typeof site.jetpack !== 'boolean' ||
-		( feature && planHasFeature ) ||
+		( feature && selectedSiteHasFeature ) ||
 		( ! feature && ! isFreePlanProduct( site.plan ) ) ||
-		( feature === FEATURE_NO_ADS && site.options.wordads ) ||
+		( feature === WPCOM_FEATURES_NO_ADVERTS && site.options.wordads ) ||
 		( ! isJetpack && site.jetpack ) ||
 		( isJetpack && ! site.jetpack );
 
@@ -173,7 +174,7 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		site: getSite( state, siteId ),
-		planHasFeature: hasFeature( state, siteId, ownProps.feature ),
+		selectedSiteHasFeature: siteHasFeature( state, siteId, ownProps.feature ),
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
 		isJetpack: isJetpackSite( state, siteId ),
 		isAtomic: isSiteAutomatedTransfer( state, siteId ),

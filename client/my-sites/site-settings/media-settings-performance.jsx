@@ -1,12 +1,13 @@
 import {
 	isJetpackVideoPress,
 	planHasFeature,
-	FEATURE_JETPACK_VIDEOPRESS,
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PRODUCT_JETPACK_VIDEOPRESS,
+	WPCOM_FEATURES_VIDEOPRESS,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import filesize from 'filesize';
@@ -138,9 +139,9 @@ class MediaSettingsPerformance extends Component {
 				<UpsellNudge
 					title={ upsellMessage }
 					event={ 'jetpack_video_settings' }
-					feature={ FEATURE_JETPACK_VIDEOPRESS }
+					feature={ WPCOM_FEATURES_VIDEOPRESS }
 					showIcon={ true }
-					href={ `/checkout/${ siteSlug }/${ FEATURE_JETPACK_VIDEOPRESS }` }
+					href={ `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_VIDEOPRESS }` }
 				/>
 			)
 		);

@@ -44,6 +44,7 @@ export const ActionSection = styled.div`
 	align-items: baseline;
 	flex-wrap: wrap;
 	margin-top: 40px;
+	gap: 4%;
 
 	@media ( max-width: 320px ) {
 		align-items: center;

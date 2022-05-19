@@ -155,7 +155,6 @@ export function didInviteDeletionSucceed( state, siteId, inviteId ) {
  *
  * @param  {object}  state    Global state tree
  * @param  {number}  siteId   Site ID
- *
  * @returns {boolean}          Whether an invite is being deleted
  */
 export function isDeletingAnyInvite( state, siteId ) {

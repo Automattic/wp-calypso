@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	SITE_FEATURES_FETCH,
 	SITE_FEATURES_FETCH_COMPLETED,
@@ -10,14 +9,14 @@ describe( 'reducer', () => {
 	describe( '#features()', () => {
 		test( 'should return an empty state when original state is undefined and action is empty', () => {
 			const state = features( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should return an empty state when original state and action are empty', () => {
 			const original = Object.freeze( {} );
 			const state = features( original, {} );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return an empty state when original state is undefined and action is unknown', () => {
@@ -26,7 +25,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should return the original state when action is unknown', () => {
@@ -43,7 +42,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should return the initial state with requesting enabled when fetching is triggered', () => {
@@ -52,7 +51,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: null,
 					error: null,
@@ -77,7 +76,7 @@ describe( 'reducer', () => {
 				error: 'Unable to fetch site features',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: {},
 					error: 'Unable to fetch site features',
@@ -101,7 +100,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: {
 						active: [ 'active-01', 'active-03', 'active-03' ],
@@ -140,7 +139,7 @@ describe( 'reducer', () => {
 				siteId: 55555555,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: {
 						active: [ 'feature_active_a_01', 'feature_active_a_02', 'feature_active_a_03' ],
@@ -184,7 +183,7 @@ describe( 'reducer', () => {
 				siteId: 11111111,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: {
 						active: [ 'feature_active_a_01', 'feature_active_a_02', 'feature_active_a_03' ],

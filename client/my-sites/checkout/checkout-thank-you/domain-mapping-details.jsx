@@ -1,4 +1,3 @@
-import { isBusiness } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -46,7 +45,6 @@ const mapStateToProps = ( state, { domain: selectedDomainName } ) => {
 	const domains = getDomainsBySiteId( state, selectedSite.ID );
 	return {
 		isAtomicSite: selectedSite.options?.is_automated_transfer,
-		isBusinessPlan: isBusiness( selectedSite.plan ),
 		isRequestingDomainsDetails: isRequestingSiteDomains( state, selectedSite.ID ),
 		isSubdomainMapping: isSubdomain( selectedDomainName ),
 		purchasedDomain: getSelectedDomain( { domains, selectedDomainName } ),

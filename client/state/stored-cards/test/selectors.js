@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	getStoredCardById,
@@ -27,7 +26,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getStoredCards( state ) ).to.be.eql(
+			expect( getStoredCards( state ) ).toEqual(
 				SELECTED_STORED_CARDS.filter( ( card ) => ! card.is_expired )
 			);
 		} );
@@ -44,7 +43,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getAllStoredCards( state ) ).to.be.eql( SELECTED_STORED_CARDS );
+			expect( getAllStoredCards( state ) ).toEqual( SELECTED_STORED_CARDS );
 		} );
 	} );
 
@@ -59,7 +58,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getStoredPaymentAgreements( state ) ).to.be.eql( SELECTED_PAYMENT_AGREEMENTS );
+			expect( getStoredPaymentAgreements( state ) ).toEqual( SELECTED_PAYMENT_AGREEMENTS );
 		} );
 	} );
 
@@ -74,7 +73,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getUniquePaymentAgreements( state ) ).to.be.eql( SELECTED_UNIQUE_PAYMENT_AGREEMENTS );
+			expect( getUniquePaymentAgreements( state ) ).toEqual( SELECTED_UNIQUE_PAYMENT_AGREEMENTS );
 		} );
 	} );
 
@@ -89,7 +88,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( getStoredCardById( state, '12345' ) ).to.be.eql( SELECTED_STORED_CARDS[ 1 ] );
+			expect( getStoredCardById( state, '12345' ) ).toEqual( SELECTED_STORED_CARDS[ 1 ] );
 		} );
 	} );
 
@@ -104,7 +103,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( hasLoadedStoredCardsFromServer( state ) ).to.be.true;
+			expect( hasLoadedStoredCardsFromServer( state ) ).toBe( true );
 		} );
 	} );
 } );

@@ -1,6 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -9,8 +8,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
 import ComparisonList from 'calypso/my-sites/email/email-providers-comparison/in-depth/comparison-list';
@@ -31,6 +28,7 @@ const EmailProvidersInDepthComparison = ( {
 	referrer,
 	selectedDomainName,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
+	source,
 }: EmailProvidersInDepthComparisonProps ): JSX.Element => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -38,9 +36,6 @@ const EmailProvidersInDepthComparison = ( {
 	const isMobile = useMobileBreakpoint();
 
 	const selectedSite = useSelector( getSelectedSite );
-	const cartKey = useCartKey();
-	const shoppingCartManager = useShoppingCart( cartKey );
-	const isDomainInCart = hasDomainInCart( shoppingCartManager.responseCart, selectedDomainName );
 
 	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
 		if ( selectedSite === null ) {
@@ -51,6 +46,7 @@ const EmailProvidersInDepthComparison = ( {
 			recordTracksEvent( 'calypso_email_providers_in_depth_billing_interval_toggle_click', {
 				domain_name: selectedDomainName,
 				new_interval: newIntervalLength,
+				source,
 			} )
 		);
 
@@ -59,7 +55,7 @@ const EmailProvidersInDepthComparison = ( {
 				selectedSite.slug,
 				selectedDomainName,
 				referrer,
-				null,
+				source,
 				newIntervalLength
 			)
 		);
@@ -74,11 +70,13 @@ const EmailProvidersInDepthComparison = ( {
 			recordTracksEvent( 'calypso_email_providers_in_depth_select_provider_click', {
 				domain_name: selectedDomainName,
 				provider: emailProviderSlug,
+				source,
 			} )
 		);
 		const path = `${ referrer }?${ stringify( {
 			interval: selectedIntervalLength,
 			provider: emailProviderSlug,
+			source,
 		} ) }`;
 
 		page( path );
@@ -89,7 +87,7 @@ const EmailProvidersInDepthComparison = ( {
 	return (
 		<Main wideLayout>
 			<PageViewTracker
-				path={ emailManagementInDepthComparison( ':site', ':domain' ) }
+				path={ emailManagementInDepthComparison( ':site', ':domain', null, source ) }
 				title="Email Comparison > In-Depth Comparison"
 			/>
 
@@ -111,7 +109,6 @@ const EmailProvidersInDepthComparison = ( {
 			<ComparisonComponent
 				emailProviders={ [ professionalEmailFeatures, googleWorkspaceFeatures ] }
 				intervalLength={ selectedIntervalLength }
-				isDomainInCart={ isDomainInCart }
 				onSelectEmailProvider={ selectEmailProvider }
 				selectedDomainName={ selectedDomainName }
 			/>

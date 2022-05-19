@@ -60,6 +60,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'starter',
+			steps: [ 'user', 'domains', 'plans-starter' ],
+			destination: getSignupDestination,
+			description: 'Create an account and a blog and then add the starter plan to the users cart.',
+			lastModified: '2022-05-05',
+			showRecaptcha: true,
+		},
+		{
 			name: 'free',
 			steps: [ 'user', 'domains' ],
 			destination: getSignupDestination,

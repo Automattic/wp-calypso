@@ -104,7 +104,7 @@ function FooBar() {
 
 See it in action with some basic configurations (includes both the plain Tour Kit and the WPCOM Tour Kit variant):
 
-`yarn run tour-kit:storybook:start`
+`yarn workspace @automattic/tour-kit run storybook`
 
 ## Accessibility
 

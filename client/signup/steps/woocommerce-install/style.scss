@@ -71,6 +71,7 @@
 		.step-business-info__instructions-container,
 		.step-store-address__instructions-container,
 		.confirm__instructions-container {
+			flex: 1 1 auto;
 			font-size: 0.875rem;
 			letter-spacing: -0.16px;
 			color: var( --studio-gray-60 );

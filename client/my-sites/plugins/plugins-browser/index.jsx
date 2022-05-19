@@ -1,10 +1,6 @@
 import {
-	isBusiness,
-	isEcommerce,
-	isEnterprise,
-	isPro,
+	FEATURE_INSTALL_PLUGINS,
 	findFirstSimilarPlanKey,
-	FEATURE_UPLOAD_PLUGINS,
 	TYPE_BUSINESS,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
@@ -25,7 +21,7 @@ import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import UrlSearch from 'calypso/lib/url-search';
+import useUrlSearch from 'calypso/lib/url-search/use-url-search';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import NoResults from 'calypso/my-sites/no-results';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -47,6 +43,7 @@ import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
+import { getPlugins, isEqualSlugOrId } from 'calypso/state/plugins/installed/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
@@ -73,20 +70,14 @@ import usePlugins from '../use-plugins';
  */
 const SHORT_LIST_LENGTH = 6;
 
-const PluginsBrowser = ( {
-	trackPageViews = true,
-	category,
-	search,
-	searchTitle,
-	hideHeader,
-	doSearch,
-} ) => {
+const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle, hideHeader } ) => {
 	const {
 		isAboveElement,
 		targetRef: searchHeaderRef,
 		referenceRef: navigationHeaderRef,
 	} = useScrollAboveElement();
 
+	const { doSearch } = useUrlSearch();
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -94,13 +85,6 @@ const PluginsBrowser = ( {
 
 	// Billing period switcher.
 	const billingPeriod = useSelector( getBillingInterval );
-
-	const hasBusinessPlan =
-		sitePlan &&
-		( isBusiness( sitePlan ) ||
-			isEnterprise( sitePlan ) ||
-			isEcommerce( sitePlan ) ||
-			isPro( sitePlan ) );
 
 	const { plugins: paidPlugins = [], isFetching: isFetchingPaidPlugins } = usePlugins( {
 		category: 'paid',
@@ -292,7 +276,6 @@ const PluginsBrowser = ( {
 				sitePlan={ sitePlan }
 				isVip={ isVip }
 				jetpackNonAtomic={ jetpackNonAtomic }
-				hasBusinessPlan={ hasBusinessPlan }
 				siteSlug={ siteSlug }
 			/>
 
@@ -334,17 +317,30 @@ const PluginsBrowser = ( {
 	);
 };
 
+const ClearSearch = () => {
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const translate = useTranslate();
+
+	return (
+		<a
+			className={ 'plugins-browser__clear-filters' }
+			href={ '/plugins' + ( siteSlug ? '/' + siteSlug : '' ) }
+		>
+			{ translate( 'Clear' ) }
+		</a>
+	);
+};
 const SearchListView = ( {
 	search: searchTerm,
 	pluginsPagination,
 	pluginsBySearchTerm,
 	fetchNextPage,
 	isFetchingPluginsBySearchTerm,
-	searchTitle: searchTitleTerm,
 	siteSlug,
 	siteId,
 	sites,
 	billingPeriod,
+	categoryName,
 } ) => {
 	const dispatch = useDispatch();
 
@@ -374,36 +370,54 @@ const SearchListView = ( {
 	}, [ searchTerm, pluginsPagination, dispatch, siteId ] );
 
 	if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
-		const searchTitle =
-			searchTitleTerm ||
-			( searchTerm &&
-				translate( 'Search results for {{b}}%(searchTerm)s{{/b}}', {
+		let title = translate( 'Search results for "%(searchTerm)s"', {
+			textOnly: true,
+			args: { searchTerm },
+		} );
+
+		if ( pluginsPagination ) {
+			title = translate(
+				'Found %(total)s plugin for "%(searchTerm)s"',
+				'Found %(total)s plugins for "%(searchTerm)s"',
+				{
+					count: pluginsPagination.results,
 					textOnly: true,
 					args: {
+						total: pluginsPagination.results,
 						searchTerm,
 					},
-					components: {
-						b: <b />,
-					},
-				} ) );
+				}
+			);
 
-		const subtitle =
-			pluginsPagination &&
-			translate( '%(total)s plugin', '%(total)s plugins', {
-				count: pluginsPagination.results,
-				textOnly: true,
-				args: {
-					total: pluginsPagination.results,
-				},
-			} );
+			if ( categoryName ) {
+				title = translate(
+					'Found %(total)s plugin for "%(searchTerm)s" under "%(categoryName)s"',
+					'Found %(total)s plugins for "%(searchTerm)s" under "%(categoryName)s"',
+					{
+						count: pluginsPagination.results,
+						textOnly: true,
+						args: {
+							total: pluginsPagination.results,
+							searchTerm,
+							categoryName,
+						},
+					}
+				);
+			}
+		}
 
 		return (
 			<>
 				<PluginsBrowserList
 					plugins={ pluginsBySearchTerm.filter( isNotBlocked ) }
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
-					title={ searchTitle }
-					subtitle={ subtitle }
+					subtitle={
+						<>
+							{ title }
+							<ClearSearch />
+						</>
+					}
+					showReset={ true }
 					site={ siteSlug }
 					showPlaceholders={ isFetchingPluginsBySearchTerm }
 					currentSites={ sites }
@@ -430,11 +444,17 @@ const FullListView = ( { category, siteSlug, sites, billingPeriod, setBillingPer
 	const isPaidCategory = category === 'paid';
 	const { plugins, isFetching, fetchNextPage } = usePlugins( { category, infinite: true } );
 
+	const categories = useCategories();
+	const categoryName = [ 'paid', 'popular' ].includes( category )
+		? categories[ category ]?.name
+		: null;
+
 	return (
 		<>
 			<PluginsBrowserList
 				plugins={ plugins }
 				listName={ category }
+				title={ categoryName }
 				site={ siteSlug }
 				showPlaceholders={ isFetching }
 				currentSites={ sites }
@@ -470,6 +490,10 @@ const PluginSingleListView = ( {
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
 
+	const installedPlugins = useSelector( ( state ) =>
+		getPlugins( state, siteObjectsToSiteIds( sites ) )
+	);
+
 	let plugins;
 	let isFetching;
 	if ( category === 'popular' ) {
@@ -485,12 +509,19 @@ const PluginSingleListView = ( {
 		return null;
 	}
 
-	plugins = plugins.filter( isNotBlocked );
+	plugins = plugins
+		.filter( isNotBlocked )
+		.filter( ( plugin ) => isNotInstalled( plugin, installedPlugins ) );
 
 	let listLink = '/plugins/' + category;
 	if ( domain ) {
 		listLink = '/plugins/' + category + '/' + domain;
 	}
+
+	if ( ! isFetching && plugins.length === 0 ) {
+		return null;
+	}
+
 	return (
 		<PluginsBrowserList
 			plugins={ plugins.slice( 0, SHORT_LIST_LENGTH ) }
@@ -533,20 +564,13 @@ const PluginBrowserContent = ( props ) => {
 	);
 };
 
-const UpgradeNudge = ( {
-	selectedSite,
-	sitePlan,
-	isVip,
-	jetpackNonAtomic,
-	hasBusinessPlan,
-	siteSlug,
-} ) => {
+const UpgradeNudge = ( { selectedSite, sitePlan, isVip, jetpackNonAtomic, siteSlug } ) => {
 	const translate = useTranslate();
 	const eligibleForProPlan = useSelector( ( state ) =>
 		isEligibleForProPlan( state, selectedSite?.ID )
 	);
 
-	if ( ! selectedSite?.ID || ! sitePlan || isVip || jetpackNonAtomic || hasBusinessPlan ) {
+	if ( ! selectedSite?.ID || ! sitePlan || isVip || jetpackNonAtomic ) {
 		return null;
 	}
 
@@ -565,7 +589,7 @@ const UpgradeNudge = ( {
 			event="calypso_plugins_browser_upgrade_nudge"
 			showIcon={ true }
 			href={ bannerURL }
-			feature={ FEATURE_UPLOAD_PLUGINS }
+			feature={ FEATURE_INSTALL_PLUGINS }
 			plan={ plan }
 			title={ title }
 		/>
@@ -663,4 +687,17 @@ function isNotBlocked( plugin ) {
 	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
 }
 
-export default UrlSearch( PluginsBrowser );
+/**
+ * Returns a boolean indicating if a plugin is already installed or not
+ *
+ * @param plugin plugin object to be tested
+ * @param installedPlugins list of installed plugins aggregated by plugin slug
+ * @returns Boolean weather a plugin is not installed on not
+ */
+function isNotInstalled( plugin, installedPlugins ) {
+	return ! installedPlugins.find( ( installedPlugin ) =>
+		isEqualSlugOrId( plugin.slug, installedPlugin )
+	);
+}
+
+export default PluginsBrowser;

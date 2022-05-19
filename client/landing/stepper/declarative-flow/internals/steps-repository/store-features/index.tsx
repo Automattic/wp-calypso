@@ -7,17 +7,12 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useIntents } from 'calypso/signup/steps/store-features/intents';
+import { StoreFeatureSet } from 'calypso/signup/steps/store-features/types';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import './style.scss';
-
-const trackSupportLinkClick = ( storeType: 'power' | 'simple' ) => {
-	recordTracksEvent( 'calypso_signup_store_feature_support_link_click', {
-		store_feature: storeType,
-	} );
-};
 
 /**
  * The store features
@@ -32,18 +27,28 @@ const StoreFeatures: Step = function StartingPointStep( { navigation } ) {
 	const siteSlug = useSiteSlugParam();
 	const site = useSite();
 	const hasPaymentsFeature = useSelect( ( select ) =>
-		select( SITE_STORE ).hasActiveSiteFeature( site?.ID, FEATURE_SIMPLE_PAYMENTS )
+		select( SITE_STORE ).siteHasFeature( site?.ID, FEATURE_SIMPLE_PAYMENTS )
 	);
 	const hasWooFeature = useSelect( ( select ) =>
-		select( SITE_STORE ).hasActiveSiteFeature( site?.ID, FEATURE_WOOP )
+		select( SITE_STORE ).siteHasFeature( site?.ID, FEATURE_WOOP )
 	);
+	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const trackSupportLinkClick = ( storeType: StoreFeatureSet ) => {
+		recordTracksEvent( 'calypso_signup_store_feature_support_link_click', {
+			store_feature: storeType,
+			intent: getIntent(),
+		} );
+	};
 	const intents = useIntents( siteSlug, hasPaymentsFeature, hasWooFeature, trackSupportLinkClick );
 	const { setStoreType } = useDispatch( ONBOARD_STORE );
 
 	const submitIntent = ( storeType: string ) => {
 		const providedDependencies = { storeType };
 		setStoreType( storeType );
-		recordTracksEvent( 'calypso_signup_store_feature_select', { store_feature: storeType } );
+		recordTracksEvent( 'calypso_signup_store_feature_select', {
+			store_feature: storeType,
+			intent: getIntent(),
+		} );
 		submit?.( providedDependencies, storeType );
 	};
 
@@ -69,6 +74,7 @@ const StoreFeatures: Step = function StartingPointStep( { navigation } ) {
 					preventWidows={ preventWidows }
 				/>
 			}
+			intent={ getIntent() }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

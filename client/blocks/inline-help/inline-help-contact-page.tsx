@@ -1,12 +1,11 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useSupportAvailability } from '@automattic/data-stores';
-import { Icon, comment } from '@wordpress/icons';
+import { Icon, comment, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
+import Mail from './icons/mail';
 import InlineHelpSearchResults from './inline-help-search-results';
-import Mail from './mail-icon';
-
 interface Props {
 	closeContactPage: () => void;
 	onSelectResource: () => void;
@@ -44,7 +43,7 @@ const InlineHelpContactPage: React.FC< Props > = ( {
 	return (
 		<div className="inline-help__contact-page">
 			<Button borderless={ true } onClick={ closeContactPage } className="inline-help__back-button">
-				<Gridicon icon={ 'chevron-left' } size={ 18 } />
+				<Icon icon={ chevronLeft } size={ 18 } />
 				{ __( 'Back' ) }
 			</Button>
 			<div className="inline-help__contact-content">

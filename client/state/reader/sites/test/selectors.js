@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { shouldSiteBeFetched } from '../selectors';
 
 describe( 'selectors', () => {
@@ -19,7 +18,7 @@ describe( 'selectors', () => {
 					},
 					1
 				)
-			).to.be.false;
+			).toBe( false );
 		} );
 
 		test( 'should return false if the site is loaded and recent', () => {
@@ -40,7 +39,7 @@ describe( 'selectors', () => {
 					},
 					1
 				)
-			).to.be.false;
+			).toBe( false );
 		} );
 
 		test( 'should return true if the site is loaded and has no last fetch time', () => {
@@ -59,7 +58,7 @@ describe( 'selectors', () => {
 					},
 					1
 				)
-			).to.be.true;
+			).toBe( true );
 		} );
 
 		test( 'should return true if the site is loaded and was not updated recently', () => {
@@ -80,7 +79,7 @@ describe( 'selectors', () => {
 					},
 					1
 				)
-			).to.be.true;
+			).toBe( true );
 		} );
 
 		test( 'should return true if the site is not queued and not loaded', () => {
@@ -97,7 +96,7 @@ describe( 'selectors', () => {
 					},
 					1
 				)
-			).to.be.true;
+			).toBe( true );
 		} );
 
 		test( 'should still return true if another site is queued or loaded', () => {
@@ -118,7 +117,7 @@ describe( 'selectors', () => {
 					},
 					1
 				)
-			).to.be.true;
+			).toBe( true );
 		} );
 	} );
 } );

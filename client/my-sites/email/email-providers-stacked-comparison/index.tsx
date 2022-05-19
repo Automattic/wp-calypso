@@ -1,3 +1,7 @@
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { stringify } from 'qs';
@@ -6,10 +10,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailExistingPaidServiceNotice from 'calypso/my-sites/email/email-existing-paid-service-notice';
@@ -20,6 +26,8 @@ import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
 import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -48,7 +56,43 @@ const EmailProvidersStackedComparison = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
+	const currentRoute = useSelector( getCurrentRoute );
+
+	const selectedSite = useSelector( getSelectedSite );
+
+	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
+	const domain = getSelectedDomain( {
+		domains,
+		selectedDomainName: selectedDomainName,
+	} );
+	const domainsWithForwards = useSelector( ( state ) => getDomainsWithForwards( state, domains ) );
+
+	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
+
+	const gSuiteProduct = useSelector( ( state ) =>
+		getProductBySlug(
+			state,
+			selectedIntervalLength === IntervalLength.MONTHLY
+				? GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY
+				: GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
+		)
+	);
+
+	const isGSuiteSupported =
+		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
+
+	const shouldPromoteGoogleWorkspace = isGSuiteSupported && source === 'google-sale';
+
 	const [ detailsExpanded, setDetailsExpanded ] = useState( () => {
+		const hasDiscountForGSuite = hasDiscount( gSuiteProduct );
+
+		if ( shouldPromoteGoogleWorkspace && ! selectedEmailProviderSlug && hasDiscountForGSuite ) {
+			return {
+				google: true,
+				titan: false,
+			};
+		}
+
 		if ( selectedEmailProviderSlug === GOOGLE_WORKSPACE_PRODUCT_TYPE ) {
 			return {
 				titan: false,
@@ -61,17 +105,6 @@ const EmailProvidersStackedComparison = ( {
 			google: false,
 		};
 	} );
-
-	const currentRoute = useSelector( getCurrentRoute );
-
-	const selectedSite = useSelector( getSelectedSite );
-
-	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
-	const domain = getSelectedDomain( {
-		domains,
-		selectedDomainName: selectedDomainName,
-	} );
-	const domainsWithForwards = useSelector( ( state ) => getDomainsWithForwards( state, domains ) );
 
 	const changeExpandedState = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
 		const expandedEntries = Object.entries( detailsExpanded ).map( ( entry ) => {
@@ -121,6 +154,7 @@ const EmailProvidersStackedComparison = ( {
 			recordTracksEvent( 'calypso_email_providers_compare_link_click', {
 				domain_name: selectedDomainName,
 				interval: selectedIntervalLength,
+				source,
 			} )
 		);
 	};
@@ -130,6 +164,27 @@ const EmailProvidersStackedComparison = ( {
 	}
 
 	const hasExistingEmailForwards = ! isDomainInCart && hasEmailForwards( domain );
+
+	const emailProviderCards = [
+		<ProfessionalEmailCard
+			comparisonContext={ comparisonContext }
+			detailsExpanded={ detailsExpanded.titan }
+			intervalLength={ selectedIntervalLength }
+			isDomainInCart={ isDomainInCart }
+			onExpandedChange={ changeExpandedState }
+			selectedDomainName={ selectedDomainName }
+			source={ source }
+		/>,
+		<GoogleWorkspaceCard
+			comparisonContext={ comparisonContext }
+			detailsExpanded={ detailsExpanded.google }
+			intervalLength={ selectedIntervalLength }
+			isDomainInCart={ isDomainInCart }
+			onExpandedChange={ changeExpandedState }
+			selectedDomainName={ selectedDomainName }
+			source={ source }
+		/>,
+	];
 
 	return (
 		<Main wideLayout>
@@ -153,7 +208,7 @@ const EmailProvidersStackedComparison = ( {
 										selectedSite.slug,
 										selectedDomainName,
 										currentRoute,
-										null,
+										source,
 										selectedIntervalLength
 									) }
 									onClick={ handleCompareClick }
@@ -178,25 +233,9 @@ const EmailProvidersStackedComparison = ( {
 
 			{ ! isDomainInCart && domain && <EmailExistingPaidServiceNotice domain={ domain } /> }
 
-			<ProfessionalEmailCard
-				comparisonContext={ comparisonContext }
-				detailsExpanded={ detailsExpanded.titan }
-				intervalLength={ selectedIntervalLength }
-				isDomainInCart={ isDomainInCart }
-				onExpandedChange={ changeExpandedState }
-				selectedDomainName={ selectedDomainName }
-				source={ source }
-			/>
-
-			<GoogleWorkspaceCard
-				comparisonContext={ comparisonContext }
-				detailsExpanded={ detailsExpanded.google }
-				intervalLength={ selectedIntervalLength }
-				isDomainInCart={ isDomainInCart }
-				onExpandedChange={ changeExpandedState }
-				selectedDomainName={ selectedDomainName }
-				source={ source }
-			/>
+			<>
+				{ shouldPromoteGoogleWorkspace ? [ ...emailProviderCards ].reverse() : emailProviderCards }
+			</>
 
 			{ ! isDomainInCart && <EmailForwardingLink selectedDomainName={ selectedDomainName } /> }
 

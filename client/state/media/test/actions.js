@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	MEDIA_DELETE,
 	MEDIA_ITEM_REQUEST,
@@ -20,7 +19,7 @@ describe( 'media - actions - sync', () => {
 			test( 'should return an action object', () => {
 				const action = receiveMedia( 2916284, { ID: 42, title: 'flowers' } );
 
-				expect( action ).to.eql( {
+				expect( action ).toEqual( {
 					type: MEDIA_RECEIVE,
 					siteId: 2916284,
 					media: [ { ID: 42, title: 'flowers' } ],
@@ -34,7 +33,7 @@ describe( 'media - actions - sync', () => {
 			test( 'should return an action object', () => {
 				const action = receiveMedia( 2916284, [ { ID: 42, title: 'flowers' } ] );
 
-				expect( action ).to.eql( {
+				expect( action ).toEqual( {
 					type: MEDIA_RECEIVE,
 					siteId: 2916284,
 					media: [ { ID: 42, title: 'flowers' } ],
@@ -50,7 +49,7 @@ describe( 'media - actions - sync', () => {
 					search: 'flowers',
 				} );
 
-				expect( action ).to.eql( {
+				expect( action ).toEqual( {
 					type: MEDIA_RECEIVE,
 					siteId: 2916284,
 					media: [ { ID: 42, title: 'flowers' } ],
@@ -66,7 +65,7 @@ describe( 'media - actions - sync', () => {
 			test( 'should return an action object', () => {
 				const action = deleteMedia( 2916284, 42 );
 
-				expect( action ).to.eql( {
+				expect( action ).toEqual( {
 					type: MEDIA_DELETE,
 					siteId: 2916284,
 					mediaIds: [ 42 ],
@@ -78,7 +77,7 @@ describe( 'media - actions - sync', () => {
 			test( 'should return an action object', () => {
 				const action = deleteMedia( 2916284, [ 42 ] );
 
-				expect( action ).to.eql( {
+				expect( action ).toEqual( {
 					type: MEDIA_DELETE,
 					siteId: 2916284,
 					mediaIds: [ 42 ],
@@ -91,7 +90,7 @@ describe( 'media - actions - sync', () => {
 		test( 'should return an action object', () => {
 			const action = requestMediaItem( 2916284, 2454 );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: MEDIA_ITEM_REQUEST,
 				siteId: 2916284,
 				mediaId: 2454,
@@ -103,7 +102,7 @@ describe( 'media - actions - sync', () => {
 		test( 'should return an action object', () => {
 			const action = successMediaItemRequest( 2916284, 2454 );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: MEDIA_ITEM_REQUEST_SUCCESS,
 				siteId: 2916284,
 				mediaId: 2454,
@@ -115,7 +114,7 @@ describe( 'media - actions - sync', () => {
 		test( 'should return an action object', () => {
 			const action = failMediaItemRequest( 2916284, 2454 );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: MEDIA_ITEM_REQUEST_FAILURE,
 				siteId: 2916284,
 				mediaId: 2454,

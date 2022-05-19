@@ -9,6 +9,9 @@ function PlanPriceExample() {
 			<h3>Plan with a price range</h3>
 			<PlanPrice rawPrice={ [ 99.99, 139.99 ] } />
 			<br />
+			<h3>Plan with a price of '0'</h3>
+			<PlanPrice rawPrice={ 0 } />
+			<br />
 			<h3>Plan with discounted price</h3>
 			<div style={ { display: 'flex' } }>
 				<PlanPrice rawPrice={ 8.25 } original />

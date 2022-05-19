@@ -1,21 +1,21 @@
 import apiFetch from '@wordpress/api-fetch';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from 'react';
-import { ONBOARD_STORE } from '../stores';
+import { useEffect, useState } from 'react';
 import { useAnchorFmParams } from './use-anchor-fm-params';
 
 export default function usePodcastTitle(): string | null {
-	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
-	const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 	const { anchorFmPodcastId } = useAnchorFmParams();
+	const [ siteTitle, setSiteTitle ] = useState( '' );
 	interface PodcastDetails {
 		title?: string;
 	}
 
 	useEffect( () => {
+		let isMounted = true;
+
 		if ( ! anchorFmPodcastId ) {
 			return;
 		}
+
 		// Fetch podcast title from /podcast-details endpoint
 		apiFetch< PodcastDetails >( {
 			path: `https://public-api.wordpress.com/wpcom/v2/podcast-details?url=https://anchor.fm/s/${ encodeURIComponent(
@@ -23,13 +23,17 @@ export default function usePodcastTitle(): string | null {
 			) }/podcast/rss&_fields=title`,
 		} )
 			.then( ( response ) => {
-				if ( response?.title ) {
+				if ( response?.title && isMounted ) {
 					setSiteTitle( response.title );
 				}
 			} )
 			.catch( () => {
-				setSiteTitle( '' );
+				isMounted && setSiteTitle( '' );
 			} );
+		return () => {
+			isMounted = false;
+		}; //Cleanup when we've finished mounting
 	}, [ anchorFmPodcastId ] );
+
 	return siteTitle;
 }

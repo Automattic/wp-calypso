@@ -45,8 +45,8 @@ describe( 'index', () => {
 
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			expect( ReactDom.findDOMNode( component ).textContent ).toContain(
-				'If you are unable to access your site at {{strong}}%(domainName)s{{/strong}}'
+			expect( ReactDom.findDOMNode( component ) ).toHaveTextContent(
+				/If you are unable to access your site at \{\{strong\}\}%\(domainName\)s\{\{\/strong\}\}/
 			);
 		} );
 	} );
@@ -67,8 +67,8 @@ describe( 'index', () => {
 
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			expect( ReactDom.findDOMNode( component ).textContent ).toContain(
-				'We are setting up {{strong}}%(domainName)s{{/strong}} for you'
+			expect( ReactDom.findDOMNode( component ) ).toHaveTextContent(
+				/We are setting up \{\{strong\}\}%\(domainName\)s\{\{\/strong\}\} for you/
 			);
 		} );
 
@@ -95,8 +95,8 @@ describe( 'index', () => {
 
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			expect( ReactDom.findDOMNode( component ).textContent ).toContain(
-				'We are setting up your new domains for you'
+			expect( ReactDom.findDOMNode( component ) ).toHaveTextContent(
+				/We are setting up your new domains for you/
 			);
 		} );
 	} );

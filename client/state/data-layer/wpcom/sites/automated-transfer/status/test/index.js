@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	fetchAutomatedTransferStatus,
@@ -26,7 +24,7 @@ const IN_PROGRESS_RESPONSE = {
 
 describe( 'requestStatus', () => {
 	test( 'should dispatch an http request', () => {
-		expect( requestStatus( { siteId } ) ).to.eql(
+		expect( requestStatus( { siteId } ) ).toEqual(
 			http(
 				{
 					method: 'GET',
@@ -44,19 +42,19 @@ describe( 'receiveStatus', () => {
 	useFakeTimers( ( fakeClock ) => ( clock = fakeClock ) );
 
 	test( 'should dispatch set status action', () => {
-		const dispatch = sinon.spy();
+		const dispatch = jest.fn();
 		receiveStatus( { siteId }, COMPLETE_RESPONSE )( dispatch );
-		expect( dispatch ).to.have.callCount( 3 );
-		expect( dispatch ).to.have.been.calledWith(
+		expect( dispatch ).toBeCalledTimes( 3 );
+		expect( dispatch ).toBeCalledWith(
 			setAutomatedTransferStatus( siteId, 'complete', 'hello-dolly' )
 		);
 	} );
 
 	test( 'should dispatch tracks event if complete', () => {
-		const dispatch = sinon.spy();
+		const dispatch = jest.fn();
 		receiveStatus( { siteId }, COMPLETE_RESPONSE )( dispatch );
-		expect( dispatch ).to.have.callCount( 3 );
-		expect( dispatch ).to.have.been.calledWith(
+		expect( dispatch ).toBeCalledTimes( 3 );
+		expect( dispatch ).toBeCalledWith(
 			recordTracksEvent( 'calypso_automated_transfer_complete', {
 				context: 'plugin_upload',
 				transfer_id: 1,
@@ -66,11 +64,11 @@ describe( 'receiveStatus', () => {
 	} );
 
 	test( 'should request status again if not complete', () => {
-		const dispatch = sinon.spy();
+		const dispatch = jest.fn();
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 		clock.tick( 4000 );
 
-		expect( dispatch ).to.have.been.calledTwice;
-		expect( dispatch ).to.have.been.calledWith( fetchAutomatedTransferStatus( siteId ) );
+		expect( dispatch ).toBeCalledTimes( 2 );
+		expect( dispatch ).toBeCalledWith( fetchAutomatedTransferStatus( siteId ) );
 	} );
 } );

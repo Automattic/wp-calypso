@@ -1,4 +1,4 @@
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, test, jest } from '@jest/globals';
 import {
 	getRandomInteger,
 	getAccountCredential,
@@ -7,6 +7,23 @@ import {
 	toTitleCase,
 	createSuiteTitle,
 } from '../src/data-helper';
+import { Secrets, SecretsManager } from '../src/secrets';
+
+const fakeSecrets = {
+	testAccounts: {
+		basicUser: {
+			username: 'wpcomuser2',
+			password: 'hunter2',
+			primarySite: 'wpcomuser.wordpress.com/',
+		},
+		noUrlUser: {
+			username: 'nourluser',
+			password: 'password1234',
+		},
+	},
+} as unknown as Secrets;
+
+jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
 
 describe( 'DataHelper Tests', function () {
 	describe( `Test: getRandomInteger`, function () {
@@ -41,8 +58,8 @@ describe( 'DataHelper Tests', function () {
 	describe( `Test: getAccountCredential`, function () {
 		test.each`
 			accountType      | expected
-			${ 'basicUser' } | ${ [ 'wpcomuser', 'hunter2' ] }
-			${ 'noURLUser' } | ${ [ 'nourluser', 'password1234' ] }
+			${ 'basicUser' } | ${ { username: 'wpcomuser2', password: 'hunter2', totpKey: undefined } }
+			${ 'noUrlUser' } | ${ { username: 'nourluser', password: 'password1234', totpKey: undefined } }
 		`(
 			'Returns $expected if getAccountCredential is called with $accountType',
 			function ( { accountType, expected } ) {
@@ -63,9 +80,8 @@ describe( 'DataHelper Tests', function () {
 
 	describe( `Test: getAccountSiteURL`, function () {
 		test.each`
-			accountType         | expected
-			${ 'basicUser' }    | ${ 'https://wpcomuser.wordpress.com/' }
-			${ 'advancedUser' } | ${ 'https://advancedwpcomuser.wordpress.com/' }
+			accountType      | expected
+			${ 'basicUser' } | ${ 'https://wpcomuser.wordpress.com/' }
 		`(
 			'Returns $expected if getAccountSiteURL is called with $accountType',
 			function ( { accountType, expected } ) {
@@ -76,7 +92,7 @@ describe( 'DataHelper Tests', function () {
 		test.each`
 			accountType             | expected
 			${ 'nonexistent_user' } | ${ Error }
-			${ 'noURLUser' }        | ${ ReferenceError }
+			${ 'noUrlUser' }        | ${ ReferenceError }
 		`(
 			'Throws error if getAccountSiteURL is called with $accountType',
 			function ( { accountType, expected } ) {

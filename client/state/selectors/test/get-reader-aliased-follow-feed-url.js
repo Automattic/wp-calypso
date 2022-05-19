@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
 
 const site1UrlKey = 'discover.wordpress.com';
@@ -29,20 +28,20 @@ describe( 'getReaderAliasedFollowFeedUrl()', () => {
 
 	test( 'should return passed in url if it cannot find anything', () => {
 		const feedUrl = getReaderAliasedFollowFeedUrl( state, 'http://croissant.happy' );
-		expect( feedUrl ).eql( 'http://croissant.happy' );
+		expect( feedUrl ).toEqual( 'http://croissant.happy' );
 	} );
 
 	test( 'should return exact match when it exists in state', () => {
 		const feedUrl = getReaderAliasedFollowFeedUrl( state, site1UrlKey );
-		expect( feedUrl ).eql( site1UrlKey );
+		expect( feedUrl ).toEqual( site1UrlKey );
 	} );
 
 	test( 'should utilize aliases within follow object to figure out a feed_url', () => {
 		const feedUrl1 = getReaderAliasedFollowFeedUrl( state, site1Aliases[ 0 ] );
-		expect( feedUrl1 ).eql( site1UrlKey );
+		expect( feedUrl1 ).toEqual( site1UrlKey );
 
 		const feedUrl2 = getReaderAliasedFollowFeedUrl( state, site1Aliases[ 1 ] );
-		expect( feedUrl2 ).eql( site1UrlKey );
+		expect( feedUrl2 ).toEqual( site1UrlKey );
 	} );
 
 	test( 'should try to guess basic rss/feed extensions', () => {
@@ -51,9 +50,9 @@ describe( 'getReaderAliasedFollowFeedUrl()', () => {
 		const feedUrlC = getReaderAliasedFollowFeedUrl( state, 'siteC' );
 		const feedUrlD = getReaderAliasedFollowFeedUrl( state, 'siteD' );
 
-		expect( feedUrlA ).eql( siteA );
-		expect( feedUrlB ).eql( siteB );
-		expect( feedUrlC ).eql( siteC );
-		expect( feedUrlD ).eql( siteD );
+		expect( feedUrlA ).toEqual( siteA );
+		expect( feedUrlB ).toEqual( siteB );
+		expect( feedUrlC ).toEqual( siteC );
+		expect( feedUrlD ).toEqual( siteD );
 	} );
 } );

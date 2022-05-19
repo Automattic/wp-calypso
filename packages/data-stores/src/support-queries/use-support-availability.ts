@@ -18,6 +18,7 @@ export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'EMAIL' >(
 			} ),
 		{
 			refetchOnWindowFocus: false,
+			keepPreviousData: true,
 		}
 	);
 }

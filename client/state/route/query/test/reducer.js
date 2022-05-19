@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { ROUTE_SET } from 'calypso/state/action-types';
 import path from '../reducer';
 
@@ -9,11 +8,11 @@ describe( 'reducer', () => {
 			query: { retry: 1, lang: 'fr' },
 		} );
 
-		expect( state.initial.retry ).to.equal( 1 );
-		expect( state.initial.lang ).to.equal( 'fr' );
-		expect( state.current.retry ).to.equal( 1 );
-		expect( state.current.lang ).to.equal( 'fr' );
-		expect( state.previous ).to.equal( false );
+		expect( state.initial.retry ).toEqual( 1 );
+		expect( state.initial.lang ).toEqual( 'fr' );
+		expect( state.current.retry ).toEqual( 1 );
+		expect( state.current.lang ).toEqual( 'fr' );
+		expect( state.previous ).toEqual( false );
 	} );
 
 	it( 'should only update current query the second time a ROUTE_SET action is triggered', () => {
@@ -27,11 +26,11 @@ describe( 'reducer', () => {
 			query: { retry: 2 },
 		} );
 
-		expect( state.initial.retry ).to.equal( 1 );
-		expect( state.initial.lang ).to.equal( 'fr' );
-		expect( state.current.retry ).to.equal( 2 );
-		expect( state.current.lang ).to.equal( undefined );
-		expect( state.previous.retry ).to.equal( 1 );
-		expect( state.previous.lang ).to.equal( 'fr' );
+		expect( state.initial.retry ).toEqual( 1 );
+		expect( state.initial.lang ).toEqual( 'fr' );
+		expect( state.current.retry ).toEqual( 2 );
+		expect( state.current.lang ).toBeUndefined();
+		expect( state.previous.retry ).toEqual( 1 );
+		expect( state.previous.lang ).toEqual( 'fr' );
 	} );
 } );

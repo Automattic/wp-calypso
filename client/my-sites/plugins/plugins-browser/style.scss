@@ -29,3 +29,9 @@
 		}
 	}
 }
+
+.plugins-browser__clear-filters, .plugins-browser__clear-filters:visited {
+	margin-left: 10px;
+	text-decoration: underline;
+	color: var( --studio-black );
+}

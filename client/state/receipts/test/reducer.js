@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	RECEIPT_FETCH,
 	RECEIPT_FETCH_COMPLETED,
@@ -11,7 +10,7 @@ describe( 'reducer', () => {
 		test( 'should return an empty state when original state is undefined and action is empty', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should return the initial state with requesting enabled when fetching is triggered', () => {
@@ -20,7 +19,7 @@ describe( 'reducer', () => {
 				receiptId: 11111111,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: null,
 					error: null,
@@ -45,7 +44,7 @@ describe( 'reducer', () => {
 				error: 'Unable to fetch the receipt.',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: null,
 					error: 'Unable to fetch the receipt.',
@@ -70,7 +69,7 @@ describe( 'reducer', () => {
 				receipt: { amount: 20 },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				11111111: {
 					data: { amount: 20 },
 					error: null,

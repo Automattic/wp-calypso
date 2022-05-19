@@ -45,7 +45,6 @@ export function getSiteKeyringsForService( state, siteId, service ) {
  * @param  {number}  siteId         Site ID
  * @param  {number}  keyringId      Keyring Id
  * @param  {string}  externalUserId External User Id on the keyring
- *
  * @returns {?object}                Site Keyring connection
  */
 export function getSiteKeyringConnection( state, siteId, keyringId, externalUserId = null ) {

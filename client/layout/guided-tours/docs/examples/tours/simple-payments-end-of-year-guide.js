@@ -1,3 +1,4 @@
+import { FEATURE_SIMPLE_PAYMENTS } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isDesktop } from '@automattic/viewport';
@@ -13,7 +14,14 @@ import {
 	Link,
 } from 'calypso/layout/guided-tours/config-elements';
 import { and } from 'calypso/layout/guided-tours/utils';
-import { hasSelectedSitePremiumOrBusinessPlan } from '../selectors/has-selected-site-premium-or-business-plan';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+
+const hasSimplePaymentFeature = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+
+	return siteHasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS );
+};
 
 export const SimplePaymentsEndOfYearGuide = makeTour(
 	<Tour
@@ -33,7 +41,7 @@ export const SimplePaymentsEndOfYearGuide = makeTour(
 			'/plugins',
 			'/settings',
 		] }
-		when={ and( isDesktop, hasSelectedSitePremiumOrBusinessPlan ) }
+		when={ and( isDesktop, hasSimplePaymentFeature ) }
 	>
 		<Step name="init" placement="right">
 			{ ( { translate } ) => (

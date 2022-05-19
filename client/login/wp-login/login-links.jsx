@@ -247,6 +247,31 @@ export class LoginLinks extends Component {
 		);
 	}
 
+	renderQrCodeLoginLink() {
+		if ( ! config.isEnabled( 'login/qr-code-login' ) || this.props.twoFactorAuthType ) {
+			return null;
+		}
+		if ( this.props.isLoggedIn ) {
+			return null;
+		}
+
+		// Is not supported for any oauth 2 client.
+		if ( this.props.oauth2Client ) {
+			return null;
+		}
+
+		if ( this.props.isJetpackWooCommerceFlow ) {
+			return null;
+		}
+
+		const loginUrl = login( {
+			locale: this.props.locale,
+			twoFactorAuthType: 'qr',
+			signupUrl: this.props.query?.signup_url,
+		} );
+		return <a href={ loginUrl }>{ this.props.translate( 'Login via the mobile app' ) }</a>;
+	}
+
 	renderResetPasswordLink() {
 		if ( this.props.twoFactorAuthType || this.props.privateSite ) {
 			return null;
@@ -336,6 +361,7 @@ export class LoginLinks extends Component {
 				{ this.renderLostPhoneLink() }
 				{ this.renderHelpLink() }
 				{ this.renderMagicLoginLink() }
+				{ this.renderQrCodeLoginLink() }
 				{ this.renderResetPasswordLink() }
 				{ ! config.isEnabled( 'desktop' ) && this.renderBackLink() }
 			</div>

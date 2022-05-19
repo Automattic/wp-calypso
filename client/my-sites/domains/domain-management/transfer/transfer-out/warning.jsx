@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
@@ -29,7 +30,11 @@ export default function TransferOutWarning( { domainName, selectedSiteSlug } ) {
 					},
 				}
 			) }{ ' ' }
-			<a href={ TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer">
+			<a
+				href={ localizeUrl( TRANSFER_DOMAIN_REGISTRATION ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			>
 				{ translate( 'Learn more about domain transfers.' ) }
 			</a>
 		</p>

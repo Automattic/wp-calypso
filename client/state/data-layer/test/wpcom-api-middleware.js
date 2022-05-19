@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import { spy, stub } from 'sinon';
 import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 import { bypassDataLayer } from '../utils';
 import { middleware } from '../wpcom-api-middleware';
@@ -9,16 +7,16 @@ describe( 'WordPress.com API Middleware', () => {
 	let store;
 
 	beforeEach( () => {
-		next = spy();
+		next = jest.fn();
 
 		store = {
-			dispatch: spy(),
-			getState: stub(),
-			replaceReducers: spy(),
-			subscribe: spy(),
+			dispatch: jest.fn(),
+			getState: jest.fn(),
+			replaceReducers: jest.fn(),
+			subscribe: jest.fn(),
 		};
 
-		store.getState.returns( Object.create( null ) );
+		store.getState.mockReturnValue( Object.create( null ) );
 	} );
 
 	test( 'should pass along actions without corresponding handlers', () => {
@@ -27,12 +25,12 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( store.dispatch ).to.not.have.been.called;
-		expect( next ).to.have.been.calledWith( action );
+		expect( store.dispatch ).not.toBeCalled();
+		expect( next ).toBeCalledWith( action );
 	} );
 
 	test( 'should pass along local actions untouched', () => {
-		const adder = spy();
+		const adder = jest.fn();
 		const handlers = mergeHandlers( {
 			[ 'ADD' ]: [ adder ],
 		} );
@@ -40,12 +38,12 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( next ).to.have.been.calledWith( action );
-		expect( adder ).to.not.have.been.called;
+		expect( next ).toBeCalledWith( action );
+		expect( adder ).not.toBeCalled();
 	} );
 
 	test( 'should pass along non-local actions with non data-layer meta', () => {
-		const adder = spy();
+		const adder = jest.fn();
 		const handlers = mergeHandlers( {
 			[ 'ADD' ]: [ adder ],
 		} );
@@ -53,12 +51,12 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( next ).to.have.been.calledOnce;
-		expect( adder ).to.have.been.calledWith( store, action );
+		expect( next ).toBeCalledTimes( 1 );
+		expect( adder ).toBeCalledWith( store, action );
 	} );
 
 	test( 'should pass non-local actions with data-layer meta but no bypass', () => {
-		const adder = spy();
+		const adder = jest.fn();
 		const handlers = mergeHandlers( {
 			[ 'ADD' ]: [ adder ],
 		} );
@@ -66,12 +64,12 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( next ).to.have.been.calledOnce;
-		expect( adder ).to.have.been.calledWith( store, action );
+		expect( next ).toBeCalledTimes( 1 );
+		expect( adder ).toBeCalledWith( store, action );
 	} );
 
 	test( 'should intercept actions in appropriate handler', () => {
-		const adder = spy();
+		const adder = jest.fn();
 		const handlers = mergeHandlers( {
 			[ 'ADD' ]: [ adder ],
 		} );
@@ -79,12 +77,12 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( next ).to.not.have.been.calledWith( action );
-		expect( adder ).to.have.been.calledWith( store, action );
+		expect( next ).not.toBeCalledWith( action );
+		expect( adder ).toBeCalledWith( store, action );
 	} );
 
 	test( 'should allow continuing the action down the chain', () => {
-		const adder = spy( () => {} );
+		const adder = jest.fn( () => {} );
 		const handlers = mergeHandlers( {
 			[ 'ADD' ]: [ adder ],
 		} );
@@ -92,14 +90,14 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( next ).to.have.been.calledOnce;
-		expect( next ).to.have.been.calledWith( bypassDataLayer( action ) );
-		expect( adder ).to.have.been.calledWith( store, action );
+		expect( next ).toBeCalledTimes( 1 );
+		expect( next ).toBeCalledWith( bypassDataLayer( action ) );
+		expect( adder ).toBeCalledWith( store, action );
 	} );
 
 	test( 'should call all given handlers (same list)', () => {
-		const adder = spy();
-		const doubler = spy();
+		const adder = jest.fn();
+		const doubler = jest.fn();
 		const handlers = mergeHandlers( {
 			[ 'MATHS' ]: [ adder, doubler ],
 		} );
@@ -107,14 +105,14 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( adder ).to.have.been.calledWith( store, action );
-		expect( doubler ).to.have.been.calledWith( store, action );
-		expect( next ).to.have.been.calledOnce;
+		expect( adder ).toBeCalledWith( store, action );
+		expect( doubler ).toBeCalledWith( store, action );
+		expect( next ).toBeCalledTimes( 1 );
 	} );
 
 	test( 'should call all given handlers (different lists)', () => {
-		const adder = spy();
-		const doubler = spy();
+		const adder = jest.fn();
+		const doubler = jest.fn();
 		const handlers = mergeHandlers(
 			{
 				[ 'MATHS' ]: [ adder ],
@@ -127,9 +125,9 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( adder ).to.have.been.calledWith( store, action );
-		expect( doubler ).to.have.been.calledWith( store, action );
-		expect( next ).to.have.been.calledOnce;
+		expect( adder ).toBeCalledWith( store, action );
+		expect( doubler ).toBeCalledWith( store, action );
+		expect( next ).toBeCalledTimes( 1 );
 	} );
 
 	describe( 'network response', () => {
@@ -138,7 +136,7 @@ describe( 'WordPress.com API Middleware', () => {
 		const action = { type: 'ADD' };
 
 		beforeEach( () => {
-			adder = spy();
+			adder = jest.fn();
 			handlers = mergeHandlers( {
 				[ 'ADD' ]: [ adder ],
 			} );
@@ -152,7 +150,7 @@ describe( 'WordPress.com API Middleware', () => {
 				meta,
 			} );
 
-			expect( next ).to.have.not.been.called;
+			expect( next ).not.toBeCalled();
 		} );
 
 		test( 'should not pass along actions for a network response that contains data', () => {
@@ -163,7 +161,7 @@ describe( 'WordPress.com API Middleware', () => {
 				meta,
 			} );
 
-			expect( next ).to.have.not.been.called;
+			expect( next ).not.toBeCalled();
 		} );
 
 		test( 'should not pass along actions for a network response that contains an error', () => {
@@ -174,7 +172,7 @@ describe( 'WordPress.com API Middleware', () => {
 				meta,
 			} );
 
-			expect( next ).to.have.not.been.called;
+			expect( next ).not.toBeCalled();
 		} );
 
 		test( 'should not pass along actions for a network response that contains a progress report', () => {
@@ -185,7 +183,7 @@ describe( 'WordPress.com API Middleware', () => {
 				meta,
 			} );
 
-			expect( next ).to.have.not.been.called;
+			expect( next ).not.toBeCalled();
 		} );
 	} );
 } );

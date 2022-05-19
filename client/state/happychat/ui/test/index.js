@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_FOCUS,
@@ -18,47 +17,47 @@ describe( 'reducers', () => {
 		Date.now.mockReturnValue( NOW );
 
 		test( 'defaults to null', () => {
-			expect( lostFocusAt( undefined, {} ) ).to.be.null;
+			expect( lostFocusAt( undefined, {} ) ).toBeNull();
 		} );
 
 		test( 'serializes to Date.now() if state is null', () => {
-			expect( serialize( lostFocusAt, null ) ).to.eql( NOW );
+			expect( serialize( lostFocusAt, null ) ).toEqual( NOW );
 		} );
 
 		test( 'deserializes a valid value', () => {
-			expect( deserialize( lostFocusAt, 1 ) ).eql( 1 );
+			expect( deserialize( lostFocusAt, 1 ) ).toEqual( 1 );
 		} );
 
 		test( 'does not deserializes invalid values', () => {
-			expect( deserialize( lostFocusAt, {} ) ).eql( null );
-			expect( deserialize( lostFocusAt, '1' ) ).eql( null );
+			expect( deserialize( lostFocusAt, {} ) ).toBeNull();
+			expect( deserialize( lostFocusAt, '1' ) ).toBeNull();
 		} );
 
 		test( 'returns Date.now() on HAPPYCHAT_BLUR actions', () => {
-			expect( lostFocusAt( null, { type: HAPPYCHAT_BLUR } ) ).to.eql( NOW );
+			expect( lostFocusAt( null, { type: HAPPYCHAT_BLUR } ) ).toEqual( NOW );
 		} );
 
 		test( 'returns null on HAPPYCHAT_FOCUS actions', () => {
-			expect( lostFocusAt( 12345, { type: HAPPYCHAT_FOCUS } ) ).to.be.null;
+			expect( lostFocusAt( 12345, { type: HAPPYCHAT_FOCUS } ) ).toBeNull();
 		} );
 	} );
 
 	describe( '#message()', () => {
 		test( 'defaults to an empty string', () => {
 			const result = currentMessage( undefined, {} );
-			expect( result ).to.eql( '' );
+			expect( result ).toEqual( '' );
 		} );
 
 		test( 'saves messages passed from HAPPYCHAT_SET_CURRENT_MESSAGE', () => {
 			const action = { type: HAPPYCHAT_SET_CURRENT_MESSAGE, message: 'abcd' };
 			const result = currentMessage( undefined, action );
-			expect( result ).to.eql( 'abcd' );
+			expect( result ).toEqual( 'abcd' );
 		} );
 
 		test( 'resets to empty string on HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE', () => {
 			const action = { type: HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE, payload: { message: 'abcd' } };
 			const result = currentMessage( 'abcd', action );
-			expect( result ).to.eql( '' );
+			expect( result ).toEqual( '' );
 		} );
 	} );
 } );

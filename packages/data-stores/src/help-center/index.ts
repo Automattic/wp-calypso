@@ -7,13 +7,19 @@ import * as selectors from './selectors';
 export type { State };
 import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 
+let isRegistered = false;
+
 export function register(): typeof STORE_KEY {
-	registerStore< State >( STORE_KEY, {
-		actions,
-		reducer: reducer as any, // eslint-disable-line @typescript-eslint/no-explicit-any
-		controls,
-		selectors,
-	} );
+	if ( ! isRegistered ) {
+		registerStore< State >( STORE_KEY, {
+			actions,
+			reducer: reducer as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+			controls,
+			selectors,
+			persist: [ 'site' ],
+		} );
+		isRegistered = true;
+	}
 
 	return STORE_KEY;
 }

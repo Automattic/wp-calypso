@@ -17,7 +17,8 @@ describe( 'External Link', () => {
 
 	test( 'should have href if provided', () => {
 		const { container } = render( <ExternalLink href="http://foobar.bang" /> );
-		expect( container.getElementsByTagName( 'a' )[ 0 ].getAttribute( 'href' ) ).toEqual(
+		expect( container.getElementsByTagName( 'a' )[ 0 ] ).toHaveAttribute(
+			'href',
 			'http://foobar.bang'
 		);
 	} );
@@ -29,9 +30,7 @@ describe( 'External Link', () => {
 
 	test( 'should have a target if given one', () => {
 		const { container } = render( <ExternalLink target="_blank" /> );
-		expect( container.getElementsByTagName( 'a' )[ 0 ].getAttribute( 'target' ) ).toEqual(
-			'_blank'
-		);
+		expect( container.getElementsByTagName( 'a' )[ 0 ] ).toHaveAttribute( 'target', '_blank' );
 	} );
 
 	test( 'should have an icon className if specified', () => {
@@ -42,15 +41,15 @@ describe( 'External Link', () => {
 	test( 'should have an icon default size of 18', () => {
 		const { container } = render( <ExternalLink icon={ true } iconClassName="foo" /> );
 		const gridicon = container.getElementsByTagName( 'svg' )[ 0 ];
-		expect( gridicon.getAttribute( 'width' ) ).toEqual( '18' );
-		expect( gridicon.getAttribute( 'height' ) ).toEqual( '18' );
+		expect( gridicon ).toHaveAttribute( 'width', '18' );
+		expect( gridicon ).toHaveAttribute( 'height', '18' );
 	} );
 
 	test( 'should have an icon size that is provided', () => {
 		const { container } = render( <ExternalLink icon={ true } iconSize={ 20 } /> );
 		const gridicon = container.getElementsByTagName( 'svg' )[ 0 ];
-		expect( gridicon.getAttribute( 'width' ) ).toEqual( '20' );
-		expect( gridicon.getAttribute( 'height' ) ).toEqual( '20' );
+		expect( gridicon ).toHaveAttribute( 'width', '20' );
+		expect( gridicon ).toHaveAttribute( 'height', '20' );
 	} );
 
 	test( 'should have icon first if specified', () => {

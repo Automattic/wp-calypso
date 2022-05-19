@@ -1,4 +1,5 @@
 import { Card, Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -44,7 +45,7 @@ class IcannVerification extends Component {
 								components: {
 									learnMoreLink: (
 										<a
-											href={ TRANSFER_DOMAIN_REGISTRATION }
+											href={ localizeUrl( TRANSFER_DOMAIN_REGISTRATION ) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>

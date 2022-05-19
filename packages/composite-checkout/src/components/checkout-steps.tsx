@@ -10,13 +10,15 @@ import {
 	useEffect,
 	useState,
 	createContext,
+	useRef,
+	useLayoutEffect,
 } from 'react';
 import { getDefaultPaymentMethodStep } from '../components/default-steps';
 import CheckoutContext from '../lib/checkout-context';
 import { useFormStatus } from '../lib/form-status';
 import joinClasses from '../lib/join-classes';
 import { usePaymentMethod } from '../lib/payment-methods';
-import { FormStatus, CheckoutStepProps } from '../types';
+import { FormStatus, CheckoutStepProps, StepCompleteCallback } from '../types';
 import Button from './button';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import CheckoutNextStepButton from './checkout-next-step-button';
@@ -31,16 +33,55 @@ const debug = debugFactory( 'composite-checkout:checkout-steps' );
 
 const customPropertyForSubmitButtonHeight = '--submit-button-height';
 
+/*
+ * Return a stable callback function whose identity does not change.
+ *
+ * Even if the dependencies of the callback argument change, the returned
+ * callback will keep the same identity. In effect, the returned callback will
+ * always use the most recent version of the variables in the callback's
+ * closure.
+ *
+ * See https://github.com/reactjs/rfcs/blob/useevent/text/0000-useevent.md for
+ * more explanation of why this is helpful.
+ */
+function useJITCallback< A, R >( handler: ( ...args: A[] ) => R ): ( ...args: A[] ) => R {
+	const handlerRef = useRef( handler );
+
+	useLayoutEffect( () => {
+		handlerRef.current = handler;
+	} );
+
+	return useCallback( ( ...args: A[] ): R => {
+		const fn = handlerRef.current;
+		return fn( ...args );
+	}, [] );
+}
+
 interface StepCompleteStatus {
 	[ key: string ]: boolean;
 }
 
-interface CheckoutStepDataContext {
+interface StepCompleteCallbackMap {
+	[ key: string ]: StepCompleteCallback;
+}
+
+interface StepIdMap {
+	[ key: string ]: number;
+}
+
+interface CheckoutStepDataContextType {
 	activeStepNumber: number;
 	stepCompleteStatus: StepCompleteStatus;
 	totalSteps: number;
 	setActiveStepNumber: ( stepNumber: number ) => void;
 	setStepCompleteStatus: Dispatch< SetStateAction< StepCompleteStatus > >;
+	getStepNumberFromId: ( stepId: string ) => number | undefined;
+	setStepCompleteCallback: (
+		stepNumber: number,
+		stepId: string,
+		callback: StepCompleteCallback
+	) => void;
+	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
 	setTotalSteps: ( totalSteps: number ) => void;
 }
 
@@ -52,13 +93,22 @@ interface CheckoutSingleStepDataContext {
 	areStepsActive: boolean;
 }
 
-const CheckoutStepDataContext = createContext< CheckoutStepDataContext >( {
+const noop = () => {
+	throw new Error( 'Cannot use CheckoutStepDataContext without a provider.' );
+};
+const noopPromise = () => () =>
+	Promise.reject( 'Cannot use CheckoutStepDataContext without a provider.' );
+const emptyStepCompleteStatus = {};
+const CheckoutStepDataContext = createContext< CheckoutStepDataContextType >( {
 	activeStepNumber: 0,
-	stepCompleteStatus: {},
+	stepCompleteStatus: emptyStepCompleteStatus,
 	totalSteps: 0,
-	setActiveStepNumber: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
-	setStepCompleteStatus: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
-	setTotalSteps: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+	setActiveStepNumber: noop,
+	setStepCompleteStatus: noop,
+	setStepCompleteCallback: noop,
+	getStepCompleteCallback: noopPromise,
+	getStepNumberFromId: noop,
+	setTotalSteps: noop,
 } );
 
 const CheckoutSingleStepDataContext = createContext< CheckoutSingleStepDataContext >( {
@@ -227,6 +277,24 @@ export function Checkout( {
 	const { formStatus } = useFormStatus();
 	const [ activeStepNumber, setActiveStepNumber ] = useState< number >( 1 );
 	const [ stepCompleteStatus, setStepCompleteStatus ] = useState< StepCompleteStatus >( {} );
+	const stepCompleteCallbackMap = useRef< StepCompleteCallbackMap >( {} );
+	const stepIdMap = useRef< StepIdMap >( {} );
+	const getStepNumberFromId = useCallback( ( id: string ) => stepIdMap.current[ id ], [] );
+	const setStepCompleteCallback = useCallback(
+		( stepNumber: number, stepId: string, callback: StepCompleteCallback ) => {
+			stepIdMap.current[ stepId ] = stepNumber;
+			stepCompleteCallbackMap.current[ stepNumber ] = callback;
+		},
+		[]
+	);
+	const getStepCompleteCallback = useJITCallback( ( stepNumber: number ) => {
+		return (
+			stepCompleteCallbackMap.current[ stepNumber ] ??
+			( () => {
+				throw new Error( `No isCompleteCallback found for step ${ stepNumber }` );
+			} )
+		);
+	} );
 	const [ totalSteps, setTotalSteps ] = useState( 0 );
 	const actualActiveStepNumber =
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
@@ -263,6 +331,9 @@ export function Checkout( {
 						totalSteps,
 						setActiveStepNumber,
 						setStepCompleteStatus,
+						setStepCompleteCallback,
+						getStepCompleteCallback,
+						getStepNumberFromId,
 						setTotalSteps,
 					} }
 				>
@@ -289,8 +360,13 @@ export const CheckoutStep = ( {
 	validatingButtonAriaLabel,
 }: CheckoutStepProps ): JSX.Element => {
 	const { __ } = useI18n();
-	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } =
-		useContext( CheckoutStepDataContext );
+	const {
+		setActiveStepNumber,
+		setStepCompleteStatus,
+		stepCompleteStatus,
+		setStepCompleteCallback,
+		getStepCompleteCallback,
+	} = useContext( CheckoutStepDataContext );
 	const { stepNumber, nextStepNumber, isStepActive, isStepComplete, areStepsActive } = useContext(
 		CheckoutSingleStepDataContext
 	);
@@ -300,8 +376,14 @@ export const CheckoutStep = ( {
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
 	const activePaymentMethod = usePaymentMethod();
-	const finishIsCompleteCallback = ( completeResult: boolean ) => {
-		setThisStepCompleteStatus( !! completeResult );
+
+	// This is the callback called when you press "Continue" on a step.
+	const goToNextStep = async () => {
+		setFormValidating();
+		// Wrapping isCompleteCallback in Promise.resolve allows it to return a Promise or boolean.
+		const completeResult = Boolean( await Promise.resolve( isCompleteCallback() ) );
+		debug( `isCompleteCallback for step ${ stepNumber } finished with`, completeResult );
+		setThisStepCompleteStatus( completeResult );
 		if ( completeResult ) {
 			onStepChanged?.( {
 				stepNumber: nextStepNumber,
@@ -314,15 +396,9 @@ export const CheckoutStep = ( {
 			}
 		}
 		setFormReady();
+		return completeResult;
 	};
-	const goToNextStep = async () => {
-		// Wrapping this in Promise.resolve allows it to be a Promise or boolean
-		const completeResult = Promise.resolve( isCompleteCallback() );
-		setFormValidating();
-		const delayedCompleteResult = await completeResult;
-		debug( `isCompleteCallback for step ${ stepNumber } finished with`, delayedCompleteResult );
-		finishIsCompleteCallback( delayedCompleteResult );
-	};
+	setStepCompleteCallback( stepNumber, stepId, goToNextStep );
 
 	const classNames = [
 		'checkout-step',
@@ -332,7 +408,7 @@ export const CheckoutStep = ( {
 	];
 
 	const onError = useCallback(
-		( error ) => onPageLoadError?.( 'step_load', error, { step_id: stepId } ),
+		( error: Error ) => onPageLoadError?.( 'step_load', error, { step_id: stepId } ),
 		[ onPageLoadError, stepId ]
 	);
 
@@ -351,7 +427,9 @@ export const CheckoutStep = ( {
 			stepId={ stepId }
 			titleContent={ titleContent }
 			goToThisStep={ areStepsActive ? goToThisStep : undefined }
-			goToNextStep={ nextStepNumber && nextStepNumber > 0 ? goToNextStep : undefined }
+			goToNextStep={
+				nextStepNumber && nextStepNumber > 0 ? getStepCompleteCallback( stepNumber ) : undefined
+			}
 			activeStepContent={
 				<>
 					{ activeStepContent }
@@ -633,7 +711,7 @@ export function CheckoutStepBody( {
 
 interface CheckoutStepBodyProps {
 	errorMessage?: string;
-	onError?: ( message: string ) => void;
+	onError?: ( error: Error ) => void;
 	editButtonAriaLabel?: string;
 	editButtonText?: string;
 	nextStepButtonText?: string;
@@ -687,19 +765,25 @@ export function useIsStepComplete(): boolean {
 	return !! stepCompleteStatus[ stepNumber ];
 }
 
-export function useSetStepComplete(): ( stepNumber: number, newStatus: boolean ) => void {
-	const { setStepCompleteStatus } = useContext( CheckoutStepDataContext );
-	const setTargetStepCompleteStatus = useCallback(
-		( stepNumber: number, newStatus: boolean ) =>
-			setStepCompleteStatus(
-				( stepCompleteStatus: StepCompleteStatus ): StepCompleteStatus => ( {
-					...stepCompleteStatus,
-					[ stepNumber ]: newStatus,
-				} )
-			),
-		[ setStepCompleteStatus ]
-	);
-	return setTargetStepCompleteStatus;
+export function useSetStepComplete(): ( stepId: string ) => Promise< void > {
+	const { getStepCompleteCallback, stepCompleteStatus, getStepNumberFromId } =
+		useContext( CheckoutStepDataContext );
+	return useJITCallback( async ( stepId: string ) => {
+		const stepNumber = getStepNumberFromId( stepId );
+		if ( ! stepNumber ) {
+			throw new Error( `Cannot find step with id ${ stepId }` );
+		}
+		// To try to complete a step, we must try to complete all previous steps
+		// first, ignoring steps that are already complete.
+		for ( let step = 1; step <= stepNumber; step++ ) {
+			if ( ! stepCompleteStatus[ step ] ) {
+				const didStepComplete = await getStepCompleteCallback( step )();
+				if ( ! didStepComplete ) {
+					break;
+				}
+			}
+		}
+	} );
 }
 
 const StepTitle = styled.span< StepTitleProps & HTMLAttributes< HTMLSpanElement > >`
@@ -945,7 +1029,7 @@ function getStepNumberForegroundColor( {
 }
 
 function saveStepNumberToUrl( stepNumber: number ) {
-	if ( ! window.history?.pushState ) {
+	if ( ! window?.history || ! window?.location ) {
 		return;
 	}
 	const newHash = stepNumber > 1 ? `#step${ stepNumber }` : '';
@@ -956,7 +1040,31 @@ function saveStepNumberToUrl( stepNumber: number ) {
 		? window.location.href.replace( window.location.hash, newHash )
 		: window.location.href + newHash;
 	debug( 'updating url to', newUrl );
-	window.history.pushState( null, '', newUrl );
+	// We've seen this call to replaceState fail sometimes when the current URL
+	// is somehow different ("A history state object with URL
+	// 'https://wordpress.com/checkout/example.com#step2' cannot be created
+	// in a document with origin 'https://wordpress.com' and URL
+	// 'https://www.username@wordpress.com/checkout/example.com'.") so we
+	// wrap this in try/catch. It's not critical that the step number is saved to
+	// the URL.
+	try {
+		window.history.replaceState( null, '', newUrl );
+	} catch ( error ) {
+		debug( 'changing the url failed' );
+		return;
+	}
+	// Modifying history does not trigger a hashchange event which is what
+	// composite-checkout uses to change its current step, so we must fire one
+	// manually.
+	//
+	// We use try/catch because we support IE11 and that browser does not include
+	// HashChange.
+	try {
+		const event = new HashChangeEvent( 'hashchange' );
+		window.dispatchEvent( event );
+	} catch ( error ) {
+		debug( 'hashchange firing failed' );
+	}
 }
 
 function getStepNumberFromUrl() {

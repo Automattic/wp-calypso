@@ -1,43 +1,19 @@
-.categories__discover {
+.categories__menu {
+	width: 100%;
+	margin-top: 90px;
 
-	@include breakpoint-deprecated('<660px') {
-		padding: 0 16px;
+	.responsive-toolbar-group__grouped-list {
+		border-color: rgba( 0, 0, 0, 0 );
 	}
 
-	.categories__header {
-		@extend .wp-brand-font;
-		font-size: $font-title-large;
-		display: flex;
-		align-items: center;
-		cursor: pointer;
-		margin-top: 20px;
+	.responsive-toolbar-group__button-item {
+		font-size: 0.875rem !important;
 	}
 
-	.categories__select-list {
-		background: #656667;
-		border: 1px solid #000000;
-		box-sizing: border-box;
-		border-radius: 15px; /* stylelint-disable-line */
-		max-width: 210px;
-		margin: 0;
-		list-style: none;
-		padding: 18px 5px;
-		color: var( --studio-white );
-		position: absolute;
-		z-index: 10;
 
-		span {
-			padding: 2px 10px;
-			border-radius: 5px; /* stylelint-disable-line */
-			display: block;
-			cursor: pointer;
-		}
-		span:hover {
-			background-color: #82a7ec;
-		}
-
-		hr {
-			margin: 15px 10px;
+	.responsive-toolbar-group__more-item {
+		&::before {
+			background: #f6f7f7;
 		}
 	}
-}
+};

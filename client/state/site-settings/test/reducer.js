@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	MEDIA_DELETE,
@@ -24,7 +23,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should set requesting value to true if request in progress', () => {
@@ -33,7 +32,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: true,
 			} );
 		} );
@@ -47,7 +46,7 @@ describe( 'reducer', () => {
 				siteId: 2916285,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: true,
 				2916285: true,
 			} );
@@ -62,7 +61,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: false,
 			} );
 		} );
@@ -76,7 +75,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: false,
 			} );
 		} );
@@ -86,7 +85,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = saveRequests( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should set request status to pending if request in progress', () => {
@@ -95,7 +94,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: { saving: true, status: 'pending', error: false },
 			} );
 		} );
@@ -109,7 +108,7 @@ describe( 'reducer', () => {
 				siteId: 2916285,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: { saving: true, status: 'pending', error: false },
 				2916285: { saving: true, status: 'pending', error: false },
 			} );
@@ -124,7 +123,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: { saving: false, status: 'success', error: false },
 			} );
 		} );
@@ -139,7 +138,7 @@ describe( 'reducer', () => {
 				error: 'my error',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: { saving: false, status: 'error', error: 'my error' },
 			} );
 		} );
@@ -149,7 +148,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should index settings by site ID', () => {
@@ -160,7 +159,7 @@ describe( 'reducer', () => {
 				settings,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: settings,
 			} );
 		} );
@@ -176,7 +175,7 @@ describe( 'reducer', () => {
 				settings,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: { default_category: 'ribs' },
 				2916285: settings,
 			} );
@@ -193,7 +192,7 @@ describe( 'reducer', () => {
 				settings,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: settings,
 			} );
 		} );
@@ -209,7 +208,7 @@ describe( 'reducer', () => {
 				settings,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: { blogdescription: 'ribs', blogname: 'chicken', lang_id: 1 },
 			} );
 		} );
@@ -222,7 +221,7 @@ describe( 'reducer', () => {
 				mediaIds: [ 42 ],
 			} );
 
-			expect( state ).to.equal( previousState );
+			expect( state ).toEqual( previousState );
 		} );
 
 		test( 'should return same state on media delete if set does not contain icon setting', () => {
@@ -238,7 +237,7 @@ describe( 'reducer', () => {
 				mediaIds: [ 36 ],
 			} );
 
-			expect( state ).to.equal( previousState );
+			expect( state ).toEqual( previousState );
 		} );
 
 		test( 'should unset icon setting on media delete if set contains icon', () => {
@@ -254,7 +253,7 @@ describe( 'reducer', () => {
 				mediaIds: [ 42 ],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					blogname: 'Example',
 					site_icon: null,
@@ -268,7 +267,7 @@ describe( 'reducer', () => {
 			} );
 			const state = serialize( items, previousState );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: { default_category: 'cat' },
 			} );
 		} );
@@ -279,7 +278,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( items, previousState );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: { default_category: 'cat' },
 			} );
 		} );
@@ -290,7 +289,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( items, previousInvalidState );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 	} );
 } );

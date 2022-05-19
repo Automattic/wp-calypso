@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getGeoLocation from '../get-geolocation';
 
 describe( 'getGeoLocation', () => {
@@ -8,7 +7,7 @@ describe( 'getGeoLocation', () => {
 				user: { geoLocation: null },
 			},
 		} );
-		expect( selected ).to.equal( null );
+		expect( selected ).toBeNull();
 	} );
 
 	test( 'should return value if geoLocation is set', () => {
@@ -21,6 +20,6 @@ describe( 'getGeoLocation', () => {
 				},
 			},
 		} );
-		expect( selected ).to.eql( { city: 'Timisoara' } );
+		expect( selected ).toEqual( { city: 'Timisoara' } );
 	} );
 } );

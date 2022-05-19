@@ -16,8 +16,6 @@ function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
-	const [ selectedArticle, setSelectedArticle ] = useState( null );
-	const [ footerContent, setFooterContent ] = useState( null );
 	const [ showHelpIconDot, setShowHelpIconDot ] = useState( false );
 	const { data, isLoading } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
 	useEffect( () => {
@@ -26,38 +24,27 @@ function HelpCenterContent() {
 		}
 	}, [ data, isLoading ] );
 
-	useEffect( () => {
-		if ( ! show ) {
-			setSelectedArticle( null );
-		}
-	}, [ show ] );
+	const content = (
+		<span className="etk-help-center">
+			<Button
+				className={ cx( 'entry-point-button', { 'is-active': show } ) }
+				onClick={ () => setShowHelpCenter( ! show ) }
+				icon={ <HelpIcon newItems={ showHelpIconDot } active={ show } /> }
+			></Button>
+		</span>
+	);
 
 	return (
 		<>
 			{ isDesktop && (
-				<PinnedItems scope="core/edit-post">
-					<span className="etk-help-center">
-						<Button
-							className={ cx( 'entry-point-button', { 'is-active': show } ) }
-							onClick={ () => setShowHelpCenter( ! show ) }
-							icon={ <HelpIcon newItems={ showHelpIconDot } active={ show } /> }
-						></Button>
-					</span>
-				</PinnedItems>
+				<>
+					<PinnedItems scope="core/edit-post">{ content }</PinnedItems>
+					<PinnedItems scope="core/edit-site">{ content }</PinnedItems>
+					<PinnedItems scope="core/edit-widgets">{ content }</PinnedItems>
+				</>
 			) }
 			{ show && (
-				<HelpCenter
-					content={
-						<Contents
-							selectedArticle={ selectedArticle }
-							setSelectedArticle={ setSelectedArticle }
-							setFooterContent={ setFooterContent }
-						/>
-					}
-					headerText={ selectedArticle?.title }
-					handleClose={ () => setShowHelpCenter( false ) }
-					footerContent={ footerContent }
-				/>
+				<HelpCenter content={ <Contents /> } handleClose={ () => setShowHelpCenter( false ) } />
 			) }
 		</>
 	);

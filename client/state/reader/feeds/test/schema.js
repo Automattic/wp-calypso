@@ -1,4 +1,3 @@
-import { assert } from 'chai';
 import validate from 'is-my-json-valid';
 import { itemsSchema } from '../schema';
 
@@ -15,7 +14,7 @@ describe( 'schema', () => {
 				blog_ID: 2,
 			},
 		} );
-		assert.isTrue( isValid, validator.error );
+		expect( isValid ).toBe( true );
 	} );
 
 	test( 'should validate a full object', () => {
@@ -31,7 +30,7 @@ describe( 'schema', () => {
 				meta: {},
 			},
 		} );
-		assert.isTrue( isValid, validator.error );
+		expect( isValid ).toBe( true );
 	} );
 
 	test( 'should allow null props', () => {
@@ -47,11 +46,11 @@ describe( 'schema', () => {
 				meta: null,
 			},
 		} );
-		assert.isTrue( isValid, validator.error );
+		expect( isValid ).toBe( true );
 	} );
 
 	test( 'shall not let bad data pass', () => {
-		assert.isFalse(
+		expect(
 			validator( {
 				1234: {
 					feed_ID: '1', // feed_ID should be an actual integer, not a string
@@ -64,6 +63,6 @@ describe( 'schema', () => {
 					meta: null,
 				},
 			} )
-		);
+		).toBe( false );
 	} );
 } );

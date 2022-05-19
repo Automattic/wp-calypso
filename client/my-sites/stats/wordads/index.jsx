@@ -16,7 +16,7 @@ import StickyPanel from 'calypso/components/sticky-panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { canCurrentUserUseAds } from 'calypso/state/sites/selectors';
+import { canAccessWordAds } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -112,7 +112,7 @@ class WordAds extends Component {
 	};
 
 	render() {
-		const { canAccessAds, date, isAdmin, site, siteId, slug } = this.props;
+		const { canAccessAds, canUpgradeToUseWordAds, date, site, siteId, slug } = this.props;
 
 		const { period, endOf } = this.props.period;
 
@@ -145,11 +145,11 @@ class WordAds extends Component {
 					<EmptyContent
 						illustration="/calypso/images/illustrations/illustration-404.svg"
 						title={
-							! isAdmin
+							! canUpgradeToUseWordAds
 								? translate( 'You are not authorized to view this page' )
 								: translate( 'WordAds is not enabled on your site' )
 						}
-						action={ isAdmin ? translate( 'Explore WordAds' ) : false }
+						action={ canUpgradeToUseWordAds ? translate( 'Explore WordAds' ) : false }
 						actionURL={ '/earn/ads-settings/' + slug }
 					/>
 				) }
@@ -216,8 +216,8 @@ export default connect(
 			site,
 			siteId,
 			slug: getSelectedSiteSlug( state ),
-			canAccessAds: canCurrentUserUseAds( state, siteId ),
-			isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
+			canAccessAds: canAccessWordAds( state, siteId ),
+			canUpgradeToUseWordAds: canCurrentUser( state, siteId, 'manage_options' ),
 		};
 	},
 	{ recordGoogleEvent }

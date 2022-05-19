@@ -1,11 +1,10 @@
-import { expect } from 'chai';
 import { nativeToRaw, rawToNative, fromApi, toApi } from '../mappings';
 
 describe( 'SEO', () => {
 	describe( 'Title Format Editor', () => {
 		describe( '#nativeToRaw', () => {
 			test( 'should produce empty formats', () => {
-				expect( nativeToRaw( [] ) ).to.eql( [] );
+				expect( nativeToRaw( [] ) ).toEqual( [] );
 			} );
 
 			test( 'should produce plain-text strings', () => {
@@ -15,7 +14,7 @@ describe( 'SEO', () => {
 						{ type: 'string', value: ' a ' },
 						{ type: 'string', value: 'string' },
 					] )
-				).to.eql( [ { type: 'string', value: 'just a string' } ] );
+				).toEqual( [ { type: 'string', value: 'just a string' } ] );
 			} );
 
 			test( 'should convert token formats', () => {
@@ -25,7 +24,7 @@ describe( 'SEO', () => {
 						{ type: 'string', value: ' | ' },
 						{ type: 'postTitle' },
 					] )
-				).to.eql( [
+				).toEqual( [
 					{ type: 'token', value: 'site_name' },
 					{ type: 'string', value: ' | ' },
 					{ type: 'token', value: 'post_title' },
@@ -35,11 +34,11 @@ describe( 'SEO', () => {
 
 		describe( '#rawToNative', () => {
 			test( 'should handle empty strings', () => {
-				expect( rawToNative( [] ) ).to.eql( [] );
+				expect( rawToNative( [] ) ).toEqual( [] );
 			} );
 
 			test( 'should handle plain strings', () => {
-				expect( rawToNative( [ { type: 'string', value: 'just a string' } ] ) ).to.eql( [
+				expect( rawToNative( [ { type: 'string', value: 'just a string' } ] ) ).toEqual( [
 					{ type: 'string', value: 'just a string' },
 				] );
 			} );
@@ -51,7 +50,7 @@ describe( 'SEO', () => {
 						{ type: 'string', value: ' | ' },
 						{ type: 'token', value: 'post_title' },
 					] )
-				).to.eql( [
+				).toEqual( [
 					{ type: 'siteName' },
 					{ type: 'string', value: ' | ' },
 					{ type: 'postTitle' },
@@ -61,7 +60,7 @@ describe( 'SEO', () => {
 
 		describe( '#fromApi', () => {
 			test( 'should produce empty formats', () => {
-				expect( fromApi( {} ) ).to.eql( {} );
+				expect( fromApi( {} ) ).toEqual( {} );
 			} );
 
 			test( 'should remap keys and values', () => {
@@ -77,7 +76,7 @@ describe( 'SEO', () => {
 							{ type: 'token', value: 'site_name' },
 						],
 					} )
-				).to.eql( {
+				).toEqual( {
 					frontPage: [ { type: 'siteName' }, { type: 'string', value: ' is awesome!' } ],
 					posts: [ { type: 'postTitle' }, { type: 'string', value: ' | ' }, { type: 'siteName' } ],
 				} );
@@ -86,7 +85,7 @@ describe( 'SEO', () => {
 
 		describe( '#toApi', () => {
 			test( 'should produce empty formats', () => {
-				expect( toApi( {} ) ).to.eql( {} );
+				expect( toApi( {} ) ).toEqual( {} );
 			} );
 
 			test( 'should remap keys and values', () => {
@@ -99,7 +98,7 @@ describe( 'SEO', () => {
 							{ type: 'siteName' },
 						],
 					} )
-				).to.eql( {
+				).toEqual( {
 					front_page: [
 						{ type: 'token', value: 'site_name' },
 						{ type: 'string', value: ' is awesome!' },

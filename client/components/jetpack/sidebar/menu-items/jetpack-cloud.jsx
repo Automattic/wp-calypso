@@ -1,11 +1,15 @@
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import { settingsPath, purchasesPath, purchasesBasePath } from 'calypso/lib/jetpack/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isRewindActive from 'calypso/state/selectors/is-rewind-active';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import JetpackIcons from './jetpack-icons';
@@ -16,6 +20,8 @@ export default ( { path } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const hasScanProduct = useSelector( ( state ) => siteHasScanProductPurchase( state, siteId ) );
+	const hasActiveRewind = useSelector( ( state ) => isRewindActive( state, siteId ) );
 
 	const onNavigate = () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_settings_clicked' ) );
@@ -24,9 +30,9 @@ export default ( { path } ) => {
 		window.scrollTo( 0, 0 );
 	};
 
-	const shouldShowSettings = useSelector( ( state ) =>
-		canCurrentUser( state, siteId, 'manage_options' )
-	);
+	const shouldShowSettings =
+		useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) ) &&
+		( hasActiveRewind || hasScanProduct );
 
 	const shouldShowPurchases =
 		isSectionNameEnabled( 'site-purchases' ) &&
@@ -34,6 +40,8 @@ export default ( { path } ) => {
 
 	return (
 		<>
+			<QueryRewindState siteId={ siteId } />
+			<QuerySitePurchases siteId={ siteId } />
 			<JetpackSidebarMenuItems
 				path={ path }
 				showIcons={ true }

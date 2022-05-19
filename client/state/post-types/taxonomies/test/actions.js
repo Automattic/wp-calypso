@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
 import {
 	POST_TYPES_TAXONOMIES_RECEIVE,
 	POST_TYPES_TAXONOMIES_REQUEST,
@@ -10,10 +8,10 @@ import useNock from 'calypso/test-helpers/use-nock';
 import { receivePostTypeTaxonomies, requestPostTypeTaxonomies } from '../actions';
 
 describe( 'actions', () => {
-	const spy = sinon.spy();
+	let spy;
 
 	beforeEach( () => {
-		spy.resetHistory();
+		spy = jest.fn();
 	} );
 
 	describe( '#receivePostTypeTaxonomies()', () => {
@@ -22,7 +20,7 @@ describe( 'actions', () => {
 				{ name: 'category', label: 'Categories' },
 			] );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: POST_TYPES_TAXONOMIES_RECEIVE,
 				siteId: 2916284,
 				postType: 'post',
@@ -53,7 +51,7 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestPostTypeTaxonomies( 2916284, 'post' )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toBeCalledWith( {
 				type: POST_TYPES_TAXONOMIES_REQUEST,
 				siteId: 2916284,
 				postType: 'post',
@@ -65,7 +63,7 @@ describe( 'actions', () => {
 				2916284,
 				'post'
 			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith(
+				expect( spy ).toBeCalledWith(
 					receivePostTypeTaxonomies( 2916284, 'post', [
 						{ name: 'category', label: 'Categories' },
 						{ name: 'post_tag', label: 'Tags' },
@@ -79,7 +77,7 @@ describe( 'actions', () => {
 				2916284,
 				'post'
 			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
 					siteId: 2916284,
 					postType: 'post',
@@ -92,11 +90,11 @@ describe( 'actions', () => {
 				2916284,
 				'foo'
 			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
 					siteId: 2916284,
 					postType: 'foo',
-					error: sinon.match( { message: 'Unknown post type' } ),
+					error: expect.objectContaining( { message: 'Unknown post type' } ),
 				} );
 			} );
 		} );

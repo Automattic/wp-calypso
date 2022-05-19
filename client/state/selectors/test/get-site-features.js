@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 
 describe( 'selectors', () => {
@@ -44,7 +43,7 @@ describe( 'selectors', () => {
 			};
 
 			const features = getFeaturesBySiteId( state, 123001 ); // site (A).
-			expect( features ).to.eql( features_a );
+			expect( features ).toEqual( features_a );
 		} );
 	} );
 
@@ -84,6 +83,6 @@ describe( 'selectors', () => {
 		};
 
 		const features = getFeaturesBySiteId( state ); // site (A).
-		expect( features ).to.eql( null );
+		expect( features ).toBeNull();
 	} );
 } );

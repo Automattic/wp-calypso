@@ -1,34 +1,6 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
 @import 'calypso/jetpack-cloud/sections/partner-portal/mixins.scss';
 
 .invoices-list {
-	&__row {
-		display: grid;
-		grid-template-columns: calc( 66% - 12px ) calc( 34% - 12px );
-		align-items: center;
-		grid-gap: 24px;
-		font-size: 1.25rem;
-
-		@include break-xlarge() {
-			grid-template-columns: 1fr 100px 100px 100px;
-		}
-	}
-
-	&__header {
-		display: none;
-
-		* {
-			font-weight: 400;
-			font-size: 0.875rem;
-			color: var( --studio-gray-70 );
-		}
-
-		@include break-xlarge() {
-			display: block;
-		}
-	}
-
 	&__pagination {
 		margin: 64px 0;
 

@@ -1,0 +1,70 @@
+
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.site-table__table {
+	display: none;
+	@include break-large() {
+		display: table;
+	}
+	border: 1px solid var( --studio-gray-5 );
+	border-collapse: collapse;
+	tr {
+		height: 1px;
+		background: var( --studio-white );
+	}
+	th {
+		font-size: 0.75rem;
+		color: var( --studio-gray-50 );
+		font-weight: 400;
+		height: 40px;
+	}
+	td {
+		font-size: 0.875rem;
+		height: 50px;
+		width: 162px;
+		box-sizing: border-box;
+		&:first-child {
+			position: relative;
+			width: initial;
+			@include break-large() {
+				max-width: 200px;
+			}
+			@include break-huge() {
+				max-width: 300px;
+			}
+		}
+	}
+	td, th {
+		border-bottom: 1px solid var( --studio-gray-5 );
+		text-align: left;
+		border-collapse: collapse;
+		vertical-align: middle;
+		@include break-large() {
+			padding: 0 8px;
+		}
+		@include break-wide() {
+			padding: 0 16px;
+		}
+	}
+}
+.site-table__connection-error {
+	td {
+		padding: 0;
+	}
+}
+td.site-table__actions {
+	padding: 0;
+	width: 50px;
+}
+td.site-table__td-with-error {
+	border-bottom: none;
+}
+.site-table__table-row {
+	&:hover {
+		background: var( --studio-gray-0 );
+		+ .site-table__connection-error {
+			background: var( --studio-gray-0 );
+		}
+	}
+}

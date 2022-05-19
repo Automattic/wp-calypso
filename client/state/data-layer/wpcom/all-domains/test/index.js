@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	ALL_DOMAINS_REQUEST,
 	ALL_DOMAINS_REQUEST_SUCCESS,
@@ -17,7 +16,7 @@ describe( 'wpcom-api', () => {
 
 		describe( '#getAllDomains', () => {
 			test( 'should dispatch an HTTP request to the all-domains endpoint', () => {
-				expect( getAllDomains( action ) ).to.eql(
+				expect( getAllDomains( action ) ).toEqual(
 					http(
 						{
 							method: 'GET',
@@ -34,9 +33,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a get all-domains failure action on error', () => {
 				const resultActions = getAllDomainsError( action, { message } );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: ALL_DOMAINS_REQUEST_FAILURE,
 					error: { message },
 				} );
@@ -50,7 +49,7 @@ describe( 'wpcom-api', () => {
 						domain: 'test.blog',
 					},
 				];
-				expect( getAllDomainsSuccess( action, { domains } ) ).to.eql( {
+				expect( getAllDomainsSuccess( action, { domains } ) ).toEqual( {
 					type: ALL_DOMAINS_REQUEST_SUCCESS,
 					domains,
 				} );
@@ -58,9 +57,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a get all-domains failure action on no response', () => {
 				const resultActions = getAllDomainsSuccess( action, undefined );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: ALL_DOMAINS_REQUEST_FAILURE,
 					error: 'Failed to retrieve your domains. No response was received',
 				} );

@@ -31,7 +31,6 @@ const error = ( state = null, action ) => {
  * @param  {object} state  Current state
  * @param  {object} action Action payload
  * @returns {object}        Updated state
- *
  */
 const status = ( state = HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED, action ) => {
 	switch ( action.type ) {

@@ -76,7 +76,7 @@ export function useLocale(): string {
 		} );
 	}, [ providerHasLocale ] );
 
-	return fromProvider || fromWpI18n || 'en';
+	return fromProvider || fromWpI18n || window?._currentUserLocale || 'en';
 }
 
 /**

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { userState } from './fixtures/user-state';
 
@@ -12,7 +11,7 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 			ui: { selectedSiteId: 2916284 },
 		};
 		const sites = getSelectedOrAllSitesWithPlugins( state );
-		expect( sites ).to.eql( [] );
+		expect( sites ).toEqual( [] );
 	} );
 
 	test( 'should return an empty array if the sites existing are not able to contain plugins', () => {
@@ -29,7 +28,7 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 			ui: {},
 		};
 		const sites = getSelectedOrAllSitesWithPlugins( state );
-		expect( sites ).to.eql( [] );
+		expect( sites ).toEqual( [] );
 	} );
 
 	test( 'should return an array with one site if just one site exists and the user is able to manage plugins there', () => {
@@ -55,8 +54,8 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 			ui: {},
 		};
 		const sites = getSelectedOrAllSitesWithPlugins( state );
-		expect( sites ).to.have.length( 1 );
-		expect( sites[ 0 ].ID ).to.eql( 2916288 );
+		expect( sites ).toHaveLength( 1 );
+		expect( sites[ 0 ].ID ).toEqual( 2916288 );
 	} );
 
 	test( 'should return an array with all the sites able to have plugins', () => {
@@ -94,9 +93,9 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 			ui: {},
 		};
 		const sites = getSelectedOrAllSitesWithPlugins( state );
-		expect( sites ).to.have.length( 2 );
-		expect( sites[ 0 ].ID ).to.eql( 2916286 );
-		expect( sites[ 1 ].ID ).to.eql( 2916289 );
+		expect( sites ).toHaveLength( 2 );
+		expect( sites[ 0 ].ID ).toEqual( 2916286 );
+		expect( sites[ 1 ].ID ).toEqual( 2916289 );
 	} );
 
 	test( 'should return an array with the selected site if it is able to have plugins', () => {
@@ -130,8 +129,8 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 			ui: { selectedSiteId: 2916289 },
 		};
 		const sites = getSelectedOrAllSitesWithPlugins( state );
-		expect( sites ).to.have.length( 1 );
-		expect( sites[ 0 ].ID ).to.eql( 2916289 );
+		expect( sites ).toHaveLength( 1 );
+		expect( sites[ 0 ].ID ).toEqual( 2916289 );
 	} );
 
 	test( 'should return an empty array if the selected site is not able to have plugins', () => {
@@ -167,6 +166,6 @@ describe( 'getSelectedOrAllSitesWithPlugins()', () => {
 			ui: { selectedSiteId: 2916287 },
 		};
 		const sites = getSelectedOrAllSitesWithPlugins( state );
-		expect( sites ).to.eql( [] );
+		expect( sites ).toEqual( [] );
 	} );
 } );

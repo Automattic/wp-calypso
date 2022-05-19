@@ -62,11 +62,9 @@ This will create the normal `style.css` and an additionnal `style.rtl.css`.
 new WebpackRTLPlugin({
   options: {},
   plugins: [],
-  diffOnly: false,
 })
 ```
 
 - `test` a RegExp (object or string) that must match asset filename.
 - `options` Options given to `rtlcss`. See the [rtlcss documentation for available options](http://rtlcss.com/learn/usage-guide/options/).
 - `plugins` RTLCSS plugins given to `rtlcss`. See the [rtlcss documentation for writing plugins](http://rtlcss.com/learn/extending-rtlcss/writing-a-plugin/). Default to `[]`.
-- `diffOnly` If set to `true`, the stylesheet created will only contain the css that differs from the source stylesheet. Default to `false`.

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
@@ -20,7 +19,7 @@ describe( 'selectors', () => {
 			};
 			const isRequesting = isRequestingSiteSettings( state, 2916285 );
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBe( false );
 		} );
 
 		test( 'should return false if the site settings are not fetching', () => {
@@ -33,7 +32,7 @@ describe( 'selectors', () => {
 			};
 			const isRequesting = isRequestingSiteSettings( state, 2916284 );
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBe( false );
 		} );
 
 		test( 'should return true if the site settings are fetching', () => {
@@ -46,7 +45,7 @@ describe( 'selectors', () => {
 			};
 			const isRequesting = isRequestingSiteSettings( state, 2916284 );
 
-			expect( isRequesting ).to.be.true;
+			expect( isRequesting ).toBe( true );
 		} );
 	} );
 
@@ -61,7 +60,7 @@ describe( 'selectors', () => {
 			};
 			const isSaving = isSavingSiteSettings( state, 2916285 );
 
-			expect( isSaving ).to.be.false;
+			expect( isSaving ).toBe( false );
 		} );
 
 		test( 'should return false if the site settings are not saving', () => {
@@ -74,7 +73,7 @@ describe( 'selectors', () => {
 			};
 			const isSaving = isSavingSiteSettings( state, 2916284 );
 
-			expect( isSaving ).to.be.false;
+			expect( isSaving ).toBe( false );
 		} );
 
 		test( 'should return true if the site settings are saving', () => {
@@ -87,7 +86,7 @@ describe( 'selectors', () => {
 			};
 			const isSaving = isSavingSiteSettings( state, 2916284 );
 
-			expect( isSaving ).to.be.true;
+			expect( isSaving ).toBe( true );
 		} );
 	} );
 
@@ -102,7 +101,7 @@ describe( 'selectors', () => {
 			};
 			const status = getSiteSettingsSaveRequestStatus( state, 2916285 );
 
-			expect( status ).to.be.undefined;
+			expect( status ).toBeUndefined();
 		} );
 
 		test( 'should return success if the save request status is success', () => {
@@ -115,7 +114,7 @@ describe( 'selectors', () => {
 			};
 			const status = getSiteSettingsSaveRequestStatus( state, 2916284 );
 
-			expect( status ).to.eql( 'success' );
+			expect( status ).toEqual( 'success' );
 		} );
 
 		test( 'should return error if the save request status is error', () => {
@@ -128,7 +127,7 @@ describe( 'selectors', () => {
 			};
 			const status = getSiteSettingsSaveRequestStatus( state, 2916284 );
 
-			expect( status ).to.eql( 'error' );
+			expect( status ).toEqual( 'error' );
 		} );
 
 		test( 'should return pending if the save request status is pending', () => {
@@ -141,7 +140,7 @@ describe( 'selectors', () => {
 			};
 			const status = getSiteSettingsSaveRequestStatus( state, 2916284 );
 
-			expect( status ).to.eql( 'pending' );
+			expect( status ).toEqual( 'pending' );
 		} );
 	} );
 
@@ -156,7 +155,7 @@ describe( 'selectors', () => {
 			};
 			const isSuccessful = isSiteSettingsSaveSuccessful( state, 2916285 );
 
-			expect( isSuccessful ).to.be.false;
+			expect( isSuccessful ).toBe( false );
 		} );
 
 		test( 'should return true if the save request status is success', () => {
@@ -169,7 +168,7 @@ describe( 'selectors', () => {
 			};
 			const isSuccessful = isSiteSettingsSaveSuccessful( state, 2916284 );
 
-			expect( isSuccessful ).to.be.true;
+			expect( isSuccessful ).toBe( true );
 		} );
 
 		test( 'should return false if the save request status is error', () => {
@@ -182,7 +181,7 @@ describe( 'selectors', () => {
 			};
 			const isSuccessful = isSiteSettingsSaveSuccessful( state, 2916284 );
 
-			expect( isSuccessful ).to.be.false;
+			expect( isSuccessful ).toBe( false );
 		} );
 	} );
 
@@ -197,7 +196,7 @@ describe( 'selectors', () => {
 			};
 			const error = getSiteSettingsSaveError( state, 2916285 );
 
-			expect( error ).to.be.false;
+			expect( error ).toBe( false );
 		} );
 
 		test( 'should return false if the save the last request has no error', () => {
@@ -210,7 +209,7 @@ describe( 'selectors', () => {
 			};
 			const error = getSiteSettingsSaveError( state, 2916284 );
 
-			expect( error ).to.be.false;
+			expect( error ).toBe( false );
 		} );
 
 		test( 'should return the error if the save request status has an error', () => {
@@ -223,7 +222,7 @@ describe( 'selectors', () => {
 			};
 			const error = getSiteSettingsSaveError( state, 2916284 );
 
-			expect( error ).to.eql( 'my Error' );
+			expect( error ).toEqual( 'my Error' );
 		} );
 	} );
 
@@ -238,7 +237,7 @@ describe( 'selectors', () => {
 			};
 			const settings = getSiteSettings( state, 2916285 );
 
-			expect( settings ).to.be.null;
+			expect( settings ).toBeNull();
 		} );
 
 		test( 'should return the settings for a siteId', () => {
@@ -251,7 +250,7 @@ describe( 'selectors', () => {
 			};
 			const settings = getSiteSettings( state, 2916284 );
 
-			expect( settings ).to.eql( { default_category: 'chicken' } );
+			expect( settings ).toEqual( { default_category: 'chicken' } );
 		} );
 	} );
 } );

@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -13,7 +14,7 @@ const WarningsOrHoldsSection = styled.div`
 	margin-top: 40px;
 `;
 
-const ErrorStep: Step = function ErrorStep( { navigation } ) {
+const ErrorStep: Step = function ErrorStep( { navigation, flow } ) {
 	const { goBack, goNext } = navigation;
 	const { __ } = useI18n();
 	const siteDomains = useSiteDomains();
@@ -25,14 +26,32 @@ const ErrorStep: Step = function ErrorStep( { navigation } ) {
 		domain = siteDomains[ 0 ].domain;
 	}
 
+	const defaultBodyText =
+		flow !== 'anchor-fm'
+			? __(
+					'It looks like something went wrong while setting up your store. Please contact support so that we can help you out.'
+			  )
+			: __(
+					'It looks like something went wrong while setting up your site. Return to Anchor or continue with site creation.'
+			  );
+
 	const headerText = siteSetupError?.error || __( "We've hit a snag" );
-	const bodyText =
-		siteSetupError?.message ||
-		__(
-			'It looks like something went wrong while setting up your store. Please contact support so that we can help you out.'
-		);
+	const bodyText = siteSetupError?.message || defaultBodyText;
 
 	const getContent = () => {
+		if ( flow === 'anchor-fm' ) {
+			return (
+				<WarningsOrHoldsSection>
+					<Button className="error-step__button" href="/start" primary>
+						{ __( 'Continue' ) }
+					</Button>
+					<Button className="error-step__link" borderless href="https://anchor.fm">
+						{ __( 'Back to Anchor.fm' ) }
+					</Button>
+				</WarningsOrHoldsSection>
+			);
+		}
+
 		return (
 			<WarningsOrHoldsSection>
 				<SupportCard domain={ domain } />
