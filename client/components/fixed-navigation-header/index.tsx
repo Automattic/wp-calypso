@@ -4,7 +4,7 @@ import Breadcrumb, { Item as TBreadcrumbItem } from 'calypso/components/breadcru
 
 const Header = styled.header`
 	position: fixed;
-	z-index: 1;
+	z-index: 10;
 	top: var( --masterbar-height );
 	left: calc( var( --sidebar-width-max ) + 1px ); // 1px is the sidebar border.
 	width: calc( 100% - var( --sidebar-width-max ) - 1px ); // 1px is the sidebar border.

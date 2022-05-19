@@ -5,6 +5,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ResponsiveToolbarGroup from './responsive-toolbar-group';
+import SwipeMenu from './swipe-menu';
 import { useCategories } from './use-categories';
 import './style.scss';
 
@@ -46,7 +47,6 @@ const Categories = ( { selected }: { selected?: string } ) => {
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
 	const categories = Object.values( useCategories( ALLOWED_CATEGORIES ) );
-
 	const onClick = ( index: number ) => {
 		const category = categories[ index ];
 
@@ -73,8 +73,17 @@ const Categories = ( { selected }: { selected?: string } ) => {
 	const current = selected ? categories.findIndex( ( { slug } ) => slug === selected ) : 0;
 
 	if ( isSwippeable ) {
-		//return mobile view
-		return <div></div>;
+		return (
+			<SwipeMenu
+				className="categories__swipe-menu"
+				initialActiveIndex={ current }
+				onClick={ onClick }
+			>
+				{ categories.map( ( category ) => (
+					<span key={ `category-${ category.slug }` }>{ category.name }</span>
+				) ) }
+			</SwipeMenu>
+		);
 	}
 
 	return (

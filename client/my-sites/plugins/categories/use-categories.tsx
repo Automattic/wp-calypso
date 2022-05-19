@@ -48,7 +48,7 @@ export function useCategories(
 	}
 
 	const categories = {
-		discover: { name: __( 'Discover' ), slug: 'discover', tags: [] },
+		discover: { name: __( 'All' ), slug: 'discover', tags: [] },
 		paid: { name: __( 'Top paid plugins' ), slug: 'paid', tags: [] },
 		popular: { name: __( 'Top free plugins' ), slug: 'popular', tags: [] },
 		featured: { name: __( 'Editor’s pick' ), slug: 'featured', tags: [] },
