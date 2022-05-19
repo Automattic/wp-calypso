@@ -1,3 +1,4 @@
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useCountries } from 'calypso/landing/stepper/hooks/use-countries';
 
@@ -42,6 +43,7 @@ const stripeSupportedStateCountries = [
 
 export function useCountriesAndStates() {
 	const { data: countriesList } = useCountries();
+	const translate = useTranslate();
 
 	return useMemo( () => {
 		const countryOptions = {};
@@ -89,8 +91,15 @@ export function useCountriesAndStates() {
 			}
 		} );
 
+		const countries = Object.values( countryOptions );
+		countries.unshift( {
+			value: '',
+			label: translate( '- Select Country -' ),
+			isLabel: false,
+		} );
+
 		return {
-			countryOptions: Object.values( countryOptions ),
+			countryOptions: countries,
 			stateOptionsMap: stateOptions,
 		};
 	}, [ countriesList ] );
