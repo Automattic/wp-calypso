@@ -112,10 +112,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		isMobile && showGeneratedDesigns && selectedDesign && isPreviewingDesign;
 
 	const visibility = useNewSiteVisibility();
-	const previewLoadingMessage = translate(
-		'{{strong}}One moment, please…{{/strong}} loading your site.',
-		{ components: { strong: <strong /> } }
-	);
 
 	function headerText() {
 		if ( showGeneratedDesigns ) {
@@ -314,7 +310,9 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 				externalUrl={ siteSlug }
 				showExternal={ true }
 				previewUrl={ previewUrl }
-				loadingMessage={ previewLoadingMessage }
+				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
+					components: { strong: <strong /> },
+				} ) }
 				toolbarComponent={ PreviewToolbar }
 				siteId={ site?.ID }
 				isPrivateAtomic={ isPrivateAtomic }
