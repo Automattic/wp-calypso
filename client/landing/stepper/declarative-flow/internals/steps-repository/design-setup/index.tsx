@@ -28,6 +28,7 @@ import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../../stores';
 import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { getCategorizationOptions } from './categories';
+import GeneratedDesignPickerWebPreview from './generated-design-picker-web-preview';
 import PreviewToolbar from './preview-toolbar';
 import StickyFooter from './sticky-footer';
 import type { Step } from '../../types';
@@ -379,31 +380,19 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			designs={ shuffledGeneratedDesigns }
 			verticalId={ siteVerticalId }
 			locale={ locale }
-			previews={ shuffledGeneratedDesigns.map( ( design ) => {
-				const isSelected = design.slug === selectedGeneratedDesign?.slug;
-				return (
-					<WebPreview
-						key={ design.slug }
-						className={ classnames( { 'is-selected': isSelected } ) }
-						showPreview
-						showClose={ false }
-						showEdit={ false }
-						showDeviceSwitcher={ false }
-						previewUrl={ getDesignPreviewUrl( design, {
-							language: locale,
-							verticalId: siteVerticalId,
-						} ) }
-						loadingMessage={ previewLoadingMessage }
-						toolbarComponent={ PreviewToolbar }
-						autoHeight
-						siteId={ site?.ID }
-						url={ site?.URL }
-						isPrivateAtomic={ isPrivateAtomic }
-						translate={ translate }
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				);
-			} ) }
+			previews={ shuffledGeneratedDesigns.map( ( design ) => (
+				<GeneratedDesignPickerWebPreview
+					key={ design.slug }
+					site={ site }
+					design={ design }
+					locale={ locale }
+					verticalId={ siteVerticalId }
+					isSelected={ design.slug === selectedGeneratedDesign?.slug }
+					isPrivateAtomic={ isPrivateAtomic }
+					translate={ translate }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			) ) }
 			heading={
 				<div className={ classnames( 'step-container__header', 'design-setup__header' ) }>
 					{ heading }

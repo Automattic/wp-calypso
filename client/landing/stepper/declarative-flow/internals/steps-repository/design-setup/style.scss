@@ -307,6 +307,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		.generated-design-picker__previews {
 			height: auto;
 			min-height: calc( 100vh - 172px );
+			margin-bottom: 84px;
 		}
 	}
 
@@ -478,6 +479,11 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				svg {
 					left: 12px;
 				}
+			}
+
+			.web-preview__placeholder {
+				flex: 0;
+				min-height: 80vh;
 			}
 		}
 
