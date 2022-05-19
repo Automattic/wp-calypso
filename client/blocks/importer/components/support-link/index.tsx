@@ -1,7 +1,7 @@
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import type { Importer } from 'calypso/signup/steps/import-from/types';
+import type { Importer } from 'calypso/blocks/importer/types';
 
 interface Props {
 	importer: Importer;
