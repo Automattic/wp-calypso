@@ -22,27 +22,12 @@
 	width: 100%;
 
 	.categories__swipe-menu-list {
-		padding: 0 44px;
+		padding: 0 16px;
 		display: flex;
 		flex-wrap: nowrap;
 		overflow-x: scroll;
 		overflow-y: hidden;
-
 		border: none;
-
-		.categories__swipe-menu-scroll {
-			position: absolute;
-			z-index: 2;
-			&.scroll-left {
-				left: 0;
-				background: linear-gradient( to left, transparent, white 30% );
-			}
-
-			&.scroll-right {
-				right: 0;
-				background: linear-gradient( to right, transparent, white 30% );
-			}
-		}
 
 		.categories__swipe-menu-item {
 			font-size: 0.875rem;
@@ -54,6 +39,7 @@
 		}
 	}
 
+	// Remove on-focus, on-click border
 	.components-toolbar .components-button::before {
 		box-shadow: none;
 	}
