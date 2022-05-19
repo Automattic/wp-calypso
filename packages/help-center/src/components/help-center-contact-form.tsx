@@ -303,12 +303,18 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 	};
 
 	const isCTADisabled = () => {
-		return (
-			isLoading ||
-			( mode !== 'FORUM' && ! supportSite ) ||
-			( mode !== 'CHAT' && ! subject ) ||
-			! message
-		);
+		if ( isLoading || ! message ) {
+			return true;
+		}
+
+		switch ( mode ) {
+			case 'CHAT':
+				return ! supportSite;
+			case 'EMAIL':
+				return ! supportSite || ! subject;
+			case 'FORUM':
+				return ! subject;
+		}
 	};
 
 	return (
@@ -405,7 +411,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 				{ hasSubmittingError && (
 					<FormInputValidation
 						isError
-						text={ __( 'Something went wrong, please try again later', __i18n_text_domain__ ) }
+						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
 					/>
 				) }
 			</section>
