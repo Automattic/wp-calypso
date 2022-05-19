@@ -1,7 +1,7 @@
+import { WPCOM_FEATURES_BACKUPS_RESTORE } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
-import { includes } from 'lodash';
-import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 
 /**
@@ -13,7 +13,7 @@ import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-sit
  */
 export default createSelector(
 	( state, siteId ) => {
-		const siteCapabilities = getRewindCapabilities( state, siteId );
+		const siteHasRestore = siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS_RESTORE );
 		const rewind = getRewindState( state, siteId );
 		const isMultiSite = isJetpackSiteMultiSite( state, siteId );
 
@@ -22,12 +22,12 @@ export default createSelector(
 			! isMultiSite &&
 			'active' === rewind.state &&
 			! ( 'queued' === restoreStatus || 'running' === restoreStatus ) &&
-			includes( siteCapabilities, 'restore' )
+			siteHasRestore
 		);
 	},
 	( state, siteId ) => {
 		return [
-			getRewindCapabilities( state, siteId ),
+			siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS_RESTORE ),
 			getRewindState( state, siteId ),
 			isJetpackSiteMultiSite( state, siteId ),
 		];
