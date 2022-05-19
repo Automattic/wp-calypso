@@ -11,7 +11,7 @@ interface Site {
 	URL: string;
 }
 
-interface GeneratedDesignPickerWebPreview {
+interface GeneratedDesignPickerWebPreviewProps {
 	site?: Site;
 	design: Design;
 	locale: string;
@@ -22,7 +22,7 @@ interface GeneratedDesignPickerWebPreview {
 	recordTracksEvent: typeof recordTracksEvent;
 }
 
-const GeneratedDesignPickerWebPreview: ReactFC< GeneratedDesignWebPreviewProps > = ( {
+const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreviewProps > = ( {
 	site,
 	design,
 	locale,
