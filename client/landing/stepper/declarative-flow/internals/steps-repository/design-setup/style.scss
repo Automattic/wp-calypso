@@ -294,6 +294,22 @@ $design-button-primary-color: rgb( 17, 122, 201 );
  * Generated Design Picker
  */
 .design-picker__is-generated {
+	&.design-picker__is-generated-previewing {
+		.design-setup__header,
+		.generated-design-picker__thumbnails {
+			display: none;
+
+			@include break-small {
+				display: flex;
+			}
+		}
+
+		.generated-design-picker__previews {
+			height: auto;
+			min-height: calc( 100vh - 172px );
+		}
+	}
+
 	&.design-setup__preview {
 		padding: 0;
 
@@ -397,6 +413,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			&.is-visible {
 				opacity: 1;
 				transform: translateY( 0 );
+				z-index: 1;
 
 				.design-setup__footer-inner {
 					pointer-events: auto;
@@ -430,7 +447,12 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	}
 
 	.generated-design-picker__previews {
-		display: none;
+		display: flex;
+		height: 0;
+		flex: 1;
+		flex-direction: column;
+		row-gap: 24px;
+		margin-bottom: 44px;
 		position: relative;
 
 		.web-preview__inner {
@@ -460,11 +482,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		}
 
 		@include break-small {
-			display: flex;
-			flex: 1;
-			flex-direction: column;
-			row-gap: 24px;
-			margin-bottom: 44px;
+			height: auto;
 		}
 	}
 

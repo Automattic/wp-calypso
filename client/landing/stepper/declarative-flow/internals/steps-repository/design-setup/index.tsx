@@ -101,11 +101,15 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		[ generatedDesigns ]
 	);
 
-	const selectedGeneratedDesign = ! isMobile
-		? selectedDesign || shuffledGeneratedDesigns[ 0 ]
-		: undefined;
+	const selectedGeneratedDesign = useMemo(
+		() => selectedDesign ?? ( ! isMobile ? shuffledGeneratedDesigns[ 0 ] : undefined ),
+		[ selectedDesign, shuffledGeneratedDesigns, isMobile ]
+	);
 
+	const isPreviewingGeneratedDesign =
+		isMobile && showGeneratedDesigns && selectedDesign && isPreviewingDesign;
 	const visibility = useNewSiteVisibility();
+
 	const previewLoadingMessage = translate(
 		'{{strong}}One moment, please…{{/strong}} loading your site.',
 		{ components: { strong: <strong /> } }
@@ -290,11 +294,11 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		goBack();
 	};
 
-	function previewStaticDesign( design: Design ) {
-		const isBlankCanvas = isBlankCanvasDesign( design );
-		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : design.title;
-		const shouldUpgrade = design.is_premium && ! isPremiumThemeAvailable;
-		const previewUrl = getDesignPreviewUrl( design, {
+	if ( selectedDesign && isPreviewingDesign && ! showGeneratedDesigns ) {
+		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
+		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
+		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
+		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
 			// If the user fills out the site title with write intent, we show it on the design preview
 			siteTitle: intent === 'write' ? siteTitle : undefined,
@@ -347,55 +351,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
 		);
-	}
-
-	function previewGeneratedDesign( design: Design ) {
-		const stepContent = (
-			<WebPreview
-				key={ design.slug }
-				showPreview
-				showClose={ false }
-				showEdit={ false }
-				showDeviceSwitcher={ false }
-				previewUrl={ getDesignPreviewUrl( design, {
-					language: locale,
-					verticalId: siteVerticalId,
-				} ) }
-				loadingMessage={ previewLoadingMessage }
-				toolbarComponent={ PreviewToolbar }
-				autoHeight
-				siteId={ site?.ID }
-				url={ site?.URL }
-				isPrivateAtomic={ isPrivateAtomic }
-				translate={ translate }
-				recordTracksEvent={ recordTracksEvent }
-			/>
-		);
-
-		return (
-			<StepContainer
-				stepName={ 'design-setup' }
-				stepContent={ stepContent }
-				hideSkip
-				hideNext={ false }
-				className={ classnames( 'design-setup__preview', 'design-picker__is-generated' ) }
-				nextLabelText={ 'Continue' }
-				backLabelText={ 'Pick another' }
-				goBack={ handleBackClick }
-				goNext={ () => pickDesign() }
-				recordTracksEvent={ recordStepContainerTracksEvent }
-			/>
-		);
-	}
-
-	if ( selectedDesign && isPreviewingDesign ) {
-		if ( showGeneratedDesigns && isMobile ) {
-			return previewGeneratedDesign( selectedDesign );
-		}
-
-		if ( ! showGeneratedDesigns ) {
-			return previewStaticDesign( selectedDesign );
-		}
 	}
 
 	// When the intent is build, we can potentially show the generated design picker.
@@ -504,16 +459,19 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			stepName={ 'design-step' }
 			className={ classnames( {
 				'design-picker__is-generated': showGeneratedDesigns,
+				'design-picker__is-generated-previewing': isPreviewingGeneratedDesign,
 				'design-picker__has-categories': showDesignPickerCategories,
 				'design-picker__sell-intent': 'sell' === intent,
 			} ) }
-			hideSkip={ isAnchorSite }
+			hideSkip={ isPreviewingGeneratedDesign || isAnchorSite }
+			hideNext={ ! isPreviewingGeneratedDesign }
 			skipButtonAlign={ 'top' }
 			hideFormattedHeader
+			backLabelText={ isPreviewingGeneratedDesign ? 'Pick another' : 'Back' }
 			skipLabelText={ intent === 'write' ? translate( 'Skip and draft first post' ) : undefined }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
-			goNext={ () => submit?.() }
+			goNext={ () => ( isPreviewingGeneratedDesign ? pickDesign() : submit?.() ) }
 			goBack={ handleBackClick }
 		/>
 	);
