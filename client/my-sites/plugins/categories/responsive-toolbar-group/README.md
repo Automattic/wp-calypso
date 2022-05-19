@@ -1,6 +1,6 @@
 # ResponsiveToolBarGroup
 
-This component is used to render a toggle group that collapses items that overflow the component width into more dropdown.
+This component is used to render a toggle group that collapses items that overflow the component width into more dropdown. On mobile viewports this menu no longer collapses and extends off the screen for swiping into view.
 
 ## How to use
 
@@ -24,3 +24,4 @@ import Discover from 'calypso/my-sites/plugins/categories/responsive-toolbar-gro
 - `rootMargin`[string]: take a look at ([take a look at the IntersectionObserver docs](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/rootMargin)) (optional).
 - `onClick`[( index: number) => void]: A callback function that receives the index of the children being clicked. (optional).
 - `initialActiveIndex`[number]: The initial active index of the component. (optional).
+- `swipeBreakpoint`[string]: The breakpoint used to switch to a mobile friendly version of the toolbar optimized for swiping with no menu collapse. (optional, defaults to "<660px")
