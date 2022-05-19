@@ -880,7 +880,7 @@ export default connect(
 			sites: getSitesItems( state ),
 			isPlanSelectionAvailableLaterInFlow:
 				( ! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ) ) ||
-				( eligibleForProPlan && 'pro' === flowName ),
+				[ 'pro', 'starter' ].includes( flowName ),
 			userLoggedIn: isUserLoggedIn( state ),
 			eligibleForProPlan,
 		};
