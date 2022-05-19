@@ -297,7 +297,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    chai: ^4.3.4
     i18n-calypso: "workspace:^"
     typescript: ^4.5.5
   peerDependencies:
@@ -1146,7 +1145,6 @@ __metadata:
   resolution: "@automattic/popup-monitor@workspace:packages/popup-monitor"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    chai: ^4.3.4
     events: ^3.3.0
     lodash: ^4.17.21
   languageName: unknown
@@ -10970,13 +10968,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"assertion-error@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "assertion-error@npm:1.1.0"
-  checksum: 25456b2aa333250f01143968e02e4884a34588a8538fbbf65c91a637f1dbfb8069249133cd2f4e530f10f624d206a664e7df30207830b659e9f5298b00a4099b
-  languageName: node
-  linkType: hard
-
 "assign-symbols@npm:^1.0.0":
   version: 1.0.0
   resolution: "assign-symbols@npm:1.0.0"
@@ -12563,7 +12554,6 @@ __metadata:
     browser-filesaver: ^1.1.1
     browserslist-useragent: ^3.0.3
     bunyan: ^1.8.15
-    chai: ^4.3.4
     chalk: ^4.1.2
     chrono-node: ^2.3.5
     circular-dependency-plugin: ^5.2.2
@@ -12838,20 +12828,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chai@npm:^4.3.4":
-  version: 4.3.4
-  resolution: "chai@npm:4.3.4"
-  dependencies:
-    assertion-error: ^1.1.0
-    check-error: ^1.0.2
-    deep-eql: ^3.0.1
-    get-func-name: ^2.0.0
-    pathval: ^1.1.1
-    type-detect: ^4.0.5
-  checksum: e8be63a3ce412cc35f0209799c96b1f67397c4829489bd1604f9639f291b697f9a8c1ee129f5d502663332691950b278d2be7e8f19d753b86ea1876e99771a8e
-  languageName: node
-  linkType: hard
-
 "chalk@npm:2.4.2, chalk@npm:^2.0.0, chalk@npm:^2.0.1, chalk@npm:^2.1.0, chalk@npm:^2.3.0, chalk@npm:^2.4.1, chalk@npm:^2.4.2":
   version: 2.4.2
   resolution: "chalk@npm:2.4.2"
@@ -12935,13 +12911,6 @@ __metadata:
   version: 0.7.0
   resolution: "chardet@npm:0.7.0"
   checksum: 96e4731b9ec8050cbb56ab684e8c48d6c33f7826b755802d14e3ebfdc51c57afeece3ea39bc6b09acc359e4363525388b915e16640c1378053820f5e70d0f27d
-  languageName: node
-  linkType: hard
-
-"check-error@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "check-error@npm:1.0.2"
-  checksum: c58ac4d6a92203209a61d025568198c073f101691eb6247f999266e1d1e3ab3af2bbe0a41af5008c1f1b95446ec7831e6ba91f03816177f2da852f316ad7921d
   languageName: node
   linkType: hard
 
@@ -15130,15 +15099,6 @@ __metadata:
   version: 0.7.0
   resolution: "dedent@npm:0.7.0"
   checksum: 7c3aa00ddfe3e5fcd477958e156156a5137e3bb6ff1493ca05edff4decf29a90a057974cc77e75951f8eb801c1816cb45aea1f52d628cdd000b82b36ab839d1b
-  languageName: node
-  linkType: hard
-
-"deep-eql@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "deep-eql@npm:3.0.1"
-  dependencies:
-    type-detect: ^4.0.0
-  checksum: 80b33c1c7713b3d5db89e6b5e9b22050f39c8a88e12a015616da8391e013988790d045a5c612b0c6dc43cc4bec51eadbe0fcf6075cc9717f8f56efdb305b6e6f
   languageName: node
   linkType: hard
 
@@ -18727,13 +18687,6 @@ __metadata:
   version: 2.0.5
   resolution: "get-caller-file@npm:2.0.5"
   checksum: c6c7b60271931fa752aeb92f2b47e355eac1af3a2673f47c9589e8f8a41adc74d45551c1bc57b5e66a80609f10ffb72b6f575e4370d61cc3f7f3aaff01757cde
-  languageName: node
-  linkType: hard
-
-"get-func-name@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "get-func-name@npm:2.0.0"
-  checksum: ed8791f7ba92cfd747259dff7ec8b6cc42734cebd031fb58c99a6e71d24d3532d84b46ad7806cafad6ad21784dd04ae1808a002d2b21001425e21f5f394c34e7
   languageName: node
   linkType: hard
 
@@ -26985,13 +26938,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pathval@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "pathval@npm:1.1.1"
-  checksum: f63e1bc1b33593cdf094ed6ff5c49c1c0dc5dc20a646ca9725cc7fe7cd9995002d51d5685b9b2ec6814342935748b711bafa840f84c0bb04e38ff40a335c94dc
-  languageName: node
-  linkType: hard
-
 "pbkdf2@npm:^3.0.3":
   version: 3.0.17
   resolution: "pbkdf2@npm:3.0.17"
@@ -32100,16 +32046,6 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"sinon-chai@npm:^3.7.0":
-  version: 3.7.0
-  resolution: "sinon-chai@npm:3.7.0"
-  peerDependencies:
-    chai: ^4.0.0
-    sinon: ">=4.0.0"
-  checksum: 9bbb0494be89c313f5287c2a0c9890104e3070ad6bf06c359b0c3cd776ea6273f7846ee1ab01fa2e0328e741f8717348669ee232e83b94b193676a56f48d2c63
-  languageName: node
-  linkType: hard
-
 "sinon@npm:^12.0.1":
   version: 12.0.1
   resolution: "sinon@npm:12.0.1"
@@ -34479,7 +34415,7 @@ swiper@4.5.1:
   languageName: node
   linkType: hard
 
-"type-detect@npm:4.0.8, type-detect@npm:^4.0.0, type-detect@npm:^4.0.5, type-detect@npm:^4.0.8":
+"type-detect@npm:4.0.8, type-detect@npm:^4.0.8":
   version: 4.0.8
   resolution: "type-detect@npm:4.0.8"
   checksum: 8fb9a51d3f365a7de84ab7f73b653534b61b622aa6800aecdb0f1095a4a646d3f5eb295322127b6573db7982afcd40ab492d038cf825a42093a58b1e1353e0bd
@@ -36273,7 +36209,6 @@ swiper@4.5.1:
     calypso: "workspace:^"
     calypso-codemods: "workspace:^"
     capture-website: ^1.0.0
-    chai: ^4.3.4
     chalk: ^4.1.2
     check-node-version: ^4.0.2
     chroma-js: ^2.1.2
@@ -36333,7 +36268,6 @@ swiper@4.5.1:
     sass-loader: ^12.1.0
     sharp: ^0.28
     sinon: ^12.0.1
-    sinon-chai: ^3.7.0
     source-map: ^0.7.3
     stackframe: ^1.1.1
     stacktrace-gps: ^3.0.3
@@ -36417,7 +36351,6 @@ swiper@4.5.1:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    chai: ^4.3.4
     debug: ^4.3.3
     progress-event: ^1.0.0
     uuid: ^8.3.2
