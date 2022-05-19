@@ -195,8 +195,9 @@ function CheckoutSummaryFeaturesList( props: {
 				if ( isDomainProduct( product ) ) {
 					productName = product.meta;
 				} else if ( isGoogleWorkspace( product ) || isTitanMail( product ) ) {
-					if ( product.extra?.email_users?.[ 0 ] ) {
-						productName = product.extra?.email_users?.[ 0 ].email;
+					if ( product.extra?.email_users?.length ) {
+						const emailUsers = product.extra?.email_users?.map( ( user ) => user.email );
+						productName = emailUsers.join( ', ' );
 					}
 				}
 
