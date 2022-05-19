@@ -1,6 +1,6 @@
+import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
+import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import SiteCard from '../site-card';
 import SiteTable from '../site-table';
 import { formatSites } from '../utils';
@@ -8,10 +8,14 @@ import type { ReactElement } from 'react';
 
 import './style.scss';
 
-export default function SiteContent(): ReactElement {
-	const translate = useTranslate();
+interface Props {
+	data: Array< any > | undefined;
+	isError: boolean;
+	isFetching: boolean;
+}
 
-	const { data, error, isLoading } = useFetchDashboardSites();
+export default function SiteContent( { data, isError, isFetching }: Props ): ReactElement {
+	const translate = useTranslate();
 
 	const sites = formatSites( data );
 
@@ -38,17 +42,19 @@ export default function SiteContent(): ReactElement {
 		},
 	];
 
-	if ( ! isLoading && ! error && ! sites.length ) {
+	if ( ! isFetching && ! isError && ! sites.length ) {
 		return <div className="site-content__no-sites">{ translate( 'No active sites' ) }</div>;
 	}
 
 	return (
 		<>
-			<SiteTable isFetching={ isLoading } columns={ columns } items={ sites } />
+			<SiteTable isFetching={ isFetching } columns={ columns } items={ sites } />
 			<div className="site-content__mobile-view">
 				<>
-					{ isLoading || error ? (
-						<JetpackLogo size={ 72 } className="site-content__logo" />
+					{ isFetching ? (
+						<Card>
+							<TextPlaceholder />
+						</Card>
 					) : (
 						<>
 							{ sites.length > 0 &&
