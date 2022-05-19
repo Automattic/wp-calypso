@@ -3,7 +3,7 @@ import { HOSTING_SFTP_USERS_SET, HOSTING_SFTP_USER_UPDATE } from 'calypso/state/
 import reducer, { sftpUsers } from '../reducer';
 
 describe( 'reducer', () => {
-	console.warn = jest.fn();
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	describe( '#sftpUsers()', () => {
 		test( 'should default to an empty object', () => {

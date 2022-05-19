@@ -453,7 +453,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'invalid state tests', () => {
-			console.warn = jest.fn();
+			jest.spyOn( console, 'warn' ).mockImplementation();
 
 			test( 'should not load invalid persisted state (1)', () => {
 				const original = deepFreeze( {

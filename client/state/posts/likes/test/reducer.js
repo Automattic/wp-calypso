@@ -5,7 +5,7 @@ import { addLiker, removeLiker, like, unlike } from '../actions';
 import reducer, { items, itemReducer } from '../reducer';
 
 describe( 'reducer', () => {
-	console.warn = jest.fn();
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	const FAKE_NOW = 1000;
 

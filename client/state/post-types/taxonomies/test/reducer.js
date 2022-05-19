@@ -10,7 +10,7 @@ import { receivePostTypeTaxonomies } from '../actions';
 import reducer, { requesting, items } from '../reducer';
 
 describe( 'reducer', () => {
-	console.warn = jest.fn();
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should include expected keys in return value', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(

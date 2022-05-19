@@ -11,7 +11,7 @@ import { serialize, deserialize } from 'calypso/state/utils';
 import jetpackConnectAuthorize from '../jetpack-connect-authorize.js';
 
 describe( '#jetpackConnectAuthorize()', () => {
-	console.warn = jest.fn();
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should default to an empty object', () => {
 		const state = jetpackConnectAuthorize( undefined, {} );

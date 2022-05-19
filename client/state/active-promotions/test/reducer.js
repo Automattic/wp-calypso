@@ -14,7 +14,7 @@ import activePromotionsReducer, {
 import { WPCOM_RESPONSE } from './fixture';
 
 describe( 'reducer', () => {
-	console.warn = jest.fn();
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should export expected reducer keys', () => {
 		expect( Object.keys( activePromotionsReducer( undefined, {} ) ) ).toEqual(

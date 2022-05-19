@@ -3,7 +3,7 @@ import { REWIND_BACKUPS_SET } from 'calypso/state/action-types';
 import reducer from '../reducer';
 
 describe( 'reducer', () => {
-	console.warn = jest.fn();
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should default to an empty object', () => {
 		const state = reducer( undefined, {} );

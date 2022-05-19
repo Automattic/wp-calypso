@@ -14,7 +14,7 @@ import reducer, { items } from '../reducer';
 import { STORED_CARDS_FROM_API, SELECTED_STORED_CARDS } from './fixture';
 
 describe( 'items', () => {
-	console.warn = jest.fn();
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should return an object with the initial state', () => {
 		expect( reducer( undefined, { type: 'UNRELATED' } ) ).toEqual( {

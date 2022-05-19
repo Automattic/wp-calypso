@@ -10,7 +10,7 @@ import { serialize, deserialize } from 'calypso/state/utils';
 import reducer, { settingsReducer } from '../reducer';
 
 describe( 'reducer', () => {
-	console.warn = jest.fn();
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should export expected reducer keys', () => {
 		const state = reducer( undefined, {} );

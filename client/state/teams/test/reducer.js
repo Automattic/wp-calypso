@@ -9,7 +9,7 @@ const validState = [ TEAM1, TEAM2 ];
 const invalidState = [ { slug: 1, title: 'foo bar' } ];
 
 describe( 'reducer', () => {
-	console.warn = jest.fn();
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	describe( 'items', () => {
 		test( 'should return an empty list by default', () => {

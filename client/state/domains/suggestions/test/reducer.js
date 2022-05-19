@@ -9,7 +9,7 @@ import { serialize, deserialize } from 'calypso/state/utils';
 import reducer, { items, requesting, errors } from '../reducer';
 
 describe( 'reducer', () => {
-	console.warn = jest.fn();
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should export expected reducer keys', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(

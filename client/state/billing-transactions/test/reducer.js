@@ -12,7 +12,7 @@ import { serialize, deserialize } from 'calypso/state/utils';
 import reducer, { requesting, items, sendingReceiptEmail } from '../reducer';
 
 describe( 'reducer', () => {
-	console.warn = jest.fn();
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should include expected keys in return value', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(

@@ -254,7 +254,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'persistence', () => {
-			console.warn = jest.fn();
+			jest.spyOn( console, 'warn' ).mockImplementation();
 
 			test( 'should persist data', () => {
 				const state = deepFreeze( {

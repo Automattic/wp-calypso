@@ -28,7 +28,7 @@ const streakQuery = { startDate: '2015-06-01', endDate: '2016-06-01' };
 const streakQueryDos = { startDate: '2014-06-01', endDate: '2015-06-01' };
 
 describe( 'reducer', () => {
-	console.warn = jest.fn();
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should include expected keys in return value', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
