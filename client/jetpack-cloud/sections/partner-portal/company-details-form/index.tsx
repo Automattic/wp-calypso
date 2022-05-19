@@ -89,7 +89,10 @@ export default function CompanyDetailsForm(): ReactElement {
 		<Card className="company-details-form">
 			<form onSubmit={ handleSubmit }>
 				<FormFieldset>
-					<FormLabel htmlFor="name">{ translate( 'Company name' ) }</FormLabel>
+					<FormLabel htmlFor="name">
+						{ translate( 'Company name' ) }{ ' ' }
+						<span className="company-details-form__label--required">*</span>
+					</FormLabel>
 					<FormTextInput
 						id="name"
 						name="name"
@@ -100,10 +103,14 @@ export default function CompanyDetailsForm(): ReactElement {
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="line1">{ translate( 'Address line 1' ) }</FormLabel>
+					<FormLabel htmlFor="line1">
+						{ translate( 'Address line 1' ) }{ ' ' }
+						<span className="company-details-form__label--required">*</span>
+					</FormLabel>
 					<FormTextInput
 						id="line1"
 						name="line1"
+						required
 						value={ line1 }
 						onChange={ ( event: any ) => setLine1( event.target.value ) }
 						disabled={ isSubmitting }
@@ -120,27 +127,37 @@ export default function CompanyDetailsForm(): ReactElement {
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="city">{ translate( 'City' ) }</FormLabel>
+					<FormLabel htmlFor="city">
+						{ translate( 'City' ) } <span className="company-details-form__label--required">*</span>
+					</FormLabel>
 					<FormTextInput
 						id="city"
 						name="city"
+						required
 						value={ city }
 						onChange={ ( event: any ) => setCity( event.target.value ) }
 						disabled={ isSubmitting }
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
+					<FormLabel htmlFor="postalCode">
+						{ translate( 'Postal code' ) }{ ' ' }
+						<span className="company-details-form__label--required">*</span>
+					</FormLabel>
 					<FormTextInput
 						id="postalCode"
 						name="postalCode"
+						required
 						value={ postalCode }
 						onChange={ ( event: any ) => setPostalCode( event.target.value ) }
 						disabled={ isSubmitting }
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel>{ translate( 'Country' ) }</FormLabel>
+					<FormLabel>
+						{ translate( 'Country' ) }{ ' ' }
+						<span className="company-details-form__label--required">*</span>
+					</FormLabel>
 					{ showCountryFields && (
 						<SelectDropdown
 							className="company-details-form__dropdown"
@@ -161,7 +178,10 @@ export default function CompanyDetailsForm(): ReactElement {
 				<FormFieldset>
 					{ showCountryFields && stateOptions && (
 						<>
-							<FormLabel>{ translate( 'State' ) }</FormLabel>
+							<FormLabel>
+								{ translate( 'State' ) }{ ' ' }
+								<span className="company-details-form__label--required">*</span>
+							</FormLabel>
 							<SelectDropdown
 								className="company-details-form__dropdown"
 								initialSelected={ addressState }
