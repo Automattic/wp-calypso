@@ -1,4 +1,6 @@
 import { Button, Card } from '@automattic/components';
+import { register } from '@automattic/data-stores/src/reader';
+import { select } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -47,10 +49,12 @@ export default function CloneSettingsMain() {
 
 	const [ sourceSiteId, setSourceSiteId ] = useState( 0 );
 
-	const onSelect = useCallback( ( select ) => {
-		const id = parseInt( select.target.value );
+	const isTeamMember = select( register() ).isA8cTeamMember();
+
+	const onSelect = useCallback( ( element ) => {
+		const id = parseInt( element.target.value );
 		if ( id ) {
-			setSourceSiteId( select.target.value );
+			setSourceSiteId( element.target.value );
 		}
 	}, [] );
 
@@ -59,6 +63,20 @@ export default function CloneSettingsMain() {
 			dispatch( cloneJetpackSettings( siteId, sourceSiteId ) );
 		}
 	}, [ siteId, sourceSiteId, dispatch ] );
+
+	let body = 'Functionality is not available';
+
+	if ( isTeamMember ) {
+		body = (
+			<form>
+				{ chooseSite( siteId, sites, onSelect ) }
+
+				<Button primary onClick={ cloneSettingsCallback }>
+					Clone Settings
+				</Button>
+			</form>
+		);
+	}
 
 	return (
 		<Main className="jetpack-clone-settings">
@@ -73,15 +91,7 @@ export default function CloneSettingsMain() {
 				align="left"
 			/>
 
-			<Card>
-				<form>
-					{ chooseSite( siteId, sites, onSelect ) }
-
-					<Button primary onClick={ cloneSettingsCallback }>
-						Clone Settings
-					</Button>
-				</form>
-			</Card>
+			<Card>{ body }</Card>
 		</Main>
 	);
 }
