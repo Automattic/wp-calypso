@@ -193,7 +193,7 @@ function CheckoutSummaryFeaturesList( props: {
 					nextDomainIsFree={ nextDomainIsFree }
 				/>
 			) }
-			{ hasOnlyStarterPlan && (
+			{ ! hasOnlyStarterPlan && (
 				<CheckoutSummaryFeaturesListItem>
 					<WPCheckoutCheckIcon id="features-list-support-text" />
 					<SupportText plans={ plans } isJetpackNotAtomic={ isJetpackNotAtomic } />
