@@ -65,6 +65,13 @@
 		overflow-y: hidden;
 		border: none;
 
+		// hides the scrollbar
+		scrollbar-width: none; // hides the scrollbar in firefox
+		
+		&::-webkit-scrollbar { // hides the scrollbar in webkit browsers
+			display: none;
+		}
+
 		.responsive-toolbar-group__swipe-item {
 			font-size: 0.875rem;
 		}
