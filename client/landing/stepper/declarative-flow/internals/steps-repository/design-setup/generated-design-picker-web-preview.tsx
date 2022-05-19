@@ -2,24 +2,19 @@ import { getDesignPreviewUrl } from '@automattic/design-picker';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import WebPreview from 'calypso/components/web-preview/content';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import PreviewToolbar from './preview-toolbar';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { Design } from '@automattic/design-picker';
 
-interface Site {
-	ID: string;
-	URL: string;
-}
-
 interface GeneratedDesignPickerWebPreviewProps {
-	site?: Site;
+	site?: SiteDetails | null;
 	design: Design;
 	locale: string;
 	verticalId: string;
 	isSelected: boolean;
 	isPrivateAtomic: boolean;
 	translate: ReturnType< typeof useTranslate >;
-	recordTracksEvent: typeof recordTracksEvent;
+	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 }
 
 const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreviewProps > = ( {

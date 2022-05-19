@@ -99,7 +99,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		useGeneratedDesignsQuery();
 
 	const shuffledGeneratedDesigns = useMemo(
-		() => shuffle( generatedDesigns ),
+		() => shuffle( generatedDesigns ).slice( 0, 3 ),
 		[ generatedDesigns ]
 	);
 
