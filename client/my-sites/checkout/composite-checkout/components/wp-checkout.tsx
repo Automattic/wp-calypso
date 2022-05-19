@@ -24,7 +24,7 @@ import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout'
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
@@ -559,20 +559,16 @@ const CheckoutSummaryTitleLink = styled.button`
 	justify-content: space-between;
 	padding: 20px 23px 20px 14px;
 	width: 100%;
-
 	.rtl & {
 		padding: 20px 14px 20px 23px;
 	}
-
 	.is-visible & {
 		border-bottom: none;
 	}
-
 	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		border-bottom: none 0;
 	}
-
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		display: none;
 	}
@@ -584,7 +580,6 @@ const CheckoutSummaryTitle = styled.span`
 
 const CheckoutSummaryTitleIcon = styled( Gridicon )`
 	margin-right: 4px;
-
 	.rtl & {
 		margin-right: 0;
 		margin-left: 4px;
@@ -598,12 +593,10 @@ const CheckoutSummaryTitleToggle = styled( MaterialIcon )`
 	width: 18px;
 	height: 18px;
 	vertical-align: bottom;
-
 	.rtl & {
 		margin-right: 0;
 		margin-left: 4px;
 	}
-
 	.is-visible & {
 		transform: rotate( 180deg );
 	}
@@ -618,15 +611,12 @@ const CheckoutSummaryTitlePrice = styled.span`
 const CheckoutSummaryBody = styled.div`
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 	display: none;
-
 	.is-visible & {
 		display: block;
 	}
-
 	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
 		border-bottom: none;
 	}
-
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		display: block;
 		max-width: 328px;
@@ -666,7 +656,7 @@ const SubmitButtonFooter = () => {
 
 	const show7DayGuarantee = responseCart?.products?.every( isMonthlyProduct );
 	const show14DayGuarantee = responseCart?.products?.every( isYearly );
-	const content =
+	const guaranteeContent =
 		show7DayGuarantee || show14DayGuarantee ? (
 			translate( '%(dayCount)s day money back guarantee', {
 				args: {
@@ -680,6 +670,13 @@ const SubmitButtonFooter = () => {
 				{ translate( '7 day money back guarantee on monthly subscriptions' ) }
 			</>
 		);
+
+	const disclaimerContent = responseCart?.products?.some( ( product ) => {
+		return !! product?.introductory_offer_terms?.enabled;
+	} )
+		? translate( '* All discounts are for the first term only, renewals are at full price.' )
+		: null;
+
 	let imgSrc = badgeGenericSrc;
 
 	if ( show7DayGuarantee ) {
@@ -691,26 +688,30 @@ const SubmitButtonFooter = () => {
 	return (
 		<SubmitButtonFooterWrapper>
 			<img src={ imgSrc } alt="" />
-			<span>{ content }</span>
+			<span>{ guaranteeContent }</span>
+
+			<SubmitButtonFooterDisclaimer>{ disclaimerContent }</SubmitButtonFooterDisclaimer>
 		</SubmitButtonFooterWrapper>
 	);
 };
+
+const SubmitButtonFooterDisclaimer = styled.span< React.HTMLAttributes< HTMLSpanElement > >`
+	flex-basis: 100%;
+	text-align: center;
+	font-size: 9px;
+`;
 
 const SubmitButtonFooterWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
-
+	flex-wrap: wrap;
 	margin-top: 1.25rem;
-
 	color: ${ ( props ) => props.theme.colors.textColor };
-
 	font-weight: 500;
-
 	img {
 		margin-right: 0.5rem;
 	}
-
 	span {
 		padding-top: 3px;
 	}
@@ -722,22 +723,18 @@ const SubmitButtonHeaderWrapper = styled.div`
 	margin-top: -5px;
 	margin-bottom: 10px;
 	text-align: center;
-
 	.checkout__step-wrapper--last-step & {
 		display: block;
-
 		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 			display: none;
 		}
 	}
-
 	button {
 		color: ${ ( props ) => props.theme.colors.highlight };
 		display: inline;
 		font-size: 13px;
 		text-decoration: underline;
 		width: auto;
-
 		&:hover {
 			color: ${ ( props ) => props.theme.colors.highlightOver };
 		}
@@ -746,7 +743,6 @@ const SubmitButtonHeaderWrapper = styled.div`
 
 const NonCheckoutContentWrapper = styled.div`
 	display: flex;
-
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		align-items: flex-start;
 		flex-direction: row;
@@ -758,13 +754,11 @@ const NonCheckoutContentWrapper = styled.div`
 const NonCheckoutContentInnerWrapper = styled.div`
 	background: ${ ( props ) => props.theme.colors.surface };
 	width: 100%;
-
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		max-width: 556px;
 		margin: 0 auto;
 	}
-
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		margin: 0;
 	}
