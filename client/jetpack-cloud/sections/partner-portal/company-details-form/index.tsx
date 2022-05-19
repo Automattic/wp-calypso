@@ -99,46 +99,6 @@ export default function CompanyDetailsForm(): ReactElement {
 					/>
 				</FormFieldset>
 				<FormFieldset>
-					<FormLabel htmlFor="line1">{ translate( 'Address line 1' ) }</FormLabel>
-					<FormTextInput
-						id="line1"
-						name="line1"
-						value={ line1 }
-						onChange={ ( event: any ) => setLine1( event.target.value ) }
-						disabled={ isSubmitting }
-					/>
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="line2">{ translate( 'Address line 2' ) }</FormLabel>
-					<FormTextInput
-						id="line2"
-						name="line2"
-						value={ line2 }
-						onChange={ ( event: any ) => setLine2( event.target.value ) }
-						disabled={ isSubmitting }
-					/>
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="city">{ translate( 'City' ) }</FormLabel>
-					<FormTextInput
-						id="city"
-						name="city"
-						value={ city }
-						onChange={ ( event: any ) => setCity( event.target.value ) }
-						disabled={ isSubmitting }
-					/>
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
-					<FormTextInput
-						id="postalCode"
-						name="postalCode"
-						value={ postalCode }
-						onChange={ ( event: any ) => setPostalCode( event.target.value ) }
-						disabled={ isSubmitting }
-					/>
-				</FormFieldset>
-				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (
 						<SelectDropdown
@@ -176,6 +136,45 @@ export default function CompanyDetailsForm(): ReactElement {
 					{ ! showCountryFields && Object.keys( stateOptionsMap ).length === 0 && (
 						<TextPlaceholder />
 					) }
+				</FormFieldset>
+				<FormFieldset className="company-details-form__business-address">
+					<FormLabel>{ translate( 'Business address' ) }</FormLabel>
+					<FormTextInput
+						id="line1"
+						name="line1"
+						placeholder={ translate( 'Street name and house number' ) }
+						value={ line1 }
+						onChange={ ( event: any ) => setLine1( event.target.value ) }
+						disabled={ isSubmitting }
+					/>
+					<FormTextInput
+						id="line2"
+						name="line2"
+						placeholder={ translate( 'Apartment, floor, suite or unit number' ) }
+						value={ line2 }
+						onChange={ ( event: any ) => setLine2( event.target.value ) }
+						disabled={ isSubmitting }
+					/>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
+					<FormTextInput
+						id="postalCode"
+						name="postalCode"
+						value={ postalCode }
+						onChange={ ( event: any ) => setPostalCode( event.target.value ) }
+						disabled={ isSubmitting }
+					/>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="city">{ translate( 'City' ) }</FormLabel>
+					<FormTextInput
+						id="city"
+						name="city"
+						value={ city }
+						onChange={ ( event: any ) => setCity( event.target.value ) }
+						disabled={ isSubmitting }
+					/>
 				</FormFieldset>
 				<div className="company-details-form__controls">
 					<Button
