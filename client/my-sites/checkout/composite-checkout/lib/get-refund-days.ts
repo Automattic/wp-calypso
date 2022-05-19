@@ -2,6 +2,7 @@ import {
 	isDomainProduct,
 	isDomainTransfer,
 	isGoogleWorkspace,
+	isGoogleWorkspaceExtraLicence,
 	isGoogleWorkspaceMonthly,
 	isMonthly,
 	isPlan,
@@ -26,6 +27,10 @@ export default function getRefundDays( product: ResponseCartProduct ): number {
 	}
 
 	if ( isGoogleWorkspace( product ) ) {
+		if ( isGoogleWorkspaceExtraLicence( product ) ) {
+			return 0;
+		}
+
 		return isGoogleWorkspaceMonthly( product ) ? 7 : 14;
 	}
 

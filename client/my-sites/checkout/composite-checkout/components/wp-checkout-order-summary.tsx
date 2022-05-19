@@ -159,30 +159,8 @@ function CheckoutSummaryFeaturesList( props: {
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 	const hasPlanInCart = plans.length > 0;
 
-	const refundablePredicates = [
-		isDomainProduct,
-		isDomainTransfer,
-		isPlan,
-		isGoogleWorkspace,
-		isTitanMail,
-	];
 	const refundableProducts = responseCart.products.filter(
-		( product ) =>
-			product.cost && refundablePredicates.some( ( predicate ) => predicate( product ) )
-	);
-	const uniqueRefundableProducts = refundableProducts.reduce< ResponseCartProduct[] >(
-		( result, product ) => {
-			const predicate = refundablePredicates.find( ( predicate ) => predicate( product ) );
-			const predicateAlreadySatisfied =
-				predicate && result.some( ( existingProduct ) => predicate( existingProduct ) );
-
-			if ( ! predicateAlreadySatisfied ) {
-				result.push( product );
-			}
-
-			return result;
-		},
-		[]
+		( product ) => product.cost && getRefundDays( product )
 	);
 
 	const translate = useTranslate();
@@ -211,19 +189,24 @@ function CheckoutSummaryFeaturesList( props: {
 
 			{ ! hasPlanInCart && <CheckoutSummaryChatIfAvailable siteId={ siteId } /> }
 
-			{ uniqueRefundableProducts.length &&
-				uniqueRefundableProducts.map( ( product ) => {
-					const productName = isDomainProduct( product )
-						? translate( 'Domain Registration', { textOnly: true } )
-						: product.product_name;
+			{ refundableProducts.map( ( product ) => {
+				let productName = product.product_name;
 
-					return (
-						<CheckoutSummaryFeaturesListItem key={ product.uuid }>
-							<WPCheckoutCheckIcon id="features-list-refund-text" />
-							{ getRefundText( getRefundDays( product ), productName, translate ) }
-						</CheckoutSummaryFeaturesListItem>
-					);
-				} ) }
+				if ( isDomainProduct( product ) ) {
+					productName = product.meta;
+				} else if ( isGoogleWorkspace( product ) || isTitanMail( product ) ) {
+					if ( product.extra?.email_users?.[ 0 ] ) {
+						productName = product.extra?.email_users?.[ 0 ].email;
+					}
+				}
+
+				return (
+					<CheckoutSummaryFeaturesListItem key={ product.uuid }>
+						<WPCheckoutCheckIcon id="features-list-refund-text" />
+						{ getRefundText( getRefundDays( product ), productName, translate ) }
+					</CheckoutSummaryFeaturesListItem>
+				);
+			} ) }
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }
