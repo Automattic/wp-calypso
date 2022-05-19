@@ -33,6 +33,12 @@
 	margin-top: 2rem;
 }
 
-.company-details-form__label--required {
-	color: var( --studio-red );
+.company-details-form__business-address {
+	input {
+		margin-bottom: 10px !important;
+
+		&:last-child {
+			margin-bottom: 0 !important;
+		}
+	}
 }
