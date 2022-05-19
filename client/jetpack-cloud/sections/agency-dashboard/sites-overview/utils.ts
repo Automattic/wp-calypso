@@ -71,10 +71,11 @@ export const getRowMetaData = (
 	siteError: string;
 	tooltip: ReactChild | undefined;
 	tooltipId: string;
+	siteDown: boolean;
 } => {
 	const row = rows[ type ];
 	const siteUrl = rows.site?.value?.url;
-	const siteError = rows.site?.error;
+	const siteError = rows.site.error;
 	const siteId = rows.site?.value?.blog_id;
 	const { link, tooltip } = getLinks( type, row.status, siteUrl, siteId );
 	return {
@@ -83,6 +84,7 @@ export const getRowMetaData = (
 		siteError,
 		tooltip,
 		tooltipId: `${ siteId }-${ type }`,
+		siteDown: rows.monitor.error,
 	};
 };
 
@@ -110,15 +112,11 @@ export const formatSites = ( data: { items: Array< any > } ): Array< any > => {
 				}
 			);
 		}
-		let error;
-		if (
+		const error =
 			! site.is_connection_healthy ||
 			! site.access_xmlrpc ||
 			! site.valid_xmlrpc ||
-			! site.authenticated_xmlrpc
-		) {
-			error = translate( 'FIX CONNECTION' );
-		}
+			! site.authenticated_xmlrpc;
 		return {
 			site: {
 				value: site,
@@ -141,6 +139,7 @@ export const formatSites = ( data: { items: Array< any > } ): Array< any > => {
 				value: 'failed' === site.monitor_status ? translate( 'Site Down' ) : '',
 				status: site.monitor_status === 'accessible' ? 'success' : site.monitor_status,
 				type: 'monitor',
+				error: 'failed' === site.monitor_status,
 			},
 			plugin: {
 				value: `${ pluginUpdates.length } ${ translate( 'Available' ) }`,

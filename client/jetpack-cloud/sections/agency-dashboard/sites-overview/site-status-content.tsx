@@ -19,7 +19,13 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 		siteError,
 		tooltip,
 		tooltipId,
+		siteDown,
 	} = getRowMetaData( rows, type );
+
+	// Disable clicks/hover when there is a site error &
+	// when the row it is not monitor and monitor status is down
+	// since monitor is clickable when site is down.
+	const disabledStatus = siteError || ( type !== 'monitor' && siteDown );
 
 	const statusContentRef = useRef< HTMLSpanElement | null >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
@@ -36,7 +42,8 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 	};
 
 	if ( type === 'site' ) {
-		const siteIssues = rows.scan.threats || rows.plugin.updates;
+		// Site issues is the sum of scan threats and plugin updates
+		const siteIssues = rows.scan.threats + rows.plugin.updates;
 		let errorContent;
 		if ( error ) {
 			errorContent = (
@@ -116,13 +123,13 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 		);
 	}
 
-	if ( siteError ) {
+	if ( disabledStatus ) {
 		updatedContent = <span className="sites-overview__disabled">{ content } </span>;
 	}
 
 	return (
 		<>
-			{ tooltip && ! siteError ? (
+			{ tooltip && ! disabledStatus ? (
 				<>
 					<span
 						ref={ statusContentRef }
