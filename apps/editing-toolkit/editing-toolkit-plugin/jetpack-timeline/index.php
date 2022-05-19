@@ -17,7 +17,7 @@ add_action(
 		// Block JS.
 		wp_register_script(
 			'jetpack-timeline',
-			plugins_url( 'dist/jetpack-timeline.js', __FILE__ ),
+			plugins_url( 'dist/jetpack-timeline.min.js', __FILE__ ),
 			$dependencies,
 			$version,
 			true

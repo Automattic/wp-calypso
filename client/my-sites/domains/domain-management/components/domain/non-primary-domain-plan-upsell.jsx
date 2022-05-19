@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -50,7 +51,13 @@ const NonPrimaryDomainPlanUpsell = ( {
 						domain: domain.name,
 					},
 					components: {
-						a: <a href={ SETTING_PRIMARY_DOMAIN } target="_blank" rel="noopener noreferrer" />,
+						a: (
+							<a
+								href={ localizeUrl( SETTING_PRIMARY_DOMAIN ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
 						strong: <strong />,
 					},
 				}

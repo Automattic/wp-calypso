@@ -19,7 +19,6 @@ const debug = debugFactory( 'calypso:url-search' );
  * @param {string} options.uri the base uri to modify and add a query to
  * @param {string} options.search the search term
  * @param {string} [options.queryKey = s] the key to place in the url.  defaults to s
- *
  * @returns {string} The built search url
  */
 export const buildSearchUrl = ( { uri, search, queryKey = 's' } ) => {

@@ -1,11 +1,9 @@
 export { default as buildSeoTitle } from './build-seo-title';
+export { default as canAccessWordAds } from './can-access-wordads';
 export { default as canCurrentUserManageSiteOptions } from './can-current-user-manage-site-options';
 export { default as canCurrentUserUpgradeSite } from './can-current-user-upgrade-site';
-export { default as canCurrentUserUseAds } from './can-current-user-use-ads';
 export { default as canCurrentUserUseCustomerHome } from './can-current-user-use-customer-home';
 export { default as canCurrentUserUseEarn } from './can-current-user-use-earn';
-export { default as canCurrentUserUseAnyWooCommerceBasedStore } from './can-current-user-use-any-woocommerce-based-store';
-export { default as canCurrentUserUseWooCommerceCoreStore } from './can-current-user-use-woocommerce-core-store';
 export { default as canJetpackSiteAutoUpdateCore } from './can-jetpack-site-auto-update-core';
 export { default as canJetpackSiteAutoUpdateFiles } from './can-jetpack-site-auto-update-files';
 export { default as canJetpackSiteUpdateFiles } from './can-jetpack-site-update-files';

@@ -1,7 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { Flex, FlexItem } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
+import { Icon, external, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import ArticleContent from 'calypso/blocks/support-article-dialog/dialog-content';
@@ -38,13 +39,13 @@ const InlineHelpEmbedResult: React.FC< Props > = ( { result, handleBackButton, s
 			<Flex justify="space-between">
 				<FlexItem>
 					<Button borderless={ true } onClick={ handleBackButton }>
-						<Gridicon icon={ 'chevron-left' } size={ 18 } />
+						<Icon icon={ chevronLeft } size={ 20 } />
 						{ __( 'Back' ) }
 					</Button>
 				</FlexItem>
 				<FlexItem>
 					<Button borderless={ true } href={ link } target="_blank">
-						<Gridicon icon={ 'external' } size={ 18 } />
+						<Icon icon={ external } size={ 20 } />
 					</Button>
 				</FlexItem>
 			</Flex>

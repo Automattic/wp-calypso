@@ -26,6 +26,7 @@ class FoldableCard extends Component {
 		onOpen: PropTypes.func,
 		screenReaderText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		summary: PropTypes.node,
+		hideSummary: PropTypes.bool,
 		highlight: PropTypes.string,
 	};
 
@@ -133,10 +134,12 @@ class FoldableCard extends Component {
 		return (
 			<div className={ headerClasses } role="presentation" onClick={ headerClickAction }>
 				{ header }
-				<span className="foldable-card__secondary">
-					{ summary }
-					{ expandedSummary }
-				</span>
+				{ ! this.props.hideSummary && (
+					<span className="foldable-card__secondary">
+						{ summary }
+						{ expandedSummary }
+					</span>
+				) }
 			</div>
 		);
 	}

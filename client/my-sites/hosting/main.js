@@ -1,4 +1,4 @@
-import { PLAN_WPCOM_PRO, FEATURE_SFTP } from '@automattic/calypso-products';
+import { PLAN_WPCOM_PRO, FEATURE_SFTP, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
@@ -22,7 +22,7 @@ import {
 } from 'calypso/state/automated-transfer/selectors';
 import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteOnAtomicPlan from 'calypso/state/selectors/is-site-on-atomic-plan';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import MiscellaneousCard from './miscellaneous-card';
@@ -56,7 +56,7 @@ class Hosting extends Component {
 		const {
 			canViewAtomicHosting,
 			clickActivate,
-			isOnAtomicPlan,
+			hasAtomicFeature,
 			isDisabled,
 			isTransferring,
 			requestSiteById,
@@ -182,7 +182,7 @@ class Hosting extends Component {
 					) }
 					align="left"
 				/>
-				{ isOnAtomicPlan ? getAtomicActivationNotice() : getUpgradeBanner() }
+				{ hasAtomicFeature ? getAtomicActivationNotice() : getUpgradeBanner() }
 				{ getContent() }
 			</Main>
 		);
@@ -195,13 +195,13 @@ export const clickActivate = () =>
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const hasAtomicFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
 
 		return {
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
-			isDisabled:
-				! isSiteOnAtomicPlan( state, siteId ) || ! isSiteAutomatedTransfer( state, siteId ),
-			isOnAtomicPlan: isSiteOnAtomicPlan( state, siteId ),
+			isDisabled: ! hasAtomicFeature || ! isSiteAutomatedTransfer( state, siteId ),
+			hasAtomicFeature,
 			canViewAtomicHosting: canSiteViewAtomicHosting( state ),
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,

@@ -5,6 +5,7 @@ import {
 	PLAN_FREE,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_STARTER,
 } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { addQueryArgs } from '@wordpress/url';
@@ -170,7 +171,9 @@ class Plans extends Component {
 
 		if (
 			eligibleForProPlan &&
-			[ PLAN_FREE, PLAN_WPCOM_FLEXIBLE, PLAN_WPCOM_PRO ].includes( currentPlan?.productSlug )
+			[ PLAN_FREE, PLAN_WPCOM_FLEXIBLE, PLAN_WPCOM_STARTER, PLAN_WPCOM_PRO ].includes(
+				currentPlan?.productSlug
+			)
 		) {
 			return (
 				<PlansComparison

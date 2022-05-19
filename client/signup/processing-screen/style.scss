@@ -26,6 +26,37 @@
 	}
 }
 
+@keyframes woobackground {
+	0% {
+		background-color: #e9e9e9;
+		opacity: 0.5;
+		filter: blur( 1px );
+	}
+	100% {
+		background-color: var( --studio-woocommerce-purple-80 );
+		opacity: 0.7;
+		filter: blur( 4px );
+	}
+}
+
+@keyframes woofocus {
+	0%, 100% {
+		background-color: var( --studio-woocommerce-purple-80 );
+		opacity: 0.7;
+		filter: blur( 4px );
+	}
+	50% {
+		background-color: var( --studio-woocommerce-purple-60 );
+		opacity: 0.5;
+		filter: blur( 1px );
+	}
+}
+
+.woo .signup-processing-screen__floaties {
+	background-color: var( --color-text );
+	animation: woobackground 1s ease-in-out 0s, woofocus 5s infinite ease-in-out 1s;
+}
+
 .signup-processing-screen__floaties {
 	pointer-events: none;
 	position: fixed;
@@ -144,7 +175,7 @@
 	.gridicons-reader {
 		height: 130px;
 		width: 130px;
-		top: 360px;
+		top: 420px;
 		left: calc( 50% - 170px );
 		transform: rotate( 12deg );
 		animation-delay: 8s;
@@ -152,7 +183,7 @@
 	.gridicons-star {
 		height: 90px;
 		width: 90px;
-		top: 380px;
+		top: 420px;
 		left: calc( 50% + 60px );
 	}
 	.gridicons-video {

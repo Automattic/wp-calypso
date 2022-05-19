@@ -119,32 +119,15 @@ $left-margin: 36px;
 /**
  * Checkout Terms
  */
-.purchase-modal .checkout__terms,
-.purchase-modal .checkout__concierge-refund-policy,
-.purchase-modal .checkout__bundled-domain-notice,
-.purchase-modal .checkout__titan-terms-of-service {
-	margin: 4px 0;
+.purchase-modal .checkout__terms {
+	margin: 1em 0 4px;
 	padding-left: $left-margin;
-	position: relative;
 	font-size: $font-body-extra-small;
-
-	.purchase-modal__step + & {
-		margin-top: 1em;
-	}
-
-	> svg {
-		position: absolute;
-		top: 0;
-		left: ( $left-margin - 24px );
-		width: 16px;
-		height: 16px;
-	}
-
-	p {
-		font-size: $font-body-extra-small;
-		margin: 0;
-		word-break: break-word;
-	}
+}
+.purchase-modal .checkout__terms-item {
+	margin-bottom: 4px;
+	margin-left: 12px;
+	margin-top: 4px;
 }
 
 /**
@@ -197,10 +180,4 @@ $left-margin: 36px;
 		@include placeholder();
 		height: 2rem;
 	}
-}
-
-.purchase-modal__annual-savings {
-	// stylelint-disable-next-line
-	font-size: 0.8rem;
-	color: #008a20;
 }

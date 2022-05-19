@@ -18,14 +18,14 @@ It originally comes from the [Newspack Blocks collection](https://github.com/aut
 
 ```
 index.php — main entry file, registers the blocks on backend
-blog-posts-block-editor.js — assets for the blog-posts-block editor
-blog-posts-block-view.js — assets for the blog-posts-block rendered on frontend
-carousel-block-editor.js — assets for the carousel-block editor
-carousel-block-view.js — assets for the carousel-block rendered on frontend
+blog-posts-block-editor.min.js — assets for the blog-posts-block editor
+blog-posts-block-view.min.js — assets for the blog-posts-block rendered on frontend
+carousel-block-editor.min.js — assets for the carousel-block editor
+carousel-block-view.min.js — assets for the carousel-block rendered on frontend
 synced-newspack-blocks/** — source code synced from the Newspack Blocks repository, not tracked in Calypso git repo
 ```
 
-`blog-posts-block-editor.js`, `blog-posts-block-view.js`, `carousel-block-editor.js`, `carousel-block-view.js` and `index.php` are files written in order to bridge the parent plugin with the Newspack Blocks. It changes the block names to an `a8c/` namespace and does things like registering REST fields or styles and scripts. In these files we are free to do all those changes because they are not shared with Newspack and only live here in this repository.
+`blog-posts-block-editor.min.js`, `blog-posts-block-view.min.js`, `carousel-block-editor.min.js`, `carousel-block-view.min.js` and `index.php` are files written in order to bridge the parent plugin with the Newspack Blocks. It changes the block names to an `a8c/` namespace and does things like registering REST fields or styles and scripts. In these files we are free to do all those changes because they are not shared with Newspack and only live here in this repository.
 
 ### Synchronizing the code
 

@@ -3,7 +3,6 @@
  */
 
 import { render, act } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import PaymentMethodAdd from '../index';

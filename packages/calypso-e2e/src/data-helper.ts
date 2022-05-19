@@ -1,8 +1,8 @@
 import phrase from 'asana-phrase';
-import config from 'config';
+import envVariables from './env-variables';
+import { SecretsManager, TestAccountName } from './secrets';
 
 export type DateFormat = 'ISO';
-export { config };
 
 export interface PaymentDetails {
 	cardHolder: string;
@@ -87,7 +87,7 @@ export function getCalypsoURL(
 	route = '',
 	queryStrings: { [ key: string ]: string } = {}
 ): string {
-	const base: string = config.get( 'calypsoBaseURL' );
+	const base = envVariables.CALYPSO_BASE_URL;
 
 	const url = new URL( route, base );
 
@@ -98,29 +98,37 @@ export function getCalypsoURL(
 	return url.toString();
 }
 
+export interface AccountCredentials {
+	username: string;
+	password: string;
+	totpKey?: string;
+}
+
 /**
  * Returns the credential for a specified account from the secrets file.
  *
- * @param {string} accountType Type of the account for which the credentials are to be obtained.
- * @returns {string[]} Username and password found in the secrets file for the given account type.
+ * @param {TestAccountName} accountType Type of the account for which the credentials are to be obtained.
+ * @returns {AccountCredentials} Username and password found in the secrets file for the given account type.
  * @throws {Error} If accountType does not correspond to a valid entry in the file.
  */
-export function getAccountCredential( accountType: string ): [ string, string ] {
-	const testAccounts: { [ key: string ]: string } = config.get( 'testAccounts' );
-	if ( ! Object.keys( testAccounts ).includes( accountType ) ) {
+export function getAccountCredential( accountType: TestAccountName ): AccountCredentials {
+	const testAccount = SecretsManager.secrets.testAccounts[ accountType ];
+	if ( ! testAccount ) {
 		throw new Error(
-			`Secrets file did not contain credentials for requested user ${ accountType }.`
+			`Secrets file did not contain credentials for requested user ${ accountType }. Update typings or the secrets file.`
 		);
 	}
-
-	const [ username, password ] = testAccounts[ accountType ];
-	return [ username, password ];
+	return {
+		username: testAccount.username,
+		password: testAccount.password,
+		totpKey: testAccount.totpKey,
+	};
 }
 
 /**
  * Returns the site URL for a specified account from the secrets file.
  *
- * @param {string} accountType Type of the account for which the site URL is to be obtained.
+ * @param {TestAccountName} accountType Type of the account for which the site URL is to be obtained.
  * @param {{key: string}: boolean} param1 Keyed object parameter.
  * @param {boolean} param1.protocol Whether to include the protocol in the returned URL. Defaults to true.
  * @returns {string} Site URL for the given username.
@@ -128,43 +136,45 @@ export function getAccountCredential( accountType: string ): [ string, string ] 
  * @throws {ReferenceError} If URL is not defined for the accountType.
  */
 export function getAccountSiteURL(
-	accountType: string,
+	accountType: TestAccountName,
 	{ protocol = true }: { protocol?: boolean } = {}
 ): string {
-	const testAccounts: { [ key: string ]: string } = config.get( 'testAccounts' );
-	if ( ! Object.keys( testAccounts ).includes( accountType ) ) {
-		throw new Error( `Secrets file did not contain URL for requested user ${ accountType }.` );
+	const testAccount = SecretsManager.secrets.testAccounts[ accountType ];
+	if ( ! testAccount ) {
+		throw new Error(
+			`Secrets file did not contain credentials for requested user ${ accountType }. Update typings or the secrets file.`
+		);
 	}
 
-	const [ , , url ] = testAccounts[ accountType ];
-	if ( ! url ) {
-		throw new ReferenceError( `Secrets entry for ${ accountType } has no site URL defined.` );
+	if ( ! testAccount.primarySite ) {
+		throw new ReferenceError(
+			`Secrets entry for ${ accountType } has no primary site URL defined.`
+		);
 	}
 
 	if ( protocol ) {
-		return new URL( `https://${ url }` ).toString();
+		return new URL( `https://${ testAccount.primarySite }` ).toString();
 	}
 
-	return url.toString();
+	return testAccount.primarySite.toString();
 }
 
 /**
  * Returns the bearer token of the user allowed to make media uploads to the ToS media upload destination wpcomtos.wordpress.com.
  *
  * @returns {string} Bearer token for the user allowed to make uploads.
- * @throws {Error} If the bearer token is missing in the config file.
  */
 export function getTosUploadToken(): string {
-	const uploadCredentials: { [ key: string ]: string } = config.get(
-		'martechTosUploadCredentials'
-	);
-	if ( ! Object.keys( uploadCredentials ).includes( 'bearer_token' ) ) {
-		throw new Error(
-			'Secrets file did not contain the bearer token for the ToS media destination'
-		);
-	}
-	const bearerToken = uploadCredentials[ 'bearer_token' ];
-	return bearerToken;
+	return SecretsManager.secrets.martechTosUploadCredentials.bearer_token;
+}
+
+/**
+ * Returns the site upload destination for the ToS screenshots.
+ *
+ * @returns {string} Site ID of the destination to which uploaded.
+ */
+export function getTosUploadDestination(): string {
+	return '200900774'; // wpcom site ID
 }
 
 /**
@@ -237,7 +247,7 @@ export function getTestDomainRegistrarDetails( email: string ): RegistrarDetails
  */
 export function adjustInviteLink( inviteURL: string ): string {
 	const originalURL = new URL( inviteURL );
-	const adjustedURL = new URL( originalURL.pathname, config.get( 'calypsoBaseURL' ) );
+	const adjustedURL = new URL( originalURL.pathname, getCalypsoURL() );
 	return adjustedURL.href;
 }
 

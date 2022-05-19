@@ -8,19 +8,20 @@ import {
 	UserSignupPage,
 	CloseAccountFlow,
 	EmailClient,
+	SecretsManager,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function () {
-	const inboxId = DataHelper.config.get( 'signupInboxId' ) as string;
+	const inboxId = SecretsManager.secrets.mailosaur.signupInboxId;
 	const username = `e2eflowtestingwpcc${ DataHelper.getTimestamp() }`;
 	const email = DataHelper.getTestEmailAddress( {
 		inboxId: inboxId,
 		prefix: username,
 	} );
-	const signupPassword = DataHelper.config.get( 'passwordForNewTestSignUps' ) as string;
+	const signupPassword = SecretsManager.secrets.passwordForNewTestSignUps;
 
 	let page: Page;
 
@@ -33,7 +34,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 
 		it( 'Navigate to CrowdSignal WPCC endpoint', async function () {
 			const calypsoBaseURL = DataHelper.getCalypsoURL();
-			const wpccAuthPath = DataHelper.config.get( 'wpccAuthPath' );
+			const wpccAuthPath = SecretsManager.secrets.wpccAuthPath;
 			console.log( calypsoBaseURL + wpccAuthPath );
 			await page.goto( calypsoBaseURL + wpccAuthPath );
 		} );

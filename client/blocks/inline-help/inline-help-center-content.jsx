@@ -1,7 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { useSupportAvailability } from '@automattic/data-stores';
+import { HelpCenterContext } from '@automattic/help-center';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { Icon, page as pageIcon } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import InlineHelpContactPage, { InlineHelpContactPageButton } from './inline-help-contact-page';
 import InlineHelpEmbedResult from './inline-help-embed-result';
@@ -11,15 +15,20 @@ import InlineHelpSearchResults from './inline-help-search-results';
 
 import './inline-help-center-content.scss';
 
-const InlineHelpCenterContent = ( {
-	selectedArticle,
-	setSelectedArticle,
-	setHelpCenterFooter,
-} ) => {
+const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) => {
 	const isMobile = useMobileBreakpoint();
+	const { __ } = useI18n();
 	const [ searchQuery, setSearchQuery ] = useState( '' );
-	const [ activeSecondaryView, setActiveSecondaryView ] = useState( null );
+	const [ activeSecondaryView, setActiveSecondaryView ] = useState(
+		openInContactPage ? VIEW_CONTACT : null
+	);
+	const { setHeaderText, setFooterContent, selectedArticle, setSelectedArticle } =
+		useContext( HelpCenterContext );
 	const secondaryViewRef = useRef();
+
+	// prefetch the values
+	useSupportAvailability( 'CHAT' );
+	useSupportAvailability( 'EMAIL' );
 
 	const openSecondaryView = ( secondaryViewKey ) => {
 		recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show`, {
@@ -35,7 +44,20 @@ const InlineHelpCenterContent = ( {
 		if ( contentTitle ) {
 			contentTitle.focus();
 		}
-	}, [ activeSecondaryView ] );
+
+		if ( activeSecondaryView === VIEW_CONTACT ) {
+			setHeaderText( __( 'Contact our WordPress.com experts' ) );
+		} else if ( activeSecondaryView === VIEW_RICH_RESULT ) {
+			setHeaderText(
+				<div className="inline-help__rich-result-header">
+					<Icon icon={ pageIcon } />
+					{ selectedArticle?.title }
+				</div>
+			);
+		} else {
+			setHeaderText( null );
+		}
+	}, [ activeSecondaryView, selectedArticle, setHeaderText, __ ] );
 
 	const openResultView = ( event, result ) => {
 		event.preventDefault();
@@ -75,6 +97,7 @@ const InlineHelpCenterContent = ( {
 							<InlineHelpContactPage
 								closeContactPage={ closeSecondaryView }
 								onSelectResource={ openResultView }
+								setContactFormOpen={ setContactFormOpen }
 							/>
 						),
 						[ VIEW_RICH_RESULT ]: (
@@ -113,7 +136,7 @@ const InlineHelpCenterContent = ( {
 	};
 
 	useEffect( () => {
-		setHelpCenterFooter(
+		setFooterContent(
 			activeSecondaryView ? null : (
 				<InlineHelpContactPageButton
 					onClick={ openContactView }

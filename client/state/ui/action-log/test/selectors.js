@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'calypso/state/action-types';
 import { getActionLog, getLastAction } from '../selectors';
 
@@ -11,7 +10,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( log ).to.eql( [] );
+			expect( log ).toEqual( [] );
 		} );
 
 		test( 'should retrieve all actions from the log', () => {
@@ -31,7 +30,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( log ).to.eql( actions );
+			expect( log ).toEqual( actions );
 		} );
 	} );
 
@@ -43,7 +42,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( action ).to.be.false;
+			expect( action ).toBe( false );
 		} );
 
 		test( 'should retrieve the last action from the action log', () => {
@@ -55,7 +54,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( action ).to.equal( navToDesign );
+			expect( action ).toEqual( navToDesign );
 		} );
 	} );
 } );

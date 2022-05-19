@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	addResponder,
 	applyDuplicatesHandlers,
@@ -59,7 +58,7 @@ describe( '#buildKey', () => {
 			],
 		];
 
-		duplicates.forEach( ( [ a, b ] ) => expect( buildKey( a ) ).to.equal( buildKey( b ) ) );
+		duplicates.forEach( ( [ a, b ] ) => expect( buildKey( a ) ).toEqual( buildKey( b ) ) );
 	} );
 
 	test( 'should differentiate "unique" requests', () => {
@@ -79,7 +78,7 @@ describe( '#buildKey', () => {
 			],
 		];
 
-		uniques.forEach( ( [ a, b ] ) => expect( buildKey( a ) ).to.not.equal( buildKey( b ) ) );
+		uniques.forEach( ( [ a, b ] ) => expect( buildKey( a ) ).not.toEqual( buildKey( b ) ) );
 	} );
 } );
 
@@ -87,21 +86,21 @@ describe( '#addResponder', () => {
 	test( 'should add an `onFailure` action to an empty list', () => {
 		const union = addResponder( {}, { onFailure: cp( failer ) } );
 
-		expect( union.failures ).to.eql( [ failer ] );
-		expect( union.successes ).to.be.empty;
+		expect( union.failures ).toEqual( [ failer ] );
+		expect( union.successes ).toHaveLength( 0 );
 	} );
 
 	test( 'should add an `onSuccess` action to an empty list', () => {
 		const union = addResponder( {}, { onSuccess: cp( succeeder ) } );
 
-		expect( union.failures ).to.be.empty;
-		expect( union.successes ).to.eql( [ succeeder ] );
+		expect( union.failures ).toHaveLength( 0 );
+		expect( union.successes ).toEqual( [ succeeder ] );
 	} );
 
 	test( 'should add a "unique" action to an existing list', () => {
 		const union = addResponder( { successes: [ cp( succeeder ) ] }, { onSuccess: cp( filler ) } );
 
-		expect( union.successes ).to.eql( [ succeeder, filler ] );
+		expect( union.successes ).toEqual( [ succeeder, filler ] );
 	} );
 
 	test( 'should merge "duplicate" actions to an existing list', () => {
@@ -110,7 +109,7 @@ describe( '#addResponder', () => {
 			{ onSuccess: cp( succeeder ) }
 		);
 
-		expect( union.successes ).to.eql( [ succeeder ] );
+		expect( union.successes ).toEqual( [ succeeder ] );
 	} );
 
 	test( 'should add both `onSuccess` and `onFailure`', () => {
@@ -125,8 +124,8 @@ describe( '#addResponder', () => {
 			}
 		);
 
-		expect( union.failures ).to.eql( [ failer, filler ] );
-		expect( union.successes ).to.eql( [ succeeder, filler ] );
+		expect( union.failures ).toEqual( [ failer, filler ] );
+		expect( union.successes ).toEqual( [ succeeder, filler ] );
 	} );
 } );
 
@@ -136,17 +135,17 @@ describe( '#removeDuplicateGets', () => {
 	test( 'should pass through non-GET requests', () => {
 		const primed = removeDuplicateGets( { nextRequest: cp( postLike ) } );
 
-		expect( primed.nextRequest ).to.eql( postLike );
+		expect( primed.nextRequest ).toEqual( postLike );
 
 		const processed = removeDuplicateGets( { nextRequest: cp( postLike ) } );
 
-		expect( processed.nextRequest ).to.eql( postLike );
+		expect( processed.nextRequest ).toEqual( postLike );
 	} );
 
 	test( 'should pass through new requests', () => {
 		const processed = removeDuplicateGets( { nextRequest: cp( getSites ) } );
 
-		expect( processed.nextRequest ).to.eql( getSites );
+		expect( processed.nextRequest ).toEqual( getSites );
 	} );
 
 	test( 'should pass through "unique" requests', () => {
@@ -154,7 +153,7 @@ describe( '#removeDuplicateGets', () => {
 
 		const processed = removeDuplicateGets( { nextRequest: cp( getPosts ) } );
 
-		expect( processed.nextRequest ).to.eql( getPosts );
+		expect( processed.nextRequest ).toEqual( getPosts );
 	} );
 
 	test( 'should drop "duplicate" requests', () => {
@@ -162,7 +161,7 @@ describe( '#removeDuplicateGets', () => {
 
 		const processed = removeDuplicateGets( { nextRequest: cp( getSites ) } );
 
-		expect( processed.nextRequest ).to.be.null;
+		expect( processed.nextRequest ).toBeNull();
 	} );
 } );
 
@@ -174,8 +173,8 @@ describe( '#applyDuplicateHandlers', () => {
 
 		const processed = applyDuplicatesHandlers( { originalRequest: cp( getSites ) } );
 
-		expect( processed.failures ).to.eql( [ getSites.onFailure ] );
-		expect( processed.successes ).to.eql( [ getSites.onSuccess ] );
+		expect( processed.failures ).toEqual( [ getSites.onFailure ] );
+		expect( processed.successes ).toEqual( [ getSites.onSuccess ] );
 	} );
 
 	test( 'should collapse "duplicate" requests having same responders', () => {
@@ -184,8 +183,8 @@ describe( '#applyDuplicateHandlers', () => {
 
 		const processed = applyDuplicatesHandlers( { originalRequest: cp( getSites ) } );
 
-		expect( processed.failures ).to.eql( [ getSites.onFailure ] );
-		expect( processed.successes ).to.eql( [ getSites.onSuccess ] );
+		expect( processed.failures ).toEqual( [ getSites.onFailure ] );
+		expect( processed.successes ).toEqual( [ getSites.onSuccess ] );
 	} );
 
 	test( 'should spread "duplicate" requests having different responders', () => {
@@ -194,8 +193,8 @@ describe( '#applyDuplicateHandlers', () => {
 
 		const processed = applyDuplicatesHandlers( { originalRequest: cp( getSites ) } );
 
-		expect( processed.failures ).to.eql( [ getSites.onFailure ] );
-		expect( processed.successes ).to.eql( [ getSites.onSuccess, filler ] );
+		expect( processed.failures ).toEqual( [ getSites.onFailure ] );
+		expect( processed.successes ).toEqual( [ getSites.onSuccess, filler ] );
 	} );
 
 	test( 'should pass through "unique" requests', () => {
@@ -204,13 +203,13 @@ describe( '#applyDuplicateHandlers', () => {
 
 		const sites = applyDuplicatesHandlers( { originalRequest: cp( getSites ) } );
 
-		expect( sites.failures ).to.eql( [ failer ] );
-		expect( sites.successes ).to.eql( [ succeeder ] );
+		expect( sites.failures ).toEqual( [ failer ] );
+		expect( sites.successes ).toEqual( [ succeeder ] );
 
 		const posts = applyDuplicatesHandlers( { originalRequest: cp( getPosts ) } );
 
-		expect( posts.failures ).to.eql( [ failer ] );
-		expect( posts.successes ).to.eql( [ succeeder ] );
+		expect( posts.failures ).toEqual( [ failer ] );
+		expect( posts.successes ).toEqual( [ succeeder ] );
 	} );
 
 	test( 'should pass through "duplicate" requests which never overlap', () => {
@@ -218,17 +217,17 @@ describe( '#applyDuplicateHandlers', () => {
 
 		const first = applyDuplicatesHandlers( { originalRequest: cp( getSites ) } );
 
-		expect( first.failures ).to.eql( [ failer ] );
-		expect( first.successes ).to.eql( [ succeeder ] );
+		expect( first.failures ).toEqual( [ failer ] );
+		expect( first.successes ).toEqual( [ succeeder ] );
 
 		const { nextRequest } = removeDuplicateGets( { nextRequest: cp( getSites ) } );
 
-		expect( nextRequest ).to.eql( getSites );
+		expect( nextRequest ).toEqual( getSites );
 
 		const second = applyDuplicatesHandlers( { originalRequest: cp( getSites ) } );
 
-		expect( second.failures ).to.eql( [ failer ] );
-		expect( second.successes ).to.eql( [ succeeder ] );
+		expect( second.failures ).toEqual( [ failer ] );
+		expect( second.successes ).toEqual( [ succeeder ] );
 	} );
 
 	test( 'should not collapse non-GET requests', () => {
@@ -241,8 +240,8 @@ describe( '#applyDuplicateHandlers', () => {
 			successes: [ cp( postLike.onSuccess ) ],
 		} );
 
-		expect( processed.failures ).to.eql( [ postLike.onFailure ] );
-		expect( processed.successes ).to.eql( [ postLike.onSuccess ] );
+		expect( processed.failures ).toEqual( [ postLike.onFailure ] );
+		expect( processed.successes ).toEqual( [ postLike.onSuccess ] );
 	} );
 
 	test( 'should not wipe out previous responders in the pipeline', () => {
@@ -255,8 +254,8 @@ describe( '#applyDuplicateHandlers', () => {
 			successes: [ cp( filler ) ],
 		} );
 
-		expect( processed.failures ).to.eql( [ filler, getSites.onFailure ] );
-		expect( processed.successes ).to.eql( [ filler, getSites.onSuccess ] );
+		expect( processed.failures ).toEqual( [ filler, getSites.onFailure ] );
+		expect( processed.successes ).toEqual( [ filler, getSites.onSuccess ] );
 	} );
 
 	test( 'should combine previous responders with "duplicate" responders in the pipeline', () => {
@@ -269,7 +268,7 @@ describe( '#applyDuplicateHandlers', () => {
 			successes: [ cp( getSites.onSuccess ) ],
 		} );
 
-		expect( processed.failures ).to.eql( [ getSites.onFailure ] );
-		expect( processed.successes ).to.eql( [ getSites.onSuccess ] );
+		expect( processed.failures ).toEqual( [ getSites.onFailure ] );
+		expect( processed.successes ).toEqual( [ getSites.onSuccess ] );
 	} );
 } );

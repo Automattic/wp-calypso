@@ -1,0 +1,22 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.invoices-list-card {
+	&__actions {
+		text-align: left;
+
+		@include break-xlarge() {
+			text-align: right;
+		}
+
+		.button {
+			&:focus {
+				border-width: 1px;
+			}
+
+			+ .button {
+				margin-left: 12px;
+			}
+		}
+	}
+}

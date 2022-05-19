@@ -2,9 +2,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
 import ExternalLink from 'calypso/components/external-link';
+import BackupWarningRetry from 'calypso/components/jetpack/backup-warning-retry';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
+import { getBackupWarnings } from 'calypso/lib/jetpack/backup-utils';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
@@ -15,6 +17,7 @@ import ActionButtons from '../action-buttons';
 import BackupChanges from '../backup-changes';
 import useGetDisplayDate from '../use-get-display-date';
 import cloudSuccessIcon from './icons/cloud-success.svg';
+import cloudWarningIcon from './icons/cloud-warning.svg';
 
 import './style.scss';
 
@@ -26,6 +29,9 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 		const capabilities = getRewindCapabilities( state, siteId );
 		return Array.isArray( capabilities ) && capabilities.includes( 'backup-realtime' );
 	} );
+
+	const warnings = getBackupWarnings( backup );
+	const hasWarnings = Object.keys( warnings ).length !== 0;
 
 	const moment = useLocalizedMoment();
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
@@ -40,6 +46,8 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 		gmtOffset: gmtOffset,
 	} );
 	const isToday = selectedDate.isSame( today, 'day' );
+
+	const cloudIcon = hasWarnings ? cloudWarningIcon : cloudSuccessIcon;
 
 	const meta = backup?.activityDescription?.[ 2 ]?.children?.[ 0 ] ?? '';
 
@@ -56,7 +64,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	return (
 		<>
 			<div className="status-card__message-head">
-				<img src={ cloudSuccessIcon } alt="" role="presentation" />
+				<img src={ cloudIcon } alt="" role="presentation" />
 				<div className="status-card__hide-mobile">
 					{ isToday ? translate( 'Latest backup' ) : translate( 'Latest backup on this day' ) }
 				</div>
@@ -95,7 +103,11 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 					</p>
 				</div>
 			) }
-			<ActionButtons rewindId={ actionableRewindId } isMultiSite={ isMultiSite } />
+			<ActionButtons
+				rewindId={ actionableRewindId }
+				isMultiSite={ isMultiSite }
+				hasWarnings={ hasWarnings }
+			/>
 			{ showBackupDetails && (
 				<div className="status-card__realtime-details">
 					<div className="status-card__realtime-details-card">
@@ -103,6 +115,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 					</div>
 				</div>
 			) }
+			{ hasWarnings && <BackupWarningRetry siteId={ siteId } /> }
 			{ ! hasRealtimeBackups && <BackupChanges deltas={ deltas } /* metaDiff={ metaDiff */ /> }
 		</>
 	);

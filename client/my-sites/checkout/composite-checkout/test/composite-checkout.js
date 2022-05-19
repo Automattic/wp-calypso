@@ -15,7 +15,6 @@ import {
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
-import '@testing-library/jest-dom/extend-expect';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -587,7 +586,7 @@ describe( 'CompositeCheckout', () => {
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
 		fireEvent.click( confirmButton );
 		await waitFor( () => {
-			expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
+			expect( screen.queryByLabelText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -604,7 +603,7 @@ describe( 'CompositeCheckout', () => {
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
 		fireEvent.click( confirmButton );
 		await waitFor( async () => {
-			expect( screen.queryAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 0 );
+			expect( screen.queryByLabelText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
 		} );
 	} );
 

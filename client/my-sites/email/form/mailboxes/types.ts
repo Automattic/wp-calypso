@@ -1,4 +1,5 @@
 import { v4 as uuid_v4 } from 'uuid';
+import { FIELD_DOMAIN, FIELD_UUID } from 'calypso/my-sites/email/form/mailboxes/constants';
 import type { TranslateResult } from 'i18n-calypso';
 
 type FieldError = TranslateResult | null;
@@ -10,12 +11,42 @@ enum EmailProvider {
 
 interface MailboxFormField< Type > {
 	error: FieldError;
+	isRequired: boolean;
+	isVisible: boolean;
+	readonly typeName: string;
 	value: Type;
 }
 
 abstract class MailboxFormFieldBase< T > implements MailboxFormField< T > {
-	error: FieldError = null;
+	private fieldError: FieldError = null;
+
+	public get error() {
+		return this.fieldError;
+	}
+
+	public set error( error: FieldError ) {
+		if ( ! error || ( typeof error === 'string' && error.trim() === '' ) ) {
+			error = null;
+		}
+		this.fieldError = error;
+	}
+
 	value!: T;
+	isRequired;
+	isVisible = true;
+	readonly typeName = String.name.toLowerCase();
+
+	constructor( isRequired = true ) {
+		this.isRequired = isRequired;
+	}
+
+	hasError(): boolean {
+		return Boolean( this.fieldError );
+	}
+
+	hasValidValue(): boolean {
+		return Boolean( this.value );
+	}
 }
 
 class DataMailboxFormField extends MailboxFormFieldBase< string > {
@@ -24,14 +55,19 @@ class DataMailboxFormField extends MailboxFormFieldBase< string > {
 
 class TextMailboxFormField extends MailboxFormFieldBase< string > {
 	value = '';
+
+	hasValidValue(): boolean {
+		return super.hasValidValue() && this.value.trim() !== '';
+	}
 }
 
 class BooleanMailboxFormField extends MailboxFormFieldBase< boolean > {
 	value = false;
+	readonly typeName = Boolean.name.toLowerCase();
 }
 
 interface IBaseMailboxFormFields {
-	readonly domain: TextMailboxFormField;
+	readonly domain: DataMailboxFormField;
 	mailbox: TextMailboxFormField;
 	password: TextMailboxFormField;
 	readonly uuid: DataMailboxFormField;
@@ -66,7 +102,7 @@ class GoogleMailboxFormFields extends MailboxFormFields implements IGoogleMailbo
 
 class TitanMailboxFormFields extends MailboxFormFields implements ITitanMailboxFormFields {
 	alternativeEmail? = new TextMailboxFormField();
-	isAdmin? = new BooleanMailboxFormField();
+	isAdmin? = new BooleanMailboxFormField( false );
 	name? = new TextMailboxFormField();
 }
 
@@ -75,7 +111,11 @@ const MailboxFormFieldsMap = {
 	[ EmailProvider.Titan ]: TitanMailboxFormFields,
 };
 
-type ValidatorFieldNames = keyof GoogleMailboxFormFields | keyof TitanMailboxFormFields | null;
+type GoogleFormFieldNames = keyof GoogleMailboxFormFields;
+type TitanFormFieldNames = keyof TitanMailboxFormFields;
+type FormFieldNames = GoogleFormFieldNames | TitanFormFieldNames;
+type MutableFormFieldNames = Exclude< FormFieldNames, typeof FIELD_DOMAIN | typeof FIELD_UUID >;
+type ValidatorFieldNames = FormFieldNames | null;
 
 type ProviderKeys = keyof typeof MailboxFormFieldsMap;
 type ProviderTypes = typeof MailboxFormFieldsMap[ ProviderKeys ];
@@ -88,9 +128,14 @@ class MailboxFormFieldsFactory {
 }
 
 export type {
+	FieldError,
+	FormFieldNames,
+	GoogleFormFieldNames,
 	GoogleMailboxFormFields,
 	MailboxFormFieldBase,
 	MailboxFormFields,
+	MutableFormFieldNames,
+	TitanFormFieldNames,
 	TitanMailboxFormFields,
 	ValidatorFieldNames,
 };

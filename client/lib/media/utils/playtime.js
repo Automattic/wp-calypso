@@ -4,7 +4,6 @@
  *
  * @example
  * playtime( 7 ); // -> "0:07"
- *
  * @param  {number} duration Duration in seconds
  * @returns {string}          Human-readable duration
  */

@@ -13,6 +13,10 @@ jest.mock( '@automattic/calypso-config', () => ( {
 				return false;
 		}
 	} ),
+	__esModule: true,
+	default: function config( key: string ) {
+		return key;
+	},
 } ) );
 
 const MOCK_LOCALE = 'en';

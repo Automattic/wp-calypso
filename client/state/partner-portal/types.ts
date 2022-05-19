@@ -103,7 +103,8 @@ export interface APIInvoices {
 
 export interface APIInvoice {
 	id: string;
-	due_date: string;
+	number: string;
+	due_date: string | null;
 	status: InvoiceStatus;
 	total: number;
 	currency: string;
@@ -120,7 +121,8 @@ export interface Invoices {
 
 export interface Invoice {
 	id: string;
-	dueDate: string;
+	number: string;
+	dueDate: string | null;
 	status: InvoiceStatus;
 	total: number;
 	currency: string;

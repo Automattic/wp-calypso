@@ -25,6 +25,7 @@ const WooInstallPlugins: Step = function WooInstallPlugins( { navigation } ) {
 		useSelect( ( select ) => select( SITE_STORE ) );
 	const site = useSite();
 	const softwareSet = 'woo-on-plans';
+	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 
 	const handleTransferFailure = ( failureInfo: FailureInfo ) => {
 		recordTracksEvent( 'calypso_woocommerce_dashboard_snag_error', {
@@ -32,6 +33,7 @@ const WooInstallPlugins: Step = function WooInstallPlugins( { navigation } ) {
 			site: site?.URL,
 			code: failureInfo.code,
 			error: failureInfo.error,
+			intent: getIntent(),
 		} );
 
 		logToLogstash( {

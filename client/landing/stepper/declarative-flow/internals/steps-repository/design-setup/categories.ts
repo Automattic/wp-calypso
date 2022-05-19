@@ -2,7 +2,6 @@ import { Category } from '@automattic/design-picker';
 
 const CATEGORY_BLOG = 'blog';
 const CATEGORY_STORE = 'store';
-const CATEGORY_GENERATED = 'generated';
 
 /**
  * Ensures the category appears at the top of the design category list
@@ -23,17 +22,8 @@ function makeSortCategoryToTop( slug: string ) {
 
 const sortBlogToTop = makeSortCategoryToTop( CATEGORY_BLOG );
 const sortStoreToTop = makeSortCategoryToTop( CATEGORY_STORE );
-const sortGeneratedToTop = makeSortCategoryToTop( CATEGORY_GENERATED );
 
-export function getGeneratedDesignsCategory( name: string ): Category {
-	return { slug: CATEGORY_GENERATED, name };
-}
-
-export function getCategorizationOptions(
-	intent: string,
-	showAllFilter: boolean,
-	showGeneratedDesigns: boolean
-) {
+export function getCategorizationOptions( intent: string, showAllFilter: boolean ) {
 	const result = {
 		showAllFilter,
 		defaultSelection: null,
@@ -42,14 +32,6 @@ export function getCategorizationOptions(
 		defaultSelection: string | null;
 		sort: ( a: Category, b: Category ) => 0 | 1 | -1;
 	};
-
-	if ( showGeneratedDesigns ) {
-		return {
-			...result,
-			defaultSelection: CATEGORY_GENERATED,
-			sort: sortGeneratedToTop,
-		};
-	}
 
 	switch ( intent ) {
 		case 'write':

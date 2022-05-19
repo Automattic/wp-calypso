@@ -35,30 +35,27 @@ export class DateTimeFormat extends Component {
 	state = {
 		customDateFormat: false,
 		customTimeFormat: false,
-		isLoadingSettings: true,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
+	static getDerivedStateFromProps( props ) {
 		const {
 			fields: { date_format: dateFormat, time_format: timeFormat },
-		} = nextProps;
-
-		const localeDifferent = this.props.locale !== nextProps.locale;
+			isRequestingSettings,
+			isSavingSettings,
+		} = props;
 
 		if (
-			( ! this.state.isLoadingSettings && ! localeDifferent ) ||
+			( ! isRequestingSettings && ! isSavingSettings ) ||
 			'' === dateFormat ||
 			'' === timeFormat
 		) {
 			return;
 		}
 
-		this.setState( {
+		return {
 			customDateFormat: ! includes( getDefaultDateFormats(), dateFormat ),
 			customTimeFormat: ! includes( getDefaultTimeFormats(), timeFormat ),
-			isLoadingSettings: false,
-		} );
+		};
 	}
 
 	setFormat = ( name, defaultFormats, event ) => {

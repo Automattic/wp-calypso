@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import isRequestingSiteConnectionStatus from 'calypso/state/selectors/is-requesting-site-connection-status';
 
 describe( 'isRequestingSiteConnectionStatus()', () => {
@@ -15,7 +14,7 @@ describe( 'isRequestingSiteConnectionStatus()', () => {
 			},
 		};
 		const output = isRequestingSiteConnectionStatus( state, siteId );
-		expect( output ).to.be.true;
+		expect( output ).toBe( true );
 	} );
 
 	test( 'should return false if connection status is currently not being requested for that site', () => {
@@ -29,7 +28,7 @@ describe( 'isRequestingSiteConnectionStatus()', () => {
 			},
 		};
 		const output = isRequestingSiteConnectionStatus( state, siteId );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return false if connection status has never been requested for that site', () => {
@@ -43,6 +42,6 @@ describe( 'isRequestingSiteConnectionStatus()', () => {
 			},
 		};
 		const output = isRequestingSiteConnectionStatus( state, siteId );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 } );

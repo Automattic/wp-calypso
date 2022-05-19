@@ -228,7 +228,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 				compact
 				borderless
 				disabled={ disableForm }
-				href={ settingsPath( siteSlug || undefined ) }
+				href={ settingsPath( siteSlug ) }
 				onClick={ () => {
 					dispatch(
 						recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_switch_host', { host } )

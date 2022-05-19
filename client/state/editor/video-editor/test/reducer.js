@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	VIDEO_EDITOR_SET_POSTER_URL,
 	VIDEO_EDITOR_SHOW_ERROR,
@@ -8,7 +7,9 @@ import reducer, { showError, uploadProgress, url } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'showError', 'uploadProgress', 'url' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'showError', 'uploadProgress', 'url' ] )
+		);
 	} );
 
 	describe( '#url()', () => {
@@ -17,7 +18,7 @@ describe( 'reducer', () => {
 		test( 'should default to null', () => {
 			const state = url( undefined, {} );
 
-			expect( state ).to.be.null;
+			expect( state ).toBeNull();
 		} );
 
 		test( 'should change to poster url on successful update', () => {
@@ -26,7 +27,7 @@ describe( 'reducer', () => {
 				posterUrl,
 			} );
 
-			expect( state ).to.eql( posterUrl );
+			expect( state ).toEqual( posterUrl );
 		} );
 
 		test( 'should change to null on some other state change', () => {
@@ -34,7 +35,7 @@ describe( 'reducer', () => {
 				type: VIDEO_EDITOR_SHOW_ERROR,
 			} );
 
-			expect( state ).to.be.null;
+			expect( state ).toBeNull();
 		} );
 	} );
 
@@ -44,7 +45,7 @@ describe( 'reducer', () => {
 		test( 'should default to null', () => {
 			const state = uploadProgress( undefined, {} );
 
-			expect( state ).to.be.null;
+			expect( state ).toBeNull();
 		} );
 
 		test( 'should change to upload percentage on successful update', () => {
@@ -53,7 +54,7 @@ describe( 'reducer', () => {
 				percentage,
 			} );
 
-			expect( state ).to.eql( percentage );
+			expect( state ).toEqual( percentage );
 		} );
 
 		test( 'should change to null on some other state change', () => {
@@ -61,7 +62,7 @@ describe( 'reducer', () => {
 				type: VIDEO_EDITOR_SHOW_ERROR,
 			} );
 
-			expect( state ).to.be.null;
+			expect( state ).toBeNull();
 		} );
 	} );
 
@@ -69,7 +70,7 @@ describe( 'reducer', () => {
 		test( 'should default to false', () => {
 			const state = showError( undefined, {} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 
 		test( 'should change to true on failed update', () => {
@@ -77,7 +78,7 @@ describe( 'reducer', () => {
 				type: VIDEO_EDITOR_SHOW_ERROR,
 			} );
 
-			expect( state ).to.be.true;
+			expect( state ).toBe( true );
 		} );
 
 		test( 'should change to false on some other state change', () => {
@@ -85,7 +86,7 @@ describe( 'reducer', () => {
 				type: VIDEO_EDITOR_SET_POSTER_URL,
 			} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 	} );
 } );

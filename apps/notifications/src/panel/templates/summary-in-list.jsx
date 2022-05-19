@@ -39,6 +39,7 @@ export class SummaryInList extends Component {
 				<div className="wpnc__note-icon">
 					<ImagePreloader
 						src={ this.props.note.icon }
+						key={ `image-preloader-${ this.props.note.icon }` }
 						placeholder={
 							<img src="https://www.gravatar.com/avatar/ad516503a11cd5ca435acc9bb6523536?s=128" />
 						}

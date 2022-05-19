@@ -10,7 +10,7 @@ describe( '<Rating />', () => {
 			const { container } = render( <Rating /> );
 
 			const component = container.getElementsByClassName( 'rating' )[ 0 ];
-			expect( component.style.width ).toEqual( '90px' ); // 18 * 5 = 120;
+			expect( component ).toHaveStyle( { width: '90px' } ); // 18 * 5 = 120;
 		} );
 
 		test( 'should use size if passed', () => {

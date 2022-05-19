@@ -17,20 +17,20 @@ export class PlanPrice extends Component {
 			className,
 			displayFlatPrice,
 			displayPerMonthNotation,
-			displayShortPerMonthNotation,
-			originalPricePrefix,
 			isOnSale,
 			taxText,
 			translate,
 		} = this.props;
 
-		if ( ! currencyCode || ! ( typeof rawPrice === 'number' ) ) {
+		if ( ! currencyCode || rawPrice === undefined ) {
 			return null;
 		}
 
 		// "Normalize" the input price or price range.
 		const rawPriceRange = Array.isArray( rawPrice ) ? rawPrice.slice( 0, 2 ) : [ rawPrice ];
-		if ( rawPrice !== 0 && rawPriceRange.includes( 0 ) ) {
+
+		// If zero is in an array of length 2, render nothing
+		if ( Array.isArray( rawPrice ) && rawPriceRange.includes( 0 ) ) {
 			return null;
 		}
 
@@ -90,42 +90,30 @@ export class PlanPrice extends Component {
 		const higherPriceHtml = priceRange[ 1 ] && renderPriceHtml( priceRange[ 1 ] );
 
 		return (
-			<>
-				{ originalPricePrefix && (
-					<span className="plan-price__original-price-prefix">{ originalPricePrefix }</span>
+			<h4 className={ classes }>
+				<sup className="plan-price__currency-symbol">{ priceRange[ 0 ].price.symbol }</sup>
+				{ ! higherPriceHtml && renderPriceHtml( priceRange[ 0 ] ) }
+				{ higherPriceHtml &&
+					translate( '{{smallerPrice/}}-{{higherPrice/}}', {
+						components: { smallerPrice: smallerPriceHtml, higherPrice: higherPriceHtml },
+						comment: 'The price range for a particular product',
+					} ) }
+				{ taxText && (
+					<sup className="plan-price__tax-amount">
+						{ translate( '(+%(taxText)s tax)', { args: { taxText } } ) }
+					</sup>
 				) }
-				<h4 className={ classes }>
-					<sup className="plan-price__currency-symbol">{ priceRange[ 0 ].price.symbol }</sup>
-					{ ! higherPriceHtml && renderPriceHtml( priceRange[ 0 ] ) }
-					{ higherPriceHtml &&
-						translate( '{{smallerPrice/}}-{{higherPrice/}}', {
-							components: { smallerPrice: smallerPriceHtml, higherPrice: higherPriceHtml },
-							comment: 'The price range for a particular product',
+				{ displayPerMonthNotation && (
+					<span className="plan-price__term">
+						{ translate( 'per{{newline/}}month', {
+							components: { newline: <br /> },
+							comment:
+								'Displays next to the price. You can remove the "{{newline/}}" if it is not proper for your language.',
 						} ) }
-					{ taxText && (
-						<sup className="plan-price__tax-amount">
-							{ translate( '(+%(taxText)s tax)', { args: { taxText } } ) }
-						</sup>
-					) }
-					{ displayPerMonthNotation && (
-						<span className="plan-price__term">
-							{ translate( 'per{{newline/}}month', {
-								components: { newline: <br /> },
-								comment:
-									'Displays next to the price. You can remove the "{{newline/}}" if it is not proper for your language.',
-							} ) }
-						</span>
-					) }
-					{ displayShortPerMonthNotation && (
-						<span className="plan-price__term-short">
-							{ translate( '/mo', {
-								comment: 'An abbreviated version of "per month"',
-							} ) }
-						</span>
-					) }
-					{ isOnSale && <Badge>{ saleBadgeText }</Badge> }
-				</h4>
-			</>
+					</span>
+				) }
+				{ isOnSale && <Badge>{ saleBadgeText }</Badge> }
+			</h4>
 		);
 	}
 }
@@ -142,8 +130,6 @@ PlanPrice.propTypes = {
 	taxText: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 	displayPerMonthNotation: PropTypes.bool,
-	displayShortPerMonthNotation: PropTypes.bool,
-	originalPricePrefix: PropTypes.string,
 	currencyFormatOptions: PropTypes.object,
 };
 
@@ -154,6 +140,4 @@ PlanPrice.defaultProps = {
 	className: '',
 	isOnSale: false,
 	displayPerMonthNotation: false,
-	displayShortPerMonthNotation: false,
-	originalPricePrefix: '',
 };

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import shouldSyncReaderFollows, {
 	MS_BETWEEN_SYNCS,
 } from 'calypso/state/selectors/should-sync-reader-follows';
@@ -13,7 +12,7 @@ describe( 'shouldSyncReaderFollows', () => {
 					},
 				},
 			} )
-		).to.be.true;
+		).toBe( true );
 	} );
 
 	test( 'should return true when last time is just over an hour ago', () => {
@@ -25,7 +24,7 @@ describe( 'shouldSyncReaderFollows', () => {
 					},
 				},
 			} )
-		).to.be.true;
+		).toBe( true );
 	} );
 
 	test( 'should return false when last sync date is now', () => {
@@ -37,7 +36,7 @@ describe( 'shouldSyncReaderFollows', () => {
 					},
 				},
 			} )
-		).to.be.false;
+		).toBe( false );
 	} );
 
 	test( 'should return false when last sync date is within an hour', () => {
@@ -49,6 +48,6 @@ describe( 'shouldSyncReaderFollows', () => {
 					},
 				},
 			} )
-		).to.be.false;
+		).toBe( false );
 	} );
 } );

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	VIDEO_EDITOR_SET_POSTER_URL,
 	VIDEO_EDITOR_SHOW_ERROR,
@@ -15,7 +14,7 @@ describe( 'actions', () => {
 			const meta = { mediaId: 123456 };
 			const action = updatePoster( videoId, params, meta );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: VIDEO_EDITOR_UPDATE_POSTER,
 				videoId,
 				params,
@@ -29,7 +28,7 @@ describe( 'actions', () => {
 			const poster = 'https://i1.wp.com/videos.files.wordpress.com/dummy-guid/thumbnail.jpg?ssl=1';
 			const action = setPosterUrl( poster );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: VIDEO_EDITOR_SET_POSTER_URL,
 				posterUrl: poster,
 			} );
@@ -40,7 +39,7 @@ describe( 'actions', () => {
 		test( 'should return an action object', () => {
 			const action = showError();
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: VIDEO_EDITOR_SHOW_ERROR,
 			} );
 		} );
@@ -51,7 +50,7 @@ describe( 'actions', () => {
 			const percentage = 50;
 			const action = showUploadProgress( percentage );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 				percentage,
 			} );
@@ -63,7 +62,7 @@ describe( 'actions', () => {
 			const percentage = 50;
 			const action = showUploadProgress( percentage );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 				percentage,
 			} );

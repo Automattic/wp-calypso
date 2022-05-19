@@ -591,12 +591,6 @@
 	.form-fieldset {
 		margin-bottom: 8px;
 	}
-	.post-selector {
-		margin-bottom: 16px;
-		.post-selector__results {
-			height: 24vh;
-		}
-	}
 
 	@include breakpoint-deprecated( '<660px' ) {
 		width: 90%;

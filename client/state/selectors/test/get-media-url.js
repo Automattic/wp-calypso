@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import getMediaUrl from 'calypso/state/selectors/get-media-url';
 
@@ -27,14 +26,14 @@ describe( 'getMediaUrl()', () => {
 	};
 
 	test( 'should return null if the item is not in state', () => {
-		expect( getMediaUrl( state, 2916285, 42 ) ).to.be.null;
+		expect( getMediaUrl( state, 2916285, 42 ) ).toBeNull();
 	} );
 
 	test( 'should return null if the media item URL is invalid', () => {
-		expect( getMediaUrl( state, 2916284, 43 ) ).to.be.null;
+		expect( getMediaUrl( state, 2916284, 43 ) ).toBeNull();
 	} );
 
 	test( 'should return a safe variation of the media URL', () => {
-		expect( getMediaUrl( state, 2916284, 42 ) ).to.be.equal( url );
+		expect( getMediaUrl( state, 2916284, 42 ) ).toEqual( url );
 	} );
 } );

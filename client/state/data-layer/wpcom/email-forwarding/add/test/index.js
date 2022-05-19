@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	EMAIL_FORWARDING_ADD_REQUEST,
 	EMAIL_FORWARDING_ADD_REQUEST_SUCCESS,
@@ -22,7 +21,7 @@ describe( 'wpcom-api', () => {
 
 		describe( '#addEmailForward', () => {
 			test( 'should dispatch an HTTP request to the email forward new endpoint', () => {
-				expect( addEmailForward( action ) ).to.eql(
+				expect( addEmailForward( action ) ).toEqual(
 					http(
 						{
 							method: 'POST',
@@ -43,9 +42,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a error notice and an add email forward failure action on error', () => {
 				const resultActions = addEmailForwardFailure( action, { message } );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_ADD_REQUEST_FAILURE,
 					domainName,
 					mailbox,
@@ -58,12 +57,12 @@ describe( 'wpcom-api', () => {
 		describe( '#addEmailForwardSuccess', () => {
 			test( 'should dispatch a success notice and an add email forward success action on a good response', () => {
 				const resultActions = addEmailForwardSuccess( action, { created: true, verified: true } );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isSuccessNotice( resultActions[ 0 ] ) ).to.be.true;
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isSuccessNotice( resultActions[ 0 ] ) ).toBe( true );
 				expect(
 					noticeHasText( resultActions[ 0 ], 'test@example.com has been successfully added!' )
-				).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_ADD_REQUEST_SUCCESS,
 					domainName,
 					mailbox,
@@ -76,8 +75,8 @@ describe( 'wpcom-api', () => {
 					created: true,
 					verified: false,
 				} );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isSuccessNotice( resultActions[ 0 ] ) ).to.be.true;
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isSuccessNotice( resultActions[ 0 ] ) ).toBe( true );
 				expect(
 					noticeHasText(
 						resultActions[ 0 ],
@@ -85,8 +84,8 @@ describe( 'wpcom-api', () => {
 							'You must confirm your email before it starts working. ' +
 							'Please check your inbox for 123@abc.com.'
 					)
-				).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_ADD_REQUEST_SUCCESS,
 					domainName,
 					mailbox,
@@ -96,9 +95,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a error notice and an add email forward failure action on a response with created: false', () => {
 				const resultActions = addEmailForwardSuccess( action, { created: false, verified: false } );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_ADD_REQUEST_FAILURE,
 					domainName,
 					mailbox,
@@ -109,9 +108,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a error notice and an add email forward failure action on no response', () => {
 				const resultActions = addEmailForwardSuccess( action, undefined );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_ADD_REQUEST_FAILURE,
 					domainName,
 					mailbox,

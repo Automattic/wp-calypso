@@ -136,8 +136,8 @@ export function CheckoutProvider( {
 	const { __ } = useI18n();
 	const errorMessage = __( 'Sorry, there was an error loading this page.' );
 	const onLoadError = useCallback(
-		( errorMessage ) => {
-			onPageLoadError?.( 'page_load', errorMessage );
+		( error: Error ) => {
+			onPageLoadError?.( 'page_load', error );
 		},
 		[ onPageLoadError ]
 	);

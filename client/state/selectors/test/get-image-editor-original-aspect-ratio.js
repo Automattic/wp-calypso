@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getImageEditorOriginalAspectRatio from 'calypso/state/selectors/get-image-editor-original-aspect-ratio';
 
 describe( 'getImageEditorOriginalAspectRatio()', () => {
@@ -11,7 +10,7 @@ describe( 'getImageEditorOriginalAspectRatio()', () => {
 			},
 		} );
 
-		expect( originalAspectRatio ).to.equal( null );
+		expect( originalAspectRatio ).toBeNull();
 	} );
 
 	test( 'should return the original aspect ratio', () => {
@@ -23,6 +22,6 @@ describe( 'getImageEditorOriginalAspectRatio()', () => {
 			},
 		} );
 
-		expect( originalAspectRatio ).to.eql( { width: 100, height: 200 } );
+		expect( originalAspectRatio ).toEqual( { width: 100, height: 200 } );
 	} );
 } );

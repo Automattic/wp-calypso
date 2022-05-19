@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { modeType, stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
@@ -65,7 +66,7 @@ export function resolveDomainStatus(
 			strong: <strong />,
 			a: (
 				<a
-					href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+					href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS ) }
 					rel="noopener noreferrer"
 					target="_blank"
 					onClick={ ( e ) => e.stopPropagation() }
@@ -124,14 +125,14 @@ export function resolveDomainStatus(
 					);
 				}
 
-				if ( isExpiringSoon( domain, 5 ) ) {
+				if ( isExpiringSoon( domain, 7 ) ) {
 					return {
 						statusText: expiresMessage,
-						statusClass: 'status-error',
-						status: translate( 'Expiring soon' ),
+						statusClass: `status-${ domain.autoRenewing ? 'success' : 'error' }`,
+						status: domain.autoRenewing ? translate( 'Active' ) : translate( 'Expiring soon' ),
 						icon: 'info',
 						listStatusText: expiresMessage,
-						listStatusClass: 'alert',
+						listStatusClass: domain.autoRenewing ? 'info' : 'alert',
 						listStatusWeight: 1000,
 						noticeText,
 					};
@@ -231,7 +232,13 @@ export function resolveDomainStatus(
 						{
 							components: {
 								strong: <strong />,
-								a: <a href={ DOMAIN_EXPIRATION } rel="noopener noreferrer" target="_blank" />,
+								a: (
+									<a
+										href={ localizeUrl( DOMAIN_EXPIRATION ) }
+										rel="noopener noreferrer"
+										target="_blank"
+									/>
+								),
 							},
 							args: {
 								renewableUntil: moment.utc( domain.renewableUntil ).format( 'LL' ),
@@ -470,7 +477,11 @@ export function resolveDomainStatus(
 							components: {
 								strong: <strong />,
 								learnMore: (
-									<a href={ SETTING_PRIMARY_DOMAIN } rel="noopener noreferrer" target="_blank" />
+									<a
+										href={ localizeUrl( SETTING_PRIMARY_DOMAIN ) }
+										rel="noopener noreferrer"
+										target="_blank"
+									/>
 								),
 								try: (
 									<a href={ `http://${ domain.name }` } rel="noopener noreferrer" target="_blank" />
@@ -558,7 +569,7 @@ export function resolveDomainStatus(
 					'This domain requires explicit user consent to complete the registration. %(detailCta)s. {{a}}Learn more{{/a}}',
 					{
 						components: {
-							a: <a href={ GDPR_POLICIES } />,
+							a: <a href={ localizeUrl( GDPR_POLICIES ) } />,
 						},
 						args: { detailCta },
 					}
@@ -622,7 +633,7 @@ export function resolveDomainStatus(
 								strong: <strong />,
 								a: (
 									<a
-										href={ INCOMING_DOMAIN_TRANSFER_STATUSES }
+										href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES ) }
 										rel="noopener noreferrer"
 										target="_blank"
 										onClick={ ( e ) => e.stopPropagation() }
@@ -640,7 +651,7 @@ export function resolveDomainStatus(
 							components: {
 								a: (
 									<a
-										href={ INCOMING_DOMAIN_TRANSFER_STATUSES }
+										href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES ) }
 										rel="noopener noreferrer"
 										target="_blank"
 									/>

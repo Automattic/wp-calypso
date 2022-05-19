@@ -4,6 +4,7 @@ import {
 	UseQueryResult,
 	UseQueryOptions,
 	InfiniteData,
+	UseInfiniteQueryResult,
 } from 'react-query';
 import { useSelector } from 'react-redux';
 import {
@@ -57,7 +58,7 @@ const extractPagination = ( pages: Array< { plugins: object; info: object } > = 
 export const useWPORGInfinitePlugins = (
 	options: PluginQueryOptions,
 	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
-): UseQueryResult => {
+): UseInfiniteQueryResult => {
 	const [ search, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
 

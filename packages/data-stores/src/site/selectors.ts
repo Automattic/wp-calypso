@@ -1,6 +1,6 @@
 import { select } from '@wordpress/data';
 import { STORE_KEY } from './constants';
-import { SiteLaunchStatus } from './types';
+import { SiteLaunchStatus, SiteOption } from './types';
 import type { State } from './reducer';
 
 export const getState = ( state: State ) => state;
@@ -61,8 +61,16 @@ export const getSiteSettings = ( state: State, siteId: number ) => {
 	return state.sitesSettings[ siteId ];
 };
 
-export const getSiteSetupError = ( state: State, siteId: number ) => {
-	return state.siteSetupErrors[ siteId ] || null;
+export const getSiteSetupError = ( state: State ) => {
+	return state.siteSetupErrors;
+};
+
+export const getSiteOptions = ( state: State, siteId: number ) => {
+	return state.sites[ siteId ]?.options;
+};
+
+export const getSiteOption = ( state: State, siteId: number, optionName: SiteOption ) => {
+	return state.sites[ siteId ]?.options?.[ optionName ];
 };
 
 export const getPrimarySiteDomain = ( _: State, siteId: number ) =>
@@ -99,7 +107,7 @@ export const getAtomicSoftwareInstallError = (
 	return state.atomicSoftwareInstallStatus[ siteId ]?.[ softwareSet ]?.error;
 };
 
-export const hasActiveSiteFeature = (
+export const siteHasFeature = (
 	_: State,
 	siteId: number | undefined,
 	featureKey: string
@@ -109,25 +117,8 @@ export const hasActiveSiteFeature = (
 	);
 };
 
-export const hasAvailableSiteFeature = (
-	_: State,
-	siteId: number | undefined,
-	featureKey: string
-): boolean => {
-	return Boolean(
-		siteId && select( STORE_KEY ).getSite( siteId )?.plan?.features.available[ featureKey ]
-	);
-};
-
 export const requiresUpgrade = ( state: State, siteId: number | null ) => {
-	const isWoopFeatureActive = Boolean(
-		siteId && select( STORE_KEY ).hasActiveSiteFeature( siteId, 'woop' )
-	);
-	const hasWoopFeatureAvailable = Boolean(
-		siteId && select( STORE_KEY ).hasAvailableSiteFeature( siteId, 'woop' )
-	);
-
-	return Boolean( ! isWoopFeatureActive && hasWoopFeatureAvailable );
+	return siteId && ! select( STORE_KEY ).siteHasFeature( siteId, 'woop' );
 };
 
 export function isJetpackSite( state: State, siteId?: number ): boolean {
@@ -147,12 +138,4 @@ export function isEligibleForProPlan( state: State, siteId?: number ): boolean {
 	}
 
 	return true;
-}
-
-export function getHappyChatAvailability( state: State ) {
-	return state.happyChatAvailability;
-}
-
-export function getEmailSupportAvailability( state: State ) {
-	return state.emailSupportAvailability;
 }

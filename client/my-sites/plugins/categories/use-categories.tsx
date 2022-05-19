@@ -5,15 +5,16 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { Category } from '.';
 
-export const allowedCategories = [
+export const ALLOWED_CATEGORIES = [
 	'discover',
 	'paid',
 	'popular',
 	'featured',
 	'analytics',
-	'business',
+	'booking',
 	'customer',
 	'design',
+	'donations',
 	'ecommerce',
 	'education',
 	'finance',
@@ -24,10 +25,13 @@ export const allowedCategories = [
 	'widgets',
 	'email',
 	'security',
+	'shipping',
 	'posts',
 ];
 
-export function useCategories(): Record< string, Category > {
+export function useCategories(
+	allowedCategories = ALLOWED_CATEGORIES
+): Record< string, Category > {
 	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
@@ -55,12 +59,19 @@ export function useCategories(): Record< string, Category > {
 			slug: 'analytics',
 			tags: [ 'analytics' ],
 		},
-		business: {
-			name: __( 'Business' ),
-			description: __( 'Business' ),
+		booking: {
+			name: __( 'Booking & Scheduling' ),
+			description: __( 'Booking' ),
 			icon: 'grid',
-			slug: 'business',
-			tags: [ 'business' ],
+			slug: 'booking',
+			tags: [
+				'booking',
+				'scheduling',
+				'appointment',
+				'reservations',
+				'reservation',
+				'booking-calendar',
+			],
 		},
 		customer: {
 			name: __( 'Customer Service' ),
@@ -76,12 +87,28 @@ export function useCategories(): Record< string, Category > {
 			slug: 'design',
 			tags: [ 'design' ],
 		},
+		donations: {
+			name: __( 'Donations' ),
+			description: __( 'Donations' ),
+			icon: 'grid',
+			slug: 'donations',
+			tags: [
+				'donation',
+				'donation-plugin',
+				'donations',
+				'donate',
+				'fundraising',
+				'crowdfunding',
+				'recurring-donations',
+				'charity',
+			],
+		},
 		ecommerce: {
-			name: __( 'Ecommerce' ),
+			name: __( 'Ecommerce & Business' ),
 			description: __( 'Ecommerce' ),
 			icon: 'grid',
 			slug: 'ecommerce',
-			tags: [ 'ecommerce', 'woocommerce' ],
+			tags: [ 'ecommerce', 'e-commerce', 'woocommerce', 'business', 'business-directory' ],
 		},
 		education: {
 			name: __( 'Education' ),
@@ -90,12 +117,19 @@ export function useCategories(): Record< string, Category > {
 			slug: 'education',
 			tags: [ 'education' ],
 		},
+		email: {
+			name: __( 'Email' ),
+			description: __( 'Email' ),
+			icon: 'grid',
+			slug: 'email',
+			tags: [ 'email' ],
+		},
 		finance: {
-			name: __( 'Finance' ),
+			name: __( 'Finance & Payments' ),
 			description: __( 'Finance' ),
 			icon: 'grid',
 			slug: 'finance',
-			tags: [ 'finance' ],
+			tags: [ 'finance', 'payment', 'credit-card', 'payment-gateway' ],
 		},
 		marketing: {
 			name: __( 'Marketing' ),
@@ -104,6 +138,20 @@ export function useCategories(): Record< string, Category > {
 			slug: 'marketing',
 			tags: [ 'marketing' ],
 		},
+		photo: {
+			name: __( 'Photo & Video' ),
+			description: __( 'Photo & Video' ),
+			icon: 'grid',
+			slug: 'photo',
+			tags: [ 'photo', 'video', 'media' ],
+		},
+		posts: {
+			name: __( 'Posts & Posting' ),
+			description: __( 'Posts & Posting' ),
+			icon: 'grid',
+			slug: 'posts',
+			tags: [ 'posts', 'post', 'page', 'pages' ],
+		},
 		seo: {
 			name: __( 'Search Optimization' ),
 			description: __( 'Search Optimization' ),
@@ -111,12 +159,28 @@ export function useCategories(): Record< string, Category > {
 			slug: 'seo',
 			tags: [ 'seo' ],
 		},
-		photo: {
-			name: __( 'Photo & Video' ),
-			description: __( 'Photo & Video' ),
+		security: {
+			name: __( 'Security' ),
+			description: __( 'Security' ),
 			icon: 'grid',
-			slug: 'photo',
-			tags: [ 'photo', 'video', 'media' ],
+			slug: 'security',
+			tags: [ 'security' ],
+		},
+		shipping: {
+			name: __( 'Shipping & Delivery' ),
+			description: __( 'Shipping & Delivery' ),
+			icon: 'grid',
+			slug: 'shipping',
+			tags: [
+				'shipping',
+				'usps',
+				'woocommerce-shipping',
+				'delivery',
+				'shipment-tracking',
+				'food-delivery',
+				'food-pickup',
+				'courier',
+			],
 		},
 		social: {
 			name: __( 'Social' ),
@@ -131,27 +195,6 @@ export function useCategories(): Record< string, Category > {
 			icon: 'grid',
 			slug: 'widgets',
 			tags: [ 'widgets' ],
-		},
-		email: {
-			name: __( 'Email' ),
-			description: __( 'Email' ),
-			icon: 'grid',
-			slug: 'email',
-			tags: [ 'email' ],
-		},
-		security: {
-			name: __( 'Security' ),
-			description: __( 'Security' ),
-			icon: 'grid',
-			slug: 'security',
-			tags: [ 'security' ],
-		},
-		posts: {
-			name: __( 'Posts & Posting' ),
-			description: __( 'Posts & Posting' ),
-			icon: 'grid',
-			slug: 'posts',
-			tags: [ 'posts', 'post', 'page', 'pages' ],
 		},
 	};
 

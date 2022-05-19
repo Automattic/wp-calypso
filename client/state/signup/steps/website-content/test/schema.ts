@@ -1,4 +1,3 @@
-import { assert } from 'chai';
 import validator from 'is-my-json-valid';
 import { initialState, schema } from '../schema';
 
@@ -44,14 +43,14 @@ const initialTestState = {
 
 describe( 'schema', () => {
 	test( 'Schema should be valid', () => {
-		assert.doesNotThrow( () => {
+		expect( () => {
 			validator( schema );
-		}, Error );
+		} ).not.toThrow();
 	} );
 
 	test( 'Empty schema should be invalid', () => {
 		const isValidSchema = validator( schema )( {} );
-		assert.isFalse( isValidSchema );
+		expect( isValidSchema ).toBe( false );
 	} );
 
 	test( 'Initial state should be valid', () => {
@@ -59,11 +58,11 @@ describe( 'schema', () => {
 			verbose: true,
 		} );
 		const isValidSchema = validatorExecutor( initialState );
-		assert.isTrue( isValidSchema );
+		expect( isValidSchema ).toBe( true );
 	} );
 
 	test( 'The sample state for Tests should adhere to the schema', () => {
 		const isValidSchema = validator( schema )( initialTestState );
-		assert.isTrue( isValidSchema );
+		expect( isValidSchema ).toBe( true );
 	} );
 } );

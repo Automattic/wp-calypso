@@ -16,9 +16,10 @@ import {
 	IndividualPurchasePage,
 	StartSiteFlow,
 	ThemesPage,
-	skipDescribeIf,
+	SecretsManager,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
@@ -29,13 +30,13 @@ const isStagingOrProd = DataHelper.getCalypsoURL()
 skipDescribeIf( isStagingOrProd )(
 	DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ),
 	function () {
-		const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
+		const inboxId = SecretsManager.secrets.mailosaur.inviteInboxId;
 		const username = `e2eflowtestingpaid${ DataHelper.getTimestamp() }`;
 		const email = DataHelper.getTestEmailAddress( {
 			inboxId: inboxId,
 			prefix: username,
 		} );
-		const signupPassword = DataHelper.config.get( 'passwordForNewTestSignUps' ) as string;
+		const signupPassword = SecretsManager.secrets.passwordForNewTestSignUps;
 		const blogName = DataHelper.getBlogName();
 		const theme = 'Zoologist';
 
@@ -97,7 +98,7 @@ skipDescribeIf( isStagingOrProd )(
 
 			it( 'Apply coupon and validate purchase amount', async function () {
 				const originalAmount = ( await cartCheckoutPage.getCheckoutTotalAmount() ) as number;
-				await cartCheckoutPage.enterCouponCode( DataHelper.config.get( 'testCouponCode' ) );
+				await cartCheckoutPage.enterCouponCode( SecretsManager.secrets.testCouponCode );
 				const newAmount = ( await cartCheckoutPage.getCheckoutTotalAmount() ) as number;
 
 				expect( newAmount ).toBeLessThan( originalAmount );
@@ -112,7 +113,7 @@ skipDescribeIf( isStagingOrProd )(
 
 			it( 'Remove coupon code and validate purchase amount', async function () {
 				const originalAmount = ( await cartCheckoutPage.getCheckoutTotalAmount() ) as number;
-				await cartCheckoutPage.removeCouponCode( DataHelper.config.get( 'testCouponCode' ) );
+				await cartCheckoutPage.removeCouponCode( SecretsManager.secrets.testCouponCode );
 				const newAmount = ( await cartCheckoutPage.getCheckoutTotalAmount() ) as number;
 				expect( newAmount ).toBeGreaterThan( originalAmount );
 			} );

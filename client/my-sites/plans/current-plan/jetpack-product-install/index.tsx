@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -331,7 +332,7 @@ export class JetpackProductInstall extends Component< Props, State > {
 						text={ translate( 'Oops! An error has occurred while setting up your plan.' ) }
 					>
 						<NoticeAction onClick={ this.refreshPage }>{ translate( 'Try again' ) }</NoticeAction>
-						<NoticeAction href={ JETPACK_CONTACT_SUPPORT } external>
+						<NoticeAction href={ localizeUrl( JETPACK_CONTACT_SUPPORT ) } external>
 							{ translate( 'Contact support' ) }
 						</NoticeAction>
 					</Notice>

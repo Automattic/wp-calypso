@@ -11,7 +11,6 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import SecondaryCartPromotions from '../secondary-cart-promotions';
 import { responseCartWithRenewal, storeData } from './lib/fixtures';
-import '@testing-library/jest-dom/extend-expect';
 
 const mockConfig = config as unknown as { isEnabled: jest.Mock };
 jest.mock( '@automattic/calypso-config', () => {

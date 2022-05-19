@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
 import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
 import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
@@ -19,7 +18,7 @@ describe( 'isJetpackSettingsSaveFailure()', () => {
 		};
 		const isFailure = isJetpackSettingsSaveFailure( state, 87654321, settings );
 
-		expect( isFailure ).to.be.false;
+		expect( isFailure ).toBe( false );
 	} );
 
 	test( 'should return false if the save request status is success', () => {
@@ -32,7 +31,7 @@ describe( 'isJetpackSettingsSaveFailure()', () => {
 		};
 		const isFailure = isJetpackSettingsSaveFailure( state, 12345678, settings );
 
-		expect( isFailure ).to.be.false;
+		expect( isFailure ).toBe( false );
 	} );
 
 	test( 'should return true if the save request status is failure', () => {
@@ -45,6 +44,6 @@ describe( 'isJetpackSettingsSaveFailure()', () => {
 		};
 		const isFailure = isJetpackSettingsSaveFailure( state, 12345678, settings );
 
-		expect( isFailure ).to.be.true;
+		expect( isFailure ).toBe( true );
 	} );
 } );

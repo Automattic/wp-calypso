@@ -21,11 +21,10 @@ import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/st
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { PREINSTALLED_PLUGINS } from '../constants';
 import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
-
-const PREINSTALLED_PLUGINS = [ 'Jetpack by WordPress.com', 'Akismet', 'VaultPress' ];
 
 const PluginsBrowserListElement = ( props ) => {
 	const {
@@ -89,7 +88,7 @@ const PluginsBrowserListElement = ( props ) => {
 			return false;
 		}
 
-		return ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.name );
+		return ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug );
 	}, [ isJetpack, site, plugin ] );
 
 	const isUntestedVersion = useMemo( () => {
@@ -112,7 +111,7 @@ const PluginsBrowserListElement = ( props ) => {
 		return ! isCompatiblePlugin( plugin.slug ) && ! jetpackNonAtomic;
 	} );
 
-	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite?.ID ) );
 
 	if ( isPlaceholder ) {
 		return <Placeholder iconSize={ iconSize } />;
@@ -216,13 +215,14 @@ const InstalledInOrPricing = ( {
 	const isPluginAtive = useSelector( ( state ) =>
 		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
 	)?.active;
+	const active = isWpcomPreinstalled || isPluginAtive;
 
 	let checkmarkColorClass = 'checkmark--active';
 
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		if ( selectedSiteId ) {
-			checkmarkColorClass = isPluginAtive ? 'checkmark--active' : 'checkmark--inactive';
+			checkmarkColorClass = active ? 'checkmark--active' : 'checkmark--inactive';
 		}
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
@@ -237,8 +237,8 @@ const InstalledInOrPricing = ( {
 				</div>
 				{ selectedSiteId && (
 					<div className="plugins-browser-item__active">
-						<Badge type={ isPluginAtive ? 'success' : 'info' }>
-							{ isPluginAtive ? translate( 'Active' ) : translate( 'Inactive' ) }
+						<Badge type={ active ? 'success' : 'info' }>
+							{ active ? translate( 'Active' ) : translate( 'Inactive' ) }
 						</Badge>
 					</div>
 				) }

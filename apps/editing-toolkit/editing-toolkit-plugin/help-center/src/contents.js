@@ -2,7 +2,8 @@
  * Global polyfills
  */
 import '@automattic/calypso-polyfills';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { ContactForm } from '@automattic/help-center';
+import { useState } from 'react';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
@@ -55,21 +56,34 @@ rawCurrentUserFetch()
 		store.dispatch( requestHappychatEligibility() );
 	} );
 
-const queryClient = new QueryClient();
+export default function Content() {
+	const [ contactForm, setContactForm ] = useState( null );
+	const [ openInContactPage, setOpenInContactPage ] = useState( null );
 
-export default function Content( { selectedArticle, setSelectedArticle, setFooterContent } ) {
 	return (
-		<QueryClientProvider client={ queryClient }>
-			<Provider store={ store }>
-				<>
-					<QuerySites siteId={ window._currentSiteId } />
-					<InlineHelpCenterContent
-						selectedArticle={ selectedArticle }
-						setSelectedArticle={ setSelectedArticle }
-						setHelpCenterFooter={ setFooterContent }
+		<Provider store={ store }>
+			<>
+				<QuerySites siteId={ window._currentSiteId } />
+				{ contactForm ? (
+					<ContactForm
+						mode={ contactForm }
+						onBackClick={ () => {
+							setOpenInContactPage( true );
+							setContactForm( null );
+						} }
+						onGoHome={ () => {
+							setOpenInContactPage( false );
+							setContactForm( null );
+						} }
+						siteId={ window._currentSiteId }
 					/>
-				</>
-			</Provider>
-		</QueryClientProvider>
+				) : (
+					<InlineHelpCenterContent
+						setContactFormOpen={ setContactForm }
+						openInContactPage={ openInContactPage }
+					/>
+				) }
+			</>
+		</Provider>
 	);
 }

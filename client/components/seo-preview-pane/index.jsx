@@ -1,3 +1,4 @@
+import { FEATURE_SEO_PREVIEW_TOOLS } from '@automattic/calypso-products';
 import { FacebookPreview, TwitterPreview, SearchPreview } from '@automattic/social-previews';
 import { localize } from 'i18n-calypso';
 import { compact, find, get } from 'lodash';
@@ -12,9 +13,9 @@ import { formatExcerpt } from 'calypso/lib/post-normalizer/rule-create-better-ex
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { getSitePost } from 'calypso/state/posts/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSeoTitle } from 'calypso/state/sites/selectors';
 import { getSectionName, getSelectedSite } from 'calypso/state/ui/selectors';
-import { hasSiteSeoFeature } from './utils';
 
 import './style.scss';
 
@@ -260,7 +261,7 @@ const mapStateToProps = ( state, { overridePost } ) => {
 			...post,
 			seoTitle: getSeoTitle( state, 'posts', { site, post } ),
 		},
-		showNudge: ! hasSiteSeoFeature( site ),
+		showNudge: ! siteHasFeature( state, site.ID, FEATURE_SEO_PREVIEW_TOOLS ),
 	};
 };
 

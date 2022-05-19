@@ -30,8 +30,8 @@ RUN cd / \
 	&& nvm install \
 	# Prime yarn cache
 	&& yarn \
-	# Prime webpack caches
-	&& NODE_ENV=production yarn build-client
+	# Prime webpack caches, including sourcemaps.
+	&& NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
 
 ENTRYPOINT [ "/bin/bash" ]
 

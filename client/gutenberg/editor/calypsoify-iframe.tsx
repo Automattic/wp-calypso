@@ -52,7 +52,6 @@ import {
 	isJetpackSite,
 	getSite,
 } from 'calypso/state/sites/selectors';
-import { setHelpCenterVisible } from 'calypso/state/ui/help-center-visible/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import isAppBannerDismissed from 'calypso/state/ui/selectors/app-banner-is-dismissed';
 import isHelpCenterVisible from 'calypso/state/ui/selectors/help-center-is-visible';
@@ -903,7 +902,6 @@ const mapDispatchToProps = {
 	fetchMediaItem,
 	getMediaItem,
 	clearLastNonEditorRoute,
-	setHelpCenterVisible,
 };
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;

@@ -1,13 +1,14 @@
 import { Gridicon } from '@automattic/components';
+import { getContextResults } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
+import { Icon, page as pageIcon, arrowRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getContextResults } from 'calypso/blocks/inline-help/contextual-help';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
@@ -22,7 +23,6 @@ import {
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from './constants';
 import PlaceholderLines from './placeholder-lines';
-import './inline-help-search-results.scss';
 
 const noop = () => {};
 
@@ -126,6 +126,18 @@ function HelpSearchResults( {
 
 		const external = externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION;
 
+		const LinkIcon = () => {
+			if ( type === 'admin_section' ) {
+				return <Icon icon={ arrowRight } />;
+			}
+
+			if ( icon ) {
+				return <Gridicon icon={ icon } />;
+			}
+
+			return <Icon icon={ pageIcon } />;
+		};
+
 		return (
 			<Fragment key={ link ?? title }>
 				<li className="inline-help__results-item">
@@ -143,7 +155,9 @@ function HelpSearchResults( {
 								rel: 'noreferrer',
 							} ) }
 						>
-							{ icon && <Gridicon icon={ icon } size={ 18 } /> }
+							{ /* Old stuff - leaving this incase we need to quick revert
+							{ icon && <Gridicon icon={ icon } size={ 18 } /> } */ }
+							<LinkIcon />
 							<span>{ preventWidows( decodeEntities( title ) ) }</span>
 						</a>
 					</div>
@@ -173,13 +187,13 @@ function HelpSearchResults( {
 		const sections = [
 			{
 				type: SUPPORT_TYPE_API_HELP,
-				title: translate( 'Support articles' ),
+				title: translate( 'Recommended resources' ),
 				results: searchResults.slice( 0, 5 ),
 				condition: ! isSearching && searchResults.length > 0,
 			},
 			{
 				type: SUPPORT_TYPE_CONTEXTUAL_HELP,
-				title: ! searchQuery.length ? translate( 'This might interest you' ) : '',
+				title: ! searchQuery.length ? translate( 'Recommended resources' ) : '',
 				results: contextualResults.slice( 0, 6 ),
 				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 			},
