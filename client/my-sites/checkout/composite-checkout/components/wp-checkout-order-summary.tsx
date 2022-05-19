@@ -178,6 +178,9 @@ function CheckoutSummaryFeaturesList( props: {
 	}
 	const refundText = getRefundText( refundDays, null, translate );
 
+	const hasOnlyStarterPlan =
+		plans.filter( ( plan ) => isStarterPlan( plan.product_slug ) ).length === plans.length;
+
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
 			{ hasDomainsInCart &&
@@ -190,10 +193,12 @@ function CheckoutSummaryFeaturesList( props: {
 					nextDomainIsFree={ nextDomainIsFree }
 				/>
 			) }
-			<CheckoutSummaryFeaturesListItem>
-				<WPCheckoutCheckIcon id="features-list-support-text" />
-				<SupportText plans={ plans } isJetpackNotAtomic={ isJetpackNotAtomic } />
-			</CheckoutSummaryFeaturesListItem>
+			{ hasOnlyStarterPlan && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon id="features-list-support-text" />
+					<SupportText plans={ plans } isJetpackNotAtomic={ isJetpackNotAtomic } />
+				</CheckoutSummaryFeaturesListItem>
+			) }
 
 			{ ! hasPlanInCart && <CheckoutSummaryChatIfAvailable siteId={ siteId } /> }
 
@@ -215,12 +220,6 @@ function SupportText( {
 	isJetpackNotAtomic?: boolean | null;
 } ) {
 	const translate = useTranslate();
-	const hasOnlyStarterPlan =
-		plans.filter( ( plan ) => isStarterPlan( plan.product_slug ) ).length === plans.length;
-
-	if ( hasOnlyStarterPlan ) {
-		return null;
-	}
 
 	if ( plans.length && ! isJetpackNotAtomic ) {
 		return <span>{ translate( 'Unlimited customer support via email' ) }</span>;
