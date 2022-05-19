@@ -32,7 +32,7 @@
 		scrollbar-width: none; // hides the scrollbar in firefox
 		
 		&::-webkit-scrollbar { // hides the scrollbar in webkit browsers
-			display: none
+			display: none;
 		}
 
 		border: none;
