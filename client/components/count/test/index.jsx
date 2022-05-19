@@ -1,17 +1,15 @@
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { spy } from 'sinon';
 import { Count } from '../';
 
 describe( 'Count', () => {
 	test( 'should use the correct class name', () => {
 		const count = shallow( <Count count={ 23 } numberFormat={ ( string ) => string } /> );
-		expect( count.hasClass( 'count' ) ).to.equal( true );
+		expect( count.hasClass( 'count' ) ).toBe( true );
 	} );
 
 	test( 'should call provided as prop numberFormat function', () => {
-		const numberFormatSpy = spy();
+		const numberFormatSpy = jest.fn();
 		shallow( <Count count={ 23 } numberFormat={ numberFormatSpy } /> );
-		expect( numberFormatSpy ).to.have.been.calledWith( 23 );
+		expect( numberFormatSpy ).toHaveBeenCalledWith( 23 );
 	} );
 } );

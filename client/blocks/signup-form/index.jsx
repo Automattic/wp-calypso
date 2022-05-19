@@ -117,27 +117,54 @@ class SignupForm extends Component {
 		horizontal: false,
 	};
 
-	state = {
-		submitting: false,
-		isFieldDirty: {
-			email: false,
-			username: false,
-			password: false,
-			firstName: false,
-			lastName: false,
-		},
-		form: null,
-		validationInitialized: false,
-	};
+	constructor( props ) {
+		super( props );
 
-	getInitialFields() {
-		return {
-			firstName: '',
-			lastName: '',
-			email: this.props.email || '',
-			username: '',
-			password: '',
+		this.formStateController = new formState.Controller( {
+			initialFields: {
+				firstName: '',
+				lastName: '',
+				email: this.props.email || '',
+				username: '',
+				password: '',
+			},
+			sanitizerFunction: this.sanitize,
+			validatorFunction: this.validate,
+			onNewState: this.setFormState,
+			onError: this.handleFormControllerError,
+			debounceWait: VALIDATION_DELAY_AFTER_FIELD_CHANGES,
+			hideFieldErrorsOnChange: true,
+			initialState: this.props.step ? this.props.step.form : undefined,
+			skipSanitizeAndValidateOnFieldChange: true,
+		} );
+
+		const initialState = this.formStateController.getInitialState();
+		const stateWithFilledUsername = this.autoFillUsername( initialState );
+
+		this.state = {
+			submitting: false,
+			isFieldDirty: {
+				email: false,
+				username: false,
+				password: false,
+				firstName: false,
+				lastName: false,
+			},
+			form: stateWithFilledUsername,
+			validationInitialized: false,
 		};
+	}
+
+	componentDidMount() {
+		debug( 'Mounted the SignupForm React component.' );
+
+		this.maybeRedirectToSocialConnect();
+	}
+
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.step && this.props.step && prevProps.step.status !== this.props.step.status ) {
+			this.maybeRedirectToSocialConnect();
+		}
 	}
 
 	autoFillUsername( form ) {
@@ -152,29 +179,6 @@ class SignupForm extends Component {
 	recordBackLinkClick = () => {
 		recordTracksEvent( 'calypso_signup_back_link_click' );
 	};
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
-		debug( 'Mounting the SignupForm React component.' );
-		this.formStateController = new formState.Controller( {
-			initialFields: this.getInitialFields(),
-			sanitizerFunction: this.sanitize,
-			validatorFunction: this.validate,
-			onNewState: this.setFormState,
-			onError: this.handleFormControllerError,
-			debounceWait: VALIDATION_DELAY_AFTER_FIELD_CHANGES,
-			hideFieldErrorsOnChange: true,
-			initialState: this.props.step ? this.props.step.form : undefined,
-			skipSanitizeAndValidateOnFieldChange: true,
-		} );
-
-		const initialState = this.formStateController.getInitialState();
-		const stateWithFilledUsername = this.autoFillUsername( initialState );
-
-		this.maybeRedirectToSocialConnect( this.props );
-
-		this.setState( { form: stateWithFilledUsername } );
-	}
 
 	getUserExistsError( props ) {
 		const { step } = props;
@@ -192,25 +196,16 @@ class SignupForm extends Component {
 	 * If the step is invalid because we had an error that the user exists,
 	 * we should prompt user with a request to connect his social account
 	 * to his existing WPCOM account
-	 *
-	 * @param {object} props react component props that has step info
 	 */
-	maybeRedirectToSocialConnect( props ) {
-		const userExistsError = this.getUserExistsError( props );
+	maybeRedirectToSocialConnect() {
+		const userExistsError = this.getUserExistsError( this.props );
 
 		if ( userExistsError ) {
-			const { service, id_token, access_token } = props.step;
+			const { service, id_token, access_token } = this.props.step;
 			const socialInfo = { service, id_token, access_token };
 
 			this.props.createSocialUserFailed( socialInfo, userExistsError );
 			page( login( { redirectTo: this.props.redirectToAfterLoginUrl } ) );
-		}
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.step && nextProps.step && this.props.step.status !== nextProps.step.status ) {
-			this.maybeRedirectToSocialConnect( nextProps );
 		}
 	}
 

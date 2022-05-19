@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useDisplayCartMessages } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
@@ -113,7 +114,7 @@ function getInvalidMultisitePurchaseErrorMessage( {
 		<>
 			{ message }&nbsp;
 			<a
-				href={ JETPACK_SUPPORT + 'backup/#does-jetpack-backup-support-multisite' }
+				href={ localizeUrl( JETPACK_SUPPORT ) + 'backup/#does-jetpack-backup-support-multisite' }
 				target="_blank"
 				rel="noopener noreferrer"
 			>

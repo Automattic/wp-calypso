@@ -172,6 +172,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		settings,
 	} );
 
+	const updateSiteSettings = ( siteId: number, settings: SiteSettings ) => ( {
+		type: 'UPDATE_SITE_SETTINGS' as const,
+		siteId,
+		settings,
+	} );
+
 	function* setCart( siteId: number, cartData: Cart ) {
 		const success: Cart = yield wpcomRequest( {
 			path: '/me/shopping-cart/' + siteId,
@@ -188,6 +194,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			blogname?: string;
 			blogdescription?: string;
 			site_vertical_id?: string;
+			woocommerce_store_address?: string;
+			woocommerce_store_address_2?: string;
+			woocommerce_store_city?: string;
+			woocommerce_store_postcode?: string;
+			woocommerce_defaut_country?: string;
 			woocommerce_onboarding_profile?: { [ key: string ]: any };
 		}
 	) {
@@ -208,6 +219,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			if ( 'site_vertical_id' in settings ) {
 				yield receiveSiteVerticalId( siteId, settings.site_vertical_id );
 			}
+			yield updateSiteSettings( siteId, settings );
 		} catch ( e ) {}
 	}
 
@@ -230,20 +242,37 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		yield saveSiteSettings( siteId, { blogdescription } );
 	}
 
-	function* setDesignOnSite( siteSlug: string, selectedDesign: Design ) {
+	function* setDesignOnSite(
+		siteSlug: string,
+		selectedDesign: Design,
+		siteVerticalId: string | undefined
+	) {
+		const { theme, recipe } = selectedDesign;
+
 		yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
-			body: { theme: selectedDesign.theme, dont_change_homepage: true },
+			body: { theme: recipe?.stylesheet?.split( '/' )[ 1 ] || theme, dont_change_homepage: true },
 			method: 'POST',
 		} );
 
-		yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
-			apiNamespace: 'wpcom/v2',
-			body: { trim_content: true },
-			method: 'POST',
-		} );
+		/*
+		 * Anchor themes are set up directly via Headstart on the server side
+		 * so exclude them from theme setup.
+		 */
+		const anchorDesigns = [ 'hannah', 'gilbert', 'riley' ];
+		if ( anchorDesigns.indexOf( selectedDesign.template ) < 0 ) {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
+				apiNamespace: 'wpcom/v2',
+				body: {
+					trim_content: true,
+					pattern_ids: recipe?.patternIds,
+					vertical_id: siteVerticalId,
+				},
+				method: 'POST',
+			} );
+		}
 
 		const data: { is_fse_active: boolean } = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/block-editor`,
@@ -254,9 +283,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return data?.is_fse_active ?? false;
 	}
 
-	const setSiteSetupError = ( siteId: number, error: string, message: string ) => ( {
+	const setSiteSetupError = ( error: string, message: string ) => ( {
 		type: 'SET_SITE_SETUP_ERROR',
-		siteId,
 		error,
 		message,
 	} );
@@ -424,12 +452,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				body: {},
 			} );
 			yield atomicSoftwareInstallSuccess( siteId, softwareSet );
-		} catch ( _ ) {
-			yield atomicSoftwareInstallFailure(
-				siteId,
-				softwareSet,
-				AtomicSoftwareInstallError.INTERNAL
-			);
+		} catch ( err ) {
+			yield atomicSoftwareInstallFailure( siteId, softwareSet, err as AtomicSoftwareInstallError );
 		}
 	}
 
@@ -451,6 +475,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveSiteFailed,
 		receiveSiteTagline,
 		receiveSiteVerticalId,
+		updateSiteSettings,
 		saveSiteTagline,
 		reset,
 		launchSite,
@@ -495,6 +520,7 @@ export type Action =
 			| ActionCreators[ 'receiveSiteVerticalId' ]
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]
+			| ActionCreators[ 'updateSiteSettings' ]
 			| ActionCreators[ 'reset' ]
 			| ActionCreators[ 'resetNewSiteFailed' ]
 			| ActionCreators[ 'launchSiteStart' ]

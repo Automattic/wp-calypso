@@ -1,0 +1,43 @@
+.backup-warning-retry__wrapper {
+	border-top: 1px solid var( --color-neutral-5 );
+	padding-top: 24px;
+	margin-top: 1.5rem;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.backup-warning-retry__info {
+	height: 24px;
+	font-style: normal;
+	font-weight: 400;
+	font-size: $font-body;
+	line-height: 24px;
+	display: flex;
+	column-gap: 8px;
+	a {
+		color: #101517;
+		text-decoration: underline;
+	}
+	.gridicons-notice-outline {
+		color: #7d5600;
+	}
+}
+
+.backup-warning-retry__button-wrapper {
+	height: 34px;
+}
+
+.backup-warning-retry__button {
+	display: inline-block;
+	width: initial;
+	margin: 0;
+	margin-right: 1rem;
+	padding-left: 2rem;
+	padding-right: 2rem;
+	font-style: normal;
+	font-weight: 600;
+	font-size: $font-body;
+	line-height: 23px;
+}

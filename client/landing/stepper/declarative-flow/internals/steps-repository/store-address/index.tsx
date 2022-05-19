@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { ComboboxControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
+import emailValidator from 'email-validator';
 import { FormEvent, ReactElement, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -10,7 +11,7 @@ import FormInputValidation from 'calypso/components/forms/form-input-validation'
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ActionSection, StyledNextButton } from 'calypso/signup/steps/woocommerce-install';
 import { useCountries } from '../../../../hooks/use-countries';
@@ -23,7 +24,17 @@ type FormFields =
 	| 'store_address_2'
 	| 'store_city'
 	| 'store_postcode'
-	| 'store_country';
+	| 'store_country'
+	| 'store_email';
+
+type WooAddressSettings = {
+	woocommerce_store_address?: string;
+	woocommerce_store_address_2?: string;
+	woocommerce_store_city?: string;
+	woocommerce_store_postcode?: string;
+	woocommerce_default_country?: string;
+	woocommerce_onboarding_profile?: { store_email: string };
+};
 
 const CityZipRow = styled.div`
 	display: -ms-grid;
@@ -38,17 +49,19 @@ const CityZipRow = styled.div`
 const StoreAddress: Step = function StoreAddress( { navigation } ) {
 	const { goBack, goNext, submit } = navigation;
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
-	const storeAddress = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreAddress() );
 	const site = useSite();
+	const settings = useSelect(
+		( select ) => ( site?.ID && select( SITE_STORE ).getSiteSettings( site.ID ) ) || {}
+	);
 	const { data: countries } = useCountries();
 	const { __ } = useI18n();
 	const [ errors, setErrors ] = useState( {} as Record< FormFields, string > );
-	const [ storeAddress1, setStoreAddress1 ] = useState( storeAddress.store_address_1 );
-	const [ storeAddress2, setStoreAddress2 ] = useState( storeAddress.store_address_2 );
-	const [ storeCity, setStoreCity ] = useState( storeAddress.store_city );
-	const [ storePostcode, setStorePostcode ] = useState( storeAddress.store_postcode );
-	const [ storeCountry, setStoreCountry ] = useState( storeAddress.store_country );
-	const { setStoreAddressValue } = useDispatch( ONBOARD_STORE );
+	const { saveSiteSettings } = useDispatch( SITE_STORE );
+	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+
+	const [ settingChanges, setSettingChanges ] = useState< {
+		[ key: string ]: string;
+	} >( {} );
 
 	if ( ! countries ) {
 		return null;
@@ -59,38 +72,60 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 		return { value: key, label: value };
 	} );
 
-	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
-		if ( site ) {
-			const errors = {} as Record< FormFields, string >;
-
-			switch ( event.currentTarget.name ) {
-				case 'store_address_1':
-					setStoreAddress1( event.currentTarget.value );
-					errors[ 'store_address_1' ] = '';
-					break;
-				case 'store_address_2':
-					setStoreAddress2( event.currentTarget.value );
-					break;
-				case 'store_city':
-					setStoreCity( event.currentTarget.value );
-					errors[ 'store_city' ] = '';
-					break;
-				case 'store_postcode':
-					setStorePostcode( event.currentTarget.value );
-					errors[ 'store_postcode' ] = '';
-					break;
-			}
-
-			setErrors( errors );
+	function getSettingsValue( key: FormFields ) {
+		if ( key in settingChanges ) {
+			return settingChanges[ key ];
 		}
+
+		switch ( key ) {
+			case 'store_email':
+				return settings?.[ 'woocommerce_onboarding_profile' ]?.[ 'store_email' ] || '';
+
+			case 'store_address_1':
+				return settings?.[ 'woocommerce_store_address' ] || '';
+
+			case 'store_country':
+				return settings?.[ 'woocommerce_default_country' ] || '';
+
+			default:
+				return settings?.[ 'woocommerce_' + key ] || '';
+		}
+	}
+
+	function updateSettingsValue( key: FormFields, value: string ) {
+		setSettingChanges( {
+			...settingChanges,
+			[ key ]: value,
+		} );
+	}
+
+	const onChange = ( key: FormFields, value: string ) => {
+		if ( site ) {
+			updateSettingsValue( key, value );
+			setErrors( {
+				...errors,
+				[ key ]: '',
+			} );
+		}
+	};
+
+	const elementChange = ( event: React.FormEvent< HTMLInputElement > ) => {
+		onChange( event.currentTarget.name as FormFields, event.currentTarget.value );
 	};
 
 	const validate = (): boolean => {
 		const errors = {} as Record< FormFields, string >;
 
-		errors[ 'store_address_1' ] = ! storeAddress1 ? __( 'Please add an address' ) : '';
-		errors[ 'store_city' ] = ! storeCity ? __( 'Please add a city' ) : '';
-		errors[ 'store_country' ] = ! storeCountry ? __( 'Please select a country / region' ) : '';
+		errors[ 'store_address_1' ] = ! getSettingsValue( 'store_address_1' )
+			? __( 'Please add an address' )
+			: '';
+		errors[ 'store_city' ] = ! getSettingsValue( 'store_city' ) ? __( 'Please add a city' ) : '';
+		errors[ 'store_country' ] = ! getSettingsValue( 'store_country' )
+			? __( 'Please select a country / region' )
+			: '';
+		errors[ 'store_email' ] = ! emailValidator.validate( getSettingsValue( 'store_email' ) )
+			? __( 'Please add a valid email address' )
+			: '';
 
 		setErrors( errors );
 
@@ -105,19 +140,40 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 				return;
 			}
 
-			await setStoreAddressValue( 'store_address_1', storeAddress1 );
-			await setStoreAddressValue( 'store_address_2', storeAddress2 || '' );
-			await setStoreAddressValue( 'store_city', storeCity );
-			await setStoreAddressValue( 'store_postcode', storePostcode );
-			await setStoreAddressValue( 'store_country', storeCountry );
+			if ( site?.ID ) {
+				const changes: WooAddressSettings = {};
 
-			submit?.( {
-				storeAddress1,
-				storeAddress2,
-				storeCity,
-				storePostcode,
-				storeCountry,
-			} );
+				if ( 'store_address_1' in settingChanges ) {
+					changes[ 'woocommerce_store_address' ] = settingChanges[ 'store_address_1' ];
+				}
+
+				if ( 'store_address_2' in settingChanges ) {
+					changes[ 'woocommerce_store_address_2' ] = settingChanges[ 'store_address_2' ];
+				}
+
+				if ( 'store_city' in settingChanges ) {
+					changes[ 'woocommerce_store_city' ] = settingChanges[ 'store_city' ];
+				}
+
+				if ( 'store_postcode' in settingChanges ) {
+					changes[ 'woocommerce_store_postcode' ] = settingChanges[ 'store_postcode' ];
+				}
+
+				if ( 'store_country' in settingChanges ) {
+					changes[ 'woocommerce_default_country' ] = settingChanges[ 'store_country' ];
+				}
+
+				if ( 'store_email' in settingChanges ) {
+					changes[ 'woocommerce_onboarding_profile' ] = {
+						...settings?.woocommerce_onboarding_profile,
+						store_email: settingChanges.store_email,
+					};
+				}
+
+				saveSiteSettings( site.ID, changes );
+			}
+
+			submit?.();
 		}
 	};
 
@@ -128,10 +184,10 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 					<FormFieldset>
 						<FormLabel htmlFor="store_address_1">{ __( 'Address line 1' ) }</FormLabel>
 						<FormInput
-							value={ storeAddress1 }
+							value={ getSettingsValue( 'store_address_1' ) }
 							name="store_address_1"
 							id="store_address_1"
-							onChange={ onChange }
+							onChange={ elementChange }
 							className={ errors[ 'store_address_1' ] ? 'is-error' : '' }
 						/>
 						<ControlError error={ errors[ 'store_address_1' ] || '' } />
@@ -140,10 +196,10 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 					<FormFieldset>
 						<FormLabel htmlFor="store_address_2">{ __( 'Address line 2 (optional)' ) }</FormLabel>
 						<FormInput
-							value={ storeAddress2 }
+							value={ getSettingsValue( 'store_address_2' ) }
 							name="store_address_2"
 							id="store_address_2"
-							onChange={ onChange }
+							onChange={ elementChange }
 							className={ errors[ 'store_address_2' ] ? 'is-error' : '' }
 						/>
 						<ControlError error={ errors[ 'store_address_2' ] || '' } />
@@ -154,10 +210,10 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 							<FormFieldset>
 								<FormLabel htmlFor="store_city">{ __( 'City' ) }</FormLabel>
 								<FormInput
-									value={ storeCity }
+									value={ getSettingsValue( 'store_city' ) }
 									name="store_city"
 									id="store_city"
-									onChange={ onChange }
+									onChange={ elementChange }
 									className={ errors[ 'store_city' ] ? 'is-error' : '' }
 								/>
 								<ControlError error={ errors[ 'store_city' ] || '' } />
@@ -168,10 +224,10 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 							<FormFieldset>
 								<FormLabel htmlFor="store_postcode">{ __( 'Postcode' ) }</FormLabel>
 								<FormInput
-									value={ storePostcode }
+									value={ getSettingsValue( 'store_postcode' ) }
 									name="store_postcode"
 									id="store_postcode"
-									onChange={ onChange }
+									onChange={ elementChange }
 									className={ errors[ 'store_postcode' ] ? 'is-error' : '' }
 								/>
 								<ControlError error={ errors[ 'store_postcode' ] || '' } />
@@ -180,22 +236,28 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 					</CityZipRow>
 
 					<FormFieldset>
+						<FormLabel htmlFor="store_postcode">{ __( 'Country / State' ) }</FormLabel>
 						<ComboboxControl
-							label={ __( 'Country / State' ) }
-							value={ storeCountry }
+							value={ getSettingsValue( 'store_country' ) }
 							onChange={ ( value: string | null ) => {
-								if ( value ) {
-									setStoreCountry( value );
-									setErrors( {
-										...errors,
-										store_country: '',
-									} );
-								}
+								onChange( 'store_country', value || '' );
 							} }
 							options={ countriesAsOptions }
 							className={ errors[ 'store_country' ] ? 'is-error' : '' }
 						/>
 						<ControlError error={ errors[ 'store_country' ] || '' } />
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="store_email">{ __( 'Email address' ) }</FormLabel>
+						<FormInput
+							value={ getSettingsValue( 'store_email' ) }
+							name="store_email"
+							id="store_email"
+							onChange={ elementChange }
+							className={ errors[ 'store_email' ] ? 'is-error' : '' }
+						/>
+						<ControlError error={ errors[ 'store_email' ] } />
 					</FormFieldset>
 
 					<ActionSection>
@@ -213,30 +275,29 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 	};
 
 	return (
-		<div className="store-address__signup is-woocommerce-install">
-			<div className="store-address__is-store-address">
-				<StepContainer
-					stepName={ 'store-address' }
-					className={ `is-step-${ intent }` }
-					skipButtonAlign={ 'top' }
-					goBack={ goBack }
-					goNext={ goNext }
-					isHorizontalLayout={ true }
-					formattedHeader={
-						<FormattedHeader
-							id={ 'site-options-header' }
-							headerText={ headerText }
-							subHeaderText={ __(
-								'This will be used as your default business address. You can change it later if you need to.'
-							) }
-							align={ 'left' }
-						/>
-					}
-					stepContent={ getContent() }
-					recordTracksEvent={ recordTracksEvent }
+		<StepContainer
+			stepName={ 'store-address' }
+			className={ `is-step-${ intent }` }
+			skipButtonAlign={ 'top' }
+			goBack={ goBack }
+			goNext={ goNext }
+			isHorizontalLayout={ true }
+			formattedHeader={
+				<FormattedHeader
+					id={ 'site-options-header' }
+					headerText={ headerText }
+					subHeaderText={ __(
+						'This will be used as your default business address. You can change it later if you need to.'
+					) }
+					align={ 'left' }
 				/>
-			</div>
-		</div>
+			}
+			intent={ intent }
+			stepContent={ getContent() }
+			recordTracksEvent={ recordTracksEvent }
+			stepProgress={ stepProgress }
+			hideSkip
+		/>
 	);
 };
 

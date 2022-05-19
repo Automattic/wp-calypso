@@ -387,3 +387,123 @@
 		}
 	}
 }
+
+
+.generated-design-thumbnail {
+	align-items: stretch;
+	border: 1px solid #dddddd;
+	border-radius: 4px;
+	box-sizing: border-box;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	height: 355px;
+	padding: 0;
+	overflow: hidden;
+	transition: border-color 0.15s ease-in-out;
+	width: 100%;
+
+	&:hover,
+	&.is-selected {
+		border-color: #117ac9;
+		outline: 0;
+	}
+
+	&:focus-visible {
+		border-color: #dddddd;
+		outline: 2px solid var( --studio-blue-30 );
+	}
+
+	.generated-design-thumbnail__header {
+		border-bottom: 1px solid #dddddd;
+		box-sizing: border-box;
+		display: block;
+		height: 23px;
+		max-width: 100%;
+		padding: 0 12px;
+		position: relative;
+		text-align: left;
+
+		svg {
+			fill: var( --studio-gray-5 );
+		}
+    }
+
+	.generated-design-thumbnail__image {
+		flex: 1;
+		overflow: hidden;
+
+		.mshots-image-visible {
+			object-fit: cover;
+			object-position: top;
+			width: 100%;
+		}
+	}
+
+	@include break-small {
+		border-radius: 2px;
+		height: 170px;
+		padding: 8px;
+
+		.generated-design-thumbnail__header {
+			display: none;
+		}
+	}
+}
+
+.generated-design-preview {
+	.generated-design-preview__header {
+		align-items: center;
+		border-radius: 4px 4px 0 0; /* stylelint-disable-line scales/radii */
+		border: 1px solid var( --studio-gray-5 );
+		box-sizing: border-box;
+		display: flex;
+		height: 23px;
+		justify-content: center;
+		margin: 0 auto;
+		max-width: 100%;
+		position: relative;
+
+		svg {
+			fill: var( --studio-gray-5 );
+			left: 8px;
+			position: absolute;
+		}
+	}
+
+	.generated-design-preview__frame {
+		border: 1px solid var( --studio-gray-5 );
+		border-radius: 0 0 4px 4px; /* stylelint-disable-line scales/radii */
+		border-top: 0;
+		box-sizing: border-box;
+		display: block;
+		line-height: 0;
+		max-height: 334px;
+		overflow: hidden;
+		position: relative;
+		width: 100%;
+	}
+
+	@include break-small {
+		display: none;
+
+		&.is-selected {
+			display: block;
+		}
+
+		.generated-design-preview__header {
+			border-radius: 8px 8px 0 0; /* stylelint-disable-line scales/radii */
+			height: 34px;
+
+			svg {
+				left: 12px;
+				transform: scale( 1 );
+			}
+		}
+
+		.generated-design-preview__frame {
+			border-radius: 0 0 8px 8px; /* stylelint-disable-line scales/radii */
+			max-height: none;
+		}
+	}
+}

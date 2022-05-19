@@ -1,5 +1,5 @@
-import React from 'react';
-import wpcom from 'calypso/lib/wp';
+import { useQuery } from 'react-query';
+import wpcomRequest from 'wpcom-proxy-request';
 import { useSite } from './use-site';
 
 type Response = {
@@ -9,24 +9,22 @@ type Response = {
 
 export function useFSEStatus() {
 	const site = useSite();
-	const [ FSEEligible, setFSEEligible ] = React.useState< boolean >( false );
-	const [ FSEActive, setFSEActive ] = React.useState< boolean >( false );
-	const [ isLoading, setIsLoading ] = React.useState< boolean >( true );
 
-	React.useEffect( () => {
-		if ( site ) {
-			wpcom.req
-				.get( {
-					path: `/sites/${ site.ID }/block-editor`,
-					apiNamespace: 'wpcom/v2',
-				} )
-				.then( ( { is_fse_eligible, is_fse_active }: Response ) => {
-					setFSEEligible( is_fse_eligible );
-					setFSEActive( is_fse_active );
-					setIsLoading( false );
-				} );
+	const { data, isLoading } = useQuery< Response >(
+		site?.ID.toString() ?? 'no-site',
+		() =>
+			wpcomRequest( {
+				path: `/sites/${ site?.ID }/block-editor`,
+				apiNamespace: 'wpcom/v2',
+			} ),
+		{
+			enabled: !! site,
 		}
-	}, [ site ] );
+	);
 
-	return { FSEEligible, FSEActive, isLoading };
+	return {
+		FSEEligible: Boolean( data?.is_fse_eligible ),
+		FSEActive: Boolean( data?.is_fse_active ),
+		isLoading,
+	};
 }

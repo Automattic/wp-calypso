@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CompactCard, Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -162,10 +163,18 @@ class Security extends Component {
 				</CompactCard>
 				{ sslStatuses.SSL_ACTIVE === sslStatus && (
 					<VerticalNav>
-						<VerticalNavItem path={ ECOMMERCE } onClick={ this.handleLearnMoreClicks } external>
+						<VerticalNavItem
+							path={ localizeUrl( ECOMMERCE ) }
+							onClick={ this.handleLearnMoreClicks }
+							external
+						>
 							{ translate( 'Learn more about selling products on WordPress.com' ) }
 						</VerticalNavItem>
-						<VerticalNavItem path={ FORMS } onClick={ this.handleLearnMoreClicks } external>
+						<VerticalNavItem
+							path={ localizeUrl( FORMS ) }
+							onClick={ this.handleLearnMoreClicks }
+							external
+						>
 							{ translate( 'Learn more about forms on WordPress.com' ) }
 						</VerticalNavItem>
 					</VerticalNav>

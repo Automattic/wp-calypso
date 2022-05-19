@@ -272,7 +272,6 @@ const parse = ( [ prev, text, offset ], nextRange ) => {
  * prep work on the list of block ranges.
  *
  * @see parse
- *
  * @param {object} block the block to parse
  * @returns {Array} list of text and node segments with children
  */

@@ -182,6 +182,21 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 	siteTitle,
 } );
 
+export const setAnchorPodcastId = ( anchorPodcastId: string | null ) => ( {
+	type: 'SET_ANCHOR_PODCAST_ID' as const,
+	anchorPodcastId,
+} );
+
+export const setAnchorEpisodeId = ( anchorEpisodeId: string | null ) => ( {
+	type: 'SET_ANCHOR_PODCAST_EPISODE_ID' as const,
+	anchorEpisodeId,
+} );
+
+export const setAnchorSpotifyUrl = ( anchorSpotifyUrl: string | null ) => ( {
+	type: 'SET_ANCHOR_PODCAST_SPOTIFY_URL' as const,
+	anchorSpotifyUrl,
+} );
+
 export function updatePlan( planProductId: number ) {
 	// keep updatePlan for backwards compat
 	return setPlanProductId( planProductId );
@@ -230,6 +245,13 @@ export const setProgressTitle = ( progressTitle: string | undefined ) => ( {
 	progressTitle,
 } );
 
+export const setStepProgress = (
+	stepProgress: { count: number; progress: number } | undefined
+) => ( {
+	type: 'SET_STEP_PROGRESS' as const,
+	stepProgress,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -250,6 +272,9 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
+	| typeof setAnchorPodcastId
+	| typeof setAnchorEpisodeId
+	| typeof setAnchorSpotifyUrl
 	| typeof startOnboarding
 	| typeof setIntent
 	| typeof setStartingPoint
@@ -257,4 +282,5 @@ export type OnboardAction = ReturnType<
 	| typeof setPendingAction
 	| typeof setProgress
 	| typeof setProgressTitle
+	| typeof setStepProgress
 >;

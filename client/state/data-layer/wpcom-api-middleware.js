@@ -43,7 +43,6 @@ const shouldNext = ( action ) => {
  *
  * The optimizations reduce function-calling and object
  * property lookup where possible.
- *
  * @param {Function} handlersFor returns list of handlers for given action type
  * @returns {Function} middleware handler
  */

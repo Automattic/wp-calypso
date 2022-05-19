@@ -6,6 +6,7 @@ import {
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
+	isStarterPlan,
 } from '@automattic/calypso-products';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
@@ -37,6 +38,15 @@ export default function getPlanFeatures(
 			! isMonthlyPlan && freeOneYearDomain,
 			String( translate( 'Best-in-class hosting' ) ),
 			String( translate( 'Dozens of Free Themes' ) ),
+		].filter( isValueTruthy );
+	}
+
+	if ( isStarterPlan( productSlug ) ) {
+		return [
+			freeOneYearDomain,
+			String( translate( 'Best-in-class hosting' ) ),
+			String( translate( 'Dozens of Free Themes' ) ),
+			String( translate( 'Track your stats with Google Analytics' ) ),
 		].filter( isValueTruthy );
 	}
 

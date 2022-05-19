@@ -79,7 +79,12 @@ export function requestSiteStats( siteId, statType, query ) {
 					},
 					options
 			  )
-			: wpcom.site( siteId )[ statType ]( options );
+			: wpcom
+					.site( siteId )
+					[ statType ](
+						options,
+						'statsVideo' === statType ? { statType: query.statType, period: query.period } : {}
+					);
 
 		return requestStats
 			.then( ( data ) => dispatch( receiveSiteStats( siteId, statType, query, data, Date.now() ) ) )

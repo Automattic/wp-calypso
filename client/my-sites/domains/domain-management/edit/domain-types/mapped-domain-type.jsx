@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -61,7 +62,15 @@ class MappedDomainType extends Component {
 			secondaryMessage = translate(
 				"Please note that it can take up to 72 hours for your changes to become available. If you're still not seeing your site loading at %(domainName)s, please wait a few more hours, clear your browser cache, and try again. {{learnMoreLink}}Learn all about mapping an existing domain in our support docs{{/learnMoreLink}}.",
 				{
-					components: { learnMoreLink: this.renderLinkTo( MAP_EXISTING_DOMAIN ) },
+					components: {
+						learnMoreLink: (
+							<a
+								href={ localizeUrl( MAP_EXISTING_DOMAIN ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
 					args: { domainName: domain.name },
 				}
 			);
@@ -83,10 +92,6 @@ class MappedDomainType extends Component {
 				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
 			</Fragment>
 		);
-	}
-
-	renderLinkTo( url ) {
-		return <a href={ url } target="_blank" rel="noopener noreferrer" />;
 	}
 
 	renderDefaultRenewButton() {

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
@@ -18,7 +17,7 @@ describe( '#isHappychatConnectionUninitialized', () => {
 				},
 			},
 		} );
-		expect( isHappychatConnectionUninitialized( stateUnitialized ) ).to.be.true;
+		expect( isHappychatConnectionUninitialized( stateUnitialized ) ).toBe( true );
 	} );
 
 	it( 'should return false for CONNECTED', () => {
@@ -29,7 +28,7 @@ describe( '#isHappychatConnectionUninitialized', () => {
 				},
 			},
 		} );
-		expect( isHappychatConnectionUninitialized( stateConnected ) ).to.be.false;
+		expect( isHappychatConnectionUninitialized( stateConnected ) ).toBe( false );
 	} );
 
 	it( 'should return false for DISCONNECTED', () => {
@@ -40,7 +39,7 @@ describe( '#isHappychatConnectionUninitialized', () => {
 				},
 			},
 		} );
-		expect( isHappychatConnectionUninitialized( stateDisconnected ) ).to.be.false;
+		expect( isHappychatConnectionUninitialized( stateDisconnected ) ).toBe( false );
 	} );
 
 	it( 'should return false for CONNECTING', () => {
@@ -51,7 +50,7 @@ describe( '#isHappychatConnectionUninitialized', () => {
 				},
 			},
 		} );
-		expect( isHappychatConnectionUninitialized( stateConnecting ) ).to.be.false;
+		expect( isHappychatConnectionUninitialized( stateConnecting ) ).toBe( false );
 	} );
 
 	it( 'should return false for RECONNECTING', () => {
@@ -62,6 +61,6 @@ describe( '#isHappychatConnectionUninitialized', () => {
 				},
 			},
 		} );
-		expect( isHappychatConnectionUninitialized( stateReconnecting ) ).to.be.false;
+		expect( isHappychatConnectionUninitialized( stateReconnecting ) ).toBe( false );
 	} );
 } );

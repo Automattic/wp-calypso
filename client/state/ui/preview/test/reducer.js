@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { PREVIEW_URL_SET } from 'calypso/state/action-types';
 import { currentPreviewSiteId } from '../reducer';
 
@@ -11,6 +10,6 @@ describe( '#currentPreviewSiteId()', () => {
 			siteId: newPreviewSiteId,
 		} );
 
-		expect( state ).to.eql( newPreviewSiteId );
+		expect( state ).toEqual( newPreviewSiteId );
 	} );
 } );

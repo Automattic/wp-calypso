@@ -1,8 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { EditGravatar } from 'calypso/blocks/edit-gravatar';
 import ImageEditor from 'calypso/blocks/image-editor';
@@ -11,7 +9,6 @@ import VerifyEmailDialog from 'calypso/components/email-verification/email-verif
 import FilePicker from 'calypso/components/file-picker';
 import Gravatar from 'calypso/components/gravatar';
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
 jest.mock( 'calypso/lib/oauth-token', () => ( {
@@ -21,35 +18,39 @@ jest.mock( 'calypso/lib/oauth-token', () => ( {
 const noop = () => {};
 
 describe( 'EditGravatar', () => {
-	let sandbox;
+	let originalUrl;
 	const user = {
 		email_verified: false,
 	};
 
-	useSandbox( ( newSandbox ) => {
-		sandbox = newSandbox;
+	beforeAll( () => {
+		originalUrl = global.URL;
 		global.URL = {
-			revokeObjectURL: sandbox.stub(),
-			createObjectURL: sandbox.stub(),
+			revokeObjectURL: jest.fn(),
+			createObjectURL: jest.fn(),
 		};
+	} );
+
+	afterAll( () => {
+		global.URL = originalUrl;
 	} );
 
 	describe( 'component rendering', () => {
 		test( 'displays a Gravatar', () => {
 			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
-			expect( wrapper.find( Gravatar ).length ).to.equal( 1 );
+			expect( wrapper.find( Gravatar ).length ).toEqual( 1 );
 		} );
 
 		test( 'contains a file picker that accepts images', () => {
 			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
 			const filePicker = wrapper.find( FilePicker );
-			expect( filePicker.length ).to.equal( 1 );
-			expect( filePicker.prop( 'accept' ) ).to.equal( 'image/*' );
+			expect( filePicker.length ).toEqual( 1 );
+			expect( filePicker.prop( 'accept' ) ).toEqual( 'image/*' );
 		} );
 
 		test( 'does not display the image editor by default', () => {
 			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
-			expect( wrapper.find( ImageEditor ).length ).to.equal( 0 );
+			expect( wrapper.find( ImageEditor ).length ).toEqual( 0 );
 		} );
 
 		describe( 'drag and drop', () => {
@@ -62,7 +63,7 @@ describe( 'EditGravatar', () => {
 						} }
 					/>
 				);
-				expect( wrapper.find( DropZone ) ).to.have.length( 0 );
+				expect( wrapper.find( DropZone ) ).toHaveLength( 0 );
 			} );
 
 			test( 'contains a drop zone for verified users', () => {
@@ -74,7 +75,7 @@ describe( 'EditGravatar', () => {
 						} }
 					/>
 				);
-				expect( wrapper.find( DropZone ) ).to.have.length( 1 );
+				expect( wrapper.find( DropZone ) ).toHaveLength( 1 );
 			} );
 		} );
 	} );
@@ -94,16 +95,16 @@ describe( 'EditGravatar', () => {
 				wrapper.instance().onReceiveFile( files );
 
 				const imageEditor = wrapper.update().find( ImageEditor );
-				expect( imageEditor.length ).to.equal( 1 );
+				expect( imageEditor.length ).toEqual( 1 );
 
 				const aspectRatioResult = imageEditor.prop( 'allowedAspectRatios' );
-				expect( aspectRatioResult ).to.eql( [ AspectRatios.ASPECT_1X1 ] );
+				expect( aspectRatioResult ).toEqual( [ AspectRatios.ASPECT_1X1 ] );
 			} );
 		} );
 
 		describe( 'bad file type', () => {
 			test( 'does not display editor, and calls error action creator', () => {
-				const receiveGravatarImageFailedSpy = sandbox.spy();
+				const receiveGravatarImageFailedSpy = jest.fn();
 				const wrapper = shallow(
 					<EditGravatar
 						receiveGravatarImageFailed={ receiveGravatarImageFailedSpy }
@@ -120,8 +121,8 @@ describe( 'EditGravatar', () => {
 
 				wrapper.instance().onReceiveFile( files );
 
-				expect( wrapper.update().find( ImageEditor ).length ).to.equal( 0 );
-				expect( receiveGravatarImageFailedSpy ).to.have.been.calledOnce;
+				expect( wrapper.update().find( ImageEditor ).length ).toEqual( 0 );
+				expect( receiveGravatarImageFailedSpy ).toHaveBeenCalledTimes( 1 );
 			} );
 		} );
 	} );
@@ -137,8 +138,8 @@ describe( 'EditGravatar', () => {
 		];
 
 		test( 'given no error, hides image editor and calls upload gravatar action creator', () => {
-			const receiveGravatarImageFailedSpy = sandbox.spy();
-			const uploadGravatarSpy = sandbox.spy();
+			const receiveGravatarImageFailedSpy = jest.fn();
+			const uploadGravatarSpy = jest.fn();
 			const wrapper = shallow(
 				<EditGravatar
 					receiveGravatarImageFailed={ receiveGravatarImageFailedSpy }
@@ -153,15 +154,15 @@ describe( 'EditGravatar', () => {
 			wrapper.instance().onReceiveFile( files );
 			wrapper.instance().onImageEditorDone( null, 'image', imageEditorProps );
 
-			expect( wrapper.update().find( ImageEditor ).length ).to.equal( 0 );
-			expect( uploadGravatarSpy ).to.have.been.calledOnce;
-			expect( receiveGravatarImageFailedSpy.callCount ).to.equal( 0 );
+			expect( wrapper.update().find( ImageEditor ).length ).toEqual( 0 );
+			expect( uploadGravatarSpy ).toHaveBeenCalledTimes( 1 );
+			expect( receiveGravatarImageFailedSpy.mock.calls ).toHaveLength( 0 );
 		} );
 
 		test( 'given an error, hides image editor and calls error notice action creator', () => {
 			const error = new Error();
-			const receiveGravatarImageFailedSpy = sandbox.spy();
-			const uploadGravatarSpy = sandbox.spy();
+			const receiveGravatarImageFailedSpy = jest.fn();
+			const uploadGravatarSpy = jest.fn();
 			const wrapper = shallow(
 				<EditGravatar
 					receiveGravatarImageFailed={ receiveGravatarImageFailedSpy }
@@ -176,9 +177,9 @@ describe( 'EditGravatar', () => {
 			wrapper.instance().onReceiveFile( files );
 			wrapper.instance().onImageEditorDone( error, 'image', imageEditorProps );
 
-			expect( wrapper.update().find( ImageEditor ).length ).to.equal( 0 );
-			expect( receiveGravatarImageFailedSpy ).to.have.been.calledOnce;
-			expect( uploadGravatarSpy.callCount ).to.equal( 0 );
+			expect( wrapper.update().find( ImageEditor ).length ).toEqual( 0 );
+			expect( receiveGravatarImageFailedSpy ).toHaveBeenCalledTimes( 1 );
+			expect( uploadGravatarSpy.mock.calls ).toHaveLength( 0 );
 		} );
 	} );
 
@@ -192,7 +193,7 @@ describe( 'EditGravatar', () => {
 
 			clickableWrapper.simulate( 'click' );
 			wrapper.update(); // make sure the state has been updated
-			expect( wrapper.find( VerifyEmailDialog ) ).to.have.length( 1 );
+			expect( wrapper.find( VerifyEmailDialog ) ).toHaveLength( 1 );
 		} );
 	} );
 } );

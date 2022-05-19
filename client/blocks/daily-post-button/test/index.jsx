@@ -1,8 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
-import { assert } from 'chai';
 import { shallow } from 'enzyme';
 import pageSpy from 'page';
 import { parse } from 'qs';
@@ -34,7 +32,7 @@ describe( 'DailyPostButton', () => {
 					markPostSeen={ markPostSeen }
 				/>
 			);
-			assert.isNull( dailyPostPrompt.type() );
+			expect( dailyPostPrompt.type() ).toBeNull();
 		} );
 
 		test( 'renders as a span tag by default', () => {
@@ -48,7 +46,7 @@ describe( 'DailyPostButton', () => {
 					markPostSeen={ markPostSeen }
 				/>
 			);
-			assert.equal( 'span', renderAsSpan.type() );
+			expect( renderAsSpan.type() ).toEqual( 'span' );
 		} );
 
 		test( 'renders as the tag specified in props tagName', () => {
@@ -63,7 +61,7 @@ describe( 'DailyPostButton', () => {
 					markPostSeen={ markPostSeen }
 				/>
 			);
-			assert.equal( 'span', renderAsSpan.type() );
+			expect( renderAsSpan.type() ).toEqual( 'span' );
 		} );
 	} );
 
@@ -80,7 +78,7 @@ describe( 'DailyPostButton', () => {
 				/>
 			);
 			dailyPostButton.simulate( 'click', { preventDefault: noop } );
-			assert.isTrue( pageSpy.calledWithMatch( /post\/apps.wordpress.com?/ ) );
+			expect( pageSpy.calledWithMatch( /post\/apps.wordpress.com?/ ) ).toBe( true );
 		} );
 
 		// eslint-disable-next-line jest/expect-expect
@@ -120,7 +118,7 @@ describe( 'DailyPostButton', () => {
 			const pageArgs = pageSpy.lastCall.args[ 0 ];
 			const query = parse( pageArgs.split( '?' )[ 1 ] );
 			const { title, URL } = dailyPromptPost;
-			assert.deepEqual( query, { title: `Daily Prompt: ${ title }`, url: URL } );
+			expect( query ).toEqual( { title: `Daily Prompt: ${ title }`, url: URL } );
 		} );
 	} );
 } );

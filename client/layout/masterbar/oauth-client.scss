@@ -492,7 +492,7 @@
 
 	.button.is-primary {
 		background-color: #a46497;
-		border-radius: 100px;
+		border-radius: 100px; /* stylelint-disable-line scales/radii */
 		border: none;
 		color: #fff;
 		font-size: $font-body;
@@ -578,12 +578,27 @@
 			max-width: 90%;
 		}
 
-		@include breakpoint-deprecated( '>660px' ) {
-			flex-direction: row;
-			flex-wrap: wrap;
+		.login__social-buttons-container {
+			display: flex;
+			flex-direction: column;
 
-			button:not( :first-of-type ) {
-				margin-top: 0;
+			@include breakpoint-deprecated( '>660px' ) {
+				flex-direction: row;
+
+				.social-buttons__button {
+					margin-top: 0;
+					margin-inline: 0;
+				}
+
+				:first-child {
+					margin-left: auto;
+					margin-right: 8px;
+				}
+
+				:last-child {
+					margin-left: 8px;
+					margin-right: auto;
+				}
 			}
 		}
 	}

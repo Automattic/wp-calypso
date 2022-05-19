@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import { groupDomainProducts } from '../utils';
 
@@ -9,7 +8,7 @@ describe( 'utils', () => {
 		test( 'should return non-domain items unchanged', () => {
 			const items = deepFreeze( [ { foo: 'bar', product_slug: 'foobar' } ] );
 			const result = groupDomainProducts( items, ident );
-			expect( result ).to.eql( items );
+			expect( result ).toEqual( items );
 		} );
 
 		test( 'should return a domain item with a groupCount', () => {
@@ -27,7 +26,7 @@ describe( 'utils', () => {
 				},
 			];
 			const result = groupDomainProducts( items, ident );
-			expect( result ).to.eql( expected );
+			expect( result ).toEqual( expected );
 		} );
 
 		test( 'should not group domain items with different domains', () => {
@@ -64,8 +63,8 @@ describe( 'utils', () => {
 				},
 			];
 			const result = groupDomainProducts( items, ident );
-			expect( result ).to.eql( expected );
-			expect( result.length ).to.eql( 3 );
+			expect( result ).toEqual( expected );
+			expect( result.length ).toEqual( 3 );
 		} );
 
 		test( 'should only return one domain item of multiple with the same domain', () => {
@@ -85,7 +84,7 @@ describe( 'utils', () => {
 				},
 			] );
 			const result = groupDomainProducts( items, ident );
-			expect( result.length ).to.eql( 2 );
+			expect( result.length ).toEqual( 2 );
 		} );
 
 		test( 'should increment groupCount for multiple items with the same domain', () => {
@@ -105,7 +104,7 @@ describe( 'utils', () => {
 				},
 			] );
 			const result = groupDomainProducts( items, ident );
-			expect( result[ 1 ].groupCount ).to.eql( 2 );
+			expect( result[ 1 ].groupCount ).toEqual( 2 );
 		} );
 
 		test( 'should sum the raw_amount for multiple items with the same domain', () => {
@@ -141,8 +140,8 @@ describe( 'utils', () => {
 				},
 			] );
 			const result = groupDomainProducts( items, ident );
-			expect( result[ 1 ].raw_amount ).to.eql( 2 );
-			expect( result[ 2 ].raw_amount ).to.eql( 19 );
+			expect( result[ 1 ].raw_amount ).toEqual( 2 );
+			expect( result[ 2 ].raw_amount ).toEqual( 19 );
 		} );
 
 		test( 'should include the formatted, summed raw_amount as amount for multiple items with teh same domain', () => {
@@ -182,8 +181,8 @@ describe( 'utils', () => {
 				},
 			] );
 			const result = groupDomainProducts( items, ident );
-			expect( result[ 1 ].amount ).to.eql( '$2.00' );
-			expect( result[ 2 ].amount ).to.eql( '$19.00' );
+			expect( result[ 1 ].amount ).toEqual( '$2.00' );
+			expect( result[ 2 ].amount ).toEqual( '$19.00' );
 		} );
 	} );
 } );

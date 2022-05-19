@@ -9,8 +9,6 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import EligibilityWarnings from '..';
 
-import '@testing-library/jest-dom/extend-expect';
-
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );

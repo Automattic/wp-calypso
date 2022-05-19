@@ -7,12 +7,17 @@ import SurveyFlow from './survey-flow';
 
 import './style.scss';
 
-const DisconnectSite = ( { reason, type, site } ) => {
+const DisconnectSite = ( { backHref, reason, site, type } ) => {
 	const confirmHref = `/settings/disconnect-site/confirm/${ site.slug }`;
 
-	let backHref = '/settings/manage-connection/' + site.slug;
 	if ( reason ) {
+		// If a reason is given then this is being rendered on the confirm screen,
+		// so navigating back should always go to the disconnect-site screen.
 		backHref = '/settings/disconnect-site/' + site.slug;
+	} else {
+		// If a reason wasn't given then navigating back should go to what was given as a prop,
+		// or to /settings/manage-connection/:site by default.
+		backHref = backHref ?? '/settings/manage-connection/' + site.slug;
 	}
 
 	if ( type === 'down' ) {

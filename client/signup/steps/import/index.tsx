@@ -3,16 +3,31 @@ import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import React from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import CaptureStep from 'calypso/blocks/import/capture';
+import ListStep from 'calypso/blocks/import/list';
+import {
+	ReadyPreviewStep,
+	ReadyNotStep,
+	ReadyStep,
+	ReadyAlreadyOnWPCOMStep,
+} from 'calypso/blocks/import/ready';
+import {
+	GoToStep,
+	GoToNextStep,
+	UrlData,
+	RecordTracksEvent,
+	ImporterPlatform,
+} from 'calypso/blocks/import/types';
+import {
+	getImporterUrl,
+	getWpComOnboardingUrl,
+	getWpOrgImporterUrl,
+} from 'calypso/blocks/import/util';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getStepUrl } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isAnalyzing, getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import isAtomicSiteSelector from 'calypso/state/selectors/is-site-automated-transfer';
-import CaptureStep from './capture';
-import ListStep from './list';
-import { ReadyPreviewStep, ReadyNotStep, ReadyStep, ReadyAlreadyOnWPCOMStep } from './ready';
-import { GoToStep, GoToNextStep, UrlData, RecordTracksEvent, ImporterPlatform } from './types';
-import { getImporterUrl, getWpComOnboardingUrl, getWpOrgImporterUrl } from './util';
 import './style.scss';
 
 type Props = ConnectedProps< typeof connector > & {

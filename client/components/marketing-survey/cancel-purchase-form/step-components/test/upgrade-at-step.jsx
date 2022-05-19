@@ -1,7 +1,5 @@
 import { Button } from '@automattic/components';
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { stub } from 'sinon';
 import { UpgradeATStep } from '../upgrade-at-step';
 
 const noop = () => {};
@@ -24,20 +22,20 @@ describe( 'UpgradeATStep', () => {
 		} );
 
 		test( 'should render translated heading content', () => {
-			expect( wrapper.find( 'FormSectionHeading' ).props().children ).to.equal(
+			expect( wrapper.find( 'FormSectionHeading' ).props().children ).toEqual(
 				'Translated: New! Install Custom Plugins and Themes'
 			);
 		} );
 
 		test( 'should render translated link content', () => {
-			expect( wrapper.find( 'FormFieldset > p' ).props().children ).to.equal(
+			expect( wrapper.find( 'FormFieldset > p' ).props().children ).toEqual(
 				'Translated: Did you know that you can now use third-party plugins and themes on the WordPress.com Business plan? ' +
 					'Claim a 25% discount when you upgrade your site today - {{b}}enter the code BIZC25 at checkout{{/b}}.'
 			);
 		} );
 
 		test( 'should render translated confirmation content', () => {
-			expect( wrapper.find( 'FormFieldset > ForwardRef(Button)' ).props().children ).to.equal(
+			expect( wrapper.find( 'FormFieldset > ForwardRef(Button)' ).props().children ).toEqual(
 				'Translated: Upgrade My Site'
 			);
 		} );
@@ -48,13 +46,13 @@ describe( 'UpgradeATStep', () => {
 			<UpgradeATStep recordTracksEvent={ noop } translate={ noop } selectedSite={ selectedSite } />
 		);
 
-		expect( wrapper.find( Button ).props().href ).to.equal(
+		expect( wrapper.find( Button ).props().href ).toEqual(
 			'/checkout/site_slug/business?coupon=BIZC25'
 		);
 	} );
 
 	test( 'should fire tracks event when button is clicked', () => {
-		const recordTracksEvent = stub();
+		const recordTracksEvent = jest.fn();
 		const wrapper = shallow(
 			<UpgradeATStep
 				recordTracksEvent={ recordTracksEvent }
@@ -65,7 +63,7 @@ describe( 'UpgradeATStep', () => {
 
 		wrapper.find( Button ).simulate( 'click' );
 
-		expect( recordTracksEvent ).to.have.been.calledWith(
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_cancellation_upgrade_at_step_upgrade_click'
 		);
 	} );

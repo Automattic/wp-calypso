@@ -12,7 +12,6 @@ import './setup';
  *
  * @param {string} eventName - The name of the 'event' property such as 'viewItem' or 'viewBasket'
  * @param {object} eventProps - Additional details about the event such as `{ item: '1' }`
- *
  * @returns {void}
  */
 export async function recordInCriteo( eventName, eventProps ) {

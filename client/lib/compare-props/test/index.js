@@ -1,27 +1,27 @@
-import { expect } from 'chai';
 import compareProps from '..';
 
 describe( 'compare-props', () => {
 	test( 'should do a shallow comparison when no options are supplied', () => {
 		const comparator = compareProps();
 
-		expect( comparator( { a: 1 }, { a: 1 } ) ).to.be.true;
-		expect( comparator( { a: 1, extra: 2 }, { a: 1 } ) ).to.be.false;
-		expect( comparator( { a: 1 }, { a: 1, extra: 2 } ) ).to.be.false;
-		expect( comparator( { a: [] }, { a: [] } ) ).to.be.false;
+		expect( comparator( { a: 1 }, { a: 1 } ) ).toBe( true );
+		expect( comparator( { a: 1, extra: 2 }, { a: 1 } ) ).toBe( false );
+		expect( comparator( { a: 1 }, { a: 1, extra: 2 } ) ).toBe( false );
+		expect( comparator( { a: [] }, { a: [] } ) ).toBe( false );
 		const a = { b: 1 };
-		expect( comparator( { a }, { a } ) ).to.be.true;
+		expect( comparator( { a }, { a } ) ).toBe( true );
 	} );
 
 	test( 'should ignore properties marked as `ignore`', () => {
 		const comparator = compareProps( { ignore: [ 'irrelevant' ] } );
 
-		expect( comparator( { a: 1, irrelevant: 'whatever1' }, { a: 1, irrelevant: 'whatever2' } ) ).to
-			.be.true;
+		expect(
+			comparator( { a: 1, irrelevant: 'whatever1' }, { a: 1, irrelevant: 'whatever2' } )
+		).toBe( true );
 
-		expect( comparator( { a: 1, irrelevant: 'whatever1' }, { a: 1 } ) ).to.be.true;
+		expect( comparator( { a: 1, irrelevant: 'whatever1' }, { a: 1 } ) ).toBe( true );
 
-		expect( comparator( { a: 1 }, { a: 1, irrelevant: 'whatever2' } ) ).to.be.true;
+		expect( comparator( { a: 1 }, { a: 1, irrelevant: 'whatever2' } ) ).toBe( true );
 	} );
 
 	test( 'should compare selected properties deeply and the remaining ones shallowly', () => {
@@ -38,7 +38,7 @@ describe( 'compare-props', () => {
 					page: 2,
 				}
 			)
-		).to.be.true;
+		).toBe( true );
 
 		expect(
 			comparator(
@@ -51,17 +51,19 @@ describe( 'compare-props', () => {
 					options: [ 'quick' ],
 				}
 			)
-		).to.be.false;
+		).toBe( false );
 	} );
 
 	test( 'should ignore properties that are not part of `shallow` list', () => {
 		const comparator = compareProps( { shallow: [ 'id' ] } );
 
-		expect( comparator( { id: 1, is_jetpack: true }, { id: 1, is_domain_only: true } ) ).to.be.true;
+		expect( comparator( { id: 1, is_jetpack: true }, { id: 1, is_domain_only: true } ) ).toBe(
+			true
+		);
 
-		expect( comparator( { is_jetpack: true }, { id: 1, is_domain_only: true } ) ).to.be.false;
+		expect( comparator( { is_jetpack: true }, { id: 1, is_domain_only: true } ) ).toBe( false );
 
-		expect( comparator( { id: 1, is_jetpack: true }, { is_domain_only: true } ) ).to.be.false;
+		expect( comparator( { id: 1, is_jetpack: true }, { is_domain_only: true } ) ).toBe( false );
 	} );
 
 	test( 'should prefer `ignore` list over `deep` and both over `shallow`', () => {
@@ -90,6 +92,6 @@ describe( 'compare-props', () => {
 					shallow_ignored: { a: 'whatever' },
 				}
 			)
-		).to.be.true;
+		).toBe( true );
 	} );
 } );

@@ -7,7 +7,6 @@
 
 import { render, screen } from '@testing-library/react';
 import PaymentInfoBlock from '../payment-info-block';
-import '@testing-library/jest-dom/extend-expect';
 
 describe( 'PaymentInfoBlock', () => {
 	describe.each( [

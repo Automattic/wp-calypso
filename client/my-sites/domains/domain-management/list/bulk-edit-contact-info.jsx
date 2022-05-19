@@ -128,6 +128,7 @@ class BulkEditContactInfo extends Component {
 					{
 						contactInformation: contactDetails,
 						domainNames: this.props.domainNamesList ?? [],
+						validateOnlyEmail: this.props.emailOnly,
 					},
 					camelToSnakeCase
 				)

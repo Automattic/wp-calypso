@@ -1,5 +1,4 @@
 import { combineReducers } from '@wordpress/data';
-import { StoreAddress } from '../shared-types';
 import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
@@ -172,6 +171,36 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
+const anchorPodcastId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_ANCHOR_PODCAST_ID' ) {
+		return action.anchorPodcastId;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const anchorEpisodeId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_ANCHOR_PODCAST_EPISODE_ID' ) {
+		return action.anchorEpisodeId;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const anchorSpotifyUrl: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_ANCHOR_PODCAST_SPOTIFY_URL' ) {
+		return action.anchorSpotifyUrl;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'ONBOARDING_START' ) {
 		return true;
@@ -222,27 +251,6 @@ const storeType: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
-const storeAddress: Reducer< StoreAddress, OnboardAction > = (
-	state = {
-		store_address_1: '',
-		store_address_2: '',
-		store_city: '',
-		store_postcode: '',
-		store_country: '',
-	},
-	action
-) => {
-	if ( action.type === 'SET_STORE_ADDRESS_VALUE' ) {
-		const { store_address_field, store_address_value } = action;
-
-		return {
-			...state,
-			[ store_address_field ]: store_address_value,
-		};
-	}
-	return state;
-};
-
 const pendingAction: Reducer< undefined | ( () => Promise< any > ), OnboardAction > = (
 	state,
 	action
@@ -276,7 +284,20 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 	return state;
 };
 
+const stepProgress: Reducer< { count: number; progress: number } | undefined, OnboardAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'SET_STEP_PROGRESS' ) {
+		return action.stepProgress;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
+	anchorPodcastId,
+	anchorEpisodeId,
+	anchorSpotifyUrl,
 	domain,
 	domainSearch,
 	domainCategory,
@@ -296,10 +317,10 @@ const reducer = combineReducers( {
 	lastLocation,
 	intent,
 	startingPoint,
-	storeAddress,
 	pendingAction,
 	progress,
 	progressTitle,
+	stepProgress,
 } );
 
 export type State = ReturnType< typeof reducer >;

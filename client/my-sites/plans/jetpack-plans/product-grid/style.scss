@@ -12,6 +12,15 @@
 	}
 }
 
+// Retain horizontal padding on Jetpack Cloud,
+// otherwise the product grid reach the edge of the screen
+.is-jetpack-cloud.product-grid__section {
+	@include breakpoint-deprecated( '>660px' ) {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+}
+
 .product-grid__section:first-of-type > .product-grid__section-title {
 	margin-bottom: 15px;
 }
@@ -48,18 +57,6 @@
 	}
 }
 
-.product-grid__plan-grid {
-	> li.is-featured {
-		// Put featured item(s) in first position
-		order: -2;
-	}
-
-	> li:last-child {
-		// Put last item below featured items
-		order: -1;
-	}
-}
-
 .product-grid__plan-grid.has-top-padding {
 	padding-top: 32px;
 }
@@ -70,9 +67,6 @@
 
 	// Considering there are 3 plans
 	> li {
-		// Reset mobile and tablet positions
-		order: 0;
-
 		&:first-child {
 			position: relative;
 			left: 8px;
@@ -81,10 +75,6 @@
 		&:last-child {
 			position: relative;
 			left: -8px;
-		}
-
-		&.is-featured {
-			order: 0;
 		}
 	}
 }

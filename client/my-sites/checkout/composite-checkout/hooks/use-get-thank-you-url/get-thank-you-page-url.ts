@@ -8,9 +8,6 @@ import {
 	getPlan,
 	isPlan,
 	isWpComPremiumPlan,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import {
 	URL_TYPE,
@@ -36,10 +33,8 @@ import {
 	hasTitanMail,
 	hasTrafficGuide,
 	hasDIFMProduct,
-	hasMonthlyCartItem,
 	hasProPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
@@ -52,7 +47,7 @@ import {
 	retrieveSignupDestination,
 } from 'calypso/signup/storageUtils';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
 
@@ -98,7 +93,7 @@ export default function getThankYouPageUrl( {
 	isJetpackCheckout?: boolean;
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
-	domains?: SiteDomain[];
+	domains?: ResponseDomain[];
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -418,49 +413,6 @@ function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
 	return;
 }
 
-function getMonthlyToAnnualUpsellUrl( {
-	pendingOrReceiptId,
-	cart,
-	siteSlug,
-	orderId,
-}: {
-	pendingOrReceiptId: string;
-	orderId: number | undefined;
-	cart: ResponseCart | undefined;
-	siteSlug: string | undefined;
-} ): string | undefined {
-	if ( orderId ) {
-		return;
-	}
-
-	const monthlyPlansDefaultExperiment = dangerouslyGetExperimentAssignment(
-		'calypso_signup_monthly_plans_default_202201_v2'
-	);
-	if ( monthlyPlansDefaultExperiment?.variationName === null ) {
-		return;
-	}
-
-	if ( cart && hasMonthlyCartItem( cart ) ) {
-		let planType;
-		if ( hasPersonalPlan( cart ) ) {
-			planType = PLAN_PERSONAL;
-		} else if ( hasPremiumPlan( cart ) ) {
-			planType = PLAN_PREMIUM;
-		} else if ( hasBusinessPlan( cart ) ) {
-			planType = PLAN_BUSINESS;
-		} else if ( hasEcommercePlan( cart ) ) {
-			planType = PLAN_ECOMMERCE;
-		}
-
-		if ( ! planType ) {
-			return;
-		}
-
-		return `/checkout/${ siteSlug }/offer-annual-upgrade/${ planType }/${ pendingOrReceiptId }`;
-	}
-
-	return;
-}
 function getPlanUpgradeUpsellUrl( {
 	pendingOrReceiptId,
 	cart,
@@ -500,23 +452,11 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideUpsell: boolean;
-	domains: SiteDomain[] | undefined;
+	domains: ResponseDomain[] | undefined;
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
 	}
-
-	const monthlyToAnnualUpsellExperimentUrl = getMonthlyToAnnualUpsellUrl( {
-		pendingOrReceiptId,
-		cart,
-		orderId,
-		siteSlug,
-	} );
-
-	if ( monthlyToAnnualUpsellExperimentUrl ) {
-		return monthlyToAnnualUpsellExperimentUrl;
-	}
-
 	const professionalEmailUpsellUrl = getProfessionalEmailUpsellUrl( {
 		pendingOrReceiptId,
 		cart,
@@ -566,7 +506,7 @@ function getProfessionalEmailUpsellUrl( {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	orderId: number | undefined;
-	domains: SiteDomain[] | undefined;
+	domains: ResponseDomain[] | undefined;
 } ): string | undefined {
 	if ( orderId || ! cart ) {
 		return;

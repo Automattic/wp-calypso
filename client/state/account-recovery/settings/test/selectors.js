@@ -1,4 +1,3 @@
-import { assert } from 'chai';
 import {
 	isAccountRecoverySettingsReady,
 	isAccountRecoveryEmailValidated,
@@ -55,51 +54,51 @@ describe( '#account-recovery/settings/selectors', () => {
 
 	describe( '#isAccountRecoverySettingsReady', () => {
 		test( 'should return false on absence', () => {
-			assert.isFalse( isAccountRecoverySettingsReady( stateBeforeFetching ) );
+			expect( isAccountRecoverySettingsReady( stateBeforeFetching ) ).toBe( false );
 		} );
 
 		test( 'should return true if exists', () => {
-			assert.isTrue( isAccountRecoverySettingsReady( stateAfterFetching ) );
+			expect( isAccountRecoverySettingsReady( stateAfterFetching ) ).toBe( true );
 		} );
 	} );
 
 	describe( '#isAccountRecoveryEmailValidated:', () => {
 		test( 'should return false on absence', () => {
-			assert.isFalse( isAccountRecoveryEmailValidated( stateBeforeFetching ) );
+			expect( isAccountRecoveryEmailValidated( stateBeforeFetching ) ).toBe( false );
 		} );
 
 		test( 'should return the emailValidated field', () => {
-			assert.isTrue( isAccountRecoveryEmailValidated( stateAfterFetching ) );
+			expect( isAccountRecoveryEmailValidated( stateAfterFetching ) ).toBe( true );
 		} );
 	} );
 
 	describe( '#isAccountRecoveryPhoneValidated:', () => {
 		test( 'should return false on absence', () => {
-			assert.isFalse( isAccountRecoveryPhoneValidated( stateBeforeFetching ) );
+			expect( isAccountRecoveryPhoneValidated( stateBeforeFetching ) ).toBe( false );
 		} );
 
 		test( 'should return the phoneValidated field', () => {
-			assert.isTrue( isAccountRecoveryPhoneValidated( stateAfterFetching ) );
+			expect( isAccountRecoveryPhoneValidated( stateAfterFetching ) ).toBe( true );
 		} );
 	} );
 
 	describe( '#getAccountRecoveryEmail:', () => {
 		test( 'should return a default value on absence', () => {
-			assert.equal( getAccountRecoveryEmail( stateBeforeFetching ), '' );
+			expect( getAccountRecoveryEmail( stateBeforeFetching ) ).toEqual( '' );
 		} );
 
 		test( 'should return the email field', () => {
-			assert.equal( getAccountRecoveryEmail( stateAfterFetching ), dummyNewEmail );
+			expect( getAccountRecoveryEmail( stateAfterFetching ) ).toEqual( dummyNewEmail );
 		} );
 	} );
 
 	describe( '#getAccountRecoveryPhone', () => {
 		test( 'should return a default value on absence', () => {
-			assert.isNull( getAccountRecoveryPhone( stateBeforeFetching ) );
+			expect( getAccountRecoveryPhone( stateBeforeFetching ) ).toBeNull();
 		} );
 
 		test( 'should return the phone field', () => {
-			assert.deepEqual( getAccountRecoveryPhone( stateAfterFetching ), {
+			expect( getAccountRecoveryPhone( stateAfterFetching ) ).toEqual( {
 				countryCode: dummyNewPhone.country_code,
 				countryNumericCode: dummyNewPhone.country_numeric_code,
 				number: dummyNewPhone.number,
@@ -129,21 +128,21 @@ describe( '#account-recovery/settings/selectors', () => {
 
 	describe( '#isUpdatingAccountRecoveryPhone', () => {
 		test( 'should return false on absence', () => {
-			assert.isFalse( isUpdatingAccountRecoveryPhone( stateBeforeUpdating ) );
+			expect( isUpdatingAccountRecoveryPhone( stateBeforeUpdating ) ).toBe( false );
 		} );
 
 		test( 'should return isUpdating.phone', () => {
-			assert.isTrue( isUpdatingAccountRecoveryPhone( stateDuringUpdating ) );
+			expect( isUpdatingAccountRecoveryPhone( stateDuringUpdating ) ).toBe( true );
 		} );
 	} );
 
 	describe( '#isUpdatingAccountRecoveryEmail', () => {
 		test( 'should return false on absence', () => {
-			assert.isFalse( isUpdatingAccountRecoveryEmail( stateBeforeUpdating ) );
+			expect( isUpdatingAccountRecoveryEmail( stateBeforeUpdating ) ).toBe( false );
 		} );
 
 		test( 'should return isUpdating.email', () => {
-			assert.isTrue( isUpdatingAccountRecoveryEmail( stateDuringUpdating ) );
+			expect( isUpdatingAccountRecoveryEmail( stateDuringUpdating ) ).toBe( true );
 		} );
 	} );
 
@@ -168,49 +167,49 @@ describe( '#account-recovery/settings/selectors', () => {
 
 	describe( '#isDeletingAccountRecoveryPhone', () => {
 		test( 'should return false on absence', () => {
-			assert.isFalse( isDeletingAccountRecoveryPhone( stateBeforeDeleting ) );
+			expect( isDeletingAccountRecoveryPhone( stateBeforeDeleting ) ).toBe( false );
 		} );
 
 		test( 'should return isDeleting.phone', () => {
-			assert.isTrue( isDeletingAccountRecoveryPhone( stateDuringDeleting ) );
+			expect( isDeletingAccountRecoveryPhone( stateDuringDeleting ) ).toBe( true );
 		} );
 	} );
 
 	describe( '#isDeletingAccountRecoveryEmail', () => {
 		test( 'should return false on absence', () => {
-			assert.isFalse( isDeletingAccountRecoveryEmail( stateBeforeDeleting ) );
+			expect( isDeletingAccountRecoveryEmail( stateBeforeDeleting ) ).toBe( false );
 		} );
 
 		test( 'should return isDeleting.email', () => {
-			assert.isTrue( isDeletingAccountRecoveryEmail( stateDuringDeleting ) );
+			expect( isDeletingAccountRecoveryEmail( stateDuringDeleting ) ).toBe( true );
 		} );
 	} );
 
 	describe( '#isAccountRecoveryEmailActionInProgress', () => {
 		test( 'should return true if the whole data is not in place yet', () => {
-			assert.isTrue( isAccountRecoveryEmailActionInProgress( stateBeforeFetching ) );
+			expect( isAccountRecoveryEmailActionInProgress( stateBeforeFetching ) ).toBe( true );
 		} );
 
 		test( 'should return true if isUpdating.email is set', () => {
-			assert.isTrue( isAccountRecoveryEmailActionInProgress( stateDuringUpdating ) );
+			expect( isAccountRecoveryEmailActionInProgress( stateDuringUpdating ) ).toBe( true );
 		} );
 
 		test( 'should return true if isDeleting.email is set', () => {
-			assert.isTrue( isAccountRecoveryEmailActionInProgress( stateDuringDeleting ) );
+			expect( isAccountRecoveryEmailActionInProgress( stateDuringDeleting ) ).toBe( true );
 		} );
 	} );
 
 	describe( '#isAccountRecoveryPhoneActionInProgress', () => {
 		test( 'should return true if the whole data is not in place yet', () => {
-			assert.isTrue( isAccountRecoveryPhoneActionInProgress( stateBeforeFetching ) );
+			expect( isAccountRecoveryPhoneActionInProgress( stateBeforeFetching ) ).toBe( true );
 		} );
 
 		test( 'should return true if isUpdating.email is set', () => {
-			assert.isTrue( isAccountRecoveryPhoneActionInProgress( stateDuringUpdating ) );
+			expect( isAccountRecoveryPhoneActionInProgress( stateDuringUpdating ) ).toBe( true );
 		} );
 
 		test( 'should return true if isDeleting.email is set', () => {
-			assert.isTrue( isAccountRecoveryPhoneActionInProgress( stateDuringDeleting ) );
+			expect( isAccountRecoveryPhoneActionInProgress( stateDuringDeleting ) ).toBe( true );
 		} );
 	} );
 
@@ -224,7 +223,7 @@ describe( '#account-recovery/settings/selectors', () => {
 				},
 			};
 
-			assert.isFalse( hasSentAccountRecoveryEmailValidation( state ) );
+			expect( hasSentAccountRecoveryEmailValidation( state ) ).toBe( false );
 		} );
 
 		test( 'should return hasSentValidation.email', () => {
@@ -238,7 +237,7 @@ describe( '#account-recovery/settings/selectors', () => {
 				},
 			};
 
-			assert.isTrue( hasSentAccountRecoveryEmailValidation( state ) );
+			expect( hasSentAccountRecoveryEmailValidation( state ) ).toBe( true );
 		} );
 	} );
 
@@ -252,7 +251,7 @@ describe( '#account-recovery/settings/selectors', () => {
 				},
 			};
 
-			assert.isFalse( hasSentAccountRecoveryPhoneValidation( state ) );
+			expect( hasSentAccountRecoveryPhoneValidation( state ) ).toBe( false );
 		} );
 
 		test( 'should return hasSentValidation.phone', () => {
@@ -266,7 +265,7 @@ describe( '#account-recovery/settings/selectors', () => {
 				},
 			};
 
-			assert.isTrue( hasSentAccountRecoveryPhoneValidation( state ) );
+			expect( hasSentAccountRecoveryPhoneValidation( state ) ).toBe( true );
 		} );
 	} );
 
@@ -280,7 +279,7 @@ describe( '#account-recovery/settings/selectors', () => {
 				},
 			};
 
-			assert.isTrue( isValidatingAccountRecoveryPhone( state ) );
+			expect( isValidatingAccountRecoveryPhone( state ) ).toBe( true );
 		} );
 	} );
 
@@ -301,19 +300,25 @@ describe( '#account-recovery/settings/selectors', () => {
 				},
 			};
 
-			assert.isTrue( shouldPromptAccountRecoveryEmailValidationNotice( state ) );
+			expect( shouldPromptAccountRecoveryEmailValidationNotice( state ) ).toBe( true );
 		} );
 
 		test( 'should not prompt if the settings data is not ready.', () => {
-			assert.isFalse( shouldPromptAccountRecoveryEmailValidationNotice( stateBeforeFetching ) );
+			expect( shouldPromptAccountRecoveryEmailValidationNotice( stateBeforeFetching ) ).toBe(
+				false
+			);
 		} );
 
 		test( 'should not prompt if isUpdating.email is set.', () => {
-			assert.isFalse( shouldPromptAccountRecoveryEmailValidationNotice( stateDuringUpdating ) );
+			expect( shouldPromptAccountRecoveryEmailValidationNotice( stateDuringUpdating ) ).toBe(
+				false
+			);
 		} );
 
 		test( 'should not prompt if isDeleting.email is set.', () => {
-			assert.isFalse( shouldPromptAccountRecoveryEmailValidationNotice( stateDuringDeleting ) );
+			expect( shouldPromptAccountRecoveryEmailValidationNotice( stateDuringDeleting ) ).toBe(
+				false
+			);
 		} );
 	} );
 
@@ -339,19 +344,25 @@ describe( '#account-recovery/settings/selectors', () => {
 				},
 			};
 
-			assert.isTrue( shouldPromptAccountRecoveryPhoneValidationNotice( state ) );
+			expect( shouldPromptAccountRecoveryPhoneValidationNotice( state ) ).toBe( true );
 		} );
 
 		test( 'should not prompt if the settings data is not ready.', () => {
-			assert.isFalse( shouldPromptAccountRecoveryPhoneValidationNotice( stateBeforeFetching ) );
+			expect( shouldPromptAccountRecoveryPhoneValidationNotice( stateBeforeFetching ) ).toBe(
+				false
+			);
 		} );
 
 		test( 'should not prompt if isUpdating.phone is set.', () => {
-			assert.isFalse( shouldPromptAccountRecoveryPhoneValidationNotice( stateDuringUpdating ) );
+			expect( shouldPromptAccountRecoveryPhoneValidationNotice( stateDuringUpdating ) ).toBe(
+				false
+			);
 		} );
 
 		test( 'should not prompt if isDeleting.phone is set.', () => {
-			assert.isFalse( shouldPromptAccountRecoveryPhoneValidationNotice( stateDuringDeleting ) );
+			expect( shouldPromptAccountRecoveryPhoneValidationNotice( stateDuringDeleting ) ).toBe(
+				false
+			);
 		} );
 	} );
 } );

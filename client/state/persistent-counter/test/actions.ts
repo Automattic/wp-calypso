@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { PREFERENCE_BASE_NAME } from '../constants';
 import { isSameDay, incrementPreference, decrementPreference, resetPreference } from '../helpers';
 
@@ -10,13 +9,13 @@ describe( 'actions', () => {
 		test( 'Should return true if 2 timestamps are on the same day', () => {
 			const timestamp1 = Date.parse( '2022-03-09 07:47:05' );
 			const timestamp2 = Date.parse( '2022-03-09 01:00:02' );
-			expect( isSameDay( timestamp1, timestamp2 ) ).to.be.true;
+			expect( isSameDay( timestamp1, timestamp2 ) ).toBe( true );
 		} );
 
 		test( 'Should return false if 2 timestamps are on different days', () => {
 			const timestamp1 = Date.now();
 			const timestamp2 = Date.parse( '2022-03-08 01:00:02' );
-			expect( isSameDay( timestamp1, timestamp2 ) ).to.be.false;
+			expect( isSameDay( timestamp1, timestamp2 ) ).toBe( false );
 		} );
 	} );
 
@@ -42,7 +41,7 @@ describe( 'actions', () => {
 				false
 			);
 
-			expect( result ).to.have.deep.own.property( 'my-test-counter' );
+			expect( result ).toHaveProperty( 'my-test-counter' );
 		} );
 
 		test( 'should cleanly update the preferences object without affecting other values', () => {
@@ -68,7 +67,7 @@ describe( 'actions', () => {
 				false
 			);
 
-			expect( result ).to.deep.eql( {
+			expect( result ).toEqual( {
 				'some-other-counter': {
 					count: 99,
 					lastUpdated: 1646844419200,
@@ -91,7 +90,7 @@ describe( 'actions', () => {
 				'my-test-counter',
 				false
 			);
-			expect( result[ COUNTER_NAME ] ).to.have.own.property( 'count', 1 );
+			expect( result[ COUNTER_NAME ] ).toHaveProperty( 'count', 1 );
 		} );
 
 		test( 'should update lastUpdated on increment', () => {
@@ -116,11 +115,11 @@ describe( 'actions', () => {
 				'my-test-counter',
 				false
 			);
-			expect( result[ COUNTER_NAME ] ).to.deep.eql( {
+			expect( result[ COUNTER_NAME ] ).toEqual( {
 				count: 2,
 				lastUpdated: 9999,
 			} );
-			expect( result[ COUNTER_NAME ] ).to.have.own.property( 'lastUpdated', 9999 );
+			expect( result[ COUNTER_NAME ] ).toHaveProperty( 'lastUpdated', 9999 );
 		} );
 	} );
 
@@ -137,8 +136,8 @@ describe( 'actions', () => {
 				'my-test-counter',
 				false
 			);
-			expect( result ).to.have.deep.own.property( 'my-test-counter' );
-			expect( result[ COUNTER_NAME ] ).to.deep.eql( {
+			expect( result ).toHaveProperty( 'my-test-counter' );
+			expect( result[ COUNTER_NAME ] ).toEqual( {
 				count: 0,
 				lastUpdated: 9999,
 			} );
@@ -165,7 +164,7 @@ describe( 'actions', () => {
 				'my-test-counter',
 				false
 			);
-			expect( result[ COUNTER_NAME ] ).to.deep.eql( {
+			expect( result[ COUNTER_NAME ] ).toEqual( {
 				count: 0,
 				lastUpdated: 9999,
 			} );
@@ -193,11 +192,11 @@ describe( 'actions', () => {
 				'my-test-counter',
 				false
 			);
-			expect( result[ COUNTER_NAME ] ).to.deep.eql( {
+			expect( result[ COUNTER_NAME ] ).toEqual( {
 				count: 0,
 				lastUpdated: 9999,
 			} );
-			expect( result[ COUNTER_NAME ] ).to.have.own.property( 'lastUpdated', 9999 );
+			expect( result[ COUNTER_NAME ] ).toHaveProperty( 'lastUpdated', 9999 );
 		} );
 	} );
 
@@ -222,7 +221,7 @@ describe( 'actions', () => {
 				'my-test-counter',
 				false
 			);
-			expect( result[ COUNTER_NAME ] ).to.deep.eql( {
+			expect( result[ COUNTER_NAME ] ).toEqual( {
 				count: 0,
 				lastUpdated: null,
 			} );

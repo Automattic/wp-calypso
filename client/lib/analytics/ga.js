@@ -85,7 +85,6 @@ export const gaRecordEvent = makeGoogleAnalyticsTrackingFunction( function recor
  * initialize and call the Google Analytics function it is passed.
  *
  * @see isGoogleAnalyticsAllowed
- *
  * @param  {Function} func Google Analytics tracking function
  * @returns {Function} Wrapped function
  */

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getRawOffsets from 'calypso/state/selectors/get-raw-offsets';
 
 describe( 'getRawOffsets()', () => {
@@ -13,7 +12,7 @@ describe( 'getRawOffsets()', () => {
 
 		const manualUTCOffsets = getRawOffsets( state );
 
-		expect( manualUTCOffsets ).to.eql( {} );
+		expect( manualUTCOffsets ).toEqual( {} );
 	} );
 
 	test( 'should return raw offsets data', () => {
@@ -31,7 +30,7 @@ describe( 'getRawOffsets()', () => {
 
 		const offsets = getRawOffsets( state );
 
-		expect( offsets ).to.eql( {
+		expect( offsets ).toEqual( {
 			'UTC+0': 'UTC',
 			'UTC-12': 'UTC-12',
 			'UTC-11.5': 'UTC-11:30',

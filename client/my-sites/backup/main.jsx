@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { ExternalLink } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -32,10 +31,6 @@ import EnableRestoresBanner from './enable-restores-banner';
 import { backupMainPath } from './paths';
 import SearchResults from './search-results';
 import { DailyStatus, RealtimeStatus } from './status';
-import {
-	DailyStatus as DailyStatusSimplifiedI4,
-	RealtimeStatus as RealtimeStatusSimplifiedI4,
-} from './status/simplified-i4';
 
 import './style.scss';
 
@@ -170,14 +165,6 @@ const BackupStatus = ( { selectedDate } ) => {
 	}
 
 	const hasRealtimeBackups = rewindCapabilities.includes( 'backup-realtime' );
-
-	if ( isEnabled( 'jetpack/backup-simplified-screens-i4' ) ) {
-		return hasRealtimeBackups ? (
-			<RealtimeStatusSimplifiedI4 selectedDate={ selectedDate } />
-		) : (
-			<DailyStatusSimplifiedI4 selectedDate={ selectedDate } />
-		);
-	}
 
 	return hasRealtimeBackups ? (
 		<RealtimeStatus selectedDate={ selectedDate } />

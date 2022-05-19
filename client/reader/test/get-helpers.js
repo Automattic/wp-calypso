@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getSiteUrl, getSiteName } from '../get-helpers';
 
 describe( '#getSiteUrl', () => {
@@ -9,25 +8,25 @@ describe( '#getSiteUrl', () => {
 
 	test( 'should favor site over feed if both exist', () => {
 		const siteUrl = getSiteUrl( { site: siteWithUrl, feed: feedWithUrl } );
-		expect( siteUrl ).eql( siteWithUrl.URL );
+		expect( siteUrl ).toEqual( siteWithUrl.URL );
 	} );
 
 	test( 'should get title from site if feed does not exist', () => {
 		const siteUrl = getSiteUrl( { site: siteWithUrl } );
-		expect( siteUrl ).eql( siteWithUrl.URL );
+		expect( siteUrl ).toEqual( siteWithUrl.URL );
 	} );
 
 	test( 'should get title from feed if site does not exist', () => {
 		const siteUrl = getSiteUrl( { feed: feedWithUrl } );
-		expect( siteUrl ).eql( feedWithUrl.URL );
+		expect( siteUrl ).toEqual( feedWithUrl.URL );
 
 		const siteUrl2 = getSiteUrl( { feed: feedWithFeedUrl } );
-		expect( siteUrl2 ).eql( 'feedwithFeedUrl.com' );
+		expect( siteUrl2 ).toEqual( 'feedwithFeedUrl.com' );
 	} );
 
 	test( 'should grab url from post if its there', () => {
 		const siteUrl = getSiteUrl( { post: postWithSiteUrl } );
-		expect( siteUrl ).eql( postWithSiteUrl.site_URL );
+		expect( siteUrl ).toEqual( postWithSiteUrl.site_URL );
 	} );
 
 	test( 'should return undefined if cannot find a reasonable url', () => {
@@ -59,35 +58,35 @@ describe( '#getSiteName', () => {
 	test( 'should favor site title over everything', () => {
 		allFeeds.forEach( ( feed ) => {
 			const siteName = getSiteName( { site: siteWithTitleAndDomain, feed } );
-			expect( siteName ).eql( siteWithTitleAndDomain.title );
+			expect( siteName ).toEqual( siteWithTitleAndDomain.title );
 		} );
 	} );
 
 	test( 'should fallback to feed if site title doesnt exist', () => {
 		const siteName = getSiteName( { site: {}, feed: feedWithName } );
-		expect( siteName ).eql( feedWithName.name );
+		expect( siteName ).toEqual( feedWithName.name );
 
 		const siteTitle = getSiteName( { site: {}, feed: feedWithTitle, post: {} } );
-		expect( siteTitle ).eql( feedWithTitle.title );
+		expect( siteTitle ).toEqual( feedWithTitle.title );
 	} );
 
 	test( 'should fallback to post if neither site or feed exist', () => {
-		expect( getSiteName( { site: {}, feed: {}, post: postWithSiteName } ) ).eql(
+		expect( getSiteName( { site: {}, feed: {}, post: postWithSiteName } ) ).toEqual(
 			postWithSiteName.site_name
 		);
 
-		expect( getSiteName( { post: postWithSiteName } ) ).eql( postWithSiteName.site_name );
+		expect( getSiteName( { post: postWithSiteName } ) ).toEqual( postWithSiteName.site_name );
 	} );
 
 	test( 'should fallback to domain name if cannot find title', () => {
-		expect( getSiteName( { site: siteWithDomain, post: {} } ) ).eql( siteWithDomain.domain );
+		expect( getSiteName( { site: siteWithDomain, post: {} } ) ).toEqual( siteWithDomain.domain );
 
-		expect( getSiteName( { feed: feedWithUrl } ) ).eql( 'feedwithurl.com' );
+		expect( getSiteName( { feed: feedWithUrl } ) ).toEqual( 'feedwithurl.com' );
 	} );
 
 	test( 'should return null if nothing was found', () => {
-		expect( getSiteName() ).eql( null );
+		expect( getSiteName() ).toBeNull();
 
-		expect( getSiteName( { feed: {}, site: {}, post: {} } ) ).eql( null );
+		expect( getSiteName( { feed: {}, site: {}, post: {} } ) ).toBeNull();
 	} );
 } );

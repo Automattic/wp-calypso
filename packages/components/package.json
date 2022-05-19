@@ -27,7 +27,9 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@wordpress/base-styles": "^4.0.4",
+		"@automattic/calypso-url": "workspace:^",
+		"@automattic/data-stores": "workspace:^",
+		"@wordpress/base-styles": "^4.4.0",
 		"classnames": "^2.3.1",
 		"gridicons": "^3.4.0",
 		"i18n-calypso": "workspace:^",
@@ -37,6 +39,7 @@
 		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {
+		"@wordpress/data": "^6.1.5",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2"
 	},
@@ -45,6 +48,8 @@
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/react": "^6.4.18",
+		"@testing-library/jest-dom": "^5.16.2",
+		"@testing-library/react": "^12.1.3",
 		"typescript": "^4.5.5"
 	},
 	"scripts": {

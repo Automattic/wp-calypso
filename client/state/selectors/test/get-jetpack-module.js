@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
 import { moduleData as MODULE_DATA_FIXTURE } from './fixtures/jetpack-modules';
 
@@ -15,7 +14,7 @@ describe( 'getJetpackModule()', () => {
 		};
 		const siteId = 123456;
 		const output = getJetpackModule( stateIn, siteId, 'module-a' );
-		expect( output ).to.eql( MODULE_DATA_FIXTURE[ 'module-a' ] );
+		expect( output ).toEqual( MODULE_DATA_FIXTURE[ 'module-a' ] );
 	} );
 
 	test( 'should return null for an unknown site', () => {
@@ -30,7 +29,7 @@ describe( 'getJetpackModule()', () => {
 		};
 		const siteId = 123456;
 		const output = getJetpackModule( stateIn, siteId, 'module-a' );
-		expect( output ).to.be.null;
+		expect( output ).toBeNull();
 	} );
 
 	test( 'should return null for an unknown module', () => {
@@ -45,6 +44,6 @@ describe( 'getJetpackModule()', () => {
 		};
 		const siteId = 123456;
 		const output = getJetpackModule( stateIn, siteId, 'module-z' );
-		expect( output ).to.be.null;
+		expect( output ).toBeNull();
 	} );
 } );

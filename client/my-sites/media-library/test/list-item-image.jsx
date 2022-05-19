@@ -1,8 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import resize from 'calypso/lib/resize-image-url';
 import ListItemImage from 'calypso/my-sites/media-library/list-item-image';
@@ -35,24 +33,24 @@ describe( 'MediaLibraryListItem image', () => {
 		test( 'defaults to photon when no thumbnail parameter is passed', () => {
 			wrapper = shallow( getItem( 0 ) );
 
-			expect( wrapper.props().src ).to.be.equal( getResizedUrl() );
+			expect( wrapper.props().src ).toEqual( getResizedUrl() );
 		} );
 		test( 'returns a resized private thumbnail for type MEDIA_IMAGE_RESIZER', () => {
 			wrapper = shallow( getItem( 0, 'MEDIA_IMAGE_RESIZER' ) );
 
-			expect( wrapper.props().src ).to.be.equal( getResizedUrl() );
+			expect( wrapper.props().src ).toEqual( getResizedUrl() );
 		} );
 
 		test( 'returns existing medium thumbnail for type MEDIA_IMAGE_THUMBNAIL', () => {
 			wrapper = shallow( getItem( 0, 'MEDIA_IMAGE_THUMBNAIL' ) );
 
-			expect( wrapper.props().src ).to.be.equal( fixtures.media[ 0 ].thumbnails.medium );
+			expect( wrapper.props().src ).toEqual( fixtures.media[ 0 ].thumbnails.medium );
 		} );
 
 		test( 'returns resized thumbnail for type MEDIA_IMAGE_THUMBNAIL when no medium thumbnail', () => {
 			wrapper = shallow( getItem( 1, 'MEDIA_IMAGE_THUMBNAIL' ) );
 
-			expect( wrapper.props().src ).to.be.equal( getResizedUrl() );
+			expect( wrapper.props().src ).toEqual( getResizedUrl() );
 		} );
 	} );
 } );

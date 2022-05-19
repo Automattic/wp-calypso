@@ -47,6 +47,6 @@ describe( 'Badge', () => {
 				<div>arbitrary-text-content</div>
 			</Badge>
 		);
-		expect( screen.getByText( 'arbitrary-text-content' ) ).toBeDefined();
+		expect( screen.getByText( 'arbitrary-text-content' ) ).toBeInTheDocument();
 	} );
 } );

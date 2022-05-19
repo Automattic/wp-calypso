@@ -8,11 +8,11 @@ import {
 	SidebarComponent,
 	TestAccount,
 	BlockWidgetEditorComponent,
-	skipDescribeIf,
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
+import { skipDescribeIf } from '../../jest-helpers';
 
 const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { sortPagesHierarchically } from '../helpers';
 
 describe( 'helpers', () => {
@@ -25,7 +24,7 @@ describe( 'helpers', () => {
 
 			const sortedPages = sortPagesHierarchically( testData );
 
-			expect( sortedPages ).to.deep.equal( [
+			expect( sortedPages ).toEqual( [
 				{
 					ID: 2,
 					parent: false,
@@ -77,7 +76,7 @@ describe( 'helpers', () => {
 
 			const sortedPages = sortPagesHierarchically( testData );
 
-			expect( sortedPages ).to.deep.equal( [
+			expect( sortedPages ).toEqual( [
 				{
 					ID: 1,
 					menu_order: 0,
@@ -139,7 +138,7 @@ describe( 'helpers', () => {
 
 			const sortedPages = sortPagesHierarchically( testData );
 
-			expect( sortedPages ).to.deep.equal( [
+			expect( sortedPages ).toEqual( [
 				{
 					ID: 1,
 					menu_order: 1,
@@ -201,7 +200,7 @@ describe( 'helpers', () => {
 
 			const sortedPages = sortPagesHierarchically( testData, 4 );
 
-			expect( sortedPages ).to.deep.equal( [
+			expect( sortedPages ).toEqual( [
 				{
 					ID: 4,
 					menu_order: 6,
@@ -254,7 +253,7 @@ describe( 'helpers', () => {
 			const homepageId = 0;
 			const sortedPages = sortPagesHierarchically( testData, homepageId );
 
-			expect( sortedPages ).to.deep.equal( [
+			expect( sortedPages ).toEqual( [
 				{
 					ID: 2,
 					parent: false,

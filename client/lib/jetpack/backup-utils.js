@@ -14,10 +14,6 @@ export const DELTA_ACTIVITIES = [
 	'user__invite_accepted',
 ];
 
-export const getDeltaActivities = ( logs ) => {
-	return logs.filter( ( { activityName } ) => DELTA_ACTIVITIES.includes( activityName ) );
-};
-
 export const getDeltaActivitiesByType = ( logs ) => {
 	return {
 		mediaCreated: logs.filter( ( event ) => 'attachment__uploaded' === event.activityName ),
@@ -71,6 +67,39 @@ export const isActivityBackup = ( activity ) => {
  */
 export const getBackupErrorCode = ( activity ) => {
 	return activity?.activityMeta?.errorCode?.toUpperCase?.();
+};
+
+/**
+ * Retrieve any warnings from a backup activity object.
+ *
+ * @param backup {object} Backup to check
+ */
+export const getBackupWarnings = ( backup ) => {
+	if ( ! backup.activityWarnings ) {
+		return {};
+	}
+	const warnings = {};
+
+	Object.keys( backup.activityWarnings ).forEach( function ( itemType ) {
+		const typeWarnings = backup.activityWarnings[ itemType ];
+		typeWarnings.forEach( ( typeWarning ) => {
+			if ( ! warnings.hasOwnProperty( typeWarning.name ) ) {
+				warnings[ typeWarning.name ] = {
+					category: typeWarning.category,
+					items: [],
+				};
+			}
+
+			const warningItem = {
+				code: typeWarning.code,
+				item: typeWarning.itemName,
+			};
+
+			warnings[ typeWarning.name ].items.push( warningItem );
+		} );
+	} );
+
+	return warnings;
 };
 
 /**

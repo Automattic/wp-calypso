@@ -140,73 +140,6 @@ $masterbar-color-secondary: #101517;
 	right: 16px;
 }
 
-.pride .masterbar {
-	background: linear-gradient(
-		to bottom,
-		#e24c3e 0%,
-		#e24c3e 16.66666666666667%,
-		#f47d3b 16.66666666666667%,
-		#f47d3b 33.33333333333334%,
-		#fdb813 33.33333333333334%,
-		#fdb813 50%,
-		#74bb5d 50%,
-		#74bb5d 66.66666666666667%,
-		#38a6d7 66.66666666666667%,
-		#38a6d7 83.33333333333333%,
-		#8c7ab8 83.33333333333333%,
-		#8c7ab8 100%
-	);
-
-	> .masterbar__item:not( .masterbar__item-title ),
-	> .masterbar__notifications,
-	> .masterbar__login-links a {
-		&:not( .is-active ) {
-			background: rgba( var( --color-primary-rgb ), 0.85 );
-		}
-
-		&:hover {
-			background: var( --color-primary );
-		}
-
-		&:focus {
-			outline: none;
-
-			.accessible-focus & {
-				box-shadow: inset 0 0 0 2px var( --color-primary-light );
-			}
-		}
-	}
-}
-
-.masterbar__item-bubble {
-	border: solid 2px var( --color-masterbar-background );
-	// stylelint-disable-next-line declaration-property-unit-allowed-list
-	border-radius: 50%;
-	display: none;
-	// stylelint-disable-next-line declaration-property-unit-allowed-list
-	font-size: 8px;
-	height: 8px;
-	letter-spacing: 0;
-	line-height: 12px;
-	margin: 0 0 0 12px;
-	padding: 0;
-	position: absolute;
-	top: calc( 50% - 14px );
-	left: -7px;
-	width: 8px;
-	z-index: z-index( '.masterbar', '.masterbar__notifications-bubble' );
-
-	// Animation
-	animation: bubble-unread-indication 0.5s linear both;
-	transition: all 150ms ease-in;
-
-	@include breakpoint-deprecated( '<480px' ) {
-		top: calc( 50% - 14px );
-		left: calc( 50% - 14px );
-		margin: 0;
-	}
-}
-
 .masterbar__section {
 	display: flex;
 
@@ -341,6 +274,11 @@ $masterbar-color-secondary: #101517;
 		.masterbar__item-content {
 			display: none;
 		}
+	}
+
+	&.masterbar__item-help {
+		cursor: pointer;
+		flex: 0;
 	}
 
 	.is-support-session &.is-active {
@@ -628,93 +566,6 @@ $masterbar-color-secondary: #101517;
 	}
 }
 
-.masterbar__item-notifications {
-	margin-right: 12px;
-
-	@include breakpoint-deprecated( '<480px' ) {
-		margin-right: 0;
-		margin-top: 0;
-	}
-
-	.gridicon {
-		fill: var( --color-text-inverted );
-		margin-top: 1px;
-
-		@media only screen and ( max-width: 782px ) {
-			flex-shrink: 0;
-		}
-	}
-
-	.gridicon + .masterbar__item-content {
-		padding: 0;
-
-		@include breakpoint-deprecated( '<480px' ) {
-			display: block;
-		}
-	}
-
-	.masterbar__item-notifications-label {
-		display: none;
-	}
-
-	.masterbar__notifications-bubble {
-		border: solid 2px var( --color-masterbar-background );
-		// stylelint-disable-next-line declaration-property-unit-allowed-list
-		border-radius: 50%;
-		display: none;
-		// stylelint-disable-next-line declaration-property-unit-allowed-list
-		font-size: 8px;
-		height: 8px;
-		letter-spacing: 0;
-		line-height: 12px;
-		margin: 0 0 0 -12px;
-		padding: 0;
-		position: absolute;
-		top: 3px;
-		left: 50%;
-		width: 8px;
-		z-index: z-index( '.masterbar', '.masterbar__notifications-bubble' );
-		transform: translateX( 1px );
-
-		// Animation
-		animation: bubble-unread-indication 0.5s linear both;
-		transition: all 150ms ease-in;
-
-		@media only screen and ( max-width: 782px ) {
-			top: 10px;
-		}
-	}
-
-	&:hover .masterbar__notifications-bubble {
-		border-color: var( --color-masterbar-item-hover-background );
-	}
-
-	&.is-active .masterbar__notifications-bubble {
-		border-color: var( --color-masterbar-item-active-background );
-	}
-
-	&.has-unread .masterbar__notifications-bubble {
-		display: block;
-		background: var( --color-masterbar-unread-dot-background );
-	}
-
-	&.is-initial-load .masterbar__notifications-bubble {
-		animation: none;
-	}
-}
-
-@keyframes bubble-unread-indication {
-	30% {
-		transform: scale3d( 1.5, 1.5, 1.5 );
-	}
-	60% {
-		transform: scale3d( 0.85, 0.85, 0.85 );
-	}
-	80% {
-		transform: scale3d( 1.15, 1.15, 1.15 );
-	}
-}
-
 .masterbar__login-links {
 	display: flex;
 	margin-left: auto;
@@ -856,6 +707,40 @@ $masterbar-color-secondary: #101517;
 			margin: 16px;
 			width: auto;
 		}
+	}
+}
+
+.masterbar-notifications {
+	svg {
+		overflow: overlay;
+	}
+	
+	.notifications-bell-icon__bubble {
+		animation: bubble-unread-indication 0.5s linear both;
+		transition: all 150ms ease-in;
+		transform-origin: 20px 4px;
+
+		use {
+			transition: all 150ms ease-in;
+			transform-origin: 20px 4px;
+		}
+	}
+
+	&:hover use.border {
+		transition: all 150ms ease-in;
+		fill: var( --color-masterbar-item-active-background );
+	}
+}
+
+@keyframes bubble-unread-indication {
+	30% {
+		transform: scale3d( 1.5, 1.5, 1.5 );
+	}
+	60% {
+		transform: scale3d( 0.85, 0.85, 0.85 );
+	}
+	80% {
+		transform: scale3d( 1.15, 1.15, 1.15 );
 	}
 }
 

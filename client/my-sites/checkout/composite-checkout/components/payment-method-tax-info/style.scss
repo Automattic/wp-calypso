@@ -18,3 +18,9 @@ button.button.payment-method-tax-info__edit-button svg.gridicon {
 .payment-method-tax-info__address {
 	margin-right: 0.5em;
 }
+
+.payment-method-tax-info {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+}

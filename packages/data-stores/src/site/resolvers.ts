@@ -1,7 +1,6 @@
-import { dispatch } from '@wordpress/data';
-import { wpcomRequest } from '../wpcom-request-controls';
-import { STORE_KEY } from './constants';
-import type { SiteDetails, Domain, SiteSettings } from './types';
+// wpcomRequest is a temporary rename while we're working on migrating generators to thunks
+import wpcomRequest from 'wpcom-proxy-request';
+import type { SiteDetails, Domain, SiteSettings, Dispatch } from './types';
 
 /**
  * Attempt to find a site based on its id, and if not return undefined.
@@ -11,45 +10,48 @@ import type { SiteDetails, Domain, SiteSettings } from './types';
  *
  * @param siteId {number}	The site to look up
  */
-export function* getSite( siteId: number ) {
-	yield dispatch( STORE_KEY ).fetchSite();
-	try {
-		const existingSite: SiteDetails | undefined = yield wpcomRequest( {
-			path: '/sites/' + encodeURIComponent( siteId ),
-			apiVersion: '1.1',
-		} );
-		yield dispatch( STORE_KEY ).receiveSite( siteId, existingSite );
-	} catch ( err ) {
-		yield dispatch( STORE_KEY ).receiveSiteFailed( siteId, undefined );
-	}
-}
+export const getSite =
+	( siteId: number ) =>
+	async ( { dispatch }: Dispatch ) => {
+		dispatch.fetchSite();
+		try {
+			const existingSite: SiteDetails | undefined = await wpcomRequest( {
+				path: '/sites/' + encodeURIComponent( siteId ),
+				apiVersion: '1.1',
+			} );
+			dispatch.receiveSite( siteId, existingSite );
+		} catch ( err ) {
+			dispatch.receiveSiteFailed( siteId, undefined );
+		}
+	};
 
 /**
  * Get all site domains
  *
  * @param siteId {number} The site id
  */
-export function* getSiteDomains( siteId: number ) {
-	try {
-		const result: { domains: Domain[] } = yield wpcomRequest( {
+export const getSiteDomains =
+	( siteId: number ) =>
+	async ( { dispatch }: Dispatch ) => {
+		const result: { domains: Domain[] } = await wpcomRequest( {
 			path: '/sites/' + encodeURIComponent( siteId ) + '/domains',
 			apiVersion: '1.2',
 		} );
-		yield dispatch( STORE_KEY ).receiveSiteDomains( siteId, result?.domains );
-	} catch ( e ) {}
-}
+		dispatch.receiveSiteDomains( siteId, result?.domains );
+	};
 
 /**
  * Get all site settings
  *
  * @param siteId {number} The site id
  */
-export function* getSiteSettings( siteId: number ) {
-	try {
-		const result: { settings: SiteSettings } = yield wpcomRequest( {
+export const getSiteSettings =
+	( siteId: number ) =>
+	async ( { dispatch }: Dispatch ) => {
+		const result: { settings: SiteSettings } = await wpcomRequest( {
 			path: '/sites/' + encodeURIComponent( siteId ) + '/settings',
 			apiVersion: '1.4',
 		} );
-		yield dispatch( STORE_KEY ).receiveSiteSettings( siteId, result?.settings );
-	} catch ( e ) {}
-}
+
+		dispatch.receiveSiteSettings( siteId, result?.settings );
+	};

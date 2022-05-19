@@ -18,7 +18,7 @@ import PriceInformation from 'calypso/my-sites/email/email-providers-comparison/
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 import './style.scss';
 
@@ -29,7 +29,7 @@ const getGoogleWorkspaceProductSlug = ( intervalLength: IntervalLength ): string
 };
 
 type GoogleWorkspacePriceProps = {
-	domain?: SiteDomain;
+	domain?: ResponseDomain;
 	intervalLength: IntervalLength;
 	isDomainInCart: boolean;
 };

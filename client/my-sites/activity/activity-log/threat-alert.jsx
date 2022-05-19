@@ -1,4 +1,5 @@
 import { Button, Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
@@ -36,7 +37,7 @@ export class ThreatAlert extends Component {
 
 	handleGetHelp = () => {
 		this.props.trackGetHelp( this.props.threat.id );
-		window.open( JETPACK_CONTACT_SUPPORT, '_blank' );
+		window.open( localizeUrl( JETPACK_CONTACT_SUPPORT ), '_blank' );
 	};
 
 	refreshRewindState = () => this.props.requestRewindState( this.props.siteId );

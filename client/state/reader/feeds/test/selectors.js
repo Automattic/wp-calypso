@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { shouldFeedBeFetched } from '../selectors';
 
 describe( 'selectors', () => {
@@ -18,7 +17,7 @@ describe( 'selectors', () => {
 					},
 					1
 				)
-			).to.be.false;
+			).toBe( false );
 		} );
 
 		test( 'should return false if the feed is loaded and recent', () => {
@@ -39,7 +38,7 @@ describe( 'selectors', () => {
 					},
 					1
 				)
-			).to.be.false;
+			).toBe( false );
 		} );
 
 		test( 'should return true if the feed is loaded, but no fetch time exists', () => {
@@ -58,7 +57,7 @@ describe( 'selectors', () => {
 					},
 					1
 				)
-			).to.be.true;
+			).toBe( true );
 		} );
 
 		test( 'should return true if the feed is loaded, but old', () => {
@@ -79,7 +78,7 @@ describe( 'selectors', () => {
 					},
 					1
 				)
-			).to.be.true;
+			).toBe( true );
 		} );
 
 		test( 'should return true if the feed is not queued and not loaded', () => {
@@ -96,7 +95,7 @@ describe( 'selectors', () => {
 					},
 					1
 				)
-			).to.be.true;
+			).toBe( true );
 		} );
 
 		test( 'should still return true if another feed is queued or loaded', () => {
@@ -117,7 +116,7 @@ describe( 'selectors', () => {
 					},
 					1
 				)
-			).to.be.true;
+			).toBe( true );
 		} );
 	} );
 } );

@@ -2,7 +2,7 @@ import {
 	FEATURE_PREMIUM_CONTENT_CONTAINER,
 	FEATURE_DONATIONS,
 	FEATURE_RECURRING_PAYMENTS,
-	FEATURE_MEMBERSHIPS,
+	FEATURE_SIMPLE_PAYMENTS,
 	PLAN_PERSONAL,
 	PLAN_JETPACK_PERSONAL,
 } from '@automattic/calypso-products';
@@ -608,7 +608,7 @@ class MembershipsSection extends Component {
 				<UpsellNudge
 					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
 					shouldDisplay={ () => true }
-					feature={ FEATURE_MEMBERSHIPS }
+					feature={ FEATURE_SIMPLE_PAYMENTS }
 					title={ this.props.translate( 'Upgrade to the Pro plan' ) }
 					description={ this.props.translate( 'Upgrade to enable Payment Blocks.' ) }
 					showIcon={ true }

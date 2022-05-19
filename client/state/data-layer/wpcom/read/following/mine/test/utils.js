@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import freeze from 'deep-freeze';
 import { subscriptionsFromApi, isValidApiResponse } from '../utils';
 
@@ -57,11 +56,11 @@ describe( '#subscriptionsFromApi', () => {
 				last_updated: NaN, // Date.parse transforms null to NaN
 			},
 		];
-		expect( subscriptionsFromApi( successfulApiResponse ) ).eql( transformedSubs );
+		expect( subscriptionsFromApi( successfulApiResponse ) ).toEqual( transformedSubs );
 	} );
 
 	test( 'should return an empty list from invalid apiResponse', () => {
-		expect( subscriptionsFromApi( { notExpected: 'true' } ) ).eql( [] );
-		expect( subscriptionsFromApi( { subscriptions: 'true' } ) ).eql( [] );
+		expect( subscriptionsFromApi( { notExpected: 'true' } ) ).toEqual( [] );
+		expect( subscriptionsFromApi( { subscriptions: 'true' } ) ).toEqual( [] );
 	} );
 } );

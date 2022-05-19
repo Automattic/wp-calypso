@@ -2,7 +2,7 @@
  * @group calypso-release
  */
 
-import { DataHelper, EmailClient, LoginPage } from '@automattic/calypso-e2e';
+import { DataHelper, EmailClient, LoginPage, SecretsManager } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import type { Message } from 'mailosaur/lib/models';
 
@@ -14,7 +14,7 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 	// and when that is copmlete, this can be replaced with an appropriate query method
 	// to extract the userEmail address of the test user.
 	// See https://github.com/Automattic/wp-calypso/issues/55694.
-	const emailInboxId = DataHelper.config.get( 'defaultUserInboxId' ) as string;
+	const emailInboxId = SecretsManager.secrets.mailosaur.defaultUserInboxId;
 	const userEmail = `main.${ emailInboxId }@mailosaur.io`;
 
 	let page: Page;

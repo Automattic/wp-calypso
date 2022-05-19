@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
 import {
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
@@ -28,10 +26,10 @@ const VIDEO_RESPONSE = {
 };
 
 describe( 'actions', () => {
-	const spy = sinon.spy();
+	let spy;
 
 	beforeEach( () => {
-		spy.resetHistory();
+		spy = jest.fn();
 	} );
 
 	describe( 'receiveSiteStats()', () => {
@@ -39,7 +37,7 @@ describe( 'actions', () => {
 			const today = Date.now();
 			const action = receiveSiteStats( SITE_ID, STAT_TYPE, STREAK_QUERY, STREAK_RESPONSE, today );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: SITE_STATS_RECEIVE,
 				siteId: SITE_ID,
 				statType: STAT_TYPE,
@@ -67,7 +65,7 @@ describe( 'actions', () => {
 		test( 'should dispatch a SITE_STATS_REQUEST', () => {
 			requestSiteStats( SITE_ID, STAT_TYPE, STREAK_QUERY )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toBeCalledWith( {
 				type: SITE_STATS_REQUEST,
 				siteId: SITE_ID,
 				statType: STAT_TYPE,
@@ -81,25 +79,29 @@ describe( 'actions', () => {
 				STAT_TYPE,
 				STREAK_QUERY
 			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWithMatch( {
-					type: SITE_STATS_RECEIVE,
-					siteId: SITE_ID,
-					statType: STAT_TYPE,
-					data: STREAK_RESPONSE,
-					query: STREAK_QUERY,
-				} );
+				expect( spy ).toBeCalledWith(
+					expect.objectContaining( {
+						type: SITE_STATS_RECEIVE,
+						siteId: SITE_ID,
+						statType: STAT_TYPE,
+						data: STREAK_RESPONSE,
+						query: STREAK_QUERY,
+					} )
+				);
 			} );
 		} );
 
 		test( 'should dispatch SITE_STATS_RECEIVE action when video stats request succeeds', () => {
 			return requestSiteStats( SITE_ID, STAT_TYPE_VIDEO, { postId: 31533 } )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWithMatch( {
-					type: SITE_STATS_RECEIVE,
-					siteId: SITE_ID,
-					statType: STAT_TYPE_VIDEO,
-					data: VIDEO_RESPONSE,
-					query: { postId: 31533 },
-				} );
+				expect( spy ).toBeCalledWith(
+					expect.objectContaining( {
+						type: SITE_STATS_RECEIVE,
+						siteId: SITE_ID,
+						statType: STAT_TYPE_VIDEO,
+						data: VIDEO_RESPONSE,
+						query: { postId: 31533 },
+					} )
+				);
 			} );
 		} );
 
@@ -109,12 +111,12 @@ describe( 'actions', () => {
 				'statsCountryViews',
 				{}
 			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: SITE_STATS_REQUEST_FAILURE,
 					siteId: SITE_ID,
 					statType: 'statsCountryViews',
 					query: {},
-					error: sinon.match( { error: 'not_found' } ),
+					error: expect.objectContaining( { error: 'not_found' } ),
 				} );
 			} );
 		} );

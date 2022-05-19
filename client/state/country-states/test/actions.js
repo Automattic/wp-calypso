@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
 import {
 	COUNTRY_STATES_RECEIVE,
 	COUNTRY_STATES_REQUEST,
@@ -7,12 +5,14 @@ import {
 	COUNTRY_STATES_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { receiveCountryStates, requestCountryStates } from '../actions';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
+
+	beforeEach( () => {
+		spy = jest.fn();
+	} );
 
 	describe( '#receiveCountryStates()', () => {
 		test( 'should return an action object', () => {
@@ -24,7 +24,7 @@ describe( 'actions', () => {
 				'US'
 			);
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: COUNTRY_STATES_RECEIVE,
 				countryCode: 'us',
 				countryStates: [
@@ -54,7 +54,7 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestCountryStates( 'us' )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toBeCalledWith( {
 				type: COUNTRY_STATES_REQUEST,
 				countryCode: 'us',
 			} );
@@ -62,7 +62,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch country states receive action when request completes', () => {
 			return requestCountryStates( 'us' )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: COUNTRY_STATES_RECEIVE,
 					countryCode: 'us',
 					countryStates: [
@@ -75,7 +75,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch country states request success action when request completes', () => {
 			return requestCountryStates( 'us' )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: COUNTRY_STATES_REQUEST_SUCCESS,
 					countryCode: 'us',
 				} );
@@ -84,10 +84,10 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return requestCountryStates( 'ca' )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: COUNTRY_STATES_REQUEST_FAILURE,
 					countryCode: 'ca',
-					error: sinon.match( { message: 'A server error occurred' } ),
+					error: expect.objectContaining( { message: 'A server error occurred' } ),
 				} );
 			} );
 		} );

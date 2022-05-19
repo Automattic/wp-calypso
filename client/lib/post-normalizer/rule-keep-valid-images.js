@@ -1,5 +1,5 @@
+import { safeImageUrl } from '@automattic/calypso-url';
 import { filter } from 'lodash';
-import safeImageUrl from 'calypso/lib/safe-image-url';
 
 function isValidImage( width, height ) {
 	return function ( image ) {

@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { CompactCard, Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
@@ -8,7 +9,7 @@ import FoldableCard from 'calypso/components/foldable-card';
 import RewindCredentialsForm from 'calypso/components/rewind-credentials-form';
 import { deleteCredentials } from 'calypso/state/jetpack/credentials/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
-import siteSupportsRealtimeBackup from 'calypso/state/selectors/site-supports-realtime-backup';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 
 import './style.scss';
 
@@ -125,7 +126,7 @@ const mapStateToProps = ( state, { siteId } ) => {
 	return {
 		canAutoconfigure: canAutoconfigure || credentials.some( ( c ) => c.type === 'managed' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors
 		mainCredentials: find( credentials, { role: 'main' } ),
-		supportsRealtimeBackup: siteSupportsRealtimeBackup( state, siteId ),
+		supportsRealtimeBackup: siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS ),
 	};
 };
 

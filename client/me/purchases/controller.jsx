@@ -38,7 +38,7 @@ function useLogPurchasesError( message ) {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'account_level_purchases',
-					message: String( error ),
+					message: error.message + '; Stack: ' + error.stack,
 				},
 			} );
 		},

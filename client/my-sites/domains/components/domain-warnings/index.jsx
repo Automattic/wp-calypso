@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import _debug from 'debug';
 import { localize } from 'i18n-calypso';
 import { intersection, map, find, get } from 'lodash';
@@ -39,9 +40,8 @@ import './style.scss';
 const debug = _debug( 'calypso:domain-warnings' );
 
 const newWindowLink = ( linkUrl ) => (
-	<a href={ linkUrl } target="_blank" rel="noopener noreferrer" />
+	<a href={ localizeUrl( linkUrl ) } target="_blank" rel="noopener noreferrer" />
 );
-const domainsLink = newWindowLink( DOMAINS );
 const pNode = <p />;
 
 const expiredDomainsCanManageWarning = 'expired-domains-can-manage';
@@ -227,7 +227,7 @@ export class DomainWarnings extends PureComponent {
 			children = (
 				<span>
 					{ text }{ ' ' }
-					<a href={ learnMoreUrl } target="_blank" rel="noopener noreferrer">
+					<a href={ localizeUrl( learnMoreUrl ) } target="_blank" rel="noopener noreferrer">
 						{ translate( 'Learn more' ) }
 					</a>
 					{ offendingList }
@@ -552,7 +552,7 @@ export class DomainWarnings extends PureComponent {
 					'We are setting up your new domains for you. They should start working immediately, ' +
 						'but may be unreliable during the first 30 minutes. ' +
 						'{{domainsLink}}Learn more{{/domainsLink}}.',
-					{ components: { domainsLink } }
+					{ components: { domainsLink: newWindowLink( DOMAINS ) } }
 				);
 			}
 		} else {
@@ -584,7 +584,7 @@ export class DomainWarnings extends PureComponent {
 					{
 						args: { domainName: domain.name },
 						components: {
-							domainsLink,
+							domainsLink: newWindowLink( DOMAINS ),
 							tryNowLink: newWindowLink( `http://${ domain.name }` ),
 							strong: <strong />,
 						},

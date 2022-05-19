@@ -5,7 +5,8 @@ import { map, compact, includes, some, filter } from 'lodash';
 import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 import { iframeIsAllowed, maxWidthPhotonishURL, deduceImageWidthAndHeight } from './utils';
 
-/** Checks whether or not an image is a tracking pixel
+/**
+ * Checks whether or not an image is a tracking pixel
  *
  * @param {Node} image - DOM node for an img
  * @returns {boolean} isTrackingPixel - returns true if image is probably a tracking pixel
@@ -19,7 +20,8 @@ function isTrackingPixel( image ) {
 	return edgeLength === 1 || edgeLength === 2;
 }
 
-/** Returns true if image should be considered
+/**
+ * Returns true if image should be considered
  *
  * @param {Node} image - DOM node for an image
  * @returns {boolean} true/false depending on if it should be included as a potential featured image
@@ -40,7 +42,8 @@ function isCandidateForContentImage( image ) {
 	return ! ( isTrackingPixel( image ) || imageShouldBeExcludedFromCandidacy );
 }
 
-/** Detects and returns metadata if it should be considered as a content image
+/**
+ * Detects and returns metadata if it should be considered as a content image
  *
  * @param {image} image - the image
  * @returns {object} metadata - regarding the image or null
@@ -58,7 +61,8 @@ const detectImage = ( image ) => {
 	return false;
 };
 
-/**  For an iframe we know how to process, return a string for an autoplaying iframe
+/**
+ *  For an iframe we know how to process, return a string for an autoplaying iframe
  *
  * @param {Node} iframe - DOM node for an iframe
  * @returns {string} html src for an iframe that autoplays if from a source we understand.  else null;
@@ -95,7 +99,8 @@ const getEmbedType = ( iframe ) => {
 	return null;
 };
 
-/** Detects and returns metadata if it should be considered as a content iframe
+/**
+ * Detects and returns metadata if it should be considered as a content iframe
  *
  * @param {Node} iframe - a DOM node for an iframe
  * @returns {metadata} metadata - metadata for an embed
@@ -121,7 +126,8 @@ const detectEmbed = ( iframe ) => {
 	};
 };
 
-/** Adds an ordered list of all of the content_media to the post
+/**
+ * Adds an ordered list of all of the content_media to the post
  *
  * @param {post} post - the post object to add content_media to
  * @param {dom} dom - the dom of the post to scan for media

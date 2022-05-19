@@ -1,4 +1,5 @@
 import { combineReducers } from '@wordpress/data';
+import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
 import type { Reducer } from 'redux';
 
@@ -10,8 +11,73 @@ const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
+const site: Reducer< SiteDetails | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
+		return undefined;
+	} else if ( action.type === 'HELP_CENTER_SET_SITE' ) {
+		return action.site;
+	}
+	return state;
+};
+
+const subject: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
+		return undefined;
+	} else if ( action.type === 'HELP_CENTER_SET_SUBJECT' ) {
+		return action.subject;
+	}
+	return state;
+};
+
+const message: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
+		return undefined;
+	} else if ( action.type === 'HELP_CENTER_SET_MESSAGE' ) {
+		return action.message;
+	}
+	return state;
+};
+
+const userDeclaredSiteUrl: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
+		return undefined;
+	} else if ( action.type === 'HELP_CENTER_SET_USER_DECLARED_SITE_URL' ) {
+		return action.url;
+	}
+	return state;
+};
+const userDeclaredSite: Reducer< SiteDetails | undefined, HelpCenterAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
+		return undefined;
+	} else if ( action.type === 'HELP_CENTER_SET_USER_DECLARED_SITE' ) {
+		return action.site;
+	}
+	return state;
+};
+
+const popup: Reducer< Window | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_POPUP' ) {
+		return action.popup;
+	} else if (
+		action.type === 'HELP_CENTER_RESET_POPUP' ||
+		action.type === 'HELP_CENTER_RESET_STORE'
+	) {
+		return undefined;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	showHelpCenter,
+	site,
+	subject,
+	message,
+	userDeclaredSite,
+	userDeclaredSiteUrl,
+	popup,
 } );
 
 export type State = ReturnType< typeof reducer >;

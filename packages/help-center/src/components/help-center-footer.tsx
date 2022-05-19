@@ -1,9 +1,9 @@
 import { CardFooter } from '@wordpress/components';
 import classnames from 'classnames';
-import { ReactElement } from 'react';
+import type { ReactNode } from 'react';
 
 interface Props {
-	footerContent: ReactElement;
+	footerContent: ReactNode;
 }
 
 const HelpCenterFooter: React.FC< Props > = ( { footerContent } ) => {

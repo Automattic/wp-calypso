@@ -64,7 +64,7 @@ function WelcomeTour() {
 	}
 	const { isInserterOpened, isSidebarOpened, isSettingsOpened } = useSelect( ( select ) => ( {
 		isInserterOpened: select( 'core/edit-post' ).isInserterOpened(),
-		isSidebarOpened: select( 'automattic/block-editor-nav-sidebar' ).isSidebarOpened(),
+		isSidebarOpened: select( 'automattic/block-editor-nav-sidebar' )?.isSidebarOpened() ?? false, // The sidebar store may not always be loaded.
 		isSettingsOpened:
 			select( 'core/interface' ).getActiveComplementaryArea( 'core/edit-post' ) ===
 			'edit-post/document',

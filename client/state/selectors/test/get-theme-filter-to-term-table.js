@@ -1,11 +1,10 @@
-import { expect } from 'chai';
 import { getThemeFilterToTermTable } from 'calypso/state/themes/selectors';
 import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterToTermTable()', () => {
 	test( 'should return a dictionary mapping taxomomy-prefixed terms to unprefixed terms (except for ambiguous terms)', () => {
 		const table = getThemeFilterToTermTable( state );
-		expect( table ).to.deep.equal( {
+		expect( table ).toEqual( {
 			'subject:artwork': 'artwork',
 			'subject:blog': 'blog',
 			'subject:business': 'business',

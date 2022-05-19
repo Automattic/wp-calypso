@@ -225,10 +225,10 @@ export default function WPCheckout( {
 
 	const { formStatus } = useFormStatus();
 
-	const arePostalCodesSupported = getCountryPostalCodeSupport(
-		countriesList,
-		contactInfo.countryCode?.value ?? ''
-	);
+	const arePostalCodesSupported =
+		countriesList.length && contactInfo.countryCode?.value
+			? getCountryPostalCodeSupport( countriesList, contactInfo.countryCode.value )
+			: false;
 
 	const updateCartContactDetails = useCallback( () => {
 		const nonTaxPaymentMethods = [ 'free-purchase' ];
@@ -267,16 +267,16 @@ export default function WPCheckout( {
 	useUpdateCartLocationWhenPaymentMethodChanges( activePaymentMethod, updateCartContactDetails );
 
 	const onReviewError = useCallback(
-		( error ) =>
-			onPageLoadError( 'step_load', String( error ), {
+		( error: Error ) =>
+			onPageLoadError( 'step_load', error, {
 				step_id: 'review',
 			} ),
 		[ onPageLoadError ]
 	);
 
 	const onSummaryError = useCallback(
-		( error ) =>
-			onPageLoadError( 'step_load', String( error ), {
+		( error: Error ) =>
+			onPageLoadError( 'step_load', error, {
 				step_id: 'summary',
 			} ),
 		[ onPageLoadError ]
@@ -447,7 +447,7 @@ export default function WPCheckout( {
 			/>
 			{ contactDetailsType !== 'none' && (
 				<CheckoutStep
-					stepId={ 'contact-form' }
+					stepId="contact-form"
 					isCompleteCallback={ async () => {
 						setShouldShowContactDetailsValidationErrors( true );
 						// Touch the fields so they display validation errors

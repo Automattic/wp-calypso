@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import React, { ReactNode } from 'react';
-import Breadcrumb from 'calypso/components/breadcrumb';
+import Breadcrumb, { Item as TBreadcrumbItem } from 'calypso/components/breadcrumb';
 
 const Header = styled.header`
 	position: fixed;
@@ -54,16 +54,21 @@ interface Props {
 	id?: string;
 	className?: string;
 	children?: ReactNode;
-	navigationItems: { label: string; href?: string }[];
+	navigationItems: TBreadcrumbItem[];
+	mobileItem?: TBreadcrumbItem;
 	compactBreadcrumb?: boolean;
 }
 
 const FixedNavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
-	const { id, className, children, navigationItems, compactBreadcrumb = false } = props;
+	const { id, className, children, navigationItems, mobileItem, compactBreadcrumb } = props;
 	return (
 		<Header id={ id } className={ className } ref={ ref }>
 			<Container>
-				<Breadcrumb items={ navigationItems } compact={ compactBreadcrumb } />
+				<Breadcrumb
+					items={ navigationItems }
+					mobileItem={ mobileItem }
+					compact={ compactBreadcrumb }
+				/>
 				<ActionsContainer>{ children }</ActionsContainer>
 			</Container>
 		</Header>
@@ -73,7 +78,6 @@ const FixedNavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, r
 FixedNavigationHeader.defaultProps = {
 	id: '',
 	className: '',
-	navigationItems: [],
 };
 
 export default FixedNavigationHeader;

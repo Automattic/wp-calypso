@@ -1,8 +1,10 @@
+import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useEffect, useState } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
 import type { Step } from '../../types';
 import './style.scss';
@@ -39,6 +41,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	const action = useSelect( ( select ) => select( ONBOARD_STORE ).getPendingAction() );
 	const progress = useSelect( ( select ) => select( ONBOARD_STORE ).getProgress() );
 	const progressTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getProgressTitle() );
+	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 
 	const getCurrentMessage = () => {
 		return progressTitle || loadingMessages[ currentMessageIndex ]?.title;
@@ -84,21 +87,33 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	}, [ simulatedProgress, progress, __ ] );
 
 	return (
-		<div className={ 'processing-step' }>
-			<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
-			{ progress >= 0 ? (
-				<div className="processing-step__content woocommerce-install__content">
-					<div
-						className="processing-step__progress-bar"
-						style={
-							{ '--progress': simulatedProgress > 1 ? 1 : simulatedProgress } as React.CSSProperties
-						}
-					/>
+		<StepContainer
+			shouldHideNavButtons={ true }
+			hideFormattedHeader={ true }
+			stepName={ 'processing-step' }
+			isHorizontalLayout={ true }
+			stepContent={
+				<div className={ 'processing-step' }>
+					<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
+					{ progress >= 0 ? (
+						<div className="processing-step__content woocommerce-install__content">
+							<div
+								className="processing-step__progress-bar"
+								style={
+									{
+										'--progress': simulatedProgress > 1 ? 1 : simulatedProgress,
+									} as React.CSSProperties
+								}
+							/>
+						</div>
+					) : (
+						<LoadingEllipsis />
+					) }
 				</div>
-			) : (
-				<LoadingEllipsis />
-			) }
-		</div>
+			}
+			stepProgress={ stepProgress }
+			recordTracksEvent={ recordTracksEvent }
+		/>
 	);
 };
 

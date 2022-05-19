@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { READER_THUMBNAIL_RECEIVE } from 'calypso/state/reader/action-types';
 import { items } from '../reducer';
 
@@ -9,7 +8,7 @@ describe( 'reducer', () => {
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should insert a new thumbnailUrl for a new embedUrl', () => {
@@ -22,7 +21,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state[ embedUrl ] ).to.eql( thumbnailUrl );
+			expect( state[ embedUrl ] ).toEqual( thumbnailUrl );
 		} );
 	} );
 } );

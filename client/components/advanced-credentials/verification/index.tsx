@@ -127,7 +127,7 @@ const Verification: FunctionComponent< Props > = ( { onFinishUp, onReview } ) =>
 			{ updateError && <UpdateErrorView { ...updateError } /> }
 			<div className="verification__buttons">
 				{ showFinishUp && (
-					<Button primary onClick={ onFinishUp } href={ settingsPath( siteSlug || undefined ) }>
+					<Button primary onClick={ onFinishUp } href={ settingsPath( siteSlug ) }>
 						{ translate( 'Finish up' ) }
 					</Button>
 				) }

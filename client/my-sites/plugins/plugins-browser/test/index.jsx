@@ -1,5 +1,6 @@
 /** @jest-environment jsdom */
 
+jest.mock( 'page' );
 jest.mock( 'react-query', () => ( {
 	useQuery: () => [],
 } ) );
@@ -18,6 +19,13 @@ let mockPlugins = [];
 jest.mock( 'calypso/data/marketplace/use-wporg-plugin-query', () => ( {
 	useWPORGPlugins: jest.fn( () => ( { data: { plugins: mockPlugins } } ) ),
 	useWPORGInfinitePlugins: jest.fn( () => ( {
+		data: { plugins: mockPlugins },
+		fetchNextPage: jest.fn(),
+	} ) ),
+} ) );
+
+jest.mock( 'calypso/data/marketplace/use-site-search-es-query', () => ( {
+	useSiteSearchPlugins: jest.fn( () => ( {
 		data: { plugins: mockPlugins },
 		fetchNextPage: jest.fn(),
 	} ) ),
@@ -54,6 +62,8 @@ import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-
 import PluginsBrowser from '../';
 
 window.__i18n_text_domain__ = JSON.stringify( 'default' );
+window.IntersectionObserver = jest.fn( () => ( { observe: jest.fn(), disconnect: jest.fn() } ) );
+
 const initialReduxState = {
 	plugins: {
 		wporg: {

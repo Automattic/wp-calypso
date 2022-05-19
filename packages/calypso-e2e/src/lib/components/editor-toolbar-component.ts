@@ -35,7 +35,7 @@ const selectors = {
 	detailsButton: `${ panel } button[aria-label="Details"]`,
 
 	// Editor settings
-	settingsButton: `${ panel } .edit-post-header__settings .interface-pinned-items button:first-child`,
+	settingsButton: `${ panel } .edit-post-header__settings .interface-pinned-items button[aria-label="Settings"]`,
 
 	// Undo/Redo
 	undoButton: 'button[aria-disabled=false][aria-label="Undo"]',

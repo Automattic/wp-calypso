@@ -1,36 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<Select /> should render expected output 1`] = `
-<div
-  className="mega-selectzilla select"
->
-  <FormLabel
-    htmlFor="select"
+<div>
+  <div
+    class="mega-selectzilla select"
   >
-    Select label
-  </FormLabel>
-  <FormSelect
-    aria-describedby="validation-field-select"
-    disabled={false}
-    id="select"
-    isError={false}
-    name="select"
-    onChange={[MockFunction]}
-    onClick={[Function]}
-    value=""
-  >
-    <option
-      key="1"
-      value={1}
+    <label
+      class="form-label"
+      for="select"
     >
-      uno
-    </option>
-    <option
-      key="2"
-      value={2}
+      Select label
+    </label>
+    <select
+      aria-describedby="validation-field-select"
+      class="form-select"
+      id="select"
+      name="select"
     >
-      due
-    </option>
-  </FormSelect>
+      <option
+        value="1"
+      >
+        uno
+      </option>
+      <option
+        value="2"
+      >
+        due
+      </option>
+    </select>
+  </div>
 </div>
 `;

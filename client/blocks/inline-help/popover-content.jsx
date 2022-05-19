@@ -12,7 +12,6 @@ import { VIEW_CONTACT, VIEW_RICH_RESULT } from './constants';
 import InlineHelpRichResult from './inline-help-rich-result';
 import InlineHelpSearchCard from './inline-help-search-card';
 import InlineHelpSearchResults from './inline-help-search-results';
-import './popover-content.scss';
 
 const noop = () => {};
 

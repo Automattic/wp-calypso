@@ -51,6 +51,10 @@ object ToSAcceptanceTracking: BuildType ({
 				# Install deps
 				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
 
+				# Decrypt secrets
+				# Must do before build so the secrets are in the dist output
+				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
+				
 				# Build packages
 				yarn workspace @automattic/calypso-e2e build
 			""".trimIndent()
@@ -67,9 +71,6 @@ object ToSAcceptanceTracking: BuildType ({
 				# Enter testing directory.
 				cd test/e2e
 				mkdir temp
-
-				# Decrypt config
-				openssl aes-256-cbc -md sha1 -d -in ./config/encrypted.enc -out ./config/local-test.json -k "%E2E_CONFIG_ENCRYPTION_KEY%"
 
 				# Run suite.
 				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=legal

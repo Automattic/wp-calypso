@@ -1,6 +1,6 @@
-import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -29,12 +29,7 @@ function ThirdPartyPluginsTermsOfService( { cart, translate } ) {
 		}
 	);
 
-	return (
-		<div className="checkout__terms">
-			<Gridicon icon="info-outline" size={ 18 } />
-			<p>{ thirdPartyPluginsTerms }</p>
-		</div>
-	);
+	return <CheckoutTermsItem>{ thirdPartyPluginsTerms }</CheckoutTermsItem>;
 }
 
 export default localize( ThirdPartyPluginsTermsOfService );

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import isSiteSupportingImageEditor from 'calypso/state/selectors/is-site-supporting-image-editor';
 
 describe( 'isSiteSupportingImageEditor()', () => {
@@ -15,7 +14,7 @@ describe( 'isSiteSupportingImageEditor()', () => {
 			2916284
 		);
 
-		expect( siteSupportsImageEditor ).to.be.true;
+		expect( siteSupportsImageEditor ).toBe( true );
 	} );
 
 	test( 'should return true if site is public and not jetpack site', () => {
@@ -35,7 +34,7 @@ describe( 'isSiteSupportingImageEditor()', () => {
 			2916284
 		);
 
-		expect( siteSupportsImageEditor ).to.be.true;
+		expect( siteSupportsImageEditor ).toBe( true );
 	} );
 
 	test( 'should return false if site is private', () => {
@@ -55,7 +54,7 @@ describe( 'isSiteSupportingImageEditor()', () => {
 			2916284
 		);
 
-		expect( siteSupportsImageEditor ).to.be.false;
+		expect( siteSupportsImageEditor ).toBe( false );
 	} );
 
 	test( 'should return true if site is public and jetpack and has photon enabled', () => {
@@ -78,7 +77,7 @@ describe( 'isSiteSupportingImageEditor()', () => {
 			2916284
 		);
 
-		expect( siteSupportsImageEditor ).to.be.true;
+		expect( siteSupportsImageEditor ).toBe( true );
 	} );
 
 	test( 'should return false if site is public and jetpack but has photon disabled', () => {
@@ -101,6 +100,6 @@ describe( 'isSiteSupportingImageEditor()', () => {
 			2916284
 		);
 
-		expect( siteSupportsImageEditor ).to.be.false;
+		expect( siteSupportsImageEditor ).toBe( false );
 	} );
 } );

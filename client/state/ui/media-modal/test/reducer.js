@@ -1,18 +1,19 @@
-import { expect } from 'chai';
 import { MEDIA_MODAL_VIEW_SET } from 'calypso/state/action-types';
 import { ModalViews } from '../constants';
 import reducer, { view } from '../reducer';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'view' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'view' ] )
+		);
 	} );
 
 	describe( 'view()', () => {
 		test( 'should default to null', () => {
 			const state = view( undefined, {} );
 
-			expect( state ).to.be.null;
+			expect( state ).toBeNull();
 		} );
 
 		test( 'should track current view', () => {
@@ -21,7 +22,7 @@ describe( 'reducer', () => {
 				view: ModalViews.DETAIL,
 			} );
 
-			expect( state ).to.equal( ModalViews.DETAIL );
+			expect( state ).toEqual( ModalViews.DETAIL );
 		} );
 	} );
 } );

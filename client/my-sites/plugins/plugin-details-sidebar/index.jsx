@@ -1,12 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
-import { useSelector } from 'react-redux';
 import eye from 'calypso/assets/images/marketplace/eye.svg';
 import support from 'calypso/assets/images/marketplace/support.svg';
 import wooLogo from 'calypso/assets/images/marketplace/woo-logo.svg';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
-import { isAnnualPlanOrUpgradeableAnnualPeriod } from 'calypso/state/marketplace/selectors';
+import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text/';
 
 const PluginDetailsSidebar = ( {
 	plugin: {
@@ -20,10 +19,11 @@ const PluginDetailsSidebar = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const isAnnualPlan = useSelector( isAnnualPlanOrUpgradeableAnnualPeriod );
 	const isWooCommercePluginRequired = requirements.plugins?.some(
 		( pluginName ) => pluginName === 'plugins/woocommerce'
 	);
+
+	const supportText = usePluginsSupportText();
 
 	if ( ! isMarketplaceProduct ) {
 		return (
@@ -102,11 +102,7 @@ const PluginDetailsSidebar = ( {
 				id="support"
 				icon={ { src: support } }
 				title={ translate( 'Support' ) }
-				description={
-					isAnnualPlan
-						? translate( 'Live chat support 24x7' )
-						: translate( 'Unlimited Email Support' )
-				}
+				description={ supportText }
 				links={ supportLinks }
 				first={ ! isWooCommercePluginRequired && ! demo_url }
 			/>

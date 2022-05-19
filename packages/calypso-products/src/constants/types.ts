@@ -12,6 +12,7 @@ export const TYPE_ALL = 'TYPE_ALL';
 export const TYPE_P2_PLUS = 'TYPE_P2_PLUS';
 export const TYPE_FLEXIBLE = 'TYPE_FLEXIBLE';
 export const TYPE_PRO = 'TYPE_PRO';
+export const TYPE_STARTER = 'TYPE_STARTER';
 
 export const TYPES_LIST = <const>[
 	TYPE_FREE,
@@ -26,4 +27,5 @@ export const TYPES_LIST = <const>[
 	TYPE_P2_PLUS,
 	TYPE_FLEXIBLE,
 	TYPE_PRO,
+	TYPE_STARTER,
 ];

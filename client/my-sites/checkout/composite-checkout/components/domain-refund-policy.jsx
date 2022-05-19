@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -9,6 +9,7 @@ import {
 	hasNewDomainRegistration,
 } from 'calypso/lib/cart-values/cart-items';
 import { DOMAIN_CANCEL, REFUNDS } from 'calypso/lib/url/support';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -78,7 +79,7 @@ class DomainRefundPolicy extends Component {
 				components: {
 					cancelDomainSupportPage: (
 						<a
-							href={ DOMAIN_CANCEL }
+							href={ localizeUrl( DOMAIN_CANCEL ) }
 							target="_blank"
 							rel="noopener noreferrer"
 							onClick={ this.recordCancelDomainSupportClick }
@@ -86,7 +87,7 @@ class DomainRefundPolicy extends Component {
 					),
 					refundsSupportPage: (
 						<a
-							href={ REFUNDS }
+							href={ localizeUrl( REFUNDS ) }
 							target="_blank"
 							rel="noopener noreferrer"
 							onClick={ this.recordRefundsSupportClick }
@@ -105,10 +106,7 @@ class DomainRefundPolicy extends Component {
 		const policies = this.getApplicablePolicies();
 
 		return Object.entries( policies ).map( ( [ name, message ] ) => (
-			<div className="checkout__domain-refund-policy" key={ 'domain-refund-policy-' + name }>
-				<Gridicon icon="info-outline" size={ 18 } />
-				<p>{ message }</p>
-			</div>
+			<CheckoutTermsItem key={ 'domain-refund-policy-' + name }>{ message }</CheckoutTermsItem>
 		) );
 	}
 }

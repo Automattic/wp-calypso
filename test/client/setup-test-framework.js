@@ -1,3 +1,5 @@
+import '@testing-library/jest-dom';
+
 const nock = require( 'nock' );
 
 // Disables all network requests for all tests.
@@ -64,3 +66,9 @@ jest.mock( 'sinon', () => {
 global.CSS = {
 	supports: jest.fn(),
 };
+
+// Don't need to mock specific functions for any tests, but mocking
+// module because it accesses the `document` global.
+jest.mock( 'wpcom-proxy-request', () => ( {
+	__esModule: true,
+} ) );

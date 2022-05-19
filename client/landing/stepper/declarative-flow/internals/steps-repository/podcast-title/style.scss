@@ -10,14 +10,14 @@ $input-max-width: 448px;
     flex-direction: column;
     align-items: flex-start;
     position: relative;
-    padding: 44px 20px 0;
+    padding: 64px 20px 0;
     text-align: center;
 
-    @include break-small {
-        padding: 64px 20px 0;
+    @include break-medium {
+        padding: 64px;
     }
 
-    @include break-medium {
+    @include break-large {
         padding: 20px;
         top: 24vh;
         left: 50%;
@@ -32,7 +32,7 @@ $input-max-width: 448px;
         margin-bottom: 40px;
         text-align: left;
 
-        @include break-medium {
+        @include break-large {
             flex-direction: row;
             flex-wrap: nowrap;
         }
@@ -46,6 +46,15 @@ $input-max-width: 448px;
     .podcast-title__explanation {
         display: flex;
         flex-direction: column;
+        input[type='text'] {
+            @include break-medium {
+                font-size: 4rem; /* stylelint-disable-line scales/font-sizes */
+            }
+            padding: 0;
+            border: 0;
+            line-height: 1;
+        }
+
     }
 
     input[type='text'],
@@ -83,7 +92,7 @@ $input-max-width: 448px;
             box-shadow: none;
         }
 
-        @include break-medium {
+        @include break-large {
             max-width: $input-max-width;
         }
     }
@@ -124,11 +133,11 @@ $input-max-width: 448px;
         max-width: 100%;
 
         &.is-empty {
-            max-width: 275px;
+            max-width: 310px;
             background: var( --color-text-subtle );
         }
 
-        @include break-medium {
+        @include break-large {
             margin-top: -12px;
             max-width: $input-max-width;
         }

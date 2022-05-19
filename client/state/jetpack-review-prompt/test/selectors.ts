@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { TIME_BETWEEN_PROMPTS } from '../constants';
 import { getIsDismissed, getIsValid } from '../selectors';
 
@@ -9,7 +8,7 @@ describe( 'selectors', () => {
 				const state = {
 					preferences: {},
 				};
-				expect( getIsDismissed( state, 'scan' ) ).to.be.false;
+				expect( getIsDismissed( state, 'scan' ) ).toBe( false );
 			} );
 			test( 'should return true if reviewed', () => {
 				const state = {
@@ -26,7 +25,7 @@ describe( 'selectors', () => {
 						},
 					},
 				};
-				expect( getIsDismissed( state, 'scan' ) ).to.be.true;
+				expect( getIsDismissed( state, 'scan' ) ).toBe( true );
 			} );
 			test( 'should return false if dismissed just now', () => {
 				const state = {
@@ -43,7 +42,7 @@ describe( 'selectors', () => {
 						},
 					},
 				};
-				expect( getIsDismissed( state, 'scan' ) ).to.be.true;
+				expect( getIsDismissed( state, 'scan' ) ).toBe( true );
 			} );
 			test( 'should return true if dismissed longer than TIME_BETWEEN_PROMPTS', () => {
 				const state = {
@@ -60,7 +59,7 @@ describe( 'selectors', () => {
 						},
 					},
 				};
-				expect( getIsDismissed( state, 'scan' ) ).to.be.true;
+				expect( getIsDismissed( state, 'scan' ) ).toBe( true );
 			} );
 			test( 'should return true if dismissed twice', () => {
 				const state = {
@@ -77,7 +76,7 @@ describe( 'selectors', () => {
 						},
 					},
 				};
-				expect( getIsDismissed( state, 'scan' ) ).to.be.true;
+				expect( getIsDismissed( state, 'scan' ) ).toBe( true );
 			} );
 		} );
 
@@ -86,7 +85,7 @@ describe( 'selectors', () => {
 				const state = {
 					preferences: {},
 				};
-				expect( getIsValid( state, 'scan' ) ).to.be.false;
+				expect( getIsValid( state, 'scan' ) ).toBe( false );
 			} );
 			test( 'should return false if isValid has not been set', () => {
 				const state = {
@@ -103,7 +102,7 @@ describe( 'selectors', () => {
 						},
 					},
 				};
-				expect( getIsValid( state, 'scan' ) ).to.be.false;
+				expect( getIsValid( state, 'scan' ) ).toBe( false );
 			} );
 			test( 'should return true if isValid has been set', () => {
 				const state = {
@@ -120,7 +119,7 @@ describe( 'selectors', () => {
 						},
 					},
 				};
-				expect( getIsValid( state, 'scan' ) ).to.be.true;
+				expect( getIsValid( state, 'scan' ) ).toBe( true );
 			} );
 			test( 'should return false if isValid is not set', () => {
 				const state = {
@@ -143,7 +142,7 @@ describe( 'selectors', () => {
 						},
 					},
 				};
-				expect( getIsValid( state, 'scan' ) ).to.be.false;
+				expect( getIsValid( state, 'scan' ) ).toBe( false );
 			} );
 		} );
 	} );
@@ -153,7 +152,7 @@ describe( 'selectors', () => {
 				const state = {
 					preferences: {},
 				};
-				expect( getIsDismissed( state, 'restore' ) ).to.be.false;
+				expect( getIsDismissed( state, 'restore' ) ).toBe( false );
 			} );
 			test( 'should return true if reviewed', () => {
 				const state = {
@@ -170,7 +169,7 @@ describe( 'selectors', () => {
 						},
 					},
 				};
-				expect( getIsDismissed( state, 'restore' ) ).to.be.true;
+				expect( getIsDismissed( state, 'restore' ) ).toBe( true );
 			} );
 			test( 'should return false if dismissed just now', () => {
 				const state = {
@@ -187,7 +186,7 @@ describe( 'selectors', () => {
 						},
 					},
 				};
-				expect( getIsDismissed( state, 'restore' ) ).to.be.true;
+				expect( getIsDismissed( state, 'restore' ) ).toBe( true );
 			} );
 			test( 'should return true if dismissed longer than TIME_BETWEEN_PROMPTS', () => {
 				const state = {
@@ -204,7 +203,7 @@ describe( 'selectors', () => {
 						},
 					},
 				};
-				expect( getIsDismissed( state, 'restore' ) ).to.be.true;
+				expect( getIsDismissed( state, 'restore' ) ).toBe( true );
 			} );
 			test( 'should return true if dismissed twice', () => {
 				const state = {
@@ -221,7 +220,7 @@ describe( 'selectors', () => {
 						},
 					},
 				};
-				expect( getIsDismissed( state, 'restore' ) ).to.be.true;
+				expect( getIsDismissed( state, 'restore' ) ).toBe( true );
 			} );
 		} );
 
@@ -230,7 +229,7 @@ describe( 'selectors', () => {
 				const state = {
 					preferences: {},
 				};
-				expect( getIsValid( state, 'restore' ) ).to.be.false;
+				expect( getIsValid( state, 'restore' ) ).toBe( false );
 			} );
 			test( 'should return false if isValid has not been set', () => {
 				const state = {
@@ -247,7 +246,7 @@ describe( 'selectors', () => {
 						},
 					},
 				};
-				expect( getIsValid( state, 'restore' ) ).to.be.false;
+				expect( getIsValid( state, 'restore' ) ).toBe( false );
 			} );
 			test( 'should return true if isValid has been set', () => {
 				const state = {
@@ -264,7 +263,7 @@ describe( 'selectors', () => {
 						},
 					},
 				};
-				expect( getIsValid( state, 'restore' ) ).to.be.true;
+				expect( getIsValid( state, 'restore' ) ).toBe( true );
 			} );
 			test( 'should return true if isValid has been set on correct sub-property', () => {
 				const state = {
@@ -287,8 +286,8 @@ describe( 'selectors', () => {
 						},
 					},
 				};
-				expect( getIsValid( state, 'restore' ) ).to.be.false;
-				expect( getIsValid( state, 'scan' ) ).to.be.true;
+				expect( getIsValid( state, 'restore' ) ).toBe( false );
+				expect( getIsValid( state, 'scan' ) ).toBe( true );
 			} );
 		} );
 	} );

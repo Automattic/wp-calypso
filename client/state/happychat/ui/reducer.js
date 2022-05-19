@@ -14,7 +14,6 @@ import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/
  * @param  {object} state  Current state
  * @param  {object} action Action payload
  * @returns {object}        Updated state
- *
  */
 export const currentMessage = ( state = '', action ) => {
 	switch ( action.type ) {
@@ -75,7 +74,6 @@ const isOpen = ( state = false, action ) => {
  * @param  {object} state  Current state
  * @param  {object} action Action payload
  * @returns {object}        Updated state
- *
  */
 const isMinimizing = ( state = false, action ) => {
 	switch ( action.type ) {

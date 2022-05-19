@@ -21,6 +21,7 @@ import {
 	REWIND_BACKUP_REQUEST,
 	REWIND_BACKUP_DISMISS,
 	REWIND_BACKUP_PROGRESS_REQUEST,
+	REWIND_BACKUP_SITE,
 	REWIND_BACKUP_UPDATE_ERROR,
 	REWIND_BACKUP_UPDATE_PROGRESS,
 	REWIND_BACKUP_DISMISS_PROGRESS,
@@ -30,6 +31,7 @@ import { filterStateToQuery } from './utils';
 
 import 'calypso/state/data-layer/wpcom/activity-log/activate';
 import 'calypso/state/data-layer/wpcom/activity-log/deactivate';
+import 'calypso/state/data-layer/wpcom/activity-log/rewind/backup';
 import 'calypso/state/data-layer/wpcom/activity-log/rewind/downloads';
 import 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status';
 import 'calypso/state/data-layer/wpcom/activity-log/rewind/to';
@@ -300,6 +302,19 @@ export function dismissRewindBackupProgress( siteId, downloadId ) {
 		type: REWIND_BACKUP_DISMISS_PROGRESS,
 		siteId,
 		downloadId,
+	};
+}
+
+/**
+ * Enqueue a new backup of a site
+ *
+ * @param  {string|number} siteId   The site ID
+ * @returns {object}                 Action object
+ */
+export function rewindBackupSite( siteId ) {
+	return {
+		type: REWIND_BACKUP_SITE,
+		siteId,
 	};
 }
 

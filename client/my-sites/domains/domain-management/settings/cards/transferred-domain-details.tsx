@@ -1,6 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { transferStatus } from 'calypso/lib/domains/constants';
@@ -79,7 +80,7 @@ const TransferredDomainDetails = ( {
 								strong: <strong />,
 								a: (
 									<a
-										href={ INCOMING_DOMAIN_TRANSFER_STATUSES }
+										href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES ) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>

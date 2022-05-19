@@ -1,5 +1,6 @@
 /* eslint-disable no-case-declarations */
 
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { getTld } from 'calypso/lib/domains';
@@ -121,7 +122,12 @@ function getAvailabilityNotice( domain, error, errorData ) {
 					args: { domain },
 					components: {
 						strong: <strong />,
-						a: <a rel="noopener noreferrer" href={ INCOMING_DOMAIN_TRANSFER_SUPPORTED_TLDS } />,
+						a: (
+							<a
+								rel="noopener noreferrer"
+								href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_SUPPORTED_TLDS ) }
+							/>
+						),
 					},
 				}
 			);
@@ -160,7 +166,10 @@ function getAvailabilityNotice( domain, error, errorData ) {
 					components: {
 						strong: <strong />,
 						a: (
-							<a rel="noopener noreferrer" href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } />
+							<a
+								rel="noopener noreferrer"
+								href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS ) }
+							/>
 						),
 					},
 				}
@@ -174,7 +183,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 						args: { tld },
 						components: {
 							strong: <strong />,
-							a: <a rel="noopener noreferrer" href={ MAP_EXISTING_DOMAIN } />,
+							a: <a rel="noopener noreferrer" href={ localizeUrl( MAP_EXISTING_DOMAIN ) } />,
 						},
 					}
 				);

@@ -6,7 +6,6 @@ import { useFormStatus } from '@automattic/composite-checkout';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
 import { useSelect } from '@wordpress/data';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
