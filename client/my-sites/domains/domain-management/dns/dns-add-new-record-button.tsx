@@ -5,11 +5,7 @@ import classNames from 'classnames';
 import { domainManagementDnsAddRecord } from 'calypso/my-sites/domains/paths';
 import { DndAddNewRecordButtonProps } from './types';
 
-function DnsAddNewRecordButton( {
-	site,
-	domain,
-	isMobile,
-}: DndAddNewRecordButtonProps ): JSX.Element {
+function DnsAddNewRecordButton( { site, domain, isMobile }: DndAddNewRecordButtonProps ) {
 	const { __ } = useI18n();
 	const className = classNames( 'dns__breadcrumb-button add-record', {
 		'is-icon-button': isMobile,

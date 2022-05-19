@@ -23,7 +23,7 @@ export default function MarketplaceProgressBar( {
 }: {
 	steps: TranslateResult[];
 	currentStep: number;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const [ simulatedProgressPercentage, setSimulatedProgressPercentage ] = useState( 1 );
 	useEffect( () => {

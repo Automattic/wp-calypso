@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import PropTypes from 'prop-types';
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -20,13 +19,7 @@ export const PaymentMethodLogos = styled.span`
 	}
 `;
 
-export function PaymentLogo( {
-	brand,
-	isSummary,
-}: {
-	brand: string;
-	isSummary?: boolean;
-} ): JSX.Element | null {
+export function PaymentLogo( { brand, isSummary }: { brand: string; isSummary?: boolean } ) {
 	let cardFieldIcon = null;
 
 	switch ( brand ) {
@@ -136,7 +129,7 @@ function LockIcon( { className }: { className?: string } ) {
 	);
 }
 
-export function VisaLogo( { className }: { className?: string } ): JSX.Element {
+export function VisaLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }
@@ -160,11 +153,7 @@ export function VisaLogo( { className }: { className?: string } ): JSX.Element {
 	);
 }
 
-VisaLogo.propTypes = {
-	className: PropTypes.string,
-};
-
-export function MastercardLogo( { className }: { className?: string } ): JSX.Element {
+export function MastercardLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }
@@ -189,11 +178,7 @@ export function MastercardLogo( { className }: { className?: string } ): JSX.Ele
 	);
 }
 
-MastercardLogo.propTypes = {
-	className: PropTypes.string,
-};
-
-export function AmexLogo( { className }: { className?: string } ): JSX.Element {
+export function AmexLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }
@@ -213,11 +198,7 @@ export function AmexLogo( { className }: { className?: string } ): JSX.Element {
 	);
 }
 
-AmexLogo.propTypes = {
-	className: PropTypes.string,
-};
-
-export function JcbLogo( { className }: { className?: string } ): JSX.Element {
+export function JcbLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }
@@ -249,11 +230,7 @@ export function JcbLogo( { className }: { className?: string } ): JSX.Element {
 	);
 }
 
-JcbLogo.propTypes = {
-	className: PropTypes.string,
-};
-
-export function DinersLogo( { className }: { className?: string } ): JSX.Element {
+export function DinersLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }
@@ -285,11 +262,7 @@ export function DinersLogo( { className }: { className?: string } ): JSX.Element
 	);
 }
 
-DinersLogo.propTypes = {
-	className: PropTypes.string,
-};
-
-export function UnionpayLogo( { className }: { className?: string } ): JSX.Element {
+export function UnionpayLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }
@@ -317,11 +290,7 @@ export function UnionpayLogo( { className }: { className?: string } ): JSX.Eleme
 	);
 }
 
-UnionpayLogo.propTypes = {
-	className: PropTypes.string,
-};
-
-export function DiscoverLogo( { className }: { className?: string } ): JSX.Element {
+export function DiscoverLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }
@@ -344,7 +313,3 @@ export function DiscoverLogo( { className }: { className?: string } ): JSX.Eleme
 		</svg>
 	);
 }
-
-DiscoverLogo.propTypes = {
-	className: PropTypes.string,
-};

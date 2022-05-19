@@ -53,7 +53,7 @@ function IncompleteLocaleNoticeMessage( {
 	language,
 	__,
 	getIncompleteLocaleNoticeMessage: getIncompleteLocaleNoticeMessageProp,
-}: IncompleteLocaleNoticeMessageProps ): JSX.Element | null {
+}: IncompleteLocaleNoticeMessageProps ) {
 	if ( ! language ) {
 		return null;
 	}

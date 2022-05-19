@@ -68,7 +68,7 @@ const Task = ( {
 			actionUrl: string;
 			actionButton?: ReactNode;
 	  }
- ) ): JSX.Element => {
+ ) ) => {
 	const [ isLoading, setIsLoading ] = useState( forceIsLoading );
 	const [ areSkipOptionsVisible, setSkipOptionsVisible ] = useState( false );
 	const dispatch = useDispatch();

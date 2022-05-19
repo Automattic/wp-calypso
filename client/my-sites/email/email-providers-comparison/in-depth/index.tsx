@@ -20,7 +20,7 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-compariso
 import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { EmailProvidersInDepthComparisonProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
+import type { EmailProvidersInDepthComparisonProps } from './types';
 
 import './style.scss';
 
@@ -29,7 +29,7 @@ const EmailProvidersInDepthComparison = ( {
 	selectedDomainName,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
 	source,
-}: EmailProvidersInDepthComparisonProps ): JSX.Element => {
+}: EmailProvidersInDepthComparisonProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 

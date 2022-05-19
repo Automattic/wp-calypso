@@ -49,7 +49,7 @@ export default function WPCheckoutOrderSummary( {
 	siteId: number | undefined;
 	onChangePlanLength: ( uuid: string, productSlug: string, productId: number ) => void;
 	nextDomainIsFree?: boolean;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const cartKey = useCartKey();
@@ -131,7 +131,7 @@ function SwitchToAnnualPlan( {
 	plan: ResponseCartProduct;
 	onChangePlanLength: ( uuid: string, productSlug: string, productId: number ) => void;
 	linkText?: React.ReactNode;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const handleClick = () => {
 		const annualPlan = getPlan( getYearlyPlanByMonthly( plan.product_slug ) );

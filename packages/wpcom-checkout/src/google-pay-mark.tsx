@@ -1,4 +1,4 @@
-export function GooglePayMark( { fill }: { fill: string } ): JSX.Element {
+export function GooglePayMark( { fill }: { fill: string } ) {
 	return (
 		<svg viewBox="0 0 524 206" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path

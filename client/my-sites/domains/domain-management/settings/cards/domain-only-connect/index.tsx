@@ -10,7 +10,7 @@ import type { DomainOnlyConnectCardProps } from './types';
 
 import './style.scss';
 
-const DomainOnlyConnectCard = ( props: DomainOnlyConnectCardProps ): JSX.Element => {
+const DomainOnlyConnectCard = ( props: DomainOnlyConnectCardProps ) => {
 	const translate = useTranslate();
 	const { selectedSite, selectedDomainName, currentRoute } = props;
 

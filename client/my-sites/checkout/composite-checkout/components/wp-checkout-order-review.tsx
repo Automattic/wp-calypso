@@ -85,7 +85,7 @@ export default function WPCheckoutOrderReview( {
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
 	isJetpackCheckout: boolean;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
 	const cartKey = useCartKey();

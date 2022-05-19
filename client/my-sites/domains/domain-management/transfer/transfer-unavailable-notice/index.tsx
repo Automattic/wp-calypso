@@ -3,7 +3,7 @@ import type { TransferUnavailableNoticeProps } from './types';
 
 import './style.scss';
 
-const TransferUnavailableNotice = ( { message }: TransferUnavailableNoticeProps ): JSX.Element => {
+const TransferUnavailableNotice = ( { message }: TransferUnavailableNoticeProps ) => {
 	return (
 		<div className="transfer-unavailable-notice__domain-notice">
 			<Icon

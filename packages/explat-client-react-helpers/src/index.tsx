@@ -113,7 +113,7 @@ export default function createExPlatClientReactHelpers(
 		loadingExperience: React.ReactNode;
 		name: string;
 		options?: ExperimentOptions;
-	} ): JSX.Element => {
+	} ) => {
 		const [ isLoading, experimentAssignment ] = useExperiment( experimentName, options );
 		if ( isLoading ) {
 			return <>{ loadingExperience }</>;
@@ -134,7 +134,7 @@ export default function createExPlatClientReactHelpers(
 		) => JSX.Element;
 		name: string;
 		options?: ExperimentOptions;
-	} ): JSX.Element => {
+	} ) => {
 		const [ isLoading, experimentAssignment ] = useExperiment( experimentName, options );
 		return children( isLoading, experimentAssignment );
 	};

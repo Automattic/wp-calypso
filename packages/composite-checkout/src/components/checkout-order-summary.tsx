@@ -13,7 +13,7 @@ const ProductListItem = styled.li`
 	list-style-type: none;
 `;
 
-export default function CheckoutOrderSummaryStep(): JSX.Element {
+export default function CheckoutOrderSummaryStep() {
 	const [ items ] = useLineItems();
 
 	return (
@@ -34,7 +34,7 @@ const CheckoutSummaryStepTotal = styled.span`
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
 
-export function CheckoutOrderSummaryStepTitle(): JSX.Element {
+export function CheckoutOrderSummaryStepTitle() {
 	const { __ } = useI18n();
 	const total = useTotal();
 	return (
@@ -65,7 +65,7 @@ const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	font-weight: ${ ( props ) => props.theme.weights.bold };
 `;
 
-export function CheckoutOrderSummary(): JSX.Element {
+export function CheckoutOrderSummary() {
 	const { __ } = useI18n();
 	const taxes = useLineItemsOfType( 'tax' );
 	const total = useTotal();

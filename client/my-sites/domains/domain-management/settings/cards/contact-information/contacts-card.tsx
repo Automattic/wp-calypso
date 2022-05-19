@@ -19,7 +19,7 @@ import {
 import { isUpdatingDomainPrivacy } from 'calypso/state/sites/domains/selectors';
 import type { ContactsCardPassedProps, ContactsCardProps } from './types';
 
-const ContactsPrivacyCard = ( props: ContactsCardProps ): JSX.Element => {
+const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 	const translate = useTranslate();
 	const togglePrivacy = () => {
 		const { selectedSite, privateDomain, selectedDomainName: name } = props;

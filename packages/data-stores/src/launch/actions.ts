@@ -83,7 +83,6 @@ export const unsetPlanProductId = () =>
 		type: 'UNSET_PLAN_PRODUCT_ID',
 	} as const );
 
-/* eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types */
 export function updatePlan( planProductId: number | undefined ) {
 	// keep updatePlan for backwards compat
 	return setPlanProductId( planProductId );

@@ -6,7 +6,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import InlineHelpCenterContent from 'calypso/blocks/inline-help/inline-help-center-content';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -27,13 +27,13 @@ interface Props {
 	isLeavingAllowed?: boolean;
 }
 
-const CheckoutMasterbar: FunctionComponent< Props > = ( {
+const CheckoutMasterbar = ( {
 	title,
 	isJetpackNotAtomic,
 	previousPath,
 	siteSlug,
 	isLeavingAllowed,
-} ) => {
+}: Props ) => {
 	const translate = useTranslate();
 	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
 	const siteId = useSelector( getSelectedSiteId );
@@ -146,7 +146,7 @@ const CheckoutMasterbar: FunctionComponent< Props > = ( {
 	);
 };
 
-export default function CheckoutMasterbarWrapper( props: Props ): JSX.Element {
+export default function CheckoutMasterbarWrapper( props: Props ) {
 	return (
 		<CalypsoShoppingCartProvider>
 			<ThemeProvider theme={ checkoutTheme }>

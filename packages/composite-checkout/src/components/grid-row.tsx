@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
-import PropTypes from 'prop-types';
-import * as React from 'react';
+import type { PropsWithChildren } from 'react';
 
 const Row = styled.div< GridRowProps & React.HTMLAttributes< HTMLDivElement > >`
 	display: -ms-grid;
@@ -17,7 +16,7 @@ export default function GridRow( {
 	columnWidths,
 	className,
 	children,
-}: GridRowProps ): JSX.Element {
+}: PropsWithChildren< GridRowProps > ) {
 	return (
 		<Row gap={ gap } columnWidths={ columnWidths } className={ className }>
 			{ children }
@@ -25,15 +24,8 @@ export default function GridRow( {
 	);
 }
 
-GridRow.propTypes = {
-	gap: PropTypes.string.isRequired,
-	columnWidths: PropTypes.string.isRequired,
-	className: PropTypes.string,
-};
-
 interface GridRowProps {
 	className?: string;
 	gap: string;
 	columnWidths: string;
-	children: React.ReactNode;
 }

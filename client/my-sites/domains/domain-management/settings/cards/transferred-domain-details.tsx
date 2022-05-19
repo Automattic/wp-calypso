@@ -15,7 +15,7 @@ const TransferredDomainDetails = ( {
 	domain,
 	isLoadingPurchase,
 	selectedSite,
-}: DetailsCardProps ): JSX.Element => {
+}: DetailsCardProps ) => {
 	const translate = useTranslate();
 
 	const renderStartTransferButton = () => {

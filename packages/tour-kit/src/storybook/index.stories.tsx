@@ -126,8 +126,6 @@ const StoryTour = ( { options = {} }: { options?: Config[ 'options' ] } ) => {
 	);
 };
 
-export const Default = (): JSX.Element => <StoryTour />;
-export const Overlay = (): JSX.Element => <StoryTour options={ { effects: { overlay: true } } } />;
-export const Spotlight = (): JSX.Element => (
-	<StoryTour options={ { effects: { spotlight: {} } } } />
-);
+export const Default = () => <StoryTour />;
+export const Overlay = () => <StoryTour options={ { effects: { overlay: true } } } />;
+export const Spotlight = () => <StoryTour options={ { effects: { spotlight: {} } } } />;

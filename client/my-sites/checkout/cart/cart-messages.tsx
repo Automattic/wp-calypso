@@ -12,7 +12,7 @@ import type { ResponseCartMessage } from '@automattic/shopping-cart';
 import type { CalypsoDispatch } from 'calypso/state/types';
 import type { TranslateResult } from 'i18n-calypso';
 
-function CartMessage( { message }: { message: ResponseCartMessage } ): JSX.Element {
+function CartMessage( { message }: { message: ResponseCartMessage } ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 

@@ -19,7 +19,7 @@ export default function CheckoutModal( {
 	isVisible,
 	primaryButtonCTA,
 	secondaryButtonCTA,
-}: CheckoutModalProps ): JSX.Element | null {
+}: CheckoutModalProps ) {
 	const { __ } = useI18n();
 	useModalScreen( isVisible, closeModal );
 

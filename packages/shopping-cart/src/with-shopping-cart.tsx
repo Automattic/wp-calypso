@@ -7,7 +7,7 @@ export default function withShoppingCart< ComponentProps >(
 	Component: React.ComponentType< ComponentProps & WithShoppingCartProps >,
 	mapPropsToCartKey?: ( props: ComponentProps ) => CartKey | undefined
 ): React.FC< ComponentProps > {
-	return function ShoppingCartWrapper( props ): JSX.Element {
+	return function ShoppingCartWrapper( props ) {
 		const cartKey = mapPropsToCartKey
 			? mapPropsToCartKey( props )
 			: ( props as Record< string, CartKey | undefined > ).cartKey;
