@@ -9,7 +9,6 @@ import {
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { fetchingConnections, connections } from '../reducer';
 
 describe( 'reducer', () => {
@@ -255,7 +254,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'persistence', () => {
-			useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
+			console.warn = jest.fn();
 
 			test( 'should persist data', () => {
 				const state = deepFreeze( {

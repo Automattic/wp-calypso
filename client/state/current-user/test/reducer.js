@@ -1,13 +1,10 @@
 import deepFreeze from 'deep-freeze';
 import { CURRENT_USER_RECEIVE, SITE_RECEIVE, SITES_RECEIVE } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import reducer, { id, capabilities } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
+	console.warn = jest.fn();
 
 	test( 'should include expected keys in return value', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(

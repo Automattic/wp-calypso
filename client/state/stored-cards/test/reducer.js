@@ -10,14 +10,11 @@ import {
 	STORED_CARDS_UPDATE_IS_BACKUP_COMPLETED,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import reducer, { items } from '../reducer';
 import { STORED_CARDS_FROM_API, SELECTED_STORED_CARDS } from './fixture';
 
 describe( 'items', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
+	console.warn = jest.fn();
 
 	test( 'should return an object with the initial state', () => {
 		expect( reducer( undefined, { type: 'UNRELATED' } ) ).toEqual( {

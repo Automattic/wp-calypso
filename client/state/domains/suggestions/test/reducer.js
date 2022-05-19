@@ -6,16 +6,10 @@ import {
 	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import reducer, { items, requesting, errors } from '../reducer';
 
 describe( 'reducer', () => {
-	let sandbox;
-
-	useSandbox( ( newSandbox ) => {
-		sandbox = newSandbox;
-		sandbox.stub( console, 'warn' );
-	} );
+	console.warn = jest.fn();
 
 	test( 'should export expected reducer keys', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(

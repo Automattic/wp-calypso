@@ -10,7 +10,6 @@ import {
 	INVITES_DELETE_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { requesting, items, counts, requestingResend, deleting } from '../reducer';
 
 describe( 'reducer', () => {
@@ -454,9 +453,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'invalid state tests', () => {
-			useSandbox( ( sandbox ) => {
-				sandbox.stub( console, 'warn' );
-			} );
+			console.warn = jest.fn();
 
 			test( 'should not load invalid persisted state (1)', () => {
 				const original = deepFreeze( {

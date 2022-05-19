@@ -8,13 +8,10 @@ import {
 	JETPACK_CONNECT_QUERY_SET,
 } from 'calypso/state/jetpack-connect/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import jetpackConnectAuthorize from '../jetpack-connect-authorize.js';
 
 describe( '#jetpackConnectAuthorize()', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
+	console.warn = jest.fn();
 
 	test( 'should default to an empty object', () => {
 		const state = jetpackConnectAuthorize( undefined, {} );

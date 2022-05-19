@@ -1,9 +1,16 @@
 import { ROUTE_SET, COMMENTS_LIKE } from 'calypso/state/action-types';
-import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 import reducer from '../reducer';
 
 describe( 'reducer', () => {
-	useFakeTimers( 1337 );
+	beforeEach( () => {
+		jest.useFakeTimers();
+		jest.setSystemTime( 1337 );
+	} );
+
+	afterEach( () => {
+		jest.runOnlyPendingTimers();
+		jest.useRealTimers();
+	} );
 
 	test( 'should default to an empty list', () => {
 		const state = reducer( undefined, {} );

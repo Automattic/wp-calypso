@@ -1,16 +1,10 @@
 import deepFreeze from 'deep-freeze';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { timezonesReceive } from '../actions';
 import timezonesReducer, { byContinents, labels, rawOffsets } from '../reducer';
 
 describe( 'reducer', () => {
-	let sandbox;
-
-	useSandbox( ( newSandbox ) => {
-		sandbox = newSandbox;
-		sandbox.stub( console, 'warn' );
-	} );
+	console.warn = jest.fn();
 
 	test( 'should export expected reducer keys', () => {
 		expect( Object.keys( timezonesReducer( undefined, {} ) ) ).toEqual(
