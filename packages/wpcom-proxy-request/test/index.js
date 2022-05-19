@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import proxy, { reloadProxy } from '../';
 
 /**
@@ -50,18 +49,18 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 								},
 								( error, body, headers ) => {
 									// error
-									expect( error ).to.be.an( 'null' );
+									expect( error ).toBe( null );
 
 									// body
-									expect( body ).to.be.ok;
-									expect( body.ID ).to.be.a( 'number' );
-									expect( body.ID ).to.be.equal( postId );
-									expect( body.site_ID ).to.be.a( 'number' );
-									expect( body.site_ID ).to.be.equal( siteId );
+									expect( body ).toBeTruthy();
+									expect( body.ID ).toBe( expect.any( Number ) );
+									expect( body.ID ).toEqual( postId );
+									expect( body.site_ID ).toBe( expect.any( Number ) );
+									expect( body.site_ID ).toEqual( siteId );
 
 									// headers
-									expect( headers ).to.be.ok;
-									expect( headers.status ).to.be.equal( 200 );
+									expect( headers ).toBeTruthy();
+									expect( headers.status ).toEqual( 200 );
 
 									done();
 								}
@@ -78,15 +77,15 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 								},
 								( error, body, headers ) => {
 									// error
-									expect( error ).to.be.an( 'null' );
+									expect( error ).toBe( null );
 
 									// body
-									expect( body.ID ).to.be.ok;
-									expect( body.ID ).to.be.a( 'number' );
-									expect( body.username ).to.be.ok;
+									expect( body.ID ).toBeTruthy();
+									expect( body.ID ).toBe( expect.any( Number ) );
+									expect( body.username ).toBeTruthy();
 
 									// headers
-									expect( headers ).to.be.ok;
+									expect( headers ).toBeTruthy();
 
 									done();
 								}
@@ -103,20 +102,20 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 									path: '/this-route-does-not-exists',
 								},
 								( error, body, headers ) => {
-									expect( error ).to.be.ok;
-									expect( error.name ).to.be.equal( 'NotFoundError' );
-									expect( error.message ).to.be.ok;
-									expect( error.statusCode ).to.be.equal( 404 );
+									expect( error ).toBeTruthy();
+									expect( error.name ).toEqual( 'NotFoundError' );
+									expect( error.message ).toBeTruthy();
+									expect( error.statusCode ).toEqual( 404 );
 
 									// error
-									expect( error ).to.be.ok;
+									expect( error ).toBeTruthy();
 
 									// body
-									expect( body ).to.be.not.ok;
+									expect( body ).toBeFalsy();
 
 									// headers
-									expect( headers ).to.be.ok;
-									expect( headers.status ).to.be.equal( 404 );
+									expect( headers ).toBeTruthy();
+									expect( headers.status ).toEqual( 404 );
 
 									done();
 								}
@@ -133,17 +132,17 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 								},
 								( error, body, headers ) => {
 									// error
-									expect( error ).to.be.ok;
-									expect( error.name ).to.be.equal( 'UnknownBlogError' );
-									expect( error.message ).to.be.ok;
-									expect( error.statusCode ).to.be.equal( 404 );
+									expect( error ).toBeTruthy();
+									expect( error.name ).toEqual( 'UnknownBlogError' );
+									expect( error.message ).toBeTruthy();
+									expect( error.statusCode ).toEqual( 404 );
 
 									// body
-									expect( body ).to.be.not.ok;
+									expect( body ).toBeFalsy();
 
 									// headers
-									expect( headers ).to.be.ok;
-									expect( headers.status ).to.be.equal( 404 );
+									expect( headers ).toBeTruthy();
+									expect( headers.status ).toEqual( 404 );
 
 									done();
 								}
@@ -160,17 +159,17 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 								},
 								( error, body, headers ) => {
 									// error
-									expect( error ).to.be.ok;
-									expect( error.name ).to.be.equal( 'UnknownPostError' );
-									expect( error.message ).to.be.ok;
-									expect( error.statusCode ).to.be.equal( 404 );
+									expect( error ).toBeTruthy();
+									expect( error.name ).toEqual( 'UnknownPostError' );
+									expect( error.message ).toBeTruthy();
+									expect( error.statusCode ).toEqual( 404 );
 
 									// body
-									expect( body ).to.be.not.ok;
+									expect( body ).toBeFalsy();
 
 									// headers
-									expect( headers ).to.be.ok;
-									expect( headers.status ).to.be.equal( 404 );
+									expect( headers ).toBeTruthy();
+									expect( headers.status ).toEqual( 404 );
 
 									done();
 								}
@@ -195,14 +194,14 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 								},
 								( error, body, headers ) => {
 									// error
-									expect( error ).to.be.an( 'null' );
+									expect( error ).toBe( null );
 
 									// body
-									expect( body.name ).to.be.ok;
-									expect( body.link ).to.be.ok;
+									expect( body.name ).toBeTruthy();
+									expect( body.link ).toBeTruthy();
 
 									// headers
-									expect( headers ).to.be.ok;
+									expect( headers ).toBeTruthy();
 
 									done();
 								}
@@ -221,19 +220,19 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 								},
 								( error, body, headers ) => {
 									// error
-									expect( error ).to.be.ok;
-									expect( error.name ).to.be.equal( 'RestNoRouteError' );
-									expect( error.statusCode ).to.be.equal( 404 );
-									expect( error.message ).to.be.equal(
+									expect( error ).toBeTruthy();
+									expect( error.name ).toEqual( 'RestNoRouteError' );
+									expect( error.statusCode ).toEqual( 404 );
+									expect( error.message ).toEqual(
 										'No route was found matching the URL and request method'
 									);
 
 									// body
-									expect( body ).to.be.not.ok;
+									expect( body ).toBeFalsy();
 
 									// headers
-									expect( headers ).to.be.ok;
-									expect( headers.status ).to.be.equal( 404 );
+									expect( headers ).toBeTruthy();
+									expect( headers.status ).toEqual( 404 );
 
 									done();
 								}
@@ -250,17 +249,17 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 								},
 								( error, body, headers ) => {
 									// error
-									expect( error ).to.be.ok;
-									expect( error.name ).to.be.equal( 'RestPostInvalidIdError' );
-									expect( error.statusCode ).to.be.equal( 404 );
-									expect( error.message ).to.be.equal( 'Invalid post ID.' );
+									expect( error ).toBeTruthy();
+									expect( error.name ).toEqual( 'RestPostInvalidIdError' );
+									expect( error.statusCode ).toEqual( 404 );
+									expect( error.message ).toEqual( 'Invalid post ID.' );
 
 									// body
-									expect( body ).to.be.not.ok;
+									expect( body ).toBeFalsy();
 
 									// headers
-									expect( headers ).to.be.ok;
-									expect( headers.status ).to.be.equal( 404 );
+									expect( headers ).toBeTruthy();
+									expect( headers.status ).toEqual( 404 );
 
 									done();
 								}
@@ -283,11 +282,11 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 								},
 								( error, body ) => {
 									// error
-									expect( error ).to.be.an( 'null' );
+									expect( error ).toBe( null );
 
 									// body
-									expect( body.found ).to.be.ok;
-									expect( body.timezones ).to.be.an( 'array' );
+									expect( body.found ).toBeTruthy();
+									expect( body.timezones ).toBe( expect.any( Array ) );
 
 									done();
 								}
@@ -306,19 +305,19 @@ runs.forEach( ( { shouldReloadProxy } ) => {
 								},
 								( error, body, headers ) => {
 									// error
-									expect( error ).to.be.ok;
-									expect( error.name ).to.be.equal( 'RestNoRouteError' );
-									expect( error.statusCode ).to.be.equal( 404 );
-									expect( error.message ).to.be.equal(
+									expect( error ).toBeTruthy();
+									expect( error.name ).toEqual( 'RestNoRouteError' );
+									expect( error.statusCode ).toEqual( 404 );
+									expect( error.message ).toEqual(
 										'No route was found matching the URL and request method'
 									);
 
 									// body
-									expect( body ).to.be.not.ok;
+									expect( body ).toBeFalsy();
 
 									// headers
-									expect( headers ).to.be.ok;
-									expect( headers.status ).to.be.equal( 404 );
+									expect( headers ).toBeTruthy();
+									expect( headers.status ).toEqual( 404 );
 
 									done();
 								}
