@@ -4,7 +4,7 @@ import { ReactChild, useState } from 'react';
 
 import './style.scss';
 
-export default function SwipeMenu( {
+export default function SwipeGroup( {
 	children,
 	className = '',
 	onClick = () => null,
@@ -15,21 +15,23 @@ export default function SwipeMenu( {
 	onClick?: ( index: number ) => void;
 	initialActiveIndex?: number;
 } ) {
-	const classes = classnames( 'categories__swipe-menu', className );
+	const classes = classnames( 'responsive-toolbar-group__swipe', className );
+
 	const [ activeIndex, setActiveIndex ] = useState< number >( initialActiveIndex );
 
 	return (
 		<div className={ classes }>
-			<ToolbarGroup className="categories__swipe-menu-list">
+			<ToolbarGroup className="responsive-toolbar-group__swipe-list">
 				{ children.map( ( child, index ) => (
 					<ToolbarButton
 						key={ `button-item-${ index }` }
+						id={ `button-item-${ index }` }
 						isActive={ activeIndex === index }
 						onClick={ () => {
 							setActiveIndex( index );
 							onClick( index );
 						} }
-						className="categories__swipe-menu-item"
+						className="responsive-toolbar-group__swipe-item"
 					>
 						{ child }
 					</ToolbarButton>

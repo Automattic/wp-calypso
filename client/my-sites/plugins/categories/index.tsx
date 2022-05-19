@@ -1,11 +1,9 @@
-import { useBreakpoint } from '@automattic/viewport-react';
 import page from 'page';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ResponsiveToolbarGroup from './responsive-toolbar-group';
-import SwipeMenu from './swipe-menu';
 import { useCategories } from './use-categories';
 import './style.scss';
 
@@ -41,7 +39,6 @@ const ALLOWED_CATEGORIES = [
 
 const Categories = ( { selected }: { selected?: string } ) => {
 	const dispatch = useDispatch();
-	const isSwippeable = useBreakpoint( '<660px' );
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
@@ -71,20 +68,6 @@ const Categories = ( { selected }: { selected?: string } ) => {
 	}
 
 	const current = selected ? categories.findIndex( ( { slug } ) => slug === selected ) : 0;
-
-	if ( isSwippeable ) {
-		return (
-			<SwipeMenu
-				className="categories__swipe-menu"
-				initialActiveIndex={ current }
-				onClick={ onClick }
-			>
-				{ categories.map( ( category ) => (
-					<span key={ `category-${ category.slug }` }>{ category.name }</span>
-				) ) }
-			</SwipeMenu>
-		);
-	}
 
 	return (
 		<ResponsiveToolbarGroup

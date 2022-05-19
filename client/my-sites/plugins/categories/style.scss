@@ -17,31 +17,3 @@
 		}
 	}
 };
-
-.categories__swipe-menu {
-	width: 100%;
-
-	.categories__swipe-menu-list {
-		padding: 0 8px;
-		display: flex;
-		flex-wrap: nowrap;
-		overflow-x: scroll;
-		overflow-y: hidden;
-		border: none;
-
-		.categories__swipe-menu-item {
-			font-size: 0.875rem;
-		}
-
-		// Core override - prevent buttons from wordwrapping content
-		> div {
-			flex-shrink: 0;
-		}
-	}
-
-	// Remove on-focus, on-click border
-	.components-toolbar .components-button::before {
-		box-shadow: none;
-	}
-
-}
