@@ -23,11 +23,15 @@ import type {
  * @param {string} siteSlug Selected site
  * @param {string | string[]} products Slugs of the products to add to the cart
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url (ie. for affiliate tracking, or whatever)
+ * @param {string} rootUrl Plans/pricing page root URL
+ * @param {boolean} showUpsellPage Whether to show the upsell page before checkout
  */
 export function buildCheckoutURL(
 	siteSlug: string,
 	products: string | string[],
-	urlQueryArgs: QueryArgs = {}
+	urlQueryArgs: QueryArgs = {},
+	rootUrl = '',
+	showUpsellPage = false
 ): string {
 	const productsArray = Array.isArray( products ) ? products : [ products ];
 	const productsString = productsArray.join( ',' );
@@ -69,6 +73,23 @@ export function buildCheckoutURL(
 			urlQueryArgs,
 			host + `/checkout/jetpack/${ siteSlug }/${ productsString }`
 		);
+	}
+
+	if ( showUpsellPage && rootUrl && siteSlug ) {
+		// Upsell page only supports one product
+		const product = productsArray[ 0 ];
+
+		// If upsell exists
+		if ( product in PURCHASE_FLOW_UPSELLS_MATRIX ) {
+			if ( ! urlQueryArgs.checkoutBackUrl ) {
+				urlQueryArgs.checkoutBackUrl = window.location.href;
+			}
+
+			return addQueryArgs(
+				urlQueryArgs,
+				`${ rootUrl.replace( /\/$/, '' ) }/upsell/${ siteSlug }/${ product }`
+			);
+		}
 	}
 
 	// If there is not siteSlug, we need to redirect the user to the site selection
