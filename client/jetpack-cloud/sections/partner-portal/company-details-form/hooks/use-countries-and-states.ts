@@ -46,8 +46,8 @@ export function useCountriesAndStates() {
 	const translate = useTranslate();
 
 	return useMemo( () => {
-		const countryOptions = {};
-		const stateOptions = {};
+		const countryOptions = <{ [ key: string ]: object }>{};
+		const stateOptions = <{ [ key: string ]: Array< object > }>{};
 
 		Object.entries( countriesList ?? [] ).map( ( [ key, value ] ) => {
 			// We just have to add the country to the list of countries if the key / country

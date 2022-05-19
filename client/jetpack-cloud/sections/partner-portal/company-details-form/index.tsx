@@ -31,7 +31,7 @@ export default function CompanyDetailsForm(): ReactElement {
 	const [ city, setCity ] = useState( partner?.address.city ?? '' );
 	const [ line1, setLine1 ] = useState( partner?.address.line1 ?? '' );
 	const [ line2, setLine2 ] = useState( partner?.address.line2 ?? '' );
-	const [ postalCode, setPostalCode ] = useState( partner?.address.postalCode ?? '' );
+	const [ postalCode, setPostalCode ] = useState( partner?.address.postal_code ?? '' );
 	const [ addressState, setAddressState ] = useState( partner?.address.state ?? '' );
 
 	const stateOptions = stateOptionsMap.hasOwnProperty( country )

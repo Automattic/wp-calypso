@@ -155,7 +155,7 @@ export interface PartnerAddress {
 	city: string;
 	line1: string;
 	line2: string;
-	postalCode: string;
+	postal_code: string;
 	state: string;
 }
 

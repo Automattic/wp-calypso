@@ -156,9 +156,6 @@ export function ensurePartnerPortalReturnUrl( returnToUrl: string ): string {
  * @returns {Partner} Formatted store-friendly Partner object.
  */
 export function formatApiPartner( partner: APIPartner ): Partner {
-	partner.address.postalCode = partner.address.postal_code;
-	delete partner.address.postal_code;
-
 	return {
 		...partner,
 		keys: partner.keys.map( ( key ) => ( {
