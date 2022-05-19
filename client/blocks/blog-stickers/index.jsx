@@ -15,7 +15,7 @@ const BlogStickers = ( { blogId } ) => {
 
 	const { data: stickers } = useBlogStickersQuery( blogId );
 
-	if ( teams && ! isTeamMember ) {
+	if ( teams.length && ! isTeamMember ) {
 		return null;
 	}
 
