@@ -39,6 +39,17 @@
 
 	.plan-price {
 		display: inline-flex;
+
+		// inline-flex causes *everything* to flow right-to-left in right-to-left locales,
+		// so we override currency displays by setting the direction explicitly.
+		//
+		// NOTE: We set a comment directive here to inform the RTL CSS plugin
+		// not to override our text direction rule for right-to-left locales.
+		// We add the comment using string interpolation so that the SCSS compiler
+		// adds it during compilation instead of deleting the comment completely
+		// in the name of optimization.
+		direction: ltr #{'/* rtl:ignore */'};
+
 		color: var( --studio-gray-100 );
 
 		&.display-price__original-price {
