@@ -1,17 +1,11 @@
 import page from 'page';
-import { useState } from 'react';
-import useUrlSearch from '../use-url-search';
+import useQueryArgs from '../index';
 
 jest.mock( 'react' );
 jest.mock( 'page' );
 
-describe( '#useUrlSearch', () => {
-	const mockSetSearchOpen = jest.fn();
-	const mockIsSearchOpen = false;
-
-	const useStateMock = () => [ mockIsSearchOpen, mockSetSearchOpen ];
-	useState.mockImplementation( useStateMock );
-	const urlSearchHook = useUrlSearch();
+describe( '#useQueryArgs', () => {
+	const queryArgs = useQueryArgs();
 
 	global.window = {
 		location: {
@@ -23,7 +17,7 @@ describe( '#useUrlSearch', () => {
 		global.window.location.pathname = '/read/search';
 		global.window.location.href = 'https://wordpress.com/read/search?q=test';
 		const expectedResult = '/read/search';
-		urlSearchHook.doSearch( '' );
+		queryArgs.setQueryArgs();
 
 		expect( page.replace ).toBeCalledWith( expectedResult );
 	} );
@@ -31,9 +25,8 @@ describe( '#useUrlSearch', () => {
 	test( 'should navigate to original url if there is no search', () => {
 		global.window.location.pathname = '/plugins';
 		global.window.location.href = 'https://wordpress.com/plugins';
-		urlSearchHook.doSearch( '' );
+		queryArgs.setQueryArgs();
 
-		expect( mockSetSearchOpen ).toHaveBeenLastCalledWith( false );
 		expect( page.replace ).toBeCalledWith( '/plugins' );
 	} );
 
@@ -43,17 +36,15 @@ describe( '#useUrlSearch', () => {
 		const expectedResult = '/read/search?q=reader+is+super+awesome';
 		const newSearchTerm = 'reader is super awesome';
 
-		const urlSearchHook2 = useUrlSearch();
-		urlSearchHook2.doSearch( { q: newSearchTerm } );
+		queryArgs.setQueryArgs( { q: newSearchTerm } );
 
-		expect( mockSetSearchOpen ).toHaveBeenLastCalledWith( true );
 		expect( page.replace ).toHaveBeenLastCalledWith( expectedResult );
 	} );
 
 	test( 'should navigate to a page without a query search', () => {
 		global.window.location.pathname = '/';
 		global.window.location.href = 'https://wordpress.com';
-		urlSearchHook.doSearch( '' );
+		queryArgs.setQueryArgs();
 
 		expect( page.replace ).toBeCalledWith( '/' );
 	} );
@@ -66,27 +57,18 @@ describe( '#useUrlSearch', () => {
 		const newSearchTerm = 'replaced-search-term';
 		const expectedUrl = '/?s=' + newSearchTerm;
 
-		urlSearchHook.doSearch( newSearchTerm );
+		queryArgs.setQueryArgs( { s: newSearchTerm } );
 
-		expect( mockSetSearchOpen ).toHaveBeenLastCalledWith( true );
 		expect( page.replace ).toHaveBeenLastCalledWith( expectedUrl );
 	} );
 
-	test( 'searchTerm should contain the last searchTerm performed on doSearch', () => {
+	test( 'searchTerm should contain the last searchTerm performed on setQueryArgs', () => {
 		const baseUrl = 'https://wordpress.com/plugins';
 		const newSearchTerm = 'replaced-search-term';
 		global.window.location.pathname = '/';
 		global.window.location.href = baseUrl + '?s=' + newSearchTerm;
 
-		urlSearchHook.doSearch( newSearchTerm );
-		expect( urlSearchHook.getQueryArgs() ).toEqual( { s: 'replaced-search-term' } );
-	} );
-
-	test( 'should return the correct values for getSearchOpen accordingly to isSearchOpen and queryKey values', () => {
-		useState.mockImplementation( () => [ false, () => {} ] );
-		expect( useUrlSearch().getSearchOpen() ).toBe( false );
-
-		useState.mockImplementation( () => [ true, () => {} ] );
-		expect( useUrlSearch().getSearchOpen() ).toBe( true );
+		queryArgs.setQueryArgs( newSearchTerm );
+		expect( queryArgs.getQueryArgs() ).toEqual( { s: 'replaced-search-term' } );
 	} );
 } );
