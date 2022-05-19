@@ -21,7 +21,7 @@ import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import useUrlSearch from 'calypso/lib/url-search/use-url-search';
+import useQueryArgs from 'calypso/lib/query-args';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import NoResults from 'calypso/my-sites/no-results';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -77,7 +77,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 		referenceRef: navigationHeaderRef,
 	} = useScrollAboveElement();
 
-	const { doSearch } = useUrlSearch();
+	const { setQueryArgs } = useQueryArgs();
+
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -282,7 +283,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 			<SearchBoxHeader
 				popularSearchesRef={ searchHeaderRef }
 				isSticky={ isAboveElement }
-				doSearch={ doSearch }
+				doSearch={ ( searchTerm ) => setQueryArgs( { s: searchTerm } ) }
 				searchTerm={ search }
 				isSearching={ isFetchingPluginsBySearchTerm }
 				title={ translate( 'Plugins you need to get your projects done' ) }
