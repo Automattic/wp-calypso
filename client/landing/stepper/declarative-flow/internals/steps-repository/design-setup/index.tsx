@@ -96,6 +96,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
 		useGeneratedDesignsQuery();
+
 	const shuffledGeneratedDesigns = useMemo(
 		() => shuffle( generatedDesigns ),
 		[ generatedDesigns ]
@@ -108,8 +109,8 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	const isPreviewingGeneratedDesign =
 		isMobile && showGeneratedDesigns && selectedDesign && isPreviewingDesign;
-	const visibility = useNewSiteVisibility();
 
+	const visibility = useNewSiteVisibility();
 	const previewLoadingMessage = translate(
 		'{{strong}}One moment, please…{{/strong}} loading your site.',
 		{ components: { strong: <strong /> } }
@@ -393,7 +394,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 							verticalId: siteVerticalId,
 						} ) }
 						loadingMessage={ previewLoadingMessage }
-						fetchPriority={ isSelected ? 'high' : 'low' }
 						toolbarComponent={ PreviewToolbar }
 						autoHeight
 						siteId={ site?.ID }

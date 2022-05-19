@@ -261,7 +261,7 @@ export default class WebPreviewContent extends Component {
 	}
 
 	render() {
-		const { translate, toolbarComponent: ToolbarComponent, fetchPriority, autoHeight } = this.props;
+		const { translate, toolbarComponent: ToolbarComponent, autoHeight } = this.props;
 		const isLoaded =
 			this.state.loaded && ( ! autoHeight || ( autoHeight && this.state.viewport !== null ) );
 
@@ -318,7 +318,6 @@ export default class WebPreviewContent extends Component {
 								src="about:blank"
 								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
 								title={ this.props.iframeTitle || translate( 'Preview' ) }
-								fetchpriority={ fetchPriority ? fetchPriority : undefined }
 								scrolling={ autoHeight ? 'no' : undefined }
 							/>
 						</div>
@@ -393,8 +392,6 @@ WebPreviewContent.propTypes = {
 	overridePost: PropTypes.object,
 	// A customized Toolbar element
 	toolbarComponent: PropTypes.elementType,
-	// iframe's fetchPriority.
-	fetchPriority: PropTypes.string,
 	// Set height based on page content. This requires the page to post it's dimensions as message.
 	autoHeight: PropTypes.bool,
 };
@@ -419,6 +416,5 @@ WebPreviewContent.defaultProps = {
 	isModalWindow: false,
 	overridePost: null,
 	toolbarComponent: Toolbar,
-	fetchPriority: null,
 	autoHeight: false,
 };
