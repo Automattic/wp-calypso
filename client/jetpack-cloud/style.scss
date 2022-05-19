@@ -30,6 +30,7 @@
 	border-radius: var( --jetpack-corners-soft );
 	box-sizing: border-box;
 	font-weight: 500; /* stylelint-disable-line scales/font-weights */
+	transition: background-color 0.1s;
 
 	&:hover {
 		background-color: var( --color-accent-0 );
@@ -59,8 +60,8 @@
 	border-color: var( --studio-jetpack-green-50 );
 
 	&:hover {
-		background-color: var( --studio-jetpack-green-60 );
-		border-color: var( --studio-jetpack-green-60 );
+		background-color: var( --studio-jetpack-green-70 );
+		border-color: var( --studio-jetpack-green-70 );
 	}
 
 	&:focus {
@@ -70,8 +71,8 @@
 	}
 
 	&:active {
-		background: var( --studio-jetpack-green-60 );
-		border-color: var( --studio-jetpack-green-60 );
+		background: var( --studio-jetpack-green-70 );
+		border-color: var( --studio-jetpack-green-70 );
 	}
 
 	&[disabled],
