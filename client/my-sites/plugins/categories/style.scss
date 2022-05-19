@@ -28,6 +28,13 @@
 		overflow-x: scroll;
 		overflow-y: hidden;
 
+		// hides the scrollbar
+		scrollbar-width: none; // hides the scrollbar in firefox
+		
+		&::-webkit-scrollbar { // hides the scrollbar in webkit browsers
+			display: none
+		}
+
 		border: none;
 
 		.categories__swipe-menu-scroll {
