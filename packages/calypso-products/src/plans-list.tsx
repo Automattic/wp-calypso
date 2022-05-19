@@ -200,6 +200,7 @@ import {
 	FEATURE_TITAN_EMAIL,
 	FEATURE_SOCIAL_MEDIA_TOOLS,
 	WPCOM_FEATURES_ATOMIC,
+	FEATURE_JETPACK_1TB_BACKUP_STORAGE,
 } from './constants';
 import type {
 	BillingTerm,
@@ -986,6 +987,7 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 	getTagline: () => translate( 'For best-in-class WordPress sites' ),
 	getPlanCardFeatures: () => [
 		FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
+		FEATURE_JETPACK_1TB_BACKUP_STORAGE,
 		FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
 		FEATURE_PRODUCT_SEARCH_V2,
 		FEATURE_CRM_V2,
