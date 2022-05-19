@@ -11,6 +11,7 @@ import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
 import SelectorPage from './selector';
 import { StoragePricing } from './storage-pricing';
 import { StoragePricingHeader } from './storage-pricing-header';
+import JetpackUpsellPage from './upsell';
 import type { Duration, QueryArgs } from './types';
 
 function stringToDuration( duration?: string ): Duration | undefined {
@@ -116,5 +117,20 @@ export const jetpackStoragePricing = ( context: PageJS.Context, next: () => void
 			locale={ lang }
 		/>
 	);
+	next();
+};
+
+export const jetpackProductUpsell = ( context: PageJS.Context, next: () => void ) => {
+	const { site, product } = context.params;
+	const urlQueryArgs = context.query;
+
+	context.primary = (
+		<JetpackUpsellPage
+			siteSlug={ site || urlQueryArgs.site }
+			productSlug={ product }
+			urlQueryArgs={ urlQueryArgs }
+		/>
+	);
+
 	next();
 };

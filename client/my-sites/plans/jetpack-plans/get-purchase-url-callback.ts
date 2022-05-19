@@ -5,7 +5,10 @@ import {
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/route';
 import { managePurchase } from 'calypso/me/purchases/paths';
-import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import {
+	EXTERNAL_PRODUCTS_LIST,
+	PURCHASE_FLOW_UPSELLS_MATRIX,
+} from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type {
@@ -20,11 +23,15 @@ import type {
  * @param {string} siteSlug Selected site
  * @param {string | string[]} products Slugs of the products to add to the cart
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url (ie. for affiliate tracking, or whatever)
+ * @param {string} rootUrl Plans/pricing page root URL
+ * @param {boolean} showUpsellPage Whether to show the upsell page before checkout
  */
-function buildCheckoutURL(
+export function buildCheckoutURL(
 	siteSlug: string,
 	products: string | string[],
-	urlQueryArgs: QueryArgs = {}
+	urlQueryArgs: QueryArgs = {},
+	rootUrl = '',
+	showUpsellPage = false
 ): string {
 	const productsArray = Array.isArray( products ) ? products : [ products ];
 	const productsString = productsArray.join( ',' );
@@ -68,6 +75,23 @@ function buildCheckoutURL(
 		);
 	}
 
+	if ( showUpsellPage && rootUrl && siteSlug ) {
+		// Upsell page only supports one product
+		const product = productsArray[ 0 ];
+
+		// If upsell exists
+		if ( product in PURCHASE_FLOW_UPSELLS_MATRIX ) {
+			if ( ! urlQueryArgs.checkoutBackUrl ) {
+				urlQueryArgs.checkoutBackUrl = window.location.href;
+			}
+
+			return addQueryArgs(
+				urlQueryArgs,
+				`${ rootUrl.replace( /\/$/, '' ) }/upsell/${ siteSlug }/${ product }`
+			);
+		}
+	}
+
 	// If there is not siteSlug, we need to redirect the user to the site selection
 	// step of the flow. Since purchases of multiple products are allowed, we need
 	// to pass all products separated by comma in the URL.
@@ -85,9 +109,18 @@ function buildCheckoutURL(
  *
  * @param {string} siteSlug Slug of the site
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url
+ * @param {string} locale Selected locale
+ * @param {string} rootUrl Plans/pricing page root URL
+ * @param {boolean} showUpsellPage Whether to show the upsell page before checkout
  */
 export const getPurchaseURLCallback =
-	( siteSlug: string, urlQueryArgs: QueryArgs, locale?: string ): PurchaseURLCallback =>
+	(
+		siteSlug: string,
+		urlQueryArgs: QueryArgs,
+		locale?: string,
+		rootUrl?: string,
+		showUpsellPage?: boolean
+	): PurchaseURLCallback =>
 	( product: SelectorProduct, isUpgradeableToYearly?, purchase?: Purchase ) => {
 		if ( locale ) {
 			urlQueryArgs.lang = locale;
@@ -105,5 +138,5 @@ export const getPurchaseURLCallback =
 			return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
 		}
 
-		return buildCheckoutURL( siteSlug, product.productSlug, urlQueryArgs );
+		return buildCheckoutURL( siteSlug, product.productSlug, urlQueryArgs, rootUrl, showUpsellPage );
 	};

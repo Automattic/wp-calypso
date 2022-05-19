@@ -105,6 +105,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	onDurationChange,
 	scrollCardIntoView,
 	createButtonURL,
+	isLoadingUpsellPageExperiment,
 } ) => {
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
@@ -212,6 +213,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				scrollCardIntoView={ scrollCardIntoView }
 				createButtonURL={ createButtonURL }
 				collapseFeaturesOnMobile
+				isLoadingUpsellPageExperiment={ isLoadingUpsellPageExperiment }
 			/>
 		</li>
 	);
@@ -268,6 +270,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 									isFeatured={ isFeatured }
 									scrollCardIntoView={ scrollCardIntoView }
 									createButtonURL={ createButtonURL }
+									isLoadingUpsellPageExperiment={ isLoadingUpsellPageExperiment }
 								/>
 							</li>
 						);

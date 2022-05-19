@@ -51,6 +51,7 @@ export interface ProductsGridProps {
 	onDurationChange?: DurationChangeCallback;
 	scrollCardIntoView: ScrollCardIntoViewCallback;
 	createButtonURL?: PurchaseURLCallback;
+	isLoadingUpsellPageExperiment?: boolean;
 }
 
 export type PlanGridProducts = {

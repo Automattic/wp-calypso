@@ -3,7 +3,9 @@ import { setLocaleMiddleware } from 'calypso/controller/shared';
 import { loggedInSiteSelection } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 import { jetpackStoragePlans } from 'calypso/my-sites/plans/jetpack-plans/jetpack-storage-plans';
+import { jetpackUpsell } from 'calypso/my-sites/plans/jetpack-plans/jetpack-upsell';
 import { jetpackPricingContext } from './controller';
+
 import './style.scss';
 
 export default function (): void {
@@ -13,6 +15,12 @@ export default function (): void {
 	);
 	page( '/plans/storage/:site', ( { params } ) =>
 		page.redirect( `/pricing/storage/${ params.site }` )
+	);
+	page( '/:locale/plans/upsell/:site/:product', ( { params } ) =>
+		page.redirect( `/${ params.locale }/pricing/upsell/${ params.site }/${ params.product }` )
+	);
+	page( '/plans/upsell/:site/:product', ( { params } ) =>
+		page.redirect( `/pricing/upsell/${ params.site }/${ params.product }` )
 	);
 	page( '/:locale/plans', ( { params } ) => page.redirect( `/${ params.locale }/pricing` ) );
 	page( '/plans/:site', ( { params } ) => page.redirect( `/pricing/${ params.site }` ) );
@@ -25,6 +33,13 @@ export default function (): void {
 		jetpackPricingContext
 	);
 	jetpackStoragePlans( '/pricing', loggedInSiteSelection, jetpackPricingContext );
+	jetpackUpsell(
+		`/:lang/pricing`,
+		setLocaleMiddleware(),
+		loggedInSiteSelection,
+		jetpackPricingContext
+	);
+	jetpackUpsell( '/pricing', loggedInSiteSelection, jetpackPricingContext );
 	jetpackPlans( `/:lang/pricing`, setLocaleMiddleware(), jetpackPricingContext );
 	jetpackPlans( '/pricing', loggedInSiteSelection, jetpackPricingContext );
 }
