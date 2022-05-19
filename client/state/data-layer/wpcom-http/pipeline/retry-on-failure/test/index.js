@@ -34,11 +34,6 @@ describe( '#retryOnFailure', () => {
 		store = { dispatch };
 	} );
 
-	afterEach( () => {
-		jest.runOnlyPendingTimers();
-		jest.useRealTimers();
-	} );
-
 	test( 'should pass through initially successful requests', () => {
 		const inbound = { nextData: 1, originalRequest: getSites, store };
 

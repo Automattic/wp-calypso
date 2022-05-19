@@ -7,11 +7,6 @@ describe( 'reducer', () => {
 		jest.setSystemTime( 1337 );
 	} );
 
-	afterEach( () => {
-		jest.runOnlyPendingTimers();
-		jest.useRealTimers();
-	} );
-
 	test( 'should default to an empty list', () => {
 		const state = reducer( undefined, {} );
 

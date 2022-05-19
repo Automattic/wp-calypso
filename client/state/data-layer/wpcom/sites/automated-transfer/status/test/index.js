@@ -41,11 +41,6 @@ describe( 'receiveStatus', () => {
 		jest.useFakeTimers();
 	} );
 
-	afterEach( () => {
-		jest.runOnlyPendingTimers();
-		jest.useRealTimers();
-	} );
-
 	test( 'should dispatch set status action', () => {
 		const dispatch = jest.fn();
 		receiveStatus( { siteId }, COMPLETE_RESPONSE )( dispatch );
@@ -69,9 +64,10 @@ describe( 'receiveStatus', () => {
 	} );
 
 	test( 'should request status again if not complete', () => {
+		jest.useFakeTimers();
 		const dispatch = jest.fn();
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
-		jest.advanceTimersByTime( 4000 );
+		jest.runAllTimers();
 
 		expect( dispatch ).toBeCalledTimes( 2 );
 		expect( dispatch ).toBeCalledWith( fetchAutomatedTransferStatus( siteId ) );

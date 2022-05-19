@@ -14,13 +14,7 @@ import {
 
 describe( 'utility functions', () => {
 	beforeAll( () => {
-		jest.useFakeTimers();
-		jest.setSystemTime( 0 );
-	} );
-
-	afterAll( () => {
-		jest.runOnlyPendingTimers();
-		jest.useRealTimers();
+		jest.useFakeTimers().setSystemTime( 0 );
 	} );
 
 	describe( '#createPlaceholderComment()', () => {

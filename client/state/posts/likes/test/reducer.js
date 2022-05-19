@@ -10,13 +10,7 @@ describe( 'reducer', () => {
 	const FAKE_NOW = 1000;
 
 	beforeEach( () => {
-		jest.useFakeTimers();
-		jest.setSystemTime( FAKE_NOW );
-	} );
-
-	afterEach( () => {
-		jest.runOnlyPendingTimers();
-		jest.useRealTimers();
+		jest.useFakeTimers().setSystemTime( FAKE_NOW );
 	} );
 
 	test( 'should include expected keys in return value', () => {
