@@ -57,132 +57,139 @@ export default function CompanyDetailsForm(): ReactElement {
 		},
 	} );
 
-	const handleSubmit = useCallback( () => {
-		setIsSubmitting( true );
-		dispatch( removeNotice( submitNotificationId ) );
+	const handleSubmit = useCallback(
+		( e ) => {
+			e.preventDefault();
+			setIsSubmitting( true );
+			dispatch( removeNotice( submitNotificationId ) );
 
-		const payload = {
-			name: name,
-			city: city,
-			line1: line1,
-			line2: line2,
-			country: country,
-			postal_code: postalCode,
-			state: addressState,
-		};
+			const payload = {
+				name: name,
+				city: city,
+				line1: line1,
+				line2: line2,
+				country: country,
+				postal_code: postalCode,
+				state: addressState,
+			};
 
-		updateCompanyDetails.mutate( payload );
+			updateCompanyDetails.mutate( payload );
 
-		dispatch(
-			recordTracksEvent( 'calypso_partner_portal_update_company_details_submit', {
-				partner_id: partner?.id,
-				...payload,
-			} )
-		);
-	}, [ dispatch, updateCompanyDetails ] );
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_update_company_details_submit', {
+					partner_id: partner?.id,
+					...payload,
+				} )
+			);
+		},
+		[ dispatch, updateCompanyDetails ]
+	);
 
 	return (
 		<Card className="company-details-form">
-			<FormFieldset>
-				<FormLabel htmlFor="name">{ translate( 'Company name' ) }</FormLabel>
-				<FormTextInput
-					id="name"
-					name="name"
-					value={ name }
-					onChange={ ( event: any ) => setName( event.target.value ) }
-					disabled={ isSubmitting }
-				/>
-			</FormFieldset>
-			<FormFieldset>
-				<FormLabel htmlFor="line1">{ translate( 'Address line 1' ) }</FormLabel>
-				<FormTextInput
-					id="line1"
-					name="line1"
-					value={ line1 }
-					onChange={ ( event: any ) => setLine1( event.target.value ) }
-					disabled={ isSubmitting }
-				/>
-			</FormFieldset>
-			<FormFieldset>
-				<FormLabel htmlFor="line2">{ translate( 'Address line 2' ) }</FormLabel>
-				<FormTextInput
-					id="line2"
-					name="line2"
-					value={ line2 }
-					onChange={ ( event: any ) => setLine2( event.target.value ) }
-					disabled={ isSubmitting }
-				/>
-			</FormFieldset>
-			<FormFieldset>
-				<FormLabel htmlFor="city">{ translate( 'City' ) }</FormLabel>
-				<FormTextInput
-					id="city"
-					name="city"
-					value={ city }
-					onChange={ ( event: any ) => setCity( event.target.value ) }
-					disabled={ isSubmitting }
-				/>
-			</FormFieldset>
-			<FormFieldset>
-				<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
-				<FormTextInput
-					id="postalCode"
-					name="postalCode"
-					value={ postalCode }
-					onChange={ ( event: any ) => setPostalCode( event.target.value ) }
-					disabled={ isSubmitting }
-				/>
-			</FormFieldset>
-			<FormFieldset>
-				<FormLabel>{ translate( 'Country' ) }</FormLabel>
-				{ showCountryFields && (
-					<SelectDropdown
-						className="company-details-form__dropdown"
-						initialSelected={ country }
-						options={ countryOptions }
-						onSelect={ ( option: any ) => {
-							setCountry( option.value );
-							// Reset the value of state since it no longer matches with the selected country.
-							setAddressState( '' );
-						} }
+			<form onSubmit={ handleSubmit }>
+				<FormFieldset>
+					<FormLabel htmlFor="name">{ translate( 'Company name' ) }</FormLabel>
+					<FormTextInput
+						id="name"
+						name="name"
+						required
+						value={ name }
+						onChange={ ( event: any ) => setName( event.target.value ) }
 						disabled={ isSubmitting }
-						isLoading={ countryOptions.length === 0 }
 					/>
-				) }
-
-				{ ! showCountryFields && <TextPlaceholder /> }
-			</FormFieldset>
-			<FormFieldset>
-				{ showCountryFields && stateOptions && (
-					<>
-						<FormLabel>{ translate( 'State' ) }</FormLabel>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="line1">{ translate( 'Address line 1' ) }</FormLabel>
+					<FormTextInput
+						id="line1"
+						name="line1"
+						value={ line1 }
+						onChange={ ( event: any ) => setLine1( event.target.value ) }
+						disabled={ isSubmitting }
+					/>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="line2">{ translate( 'Address line 2' ) }</FormLabel>
+					<FormTextInput
+						id="line2"
+						name="line2"
+						value={ line2 }
+						onChange={ ( event: any ) => setLine2( event.target.value ) }
+						disabled={ isSubmitting }
+					/>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="city">{ translate( 'City' ) }</FormLabel>
+					<FormTextInput
+						id="city"
+						name="city"
+						value={ city }
+						onChange={ ( event: any ) => setCity( event.target.value ) }
+						disabled={ isSubmitting }
+					/>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
+					<FormTextInput
+						id="postalCode"
+						name="postalCode"
+						value={ postalCode }
+						onChange={ ( event: any ) => setPostalCode( event.target.value ) }
+						disabled={ isSubmitting }
+					/>
+				</FormFieldset>
+				<FormFieldset>
+					<FormLabel>{ translate( 'Country' ) }</FormLabel>
+					{ showCountryFields && (
 						<SelectDropdown
 							className="company-details-form__dropdown"
-							initialSelected={ addressState }
-							options={ stateOptions }
+							initialSelected={ country }
+							options={ countryOptions }
 							onSelect={ ( option: any ) => {
-								setAddressState( option.value );
+								setCountry( option.value );
+								// Reset the value of state since it no longer matches with the selected country.
+								setAddressState( '' );
 							} }
 							disabled={ isSubmitting }
+							isLoading={ countryOptions.length === 0 }
 						/>
-					</>
-				) }
+					) }
 
-				{ ! showCountryFields && Object.keys( stateOptionsMap ).length === 0 && (
-					<TextPlaceholder />
-				) }
-			</FormFieldset>
-			<div className="company-details-form__controls">
-				<Button
-					primary
-					className="company-details-form__submit"
-					disabled={ isSubmitting }
-					busy={ isSubmitting }
-					onClick={ handleSubmit }
-				>
-					{ translate( 'Update details' ) }
-				</Button>
-			</div>
+					{ ! showCountryFields && <TextPlaceholder /> }
+				</FormFieldset>
+				<FormFieldset>
+					{ showCountryFields && stateOptions && (
+						<>
+							<FormLabel>{ translate( 'State' ) }</FormLabel>
+							<SelectDropdown
+								className="company-details-form__dropdown"
+								initialSelected={ addressState }
+								options={ stateOptions }
+								onSelect={ ( option: any ) => {
+									setAddressState( option.value );
+								} }
+								disabled={ isSubmitting }
+							/>
+						</>
+					) }
+
+					{ ! showCountryFields && Object.keys( stateOptionsMap ).length === 0 && (
+						<TextPlaceholder />
+					) }
+				</FormFieldset>
+				<div className="company-details-form__controls">
+					<Button
+						primary
+						type="submit"
+						className="company-details-form__submit"
+						disabled={ ! showCountryFields || isSubmitting }
+						busy={ isSubmitting }
+					>
+						{ translate( 'Update details' ) }
+					</Button>
+				</div>
+			</form>
 		</Card>
 	);
 }
