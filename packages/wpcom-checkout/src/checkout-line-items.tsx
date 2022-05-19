@@ -57,7 +57,6 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 	border-bottom: ${ ( { theme, total } ) =>
 		total ? 0 : '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
-
 	.checkout-line-item__price {
 		position: relative;
 	}
@@ -75,7 +74,6 @@ export const LineItem = styled( WPLineItem )< {
 	padding: 20px 0;
 	border-bottom: ${ ( { theme } ) => '1px solid ' + theme.colors.borderColorLight };
 	position: relative;
-
 	.checkout-line-item__price {
 		position: relative;
 	}
@@ -85,15 +83,12 @@ export const CouponLineItem = styled( WPCouponLineItem )< {
 	theme?: Theme;
 } >`
 	border-bottom: ${ ( { theme } ) => '1px solid ' + theme.colors.borderColorLight };
-
 	&[data-partner-coupon='true'] ${ NonProductLineItem } {
 		border-bottom: none;
 	}
-
 	&:last-child {
 		border-bottom: none;
 	}
-
 	.jetpack-partner-logo {
 		padding-bottom: 20px;
 	}
@@ -130,7 +125,6 @@ const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
 	margin-left: 12px;
 	font-size: 16px;
-
 	.rtl & {
 		margin-right: 12px;
 		margin-left: 0;
@@ -709,15 +703,15 @@ function FirstTermDiscountCallout( {
 	}
 
 	if ( isMonthlyProduct( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first month' ) }</DiscountCallout>;
+		return <DiscountCallout>{ translate( 'Discount for first month *' ) }</DiscountCallout>;
 	}
 
 	if ( isYearly( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
+		return <DiscountCallout>{ translate( 'Discount for first year *' ) }</DiscountCallout>;
 	}
 
 	if ( isBiennially( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first term' ) }</DiscountCallout>;
+		return <DiscountCallout>{ translate( 'Discount for first term *' ) }</DiscountCallout>;
 	}
 
 	return null;
@@ -775,7 +769,7 @@ function DomainDiscountCallout( {
 
 	const isFreeBundledDomainRegistration = product.is_bundled && product.item_subtotal_integer === 0;
 	if ( isFreeBundledDomainRegistration ) {
-		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
+		return <DiscountCallout>{ translate( 'Discount for first year *' ) }</DiscountCallout>;
 	}
 
 	const isFreeDomainMapping =
@@ -813,7 +807,7 @@ function GSuiteDiscountCallout( {
 		product.item_original_subtotal_integer < product.item_original_subtotal_integer &&
 		product.is_sale_coupon_applied
 	) {
-		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
+		return <DiscountCallout>{ translate( 'Discount for first year *' ) }</DiscountCallout>;
 	}
 	return null;
 }
