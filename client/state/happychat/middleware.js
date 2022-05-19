@@ -1,5 +1,5 @@
+import buildConnection from '@automattic/happychat-connection';
 import { get } from 'lodash';
-import buildConnection from 'calypso/lib/happychat/connection-async';
 import {
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_FOCUS,
@@ -13,7 +13,24 @@ import {
 	HAPPYCHAT_IO_SEND_TYPING,
 	HAPPYCHAT_IO_SET_CUSTOM_FIELDS,
 } from 'calypso/state/action-types';
-import { sendEvent, setChatCustomFields } from 'calypso/state/happychat/connection/actions';
+import {
+	receiveAccept,
+	receiveConnect,
+	receiveDisconnect,
+	receiveError,
+	receiveInit,
+	receiveLocalizedSupport,
+	receiveMessage,
+	receiveMessageOptimistic,
+	receiveMessageUpdate,
+	receiveReconnecting,
+	receiveStatus,
+	receiveToken,
+	receiveUnauthorized,
+	requestTranscript,
+	sendEvent,
+	setChatCustomFields,
+} from 'calypso/state/happychat/connection/actions';
 import isHappychatChatAssigned from 'calypso/state/happychat/selectors/is-happychat-chat-assigned';
 import isHappychatClientConnected from 'calypso/state/happychat/selectors/is-happychat-client-connected';
 
@@ -27,7 +44,22 @@ export const socketMiddleware = ( connection = null ) => {
 	// Allow a connection object to be specified for
 	// testing. If blank, use a real connection.
 	if ( connection == null ) {
-		connection = buildConnection();
+		connection = buildConnection(
+			receiveAccept,
+			receiveConnect,
+			receiveDisconnect,
+			receiveError,
+			receiveInit,
+			receiveLocalizedSupport,
+			receiveMessage,
+			receiveMessageOptimistic,
+			receiveMessageUpdate,
+			receiveReconnecting,
+			receiveStatus,
+			receiveToken,
+			receiveUnauthorized,
+			requestTranscript
+		);
 	}
 
 	return ( store ) => ( next ) => ( action ) => {

@@ -634,6 +634,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/happychat-connection@workspace:^, @automattic/happychat-connection@workspace:packages/happychat-connection":
+  version: 0.0.0-use.local
+  resolution: "@automattic/happychat-connection@workspace:packages/happychat-connection"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    debug: 4.3.3
+    react: ^17.0.2
+    socket.io-client: 2.3.0
+    typescript: ^4.5.5
+  peerDependencies:
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
 "@automattic/help-center@workspace:^, @automattic/help-center@workspace:packages/help-center":
   version: 0.0.0-use.local
   resolution: "@automattic/help-center@workspace:packages/help-center"
@@ -32207,7 +32224,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"socket.io-client@npm:^2.3.0":
+"socket.io-client@npm:2.3.0, socket.io-client@npm:^2.3.0":
   version: 2.3.0
   resolution: "socket.io-client@npm:2.3.0"
   dependencies:
@@ -36151,6 +36168,7 @@ swiper@4.5.1:
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/eslint-plugin-json": "workspace:^"
+    "@automattic/happychat-connection": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"

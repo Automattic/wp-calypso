@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import { buildConnection } from '@automattic/happychat-connection';
 import {
 	receiveAccept,
 	receiveConnect,
@@ -15,7 +16,23 @@ import {
 	requestTranscript,
 	sendTyping,
 } from 'calypso/state/happychat/connection/actions';
-import buildConnection from '../connection';
+
+const getConnection = () =>
+	buildConnection(
+		receiveAccept,
+		receiveConnect,
+		receiveDisconnect,
+		receiveError,
+		receiveInit,
+		receiveLocalizedSupport,
+		receiveMessage,
+		receiveReconnecting,
+		receiveStatus,
+		receiveToken,
+		receiveTranscript,
+		receiveUnauthorized,
+		requestTranscript
+	);
 
 describe( 'connection', () => {
 	describe( 'init', () => {
@@ -32,7 +49,7 @@ describe( 'connection', () => {
 			beforeEach( () => {
 				socket = new EventEmitter();
 				dispatch = jest.fn();
-				const connection = buildConnection();
+				const connection = getConnection();
 				const config = Promise.resolve( {
 					url: socket,
 					user: {
@@ -132,7 +149,7 @@ describe( 'connection', () => {
 			beforeEach( () => {
 				socket = new EventEmitter();
 				dispatch = jest.fn();
-				connection = buildConnection();
+				connection = getConnection();
 				openSocket = connection.init( dispatch, Promise.reject( rejectMsg ) );
 			} );
 
@@ -226,7 +243,7 @@ describe( 'connection', () => {
 		beforeEach( () => {
 			socket = new EventEmitter();
 			dispatch = jest.fn();
-			connection = buildConnection();
+			connection = getConnection();
 			config = Promise.resolve( {
 				url: socket,
 				user: {
@@ -291,7 +308,7 @@ describe( 'connection', () => {
 		beforeEach( () => {
 			socket = new EventEmitter();
 			dispatch = jest.fn();
-			connection = buildConnection();
+			connection = getConnection();
 			config = Promise.reject( 'no auth' );
 			connection.init( dispatch, config );
 		} );

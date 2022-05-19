@@ -2,7 +2,22 @@
  * This function creates a stub `Connection` object that dynamically loads the chunk
  * with the `happychat/connection` library only after the first method call.
  */
-export default function buildConnection() {
+export default function buildConnection(
+	receiveAccept,
+	receiveConnect,
+	receiveDisconnect,
+	receiveError,
+	receiveInit,
+	receiveLocalizedSupport,
+	receiveMessage,
+	receiveMessageOptimistic,
+	receiveMessageUpdate,
+	receiveReconnecting,
+	receiveStatus,
+	receiveToken,
+	receiveUnauthorized,
+	requestTranscript
+) {
 	// Promise with a lazy initialized `Connection`
 	let connection = null;
 
@@ -10,14 +25,34 @@ export default function buildConnection() {
 	// That's a factory function that creates and returns the `Connection` class instance.
 	function importConnectionLib() {
 		return import(
-			/* webpackChunkName: "async-load-calypso-lib-happychat-connection" */ 'calypso/lib/happychat/connection'
+			/* webpackChunkName: "async-load-calypso-lib-happychat-connection" */ './connection'
 		);
 	}
+	// function importConnectionLib() {
+	// 	return import(
+	// 		/* webpackChunkName: "async-load-calypso-lib-happychat-connection" */ 'calypso/lib/happychat/connection'
+	// 	);
+	// }
 
 	function getConnection() {
 		if ( ! connection ) {
 			connection = importConnectionLib().then( ( { default: createConnection } ) =>
-				createConnection()
+				createConnection(
+					receiveAccept,
+					receiveConnect,
+					receiveDisconnect,
+					receiveError,
+					receiveInit,
+					receiveLocalizedSupport,
+					receiveMessage,
+					receiveMessageOptimistic,
+					receiveMessageUpdate,
+					receiveReconnecting,
+					receiveStatus,
+					receiveToken,
+					receiveUnauthorized,
+					requestTranscript
+				)
 			);
 		}
 		return connection;

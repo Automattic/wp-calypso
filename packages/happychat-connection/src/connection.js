@@ -1,21 +1,5 @@
 import debugFactory from 'debug';
 import IO from 'socket.io-client';
-import {
-	receiveAccept,
-	receiveConnect,
-	receiveDisconnect,
-	receiveError,
-	receiveInit,
-	receiveLocalizedSupport,
-	receiveMessage,
-	receiveMessageOptimistic,
-	receiveMessageUpdate,
-	receiveReconnecting,
-	receiveStatus,
-	receiveToken,
-	receiveUnauthorized,
-	requestTranscript,
-} from 'calypso/state/happychat/connection/actions';
 
 const debug = debugFactory( 'calypso:happychat:connection' );
 
@@ -28,6 +12,36 @@ const buildConnection = ( socket ) =>
 		: socket; // If socket is not an url, use it directly. Useful for testing.
 
 class Connection {
+	constructor(
+		receiveAccept,
+		receiveConnect,
+		receiveDisconnect,
+		receiveInit,
+		receiveLocalizedSupport,
+		receiveMessage,
+		receiveMessageOptimistic,
+		receiveMessageUpdate,
+		receiveReconnecting,
+		receiveStatus,
+		receiveToken,
+		receiveUnauthorized,
+		requestTranscript
+	) {
+		this.receiveAccept = receiveAccept;
+		this.receiveConnect = receiveConnect;
+		this.receiveDisconnect = receiveDisconnect;
+		this.receiveInit = receiveInit;
+		this.receiveLocalizedSupport = receiveLocalizedSupport;
+		this.receiveMessage = receiveMessage;
+		this.receiveMessageOptimistic = receiveMessageOptimistic;
+		this.receiveMessageUpdate = receiveMessageUpdate;
+		this.receiveReconnecting = receiveReconnecting;
+		this.receiveStatus = receiveStatus;
+		this.receiveToken = receiveToken;
+		this.receiveUnauthorized = receiveUnauthorized;
+		this.requestTranscript = requestTranscript;
+	}
+
 	/**
 	 * Init the SockeIO connection: check user authorization and bind socket events
 	 *
@@ -49,31 +63,35 @@ class Connection {
 					const socket = buildConnection( url );
 
 					socket
-						.once( 'connect', () => dispatch( receiveConnect() ) )
+						.once( 'connect', () => dispatch( this.receiveConnect() ) )
 						.on( 'token', ( handler ) => {
-							dispatch( receiveToken() );
+							dispatch( this.receiveToken() );
 							handler( { signer_user_id, jwt, locale, groups, skills } );
 						} )
 						.on( 'init', () => {
-							dispatch( receiveInit( { signer_user_id, locale, groups, skills, geoLocation } ) );
-							dispatch( requestTranscript() );
+							dispatch(
+								this.receiveInit( { signer_user_id, locale, groups, skills, geoLocation } )
+							);
+							dispatch( this.requestTranscript() );
 							resolve( socket );
 						} )
 						.on( 'unauthorized', () => {
 							socket.close();
-							dispatch( receiveUnauthorized( 'User is not authorized' ) );
+							dispatch( this.receiveUnauthorized( 'User is not authorized' ) );
 							reject( 'user is not authorized' );
 						} )
-						.on( 'disconnect', ( reason ) => dispatch( receiveDisconnect( reason ) ) )
-						.on( 'reconnecting', () => dispatch( receiveReconnecting() ) )
-						.on( 'status', ( status ) => dispatch( receiveStatus( status ) ) )
-						.on( 'accept', ( accept ) => dispatch( receiveAccept( accept ) ) )
-						.on( 'localized-support', ( accept ) => dispatch( receiveLocalizedSupport( accept ) ) )
-						.on( 'message', ( message ) => dispatch( receiveMessage( message ) ) )
-						.on( 'message.optimistic', ( message ) =>
-							dispatch( receiveMessageOptimistic( message ) )
+						.on( 'disconnect', ( reason ) => dispatch( this.receiveDisconnect( reason ) ) )
+						.on( 'reconnecting', () => dispatch( this.receiveReconnecting() ) )
+						.on( 'status', ( status ) => dispatch( this.receiveStatus( status ) ) )
+						.on( 'accept', ( accept ) => dispatch( this.receiveAccept( accept ) ) )
+						.on( 'localized-support', ( accept ) =>
+							dispatch( this.receiveLocalizedSupport( accept ) )
 						)
-						.on( 'message.update', ( message ) => dispatch( receiveMessageUpdate( message ) ) )
+						.on( 'message', ( message ) => dispatch( this.receiveMessage( message ) ) )
+						.on( 'message.optimistic', ( message ) =>
+							dispatch( this.receiveMessageOptimistic( message ) )
+						)
+						.on( 'message.update', ( message ) => dispatch( this.receiveMessageUpdate( message ) ) )
 						.on( 'reconnect_attempt', () => {
 							socket.io.opts.transports = [ 'polling', 'websocket' ];
 						} );
@@ -100,10 +118,11 @@ class Connection {
 		if ( ! this.openSocket ) {
 			return;
 		}
+
 		return this.openSocket.then(
 			( socket ) => socket.emit( action.event, action.payload ),
 			( e ) => {
-				this.dispatch( receiveError( 'failed to send ' + action.event + ': ' + e ) );
+				this.dispatch( this.receiveError( 'failed to send ' + action.event + ': ' + e ) );
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
 			}
@@ -158,7 +177,7 @@ class Connection {
 					( result ) => this.dispatch( action.callback( result ) ),
 					( e ) => {
 						if ( e.message !== 'timeout' ) {
-							this.dispatch( receiveError( action.event + ' request failed: ' + e.message ) );
+							this.dispatch( this.receiveError( action.event + ' request failed: ' + e.message ) );
 						}
 					}
 				);
@@ -166,7 +185,7 @@ class Connection {
 				return promiseRace;
 			},
 			( e ) => {
-				this.dispatch( receiveError( 'failed to send ' + action.event + ': ' + e ) );
+				this.dispatch( this.receiveError( 'failed to send ' + action.event + ': ' + e ) );
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
 			}
@@ -174,4 +193,35 @@ class Connection {
 	}
 }
 
-export default () => new Connection();
+export default (
+	receiveAccept,
+	receiveConnect,
+	receiveDisconnect,
+	receiveError,
+	receiveInit,
+	receiveLocalizedSupport,
+	receiveMessage,
+	receiveMessageOptimistic,
+	receiveMessageUpdate,
+	receiveReconnecting,
+	receiveStatus,
+	receiveToken,
+	receiveUnauthorized,
+	requestTranscript
+) =>
+	new Connection(
+		receiveAccept,
+		receiveConnect,
+		receiveDisconnect,
+		receiveError,
+		receiveInit,
+		receiveLocalizedSupport,
+		receiveMessage,
+		receiveMessageOptimistic,
+		receiveMessageUpdate,
+		receiveReconnecting,
+		receiveStatus,
+		receiveToken,
+		receiveUnauthorized,
+		requestTranscript
+	);

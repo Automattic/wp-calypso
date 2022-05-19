@@ -138,6 +138,7 @@
 		"@automattic/color-studio": "2.5.0",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
+		"@automattic/happychat-connection": "workspace:^",
 		"@automattic/help-center": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/languages": "workspace:^",
