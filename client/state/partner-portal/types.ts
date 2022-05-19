@@ -60,12 +60,12 @@ export interface APIPartnerKey {
 }
 
 export interface APIPartnerAddress {
-	country: string | null;
-	city: string | null;
-	line1: string | null;
-	line2: string | null;
-	postal_code: string | number | null;
-	state: string | null;
+	country: string;
+	city: string;
+	line1: string;
+	line2: string;
+	postal_code: string;
+	state: string;
 }
 
 export interface APIPartner {
@@ -151,12 +151,12 @@ export interface PartnerKey {
 }
 
 export interface PartnerAddress {
-	country: string | null;
-	city: string | null;
-	line1: string | null;
-	line2: string | null;
-	postal_code: string | number | null;
-	state: string | null;
+	country: string;
+	city: string;
+	line1: string;
+	line2: string;
+	postalCode: string;
+	state: string;
 }
 
 export interface Partner {
