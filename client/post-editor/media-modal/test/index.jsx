@@ -1,13 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { translate } from 'i18n-calypso';
-import accept from 'calypso/lib/accept';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { EditorMediaModal } from '../';
 
 jest.mock( 'component-closest', () => {} );
@@ -61,12 +57,12 @@ describe( 'EditorMediaModal', () => {
 	let changeMediaSource;
 	let baseProps;
 
-	useSandbox( ( sandbox ) => {
-		spy = sandbox.spy();
-		deleteMedia = sandbox.stub();
-		onClose = sandbox.stub();
-		selectMediaItems = sandbox.stub();
-		changeMediaSource = sandbox.stub();
+	beforeEach( () => {
+		spy = jest.fn();
+		deleteMedia = jest.fn();
+		onClose = jest.fn();
+		selectMediaItems = jest.fn();
+		changeMediaSource = jest.fn();
 		baseProps = {
 			selectMediaItems,
 			site: DUMMY_SITE,
@@ -79,12 +75,12 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	afterEach( () => {
-		accept.resetHistory();
+		jest.clearAllMocks();
 	} );
 
 	test( 'When `single` selection screen chosen should initialise with no items selected', () => {
 		shallow( <EditorMediaModal { ...baseProps } single={ true } view={ null } /> ).instance();
-		expect( selectMediaItems ).to.have.been.calledWith( DUMMY_SITE.ID, [] );
+		expect( selectMediaItems ).toHaveBeenCalledWith( DUMMY_SITE.ID, [] );
 	} );
 
 	test( 'should prompt to delete a single item from the list view', () => {
@@ -95,14 +91,9 @@ describe( 'EditorMediaModal', () => {
 		).instance();
 		tree.deleteMedia();
 
-		expect( accept ).to.have.been.calledWith(
-			'Are you sure you want to delete this item? ' +
-				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
-				'This cannot be undone.'
-		);
 		return new Promise( ( resolve ) => {
 			process.nextTick( function () {
-				expect( deleteMedia ).to.have.been.calledWith(
+				expect( deleteMedia ).toHaveBeenCalledWith(
 					DUMMY_SITE.ID,
 					media.map( ( { ID } ) => ID )
 				);
@@ -115,15 +106,9 @@ describe( 'EditorMediaModal', () => {
 		const tree = shallow( <EditorMediaModal { ...baseProps } /> ).instance();
 		tree.deleteMedia();
 
-		expect( accept ).to.have.been.calledWith(
-			'Are you sure you want to delete these items? ' +
-				'Deleted media will no longer appear anywhere on your website, including all posts, pages, and widgets. ' +
-				'This cannot be undone.'
-		);
-
 		return new Promise( ( resolve ) => {
 			process.nextTick( function () {
-				expect( deleteMedia ).to.have.been.calledWith(
+				expect( deleteMedia ).toHaveBeenCalledWith(
 					DUMMY_SITE.ID,
 					DUMMY_MEDIA.map( ( { ID } ) => ID )
 				);
@@ -144,7 +129,7 @@ describe( 'EditorMediaModal', () => {
 
 		const buttons = tree.getModalButtons();
 
-		expect( buttons ).to.be.undefined;
+		expect( buttons ).toBeUndefined();
 	} );
 
 	test( 'should show a Copy to media library button when viewing external media (no selection)', () => {
@@ -160,8 +145,8 @@ describe( 'EditorMediaModal', () => {
 		tree.setState( { source: 'external' } );
 		const buttons = tree.getModalButtons();
 
-		expect( buttons.length ).to.be.equals( 2 );
-		expect( buttons[ 1 ].label ).to.be.equals( 'Copy to media library' );
+		expect( buttons.length ).toEqual( 2 );
+		expect( buttons[ 1 ].label ).toEqual( 'Copy to media library' );
 	} );
 
 	test( 'should show a Copy to media library button when 1 external image is selected', () => {
@@ -177,8 +162,8 @@ describe( 'EditorMediaModal', () => {
 		tree.setState( { source: 'external' } );
 		const buttons = tree.getModalButtons();
 
-		expect( buttons.length ).to.be.equals( 2 );
-		expect( buttons[ 1 ].label ).to.be.equals( 'Copy to media library' );
+		expect( buttons.length ).toEqual( 2 );
+		expect( buttons[ 1 ].label ).toEqual( 'Copy to media library' );
 	} );
 
 	test( 'should show a copy button when 1 external video is selected', () => {
@@ -194,8 +179,8 @@ describe( 'EditorMediaModal', () => {
 		tree.setState( { source: 'external' } );
 		const buttons = tree.getModalButtons();
 
-		expect( buttons.length ).to.be.equals( 2 );
-		expect( buttons[ 1 ].label ).to.be.equals( 'Copy to media library' );
+		expect( buttons.length ).toEqual( 2 );
+		expect( buttons[ 1 ].label ).toEqual( 'Copy to media library' );
 	} );
 
 	test( 'should show a copy button when 2 or more external media are selected', () => {
@@ -206,8 +191,8 @@ describe( 'EditorMediaModal', () => {
 		tree.setState( { source: 'external' } );
 		const buttons = tree.getModalButtons();
 
-		expect( buttons.length ).to.be.equals( 2 );
-		expect( buttons[ 1 ].label ).to.be.equals( 'Copy to media library' );
+		expect( buttons.length ).toEqual( 2 );
+		expect( buttons[ 1 ].label ).toEqual( 'Copy to media library' );
 	} );
 
 	test( 'should show a continue button when multiple images are selected', () => {
@@ -217,7 +202,7 @@ describe( 'EditorMediaModal', () => {
 
 		const buttons = tree.getModalButtons();
 
-		expect( buttons[ 1 ].label ).to.be.equals( 'Continue' );
+		expect( buttons[ 1 ].label ).toEqual( 'Continue' );
 	} );
 
 	test( 'should show an insert button if none or one local items are selected', () => {
@@ -232,7 +217,7 @@ describe( 'EditorMediaModal', () => {
 
 		const buttons = tree.getModalButtons();
 
-		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
+		expect( buttons[ 1 ].label ).toEqual( 'Insert' );
 	} );
 
 	test( 'should show an insert button if multiple images are selected when gallery view is disabled', () => {
@@ -247,7 +232,7 @@ describe( 'EditorMediaModal', () => {
 
 		const buttons = tree.getModalButtons();
 
-		expect( buttons[ 1 ].label ).to.be.equals( 'Insert' );
+		expect( buttons[ 1 ].label ).toEqual( 'Insert' );
 	} );
 
 	describe( '#confirmSelection()', () => {
@@ -260,7 +245,7 @@ describe( 'EditorMediaModal', () => {
 
 			return new Promise( ( resolve ) => {
 				process.nextTick( () => {
-					expect( onClose ).to.have.been.calledWith( {
+					expect( onClose ).toHaveBeenCalledWith( {
 						items: DUMMY_MEDIA,
 						settings: undefined,
 						type: 'media',
@@ -292,7 +277,7 @@ describe( 'EditorMediaModal', () => {
 
 			return new Promise( ( resolve ) => {
 				process.nextTick( () => {
-					expect( onClose ).to.have.been.calledWith( transientItems, 'external' );
+					expect( onClose ).toHaveBeenCalledWith( transientItems, 'external' );
 					resolve();
 				} );
 			} );
@@ -321,7 +306,7 @@ describe( 'EditorMediaModal', () => {
 			];
 			return new Promise( ( resolve ) => {
 				process.nextTick( () => {
-					expect( onClose ).to.have.been.calledWith( transientItems, 'external' );
+					expect( onClose ).toHaveBeenCalledWith( transientItems, 'external' );
 					resolve();
 				} );
 			} );
