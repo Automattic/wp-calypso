@@ -51,6 +51,7 @@ import {
 	requestThemeFilters,
 	getRecommendedThemes,
 	receiveRecommendedThemes,
+	updateThemes,
 } from '../actions';
 
 expect.extend( {
@@ -577,6 +578,75 @@ describe( 'actions', () => {
 				trackingData
 			)( spy ).then( () => {
 				expect( spy.mock.calls[ 1 ][ 0 ].name ).toEqual( 'themeActivatedThunk' );
+			} );
+		} );
+
+		test( 'should dispatch theme activation failure action when request completes', () => {
+			const themeActivationFailure = {
+				error: expect.objectContaining( { message: 'The specified theme was not found' } ),
+				siteId: 2211667,
+				themeId: 'badTheme',
+				type: THEME_ACTIVATE_FAILURE,
+			};
+
+			return activateTheme(
+				'badTheme',
+				2211667,
+				trackingData
+			)( spy ).then( () => {
+				expect( spy ).toBeCalledWith( themeActivationFailure );
+			} );
+		} );
+	} );
+
+	describe( '#updateThemes()', () => {
+		const themes = [
+			{
+				id: 'storefront',
+				version: '4.1.0',
+			},
+			{
+				id: 'twentysixteen',
+				version: '5.3.0',
+			},
+		];
+
+		const successfulParameters = {
+			themes: [ 'storefront', 'twentysixteen' ],
+			action: 'update',
+			autoupdate: false,
+		};
+
+		const badParameters = { themes: [ 'unknown' ] };
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/2211667/themes', successfulParameters )
+				.reply( 200, { themes } )
+				.post( '/rest/v1.1/sites/2211667/themes', badParameters )
+				.reply( 404, {
+					error: 'unknown_theme',
+					message: 'The theme directory "unknown" does not exist.',
+				} );
+		} );
+
+		test( 'Theme update action should be triggered', () => {
+			updateThemes( [ 'storefront', 'twentysixteen' ], 2211667 )( spy );
+
+			expect( spy ).toBeCalledWith( {
+				type: THEME_UPDATE,
+				siteId: 2211667,
+				themeSlugs: [ 'storefront', 'twentysixteen' ],
+			} );
+		} );
+
+		test( 'should dispatch theme activation success thunk when request completes', () => {
+			return activateTheme(
+				[ 'storefront', 'twentysixteen' ],
+				2211667
+			)( spy ).then( () => {
+				expect( spy.mock.calls[ 1 ][ 0 ].name ).toEqual( 'xx' );
 			} );
 		} );
 
