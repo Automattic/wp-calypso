@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { mount, shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import CloseOnEscape from '../';
 
 const simulateEscapeKeydown = () =>
@@ -10,8 +10,8 @@ const simulateEscapeKeydown = () =>
 describe( 'CloseOnEscape', () => {
 	describe( 'rendering', () => {
 		test( 'renders nothing', () => {
-			const wrapper = shallow( <CloseOnEscape /> );
-			expect( wrapper.type() ).toBe( null );
+			const { container } = render( <CloseOnEscape /> );
+			expect( container ).toBeEmptyDOMElement();
 		} );
 	} );
 
@@ -19,7 +19,7 @@ describe( 'CloseOnEscape', () => {
 		test( 'calls the `onEscape` method of stacked components in LIFO order on each escape keydown', () => {
 			const onEscapeSpy = jest.fn();
 
-			const wrapper1 = mount(
+			const wrapper1 = render(
 				<CloseOnEscape
 					onEscape={ function () {
 						onEscapeSpy( 1 );
@@ -28,7 +28,7 @@ describe( 'CloseOnEscape', () => {
 				/>
 			);
 
-			const wrapper2 = mount(
+			const wrapper2 = render(
 				<CloseOnEscape
 					onEscape={ function () {
 						onEscapeSpy( 2 );
