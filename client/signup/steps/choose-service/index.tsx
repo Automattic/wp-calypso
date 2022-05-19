@@ -79,7 +79,7 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 			key: 'builtby',
 			title: translate( 'Built by WordPress.com - Concierge' ),
 			description: translate(
-				'Curabitur elementum lectus mi, quis venenatis metus tincidunt ac. Integer non lorem erat.'
+				'Perfect for those looking for advanced features (e.g., e-commerce, migrations), customized designs, or who prefer a custom, consultative experience.'
 			),
 			icon: headset,
 			value: 'builtby',
