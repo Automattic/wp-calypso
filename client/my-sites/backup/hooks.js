@@ -1,6 +1,6 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
-import { useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import {
 	SUCCESSFUL_BACKUP_ACTIVITIES,
@@ -11,7 +11,6 @@ import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activi
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 
 const byActivityTsDescending = ( a, b ) => ( a.activityTs > b.activityTs ? -1 : 1 );
 
@@ -62,12 +61,6 @@ export const useFirstMatchingBackupAttempt = (
 	siteId,
 	{ before, after, successOnly, sortOrder } = {}
 ) => {
-	const dispatch = useDispatch();
-
-	useEffect( () => {
-		dispatch( fetchSiteFeatures( siteId ) );
-	}, [ siteId ] );
-
 	const hasRealtimeBackups = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS )
 	);
