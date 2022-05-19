@@ -119,3 +119,11 @@ button {
 		--color-accent-60: #0e64a5;
 	}
 }
+
+@media ( max-width: 660px ) {
+	body.is-section-stepper .wpcom-site {
+		.inline-help {
+			bottom: 74px;
+		}
+	}
+}
