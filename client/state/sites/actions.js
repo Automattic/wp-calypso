@@ -135,8 +135,9 @@ export function requestSite( siteFragment ) {
 		const result = doRequest( false ).catch( ( error ) => {
 			// if there is Jetpack JSON API module error, retry with force: 'wpcom'
 			if (
-				error?.status === 403 &&
-				error?.message === 'API calls to this blog have been disabled.'
+				( error?.status === 403 &&
+					error?.message === 'API calls to this blog have been disabled.' ) ||
+				( error?.status === 400 && error?.name === 'ApiNotFoundError' )
 			) {
 				return doRequest( true );
 			}
