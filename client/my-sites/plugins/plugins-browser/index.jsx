@@ -442,19 +442,41 @@ const SearchListView = ( {
 
 const FullListView = ( { category, siteSlug, sites, billingPeriod, setBillingPeriod } ) => {
 	const isPaidCategory = category === 'paid';
-	const { plugins, isFetching, fetchNextPage } = usePlugins( { category, infinite: true } );
-
+	const { plugins, isFetching, fetchNextPage, pagination } = usePlugins( {
+		category,
+		infinite: true,
+	} );
+	const translate = useTranslate();
 	const categories = useCategories();
-	const categoryName = [ 'paid', 'popular' ].includes( category )
-		? categories[ category ]?.name
-		: null;
+	const categoryName = categories[ category ]?.name;
+
+	let title = '';
+	if ( categoryName && pagination ) {
+		title = translate(
+			'Found %(total)s plugin under "%(categoryName)s"',
+			'Found %(total)s plugins under "%(categoryName)s"',
+			{
+				count: pagination.results,
+				textOnly: true,
+				args: {
+					total: pagination.results,
+					categoryName,
+				},
+			}
+		);
+	}
 
 	return (
 		<>
 			<PluginsBrowserList
 				plugins={ plugins }
 				listName={ category }
-				title={ categoryName }
+				subtitle={
+					<>
+						{ title }
+						<ClearSearch />
+					</>
+				}
 				site={ siteSlug }
 				showPlaceholders={ isFetching }
 				currentSites={ sites }
