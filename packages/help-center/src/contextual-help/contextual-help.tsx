@@ -15,7 +15,7 @@ type LinksForSection = {
 
 /* eslint-disable inclusive-language/use-inclusive-words */
 // All usage of the word "master" here refers to the verb (ie. "to learn"), not a synonym of "primary".
-const defaultFallbackLinks = [
+export const defaultFallbackLinks = [
 	{
 		get link() {
 			return localizeUrl(
@@ -93,7 +93,7 @@ const defaultFallbackLinks = [
 	},
 ];
 
-const bloggerFallbackLinks = [
+export const bloggerFallbackLinks = [
 	{
 		get link() {
 			return localizeUrl( 'https://wordpress.com/support/posts/' );
@@ -144,7 +144,7 @@ const bloggerFallbackLinks = [
 	},
 ];
 
-const contextLinksForSection: Record< string, LinksForSection | LinksForSection[] > = {
+export const contextLinksForSection: Record< string, LinksForSection | LinksForSection[] > = {
 	stats: [
 		{
 			get link() {
@@ -743,9 +743,9 @@ const contextLinksForSection: Record< string, LinksForSection | LinksForSection[
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/user-roles/' );
+				return localizeUrl( 'https://wordpress.com/support/adding-users/' );
 			},
-			post_id: 1221,
+			post_id: 2160,
 			get title() {
 				return __( 'Inviting Contributors, Followers, and Viewers', __i18n_text_domain__ );
 			},
@@ -1874,7 +1874,7 @@ console.log( data );
 ```
 */
 
-const videosForSection = {
+export const videosForSection = {
 	sharing: [
 		{
 			type: RESULT_VIDEO,
@@ -2431,7 +2431,7 @@ const videosForSection = {
 	],
 };
 
-const toursForSection = {
+export const toursForSection = {
 	media: [
 		{
 			type: RESULT_TOUR,
