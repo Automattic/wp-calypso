@@ -103,7 +103,6 @@ RUN apt update \
 		libxss1 \
 		libxss1 \
 		libxtst6 \
-		ttf-ubuntu-font-family \
 		xdg-utils \
 		xfonts-100dpi \
 		xfonts-75dpi \
