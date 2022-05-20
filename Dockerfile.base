@@ -103,6 +103,7 @@ RUN apt update \
 		libxss1 \
 		libxss1 \
 		libxtst6 \
+		ttf-ubuntu-font-family \
 		xdg-utils \
 		xfonts-100dpi \
 		xfonts-75dpi \
@@ -110,13 +111,6 @@ RUN apt update \
 		xfonts-cyrillic \
 		xfonts-scalable \
 		xvfb
-
-WORKDIR /usr/share/fonts/opentype/noto
-RUN wget -O noto.zip "https://github.com/googlei18n/noto-cjk/blob/master/NotoSansCJK.ttc.zip?raw=true" \
-    && apt-get install -y unzip \
-    && unzip noto.zip \
-    && rm noto.zip \
-    && fc-cache -f -v
 
 RUN wget --no-verbose https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
 	&& apt-get install -y ./google-chrome-stable_current_amd64.deb \
