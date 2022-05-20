@@ -63,7 +63,7 @@ const fetchAuthState = async ( setAuthState, setTokenData, tokenData, anonymousU
 
 	const responseData = await getLoginActionResponse( 'qr-code-authentication-endpoint', {
 		anon_id: anonymousUserId,
-		token: token,
+		token,
 		data: encrypted,
 	} );
 
