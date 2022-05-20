@@ -1,6 +1,6 @@
 import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import classnames from 'classnames';
-import { ReactChild, useState } from 'react';
+import { ReactChild, useState, useEffect } from 'react';
 
 import './style.scss';
 
@@ -18,6 +18,11 @@ export default function SwipeGroup( {
 	const classes = classnames( 'responsive-toolbar-group__swipe', className );
 
 	const [ activeIndex, setActiveIndex ] = useState< number >( initialActiveIndex );
+
+	// Reset active on prop change from above
+	useEffect( () => {
+		setActiveIndex( initialActiveIndex );
+	}, [ initialActiveIndex ] );
 
 	return (
 		<div className={ classes }>
