@@ -84,29 +84,29 @@ describe( '#retryOnFailure', () => {
 		expect(
 			retryIt( { ...inbound, originalRequest: inbound.store.dispatch.mock.lastCall[ 0 ] } )
 		).toHaveProperty( 'shouldAbort', true );
-		expect( inbound.store.dispatch.mock.calls.length ).toEqual( 1 );
+		expect( inbound.store.dispatch ).toBeCalledTimes( 1 );
 
 		jest.advanceTimersByTime( 1337 );
-		expect( inbound.store.dispatch.mock.calls.length ).toEqual( 2 );
+		expect( inbound.store.dispatch ).toBeCalledTimes( 2 );
 		expect( inbound.store.dispatch ).toBeCalledWith( withRetries( 2 )( originalRequest ) );
 
 		// retry 3
 		expect(
 			retryIt( { ...inbound, originalRequest: inbound.store.dispatch.mock.lastCall[ 0 ] } )
 		).toHaveProperty( 'shouldAbort', true );
-		expect( inbound.store.dispatch.mock.calls.length ).toEqual( 2 );
+		expect( inbound.store.dispatch ).toBeCalledTimes( 2 );
 
 		jest.advanceTimersByTime( 1337 );
-		expect( inbound.store.dispatch.mock.calls.length ).toEqual( 3 );
+		expect( inbound.store.dispatch ).toBeCalledTimes( 3 );
 		expect( inbound.store.dispatch ).toBeCalledWith( withRetries( 3 )( originalRequest ) );
 
 		// retry 4
 		const finalRequest = { ...inbound, originalRequest: inbound.store.dispatch.mock.lastCall[ 0 ] };
 		expect( retryIt( finalRequest ) ).toEqual( finalRequest );
-		expect( inbound.store.dispatch.mock.calls.length ).toEqual( 3 );
+		expect( inbound.store.dispatch ).toBeCalledTimes( 3 );
 
 		jest.advanceTimersByTime( 1337 );
-		expect( inbound.store.dispatch.mock.calls.length ).toEqual( 3 );
+		expect( inbound.store.dispatch ).toBeCalledTimes( 3 );
 	} );
 
 	test( 'should handle `exponentialBackoff`', () => {
