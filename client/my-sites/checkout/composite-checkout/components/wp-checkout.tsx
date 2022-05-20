@@ -686,7 +686,7 @@ const SubmitButtonFooter = () => {
 	} )
 		? translate( '* All discounts are for the first term only, renewals are at full price.', {
 				comment:
-					'*, the asterisk, is used to refer to a comment at the bottom of the page that relates to the text before it',
+					'*, the asterisk, is used to indicate it refers to any text with an asterisk after it previously on the page',
 		  } )
 		: null;
 
