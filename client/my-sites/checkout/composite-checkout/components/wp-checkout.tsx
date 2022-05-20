@@ -684,7 +684,10 @@ const SubmitButtonFooter = () => {
 	const disclaimerContent = responseCart?.products?.some( ( product ) => {
 		return !! product?.introductory_offer_terms?.enabled;
 	} )
-		? translate( '* All discounts are for the first term only, renewals are at full price.' )
+		? translate( '* All discounts are for the first term only, renewals are at full price.', {
+				comment:
+					'*, the asterisk, is used to refer to a comment at the bottom of the page that relates to the text before it',
+		  } )
 		: null;
 
 	let imgSrc = badgeGenericSrc;
