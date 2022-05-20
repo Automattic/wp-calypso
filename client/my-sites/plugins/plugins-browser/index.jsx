@@ -322,12 +322,15 @@ const ClearSearch = () => {
 	const translate = useTranslate();
 
 	return (
-		<a
-			className={ 'plugins-browser__clear-filters' }
-			href={ '/plugins' + ( siteSlug ? '/' + siteSlug : '' ) }
-		>
-			{ translate( 'Clear' ) }
-		</a>
+		<>
+			&nbsp;
+			<a
+				className={ 'plugins-browser__clear-filters' }
+				href={ '/plugins' + ( siteSlug ? '/' + siteSlug : '' ) }
+			>
+				{ translate( 'Clear' ) }
+			</a>
+		</>
 	);
 };
 const SearchListView = ( {
