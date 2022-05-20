@@ -25,7 +25,7 @@ export function MasterbarCartButton( {
 	goToCheckout,
 	onRemoveProduct,
 	onRemoveCoupon,
-}: MasterbarCartButtonProps ): JSX.Element | null {
+}: MasterbarCartButtonProps ) {
 	const { responseCart, reloadFromServer } = useShoppingCart(
 		selectedSiteId ? selectedSiteId : undefined
 	);

@@ -67,7 +67,7 @@ function DnsMenuOptionsButton( {
 	dispatchUpdateDns,
 	dispatchSuccessNotice,
 	dispatchErrorNotice,
-}: DnsMenuOptionsButtonProps ): JSX.Element {
+}: DnsMenuOptionsButtonProps ) {
 	const { __ } = useI18n();
 
 	const [ isMenuVisible, setMenuVisible ] = useState( false );
@@ -170,44 +170,40 @@ function DnsMenuOptionsButton( {
 		TITAN: __( 'Professional Email' ),
 	};
 
-	const emailDnsDialogs = emailProviderKeys.map(
-		( emailProviderKey: EmailProviderKey ): JSX.Element => {
-			return (
-				<RestoreEmailDnsDialog
-					key={ 'email-dns-restore-dialog-' + emailProviderKey }
-					emailServiceName={ productNames[ emailProviderKey ] }
-					isVisible={ emailRestoreDialogVisibility[ emailProviderKey ] }
-					onClose={ ( { shouldRestoreEmailDns }: RestoreEmailDnsDialogResult ) =>
-						closeEmailRestoreDialog( { providerKey: emailProviderKey, shouldRestoreEmailDns } )
-					}
-				/>
-			);
-		}
-	);
+	const emailDnsDialogs = emailProviderKeys.map( ( emailProviderKey: EmailProviderKey ) => {
+		return (
+			<RestoreEmailDnsDialog
+				key={ 'email-dns-restore-dialog-' + emailProviderKey }
+				emailServiceName={ productNames[ emailProviderKey ] }
+				isVisible={ emailRestoreDialogVisibility[ emailProviderKey ] }
+				onClose={ ( { shouldRestoreEmailDns }: RestoreEmailDnsDialogResult ) =>
+					closeEmailRestoreDialog( { providerKey: emailProviderKey, shouldRestoreEmailDns } )
+				}
+			/>
+		);
+	} );
 
-	const emailRestoreItems = emailProviderKeys.map(
-		( emailProviderKey: EmailProviderKey ): JSX.Element | null => {
-			if (
-				domain === undefined ||
-				! emailProviderConfig[ emailProviderKey ].shouldRestoreOptionBeEnabled( domain )
-			) {
-				return null;
-			}
-
-			return (
-				<PopoverMenuItem
-					key={ 'email-dns-restore-menu-item-' + emailProviderKey }
-					onClick={ () => showEmailRestoreDialog( emailProviderKey ) }
-				>
-					<Icon icon={ redo } size={ 14 } className="gridicon" viewBox="2 2 20 20" />
-					{
-						/* translators: %s is an email product name like Professional Email, Google Workspace, or Email Forwarding */
-						sprintf( __( 'Restore DNS records for %s' ), productNames[ emailProviderKey ] )
-					}
-				</PopoverMenuItem>
-			);
+	const emailRestoreItems = emailProviderKeys.map( ( emailProviderKey: EmailProviderKey ) => {
+		if (
+			domain === undefined ||
+			! emailProviderConfig[ emailProviderKey ].shouldRestoreOptionBeEnabled( domain )
+		) {
+			return null;
 		}
-	);
+
+		return (
+			<PopoverMenuItem
+				key={ 'email-dns-restore-menu-item-' + emailProviderKey }
+				onClick={ () => showEmailRestoreDialog( emailProviderKey ) }
+			>
+				<Icon icon={ redo } size={ 14 } className="gridicon" viewBox="2 2 20 20" />
+				{
+					/* translators: %s is an email product name like Professional Email, Google Workspace, or Email Forwarding */
+					sprintf( __( 'Restore DNS records for %s' ), productNames[ emailProviderKey ] )
+				}
+			</PopoverMenuItem>
+		);
+	} );
 
 	return (
 		<>

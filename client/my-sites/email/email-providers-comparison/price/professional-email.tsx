@@ -30,7 +30,7 @@ const ProfessionalEmailPrice = ( {
 	domain,
 	intervalLength,
 	isDomainInCart,
-}: ProfessionalEmailPriceProps ): JSX.Element | null => {
+}: ProfessionalEmailPriceProps ) => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	const productSlug = getTitanProductSlug( intervalLength );

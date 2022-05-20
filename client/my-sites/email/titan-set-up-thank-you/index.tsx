@@ -31,7 +31,7 @@ const TitanSetUpThankYou = ( {
 	emailAddress,
 	subtitle,
 	title,
-}: TitanSetUpThankYouProps ): JSX.Element => {
+}: TitanSetUpThankYouProps ) => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = selectedSite?.slug ?? null;

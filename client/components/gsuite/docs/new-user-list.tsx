@@ -23,7 +23,7 @@ const domainTwo: any = {
 	supportsGdprConsentManagement: true,
 };
 
-function GSuiteNewUserListExample(): JSX.Element {
+function GSuiteNewUserListExample() {
 	const [ users, setUsers ] = useState( newUsers( domainOne.name ?? '' ) );
 	const [ domains, setDomains ] = useState( [ domainOne ] );
 	const [ useMultipleDomains, setUseMultipleDomains ] = useState( false );

@@ -27,7 +27,14 @@ import LoadingContent from './loading-content';
 import { CheckIcon } from './shared-icons';
 import { useCustomPropertyForHeight } from './use-custom-property-for-height';
 import type { Theme } from '../lib/theme';
-import type { Dispatch, ReactNode, HTMLAttributes, SetStateAction, ReactElement } from 'react';
+import type {
+	Dispatch,
+	ReactNode,
+	HTMLAttributes,
+	PropsWithChildren,
+	SetStateAction,
+	ReactElement,
+} from 'react';
 
 const debug = debugFactory( 'composite-checkout:checkout-steps' );
 
@@ -167,10 +174,9 @@ const CheckoutSummary = styled.div`
 export const CheckoutSummaryArea = ( {
 	children,
 	className,
-}: {
-	children: ReactNode;
+}: PropsWithChildren< {
 	className?: string;
-} ): JSX.Element => {
+} > ) => {
 	return (
 		<CheckoutSummary className={ joinClasses( [ className, 'checkout__summary-area' ] ) }>
 			{ children }
@@ -205,7 +211,7 @@ function isNodeAComponent( el: ReactNode ): el is ReactElement {
 export const CheckoutSteps = ( {
 	children,
 	areStepsActive = true,
-}: CheckoutStepsProps ): JSX.Element => {
+}: PropsWithChildren< CheckoutStepsProps > ) => {
 	let stepNumber = 0;
 	let nextStepNumber: number | null = 1;
 
@@ -262,17 +268,10 @@ export const CheckoutSteps = ( {
 };
 
 interface CheckoutStepsProps {
-	children?: ReactNode;
 	areStepsActive?: boolean;
 }
 
-export function Checkout( {
-	children,
-	className,
-}: {
-	children: ReactNode;
-	className?: string;
-} ): JSX.Element {
+export function Checkout( { children, className }: PropsWithChildren< { className?: string } > ) {
 	const { isRTL } = useI18n();
 	const { formStatus } = useFormStatus();
 	const [ activeStepNumber, setActiveStepNumber ] = useState< number >( 1 );
@@ -358,7 +357,7 @@ export const CheckoutStep = ( {
 	nextStepButtonAriaLabel,
 	validatingButtonText,
 	validatingButtonAriaLabel,
-}: CheckoutStepProps ): JSX.Element => {
+}: CheckoutStepProps ) => {
 	const { __ } = useI18n();
 	const {
 		setActiveStepNumber,
@@ -521,10 +520,9 @@ export const SubmitFooterWrapper = styled.div`
 export function CheckoutStepArea( {
 	children,
 	className,
-}: {
-	children: ReactNode;
+}: PropsWithChildren< {
 	className?: string;
-} ): JSX.Element {
+} > ) {
 	const { activeStepNumber, totalSteps } = useContext( CheckoutStepDataContext );
 	const actualActiveStepNumber =
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
@@ -547,7 +545,7 @@ export function CheckoutFormSubmit( {
 	submitButtonHeader?: ReactNode;
 	submitButtonFooter?: ReactNode;
 	disableSubmitButton?: boolean;
-} ): JSX.Element {
+} ) {
 	const { activeStepNumber, totalSteps } = useContext( CheckoutStepDataContext );
 	const actualActiveStepNumber =
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
@@ -640,7 +638,7 @@ export function CheckoutStepBody( {
 	formStatus,
 	completeStepContent,
 	onError,
-}: CheckoutStepBodyProps ): JSX.Element {
+}: CheckoutStepBodyProps ) {
 	const { __ } = useI18n();
 
 	// Since both the active and inactive step content can be mounted at the same
@@ -1103,11 +1101,10 @@ export function CheckoutStepGroup( {
 	children,
 	areStepsActive,
 	stepAreaHeader,
-}: {
-	children: ReactNode;
+}: PropsWithChildren< {
 	areStepsActive?: boolean;
 	stepAreaHeader?: ReactNode;
-} ): JSX.Element {
+} > ) {
 	return (
 		<Checkout>
 			{ stepAreaHeader }
@@ -1119,7 +1116,7 @@ export function CheckoutStepGroup( {
 }
 
 const paymentMethodStepProps = getDefaultPaymentMethodStep();
-export function PaymentMethodStep( props: Partial< CheckoutStepProps > ): JSX.Element {
+export function PaymentMethodStep( props: Partial< CheckoutStepProps > ) {
 	return <CheckoutStep { ...{ ...paymentMethodStepProps, ...props } } />;
 }
 PaymentMethodStep.isCheckoutStep = true;

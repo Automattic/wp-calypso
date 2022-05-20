@@ -2,13 +2,7 @@ import { CompactCard, Gridicon } from '@automattic/components';
 
 import './style.scss';
 
-export default function MembershipSiteHeader( {
-	name,
-	domain,
-}: {
-	name: string;
-	domain: string;
-} ): JSX.Element {
+export default function MembershipSiteHeader( { name, domain }: { name: string; domain: string } ) {
 	return (
 		<CompactCard className="memberships__header">
 			<div className="memberships__icon">

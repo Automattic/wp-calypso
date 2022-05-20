@@ -27,7 +27,7 @@ export const PatternSelectorControl = ( {
 	locale = 'en',
 	onPatternSelect = noop,
 	siteInformation = {},
-}: PatternSelectorControlProps ): JSX.Element | null => {
+}: PatternSelectorControlProps ) => {
 	if ( ! Array.isArray( patterns ) || ! patterns.length ) {
 		return null;
 	}

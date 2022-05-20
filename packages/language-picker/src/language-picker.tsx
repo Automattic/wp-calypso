@@ -85,7 +85,7 @@ function LanguagePicker< TLanguage extends Language >( {
 	localizedLanguageNames,
 	headingTitle,
 	headingButtons,
-}: Props< TLanguage > ): JSX.Element {
+}: Props< TLanguage > ) {
 	const { __ } = useI18n();
 	const [ filter, setFilter ] = useState(
 		findBestDefaultLanguageGroupId( selectedLanguage, languageGroups, languageGroups[ 0 ].id )

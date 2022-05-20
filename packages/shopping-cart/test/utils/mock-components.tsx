@@ -1,5 +1,4 @@
-import { useEffect } from 'react';
-import * as React from 'react';
+import { useEffect, PropsWithChildren } from 'react';
 import {
 	useShoppingCart,
 	ShoppingCartProvider,
@@ -14,11 +13,7 @@ import type {
 	ShoppingCartManagerOptions,
 } from '../../src/types';
 
-export function ProductList( {
-	initialProducts,
-}: {
-	initialProducts?: RequestCartProduct[];
-} ): JSX.Element {
+export function ProductList( { initialProducts }: { initialProducts?: RequestCartProduct[] } ) {
 	const { isPendingUpdate, responseCart, addProductsToCart } = useShoppingCart();
 	useEffect( () => {
 		initialProducts && addProductsToCart( initialProducts );
@@ -54,7 +49,7 @@ export function ProductListWithoutHook( {
 	shoppingCartManager,
 	cart,
 	productsToAddOnClick,
-}: { productsToAddOnClick: RequestCartProduct[] } & WithShoppingCartProps ): JSX.Element {
+}: { productsToAddOnClick: RequestCartProduct[] } & WithShoppingCartProps ) {
 	const { isPendingUpdate, addProductsToCart } = shoppingCartManager;
 	const onClick = () => {
 		addProductsToCart( productsToAddOnClick );
@@ -82,14 +77,13 @@ export function MockProvider( {
 	options,
 	cartKeyOverride,
 	useUndefinedCartKey,
-}: {
-	children: React.ReactNode;
+}: PropsWithChildren< {
 	setCartOverride?: SetCart;
 	getCartOverride?: GetCart;
 	options?: ShoppingCartManagerOptions;
 	cartKeyOverride?: string | undefined;
 	useUndefinedCartKey?: boolean;
-} ): JSX.Element {
+} > ) {
 	const managerClient = createShoppingCartManagerClient( {
 		getCart: getCartOverride ?? getCart,
 		setCart: setCartOverride ?? setCart,

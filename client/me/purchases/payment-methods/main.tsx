@@ -11,7 +11,7 @@ import { getAddNewPaymentMethodPath } from 'calypso/me/purchases/utils';
 
 import './style.scss';
 
-function PaymentMethods(): JSX.Element {
+function PaymentMethods() {
 	const translate = useTranslate();
 
 	return (

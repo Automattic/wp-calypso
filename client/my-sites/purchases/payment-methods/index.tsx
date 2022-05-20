@@ -9,7 +9,6 @@ import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo, useEffect } from 'react';
-import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -53,7 +52,7 @@ function useLogPaymentMethodsError( message: string ) {
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Element {
+export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 	const translate = useTranslate();
 	const logPaymentMethodsError = useLogPaymentMethodsError(
 		'site level payment methods load error'
@@ -94,7 +93,7 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 	);
 }
 
-function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ): JSX.Element {
+function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ) {
 	const translate = useTranslate();
 	const goToBillingHistory = () => page( getPaymentMethodsUrlFor( siteSlug ) );
 	const logPaymentMethodsError = useLogPaymentMethodsError(
@@ -166,9 +165,7 @@ function SiteLevelAddNewPaymentMethodForm( { siteSlug }: { siteSlug: string } ):
 }
 /* eslint-enable wpcalypso/jsx-classname-namespace */
 
-export function SiteLevelAddNewPaymentMethod(
-	props: React.ComponentPropsWithoutRef< typeof SiteLevelAddNewPaymentMethodForm >
-): JSX.Element {
+export function SiteLevelAddNewPaymentMethod( props: { siteSlug: string } ) {
 	const locale = useSelector( getCurrentUserLocale );
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>

@@ -46,7 +46,7 @@ const SignupAnchorLayout = ( {
 	setEmailVal,
 	setPasswordVal,
 	tos,
-}: Props ): JSX.Element => {
+}: Props ) => {
 	const { __ } = useI18n();
 
 	const form = (

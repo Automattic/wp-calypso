@@ -7,7 +7,6 @@ import {
 	NonProductLineItem,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import * as React from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
@@ -42,7 +41,7 @@ const CheckoutTermsWrapper = styled.div`
 	}
 `;
 
-export default function PaymentMethodStep(): JSX.Element {
+export default function PaymentMethodStep() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );

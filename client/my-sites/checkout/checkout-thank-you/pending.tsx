@@ -20,7 +20,7 @@ interface CheckoutPendingProps {
 	redirectTo?: string;
 }
 
-function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProps ): JSX.Element {
+function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProps ) {
 	const translate = useTranslate();
 	const transaction = useSelector( ( state ) => getOrderTransaction( state, orderId ) );
 	const error = useSelector( ( state ) => getOrderTransactionError( state, orderId ) );

@@ -153,7 +153,7 @@ const EmailPricingNotice = ( {
 	mailboxPurchaseCost,
 	mailboxRenewalCost,
 	product,
-}: MailboxPricingNoticeProps ): JSX.Element | null => {
+}: MailboxPricingNoticeProps ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 

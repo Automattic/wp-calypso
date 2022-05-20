@@ -28,7 +28,7 @@ import type {
 	ChangePrimaryFunction,
 } from './types';
 
-const SetAsPrimary = ( props: SetAsPrimaryProps ): JSX.Element | null => {
+const SetAsPrimary = ( props: SetAsPrimaryProps ) => {
 	const translate = useTranslate();
 	const [ isSettingPrimaryDomain, setIsSettingPrimaryDomain ] = useState( false );
 	const {

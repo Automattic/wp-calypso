@@ -142,7 +142,7 @@ const MShotsImage = ( {
 	alt,
 	options,
 	scrollable = false,
-}: MShotsImageProps ): JSX.Element => {
+}: MShotsImageProps ) => {
 	const maybeImage = useMshotsImg( url, options );
 	const src: string = maybeImage?.src || '';
 	const visible = !! src;

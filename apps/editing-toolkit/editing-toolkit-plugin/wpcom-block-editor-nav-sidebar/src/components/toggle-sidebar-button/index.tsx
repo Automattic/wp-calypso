@@ -15,7 +15,7 @@ const Button = ( {
 	<OriginalButton { ...rest }>{ children }</OriginalButton>
 );
 
-export default function ToggleSidebarButton(): JSX.Element {
+export default function ToggleSidebarButton() {
 	const { toggleSidebar } = useDispatch( STORE_KEY );
 	const isSidebarOpen = useSelect( ( select ) => select( STORE_KEY ).isSidebarOpened() );
 

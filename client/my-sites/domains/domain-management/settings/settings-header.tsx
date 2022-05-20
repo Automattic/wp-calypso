@@ -18,7 +18,7 @@ import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
-const SettingsHeader = ( props: SettingsHeaderProps ): JSX.Element => {
+const SettingsHeader = ( props: SettingsHeaderProps ) => {
 	const { __ } = useI18n();
 	let badgeCounter = 0;
 

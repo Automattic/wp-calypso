@@ -3,9 +3,7 @@ import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-provid
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import type { EmailProvidersStackedComparisonProps } from 'calypso/my-sites/email/email-providers-stacked-comparison';
 
-const EmailProvidersStackedComparisonPage = (
-	props: EmailProvidersStackedComparisonProps
-): JSX.Element => {
+const EmailProvidersStackedComparisonPage = ( props: EmailProvidersStackedComparisonProps ) => {
 	return (
 		<>
 			<PageViewTracker
