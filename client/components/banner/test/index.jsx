@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 jest.mock( 'calypso/blocks/dismissible-card', () => {
 	return function DismissibleCard() {
 		return null;
@@ -11,6 +15,7 @@ jest.mock( 'calypso/lib/analytics/track-component-view', () => {
 } );
 
 import { Card, Button } from '@automattic/components';
+import { render } from '@testing-library/react';
 import { shallow } from 'enzyme';
 import PlanPrice from 'calypso/my-sites/plan-price/';
 import { Banner } from '../index';
@@ -22,8 +27,8 @@ const props = {
 
 describe( 'Banner basic tests', () => {
 	test( 'should not blow up and have proper CSS class', () => {
-		const comp = shallow( <Banner { ...props } /> );
-		expect( comp.find( '.banner' ) ).toHaveLength( 1 );
+		const { container } = render( <Banner { ...props } /> );
+		expect( container.getElementsByClassName( 'banner' ).length ).toBe( 1 );
 	} );
 
 	test( 'should render Card if dismissPreferenceName is null', () => {
