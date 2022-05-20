@@ -87,15 +87,15 @@ const getTitanMenuItems = ( {
 	translate,
 } ) => {
 	const email = getEmailAddress( mailbox );
-	const isEmbeddedMailboxEnabled = isEnabled( 'emails/embedded-inbox-testing' );
+	const isEmbeddedInboxTestingEnabled = isEnabled( 'emails/embedded-inbox-testing' );
 
-	const mailboxUrl = isEmbeddedMailboxEnabled
+	const mailboxPrefixUrl = isEmbeddedInboxTestingEnabled
 		? 'https://webmail-qa.riva.co/0.2361'
 		: titanAppsUrlPrefix;
 
 	return [
 		{
-			href: getTitanEmailUrl( mailboxUrl, email, false, window.location.href ),
+			href: getTitanEmailUrl( mailboxPrefixUrl, email, false, window.location.href ),
 			image: titanMailIcon,
 			imageAltText: translate( 'Titan Mail icon' ),
 			title: translate( 'View Mail', {

@@ -41,15 +41,15 @@ import './style.scss';
 
 const getExternalUrl = ( mailbox, titanAppsUrlPrefix ) => {
 	if ( isTitanMailAccount( mailbox ) ) {
-		const isEmbeddedMailboxEnabled = isEnabled( 'emails/embedded-inbox-testing' );
+		const isEmbeddedInboxTestingEnabled = isEnabled( 'emails/embedded-inbox-testing' );
 
-		const mailboxUrl = isEmbeddedMailboxEnabled
+		const mailboxPrefixUrl = isEmbeddedInboxTestingEnabled
 			? 'https://webmail-qa.riva.co/0.2361'
 			: titanAppsUrlPrefix;
 		return getTitanEmailUrl(
-			mailboxUrl,
+			mailboxPrefixUrl,
 			getEmailAddress( mailbox ),
-			! mailboxUrl,
+			! mailboxPrefixUrl,
 			window.location.href
 		);
 	}
