@@ -34,7 +34,7 @@ export const defaultFallbackLinks = [
 	},
 	{
 		get link() {
-			return localizeUrl( 'https://wordpress.com/support/business-plan/' );
+			return localizeUrl( 'https://wordpress.com/support/pro-plan/' );
 		},
 		post_id: 134940,
 		get title() {
@@ -42,7 +42,7 @@ export const defaultFallbackLinks = [
 		},
 		get description() {
 			return __(
-				'Learn more about installing a custom theme or plugin using the Business plan.',
+				'Learn more about installing a custom theme or plugin using the Pro plan.',
 				__i18n_text_domain__
 			);
 		},
@@ -179,7 +179,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/increase-your-site-traffic/' );
+				return localizeUrl( 'https://wordpress.com/support/getting-more-views-and-traffic/' );
 			},
 			post_id: 132186,
 			get title() {
@@ -213,7 +213,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		{
 			get link() {
 				return localizeUrl(
-					'https://wordpress.com/support/video-tutorials/connect-to-social-media/',
+					'https://wordpress.com/support/video-tutorials/',
 					__i18n_text_domain__
 				);
 			},
@@ -330,7 +330,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/account-deactivation/' );
+				return localizeUrl( 'https://wordpress.com/support/close-account/' );
 			},
 			post_id: 138080,
 			get title() {
@@ -375,7 +375,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/video-tutorials/manage-your-account/' );
+				return localizeUrl( 'https://wordpress.com/support/manage-your-account/' );
 			},
 			post_id: 130826,
 			get title() {
@@ -405,7 +405,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/account-deactivation/' );
+				return localizeUrl( 'https://wordpress.com/support/close-account/' );
 			},
 			post_id: 143899,
 			get title() {
@@ -501,7 +501,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/auto-renewal/' );
+				return localizeUrl( 'https://wordpress.com/support/manage-purchases/#automatic-renewal' );
 			},
 			post_id: 110924,
 			get title() {
@@ -517,7 +517,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/discover-the-wordpress-com-plans/' );
+				return localizeUrl( 'https://en.support.wordpress.com/plan-features/' );
 			},
 			post_id: 140323,
 			get title() {
@@ -549,7 +549,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/auto-renewal/' );
+				return localizeUrl( 'https://wordpress.com/support/manage-purchases/#automatic-renewal' );
 			},
 			post_id: 110924,
 			get title() {
@@ -565,7 +565,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/discover-the-wordpress-com-plans/' );
+				return localizeUrl( 'https://en.support.wordpress.com/plan-features/' );
 			},
 			post_id: 140323,
 			get title() {
@@ -662,7 +662,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		{
 			get link() {
 				return localizeUrl(
-					'https://wordpress.com/support/add-media/finding-free-images-and-other-media/',
+					'https://wordpress.com/support/finding-free-images-and-other-media/',
 					__i18n_text_domain__
 				);
 			},
@@ -679,7 +679,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/add-media/' );
+				return localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/image-block/' );
 			},
 			post_id: 38830,
 			get title() {
@@ -743,7 +743,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/adding-users/' );
+				return localizeUrl( 'https://en.support.wordpress.com/user-roles/' );
 			},
 			post_id: 2160,
 			get title() {
@@ -793,7 +793,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/plugins/managing-plugins/' );
+				return localizeUrl( 'https://wordpress.com/support/plugins/#managing-plugins' );
 			},
 			post_id: 134818,
 			get title() {
@@ -808,7 +808,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/plugins/adding-plugins/' );
+				return localizeUrl( 'https://wordpress.com/support/plugins/#installing-plugins' );
 			},
 			post_id: 134719,
 			get title() {
@@ -824,7 +824,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/business-plan/' );
+				return localizeUrl( 'https://wordpress.com/support/pro-plan/' );
 			},
 			post_id: 134940,
 			get title() {
@@ -1000,10 +1000,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl(
-					'https://wordpress.com/support/enable-disable-comments-for-future-posts/',
-					__i18n_text_domain__
-				);
+				return localizeUrl( 'https://wordpress.com/support/comments/', __i18n_text_domain__ );
 			},
 			post_id: 5997,
 			get title() {
@@ -1129,7 +1126,9 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/unwanted-comments/' );
+				return localizeUrl(
+					'https://wordpress.com/support/comments/#unwanted-comments-and-comment-spam'
+				);
 			},
 			post_id: 5882,
 			get title() {
@@ -1144,7 +1143,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/selecting-a-strong-password/' );
+				return localizeUrl( 'https://wordpress.com/support/security/#strong-password' );
 			},
 			post_id: 35364,
 			get title() {
@@ -1257,7 +1256,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		{
 			get link() {
 				return localizeUrl(
-					'https://wordpress.com/support/themes/uploading-setting-up-custom-themes/child-themes/',
+					'https://wordpress.com/support/themes/child-themes',
 					__i18n_text_domain__
 				);
 			},
@@ -1294,7 +1293,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		{
 			get link() {
 				return localizeUrl(
-					'https://wordpress.com/support/themes/uploading-setting-up-custom-themes/child-themes/',
+					'https://wordpress.com/support/themes/child-themes',
 					__i18n_text_domain__
 				);
 			},
@@ -1314,7 +1313,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 	plans: [
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/discover-the-wordpress-com-plans/' );
+				return localizeUrl( 'https://en.support.wordpress.com/plan-features/' );
 			},
 			post_id: 140323,
 			get title() {
@@ -1344,7 +1343,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/auto-renewal/' );
+				return localizeUrl( 'https://wordpress.com/support/manage-purchases/#automatic-renewal' );
 			},
 			post_id: 110924,
 			get title() {
@@ -1360,7 +1359,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/jetpack-add-ons/' );
+				return localizeUrl( 'https://wordpress.com/support/jetpack/' );
 			},
 			post_id: 115025,
 			get title() {
@@ -1426,7 +1425,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/xml-rpc/' );
+				return localizeUrl( 'https://wordpress.com/support/offline-editing/' );
 			},
 			post_id: 3595,
 			get title() {
@@ -1522,7 +1521,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 	help: [
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/blogging-u/' );
+				return localizeUrl( 'https://wpcourses.com/' );
 			},
 			post_id: 117437,
 			get title() {
@@ -1567,7 +1566,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://learn.wordpress.com/' );
+				return localizeUrl( 'https://wordpress.com/learn/' );
 			},
 			get title() {
 				return __( 'Self-guided Online Tutorial', __i18n_text_domain__ );
@@ -1613,7 +1612,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/comment-display-options/' );
+				return localizeUrl( 'https://wordpress.com/support/settings/discussion-settings/' );
 			},
 			post_id: 5840,
 			get title() {
@@ -1629,7 +1628,9 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/unwanted-comments/' );
+				return localizeUrl(
+					'https://wordpress.com/support/comments/#unwanted-comments-and-comment-spam'
+				);
 			},
 			post_id: 5882,
 			get title() {
@@ -1720,7 +1721,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/jetpack-add-ons/' );
+				return localizeUrl( 'https://wordpress.com/support/jetpack/' );
 			},
 			post_id: 115025,
 			get title() {
@@ -1750,7 +1751,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/auto-renewal/' );
+				return localizeUrl( 'https://wordpress.com/support/manage-purchases/#automatic-renewal' );
 			},
 			post_id: 110924,
 			get title() {
@@ -1799,7 +1800,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		{
 			get link() {
 				return localizeUrl(
-					'https://wordpress.com/support/move-domain/transfer-domain-registration/',
+					'https://wordpress.com/support/transfer-domain-registration/',
 					__i18n_text_domain__
 				);
 			},
@@ -1816,7 +1817,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/domain-mapping-vs-domain-transfer/' );
+				return localizeUrl( 'https://wordpress.com/support/domain-connection-vs-domain-transfer/' );
 			},
 			post_id: 157655,
 			get title() {
