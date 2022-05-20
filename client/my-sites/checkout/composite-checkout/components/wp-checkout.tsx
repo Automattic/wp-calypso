@@ -24,7 +24,7 @@ import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout'
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback, HTMLAttributes } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
@@ -705,13 +705,13 @@ const SubmitButtonFooter = () => {
 	);
 };
 
-const SubmitButtonFooterDisclaimer = styled.span< React.HTMLAttributes< HTMLSpanElement > >`
+const SubmitButtonFooterDisclaimer = styled.span< HTMLAttributes< HTMLSpanElement > >`
 	flex-basis: 100%;
 	text-align: center;
 	font-size: 9px;
 `;
 
-const SubmitButtonFooterWrapper = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+const SubmitButtonFooterWrapper = styled.div< HTMLAttributes< HTMLDivElement > >`
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
