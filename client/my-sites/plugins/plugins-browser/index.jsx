@@ -55,6 +55,7 @@ import {
 	isJetpackSite,
 	isRequestingSites,
 	getSiteAdminUrl,
+	getSiteDomain,
 } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSiteId,
@@ -508,6 +509,9 @@ const PluginSingleListView = ( {
 } ) => {
 	const translate = useTranslate();
 
+	const siteId = useSelector( getSelectedSiteId );
+	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
+
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
 
@@ -534,6 +538,11 @@ const PluginSingleListView = ( {
 		.filter( isNotBlocked )
 		.filter( ( plugin ) => isNotInstalled( plugin, installedPlugins ) );
 
+	let listLink = '/plugins/' + category;
+	if ( domain ) {
+		listLink = '/plugins/' + category + '/' + domain;
+	}
+
 	if ( ! isFetching && plugins.length === 0 ) {
 		return null;
 	}
@@ -544,6 +553,7 @@ const PluginSingleListView = ( {
 			listName={ category }
 			title={ categoryName }
 			site={ siteSlug }
+			expandedListLink={ plugins.length > SHORT_LIST_LENGTH ? listLink : false }
 			size={ SHORT_LIST_LENGTH }
 			showPlaceholders={ isFetching }
 			currentSites={ sites }
