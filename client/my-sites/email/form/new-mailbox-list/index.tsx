@@ -15,13 +15,13 @@ import {
 } from 'calypso/my-sites/email/form/mailboxes/field-selectors';
 import NewMailbox from 'calypso/my-sites/email/form/new-mailbox-list/new-mailbox';
 import { sanitizeMailboxValue } from 'calypso/my-sites/email/form/new-mailbox-list/sanitize-mailbox-value';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { EmailProvider, FormFieldNames } from 'calypso/my-sites/email/form/mailboxes/types';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
 import type { ReactNode } from 'react';
 
 interface NewMailboxListProps {
 	children?: ReactNode;
-	domains?: SiteDomain[];
+	domains?: ResponseDomain[];
 	hiddenFieldNames: FormFieldNames[];
 	mailboxes: MailboxForm< EmailProvider >[];
 	onMailboxesChange: ( mailboxes: MailboxForm< EmailProvider >[] ) => void;
