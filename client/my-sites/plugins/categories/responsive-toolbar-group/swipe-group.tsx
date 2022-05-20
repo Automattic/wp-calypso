@@ -19,7 +19,7 @@ export default function SwipeGroup( {
 
 	const [ activeIndex, setActiveIndex ] = useState< number >( initialActiveIndex );
 
-	// Reset active on prop change from above
+	// Set active on prop change from above
 	useEffect( () => {
 		setActiveIndex( initialActiveIndex );
 	}, [ initialActiveIndex ] );
@@ -31,6 +31,13 @@ export default function SwipeGroup( {
 			ref.current.scrollIntoView( { block: 'end', inline: 'center' } );
 		}
 	}, [] );
+
+	// Scroll to the beginning when activeIndex changes to 0. This indicates a state reset.
+	useEffect( () => {
+		if ( ref.current && activeIndex === 0 ) {
+			ref.current.scrollIntoView( { block: 'end', inline: 'center' } );
+		}
+	}, [ activeIndex ] );
 
 	return (
 		<div className={ classes }>
