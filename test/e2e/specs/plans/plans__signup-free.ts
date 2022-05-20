@@ -106,7 +106,11 @@ describe(
 				bearerToken
 			);
 
-			const response = await restAPIClient.closeAccount( userID, username, email );
+			const response = await restAPIClient.closeAccount( {
+				userID: userID,
+				username: username,
+				email: email,
+			} );
 
 			if ( response.success !== true ) {
 				console.warn( `Failed to delete user ID ${ userID }` );
