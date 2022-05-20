@@ -15,13 +15,34 @@ export type Category = {
 	separator?: boolean;
 };
 
+const ALLOWED_CATEGORIES = [
+	'discover',
+	'analytics',
+	'booking',
+	'customer',
+	'design',
+	'donations',
+	'ecommerce',
+	'education',
+	'finance',
+	'marketing',
+	'seo',
+	'photo',
+	'social',
+	'widgets',
+	'email',
+	'security',
+	'shipping',
+	'posts',
+];
+
 const Categories = ( { selected }: { selected?: string } ) => {
 	const dispatch = useDispatch();
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
-	const categories = Object.values( useCategories() );
+	const categories = Object.values( useCategories( ALLOWED_CATEGORIES ) );
 	const onClick = ( index: number ) => {
 		const category = categories[ index ];
 
@@ -40,6 +61,10 @@ const Categories = ( { selected }: { selected?: string } ) => {
 
 		page( url );
 	};
+
+	if ( selected && ! ALLOWED_CATEGORIES.includes( selected ) ) {
+		return <div></div>;
+	}
 
 	const current = selected ? categories.findIndex( ( { slug } ) => slug === selected ) : 0;
 
