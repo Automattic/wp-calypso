@@ -1,6 +1,5 @@
-import { Card, Gridicon } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -26,11 +25,9 @@ const PluginsBrowserList = ( {
 	site,
 	currentSites,
 	listName,
-	expandedListLink,
 	size,
 } ) => {
 	const isWide = useBreakpoint( '>1280px' );
-	const { __ } = useI18n();
 
 	const renderPluginsViewList = () => {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
@@ -99,12 +96,6 @@ const PluginsBrowserList = ( {
 							onChange={ setBillingPeriod }
 							compact={ ! isWide }
 						/>
-					) }
-					{ expandedListLink && (
-						<a className="plugins-browser-list__browse-all" href={ expandedListLink }>
-							{ __( 'Browse All' ) }
-							<Gridicon icon="arrow-right" size="18" />
-						</a>
 					) }
 				</div>
 			</div>
