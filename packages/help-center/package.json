@@ -55,8 +55,6 @@
 		"typescript": "^4.5.5"
 	},
 	"peerDependencies": {
-		"@testing-library/react": "^12.1.3",
-		"@testing-library/react-hooks": "^7.0.2",
 		"@wordpress/data": "^6.1.5",
 		"@wordpress/element": "^4.5.0",
 		"react": "^17.0.2",
