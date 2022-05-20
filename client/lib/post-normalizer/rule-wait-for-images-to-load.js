@@ -1,5 +1,5 @@
 import debugFactory from 'debug';
-import { filter, find, forEach, map } from 'lodash';
+import { forEach, map } from 'lodash';
 import { deduceImageWidthAndHeight, thumbIsLikelyImage } from './utils';
 
 const debug = debugFactory( 'calypso:post-normalizer:wait-for-images-to-load' );
@@ -39,25 +39,22 @@ export default function waitForImagesToLoad( post ) {
 	return new Promise( ( resolve ) => {
 		function acceptLoadedImages( images ) {
 			if ( post.featured_image ) {
-				if ( ! find( images, { src: post.featured_image } ) ) {
+				if ( ! images.some( ( img ) => img.src === post.featured_image ) ) {
 					// featured image didn't load, nix it
 					post.featured_image = null;
 				}
 			}
 
-			post.images = map( images, convertImageToObject );
+			post.images = images.map( convertImageToObject );
 
-			post.content_images = filter(
-				map( post.content_images, function ( image ) {
-					return find( post.images, { src: image.src } );
-				} ),
-				Boolean
-			);
+			post.content_images = map( post.content_images, ( image ) =>
+				post.images.find( ( img ) => img.src === image.src )
+			).filter( Boolean );
 
 			// this adds adds height/width to images
 			post.content_media = map( post.content_media, ( media ) => {
 				if ( media.mediaType === 'image' ) {
-					const img = find( post.images, { src: media.src } );
+					const img = post.images.find( ( image ) => image.src === media.src );
 					return { ...media, ...img };
 				}
 				return media;
@@ -112,14 +109,14 @@ export default function waitForImagesToLoad( post ) {
 		// convert to image objects to start the load process
 		// only check the first x images
 		const NUMBER_OF_IMAGES_TO_CHECK = 10;
-		let promises = map( imagesToCheck.slice( 0, NUMBER_OF_IMAGES_TO_CHECK ), ( imageUrl ) => {
+		let promises = imagesToCheck.slice( 0, NUMBER_OF_IMAGES_TO_CHECK ).map( ( imageUrl ) => {
 			if ( imageUrl in knownImages ) {
 				return Promise.resolve( knownImages[ imageUrl ] );
 			}
 			return promiseForImage( imageForURL( imageUrl ) );
 		} );
 
-		forEach( promises, ( promise ) => {
+		promises.forEach( ( promise ) => {
 			promise
 				.then( ( image ) => {
 					// keep track of what loaded successfully. Note these will be out of order.
@@ -135,12 +132,9 @@ export default function waitForImagesToLoad( post ) {
 					// if so, accept what loaded and resolve the main promise
 					promises = promises.filter( ( p ) => p !== promise );
 					if ( promises.length === 0 ) {
-						const imagesInOrder = filter(
-							map( imagesToCheck, ( src ) => {
-								return imagesLoaded[ src ];
-							} ),
-							Boolean
-						);
+						const imagesInOrder = imagesToCheck
+							.map( ( src ) => imagesLoaded[ src ] )
+							.filter( Boolean );
 						acceptLoadedImages( imagesInOrder );
 					}
 				} )
