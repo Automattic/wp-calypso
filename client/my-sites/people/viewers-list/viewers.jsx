@@ -11,7 +11,7 @@ import accept from 'calypso/lib/accept';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import InviteButton from './invite-button';
+import InviteButton from '../invite-button';
 
 class Viewers extends Component {
 	infiniteList = createRef();
