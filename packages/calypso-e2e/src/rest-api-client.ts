@@ -2,6 +2,12 @@ import fetch, { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 import { SecretsManager } from './secrets';
 import type { AccountCredentials } from './data-helper';
 
+interface AccountClosureDetails {
+	userID: number;
+	username: string;
+	email: string;
+}
+
 type EndpointVersions = '1' | '1.1' | '1.2' | '1.3';
 interface BearerTokenResponse {
 	success: string;
@@ -208,14 +214,17 @@ export class RestAPIClient {
 	 * @returns {Promise<boolean>} True if account closure was successful. False otherwise.
 	 */
 	async closeAccount(
-		userID: number,
-		username: string,
-		email: string
+		expectedAccountDetails: AccountClosureDetails
 	): Promise< { success: boolean } > {
 		const accountInformation = await this.getMyAccountInformation();
 
-		// Multiple guards to ensure we are operating on the intended
-		// account.
+		// Multiple guards to ensure we are operating on the
+		// intended account.
+		// If at any point the validation fails the procedure is
+		// aborted.
+
+		// This portion validates whether the user represented by the
+		// instance of the RestAPIClient is in fact a test user.
 		if ( ! accountInformation.email.includes( 'mailosaur' ) ) {
 			throw new Error(
 				'Aborting account closure: email address provided is not for an e2e test user.'
@@ -226,15 +235,17 @@ export class RestAPIClient {
 			throw new Error( 'Aborting account closure: username is not for a test user.' );
 		}
 
-		if ( userID !== accountInformation.ID ) {
+		// This portion validates that supplied account details match
+		// the user represented by the instance of RestAPIClient.
+		if ( expectedAccountDetails.userID !== accountInformation.ID ) {
 			throw new Error( `Failed to close account: target account user ID did not match.` );
 		}
 
-		if ( username !== accountInformation.username ) {
+		if ( expectedAccountDetails.username !== accountInformation.username ) {
 			throw new Error( `Failed to close account: target account username did not match.` );
 		}
 
-		if ( email !== accountInformation.email ) {
+		if ( expectedAccountDetails.email !== accountInformation.email ) {
 			throw new Error( `Failed to close account: target account email did not match.` );
 		}
 

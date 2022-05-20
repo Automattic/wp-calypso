@@ -12,7 +12,7 @@ const selectors = {
 
 	// Buttons and links within Sidebar
 	linkWithText: ( text: string ) => `a:has-text("${ text }")`,
-	planName: '.sidebar__inline-text',
+	planName: ':text-is("Upgrades"):visible .sidebar__inline-text',
 };
 
 /**

@@ -109,7 +109,7 @@ describe(
 			const response = await restAPIClient.closeAccount( userID, username, email );
 
 			if ( response.success !== true ) {
-				console.log( `Failed to delete user ID ${ userID }` );
+				console.warn( `Failed to delete user ID ${ userID }` );
 			} else {
 				console.log( `Successfully deleted user ID ${ userID }` );
 			}
