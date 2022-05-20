@@ -6,7 +6,6 @@ import {
 	pickBy,
 	without,
 	isEmpty,
-	take,
 	filter,
 	map,
 	sortBy,
@@ -210,7 +209,7 @@ class KeyedSuggestions extends Component {
 			otherSuggestions.unshift( filterText );
 			// limit or show all
 			filtered[ taxonomy ] =
-				showAll === taxonomy ? otherSuggestions : take( otherSuggestions, limit );
+				showAll === taxonomy ? otherSuggestions : otherSuggestions.slice( 0, limit );
 			return filtered;
 		}
 
@@ -284,17 +283,14 @@ class KeyedSuggestions extends Component {
 					return max_seen > SEARCH_THRESHOLD;
 				};
 
-				filtered[ key ] = take(
-					filter(
-						map( terms[ key ], ( term, k ) =>
-							cleanFilterTerm === '' ||
-							matcher( term.name.toLowerCase(), cleanFilterTerm.toLowerCase() )
-								? k
-								: null
-						)
-					),
-					limit
-				);
+				filtered[ key ] = filter(
+					map( terms[ key ], ( term, k ) =>
+						cleanFilterTerm === '' ||
+						matcher( term.name.toLowerCase(), cleanFilterTerm.toLowerCase() )
+							? k
+							: null
+					)
+				).slice( 0, limit );
 			}
 		}
 		return this.removeEmptySuggestions( filtered );

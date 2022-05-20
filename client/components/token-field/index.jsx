@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import { clone, difference, forEach, last, map, some, take } from 'lodash';
+import { clone, difference, forEach, last, map, some } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import isSuggestionLabel from './helpers';
@@ -353,7 +353,7 @@ class TokenField extends PureComponent {
 			suggestions = startsWithMatch.concat( containsMatch );
 		}
 
-		return take( suggestions, this.props.maxSuggestions );
+		return suggestions.slice( 0, this.props.maxSuggestions );
 	};
 
 	_getSelectedSuggestion = () => {
