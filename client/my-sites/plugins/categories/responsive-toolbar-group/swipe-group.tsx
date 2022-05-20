@@ -1,6 +1,6 @@
 import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import classnames from 'classnames';
-import { ReactChild, useState, useEffect } from 'react';
+import { ReactChild, useState, useRef, useEffect } from 'react';
 
 import './style.scss';
 
@@ -24,6 +24,14 @@ export default function SwipeGroup( {
 		setActiveIndex( initialActiveIndex );
 	}, [ initialActiveIndex ] );
 
+	// Scroll to category on load
+	const ref = useRef< HTMLButtonElement | null >( null );
+	useEffect( () => {
+		if ( ref.current ) {
+			ref.current.scrollIntoView( { block: 'end', inline: 'center' } );
+		}
+	}, [] );
+
 	return (
 		<div className={ classes }>
 			<ToolbarGroup className="responsive-toolbar-group__swipe-list">
@@ -32,6 +40,7 @@ export default function SwipeGroup( {
 						key={ `button-item-${ index }` }
 						id={ `button-item-${ index }` }
 						isActive={ activeIndex === index }
+						ref={ activeIndex === index ? ref : null }
 						onClick={ () => {
 							setActiveIndex( index );
 							onClick( index );
