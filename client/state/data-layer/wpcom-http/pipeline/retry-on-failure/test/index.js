@@ -1,7 +1,6 @@
 import deepFreeze from 'deep-freeze';
 import { merge } from 'lodash';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 import { retryOnFailure as rof } from '../';
 import { noRetry, exponentialBackoff } from '../policies';
 
@@ -26,13 +25,11 @@ const withRetries = ( retryCount ) => ( actionOrInbound ) =>
 		: merge( actionOrInbound, { meta: { dataLayer: { retryCount } } } );
 
 describe( '#retryOnFailure', () => {
-	let clock;
 	let dispatch;
 	let store;
 
-	useFakeTimers( ( fakeClock ) => ( clock = fakeClock ) );
-
 	beforeEach( () => {
+		jest.useFakeTimers();
 		dispatch = jest.fn();
 		store = { dispatch };
 	} );
@@ -42,7 +39,7 @@ describe( '#retryOnFailure', () => {
 
 		expect( retryOnFailure( inbound ) ).toEqual( inbound );
 
-		clock.tick( 20000 );
+		jest.advanceTimersByTime( 20000 );
 		expect( dispatch ).not.toBeCalled();
 	} );
 
@@ -52,7 +49,7 @@ describe( '#retryOnFailure', () => {
 
 		expect( retryOnFailure( inbound ) ).toEqual( inbound );
 
-		clock.tick( 20000 );
+		jest.advanceTimersByTime( 20000 );
 		expect( dispatch ).not.toBeCalled();
 	} );
 
@@ -62,7 +59,7 @@ describe( '#retryOnFailure', () => {
 
 		expect( retryOnFailure( inbound ) ).toEqual( inbound );
 
-		clock.tick( 20000 );
+		jest.advanceTimersByTime( 20000 );
 		expect( dispatch ).not.toBeCalled();
 	} );
 
@@ -72,7 +69,7 @@ describe( '#retryOnFailure', () => {
 		expect( retryWithDelay( 1337 )( inbound ) ).toHaveProperty( 'shouldAbort', true );
 		expect( dispatch ).not.toBeCalled();
 
-		clock.tick( 1337 );
+		jest.advanceTimersByTime( 1337 );
 		expect( dispatch ).toBeCalledWith( withRetries( 1 )( getSites ) );
 	} );
 
@@ -85,7 +82,7 @@ describe( '#retryOnFailure', () => {
 		expect( retryIt( inbound ) ).toHaveProperty( 'shouldAbort', true );
 		expect( dispatch ).not.toBeCalled();
 
-		clock.tick( 1337 );
+		jest.advanceTimersByTime( 1337 );
 		expect( dispatch ).toBeCalledWith( withRetries( 1 )( originalRequest ) );
 
 		// retry 2
@@ -94,7 +91,7 @@ describe( '#retryOnFailure', () => {
 		).toHaveProperty( 'shouldAbort', true );
 		expect( dispatch.mock.calls.length ).toEqual( 1 );
 
-		clock.tick( 1337 );
+		jest.advanceTimersByTime( 1337 );
 		expect( dispatch.mock.calls.length ).toEqual( 2 );
 		expect( dispatch ).toBeCalledWith( withRetries( 2 )( originalRequest ) );
 
@@ -104,7 +101,7 @@ describe( '#retryOnFailure', () => {
 		).toHaveProperty( 'shouldAbort', true );
 		expect( dispatch.mock.calls.length ).toEqual( 2 );
 
-		clock.tick( 1337 );
+		jest.advanceTimersByTime( 1337 );
 		expect( dispatch.mock.calls.length ).toEqual( 3 );
 		expect( dispatch ).toBeCalledWith( withRetries( 3 )( originalRequest ) );
 
@@ -113,7 +110,7 @@ describe( '#retryOnFailure', () => {
 		expect( retryIt( finalRequest ) ).toEqual( finalRequest );
 		expect( dispatch.mock.calls.length ).toEqual( 3 );
 
-		clock.tick( 1337 );
+		jest.advanceTimersByTime( 1337 );
 		expect( dispatch.mock.calls.length ).toEqual( 3 );
 	} );
 
@@ -128,27 +125,27 @@ describe( '#retryOnFailure', () => {
 		expect( retryOnFailure( inbound ) ).toHaveProperty( 'shouldAbort', true );
 		expect( dispatch ).not.toBeCalled();
 
-		clock.tick( 1000 + 3 * 1000 );
+		jest.advanceTimersByTime( 1000 + 3 * 1000 );
 		expect( dispatch ).toBeCalledTimes( 1 );
 
-		clock.tick( 200000 );
+		jest.advanceTimersByTime( 200000 );
 		expect( dispatch ).toBeCalledTimes( 1 );
 
 		// retry 4 (should have much longer delay)
 		expect( retryOnFailure( withRetries( 4 )( inbound ) ) ).toHaveProperty( 'shouldAbort', true );
 		expect( dispatch ).toBeCalledTimes( 1 );
 
-		clock.tick( 1000 + 3 * 16000 );
+		jest.advanceTimersByTime( 1000 + 3 * 16000 );
 		expect( dispatch ).toBeCalledTimes( 2 );
 
-		clock.tick( 200000 );
+		jest.advanceTimersByTime( 200000 );
 		expect( dispatch ).toBeCalledTimes( 2 );
 
 		// retry 5 (should not retry)
 		expect( retryOnFailure( withRetries( 5 )( inbound ) ) ).toEqual( withRetries( 5 )( inbound ) );
 		expect( dispatch ).toBeCalledTimes( 2 );
 
-		clock.tick( 200000 );
+		jest.advanceTimersByTime( 200000 );
 		expect( dispatch ).toBeCalledTimes( 2 );
 	} );
 } );

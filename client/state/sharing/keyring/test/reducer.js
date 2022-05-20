@@ -9,7 +9,6 @@ import {
 	PUBLICIZE_CONNECTION_DELETE,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { isFetching, items } from '../reducer';
 
 describe( 'reducers', () => {
@@ -143,7 +142,7 @@ describe( 'reducers', () => {
 		} );
 
 		describe( 'persistence', () => {
-			useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
+			jest.spyOn( console, 'warn' ).mockImplementation();
 
 			test( 'should persist data', () => {
 				const state = deepFreeze( {

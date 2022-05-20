@@ -1,11 +1,9 @@
-import sinon from 'sinon';
 import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
 	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
 	HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { useNock } from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import {
 	ticketSupportConfigurationRequest,
 	ticketSupportConfigurationRequestSuccess,
@@ -14,9 +12,6 @@ import {
 import { dummyConfiguration, dummyError } from './test-data';
 
 describe( 'ticket-support/configuration actions', () => {
-	let spy;
-	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
-
 	describe( '#ticketSupportConfigurationRequestSuccess', () => {
 		test( 'should return HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS', () => {
 			const action = ticketSupportConfigurationRequestSuccess( dummyConfiguration );
@@ -43,6 +38,8 @@ describe( 'ticket-support/configuration actions', () => {
 	const endpoint = '/rest/v1.1/help/tickets/kayako/mine';
 
 	describe( '#ticketSupportConfigurationRequest success', () => {
+		const spy = jest.fn();
+
 		useNock( ( nock ) => {
 			nock( apiUrl ).get( endpoint ).reply( 200, dummyConfiguration );
 		} );
@@ -50,22 +47,22 @@ describe( 'ticket-support/configuration actions', () => {
 		test( 'should be successful.', () => {
 			const action = ticketSupportConfigurationRequest()( spy );
 
-			expect(
-				spy.calledWith( sinon.match( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) )
-			).toBeTruthy();
+			expect( spy ).toHaveBeenCalledWith(
+				expect.objectContaining( { type: HELP_TICKET_CONFIGURATION_REQUEST } )
+			);
 
 			return action.then( () => {
-				expect(
-					spy.calledWith( {
-						type: HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
-						configuration: dummyConfiguration,
-					} )
-				).toBeTruthy();
+				expect( spy ).toHaveBeenCalledWith( {
+					type: HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
+					configuration: dummyConfiguration,
+				} );
 			} );
 		} );
 	} );
 
 	describe( '#ticketSupportConfigurationRequest failed', () => {
+		const spy = jest.fn();
+
 		useNock( ( nock ) => {
 			nock( apiUrl ).get( endpoint ).reply( dummyError.status, dummyError );
 		} );
@@ -73,19 +70,17 @@ describe( 'ticket-support/configuration actions', () => {
 		test( 'should be failed.', () => {
 			const action = ticketSupportConfigurationRequest()( spy );
 
-			expect(
-				spy.calledWith( sinon.match( { type: HELP_TICKET_CONFIGURATION_REQUEST } ) )
-			).toBeTruthy();
+			expect( spy ).toHaveBeenCalledWith(
+				expect.objectContaining( { type: HELP_TICKET_CONFIGURATION_REQUEST } )
+			);
 
 			return action.then( () => {
-				expect(
-					spy.calledWith(
-						sinon.match( {
-							type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
-							error: dummyError,
-						} )
-					)
-				).toBeTruthy();
+				expect( spy ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						type: HELP_TICKET_CONFIGURATION_REQUEST_FAILURE,
+						error: expect.objectContaining( dummyError ),
+					} )
+				);
 			} );
 		} );
 	} );
