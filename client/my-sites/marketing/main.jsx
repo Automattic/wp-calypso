@@ -1,4 +1,4 @@
-import { WPCOM_FEATURES_NO_ADVERTS } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_NO_ADVERTS, isFreePlan, isStarterPlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
@@ -12,10 +12,12 @@ import Main from 'calypso/components/main';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { isStarterPlanEnabled } from 'calypso/my-sites/plans-comparison';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -23,6 +25,7 @@ import './style.scss';
 
 export const Sharing = ( {
 	contentComponent,
+	currentPlanSlug,
 	pathname,
 	showButtons,
 	showConnections,
@@ -123,6 +126,22 @@ export const Sharing = ( {
 		titleHeader = translate( 'Integrations' );
 	}
 
+	// Determine the right type of upsell according to the plan.
+	// For the Free plan and the Starter plan, we want to upsell the no-ads add-on.
+	// Otherwise, it upsells the Pro plan.
+	let upsellNudgeTitle = translate( 'No ads with WordPress.com Pro' );
+	let upsellNudgeDesc = translate( 'Prevent ads from showing on your site.' );
+	let upsellNudgeHref;
+
+	if (
+		isStarterPlanEnabled() &&
+		( isFreePlan( currentPlanSlug ) || isStarterPlan( currentPlanSlug ) )
+	) {
+		upsellNudgeTitle = translate( 'Remove ads from your site with the No-Ads add-on' );
+		upsellNudgeDesc = translate( 'Click here to add to cart and continue.' );
+		upsellNudgeHref = `/checkout/${ siteSlug }/no-ads`;
+	}
+
 	const selected = find( filters, { route: pathname } );
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -152,12 +171,13 @@ export const Sharing = ( {
 					</NavTabs>
 				</SectionNav>
 			) }
-			{ ! isVip && ! isJetpack && (
+			{ ! isVip && ! isJetpack && currentPlanSlug && (
 				<UpsellNudge
 					event="sharing_no_ads"
 					feature={ WPCOM_FEATURES_NO_ADVERTS }
-					description={ translate( 'Prevent ads from showing on your site.' ) }
-					title={ translate( 'No ads with WordPress.com Pro' ) }
+					href={ upsellNudgeHref }
+					description={ upsellNudgeDesc }
+					title={ upsellNudgeTitle }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
 					showIcon={ true }
@@ -170,8 +190,9 @@ export const Sharing = ( {
 
 Sharing.propTypes = {
 	canManageOptions: PropTypes.bool,
-	isVipSite: PropTypes.bool,
 	contentComponent: PropTypes.node,
+	currentPlanSlug: PropTypes.string,
+	isVipSite: PropTypes.bool,
 	path: PropTypes.string,
 	showButtons: PropTypes.bool,
 	showConnections: PropTypes.bool,
@@ -186,8 +207,10 @@ export default connect( ( state ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAtomic = isSiteWpcomAtomic( state, siteId );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	const currentPlanSlug = getCurrentPlan( state, siteId )?.productSlug;
 
 	return {
+		currentPlanSlug,
 		isP2Hub: isSiteP2Hub( state, siteId ),
 		showButtons: siteId && canManageOptions,
 		showConnections: !! siteId,
