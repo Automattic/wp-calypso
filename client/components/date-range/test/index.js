@@ -2,15 +2,14 @@
  * @jest-environment jsdom
  */
 
-import { Popover } from '@automattic/components';
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { translate } from 'i18n-calypso';
 import MockDate from 'mockdate';
 import moment from 'moment';
 import DatePicker from 'calypso/components/date-picker';
 import DateRangeHeader from 'calypso/components/date-range/header';
 import DateRangeInputs from 'calypso/components/date-range/inputs';
-import DateRangeTrigger from 'calypso/components/date-range/trigger';
 import { DateRange } from '../index.js';
 
 function dateToLocaleString( date ) {
@@ -44,17 +43,17 @@ describe( 'DateRange', () => {
 	} );
 
 	test( 'should render', () => {
-		const wrapper = shallow( <DateRange moment={ moment } translate={ translate } /> );
-		expect( wrapper ).toMatchSnapshot();
+		const { container } = render( <DateRange moment={ moment } translate={ translate } /> );
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 
 	describe( 'Date range clamping', () => {
 		test( 'should ensure the end date is not before the start date', () => {
-			const selectedEndDate = moment( '2018-06-01' );
+			const selectedEndDate = moment( '06-01-2018', 'MM-DD-YYYY' );
 
 			const selectedStartDate = moment( selectedEndDate ).add( 1, 'months' );
 
-			const wrapper = shallow(
+			render(
 				<DateRange
 					moment={ moment }
 					translate={ translate }
@@ -63,22 +62,26 @@ describe( 'DateRange', () => {
 				/>
 			);
 
-			const actualStartDate = wrapper.state().startDate;
-			const actualEndDate = wrapper.state().endDate;
+			const [ actualStartDate, actualEndDate ] = screen
+				.getByLabelText( 'Select date range' )
+				.querySelector( 'span' )
+				.innerHTML.split( '-' )
+				.map( ( s ) => s.trim() );
 
-			// Check whether start is before end date
-			const isStartBeforeEnd = moment( actualStartDate ).isBefore( actualEndDate );
+			const isStartBeforeEnd = moment( actualStartDate, 'MM-DD-YYYY' ).isBefore(
+				moment( actualEndDate, 'MM-DD-YYYY' )
+			);
 
 			expect( isStartBeforeEnd ).toBe( true );
 		} );
 
 		test( 'should clamp selected dates to respect firstSelectableDate prop', () => {
-			const firstSelectableDate = moment( '2018-06-01' );
+			const firstSelectableDate = moment( '06-01-2018', 'MM-DD-YYYY' );
 
 			const endDateInPast = moment( firstSelectableDate ).subtract( 1, 'months' );
 			const startDateInPast = moment( endDateInPast ).subtract( 1, 'months' );
 
-			const wrapper = shallow(
+			render(
 				<DateRange
 					moment={ moment }
 					translate={ translate }
@@ -91,8 +94,14 @@ describe( 'DateRange', () => {
 			const expectedStartDate = dateToLocaleString( firstSelectableDate );
 			const expectedEndDate = dateToLocaleString( firstSelectableDate );
 
-			const actualStartDate = dateToLocaleString( wrapper.state().startDate );
-			const actualEndDate = dateToLocaleString( wrapper.state().endDate );
+			let [ actualStartDate, actualEndDate ] = screen
+				.getByLabelText( 'Select date range' )
+				.querySelector( 'span' )
+				.innerHTML.split( '-' )
+				.map( ( s ) => s.trim() );
+
+			actualStartDate = dateToLocaleString( moment( actualStartDate, 'MM-DD-YYYY' ) );
+			actualEndDate = dateToLocaleString( moment( actualEndDate, 'MM-DD-YYYY' ) );
 
 			// Expect start/end are both clamped to the first selectable Date
 			expect( actualStartDate ).toEqual( expectedStartDate );
@@ -100,12 +109,12 @@ describe( 'DateRange', () => {
 		} );
 
 		test( 'should clamp selected dates to respect lastSelectableDate prop', () => {
-			const lastSelectableDate = moment( '2018-06-01' );
+			const lastSelectableDate = moment( '06-01-2018', 'MM-DD-YYYY' );
 
 			const startDateInFuture = moment( lastSelectableDate ).add( 1, 'months' );
 			const endDateInFuture = moment( lastSelectableDate ).add( 2, 'months' );
 
-			const wrapper = shallow(
+			render(
 				<DateRange
 					moment={ moment }
 					translate={ translate }
@@ -115,11 +124,17 @@ describe( 'DateRange', () => {
 				/>
 			);
 
+			let [ actualStartDate, actualEndDate ] = screen
+				.getByLabelText( 'Select date range' )
+				.querySelector( 'span' )
+				.innerHTML.split( '-' )
+				.map( ( s ) => s.trim() );
+
 			const expectedStartDate = dateToLocaleString( lastSelectableDate );
 			const expectedEndDate = dateToLocaleString( lastSelectableDate );
 
-			const actualStartDate = dateToLocaleString( wrapper.state().startDate );
-			const actualEndDate = dateToLocaleString( wrapper.state().endDate );
+			actualStartDate = dateToLocaleString( moment( actualStartDate, 'MM-DD-YYYY' ) );
+			actualEndDate = dateToLocaleString( moment( actualEndDate, 'MM-DD-YYYY' ) );
 
 			// Expect start/end to be clamped to the last selectable date
 			expect( actualStartDate ).toEqual( expectedStartDate );
@@ -129,77 +144,54 @@ describe( 'DateRange', () => {
 
 	describe( 'Trigger element', () => {
 		test( 'should render trigger with appropriate placeholders if no dates provided or selected', () => {
-			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
+			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const dateRangeTrigger = wrapper.find( DateRangeTrigger );
+			const range = screen.getByLabelText( 'Select date range' ).querySelector( 'span' ).innerHTML;
 
-			const expected = {
-				startDateText: 'MM/DD/YYYY',
-				endDateText: 'MM/DD/YYYY',
-			};
-
-			expect( dateRangeTrigger.props() ).toEqual( expect.objectContaining( expected ) );
+			expect( range ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
 		} );
 
 		test( 'should update trigger props to match currently selected dates', () => {
-			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
+			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const expectedStartDate = '2018-04-01';
-			const expectedEndDate = '2018-04-29';
+			userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			const newStartDate = moment( expectedStartDate );
-			const newEndDate = moment( expectedEndDate );
+			const from = screen.getByLabelText( 'From' );
+			const to = screen.getByLabelText( 'To' );
+			const applyBtn = screen.getByText( 'Apply' );
 
-			// Select dates using API
-			// note: not usually recommended to access component API directly
-			// but it's tricky to do this via DOM on a datepicker...
-			wrapper.instance().onSelectDate( newStartDate );
-			wrapper.instance().onSelectDate( newEndDate );
+			userEvent.type( from, '04-01-2018' );
+			userEvent.type( to, '04-29-2018' );
 
-			// Force re-render
-			wrapper.update();
+			userEvent.click( applyBtn );
 
-			const dateRangeTrigger = wrapper.find( DateRangeTrigger );
+			const range = screen.getByLabelText( 'Select date range' ).querySelector( 'span' ).innerHTML;
 
-			const expected = {
-				startDateText: dateToLocaleString( newStartDate ),
-				endDateText: dateToLocaleString( newEndDate ),
-			};
-
-			expect( dateRangeTrigger.props() ).toEqual( expect.objectContaining( expected ) );
+			expect( range ).toEqual( '04/01/2018 - 04/29/2018' );
 		} );
 
 		test( 'should toggle popover on trigger click', () => {
-			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
-
-			const trigger = wrapper.find( DateRangeTrigger );
-
-			let popover;
+			render( <DateRange translate={ translate } moment={ moment } /> );
 
 			// Open
-			trigger.props().onTriggerClick();
+			userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			wrapper.update();
+			const popover = screen.getByRole( 'tooltip' );
 
-			popover = wrapper.find( Popover );
-
-			expect( popover.props().isVisible ).toBe( true );
+			expect( popover ).toBeVisible();
 
 			// Close
-			trigger.props().onTriggerClick();
+			const applyBtn = screen.getByText( 'Apply' );
+			userEvent.click( applyBtn );
 
-			wrapper.update();
-
-			popover = wrapper.find( Popover );
-
-			expect( popover.props().isVisible ).toBe( false );
+			expect( popover ).not.toBeVisible();
 		} );
 
 		test( 'should reset Dates on trigger clear btn click', () => {
-			const endDate = moment( '2018-05-30' );
-			const startDate = moment( '2018-04-30' );
+			const endDate = moment( '05-30-2018', 'MM-DD-YYYY' );
+			const startDate = moment( '04-30-2018', 'MM-DD-YYYY' );
 
-			const wrapper = shallow(
+			render(
 				<DateRange
 					selectedStartDate={ startDate }
 					selectedEndDate={ endDate }
@@ -208,23 +200,11 @@ describe( 'DateRange', () => {
 				/>
 			);
 
-			const trigger = wrapper.find( DateRangeTrigger );
+			const clearBtn = screen.getByTitle( 'Clear date selection' );
+			userEvent.click( clearBtn );
 
-			trigger.props().onClearClick();
-
-			wrapper.update();
-
-			// Should have completed reset the Dates
-			expect( wrapper.state() ).toEqual(
-				expect.objectContaining( {
-					startDate: null,
-					endDate: null,
-					staleStartDate: null,
-					staleEndDate: null,
-					textInputStartDate: '',
-					textInputEndDate: '',
-				} )
-			);
+			const range = screen.getByLabelText( 'Select date range' ).querySelector( 'span' ).innerHTML;
+			expect( range ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
 		} );
 	} );
 
@@ -236,7 +216,7 @@ describe( 'DateRange', () => {
 		};
 
 		test( 'should pass expected default props to DatePicker', () => {
-			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
+			const wrapper = render( <DateRange translate={ translate } moment={ moment } /> );
 			const instance = wrapper.instance();
 			const datePicker = wrapper.find( DatePicker );
 
@@ -282,7 +262,7 @@ describe( 'DateRange', () => {
 				};
 			} );
 
-			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
+			const wrapper = render( <DateRange translate={ translate } moment={ moment } /> );
 			const datePicker = wrapper.find( DatePicker );
 
 			expect( datePicker.props().numberOfMonths ).toEqual( 2 );
@@ -297,7 +277,7 @@ describe( 'DateRange', () => {
 				};
 			} );
 
-			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
+			const wrapper = render( <DateRange translate={ translate } moment={ moment } /> );
 			const datePicker = wrapper.find( DatePicker );
 
 			expect( datePicker.props().numberOfMonths ).toEqual( 1 );
@@ -305,7 +285,7 @@ describe( 'DateRange', () => {
 
 		test( 'should disable dates before firstSelectableDate when set', () => {
 			const today = new Date();
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange translate={ translate } moment={ moment } firstSelectableDate={ today } />
 			);
 			const datePicker = wrapper.find( DatePicker );
@@ -323,7 +303,7 @@ describe( 'DateRange', () => {
 
 		test( 'should disable dates after lastSelectableDate when set', () => {
 			const today = new Date();
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange translate={ translate } moment={ moment } lastSelectableDate={ today } />
 			);
 			const datePicker = wrapper.find( DatePicker );
@@ -342,7 +322,7 @@ describe( 'DateRange', () => {
 		test( 'should disable DatePicker UI for months previous to firstSelectableDate when set', () => {
 			const today = new Date();
 
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange translate={ translate } moment={ moment } firstSelectableDate={ today } />
 			);
 			const datePicker = wrapper.find( DatePicker );
@@ -356,7 +336,7 @@ describe( 'DateRange', () => {
 		test( 'should disable DatePicker UI for months after lastSelectableDate when set', () => {
 			const today = new Date();
 
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange translate={ translate } moment={ moment } lastSelectableDate={ today } />
 			);
 			const datePicker = wrapper.find( DatePicker );
@@ -370,7 +350,7 @@ describe( 'DateRange', () => {
 
 	describe( 'Input elements', () => {
 		test( 'should see inputs reflect date picker selection', () => {
-			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
+			const wrapper = render( <DateRange translate={ translate } moment={ moment } /> );
 
 			const expectedStart = '2018-04-03';
 			const expectedEnd = '2018-04-29';
@@ -399,7 +379,7 @@ describe( 'DateRange', () => {
 			const endDate = moment( '2018-05-30' );
 			const startDate = moment( endDate ).subtract( 1, 'months' );
 
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange
 					selectedStartDate={ startDate }
 					selectedEndDate={ endDate }
@@ -419,7 +399,7 @@ describe( 'DateRange', () => {
 			const endDate = moment( '2018-05-30' );
 			const startDate = moment( endDate ).subtract( 1, 'months' );
 
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange
 					selectedStartDate={ startDate }
 					selectedEndDate={ endDate }
@@ -441,7 +421,7 @@ describe( 'DateRange', () => {
 			const endDate = moment( '2018-05-28' );
 			const startDate = moment( endDate ).subtract( 1, 'months' );
 
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange
 					selectedStartDate={ startDate }
 					selectedEndDate={ endDate }
@@ -470,7 +450,7 @@ describe( 'DateRange', () => {
 			const newStartDate = '03/30/2018';
 			const newEndDate = '06/30/2018';
 
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange
 					selectedStartDate={ startDate }
 					selectedEndDate={ endDate }
@@ -490,7 +470,7 @@ describe( 'DateRange', () => {
 			const endDate = moment( '2018-05-28' );
 			const startDate = moment( endDate ).subtract( 1, 'months' );
 
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange
 					selectedStartDate={ startDate }
 					selectedEndDate={ endDate }
@@ -515,7 +495,7 @@ describe( 'DateRange', () => {
 			const endDate = moment( '2018-05-28' );
 			const startDate = moment( endDate ).subtract( 1, 'months' );
 
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange
 					selectedStartDate={ startDate }
 					selectedEndDate={ endDate }
@@ -547,7 +527,7 @@ describe( 'DateRange', () => {
 
 			const badDate = moment( firstSelectableDate ).subtract( 11, 'months' );
 
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange
 					selectedStartDate={ startDate }
 					selectedEndDate={ endDate }
@@ -572,7 +552,7 @@ describe( 'DateRange', () => {
 
 			const badDate = moment( firstSelectableDate ).subtract( 11, 'months' );
 
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange
 					selectedStartDate={ startDate }
 					selectedEndDate={ endDate }
@@ -597,7 +577,7 @@ describe( 'DateRange', () => {
 
 			const badDate = dateToLocaleString( moment( lastSelectableDate ).add( 11, 'months' ) );
 
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange
 					selectedStartDate={ startDate }
 					selectedEndDate={ endDate }
@@ -623,7 +603,7 @@ describe( 'DateRange', () => {
 		test( 'should call onDateSelect function when a date is selected', () => {
 			const callback = jest.fn();
 
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange translate={ translate } moment={ moment } onDateSelect={ callback } />
 			);
 
@@ -647,7 +627,7 @@ describe( 'DateRange', () => {
 		test( 'should call onDateCommit function when a date is committed/applied', () => {
 			const callback = jest.fn();
 
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange translate={ translate } moment={ moment } onDateCommit={ callback } />
 			);
 
@@ -673,7 +653,7 @@ describe( 'DateRange', () => {
 
 	describe( 'Actions and Information UI', () => {
 		test( 'should only persist date selection when user clicks "Apply" button', () => {
-			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
+			const wrapper = render( <DateRange translate={ translate } moment={ moment } /> );
 			const originalStartDate = wrapper.state().startDate;
 			const originalEndDate = wrapper.state().endDate;
 
@@ -723,7 +703,7 @@ describe( 'DateRange', () => {
 
 		test( 'Should display prompt to select first date when no start date selected', () => {
 			// Note that no dates are selected
-			const wrapper = shallow( <DateRange translate={ translate } moment={ moment } /> );
+			const wrapper = render( <DateRange translate={ translate } moment={ moment } /> );
 
 			const infoText = wrapper.find( '.date-range__info' ).text();
 
@@ -734,7 +714,7 @@ describe( 'DateRange', () => {
 			const startDate = moment( '2018-04-28' );
 
 			// Note that no dates are selected
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange selectedStartDate={ startDate } translate={ translate } moment={ moment } />
 			);
 
@@ -748,7 +728,7 @@ describe( 'DateRange', () => {
 			const endDate = moment( '2018-05-28' );
 
 			// Note that no dates are selected
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange
 					selectedStartDate={ startDate }
 					selectedEndDate={ endDate }
@@ -766,7 +746,7 @@ describe( 'DateRange', () => {
 			const startDate = moment( '2018-04-28' );
 			const endDate = moment( '2018-05-28' );
 
-			const wrapper = shallow(
+			const wrapper = render(
 				<DateRange
 					selectedStartDate={ startDate }
 					selectedEndDate={ endDate }
@@ -804,7 +784,7 @@ describe( 'DateRange', () => {
 		test( 'should allow for render prop to overide trigger render', () => {
 			const spyComponent = jest.fn();
 
-			shallow(
+			render(
 				<DateRange translate={ translate } moment={ moment } renderTrigger={ spyComponent } />
 			);
 
@@ -832,7 +812,7 @@ describe( 'DateRange', () => {
 		test( 'should allow for render prop to overide header render', () => {
 			const spyComponent = jest.fn();
 
-			shallow(
+			render(
 				<DateRange translate={ translate } moment={ moment } renderHeader={ spyComponent } />
 			);
 
@@ -847,7 +827,7 @@ describe( 'DateRange', () => {
 		test( 'should allow for render prop to overide inputs render', () => {
 			const spyComponent = jest.fn();
 
-			shallow(
+			render(
 				<DateRange translate={ translate } moment={ moment } renderInputs={ spyComponent } />
 			);
 
