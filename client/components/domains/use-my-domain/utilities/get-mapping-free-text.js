@@ -21,7 +21,7 @@ export function getMappingFreeText( {
 	) {
 		mappingFreeText = __( 'No additional charge with your plan' );
 	} else if ( primaryWithPlansOnly || isSignupStep ) {
-		mappingFreeText = __( 'Included in Pro plan' );
+		mappingFreeText = __( 'Included in paid plans' );
 	}
 
 	return mappingFreeText;
