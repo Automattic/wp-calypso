@@ -12,7 +12,6 @@ const selectors = {
 
 	// Buttons and links within Sidebar
 	linkWithText: ( text: string ) => `a:has-text("${ text }")`,
-	planName: ':text-is("Upgrades"):visible .sidebar__inline-text',
 };
 
 /**
@@ -131,38 +130,6 @@ export class SidebarComponent {
 			this.page.waitForNavigation(),
 			this.page.click( selectors.linkWithText( 'Add New Site' ) ),
 		] );
-	}
-
-	/**
-	 * Returns the current plan name as shown on the sidebar.
-	 *
-	 * Note, the plan name shown in the sidebar may not always be
-	 * accurate due to race conditions. Consider this method as
-	 * secondary validation.
-	 *
-	 * Additionally, on mobile viewports if the current page is
-	 * Upgrades > Plans the plan name is not visible in the sidebar.
-	 * This method should be used after navigating away from the
-	 * Plans page.
-	 *
-	 * @returns {Promise<string>} Name of the plan.
-	 * @throws {Error} If the viewport is mobile and the currently displayed page is Upgrades > Plans.
-	 */
-	async getCurrentPlanName(): Promise< string > {
-		await this.waitForSidebarInitialization();
-
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			if ( this.page.url().includes( getCalypsoURL( 'plans' ) ) ) {
-				throw new Error(
-					'Unable to retrieve current plan name on mobile sidebar.\nNavigate away from Upgrades > Plans page and try again.'
-				);
-			}
-
-			await this.openMobileSidebar();
-		}
-
-		const planNameLocator = this.page.locator( selectors.planName );
-		return await planNameLocator.innerText();
 	}
 
 	/* Viewport-specific methods */

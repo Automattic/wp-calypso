@@ -1,12 +1,6 @@
 import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
-import { NewUserResponse } from '../../rest-api-client';
-
-export interface NewUserDetails {
-	ID: number;
-	bearer_token: string;
-}
 
 const selectors = {
 	// Fields
@@ -59,7 +53,7 @@ export class UserSignupPage {
 	 * @param {string} username Username of the new user.
 	 * @param {string} password Password of the new user.
 	 */
-	async signup( email: string, username: string, password: string ): Promise< NewUserDetails > {
+	async signup( email: string, username: string, password: string ): Promise< void > {
 		await this.page.fill( selectors.emailInput, email );
 		await this.page.fill( selectors.usernameInput, username );
 		await this.page.fill( selectors.passwordInput, password );
@@ -69,18 +63,10 @@ export class UserSignupPage {
 		// user to this page.
 		// Example: invite => Signup & Follow
 		//          signup from login => Create your account
-		const [ , response ] = await Promise.all( [
+		await Promise.all( [
 			this.page.waitForNavigation(),
-			this.page.waitForResponse( /.*new\?.*/ ),
 			this.page.click( selectors.submitButton ),
 		] );
-
-		if ( ! response ) {
-			throw new Error( 'Failed to create new user at signup.' );
-		}
-
-		const responseBody: NewUserResponse = JSON.parse( ( await response.body() ).toString() );
-		return { ID: responseBody.body.user_id, bearer_token: responseBody.body.bearer_token };
 	}
 
 	/**

@@ -2,12 +2,6 @@ import fetch, { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 import { SecretsManager } from './secrets';
 import type { AccountCredentials } from './data-helper';
 
-interface AccountClosureDetails {
-	userID: number;
-	username: string;
-	email: string;
-}
-
 type EndpointVersions = '1' | '1.1' | '1.2' | '1.3';
 interface BearerTokenResponse {
 	success: string;
@@ -22,33 +16,14 @@ interface RequestParams {
 	body?: BodyInit;
 }
 interface Site {
-	ID: number;
+	ID: string;
 	name: string;
 	description: string;
 	URL: string;
-	site_owner: number;
+	site_owner: string;
 }
-interface AllSitesResponse {
+interface MySitesResponse {
 	sites: Site[];
-}
-interface CalypsoPreferencesResponse {
-	calypso_preferences: {
-		recentSites: number[];
-	};
-}
-interface MyAccountInformationResponse {
-	ID: number;
-	username: string;
-	email: string;
-}
-export interface NewUserResponse {
-	code: number;
-	body: {
-		success: boolean;
-		user_id: number;
-		username: string;
-		bearer_token: string;
-	};
 }
 
 const BEARER_TOKEN_URL = 'https://wordpress.com/wp-login.php?action=login-endpoint';
@@ -56,9 +31,6 @@ const REST_API_BASE_URL = 'https://public-api.wordpress.com';
 
 /**
  * Client to interact with the WordPress.com REST API.
- *
- * Each instance of the RestAPIClient represents a specific user,
- * represented by the credentials and bearer token.
  */
 export class RestAPIClient {
 	readonly credentials: AccountCredentials;
@@ -67,9 +39,9 @@ export class RestAPIClient {
 	/**
 	 * Constructs an instance of the API client.
 	 */
-	constructor( credentials: AccountCredentials, bearerToken?: string ) {
+	constructor( credentials: AccountCredentials ) {
 		this.credentials = credentials;
-		this.bearerToken = bearerToken ? bearerToken : null;
+		this.bearerToken = null;
 	}
 
 	/**
@@ -152,8 +124,6 @@ export class RestAPIClient {
 		return response.json();
 	}
 
-	/* Sites */
-
 	/**
 	 * Gets the list of users's sites.
 	 *
@@ -166,9 +136,9 @@ export class RestAPIClient {
 	 * 	- URL
 	 * 	- site owner
 	 *
-	 * @returns {Promise<AllSitesResponse} JSON array of sites.
+	 * @returns {Site[]} Array of Sites.
 	 */
-	async getAllSites(): Promise< AllSitesResponse > {
+	async getMySites(): Promise< Site[] > {
 		const params: RequestParams = {
 			method: 'get',
 			headers: {
@@ -177,114 +147,11 @@ export class RestAPIClient {
 			},
 		};
 
-		return await this.sendRequest( this.getRequestURL( '1.1', '/me/sites' ), params );
-	}
+		const response: MySitesResponse = await this.sendRequest(
+			this.getRequestURL( '1.1', '/me/sites' ),
+			params
+		);
 
-	/* Me */
-
-	/**
-	 * Returns the account information for the user authenticated
-	 * via the bearer token.
-	 *
-	 * @returns {Promise<MyAccountInformationResponse>} Response containing user details.
-	 */
-	async getMyAccountInformation(): Promise< MyAccountInformationResponse > {
-		const params: RequestParams = {
-			method: 'get',
-			headers: {
-				Authorization: await this.getAuthorizationHeader( 'bearer' ),
-				'Content-Type': this.getContentTypeHeader( 'json' ),
-			},
-		};
-
-		return await this.sendRequest( this.getRequestURL( '1.1', '/me' ), params );
-	}
-
-	/**
-	 * Closes the account.
-	 *
-	 * Prior to the account being closed, this method performs
-	 * multiple checks to ensure the operation is safe and that
-	 * the correct account is being closed.
-	 *
-	 * The userID, username and email of the account that is
-	 * authenticated via the bearer token is checked against the
-	 * supplied parameters.
-	 *
-	 * @returns {Promise<boolean>} True if account closure was successful. False otherwise.
-	 */
-	async closeAccount(
-		expectedAccountDetails: AccountClosureDetails
-	): Promise< { success: boolean } > {
-		const accountInformation = await this.getMyAccountInformation();
-
-		// Multiple guards to ensure we are operating on the
-		// intended account.
-		// If at any point the validation fails the procedure is
-		// aborted.
-
-		// This portion validates whether the user represented by the
-		// instance of the RestAPIClient is in fact a test user.
-		if ( ! accountInformation.email.includes( 'mailosaur' ) ) {
-			console.warn(
-				'Aborting account closure: email address provided is not for an e2e test user.'
-			);
-			return { success: false };
-		}
-
-		if ( ! accountInformation.username.includes( 'e2eflowtesting' ) ) {
-			console.warn( 'Aborting account closure: username is not for a test user.' );
-			return { success: false };
-		}
-
-		// This portion validates that supplied account details match
-		// the user represented by the instance of RestAPIClient.
-		if ( expectedAccountDetails.userID !== accountInformation.ID ) {
-			console.warn(
-				`Failed to close account: target account user ID did not match.\nExpected: ${ accountInformation.ID }, Got: ${ expectedAccountDetails.userID }`
-			);
-			return { success: false };
-		}
-
-		if ( expectedAccountDetails.username !== accountInformation.username ) {
-			console.warn(
-				`Failed to close account: target account username did not match.\nExpected: ${ accountInformation.username }, Got: ${ expectedAccountDetails.username }`
-			);
-			return { success: false };
-		}
-
-		if ( expectedAccountDetails.email !== accountInformation.email ) {
-			console.warn(
-				`Failed to close account: target account email did not match.\nExpected: ${ accountInformation.email }, Got: ${ expectedAccountDetails.email }`
-			);
-			return { success: false };
-		}
-
-		const params: RequestParams = {
-			method: 'post',
-			headers: {
-				Authorization: await this.getAuthorizationHeader( 'bearer' ),
-				'Content-Type': this.getContentTypeHeader( 'json' ),
-			},
-		};
-
-		return await this.sendRequest( this.getRequestURL( '1.1', '/me/account/close' ), params );
-	}
-
-	/**
-	 * Returns Calypso preferences for the user.
-	 *
-	 * @returns {Promise<CalypsoPreferencesResponse>} JSON response containing Calypso preferences.
-	 */
-	async getCalypsoPreferences(): Promise< CalypsoPreferencesResponse > {
-		const params: RequestParams = {
-			method: 'get',
-			headers: {
-				Authorization: await this.getAuthorizationHeader( 'bearer' ),
-				'Content-Type': this.getContentTypeHeader( 'json' ),
-			},
-		};
-
-		return await this.sendRequest( this.getRequestURL( '1.1', '/me/preferences' ), params );
+		return response[ 'sites' ];
 	}
 }
