@@ -1,6 +1,6 @@
 import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import classnames from 'classnames';
-import { ReactChild, useState, useRef, useEffect } from 'react';
+import { ReactChild, useRef, useEffect } from 'react';
 
 import './style.scss';
 
@@ -17,13 +17,6 @@ export default function SwipeGroup( {
 } ) {
 	const classes = classnames( 'responsive-toolbar-group__swipe', className );
 
-	const [ activeIndex, setActiveIndex ] = useState< number >( initialActiveIndex );
-
-	// Set active on prop change from above
-	useEffect( () => {
-		setActiveIndex( initialActiveIndex );
-	}, [ initialActiveIndex ] );
-
 	// Scroll to category on load
 	const ref = useRef< HTMLButtonElement | null >( null );
 	useEffect( () => {
@@ -34,10 +27,10 @@ export default function SwipeGroup( {
 
 	// Scroll to the beginning when activeIndex changes to 0. This indicates a state reset.
 	useEffect( () => {
-		if ( ref.current && activeIndex === 0 ) {
+		if ( ref.current && initialActiveIndex === 0 ) {
 			ref.current.scrollIntoView( { block: 'end', inline: 'center' } );
 		}
-	}, [ activeIndex ] );
+	}, [ initialActiveIndex ] );
 
 	return (
 		<div className={ classes }>
@@ -46,10 +39,9 @@ export default function SwipeGroup( {
 					<ToolbarButton
 						key={ `button-item-${ index }` }
 						id={ `button-item-${ index }` }
-						isActive={ activeIndex === index }
-						ref={ activeIndex === index ? ref : null }
+						isActive={ initialActiveIndex === index }
+						ref={ initialActiveIndex === index ? ref : null }
 						onClick={ () => {
-							setActiveIndex( index );
 							onClick( index );
 						} }
 						className="responsive-toolbar-group__swipe-item"
