@@ -46,6 +46,8 @@ const MENU_POPOVER_PREFERENCE_KEY = 'dismissible-card-masterbar-collapsable-menu
 
 const MOBILE_BREAKPOINT = '<480px';
 
+const FULL_WIDTH_SECTIONS = [ 'theme' ];
+
 class MasterbarLoggedIn extends Component {
 	state = {
 		isActionSearchVisible: false,
@@ -59,6 +61,7 @@ class MasterbarLoggedIn extends Component {
 		user: PropTypes.object.isRequired,
 		domainOnlySite: PropTypes.bool,
 		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		sectionName: PropTypes.string,
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		currentLayoutFocus: PropTypes.string,
 		siteSlug: PropTypes.string,
@@ -213,7 +216,8 @@ class MasterbarLoggedIn extends Component {
 			: getStatsPathForTab( 'day', siteSlug );
 
 		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
-		if ( 'sites' === section ) {
+		const isMainFullWidth = FULL_WIDTH_SECTIONS.includes( this.props.sectionName );
+		if ( 'sites' === section && ! isMainFullWidth ) {
 			mySitesUrl = '';
 		}
 		const icon =
