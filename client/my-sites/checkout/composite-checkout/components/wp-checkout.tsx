@@ -24,7 +24,7 @@ import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout'
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback, HTMLAttributes } from 'react';
+import { useState, useCallback } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
 import {
@@ -61,6 +61,7 @@ import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type { HTMLAttributes } from 'react';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
