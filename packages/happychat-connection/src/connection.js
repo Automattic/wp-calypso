@@ -16,6 +16,7 @@ class Connection {
 		receiveAccept,
 		receiveConnect,
 		receiveDisconnect,
+		receiveError,
 		receiveInit,
 		receiveLocalizedSupport,
 		receiveMessage,
@@ -30,6 +31,7 @@ class Connection {
 		this.receiveAccept = receiveAccept;
 		this.receiveConnect = receiveConnect;
 		this.receiveDisconnect = receiveDisconnect;
+		this.receiveError = receiveError;
 		this.receiveInit = receiveInit;
 		this.receiveLocalizedSupport = receiveLocalizedSupport;
 		this.receiveMessage = receiveMessage;

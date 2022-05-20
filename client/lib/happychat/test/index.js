@@ -8,6 +8,8 @@ import {
 	receiveInit,
 	receiveLocalizedSupport,
 	receiveMessage,
+	receiveMessageOptimistic,
+	receiveMessageUpdate,
 	receiveReconnecting,
 	receiveStatus,
 	receiveToken,
@@ -26,10 +28,11 @@ const getConnection = () =>
 		receiveInit,
 		receiveLocalizedSupport,
 		receiveMessage,
+		receiveMessageOptimistic,
+		receiveMessageUpdate,
 		receiveReconnecting,
 		receiveStatus,
 		receiveToken,
-		receiveTranscript,
 		receiveUnauthorized,
 		requestTranscript
 	);
