@@ -226,27 +226,38 @@ export class RestAPIClient {
 		// This portion validates whether the user represented by the
 		// instance of the RestAPIClient is in fact a test user.
 		if ( ! accountInformation.email.includes( 'mailosaur' ) ) {
-			throw new Error(
+			console.warn(
 				'Aborting account closure: email address provided is not for an e2e test user.'
 			);
+			return { success: false };
 		}
 
 		if ( ! accountInformation.username.includes( 'e2eflowtesting' ) ) {
-			throw new Error( 'Aborting account closure: username is not for a test user.' );
+			console.warn( 'Aborting account closure: username is not for a test user.' );
+			return { success: false };
 		}
 
 		// This portion validates that supplied account details match
 		// the user represented by the instance of RestAPIClient.
 		if ( expectedAccountDetails.userID !== accountInformation.ID ) {
-			throw new Error( `Failed to close account: target account user ID did not match.` );
+			console.warn(
+				`Failed to close account: target account user ID did not match.\nExpected: ${ accountInformation.ID }, Got: ${ expectedAccountDetails.userID }`
+			);
+			return { success: false };
 		}
 
 		if ( expectedAccountDetails.username !== accountInformation.username ) {
-			throw new Error( `Failed to close account: target account username did not match.` );
+			console.warn(
+				`Failed to close account: target account username did not match.\nExpected: ${ accountInformation.username }, Got: ${ expectedAccountDetails.username }`
+			);
+			return { success: false };
 		}
 
 		if ( expectedAccountDetails.email !== accountInformation.email ) {
-			throw new Error( `Failed to close account: target account email did not match.` );
+			console.warn(
+				`Failed to close account: target account email did not match.\nExpected: ${ accountInformation.email }, Got: ${ expectedAccountDetails.email }`
+			);
+			return { success: false };
 		}
 
 		const params: RequestParams = {

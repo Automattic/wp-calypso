@@ -64,7 +64,7 @@ describe(
 
 			it( 'Select WordPress.com Free plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				await signupPickPlanPage.selectPlan( 'start with a free site' );
+				await signupPickPlanPage.selectPlan( 'Free' );
 			} );
 
 			it( 'Skip to dashboard', async function () {
