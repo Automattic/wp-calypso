@@ -6,11 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import jetpackIllustration from 'calypso/assets/images/illustrations/jetpack-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const Cloudflare = () => {
@@ -18,7 +16,6 @@ const Cloudflare = () => {
 	const dispatch = useDispatch();
 	const showCloudflare = config.isEnabled( 'cloudflare' );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || 0;
-	const sitePlan = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
 	const hasCloudflareCDN = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_CLOUDFLARE_CDN )
@@ -38,7 +35,6 @@ const Cloudflare = () => {
 		<>
 			{ showCloudflare && (
 				<>
-					{ ! sitePlan && <QuerySitePlans siteId={ siteId } /> }
 					<SettingsSectionHeader title={ translate( 'CDN' ) } />
 					<CompactCard>
 						<div className="site-settings__cloudflare">
