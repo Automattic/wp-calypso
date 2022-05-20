@@ -340,6 +340,8 @@ const SearchListView = ( {
 	siteId,
 	sites,
 	billingPeriod,
+	setBillingPeriod,
+	category,
 	categoryName,
 } ) => {
 	const dispatch = useDispatch();
@@ -424,6 +426,7 @@ const SearchListView = ( {
 					variant={ PluginsBrowserListVariant.Paginated }
 					extended
 					billingPeriod={ billingPeriod }
+					setBillingPeriod={ category !== 'popular' && setBillingPeriod }
 				/>
 				<InfiniteScroll nextPageMethod={ fetchNextPage } />
 			</>
@@ -441,7 +444,6 @@ const SearchListView = ( {
 };
 
 const FullListView = ( { category, siteSlug, sites, billingPeriod, setBillingPeriod } ) => {
-	const isPaidCategory = category === 'paid';
 	const { plugins, isFetching, fetchNextPage } = usePlugins( { category, infinite: true } );
 
 	const categories = useCategories();
@@ -460,7 +462,7 @@ const FullListView = ( { category, siteSlug, sites, billingPeriod, setBillingPer
 				currentSites={ sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
 				billingPeriod={ billingPeriod }
-				setBillingPeriod={ isPaidCategory && setBillingPeriod }
+				setBillingPeriod={ category !== 'popular' && setBillingPeriod }
 				extended
 			/>
 
@@ -534,7 +536,7 @@ const PluginSingleListView = ( {
 			currentSites={ sites }
 			variant={ PluginsBrowserListVariant.Fixed }
 			billingPeriod={ billingPeriod }
-			setBillingPeriod={ category === 'paid' && setBillingPeriod }
+			setBillingPeriod={ category !== 'popular' && setBillingPeriod }
 			extended
 		/>
 	);
