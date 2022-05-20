@@ -99,7 +99,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		useGeneratedDesignsQuery();
 
 	const shuffledGeneratedDesigns = useMemo(
-		() => shuffle( generatedDesigns ).slice( 0, 3 ),
+		() => shuffle( generatedDesigns ),
 		[ generatedDesigns ]
 	);
 
@@ -387,7 +387,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 					verticalId={ siteVerticalId }
 					isSelected={ design.slug === selectedGeneratedDesign?.slug }
 					isPrivateAtomic={ isPrivateAtomic }
-					translate={ translate }
 					recordTracksEvent={ recordTracksEvent }
 				/>
 			) ) }

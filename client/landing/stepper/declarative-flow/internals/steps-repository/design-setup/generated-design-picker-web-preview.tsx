@@ -13,7 +13,6 @@ interface GeneratedDesignPickerWebPreviewProps {
 	verticalId: string;
 	isSelected: boolean;
 	isPrivateAtomic: boolean;
-	translate: ReturnType< typeof useTranslate >;
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 }
 
@@ -24,9 +23,10 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 	verticalId,
 	isSelected,
 	isPrivateAtomic,
-	translate,
 	recordTracksEvent,
 } ) => {
+	const translate = useTranslate();
+
 	return (
 		<WebPreview
 			className={ classnames( { 'is-selected': isSelected } ) }

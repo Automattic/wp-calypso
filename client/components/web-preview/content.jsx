@@ -262,8 +262,7 @@ export default class WebPreviewContent extends Component {
 
 	render() {
 		const { translate, toolbarComponent: ToolbarComponent, fetchPriority, autoHeight } = this.props;
-		const isLoaded =
-			this.state.loaded && ( ! autoHeight || ( autoHeight && this.state.viewport !== null ) );
+		const isLoaded = this.state.loaded && ( ! autoHeight || this.state.viewport !== null );
 
 		const className = classNames( this.props.className, 'web-preview__inner', {
 			'is-touch': hasTouch(),
@@ -419,6 +418,5 @@ WebPreviewContent.defaultProps = {
 	isModalWindow: false,
 	overridePost: null,
 	toolbarComponent: Toolbar,
-	fetchPriority: null,
 	autoHeight: false,
 };

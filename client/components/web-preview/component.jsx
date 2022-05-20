@@ -75,7 +75,6 @@ export class WebPreviewModal extends Component {
 		onEdit: noop,
 		hasSidebar: false,
 		overridePost: null,
-		fetchPriority: null,
 		autoHeight: false,
 	};
 
