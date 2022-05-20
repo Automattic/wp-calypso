@@ -709,15 +709,36 @@ function FirstTermDiscountCallout( {
 	}
 
 	if ( isMonthlyProduct( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first month *' ) }</DiscountCallout>;
+		return (
+			<DiscountCallout>
+				{ translate( 'Discount for first month *', {
+					comment:
+						'*, the asterisk, is used to refer to a comment at the bottom of the page that relates to the text before it',
+				} ) }
+			</DiscountCallout>
+		);
 	}
 
 	if ( isYearly( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first year *' ) }</DiscountCallout>;
+		return (
+			<DiscountCallout>
+				{ translate( 'Discount for first year *', {
+					comment:
+						'*, the asterisk, is used to refer to a comment at the bottom of the page that relates to the text before it',
+				} ) }
+			</DiscountCallout>
+		);
 	}
 
 	if ( isBiennially( product ) ) {
-		return <DiscountCallout>{ translate( 'Discount for first term *' ) }</DiscountCallout>;
+		return (
+			<DiscountCallout>
+				{ translate( 'Discount for first term *', {
+					comment:
+						'*, the asterisk, is used to refer to a comment at the bottom of the page that relates to the text before it',
+				} ) }
+			</DiscountCallout>
+		);
 	}
 
 	return null;
@@ -775,7 +796,14 @@ function DomainDiscountCallout( {
 
 	const isFreeBundledDomainRegistration = product.is_bundled && product.item_subtotal_integer === 0;
 	if ( isFreeBundledDomainRegistration ) {
-		return <DiscountCallout>{ translate( 'Discount for first year *' ) }</DiscountCallout>;
+		return (
+			<DiscountCallout>
+				{ translate( 'Discount for first year *', {
+					comment:
+						'*, the asterisk, is used to refer to a comment at the bottom of the page that relates to the text before it',
+				} ) }
+			</DiscountCallout>
+		);
 	}
 
 	const isFreeDomainMapping =
@@ -813,7 +841,14 @@ function GSuiteDiscountCallout( {
 		product.item_original_subtotal_integer < product.item_original_subtotal_integer &&
 		product.is_sale_coupon_applied
 	) {
-		return <DiscountCallout>{ translate( 'Discount for first year *' ) }</DiscountCallout>;
+		return (
+			<DiscountCallout>
+				{ translate( 'Discount for first year *', {
+					comment:
+						'*, the asterisk, is used to refer to a comment at the bottom of the page that relates to the text before it',
+				} ) }
+			</DiscountCallout>
+		);
 	}
 	return null;
 }
