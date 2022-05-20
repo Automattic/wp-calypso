@@ -12,12 +12,10 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { setupLocale } from 'calypso/boot/locale';
-import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
-import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import { loadPersistedState } from 'calypso/state/persisted-state';
 import initialReducer from 'calypso/state/reducer';
@@ -41,8 +39,9 @@ function generateGetSuperProps() {
 	} );
 }
 
-function setupHappyChat( reduxStore: any, user: CurrentUser ) {
-	reduxStore.dispatch( requestHappychatEligibility() );
+function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
+	// This should be re-enabled if we bring back the inline-help component.
+	// reduxStore.dispatch( requestHappychatEligibility() );
 	reduxStore.dispatch( setCurrentUser( user ) );
 	reduxStore.dispatch( requestSites() );
 }
@@ -96,7 +95,7 @@ window.AppBoot = async () => {
 	setStore( reduxStore, getStateFromCache( userId ) );
 	setupLocale( user, reduxStore );
 
-	user && setupHappyChat( reduxStore, user as CurrentUser );
+	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
 
 	ReactDom.render(
 		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
@@ -106,7 +105,6 @@ window.AppBoot = async () => {
 					<BrowserRouter basename="setup">
 						<FlowWrapper user={ user as UserStore.CurrentUser } />
 					</BrowserRouter>
-					<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
 				</QueryClientProvider>
 			</Provider>
 		</CalypsoI18nProvider>,
