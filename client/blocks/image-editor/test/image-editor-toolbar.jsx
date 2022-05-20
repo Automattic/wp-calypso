@@ -2,18 +2,13 @@
  * @jest-environment jsdom
  */
 import { fireEvent, render, screen } from '@testing-library/react';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { ImageEditorToolbar } from '../image-editor-toolbar';
 
 describe( 'ImageEditorToolbar', () => {
-	let defaultProps;
-
-	useSandbox( ( sandbox ) => {
-		defaultProps = {
-			onShowNotice: sandbox.spy(),
-			translate: ( string ) => string,
-		};
-	} );
+	const defaultProps = {
+		onShowNotice: jest.fn(),
+		translate: ( string ) => string,
+	};
 
 	test( 'should not add `is-disabled` class to aspect ratio toolbar button by default', () => {
 		const { container } = render( <ImageEditorToolbar { ...defaultProps } /> );
@@ -49,7 +44,7 @@ describe( 'ImageEditorToolbar', () => {
 
 			fireEvent.click( container.getElementsByClassName( 'image-editor__toolbar-button' )[ 1 ] );
 
-			expect( defaultProps.onShowNotice.called ).toBe( false );
+			expect( defaultProps.onShowNotice ).not.toHaveBeenCalled();
 		}
 	);
 
@@ -62,11 +57,9 @@ describe( 'ImageEditorToolbar', () => {
 			);
 			fireEvent.click( container.getElementsByClassName( 'image-editor__toolbar-button' )[ 1 ] );
 
-			expect(
-				defaultProps.onShowNotice.calledWith(
-					'To change the aspect ratio, the height and width must be bigger than {{strong}}%(width)dpx{{/strong}}.'
-				)
-			).toBe( true );
+			expect( defaultProps.onShowNotice ).toHaveBeenCalledWith(
+				'To change the aspect ratio, the height and width must be bigger than {{strong}}%(width)dpx{{/strong}}.'
+			);
 		}
 	);
 
