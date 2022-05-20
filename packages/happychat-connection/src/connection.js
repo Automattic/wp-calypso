@@ -63,38 +63,60 @@ class Connection {
 			auth
 				.then( ( { url, user: { signer_user_id, jwt, locale, groups, skills, geoLocation } } ) => {
 					const socket = buildConnection( url );
-
 					socket
-						.once( 'connect', () => dispatch( this.receiveConnect?.() ) )
+						.once( 'connect', () => this.receiveConnect && dispatch( this.receiveConnect() ) )
 						.on( 'token', ( handler ) => {
-							dispatch( this.receiveToken?.() );
+							this.receiveToken && dispatch( this.receiveToken() );
 							handler( { signer_user_id, jwt, locale, groups, skills } );
 						} )
 						.on( 'init', () => {
-							dispatch(
-								this.receiveInit?.( { signer_user_id, locale, groups, skills, geoLocation } )
-							);
-							dispatch( this.requestTranscript?.() );
+							this.receiveInit &&
+								dispatch(
+									this.receiveInit( { signer_user_id, locale, groups, skills, geoLocation } )
+								);
+							this.requestTranscript && dispatch( this.requestTranscript() );
 							resolve( socket );
 						} )
 						.on( 'unauthorized', () => {
 							socket.close();
-							dispatch( this.receiveUnauthorized?.( 'User is not authorized' ) );
+							this.receiveUnauthorized &&
+								dispatch( this.receiveUnauthorized( 'User is not authorized' ) );
 							reject( 'user is not authorized' );
 						} )
-						.on( 'disconnect', ( reason ) => dispatch( this.receiveDisconnect?.( reason ) ) )
-						.on( 'reconnecting', () => dispatch( this.receiveReconnecting?.() ) )
-						.on( 'status', ( status ) => dispatch( this.receiveStatus?.( status ) ) )
-						.on( 'accept', ( accept ) => dispatch( this.receiveAccept?.( accept ) ) )
-						.on( 'localized-support', ( accept ) =>
-							dispatch( this.receiveLocalizedSupport?.( accept ) )
+						.on(
+							'disconnect',
+							( reason ) => this.receiveDisconnect && dispatch( this.receiveDisconnect( reason ) )
 						)
-						.on( 'message', ( message ) => dispatch( this.receiveMessage?.( message ) ) )
-						.on( 'message.optimistic', ( message ) =>
-							dispatch( this.receiveMessageOptimistic?.( message ) )
+						.on(
+							'reconnecting',
+							() => this.receiveReconnecting && dispatch( this.receiveReconnecting() )
 						)
-						.on( 'message.update', ( message ) =>
-							dispatch( this.receiveMessageUpdate?.( message ) )
+						.on(
+							'status',
+							( status ) => this.receiveStatus && dispatch( this.receiveStatus( status ) )
+						)
+						.on( 'accept', ( accept ) => {
+							this.receiveAccept && dispatch( this.receiveAccept( accept ) );
+						} )
+						.on(
+							'localized-support',
+							( accept ) =>
+								this.receiveLocalizedSupport && dispatch( this.receiveLocalizedSupport( accept ) )
+						)
+						.on(
+							'message',
+							( message ) => this.receiveMessage && dispatch( this.receiveMessage( message ) )
+						)
+						.on(
+							'message.optimistic',
+							( message ) =>
+								this.receiveMessageOptimistic &&
+								dispatch( this.receiveMessageOptimistic( message ) )
+						)
+						.on(
+							'message.update',
+							( message ) =>
+								this.receiveMessageUpdate && dispatch( this.receiveMessageUpdate( message ) )
 						)
 						.on( 'reconnect_attempt', () => {
 							socket.io.opts.transports = [ 'polling', 'websocket' ];

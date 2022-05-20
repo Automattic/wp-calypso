@@ -432,6 +432,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/format-currency": "workspace:^"
+    "@automattic/happychat-connection": "workspace:^"
     "@types/validator": ^13.7.1
     "@wordpress/api-fetch": ^6.4.0
     "@wordpress/data-controls": ^2.7.0
@@ -638,8 +639,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/happychat-connection@workspace:packages/happychat-connection"
   dependencies:
+    "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
     debug: 4.3.3
+    i18n-calypso: "workspace:^"
     react: ^17.0.2
     socket.io-client: 2.3.0
     typescript: ^4.5.5
@@ -1554,6 +1558,7 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
     "@automattic/format-currency": "workspace:^"
+    "@automattic/happychat-connection": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/launch": "workspace:^"
