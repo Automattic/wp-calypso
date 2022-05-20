@@ -510,14 +510,14 @@ class MembershipsSection extends Component {
 						<p className="memberships__onboarding-paragraph">
 							{ preventWidows(
 								translate(
-									'WordPress.com Payments makes it easy to sell physical and digital goods, accept donations, charge for in-person services, build subscription newsletters, and more.'
+									'Our payments blocks make it easy to add a buy button for digital goods or services, collect donations via a form, or limit access for specific content to subscribers-only.'
 								)
 							) }
 						</p>
 						<p className="memberships__onboarding-paragraph">
 							{ preventWidows(
 								translate(
-									'One-time, monthly, and yearly credit and debit card payment options are supported. {{link}}Learn more about payments.{{/link}}',
+									'The Payment Button, Donations Form, and Premium Content blocks all require you to first connect your bank account details with our secure payment processor, Stripe.',
 									{
 										components: {
 											link: (
@@ -530,11 +530,13 @@ class MembershipsSection extends Component {
 						</p>
 						<p className="memberships__onboarding-paragraph">{ cta }</p>
 						<p className="memberships__onboarding-paragraph memberships__onboarding-paragraph-disclaimer">
-							{ preventWidows(
-								translate(
-									'Payments are securely processed by Stripe, a payment partner for all credit and debit card payments.'
-								)
-							) }
+							<em>
+								{ preventWidows(
+									translate(
+										'All credit and debit card payments made through these blocks are securely and seamlessly processed by Stripe.'
+									)
+								) }
+							</em>
 						</p>
 					</div>
 					<div className="memberships__onboarding-column-image">
@@ -543,33 +545,29 @@ class MembershipsSection extends Component {
 				</div>
 				<div className="memberships__onboarding-benefits">
 					<div>
-						<h3>{ translate( 'Payments for anything' ) }</h3>
+						<h3>{ translate( 'No plugin required' ) }</h3>
 						{ preventWidows(
 							translate(
-								'Send paid newsletters and offer premium content, services, physical and digital goods, accept donations, and more.'
+								'No additional installs or purchases. Simply connect your banking details with our payment processor, Stripe, and insert a block to get started.'
 							)
 						) }
 					</div>
 					<div>
-						<h3>{ translate( 'Flexibile options' ) }</h3>
+						<h3>{ translate( 'One-time and recurring options' ) }</h3>
 						{ preventWidows(
 							translate(
-								'Add as many one-time, monthly, yearly, and lifetime subscription options as you need.'
+								'Accept one-time, monthly, and yearly payments from your visitors. This is perfect for a single purchase or tip — or a recurring donation, membership fee, or subscription.'
 							)
 						) }
 					</div>
 					<div>
-						<h3>{ translate( "You're in control" ) }</h3>
-						{ preventWidows(
-							translate(
-								'You choose which content requires payment. Easily manage subscribers and payment plans.'
-							)
-						) }
+						<h3>{ translate( 'No membership fees' ) }</h3>
+						{ preventWidows( translate( 'No monthly or annual fees charged.' ) ) }
 					</div>
 					<div>
-						<h3>{ translate( 'Global payments' ) }</h3>
+						<h3>{ translate( 'Join thousands of others' ) }</h3>
 						{ preventWidows(
-							translate( 'Collect payments in 135 countries to reach customers around the world.' )
+							'Sites that actively promoted their businesses and causes on social media, email, and other platforms have collected tens of thousands of dollars through these blocks.'
 						) }
 					</div>
 				</div>
@@ -612,7 +610,7 @@ class MembershipsSection extends Component {
 					shouldDisplay={ () => true }
 					feature={ FEATURE_SIMPLE_PAYMENTS }
 					title={ this.props.translate( 'Upgrade to the Pro plan' ) }
-					description={ this.props.translate( 'Upgrade to start selling.' ) }
+					description={ this.props.translate( 'Upgrade to enable Payment Blocks.' ) }
 					showIcon={ true }
 					event="calypso_memberships_upsell_nudge"
 					tracksImpressionName="calypso_upgrade_nudge_impression"
