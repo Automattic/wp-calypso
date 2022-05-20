@@ -65,35 +65,37 @@ class Connection {
 					const socket = buildConnection( url );
 
 					socket
-						.once( 'connect', () => dispatch( this.receiveConnect() ) )
+						.once( 'connect', () => dispatch( this.receiveConnect?.() ) )
 						.on( 'token', ( handler ) => {
-							dispatch( this.receiveToken() );
+							dispatch( this.receiveToken?.() );
 							handler( { signer_user_id, jwt, locale, groups, skills } );
 						} )
 						.on( 'init', () => {
 							dispatch(
-								this.receiveInit( { signer_user_id, locale, groups, skills, geoLocation } )
+								this.receiveInit?.( { signer_user_id, locale, groups, skills, geoLocation } )
 							);
-							dispatch( this.requestTranscript() );
+							dispatch( this.requestTranscript?.() );
 							resolve( socket );
 						} )
 						.on( 'unauthorized', () => {
 							socket.close();
-							dispatch( this.receiveUnauthorized( 'User is not authorized' ) );
+							dispatch( this.receiveUnauthorized?.( 'User is not authorized' ) );
 							reject( 'user is not authorized' );
 						} )
-						.on( 'disconnect', ( reason ) => dispatch( this.receiveDisconnect( reason ) ) )
-						.on( 'reconnecting', () => dispatch( this.receiveReconnecting() ) )
-						.on( 'status', ( status ) => dispatch( this.receiveStatus( status ) ) )
-						.on( 'accept', ( accept ) => dispatch( this.receiveAccept( accept ) ) )
+						.on( 'disconnect', ( reason ) => dispatch( this.receiveDisconnect?.( reason ) ) )
+						.on( 'reconnecting', () => dispatch( this.receiveReconnecting?.() ) )
+						.on( 'status', ( status ) => dispatch( this.receiveStatus?.( status ) ) )
+						.on( 'accept', ( accept ) => dispatch( this.receiveAccept?.( accept ) ) )
 						.on( 'localized-support', ( accept ) =>
-							dispatch( this.receiveLocalizedSupport( accept ) )
+							dispatch( this.receiveLocalizedSupport?.( accept ) )
 						)
-						.on( 'message', ( message ) => dispatch( this.receiveMessage( message ) ) )
+						.on( 'message', ( message ) => dispatch( this.receiveMessage?.( message ) ) )
 						.on( 'message.optimistic', ( message ) =>
-							dispatch( this.receiveMessageOptimistic( message ) )
+							dispatch( this.receiveMessageOptimistic?.( message ) )
 						)
-						.on( 'message.update', ( message ) => dispatch( this.receiveMessageUpdate( message ) ) )
+						.on( 'message.update', ( message ) =>
+							dispatch( this.receiveMessageUpdate?.( message ) )
+						)
 						.on( 'reconnect_attempt', () => {
 							socket.io.opts.transports = [ 'polling', 'websocket' ];
 						} );
@@ -124,7 +126,7 @@ class Connection {
 		return this.openSocket.then(
 			( socket ) => socket.emit( action.event, action.payload ),
 			( e ) => {
-				this.dispatch( this.receiveError( 'failed to send ' + action.event + ': ' + e ) );
+				this.dispatch( this.receiveError?.( 'failed to send ' + action.event + ': ' + e ) );
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
 			}
@@ -179,7 +181,9 @@ class Connection {
 					( result ) => this.dispatch( action.callback( result ) ),
 					( e ) => {
 						if ( e.message !== 'timeout' ) {
-							this.dispatch( this.receiveError( action.event + ' request failed: ' + e.message ) );
+							this.dispatch(
+								this.receiveError?.( action.event + ' request failed: ' + e.message )
+							);
 						}
 					}
 				);
@@ -187,7 +191,7 @@ class Connection {
 				return promiseRace;
 			},
 			( e ) => {
-				this.dispatch( this.receiveError( 'failed to send ' + action.event + ': ' + e ) );
+				this.dispatch( this.receiveError?.( 'failed to send ' + action.event + ': ' + e ) );
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
 			}
