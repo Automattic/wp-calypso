@@ -248,10 +248,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 							>
 								{ translate( 'Auto fix all' ) }
 							</Button>
-							<Button
-								className="scan-threats__button scan__retry-bottom"
-								onClick={ dispatchScanRun }
-							>
+							<Button className="scan-threats__retry-bottom" onClick={ dispatchScanRun }>
 								{ translate( 'Scan now' ) }
 							</Button>
 						</div>
