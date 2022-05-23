@@ -13,8 +13,9 @@ const getLinks = (
 	status: string,
 	siteUrl: string,
 	siteId: number
-): { tooltip: ReactChild | undefined; link: string } => {
+): { tooltip: ReactChild | undefined; link: string; isExternalLink: boolean } => {
 	let link = '';
+	let isExternalLink = false;
 	let tooltip;
 	switch ( type ) {
 		case 'backup': {
@@ -42,6 +43,7 @@ const getLinks = (
 		case 'monitor': {
 			if ( status === 'failed' ) {
 				link = `https://jptools.wordpress.com/debug/?url=${ siteUrl }`;
+				isExternalLink = true;
 			}
 			if ( status === 'success' ) {
 				tooltip = translate( 'Monitor is on and your site is online' );
@@ -55,7 +57,7 @@ const getLinks = (
 			break;
 		}
 	}
-	return { link, tooltip };
+	return { link, isExternalLink, tooltip };
 };
 
 /**
@@ -68,6 +70,7 @@ export const getRowMetaData = (
 ): {
 	row: { value: { url: string }; status: string; error: string };
 	link: string;
+	isExternalLink: boolean;
 	siteError: string;
 	tooltip: ReactChild | undefined;
 	tooltipId: string;
@@ -77,10 +80,11 @@ export const getRowMetaData = (
 	const siteUrl = rows.site?.value?.url;
 	const siteError = rows.site.error;
 	const siteId = rows.site?.value?.blog_id;
-	const { link, tooltip } = getLinks( type, row.status, siteUrl, siteId );
+	const { link, tooltip, isExternalLink } = getLinks( type, row.status, siteUrl, siteId );
 	return {
 		row,
 		link,
+		isExternalLink,
 		siteError,
 		tooltip,
 		tooltipId: `${ siteId }-${ type }`,

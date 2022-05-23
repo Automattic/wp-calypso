@@ -15,6 +15,7 @@ interface Props {
 export default function SiteStatusContent( { rows, type }: Props ): ReactElement {
 	const {
 		link,
+		isExternalLink,
 		row: { value, status, error },
 		siteError,
 		tooltip,
@@ -116,8 +117,14 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 	let updatedContent = content;
 
 	if ( link ) {
+		let target = '_self';
+		let rel;
+		if ( isExternalLink ) {
+			target = '_blank';
+			rel = 'noreferrer';
+		}
 		updatedContent = (
-			<a onClick={ handleClickRowAction } href={ link }>
+			<a target={ target } rel={ rel } onClick={ handleClickRowAction } href={ link }>
 				{ content }
 			</a>
 		);
