@@ -7,5 +7,5 @@
 	},
 	"include": [ "src", "types.d.ts" ],
 	"exclude": [ "**/test/*" ],
-	"references": []
+	"references": [ { "path": "../wpcom-checkout" } ]
 }
