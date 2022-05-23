@@ -148,7 +148,7 @@
 				text-align: left;
 			}
 
-			@include breakpoint-deprecated( '>800px' ) {
+			@include breakpoint-deprecated( '>660px' ) {
 				flex-grow: 1;
 				margin: 0 !important;
 			}
@@ -160,7 +160,14 @@
 		height: 40px;
 		border-radius: 2px;
 		font-weight: 600;
-		@include breakpoint-deprecated( '<900px' ) {
+		@include breakpoint-deprecated( '<800px' ) {
+			flex-grow: 1;
+		}
+	}
+
+	&__scan-secondary-button {
+		margin-left: 10px;
+		@include breakpoint-deprecated( '<800px' ) {
 			flex-grow: 1;
 		}
 	}
@@ -169,13 +176,5 @@
 		flex: 0 0 50px;
 		padding: 10px 0;
 		margin-left: 16px;
-	}
-
-	&__retry-bottom {
-		margin: 10px 16px;
-	
-		@include breakpoint-deprecated( '<900px' ) {
-			flex-grow: 1;
-		}
 	}
 }
