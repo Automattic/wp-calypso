@@ -13,7 +13,6 @@ import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.
 import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
 import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { marketingConnections, pluginsPath } from 'calypso/my-sites/marketing/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -87,7 +86,6 @@ export const MarketingTools: FunctionComponent = () => {
 
 	return (
 		<Fragment>
-			<QueryUserPurchases />
 			<QueryJetpackPlugins siteIds={ [ siteId ] } />
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
