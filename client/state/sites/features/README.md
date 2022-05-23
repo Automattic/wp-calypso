@@ -45,12 +45,12 @@ In the end, the subtree data is provided by the features endpoint of the WP COM 
 }
 ```
 
-Since these data are defined and provided by the server-side, we can rely on what feature is enabled and what is not, and update the UI interface accordingly. For this purpose is why we created the [hasActiveSiteFeature()](../../selectors/has-active-site-feature.js) selector.
+Since these data are defined and provided by the server-side, we can rely on what feature is enabled and what is not, and update the UI interface accordingly. For this purpose is why we created the [siteHasFeature()](../../selectors/site-has-feature.js) selector.
 
 ```es6
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 
 const MyComponent = ( { canSetPrimaryDomain } ) {
 	return (
@@ -65,7 +65,7 @@ export default connect(
 		const siteId = get( ownProps, 'selectedSite.ID', null );
 
 		return {
-			canSetPrimaryDomain: hasActiveSiteFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
+			canSetPrimaryDomain: siteHasFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
 		};
 	}
 )( MyComponent ) );
