@@ -135,7 +135,7 @@ export const MarketingTools: FunctionComponent = () => {
 					>
 						<Button
 							onClick={ handleFacebookClick }
-							href={ `https://wordpress.com/plugins/official-facebook-pixel/${ selectedSiteSlug }` }
+							href={ `/plugins/official-facebook-pixel/${ selectedSiteSlug }` }
 						>
 							{ translate( 'Add Facebook for WordPress.com' ) }
 						</Button>
