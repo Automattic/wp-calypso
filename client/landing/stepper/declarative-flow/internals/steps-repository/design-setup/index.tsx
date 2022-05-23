@@ -18,13 +18,14 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import useTrackScrollPageFromTop from '../../../../hooks/use-track-scroll-page-from-top';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../../stores';
 import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { getCategorizationOptions } from './categories';
@@ -34,6 +35,8 @@ import StickyFooter from './sticky-footer';
 import type { Step } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
+
+const STEP_NAME = 'design-setup';
 
 /**
  * The design picker step
@@ -292,6 +295,16 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		goBack();
 	};
 
+	// Track scroll event to make sure people are scrolling on mobile.
+	useTrackScrollPageFromTop( isMobile && ! isPreviewingDesign, flow || '', STEP_NAME, {
+		is_generated_designs: showGeneratedDesigns,
+	} );
+
+	// Make sure people is at the top when switching between generated designs and static designs
+	useEffect( () => {
+		window.scrollTo( { top: 0 } );
+	}, [ isForceStaticDesigns ] );
+
 	if ( selectedDesign && isPreviewingDesign && ! showGeneratedDesigns ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
@@ -324,7 +337,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 		return (
 			<StepContainer
-				stepName={ 'design-setup' }
+				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
 				hideNext={ shouldUpgrade }
@@ -442,7 +455,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'design-step' }
+			stepName={ STEP_NAME }
 			className={ classnames( {
 				'design-picker__is-generated': showGeneratedDesigns,
 				'design-picker__is-generated-previewing': isPreviewingGeneratedDesign,
