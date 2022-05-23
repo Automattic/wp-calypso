@@ -119,7 +119,7 @@
 		"signup/site-vertical-step": false,
 		"signup/stepper-flow": true,
 		"site-indicator": true,
-		"stepper-woocommerce-poc": false,
+		"stepper-woocommerce-poc": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
