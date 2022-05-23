@@ -1,5 +1,4 @@
-import lodash from 'lodash';
-import sinon from 'sinon';
+import { cloneDeep } from 'lodash';
 import {
 	isRequestingInvitesForSite,
 	getPendingInvitesForSite,
@@ -192,14 +191,6 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getInviteForSite()', () => {
-		beforeAll( () => {
-			sinon.spy( lodash, 'find' );
-		} );
-
-		afterEach( () => {
-			lodash.find.resetHistory();
-		} );
-
 		test( 'should return invite', () => {
 			const state = {
 				invites: {
@@ -270,19 +261,14 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( lodash.find.callCount ).toEqual( 0 );
-
 			const call1 = getInviteForSite( state, 12345, '123456asdf789' );
-			expect( lodash.find.callCount ).toEqual( 2 );
-			expect( call1 ).toEqual( state.invites.items[ 12345 ].accepted[ 0 ] );
+			expect( call1 ).toBe( state.invites.items[ 12345 ].accepted[ 0 ] );
 
 			const call2 = getInviteForSite( state, 12345, '123456asdf789' );
-			expect( lodash.find.callCount ).toEqual( 2 );
-			expect( call1 ).toEqual( call2 );
+			expect( call1 ).toBe( call2 );
 
-			const newState = lodash.cloneDeep( state );
+			const newState = cloneDeep( state );
 			const call3 = getInviteForSite( newState, 12345, '123456asdf789' );
-			expect( lodash.find.callCount ).toEqual( 4 );
 			expect( call3 ).toEqual( newState.invites.items[ 12345 ].accepted[ 0 ] );
 			expect( call3 ).not.toBe( call2 );
 		} );

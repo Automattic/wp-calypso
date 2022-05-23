@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { mount } from 'enzyme';
-import { spy } from 'sinon';
 import { PluginActivateToggle } from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import fixtures from './fixtures';
 
@@ -12,16 +11,12 @@ jest.mock( 'calypso/my-sites/plugins/plugin-action/plugin-action', () =>
 
 describe( 'PluginActivateToggle', () => {
 	const mockedProps = {
-		recordGoogleEvent: spy(),
-		recordTracksEvent: spy(),
-		removePluginStatuses: spy(),
-		togglePluginActivation: spy(),
-		translate: spy(),
+		recordGoogleEvent: jest.fn(),
+		recordTracksEvent: jest.fn(),
+		removePluginStatuses: jest.fn(),
+		togglePluginActivation: jest.fn(),
+		translate: jest.fn(),
 	};
-
-	afterEach( () => {
-		mockedProps.recordGoogleEvent.resetHistory();
-	} );
 
 	test( 'should render the component', () => {
 		const wrapper = mount( <PluginActivateToggle { ...mockedProps } { ...fixtures } /> );
@@ -34,8 +29,8 @@ describe( 'PluginActivateToggle', () => {
 
 		wrapper.simulate( 'click' );
 
-		expect( mockedProps.recordGoogleEvent.called ).toEqual( true );
-		expect( mockedProps.recordTracksEvent.called ).toEqual( true );
+		expect( mockedProps.recordGoogleEvent ).toHaveBeenCalled();
+		expect( mockedProps.recordTracksEvent ).toHaveBeenCalled();
 	} );
 
 	test( 'should call an action when the subcomponent action is executed', () => {
@@ -43,6 +38,6 @@ describe( 'PluginActivateToggle', () => {
 
 		wrapper.simulate( 'click' );
 
-		expect( mockedProps.togglePluginActivation.called ).toEqual( true );
+		expect( mockedProps.togglePluginActivation ).toHaveBeenCalled();
 	} );
 } );

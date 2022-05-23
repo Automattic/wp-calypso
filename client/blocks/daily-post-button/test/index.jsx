@@ -13,7 +13,7 @@ jest.mock( 'calypso/reader/stats', () => ( {
 	recordGaEvent: () => {},
 	recordTrackForPost: () => {},
 } ) );
-jest.mock( 'page', () => require( 'sinon' ).spy() );
+jest.mock( 'page', () => jest.fn() );
 const markPostSeen = jest.fn();
 const noop = () => {};
 
@@ -78,7 +78,9 @@ describe( 'DailyPostButton', () => {
 				/>
 			);
 			dailyPostButton.simulate( 'click', { preventDefault: noop } );
-			expect( pageSpy.calledWithMatch( /post\/apps.wordpress.com?/ ) ).toBe( true );
+			expect( pageSpy ).toHaveBeenCalledWith(
+				expect.stringMatching( /post\/apps.wordpress.com?/ )
+			);
 		} );
 
 		// eslint-disable-next-line jest/expect-expect
@@ -115,7 +117,7 @@ describe( 'DailyPostButton', () => {
 				/>
 			);
 			prompt.instance().openEditorWithSite( 'apps.wordpress.com' );
-			const pageArgs = pageSpy.lastCall.args[ 0 ];
+			const pageArgs = pageSpy.mock.lastCall[ 0 ];
 			const query = parse( pageArgs.split( '?' )[ 1 ] );
 			const { title, URL } = dailyPromptPost;
 			expect( query ).toEqual( { title: `Daily Prompt: ${ title }`, url: URL } );
