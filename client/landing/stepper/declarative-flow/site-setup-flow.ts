@@ -30,6 +30,7 @@ export const siteSetupFlow: Flow = {
 			'courses',
 			'storeFeatures',
 			'import',
+			'importLight',
 			'importList',
 			'importReady',
 			'importReadyNot',
