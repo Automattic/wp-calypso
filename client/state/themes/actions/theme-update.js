@@ -2,8 +2,11 @@ import { translate } from 'i18n-calypso';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { THEME_ACTIVATE, THEME_ACTIVATE_FAILURE } from 'calypso/state/themes/action-types';
-import { themeActivated } from 'calypso/state/themes/actions/theme-activated';
+import {
+	THEMES_UPDATE,
+	THEMES_UPDATE_FAILURE,
+	THEMES_UPDATE_SUCCESS,
+} from 'calypso/state/themes/action-types';
 
 import 'calypso/state/themes/init';
 
@@ -12,13 +15,13 @@ import 'calypso/state/themes/init';
  *
  * @param {Array} themeSlugs    Array of themes to be updated.
  * @param {number} siteId       Site ID
- * @param {boolean} purchased   Whether should enable or disable the auto update.
+ * @param {boolean} autoupdate  Whether should enable or disable the auto update.
  * @returns {Function}          Action thunk
  */
 export function updateThemes( themeSlugs, siteId, autoupdate = false ) {
 	return ( dispatch ) => {
 		dispatch( {
-			type: THEME_UPDATE,
+			type: THEMES_UPDATE,
 			themeSlugs,
 			siteId,
 		} );
@@ -30,14 +33,17 @@ export function updateThemes( themeSlugs, siteId, autoupdate = false ) {
 				autoupdate,
 			} )
 			.then( ( response ) => {
-				console.log( response );
 				const successfullyUpdatedThemes = response.themes.map( ( theme ) => theme.id );
-				dispatch( themesUpdated( successfullyUpdatedThemes, siteId ) );
+				dispatch( {
+					type: THEMES_UPDATE_SUCCESS,
+					themeSlugs: successfullyUpdatedThemes,
+					siteId,
+				} );
 			} )
 			.catch( ( error ) => {
 				dispatch( {
-					type: THEME_UPDATE_FAILURE,
-					themeId,
+					type: THEMES_UPDATE_FAILURE,
+					themeSlugs,
 					siteId,
 					error,
 				} );
@@ -63,5 +69,3 @@ export function updateThemes( themeSlugs, siteId, autoupdate = false ) {
 			} );
 	};
 }
-
-export function themesUpdated() {}

@@ -134,4 +134,23 @@ describe( 'Theme', () => {
 			);
 		} );
 	} );
+
+	describe( 'Update themes', () => {
+		beforeEach( () => {
+			props = {
+				...props,
+				theme: {
+					...props.theme,
+					update: {},
+				},
+			};
+
+			const themeElement = TestUtils.renderIntoDocument( createElement( Theme, { ...props } ) );
+			themeNode = ReactDom.findDOMNode( themeElement );
+		} );
+
+		test( 'Should show the update message', () => {
+			assert( themeNode.getElementsByClassName( 'theme__update-alert' ).length, 1 );
+		} );
+	} );
 } );

@@ -215,8 +215,22 @@ $theme-info-height: 54px;
 		span {
 			line-height: 30px;
 		}
-		background-color: #fcf9e8;
-		border-left: 4px #dba617 solid;
+		&.warning {
+			background-color: #fcf9e8;
+			border-left: 4px #dba617 solid;
+		}
+		&.success {
+			background-color: #e4f8e9;
+			border-left: 4px var( --color-success ) solid;
+		}
+		&.info {
+			background-color: #e4f0f8;
+			border-left: 4px #0675c4 solid;
+		}
+		&.danger {
+			background-color: #f8e4e4;
+			border-left: 4px #c40606 solid;
+		}
 	}
 
 	.theme__button-link.button.is-borderless {

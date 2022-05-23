@@ -16,9 +16,9 @@ import {
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
-	THEME_UPDATE,
-	THEME_UPDATE_SUCCESS,
-	THEME_UPDATE_FAILURE,
+	THEMES_UPDATE,
+	THEMES_UPDATE_SUCCESS,
+	THEMES_UPDATE_FAILURE,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE_SUCCESS,
 	THEME_FILTERS_ADD,
@@ -523,6 +523,56 @@ export function trendingThemes( state = {}, action ) {
 	return state;
 }
 
+export function themesUpdate( state = {}, action ) {
+	const themesUpdating = state.themesUpdating || [];
+	const themesUpdated = state.themesUpdated || [];
+	const themesUpdateFailed = state.themesUpdateFailed || [];
+
+	switch ( action.type ) {
+		case THEMES_UPDATE:
+			return {
+				...state,
+				themesUpdating: [
+					...themesUpdating,
+					...action.themeSlugs.filter( ( slug ) => themesUpdating.indexOf( slug ) === -1 ),
+				],
+				themesUpdateFailed: [
+					...( state.themesUpdateFailed || [] ).filter(
+						( slug ) => action.themeSlugs.indexOf( slug ) === -1
+					),
+				],
+			};
+		case THEMES_UPDATE_SUCCESS:
+			return {
+				...state,
+				themesUpdating: [
+					...( state.themesUpdating || [] ).filter(
+						( slug ) => action.themeSlugs.indexOf( slug ) === -1
+					),
+				],
+				themesUpdated: [
+					...themesUpdated,
+					...action.themeSlugs.filter( ( slug ) => themesUpdated.indexOf( slug ) === -1 ),
+				],
+			};
+		case THEMES_UPDATE_FAILURE:
+			return {
+				...state,
+				themesUpdating: [
+					...( state.themesUpdating || [] ).filter(
+						( slug ) => action.themeSlugs.indexOf( slug ) === -1
+					),
+				],
+				themesUpdateFailed: [
+					...themesUpdateFailed,
+					...action.themeSlugs.filter( ( slug ) => themesUpdateFailed.indexOf( slug ) === -1 ),
+				],
+			};
+	}
+
+	return state;
+}
+
 const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
@@ -543,6 +593,7 @@ const combinedReducer = combineReducers( {
 	recommendedThemes,
 	trendingThemes,
 	themeHasAutoLoadingHomepageWarning,
+	themesUpdate,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );
 
