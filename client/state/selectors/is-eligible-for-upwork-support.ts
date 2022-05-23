@@ -1,8 +1,7 @@
 import config from '@automattic/calypso-config';
-import { WPCOM_FEATURES_UPWORK_SUPPORT_EXEMPT } from '@automattic/calypso-products';
+import { isBusinessPlan, isEcommercePlan, isProPlan } from '@automattic/calypso-products';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -17,7 +16,8 @@ export default function isEligibleForUpworkSupport( state: AppState ): boolean {
 	}
 
 	// If any site has an Upwork Support exemption, the user is not eligible.
-	return ! Object.values( getSitesItems( state ) ).some( ( { ID } ) =>
-		siteHasFeature( state, ID ?? 0, WPCOM_FEATURES_UPWORK_SUPPORT_EXEMPT )
-	);
+	return ! Object.values( getSitesItems( state ) ).some( ( site ) => {
+		const planSlug = site.plan?.product_slug ?? '';
+		return isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) || isProPlan( planSlug );
+	} );
 }

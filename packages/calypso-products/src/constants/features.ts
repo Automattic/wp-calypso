@@ -226,6 +226,5 @@ export const WPCOM_FEATURES_PREMIUM_THEMES = 'premium-themes';
 export const WPCOM_FEATURES_REAL_TIME_BACKUPS = 'real-time-backups';
 export const WPCOM_FEATURES_UPLOAD_AUDIO_FILES = 'upload-audio-files';
 export const WPCOM_FEATURES_UPLOAD_VIDEO_FILES = 'upload-video-files';
-export const WPCOM_FEATURES_UPWORK_SUPPORT_EXEMPT = 'upwork-support-exempt';
 export const WPCOM_FEATURES_VIDEOPRESS = 'videopress';
 export const WPCOM_FEATURES_WORDADS = 'wordads';
