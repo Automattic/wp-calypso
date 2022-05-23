@@ -20,7 +20,7 @@ export default function useHappychatAuth() {
 				apiVersion: '1.1',
 			} );
 
-			const url: string = 'https://happychat.io/customer'//config( 'happychat_url' );
+			const url: string = config( 'happychat_url' );
 			const locale = getLocaleSlug();
 
 			const happychatUser: HappychatUser = {
@@ -39,7 +39,7 @@ export default function useHappychatAuth() {
 			const { session_id, geo_location } = session;
 			happychatUser.geoLocation = geo_location;
 
-			const sign: any = await wpcomRequest( {
+			const sign: { jwt: string } = await wpcomRequest( {
 				path: '/jwt/sign',
 				apiVersion: '1.1',
 				method: 'POST',

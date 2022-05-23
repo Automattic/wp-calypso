@@ -83,10 +83,13 @@ export class Connection {
 					const socket = buildConnection( url );
 					socket
 						.once( 'connect', () => dispatch( this.receiveConnect?.() ) )
-						.on( 'token', ( handler: ( happychatUser: HappychatUser & { jwt: any } ) => void ) => {
-							dispatch( this.receiveToken?.() );
-							handler( { signer_user_id, jwt, locale, groups, skills } );
-						} )
+						.on(
+							'token',
+							( handler: ( happychatUser: HappychatUser & { jwt: string } ) => void ) => {
+								dispatch( this.receiveToken?.() );
+								handler( { signer_user_id, jwt, locale, groups, skills } );
+							}
+						)
 						.on( 'init', () => {
 							dispatch(
 								this.receiveInit?.( { signer_user_id, locale, groups, skills, geoLocation } )
@@ -146,7 +149,7 @@ export class Connection {
 
 		return this.openSocket.then(
 			( socket: Socket ) => socket.emit( action.event, action.payload ),
-			( e: any ) => {
+			( e: Error ) => {
 				this.dispatch( this.receiveError?.( 'failed to send ' + action.event + ': ' + e ) );
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
@@ -183,7 +186,7 @@ export class Connection {
 			( socket: Socket ) => {
 				const promiseRace = Promise.race( [
 					new Promise( ( resolve, reject ) => {
-						socket.emit( action.event, action.payload, ( e: string, result: any ) => {
+						socket.emit( action.event, action.payload, ( e: string, result: unknown ) => {
 							if ( e ) {
 								return reject( new Error( e ) ); // request failed
 							}

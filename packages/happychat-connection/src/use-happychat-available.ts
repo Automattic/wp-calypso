@@ -11,7 +11,7 @@ export function useHappychatAvailable() {
 			const connection = buildConnection( {
 				receiveAccept: ( receivedAvailability ) => setIsAvailable( receivedAvailability ),
 			} );
-			connection.init( ( value: any ) => value, Promise.resolve( dataAuth ) );
+			connection.init( ( value: unknown ) => value, Promise.resolve( dataAuth ) );
 		}
 	}, [ dataAuth, isLoadingAuth ] );
 

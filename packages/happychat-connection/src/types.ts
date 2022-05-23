@@ -42,7 +42,7 @@ export interface ConnectionProps {
 }
 
 export interface HappychatAuth {
-	url: any;
+	url: string | Socket;
 	user: {
 		jwt: string;
 	} & HappychatUser;
