@@ -15,9 +15,9 @@ import JetpackCredentialsBanner from 'calypso/my-sites/site-settings/jetpack-cre
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
 import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import isRewindActive from 'calypso/state/selectors/is-rewind-active';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { shouldDisplayJetpackCredentialsBanner } from 'calypso/state/site-settings/jetpack-credentials-banner/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -94,6 +94,10 @@ export default connect( ( state ) => {
 		hasActiveRewind: isRewindActive( state, siteId ),
 		isJetpackSectionEnabled: isJetpackSectionEnabledForSite( state, siteId ),
 		shouldDisplayBanner: shouldDisplayJetpackCredentialsBanner( state ),
-		hasActiveSecuritySettingsFeature: siteHasFeature( state, siteId, FEATURE_SECURITY_SETTINGS ),
+		hasActiveSecuritySettingsFeature: hasActiveSiteFeature(
+			state,
+			siteId,
+			FEATURE_SECURITY_SETTINGS
+		),
 	};
 } )( localize( SiteSettingsSecurity ) );

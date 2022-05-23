@@ -17,7 +17,7 @@ import { FormCheckbox } from 'calypso/devdocs/design/playground-scope';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getMimePrefix, url } from 'calypso/lib/media/utils';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EditorMediaModalFieldset from '../fieldset';
@@ -354,7 +354,7 @@ export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isWpcom = ! isJetpackSite( state, siteId );
 	const hasVideoPrivacyFeature =
-		isWpcom && siteHasFeature( state, siteId, 'videopress-privacy-setting' );
+		isWpcom && hasActiveSiteFeature( state, siteId, 'videopress-privacy-setting' );
 
 	return {
 		siteId,

@@ -9,7 +9,7 @@ import searchUrl from 'calypso/lib/search-url';
 import { selectMediaItems } from 'calypso/state/media/actions';
 import getMediaErrors from 'calypso/state/selectors/get-media-errors';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import {
 	isKeyringConnectionsFetching,
@@ -206,7 +206,7 @@ export default connect(
 		needsKeyring: needsKeyring( state, source ),
 		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		isJetpack: isJetpackSite( state, site?.ID ),
-		hasVideoUploadFeature: siteHasFeature( state, site?.ID, 'upload-video-files' ),
+		hasVideoUploadFeature: hasActiveSiteFeature( state, site?.ID, 'upload-video-files' ),
 	} ),
 	{
 		requestKeyringConnections,

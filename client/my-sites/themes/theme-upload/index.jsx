@@ -42,9 +42,9 @@ import {
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
@@ -386,8 +386,8 @@ const mapStateToProps = ( state ) => {
 	const eligibleForProPlan = isEligibleForProPlan( state, siteId );
 
 	const canUploadThemesOrPlugins =
-		siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ) ||
-		siteHasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS );
+		hasActiveSiteFeature( state, siteId, FEATURE_UPLOAD_THEMES ) ||
+		hasActiveSiteFeature( state, siteId, FEATURE_UPLOAD_PLUGINS );
 
 	const isAtomic = isSiteWpcomAtomic( state, siteId );
 

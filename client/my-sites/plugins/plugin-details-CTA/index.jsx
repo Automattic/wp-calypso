@@ -22,8 +22,8 @@ import { removePluginStatuses } from 'calypso/state/plugins/installed/status/act
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { PREINSTALLED_PLUGINS } from '../constants';
@@ -57,7 +57,7 @@ const PluginDetailsCTA = ( {
 
 	const shouldUpgrade =
 		useSelector(
-			( state ) => ! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
+			( state ) => ! hasActiveSiteFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
 		) && ! isJetpackSelfHosted;
 
 	// Eligibilities for Simple Sites.

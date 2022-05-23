@@ -16,7 +16,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -139,9 +139,9 @@ export default connect(
 			siteSlug: getSelectedSiteSlug( state ),
 			products: getProductsForSiteId( state, siteId ),
 			hasStripeFeature:
-				siteHasFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
-				siteHasFeature( state, siteId, FEATURE_DONATIONS ) ||
-				siteHasFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
+				hasActiveSiteFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
+				hasActiveSiteFeature( state, siteId, FEATURE_DONATIONS ) ||
+				hasActiveSiteFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 		};
 	},
 	( dispatch ) => ( {

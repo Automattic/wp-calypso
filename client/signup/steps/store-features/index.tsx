@@ -8,7 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { EXCLUDED_STEPS } from '../intent/index';
 import { useIntents } from './intents';
@@ -74,10 +74,10 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	}, [] );
 
 	const hasPaymentsFeature = useSelector( ( state ) =>
-		siteHasFeature( state, props.siteId, FEATURE_SIMPLE_PAYMENTS )
+		hasActiveSiteFeature( state, props.siteId, FEATURE_SIMPLE_PAYMENTS )
 	);
 	const hasWooFeature = useSelector( ( state ) =>
-		siteHasFeature( state, props.siteId, FEATURE_WOOP )
+		hasActiveSiteFeature( state, props.siteId, FEATURE_WOOP )
 	);
 	const intents = useIntents( siteSlug, hasPaymentsFeature, hasWooFeature, trackSupportLinkClick );
 

@@ -18,8 +18,8 @@ import {
 	showUpdatePrimaryDomainErrorNotice,
 } from 'calypso/state/domains/management/actions';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import type {
 	SetAsPrimaryProps,
@@ -141,7 +141,7 @@ export default connect(
 				: false,
 			isOnFreePlan,
 			isManagingAllSites: isUnderDomainManagementAll( getCurrentRoute( state ) ),
-			canSetPrimaryDomain: siteHasFeature(
+			canSetPrimaryDomain: hasActiveSiteFeature(
 				state,
 				selectedSite.ID,
 				FEATURE_SET_PRIMARY_CUSTOM_DOMAIN

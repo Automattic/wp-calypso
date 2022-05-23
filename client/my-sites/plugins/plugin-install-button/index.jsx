@@ -19,8 +19,8 @@ import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/ac
 import { installPlugin } from 'calypso/state/plugins/installed/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
+import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isCompatiblePlugin } from '../plugin-compatibility';
 import { getPeriodVariationValue } from '../plugin-price';
 
@@ -332,7 +332,7 @@ export default connect(
 			siteId,
 			siteIsConnected: getSiteConnectionStatus( state, siteId ),
 			siteIsWpcomAtomic: isSiteWpcomAtomic( state, siteId ),
-			canInstallPlugins: siteHasFeature( state, siteId, FEATURE_INSTALL_PLUGINS ),
+			canInstallPlugins: hasActiveSiteFeature( state, siteId, FEATURE_INSTALL_PLUGINS ),
 			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
 		};
 	},
