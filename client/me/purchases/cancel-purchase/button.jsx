@@ -300,7 +300,6 @@ class CancelPurchaseButton extends Component {
 		}
 
 		const disableButtons = this.state.disabled || this.props.disabled;
-		const flowType = this.getCancellationFlowType();
 		const { isJetpack } = this.props;
 
 		return (
@@ -337,7 +336,7 @@ class CancelPurchaseButton extends Component {
 						isVisible={ this.state.showDialog }
 						onClose={ this.closeDialog }
 						onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
-						flowType={ flowType }
+						flowType={ this.getCancellationFlowType() }
 					/>
 				) }
 			</div>

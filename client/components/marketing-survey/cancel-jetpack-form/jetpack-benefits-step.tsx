@@ -120,23 +120,25 @@ const JetpackBenefitsStep: React.FC< Props > = ( props ) => {
 	const getCancelConsequenceByProduct = ( productSlug: string ) => {
 		if ( isJetpackScanSlug( productSlug ) ) {
 			return translate(
-				'Once you cancel, your site will no longer have automatic protection from threats.'
+				'Once you remove your subscription, your site will no longer have automatic protection from threats.'
 			);
 		} else if ( isJetpackBackupSlug( productSlug ) ) {
-			return translate( 'Once you cancel, you will lose access to your site backups.' );
+			return translate(
+				'Once you remove your subscription, you will lose access to your site backups.'
+			);
 		} else if ( ( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes( productSlug ) ) {
 			return translate(
-				"Once you cancel, you will no longer have Jetpack's enhanced search experience."
+				"Once you remove your subscription, you will no longer have Jetpack's enhanced search experience."
 			);
 		}
 
-		return translate( 'Once you cancel, you will lose access to the following:' );
+		return translate( 'Once you remove your subscription, you will lose access to the following:' );
 	};
 
 	return (
 		<React.Fragment>
 			<FormattedHeader
-				headerText={ translate( 'Are you sure you want to cancel?' ) }
+				headerText={ translate( 'Are you sure you want to remove your subscription?' ) }
 				subHeaderText={
 					<React.Fragment>
 						{ renderTimeRemainingString( product, purchase ) }

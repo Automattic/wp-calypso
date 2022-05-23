@@ -775,6 +775,7 @@ export {
 	isPaidWithPaypal,
 	isPaidWithCredits,
 	isPartnerPurchase,
+	isPurchaseCancelable,
 	hasPaymentMethod,
 	isCloseToExpiration,
 	isExpired,
