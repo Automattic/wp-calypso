@@ -21,7 +21,7 @@ export default function PaymentInfoBlock( {
 }: {
 	purchase: Purchase;
 	cards: StoredCard[];
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const isBackupMethodAvailable = cards.some(

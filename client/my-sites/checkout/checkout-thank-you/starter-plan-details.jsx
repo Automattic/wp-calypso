@@ -3,6 +3,7 @@ import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
@@ -29,6 +30,16 @@ const StarterPlanDetails = ( { translate, selectedSite, sitePlans, purchases } )
 				) }
 				buttonText={ translate( 'Start Earning' ) }
 				href={ '/earn/' + selectedSite.slug }
+			/>
+
+			<PurchaseDetail
+				icon={ <img alt="" src={ analyticsImage } /> }
+				title={ translate( 'Connect to Google Analytics' ) }
+				description={ translate(
+					"Complement WordPress.com's stats with Google's in-depth look at your visitors and traffic patterns."
+				) }
+				buttonText={ translate( 'Connect Google Analytics' ) }
+				href={ '/settings/analytics/' + selectedSite.slug }
 			/>
 		</div>
 	);

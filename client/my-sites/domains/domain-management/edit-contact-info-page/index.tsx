@@ -31,7 +31,7 @@ const EditContactInfoPage = ( {
 	isRequestingWhois,
 	selectedDomainName,
 	selectedSite,
-}: EditContactInfoPageProps ): JSX.Element => {
+}: EditContactInfoPageProps ) => {
 	const translate = useTranslate();
 
 	const isDataLoading = () => {

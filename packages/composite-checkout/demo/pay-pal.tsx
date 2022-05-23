@@ -25,7 +25,7 @@ export function createPayPalMethod(): PaymentMethod {
 	};
 }
 
-function PaypalLabel(): JSX.Element {
+function PaypalLabel() {
 	return (
 		<Fragment>
 			<span>{ 'PayPal' }</span>
@@ -39,7 +39,7 @@ function PaypalSubmitButton( {
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
-} ): JSX.Element {
+} ) {
 	const { formStatus } = useFormStatus();
 	const { transactionStatus } = useTransactionStatus();
 	const [ items ] = useLineItems();
@@ -73,7 +73,7 @@ function PayPalButtonContents( {
 }: {
 	formStatus: FormStatus;
 	transactionStatus: TransactionStatus;
-} ): JSX.Element {
+} ) {
 	const { __ } = useI18n();
 	if ( transactionStatus === TransactionStatus.REDIRECTING ) {
 		return <span>{ __( 'Redirecting to PayPal…' ) }</span>;
@@ -87,11 +87,11 @@ function PayPalButtonContents( {
 	return <span>{ __( 'Please wait…' ) }</span>;
 }
 
-function PaypalSummary(): JSX.Element {
+function PaypalSummary() {
 	return <>{ 'PayPal' }</>;
 }
 
-function PaypalLogo( { className }: { className?: string } ): JSX.Element {
+function PaypalLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }

@@ -53,6 +53,11 @@ describe( 'payPalExpressProcessor', () => {
 		domain_details: null,
 		postal_code: '',
 		success_url: 'https://example.com/thank-you',
+		tos: {
+			locale: 'en',
+			path: '/',
+			viewport: '0x0',
+		},
 	};
 
 	beforeEach( () => {
@@ -271,6 +276,11 @@ describe( 'payPalExpressProcessor', () => {
 				coupon: '',
 				create_new_blog: true,
 			},
+			tos: {
+				locale: 'en',
+				path: '/checkout/no-site',
+				viewport: '0x0',
+			},
 		} );
 	} );
 
@@ -298,6 +308,11 @@ describe( 'payPalExpressProcessor', () => {
 				cart_key: 'no-site',
 				coupon: '',
 				create_new_blog: true,
+			},
+			tos: {
+				locale: 'en',
+				path: '/checkout/no-site',
+				viewport: '0x0',
 			},
 		} );
 	} );

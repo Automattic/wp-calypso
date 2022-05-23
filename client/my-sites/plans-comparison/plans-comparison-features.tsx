@@ -18,6 +18,7 @@ import {
 	FEATURE_TITAN_EMAIL,
 	FEATURE_MONETISE,
 	FEATURE_JETPACK_ESSENTIAL,
+	FEATURE_GOOGLE_ANALYTICS,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { translate, numberFormat } from 'i18n-calypso';
@@ -131,172 +132,23 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	},
 	{
 		get title() {
-			return translate( 'Website Administrator' );
-		},
-		get description() {
-			return translate(
-				'Pro WordPress lets you have unlimited users editing your site. This is ideal for having multiple collaborators help you have your website built and maintained.'
-			);
-		},
-		features: [ FEATURE_UNLIMITED_ADMINS ],
-		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
-			const adminCount = 1;
-
-			if ( ! isMobile ) {
-				if ( feature ) {
-					return translate( 'Unlimited' );
-				}
-
-				if ( isLegacySiteWithHigherLimits ) {
-					// Adding "administrator" is redundant here (and differs from the non-legacy
-					// case below), but we're adding it because just having the number crossed
-					// out is hard to read.
-					return translate(
-						'{{del}}%(adminCount)s administrator{{/del}} Unlimited on this site',
-						'{{del}}%(adminCount)s administrators{{/del}} Unlimited on this site',
-						{
-							count: adminCount,
-							components: {
-								del: <del />,
-							},
-							args: { adminCount: numberFormat( adminCount, 0 ) },
-						}
-					);
-				}
-
-				return String( adminCount );
-			}
-
-			if ( feature ) {
-				return translate( 'Unlimited Website Administrators' );
-			}
-
-			if ( isLegacySiteWithHigherLimits ) {
-				return translate(
-					'{{del}}%(adminCount)s Website Administrator{{/del}} Unlimited on this site',
-					'{{del}}%(adminCount)s Website Administrators{{/del}} Unlimited on this site',
-					{
-						count: adminCount,
-						components: {
-							del: <del />,
-						},
-						args: { adminCount: numberFormat( adminCount, 0 ) },
-					}
-				);
-			}
-
-			return translate(
-				'%(adminCount)s Website Administrator',
-				'%(adminCount)s Website Administrators',
-				{
-					count: adminCount,
-					args: { adminCount: numberFormat( adminCount, 0 ) },
-				}
-			);
-		},
-	},
-	{
-		get title() {
-			return translate( 'Premium themes' );
-		},
-		get description() {
-			return translate(
-				'Gain access to advanced, professional & beautiful premium design templates including themes specifically tailored for businesses.'
-			);
-		},
-		features: [ FEATURE_PREMIUM_THEMES ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Premium themes' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Premium themes are included' )
-					: translate( 'Premium themes are {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
-		},
-	},
-	{
-		get title() {
-			return translate( 'WordPress plugins' );
+			return translate( 'Collect payments' );
 		},
 		get subtitle() {
-			return translate( 'Be able to add forms, calendar, and more.' );
+			return translate( 'Accept donations, subscriptions and more.' );
 		},
 		get description() {
 			return translate(
-				'Install WordPress plugins and extend functionality for your site with access to more than 50,000 WordPress plugins.'
+				'One simple, flexible way to collect any type of payment. Accept payments for just about anything from goods and services to memberships and donations.'
 			);
 		},
-		features: [ FEATURE_INSTALL_PLUGINS ],
+		features: [ FEATURE_PAYMENT_BLOCKS ],
 		getCellText: ( feature, isMobile = false ) => {
-			if ( ! isMobile ) {
-				if ( feature ) {
-					return (
-						<>
-							<Gridicon icon="checkmark" />
-							{ translate( 'Unlimited plugins' ) }
-						</>
-					);
-				}
-
-				return (
-					<>
-						<Gridicon icon="cross" />
-						{ translate( 'Not included' ) }
-					</>
-				);
-			}
-
-			return feature
-				? translate( 'Unlimited WordPress plugins' )
-				: translate( 'WordPress plugins are {{strong}}not{{/strong}} included', {
-						components: { strong: <strong /> },
-				  } );
-		},
-	},
-	{
-		get title() {
-			return translate( 'Premium support' );
-		},
-		get subtitle() {
-			return translate( 'Get expert help to build your site.' );
-		},
-		get description() {
-			return translate(
-				'Over 30% of WordPress.com is dedicated to customer service. We call it Happiness — real support delivered by real human beings, experts in WordPress sites.'
-			);
-		},
-		features: [ FEATURE_PREMIUM_SUPPORT ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Premium support' ) )( feature, isMobile );
+			let cellText = defaultGetCellText( translate( 'Collect payments' ) )( feature, isMobile );
 			if ( isMobile ) {
 				cellText = feature
-					? translate( 'Premium support is included' )
-					: translate( 'Premium support is {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
-		},
-	},
-	{
-		get title() {
-			return translate( 'Sell products with WooCommerce' );
-		},
-		get description() {
-			return translate(
-				'Includes one-click payments, premium store designs and personalized expert support.'
-			);
-		},
-		features: [ FEATURE_WOOCOMMERCE ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'WooCommerce' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'WooCommerce is included' )
-					: translate( 'WooCommerce is {{strong}}not{{/strong}} included', {
+					? translate( 'Collect payments is included' )
+					: translate( 'Collect payments is {{strong}}not{{/strong}} included', {
 							components: { strong: <strong /> },
 					  } );
 			}
@@ -376,6 +228,189 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	},
 	{
 		get title() {
+			return translate( 'WordPress plugins' );
+		},
+		get subtitle() {
+			return translate( 'Be able to add forms, calendar, and more.' );
+		},
+		get description() {
+			return translate(
+				'Install WordPress plugins and extend functionality for your site with access to more than 50,000 WordPress plugins.'
+			);
+		},
+		features: [ FEATURE_INSTALL_PLUGINS ],
+		getCellText: ( feature, isMobile = false ) => {
+			if ( ! isMobile ) {
+				if ( feature ) {
+					return (
+						<>
+							<Gridicon icon="checkmark" />
+							{ translate( 'Unlimited plugins' ) }
+						</>
+					);
+				}
+
+				return (
+					<>
+						<Gridicon icon="cross" />
+						{ translate( 'Not included' ) }
+					</>
+				);
+			}
+
+			return feature
+				? translate( 'Unlimited WordPress plugins' )
+				: translate( 'WordPress plugins are {{strong}}not{{/strong}} included', {
+						components: { strong: <strong /> },
+				  } );
+		},
+	},
+	{
+		get title() {
+			return translate( 'Premium support' );
+		},
+		get subtitle() {
+			return translate( 'Get expert help to build your site.' );
+		},
+		get description() {
+			return translate(
+				'Over 30% of WordPress.com is dedicated to customer service. We call it Happiness — real support delivered by real human beings, experts in WordPress sites.'
+			);
+		},
+		features: [ FEATURE_PREMIUM_SUPPORT ],
+		getCellText: ( feature, isMobile = false ) => {
+			let cellText = defaultGetCellText( translate( 'Premium support' ) )( feature, isMobile );
+			if ( isMobile ) {
+				cellText = feature
+					? translate( 'Premium support is included' )
+					: translate( 'Premium support is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
+			}
+			return cellText;
+		},
+	},
+	{
+		get title() {
+			return translate( 'Premium themes' );
+		},
+		get description() {
+			return translate(
+				'Gain access to advanced, professional & beautiful premium design templates including themes specifically tailored for businesses.'
+			);
+		},
+		features: [ FEATURE_PREMIUM_THEMES ],
+		getCellText: ( feature, isMobile = false ) => {
+			let cellText = defaultGetCellText( translate( 'Premium themes' ) )( feature, isMobile );
+			if ( isMobile ) {
+				cellText = feature
+					? translate( 'Premium themes are included' )
+					: translate( 'Premium themes are {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
+			}
+			return cellText;
+		},
+	},
+	{
+		get title() {
+			return translate( 'Sell products with WooCommerce' );
+		},
+		get description() {
+			return translate(
+				'Includes one-click payments, premium store designs and personalized expert support.'
+			);
+		},
+		features: [ FEATURE_WOOCOMMERCE ],
+		getCellText: ( feature, isMobile = false ) => {
+			let cellText = defaultGetCellText( translate( 'WooCommerce' ) )( feature, isMobile );
+			if ( isMobile ) {
+				cellText = feature
+					? translate( 'WooCommerce is included' )
+					: translate( 'WooCommerce is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
+			}
+			return cellText;
+		},
+	},
+	{
+		get title() {
+			return translate( 'Professional Email' );
+		},
+		get subtitle() {
+			return translate( 'Custom email address with your own domain.' );
+		},
+		get description() {
+			return translate(
+				'Custom email address with mailbox, calendar, templates and more. Register free for 3 months with your custom domain. After 3 months, you have the option to renew or cancel your email subscription.'
+			);
+		},
+		features: [ FEATURE_TITAN_EMAIL ],
+		getCellText: ( feature, isMobile = false ) => {
+			if ( ! isMobile ) {
+				if ( feature ) {
+					return (
+						<>
+							<Gridicon icon="checkmark" />
+							{ translate( 'Free for 3 months' ) }
+						</>
+					);
+				}
+
+				return (
+					<>
+						<Gridicon icon="cross" />
+						{ translate( 'Not included' ) }
+					</>
+				);
+			}
+
+			return feature
+				? translate( 'Professional Email is free for 3 months' )
+				: translate( 'Professional Email is {{strong}}not{{/strong}} included', {
+						components: { strong: <strong /> },
+				  } );
+		},
+	},
+	{
+		get title() {
+			return translate( 'Google Analytics integration' );
+		},
+		get description() {
+			return translate(
+				"Track your site's stats with Google Analytics for a deeper understanding of your visitors and customers."
+			);
+		},
+		features: [ FEATURE_GOOGLE_ANALYTICS ],
+		getCellText: ( feature, isMobile = false ) => {
+			if ( ! isMobile ) {
+				if ( feature ) {
+					return (
+						<>
+							<Gridicon icon="checkmark" />
+							{ translate( 'Included' ) }
+						</>
+					);
+				}
+
+				return (
+					<>
+						<Gridicon icon="cross" />
+						{ translate( 'Not included' ) }
+					</>
+				);
+			}
+
+			return feature
+				? translate( 'Google Analytics integration' )
+				: translate( 'Google Analytics integration is {{strong}}not{{/strong}} included', {
+						components: { strong: <strong /> },
+				  } );
+		},
+	},
+	{
+		get title() {
 			return translate( 'Remove ads' );
 		},
 		get description() {
@@ -443,27 +478,68 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	},
 	{
 		get title() {
-			return translate( 'Collect payments' );
-		},
-		get subtitle() {
-			return translate( 'Accept donations, subscriptions and more.' );
+			return translate( 'Website Administrator' );
 		},
 		get description() {
 			return translate(
-				'One simple, flexible way to collect any type of payment. Accept payments for just about anything from goods and services to memberships and donations.'
+				'Pro WordPress lets you have unlimited users editing your site. This is ideal for having multiple collaborators help you have your website built and maintained.'
 			);
 		},
-		features: [ FEATURE_PAYMENT_BLOCKS ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Collect payments' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Collect payments is included' )
-					: translate( 'Collect payments is {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
+		features: [ FEATURE_UNLIMITED_ADMINS ],
+		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
+			const adminCount = 1;
+
+			if ( ! isMobile ) {
+				if ( feature ) {
+					return translate( 'Unlimited' );
+				}
+
+				if ( isLegacySiteWithHigherLimits ) {
+					// Adding "administrator" is redundant here (and differs from the non-legacy
+					// case below), but we're adding it because just having the number crossed
+					// out is hard to read.
+					return translate(
+						'{{del}}%(adminCount)s administrator{{/del}} Unlimited on this site',
+						'{{del}}%(adminCount)s administrators{{/del}} Unlimited on this site',
+						{
+							count: adminCount,
+							components: {
+								del: <del />,
+							},
+							args: { adminCount: numberFormat( adminCount, 0 ) },
+						}
+					);
+				}
+
+				return String( adminCount );
 			}
-			return cellText;
+
+			if ( feature ) {
+				return translate( 'Unlimited Website Administrators' );
+			}
+
+			if ( isLegacySiteWithHigherLimits ) {
+				return translate(
+					'{{del}}%(adminCount)s Website Administrator{{/del}} Unlimited on this site',
+					'{{del}}%(adminCount)s Website Administrators{{/del}} Unlimited on this site',
+					{
+						count: adminCount,
+						components: {
+							del: <del />,
+						},
+						args: { adminCount: numberFormat( adminCount, 0 ) },
+					}
+				);
+			}
+
+			return translate(
+				'%(adminCount)s Website Administrator',
+				'%(adminCount)s Website Administrators',
+				{
+					count: adminCount,
+					args: { adminCount: numberFormat( adminCount, 0 ) },
+				}
+			);
 		},
 	},
 	{
@@ -487,45 +563,6 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 					  } );
 			}
 			return cellText;
-		},
-	},
-	{
-		get title() {
-			return translate( 'Professional Email' );
-		},
-		get subtitle() {
-			return translate( 'Custom email address with your own domain.' );
-		},
-		get description() {
-			return translate(
-				'Custom email address with mailbox, calendar, templates and more. Register free for 3 months with your custom domain. After 3 months, you have the option to renew or cancel your email subscription.'
-			);
-		},
-		features: [ FEATURE_TITAN_EMAIL ],
-		getCellText: ( feature, isMobile = false ) => {
-			if ( ! isMobile ) {
-				if ( feature ) {
-					return (
-						<>
-							<Gridicon icon="checkmark" />
-							{ translate( 'Free for 3 months' ) }
-						</>
-					);
-				}
-
-				return (
-					<>
-						<Gridicon icon="cross" />
-						{ translate( 'Not included' ) }
-					</>
-				);
-			}
-
-			return feature
-				? translate( 'Professional Email is free for 3 months' )
-				: translate( 'Professional Email is {{strong}}not{{/strong}} included', {
-						components: { strong: <strong /> },
-				  } );
 		},
 	},
 	{

@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import sortBy from 'lodash/sortBy';
 import page from 'page';
 import { ReactElement, useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -21,6 +22,12 @@ function selectProductOptions( families: APIProductFamily[] ): APIProductFamilyP
 	return families.flatMap( ( family ) => family.products );
 }
 
+function alphabeticallySortedProductOptions(
+	families: APIProductFamily[]
+): APIProductFamilyProduct[] {
+	return sortBy( selectProductOptions( families ), ( product ) => product.name );
+}
+
 interface Props {
 	selectedSite?: number | null;
 }
@@ -29,7 +36,7 @@ export default function IssueLicenseForm( { selectedSite }: Props ): ReactElemen
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const products = useProductsQuery( {
-		select: selectProductOptions,
+		select: alphabeticallySortedProductOptions,
 	} );
 
 	const assignLicense = useAssignLicenseMutation( {

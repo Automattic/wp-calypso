@@ -36,6 +36,7 @@ class InlineSupportLink extends Component {
 		statsGroup: PropTypes.string,
 		statsName: PropTypes.string,
 		routeModalData: PropTypes.object,
+		showSupportModal: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -44,6 +45,7 @@ class InlineSupportLink extends Component {
 		showText: true,
 		showIcon: true,
 		iconSize: 14,
+		showSupportModal: true,
 	};
 
 	componentDidMount() {
@@ -60,8 +62,18 @@ class InlineSupportLink extends Component {
 		}
 	}
 
+	onSupportLinkClick( event, supportPostId, url ) {
+		const { showSupportModal, openDialog } = this.props;
+
+		if ( ! showSupportModal ) return;
+
+		const openDialogReturn = openDialog( event, supportPostId, url );
+		this.props.routeModalData.openModal( supportPostId );
+		return openDialogReturn;
+	}
+
 	render() {
-		const { className, showText, showIcon, iconSize, translate, openDialog, children } = this.props;
+		const { className, showText, showIcon, iconSize, translate, children } = this.props;
 
 		let { supportPostId, supportLink } = this.props;
 		if ( this.state.supportDataFromContext ) {
@@ -101,11 +113,7 @@ class InlineSupportLink extends Component {
 			<LinkComponent
 				className={ classnames( 'inline-support-link', className ) }
 				href={ url }
-				onClick={ ( event ) => {
-					const openDialogReturn = openDialog( event, supportPostId, url );
-					this.props.routeModalData.openModal( supportPostId );
-					return openDialogReturn;
-				} }
+				onClick={ ( event ) => this.onSupportLinkClick( event, supportPostId, url ) }
 				target="_blank"
 				rel="noopener noreferrer"
 				{ ...externalLinkProps }

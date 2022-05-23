@@ -10,7 +10,7 @@ type EmailManagementHomePageProps = {
 	source: string;
 };
 
-const EmailManagementHomePage = ( props: EmailManagementHomePageProps ): JSX.Element => {
+const EmailManagementHomePage = ( props: EmailManagementHomePageProps ) => {
 	return (
 		<>
 			<PageViewTracker

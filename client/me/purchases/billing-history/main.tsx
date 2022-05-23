@@ -21,7 +21,7 @@ export function BillingHistoryContent( {
 }: {
 	siteId: number | null;
 	getReceiptUrlFor: ( receiptId: string | number ) => string;
-} ): JSX.Element {
+} ) {
 	return (
 		<Card className="billing-history__receipts">
 			<BillingHistoryList header siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
@@ -29,7 +29,7 @@ export function BillingHistoryContent( {
 	);
 }
 
-function BillingHistory(): JSX.Element {
+function BillingHistory() {
 	const translate = useTranslate();
 	const { vatDetails } = useVatDetails();
 	const editVatText = translate( 'Edit VAT details (for Europe only)' );

@@ -41,11 +41,7 @@ const ThankYouContainer = styled.div`
 
 const AtomicTransferComplete = 'completed';
 
-interface IProps {
-	productSlug: string;
-}
-
-const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
+const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );

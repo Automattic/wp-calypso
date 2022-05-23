@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { assert } from 'chai';
 import { shallow, mount } from 'enzyme';
 import D3Base from '../index';
 
@@ -13,12 +12,12 @@ describe( 'D3base', () => {
 
 	test( 'should have d3Base class', () => {
 		const base = shallowWithoutLifecycle( <D3Base drawChart={ noop } getParams={ noop } /> );
-		assert.lengthOf( base.find( '.d3-base' ), 1 );
+		expect( base.find( '.d3-base' ).length ).toBe( 1 );
 	} );
 
 	test( 'should render an svg', () => {
 		const base = mount( <D3Base drawChart={ noop } getParams={ noop } /> );
-		assert.lengthOf( base.render().find( 'svg' ), 1 );
+		expect( base.render().find( 'svg' ).length ).toBe( 1 );
 	} );
 
 	test( 'should render a result of the drawChart prop', () => {
@@ -26,7 +25,7 @@ describe( 'D3base', () => {
 			return svg.append( 'circle' );
 		};
 		const base = mount( <D3Base drawChart={ drawChart } getParams={ noop } /> );
-		assert.lengthOf( base.render().find( 'circle' ), 1 );
+		expect( base.render().find( 'circle' ).length ).toBe( 1 );
 	} );
 
 	test( 'should pass a property of getParams output to drawChart function', () => {
@@ -37,6 +36,6 @@ describe( 'D3base', () => {
 			return svg.append( params.tagName );
 		};
 		const base = mount( <D3Base drawChart={ drawChart } getParams={ getParams } /> );
-		assert.lengthOf( base.render().find( 'circle' ), 1 );
+		expect( base.render().find( 'circle' ).length ).toBe( 1 );
 	} );
 } );

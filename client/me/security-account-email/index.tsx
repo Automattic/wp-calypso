@@ -25,7 +25,7 @@ const noticeOptions: NoticeOptions = {
 	id: noticeId,
 };
 
-const SecurityAccountEmail = ( { path }: { path: string } ): JSX.Element => {
+const SecurityAccountEmail = ( { path }: { path: string } ) => {
 	const dispatch: CalypsoDispatch = useDispatch();
 	const { markChanged, markSaved } = useProtectForm();
 	const translate = useTranslate();

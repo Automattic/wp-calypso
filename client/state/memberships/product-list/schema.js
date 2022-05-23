@@ -10,6 +10,7 @@ export const metadataSchema = {
 	formatted_price: { type: 'string', metaKey: 'spay_formatted_price' },
 	stripe_account: { type: 'string' },
 	renewal_schedule: { type: 'string' },
+	type: { type: 'string' },
 };
 
 /**

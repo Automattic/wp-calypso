@@ -70,6 +70,11 @@ describe( 'weChatProcessor', () => {
 			tef_bank: undefined,
 			zip: '10001',
 		},
+		tos: {
+			locale: 'en',
+			path: '/',
+			viewport: '0x0',
+		},
 	};
 
 	const redirect_url = 'https://test-redirect-url';

@@ -14,7 +14,7 @@ export default function productAboveButtonText(
 		siteProduct &&
 		( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes( product.productSlug )
 	) {
-		return translate( '*estimated price based off of %(records)s records', {
+		return translate( '*estimated price based on %(records)s records', {
 			args: {
 				records: numberFormat( siteProduct.tierUsage, 0 ),
 			},

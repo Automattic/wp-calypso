@@ -1,0 +1,14 @@
+.login__submit-button {
+    background: $design-button-primary-color;
+    border-color: $design-button-primary-color;
+    padding: 9px 48px;
+    border-radius: 4px;
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+
+    &:hover,
+    &:focus {
+        background: $design-button-primary-hover-color;
+        border-color: $design-button-primary-hover-color;
+    }
+}

@@ -1,8 +1,8 @@
 import classnames from 'classnames';
-import { ReactNode, RefObject } from 'react';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import PhoneInput from 'calypso/components/phone-input';
+import type { PropsWithChildren, RefObject } from 'react';
 
 type FormPhoneMediaInputProps = {
 	additionalClasses?: string[];
@@ -18,7 +18,6 @@ type FormPhoneMediaInputProps = {
 	countriesList: { code: string; name: string }[];
 	enableStickyCountry?: boolean;
 	inputRef?: RefObject< HTMLInputElement >;
-	children: ReactNode;
 };
 
 export default function FormPhoneMediaInput( {
@@ -36,7 +35,7 @@ export default function FormPhoneMediaInput( {
 	enableStickyCountry,
 	inputRef,
 	children,
-}: FormPhoneMediaInputProps ): JSX.Element {
+}: PropsWithChildren< FormPhoneMediaInputProps > ) {
 	return (
 		<div className={ classnames( additionalClasses, 'phone' ) }>
 			<div>

@@ -1,8 +1,5 @@
 import events from 'events';
-import { expect } from 'chai';
-import sinon from 'sinon';
 import { logSectionResponse } from 'calypso/server/pages/analytics';
-import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 import analytics from '../../lib/analytics';
 
 const TWO_SECONDS = 2000;
@@ -25,68 +22,63 @@ describe( 'index', () => {
 		} );
 
 		describe( 'when rendering a section', () => {
-			let clock;
-
-			useFakeTimers( ( newClock ) => ( clock = newClock ) );
+			jest.useFakeTimers();
 
 			beforeEach( () => {
-				sinon.stub( analytics.statsd, 'recordTiming' );
-				sinon.stub( analytics.statsd, 'recordCounting' );
+				jest.spyOn( analytics.statsd, 'recordTiming' );
+				jest.spyOn( analytics.statsd, 'recordCounting' );
 				request.context.sectionName = 'reader';
 				request.context.target = 'evergreen';
 			} );
 
 			afterEach( () => {
-				analytics.statsd.recordTiming.restore();
-				analytics.statsd.recordCounting.restore();
+				analytics.statsd.recordTiming.mockReset();
+				analytics.statsd.recordCounting.mockReset();
 			} );
 
 			test( 'logs response analytics', () => {
 				// Clear throttling
-				clock.tick( TWO_SECONDS );
+				jest.advanceTimersByTime( TWO_SECONDS );
 
 				logSectionResponse( request, response, next );
 
 				// Move time forward and mock the "finish" event
-				clock.tick( TWO_SECONDS );
+				jest.advanceTimersByTime( TWO_SECONDS );
 				response.emit( 'finish' );
 
-				expect( analytics.statsd.recordTiming ).to.have.been.calledWith(
+				expect( analytics.statsd.recordTiming ).toBeCalledWith(
 					'reader',
 					'response-time',
 					TWO_SECONDS
 				);
 
-				expect( analytics.statsd.recordCounting ).to.have.been.calledWith(
-					'reader',
-					'target.evergreen'
-				);
+				expect( analytics.statsd.recordCounting ).toBeCalledWith( 'reader', 'target.evergreen' );
 			} );
 
 			test( 'does not log build target if not defined', () => {
 				request.context.target = undefined;
 
 				// Clear throttling
-				clock.tick( TWO_SECONDS );
+				jest.advanceTimersByTime( TWO_SECONDS );
 
 				logSectionResponse( request, response, next );
 
 				// Move time forward and mock the "finish" event
-				clock.tick( TWO_SECONDS );
+				jest.advanceTimersByTime( TWO_SECONDS );
 				response.emit( 'finish' );
 
-				expect( analytics.statsd.recordTiming ).to.have.been.calledWith(
+				expect( analytics.statsd.recordTiming ).toBeCalledWith(
 					'reader',
 					'response-time',
 					TWO_SECONDS
 				);
 
-				expect( analytics.statsd.recordCounting ).not.to.have.been.called;
+				expect( analytics.statsd.recordCounting ).not.toBeCalled();
 			} );
 
 			test( 'throttles calls to log analytics', () => {
 				// Clear throttling
-				clock.tick( TWO_SECONDS );
+				jest.advanceTimersByTime( TWO_SECONDS );
 
 				logSectionResponse( request, response, next );
 				logSectionResponse( request2, response2, next );
@@ -94,27 +86,27 @@ describe( 'index', () => {
 				response.emit( 'finish' );
 				response2.emit( 'finish' );
 
-				expect( analytics.statsd.recordTiming ).to.have.been.calledOnce;
-				expect( analytics.statsd.recordCounting ).to.have.been.calledOnce;
+				expect( analytics.statsd.recordTiming ).toBeCalledTimes( 1 );
+				expect( analytics.statsd.recordCounting ).toBeCalledTimes( 1 );
 
-				clock.tick( TWO_SECONDS );
+				jest.advanceTimersByTime( TWO_SECONDS );
 				response.emit( 'finish' );
 				response2.emit( 'finish' );
 
-				expect( analytics.statsd.recordTiming ).to.have.been.calledTwice;
-				expect( analytics.statsd.recordCounting ).to.have.been.calledTwice;
+				expect( analytics.statsd.recordTiming ).toBeCalledTimes( 2 );
+				expect( analytics.statsd.recordCounting ).toBeCalledTimes( 2 );
 			} );
 		} );
 
 		describe( 'when not rendering a section', () => {
 			beforeEach( () => {
-				sinon.stub( analytics.statsd, 'recordTiming' );
-				sinon.stub( analytics.statsd, 'recordCounting' );
+				jest.spyOn( analytics.statsd, 'recordTiming' );
+				jest.spyOn( analytics.statsd, 'recordCounting' );
 			} );
 
 			afterEach( () => {
-				analytics.statsd.recordTiming.restore();
-				analytics.statsd.recordCounting.restore();
+				analytics.statsd.recordTiming.mockReset();
+				analytics.statsd.recordCounting.mockReset();
 			} );
 
 			test( 'does not log response time analytics', () => {
@@ -123,8 +115,8 @@ describe( 'index', () => {
 				// Mock the "finish" event
 				response.emit( 'finish' );
 
-				expect( analytics.statsd.recordTiming ).not.to.have.been.called;
-				expect( analytics.statsd.recordCounting ).not.to.have.been.called;
+				expect( analytics.statsd.recordTiming ).not.toBeCalled();
+				expect( analytics.statsd.recordCounting ).not.toBeCalled();
 			} );
 		} );
 	} );

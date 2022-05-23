@@ -45,7 +45,7 @@ export default function TaxFields( {
 	countriesList: CountryListItem[];
 	onChange: ( taxInfo: ManagedContactDetails ) => void;
 	isDisabled?: boolean;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const { postalCode, countryCode } = taxInfo;
 	const arePostalCodesSupported =

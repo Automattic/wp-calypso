@@ -303,19 +303,6 @@ module.exports = {
 				assertFunctionNames: [
 					// Jest
 					'expect',
-
-					// Chai
-					'chai.assert',
-					'chai.assert.*',
-					'assert',
-					'assert.*',
-					'equal',
-					'ok',
-					'deepStrictEqual',
-					'chaiExpect',
-
-					// Sinon
-					'sinon.assert.*',
 				],
 			},
 		],

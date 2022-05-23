@@ -10,7 +10,7 @@ const RestoreEmailDnsDialog = ( {
 	emailServiceName: string;
 	isVisible: boolean;
 	onClose: ( restoreEmailDnsDialogResult: RestoreEmailDnsDialogResult ) => void;
-} ): JSX.Element => {
+} ) => {
 	const translate = useTranslate();
 
 	const onCancel = () => {

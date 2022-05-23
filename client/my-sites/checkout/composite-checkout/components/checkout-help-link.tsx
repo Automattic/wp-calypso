@@ -47,7 +47,7 @@ const HappychatButton = styled( HappychatButtonUnstyled )`
 	}
 `;
 
-export function PaymentChatButton( { plan }: { plan: string | undefined } ): JSX.Element {
+export function PaymentChatButton( { plan }: { plan: string | undefined } ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const supportLevel = useSelector( getSupportLevel );
@@ -124,7 +124,7 @@ const LoadingButton = styled.p< StyledProps >`
 	position: relative;
 `;
 
-export default function CheckoutHelpLink(): JSX.Element {
+export default function CheckoutHelpLink() {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const cartKey = useCartKey();

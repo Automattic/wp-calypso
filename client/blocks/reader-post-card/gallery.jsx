@@ -1,4 +1,3 @@
-import { map, take, filter } from 'lodash';
 import PropTypes from 'prop-types';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -16,13 +15,12 @@ function getGalleryWorthyImages( post ) {
 		images.splice( indexToRemove, 1 );
 	}
 
-	const worthyImages = filter( images, imageIsBigEnoughForGallery );
-	return take( worthyImages, numberOfImagesToDisplay );
+	return images.filter( imageIsBigEnoughForGallery ).slice( 0, numberOfImagesToDisplay );
 }
 
 const PostGallery = ( { post, children, isDiscover } ) => {
 	const imagesToDisplay = getGalleryWorthyImages( post );
-	const listItems = map( imagesToDisplay, ( image, index ) => {
+	const listItems = imagesToDisplay.map( ( image, index ) => {
 		const imageUrl = resizeImageUrl( image.src, {
 			w: READER_CONTENT_WIDTH / imagesToDisplay.length,
 		} );

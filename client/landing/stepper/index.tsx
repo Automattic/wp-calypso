@@ -3,6 +3,8 @@ import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
+import { User as UserStore } from '@automattic/data-stores';
+import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -28,6 +30,7 @@ import { FlowRenderer } from './declarative-flow/internals';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';
 import { useAnchorFmParams } from './hooks/use-anchor-fm-params';
+import { USER_STORE } from './stores';
 
 function generateGetSuperProps() {
 	return () => ( {
@@ -38,19 +41,22 @@ function generateGetSuperProps() {
 	} );
 }
 
-function setupHappyChat( reduxStore: any, user: CurrentUser ) {
-	reduxStore.dispatch( requestHappychatEligibility() );
+function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
+	config.isEnabled( 'signup/inline-help' ) && reduxStore.dispatch( requestHappychatEligibility() );
 	reduxStore.dispatch( setCurrentUser( user ) );
 	reduxStore.dispatch( requestSites() );
 }
 
-const FlowWrapper: React.FC = () => {
+const FlowWrapper: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
 	const { anchorFmPodcastId } = useAnchorFmParams();
 	let flow = siteSetupFlow;
 
 	if ( anchorFmPodcastId && config.isEnabled( 'signup/anchor-fm' ) ) {
 		flow = anchorFmFlow;
 	}
+
+	const { receiveCurrentUser } = useDispatch( USER_STORE );
+	user && receiveCurrentUser( user as UserStore.CurrentUser );
 
 	return <FlowRenderer flow={ flow } />;
 };
@@ -89,7 +95,8 @@ window.AppBoot = async () => {
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( userId ) );
 	setupLocale( user, reduxStore );
-	user && setupHappyChat( reduxStore, user as CurrentUser );
+
+	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
 
 	ReactDom.render(
 		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
@@ -97,9 +104,11 @@ window.AppBoot = async () => {
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<FlowWrapper />
+						<FlowWrapper user={ user as UserStore.CurrentUser } />
 					</BrowserRouter>
-					<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
+					{ config.isEnabled( 'signup/inline-help' ) && (
+						<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
+					) }
 				</QueryClientProvider>
 			</Provider>
 		</CalypsoI18nProvider>,

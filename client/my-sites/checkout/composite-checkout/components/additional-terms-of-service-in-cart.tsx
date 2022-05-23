@@ -13,7 +13,7 @@ const debug = debugFactory( 'calypso:composite-checkout:additional-terms-of-serv
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-export default function AdditionalTermsOfServiceInCart(): JSX.Element | null {
+export default function AdditionalTermsOfServiceInCart() {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const cartKey = useCartKey();

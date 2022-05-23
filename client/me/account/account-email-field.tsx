@@ -65,7 +65,7 @@ const AccountEmailValidationNotice = ( {
 	emailInvalidReason: AccountEmailValidationReason;
 	unsavedUserSettings: UserSettingsType;
 	userSettings: UserSettingsType;
-} ): JSX.Element | null => {
+} ) => {
 	const translate = useTranslate();
 
 	if ( unsavedUserSettings?.user_email === null || unsavedUserSettings?.user_email === undefined ) {
@@ -101,7 +101,7 @@ const AccountEmailPendingEmailChangeNotice = ( {
 }: {
 	unsavedUserSettings: UserSettingsType;
 	userSettings: UserSettingsType;
-} ): JSX.Element | null => {
+} ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -168,7 +168,7 @@ const AccountEmailField = ( {
 	onFocus,
 	unsavedUserSettings = {},
 	userSettings = {},
-}: AccountEmailFieldProps ): JSX.Element => {
+}: AccountEmailFieldProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isEmailChangePending = useSelector( isPendingEmailChange );

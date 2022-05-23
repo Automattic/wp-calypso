@@ -73,7 +73,7 @@ export const PaymentMethodSummary = ( {
 	type: string;
 	digits?: string;
 	email?: string;
-} ): JSX.Element => {
+} ) => {
 	const translate = useTranslate();
 	if ( type === PARTNER_PAYPAL_EXPRESS ) {
 		return <>{ email || '' }</>;

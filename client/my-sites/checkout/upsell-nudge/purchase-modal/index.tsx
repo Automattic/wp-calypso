@@ -34,7 +34,7 @@ export function PurchaseModal( {
 	isCartUpdating,
 	onClose,
 	siteSlug,
-}: PurchaseModalProps ): JSX.Element {
+}: PurchaseModalProps ) {
 	const [ step, setStep ] = useState( BEFORE_SUBMIT );
 	const submitTransaction = useSubmitTransaction( {
 		cart,
@@ -66,7 +66,7 @@ function wrapValueInManagedValue( value: string | undefined ): ManagedValue {
 	};
 }
 
-export default function PurchaseModalWrapper( props: PurchaseModalProps ): JSX.Element {
+export default function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const onComplete = useCreatePaymentCompleteCallback( {
 		isComingFromUpsell: true,
 		siteSlug: props.siteSlug,

@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import Modal from 'react-modal';
 import ButtonBar from './button-bar';
 import type { Button, BaseButton } from './button-bar';
-import type { ReactNode } from 'react';
+import type { PropsWithChildren } from 'react';
 
 import './style.scss';
 
@@ -13,7 +13,6 @@ type Props = {
 	baseClassName?: string;
 	buttons?: Button[];
 	className?: string;
-	children: ReactNode;
 	isBackdropVisible?: boolean;
 	isFullScreen?: boolean;
 	isVisible: boolean;
@@ -37,7 +36,7 @@ const Dialog = ( {
 	leaveTimeout = 200,
 	onClose,
 	shouldCloseOnEsc,
-}: Props ): JSX.Element => {
+}: PropsWithChildren< Props > ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 	const onButtonClick = useCallback(
 		( button: BaseButton ) => {

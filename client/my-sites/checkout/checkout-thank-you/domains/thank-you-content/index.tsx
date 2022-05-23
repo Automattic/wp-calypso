@@ -28,7 +28,7 @@ interface StepCTAProps {
 	primary: boolean;
 }
 
-const StepCTA = ( { email, primary, domainType }: StepCTAProps ): JSX.Element => {
+const StepCTA = ( { email, primary, domainType }: StepCTAProps ) => {
 	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 
 	return (

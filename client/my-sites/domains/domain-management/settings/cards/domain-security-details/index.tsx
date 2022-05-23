@@ -8,7 +8,7 @@ import type { DetailsCardProps } from '../types';
 
 import './style.scss';
 
-const DomainSecurityDetails = ( { domain }: DetailsCardProps ): JSX.Element | null => {
+const DomainSecurityDetails = ( { domain }: DetailsCardProps ) => {
 	const translate = useTranslate();
 
 	if ( ! isSecuredWithUs( domain ) ) {

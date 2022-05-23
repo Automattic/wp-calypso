@@ -51,9 +51,7 @@ interface InstalledPlugin {
 	id?: number;
 }
 
-const MarketplacePluginInstall = ( {
-	productSlug,
-}: MarketplacePluginInstallProps ): JSX.Element => {
+const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProps ) => {
 	const isUploadFlow = ! productSlug;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ initializeInstallFlow, setInitializeInstallFlow ] = useState( false );

@@ -1,6 +1,6 @@
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { trim, debounce, random, take, reject, includes } from 'lodash';
+import { trim, debounce, random, reject, includes } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
@@ -251,7 +251,7 @@ class FollowingManage extends Component {
 					</div>
 					{ ! sitesQuery && (
 						<RecommendedSites
-							sites={ take( filteredRecommendedSites, 2 ) }
+							sites={ filteredRecommendedSites.slice( 0, 2 ) }
 							followSource={ READER_FOLLOWING_MANAGE_RECOMMENDATION }
 						/>
 					) }

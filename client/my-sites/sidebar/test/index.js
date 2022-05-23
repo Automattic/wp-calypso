@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { itemLinkMatches } from '../utils';
 
 describe( 'MySitesSidebar', () => {
@@ -9,7 +8,7 @@ describe( 'MySitesSidebar', () => {
 				'/posts/example.wordpress.com'
 			);
 
-			expect( isSelected ).to.be.false;
+			expect( isSelected ).toBe( false );
 		} );
 
 		test( "should return true if a path's first fragment does match the current path", () => {
@@ -18,7 +17,7 @@ describe( 'MySitesSidebar', () => {
 				'/pages/test/example.wordpress.com'
 			);
 
-			expect( isSelected ).to.be.true;
+			expect( isSelected ).toBe( true );
 		} );
 
 		test( 'should return true for jetpack types', () => {
@@ -27,13 +26,13 @@ describe( 'MySitesSidebar', () => {
 				'/types/jetpack-testimonial/test'
 			);
 
-			expect( isSelected ).to.be.true;
+			expect( isSelected ).toBe( true );
 		} );
 
 		test( 'should return true if one of the paths is a prefix of the current path and separated by search query', () => {
 			const isSelected = itemLinkMatches( '/posts', '/posts?s=search' );
 
-			expect( isSelected ).to.be.true;
+			expect( isSelected ).toBe( true );
 		} );
 
 		test( 'should return false if a fragment matches but not in position (1)', () => {
@@ -42,12 +41,12 @@ describe( 'MySitesSidebar', () => {
 				'/test/pages/example.wordpress.com'
 			);
 
-			expect( isSelected ).to.be.false;
+			expect( isSelected ).toBe( false );
 		} );
 		test( '#itemLinkMatches() compares 2 part path with 1 part path without error', () => {
 			const isSelected = itemLinkMatches( '/stats/day', '/plugins' );
 
-			expect( isSelected ).to.be.false;
+			expect( isSelected ).toBe( false );
 		} );
 	} );
 
@@ -58,7 +57,7 @@ describe( 'MySitesSidebar', () => {
 				'/settings/discussion/cpapfree.wordpress.com'
 			);
 
-			expect( isSelected ).to.be.false;
+			expect( isSelected ).toBe( false );
 		} );
 
 		test( 'clicking a marketing panel should activate the marketing/tools menu', () => {
@@ -67,7 +66,7 @@ describe( 'MySitesSidebar', () => {
 				'/marketing/traffic/cpapfree.wordpress.com'
 			);
 
-			expect( isSelected ).to.be.true;
+			expect( isSelected ).toBe( true );
 		} );
 	} );
 } );

@@ -4,7 +4,7 @@ const CheckIconSvg = styled.svg`
 	fill: #fff;
 `;
 
-export function CheckIcon( { className, id }: { className?: string; id: string } ): JSX.Element {
+export function CheckIcon( { className, id }: { className?: string; id: string } ) {
 	return (
 		<CheckIconSvg
 			width="20"
@@ -32,7 +32,7 @@ export function CheckIcon( { className, id }: { className?: string; id: string }
 	);
 }
 
-export function ErrorIcon( { className }: { className?: string } ): JSX.Element {
+export function ErrorIcon( { className }: { className?: string } ) {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +50,7 @@ export function ErrorIcon( { className }: { className?: string } ): JSX.Element 
 	);
 }
 
-export function InfoIcon( { className }: { className?: string } ): JSX.Element {
+export function InfoIcon( { className }: { className?: string } ) {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"

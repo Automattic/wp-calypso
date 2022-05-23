@@ -103,7 +103,7 @@
 		@media ( min-width: 783px ) {
 			margin-top: 0;
 			position: fixed;
-			z-index: 2;
+			z-index: 20;
 			top: var( --masterbar-height );
 			left: calc( var( --sidebar-width-max ) + 1px );
 			width: calc( 100% - var( --sidebar-width-max ) - 1px );

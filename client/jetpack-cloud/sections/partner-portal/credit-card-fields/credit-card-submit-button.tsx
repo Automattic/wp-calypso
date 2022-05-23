@@ -26,7 +26,7 @@ export default function CreditCardSubmitButton( {
 	stripe: Stripe | null;
 	stripeConfiguration: StripeConfiguration | null;
 	activeButtonText: string | undefined;
-} ): JSX.Element {
+} ) {
 	const { __ } = useI18n();
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
 	const useAsPrimaryPaymentMethod = useSelect( ( select ) =>

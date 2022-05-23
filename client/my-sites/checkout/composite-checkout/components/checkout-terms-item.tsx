@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
+import type { MouseEventHandler, PropsWithChildren } from 'react';
 
 const Wrapper = styled.div`
 	padding-left: 24px;
@@ -32,12 +33,11 @@ const CheckoutTermsItem = ( {
 	className,
 	onClick,
 	isPrewrappedChildren,
-}: {
-	children: React.ReactNode;
+}: PropsWithChildren< {
 	className?: string;
-	onClick?: React.MouseEventHandler< HTMLDivElement >;
+	onClick?: MouseEventHandler< HTMLDivElement >;
 	isPrewrappedChildren?: boolean;
-} ): JSX.Element => {
+} > ) => {
 	return (
 		<Wrapper className={ classNames( 'checkout__terms-item', className ) } onClick={ onClick }>
 			<Gridicon icon="info-outline" size={ 18 } />

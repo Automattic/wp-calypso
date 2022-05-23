@@ -97,7 +97,5 @@ const HelpCenterStory: React.FC< { content: ReactElement } > = ( { content } ) =
 	);
 };
 
-export const Default = (): JSX.Element => <HelpCenterStory content={ <HelpCenterLongContent /> } />;
-export const ShortContent = (): JSX.Element => (
-	<HelpCenterStory content={ <HelpCenterShortContent /> } />
-);
+export const Default = () => <HelpCenterStory content={ <HelpCenterLongContent /> } />;
+export const ShortContent = () => <HelpCenterStory content={ <HelpCenterShortContent /> } />;

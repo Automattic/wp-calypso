@@ -52,7 +52,7 @@ const EmailProvidersStackedComparison = ( {
 	selectedEmailProviderSlug,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
 	source,
-}: EmailProvidersStackedComparisonProps ): JSX.Element | null => {
+}: EmailProvidersStackedComparisonProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 

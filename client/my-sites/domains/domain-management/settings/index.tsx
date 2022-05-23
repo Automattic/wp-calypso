@@ -64,7 +64,7 @@ const Settings = ( {
 	selectedSite,
 	updateNameservers,
 	whoisData,
-}: SettingsPageProps ): JSX.Element => {
+}: SettingsPageProps ) => {
 	const translate = useTranslate();
 	const contactInformation = findRegistrantWhois( whoisData );
 

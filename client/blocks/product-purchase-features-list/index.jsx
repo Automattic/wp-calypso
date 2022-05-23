@@ -249,6 +249,7 @@ export class ProductPurchaseFeaturesList extends Component {
 		return (
 			<Fragment>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
 			</Fragment>

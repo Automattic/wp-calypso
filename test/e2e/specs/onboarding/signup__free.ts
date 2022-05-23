@@ -70,7 +70,7 @@ skipDescribeIf( isStagingOrProd )(
 
 			it( 'Select WordPress.com Free plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				await signupPickPlanPage.selectPlan( 'start with a free site' );
+				await signupPickPlanPage.selectPlan( 'Free' );
 			} );
 		} );
 
@@ -122,6 +122,8 @@ skipDescribeIf( isStagingOrProd )(
 		describe( 'Validate site metadata', function () {
 			it( 'Return to Calypso dashboard', async function () {
 				editorPage = new EditorPage( page );
+				// Force the flow back into the configured environment for the test suite e.g. wpcalypso or calypso.localhost
+				editorPage.visit();
 				await editorPage.exitEditor();
 			} );
 
@@ -169,7 +171,7 @@ skipDescribeIf( isStagingOrProd )(
 
 			it( 'Keep free plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				await signupPickPlanPage.selectPlan( 'start with free' );
+				await signupPickPlanPage.selectPlan( 'Free' );
 			} );
 
 			it( 'Confirm site is launched', async function () {

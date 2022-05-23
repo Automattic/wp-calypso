@@ -48,7 +48,9 @@ function getPurchasesBySite( purchases, sites ) {
 		.reduce( ( result, currentValue ) => {
 			const site = find( result, { id: currentValue.siteId } );
 			if ( site ) {
-				site.purchases = site.purchases.concat( currentValue );
+				site.purchases = site.purchases
+					.concat( currentValue )
+					.sort( ( a, b ) => ( a.id > b.id ? 1 : -1 ) );
 			} else {
 				const siteObject = find( sites, { ID: currentValue.siteId } );
 
