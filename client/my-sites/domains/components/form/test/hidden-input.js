@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { HiddenInput } from '../hidden-input';
 
 describe( 'HiddenInput', () => {
@@ -34,10 +35,10 @@ describe( 'HiddenInput', () => {
 		expect( screen.queryByPlaceholderText( 'Your name' ) ).toHaveValue( fieldValue );
 	} );
 
-	test( 'it should toggle input field when the toggle link is clicked', () => {
+	test( 'it should toggle input field when the toggle link is clicked', async () => {
 		const { container } = render( <HiddenInput { ...defaultProps } /> );
 		expect( screen.queryByText( 'Love cannot be hidden.' ) ).toBeVisible();
-		fireEvent.click( container.getElementsByTagName( 'a' )[ 0 ] );
+		await userEvent.click( container.getElementsByTagName( 'a' )[ 0 ] );
 		expect( screen.queryByText( 'Love cannot be hidden.' ) ).not.toBeInTheDocument();
 		expect( screen.queryByPlaceholderText( 'Your name' ) ).toBeVisible();
 	} );
