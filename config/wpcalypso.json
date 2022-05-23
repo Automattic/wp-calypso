@@ -44,6 +44,7 @@
 		"gdpr-banner": true,
 		"google-my-business": true,
 		"gutenboarding/alpha-templates": false,
+		"onboarding/difm": true,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,
