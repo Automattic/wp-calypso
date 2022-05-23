@@ -31,6 +31,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/design-picker": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
 		"@wordpress/api-fetch": "^6.4.0",
 		"@wordpress/data-controls": "^2.7.0",
