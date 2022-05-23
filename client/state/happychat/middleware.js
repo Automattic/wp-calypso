@@ -44,7 +44,7 @@ export const socketMiddleware = ( connection = null ) => {
 	// Allow a connection object to be specified for
 	// testing. If blank, use a real connection.
 	if ( connection == null ) {
-		connection = buildConnection(
+		connection = buildConnection( {
 			receiveAccept,
 			receiveConnect,
 			receiveDisconnect,
@@ -58,8 +58,8 @@ export const socketMiddleware = ( connection = null ) => {
 			receiveStatus,
 			receiveToken,
 			receiveUnauthorized,
-			requestTranscript
-		);
+			requestTranscript,
+		} );
 	}
 
 	return ( store ) => ( next ) => ( action ) => {

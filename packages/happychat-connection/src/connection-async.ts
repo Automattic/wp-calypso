@@ -1,8 +1,11 @@
+import type { Connection } from './connection';
+import type { ConnectionProps } from './types';
+
 /*
  * This function creates a stub `Connection` object that dynamically loads the chunk
  * with the `happychat/connection` library only after the first method call.
  */
-export default function buildConnection(
+export default function buildConnection( {
 	receiveAccept,
 	receiveConnect,
 	receiveDisconnect,
@@ -16,10 +19,10 @@ export default function buildConnection(
 	receiveStatus,
 	receiveToken,
 	receiveUnauthorized,
-	requestTranscript
-) {
+	requestTranscript,
+}: ConnectionProps ) {
 	// Promise with a lazy initialized `Connection`
-	let connection = null;
+	let connection: Promise< Connection > | null = null;
 
 	// Async load the connection library and return a promise with its default export.
 	// That's a factory function that creates and returns the `Connection` class instance.
@@ -28,16 +31,11 @@ export default function buildConnection(
 			/* webpackChunkName: "async-load-calypso-lib-happychat-connection" */ './connection'
 		);
 	}
-	// function importConnectionLib() {
-	// 	return import(
-	// 		/* webpackChunkName: "async-load-calypso-lib-happychat-connection" */ 'calypso/lib/happychat/connection'
-	// 	);
-	// }
 
-	function getConnection() {
+	function getConnection(): Promise< Connection > {
 		if ( ! connection ) {
 			connection = importConnectionLib().then( ( { default: createConnection } ) =>
-				createConnection(
+				createConnection( {
 					receiveAccept,
 					receiveConnect,
 					receiveDisconnect,
@@ -51,8 +49,8 @@ export default function buildConnection(
 					receiveStatus,
 					receiveToken,
 					receiveUnauthorized,
-					requestTranscript
-				)
+					requestTranscript,
+				} )
 			);
 		}
 		return connection;
@@ -60,8 +58,8 @@ export default function buildConnection(
 
 	// Forward a method call to the implementation. Works only for methods that return promises,
 	// which, fortunately, is the case for all `Connection` methods.
-	function forwardMethod( name ) {
-		return ( ...args ) => getConnection().then( ( conn ) => conn[ name ]( ...args ) );
+	function forwardMethod( name: keyof Connection ) {
+		return ( ...args: any[] ) => getConnection().then( ( conn ) => conn[ name ]( ...args ) );
 	}
 
 	return {

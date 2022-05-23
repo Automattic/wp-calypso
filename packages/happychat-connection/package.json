@@ -8,6 +8,7 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.js",
+	"types": "dist/types",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -19,8 +20,8 @@
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"scripts": {
-		"clean": "rm -rf dist",
-		"build": "transpile",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {

@@ -20,7 +20,7 @@ import {
 } from 'calypso/state/happychat/connection/actions';
 
 const getConnection = () =>
-	buildConnection(
+	buildConnection( {
 		receiveAccept,
 		receiveConnect,
 		receiveDisconnect,
@@ -34,8 +34,8 @@ const getConnection = () =>
 		receiveStatus,
 		receiveToken,
 		receiveUnauthorized,
-		requestTranscript
-	);
+		requestTranscript,
+	} );
 
 describe( 'connection', () => {
 	describe( 'init', () => {

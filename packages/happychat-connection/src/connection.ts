@@ -1,9 +1,10 @@
 import debugFactory from 'debug';
 import IO from 'socket.io-client';
+import type { Action, HappychatUser, ConnectionProps, HappychatAuth, Socket } from './types';
 
 const debug = debugFactory( 'calypso:happychat:connection' );
 
-const buildConnection = ( socket ) =>
+const buildConnection: ( socket: string | Socket ) => Socket = ( socket ) =>
 	typeof socket === 'string'
 		? new IO( socket, {
 				// force websocket connection since we no longer have sticky connections server side.
@@ -11,8 +12,25 @@ const buildConnection = ( socket ) =>
 		  } ) // If socket is an URL, connect to server.
 		: socket; // If socket is not an url, use it directly. Useful for testing.
 
-class Connection {
-	constructor(
+export class Connection {
+	receiveAccept?: ( accept: boolean ) => void;
+	receiveConnect?: () => void;
+	receiveDisconnect?: ( reason: string ) => void;
+	receiveError?: ( error: string ) => void;
+	receiveInit?: ( init: HappychatUser ) => void;
+	receiveLocalizedSupport?: ( accept: boolean ) => void;
+	receiveMessage?: ( message: string ) => void;
+	receiveMessageOptimistic?: ( message: string ) => void;
+	receiveMessageUpdate?: ( message: string ) => void;
+	receiveReconnecting?: () => void;
+	receiveStatus?: ( status: string ) => void;
+	receiveToken?: () => void;
+	receiveUnauthorized?: ( message: string ) => void;
+	requestTranscript?: () => void;
+	dispatch: any;
+	openSocket: any;
+
+	constructor( {
 		receiveAccept,
 		receiveConnect,
 		receiveDisconnect,
@@ -26,8 +44,8 @@ class Connection {
 		receiveStatus,
 		receiveToken,
 		receiveUnauthorized,
-		requestTranscript
-	) {
+		requestTranscript,
+	}: ConnectionProps = {} ) {
 		this.receiveAccept = receiveAccept;
 		this.receiveConnect = receiveConnect;
 		this.receiveDisconnect = receiveDisconnect;
@@ -52,7 +70,7 @@ class Connection {
 	 * @returns { Promise } Fulfilled (returns the opened socket)
 	 *                   	 or rejected (returns an error message)
 	 */
-	init( dispatch, auth ) {
+	init( dispatch: any, auth: Promise< HappychatAuth > ) {
 		if ( this.openSocket ) {
 			debug( 'socket is already connected' );
 			return this.openSocket;
@@ -64,59 +82,40 @@ class Connection {
 				.then( ( { url, user: { signer_user_id, jwt, locale, groups, skills, geoLocation } } ) => {
 					const socket = buildConnection( url );
 					socket
-						.once( 'connect', () => this.receiveConnect && dispatch( this.receiveConnect() ) )
-						.on( 'token', ( handler ) => {
-							this.receiveToken && dispatch( this.receiveToken() );
+						.once( 'connect', () => dispatch( this.receiveConnect?.() ) )
+						.on( 'token', ( handler: ( happychatUser: HappychatUser & { jwt: any } ) => void ) => {
+							dispatch( this.receiveToken?.() );
 							handler( { signer_user_id, jwt, locale, groups, skills } );
 						} )
 						.on( 'init', () => {
-							this.receiveInit &&
-								dispatch(
-									this.receiveInit( { signer_user_id, locale, groups, skills, geoLocation } )
-								);
-							this.requestTranscript && dispatch( this.requestTranscript() );
+							dispatch(
+								this.receiveInit?.( { signer_user_id, locale, groups, skills, geoLocation } )
+							);
+							dispatch( this.requestTranscript?.() );
 							resolve( socket );
 						} )
 						.on( 'unauthorized', () => {
 							socket.close();
-							this.receiveUnauthorized &&
-								dispatch( this.receiveUnauthorized( 'User is not authorized' ) );
+							dispatch( this.receiveUnauthorized?.( 'User is not authorized' ) );
 							reject( 'user is not authorized' );
 						} )
-						.on(
-							'disconnect',
-							( reason ) => this.receiveDisconnect && dispatch( this.receiveDisconnect( reason ) )
+						.on( 'disconnect', ( reason: string ) =>
+							dispatch( this.receiveDisconnect?.( reason ) )
 						)
-						.on(
-							'reconnecting',
-							() => this.receiveReconnecting && dispatch( this.receiveReconnecting() )
-						)
-						.on(
-							'status',
-							( status ) => this.receiveStatus && dispatch( this.receiveStatus( status ) )
-						)
-						.on( 'accept', ( accept ) => {
-							this.receiveAccept && dispatch( this.receiveAccept( accept ) );
+						.on( 'reconnecting', () => dispatch( this.receiveReconnecting?.() ) )
+						.on( 'status', ( status: string ) => dispatch( this.receiveStatus?.( status ) ) )
+						.on( 'accept', ( accept: boolean ) => {
+							dispatch( this.receiveAccept?.( accept ) );
 						} )
-						.on(
-							'localized-support',
-							( accept ) =>
-								this.receiveLocalizedSupport && dispatch( this.receiveLocalizedSupport( accept ) )
+						.on( 'localized-support', ( accept: boolean ) =>
+							dispatch( this.receiveLocalizedSupport?.( accept ) )
 						)
-						.on(
-							'message',
-							( message ) => this.receiveMessage && dispatch( this.receiveMessage( message ) )
+						.on( 'message', ( message: string ) => dispatch( this.receiveMessage?.( message ) ) )
+						.on( 'message.optimistic', ( message: string ) =>
+							dispatch( this.receiveMessageOptimistic?.( message ) )
 						)
-						.on(
-							'message.optimistic',
-							( message ) =>
-								this.receiveMessageOptimistic &&
-								dispatch( this.receiveMessageOptimistic( message ) )
-						)
-						.on(
-							'message.update',
-							( message ) =>
-								this.receiveMessageUpdate && dispatch( this.receiveMessageUpdate( message ) )
+						.on( 'message.update', ( message: string ) =>
+							dispatch( this.receiveMessageUpdate?.( message ) )
 						)
 						.on( 'reconnect_attempt', () => {
 							socket.io.opts.transports = [ 'polling', 'websocket' ];
@@ -140,14 +139,14 @@ class Connection {
 	 * @returns { Promise } Fulfilled (returns nothing)
 	 *                     or rejected (returns an error message)
 	 */
-	send( action ) {
+	send( action: Action ) {
 		if ( ! this.openSocket ) {
 			return;
 		}
 
 		return this.openSocket.then(
-			( socket ) => socket.emit( action.event, action.payload ),
-			( e ) => {
+			( socket: Socket ) => socket.emit( action.event, action.payload ),
+			( e: any ) => {
 				this.dispatch( this.receiveError?.( 'failed to send ' + action.event + ': ' + e ) );
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
@@ -175,16 +174,16 @@ class Connection {
 	 * @returns { Promise } Fulfilled (returns the transcript response)
 	 *                     or rejected (returns an error message)
 	 */
-	request( action, timeout ) {
+	request( action: Action, timeout: number ) {
 		if ( ! this.openSocket ) {
 			return;
 		}
 
 		return this.openSocket.then(
-			( socket ) => {
+			( socket: Socket ) => {
 				const promiseRace = Promise.race( [
 					new Promise( ( resolve, reject ) => {
-						socket.emit( action.event, action.payload, ( e, result ) => {
+						socket.emit( action.event, action.payload, ( e: string, result: any ) => {
 							if ( e ) {
 								return reject( new Error( e ) ); // request failed
 							}
@@ -200,8 +199,8 @@ class Connection {
 
 				// dispatch the request state upon promise race resolution
 				promiseRace.then(
-					( result ) => this.dispatch( action.callback( result ) ),
-					( e ) => {
+					( result ) => this.dispatch( action.callback?.( null, result ) ),
+					( e: Error ) => {
 						if ( e.message !== 'timeout' ) {
 							this.dispatch(
 								this.receiveError?.( action.event + ' request failed: ' + e.message )
@@ -212,7 +211,7 @@ class Connection {
 
 				return promiseRace;
 			},
-			( e ) => {
+			( e: Error ) => {
 				this.dispatch( this.receiveError?.( 'failed to send ' + action.event + ': ' + e ) );
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
@@ -221,35 +220,4 @@ class Connection {
 	}
 }
 
-export default (
-	receiveAccept,
-	receiveConnect,
-	receiveDisconnect,
-	receiveError,
-	receiveInit,
-	receiveLocalizedSupport,
-	receiveMessage,
-	receiveMessageOptimistic,
-	receiveMessageUpdate,
-	receiveReconnecting,
-	receiveStatus,
-	receiveToken,
-	receiveUnauthorized,
-	requestTranscript
-) =>
-	new Connection(
-		receiveAccept,
-		receiveConnect,
-		receiveDisconnect,
-		receiveError,
-		receiveInit,
-		receiveLocalizedSupport,
-		receiveMessage,
-		receiveMessageOptimistic,
-		receiveMessageUpdate,
-		receiveReconnecting,
-		receiveStatus,
-		receiveToken,
-		receiveUnauthorized,
-		requestTranscript
-	);
+export default ( connectionProps: ConnectionProps ) => new Connection( connectionProps );

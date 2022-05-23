@@ -2,20 +2,28 @@ import config from '@automattic/calypso-config';
 import { getLocaleSlug } from 'i18n-calypso';
 import { useQuery } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import type { HappychatSession, HappychatUser, User } from './types';
+
+type Result = {
+	url: string;
+	user: {
+		jwt: string;
+	} & HappychatUser;
+};
 
 export default function useHappychatAuth() {
-	return useQuery(
+	return useQuery< Result, typeof Error >(
 		'getHappychatAuth',
 		async () => {
-			const user = await wpcomRequest( {
+			const user: User = await wpcomRequest( {
 				path: '/me',
 				apiVersion: '1.1',
 			} );
 
-			const url = config( 'happychat_url' );
+			const url: string = 'https://happychat.io/customer'//config( 'happychat_url' );
 			const locale = getLocaleSlug();
 
-			const happychatUser = {
+			const happychatUser: HappychatUser = {
 				signer_user_id: user.ID,
 				locale,
 				groups: [ 'WP.com' ],
@@ -23,7 +31,7 @@ export default function useHappychatAuth() {
 					product: [ 'WP.com' ],
 				},
 			};
-			const session = await wpcomRequest( {
+			const session: HappychatSession = await wpcomRequest( {
 				path: '/happychat/session',
 				apiVersion: '1.1',
 				method: 'POST',
@@ -31,7 +39,7 @@ export default function useHappychatAuth() {
 			const { session_id, geo_location } = session;
 			happychatUser.geoLocation = geo_location;
 
-			const sign = await wpcomRequest( {
+			const sign: any = await wpcomRequest( {
 				path: '/jwt/sign',
 				apiVersion: '1.1',
 				method: 'POST',
