@@ -1,12 +1,14 @@
 /**
  * External Dependencies
  */
-import { useSelect } from '@wordpress/data';
+import { useSupportAvailability } from '@automattic/data-stores';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
-import { USER_KEY } from '../store';
+import { execute } from '../directly';
+import { STORE_KEY, USER_KEY } from '../store';
 import { Container } from '../types';
 import { SITE_STORE } from './help-center-contact-form';
 import HelpCenterContainer from './help-center-container';
@@ -23,6 +25,24 @@ const HelpCenter: React.FC< Container > = ( {
 	// prefetch the current site and user
 	useSelect( ( select ) => select( SITE_STORE ).getSite( window._currentSiteId ) );
 	useSelect( ( select ) => select( USER_KEY ).getCurrentUser() );
+	const { setDirectlyData } = useDispatch( STORE_KEY );
+
+	// Need to fix this
+	const supportAvailability = useSupportAvailability( 'OTHER' );
+
+	useEffect( () => {
+		// Need to fix this
+		const directlyLoad = true;
+
+		if ( directlyLoad ) {
+			execute( [
+				'onReady',
+				( { session } ) => {
+					setDirectlyData( { isLoaded: true, hasSession: session } );
+				},
+			] );
+		}
+	} );
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];

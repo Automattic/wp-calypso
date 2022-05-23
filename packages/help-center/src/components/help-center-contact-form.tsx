@@ -18,7 +18,7 @@ import React, { useEffect, useState, useContext } from 'react';
 /**
  * Internal Dependencies
  */
-import { askDirectlyQuestion } from '../directly';
+import { askDirectlyQuestion, execute } from '../directly';
 import { HelpCenterContext } from '../help-center-context';
 import { STORE_KEY, USER_KEY } from '../store';
 import { SitePicker } from '../types';
@@ -159,14 +159,17 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 		'CURRENT_SITE'
 	);
 	const { setHeaderText } = useContext( HelpCenterContext );
-	const { selectedSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
-		return {
-			selectedSite: select( STORE_KEY ).getSite(),
-			subject: select( STORE_KEY ).getSubject(),
-			message: select( STORE_KEY ).getMessage(),
-			userDeclaredSiteUrl: select( STORE_KEY ).getUserDeclaredSiteUrl(),
-		};
-	} );
+	const { selectedSite, subject, message, userDeclaredSiteUrl, directlyData } = useSelect(
+		( select ) => {
+			return {
+				selectedSite: select( STORE_KEY ).getSite(),
+				subject: select( STORE_KEY ).getSubject(),
+				message: select( STORE_KEY ).getMessage(),
+				userDeclaredSiteUrl: select( STORE_KEY ).getUserDeclaredSiteUrl(),
+				directlyData: select( STORE_KEY ).getDirectly(),
+			};
+		}
+	);
 	const userData = useSelect( ( select ) => select( USER_KEY ).getCurrentUser() );
 
 	const {
@@ -192,6 +195,13 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 			setUserDeclaredSite( userDeclaredSite );
 		}
 	}, [ userDeclaredSite, setUserDeclaredSite ] );
+
+	useEffect( () => {
+		if ( directlyData?.hasSession ) {
+			execute( [ 'maximize', {} ] );
+			setShowHelpCenter( false );
+		}
+	}, [ directlyData, setShowHelpCenter ] );
 
 	useEffect( () => {
 		switch ( mode ) {

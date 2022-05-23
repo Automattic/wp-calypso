@@ -16,10 +16,9 @@ import InlineHelpSearchResults from './inline-help-search-results';
 
 import './inline-help-center-content.scss';
 
-const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage, closeHelpCenter } ) => {
+const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) => {
 	const isMobile = useMobileBreakpoint();
 	const { __ } = useI18n();
-	const [ directly, updateDirectly ] = useState( { isLoaded: false, hasSession: false } );
 	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const [ activeSecondaryView, setActiveSecondaryView ] = useState(
 		openInContactPage ? VIEW_CONTACT : null
@@ -32,19 +31,6 @@ const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage, close
 	useSupportAvailability( 'CHAT' );
 	useSupportAvailability( 'EMAIL' );
 	useHappychatAuth();
-
-	// Load Directly if needed
-	useEffect( () => {
-		// Not sure how we want to determine this
-		const hasDirectlySupport = true;
-
-		if ( hasDirectlySupport ) {
-			DirectlyRTM( [
-				'onReady',
-				( { session } ) => updateDirectly( { isLoaded: true, hasSession: session } ),
-			] );
-		}
-	}, [] );
 
 	const openSecondaryView = ( secondaryViewKey ) => {
 		recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show`, {
@@ -90,12 +76,7 @@ const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage, close
 	};
 
 	const openContactView = () => {
-		if ( directly.isLoaded && directly.hasSession ) {
-			DirectlyRTM( [ 'maximize' ] );
-			closeHelpCenter();
-		} else {
-			openSecondaryView( VIEW_CONTACT );
-		}
+		openSecondaryView( VIEW_CONTACT );
 	};
 
 	const setAdminSection = () => {
