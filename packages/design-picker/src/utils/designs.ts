@@ -20,7 +20,7 @@ export const getDesignPreviewUrl = (
 		source_site: 'patternboilerplates.wordpress.com',
 	} );
 
-	const siteTitle = ! options.skipSiteTitle && ( options.siteTitle || design.title );
+	const siteTitle = options.siteTitle || design.title;
 	if ( siteTitle ) {
 		// The preview url is sometimes used in a `background-image: url()` CSS rule and unescaped
 		// parentheses in the URL break it. `addQueryArgs` and `encodeURIComponent` don't escape
