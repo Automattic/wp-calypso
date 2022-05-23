@@ -16,7 +16,6 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () {
 	const planTier = 'Personal';
-	const planName = `WordPress.com ${ planTier }`;
 	let page: Page;
 	let plansPage: PlansPage;
 	let individualPurchasesPage: IndividualPurchasePage;
@@ -40,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () 
 			await plansPage.clickTab( 'My Plan' );
 		} );
 
-		it( `${ planName } is the active plan`, async function () {
+		it( `${ planTier } is the active plan`, async function () {
 			await plansPage.validateActivePlan( planTier );
 		} );
 
@@ -50,7 +49,7 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () 
 	} );
 
 	describe( 'Renew Plan', function () {
-		it( `Manage ${ planName } plan`, async function () {
+		it( `Manage ${ planTier } plan`, async function () {
 			// This navigation also validates that we correctly identify the active plan in the Plans table.
 			// The button text won't be correct if Premium isn't the active plan.
 			await plansPage.clickPlanActionButton( { plan: planTier, buttonText: 'Manage plan' } );
@@ -58,25 +57,25 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () 
 
 		it( `Details of purchased plan ${ planTier } are shown`, async function () {
 			individualPurchasesPage = new IndividualPurchasePage( page );
-			await individualPurchasesPage.validatePurchaseTitle( planName );
+			await individualPurchasesPage.validatePurchaseTitle( planTier );
 		} );
 
 		it( 'Renew plan', async function () {
 			await individualPurchasesPage.clickRenewNowCardButton();
 		} );
 
-		it( `${ planName } is added to cart`, async function () {
+		it( `${ planTier } is added to cart`, async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
-			await cartCheckoutPage.validateCartItem( planName );
+			await cartCheckoutPage.validateCartItem( planTier );
 		} );
 
-		it( `Remove ${ planName } from cart`, async function () {
-			await cartCheckoutPage.removeCartItem( planName );
+		it( `Remove ${ planTier } from cart`, async function () {
+			await cartCheckoutPage.removeCartItem( planTier );
 		} );
 
 		it( 'Automatically return to purchase page', async function () {
 			individualPurchasesPage = new IndividualPurchasePage( page );
-			await individualPurchasesPage.validatePurchaseTitle( planName );
+			await individualPurchasesPage.validatePurchaseTitle( planTier );
 		} );
 	} );
 } );
