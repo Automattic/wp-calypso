@@ -72,6 +72,12 @@
 	border-color: var( --color-accent );
 	color: var( --color-text-inverted );
 
+	&:hover {
+		color: var( --color-text-inverted );
+		background-color: var( --color-accent-60 );
+		border-color: var( --color-accent-60 );
+	}
+
 	&:disabled {
 		background-color: var( --color-surface ) !important;
 		border-color: var( --color-neutral-5 ) !important;
@@ -167,10 +173,12 @@ span.help-center-header__title {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+	display: flex;
 }
 
 .is-minimized .help-center-header__title .inline-help__rich-result-header {
 	padding-left: 24px;
+	display: inline;
 
 	svg {
 		position: absolute;
