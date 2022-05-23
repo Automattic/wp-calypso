@@ -296,7 +296,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		}
 
 		.generated-design-picker__previews {
-			height: auto;
+			flex: 1;
 			min-height: calc( 100vh - 172px );
 			margin-bottom: 84px;
 		}
@@ -448,8 +448,6 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 	.generated-design-picker__previews {
 		display: flex;
-		height: 0;
-		flex: 1;
 		flex-direction: column;
 		row-gap: 24px;
 		margin-bottom: 44px;
@@ -487,7 +485,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		}
 
 		@include break-small {
-			height: auto;
+			flex: 1;
 		}
 	}
 
