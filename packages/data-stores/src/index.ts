@@ -23,7 +23,7 @@ export { useSiteIntent } from './queries/use-site-intent';
 export { useSupportAvailability } from './support-queries/use-support-availability';
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
-export { useVerticalImagesQuery } from './verticals-queries/use-vertical-images-query';
+export { useStarterDesignsGeneratedQuery } from './starter-designs-queries/use-starter-designs-generated-query';
 export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './site/types';
 
