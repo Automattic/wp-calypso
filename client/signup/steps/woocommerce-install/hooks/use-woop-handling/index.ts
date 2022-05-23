@@ -18,6 +18,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
 import isAtomicSiteSelector from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
@@ -127,9 +128,7 @@ export default function useEligibility( siteId: number ): EligibilityHook {
 	 * Check whether the `woop` feature is actve.`
 	 * It's defined by wpcom in the store product list.
 	 */
-	const hasWoopFeature = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, FEATURE_WOOP )
-	);
+	const hasWoopFeature = useSelector( ( state ) => siteHasFeature( state, siteId, FEATURE_WOOP ) );
 
 	/*
 	 * We pick the first plan from the available plans list.
