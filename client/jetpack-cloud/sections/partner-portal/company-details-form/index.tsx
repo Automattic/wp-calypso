@@ -22,10 +22,9 @@ export default function CompanyDetailsForm(): ReactElement {
 	// controller function, so we do not have to do any further checks.
 	const partner = useSelector( getCurrentPartner );
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
-	const submitNotificationId = 'company-details-form';
+	const submitNotificationId = 'partner-portal-company-details-form';
 	const showCountryFields = countryOptions.length > 0;
 
-	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ name, setName ] = useState( partner?.name ?? '' );
 	const [ country, setCountry ] = useState( partner?.address.country ?? '' );
 	const [ city, setCity ] = useState( partner?.address.city ?? '' );
@@ -41,11 +40,10 @@ export default function CompanyDetailsForm(): ReactElement {
 	const updateCompanyDetails = useUpdateCompanyDetailsMutation( {
 		onSuccess: () => {
 			dispatch(
-				successNotice( translate( 'Company details has been updated' ), {
+				successNotice( translate( 'Company details have been updated' ), {
 					id: submitNotificationId,
 				} )
 			);
-			setIsSubmitting( false );
 		},
 		onError: ( error: APIError ) => {
 			dispatch(
@@ -53,14 +51,17 @@ export default function CompanyDetailsForm(): ReactElement {
 					id: submitNotificationId,
 				} )
 			);
-			setIsSubmitting( false );
 		},
 	} );
 
 	const handleSubmit = useCallback(
 		( e ) => {
 			e.preventDefault();
-			setIsSubmitting( true );
+
+			if ( ! showCountryFields || updateCompanyDetails.isLoading ) {
+				return;
+			}
+
 			dispatch( removeNotice( submitNotificationId ) );
 
 			const payload = {
@@ -82,7 +83,7 @@ export default function CompanyDetailsForm(): ReactElement {
 				} )
 			);
 		},
-		[ dispatch, updateCompanyDetails ]
+		[ submitNotificationId, dispatch, updateCompanyDetails.mutate ]
 	);
 
 	return (
@@ -95,7 +96,7 @@ export default function CompanyDetailsForm(): ReactElement {
 						name="name"
 						value={ name }
 						onChange={ ( event: any ) => setName( event.target.value ) }
-						disabled={ isSubmitting }
+						disabled={ updateCompanyDetails.isLoading }
 					/>
 				</FormFieldset>
 				<FormFieldset>
@@ -110,7 +111,7 @@ export default function CompanyDetailsForm(): ReactElement {
 								// Reset the value of state since it no longer matches with the selected country.
 								setAddressState( '' );
 							} }
-							disabled={ isSubmitting }
+							disabled={ updateCompanyDetails.isLoading }
 							isLoading={ countryOptions.length === 0 }
 						/>
 					) }
@@ -128,7 +129,7 @@ export default function CompanyDetailsForm(): ReactElement {
 								onSelect={ ( option: any ) => {
 									setAddressState( option.value );
 								} }
-								disabled={ isSubmitting }
+								disabled={ updateCompanyDetails.isLoading }
 							/>
 						</>
 					) }
@@ -145,7 +146,7 @@ export default function CompanyDetailsForm(): ReactElement {
 						placeholder={ translate( 'Street name and house number' ) }
 						value={ line1 }
 						onChange={ ( event: any ) => setLine1( event.target.value ) }
-						disabled={ isSubmitting }
+						disabled={ updateCompanyDetails.isLoading }
 					/>
 					<FormTextInput
 						id="line2"
@@ -153,7 +154,7 @@ export default function CompanyDetailsForm(): ReactElement {
 						placeholder={ translate( 'Apartment, floor, suite or unit number' ) }
 						value={ line2 }
 						onChange={ ( event: any ) => setLine2( event.target.value ) }
-						disabled={ isSubmitting }
+						disabled={ updateCompanyDetails.isLoading }
 					/>
 				</FormFieldset>
 				<FormFieldset>
@@ -163,7 +164,7 @@ export default function CompanyDetailsForm(): ReactElement {
 						name="postalCode"
 						value={ postalCode }
 						onChange={ ( event: any ) => setPostalCode( event.target.value ) }
-						disabled={ isSubmitting }
+						disabled={ updateCompanyDetails.isLoading }
 					/>
 				</FormFieldset>
 				<FormFieldset>
@@ -173,7 +174,7 @@ export default function CompanyDetailsForm(): ReactElement {
 						name="city"
 						value={ city }
 						onChange={ ( event: any ) => setCity( event.target.value ) }
-						disabled={ isSubmitting }
+						disabled={ updateCompanyDetails.isLoading }
 					/>
 				</FormFieldset>
 				<div className="company-details-form__controls">
@@ -181,8 +182,8 @@ export default function CompanyDetailsForm(): ReactElement {
 						primary
 						type="submit"
 						className="company-details-form__submit"
-						disabled={ ! showCountryFields || isSubmitting }
-						busy={ isSubmitting }
+						disabled={ ! showCountryFields || updateCompanyDetails.isLoading }
+						busy={ updateCompanyDetails.isLoading }
 					>
 						{ translate( 'Update details' ) }
 					</Button>
