@@ -27,14 +27,12 @@ const HelpCenter: React.FC< Container > = ( {
 	useSelect( ( select ) => select( USER_KEY ).getCurrentUser() );
 	const { setDirectlyData } = useDispatch( STORE_KEY );
 
-	// Need to fix this
+	// Need to fix this - supportAvailability is returning ERROR
 	const supportAvailability = useSupportAvailability( 'OTHER' );
 
 	useEffect( () => {
-		// Need to fix this
-		const directlyLoad = true;
-
-		if ( directlyLoad ) {
+		// Need to fix this - supportAvailability is returning ERROR
+		if ( supportAvailability.data?.is_user_eligible_for_directly ) {
 			execute( [
 				'onReady',
 				( { session } ) => {

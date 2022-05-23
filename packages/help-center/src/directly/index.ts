@@ -29,7 +29,7 @@ function getDefaultOptions() {
 	};
 }
 
-type Options = Record< string, string | boolean | number > | string;
+type Options = Record< string, string | boolean | number > | string | ( ( props: any ) => void );
 
 declare global {
 	interface Window {
