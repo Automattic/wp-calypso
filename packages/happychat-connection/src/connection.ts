@@ -30,36 +30,8 @@ export class Connection {
 	dispatch: any;
 	openSocket: any;
 
-	constructor( {
-		receiveAccept,
-		receiveConnect,
-		receiveDisconnect,
-		receiveError,
-		receiveInit,
-		receiveLocalizedSupport,
-		receiveMessage,
-		receiveMessageOptimistic,
-		receiveMessageUpdate,
-		receiveReconnecting,
-		receiveStatus,
-		receiveToken,
-		receiveUnauthorized,
-		requestTranscript,
-	}: ConnectionProps = {} ) {
-		this.receiveAccept = receiveAccept;
-		this.receiveConnect = receiveConnect;
-		this.receiveDisconnect = receiveDisconnect;
-		this.receiveError = receiveError;
-		this.receiveInit = receiveInit;
-		this.receiveLocalizedSupport = receiveLocalizedSupport;
-		this.receiveMessage = receiveMessage;
-		this.receiveMessageOptimistic = receiveMessageOptimistic;
-		this.receiveMessageUpdate = receiveMessageUpdate;
-		this.receiveReconnecting = receiveReconnecting;
-		this.receiveStatus = receiveStatus;
-		this.receiveToken = receiveToken;
-		this.receiveUnauthorized = receiveUnauthorized;
-		this.requestTranscript = requestTranscript;
+	constructor( props: ConnectionProps = {} ) {
+		Object.assign( this, props );
 	}
 
 	/**

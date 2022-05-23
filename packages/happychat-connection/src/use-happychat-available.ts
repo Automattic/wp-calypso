@@ -15,7 +15,7 @@ export function useHappychatAvailable() {
 		}
 	}, [ dataAuth, isLoadingAuth ] );
 
-	return { available, isLoading: available === undefined };
+	return { available: Boolean( available ), isLoading: available === undefined };
 }
 
 export default useHappychatAvailable;
