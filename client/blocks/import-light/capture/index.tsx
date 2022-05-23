@@ -21,13 +21,13 @@ const Capture: FunctionComponent< Props > = ( props ) => {
 					<div className="import__heading">
 						<FormattedHeader
 							align={ 'left' }
-							headerText={ translate( 'Do you have an existing website?' ) }
+							headerText={ translate( 'What’s your existing site address?' ) }
 							subHeaderText={ translate(
-								'We can import colors from your existing site to use on your new website.'
+								'After a brief scan, we’ll prompt with what we can import.'
 							) }
 						/>
 						<div className={ 'step-wrapper__header-image' }>
-							<img alt="Light import" src="/calypso/images/importer/onboarding-3.svg" />
+							<img alt="Light import" src="/calypso/images/importer/onboarding-4.svg" />
 						</div>
 					</div>
 				</div>

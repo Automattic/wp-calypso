@@ -6,6 +6,7 @@
 
 		span {
 			font-weight: normal;
+			color: var( --studio-gray-40 );
 		}
 	}
 
@@ -13,8 +14,13 @@
 		margin-bottom: 2em;
 	}
 
-	.form-text-input {
+	input[type=text].form-text-input {
+		font-size: 0.875rem;
 		color: var( --studio-gray-90 );
+	}
+
+	input[type=text].form-text-input::placeholder {
+		color: var( --studio-gray-30 );
 	}
 
 	.form-setting-explanation {
