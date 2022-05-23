@@ -7,6 +7,7 @@ export function useStarterDesignsGeneratedQuery(): UseQueryResult< Design[] > {
 	return useQuery( [ 'starter-designs-generated' ], () => fetchStarterDesignsGenerated(), {
 		select: ( response ) => response.map( apiStarterDesignsGeneratedToDesign ),
 		enabled: true,
+		refetchOnMount: 'always',
 		staleTime: Infinity,
 	} );
 }

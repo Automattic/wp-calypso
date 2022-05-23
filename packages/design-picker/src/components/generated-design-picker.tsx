@@ -87,7 +87,11 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 							<GeneratedDesignThumbnail
 								key={ design.slug }
 								slug={ design.slug }
-								thumbnailUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
+								thumbnailUrl={ getDesignPreviewUrl( design, {
+									language: locale,
+									verticalId,
+									skipSiteTitle: true,
+								} ) }
 								isSelected={ selectedDesign?.slug === design.slug }
 								onPreview={ () => onPreview( design, index ) }
 							/>

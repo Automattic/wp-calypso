@@ -37,6 +37,7 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 			previewUrl={ getDesignPreviewUrl( design, {
 				language: locale,
 				verticalId,
+				skipSiteTitle: true,
 			} ) }
 			loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
 				components: { strong: <strong /> },

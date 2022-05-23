@@ -52,6 +52,7 @@ export interface DesignPreviewOptions {
 	language?: string;
 	verticalId?: string;
 	siteTitle?: string;
+	skipSiteTitle?: boolean;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */
