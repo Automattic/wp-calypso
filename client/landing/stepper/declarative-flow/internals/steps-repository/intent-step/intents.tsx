@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { englishLocales, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
 import { SelectItem, SelectItemAlt } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { build, write, shoppingCart } from 'calypso/signup/icons';
@@ -63,7 +64,9 @@ export const useIntentsAlt = ( canImport: boolean ): IntentAlt[] => {
 			),
 		},
 		{
-			show: isEnabled( 'onboarding/difm' ),
+			show:
+				isEnabled( 'onboarding/difm' ) &&
+				englishLocales.includes( translate.localeSlug || i18nDefaultLocaleSlug ),
 			key: 'difm',
 			description: translate( 'Let our experts create your dream site' ),
 			value: 'difm',
