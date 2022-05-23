@@ -33,7 +33,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins page /plugins/:jetpack-site' ), 
 	it.each( [ 'Editor’s pick', 'Top free plugins' ] )(
 		'Plugins page loads %s section',
 		async function ( section: string ) {
-			await pluginsPage.validateHasSection( section );
+			await pluginsPage.validateHasSubtitle( section );
 		}
 	);
 
