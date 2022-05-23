@@ -431,7 +431,6 @@ __metadata:
   resolution: "@automattic/data-stores@workspace:packages/data-stores"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/design-picker": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@types/validator": ^13.7.1
     "@wordpress/api-fetch": ^6.4.0
