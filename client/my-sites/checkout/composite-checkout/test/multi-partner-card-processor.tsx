@@ -157,6 +157,11 @@ describe( 'multiPartnerCardProcessor', () => {
 			tef_bank: undefined,
 			zip: '10001',
 		},
+		tos: {
+			locale: 'en',
+			path: '/',
+			viewport: '0x0',
+		},
 	};
 
 	const basicExpectedEbanxRequest = {
