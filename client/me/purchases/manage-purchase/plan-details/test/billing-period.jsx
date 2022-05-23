@@ -38,19 +38,19 @@ jest.mock( 'page', () => jest.fn() );
 
 describe( 'PlanBillingPeriod', () => {
 	describe( 'a monthly plan', () => {
-		test( 'should display the current period', () => {
+		it( 'should display the current period', () => {
 			render( <PlanBillingPeriod { ...props } /> );
 			expect( screen.getByText( /billed monthly/i ) ).toBeInTheDocument();
 		} );
 
-		test( 'should upgrade to a yearly plan when the button is clicked', () => {
+		it( 'should upgrade to a yearly plan when the button is clicked', () => {
 			render( <PlanBillingPeriod { ...props } /> );
 			const btn = screen.getByRole( 'button', { name: /upgrade/i } );
 			fireEvent.click( btn );
 			expect( page ).toHaveBeenCalledWith( '/checkout/site.com/jetpack_premium' );
 		} );
 
-		test( 'should display a message instead of the upgrade button for a disconnected site', () => {
+		it( 'should display a message instead of the upgrade button for a disconnected site', () => {
 			render( <PlanBillingPeriod { ...props } site={ null } /> );
 
 			expect( screen.queryAllByRole( 'button', { name: /upgrade/i } ) ).toHaveLength( 0 );
@@ -71,13 +71,13 @@ describe( 'PlanBillingPeriod', () => {
 			},
 		};
 
-		test( 'should display the current period', () => {
+		it( 'should display the current period', () => {
 			render( <PlanBillingPeriod { ...annualPlanProps } /> );
 			expect( screen.getByText( /billed yearly/i ) ).toBeInTheDocument();
 		} );
 
 		describe( 'when credit card is expiring', () => {
-			test( 'should display a warning to the user', () => {
+			it( 'should display a warning to the user', () => {
 				const planExpiryDate = moment().add( 3, 'months' ).format();
 				const cardExpiryDate = moment().add( 1, 'months' ).format( 'MM/YY' );
 				const purchase = {
@@ -98,7 +98,7 @@ describe( 'PlanBillingPeriod', () => {
 		} );
 
 		describe( 'when plan is renewing', () => {
-			test( 'should display a warning to the user', () => {
+			it( 'should display a warning to the user', () => {
 				const purchase = {
 					...annualPlanProps.purchase,
 					renewDate: moment( '2020-01-01' ).format(),
@@ -111,7 +111,7 @@ describe( 'PlanBillingPeriod', () => {
 		} );
 
 		describe( 'when plan is expiring', () => {
-			test( 'should display a warning to the user', () => {
+			it( 'should display a warning to the user', () => {
 				const purchase = {
 					...annualPlanProps.purchase,
 					expiryDate: moment( '2020-01-01' ).format(),
@@ -125,7 +125,7 @@ describe( 'PlanBillingPeriod', () => {
 		} );
 
 		describe( 'when plan is expired', () => {
-			test( 'should display a warning to the user', () => {
+			it( 'should display a warning to the user', () => {
 				const purchase = {
 					...annualPlanProps.purchase,
 					expiryDate: moment().subtract( 1, 'month' ).format(),
