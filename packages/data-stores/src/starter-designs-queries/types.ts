@@ -1,4 +1,4 @@
-import type { Category, DesignRecipe } from '@automattic/design-picker';
+import type { Category, DesignRecipe } from '@automattic/design-picker/src/types';
 
 export interface StarterDesignsGenerated {
 	slug: string;
