@@ -5,7 +5,7 @@
 		"outDir": "dist/esm",
 		"rootDir": "src"
 	},
-	"include": [ "src", "types.d.ts" ],
+	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
 	"references": [ { "path": "../wpcom-checkout" } ]
 }
