@@ -52,7 +52,7 @@ describe( DataHelper.createSuiteTitle( 'Plans: Add Upgrade to Cart' ), function 
 		} );
 
 		it( 'Automatically navigated back to Plans page', async function () {
-			await plansPage.validateActiveNavigationTab( 'Plans' );
+			await plansPage.validateActiveTab( 'Plans' );
 		} );
 	} );
 } );

@@ -1,5 +1,12 @@
 import { Page } from 'playwright';
+import { NewSiteResponse } from '../../rest-api-client';
 import { PlansPage, Plans } from './plans-page';
+
+interface NewSiteDetails {
+	id: string;
+	url: string;
+	name: string;
+}
 
 /**
  * Represents the Signup > Pick a Plan page.
@@ -25,7 +32,21 @@ export class SignupPickPlanPage {
 	 *
 	 * @param {Plans} name Name of the plan.
 	 */
-	async selectPlan( name: Plans ): Promise< void > {
-		await this.plansPage.selectPlan( name );
+	async selectPlan( name: Plans ): Promise< NewSiteDetails > {
+		const [ response ] = await Promise.all( [
+			this.page.waitForResponse( /.*sites\/new\?.*/ ),
+			this.plansPage.selectPlan( name ),
+		] );
+
+		if ( ! response ) {
+			throw new Error( 'Failed to create new site at Signup.' );
+		}
+
+		const responseBody: NewSiteResponse = JSON.parse( ( await response.body() ).toString() );
+		return {
+			id: responseBody.body.blog_details.blogid,
+			url: responseBody.body.blog_details.url,
+			name: responseBody.body.blog_details.blogname,
+		};
 	}
 }
