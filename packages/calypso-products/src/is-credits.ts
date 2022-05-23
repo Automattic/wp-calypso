@@ -1,3 +1,6 @@
-export function isCredits( product: { product_slug: string } ): boolean {
-	return 'wordpress-com-credits' === product.product_slug;
+import { camelOrSnakeSlug } from './camel-or-snake-slug';
+import type { WithSnakeCaseSlug, WithCamelCaseSlug } from './types';
+
+export function isCredits( product: WithSnakeCaseSlug | WithCamelCaseSlug ): boolean {
+	return 'wordpress-com-credits' === camelOrSnakeSlug( product );
 }
