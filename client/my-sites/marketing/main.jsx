@@ -1,4 +1,4 @@
-import { WPCOM_FEATURES_NO_ADVERTS, isFreePlan, isStarterPlan } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_NO_ADVERTS } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
@@ -12,7 +12,6 @@ import Main from 'calypso/components/main';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { isStarterPlanEnabled } from 'calypso/my-sites/plans-comparison';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -126,21 +125,8 @@ export const Sharing = ( {
 		titleHeader = translate( 'Integrations' );
 	}
 
-	// Determine the right type of upsell according to the plan.
-	// For the Free plan and the Starter plan, we want to upsell the no-ads add-on.
-	// Otherwise, it upsells the Pro plan.
-	let upsellNudgeTitle = translate( 'No ads with WordPress.com Pro' );
-	let upsellNudgeDesc = translate( 'Prevent ads from showing on your site.' );
-	let upsellNudgeHref;
-
-	if (
-		isStarterPlanEnabled() &&
-		( isFreePlan( currentPlanSlug ) || isStarterPlan( currentPlanSlug ) )
-	) {
-		upsellNudgeTitle = translate( 'Remove ads from your site with the No-Ads add-on' );
-		upsellNudgeDesc = translate( 'Click here to add to cart and continue.' );
-		upsellNudgeHref = `/checkout/${ siteSlug }/no-ads`;
-	}
+	const upsellNudgeTitle = translate( 'Remove ads from your site with the No Ads add-on' );
+	const upsellNudgeHref = `/checkout/${ siteSlug }/no-ads`;
 
 	const selected = find( filters, { route: pathname } );
 	return (
@@ -176,7 +162,6 @@ export const Sharing = ( {
 					event="sharing_no_ads"
 					feature={ WPCOM_FEATURES_NO_ADVERTS }
 					href={ upsellNudgeHref }
-					description={ upsellNudgeDesc }
 					title={ upsellNudgeTitle }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
