@@ -1,4 +1,7 @@
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+import { render, screen } from '@testing-library/react';
 import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 import JetpackBenefitsSiteBackups from '../site-backups';
 
@@ -11,11 +14,6 @@ jest.mock( 'react-redux', () => ( {
 jest.mock( 'calypso/state/selectors/get-rewind-backups' );
 
 describe( 'Jetpack Benefits site backups card', () => {
-	const getBenefitsCard = () => {
-		const element = shallow( <JetpackBenefitsSiteBackups /> );
-		return element.find( 'JetpackBenefitsSiteBackups' ).dive().find( 'JetpackBenefitsCard' );
-	};
-
 	beforeEach( () => {
 		getRewindBackups.mockReset();
 	} );
@@ -23,24 +21,36 @@ describe( 'Jetpack Benefits site backups card', () => {
 	test( 'If backups are still loading, show a placeholder output', () => {
 		const backupsReceived = null;
 		getRewindBackups.mockReturnValue( backupsReceived );
-		expect( getBenefitsCard().props() ).toHaveProperty( 'jestMarker', 'loading-backups' );
+
+		render( <JetpackBenefitsSiteBackups /> );
+		const card = screen.getByTestId( 'loading-backups' );
+		expect( card ).toBeInTheDocument();
 	} );
 
 	test( 'If no backups are found, show a no-backups output', () => {
 		const backupsReceived = [];
 		getRewindBackups.mockReturnValue( backupsReceived );
-		expect( getBenefitsCard().props() ).toHaveProperty( 'jestMarker', 'no-backups' );
+
+		render( <JetpackBenefitsSiteBackups /> );
+		const card = screen.getByTestId( 'no-backups' );
+		expect( card ).toBeInTheDocument();
 	} );
 
 	test( 'If last backup was an error, show an error message', () => {
 		const backupsReceived = [ { status: 'error-will-retry' } ];
 		getRewindBackups.mockReturnValue( backupsReceived );
-		expect( getBenefitsCard().props() ).toHaveProperty( 'jestMarker', 'recent-backup-error' );
+
+		render( <JetpackBenefitsSiteBackups /> );
+		const card = screen.getByTestId( 'recent-backup-error' );
+		expect( card ).toBeInTheDocument();
 	} );
 
 	test( 'If last backup is good, show default backup card output', () => {
 		const backupsReceived = [ { status: 'finished' } ];
 		getRewindBackups.mockReturnValue( backupsReceived );
-		expect( getBenefitsCard().props() ).toHaveProperty( 'jestMarker', 'default-backup-output' );
+
+		render( <JetpackBenefitsSiteBackups /> );
+		const card = screen.getByTestId( 'default-backup-output' );
+		expect( card ).toBeInTheDocument();
 	} );
 } );

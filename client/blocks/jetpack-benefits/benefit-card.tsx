@@ -15,6 +15,7 @@ export const JetpackBenefitsCard: React.FC< Props > = ( {
 	headline,
 	description,
 	placeholder,
+	jestMarker,
 } ) => {
 	const getStat = () => {
 		if ( stat ) {
@@ -28,7 +29,7 @@ export const JetpackBenefitsCard: React.FC< Props > = ( {
 	} );
 
 	return (
-		<div className="jetpack-benefits__card card">
+		<div className="jetpack-benefits__card card" data-testid={ jestMarker }>
 			<div className="jetpack-benefits__card-content">
 				<p className="jetpack-benefits__card-headline">{ headline }</p>
 				<div className={ statBlockClassNames }>
