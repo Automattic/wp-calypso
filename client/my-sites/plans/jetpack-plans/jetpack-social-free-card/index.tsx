@@ -10,7 +10,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { QueryArgs, SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 const SOCIAL_FREE_URL = isJetpackCloud()
-	? 'https://cloud.jetpack.com/pricing/jetpack-social/welcome'
+	? '/pricing/jetpack-social/welcome'
 	: 'https://wordpress.org/plugins/jetpack-social/'; // This may need to be updated (page doesn't exist yet).
 
 const useSocialFreeItem = (): SelectorProduct => {
