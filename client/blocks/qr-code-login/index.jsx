@@ -224,41 +224,41 @@ function QRCodeLogin() {
 		translate( 'Point your phone to this screen to scan the code.' ),
 	] );
 
-	return (
-		<Card className="qr-code-login">
-			{ ! isErrorState && (
-				<div className="qr-code-login__token">
-					<TokenQRCode tokenData={ tokenData } />
-				</div>
-			) }
-
-			{ isErrorState && (
+	if ( isErrorState ) {
+		return (
+			<Card className="qr-code-login">
 				<p className="qr-code-login__token-error">
 					{ translate( 'Mobile App QR Code login is currently unavailable.' ) }
 				</p>
-			) }
+			</Card>
+		);
+	}
 
-			{ ! isErrorState && (
-				<div className="qr-code-login__instructions">
-					<h2 className="qr-code-login__heading">{ translate( 'Use QR Code to login' ) }</h2>
-					<ol className="qr-code-login__steps">
-						{ steps.map( ( step, index ) => (
-							<li key={ 'step-' + index } className="qr-code-login__step">
-								{ step }
-							</li>
-						) ) }
-					</ol>
-					<p>
-						<ExternalLink
-							target="_blank"
-							icon={ false }
-							href="https://apps.wordpress.com/mobile/login-via-qr-code"
-						>
-							{ translate( 'Need help?' ) }
-						</ExternalLink>
-					</p>
-				</div>
-			) }
+	return (
+		<Card className="qr-code-login">
+			<div className="qr-code-login__token">
+				<TokenQRCode tokenData={ tokenData } />
+			</div>
+
+			<div className="qr-code-login__instructions">
+				<h2 className="qr-code-login__heading">{ translate( 'Use QR Code to login' ) }</h2>
+				<ol className="qr-code-login__steps">
+					{ steps.map( ( step, index ) => (
+						<li key={ 'step-' + index } className="qr-code-login__step">
+							{ step }
+						</li>
+					) ) }
+				</ol>
+				<p>
+					<ExternalLink
+						target="_blank"
+						icon={ false }
+						href="https://apps.wordpress.com/mobile/login-via-qr-code"
+					>
+						{ translate( 'Need help?' ) }
+					</ExternalLink>
+				</p>
+			</div>
 		</Card>
 	);
 }
