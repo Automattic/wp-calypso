@@ -47,16 +47,16 @@ const getLoginActionResponse = async ( action, args ) => {
 
 const fetchQRCodeData = async ( setTokenData, tokenData, anonymousUserId, setIsErrorState ) => {
 	if ( isStillValidToken( tokenData ) ) {
-		return tokenData;
+		return;
 	}
 
 	if ( ! anonymousUserId ) {
-		return null;
+		return;
 	}
 	// tokenData is set to null initially.
 	// Lets wait till it is set to false when the local data is the just yet.
 	if ( tokenData === null ) {
-		return null;
+		return;
 	}
 
 	const responseData = await getLoginActionResponse( 'qr-code-token-request-endpoint', {
@@ -65,16 +65,16 @@ const fetchQRCodeData = async ( setTokenData, tokenData, anonymousUserId, setIsE
 
 	if ( responseData === false ) {
 		setIsErrorState( true );
-		return null;
+		return;
 	}
 
 	if ( isStillValidToken( responseData.data ) ) {
 		setTokenData( responseData.data );
 		setStoredItem( LOCALE_STORAGE_KEY, responseData.data );
-		return null;
+		return;
 	}
 	setIsErrorState( true );
-	return null;
+	return;
 };
 
 const fetchAuthState = async (
