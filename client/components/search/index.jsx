@@ -1,5 +1,5 @@
-import { Gridicon } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
+import { Icon, search, closeSmall } from '@wordpress/icons';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import { debounce } from 'lodash';
@@ -340,7 +340,7 @@ class Search extends Component {
 					aria-controls={ 'search-component-' + this.instanceId }
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }
 				>
-					{ ! this.props.hideOpenIcon && <Gridicon icon="search" className="search__open-icon" /> }
+					{ ! this.props.hideOpenIcon && <Icon icon={ search } className="search__open-icon" /> }
 				</div>
 				<div className={ fadeDivClass }>
 					<FormTextInput
@@ -396,7 +396,7 @@ class Search extends Component {
 					aria-controls={ 'search-component-' + this.instanceId }
 					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }
 				>
-					<Gridicon icon="cross" className="search__close-icon" />
+					<Icon icon={ closeSmall } className="search__close-icon" />
 				</div>
 			);
 		}

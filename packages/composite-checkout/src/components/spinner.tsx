@@ -44,6 +44,6 @@ const SpinnerWrapper = styled.div`
 	}
 `;
 
-export default function Spinner( { className }: { className?: string } ): JSX.Element {
+export default function Spinner( { className }: { className?: string } ) {
 	return <SpinnerWrapper className={ className } />;
 }

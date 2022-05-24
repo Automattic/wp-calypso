@@ -101,13 +101,7 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
-export function ReceiptView( {
-	siteSlug,
-	receiptId,
-}: {
-	siteSlug: string;
-	receiptId: number;
-} ): JSX.Element {
+export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receiptId: number } ) {
 	const translate = useTranslate();
 	const transaction = useSelector( ( state ) => getPastBillingTransaction( state, receiptId ) );
 	const logBillingHistoryError = useLogBillingHistoryError( 'site level receipt view load error' );

@@ -120,7 +120,7 @@ export default function CompositeCheckout( {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
 		useSelector(

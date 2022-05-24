@@ -2,7 +2,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
-export default function TosText(): JSX.Element {
+export default function TosText() {
 	const translate = useTranslate();
 	return (
 		<>

@@ -1,7 +1,6 @@
 import deepfreeze from 'deep-freeze';
 import { TEAMS_REQUEST, TEAMS_RECEIVE } from 'calypso/state/teams/action-types';
 import { deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { items, isRequesting } from '../reducer';
 
 const TEAM1 = { slug: 'team one slug', title: 'team one title' };
@@ -10,12 +9,7 @@ const validState = [ TEAM1, TEAM2 ];
 const invalidState = [ { slug: 1, title: 'foo bar' } ];
 
 describe( 'reducer', () => {
-	let sandbox;
-
-	useSandbox( ( newSandbox ) => {
-		sandbox = newSandbox;
-		sandbox.stub( console, 'warn' );
-	} );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	describe( 'items', () => {
 		test( 'should return an empty list by default', () => {

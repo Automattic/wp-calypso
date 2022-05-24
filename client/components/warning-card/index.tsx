@@ -26,7 +26,7 @@ const StyledIcon = styled( Gridicon )`
 	margin-right: 0.5rem;
 `;
 
-function WarningCard( { message }: { message: ReactNode } ): JSX.Element {
+function WarningCard( { message }: { message: ReactNode } ) {
 	return (
 		<Container>
 			<IconSection>

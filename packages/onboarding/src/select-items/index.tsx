@@ -12,6 +12,7 @@ export interface SelectItem< T > {
 	value: T;
 	actionText: TranslateResult;
 	hidden?: boolean;
+	isPrimary?: boolean;
 }
 
 interface Props< T > {
@@ -29,7 +30,7 @@ function SelectItems< T >( {
 }: Props< T > ): React.ReactElement {
 	return (
 		<div className={ classnames( 'select-items', className ) }>
-			{ items.map( ( { key, title, description, icon, actionText, value } ) => (
+			{ items.map( ( { key, title, description, icon, actionText, value, isPrimary } ) => (
 				<div key={ key } className="select-items__item">
 					<Icon className="select-items__item-icon" icon={ icon } size={ 24 } />
 					<div className="select-items__item-info-wrapper">
@@ -37,7 +38,11 @@ function SelectItems< T >( {
 							<h2 className="select-items__item-title">{ preventWidows( title ) }</h2>
 							<div className="select-items__item-description">{ preventWidows( description ) }</div>
 						</div>
-						<Button className="select-items__item-button" onClick={ () => onSelect( value ) }>
+						<Button
+							primary={ isPrimary }
+							className="select-items__item-button"
+							onClick={ () => onSelect( value ) }
+						>
 							{ actionText }
 						</Button>
 					</div>

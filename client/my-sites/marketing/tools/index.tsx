@@ -156,9 +156,9 @@ export const MarketingTools: FunctionComponent = () => {
 				) }
 
 				<MarketingToolsFeature
-					title={ translate( 'Build your community, following, and income with Earn tools' ) }
+					title={ translate( 'Monetize your site' ) }
 					description={ translate(
-						'Increase engagement and income on your site by accepting payments for just about anything – physical and digital goods, services, donations, or access to exclusive content.'
+						'Accept payments or donations with our native payment blocks, limit content to paid subscribers only, opt into our ad network to earn revenue, and refer friends to WordPress.com for credits.'
 					) }
 					imagePath={ earnIllustration }
 				>

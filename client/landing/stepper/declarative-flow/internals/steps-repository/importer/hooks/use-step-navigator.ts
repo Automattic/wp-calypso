@@ -79,6 +79,7 @@ export function useStepNavigator(
 	}
 
 	return {
+		supportLinkModal: false,
 		goToIntentPage,
 		goToImportCapturePage,
 		goToSiteViewPage,

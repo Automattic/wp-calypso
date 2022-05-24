@@ -17,7 +17,7 @@ export default function PaymentRequestButton( {
 	paymentType,
 	disabled,
 	disabledReason,
-}: PaymentRequestButtonProps ): JSX.Element {
+}: PaymentRequestButtonProps ) {
 	const { __ } = useI18n();
 	const { formStatus, setFormReady, setFormSubmitting } = useFormStatus();
 	const onClick = ( event: MouseEvent ) => {
@@ -136,7 +136,7 @@ function GooglePayButton( {
 }: {
 	disabled?: boolean;
 	onClick: ( event: MouseEvent ) => void;
-} ): JSX.Element {
+} ) {
 	return (
 		<GooglePayButtonWrapper disabled={ disabled } onClick={ onClick }>
 			<GooglePayMark fill="white" />

@@ -122,7 +122,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		);
 	}
 
-	render(): JSX.Element {
+	render() {
 		const { selectedSite, selectedDomainName, currentRoute, translate } = this.props;
 		const { slug } = selectedSite;
 		const componentClassName = 'transfer-domain-to-other-site';
@@ -156,7 +156,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		);
 	}
 
-	renderBreadcrumbs = (): JSX.Element => {
+	renderBreadcrumbs = () => {
 		const { translate, selectedSite, selectedDomainName, currentRoute } = this.props;
 
 		const items = [
@@ -184,7 +184,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
 	};
 
-	renderSection(): JSX.Element {
+	renderSection() {
 		const { currentUserCanManage, selectedDomainName, aftermarketAuction, translate, domain } =
 			this.props;
 		const { children, ...propsWithoutChildren } = this.props;

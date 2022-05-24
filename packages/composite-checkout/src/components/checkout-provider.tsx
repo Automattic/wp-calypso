@@ -54,7 +54,7 @@ export function CheckoutProvider( {
 	isValidating,
 	initiallySelectedPaymentMethodId = null,
 	children,
-}: CheckoutProviderProps ): JSX.Element {
+}: CheckoutProviderProps ) {
 	const propsToValidate = {
 		total,
 		items,

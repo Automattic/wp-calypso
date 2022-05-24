@@ -386,6 +386,10 @@ const webpackConfig = {
 				release: `calypso_${ process.env.COMMIT_SHA }`,
 				include: filePaths.path,
 				urlPrefix: `~${ filePaths.publicPath }`,
+				errorHandler: ( err, invokeErr, compilation ) => {
+					// Sentry should _never_ fail the webpack build, so only emit warnings here:
+					compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
+				},
 			} ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],

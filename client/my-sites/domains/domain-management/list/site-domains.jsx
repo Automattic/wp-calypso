@@ -39,9 +39,9 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getPurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import DomainOnly from './domain-only';
@@ -506,7 +506,7 @@ export default connect(
 				: false,
 			isOnFreePlan,
 			userCanManageOptions,
-			canSetPrimaryDomain: hasActiveSiteFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
+			canSetPrimaryDomain: siteHasFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
 			purchases,
 			isFetchingPurchases: isFetchingSitePurchases( state ),
 		};

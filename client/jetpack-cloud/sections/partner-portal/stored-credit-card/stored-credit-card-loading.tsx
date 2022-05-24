@@ -1,6 +1,6 @@
 import './style.scss';
 
-export default function StoredCreditCardLoading(): JSX.Element {
+export default function StoredCreditCardLoading() {
 	return (
 		<div className="stored-credit-card stored-credit-card-loading">
 			<div className="stored-credit-card-loading__content" />

@@ -4,7 +4,6 @@ import {
 	setAutomatedTransferStatus,
 } from 'calypso/state/automated-transfer/actions';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 import { requestStatus, receiveStatus } from '../';
 
 const siteId = 1916284;
@@ -38,8 +37,9 @@ describe( 'requestStatus', () => {
 } );
 
 describe( 'receiveStatus', () => {
-	let clock;
-	useFakeTimers( ( fakeClock ) => ( clock = fakeClock ) );
+	beforeEach( () => {
+		jest.useFakeTimers();
+	} );
 
 	test( 'should dispatch set status action', () => {
 		const dispatch = jest.fn();
@@ -64,9 +64,10 @@ describe( 'receiveStatus', () => {
 	} );
 
 	test( 'should request status again if not complete', () => {
+		jest.useFakeTimers();
 		const dispatch = jest.fn();
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
-		clock.tick( 4000 );
+		jest.runAllTimers();
 
 		expect( dispatch ).toBeCalledTimes( 2 );
 		expect( dispatch ).toBeCalledWith( fetchAutomatedTransferStatus( siteId ) );

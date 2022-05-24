@@ -20,7 +20,7 @@ export const PluginCustomDomainDialog = ( {
 	closeDialog,
 	isDialogVisible,
 	onProceed,
-}: Props ): JSX.Element => {
+}: Props ) => {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 

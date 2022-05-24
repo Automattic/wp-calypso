@@ -102,7 +102,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		// Space isn't included in the translatable string to prevent it being easily missed.
 		return isNonAtomicJetpack
 			? ' ' + jetpackText
-			: ' ' + translate( 'Available with any paid plan.' );
+			: ' ' + translate( 'Available with any paid plan — no plugin required.' );
 	};
 
 	const getPremiumPlanNames = () => {
@@ -170,6 +170,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getRecurringPaymentsCard = () => {
+		const hasConnectionCtaTitle = translate( 'Manage Payment Button' );
+		const noConnectionCtaTitle = translate( 'Enable Payment Button' );
+		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
 		const cta = ! hasRecurringPayments
 			? {
 					text: translate( 'Unlock this feature' ),
@@ -179,35 +182,40 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  }
 			: {
-					text: translate( 'Collect payments' ),
+					text: ctaTitle,
 					action: () => {
 						trackCtaButton( 'recurring-payments' );
 						page( `/earn/payments/${ selectedSiteSlug }` );
 					},
 			  };
-		const hasConnectionTitle = translate( 'Manage payments' );
-		const noConnectionTitle = translate( 'Collect payments' );
-		const title = hasConnectedAccount ? hasConnectionTitle : noConnectionTitle;
+		const title = translate( 'Collect payments' );
 
-		const hasConnectionBody = translate(
-			"Manage your customers and subscribers, or your current subscription options and review the total revenue that you've made from payments."
-		);
-		const noConnectionBody = (
+		const body = (
 			<>
-				{ translate(
-					'Accept one-time and recurring credit card payments for physical products, services, memberships, subscriptions, and donations.'
-				) }
-				{ ! hasRecurringPayments && <em>{ getAnyPlanNames() }</em> }
+				{ hasConnectedAccount
+					? translate(
+							'Let visitors pay for digital goods and services or make quick, pre-set donations by inserting the Payment Button block.'
+					  )
+					: translate(
+							'Let visitors pay for digital goods and services or make quick, pre-set donations by enabling the Payment Button block.'
+					  ) }
+				<>
+					<br />
+					<em>{ getAnyPlanNames() }</em>
+				</>
 			</>
 		);
-		const body = hasConnectedAccount ? hasConnectionBody : noConnectionBody;
 
-		const learnMoreLink = ! hasRecurringPayments
+		const learnMoreLink = ! hasConnectedAccount
 			? {
-					url: 'https://wordpress.com/support/recurring-payments/',
+					url: 'https://wordpress.com/payments-donations/',
 					onClick: () => trackLearnLink( 'recurring-payments' ),
 			  }
-			: null;
+			: {
+					url: 'https://wordpress.com/support/wordpress-editor/blocks/payments/#payment-button-block',
+					onClick: () => trackLearnLink( 'recurring-payments' ),
+					label: translate( 'Support documentation' ),
+			  };
 		return {
 			title,
 			body,
@@ -225,6 +233,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getDonationsCard = () => {
+		const hasConnectionCtaTitle = translate( 'Manage Donations Form' );
+		const noConnectionCtaTitle = translate( 'Enable Donations Form' );
+		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
 		const cta = ! hasDonations
 			? {
 					text: translate( 'Unlock this feature' ),
@@ -234,7 +245,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  }
 			: {
-					text: translate( 'Manage donations' ),
+					text: ctaTitle,
 					action: () => {
 						trackCtaButton( 'donations' );
 						page( `/earn/payments/${ selectedSiteSlug }` );
@@ -244,17 +255,30 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 		const body = (
 			<>
-				{ translate(
-					'Collect donations, tips, and contributions for your creative pursuits, organization, or whatever your website is about.'
-				) }
-				{ ! hasDonations && <em>{ getAnyPlanNames() }</em> }
+				{ hasConnectedAccount
+					? translate(
+							'Accept one-time and recurring donations by inserting the Donations Form block.'
+					  )
+					: translate(
+							'Accept one-time and recurring donations by enabling the Donations Form block.'
+					  ) }
+				<>
+					<br />
+					<em>{ getAnyPlanNames() }</em>
+				</>
 			</>
 		);
 
-		const learnMoreLink = {
-			url: localizeUrl( 'https://wordpress.com/support/donations/' ),
-			onClick: () => trackLearnLink( 'donations' ),
-		};
+		const learnMoreLink = ! hasConnectedAccount
+			? {
+					url: localizeUrl( 'https://wordpress.com/payments-donations/' ),
+					onClick: () => trackLearnLink( 'donations' ),
+			  }
+			: {
+					url: localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/donations/' ),
+					onClick: () => trackLearnLink( 'donations' ),
+					label: translate( 'Support documentation' ),
+			  };
 
 		return {
 			title,
@@ -273,6 +297,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getPremiumContentCard = () => {
+		const hasConnectionCtaTitle = translate( 'Manage Premium Content' );
+		const noConnectionCtaTitle = translate( 'Enable Premium Content' );
+		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
 		if ( isNonAtomicJetpack ) {
 			return;
 		}
@@ -285,44 +312,36 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  }
 			: {
-					text: translate( 'Add premium content subscriptions' ),
+					text: ctaTitle,
 					action: () => {
 						trackCtaButton( 'premium-content' );
 						page( `/earn/payments/${ selectedSiteSlug }` );
 					},
 			  };
-		const title = hasConnectedAccount
-			? translate( 'Manage your premium content' )
-			: translate( 'Collect payments for content' );
-		const body = hasConnectedAccount ? (
-			translate(
-				'Create paid subscription options to share premium content like text, images, video, and any other content on your website. Browse our {{a}}docs{{/a}} for the details.',
-				{
-					components: {
-						a: (
-							<a
-								href="https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/"
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-					},
-				}
-			)
-		) : (
+		const title = translate( 'Profit from subscriber-only content' );
+		const hasConnectionBodyText = translate(
+			'Create paid subscriptions so only subscribers can see selected content on your site — everyone else will see a paywall.'
+		);
+		const noConnectionBodyText = translate(
+			'Create paid subscription options to share premium content like text, images, video, and any other content on your website.'
+		);
+		const bodyText = hasConnectedAccount ? hasConnectionBodyText : noConnectionBodyText;
+
+		const body = (
 			<>
-				{ translate(
-					'Create paid subscription options to share premium content like text, images, video, and any other content on your website.'
-				) }
-				{ ! hasPremiumContent && <em>{ getAnyPlanNames() }</em> }
+				{ bodyText }
+				<>
+					<br />
+					<em>{ getAnyPlanNames() }</em>
+				</>
 			</>
 		);
-		const learnMoreLink = ! hasPremiumContent
-			? {
-					url: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/',
-					onClick: () => trackLearnLink( 'premium-content' ),
-			  }
-			: null;
+		const learnMoreLink = {
+			url: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/',
+			onClick: () => trackLearnLink( 'premium-content' ),
+			label: hasConnectedAccount ? translate( 'Support documentation' ) : null,
+		};
+
 		return {
 			title,
 			body,
@@ -369,7 +388,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Share premium content with paying subscribers automatically through email.'
 				) }
-				{ <em>{ getAnyPlanNames() }</em> }
 			</>
 		) : (
 			translate( 'Share premium content with paying subscribers automatically through email.' )

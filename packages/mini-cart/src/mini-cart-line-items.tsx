@@ -40,7 +40,7 @@ export function MiniCartLineItems( {
 	removeCoupon: RemoveCouponFromCart;
 	createUserAndSiteBeforeTransaction?: boolean;
 	responseCart: ResponseCart;
-} ): JSX.Element {
+} ) {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 

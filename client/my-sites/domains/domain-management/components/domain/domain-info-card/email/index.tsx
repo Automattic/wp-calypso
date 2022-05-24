@@ -9,10 +9,7 @@ import DomainInfoCard from '..';
 import type { DomainInfoCardProps } from '../types';
 import type { EmailAccount } from './types';
 
-const DomainEmailInfoCard = ( {
-	domain,
-	selectedSite,
-}: DomainInfoCardProps ): JSX.Element | null => {
+const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) => {
 	const translate = useTranslate();
 	const typesUnableToAddEmail = [ domainType.TRANSFER, domainType.SITE_REDIRECT ] as const;
 	const { data, error, isLoading } = useEmailAccountsQuery( selectedSite.ID, domain.name );

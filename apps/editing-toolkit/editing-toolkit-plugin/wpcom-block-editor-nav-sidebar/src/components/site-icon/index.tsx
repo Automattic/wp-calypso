@@ -2,7 +2,7 @@ import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, wordpress } from '@wordpress/icons';
 
-export default function SiteIcon(): JSX.Element {
+export default function SiteIcon() {
 	// The site icon url should be available from /wp/v2/settings or similar in the future,
 	// but for now it's accessible at the index endpoint.
 	// https://github.com/WordPress/gutenberg/blob/68c3978be352c6d3982f73bcf8c80744608c53c8/lib/init.php#L160

@@ -7,7 +7,7 @@ describe( 'Design Picker designs utils', () => {
 			title: 'Zoologist',
 			recipe: {
 				stylesheet: 'pub/zoologist',
-				patternIds: [ 12, 34 ],
+				pattern_ids: [ 12, 34 ],
 			},
 		} as Design;
 

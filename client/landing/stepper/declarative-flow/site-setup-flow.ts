@@ -184,6 +184,9 @@ export const siteSetupFlow: Flow = {
 						case 'write': {
 							return navigate( 'options' );
 						}
+						case 'difm': {
+							return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
+						}
 						default: {
 							return navigate( submittedIntent as StepPath );
 						}

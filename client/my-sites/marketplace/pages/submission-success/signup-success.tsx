@@ -7,7 +7,7 @@ import theme from 'calypso/my-sites/marketplace/theme';
 import MasterbarStyled from '../../components/masterbar-styled';
 import './style.scss';
 
-const SignupSuccess = (): JSX.Element => {
+const SignupSuccess = () => {
 	const translate = useTranslate();
 
 	return (

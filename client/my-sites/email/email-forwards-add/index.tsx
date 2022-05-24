@@ -34,7 +34,7 @@ type EmailForwardsAddProps = {
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = (): void => {};
 
-const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps ): JSX.Element => {
+const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps ) => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSite = useSelector( getSelectedSite );
 

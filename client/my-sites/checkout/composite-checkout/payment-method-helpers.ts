@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import i18n from 'i18n-calypso';
 import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wp from 'calypso/lib/wp';
 import { stringifyBody } from 'calypso/state/login/utils';
 
@@ -95,6 +96,7 @@ export async function createAccount( {
 			locale: getLocaleSlug(),
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
+			tos: getToSAcceptancePayload(),
 		} );
 
 		if ( ! isCreateAccountResponse( response ) || ! response.success ) {

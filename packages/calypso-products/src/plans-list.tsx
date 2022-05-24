@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import i18n, { translate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, translate } from 'i18n-calypso';
 import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
@@ -1589,12 +1589,18 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 	getStoreSlug: () => PLAN_WPCOM_STARTER,
 	getPathSlug: () => 'starter',
 	getDescription: () =>
-		i18n.translate( 'Start your WordPress.com website. Limited functionality and storage.' ),
+		i18n.hasTranslation( 'Start with a custom domain name, simple payments, and extra storage.' ) ||
+		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
+			? i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' )
+			: i18n.translate( 'Start your WordPress.com website. Limited functionality and storage.' ),
 	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
 	getPlanCompareFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_ADMINS,
 		FEATURE_6GB_STORAGE,
+		FEATURE_GOOGLE_ANALYTICS,
+		FEATURE_PAYMENT_BLOCKS,
+		FEATURE_TITAN_EMAIL,
 	],
 };
 
@@ -1619,7 +1625,15 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 	getProductId: () => 1032,
 	getStoreSlug: () => PLAN_WPCOM_PRO,
 	getPathSlug: () => 'pro',
-	getDescription: () => i18n.translate( 'The full power of modern WordPress hosting made easy.' ),
+	getDescription: () =>
+		i18n.hasTranslation(
+			'Unlock the full power of WordPress with plugins, custom themes and much more.'
+		) || [ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
+			? i18n.translate(
+					'Unlock the full power of WordPress with plugins, custom themes and much more.'
+			  )
+			: i18n.translate( 'The full power of modern WordPress hosting made easy.' ),
+
 	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
 	getPlanCompareFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
@@ -1641,6 +1655,7 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 		FEATURE_JETPACK_ESSENTIAL,
 		FEATURE_SIMPLE_PAYMENTS,
 		FEATURE_WORDADS_INSTANT,
+		FEATURE_GOOGLE_ANALYTICS,
 	],
 	getIncludedFeatures: () => [
 		FEATURE_ADVANCED_DESIGN,

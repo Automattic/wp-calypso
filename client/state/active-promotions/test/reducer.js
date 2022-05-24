@@ -1,6 +1,5 @@
 import deepFreeze from 'deep-freeze';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import {
 	activePromotionsReceiveAction,
 	activePromotionsRequestSuccessAction,
@@ -15,13 +14,7 @@ import activePromotionsReducer, {
 import { WPCOM_RESPONSE } from './fixture';
 
 describe( 'reducer', () => {
-	let sandbox;
-
-	useSandbox( ( newSandbox ) => {
-		sandbox = newSandbox;
-		// mute off console warn
-		sandbox.stub( console, 'warn' );
-	} );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should export expected reducer keys', () => {
 		expect( Object.keys( activePromotionsReducer( undefined, {} ) ) ).toEqual(

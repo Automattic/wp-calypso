@@ -111,7 +111,7 @@ export function MiniCart( {
 	closeCart: () => void;
 	onRemoveProduct?: ( uuid: string ) => void;
 	onRemoveCoupon?: () => void;
-} ): JSX.Element | null {
+} ) {
 	const { responseCart, removeCoupon, removeProductFromCart, isLoading, isPendingUpdate } =
 		useShoppingCart( cartKey ? cartKey : undefined );
 	const { __ } = useI18n();

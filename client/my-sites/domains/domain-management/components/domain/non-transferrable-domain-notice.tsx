@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 
-const NonTransferrableDomainNotice = ( { domainName }: { domainName: string } ): JSX.Element => {
+const NonTransferrableDomainNotice = ( { domainName }: { domainName: string } ) => {
 	const translate = useTranslate();
 	const text = translate(
 		"{{strong}}%(domain)s{{/strong}} is in redemption so it's not possible to transfer it.",

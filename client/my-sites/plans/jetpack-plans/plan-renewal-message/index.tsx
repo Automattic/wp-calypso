@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 
-const PlanRenewalMessage = (): JSX.Element => {
+const PlanRenewalMessage = () => {
 	const translate = useTranslate();
 
 	return (

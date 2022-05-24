@@ -135,7 +135,7 @@ function ExistingCardLabel( {
 	storedDetailsId: string;
 	paymentPartnerProcessorId: string;
 	allowEditingTaxInfo?: boolean;
-} ): JSX.Element {
+} ) {
 	const { __, _x } = useI18n();
 
 	/* translators: %s is the last 4 digits of the credit card number */
@@ -240,7 +240,7 @@ function ButtonContents( {
 	formStatus: string;
 	total: LineItem;
 	activeButtonText?: string;
-} ): JSX.Element {
+} ) {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
 		return <>{ __( 'Processing…' ) }</>;
