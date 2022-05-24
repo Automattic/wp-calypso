@@ -45,7 +45,6 @@ export function updateThemes( themeSlugs, siteId, autoupdate = false ) {
 					type: THEMES_UPDATE_FAILURE,
 					themeSlugs,
 					siteId,
-					error,
 				} );
 
 				if ( error.error === 'theme_not_found' ) {

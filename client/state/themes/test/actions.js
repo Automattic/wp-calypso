@@ -28,6 +28,9 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
+	THEMES_UPDATE,
+	THEMES_UPDATE_FAILURE,
+	THEMES_UPDATE_SUCCESS,
 } from 'calypso/state/themes/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import {
@@ -635,33 +638,35 @@ describe( 'actions', () => {
 			updateThemes( [ 'storefront', 'twentysixteen' ], 2211667 )( spy );
 
 			expect( spy ).toBeCalledWith( {
-				type: THEME_UPDATE,
+				type: THEMES_UPDATE,
 				siteId: 2211667,
 				themeSlugs: [ 'storefront', 'twentysixteen' ],
 			} );
 		} );
 
-		test( 'should dispatch theme activation success thunk when request completes', () => {
-			return activateTheme(
+		test( 'should dispatch theme updated success thunk when request completes', () => {
+			return updateThemes(
 				[ 'storefront', 'twentysixteen' ],
 				2211667
 			)( spy ).then( () => {
-				expect( spy.mock.calls[ 1 ][ 0 ].name ).toEqual( 'xx' );
+				expect( spy ).toBeCalledWith( {
+					type: THEMES_UPDATE_SUCCESS,
+					siteId: 2211667,
+					themeSlugs: [ 'storefront', 'twentysixteen' ],
+				} );
 			} );
 		} );
 
-		test( 'should dispatch theme activation failure action when request completes', () => {
+		test( 'should dispatch theme update failure action when request completes', () => {
 			const themeActivationFailure = {
-				error: expect.objectContaining( { message: 'The specified theme was not found' } ),
 				siteId: 2211667,
-				themeId: 'badTheme',
-				type: THEME_ACTIVATE_FAILURE,
+				themeSlugs: [ 'unknown' ],
+				type: THEMES_UPDATE_FAILURE,
 			};
 
-			return activateTheme(
-				'badTheme',
-				2211667,
-				trackingData
+			return updateThemes(
+				[ 'unknown' ],
+				2211667
 			)( spy ).then( () => {
 				expect( spy ).toBeCalledWith( themeActivationFailure );
 			} );
