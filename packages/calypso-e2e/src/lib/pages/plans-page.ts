@@ -40,7 +40,7 @@ const selectors = {
 
 	// My Plans view
 	myPlanTitle: ( planName: LegacyPlans | Plans ) =>
-		`.my-plan-card__title:has-text("WordPress ${ planName }")`,
+		`.my-plan-card__title:has-text("${ planName }")`,
 };
 
 /**
