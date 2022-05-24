@@ -21,8 +21,12 @@ const InlineHelpContactPage: React.FC< Props > = ( {
 	const { __ } = useI18n();
 
 	const { data: dataChat, isLoading: isLoadingChat } = useSupportAvailability( 'CHAT' );
+<<<<<<< HEAD
 	const { data: dataEmail, isLoading: isLoadingEmail } = useSupportAvailability( 'EMAIL' );
 	const { available: chatAvailable, isLoading: isLoadingChatAvailable } = useHappychatAvailable();
+=======
+	const { data: dataEmail, isLoading: isLoadingEmail } = useSupportAvailability( 'OTHER' );
+>>>>>>> 3eb744b089 (Fix useSupportAvailability call)
 
 	// If user has both chat and email options, we show him the contact-page to choose
 	// If instead the user has one option, we show him the contact form directly

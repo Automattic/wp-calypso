@@ -29,7 +29,7 @@ const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) =>
 
 	// prefetch the values
 	useSupportAvailability( 'CHAT' );
-	useSupportAvailability( 'EMAIL' );
+	useSupportAvailability( 'OTHER' );
 	useHappychatAuth();
 
 	const openSecondaryView = useCallback(
