@@ -21,7 +21,7 @@ const GoalsStep: Step = function GoalsStep( { navigation } ) {
 	//const { goBack, goNext, submit } = navigation;
 	const { goBack, goNext } = navigation;
 	const translate = useTranslate();
-	const headerText = translate( 'What are your goals?' );
+	const headerText = translate( 'Welcome! What are your goals?' );
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
 
 	//const { setIntent } = useDispatch( ONBOARD_STORE );
