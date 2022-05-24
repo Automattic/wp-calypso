@@ -1,253 +1,215 @@
 /**
  * @jest-environment jsdom
  */
-import { shallow, mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import SelectDropdown from '../index';
 
-describe( 'index', () => {
-	describe( 'component rendering', () => {
-		test( 'should render a list with the provided options', () => {
-			const dropdown = mountDropdown();
-			expect(
-				dropdown.find( '.select-dropdown__options li.select-dropdown__label' ).text()
-			).toEqual( 'Statuses' );
-			expect(
-				dropdown.find( '.select-dropdown__options li.select-dropdown__option' )
-			).toHaveLength( 4 );
-		} );
+function getDropdownOptions() {
+	return [
+		{ value: 'status-options', label: 'Statuses', isLabel: true },
+		{ value: 'published', label: 'Published' },
+		{ value: 'scheduled', label: 'Scheduled' },
+		{ value: 'drafts', label: 'Drafts' },
+		null,
+		{ value: 'trashed', label: 'Trashed' },
+	];
+}
 
-		test( 'should render a separator in place of any falsy option', () => {
-			const dropdown = mountDropdown();
-			expect(
-				dropdown.find( '.select-dropdown__options li.select-dropdown__separator' )
-			).toHaveLength( 1 );
-		} );
+function renderDropdown( props ) {
+	return render( <SelectDropdown options={ getDropdownOptions() } { ...props } /> );
+}
 
-		test( 'should be initially closed', () => {
-			const dropdown = shallowRenderDropdown();
-			expect( dropdown.find( '.select-dropdown' ) ).toHaveLength( 1 );
-			expect( dropdown.find( '.select-dropdown.is-open' ) ).toHaveLength( 0 );
-		} );
-
-		test( 'should execute toggleDropdown when clicked', () => {
-			const dropdown = shallowRenderDropdown();
-
-			dropdown.find( '.select-dropdown__container' ).simulate( 'click' );
-			expect( dropdown.find( '.select-dropdown.is-open' ) ).toHaveLength( 1 );
-		} );
-
-		test( 'should not respond when clicked when disabled', () => {
-			const dropdown = shallowRenderDropdown( { disabled: true } );
-
-			expect( dropdown.find( '.select-dropdown.is-disabled' ) ).toHaveLength( 1 );
-
-			dropdown.find( '.select-dropdown__container' ).simulate( 'click' );
-			expect( dropdown.find( '.select-dropdown.is-open' ) ).toHaveLength( 0 );
-
-			// Repeat to be sure
-			dropdown.find( '.select-dropdown__container' ).simulate( 'click' );
-			expect( dropdown.find( '.select-dropdown.is-open' ) ).toHaveLength( 0 );
-		} );
-
-		test( 'should be possible to open the dropdown via keyboard', () => {
-			const dropdown = shallowRenderDropdown();
-
-			// simulate pressing 'space' key
-			dropdown.find( '.select-dropdown__container' ).simulate( 'keydown', createKeyEvent( 32 ) );
-			expect( dropdown.find( '.select-dropdown.is-open' ) ).toHaveLength( 1 );
-		} );
+describe( 'component rendering', () => {
+	test( 'should render a list with the provided options', () => {
+		renderDropdown();
+		expect( screen.getByRole( 'presentation' ) ).toHaveTextContent( 'Statuses' );
+		expect( screen.queryAllByRole( 'listitem' ) ).toHaveLength( 4 );
 	} );
 
-	describe( 'getInitialSelectedItem', () => {
-		test( 'should return the initially selected value (if any)', () => {
-			const dropdown = shallowRenderDropdown( { initialSelected: 'drafts' } );
-			const initialSelectedValue = dropdown.instance().getInitialSelectedItem();
-			expect( initialSelectedValue ).toEqual( 'drafts' );
-		} );
-
-		test( "should return `undefined`, when there aren't options", () => {
-			const dropdown = shallow( <SelectDropdown /> );
-			expect( dropdown.instance().getInitialSelectedItem() ).toBeUndefined();
-		} );
-
-		test( "should return the first not-label option, when there isn't a preselected value", () => {
-			const dropdown = shallowRenderDropdown();
-			const initialSelectedValue = dropdown.instance().getInitialSelectedItem();
-			expect( initialSelectedValue ).toEqual( 'published' );
-		} );
+	test( 'should render a separator in place of any falsy option', () => {
+		renderDropdown();
+		expect( screen.queryAllByRole( 'separator' ) ).toHaveLength( 1 );
 	} );
 
-	describe( 'getSelectedText', () => {
-		test( 'should return the initially selected text (if any)', () => {
-			const dropdown = shallowRenderDropdown( { selectedText: 'Drafts' } );
-			const initialSelectedText = dropdown.instance().getSelectedText();
-			expect( initialSelectedText ).toEqual( 'Drafts' );
-		} );
-
-		test( 'should return the `label` associated to the selected option', () => {
-			const dropdown = shallowRenderDropdown();
-			const initialSelectedText = dropdown.instance().getSelectedText();
-			expect( initialSelectedText ).toEqual( 'Published' );
-		} );
-
-		test( 'should return the `label` associated to the initial selected option', () => {
-			const dropdown = shallowRenderDropdown( { initialSelected: 'scheduled' } );
-			const initialSelectedText = dropdown.instance().getSelectedText();
-			expect( initialSelectedText ).toEqual( 'Scheduled' );
-		} );
+	test( 'should be initially closed', () => {
+		renderDropdown();
+		expect( screen.getByRole( 'button' ) ).toHaveAttribute( 'aria-expanded', 'false' );
 	} );
 
-	describe( 'selectItem', () => {
-		test( 'should run the `onSelect` hook, and then update the state', () => {
-			const dropdownOptions = getDropdownOptions();
-			const onSelectSpy = jest.fn();
-			const dropdown = mount(
-				<SelectDropdown options={ dropdownOptions } onSelect={ onSelectSpy } />
-			);
+	test( 'should execute toggleDropdown when clicked', async () => {
+		renderDropdown();
 
-			const newSelectedOption = dropdownOptions[ 2 ];
-			dropdown.instance().selectItem( newSelectedOption );
-			expect( dropdown.state( 'selected' ) ).toEqual( newSelectedOption.value );
-		} );
+		const btn = screen.getByRole( 'button' );
+		expect( btn ).toHaveAttribute( 'aria-expanded', 'false' );
+
+		await userEvent.click( btn );
+		expect( btn ).toHaveAttribute( 'aria-expanded', 'true' );
+
+		await userEvent.click( btn );
+		expect( btn ).toHaveAttribute( 'aria-expanded', 'false' );
 	} );
 
-	describe( 'toggleDropdown', () => {
-		test( 'should toggle the `isOpen` state property', () => {
-			function runToggleDropdownTest( isCurrentlyOpen ) {
-				const dropdown = shallowRenderDropdown();
-				dropdown.setState( { isOpen: isCurrentlyOpen } );
+	test( 'should not respond when clicked when disabled', async () => {
+		renderDropdown( { disabled: true } );
 
-				dropdown.instance().toggleDropdown();
-				expect( dropdown.state( 'isOpen' ) ).toEqual( ! isCurrentlyOpen );
-			}
+		const btn = screen.getByRole( 'button' );
+		expect( btn ).toHaveAttribute( 'aria-disabled', 'true' );
 
-			runToggleDropdownTest( true );
-			runToggleDropdownTest( false );
-		} );
+		await userEvent.click( btn );
+		expect( btn ).toHaveAttribute( 'aria-expanded', 'false' );
 	} );
 
-	describe( 'openDropdown', () => {
-		test( 'should set the `isOpen` state property equal `true`', () => {
-			const dropdown = shallowRenderDropdown();
-			dropdown.instance().openDropdown();
-			expect( dropdown.state( 'isOpen' ) ).toEqual( true );
-		} );
+	test( 'should be possible to open the dropdown via keyboard', async () => {
+		renderDropdown();
+
+		const btn = screen.getByRole( 'button' );
+
+		await userEvent.tab();
+		expect( btn ).toHaveFocus();
+
+		await userEvent.keyboard( '[Space]' );
+		expect( btn ).toHaveAttribute( 'aria-expanded', 'true' );
+	} );
+} );
+
+describe( 'selected items', () => {
+	test( 'should return the initially selected value (if any)', () => {
+		renderDropdown( { initialSelected: 'drafts' } );
+
+		const selected = screen.queryByRole( 'menuitem', { current: true } );
+		expect( selected ).toHaveTextContent( 'Drafts' );
+
+		const btn = screen.getByRole( 'button' );
+		expect( btn.firstChild.textContent ).toBe( 'Drafts' );
 	} );
 
-	describe( 'closeDropdown', () => {
-		test( "shouldn't do anything when the dropdown is already closed", () => {
-			const dropdown = shallowRenderDropdown();
-			dropdown.instance().closeDropdown();
-			expect( dropdown.state( 'isOpen' ) ).toEqual( false );
-		} );
+	test( "should return `undefined`, when there aren't options", () => {
+		render( <SelectDropdown /> );
 
-		test( 'should set the `isOpen` state property equal `false`', () => {
-			const dropdown = shallowRenderDropdown();
-			dropdown.setState( { isOpen: true } );
-			dropdown.instance().focused = 1;
+		const selected = screen.queryByRole( 'menuitem', { current: true } );
+		expect( selected ).toBeNull();
 
-			dropdown.instance().closeDropdown();
-			expect( dropdown.state( 'isOpen' ) ).toEqual( false );
-			expect( dropdown.instance().focused ).toBeUndefined();
-		} );
+		const btn = screen.getByRole( 'button' );
+		expect( btn.firstChild.textContent ).toBe( '' );
 	} );
 
-	describe( 'navigateItem', () => {
-		test( "permits to navigate through the dropdown's options by pressing the TAB key", () => {
-			const tabKeyCode = 9;
-			const tabEvent = createKeyEvent( tabKeyCode );
+	test( "should return the first not-label option, when there isn't a preselected value", () => {
+		renderDropdown();
 
-			const dropdown = mountDropdown();
-			dropdown.setState( { isOpen: true } );
+		const selected = screen.queryByRole( 'menuitem', { current: true } );
+		expect( selected ).toHaveTextContent( 'Published' );
 
-			dropdown.find( '.select-dropdown__container' ).simulate( 'keydown', tabEvent );
-			expect( dropdown.instance().focused ).toEqual( 1 );
-		} );
-
-		test( 'permits to select an option by pressing ENTER, or SPACE', () => {
-			function runNavigateItemTest( keyCode ) {
-				const dropdown = shallowRenderDropdown();
-				const activateItemSpy = jest.spyOn( dropdown.instance(), 'activateItem' );
-				const keyEvent = createKeyEvent( keyCode );
-
-				dropdown.find( '.select-dropdown__container' ).simulate( 'keydown', keyEvent );
-				expect( dropdown.state( 'isOpen' ) ).toEqual( true );
-				expect( activateItemSpy ).toBeCalledTimes( 1 );
-			}
-
-			const enterKeyCode = 13;
-			const spaceKeyCode = 32;
-
-			[ enterKeyCode, spaceKeyCode ].forEach( runNavigateItemTest );
-		} );
-
-		test( 'permits to close the dropdown by pressing ESCAPE', () => {
-			const escapeKeyCode = 27;
-			const escEvent = createKeyEvent( escapeKeyCode );
-
-			const dropdown = mountDropdown( true );
-			dropdown.setState( { isOpen: true } );
-
-			const container = dropdown.find( '.select-dropdown__container' );
-			container.simulate( 'keydown', escEvent );
-			expect( dropdown.state( 'isOpen' ) ).toEqual( false );
-			// check that container was focused
-			expect( container.instance() ).toEqual( document.activeElement );
-			dropdown.unmount();
-		} );
-
-		describe( "permits to open the dropdown, and navigate through the dropdown's options by", () => {
-			function runNavigateItemTest( { keyCode, nextFocused } ) {
-				const keyEvent = createKeyEvent( keyCode );
-				const dropdown = mountDropdown();
-				dropdown.instance().focused = 1;
-
-				dropdown.find( '.select-dropdown__container' ).simulate( 'keydown', keyEvent );
-				expect( dropdown.state( 'isOpen' ) ).toEqual( true );
-
-				dropdown.find( '.select-dropdown__container' ).simulate( 'keydown', keyEvent );
-				expect( dropdown.instance().focused ).toEqual( nextFocused );
-			}
-
-			const arrowUp = { keyCode: 38, nextFocused: 0 };
-			const arrowDown = { keyCode: 40, nextFocused: 2 };
-
-			[ arrowUp, arrowDown ].forEach( runNavigateItemTest );
-		} );
+		const btn = screen.getByRole( 'button' );
+		expect( btn.firstChild.textContent ).toBe( 'Published' );
 	} );
 
-	/**
-	 * Utilities
-	 */
+	test( 'should return the initially selected text (if any)', () => {
+		renderDropdown( { selectedText: 'Drafts' } );
 
-	function mountDropdown( attach = false ) {
-		const dropdownOptions = getDropdownOptions();
-		return mount(
-			<SelectDropdown options={ dropdownOptions } />,
-			attach ? { attachTo: document.body } : undefined
-		);
-	}
+		const btn = screen.getByRole( 'button' );
+		expect( btn.firstChild.textContent ).toEqual( 'Drafts' );
+	} );
+} );
 
-	function shallowRenderDropdown( props ) {
-		const dropdownOptions = getDropdownOptions();
-		return shallow( <SelectDropdown options={ dropdownOptions } { ...props } /> );
-	}
+describe( 'selectItem', () => {
+	test( 'should run the `onSelect` hook, and then update the state', async () => {
+		const onSelectSpy = jest.fn();
+		const options = getDropdownOptions();
 
-	function getDropdownOptions() {
-		return [
-			{ value: 'status-options', label: 'Statuses', isLabel: true },
-			{ value: 'published', label: 'Published' },
-			{ value: 'scheduled', label: 'Scheduled' },
-			{ value: 'drafts', label: 'Drafts' },
-			null,
-			{ value: 'trashed', label: 'Trashed' },
-		];
-	}
+		render( <SelectDropdown options={ options } onSelect={ onSelectSpy } /> );
 
-	function createKeyEvent( keyCode ) {
-		return {
-			keyCode,
-			preventDefault: jest.fn(),
-		};
-	}
+		const item = screen.getByRole( 'menuitem', { name: options[ 2 ].label } );
+
+		await userEvent.click( item );
+
+		const selected = screen.getByRole( 'menuitem', { current: true } );
+		expect( selected ).toHaveTextContent( options[ 2 ].label );
+
+		expect( onSelectSpy ).toHaveBeenCalledTimes( 1 );
+		expect( onSelectSpy ).toHaveBeenCalledWith( options[ 2 ] );
+	} );
+} );
+
+describe( 'navigateItem', () => {
+	test( "permits to navigate through the dropdown's options by pressing the TAB key", async () => {
+		renderDropdown();
+
+		const btn = screen.getByRole( 'button' );
+
+		await userEvent.click( btn );
+		await userEvent.tab();
+		await userEvent.keyboard( '[Space]' );
+
+		expect( screen.getByRole( 'menuitem', { current: true } ) ).toHaveTextContent( 'Scheduled' );
+	} );
+
+	test( 'permits to select an option by pressing ENTER', async () => {
+		const onSelectSpy = jest.fn();
+		const options = getDropdownOptions();
+		renderDropdown( { options, onSelect: onSelectSpy } );
+
+		const btn = screen.getByRole( 'button' );
+		await userEvent.click( btn );
+		await userEvent.tab();
+		await userEvent.keyboard( '[Enter]' );
+
+		expect( onSelectSpy ).toHaveBeenCalledTimes( 1 );
+		expect( onSelectSpy ).toHaveBeenCalledWith( options[ 2 ] );
+	} );
+
+	test( 'permits to select an option by pressing SPACE', async () => {
+		const onSelectSpy = jest.fn();
+		const options = getDropdownOptions();
+		renderDropdown( { options, onSelect: onSelectSpy } );
+
+		const btn = screen.getByRole( 'button' );
+		await userEvent.click( btn );
+		await userEvent.tab();
+		await userEvent.keyboard( '[Space]' );
+
+		expect( onSelectSpy ).toHaveBeenCalledTimes( 1 );
+		expect( onSelectSpy ).toHaveBeenCalledWith( options[ 2 ] );
+	} );
+
+	test( 'permits to close the dropdown by pressing ESCAPE', async () => {
+		renderDropdown();
+
+		const btn = screen.getByRole( 'button' );
+		await userEvent.click( btn );
+
+		expect( btn ).toHaveAttribute( 'aria-expanded', 'true' );
+
+		await userEvent.keyboard( '[Escape]' );
+
+		expect( btn ).toHaveAttribute( 'aria-expanded', 'false' );
+		expect( btn ).toHaveFocus();
+	} );
+
+	test( "permits to open the dropdown, and navigate through the dropdown's options with arrow keys", async () => {
+		renderDropdown();
+
+		const btn = screen.getByRole( 'button' );
+		const items = screen.getAllByRole( 'menuitem' );
+
+		await userEvent.tab();
+		await userEvent.keyboard( '[ArrowDown]' );
+
+		expect( btn ).toHaveAttribute( 'aria-expanded', 'true' );
+
+		await userEvent.keyboard( '[Escape]' );
+		expect( btn ).toHaveAttribute( 'aria-expanded', 'false' );
+
+		await userEvent.keyboard( '[ArrowUp]' );
+		expect( btn ).toHaveAttribute( 'aria-expanded', 'true' );
+
+		await userEvent.keyboard( '[ArrowDown]' );
+		expect( items[ 1 ] ).toHaveFocus();
+
+		await userEvent.keyboard( '[ArrowDown]' );
+		expect( items[ 2 ] ).toHaveFocus();
+
+		await userEvent.keyboard( '[ArrowUp]' );
+		expect( items[ 1 ] ).toHaveFocus();
+	} );
 } );
