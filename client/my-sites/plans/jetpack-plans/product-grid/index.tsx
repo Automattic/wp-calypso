@@ -21,6 +21,7 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import CategoryFilter from '../category-filter';
 import JetpackCrmFreeCard from '../jetpack-crm-free-card';
 import JetpackFreeCard from '../jetpack-free-card';
+import JetpackSocialFreeCard from '../jetpack-social-free-card';
 import MoreInfoBox from '../more-info-box';
 import PlanUpgradeSection from '../plan-upgrade';
 import PlansFilterBar from '../plans-filter-bar';
@@ -106,7 +107,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const showProductCategories = ! isDesktop;
 
 	const showAnnualPlansOnly = config.isEnabled( 'jetpack/pricing-page-annual-only' );
-	const showBoostAndSocial = config.isEnabled( 'jetpack/pricing-add-boost-social' );
+	const showBoostAndSocialFree = config.isEnabled( 'jetpack/pricing-add-boost-social' );
 
 	const [ category, setCategory ] = useState< JetpackProductCategory >();
 	const onCategoryChange = useCallback( setCategory, [ setCategory ] );
@@ -285,14 +286,9 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 								<li>
 									<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
 								</li>
-								{ showBoostAndSocial && (
+								{ showBoostAndSocialFree && (
 									<li>
-										{ /* Add Jetpack Social Free card here. */ }
-										JETPACK SOCIAL
-										<br />
-										FREE CARD
-										<br />
-										HERE
+										<JetpackSocialFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 									</li>
 								) }
 							</>
