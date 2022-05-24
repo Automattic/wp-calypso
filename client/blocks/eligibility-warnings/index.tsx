@@ -247,6 +247,7 @@ const mapDispatchToProps = {
 		saveSiteSettings( selectedSiteId, {
 			blog_public: 1,
 			wpcom_coming_soon: 0,
+			wpcom_public_coming_soon: 0,
 		} ),
 };
 
