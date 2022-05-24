@@ -310,20 +310,18 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 				</p>
 			) }
 
-			{ mode === 'FORUM' && (
-				<section>
-					<HelpCenterSitePicker
-						currentSite={ currentSite }
-						onSelect={ ( id: string | number ) => {
-							if ( id !== 0 ) {
-								setSite( currentSite );
-							}
-							setSitePickerChoice( id === 0 ? 'OTHER_SITE' : 'CURRENT_SITE' );
-						} }
-						siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
-					/>
-				</section>
-			) }
+			<section>
+				<HelpCenterSitePicker
+					currentSite={ currentSite }
+					onSelect={ ( id: string | number ) => {
+						if ( id !== 0 ) {
+							setSite( currentSite );
+						}
+						setSitePickerChoice( id === 0 ? 'OTHER_SITE' : 'CURRENT_SITE' );
+					} }
+					siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
+				/>
+			</section>
 
 			{ sitePickerChoice === 'OTHER_SITE' && (
 				<>
