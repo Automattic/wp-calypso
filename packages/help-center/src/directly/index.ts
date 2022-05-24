@@ -124,6 +124,7 @@ export function checkAPIThenInitializeDirectly() {
 	}
 	directlyPromise = wpcomRequest< { isAvailable: true } >( {
 		path: '/help/directly/mine',
+		apiVersion: '1.1',
 	} ).then( ( { isAvailable } ) => {
 		if ( ! isAvailable ) {
 			return Promise.reject(
@@ -135,6 +136,7 @@ export function checkAPIThenInitializeDirectly() {
 	return directlyPromise;
 }
 
+let initialized = false;
 /**
  * Initializes the RTM widget if it hasn't already been initialized. This sets up global
  * objects and DOM elements and requests the vendor script.
@@ -142,9 +144,10 @@ export function checkAPIThenInitializeDirectly() {
  * @returns Promise that resolves after initialization completes or fails
  */
 export function initializeDirectly() {
-	if ( directlyPromise ) {
+	if ( initialized ) {
 		return directlyPromise;
 	}
+	initialized = true;
 	configureGlobals();
 	insertDOM();
 	directlyPromise = loadDirectlyScript();
