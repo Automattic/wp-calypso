@@ -675,7 +675,6 @@ __metadata:
     "@wordpress/icons": ^8.3.0
     "@wordpress/primitives": ^3.5.0
     classnames: ^2.3.1
-    nock: ^12.0.3
     react: ^17.0.2
     react-dom: ^17.0.2
     react-draggable: ^4.4.4
