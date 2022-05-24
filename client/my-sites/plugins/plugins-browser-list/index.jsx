@@ -1,11 +1,9 @@
 import { Card, Gridicon } from '@automattic/components';
-import { useBreakpoint } from '@automattic/viewport-react';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import AsyncLoad from 'calypso/components/async-load';
-import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
 import { PluginsBrowserListVariant } from './types';
@@ -20,8 +18,6 @@ const PluginsBrowserList = ( {
 	title,
 	subtitle,
 	extended,
-	billingPeriod,
-	setBillingPeriod,
 	showPlaceholders,
 	site,
 	currentSites,
@@ -29,7 +25,6 @@ const PluginsBrowserList = ( {
 	expandedListLink,
 	size,
 } ) => {
-	const isWide = useBreakpoint( '>1280px' );
 	const { __ } = useI18n();
 
 	const renderPluginsViewList = () => {
@@ -49,7 +44,6 @@ const PluginsBrowserList = ( {
 					variant={
 						extended ? PluginsBrowserElementVariant.Extended : PluginsBrowserElementVariant.Compact
 					}
-					billingPeriod={ billingPeriod }
 				/>
 			);
 		} );
@@ -97,13 +91,6 @@ const PluginsBrowserList = ( {
 					<div className="plugins-browser-list__subtitle">{ subtitle }</div>
 				</div>
 				<div className="plugins-browser-list__actions">
-					{ setBillingPeriod && (
-						<BillingIntervalSwitcher
-							billingPeriod={ billingPeriod }
-							onChange={ setBillingPeriod }
-							compact={ ! isWide }
-						/>
-					) }
 					{ expandedListLink && (
 						<a className="plugins-browser-list__browse-all" href={ expandedListLink }>
 							{ __( 'Browse All' ) }

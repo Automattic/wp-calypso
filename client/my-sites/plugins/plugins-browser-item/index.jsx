@@ -9,6 +9,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import version_compare from 'calypso/lib/version-compare';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
@@ -33,7 +34,6 @@ const PluginsBrowserListElement = ( props ) => {
 		iconSize = 40,
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
-		billingPeriod,
 	} = props;
 
 	const translate = useTranslate();
@@ -182,7 +182,6 @@ const PluginsBrowserListElement = ( props ) => {
 							sitesWithPlugin={ sitesWithPlugin }
 							isWpcomPreinstalled={ isWpcomPreinstalled }
 							plugin={ plugin }
-							billingPeriod={ billingPeriod }
 							shouldUpgrade={ shouldUpgrade }
 							currentSites={ currentSites }
 						/>
@@ -218,7 +217,6 @@ const InstalledInOrPricing = ( {
 	sitesWithPlugin,
 	isWpcomPreinstalled,
 	plugin,
-	billingPeriod,
 	shouldUpgrade,
 	currentSites,
 } ) => {
@@ -261,7 +259,7 @@ const InstalledInOrPricing = ( {
 
 	return (
 		<div className="plugins-browser-item__pricing">
-			<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
+			<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
 				{ ( { isFetching, price, period } ) =>
 					isFetching ? (
 						<div className="plugins-browser-item__pricing-placeholder">...</div>
