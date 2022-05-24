@@ -5,22 +5,7 @@ import type { ConnectionProps } from './types';
  * This function creates a stub `Connection` object that dynamically loads the chunk
  * with the `happychat/connection` library only after the first method call.
  */
-export default function buildConnection( {
-	receiveAccept,
-	receiveConnect,
-	receiveDisconnect,
-	receiveError,
-	receiveInit,
-	receiveLocalizedSupport,
-	receiveMessage,
-	receiveMessageOptimistic,
-	receiveMessageUpdate,
-	receiveReconnecting,
-	receiveStatus,
-	receiveToken,
-	receiveUnauthorized,
-	requestTranscript,
-}: ConnectionProps ) {
+export default function buildConnection( props: ConnectionProps ) {
 	// Promise with a lazy initialized `Connection`
 	let connection: Promise< Connection > | null = null;
 
@@ -35,22 +20,7 @@ export default function buildConnection( {
 	function getConnection(): Promise< Connection > {
 		if ( ! connection ) {
 			connection = importConnectionLib().then( ( { default: createConnection } ) =>
-				createConnection( {
-					receiveAccept,
-					receiveConnect,
-					receiveDisconnect,
-					receiveError,
-					receiveInit,
-					receiveLocalizedSupport,
-					receiveMessage,
-					receiveMessageOptimistic,
-					receiveMessageUpdate,
-					receiveReconnecting,
-					receiveStatus,
-					receiveToken,
-					receiveUnauthorized,
-					requestTranscript,
-				} )
+				createConnection( props )
 			);
 		}
 		return connection;
