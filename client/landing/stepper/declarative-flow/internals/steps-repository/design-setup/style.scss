@@ -9,13 +9,9 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 .design-setup {
 	.step-container {
-		padding-left: 24px;
-		padding-right: 24px;
+		padding-left: 20px;
+		padding-right: 20px;
 		max-width: 1440px;
-
-		.step-container__navigation.action-buttons {
-			border: none;
-		}
 
 		.step-container__content {
 			margin-top: 32px;
@@ -40,8 +36,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			}
 
 			.formatted-header__subtitle {
-				// Overrides some very specific selectors in /client/signup/style.scss
-				margin: 12px 0 48px !important;
+				margin: 12px 0 48px;
 			}
 		}
 
@@ -87,12 +82,8 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				text-align: left;
 				color: $gray-60;
 				font-size: 1rem;
-				margin: 8px 0 0;
+				margin: 12px 0 32px;
 				line-height: 24px;
-
-				@include breakpoint-deprecated('<660px') {
-					margin-top: 16px;
-				}
 			}
 		}
 
@@ -305,6 +296,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		}
 
 		.generated-design-picker__previews {
+			flex: 1;
 			height: auto;
 			min-height: calc( 100vh - 172px );
 			margin-bottom: 84px;
@@ -373,6 +365,14 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		margin: 48px 0;
 		row-gap: 1.5rem;
 		flex-wrap: wrap;
+
+		.button {
+			display: none;
+
+			@include break-small {
+				display: inherit;
+			}
+		}
 	}
 
 	.design-setup__footer {
@@ -450,7 +450,6 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	.generated-design-picker__previews {
 		display: flex;
 		height: 0;
-		flex: 1;
 		flex-direction: column;
 		row-gap: 24px;
 		margin-bottom: 44px;
@@ -488,6 +487,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		}
 
 		@include break-small {
+			flex: 1;
 			height: auto;
 		}
 	}
