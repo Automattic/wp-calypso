@@ -2,22 +2,15 @@ import { getQueryArgs } from '@wordpress/url';
 import page from 'page';
 
 function getRelativeUrlWithParameters( queryArgs: object ): string {
-	const urlParams = new URLSearchParams( window.location.search );
-	let returnPath = window.location.pathname;
-
-	if ( queryArgs ) {
-		for ( const [ key, value ] of Object.entries( queryArgs ) ) {
-			if ( '' !== value ) {
-				urlParams.set( key, value );
-			} else {
-				urlParams.delete( key );
-			}
+	const url = new URL( window.location.href );
+	for ( const [ key, value ] of Object.entries( queryArgs ) ) {
+		if ( '' !== value ) {
+			url.searchParams.set( key, value );
+		} else {
+			url.searchParams.delete( key );
 		}
-
-		returnPath += '?' + urlParams.toString();
 	}
-
-	return returnPath;
+	return url.pathname + url.search + url.hash;
 }
 
 function useQueryArgs() {
