@@ -1,5 +1,4 @@
 import page from 'page';
-import { reduxGetState } from 'calypso/lib/redux-bridge';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 
@@ -16,40 +15,42 @@ export function isPostNotFound( post ) {
 }
 
 export function showSelectedPost( { replaceHistory, postKey, comments } ) {
-	if ( ! postKey ) {
-		return;
-	}
+	return ( dispatch, getState ) => {
+		if ( ! postKey ) {
+			return;
+		}
 
-	// rec block
-	if ( postKey.isRecommendationBlock ) {
-		return;
-	}
+		// rec block
+		if ( postKey.isRecommendationBlock ) {
+			return;
+		}
 
-	const post = getPostByKey( reduxGetState(), postKey );
+		const post = getPostByKey( getState(), postKey );
 
-	if ( isXPost( post ) && ! replaceHistory ) {
-		return showFullXPost( XPostHelper.getXPostMetadata( post ) );
-	}
+		if ( isXPost( post ) && ! replaceHistory ) {
+			return showFullXPost( XPostHelper.getXPostMetadata( post ) );
+		}
 
-	// normal
-	let mappedPost;
-	if ( postKey.feedId ) {
-		mappedPost = {
-			feed_ID: postKey.feedId,
-			feed_item_ID: postKey.postId,
-		};
-	} else {
-		mappedPost = {
-			site_ID: postKey.blogId,
-			ID: postKey.postId,
-		};
-	}
+		// normal
+		let mappedPost;
+		if ( postKey.feedId ) {
+			mappedPost = {
+				feed_ID: postKey.feedId,
+				feed_item_ID: postKey.postId,
+			};
+		} else {
+			mappedPost = {
+				site_ID: postKey.blogId,
+				ID: postKey.postId,
+			};
+		}
 
-	showFullPost( {
-		post: mappedPost,
-		replaceHistory,
-		comments,
-	} );
+		showFullPost( {
+			post: mappedPost,
+			replaceHistory,
+			comments,
+		} );
+	};
 }
 
 export function showFullXPost( xMetadata ) {
