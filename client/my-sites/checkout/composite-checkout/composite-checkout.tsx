@@ -7,7 +7,7 @@ import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout'
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useMemo } from 'react';
+import { Fragment, useCallback, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
@@ -599,27 +599,29 @@ export default function CompositeCheckout( {
 		[ reduxDispatch ]
 	);
 
-	const handlePaymentMethodChanged = useCallback(
-		( method: string ) => {
-			updateCartContactDetailsForCheckout(
-				method,
-				countriesList,
-				responseCart,
-				updateLocation,
-				contactDetails
-			);
+	const handlePaymentMethodChangedRef = useRef< ( method: string ) => void >();
+	handlePaymentMethodChangedRef.current = ( method: string ) => {
+		updateCartContactDetailsForCheckout(
+			method,
+			countriesList,
+			responseCart,
+			updateLocation,
+			contactDetails
+		);
 
-			logStashEvent( 'payment_method_select', {
-				newMethodId: String( method ),
-			} );
-			// Need to convert to the slug format used in old checkout so events are comparable
-			const rawPaymentMethodSlug = String( method );
-			const legacyPaymentMethodSlug = translateCheckoutPaymentMethodToTracksPaymentMethod(
-				rawPaymentMethodSlug as CheckoutPaymentMethodSlug
-			);
-			reduxDispatch( recordTracksEvent( 'calypso_checkout_switch_to_' + legacyPaymentMethodSlug ) );
-		},
-		[ reduxDispatch, contactDetails, countriesList, responseCart, updateLocation ]
+		logStashEvent( 'payment_method_select', {
+			newMethodId: String( method ),
+		} );
+		// Need to convert to the slug format used in old checkout so events are comparable
+		const rawPaymentMethodSlug = String( method );
+		const legacyPaymentMethodSlug = translateCheckoutPaymentMethodToTracksPaymentMethod(
+			rawPaymentMethodSlug as CheckoutPaymentMethodSlug
+		);
+		reduxDispatch( recordTracksEvent( 'calypso_checkout_switch_to_' + legacyPaymentMethodSlug ) );
+	};
+	const handlePaymentMethodChanged = useCallback(
+		( method: string ) => handlePaymentMethodChangedRef.current?.( method ),
+		[]
 	);
 
 	const handlePaymentComplete = useCallback(
