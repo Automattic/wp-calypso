@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
-import ExternalLink from 'calypso/components/external-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
@@ -120,6 +119,13 @@ const PluginsBrowserListElement = ( props ) => {
 	const classNames = classnames( 'plugins-browser-item', variant, {
 		incompatible: isPluginIncompatible,
 	} );
+
+	const onClick = ( e ) => {
+		e.preventDefault();
+		e.stopPropagation();
+		window.location.href = 'https://wordpress.com/support/incompatible-plugins/';
+	};
+
 	return (
 		<li className={ classNames }>
 			<a
@@ -160,9 +166,15 @@ const PluginsBrowserListElement = ( props ) => {
 					</div>
 				) }
 				{ isPluginIncompatible && (
-					<ExternalLink icon={ false } href="https://wordpress.com/support/incompatible-plugins/">
+					<span
+						role="link"
+						tabIndex="-1"
+						onClick={ onClick }
+						onKeyPress={ onClick }
+						className="plugins-browser-item__incompatible"
+					>
 						{ translate( 'Why is this plugin not compatible with WordPress.com?' ) }
-					</ExternalLink>
+					</span>
 				) }
 				<div className="plugins-browser-item__footer">
 					{ variant === PluginsBrowserElementVariant.Extended && (
