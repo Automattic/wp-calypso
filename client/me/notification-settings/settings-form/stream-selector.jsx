@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import FormSelect from 'calypso/components/forms/form-select';
-import { useUserDevicesQuery } from 'calypso/data/user-devices/use-user-devices-query';
+import { useNotificationDevicesQuery } from 'calypso/data/notification-devices/use-notification-devices-query';
 import { getLabelForStream } from './locales';
 
 const options = [ 'timeline', 'email' ];
 
 function NotificationSettingsFormStreamSelector( { selectedStream, onChange } ) {
-	const { data: devices = [] } = useUserDevicesQuery();
+	const { data: devices = [] } = useNotificationDevicesQuery();
 
 	options
 		.map( ( stream ) => (

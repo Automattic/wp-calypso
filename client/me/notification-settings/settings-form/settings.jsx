@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { useUserDevicesQuery } from 'calypso/data/user-devices/use-user-devices-query';
+import { useNotificationDevicesQuery } from 'calypso/data/notification-devices/use-notification-devices-query';
 import Labels from './labels';
 import Stream from './stream';
 import StreamSelector from './stream-selector';
@@ -16,7 +16,7 @@ const streams = {
 
 function NotificationSettingsForm( { blogId, settingKeys, settings, onToggle } ) {
 	const [ selectedStream, setSelectedStream ] = useState( streams.TIMELINE );
-	const { data: devices = [] } = useUserDevicesQuery();
+	const { data: devices = [] } = useNotificationDevicesQuery();
 
 	const getSelectedStreamSettings = () => {
 		if ( isNaN( selectedStream ) ) {

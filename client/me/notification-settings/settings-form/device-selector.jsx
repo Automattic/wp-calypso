@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import FormSelect from 'calypso/components/forms/form-select';
-import { useUserDevicesQuery } from 'calypso/data/user-devices/use-user-devices-query';
+import { useNotificationDevicesQuery } from 'calypso/data/notification-devices/use-notification-devices-query';
 import StreamHeader from './stream-header';
 
 function NotificationSettingsFormDeviceSelector( { selectedDeviceId, onChange } ) {
-	const { data: devices = [] } = useUserDevicesQuery();
+	const { data: devices = [] } = useNotificationDevicesQuery();
 
 	if ( devices.length === 1 ) {
 		return <StreamHeader title={ devices[ 0 ].name } />;
