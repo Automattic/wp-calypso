@@ -20,7 +20,7 @@ import {
 	PaymentMethodStep,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
+import { styled } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -41,9 +41,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
-import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
+import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
@@ -224,45 +224,6 @@ export default function WPCheckout( {
 	} );
 
 	const { formStatus } = useFormStatus();
-
-	const arePostalCodesSupported =
-		countriesList.length && contactInfo.countryCode?.value
-			? getCountryPostalCodeSupport( countriesList, contactInfo.countryCode.value )
-			: false;
-
-	const updateCartContactDetails = useCallback(
-		( contactInfoForCart: ManagedContactDetails ) => {
-			const nonTaxPaymentMethods = [ 'free-purchase' ];
-			if ( ! activePaymentMethod || ! contactInfoForCart ) {
-				return;
-			}
-
-			// When the contact details change, update the tax location in cart if the
-			// active payment method is taxable.
-			if ( nonTaxPaymentMethods.includes( activePaymentMethod.id ) ) {
-				// This data is intentionally empty so we do not charge taxes
-				updateLocation( {
-					countryCode: '',
-					postalCode: '',
-					subdivisionCode: '',
-				} );
-			} else {
-				// The tax form does not include a subdivisionCode field but the server
-				// will sometimes fill in the value on the cart itself so we should not
-				// try to update it when the field does not exist.
-				const subdivisionCode =
-					contactDetailsType === 'tax' ? undefined : contactInfoForCart.state?.value;
-				updateLocation( {
-					countryCode: contactInfoForCart.countryCode?.value,
-					postalCode: arePostalCodesSupported ? contactInfoForCart.postalCode?.value : '',
-					subdivisionCode,
-				} );
-			}
-		},
-		[ activePaymentMethod, updateLocation, contactDetailsType, arePostalCodesSupported ]
-	);
-
-	useUpdateCartLocationWhenPaymentMethodChanges( activePaymentMethod, updateCartContactDetails );
 
 	const onReviewError = useCallback(
 		( error: Error ) =>
@@ -450,7 +411,13 @@ export default function WPCheckout( {
 						setShouldShowContactDetailsValidationErrors( true );
 						// Touch the fields so they display validation errors
 						touchContactFields();
-						updateCartContactDetails( contactInfo );
+						updateCartContactDetailsForCheckout(
+							activePaymentMethod?.id,
+							countriesList,
+							responseCart,
+							updateLocation,
+							contactInfo
+						);
 						return validateContactDetails(
 							contactInfo,
 							isLoggedOutCart,

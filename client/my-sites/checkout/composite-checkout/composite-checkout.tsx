@@ -58,6 +58,7 @@ import getContactDetailsType from './lib/get-contact-details-type';
 import multiPartnerCardProcessor from './lib/multi-partner-card-processor';
 import payPalProcessor from './lib/paypal-express-processor';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
+import { updateCartContactDetailsForCheckout } from './lib/update-cart-contact-details-for-checkout';
 import weChatProcessor from './lib/we-chat-processor';
 import webPayProcessor from './lib/web-pay-processor';
 import { StoredCard } from './types/stored-cards';
@@ -187,6 +188,7 @@ export default function CompositeCheckout( {
 	const cartKey = useCartKey();
 	const {
 		applyCoupon,
+		updateLocation,
 		replaceProductInCart,
 		replaceProductsInCart,
 		isLoading: isLoadingCart,
@@ -599,6 +601,14 @@ export default function CompositeCheckout( {
 
 	const handlePaymentMethodChanged = useCallback(
 		( method: string ) => {
+			updateCartContactDetailsForCheckout(
+				method,
+				countriesList,
+				responseCart,
+				updateLocation,
+				contactDetails
+			);
+
 			logStashEvent( 'payment_method_select', {
 				newMethodId: String( method ),
 			} );
@@ -609,7 +619,7 @@ export default function CompositeCheckout( {
 			);
 			reduxDispatch( recordTracksEvent( 'calypso_checkout_switch_to_' + legacyPaymentMethodSlug ) );
 		},
-		[ reduxDispatch ]
+		[ reduxDispatch, contactDetails, countriesList, responseCart, updateLocation ]
 	);
 
 	const handlePaymentComplete = useCallback(
