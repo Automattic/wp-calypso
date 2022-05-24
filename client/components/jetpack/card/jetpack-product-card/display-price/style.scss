@@ -223,7 +223,8 @@
 	margin: 0.75rem 0;
 }
 
-.jetpack-product-card__discount-label {
+.jetpack-product-card__discount-label,
+.jetpack-product-card__new-label {
 	display: inline-block;
 
 	padding: 0.125rem 0.5rem;
@@ -241,6 +242,9 @@
 
 		font-size: 0.75em;
 	}
+}
+.jetpack-product-card__new-label {
+	background-color: var( --studio-jetpack-green-10 );
 }
 
 .jetpack-product-card {
