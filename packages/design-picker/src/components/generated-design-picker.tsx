@@ -5,6 +5,7 @@ import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { useEffect, useRef } from 'react';
 import { getDesignPreviewUrl, getMShotOptions } from '../utils';
 import type { Design } from '../types';
 import './style.scss';
@@ -77,24 +78,55 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 } ) => {
 	const { __ } = useI18n();
 
+	/* eslint-disable @typescript-eslint/no-unused-vars */
+	const wrapperRef = useRef< HTMLDivElement >( null );
+
+	useEffect( () => {
+		const onResize = () => {
+			const { current: thumnbnailWrapper } = wrapperRef;
+			if ( ! thumnbnailWrapper ) {
+				return;
+			}
+
+			const viewportHeight = Math.max(
+				document.documentElement.clientHeight,
+				window.innerHeight || 0
+			);
+			const wrapperMaxHeight =
+				viewportHeight - ( thumnbnailWrapper.getClientRects()[ 0 ].y + window.scrollY );
+		};
+
+		window.addEventListener( 'resize', onResize );
+		onResize();
+
+		return () => {
+			window.removeEventListener( 'resize', onResize );
+		};
+	}, [] );
+	/* eslint-enable @typescript-eslint/no-unused-vars */
+
 	return (
 		<div className="generated-design-picker">
 			{ heading }
 			<div className="generated_design-picker__content">
 				<div className="generated-design-picker__thumbnails">
-					{ designs &&
-						designs.map( ( design, index ) => (
-							<GeneratedDesignThumbnail
-								key={ design.slug }
-								slug={ design.slug }
-								thumbnailUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
-								isSelected={ selectedDesign?.slug === design.slug }
-								onPreview={ () => onPreview( design, index ) }
-							/>
-						) ) }
-					<Button className="generated-design-picker__view-more" onClick={ onViewMore }>
-						{ __( 'View more options' ) }
-					</Button>
+					<div className="generated-design-picker__thumbnails-wrapper" ref={ wrapperRef }>
+						{ designs &&
+							designs.map( ( design, index ) => (
+								<GeneratedDesignThumbnail
+									key={ design.slug }
+									slug={ design.slug }
+									thumbnailUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
+									isSelected={ selectedDesign?.slug === design.slug }
+									onPreview={ () => onPreview( design, index ) }
+								/>
+							) ) }
+					</div>
+					<div className="generated-design-picker__view-more-wrapper">
+						<Button className="generated-design-picker__view-more" onClick={ onViewMore }>
+							{ __( 'View more options' ) }
+						</Button>
+					</div>
 				</div>
 				<div className="generated-design-picker__previews">{ previews }</div>
 			</div>
