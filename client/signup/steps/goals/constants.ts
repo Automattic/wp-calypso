@@ -1,8 +1,8 @@
-export enum GoalId {
-	Other = 'other',
+export enum GoalKey {
+	Write = 'write',
+	Sell = 'sell',
+	Promote = 'promote',
 	DIFM = 'difm',
 	Import = 'import',
-	Promote = 'promote',
-	Sell = 'sell',
-	Write = 'write',
+	Other = 'other',
 }

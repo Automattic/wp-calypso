@@ -1,7 +1,7 @@
-import { GoalId } from './constants';
+import { GoalKey } from './constants';
 
 export type Goal = {
-	id: GoalId;
-	label: React.ReactChild | string;
+	key: GoalKey;
+	title: React.ReactChild | string;
 	isPremium?: boolean;
 };

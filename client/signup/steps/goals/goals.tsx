@@ -1,34 +1,35 @@
 import { useTranslate } from 'i18n-calypso';
-import { GoalId } from './constants';
+import { GoalKey } from './constants';
 import type { Goal } from './types';
 
-export const useIntents = (): Goal[] => {
+export const useGoals = (): Goal[] => {
 	const translate = useTranslate();
 
 	const goals: Goal[] = [
 		{
-			id: GoalId.Write,
-			label: translate( 'Write and publish' ),
+			key: GoalKey.Write,
+			title: translate( 'Write and publish' ),
 		},
 		{
-			id: GoalId.Sell,
-			label: translate( 'Sell goods or products' ),
+			key: GoalKey.Sell,
+			title: translate( 'Sell goods or products' ),
 		},
 		{
-			id: GoalId.Promote,
-			label: translate( 'Promote myself or my business' ),
+			key: GoalKey.Promote,
+			title: translate( 'Promote myself or my business' ),
 		},
 		{
-			id: GoalId.DIFM,
-			label: translate( 'Hire a professional to design my website' ),
+			key: GoalKey.DIFM,
+			title: translate( 'Hire a professional to design my website' ),
+			isPremium: true,
 		},
 		{
-			id: GoalId.Import,
-			label: translate( 'Import my existing website content' ),
+			key: GoalKey.Import,
+			title: translate( 'Import my existing website content' ),
 		},
 		{
-			id: GoalId.Other,
-			label: translate( 'Other' ),
+			key: GoalKey.Other,
+			title: translate( 'Other' ),
 		},
 	];
 
