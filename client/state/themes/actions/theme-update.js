@@ -1,12 +1,14 @@
 import { translate } from 'i18n-calypso';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	THEMES_UPDATE,
 	THEMES_UPDATE_FAILURE,
 	THEMES_UPDATE_SUCCESS,
 } from 'calypso/state/themes/action-types';
+import { requestThemes } from 'calypso/state/themes/actions';
 
 import 'calypso/state/themes/init';
 
@@ -34,11 +36,7 @@ export function updateThemes( themeSlugs, siteId, autoupdate = false ) {
 			} )
 			.then( ( response ) => {
 				const successfullyUpdatedThemes = response.themes.map( ( theme ) => theme.id );
-				dispatch( {
-					type: THEMES_UPDATE_SUCCESS,
-					themeSlugs: successfullyUpdatedThemes,
-					siteId,
-				} );
+				dispatch( themesUpdated( siteId, successfullyUpdatedThemes ) );
 			} )
 			.catch( ( error ) => {
 				dispatch( {
@@ -67,4 +65,29 @@ export function updateThemes( themeSlugs, siteId, autoupdate = false ) {
 				}
 			} );
 	};
+}
+
+/**
+ * Updates the state and UI after successfuly update the themes.
+ *
+ * @param {number} siteId
+ * @param {Array} themeSlugs
+ * @returns
+ */
+export function themesUpdated( siteId, themeSlugs ) {
+	const themeUpdatedThunk = ( dispatch ) => {
+		dispatch( {
+			type: THEMES_UPDATE_SUCCESS,
+			themeSlugs,
+			siteId,
+		} );
+
+		// There are instances where switching themes toggles menu items. This action refreshes
+		// the admin bar to ensure that those updates are displayed in the UI.
+		dispatch( requestAdminMenu( siteId ) );
+
+		dispatch( requestThemes( siteId, {} ) );
+	};
+
+	return themeUpdatedThunk;
 }

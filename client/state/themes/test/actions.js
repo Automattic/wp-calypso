@@ -33,6 +33,7 @@ import {
 	THEMES_UPDATE_SUCCESS,
 } from 'calypso/state/themes/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
+import { ADMIN_MENU_REQUEST } from '../../action-types';
 import {
 	themeActivated,
 	clearActivated,
@@ -56,6 +57,7 @@ import {
 	receiveRecommendedThemes,
 	updateThemes,
 } from '../actions';
+import { themesUpdated } from '../actions/theme-update';
 
 expect.extend( {
 	toMatchFunction( received, fn ) {
@@ -649,11 +651,7 @@ describe( 'actions', () => {
 				[ 'storefront', 'twentysixteen' ],
 				2211667
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
-					type: THEMES_UPDATE_SUCCESS,
-					siteId: 2211667,
-					themeSlugs: [ 'storefront', 'twentysixteen' ],
-				} );
+				expect( spy.mock.calls[ 1 ][ 0 ].name ).toEqual( 'themeUpdatedThunk' );
 			} );
 		} );
 
@@ -670,6 +668,25 @@ describe( 'actions', () => {
 			)( spy ).then( () => {
 				expect( spy ).toBeCalledWith( themeActivationFailure );
 			} );
+		} );
+
+		test( 'should update the badges in the UI by dispatching the actions', () => {
+			themesUpdated( 2211667, [ 'storefront', 'twentysixteen' ] )( spy );
+
+			expect( spy ).toBeCalledWith( {
+				type: THEMES_UPDATE_SUCCESS,
+				themeSlugs: [ 'storefront', 'twentysixteen' ],
+				siteId: 2211667,
+			} );
+
+			expect( spy ).toBeCalledWith( {
+				type: ADMIN_MENU_REQUEST,
+				siteId: 2211667,
+			} );
+
+			spy.mock.calls[ 2 ][ 0 ]( spy );
+
+			expect( spy.mock.calls[ 3 ][ 0 ].type ).toEqual( THEMES_REQUEST );
 		} );
 	} );
 
