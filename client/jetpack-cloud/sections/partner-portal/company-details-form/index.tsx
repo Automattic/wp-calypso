@@ -1,19 +1,12 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { ReactChild, ReactElement, useCallback, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { receivePartner } from 'calypso/state/partner-portal/partner/actions';
-import useUpdateCompanyDetailsMutation from 'calypso/state/partner-portal/partner/hooks/use-update-company-details';
-import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
-import { APIError } from 'calypso/state/partner-portal/types';
+import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
 import { useCountriesAndStates } from './hooks/use-countries-and-states';
 import './style.scss';
 
@@ -23,97 +16,83 @@ function getCountry( country: string, options: object[] ): string {
 	}
 
 	for ( let i = 0; i < options.length; i++ ) {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
 		if ( options[ i ].value === country ) {
 			return country;
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
 	return options[ 0 ].value;
 }
 
-export default function CompanyDetailsForm(): ReactElement {
+interface Props {
+	includeTermsOfService?: boolean;
+	isLoading: boolean;
+	onSubmit: ( payload: PartnerDetailsPayload ) => void;
+	initialValues?: {
+		name?: string;
+		city?: string;
+		line1?: string;
+		line2?: string;
+		country?: string;
+		postalCode?: string;
+		state?: string;
+	};
+	submitLabel: ReactChild;
+}
+
+export default function CompanyDetailsForm( {
+	includeTermsOfService = false,
+	isLoading,
+	initialValues = {},
+	onSubmit,
+	submitLabel,
+}: Props ): ReactElement {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
-	// The partner has already been fetched through e.g. the requireAccessContext
-	// controller function, so we do not have to do any further checks.
-	const partner = useSelector( getCurrentPartner );
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
 	const showCountryFields = countryOptions.length > 0;
-	const submitNotificationId = 'partner-portal-company-details-form';
 
-	const [ name, setName ] = useState( partner?.name ?? '' );
-	const [ countryValue, setCountry ] = useState( partner?.address.country ?? '' );
-	const [ city, setCity ] = useState( partner?.address.city ?? '' );
-	const [ line1, setLine1 ] = useState( partner?.address.line1 ?? '' );
-	const [ line2, setLine2 ] = useState( partner?.address.line2 ?? '' );
-	const [ postalCode, setPostalCode ] = useState( partner?.address.postal_code ?? '' );
-	const [ addressState, setAddressState ] = useState( partner?.address.state ?? '' );
+	const [ name, setName ] = useState( initialValues.name ?? '' );
+	const [ countryValue, setCountry ] = useState( initialValues.country ?? '' );
+	const [ city, setCity ] = useState( initialValues.city ?? '' );
+	const [ line1, setLine1 ] = useState( initialValues.line1 ?? '' );
+	const [ line2, setLine2 ] = useState( initialValues.line2 ?? '' );
+	const [ postalCode, setPostalCode ] = useState( initialValues.postalCode ?? '' );
+	const [ addressState, setAddressState ] = useState( initialValues.state ?? '' );
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap.hasOwnProperty( country )
 		? stateOptionsMap[ country ]
 		: false;
-	const payload = {
-		name: name,
-		city: city,
-		line1: line1,
-		line2: line2,
-		country: country,
-		postal_code: postalCode,
+	const payload: PartnerDetailsPayload = {
+		name,
+		city,
+		line1,
+		line2,
+		country,
+		postalCode,
 		state: addressState,
+		...( includeTermsOfService ? { tos: 'consented' } : {} ),
 	};
-
-	const updateCompanyDetails = useUpdateCompanyDetailsMutation( {
-		onSuccess: ( partner ) => {
-			dispatch( receivePartner( formatApiPartner( partner ) ) );
-
-			dispatch(
-				successNotice( translate( 'Company details have been updated' ), {
-					id: submitNotificationId,
-				} )
-			);
-		},
-		onError: ( error: APIError ) => {
-			dispatch(
-				errorNotice( error.message, {
-					id: submitNotificationId,
-				} )
-			);
-		},
-	} );
 
 	const handleSubmit = useCallback(
 		( e ) => {
 			e.preventDefault();
 
-			if ( ! showCountryFields || updateCompanyDetails.isLoading ) {
+			if ( ! showCountryFields || isLoading ) {
 				return;
 			}
 
-			dispatch( removeNotice( submitNotificationId ) );
-
-			updateCompanyDetails.mutate( payload );
-
-			dispatch(
-				recordTracksEvent( 'calypso_partner_portal_update_company_details_submit', {
-					partner_id: partner?.id,
-					...payload,
-				} )
-			);
+			onSubmit( payload );
 		},
-		[
-			submitNotificationId,
-			showCountryFields,
-			payload,
-			partner?.id,
-			updateCompanyDetails.isLoading,
-			updateCompanyDetails.mutate,
-			dispatch,
-		]
+		[ showCountryFields, isLoading, onSubmit, payload ]
 	);
 
 	return (
-		<Card className="company-details-form">
+		<div className="company-details-form">
 			<form onSubmit={ handleSubmit }>
 				<FormFieldset>
 					<FormLabel htmlFor="name">{ translate( 'Company name' ) }</FormLabel>
@@ -122,7 +101,7 @@ export default function CompanyDetailsForm(): ReactElement {
 						name="name"
 						value={ name }
 						onChange={ ( event: any ) => setName( event.target.value ) }
-						disabled={ updateCompanyDetails.isLoading }
+						disabled={ isLoading }
 					/>
 				</FormFieldset>
 
@@ -138,7 +117,7 @@ export default function CompanyDetailsForm(): ReactElement {
 								// Reset the value of state since it no longer matches with the selected country.
 								setAddressState( '' );
 							} }
-							disabled={ updateCompanyDetails.isLoading }
+							disabled={ isLoading }
 							isLoading={ countryOptions.length === 0 }
 						/>
 					) }
@@ -156,7 +135,7 @@ export default function CompanyDetailsForm(): ReactElement {
 							onSelect={ ( option: any ) => {
 								setAddressState( option.value );
 							} }
-							disabled={ updateCompanyDetails.isLoading }
+							disabled={ isLoading }
 						/>
 					</FormFieldset>
 				) }
@@ -169,7 +148,7 @@ export default function CompanyDetailsForm(): ReactElement {
 						placeholder={ translate( 'Street name and house number' ) }
 						value={ line1 }
 						onChange={ ( event: any ) => setLine1( event.target.value ) }
-						disabled={ updateCompanyDetails.isLoading }
+						disabled={ isLoading }
 					/>
 					<FormTextInput
 						id="line2"
@@ -177,7 +156,7 @@ export default function CompanyDetailsForm(): ReactElement {
 						placeholder={ translate( 'Apartment, floor, suite or unit number' ) }
 						value={ line2 }
 						onChange={ ( event: any ) => setLine2( event.target.value ) }
-						disabled={ updateCompanyDetails.isLoading }
+						disabled={ isLoading }
 					/>
 				</FormFieldset>
 
@@ -188,7 +167,7 @@ export default function CompanyDetailsForm(): ReactElement {
 						name="postalCode"
 						value={ postalCode }
 						onChange={ ( event: any ) => setPostalCode( event.target.value ) }
-						disabled={ updateCompanyDetails.isLoading }
+						disabled={ isLoading }
 					/>
 				</FormFieldset>
 
@@ -199,22 +178,46 @@ export default function CompanyDetailsForm(): ReactElement {
 						name="city"
 						value={ city }
 						onChange={ ( event: any ) => setCity( event.target.value ) }
-						disabled={ updateCompanyDetails.isLoading }
+						disabled={ isLoading }
 					/>
 				</FormFieldset>
+
+				{ includeTermsOfService && (
+					<div className="company-details-form__tos">
+						<p>
+							{ translate(
+								'By clicking ‘Continue’, you agree to the{{break}}{{/break}}{{link}}%(link_text)s{{icon}}{{/icon}}{{/link}}.',
+								{
+									components: {
+										break: <br />,
+										link: (
+											<a
+												href="https://jetpack.com/platform-agreement/"
+												target="_blank"
+												rel="noopener noreferrer"
+											></a>
+										),
+										icon: <Gridicon icon="external" size={ 18 } />,
+									},
+									args: { link_text: 'Terms of the Jetpack Agency Platform Agreement' },
+								}
+							) }
+						</p>
+					</div>
+				) }
 
 				<div className="company-details-form__controls">
 					<Button
 						primary
 						type="submit"
 						className="company-details-form__submit"
-						disabled={ ! showCountryFields || updateCompanyDetails.isLoading }
-						busy={ updateCompanyDetails.isLoading }
+						disabled={ ! showCountryFields || isLoading }
+						busy={ isLoading }
 					>
-						{ translate( 'Update details' ) }
+						{ submitLabel }
 					</Button>
 				</div>
 			</form>
-		</Card>
+		</div>
 	);
 }

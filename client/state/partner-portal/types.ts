@@ -139,6 +139,20 @@ export interface Invoice {
 	pdfUrl: string;
 }
 
+export interface CompanyDetailsPayload {
+	name: string;
+	city: string;
+	line1: string;
+	line2: string;
+	country: string;
+	postalCode: string;
+	state: string;
+}
+
+export interface PartnerDetailsPayload extends CompanyDetailsPayload {
+	tos?: 'consented';
+}
+
 /**
  * Store.
  */
