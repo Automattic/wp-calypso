@@ -1,14 +1,13 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { useVerticalImagesQuery } from '@automattic/data-stores';
+import { useStarterDesignsGeneratedQuery } from '@automattic/data-stores';
 import DesignPicker, {
 	GeneratedDesignPicker,
 	PremiumBadge,
 	useCategorization,
 	isBlankCanvasDesign,
 	getDesignPreviewUrl,
-	useGeneratedDesignsQuery,
 	useDesignsBySite,
 } from '@automattic/design-picker';
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
@@ -59,24 +58,22 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const siteSlug = useSiteSlugParam();
 	const siteTitle = site?.name;
 	const isReskinned = true;
-	const siteVerticalId = useSelect(
-		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site.ID ) ) || undefined
-	);
-	const { data: siteVerticalImages = [], isLoading: isLoadingSiteVerticalImages } =
-		useVerticalImagesQuery( siteVerticalId || '', { limit: 1 } );
-	const isVerticalizedWithImages = !! siteVerticalId && siteVerticalImages.length > 0;
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
 	const isPrivateAtomic = Boolean( site?.launch_status === 'unlaunched' && isAtomic );
-
 	const isEligibleForProPlan = useSelect(
 		( select ) => site && select( SITE_STORE ).isEligibleForProPlan( site.ID )
 	);
+
+	const siteVerticalId = useSelect(
+		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site.ID ) ) || undefined
+	);
+
 	const showDesignPickerCategories =
 		isEnabled( 'signup/design-picker-categories' ) && ! isAnchorSite;
 	const showGeneratedDesigns =
 		isEnabled( 'signup/design-picker-generated-designs' ) &&
 		intent === 'build' &&
-		isVerticalizedWithImages &&
+		!! siteVerticalId &&
 		! isForceStaticDesigns;
 	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
 
@@ -96,16 +93,11 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	);
 
 	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
-		useGeneratedDesignsQuery();
-
-	const shuffledGeneratedDesigns = useMemo(
-		() => shuffle( generatedDesigns ),
-		[ generatedDesigns ]
-	);
+		useStarterDesignsGeneratedQuery();
 
 	const selectedGeneratedDesign = useMemo(
-		() => selectedDesign ?? ( ! isMobile ? shuffledGeneratedDesigns[ 0 ] : undefined ),
-		[ selectedDesign, shuffledGeneratedDesigns, isMobile ]
+		() => selectedDesign ?? ( ! isMobile ? generatedDesigns[ 0 ] : undefined ),
+		[ selectedDesign, generatedDesigns, isMobile ]
 	);
 
 	const isPreviewingGeneratedDesign =
@@ -164,7 +156,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		intent,
 		is_premium: design?.is_premium,
 		is_generated: showGeneratedDesigns,
-		...( design?.recipe?.patternIds && { pattern_ids: design.recipe.patternIds.join( ',' ) } ),
+		...( design?.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
 	} );
 
 	const categorizationOptions = getCategorizationOptions(
@@ -182,7 +174,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlug && _selectedDesign ) {
 			const positionIndex = showGeneratedDesigns
-				? shuffledGeneratedDesigns.findIndex( ( design ) => design.slug === _selectedDesign.slug )
+				? generatedDesigns.findIndex( ( design ) => design.slug === _selectedDesign.slug )
 				: -1;
 
 			setPendingAction( () => setDesignOnSite( siteSlug, _selectedDesign, siteVerticalId ) );
@@ -354,11 +346,8 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	}
 
 	// When the intent is build, we can potentially show the generated design picker.
-	// Additional data is needed from the backend to determine whether to show it or not.
-	if (
-		intent === 'build' &&
-		( isLoadingSiteVerticalImages || ( showGeneratedDesigns && isLoadingGeneratedDesigns ) )
-	) {
+	// Don't render until we've fetched the generated designs from the backend.
+	if ( showGeneratedDesigns && isLoadingGeneratedDesigns ) {
 		return null;
 	}
 
@@ -375,10 +364,10 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const stepContent = showGeneratedDesigns ? (
 		<GeneratedDesignPicker
 			selectedDesign={ selectedGeneratedDesign }
-			designs={ shuffledGeneratedDesigns }
+			designs={ generatedDesigns }
 			verticalId={ siteVerticalId }
 			locale={ locale }
-			previews={ shuffledGeneratedDesigns.map( ( design ) => (
+			previews={ generatedDesigns.map( ( design ) => (
 				<GeneratedDesignPickerWebPreview
 					key={ design.slug }
 					site={ site }
