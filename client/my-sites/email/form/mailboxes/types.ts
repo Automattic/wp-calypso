@@ -1,5 +1,15 @@
 import { v4 as uuid_v4 } from 'uuid';
-import { FIELD_DOMAIN, FIELD_UUID } from 'calypso/my-sites/email/form/mailboxes/constants';
+import {
+	FIELD_ALTERNATIVE_EMAIL,
+	FIELD_DOMAIN,
+	FIELD_FIRSTNAME,
+	FIELD_IS_ADMIN,
+	FIELD_LASTNAME,
+	FIELD_MAILBOX,
+	FIELD_NAME,
+	FIELD_PASSWORD,
+	FIELD_UUID,
+} from 'calypso/my-sites/email/form/mailboxes/constants';
 import type { TranslateResult } from 'i18n-calypso';
 
 type FieldError = TranslateResult | null;
@@ -34,9 +44,11 @@ abstract class MailboxFormFieldBase< T > implements MailboxFormField< T > {
 	value!: T;
 	isRequired;
 	isVisible = true;
+	fieldName: FormFieldNames;
 	readonly typeName = String.name.toLowerCase();
 
-	constructor( isRequired = true ) {
+	constructor( fieldName: FormFieldNames, isRequired = true ) {
+		this.fieldName = fieldName;
 		this.isRequired = isRequired;
 	}
 
@@ -85,10 +97,10 @@ interface ITitanMailboxFormFields extends IBaseMailboxFormFields {
 }
 
 abstract class MailboxFormFields implements IBaseMailboxFormFields {
-	readonly domain = new TextMailboxFormField();
-	mailbox = new TextMailboxFormField();
-	password = new TextMailboxFormField();
-	readonly uuid = new DataMailboxFormField();
+	readonly domain = new TextMailboxFormField( FIELD_DOMAIN );
+	mailbox = new TextMailboxFormField( FIELD_MAILBOX );
+	password = new TextMailboxFormField( FIELD_PASSWORD );
+	readonly uuid = new DataMailboxFormField( FIELD_UUID );
 
 	constructor( domain: string ) {
 		this.domain.value = domain;
@@ -96,14 +108,14 @@ abstract class MailboxFormFields implements IBaseMailboxFormFields {
 }
 
 class GoogleMailboxFormFields extends MailboxFormFields implements IGoogleMailboxFormFields {
-	firstName? = new TextMailboxFormField();
-	lastName? = new TextMailboxFormField();
+	firstName? = new TextMailboxFormField( FIELD_FIRSTNAME );
+	lastName? = new TextMailboxFormField( FIELD_LASTNAME );
 }
 
 class TitanMailboxFormFields extends MailboxFormFields implements ITitanMailboxFormFields {
-	alternativeEmail? = new TextMailboxFormField();
-	isAdmin? = new BooleanMailboxFormField( false );
-	name? = new TextMailboxFormField();
+	alternativeEmail? = new TextMailboxFormField( FIELD_ALTERNATIVE_EMAIL );
+	isAdmin? = new BooleanMailboxFormField( FIELD_IS_ADMIN, false );
+	name? = new TextMailboxFormField( FIELD_NAME );
 }
 
 const MailboxFormFieldsMap = {
