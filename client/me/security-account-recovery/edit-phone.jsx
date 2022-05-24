@@ -1,3 +1,4 @@
+import { FormInputValidation } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -5,7 +6,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import getCountries from 'calypso/state/selectors/get-countries';
 import Buttons from './buttons';
