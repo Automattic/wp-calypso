@@ -50,7 +50,7 @@ const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) =>
 		} else if ( activeSecondaryView === VIEW_RICH_RESULT ) {
 			setHeaderText(
 				<div className="inline-help__rich-result-header">
-					<Icon icon={ pageIcon } />
+					<Icon size="20" icon={ pageIcon } />
 					{ selectedArticle?.title }
 				</div>
 			);

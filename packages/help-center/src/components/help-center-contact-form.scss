@@ -51,6 +51,10 @@
 			}
 		}
 	}
+
+	.site-picker__site-item {
+		padding: 12px 8px;
+	}
 }
 
 .help-center-contact-form__message, .help-center-contact-form__subject input.components-text-control__input {
@@ -173,7 +177,6 @@ span.help-center-header__title {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-	display: flex;
 }
 
 .is-minimized .help-center-header__title .inline-help__rich-result-header {
@@ -184,5 +187,6 @@ span.help-center-header__title {
 		position: absolute;
 		left: 12px;
 		top: 12px;
+		margin-right: 4px;
 	}
 }
