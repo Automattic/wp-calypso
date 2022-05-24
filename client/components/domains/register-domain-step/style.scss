@@ -295,12 +295,12 @@ body.is-section-signup.is-white-signup {
 }
 .register-domain-step__placeholder {
 	display: none;
-	
+
 	@include break-large {
 		display: block;
 	}
 }
-.register-domain-step__domain-side-content-container-browser-chrome {
+.register-domain-step__domain-side-content-container-domain-explanation-image {
 	position: relative;
 	background-color: #d9d8da;
 	border-top-right-radius: 4px;
@@ -336,7 +336,7 @@ body.is-section-signup.is-white-signup {
 		margin: 3px 6px;
 	}
 }
-.register-domain-step__domain-side-content-container-browser-chrome-url {
+.register-domain-step__domain-side-content-container-domain-explanation-image-url {
 	flex-grow: 2;
 	padding: 0 10px;
 	line-height: 32px;
