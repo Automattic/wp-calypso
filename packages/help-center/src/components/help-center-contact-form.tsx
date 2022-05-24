@@ -36,7 +36,12 @@ const fakeFaces = Array.from(
 );
 const randomTwoFaces = fakeFaces.sort( () => Math.random() - 0.5 ).slice( 0, 2 );
 
-const HelpCenterSitePicker: React.FC< SitePicker > = ( { onSelect, currentSite, siteId } ) => {
+const HelpCenterSitePicker: React.FC< SitePicker > = ( {
+	onSelect,
+	currentSite,
+	siteId,
+	enabled,
+} ) => {
 	const otherSite = {
 		name: __( 'Other site', __i18n_text_domain__ ),
 		ID: 0,
@@ -50,7 +55,14 @@ const HelpCenterSitePicker: React.FC< SitePicker > = ( { onSelect, currentSite, 
 
 	const options = [ currentSite, otherSite ];
 
-	return <SitePickerDropDown onPickSite={ pickSite } options={ options } siteId={ siteId } />;
+	return (
+		<SitePickerDropDown
+			enabled={ enabled }
+			onPickSite={ pickSite }
+			options={ options }
+			siteId={ siteId }
+		/>
+	);
 };
 
 const titles: {
@@ -311,6 +323,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 			) }
 			<section>
 				<HelpCenterSitePicker
+					enabled={ mode === 'FORUM' }
 					currentSite={ currentSite }
 					onSelect={ ( id: string | number ) => {
 						if ( id !== 0 ) {
