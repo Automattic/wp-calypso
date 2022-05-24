@@ -234,7 +234,7 @@ function QRCodeLogin() {
 
 			{ isErrorState && (
 				<p className="qr-code-login__token-error">
-					{ translate( 'Mobile App QR Code login is currently an available.' ) }
+					{ translate( 'Mobile App QR Code login is currently unavailable.' ) }
 				</p>
 			) }
 
