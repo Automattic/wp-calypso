@@ -97,10 +97,14 @@ const BusinessInfo: Step = function ( props ): ReactElement | null {
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 		if ( siteId ) {
+			const changes = {
+				...profileChanges,
+				[ 'completed' ]: true,
+			};
 			saveSiteSettings( siteId, {
 				woocommerce_onboarding_profile: {
 					...onboardingProfile,
-					...profileChanges,
+					...changes,
 				},
 			} );
 		}
