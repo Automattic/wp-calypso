@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, Spinner } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
 import classnames from 'classnames';
 import { numberFormat, useTranslate } from 'i18n-calypso';
@@ -9,7 +9,6 @@ import CardHeading from 'calypso/components/card-heading';
 import Chart from 'calypso/components/chart';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import Spinner from 'calypso/components/spinner';
 import { preventWidows } from 'calypso/lib/formatting';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';

@@ -1,4 +1,4 @@
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card, Gridicon, Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,7 +7,6 @@ import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetp
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import Main from 'calypso/components/main';
-import Spinner from 'calypso/components/spinner';
 import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

@@ -251,3 +251,12 @@ button.button.back-button__help-center.is-borderless {
 	justify-content: center;
 	height: 100%;
 }
+.help-center-container__spinner {
+	.spinner__outer {
+		border-top-color: var( --wp-admin-theme-color );
+	}
+	.spinner__inner {
+		border-top-color: var( --wp-admin-theme-color );
+		border-right-color: var( --wp-admin-theme-color );
+	}
+}

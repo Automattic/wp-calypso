@@ -1,21 +1,20 @@
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
 import './style.scss';
 
-export default class Spinner extends PureComponent {
-	static propTypes = {
-		className: PropTypes.string,
-		size: PropTypes.number,
-	};
-
+export class Spinner extends PureComponent< {
+	className?: string;
+	size?: number;
+	baseClassName?: string;
+} > {
 	static defaultProps = {
 		size: 20,
+		baseClassName: 'spinner',
 	};
 
 	render() {
-		const className = classNames( 'spinner', this.props.className );
+		const className = classNames( this.props.baseClassName, this.props.className );
 
 		const style = {
 			width: this.props.size,

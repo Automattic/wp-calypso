@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import { Spinner } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
@@ -92,7 +93,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 					/>
 					{ isLoading ? (
 						<div className="help-center-container__loading">
-							{ __( 'Loading', __i18n_text_domain__ ) }
+							<Spinner baseClassName="" className="help-center-container__spinner" />
 						</div>
 					) : (
 						<>

@@ -1,4 +1,4 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -9,7 +9,6 @@ import FoldableCard from 'calypso/components/foldable-card';
 import InfoPopover from 'calypso/components/info-popover';
 import MarkedLines from 'calypso/components/marked-lines';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import Spinner from 'calypso/components/spinner';
 import SplitButton from 'calypso/components/split-button';
 import TimeSince from 'calypso/components/time-since';
 import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';

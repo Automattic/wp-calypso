@@ -1,4 +1,4 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -16,7 +16,6 @@ import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
-import Spinner from 'calypso/components/spinner';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, getTopLevelOfTld, isMappedDomain } from 'calypso/lib/domains';
 import { DESIGNATED_AGENT, TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';

@@ -99,7 +99,6 @@ export { default as SegmentedControl } from 'calypso/components/segmented-contro
 export { default as SelectDropdown } from 'calypso/components/select-dropdown';
 export { default as ShareButton } from 'calypso/components/share-button';
 export { default as SocialLogo } from 'calypso/components/social-logo';
-export { default as Spinner } from 'calypso/components/spinner';
 export { default as SpinnerButton } from 'calypso/components/spinner-button';
 export { default as SpinnerLine } from 'calypso/components/spinner-line';
 export { default as SplitButton } from 'calypso/components/split-button';
