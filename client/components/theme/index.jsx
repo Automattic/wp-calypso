@@ -206,7 +206,7 @@ export class Theme extends Component {
 			content = (
 				<div>
 					<span>
-						<Gridicon icon="refresh" size={ 18 } />
+						<Gridicon className="theme__updating-animated" icon="refresh" size={ 18 } />
 						{ translate( 'Updating theme.' ) }
 					</span>
 				</div>

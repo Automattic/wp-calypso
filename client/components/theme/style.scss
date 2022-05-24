@@ -209,6 +209,17 @@ $theme-info-height: 54px;
 	padding: 1px;
 	font-size: 0.75rem;
 	.theme__update-alert-content {
+		@keyframes theme__rotate-spinner {
+			100% {
+				transform: rotate( 360deg );
+			}
+		}
+
+		.theme__updating-animated {
+			animation: 2s linear infinite;
+			animation-name: theme__rotate-spinner;
+		}
+	
 		svg {
 			margin: 0 0.5rem -0.25rem;
 		}
