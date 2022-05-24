@@ -9,7 +9,7 @@ import {
 	getJetpackDashboardWelcomeBannerPreference as getPreference,
 } from 'calypso/state/partner-portal/agency-dashboard/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
-import type { Preference, PreferenceType } from '../types';
+import type { PreferenceType } from '../types';
 
 export default function SiteWelcomeBanner( {
 	isDashboardView,
@@ -24,8 +24,8 @@ export default function SiteWelcomeBanner( {
 	const preferenceName = isDashboardView
 		? homePagePreferenceName
 		: `${ JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE }-${ bannerKey }`;
-	const preference: Preference = useSelector( ( state ) => getPreference( state, preferenceName ) );
-	const homePagePreference: Preference = useSelector( ( state ) =>
+	const preference = useSelector( ( state ) => getPreference( state, preferenceName ) );
+	const homePagePreference = useSelector( ( state ) =>
 		getPreference( state, homePagePreferenceName )
 	);
 
@@ -77,6 +77,6 @@ export default function SiteWelcomeBanner( {
 			dismissTemporary={ ! isDashboardView }
 			onDismiss={ dismissBanner }
 			dismissPreferenceName={ isDashboardView ? '' : preferenceName }
-		></Banner>
+		/>
 	);
 }
