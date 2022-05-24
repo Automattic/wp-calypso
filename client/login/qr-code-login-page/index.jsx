@@ -7,7 +7,7 @@ import { login } from 'calypso/lib/paths';
 import './style.scss';
 
 function QrCodeLoginPlaceholder() {
-	return <Card className="qr-code-login-page__placeholder"></Card>;
+	return <Card className="qr-code-login-page__placeholder" />;
 }
 
 function QrCodeLoginPage( { locale } ) {
