@@ -1251,6 +1251,7 @@ __metadata:
   resolution: "@automattic/social-previews@workspace:packages/social-previews"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@emotion/react": ^11.4.1
     "@wordpress/components": ^19.9.0
     "@wordpress/i18n": ^4.7.0
     classnames: ^2.3.1

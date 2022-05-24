@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.4 (2022-05-25)
+
+- Add missing dependency on `@emotion/react`.
+
 ## v1.1.3 (2022-05-16)
 
 - Remove unnecessary peer dependencies on `@wordpress/data`, `reakit-utils`, and `redux`.
