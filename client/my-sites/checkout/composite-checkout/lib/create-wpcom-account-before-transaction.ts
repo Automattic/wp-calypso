@@ -1,13 +1,15 @@
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { createAccount } from '../payment-method-helpers';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { WPCOMTransactionEndpointCart } from '@automattic/wpcom-checkout';
+import type { RequestCart, CartKey } from '@automattic/shopping-cart';
 
 export async function createWpcomAccountBeforeTransaction(
-	transactionCart: WPCOMTransactionEndpointCart,
+	transactionCart: RequestCart,
 	transactionOptions: PaymentProcessorOptions
-): Promise< WPCOMTransactionEndpointCart > {
-	const isJetpackUserLessCheckout = transactionCart.is_jetpack_checkout;
+): Promise< RequestCart > {
+	const isJetpackUserLessCheckout = transactionCart.products.some(
+		( product ) => product.extra.isJetpackCheckout
+	);
 
 	return createAccount( {
 		signupFlowName: isJetpackUserLessCheckout
@@ -35,7 +37,7 @@ export async function createWpcomAccountBeforeTransaction(
 		return {
 			...transactionCart,
 			blog_id: siteId ? String( siteId ) : '0',
-			cart_key: siteId ? String( siteId ) : 'no-site',
+			cart_key: ( siteId ? siteId : 'no-site' ) as CartKey,
 			create_new_blog: siteId ? false : true,
 		};
 	} );
