@@ -283,14 +283,14 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						{ filteredItems.map( getOtherItemsProductCard ) }
 						{ ( ! showProductCategories || category === JETPACK_GROWTH_CATEGORY ) && (
 							<>
-								<li>
-									<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
-								</li>
 								{ showBoostAndSocialFree && (
 									<li>
 										<JetpackSocialFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 									</li>
 								) }
+								<li>
+									<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
+								</li>
 							</>
 						) }
 						{ showFreeCard && (
