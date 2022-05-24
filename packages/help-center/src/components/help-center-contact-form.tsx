@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
 	useSubmitTicketMutation,
@@ -189,6 +190,14 @@ export const HelpCenterContactForm = () => {
 		switch ( mode ) {
 			case 'CHAT': {
 				if ( supportSite ) {
+					recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+						support_variation: 'happychat',
+					} );
+
+					recordTracksEvent( 'calypso_help_live_chat_begin', {
+						site_plan_product_id: supportSite ? supportSite.plan?.product_id : null,
+						is_automated_transfer: supportSite ? supportSite.options.is_automated_transfer : null,
+					} );
 					history.push( '/inline-chat' );
 					break;
 				}
@@ -212,6 +221,14 @@ export const HelpCenterContactForm = () => {
 						is_chat_overflow: false,
 					} )
 						.then( () => {
+							recordTracksEvent( 'calypso_help_contact_submit', {
+								ticket_type: 'kayako',
+								support_variation: 'SUPPORT_TICKET',
+								site_plan_product_id: supportSite ? supportSite.plan?.product_id : null,
+								is_automated_transfer: supportSite
+									? supportSite.options.is_automated_transfer
+									: null,
+							} );
 							history.push( '/success' );
 							resetStore();
 						} )
@@ -232,6 +249,7 @@ export const HelpCenterContactForm = () => {
 					userDeclaredSiteUrl,
 				} )
 					.then( ( response ) => {
+						recordTracksEvent( 'calypso_help_contact_submit', { ticket_type: 'forum' } );
 						history.push( `/success?forumTopic=${ encodeURIComponent( response.topic_URL ) }` );
 						resetStore();
 					} )
