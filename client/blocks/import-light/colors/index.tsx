@@ -1,4 +1,5 @@
-import { Title } from '@automattic/onboarding';
+import { ProgressBar } from '@automattic/components';
+import { Title, Progress } from '@automattic/onboarding';
 import { ColorIndicator } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
@@ -15,7 +16,7 @@ interface Color {
 interface Props {
 	colors: Color[];
 }
-const Scanning: React.FunctionComponent< Props > = ( props ) => {
+const Colors: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
 
 	const [ colors ] = useState( props.colors );
@@ -44,17 +45,19 @@ const Scanning: React.FunctionComponent< Props > = ( props ) => {
 		<div className="import-layout__center import-light__colors">
 			<div className="import__header">
 				<div className="import__heading-center">
-					<Title>{ __( 'Importing colors' ) }</Title>
-
-					<div className="colors-container">
-						{ displayedColors.map( ( x, i ) => (
-							<ColorIndicator key={ i } colorValue={ x.hex } />
-						) ) }
-					</div>
+					<Progress>
+						<Title>{ __( 'Importing colors' ) }</Title>
+						<ProgressBar value={ 23 } compact={ true } />
+						<div className="colors-container">
+							{ displayedColors.map( ( x, i ) => (
+								<ColorIndicator key={ i } colorValue={ x.hex } />
+							) ) }
+						</div>
+					</Progress>
 				</div>
 			</div>
 		</div>
 	);
 };
 
-export default Scanning;
+export default Colors;

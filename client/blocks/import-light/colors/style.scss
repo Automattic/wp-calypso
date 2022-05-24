@@ -10,10 +10,6 @@ $indicatorCircleSize: 28px;
 		width: $indicatorCircleSize;
 		height: $indicatorCircleSize;
 		border-radius: $indicatorCircleSize;
-		border: solid 1px rgba( 69, 70, 72, 0.4 );
-
-		&:first-child {
-			margin: 0;
-		}
+		margin: 0 0.25em;
 	}
 }
