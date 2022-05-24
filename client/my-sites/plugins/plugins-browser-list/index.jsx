@@ -34,6 +34,10 @@ const PluginsBrowserList = ( {
 
 	const renderPluginsViewList = () => {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
+			// Needs a beter fix but something is leaking empty objects into this list.
+			if ( ! plugin?.slug ) {
+				return null;
+			}
 			return (
 				<PluginBrowserItem
 					site={ site }
