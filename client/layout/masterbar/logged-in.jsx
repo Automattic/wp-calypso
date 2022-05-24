@@ -45,14 +45,14 @@ const NEW_MASTERBAR_SHIPPING_DATE = new Date( 2022, 3, 14 ).getTime();
 const MENU_POPOVER_PREFERENCE_KEY = 'dismissible-card-masterbar-collapsable-menu-popover';
 
 const MOBILE_BREAKPOINT = '<480px';
-
-const FULL_WIDTH_SECTIONS = [ 'theme' ];
+const IS_RESPONSIVE_MENU_BREAKPOINT = '<782px';
 
 class MasterbarLoggedIn extends Component {
 	state = {
 		isActionSearchVisible: false,
 		isMenuOpen: false,
 		isMobile: isWithinBreakpoint( MOBILE_BREAKPOINT ),
+		isResponsiveMenu: isWithinBreakpoint( IS_RESPONSIVE_MENU_BREAKPOINT ),
 		// making the ref a state triggers a re-render when it changes (needed for popover)
 		menuBtnRef: null,
 	};
@@ -61,7 +61,6 @@ class MasterbarLoggedIn extends Component {
 		user: PropTypes.object.isRequired,
 		domainOnlySite: PropTypes.bool,
 		section: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
-		sectionName: PropTypes.string,
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		currentLayoutFocus: PropTypes.string,
 		siteSlug: PropTypes.string,
@@ -77,6 +76,10 @@ class MasterbarLoggedIn extends Component {
 		this.unsubscribeToViewPortChanges = subscribeIsWithinBreakpoint(
 			MOBILE_BREAKPOINT,
 			( isMobile ) => this.setState( { isMobile } )
+		);
+		this.unsubscribeResponsiveMenuViewPortChanges = subscribeIsWithinBreakpoint(
+			IS_RESPONSIVE_MENU_BREAKPOINT,
+			( isResponsiveMenu ) => this.setState( { isResponsiveMenu } )
 		);
 	}
 	handleLayoutFocus = ( currentSection ) => {
@@ -109,6 +112,7 @@ class MasterbarLoggedIn extends Component {
 	componentWillUnmount() {
 		document.removeEventListener( 'keydown', this.actionSearchShortCutListener );
 		this.unsubscribeToViewPortChanges?.();
+		this.unsubscribeResponsiveMenuViewPortChanges?.();
 	}
 
 	clickMySites = () => {
@@ -209,15 +213,14 @@ class MasterbarLoggedIn extends Component {
 			isCustomerHomeEnabled,
 			section,
 		} = this.props;
-		const { isMenuOpen } = this.state;
+		const { isMenuOpen, isResponsiveMenu } = this.state;
 
 		const homeUrl = isCustomerHomeEnabled
 			? `/home/${ siteSlug }`
 			: getStatsPathForTab( 'day', siteSlug );
 
 		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
-		const isMainFullWidth = FULL_WIDTH_SECTIONS.includes( this.props.sectionName );
-		if ( 'sites' === section && ! isMainFullWidth ) {
+		if ( 'sites' === section && isResponsiveMenu ) {
 			mySitesUrl = '';
 		}
 		const icon =
