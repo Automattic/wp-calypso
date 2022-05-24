@@ -35,3 +35,9 @@
 	text-decoration: underline;
 	color: var( --studio-black );
 }
+
+.plugins-browser__no-results {
+	@include breakpoint-deprecated('<660px') {
+		margin: 0 16px;
+	}
+}

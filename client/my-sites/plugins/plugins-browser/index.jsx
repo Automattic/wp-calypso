@@ -431,12 +431,14 @@ const SearchListView = ( {
 	}
 
 	return (
-		<NoResults
-			text={ translate( 'No plugins match your search for {{searchTerm/}}.', {
-				textOnly: true,
-				components: { searchTerm: <em>{ searchTerm }</em> },
-			} ) }
-		/>
+		<div className="plugins-browser__no-results">
+			<NoResults
+				text={ translate( 'No plugins match your search for {{searchTerm/}}.', {
+					textOnly: true,
+					components: { searchTerm: <em>{ searchTerm }</em> },
+				} ) }
+			/>
+		</div>
 	);
 };
 
