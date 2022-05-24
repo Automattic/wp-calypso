@@ -1,5 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { isEnabled } from '@automattic/calypso-config';
+//import { isEnabled } from '@automattic/calypso-config';
 //import { IntentScreen, StepContainer } from '@automattic/onboarding';
 import { StepContainer } from '@automattic/onboarding';
 //import { useDispatch } from '@wordpress/data';
@@ -53,7 +53,7 @@ const GoalsStep: Step = function GoalsStep( { navigation } ) {
 			goNext={ goNext }
 			skipLabelText={ translate( 'Skip to Dashboard' ) }
 			skipButtonAlign={ 'top' }
-			hideBack={ ! isEnabled( 'signup/site-vertical-step' ) }
+			hideBack={ true }
 			isHorizontalLayout={ false }
 			formattedHeader={
 				<FormattedHeader
