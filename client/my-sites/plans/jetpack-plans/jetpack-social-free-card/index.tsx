@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -7,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { ITEM_TYPE_PRODUCT } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { QueryArgs, SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 const SOCIAL_FREE_URL = isJetpackCloud()
@@ -49,19 +49,13 @@ const CardWithPrice: React.FC< CardWithPriceProps > = ( { siteId, urlQueryArgs }
 	const socialFreeProduct = useSocialFreeItem();
 
 	const dispatch = useDispatch();
-	const trackCallback = useCallback(
-		() =>
-			dispatch(
-				recordTracksEvent( 'calypso_product_jpsocialfree_click', {
-					site_id: siteId ?? undefined,
-				} )
-			),
-		[ dispatch, siteId ]
-	);
-
 	const onButtonClick = useCallback( () => {
-		trackCallback();
-	}, [ trackCallback ] );
+		dispatch(
+			recordTracksEvent( 'calypso_product_jpsocialfree_click', {
+				site_id: siteId ?? undefined,
+			} )
+		);
+	}, [ dispatch, siteId ] );
 
 	return (
 		<JetpackProductCard
