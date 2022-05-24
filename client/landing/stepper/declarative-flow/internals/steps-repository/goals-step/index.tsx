@@ -46,6 +46,8 @@ const GoalsStep: Step = function GoalsStep( { navigation } ) {
 	};
     */
 
+	const stepContent = <p>stepContent goes here</p>;
+
 	return (
 		<StepContainer
 			stepName={ 'goals-step' }
@@ -63,7 +65,7 @@ const GoalsStep: Step = function GoalsStep( { navigation } ) {
 					align={ 'center' }
 				/>
 			}
-			stepContent={ <p>stepContent goes here</p> }
+			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
