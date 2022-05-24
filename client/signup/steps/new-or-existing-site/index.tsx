@@ -20,7 +20,7 @@ import {
 } from 'calypso/state/products-list/selectors';
 import { removeSiteSlugDependency } from 'calypso/state/signup/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
-import { award, headset } from '../../icons';
+import { award, frame } from '../../icons';
 import { ChoiceType } from './types';
 import type { SelectItem } from '@automattic/onboarding';
 
@@ -86,7 +86,7 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 					) }
 				</p>
 			),
-			icon: headset,
+			icon: frame,
 			value: 'existing-site',
 			actionText: translate( 'Select a site' ),
 		},

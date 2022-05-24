@@ -24,8 +24,10 @@ const themeData = {
 	demo_uri: 'https://twentysixteendemo.wordpress.com/',
 };
 
+let queryClient;
+
 const TestComponent = ( { themeId, store } ) => {
-	const queryClient = new QueryClient();
+	queryClient = new QueryClient();
 	return (
 		<ReduxProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>
@@ -36,6 +38,10 @@ const TestComponent = ( { themeId, store } ) => {
 };
 
 describe( 'main', () => {
+	afterEach( () => {
+		queryClient.clear();
+	} );
+
 	test( "doesn't throw an exception without theme data", () => {
 		const store = createReduxStore();
 		setStore( store );

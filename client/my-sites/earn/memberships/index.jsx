@@ -45,7 +45,7 @@ import {
 	getTotalSubscribersForSiteId,
 	getOwnershipsForSiteId,
 } from 'calypso/state/memberships/subscribers/selectors';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -658,9 +658,9 @@ const mapStateToProps = ( state ) => {
 		connectedAccountId: getConnectedAccountIdForSiteId( state, siteId ),
 		connectUrl: getConnectUrlForSiteId( state, siteId ),
 		hasStripeFeature:
-			hasActiveSiteFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
-			hasActiveSiteFeature( state, siteId, FEATURE_DONATIONS ) ||
-			hasActiveSiteFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
+			siteHasFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
+			siteHasFeature( state, siteId, FEATURE_DONATIONS ) ||
+			siteHasFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 		isJetpack: isJetpackSite( state, siteId ),
 	};
 };

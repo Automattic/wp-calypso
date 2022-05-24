@@ -68,6 +68,11 @@ describe( 'webPayProcessor', () => {
 			tef_bank: undefined,
 			zip: '10001',
 		},
+		tos: {
+			locale: 'en',
+			path: '/',
+			viewport: '0x0',
+		},
 	};
 
 	it( 'throws an error if there is no stripe object', async () => {

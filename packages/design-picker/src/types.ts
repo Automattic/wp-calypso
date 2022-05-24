@@ -16,7 +16,7 @@ export interface Category {
 
 export interface DesignRecipe {
 	stylesheet?: string;
-	patternIds?: number[];
+	pattern_ids?: number[];
 }
 
 export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
@@ -58,13 +58,4 @@ export interface DesignPreviewOptions {
 export interface DesignUrlOptions {
 	iframe?: boolean;
 	site_title?: string;
-}
-
-export interface BlockRecipe {
-	id: number;
-	slug: string;
-	title: string;
-	stylesheet: string;
-	pattern_ids: number[];
-	modified_date: string;
 }

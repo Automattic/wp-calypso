@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { Card, Button, Gridicon } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -14,6 +14,7 @@ import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import InviteButton from '../invite-button';
 
 class Followers extends Component {
 	infiniteList = createRef();
@@ -91,14 +92,9 @@ class Followers extends Component {
 	}
 
 	renderInviteFollowersAction( isPrimary = true ) {
-		const { site, translate } = this.props;
+		const { site } = this.props;
 
-		return (
-			<Button primary={ isPrimary } href={ `/people/new/${ site.slug }` }>
-				<Gridicon icon="user-add" />
-				<span>{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }</span>
-			</Button>
-		);
+		return <InviteButton primary={ isPrimary } siteSlug={ site.slug } />;
 	}
 
 	render() {

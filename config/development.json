@@ -62,6 +62,7 @@
 		"google-my-business": true,
 		"google-drive": true,
 		"gutenboarding/alpha-templates": false,
+		"onboarding/difm": true,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,

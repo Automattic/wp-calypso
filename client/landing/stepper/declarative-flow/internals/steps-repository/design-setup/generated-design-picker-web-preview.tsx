@@ -34,10 +34,7 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 			showClose={ false }
 			showEdit={ false }
 			showDeviceSwitcher={ false }
-			previewUrl={ getDesignPreviewUrl( design, {
-				language: locale,
-				verticalId,
-			} ) }
+			previewUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
 			loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
 				components: { strong: <strong /> },
 			} ) }

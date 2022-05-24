@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import { clone, difference, forEach, last, map, some } from 'lodash';
+import { difference } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import isSuggestionLabel from './helpers';
@@ -33,7 +33,7 @@ class TokenField extends PureComponent {
 				return new Error( 'Value prop is expected to be an array.' );
 			}
 
-			forEach( value, ( item ) => {
+			for ( const item of value ) {
 				if ( 'object' === typeof item ) {
 					if ( ! ( 'value' in item ) ) {
 						return new Error(
@@ -41,7 +41,7 @@ class TokenField extends PureComponent {
 						);
 					}
 				}
-			} );
+			}
 		},
 	};
 
@@ -129,7 +129,7 @@ class TokenField extends PureComponent {
 	}
 
 	_renderTokensAndInput = () => {
-		const components = map( this.props.value, this._renderToken );
+		const components = this.props.value.map( this._renderToken );
 
 		components.splice( this._getIndexOfInput(), 0, this._renderInput() );
 
@@ -243,7 +243,7 @@ class TokenField extends PureComponent {
 		}
 
 		this.setState( {
-			incompleteTokenValue: last( items ) || '',
+			incompleteTokenValue: items[ items.length - 1 ] || '',
 			selectedSuggestionIndex: -1,
 			selectedSuggestionScroll: false,
 		} );
@@ -493,8 +493,8 @@ class TokenField extends PureComponent {
 		debug( '_addNewTokens: tokensToAdd', tokensToAdd );
 
 		if ( tokensToAdd.length > 0 ) {
-			const newValue = clone( this.props.value );
-			newValue.splice.apply( newValue, [ this._getIndexOfInput(), 0 ].concat( tokensToAdd ) );
+			const newValue = [ ...this.props.value ];
+			newValue.splice( this._getIndexOfInput(), 0, ...tokensToAdd );
 			debug( '_addNewTokens: onChange', newValue );
 			this.props.onChange( newValue );
 		}
@@ -516,7 +516,7 @@ class TokenField extends PureComponent {
 	};
 
 	_valueContainsToken = ( token ) => {
-		return some( this.props.value, ( item ) => {
+		return this.props.value.some( ( item ) => {
 			return this._getTokenValue( token ) === this._getTokenValue( item );
 		} );
 	};

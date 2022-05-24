@@ -1,6 +1,7 @@
-/* eslint-disable no-irregular-whitespace */
-
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+import { fireEvent, render, screen } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -22,11 +23,6 @@ jest.mock( 'calypso/state/preferences/selectors', () => ( {
 	hasReceivedRemotePreferences: jest.fn( () => true ),
 	getPreference: jest.fn( () => false ),
 } ) );
-jest.mock( 'calypso/components/notice', () => ( { status, onDismissClick, children } ) => (
-	<button className={ status } onClick={ onDismissClick }>
-		{ children }
-	</button>
-) );
 
 describe( 'TimeMismatchWarning', () => {
 	beforeAll( () => {
@@ -38,64 +34,62 @@ describe( 'TimeMismatchWarning', () => {
 	} );
 
 	test( 'to render nothing if no site ID is provided', () => {
-		const wrapper = shallow( <TimeMismatchWarning settingsUrl="https://example.com" /> );
-		expect( wrapper.isEmptyRender() ).toBeTruthy();
+		const { container } = render( <TimeMismatchWarning settingsUrl="https://example.com" /> );
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'to render nothing if no settings URL is provided', () => {
-		const wrapper = shallow( <TimeMismatchWarning siteId={ 1 } /> );
-		expect( wrapper.isEmptyRender() ).toBeTruthy();
+		const { container } = render( <TimeMismatchWarning siteId={ 1 } /> );
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'to render nothing if times match', () => {
-		const wrapper = shallow(
+		const { container } = render(
 			<TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" />
 		);
-		expect( wrapper.isEmptyRender() ).toBeTruthy();
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'to render nothing if the user preference is dismissed', () => {
 		getSiteGmtOffset.mockReturnValueOnce( 10 );
 		getPreference.mockReturnValueOnce( () => true );
-		const wrapper = shallow(
+		const { container } = render(
 			<TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" />
 		);
-		expect( wrapper.isEmptyRender() ).toBeTruthy();
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'to render if GMT offsets do not match', () => {
 		getSiteGmtOffset.mockReturnValueOnce( 10 );
-		const wrapper = shallow(
+		const { container } = render(
 			<TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" />
 		);
-		expect( wrapper ).toMatchSnapshot();
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( 'to render the passed site settings URL', () => {
 		const translate = jest.fn( ( text ) => text );
 		getSiteGmtOffset.mockReturnValueOnce( 10 );
 		useTranslate.mockImplementationOnce( () => translate );
-		shallow( <TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" /> );
+		render( <TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" /> );
 		expect( translate ).toMatchSnapshot();
 	} );
 
 	test( 'to render the status if set', () => {
 		getSiteGmtOffset.mockReturnValueOnce( 10 );
-		const wrapper = shallow(
+		const { container } = render(
 			<TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" status="is-error" />
 		);
-		expect( wrapper.dive().prop( 'className' ) ).toEqual( 'is-error' );
+		expect( container.firstChild ).toHaveClass( 'is-error' );
 	} );
 
 	test( 'to dispatch user preference setting on dismiss click', () => {
 		const dispatch = jest.fn( () => null );
 		useDispatch.mockReturnValueOnce( dispatch );
 		getSiteGmtOffset.mockReturnValueOnce( 10 );
-		const wrapper = shallow(
-			<TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" />
-		);
-		const onDismissClick = wrapper.prop( 'onDismissClick' );
-		onDismissClick();
+		render( <TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" /> );
+		const dismissButton = screen.getByRole( 'button' );
+		fireEvent.click( dismissButton );
 		expect( dispatch ).toHaveBeenCalled();
 	} );
 } );

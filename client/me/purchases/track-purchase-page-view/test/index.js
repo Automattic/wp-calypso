@@ -1,5 +1,8 @@
+/**
+ * @jest-environment jsdom
+ */
+import { render } from '@testing-library/react';
 import deepFreeze from 'deep-freeze';
-import { shallow } from 'enzyme';
 import { TrackPurchasePageView } from '..';
 
 const baseProps = deepFreeze( {
@@ -15,12 +18,12 @@ beforeEach( jest.clearAllMocks );
 
 describe( 'TrackPurchasePageView', () => {
 	test( 'should render nothing', () => {
-		const wrapper = shallow( <TrackPurchasePageView { ...baseProps } /> );
-		expect( wrapper.type() ).toBeNull();
+		const { container } = render( <TrackPurchasePageView { ...baseProps } /> );
+		expect( container.innerHTML ).toEqual( '' );
 	} );
 
 	test( 'should track on mount if data is loaded', () => {
-		shallow( <TrackPurchasePageView { ...baseProps } /> );
+		render( <TrackPurchasePageView { ...baseProps } /> );
 		expect( baseProps.recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( baseProps.recordTracksEvent ).toHaveBeenCalledWith( baseProps.eventName, {
 			product_slug: baseProps.productSlug,
@@ -28,15 +31,15 @@ describe( 'TrackPurchasePageView', () => {
 	} );
 
 	test( 'should not track if productSlug is absent (data not loaded)', () => {
-		shallow( <TrackPurchasePageView { ...baseProps } productSlug={ null } /> );
+		render( <TrackPurchasePageView { ...baseProps } productSlug={ null } /> );
 		expect( baseProps.recordTracksEvent ).toHaveBeenCalledTimes( 0 );
 	} );
 
 	test( 'should track when productSlug is provided (data loads)', () => {
-		const wrapper = shallow( <TrackPurchasePageView { ...baseProps } productSlug={ null } /> );
+		const { rerender } = render( <TrackPurchasePageView { ...baseProps } productSlug={ null } /> );
 		expect( baseProps.recordTracksEvent ).toHaveBeenCalledTimes( 0 );
 
-		wrapper.setProps( { productSlug: baseProps.productSlug } );
+		rerender( <TrackPurchasePageView { ...baseProps } /> );
 		expect( baseProps.recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( baseProps.recordTracksEvent ).toHaveBeenCalledWith( baseProps.eventName, {
 			product_slug: baseProps.productSlug,
@@ -44,15 +47,14 @@ describe( 'TrackPurchasePageView', () => {
 	} );
 
 	test( 'should only track once if relevant props are unchanged', () => {
-		const wrapper = shallow( <TrackPurchasePageView { ...baseProps } /> );
-		wrapper.update();
-		wrapper.update();
-		wrapper.update();
+		const { rerender } = render( <TrackPurchasePageView { ...baseProps } /> );
+		rerender( <TrackPurchasePageView { ...baseProps } /> );
+		rerender( <TrackPurchasePageView { ...baseProps } /> );
 		expect( baseProps.recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'should track when relevant props update', () => {
-		const wrapper = shallow( <TrackPurchasePageView { ...baseProps } /> );
+		const { rerender } = render( <TrackPurchasePageView { ...baseProps } /> );
 
 		expect( baseProps.recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( baseProps.recordTracksEvent ).toHaveBeenCalledWith( baseProps.eventName, {
@@ -61,7 +63,7 @@ describe( 'TrackPurchasePageView', () => {
 
 		const productSlug = 'new-product-slug';
 
-		wrapper.setProps( { productSlug } );
+		rerender( <TrackPurchasePageView { ...baseProps } productSlug={ productSlug } /> );
 		expect( baseProps.recordTracksEvent ).toHaveBeenCalledTimes( 2 );
 		expect( baseProps.recordTracksEvent ).toHaveBeenLastCalledWith( baseProps.eventName, {
 			product_slug: productSlug,
@@ -69,7 +71,9 @@ describe( 'TrackPurchasePageView', () => {
 
 		const eventName = 'new-tracking-slug';
 
-		wrapper.setProps( { eventName } );
+		rerender(
+			<TrackPurchasePageView { ...baseProps } productSlug={ productSlug } eventName={ eventName } />
+		);
 		expect( baseProps.recordTracksEvent ).toHaveBeenCalledTimes( 3 );
 		expect( baseProps.recordTracksEvent ).toHaveBeenLastCalledWith( eventName, {
 			product_slug: productSlug,
