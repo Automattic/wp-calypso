@@ -12510,6 +12510,7 @@ __metadata:
     "@automattic/explat-client": "workspace:^"
     "@automattic/explat-client-react-helpers": "workspace:^"
     "@automattic/format-currency": "workspace:^"
+    "@automattic/happychat-connection": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/isolated-block-editor": ^2.8.1
     "@automattic/js-utils": "workspace:^"
