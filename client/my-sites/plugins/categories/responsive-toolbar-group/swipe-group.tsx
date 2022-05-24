@@ -19,6 +19,10 @@ export default function SwipeGroup( {
 
 	const [ activeIndex, setActiveIndex ] = useState< number >( initialActiveIndex );
 
+	// Set active on prop change from above
+	useEffect( () => {
+		setActiveIndex( initialActiveIndex );
+	}, [ initialActiveIndex ] );
 	const ref = useRef< HTMLButtonElement | null >( null );
 
 	// Scroll to category on load

@@ -193,6 +193,11 @@ export default function DropdownGroup( {
 		};
 	}, [ shadowListItems, interceptionCallback, hideRatio, showRatio, rootMargin ] );
 
+	// Reset active on prop change from above
+	useEffect( () => {
+		setActiveIndex( initialActiveIndex );
+	}, [ initialActiveIndex ] );
+
 	return (
 		<div className={ classes } ref={ containerRef }>
 			<ToolbarGroup className="responsive-toolbar-group__full-list">
