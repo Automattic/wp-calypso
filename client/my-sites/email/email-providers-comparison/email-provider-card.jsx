@@ -35,10 +35,10 @@ function EmailProviderCard( {
 
 	const showFeaturesToggleButton = detailsExpanded && isViewportSizeLowerThan1040px;
 
-	const toggleVisibility = ( event ) => {
+	const expandCard = ( event ) => {
 		event.preventDefault();
 
-		onExpandedChange( providerKey, ! detailsExpanded );
+		onExpandedChange( providerKey, true );
 	};
 
 	const labelForExpandButton = expandButtonLabel ? expandButtonLabel : buttonLabel;
@@ -59,7 +59,7 @@ function EmailProviderCard( {
 				{ showExpandButton && (
 					<Button
 						primary={ false }
-						onClick={ toggleVisibility }
+						onClick={ expandCard }
 						className="email-providers-comparison__provider-expand-cta"
 					>
 						{ labelForExpandButton }

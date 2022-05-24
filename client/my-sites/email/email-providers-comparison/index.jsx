@@ -191,8 +191,9 @@ class EmailProvidersComparison extends Component {
 		return ! hasCartDomain && hasEmailForwards( domain );
 	};
 
-	onTitanMailboxesChange = ( updatedMailboxes ) =>
+	onTitanMailboxesChange = ( updatedMailboxes ) => {
 		this.setState( { titanMailboxes: updatedMailboxes } );
+	};
 
 	onTitanFormReturnKeyPress = ( event ) => {
 		// Simulate form submission
