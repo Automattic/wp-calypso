@@ -232,4 +232,5 @@ export const WPCOM_FEATURES_UPLOAD_AUDIO_FILES = 'upload-audio-files';
 export const WPCOM_FEATURES_UPLOAD_VIDEO_FILES = 'upload-video-files';
 export const WPCOM_FEATURES_VAULTPRESS_BACKUPS = 'vaultpress-backups';
 export const WPCOM_FEATURES_VIDEOPRESS = 'videopress';
+export const WPCOM_FEATURES_VIDEOPRESS_UNLIMITED_STORAGE = 'videopress-unlimited-storage';
 export const WPCOM_FEATURES_WORDADS = 'wordads';
