@@ -174,7 +174,7 @@ export class Connection {
 
 				// dispatch the request state upon promise race resolution
 				promiseRace.then(
-					( result ) => this.dispatch( action.callback?.( null, result ) ),
+					( result ) => this.dispatch( action.callback?.( result ) ),
 					( e: Error ) => {
 						if ( e.message !== 'timeout' ) {
 							this.dispatch(
