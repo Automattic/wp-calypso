@@ -59,7 +59,7 @@ const GoalsStep: Step = function GoalsStep( { navigation } ) {
 			isHorizontalLayout={ false }
 			formattedHeader={
 				<FormattedHeader
-					id={ 'intent-header' }
+					id={ 'goals-header' }
 					headerText={ headerText }
 					subHeaderText={ subHeaderText }
 					align={ 'center' }
