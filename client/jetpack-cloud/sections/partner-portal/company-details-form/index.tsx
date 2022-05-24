@@ -121,6 +121,7 @@ export default function CompanyDetailsForm(): ReactElement {
 						disabled={ updateCompanyDetails.isLoading }
 					/>
 				</FormFieldset>
+
 				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (
@@ -140,26 +141,22 @@ export default function CompanyDetailsForm(): ReactElement {
 
 					{ ! showCountryFields && <TextPlaceholder /> }
 				</FormFieldset>
-				<FormFieldset>
-					{ showCountryFields && stateOptions && (
-						<>
-							<FormLabel>{ translate( 'State' ) }</FormLabel>
-							<SelectDropdown
-								className="company-details-form__dropdown"
-								initialSelected={ addressState }
-								options={ stateOptions }
-								onSelect={ ( option: any ) => {
-									setAddressState( option.value );
-								} }
-								disabled={ updateCompanyDetails.isLoading }
-							/>
-						</>
-					) }
 
-					{ ! showCountryFields && Object.keys( stateOptionsMap ).length === 0 && (
-						<TextPlaceholder />
-					) }
-				</FormFieldset>
+				{ showCountryFields && stateOptions && (
+					<FormFieldset>
+						<FormLabel>{ translate( 'State' ) }</FormLabel>
+						<SelectDropdown
+							className="company-details-form__dropdown"
+							initialSelected={ addressState }
+							options={ stateOptions }
+							onSelect={ ( option: any ) => {
+								setAddressState( option.value );
+							} }
+							disabled={ updateCompanyDetails.isLoading }
+						/>
+					</FormFieldset>
+				) }
+
 				<FormFieldset className="company-details-form__business-address">
 					<FormLabel>{ translate( 'Business address' ) }</FormLabel>
 					<FormTextInput
@@ -179,6 +176,7 @@ export default function CompanyDetailsForm(): ReactElement {
 						disabled={ updateCompanyDetails.isLoading }
 					/>
 				</FormFieldset>
+
 				<FormFieldset>
 					<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
 					<FormTextInput
@@ -189,6 +187,7 @@ export default function CompanyDetailsForm(): ReactElement {
 						disabled={ updateCompanyDetails.isLoading }
 					/>
 				</FormFieldset>
+
 				<FormFieldset>
 					<FormLabel htmlFor="city">{ translate( 'City' ) }</FormLabel>
 					<FormTextInput
@@ -199,6 +198,7 @@ export default function CompanyDetailsForm(): ReactElement {
 						disabled={ updateCompanyDetails.isLoading }
 					/>
 				</FormFieldset>
+
 				<div className="company-details-form__controls">
 					<Button
 						primary
