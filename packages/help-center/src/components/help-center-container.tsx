@@ -32,6 +32,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	handleClose,
 	defaultHeaderText,
 	defaultFooterContent,
+	isLoading,
 } ) => {
 	const { __ } = useI18n();
 	const [ isMinimized, setIsMinimized ] = useState( false );
@@ -89,8 +90,18 @@ const HelpCenterContainer: React.FC< Container > = ( {
 						onDismiss={ onDismiss }
 						headerText={ header }
 					/>
-					<HelpCenterContent isMinimized={ isMinimized } content={ content } />
-					{ footerContent && ! isMinimized && <HelpCenterFooter footerContent={ footerContent } /> }
+					{ isLoading ? (
+						<div className="help-center-container__loading">
+							{ __( 'Loading', __i18n_text_domain__ ) }
+						</div>
+					) : (
+						<>
+							<HelpCenterContent isMinimized={ isMinimized } content={ content } />
+							{ footerContent && ! isMinimized && (
+								<HelpCenterFooter footerContent={ footerContent } />
+							) }
+						</>
+					) }
 				</HelpCenterContext.Provider>
 			</Card>
 		</OptionalDraggable>

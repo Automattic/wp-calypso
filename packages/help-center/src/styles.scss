@@ -244,3 +244,10 @@ button.button.back-button__help-center.is-borderless {
 .help-center-sibyl-articles__container {
 	padding-top: 0;
 }
+
+.help-center-container__loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}

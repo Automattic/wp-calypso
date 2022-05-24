@@ -23,16 +23,14 @@ const HelpCenter: React.FC< Container > = ( {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
 	// prefetch the current site and user
-	useSelect( ( select ) => select( SITE_STORE ).getSite( window._currentSiteId ) );
-	useSelect( ( select ) => select( USER_KEY ).getCurrentUser() );
+	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( window._currentSiteId ) );
+	const user = useSelect( ( select ) => select( USER_KEY ).getCurrentUser() );
 	const { setDirectlyData } = useDispatch( STORE_KEY );
 
-	// Need to fix this - supportAvailability is returning ERROR
-	const supportAvailability = useSupportAvailability( 'OTHER' );
+	const { data: supportData, isLoading: isSupportDataLoading } = useSupportAvailability( 'OTHER' );
 
 	useEffect( () => {
-		// Need to fix this - supportAvailability is returning ERROR
-		if ( supportAvailability.data?.is_user_eligible_for_directly ) {
+		if ( supportData?.is_user_eligible_for_directly ) {
 			execute( [
 				'onReady',
 				( { session } ) => {
@@ -40,7 +38,9 @@ const HelpCenter: React.FC< Container > = ( {
 				},
 			] );
 		}
-	} );
+	}, [ supportData, setDirectlyData ] );
+
+	const isLoading = ! site || ! user || isSupportDataLoading;
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];
@@ -59,6 +59,7 @@ const HelpCenter: React.FC< Container > = ( {
 			content={ content }
 			defaultHeaderText={ defaultHeaderText }
 			defaultFooterContent={ defaultFooterContent }
+			isLoading={ isLoading }
 		/>,
 		portalParent
 	);

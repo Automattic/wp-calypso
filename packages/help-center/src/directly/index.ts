@@ -29,11 +29,22 @@ function getDefaultOptions() {
 	};
 }
 
-type Options = Record< string, string | boolean | number > | string | ( ( props: any ) => void );
+type Params = Record< string, string | boolean | number >;
+
+type Options =
+	| Params
+	| [ command: string, params: Params ]
+	| string
+	| ( ( props: { session: boolean } ) => void );
+
+type DTM = {
+	( ...args: Options[] ): void;
+	cq?: [ command?: string, options?: Options ];
+};
 
 declare global {
 	interface Window {
-		DirectlyRTM: any;
+		DirectlyRTM: DTM;
 	}
 }
 
@@ -46,11 +57,11 @@ function configureGlobals() {
 	// Set up the global DirectlyRTM function, required for the RTM widget.
 	// This snippet is pasted from Directly's setup code.
 	if ( ! window.DirectlyRTM ) {
-		window.DirectlyRTM = function ( ...args: any ) {
+		window.DirectlyRTM = function ( ...args: Options[] ) {
 			if ( window.DirectlyRTM.cq ) {
 				window.DirectlyRTM.cq.push( ...args );
 			} else {
-				window.DirectlyRTM.cq = args;
+				window.DirectlyRTM.cq = args as [ string, Options ];
 			}
 		};
 	}

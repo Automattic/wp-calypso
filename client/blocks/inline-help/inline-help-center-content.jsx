@@ -3,7 +3,7 @@ import { useSupportAvailability } from '@automattic/data-stores';
 import { useHappychatAuth } from '@automattic/happychat-connection';
 import { HelpCenterContext, execute as DirectlyRTM } from '@automattic/help-center';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { useState, useEffect, useRef, useContext } from '@wordpress/element';
+import { useState, useEffect, useRef, useContext, useCallback } from '@wordpress/element';
 import { Icon, page as pageIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
@@ -32,12 +32,15 @@ const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) =>
 	useSupportAvailability( 'EMAIL' );
 	useHappychatAuth();
 
-	const openSecondaryView = ( secondaryViewKey ) => {
-		recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show`, {
-			location: 'inline-help-popover',
-		} );
-		setActiveSecondaryView( secondaryViewKey );
-	};
+	const openSecondaryView = useCallback(
+		( secondaryViewKey ) => {
+			recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show`, {
+				location: 'inline-help-popover',
+			} );
+			setActiveSecondaryView( secondaryViewKey );
+		},
+		[ setActiveSecondaryView ]
+	);
 
 	// Focus the secondary popover contents after the state is set
 	useEffect( () => {
@@ -61,11 +64,14 @@ const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) =>
 		}
 	}, [ activeSecondaryView, selectedArticle, setHeaderText, __ ] );
 
-	const openResultView = ( event, result ) => {
-		event.preventDefault();
-		setSelectedArticle( result );
-		openSecondaryView( VIEW_RICH_RESULT );
-	};
+	const openResultView = useCallback(
+		( event, result ) => {
+			event.preventDefault();
+			setSelectedArticle( result );
+			openSecondaryView( VIEW_RICH_RESULT );
+		},
+		[ setSelectedArticle, openSecondaryView ]
+	);
 
 	const closeSecondaryView = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ activeSecondaryView }_hide`, {
@@ -75,9 +81,9 @@ const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) =>
 		setSelectedArticle( null );
 	};
 
-	const openContactView = () => {
+	const openContactView = useCallback( () => {
 		openSecondaryView( VIEW_CONTACT );
-	};
+	}, [ openSecondaryView ] );
 
 	const setAdminSection = () => {
 		if ( ! isMobile ) {
@@ -146,13 +152,13 @@ const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) =>
 				/>
 			)
 		);
-	}, [ activeSecondaryView ] );
+	}, [ activeSecondaryView, setFooterContent, openContactView, openResultView ] );
 
 	useEffect( () => {
 		if ( selectedArticle ) {
 			openSecondaryView( VIEW_RICH_RESULT );
 		}
-	}, [] );
+	}, [ openSecondaryView, selectedArticle ] );
 
 	const className = classNames(
 		'inline-help-center__content',
