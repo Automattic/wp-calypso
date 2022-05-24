@@ -137,7 +137,7 @@ describe( 'Theme', () => {
 
 	describe( 'Update themes', () => {
 		beforeEach( () => {
-			props = {
+			const updateThemeProps = {
 				...props,
 				theme: {
 					...props.theme,
@@ -145,12 +145,14 @@ describe( 'Theme', () => {
 				},
 			};
 
-			const themeElement = TestUtils.renderIntoDocument( createElement( Theme, { ...props } ) );
+			const themeElement = TestUtils.renderIntoDocument(
+				createElement( Theme, { ...updateThemeProps } )
+			);
 			themeNode = ReactDom.findDOMNode( themeElement );
 		} );
 
 		test( 'Should show the update message', () => {
-			assert( themeNode.getElementsByClassName( 'theme__update-alert' ).length, 1 );
+			expect( themeNode.getElementsByClassName( 'theme__update-alert' ).length ).toBe( 1 );
 		} );
 	} );
 } );
