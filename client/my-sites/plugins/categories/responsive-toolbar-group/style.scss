@@ -1,24 +1,25 @@
 .responsive-toolbar-group__dropdown {
 	position: relative;
-	width: 100%;
-
-	.responsive-toolbar-group__full-list {
-		width: 100%;
-		display: grid;
-		grid-auto-columns: max-content;
-    	grid-auto-flow: column;
-	}
 
 	.responsive-toolbar-group__grouped-list {
-		width: 100%;
 		justify-content: space-between;
 		flex-wrap: nowrap;
 		display: flex;
 		opacity: 0;
 
+		border-color: rgba( 0, 0, 0, 0 );
+
 		.responsive-toolbar-group__menu-item.is-selected {
 			background-color: #1e1e1e;
 			color: var( --color-text-inverted );
+		}
+
+		// Stretch selected item border to page border
+		>div:first-of-type {
+			margin-left: -8px;
+		}
+		>div:last-of-type {
+			margin-right: -8px;
 		}
 	}
 
@@ -34,22 +35,23 @@
 		top: 0;
 		left: 0;
 		right: 0;
-		z-index: -1;
 	}
 
 	.responsive-toolbar-group__button-item {
 		flex-basis: max-content;
 		white-space: nowrap;
-		z-index: 0;
+
+		font-size: 0.875rem;
 	}
 
-	.responsive-toolbar-group__button-item, .responsive-toolbar-group__menu-item {
-		&:focus {
-			&::before {
-				// disable blue box on focus
-				box-shadow: none !important;
-				outline: none !important;
-			}
+	// Remove on-focus, on-click border
+	.components-toolbar .components-button::before {
+		box-shadow: none;
+	}
+
+	.responsive-toolbar-group__more-item {
+		&::before {
+			background: #f6f7f7;
 		}
 	}
 }
@@ -67,7 +69,7 @@
 
 		// hides the scrollbar
 		scrollbar-width: none; // hides the scrollbar in firefox
-		
+
 		&::-webkit-scrollbar { // hides the scrollbar in webkit browsers
 			display: none;
 		}

@@ -110,7 +110,7 @@
 		"signup/site-vertical-step": false,
 		"signup/stepper-flow": true,
 		"site-indicator": true,
-		"stepper-woocommerce-poc": false,
+		"stepper-woocommerce-poc": true,
 		"ssr/sample-log-cache-misses": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,

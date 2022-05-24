@@ -316,12 +316,15 @@ const ClearSearch = () => {
 	const translate = useTranslate();
 
 	return (
-		<a
-			className={ 'plugins-browser__clear-filters' }
-			href={ '/plugins' + ( siteSlug ? '/' + siteSlug : '' ) }
-		>
-			{ translate( 'Clear' ) }
-		</a>
+		<>
+			&nbsp;
+			<a
+				className={ 'plugins-browser__clear-filters' }
+				href={ '/plugins' + ( siteSlug ? '/' + siteSlug : '' ) }
+			>
+				{ translate( 'Clear' ) }
+			</a>
+		</>
 	);
 };
 const SearchListView = ( {
@@ -435,19 +438,42 @@ const SearchListView = ( {
 };
 
 const FullListView = ( { category, siteSlug, sites } ) => {
-	const { plugins, isFetching, fetchNextPage } = usePlugins( { category, infinite: true } );
+	const { plugins, isFetching, fetchNextPage, pagination } = usePlugins( {
+		category,
+		infinite: true,
+	} );
 
 	const categories = useCategories();
-	const categoryName = [ 'paid', 'popular' ].includes( category )
-		? categories[ category ]?.name
-		: null;
+	const categoryName = categories[ category ]?.name;
+	const translate = useTranslate();
+
+	let title = '';
+	if ( categoryName && pagination ) {
+		title = translate(
+			'Found %(total)s plugin under "%(categoryName)s"',
+			'Found %(total)s plugins under "%(categoryName)s"',
+			{
+				count: pagination.results,
+				textOnly: true,
+				args: {
+					total: pagination.results,
+					categoryName,
+				},
+			}
+		);
+	}
 
 	return (
 		<>
 			<PluginsBrowserList
 				plugins={ plugins }
 				listName={ category }
-				title={ categoryName }
+				subtitle={
+					<>
+						{ title }
+						<ClearSearch />
+					</>
+				}
 				site={ siteSlug }
 				showPlaceholders={ isFetching }
 				currentSites={ sites }
