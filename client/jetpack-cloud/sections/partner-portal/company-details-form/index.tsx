@@ -7,8 +7,10 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { receivePartner } from 'calypso/state/partner-portal/partner/actions';
 import useUpdateCompanyDetailsMutation from 'calypso/state/partner-portal/partner/hooks/use-update-company-details';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import { APIError } from 'calypso/state/partner-portal/types';
@@ -62,7 +64,9 @@ export default function CompanyDetailsForm(): ReactElement {
 	};
 
 	const updateCompanyDetails = useUpdateCompanyDetailsMutation( {
-		onSuccess: () => {
+		onSuccess: ( partner ) => {
+			dispatch( receivePartner( formatApiPartner( partner ) ) );
+
 			dispatch(
 				successNotice( translate( 'Company details have been updated' ), {
 					id: submitNotificationId,
