@@ -51,7 +51,7 @@ export class NoticeComponent {
 	 * 	False otherwise.
 	 */
 	async noticeShown( text: string, { type }: { type?: NoticeType } = {} ): Promise< boolean > {
-		const noticeType = `.is-${ type?.toLowerCase() }` || '';
+		const noticeType = type ? `.is-${ type?.toLowerCase() }` : '';
 
 		const selector = `div.notice${ noticeType } :text("${ text }")`;
 

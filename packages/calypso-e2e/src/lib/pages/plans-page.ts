@@ -16,6 +16,7 @@ export type PlanActionButton = 'Manage plan' | 'Upgrade';
 const selectors = {
 	// Generic
 	placeholder: `.is-placeholder`,
+	managePlanButton: `a:has-text("Manage plan")`,
 
 	// Navigation
 	mobileNavTabsToggle: `button.section-nav__mobile-header`,
@@ -60,6 +61,26 @@ export class PlansPage {
 		this.version = version;
 	}
 
+	/* Generic */
+
+	/**
+	 * Validates that the provided plan name is the title of the active plan in the My Plan tab of the Plans page. Throws if it isn't.
+	 *
+	 * @param {LegacyPlans} expectedPlan Name of the expected plan.
+	 * @throws If the expected plan title is not found in the timeout period.
+	 */
+	async validateActivePlan( expectedPlan: LegacyPlans | Plans ): Promise< void > {
+		const expectedPlanLocator = this.page.locator( selectors.myPlanTitle( expectedPlan ) );
+		await expectedPlanLocator.waitFor();
+	}
+
+	/**
+	 * Clicks on the "Manage plan" button, which can be found in the My Plan tab.
+	 */
+	async clickManagePlan(): Promise< void > {
+		await this.page.click( selectors.managePlanButton );
+	}
+
 	/* Current Plans */
 
 	/**
@@ -96,17 +117,6 @@ export class PlansPage {
 
 		const showButtonLocator = this.page.locator( selectors.planComparisonActionButton( 'show' ) );
 		await showButtonLocator.waitFor();
-	}
-
-	/**
-	 * Validates that the provided plan name is the title of the active plan in the My Plan tab of the Plans page. Throws if it isn't.
-	 *
-	 * @param {LegacyPlans} expectedPlan Name of the expected plan.
-	 * @throws If the expected plan title is not found in the timeout period.
-	 */
-	async validateActivePlan( expectedPlan: LegacyPlans | Plans ): Promise< void > {
-		const expectedPlanLocator = this.page.locator( selectors.myPlanTitle( expectedPlan ) );
-		await expectedPlanLocator.waitFor();
 	}
 
 	/**
