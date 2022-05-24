@@ -62,11 +62,11 @@ See the [list of groups](docs/overview.md#what-is-tested).
 
 ### Save authentication cookies
 
-Specified accounts will be pre-authenticated prior to the main test suite executions and its cookies saved to be re-used until expiry (typically 3 days).
+Specified accounts will be pre-authenticated prior to the main test suite executions and their cookies saved to be re-used until expiry (typically 3 days).
 
 Specify a list of user accounts found in [Secret Manager](packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
 
-```
+```test/e2e/docs/tests_local.md
 export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,eCommerceUser,defaultUser
 ```
 
