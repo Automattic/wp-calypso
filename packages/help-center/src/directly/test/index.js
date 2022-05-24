@@ -2,26 +2,39 @@
  * @jest-environment jsdom
  */
 
-import nock from 'nock';
-
 jest.mock( '@automattic/load-script', () => ( { loadScript: jest.fn() } ) );
+jest.mock( 'wpcom-proxy-request', () => ( {
+	__esModule: true,
+	default: jest.fn( () => Promise.resolve( { isAvailable: false } ) ),
+} ) );
+jest.mock( '@automattic/calypso-config', () => ( {
+	isEnabled: jest.fn( true ),
+	__esModule: true,
+	default( key ) {
+		return key;
+	},
+} ) );
 
 describe( 'index', () => {
-	let initialize;
-	let askQuestion;
+	let initializeDirectly;
+	let checkAPIThenInitializeDirectly;
+	let askDirectlyQuestion;
 	let loadScript;
 
-	// Helpers to simulate whether the remote Directly script loads or fails
 	const simulateSuccessfulScriptLoad = () => {
-		loadScript.mockImplementation( ( url, callback ) => callback() );
+		loadScript.mockImplementation( () => Promise.resolve() );
 	};
 	const simulateFailedScriptLoad = ( error ) => {
-		loadScript.mockImplementation( ( url, callback ) => callback( error ) );
+		loadScript.mockImplementation( () => Promise.reject( new Error( error.src ) ) );
 	};
 
 	beforeEach( () => {
 		// The previous test called `resetModules()`, so these needs to be loaded again
-		( { initialize, askQuestion } = require( '../' ) );
+		( {
+			initializeDirectly,
+			askDirectlyQuestion,
+			checkAPIThenInitializeDirectly,
+		} = require( '../' ) );
 		( { loadScript } = require( '@automattic/load-script' ) );
 
 		// Since most tests expect the script to load, make this the default
@@ -39,91 +52,63 @@ describe( 'index', () => {
 		jest.resetModules();
 	} );
 
-	describe( 'when the API says Directly is available', () => {
-		beforeAll( () => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.get( '/rest/v1.1/help/directly/mine' )
-				.reply( 200, {
-					isAvailable: true,
-				} );
+	describe( '#initializeDirectly()', () => {
+		test( 'creates a window.DirectlyRTM function', async () => {
+			await initializeDirectly();
+			expect( window.DirectlyRTM ).toBeInstanceOf( Function );
 		} );
 
-		afterAll( () => {
-			nock.cleanAll();
+		test( 'attempts to load the remote script', async () => {
+			await initializeDirectly();
+			expect( loadScript ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		describe( '#initialize()', () => {
-			test( 'creates a window.DirectlyRTM function', async () => {
-				await initialize();
-				expect( window.DirectlyRTM ).toBeInstanceOf( Function );
-			} );
-
-			test( 'attempts to load the remote script', async () => {
-				await initialize();
-				expect( loadScript ).toHaveBeenCalledTimes( 1 );
-			} );
-
-			test( 'does nothing after the first call', async () => {
-				await Promise.all( [ initialize(), initialize(), initialize() ] );
-				expect( window.DirectlyRTM.cq ).toHaveLength( 1 );
-				expect( window.DirectlyRTM.cq[ 0 ][ 0 ] ).toBe( 'config' );
-				expect( loadScript ).toHaveBeenCalledTimes( 1 );
-			} );
-
-			test( 'rejects the returned promise if the library load fails', async () => {
-				const error = { src: 'http://url.to/directly/embed.js' };
-				simulateFailedScriptLoad( error );
-				await expect( initialize() ).rejects.toThrow( error.src );
-			} );
+		test( 'does nothing after the first call', async () => {
+			await Promise.all( [ initializeDirectly(), initializeDirectly(), initializeDirectly() ] );
+			expect( window.DirectlyRTM.cq ).toHaveLength( 1 );
+			expect( window.DirectlyRTM.cq[ 0 ][ 0 ] ).toBe( 'config' );
+			expect( loadScript ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		describe( '#askQuestion()', () => {
-			const questionText = 'How can I give you all my money?';
-			const name = 'Richie Rich';
-			const email = 'richie@richenterprises.biz';
+		test( 'rejects the returned promise if the library load fails', async () => {
+			const error = { src: 'http://url.to/directly/embed.js' };
+			simulateFailedScriptLoad( error );
+			await expect( initializeDirectly() ).rejects.toThrow( error.src );
+		} );
+	} );
 
-			test( "initializes Directly if it hasn't already been initialized", async () => {
-				await askQuestion( questionText, name, email );
-				expect( window.DirectlyRTM ).toBeInstanceOf( Function );
-				expect( loadScript ).toHaveBeenCalledTimes( 1 );
-			} );
+	describe( '#askDirectlyQuestion()', () => {
+		const questionText = 'How can I give you all my money?';
+		const name = 'Richie Rich';
+		const email = 'richie@richenterprises.biz';
 
-			test( 'invokes the Directly API with the given paramaters', async () => {
-				window.DirectlyRTM = jest.fn();
-				await askQuestion( questionText, name, email );
-				expect( window.DirectlyRTM ).toHaveBeenCalledWith( 'askQuestion', {
-					questionText,
-					name,
-					email,
-				} );
+		test( "initializes Directly if it hasn't already been initialized", async () => {
+			await askDirectlyQuestion( questionText, name, email );
+			expect( window.DirectlyRTM ).toBeInstanceOf( Function );
+			expect( loadScript ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'invokes the Directly API with the given paramaters', async () => {
+			window.DirectlyRTM = jest.fn();
+			await askDirectlyQuestion( questionText, name, email );
+			expect( window.DirectlyRTM ).toHaveBeenCalledWith( 'askQuestion', {
+				questionText,
+				name,
+				email,
 			} );
 		} );
 	} );
 
 	describe( 'when the public API says Directly is not available', () => {
-		beforeAll( () => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.get( '/rest/v1.1/help/directly/mine' )
-				.reply( 200, {
-					isAvailable: false,
-				} );
-		} );
-
-		afterAll( () => {
-			nock.cleanAll();
-		} );
-
-		describe( '#initialize()', () => {
+		describe( '#checkAPIThenInitializeDirectly()', () => {
 			test( 'rejects intialization with an error', async () => {
-				await expect( initialize() ).rejects.toThrow(
+				await expect( checkAPIThenInitializeDirectly() ).rejects.toThrow(
 					'Directly Real-Time Messaging is not available at this time.'
 				);
 			} );
 
 			test( 'does not attempt to load the remote script', async () => {
-				await expect( initialize() ).rejects.toThrow();
+				await expect( checkAPIThenInitializeDirectly() ).rejects.toThrow();
 				expect( loadScript ).not.toHaveBeenCalled();
 			} );
 		} );

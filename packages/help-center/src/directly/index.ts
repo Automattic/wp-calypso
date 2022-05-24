@@ -109,6 +109,7 @@ export async function execute( args: [ string, Options ] ) {
 function loadDirectlyScript() {
 	return loadScript( DIRECTLY_RTM_SCRIPT_URL );
 }
+
 let directlyPromise: Promise< void >;
 
 /**
