@@ -15,6 +15,20 @@ import { APIError } from 'calypso/state/partner-portal/types';
 import { useCountriesAndStates } from './hooks/use-countries-and-states';
 import './style.scss';
 
+function getCountry( country: string, options: object[] ): string {
+	if ( options.length < 1 ) {
+		return country;
+	}
+
+	for ( let i = 0; i < options.length; i++ ) {
+		if ( options[ i ].value === country ) {
+			return country;
+		}
+	}
+
+	return options[ 0 ].value;
+}
+
 export default function CompanyDetailsForm(): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -22,20 +36,30 @@ export default function CompanyDetailsForm(): ReactElement {
 	// controller function, so we do not have to do any further checks.
 	const partner = useSelector( getCurrentPartner );
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
-	const submitNotificationId = 'partner-portal-company-details-form';
 	const showCountryFields = countryOptions.length > 0;
+	const submitNotificationId = 'partner-portal-company-details-form';
 
 	const [ name, setName ] = useState( partner?.name ?? '' );
-	const [ country, setCountry ] = useState( partner?.address.country ?? '' );
+	const [ countryValue, setCountry ] = useState( partner?.address.country ?? '' );
 	const [ city, setCity ] = useState( partner?.address.city ?? '' );
 	const [ line1, setLine1 ] = useState( partner?.address.line1 ?? '' );
 	const [ line2, setLine2 ] = useState( partner?.address.line2 ?? '' );
 	const [ postalCode, setPostalCode ] = useState( partner?.address.postal_code ?? '' );
 	const [ addressState, setAddressState ] = useState( partner?.address.state ?? '' );
 
+	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap.hasOwnProperty( country )
 		? stateOptionsMap[ country ]
 		: false;
+	const payload = {
+		name: name,
+		city: city,
+		line1: line1,
+		line2: line2,
+		country: country,
+		postal_code: postalCode,
+		state: addressState,
+	};
 
 	const updateCompanyDetails = useUpdateCompanyDetailsMutation( {
 		onSuccess: () => {
@@ -64,16 +88,6 @@ export default function CompanyDetailsForm(): ReactElement {
 
 			dispatch( removeNotice( submitNotificationId ) );
 
-			const payload = {
-				name: name,
-				city: city,
-				line1: line1,
-				line2: line2,
-				country: country,
-				postal_code: postalCode,
-				state: addressState,
-			};
-
 			updateCompanyDetails.mutate( payload );
 
 			dispatch(
@@ -83,7 +97,15 @@ export default function CompanyDetailsForm(): ReactElement {
 				} )
 			);
 		},
-		[ submitNotificationId, dispatch, updateCompanyDetails.mutate ]
+		[
+			submitNotificationId,
+			showCountryFields,
+			payload,
+			partner?.id,
+			updateCompanyDetails.isLoading,
+			updateCompanyDetails.mutate,
+			dispatch,
+		]
 	);
 
 	return (
