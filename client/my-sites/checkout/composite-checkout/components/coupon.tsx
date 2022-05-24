@@ -1,7 +1,7 @@
 import { Button } from '@automattic/composite-checkout';
 import { Field, styled, joinClasses } from '@automattic/wpcom-checkout';
 import { keyframes } from '@emotion/react';
-import i18n, { useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { CouponStatus } from '@automattic/shopping-cart';
@@ -126,10 +126,15 @@ function getCouponErrorMessageFromStatus(
 	isFreshOrEdited: boolean
 ): string | undefined {
 	if ( status === 'rejected' && ! isFreshOrEdited ) {
-		return String(
+		if (
+			getLocaleSlug() === 'en' ||
+			getLocaleSlug() === 'en-gb' ||
 			i18n.hasTranslation( 'There was a problem applying this coupon.' )
-				? translate( 'There was a problem applying this coupon.' )
-				: translate( "We couldn't find your coupon. Please check your coupon code and try again." )
+		) {
+			return translate( 'There was a problem applying this coupon.', { textOnly: true } );
+		}
+		return String(
+			translate( "We couldn't find your coupon. Please check your coupon code and try again." )
 		);
 	}
 	return undefined;
