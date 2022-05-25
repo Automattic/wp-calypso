@@ -143,8 +143,6 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 
     @include break-medium {
         padding: 0 20px 20px;
-        position: absolute;
-        top: 24%;
         left: 50%;
         width: 100%;
         max-width: 1024px;
