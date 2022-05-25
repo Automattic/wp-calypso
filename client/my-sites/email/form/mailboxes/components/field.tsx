@@ -17,8 +17,8 @@ interface MailboxFormFieldProps {
 	field: MailboxFormFieldBase< string >;
 	isPasswordField?: boolean;
 	lowerCaseChangeValue?: boolean;
-	notifyFieldExited: ( field: MailboxFormFieldBase< string > ) => void;
 	notifyFieldValueChanged?: ( field: MailboxFormFieldBase< string > ) => void;
+	requestFieldValidation: ( field: MailboxFormFieldBase< string > ) => void;
 	selectedDomainName: string;
 	textInputPrefix?: string;
 	textInputSuffix?: string;
@@ -69,7 +69,7 @@ const MailboxField = ( {
 	const {
 		field,
 		lowerCaseChangeValue = false,
-		notifyFieldExited,
+		requestFieldValidation,
 		notifyFieldValueChanged = () => undefined,
 	} = props;
 	const fieldLabelText = useGetDefaultFieldLabelText( field.fieldName as MutableFormFieldNames );
@@ -80,7 +80,7 @@ const MailboxField = ( {
 	}
 
 	const onBlur = () => {
-		notifyFieldExited( field ); // Validation should normally occur here ...
+		requestFieldValidation( field );
 		setFieldState( { ...fieldState, error: field.error } );
 	};
 
@@ -90,7 +90,14 @@ const MailboxField = ( {
 			value = value.toLowerCase();
 		}
 		field.value = value;
-		setFieldState( { ...fieldState, value } );
+
+		let error = fieldState.error;
+		// Validate the field on the fly if there was already an error
+		if ( error ) {
+			requestFieldValidation( field );
+			error = field.error;
+		}
+		setFieldState( { ...fieldState, error, value } );
 		notifyFieldValueChanged( field );
 	};
 

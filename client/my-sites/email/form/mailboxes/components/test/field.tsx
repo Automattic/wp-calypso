@@ -23,7 +23,7 @@ describe( '<MailboxFormField /> suite', () => {
 		}
 
 		return {
-			notifyFieldExited(): void {
+			requestFieldValidation(): void {
 				mailbox.validateField( fieldName );
 			},
 			domains: [],
@@ -66,6 +66,17 @@ describe( '<MailboxFormField /> suite', () => {
 		expect( defaultProps.field.value ).toBe( 'John-Pierre' );
 	} );
 
+	it( 'Input element should not fire off validation without an initial onblur event', () => {
+		const { container, defaultProps } = setup( FIELD_FIRSTNAME );
+
+		const input = getFirstInput( container );
+
+		fireEvent.change( input, { target: { value: 'First' } } );
+		fireEvent.change( input, { target: { value: '' } } ); // Should normally trigger "field required" error
+
+		expect( defaultProps.field.error ).toBeNull();
+	} );
+
 	it( 'Input value should be validated when the element looses focus', () => {
 		const { container, defaultProps } = setup( FIELD_FIRSTNAME );
 
@@ -84,5 +95,20 @@ describe( '<MailboxFormField /> suite', () => {
 				?.innerHTML?.replace( /<[^>]*>?/gm, '' )
 				?.trim()
 		).toEqual( error as string );
+	} );
+
+	it( 'Input element should fire off validation after an onblur event, or if an error is already displayed', () => {
+		const { container, defaultProps } = setup( FIELD_FIRSTNAME );
+
+		const input = getFirstInput( container );
+
+		fireEvent.change( input, { target: { value: '' } } ); // Invalid value at first
+		fireEvent.blur( input );
+
+		expect( defaultProps.field.error ).toBeTruthy(); // An error exists
+
+		fireEvent.change( input, { target: { value: 'John' } } ); // Now a valid value
+
+		expect( defaultProps.field.error ).toBeNull(); // Error should be gone
 	} );
 } );

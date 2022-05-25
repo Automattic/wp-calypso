@@ -12,8 +12,7 @@ export const MailForm = () => {
 			<MailboxField
 				domains={ [] }
 				field={ mailbox.formFields.password }
-				notifyFieldExited={ () => true }
-				notifyFieldValueChanged={ () => true }
+				requestFieldValidation={ () => mailbox.validateField( 'password' ) }
 				selectedDomainName={ domainName }
 			>
 				<div>Croak</div>
