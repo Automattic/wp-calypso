@@ -13,7 +13,6 @@ import {
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
-	usePaymentMethod,
 	useTotal,
 	CheckoutErrorBoundary,
 	CheckoutFormSubmit,
@@ -168,7 +167,6 @@ export default function WPCheckout( {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
-	const activePaymentMethod = usePaymentMethod();
 	const reduxDispatch = useReduxDispatch();
 
 	const areThereDomainProductsInCart =
@@ -412,7 +410,6 @@ export default function WPCheckout( {
 						// Touch the fields so they display validation errors
 						touchContactFields();
 						updateCartContactDetailsForCheckout(
-							activePaymentMethod?.id,
 							countriesList,
 							responseCart,
 							updateLocation,

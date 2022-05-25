@@ -4,7 +4,6 @@ import type { ResponseCart, UpdateTaxLocationInCart } from '@automattic/shopping
 import type { ManagedContactDetails, CountryListItem } from '@automattic/wpcom-checkout';
 
 export async function updateCartContactDetailsForCheckout(
-	activePaymentMethodId: string | undefined | null,
 	countriesList: CountryListItem[],
 	responseCart: ResponseCart,
 	updateLocation: UpdateTaxLocationInCart,
@@ -17,22 +16,10 @@ export async function updateCartContactDetailsForCheckout(
 			: false;
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	if ( ! activePaymentMethodId || ! contactInfo || ! areCountriesLoaded ) {
+	if ( ! contactInfo || ! areCountriesLoaded ) {
 		return;
 	}
 
-	const nonTaxPaymentMethods = [ 'free-purchase' ];
-
-	// When the contact details change, update the tax location in cart if the
-	// active payment method is taxable.
-	if ( nonTaxPaymentMethods.includes( activePaymentMethodId ) ) {
-		// This data is intentionally empty so we do not charge taxes.
-		return updateLocation( {
-			countryCode: '',
-			postalCode: '',
-			subdivisionCode: '',
-		} );
-	}
 	// The tax form does not include a subdivisionCode field but the server
 	// will sometimes fill in the value on the cart itself so we should not
 	// try to update it when the field does not exist.
