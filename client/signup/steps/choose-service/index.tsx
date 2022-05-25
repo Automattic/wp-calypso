@@ -20,7 +20,6 @@ import './style.scss';
 interface Props {
 	existingSiteCount: number;
 	goToNextStep: () => void;
-	submitSignupStep: ( { stepName, wasSkipped }: { stepName: string; wasSkipped: boolean } ) => void;
 	goToStep: ( stepName: string ) => void;
 	stepName: string;
 	queryObject: {
@@ -99,6 +98,7 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 				{ stepName: props.stepName },
 				{
 					siteSlug: props.queryObject.siteSlug || props.queryObject.siteId,
+					newOrExistingSiteChoice: 'existing-site',
 				}
 			)
 		);
