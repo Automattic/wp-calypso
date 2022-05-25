@@ -80,6 +80,17 @@ async function stripeCardProcessor(
 		} )
 	);
 
+	if ( ! responseCart.tax.location.country_code && contactDetails?.countryCode?.value ) {
+		// Changes to the contact form data should always be sent to the cart, so
+		// this should not be possible.
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_mismatched_tax_location', {
+				form_country: contactDetails.countryCode.value,
+				cart_country: responseCart.tax.location.country_code,
+			} )
+		);
+	}
+
 	let paymentMethodToken;
 	try {
 		const tokenResponse = await createStripePaymentMethodToken( {
