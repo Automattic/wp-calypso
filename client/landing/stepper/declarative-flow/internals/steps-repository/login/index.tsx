@@ -174,7 +174,7 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 
 		return (
 			<form className="login__form" onSubmit={ handleSubmit }>
-				<fieldset className="signup-form__fieldset">
+				<fieldset className="login__fieldset">
 					<TextControl
 						value={ emailVal }
 						disabled={ isFetchingNewUser }
@@ -196,20 +196,20 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 					/>
 
 					{ errorMessage && (
-						<Notice className="signup-form__error-notice" status="error" isDismissible={ false }>
+						<Notice className="login__error-notice" status="error" isDismissible={ false }>
 							{ errorMessage }
 						</Notice>
 					) }
 
-					<div className="signup-form__footer">
-						<p className="signup-form__login-link">
+					<div className="login__footer">
+						<p className="login__login-link">
 							<span>{ __( 'Already have an account?' ) }</span>{ ' ' }
-							<Button className="signup-form__link" plain href={ loginUrl }>
+							<Button className="login__link" plain href={ loginUrl }>
 								{ __( 'Log in' ) }
 							</Button>
 						</p>
 
-						<p className="signup-form__link signup-form__terms-of-service-link">{ tos }</p>
+						<p className="login__link login__terms-of-service-link">{ tos }</p>
 
 						<Button
 							type="submit"
@@ -220,7 +220,7 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 							{ __( 'Create account' ) }
 						</Button>
 
-						<p className="signup-form__link signup-form__terms-of-service-link signup-form__recaptcha_tos">
+						<p className="login__link login__terms-of-service-link login__recaptcha_tos">
 							{ recaptcha_tos }
 						</p>
 					</div>
@@ -232,35 +232,33 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 	const LoginForm: React.FC = () => {
 		return (
 			<div>
-				<div className="signup-form__anchor-body">
-					<h1 className="signup-form__title">
-						{ __( 'Create your podcast site with WordPress.com' ) }
-					</h1>
-					<div className="signup-form__anchor-subheading">
+				<div className="login__anchor-body">
+					<h1 className="login__title">{ __( 'Create your podcast site with WordPress.com' ) }</h1>
+					<div className="login__anchor-subheading">
 						<p>{ __( 'Create a WordPress.com account and start creating your free site.' ) }</p>
 					</div>
 
-					<div className="signup-form__anchor-row">
+					<div className="login__anchor-row">
 						{ /* Left Column: Contains Form */ }
-						<div className="signup-form__anchor-col">
-							<div className="signup-form__anchor-col-container is-left-col">
+						<div className="login__anchor-col">
+							<div className="login__anchor-col-container is-left-col">
 								<Form />
 							</div>
 						</div>
 
-						<div className="signup-form__anchor-separator" aria-hidden="true" role="presentation" />
+						<div className="login__anchor-separator" aria-hidden="true" role="presentation" />
 
 						{ /* Right Column: Contains Marketing Text */ }
-						<div className="signup-form__anchor-col">
-							<div className="signup-form__anchor-col-container is-right-col">
-								<div className="signup-form__anchor-col-right-group">
-									<div className="signup-form__anchor-right-heading">
+						<div className="login__anchor-col">
+							<div className="login__anchor-col-container is-right-col">
+								<div className="login__anchor-col-right-group">
+									<div className="login__anchor-right-heading">
 										{ __(
 											'Turn your listeners into customers with the marketing power of a website'
 										) }
 									</div>
 									<div>
-										<ul className="signup-form__anchor-list">
+										<ul className="login__anchor-list">
 											<li> { __( 'Create forms and mailing lists' ) } </li>
 											<li> { __( 'Accept Payments and sell merchandise' ) } </li>
 											<li> { __( 'Built-in SEO and social tools' ) } </li>
@@ -268,12 +266,12 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 									</div>
 								</div>
 
-								<div className="signup-form__anchor-col-right-group">
-									<div className="signup-form__anchor-right-heading">
+								<div className="login__anchor-col-right-group">
+									<div className="login__anchor-right-heading">
 										{ __( 'Increase your audience with episode transcriptions' ) }
 									</div>
 									<div>
-										<ul className="signup-form__anchor-list">
+										<ul className="login__anchor-list">
 											<li> { __( 'Add transcriptions to episode pages' ) } </li>
 											<li> { __( 'Customizable templates built for podcasts' ) } </li>
 											<li> { __( 'Add images, videos, and text formatting' ) } </li>

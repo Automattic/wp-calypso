@@ -21,7 +21,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
     }
 }
 
-.signup-form__title {
+.login__title {
     @include onboarding-heading-text-mobile;
     text-align: center;
 
@@ -30,7 +30,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
     }
 }
 
-.signup-form__body {
+.login__body {
     position: relative;
     padding: 44px 20px 0;
     text-align: center;
@@ -46,7 +46,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
     }
 }
 
-.signup-form__legend {
+.login__legend {
     padding-bottom: 42px;
 
     & > p {
@@ -55,7 +55,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
     }
 }
 
-.signup-form__fieldset {
+.login__fieldset {
     border: 0;
     margin: 0;
     outline: 0;
@@ -82,7 +82,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
     }
 }
 
-.signup-form__error-notice {
+.login__error-notice {
     max-width: 400px;
     margin: 10px auto;
 
@@ -91,24 +91,24 @@ $design-button-primary-hover-color: var( --color-primary-60 );
     }
 }
 
-.signup-form__login-link {
+.login__login-link {
     @include onboarding-medium-text;
     margin: 4px 0 29px;
     color: var( --studio-gray-40 );
 
-    .signup-form__link {
+    .login__link {
         @include onboarding-medium-text;
         color: var( --studio-gray-40 );
     }
 }
 
-.signup-form__link,
-.signup-form__link a {
+.login__link,
+.login__link a {
     @include onboarding-medium-text;
     color: var( --studio-gray-40 );
 }
 
-.signup-form__terms-of-service-link {
+.login__terms-of-service-link {
     @include onboarding-medium-text;
     text-align: center;
     color: var( --studio-gray-30 );
@@ -116,7 +116,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
     max-width: 400px;
 }
 
-.signup-form__recaptcha_tos {
+.login__recaptcha_tos {
     margin: 20px auto 15px;
 
     @include break-small {
@@ -132,7 +132,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 //// Anchor Specific ////
 
 // 1024 wide container
-.signup-form__anchor-body {
+.login__anchor-body {
     position: relative;
     padding: 44px 20px 0;
     text-align: center;
@@ -153,7 +153,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 }
 
 // "Create a WordPress.com account.." under main header
-.signup-form__anchor-subheading {
+.login__anchor-subheading {
     padding-bottom: 64px;
 
     & > p {
@@ -163,7 +163,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 }
 
 // Flexbox Row used for 2 column layout
-.signup-form__anchor-row {
+.login__anchor-row {
     // One column for small displays
     display: block;
 
@@ -178,7 +178,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 }
 
 // Flexbox Col used for 2 column layout
-.signup-form__anchor-col {
+.login__anchor-col {
     display: flex;
     flex-direction: column;
     flex-basis: 100%;
@@ -187,7 +187,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 }
 
 // Thin line between Flexbox Cols
-.signup-form__anchor-separator {
+.login__anchor-separator {
     background: var( --studio-gray-5 );
     width: 0;
 
@@ -197,7 +197,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 }
 
 // Container of left+right columns
-.signup-form__anchor-col-container {
+.login__anchor-col-container {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
 
@@ -227,7 +227,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 }
 
 // Div grouping together right heading "Turn your listeners.." with bullet points
-.signup-form__anchor-col-right-group {
+.login__anchor-col-right-group {
     margin-bottom: 2em;
 
     &:last-child {
@@ -236,13 +236,13 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 }
 
 // Right heading like "Turn your listeners.."
-.signup-form__anchor-right-heading {
+.login__anchor-right-heading {
     font-size: 1.25rem;
     margin-bottom: 0.5rem;
 }
 
 // UL with Right bullet points
-ul.signup-form__anchor-list {
+ul.login__anchor-list {
     list-style: disc inside;
     color: var( --studio-gray-70 );
     font-size: 0.875rem;
