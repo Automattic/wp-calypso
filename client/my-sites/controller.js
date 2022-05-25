@@ -463,7 +463,10 @@ export function siteSelection( context, next ) {
 	}
 
 	const siteId = getSiteId( getState(), siteFragment );
-	if ( siteId ) {
+	// For unlinked checkout flow, we should always request fresh site information.
+	const isUnlinkedFlow =
+		'1' === context?.query?.unlinked && context?.path?.startsWith( '/checkout/' );
+	if ( siteId && ! isUnlinkedFlow ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
 		dispatch( setSelectedSiteId( siteId ) );
