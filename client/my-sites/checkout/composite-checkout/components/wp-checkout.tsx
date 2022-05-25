@@ -422,7 +422,7 @@ export default function WPCheckout( {
 						);
 						if ( validationResponse ) {
 							// When the contact details change, update the cart's tax location to match.
-							updateCartContactDetailsForCheckout(
+							await updateCartContactDetailsForCheckout(
 								countriesList,
 								responseCart,
 								updateLocation,
