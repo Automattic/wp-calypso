@@ -14,7 +14,7 @@ export function isPostNotFound( post ) {
 	return post.statusCode === 404;
 }
 
-export function showSelectedPost( { replaceHistory, postKey, comments } ) {
+export function showSelectedPost( { postKey, comments } ) {
 	return ( dispatch, getState ) => {
 		if ( ! postKey ) {
 			return;
@@ -27,7 +27,7 @@ export function showSelectedPost( { replaceHistory, postKey, comments } ) {
 
 		const post = getPostByKey( getState(), postKey );
 
-		if ( isXPost( post ) && ! replaceHistory ) {
+		if ( isXPost( post ) ) {
 			return showFullXPost( XPostHelper.getXPostMetadata( post ) );
 		}
 
@@ -47,7 +47,6 @@ export function showSelectedPost( { replaceHistory, postKey, comments } ) {
 
 		showFullPost( {
 			post: mappedPost,
-			replaceHistory,
 			comments,
 		} );
 	};
@@ -68,7 +67,7 @@ export function showFullXPost( xMetadata ) {
 	}
 }
 
-export function showFullPost( { post, replaceHistory, comments } ) {
+export function showFullPost( { post, comments } ) {
 	const hashtag = comments ? '#comments' : '';
 	let query = '';
 	if ( post.referral ) {
@@ -76,13 +75,10 @@ export function showFullPost( { post, replaceHistory, comments } ) {
 		query += `ref_blog=${ blogId }&ref_post=${ postId }`;
 	}
 
-	const method = replaceHistory ? 'replace' : 'show';
 	if ( post.feed_ID && post.feed_item_ID ) {
-		page[ method ](
-			`/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }`
-		);
+		page( `/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }` );
 	} else {
-		page[ method ]( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
+		page( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
 	}
 }
 
