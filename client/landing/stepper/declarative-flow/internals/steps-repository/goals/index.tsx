@@ -10,7 +10,7 @@ import './style.scss';
 /**
  * The goals capture step
  */
-const GoalsStep: Step = function GoalsStep( { navigation } ) {
+const GoalsStep: Step = ( { navigation } ) => {
 	const { goNext } = navigation;
 	const translate = useTranslate();
 	const headerText = translate( 'Welcome! What are your goals?' );
