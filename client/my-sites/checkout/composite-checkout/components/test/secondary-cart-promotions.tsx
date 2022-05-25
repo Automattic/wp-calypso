@@ -5,7 +5,8 @@
 import config from '@automattic/calypso-config';
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { ThemeProvider } from '@emotion/react';
-import { render, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
@@ -59,7 +60,7 @@ describe( 'SecondaryCartPromotions', () => {
 				expect( container ).toHaveTextContent( '' );
 			} );
 
-			test( 'adds the items to the cart when "Renew all" is clicked', () => {
+			test( 'adds the items to the cart when "Renew all" is clicked', async () => {
 				const mockAddItemToCart = jest.fn();
 				const { queryByText } = render(
 					<ReduxProvider store={ store }>
@@ -71,7 +72,7 @@ describe( 'SecondaryCartPromotions', () => {
 						</ThemeProvider>
 					</ReduxProvider>
 				);
-				fireEvent.click( queryByText( 'Renew all' ) );
+				await userEvent.click( queryByText( 'Renew all' ) );
 				expect( mockAddItemToCart ).toHaveBeenCalledTimes( 2 );
 				expect( mockAddItemToCart ).toHaveBeenCalledWith(
 					expect.objectContaining( {
@@ -122,7 +123,7 @@ describe( 'SecondaryCartPromotions', () => {
 				expect( queryByText( 'Add to Cart' ) ).toBeTruthy();
 			} );
 
-			test( 'adds the plan to the cart when "Add to Cart" is clicked', () => {
+			test( 'adds the plan to the cart when "Add to Cart" is clicked', async () => {
 				const mockAddItemToCart = jest.fn();
 				const { queryByText } = render(
 					<ReduxProvider store={ store }>
@@ -134,7 +135,7 @@ describe( 'SecondaryCartPromotions', () => {
 						</ThemeProvider>
 					</ReduxProvider>
 				);
-				fireEvent.click( queryByText( 'Add to Cart' ) );
+				await userEvent.click( queryByText( 'Add to Cart' ) );
 				expect( mockAddItemToCart ).toHaveBeenCalledTimes( 1 );
 				expect( mockAddItemToCart ).toHaveBeenCalledWith( {
 					product_slug: 'personal-bundle',

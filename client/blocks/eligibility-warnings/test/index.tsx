@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { fireEvent, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import page from 'page';
 import { ReactChild } from 'react';
 import { Provider } from 'react-redux';
@@ -144,7 +145,7 @@ describe( '<EligibilityWarnings>', () => {
 		expect( container.querySelectorAll( '.notice.is-warning' ) ).toHaveLength( 0 );
 	} );
 
-	it( 'goes to checkout when clicking "Upgrade and continue"', () => {
+	it( 'goes to checkout when clicking "Upgrade and continue"', async () => {
 		const state = createState( {
 			holds: [ 'NO_BUSINESS_PLAN' ],
 			siteUrl: 'https://example.wordpress.com',
@@ -161,7 +162,7 @@ describe( '<EligibilityWarnings>', () => {
 		expect( upgradeAndContinue ).toBeVisible();
 		expect( upgradeAndContinue ).not.toBeDisabled();
 
-		fireEvent.click( upgradeAndContinue );
+		await userEvent.click( upgradeAndContinue );
 
 		expect( handleProceed ).not.toHaveBeenCalled();
 		expect( page.redirect ).toHaveBeenCalledTimes( 1 );
@@ -170,7 +171,7 @@ describe( '<EligibilityWarnings>', () => {
 		);
 	} );
 
-	it( `disables the "Continue" button if holds can't be handled automatically`, () => {
+	it( `disables the "Continue" button if holds can't be handled automatically`, async () => {
 		const state = createState( {
 			holds: [ 'NON_ADMIN_USER', 'SITE_PRIVATE' ],
 		} );
@@ -186,7 +187,7 @@ describe( '<EligibilityWarnings>', () => {
 
 		expect( continueButton ).toBeDisabled();
 
-		fireEvent.click( continueButton );
+		await userEvent.click( continueButton );
 		expect( handleProceed ).not.toHaveBeenCalled();
 	} );
 } );

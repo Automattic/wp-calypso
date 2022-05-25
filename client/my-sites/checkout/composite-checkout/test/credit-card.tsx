@@ -9,7 +9,8 @@ import {
 	makeSuccessResponse,
 	CheckoutFormSubmit,
 } from '@automattic/composite-checkout';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import {
@@ -76,6 +77,7 @@ describe( 'Credit card payment method', () => {
 	} );
 
 	it( 'submits the data to the processor when the submit button is pressed', async () => {
+		const user = userEvent.setup();
 		const store = createCreditCardPaymentMethodStore( {} );
 		const paymentMethod = getPaymentMethod( store );
 		const processorFunction = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
@@ -87,25 +89,17 @@ describe( 'Credit card payment method', () => {
 		);
 		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
 
-		fireEvent.change( screen.getAllByLabelText( /Cardholder name/i )[ 1 ], {
-			target: { value: customerName },
-		} );
-		fireEvent.change( screen.getByLabelText( /Card number/i ), {
-			target: { value: cardNumber },
-		} );
-		fireEvent.change( screen.getByLabelText( /Expiry date/i ), {
-			target: { value: cardExpiry },
-		} );
-		fireEvent.change( screen.getAllByLabelText( /Security code/i )[ 0 ], {
-			target: { value: cardCvv },
-		} );
+		await user.type( screen.getAllByLabelText( /Cardholder name/i )[ 1 ], customerName );
+		await user.type( screen.getByLabelText( /Card number/i ), cardNumber );
+		await user.type( screen.getByLabelText( /Expiry date/i ), cardExpiry );
+		await user.type( screen.getAllByLabelText( /Security code/i )[ 0 ], cardCvv );
 
 		// Stripe fields will not actually operate in this test so we have to pretend they are complete.
 		store.dispatch( actions.setCardDataComplete( 'cardNumber', true ) );
 		store.dispatch( actions.setCardDataComplete( 'cardExpiry', true ) );
 		store.dispatch( actions.setCardDataComplete( 'cardCvc', true ) );
 
-		fireEvent.click( await screen.findByText( activePayButtonText ) );
+		await user.click( await screen.findByText( activePayButtonText ) );
 		await waitFor( () => {
 			expect( processorFunction ).toHaveBeenCalledWith( {
 				name: customerName,
@@ -132,7 +126,7 @@ describe( 'Credit card payment method', () => {
 			></TestWrapper>
 		);
 		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
-		fireEvent.click( await screen.findByText( activePayButtonText ) );
+		await userEvent.click( await screen.findByText( activePayButtonText ) );
 		await waitFor( () => {
 			expect( processorFunction ).not.toHaveBeenCalled();
 		} );
