@@ -142,7 +142,6 @@
 			text-align: left;
 			flex-grow: 1;
 			margin: 0 !important;
-			padding-bottom: 10px;
 			// line-height: 24px;
 
 			@include breakpoint-deprecated( '<960px' ) {
@@ -150,6 +149,7 @@
 				font-weight: normal;
 				width: 100%;
 				text-align: center;
+				padding-bottom: 10px;
 			}
 		}
 	}
