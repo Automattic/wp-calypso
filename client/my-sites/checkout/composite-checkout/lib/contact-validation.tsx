@@ -42,22 +42,16 @@ const getEmailTakenLoginRedirectMessage = (
 	reduxDispatch: CalypsoDispatch,
 	translate: ReturnType< typeof useTranslate >
 ) => {
-	let redirectTo = '/checkout/no-site?cart=no-user';
+	const { href, pathname } = window.location;
+	const isJetpackCheckout = pathname.includes( '/checkout/jetpack' );
 
-	try {
-		const { href, pathname } = window.location;
-		const isJetpackCheckout = pathname.includes( '/checkout/jetpack' );
-
-		// Users with a WP.com account should return to the checkout page
-		// once they are logged in to complete the process. The flow for them is
-		// checkout -> login -> checkout.
-		const currentURLQueryParameters = Object.fromEntries( new URL( href ).searchParams.entries() );
-		redirectTo = isJetpackCheckout
-			? addQueryArgs( { ...currentURLQueryParameters, flow: 'coming_from_login' }, pathname )
-			: '/checkout/no-site?cart=no-user';
-	} catch ( error ) {
-		// If window is not accessible, we should continue anyway.
-	}
+	// Users with a WP.com account should return to the checkout page
+	// once they are logged in to complete the process. The flow for them is
+	// checkout -> login -> checkout.
+	const currentURLQueryParameters = Object.fromEntries( new URL( href ).searchParams.entries() );
+	const redirectTo = isJetpackCheckout
+		? addQueryArgs( { ...currentURLQueryParameters, flow: 'coming_from_login' }, pathname )
+		: '/checkout/no-site?cart=no-user';
 
 	const loginUrl = login( { redirectTo, emailAddress } );
 
