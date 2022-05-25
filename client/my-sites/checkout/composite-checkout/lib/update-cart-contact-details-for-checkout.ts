@@ -17,7 +17,7 @@ export function updateCartContactDetailsForCheckout(
 			: false;
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	if ( ! activePaymentMethodId || ! contactInfo || areCountriesLoaded ) {
+	if ( ! activePaymentMethodId || ! contactInfo || ! areCountriesLoaded ) {
 		return;
 	}
 
