@@ -187,7 +187,7 @@ describe( '<EligibilityWarnings>', () => {
 
 		expect( continueButton ).toBeDisabled();
 
-		userEvent.click( continueButton );
+		await userEvent.click( continueButton );
 		expect( handleProceed ).not.toHaveBeenCalled();
 	} );
 } );
