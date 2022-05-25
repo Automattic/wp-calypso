@@ -81,7 +81,7 @@ describe( 'selected items', () => {
 		expect( selected ).toHaveTextContent( 'Drafts' );
 
 		const btn = screen.getByRole( 'button' );
-		expect( btn.firstChild.textContent ).toBe( 'Drafts' );
+		expect( btn.firstChild ).toHaveTextContent( 'Drafts' );
 	} );
 
 	test( "should return `undefined`, when there aren't options", () => {
@@ -91,7 +91,7 @@ describe( 'selected items', () => {
 		expect( selected ).toBeNull();
 
 		const btn = screen.getByRole( 'button' );
-		expect( btn.firstChild.textContent ).toBe( '' );
+		expect( btn.firstChild ).toHaveTextContent( '' );
 	} );
 
 	test( "should return the first not-label option, when there isn't a preselected value", () => {
@@ -101,14 +101,14 @@ describe( 'selected items', () => {
 		expect( selected ).toHaveTextContent( 'Published' );
 
 		const btn = screen.getByRole( 'button' );
-		expect( btn.firstChild.textContent ).toBe( 'Published' );
+		expect( btn.firstChild ).toHaveTextContent( 'Published' );
 	} );
 
 	test( 'should return the initially selected text (if any)', () => {
 		renderDropdown( { selectedText: 'Drafts' } );
 
 		const btn = screen.getByRole( 'button' );
-		expect( btn.firstChild.textContent ).toEqual( 'Drafts' );
+		expect( btn.firstChild ).toHaveTextContent( 'Drafts' );
 	} );
 } );
 

@@ -17,7 +17,7 @@ describe( 'item', () => {
 			render( <SelectDropdownItem>Published</SelectDropdownItem> );
 			const item = screen.getByRole( 'listitem' );
 			const link = screen.getByRole( 'menuitem', { name: /published/i } );
-			expect( item.firstChild.textContent ).toBe( 'Published' );
+			expect( item.firstChild ).toHaveTextContent( 'Published' );
 			expect( item.firstChild ).toBe( link );
 		} );
 	} );
