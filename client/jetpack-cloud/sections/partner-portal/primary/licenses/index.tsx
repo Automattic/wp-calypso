@@ -1,10 +1,11 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import SiteWelcomeBanner from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-welcome-banner';
 import LicenseList from 'calypso/jetpack-cloud/sections/partner-portal/license-list';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import LicenseStateFilter from 'calypso/jetpack-cloud/sections/partner-portal/license-state-filter';
@@ -16,6 +17,7 @@ import {
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { showAgencyDashboard } from 'calypso/state/partner-portal/partner/selectors';
 import './style.scss';
 
 interface Props {
@@ -35,6 +37,7 @@ export default function Licenses( {
 }: Props ): ReactElement {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const isAgencyUser = useSelector( showAgencyDashboard );
 
 	const context = {
 		filter,
@@ -52,7 +55,7 @@ export default function Licenses( {
 		<Main wideLayout className="licenses">
 			<DocumentHead title={ translate( 'Licenses' ) } />
 			<SidebarNavigation />
-
+			{ isAgencyUser && <SiteWelcomeBanner bannerKey="licenses-page" /> }
 			<div className="licenses__header">
 				<CardHeading size={ 36 }>{ translate( 'Licenses' ) }</CardHeading>
 

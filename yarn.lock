@@ -432,6 +432,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/format-currency": "workspace:^"
+    "@automattic/happychat-connection": "workspace:^"
     "@types/validator": ^13.7.1
     "@wordpress/api-fetch": ^6.4.0
     "@wordpress/data-controls": ^2.7.0
@@ -631,6 +632,25 @@ __metadata:
     webpack-dev-server: ^4.7.3
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
+  languageName: unknown
+  linkType: soft
+
+"@automattic/happychat-connection@workspace:^, @automattic/happychat-connection@workspace:packages/happychat-connection":
+  version: 0.0.0-use.local
+  resolution: "@automattic/happychat-connection@workspace:packages/happychat-connection"
+  dependencies:
+    "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    debug: 4.3.3
+    i18n-calypso: "workspace:^"
+    react: ^17.0.2
+    react-query: ^3.32.1
+    socket.io-client: 2.3.0
+    typescript: ^4.5.5
+    wpcom-proxy-request: "workspace:^"
+  peerDependencies:
+    react: ^17.0.2
   languageName: unknown
   linkType: soft
 
@@ -1251,6 +1271,7 @@ __metadata:
   resolution: "@automattic/social-previews@workspace:packages/social-previews"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@emotion/react": ^11.4.1
     "@wordpress/components": ^19.9.0
     "@wordpress/i18n": ^4.7.0
     classnames: ^2.3.1
@@ -1537,6 +1558,7 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
     "@automattic/format-currency": "workspace:^"
+    "@automattic/happychat-connection": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/launch": "workspace:^"
@@ -12498,6 +12520,7 @@ __metadata:
     "@automattic/explat-client": "workspace:^"
     "@automattic/explat-client-react-helpers": "workspace:^"
     "@automattic/format-currency": "workspace:^"
+    "@automattic/happychat-connection": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/isolated-block-editor": ^2.8.1
     "@automattic/js-utils": "workspace:^"
@@ -32218,7 +32241,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"socket.io-client@npm:^2.3.0":
+"socket.io-client@npm:2.3.0, socket.io-client@npm:^2.3.0":
   version: 2.3.0
   resolution: "socket.io-client@npm:2.3.0"
   dependencies:
@@ -36162,6 +36185,7 @@ swiper@4.5.1:
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/eslint-plugin-json": "workspace:^"
+    "@automattic/happychat-connection": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"

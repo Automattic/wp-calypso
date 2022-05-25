@@ -138,7 +138,7 @@ export const siteSetupFlow: Flow = {
 					if ( storeType === 'power' ) {
 						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
 
-						return exitFlow( `${ adminUrl }/wp-admin/admin.php?page=wc-admin` );
+						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 
 					if ( FSEActive && intent !== 'write' ) {

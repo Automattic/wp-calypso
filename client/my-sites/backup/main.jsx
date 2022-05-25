@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { ExternalLink } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -7,9 +8,9 @@ import { useSelector } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import BackupStorageSpace from 'calypso/components/backup-storage-space';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
@@ -22,9 +23,11 @@ import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
-import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
+import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import BackupDatePicker from './backup-date-picker';
 import EnableRestoresBanner from './enable-restores-banner';
@@ -128,7 +131,7 @@ const AdminContent = ( { selectedDate } ) => {
 
 	return (
 		<>
-			<QueryRewindCapabilities siteId={ siteId } />
+			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			<QueryRewindPolicies
 				siteId={ siteId } /* The policies inform the max visible limit for backups */
 			/>
@@ -157,14 +160,15 @@ const AdminContent = ( { selectedDate } ) => {
 };
 
 const BackupStatus = ( { selectedDate } ) => {
-	const siteId = useSelector( getSelectedSiteId );
-	const rewindCapabilities = useSelector( ( state ) => getRewindCapabilities( state, siteId ) );
+	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
+	const hasRealtimeBackups = useSelectedSiteSelector(
+		siteHasFeature,
+		WPCOM_FEATURES_REAL_TIME_BACKUPS
+	);
 
-	if ( ! Array.isArray( rewindCapabilities ) ) {
+	if ( isFetchingSiteFeatures ) {
 		return <BackupPlaceholder showDatePicker={ false } />;
 	}
-
-	const hasRealtimeBackups = rewindCapabilities.includes( 'backup-realtime' );
 
 	return hasRealtimeBackups ? (
 		<RealtimeStatus selectedDate={ selectedDate } />

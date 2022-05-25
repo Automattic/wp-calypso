@@ -1,25 +1,10 @@
 import debugFactory from 'debug';
 import IO from 'socket.io-client';
-import {
-	receiveAccept,
-	receiveConnect,
-	receiveDisconnect,
-	receiveError,
-	receiveInit,
-	receiveLocalizedSupport,
-	receiveMessage,
-	receiveMessageOptimistic,
-	receiveMessageUpdate,
-	receiveReconnecting,
-	receiveStatus,
-	receiveToken,
-	receiveUnauthorized,
-	requestTranscript,
-} from 'calypso/state/happychat/connection/actions';
+import type { Action, HappychatUser, ConnectionProps, HappychatAuth, Socket } from './types';
 
 const debug = debugFactory( 'calypso:happychat:connection' );
 
-const buildConnection = ( socket ) =>
+const buildConnection: ( socket: string | Socket ) => Socket = ( socket ) =>
 	typeof socket === 'string'
 		? new IO( socket, {
 				// force websocket connection since we no longer have sticky connections server side.
@@ -27,16 +12,40 @@ const buildConnection = ( socket ) =>
 		  } ) // If socket is an URL, connect to server.
 		: socket; // If socket is not an url, use it directly. Useful for testing.
 
-class Connection {
+//The second one is an identity function, used in 'use-happychat-available' hook
+export type Dispatch = ( ( arg: unknown ) => void ) | ( < T >( value: T ) => T );
+
+export class Connection {
+	receiveAccept?: ( accept: boolean ) => void;
+	receiveConnect?: () => void;
+	receiveDisconnect?: ( reason: string ) => void;
+	receiveError?: ( error: string ) => void;
+	receiveInit?: ( init: HappychatUser ) => void;
+	receiveLocalizedSupport?: ( accept: boolean ) => void;
+	receiveMessage?: ( message: string ) => void;
+	receiveMessageOptimistic?: ( message: string ) => void;
+	receiveMessageUpdate?: ( message: string ) => void;
+	receiveReconnecting?: () => void;
+	receiveStatus?: ( status: string ) => void;
+	receiveToken?: () => void;
+	receiveUnauthorized?: ( message: string ) => void;
+	requestTranscript?: () => void;
+	dispatch?: Dispatch;
+	openSocket?: Promise< Socket >;
+
+	constructor( props: ConnectionProps = {} ) {
+		Object.assign( this, props );
+	}
+
 	/**
 	 * Init the SockeIO connection: check user authorization and bind socket events
 	 *
-	 * @param  { Function } dispatch Redux dispatch function
-	 * @param  { Promise } auth Authentication promise, will return the user info upon fulfillment
-	 * @returns { Promise } Fulfilled (returns the opened socket)
+	 * @param dispatch Redux dispatch function
+	 * @param auth Authentication promise, will return the user info upon fulfillment
+	 * @returns Fulfilled (returns the opened socket)
 	 *                   	 or rejected (returns an error message)
 	 */
-	init( dispatch, auth ) {
+	init( dispatch: Dispatch, auth: Promise< HappychatAuth > ) {
 		if ( this.openSocket ) {
 			debug( 'socket is already connected' );
 			return this.openSocket;
@@ -47,33 +56,45 @@ class Connection {
 			auth
 				.then( ( { url, user: { signer_user_id, jwt, locale, groups, skills, geoLocation } } ) => {
 					const socket = buildConnection( url );
-
 					socket
-						.once( 'connect', () => dispatch( receiveConnect() ) )
-						.on( 'token', ( handler ) => {
-							dispatch( receiveToken() );
-							handler( { signer_user_id, jwt, locale, groups, skills } );
-						} )
+						.once( 'connect', () => dispatch( this.receiveConnect?.() ) )
+						.on(
+							'token',
+							( handler: ( happychatUser: HappychatUser & { jwt: string } ) => void ) => {
+								dispatch( this.receiveToken?.() );
+								handler( { signer_user_id, jwt, locale, groups, skills } );
+							}
+						)
 						.on( 'init', () => {
-							dispatch( receiveInit( { signer_user_id, locale, groups, skills, geoLocation } ) );
-							dispatch( requestTranscript() );
+							dispatch(
+								this.receiveInit?.( { signer_user_id, locale, groups, skills, geoLocation } )
+							);
+							dispatch( this.requestTranscript?.() );
 							resolve( socket );
 						} )
 						.on( 'unauthorized', () => {
 							socket.close();
-							dispatch( receiveUnauthorized( 'User is not authorized' ) );
+							dispatch( this.receiveUnauthorized?.( 'User is not authorized' ) );
 							reject( 'user is not authorized' );
 						} )
-						.on( 'disconnect', ( reason ) => dispatch( receiveDisconnect( reason ) ) )
-						.on( 'reconnecting', () => dispatch( receiveReconnecting() ) )
-						.on( 'status', ( status ) => dispatch( receiveStatus( status ) ) )
-						.on( 'accept', ( accept ) => dispatch( receiveAccept( accept ) ) )
-						.on( 'localized-support', ( accept ) => dispatch( receiveLocalizedSupport( accept ) ) )
-						.on( 'message', ( message ) => dispatch( receiveMessage( message ) ) )
-						.on( 'message.optimistic', ( message ) =>
-							dispatch( receiveMessageOptimistic( message ) )
+						.on( 'disconnect', ( reason: string ) =>
+							dispatch( this.receiveDisconnect?.( reason ) )
 						)
-						.on( 'message.update', ( message ) => dispatch( receiveMessageUpdate( message ) ) )
+						.on( 'reconnecting', () => dispatch( this.receiveReconnecting?.() ) )
+						.on( 'status', ( status: string ) => dispatch( this.receiveStatus?.( status ) ) )
+						.on( 'accept', ( accept: boolean ) => {
+							dispatch( this.receiveAccept?.( accept ) );
+						} )
+						.on( 'localized-support', ( accept: boolean ) =>
+							dispatch( this.receiveLocalizedSupport?.( accept ) )
+						)
+						.on( 'message', ( message: string ) => dispatch( this.receiveMessage?.( message ) ) )
+						.on( 'message.optimistic', ( message: string ) =>
+							dispatch( this.receiveMessageOptimistic?.( message ) )
+						)
+						.on( 'message.update', ( message: string ) =>
+							dispatch( this.receiveMessageUpdate?.( message ) )
+						)
 						.on( 'reconnect_attempt', () => {
 							socket.io.opts.transports = [ 'polling', 'websocket' ];
 						} );
@@ -96,14 +117,15 @@ class Connection {
 	 * @returns { Promise } Fulfilled (returns nothing)
 	 *                     or rejected (returns an error message)
 	 */
-	send( action ) {
+	send( action: Action ) {
 		if ( ! this.openSocket ) {
 			return;
 		}
+
 		return this.openSocket.then(
-			( socket ) => socket.emit( action.event, action.payload ),
-			( e ) => {
-				this.dispatch( receiveError( 'failed to send ' + action.event + ': ' + e ) );
+			( socket: Socket ) => socket.emit( action.event, action.payload ),
+			( e: Error ) => {
+				this.dispatch?.( this.receiveError?.( 'failed to send ' + action.event + ': ' + e ) );
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
 			}
@@ -130,16 +152,16 @@ class Connection {
 	 * @returns { Promise } Fulfilled (returns the transcript response)
 	 *                     or rejected (returns an error message)
 	 */
-	request( action, timeout ) {
+	request( action: Action, timeout: number ) {
 		if ( ! this.openSocket ) {
 			return;
 		}
 
 		return this.openSocket.then(
-			( socket ) => {
+			( socket: Socket ) => {
 				const promiseRace = Promise.race( [
 					new Promise( ( resolve, reject ) => {
-						socket.emit( action.event, action.payload, ( e, result ) => {
+						socket.emit( action.event, action.payload, ( e: string, result: unknown ) => {
 							if ( e ) {
 								return reject( new Error( e ) ); // request failed
 							}
@@ -155,18 +177,20 @@ class Connection {
 
 				// dispatch the request state upon promise race resolution
 				promiseRace.then(
-					( result ) => this.dispatch( action.callback( result ) ),
-					( e ) => {
+					( result ) => this.dispatch?.( action.callback?.( result ) ),
+					( e: Error ) => {
 						if ( e.message !== 'timeout' ) {
-							this.dispatch( receiveError( action.event + ' request failed: ' + e.message ) );
+							this.dispatch?.(
+								this.receiveError?.( action.event + ' request failed: ' + e.message )
+							);
 						}
 					}
 				);
 
 				return promiseRace;
 			},
-			( e ) => {
-				this.dispatch( receiveError( 'failed to send ' + action.event + ': ' + e ) );
+			( e: Error ) => {
+				this.dispatch?.( this.receiveError?.( 'failed to send ' + action.event + ': ' + e ) );
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
 			}
@@ -174,4 +198,4 @@ class Connection {
 	}
 }
 
-export default () => new Connection();
+export default ( connectionProps: ConnectionProps ) => new Connection( connectionProps );

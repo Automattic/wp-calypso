@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, FormInputValidation } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, omit } from 'lodash';
 import { Component } from 'react';
@@ -7,7 +7,6 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormInput from 'calypso/components/forms/form-text-input-with-affixes';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import SupportInfo from 'calypso/components/support-info';

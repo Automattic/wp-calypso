@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { ReactChild, useMemo } from 'react';
 import { useCountries } from 'calypso/landing/stepper/hooks/use-countries';
 
 /**
@@ -40,6 +40,12 @@ const stripeSupportedStateCountries = [
 	'UY',
 	'VE',
 ];
+
+export interface Option {
+	value: string;
+	label: ReactChild;
+	isLabel: boolean;
+}
 
 export function useCountriesAndStates() {
 	const { data: countriesList } = useCountries();
@@ -99,7 +105,7 @@ export function useCountriesAndStates() {
 		} );
 
 		return {
-			countryOptions: countries,
+			countryOptions: countries as Option[],
 			stateOptionsMap: stateOptions,
 		};
 	}, [ countriesList ] );

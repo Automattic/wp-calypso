@@ -4,7 +4,7 @@ import {
 	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_GOOGLE_ANALYTICS,
 } from '@automattic/calypso-products';
-import { CompactCard } from '@automattic/components';
+import { CompactCard, FormInputValidation as FormTextValidation } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { pick } from 'lodash';
 import { useState, useEffect } from 'react';
@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormTextValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';

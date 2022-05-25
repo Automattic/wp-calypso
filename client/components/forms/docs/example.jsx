@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { Card } from '@automattic/components';
+import { Card, FormInputValidation } from '@automattic/components';
 import { CURRENCIES } from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
 import PropTypes from 'prop-types';
@@ -13,7 +13,6 @@ import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';

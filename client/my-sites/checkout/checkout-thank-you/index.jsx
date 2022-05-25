@@ -1,6 +1,10 @@
 import {
+	isBlogger,
+	isBusiness,
 	isChargeback,
+	isCredits,
 	isDelayedDomainTransfer,
+	isDIFMProduct,
 	isDomainMapping,
 	isDomainProduct,
 	isDomainRedemption,
@@ -9,20 +13,17 @@ import {
 	isEcommerce,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
-	isJetpackPlan,
-	isPlan,
-	isBlogger,
-	isPersonal,
-	isPremium,
-	isBusiness,
-	isSiteRedirect,
-	isTheme,
-	isStarter,
-	isTitanMail,
 	isJetpackBusinessPlan,
-	shouldFetchSitePlans,
-	isDIFMProduct,
+	isJetpackPlan,
+	isPersonal,
+	isPlan,
+	isPremium,
 	isPro,
+	isSiteRedirect,
+	isStarter,
+	isTheme,
+	isTitanMail,
+	shouldFetchSitePlans,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -388,7 +389,7 @@ export class CheckoutThankYou extends Component {
 		let wasTitanEmailProduct = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
-			purchases = getPurchases( this.props );
+			purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
 
 			wasGSuiteOrGoogleWorkspace = purchases.some( isGSuiteOrGoogleWorkspace );
 			wasTitanEmailProduct = purchases.some( isTitanMail );

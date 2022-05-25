@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { Button, Popover } from '@automattic/components';
+import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
 	useHas3PC,
 	useSubmitTicketMutation,
@@ -36,7 +36,12 @@ const fakeFaces = Array.from(
 );
 const randomTwoFaces = fakeFaces.sort( () => Math.random() - 0.5 ).slice( 0, 2 );
 
-const HelpCenterSitePicker: React.FC< SitePicker > = ( { onSelect, currentSite, siteId } ) => {
+const HelpCenterSitePicker: React.FC< SitePicker > = ( {
+	onSelect,
+	currentSite,
+	siteId,
+	enabled,
+} ) => {
 	const otherSite = {
 		name: __( 'Other site', __i18n_text_domain__ ),
 		ID: 0,
@@ -50,7 +55,14 @@ const HelpCenterSitePicker: React.FC< SitePicker > = ( { onSelect, currentSite, 
 
 	const options = [ currentSite, otherSite ];
 
-	return <SitePickerDropDown onPickSite={ pickSite } options={ options } siteId={ siteId } />;
+	return (
+		<SitePickerDropDown
+			enabled={ enabled }
+			onPickSite={ pickSite }
+			options={ options }
+			siteId={ siteId }
+		/>
+	);
 };
 
 const titles: {
@@ -123,6 +135,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 	const [ contactSuccess, setContactSuccess ] = useState( false );
 	const [ forumTopicUrl, setForumTopicUrl ] = useState( '' );
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
+	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 	const locale = useLocale();
 	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
 	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
@@ -234,10 +247,14 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 						locale,
 						client: 'browser:help-center',
 						is_chat_overflow: false,
-					} ).then( () => {
-						setContactSuccess( true );
-						resetStore();
-					} );
+					} )
+						.then( () => {
+							setContactSuccess( true );
+							resetStore();
+						} )
+						.catch( () => {
+							setHasSubmittingError( true );
+						} );
 				}
 				break;
 			}
@@ -249,10 +266,14 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					locale,
 					hideInfo: hideSiteInfo,
 					userDeclaredSiteUrl,
-				} ).then( ( response ) => {
-					setForumTopicUrl( response.topic_URL );
-					resetStore();
-				} );
+				} )
+					.then( ( response ) => {
+						setForumTopicUrl( response.topic_URL );
+						resetStore();
+					} )
+					.catch( () => {
+						setHasSubmittingError( true );
+					} );
 				break;
 			}
 		}
@@ -294,7 +315,18 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 	};
 
 	const isCTADisabled = () => {
-		return isLoading || ( mode !== 'FORUM' && ! supportSite ) || ! message;
+		if ( isLoading || ! message ) {
+			return true;
+		}
+
+		switch ( mode ) {
+			case 'CHAT':
+				return ! supportSite;
+			case 'EMAIL':
+				return ! supportSite || ! subject;
+			case 'FORUM':
+				return ! subject;
+		}
 	};
 
 	return (
@@ -309,8 +341,10 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					{ formTitles.formDisclaimer }
 				</p>
 			) }
+
 			<section>
 				<HelpCenterSitePicker
+					enabled={ mode === 'FORUM' }
 					currentSite={ currentSite }
 					onSelect={ ( id: string | number ) => {
 						if ( id !== 0 ) {
@@ -321,6 +355,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
 				/>
 			</section>
+
 			{ sitePickerChoice === 'OTHER_SITE' && (
 				<>
 					<section>
@@ -343,6 +378,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 			{ [ 'FORUM', 'EMAIL' ].includes( mode ) && (
 				<section>
 					<TextControl
+						className="help-center-contact-form__subject"
 						label={ __( 'Subject', __i18n_text_domain__ ) }
 						value={ subject ?? '' }
 						onChange={ setSubject }
@@ -378,6 +414,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					</div>
 				</section>
 			) }
+
 			<section>
 				<Button
 					disabled={ isCTADisabled() }
@@ -387,6 +424,12 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 				>
 					{ isSubmitting ? formTitles.buttonLoadingLabel : formTitles.buttonLabel }
 				</Button>
+				{ hasSubmittingError && (
+					<FormInputValidation
+						isError
+						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
+					/>
+				) }
 			</section>
 			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && (
 				<section>

@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import SupportInfo from '../';
 
 describe( 'SupportInfo', () => {
@@ -12,10 +13,10 @@ describe( 'SupportInfo', () => {
 		privacyLink: 'https://foo.com/privacy/',
 	};
 
-	test( 'should have a proper "Learn more" link', () => {
+	test( 'should have a proper "Learn more" link', async () => {
 		render( <SupportInfo { ...testProps } /> );
 
-		fireEvent.click( screen.getByRole( 'button' ) );
+		await userEvent.click( screen.getByRole( 'button' ) );
 
 		const link = screen.getByRole( 'link', { name: /learn more/i } );
 
@@ -23,10 +24,10 @@ describe( 'SupportInfo', () => {
 		expect( link ).toHaveAttribute( 'href', testProps.link );
 	} );
 
-	it( 'should have a proper "Privacy Information" link', () => {
+	it( 'should have a proper "Privacy Information" link', async () => {
 		render( <SupportInfo { ...testProps } /> );
 
-		fireEvent.click( screen.getByRole( 'button' ) );
+		await userEvent.click( screen.getByRole( 'button' ) );
 
 		const link = screen.getByRole( 'link', { name: /privacy information/i } );
 

@@ -51,18 +51,16 @@
 	-moz-osx-font-smoothing: grayscale;
 	font-size: $font-title-medium;
 	font-weight: 600;
-	line-height: 34px;
+	line-height: 32px;
 	margin: 56px 0 0;
 	max-width: 750px;
 
 	@include breakpoint-deprecated( '>960px' ) {
 		font-size: $font-headline-small;
-		line-height: 46px;
 	}
 
 	@include breakpoint-deprecated( '480px-960px' ) {
 		font-size: $font-title-large;
-		line-height: 40px;
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {

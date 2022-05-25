@@ -22,11 +22,11 @@ import isHappychatServerReachable from 'calypso/state/happychat/selectors/is-hap
 import { setCurrentMessage } from 'calypso/state/happychat/ui/actions';
 import './happychat.scss';
 
-function getMessagesOlderThan( timestamp, messages ) {
+function getReceivedMessagesOlderThan( timestamp, messages ) {
 	if ( ! timestamp ) {
 		return [];
 	}
-	return messages.filter( ( m ) => m.timestamp >= timestamp );
+	return messages.filter( ( m ) => m.timestamp >= timestamp && m.source !== 'customer' );
 }
 
 function ParentConnection( { chatStatus, timeline } ) {
@@ -142,7 +142,7 @@ function ParentConnection( { chatStatus, timeline } ) {
 	}, [] );
 
 	useEffect( () => {
-		const unreadMessageCount = getMessagesOlderThan( blurredAt, timeline ).length;
+		const unreadMessageCount = getReceivedMessagesOlderThan( blurredAt, timeline ).length;
 		( window.opener || window.parent )?.postMessage(
 			{
 				type: 'calypso-happy-chat-unread-messages',

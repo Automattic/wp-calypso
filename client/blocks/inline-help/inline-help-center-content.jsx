@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSupportAvailability } from '@automattic/data-stores';
+import { useHappychatAuth } from '@automattic/happychat-connection';
 import { HelpCenterContext } from '@automattic/help-center';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Icon, page as pageIcon } from '@wordpress/icons';
@@ -29,6 +30,7 @@ const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) =>
 	// prefetch the values
 	useSupportAvailability( 'CHAT' );
 	useSupportAvailability( 'EMAIL' );
+	useHappychatAuth();
 
 	const openSecondaryView = ( secondaryViewKey ) => {
 		recordTracksEvent( `calypso_inlinehelp_${ secondaryViewKey }_show`, {
@@ -50,7 +52,7 @@ const InlineHelpCenterContent = ( { setContactFormOpen, openInContactPage } ) =>
 		} else if ( activeSecondaryView === VIEW_RICH_RESULT ) {
 			setHeaderText(
 				<div className="inline-help__rich-result-header">
-					<Icon icon={ pageIcon } />
+					<Icon size="20" icon={ pageIcon } />
 					{ selectedArticle?.title }
 				</div>
 			);

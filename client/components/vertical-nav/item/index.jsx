@@ -53,7 +53,7 @@ class VerticalNavItem extends Component {
 			return this.renderPlaceholder();
 		}
 
-		const compactCardClassNames = classNames( 'vertical-nav-item', className );
+		const compactCardClassNames = classNames( 'vertical-nav-item', className, { disabled } );
 
 		const linkProps = external ? { target: '_blank', rel: 'noreferrer' } : {};
 

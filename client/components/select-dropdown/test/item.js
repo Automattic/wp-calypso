@@ -1,47 +1,49 @@
 /**
  * @jest-environment jsdom
  */
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import SelectDropdownItem from '../item';
 
 describe( 'item', () => {
 	describe( 'component rendering', () => {
 		test( 'should render a list entry', () => {
-			const dropdownItem = shallow( <SelectDropdownItem>Published</SelectDropdownItem> );
-			expect( dropdownItem.is( 'li.select-dropdown__option' ) ).toBe( true );
+			render( <SelectDropdownItem>Published</SelectDropdownItem> );
+			const item = screen.queryByRole( 'listitem' );
+			expect( item ).toBeInTheDocument();
 		} );
 
 		test( 'should contain a link', () => {
-			const dropdownItem = shallow( <SelectDropdownItem>Published</SelectDropdownItem> );
-			expect( dropdownItem.children( 'a.select-dropdown__item' ).length ).toEqual( 1 );
-			expect( dropdownItem.find( 'span.select-dropdown__item-text' ).text() ).toEqual(
-				'Published'
-			);
+			render( <SelectDropdownItem>Published</SelectDropdownItem> );
+			const item = screen.getByRole( 'listitem' );
+			const link = screen.getByRole( 'menuitem', { name: /published/i } );
+			expect( item.firstChild ).toHaveTextContent( 'Published' );
+			expect( item.firstChild ).toBe( link );
 		} );
 	} );
 
 	describe( 'when the component is clicked', () => {
-		test( 'should do nothing when is disabled', () => {
+		test( 'should do nothing when is disabled', async () => {
 			const onClickSpy = jest.fn();
-			const dropdownItem = shallow(
+			render(
 				<SelectDropdownItem disabled={ true } onClick={ onClickSpy }>
 					Published
 				</SelectDropdownItem>
 			);
 
-			const link = dropdownItem.children( 'a.select-dropdown__item' );
-			expect( link.hasClass( 'is-disabled' ) ).toBe( true );
+			const link = screen.getByRole( 'menuitem', { name: /published/i } );
+			await userEvent.click( link );
 
-			link.simulate( 'click' );
 			expect( onClickSpy ).not.toHaveBeenCalled();
 		} );
 
-		test( 'should run the `onClick` hook', () => {
+		test( 'should run the `onClick` hook', async () => {
 			const onClickSpy = jest.fn();
-			const dropdownItem = shallow(
-				<SelectDropdownItem onClick={ onClickSpy }>Published</SelectDropdownItem>
-			);
-			dropdownItem.children( 'a.select-dropdown__item' ).simulate( 'click' );
+			render( <SelectDropdownItem onClick={ onClickSpy }>Published</SelectDropdownItem> );
+
+			const link = screen.getByRole( 'menuitem', { name: /published/i } );
+			await userEvent.click( link );
+
 			expect( onClickSpy ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );

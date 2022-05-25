@@ -1,4 +1,4 @@
-import { PLAN_WPCOM_PRO, FEATURE_SFTP, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
+import { PLAN_WPCOM_PRO, FEATURE_SFTP } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
@@ -20,7 +20,6 @@ import {
 	getAutomatedTransferStatus,
 	isAutomatedTransferActive,
 } from 'calypso/state/automated-transfer/selectors';
-import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -54,9 +53,8 @@ class Hosting extends Component {
 
 	render() {
 		const {
-			canViewAtomicHosting,
 			clickActivate,
-			hasAtomicFeature,
+			hasSftpFeature,
 			isDisabled,
 			isTransferring,
 			requestSiteById,
@@ -65,10 +63,6 @@ class Hosting extends Component {
 			translate,
 			transferState,
 		} = this.props;
-
-		if ( ! canViewAtomicHosting ) {
-			return null;
-		}
 
 		const getUpgradeBanner = () => (
 			<UpsellNudge
@@ -182,7 +176,7 @@ class Hosting extends Component {
 					) }
 					align="left"
 				/>
-				{ hasAtomicFeature ? getAtomicActivationNotice() : getUpgradeBanner() }
+				{ hasSftpFeature ? getAtomicActivationNotice() : getUpgradeBanner() }
 				{ getContent() }
 			</Main>
 		);
@@ -195,14 +189,13 @@ export const clickActivate = () =>
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const hasAtomicFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
+		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 
 		return {
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
-			isDisabled: ! hasAtomicFeature || ! isSiteAutomatedTransfer( state, siteId ),
-			hasAtomicFeature,
-			canViewAtomicHosting: canSiteViewAtomicHosting( state ),
+			isDisabled: ! hasSftpFeature || ! isSiteAutomatedTransfer( state, siteId ),
+			hasSftpFeature,
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
 		};

@@ -7,24 +7,20 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
-import { useCountriesAndStates } from './hooks/use-countries-and-states';
+import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 import './style.scss';
 
-function getCountry( country: string, options: object[] ): string {
+function getCountry( country: string, options: CountryOption[] ): string {
 	if ( options.length < 1 ) {
 		return country;
 	}
 
 	for ( let i = 0; i < options.length; i++ ) {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
 		if ( options[ i ].value === country ) {
 			return country;
 		}
 	}
 
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
 	return options[ 0 ].value;
 }
 

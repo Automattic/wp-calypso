@@ -28,8 +28,12 @@ import {
 	THEMES_REQUEST,
 	THEMES_REQUEST_SUCCESS,
 	THEMES_REQUEST_FAILURE,
+	THEMES_UPDATE,
+	THEMES_UPDATE_FAILURE,
+	THEMES_UPDATE_SUCCESS,
 } from 'calypso/state/themes/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
+import { ADMIN_MENU_REQUEST } from '../../action-types';
 import {
 	themeActivated,
 	clearActivated,
@@ -51,7 +55,9 @@ import {
 	requestThemeFilters,
 	getRecommendedThemes,
 	receiveRecommendedThemes,
+	updateThemes,
 } from '../actions';
+import { themesUpdated } from '../actions/theme-update';
 
 expect.extend( {
 	toMatchFunction( received, fn ) {
@@ -595,6 +601,92 @@ describe( 'actions', () => {
 			)( spy ).then( () => {
 				expect( spy ).toBeCalledWith( themeActivationFailure );
 			} );
+		} );
+	} );
+
+	describe( '#updateThemes()', () => {
+		const themes = [
+			{
+				id: 'storefront',
+				version: '4.1.0',
+			},
+			{
+				id: 'twentysixteen',
+				version: '5.3.0',
+			},
+		];
+
+		const successfulParameters = {
+			themes: [ 'storefront', 'twentysixteen' ],
+			action: 'update',
+			autoupdate: false,
+		};
+
+		const badParameters = { themes: [ 'unknown' ] };
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/2211667/themes', successfulParameters )
+				.reply( 200, { themes } )
+				.post( '/rest/v1.1/sites/2211667/themes', badParameters )
+				.reply( 404, {
+					error: 'unknown_theme',
+					message: 'The theme directory "unknown" does not exist.',
+				} );
+		} );
+
+		test( 'Theme update action should be triggered', () => {
+			updateThemes( [ 'storefront', 'twentysixteen' ], 2211667 )( spy );
+
+			expect( spy ).toBeCalledWith( {
+				type: THEMES_UPDATE,
+				siteId: 2211667,
+				themeSlugs: [ 'storefront', 'twentysixteen' ],
+			} );
+		} );
+
+		test( 'should dispatch theme updated success thunk when request completes', () => {
+			return updateThemes(
+				[ 'storefront', 'twentysixteen' ],
+				2211667
+			)( spy ).then( () => {
+				expect( spy.mock.calls[ 1 ][ 0 ].name ).toEqual( 'themeUpdatedThunk' );
+			} );
+		} );
+
+		test( 'should dispatch theme update failure action when request completes', () => {
+			const themeActivationFailure = {
+				siteId: 2211667,
+				themeSlugs: [ 'unknown' ],
+				type: THEMES_UPDATE_FAILURE,
+			};
+
+			return updateThemes(
+				[ 'unknown' ],
+				2211667
+			)( spy ).then( () => {
+				expect( spy ).toBeCalledWith( themeActivationFailure );
+			} );
+		} );
+
+		test( 'should update the badges in the UI by dispatching the actions', () => {
+			themesUpdated( 2211667, [ 'storefront', 'twentysixteen' ] )( spy );
+
+			expect( spy ).toBeCalledWith( {
+				type: THEMES_UPDATE_SUCCESS,
+				themeSlugs: [ 'storefront', 'twentysixteen' ],
+				siteId: 2211667,
+			} );
+
+			expect( spy ).toBeCalledWith( {
+				type: ADMIN_MENU_REQUEST,
+				siteId: 2211667,
+			} );
+
+			spy.mock.calls[ 2 ][ 0 ]( spy );
+
+			expect( spy.mock.calls[ 3 ][ 0 ].type ).toEqual( THEMES_REQUEST );
 		} );
 	} );
 

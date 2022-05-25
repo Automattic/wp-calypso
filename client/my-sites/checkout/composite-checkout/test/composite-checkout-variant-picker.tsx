@@ -3,7 +3,8 @@
  */
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
-import { render, fireEvent, screen, within, waitFor } from '@testing-library/react';
+import { render, screen, within, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -152,7 +153,7 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
 			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-			fireEvent.click( editOrderButton );
+			await userEvent.click( editOrderButton );
 
 			expect( screen.getByText( getVariantItemTextForInterval( expectedVariant ) ) ).toBeVisible();
 		}
@@ -258,7 +259,7 @@ describe( 'CompositeCheckout with a variant picker', () => {
 		const cartChanges = { products: [ domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
+		await userEvent.click( editOrderButton );
 
 		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
@@ -288,7 +289,7 @@ describe( 'CompositeCheckout with a variant picker', () => {
 		const cartChanges = { products: [ currentPlanRenewal ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
+		await userEvent.click( editOrderButton );
 
 		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();

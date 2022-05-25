@@ -12,6 +12,7 @@ import Tootlip from 'calypso/components/tooltip';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { updateThemes } from 'calypso/state/themes/actions/theme-update';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
 
@@ -33,6 +34,7 @@ export class Theme extends Component {
 			demo_uri: PropTypes.string,
 			stylesheet: PropTypes.string,
 			taxonomies: PropTypes.object,
+			update: PropTypes.object,
 		} ),
 		// If true, highlight this theme as active
 		active: PropTypes.bool,
@@ -69,6 +71,10 @@ export class Theme extends Component {
 			PropTypes.func,
 			PropTypes.shape( { current: PropTypes.any } ),
 		] ),
+		siteId: PropTypes.number,
+		isUpdating: PropTypes.bool,
+		isUpdated: PropTypes.bool,
+		errorOnUpdate: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -161,6 +167,72 @@ export class Theme extends Component {
 		this.props.setThemesBookmark( this.props.theme.id );
 	};
 
+	updateTheme = () => {
+		this.props.updateThemes( [ this.props.theme.id ], this.props.siteId );
+	};
+
+	renderUpdateAlert = () => {
+		const { isUpdated, isUpdating, errorOnUpdate, theme, translate } = this.props;
+
+		if ( ! theme.update && ! isUpdated && ! isUpdating && ! errorOnUpdate ) {
+			return;
+		}
+
+		let content;
+		let alertType;
+
+		if ( errorOnUpdate ) {
+			alertType = 'danger';
+			content = (
+				<div>
+					<span>
+						<Gridicon icon="cross" size={ 18 } />
+						{ translate( 'Failed to update Theme.' ) }
+					</span>
+				</div>
+			);
+		} else if ( isUpdated ) {
+			alertType = 'success';
+			content = (
+				<div>
+					<span>
+						<Gridicon icon="checkmark" size={ 18 } />
+						{ translate( 'Theme updated!' ) }
+					</span>
+				</div>
+			);
+		} else if ( isUpdating ) {
+			alertType = 'info';
+			content = (
+				<div>
+					<span>
+						<Gridicon className="theme__updating-animated" icon="refresh" size={ 18 } />
+						{ translate( 'Updating theme.' ) }
+					</span>
+				</div>
+			);
+		} else if ( theme.update ) {
+			alertType = 'warning';
+			content = (
+				<div>
+					<span>
+						<Gridicon icon="refresh" size={ 18 } />
+						{ translate( 'New version available.' ) }
+					</span>
+					<Button onClick={ this.updateTheme } primary className="theme__button-link" borderless>
+						{ translate( 'Update now' ) }
+					</Button>
+				</div>
+			);
+		}
+
+		return (
+			<div className="theme__update-alert">
+				<div className={ `${ alertType } theme__update-alert-content` }>{ content }</div>
+			</div>
+		);
+	};
+
 	render() {
 		const { active, price, theme, translate, upsellUrl } = this.props;
 		const { name, description, screenshot } = theme;
@@ -250,6 +322,7 @@ export class Theme extends Component {
 					</Ribbon>
 				) }
 				<div ref={ this.themeThumbnailRef } className="theme__content" { ...bookmarkRef }>
+					{ this.renderUpdateAlert() }
 					<a
 						aria-label={ name }
 						className="theme__thumbnail"
@@ -315,4 +388,17 @@ export class Theme extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent, setThemesBookmark } )( localize( Theme ) );
+export default connect(
+	( state, { theme } ) => {
+		const {
+			themes: { themesUpdate },
+		} = state;
+		const { themesUpdateFailed, themesUpdating, themesUpdated } = themesUpdate;
+		return {
+			errorOnUpdate: themesUpdateFailed && themesUpdateFailed.indexOf( theme.id ) > -1,
+			isUpdating: themesUpdating && themesUpdating.indexOf( theme.id ) > -1,
+			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
+		};
+	},
+	{ recordTracksEvent, setThemesBookmark, updateThemes }
+)( localize( Theme ) );

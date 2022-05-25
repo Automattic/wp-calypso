@@ -36,6 +36,7 @@
 		"jetpack/backup-messaging-i3": true,
 		"jetpack/partner-portal-payment": true,
 		"jetpack/pricing-page": true,
+		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page-annual-only": true,
 		"jetpack/search-product": true,
 		"jetpack/server-credentials-advanced-flow": true,
