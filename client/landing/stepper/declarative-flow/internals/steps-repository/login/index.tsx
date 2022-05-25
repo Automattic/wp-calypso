@@ -1,9 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import config from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
-import { TextControl, Notice, ExternalLink } from '@wordpress/components';
+import { TextControl, ExternalLink } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -196,9 +196,7 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 					/>
 
 					{ errorMessage && (
-						<Notice className="login__error-notice" status="error" isDismissible={ false }>
-							{ errorMessage }
-						</Notice>
+						<FormInputValidation className="login__error-notice" isError text={ errorMessage } />
 					) }
 
 					<div className="login__footer">
