@@ -63,7 +63,6 @@ const GoalsStep: Step = function GoalsStep( { navigation } ) {
 					id={ 'goals-header' }
 					headerText={ headerText }
 					subHeaderText={ subHeaderText }
-					align={ 'center' }
 				/>
 			}
 			stepContent={ stepContent }
