@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSupportAvailability } from '@automattic/data-stores';
 import { useHappychatAuth } from '@automattic/happychat-connection';
-import { HelpCenterContext, execute as DirectlyRTM } from '@automattic/help-center';
+import { HelpCenterContext } from '@automattic/help-center';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useState, useEffect, useRef, useContext, useCallback } from '@wordpress/element';
 import { Icon, page as pageIcon } from '@wordpress/icons';
