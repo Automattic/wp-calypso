@@ -14,10 +14,10 @@ import { receivePartner } from 'calypso/state/partner-portal/partner/actions';
 import useUpdateCompanyDetailsMutation from 'calypso/state/partner-portal/partner/hooks/use-update-company-details';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import { APIError } from 'calypso/state/partner-portal/types';
-import { useCountriesAndStates } from './hooks/use-countries-and-states';
+import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 import './style.scss';
 
-function getCountry( country: string, options: object[] ): string {
+function getCountry( country: string, options: CountryOption[] ): string {
 	if ( options.length < 1 ) {
 		return country;
 	}
