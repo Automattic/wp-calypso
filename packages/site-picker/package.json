@@ -23,6 +23,8 @@
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"dependencies": {
+		"@automattic/components": "workspace:^",
+		"@automattic/onboarding": "workspace:^",
 		"@automattic/tour-kit": "workspace:^",
 		"@wordpress/dom": "^3.39.0",
 		"@wordpress/i18n": "^4.39.0",

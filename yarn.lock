@@ -1478,6 +1478,8 @@ __metadata:
   resolution: "@automattic/site-picker@workspace:packages/site-picker"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "workspace:^"
+    "@automattic/onboarding": "workspace:^"
     "@automattic/tour-kit": "workspace:^"
     "@testing-library/jest-dom": ^5.17.0
     "@testing-library/react": ^14.0.0
