@@ -1044,6 +1044,23 @@ export function excludeStepIfProfileComplete( stepName, defaultDependencies, nex
 	}
 }
 
+export async function excludeStepIfWorkspaceListEmpty( stepName, defaultDependencies, nextProps ) {
+	if ( includes( flows.excludedSteps, stepName ) ) {
+		return;
+	}
+
+	const workspaceList = await wpcom.req.get( {
+		path: '/p2/preapproved-joining/list-workspaces',
+		apiNamespace: 'wpcom/v2',
+	} );
+
+	if ( workspaceList.length < 1 ) {
+		debug( 'Skipping P2 join workspace step' );
+		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
+		flows.excludeStep( stepName );
+	}
+}
+
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { isPaidPlan, sitePlanSlug, submitSignupStep } = nextProps;
 	let fulfilledDependencies = [];

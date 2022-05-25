@@ -44,6 +44,7 @@ export function generateSteps( {
 	setDIFMLiteDesign = noop,
 	excludeStepIfEmailVerified = noop,
 	excludeStepIfProfileComplete = noop,
+	excludeStepIfWorkspaceListEmpty = noop,
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
@@ -621,6 +622,7 @@ export function generateSteps( {
 
 		'p2-join-workspace': {
 			stepName: 'p2-join-workspace',
+			fulfilledStepCallback: excludeStepIfWorkspaceListEmpty,
 		},
 
 		'plans-personal-monthly': {
