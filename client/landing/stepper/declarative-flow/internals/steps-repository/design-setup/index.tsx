@@ -46,7 +46,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const [ isForceStaticDesigns, setIsForceStaticDesigns ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
-	const { goBack, submit } = navigation;
+	const { goBack, submit, goToStep } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
 	const site = useSite();
@@ -168,7 +168,15 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	);
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
+
+	useEffect( () => {
+		if ( isAnchorSite && ! currentUser && ! newUser ) {
+			//Go to login
+			goToStep?.( 'login' );
+		}
+	}, [ currentUser, newUser ] );
 
 	function pickDesign(
 		_selectedDesign: Design | undefined = selectedDesign,
