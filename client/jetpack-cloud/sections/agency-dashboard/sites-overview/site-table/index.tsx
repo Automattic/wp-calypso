@@ -53,7 +53,7 @@ export default function SiteTable( { isFetching, columns, items }: Props ): Reac
 													className={ classNames( site.error && 'site-table__td-with-error' ) }
 													key={ `table-data-${ row.type }-${ blogId }` }
 												>
-													<SiteStatusContent rows={ item } type={ row.type } />
+													<SiteStatusContent rows={ item } type={ row.type } isLargeScreen />
 												</td>
 											);
 										}
