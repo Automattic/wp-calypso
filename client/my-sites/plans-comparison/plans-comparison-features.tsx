@@ -206,24 +206,34 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			}
 
 			if ( isLegacySiteWithHigherLimits && legacyStorageSize > storageSize ) {
-				return translate(
-					'{{del}}%(originalStorage)sGB{{/del}} %(modifiedStorage)sGB on this site',
-					{
-						components: {
-							del: <del />,
-						},
-						args: {
-							originalStorage: storageSize,
-							modifiedStorage: legacyStorageSize,
-						},
-					}
+				return (
+					<>
+						<Gridicon icon="checkmark" />
+						{ translate(
+							'{{del}}%(originalStorage)sGB{{/del}} %(modifiedStorage)sGB on this site',
+							{
+								components: {
+									del: <del />,
+								},
+								args: {
+									originalStorage: storageSize,
+									modifiedStorage: legacyStorageSize,
+								},
+							}
+						) }
+					</>
 				);
 			}
 
-			return translate( '%sGB', {
-				args: [ storageSize ],
-				comment: '%s is a number of gigabytes.',
-			} );
+			return (
+				<>
+					<Gridicon icon="checkmark" />
+					{ translate( '%sGB', {
+						args: [ storageSize ],
+						comment: '%s is a number of gigabytes.',
+					} ) }
+				</>
+			);
 		},
 	},
 	{
