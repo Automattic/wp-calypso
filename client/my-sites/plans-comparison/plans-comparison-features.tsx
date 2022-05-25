@@ -360,6 +360,28 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	},
 	{
 		get title() {
+			return translate( 'Sell products with WooCommerce' );
+		},
+		get description() {
+			return translate(
+				'Includes one-click payments, premium store designs and personalized expert support.'
+			);
+		},
+		features: [ FEATURE_WOOCOMMERCE ],
+		getCellText: ( feature, isMobile = false ) => {
+			let cellText = defaultGetCellText( translate( 'WooCommerce' ) )( feature, isMobile );
+			if ( isMobile ) {
+				cellText = feature
+					? translate( 'WooCommerce is included' )
+					: translate( 'WooCommerce is {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
+			}
+			return cellText;
+		},
+	},
+	{
+		get title() {
 			return translate( 'Advanced social media tools' );
 		},
 		get description() {
@@ -375,28 +397,6 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 				cellText = feature
 					? translate( 'Built in social media tools are included' )
 					: translate( 'Built in social media tools are {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
-		},
-	},
-	{
-		get title() {
-			return translate( 'Sell products with WooCommerce' );
-		},
-		get description() {
-			return translate(
-				'Includes one-click payments, premium store designs and personalized expert support.'
-			);
-		},
-		features: [ FEATURE_WOOCOMMERCE ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'WooCommerce' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'WooCommerce is included' )
-					: translate( 'WooCommerce is {{strong}}not{{/strong}} included', {
 							components: { strong: <strong /> },
 					  } );
 			}
