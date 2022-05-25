@@ -7,7 +7,7 @@ import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { ITEM_TYPE_PRODUCT } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import type { QueryArgs, SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import type { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 const SOCIAL_FREE_URL = isJetpackCloud()
 	? '/pricing/jetpack-social/welcome'
@@ -41,10 +41,9 @@ const useSocialFreeItem = (): SelectorProduct => {
 
 export type CardWithPriceProps = {
 	siteId: number | null;
-	urlQueryArgs: QueryArgs;
 };
 
-const CardWithPrice: React.FC< CardWithPriceProps > = ( { siteId, urlQueryArgs } ) => {
+const CardWithPrice: React.FC< CardWithPriceProps > = ( { siteId } ) => {
 	const translate = useTranslate();
 	const socialFreeProduct = useSocialFreeItem();
 

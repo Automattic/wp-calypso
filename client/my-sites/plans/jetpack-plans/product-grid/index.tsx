@@ -285,7 +285,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 							<>
 								{ showBoostAndSocialFree && (
 									<li>
-										<JetpackSocialFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+										<JetpackSocialFreeCard siteId={ siteId } />
 									</li>
 								) }
 								<li>
