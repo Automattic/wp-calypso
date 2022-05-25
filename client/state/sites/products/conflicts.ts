@@ -26,9 +26,11 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+	WPCOM_FEATURES_BACKUPS,
+	WPCOM_FEATURES_REAL_TIME_BACKUPS,
 } from '@automattic/calypso-products';
 import { createSelector } from '@automattic/state-utils';
-import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteProducts, getSitePlanSlug } from 'calypso/state/sites/selectors';
 import type { AppState } from 'calypso/types';
 
@@ -142,10 +144,8 @@ export const isPlanIncludingSiteBackup = createSelector(
 			return null;
 		}
 
-		const capabilities = getRewindCapabilities( state, siteId );
-		const siteHasBackup = Array.isArray( capabilities ) && capabilities.includes( 'backup' );
-		const siteHasRealTimeBackup =
-			Array.isArray( capabilities ) && capabilities.includes( 'backup-realtime' );
+		const siteHasBackup = siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS );
+		const siteHasRealTimeBackup = siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS );
 
 		if ( ! siteHasBackup && ! siteHasRealTimeBackup ) {
 			return false;
@@ -165,7 +165,8 @@ export const isPlanIncludingSiteBackup = createSelector(
 		( state: AppState, siteId: number | null, planSlug: string ) => [
 			siteId,
 			planSlug,
-			getRewindCapabilities( state, siteId ),
+			siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS ),
+			siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS ),
 		],
 	]
 );
