@@ -106,6 +106,7 @@ export default class WebPreviewContent extends Component {
 				this.setState( { isLoadingSubpage: true } );
 				return;
 			case 'page-dimensions-on-load':
+			case 'page-dimensions-on-resize':
 				if ( this.props.autoHeight ) {
 					this.setState( { viewport: data.payload } );
 				}
