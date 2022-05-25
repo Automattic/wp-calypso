@@ -1,18 +1,15 @@
-import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { useDispatch } from 'react-redux';
-import JetpackLogo from 'calypso/components/jetpack-logo';
-import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { JetpackWelcomePage } from '../jetpack-welcome-page';
 
 import './style.scss';
 
 const JetpackFreeWelcome: FC = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
 	const jetpackInstallInstructionsLink =
 		'https://jetpack.com/support/getting-started-with-jetpack/';
 	const featureLink1 = 'https://jetpack.com/features/design/content-delivery-network/';
@@ -21,67 +18,67 @@ const JetpackFreeWelcome: FC = () => {
 	const featuresComparisonLink = 'https://jetpack.com/features/comparison/';
 
 	return (
-		<Main wideLayout className="jetpack-free-welcome">
-			<PageViewTracker
-				path="/pricing/jetpack-free/welcome"
-				title="Pricing > Jetpack Free > Welcome to Jetpack"
-			/>
-			<Card className="jetpack-free-welcome__card">
-				<div className="jetpack-free-welcome__card-main">
-					<JetpackLogo size={ 45 } />
-					<h1 className="jetpack-free-welcome__main-message">
-						{ translate( 'Welcome{{br/}} to Jetpack!', {
-							components: {
-								br: <br />,
-							},
-						} ) }{ ' ' }
-						{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
-					</h1>
-					<p>{ translate( "Here's how to get started with Jetpack." ) }</p>
-					<div className="jetpack-free-welcome__step">
-						<div className="jetpack-free-welcome__step-number">1</div>
-						<div className="jetpack-free-welcome__step-content">
-							<h2>{ translate( 'Install Jetpack' ) }</h2>
-							<p>
-								{ translate(
-									'Download Jetpack or install it directly from your site by following the {{a}}instructions we put together here{{/a}}.',
-									{
-										components: {
-											a: (
-												<a
-													className="jetpack-free-welcome__link"
-													target="_blank"
-													rel="noopener noreferrer"
-													onClick={ () =>
-														dispatch(
-															recordTracksEvent(
-																'calypso_siteless_free_page_install_instructions_link_clicked',
-																{
-																	product_slug: 'jetpack_free',
-																}
-															)
+		<JetpackWelcomePage
+			description={ translate( "Here's how to get started with Jetpack." ) }
+			mainClassName="jetpack-free-welcome"
+			pageViewTracker={
+				<PageViewTracker
+					path="/pricing/jetpack-free/welcome"
+					title="Pricing > Jetpack Free > Welcome to Jetpack"
+				/>
+			}
+			title={
+				<>
+					{ translate( 'Welcome{{br/}} to Jetpack!', {
+						components: {
+							br: <br />,
+						},
+					} ) }{ ' ' }
+					{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
+				</>
+			}
+			steps={ [
+				{
+					title: translate( 'Install Jetpack' ),
+					content: (
+						<p>
+							{ translate(
+								'Download Jetpack or install it directly from your site by following the {{a}}instructions we put together here{{/a}}.',
+								{
+									components: {
+										a: (
+											<a
+												target="_blank"
+												rel="noopener noreferrer"
+												onClick={ () =>
+													dispatch(
+														recordTracksEvent(
+															'calypso_siteless_free_page_install_instructions_link_clicked',
+															{
+																product_slug: 'jetpack_free',
+															}
 														)
-													}
-													href={ jetpackInstallInstructionsLink }
-												/>
-											),
-										},
-									}
-								) }
-							</p>
-						</div>
-					</div>
-					<div className="jetpack-free-welcome__step">
-						<div className="jetpack-free-welcome__step-number">2</div>
-						<div className="jetpack-free-welcome__step-content">
-							<h2>{ translate( 'Try our powerful free features' ) }</h2>
+													)
+												}
+												href={ jetpackInstallInstructionsLink }
+											/>
+										),
+									},
+								}
+							) }
+						</p>
+					),
+				},
+				{
+					title: translate( 'Try our powerful free features' ),
+					content: (
+						<>
 							<ul className="jetpack-free-welcome__features">
 								<li>
 									{ translate( '{{a}}Speed up your site{{/a}} with our CDN.', {
 										components: {
 											a: (
 												<a
-													className="jetpack-free-welcome__feature-link"
 													target="_blank"
 													rel="noopener noreferrer"
 													onClick={ () =>
@@ -100,7 +97,6 @@ const JetpackFreeWelcome: FC = () => {
 											components: {
 												a: (
 													<a
-														className="jetpack-free-welcome__feature-link"
 														target="_blank"
 														rel="noopener noreferrer"
 														onClick={ () =>
@@ -122,7 +118,6 @@ const JetpackFreeWelcome: FC = () => {
 										components: {
 											a: (
 												<a
-													className="jetpack-free-welcome__feature-link"
 													target="_blank"
 													rel="noopener noreferrer"
 													onClick={ () =>
@@ -153,11 +148,11 @@ const JetpackFreeWelcome: FC = () => {
 								<span>{ translate( 'Want to learn more about our products?' ) }</span>
 								<span>{ translate( 'See how Jetpack can help grow your business or hobby' ) }</span>
 							</a>
-						</div>
-					</div>
-				</div>
-			</Card>
-		</Main>
+						</>
+					),
+				},
+			] }
+		/>
 	);
 };
 

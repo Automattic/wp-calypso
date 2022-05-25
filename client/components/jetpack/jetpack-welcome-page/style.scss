@@ -1,0 +1,106 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+.jetpack-welcome-page {
+	&.main.is-wide-layout {
+		max-width: 744px;
+	}
+	&__card {
+		padding: 0;
+		box-shadow: 0 0 40px 0 #00000014;
+
+		width: 100%;
+		max-width: none;
+
+		&--main, &--footer {
+			box-sizing: border-box;
+			padding: 26px;
+			@include break-mobile {
+				padding: 76px;
+			}
+		}
+		&--footer {
+			padding-top: 0;
+		}
+
+		.jetpack-logo {
+			margin-bottom: 48px;
+		}
+
+		a {
+			text-decoration: underline;
+			color: var( --color-studio-black );
+			&:hover {
+				text-decoration: none;
+			}
+		}
+
+		h1 {
+			line-height: 1;
+			@include break-mobile {
+				font-size: $font-headline-medium;
+			}
+			+ p {
+				font-size: 18px; /* stylelint-disable-line */
+				line-height: 1.5rem;
+				@include break-mobile {
+					font-size: $font-title-medium;
+					line-height: 2rem;
+				}
+			}
+		}
+		h2 {
+			font-size: $font-title-medium;
+			font-weight: 700;
+			line-height: 1.75rem;
+			padding-bottom: 16px;
+		}
+
+		.jetpack-welcome-page__step {
+			display: flex;
+			align-items: flex-start;
+			padding-bottom: 40px;
+
+			&:last-of-type {
+				padding-bottom: 0;
+			}
+
+			&--body {
+				flex: 1;
+				padding: 0 10px 0 16px;
+			}
+
+			&--number {
+				color: white;
+				background-color: var( --studio-jetpack-green-40 );
+				text-align: center;
+				border-radius: 50%; /* stylelint-disable-line */
+				font-size: $font-title-small;
+				font-weight: 600;
+				width: rem( 32px );
+				height: rem( 32px );
+			}
+			&--content {
+				flex: 1;
+				p {
+					@include break-mobile {
+						font-size: 18px; /* stylelint-disable-line */
+						line-height: 1.75rem;
+					}
+					margin: 0;
+				}
+			}
+		}
+
+		.jetpack-welcome-page__title {
+			font-size: 2.25rem;
+			font-weight: 700;
+			margin-bottom: 24px;
+
+			@include break-mobile {
+				font-size: 3rem;
+			}
+		}
+	}
+}
