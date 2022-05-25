@@ -75,7 +75,7 @@ describe( 'SitePickerSubmit', () => {
 		props.goToStep.mockReset();
 	} );
 
-	test( 'Does not blow up', () => {
+	test( 'Submits the signup step on render', () => {
 		expect( props.goToStep ).toHaveBeenCalledTimes( 0 );
 		const { container } = render( <SitePickerSubmit { ...props } /> );
 		expect( container ).toBeEmptyDOMElement();
