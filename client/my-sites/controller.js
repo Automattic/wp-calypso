@@ -4,6 +4,7 @@ import i18n from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
+import { requestAll } from 'calypso/client/components/data/query-sites';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
@@ -462,51 +463,57 @@ export function siteSelection( context, next ) {
 		return next();
 	}
 
-	const siteId = getSiteId( getState(), siteFragment );
 	// For unlinked checkout flow, we should always request fresh site information.
+	// Because sites might not be current.
 	const isUnlinkedFlow =
 		'1' === context?.query?.unlinked && context?.path?.startsWith( '/checkout/' );
-	if ( siteId && ! isUnlinkedFlow ) {
-		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
-		// to wp-admin. In that case, don't continue handling the route.
-		dispatch( setSelectedSiteId( siteId ) );
-		if ( onSelectedSiteAvailable( context ) ) {
-			next();
-		}
-	} else {
-		// Fetch the site by siteFragment and then try to select again
-		dispatch( requestSite( siteFragment ) )
-			.catch( () => null )
-			.then( ( site ) => {
-				let freshSiteId = getSiteId( getState(), siteFragment );
 
-				if ( ! freshSiteId ) {
-					const wpcomStagingFragment = siteFragment.replace(
-						/\b.wordpress.com/,
-						'.wpcomstaging.com'
-					);
-					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+	Promise.resolve( () => isUnlinkedFlow && dispatch( requestAll() ) )
+		.catch( () => null )
+		.then( () => {
+			const siteId = getSiteId( getState(), siteFragment );
+			if ( siteId ) {
+				// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
+				// to wp-admin. In that case, don't continue handling the route.
+				dispatch( setSelectedSiteId( siteId ) );
+				if ( onSelectedSiteAvailable( context ) ) {
+					next();
 				}
+			} else {
+				// Fetch the site by siteFragment and then try to select again
+				dispatch( requestSite( siteFragment ) )
+					.catch( () => null )
+					.then( ( site ) => {
+						let freshSiteId = getSiteId( getState(), siteFragment );
 
-				if ( freshSiteId ) {
-					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
-					// to wp-admin. In that case, don't continue handling the route.
-					dispatch( setSelectedSiteId( freshSiteId ) );
-					if ( onSelectedSiteAvailable( context ) ) {
-						next();
-					}
-				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
-					navigate( getJetpackAuthorizeURL( context, site ) );
-				} else {
-					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
-					const allSitesPath = addQueryArgs(
-						{ site: siteFragment },
-						sectionify( context.path, siteFragment )
-					);
-					page.redirect( allSitesPath );
-				}
-			} );
-	}
+						if ( ! freshSiteId ) {
+							const wpcomStagingFragment = siteFragment.replace(
+								/\b.wordpress.com/,
+								'.wpcomstaging.com'
+							);
+							freshSiteId = getSiteId( getState(), wpcomStagingFragment );
+						}
+
+						if ( freshSiteId ) {
+							// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
+							// to wp-admin. In that case, don't continue handling the route.
+							dispatch( setSelectedSiteId( freshSiteId ) );
+							if ( onSelectedSiteAvailable( context ) ) {
+								next();
+							}
+						} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
+							navigate( getJetpackAuthorizeURL( context, site ) );
+						} else {
+							// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
+							const allSitesPath = addQueryArgs(
+								{ site: siteFragment },
+								sectionify( context.path, siteFragment )
+							);
+							page.redirect( allSitesPath );
+						}
+					} );
+			}
+		} );
 }
 
 export function loggedInSiteSelection( context, next ) {
