@@ -13,9 +13,7 @@ const buildConnection: ( socket: string | Socket ) => Socket = ( socket ) =>
 		: socket; // If socket is not an url, use it directly. Useful for testing.
 
 //The second one is an identity function, used in 'use-happychat-available' hook
-type Dispatch =
-	| ( ( arg: boolean | string | HappychatUser | void ) => void )
-	| ( < T >( value: T ) => T );
+export type Dispatch = ( ( arg: unknown ) => void ) | ( < T >( value: T ) => T );
 
 export class Connection {
 	receiveAccept?: ( accept: boolean ) => void;
@@ -42,9 +40,9 @@ export class Connection {
 	/**
 	 * Init the SockeIO connection: check user authorization and bind socket events
 	 *
-	 * @param  { Function } dispatch Redux dispatch function
-	 * @param  { Promise } auth Authentication promise, will return the user info upon fulfillment
-	 * @returns { Promise } Fulfilled (returns the opened socket)
+	 * @param dispatch Redux dispatch function
+	 * @param auth Authentication promise, will return the user info upon fulfillment
+	 * @returns Fulfilled (returns the opened socket)
 	 *                   	 or rejected (returns an error message)
 	 */
 	init( dispatch: Dispatch, auth: Promise< HappychatAuth > ) {

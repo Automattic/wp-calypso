@@ -1,5 +1,5 @@
-import type { Connection } from './connection';
-import type { ConnectionProps } from './types';
+import type { Connection, Dispatch } from './connection';
+import type { Action, ConnectionProps, HappychatAuth } from './types';
 
 /*
  * This function creates a stub `Connection` object that dynamically loads the chunk
@@ -26,15 +26,18 @@ export default function buildConnection( props: ConnectionProps ) {
 		return connection;
 	}
 
-	// Forward a method call to the implementation. Works only for methods that return promises,
-	// which, fortunately, is the case for all `Connection` methods.
-	function forwardMethod( name: keyof Connection ) {
-		return ( ...args: any[] ) => getConnection().then( ( conn ) => conn[ name ]( ...args ) );
-	}
-
 	return {
-		init: forwardMethod( 'init' ),
-		request: forwardMethod( 'request' ),
-		send: forwardMethod( 'send' ),
+		async init( dispatch: Dispatch, auth: Promise< HappychatAuth > ) {
+			const conn = await getConnection();
+			return conn.init( dispatch, auth );
+		},
+		async request( action: Action, timeout: number ) {
+			const conn = await getConnection();
+			return conn.request( action, timeout );
+		},
+		async send( action: Action ) {
+			const conn = await getConnection();
+			return conn.send( action );
+		},
 	};
 }
