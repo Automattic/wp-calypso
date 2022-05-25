@@ -1,6 +1,8 @@
+import { Onboard } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { GoalKey } from './constants';
 import type { Goal } from './types';
+
+const GoalKey = Onboard.GoalKey;
 
 export const useGoals = (): Goal[] => {
 	const translate = useTranslate();

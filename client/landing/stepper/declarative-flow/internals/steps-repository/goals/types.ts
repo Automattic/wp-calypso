@@ -1,7 +1,7 @@
-import { GoalKey } from './constants';
+import { Onboard } from '@automattic/data-stores';
 
 export type Goal = {
-	key: GoalKey;
+	key: Onboard.GoalKey;
 	title: React.ReactChild | string;
 	isPremium?: boolean;
 };
