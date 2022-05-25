@@ -80,6 +80,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	const wrapperRef = useRef< HTMLDivElement >( null );
+	const propertyForThumbnailHeight = '--thumbnail-design-height';
 
 	useEffect( () => {
 		const onResize = () => {
@@ -94,6 +95,13 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 			);
 			const wrapperMaxHeight =
 				viewportHeight - ( thumnbnailWrapper.getClientRects()[ 0 ].y + window.scrollY );
+			const thumbnailHeight = wrapperMaxHeight / 3;
+			const thumbnailActualHeight = Math.min( 300, Math.max( 100, thumbnailHeight ) );
+
+			thumnbnailWrapper.style.setProperty(
+				propertyForThumbnailHeight,
+				`${ thumbnailActualHeight }px`
+			);
 		};
 
 		window.addEventListener( 'resize', onResize );
