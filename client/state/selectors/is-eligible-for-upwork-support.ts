@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
+import { isBusinessPlan, isEcommercePlan, isProPlan } from '@automattic/calypso-products';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import type { AppState } from 'calypso/types';
@@ -15,11 +15,8 @@ export default function isEligibleForUpworkSupport( state: AppState ): boolean {
 		return false;
 	}
 
-	const hasBusinessOrEcommercePlan = Object.values( getSitesItems( state ) ).some( ( site ) => {
-		const planSlug = site.plan?.product_slug;
-		return isBusinessPlan( planSlug ?? '' ) || isEcommercePlan( planSlug ?? '' );
+	return ! Object.values( getSitesItems( state ) ).some( ( site ) => {
+		const planSlug = site.plan?.product_slug ?? '';
+		return isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) || isProPlan( planSlug );
 	} );
-
-	// Upwork is not available if the customer has a Business or eCommerce plan
-	return ! hasBusinessOrEcommercePlan;
 }
