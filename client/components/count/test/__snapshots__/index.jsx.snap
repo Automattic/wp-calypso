@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Count should render with primary class 1`] = `
+<span
+  class="count is-primary"
+>
+  23
+</span>
+`;

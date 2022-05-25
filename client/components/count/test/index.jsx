@@ -1,15 +1,23 @@
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+import { render } from '@testing-library/react';
 import { Count } from '../';
 
 describe( 'Count', () => {
-	test( 'should use the correct class name', () => {
-		const count = shallow( <Count count={ 23 } numberFormat={ ( string ) => string } /> );
-		expect( count.hasClass( 'count' ) ).toBe( true );
-	} );
-
 	test( 'should call provided as prop numberFormat function', () => {
 		const numberFormatSpy = jest.fn();
-		shallow( <Count count={ 23 } numberFormat={ numberFormatSpy } /> );
+		render( <Count count={ 23 } numberFormat={ numberFormatSpy } /> );
 		expect( numberFormatSpy ).toHaveBeenCalledWith( 23 );
+	} );
+
+	test( 'should call `formatNumberCompact` if `compact` prop is `true`', () => {
+		const { container } = render( <Count count={ 1000 } compact /> );
+		expect( container.firstChild ).toHaveTextContent( '1.0K' );
+	} );
+
+	test( 'should render with primary class', () => {
+		const { container } = render( <Count count={ 23 } primary /> );
+		expect( container.firstChild ).toMatchSnapshot();
 	} );
 } );
