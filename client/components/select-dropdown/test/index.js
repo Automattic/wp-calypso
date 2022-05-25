@@ -5,19 +5,17 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SelectDropdown from '../index';
 
-function getDropdownOptions() {
-	return [
-		{ value: 'status-options', label: 'Statuses', isLabel: true },
-		{ value: 'published', label: 'Published' },
-		{ value: 'scheduled', label: 'Scheduled' },
-		{ value: 'drafts', label: 'Drafts' },
-		null,
-		{ value: 'trashed', label: 'Trashed' },
-	];
-}
+const DROPDOWN_OPTIONS = [
+	{ value: 'status-options', label: 'Statuses', isLabel: true },
+	{ value: 'published', label: 'Published' },
+	{ value: 'scheduled', label: 'Scheduled' },
+	{ value: 'drafts', label: 'Drafts' },
+	null,
+	{ value: 'trashed', label: 'Trashed' },
+];
 
 function renderDropdown( props ) {
-	return render( <SelectDropdown options={ getDropdownOptions() } { ...props } /> );
+	return render( <SelectDropdown options={ DROPDOWN_OPTIONS } { ...props } /> );
 }
 
 describe( 'component rendering', () => {
@@ -115,19 +113,18 @@ describe( 'selected items', () => {
 describe( 'selectItem', () => {
 	test( 'should run the `onSelect` hook, and then update the state', async () => {
 		const onSelectSpy = jest.fn();
-		const options = getDropdownOptions();
 
-		render( <SelectDropdown options={ options } onSelect={ onSelectSpy } /> );
+		renderDropdown( { onSelect: onSelectSpy } );
 
-		const item = screen.getByRole( 'menuitem', { name: options[ 2 ].label } );
+		const item = screen.getByRole( 'menuitem', { name: DROPDOWN_OPTIONS[ 2 ].label } );
 
 		await userEvent.click( item );
 
 		const selected = screen.getByRole( 'menuitem', { current: true } );
-		expect( selected ).toHaveTextContent( options[ 2 ].label );
+		expect( selected ).toHaveTextContent( DROPDOWN_OPTIONS[ 2 ].label );
 
 		expect( onSelectSpy ).toHaveBeenCalledTimes( 1 );
-		expect( onSelectSpy ).toHaveBeenCalledWith( options[ 2 ] );
+		expect( onSelectSpy ).toHaveBeenCalledWith( DROPDOWN_OPTIONS[ 2 ] );
 	} );
 } );
 
@@ -146,8 +143,7 @@ describe( 'navigateItem', () => {
 
 	test( 'permits to select an option by pressing ENTER', async () => {
 		const onSelectSpy = jest.fn();
-		const options = getDropdownOptions();
-		renderDropdown( { options, onSelect: onSelectSpy } );
+		renderDropdown( { onSelect: onSelectSpy } );
 
 		const btn = screen.getByRole( 'button' );
 		await userEvent.click( btn );
@@ -155,13 +151,12 @@ describe( 'navigateItem', () => {
 		await userEvent.keyboard( '[Enter]' );
 
 		expect( onSelectSpy ).toHaveBeenCalledTimes( 1 );
-		expect( onSelectSpy ).toHaveBeenCalledWith( options[ 2 ] );
+		expect( onSelectSpy ).toHaveBeenCalledWith( DROPDOWN_OPTIONS[ 2 ] );
 	} );
 
 	test( 'permits to select an option by pressing SPACE', async () => {
 		const onSelectSpy = jest.fn();
-		const options = getDropdownOptions();
-		renderDropdown( { options, onSelect: onSelectSpy } );
+		renderDropdown( { onSelect: onSelectSpy } );
 
 		const btn = screen.getByRole( 'button' );
 		await userEvent.click( btn );
@@ -169,7 +164,7 @@ describe( 'navigateItem', () => {
 		await userEvent.keyboard( '[Space]' );
 
 		expect( onSelectSpy ).toHaveBeenCalledTimes( 1 );
-		expect( onSelectSpy ).toHaveBeenCalledWith( options[ 2 ] );
+		expect( onSelectSpy ).toHaveBeenCalledWith( DROPDOWN_OPTIONS[ 2 ] );
 	} );
 
 	test( 'permits to close the dropdown by pressing ESCAPE', async () => {
