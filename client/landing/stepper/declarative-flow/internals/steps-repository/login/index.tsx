@@ -225,7 +225,7 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 			</FormFieldset>
 		</form>
 	);
-	const loginForm = (
+	const stepContent = (
 		<div>
 			<div className="login__anchor-body">
 				<h1 className="login__title">{ __( 'Create your podcast site with WordPress.com' ) }</h1>
@@ -323,7 +323,7 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 			hideBack
 			hideSkip
 			hideNext
-			stepContent={ loginForm }
+			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

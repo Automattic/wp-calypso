@@ -101,26 +101,38 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 	.login__login-link {
 		@include onboarding-medium-text;
 		margin: 4px 0 29px;
-		color: var( --studio-gray-40 );
+		color: var( --color-text-subtle );
 
 		.login__link {
 			@include onboarding-medium-text;
-			color: var( --studio-gray-40 );
+			color: var( --color-text-subtle );
+		}
+
+		a {
+			text-decoration: underline;
 		}
 	}
 
 	.login__link,
 	.login__link a {
 		@include onboarding-medium-text;
-		color: var( --studio-gray-40 );
+		color: var( --color-text-subtle );
+	}
+
+	.login__link a {
+		text-decoration: underline;
 	}
 
 	.login__terms-of-service-link {
 		@include onboarding-medium-text;
 		text-align: center;
-		color: var( --studio-gray-30 );
+		color: var( --color-text-subtle );
 		margin: 15px auto 20px;
 		max-width: 400px;
+
+		a {
+			text-decoration: underline;
+		}
 	}
 
 	.login__recaptcha_tos {
@@ -163,7 +175,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 
 		& > p {
 			@include onboarding-large-text;
-			color: var( --studio-gray-40 );
+			color: var( --color-text-subtle );
 		}
 	}
 
