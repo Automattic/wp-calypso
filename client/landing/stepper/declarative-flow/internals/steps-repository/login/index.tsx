@@ -44,9 +44,9 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 	const isMobile = useViewportMatch( 'small', '<' );
 	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyUrl } = useAnchorFmParams();
 	const isAnchorFmSignup = useIsAnchorFm();
+	const [ emailVal, setEmailVal ] = useState( '' );
 
 	const Form: React.FC = () => {
-		const [ emailVal, setEmailVal ] = useState( '' );
 		const [ passwordVal, setPasswordVal ] = useState( '' );
 		const handleSubmit = async ( event: FormEvent< HTMLFormElement > ) => {
 			event.preventDefault();
