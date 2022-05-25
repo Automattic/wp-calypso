@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { get } from 'lodash';
+import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import {
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
@@ -33,6 +34,7 @@ export const loginSocialUser = ( socialInfo, redirectTo ) => ( dispatch ) => {
 		redirect_to: redirectTo,
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
+		tos: JSON.stringify( getToSAcceptancePayload() ),
 	} )
 		.then( ( response ) => {
 			if ( get( response, 'body.data.two_step_notification_sent' ) === 'sms' ) {

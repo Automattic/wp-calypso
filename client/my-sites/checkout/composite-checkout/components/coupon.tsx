@@ -20,7 +20,7 @@ export default function Coupon( {
 	disabled?: boolean;
 	couponStatus: CouponStatus;
 	couponFieldStateProps: CouponFieldStateProps;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const {
 		couponFieldValue,

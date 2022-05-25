@@ -1,12 +1,9 @@
 import classnames from 'classnames';
-import { translate, TranslateOptions, TranslateOptionsText } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { UrlData } from 'calypso/blocks/import/types';
 import { Importer, ImportJob, ImportJobParams, StepNavigator } from 'calypso/blocks/importer/types';
 import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
-import InlineSupportLink from 'calypso/components/inline-support-link';
-import importerConfig from 'calypso/lib/importer/importer-config';
 import { startImport, resetImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
@@ -14,6 +11,7 @@ import CompleteScreen from '../../components/complete-screen';
 import ErrorMessage from '../../components/error-message';
 import GettingStartedVideo from '../../components/getting-started-video';
 import ImporterDrag from '../../components/importer-drag';
+import { getImportDragConfig } from '../../components/importer-drag/config';
 import ProgressScreen from '../../components/progress-screen';
 import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
@@ -69,35 +67,6 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}
 
-	function getImportDragConfig() {
-		const importerData = importerConfig().wordpress;
-
-		const options: TranslateOptions = {
-			args: {
-				importerName: 'WordPress',
-			},
-			components: {
-				supportLink: (
-					<InlineSupportLink supportContext="importers-wordpress" showIcon={ false }>
-						{ translate( 'Need help exporting your content?' ) }
-					</InlineSupportLink>
-				),
-			},
-		};
-
-		importerData.title = translate( 'Import content from %(importerName)s', {
-			...options,
-			textOnly: true,
-		} as TranslateOptionsText ) as string;
-
-		importerData.description = translate(
-			'Import posts, pages, and media from your %(importerName)s export file.',
-			options
-		);
-
-		return importerData;
-	}
-
 	function checkProgress() {
 		return job?.importerState === appStates.IMPORTING;
 	}
@@ -141,7 +110,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 				<ImporterDrag
 					site={ siteItem as SitesItem }
 					urlData={ siteAnalyzedData }
-					importerData={ getImportDragConfig() }
+					importerData={ getImportDragConfig( importer, stepNavigator?.supportLinkModal ) }
 					importerStatus={ job }
 				/>
 			)

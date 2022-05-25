@@ -19,7 +19,7 @@ interface Props {
 	postType: { slug: string };
 }
 
-export default function CreatePage( { postType }: Props ): JSX.Element {
+export default function CreatePage( { postType }: Props ) {
 	const defaultLabel = get(
 		postType,
 		[ 'labels', 'add_new_item' ],

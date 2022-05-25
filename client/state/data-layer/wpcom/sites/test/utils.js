@@ -5,7 +5,6 @@ import {
 	NOTICE_CREATE,
 } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 import {
 	createPlaceholderComment,
 	dispatchNewCommentRequest,
@@ -14,7 +13,9 @@ import {
 } from '../utils';
 
 describe( 'utility functions', () => {
-	useFakeTimers();
+	beforeAll( () => {
+		jest.useFakeTimers().setSystemTime( 0 );
+	} );
 
 	describe( '#createPlaceholderComment()', () => {
 		test( 'should return a comment placeholder', () => {

@@ -1,11 +1,9 @@
 import config from '@automattic/calypso-config';
-import { isMobile } from '@automattic/viewport';
 import { isEmpty } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
 import store from 'store';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import flows from 'calypso/signup/config/flows';
@@ -278,11 +276,6 @@ export default {
 			! isManageSiteFlow
 		) {
 			context.store.dispatch( setSelectedSiteId( null ) );
-		}
-
-		// Pre-fetching the experiment
-		if ( isMobile() && [ 'onboarding', 'launch-site', 'free', 'pro' ].includes( flowName ) ) {
-			loadExperimentAssignment( 'calypso_signup_domain_mobile_browser_chrome_added_v4' );
 		}
 
 		context.primary = createElement( SignupComponent, {

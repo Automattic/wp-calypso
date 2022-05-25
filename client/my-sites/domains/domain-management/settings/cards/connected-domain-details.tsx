@@ -12,7 +12,7 @@ const ConnectedDomainDetails = ( {
 	domain,
 	isLoadingPurchase,
 	selectedSite,
-}: DetailsCardProps ): JSX.Element => {
+}: DetailsCardProps ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 

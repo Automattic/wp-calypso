@@ -58,7 +58,7 @@ import './style.scss';
 type ToggleControlProps = React.ComponentProps< typeof ToggleControl > & { disabled?: boolean };
 const FixedToggleControl = ( props: ToggleControlProps ) => <ToggleControl { ...props } />;
 
-const TransferPage = ( props: TransferPageProps ): JSX.Element => {
+const TransferPage = ( props: TransferPageProps ) => {
 	const dispatch = useDispatch();
 	const {
 		currentRoute,
@@ -335,7 +335,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		);
 	};
 
-	const renderContent = (): JSX.Element | null => {
+	const renderContent = () => {
 		if ( ! domain ) {
 			return null;
 		}

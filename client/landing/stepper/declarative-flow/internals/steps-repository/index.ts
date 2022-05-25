@@ -1,6 +1,7 @@
 export { default as courses } from './courses';
 export { default as intent } from './intent-step';
 export { default as podcastTitle } from './podcast-title';
+export { default as login } from './login';
 export { default as options } from './site-options';
 export { default as bloggerStartingPoint } from './blogger-starting-point';
 export { default as storeFeatures } from './store-features';
@@ -47,6 +48,7 @@ export type StepPath =
 	| 'businessInfo'
 	| 'storeAddress'
 	| 'processing'
+	| 'login'
 	| 'vertical'
 	| 'wooTransfer'
 	| 'wooInstallPlugins'

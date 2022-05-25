@@ -41,8 +41,6 @@ import {
 } from 'calypso/state/analytics/actions';
 import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
-import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
-import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { getPlugins, isEqualSlugOrId } from 'calypso/state/plugins/installed/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
@@ -82,9 +80,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
-
-	// Billing period switcher.
-	const billingPeriod = useSelector( getBillingInterval );
 
 	const { plugins: paidPlugins = [], isFetching: isFetchingPaidPlugins } = usePlugins( {
 		category: 'paid',
@@ -309,8 +304,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 				siteSlug={ siteSlug }
 				siteId={ siteId }
 				jetpackNonAtomic={ jetpackNonAtomic }
-				billingPeriod={ billingPeriod }
-				setBillingPeriod={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
 			/>
 			<EducationFooter />
 		</MainComponent>
@@ -322,12 +315,15 @@ const ClearSearch = () => {
 	const translate = useTranslate();
 
 	return (
-		<a
-			className={ 'plugins-browser__clear-filters' }
-			href={ '/plugins' + ( siteSlug ? '/' + siteSlug : '' ) }
-		>
-			{ translate( 'Clear' ) }
-		</a>
+		<>
+			&nbsp;
+			<a
+				className={ 'plugins-browser__clear-filters' }
+				href={ '/plugins' + ( siteSlug ? '/' + siteSlug : '' ) }
+			>
+				{ translate( 'Clear' ) }
+			</a>
+		</>
 	);
 };
 const SearchListView = ( {
@@ -339,7 +335,6 @@ const SearchListView = ( {
 	siteSlug,
 	siteId,
 	sites,
-	billingPeriod,
 	categoryName,
 } ) => {
 	const dispatch = useDispatch();
@@ -423,7 +418,6 @@ const SearchListView = ( {
 					currentSites={ sites }
 					variant={ PluginsBrowserListVariant.Paginated }
 					extended
-					billingPeriod={ billingPeriod }
 				/>
 				<InfiniteScroll nextPageMethod={ fetchNextPage } />
 			</>
@@ -431,36 +425,58 @@ const SearchListView = ( {
 	}
 
 	return (
-		<NoResults
-			text={ translate( 'No plugins match your search for {{searchTerm/}}.', {
-				textOnly: true,
-				components: { searchTerm: <em>{ searchTerm }</em> },
-			} ) }
-		/>
+		<div className="plugins-browser__no-results">
+			<NoResults
+				text={ translate( 'No plugins match your search for {{searchTerm/}}.', {
+					textOnly: true,
+					components: { searchTerm: <em>{ searchTerm }</em> },
+				} ) }
+			/>
+		</div>
 	);
 };
 
-const FullListView = ( { category, siteSlug, sites, billingPeriod, setBillingPeriod } ) => {
-	const isPaidCategory = category === 'paid';
-	const { plugins, isFetching, fetchNextPage } = usePlugins( { category, infinite: true } );
+const FullListView = ( { category, siteSlug, sites } ) => {
+	const { plugins, isFetching, fetchNextPage, pagination } = usePlugins( {
+		category,
+		infinite: true,
+	} );
 
 	const categories = useCategories();
-	const categoryName = [ 'paid', 'popular' ].includes( category )
-		? categories[ category ]?.name
-		: null;
+	const categoryName = categories[ category ]?.name;
+	const translate = useTranslate();
+
+	let title = '';
+	if ( categoryName && pagination ) {
+		title = translate(
+			'Found %(total)s plugin under "%(categoryName)s"',
+			'Found %(total)s plugins under "%(categoryName)s"',
+			{
+				count: pagination.results,
+				textOnly: true,
+				args: {
+					total: pagination.results,
+					categoryName,
+				},
+			}
+		);
+	}
 
 	return (
 		<>
 			<PluginsBrowserList
 				plugins={ plugins }
 				listName={ category }
-				title={ categoryName }
+				subtitle={
+					<>
+						{ title }
+						<ClearSearch />
+					</>
+				}
 				site={ siteSlug }
 				showPlaceholders={ isFetching }
 				currentSites={ sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
-				billingPeriod={ billingPeriod }
-				setBillingPeriod={ isPaidCategory && setBillingPeriod }
 				extended
 			/>
 
@@ -479,8 +495,6 @@ const PluginSingleListView = ( {
 	isFetchingPaidPlugins,
 	siteSlug,
 	sites,
-	billingPeriod,
-	setBillingPeriod,
 } ) => {
 	const translate = useTranslate();
 
@@ -533,8 +547,6 @@ const PluginSingleListView = ( {
 			showPlaceholders={ isFetching }
 			currentSites={ sites }
 			variant={ PluginsBrowserListVariant.Fixed }
-			billingPeriod={ billingPeriod }
-			setBillingPeriod={ category === 'paid' && setBillingPeriod }
 			extended
 		/>
 	);

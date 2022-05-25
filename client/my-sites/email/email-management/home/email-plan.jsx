@@ -15,6 +15,7 @@ import {
 	getGoogleAdminUrl,
 	getGoogleMailServiceFamily,
 	getGSuiteProductSlug,
+	getGSuiteSubscriptionStatus,
 	getProductType,
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
@@ -266,14 +267,11 @@ const EmailPlan = ( props ) => {
 				);
 			}
 
-			if ( canAddMailboxes ) {
-				return (
-					<VerticalNavItem { ...getAddMailboxProps() }>
-						{ translate( 'Add new mailboxes' ) }
-					</VerticalNavItem>
-				);
-			}
-			return null;
+			return (
+				<VerticalNavItem { ...getAddMailboxProps() } disabled={ ! canAddMailboxes }>
+					{ translate( 'Add new mailboxes' ) }
+				</VerticalNavItem>
+			);
 		}
 
 		return (
@@ -357,8 +355,8 @@ EmailPlan.propType = {
 export default connect( ( state, ownProps ) => {
 	return {
 		canAddMailboxes:
-			Boolean( getGSuiteProductSlug( ownProps.domain ) ) ||
-			Boolean( getTitanProductSlug( ownProps.domain ) ),
+			( getGSuiteProductSlug( ownProps.domain ) || getTitanProductSlug( ownProps.domain ) ) &&
+			getGSuiteSubscriptionStatus( ownProps.domain ) !== 'suspended',
 		currentRoute: getCurrentRoute( state ),
 		emailForwards: getEmailForwards( state, ownProps.domain.name ),
 		isLoadingEmailForwards: isRequestingEmailForwards( state, ownProps.domain.name ),

@@ -78,7 +78,7 @@ export function createGiropayMethod( { store }: { store: GiropayStore } ): Payme
 	};
 }
 
-function GiropayFields(): JSX.Element {
+function GiropayFields() {
 	const { __ } = useI18n();
 
 	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() );
@@ -140,7 +140,7 @@ function GiropayPayButton( {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: GiropayStore;
-} ): JSX.Element {
+} ) {
 	const [ , total ] = useLineItems();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() );

@@ -1,10 +1,10 @@
+import { FormInputValidation } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, trim } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { applyDnsTemplate } from 'calypso/state/domains/dns/actions';

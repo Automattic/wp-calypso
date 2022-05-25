@@ -3,5 +3,10 @@
 	"require": {
 		"wp-phpunit/wp-phpunit": "^5.4",
 		"automattic/jetpack-codesniffer": "^2.1"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
 	}
 }

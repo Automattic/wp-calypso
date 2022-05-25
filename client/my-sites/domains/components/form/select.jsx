@@ -1,7 +1,7 @@
+import { FormInputValidation } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';

@@ -5,10 +5,7 @@ import { domainManagementTransfer } from 'calypso/my-sites/domains/paths';
 import DomainInfoCard from '..';
 import type { DomainInfoCardProps } from '../types';
 
-const DomainTransferInfoCard = ( {
-	domain,
-	selectedSite,
-}: DomainInfoCardProps ): JSX.Element | null => {
+const DomainTransferInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) => {
 	const typesUnableToTransfer = [ domainType.TRANSFER, domainType.SITE_REDIRECT ] as const;
 	const translate = useTranslate();
 

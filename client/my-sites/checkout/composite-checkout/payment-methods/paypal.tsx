@@ -138,7 +138,7 @@ const PayPalFieldsWrapper = styled.div`
 	}
 `;
 
-function PayPalTaxFields(): JSX.Element {
+function PayPalTaxFields() {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList();
@@ -175,7 +175,7 @@ function PayPalLabel( {
 }: {
 	labelText?: string | null;
 	store?: PayPalStore;
-} ): JSX.Element {
+} ) {
 	return (
 		<Fragment>
 			<div>
@@ -206,7 +206,7 @@ function PayPalSubmitButton( {
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
-} ): JSX.Element {
+} ) {
 	const { formStatus } = useFormStatus();
 	const { transactionStatus } = useTransactionStatus();
 	const [ items ] = useLineItems();
@@ -244,7 +244,7 @@ function PayPalButtonContents( {
 }: {
 	formStatus: FormStatus;
 	transactionStatus: TransactionStatus;
-} ): JSX.Element {
+} ) {
 	const { __ } = useI18n();
 	if ( transactionStatus === TransactionStatus.REDIRECTING ) {
 		return <span>{ __( 'Redirecting to PayPal…' ) }</span>;
@@ -262,11 +262,11 @@ const ButtonPayPalIcon = styled( PayPalLogo )`
 	transform: translateY( 2px );
 `;
 
-function PayPalSummary(): JSX.Element {
+function PayPalSummary() {
 	return <>PayPal</>;
 }
 
-function PayPalLogo( { className }: { className?: string } ): JSX.Element {
+function PayPalLogo( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }

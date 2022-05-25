@@ -28,7 +28,7 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 	// example usage
 	// const site = useSite();
 	// const hasSimplePayments = useSelect(
-	//	( select ) => site && select( SITE_STORE ).hasActiveSiteFeature( site?.ID, 'simple-payments' )
+	//	( select ) => site && select( SITE_STORE ).siteHasFeature( site?.ID, 'simple-payments' )
 	//);
 
 	const intents = useIntents();

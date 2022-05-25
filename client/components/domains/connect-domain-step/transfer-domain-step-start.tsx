@@ -33,7 +33,7 @@ function TransferDomainStepStart( {
 	domain,
 	isFetchingAvailability,
 	selectedSite,
-}: StartStepProps ): JSX.Element {
+}: StartStepProps ) {
 	const { __ } = useI18n();
 	const switchToDomainConnect = () => page( localizeUrl( MAP_EXISTING_DOMAIN ) );
 	const [ inboundTransferStatusInfo, setInboundTransferStatusInfo ] = useState<

@@ -27,7 +27,9 @@ describe( 'PluginsBrowserItem Incompatible Plugins Message', () => {
 		};
 
 		const comp = shallow( <PluginsBrowserListElement { ...props } /> );
-		expect( comp.find( 'ExternalLink' ).length ).toBe( 1 );
+		expect( comp.text().includes( 'Why is this plugin not compatible with WordPress.com?' ) ).toBe(
+			true
+		);
 	} );
 
 	test( 'should render the incompatible plugin message on Atomic Sites', () => {
@@ -39,7 +41,9 @@ describe( 'PluginsBrowserItem Incompatible Plugins Message', () => {
 		};
 
 		const comp = shallow( <PluginsBrowserListElement { ...props } /> );
-		expect( comp.find( 'ExternalLink' ).length ).toBe( 1 );
+		expect( comp.text().includes( 'Why is this plugin not compatible with WordPress.com?' ) ).toBe(
+			true
+		);
 	} );
 
 	test( 'should NOT render the incompatible plugin message on JetpackSite non Atomic sites', () => {
@@ -51,7 +55,9 @@ describe( 'PluginsBrowserItem Incompatible Plugins Message', () => {
 		};
 
 		const comp = shallow( <PluginsBrowserListElement { ...props } /> );
-		expect( comp.find( 'ExternalLink' ).length ).toBe( 0 );
+		expect( comp.text().includes( 'Why is this plugin not compatible with WordPress.com?' ) ).toBe(
+			false
+		);
 	} );
 
 	test( 'should NOT render the incompatible plugin message if it is not in the list', () => {
@@ -63,6 +69,8 @@ describe( 'PluginsBrowserItem Incompatible Plugins Message', () => {
 		};
 
 		const comp = shallow( <PluginsBrowserListElement { ...props } /> );
-		expect( comp.find( 'ExternalLink' ).length ).toBe( 0 );
+		expect( comp.text().includes( 'Why is this plugin not compatible with WordPress.com?' ) ).toBe(
+			false
+		);
 	} );
 } );

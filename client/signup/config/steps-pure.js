@@ -689,6 +689,11 @@ export function generateSteps( {
 			},
 		},
 
+		'choose-service': {
+			stepName: 'choose-service',
+			providesDependencies: [ 'siteSlug' ],
+		},
+
 		'new-or-existing-site': {
 			stepName: 'new-or-existing-site',
 			fulfilledStepCallback: isNewOrExistingSiteFulfilled,
@@ -709,7 +714,6 @@ export function generateSteps( {
 			stepName: 'difm-design-setup-site',
 			apiRequestFunction: setDIFMLiteDesign,
 			delayApiRequestUntilComplete: true,
-			dependencies: [ 'newOrExistingSiteChoice' ],
 			providesDependencies: [
 				'isFSEActive',
 				'selectedDesign',

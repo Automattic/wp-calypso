@@ -236,6 +236,31 @@ object BuildDockerImage : BuildType({
 				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
 			}
 		}
+
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#team-calypso-bot"
+				messageFormat = simpleMessageFormat()
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			firstSuccessAfterFailure = true
+			buildProbablyHanging = true
+		}
 	}
 })
 

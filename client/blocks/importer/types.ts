@@ -8,6 +8,7 @@ export type QueryObject = {
 };
 
 export type StepNavigator = {
+	supportLinkModal?: boolean;
 	goToIntentPage?: () => void;
 	goToImportCapturePage?: () => void;
 	goToSiteViewPage?: () => void;

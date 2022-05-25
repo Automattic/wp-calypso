@@ -31,7 +31,7 @@ const shouldHideCard = ( date: string | null ): boolean => {
 	return reminderEnd.isValid() && moment().isBefore( reminderEnd );
 };
 
-const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.Element | null => {
+const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ) => {
 	const translate = useTranslate();
 	const [ areHideSiteCardOptionsVisible, setHideSiteCardOptionsVisible ] = useState( false );
 	const [ areHideEmailCardOptionsVisible, setHideEmailCardOptionsVisible ] = useState( false );
@@ -139,7 +139,7 @@ const DomainOnlyUpsellCarousel = ( props: DomainOnlyUpsellCarouselProps ): JSX.E
 		eventTrackViewName: string;
 		areHideOptionsVisible: boolean;
 		setHideOptionsVisible: ( arg: boolean ) => void;
-	} ): JSX.Element => {
+	} ) => {
 		return (
 			<Card className="domain-only-upsell-carousel__card" key="domain-only-upsell-site">
 				<div className="domain-only-upsell-carousel__card-wrapper is-compact">

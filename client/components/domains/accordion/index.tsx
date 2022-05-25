@@ -11,7 +11,7 @@ const Accordion = ( {
 	children,
 	isPlaceholder,
 	expanded = false,
-}: AccordionProps ): JSX.Element => {
+}: AccordionProps ) => {
 	const classes = classNames( {
 		'is-placeholder': isPlaceholder,
 	} );

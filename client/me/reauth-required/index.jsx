@@ -1,4 +1,4 @@
-import { Card, Dialog } from '@automattic/components';
+import { Card, Dialog, FormInputValidation } from '@automattic/components';
 import { supported } from '@github/webauthn-json';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import Notice from 'calypso/components/notice';

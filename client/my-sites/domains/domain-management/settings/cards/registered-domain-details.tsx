@@ -19,7 +19,7 @@ const RegisteredDomainDetails = ( {
 	isLoadingPurchase,
 	purchase,
 	selectedSite,
-}: DetailsCardProps ): JSX.Element => {
+}: DetailsCardProps ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const redemptionProduct = useSelector( ( state ) =>

@@ -72,7 +72,7 @@ export default function PaymentMethodSelector( {
 	paymentMethods: PaymentMethod[];
 	successCallback: () => void;
 	eventContext?: string;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const { isStripeLoading, stripe, stripeConfiguration, stripeLoadingError } = useStripe();
@@ -249,11 +249,7 @@ function onPaymentSelectComplete( {
 	successCallback();
 }
 
-function CurrentPaymentMethodNotAvailableNotice( {
-	purchase,
-}: {
-	purchase: Purchase;
-} ): JSX.Element | null {
+function CurrentPaymentMethodNotAvailableNotice( { purchase }: { purchase: Purchase } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const storedPaymentAgreements = useSelector( getStoredPaymentAgreements );

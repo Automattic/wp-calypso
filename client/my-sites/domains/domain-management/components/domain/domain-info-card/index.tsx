@@ -4,7 +4,7 @@ import type { CardProps, GenericActionCardProps } from './types';
 
 import './style.scss';
 
-const DomainInfoCard = ( props: GenericActionCardProps ): JSX.Element => {
+const DomainInfoCard = ( props: GenericActionCardProps ) => {
 	const { title, description, type } = props;
 	const cardProps: CardProps = {
 		headerText: title,

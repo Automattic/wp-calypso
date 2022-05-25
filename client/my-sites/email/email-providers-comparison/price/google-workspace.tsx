@@ -38,7 +38,7 @@ const GoogleWorkspacePrice = ( {
 	domain,
 	intervalLength,
 	isDomainInCart,
-}: GoogleWorkspacePriceProps ): JSX.Element | null => {
+}: GoogleWorkspacePriceProps ) => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	const productSlug = getGoogleWorkspaceProductSlug( intervalLength );

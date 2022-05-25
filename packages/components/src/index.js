@@ -2,6 +2,7 @@ export { default as Button } from './button';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
 export { default as Dialog } from './dialog';
+export { default as FormInputValidation } from './forms/form-input-validation';
 export { default as Gridicon } from './gridicon';
 export { default as Popover } from './popover';
 export { default as ProductIcon } from './product-icon';

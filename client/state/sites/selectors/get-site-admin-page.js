@@ -8,19 +8,9 @@ import getSiteOption from './get-site-option';
  * @returns {string}        Jetpack or standalone plugin page name
  */
 export default function getSiteAdminPage( state, siteId ) {
-	const activeConnectedPlugins = getSiteOption(
-		state,
-		siteId,
-		'jetpack_connection_active_plugins'
-	);
+	const activeConnectedPlugins =
+		getSiteOption( state, siteId, 'jetpack_connection_active_plugins' ) ?? [];
+	const plugins = [ 'jetpack', 'jetpack-backup', 'jetpack-search', 'jetpack-social' ];
 
-	let pluginPage = 'jetpack';
-	if ( Array.isArray( activeConnectedPlugins ) && ! activeConnectedPlugins.includes( 'jetpack' ) ) {
-		if ( activeConnectedPlugins.includes( 'jetpack-backup' ) ) {
-			pluginPage = 'jetpack-backup';
-		} else if ( activeConnectedPlugins.includes( 'jetpack-search' ) ) {
-			pluginPage = 'jetpack-search';
-		}
-	}
-	return pluginPage;
+	return plugins.find( ( plugin ) => activeConnectedPlugins.includes( plugin ) ) ?? 'jetpack';
 }

@@ -31,7 +31,7 @@ export default function DomainContactDetails( {
 	isDisabled: boolean;
 	isLoggedOutCart: boolean;
 	emailOnly?: boolean;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );

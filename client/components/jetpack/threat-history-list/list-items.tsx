@@ -76,13 +76,7 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 
 export default ListItems;
 
-export const ListItemsPlaceholder = ( {
-	count,
-	perPage,
-}: {
-	count: number;
-	perPage: number;
-} ): JSX.Element => {
+export const ListItemsPlaceholder = ( { count, perPage }: { count: number; perPage: number } ) => {
 	const showPagination = count > perPage;
 	const itemsToShow = Math.min( count, perPage );
 

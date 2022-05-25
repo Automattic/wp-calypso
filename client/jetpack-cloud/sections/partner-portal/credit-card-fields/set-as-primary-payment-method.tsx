@@ -16,7 +16,7 @@ export default function SetAsPrimaryPaymentMethod( {
 	isChecked: boolean;
 	isDisabled?: boolean;
 	onChange: ( isChecked: boolean ) => void;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 

@@ -40,9 +40,6 @@ describe( 'payPalExpressProcessor', () => {
 			cart_key: 'no-site',
 			coupon: '',
 			create_new_blog: true,
-			currency: 'USD',
-			extra: [],
-			is_jetpack_checkout: false,
 			products: [ product ],
 			tax: {
 				location: {},
@@ -53,6 +50,11 @@ describe( 'payPalExpressProcessor', () => {
 		domain_details: null,
 		postal_code: '',
 		success_url: 'https://example.com/thank-you',
+		tos: {
+			locale: 'en',
+			path: '/',
+			viewport: '0x0',
+		},
 	};
 
 	beforeEach( () => {
@@ -152,7 +154,7 @@ describe( 'payPalExpressProcessor', () => {
 				cart_key: '1234567',
 				coupon: '',
 				create_new_blog: false,
-				tax: { location: { postal_code: 'PR26 7RY', country_code: 'GB' } },
+				tax: { location: { postal_code: 'pr267ry', country_code: 'GB' } },
 			},
 			postal_code: 'PR26 7RY',
 			country: 'GB',
@@ -208,7 +210,7 @@ describe( 'payPalExpressProcessor', () => {
 			cart: {
 				...basicExpectedRequest.cart,
 				blog_id: '1234567',
-				cart_key: '1234567',
+				cart_key: 1234567,
 				coupon: '',
 				create_new_blog: false,
 			},
@@ -271,6 +273,11 @@ describe( 'payPalExpressProcessor', () => {
 				coupon: '',
 				create_new_blog: true,
 			},
+			tos: {
+				locale: 'en',
+				path: '/checkout/no-site',
+				viewport: '0x0',
+			},
 		} );
 	} );
 
@@ -298,6 +305,11 @@ describe( 'payPalExpressProcessor', () => {
 				cart_key: 'no-site',
 				coupon: '',
 				create_new_blog: true,
+			},
+			tos: {
+				locale: 'en',
+				path: '/checkout/no-site',
+				viewport: '0x0',
 			},
 		} );
 	} );
@@ -330,7 +342,7 @@ describe( 'payPalExpressProcessor', () => {
 			cart: {
 				...basicExpectedRequest.cart,
 				blog_id: '1234567',
-				cart_key: '1234567',
+				cart_key: 1234567,
 				coupon: '',
 				create_new_blog: false,
 			},

@@ -12,12 +12,7 @@ import type { DnsDetailsProps } from './types';
 
 import './style.scss';
 
-const DnsDetails = ( {
-	dns,
-	selectedDomainName,
-	currentRoute,
-	selectedSite,
-}: DnsDetailsProps ): JSX.Element => {
+const DnsDetails = ( { dns, selectedDomainName, currentRoute, selectedSite }: DnsDetailsProps ) => {
 	const showPlaceholder = ! dns.hasLoadedFromServer;
 	const translate = useTranslate();
 

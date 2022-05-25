@@ -140,7 +140,6 @@
 	 *	Navigation
 	 */
 	.step-container__navigation.action-buttons {
-		border-top: 1px solid var( --studio-gray-100 );
 		background-color: $white;
 		height: 60px;
 		align-items: center;
@@ -154,6 +153,8 @@
 		bottom: 0;
 		padding: 0 20px;
 		margin: 0;
+		border-top: none;
+		box-shadow: inset 0 1px 0 #e2e4e7;
 
 		&:empty {
 			display: none;

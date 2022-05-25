@@ -461,7 +461,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 		<>
 			<Global styles={ globalOverrides } />
 			<ComparisonTable
-				firstColWidth={ 32 }
+				firstColWidth={ 31 }
 				planCount={ plans.length }
 				hideFreePlan={ hideFreePlan && ! isStarterPlanEnabled() }
 			>

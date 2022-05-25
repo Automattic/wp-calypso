@@ -49,7 +49,7 @@ const NameServersCard = ( {
 	selectedDomainName,
 	selectedSite,
 	updateNameservers,
-}: NameServersCardProps ): JSX.Element => {
+}: NameServersCardProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ nameservers, setNameservers ] = useState( nameserversProps || null );

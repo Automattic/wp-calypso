@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, FormInputValidation } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import { isCommentableDiscoverPost } from 'calypso/blocks/comments/helper';
 import AsyncLoad from 'calypso/components/async-load';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import Gravatar from 'calypso/components/gravatar';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
