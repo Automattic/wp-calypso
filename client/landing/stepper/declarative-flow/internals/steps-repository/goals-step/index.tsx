@@ -57,6 +57,7 @@ const GoalsStep: Step = function GoalsStep( { navigation } ) {
 			skipButtonAlign={ 'top' }
 			hideBack={ true }
 			isHorizontalLayout={ false }
+			className={ 'goals-container' }
 			formattedHeader={
 				<FormattedHeader
 					id={ 'goals-header' }
