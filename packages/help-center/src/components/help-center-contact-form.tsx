@@ -341,6 +341,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					{ formTitles.formDisclaimer }
 				</p>
 			) }
+
 			<section>
 				<HelpCenterSitePicker
 					enabled={ mode === 'FORUM' }
@@ -354,6 +355,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
 				/>
 			</section>
+
 			{ sitePickerChoice === 'OTHER_SITE' && (
 				<>
 					<section>
@@ -376,6 +378,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 			{ [ 'FORUM', 'EMAIL' ].includes( mode ) && (
 				<section>
 					<TextControl
+						className="help-center-contact-form__subject"
 						label={ __( 'Subject', __i18n_text_domain__ ) }
 						value={ subject ?? '' }
 						onChange={ setSubject }
