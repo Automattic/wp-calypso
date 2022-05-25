@@ -65,6 +65,7 @@
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,
 		"jetpack/features-section/simple": true,
+		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page-annual-only": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jitms": true,

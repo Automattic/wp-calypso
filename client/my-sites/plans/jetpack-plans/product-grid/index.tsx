@@ -106,6 +106,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const showProductCategories = ! isDesktop;
 
 	const showAnnualPlansOnly = config.isEnabled( 'jetpack/pricing-page-annual-only' );
+	const showBoostAndSocial = config.isEnabled( 'jetpack/pricing-add-boost-social' );
 
 	const [ category, setCategory ] = useState< JetpackProductCategory >();
 	const onCategoryChange = useCallback( setCategory, [ setCategory ] );
@@ -280,9 +281,21 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					<ul className="product-grid__product-grid">
 						{ filteredItems.map( getOtherItemsProductCard ) }
 						{ ( ! showProductCategories || category === JETPACK_GROWTH_CATEGORY ) && (
-							<li>
-								<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
-							</li>
+							<>
+								<li>
+									<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
+								</li>
+								{ showBoostAndSocial && (
+									<li>
+										{ /* Add Jetpack Social Free card here. */ }
+										JETPACK SOCIAL
+										<br />
+										FREE CARD
+										<br />
+										HERE
+									</li>
+								) }
+							</>
 						) }
 						{ showFreeCard && (
 							<li>
