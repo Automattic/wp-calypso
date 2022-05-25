@@ -5,13 +5,13 @@ import Main from 'calypso/components/main';
 
 import './style.scss';
 
-export type JetpackWelcomePageProps = {
+type JetpackWelcomePageProps = {
+	title: React.ReactNode;
 	description?: React.ReactNode;
 	footer?: React.ReactNode;
 	mainClassName?: string;
 	pageViewTracker?: React.ReactNode;
 	steps?: Array< React.ReactNode >;
-	title: React.ReactNode;
 };
 
 export const JetpackWelcomePage: React.FC< JetpackWelcomePageProps > = ( {
