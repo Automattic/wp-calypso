@@ -79,7 +79,7 @@ describe( 'DailyPostButton', () => {
 			);
 			dailyPostButton.simulate( 'click', { preventDefault: noop } );
 			expect( pageSpy ).toHaveBeenCalledWith(
-				expect.stringMatching( /post\/apps.wordpress.com?/ )
+				expect.stringContaining( 'post/apps.wordpress.com' )
 			);
 		} );
 
