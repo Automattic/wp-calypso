@@ -228,6 +228,42 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	},
 	{
 		get title() {
+			return translate( 'Google Analytics integration' );
+		},
+		get description() {
+			return translate(
+				"Track your site's stats with Google Analytics for a deeper understanding of your visitors and customers."
+			);
+		},
+		features: [ FEATURE_GOOGLE_ANALYTICS ],
+		getCellText: ( feature, isMobile = false ) => {
+			if ( ! isMobile ) {
+				if ( feature ) {
+					return (
+						<>
+							<Gridicon icon="checkmark" />
+							{ translate( 'Included' ) }
+						</>
+					);
+				}
+
+				return (
+					<>
+						<Gridicon icon="cross" />
+						{ translate( 'Not included' ) }
+					</>
+				);
+			}
+
+			return feature
+				? translate( 'Google Analytics integration' )
+				: translate( 'Google Analytics integration is {{strong}}not{{/strong}} included', {
+						components: { strong: <strong /> },
+				  } );
+		},
+	},
+	{
+		get title() {
 			return translate( 'WordPress plugins' );
 		},
 		get subtitle() {
@@ -314,6 +350,29 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 	},
 	{
 		get title() {
+			return translate( 'Advanced social media tools' );
+		},
+		get description() {
+			return translate( 'Amplify your voice with our built-in social tools.' );
+		},
+		features: [ FEATURE_SOCIAL_MEDIA_TOOLS ],
+		getCellText: ( feature, isMobile = false ) => {
+			let cellText = defaultGetCellText( translate( 'Built in social media tools' ) )(
+				feature,
+				isMobile
+			);
+			if ( isMobile ) {
+				cellText = feature
+					? translate( 'Built in social media tools are included' )
+					: translate( 'Built in social media tools are {{strong}}not{{/strong}} included', {
+							components: { strong: <strong /> },
+					  } );
+			}
+			return cellText;
+		},
+	},
+	{
+		get title() {
 			return translate( 'Sell products with WooCommerce' );
 		},
 		get description() {
@@ -369,42 +428,6 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			return feature
 				? translate( 'Professional Email is free for 3 months' )
 				: translate( 'Professional Email is {{strong}}not{{/strong}} included', {
-						components: { strong: <strong /> },
-				  } );
-		},
-	},
-	{
-		get title() {
-			return translate( 'Google Analytics integration' );
-		},
-		get description() {
-			return translate(
-				"Track your site's stats with Google Analytics for a deeper understanding of your visitors and customers."
-			);
-		},
-		features: [ FEATURE_GOOGLE_ANALYTICS ],
-		getCellText: ( feature, isMobile = false ) => {
-			if ( ! isMobile ) {
-				if ( feature ) {
-					return (
-						<>
-							<Gridicon icon="checkmark" />
-							{ translate( 'Included' ) }
-						</>
-					);
-				}
-
-				return (
-					<>
-						<Gridicon icon="cross" />
-						{ translate( 'Not included' ) }
-					</>
-				);
-			}
-
-			return feature
-				? translate( 'Google Analytics integration' )
-				: translate( 'Google Analytics integration is {{strong}}not{{/strong}} included', {
 						components: { strong: <strong /> },
 				  } );
 		},
@@ -540,29 +563,6 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 					args: { adminCount: numberFormat( adminCount, 0 ) },
 				}
 			);
-		},
-	},
-	{
-		get title() {
-			return translate( 'Advanced social media tools' );
-		},
-		get description() {
-			return translate( 'Amplify your voice with our built-in social tools.' );
-		},
-		features: [ FEATURE_SOCIAL_MEDIA_TOOLS ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Built in social media tools' ) )(
-				feature,
-				isMobile
-			);
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Built in social media tools are included' )
-					: translate( 'Built in social media tools are {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
 		},
 	},
 	{
