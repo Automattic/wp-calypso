@@ -462,13 +462,10 @@ export function siteSelection( context, next ) {
 		return next();
 	}
 
-	// For unlinked checkout flow, we should always request fresh site information.
-	// Because sites might not be current.
-	const isUnlinkedCheckoutFlow =
-		'1' === context?.query?.unlinked && context?.path?.startsWith( '/checkout/' );
-
 	Promise.resolve( () => {
-		if ( ! isUnlinkedCheckoutFlow ) {
+		// For unlinked checkout flow, we should always request fresh site information.
+		// Because sites might not be current.
+		if ( '1' !== context?.query?.unlinked || ! context?.path?.startsWith( '/checkout/' ) ) {
 			return;
 		}
 		return dispatch( requestSites() );
