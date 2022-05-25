@@ -23,6 +23,8 @@
 		{ "path": "./explat-client-react-helpers" },
 		{ "path": "./explat-client" },
 		{ "path": "./format-currency" },
+		{ "path": "./happychat-connection" },
+		{ "path": "./help-center" },
 		{ "path": "./i18n-utils" },
 		{ "path": "./js-utils" },
 		{ "path": "./language-picker" },
