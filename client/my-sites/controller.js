@@ -464,11 +464,11 @@ export function siteSelection( context, next ) {
 
 	// For unlinked checkout flow, we should always request fresh site information.
 	// Because sites might not be current.
-	const isUnlinkedFlow =
+	const isUnlinkedCheckoutFlow =
 		'1' === context?.query?.unlinked && context?.path?.startsWith( '/checkout/' );
 
 	Promise.resolve( () => {
-		if ( ! isUnlinkedFlow ) {
+		if ( ! isUnlinkedCheckoutFlow ) {
 			return;
 		}
 		return dispatch( requestSites() );
