@@ -26,8 +26,10 @@ export function register(): typeof STORE_KEY {
 			'anchorSpotifyUrl',
 			'domain',
 			'domainSearch',
+			'goals',
 			'hasUsedDomainsStep',
 			'hasUsedPlansStep',
+			'intent',
 			'lastLocation',
 			'planProductId',
 			'randomizedDesigns',
@@ -37,7 +39,6 @@ export function register(): typeof STORE_KEY {
 			'selectedSite',
 			'siteTitle',
 			'storeType',
-			'intent',
 		],
 	} );
 
