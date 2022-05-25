@@ -21,6 +21,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { askDirectlyQuestion, execute } from '../directly';
 import { STORE_KEY, USER_KEY } from '../store';
+import { getSupportVariationFromMode } from '../support-variations';
 import { SitePicker } from '../types';
 import { BackButton } from './back-button';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
@@ -154,6 +155,13 @@ export const HelpCenterContactForm = () => {
 		isLoading: isAnalysisLoading,
 		site: userDeclaredSite,
 	} = useSiteAnalysis( userDeclaredSiteUrl );
+
+	useEffect( () => {
+		const supportVariation = getSupportVariationFromMode( mode );
+		recordTracksEvent( 'calypso_inlinehelp_contact_view', {
+			support_variation: supportVariation,
+		} );
+	}, [ mode ] );
 
 	// record the resolved site
 	useEffect( () => {

@@ -14,6 +14,7 @@ import {
 } from '@automattic/calypso-products';
 import { Dialog, Button } from '@automattic/components';
 import { getCurrencyDefaults } from '@automattic/format-currency';
+import { SUPPORT_HAPPYCHAT } from '@automattic/help-center';
 import {
 	Button as GutenbergButton,
 	CheckboxControl,
@@ -55,9 +56,7 @@ import {
 	willAtomicSiteRevertAfterPurchaseDeactivation,
 } from 'calypso/state/purchases/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
-import getSupportVariation, {
-	SUPPORT_HAPPYCHAT,
-} from 'calypso/state/selectors/get-inline-help-support-variation';
+import getSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import getSiteImportEngine from 'calypso/state/selectors/get-site-import-engine';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import getSite from 'calypso/state/sites/selectors/get-site';
