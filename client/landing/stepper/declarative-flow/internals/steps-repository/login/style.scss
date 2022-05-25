@@ -76,6 +76,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 		line-height: 17px;
 		border-radius: 0;
 		border: 1px solid var( --studio-gray-10 );
+		box-sizing: border-box;
 		width: 100%;
 		max-width: 100%;
 
