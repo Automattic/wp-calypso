@@ -1,38 +1,42 @@
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+import { render, screen } from '@testing-library/react';
 import ValidationFieldset from '..';
 
 describe( 'ValidationFieldset', () => {
 	test( 'should pass className prop to the child FormFieldset component.', () => {
-		const wrapper = shallow( <ValidationFieldset className="test__foo-bar" /> );
+		render( <ValidationFieldset className="test__foo-bar" /> );
 
-		expect( wrapper.find( 'FormFieldset' ) ).toHaveLength( 1 );
-		expect( wrapper.find( 'FormFieldset' ).hasClass( 'test__foo-bar' ) ).toBe( true );
+		const fieldset = screen.getByRole( 'group' );
+		expect( fieldset ).toBeVisible();
+		expect( fieldset ).toHaveClass( 'test__foo-bar' );
 	} );
 
 	test( 'should include a FormInputValidation only when errorMessages prop is set.', () => {
-		const wrapper = shallow( <ValidationFieldset /> );
+		const { rerender } = render( <ValidationFieldset /> );
 
-		expect( wrapper.find( 'FormInputValidation' ).exists() ).toBe( false );
+		expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
 
-		wrapper.setProps( { errorMessages: [ 'error', 'message' ] } );
-		expect( wrapper.find( 'FormInputValidation' ) ).toHaveLength( 1 );
+		rerender( <ValidationFieldset errorMessages={ [ 'error', 'message' ] } /> );
 
-		expect( wrapper.find( 'FormInputValidation' ).prop( 'text' ) ).toEqual( 'error' );
-
-		expect( wrapper.find( '.validation-fieldset__validation-message' ).exists() ).toBe( true );
+		const validationError = screen.queryByRole( 'alert' );
+		expect( validationError ).toBeVisible();
+		expect( validationError ).toHaveTextContent( 'error' );
+		expect( validationError.parentNode ).toHaveClass( 'validation-fieldset__validation-message' );
 	} );
 
 	test( 'should render the children within a FormFieldset', () => {
-		const wrapper = shallow(
+		render(
 			<ValidationFieldset>
-				<p>Lorem ipsum dolor sit amet</p>
-				<p>consectetur adipiscing elit</p>
+				<p data-testid="paragraph-1">Lorem ipsum dolor sit amet</p>
+				<p data-testid="paragraph-2">consectetur adipiscing elit</p>
 			</ValidationFieldset>
 		);
 
-		expect( wrapper.find( 'FormFieldset > p' ) ).toHaveLength( 2 );
-		expect( wrapper.find( 'FormFieldset > p' ).first().text() ).toEqual(
-			'Lorem ipsum dolor sit amet'
-		);
+		const paragraph1 = screen.getByTestId( 'paragraph-1' );
+		expect( paragraph1 ).toBeVisible();
+		expect( paragraph1 ).toHaveTextContent( 'Lorem ipsum dolor sit amet' );
+		expect( screen.getByTestId( 'paragraph-2' ) ).toBeVisible();
 	} );
 } );
