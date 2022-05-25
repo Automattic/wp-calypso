@@ -120,7 +120,7 @@ const MailboxItem = ( { mailbox } ) => {
 			}
 			className="mailbox-selection-list__item"
 			href={ getExternalUrl( mailbox, titanAppsUrlPrefix ) }
-			target="external"
+			target={ isTitanMailAccount( mailbox ) ? null : 'external' }
 		>
 			<span className="mailbox-selection-list__icon">
 				<MailboxItemIcon mailbox={ mailbox } />

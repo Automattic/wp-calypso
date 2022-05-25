@@ -102,6 +102,7 @@ const getTitanMenuItems = ( {
 				comment: 'View the Email application (i.e. the webmail) for Titan',
 			} ),
 			onClick: getTitanClickHandler( 'webmail' ),
+			isInternalLink: isEmbeddedInboxTestingEnabled,
 		},
 		{
 			href: getTitanCalendarUrl( titanAppsUrlPrefix, email ),
