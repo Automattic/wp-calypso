@@ -9,7 +9,7 @@ import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import type { MailboxFormFieldProps } from 'calypso/my-sites/email/form/mailboxes/components/field';
 import type { MutableFormFieldNames } from 'calypso/my-sites/email/form/mailboxes/types';
 
-describe( '<MailboxFormField /> suite', () => {
+describe( '<MailboxField /> suite', () => {
 	const getDefaultProps = (
 		fieldName: MutableFormFieldNames,
 		initialValue?: string
