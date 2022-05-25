@@ -9,6 +9,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 import {
 	recordOnboardingError,
 	initGoogleRecaptcha,
@@ -174,7 +175,7 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 
 		return (
 			<form className="login__form" onSubmit={ handleSubmit }>
-				<fieldset className="login__fieldset">
+				<FormFieldset className="login__fieldset">
 					<TextControl
 						value={ emailVal }
 						disabled={ isFetchingNewUser }
@@ -222,7 +223,7 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 							{ recaptcha_tos }
 						</p>
 					</div>
-				</fieldset>
+				</FormFieldset>
 			</form>
 		);
 	};
