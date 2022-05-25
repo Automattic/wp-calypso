@@ -534,7 +534,7 @@ describe( 'CompositeCheckout', () => {
 			fireEvent.click( await screen.findByText( 'Continue' ) );
 
 			// Wait for the validation to complete
-			await waitForElementToBeRemoved( () => screen.queryByText( 'Updating cart…' ) );
+			await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
 
 			if ( complete === 'does' ) {
 				expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
