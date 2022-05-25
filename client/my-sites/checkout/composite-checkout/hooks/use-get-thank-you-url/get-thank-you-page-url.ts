@@ -184,6 +184,7 @@ export default function getThankYouPageUrl( {
 		isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
 		productAliasFromUrl,
 		adminPageRedirect,
+		redirectTo,
 	} );
 	debug( 'fallbackUrl is', fallbackUrl );
 
@@ -305,6 +306,7 @@ function getFallbackDestination( {
 	isJetpackNotAtomic,
 	productAliasFromUrl,
 	adminPageRedirect,
+	redirectTo,
 }: {
 	pendingOrReceiptId: string;
 	siteSlug: string | undefined;
@@ -314,6 +316,7 @@ function getFallbackDestination( {
 	isJetpackNotAtomic: boolean;
 	productAliasFromUrl: string | undefined;
 	adminPageRedirect?: string;
+	redirectTo?: string;
 } ): string {
 	const isCartEmpty = cart ? getAllCartItems( cart ).length === 0 : true;
 	const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
@@ -346,7 +349,8 @@ function getFallbackDestination( {
 		if ( isJetpackNotAtomic && purchasedProduct ) {
 			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
 
-			const adminPath = adminPageRedirect || 'admin.php?page=jetpack#/recommendations';
+			const adminPath =
+				redirectTo || adminPageRedirect || 'admin.php?page=jetpack#/recommendations';
 
 			// Jetpack Cloud will either redirect to wp-admin (if JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN
 			// flag is set), or otherwise will redirect to a Jetpack Redirect API url (source=jetpack-checkout-thankyou)
