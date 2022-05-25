@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { filter, find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component } from 'react';
+import { v4 as uuid } from 'uuid';
 import Count from 'calypso/components/count';
 import MaterialIcon from 'calypso/components/material-icon';
 import TranslatableString from 'calypso/components/translatable/proptype';
@@ -49,9 +50,7 @@ class SelectDropdown extends Component {
 		style: {},
 	};
 
-	static instances = 0;
-
-	instanceId = ++SelectDropdown.instances;
+	instanceId = uuid();
 
 	state = {
 		isOpen: false,
