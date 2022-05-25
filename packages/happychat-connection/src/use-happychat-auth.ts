@@ -2,17 +2,10 @@ import config from '@automattic/calypso-config';
 import { getLocaleSlug } from 'i18n-calypso';
 import { useQuery } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import type { HappychatSession, HappychatUser, User } from './types';
-
-type Result = {
-	url: string;
-	user: {
-		jwt: string;
-	} & HappychatUser;
-};
+import type { HappychatSession, HappychatUser, User, HappychatAuth } from './types';
 
 export default function useHappychatAuth() {
-	return useQuery< Result, typeof Error >(
+	return useQuery< HappychatAuth, typeof Error >(
 		'getHappychatAuth',
 		async () => {
 			const user: User = await wpcomRequest( {

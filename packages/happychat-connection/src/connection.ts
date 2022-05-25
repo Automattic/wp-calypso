@@ -12,6 +12,11 @@ const buildConnection: ( socket: string | Socket ) => Socket = ( socket ) =>
 		  } ) // If socket is an URL, connect to server.
 		: socket; // If socket is not an url, use it directly. Useful for testing.
 
+//The second one is an identity function, used in 'use-happychat-available' hook
+type Dispatch =
+	| ( ( arg: boolean | string | HappychatUser | void ) => void )
+	| ( < T >( value: T ) => T );
+
 export class Connection {
 	receiveAccept?: ( accept: boolean ) => void;
 	receiveConnect?: () => void;
@@ -27,8 +32,8 @@ export class Connection {
 	receiveToken?: () => void;
 	receiveUnauthorized?: ( message: string ) => void;
 	requestTranscript?: () => void;
-	dispatch: any;
-	openSocket: any;
+	dispatch?: Dispatch;
+	openSocket?: Promise< Socket >;
 
 	constructor( props: ConnectionProps = {} ) {
 		Object.assign( this, props );
@@ -42,7 +47,7 @@ export class Connection {
 	 * @returns { Promise } Fulfilled (returns the opened socket)
 	 *                   	 or rejected (returns an error message)
 	 */
-	init( dispatch: any, auth: Promise< HappychatAuth > ) {
+	init( dispatch: Dispatch, auth: Promise< HappychatAuth > ) {
 		if ( this.openSocket ) {
 			debug( 'socket is already connected' );
 			return this.openSocket;
@@ -122,7 +127,7 @@ export class Connection {
 		return this.openSocket.then(
 			( socket: Socket ) => socket.emit( action.event, action.payload ),
 			( e: Error ) => {
-				this.dispatch( this.receiveError?.( 'failed to send ' + action.event + ': ' + e ) );
+				this.dispatch?.( this.receiveError?.( 'failed to send ' + action.event + ': ' + e ) );
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
 			}
@@ -174,10 +179,10 @@ export class Connection {
 
 				// dispatch the request state upon promise race resolution
 				promiseRace.then(
-					( result ) => this.dispatch( action.callback?.( result ) ),
+					( result ) => this.dispatch?.( action.callback?.( result ) ),
 					( e: Error ) => {
 						if ( e.message !== 'timeout' ) {
-							this.dispatch(
+							this.dispatch?.(
 								this.receiveError?.( action.event + ' request failed: ' + e.message )
 							);
 						}
@@ -187,7 +192,7 @@ export class Connection {
 				return promiseRace;
 			},
 			( e: Error ) => {
-				this.dispatch( this.receiveError?.( 'failed to send ' + action.event + ': ' + e ) );
+				this.dispatch?.( this.receiveError?.( 'failed to send ' + action.event + ': ' + e ) );
 				// so we can relay the error message, for testing purposes
 				return Promise.reject( e );
 			}
