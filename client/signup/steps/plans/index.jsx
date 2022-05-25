@@ -226,8 +226,8 @@ export class PlansStep extends Component {
 		const { headerText, translate, eligibleForProPlan, locale } = this.props;
 
 		if ( eligibleForProPlan ) {
-			return 'en' === locale || i18n.hasTranslation( 'Choose your hosting plan' )
-				? translate( 'Choose your hosting plan' )
+			return 'en' === locale || i18n.hasTranslation( 'Choose the right plan for you' )
+				? translate( 'Choose the right plan for you' )
 				: translate( 'Choose the plan that’s right for you' );
 		}
 
