@@ -5,9 +5,7 @@
 import page from 'page';
 import { showSelectedPost } from '../utils';
 
-jest.mock( 'page', () => ( {
-	show: jest.fn(),
-} ) );
+jest.mock( 'page', () => jest.fn() );
 
 describe( 'reader utils', () => {
 	const dispatch = jest.fn();
@@ -20,18 +18,18 @@ describe( 'reader utils', () => {
 	} );
 
 	beforeEach( () => {
-		page.show.mockReset();
+		page.mockReset();
 	} );
 
 	describe( '#showSelectedPost', () => {
 		test( 'does not do anything if postKey argument is missing', () => {
 			showSelectedPost( {} )( dispatch, getState );
-			expect( page.show ).not.toBeCalled();
+			expect( page ).not.toBeCalled();
 		} );
 
 		test( 'redirects if passed a post key', () => {
 			showSelectedPost( { postKey: { feedId: 1, postId: 5 } } )( dispatch, getState );
-			expect( page.show ).toBeCalledTimes( 1 );
+			expect( page ).toBeCalledTimes( 1 );
 		} );
 
 		test( 'redirects to a #comments URL if we passed comments argument', () => {
@@ -39,7 +37,7 @@ describe( 'reader utils', () => {
 				dispatch,
 				getState
 			);
-			expect( page.show ).toBeCalledWith( '/read/feeds/1/posts/5#comments' );
+			expect( page ).toBeCalledWith( '/read/feeds/1/posts/5#comments' );
 		} );
 	} );
 } );
