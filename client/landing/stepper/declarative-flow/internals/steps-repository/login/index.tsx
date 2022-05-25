@@ -1,23 +1,39 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
-import { USER_STORE } from 'calypso/landing/stepper/stores';
+import { useAnchorFmParams } from 'calypso/landing/stepper/hooks/use-anchor-fm-params';
+import useDetectMatchingAnchorSite from 'calypso/landing/stepper/hooks/use-detect-matching-anchor-site';
+import { ONBOARD_STORE, USER_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 import '../style.scss';
-
 const LoginStep: Step = function LoginStep( { navigation } ) {
-	const { submit, goNext } = navigation;
+	const { submit, goNext, goToStep } = navigation;
 	const { __ } = useI18n();
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+	//Check to see if there is a site with a matching anchor podcast ID
+	const isLookingUpMatchingAnchorSites = useDetectMatchingAnchorSite();
+	const { setSiteSetupError } = useDispatch( SITE_STORE );
+	const { setAnchorPodcastId, setAnchorEpisodeId, setAnchorSpotifyUrl } =
+		useDispatch( ONBOARD_STORE );
+	const { anchorFmPodcastId, isAnchorFmPodcastIdError, anchorFmEpisodeId, anchorFmSpotifyUrl } =
+		useAnchorFmParams();
 
 	const LoginForm: React.FC = () => {
 		const handleSubmit = () => {
-			submit?.();
+			const providedDependencies = {
+				anchorFmPodcastId,
+				anchorFmEpisodeId,
+				anchorFmSpotifyUrl,
+			};
+			setAnchorPodcastId( ! isAnchorFmPodcastIdError ? anchorFmPodcastId : null );
+			setAnchorEpisodeId( anchorFmEpisodeId );
+			setAnchorSpotifyUrl( anchorFmSpotifyUrl );
+			submit?.( providedDependencies );
 		};
 
 		return (
@@ -43,6 +59,22 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 			goNext?.();
 		}
 	}, [ currentUser, userIsLoggedIn ] );
+
+	useEffect( () => {
+		if ( isAnchorFmPodcastIdError ) {
+			const error = __( "We're sorry!" );
+			const message = __(
+				"We're unable to locate your podcast. Return to Anchor or continue with site creation."
+			);
+			setSiteSetupError( error, message );
+			return goToStep?.( 'error' );
+		}
+	}, [ isAnchorFmPodcastIdError ] );
+
+	//If we're still checking for matching Anchor sites, don't show the form
+	if ( isLookingUpMatchingAnchorSites ) {
+		return <div />;
+	}
 
 	return (
 		<StepContainer

@@ -154,7 +154,7 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, upsellUrl } = this.props;
+		const { source, query, upsellUrl, siteId } = this.props;
 
 		return (
 			<div className="themes__selection">
@@ -175,6 +175,7 @@ class ThemesSelection extends Component {
 					emptyContent={ this.props.emptyContent }
 					placeholderCount={ this.props.placeholderCount }
 					bookmarkRef={ this.props.bookmarkRef }
+					siteId={ siteId }
 				/>
 			</div>
 		);

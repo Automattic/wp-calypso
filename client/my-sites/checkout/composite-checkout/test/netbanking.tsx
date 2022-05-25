@@ -8,7 +8,8 @@ import {
 	makeSuccessResponse,
 	CheckoutFormSubmit,
 } from '@automattic/composite-checkout';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import {
@@ -73,6 +74,7 @@ describe( 'Netbanking payment method', () => {
 	} );
 
 	it( 'submits the data to the processor when the submit button is pressed', async () => {
+		const user = userEvent.setup();
 		const paymentMethod = getPaymentMethod();
 		const processorFunction = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
 		render(
@@ -83,32 +85,16 @@ describe( 'Netbanking payment method', () => {
 		);
 		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
 
-		fireEvent.change( screen.getByLabelText( /Your name/i ), {
-			target: { value: customerName },
-		} );
-		fireEvent.change( screen.getByLabelText( /GSTIN/i ), {
-			target: { value: gstin },
-		} );
-		fireEvent.change( screen.getAllByLabelText( /PAN Number/i )[ 1 ], {
-			target: { value: pan },
-		} );
-		fireEvent.change( screen.getByLabelText( /Address/i ), {
-			target: { value: customerAddress },
-		} );
-		fireEvent.change( screen.getByLabelText( /Street Number/i ), {
-			target: { value: customerStreet },
-		} );
-		fireEvent.change( screen.getByLabelText( /City/i ), {
-			target: { value: customerCity },
-		} );
-		fireEvent.change( screen.getByLabelText( /State/i ), {
-			target: { value: customerState },
-		} );
-		fireEvent.change( screen.getByLabelText( /Postal code/i ), {
-			target: { value: customerPostalCode },
-		} );
+		await user.type( screen.getByLabelText( /Your name/i ), customerName );
+		await user.type( screen.getByLabelText( /GSTIN/i ), gstin );
+		await user.type( screen.getAllByLabelText( /PAN Number/i )[ 1 ], pan );
+		await user.type( screen.getByLabelText( /Address/i ), customerAddress );
+		await user.type( screen.getByLabelText( /Street Number/i ), customerStreet );
+		await user.type( screen.getByLabelText( /City/i ), customerCity );
+		await user.type( screen.getByLabelText( /State/i ), customerState );
+		await user.type( screen.getByLabelText( /Postal code/i ), customerPostalCode );
 
-		fireEvent.click( await screen.findByText( activePayButtonText ) );
+		await userEvent.click( await screen.findByText( activePayButtonText ) );
 		await waitFor( () => {
 			expect( processorFunction ).toHaveBeenCalledWith( {
 				name: customerName,
@@ -134,7 +120,7 @@ describe( 'Netbanking payment method', () => {
 			></TestWrapper>
 		);
 		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
-		fireEvent.click( await screen.findByText( activePayButtonText ) );
+		await userEvent.click( await screen.findByText( activePayButtonText ) );
 		await waitFor( () => {
 			expect( processorFunction ).not.toHaveBeenCalled();
 		} );

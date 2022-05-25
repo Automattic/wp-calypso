@@ -134,4 +134,25 @@ describe( 'Theme', () => {
 			);
 		} );
 	} );
+
+	describe( 'Update themes', () => {
+		beforeEach( () => {
+			const updateThemeProps = {
+				...props,
+				theme: {
+					...props.theme,
+					update: {},
+				},
+			};
+
+			const themeElement = TestUtils.renderIntoDocument(
+				createElement( Theme, { ...updateThemeProps } )
+			);
+			themeNode = ReactDom.findDOMNode( themeElement );
+		} );
+
+		test( 'Should show the update message', () => {
+			expect( themeNode.getElementsByClassName( 'theme__update-alert' ).length ).toBe( 1 );
+		} );
+	} );
 } );
