@@ -15,7 +15,6 @@ export default function isEligibleForUpworkSupport( state: AppState ): boolean {
 		return false;
 	}
 
-	// If any site has an Upwork Support exemption, the user is not eligible.
 	return ! Object.values( getSitesItems( state ) ).some( ( site ) => {
 		const planSlug = site.plan?.product_slug ?? '';
 		return isBusinessPlan( planSlug ) || isEcommercePlan( planSlug ) || isProPlan( planSlug );
