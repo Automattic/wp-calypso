@@ -4,6 +4,8 @@
 .sites-overview {
 	height: 100vh;
 	padding: 16px;
+	max-width: 1500px;
+	margin: auto;
 	@include break-large() {
 		padding: 0;
 	}
