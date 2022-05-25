@@ -18,6 +18,6 @@ describe( 'Count', () => {
 
 	test( 'should render with primary class', () => {
 		const { container } = render( <Count count={ 23 } primary /> );
-		expect( container.firstChild ).toMatchSnapshot();
+		expect( container.firstChild ).toHaveClass( 'is-primary' );
 	} );
 } );
