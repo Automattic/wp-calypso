@@ -1,4 +1,3 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -25,7 +24,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 			skipButtonAlign={ 'top' }
 			hideBack={ true }
 			isHorizontalLayout={ false }
-			className={ 'goals-container' }
+			className={ 'goals__container' }
 			formattedHeader={
 				<FormattedHeader
 					id={ 'goals-header' }
