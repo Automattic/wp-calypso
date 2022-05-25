@@ -12,7 +12,7 @@ import type { AllowedTypes, SiteData } from './types';
 interface Props {
 	rows: SiteData;
 	type: AllowedTypes;
-	isLargeScreen: boolean;
+	isLargeScreen?: boolean;
 }
 
 export default function SiteStatusContent( {

@@ -180,6 +180,7 @@ const getLinks = (
 		case 'plugin': {
 			if ( status === 'warning' ) {
 				link = `https://wordpress.com/plugins/updates/${ siteUrl }`;
+				isExternalLink = true;
 			}
 			break;
 		}
