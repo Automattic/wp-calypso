@@ -15,8 +15,6 @@ jest.mock( '@automattic/calypso-config', () => ( {
 	},
 } ) );
 
-jest.setTimeout( 2000 );
-
 async function linkStatus( link: string ) {
 	const response = await fetch( link, { redirect: 'manual' } );
 	return {
