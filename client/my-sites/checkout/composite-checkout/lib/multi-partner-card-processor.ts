@@ -80,13 +80,15 @@ async function stripeCardProcessor(
 		} )
 	);
 
-	if ( ! responseCart.tax.location.country_code && contactDetails?.countryCode?.value ) {
+	const cartCountry = responseCart.tax.location.country_code ?? '';
+	const formCountry = contactDetails?.countryCode?.value ?? '';
+	if ( cartCountry !== formCountry ) {
 		// Changes to the contact form data should always be sent to the cart, so
 		// this should not be possible.
 		reduxDispatch(
 			recordTracksEvent( 'calypso_checkout_mismatched_tax_location', {
-				form_country: contactDetails.countryCode.value,
-				cart_country: responseCart.tax.location.country_code,
+				form_country: formCountry,
+				cart_country: cartCountry,
 			} )
 		);
 	}
