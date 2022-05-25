@@ -4,7 +4,6 @@ import i18n from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
-import { requestAll } from 'calypso/client/components/data/query-sites';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
@@ -60,7 +59,7 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { requestSite } from 'calypso/state/sites/actions';
+import { requestSites, requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSite, getSiteId, getSiteSlug } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -468,7 +467,12 @@ export function siteSelection( context, next ) {
 	const isUnlinkedFlow =
 		'1' === context?.query?.unlinked && context?.path?.startsWith( '/checkout/' );
 
-	Promise.resolve( () => isUnlinkedFlow && dispatch( requestAll() ) )
+	Promise.resolve( () => {
+		if ( ! isUnlinkedFlow ) {
+			return;
+		}
+		return dispatch( requestSites() );
+	} )
 		.catch( () => null )
 		.then( () => {
 			const siteId = getSiteId( getState(), siteFragment );
