@@ -43,18 +43,16 @@ const Colors: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<div className="import-layout__center import-light__colors">
-			<div className="import__header">
-				<div className="import__heading-center">
-					<Progress>
-						<Title>{ __( 'Importing colors' ) }</Title>
-						<ProgressBar value={ 23 } compact={ true } />
-						<div className="colors-container">
-							{ displayedColors.map( ( x, i ) => (
-								<ColorIndicator key={ i } colorValue={ x.hex } />
-							) ) }
-						</div>
-					</Progress>
-				</div>
+			<div className="import__heading-center">
+				<Progress>
+					<Title>{ __( 'Importing colors' ) }</Title>
+					<ProgressBar value={ 67 } compact={ true } />
+					<div className="colors-container">
+						{ displayedColors.map( ( x, i ) => (
+							<ColorIndicator key={ i } colorValue={ x.hex } />
+						) ) }
+					</div>
+				</Progress>
 			</div>
 		</div>
 	);
