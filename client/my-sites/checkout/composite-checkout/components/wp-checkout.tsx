@@ -409,13 +409,7 @@ export default function WPCheckout( {
 						setShouldShowContactDetailsValidationErrors( true );
 						// Touch the fields so they display validation errors
 						touchContactFields();
-						updateCartContactDetailsForCheckout(
-							countriesList,
-							responseCart,
-							updateLocation,
-							contactInfo
-						);
-						return validateContactDetails(
+						const validationResponse = await validateContactDetails(
 							contactInfo,
 							isLoggedOutCart,
 							responseCart,
@@ -425,25 +419,32 @@ export default function WPCheckout( {
 							reduxDispatch,
 							translate,
 							true
-						).then( ( response ) => {
-							if ( response ) {
-								// When the contact details change, update the cached contact details on
-								// the server. This can fail if validation fails but we will silently
-								// ignore failures here because the validation call will handle them better
-								// than this will.
-								reduxDispatch(
-									saveContactDetailsCache( prepareDomainContactValidationRequest( contactInfo ) )
-								);
+						);
+						if ( validationResponse ) {
+							// When the contact details change, update the cart's tax location to match.
+							updateCartContactDetailsForCheckout(
+								countriesList,
+								responseCart,
+								updateLocation,
+								contactInfo
+							);
 
-								reduxDispatch(
-									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
-										step: 1,
-										step_name: 'contact-form',
-									} )
-								);
-							}
-							return response;
-						} );
+							// When the contact details change, update the cached contact details on
+							// the server. This can fail if validation fails but we will silently
+							// ignore failures here because the validation call will handle them better
+							// than this will.
+							reduxDispatch(
+								saveContactDetailsCache( prepareDomainContactValidationRequest( contactInfo ) )
+							);
+
+							reduxDispatch(
+								recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+									step: 1,
+									step_name: 'contact-form',
+								} )
+							);
+						}
+						return validationResponse;
 					} }
 					activeStepContent={
 						<WPContactForm
