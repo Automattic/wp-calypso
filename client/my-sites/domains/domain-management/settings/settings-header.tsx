@@ -2,24 +2,29 @@ import { Circle, SVG } from '@wordpress/components';
 import { home, Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type as DomainType } from 'calypso/lib/domains/constants';
 import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import type {
-	SettingsHeaderConnectedProps,
-	SettingsHeaderOwnProps,
-	SettingsHeaderProps,
-} from './types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { Purchase } from 'calypso/lib/purchases/types';
+import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
-const SettingsHeader = ( props: SettingsHeaderProps ) => {
+type SettingsHeaderProps = {
+	domain: ResponseDomain;
+	site: SiteData;
+	purchase: Purchase | null;
+};
+
+export default function SettingsHeader( { domain, site, purchase }: SettingsHeaderProps ) {
 	const { __ } = useI18n();
+	const isSiteDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, site.ID ) );
 	let badgeCounter = 0;
 
 	const renderCircle = () => (
@@ -83,7 +88,7 @@ const SettingsHeader = ( props: SettingsHeaderProps ) => {
 		return renderNeutralBadge( __( 'Domain Transfer' ) );
 	};
 
-	const renderStatusBadge = ( domain: typeof props[ 'domain' ] ) => {
+	const renderStatusBadge = ( domain: ResponseDomain ) => {
 		const { status, statusClass } = resolveDomainStatus( domain );
 
 		if ( status ) {
@@ -94,7 +99,6 @@ const SettingsHeader = ( props: SettingsHeaderProps ) => {
 	};
 
 	const renderBadges = () => {
-		const { domain, isDomainOnlySite } = props;
 		const badges = [];
 
 		if (
@@ -108,7 +112,7 @@ const SettingsHeader = ( props: SettingsHeaderProps ) => {
 			badges.push( statusBadge );
 		}
 
-		if ( domain.isPrimary && ! isDomainOnlySite ) {
+		if ( domain.isPrimary && ! isSiteDomainOnly ) {
 			badges.push( renderSuccessBadge( __( 'Primary site address' ), home ) );
 		}
 
@@ -120,7 +124,6 @@ const SettingsHeader = ( props: SettingsHeaderProps ) => {
 	};
 
 	const renderNotices = () => {
-		const { domain, site, purchase } = props;
 		const { noticeText, statusClass } = resolveDomainStatus( domain, purchase, {
 			siteSlug: site?.slug,
 			getMappingErrors: true,
@@ -154,7 +157,7 @@ const SettingsHeader = ( props: SettingsHeaderProps ) => {
 				<FormattedHeader
 					brandFont
 					className="settings-header__title"
-					headerText={ props.domain.name }
+					headerText={ domain.name }
 					align="left"
 					hasScreenOptions={ false }
 				/>
@@ -162,18 +165,10 @@ const SettingsHeader = ( props: SettingsHeaderProps ) => {
 			</div>
 			{ renderNotices() }
 			<TransferConnectedDomainNudge
-				domain={ props.domain }
+				domain={ domain }
 				location="domain_settings"
-				siteSlug={ props.site.slug }
+				siteSlug={ site.slug }
 			/>
 		</div>
 	);
-};
-
-export default connect(
-	( state, ownProps: SettingsHeaderOwnProps ): SettingsHeaderConnectedProps => {
-		return {
-			isDomainOnlySite: !! isDomainOnlySite( state, ownProps.site.ID ),
-		};
-	}
-)( SettingsHeader );
+}
