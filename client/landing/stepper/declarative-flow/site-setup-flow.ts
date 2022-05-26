@@ -60,7 +60,7 @@ export const siteSetupFlow: Flow = {
 		const site = useSite();
 		const siteSlug = site ? new URL( site.URL ).host : null;
 		const adminUrl = useSelect(
-			( select ) => site && select( SITE_STORE ).getSiteOption( site.ID as number, 'admin_url' )
+			( select ) => site && select( SITE_STORE ).getSiteOption( site.ID, 'admin_url' )
 		);
 		const isAtomic = useSelect( ( select ) =>
 			select( SITE_STORE ).isSiteAtomic( site?.ID as number )
