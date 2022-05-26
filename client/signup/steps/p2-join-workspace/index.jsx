@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { useState, useEffect, createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, chevronRight } from '@wordpress/icons';
+import debugFactory from 'debug';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
@@ -11,6 +12,8 @@ import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import './style.scss';
 import P2JoinWorkspaceCodeInput from './code-input';
+
+const debug = debugFactory( 'calypso:signup:p2-join-workspace' );
 
 function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, submitSignupStep } ) {
 	const dispatch = useDispatch();
@@ -46,6 +49,7 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 	}, [ userEmail ] );
 
 	useEffect( () => {
+		debug( 'Fetching workspace list' );
 		fetchList();
 	}, [ fetchList ] );
 
