@@ -17,8 +17,6 @@ export class PlanPrice extends Component {
 			className,
 			displayFlatPrice,
 			displayPerMonthNotation,
-			displayShortPerMonthNotation,
-			originalPricePrefix,
 			productDisplayPrice,
 			isOnSale,
 			taxText,
