@@ -7,6 +7,7 @@ import {
 	isJetpackPlanSlug,
 	isJetpackScan,
 	isJetpackScanSlug,
+	planHasFeature,
 	WPCOM_FEATURES_ANTISPAM,
 	WPCOM_FEATURES_BACKUPS,
 	WPCOM_FEATURES_SCAN,
@@ -72,20 +73,20 @@ const PrePurchaseNotices = () => {
 	/**
 	 * The active product on the current site that overlaps/conflicts with the plan currently in the cart.
 	 */
-	const siteProductThatOverlapsCartPlan = useSelector( ( state ) => {
+	const siteProductThatOverlapsCartPlan = useSelector( () => {
 		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
 
 		if ( ! planSlugInCart ) return null;
 
-		if ( siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS ) ) {
+		if ( planHasFeature( planSlugInCart, WPCOM_FEATURES_BACKUPS ) ) {
 			return currentSiteProducts.find( isJetpackBackup );
 		}
 
-		if ( siteHasFeature( state, siteId, WPCOM_FEATURES_ANTISPAM ) ) {
+		if ( planHasFeature( planSlugInCart, WPCOM_FEATURES_ANTISPAM ) ) {
 			return currentSiteProducts.find( isJetpackAntiSpam );
 		}
 
-		if ( siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ) ) {
+		if ( planHasFeature( planSlugInCart, WPCOM_FEATURES_SCAN ) ) {
 			return currentSiteProducts.find( isJetpackScan );
 		}
 
