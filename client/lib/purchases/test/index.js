@@ -210,22 +210,25 @@ describe( 'index', () => {
 		const siteSlug = 'my-site.wordpress.com';
 
 		test( 'should redirect to the checkout page', () => {
-			handleRenewNowClick( purchase, siteSlug );
+			const dispatch = jest.fn();
+			handleRenewNowClick( purchase, siteSlug )( dispatch );
 			expect( page ).toHaveBeenCalledWith(
 				'/checkout/personal-bundle/renew/1/my-site.wordpress.com'
 			);
 		} );
 
 		test( 'should redirect to the checkout page with ?redirect_to', () => {
-			handleRenewNowClick( purchase, siteSlug, { redirectTo: '/me/purchases' } );
+			const dispatch = jest.fn();
+			handleRenewNowClick( purchase, siteSlug, { redirectTo: '/me/purchases' } )( dispatch );
 			expect( page ).toHaveBeenCalledWith(
 				'/checkout/personal-bundle/renew/1/my-site.wordpress.com?redirect_to=%2Fme%2Fpurchases'
 			);
 		} );
 
 		test( 'should send the tracks events', () => {
+			const dispatch = jest.fn();
 			const tracksProps = { extra: 'extra' };
-			handleRenewNowClick( purchase, siteSlug, { tracksProps } );
+			handleRenewNowClick( purchase, siteSlug, { tracksProps } )( dispatch );
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_purchases_renew_now_click', {
 				product_slug: 'personal-bundle',
 				extra: 'extra',
@@ -233,18 +236,32 @@ describe( 'index', () => {
 		} );
 
 		describe( 'when the purchase id does not exist', () => {
-			test( 'should reject', () => {
-				expect( () => handleRenewNowClick( { ...purchase, id: null }, siteSlug ) ).toThrowError(
-					'Could not find purchase id for renewal.'
+			test( 'should report error', () => {
+				const dispatch = jest.fn();
+				handleRenewNowClick( { ...purchase, id: null }, siteSlug )( dispatch );
+				expect( dispatch ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						notice: expect.objectContaining( {
+							status: 'is-error',
+							text: 'Could not find purchase id for renewal.',
+						} ),
+					} )
 				);
 			} );
 		} );
 
 		describe( 'when the product slug does not exist', () => {
-			test( 'should reject', () => {
-				expect( () =>
-					handleRenewNowClick( { ...purchase, productSlug: '' }, siteSlug )
-				).toThrowError( 'This product cannot be renewed.' );
+			test( 'should report error', () => {
+				const dispatch = jest.fn();
+				handleRenewNowClick( { ...purchase, productSlug: '' }, siteSlug )( dispatch );
+				expect( dispatch ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						notice: expect.objectContaining( {
+							status: 'is-error',
+							text: 'This product cannot be renewed.',
+						} ),
+					} )
+				);
 			} );
 		} );
 	} );
@@ -272,24 +289,33 @@ describe( 'index', () => {
 		];
 		const siteSlug = 'my-site.wordpress.com';
 		test( 'should redirect to the checkout page', () => {
-			handleRenewMultiplePurchasesClick( purchases, siteSlug );
+			const dispatch = jest.fn();
+			handleRenewMultiplePurchasesClick( purchases, siteSlug )( dispatch );
 			expect( page ).toHaveBeenCalledWith(
 				'/checkout/personal-bundle,dotlive_domain:personalsitetest1234.live/renew/1,2/my-site.wordpress.com'
 			);
 		} );
 		describe( 'when the none of the purchase ids exist', () => {
-			test( 'should reject', () => {
+			test( 'should report error', () => {
+				const dispatch = jest.fn();
 				const purchasesWithoutId = purchases.map( ( purchase ) => ( { ...purchase, id: null } ) );
-				expect( () =>
-					handleRenewMultiplePurchasesClick( purchasesWithoutId, siteSlug )
-				).toThrowError( 'Could not find product slug or purchase id for renewal.' );
+				handleRenewMultiplePurchasesClick( purchasesWithoutId, siteSlug )( dispatch );
+				expect( dispatch ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						notice: expect.objectContaining( {
+							status: 'is-error',
+							text: 'Could not find product slug or purchase id for renewal.',
+						} ),
+					} )
+				);
 			} );
 		} );
 
 		describe( 'when at least one purchase can be renewed', () => {
 			test( 'should redirect to checkout with only the valid purchases to renew', () => {
+				const dispatch = jest.fn();
 				const purchasesPartiallyValid = [ purchases[ 1 ], { ...purchases[ 0 ], id: null } ];
-				handleRenewMultiplePurchasesClick( purchasesPartiallyValid, siteSlug );
+				handleRenewMultiplePurchasesClick( purchasesPartiallyValid, siteSlug )( dispatch );
 				expect( page ).toHaveBeenCalledWith(
 					'/checkout/dotlive_domain:personalsitetest1234.live/renew/2/my-site.wordpress.com'
 				);

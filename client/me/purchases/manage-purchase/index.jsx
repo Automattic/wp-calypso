@@ -182,10 +182,10 @@ class ManagePurchase extends Component {
 	}
 
 	handleRenew = () => {
-		const { purchase, siteSlug, redirectTo } = this.props;
+		const { purchase, siteSlug, redirectTo, dispatch } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
 
-		handleRenewNowClick( purchase, siteSlug, options );
+		dispatch( handleRenewNowClick( purchase, siteSlug, options ) );
 	};
 
 	handleRenewMonthly = () => {
@@ -208,9 +208,9 @@ class ManagePurchase extends Component {
 	};
 
 	handleRenewMultiplePurchases = ( purchases ) => {
-		const { siteSlug, redirectTo } = this.props;
+		const { siteSlug, redirectTo, dispatch } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
-		handleRenewMultiplePurchasesClick( purchases, siteSlug, options );
+		dispatch( handleRenewMultiplePurchasesClick( purchases, siteSlug, options ) );
 	};
 
 	shouldShowNonPrimaryDomainWarning() {
