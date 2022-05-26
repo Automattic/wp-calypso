@@ -1049,10 +1049,13 @@ export async function excludeStepIfWorkspaceListEmpty( stepName, defaultDependen
 		return;
 	}
 
+	debug( 'Fetching workspace list' );
 	const workspaceList = await wpcom.req.get( {
 		path: '/p2/preapproved-joining/list-workspaces',
 		apiNamespace: 'wpcom/v2',
 	} );
+
+	debug( 'Workspace list', workspaceList );
 
 	if ( workspaceList.length < 1 ) {
 		debug( 'Skipping P2 join workspace step' );
