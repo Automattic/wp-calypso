@@ -74,7 +74,7 @@ export default class extends React.Component {
 
 ## Props
 
-| Prop         | Type           | Description                                             |
+| Prop                | Type           | Description                                             |
 | ------------------- | -------------- | ------------------------------------------------------- |
 | productDisplayPrice | number         | HTML wrapped display price                              |
 | rawPrice            | number / array | Price or price range of the plan                        |
