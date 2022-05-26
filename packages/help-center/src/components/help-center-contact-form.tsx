@@ -112,14 +112,6 @@ const titles: {
 };
 
 type Mode = 'CHAT' | 'EMAIL' | 'DIRECTLY' | 'FORUM';
-interface ContactFormProps {
-	mode: Mode;
-	onBackClick: () => void;
-	onGoHome: () => void;
-	siteId: number | null;
-	onPopupOpen?: () => void;
-}
-
 const POPUP_TOP_BAR_HEIGHT = 60;
 
 function openPopup( event: React.MouseEvent< HTMLButtonElement > ): Window {
@@ -144,7 +136,7 @@ function openPopup( event: React.MouseEvent< HTMLButtonElement > ): Window {
 	return popup;
 }
 
-export const HelpCenterContactForm: React.FC< ContactFormProps > = () => {
+export const HelpCenterContactForm: React.FC = () => {
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;

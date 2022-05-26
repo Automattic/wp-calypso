@@ -9,11 +9,8 @@ import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-opt
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
 import Mail from '../icons/mail';
 import { SibylArticles } from './help-center-sibyl-articles';
-interface Props {
-	onSelectResource: () => void;
-}
 
-export const HelpCenterContactPage: React.FC< Props > = () => {
+export const HelpCenterContactPage: React.FC = () => {
 	const { __ } = useI18n();
 
 	const renderEmail = useShouldRenderEmailOption();
