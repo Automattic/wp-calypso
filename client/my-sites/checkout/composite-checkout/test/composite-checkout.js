@@ -534,15 +534,13 @@ describe( 'CompositeCheckout', () => {
 			fireEvent.click( await screen.findByText( 'Continue' ) );
 
 			// Wait for the validation to complete
-			await waitForElementToBeRemoved( () => screen.queryByText( 'Updating cart…' ) );
+			await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
 
 			if ( complete === 'does' ) {
 				expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 			} else {
-				// This is a little tricky because we need to verify something never happens,
-				// even after some time passes, so we use this slightly convoluted technique:
-				// https://stackoverflow.com/a/68318058/2615868
-				await expect( screen.findByTestId( 'payment-method-step--visible' ) ).rejects.toThrow();
+				await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
+
 				// Make sure the error message is displayed
 				if ( valid !== 'valid' ) {
 					if ( logged === 'out' && email === 'fails' ) {
