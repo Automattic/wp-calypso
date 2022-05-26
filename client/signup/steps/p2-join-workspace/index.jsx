@@ -53,6 +53,19 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 		fetchList();
 	}, [ fetchList ] );
 
+	useEffect( () => {
+		if ( eligibleWorkspaces.length > 0 || isLoading ) {
+			return;
+		}
+
+		submitSignupStep( {
+			stepName,
+			wasSkipped: true,
+		} );
+
+		goToNextStep();
+	}, [ eligibleWorkspaces, isLoading, submitSignupStep, stepName, goToNextStep ] );
+
 	const handleJoinWorkspaceClick = async ( { id, name } ) => {
 		// Remember which workspace is being requested, for more accurate loading feedback.
 		setWorkspaceStatus( {
