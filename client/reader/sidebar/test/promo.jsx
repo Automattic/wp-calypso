@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import { ReaderSidebarPromo, shouldRenderAppPromo } from '../promo';
 
 describe( 'ReaderSidebarPromo', () => {
@@ -17,16 +17,16 @@ describe( 'ReaderSidebarPromo', () => {
 
 	test( 'should render the AppPromo when the shouldRenderAppPromo property is true', () => {
 		const adjustedProperties = { shouldRenderAppPromo: true };
-		const wrapper = shallow( <ReaderSidebarPromo { ...adjustedProperties } /> );
-		expect( wrapper.find( '.sidebar__app-promo' ) ).toHaveLength( 1 );
+		const { wrapper } = render( <ReaderSidebarPromo { ...adjustedProperties } /> );
+		expect( wrapper.getElementsByClassName( 'sidebar__app-promo' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should not render the AppPromo when the shouldRenderAppPromo property is false', () => {
 		const adjustedProperties = {
 			shouldRenderAppPromo: false,
 		};
-		const wrapper = shallow( <ReaderSidebarPromo { ...adjustedProperties } /> );
-		expect( wrapper.find( '.sidebar__app-promo' ) ).toHaveLength( 0 );
+		const { wrapper } = render( <ReaderSidebarPromo { ...adjustedProperties } /> );
+		expect( wrapper.getElementsByClassName( '.sidebar__app-promo' ) ).toHaveLength( 0 );
 	} );
 
 	describe( 'shouldRenderAppPromo', () => {
