@@ -53,17 +53,8 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	render() {
-		const {
-			children,
-			date,
-			moment,
-			period,
-			url,
-			hidePreviousArrow,
-			hideNextArrow,
-			isRtl,
-			queryParams,
-		} = this.props;
+		const { children, date, moment, period, url, hidePreviousArrow, hideNextArrow, queryParams } =
+			this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
 		const previousDay = moment( date ).subtract( 1, period ).format( 'YYYY-MM-DD' );
@@ -76,36 +67,31 @@ class StatsPeriodNavigation extends PureComponent {
 			addQueryPrefix: true,
 		} );
 
-		const previousDayComponent = (
-			<a
-				className={ classNames( 'stats-period-navigation__previous', {
-					'is-disabled': hidePreviousArrow,
-				} ) }
-				href={ `${ url }${ previousDayQuery }` }
-				onClick={ this.handleClickPrevious }
-			>
-				<Gridicon icon={ 'arrow-left' } size={ 18 } />
-			</a>
-		);
-		const nextDayComponent = (
-			<a
-				className={ classNames( 'stats-period-navigation__next', {
-					'is-disabled': hideNextArrow || isToday,
-				} ) }
-				href={ `${ url }${ nextDayQuery }` }
-				onClick={ this.handleClickNext }
-			>
-				<Gridicon icon={ 'arrow-right' } size={ 18 } />
-			</a>
-		);
-
 		return (
 			<div className="stats-period-navigation">
-				{ isRtl ? nextDayComponent : previousDayComponent }
-
+				{
+					<a
+						className={ classNames( 'stats-period-navigation__previous', {
+							'is-disabled': hidePreviousArrow,
+						} ) }
+						href={ `${ url }${ previousDayQuery }` }
+						onClick={ this.handleClickPrevious }
+					>
+						<Gridicon icon={ 'arrow-left' } size={ 18 } />
+					</a>
+				}
 				<div className="stats-period-navigation__children">{ children }</div>
-
-				{ isRtl ? previousDayComponent : nextDayComponent }
+				{
+					<a
+						className={ classNames( 'stats-period-navigation__next', {
+							'is-disabled': hideNextArrow || isToday,
+						} ) }
+						href={ `${ url }${ nextDayQuery }` }
+						onClick={ this.handleClickNext }
+					>
+						<Gridicon icon={ 'arrow-right' } size={ 18 } />
+					</a>
+				}
 			</div>
 		);
 	}
