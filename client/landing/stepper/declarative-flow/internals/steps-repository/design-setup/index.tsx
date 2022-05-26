@@ -168,6 +168,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	);
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
 
 	function pickDesign(
@@ -194,12 +195,19 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			submit?.( providedDependencies );
 		} else if ( isAnchorSite && _selectedDesign ) {
 			setPendingAction( async () => {
-				if ( ! currentUser ) {
+				if ( ! currentUser && ! newUser ) {
 					return;
 				}
 
+				let user = '';
+				if ( currentUser ) {
+					user = currentUser.username;
+				} else if ( newUser ) {
+					user = newUser.username as string;
+				}
+
 				await createSite( {
-					username: currentUser.username,
+					username: user,
 					languageSlug: locale,
 					bearerToken: undefined,
 					visibility,
