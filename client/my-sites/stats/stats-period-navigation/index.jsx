@@ -76,31 +76,36 @@ class StatsPeriodNavigation extends PureComponent {
 			addQueryPrefix: true,
 		} );
 
+		const previousDayComponent = (
+			<a
+				className={ classNames( 'stats-period-navigation__previous', {
+					'is-disabled': hidePreviousArrow,
+				} ) }
+				href={ `${ url }${ previousDayQuery }` }
+				onClick={ this.handleClickPrevious }
+			>
+				<Gridicon icon={ 'arrow-left' } size={ 18 } />
+			</a>
+		);
+		const nextDayComponent = (
+			<a
+				className={ classNames( 'stats-period-navigation__next', {
+					'is-disabled': hideNextArrow || isToday,
+				} ) }
+				href={ `${ url }${ nextDayQuery }` }
+				onClick={ this.handleClickNext }
+			>
+				<Gridicon icon={ 'arrow-right' } size={ 18 } />
+			</a>
+		);
+
 		return (
 			<div className="stats-period-navigation">
-				{
-					<a
-						className={ classNames( 'stats-period-navigation__previous', {
-							'is-disabled': hidePreviousArrow,
-						} ) }
-						href={ `${ url }${ previousDayQuery }` }
-						onClick={ this.handleClickPrevious }
-					>
-						<Gridicon icon={ isRtl ? 'arrow-right' : 'arrow-left' } size={ 18 } />
-					</a>
-				}
+				{ isRtl ? nextDayComponent : previousDayComponent }
+
 				<div className="stats-period-navigation__children">{ children }</div>
-				{
-					<a
-						className={ classNames( 'stats-period-navigation__next', {
-							'is-disabled': hideNextArrow || isToday,
-						} ) }
-						href={ `${ url }${ nextDayQuery }` }
-						onClick={ this.handleClickNext }
-					>
-						<Gridicon icon={ isRtl ? 'arrow-left' : 'arrow-right' } size={ 18 } />
-					</a>
-				}
+
+				{ isRtl ? previousDayComponent : nextDayComponent }
 			</div>
 		);
 	}
