@@ -104,6 +104,7 @@ export interface APIError {
 	status: number;
 	code: string | null;
 	message: string;
+	data?: any;
 }
 
 export interface APIInvoices {

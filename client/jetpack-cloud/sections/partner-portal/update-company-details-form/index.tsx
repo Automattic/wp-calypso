@@ -8,6 +8,7 @@ import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/
 import { receivePartner } from 'calypso/state/partner-portal/partner/actions';
 import useUpdateCompanyDetailsMutation from 'calypso/state/partner-portal/partner/hooks/use-update-company-details-mutation';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
+import { translateInvalidPartnerParameterError } from 'calypso/state/partner-portal/partner/utils';
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
 import type { APIError } from 'calypso/state/partner-portal/types';
 
@@ -36,11 +37,13 @@ export default function UpdateCompanyDetailsForm(): ReactElement {
 			);
 		},
 		onError: ( error: APIError ) => {
-			dispatch(
-				errorNotice( error.message, {
-					id: notificationId,
-				} )
-			);
+			let message = error.message;
+
+			if ( error.code === 'rest_invalid_param' && typeof error?.data?.params !== undefined ) {
+				message = translateInvalidPartnerParameterError( error.data.params );
+			}
+
+			dispatch( errorNotice( message, { id: notificationId } ) );
 		},
 	} );
 

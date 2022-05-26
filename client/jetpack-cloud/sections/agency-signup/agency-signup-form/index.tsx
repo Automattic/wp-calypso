@@ -12,6 +12,7 @@ import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { receivePartner } from 'calypso/state/partner-portal/partner/actions';
 import useCreatePartnerMutation from 'calypso/state/partner-portal/partner/hooks/use-create-partner-mutation';
 import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
+import { translateInvalidPartnerParameterError } from 'calypso/state/partner-portal/partner/utils';
 import type { APIError } from 'calypso/state/partner-portal/types';
 import type { ReactElement } from 'react';
 import './style.scss';
@@ -29,11 +30,13 @@ export default function AgencySignupForm(): ReactElement {
 			page.redirect( partnerPortalBasePath() );
 		},
 		onError: ( error: APIError ) => {
-			dispatch(
-				errorNotice( error.message, {
-					id: notificationId,
-				} )
-			);
+			let message = error.message;
+
+			if ( error.code === 'rest_invalid_param' && typeof error?.data?.params !== undefined ) {
+				message = translateInvalidPartnerParameterError( error.data.params );
+			}
+
+			dispatch( errorNotice( message, { id: notificationId } ) );
 		},
 	} );
 
