@@ -1,7 +1,7 @@
 import { PureComponent } from 'react';
-import Spinner from 'calypso/components/spinner';
+import { Spinner } from '../';
 
-export default class extends PureComponent {
+export class SpinnerExample extends PureComponent {
 	static displayName = 'Spinner';
 
 	render() {

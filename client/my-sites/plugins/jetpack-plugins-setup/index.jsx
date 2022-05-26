@@ -1,4 +1,4 @@
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { filter, get, range } from 'lodash';
@@ -10,7 +10,6 @@ import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
 import EmptyContent from 'calypso/components/empty-content';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import Spinner from 'calypso/components/spinner';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';

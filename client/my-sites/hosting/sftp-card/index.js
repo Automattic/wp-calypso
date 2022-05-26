@@ -1,4 +1,4 @@
-import { Card, Button, Gridicon } from '@automattic/components';
+import { Card, Button, Gridicon, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { PanelBody } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -11,7 +11,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MaterialIcon from 'calypso/components/material-icon';
-import Spinner from 'calypso/components/spinner';
 import {
 	withAnalytics,
 	composeAnalytics,

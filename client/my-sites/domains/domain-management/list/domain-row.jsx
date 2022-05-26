@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Spinner } from '@automattic/components';
 import { Icon, home, info, moreVertical, redo, plus } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -13,7 +13,6 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import MaterialIcon from 'calypso/components/material-icon';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import Spinner from 'calypso/components/spinner';
 import {
 	canCurrentUserAddEmail,
 	getDomainTypeText,

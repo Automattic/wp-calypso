@@ -7,11 +7,11 @@
  *   Currently experimental/WIP.
  */
 
+import { Spinner } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import Spinner from 'calypso/components/spinner';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';

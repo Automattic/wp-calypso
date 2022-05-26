@@ -1,10 +1,9 @@
-import { Card, FormInputValidation } from '@automattic/components';
+import { Card, FormInputValidation, Spinner } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
-import Spinner from 'calypso/components/spinner';
 
 import './security-key-form.scss';
 

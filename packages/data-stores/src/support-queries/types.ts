@@ -21,6 +21,8 @@ export interface HappyChatAvailability {
 	availability: Availability;
 }
 
-export interface EmailSupportAvailability {
-	is_user_eligible: boolean;
+export interface OtherSupportAvailability {
+	is_user_eligible_for_upwork: boolean;
+	is_user_eligible_for_kayako: boolean;
+	is_user_eligible_for_directly: boolean;
 }

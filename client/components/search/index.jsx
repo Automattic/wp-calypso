@@ -1,3 +1,4 @@
+import { Spinner } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
 import { Icon, search, closeSmall } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -7,7 +8,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { v4 as uuid } from 'uuid';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Spinner from 'calypso/components/spinner';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 

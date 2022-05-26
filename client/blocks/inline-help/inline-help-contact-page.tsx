@@ -21,20 +21,24 @@ const InlineHelpContactPage: React.FC< Props > = ( {
 	const { __ } = useI18n();
 
 	const { data: dataChat, isLoading: isLoadingChat } = useSupportAvailability( 'CHAT' );
-	const { data: dataEmail, isLoading: isLoadingEmail } = useSupportAvailability( 'EMAIL' );
 	const { available: chatAvailable, isLoading: isLoadingChatAvailable } = useHappychatAvailable();
+	const { data: dataEmail, isLoading: isLoadingEmail } = useSupportAvailability( 'OTHER' );
 
 	// If user has both chat and email options, we show him the contact-page to choose
 	// If instead the user has one option, we show him the contact form directly
 	useEffect( () => {
 		if ( ! isLoadingChat && ! isLoadingEmail ) {
-			if ( ! dataChat?.isUserEligible ) {
-				if ( dataEmail?.is_user_eligible ) {
-					setContactFormOpen( 'EMAIL' );
-				} else {
-					setContactFormOpen( 'FORUM' );
-				}
-			}
+			setContactFormOpen( 'DIRECTLY' );
+
+			// if ( ! dataChat?.isUserEligible ) {
+			// 	if ( dataEmail?.is_user_eligible ) {
+			// 		setContactFormOpen( 'EMAIL' );
+			// 	} else if ( directlyAvailable ) {
+			// 		setContactFormOpen( 'DIRECTLY' );
+			// 	} else {
+			// 		setContactFormOpen( 'FORUM' );
+			// 	}
+			// }
 		}
 	}, [ isLoadingChat, isLoadingEmail, dataChat, dataEmail, setContactFormOpen ] );
 

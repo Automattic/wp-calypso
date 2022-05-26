@@ -1,11 +1,10 @@
-import { Card } from '@automattic/components';
+import { Card, Spinner } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import Spinner from 'calypso/components/spinner';
 import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { getTaskList } from 'calypso/lib/checklist';
