@@ -32,6 +32,10 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 			height: $wpcom-modal-content-min-height;
 			top: calc( 50% - #{$wpcom-modal-footer-height * 0.5} );
 		}
+
+		.components-modal__content {
+			overflow: visible;
+		}
 	}
 
 	.components-modal__header {
@@ -40,32 +44,40 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 	.components-guide__container {
 		margin-top: 0;
+
+		@media ( max-width: $wpcom-modal-breakpoint ) {
+			height: 100%;
+		}
 	}
 
 	.components-guide__footer {
-		position: absolute;
 		width: 100%;
-		height: $wpcom-modal-footer-height;
-		bottom: $wpcom-modal-footer-height * -1;
-		left: 0;
-		padding: $wpcom-modal-footer-padding-v 0;
 		margin: 0;
 		display: flex;
 		justify-content: center;
 		background: var( --studio-white );
-		border-top: 1px solid var( --studio-gray-5 );
+		border-top: none;
 		box-sizing: border-box;
-
+		min-height: 50px;
+		
 		@media ( min-width: $wpcom-modal-breakpoint ) {
-			border-top: none;
+			border-top: 1px solid var( --studio-gray-5 );
+			padding: $wpcom-modal-footer-padding-v 0;
+			position: absolute;
+			bottom: $wpcom-modal-footer-height * -1;
+			height: $wpcom-modal-footer-height;
+			left: 0;
 		}
 	}
 
 	.components-guide__page {
-		position: absolute;
 		width: 100%;
 		height: 100%;
 		justify-content: start;
+
+		@media ( min-width: $wpcom-modal-breakpoint ) {
+			position: absolute;
+		}
 	}
 
 	.components-guide__page-control {
@@ -86,12 +98,6 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		li {
 			vertical-align: middle;
 			margin-bottom: 0;
-		}
-
-		// Temporarily disable dots on mobile as alignment is wonky.
-		display: none;
-		@media ( min-width: $wpcom-modal-breakpoint ) {
-			display: block;
 		}
 	}
 }
@@ -124,7 +130,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 }
 
 .whats-new-page__text {
-	padding: 0 25px 25px;
+	padding: 25px;
 	height: 60%;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
