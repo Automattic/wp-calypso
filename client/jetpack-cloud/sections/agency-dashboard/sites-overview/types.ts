@@ -25,3 +25,11 @@ export type Preference = {
 	dismiss?: boolean;
 	view?: boolean;
 };
+
+export type FormattedRowObj = {
+	value: ReactChild;
+	status: string;
+	type: string;
+	threats?: number;
+	error?: boolean;
+};
