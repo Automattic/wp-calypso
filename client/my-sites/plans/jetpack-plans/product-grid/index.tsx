@@ -275,45 +275,50 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					/>
 				</div>
 			</ProductGridSection>
-			<ProductGridSection title={ translate( 'More Products' ) }>
-				<>
-					{ showProductCategories && (
-						<div className="product-grid__category-filter">
-							<CategoryFilter
-								defaultValue={ JETPACK_SECURITY_CATEGORY }
-								onChange={ onCategoryChange }
-							/>
-						</div>
-					) }
-					<ul className="product-grid__product-grid">
-						{ filteredItems.map( getOtherItemsProductCard ) }
-						{ ( ! showProductCategories || category === JETPACK_PERFORMANCE_CATEGORY ) &&
-							showBoostAndSocialFree &&
-							! siteHasBoostPremium && (
-								<li>
-									<JetpackBoostFreeCard siteId={ siteId } />
-								</li>
-							) }
-						{ ( ! showProductCategories || category === JETPACK_GROWTH_CATEGORY ) && (
-							<>
-								{ showBoostAndSocialFree && (
+			<div className={ classNames( { 'product-grid__fullwidth-wrapper': isJetpackCloud() } ) }>
+				<ProductGridSection
+					title={ translate( 'More Products' ) }
+					{ ...( isJetpackCloud() && { className: 'product-grid__wide-grid' } ) }
+				>
+					<>
+						{ showProductCategories && (
+							<div className="product-grid__category-filter">
+								<CategoryFilter
+									defaultValue={ JETPACK_SECURITY_CATEGORY }
+									onChange={ onCategoryChange }
+								/>
+							</div>
+						) }
+						<ul className="product-grid__product-grid">
+							{ filteredItems.map( getOtherItemsProductCard ) }
+							{ ( ! showProductCategories || category === JETPACK_PERFORMANCE_CATEGORY ) &&
+								showBoostAndSocialFree &&
+								! siteHasBoostPremium && (
 									<li>
-										<JetpackSocialFreeCard siteId={ siteId } />
+										<JetpackBoostFreeCard siteId={ siteId } />
 									</li>
 								) }
+							{ ( ! showProductCategories || category === JETPACK_GROWTH_CATEGORY ) && (
+								<>
+									{ showBoostAndSocialFree && (
+										<li>
+											<JetpackSocialFreeCard siteId={ siteId } />
+										</li>
+									) }
+									<li>
+										<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
+									</li>
+								</>
+							) }
+							{ showFreeCard && (
 								<li>
-									<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
+									<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 								</li>
-							</>
-						) }
-						{ showFreeCard && (
-							<li>
-								<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
-							</li>
-						) }
-					</ul>
-				</>
-			</ProductGridSection>
+							) }
+						</ul>
+					</>
+				</ProductGridSection>
+			</div>
 			<StoreFooter />
 		</>
 	);
