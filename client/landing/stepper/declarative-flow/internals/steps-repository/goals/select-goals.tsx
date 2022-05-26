@@ -28,6 +28,7 @@ export const SelectGoals: React.FC< SelectGoalsProps > = ( { onChange, selectedG
 		<div className="select-goals__container">
 			{ goals.map( ( goal ) => (
 				<SelectCard
+					key={ goal.key }
 					onChange={ handleChange }
 					selected={ selectedGoals.includes( goal.key ) }
 					value={ goal.key }
