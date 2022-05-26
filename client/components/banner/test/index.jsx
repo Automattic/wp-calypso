@@ -124,18 +124,23 @@ describe( 'Banner basic tests', () => {
 	} );
 
 	test( 'should render Card with href if href prop is passed', () => {
-		render( <Banner { ...props } href={ '/' } /> );
-		expect( screen.queryByRole( 'link' ) ).toHaveAttribute( 'href', '/' );
+		const { container } = render( <Banner { ...props } href={ '/' } /> );
+		expect( container.firstChild ).toHaveClass( 'card' );
+		expect( container.firstChild ).toHaveAttribute( 'href', '/' );
 	} );
 
 	test( 'should render Card with no href if href prop is passed but disableHref is true', () => {
-		render( <Banner { ...props } href={ '/' } disableHref={ true } /> );
-		expect( screen.queryByRole( 'link' ) ).toBeNull();
+		const { container } = render( <Banner { ...props } href={ '/' } disableHref={ true } /> );
+		expect( container.firstChild ).toHaveClass( 'card' );
+		expect( container.firstChild ).not.toHaveAttribute( 'href', '/' );
 	} );
 
 	test( 'should render Card with href if href prop is passed but disableHref is true and forceHref is true', () => {
-		render( <Banner { ...props } href={ '/' } disableHref={ true } forceHref={ true } /> );
-		expect( screen.queryByRole( 'link' ) ).toHaveAttribute( 'href', '/' );
+		const { container } = render(
+			<Banner { ...props } href={ '/' } disableHref={ true } forceHref={ true } />
+		);
+		expect( container.firstChild ).toHaveClass( 'card' );
+		expect( container.firstChild ).toHaveAttribute( 'href', '/' );
 	} );
 
 	test( 'should render Card with no href and CTA button with href if href prop is passed and callToAction is also passed', () => {
