@@ -15,25 +15,25 @@ type RenewButtonProps = {
 	selectedSite: SiteData;
 	subscriptionId: number;
 	compact?: boolean;
-	primary?: boolean;
+	customLabel?: ReactChild;
 	disabled?: boolean;
+	primary?: boolean;
 	redemptionProduct?: ProductListItem;
 	reactivate?: boolean;
-	customLabel?: ReactChild;
 	tracksProps?: Record< string, string >;
 };
 
 function RenewButton( {
-	compact,
-	primary,
+	purchase,
 	selectedSite,
 	subscriptionId,
+	compact,
+	customLabel,
+	disabled,
+	primary,
 	redemptionProduct,
 	reactivate,
-	customLabel,
 	tracksProps,
-	purchase,
-	disabled,
 }: RenewButtonProps ) {
 	const translate = useTranslate();
 
