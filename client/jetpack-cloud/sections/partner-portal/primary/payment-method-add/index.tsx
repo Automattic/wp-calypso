@@ -26,6 +26,7 @@ import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sid
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { setPartnerHasValidPaymentMethod } from 'calypso/state/partner-portal/partner/actions';
 
 import './style.scss';
 
@@ -82,6 +83,11 @@ function PaymentMethodAdd(): ReactElement {
 		[ reduxDispatch ]
 	);
 
+	const successCallback = useCallback( () => {
+		reduxDispatch( setPartnerHasValidPaymentMethod( true ) );
+		page( '/partner-portal/payment-methods/' );
+	}, [ reduxDispatch, page ] );
+
 	useEffect( () => {
 		if ( stripeLoadingError ) {
 			reduxDispatch( errorNotice( stripeLoadingError.message ) );
@@ -108,7 +114,7 @@ function PaymentMethodAdd(): ReactElement {
 			<CheckoutProvider
 				onPaymentComplete={ () => {
 					onPaymentSelectComplete( {
-						successCallback: () => page( '/partner-portal/payment-methods/' ),
+						successCallback,
 						translate,
 						showSuccessMessage,
 						reloadSetupIntentId,
