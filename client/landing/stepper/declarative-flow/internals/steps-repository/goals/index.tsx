@@ -1,9 +1,10 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import SelectCard from './select-card';
 import type { Step } from '../../types';
-
 import './style.scss';
 
 /**
@@ -14,7 +15,17 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const translate = useTranslate();
 	const headerText = translate( 'Welcome! What are your goals?' );
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
-	const stepContent = <p>stepContent goes here</p>;
+
+	// Mock step content
+	const [ selected, setSelected ] = useState( false );
+	const toggleSelected = () => {
+		setSelected( ! selected );
+	};
+	const stepContent = (
+		<SelectCard selected={ selected } value="build" onChange={ toggleSelected }>
+			Promote myself or my business
+		</SelectCard>
+	);
 
 	return (
 		<StepContainer
