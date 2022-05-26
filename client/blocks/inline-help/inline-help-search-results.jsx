@@ -135,7 +135,7 @@ function HelpSearchResults( {
 				return <Gridicon icon={ icon } />;
 			}
 
-			return <Icon icon={ pageIcon } />;
+			return <Icon icon={ pageIcon } width={ 18 } height={ 18 } />;
 		};
 
 		return (

@@ -318,6 +318,10 @@
 
 .inline-help__results-cell {
 	width: 100%;
+
+	svg {
+		overflow: visible;
+	}
 }
 
 .inline-help__results-item {
