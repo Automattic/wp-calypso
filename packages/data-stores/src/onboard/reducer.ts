@@ -1,4 +1,5 @@
 import { combineReducers } from '@wordpress/data';
+import { GoalKey } from './constants';
 import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
@@ -294,6 +295,16 @@ const stepProgress: Reducer< { count: number; progress: number } | undefined, On
 	return state;
 };
 
+const goals: Reducer< GoalKey[], OnboardAction > = ( state = [], action ) => {
+	if ( action.type === 'SET_GOALS' ) {
+		return action.goals;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return [];
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -321,6 +332,7 @@ const reducer = combineReducers( {
 	progress,
 	progressTitle,
 	stepProgress,
+	goals,
 } );
 
 export type State = ReturnType< typeof reducer >;
