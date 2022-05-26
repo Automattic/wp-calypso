@@ -7,35 +7,33 @@ flexbox container.
 
 ## Usage
 
-PlanPrice can take a `productDisplayPrice` or a `rawPrice`  (deprecated) prop, though `productDisplayPrice` is the preferred option.
+PlanPrice can take a `productDisplayPrice` or a `rawPrice` (deprecated) prop, though `productDisplayPrice` is the preferred option.
 
-A `productDisplayPrice` can be passed from the `/purchases` or `/plans` REST endpoints to a Redux store, for example:
+A `productDisplayPrice` can be retrieved from the `/purchases` or `/plans` REST endpoints and are stored in Redux; for example:
 
 ```jsx
-import { connect } from "react-redux";
-
-const { productDisplayPrice } = purchase;
-
-export default connect((state, props) => {
-  const purchase = getByPurchaseId(state, props.purchaseId);
-
-  return purchase;
-});
+function MyComponent( { purchaseId } ) {
+	const { productDisplayPrice } = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
+	return <PlanPrice productDisplayPrice={ productDisplayPrice } />;
+}
 ```
+
 `productDisplayPrice` is preferred because it provides an HTML wrapped, geo-IDed, and properly formatted currency string. Whereas, `rawPrice` is not geo-IDed and requires extra work to format correctly on the front end.
 
 You can pass along `rawPrice` (not required) with `productDisplayPrice` and when available the `productDisplayPrice` will be used by default.
 
 **Preferred usage**
+
 ```jsx
 <PlanPrice
 	productDisplayPrice={ purchase.productDisplayPrice }
 	taxText={ purchase.taxText }
 	isOnSale={ !! purchase.saleAmount }
-/>
+/>;
 ```
 
 **Backwards compatible usage**
+
 ```jsx
 <PlanPrice
 	productDisplayPrice={ purchase.productDisplayPrice }
@@ -43,11 +41,10 @@ You can pass along `rawPrice` (not required) with `productDisplayPrice` and when
 	currencyCode={ purchase.currencyCode }
 	taxText={ purchase.taxText }
 	isOnSale={ !! purchase.saleAmount }
-/>
+/>;
 ```
 
 If you pass an array of two numbers in the `rawPrice` prop, a range of prices will be displayed.
-
 
 ```jsx
 import PlanPrice from 'calypso/my-sites/plan-price';
