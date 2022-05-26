@@ -29,9 +29,8 @@
 		gap: 16px;
 		grid-template-columns: repeat( 1, 1fr );
 
-		.select-card__label {
-			display: inline-flex;
-			gap: 14px;
+		.select-goals__goal-title {
+			margin-right: 14px;
 		}
 
 		.select-goals__premium-badge {

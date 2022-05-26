@@ -32,7 +32,7 @@ export const SelectGoals: React.FC< SelectGoalsProps > = ( { onChange, selectedG
 					selected={ selectedGoals.includes( goal.key ) }
 					value={ goal.key }
 				>
-					{ goal.title }
+					<span className="select-goals__goal-title">{ goal.title }</span>
 					{ goal.isPremium && <span className="select-goals__premium-badge">Premium</span> }
 				</SelectCard>
 			) ) }
