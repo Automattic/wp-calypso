@@ -5,18 +5,6 @@ export function setReduxStore( store ) {
 }
 
 /**
- * Get the state of the current redux store
- *
- * @returns {object} Redux state
- */
-export function reduxGetState() {
-	if ( ! reduxStore ) {
-		return;
-	}
-	return reduxStore.getState();
-}
-
-/**
  * Dispatch an action against the current redux store
  *
  * @returns {any} Result of the dispatch

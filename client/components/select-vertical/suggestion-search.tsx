@@ -1,10 +1,9 @@
-import { Gridicon, Suggestions } from '@automattic/components';
+import { Gridicon, Suggestions, Spinner } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useMemo, useRef, useState } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Spinner from 'calypso/components/spinner';
 import type { Vertical } from './types';
 import './style.scss';
 

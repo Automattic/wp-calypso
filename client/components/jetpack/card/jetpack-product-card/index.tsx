@@ -42,6 +42,7 @@ type OwnProps = {
 	aboveButtonText?: TranslateResult | ReactNode;
 	featuredLabel?: TranslateResult;
 	hideSavingLabel?: boolean;
+	showNewLabel?: boolean;
 	showAbovePriceText?: boolean;
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
 	collapseFeaturesOnMobile?: boolean;
@@ -81,6 +82,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	tooltipText,
 	featuredLabel,
 	hideSavingLabel,
+	showNewLabel,
 	showAbovePriceText,
 	aboveButtonText = null,
 	scrollCardIntoView,
@@ -143,6 +145,9 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 					<Header level={ headerLevel } className="jetpack-product-card__product-name">
 						{ item.displayName }
 					</Header>
+					{ showNewLabel && (
+						<span className="jetpack-product-card__new-label">{ translate( 'New' ) }</span>
+					) }
 					{ discountElt && (
 						<span className="jetpack-product-card__discount-label">{ discountElt }</span>
 					) }

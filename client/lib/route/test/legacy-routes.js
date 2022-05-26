@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import sinon from 'sinon';
 import { isLegacyRoute } from '../legacy-routes';
 
 let features = [];
@@ -7,13 +6,9 @@ let features = [];
 describe( 'legacy-routes', () => {
 	describe( '#isLegacyRoute()', () => {
 		beforeAll( () => {
-			sinon.stub( config, 'isEnabled' ).callsFake( ( flag ) => {
+			jest.spyOn( config, 'isEnabled' ).mockImplementation( ( flag ) => {
 				return features.indexOf( flag ) > -1;
 			} );
-		} );
-
-		afterAll( () => {
-			config.isEnabled.restore();
 		} );
 
 		test( 'should return false for /settings/general', () => {

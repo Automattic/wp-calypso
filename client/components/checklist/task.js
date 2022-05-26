@@ -1,10 +1,9 @@
-import { Button, CompactCard, ScreenReaderText, Gridicon } from '@automattic/components';
+import { Button, CompactCard, ScreenReaderText, Gridicon, Spinner } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Fragment, PureComponent } from 'react';
 import Notice from 'calypso/components/notice';
-import Spinner from 'calypso/components/spinner';
 
 class Task extends PureComponent {
 	static propTypes = {

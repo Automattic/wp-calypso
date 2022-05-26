@@ -4,7 +4,6 @@
 import { Component, createElement } from 'react';
 import ReactDom from 'react-dom';
 import TestUtils from 'react-dom/test-utils';
-import sinon from 'sinon';
 import { DropZone } from '../';
 
 class Wrapper extends Component {
@@ -15,7 +14,6 @@ class Wrapper extends Component {
 
 describe( 'index', () => {
 	let container;
-	let sandbox;
 	const requiredProps = {
 		hideDropZone: () => {},
 		showDropZone: () => {},
@@ -25,10 +23,10 @@ describe( 'index', () => {
 	beforeAll( function () {
 		container = document.createElement( 'div' );
 		container.id = 'container';
-		window.MutationObserver = sinon.stub().returns( {
-			observe: sinon.stub(),
-			disconnect: sinon.stub(),
-		} );
+		window.MutationObserver = jest.fn( () => ( {
+			observe: jest.fn(),
+			disconnect: jest.fn(),
+		} ) );
 	} );
 
 	afterAll( function () {
@@ -37,12 +35,7 @@ describe( 'index', () => {
 		}
 	} );
 
-	beforeEach( () => {
-		sandbox = sinon.createSandbox();
-	} );
-
 	afterEach( () => {
-		sandbox.restore();
 		ReactDom.unmountComponentAtNode( container );
 	} );
 
@@ -159,7 +152,7 @@ describe( 'index', () => {
 
 	test( 'should further highlight the drop zone when dragging over the element', () => {
 		const tree = ReactDom.render( createElement( DropZone, requiredProps ), container );
-		sandbox.stub( tree, 'isWithinZoneBounds' ).returns( true );
+		jest.spyOn( tree, 'isWithinZoneBounds' ).mockReturnValue( true );
 
 		const dragEnterEvent = new window.MouseEvent( 'dragenter' );
 		window.dispatchEvent( dragEnterEvent );
@@ -185,9 +178,9 @@ describe( 'index', () => {
 	} );
 
 	test( 'should call onDrop with the raw event data when a drop occurs', () => {
-		const spyDrop = sandbox.spy();
+		const spyDrop = jest.fn();
 
-		sandbox.stub( window.HTMLElement.prototype, 'contains' ).returns( true );
+		jest.spyOn( window.HTMLElement.prototype, 'contains' ).mockReturnValue( true );
 
 		ReactDom.render(
 			createElement( DropZone, {
@@ -200,14 +193,14 @@ describe( 'index', () => {
 		const dropEvent = new window.MouseEvent( 'drop' );
 		window.dispatchEvent( dropEvent );
 
-		expect( spyDrop.calledOnce ).toBeTruthy();
-		expect( spyDrop.getCall( 0 ).args[ 0 ] ).toBe( dropEvent );
+		expect( spyDrop ).toHaveBeenCalledTimes( 1 );
+		expect( spyDrop.mock.calls[ 0 ][ 0 ] ).toBe( dropEvent );
 	} );
 
 	test( 'should call onFilesDrop with the files array when a drop occurs', () => {
-		const spyDrop = sandbox.spy();
+		const spyDrop = jest.fn();
 
-		sandbox.stub( window.HTMLElement.prototype, 'contains' ).returns( true );
+		jest.spyOn( window.HTMLElement.prototype, 'contains' ).mockReturnValue( true );
 		ReactDom.render(
 			createElement( DropZone, {
 				...requiredProps,
@@ -220,12 +213,12 @@ describe( 'index', () => {
 		dropEvent.dataTransfer = { files: [ 1, 2, 3 ] };
 		window.dispatchEvent( dropEvent );
 
-		expect( spyDrop.calledOnce ).toBeTruthy();
-		expect( spyDrop.getCall( 0 ).args[ 0 ] ).toEqual( [ 1, 2, 3 ] );
+		expect( spyDrop ).toHaveBeenCalledTimes( 1 );
+		expect( spyDrop.mock.calls[ 0 ][ 0 ] ).toEqual( [ 1, 2, 3 ] );
 	} );
 
 	test( 'should not call onFilesDrop if onVerifyValidTransfer returns false', () => {
-		const spyDrop = sandbox.spy();
+		const spyDrop = jest.fn();
 		const dropEvent = new window.MouseEvent( 'drop' );
 
 		ReactDom.render(
@@ -243,7 +236,7 @@ describe( 'index', () => {
 		dropEvent.dataTransfer = { files: [ 1, 2, 3 ] };
 		window.dispatchEvent( dropEvent );
 
-		expect( spyDrop.called ).toBeFalsy();
+		expect( spyDrop ).not.toHaveBeenCalled();
 	} );
 
 	test( 'should allow more than one rendered DropZone on a page', () => {

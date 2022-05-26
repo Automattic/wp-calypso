@@ -1,6 +1,6 @@
+import { Spinner } from '@automattic/components';
 import classNames from 'classnames';
 import { FunctionComponent, useEffect, useState } from 'react';
-import Spinner from 'calypso/components/spinner';
 import connectToWebpackServer, { BuildState } from './webpack-client';
 
 import './style.scss';

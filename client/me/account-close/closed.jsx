@@ -1,8 +1,8 @@
+import { Spinner } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
-import Spinner from 'calypso/components/spinner';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isAccountClosed from 'calypso/state/selectors/is-account-closed';
 

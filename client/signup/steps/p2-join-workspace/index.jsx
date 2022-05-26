@@ -1,10 +1,10 @@
+import { Spinner } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useState, useEffect, createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, chevronRight } from '@wordpress/icons';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Spinner from 'calypso/components/spinner';
 import wpcom from 'calypso/lib/wp';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';

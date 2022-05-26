@@ -1,9 +1,8 @@
-import { ProgressBar } from '@automattic/components';
+import { ProgressBar, Spinner } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { UrlData } from 'calypso/blocks/import/types';
-import Spinner from 'calypso/components/spinner';
 import AuthorMappingPane from 'calypso/my-sites/importer/author-mapping-pane';
 import {
 	calculateProgress,

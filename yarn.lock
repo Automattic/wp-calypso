@@ -12638,6 +12638,7 @@ __metadata:
     jest: ^27.3.1
     jest-fetch-mock: ^3.0.3
     jest-mock-process: ^1.4.1
+    jest-when: ^3.5.1
     lodash: ^4.17.21
     lodash-es: ^4.17.21
     lru: ^3.1.0
@@ -22273,6 +22274,15 @@ __metadata:
     jest-util: ^27.5.1
     string-length: ^4.0.1
   checksum: e42f5e38bc4da56bde6ccec4b13b7646460a3d6b567934e0ca96d72c2ce837223ffbb84a2f8428197da4323870c03f00969237f9b40f83a3072111a8cd66cc4b
+  languageName: node
+  linkType: hard
+
+"jest-when@npm:^3.5.1":
+  version: 3.5.1
+  resolution: "jest-when@npm:3.5.1"
+  peerDependencies:
+    jest: ">= 25"
+  checksum: 06719b89fc924a6c67c402366309099a0ec37f54851e9889f632fad88e7f9537504b63cdc805738e73425ff69ca883340f0977ac512bf7d931dbe1d6384a4d91
   languageName: node
   linkType: hard
 

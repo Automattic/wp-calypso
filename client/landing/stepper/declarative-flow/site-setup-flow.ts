@@ -24,6 +24,7 @@ export const siteSetupFlow: Flow = {
 		return [
 			...( isEnabled( 'signup/site-vertical-step' ) ? [ 'vertical' ] : [] ),
 			'intent',
+			...( isEnabled( 'signup/goals-step' ) ? [ 'goals' ] : [] ),
 			'options',
 			'designSetup',
 			'bloggerStartingPoint',

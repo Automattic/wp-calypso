@@ -11,10 +11,11 @@ const useFetchDashboardSites = () => {
 		[ 'jetpack-cloud', 'agency-dashboard', 'sites' ],
 		() =>
 			wpcomJpl.req.get( {
-				path: '/jetpack-partner/dashboard/sites-mock',
+				path: '/jetpack-agency/sites',
 				apiNamespace: 'wpcom/v2',
 			} ),
 		{
+			select: ( data ) => ( data.sites ? Object.values( data.sites ) : [] ),
 			refetchOnWindowFocus: false,
 			onError: () =>
 				dispatch(

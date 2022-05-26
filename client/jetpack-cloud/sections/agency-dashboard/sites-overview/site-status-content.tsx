@@ -95,7 +95,7 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 			content = <Gridicon icon="checkmark" size={ 18 } className="sites-overview__grey-icon" />;
 			break;
 		}
-		case 'active': {
+		case 'disabled': {
 			content = <Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />;
 			break;
 		}

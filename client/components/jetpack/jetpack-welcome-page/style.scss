@@ -13,7 +13,8 @@
 		width: 100%;
 		max-width: none;
 
-		&--main, &--footer {
+		&--main,
+		&--footer {
 			box-sizing: border-box;
 			padding: 26px;
 			@include break-mobile {

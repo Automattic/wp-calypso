@@ -6,6 +6,7 @@ export interface Container {
 	handleClose: () => void;
 	defaultHeaderText?: string;
 	defaultFooterContent?: ReactElement;
+	isLoading?: boolean;
 }
 
 export interface Content {

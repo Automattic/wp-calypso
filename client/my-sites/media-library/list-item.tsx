@@ -1,8 +1,7 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Spinner } from '@automattic/components';
 import classNames from 'classnames';
 import { isEqual } from 'lodash';
 import * as React from 'react';
-import Spinner from 'calypso/components/spinner';
 import { getMimePrefix } from 'calypso/lib/media/utils';
 import ListItemAudio from './list-item-audio';
 import ListItemDocument from './list-item-document';
