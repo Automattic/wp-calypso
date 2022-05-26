@@ -4,6 +4,8 @@ import {
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
+	JETPACK_BOOST_PRODUCTS,
+	JETPACK_PERFORMANCE_CATEGORY,
 	JETPACK_SECURITY_CATEGORY,
 	JETPACK_GROWTH_CATEGORY,
 } from '@automattic/calypso-products';
@@ -19,8 +21,10 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import CategoryFilter from '../category-filter';
+import JetpackBoostFreeCard from '../jetpack-boost-free-card';
 import JetpackCrmFreeCard from '../jetpack-crm-free-card';
 import JetpackFreeCard from '../jetpack-free-card';
+import JetpackSocialFreeCard from '../jetpack-social-free-card';
 import MoreInfoBox from '../more-info-box';
 import PlanUpgradeSection from '../plan-upgrade';
 import PlansFilterBar from '../plans-filter-bar';
@@ -106,7 +110,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const showProductCategories = ! isDesktop;
 
 	const showAnnualPlansOnly = config.isEnabled( 'jetpack/pricing-page-annual-only' );
-	const showBoostAndSocial = config.isEnabled( 'jetpack/pricing-add-boost-social' );
+	const showBoostAndSocialFree = config.isEnabled( 'jetpack/pricing-add-boost-social' );
 
 	const [ category, setCategory ] = useState< JetpackProductCategory >();
 	const onCategoryChange = useCallback( setCategory, [ setCategory ] );
@@ -138,6 +142,9 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const { shouldWrap: shouldWrapGrid, gridRef } = useWrapGridForSmallScreens( 3 );
 	const { availableProducts, purchasedProducts, includedInPlanProducts } =
 		useGetPlansGridProducts( siteId );
+	const siteHasBoostPremium = purchasedProducts.some( ( product ) =>
+		( JETPACK_BOOST_PRODUCTS as ReadonlyArray< string > ).includes( product.productSlug )
+	);
 	const [ popularItems, otherItems ] = useMemo( () => {
 		const allItems = sortByGridPosition( [
 			...getProductsToDisplay( {
@@ -280,21 +287,23 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					) }
 					<ul className="product-grid__product-grid">
 						{ filteredItems.map( getOtherItemsProductCard ) }
+						{ ( ! showProductCategories || category === JETPACK_PERFORMANCE_CATEGORY ) &&
+							showBoostAndSocialFree &&
+							! siteHasBoostPremium && (
+								<li>
+									<JetpackBoostFreeCard siteId={ siteId } />
+								</li>
+							) }
 						{ ( ! showProductCategories || category === JETPACK_GROWTH_CATEGORY ) && (
 							<>
+								{ showBoostAndSocialFree && (
+									<li>
+										<JetpackSocialFreeCard siteId={ siteId } />
+									</li>
+								) }
 								<li>
 									<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
 								</li>
-								{ showBoostAndSocial && (
-									<li>
-										{ /* Add Jetpack Social Free card here. */ }
-										JETPACK SOCIAL
-										<br />
-										FREE CARD
-										<br />
-										HERE
-									</li>
-								) }
 							</>
 						) }
 						{ showFreeCard && (
