@@ -93,11 +93,10 @@ export const getRowMetaData = (
 };
 
 const formatBackupData = ( site: SiteData ) => {
-	const type = 'backup';
 	const backup: FormattedRowObj = {
 		value: '',
 		status: '',
-		type,
+		type: 'backup',
 	};
 	if ( ! site.has_backup ) {
 		backup.status = 'inactive';
@@ -126,11 +125,10 @@ const formatBackupData = ( site: SiteData ) => {
 };
 
 const formatScanData = ( site: SiteData ) => {
-	const type = 'scan';
 	const scan: FormattedRowObj = {
 		value: '',
 		status: '',
-		type,
+		type: 'scan',
 		threats: 0,
 	};
 	if ( ! site.has_scan ) {
@@ -156,8 +154,12 @@ const formatScanData = ( site: SiteData ) => {
 };
 
 const formatMonitorData = ( site: SiteData ) => {
-	const type = 'monitor';
-	const monitor: FormattedRowObj = { value: '', status: '', type, error: false };
+	const monitor: FormattedRowObj = {
+		value: '',
+		status: '',
+		type: 'monitor',
+		error: false,
+	};
 	if ( ! site.monitor_active ) {
 		monitor.status = 'disabled';
 	} else if ( ! site.monitor_site_status ) {
