@@ -8,6 +8,7 @@ import { Route, Switch, useLocation } from 'react-router-dom';
 import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import { STORE_KEY } from '../store';
 import type { Header, WindowState } from '../types';
+import type { ReactElement } from 'react';
 
 export function ArticleTitle() {
 	const { search } = useLocation();

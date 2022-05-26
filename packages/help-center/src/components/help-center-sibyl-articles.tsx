@@ -34,6 +34,7 @@ function getPostUrl( article: Article, query: string ) {
 		}
 
 		const search = params.toString();
+
 		return {
 			pathname: '/post',
 			search,
@@ -71,9 +72,9 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 				className="help-center-sibyl-articles__list"
 				aria-labelledby="help-center--contextual_help"
 			>
-				{ articles.map( ( article ) => (
+				{ articles.map( ( article: Article ) => (
 					<li>
-						<Link to={ getPostUrl( article as Article, message ) }>
+						<Link to={ getPostUrl( article, message ) }>
 							<Icon icon={ page } />
 							{ article.title }
 						</Link>

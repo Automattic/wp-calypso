@@ -20,6 +20,7 @@ import getCurrentMessage from 'calypso/state/happychat/selectors/get-happychat-c
 import getHappychatTimeline from 'calypso/state/happychat/selectors/get-happychat-timeline';
 import isHappychatServerReachable from 'calypso/state/happychat/selectors/is-happychat-server-reachable';
 import { setCurrentMessage } from 'calypso/state/happychat/ui/actions';
+
 import './happychat.scss';
 
 function getReceivedMessagesOlderThan( timestamp, messages ) {
@@ -29,37 +30,21 @@ function getReceivedMessagesOlderThan( timestamp, messages ) {
 	return messages.filter( ( m ) => m.timestamp >= timestamp && m.source !== 'customer' );
 }
 
-function ParentConnection( { chatStatus, timeline } ) {
+function ParentConnection( { chatStatus, timeline, connectionStatus } ) {
 	const dispatch = useDispatch();
 	const [ blurredAt, setBlurredAt ] = useState( Date.now() );
+	const [ introMessage, setIntroMessage ] = useState( null );
 
 	// listen to messages from parent window
 	useEffect( () => {
 		function onMessage( e ) {
 			const message = e.data;
 			switch ( message.type ) {
-				case 'opened':
-					if ( message.opened ) {
-						dispatch( sendEvent( 'Started looking at Happychat' ) );
-					} else {
-						dispatch( sendEvent( 'Stopped looking at Happychat' ) );
-					}
-					break;
 				case 'route':
 					dispatch( sendEvent( `Looking at ${ message.route }` ) );
 					break;
 				case 'happy-chat-introduction-data': {
-					if ( message.siteId ) {
-						dispatch(
-							setChatCustomFields( {
-								calypsoSectionName: 'gutenberg-editor',
-								wpcomSiteId: message.siteId.toString(),
-								wpcomSitePlan: message.planSlug,
-							} )
-						);
-					}
-					// send the user's message
-					dispatch( sendMessage( message.message ) );
+					setIntroMessage( message );
 					break;
 				}
 			}
@@ -68,6 +53,22 @@ function ParentConnection( { chatStatus, timeline } ) {
 		window.addEventListener( 'message', onMessage );
 		return () => window.removeEventListener( 'message', onMessage );
 	}, [ dispatch ] );
+
+	useEffect( () => {
+		if ( connectionStatus === 'connected' && introMessage ) {
+			dispatch(
+				setChatCustomFields( {
+					calypsoSectionName: 'gutenberg-editor',
+					wpcomSiteId: introMessage.siteId?.toString(),
+					wpcomSitePlan: introMessage.planSlug,
+				} )
+			);
+			// forward the message from the form
+			if ( introMessage.message ) {
+				dispatch( sendMessage( introMessage.message ) );
+			}
+		}
+	}, [ connectionStatus, introMessage, dispatch ] );
 
 	// notify parent window about chat status changes
 	useEffect( () => {
@@ -152,6 +153,7 @@ function ParentConnection( { chatStatus, timeline } ) {
 		);
 	}, [ blurredAt, timeline ] );
 
+	/*
 	useEffect( () => {
 		// blurredAt is 0 when the user is looking
 		if ( blurredAt ) {
@@ -160,11 +162,11 @@ function ParentConnection( { chatStatus, timeline } ) {
 			dispatch( sendEvent( `Started looking at Happychat` ) );
 		}
 	}, [ blurredAt, dispatch ] );
-
+	*/
 	return null;
 }
 
-export default function Happychat() {
+export default function Happychat( { auth } ) {
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
 	const chatStatus = useSelector( getHappychatChatStatus );
@@ -173,15 +175,18 @@ export default function Happychat() {
 	const message = useSelector( getCurrentMessage );
 	const isServerReachable = useSelector( isHappychatServerReachable );
 	const disabled = ! useSelector( canUserSendMessages );
-
 	const isMessageFromCurrentUser = ( { user_id, source } ) => {
 		return user_id.toString() === currentUser.ID.toString() && source === 'customer';
 	};
 
 	return (
 		<div className="happychat__container">
-			<HappychatConnection />
-			<ParentConnection timeline={ timeline } chatStatus={ chatStatus } />
+			<HappychatConnection getAuth={ () => Promise.resolve( auth ) } />
+			<ParentConnection
+				connectionStatus={ connectionStatus }
+				timeline={ timeline }
+				chatStatus={ chatStatus }
+			/>
 			<Timeline
 				currentUserEmail={ currentUser.email }
 				isCurrentUser={ isMessageFromCurrentUser }

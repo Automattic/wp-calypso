@@ -112,31 +112,8 @@ const titles: {
 };
 
 type Mode = 'CHAT' | 'EMAIL' | 'DIRECTLY' | 'FORUM';
-const POPUP_TOP_BAR_HEIGHT = 60;
 
-function openPopup( event: React.MouseEvent< HTMLButtonElement > ): Window {
-	const helpCenterContainer = event.currentTarget.closest(
-		'.help-center__container'
-	) as HTMLDivElement;
-
-	const HCRect = helpCenterContainer.getBoundingClientRect();
-	const windowTop = event.screenY - event.clientY;
-
-	const popupTop = windowTop + HCRect.top - POPUP_TOP_BAR_HEIGHT;
-	const popupLeft = window.screenLeft + HCRect.left;
-	const popupWidth = HCRect.width;
-	const popupHeight = HCRect.height - POPUP_TOP_BAR_HEIGHT;
-
-	const popup = window.open(
-		'https://widgets.wp.com/calypso-happychat/',
-		'happy-chat-window',
-		`toolbar=no,scrollbars=yes,location=no,addressbar=no,width=${ popupWidth },height=${ popupHeight },left=${ popupLeft },top=${ popupTop }`
-	) as Window;
-
-	return popup;
-}
-
-export const HelpCenterContactForm: React.FC = () => {
+export const HelpCenterContactForm = () => {
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
@@ -170,7 +147,6 @@ export const HelpCenterContactForm: React.FC = () => {
 		setUserDeclaredSite,
 		setSubject,
 		setMessage,
-		setPopup,
 	} = useDispatch( STORE_KEY );
 
 	const {
@@ -193,7 +169,7 @@ export const HelpCenterContactForm: React.FC = () => {
 		}
 	}, [ directlyData, setShowHelpCenter ] );
 
-	const { hasCookies, isLoading: loadingCookies } = useHas3PC();
+	const { isLoading: loadingCookies } = useHas3PC();
 
 	const isSubmitting = submittingTicket || submittingTopic;
 	const isLoading = loadingCookies || isSubmitting;
@@ -213,19 +189,12 @@ export const HelpCenterContactForm: React.FC = () => {
 		supportSite = selectedSite || currentSite;
 	}
 
-	function handleCTA( event: React.MouseEvent< HTMLButtonElement > ) {
+	function handleCTA() {
 		switch ( mode ) {
 			case 'CHAT': {
 				if ( supportSite ) {
-					if ( hasCookies ) {
-						history.push( '/inline-chat' );
-						break;
-					} else {
-						const popup = openPopup( event );
-						setPopup( popup );
-						// go home once popup is open
-						history.push( '/' );
-					}
+					history.push( '/inline-chat' );
+					break;
 				}
 				break;
 			}
@@ -398,7 +367,7 @@ export const HelpCenterContactForm: React.FC = () => {
 					id="help-center-contact-form__message"
 					rows={ 10 }
 					value={ message ?? '' }
-					onChange={ ( event ) => setMessage( event.target.value ) }
+					onInput={ ( event ) => setMessage( event.currentTarget.value ) }
 					className="help-center-contact-form__message"
 				/>
 			</section>
