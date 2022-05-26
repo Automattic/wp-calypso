@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { mount } from 'enzyme';
-import { spy } from 'sinon';
 import { PluginAutoUpdateToggle } from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import fixtures from './fixtures';
 
@@ -13,17 +12,12 @@ jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
 
 describe( 'PluginAutoupdateToggle', () => {
 	const mockedProps = {
-		recordGoogleEvent: spy(),
-		recordTracksEvent: spy(),
-		removePluginStatuses: spy(),
-		translate: spy(),
-		togglePluginAutoUpdate: spy(),
+		recordGoogleEvent: jest.fn(),
+		recordTracksEvent: jest.fn(),
+		removePluginStatuses: jest.fn(),
+		translate: jest.fn(),
+		togglePluginAutoUpdate: jest.fn(),
 	};
-
-	afterEach( () => {
-		mockedProps.togglePluginAutoUpdate.resetHistory();
-		mockedProps.recordGoogleEvent.resetHistory();
-	} );
 
 	test( 'should render the component', () => {
 		const wrapper = mount( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
@@ -36,8 +30,8 @@ describe( 'PluginAutoupdateToggle', () => {
 
 		wrapper.simulate( 'click' );
 
-		expect( mockedProps.recordGoogleEvent.called ).toEqual( true );
-		expect( mockedProps.recordTracksEvent.called ).toEqual( true );
+		expect( mockedProps.recordGoogleEvent ).toHaveBeenCalled();
+		expect( mockedProps.recordTracksEvent ).toHaveBeenCalled();
 	} );
 
 	test( 'should call an action when the subcomponent action is executed', () => {
@@ -45,6 +39,6 @@ describe( 'PluginAutoupdateToggle', () => {
 
 		wrapper.simulate( 'click' );
 
-		expect( mockedProps.togglePluginAutoUpdate.called ).toEqual( true );
+		expect( mockedProps.togglePluginAutoUpdate ).toHaveBeenCalled();
 	} );
 } );

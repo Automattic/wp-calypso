@@ -1,13 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-
 import { parse } from 'url';
 import { shallow } from 'enzyme';
 import { createElement } from 'react';
 import ReactDom from 'react-dom';
 import TestUtils from 'react-dom/test-utils';
-import sinon from 'sinon';
 import { Theme } from '../';
 
 jest.mock( 'calypso/components/popover-menu', () => 'components--popover--menu' );
@@ -25,7 +23,7 @@ describe( 'Theme', () => {
 				screenshot:
 					'https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?ssl=1',
 			},
-			buttonContents: { dummyAction: { label: 'Dummy action', action: sinon.spy() } }, // TODO: test if called when clicked
+			buttonContents: { dummyAction: { label: 'Dummy action', action: jest.fn() } }, // TODO: test if called when clicked
 			translate: ( string ) => string,
 			setThemesBookmark: () => {},
 		};
@@ -34,7 +32,7 @@ describe( 'Theme', () => {
 	describe( 'rendering', () => {
 		describe( 'with default display buttonContents', () => {
 			beforeEach( () => {
-				props.onScreenshotClick = sinon.spy();
+				props.onScreenshotClick = jest.fn();
 				const themeElement = TestUtils.renderIntoDocument( createElement( Theme, props ) );
 				themeNode = ReactDom.findDOMNode( themeElement );
 			} );
@@ -67,7 +65,7 @@ describe( 'Theme', () => {
 			test( 'should call onScreenshotClick() on click on screenshot', () => {
 				const imgNode = themeNode.getElementsByTagName( 'img' )[ 0 ];
 				TestUtils.Simulate.click( imgNode );
-				expect( props.onScreenshotClick.calledOnce ).toBe( true );
+				expect( props.onScreenshotClick ).toHaveBeenCalledTimes( 1 );
 			} );
 
 			test( 'should not show a price when there is none', () => {

@@ -3,7 +3,6 @@
  */
 import { createElement } from 'react';
 import TestUtils from 'react-dom/test-utils';
-import sinon from 'sinon';
 import searchClass from '../';
 
 jest.mock( 'calypso/lib/analytics/ga', () => ( {} ) );
@@ -14,7 +13,7 @@ describe( 'Search', () => {
 		let rendered;
 
 		beforeEach( () => {
-			onSearch = sinon.stub();
+			onSearch = jest.fn();
 		} );
 
 		describe( 'with initialValue', () => {
