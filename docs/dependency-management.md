@@ -80,11 +80,11 @@ Run
 yarn upgrade <package>
 
 # Example
-# yarn upgrade sinon
+# yarn upgrade react-query
 ```
 
-Note that this won't change the required range of `sinon` (i.e. it won't modify `package.json`). Instead, it will try to update `sinon` and any of its dependencies to the highest version that satisfies the specified range.
-For example, if we declare a dependency on `sinon@^7.5.0` it may update sinon to `7.5.1`, but never to `8.0.0`.
+Note that this won't change the required range of `react-query` (i.e. it won't modify `package.json`). Instead, it will try to update `react-query` and any of its dependencies to the highest version that satisfies the specified range.
+For example, if we declare a dependency on `react-query@^2.24.0` it may update react-query to `2.24.1`, but never to `3.0.0`.
 
 ### Update a dependency to a new range
 
@@ -94,10 +94,10 @@ Run
 yarn upgrade <package>@^<semver-range>
 
 # Example
-# yarn upgrade sinon@^9.0.0
+# yarn upgrade react-query@^3.0.0
 ```
 
-As before, it will update `sinon` and all its dependencies. But in this case, it _will_ change the required range (i.e. it will modify `package.json`)
+As before, it will update `react-query` and all its dependencies. But in this case, it _will_ change the required range (i.e. it will modify `package.json`)
 
 ### List oudated dependencies
 
