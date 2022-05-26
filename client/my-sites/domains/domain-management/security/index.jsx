@@ -108,7 +108,7 @@ class Security extends Component {
 					</p>
 					{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 					<RenewButton
-						primary={ true }
+						primary
 						purchase={ purchase }
 						selectedSite={ selectedSite }
 						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
