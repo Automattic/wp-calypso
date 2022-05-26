@@ -18,6 +18,7 @@ import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner'
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import CategoryFilter from '../category-filter';
@@ -119,6 +120,11 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const currentPlanSlug = currentPlan?.product_slug || null;
+	const currentRoute = useSelector( getCurrentRoute );
+
+	const isStoreLanding =
+		currentRoute === '/jetpack/connect/store' ||
+		currentRoute.match( new RegExp( '^/jetpack/connect/plans/[^/]+/?(monthly|annual)?$' ) );
 
 	// Retrieve and cache the plans array, which might be already translated.
 	useEffect( () => {
@@ -210,6 +216,8 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		</li>
 	);
 
+	const showFourColumnGrid = isJetpackCloud() || isStoreLanding;
+
 	return (
 		<>
 			{ planRecommendation && (
@@ -275,10 +283,10 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					/>
 				</div>
 			</ProductGridSection>
-			<div className={ classNames( { 'product-grid__fullwidth-wrapper': isJetpackCloud() } ) }>
+			<div className={ classNames( { 'product-grid__fullwidth-wrapper': showFourColumnGrid } ) }>
 				<ProductGridSection
 					title={ translate( 'More Products' ) }
-					{ ...( isJetpackCloud() && { className: 'product-grid__wide-grid' } ) }
+					{ ...( showFourColumnGrid && { className: 'product-grid__wide-grid' } ) }
 				>
 					<>
 						{ showProductCategories && (

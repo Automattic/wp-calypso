@@ -26,7 +26,8 @@
 	}
 }
 
-.is-jetpack-cloud.product-grid__wide-grid {
+.is-jetpack-cloud.product-grid__wide-grid,
+.product-grid__wide-grid {
 	// 4 column product grid
 	max-width: 1312px;
 	margin: 0 auto;
