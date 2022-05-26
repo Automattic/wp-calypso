@@ -55,7 +55,6 @@ registerPlugin( 'etk-help-center', {
 				<CalypsoStateProvider>
 					<HelpCenterContent />
 				</CalypsoStateProvider>
-				,
 			</QueryClientProvider>
 		);
 	},
