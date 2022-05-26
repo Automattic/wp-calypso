@@ -13,13 +13,12 @@ import type {
 import type { ChangeEvent } from 'react';
 
 interface MailboxFormFieldProps {
-	domains: string[];
+	domains?: string[];
 	field: MailboxFormFieldBase< string >;
 	isPasswordField?: boolean;
 	lowerCaseChangeValue?: boolean;
 	notifyFieldValueChanged?: ( field: MailboxFormFieldBase< string > ) => void;
 	requestFieldValidation: ( field: MailboxFormFieldBase< string > ) => void;
-	selectedDomainName: string;
 	textInputPrefix?: string;
 	textInputSuffix?: string;
 }
@@ -67,13 +66,14 @@ const MailboxField = ( {
 	...props
 }: MailboxFormFieldProps & { children?: JSX.Element } ): JSX.Element => {
 	const {
-		field,
+		field: originalField,
 		lowerCaseChangeValue = false,
 		requestFieldValidation,
 		notifyFieldValueChanged = () => undefined,
 	} = props;
+
+	const [ { field }, setFieldState ] = useState( { field: originalField } );
 	const fieldLabelText = useGetDefaultFieldLabelText( field.fieldName as MutableFormFieldNames );
-	const [ fieldState, setFieldState ] = useState( { value: field.value, error: field.error } );
 
 	if ( ! field.isVisible ) {
 		return <></>;
@@ -81,7 +81,7 @@ const MailboxField = ( {
 
 	const onBlur = () => {
 		requestFieldValidation( field );
-		setFieldState( { ...fieldState, error: field.error } );
+		setFieldState( { field } );
 	};
 
 	const onChange = ( event: ChangeEvent< HTMLInputElement > ) => {
@@ -91,13 +91,11 @@ const MailboxField = ( {
 		}
 		field.value = value;
 
-		let error = fieldState.error;
 		// Validate the field on the fly if there was already an error
-		if ( error ) {
+		if ( field.error ) {
 			requestFieldValidation( field );
-			error = field.error;
 		}
-		setFieldState( { ...fieldState, error, value } );
+		setFieldState( { field } );
 		notifyFieldValueChanged( field );
 	};
 
@@ -108,7 +106,7 @@ const MailboxField = ( {
 				<MailboxFieldInput { ...props } onBlur={ onBlur } onChange={ onChange } />
 				{ children }
 			</FormLabel>
-			{ fieldState.error && <FormInputValidation text={ fieldState.error } isError /> }
+			{ field.error && <FormInputValidation text={ field.error } isError /> }
 		</FormFieldset>
 	);
 };

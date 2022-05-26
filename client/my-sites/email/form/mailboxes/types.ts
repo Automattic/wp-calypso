@@ -62,7 +62,9 @@ abstract class MailboxFormFieldBase< T > implements MailboxFormField< T > {
 }
 
 class DataMailboxFormField extends MailboxFormFieldBase< string > {
+	isVisible = false;
 	value = uuid_v4();
+	readonly typeName = 'data';
 }
 
 class TextMailboxFormField extends MailboxFormFieldBase< string > {
@@ -97,7 +99,7 @@ interface ITitanMailboxFormFields extends IBaseMailboxFormFields {
 }
 
 abstract class MailboxFormFields implements IBaseMailboxFormFields {
-	readonly domain = new TextMailboxFormField( FIELD_DOMAIN );
+	readonly domain = new DataMailboxFormField( FIELD_DOMAIN );
 	mailbox = new TextMailboxFormField( FIELD_MAILBOX );
 	password = new TextMailboxFormField( FIELD_PASSWORD );
 	readonly uuid = new DataMailboxFormField( FIELD_UUID );

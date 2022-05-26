@@ -28,7 +28,6 @@ describe( '<MailboxField /> suite', () => {
 			},
 			domains: [],
 			field: Reflect.get( mailbox.formFields, fieldName ),
-			selectedDomainName,
 		};
 	};
 
