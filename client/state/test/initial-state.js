@@ -4,7 +4,6 @@
 
 import { withStorageKey } from '@automattic/state-utils';
 import { mapKeys } from 'lodash';
-import { useFakeTimers } from 'sinon';
 import * as browserStorage from 'calypso/lib/browser-storage';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import { createReduxStore } from 'calypso/state';
@@ -644,7 +643,6 @@ describe( 'initial-state', () => {
 
 	describe( '#persistOnChange()', () => {
 		let store;
-		let clock;
 		let setStoredItemSpy;
 		let stopPersisting;
 
@@ -671,7 +669,7 @@ describe( 'initial-state', () => {
 		beforeEach( async () => {
 			// we use fake timers from Sinon (aka Lolex) because `lodash.throttle` also uses `Date.now()`
 			// and relies on it returning a mocked value. Jest fake timers don't mock `Date`, Lolex does.
-			clock = useFakeTimers();
+			jest.useFakeTimers();
 			setStoredItemSpy = jest
 				.spyOn( browserStorage, 'setStoredItem' )
 				.mockImplementation( ( value ) => Promise.resolve( value ) );
@@ -681,7 +679,6 @@ describe( 'initial-state', () => {
 		} );
 
 		afterEach( () => {
-			clock.restore();
 			setStoredItemSpy.mockRestore();
 		} );
 
@@ -691,7 +688,7 @@ describe( 'initial-state', () => {
 				data: 1,
 			} );
 
-			clock.tick( SERIALIZE_THROTTLE );
+			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
 
 			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -702,14 +699,14 @@ describe( 'initial-state', () => {
 				data: 1,
 			} );
 
-			clock.tick( SERIALIZE_THROTTLE );
+			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
 
 			store.dispatch( {
 				type: 'foo',
 				data: 2,
 			} );
 
-			clock.tick( SERIALIZE_THROTTLE );
+			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
 
 			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 2 );
 		} );
@@ -720,14 +717,14 @@ describe( 'initial-state', () => {
 				data: 1,
 			} );
 
-			clock.tick( SERIALIZE_THROTTLE );
+			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
 
 			store.dispatch( {
 				type: 'foo',
 				data: 1,
 			} );
 
-			clock.tick( SERIALIZE_THROTTLE );
+			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
 
 			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -748,7 +745,7 @@ describe( 'initial-state', () => {
 				data: 3,
 			} );
 
-			clock.tick( SERIALIZE_THROTTLE );
+			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
 
 			store.dispatch( {
 				type: 'foo',
@@ -760,7 +757,7 @@ describe( 'initial-state', () => {
 				data: 5,
 			} );
 
-			clock.tick( SERIALIZE_THROTTLE );
+			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
 
 			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 2 );
 			expect( setStoredItemSpy ).toHaveBeenCalledWith(
@@ -778,7 +775,7 @@ describe( 'initial-state', () => {
 				type: 'foo',
 				data: 1,
 			} );
-			clock.tick( SERIALIZE_THROTTLE );
+			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
 			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 1 );
 
 			stopPersisting();
@@ -787,7 +784,7 @@ describe( 'initial-state', () => {
 				type: 'foo',
 				data: 1,
 			} );
-			clock.tick( SERIALIZE_THROTTLE );
+			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
 			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 1 ); // no new call
 		} );
 	} );
