@@ -1602,7 +1602,7 @@ __metadata:
     "@wordpress/html-entities": ^3.7.0
     "@wordpress/i18n": ^4.7.0
     "@wordpress/icons": ^8.3.0
-    "@wordpress/interface": ^4.6.0
+    "@wordpress/interface": ^4.8.0
     "@wordpress/is-shallow-equal": ^4.7.0
     "@wordpress/jest-preset-default": ^7.1.3
     "@wordpress/keycodes": ^3.7.0
@@ -3804,6 +3804,35 @@ __metadata:
     minimatch: ^3.0.4
     strip-json-comments: ^3.1.1
   checksum: 0dadf35c2c27e9f36faeaed23a9d234a4326f4b32047a7b27dfddba62304a21eac50a232bc444745acff57505bbc02684ea133955c1647eab8ee6d36c39803e4
+  languageName: node
+  linkType: hard
+
+"@floating-ui/core@npm:^0.6.2":
+  version: 0.6.2
+  resolution: "@floating-ui/core@npm:0.6.2"
+  checksum: a27fca302fae8ee915e77efc3ab45bd03d52370a9e34f087a53e1d4ff6e5a41a77c2d4c9236fe4ea9145e1580a7cef2f96a69de74cb561a8e9a3bc3fcb40b32e
+  languageName: node
+  linkType: hard
+
+"@floating-ui/dom@npm:^0.4.5":
+  version: 0.4.5
+  resolution: "@floating-ui/dom@npm:0.4.5"
+  dependencies:
+    "@floating-ui/core": ^0.6.2
+  checksum: dad990e9164c92c251fd5687d9e1461083005b203468183468313a3907992242b6281de2b2e3e874ab84459bf18ea4b4c0459223ab66d89e11928fe060a946f5
+  languageName: node
+  linkType: hard
+
+"@floating-ui/react-dom@npm:0.6.3":
+  version: 0.6.3
+  resolution: "@floating-ui/react-dom@npm:0.6.3"
+  dependencies:
+    "@floating-ui/dom": ^0.4.5
+    use-isomorphic-layout-effect: ^1.1.1
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 83b89c0535b283ce2ae8b637237987bbece02bb15f9765d94004ce5ca0d77e32ef1402f6499c04b357787d010d9ec23d2eaf0b6ab7ab8b2c53a39ab813c8d046
   languageName: node
   linkType: hard
 
@@ -8263,14 +8292,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/a11y@npm:^3.2.1, @wordpress/a11y@npm:^3.2.4, @wordpress/a11y@npm:^3.7.0":
-  version: 3.7.0
-  resolution: "@wordpress/a11y@npm:3.7.0"
+"@wordpress/a11y@npm:^3.2.1, @wordpress/a11y@npm:^3.2.4, @wordpress/a11y@npm:^3.7.0, @wordpress/a11y@npm:^3.9.0":
+  version: 3.9.0
+  resolution: "@wordpress/a11y@npm:3.9.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/dom-ready": ^3.7.0
-    "@wordpress/i18n": ^4.7.0
-  checksum: fb62e17af45a28550ef712b8ddfb80772cba5897c31118a7c0992ac764c2516c824e62d200821efa693dab904f3157b2a4f1a5510a532e923df7b2d5d87c4de9
+    "@wordpress/dom-ready": ^3.9.0
+    "@wordpress/i18n": ^4.9.0
+  checksum: b9bbd0a0f6d2f0385b222da0a21dcb21bc10599d4daa525bf6bcd16bcbd092a6508d15fd9ad914e7143d5969e18bfd781e7f9d74a92d086b8fbe04dbc5523f1c
   languageName: node
   linkType: hard
 
@@ -8619,9 +8648,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/components@npm:^19.1.1, @wordpress/components@npm:^19.1.3, @wordpress/components@npm:^19.2.0, @wordpress/components@npm:^19.9.0":
-  version: 19.9.0
-  resolution: "@wordpress/components@npm:19.9.0"
+"@wordpress/components@npm:^19.1.1, @wordpress/components@npm:^19.1.3, @wordpress/components@npm:^19.11.0, @wordpress/components@npm:^19.2.0, @wordpress/components@npm:^19.9.0":
+  version: 19.11.0
+  resolution: "@wordpress/components@npm:19.11.0"
   dependencies:
     "@babel/runtime": ^7.16.0
     "@emotion/cache": ^11.7.1
@@ -8630,22 +8659,23 @@ __metadata:
     "@emotion/serialize": ^1.0.2
     "@emotion/styled": ^11.6.0
     "@emotion/utils": 1.0.0
+    "@floating-ui/react-dom": 0.6.3
     "@use-gesture/react": ^10.2.6
-    "@wordpress/a11y": ^3.7.0
-    "@wordpress/compose": ^5.5.0
-    "@wordpress/date": ^4.7.0
-    "@wordpress/deprecated": ^3.7.0
-    "@wordpress/dom": ^3.7.0
-    "@wordpress/element": ^4.5.0
-    "@wordpress/escape-html": ^2.7.0
-    "@wordpress/hooks": ^3.7.0
-    "@wordpress/i18n": ^4.7.0
-    "@wordpress/icons": ^8.3.0
-    "@wordpress/is-shallow-equal": ^4.7.0
-    "@wordpress/keycodes": ^3.7.0
-    "@wordpress/primitives": ^3.5.0
-    "@wordpress/rich-text": ^5.5.0
-    "@wordpress/warning": ^2.7.0
+    "@wordpress/a11y": ^3.9.0
+    "@wordpress/compose": ^5.7.0
+    "@wordpress/date": ^4.9.0
+    "@wordpress/deprecated": ^3.9.0
+    "@wordpress/dom": ^3.9.0
+    "@wordpress/element": ^4.7.0
+    "@wordpress/escape-html": ^2.9.0
+    "@wordpress/hooks": ^3.9.0
+    "@wordpress/i18n": ^4.9.0
+    "@wordpress/icons": ^9.0.0
+    "@wordpress/is-shallow-equal": ^4.9.0
+    "@wordpress/keycodes": ^3.9.0
+    "@wordpress/primitives": ^3.7.0
+    "@wordpress/rich-text": ^5.7.0
+    "@wordpress/warning": ^2.9.0
     classnames: ^2.3.1
     colord: ^2.7.0
     dom-scroll-into-view: ^1.2.1
@@ -8658,14 +8688,13 @@ __metadata:
     moment: ^2.22.1
     re-resizable: ^6.4.0
     react-colorful: ^5.3.1
-    react-dates: ^17.1.1
-    react-resize-aware: ^3.1.0
+    react-dates: ^21.8.0
     reakit: ^1.3.8
     uuid: ^8.3.0
   peerDependencies:
     react: ^17.0.0
     react-dom: ^17.0.0
-  checksum: 63dbe38aabe597580382a0d83e643149db4b90f0e8290a2e24e19774f72fcf19100c430b97ac410c6b412d1004522c8a8d4ca4f9a78d4725e6734449ccb320e8
+  checksum: 35661863f7461a42182e4d5dce81d93b714c3106f4ea3b41733dffb454d17b8c40512e429211dd9e927b2fd3b473b868abc068d90aab805c8d8f98f2184479b6
   languageName: node
   linkType: hard
 
@@ -8690,27 +8719,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/compose@npm:^5.0.1, @wordpress/compose@npm:^5.0.6, @wordpress/compose@npm:^5.0.7, @wordpress/compose@npm:^5.5.0":
-  version: 5.5.0
-  resolution: "@wordpress/compose@npm:5.5.0"
+"@wordpress/compose@npm:^5.0.1, @wordpress/compose@npm:^5.0.6, @wordpress/compose@npm:^5.0.7, @wordpress/compose@npm:^5.5.0, @wordpress/compose@npm:^5.7.0":
+  version: 5.7.0
+  resolution: "@wordpress/compose@npm:5.7.0"
   dependencies:
     "@babel/runtime": ^7.16.0
     "@types/lodash": ^4.14.172
     "@types/mousetrap": ^1.6.8
-    "@wordpress/deprecated": ^3.7.0
-    "@wordpress/dom": ^3.7.0
-    "@wordpress/element": ^4.5.0
-    "@wordpress/is-shallow-equal": ^4.7.0
-    "@wordpress/keycodes": ^3.7.0
-    "@wordpress/priority-queue": ^2.7.0
+    "@wordpress/deprecated": ^3.9.0
+    "@wordpress/dom": ^3.9.0
+    "@wordpress/element": ^4.7.0
+    "@wordpress/is-shallow-equal": ^4.9.0
+    "@wordpress/keycodes": ^3.9.0
+    "@wordpress/priority-queue": ^2.9.0
     clipboard: ^2.0.8
     lodash: ^4.17.21
     mousetrap: ^1.6.5
-    react-resize-aware: ^3.1.0
     use-memo-one: ^1.1.1
   peerDependencies:
     react: ^17.0.0
-  checksum: de48cbbf8fa091fbfb7703d61e0b53cf9eb4ba10a9a9adfa5043165facd56ccb3658efe24806e139191058979a8ad9588624afe5bf75c9c3abae4b37808f826a
+  checksum: 9fd14fe4ca41bea5f412c71db6bff52a9a10f8f94fcc4d4ff1fa8f9de03818f2bbd1801d0cc03924773f347bbd018b55f1786bfed2fd033e9edde55eef14c73d
   languageName: node
   linkType: hard
 
@@ -8775,17 +8803,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/data@npm:^6.0.1, @wordpress/data@npm:^6.1.4, @wordpress/data@npm:^6.1.5, @wordpress/data@npm:^6.7.0":
-  version: 6.7.0
-  resolution: "@wordpress/data@npm:6.7.0"
+"@wordpress/data@npm:^6.0.1, @wordpress/data@npm:^6.1.4, @wordpress/data@npm:^6.1.5, @wordpress/data@npm:^6.7.0, @wordpress/data@npm:^6.9.0":
+  version: 6.9.0
+  resolution: "@wordpress/data@npm:6.9.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/compose": ^5.5.0
-    "@wordpress/deprecated": ^3.7.0
-    "@wordpress/element": ^4.5.0
-    "@wordpress/is-shallow-equal": ^4.7.0
-    "@wordpress/priority-queue": ^2.7.0
-    "@wordpress/redux-routine": ^4.7.0
+    "@wordpress/compose": ^5.7.0
+    "@wordpress/deprecated": ^3.9.0
+    "@wordpress/element": ^4.7.0
+    "@wordpress/is-shallow-equal": ^4.9.0
+    "@wordpress/priority-queue": ^2.9.0
+    "@wordpress/redux-routine": ^4.9.0
     equivalent-key-map: ^0.2.2
     is-promise: ^4.0.0
     lodash: ^4.17.21
@@ -8794,7 +8822,7 @@ __metadata:
     use-memo-one: ^1.1.1
   peerDependencies:
     react: ^17.0.0
-  checksum: ab968a09852fbff7940e849d5c94f733edf5265e5d4ead61b6e33f45bd744ed1aba4bd32ebb69affe647e9516ee93e9c483e08d10ec479d0667cd9a056d02fa2
+  checksum: b7d9598c149c468f4093f049e1dd4b659f03951d9a5e701f2cce30a85ebaeaa92bd92cc2e3e6a834b54f0cd91fc26b9b9edc46a95901141c48a31850e6e67e0e
   languageName: node
   linkType: hard
 
@@ -8809,14 +8837,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/date@npm:^4.2.1, @wordpress/date@npm:^4.2.3, @wordpress/date@npm:^4.7.0":
-  version: 4.7.0
-  resolution: "@wordpress/date@npm:4.7.0"
+"@wordpress/date@npm:^4.2.1, @wordpress/date@npm:^4.2.3, @wordpress/date@npm:^4.7.0, @wordpress/date@npm:^4.9.0":
+  version: 4.9.0
+  resolution: "@wordpress/date@npm:4.9.0"
   dependencies:
     "@babel/runtime": ^7.16.0
     moment: ^2.22.1
     moment-timezone: ^0.5.31
-  checksum: 4c81c7b6d2b8e6dbd06d63c708e3d8702a96a9587100cfc695b3993502e797704f4968c7d23c04e65b008c0e443edd72ec9572cf08a3d2f4f4b7a98bf775a366
+  checksum: 65bb8a5085c01fb7aaa22ff62554484bd2f2e07ccdda7f6506c616ce7250fc41aea503d6bb4af7c7ab5fef51a01992be00a8121574da65126d5f29d43ecc1820
   languageName: node
   linkType: hard
 
@@ -8842,13 +8870,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/deprecated@npm:^3.2.3, @wordpress/deprecated@npm:^3.7.0":
-  version: 3.7.0
-  resolution: "@wordpress/deprecated@npm:3.7.0"
+"@wordpress/deprecated@npm:^3.2.3, @wordpress/deprecated@npm:^3.7.0, @wordpress/deprecated@npm:^3.8.0, @wordpress/deprecated@npm:^3.9.0":
+  version: 3.9.0
+  resolution: "@wordpress/deprecated@npm:3.9.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/hooks": ^3.7.0
-  checksum: dab533834530fa2441522187bd0660768e04d463bf65bda934c4fd661553d292427b1523a59a1256f052c6f387a16888fd29facdfaae2811f2ec10cd99fd8dfd
+    "@wordpress/hooks": ^3.9.0
+  checksum: 52d7d07033d1de37dd945003288abb1ca15f45eb59b3eb163ff8b05e21f45ca8dd2359460438d4ba8024b34aa8867b9b7006604088d5cec05be987594a8e480d
   languageName: node
   linkType: hard
 
@@ -8861,12 +8889,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dom-ready@npm:^3.2.1, @wordpress/dom-ready@npm:^3.2.3, @wordpress/dom-ready@npm:^3.7.0":
-  version: 3.7.0
-  resolution: "@wordpress/dom-ready@npm:3.7.0"
+"@wordpress/dom-ready@npm:^3.2.1, @wordpress/dom-ready@npm:^3.2.3, @wordpress/dom-ready@npm:^3.7.0, @wordpress/dom-ready@npm:^3.9.0":
+  version: 3.9.0
+  resolution: "@wordpress/dom-ready@npm:3.9.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-  checksum: ac759026961579dbe603f8583ce587112b19bb2f7f56db62049c8a9703fbbcddc75c316ea361411db3d84dda7b592adc70525a0a476d6ee970efd44da8667f78
+  checksum: d506b8a8037181ccee1ad284917b2205b9702a63b7cb1f5a79879fa09eff9a0ac2ac3849afd60f8156182ae057bcbce2684958bfcc2d211eb2b25139e38d925a
   languageName: node
   linkType: hard
 
@@ -8880,13 +8908,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dom@npm:^3.2.7, @wordpress/dom@npm:^3.7.0":
-  version: 3.7.0
-  resolution: "@wordpress/dom@npm:3.7.0"
+"@wordpress/dom@npm:^3.2.7, @wordpress/dom@npm:^3.7.0, @wordpress/dom@npm:^3.9.0":
+  version: 3.9.0
+  resolution: "@wordpress/dom@npm:3.9.0"
   dependencies:
     "@babel/runtime": ^7.16.0
+    "@wordpress/deprecated": ^3.8.0
     lodash: ^4.17.21
-  checksum: 240ccfcfada58855672ba558fda71ea8749477a402f34c044a6ee730d50b5cfd62a3eeb359841672154fa423f56adc6f9e2d13282b937b72b48da8cc41337255
+  checksum: 87e521817c694786b99772e284a3f67393687b4011aa94c44cf36635331dc373e591be2ffa2a9c16c84eb27423c099d6ab14f39b0889370c1d780edb824aff1f
   languageName: node
   linkType: hard
 
@@ -9087,18 +9116,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/element@npm:^4.0.1, @wordpress/element@npm:^4.0.4, @wordpress/element@npm:^4.1.1, @wordpress/element@npm:^4.5.0":
-  version: 4.5.0
-  resolution: "@wordpress/element@npm:4.5.0"
+"@wordpress/element@npm:^4.0.1, @wordpress/element@npm:^4.0.4, @wordpress/element@npm:^4.1.1, @wordpress/element@npm:^4.5.0, @wordpress/element@npm:^4.7.0":
+  version: 4.7.0
+  resolution: "@wordpress/element@npm:4.7.0"
   dependencies:
     "@babel/runtime": ^7.16.0
     "@types/react": ^17.0.37
     "@types/react-dom": ^17.0.11
-    "@wordpress/escape-html": ^2.7.0
+    "@wordpress/escape-html": ^2.9.0
     lodash: ^4.17.21
     react: ^17.0.2
     react-dom: ^17.0.2
-  checksum: 513a653de5651743d41b96c85d66862475e505ae843fec3abbb959dc243e1135f75b704bf26504e3a9fd9f23ac5c7dfb7d49438bc3bf3d979222bba82957be40
+  checksum: 9c2a3ac25688e870e514910eb60a315fb9ef88a19772eb8e8e6554cff3073c8cb9f9d4b79ab6eeaafaa38d3e7cd2b01002793cb33496e150df9dadea6b41c7d0
   languageName: node
   linkType: hard
 
@@ -9133,12 +9162,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/escape-html@npm:^2.2.0, @wordpress/escape-html@npm:^2.2.1, @wordpress/escape-html@npm:^2.2.3, @wordpress/escape-html@npm:^2.7.0":
-  version: 2.7.0
-  resolution: "@wordpress/escape-html@npm:2.7.0"
+"@wordpress/escape-html@npm:^2.2.0, @wordpress/escape-html@npm:^2.2.1, @wordpress/escape-html@npm:^2.2.3, @wordpress/escape-html@npm:^2.7.0, @wordpress/escape-html@npm:^2.9.0":
+  version: 2.9.0
+  resolution: "@wordpress/escape-html@npm:2.9.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-  checksum: 74842c057f28bf247a3479f413c8f9ec83b3df79d5ee3f48cc4d7400a27f232590926a3951b36ae8486715d7203d52afb31588a29adfdd99584b73d0f15780b9
+  checksum: edda7a600b3a74a5589e900dbbb7cfb5c3866880cbd6632bff5b89dda1c2e5ab1ff2aa583069a274f315f843e4ecfce2188b99cc0e209a0ed2e92a2a23653ca3
   languageName: node
   linkType: hard
 
@@ -9209,12 +9238,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/hooks@npm:^3.2.0, @wordpress/hooks@npm:^3.2.2, @wordpress/hooks@npm:^3.7.0":
-  version: 3.7.0
-  resolution: "@wordpress/hooks@npm:3.7.0"
+"@wordpress/hooks@npm:^3.2.0, @wordpress/hooks@npm:^3.2.2, @wordpress/hooks@npm:^3.7.0, @wordpress/hooks@npm:^3.9.0":
+  version: 3.9.0
+  resolution: "@wordpress/hooks@npm:3.9.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-  checksum: 5df7be9b60d930180d8725993b14373f3f09625fa115a35a099ca3f8c25c4ce8f754d8c5759b4787821b0bcbb4a166b2ab315c2ac88e3bc21fe7f36f00f9a640
+  checksum: 1882d5468545d14eedf48520ce291ebd74db5a95b127f60a8611f9c136799b3667cd464f944845f52f8987003ced68d9d9420157dc7d32bbcf2f13e0eb5b6930
   languageName: node
   linkType: hard
 
@@ -9244,12 +9273,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/i18n@npm:^4.2.1, @wordpress/i18n@npm:^4.2.4, @wordpress/i18n@npm:^4.7.0":
-  version: 4.7.0
-  resolution: "@wordpress/i18n@npm:4.7.0"
+"@wordpress/i18n@npm:^4.2.1, @wordpress/i18n@npm:^4.2.4, @wordpress/i18n@npm:^4.7.0, @wordpress/i18n@npm:^4.9.0":
+  version: 4.9.0
+  resolution: "@wordpress/i18n@npm:4.9.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/hooks": ^3.7.0
+    "@wordpress/hooks": ^3.9.0
     gettext-parser: ^1.3.1
     lodash: ^4.17.21
     memize: ^1.1.0
@@ -9257,7 +9286,7 @@ __metadata:
     tannin: ^1.2.0
   bin:
     pot-to-php: tools/pot-to-php.js
-  checksum: 854c442757caad395171a99abd83c95b669313fe31b67e2b356ace110b6ce3ea6cb7709ce00036ba4cf0fc986a38d9a9bd9c43611c8cd0f4bfb9536fe4c93365
+  checksum: c5c8fcd820f258685b404c0347f93d3fa6b85b9085d0704f80bfa52f62e715a31dedd2f38d7d98799b3042d8e02c0d6a4199f30c9ac829b42025224c54653c9c
   languageName: node
   linkType: hard
 
@@ -9316,28 +9345,39 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/interface@npm:^4.1.15, @wordpress/interface@npm:^4.1.9, @wordpress/interface@npm:^4.6.0":
-  version: 4.6.0
-  resolution: "@wordpress/interface@npm:4.6.0"
+"@wordpress/icons@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "@wordpress/icons@npm:9.0.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/a11y": ^3.7.0
-    "@wordpress/components": ^19.9.0
-    "@wordpress/compose": ^5.5.0
-    "@wordpress/data": ^6.7.0
-    "@wordpress/deprecated": ^3.7.0
-    "@wordpress/element": ^4.5.0
-    "@wordpress/i18n": ^4.7.0
-    "@wordpress/icons": ^8.3.0
-    "@wordpress/plugins": ^4.5.0
-    "@wordpress/preferences": ^1.3.0
-    "@wordpress/viewport": ^4.5.0
+    "@wordpress/element": ^4.7.0
+    "@wordpress/primitives": ^3.7.0
+  checksum: 0539af297c3b1b21b67e50a186d784a5a742fe825156e119ae6ec9f446c87646397416a6173c51537a1d13110cd78447626cad6eb77e689865f8cdadf98263e7
+  languageName: node
+  linkType: hard
+
+"@wordpress/interface@npm:^4.1.15, @wordpress/interface@npm:^4.1.9, @wordpress/interface@npm:^4.6.0, @wordpress/interface@npm:^4.8.0":
+  version: 4.8.0
+  resolution: "@wordpress/interface@npm:4.8.0"
+  dependencies:
+    "@babel/runtime": ^7.16.0
+    "@wordpress/a11y": ^3.9.0
+    "@wordpress/components": ^19.11.0
+    "@wordpress/compose": ^5.7.0
+    "@wordpress/data": ^6.9.0
+    "@wordpress/deprecated": ^3.9.0
+    "@wordpress/element": ^4.7.0
+    "@wordpress/i18n": ^4.9.0
+    "@wordpress/icons": ^9.0.0
+    "@wordpress/plugins": ^4.7.0
+    "@wordpress/preferences": ^2.1.0
+    "@wordpress/viewport": ^4.7.0
     classnames: ^2.3.1
     lodash: ^4.17.21
   peerDependencies:
     react: ^17.0.0
     react-dom: ^17.0.0
-  checksum: 19858411e6d60d04d73787129539e8b46a610ab65947cf7e7606d2bde48793d024f3113d6c401b83790958e6c34b7e8a50ca9f68d53badbc9cd13db3d100eaae
+  checksum: 2b77361bcfdb6ff1e61d26ad4804bf6701efb4c59418a6e0427857dcd74511c28888c83e195f0e2b25a04c5d49a3f52a8e19fd09826063a085a7c468303583be
   languageName: node
   linkType: hard
 
@@ -9350,12 +9390,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/is-shallow-equal@npm:^4.2.1, @wordpress/is-shallow-equal@npm:^4.7.0":
-  version: 4.7.0
-  resolution: "@wordpress/is-shallow-equal@npm:4.7.0"
+"@wordpress/is-shallow-equal@npm:^4.2.1, @wordpress/is-shallow-equal@npm:^4.7.0, @wordpress/is-shallow-equal@npm:^4.9.0":
+  version: 4.9.0
+  resolution: "@wordpress/is-shallow-equal@npm:4.9.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-  checksum: aa080df7635a0085a23e30b38e16e41a65df434ad6d5620931a199061a300a225e630d50c27802344bd8c67fec3a32cabac53e1ae0b5ef69317bc7451d3d0e9b
+  checksum: ef275196c4148b56f35ec530485daadf1de5acd3161d125dd466fbb0c2e9fe0551c81264054126aeec492ee5cd8aa30ff92aa36036852af7649d2404074ef66f
   languageName: node
   linkType: hard
 
@@ -9445,14 +9485,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/keycodes@npm:^3.2.1, @wordpress/keycodes@npm:^3.2.4, @wordpress/keycodes@npm:^3.7.0":
-  version: 3.7.0
-  resolution: "@wordpress/keycodes@npm:3.7.0"
+"@wordpress/keycodes@npm:^3.2.1, @wordpress/keycodes@npm:^3.2.4, @wordpress/keycodes@npm:^3.7.0, @wordpress/keycodes@npm:^3.9.0":
+  version: 3.9.0
+  resolution: "@wordpress/keycodes@npm:3.9.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/i18n": ^4.7.0
+    "@wordpress/i18n": ^4.9.0
     lodash: ^4.17.21
-  checksum: a7f9260a71e1ab150021e9b3ca4154f57a5814cb8a9f8b16ff40afe71e1e327184524094cceb00e3ef7225cb193a7b83f5dc771143fecd17bda1aa518eb246b2
+  checksum: a47d09e0bac786feff7a3d1b77b085f52684b44cfef7835a92a83959a07de318418634c2c54c68c5c135efce076305b5df718edc0dd5383aca6e7616bc368a34
   languageName: node
   linkType: hard
 
@@ -9529,20 +9569,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/plugins@npm:^4.0.1, @wordpress/plugins@npm:^4.0.6, @wordpress/plugins@npm:^4.0.7, @wordpress/plugins@npm:^4.5.0":
-  version: 4.5.0
-  resolution: "@wordpress/plugins@npm:4.5.0"
+"@wordpress/plugins@npm:^4.0.1, @wordpress/plugins@npm:^4.0.6, @wordpress/plugins@npm:^4.0.7, @wordpress/plugins@npm:^4.5.0, @wordpress/plugins@npm:^4.7.0":
+  version: 4.7.0
+  resolution: "@wordpress/plugins@npm:4.7.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/compose": ^5.5.0
-    "@wordpress/element": ^4.5.0
-    "@wordpress/hooks": ^3.7.0
-    "@wordpress/icons": ^8.3.0
+    "@wordpress/compose": ^5.7.0
+    "@wordpress/element": ^4.7.0
+    "@wordpress/hooks": ^3.9.0
+    "@wordpress/icons": ^9.0.0
     lodash: ^4.17.21
     memize: ^1.1.0
   peerDependencies:
     react: ^17.0.0
-  checksum: 928929849c1ff925ed19a3f5438413cc400f215e4f210208964bee17545470fef884bf1ba0dd4e73c5c82fa5223c1bbd0c65d9839643bd3c85dd372d7db8ee54
+  checksum: 0bdf3658c9b3be120a3095e1e2905261f8468da13e9f3d09d4eb9f482ec01acb03378724048b9104ca3560a5ad2e3a56f95248bd3745f980492c34bedbbda780
   languageName: node
   linkType: hard
 
@@ -9573,6 +9613,24 @@ __metadata:
     react: ^17.0.0
     react-dom: ^17.0.0
   checksum: 3e37e947f9070fba8c8081ed6533e518d18066f0fb1526920880c542815429a6ffc065c4741b224109ec5a328ef7668d53a40f83ee25146067d3b0a055d52486
+  languageName: node
+  linkType: hard
+
+"@wordpress/preferences@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@wordpress/preferences@npm:2.1.0"
+  dependencies:
+    "@babel/runtime": ^7.16.0
+    "@wordpress/a11y": ^3.9.0
+    "@wordpress/components": ^19.11.0
+    "@wordpress/data": ^6.9.0
+    "@wordpress/i18n": ^4.9.0
+    "@wordpress/icons": ^9.0.0
+    classnames: ^2.3.1
+  peerDependencies:
+    react: ^17.0.0
+    react-dom: ^17.0.0
+  checksum: e716c0a29ed40429bac87c7de0adcf2f09ed00e95fbffa6069b4d726e8fd699929b250fc22bc8a454728ce341c08461c7936e3cf678d11c3e87741af54d2a5bf
   languageName: node
   linkType: hard
 
@@ -9607,14 +9665,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/primitives@npm:^3.0.1, @wordpress/primitives@npm:^3.0.4, @wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.5.0":
-  version: 3.5.0
-  resolution: "@wordpress/primitives@npm:3.5.0"
+"@wordpress/primitives@npm:^3.0.1, @wordpress/primitives@npm:^3.0.4, @wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.5.0, @wordpress/primitives@npm:^3.7.0":
+  version: 3.7.0
+  resolution: "@wordpress/primitives@npm:3.7.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/element": ^4.5.0
+    "@wordpress/element": ^4.7.0
     classnames: ^2.3.1
-  checksum: cd5b66cc3addf31ea1cd7eb73a4a107eb68c5eeb3d9c7ed6336f0756f47a588be830cdf101957b5e3cbdc86e4dbe4bd6149c59e7e258bd5c0cf21bd4af731cb9
+  checksum: 7d6ac1781c70be51290b696ea3a1bcba571e21d8bba4627971bbf21d2e7951c046304bee00f1488063e08990376550be6bf39aae4da06a2d8f315bdaaf04dda1
   languageName: node
   linkType: hard
 
@@ -9627,12 +9685,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/priority-queue@npm:^2.2.3, @wordpress/priority-queue@npm:^2.7.0":
-  version: 2.7.0
-  resolution: "@wordpress/priority-queue@npm:2.7.0"
+"@wordpress/priority-queue@npm:^2.2.3, @wordpress/priority-queue@npm:^2.9.0":
+  version: 2.9.0
+  resolution: "@wordpress/priority-queue@npm:2.9.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-  checksum: 96bc99f31b7e9b6079b71bb841302e4c46a41c4c7a0a2cf7e8c98ff80bf485823d2efad93709b329eddb57013018a6646024a6d98e9446bc1ac59dd5ce0d4e6d
+  checksum: c714fda3afe1826c4a7662232e46a50e4eff71bc5270744a1f62b0d7da44551b26f95d3d33909b5c3ca2f53ccdabb0c459bac50d345702df0635dd6a060e9348
   languageName: node
   linkType: hard
 
@@ -9660,9 +9718,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/redux-routine@npm:^4.2.2, @wordpress/redux-routine@npm:^4.7.0":
-  version: 4.7.0
-  resolution: "@wordpress/redux-routine@npm:4.7.0"
+"@wordpress/redux-routine@npm:^4.2.2, @wordpress/redux-routine@npm:^4.9.0":
+  version: 4.9.0
+  resolution: "@wordpress/redux-routine@npm:4.9.0"
   dependencies:
     "@babel/runtime": ^7.16.0
     is-promise: ^4.0.0
@@ -9670,7 +9728,7 @@ __metadata:
     rungen: ^0.3.2
   peerDependencies:
     redux: ">=4"
-  checksum: c5bf9dca06f2a8cb776e8bdf0e6aaa94201b346fb9d6ecda853cba2e398f5702500a3fba0a788868946e7ab7e488b8c16dbf4ad1af95143e8a61502d60929a7d
+  checksum: 2f1a313f88b65e16eb041892f7c7639246ac20b09e1d02cafb60409e82d2b2e18729dc97e2501a8c816e4d8d3616862eeb6b0563ecfe114c0cddc7139ff69992
   languageName: node
   linkType: hard
 
@@ -9716,24 +9774,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/rich-text@npm:^5.0.6, @wordpress/rich-text@npm:^5.0.7, @wordpress/rich-text@npm:^5.5.0":
-  version: 5.5.0
-  resolution: "@wordpress/rich-text@npm:5.5.0"
+"@wordpress/rich-text@npm:^5.0.6, @wordpress/rich-text@npm:^5.0.7, @wordpress/rich-text@npm:^5.5.0, @wordpress/rich-text@npm:^5.7.0":
+  version: 5.7.0
+  resolution: "@wordpress/rich-text@npm:5.7.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/a11y": ^3.7.0
-    "@wordpress/compose": ^5.5.0
-    "@wordpress/data": ^6.7.0
-    "@wordpress/element": ^4.5.0
-    "@wordpress/escape-html": ^2.7.0
-    "@wordpress/i18n": ^4.7.0
-    "@wordpress/keycodes": ^3.7.0
+    "@wordpress/a11y": ^3.9.0
+    "@wordpress/compose": ^5.7.0
+    "@wordpress/data": ^6.9.0
+    "@wordpress/element": ^4.7.0
+    "@wordpress/escape-html": ^2.9.0
+    "@wordpress/i18n": ^4.9.0
+    "@wordpress/keycodes": ^3.9.0
     lodash: ^4.17.21
     memize: ^1.1.0
     rememo: ^3.0.0
   peerDependencies:
     react: ^17.0.0
-  checksum: 9d6f80f6d0c6e92db9135a17f87f58dd0e9f2946b38c58c0296d68b7efd195ab60aaf68c84760ff374c400c804acffcfd3402419618abda8709a91bcffca0680
+  checksum: e0781ec66bb1f3fe3c7f1c383f9965c577454ff197116449867515dc3b51c6c6881c70bf32f806aa16921909363a6e214ef30acd8a131610c8882b10e61774c9
   languageName: node
   linkType: hard
 
@@ -9882,17 +9940,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/viewport@npm:^4.0.6, @wordpress/viewport@npm:^4.0.7, @wordpress/viewport@npm:^4.5.0":
-  version: 4.5.0
-  resolution: "@wordpress/viewport@npm:4.5.0"
+"@wordpress/viewport@npm:^4.0.6, @wordpress/viewport@npm:^4.0.7, @wordpress/viewport@npm:^4.5.0, @wordpress/viewport@npm:^4.7.0":
+  version: 4.7.0
+  resolution: "@wordpress/viewport@npm:4.7.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/compose": ^5.5.0
-    "@wordpress/data": ^6.7.0
+    "@wordpress/compose": ^5.7.0
+    "@wordpress/data": ^6.9.0
     lodash: ^4.17.21
   peerDependencies:
     react: ^17.0.0
-  checksum: 7e62867d628d5099de7dc5b0db3cbe509f5a7ac620f5e396fcc33c8e9b8ad9162a2be4a673bd3b5383f7cc5b13ea5ee3da7384fcb7de1e778d3b029c4f5c7f29
+  checksum: 467107bc3f673f3bc9c61dde9c194e869bdd1b3152f9bd6327a1c88ac700f4b9e1784901cf53d8c0eea4a44f65fe4c786a6dd252073f691fcb3e5a37e7aa86cd
   languageName: node
   linkType: hard
 
@@ -9903,10 +9961,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/warning@npm:^2.2.2, @wordpress/warning@npm:^2.7.0":
-  version: 2.7.0
-  resolution: "@wordpress/warning@npm:2.7.0"
-  checksum: 73e6b3f1604cd35b8a0d0fbcc09d20fbd9371f6b16a368d2fa98bae8ad9e7d3ab28097d44432e43d96a2a7bc1b83a20a47bc8736985a3c62d680132be1310584
+"@wordpress/warning@npm:^2.2.2, @wordpress/warning@npm:^2.7.0, @wordpress/warning@npm:^2.9.0":
+  version: 2.9.0
+  resolution: "@wordpress/warning@npm:2.9.0"
+  checksum: e151c64c4162da64c49430e8d8161e00c4e616c4498aead8d598d81fa15a58eda603f9b09a2c3681d85bccb7ec44f1c624b3169ae5e8a88bba13e19151a8d473
   languageName: node
   linkType: hard
 
@@ -10290,7 +10348,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"airbnb-prop-types@npm:^2.10.0, airbnb-prop-types@npm:^2.15.0":
+"airbnb-prop-types@npm:^2.10.0, airbnb-prop-types@npm:^2.14.0, airbnb-prop-types@npm:^2.15.0, airbnb-prop-types@npm:^2.16.0":
   version: 2.16.0
   resolution: "airbnb-prop-types@npm:2.16.0"
   dependencies:
@@ -15512,7 +15570,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"direction@npm:^1.0.2":
+"direction@npm:^1.0.4":
   version: 1.0.4
   resolution: "direction@npm:1.0.4"
   bin:
@@ -28822,6 +28880,35 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-dates@npm:^21.8.0":
+  version: 21.8.0
+  resolution: "react-dates@npm:21.8.0"
+  dependencies:
+    airbnb-prop-types: ^2.15.0
+    consolidated-events: ^1.1.1 || ^2.0.0
+    enzyme-shallow-equal: ^1.0.0
+    is-touch-device: ^1.0.1
+    lodash: ^4.1.1
+    object.assign: ^4.1.0
+    object.values: ^1.1.0
+    prop-types: ^15.7.2
+    raf: ^3.4.1
+    react-moment-proptypes: ^1.6.0
+    react-outside-click-handler: ^1.2.4
+    react-portal: ^4.2.0
+    react-with-direction: ^1.3.1
+    react-with-styles: ^4.1.0
+    react-with-styles-interface-css: ^6.0.0
+  peerDependencies:
+    "@babel/runtime": ^7.0.0
+    moment: ^2.18.1
+    react: ^0.14 || ^15.5.4 || ^16.1.1
+    react-dom: ^0.14 || ^15.5.4 || ^16.1.1
+    react-with-direction: ^1.3.1
+  checksum: 19f4a4c06817d3e69a5671443df32fa9dd6ea0d7832998df41789f998dc2f5fc78d9150eec843386cd8aebca9845ce73c019786979f7487b26f89d67b08d5015
+  languageName: node
+  linkType: hard
+
 "react-day-picker@npm:^7.4.10":
   version: 7.4.10
   resolution: "react-day-picker@npm:7.4.10"
@@ -29115,7 +29202,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-outside-click-handler@npm:^1.2.0":
+"react-outside-click-handler@npm:^1.2.0, react-outside-click-handler@npm:^1.2.4":
   version: 1.3.0
   resolution: "react-outside-click-handler@npm:1.3.0"
   dependencies:
@@ -29158,14 +29245,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-portal@npm:^4.1.5":
-  version: 4.2.1
-  resolution: "react-portal@npm:4.2.1"
+"react-portal@npm:^4.1.5, react-portal@npm:^4.2.0":
+  version: 4.2.2
+  resolution: "react-portal@npm:4.2.2"
   dependencies:
     prop-types: ^15.5.8
   peerDependencies:
-    react: ^15.0.0-0 || ^16.0.0-0 || ^17.0.0-0
-  checksum: 1e448dc5864e2924070942263750d5ce699c5e87ec529d5d7814e73bf741755c0abd64c2df356092528ff8a4823e522040cbacbc4880dd66b5fc198ca90f562e
+    react: ^16.0.0-0 || ^17.0.0-0 || ^18.0.0-0
+    react-dom: ^16.0.0-0 || ^17.0.0-0 || ^18.0.0-0
+  checksum: 323872f9cafb82e4385738a7a855b3ae6f4b59b1ebe194a2eb4cf0e6c6e4ac7d7c0c10598339dbf648b3c7299ade2bac3661c3eb7a7f0b11d3c81a86c2a0187c
   languageName: node
   linkType: hard
 
@@ -29432,22 +29520,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-with-direction@npm:^1.3.0":
-  version: 1.3.1
-  resolution: "react-with-direction@npm:1.3.1"
+"react-with-direction@npm:^1.3.0, react-with-direction@npm:^1.3.1":
+  version: 1.4.0
+  resolution: "react-with-direction@npm:1.4.0"
   dependencies:
-    airbnb-prop-types: ^2.10.0
+    airbnb-prop-types: ^2.16.0
     brcast: ^2.0.2
     deepmerge: ^1.5.2
-    direction: ^1.0.2
-    hoist-non-react-statics: ^3.3.0
-    object.assign: ^4.1.0
-    object.values: ^1.0.4
-    prop-types: ^15.6.2
+    direction: ^1.0.4
+    hoist-non-react-statics: ^3.3.2
+    object.assign: ^4.1.2
+    object.values: ^1.1.5
+    prop-types: ^15.7.2
   peerDependencies:
     react: ^0.14 || ^15 || ^16
     react-dom: ^0.14 || ^15 || ^16
-  checksum: 3697ec21138fca37fd5f56627b0ea17ca8975560e5b2b6c7b519b1a7ba902b3561577d4edbbd91815fd2bfc885817860f7233643f15121a98c78112459883e2c
+  checksum: 4d8f8b16561b1c9fe75ed6d575e7dee9f736bcb85ef42fa5cedec590a672531dc0f26d8f6a0687fed78ab428fd6f5912d72f54c7e2bd8ff1e44d96d8162c5af8
   languageName: node
   linkType: hard
 
@@ -29463,6 +29551,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-with-styles-interface-css@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "react-with-styles-interface-css@npm:6.0.0"
+  dependencies:
+    array.prototype.flat: ^1.2.1
+    global-cache: ^1.2.1
+  peerDependencies:
+    "@babel/runtime": ^7.0.0
+    react-with-styles: ^3.0.0 || ^4.0.0
+  checksum: ba4577b0c8992bbac04559ed33ff3cb8d204450501e8481112b77ed825708c11ab005098d7a7d3fee87a508601ddf6aa943e3831dbefc73213b02e3fad603ec4
+  languageName: node
+  linkType: hard
+
 "react-with-styles@npm:^3.2.0":
   version: 3.2.3
   resolution: "react-with-styles@npm:3.2.3"
@@ -29475,6 +29576,23 @@ __metadata:
     react: ">=0.14"
     react-with-direction: ^1.1.0
   checksum: d0a21c18fec637cdc69c62919f104376c68715aa013a4c32bd056157f32a5f732854ae9144f10a7be3294568feede15cb3c03b6251cfe3c006870a2549b5744c
+  languageName: node
+  linkType: hard
+
+"react-with-styles@npm:^4.1.0":
+  version: 4.2.0
+  resolution: "react-with-styles@npm:4.2.0"
+  dependencies:
+    airbnb-prop-types: ^2.14.0
+    hoist-non-react-statics: ^3.2.1
+    object.assign: ^4.1.0
+    prop-types: ^15.7.2
+    react-with-direction: ^1.3.1
+  peerDependencies:
+    "@babel/runtime": ^7.0.0
+    react: ">=0.14"
+    react-with-direction: ^1.3.1
+  checksum: 401dd2d36f1597d07ca3bbf41548e6e93b0618e38f84121e5d5a7d6a522426ba9c4422d8fcf6a200653ecc173e6fab921e97b2debc1d119754ebe5eab40b47ce
   languageName: node
   linkType: hard
 
@@ -35162,15 +35280,15 @@ swiper@4.5.1:
   languageName: node
   linkType: hard
 
-"use-isomorphic-layout-effect@npm:^1.0.0":
-  version: 1.1.0
-  resolution: "use-isomorphic-layout-effect@npm:1.1.0"
+"use-isomorphic-layout-effect@npm:^1.0.0, use-isomorphic-layout-effect@npm:^1.1.1":
+  version: 1.1.2
+  resolution: "use-isomorphic-layout-effect@npm:1.1.2"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 1bdd2ee85184f512b238aa3fac725dffc2b9db682d0026cf3d4415c7b270f931c9717884688ad61a58c3ce9ffb53343437ed7fb2395358e49835394036352131
+  checksum: d8deea8b85e55ac6daba237a889630bfdbf0ebf60e9e22b6a78a78c26fabe6025e04ada7abef1e444e6786227d921e648b2707db8b3564daf757264a148a6e23
   languageName: node
   linkType: hard
 
