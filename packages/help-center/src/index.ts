@@ -5,7 +5,6 @@ export { SuccessScreen } from './components/ticket-success-screen';
 export { BackButton } from './components/back-button';
 export { default as ContactForm } from './components/help-center-contact-form';
 export { useHCWindowCommunicator } from './happychat-window-communicator';
-export { HelpCenterContext } from './help-center-context';
 export { execute, checkAPIThenInitializeDirectly, askDirectlyQuestion } from './directly';
 export { getContextResults } from './contextual-help/contextual-help';
 export type { LinksForSection } from './contextual-help/contextual-help';
