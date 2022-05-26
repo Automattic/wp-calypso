@@ -1,4 +1,4 @@
-import { Onboard } from 'calypso/../packages/data-stores/src';
+import { Onboard } from '@automattic/data-stores';
 import { useGoals } from './goals';
 import SelectCard from './select-card';
 

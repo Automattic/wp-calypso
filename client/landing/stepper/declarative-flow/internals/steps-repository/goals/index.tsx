@@ -1,7 +1,7 @@
+import { Onboard } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { Onboard } from 'calypso/../packages/data-stores/src';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SelectGoals from './select-goals';
