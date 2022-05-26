@@ -169,6 +169,7 @@ const sections = [
 		paths: [ '/marketing', '/sharing' ],
 		module: 'calypso/my-sites/marketing',
 		group: 'sites',
+		isomorphic: true,
 	},
 	{
 		name: 'jetpack-connect',

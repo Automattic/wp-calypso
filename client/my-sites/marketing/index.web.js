@@ -1,4 +1,3 @@
-import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
@@ -15,11 +14,7 @@ import {
 	ultimateTrafficGuide,
 } from './controller';
 
-export default function () {
-	page( '/marketing/do-it-for-me*', function redirectToDIFMLandingPage() {
-		window.location.replace( 'https://wordpress.com/do-it-for-me' );
-	} );
-
+export default function ( router ) {
 	const paths = [
 		'/marketing',
 		'/marketing/connections',
@@ -32,16 +27,18 @@ export default function () {
 		'/marketing/business-tools',
 	];
 
-	paths.forEach( ( path ) => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );
+	paths.forEach( ( path ) =>
+		router( path, ...[ siteSelection, sites, makeLayout, clientRender ] )
+	);
 
-	page( '/marketing/connection/:service', redirectDefaultConnectionsDomain );
+	router( '/marketing/connection/:service', redirectDefaultConnectionsDomain );
 
-	page( '/sharing/:domain', redirectConnections );
-	page( '/sharing/buttons/:domain', redirectSharingButtons );
+	router( '/sharing/:domain', redirectConnections );
+	router( '/sharing/buttons/:domain', redirectSharingButtons );
 
-	page( '/marketing/:domain', redirectMarketingTools );
+	router( '/marketing/:domain', redirectMarketingTools );
 
-	page(
+	router(
 		'/marketing/connections/:domain',
 		siteSelection,
 		navigation,
@@ -51,7 +48,7 @@ export default function () {
 		clientRender
 	);
 
-	page(
+	router(
 		'/marketing/traffic/:domain',
 		siteSelection,
 		navigation,
@@ -61,7 +58,7 @@ export default function () {
 		clientRender
 	);
 
-	page(
+	router(
 		'/marketing/sharing-buttons/:domain',
 		siteSelection,
 		navigation,
@@ -71,7 +68,7 @@ export default function () {
 		clientRender
 	);
 
-	page(
+	router(
 		'/marketing/tools/:domain',
 		siteSelection,
 		navigation,
@@ -81,7 +78,7 @@ export default function () {
 		clientRender
 	);
 
-	page(
+	router(
 		'/marketing/business-tools/:domain',
 		siteSelection,
 		navigation,
@@ -91,7 +88,7 @@ export default function () {
 		clientRender
 	);
 
-	page(
+	router(
 		'/marketing/ultimate-traffic-guide/:domain',
 		siteSelection,
 		sites,
