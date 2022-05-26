@@ -80,12 +80,14 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 
 	/* eslint-disable @typescript-eslint/no-unused-vars */
 	const wrapperRef = useRef< HTMLDivElement >( null );
+	const viewmoreRef = useRef< HTMLDivElement >( null );
 	const propertyForThumbnailHeight = '--thumbnail-design-height';
 
 	useEffect( () => {
 		const onResize = () => {
 			const { current: thumnbnailWrapper } = wrapperRef;
-			if ( ! thumnbnailWrapper ) {
+			const { current: viewmoreWrapper } = viewmoreRef;
+			if ( ! thumnbnailWrapper || ! viewmoreWrapper ) {
 				return;
 			}
 
@@ -94,7 +96,9 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 				window.innerHeight || 0
 			);
 			const wrapperMaxHeight =
-				viewportHeight - ( thumnbnailWrapper.getClientRects()[ 0 ].y + window.scrollY );
+				viewportHeight -
+				( thumnbnailWrapper.getClientRects()[ 0 ].y + window.scrollY ) -
+				viewmoreWrapper.getClientRects()[ 0 ].height;
 			const thumbnailHeight = wrapperMaxHeight / 3;
 			const thumbnailActualHeight = Math.min( 300, Math.max( 100, thumbnailHeight ) );
 
@@ -120,17 +124,19 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 				<div className="generated-design-picker__thumbnails">
 					<div className="generated-design-picker__thumbnails-wrapper" ref={ wrapperRef }>
 						{ designs &&
-							designs.map( ( design, index ) => (
-								<GeneratedDesignThumbnail
-									key={ design.slug }
-									slug={ design.slug }
-									thumbnailUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
-									isSelected={ selectedDesign?.slug === design.slug }
-									onPreview={ () => onPreview( design, index ) }
-								/>
-							) ) }
+							designs
+								.slice( 0, 3 )
+								.map( ( design, index ) => (
+									<GeneratedDesignThumbnail
+										key={ design.slug }
+										slug={ design.slug }
+										thumbnailUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
+										isSelected={ selectedDesign?.slug === design.slug }
+										onPreview={ () => onPreview( design, index ) }
+									/>
+								) ) }
 					</div>
-					<div className="generated-design-picker__view-more-wrapper">
+					<div className="generated-design-picker__view-more-wrapper" ref={ viewmoreRef }>
 						<Button className="generated-design-picker__view-more" onClick={ onViewMore }>
 							{ __( 'View more options' ) }
 						</Button>

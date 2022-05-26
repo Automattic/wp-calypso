@@ -433,7 +433,6 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		flex-direction: column;
 		flex-grow: 1;
 		margin-bottom: 98px;
-		row-gap: 24px;
 
 		@include break-small {
 			flex: 0 154px;
