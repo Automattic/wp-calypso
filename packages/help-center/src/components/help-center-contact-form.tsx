@@ -265,6 +265,9 @@ export const HelpCenterContactForm = () => {
 			}
 			case 'DIRECTLY': {
 				askDirectlyQuestion( message ?? '', userData?.display_name ?? '', userData?.email ?? '' );
+				recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+					support_variation: 'directly',
+				} );
 				setShowHelpCenter( false );
 				break;
 			}
