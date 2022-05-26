@@ -1,13 +1,12 @@
 import { Gridicon } from '@automattic/components';
-import { getContextResults } from '@automattic/help-center';
+import { getContextResults, LinksForSection } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
 import { Icon, page as pageIcon, arrowRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { debounce } from 'lodash';
+import { debounce, noop } from 'lodash';
 import page from 'page';
-import PropTypes from 'prop-types';
-import { Fragment, useEffect, useMemo } from 'react';
+import React, { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
@@ -24,8 +23,6 @@ import {
 } from './constants';
 import PlaceholderLines from './placeholder-lines';
 
-const noop = () => {};
-
 function debounceSpeak( { message = '', priority = 'polite', timeout = 800 } ) {
 	return debounce( () => {
 		speak( message, priority );
@@ -38,11 +35,19 @@ const resultsSpeak = debounceSpeak( { message: 'Search results loaded.' } );
 
 const errorSpeak = debounceSpeak( { message: 'No search results found.' } );
 
-const filterManagePurchaseLink = ( hasPurchases, isPurchasesSection ) => {
+const filterManagePurchaseLink = ( hasPurchases: boolean, isPurchasesSection: boolean ) => {
 	if ( hasPurchases || isPurchasesSection ) {
 		return () => true;
 	}
-	return ( { post_id } ) => post_id !== 111349;
+	return ( { post_id }: LinksForSection ) => post_id !== 111349;
+};
+type Props = {
+	searchQuery?: string;
+	onSelect: ( event: React.MouseEvent< HTMLAnchorElement >, link: LinksForSection ) => void;
+	onAdminSectionSelect?: ( event: React.MouseEvent< HTMLAnchorElement > ) => void;
+	placeholderLines?: number;
+	openAdminInNewTab?: boolean;
+	externalLinks?: boolean;
 };
 
 function HelpSearchResults( {
@@ -52,28 +57,30 @@ function HelpSearchResults( {
 	searchQuery = '',
 	placeholderLines,
 	openAdminInNewTab = false,
-} ) {
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const hasPurchases = useSelector( hasCancelableUserPurchases );
-	const sectionName = useSelector( getSectionName );
+	const hasPurchases = useSelector( hasCancelableUserPurchases ) as boolean;
+	const sectionName = useSelector( getSectionName ) as string;
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
-	const siteIntent = useSiteOption( 'site_intent' );
+	const siteIntent = useSiteOption( 'site_intent' ) as string;
 	const rawContextualResults = useMemo(
 		() => getContextResults( sectionName, siteIntent ),
 		[ sectionName, siteIntent ]
 	);
-	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
+	const adminResults: LinksForSection[] = useSelector( ( state ) =>
+		getAdminHelpResults( state, searchQuery, 3 )
+	);
 
-	const contextualResults = rawContextualResults.filter(
+	const contextualResults: LinksForSection[] = rawContextualResults.filter(
 		// Unless searching with Inline Help or on the Purchases section, hide the
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery( searchQuery );
 
-	const searchResults = searchData?.wordpress_support_links ?? [];
+	const searchResults: LinksForSection[] = searchData?.wordpress_support_links ?? [];
 	const hasAPIResults = searchResults.length > 0;
 
 	useEffect( () => {
@@ -96,7 +103,11 @@ function HelpSearchResults( {
 		}
 	}, [ isSearching, hasAPIResults, searchQuery ] );
 
-	const onLinkClickHandler = ( event, result, type ) => {
+	const onLinkClickHandler = (
+		event: React.MouseEvent< HTMLAnchorElement >,
+		result: LinksForSection,
+		type: string
+	) => {
 		const { link } = result;
 		// check and catch admin section links.
 		if ( type === SUPPORT_TYPE_ADMIN_SECTION && link ) {
@@ -107,7 +118,6 @@ function HelpSearchResults( {
 					search_term: searchQuery,
 				} )
 			);
-
 			// push state only if it's internal link.
 			if ( ! /^http/.test( link ) ) {
 				event.preventDefault();
@@ -117,11 +127,10 @@ function HelpSearchResults( {
 
 			return;
 		}
-
 		onSelect( event, result );
 	};
 
-	const renderHelpLink = ( result, type ) => {
+	const renderHelpLink = ( result: LinksForSection, type: string ) => {
 		const { link, title, icon } = result;
 
 		const external = externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION;
@@ -166,7 +175,17 @@ function HelpSearchResults( {
 		);
 	};
 
-	const renderSearchResultsSection = ( { type, title, results, condition } ) => {
+	const renderSearchResultsSection = ( {
+		type,
+		title,
+		results,
+		condition,
+	}: {
+		type: string;
+		title: string;
+		results: LinksForSection[];
+		condition: boolean;
+	} ) => {
 		const id = `inline-search--${ type }`;
 
 		return condition ? (
@@ -187,19 +206,19 @@ function HelpSearchResults( {
 		const sections = [
 			{
 				type: SUPPORT_TYPE_API_HELP,
-				title: translate( 'Recommended resources' ),
+				title: translate( 'Recommended resources' ) as string,
 				results: searchResults.slice( 0, 5 ),
 				condition: ! isSearching && searchResults.length > 0,
 			},
 			{
 				type: SUPPORT_TYPE_CONTEXTUAL_HELP,
-				title: ! searchQuery.length ? translate( 'Recommended resources' ) : '',
+				title: ( ! searchQuery.length ? translate( 'Recommended resources' ) : '' ) as string,
 				results: contextualResults.slice( 0, 6 ),
 				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 			},
 			{
 				type: SUPPORT_TYPE_ADMIN_SECTION,
-				title: translate( 'Show me where to' ),
+				title: translate( 'Show me where to' ) as string,
 				results: adminResults,
 				condition: !! searchQuery && adminResults.length > 0,
 			},
@@ -209,8 +228,8 @@ function HelpSearchResults( {
 	};
 
 	const resultsLabel = hasAPIResults
-		? translate( 'Search Results' )
-		: translate( 'Helpful resources for this section' );
+		? ( translate( 'Search Results' ) as string )
+		: ( translate( 'Helpful resources for this section' ) as string );
 
 	const renderSearchResults = () => {
 		if ( isSearching && ! searchResults.length && ! adminResults.length ) {
@@ -241,11 +260,4 @@ function HelpSearchResults( {
 		</>
 	);
 }
-
-HelpSearchResults.propTypes = {
-	searchQuery: PropTypes.string,
-	onSelect: PropTypes.func.isRequired,
-	onAdminSectionSelect: PropTypes.func,
-};
-
 export default HelpSearchResults;

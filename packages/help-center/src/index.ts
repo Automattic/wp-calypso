@@ -8,3 +8,6 @@ export { useHCWindowCommunicator } from './happychat-window-communicator';
 export { HelpCenterContext } from './help-center-context';
 export { execute, checkAPIThenInitializeDirectly, askDirectlyQuestion } from './directly';
 export { getContextResults } from './contextual-help/contextual-help';
+export type { LinksForSection } from './contextual-help/contextual-help';
+export { default as Mail } from './icons/mail';
+export { default as NewReleases } from './icons/new-releases';

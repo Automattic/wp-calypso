@@ -13,20 +13,18 @@ import { SitePickerDropDown } from '@automattic/site-picker';
 import { TextControl, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { Icon, info, commentContent } from '@wordpress/icons';
-import React, { useEffect, useState, useContext } from 'react';
+import { Icon, info } from '@wordpress/icons';
+import React, { useEffect, useState } from 'react';
 /**
  * Internal Dependencies
  */
+import { useHistory, useLocation } from 'react-router-dom';
 import { askDirectlyQuestion, execute } from '../directly';
-import { HelpCenterContext } from '../help-center-context';
 import { STORE_KEY, USER_KEY } from '../store';
 import { SitePicker } from '../types';
 import { BackButton } from './back-button';
-import InlineChat from './help-center-inline-chat';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
-import { SuccessScreen } from './ticket-success-screen';
 import './help-center-contact-form.scss';
 
 export const SITE_STORE = 'automattic/site';
@@ -146,10 +144,11 @@ function openPopup( event: React.MouseEvent< HTMLButtonElement > ): Window {
 	return popup;
 }
 
-const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHome } ) => {
-	const [ openChat, setOpenChat ] = useState( false );
-	const [ contactSuccess, setContactSuccess ] = useState( false );
-	const [ forumTopicUrl, setForumTopicUrl ] = useState( '' );
+export const HelpCenterContactForm: React.FC< ContactFormProps > = () => {
+	const { search } = useLocation();
+	const params = new URLSearchParams( search );
+	const mode = params.get( 'mode' ) as Mode;
+	const history = useHistory();
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 	const locale = useLocale();
@@ -158,7 +157,6 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
-	const { setHeaderText } = useContext( HelpCenterContext );
 	const { selectedSite, subject, message, userDeclaredSiteUrl, directlyData } = useSelect(
 		( select ) => {
 			return {
@@ -203,32 +201,6 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 		}
 	}, [ directlyData, setShowHelpCenter ] );
 
-	useEffect( () => {
-		switch ( mode ) {
-			case 'CHAT':
-				if ( openChat ) {
-					setHeaderText(
-						<>
-							<Icon icon={ commentContent } />
-							{ __( 'Live chat', __i18n_text_domain__ ) }
-						</>
-					);
-				} else {
-					setHeaderText( __( 'Start live chat', __i18n_text_domain__ ) );
-				}
-				break;
-			case 'EMAIL':
-				setHeaderText( __( 'Send us an email', __i18n_text_domain__ ) );
-				break;
-			case 'DIRECTLY':
-				setHeaderText( __( 'Start live chat with an expert', 'full-site-editing' ) );
-				break;
-			case 'FORUM':
-				setHeaderText( __( 'Ask in our community forums', __i18n_text_domain__ ) );
-				break;
-		}
-	}, [ mode, openChat, setHeaderText ] );
-
 	const { hasCookies, isLoading: loadingCookies } = useHas3PC();
 
 	const isSubmitting = submittingTicket || submittingTopic;
@@ -254,11 +226,13 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 			case 'CHAT': {
 				if ( supportSite ) {
 					if ( hasCookies ) {
-						setOpenChat( true );
+						history.push( '/inline-chat' );
 						break;
 					} else {
 						const popup = openPopup( event );
 						setPopup( popup );
+						// go home once popup is open
+						history.push( '/' );
 					}
 				}
 				break;
@@ -281,7 +255,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 						is_chat_overflow: false,
 					} )
 						.then( () => {
-							setContactSuccess( true );
+							history.push( '/success' );
 							resetStore();
 						} )
 						.catch( () => {
@@ -301,7 +275,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					userDeclaredSiteUrl,
 				} )
 					.then( ( response ) => {
-						setForumTopicUrl( response.topic_URL );
+						history.push( `/success?forumTopic=${ encodeURIComponent( response.topic_URL ) }` );
 						resetStore();
 					} )
 					.catch( () => {
@@ -315,14 +289,6 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 				break;
 			}
 		}
-	}
-
-	if ( openChat ) {
-		return <InlineChat />;
-	}
-
-	if ( contactSuccess || forumTopicUrl ) {
-		return <SuccessScreen forumTopicUrl={ forumTopicUrl } onBack={ onGoHome } />;
 	}
 
 	const InfoTip = () => {
@@ -371,8 +337,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 	return (
 		<main className="help-center-contact-form">
 			<header>
-				{ /* forum users don't have other support options, send them back to home, not the support options screen */ }
-				<BackButton onClick={ mode === 'FORUM' || mode === 'DIRECTLY' ? onGoHome : onBackClick } />
+				<BackButton />
 			</header>
 			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
 			{ formTitles.formSubtitle && (
@@ -491,5 +456,3 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 		</main>
 	);
 };
-
-export default ContactForm;

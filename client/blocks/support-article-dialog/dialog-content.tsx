@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
@@ -13,9 +12,9 @@ import Placeholders from './placeholders';
 import './style.scss';
 import './content.scss';
 
-const getPostKey = ( blogId, postId ) => ( { blogId, postId } );
+const getPostKey = ( blogId: number, postId: number ) => ( { blogId, postId } );
 
-const useSupportArticleAlternatePostKey = ( blogId, postId ) => {
+const useSupportArticleAlternatePostKey = ( blogId: number, postId: number ) => {
 	const supportArticleAlternates = useSupportArticleAlternatesQuery( blogId, postId );
 	if ( supportArticleAlternates.isLoading ) {
 		return null;
@@ -28,7 +27,15 @@ const useSupportArticleAlternatePostKey = ( blogId, postId ) => {
 	return getPostKey( supportArticleAlternates.data.blog_id, supportArticleAlternates.data.page_id );
 };
 
-const DialogContent = ( { postId, blogId, articleUrl } ) => {
+const DialogContent = ( {
+	postId,
+	blogId,
+	articleUrl,
+}: {
+	postId: number;
+	blogId: number | null;
+	articleUrl: string;
+} ) => {
 	const postKey = useSupportArticleAlternatePostKey( blogId ?? SUPPORT_BLOG_ID, postId );
 	const post = useSelector( ( state ) => getPostByKey( state, postKey ) );
 	const isLoading = ! post || ! postKey;
@@ -45,9 +52,11 @@ const DialogContent = ( { postId, blogId, articleUrl } ) => {
 		) {
 			setTimeout( () => {
 				const anchorId = articleUrl.split( '#' ).pop();
-				const element = document.getElementById( anchorId );
-				if ( element ) {
-					element.scrollIntoView();
+				if ( anchorId ) {
+					const element = document.getElementById( anchorId );
+					if ( element ) {
+						element.scrollIntoView();
+					}
 				}
 			}, 0 );
 		}
@@ -77,12 +86,6 @@ const DialogContent = ( { postId, blogId, articleUrl } ) => {
 			</article>
 		</>
 	);
-};
-
-DialogContent.propTypes = {
-	postId: PropTypes.number.isRequired,
-	blogId: PropTypes.number,
-	articleUrl: PropTypes.string,
 };
 
 export default DialogContent;

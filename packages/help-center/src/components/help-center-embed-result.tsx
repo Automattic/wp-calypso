@@ -1,0 +1,49 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button } from '@automattic/components';
+import { Flex, FlexItem } from '@wordpress/components';
+import { useEffect } from '@wordpress/element';
+import { Icon, external } from '@wordpress/icons';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
+// eslint-disable-next-line no-restricted-imports
+import ArticleContent from 'calypso/blocks/support-article-dialog/dialog-content';
+import { BackButton } from './back-button';
+
+export const HelpCenterEmbedResult: React.FC = () => {
+	const { search } = useLocation();
+	const params = new URLSearchParams( search );
+	const postId = params.get( 'postId' );
+	const query = params.get( 'query' );
+	const link = params.get( 'link' );
+
+	useEffect( () => {
+		const tracksData = {
+			search_query: query,
+			location: 'inline-help-popover',
+			result_url: link,
+		};
+
+		recordTracksEvent( `calypso_inlinehelp_article_open`, tracksData );
+	}, [ query, link ] );
+
+	return (
+		<div className="help-center-embed-result">
+			<Flex justify="space-between">
+				<FlexItem>
+					<BackButton />
+				</FlexItem>
+				<FlexItem>
+					<Button
+						borderless={ true }
+						href={ link ?? '' }
+						target="_blank"
+						className="help-center-embed-result__external-button"
+					>
+						<Icon icon={ external } size={ 20 } />
+					</Button>
+				</FlexItem>
+			</Flex>
+			<ArticleContent postId={ postId } blogId={ null } articleUrl={ null } />
+		</div>
+	);
+};

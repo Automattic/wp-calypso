@@ -1,16 +1,13 @@
-import { SiteDetails } from '@automattic/data-stores/dist/types/site';
-import { ReactElement, ReactNode } from 'react';
+import { SiteDetails } from '@automattic/data-stores';
+import { ReactElement } from 'react';
 
 export interface Container {
-	content: ReactElement;
 	handleClose: () => void;
-	defaultHeaderText?: string;
 	defaultFooterContent?: ReactElement;
 	isLoading?: boolean;
 }
 
 export interface Content {
-	content: ReactElement;
 	isMinimized: boolean;
 }
 
@@ -19,14 +16,7 @@ export interface Header {
 	onMinimize?: () => void;
 	onMaximize?: () => void;
 	onDismiss: () => void;
-	headerText: ReactNode;
 }
-
-export interface SuccessScreenProps {
-	onBack: () => void;
-	forumTopicUrl?: string;
-}
-
 export interface SitePicker {
 	currentSite: SiteDetails | undefined;
 	onSelect: ( siteId: number | string ) => void;
@@ -41,4 +31,6 @@ export interface Article {
 	title: string;
 	link?: string;
 	icon?: string;
+	id?: string;
+	post_id?: string;
 }

@@ -1,18 +1,39 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 import { useSibylQuery, SiteDetails, useSiteIntent } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, page } from '@wordpress/icons';
+import { Link } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { getContextResults } from '../contextual-help/contextual-help';
+import { Article } from '../types';
 
 export const SITE_STORE = 'automattic/site' as const;
 
 type Props = {
-	message: string | undefined;
-	supportSite: SiteDetails | undefined;
+	message?: string;
+	supportSite?: SiteDetails;
 };
 
-export function SibylArticles( { message, supportSite }: Props ) {
+function getPostUrl( article: Article, query: string ) {
+	// if it's a wpcom support article, it has an ID
+	if ( article.post_id ) {
+		const search = new URLSearchParams( {
+			postId: article.post_id,
+			query,
+			link: article.link ?? '',
+			title: article.title,
+		} ).toString();
+
+		return {
+			pathname: '/post',
+			search,
+		};
+	}
+	return article.link;
+}
+
+export function SibylArticles( { message = '', supportSite }: Props ) {
 	const isAtomic = Boolean(
 		useSelect( ( select ) => supportSite && select( SITE_STORE ).isSiteAtomic( supportSite?.ID ) )
 	);
@@ -32,7 +53,7 @@ export function SibylArticles( { message, supportSite }: Props ) {
 
 	return (
 		<div className="help-center-sibyl-articles__container">
-			<h3 id="help-center--contextual_help" className="help-center-sibyl-articles__title">
+			<h3 id="help-center--contextual_help" className="help-center__section-title">
 				{ __( 'Recommended resources', __i18n_text_domain__ ) }
 			</h3>
 			<ul
@@ -41,10 +62,10 @@ export function SibylArticles( { message, supportSite }: Props ) {
 			>
 				{ articles.map( ( article ) => (
 					<li>
-						<a href={ article.link } target="_blank" rel="noreferrer noopener">
+						<Link to={ getPostUrl( article as Article, message ) }>
 							<Icon icon={ page } />
 							{ article.title }
-						</a>
+						</Link>
 					</li>
 				) ) }
 			</ul>

@@ -9,7 +9,7 @@ import cx from 'classnames';
 import { useEffect, useState } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
-import Contents from './contents';
+import CalypsoStateProvider from './CalypsoStateProvider';
 import './help-center.scss';
 
 function HelpCenterContent() {
@@ -43,12 +43,7 @@ function HelpCenterContent() {
 					<PinnedItems scope="core/edit-widgets">{ content }</PinnedItems>
 				</>
 			) }
-			{ show && (
-				<HelpCenter
-					content={ <Contents handleClose={ () => setShowHelpCenter( false ) } /> }
-					handleClose={ () => setShowHelpCenter( false ) }
-				/>
-			) }
+			{ show && <HelpCenter handleClose={ () => setShowHelpCenter( false ) } /> }
 		</>
 	);
 }
@@ -57,7 +52,10 @@ registerPlugin( 'etk-help-center', {
 	render: () => {
 		return (
 			<QueryClientProvider client={ whatsNewQueryClient }>
-				<HelpCenterContent />,
+				<CalypsoStateProvider>
+					<HelpCenterContent />
+				</CalypsoStateProvider>
+				,
 			</QueryClientProvider>
 		);
 	},

@@ -4,7 +4,7 @@ import { useQuery } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { HappychatSession, HappychatUser, User, HappychatAuth } from './types';
 
-export default function useHappychatAuth() {
+export default function useHappychatAuth( enabled = true ) {
 	return useQuery< HappychatAuth, typeof Error >(
 		'getHappychatAuth',
 		async () => {
@@ -46,6 +46,7 @@ export default function useHappychatAuth() {
 		{
 			refetchOnWindowFocus: false,
 			keepPreviousData: true,
+			enabled,
 		}
 	);
 }

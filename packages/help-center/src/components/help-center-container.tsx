@@ -4,15 +4,14 @@
 import { Spinner } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { ReactNode, useState, FC } from 'react';
+import { useState, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
+import { MemoryRouter } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
-import { HelpCenterContext } from '../help-center-context';
-import { Article, Container } from '../types';
+import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
@@ -28,23 +27,12 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 	return <Draggable { ...props } />;
 };
 
-const HelpCenterContainer: React.FC< Container > = ( {
-	content,
-	handleClose,
-	defaultHeaderText,
-	defaultFooterContent,
-	isLoading,
-} ) => {
-	const { __ } = useI18n();
+const HelpCenterContainer: React.FC< Container > = ( { handleClose, isLoading } ) => {
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
-	const [ headerText, setHeaderText ] = useState< ReactNode >( defaultHeaderText );
-	const [ footerContent, setFooterContent ] = useState< ReactNode >( defaultFooterContent );
-	const [ selectedArticle, setSelectedArticle ] = useState< Article | null >( null );
 	const classNames = classnames( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
-		'no-footer': ! footerContent,
 	} );
 
 	const onDismiss = () => {
@@ -64,32 +52,20 @@ const HelpCenterContainer: React.FC< Container > = ( {
 		onAnimationEnd: toggleVisible,
 	};
 
-	const header = isMinimized ? headerText ?? __( 'Help Center' ) : __( 'Help Center' );
-
 	return (
-		<OptionalDraggable
-			disabled={ isMinimized }
-			draggable={ ! isMobile }
-			handle=".help-center__container-header"
-			bounds="body"
-		>
-			<Card className={ classNames } { ...animationProps }>
-				<HelpCenterContext.Provider
-					value={ {
-						headerText,
-						setHeaderText,
-						footerContent,
-						setFooterContent,
-						selectedArticle,
-						setSelectedArticle,
-					} }
-				>
+		<MemoryRouter>
+			<OptionalDraggable
+				disabled={ isMinimized }
+				draggable={ ! isMobile }
+				handle=".help-center__container-header"
+				bounds="body"
+			>
+				<Card className={ classNames } { ...animationProps }>
 					<HelpCenterHeader
 						isMinimized={ isMinimized }
 						onMinimize={ () => setIsMinimized( true ) }
 						onMaximize={ () => setIsMinimized( false ) }
 						onDismiss={ onDismiss }
-						headerText={ header }
 					/>
 					{ isLoading ? (
 						<div className="help-center-container__loading">
@@ -97,15 +73,13 @@ const HelpCenterContainer: React.FC< Container > = ( {
 						</div>
 					) : (
 						<>
-							<HelpCenterContent isMinimized={ isMinimized } content={ content } />
-							{ footerContent && ! isMinimized && (
-								<HelpCenterFooter footerContent={ footerContent } />
-							) }
+							<HelpCenterContent isMinimized={ isMinimized } />
+							{ ! isMinimized && <HelpCenterFooter /> }
 						</>
 					) }
-				</HelpCenterContext.Provider>
-			</Card>
-		</OptionalDraggable>
+				</Card>
+			</OptionalDraggable>
+		</MemoryRouter>
 	);
 };
 

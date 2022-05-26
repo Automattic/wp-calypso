@@ -11,14 +11,22 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
  */
 const debug = debugFactory( 'calypso:inline-help' );
 
+type Props = {
+	searchQuery: string;
+	location?: string;
+	isVisible?: boolean;
+	placeholder?: string;
+	onSearch?: ( query: string ) => void;
+};
+
 const InlineHelpSearchCard = ( {
 	searchQuery = '',
 	location = 'inline-help-popover',
 	isVisible = true,
 	placeholder,
 	onSearch,
-} ) => {
-	const cardRef = useRef();
+}: Props ) => {
+	const cardRef = useRef< { searchInput: HTMLInputElement } >();
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -35,7 +43,7 @@ const InlineHelpSearchCard = ( {
 		return () => window.clearTimeout( timerId );
 	}, [ cardRef, location, isVisible ] );
 
-	const searchHelperHandler = ( query ) => {
+	const searchHelperHandler = ( query: string ) => {
 		const inputQuery = query.trim();
 
 		if ( inputQuery?.length ) {
