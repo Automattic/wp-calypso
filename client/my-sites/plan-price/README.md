@@ -18,11 +18,8 @@ A `productDisplayPrice` can be passed from the `/purchases` or `/plans` REST end
 
 	export default connect( ( state, props ) => {
 		const purchase = getByPurchaseId( state, props.purchaseId );
-		...more props
-		return {
-			purchase,
-			...more props,
-		}
+		
+		return purchase;
 	});
 ```
 `productDisplayPrice` is preferred because it provides an HTML wrapped, geo-IDed, and properly formatted currency string. Whereas, `rawPrice` is not geo-IDed and requires extra work to format correctly on the front end.
