@@ -84,7 +84,7 @@ const SetAsPrimary = ( props: SetAsPrimaryProps ) => {
 			await setPrimaryDomain( domain.name );
 			props.showUpdatePrimaryDomainSuccessNotice( domain.name );
 		} catch ( error ) {
-			props.showUpdatePrimaryDomainSuccessNotice( domain.name );
+			props.showUpdatePrimaryDomainErrorNotice( ( error as Error ).message );
 		} finally {
 			setIsSettingPrimaryDomain( false );
 		}
