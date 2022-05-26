@@ -1,5 +1,6 @@
 export { default as courses } from './courses';
 export { default as intent } from './intent-step';
+export { default as goals } from './goals';
 export { default as podcastTitle } from './podcast-title';
 export { default as login } from './login';
 export { default as options } from './site-options';
@@ -29,6 +30,7 @@ export { default as wooConfirm } from './woo-confirm';
 export type StepPath =
 	| 'courses'
 	| 'intent'
+	| 'goals'
 	| 'podcastTitle'
 	| 'options'
 	| 'bloggerStartingPoint'
