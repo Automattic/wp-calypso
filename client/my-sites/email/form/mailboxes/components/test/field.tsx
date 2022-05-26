@@ -1,9 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { render, fireEvent, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { renderHook } from '@testing-library/react-hooks';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { MailboxField } from 'calypso/my-sites/email/form/mailboxes/components/field';
+import { useGetDefaultFieldLabelText } from 'calypso/my-sites/email/form/mailboxes/components/use-get-default-field-label-text';
 import { FIELD_FIRSTNAME } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import type { MailboxFormFieldProps } from 'calypso/my-sites/email/form/mailboxes/components/field';
@@ -26,87 +28,68 @@ describe( '<MailboxField /> suite', () => {
 			requestFieldValidation(): void {
 				mailbox.validateField( fieldName );
 			},
-			domains: [],
 			field: Reflect.get( mailbox.formFields, fieldName ),
 		};
 	};
 
-	const getInputCollection = ( container: HTMLElement ): HTMLCollectionOf< HTMLInputElement > => {
-		return container.getElementsByTagName( 'input' );
-	};
-
-	const getFirstInput = ( container: HTMLElement ): HTMLInputElement => {
-		return getInputCollection( container ).item( 0 );
-	};
-
 	const setup = ( fieldName: MutableFormFieldNames, initialValue?: string ) => {
 		const defaultProps = getDefaultProps( fieldName, initialValue );
-		const { container } = render( <MailboxField { ...defaultProps } /> );
+		const { result } = renderHook( () => useGetDefaultFieldLabelText( fieldName ) );
+		render( <MailboxField { ...defaultProps } /> );
 
-		return { defaultProps, container };
+		const element = screen.getByLabelText( result.current as string );
+
+		return { defaultProps, element };
 	};
 
-	it( 'Output should contain one input element', () => {
-		const { container } = setup( FIELD_FIRSTNAME );
+	it( 'Output should contain our input element', () => {
+		const { element } = setup( FIELD_FIRSTNAME );
 
-		expect( getInputCollection( container ) ).toHaveLength( 1 );
+		expect( element ).toBeInTheDocument();
 	} );
 
 	it( 'Input element should mirror mailbox value via the change event', () => {
-		const { container, defaultProps } = setup( FIELD_FIRSTNAME, 'John' );
+		const { defaultProps, element } = setup( FIELD_FIRSTNAME, 'John' );
 
 		expect( screen.getByDisplayValue( 'John' ) ).toBeInTheDocument();
 
-		const input = getFirstInput( container );
-
-		fireEvent.change( input, { target: { value: 'John-Pierre' } } );
+		fireEvent.change( element, { target: { value: 'John-Pierre' } } );
 
 		expect( screen.getByDisplayValue( 'John-Pierre' ) ).toBeInTheDocument();
 		expect( defaultProps.field.value ).toBe( 'John-Pierre' );
 	} );
 
 	it( 'Input element should not fire off validation without an initial onblur event', () => {
-		const { container, defaultProps } = setup( FIELD_FIRSTNAME );
+		const { defaultProps, element } = setup( FIELD_FIRSTNAME );
 
-		const input = getFirstInput( container );
-
-		fireEvent.change( input, { target: { value: 'First' } } );
-		fireEvent.change( input, { target: { value: '' } } ); // Should normally trigger "field required" error
+		fireEvent.change( element, { target: { value: 'First' } } );
+		fireEvent.change( element, { target: { value: '' } } ); // Should normally trigger "field required" error
 
 		expect( defaultProps.field.error ).toBeNull();
 	} );
 
 	it( 'Input value should be validated when the element looses focus', () => {
-		const { container, defaultProps } = setup( FIELD_FIRSTNAME );
-
-		const input = getFirstInput( container );
+		const { defaultProps, element } = setup( FIELD_FIRSTNAME );
 
 		// Clear the field so that we can trigger a 'required' error
-		fireEvent.change( input, { target: { value: '' } } );
-		fireEvent.blur( input );
+		fireEvent.change( element, { target: { value: '' } } );
+		fireEvent.blur( element );
 
 		const error = defaultProps.field.error;
 
 		expect( error ).toBeTruthy();
-		expect(
-			screen
-				.getByRole( 'alert' )
-				?.innerHTML?.replace( /<[^>]*>?/gm, '' )
-				?.trim()
-		).toEqual( error as string );
+		expect( screen.getByText( error as string ) ).toBeInTheDocument();
 	} );
 
 	it( 'Input element should fire off validation after an onblur event, or if an error is already displayed', () => {
-		const { container, defaultProps } = setup( FIELD_FIRSTNAME );
+		const { defaultProps, element } = setup( FIELD_FIRSTNAME );
 
-		const input = getFirstInput( container );
-
-		fireEvent.change( input, { target: { value: '' } } ); // Invalid value at first
-		fireEvent.blur( input );
+		fireEvent.change( element, { target: { value: '' } } ); // Invalid value at first
+		fireEvent.blur( element );
 
 		expect( defaultProps.field.error ).toBeTruthy(); // An error exists
 
-		fireEvent.change( input, { target: { value: 'John' } } ); // Now a valid value
+		fireEvent.change( element, { target: { value: 'John' } } ); // Now a valid value
 
 		expect( defaultProps.field.error ).toBeNull(); // Error should be gone
 	} );

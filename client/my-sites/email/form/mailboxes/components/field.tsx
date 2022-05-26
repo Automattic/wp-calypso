@@ -39,6 +39,7 @@ const MailboxFieldInput = ( {
 
 	const commonProps = {
 		isError: field.hasError(),
+		name: field.fieldName,
 		onBlur,
 		onChange,
 		required: field.isRequired,
