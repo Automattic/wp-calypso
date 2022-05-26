@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
@@ -89,6 +90,7 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 	}, [] );
 
 	const onSelect = ( value: ChoiceType ) => {
+		recordTracksEvent( 'calypso_signup_difm_service_selected', { service: value } );
 		if ( 'builtby' === value ) {
 			window.location.href = 'https://builtbywp.com/';
 			return;
