@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
+@import '@automattic/typography/styles/fonts';
 
 .goals__container {
 	padding: 0 20px;
@@ -21,6 +22,33 @@
 			}
 		}
 	}
+
+	.select-goals__container {
+		font-family: 'Inter', $sans;
+		display: grid;
+		gap: 16px;
+		grid-template-columns: repeat( 1, 1fr );
+
+		.select-card__label {
+			display: inline-flex;
+			gap: 14px;
+		}
+
+		.select-goals__premium-badge {
+			display: inline-block;
+			background: #101517;
+			color: #ffffff;
+			border-radius: 4px;
+			font-weight: 500;
+			font-size: 0.75rem;
+			line-height: 20px;
+			padding: 0 10px;
+		}
+
+		@include break-small {
+			grid-template-columns: repeat( 2, 1fr );
+		}
+	}
 }
 
 .select-card__container {
@@ -30,6 +58,7 @@
 	font-size: 0.875rem;
 	cursor: pointer;
 	display: flex;
+	align-items: center;
 
 	.select-card__label {
 		pointer-events: none;
