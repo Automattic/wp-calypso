@@ -25,7 +25,6 @@ type SettingsHeaderProps = {
 export default function SettingsHeader( { domain, site, purchase }: SettingsHeaderProps ) {
 	const { __ } = useI18n();
 	const isSiteDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, site.ID ) );
-	let badgeCounter = 0;
 
 	const renderCircle = () => (
 		<SVG viewBox="0 0 24 24" height={ 8 } width={ 8 }>
@@ -34,10 +33,7 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 	);
 
 	const renderSuccessBadge = ( description: TranslateResult, icon?: JSX.Element ) => (
-		<Badge
-			className="settings-header__badge settings-header__badge--success"
-			key={ `badge${ badgeCounter++ }` }
-		>
+		<Badge className="settings-header__badge settings-header__badge--success">
 			{ icon ? (
 				<Icon icon={ icon } size={ 14 } />
 			) : (
@@ -48,30 +44,21 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 	);
 
 	const renderWarningBadge = ( description: TranslateResult ) => (
-		<Badge
-			className="settings-header__badge settings-header__badge--warning"
-			key={ `badge${ badgeCounter++ }` }
-		>
+		<Badge className="settings-header__badge settings-header__badge--warning">
 			<div className="settings-header__badge-indicator">{ renderCircle() }</div>
 			{ description }
 		</Badge>
 	);
 
 	const renderPremiumBadge = () => (
-		<Badge
-			className="settings-header__badge settings-header__badge--premium"
-			key={ `badge${ badgeCounter++ }` }
-		>
+		<Badge className="settings-header__badge settings-header__badge--premium">
 			{ __( 'Premium domain' ) }
 			<Icon icon={ info } size={ 17 } />
 		</Badge>
 	);
 
 	const renderNeutralBadge = ( description: TranslateResult ) => (
-		<Badge
-			className="settings-header__badge settings-header__badge--neutral"
-			key={ `badge${ badgeCounter++ }` }
-		>
+		<Badge className="settings-header__badge settings-header__badge--neutral">
 			{ description }
 		</Badge>
 	);
@@ -99,28 +86,22 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 	};
 
 	const renderBadges = () => {
-		const badges = [];
+		const showDomainType = [
+			DomainType.SITE_REDIRECT,
+			DomainType.MAPPED,
+			DomainType.TRANSFER,
+		].includes( domain.type );
 
-		if (
-			[ DomainType.SITE_REDIRECT, DomainType.MAPPED, DomainType.TRANSFER ].includes( domain.type )
-		) {
-			badges.push( renderDomainTypeBadge( domain.type ) );
-		}
+		const showPrimary = domain.isPrimary && ! isSiteDomainOnly;
 
-		const statusBadge = renderStatusBadge( domain );
-		if ( statusBadge ) {
-			badges.push( statusBadge );
-		}
-
-		if ( domain.isPrimary && ! isSiteDomainOnly ) {
-			badges.push( renderSuccessBadge( __( 'Primary site address' ), home ) );
-		}
-
-		if ( domain.isPremium ) {
-			badges.push( renderPremiumBadge() );
-		}
-
-		return <div className="settings-header__container-badges">{ badges }</div>;
+		return (
+			<div className="settings-header__container-badges">
+				{ showDomainType && renderDomainTypeBadge( domain.type ) }
+				{ renderStatusBadge( domain ) }
+				{ showPrimary && renderSuccessBadge( __( 'Primary site address' ), home ) }
+				{ domain.isPremium && renderPremiumBadge() }
+			</div>
+		);
 	};
 
 	const renderNotices = () => {
