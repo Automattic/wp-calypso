@@ -14,8 +14,9 @@ jest.mock( 'calypso/lib/analytics/track-component-view', () => {
 	};
 } );
 
-import { Card, Button } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { shallow } from 'enzyme';
 import { Banner } from '../index';
 
@@ -143,28 +144,45 @@ describe( 'Banner basic tests', () => {
 		expect( container.firstChild ).toHaveAttribute( 'href', '/' );
 	} );
 
-	test( 'should render Card with no href and CTA button with href if href prop is passed and callToAction is also passed', () => {
-		const comp = shallow( <Banner { ...props } href={ '/' } callToAction="Go WordPress!" /> );
-		expect( comp.find( Card ) ).toHaveLength( 1 );
-		expect( comp.find( Card ).props().href ).toBeNull();
-		expect( comp.find( Card ).props().onClick ).toBeNull();
+	test( 'should render Card with no href and CTA button with href if href prop is passed and callToAction is also passed', async () => {
+		const handleClick = jest.fn();
+		const { container } = render(
+			<Banner { ...props } href={ '/' } callToAction="Go WordPress!" onClick={ handleClick } />
+		);
 
-		expect( comp.find( Button ) ).toHaveLength( 1 );
-		expect( comp.find( Button ).props().href ).toBe( '/' );
-		expect( comp.find( Button ).props().children ).toBe( 'Go\xA0WordPress!' ); //preventwidows adds \xA0 non-breaking space;
-		expect( comp.find( Button ).props().onClick ).toBe( comp.instance().handleClick );
+		await userEvent.click( container.firstChild );
+		await userEvent.click( screen.getByText( 'Go WordPress!' ) );
+
+		expect( handleClick ).toHaveBeenCalledTimes( 1 );
+
+		expect( container.firstChild ).toHaveClass( 'card' );
+		expect( container.firstChild.href ).toBeUndefined();
+
+		expect( screen.getByText( 'Go WordPress!' ) ).toBeVisible();
+		expect( screen.getByText( 'Go WordPress!' ) ).toHaveAttribute( 'href', '/' );
 	} );
 
-	test( 'should render Card with href and CTA button with no href if href prop is passed and callToAction is also passed and forceHref is true', () => {
-		const comp = shallow(
-			<Banner { ...props } href={ '/' } callToAction="Go WordPress!" forceHref={ true } />
+	test( 'should render Card with href and CTA button with no href if href prop is passed and callToAction is also passed and forceHref is true', async () => {
+		const handleClick = jest.fn();
+		const { container } = render(
+			<Banner
+				{ ...props }
+				href={ '/' }
+				callToAction="Go WordPress!"
+				forceHref={ true }
+				onClick={ handleClick }
+			/>
 		);
-		expect( comp.find( Card ) ).toHaveLength( 1 );
-		expect( comp.find( Card ).props().href ).toBe( '/' );
-		expect( comp.find( Card ).props().onClick ).toBe( comp.instance().handleClick );
 
-		expect( comp.find( Button ) ).toHaveLength( 1 );
-		expect( comp.find( Button ).props().href ).toBeUndefined();
-		expect( comp.find( Button ).props().children ).toBe( 'Go\xA0WordPress!' ); //preventWidows adds \xA0 non-breaking space;
+		await userEvent.click( container.firstChild );
+
+		expect( handleClick ).toHaveBeenCalledTimes( 1 );
+
+		expect( container.firstChild ).toHaveClass( 'card' );
+		expect( container.firstChild ).toHaveAttribute( 'href', '/' );
+
+		expect( screen.getByRole( 'button' ) ).toBeVisible();
+		expect( screen.getByRole( 'button' ).href ).toBeUndefined();
+		expect( screen.getByRole( 'button' ) ).toHaveTextContent( 'Go WordPress!' );
 	} );
 } );
