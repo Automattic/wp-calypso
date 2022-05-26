@@ -12,15 +12,15 @@ PlanPrice can take a `productDisplayPrice` or a `rawPrice`  (deprecated) prop, t
 A `productDisplayPrice` can be passed from the `/purchases` or `/plans` REST endpoints to a Redux store, for example:
 
 ```jsx
-	import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
-	const { productDisplayPrice } = purchase;
+const { productDisplayPrice } = purchase;
 
-	export default connect( ( state, props ) => {
-		const purchase = getByPurchaseId( state, props.purchaseId );
-		
-		return purchase;
-	});
+export default connect((state, props) => {
+  const purchase = getByPurchaseId(state, props.purchaseId);
+
+  return purchase;
+});
 ```
 `productDisplayPrice` is preferred because it provides an HTML wrapped, geo-IDed, and properly formatted currency string. Whereas, `rawPrice` is not geo-IDed and requires extra work to format correctly on the front end.
 
