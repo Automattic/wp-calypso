@@ -46,9 +46,7 @@ export const Promo = ( { isSocialActive, adminUrl, translate } ) => {
 					<ul className="jetpack-social__features">
 						{ features.map( ( feature, i ) => (
 							<li className="jetpack-social__feature" key={ i }>
-								<>
-									<Gridicon size={ 18 } icon="checkmark" /> { preventWidows( feature ) }
-								</>
+								<Gridicon size={ 18 } icon="checkmark" /> { preventWidows( feature ) }
 							</li>
 						) ) }
 					</ul>
