@@ -17,11 +17,7 @@ const ProgressScreen: React.FunctionComponent< Props > = ( props ) => {
 	return (
 		<Progress>
 			<Title>{ __( 'Importing' ) }...</Title>
-			<ProgressBar
-				color={ 'black' }
-				compact={ true }
-				value={ Number.isNaN( progress ) ? 0 : progress }
-			/>
+			<ProgressBar compact={ true } value={ Number.isNaN( progress ) ? 0 : progress } />
 			<SubTitle>
 				{ createInterpolateElement(
 					__(

@@ -38,7 +38,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 			<FormFieldset>
 				<FormLabel>
 					{ createInterpolateElement(
-						translate( 'Site address <span>(optional)</span>' ).toString(),
+						translate( 'Existing site address <span>(optional)</span>' ).toString(),
 						{
 							span: createElement( 'span' ),
 						}
@@ -51,8 +51,8 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					autoComplete="off"
 					autoCorrect="off"
 					spellCheck="false"
-					dir="ltr"
 					value={ urlValue }
+					placeholder={ translate( 'Copy and paste' ) }
 					onBlur={ onInputBlur }
 					onChange={ onInputChange }
 				/>
