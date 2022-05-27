@@ -536,9 +536,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_REPUBLICIZE,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
-			WPCOM_FEATURES_SCAN,
-			WPCOM_FEATURES_ANTISPAM,
-			WPCOM_FEATURES_BACKUPS,
 		] ),
 	getPromotedFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
@@ -576,7 +573,13 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
 	// Features not displayed but used for checking plan abilities
-	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_CLOUDFLARE_ANALYTICS ],
+	getIncludedFeatures: () => [
+		FEATURE_AUDIO_UPLOADS,
+		FEATURE_CLOUDFLARE_ANALYTICS,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
+	],
 	getInferiorFeatures: () => [],
 } );
 
