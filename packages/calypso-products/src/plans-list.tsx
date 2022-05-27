@@ -536,6 +536,9 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_REPUBLICIZE,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
+			WPCOM_FEATURES_SCAN,
+			WPCOM_FEATURES_ANTISPAM,
+			WPCOM_FEATURES_BACKUPS,
 		] ),
 	getPromotedFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
