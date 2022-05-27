@@ -4,11 +4,18 @@
 .sites-overview {
 	height: 100vh;
 	padding: 16px;
+	max-width: 1500px;
+	margin: auto;
 	@include break-large() {
 		padding: 0;
 	}
 	@include break-wide() {
 		padding: 6px 16px;
+	}
+}
+.sites-overview__search {
+	@include break-large() {
+		display: none;
 	}
 }
 .sites-overview__page-title-container {

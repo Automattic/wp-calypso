@@ -1,4 +1,4 @@
-import { Card, Button, Gridicon } from '@automattic/components';
+import { Card, Button, FormInputValidation, Gridicon } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import illustration from 'calypso/assets/images/domains/domain.svg';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 import './style.scss';

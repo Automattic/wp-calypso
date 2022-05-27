@@ -7,15 +7,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { getDesignPreviewUrl, getMShotOptions } from '../utils';
 import type { Design } from '../types';
-import type { MShotsOptions } from '@automattic/onboarding';
 import './style.scss';
-
-const previewImageOptions: MShotsOptions = {
-	vpw: 1600,
-	vph: 1040,
-	w: 2399,
-	screen_height: 3600,
-};
 
 interface GeneratedDesignThumbnailProps {
 	slug: string;
@@ -60,44 +52,10 @@ const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
 	);
 };
 
-interface GeneratedDesignPreviewProps {
-	slug: string;
-	previewUrl: string;
-	isSelected: boolean;
-}
-
-const GeneratedDesignPreview: React.FC< GeneratedDesignPreviewProps > = ( {
-	slug,
-	previewUrl,
-	isSelected,
-} ) => {
-	return (
-		<div className={ classnames( 'generated-design-preview', { 'is-selected': isSelected } ) }>
-			<div className="generated-design-preview__header">
-				<svg width="36" height="8">
-					<g>
-						<rect width="8" height="8" rx="4" />
-						<rect x="14" width="8" height="8" rx="4" />
-						<rect x="28" width="8" height="8" rx="4" />
-					</g>
-				</svg>
-			</div>
-			<div className="generated-design-preview__frame">
-				<MShotsImage
-					url={ previewUrl }
-					alt=""
-					aria-labelledby={ `generated-design-preview__image__${ slug }` }
-					options={ previewImageOptions }
-					scrollable={ false }
-				/>
-			</div>
-		</div>
-	);
-};
-
 export interface GeneratedDesignPickerProps {
 	selectedDesign?: Design;
 	designs: Design[];
+	previews: React.ReactElement[];
 	verticalId: string;
 	locale: string;
 	heading?: React.ReactElement;
@@ -109,6 +67,7 @@ export interface GeneratedDesignPickerProps {
 const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 	selectedDesign,
 	designs,
+	previews,
 	verticalId,
 	locale,
 	heading,
@@ -137,21 +96,11 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 						{ __( 'View more options' ) }
 					</Button>
 				</div>
-				<div className="generated-design-picker__previews">
-					{ designs &&
-						designs.map( ( design ) => (
-							<GeneratedDesignPreview
-								key={ design.slug }
-								slug={ design.slug }
-								isSelected={ selectedDesign?.slug === design.slug }
-								previewUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
-							/>
-						) ) }
-				</div>
+				<div className="generated-design-picker__previews">{ previews }</div>
 			</div>
 			{ footer }
 		</div>
 	);
 };
 
-export { GeneratedDesignPicker as default, GeneratedDesignPreview };
+export default GeneratedDesignPicker;

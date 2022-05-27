@@ -1,11 +1,10 @@
-import { Button } from '@automattic/components';
+import { Button, Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import Main from 'calypso/components/main';
-import Spinner from 'calypso/components/spinner';
 import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {

@@ -55,7 +55,7 @@ exports[`Theme rendering with default display buttonContents should match snapsh
         options={
           Object {
             "dummyAction": Object {
-              "action": [Function],
+              "action": [MockFunction],
               "label": "Dummy action",
             },
           }

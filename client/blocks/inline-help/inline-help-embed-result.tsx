@@ -36,15 +36,24 @@ const InlineHelpEmbedResult: React.FC< Props > = ( { result, handleBackButton, s
 
 	return (
 		<div className="inline-help__embed-result">
-			<Flex justify="space-between">
+			<Flex justify="space-between" className="inline-help__embed-navigation">
 				<FlexItem>
-					<Button borderless={ true } onClick={ handleBackButton }>
+					<Button
+						borderless={ true }
+						onClick={ handleBackButton }
+						className="inline-help__back-button"
+					>
 						<Icon icon={ chevronLeft } size={ 20 } />
 						{ __( 'Back' ) }
 					</Button>
 				</FlexItem>
 				<FlexItem>
-					<Button borderless={ true } href={ link } target="_blank">
+					<Button
+						borderless={ true }
+						href={ link }
+						target="_blank"
+						className="inline-help__external-button"
+					>
 						<Icon icon={ external } size={ 20 } />
 					</Button>
 				</FlexItem>

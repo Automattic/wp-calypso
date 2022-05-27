@@ -60,16 +60,21 @@
 
 	&.incompatible {
 		.plugins-browser-item__link {
-			.external-link {
+			.plugins-browser-item__incompatible {
 				margin-bottom: 16px;
 				font-size: $font-body-small;
+				color: $studio-blue-40;
 			}
 
-			*:not( .external-link ) {
+			*:not( .plugins-browser-item__incompatible ) {
 				opacity: 0.6;
 			}
+
 		}
+
 	}
+
+
 }
 
 .plugins-browser-item__info {

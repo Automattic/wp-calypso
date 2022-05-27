@@ -497,7 +497,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 					</tr>
 				</THead>
 				<PlansComparisonRows>
-					{ planComparisonFeatures.slice( 0, 7 ).map( ( feature ) => (
+					{ planComparisonFeatures.slice( 0, 8 ).map( ( feature ) => (
 						<PlansComparisonRow
 							feature={ feature }
 							plans={ plans }
@@ -507,7 +507,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 					) ) }
 				</PlansComparisonRows>
 				<PlansComparisonCollapsibleRows collapsed={ showCollapsibleRows }>
-					{ planComparisonFeatures.slice( 7 ).map( ( feature ) => (
+					{ planComparisonFeatures.slice( 8 ).map( ( feature ) => (
 						<PlansComparisonRow
 							feature={ feature }
 							plans={ plans }

@@ -1,4 +1,4 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Spinner } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
 import { connect } from 'react-redux';
@@ -7,7 +7,6 @@ import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version'
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import MaterialIcon from 'calypso/components/material-icon';
-import Spinner from 'calypso/components/spinner';
 import { updateAtomicPhpVersion } from 'calypso/state/hosting/actions';
 import { getAtomicHostingPhpVersion } from 'calypso/state/selectors/get-atomic-hosting-php-version';
 import getRequest from 'calypso/state/selectors/get-request';

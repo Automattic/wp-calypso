@@ -2,12 +2,11 @@
  * External dependendies
  */
 
-import { Button } from '@automattic/components';
+import { Button, FormInputValidation } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSelect from 'calypso/components/forms/form-select';

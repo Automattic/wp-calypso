@@ -1,9 +1,8 @@
-import { ProgressBar } from '@automattic/components';
+import { ProgressBar, Spinner } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { UrlData } from 'calypso/blocks/import/types';
-import Spinner from 'calypso/components/spinner';
 import AuthorMappingPane from 'calypso/my-sites/importer/author-mapping-pane';
 import {
 	calculateProgress,
@@ -79,12 +78,7 @@ class ImportingPane extends ImportingPaneBase {
 				) }
 				{ ( this.isImporting() || this.isProcessing() ) &&
 					( percentComplete >= 0 ? (
-						<ProgressBar
-							color={ 'black' }
-							compact={ true }
-							className={ progressClasses }
-							value={ percentComplete }
-						/>
+						<ProgressBar compact={ true } className={ progressClasses } value={ percentComplete } />
 					) : (
 						<div>
 							<Spinner className="importing-pane__spinner" />

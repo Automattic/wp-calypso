@@ -1,11 +1,12 @@
 /**
  * External Dependencies
  */
+import { Spinner } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React, { useState, FC } from 'react';
+import { ReactNode, useState, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
 /**
  * Internal Dependencies
@@ -32,13 +33,14 @@ const HelpCenterContainer: React.FC< Container > = ( {
 	handleClose,
 	defaultHeaderText,
 	defaultFooterContent,
+	isLoading,
 } ) => {
 	const { __ } = useI18n();
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
-	const [ headerText, setHeaderText ] = useState< React.ReactNode >( defaultHeaderText );
-	const [ footerContent, setFooterContent ] = useState< React.ReactNode >( defaultFooterContent );
+	const [ headerText, setHeaderText ] = useState< ReactNode >( defaultHeaderText );
+	const [ footerContent, setFooterContent ] = useState< ReactNode >( defaultFooterContent );
 	const [ selectedArticle, setSelectedArticle ] = useState< Article | null >( null );
 	const classNames = classnames( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
@@ -89,8 +91,18 @@ const HelpCenterContainer: React.FC< Container > = ( {
 						onDismiss={ onDismiss }
 						headerText={ header }
 					/>
-					<HelpCenterContent isMinimized={ isMinimized } content={ content } />
-					{ footerContent && ! isMinimized && <HelpCenterFooter footerContent={ footerContent } /> }
+					{ isLoading ? (
+						<div className="help-center-container__loading">
+							<Spinner baseClassName="" className="help-center-container__spinner" />
+						</div>
+					) : (
+						<>
+							<HelpCenterContent isMinimized={ isMinimized } content={ content } />
+							{ footerContent && ! isMinimized && (
+								<HelpCenterFooter footerContent={ footerContent } />
+							) }
+						</>
+					) }
 				</HelpCenterContext.Provider>
 			</Card>
 		</OptionalDraggable>

@@ -6,6 +6,7 @@ export interface Container {
 	handleClose: () => void;
 	defaultHeaderText?: string;
 	defaultFooterContent?: ReactElement;
+	isLoading?: boolean;
 }
 
 export interface Content {
@@ -30,6 +31,7 @@ export interface SitePicker {
 	currentSite: SiteDetails | undefined;
 	onSelect: ( siteId: number | string ) => void;
 	siteId: string | number | null | undefined;
+	enabled: boolean;
 }
 
 // ended means the user closed the popup

@@ -1,8 +1,9 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+import { Spinner } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import Spinner from 'calypso/components/spinner';
 
 class CustomizerLoadingPanel extends Component {
 	static displayName = 'CustomizerLoadingPanel';

@@ -24,12 +24,14 @@ export const siteSetupFlow: Flow = {
 		return [
 			...( isEnabled( 'signup/site-vertical-step' ) ? [ 'vertical' ] : [] ),
 			'intent',
+			...( isEnabled( 'signup/goals-step' ) ? [ 'goals' ] : [] ),
 			'options',
 			'designSetup',
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
 			'import',
+			...( isEnabled( 'onboarding/import-light' ) ? [ 'importLight' ] : [] ),
 			'importList',
 			'importReady',
 			'importReadyNot',
@@ -138,7 +140,7 @@ export const siteSetupFlow: Flow = {
 					if ( storeType === 'power' ) {
 						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
 
-						return exitFlow( `${ adminUrl }/wp-admin/admin.php?page=wc-admin` );
+						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 
 					if ( FSEActive && intent !== 'write' ) {
@@ -183,6 +185,9 @@ export const siteSetupFlow: Flow = {
 						}
 						case 'write': {
 							return navigate( 'options' );
+						}
+						case 'difm': {
+							return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
 						}
 						default: {
 							return navigate( submittedIntent as StepPath );

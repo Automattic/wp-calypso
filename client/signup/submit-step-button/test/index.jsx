@@ -1,20 +1,23 @@
-import { Button } from '@automattic/components';
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { SubmitStepButton } from '..';
 
 describe( 'SubmitStepButton', () => {
 	test( 'should render buttonText prop within a child button', () => {
-		const wrapper = shallow( <SubmitStepButton buttonText="SubmitStepButton: buttonText" /> );
-		const button = wrapper.find( Button );
-		expect( button.length ).toBe( 1 );
-		expect( button.children().text() ).toBe( 'SubmitStepButton: buttonText' );
+		render( <SubmitStepButton buttonText="SubmitStepButton: buttonText" /> );
+		const button = screen.getByRole( 'button' );
+		expect( button ).toBeVisible();
+		expect( button ).toHaveTextContent( 'SubmitStepButton: buttonText' );
 	} );
 
-	test( 'should trigger both submitSignupStep action and goToNextStep prop when clicked.', () => {
+	test( 'should trigger both submitSignupStep action and goToNextStep prop when clicked.', async () => {
 		const submitSignupStep = jest.fn();
 		const goToNextStep = jest.fn();
 
-		const wrapper = shallow(
+		render(
 			<SubmitStepButton
 				buttonText="buttonText"
 				stepName="test:step:1"
@@ -27,7 +30,8 @@ describe( 'SubmitStepButton', () => {
 		expect( goToNextStep ).not.toHaveBeenCalled();
 
 		// after simulate click event
-		wrapper.find( Button ).simulate( 'click' );
+		const button = screen.getByRole( 'button' );
+		await userEvent.click( button );
 
 		// the functions should be called
 		expect( submitSignupStep ).toHaveBeenCalledWith( { stepName: 'test:step:1' } );

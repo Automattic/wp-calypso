@@ -12,12 +12,11 @@ import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png'
 import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
 import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
 import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { marketingConnections, pluginsPath } from 'calypso/my-sites/marketing/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import * as T from 'calypso/types';
 import MarketingToolsFeature from './feature';
@@ -32,9 +31,9 @@ export const MarketingTools: FunctionComponent = () => {
 
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
-	const sitePlan = useSelector( ( state ) => getSitePlanSlug( state, siteId ) ) || '';
-	const showFacebookUpsell = [ 'value_bundle', 'personal-bundle', 'free_plan' ].includes(
-		sitePlan
+
+	const facebookPluginInstalled = useSelector( ( state ) =>
+		getPluginOnSite( state, siteId, 'official-facebook-pixel' )
 	);
 
 	const handleBusinessToolsClick = () => {
@@ -87,8 +86,7 @@ export const MarketingTools: FunctionComponent = () => {
 
 	return (
 		<Fragment>
-			<QueryUserPurchases />
-			{ ! sitePlan && <QuerySitePlans siteId={ siteId } /> }
+			<QueryJetpackPlugins siteIds={ [ siteId ] } />
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
@@ -122,7 +120,7 @@ export const MarketingTools: FunctionComponent = () => {
 					</Button>
 				</MarketingToolsFeature>
 
-				{ getLocaleSlug() === 'en' && (
+				{ ! facebookPluginInstalled && (
 					<MarketingToolsFeature
 						title={ translate( 'Want to connect with your audience on Facebook and Instagram?' ) }
 						description={ translate(
@@ -135,23 +133,12 @@ export const MarketingTools: FunctionComponent = () => {
 						) }
 						imagePath={ facebookLogo }
 					>
-						{ ! showFacebookUpsell && (
-							<Button
-								onClick={ handleFacebookClick }
-								href="https://wordpress.com/plugins/official-facebook-pixel"
-								target="_blank"
-							>
-								{ translate( 'Add Facebook for WordPress.com' ) }
-							</Button>
-						) }
-						{ showFacebookUpsell && (
-							<Button
-								onClick={ handleFacebookClick }
-								href={ `/plans/${ selectedSiteSlug }?customerType=business` }
-							>
-								{ translate( 'Unlock this feature' ) }
-							</Button>
-						) }
+						<Button
+							onClick={ handleFacebookClick }
+							href={ `/plugins/official-facebook-pixel/${ selectedSiteSlug }` }
+						>
+							{ translate( 'Add Facebook for WordPress.com' ) }
+						</Button>
 					</MarketingToolsFeature>
 				) }
 

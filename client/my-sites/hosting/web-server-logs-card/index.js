@@ -1,4 +1,4 @@
-import { Button, Card, ProgressBar } from '@automattic/components';
+import { Button, Card, FormInputValidation, ProgressBar } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, map } from 'lodash';
 import moment from 'moment';
@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MaterialIcon from 'calypso/components/material-icon';

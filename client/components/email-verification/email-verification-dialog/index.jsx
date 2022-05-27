@@ -1,10 +1,9 @@
-import { Dialog, Button } from '@automattic/components';
+import { Dialog, Button, Spinner } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Spinner from 'calypso/components/spinner';
 import {
 	verifyEmail,
 	resetVerifyEmailState,

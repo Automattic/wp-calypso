@@ -81,6 +81,18 @@ class PartnerPortalSidebar extends Component< Props > {
 								selected={ itemLinkMatches( '/partner-portal/invoices', path ) }
 							/>
 						) }
+
+						{ config.isEnabled( 'jetpack/partner-portal-payment' ) && (
+							<SidebarItem
+								customIcon={ <JetpackIcons icon="settings" /> }
+								label={ translate( 'Company Details', {
+									comment: 'Jeptack sidebar navigation item',
+								} ) }
+								link="/partner-portal/company-details"
+								onNavigate={ this.onNavigate( 'Jetpack Cloud / Partner Portal / Company Details' ) }
+								selected={ itemLinkMatches( '/partner-portal/company-details', path ) }
+							/>
+						) }
 					</SidebarMenu>
 				</SidebarRegion>
 			</Sidebar>

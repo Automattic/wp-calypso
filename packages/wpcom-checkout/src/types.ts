@@ -1,24 +1,6 @@
 import type { LineItem } from '@automattic/composite-checkout';
-import type {
-	RequestCartProduct,
-	ResponseCartTaxData,
-	DomainContactDetails,
-} from '@automattic/shopping-cart';
+import type { DomainContactDetails, RequestCart } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
-
-export type WPCOMTransactionEndpointCart = {
-	blog_id: string;
-	cart_key: string;
-	create_new_blog: boolean;
-	is_jetpack_checkout?: boolean;
-	jetpack_blog_id?: string;
-	coupon: string;
-	currency: string;
-	temporary: false;
-	extra: string[];
-	products: RequestCartProduct[];
-	tax: Omit< ResponseCartTaxData, 'display_taxes' >;
-};
 
 type PurchaseSiteId = number;
 
@@ -54,7 +36,7 @@ export interface Purchase {
 export interface TransactionRequest {
 	country: string;
 	postalCode: string;
-	cart: WPCOMTransactionEndpointCart;
+	cart: RequestCart;
 	paymentMethodType: string;
 	name: string;
 	siteId?: string | undefined;
@@ -89,9 +71,16 @@ export type WPCOMTransactionEndpoint = (
 // Request payload as expected by the WPCOM transactions endpoint
 // '/me/transactions/': WPCOM_JSON_API_Transactions_Endpoint
 export type WPCOMTransactionEndpointRequestPayload = {
-	cart: WPCOMTransactionEndpointCart;
+	cart: RequestCart;
 	payment: WPCOMTransactionEndpointPaymentDetails;
 	domainDetails?: DomainContactDetails;
+	tos?: ToSAcceptanceTrackingDetails;
+};
+
+export type ToSAcceptanceTrackingDetails = {
+	path: string;
+	locale: string;
+	viewport: string;
 };
 
 export type WPCOMTransactionEndpointPaymentDetails = {
@@ -191,10 +180,11 @@ export type PayPalExpressEndpoint = (
 export type PayPalExpressEndpointRequestPayload = {
 	successUrl: string;
 	cancelUrl: string;
-	cart: WPCOMTransactionEndpointCart;
+	cart: RequestCart;
 	domainDetails: DomainContactDetails | null;
 	country: string;
 	postalCode: string;
+	tos?: ToSAcceptanceTrackingDetails;
 };
 
 export type PayPalExpressEndpointResponse = unknown;

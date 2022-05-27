@@ -9,16 +9,16 @@
 <!-- TOC -->
 
 - [Writing Tests](#writing-tests)
-    - [Example test spec](#example-test-spec)
-    - [Quick start](#quick-start)
-    - [Child-level describe blocks](#child-level-describe-blocks)
-    - [Test step](#test-step)
-    - [Hooks](#hooks)
-    - [Viewports](#viewports)
-    - [Block Smoke Testing](#block-smoke-testing)
-        - [Overview](#overview)
-        - [How To](#how-to)
-        - [Examples](#examples)
+  - [Example test spec](#example-test-spec)
+  - [Quick start](#quick-start)
+  - [Child-level describe blocks](#child-level-describe-blocks)
+  - [Test step](#test-step)
+  - [Hooks](#hooks)
+  - [Viewports](#viewports)
+  - [Block Smoke Testing](#block-smoke-testing)
+    - [Overview](#overview)
+    - [How To](#how-to)
+    - [Examples](#examples)
 
 <!-- /TOC -->
 

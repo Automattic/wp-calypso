@@ -1,5 +1,5 @@
+import { FormInputValidation } from '@automattic/components';
 import classnames from 'classnames';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import PhoneInput from 'calypso/components/phone-input';
 import type { PropsWithChildren, RefObject } from 'react';

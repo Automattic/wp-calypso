@@ -66,7 +66,6 @@ arch -x86_64 npm install yarn
 arch -x86_64 yarn install --frozen-lockfile
 ```
 
-
 At any point, run `arch` to verify whether shell is running with Rosetta 2 emulation.
 
 ## Apple Silicon (arm64)

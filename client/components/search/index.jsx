@@ -1,5 +1,6 @@
-import { Gridicon } from '@automattic/components';
+import { Spinner } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
+import { Icon, search, closeSmall } from '@wordpress/icons';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import { debounce } from 'lodash';
@@ -7,7 +8,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { v4 as uuid } from 'uuid';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Spinner from 'calypso/components/spinner';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
@@ -340,7 +340,7 @@ class Search extends Component {
 					aria-controls={ 'search-component-' + this.instanceId }
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }
 				>
-					{ ! this.props.hideOpenIcon && <Gridicon icon="search" className="search__open-icon" /> }
+					{ ! this.props.hideOpenIcon && <Icon icon={ search } className="search__open-icon" /> }
 				</div>
 				<div className={ fadeDivClass }>
 					<FormTextInput
@@ -396,7 +396,7 @@ class Search extends Component {
 					aria-controls={ 'search-component-' + this.instanceId }
 					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }
 				>
-					<Gridicon icon="cross" className="search__close-icon" />
+					<Icon icon={ closeSmall } className="search__close-icon" />
 				</div>
 			);
 		}

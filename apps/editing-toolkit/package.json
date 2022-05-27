@@ -54,6 +54,7 @@
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/domain-picker": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
+		"@automattic/happychat-connection": "workspace:^",
 		"@automattic/help-center": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/launch": "workspace:^",

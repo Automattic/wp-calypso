@@ -12,9 +12,10 @@ import './style.scss';
 interface Props {
 	isLargeScreen?: boolean;
 	site: SiteNode;
+	siteError: boolean;
 }
 
-export default function SiteActions( { isLargeScreen, site }: Props ): ReactElement {
+export default function SiteActions( { isLargeScreen, site, siteError }: Props ): ReactElement {
 	const translate = useTranslate();
 
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -31,7 +32,6 @@ export default function SiteActions( { isLargeScreen, site }: Props ): ReactElem
 
 	const siteUrl = site?.value?.url;
 	const siteUrlWithScheme = site?.value?.url_with_scheme;
-	const siteError = site?.error;
 	const siteId = site?.value?.blog_id;
 
 	const handleClickMenuItem = () => {

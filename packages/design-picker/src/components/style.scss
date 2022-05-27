@@ -152,7 +152,11 @@
 	// padding-top to set the size of the element and then reposition content
 	// over the padding
 	.design-picker__image-frame-landscape {
-		padding-top: 65%; // Aspect ratio for the picker
+		padding-top: 100%; // Aspect ratio for the picker
+
+		@include break-small {
+			padding-top: 65%;
+		}
 	}
 
 	.design-picker__image-frame-portrait {
@@ -397,7 +401,6 @@
 	cursor: pointer;
 	display: flex;
 	flex-direction: column;
-	height: 355px;
 	padding: 0;
 	overflow: hidden;
 	transition: border-color 0.15s ease-in-out;
@@ -430,13 +433,32 @@
     }
 
 	.generated-design-thumbnail__image {
-		flex: 1;
+		position: relative;
+		width: 100%;
+		height: 0;
+		padding-top: 100%;
 		overflow: hidden;
+
+		.mshots-image__container {
+			position: absolute;
+			left: 0;
+			top: 0;
+
+			@include break-small {
+				position: relative;
+			}
+		}
 
 		.mshots-image-visible {
 			object-fit: cover;
 			object-position: top;
 			width: 100%;
+		}
+
+		@include break-small {
+			height: auto;
+			padding-top: 0;
+			flex: 1;
 		}
 	}
 

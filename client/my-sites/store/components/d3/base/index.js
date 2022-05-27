@@ -10,21 +10,8 @@ export default class D3Base extends Component {
 		getParams: PropTypes.func.isRequired,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.updateParams = this.updateParams.bind( this );
-	}
-
-	state = {};
-
 	componentDidMount() {
-		window.addEventListener( 'resize', this.updateParams );
-		this.updateParams();
-	}
-
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.updateParams( nextProps );
+		window.addEventListener( 'resize', this.draw );
 	}
 
 	componentDidUpdate() {
@@ -32,22 +19,19 @@ export default class D3Base extends Component {
 	}
 
 	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.updateParams );
+		window.removeEventListener( 'resize', this.draw );
 		delete this.node;
 	}
 
-	updateParams( nextProps ) {
-		const getParams = ( nextProps && nextProps.getParams ) || this.props.getParams;
-		this.setState( getParams( this.node ), this.draw );
-	}
-
 	draw() {
-		this.props.drawChart( this.createNewContext(), this.state );
+		if ( this.node ) {
+			this.props.drawChart( this.createNewContext(), this.props.getParams( this.node ) );
+		}
 	}
 
 	createNewContext() {
 		const { className } = this.props;
-		const { width, height } = this.state;
+		const { width, height } = this.props.getParams( this.node );
 
 		d3Select( this.node ).selectAll( 'svg' ).remove();
 		const newNode = d3Select( this.node )

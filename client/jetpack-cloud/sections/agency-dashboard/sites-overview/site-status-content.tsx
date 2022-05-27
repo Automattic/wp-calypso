@@ -15,11 +15,18 @@ interface Props {
 export default function SiteStatusContent( { rows, type }: Props ): ReactElement {
 	const {
 		link,
+		isExternalLink,
 		row: { value, status, error },
 		siteError,
 		tooltip,
 		tooltipId,
+		siteDown,
 	} = getRowMetaData( rows, type );
+
+	// Disable clicks/hover when there is a site error &
+	// when the row it is not monitor and monitor status is down
+	// since monitor is clickable when site is down.
+	const disabledStatus = siteError || ( type !== 'monitor' && siteDown );
 
 	const statusContentRef = useRef< HTMLSpanElement | null >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
@@ -36,7 +43,8 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 	};
 
 	if ( type === 'site' ) {
-		const siteIssues = rows.scan.threats || rows.plugin.updates;
+		// Site issues is the sum of scan threats and plugin updates
+		const siteIssues = rows.scan.threats + rows.plugin.updates;
 		let errorContent;
 		if ( error ) {
 			errorContent = (
@@ -87,7 +95,7 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 			content = <Gridicon icon="checkmark" size={ 18 } className="sites-overview__grey-icon" />;
 			break;
 		}
-		case 'active': {
+		case 'disabled': {
 			content = <Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />;
 			break;
 		}
@@ -109,20 +117,26 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 	let updatedContent = content;
 
 	if ( link ) {
+		let target = '_self';
+		let rel;
+		if ( isExternalLink ) {
+			target = '_blank';
+			rel = 'noreferrer';
+		}
 		updatedContent = (
-			<a onClick={ handleClickRowAction } href={ link }>
+			<a target={ target } rel={ rel } onClick={ handleClickRowAction } href={ link }>
 				{ content }
 			</a>
 		);
 	}
 
-	if ( siteError ) {
+	if ( disabledStatus ) {
 		updatedContent = <span className="sites-overview__disabled">{ content } </span>;
 	}
 
 	return (
 		<>
-			{ tooltip && ! siteError ? (
+			{ tooltip && ! disabledStatus ? (
 				<>
 					<span
 						ref={ statusContentRef }

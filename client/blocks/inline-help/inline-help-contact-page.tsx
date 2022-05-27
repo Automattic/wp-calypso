@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { useSupportAvailability } from '@automattic/data-stores';
+import { useHappychatAvailable } from '@automattic/happychat-connection';
 import { Icon, comment, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -20,25 +21,32 @@ const InlineHelpContactPage: React.FC< Props > = ( {
 	const { __ } = useI18n();
 
 	const { data: dataChat, isLoading: isLoadingChat } = useSupportAvailability( 'CHAT' );
-	const { data: dataEmail, isLoading: isLoadingEmail } = useSupportAvailability( 'EMAIL' );
+	const { available: chatAvailable, isLoading: isLoadingChatAvailable } = useHappychatAvailable();
+	const { data: dataEmail, isLoading: isLoadingEmail } = useSupportAvailability( 'OTHER' );
 
 	// If user has both chat and email options, we show him the contact-page to choose
 	// If instead the user has one option, we show him the contact form directly
 	useEffect( () => {
 		if ( ! isLoadingChat && ! isLoadingEmail ) {
-			if ( ! dataChat?.isUserEligible ) {
-				if ( dataEmail?.is_user_eligible ) {
-					setContactFormOpen( 'EMAIL' );
-				} else {
-					setContactFormOpen( 'FORUM' );
-				}
-			}
+			setContactFormOpen( 'DIRECTLY' );
+
+			// if ( ! dataChat?.isUserEligible ) {
+			// 	if ( dataEmail?.is_user_eligible ) {
+			// 		setContactFormOpen( 'EMAIL' );
+			// 	} else if ( directlyAvailable ) {
+			// 		setContactFormOpen( 'DIRECTLY' );
+			// 	} else {
+			// 		setContactFormOpen( 'FORUM' );
+			// 	}
+			// }
 		}
 	}, [ isLoadingChat, isLoadingEmail, dataChat, dataEmail, setContactFormOpen ] );
 
-	if ( isLoadingChat || isLoadingEmail ) {
+	if ( isLoadingChat || isLoadingEmail || isLoadingChatAvailable ) {
 		return null;
 	}
+
+	const isChatDisabled = dataChat?.isClosed || ! chatAvailable;
 
 	return (
 		<div className="inline-help__contact-page">
@@ -50,14 +58,14 @@ const InlineHelpContactPage: React.FC< Props > = ( {
 				<h3>{ __( 'Contact our WordPress.com experts' ) }</h3>
 				<div
 					className={ classnames( 'inline-help__contact-boxes', {
-						'is-reversed': dataChat?.isClosed,
+						'is-reversed': isChatDisabled,
 					} ) }
 				>
 					<div
 						className={ classnames( 'inline-help__contact-box', 'chat', {
-							'is-disabled': dataChat?.isClosed,
+							'is-disabled': isChatDisabled,
 						} ) }
-						onClick={ () => setContactFormOpen( 'CHAT' ) }
+						onClick={ () => ! isChatDisabled && setContactFormOpen( 'CHAT' ) }
 						onKeyDown={ () => setContactFormOpen( 'CHAT' ) }
 						role="button"
 						tabIndex={ 0 }
@@ -68,7 +76,7 @@ const InlineHelpContactPage: React.FC< Props > = ( {
 						<div>
 							<h2>{ __( 'Live chat' ) }</h2>
 							<p>
-								{ dataChat?.isClosed
+								{ dataChat?.isClosed || ! chatAvailable
 									? __( 'Chat is unavailable right now' )
 									: __( 'Get an immediate reply' ) }
 							</p>

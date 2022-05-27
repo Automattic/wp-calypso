@@ -41,8 +41,8 @@ function generateGetSuperProps() {
 	} );
 }
 
-function setupHappyChat( reduxStore: any, user: CurrentUser ) {
-	reduxStore.dispatch( requestHappychatEligibility() );
+function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
+	config.isEnabled( 'signup/inline-help' ) && reduxStore.dispatch( requestHappychatEligibility() );
 	reduxStore.dispatch( setCurrentUser( user ) );
 	reduxStore.dispatch( requestSites() );
 }
@@ -96,7 +96,7 @@ window.AppBoot = async () => {
 	setStore( reduxStore, getStateFromCache( userId ) );
 	setupLocale( user, reduxStore );
 
-	user && setupHappyChat( reduxStore, user as CurrentUser );
+	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
 
 	ReactDom.render(
 		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
@@ -106,7 +106,9 @@ window.AppBoot = async () => {
 					<BrowserRouter basename="setup">
 						<FlowWrapper user={ user as UserStore.CurrentUser } />
 					</BrowserRouter>
-					<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
+					{ config.isEnabled( 'signup/inline-help' ) && (
+						<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
+					) }
 				</QueryClientProvider>
 			</Provider>
 		</CalypsoI18nProvider>,

@@ -1,19 +1,19 @@
 import { useQuery } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import { EmailSupportAvailability, HappyChatAvailability } from './types';
+import { OtherSupportAvailability, HappyChatAvailability } from './types';
 
-type ResponseType< T extends 'CHAT' | 'EMAIL' > = T extends 'CHAT'
+type ResponseType< T extends 'CHAT' | 'OTHER' > = T extends 'CHAT'
 	? HappyChatAvailability
-	: EmailSupportAvailability;
+	: OtherSupportAvailability;
 
-export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'EMAIL' >(
+export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 	supportType: SUPPORT_TYPE
 ) {
 	return useQuery< ResponseType< SUPPORT_TYPE >, typeof Error >(
-		supportType === 'EMAIL' ? 'emailSupportAvailability' : 'chatSupportAvailability',
+		supportType === 'OTHER' ? 'otherSupportAvailability' : 'chatSupportAvailability',
 		async () =>
 			await wpcomRequest( {
-				path: supportType === 'EMAIL' ? '/help/tickets/kayako/mine' : '/help/olark/mine',
+				path: supportType === 'OTHER' ? '/help/tickets/all/mine' : '/help/olark/mine',
 				apiVersion: '1.1',
 			} ),
 		{

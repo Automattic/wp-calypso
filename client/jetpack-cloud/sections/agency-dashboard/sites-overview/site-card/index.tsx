@@ -29,7 +29,7 @@ export default function SiteCard( { rows, columns }: Props ): ReactElement {
 	const headerItem = rows[ 'site' ];
 
 	const site = rows.site;
-	const siteError = site.error;
+	const siteError = site.error || rows.monitor.error;
 	const siteUrl = site.value.url;
 
 	return (
@@ -45,7 +45,7 @@ export default function SiteCard( { rows, columns }: Props ): ReactElement {
 					{ toggleContent }
 					<SiteStatusContent rows={ rows } type={ headerItem.type } />
 				</span>
-				<SiteActions site={ site } />
+				<SiteActions site={ site } siteError={ siteError } />
 			</div>
 
 			{ isExpanded && (

@@ -205,7 +205,7 @@ class ReaderStream extends Component {
 	};
 
 	handleOpenSelection = () => {
-		showSelectedPost( {
+		this.props.showSelectedPost( {
 			store: this.props.streamKey,
 			postKey: this.props.selectedPostKey,
 		} );
@@ -382,7 +382,7 @@ class ReaderStream extends Component {
 
 		const itemKey = this.getPostRef( postKey );
 		const showPost = ( args ) =>
-			showSelectedPost( {
+			this.props.showSelectedPost( {
 				...args,
 				postKey: postKey.isCombination ? keyForPost( args ) : postKey,
 				streamKey,
@@ -503,6 +503,7 @@ export default connect(
 		selectItem,
 		selectNextItem,
 		selectPrevItem,
+		showSelectedPost,
 		showUpdates,
 		viewStream,
 	}

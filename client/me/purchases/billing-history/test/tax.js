@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import { renderTransactionAmount, transactionIncludesTax } from '../utils';
 
 const translate = ( x ) => x;
@@ -75,8 +75,8 @@ test( 'tax shown if available', () => {
 		],
 	};
 
-	const wrapper = mount( renderTransactionAmount( transaction, { translate } ) );
-	expect( wrapper.last().text() ).toContain( 'tax' );
+	render( renderTransactionAmount( transaction, { translate } ) );
+	expect( screen.getByText( /tax/ ) ).toBeInTheDocument();
 } );
 
 test( 'tax includes', () => {
@@ -91,8 +91,8 @@ test( 'tax includes', () => {
 		],
 	};
 
-	const wrapper = mount( renderTransactionAmount( transaction, { translate, addingTax: false } ) );
-	expect( wrapper.last().text() ).toEqual( '(includes %(taxAmount)s tax)' );
+	render( renderTransactionAmount( transaction, { translate, addingTax: false } ) );
+	expect( screen.getByText( '(includes %(taxAmount)s tax)' ) ).toBeInTheDocument();
 } );
 
 test( 'tax adding', () => {
@@ -107,8 +107,8 @@ test( 'tax adding', () => {
 		],
 	};
 
-	const wrapper = mount( renderTransactionAmount( transaction, { translate, addingTax: true } ) );
-	expect( wrapper.last().text() ).toEqual( '(+%(taxAmount)s tax)' );
+	render( renderTransactionAmount( transaction, { translate, addingTax: true } ) );
+	expect( screen.getByText( '(+%(taxAmount)s tax)' ) ).toBeInTheDocument();
 } );
 
 test( 'tax hidden if not available', () => {

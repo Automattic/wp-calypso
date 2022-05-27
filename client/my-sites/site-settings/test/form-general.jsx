@@ -21,7 +21,8 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_WPCOM_PRO,
 } from '@automattic/calypso-products';
-import { screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import moment from 'moment';
 import editorReducer from 'calypso/state/editor/reducer';
 import mediaReducer from 'calypso/state/media/reducer';
@@ -150,7 +151,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
 		} );
 
-		test( `Selecting Hidden should switch radio to Public`, () => {
+		test( `Selecting Hidden should switch radio to Public`, async () => {
 			testProps.fields.blog_public = -1;
 			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
@@ -162,7 +163,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			const publicRadio = getByLabelText( 'Public' );
 			expect( publicRadio ).not.toBeChecked();
 
-			fireEvent.click( hiddenCheckbox );
+			await userEvent.click( hiddenCheckbox );
 			expect( testProps.updateFields ).toBeCalledWith( {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
@@ -170,7 +171,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			} );
 		} );
 
-		test( `Hidden checkbox should be possible to unselect`, () => {
+		test( `Hidden checkbox should be possible to unselect`, async () => {
 			testProps.fields.blog_public = 0;
 			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
@@ -182,7 +183,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			const publicRadio = getByLabelText( 'Public' );
 			expect( publicRadio ).toBeChecked();
 
-			fireEvent.click( hiddenCheckbox );
+			await userEvent.click( hiddenCheckbox );
 			expect( testProps.updateFields ).toBeCalledWith( {
 				blog_public: 1,
 				wpcom_coming_soon: 0,
@@ -217,7 +218,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					{ blog_public: -1, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
 				],
 			].forEach( ( [ name, text, initialBlogPublic, updatedFields ] ) => {
-				test( `${ name } option should be selectable`, () => {
+				test( `${ name } option should be selectable`, async () => {
 					testProps.fields.blog_public = initialBlogPublic;
 					const { getByLabelText } = renderWithRedux(
 						<SiteSettingsFormGeneral { ...testProps } />
@@ -225,7 +226,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 
 					const radioButton = getByLabelText( text, { exact: false } );
 					expect( radioButton ).not.toBeChecked();
-					fireEvent.click( radioButton );
+					await userEvent.click( radioButton );
 					expect( testProps.updateFields ).toBeCalledWith( updatedFields );
 				} );
 			} );

@@ -1,5 +1,5 @@
 import { getUrlParts } from '@automattic/calypso-url';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Spinner } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -8,7 +8,6 @@ import Site from 'calypso/blocks/site';
 import Badge from 'calypso/components/badge';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Spinner from 'calypso/components/spinner';
 import './style.scss';
 
 class SitesBlock extends Component {

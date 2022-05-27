@@ -283,26 +283,26 @@ class SelectDropdown extends Component {
 	}
 
 	navigateItem = ( event ) => {
-		switch ( event.keyCode ) {
-			case 9: //tab
+		switch ( event.code ) {
+			case 'Tab':
 				this.navigateItemByTabKey( event );
 				break;
-			case 32: // space
-			case 13: // enter
+			case 'Space':
+			case 'Enter':
 				event.preventDefault();
 				this.activateItem();
 				break;
-			case 38: // up arrow
+			case 'ArrowUp':
 				event.preventDefault();
 				this.focusSibling( 'previous' );
 				this.openDropdown();
 				break;
-			case 40: // down arrow
+			case 'ArrowDown':
 				event.preventDefault();
 				this.focusSibling( 'next' );
 				this.openDropdown();
 				break;
-			case 27: // escape
+			case 'Escape':
 				event.preventDefault();
 				this.closeDropdown();
 				this.dropdownContainerRef.current.focus();

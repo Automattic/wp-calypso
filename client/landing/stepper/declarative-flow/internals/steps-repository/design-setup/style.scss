@@ -9,13 +9,9 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 .design-setup {
 	.step-container {
-		padding-left: 24px;
-		padding-right: 24px;
+		padding-left: 20px;
+		padding-right: 20px;
 		max-width: 1440px;
-
-		.step-container__navigation.action-buttons {
-			border: none;
-		}
 
 		.step-container__content {
 			margin-top: 32px;
@@ -40,8 +36,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			}
 
 			.formatted-header__subtitle {
-				// Overrides some very specific selectors in /client/signup/style.scss
-				margin: 12px 0 48px !important;
+				margin: 12px 0 48px;
 			}
 		}
 
@@ -87,12 +82,8 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				text-align: left;
 				color: $gray-60;
 				font-size: 1rem;
-				margin: 8px 0 0;
+				margin: 12px 0 32px;
 				line-height: 24px;
-
-				@include breakpoint-deprecated('<660px') {
-					margin-top: 16px;
-				}
 			}
 		}
 
@@ -294,6 +285,24 @@ $design-button-primary-color: rgb( 17, 122, 201 );
  * Generated Design Picker
  */
 .design-picker__is-generated {
+	&.design-picker__is-generated-previewing {
+		.design-setup__header,
+		.generated-design-picker__thumbnails {
+			display: none;
+
+			@include break-small {
+				display: flex;
+			}
+		}
+
+		.generated-design-picker__previews {
+			flex: 1;
+			height: auto;
+			min-height: calc( 100vh - 172px );
+			margin-bottom: 84px;
+		}
+	}
+
 	&.design-setup__preview {
 		padding: 0;
 
@@ -301,21 +310,39 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			margin: 0;
 		}
 
-		.design-setup__content {
-			height: calc( 100vh - 157px );
-			margin-top: 48px;
+		.step-container__content {
+			height: calc( 100vh - 172px );
+			margin-top: 32px;
 			overflow: scroll;
 			padding: 0 24px;
+
+			.web-preview__inner {
+				transform: none;
+			}
 		}
 
-		.generated-design-preview__frame {
-			max-height: none;
-			margin-bottom: 24px;
+		.web-preview__inner {
+			.preview-toolbar__browser-header {
+				height: 23px;
 
-			.mshots-image__container {
-				object-fit: cover;
-				object-position: top;
-				width: 100%;
+				svg {
+					height: 6px;
+					left: 12px;
+
+					rect {
+						height: 6px;
+						rx: 3px;
+						width: 6px;
+
+						&:nth-child( 2 ) {
+							x: 12px;
+						}
+
+						&:nth-child( 3 ) {
+							x: 24px;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -338,6 +365,14 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		margin: 48px 0;
 		row-gap: 1.5rem;
 		flex-wrap: wrap;
+
+		.button {
+			display: none;
+
+			@include break-small {
+				display: inherit;
+			}
+		}
 	}
 
 	.design-setup__footer {
@@ -379,6 +414,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			&.is-visible {
 				opacity: 1;
 				transform: translateY( 0 );
+				z-index: 1;
 
 				.design-setup__footer-inner {
 					pointer-events: auto;
@@ -412,18 +448,47 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	}
 
 	.generated-design-picker__previews {
-		display: none;
+		display: flex;
+		height: 0;
+		flex-direction: column;
+		row-gap: 24px;
+		margin-bottom: 44px;
+		position: relative;
 
-		.mshots-image__container {
-			width: 100%;
+		.web-preview__inner {
+			opacity: 0;
+			left: 0;
+			overflow: hidden;
+			pointer-events: none;
+			position: absolute;
+			right: 0;
+			top: 0;
+			transition: opacity 0.15s ease-in-out;
+
+			&.is-selected {
+				opacity: 1;
+				pointer-events: auto;
+				position: relative;
+				z-index: 1;
+			}
+
+			.preview-toolbar__browser-header {
+				height: 34px;
+
+				svg {
+					left: 12px;
+				}
+			}
+
+			.web-preview__placeholder {
+				flex: 0;
+				min-height: 80vh;
+			}
 		}
 
 		@include break-small {
-			display: flex;
 			flex: 1;
-			flex-direction: column;
-			row-gap: 24px;
-			margin-bottom: 44px;
+			height: auto;
 		}
 	}
 
@@ -433,5 +498,27 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		line-height: 1.25rem;
 		margin: 8px 0;
 		width: 100%;
+	}
+
+	.step-container__content {
+		.web-preview__inner {
+			.web-preview__placeholder {
+				border: 1px solid rgba( 0, 0, 0, 0.12 );
+				/* stylelint-disable-next-line scales/radii */
+				border-radius: 0 0 6px 6px;
+				border-width: 0 1px 1px;
+				box-sizing: border-box;
+				overflow: hidden;
+			}
+
+			.web-preview__frame {
+				border: 0;
+				overflow: hidden;
+			}
+
+			.spinner-line {
+				display: none;
+			}
+		}
 	}
 }

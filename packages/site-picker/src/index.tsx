@@ -20,6 +20,7 @@ type ItemProps = {
 	onKeyDown?: React.KeyboardEventHandler< HTMLButtonElement >;
 	logo: { id: string; sizes: string[]; url: string } | undefined;
 	id: string;
+	enabled?: boolean;
 };
 
 const SiteLogo: FC< { logo: ItemProps[ 'logo' ] } > = ( { logo } ) => {
@@ -38,10 +39,11 @@ const SitePickerItem: FC< ItemProps > = ( {
 	selected,
 	logo,
 	id,
+	enabled = true,
 }: ItemProps ) => {
 	return (
 		<button
-			className={ cx( 'site-picker__site-item', { 'main-item': mainItem, selected } ) }
+			className={ cx( 'site-picker__site-item', { 'main-item': mainItem, selected, enabled } ) }
 			onClick={ onClick }
 			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus={ selected }
@@ -75,9 +77,15 @@ export type Props = {
 	siteId: string | number | undefined | null;
 	options: ( SitePickerSite | undefined )[];
 	onPickSite: ( siteId: number ) => void;
+	enabled: boolean;
 };
 
-export const SitePickerDropDown: FC< Props > = ( { siteId, options, onPickSite }: Props ) => {
+export const SitePickerDropDown: FC< Props > = ( {
+	siteId,
+	options,
+	onPickSite,
+	enabled,
+}: Props ) => {
 	const [ ref, setRef ] = useState< HTMLDivElement | null >( null );
 	const [ open, setOpen ] = useState( false );
 
@@ -93,22 +101,25 @@ export const SitePickerDropDown: FC< Props > = ( { siteId, options, onPickSite }
 				setOpen( false );
 			}
 		}
-		if ( open ) {
+		if ( open && enabled ) {
 			window.addEventListener( 'click', onClickOutside );
 			return () => {
 				window.removeEventListener( 'click', onClickOutside );
 			};
 		}
-	}, [ siteId, options, open, ref ] );
+	}, [ siteId, options, open, ref, enabled ] );
 
 	return (
 		<>
 			<label className="site-picker__label" htmlFor="site-picker-button">
-				{ __( 'Select a site', __i18n_text_domain__ ) }
+				{ enabled
+					? __( 'Select a site', __i18n_text_domain__ )
+					: __( 'Site', __i18n_text_domain__ ) }
 			</label>
 			<div className={ cx( 'site-picker__site-dropdown', { open } ) }>
 				<SitePickerItem
 					host={ selectedSite?.URL?.replace( 'https://', '' ) ?? '' }
+					enabled={ enabled }
 					name={
 						selectedSite?.name ??
 						// if site has no name, show URL
@@ -116,10 +127,19 @@ export const SitePickerDropDown: FC< Props > = ( { siteId, options, onPickSite }
 						__( 'Unknown site', __i18n_text_domain__ )
 					}
 					logo={ selectedSite?.logo }
-					mainItem
+					// mainItem implies showing the dropdown arrow, hide it when the picking feature is disabled
+					mainItem={ enabled }
 					open={ open }
-					onClick={ () => setOpen( ( o ) => ! o ) }
-					onKeyDown={ ( event ) => event.key === 'ArrowDown' && setOpen( true ) }
+					onClick={ () => {
+						if ( enabled ) {
+							setOpen( ( o ) => ! o );
+						}
+					} }
+					onKeyDown={ ( event ) => {
+						if ( event.key === 'ArrowDown' && enabled ) {
+							setOpen( true );
+						}
+					} }
 					id="site-picker-button"
 				/>
 				{ open && (
