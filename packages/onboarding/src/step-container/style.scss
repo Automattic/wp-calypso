@@ -24,7 +24,7 @@
 	&.is-horizontal-layout {
 		align-items: flex-start;
 		justify-content: space-between;
-		margin-top: 44px;
+		margin-top: 28px;
 		max-width: 1024px;
 		padding: 0 20px;
 
@@ -193,23 +193,41 @@
 			color: var( --color-text-inverted );
 		}
 
+		.step-container__navigation-logo {
+			display: none;
+			// Algin with wordpress logo in signup-header
+			margin-top: 1px;
+			margin-right: 24px;
+			fill: var( --color-text );
+			stroke: var( --color-text );
+
+			@include break-small {
+				display: block;
+			}
+		}
+
 		@include break-small {
 			position: absolute;
 			top: 0;
 			left: 72px;
 			right: 24px;
-			// Algin with wordpress logo
+			// Algin with wordpress logo in signup-header
 			padding: 1px 0 0;
 			background-color: transparent;
 			border: none;
 			box-shadow: none;
 
-			&.is-sticky {
+			&.should-sticky-nav-buttons {
 				position: fixed;
 				left: 0;
 				right: 0;
-				padding: 1px 24px 48px 72px;
+				padding-left: 24px;
+				padding-right: 24px;
 				background-color: $white;
+			}
+
+			&.has-sticky-nav-buttons-padding {
+				padding-bottom: 48px;
 			}
 		}
 	}

@@ -362,7 +362,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	.design-setup__header {
 		align-items: center;
 		display: flex;
-		margin: 48px 0;
+		margin: 0 0 48px;
 		row-gap: 1.5rem;
 		flex-wrap: wrap;
 
@@ -372,6 +372,10 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			@include break-small {
 				display: inherit;
 			}
+		}
+
+		@include break-small {
+			margin-top: 48px;
 		}
 	}
 
