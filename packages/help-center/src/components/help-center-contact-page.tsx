@@ -2,13 +2,20 @@ import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
 import { BackButton } from '..';
 import { useShouldRenderChatOption } from '../hooks/use-should-render-chat-option';
 import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-option';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
 import Mail from '../icons/mail';
 import { SibylArticles } from './help-center-sibyl-articles';
+
+const ConditionalLink: React.FC< { active: boolean } & LinkProps > = ( { active, ...props } ) => {
+	if ( active ) {
+		return <Link { ...props } />;
+	}
+	return <span { ...props }></span>;
+};
 
 export const HelpCenterContactPage: React.FC = () => {
 	const { __ } = useI18n();
@@ -27,7 +34,10 @@ export const HelpCenterContactPage: React.FC = () => {
 					} ) }
 				>
 					{ renderChat.render && (
-						<Link to="/contact-form?mode=CHAT">
+						<ConditionalLink
+							active={ renderChat.state === 'AVAILABLE' }
+							to="/contact-form?mode=CHAT"
+						>
 							<div
 								className={ classnames( 'help-center-contact-page__box', 'chat', {
 									'is-disabled': renderChat.state !== 'AVAILABLE',
@@ -47,7 +57,7 @@ export const HelpCenterContactPage: React.FC = () => {
 									</p>
 								</div>
 							</div>
-						</Link>
+						</ConditionalLink>
 					) }
 					{ renderEmail && (
 						<Link to="/contact-form?mode=EMAIL">
