@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import Search from 'calypso/components/search';
 import { setQueryArgs } from 'calypso/lib/query-args';
+import type { ReactElement } from 'react';
 
 export default function SiteSearch( {
 	searchQuery,
