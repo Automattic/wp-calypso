@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import VerticalNav from 'calypso/components/vertical-nav';
@@ -49,8 +48,6 @@ import {
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getEmailForwards } from 'calypso/state/selectors/get-email-forwards';
-import isRequestingEmailForwards from 'calypso/state/selectors/is-requesting-email-forwards';
 
 const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 	const translate = useTranslate();
@@ -75,10 +72,6 @@ UpgradeNavItem.propTypes = {
 };
 
 const EmailPlan = ( props ) => {
-	const shouldCheckForEmailForwards = ( domain ) => {
-		return ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain );
-	};
-
 	function getAccount( data ) {
 		return data?.accounts?.[ 0 ];
 	}
@@ -284,9 +277,6 @@ const EmailPlan = ( props ) => {
 	const { currentRoute, domain, selectedSite, hasSubscription, purchase, isLoadingPurchase } =
 		props;
 
-	// Ensure we check for email forwarding additions and removals
-	const shouldQueryEmailForwards = shouldCheckForEmailForwards( domain );
-
 	const { data, isLoading } = useEmailAccountsQuery( props.selectedSite.ID, props.domain.name, {
 		retry: false,
 	} );
@@ -294,8 +284,6 @@ const EmailPlan = ( props ) => {
 	return (
 		<>
 			{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
-
-			{ shouldQueryEmailForwards && <QueryEmailForwards domainName={ domain.name } /> }
 
 			<DocumentHead title={ titleCase( getHeaderText() ) } />
 
@@ -345,9 +333,7 @@ EmailPlan.propType = {
 	// Connected props
 	canAddMailboxes: PropTypes.bool,
 	currentRoute: PropTypes.string,
-	emailForwards: PropTypes.array,
 	hasSubscription: PropTypes.bool,
-	isLoadingEmailForwards: PropTypes.bool,
 	isLoadingPurchase: PropTypes.bool,
 	purchase: PropTypes.object,
 };
@@ -358,8 +344,6 @@ export default connect( ( state, ownProps ) => {
 			( getGSuiteProductSlug( ownProps.domain ) || getTitanProductSlug( ownProps.domain ) ) &&
 			getGSuiteSubscriptionStatus( ownProps.domain ) !== 'suspended',
 		currentRoute: getCurrentRoute( state ),
-		emailForwards: getEmailForwards( state, ownProps.domain.name ),
-		isLoadingEmailForwards: isRequestingEmailForwards( state, ownProps.domain.name ),
 		isLoadingPurchase:
 			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
 		purchase: getEmailPurchaseByDomain( state, ownProps.domain ),
