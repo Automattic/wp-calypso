@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
 import { ReactElement, useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import FormattedDate from 'calypso/components/formatted-date';
 import LicenseDetails from 'calypso/jetpack-cloud/sections/partner-portal/license-details';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
@@ -14,7 +14,11 @@ import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/part
 import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { infoNotice } from 'calypso/state/notices/actions';
+import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
+import {
+	hasValidPaymentMethod,
+	isAgencyUser,
+} from 'calypso/state/partner-portal/partner/selectors';
 import './style.scss';
 
 interface Props {
@@ -44,6 +48,8 @@ export default function LicensePreview( {
 	const dispatch = useDispatch();
 	const isHighlighted = getQueryArg( window.location.href, 'highlight' ) === licenseKey;
 	const [ isOpen, setOpen ] = useState( isHighlighted );
+	const validPaymentMethod = useSelector( hasValidPaymentMethod );
+	const isAgency = useSelector( isAgencyUser );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 	const showDomain =
@@ -64,6 +70,26 @@ export default function LicensePreview( {
 		dispatch( infoNotice( translate( 'License copied!' ), { duration: 2000 } ) );
 		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_copy_license_click' ) );
 	}, [ dispatch, translate ] );
+
+	const assign = useCallback( () => {
+		if ( isAgency && ! validPaymentMethod ) {
+			const errorMessage = translate(
+				'We could not find a valid payment method.{{br/}} ' +
+					'{{a}}Try adding a new payment method{{/a}} or contact support.',
+				{
+					components: {
+						a: <a href={ '/partner-portal/payment-methods/add' } />,
+						br: <br />,
+					},
+				}
+			);
+
+			dispatch( errorNotice( errorMessage ) );
+			return;
+		}
+
+		page.redirect( addQueryArgs( { key: licenseKey }, '/partner-portal/assign-license' ) );
+	}, [ isAgency, validPaymentMethod, translate, dispatch, errorNotice ] );
 
 	useEffect( () => {
 		if ( isHighlighted ) {
@@ -160,10 +186,7 @@ export default function LicensePreview( {
 
 				<div>
 					{ licenseState === LicenseState.Detached && (
-						<Button
-							compact
-							href={ addQueryArgs( { key: licenseKey }, '/partner-portal/assign-license' ) }
-						>
+						<Button compact onClick={ assign }>
 							{ translate( 'Assign License' ) }
 						</Button>
 					) }
