@@ -66,7 +66,6 @@ Solution:
 
 ```
 PUPPETEER_SKIP_DOWNLOAD=true
-CHROMEDRIVER_SKIP_DOWNLOAD=true
 ```
 
 Description:
