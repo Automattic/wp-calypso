@@ -17,10 +17,41 @@ export class PlanPrice extends Component {
 			className,
 			displayFlatPrice,
 			displayPerMonthNotation,
+			productDisplayPrice,
 			isOnSale,
 			taxText,
 			translate,
 		} = this.props;
+
+		const classes = classNames( 'plan-price', className, {
+			'is-original': original,
+			'is-discounted': discounted,
+		} );
+
+		// productDisplayPrice is returned from Store Price and provides a geo-IDed currency format
+		const shouldUseDisplayPrice = () => {
+			if ( ! productDisplayPrice ) {
+				return false;
+			}
+			if ( rawPrice ) {
+				if ( Array.isArray( rawPrice ) && rawPrice.length > 1 ) {
+					return false;
+				}
+			}
+			return true;
+		};
+
+		if ( shouldUseDisplayPrice() ) {
+			return (
+				<h4 className={ classes }>
+					<span
+						className="plan-price__integer"
+						// eslint-disable-next-line react/no-danger
+						dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
+					/>
+				</h4>
+			);
+		}
 
 		if ( ! currencyCode || rawPrice === undefined ) {
 			return null;
@@ -39,11 +70,6 @@ export class PlanPrice extends Component {
 				price: getCurrencyObject( item, currencyCode ),
 				raw: item,
 			};
-		} );
-
-		const classes = classNames( 'plan-price', className, {
-			'is-original': original,
-			'is-discounted': discounted,
 		} );
 
 		const renderPrice = ( priceObj ) => {
@@ -131,6 +157,7 @@ PlanPrice.propTypes = {
 	translate: PropTypes.func.isRequired,
 	displayPerMonthNotation: PropTypes.bool,
 	currencyFormatOptions: PropTypes.object,
+	productDisplayPrice: PropTypes.string,
 };
 
 PlanPrice.defaultProps = {

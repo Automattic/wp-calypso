@@ -29,4 +29,34 @@ describe( 'PlanPrice', () => {
 		render( <PlanPrice rawPrice={ [ 10, 0 ] } /> );
 		expect( document.body ).not.toHaveTextContent( '$10-0' );
 	} );
+	it( 'will use productDisplayPrice when rawPrice is an integer', () => {
+		render(
+			<PlanPrice
+				rawPrice={ 10 }
+				productDisplayPrice={ '<abbr title="United States Dollars">$</abbr>96.00' }
+			/>
+		);
+		expect( document.body ).toHaveTextContent( '$96.00' );
+		expect( document.body ).not.toHaveTextContent( '$10' );
+	} );
+	it( 'will use productDisplayPrice when rawPrice is an array with length of 1', () => {
+		render(
+			<PlanPrice
+				rawPrice={ [ 10 ] }
+				productDisplayPrice={ '<abbr title="United States Dollars">$</abbr>96.00' }
+			/>
+		);
+		expect( document.body ).toHaveTextContent( '$96.00' );
+		expect( document.body ).not.toHaveTextContent( '$10' );
+	} );
+	it( 'will use rawPrice when rawPrice is passed an array with length > 1', () => {
+		render(
+			<PlanPrice
+				rawPrice={ [ 5, 10 ] }
+				productDisplayPrice={ '<abbr title="United States Dollars">$</abbr>96.00' }
+			/>
+		);
+		expect( document.body ).toHaveTextContent( '$5-10' );
+		expect( document.body ).not.toHaveTextContent( '$96.00' );
+	} );
 } );
