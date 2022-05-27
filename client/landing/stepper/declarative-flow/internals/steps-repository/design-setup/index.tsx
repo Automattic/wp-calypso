@@ -462,6 +462,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 				'design-picker__has-categories': showDesignPickerCategories,
 				'design-picker__sell-intent': 'sell' === intent,
 			} ) }
+			shouldStickyNavButtons={ showGeneratedDesigns }
 			hideSkip={ isPreviewingGeneratedDesign || isAnchorSite }
 			hideNext={ ! isPreviewingGeneratedDesign }
 			skipButtonAlign={ 'top' }

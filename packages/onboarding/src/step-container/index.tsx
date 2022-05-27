@@ -11,6 +11,7 @@ interface Props {
 	stepSectionName?: string;
 	stepContent: ReactElement;
 	shouldHideNavButtons?: boolean;
+	shouldStickyNavButtons?: boolean;
 	hideBack?: boolean;
 	hideSkip?: boolean;
 	hideNext?: boolean;
@@ -43,6 +44,7 @@ const StepContainer: React.FC< Props > = ( {
 	stepContent,
 	stepName,
 	shouldHideNavButtons,
+	shouldStickyNavButtons,
 	hideBack,
 	backLabelText,
 	hideSkip,
@@ -162,6 +164,7 @@ const StepContainer: React.FC< Props > = ( {
 	return (
 		<div className={ classes }>
 			<ActionButtons
+				sticky={ shouldStickyNavButtons }
 				className={ classNames( 'step-container__navigation', {
 					'should-hide-nav-buttons': shouldHideNavButtons,
 				} ) }

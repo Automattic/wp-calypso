@@ -426,9 +426,12 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	.generated_design-picker__content {
 		display: flex;
 		flex-direction: row;
+		align-items: flex-start;
 	}
 
 	.generated-design-picker__thumbnails {
+		position: sticky;
+		top: 110px;
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;

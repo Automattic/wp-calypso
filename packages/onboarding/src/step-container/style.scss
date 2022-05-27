@@ -195,12 +195,22 @@
 
 		@include break-small {
 			position: absolute;
-			top: 1px;
+			top: 0;
 			left: 72px;
 			right: 24px;
-			padding: 0;
+			// Algin with wordpress logo
+			padding: 1px 0 0;
 			background-color: transparent;
 			border: none;
+			box-shadow: none;
+
+			&.is-sticky {
+				position: fixed;
+				left: 0;
+				right: 0;
+				padding: 1px 24px 48px 72px;
+				background-color: $white;
+			}
 		}
 	}
 
