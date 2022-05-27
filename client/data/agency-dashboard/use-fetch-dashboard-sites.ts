@@ -25,6 +25,7 @@ const useFetchDashboardSites = ( searchQuery: string | null, currentPage: number
 				return {
 					sites: data.sites ? Object.values( data.sites ) : [],
 					total: data.total,
+					perPage: data.per_page,
 				};
 			},
 			refetchOnWindowFocus: false,

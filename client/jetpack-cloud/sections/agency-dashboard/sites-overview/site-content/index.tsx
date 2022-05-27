@@ -7,7 +7,7 @@ import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-
 import { addQueryArgs } from 'calypso/lib/route';
 import SiteCard from '../site-card';
 import SiteTable from '../site-table';
-import { formatSites, SITES_PER_PAGE } from '../utils';
+import { formatSites } from '../utils';
 import type { ReactElement } from 'react';
 
 import './style.scss';
@@ -19,7 +19,7 @@ const addPageArgs = ( pageNumber: number ) => {
 };
 
 interface Props {
-	data: { sites: Array< any >; total: number } | undefined;
+	data: { sites: Array< any >; total: number; perPage: number } | undefined;
 	isError: boolean;
 	isFetching: boolean;
 	currentPage: number;
@@ -93,7 +93,7 @@ export default function SiteContent( {
 				<Pagination
 					compact={ isMobile }
 					page={ currentPage }
-					perPage={ SITES_PER_PAGE }
+					perPage={ data.perPage }
 					total={ data.total }
 					pageClick={ handlePageClick }
 				/>
