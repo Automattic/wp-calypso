@@ -57,8 +57,16 @@ export const siteSetupFlow: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
+		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
-		const siteSlug = site ? new URL( site.URL ).host : null;
+
+		let siteSlug: string | null = null;
+		if ( siteSlugParam ) {
+			siteSlug = siteSlugParam;
+		} else if ( site ) {
+			siteSlug = new URL( site.URL ).host;
+		}
+
 		const adminUrl = useSelect(
 			( select ) => site && select( SITE_STORE ).getSiteOption( site.ID, 'admin_url' )
 		);
