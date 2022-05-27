@@ -16,7 +16,6 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -24,7 +23,6 @@ import './style.scss';
 
 export const Sharing = ( {
 	contentComponent,
-	currentPlanSlug,
 	pathname,
 	showButtons,
 	showConnections,
@@ -157,7 +155,7 @@ export const Sharing = ( {
 					</NavTabs>
 				</SectionNav>
 			) }
-			{ ! isVip && ! isJetpack && currentPlanSlug && (
+			{ ! isVip && ! isJetpack && (
 				<UpsellNudge
 					event="sharing_no_ads"
 					feature={ WPCOM_FEATURES_NO_ADVERTS }
@@ -176,7 +174,6 @@ export const Sharing = ( {
 Sharing.propTypes = {
 	canManageOptions: PropTypes.bool,
 	contentComponent: PropTypes.node,
-	currentPlanSlug: PropTypes.string,
 	isVipSite: PropTypes.bool,
 	path: PropTypes.string,
 	showButtons: PropTypes.bool,
@@ -192,10 +189,8 @@ export default connect( ( state ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const isAtomic = isSiteWpcomAtomic( state, siteId );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-	const currentPlanSlug = getCurrentPlan( state, siteId )?.productSlug;
 
 	return {
-		currentPlanSlug,
 		isP2Hub: isSiteP2Hub( state, siteId ),
 		showButtons: siteId && canManageOptions,
 		showConnections: !! siteId,
