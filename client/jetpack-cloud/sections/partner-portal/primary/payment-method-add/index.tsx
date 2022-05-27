@@ -10,15 +10,17 @@ import { CheckoutProvider, CheckoutSubmitButton } from '@automattic/composite-ch
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { CardElement, useElements } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
+import { getQueryArg } from '@wordpress/url';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback, useMemo, ReactElement, useEffect } from 'react';
+import { useCallback, useMemo, ReactElement, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-loading';
 import PaymentMethodImage from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/payment-method-image';
+import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { assignNewCardProcessor } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
 import { getStripeConfiguration } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/get-stripe-configuration';
 import { useCreateStoredCreditCardMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/hooks/use-create-stored-credit-card';
@@ -33,6 +35,7 @@ import './style.scss';
 function PaymentMethodAdd(): ReactElement {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
+	const [ successRedirect, setSuccessRedirect ] = useState( false );
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 	const {
 		reload: reloadSetupIntentId,
@@ -52,6 +55,8 @@ function PaymentMethodAdd(): ReactElement {
 	const useAsPrimaryPaymentMethod = useSelect( ( select ) =>
 		select( 'credit-card' ).useAsPrimaryPaymentMethod()
 	);
+
+	useReturnUrl( successRedirect );
 
 	const onGoToPaymentMethods = () => {
 		reduxDispatch(
@@ -85,7 +90,11 @@ function PaymentMethodAdd(): ReactElement {
 
 	const successCallback = useCallback( () => {
 		reduxDispatch( setPartnerHasValidPaymentMethod( true ) );
-		page( '/partner-portal/payment-methods/' );
+		if ( getQueryArg( window.location.href, 'return' ) ) {
+			setSuccessRedirect( true );
+		} else {
+			page( '/partner-portal/payment-methods/' );
+		}
 	}, [ reduxDispatch, page ] );
 
 	useEffect( () => {
