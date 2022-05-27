@@ -72,13 +72,20 @@ export default function LicensePreview( {
 	}, [ dispatch, translate ] );
 
 	const assign = useCallback( () => {
+		const redirectUrl = addQueryArgs( { key: licenseKey }, '/partner-portal/assign-license' );
 		if ( isAgency && ! validPaymentMethod ) {
+			const noticeLinkHref = addQueryArgs(
+				{
+					return: redirectUrl,
+				},
+				'/partner-portal/payment-methods/add'
+			);
 			const errorMessage = translate(
 				'We could not find a valid payment method.{{br/}} ' +
 					'{{a}}Try adding a new payment method{{/a}} or contact support.',
 				{
 					components: {
-						a: <a href={ '/partner-portal/payment-methods/add' } />,
+						a: <a href={ noticeLinkHref } />,
 						br: <br />,
 					},
 				}
@@ -88,7 +95,7 @@ export default function LicensePreview( {
 			return;
 		}
 
-		page.redirect( addQueryArgs( { key: licenseKey }, '/partner-portal/assign-license' ) );
+		page.redirect( redirectUrl );
 	}, [ isAgency, validPaymentMethod, translate, dispatch, errorNotice ] );
 
 	useEffect( () => {
