@@ -4,6 +4,7 @@ const evaluations = [
 	require( './evaluations/node-memory' ),
 	require( './evaluations/node-npm-cache' ),
 	require( './evaluations/node-puppeteer' ),
+	require( './evaluations/node-chromedriver' ),
 	require( './evaluations/node-playwright' ),
 	require( './evaluations/docker-cpu' ),
 	require( './evaluations/docker-memory' ),

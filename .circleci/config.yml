@@ -13,6 +13,7 @@ references:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
       PUPPETEER_SKIP_DOWNLOAD: 'true'
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 'true'
       SKIP_TSC: 'true'
       NODE_OPTIONS: --max-old-space-size=3072
@@ -172,6 +173,7 @@ jobs:
     working_directory: /Users/distiller/wp-calypso
     environment:
       CONFIG_ENV: release
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     steps:
       - checkout
@@ -248,6 +250,7 @@ jobs:
     shell: /bin/bash --login
     environment:
       CONFIG_ENV: release
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     steps:
       - checkout
@@ -318,6 +321,7 @@ jobs:
     working_directory: C:\Users\circleci\wp-calypso
     environment:
       CONFIG_ENV: release
+      CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
     steps:
       - checkout

@@ -76,6 +76,7 @@ Similar to instructions in macOS Intel architecture, install the arm64 variant o
 
 ```
 PUPPETEER_SKIP_DOWNLOAD=true
+CHROMEDRIVER_SKIP_DOWNLOAD=true
 ```
 
 2. install dependencies:
