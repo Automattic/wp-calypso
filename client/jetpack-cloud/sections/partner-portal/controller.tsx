@@ -246,12 +246,7 @@ export function requireValidPaymentMethod( context: PageJS.Context, next: () => 
 	const isAgency = isAgencyUser( state );
 	const { pathname, search } = window.location;
 
-	if ( isAgency ) {
-		if ( validPaymentMethod ) {
-			next();
-			return;
-		}
-
+	if ( isAgency && ! validPaymentMethod ) {
 		const returnUrl = ensurePartnerPortalReturnUrl( pathname + search );
 
 		page.redirect(
@@ -262,8 +257,9 @@ export function requireValidPaymentMethod( context: PageJS.Context, next: () => 
 				'/partner-portal/payment-methods/add'
 			)
 		);
-	} else {
-		next();
 		return;
 	}
+
+	next();
+	return;
 }
