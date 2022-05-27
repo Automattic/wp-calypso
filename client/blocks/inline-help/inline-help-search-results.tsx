@@ -1,5 +1,6 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
-import { getContextResults, LinksForSection } from '@automattic/help-center';
+import { getContextResults, LinksForSection } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
 import { Icon, page as pageIcon, arrowRight } from '@wordpress/icons';
@@ -11,7 +12,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useSiteOption } from 'calypso/state/sites/hooks';
@@ -167,7 +167,7 @@ function HelpSearchResults( {
 							{ /* Old stuff - leaving this incase we need to quick revert
 							{ icon && <Gridicon icon={ icon } size={ 18 } /> } */ }
 							<LinkIcon />
-							<span>{ preventWidows( decodeEntities( title ) ) }</span>
+							<span>{ preventWidows( decodeEntities( title as string ) ) }</span>
 						</a>
 					</div>
 				</li>

@@ -3,7 +3,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
-import { NewReleases } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
 import WhatsNewGuide from '@automattic/whats-new';
 import { Button, SVG, Circle } from '@wordpress/components';
@@ -13,6 +12,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import NewReleases from '../icons/new-releases';
 
 const circle = (
 	<SVG viewBox="0 0 24 24">

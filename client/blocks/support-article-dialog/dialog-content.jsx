@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
@@ -12,9 +13,9 @@ import Placeholders from './placeholders';
 import './style.scss';
 import './content.scss';
 
-const getPostKey = ( blogId: number, postId: number ) => ( { blogId, postId } );
+const getPostKey = ( blogId, postId ) => ( { blogId, postId } );
 
-const useSupportArticleAlternatePostKey = ( blogId: number, postId: number ) => {
+const useSupportArticleAlternatePostKey = ( blogId, postId ) => {
 	const supportArticleAlternates = useSupportArticleAlternatesQuery( blogId, postId );
 	if ( supportArticleAlternates.isLoading ) {
 		return null;
@@ -27,15 +28,7 @@ const useSupportArticleAlternatePostKey = ( blogId: number, postId: number ) => 
 	return getPostKey( supportArticleAlternates.data.blog_id, supportArticleAlternates.data.page_id );
 };
 
-const DialogContent = ( {
-	postId,
-	blogId,
-	articleUrl,
-}: {
-	postId: number;
-	blogId: number | null;
-	articleUrl: string;
-} ) => {
+const DialogContent = ( { postId, blogId, articleUrl } ) => {
 	const postKey = useSupportArticleAlternatePostKey( blogId ?? SUPPORT_BLOG_ID, postId );
 	const post = useSelector( ( state ) => getPostByKey( state, postKey ) );
 	const isLoading = ! post || ! postKey;
@@ -52,11 +45,9 @@ const DialogContent = ( {
 		) {
 			setTimeout( () => {
 				const anchorId = articleUrl.split( '#' ).pop();
-				if ( anchorId ) {
-					const element = document.getElementById( anchorId );
-					if ( element ) {
-						element.scrollIntoView();
-					}
+				const element = document.getElementById( anchorId );
+				if ( element ) {
+					element.scrollIntoView();
 				}
 			}, 0 );
 		}
@@ -86,6 +77,12 @@ const DialogContent = ( {
 			</article>
 		</>
 	);
+};
+
+DialogContent.propTypes = {
+	postId: PropTypes.number.isRequired,
+	blogId: PropTypes.number,
+	articleUrl: PropTypes.string,
 };
 
 export default DialogContent;

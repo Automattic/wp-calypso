@@ -3,7 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { closeSmall, chevronUp, lineSolid, commentContent, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import { STORE_KEY } from '../store';
@@ -15,7 +15,7 @@ export function ArticleTitle() {
 	return <span className="help-center-header__article-title">{ params.get( 'title' ) }</span>;
 }
 
-const SupportModeTitle: React.FC = () => {
+const SupportModeTitle = (): ReactElement => {
 	const { __ } = useI18n();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
@@ -30,13 +30,13 @@ const SupportModeTitle: React.FC = () => {
 				</>
 			);
 		case 'EMAIL': {
-			return __( 'Send us an email', __i18n_text_domain__ );
+			return <>{ __( 'Send us an email', __i18n_text_domain__ ) }</>;
 		}
 		case 'FORUM': {
-			return __( 'Ask in our community forums', __i18n_text_domain__ );
+			return <>{ __( 'Ask in our community forums', __i18n_text_domain__ ) }</>;
 		}
 		default: {
-			return __( 'Help Center', __i18n_text_domain__ );
+			return <>{ __( 'Help Center', __i18n_text_domain__ ) }</>;
 		}
 	}
 };

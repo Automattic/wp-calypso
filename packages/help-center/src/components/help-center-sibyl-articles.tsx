@@ -1,11 +1,15 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { useSibylQuery, SiteDetails, useSiteIntent } from '@automattic/data-stores';
+import {
+	useSibylQuery,
+	SiteDetails,
+	useSiteIntent,
+	getContextResults,
+} from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, page } from '@wordpress/icons';
 import { Link } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
-import { getContextResults } from '../contextual-help/contextual-help';
 import { Article } from '../types';
 
 export const SITE_STORE = 'automattic/site' as const;
