@@ -479,16 +479,11 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 					left: 12px;
 				}
 			}
-
-			.web-preview__placeholder {
-				flex: 0;
-				min-height: 80vh;
-			}
 		}
 
 		@include break-small {
 			flex: 1;
-			height: auto;
+			height: calc( 100vh - 278px );
 		}
 	}
 

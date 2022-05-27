@@ -30,7 +30,6 @@ import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { getCategorizationOptions } from './categories';
 import GeneratedDesignPickerWebPreview from './generated-design-picker-web-preview';
 import PreviewToolbar from './preview-toolbar';
-import StickyFooter from './sticky-footer';
 import type { Step } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
@@ -411,18 +410,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 						{ translate( 'Continue' ) }
 					</Button>
 				</div>
-			}
-			footer={
-				<StickyFooter
-					className={ classnames( 'step-container__footer', 'design-setup__footer' ) }
-					targetRef={ continueButtonRef }
-				>
-					<div className={ 'design-setup__footer-inner' }>
-						<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'bottom' ) }>
-							{ translate( 'Continue' ) }
-						</Button>
-					</div>
-				</StickyFooter>
 			}
 			onPreview={ previewDesign }
 			onViewMore={ viewMoreDesigns }

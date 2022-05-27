@@ -40,7 +40,6 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 			} ) }
 			toolbarComponent={ PreviewToolbar }
 			fetchPriority={ isSelected ? 'high' : 'low' }
-			autoHeight
 			siteId={ site?.ID }
 			url={ site?.URL }
 			isPrivateAtomic={ isPrivateAtomic }
