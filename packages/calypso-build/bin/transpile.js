@@ -5,6 +5,7 @@ const { execSync } = require( 'child_process' );
 const path = require( 'path' );
 
 const dir = process.cwd();
+const root = path.dirname( __dirname );
 const babelPresetFile = require.resolve( '@automattic/calypso-babel-config/presets/default.js' );
 
 const inputDir = path.join( dir, 'src' );
@@ -31,30 +32,23 @@ for ( const arg of process.argv.slice( 2 ) ) {
 // root directory (set as cwd) which isn't an ancestor of any of the source files.
 const testIgnorePattern = path.join( dir, '**/test/**' );
 
-// Babel may get hoisted from calypso-build/node_modules to the root-level node_modules.
-// To handle either scenario, use require.resolve to find the path to babel.
-const babelLocation = require.resolve( '@babel/cli' );
-if ( ! babelLocation ) {
-	throw new Error( 'Could not find babel CLI; there may be an issue with dependencies.' );
-}
-// The bin script lives at node_modules/.bin/babel, so this changes node_modules/@babel/cli/...
-// to point to that instead. In theory, this would break if you install wp-calypso
-// under a path which includes babel, like /home/foo/@babel/wp-calypso, but who
-// would do that?
-const babelScript = path.resolve( babelLocation.split( '@babel' )[ 0 ], '.bin', 'babel' );
-
-// NOTE: this depends explicitly on @babel/cli, so @babel/cli must be included
-// in calypso-build's dependencies.
-const baseCommand = `${ babelScript } --presets="${ babelPresetFile }" --ignore "${ testIgnorePattern }" --extensions='.js,.jsx,.ts,.tsx'`;
-
 console.log( 'Building %s', dir );
 
+// For yarn to find the babel bin script, @babel/cli must be in caplyso-build's dependencies.
+const baseCommand = `yarn run babel ${ inputDir } --presets="${ babelPresetFile }" --ignore "${ testIgnorePattern }" --extensions='.js,.jsx,.ts,.tsx'`;
+
+const execConfig = {
+	encoding: 'UTF-8', // So that errors are human-readable.
+	cwd: root,
+};
+
 if ( transpileAll || transpileESM ) {
-	execSync( `${ baseCommand } -d "${ outputDirESM }" "${ inputDir }"` );
+	execSync( `${ baseCommand } -d "${ outputDirESM }"`, execConfig );
 }
 
 if ( transpileAll || transpileCJS ) {
-	execSync( `${ baseCommand } -d "${ outputDirCJS }" "${ inputDir }"`, {
-		env: Object.assign( {}, process.env, { MODULES: 'commonjs' } ),
+	execSync( `${ baseCommand } -d "${ outputDirCJS }"`, {
+		...execConfig,
+		env: { ...process.env, MODULES: 'commonjs' },
 	} );
 }
