@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import Search from 'calypso/components/search';
-import useUrlSearch from 'calypso/lib/url-search/use-url-search';
+import { setQueryArgs } from 'calypso/lib/query-args';
 
 export default function SiteSearch( {
 	searchQuery,
@@ -11,10 +11,9 @@ export default function SiteSearch( {
 	handleSearch: ( query: string ) => void;
 } ): ReactElement {
 	const translate = useTranslate();
-	const { doSearch } = useUrlSearch();
 
 	const handleSearchSites = ( query: string ) => {
-		doSearch( query );
+		setQueryArgs( '' !== query ? { s: query } : {} );
 		handleSearch( query );
 	};
 
