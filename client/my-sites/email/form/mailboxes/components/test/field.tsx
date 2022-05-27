@@ -25,7 +25,7 @@ describe( '<MailboxField /> suite', () => {
 		}
 
 		return {
-			requestFieldValidation(): void {
+			onRequestFieldValidation(): void {
 				mailbox.validateField( fieldName );
 			},
 			field: Reflect.get( mailbox.formFields, fieldName ),

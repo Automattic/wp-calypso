@@ -12,7 +12,6 @@ import {
 } from 'calypso/my-sites/email/form/mailboxes/types';
 
 interface MailboxFormWrapperProps {
-	domains?: string[];
 	onSubmit: ( mailbox: MailboxForm< EmailProvider > ) => void;
 	provider: EmailProvider;
 	selectedDomainName: string;
@@ -20,7 +19,6 @@ interface MailboxFormWrapperProps {
 
 const MailboxFormWrapper = ( {
 	children,
-	domains = [],
 	onSubmit,
 	provider,
 	selectedDomainName,
@@ -46,9 +44,8 @@ const MailboxFormWrapper = ( {
 	const commonProps = ( field: MailboxFormFieldBase< string > ) => {
 		renderedFields.add( field.fieldName );
 		return {
-			domains,
 			field,
-			requestFieldValidation: () => mailbox.validateField( field.fieldName ),
+			onRequestFieldValidation: () => mailbox.validateField( field.fieldName ),
 		};
 	};
 

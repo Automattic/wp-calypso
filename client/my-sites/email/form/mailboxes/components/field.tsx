@@ -13,12 +13,11 @@ import type {
 import type { ChangeEvent } from 'react';
 
 interface MailboxFormFieldProps {
-	domains?: string[];
 	field: MailboxFormFieldBase< string >;
 	isPasswordField?: boolean;
 	lowerCaseChangeValue?: boolean;
-	notifyFieldValueChanged?: ( field: MailboxFormFieldBase< string > ) => void;
-	requestFieldValidation: ( field: MailboxFormFieldBase< string > ) => void;
+	onFieldValueChanged?: ( field: MailboxFormFieldBase< string > ) => void;
+	onRequestFieldValidation: ( field: MailboxFormFieldBase< string > ) => void;
 	textInputPrefix?: string;
 	textInputSuffix?: string;
 }
@@ -65,23 +64,23 @@ const MailboxFieldInput = ( {
 const MailboxField = ( {
 	children,
 	...props
-}: MailboxFormFieldProps & { children?: JSX.Element } ): JSX.Element => {
+}: MailboxFormFieldProps & { children?: JSX.Element } ): JSX.Element | null => {
 	const {
 		field: originalField,
 		lowerCaseChangeValue = false,
-		requestFieldValidation,
-		notifyFieldValueChanged = () => undefined,
+		onRequestFieldValidation,
+		onFieldValueChanged = () => undefined,
 	} = props;
 
 	const [ { field }, setFieldState ] = useState( { field: originalField } );
 	const fieldLabelText = useGetDefaultFieldLabelText( field.fieldName as MutableFormFieldNames );
 
 	if ( ! field.isVisible ) {
-		return <></>;
+		return null;
 	}
 
 	const onBlur = () => {
-		requestFieldValidation( field );
+		onRequestFieldValidation( field );
 		setFieldState( { field } );
 	};
 
@@ -94,10 +93,10 @@ const MailboxField = ( {
 
 		// Validate the field on the fly if there was already an error
 		if ( field.error ) {
-			requestFieldValidation( field );
+			onRequestFieldValidation( field );
 		}
 		setFieldState( { field } );
-		notifyFieldValueChanged( field );
+		onFieldValueChanged( field );
 	};
 
 	return (
