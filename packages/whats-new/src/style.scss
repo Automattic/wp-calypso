@@ -55,13 +55,13 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		margin: 0;
 		display: flex;
 		justify-content: center;
+		align-items: center;
 		background: var( --studio-white );
 		border-top: none;
 		box-sizing: border-box;
-		min-height: 50px;
+		min-height: $wpcom-modal-footer-height;
 		
 		@media ( min-width: $wpcom-modal-breakpoint ) {
-			border-top: 1px solid var( --studio-gray-5 );
 			padding: $wpcom-modal-footer-padding-v 0;
 			position: absolute;
 			bottom: $wpcom-modal-footer-height * -1;
