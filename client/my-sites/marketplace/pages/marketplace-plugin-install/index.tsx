@@ -252,7 +252,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 			translate( 'Installing plugin' ),
 			translate( 'Activating plugin' ),
 		],
-		[ isUploadFlow ]
+		[ isUploadFlow, translate ]
 	);
 
 	const additionalSteps = useMemo(
@@ -262,7 +262,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 			translate( 'Wheels are in motion' ),
 			translate( 'Working magic' ),
 		],
-		[]
+		[ translate ]
 	);
 
 	const renderError = () => {
