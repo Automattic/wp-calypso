@@ -16,6 +16,7 @@ export const HelpCenterSearch = () => {
 		( event, result ) => {
 			const search = new URLSearchParams( {
 				postId: result.post_id,
+				blogId: result.blog_id,
 				query: searchQuery,
 				link: result.link ?? '',
 				title: result.title,

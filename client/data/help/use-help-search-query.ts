@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { LinksForSection } from '@automattic/data-stores';
@@ -5,8 +6,10 @@ export const useHelpSearchQuery = (
 	search: string,
 	queryOptions: Record< string, unknown > = {}
 ) => {
+	const locale = useLocale();
 	const params = new URLSearchParams( {
 		include_post_id: '1',
+		locale,
 	} );
 
 	if ( search ) {

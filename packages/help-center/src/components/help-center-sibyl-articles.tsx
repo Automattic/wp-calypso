@@ -6,8 +6,8 @@ import {
 	getContextResults,
 } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
 import { Icon, page } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import { Link } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { Article } from '../types';
@@ -22,13 +22,18 @@ type Props = {
 function getPostUrl( article: Article, query: string ) {
 	// if it's a wpcom support article, it has an ID
 	if ( article.post_id ) {
-		const search = new URLSearchParams( {
+		const params = new URLSearchParams( {
 			postId: article.post_id,
 			query,
 			link: article.link ?? '',
 			title: article.title,
-		} ).toString();
+		} );
 
+		if ( article.blog_id ) {
+			params.set( 'blogId', article.blog_id );
+		}
+
+		const search = params.toString();
 		return {
 			pathname: '/post',
 			search,
@@ -38,6 +43,8 @@ function getPostUrl( article: Article, query: string ) {
 }
 
 export function SibylArticles( { message = '', supportSite }: Props ) {
+	const { __ } = useI18n();
+
 	const isAtomic = Boolean(
 		useSelect( ( select ) => supportSite && select( SITE_STORE ).isSiteAtomic( supportSite?.ID ) )
 	);

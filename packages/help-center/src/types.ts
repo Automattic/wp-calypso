@@ -33,4 +33,5 @@ export interface Article {
 	icon?: string;
 	id?: string;
 	post_id?: string;
+	blog_id?: string;
 }

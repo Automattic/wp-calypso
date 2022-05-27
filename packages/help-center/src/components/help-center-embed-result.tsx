@@ -13,6 +13,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const postId = params.get( 'postId' );
+	const blogId = params.get( 'blogId' );
 	const query = params.get( 'query' );
 	const link = params.get( 'link' );
 
@@ -43,7 +44,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 					</Button>
 				</FlexItem>
 			</Flex>
-			<ArticleContent postId={ postId } blogId={ null } articleUrl={ null } />
+			<ArticleContent postId={ postId } blogId={ blogId } articleUrl={ null } />
 		</div>
 	);
 };
