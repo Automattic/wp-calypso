@@ -8,5 +8,5 @@ import isJetpackConnectionPluginActive from './is-jetpack-connection-plugin-acti
  * @returns {?boolean}        Whether site has the Jetpack Backup plugin active
  */
 export default function isBackupPluginActive( state, siteId ) {
-	return isJetpackConnectionPluginActive( state, siteId, 'jetpack-plugin' );
+	return isJetpackConnectionPluginActive( state, siteId, 'jetpack-backup' );
 }
