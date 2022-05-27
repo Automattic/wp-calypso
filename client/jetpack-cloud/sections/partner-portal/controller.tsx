@@ -28,6 +28,7 @@ import {
 	getCurrentPartner,
 	hasActivePartnerKey,
 	hasValidPaymentMethod,
+	isAgencyUser,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { ToSConsent } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -242,21 +243,27 @@ export function requireSelectedPartnerKeyContext(
 export function requireValidPaymentMethod( context: PageJS.Context, next: () => void ) {
 	const state = context.store.getState();
 	const validPaymentMethod = hasValidPaymentMethod( state );
+	const isAgency = isAgencyUser( state );
 	const { pathname, search } = window.location;
 
-	if ( validPaymentMethod ) {
+	if ( isAgency ) {
+		if ( validPaymentMethod ) {
+			next();
+			return;
+		}
+
+		const returnUrl = ensurePartnerPortalReturnUrl( pathname + search );
+
+		page.redirect(
+			addQueryArgs(
+				{
+					return: returnUrl,
+				},
+				'/partner-portal/payment-methods/add'
+			)
+		);
+	} else {
 		next();
 		return;
 	}
-
-	const returnUrl = ensurePartnerPortalReturnUrl( pathname + search );
-
-	page.redirect(
-		addQueryArgs(
-			{
-				return: returnUrl,
-			},
-			'/partner-portal/payment-methods/add'
-		)
-	);
 }
