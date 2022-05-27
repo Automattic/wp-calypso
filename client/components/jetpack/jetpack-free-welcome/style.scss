@@ -7,7 +7,7 @@
 		margin: 0 0 0 10px;
 		padding: 0 0 32px 5px;
 		@include break-mobile {
-			font-size: 18px; /* stylelint-disable-line */
+			font-size: $font-body;
 			line-height: 2rem;
 		}
 	}
