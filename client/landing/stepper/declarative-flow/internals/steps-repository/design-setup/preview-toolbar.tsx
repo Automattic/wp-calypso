@@ -2,25 +2,36 @@ import { Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { computer, tablet, phone } from 'calypso/signup/icons';
 import './preview-toolbar.scss';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ] as const;
 
 type Device = typeof possibleDevices[ number ];
+
 type PreviewToolbarProps = {
+	// The device to display, used for setting preview dimensions
 	device: Device;
+	// The site URL
 	externalUrl: string;
+	// Show device viewport switcher
 	showDeviceSwitcher: boolean;
+	// Whether to sticky
+	isSticky?: boolean;
+	// Called when a device button is clicked
 	setDeviceViewport: ( device: Device ) => void;
 	translate: ( word: string ) => string;
 };
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+
 const DesignPickerPreviewToolbar = ( {
 	device: currentDevice,
 	externalUrl,
 	showDeviceSwitcher,
+	isSticky,
 	setDeviceViewport,
 	translate,
 }: PreviewToolbarProps ) => {
@@ -30,8 +41,39 @@ const DesignPickerPreviewToolbar = ( {
 		phone: { title: translate( 'Phone' ), icon: phone, iconSize: 24 },
 	} );
 
+	const wrapperRef = useRef< HTMLDivElement >( null );
+	const headerRef = useRef< HTMLDivElement >( null );
+
+	useEffect( () => {
+		if ( ! isSticky ) {
+			wrapperRef.current?.style.removeProperty( 'height' );
+			headerRef.current?.style.removeProperty( 'width' );
+			headerRef.current?.style.removeProperty( 'left' );
+			return noop;
+		}
+
+		const handleSticky = () => {
+			if ( ! wrapperRef.current || ! headerRef.current ) {
+				return;
+			}
+
+			const { left } = wrapperRef.current.getBoundingClientRect();
+			wrapperRef.current?.style.setProperty( 'height', `${ headerRef.current.offsetWidth }px` );
+			headerRef.current?.style.setProperty( 'width', `${ wrapperRef.current.offsetWidth }px` );
+			headerRef.current?.style.setProperty( 'left', `${ left }px` );
+		};
+
+		handleSticky();
+
+		window.addEventListener( 'resize', handleSticky );
+
+		return () => {
+			window.removeEventListener( 'resize', handleSticky );
+		};
+	}, [ isSticky ] );
+
 	return (
-		<div className="preview-toolbar__toolbar">
+		<div className="preview-toolbar__toolbar" ref={ wrapperRef }>
 			{ showDeviceSwitcher && (
 				<div className="preview-toolbar__devices">
 					{ possibleDevices.map( ( device ) => (
@@ -52,7 +94,12 @@ const DesignPickerPreviewToolbar = ( {
 					) ) }
 				</div>
 			) }
-			<div className="preview-toolbar__browser-header">
+			<div
+				className={ classNames( 'preview-toolbar__browser-header', {
+					'preview-toolbar__browser-header--sticky': isSticky,
+				} ) }
+				ref={ headerRef }
+			>
 				<svg width="40" height="8">
 					<g>
 						<rect width="8" height="8" rx="4" />
@@ -64,17 +111,6 @@ const DesignPickerPreviewToolbar = ( {
 			</div>
 		</div>
 	);
-};
-
-DesignPickerPreviewToolbar.propTypes = {
-	// The device to display, used for setting preview dimensions
-	device: PropTypes.string,
-	// The site URL
-	externalUrl: PropTypes.string,
-	// Show device viewport switcher
-	showDeviceSwitcher: PropTypes.bool,
-	// Called when a device button is clicked
-	setDeviceViewport: PropTypes.func,
 };
 
 export default localize( DesignPickerPreviewToolbar );
