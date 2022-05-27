@@ -74,6 +74,15 @@ const current = ( state = initialState.current, action: AnyAction ) => {
 
 			return action.partner;
 
+		case 'STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED':
+			if ( null !== state ) {
+				return Object.assign( state, {
+					has_valid_payment_method: !! action?.payment_method_id,
+				} );
+			}
+
+			return state;
+
 		case JETPACK_PARTNER_PORTAL_PARTNER_SET_HAS_VALID_PAYMENT_METHOD:
 			if ( null !== state ) {
 				return Object.assign( state, {
