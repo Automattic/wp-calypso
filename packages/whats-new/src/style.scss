@@ -25,6 +25,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 			min-width: 90vw;
 			left: 5vw;
 			right: 5vw;
+			max-height: 500px;
 		}
 
 		@media ( min-width: $wpcom-modal-breakpoint ) {
@@ -39,7 +40,10 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	}
 
 	.components-modal__header {
-		display: none;
+		height: 0;
+		@media ( min-width: $wpcom-modal-breakpoint ) {
+			display: none;
+		}
 	}
 
 	.components-guide__container {
@@ -131,7 +135,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 .whats-new-page__text {
 	padding: 25px;
-	height: 60%;
+	height: 50%;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		height: auto;
@@ -139,7 +143,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	}
 }
 .whats-new-page__visual {
-	height: 40%;
+	height: 50%;
 	padding: 25px 25px 0;
 	background: var( --color-primary );
 	text-align: center;
