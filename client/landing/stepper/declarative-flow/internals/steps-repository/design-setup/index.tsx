@@ -374,7 +374,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	// When the intent is build, we can potentially show the generated design picker.
 	// Don't render until we've fetched the generated designs from the backend.
-	if ( showGeneratedDesigns && isLoadingGeneratedDesigns ) {
+	if ( showGeneratedDesigns && ( isLoadingGeneratedDesigns || ! siteVerticalId ) ) {
 		return null;
 	}
 
