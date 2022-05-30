@@ -1,8 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { ReactElement, useContext } from 'react';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import SitesOverviewContext from './context';
 import SiteContent from './site-content';
 import SiteSearch from './site-search';
 import SiteWelcomeBanner from './site-welcome-banner';
@@ -11,25 +10,10 @@ import './style.scss';
 
 export default function SitesOverview(): ReactElement {
 	const translate = useTranslate();
-	const searchParam = new URLSearchParams( window.location.search ).get( 's' );
-	const pageParam = new URLSearchParams( window.location.search ).get( 'page' );
 
-	const [ searchQuery, setSearchQuery ] = useState( searchParam );
-	const [ pageNumber, setPageNumber ] = useState( Number( pageParam ) );
-	const { data, isError, isFetching } = useFetchDashboardSites( searchQuery, pageNumber );
+	const { search, currentPage } = useContext( SitesOverviewContext );
 
-	const handleSearch = ( query: string | null ) => {
-		setSearchQuery( query );
-	};
-	const dispatch = useDispatch();
-
-	useEffect( () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_visit' ) );
-	}, [ dispatch ] );
-
-	const handlePageChange = ( page: number ) => {
-		setPageNumber( page );
-	};
+	const { data, isError, isFetching } = useFetchDashboardSites( search, currentPage );
 
 	return (
 		<div className="sites-overview">
@@ -41,14 +25,13 @@ export default function SitesOverview(): ReactElement {
 				</div>
 			</div>
 			<div className="sites-overview__search">
-				<SiteSearch searchQuery={ searchParam } handleSearch={ handleSearch } />
+				<SiteSearch searchQuery={ search } currentPage={ currentPage } />
 			</div>
 			<SiteContent
 				data={ data }
 				isError={ isError }
 				isFetching={ isFetching }
-				currentPage={ pageNumber || 1 }
-				handlePageChange={ handlePageChange }
+				currentPage={ currentPage }
 			/>
 		</div>
 	);

@@ -23,7 +23,6 @@ interface Props {
 	isError: boolean;
 	isFetching: boolean;
 	currentPage: number;
-	handlePageChange: ( pageNumber: number ) => void;
 }
 
 export default function SiteContent( {
@@ -31,7 +30,6 @@ export default function SiteContent( {
 	isError,
 	isFetching,
 	currentPage,
-	handlePageChange,
 }: Props ): ReactElement {
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
@@ -67,7 +65,6 @@ export default function SiteContent( {
 
 	const handlePageClick = ( pageNumber: number ) => {
 		addPageArgs( pageNumber );
-		handlePageChange( pageNumber );
 	};
 
 	return (

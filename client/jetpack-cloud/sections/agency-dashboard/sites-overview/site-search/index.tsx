@@ -1,20 +1,23 @@
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import Search from 'calypso/components/search';
-import { setQueryArgs } from 'calypso/lib/query-args';
+import { addQueryArgs } from 'calypso/lib/route';
 import type { ReactElement } from 'react';
 
 export default function SiteSearch( {
 	searchQuery,
-	handleSearch,
 }: {
 	searchQuery: string | null;
-	handleSearch: ( query: string ) => void;
+	currentPage: number;
 } ): ReactElement {
 	const translate = useTranslate();
 
 	const handleSearchSites = ( query: string ) => {
-		setQueryArgs( '' !== query ? { s: query } : {} );
-		handleSearch( query );
+		const queryParams = {
+			...( query && { s: query } ),
+		};
+		const currentPath = window.location.pathname;
+		page( addQueryArgs( queryParams, currentPath ) );
 	};
 
 	return (
