@@ -96,7 +96,10 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	);
 
 	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
-		useStarterDesignsGeneratedQuery( { seed: siteSlug || undefined } );
+		useStarterDesignsGeneratedQuery( {
+			vertical_id: siteVerticalId,
+			seed: siteSlug || undefined,
+		} );
 
 	const selectedGeneratedDesign = useMemo(
 		() => selectedDesign ?? ( ! isMobile ? generatedDesigns[ 0 ] : undefined ),
