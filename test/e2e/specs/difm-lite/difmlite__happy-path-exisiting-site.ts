@@ -33,35 +33,27 @@ describe(
 				await gutenboardingFlow.clickButton( 'Select a site' );
 			} );
 			it( 'Step 2: Choose site to redo (delete)', async function () {
+				// Search
+				await difmLite.searchExistingSites();
 				// Selects a site to delete, first is default.
 				await difmLite.selectASite();
 
 				// Validate button inactive.
-				// const confirmSiteDeleteButton = page.locator( difmLite.selectors.confirmSiteDeleteButton );
-				const confirmSiteDeleteButton = page.locator(
-					'difmLite.selectors.confirmSiteDeleteButton'
-				);
-				await expect( confirmSiteDeleteButton.isDisabled );
 
 				// Fills in confirmation input (by default it will enter a valid input).
 				await difmLite.fillDeleteConfirmationField();
 
 				// Validate button active.
-				const confirmSiteDeleteButtonSteve = page.locator(
-					'difmLite.selectors.confirmSiteDeleteButton'
-				);
-				await expect( confirmSiteDeleteButtonSteve.isDisabled );
 
 				// Attempts to click the 'Delete site content' button.
 				await difmLite.clickDeleteConfirmation();
 			} );
 			it( 'Step 3: Enter site name (skip tagline)', async function () {
-				const siteTitleInput = page.locator( '#siteTitle ' );
-				await siteTitleInput.fill( 'Test Site Name' );
-				await gutenboardingFlow.clickButton( 'Continue' );
+				await difmLite.fillSiteTitleInput();
+				await difmLite.pressContinueButton();
 			} );
 			it( 'Step 4: Continue on socials (enter no socials)', async function () {
-				await gutenboardingFlow.clickButton( 'Continue' );
+				await difmLite.pressContinueButton();
 			} );
 			it( 'Step 5: Select a theme.', async function () {
 				const firstThemeChoice = page.locator( '.design-picker__design-option >> nth=0 ' );

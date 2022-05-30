@@ -5,11 +5,20 @@ import { Page } from 'playwright';
  */
 export class DifmLiteFlow {
 	selectors = {
-		existingSite: ( listPosition: number ) => `.site-icon >> nth=${ listPosition }`,
+		// Common
+		existingSite: ( index: number ) => `.site-icon >> nth=${ index }`,
+		input: ( index: number ) => `input >> nth=${ index }`,
+		continue: 'button[type="submit"]',
 
-		// Site deletion
+		// /do-it-for-me/difm-site-picker
+		search: 'input[type="search"]',
 		confirmSiteDeleteInput: '#confirmTextChangeInput',
-		confirmSiteDeleteButton: 'button.is-primary',
+		primaryCTA: 'button:text("Delete site content")',
+		cancel: 'button:text("Cancel")',
+
+		// /do-it-for-me/difm-options
+		siteTitleInput: 'input[name="siteTitle"]',
+		siteTagLineInput: 'input[name="tagline"]',
 	};
 
 	private page: Page;
@@ -19,6 +28,15 @@ export class DifmLiteFlow {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+	}
+
+	/**
+	 * Enters text into the delete confirmation field.
+	 *
+	 * @param {string} text Text to input to check, default is DELETE.
+	 */
+	async searchExistingSites( text = 'e2e' ) {
+		this.page.fill( this.selectors.search, text );
 	}
 
 	/**
@@ -43,7 +61,23 @@ export class DifmLiteFlow {
 	 * Deletes site selected by selectASite function.
 	 */
 	async clickDeleteConfirmation() {
-		this.page.click( this.selectors.confirmSiteDeleteButton );
+		this.page.click( this.selectors.primaryCTA );
+	}
+
+	/**
+	 * Fills site title at /do-it-for-me/difm-options stage of difm journey
+	 *
+	 * * @param {string} text default is Site Title plus current date (to give the ).
+	 */
+	async fillSiteTitleInput( text = 'Site Title' ) {
+		this.page.fill( this.selectors.siteTitleInput, text );
+	}
+
+	/**
+	 * Clicks button with type=submit
+	 */
+	async pressContinueButton() {
+		this.page.click( this.selectors.continue );
 	}
 
 	/**
