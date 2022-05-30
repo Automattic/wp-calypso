@@ -64,13 +64,62 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		border-top: none;
 		box-sizing: border-box;
 		min-height: $wpcom-modal-footer-height;
-		
+
 		@media ( min-width: $wpcom-modal-breakpoint ) {
 			padding: $wpcom-modal-footer-padding-v 0;
 			position: absolute;
 			bottom: $wpcom-modal-footer-height * -1;
 			height: $wpcom-modal-footer-height;
 			left: 0;
+		}
+
+		.components-button {
+			background-color: var( --color-surface );
+			color: var( --color-neutral-70 );
+			border-color: var( --color-neutral-10 );
+			border-radius: 2px;
+			border-style: solid;
+			border-width: 1px;
+			box-sizing: border-box;
+			font-weight: 400;
+			line-height: 22px;
+			padding: 12px 16px;
+			text-decoration: none;
+			vertical-align: top;
+
+			&:active,
+			&.is-active {
+				border-width: 1px;
+			}
+
+			&:hover {
+				border-color: var( --color-neutral-20 );
+				color: var( --color-neutral-70 );
+			}
+
+			.accessible-focus &:focus {
+				border-color: var( --color-primary );
+				box-shadow: 0 0 0 2px var( --color-primary-light );
+			}
+		}
+
+		.components-guide__forward-button {
+			background-color: var( --color-accent );
+			border-color: var( --color-accent );
+
+			color: var( --color-text-inverted );
+			font-size: $font-body-small;
+
+			&:hover,
+			&:focus {
+				background-color: var( --color-accent-60 );
+				border-color: var( --color-accent-60 );
+				color: var( --color-text-inverted );
+			}
+
+			.accessible-focus &:focus {
+				box-shadow: 0 0 0 2px var( --color-accent-light );
+			}
 		}
 	}
 
