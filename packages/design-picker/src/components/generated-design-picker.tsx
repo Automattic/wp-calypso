@@ -5,6 +5,7 @@ import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { useEffect, useRef } from 'react';
 import { getDesignPreviewUrl, getMShotOptions } from '../utils';
 import type { Design } from '../types';
 import './style.scss';
@@ -77,11 +78,31 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 } ) => {
 	const { __ } = useI18n();
 
+	const wrapperRef = useRef< HTMLDivElement >( null );
+
+	useEffect( () => {
+		const onResize = () => {
+			const { current: thumnbnailWrapper } = wrapperRef;
+			if ( ! thumnbnailWrapper ) {
+				return;
+			}
+
+			thumnbnailWrapper.style.height = `calc( 100vh - ${ thumnbnailWrapper.offsetTop }px`;
+		};
+
+		window.addEventListener( 'resize', onResize );
+		onResize();
+
+		return () => {
+			window.removeEventListener( 'resize', onResize );
+		};
+	}, [] );
+
 	return (
 		<div className="generated-design-picker">
 			{ heading }
 			<div className="generated_design-picker__content">
-				<div className="generated-design-picker__thumbnails">
+				<div className="generated-design-picker__thumbnails" ref={ wrapperRef }>
 					{ designs &&
 						designs.map( ( design, index ) => (
 							<GeneratedDesignThumbnail
