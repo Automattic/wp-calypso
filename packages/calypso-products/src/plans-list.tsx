@@ -201,6 +201,9 @@ import {
 	TYPE_PRO,
 	TYPE_STARTER,
 	WPCOM_FEATURES_ATOMIC,
+	WPCOM_FEATURES_SCAN,
+	WPCOM_FEATURES_ANTISPAM,
+	WPCOM_FEATURES_BACKUPS,
 } from './constants';
 import type {
 	BillingTerm,
@@ -481,6 +484,9 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
 		WPCOM_FEATURES_ATOMIC,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [],
 } );
@@ -568,7 +574,13 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
 	// Features not displayed but used for checking plan abilities
-	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_CLOUDFLARE_ANALYTICS ],
+	getIncludedFeatures: () => [
+		FEATURE_AUDIO_UPLOADS,
+		FEATURE_CLOUDFLARE_ANALYTICS,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
+	],
 	getInferiorFeatures: () => [],
 } );
 
@@ -672,6 +684,9 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
 		WPCOM_FEATURES_ATOMIC,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [],
 } );
@@ -712,6 +727,8 @@ const getJetpackPersonalDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_ACTIVITY_LOG,
 		FEATURE_PREMIUM_SUPPORT,
 		FEATURE_ALL_FREE_FEATURES_JETPACK,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 } );
 
@@ -764,6 +781,9 @@ const getJetpackPremiumDetails = (): IncompleteJetpackPlan => ( {
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_ADVANCED_SEO,
 			FEATURE_ALL_FREE_FEATURES_JETPACK,
+			WPCOM_FEATURES_SCAN,
+			WPCOM_FEATURES_ANTISPAM,
+			WPCOM_FEATURES_BACKUPS,
 		] ),
 } );
 
@@ -824,6 +844,9 @@ const getJetpackBusinessDetails = (): IncompleteJetpackPlan => ( {
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
+			WPCOM_FEATURES_SCAN,
+			WPCOM_FEATURES_ANTISPAM,
+			WPCOM_FEATURES_BACKUPS,
 		] ),
 	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );
@@ -858,6 +881,9 @@ const getPlanJetpackSecurityDailyDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 } );
 
@@ -902,6 +928,9 @@ const getPlanJetpackSecurityRealtimeDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
@@ -940,6 +969,9 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );
@@ -963,6 +995,9 @@ const getPlanJetpackSecurityT2Details = (): IncompleteJetpackPlan => ( {
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
@@ -1016,6 +1051,9 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 			FEATURE_GOOGLE_ANALYTICS,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_PREMIUM_SUPPORT,
+			WPCOM_FEATURES_SCAN,
+			WPCOM_FEATURES_ANTISPAM,
+			WPCOM_FEATURES_BACKUPS,
 		] ),
 	getInferiorFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
@@ -1681,5 +1719,8 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 		FEATURE_UPLOAD_THEMES,
 		FEATURE_UPLOAD_THEMES_PLUGINS,
 		WPCOM_FEATURES_ATOMIC,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 };
