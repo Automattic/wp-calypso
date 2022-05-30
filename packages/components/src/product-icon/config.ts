@@ -51,6 +51,7 @@ export type SupportedSlugs =
 	| 'personal-bundle-monthly'
 	| 'value_bundle'
 	| 'value_bundle-2y'
+	| 'value_bundle-monthly'
 	| 'value_bundle_monthly'
 	| 'ecommerce-bundle'
 	| 'ecommerce-bundle-2y'
