@@ -25,7 +25,7 @@ export default function DashboardOverview() {
 		}
 	}, [ hasFetched, isAgency, isAgencyEnabled ] );
 
-	if ( hasFetched && isAgency ) {
+	if ( isAgencyEnabled && hasFetched && isAgency ) {
 		return <SitesOverview />;
 	}
 

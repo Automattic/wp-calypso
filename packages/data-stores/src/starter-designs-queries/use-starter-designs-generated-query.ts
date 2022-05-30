@@ -8,7 +8,7 @@ export function useStarterDesignsGeneratedQuery(
 	queryParams: StarterDesignsGeneratedQueryParams
 ): UseQueryResult< Design[] > {
 	return useQuery(
-		[ 'starter-designs-generated' ],
+		[ 'starter-designs-generated', queryParams ],
 		() => fetchStarterDesignsGenerated( queryParams ),
 		{
 			select: ( response ) => response.map( apiStarterDesignsGeneratedToDesign ),

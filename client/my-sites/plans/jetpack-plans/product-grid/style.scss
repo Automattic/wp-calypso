@@ -1,6 +1,11 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+.product-grid__fullwidth-wrapper {
+	width: 100vw;
+	margin: 0 calc( 50% - 50vw );
+}
+
 .product-grid__section {
 	margin-bottom: 70px;
 	padding-left: 16px;
@@ -19,6 +24,15 @@
 		padding-left: 16px;
 		padding-right: 16px;
 	}
+}
+
+.is-jetpack-cloud.product-grid__wide-grid,
+.product-grid__wide-grid {
+	// 4 column product grid
+	max-width: 1312px;
+	margin: 0 auto;
+	padding-left: 32px;
+	padding-right: 32px;
 }
 
 .product-grid__section:first-of-type > .product-grid__section-title {

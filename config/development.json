@@ -123,7 +123,6 @@
 		"reader": true,
 		"reader/comment-polling": false,
 		"reader/full-errors": true,
-		"reader/gutenberg-for-comments": false,
 		"reader/list-management": true,
 		"recommend-plugins": true,
 		"redirect-fallback-browsers": true,

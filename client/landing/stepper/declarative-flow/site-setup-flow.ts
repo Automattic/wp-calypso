@@ -31,6 +31,7 @@ export const siteSetupFlow: Flow = {
 			'courses',
 			'storeFeatures',
 			'import',
+			...( isEnabled( 'onboarding/import-light' ) ? [ 'importLight' ] : [] ),
 			'importList',
 			'importReady',
 			'importReadyNot',

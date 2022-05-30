@@ -8,6 +8,7 @@ export { default as bloggerStartingPoint } from './blogger-starting-point';
 export { default as storeFeatures } from './store-features';
 export { default as designSetup } from './design-setup';
 export { default as import } from './import';
+export { default as importLight } from './import-light';
 export { default as importList } from './import-list';
 export { default as importReady } from './import-ready';
 export { default as importReadyNot } from './import-ready-not';
@@ -38,6 +39,7 @@ export type StepPath =
 	| 'designSetup'
 	| 'import'
 	| 'importList'
+	| 'importLight'
 	| 'importReady'
 	| 'importReadyNot'
 	| 'importReadyWpcom'

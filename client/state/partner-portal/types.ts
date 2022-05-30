@@ -104,6 +104,7 @@ export interface APIError {
 	status: number;
 	code: string | null;
 	message: string;
+	data?: any;
 }
 
 export interface APIInvoices {
@@ -137,6 +138,20 @@ export interface Invoice {
 	total: number;
 	currency: string;
 	pdfUrl: string;
+}
+
+export interface CompanyDetailsPayload {
+	name: string;
+	city: string;
+	line1: string;
+	line2: string;
+	country: string;
+	postalCode: string;
+	state: string;
+}
+
+export interface PartnerDetailsPayload extends CompanyDetailsPayload {
+	tos?: 'consented';
 }
 
 /**

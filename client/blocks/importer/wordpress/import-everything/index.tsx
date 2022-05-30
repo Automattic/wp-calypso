@@ -122,11 +122,7 @@ export class ImportEverything extends SectionMigrate {
 							sprintf( translate( 'Restoring to %(website)s' ), { website: targetSiteSlug } ) +
 								'...' }
 					</Title>
-					<ProgressBar
-						color={ 'black' }
-						compact={ true }
-						value={ this.state.percent ? this.state.percent : 0 }
-					/>
+					<ProgressBar compact={ true } value={ this.state.percent ? this.state.percent : 0 } />
 					<SubTitle>
 						{ translate(
 							"This may take a few minutes. We'll notify you by email when it's done."
