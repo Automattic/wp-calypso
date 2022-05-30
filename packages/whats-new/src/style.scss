@@ -44,6 +44,10 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		@media ( min-width: $wpcom-modal-breakpoint ) {
 			display: none;
 		}
+
+		.components-button {
+			color: var( --studio-white );
+		}
 	}
 
 	.components-guide__container {
