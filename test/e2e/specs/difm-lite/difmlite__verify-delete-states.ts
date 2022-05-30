@@ -1,5 +1,5 @@
 /**
- * @group calypso-release
+ * @group difmlite-pr
  */
 
 import { DataHelper, GutenboardingFlow, DifmLiteFlow, TestAccount } from '@automattic/calypso-e2e';
@@ -7,8 +7,8 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe(
-	DataHelper.createSuiteTitle( 'DIFM-Lite: Create WordPress.com paid site as an existing user.' ),
+describe.skip(
+	DataHelper.createSuiteTitle( 'DIFM-Lite: Verify site deletion journey.' ),
 	function () {
 		let testAccount: TestAccount;
 		let page: Page;

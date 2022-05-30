@@ -67,7 +67,7 @@ export class DifmLiteFlow {
 	/**
 	 * Fills site title at /do-it-for-me/difm-options stage of difm journey
 	 *
-	 * * @param {string} text default is Site Title plus current date (to give the ).
+	 * @param {string} text default is Site Title plus current date (to give the ).
 	 */
 	async fillSiteTitleInput( text = 'Site Title' ) {
 		this.page.fill( this.selectors.siteTitleInput, text );

@@ -1,5 +1,5 @@
 /**
- * @group calypso-release
+] * @group difmlite-pr
  */
 
 import { DataHelper, GutenboardingFlow, DifmLiteFlow, TestAccount } from '@automattic/calypso-e2e';
