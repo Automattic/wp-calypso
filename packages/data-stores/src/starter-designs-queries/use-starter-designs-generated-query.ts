@@ -7,12 +7,13 @@ import type { Design } from '@automattic/design-picker/src/types';
 export function useStarterDesignsGeneratedQuery(
 	queryParams: StarterDesignsGeneratedQueryParams
 ): UseQueryResult< Design[] > {
+	const { vertical_id } = queryParams;
 	return useQuery(
 		[ 'starter-designs-generated', queryParams ],
 		() => fetchStarterDesignsGenerated( queryParams ),
 		{
 			select: ( response ) => response.map( apiStarterDesignsGeneratedToDesign ),
-			enabled: true,
+			enabled: !! vertical_id,
 			refetchOnMount: 'always',
 			staleTime: Infinity,
 		}
