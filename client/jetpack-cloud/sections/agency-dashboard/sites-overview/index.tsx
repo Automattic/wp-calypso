@@ -1,6 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useContext } from 'react';
+import { ReactElement, useContext, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SitesOverviewContext from './context';
 import SiteContent from './site-content';
 import SiteSearch from './site-search';
@@ -10,10 +12,15 @@ import './style.scss';
 
 export default function SitesOverview(): ReactElement {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const { search, currentPage } = useContext( SitesOverviewContext );
 
 	const { data, isError, isFetching } = useFetchDashboardSites( search, currentPage );
+
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_visit' ) );
+	}, [ dispatch ] );
 
 	return (
 		<div className="sites-overview">

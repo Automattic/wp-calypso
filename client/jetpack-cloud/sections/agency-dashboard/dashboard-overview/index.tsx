@@ -9,9 +9,10 @@ import {
 	isAgencyUser,
 } from 'calypso/state/partner-portal/partner/selectors';
 import SitesOverview from '../sites-overview';
-import '../style.scss';
 import SitesOverviewContext from '../sites-overview/context';
 import type { SitesOverviewContextInterface } from '../sites-overview/types';
+
+import '../style.scss';
 
 export default function DashboardOverview( {
 	search,

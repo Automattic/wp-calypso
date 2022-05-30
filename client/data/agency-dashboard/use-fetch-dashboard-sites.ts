@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 
-const useFetchDashboardSites = ( searchQuery: string | null, currentPage: number | null ) => {
+const useFetchDashboardSites = ( searchQuery: string, currentPage: number ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	return useQuery(
