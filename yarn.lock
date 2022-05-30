@@ -1001,6 +1001,7 @@ __metadata:
   resolution: "@automattic/onboarding@workspace:packages/onboarding"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@testing-library/react": ^12.1.3

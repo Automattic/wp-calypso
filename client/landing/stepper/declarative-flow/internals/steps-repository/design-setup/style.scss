@@ -6,6 +6,7 @@
 $gray-100: #101517;
 $gray-60: #50575e;
 $design-button-primary-color: rgb( 17, 122, 201 );
+$design-setup-footer-height: 118px;
 
 .design-setup {
 	.step-container {
@@ -362,7 +363,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	.design-setup__header {
 		align-items: center;
 		display: flex;
-		margin: 48px 0;
+		margin: 0 0 48px;
 		row-gap: 1.5rem;
 		flex-wrap: wrap;
 
@@ -373,10 +374,15 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				display: inherit;
 			}
 		}
+
+		@include break-small {
+			margin-top: 48px;
+		}
 	}
 
 	.design-setup__footer {
 		display: none;
+		position: relative;
 		margin: 0 auto;
 
 		.design-setup__footer-inner {
@@ -385,50 +391,48 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			background-color: #ffffff;
 			display: flex;
 			justify-content: flex-end;
+			position: absolute;
 			width: 100%;
-
-			@include break-small {
-				margin-left: 154px;
-			}
-
-			@include break-medium {
-				margin-left: 248px;
-			}
+			height: $design-setup-footer-height;
+			opacity: 0;
+			transform: translateY( 100% );
+			pointer-events: none;
+			transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
 		}
 
 		@include break-small {
 			align-items: center;
 			bottom: 0;
 			display: flex;
-			height: 118px;
+			height: $design-setup-footer-height;
 			justify-content: flex-end;
-			left: 0;
 			max-width: 1440px;
-			opacity: 0;
-			pointer-events: none;
+			margin-left: 154px;
 			position: sticky;
-			right: 0;
-			transform: translateY( 118px );
-			transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+			overflow: hidden;
+			z-index: 1;
 
-			&.is-visible {
+			&.is-visible .design-setup__footer-inner {
 				opacity: 1;
 				transform: translateY( 0 );
-				z-index: 1;
-
-				.design-setup__footer-inner {
-					pointer-events: auto;
-				}
+				pointer-events: auto;
 			}
+		}
+
+		@include break-medium {
+			margin-left: 248px;
 		}
 	}
 
 	.generated_design-picker__content {
 		display: flex;
 		flex-direction: row;
+		align-items: flex-start;
 	}
 
 	.generated-design-picker__thumbnails {
+		position: sticky;
+		top: 109px;
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
@@ -452,7 +456,6 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		height: 0;
 		flex-direction: column;
 		row-gap: 24px;
-		margin-bottom: 44px;
 		position: relative;
 
 		.web-preview__inner {
