@@ -1,10 +1,11 @@
 import classnames from 'classnames';
 import { useEffect } from 'react';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import SignupHeader from 'calypso/signup/signup-header';
 import * as Steps from './steps-repository';
+import { AssertConditionState, Flow } from './types';
 import type { StepPath } from './steps-repository';
-import type { Flow } from './types';
 import './global.scss';
 
 /**
@@ -40,17 +41,30 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		window.scrollTo( 0, 0 );
 	}, [ location ] );
 
-	flow.useAssertConditions?.();
+	const assertCondition = flow.useAssertConditions?.() ?? { state: AssertConditionState.SUCCESS };
+
+	const renderStep = ( path: StepPath ) => {
+		switch ( assertCondition.state ) {
+			case AssertConditionState.CHECKING:
+				/* eslint-disable wpcalypso/jsx-classname-namespace */
+				return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
+			case AssertConditionState.FAILURE:
+				throw new Error( assertCondition.message ?? 'Error in Stepper pre-conditions' );
+		}
+
+		const StepComponent = Steps[ path ];
+		return <StepComponent navigation={ stepNavigation } flow={ flow.name } />;
+	};
 
 	return (
 		<Switch>
 			{ stepPaths.map( ( path ) => {
-				const StepComponent = Steps[ path ];
 				return (
 					<Route key={ path } path={ `/${ path }` }>
 						<div className={ classnames( flow.name, flow.classnames, pathToClass( path ) ) }>
 							<SignupHeader />
-							<StepComponent navigation={ stepNavigation } flow={ flow.name } />
+							{ renderStep( path ) }
 						</div>
 					</Route>
 				);
