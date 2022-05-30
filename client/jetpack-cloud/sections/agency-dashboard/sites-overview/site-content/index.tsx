@@ -86,7 +86,7 @@ export default function SiteContent( {
 					) }
 				</>
 			</div>
-			{ data?.total && (
+			{ data && data?.total > 0 && (
 				<Pagination
 					compact={ isMobile }
 					page={ currentPage }
