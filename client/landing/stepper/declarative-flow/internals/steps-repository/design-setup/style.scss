@@ -498,7 +498,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		line-height: 1.25rem;
 		margin: 8px 0;
 		width: 100%;
-		overflow: visible;
+		flex-shrink: 0;
     	margin-bottom: 48px;
 	}
 
