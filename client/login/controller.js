@@ -90,7 +90,8 @@ export function magicLogin( context, next ) {
 }
 
 export function qrCodeLogin( context, next ) {
-	context.primary = <QrCodeLoginPage locale={ context.params.lang } />;
+	const { redirect_to } = context.query;
+	context.primary = <QrCodeLoginPage locale={ context.params.lang } redirect_to={ redirect_to } />;
 
 	next();
 }

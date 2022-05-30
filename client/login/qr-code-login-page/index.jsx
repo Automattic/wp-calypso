@@ -10,17 +10,19 @@ function QrCodeLoginPlaceholder() {
 	return <Card className="qr-code-login-page__placeholder" />;
 }
 
-function QrCodeLoginPage( { locale } ) {
+function QrCodeLoginPage( { locale, redirectTo } ) {
 	const translate = useTranslate();
 
 	return (
 		<Main className="qr-code-login-page">
 			<div className="qr-code-login-page__form">
-				<h1 className="qr-code-login-page__heading">{ 'Login via the mobile app' }</h1>
+				<h1 className="qr-code-login-page__heading">{ translate( 'Login via the mobile app' ) }</h1>
 				<AsyncLoad
 					require="calypso/blocks/qr-code-login"
 					placeholder={ <QrCodeLoginPlaceholder /> }
 					size={ 300 }
+					locale={ locale }
+					redirectToAfterLoginUrl={ redirectTo }
 				/>
 				<div className="qr-code-login-page__footer">
 					<a href={ login( { locale } ) }>

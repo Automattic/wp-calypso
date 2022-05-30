@@ -3,11 +3,13 @@ import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QRCode from 'qrcode.react';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import qrCenter from 'calypso/assets/images/qr-login/wp.png';
 import ExternalLink from 'calypso/components/external-link';
 import { setStoredItem, getStoredItem } from 'calypso/lib/browser-storage';
 import { useInterval } from 'calypso/lib/interval';
+import { login } from 'calypso/lib/paths';
+import { postLoginRequest, getErrorFromHTTPError } from 'calypso/state/login/utils';
 
 import './style.scss';
 
@@ -22,103 +24,20 @@ const isStillValidToken = ( tokenData ) => {
 };
 
 const getLoginActionResponse = async ( action, args ) => {
-	const url = `https://wordpress.com/wp-login.php?action=${ action }`;
-	const body = new URLSearchParams( {
+	return postLoginRequest( action, {
 		...args,
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
-	} );
-
-	const response = await fetch( url, {
-		method: 'POST',
-		credentials: 'include',
-		body,
-	} );
-
-	let json_response = null;
-	try {
-		json_response = await response.json();
-	} catch {
-		json_response = false;
-	}
-
-	return json_response;
-};
-
-const fetchQRCodeData = async ( setTokenData, tokenData, anonymousUserId, setIsErrorState ) => {
-	if ( isStillValidToken( tokenData ) ) {
-		return;
-	}
-
-	if ( ! anonymousUserId ) {
-		return;
-	}
-	// tokenData is set to null initially.
-	// Lets wait till it is set to false when the local data is the just yet.
-	if ( tokenData === null ) {
-		return;
-	}
-
-	const responseData = await getLoginActionResponse( 'qr-code-token-request-endpoint', {
-		anon_id: anonymousUserId,
-	} );
-
-	if ( responseData === false ) {
-		setIsErrorState( true );
-		return;
-	}
-
-	if ( isStillValidToken( responseData.data ) ) {
-		setTokenData( responseData.data );
-		setStoredItem( LOCALE_STORAGE_KEY, responseData.data );
-		return;
-	}
-	setIsErrorState( true );
-	return;
-};
-
-const fetchAuthState = async (
-	setAuthState,
-	setTokenData,
-	tokenData,
-	anonymousUserId,
-	isErrorState,
-	setIsErrorState,
-	setPullInterval
-) => {
-	if ( ! tokenData ) {
-		return;
-	}
-
-	if ( isErrorState ) {
-		setPullInterval( null );
-		return;
-	}
-
-	if ( ! anonymousUserId ) {
-		return;
-	}
-
-	if ( ! isStillValidToken( tokenData ) ) {
-		fetchQRCodeData( setTokenData, tokenData, anonymousUserId );
-		return;
-	}
-
-	const { token, encrypted } = tokenData;
-
-	const responseData = await getLoginActionResponse( 'qr-code-authentication-endpoint', {
-		anon_id: anonymousUserId,
-		token,
-		data: encrypted,
-	} );
-
-	if ( responseData === false ) {
-		setIsErrorState( true );
-		setPullInterval( null );
-		return;
-	}
-
-	setAuthState( responseData.data );
+	} )
+		.then( ( response ) => {
+			if ( response.ok ) {
+				return response;
+			}
+			return response;
+		} )
+		.catch( ( httpError ) => {
+			return Promise.reject( getErrorFromHTTPError( httpError ) );
+		} );
 };
 
 function TokenQRCode( { tokenData } ) {
@@ -151,54 +70,133 @@ function QRCodePlaceholder() {
 	);
 }
 
-function QRCodeLogin() {
+function QRCodeErrorCard( { redirectToAfterLoginUrl, locale } ) {
 	const translate = useTranslate();
-	const [ tokenData, setTokenData ] = useState( null );
+
+	const loginUrl = login( {
+		redirectTo: redirectToAfterLoginUrl,
+		locale,
+	} );
+	return (
+		<Card className="qr-code-login">
+			<div className="qr-code-login__token-error">
+				<p>{ translate( 'Mobile App QR Code login is currently unavailable.' ) }</p>
+				<p>
+					<a href={ loginUrl }>{ translate( 'Back to login' ) }</a>
+				</p>
+			</div>
+		</Card>
+	);
+}
+
+function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
+	const translate = useTranslate();
+	const [ tokenState, setTokenState ] = useState( null );
 	const [ authState, setAuthState ] = useState( false );
-	const [ pullInterval, setPullInterval ] = useState( AUTH_PULL_INTERVAL );
 	const [ isErrorState, setIsErrorState ] = useState( false );
+	const [ pullInterval, setPullInterval ] = useState( AUTH_PULL_INTERVAL );
 
 	const anonymousUserId = getTracksAnonymousUserId();
+
+	const fetchQRCodeData = async ( tokenData, anonId ) => {
+		if ( isStillValidToken( tokenData ) ) {
+			return;
+		}
+
+		if ( ! anonId ) {
+			return;
+		}
+		// tokenData is set to null initially.
+		// Lets wait till it is set to false when the local data is the just yet.
+		if ( tokenData === null ) {
+			return;
+		}
+
+		try {
+			const responseData = await getLoginActionResponse( 'qr-code-token-request-endpoint', {
+				anon_id: anonId,
+			} );
+			if ( isStillValidToken( responseData.body.data ) ) {
+				setTokenState( responseData.body.data );
+				setStoredItem( LOCALE_STORAGE_KEY, responseData.body.data );
+				return;
+			}
+		} catch {
+			setIsErrorState( true );
+			return;
+		}
+		setIsErrorState( true );
+	};
+
+	const fetchAuthState = async ( tokenData, anonId, isInError ) => {
+		if ( ! tokenData ) {
+			return;
+		}
+
+		if ( isInError ) {
+			setPullInterval( null );
+			return;
+		}
+
+		if ( ! anonymousUserId ) {
+			return;
+		}
+
+		if ( ! isStillValidToken( tokenData ) ) {
+			fetchQRCodeData( tokenData, anonId );
+			return;
+		}
+
+		const { token, encrypted } = tokenData;
+		try {
+			const responseData = await getLoginActionResponse( 'qr-code-authentication-endpoint', {
+				anon_id: anonId,
+				token,
+				data: encrypted,
+			} );
+			setAuthState( responseData.body.data );
+		} catch ( error ) {
+			if ( error.code !== 'auth_missing' ) {
+				setIsErrorState( true );
+				setPullInterval( null );
+			}
+			return;
+		}
+	};
 
 	// Set the error state if we don't have a anonymousUserId
 	useEffect( () => {
 		if ( ! anonymousUserId ) {
 			setIsErrorState( true );
 		}
-	}, [ anonymousUserId, setIsErrorState ] );
+	}, [ anonymousUserId ] );
 
 	// Fetch QR code data.
 	useEffect( () => {
-		fetchQRCodeData( setTokenData, tokenData, anonymousUserId, setIsErrorState );
-	}, [ setTokenData, tokenData, anonymousUserId, setIsErrorState ] );
+		fetchQRCodeData( tokenState, anonymousUserId );
+	}, [ tokenState, anonymousUserId ] );
 
 	// Fetch the Auth Data.
 	useInterval( () => {
-		fetchAuthState(
-			setAuthState,
-			setTokenData,
-			tokenData,
-			anonymousUserId,
-			isErrorState,
-			setIsErrorState,
-			setPullInterval
-		);
+		fetchAuthState( tokenState, anonymousUserId, isErrorState );
 	}, pullInterval );
 
 	// Send the user to the login state.
 	useEffect( () => {
 		if ( authState?.auth_url ) {
+			// Clear the data.
+			setStoredItem( LOCALE_STORAGE_KEY, null );
 			window.location.replace( authState.auth_url );
 		}
 	}, [ authState ] );
 
 	useEffect( () => {
-		getStoredItem( LOCALE_STORAGE_KEY ).then( ( localTokenData ) =>
-			setTokenData( localTokenData ?? false )
+		getStoredItem( LOCALE_STORAGE_KEY ).then( ( storedTokenData ) =>
+			setTokenState( storedTokenData ?? false )
 		);
 	}, [] );
 
-	const steps = useMemo( () => [
+	const steps = [
 		// translation: Link to the WordPress App.
 		translate( 'Open the {{link}}%(wordpress)s App{{/link}} on your phone.', {
 			args: {
@@ -222,22 +220,18 @@ function QRCodeLogin() {
 			},
 		} ),
 		translate( 'Point your phone to this screen to scan the code.' ),
-	] );
+	];
 
 	if ( isErrorState ) {
 		return (
-			<Card className="qr-code-login">
-				<p className="qr-code-login__token-error">
-					{ translate( 'Mobile App QR Code login is currently unavailable.' ) }
-				</p>
-			</Card>
+			<QRCodeErrorCard locale={ locale } redirectToAfterLoginUrl={ redirectToAfterLoginUrl } />
 		);
 	}
 
 	return (
 		<Card className="qr-code-login">
 			<div className="qr-code-login__token">
-				<TokenQRCode tokenData={ tokenData } />
+				<TokenQRCode tokenData={ tokenState } />
 			</div>
 
 			<div className="qr-code-login__instructions">

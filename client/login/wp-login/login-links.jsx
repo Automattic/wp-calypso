@@ -270,6 +270,7 @@ export class LoginLinks extends Component {
 		const loginUrl = login( {
 			locale: this.props.locale,
 			twoFactorAuthType: 'qr',
+			redirectTo: this.props.query?.redirect_to,
 			signupUrl: this.props.query?.signup_url,
 		} );
 		return <a href={ loginUrl }>{ this.props.translate( 'Login via the mobile app' ) }</a>;
