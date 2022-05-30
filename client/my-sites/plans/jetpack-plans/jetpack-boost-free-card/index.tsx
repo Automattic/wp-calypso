@@ -23,9 +23,10 @@ const useBoostFreeItem = (): SelectorProduct => {
 			displayName: translate( 'Boost' ),
 			features: {
 				items: [
-					{ slug: 'not used', text: translate( 'Defer Non-Essential Javascript' ) },
-					{ slug: 'not used', text: translate( 'Optimize CSS Structure' ) },
-					{ slug: 'not used', text: translate( 'Lazy Image Loading' ) },
+					{ slug: 'not used', text: translate( 'Optimize CSS loading' ) },
+					{ slug: 'not used', text: translate( 'Defer non-essential JavaScript' ) },
+					{ slug: 'not used', text: translate( 'Lazy image loading' ) },
+					{ slug: 'not used', text: translate( 'Site performance scores' ) },
 				],
 			},
 			type: ITEM_TYPE_PRODUCT, // not used
@@ -68,7 +69,7 @@ const CardWithPrice: React.FC< CardWithPriceProps > = ( { siteId } ) => {
 			item={ boostFreeProduct }
 			headerLevel={ 3 }
 			description={ translate(
-				"Boost gives your site the same performance advantages as the world's leading websites."
+				'All of the essential tools to speed up your site — no developer required.'
 			) }
 			buttonLabel={ translate( 'Get Boost' ) }
 			buttonURL={ BOOST_FREE_URL }

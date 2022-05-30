@@ -24,6 +24,8 @@ const useFreeItem = (): SelectorProduct => {
 					{ slug: 'not used', text: translate( 'Brute force attack protection' ) },
 					{ slug: 'not used', text: translate( 'Site stats' ) },
 					{ slug: 'not used', text: translate( 'Content Delivery Network' ) },
+					{ slug: 'not used', text: translate( 'Downtime monitoring' ) },
+					{ slug: 'not used', text: translate( 'Related posts' ) },
 				],
 			},
 			type: ITEM_TYPE_PLAN, // not used
