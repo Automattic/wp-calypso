@@ -158,8 +158,10 @@ export function disableDomainPrivacy( siteId, domain ) {
 export const setPrimaryDomain = ( siteId, domain ) => async ( dispatch ) => {
 	debug( 'setPrimaryDomain', siteId, domain );
 	await wpcom.req.post( `/sites/${ siteId }/domains/primary`, { domain } );
-	await dispatch( fetchSiteDomains( siteId ) );
-	await dispatch( requestSite( siteId ) );
+	await Promise.all( [
+		dispatch( requestSite( siteId ) ),
+		dispatch( fetchSiteDomains( siteId ) ),
+	] );
 };
 
 export function discloseDomainContactInfo( siteId, domain ) {
