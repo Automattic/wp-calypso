@@ -2,8 +2,8 @@ import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import wp from 'calypso/lib/wp';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getCacheKey as getuseGetEmailAccountsQueryKey } from './use-get-email-accounts-query';
-import { getCacheKey as getuseGetEmailDomainsQueryKey } from './use-get-email-domains-query';
+import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
+import { getCacheKey as getEmailDomainsQueryKey } from './use-get-email-domains-query';
 import type { UseMutationOptions, UseMutationResult } from 'react-query';
 
 /**
@@ -23,8 +23,8 @@ export function useRemoveEmailForwardMutation(
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
-	const useEmailsQueryKey = getuseGetEmailAccountsQueryKey( selectedSiteId, domainName );
-	const useGetEmailDomainsQueryKey = getuseGetEmailDomainsQueryKey( selectedSiteId );
+	const useEmailsQueryKey = getEmailAccountsQueryKey( selectedSiteId, domainName );
+	const useGetEmailDomainsQueryKey = getEmailDomainsQueryKey( selectedSiteId );
 
 	mutationOptions.onSettled = async () => {
 		await Promise.all( [
