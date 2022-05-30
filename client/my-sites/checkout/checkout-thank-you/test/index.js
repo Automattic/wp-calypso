@@ -3,23 +3,9 @@
  */
 
 import {
-	PLAN_FREE,
 	PLAN_ECOMMERCE,
-	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_BUSINESS,
-	PLAN_BUSINESS_2_YEARS,
 	PLAN_PREMIUM,
-	PLAN_PREMIUM_2_YEARS,
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_BLOGGER,
-	PLAN_BLOGGER_2_YEARS,
-	PLAN_JETPACK_PERSONAL,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_BUSINESS_MONTHLY,
 	isDotComPlan,
 	WPCOM_DIFM_LITE,
 	isDIFMProduct,
@@ -211,38 +197,6 @@ describe( 'CheckoutThankYou', () => {
 				/>
 			);
 			expect( comp.find( DIFMLiteThankYou ) ).toHaveLength( 0 );
-		} );
-	} );
-
-	describe( 'isEligibleForLiveChat', () => {
-		[ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MONTHLY ].forEach( ( planSlug ) => {
-			test( `Should return true for Jetpack business plans (${ planSlug })`, () => {
-				const instance = new CheckoutThankYou( { planSlug } );
-				expect( instance.isEligibleForLiveChat() ).toBe( true );
-			} );
-		} );
-
-		[
-			PLAN_FREE,
-			PLAN_BLOGGER,
-			PLAN_BLOGGER_2_YEARS,
-			PLAN_PERSONAL,
-			PLAN_PERSONAL_2_YEARS,
-			PLAN_JETPACK_PERSONAL,
-			PLAN_JETPACK_PERSONAL_MONTHLY,
-			PLAN_PREMIUM,
-			PLAN_PREMIUM_2_YEARS,
-			PLAN_JETPACK_PREMIUM,
-			PLAN_JETPACK_PREMIUM_MONTHLY,
-			PLAN_BUSINESS,
-			PLAN_BUSINESS_2_YEARS,
-			PLAN_ECOMMERCE,
-			PLAN_ECOMMERCE_2_YEARS,
-		].forEach( ( planSlug ) => {
-			test( `Should return false for all other plans (${ planSlug })`, () => {
-				const instance = new CheckoutThankYou( { planSlug } );
-				expect( instance.isEligibleForLiveChat() ).toBe( false );
-			} );
 		} );
 	} );
 } );
