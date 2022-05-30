@@ -51,9 +51,6 @@
 }
 
 .preview-toolbar__browser-header {
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	position: relative;
 	max-width: 100%;
 	height: 40px;
@@ -70,6 +67,9 @@
 }
 
 .preview-toolbar__browser-header-content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	position: relative;
 	width: 100%;
 	height: 100%;
