@@ -1,10 +1,14 @@
 import classnames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
 
 import './style.scss';
 
-export const Count = ( { count, compact, numberFormat, forwardRef, primary, ...inheritProps } ) => {
+export const Count = ( { count, compact, numberFormat, forwardRef, primary, ...rest } ) => {
+	// Omit props passed from the `localize` higher-order component that we don't need.
+	const { translate, moment, ...inheritProps } = rest;
+
 	return (
 		<span
 			ref={ forwardRef }
@@ -27,7 +31,6 @@ Count.propTypes = {
 Count.defaultProps = {
 	primary: false,
 	compact: false,
-	numberFormat: ( i ) => i,
 };
 
-export default Count;
+export default localize( Count );

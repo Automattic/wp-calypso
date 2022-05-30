@@ -17,7 +17,7 @@ describe( 'Count', () => {
 	} );
 
 	test( 'should render with primary class', () => {
-		const { container } = render( <Count count={ 23 } primary /> );
+		const { container } = render( <Count count={ 23 } primary numberFormat={ () => {} } /> );
 		expect( container.firstChild ).toHaveClass( 'is-primary' );
 	} );
 } );
