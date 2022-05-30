@@ -91,18 +91,20 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		[ staticDesigns ]
 	);
 
+	const enabledGeneratedDesigns =
+		isEnabled( 'signup/design-picker-generated-designs' ) && intent === 'build';
+
 	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
-		useStarterDesignsGeneratedQuery( {
-			vertical_id: siteVerticalId,
-			seed: siteSlug || undefined,
-		} );
+		useStarterDesignsGeneratedQuery(
+			{
+				vertical_id: siteVerticalId,
+				seed: siteSlug || undefined,
+			},
+			{ enabled: enabledGeneratedDesigns && !! siteVerticalId }
+		);
 
 	const showGeneratedDesigns =
-		isEnabled( 'signup/design-picker-generated-designs' ) &&
-		intent === 'build' &&
-		!! siteVerticalId &&
-		generatedDesigns.length > 0 &&
-		! isForceStaticDesigns;
+		enabledGeneratedDesigns && generatedDesigns.length > 0 && ! isForceStaticDesigns;
 
 	const selectedGeneratedDesign = useMemo(
 		() => selectedDesign ?? ( ! isMobile ? generatedDesigns[ 0 ] : undefined ),
@@ -374,7 +376,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	// When the intent is build, we can potentially show the generated design picker.
 	// Don't render until we've fetched the generated designs from the backend.
-	if ( showGeneratedDesigns && ( isLoadingGeneratedDesigns || ! siteVerticalId ) ) {
+	if ( enabledGeneratedDesigns && ( isLoadingGeneratedDesigns || ! siteVerticalId ) ) {
 		return null;
 	}
 

@@ -1,21 +1,26 @@
 import { stringify } from 'qs';
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult, QueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { StarterDesignsGenerated, StarterDesignsGeneratedQueryParams } from './types';
 import type { Design } from '@automattic/design-picker/src/types';
 
+interface Options extends QueryOptions< StarterDesignsGenerated[], unknown > {
+	enabled?: boolean;
+}
+
 export function useStarterDesignsGeneratedQuery(
-	queryParams: StarterDesignsGeneratedQueryParams
+	queryParams: StarterDesignsGeneratedQueryParams,
+	queryOptions: Options = {}
 ): UseQueryResult< Design[] > {
-	const { vertical_id } = queryParams;
 	return useQuery(
 		[ 'starter-designs-generated', queryParams ],
 		() => fetchStarterDesignsGenerated( queryParams ),
 		{
-			select: ( response ) => response.map( apiStarterDesignsGeneratedToDesign ),
-			enabled: !! vertical_id,
+			select: ( response: StarterDesignsGenerated[] ) =>
+				response.map( apiStarterDesignsGeneratedToDesign ),
 			refetchOnMount: 'always',
 			staleTime: Infinity,
+			...queryOptions,
 		}
 	);
 }
