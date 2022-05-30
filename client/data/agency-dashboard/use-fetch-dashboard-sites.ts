@@ -23,7 +23,7 @@ const useFetchDashboardSites = ( searchQuery: string, currentPage: number ) => {
 		{
 			select: ( data ) => {
 				return {
-					sites: data.sites ? Object.values( data.sites ) : [],
+					sites: data.sites,
 					total: data.total,
 					perPage: data.per_page,
 				};
