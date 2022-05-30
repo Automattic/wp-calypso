@@ -24,6 +24,7 @@ export const createSitePlanObject = ( plan ) => {
 		isDomainUpgrade: Boolean( plan.is_domain_upgrade ),
 		productName: plan.product_name,
 		productSlug: plan.product_slug,
+		productDisplayPrice: plan.product_display_price,
 		rawDiscount: plan.raw_discount,
 		rawPrice: plan.raw_price,
 		subscribedDate: plan.subscribed_date,

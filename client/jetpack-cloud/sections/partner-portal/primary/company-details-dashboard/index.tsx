@@ -1,10 +1,11 @@
+import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
-import CompanyDetailsForm from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
+import UpdateCompanyDetailsForm from 'calypso/jetpack-cloud/sections/partner-portal/update-company-details-form';
 import './style.scss';
 
 export default function CompanyDetailsDashboard(): ReactElement {
@@ -25,7 +26,9 @@ export default function CompanyDetailsDashboard(): ReactElement {
 				</p>
 			</div>
 
-			<CompanyDetailsForm />
+			<Card>
+				<UpdateCompanyDetailsForm />
+			</Card>
 		</Main>
 	);
 }

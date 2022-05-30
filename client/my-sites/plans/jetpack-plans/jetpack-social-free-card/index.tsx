@@ -23,9 +23,13 @@ const useSocialFreeItem = (): SelectorProduct => {
 			displayName: translate( 'Social' ),
 			features: {
 				items: [
-					{ slug: 'not used', text: translate( 'Schedule or share instantly' ) },
-					{ slug: 'not used', text: translate( 'Connect to leading social platforms' ) },
-					{ slug: 'not used', text: translate( 'Manage everything from Publishing Hub' ) },
+					{ slug: 'not used', text: translate( 'Auto-publish on popular social media platforms' ) },
+					{ slug: 'not used', text: translate( 'Schedule your posts' ) },
+					{ slug: 'not used', text: translate( 'Preview content before sharing' ) },
+					{
+						slug: 'not used',
+						text: translate( 'Central dashboard to manage all social platform connections' ),
+					},
 				],
 			},
 			type: ITEM_TYPE_PRODUCT, // not used
@@ -68,7 +72,7 @@ const CardWithPrice: React.FC< CardWithPriceProps > = ( { siteId } ) => {
 			item={ socialFreeProduct }
 			headerLevel={ 3 }
 			description={ translate(
-				'Grow your audience effortlessly by automating posting on social media.'
+				'Easily share your website content on your social media channels.'
 			) }
 			buttonLabel={ translate( 'Get Social' ) }
 			buttonURL={ SOCIAL_FREE_URL }

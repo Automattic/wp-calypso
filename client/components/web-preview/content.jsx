@@ -294,6 +294,7 @@ export default class WebPreviewContent extends Component {
 					showUrl={ this.props.showUrl && isWithinBreakpoint( '>960px' ) }
 					selectSeoPreview={ this.selectSEO }
 					isLoading={ this.state.isLoadingSubpage }
+					isSticky={ this.props.isStickyToolbar }
 				/>
 				{ this.props.belowToolbar }
 				{ ( ! isLoaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
@@ -397,6 +398,8 @@ WebPreviewContent.propTypes = {
 	fetchPriority: PropTypes.string,
 	// Set height based on page content. This requires the page to post it's dimensions as message.
 	autoHeight: PropTypes.bool,
+	// The toolbar should sticky or not
+	isStickyToolbar: PropTypes.bool,
 };
 
 WebPreviewContent.defaultProps = {

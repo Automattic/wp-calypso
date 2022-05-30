@@ -37,7 +37,6 @@ export class UploadingPane extends UploadingPaneBase {
 				<div>
 					<p>{ uploaderPrompt }</p>
 					<ProgressBar
-						color={ 'black' }
 						compact={ true }
 						className={ progressClasses }
 						value={ uploadPercent }

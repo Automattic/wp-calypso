@@ -59,7 +59,7 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( { domainItem, siteId, siteSlug }, localeSlug ) {
+function getSignupDestination( { domainItem, siteId, siteSlug, refParameter }, localeSlug ) {
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
@@ -71,6 +71,11 @@ function getSignupDestination( { domainItem, siteId, siteSlug }, localeSlug ) {
 		// case we use the ID because we know it won't change depending on whether the user
 		// successfully completes the checkout process or not.
 		queryParam = { siteId };
+	}
+
+	// Add referral param to query args
+	if ( refParameter ) {
+		queryParam.ref = refParameter;
 	}
 
 	if ( isEnabled( 'signup/stepper-flow' ) ) {

@@ -33,3 +33,19 @@ export type FormattedRowObj = {
 	threats?: number;
 	error?: boolean;
 };
+
+export type AllowedStatusTypes = 'inactive' | 'progress' | 'failed' | 'warning' | 'success';
+
+export type StatusEventNames = {
+	[ key in AllowedStatusTypes | string ]: { small_screen: string; large_screen: string };
+};
+
+export type AllowedActionTypes = 'issue_license' | 'view_activity' | 'view_site' | 'visit_wp_admin';
+
+export type ActionEventNames = {
+	[ key in AllowedActionTypes ]: { small_screen: string; large_screen: string };
+};
+export interface SitesOverviewContextInterface {
+	search: string;
+	currentPage: number;
+}

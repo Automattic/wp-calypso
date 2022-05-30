@@ -121,6 +121,7 @@ import {
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_SPAM_BLOCK_V2,
 	FEATURE_SPELLING_CORRECTION_V2,
+	FEATURE_SUPPORTS_WOOCOMMERCE_V2,
 	FEATURE_STANDARD_SECURITY_TOOLS,
 	FEATURE_TRAFFIC_TOOLS,
 	FEATURE_UNLIMITED_PRODUCTS_SERVICES,
@@ -1267,6 +1268,11 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Spelling correction' ),
 	},
 
+	[ FEATURE_SUPPORTS_WOOCOMMERCE_V2 ]: {
+		getSlug: () => FEATURE_SUPPORTS_WOOCOMMERCE_V2,
+		getTitle: () => i18n.translate( 'Works seamlessly with WooCommerce' ),
+	},
+
 	[ FEATURE_P2_3GB_STORAGE ]: {
 		getSlug: () => FEATURE_P2_3GB_STORAGE,
 		getTitle: () =>
@@ -1403,7 +1409,7 @@ export const FEATURES_LIST = {
 	/* START - Jetpack tiered product-specific features */
 	[ FEATURE_JETPACK_10GB_BACKUP_STORAGE ]: {
 		getSlug: () => FEATURE_JETPACK_10GB_BACKUP_STORAGE,
-		getTitle: () => i18n.translate( '10GB of backup storage' ),
+		getTitle: () => i18n.translate( 'Starts with 10GB of storage' ),
 	},
 	[ FEATURE_JETPACK_1TB_BACKUP_STORAGE ]: {
 		getSlug: () => FEATURE_JETPACK_1TB_BACKUP_STORAGE,

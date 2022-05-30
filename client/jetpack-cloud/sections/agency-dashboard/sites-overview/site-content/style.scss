@@ -9,7 +9,5 @@
 	@include break-large() {
 		display: none;
 	}
-}
-.site-content__card.is-compact {
-	padding: 0;
+	margin-bottom: 1.5rem;
 }

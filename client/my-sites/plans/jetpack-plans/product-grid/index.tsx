@@ -18,6 +18,7 @@ import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner'
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import CategoryFilter from '../category-filter';
@@ -119,6 +120,11 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const currentPlanSlug = currentPlan?.product_slug || null;
+	const currentRoute = useSelector( getCurrentRoute );
+
+	const isStoreLanding =
+		currentRoute === '/jetpack/connect/store' ||
+		currentRoute.match( new RegExp( '^/jetpack/connect/plans/[^/]+/?(monthly|annual)?$' ) );
 
 	// Retrieve and cache the plans array, which might be already translated.
 	useEffect( () => {
@@ -210,6 +216,10 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		</li>
 	);
 
+	const showFourColumnGrid =
+		config.isEnabled( 'jetpack/pricing-add-boost-social' ) &&
+		( isJetpackCloud() || isStoreLanding );
+
 	return (
 		<>
 			{ planRecommendation && (
@@ -275,45 +285,50 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					/>
 				</div>
 			</ProductGridSection>
-			<ProductGridSection title={ translate( 'More Products' ) }>
-				<>
-					{ showProductCategories && (
-						<div className="product-grid__category-filter">
-							<CategoryFilter
-								defaultValue={ JETPACK_SECURITY_CATEGORY }
-								onChange={ onCategoryChange }
-							/>
-						</div>
-					) }
-					<ul className="product-grid__product-grid">
-						{ filteredItems.map( getOtherItemsProductCard ) }
-						{ ( ! showProductCategories || category === JETPACK_PERFORMANCE_CATEGORY ) &&
-							showBoostAndSocialFree &&
-							! siteHasBoostPremium && (
-								<li>
-									<JetpackBoostFreeCard siteId={ siteId } />
-								</li>
-							) }
-						{ ( ! showProductCategories || category === JETPACK_GROWTH_CATEGORY ) && (
-							<>
-								{ showBoostAndSocialFree && (
+			<div className={ classNames( { 'product-grid__fullwidth-wrapper': showFourColumnGrid } ) }>
+				<ProductGridSection
+					title={ translate( 'More Products' ) }
+					{ ...( showFourColumnGrid && { className: 'product-grid__wide-grid' } ) }
+				>
+					<>
+						{ showProductCategories && (
+							<div className="product-grid__category-filter">
+								<CategoryFilter
+									defaultValue={ JETPACK_SECURITY_CATEGORY }
+									onChange={ onCategoryChange }
+								/>
+							</div>
+						) }
+						<ul className="product-grid__product-grid">
+							{ filteredItems.map( getOtherItemsProductCard ) }
+							{ ( ! showProductCategories || category === JETPACK_PERFORMANCE_CATEGORY ) &&
+								showBoostAndSocialFree &&
+								! siteHasBoostPremium && (
 									<li>
-										<JetpackSocialFreeCard siteId={ siteId } />
+										<JetpackBoostFreeCard siteId={ siteId } />
 									</li>
 								) }
+							{ ( ! showProductCategories || category === JETPACK_GROWTH_CATEGORY ) && (
+								<>
+									{ showBoostAndSocialFree && (
+										<li>
+											<JetpackSocialFreeCard siteId={ siteId } />
+										</li>
+									) }
+									<li>
+										<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
+									</li>
+								</>
+							) }
+							{ showFreeCard && (
 								<li>
-									<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
+									<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 								</li>
-							</>
-						) }
-						{ showFreeCard && (
-							<li>
-								<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
-							</li>
-						) }
-					</ul>
-				</>
-			</ProductGridSection>
+							) }
+						</ul>
+					</>
+				</ProductGridSection>
+			</div>
 			<StoreFooter />
 		</>
 	);

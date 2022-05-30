@@ -371,17 +371,9 @@ export class SiteDomains extends Component {
 		);
 	}
 
-	setPrimaryDomain( domainName ) {
-		return new Promise( ( resolve, reject ) => {
-			this.props.setPrimaryDomain( this.props.selectedSite.ID, domainName, ( error, data ) => {
-				if ( ! error && data && data.success ) {
-					page.redirect( domainManagementList( this.props.selectedSite.slug ) );
-					resolve();
-				} else {
-					reject( error );
-				}
-			} );
-		} );
+	async setPrimaryDomain( domainName ) {
+		await this.props.setPrimaryDomain( this.props.selectedSite.ID, domainName );
+		page.redirect( domainManagementList( this.props.selectedSite.slug ) );
 	}
 
 	handleUpdatePrimaryDomainWpcom = ( domainName ) => {

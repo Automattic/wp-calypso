@@ -1,7 +1,6 @@
 import { CheckboxControl } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
 import classNames from 'classnames';
-import React from 'react';
 
 type SelectCardProps = {
 	children: React.ReactNode;
