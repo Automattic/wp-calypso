@@ -9,7 +9,7 @@ const Playground = () => {
 	return <div className={ 'storybook__helpcenter-playground' }></div>;
 };
 
-const HelpCenterStory: React.FC = () => {
+const HelpCenterStory = () => {
 	const [ showHelpCenter, setShowHelpCenter ] = useState( false );
 
 	return (

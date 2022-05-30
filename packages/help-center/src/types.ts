@@ -1,5 +1,5 @@
-import { SiteDetails } from '@automattic/data-stores';
-import { ReactElement } from 'react';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { ReactElement } from 'react';
 
 export interface Container {
 	handleClose: () => void;
@@ -24,7 +24,7 @@ export interface SitePicker {
 	enabled: boolean;
 }
 
-// ended means the user closed the popup
+// ended means the user closed the popup or reloaded the iframe
 export type WindowState = 'open' | 'closed' | 'blurred' | 'ended';
 
 export interface Article {

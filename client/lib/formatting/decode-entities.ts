@@ -1,4 +1,4 @@
-import decode from './decode/node';
+import decode from './decode';
 
 export function decodeEntities( text: string ) {
 	// Bypass decode if text doesn't include entities
