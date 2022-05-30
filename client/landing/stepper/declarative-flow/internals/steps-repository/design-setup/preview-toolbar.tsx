@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { computer, tablet, phone } from 'calypso/signup/icons';
 import './preview-toolbar.scss';
 
@@ -41,26 +41,30 @@ const DesignPickerPreviewToolbar = ( {
 		phone: { title: translate( 'Phone' ), icon: phone, iconSize: 24 },
 	} );
 
-	const wrapperRef = useRef< HTMLDivElement >( null );
+	const [ stickyStyle, setStickyStyle ] = useState( {} );
 	const headerRef = useRef< HTMLDivElement >( null );
+	const headerContentRef = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
 		if ( ! isSticky ) {
-			wrapperRef.current?.style.removeProperty( 'height' );
-			headerRef.current?.style.removeProperty( 'width' );
-			headerRef.current?.style.removeProperty( 'left' );
+			setStickyStyle( {} );
 			return noop;
 		}
 
 		const handleSticky = () => {
-			if ( ! wrapperRef.current || ! headerRef.current ) {
+			if ( ! headerRef.current || ! headerContentRef.current ) {
 				return;
 			}
 
-			const { left } = wrapperRef.current.getBoundingClientRect();
-			wrapperRef.current?.style.setProperty( 'height', `${ headerRef.current.offsetWidth }px` );
-			headerRef.current?.style.setProperty( 'width', `${ wrapperRef.current.offsetWidth }px` );
-			headerRef.current?.style.setProperty( 'left', `${ left }px` );
+			const { left } = headerRef.current.getBoundingClientRect();
+
+			setStickyStyle( {
+				position: 'fixed',
+				top: '109px',
+				left: `${ left }px`,
+				height: `${ headerRef.current.offsetHeight }px`,
+				width: `${ headerRef.current.offsetWidth }px`,
+			} );
 		};
 
 		handleSticky();
@@ -70,10 +74,10 @@ const DesignPickerPreviewToolbar = ( {
 		return () => {
 			window.removeEventListener( 'resize', handleSticky );
 		};
-	}, [ isSticky ] );
+	}, [ isSticky, setStickyStyle ] );
 
 	return (
-		<div className="preview-toolbar__toolbar" ref={ wrapperRef }>
+		<div className="preview-toolbar__toolbar">
 			{ showDeviceSwitcher && (
 				<div className="preview-toolbar__devices">
 					{ possibleDevices.map( ( device ) => (
@@ -94,20 +98,21 @@ const DesignPickerPreviewToolbar = ( {
 					) ) }
 				</div>
 			) }
-			<div
-				className={ classNames( 'preview-toolbar__browser-header', {
-					'preview-toolbar__browser-header--sticky': isSticky,
-				} ) }
-				ref={ headerRef }
-			>
-				<svg width="40" height="8">
-					<g>
-						<rect width="8" height="8" rx="4" />
-						<rect x="16" width="8" height="8" rx="4" />
-						<rect x="32" width="8" height="8" rx="4" />
-					</g>
-				</svg>
-				{ externalUrl && <span className="preview-toolbar__browser-url">{ externalUrl }</span> }
+			<div className="preview-toolbar__browser-header" ref={ headerRef }>
+				<div
+					className="preview-toolbar__browser-header-content"
+					style={ stickyStyle }
+					ref={ headerContentRef }
+				>
+					<svg width="40" height="8">
+						<g>
+							<rect width="8" height="8" rx="4" />
+							<rect x="16" width="8" height="8" rx="4" />
+							<rect x="32" width="8" height="8" rx="4" />
+						</g>
+					</svg>
+					{ externalUrl && <span className="preview-toolbar__browser-url">{ externalUrl }</span> }
+				</div>
 			</div>
 		</div>
 	);
