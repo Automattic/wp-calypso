@@ -25,7 +25,7 @@ function QrCodeLoginPage( { locale, redirectTo } ) {
 					redirectToAfterLoginUrl={ redirectTo }
 				/>
 				<div className="qr-code-login-page__footer">
-					<a href={ login( { locale } ) }>
+					<a href={ login( { locale, redirectTo } ) }>
 						<Gridicon icon="arrow-left" size={ 18 } />
 						{ translate( 'Enter a password instead' ) }
 					</a>
