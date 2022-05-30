@@ -216,7 +216,9 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 		</li>
 	);
 
-	const showFourColumnGrid = isJetpackCloud() || isStoreLanding;
+	const showFourColumnGrid =
+		config.isEnabled( 'jetpack/pricing-add-boost-social' ) &&
+		( isJetpackCloud() || isStoreLanding );
 
 	return (
 		<>
