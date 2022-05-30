@@ -8,7 +8,9 @@ import { Page, Browser } from 'playwright';
 declare const browser: Browser;
 
 describe(
-	DataHelper.createSuiteTitle( 'DIFM-Lite: Create WordPress.com paid site as an existing user.' ),
+	DataHelper.createSuiteTitle(
+		'DIFM-Lite: Create a new WordPress.com paid site over writting an existing site.'
+	),
 	function () {
 		let testAccount: TestAccount;
 		let page: Page;
@@ -31,9 +33,27 @@ describe(
 				await gutenboardingFlow.clickButton( 'Select a site' );
 			} );
 			it( 'Step 2: Choose site to redo (delete)', async function () {
+				// Selects a site to delete, first is default.
 				await difmLite.selectASite();
-				await page.locator( '#confirmTextChangeInput' ).fill( 'DELETE' );
-				await gutenboardingFlow.clickButton( 'Delete site content' );
+
+				// Validate button inactive.
+				// const confirmSiteDeleteButton = page.locator( difmLite.selectors.confirmSiteDeleteButton );
+				const confirmSiteDeleteButton = page.locator(
+					'difmLite.selectors.confirmSiteDeleteButton'
+				);
+				await expect( confirmSiteDeleteButton.isDisabled );
+
+				// Fills in confirmation input (by default it will enter a valid input).
+				await difmLite.fillDeleteConfirmationField();
+
+				// Validate button active.
+				const confirmSiteDeleteButtonSteve = page.locator(
+					'difmLite.selectors.confirmSiteDeleteButton'
+				);
+				await expect( confirmSiteDeleteButtonSteve.isDisabled );
+
+				// Attempts to click the 'Delete site content' button.
+				await difmLite.clickDeleteConfirmation();
 			} );
 			it( 'Step 3: Enter site name (skip tagline)', async function () {
 				const siteTitleInput = page.locator( '#siteTitle ' );
@@ -51,7 +71,7 @@ describe(
 				await gutenboardingFlow.clickButton( 'Go to Checkout' );
 			} );
 			it( 'Confirm journey has resolved to the basket.', async function () {
-				await page.locator( '.masterbar__secure-checkout' );
+				await difmLite.checkForCheckout();
 			} );
 		} );
 	}
