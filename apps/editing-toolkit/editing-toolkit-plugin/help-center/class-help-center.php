@@ -7,6 +7,10 @@
 
 namespace A8C\FSE;
 
+define( 'HELP_CENTER_BUNDLE_PATH', 'https://widgets.wp.com/help-center/build.min.js' );
+define( 'HELP_CENTER_CSS_PATH', 'https://widgets.wp.com/help-center/build.min.css' );
+define( 'HELP_CENTER_RTL_CSS_PATH', 'https://widgets.wp.com/help-center/build.min.rtl.css' );
+
 /**
  * Class Help_Center
  */
@@ -41,23 +45,19 @@ class Help_Center {
 	 * Enqueue block editor assets.
 	 */
 	public function enqueue_script() {
-		$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/help-center.asset.php';
-		$script_dependencies = $asset_file['dependencies'];
-		$version             = $asset_file['version'];
-
 		wp_enqueue_script(
 			'help-center-script',
-			plugins_url( 'dist/help-center.min.js', __FILE__ ),
-			is_array( $script_dependencies ) ? $script_dependencies : array(),
-			$version,
+			HELP_CENTER_BUNDLE_PATH,
+			array(),
+			1,
 			true
 		);
 
 		wp_enqueue_style(
 			'help-center-style',
-			plugins_url( 'dist/help-center' . ( is_rtl() ? '.rtl.css' : '.css' ), __FILE__ ),
+			is_rtl() ? HELP_CENTER_RTL_CSS_PATH : HELP_CENTER_CSS_PATH,
 			array(),
-			$version
+			1
 		);
 
 		wp_localize_script(

@@ -1,3 +1,5 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+import './config';
 import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { Button } from '@wordpress/components';
@@ -8,7 +10,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
 import { useEffect, useState } from 'react';
 import { QueryClientProvider } from 'react-query';
-import { whatsNewQueryClient } from '../../common/what-new-query-client';
+import { whatsNewQueryClient } from '../../editing-toolkit/editing-toolkit-plugin/common/what-new-query-client';
 import Contents from './contents';
 import './help-center.scss';
 
@@ -25,7 +27,7 @@ function HelpCenterContent() {
 	}, [ data, isLoading ] );
 
 	const content = (
-		<span className="etk-help-center">
+		<span className="help-center-entry-point">
 			<Button
 				className={ cx( 'entry-point-button', { 'is-active': show } ) }
 				onClick={ () => setShowHelpCenter( ! show ) }
@@ -55,6 +57,7 @@ function HelpCenterContent() {
 
 registerPlugin( 'etk-help-center', {
 	render: () => {
+		debugger;
 		return (
 			<QueryClientProvider client={ whatsNewQueryClient }>
 				<HelpCenterContent />,
