@@ -126,7 +126,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	useEffect( () => {
 		if ( showGeneratedDesigns && ! hasTrackedView.current ) {
 			hasTrackedView.current = true;
-			recordTracksEvent( 'calypso_signup_view_generated_design_picker' );
+			recordTracksEvent( 'calypso_signup_generated_design_picker_view' );
 		}
 	}, [ showGeneratedDesigns, hasTrackedView ] );
 
