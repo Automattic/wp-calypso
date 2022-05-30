@@ -68,7 +68,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	);
 
 	const siteVerticalId = useSelect(
-		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site.ID ) ) || undefined
+		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site.ID ) ) || ''
 	);
 
 	const showDesignPickerCategories =
