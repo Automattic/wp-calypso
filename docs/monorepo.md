@@ -93,8 +93,8 @@ failing to do so, will make your package work correctly in the dev build but tre
 	},
 	"files": [ "dist", "src" ],
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
+		"clean": "run -T rimraf dist",
+		"prepublish": "run clean",
 		"prepare": "transpile"
 	}
 }

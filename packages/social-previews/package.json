@@ -34,7 +34,7 @@
 	"scripts": {
 		"clean": "rm -rf dist",
 		"build": "transpile && copy-assets",
-		"prepack": "yarn run clean && yarn run build"
+		"prepack": "run clean && run build"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.4.1",
