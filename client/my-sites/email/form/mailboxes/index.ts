@@ -10,6 +10,7 @@ import {
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import {
 	EmailProvider,
+	FieldError,
 	MailboxFormFieldBase,
 	MailboxFormFieldsFactory,
 } from 'calypso/my-sites/email/form/mailboxes/types';
@@ -40,15 +41,8 @@ class MailboxForm< T extends EmailProvider > {
 		this.provider = provider;
 	}
 
-	private getFormField< T >( fieldName: FormFieldNames ): MailboxFormFieldBase< T > | null {
-		if ( fieldName in this.formFields ) {
-			const field = Reflect.get( this.formFields, fieldName );
-			if ( field ) {
-				return field;
-			}
-		}
-
-		return null;
+	private getFormField< T >( fieldName: FormFieldNames ): MailboxFormFieldBase< T > | undefined {
+		return Reflect.get( this.formFields, fieldName );
 	}
 
 	private getValidators(): [ ValidatorFieldNames, Validator< unknown > ][] {
@@ -90,6 +84,22 @@ class MailboxForm< T extends EmailProvider > {
 		}
 	}
 
+	getFieldValue< R >( fieldName: FormFieldNames ) {
+		return this.getFormField< R >( fieldName )?.value;
+	}
+
+	getFieldError( fieldName: FormFieldNames ): FieldError {
+		return this.getFormField( fieldName )?.error ?? null;
+	}
+
+	getIsFieldRequired( fieldName: FormFieldNames ) {
+		return this.getFormField( fieldName )?.isRequired;
+	}
+
+	getIsFieldVisible( fieldName: FormFieldNames ) {
+		return this.getFormField( fieldName )?.isVisible;
+	}
+
 	hasErrors() {
 		return Object.values( this.formFields ).some( ( field ) => field.hasError() );
 	}
@@ -118,6 +128,13 @@ class MailboxForm< T extends EmailProvider > {
 		}
 	}
 
+	setFieldValue< R >( fieldName: FormFieldNames, value: R ) {
+		const field = this.getFormField< R >( fieldName );
+		if ( field ) {
+			field.value = value;
+		}
+	}
+
 	validate() {
 		this.clearErrors();
 
@@ -133,6 +150,21 @@ class MailboxForm< T extends EmailProvider > {
 
 			validator.validate( field );
 		}
+	}
+
+	validateField( fieldName: FormFieldNames ) {
+		const field = this.getFormField( fieldName );
+		if ( ! field ) {
+			return;
+		}
+
+		// Clear previous error
+		field.error = null;
+
+		// Validate single field by name
+		this.getValidators()
+			.filter( ( [ currentFieldName, validator ] ) => currentFieldName === fieldName && validator )
+			.forEach( ( [ , validator ] ) => validator.validate( field ) );
 	}
 }
 
