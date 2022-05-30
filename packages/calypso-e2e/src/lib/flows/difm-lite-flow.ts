@@ -1,11 +1,11 @@
 import { Page } from 'playwright';
 
 const selectors = {
-	selectExistingSite: '.button__select-items__item-button:text("Select a site")',
+	existingSite: ( listPosition: number ) => `.site-icon >> nth=${ listPosition }`,
 };
 
 /**
- * Class representing the landing page at https://wordpress.com/woocommerce-installation/.
+ * Class representing the difm-lite journey.
  */
 export class DifmLiteFlow {
 	private page: Page;
@@ -18,25 +18,11 @@ export class DifmLiteFlow {
 	}
 
 	/**
-	 * Click the Select a site button
+	 * Given a number, clicks the n'th item where nth is the number parametrer passed.
+	 *
+	 * @param {number} number N'th site on page.
 	 */
-	async clickSelectSite(): Promise< void > {
-		await this.page.waitForSelector( selectors.selectExistingSite );
-		await this.page.click( selectors.selectExistingSite );
+	async selectASite( number = 0 ): Promise< void > {
+		await this.page.click( selectors.existingSite( number ) );
 	}
-
-	/**
-	 * SC Check URL
-	 */
-	async urlIsCheckout(): Promise< void > {
-		await this.page.url().includes( '/checkout' );
-	}
-
-	/**
-	 * Click the Start a new store button
-	 */
-	// async openStoreSetup(): Promise< void > {
-	// 	await this.page.click( selectors.start );
-	// 	await this.page.waitForSelector( selectors.installer );
-	// }
 }
