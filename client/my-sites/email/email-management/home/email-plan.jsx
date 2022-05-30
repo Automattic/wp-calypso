@@ -9,7 +9,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
+import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import {
 	getGoogleAdminUrl,
 	getGoogleMailServiceFamily,
@@ -271,7 +271,7 @@ function EmailPlan( { domain, selectedSite, source } ) {
 		);
 	}
 
-	const { data, isLoading } = useEmailAccountsQuery( selectedSite.ID, domain.name, {
+	const { data, isLoading } = useGetEmailAccountsQuery( selectedSite.ID, domain.name, {
 		retry: false,
 	} );
 
