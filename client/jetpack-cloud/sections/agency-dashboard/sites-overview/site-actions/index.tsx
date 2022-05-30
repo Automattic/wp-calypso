@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getActionEventNames } from '../utils';
+import { getActionEventName } from '../utils';
 import type { SiteNode, AllowedActionTypes } from '../types';
 import type { ReactElement } from 'react';
 
@@ -43,7 +43,7 @@ export default function SiteActions( {
 	const siteId = site?.value?.blog_id;
 
 	const handleClickMenuItem = ( actionType: AllowedActionTypes ) => {
-		const eventName = getActionEventNames( actionType, isLargeScreen );
+		const eventName = getActionEventName( actionType, isLargeScreen );
 		dispatch( recordTracksEvent( eventName ) );
 	};
 

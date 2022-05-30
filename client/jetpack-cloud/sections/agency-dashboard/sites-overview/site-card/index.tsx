@@ -21,11 +21,11 @@ export default function SiteCard( { rows, columns }: Props ): ReactElement {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	const toggleIsExpanded = () => {
-		setIsExpanded( ( prevValue ) => {
-			if ( ! prevValue ) {
+		setIsExpanded( ( expanded ) => {
+			if ( ! expanded ) {
 				dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_card_expand' ) );
 			}
-			return ! prevValue;
+			return ! expanded;
 		} );
 	};
 

@@ -31,7 +31,7 @@ export const actionEventNames: ActionEventNames = {
 };
 
 // Returns event name based on the action type
-export const getActionEventNames = ( actionType: AllowedActionTypes, isLargeScreen: boolean ) => {
+export const getActionEventName = ( actionType: AllowedActionTypes, isLargeScreen: boolean ) => {
 	const deviceKey = isLargeScreen ? 'large_screen' : 'small_screen';
 	return actionEventNames?.[ actionType ]?.[ deviceKey ];
 };
@@ -102,27 +102,21 @@ const getRowEventName = (
 	status: AllowedStatusTypes,
 	isLargeScreen: boolean
 ) => {
-	let eventName = '';
 	const deviceKey = isLargeScreen ? 'large_screen' : 'small_screen';
 	switch ( type ) {
 		case 'backup': {
-			eventName = backupEventNames?.[ status ]?.[ deviceKey ];
-			break;
+			return backupEventNames?.[ status ]?.[ deviceKey ];
 		}
 		case 'scan': {
-			eventName = scanEventNames?.[ status ]?.[ deviceKey ];
-			break;
+			return scanEventNames?.[ status ]?.[ deviceKey ];
 		}
 		case 'monitor': {
-			eventName = monitorEventNames?.[ status ]?.[ deviceKey ];
-			break;
+			return monitorEventNames?.[ status ]?.[ deviceKey ];
 		}
 		case 'plugin': {
-			eventName = pluginEventNames?.[ status ]?.[ deviceKey ];
-			break;
+			return pluginEventNames?.[ status ]?.[ deviceKey ];
 		}
 	}
-	return eventName;
 };
 
 /**
@@ -204,7 +198,7 @@ export const getRowMetaData = (
 	tooltip: ReactChild | undefined;
 	tooltipId: string;
 	siteDown: boolean;
-	eventName: string | null;
+	eventName: string | undefined;
 } => {
 	const row = rows[ type ];
 	const siteUrl = rows.site?.value?.url;
