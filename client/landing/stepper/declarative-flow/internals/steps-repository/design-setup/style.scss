@@ -414,11 +414,11 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			right: 0;
 			transform: translateY( 118px );
 			transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+			z-index: 1;
 
 			&.is-visible {
 				opacity: 1;
 				transform: translateY( 0 );
-				z-index: 1;
 
 				.design-setup__footer-inner {
 					pointer-events: auto;
