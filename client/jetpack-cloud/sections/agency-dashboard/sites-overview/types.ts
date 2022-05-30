@@ -45,3 +45,7 @@ export type AllowedActionTypes = 'issue_license' | 'view_activity' | 'view_site'
 export type ActionEventNames = {
 	[ key in AllowedActionTypes ]: { small_screen: string; large_screen: string };
 };
+export interface SitesOverviewContextInterface {
+	search: string;
+	currentPage: number;
+}
