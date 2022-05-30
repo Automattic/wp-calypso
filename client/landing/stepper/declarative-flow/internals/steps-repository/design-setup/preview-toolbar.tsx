@@ -60,6 +60,7 @@ const DesignPickerPreviewToolbar = ( {
 
 			setStickyStyle( {
 				position: 'fixed',
+				// Align with the sticky thumbnails
 				top: '109px',
 				left: `${ left }px`,
 				height: `${ headerRef.current.offsetHeight }px`,

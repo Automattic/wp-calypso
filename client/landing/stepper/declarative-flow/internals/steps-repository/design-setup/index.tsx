@@ -37,8 +37,9 @@ import type { Design } from '@automattic/design-picker';
 
 const STEP_NAME = 'design-setup';
 
+// The distance from top when sticky should be 109px and it's aligned with thumbnails and previews
 const STICKY_OPTIONS = {
-	rootMargin: '-110px 0px 0px',
+	rootMargin: '-109px 0px 0px',
 };
 
 /**

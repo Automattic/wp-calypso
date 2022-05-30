@@ -395,7 +395,7 @@ $design-setup-footer-height: 118px;
 			width: 100%;
 			height: $design-setup-footer-height;
 			opacity: 0;
-			transform: translateY( 118px );
+			transform: translateY( 100% );
 			pointer-events: none;
 			transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
 		}
@@ -432,7 +432,7 @@ $design-setup-footer-height: 118px;
 
 	.generated-design-picker__thumbnails {
 		position: sticky;
-		top: 110px;
+		top: 109px;
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
