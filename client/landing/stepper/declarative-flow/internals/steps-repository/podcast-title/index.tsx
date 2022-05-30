@@ -11,23 +11,32 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormInput from 'calypso/components/forms/form-text-input';
 import getTextWidth from 'calypso/landing/gutenboarding/onboarding-block/acquire-intent/get-text-width';
 import usePodcastTitle from 'calypso/landing/stepper/hooks/use-podcast-title';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import type { Step } from '../../types';
 import './style.scss';
 
 const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
-	const { goBack, submit } = navigation;
+	const { goBack, submit, goToStep } = navigation;
 	const { __ } = useI18n();
 
 	const PodcastTitleForm: React.FC = () => {
 		//Get the podcast title from the API
 		const podcastTitle = usePodcastTitle();
 		const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+		const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+		const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 		const hasSiteTitle = siteTitle.length > 0;
 		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 		const [ formTouched, setFormTouched ] = useState( false );
+
+		useEffect( () => {
+			if ( ! currentUser && ! newUser ) {
+				//Go to login
+				goToStep?.( 'login' );
+			}
+		}, [ currentUser, newUser ] );
 
 		/*
 		 * If we don't have a custom title in the store and we haven't touched the form input,
