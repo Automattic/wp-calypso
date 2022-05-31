@@ -75,7 +75,7 @@ export default function SiteContent( {
 		},
 	];
 
-	if ( ! isFetching && ! isError && ! sites.length ) {
+	if ( ! isFetching && ! isError && ! sites.length && ! filter.group.length ) {
 		return <div className="site-content__no-sites">{ translate( 'No active sites' ) }</div>;
 	}
 
