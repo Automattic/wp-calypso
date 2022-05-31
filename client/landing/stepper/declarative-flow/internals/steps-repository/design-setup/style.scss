@@ -446,8 +446,6 @@ $design-setup-footer-height: 118px;
 	}
 
 	.generated-design-picker__thumbnails {
-		position: sticky;
-		top: 109px;
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
@@ -455,6 +453,8 @@ $design-setup-footer-height: 118px;
 		row-gap: 24px;
 
 		@include break-small {
+			position: sticky;
+			top: 109px;
 			flex: 0 154px;
 			padding-right: 1.5rem;
 		}

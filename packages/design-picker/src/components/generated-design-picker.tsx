@@ -10,6 +10,9 @@ import { getDesignPreviewUrl, getMShotOptions } from '../utils';
 import type { Design } from '../types';
 import './style.scss';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+
 interface GeneratedDesignThumbnailProps {
 	slug: string;
 	thumbnailUrl: string;
@@ -78,9 +81,16 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 } ) => {
 	const { __ } = useI18n();
 
+	const isMobile = useViewportMatch( 'small', '<' );
+
 	const wrapperRef = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
+		if ( isMobile ) {
+			wrapperRef.current?.style.removeProperty( 'height' );
+			return noop;
+		}
+
 		const onResize = () => {
 			const { current: thumnbnailWrapper } = wrapperRef;
 			if ( ! thumnbnailWrapper ) {
@@ -96,7 +106,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 		return () => {
 			window.removeEventListener( 'resize', onResize );
 		};
-	}, [] );
+	}, [ isMobile ] );
 
 	return (
 		<div className="generated-design-picker">
