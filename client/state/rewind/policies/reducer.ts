@@ -35,6 +35,7 @@ const policies = (
 		case REWIND_POLICIES_SET:
 			return {
 				requestStatus: state.requestStatus,
+				isInitialized: true,
 				...policies,
 			};
 	}

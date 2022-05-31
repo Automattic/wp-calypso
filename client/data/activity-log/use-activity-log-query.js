@@ -42,6 +42,7 @@ export default function useActivityLogQuery( siteId, filter, options ) {
 				.then( fromActivityLogApi ),
 		{
 			refetchInterval: 5 * 60 * 1000,
+			refetchOnWindowFocus: false,
 			...options,
 		}
 	);
