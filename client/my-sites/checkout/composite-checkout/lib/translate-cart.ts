@@ -103,7 +103,7 @@ export function createTransactionEndpointCartFromResponseCart( {
 			products: responseCart.products.map( ( item ) =>
 				addRegistrationDataToGSuiteCartProduct( item, contactDetails )
 			),
-			tax: createTransactionEndpointTaxFromResponseCartTax( responseCart.tax ),
+			tax: createTransactionEndpointTax( responseCart.tax, contactDetails ),
 		};
 	}
 
@@ -116,19 +116,20 @@ export function createTransactionEndpointCartFromResponseCart( {
 		products: responseCart.products.map( ( item ) =>
 			addRegistrationDataToGSuiteCartProduct( item, contactDetails )
 		),
-		tax: createTransactionEndpointTaxFromResponseCartTax( responseCart.tax ),
+		tax: createTransactionEndpointTax( responseCart.tax, contactDetails ),
 	};
 }
 
-function createTransactionEndpointTaxFromResponseCartTax(
-	tax: ResponseCartTaxData
+function createTransactionEndpointTax(
+	tax: ResponseCartTaxData,
+	contactDetails: DomainContactDetails | null
 ): RequestCartTaxData {
 	const { country_code, postal_code, subdivision_code } = tax.location;
 	return {
 		location: {
-			country_code,
-			postal_code,
-			subdivision_code,
+			country_code: contactDetails?.countryCode ?? country_code,
+			postal_code: contactDetails?.postalCode ?? postal_code,
+			subdivision_code: contactDetails?.state ?? subdivision_code,
 		},
 	};
 }
