@@ -24,7 +24,7 @@ export const useGetEmailAccountsQuery = (
 	domain: string,
 	queryOptions?: UseQueryParams[ 2 ]
 ) => {
-	return useQuery(
+	return useQuery< any >(
 		getCacheKey( siteId, domain ),
 		() =>
 			wpcom.req.get( {
