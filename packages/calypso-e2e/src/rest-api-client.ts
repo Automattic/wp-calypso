@@ -7,7 +7,7 @@ interface AccountClosureDetails {
 	username: string;
 	email: string;
 }
-interface SiteClosureDetails {
+export interface SiteDetails {
 	url: string;
 	id: string;
 	name: string;
@@ -212,12 +212,10 @@ export class RestAPIClient {
 	 * Otherwise the active subscription must be first cancelled
 	 * otherwise the REST API will throw a HTTP 403 status.
 	 *
-	 * @param {SiteClosureDetails} expectedSiteDetails Expected details for the site to be deleted.
+	 * @param {SiteDetails} expectedSiteDetails Expected details for the site to be deleted.
 	 * @returns {SiteDeletionResponse | null} Null if deletion was unsuccessful or not performed. SiteDeletionResponse otherwise.
 	 */
-	async deleteSite(
-		expectedSiteDetails: SiteClosureDetails
-	): Promise< SiteDeletionResponse | null > {
+	async deleteSite( expectedSiteDetails: SiteDetails ): Promise< SiteDeletionResponse | null > {
 		if ( ! expectedSiteDetails.url.includes( 'e2e' ) ) {
 			console.warn( `Aborting site deletion: target is not a test site.` );
 			return null;

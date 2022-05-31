@@ -13,8 +13,10 @@ import {
 	CartCheckoutPage,
 	TestAccount,
 	DomainSearchComponent,
+	MediaPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import type { SiteDetails } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;
 
@@ -26,11 +28,9 @@ describe(
 		let testAccount: TestAccount;
 		let page: Page;
 		let siteCreatedFlag = false;
-		let siteID: string;
-		let siteURL: string;
-		let siteName: string;
+		let siteDetails: SiteDetails;
 
-		beforeAll( async () => {
+		beforeAll( async function () {
 			page = await browser.newPage();
 
 			testAccount = new TestAccount( 'calypsoPreReleaseUser' );
@@ -40,12 +40,12 @@ describe(
 		describe( 'Create new site', function () {
 			let cartCheckoutPage: CartCheckoutPage;
 
-			it( 'Navigate to /start', async function () {
-				await page.goto( DataHelper.getCalypsoURL( 'start' ) );
+			beforeAll( async function () {
+				await BrowserManager.setStoreCookie( page );
 			} );
 
-			it( 'Set store cookie', async function () {
-				await BrowserManager.setStoreCookie( page );
+			it( 'Navigate to /start', async function () {
+				await page.goto( DataHelper.getCalypsoURL( 'start' ) );
 			} );
 
 			it( 'Select a .wordpres.com domain name', async function () {
@@ -56,11 +56,7 @@ describe(
 
 			it( 'Select WordPress.com Pro plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				const details = await signupPickPlanPage.selectPlan( 'Pro' );
-
-				siteID = details.id;
-				siteURL = details.url;
-				siteName = details.name;
+				siteDetails = await signupPickPlanPage.selectPlan( 'Pro' );
 
 				siteCreatedFlag = true;
 			} );
@@ -105,6 +101,12 @@ describe(
 				const plansPage = new PlansPage( page, 'current' );
 				await plansPage.validateActivePlan( 'Pro' );
 			} );
+
+			it( 'Validate storage capacity', async function () {
+				await sidebarComponent.navigate( 'Media' );
+				const mediaPage = new MediaPage( page );
+				await mediaPage.validateStorageCapacity( 50 );
+			} );
 		} );
 
 		afterAll( async function () {
@@ -117,11 +119,7 @@ describe(
 				password: testAccount.credentials.password,
 			} );
 
-			const response = await restAPIClient.deleteSite( {
-				url: siteURL,
-				id: siteID,
-				name: siteName,
-			} );
+			const response = await restAPIClient.deleteSite( siteDetails );
 
 			// If the response is `null` then no action has been
 			// performed.
@@ -130,10 +128,10 @@ describe(
 				// "deleted".
 				if ( response.status !== 'deleted' ) {
 					console.warn(
-						`Failed to delete siteID ${ siteID }.\nExpected: "deleted", Got: ${ response.status }`
+						`Failed to delete siteID ${ siteDetails.id }.\nExpected: "deleted", Got: ${ response.status }`
 					);
 				} else {
-					console.log( `Successfully deleted siteID ${ siteID }.` );
+					console.log( `Successfully deleted siteID ${ siteDetails.id }.` );
 				}
 			}
 		} );

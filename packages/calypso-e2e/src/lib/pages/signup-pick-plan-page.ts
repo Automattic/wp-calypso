@@ -1,12 +1,7 @@
 import { Page } from 'playwright';
 import { NewSiteResponse } from '../../rest-api-client';
 import { PlansPage, Plans } from './plans-page';
-
-interface NewSiteDetails {
-	id: string;
-	url: string;
-	name: string;
-}
+import type { SiteDetails } from '../../rest-api-client';
 
 /**
  * Represents the Signup > Pick a Plan page.
@@ -31,18 +26,20 @@ export class SignupPickPlanPage {
 	 * Selects a WordPress.com plan matching the name, triggering site creation.
 	 *
 	 * @param {Plans} name Name of the plan.
+	 * @returns {Promise<SiteDetails>} Details of the newly created site.
 	 */
-	async selectPlan( name: Plans ): Promise< NewSiteDetails > {
+	async selectPlan( name: Plans ): Promise< SiteDetails > {
 		const [ response ] = await Promise.all( [
 			this.page.waitForResponse( /.*sites\/new\?.*/ ),
 			this.plansPage.selectPlan( name ),
 		] );
 
 		if ( ! response ) {
-			throw new Error( 'Failed to create new site at Signup.' );
+			throw new Error( 'Failed to create new site when selecting a plan at signup.' );
 		}
 
 		const responseBody: NewSiteResponse = JSON.parse( ( await response.body() ).toString() );
+
 		return {
 			id: responseBody.body.blog_details.blogid,
 			url: responseBody.body.blog_details.url,
