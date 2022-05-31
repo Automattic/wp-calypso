@@ -7,6 +7,7 @@ import { useFSEStatus } from '../hooks/use-fse-status';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
+import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step';
@@ -355,22 +356,37 @@ export const siteSetupFlow: Flow = {
 		const siteSlug = useSiteSlugParam();
 		const siteId = useSiteIdParam();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		if ( ! userIsLoggedIn ) {
 			redirect( '/start' );
-			return {
+			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'site-setup requires a logged in user',
 			};
 		}
 
 		if ( ! siteSlug && ! siteId ) {
-			return {
+			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'site-setup did not provide the site slug or site id it is configured to.',
 			};
 		}
 
-		return { state: AssertConditionState.SUCCESS };
+		const canManageOptions = useCanUserManageOptions();
+		if ( canManageOptions === 'requesting' ) {
+			result = {
+				state: AssertConditionState.CHECKING,
+			};
+		} else if ( canManageOptions === false ) {
+			redirect( '/start' );
+			result = {
+				state: AssertConditionState.FAILURE,
+				message:
+					'site-setup the user needs to have the manage_options capability to go through the flow.',
+			};
+		}
+
+		return result;
 	},
 };
