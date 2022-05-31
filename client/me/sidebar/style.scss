@@ -14,3 +14,40 @@
 .is-group-me .sidebar__menu-happychat {
 	display: none;
 }
+
+.sidebar {
+	.sidebar__me-signout-button {
+		.gridicons-popout {
+			display: none;
+		}
+	}
+}
+
+.is-sidebar-collapsed .sidebar {
+	.gravatar {
+		width: 24px;
+		height: 24px;
+		border: 2px solid var( --color-border-inverted );
+	}
+	.sidebar__me-signout-button {
+		padding: 3px;
+		margin-top: 12px;
+		span {
+			display: none;
+		}
+		.gridicons-popout {
+			display: inline-block;
+		}
+	}
+	.profile-gravatar__user-display-name,
+	.profile-gravatar__user-secondary-info {
+		display: none;
+	}
+	.sidebar__menu-link .gridicons-external {
+		top: 2px;
+		right: 0;
+		height: 14px;
+		width: 14px;
+		color: var( --color-border-inverted );
+	}
+}

@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -69,7 +69,8 @@ class MeSidebar extends Component {
 							onClick={ this.onSignOut }
 							title={ translate( 'Log out of WordPress.com' ) }
 						>
-							{ translate( 'Log out' ) }
+							<span>{ translate( 'Log out' ) }</span>
+							<Gridicon icon="popout" size={ 16 } />
 						</Button>
 					</div>
 
