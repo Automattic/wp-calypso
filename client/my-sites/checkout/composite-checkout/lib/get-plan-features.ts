@@ -44,8 +44,9 @@ export default function getPlanFeatures(
 	if ( isStarterPlan( productSlug ) ) {
 		return [
 			freeOneYearDomain,
-			String( translate( 'Best-in-class hosting' ) ),
-			String( translate( 'Dozens of Free Themes' ) ),
+			String( translate( 'Collect Payments' ) ),
+			String( translate( '6GB of Storage' ) ),
+			String( translate( 'Free professional e-mail for 3 months' ) ),
 			String( translate( 'Track your stats with Google Analytics' ) ),
 		].filter( isValueTruthy );
 	}
