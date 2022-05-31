@@ -6,7 +6,6 @@
 $gray-100: #101517;
 $gray-60: #50575e;
 $design-button-primary-color: rgb( 17, 122, 201 );
-$design-setup-footer-height: 118px;
 
 .design-setup {
 	.step-container {
@@ -404,32 +403,21 @@ $design-setup-footer-height: 118px;
 		position: relative;
 		margin: 0 auto;
 
-		.design-setup__footer-inner {
-			align-self: stretch;
-			align-items: center;
-			background-color: #ffffff;
+		@include break-small {
 			display: flex;
+			align-items: center;
 			justify-content: flex-end;
-			position: absolute;
-			width: 100%;
-			height: $design-setup-footer-height;
+			position: sticky;
+			bottom: 0;
+			height: 118px;
+			background-color: #ffffff;
 			opacity: 0;
 			transform: translateY( 100% );
 			pointer-events: none;
 			transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
-		}
-
-		@include break-small {
-			align-items: center;
-			bottom: 0;
-			display: flex;
-			height: $design-setup-footer-height;
-			justify-content: flex-end;
-			position: sticky;
-			overflow: hidden;
 			z-index: 1;
 
-			&.is-visible .design-setup__footer-inner {
+			&.is-visible {
 				opacity: 1;
 				transform: translateY( 0 );
 				pointer-events: auto;
