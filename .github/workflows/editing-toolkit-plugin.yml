@@ -52,7 +52,7 @@ jobs:
         working-directory: apps/editing-toolkit
 
       - name: Start wp-env
-        run: npx wp-env start || npx wp-env start # Retry if failed.
+        run: yarn run wp-env start || yarn run wp-env start # Retry if failed.
         working-directory: apps/editing-toolkit
 
       - name: Run phpunit command

@@ -19,7 +19,7 @@
 	"scripts": {
 		"build": "NODE_ENV=production yarn dev",
 		"build:happychat": "calypso-build",
-		"clean": "npx rimraf dist",
+		"clean": "run -T rimraf dist",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/calypso-happychat",
 		"dev-server": "webpack serve",
 		"show-stats": "NODE_ENV=production EMIT_STATS=true yarn build"

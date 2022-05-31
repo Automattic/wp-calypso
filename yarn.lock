@@ -840,7 +840,6 @@ __metadata:
     "@wordpress/react-i18n": ^3.0.4
     "@wordpress/url": ^3.8.0
     classnames: ^2.3.1
-    copyfiles: ^2.3.0
     react: ^17.0.2
     react-dom: ^17.0.2
     react-router-dom: ^5.1.2
@@ -1016,7 +1015,6 @@ __metadata:
     "@wordpress/icons": ^8.3.0
     "@wordpress/react-i18n": ^3.0.4
     classnames: ^2.3.1
-    copyfiles: ^2.3.0
     css-loader: ^3.6.0
     history: ^5.1.0
     react: ^17.0.2
@@ -13932,20 +13930,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"copyfiles@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "copyfiles@npm:2.3.0"
+"copyfiles@npm:^2.4.1":
+  version: 2.4.1
+  resolution: "copyfiles@npm:2.4.1"
   dependencies:
     glob: ^7.0.5
     minimatch: ^3.0.3
     mkdirp: ^1.0.4
     noms: 0.0.0
     through2: ^2.0.1
-    yargs: ^15.3.1
+    untildify: ^4.0.0
+    yargs: ^16.1.0
   bin:
     copyfiles: copyfiles
     copyup: copyfiles
-  checksum: 8fb983bb7ba4e0f43ac545b960b466379853cb093dd0c3f45c07d2ad7371cd5cd9ce632576f9ee3c44a67666f198d498d78a56bfe3a6e212960b3c67d35e87d2
+  checksum: e65cd055ec9acc14997b0ace83973d73f8d9c68167cbf4293c40b52d100af09a8c8da329042d52dc33422c0a8cbf74c6efb25e9ae088667721653659bd67bf57
   languageName: node
   linkType: hard
 
@@ -34766,6 +34765,13 @@ swiper@4.5.1:
   languageName: node
   linkType: hard
 
+"untildify@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "untildify@npm:4.0.0"
+  checksum: d758e624c707d49f76f7511d75d09a8eda7f2020d231ec52b67ff4896bcf7013be3f9522d8375f57e586e9a2e827f5641c7e06ee46ab9c435fc2b2b2e9de517a
+  languageName: node
+  linkType: hard
+
 "upath@npm:^1.1.1":
   version: 1.2.0
   resolution: "upath@npm:1.2.0"
@@ -35993,6 +35999,7 @@ swiper@4.5.1:
     "@wordpress/components": ^19.9.0
     "@wordpress/data": ^6.7.0
     "@wordpress/element": ^4.5.0
+    "@wordpress/env": ^4.6.0
     "@wordpress/eslint-plugin": ^12.1.0
     "@wordpress/i18n": ^4.7.0
     "@wordpress/icons": ^8.3.0
@@ -36010,6 +36017,7 @@ swiper@4.5.1:
     check-node-version: ^4.0.2
     chroma-js: ^2.1.2
     config: ^3.3.6
+    copyfiles: ^2.4.1
     css-loader: ^6.5.1
     debug: ^4.3.3
     doctrine: ^3.0.0
@@ -36061,6 +36069,7 @@ swiper@4.5.1:
     redux: ^4.1.2
     replace: ^1.1.5
     request: ^2.88.2
+    rimraf: ^3.0.2
     sass: ^1.37.5
     sass-loader: ^12.1.0
     sharp: ^0.28
@@ -36678,7 +36687,7 @@ swiper@4.5.1:
   languageName: node
   linkType: hard
 
-"yargs@npm:^16.0.0, yargs@npm:^16.2.0":
+"yargs@npm:^16.0.0, yargs@npm:^16.1.0, yargs@npm:^16.2.0":
   version: 16.2.0
   resolution: "yargs@npm:16.2.0"
   dependencies:
