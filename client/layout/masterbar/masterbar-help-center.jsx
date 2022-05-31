@@ -19,7 +19,7 @@ const MasterbarHelpCenter = ( { siteId } ) => {
 			className={ classnames( 'masterbar__item-help', {
 				'is-active': helpCenterVisible,
 			} ) }
-			icon={ <HelpIcon newItems={ newItems } active={ helpCenterVisible } /> }
+			icon={ <HelpIcon newItems={ newItems } /> }
 		/>
 	);
 };

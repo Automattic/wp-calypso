@@ -103,7 +103,7 @@ const CheckoutMasterbar = ( {
 					className={ classnames( 'masterbar__item-help', {
 						'is-active': isHelpCenterVisible,
 					} ) }
-					icon={ <HelpIcon newItems={ newItems } active={ isHelpCenterVisible } /> }
+					icon={ <HelpIcon newItems={ newItems } /> }
 				/>
 			) }
 			<CheckoutModal
