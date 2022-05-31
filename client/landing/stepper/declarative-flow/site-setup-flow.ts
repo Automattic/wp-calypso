@@ -11,6 +11,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
+import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { redirect } from './internals/steps-repository/import/util';
@@ -523,10 +524,11 @@ export const siteSetupFlow: Flow = {
 		const fetchingSiteError = useSelect( ( select ) =>
 			select( SITE_STORE ).getFetchingSiteError()
 		);
+		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		if ( ! userIsLoggedIn ) {
 			redirect( '/start' );
-			return {
+			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'site-setup requires a logged in user',
 			};
@@ -534,7 +536,7 @@ export const siteSetupFlow: Flow = {
 
 		if ( ! siteSlug && ! siteId ) {
 			redirect( '/' );
-			return {
+			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'site-setup did not provide the site slug or site id it is configured to.',
 			};
@@ -542,12 +544,26 @@ export const siteSetupFlow: Flow = {
 
 		if ( fetchingSiteError ) {
 			redirect( '/' );
-			return {
+			result = {
 				state: AssertConditionState.FAILURE,
 				message: fetchingSiteError.message,
 			};
 		}
 
-		return { state: AssertConditionState.SUCCESS };
+		const canManageOptions = useCanUserManageOptions();
+		if ( canManageOptions === 'requesting' ) {
+			result = {
+				state: AssertConditionState.CHECKING,
+			};
+		} else if ( canManageOptions === false ) {
+			redirect( '/start' );
+			result = {
+				state: AssertConditionState.FAILURE,
+				message:
+					'site-setup the user needs to have the manage_options capability to go through the flow.',
+			};
+		}
+
+		return result;
 	},
 };
