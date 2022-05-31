@@ -137,20 +137,24 @@ function AddressSummary( {
 	areThereDomainProductsInCart: boolean;
 	isRenewal: boolean;
 } ) {
-	// We display the postal code and country from the cart's tax location rather
-	// than what is stored in the contact details just in case they differ (eg:
-	// if the tax location has been changed in another tab) so that what is
-	// displayed always matches what the cart is using to calculate taxes. This
-	// does mean that the summary won't display the postal code and country that
-	// will be sent to the transactions endpoint for a domain product (it will be
-	// whatever was entered in the form) but that is less risky since it will be
-	// validated before the transaction completes and it will not affect the
-	// price like the tax location will.
-	const postalAndCountry = joinNonEmptyValues(
-		', ',
-		responseCart.tax.location.postal_code,
-		responseCart.tax.location.country_code
-	);
+	// For carts which could be taxed, we display the postal code and country
+	// from the cart's tax location rather than what is stored in the contact
+	// details just in case they differ (eg: if the tax location has been changed
+	// in another tab) so that what is displayed always matches what the cart is
+	// using to calculate taxes. This does mean that the summary won't display
+	// the postal code and country that will be sent to the transactions endpoint
+	// for a domain product (it will be whatever was entered in the form) but
+	// that is less risky since it will be validated before the transaction
+	// completes and it will not affect the price like the tax location will.
+	const postalCode =
+		responseCart.total_cost_integer > 0
+			? responseCart.tax.location.postal_code
+			: contactInfo.postalCode?.value;
+	const countryCode =
+		responseCart.total_cost_integer > 0
+			? responseCart.tax.location.country_code
+			: contactInfo.countryCode?.value;
+	const postalAndCountry = joinNonEmptyValues( ', ', postalCode, countryCode );
 
 	if ( ! areThereDomainProductsInCart || isRenewal ) {
 		return (
