@@ -44,7 +44,7 @@ const getExternalUrl = ( mailbox, titanAppsUrlPrefix ) => {
 		const isEmbeddedInboxTestingEnabled = isEnabled( 'emails/embedded-inbox-testing' );
 
 		const mailboxPrefixUrl = isEmbeddedInboxTestingEnabled
-			? 'https://webmail-qa.riva.co/0.2361'
+			? 'https://webmail-qa.riva.co/0.2377'
 			: titanAppsUrlPrefix;
 		return getTitanEmailUrl(
 			mailboxPrefixUrl,
