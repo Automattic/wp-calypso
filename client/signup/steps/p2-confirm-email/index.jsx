@@ -4,6 +4,7 @@ import { check } from '@wordpress/icons';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
@@ -52,12 +53,14 @@ function P2ConfirmEmail( {
 
 			debug( 'Email confirmation step loaded for %s', userEmail );
 		}
-	}, [ dispatch, stepName, refParameter ] );
+	}, [ userEmail, dispatch, stepName, refParameter ] );
 
 	const handleResendEmailClick = () => {
 		if ( emailResendCount >= EMAIL_RESEND_MAX ) {
 			return;
 		}
+
+		recordTracksEvent( 'calypso_signup_p2_confirm_email_request_resend' );
 
 		wpcom.req
 			.post( {
@@ -79,7 +82,7 @@ function P2ConfirmEmail( {
 
 	const handleNextStepClick = () => {
 		debug( 'Email confirmation step completed for %s', userEmail );
-
+		recordTracksEvent( 'calypso_signup_p2_confirm_email_complete' );
 		submitSignupStep( { stepName } );
 
 		goToNextStep();

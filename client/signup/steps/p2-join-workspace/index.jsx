@@ -64,7 +64,7 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 			wasSkipped: true,
 		} );
 
-		recordTracksEvent( 'calypso_signup_p2_join_workspace_auto_skip' );
+		recordTracksEvent( 'calypso_signup_p2_join_workspace_autoskip' );
 		goToNextStep();
 	}, [ eligibleWorkspaces, isLoading, submitSignupStep, stepName, goToNextStep ] );
 

@@ -87,6 +87,8 @@ function P2CompleteProfile( {
 
 		// API call to update user profile.
 		dispatch( saveUserSettings( { display_name: formFullName } ) );
+
+		recordTracksEvent( 'calypso_signup_p2_complete_profile_submit' );
 	};
 
 	const handleSkipBtnClick = () => {
