@@ -442,6 +442,7 @@ __metadata:
     i18n-calypso: "workspace:^"
     jest-fetch-mock: ^3.0.3
     nock: ^12.0.3
+    node-fetch: ^2.6.6
     qs: ^6.9.1
     redux: ^4.1.2
     tslib: ^2.3.0
@@ -613,8 +614,12 @@ __metadata:
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
+    "@automattic/components": "workspace:^"
+    "@automattic/happychat-connection": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
+    "@wordpress/data": ^6.7.0
+    "@wordpress/icons": ^8.3.0
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
     enzyme: ^3.11.0

@@ -1,16 +1,13 @@
-import { SiteDetails } from '@automattic/data-stores/dist/types/site';
-import { ReactElement, ReactNode } from 'react';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { ReactElement } from 'react';
 
 export interface Container {
-	content: ReactElement;
 	handleClose: () => void;
-	defaultHeaderText?: string;
 	defaultFooterContent?: ReactElement;
 	isLoading?: boolean;
 }
 
 export interface Content {
-	content: ReactElement;
 	isMinimized: boolean;
 }
 
@@ -19,14 +16,7 @@ export interface Header {
 	onMinimize?: () => void;
 	onMaximize?: () => void;
 	onDismiss: () => void;
-	headerText: ReactNode;
 }
-
-export interface SuccessScreenProps {
-	onBack: () => void;
-	forumTopicUrl?: string;
-}
-
 export interface SitePicker {
 	currentSite: SiteDetails | undefined;
 	onSelect: ( siteId: number | string ) => void;
@@ -34,11 +24,14 @@ export interface SitePicker {
 	enabled: boolean;
 }
 
-// ended means the user closed the popup
+// ended means the user closed the popup or reloaded the iframe
 export type WindowState = 'open' | 'closed' | 'blurred' | 'ended';
 
 export interface Article {
 	title: string;
 	link?: string;
 	icon?: string;
+	id?: string;
+	post_id?: string;
+	blog_id?: string;
 }

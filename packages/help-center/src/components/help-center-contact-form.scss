@@ -57,7 +57,8 @@
 	}
 }
 
-.help-center-contact-form__message, .help-center-contact-form__subject input.components-text-control__input {
+.help-center-contact-form__message,
+.help-center-contact-form__subject input.components-text-control__input {
 	padding: 15.5px;
 	border: 1px solid var( --studio-gray-10 );
 	border-radius: 4px;
@@ -171,24 +172,6 @@
 		svg {
 			fill: var( --studio-gray-50 );
 		}
-	}
-}
-
-span.help-center-header__title {
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-
-.is-minimized .help-center-header__title .inline-help__rich-result-header {
-	padding-left: 24px;
-	display: inline;
-
-	svg {
-		position: absolute;
-		left: 12px;
-		top: 12px;
-		margin-right: 4px;
 	}
 }
 

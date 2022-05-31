@@ -9,9 +9,10 @@ import AssignLicenseStepProgress from '../../assign-license-step-progress';
 
 interface Props {
 	selectedSite?: number | null;
+	productSlug?: string | null;
 }
 
-export default function IssueLicense( { selectedSite }: Props ): ReactElement {
+export default function IssueLicense( { selectedSite, productSlug }: Props ): ReactElement {
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -32,7 +33,7 @@ export default function IssueLicense( { selectedSite }: Props ): ReactElement {
 			<AssignLicenseStepProgress currentStep={ 1 } />
 			<CardHeading size={ 36 }>{ translate( 'Issue a new License' ) }</CardHeading>
 
-			<IssueLicenseForm selectedSite={ selectedSite } />
+			<IssueLicenseForm selectedSite={ selectedSite } suggestedProduct={ productSlug } />
 		</Main>
 	);
 }

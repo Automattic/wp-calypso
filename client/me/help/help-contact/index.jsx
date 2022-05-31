@@ -1,6 +1,14 @@
 import config from '@automattic/calypso-config';
 import { getPlanTermLabel } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
+import {
+	SUPPORT_CHAT_OVERFLOW,
+	SUPPORT_DIRECTLY,
+	SUPPORT_FORUM,
+	SUPPORT_HAPPYCHAT,
+	SUPPORT_TICKET,
+	SUPPORT_UPWORK_TICKET,
+} from '@automattic/help-center';
 import { isDefaultLocale, localizeUrl } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -48,14 +56,7 @@ import {
 	getTicketSupportRequestError,
 } from 'calypso/state/help/ticket/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
-import getInlineHelpSupportVariation, {
-	SUPPORT_CHAT_OVERFLOW,
-	SUPPORT_DIRECTLY,
-	SUPPORT_FORUM,
-	SUPPORT_HAPPYCHAT,
-	SUPPORT_TICKET,
-	SUPPORT_UPWORK_TICKET,
-} from 'calypso/state/selectors/get-inline-help-support-variation';
+import getInlineHelpSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
 import hasUserAskedADirectlyQuestion from 'calypso/state/selectors/has-user-asked-a-directly-question';
 import isDirectlyFailed from 'calypso/state/selectors/is-directly-failed';

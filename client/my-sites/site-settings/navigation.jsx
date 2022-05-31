@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -6,11 +7,11 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import versionCompare from 'calypso/lib/version-compare';
-import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import isRewindActive from 'calypso/state/selectors/is-rewind-active';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteFailedMigrationSource from 'calypso/state/selectors/is-site-failed-migration-source';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -122,7 +123,7 @@ export default connect( ( state ) => {
 		shouldShowJetpackSettings:
 			siteId &&
 			isJetpackSectionEnabledForSite( state, siteId ) &&
-			( siteHasScanProductPurchase( state, siteId ) ||
+			( siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ) ||
 				isRewindActive( state, siteId ) ||
 				isSiteFailedMigrationSource( state, siteId ) ),
 	};

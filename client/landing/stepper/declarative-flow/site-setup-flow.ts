@@ -10,8 +10,13 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step';
+import {
+	AssertConditionResult,
+	AssertConditionState,
+	Flow,
+	ProvidedDependencies,
+} from './internals/types';
 import type { StepPath } from './internals/steps-repository';
-import type { Flow, ProvidedDependencies } from './internals/types';
 
 function redirect( to: string ) {
 	window.location.href = to;
@@ -346,18 +351,26 @@ export const siteSetupFlow: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 
-	useAssertConditions() {
+	useAssertConditions(): AssertConditionResult {
 		const siteSlug = useSiteSlugParam();
 		const siteId = useSiteIdParam();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 
 		if ( ! userIsLoggedIn ) {
 			redirect( '/start' );
-			throw new Error( 'site-setup requires a logged in user' );
+			return {
+				state: AssertConditionState.FAILURE,
+				message: 'site-setup requires a logged in user',
+			};
 		}
 
 		if ( ! siteSlug && ! siteId ) {
-			throw new Error( 'site-setup did not provide the site slug or site id it is configured to.' );
+			return {
+				state: AssertConditionState.FAILURE,
+				message: 'site-setup did not provide the site slug or site id it is configured to.',
+			};
 		}
+
+		return { state: AssertConditionState.SUCCESS };
 	},
 };

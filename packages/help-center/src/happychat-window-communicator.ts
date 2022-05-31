@@ -1,8 +1,16 @@
+import { useHappychatAuth } from '@automattic/happychat-connection';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { STORE_KEY } from './store';
 import type { WindowState } from './types';
 
+/**
+ * This hook attaches an event listener to the window to listen to Happychat messages that com from https://widgets.wp.com/calypso-happychat/
+ * It collects information from the help-center store and forwards it to Happychat. It also forwards the unread count and the state changes (ended, blurred, closed, opened) to whoever uses the hook
+ *
+ * @param onStateChange a callback that will be called whenever state changes
+ * @param onUnreadChange a callback that will be called with the number of new unread messages
+ */
 export function useHCWindowCommunicator(
 	onStateChange: ( state: WindowState ) => void,
 	onUnreadChange: ( unreadCount: number ) => void
@@ -16,8 +24,13 @@ export function useHCWindowCommunicator(
 		};
 	} );
 
-	const supportSite = selectedSite || userDeclaredSite;
-	const { resetPopup, resetStore } = useDispatch( STORE_KEY );
+	const currentSite = useSelect( ( select ) =>
+		select( 'automattic/site' ).getSite( window._currentSiteId )
+	);
+
+	const supportSite = selectedSite || userDeclaredSite || currentSite;
+	const { resetStore } = useDispatch( STORE_KEY );
+	const auth = useHappychatAuth();
 
 	useEffect( () => {
 		const messageHandler = ( event: MessageEvent ) => {
@@ -32,7 +45,8 @@ export function useHCWindowCommunicator(
 						if ( data.state === 'ended' ) {
 							// cleanup
 							window.removeEventListener( 'message', messageHandler );
-							resetPopup();
+							// now clear the store, since we sent everything
+							resetStore();
 						}
 						break;
 					case 'happy-chat-introduction-data': {
@@ -47,8 +61,17 @@ export function useHCWindowCommunicator(
 							},
 							{ targetOrigin: event.origin }
 						);
-						// now clear the store, since we sent everything
-						resetStore();
+
+						break;
+					}
+					case 'happy-chat-authentication-data': {
+						event.source?.postMessage(
+							{
+								type: 'happy-chat-authentication-data',
+								authData: auth?.data,
+							},
+							{ targetOrigin: event.origin }
+						);
 						break;
 					}
 				}
@@ -59,5 +82,5 @@ export function useHCWindowCommunicator(
 		return () => {
 			window.removeEventListener( 'message', messageHandler, false );
 		};
-	}, [ onStateChange, onUnreadChange, supportSite, subject, message, resetPopup ] );
+	}, [ onStateChange, onUnreadChange, supportSite, subject, message, auth, resetStore ] );
 }

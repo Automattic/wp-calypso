@@ -2,15 +2,25 @@ import { useEffect, useState } from 'react';
 import buildConnection from './connection';
 import useHappychatAuth from './use-happychat-auth';
 
+let cachedAvailableValue: boolean | undefined = undefined;
+
 export function useHappychatAvailable() {
-	const [ available, setIsAvailable ] = useState< boolean | undefined >( undefined );
-	const { data: dataAuth, isLoading: isLoadingAuth } = useHappychatAuth();
+	const [ available, setIsAvailable ] = useState< boolean | undefined >( cachedAvailableValue );
+	const { data: dataAuth, isLoading: isLoadingAuth } = useHappychatAuth(
+		cachedAvailableValue === undefined
+	);
 
 	useEffect( () => {
-		if ( ! isLoadingAuth && dataAuth ) {
+		if ( ! isLoadingAuth && dataAuth && cachedAvailableValue === undefined ) {
 			const connection = buildConnection( {
-				receiveAccept: ( receivedAvailability ) => setIsAvailable( receivedAvailability ),
-				receiveUnauthorized: () => setIsAvailable( false ),
+				receiveAccept: ( receivedAvailability ) => {
+					cachedAvailableValue = receivedAvailability;
+					setIsAvailable( receivedAvailability );
+				},
+				receiveUnauthorized: () => {
+					cachedAvailableValue = false;
+					setIsAvailable( false );
+				},
 			} );
 			connection.init( ( value: unknown ) => value, Promise.resolve( dataAuth ) );
 		}

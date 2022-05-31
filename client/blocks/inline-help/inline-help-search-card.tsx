@@ -1,15 +1,22 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useRef, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import SearchCard from 'calypso/components/search-card';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Module variables
  */
 const debug = debugFactory( 'calypso:inline-help' );
+
+type Props = {
+	searchQuery: string;
+	location?: string;
+	isVisible?: boolean;
+	placeholder?: string;
+	onSearch?: ( query: string ) => void;
+};
 
 const InlineHelpSearchCard = ( {
 	searchQuery = '',
@@ -17,10 +24,9 @@ const InlineHelpSearchCard = ( {
 	isVisible = true,
 	placeholder,
 	onSearch,
-} ) => {
-	const cardRef = useRef();
+}: Props ) => {
+	const cardRef = useRef< { searchInput: HTMLInputElement } >();
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	// Focus in the input element.
 	useEffect( () => {
@@ -35,17 +41,15 @@ const InlineHelpSearchCard = ( {
 		return () => window.clearTimeout( timerId );
 	}, [ cardRef, location, isVisible ] );
 
-	const searchHelperHandler = ( query ) => {
+	const searchHelperHandler = ( query: string ) => {
 		const inputQuery = query.trim();
 
 		if ( inputQuery?.length ) {
 			debug( 'search query received: ', searchQuery );
-			dispatch(
-				recordTracksEvent( 'calypso_inlinehelp_search', {
-					search_query: searchQuery,
-					location: location,
-				} )
-			);
+			recordTracksEvent( 'calypso_inlinehelp_search', {
+				search_query: searchQuery,
+				location: location,
+			} );
 		}
 
 		// Set the query search

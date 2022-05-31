@@ -1,9 +1,9 @@
 /**
  * External Dependencies
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
-	useHas3PC,
 	useSubmitTicketMutation,
 	useSubmitForumsMutation,
 	useSiteAnalysis,
@@ -13,20 +13,19 @@ import { SitePickerDropDown } from '@automattic/site-picker';
 import { TextControl, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { Icon, info, commentContent } from '@wordpress/icons';
-import React, { useEffect, useState, useContext } from 'react';
+import { Icon, info } from '@wordpress/icons';
+import React, { useEffect, useState } from 'react';
 /**
  * Internal Dependencies
  */
+import { useHistory, useLocation } from 'react-router-dom';
 import { askDirectlyQuestion, execute } from '../directly';
-import { HelpCenterContext } from '../help-center-context';
 import { STORE_KEY, USER_KEY } from '../store';
+import { getSupportVariationFromMode } from '../support-variations';
 import { SitePicker } from '../types';
 import { BackButton } from './back-button';
-import InlineChat from './help-center-inline-chat';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
-import { SuccessScreen } from './ticket-success-screen';
 import './help-center-contact-form.scss';
 
 export const SITE_STORE = 'automattic/site';
@@ -114,42 +113,12 @@ const titles: {
 };
 
 type Mode = 'CHAT' | 'EMAIL' | 'DIRECTLY' | 'FORUM';
-interface ContactFormProps {
-	mode: Mode;
-	onBackClick: () => void;
-	onGoHome: () => void;
-	siteId: number | null;
-	onPopupOpen?: () => void;
-}
 
-const POPUP_TOP_BAR_HEIGHT = 60;
-
-function openPopup( event: React.MouseEvent< HTMLButtonElement > ): Window {
-	const helpCenterContainer = event.currentTarget.closest(
-		'.help-center__container'
-	) as HTMLDivElement;
-
-	const HCRect = helpCenterContainer.getBoundingClientRect();
-	const windowTop = event.screenY - event.clientY;
-
-	const popupTop = windowTop + HCRect.top - POPUP_TOP_BAR_HEIGHT;
-	const popupLeft = window.screenLeft + HCRect.left;
-	const popupWidth = HCRect.width;
-	const popupHeight = HCRect.height - POPUP_TOP_BAR_HEIGHT;
-
-	const popup = window.open(
-		'https://widgets.wp.com/calypso-happychat/',
-		'happy-chat-window',
-		`toolbar=no,scrollbars=yes,location=no,addressbar=no,width=${ popupWidth },height=${ popupHeight },left=${ popupLeft },top=${ popupTop }`
-	) as Window;
-
-	return popup;
-}
-
-const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHome } ) => {
-	const [ openChat, setOpenChat ] = useState( false );
-	const [ contactSuccess, setContactSuccess ] = useState( false );
-	const [ forumTopicUrl, setForumTopicUrl ] = useState( '' );
+export const HelpCenterContactForm = () => {
+	const { search } = useLocation();
+	const params = new URLSearchParams( search );
+	const mode = params.get( 'mode' ) as Mode;
+	const history = useHistory();
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 	const locale = useLocale();
@@ -158,7 +127,6 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
-	const { setHeaderText } = useContext( HelpCenterContext );
 	const { selectedSite, subject, message, userDeclaredSiteUrl, directlyData } = useSelect(
 		( select ) => {
 			return {
@@ -180,7 +148,6 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 		setUserDeclaredSite,
 		setSubject,
 		setMessage,
-		setPopup,
 	} = useDispatch( STORE_KEY );
 
 	const {
@@ -188,6 +155,13 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 		isLoading: isAnalysisLoading,
 		site: userDeclaredSite,
 	} = useSiteAnalysis( userDeclaredSiteUrl );
+
+	useEffect( () => {
+		const supportVariation = getSupportVariationFromMode( mode );
+		recordTracksEvent( 'calypso_inlinehelp_contact_view', {
+			support_variation: supportVariation,
+		} );
+	}, [ mode ] );
 
 	// record the resolved site
 	useEffect( () => {
@@ -203,36 +177,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 		}
 	}, [ directlyData, setShowHelpCenter ] );
 
-	useEffect( () => {
-		switch ( mode ) {
-			case 'CHAT':
-				if ( openChat ) {
-					setHeaderText(
-						<>
-							<Icon icon={ commentContent } />
-							{ __( 'Live chat', __i18n_text_domain__ ) }
-						</>
-					);
-				} else {
-					setHeaderText( __( 'Start live chat', __i18n_text_domain__ ) );
-				}
-				break;
-			case 'EMAIL':
-				setHeaderText( __( 'Send us an email', __i18n_text_domain__ ) );
-				break;
-			case 'DIRECTLY':
-				setHeaderText( __( 'Start live chat with an expert', 'full-site-editing' ) );
-				break;
-			case 'FORUM':
-				setHeaderText( __( 'Ask in our community forums', __i18n_text_domain__ ) );
-				break;
-		}
-	}, [ mode, openChat, setHeaderText ] );
-
-	const { hasCookies, isLoading: loadingCookies } = useHas3PC();
-
 	const isSubmitting = submittingTicket || submittingTopic;
-	const isLoading = loadingCookies || isSubmitting;
 
 	const formTitles = titles[ mode ];
 
@@ -249,17 +194,20 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 		supportSite = selectedSite || currentSite;
 	}
 
-	function handleCTA( event: React.MouseEvent< HTMLButtonElement > ) {
+	function handleCTA() {
 		switch ( mode ) {
 			case 'CHAT': {
 				if ( supportSite ) {
-					if ( hasCookies ) {
-						setOpenChat( true );
-						break;
-					} else {
-						const popup = openPopup( event );
-						setPopup( popup );
-					}
+					recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+						support_variation: 'happychat',
+					} );
+
+					recordTracksEvent( 'calypso_help_live_chat_begin', {
+						site_plan_product_id: supportSite ? supportSite.plan?.product_id : null,
+						is_automated_transfer: supportSite ? supportSite.options.is_automated_transfer : null,
+					} );
+					history.push( '/inline-chat' );
+					break;
 				}
 				break;
 			}
@@ -281,7 +229,10 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 						is_chat_overflow: false,
 					} )
 						.then( () => {
-							setContactSuccess( true );
+							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+								support_variation: 'kayako',
+							} );
+							history.push( '/success' );
 							resetStore();
 						} )
 						.catch( () => {
@@ -301,7 +252,10 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					userDeclaredSiteUrl,
 				} )
 					.then( ( response ) => {
-						setForumTopicUrl( response.topic_URL );
+						recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+							support_variation: 'forums',
+						} );
+						history.push( `/success?forumTopic=${ encodeURIComponent( response.topic_URL ) }` );
 						resetStore();
 					} )
 					.catch( () => {
@@ -311,18 +265,13 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 			}
 			case 'DIRECTLY': {
 				askDirectlyQuestion( message ?? '', userData?.display_name ?? '', userData?.email ?? '' );
+				recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+					support_variation: 'directly',
+				} );
 				setShowHelpCenter( false );
 				break;
 			}
 		}
-	}
-
-	if ( openChat ) {
-		return <InlineChat />;
-	}
-
-	if ( contactSuccess || forumTopicUrl ) {
-		return <SuccessScreen forumTopicUrl={ forumTopicUrl } onBack={ onGoHome } />;
 	}
 
 	const InfoTip = () => {
@@ -354,7 +303,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 	};
 
 	const isCTADisabled = () => {
-		if ( isLoading || ! message ) {
+		if ( isSubmitting || ! message ) {
 			return true;
 		}
 
@@ -371,8 +320,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 	return (
 		<main className="help-center-contact-form">
 			<header>
-				{ /* forum users don't have other support options, send them back to home, not the support options screen */ }
-				<BackButton onClick={ mode === 'FORUM' || mode === 'DIRECTLY' ? onGoHome : onBackClick } />
+				<BackButton />
 			</header>
 			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
 			{ formTitles.formSubtitle && (
@@ -441,7 +389,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					id="help-center-contact-form__message"
 					rows={ 10 }
 					value={ message ?? '' }
-					onChange={ ( event ) => setMessage( event.target.value ) }
+					onInput={ ( event ) => setMessage( event.currentTarget.value ) }
 					className="help-center-contact-form__message"
 				/>
 			</section>
@@ -491,5 +439,3 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 		</main>
 	);
 };
-
-export default ContactForm;

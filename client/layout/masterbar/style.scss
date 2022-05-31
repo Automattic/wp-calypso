@@ -870,6 +870,12 @@ a.masterbar__quick-language-switcher {
 }
 
 .masterbar__item-help {
+	padding: 0 11px;
+
+	svg {
+		fill: var( --color-masterbar-text );
+	}
+	
 	&.is-active {
 		background: #1e1e1e;
 	}

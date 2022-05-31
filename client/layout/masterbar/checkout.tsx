@@ -1,14 +1,13 @@
 import config from '@automattic/calypso-config';
 import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
 import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
-import HelpCenter, { HelpIcon, ContactForm } from '@automattic/help-center';
+import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import InlineHelpCenterContent from 'calypso/blocks/inline-help/inline-help-center-content';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -46,8 +45,6 @@ const CheckoutMasterbar = ( {
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const [ isHelpCenterVisible, setIsHelpCenterVisible ] = useState( false );
-	const [ contactForm, setContactForm ] = useState( null );
-	const [ openInContactPage, setOpenInContactPage ] = useState< boolean >( false );
 
 	const closeAndLeave = () =>
 		leaveCheckout( {
@@ -103,7 +100,7 @@ const CheckoutMasterbar = ( {
 					className={ classnames( 'masterbar__item-help', {
 						'is-active': isHelpCenterVisible,
 					} ) }
-					icon={ <HelpIcon newItems={ newItems } active={ isHelpCenterVisible } /> }
+					icon={ <HelpIcon newItems={ newItems } /> }
 				/>
 			) }
 			<CheckoutModal
@@ -117,30 +114,7 @@ const CheckoutMasterbar = ( {
 				secondaryAction={ clearCartAndLeave }
 			/>
 			{ isHelpCenterEnabled && isHelpCenterVisible && (
-				<HelpCenter
-					content={
-						contactForm ? (
-							<ContactForm
-								mode={ contactForm }
-								onBackClick={ () => {
-									setOpenInContactPage( true );
-									setContactForm( null );
-								} }
-								onGoHome={ () => {
-									setOpenInContactPage( false );
-									setContactForm( null );
-								} }
-								siteId={ siteId }
-							/>
-						) : (
-							<InlineHelpCenterContent
-								setContactFormOpen={ setContactForm }
-								openInContactPage={ openInContactPage }
-							/>
-						)
-					}
-					handleClose={ () => setIsHelpCenterVisible( false ) }
-				/>
+				<HelpCenter handleClose={ () => setIsHelpCenterVisible( false ) } />
 			) }
 		</Masterbar>
 	);
