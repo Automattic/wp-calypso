@@ -29,7 +29,7 @@ function HelpCenterContent() {
 			<Button
 				className={ cx( 'entry-point-button', { 'is-active': show } ) }
 				onClick={ () => setShowHelpCenter( ! show ) }
-				icon={ <HelpIcon newItems={ showHelpIconDot } active={ show } /> }
+				icon={ <HelpIcon newItems={ showHelpIconDot } /> }
 			></Button>
 		</span>
 	);
