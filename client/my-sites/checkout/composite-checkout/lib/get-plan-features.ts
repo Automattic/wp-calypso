@@ -68,11 +68,10 @@ export default function getPlanFeatures(
 	if ( isWpComBusinessPlan( productSlug ) || isWpComProPlan( productSlug ) ) {
 		return [
 			! isMonthlyPlan && freeOneYearDomain,
-			! isMonthlyPlan && liveChatSupport,
-			String( translate( 'Install custom plugins and themes' ) ),
-			String( translate( 'Drive traffic to your site with our advanced SEO tools' ) ),
-			String( translate( 'Track your stats with Google Analytics' ) ),
-			String( translate( 'Real-time backups and activity logs' ) ),
+			String( translate( 'Install Custom Plugins and themes' ) ),
+			String( translate( 'Sell products with WooCommerce' ) ),
+			String( translate( '50GB of Storage' ) ),
+			String( translate( 'Free professional e-mail for 3 months' ) ),
 		].filter( isValueTruthy );
 	}
 
