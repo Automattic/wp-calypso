@@ -6,19 +6,27 @@ import { Page } from 'playwright';
 export class DifmLiteFlow {
 	selectors = {
 		// Common
-		existingSite: ( index: number ) => `.site-icon >> nth=${ index }`,
 		input: ( index: number ) => `input >> nth=${ index }`,
+		input2: ( name: string ) => `input[name="${ name }"]`,
 		continue: 'button[type="submit"]',
 
-		// /do-it-for-me/difm-site-picker
-		search: 'input[type="search"]',
+		// difm-site-picker
+		existingSite: ( index: number ) => `.site-icon >> nth=${ index }`,
+		inputSearch: 'input[type="search"]',
+		searchTerm: 'e2e',
 		confirmSiteDeleteInput: '#confirmTextChangeInput',
 		primaryCTA: 'button:text("Delete site content")',
 		cancel: 'button:text("Cancel")',
 
-		// /do-it-for-me/difm-options
+		// difm-options
 		siteTitleInput: 'input[name="siteTitle"]',
 		siteTagLineInput: 'input[name="tagline"]',
+
+		// social-profiles
+		fbSocialInput: 'input[name="facebookUrl"]',
+		twitterSocialInput: 'input[name="twitterUrl"]',
+		instaSocialInput: 'input[name="instagramUrl"]',
+		linkedinSocialInput: 'input[name="linkedinUrl"]',
 	};
 
 	private page: Page;
@@ -35,8 +43,9 @@ export class DifmLiteFlow {
 	 *
 	 * @param {string} text Text to input to check, default is DELETE.
 	 */
-	async searchExistingSites( text = 'e2e' ) {
-		this.page.fill( this.selectors.search, text );
+	async searchExistingSites( text = this.selectors.searchTerm ) {
+		// TODO: Do we want to find a way to wait for the list of sites? right now the Playwright retries seems to be enough.
+		this.page.fill( this.selectors.inputSearch, text );
 	}
 
 	/**
@@ -45,6 +54,7 @@ export class DifmLiteFlow {
 	 * @param {number} number N'th site on page.
 	 */
 	async selectASite( number = 0 ): Promise< void > {
+		// TODO: Use search existing sites to validate
 		await this.page.click( this.selectors.existingSite( number ) );
 	}
 
@@ -65,12 +75,39 @@ export class DifmLiteFlow {
 	}
 
 	/**
-	 * Fills site title at /do-it-for-me/difm-options stage of difm journey
+	 * Fills site tag line at /difm-options stage of difm journey
 	 *
-	 * @param {string} text default is Site Title plus current date (to give the ).
+	 * @param {string} text default is Site Tag.
 	 */
 	async fillSiteTitleInput( text = 'Site Title' ) {
-		this.page.fill( this.selectors.siteTitleInput, text );
+		await Promise.all( [
+			this.page.waitForSelector( this.selectors.siteTitleInput ),
+			this.page.fill( this.selectors.siteTitleInput, text ),
+		] );
+	}
+
+	/**
+	 * Fills site tag line at /difm-options stage of difm journey
+	 *
+	 * @param {string} text default is Site Tag.
+	 */
+	async fillSiteTagInput( text = 'Site Tag' ) {
+		await Promise.all( [
+			this.page.waitForSelector( this.selectors.siteTagLineInput ),
+			this.page.fill( this.selectors.siteTagLineInput, text ),
+		] );
+	}
+
+	/**
+	 * Fills in social media urls /social-profiles stage of difm journey
+	 *
+	 * @param {string} text default is socialUrl.
+	 */
+	async fillSocials( text = 'socialUrl' ) {
+		this.page.fill( this.selectors.fbSocialInput, text );
+		this.page.fill( this.selectors.twitterSocialInput, text );
+		this.page.fill( this.selectors.instaSocialInput, text );
+		this.page.fill( this.selectors.linkedinSocialInput, text );
 	}
 
 	/**

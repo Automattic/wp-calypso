@@ -33,7 +33,8 @@ describe(
 				await gutenboardingFlow.clickButton( 'Select a site' );
 			} );
 			it( 'Step 2: Choose site to redo (delete)', async function () {
-				// Search
+				// Search existing sites
+				// TODO: Validate search result is shown
 				await difmLite.searchExistingSites();
 				// Selects a site to delete, first is default.
 				await difmLite.selectASite();
@@ -50,6 +51,7 @@ describe(
 			} );
 			it( 'Step 3: Enter site name (skip tagline)', async function () {
 				await difmLite.fillSiteTitleInput();
+				await difmLite.fillSiteTagInput();
 				await difmLite.pressContinueButton();
 			} );
 			it( 'Step 4: Continue on socials (enter no socials)', async function () {
