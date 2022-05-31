@@ -22,6 +22,14 @@ const IssueTypeSelector: React.FunctionComponent< Props > = ( props ) => {
 			key: 'threats_found',
 			name: translate( 'Threats found' ),
 		},
+		{
+			key: 'site_down',
+			name: translate( 'Site disconnected' ),
+		},
+		{
+			key: 'plugin_updates',
+			name: translate( 'Plugin needs updates' ),
+		},
 	];
 	return <TypeSelector types={ issueTypes } title={ translate( 'Issue Type' ) } { ...props } />;
 };

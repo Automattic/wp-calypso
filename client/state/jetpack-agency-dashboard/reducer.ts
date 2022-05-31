@@ -9,7 +9,12 @@ type AgencyDashboardFilterActionTypes =
 	| typeof JETPACK_AGENCY_DASHBOARD_FILTER_SET
 	| typeof JETPACK_AGENCY_DASHBOARD_FILTER_UPDATE;
 
-export type AgencyDashboardFilterOption = 'backup_failed' | 'backup_warning' | 'threats_found';
+export type AgencyDashboardFilterOption =
+	| 'backup_failed'
+	| 'backup_warning'
+	| 'threats_found'
+	| 'site_down'
+	| 'plugin_updates';
 
 export interface AgencyDashboardFilter {
 	group: AgencyDashboardFilterOption[];
