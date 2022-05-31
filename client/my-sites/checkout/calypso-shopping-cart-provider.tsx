@@ -10,7 +10,7 @@ import { cartManagerClient } from './cart-manager-client';
 export default function CalypsoShoppingCartProvider( { children }: PropsWithChildren< {} > ) {
 	const options = useMemo(
 		() => ( {
-			refetchOnWindowFocus: true,
+			refetchOnWindowFocus: false,
 		} ),
 		[]
 	);
