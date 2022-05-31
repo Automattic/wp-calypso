@@ -8,3 +8,4 @@ export { useHCWindowCommunicator } from './happychat-window-communicator';
 export { execute, checkAPIThenInitializeDirectly, askDirectlyQuestion } from './directly';
 export { default as Mail } from './icons/mail';
 export { default as NewReleases } from './icons/new-releases';
+export * from './support-variations';

@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -87,8 +88,18 @@ export const HelpCenterContactButton: React.FC = () => {
 	const { __ } = useI18n();
 	const url = useStillNeedHelpURL();
 
+	const trackContactButtonClicked = () => {
+		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
+			location: 'help-center-still-need-help',
+		} );
+	};
+
 	return (
-		<Link to={ url } className="button help-center-contact-page__button">
+		<Link
+			to={ url }
+			onClick={ trackContactButtonClicked }
+			className="button help-center-contact-page__button"
+		>
 			<Icon icon={ comment } />
 			<span>{ __( 'Still need help?' ) }</span>
 		</Link>

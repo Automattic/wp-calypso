@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
@@ -9,6 +10,11 @@ export const SuccessScreen: React.FC = () => {
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const forumTopicUrl = params.get( 'forumTopic' );
+
+	const trackForumOpen = () =>
+		recordTracksEvent( 'calypso_inlinehelp_forums_open', {
+			location: 'help-center',
+		} );
 
 	return (
 		<div>
@@ -25,7 +31,12 @@ export const SuccessScreen: React.FC = () => {
 							__i18n_text_domain__
 						) }
 						&nbsp;
-						<a target="_blank" rel="noopener noreferrer" href={ forumTopicUrl }>
+						<a
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ trackForumOpen }
+							href={ forumTopicUrl }
+						>
 							{ __( 'View the forums topic here.', __i18n_text_domain__ ) }
 						</a>
 					</p>

@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
 	useSubmitTicketMutation,
@@ -20,6 +21,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { askDirectlyQuestion, execute } from '../directly';
 import { STORE_KEY, USER_KEY } from '../store';
+import { getSupportVariationFromMode } from '../support-variations';
 import { SitePicker } from '../types';
 import { BackButton } from './back-button';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
@@ -154,6 +156,13 @@ export const HelpCenterContactForm = () => {
 		site: userDeclaredSite,
 	} = useSiteAnalysis( userDeclaredSiteUrl );
 
+	useEffect( () => {
+		const supportVariation = getSupportVariationFromMode( mode );
+		recordTracksEvent( 'calypso_inlinehelp_contact_view', {
+			support_variation: supportVariation,
+		} );
+	}, [ mode ] );
+
 	// record the resolved site
 	useEffect( () => {
 		if ( userDeclaredSite ) {
@@ -189,6 +198,14 @@ export const HelpCenterContactForm = () => {
 		switch ( mode ) {
 			case 'CHAT': {
 				if ( supportSite ) {
+					recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+						support_variation: 'happychat',
+					} );
+
+					recordTracksEvent( 'calypso_help_live_chat_begin', {
+						site_plan_product_id: supportSite ? supportSite.plan?.product_id : null,
+						is_automated_transfer: supportSite ? supportSite.options.is_automated_transfer : null,
+					} );
 					history.push( '/inline-chat' );
 					break;
 				}
@@ -212,6 +229,9 @@ export const HelpCenterContactForm = () => {
 						is_chat_overflow: false,
 					} )
 						.then( () => {
+							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+								support_variation: 'kayako',
+							} );
 							history.push( '/success' );
 							resetStore();
 						} )
@@ -232,6 +252,9 @@ export const HelpCenterContactForm = () => {
 					userDeclaredSiteUrl,
 				} )
 					.then( ( response ) => {
+						recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+							support_variation: 'forums',
+						} );
 						history.push( `/success?forumTopic=${ encodeURIComponent( response.topic_URL ) }` );
 						resetStore();
 					} )
@@ -242,6 +265,9 @@ export const HelpCenterContactForm = () => {
 			}
 			case 'DIRECTLY': {
 				askDirectlyQuestion( message ?? '', userData?.display_name ?? '', userData?.email ?? '' );
+				recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+					support_variation: 'directly',
+				} );
 				setShowHelpCenter( false );
 				break;
 			}

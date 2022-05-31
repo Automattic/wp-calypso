@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { Button } from '@wordpress/components';
@@ -24,11 +25,20 @@ function HelpCenterContent() {
 		}
 	}, [ data, isLoading ] );
 
+	const handleToggleHelpCenter = () => {
+		if ( show ) {
+			recordTracksEvent( 'calypso_inlinehelp_close', { location: 'help-center-desktop' } );
+		} else {
+			recordTracksEvent( 'calypso_inlinehelp_show', { location: 'help-center-desktop' } );
+		}
+		setShowHelpCenter( ! show );
+	};
+
 	const content = (
 		<span className="etk-help-center">
 			<Button
 				className={ cx( 'entry-point-button', { 'is-active': show } ) }
-				onClick={ () => setShowHelpCenter( ! show ) }
+				onClick={ handleToggleHelpCenter }
 				icon={ <HelpIcon newItems={ showHelpIconDot } /> }
 			></Button>
 		</span>
