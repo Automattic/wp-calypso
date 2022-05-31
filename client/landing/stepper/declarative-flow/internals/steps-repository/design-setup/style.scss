@@ -296,7 +296,9 @@ $design-setup-footer-height: 118px;
 		}
 
 		@include onboarding-break-2k {
-			max-width: 2144px;
+			max-width: 2240px;
+			padding-left: 0;
+			padding-right: 0;
 		}
 	}
 
