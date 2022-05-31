@@ -78,7 +78,14 @@ export class Filterbar extends Component {
 	};
 
 	renderCloseButton = () => {
-		const { filter } = this.props;
+		const { filter, selectorTypes } = this.props;
+
+		// If there is not more than one filter selector then don't render this button
+		// which serves to clear multiple filters.
+		if ( Object.keys( selectorTypes ).length <= 1 ) {
+			return;
+		}
+
 		if ( filter && ( filter.group || filter.before || filter.after ) ) {
 			return (
 				<Button onClick={ this.handleRemoveFilters } borderless className="filterbar__icon-reset">
