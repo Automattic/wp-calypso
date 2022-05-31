@@ -1,8 +1,8 @@
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 
 type SiteId = number | null;
@@ -19,6 +19,7 @@ const CALYPSO_BOOST_LANDING_PAGE = '/pricing/jetpack-boost/welcome';
 
 export default function useBoostFreeButtonProps( siteId: SiteId, isOwned: boolean ): Props {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const siteWpAdminUrl = useSelector( ( state ) =>
 		getSiteAdminUrl( state, siteId, 'admin.php?page=jetpack-boost' )
 	);
@@ -37,13 +38,14 @@ export default function useBoostFreeButtonProps( siteId: SiteId, isOwned: boolea
 
 	const label = isOwned ? translate( 'Manage plugin' ) : translate( 'Get Boost' );
 
-	const trackCallback = useTrackCallback( undefined, 'calypso_product_jpboost_free_click', {
-		site_id: siteId || undefined,
-	} );
-
 	const onClick = useCallback( () => {
-		trackCallback();
-	}, [ trackCallback ] );
+		dispatch(
+			recordTracksEvent( 'calypso_product_jpboost_free_click', {
+				site_id: siteId ?? undefined,
+				is_owned: !! isOwned,
+			} )
+		);
+	}, [ dispatch, siteId, isOwned ] );
 
 	return {
 		primary,
