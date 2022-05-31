@@ -28,6 +28,8 @@
 		"@automattic/happychat-connection": "workspace:^",
 		"@automattic/help-center": "workspace:^",
 		"@automattic/site-picker": "workspace:^",
+		"@wordpress/interface": "^4.6.0",
+		"@wordpress/plugins": "^4.5.0",
 		"@automattic/calypso-polyfills": "workspace:^",
 		"calypso": "workspace:^",
 		"react": "^17.0.2",

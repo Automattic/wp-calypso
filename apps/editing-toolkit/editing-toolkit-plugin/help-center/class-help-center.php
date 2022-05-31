@@ -26,7 +26,7 @@ class Help_Center {
 	 * Help_Center constructor.
 	 */
 	public function __construct() {
-		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script' ), 100 );
 	}
 
 	/**
@@ -49,7 +49,7 @@ class Help_Center {
 			'help-center-script',
 			HELP_CENTER_BUNDLE_PATH,
 			array(),
-			1,
+			time(),
 			true
 		);
 
@@ -57,7 +57,7 @@ class Help_Center {
 			'help-center-style',
 			is_rtl() ? HELP_CENTER_RTL_CSS_PATH : HELP_CENTER_CSS_PATH,
 			array(),
-			1
+			time()
 		);
 
 		wp_localize_script(
