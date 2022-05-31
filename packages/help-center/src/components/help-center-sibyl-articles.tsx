@@ -34,6 +34,7 @@ function getPostUrl( article: Article, query: string ) {
 		}
 
 		const search = params.toString();
+
 		return {
 			pathname: '/post',
 			search,

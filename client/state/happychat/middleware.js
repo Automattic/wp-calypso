@@ -70,9 +70,10 @@ export const socketMiddleware = ( connection = null ) => {
 				connection.init( store.dispatch, action.auth );
 				break;
 
-			case HAPPYCHAT_IO_REQUEST_TRANSCRIPT:
+			case HAPPYCHAT_IO_REQUEST_TRANSCRIPT: {
 				connection.request( action, action.timeout );
 				break;
+			}
 
 			case HAPPYCHAT_IO_SEND_MESSAGE_USERINFO:
 				// When user info is sent, pass it through in a message...
