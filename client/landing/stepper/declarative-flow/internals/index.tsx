@@ -50,7 +50,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 			case AssertConditionState.FAILURE:
-				throw new Error( assertCondition.message ?? 'Error in Stepper pre-conditions' );
+				throw new Error( assertCondition.message ?? 'An error has occurred.' );
 		}
 
 		const StepComponent = Steps[ path ];
