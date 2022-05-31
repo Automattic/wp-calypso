@@ -6,6 +6,7 @@ import { Icon, chevronRight } from '@wordpress/icons';
 import debugFactory from 'debug';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
@@ -63,10 +64,13 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 			wasSkipped: true,
 		} );
 
+		recordTracksEvent( 'calypso_signup_p2_join_workspace_auto_skip' );
 		goToNextStep();
 	}, [ eligibleWorkspaces, isLoading, submitSignupStep, stepName, goToNextStep ] );
 
 	const handleJoinWorkspaceClick = async ( { id, name } ) => {
+		recordTracksEvent( 'calypso_signup_p2_join_workspace_join_request' );
+
 		// Remember which workspace is being requested, for more accurate loading feedback.
 		setWorkspaceStatus( {
 			...workspaceStatus,
@@ -82,13 +86,16 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 			},
 		} );
 
-		if ( response.success ) {
-			setWorkspaceStatus( {
-				...workspaceStatus,
-				requesting: null,
-				requested: { id: parseInt( response.hub_id ), name },
-			} );
+		if ( ! response.success ) {
+			recordTracksEvent( 'calypso_signup_p2_join_workspace_join_request_fail' );
 		}
+
+		recordTracksEvent( 'calypso_signup_p2_join_workspace_join_request_success' );
+		setWorkspaceStatus( {
+			...workspaceStatus,
+			requesting: null,
+			requested: { id: parseInt( response.hub_id ), name },
+		} );
 	};
 
 	const handleCreateWorkspaceClick = () => {
