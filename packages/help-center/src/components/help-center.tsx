@@ -27,8 +27,8 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 	const { isLoading: isLoadingChat } = useSupportAvailability( 'CHAT' );
 	const { isLoading: isLoadingChatAvailable } = useHappychatAvailable();
 	const { data: supportData, isLoading: isSupportDataLoading } = useSupportAvailability( 'OTHER' );
-
 	useStillNeedHelpURL();
+
 	useEffect( () => {
 		if ( supportData?.is_user_eligible_for_directly ) {
 			execute( [

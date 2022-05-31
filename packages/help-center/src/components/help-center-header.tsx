@@ -3,7 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { closeSmall, chevronUp, lineSolid, commentContent, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { ReactElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import { STORE_KEY } from '../store';

@@ -3,7 +3,6 @@
  */
 import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
-	useHas3PC,
 	useSubmitTicketMutation,
 	useSubmitForumsMutation,
 	useSiteAnalysis,
@@ -169,10 +168,7 @@ export const HelpCenterContactForm = () => {
 		}
 	}, [ directlyData, setShowHelpCenter ] );
 
-	const { isLoading: loadingCookies } = useHas3PC();
-
 	const isSubmitting = submittingTicket || submittingTopic;
-	const isLoading = loadingCookies || isSubmitting;
 
 	const formTitles = titles[ mode ];
 
@@ -281,7 +277,7 @@ export const HelpCenterContactForm = () => {
 	};
 
 	const isCTADisabled = () => {
-		if ( isLoading || ! message ) {
+		if ( isSubmitting || ! message ) {
 			return true;
 		}
 

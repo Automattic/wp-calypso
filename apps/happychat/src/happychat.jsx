@@ -153,7 +153,6 @@ function ParentConnection( { chatStatus, timeline, connectionStatus } ) {
 		);
 	}, [ blurredAt, timeline ] );
 
-	/*
 	useEffect( () => {
 		// blurredAt is 0 when the user is looking
 		if ( blurredAt ) {
@@ -162,7 +161,7 @@ function ParentConnection( { chatStatus, timeline, connectionStatus } ) {
 			dispatch( sendEvent( `Started looking at Happychat` ) );
 		}
 	}, [ blurredAt, dispatch ] );
-	*/
+
 	return null;
 }
 
