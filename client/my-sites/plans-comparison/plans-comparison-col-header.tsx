@@ -17,7 +17,6 @@ const PlanTitle = styled.h2`
 	font-size: 1.125rem;
 	margin-bottom: 10px;
 	font-weight: 500;
-	line-height: 1.1;
 
 	@media screen and ( min-width: ${ SCREEN_BREAKPOINT_SIGNUP + 1 }px ) {
 		.is-section-signup & {
@@ -34,17 +33,10 @@ const PlanTitle = styled.h2`
 	}
 `;
 
-const FlexContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	height: 100%;
-`;
-
 const PlanDescription = styled.p`
 	font-size: 1rem;
 	font-weight: 400;
 	margin: 0 0 1.5rem;
-	flex: 1;
 
 	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
 		.is-section-signup & {
@@ -90,40 +82,38 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 
 	return (
 		<th scope="col">
-			<FlexContainer>
-				<PlanTitle>{ plan.getTitle() }</PlanTitle>
-				<PlanDescription>{ plan.getDescription() }</PlanDescription>
-				<PriceContainer>
-					{ isDiscounted && (
-						<>
-							<PlanPrice
-								currencyCode={ currencyCode }
-								rawPrice={ originalPrice }
-								displayFlatPrice={ true }
-								translate={ translate }
-								original
-							/>
-							<PlanPrice
-								currencyCode={ currencyCode }
-								displayFlatPrice={ true }
-								rawPrice={ price }
-								translate={ translate }
-								discounted
-							/>
-						</>
-					) }
-					{ ! isDiscounted && (
+			<PlanTitle>{ plan.getTitle() }</PlanTitle>
+			<PlanDescription>{ plan.getDescription() }</PlanDescription>
+			<PriceContainer>
+				{ isDiscounted && (
+					<>
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ originalPrice }
+							displayFlatPrice={ true }
+							translate={ translate }
+							original
+						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							displayFlatPrice={ true }
 							rawPrice={ price }
 							translate={ translate }
+							discounted
 						/>
-					) }
-				</PriceContainer>
-				<BillingTimeFrame>{ plan.getBillingTimeFrame() }</BillingTimeFrame>
-				{ children }
-			</FlexContainer>
+					</>
+				) }
+				{ ! isDiscounted && (
+					<PlanPrice
+						currencyCode={ currencyCode }
+						displayFlatPrice={ true }
+						rawPrice={ price }
+						translate={ translate }
+					/>
+				) }
+			</PriceContainer>
+			<BillingTimeFrame>{ plan.getBillingTimeFrame() }</BillingTimeFrame>
+			{ children }
 		</th>
 	);
 };
