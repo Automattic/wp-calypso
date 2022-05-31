@@ -21,8 +21,8 @@ import {
 	isNewOrExistingSiteFulfilled,
 	setDIFMLiteDesign,
 	excludeStepIfEmailVerified,
-	excludeStepIfProfileComplete,
 	submitWebsiteContent,
+	excludeStepIfProfileComplete,
 } from 'calypso/lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
