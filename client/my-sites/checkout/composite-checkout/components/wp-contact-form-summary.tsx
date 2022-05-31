@@ -1,9 +1,10 @@
-import { ResponseCart, useShoppingCart } from '@automattic/shopping-cart';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { hasOnlyRenewalItems } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { SummaryLine, SummaryDetails } from './summary-details';
+import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const GridRow = styled.div`
