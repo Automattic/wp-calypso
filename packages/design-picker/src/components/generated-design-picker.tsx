@@ -91,20 +91,23 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 			return noop;
 		}
 
-		const onResize = () => {
-			const { current: thumnbnailWrapper } = wrapperRef;
-			if ( ! thumnbnailWrapper ) {
+		const handleResponsive = () => {
+			if ( ! wrapperRef.current ) {
 				return;
 			}
 
-			thumnbnailWrapper.style.height = `calc( 100vh - ${ thumnbnailWrapper.offsetTop }px`;
+			const offsetTop = wrapperRef.current.offsetTop - window.pageYOffset;
+			wrapperRef.current.style.setProperty( 'height', `calc( 100vh - ${ offsetTop }px` );
 		};
 
-		window.addEventListener( 'resize', onResize );
-		onResize();
+		handleResponsive();
+
+		window.addEventListener( 'resize', handleResponsive );
+		window.addEventListener( 'scroll', handleResponsive );
 
 		return () => {
-			window.removeEventListener( 'resize', onResize );
+			window.removeEventListener( 'resize', handleResponsive );
+			window.removeEventListener( 'scroll', handleResponsive );
 		};
 	}, [ isMobile ] );
 
@@ -127,9 +130,11 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 						{ __( 'View more options' ) }
 					</Button>
 				</div>
-				<div className="generated-design-picker__previews">{ previews }</div>
+				<div className="generated-design-picker__main">
+					<div className="generated-design-picker__previews">{ previews }</div>
+					{ footer }
+				</div>
 			</div>
-			{ footer }
 		</div>
 	);
 };

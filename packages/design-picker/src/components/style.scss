@@ -476,6 +476,15 @@
 	}
 }
 
+.generated-design-picker__main {
+	height: 0;
+
+	@include break-small {
+		flex: 1;
+		height: auto;
+	}
+}
+
 .generated-design-preview {
 	.generated-design-preview__header {
 		align-items: center;
