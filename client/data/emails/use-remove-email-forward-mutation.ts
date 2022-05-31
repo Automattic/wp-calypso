@@ -26,7 +26,11 @@ export function useRemoveEmailForwardMutation(
 	const useEmailsQueryKey = getEmailAccountsQueryKey( selectedSiteId, domainName );
 	const useGetEmailDomainsQueryKey = getEmailDomainsQueryKey( selectedSiteId );
 
-	mutationOptions.onSettled = async () => {
+	const suppliedOnSettled = mutationOptions.onSettled;
+
+	mutationOptions.onSettled = async ( data, error, variables, context ) => {
+		suppliedOnSettled?.( data, error, variables, context );
+
 		await Promise.all( [
 			queryClient.invalidateQueries( useEmailsQueryKey ),
 			queryClient.invalidateQueries( useGetEmailDomainsQueryKey ),
