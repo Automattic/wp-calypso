@@ -1,15 +1,18 @@
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { BackButton } from './back-button';
 import { SuccessIcon } from './success-icon';
-import type { SuccessScreenProps } from '../types';
 
-export const SuccessScreen: React.FC< SuccessScreenProps > = ( { onBack, forumTopicUrl } ) => {
+export const SuccessScreen: React.FC = () => {
 	const { __ } = useI18n();
+	const { search } = useLocation();
+	const params = new URLSearchParams( search );
+	const forumTopicUrl = params.get( 'forumTopic' );
 
 	return (
 		<div>
-			<BackButton onClick={ onBack } />
+			<BackButton backToRoot />
 			<div className="ticket-success-screen__help-center">
 				<SuccessIcon />
 				<h1 className="ticket-success-screen__help-center-heading">

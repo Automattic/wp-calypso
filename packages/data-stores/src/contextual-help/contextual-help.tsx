@@ -2,12 +2,13 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import { RESULT_TOUR, RESULT_VIDEO, SELL_INTENT } from './constants';
 
-type LinksForSection = {
+export type LinksForSection = {
 	readonly link: string;
 	post_id?: number;
 	readonly title: React.ReactChild;
-	readonly description: React.ReactChild;
+	readonly description?: React.ReactChild;
 	readonly intent?: string;
+	icon?: string;
 };
 /**
  * Module variables
@@ -93,7 +94,7 @@ export const defaultFallbackLinks = [
 	},
 ];
 
-export const bloggerFallbackLinks = [
+export const bloggerFallbackLinks: LinksForSection[] = [
 	{
 		get link() {
 			return localizeUrl( 'https://wordpress.com/support/posts/' );
