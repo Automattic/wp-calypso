@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';
 import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-form-complete';
+import { useUpdateFormLocationIfCartChanges } from '../hooks/use-update-form-location-if-cart-changes';
 import ContactDetailsContainer from './contact-details-container';
 import type {
 	CountryListItem,
@@ -48,6 +49,7 @@ export default function WPContactForm( {
 	const isCachedContactFormValid = useIsCachedContactFormValid( contactValidationCallback );
 
 	useSkipToLastStepIfFormComplete( isCachedContactFormValid );
+	useUpdateFormLocationIfCartChanges();
 
 	return (
 		<BillingFormFields>
