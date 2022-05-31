@@ -82,7 +82,7 @@ function P2ConfirmEmail( {
 
 	const handleNextStepClick = () => {
 		debug( 'Email confirmation step completed for %s', userEmail );
-		recordTracksEvent( 'calypso_signup_p2_confirm_email_complete' );
+		recordTracksEvent( 'calypso_signup_p2_confirm_email_step_submit' );
 		submitSignupStep( { stepName } );
 
 		goToNextStep();
