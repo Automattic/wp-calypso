@@ -1,6 +1,7 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
@@ -97,12 +98,21 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const hasSitesLoaded = useSelector( ( state ) => hasLoadedSites( state ) );
 
-	const { data, isLoading: isSiteDomainLoading } = useGetEmailDomainsQuery(
-		selectedSite?.ID ?? null,
-		{
-			retry: false,
-		}
-	);
+	const {
+		data,
+		isLoading: isSiteDomainLoading,
+		remove: removeEmailDomainsCache,
+	} = useGetEmailDomainsQuery( selectedSite?.ID ?? null, {
+		retry: false,
+	} );
+
+	// Clear the query data when the component unmounts in order to prevent showing stale data when
+	// users return here after e.g. adding a new email forward.
+	useEffect( () => {
+		return () => {
+			removeEmailDomainsCache();
+		};
+	}, [] );
 
 	const domains = data?.domains?.map( createSiteDomainObject );
 
