@@ -30,9 +30,13 @@ function alphabeticallySortedProductOptions(
 
 interface Props {
 	selectedSite?: number | null;
+	suggestedProduct?: string | null;
 }
 
-export default function IssueLicenseForm( { selectedSite }: Props ): ReactElement {
+export default function IssueLicenseForm( {
+	selectedSite,
+	suggestedProduct,
+}: Props ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const products = useProductsQuery( {
@@ -109,6 +113,7 @@ export default function IssueLicenseForm( { selectedSite }: Props ): ReactElemen
 				onSelectProduct={ onSelectProduct }
 				isSelected={ productOption.slug === product }
 				tabIndex={ 100 + i }
+				suggestedProduct={ suggestedProduct }
 			/>
 		) );
 

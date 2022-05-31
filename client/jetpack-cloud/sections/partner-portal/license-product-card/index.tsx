@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useCallback } from 'react';
+import { ReactElement, useCallback, useEffect } from 'react';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import './style.scss';
 
@@ -11,10 +11,11 @@ interface Props {
 	product: APIProductFamilyProduct;
 	isSelected: boolean;
 	onSelectProduct: ( value: string ) => void | null;
+	suggestedProduct?: string | null;
 }
 
 export default function LicenseProductCard( props: Props ): ReactElement {
-	const { tabIndex, product, isSelected, onSelectProduct } = props;
+	const { tabIndex, product, isSelected, onSelectProduct, suggestedProduct } = props;
 	const productTitle = product.name.replace( 'Jetpack ', '' ).replace( '(', '' ).replace( ')', '' );
 	const translate = useTranslate();
 
@@ -31,6 +32,14 @@ export default function LicenseProductCard( props: Props ): ReactElement {
 		},
 		[ onSelect ]
 	);
+
+	useEffect( () => {
+		if ( suggestedProduct ) {
+			if ( product.slug === suggestedProduct ) {
+				onSelect();
+			}
+		}
+	}, [ onSelect, product, suggestedProduct ] );
 
 	return (
 		<div
