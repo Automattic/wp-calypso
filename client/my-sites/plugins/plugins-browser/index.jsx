@@ -310,7 +310,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 				siteId={ siteId }
 				jetpackNonAtomic={ jetpackNonAtomic }
 			/>
-			{ category === 'discover' && <EducationFooter /> }
+			{ ! category && ! search && <EducationFooter /> }
 		</MainComponent>
 	);
 };
