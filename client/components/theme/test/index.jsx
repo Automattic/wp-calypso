@@ -76,7 +76,7 @@ describe( 'Theme', () => {
 
 			test( 'should match snapshot', () => {
 				const { container } = render( <Theme { ...props } /> );
-				expect( container ).toMatchSnapshot();
+				expect( container.firstChild ).toMatchSnapshot();
 			} );
 		} );
 

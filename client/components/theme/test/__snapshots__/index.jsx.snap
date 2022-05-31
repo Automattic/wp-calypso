@@ -1,57 +1,55 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Theme rendering with default display buttonContents should match snapshot 1`] = `
-<div>
+<div
+  class="card theme is-actionable is-clickable"
+  data-e2e-theme="twenty-seventeen"
+>
   <div
-    class="card theme is-actionable is-clickable"
-    data-e2e-theme="twenty-seventeen"
+    class="theme__content"
   >
-    <div
-      class="theme__content"
+    <a
+      aria-label="Twenty Seventeen"
+      class="theme__thumbnail"
+      href="javascript:;"
     >
-      <a
-        aria-label="Twenty Seventeen"
-        class="theme__thumbnail"
-        href="javascript:;"
-      >
-        <div
-          class="theme__thumbnail-label"
-        />
-        <img
-          class="theme__img"
-          src="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360"
-          srcset="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
-        />
-      </a>
       <div
-        class="theme__info"
+        class="theme__thumbnail-label"
+      />
+      <img
+        class="theme__img"
+        src="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360"
+        srcset="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
+      />
+    </a>
+    <div
+      class="theme__info"
+    >
+      <h2
+        class="theme__info-title"
       >
-        <h2
-          class="theme__info-title"
-        >
-          Twenty Seventeen
-        </h2>
-        <span
-          class="theme__badge-price theme__badge-price-upgrade"
-        />
-        <span
-          class="theme__more-button"
-        >
-          <button>
-            <svg
-              class="gridicon gridicons-ellipsis"
-              height="24"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <use
-                xlink:href="gridicons.svg#gridicons-ellipsis"
-              />
-            </svg>
-          </button>
-        </span>
-      </div>
+        Twenty Seventeen
+      </h2>
+      <span
+        class="theme__badge-price theme__badge-price-upgrade"
+      />
+      <span
+        class="theme__more-button"
+      >
+        <button>
+          <svg
+            class="gridicon gridicons-ellipsis"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <use
+              xlink:href="gridicons.svg#gridicons-ellipsis"
+            />
+          </svg>
+        </button>
+      </span>
     </div>
   </div>
 </div>
