@@ -126,9 +126,12 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	useEffect( () => {
 		if ( showGeneratedDesigns && ! hasTrackedView.current ) {
 			hasTrackedView.current = true;
-			recordTracksEvent( 'calypso_signup_generated_design_picker_view' );
+			recordTracksEvent( 'calypso_signup_generated_design_picker_view', {
+				vertical_id: siteVerticalId,
+				generated_designs: generatedDesigns?.map( ( design ) => design.slug ).join( ',' ),
+			} );
 		}
-	}, [ showGeneratedDesigns, hasTrackedView ] );
+	}, [ showGeneratedDesigns, hasTrackedView, generatedDesigns ] );
 
 	function headerText() {
 		if ( showGeneratedDesigns ) {
