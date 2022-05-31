@@ -1020,6 +1020,7 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 	}
 
 	debug( 'Skipping P2 email confirmation step' );
+	recordTracksEvent( 'calypso_signup_p2_confirm_email_autoskip' );
 	nextProps.submitSignupStep( { stepName, wasSkipped: true } );
 	flows.excludeStep( stepName );
 }
@@ -1039,6 +1040,7 @@ export function excludeStepIfProfileComplete( stepName, defaultDependencies, nex
 	debug( 'Checking profile for current user', currentUser );
 	if ( currentUser?.display_name !== currentUser?.username ) {
 		debug( 'Skipping P2 complete profile step' );
+		recordTracksEvent( 'calypso_signup_p2_complete_profile_autoskip' );
 		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
 		flows.excludeStep( stepName );
 	}
