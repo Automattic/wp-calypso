@@ -1,8 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement, useContext, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getFilter } from 'calypso/state/jetpack-agency-dashboard/selectors/get-filter';
 import SitesOverviewContext from './context';
 import SiteContent from './site-content';
 import SiteSearch from './site-search';
@@ -15,8 +16,9 @@ export default function SitesOverview(): ReactElement {
 	const dispatch = useDispatch();
 
 	const { search, currentPage } = useContext( SitesOverviewContext );
+	const filter = useSelector( ( state ) => getFilter( state ) );
 
-	const { data, isError, isFetching } = useFetchDashboardSites( search, currentPage );
+	const { data, isError, isFetching } = useFetchDashboardSites( search, currentPage, filter );
 
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_visit' ) );
@@ -39,6 +41,7 @@ export default function SitesOverview(): ReactElement {
 				isError={ isError }
 				isFetching={ isFetching }
 				currentPage={ currentPage }
+				filter={ filter }
 			/>
 		</div>
 	);

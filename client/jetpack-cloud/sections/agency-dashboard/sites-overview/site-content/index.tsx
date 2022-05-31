@@ -2,17 +2,19 @@ import { Card } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Pagination from 'calypso/components/pagination';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { addQueryArgs } from 'calypso/lib/route';
 import { FilterbarWithoutDispatch as Filterbar } from 'calypso/my-sites/activity/filterbar';
 import { updateFilter } from 'calypso/state/jetpack-agency-dashboard/actions';
-import { getFilter } from 'calypso/state/jetpack-agency-dashboard/selectors/get-filter';
 import SiteCard from '../site-card';
 import SiteTable from '../site-table';
 import { formatSites } from '../utils';
-import type { AgencyDashboardFilterOption } from 'calypso/state/jetpack-agency-dashboard/reducer';
+import type {
+	AgencyDashboardFilter,
+	AgencyDashboardFilterOption,
+} from 'calypso/state/jetpack-agency-dashboard/reducer';
 import type { ReactElement } from 'react';
 import './style.scss';
 
@@ -27,6 +29,7 @@ interface Props {
 	isError: boolean;
 	isFetching: boolean;
 	currentPage: number;
+	filter: AgencyDashboardFilter;
 }
 
 export default function SiteContent( {
@@ -34,13 +37,12 @@ export default function SiteContent( {
 	isError,
 	isFetching,
 	currentPage,
+	filter,
 }: Props ): ReactElement {
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
 
 	const sites = formatSites( data?.sites );
-
-	const filter = useSelector( ( state ) => getFilter( state ) );
 
 	const dispatch = useDispatch();
 	const selectIssueTypes = ( types: AgencyDashboardFilterOption[] ) => {

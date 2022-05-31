@@ -5,10 +5,19 @@ import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { AgencyDashboardFilter } from 'calypso/state/jetpack-agency-dashboard/reducer';
 
+const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) =>
+	filter.group.reduce(
+		( previousValue, currentValue ) => ( {
+			...previousValue,
+			[ currentValue ]: true,
+		} ),
+		{}
+	);
+
 const useFetchDashboardSites = (
 	searchQuery: string,
 	currentPage: number,
-	filter?: AgencyDashboardFilter
+	filter: AgencyDashboardFilter
 ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -23,7 +32,7 @@ const useFetchDashboardSites = (
 				{
 					...( searchQuery && { query: searchQuery } ),
 					...( currentPage && { page: currentPage } ),
-					filter,
+					...agencyDashboardFilterToQueryObject( filter ),
 				}
 			),
 		{
