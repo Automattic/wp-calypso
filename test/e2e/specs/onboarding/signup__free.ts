@@ -161,8 +161,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			await domainSearchComponent.clickButton( 'Skip Purchase' );
 		} );
 
-		// eslint-disable-next-line jest/no-disabled-tests
-		it.skip( 'Keep free plan', async function () {
+		it( 'Keep free plan', async function () {
 			const signupPickPlanPage = new SignupPickPlanPage( page );
 			await signupPickPlanPage.selectPlan( 'Free' );
 		} );
