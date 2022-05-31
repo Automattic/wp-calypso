@@ -286,6 +286,22 @@ $design-setup-footer-height: 118px;
  * Generated Design Picker
  */
 .design-picker__is-generated {
+	&.step-container {
+		max-width: none;
+
+		@include onboarding-break-full-hd {
+			.generated-design-picker__thumbnails {
+				padding-right: 4rem;
+			}
+		}
+
+		@include onboarding-break-2k {
+			max-width: 2240px;
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
+
 	&.design-picker__is-generated-previewing {
 		.design-setup__header,
 		.generated-design-picker__thumbnails {
@@ -406,7 +422,6 @@ $design-setup-footer-height: 118px;
 			display: flex;
 			height: $design-setup-footer-height;
 			justify-content: flex-end;
-			max-width: 1440px;
 			margin-left: 154px;
 			position: sticky;
 			overflow: hidden;
