@@ -56,6 +56,24 @@ export function buildCheckoutURL(
 			? 'http://calypso.localhost:3000'
 			: 'https://wordpress.com';
 
+	// Link to upsell page if upsell feature enabled
+	if ( showUpsellPage && rootUrl ) {
+		// Upsell page only supports one product
+		const product = productsArray[ 0 ];
+
+		// If upsell exists
+		if ( product in PURCHASE_FLOW_UPSELLS_MATRIX ) {
+			if ( ! urlQueryArgs.checkoutBackUrl ) {
+				urlQueryArgs.checkoutBackUrl = window.location.href;
+			}
+
+			return addQueryArgs(
+				urlQueryArgs,
+				`${ rootUrl.replace( /\/$/, '' ) }/upsell/${ product }/${ siteSlug }`
+			);
+		}
+	}
+
 	// siteless checkout
 	if (
 		! siteSlug &&
@@ -73,23 +91,6 @@ export function buildCheckoutURL(
 			urlQueryArgs,
 			host + `/checkout/jetpack/${ siteSlug }/${ productsString }`
 		);
-	}
-
-	if ( showUpsellPage && rootUrl && siteSlug ) {
-		// Upsell page only supports one product
-		const product = productsArray[ 0 ];
-
-		// If upsell exists
-		if ( product in PURCHASE_FLOW_UPSELLS_MATRIX ) {
-			if ( ! urlQueryArgs.checkoutBackUrl ) {
-				urlQueryArgs.checkoutBackUrl = window.location.href;
-			}
-
-			return addQueryArgs(
-				urlQueryArgs,
-				`${ rootUrl.replace( /\/$/, '' ) }/upsell/${ siteSlug }/${ product }`
-			);
-		}
 	}
 
 	// If there is not siteSlug, we need to redirect the user to the site selection
