@@ -4,7 +4,12 @@ import { useQuery } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { HappychatSession, HappychatUser, User, HappychatAuth } from './types';
 
+let cachedHappyChatAuth: HappychatAuth;
+
 export async function requestHappyChatAuth() {
+	if ( cachedHappyChatAuth ) {
+		return Promise.resolve( cachedHappyChatAuth );
+	}
 	const user: User = await wpcomRequest( {
 		path: '/me',
 		apiVersion: '1.1',
@@ -38,13 +43,13 @@ export async function requestHappyChatAuth() {
 
 	const { jwt } = sign;
 
-	return { url, user: { jwt, ...happychatUser }, fullUser: user };
+	cachedHappyChatAuth = { url, user: { jwt, ...happychatUser }, fullUser: user };
+	return cachedHappyChatAuth;
 }
 
 export default function useHappychatAuth( enabled = true ) {
-	return useQuery< HappychatAuth, typeof Error >( 'getHappychatAuth', requestHappyChatAuth, {
-		refetchOnWindowFocus: false,
-		keepPreviousData: true,
+	return useQuery< HappychatAuth >( 'getHappychatAuth', requestHappyChatAuth, {
+		staleTime: Infinity,
 		enabled,
 	} );
 }

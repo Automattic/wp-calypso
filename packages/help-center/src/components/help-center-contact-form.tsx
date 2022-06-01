@@ -20,7 +20,7 @@ import React, { useEffect, useState } from 'react';
  */
 import { useHistory, useLocation } from 'react-router-dom';
 import { askDirectlyQuestion, execute } from '../directly';
-import { STORE_KEY, USER_KEY } from '../store';
+import { HELP_CENTER_STORE, USER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { SitePicker } from '../types';
 import { BackButton } from './back-button';
@@ -130,15 +130,15 @@ export const HelpCenterContactForm = () => {
 	const { selectedSite, subject, message, userDeclaredSiteUrl, directlyData } = useSelect(
 		( select ) => {
 			return {
-				selectedSite: select( STORE_KEY ).getSite(),
-				subject: select( STORE_KEY ).getSubject(),
-				message: select( STORE_KEY ).getMessage(),
-				userDeclaredSiteUrl: select( STORE_KEY ).getUserDeclaredSiteUrl(),
-				directlyData: select( STORE_KEY ).getDirectly(),
+				selectedSite: select( HELP_CENTER_STORE ).getSite(),
+				subject: select( HELP_CENTER_STORE ).getSubject(),
+				message: select( HELP_CENTER_STORE ).getMessage(),
+				userDeclaredSiteUrl: select( HELP_CENTER_STORE ).getUserDeclaredSiteUrl(),
+				directlyData: select( HELP_CENTER_STORE ).getDirectly(),
 			};
 		}
 	);
-	const userData = useSelect( ( select ) => select( USER_KEY ).getCurrentUser() );
+	const userData = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 
 	const {
 		setSite,
@@ -148,7 +148,7 @@ export const HelpCenterContactForm = () => {
 		setUserDeclaredSite,
 		setSubject,
 		setMessage,
-	} = useDispatch( STORE_KEY );
+	} = useDispatch( HELP_CENTER_STORE );
 
 	const {
 		result: ownershipResult,

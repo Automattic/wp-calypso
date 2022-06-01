@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import { useEffect, useState } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import { useHCWindowCommunicator } from '../happychat-window-communicator';
-import { STORE_KEY } from '../store';
+import { HELP_CENTER_STORE } from '../stores';
 import type { Header, WindowState } from '../types';
 import type { ReactElement } from 'react';
 
@@ -52,7 +52,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 	const [ chatWindowStatus, setChatWindowStatus ] = useState< WindowState >( 'closed' );
 	const [ unreadCount, setUnreadCount ] = useState< number >( 0 );
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
-	const popup = useSelect( ( select ) => select( STORE_KEY ).getPopup() );
+	const popup = useSelect( ( select ) => select( HELP_CENTER_STORE ).getPopup() );
 
 	useEffect( () => {
 		if ( chatWindowStatus === 'open' && popup ) {
