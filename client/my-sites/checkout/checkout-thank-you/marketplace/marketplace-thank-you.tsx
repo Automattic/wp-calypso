@@ -60,7 +60,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		if ( ! siteId || transfer?.status === AtomicTransferComplete ) {
 			return;
 		}
-		waitFor( 2 ).then( () => dispatch( dispatch( requestLatestAtomicTransfer( siteId ) ) ) );
+		waitFor( 2 ).then( () => dispatch( requestLatestAtomicTransfer( siteId ) ) );
 	}, [ siteId, dispatch, transfer ] );
 
 	useEffect( () => {
