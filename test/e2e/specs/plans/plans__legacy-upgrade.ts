@@ -51,7 +51,7 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () 
 		} );
 
 		it( 'Automatically return to Plans page', async function () {
-			await plansPage.validateActiveNavigationTab( 'Plans' );
+			await plansPage.validateActiveTab( 'Plans' );
 		} );
 	} );
 } );
