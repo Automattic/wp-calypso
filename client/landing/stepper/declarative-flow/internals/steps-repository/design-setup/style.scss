@@ -402,12 +402,13 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		display: none;
 		position: relative;
 		margin: 0 auto;
-
+		
 		@include break-small {
 			display: flex;
 			align-items: center;
 			justify-content: flex-end;
-			position: sticky;
+			position: fixed;
+			width: calc( 100% - 376px );
 			bottom: 0;
 			height: 118px;
 			background-color: #ffffff;
@@ -422,6 +423,10 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				transform: translateY( 0 );
 				pointer-events: auto;
 			}
+		}
+
+		@include onboarding-break-2k {
+			width: 1928px;
 		}
 	}
 
@@ -493,9 +498,9 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 	.generated-design-picker__previews-scaled {
 		position: absolute;
-		top: 0;
+		top: 40px;
 		right: 0;
-		width: 1160px;
+		width: 1600px;
 		transform: scale( 1 );
 		transform-origin: 100% 0;
 	}

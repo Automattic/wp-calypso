@@ -5,6 +5,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
+import PreviewToolbar from '../../../../client/landing/stepper/declarative-flow/internals/steps-repository/design-setup/preview-toolbar';
 import { getDesignPreviewUrl, getMShotOptions } from '../utils';
 import type { Design } from '../types';
 import './style.scss';
@@ -56,6 +57,7 @@ const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
 };
 
 export interface GeneratedDesignPickerProps {
+	isStickyToolbar: boolean;
 	selectedDesign?: Design;
 	designs: Design[];
 	previews: React.ReactElement[];
@@ -67,9 +69,10 @@ export interface GeneratedDesignPickerProps {
 	onViewMore: () => void;
 }
 
-const PREVIEW_INITIAL_WIDTH = 1160;
+const PREVIEW_INITIAL_WIDTH = 1600;
 
 const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
+	isStickyToolbar,
 	selectedDesign,
 	designs,
 	previews,
@@ -148,6 +151,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 				</div>
 				<div className="generated-design-picker__main">
 					<div className="generated-design-picker__previews" ref={ previewElement }>
+						<PreviewToolbar isSticky={ isStickyToolbar } />
 						<div
 							className="generated-design-picker__previews-scaled"
 							style={ { transform: `scale(${ scalePreview })` } }

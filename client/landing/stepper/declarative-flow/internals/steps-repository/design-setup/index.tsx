@@ -424,6 +424,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	const stepContent = showGeneratedDesigns ? (
 		<GeneratedDesignPicker
+			isStickyToolbar={ ! isMobile && isSticky }
 			selectedDesign={ selectedGeneratedDesign }
 			designs={ generatedDesigns }
 			verticalId={ siteVerticalId }

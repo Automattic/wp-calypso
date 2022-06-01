@@ -2,7 +2,6 @@ import { getDesignPreviewUrl } from '@automattic/design-picker';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import WebPreview from 'calypso/components/web-preview/content';
-import PreviewToolbar from './preview-toolbar';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { Design } from '@automattic/design-picker';
 
@@ -40,7 +39,7 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 			loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
 				components: { strong: <strong /> },
 			} ) }
-			toolbarComponent={ PreviewToolbar }
+			toolbarComponent={ () => null }
 			fetchPriority={ isSelected ? 'high' : 'low' }
 			autoHeight
 			siteId={ site?.ID }
