@@ -491,6 +491,15 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		}
 	}
 
+	.generated-design-picker__previews-scaled {
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 1160px;
+		transform: scale( 1 );
+		transform-origin: 100% 0;
+	}
+
 	.generated-design-picker__view-more {
 		border-radius: 4px;
 		font-weight: 500;

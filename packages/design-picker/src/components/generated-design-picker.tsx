@@ -1,11 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-
 import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getDesignPreviewUrl, getMShotOptions } from '../utils';
 import type { Design } from '../types';
 import './style.scss';
@@ -68,6 +67,8 @@ export interface GeneratedDesignPickerProps {
 	onViewMore: () => void;
 }
 
+const PREVIEW_INITIAL_WIDTH = 1160;
+
 const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 	selectedDesign,
 	designs,
@@ -80,6 +81,21 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 	onViewMore,
 } ) => {
 	const { __ } = useI18n();
+	const [ scalePreview, setScalePreview ] = useState( 1 );
+	const previewElement = useRef< HTMLDivElement | null >( null );
+
+	useEffect( () => {
+		const handleScalePreview = () => {
+			if ( previewElement?.current )
+				setScalePreview( previewElement.current.clientWidth / PREVIEW_INITIAL_WIDTH );
+		};
+
+		handleScalePreview();
+
+		window.addEventListener( 'resize', handleScalePreview );
+
+		return () => window.removeEventListener( 'resize', handleScalePreview );
+	} );
 
 	const isMobile = useViewportMatch( 'small', '<' );
 
@@ -131,7 +147,14 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 					</Button>
 				</div>
 				<div className="generated-design-picker__main">
-					<div className="generated-design-picker__previews">{ previews }</div>
+					<div className="generated-design-picker__previews" ref={ previewElement }>
+						<div
+							className="generated-design-picker__previews-scaled"
+							style={ { transform: `scale(${ scalePreview })` } }
+						>
+							{ previews }
+						</div>
+					</div>
 					{ footer }
 				</div>
 			</div>
