@@ -104,7 +104,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 				vertical_id: siteVerticalId,
 				seed: siteSlug || undefined,
 			},
-			{ enabled: enabledGeneratedDesigns && !! siteVerticalId }
+			{ enabled: enabledGeneratedDesigns && !! siteVerticalId && ! isAnchorSite }
 		);
 
 	const showGeneratedDesigns =
@@ -404,7 +404,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	// When the intent is build, we can potentially show the generated design picker.
 	// Don't render until we've fetched the generated designs from the backend.
-	if ( isLoadingGeneratedDesigns && ! isAnchorSite ) {
+	if ( isLoadingGeneratedDesigns ) {
 		return null;
 	}
 
