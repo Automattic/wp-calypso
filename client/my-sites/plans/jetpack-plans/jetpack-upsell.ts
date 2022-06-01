@@ -4,7 +4,7 @@ import { jetpackProductUpsell } from './controller';
 
 export const jetpackUpsell = ( rootUrl: string, ...rest: PageJS.Callback[] ) => {
 	page(
-		`${ rootUrl }/upsell/:site/:product`,
+		`${ rootUrl }/upsell/:product/:site?`,
 		...rest,
 		jetpackProductUpsell,
 		makeLayout,

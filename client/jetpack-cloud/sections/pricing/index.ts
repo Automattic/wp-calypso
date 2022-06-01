@@ -16,11 +16,11 @@ export default function (): void {
 	page( '/plans/storage/:site', ( { params } ) =>
 		page.redirect( `/pricing/storage/${ params.site }` )
 	);
-	page( '/:locale/plans/upsell/:site/:product', ( { params } ) =>
-		page.redirect( `/${ params.locale }/pricing/upsell/${ params.site }/${ params.product }` )
+	page( '/:locale/plans/upsell/:product/:site?', ( { params } ) =>
+		page.redirect( `/${ params.locale }/pricing/upsell/${ params.product }/${ params.site }` )
 	);
-	page( '/plans/upsell/:site/:product', ( { params } ) =>
-		page.redirect( `/pricing/upsell/${ params.site }/${ params.product }` )
+	page( '/plans/upsell/:product/:site?', ( { params } ) =>
+		page.redirect( `/pricing/upsell/${ params.product }/${ params.site }` )
 	);
 	page( '/:locale/plans', ( { params } ) => page.redirect( `/${ params.locale }/pricing` ) );
 	page( '/plans/:site', ( { params } ) => page.redirect( `/pricing/${ params.site }` ) );
