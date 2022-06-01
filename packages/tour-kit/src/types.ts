@@ -68,6 +68,8 @@ export interface Options {
 		spotlight?: { styles?: React.CSSProperties };
 		arrowIndicator?: boolean; // defaults to true
 		overlay?: boolean;
+		// https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
+		autoScroll?: ScrollIntoViewOptions | boolean;
 	};
 	popperModifiers?: PopperModifier[];
 	portalParentElement?: HTMLElement | null;
