@@ -122,7 +122,15 @@ $head-foot-height: 50px;
 		max-height: 100%;
 
 		.help-center__container-content {
-			height: auto;
+			flex: auto;
+		}
+
+		.help-center__container-footer {
+			margin-bottom: 0;
+		}
+
+		.help-center-contact-page__button {
+			line-height: 2.15;
 		}
 
 		&.is-minimized {
