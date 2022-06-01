@@ -65,7 +65,8 @@ export class MediaPage {
 		const locator = this.page.locator(
 			`.plan-storage__storage-label:has-text("${ capacity.toString() }")`
 		);
-		return Boolean( await locator.count() );
+		const count = await locator.count();
+		return count > 0 ? true : false;
 	}
 
 	/**
