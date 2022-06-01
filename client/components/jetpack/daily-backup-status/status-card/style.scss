@@ -254,6 +254,10 @@
 		@include placeholder( --color-neutral-10 );
 	}
 
+	&.foldable-card.card.is-expanded {
+		margin: 0;
+	}
+
 	.log-item__header-wrapper {
 		flex-grow: 1;
 		width: 100%;
