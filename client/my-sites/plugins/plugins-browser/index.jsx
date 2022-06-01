@@ -7,7 +7,7 @@ import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
@@ -74,6 +74,11 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 		targetRef: searchHeaderRef,
 		referenceRef: navigationHeaderRef,
 	} = useScrollAboveElement();
+	const searchRef = useRef( null );
+
+	const clearSearch = useCallback( () => {
+		searchRef.current.setKeyword( '' );
+	}, [ searchRef ] );
 
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
@@ -149,6 +154,12 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
+
+	useEffect( () => {
+		if ( ! search ) {
+			clearSearch();
+		}
+	}, [ clearSearch, search ] );
 
 	useEffect( () => {
 		const items = [
@@ -275,6 +286,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 			/>
 
 			<SearchBoxHeader
+				searchRef={ searchRef }
 				popularSearchesRef={ searchHeaderRef }
 				isSticky={ isAboveElement }
 				doSearch={ ( searchTerm ) => setQueryArgs( '' !== searchTerm ? { s: searchTerm } : {} ) }
@@ -284,9 +296,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 			/>
 
-			{ ! search && <Categories selected={ category } /> }
+			{ ! search && <Categories clearSearch={ clearSearch } selected={ category } /> }
 
 			<PluginBrowserContent
+				clearSearch={ clearSearch }
 				pluginsByCategoryPopular={ pluginsByCategoryPopular }
 				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
 				isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
