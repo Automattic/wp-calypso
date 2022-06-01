@@ -77,7 +77,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 	const searchRef = useRef( null );
 
 	const clearSearch = useCallback( () => {
-		searchRef.current.setKeyword( '' );
+		searchRef?.current?.setKeyword( '' );
 	}, [ searchRef ] );
 
 	const breadcrumbs = useSelector( getBreadcrumbs );
