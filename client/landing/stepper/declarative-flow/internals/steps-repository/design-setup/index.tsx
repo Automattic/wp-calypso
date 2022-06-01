@@ -459,9 +459,11 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 						'is-visible': isSticky,
 					} ) }
 				>
-					<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'bottom' ) }>
-						{ translate( 'Continue' ) }
-					</Button>
+					<div className="design-setup__footer-content">
+						<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'bottom' ) }>
+							{ translate( 'Continue' ) }
+						</Button>
+					</div>
 				</div>
 			}
 			onPreview={ previewDesign }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface Props {
 	stickyOptions?: IntersectionObserverInit;
@@ -6,7 +6,6 @@ interface Props {
 }
 
 const StickyPositioner = ( { stickyOptions, onShouldStickyChange }: Props ) => {
-	const [ shouldSticky, setShouldSticky ] = useState( false );
 	const targetRef = useRef< HTMLDivElement >( null );
 	const observerRef = useRef< IntersectionObserver >();
 
@@ -21,18 +20,17 @@ const StickyPositioner = ( { stickyOptions, onShouldStickyChange }: Props ) => {
 			}
 
 			const [ entry ] = entries;
-			setShouldSticky( ! entry.isIntersecting );
+			onShouldStickyChange( ! entry.isIntersecting );
 		};
 
 		observerRef.current = new IntersectionObserver( handler, stickyOptions );
 		observerRef.current.observe( targetRef.current );
 
-		return () => observerRef.current?.disconnect?.();
+		return () => {
+			observerRef.current?.disconnect?.();
+			onShouldStickyChange( false );
+		};
 	}, [ stickyOptions ] );
-
-	useEffect( () => {
-		onShouldStickyChange( shouldSticky );
-	}, [ shouldSticky, onShouldStickyChange ] );
 
 	return <div ref={ targetRef } />;
 };
