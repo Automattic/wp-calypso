@@ -11,10 +11,10 @@ Install [ESLint](http://eslint.org) and `eslint-plugin-wpcalypso`
 $ yarn add --dev eslint eslint-plugin-wpcalypso
 ```
 
-If you're planning to use the React superset of rules, you should also install `eslint-plugin-react`:
+If you're planning to use the React superset of rules, you should also install `eslint-plugin-react` and `eslint-plugin-react-hooks`:
 
 ```
-yarn add --dev eslint-plugin-react
+yarn add --dev eslint-plugin-react eslint-plugin-react-hooks
 ```
 
 ## Usage
