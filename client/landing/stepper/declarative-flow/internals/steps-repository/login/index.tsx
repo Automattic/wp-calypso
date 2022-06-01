@@ -47,14 +47,21 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 	const [ emailVal, setEmailVal ] = useState( '' );
 	const [ passwordVal, setPasswordVal ] = useState( '' );
 
-	const handleSubmit = async ( event: FormEvent< HTMLFormElement > ) => {
-		event.preventDefault();
-
+	const submitAnchorDeps = () => {
 		const providedDependencies = {
 			anchorFmPodcastId,
 			anchorFmEpisodeId,
 			anchorFmSpotifyUrl,
 		};
+
+		setAnchorPodcastId( ! isAnchorFmPodcastIdError ? anchorFmPodcastId : null );
+		setAnchorEpisodeId( anchorFmEpisodeId );
+		setAnchorSpotifyUrl( anchorFmSpotifyUrl );
+		submit?.( providedDependencies );
+	};
+
+	const handleSubmit = async ( event: FormEvent< HTMLFormElement > ) => {
+		event.preventDefault();
 
 		let recaptchaToken;
 		let recaptchaError;
@@ -84,10 +91,7 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 		} );
 
 		if ( result.ok ) {
-			setAnchorPodcastId( ! isAnchorFmPodcastIdError ? anchorFmPodcastId : null );
-			setAnchorEpisodeId( anchorFmEpisodeId );
-			setAnchorSpotifyUrl( anchorFmSpotifyUrl );
-			submit?.( providedDependencies );
+			submitAnchorDeps();
 		} else {
 			recordOnboardingError( {
 				step: 'account_creation',
@@ -285,16 +289,8 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 	 * proceed to the next step; no need to log in.
 	 */
 	useEffect( () => {
-		const providedDependencies = {
-			anchorFmPodcastId,
-			anchorFmEpisodeId,
-			anchorFmSpotifyUrl,
-		};
 		if ( currentUser && userIsLoggedIn ) {
-			setAnchorPodcastId( ! isAnchorFmPodcastIdError ? anchorFmPodcastId : null );
-			setAnchorEpisodeId( anchorFmEpisodeId );
-			setAnchorSpotifyUrl( anchorFmSpotifyUrl );
-			submit?.( providedDependencies );
+			submitAnchorDeps();
 		}
 	}, [ currentUser, userIsLoggedIn ] );
 
