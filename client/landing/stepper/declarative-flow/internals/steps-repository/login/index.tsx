@@ -26,7 +26,7 @@ import type { FormEvent } from 'react';
 import './style.scss';
 
 const LoginStep: Step = function LoginStep( { navigation } ) {
-	const { submit, goNext, goToStep } = navigation;
+	const { submit, goToStep } = navigation;
 	const { __ } = useI18n();
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
@@ -285,8 +285,16 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 	 * proceed to the next step; no need to log in.
 	 */
 	useEffect( () => {
+		const providedDependencies = {
+			anchorFmPodcastId,
+			anchorFmEpisodeId,
+			anchorFmSpotifyUrl,
+		};
 		if ( currentUser && userIsLoggedIn ) {
-			goNext?.();
+			setAnchorPodcastId( ! isAnchorFmPodcastIdError ? anchorFmPodcastId : null );
+			setAnchorEpisodeId( anchorFmEpisodeId );
+			setAnchorSpotifyUrl( anchorFmSpotifyUrl );
+			submit?.( providedDependencies );
 		}
 	}, [ currentUser, userIsLoggedIn ] );
 
