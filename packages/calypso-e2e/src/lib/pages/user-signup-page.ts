@@ -79,8 +79,7 @@ export class UserSignupPage {
 			throw new Error( 'Failed to create new user at signup.' );
 		}
 
-		const responseBody: NewUserResponse = await response.json();
-
+		const responseBody: NewUserResponse = JSON.parse( ( await response.body() ).toString() );
 		return { ID: responseBody.body.user_id, bearer_token: responseBody.body.bearer_token };
 	}
 

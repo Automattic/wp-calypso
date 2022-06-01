@@ -56,24 +56,6 @@ export class MediaPage {
 	}
 
 	/**
-	 * Checks whether the storage capacity for Media files is
-	 * as expected.
-	 *
-	 * @param {number} capacity Expected capacity in GB (gigabytes).
-	 */
-	async hasStorageCapacity( capacity: number ): Promise< boolean > {
-		const locator = this.page.locator(
-			`.plan-storage__storage-label:has-text("${ capacity.toString() }")`
-		);
-		try {
-			await locator.waitFor( { timeout: 15 * 1000 } );
-			return true;
-		} catch {
-			return false;
-		}
-	}
-
-	/**
 	 * Given a 1-indexed number `n`, click and select the nth item in the media gallery.
 	 *
 	 * Note that if the media gallery has been filtered (eg. Images only), this method

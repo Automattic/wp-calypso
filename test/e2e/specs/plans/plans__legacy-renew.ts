@@ -41,7 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () 
 		} );
 
 		it( `${ planName } is the active plan`, async function () {
-			await plansPage.validateActivePlan( planTier );
+			await plansPage.validateActivePlanInMyPlanTab( planTier );
 		} );
 
 		it( 'Click on the Plans tab', async function () {
