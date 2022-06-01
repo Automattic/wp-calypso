@@ -96,7 +96,7 @@ const usePlugins = ( {
 		isLoading: isFetchingWPORGInfinite,
 		fetchNextPage,
 	} = searchHook( wporgPluginsOptions, {
-		enabled: infinite && WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) && wporgEnabled,
+		enabled: infinite && ! WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) && wporgEnabled,
 	} ) as WPORGResponse;
 
 	const dotOrgPlugins = infinite ? wporgPluginsInfinite : wporgPlugins;
