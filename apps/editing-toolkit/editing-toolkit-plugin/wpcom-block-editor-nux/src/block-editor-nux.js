@@ -12,6 +12,7 @@ import { getQueryArg } from '@wordpress/url';
 import DraftPostModal from './draft-post-modal';
 import PaymentsBlockUpgradeModal from './payments-block-upgrade-modal';
 import PostPublishedModal from './post-published-modal';
+import PurchaseNotice from './purchase-notice';
 import SellerCelebrationModal from './seller-celebration-modal';
 import { DEFAULT_VARIANT, BLANK_CANVAS_VARIANT } from './store';
 import WpcomNux from './welcome-modal/wpcom-nux';
@@ -83,6 +84,7 @@ registerPlugin( 'wpcom-block-editor-nux', {
 			<PostPublishedModal />
 			<SellerCelebrationModal />
 			<PaymentsBlockUpgradeModal />
+			<PurchaseNotice />
 		</>
 	),
 } );
