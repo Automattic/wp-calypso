@@ -241,3 +241,49 @@
 	display: grid;
 	grid-auto-flow: column;
 }
+
+.daily-backup-status__warning-item {
+	.foldable-card__main {
+		flex: unset;
+		max-width: 100%;
+		width: 100%;
+	}
+	&.is-placeholder .card-heading,
+	&.is-placeholder .log-item__subheader {
+		margin-bottom: 2px;
+		@include placeholder( --color-neutral-10 );
+	}
+
+	.log-item__header-wrapper {
+		flex-grow: 1;
+		width: 100%;
+	}
+
+	.card-heading {
+		display: flex;
+		padding-top: 8px;
+		padding-bottom: 8px;
+		flex-grow: 1;
+		line-height: 16px;
+		max-width: calc( 100% - 32px );
+
+		@include breakpoint-deprecated( '>960px' ) {
+			flex-wrap: nowrap;
+			flex-direction: row;
+		}
+	}
+
+	.log-item__subheader {
+		color: var( --studio-gray-60 );
+		font-size: $font-body-small;
+	}
+
+	&__buttons {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.foldable-card__action.foldable-card__expand {
+		border: none;
+	}
+}
