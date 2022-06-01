@@ -9,17 +9,16 @@ import {
 } from 'calypso/my-sites/email/form/mailboxes/types';
 
 interface MailboxFormWrapperProps {
-	provider: EmailProvider;
-	selectedDomainName: string;
+	mailbox: MailboxForm< EmailProvider >;
+	onFieldValueChanged?: ( field: MailboxFormFieldBase< string > ) => void;
 }
 
 const MailboxFormWrapper = ( {
 	children,
 	mailbox,
-	provider,
+	onFieldValueChanged = () => undefined,
 }: MailboxFormWrapperProps & {
 	children?: JSX.Element | false;
-	mailbox: MailboxForm< EmailProvider >;
 } ): JSX.Element => {
 	const isRtl = useRtl();
 
@@ -31,6 +30,7 @@ const MailboxFormWrapper = ( {
 	const commonProps = ( field: MailboxFormFieldBase< string > ) => {
 		return {
 			field,
+			onFieldValueChanged,
 			onRequestFieldValidation: () => mailbox.validateField( field.fieldName ),
 		};
 	};
@@ -86,7 +86,7 @@ const MailboxFormWrapper = ( {
 	return (
 		<div>
 			<div className="form__fields form__new-mailbox">
-				{ provider === EmailProvider.Titan ? <TitanFormFields /> : <GoogleFormFields /> }
+				{ mailbox.provider === EmailProvider.Titan ? <TitanFormFields /> : <GoogleFormFields /> }
 			</div>
 
 			<div className="form__children">{ children }</div>
@@ -94,4 +94,5 @@ const MailboxFormWrapper = ( {
 	);
 };
 
-export default MailboxFormWrapper;
+export { MailboxFormWrapper };
+export type { MailboxFormWrapperProps };

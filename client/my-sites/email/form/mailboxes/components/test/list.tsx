@@ -3,17 +3,23 @@
  */
 import { fireEvent, render, screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
-import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
-import { MailboxFormWrapper } from 'calypso/my-sites/email/form/mailboxes/components/form';
+import {
+	MailboxListProps,
+	NewMailBoxList,
+} from 'calypso/my-sites/email/form/mailboxes/components/list';
 import { useGetDefaultFieldLabelText } from 'calypso/my-sites/email/form/mailboxes/components/use-get-default-field-label-text';
 import { FIELD_MAILBOX } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 
-describe( '<MailboxFormWrapper /> suite', () => {
-	const mailbox = new MailboxForm( EmailProvider.Google, 'example.com' );
+describe( '<NewMailBoxList /> suite', () => {
+	const defaultProps = {
+		onSubmit: () => undefined,
+		provider: EmailProvider.Titan,
+		selectedDomainName: 'example.com',
+	} as MailboxListProps;
 
-	const setup = () => {
-		const { container } = render( <MailboxFormWrapper mailbox={ mailbox } /> );
+	const setup = ( propOverrides: Partial< MailboxListProps > = {} ) => {
+		const { container } = render( <NewMailBoxList { ...defaultProps } { ...propOverrides } /> );
 		return container;
 	};
 
@@ -21,16 +27,17 @@ describe( '<MailboxFormWrapper /> suite', () => {
 		setup();
 
 		expect( screen.getAllByRole( 'textbox' ).length ).toBeGreaterThan( 2 );
+		expect( screen.getAllByRole( 'button' ).length ).toEqual( 1 );
 	} );
 
-	it( 'Element blur should trigger pre-validation of associated field', () => {
+	it( 'Form submission should trigger pre-validation of input fields', () => {
 		setup();
 
 		const {
 			result: { current: displayText },
 		} = renderHook( () => useGetDefaultFieldLabelText( FIELD_MAILBOX ) );
 
-		fireEvent.blur( screen.getAllByRole( 'textbox' )[ 0 ] );
+		fireEvent.blur( screen.getByRole( 'button' ) );
 
 		const elements = screen.getAllByText( displayText as string );
 		expect( elements ).toHaveLength( 1 );

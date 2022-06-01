@@ -1,16 +1,27 @@
 import { Button, Gridicon } from '@automattic/components';
-import { useCallback } from '@wordpress/element';
+import { Fragment, useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
-import MailboxFormWrapper from 'calypso/my-sites/email/form/mailboxes/components/form';
-import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
+import { MailboxFormWrapper } from 'calypso/my-sites/email/form/mailboxes/components/form';
+import { sanitizeMailboxValue } from 'calypso/my-sites/email/form/mailboxes/components/sanitize-mailbox-value';
+import {
+	FIELD_FIRSTNAME,
+	FIELD_MAILBOX,
+	FIELD_NAME,
+} from 'calypso/my-sites/email/form/mailboxes/constants';
+import {
+	EmailProvider,
+	MailboxFormFieldBase,
+	MutableFormFieldNames,
+} from 'calypso/my-sites/email/form/mailboxes/types';
 
 import './style.scss';
 
 interface MailboxListProps {
+	hiddenFieldNames?: MutableFormFieldNames[];
 	onCancel?: () => void;
 	onSubmit: ( mailboxes: MailboxForm< EmailProvider >[] ) => void;
 	provider: EmailProvider;
@@ -24,6 +35,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 	const translate = useTranslate();
 
 	const {
+		hiddenFieldNames = [],
 		onCancel = () => undefined,
 		onSubmit,
 		provider,
@@ -36,6 +48,11 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 	const createNewMailbox = () => new MailboxForm< EmailProvider >( provider, selectedDomainName );
 
 	const [ mailboxes, setMailboxes ] = useState( [ createNewMailbox() ] );
+
+	// Set visibility for desired hidden fields
+	mailboxes.forEach( ( mailbox ) => {
+		hiddenFieldNames.forEach( ( fieldName ) => mailbox.setFieldIsVisible( fieldName, true ) );
+	} );
 
 	const addMailbox = () => {
 		setMailboxes( [ ...mailboxes, createNewMailbox() ] );
@@ -58,37 +75,48 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 
 	return (
 		<div className="list__main">
-			{ mailboxes.map( ( mailbox, index ) => (
-				<>
-					{ index > 0 && (
-						<CardHeading className="list__numbered-heading" tagName="h3" size={ 20 }>
-							{ translate( 'Mailbox %(position)s', {
-								args: { position: index + 1 },
-								comment:
-									'%(position)s is the position of the mailbox in a list, e.g. Mailbox 1, Mailbox 2, etc',
-							} ) }
-						</CardHeading>
-					) }
-					<MailboxFormWrapper
-						{ ...props }
-						key={ mailbox.formFields.uuid.value }
-						mailbox={ mailbox }
-					>
-						<>
-							<div className="list__actions">
-								{ index > 0 && (
-									<Button onClick={ removeMailbox( mailbox.formFields.uuid.value ) }>
-										<Gridicon icon="trash" />
-										<span>{ translate( 'Remove this mailbox' ) }</span>
-									</Button>
-								) }
-							</div>
+			{ mailboxes.map( ( mailbox, index ) => {
+				const uuid = mailbox.formFields.uuid.value;
 
-							<hr className="list__separator" />
-						</>
-					</MailboxFormWrapper>
-				</>
-			) ) }
+				const onFieldValueChanged = ( field: MailboxFormFieldBase< string > ) => {
+					if ( ! [ FIELD_FIRSTNAME, FIELD_NAME ].includes( field.fieldName ) ) {
+						return;
+					}
+					if ( mailbox.getFieldError( FIELD_MAILBOX ) || mailbox.getFieldValue( FIELD_MAILBOX ) ) {
+						// return;
+					}
+					mailbox.setFieldValue( FIELD_MAILBOX, sanitizeMailboxValue( field.value ) );
+					setMailboxes( [ ...mailboxes ] );
+				};
+
+				return (
+					<Fragment key={ 'form-' + uuid }>
+						{ index > 0 && (
+							<CardHeading className="list__numbered-heading" tagName="h3" size={ 20 }>
+								{ translate( 'Mailbox %(position)s', {
+									args: { position: index + 1 },
+									comment:
+										'%(position)s is the position of the mailbox in a list, e.g. Mailbox 1, Mailbox 2, etc',
+								} ) }
+							</CardHeading>
+						) }
+						<MailboxFormWrapper mailbox={ mailbox } onFieldValueChanged={ onFieldValueChanged }>
+							<>
+								<div className="list__actions">
+									{ index > 0 && (
+										<Button onClick={ removeMailbox( uuid ) }>
+											<Gridicon icon="trash" />
+											<span>{ translate( 'Remove this mailbox' ) }</span>
+										</Button>
+									) }
+								</div>
+
+								<hr className="list__separator" />
+							</>
+						</MailboxFormWrapper>
+					</Fragment>
+				);
+			} ) }
 
 			<div
 				className={ classNames( 'list__supplied-actions', {
