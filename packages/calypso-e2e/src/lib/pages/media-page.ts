@@ -61,7 +61,7 @@ export class MediaPage {
 	 *
 	 * @param {number} capacity Expected capacity in GB (gigabytess).
 	 */
-	async validateStorageCapacity( capacity: number ): Promise< boolean > {
+	async hasStorageCapacity( capacity: number ): Promise< boolean > {
 		const locator = this.page.locator(
 			`.plan-storage__storage-label:has-text("${ capacity.toString() }")`
 		);

@@ -38,7 +38,7 @@ export class SignupPickPlanPage {
 			throw new Error( 'Failed to create new site when selecting a plan at signup.' );
 		}
 
-		const responseBody: NewSiteResponse = JSON.parse( ( await response.body() ).toString() );
+		const responseBody: NewSiteResponse = await response.json();
 
 		return {
 			id: responseBody.body.blog_details.blogid,
