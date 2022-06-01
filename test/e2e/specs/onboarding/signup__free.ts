@@ -23,7 +23,7 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function () {
 	const inboxId = SecretsManager.secrets.mailosaur.inviteInboxId;
-	const username = `e2eflowtestingfree${ DataHelper.getTimestamp() }`;
+	const username = DataHelper.getUsername( { prefix: 'free' } );
 	const email = DataHelper.getTestEmailAddress( {
 		inboxId: inboxId,
 		prefix: username,
