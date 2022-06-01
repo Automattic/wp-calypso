@@ -95,6 +95,7 @@ export type Plan = BillingTerm & {
 	getStoreSlug: () => PlanSlug;
 	getTitle: () => TranslateResult;
 	getDescription: () => TranslateResult;
+	getSubTitle?: () => TranslateResult;
 	getShortDescription?: () => TranslateResult;
 	getTagline?: () => TranslateResult;
 	getPlanCardFeatures?: () => Feature[];

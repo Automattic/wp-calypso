@@ -1633,6 +1633,7 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
 			? i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' )
 			: i18n.translate( 'Start your WordPress.com website. Limited functionality and storage.' ),
+	getSubTitle: () => i18n.translate( 'The Essentials. No fluff.' ),
 	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
 	getPlanCompareFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
@@ -1673,7 +1674,7 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 					'Unlock the full power of WordPress with plugins, custom themes and much more.'
 			  )
 			: i18n.translate( 'The full power of modern WordPress hosting made easy.' ),
-
+	getSubTitle: () => i18n.translate( 'Unlimited Traffic. Revolutionary Price.' ),
 	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
 	getPlanCompareFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,

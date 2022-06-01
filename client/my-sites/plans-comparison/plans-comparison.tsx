@@ -1,10 +1,12 @@
-import { TYPE_FREE, TYPE_FLEXIBLE, TYPE_PRO } from '@automattic/calypso-products';
+import { TYPE_FREE, TYPE_FLEXIBLE, TYPE_PRO, TYPE_STARTER } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useExperiment } from 'calypso/lib/explat';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
@@ -349,7 +351,6 @@ const ComparisonTable = styled.table< TableProps >`
 `;
 
 const THead = styled.thead< { isInSignup: boolean } >`
-	position: sticky;
 	top: ${ ( { isInSignup } ) => ( isInSignup ? '0' : `var( --masterbar-height )` ) };
 `;
 
@@ -404,6 +405,35 @@ const PlansComparisonToggle = styled.tbody`
 		}
 	}
 `;
+
+const PlansHighlightFeatures = styled.div`
+	font-size: 1rem;
+	font-weight: 400;
+	margin: 1.5rem 0 1rem;
+
+	.gridicon.gridicon {
+		width: 1.1em;
+		height: 1.1em;
+
+		html[dir='ltr'] & {
+			margin: 0 5px -2px 0;
+		}
+		html[dir='rtl'] & {
+			margin: 0 0 -2px 5px;
+		}
+	}
+
+	.gridicons-checkmark {
+		fill: var( --studio-green-50 );
+	}
+`;
+
+const ComparisonHeader = styled( PlansComparisonRows )`
+	td {
+		font-size: 1rem;
+		font-weight: 500;
+	}
+`;
 interface Props {
 	isInSignup?: boolean;
 	selectedSiteId?: number;
@@ -434,6 +464,9 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	hideFreePlan,
 	onSelectPlan,
 } ) => {
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+		'pricing_packaging_plans_page_copy_test'
+	);
 	const legacySiteWithHigherLimits = useSelector( ( state ) =>
 		isLegacySiteWithHigherLimits( state, selectedSiteId || 0 )
 	);
@@ -447,6 +480,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	const plans = usePlans( hideFreePlan );
 	const prices = usePlanPrices( plans );
 	const translate = useTranslate();
+	const isMobile = useBreakpoint( '769' );
 
 	const toggleCollapsibleRows = useCallback( () => {
 		setShowCollapsibleRows( ! showCollapsibleRows );
@@ -478,6 +512,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 								price={ prices[ index ].price }
 								originalPrice={ prices[ index ].originalPrice }
 								translate={ translate }
+								isExperiment={ 'treatment' === experimentAssignment?.variationName }
 							>
 								{ selectedDomainConnection && <PlansDomainConnectionInfo plan={ plan } /> }
 								<PlansComparisonAction
@@ -492,10 +527,74 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 									}
 									onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
 								/>
+								{ plan.type === TYPE_STARTER &&
+								'treatment' === experimentAssignment?.variationName ? (
+									<PlansHighlightFeatures>
+										<p>
+											<b>Our favorite Starter features:</b>
+										</p>
+										<div>
+											<Gridicon icon="checkmark" />
+											Custom website address.
+										</div>
+										<div>
+											<Gridicon icon="checkmark" />
+											Professional site templates.
+										</div>
+										<div>
+											<Gridicon icon="checkmark" />
+											Customer support forums.
+										</div>
+										<div>
+											<Gridicon icon="checkmark" />
+											Automatic WordPress updates.
+										</div>
+										<div>
+											<Gridicon icon="checkmark" />
+											Flexible upgrade options.
+										</div>
+									</PlansHighlightFeatures>
+								) : null }
+
+								{ plan.type === TYPE_PRO && 'treatment' === experimentAssignment?.variationName ? (
+									<PlansHighlightFeatures>
+										<p>
+											<b>Our favorite Pro features:</b>
+										</p>
+										<div>
+											<Gridicon icon="checkmark" />
+											Unlimited traffic at blazing speeds.
+										</div>
+										<div>
+											<Gridicon icon="checkmark" />
+											Support for Plugins and Themes.
+										</div>
+										<div>
+											<Gridicon icon="checkmark" />
+											Real-time live chat support.
+										</div>
+										<div>
+											<Gridicon icon="checkmark" />
+											Unmatched managed hosting service.
+										</div>
+										<div>
+											<Gridicon icon="checkmark" />
+											SFTP and database access for devs.
+										</div>
+									</PlansHighlightFeatures>
+								) : null }
 							</PlansComparisonColHeader>
 						) ) }
 					</tr>
 				</THead>
+				{ /* { 'treatment' === experimentAssignment?.variationName && (
+					<ComparisonHeader>
+						<tr>
+							<td colSpan={ isMobile ? 1 : 2 }>Detailed plan comparison:</td>
+							<td>&nbsp;</td>
+						</tr>
+					</ComparisonHeader>
+				) } */ }
 				<PlansComparisonRows>
 					{ planComparisonFeatures.slice( 0, 8 ).map( ( feature ) => (
 						<PlansComparisonRow

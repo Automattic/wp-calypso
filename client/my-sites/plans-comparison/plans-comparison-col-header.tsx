@@ -9,6 +9,7 @@ interface Props {
 	plan: Plan;
 	price?: number;
 	originalPrice?: number;
+	isExperiment?: boolean;
 	onClick?: ( productSlug: string ) => void;
 	translate: typeof translate;
 }
@@ -51,6 +52,10 @@ const PlanDescription = styled.p`
 	}
 `;
 
+const PlanSubTitle = styled( PlanDescription )`
+	font-weight: 600;
+`;
+
 const PriceContainer = styled.div`
 	display: flex;
 	flex-direction: row;
@@ -77,12 +82,14 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 	originalPrice,
 	children,
 	translate,
+	isExperiment,
 } ) => {
 	const isDiscounted = typeof originalPrice === 'number';
 
 	return (
 		<th scope="col">
 			<PlanTitle>{ plan.getTitle() }</PlanTitle>
+			{ isExperiment && <PlanSubTitle>{ plan.getSubTitle() }</PlanSubTitle> }
 			<PlanDescription>{ plan.getDescription() }</PlanDescription>
 			<PriceContainer>
 				{ isDiscounted && (
