@@ -59,14 +59,18 @@ export class MediaPage {
 	 * Checks whether the storage capacity for Media files is
 	 * as expected.
 	 *
-	 * @param {number} capacity Expected capacity in GB (gigabytess).
+	 * @param {number} capacity Expected capacity in GB (gigabytes).
 	 */
 	async hasStorageCapacity( capacity: number ): Promise< boolean > {
 		const locator = this.page.locator(
 			`.plan-storage__storage-label:has-text("${ capacity.toString() }")`
 		);
-		const count = await locator.count();
-		return count > 0 ? true : false;
+		try {
+			await locator.waitFor( { timeout: 15 * 1000 } );
+			return true;
+		} catch {
+			return false;
+		}
 	}
 
 	/**
