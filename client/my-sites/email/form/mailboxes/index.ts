@@ -135,16 +135,20 @@ class MailboxForm< T extends EmailProvider > {
 		}
 	}
 
-	validate() {
+	validate( skipInvisibleFields = false ) {
 		this.clearErrors();
 
 		for ( const [ fieldName, validator ] of this.getValidators() ) {
-			if ( ! fieldName ) {
+			if ( ! fieldName || ! validator ) {
 				continue;
 			}
 
 			const field = this.getFormField( fieldName );
 			if ( ! field || field.error ) {
+				continue;
+			}
+
+			if ( skipInvisibleFields && ! field.isVisible ) {
 				continue;
 			}
 

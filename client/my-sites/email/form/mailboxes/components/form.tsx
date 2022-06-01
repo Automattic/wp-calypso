@@ -1,40 +1,27 @@
-import { Button } from '@automattic/components';
-import { translate, useRtl } from 'i18n-calypso';
-import { useState } from 'react';
+import { useRtl } from 'i18n-calypso';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { MailboxField } from 'calypso/my-sites/email/form/mailboxes/components/field';
 import {
 	EmailProvider,
-	FormFieldNames,
 	GoogleMailboxFormFields,
 	MailboxFormFieldBase,
 	TitanMailboxFormFields,
 } from 'calypso/my-sites/email/form/mailboxes/types';
 
 interface MailboxFormWrapperProps {
-	onSubmit: ( mailbox: MailboxForm< EmailProvider > ) => void;
 	provider: EmailProvider;
 	selectedDomainName: string;
 }
 
 const MailboxFormWrapper = ( {
 	children,
-	onSubmit,
+	mailbox,
 	provider,
-	selectedDomainName,
-}: MailboxFormWrapperProps & { children?: JSX.Element } ) => {
+}: MailboxFormWrapperProps & {
+	children?: JSX.Element | false;
+	mailbox: MailboxForm< EmailProvider >;
+} ): JSX.Element => {
 	const isRtl = useRtl();
-	const [ { mailbox }, setMailboxState ] = useState( {
-		mailbox: new MailboxForm< EmailProvider >( provider, selectedDomainName ),
-	} );
-
-	const renderedFields = new Set< string >();
-
-	const handleSubmit = () => {
-		renderedFields.forEach( ( fieldName ) => mailbox.validateField( fieldName as FormFieldNames ) );
-		setMailboxState( { mailbox } );
-		onSubmit( mailbox );
-	};
 
 	const formFields = mailbox.formFields;
 	const domainAffix = {
@@ -42,7 +29,6 @@ const MailboxFormWrapper = ( {
 	};
 
 	const commonProps = ( field: MailboxFormFieldBase< string > ) => {
-		renderedFields.add( field.fieldName );
 		return {
 			field,
 			onRequestFieldValidation: () => mailbox.validateField( field.fieldName ),
@@ -99,18 +85,13 @@ const MailboxFormWrapper = ( {
 
 	return (
 		<div>
-			<div className="form__fields">
+			<div className="form__fields form__new-mailbox">
 				{ provider === EmailProvider.Titan ? <TitanFormFields /> : <GoogleFormFields /> }
 			</div>
 
 			<div className="form__children">{ children }</div>
-
-			<Button className="form__button" primary onClick={ handleSubmit }>
-				{ translate( 'Complete setup' ) }
-			</Button>
 		</div>
 	);
 };
 
-export { MailboxFormWrapper };
-export type { MailboxFormWrapperProps };
+export default MailboxFormWrapper;

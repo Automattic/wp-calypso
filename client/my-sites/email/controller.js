@@ -11,6 +11,7 @@ import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-pr
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import InboxManagement from 'calypso/my-sites/email/inbox';
 import { emailManagement } from 'calypso/my-sites/email/paths';
+import TestComponent from 'calypso/my-sites/email/test-component';
 import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
 import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
@@ -171,6 +172,11 @@ export default {
 				selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
 			/>
 		);
+		next();
+	},
+
+	emailManagementTestComponent( pageContext, next ) {
+		pageContext.primary = <TestComponent site={ pageContext.params.site } />;
 		next();
 	},
 };
