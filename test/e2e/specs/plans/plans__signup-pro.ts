@@ -105,7 +105,7 @@ describe(
 			it( 'Validate storage capacity', async function () {
 				await sidebarComponent.navigate( 'Media' );
 				const mediaPage = new MediaPage( page );
-				await mediaPage.hasStorageCapacity( 50 );
+				expect( await mediaPage.hasStorageCapacity( 50 ) ).toBe( true );
 			} );
 		} );
 
