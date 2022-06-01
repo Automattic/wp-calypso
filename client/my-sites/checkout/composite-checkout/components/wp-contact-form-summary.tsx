@@ -4,6 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { hasOnlyRenewalItems } from 'calypso/lib/cart-values/cart-items';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { SummaryLine, SummaryDetails } from './summary-details';
+import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const GridRow = styled.div`
@@ -29,8 +30,8 @@ export default function WPContactFormSummary( {
 		select( 'wpcom-checkout' ).getContactInfo()
 	);
 	const cartKey = useCartKey();
-	const { responseCart: cart } = useShoppingCart( cartKey );
-	const isRenewal = cart && hasOnlyRenewalItems( cart );
+	const { responseCart } = useShoppingCart( cartKey );
+	const isRenewal = hasOnlyRenewalItems( responseCart );
 
 	// Check if paymentData is empty
 	if ( Object.entries( contactInfo ).length === 0 ) {
@@ -73,6 +74,7 @@ export default function WPContactFormSummary( {
 				</SummaryDetails>
 
 				<AddressSummary
+					responseCart={ responseCart }
 					isRenewal={ isRenewal }
 					contactInfo={ contactInfo }
 					areThereDomainProductsInCart={ areThereDomainProductsInCart }
@@ -125,19 +127,34 @@ function EmailSummary( {
 }
 
 function AddressSummary( {
+	responseCart,
 	contactInfo,
 	areThereDomainProductsInCart,
 	isRenewal,
 }: {
+	responseCart: ResponseCart;
 	contactInfo: ManagedContactDetails;
 	areThereDomainProductsInCart: boolean;
 	isRenewal: boolean;
 } ) {
-	const postalAndCountry = joinNonEmptyValues(
-		', ',
-		contactInfo.postalCode?.value,
-		contactInfo.countryCode?.value
-	);
+	// For carts which could be taxed, we display the postal code and country
+	// from the cart's tax location rather than what is stored in the contact
+	// details just in case they differ (eg: if the tax location has been changed
+	// in another tab) so that what is displayed always matches what the cart is
+	// using to calculate taxes. This does mean that the summary won't display
+	// the postal code and country that will be sent to the transactions endpoint
+	// for a domain product (it will be whatever was entered in the form) but
+	// that is less risky since it will be validated before the transaction
+	// completes and it will not affect the price like the tax location will.
+	const postalCode =
+		responseCart.total_cost_integer > 0
+			? responseCart.tax.location.postal_code
+			: contactInfo.postalCode?.value;
+	const countryCode =
+		responseCart.total_cost_integer > 0
+			? responseCart.tax.location.country_code
+			: contactInfo.countryCode?.value;
+	const postalAndCountry = joinNonEmptyValues( ', ', postalCode, countryCode );
 
 	if ( ! areThereDomainProductsInCart || isRenewal ) {
 		return (
