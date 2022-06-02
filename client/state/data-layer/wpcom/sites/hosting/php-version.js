@@ -52,7 +52,7 @@ export const hostingPhpVersionUpdateTracking = ( version, result ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Hosting Configuration',
-			'Clicked "Update PHP Version" Button in PHP Version box',
+			'Clicked "Update PHP Version" Button in Web Server Settings box',
 			`PHP Version Update ${ result }`,
 			version
 		),
