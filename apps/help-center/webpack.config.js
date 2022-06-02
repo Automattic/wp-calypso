@@ -18,7 +18,7 @@ const outputPath = path.join( __dirname, 'dist' );
 module.exports = {
 	bail: ! isDevelopment,
 	entry: path.join( __dirname, 'src', 'index.js' ),
-	mode: false ? 'development' : 'production',
+	mode: isDevelopment ? 'development' : 'production',
 	devtool: false,
 	output: {
 		path: outputPath,

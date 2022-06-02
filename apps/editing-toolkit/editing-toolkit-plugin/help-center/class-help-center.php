@@ -26,7 +26,7 @@ class Help_Center {
 	 * Help_Center constructor.
 	 */
 	public function __construct() {
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script' ), 100 );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
 	}
 
 	/**
