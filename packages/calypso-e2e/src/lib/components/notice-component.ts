@@ -47,18 +47,14 @@ export class NoticeComponent {
 	 * @param {string} text Full or partial text to validate on page.
 	 * @param param1 Optional parameters.
 	 * @param {NoticeType} param1.type Type of notice to limit validation to.
-	 * @returns {Promise<boolean>} True if text is found in target notification.
-	 * 	False otherwise.
 	 */
-	async noticeShown( text: string, { type }: { type?: NoticeType } = {} ): Promise< boolean > {
+	async noticeShown( text: string, { type }: { type?: NoticeType } = {} ): Promise< void > {
 		const noticeType = type ? `.is-${ type?.toLowerCase() }` : '';
 
 		const selector = `div.notice${ noticeType } :text("${ text }")`;
 
 		const locator = this.page.locator( selector );
 		await locator.waitFor( { state: 'visible' } );
-
-		return Boolean( await locator.count() );
 	}
 
 	/**
