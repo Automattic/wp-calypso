@@ -17,10 +17,10 @@ export default function (): void {
 		page.redirect( `/pricing/storage/${ params.site }` )
 	);
 	page( '/:locale/plans/upsell/:product/:site?', ( { params } ) =>
-		page.redirect( `/${ params.locale }/pricing/upsell/${ params.product }/${ params.site }` )
+		page.redirect( `/${ params.locale }/pricing/upsell/${ params.product }/${ params.site || '' }` )
 	);
 	page( '/plans/upsell/:product/:site?', ( { params } ) =>
-		page.redirect( `/pricing/upsell/${ params.product }/${ params.site }` )
+		page.redirect( `/pricing/upsell/${ params.product }/${ params.site || '' }` )
 	);
 	page( '/:locale/plans', ( { params } ) => page.redirect( `/${ params.locale }/pricing` ) );
 	page( '/plans/:site', ( { params } ) => page.redirect( `/pricing/${ params.site }` ) );
