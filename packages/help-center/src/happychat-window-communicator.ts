@@ -1,8 +1,10 @@
-import { requestHappyChatAuth } from '@automattic/happychat-connection';
+import { useHappychatAuth } from '@automattic/happychat-connection';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
+import { useQueryClient } from 'react-query';
 import { HELP_CENTER_STORE, SITE_STORE } from './stores';
 import type { WindowState } from './types';
+
 /**
  * This hook attaches an event listener to the window to listen to Happychat messages that com from https://widgets.wp.com/calypso-happychat/
  * It collects information from the help-center store and forwards it to Happychat. It also forwards the unread count and the state changes (ended, blurred, closed, opened) to whoever uses the hook
@@ -23,15 +25,22 @@ export function useHCWindowCommunicator(
 		};
 	} );
 
-	const currentSite = useSelect( ( select ) =>
-		select( SITE_STORE ).getSite( window._currentSiteId )
+	const currentSite = useSelect(
+		( select ) => select( SITE_STORE ).getSite( window._currentSiteId ),
+		[ window._currentSiteId ]
 	);
+
+	const queryClient = useQueryClient();
 
 	const supportSite = selectedSite || userDeclaredSite || currentSite;
 	const { resetStore } = useDispatch( HELP_CENTER_STORE );
+	useHappychatAuth();
 
 	useEffect( () => {
 		const messageHandler = ( event: MessageEvent ) => {
+			// please be careful about changing this check
+			// sometimes we send sensitive information to this event's origin,
+			// and changing this to something untrusted is a serious security risk.
 			if ( event.origin === 'https://widgets.wp.com' ) {
 				const { data } = event;
 				switch ( data.type ) {
@@ -63,7 +72,9 @@ export function useHCWindowCommunicator(
 						break;
 					}
 					case 'happy-chat-authentication-data': {
-						requestHappyChatAuth().then( ( auth ) => {
+						// this hooks up to the query initiated above (useHappychatAuth)
+						// and returns a promise. We wait for this promise to prevent a race-condition.
+						queryClient.fetchQuery( 'getHappychatAuth' ).then( ( auth ) => {
 							event.source?.postMessage(
 								{
 									type: 'happy-chat-authentication-data',
@@ -83,5 +94,5 @@ export function useHCWindowCommunicator(
 		return () => {
 			window.removeEventListener( 'message', messageHandler );
 		};
-	}, [ onStateChange, onUnreadChange, supportSite, subject, message, resetStore ] );
+	}, [ onStateChange, onUnreadChange, queryClient, supportSite, subject, message, resetStore ] );
 }
