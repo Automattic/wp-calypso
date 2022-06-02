@@ -5,6 +5,7 @@ import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dash
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SitesOverviewContext from './context';
 import SiteContent from './site-content';
+import SiteFilters from './site-filters';
 import SiteSearch from './site-search';
 import SiteWelcomeBanner from './site-welcome-banner';
 
@@ -14,9 +15,9 @@ export default function SitesOverview(): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { search, currentPage } = useContext( SitesOverviewContext );
+	const { search, currentPage, filter } = useContext( SitesOverviewContext );
 
-	const { data, isError, isFetching } = useFetchDashboardSites( search, currentPage );
+	const { data, isError, isFetching } = useFetchDashboardSites( search, currentPage, filter );
 
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_visit' ) );
@@ -33,6 +34,9 @@ export default function SitesOverview(): ReactElement {
 			</div>
 			<div className="sites-overview__search">
 				<SiteSearch searchQuery={ search } currentPage={ currentPage } />
+			</div>
+			<div className="sites-overview__filter-bar">
+				<SiteFilters filter={ filter } isFetching={ isFetching } />
 			</div>
 			<SiteContent
 				data={ data }
