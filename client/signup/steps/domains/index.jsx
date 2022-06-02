@@ -722,6 +722,7 @@ class DomainsStep extends Component {
 		}
 
 		const { isAllDomains, translate, isReskinned } = this.props;
+		const siteSlug = get( this.props, 'queryObject.siteSlug' );
 		const source = get( this.props, 'queryObject.source' );
 		let backUrl;
 		let backLabelText;
@@ -737,7 +738,10 @@ class DomainsStep extends Component {
 		} else {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, null, this.getLocale() );
 
-			if ( backUrl === this.removeQueryParam( this.props.path ) ) {
+			if ( 'general-settings' === source && siteSlug ) {
+				backUrl = `/settings/general/${ siteSlug }`;
+				backLabelText = translate( 'Back to General Settings' );
+			} else if ( backUrl === this.removeQueryParam( this.props.path ) ) {
 				backUrl = '/sites/';
 				backLabelText = translate( 'Back to My Sites' );
 			}
