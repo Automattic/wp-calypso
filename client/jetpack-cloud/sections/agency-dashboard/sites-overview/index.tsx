@@ -1,6 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement, useContext, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import DocumentHead from 'calypso/components/data/document-head';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SitesOverviewContext from './context';
@@ -23,27 +25,33 @@ export default function SitesOverview(): ReactElement {
 		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_visit' ) );
 	}, [ dispatch ] );
 
+	const pageTitle = translate( 'Dashboard' );
+
 	return (
 		<div className="sites-overview">
-			<SiteWelcomeBanner isDashboardView />
-			<div className="sites-overview__page-title-container">
-				<h2 className="sites-overview__page-title">{ translate( 'Dashboard' ) }</h2>
-				<div className="sites-overview__page-subtitle">
-					{ translate( 'Manage all your Jetpack sites from one location' ) }
+			<DocumentHead title={ pageTitle } />
+			<SidebarNavigation sectionTitle={ pageTitle } />
+			<div className="sites-overview__container">
+				<SiteWelcomeBanner isDashboardView />
+				<div className="sites-overview__page-title-container">
+					<h2 className="sites-overview__page-title">{ pageTitle }</h2>
+					<div className="sites-overview__page-subtitle">
+						{ translate( 'Manage all your Jetpack sites from one location' ) }
+					</div>
 				</div>
+				<div className="sites-overview__search">
+					<SiteSearch searchQuery={ search } currentPage={ currentPage } />
+				</div>
+				<div className="sites-overview__filter-bar">
+					<SiteFilters filter={ filter } isFetching={ isFetching } />
+				</div>
+				<SiteContent
+					data={ data }
+					isError={ isError }
+					isFetching={ isFetching }
+					currentPage={ currentPage }
+				/>
 			</div>
-			<div className="sites-overview__search">
-				<SiteSearch searchQuery={ search } currentPage={ currentPage } />
-			</div>
-			<div className="sites-overview__filter-bar">
-				<SiteFilters filter={ filter } isFetching={ isFetching } />
-			</div>
-			<SiteContent
-				data={ data }
-				isError={ isError }
-				isFetching={ isFetching }
-				currentPage={ currentPage }
-			/>
 		</div>
 	);
 }
