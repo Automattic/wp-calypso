@@ -364,6 +364,7 @@ export class PlanFeatures extends Component {
 				bestValue,
 				relatedMonthlyPlan,
 				primaryUpgrade,
+				productDisplayPrice,
 				isPlaceholder,
 				hideMonthly,
 			} = properties;
@@ -384,6 +385,7 @@ export class PlanFeatures extends Component {
 						title={ planConstantObj.getTitle() }
 						planType={ planName }
 						rawPrice={ rawPrice }
+						productDisplayPrice={ productDisplayPrice }
 						discountPrice={ discountPrice }
 						billingTimeFrame={ planConstantObj.getBillingTimeFrame() }
 						hideMonthly={ hideMonthly }
@@ -466,6 +468,7 @@ export class PlanFeatures extends Component {
 				isPlaceholder,
 				hideMonthly,
 				rawPrice,
+				productDisplayPrice,
 				isMonthlyPlan,
 			} = properties;
 			let { discountPrice } = properties;
@@ -514,6 +517,7 @@ export class PlanFeatures extends Component {
 						planType={ planName }
 						popular={ popular }
 						rawPrice={ rawPrice }
+						productDisplayPrice={ productDisplayPrice }
 						relatedMonthlyPlan={ relatedMonthlyPlan }
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
@@ -900,6 +904,7 @@ const ConnectedPlanFeatures = connect(
 				const isLoadingSitePlans = selectedSiteId && ! sitePlans.hasLoadedFromServer;
 				const isMonthlyPlan = isMonthly( plan );
 				const showMonthly = ! isMonthlyPlan;
+				const productDisplayPrice = planObject.product_display_price;
 				const availableForPurchase = isInSignup
 					? true
 					: canUpgradeToPlan( state, selectedSiteId, plan ) && canPurchase;
@@ -990,6 +995,7 @@ const ConnectedPlanFeatures = connect(
 					planName: plan,
 					planObject: planObject,
 					popular,
+					productDisplayPrice,
 					productSlug: get( planObject, 'product_slug' ),
 					newPlan: newPlan,
 					bestValue: bestValue,

@@ -222,15 +222,20 @@ function PurchaseMetaOwner( { owner } ) {
 
 function PurchaseMetaPrice( { purchase } ) {
 	const translate = useTranslate();
-	const { priceText, productSlug } = purchase;
+	const { productSlug, productDisplayPrice } = purchase;
 	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
 	let period = translate( 'year' );
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
-		// translators: %(priceText)s is the price of the purchase with localized currency (i.e. "C$10")
-		return translate( '%(priceText)s {{period}}(one-time){{/period}}', {
-			args: { priceText },
+		// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10")
+		return translate( '{{displayPrice/}} {{period}}(one-time){{/period}}', {
 			components: {
+				displayPrice: (
+					<span
+						// eslint-disable-next-line react/no-danger
+						dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
+					/>
+				),
 				period: <span className="manage-purchase__time-period" />,
 			},
 		} );
@@ -256,10 +261,16 @@ function PurchaseMetaPrice( { purchase } ) {
 		period = translate( 'month' );
 	}
 
-	// translators: %(priceText)s is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
-	return translate( '%(priceText)s {{period}}/ %(period)s{{/period}}', {
-		args: { priceText, period },
+	// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
+	return translate( '{{displayPrice/}} {{period}}/ %(period)s{{/period}}', {
+		args: { period },
 		components: {
+			displayPrice: (
+				<span
+					// eslint-disable-next-line react/no-danger
+					dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
+				/>
+			),
 			period: <span className="manage-purchase__time-period" />,
 		},
 	} );

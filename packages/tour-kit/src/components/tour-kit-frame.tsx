@@ -192,6 +192,12 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		}
 	}, [ popperUpdate, referenceElement ] );
 
+	useEffect( () => {
+		if ( referenceElement && config.options?.effects?.autoScroll ) {
+			referenceElement.scrollIntoView( config.options.effects.autoScroll );
+		}
+	}, [ config.options?.effects?.autoScroll, referenceElement ] );
+
 	const classes = classnames(
 		'tour-kit-frame',
 		isMobile ? 'is-mobile' : 'is-desktop',

@@ -231,8 +231,11 @@ class Layout extends Component {
 		const optionalBodyProps = () => {
 			const bodyClass = [ 'font-smoothing-antialiased' ];
 
-			if ( this.props.sidebarIsCollapsed && isWithinBreakpoint( '>800px' ) ) {
-				bodyClass.push( 'is-sidebar-collapsed' );
+			// /me section doesn't have design for a collapsed sidebar.
+			if ( 'me' !== this.props.sectionGroup ) {
+				if ( this.props.sidebarIsCollapsed && isWithinBreakpoint( '>800px' ) ) {
+					bodyClass.push( 'is-sidebar-collapsed' );
+				}
 			}
 
 			return {

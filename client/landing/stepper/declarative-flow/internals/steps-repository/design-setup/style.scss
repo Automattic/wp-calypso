@@ -401,25 +401,32 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	.design-setup__footer {
 		display: none;
 		position: relative;
-		margin: 0 auto;
 
-		@include break-small {
+		.design-setup__footer-content {
+			position: absolute;
+			top: 100%;
+			width: 100%;
+			height: 100%;
 			display: flex;
 			align-items: center;
 			justify-content: flex-end;
+			background-color: #ffffff;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+		}
+
+		@include break-small {
+			display: block;
 			position: sticky;
 			bottom: 0;
 			height: 118px;
-			background-color: #ffffff;
-			opacity: 0;
-			transform: translateY( 100% );
-			pointer-events: none;
-			transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+			overflow: hidden;
 			z-index: 1;
 
-			&.is-visible {
+			&.is-visible .design-setup__footer-content {
 				opacity: 1;
-				transform: translateY( 0 );
+				transform: translateY( -100% );
 				pointer-events: auto;
 			}
 		}

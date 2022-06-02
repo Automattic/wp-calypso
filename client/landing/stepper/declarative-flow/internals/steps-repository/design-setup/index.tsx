@@ -17,7 +17,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
@@ -104,7 +104,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 				vertical_id: siteVerticalId,
 				seed: siteSlug || undefined,
 			},
-			{ enabled: enabledGeneratedDesigns && !! siteVerticalId }
+			{ enabled: enabledGeneratedDesigns && !! siteVerticalId && ! isAnchorSite }
 		);
 
 	const showGeneratedDesigns =
@@ -121,6 +121,17 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const visibility = useNewSiteVisibility();
 
 	const [ isSticky, setIsSticky ] = useState( false );
+
+	const hasTrackedView = useRef( false );
+	useEffect( () => {
+		if ( showGeneratedDesigns && ! hasTrackedView.current ) {
+			hasTrackedView.current = true;
+			recordTracksEvent( 'calypso_signup_generated_design_picker_view', {
+				vertical_id: siteVerticalId,
+				generated_designs: generatedDesigns?.map( ( design ) => design.slug ).join( ',' ),
+			} );
+		}
+	}, [ showGeneratedDesigns, hasTrackedView, generatedDesigns ] );
 
 	function headerText() {
 		if ( showGeneratedDesigns ) {
@@ -393,11 +404,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	// When the intent is build, we can potentially show the generated design picker.
 	// Don't render until we've fetched the generated designs from the backend.
-	if (
-		enabledGeneratedDesigns &&
-		( isLoadingGeneratedDesigns || ! siteVerticalId ) &&
-		! isAnchorSite
-	) {
+	if ( ( ! site || isLoadingGeneratedDesigns ) && ! isAnchorSite ) {
 		return null;
 	}
 
@@ -452,9 +459,11 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 						'is-visible': isSticky,
 					} ) }
 				>
-					<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'bottom' ) }>
-						{ translate( 'Continue' ) }
-					</Button>
+					<div className="design-setup__footer-content">
+						<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'bottom' ) }>
+							{ translate( 'Continue' ) }
+						</Button>
+					</div>
 				</div>
 			}
 			onPreview={ previewDesign }

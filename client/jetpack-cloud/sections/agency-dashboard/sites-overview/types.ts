@@ -48,4 +48,16 @@ export type ActionEventNames = {
 export interface SitesOverviewContextInterface {
 	search: string;
 	currentPage: number;
+	filter: { issueTypes: Array< string > };
 }
+
+export type AgencyDashboardFilterOption =
+	| 'backup_failed'
+	| 'backup_warning'
+	| 'threats_found'
+	| 'site_down'
+	| 'plugin_updates';
+
+export type AgencyDashboardFilter = {
+	issueTypes: Array< AgencyDashboardFilterOption | string >;
+};

@@ -17,6 +17,7 @@ import '../style.scss';
 export default function DashboardOverview( {
 	search,
 	currentPage,
+	filter,
 }: SitesOverviewContextInterface ): ReactElement {
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
@@ -36,6 +37,7 @@ export default function DashboardOverview( {
 		const context = {
 			search,
 			currentPage,
+			filter,
 		};
 		return (
 			<SitesOverviewContext.Provider value={ context }>

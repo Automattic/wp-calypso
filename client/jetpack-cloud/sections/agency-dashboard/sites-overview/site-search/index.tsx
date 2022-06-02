@@ -13,8 +13,11 @@ export default function SiteSearch( {
 	const translate = useTranslate();
 
 	const handleSearchSites = ( query: string ) => {
+		const params = new URLSearchParams( window.location.search );
+		const issueTypes = params.get( 'issue_types' );
 		const queryParams = {
 			...( query && { s: query } ),
+			...( issueTypes && { issue_types: issueTypes } ),
 		};
 		const currentPath = window.location.pathname;
 		page( addQueryArgs( queryParams, currentPath ) );

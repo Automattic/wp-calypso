@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/data-stores",
-	"version": "2.0.1",
+	"version": "3.0.0",
 	"description": "Calypso Data Stores.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -33,10 +33,10 @@
 	"dependencies": {
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/happychat-connection": "workspace:^",
-		"@wordpress/api-fetch": "^6.4.0",
-		"@wordpress/data-controls": "^2.7.0",
-		"@wordpress/deprecated": "^3.7.0",
-		"@wordpress/url": "^3.8.0",
+		"@wordpress/api-fetch": "^6.6.0",
+		"@wordpress/data-controls": "^2.9.0",
+		"@wordpress/deprecated": "^3.9.0",
+		"@wordpress/url": "^3.10.0",
 		"fast-json-stable-stringify": "^2.1.0",
 		"i18n-calypso": "workspace:^",
 		"qs": "^6.9.1",

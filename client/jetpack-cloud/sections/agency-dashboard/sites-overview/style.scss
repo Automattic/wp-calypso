@@ -2,7 +2,6 @@
 @import '@wordpress/base-styles/mixins';
 
 .sites-overview {
-	height: 100vh;
 	padding: 16px;
 	max-width: 1500px;
 	margin: auto;
@@ -16,6 +15,9 @@
 .sites-overview__search {
 	@include break-large() {
 		display: none;
+	}
+	.search.is-open {
+		margin-bottom: 8px;
 	}
 }
 .sites-overview__page-title-container {
@@ -206,4 +208,13 @@
 }
 .sites-overview__status-warning {
 	border-color:  var( --studio-yellow-20 );;
+}
+.sites-overview__filter-bar {
+	margin: 0 1px 8px;
+	.filterbar__wrap.card {
+		overflow-x: scroll;
+		@include break-large() {
+			overflow-x: visible;
+		}
+	}
 }

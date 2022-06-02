@@ -9,7 +9,6 @@ import SiteCard from '../site-card';
 import SiteTable from '../site-table';
 import { formatSites } from '../utils';
 import type { ReactElement } from 'react';
-
 import './style.scss';
 
 const addPageArgs = ( pageNumber: number ) => {

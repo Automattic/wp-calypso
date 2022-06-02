@@ -158,6 +158,7 @@ The main API for configuring a tour is the config object. See example usage and 
   - `spotlight`: Adds a semi-transparent overlay and highlights the reference element when provided with a transparent box over it. Expects an object with optional styles to override the default highlight/spotlight behavior when provided (default: spotlight wraps the entire reference element).
   - `arrowIndicator`: Adds an arrow tip pointing at the reference element when provided.
   - `overlay`: Includes the semi-transparent overlay for all the steps (also blocks interactions with the rest of the page)
+  - `autoScroll`: The page scrolls up and down automatically such that the step target element is visible to the user.
 
 - `callbacks`: An object of callbacks to handle side effects from various interactions (see [types.ts](./src/types.ts)).
 

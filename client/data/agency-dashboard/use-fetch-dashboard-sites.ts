@@ -3,12 +3,26 @@ import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
+import type { AgencyDashboardFilter } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
-const useFetchDashboardSites = ( searchQuery: string, currentPage: number ) => {
+const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) =>
+	filter.issueTypes?.reduce(
+		( previousValue, currentValue ) => ( {
+			...previousValue,
+			[ currentValue ]: true,
+		} ),
+		{}
+	);
+
+const useFetchDashboardSites = (
+	searchQuery: string,
+	currentPage: number,
+	filter: AgencyDashboardFilter
+) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	return useQuery(
-		[ 'jetpack-cloud', 'agency-dashboard', 'sites', searchQuery, currentPage ],
+		[ 'jetpack-cloud', 'agency-dashboard', 'sites', searchQuery, currentPage, filter ],
 		() =>
 			wpcomJpl.req.get(
 				{
@@ -18,6 +32,7 @@ const useFetchDashboardSites = ( searchQuery: string, currentPage: number ) => {
 				{
 					...( searchQuery && { query: searchQuery } ),
 					...( currentPage && { page: currentPage } ),
+					...agencyDashboardFilterToQueryObject( filter ),
 				}
 			),
 		{
