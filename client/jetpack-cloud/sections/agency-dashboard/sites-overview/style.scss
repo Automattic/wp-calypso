@@ -2,6 +2,11 @@
 @import '@wordpress/base-styles/mixins';
 
 .sites-overview {
+	.current-section {
+		padding: 0 16px;
+	}
+}
+.sites-overview__container {
 	padding: 16px;
 	max-width: 1500px;
 	margin: auto;
