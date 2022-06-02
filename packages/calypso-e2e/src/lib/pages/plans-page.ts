@@ -35,7 +35,14 @@ const selectors = {
 		`.formatted-header button.button:has-text("${ type }"), .plans-comparison-col-header button.button:has-text("${ type }")`,
 	planComparisonActionButton: ( action: PlansComparisonAction ) => {
 		const buttonText = `${ toTitleCase( action ) } full plan comparison`;
-
+		return `button:text("${ buttonText }")`;
+	},
+	showFeaturesActionButton: () => {
+		const buttonText = `Show all features`;
+		return `button:text("${ buttonText }")`;
+	},
+	hideFeaturesActionButton: () => {
+		const buttonText = `Show less features`;
 		return `button:text("${ buttonText }")`;
 	},
 
@@ -79,10 +86,18 @@ export class PlansPage {
 	 * This method is applicable only to the overhauled plans.
 	 */
 	async showPlanComparison(): Promise< void > {
-		const buttonLocator = this.page.locator( selectors.planComparisonActionButton( 'view' ) );
+		const showSelector =
+			envVariables.VIEWPORT_NAME === 'mobile'
+				? selectors.showFeaturesActionButton()
+				: selectors.planComparisonActionButton( 'view' );
+		const buttonLocator = this.page.locator( showSelector );
 		await buttonLocator.click();
 
-		const hideButtonLocator = this.page.locator( selectors.planComparisonActionButton( 'hide' ) );
+		const hideSelector =
+			envVariables.VIEWPORT_NAME === 'mobile'
+				? selectors.hideFeaturesActionButton()
+				: selectors.planComparisonActionButton( 'hide' );
+		const hideButtonLocator = this.page.locator( hideSelector );
 		await hideButtonLocator.waitFor();
 	}
 
