@@ -1,4 +1,4 @@
-import { Button, useFormStatus, FormStatus, useLineItems } from '@automattic/composite-checkout';
+import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
 import WordPressLogo from '../components/wordpress-logo';
@@ -22,7 +22,6 @@ function FreePurchaseSubmitButton( {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 } ) {
-	const [ items ] = useLineItems();
 	const { formStatus } = useFormStatus();
 
 	// This must be typed as optional because it's injected by cloning the
@@ -35,9 +34,7 @@ function FreePurchaseSubmitButton( {
 	}
 
 	const handleButtonPress = () => {
-		onClick( {
-			items,
-		} );
+		onClick( {} );
 	};
 
 	return (
