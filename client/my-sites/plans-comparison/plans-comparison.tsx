@@ -310,7 +310,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	return (
 		<>
 			<Global styles={ globalOverrides } />
-			<ComparisonGrid>
+			<ComparisonGrid className="plans-comparison">
 				{ plans.map( ( plan, index ) => (
 					<PlansComparisonColHeader
 						key={ plan.getProductId() }

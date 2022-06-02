@@ -5,7 +5,7 @@ import envVariables from '../../env-variables';
 
 // Differentiates between the legacy and current (overhauled) plans.
 type PlansGridVersion = 'current' | 'legacy';
-type PlansComparisonAction = 'show' | 'hide';
+type PlansComparisonAction = 'show' | 'hide' | 'view';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
 export type Plans = 'Free' | 'Pro';
@@ -32,9 +32,10 @@ const selectors = {
 
 	// Overhauled plans view
 	selectPlanButton: ( type: Plans ) =>
-		`.formatted-header button.button:has-text("${ type }"), tr th button.button:has-text("${ type }")`,
+		`.formatted-header button.button:has-text("${ type }"), .plans-comparison-col-header button.button:has-text("${ type }")`,
 	planComparisonActionButton: ( action: PlansComparisonAction ) => {
 		const buttonText = `${ toTitleCase( action ) } full plan comparison`;
+
 		return `button:text("${ buttonText }")`;
 	},
 
@@ -78,7 +79,7 @@ export class PlansPage {
 	 * This method is applicable only to the overhauled plans.
 	 */
 	async showPlanComparison(): Promise< void > {
-		const buttonLocator = this.page.locator( selectors.planComparisonActionButton( 'show' ) );
+		const buttonLocator = this.page.locator( selectors.planComparisonActionButton( 'view' ) );
 		await buttonLocator.click();
 
 		const hideButtonLocator = this.page.locator( selectors.planComparisonActionButton( 'hide' ) );
@@ -94,7 +95,7 @@ export class PlansPage {
 		const buttonLocator = this.page.locator( selectors.planComparisonActionButton( 'hide' ) );
 		await buttonLocator.click();
 
-		const showButtonLocator = this.page.locator( selectors.planComparisonActionButton( 'show' ) );
+		const showButtonLocator = this.page.locator( selectors.planComparisonActionButton( 'view' ) );
 		await showButtonLocator.waitFor();
 	}
 

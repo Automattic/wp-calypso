@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import classNames from 'classnames';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { mobile_breakpoint } from './breakpoints';
 import type { Plan } from '@automattic/calypso-products';
@@ -97,9 +98,10 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 	translate,
 } ) => {
 	const isDiscounted = typeof originalPrice === 'number';
+	const classes = classNames( plan.getStoreSlug, 'plans-comparison-col-header' );
 
 	return (
-		<PlanComparisonHeader className={ plan.getStoreSlug() }>
+		<PlanComparisonHeader className={ classes }>
 			<PlanTitle>{ plan.getTitle() }</PlanTitle>
 			<PlanDescription>{ plan.getDescription() }</PlanDescription>
 			<PriceContainer>
