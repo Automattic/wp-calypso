@@ -12,6 +12,7 @@ export { default as RootChild } from './root-child';
 export { default as ScreenReaderText } from './screen-reader-text';
 export { default as Suggestions } from './suggestions';
 export { default as PaginationControl } from './pagination-control';
+export { default as ResponsiveToolbarGroup } from './responsive-toolbar-group';
 export { Gravatar } from './gravatar';
 export { HappinessEngineersTray } from './happiness-engineers-tray';
 export { Spinner } from './spinner';
