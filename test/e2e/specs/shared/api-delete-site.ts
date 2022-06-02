@@ -1,7 +1,16 @@
 import { RestAPIClient } from '@automattic/calypso-e2e';
 import type { SiteDetails } from '@automattic/calypso-e2e';
 
-export async function apiDeleteSite( client: RestAPIClient, siteDetails: SiteDetails ) {
+/**
+ * Makes an API request to delete a site.
+ *
+ * @param {RestAPIClient} client Client to interact with the WP REST API.
+ * @param { SiteDetails} siteDetails Details of the site to be closed.
+ */
+export async function apiDeleteSite(
+	client: RestAPIClient,
+	siteDetails: SiteDetails
+): Promise< void > {
 	const response = await client.deleteSite( siteDetails );
 
 	// If the response is `null` then no action has been

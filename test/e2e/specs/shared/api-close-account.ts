@@ -15,7 +15,7 @@ import type { AccountClosureResponse, AccountClosureDetails } from '@automattic/
 export async function apiCloseAccount(
 	client: RestAPIClient,
 	accountDetails: AccountClosureDetails
-) {
+): Promise< void > {
 	const response: AccountClosureResponse = await client.closeAccount( accountDetails );
 
 	if ( response.success !== true ) {
@@ -23,5 +23,4 @@ export async function apiCloseAccount(
 	} else {
 		console.log( `Successfully deleted user ID ${ accountDetails.userID }` );
 	}
-	return response;
 }
