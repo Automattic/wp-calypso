@@ -49,7 +49,11 @@ export class StartSiteFlow {
 	 * @param {string} name Name for the blog.
 	 */
 	async enterBlogName( name: string ): Promise< void > {
-		await this.page.fill( selectors.blogNameInput, name );
+		const locator = this.page.locator( selectors.blogNameInput );
+		// Use the type method to simulate user interaction to avoid
+		// https://github.com/Automattic/wp-calypso/issues/64271.
+		await locator.fill( '' );
+		await locator.type( name );
 	}
 
 	/**
@@ -58,7 +62,11 @@ export class StartSiteFlow {
 	 * @param {string} tagline Tagline for the blog.
 	 */
 	async enterTagline( tagline: string ): Promise< void > {
-		await this.page.fill( selectors.taglineInput, tagline );
+		const locator = this.page.locator( selectors.taglineInput );
+		// Use the type method to simulate user interaction to avoid
+		// https://github.com/Automattic/wp-calypso/issues/64271.
+		await locator.fill( '' );
+		await locator.type( tagline );
 	}
 
 	/**
