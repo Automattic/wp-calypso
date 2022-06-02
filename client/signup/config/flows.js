@@ -79,7 +79,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter }, l
 	}
 
 	if ( isEnabled( 'signup/stepper-flow' ) ) {
-		return addQueryArgs( queryParam, '/setup/intent' );
+		return addQueryArgs( queryParam, '/setup' );
 	}
 
 	// Initially ship to English users only, then ship to all users when translations complete
