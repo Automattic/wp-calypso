@@ -1,8 +1,11 @@
-import { useLineItems } from '@automattic/composite-checkout';
+import { useTotal } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import { getLabel } from '../checkout-labels';
 import type { StripeConfiguration, PaymentRequestOptions } from '@automattic/calypso-stripe';
 import type { LineItem } from '@automattic/composite-checkout';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 import type { PaymentRequest, Stripe } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'wpcom-checkout:web-pay-utils' );
@@ -25,12 +28,10 @@ const PAYMENT_REQUEST_OPTIONS = {
 export function usePaymentRequestOptions(
 	stripeConfiguration: StripeConfiguration
 ): PaymentRequestOptions | null {
-	const [ items, total ] = useLineItems();
+	const total = useTotal();
+	const { responseCart } = useShoppingCart();
 	const country = getProcessorCountryFromStripeConfiguration( stripeConfiguration );
-	const currency = items.reduce(
-		( firstCurrency: string | null, item: LineItem ) => firstCurrency || item.amount.currency,
-		null
-	);
+	const currency = responseCart.currency;
 	const paymentRequestOptions = useMemo( () => {
 		debug( 'generating payment request options' );
 		if ( ! currency || ! total.amount.value ) {
@@ -40,10 +41,10 @@ export function usePaymentRequestOptions(
 			country,
 			currency: currency?.toLowerCase(),
 			total: getPaymentRequestTotalFromTotal( total ),
-			displayItems: getDisplayItemsForLineItems( items ),
+			displayItems: getDisplayItemsForLineItems( responseCart.products ),
 			...PAYMENT_REQUEST_OPTIONS,
 		};
-	}, [ country, currency, items, total ] );
+	}, [ country, currency, total, responseCart.products ] );
 	return paymentRequestOptions;
 }
 
@@ -138,10 +139,10 @@ export function useStripePaymentRequest( {
 	return paymentRequestState;
 }
 
-function getDisplayItemsForLineItems( items: LineItem[] ) {
-	return items.map( ( { label, amount } ) => ( {
-		label,
-		amount: amount.value,
+function getDisplayItemsForLineItems( products: ResponseCartProduct[] ) {
+	return products.map( ( product ) => ( {
+		label: getLabel( product ),
+		amount: product.item_subtotal_integer,
 	} ) );
 }
 
