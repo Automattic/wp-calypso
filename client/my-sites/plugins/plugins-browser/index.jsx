@@ -296,7 +296,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 			/>
 
-			{ ! search && <Categories clearSearch={ clearSearch } selected={ category } /> }
+			{ ! search && <Categories selected={ category } /> }
 
 			<PluginBrowserContent
 				clearSearch={ clearSearch }
