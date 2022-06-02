@@ -212,4 +212,10 @@
 }
 .sites-overview__filter-bar {
 	margin: 0 1px 8px;
+	.filterbar__wrap.card {
+		overflow-x: scroll;
+		@include break-large() {
+			overflow-x: visible;
+		}
+	}
 }
