@@ -738,7 +738,10 @@ class DomainsStep extends Component {
 		} else {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, null, this.getLocale() );
 
-			if ( 'general-settings' === source && siteSlug ) {
+			if ( 'my-home' === source && siteSlug ) {
+				backUrl = `/home/${ siteSlug }`;
+				backLabelText = translate( 'Back to My Home' );
+			} else if ( 'general-settings' === source && siteSlug ) {
 				backUrl = `/settings/general/${ siteSlug }`;
 				backLabelText = translate( 'Back to General Settings' );
 			} else if ( backUrl === this.removeQueryParam( this.props.path ) ) {
