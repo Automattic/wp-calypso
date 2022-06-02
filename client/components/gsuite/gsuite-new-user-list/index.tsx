@@ -62,7 +62,7 @@ const GSuiteNewUserList = ( {
 
 	const onUserAdd = () => {
 		recordTracksEvent(
-			'calypso_email_management_google_workspace_add_mailboxes_add_another_mailbox_button_click',
+			'calypso_email_google_workspace_add_mailboxes_add_another_mailbox_button_click',
 			{ mailbox_count: users.length + 1 }
 		);
 
@@ -70,10 +70,9 @@ const GSuiteNewUserList = ( {
 	};
 
 	const onUserRemove = ( uuid: string ) => () => {
-		recordTracksEvent(
-			'calypso_email_management_google_workspace_add_mailboxes_remove_mailbox_button_click',
-			{ mailbox_count: users.length - 1 }
-		);
+		recordTracksEvent( 'calypso_email_google_workspace_add_mailboxes_remove_mailbox_button_click', {
+			mailbox_count: users.length - 1,
+		} );
 
 		const newUserList = users.filter( ( _user ) => _user.uuid !== uuid );
 

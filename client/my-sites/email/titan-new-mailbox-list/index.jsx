@@ -53,16 +53,15 @@ const TitanNewMailboxList = ( {
 	};
 
 	const onMailboxAdd = () => {
-		recordTracksEvent(
-			'calypso_email_management_titan_add_mailboxes_add_another_mailbox_button_click',
-			{ mailbox_count: mailboxes.length + 1 }
-		);
+		recordTracksEvent( 'calypso_email_titan_add_mailboxes_add_another_mailbox_button_click', {
+			mailbox_count: mailboxes.length + 1,
+		} );
 
 		onMailboxesChange( [ ...mailboxes, buildNewTitanMailbox( selectedDomainName, false ) ] );
 	};
 
 	const onMailboxRemove = ( currentMailboxes, uuid ) => () => {
-		recordTracksEvent( 'calypso_email_management_titan_add_mailboxes_remove_mailbox_button_click', {
+		recordTracksEvent( 'calypso_email_titan_add_mailboxes_remove_mailbox_button_click', {
 			mailbox_count: mailboxes.length - 1,
 		} );
 
