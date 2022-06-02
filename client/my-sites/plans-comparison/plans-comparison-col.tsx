@@ -59,8 +59,7 @@ const PlansComparisonRows = styled.div`
 	` ) }
 
 	.button {
-		margin-top: 14px;
-		margin-bottom: 30px;
+		margin: 22px 0 16px;
 	}
 `;
 const Title = styled.div`
@@ -114,14 +113,14 @@ function renderContent( content: ReturnType< PlanComparisonFeature[ 'getCellText
 }
 
 const PlansComparisonToggle = styled.div`
-	margin-top: 22px;
 	display: none;
 
 	button {
 		background: none;
 		display: flex;
 		justify-content: space-between;
-		padding: 22px 0 0;
+		margin-top: 22px;
+		padding-top: 15px;
 		width: 100%;
 		cursor: pointer;
 		border-top: solid 1px #e9e9ea;
