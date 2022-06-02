@@ -1,6 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, ReactNode } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	newUser,
 	GSuiteNewUser as NewUser,
@@ -60,10 +61,20 @@ const GSuiteNewUserList = ( {
 		};
 
 	const onUserAdd = () => {
+		recordTracksEvent(
+			'calypso_email_management_google_workspace_add_mailboxes_add_another_mailbox_button_click',
+			{ mailbox_count: users.length + 1 }
+		);
+
 		onUsersChange( [ ...users, newUser( selectedDomainName ) ] );
 	};
 
 	const onUserRemove = ( uuid: string ) => () => {
+		recordTracksEvent(
+			'calypso_email_management_google_workspace_add_mailboxes_remove_mailbox_button_click',
+			{ mailbox_count: users.length - 1 }
+		);
+
 		const newUserList = users.filter( ( _user ) => _user.uuid !== uuid );
 
 		onUsersChange( 0 < newUserList.length ? newUserList : [ newUser( selectedDomainName ) ] );
