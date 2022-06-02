@@ -5,16 +5,13 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
-import BackupWarningHeader from 'calypso/components/jetpack/backup-warnings/backup-warning-header';
-import BackupWarningListHeader from 'calypso/components/jetpack/backup-warnings/backup-warning-list-header';
-import LogItem from 'calypso/components/jetpack/log-item';
+import BackupWarnings from 'calypso/components/jetpack/backup-warnings/backup-warnings';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
 	getBackupErrorCode,
-	getBackupWarnings,
 } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { useIsDateVisible } from 'calypso/my-sites/backup/hooks';
@@ -148,55 +145,6 @@ DailyBackupStatus.propTypes = {
 	deltas: PropTypes.object,
 };
 
-const DailyBackupWarnings = ( { backup } ) => {
-	if ( ! backup ) {
-		return <></>;
-	}
-
-	const backupWarnings = getBackupWarnings( backup );
-	const hasWarnings = Object.keys( backupWarnings ).length !== 0;
-
-	if ( ! hasWarnings ) {
-		return <></>;
-	}
-
-	const renderWarnings = ( warnings ) => {
-		const logItems = [];
-		Object.keys( warnings ).forEach( ( warningCategory ) => {
-			const fileList = [];
-			warnings[ warningCategory ].items.forEach( ( item ) => {
-				fileList.push( <li key={ item.item }> { item.item } </li> );
-			} );
-			logItems.push(
-				<LogItem
-					key={ warningCategory }
-					className="daily-backup-status__warning-item"
-					header={
-						<BackupWarningHeader
-							warning={ warnings[ warningCategory ] }
-							warningCategory={ warningCategory }
-						/>
-					}
-				>
-					<ul>{ fileList }</ul>
-				</LogItem>
-			);
-		} );
-		return (
-			<>
-				<BackupWarningListHeader />
-				{ logItems }
-			</>
-		);
-	};
-
-	return renderWarnings( backupWarnings );
-};
-
-DailyBackupWarnings.propTypes = {
-	backup: PropTypes.object,
-};
-
 const Wrapper = ( props ) => {
 	const siteId = useSelector( getSelectedSiteId );
 
@@ -209,7 +157,7 @@ const Wrapper = ( props ) => {
 				<QueryRewindBackups siteId={ siteId } />
 				<DailyBackupStatus { ...props } />
 			</Card>
-			<DailyBackupWarnings backup={ props.backup } />
+			<BackupWarnings backup={ props.backup } />
 		</>
 	);
 };

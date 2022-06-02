@@ -3,7 +3,7 @@ import BackupWarningTypeBadge from 'calypso/components/jetpack/backup-warnings/b
 
 import './style.scss';
 
-const warningCategoryText = ( warningCategory ) => {
+const warningCodeText = ( warningCode ) => {
 	const typeMap = {
 		SERIOUS_ROW_COUNT_MISMATCH: translate( 'Serious row count mismatch' ),
 		SELECT_COMMAND_DENIED_TO_USER: translate( 'Select command denied to user' ),
@@ -34,19 +34,17 @@ const warningCategoryText = ( warningCategory ) => {
 		GENERIC: translate( 'Generic' ),
 	};
 
-	const warningText = typeMap[ warningCategory ];
+	const warningText = typeMap[ warningCode ];
 
 	return warningText ? warningText : typeMap.GENERIC;
 };
 
-const BackupWarningHeader = ( { warning, warningCategory } ) => {
+const BackupWarningHeader = ( { warning, warningCode } ) => {
 	return (
 		<>
 			<BackupWarningTypeBadge warningType={ warning.category } />
 			<div className="backup-warning-header__titles">
-				<div className="backup-warning-header__card-top">
-					{ warningCategoryText( warningCategory ) }
-				</div>
+				<div className="backup-warning-header__card-top">{ warningCodeText( warningCode ) }</div>
 				<div className="backup-warning-header__card-bottom">
 					{ warning.items.length } { translate( 'files affected.' ) }
 				</div>
