@@ -4,6 +4,7 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Sidebar from 'calypso/layout/sidebar';
+import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
@@ -152,6 +153,11 @@ class MeSidebar extends Component {
 						/>
 					</SidebarMenu>
 				</SidebarRegion>
+				<CollapseSidebar
+					key="collapse"
+					title={ translate( 'Collapse menu' ) }
+					icon="dashicons-admin-collapse"
+				/>
 				<SidebarFooter />
 			</Sidebar>
 		);
