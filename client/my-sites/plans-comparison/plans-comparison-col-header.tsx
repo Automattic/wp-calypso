@@ -70,6 +70,10 @@ const PriceContainer = styled.div`
 			font-size: 50%;
 			vertical-align: super;
 		}
+
+		${ mobile_breakpoint( `
+			font-size: 2.5rem;
+		` ) }
 	}
 `;
 
@@ -77,6 +81,10 @@ const BillingTimeFrame = styled.div`
 	color: var( --studio-gray-40 );
 	font-size: 0.75rem;
 	margin: 0.5rem 0 1rem;
+	${ mobile_breakpoint( `
+		font-size: 0.625rem;
+		margin-bottom: 0.6rem;
+	` ) }
 `;
 
 export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {

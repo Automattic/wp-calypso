@@ -21,7 +21,7 @@ import {
 	FEATURE_GOOGLE_ANALYTICS,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { translate, numberFormat } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import isStarterPlanEnabled from './is-starter-plan-enabled';
 import type { TranslateResult } from 'i18n-calypso';
 

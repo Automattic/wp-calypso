@@ -17,8 +17,8 @@ interface Props {
 const PlansComparisonRows = styled.div`
 	border-bottom-left-radius: 4px;
 	border-bottom-right-radius: 4px;
-	padding: 0 22px 22px;
-	margin-bottom: 22px;
+	padding: 0 30px 22px;
+	margin-bottom: 30px;
 
 	.plans-comparison__collapsible {
 		display: none;
@@ -59,7 +59,8 @@ const PlansComparisonRows = styled.div`
 	` ) }
 
 	.button {
-		margin-top: 22px;
+		margin-top: 14px;
+		margin-bottom: 8px;
 	}
 `;
 const Title = styled.div`
@@ -86,7 +87,12 @@ const Feature = styled.div`
 	line-height: 1.4;
 	display: flex;
 	align-items: flex-start;
-	padding: 8px 0;
+	padding: 9px 0;
+
+	${ mobile_breakpoint( `
+		padding: 8px 0 7px;
+		font-size: 14px;
+	` ) }
 `;
 
 const Description = styled.p`
@@ -108,17 +114,21 @@ function renderContent( content: ReturnType< PlanComparisonFeature[ 'getCellText
 }
 
 const PlansComparisonToggle = styled.div`
-	margin-top: 22px;
+	margin-top: 33px;
 	display: none;
 
 	button {
 		background: none;
 		display: flex;
 		justify-content: space-between;
-		padding: 15px 0;
+		padding: 22px 0 0;
 		width: 100%;
 		cursor: pointer;
 		border-top: solid 1px #e9e9ea;
+
+		.gridicon.gridicon {
+			opacity: 0.3;
+		}
 	}
 
 	${ mobile_breakpoint( `display: block` ) }
@@ -169,7 +179,7 @@ export const PlansComparisonCol: React.FunctionComponent< Props > = ( {
 				<button onClick={ showAllRowsToggle }>
 					{ showAllRows ? (
 						<>
-							{ translate( 'Hide all features' ) }
+							{ translate( 'Show less features' ) }
 							<Gridicon size={ 12 } icon="chevron-up" />
 						</>
 					) : (

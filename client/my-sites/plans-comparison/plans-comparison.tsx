@@ -207,7 +207,7 @@ const ComparisonGrid = styled.div`
 	grid-template-columns: 1fr 1fr;
 	margin-top: 64px;
 	margin-bottom: 64px;
-	max-width: 862px;
+	max-width: 820px;
 	padding: 0 20px;
 
 	.is-section-plans & {
@@ -376,7 +376,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 						) : (
 							<>
 								<Gridicon size={ 12 } icon="chevron-down" />
-								{ translate( 'Show full plan comparison' ) }
+								{ translate( 'View full plan comparison' ) }
 							</>
 						) }
 					</button>
