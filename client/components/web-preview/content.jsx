@@ -23,6 +23,8 @@ export default class WebPreviewContent extends Component {
 		iframeUrl: null,
 		device: this.props.defaultViewportDevice || 'computer',
 		viewport: null,
+		iframeStyle: {},
+		iframeScaleRatio: 1,
 		loaded: false,
 		isLoadingSubpage: false,
 	};
@@ -40,11 +42,17 @@ export default class WebPreviewContent extends Component {
 			this.setIframeMarkup( this.props.previewMarkup );
 		}
 
+		if ( this.props.vpw ) {
+			this.handleResize();
+			window.addEventListener( 'resize', this.handleResize );
+		}
+
 		this.props.onDeviceUpdate( this.state.device );
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'message', this.handleMessage );
+		window.removeEventListener( 'resize', this.handleResize );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -112,6 +120,20 @@ export default class WebPreviewContent extends Component {
 				}
 				return;
 		}
+	};
+
+	handleResize = () => {
+		const { vpw } = this.props;
+		const iframeScaleRatio = this.iframe.parentElement.clientWidth / vpw;
+		const iframeStyle = {
+			maxWidth: 'none',
+			width: `${ vpw }px`,
+			margin: 0,
+			transform: `scale( ${ iframeScaleRatio } )`,
+			transformOrigin: '0 0',
+		};
+
+		this.setState( { iframeStyle, iframeScaleRatio } );
 	};
 
 	redirectToAuth() {
@@ -300,7 +322,11 @@ export default class WebPreviewContent extends Component {
 				{ ( ! isLoaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
 				<div
 					className="web-preview__placeholder"
-					style={ this.state.viewport ? { minHeight: this.state.viewport.height } : null }
+					style={
+						this.state.viewport
+							? { minHeight: this.state.viewport.height * this.state.iframeScaleRatio }
+							: null
+					}
 				>
 					{ showLoadingMessage && (
 						<div className="web-preview__loading-message-wrapper">
@@ -316,6 +342,7 @@ export default class WebPreviewContent extends Component {
 							<iframe
 								ref={ this.setIframeInstance }
 								className="web-preview__frame"
+								style={ { ...this.state.iframeStyle, height: this.state.viewport?.height } }
 								src="about:blank"
 								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
 								title={ this.props.iframeTitle || translate( 'Preview' ) }
@@ -400,6 +427,8 @@ WebPreviewContent.propTypes = {
 	autoHeight: PropTypes.bool,
 	// The toolbar should sticky or not
 	isStickyToolbar: PropTypes.bool,
+	// Fixed the viewport width of the iframe if provided
+	vpw: PropTypes.number,
 };
 
 WebPreviewContent.defaultProps = {
