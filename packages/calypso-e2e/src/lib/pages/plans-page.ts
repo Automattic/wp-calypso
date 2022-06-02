@@ -39,11 +39,11 @@ const selectors = {
 	},
 	showFeaturesActionButton: () => {
 		const buttonText = `Show all features`;
-		return `button:text("${ buttonText }")`;
+		return `.pro-plan button:text("${ buttonText }")`;
 	},
 	hideFeaturesActionButton: () => {
 		const buttonText = `Show less features`;
-		return `button:text("${ buttonText }")`;
+		return `.pro-plan button:text("${ buttonText }")`;
 	},
 
 	// My Plans view
