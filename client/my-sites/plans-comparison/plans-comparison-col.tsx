@@ -60,7 +60,7 @@ const PlansComparisonRows = styled.div`
 
 	.button {
 		margin-top: 14px;
-		margin-bottom: 8px;
+		margin-bottom: 30px;
 	}
 `;
 const Title = styled.div`
@@ -114,7 +114,7 @@ function renderContent( content: ReturnType< PlanComparisonFeature[ 'getCellText
 }
 
 const PlansComparisonToggle = styled.div`
-	margin-top: 33px;
+	margin-top: 22px;
 	display: none;
 
 	button {
@@ -180,12 +180,12 @@ export const PlansComparisonCol: React.FunctionComponent< Props > = ( {
 					{ showAllRows ? (
 						<>
 							{ translate( 'Show less features' ) }
-							<Gridicon size={ 12 } icon="chevron-up" />
+							<Gridicon size={ 16 } icon="chevron-up" />
 						</>
 					) : (
 						<>
 							{ translate( 'Show all features' ) }
-							<Gridicon size={ 12 } icon="chevron-down" />
+							<Gridicon size={ 16 } icon="chevron-down" />
 						</>
 					) }
 				</button>

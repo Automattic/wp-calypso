@@ -81,9 +81,10 @@ const BillingTimeFrame = styled.div`
 	color: var( --studio-gray-40 );
 	font-size: 0.75rem;
 	margin: 0.5rem 0 1rem;
+
 	${ mobile_breakpoint( `
 		font-size: 0.625rem;
-		margin-bottom: 0.6rem;
+		margin-bottom: 0.8rem;
 	` ) }
 `;
 

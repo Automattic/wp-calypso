@@ -61,7 +61,6 @@ function getButtonText( props: Partial< Props >, translate: TranslateFunc ): Tra
 
 const ActionButton = styled( Button )`
 	display: block;
-	box-shadow: 0px 1px 2px rgba( 0, 0, 0, 0.05 );
 	border-radius: 4px;
 	font-weight: 500;
 	width: 100%;
@@ -109,7 +108,11 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 
 	if ( ! isInSignup ) {
 		if ( isCurrentPlan ) {
-			return <Button disabled>{ translate( 'This is your plan' ) }</Button>;
+			return (
+				<ActionButton className={ className } disabled>
+					{ translate( 'This is your plan' ) }
+				</ActionButton>
+			);
 		}
 
 		if ( [ TYPE_FLEXIBLE, TYPE_FREE ].includes( plan.type ) ) {
