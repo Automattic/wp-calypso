@@ -69,7 +69,10 @@ class PagesMain extends Component {
 		/* Check if All Sites Mode */
 		const isAllSites = siteId ? 1 : 0;
 		const query = {
-			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
+			// all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
+			// however, /sites/$site/posts/ endpoint used for single site supports up to 100,
+			// let's utilize that to always load hierarchical view by default then
+			number: siteId ? 100 : 20,
 			search,
 			site_visibility: ! siteId ? 'visible' : undefined,
 			author,
