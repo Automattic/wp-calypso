@@ -8,6 +8,7 @@ interface Props {
 	feature: PlanComparisonFeature;
 	plans: WPComPlan[];
 	isLegacySiteWithHigherLimits: boolean;
+	isExperiment?: boolean;
 }
 
 export const DesktopContent = styled.div`
@@ -66,7 +67,11 @@ export const PlansComparisonRow: React.FunctionComponent< Props > = ( {
 	feature,
 	plans,
 	isLegacySiteWithHigherLimits,
+	isExperiment = false,
 } ) => {
+	function getPlanFeatures( plan: WPComPlan, isExperiment: boolean ): string[] | undefined {
+		return isExperiment ? plan.getPlanCompareFeaturesTest?.() : plan.getPlanCompareFeatures?.();
+	}
 	return (
 		<tr>
 			<PlansComparisonRowHeader
@@ -77,7 +82,7 @@ export const PlansComparisonRow: React.FunctionComponent< Props > = ( {
 			/>
 			{ plans.map( ( plan ) => {
 				const includedFeature = intersection(
-					plan.getPlanCompareFeatures?.() || [],
+					getPlanFeatures( plan, isExperiment ) || [],
 					feature.features
 				)[ 0 ];
 

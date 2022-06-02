@@ -138,6 +138,7 @@ import {
 	FEATURE_WP_SUBDOMAIN,
 	FEATURE_WP_SUBDOMAIN_SIGNUP,
 	FEATURE_UNLIMITED_ADMINS,
+	FEATURE_UNLIMITED_TRAFFIC,
 	FEATURE_PAYMENT_BLOCKS,
 	FEATURE_WOOCOMMERCE,
 	GROUP_JETPACK,
@@ -1633,9 +1634,18 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
 			? i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' )
 			: i18n.translate( 'Start your WordPress.com website. Limited functionality and storage.' ),
-	getSubTitle: () => i18n.translate( 'The Essentials. No fluff.' ),
+	getSubTitle: () => i18n.translate( 'Essential features. Freedom to grow.' ),
 	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
 	getPlanCompareFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_UNLIMITED_ADMINS,
+		FEATURE_6GB_STORAGE,
+		FEATURE_GOOGLE_ANALYTICS,
+		FEATURE_PAYMENT_BLOCKS,
+		FEATURE_TITAN_EMAIL,
+	],
+	getPlanCompareFeaturesTest: () => [
+		FEATURE_UNLIMITED_TRAFFIC,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_ADMINS,
 		FEATURE_6GB_STORAGE,
@@ -1667,14 +1677,10 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 	getStoreSlug: () => PLAN_WPCOM_PRO,
 	getPathSlug: () => 'pro',
 	getDescription: () =>
-		i18n.hasTranslation(
+		i18n.translate(
 			'Unlock the full power of WordPress with plugins, custom themes and much more.'
-		) || [ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
-			? i18n.translate(
-					'Unlock the full power of WordPress with plugins, custom themes and much more.'
-			  )
-			: i18n.translate( 'The full power of modern WordPress hosting made easy.' ),
-	getSubTitle: () => i18n.translate( 'Unlimited Traffic. Revolutionary Price.' ),
+		),
+	getSubTitle: () => i18n.translate( 'Unlimited features. Unbeatable value.' ),
 	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
 	getPlanCompareFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,

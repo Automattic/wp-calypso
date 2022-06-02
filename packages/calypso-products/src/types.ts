@@ -25,7 +25,12 @@ export interface WPComPlan extends Plan {
 	getBlogAudience?: () => TranslateResult;
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
+	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
+		experiment?: string,
+		options?: Record< string, string | boolean[] >
+	) => Feature[];
+	getPlanCompareFeaturesTest?: (
 		experiment?: string,
 		options?: Record< string, string | boolean[] >
 	) => Feature[];
@@ -95,7 +100,6 @@ export type Plan = BillingTerm & {
 	getStoreSlug: () => PlanSlug;
 	getTitle: () => TranslateResult;
 	getDescription: () => TranslateResult;
-	getSubTitle?: () => TranslateResult;
 	getShortDescription?: () => TranslateResult;
 	getTagline?: () => TranslateResult;
 	getPlanCardFeatures?: () => Feature[];

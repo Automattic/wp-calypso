@@ -19,6 +19,7 @@ import {
 	FEATURE_MONETISE,
 	FEATURE_JETPACK_ESSENTIAL,
 	FEATURE_GOOGLE_ANALYTICS,
+	FEATURE_UNLIMITED_TRAFFIC,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { translate, numberFormat } from 'i18n-calypso';
@@ -94,6 +95,40 @@ function defaultGetCellText(
 }
 
 export const planComparisonFeatures: PlanComparisonFeature[] = [
+	{
+		get title() {
+			return translate( 'Unlimited Traffic' );
+		},
+		get description() {
+			return translate( 'Unlimited traffic description' );
+		},
+		features: [ FEATURE_UNLIMITED_TRAFFIC ],
+		getCellText: ( feature, isMobile = false ) => {
+			if ( ! isMobile ) {
+				if ( feature ) {
+					return (
+						<>
+							<Gridicon icon="checkmark" />
+							{ translate( 'Included' ) }
+						</>
+					);
+				}
+
+				return (
+					<>
+						<Gridicon icon="cross" />
+						{ translate( 'Not included' ) }
+					</>
+				);
+			}
+
+			return feature
+				? translate( 'Includes unlimited traffic.' )
+				: translate( 'Unlimited traffic is {{strong}}not{{/strong}} included', {
+						components: { strong: <strong /> },
+				  } );
+		},
+	},
 	{
 		get title() {
 			return translate( 'Custom domain name' );
