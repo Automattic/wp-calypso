@@ -77,7 +77,6 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		it( 'Select "write" path', async function () {
 			startSiteFlow = new StartSiteFlow( page );
 			await startSiteFlow.clickButton( 'Start writing' );
-			await page.pause();
 		} );
 
 		it( 'Enter blog name', async function () {
@@ -93,7 +92,6 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		} );
 
 		it( 'Select "Choose a design" path', async function () {
-			await page.pause();
 			await startSiteFlow.clickButton( 'View designs' );
 		} );
 
