@@ -7,6 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
