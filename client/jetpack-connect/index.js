@@ -6,6 +6,7 @@ import { OFFER_RESET_FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { siteSelection } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
+import { jetpackUpsell } from 'calypso/my-sites/plans/jetpack-plans/jetpack-upsell';
 import * as controller from './controller';
 
 import './style.scss';
@@ -73,6 +74,7 @@ export default function () {
 	);
 
 	jetpackPlans( `/jetpack/connect/store`, controller.offerResetContext );
+	jetpackUpsell( `/jetpack/connect/store`, controller.offerResetContext );
 
 	page(
 		'/jetpack/connect/:_(akismet|plans|vaultpress)/:interval(yearly|monthly)?',
@@ -81,6 +83,14 @@ export default function () {
 	);
 
 	jetpackPlans(
+		`/jetpack/connect/plans`,
+		controller.redirectToLoginIfLoggedOut,
+		siteSelection,
+		controller.partnerCouponRedirects,
+		controller.offerResetRedirects,
+		controller.offerResetContext
+	);
+	jetpackUpsell(
 		`/jetpack/connect/plans`,
 		controller.redirectToLoginIfLoggedOut,
 		siteSelection,
