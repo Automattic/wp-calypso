@@ -1,11 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement, useContext, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getFilter } from 'calypso/state/jetpack-agency-dashboard/selectors/get-filter';
 import SitesOverviewContext from './context';
 import SiteContent from './site-content';
+import SiteFilters from './site-filters';
 import SiteSearch from './site-search';
 import SiteWelcomeBanner from './site-welcome-banner';
 
@@ -15,8 +15,7 @@ export default function SitesOverview(): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { search, currentPage } = useContext( SitesOverviewContext );
-	const filter = useSelector( ( state ) => getFilter( state ) );
+	const { search, currentPage, filter } = useContext( SitesOverviewContext );
 
 	const { data, isError, isFetching } = useFetchDashboardSites( search, currentPage, filter );
 
@@ -36,12 +35,14 @@ export default function SitesOverview(): ReactElement {
 			<div className="sites-overview__search">
 				<SiteSearch searchQuery={ search } currentPage={ currentPage } />
 			</div>
+			<div className="sites-overview__filter-bar">
+				<SiteFilters filter={ filter } isFetching={ isFetching } />
+			</div>
 			<SiteContent
 				data={ data }
 				isError={ isError }
 				isFetching={ isFetching }
 				currentPage={ currentPage }
-				filter={ filter }
 			/>
 		</div>
 	);

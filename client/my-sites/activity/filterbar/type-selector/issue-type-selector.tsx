@@ -31,7 +31,14 @@ const IssueTypeSelector: React.FunctionComponent< Props > = ( props ) => {
 			name: translate( 'Plugin needs updates' ),
 		},
 	];
-	return <TypeSelector types={ issueTypes } title={ translate( 'Issue Type' ) } { ...props } />;
+	return (
+		<TypeSelector
+			types={ issueTypes }
+			typeKey="issueTypes"
+			title={ translate( 'Issue Type' ) }
+			{ ...props }
+		/>
+	);
 };
 
 const selectIssueType = ( types: any ) => ( dispatch: any ) => {

@@ -73,8 +73,8 @@ export class Filterbar extends Component {
 	};
 
 	handleRemoveFilters = () => {
-		const { resetFilters } = this.props;
-		resetFilters();
+		const { resetFilters, siteId } = this.props;
+		resetFilters( siteId );
 	};
 
 	renderCloseButton = () => {

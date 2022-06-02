@@ -1,19 +1,24 @@
-import {
-	JETPACK_AGENCY_DASHBOARD_FILTER_SET,
-	JETPACK_AGENCY_DASHBOARD_FILTER_UPDATE,
-} from 'calypso/state/action-types';
-import { AgencyDashboardFilterOption } from './reducer';
+import page from 'page';
+import { AgencyDashboardFilterOption } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import { addQueryArgs } from 'calypso/lib/url';
 
-export function setFilter( filterOptions: AgencyDashboardFilterOption[] ) {
-	return {
-		type: JETPACK_AGENCY_DASHBOARD_FILTER_SET,
-		filterOptions,
-	};
+const filterStateToQuery = ( filterOptions: AgencyDashboardFilterOption[] ) => {
+	if ( ! filterOptions.length ) {
+		return {};
+	}
+	return { issue_types: filterOptions.join( ',' ) };
+};
+
+function navigateToFilter( filterOptions: AgencyDashboardFilterOption[] ) {
+	const params = new URLSearchParams( window.location.search );
+	const search = params.get( 's' ) ? `?s=${ params.get( 's' ) }` : '';
+	page( addQueryArgs( filterStateToQuery( filterOptions ), window.location.pathname + search ) );
 }
 
-export function updateFilter( filterOptions: AgencyDashboardFilterOption[] ) {
-	return {
-		type: JETPACK_AGENCY_DASHBOARD_FILTER_UPDATE,
-		filterOptions,
-	};
-}
+export const setFilter = ( filterOptions: AgencyDashboardFilterOption[] ) => () => {
+	navigateToFilter( filterOptions );
+};
+
+export const updateFilter = ( filterOptions: AgencyDashboardFilterOption[] ) => () => {
+	navigateToFilter( filterOptions );
+};

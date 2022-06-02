@@ -3,10 +3,10 @@ import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
-import type { AgencyDashboardFilter } from 'calypso/state/jetpack-agency-dashboard/reducer';
+import type { AgencyDashboardFilter } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
 const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) =>
-	filter.group.reduce(
+	filter.issueTypes?.reduce(
 		( previousValue, currentValue ) => ( {
 			...previousValue,
 			[ currentValue ]: true,

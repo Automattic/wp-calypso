@@ -56,8 +56,9 @@ export class TypeSelector extends Component {
 		if ( this.state.userHasSelected ) {
 			return this.state.selectedCheckboxes;
 		}
-		if ( this.props.filter?.group?.length ) {
-			return this.props.filter.group;
+		const key = this.props.typeKey || 'group';
+		if ( this.props.filter?.[ key ]?.length ) {
+			return this.props.filter[ key ];
 		}
 		return [];
 	};
@@ -90,16 +91,16 @@ export class TypeSelector extends Component {
 		return count;
 	};
 
-	renderCheckbox = ( group ) => {
+	renderCheckbox = ( item ) => {
 		return (
-			<FormLabel key={ group.key }>
+			<FormLabel key={ item.key }>
 				<FormCheckbox
-					id={ group.key }
-					checked={ this.isSelected( group.key ) }
-					name={ group.key }
+					id={ item.key }
+					checked={ this.isSelected( item.key ) }
+					name={ item.key }
 					onChange={ this.handleSelectClick }
 				/>
-				{ group.count ? group.name + ' (' + this.humanReadable( group.count ) + ')' : group.name }
+				{ item.count ? item.name + ' (' + this.humanReadable( item.count ) + ')' : item.name }
 			</FormLabel>
 		);
 	};

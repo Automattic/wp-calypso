@@ -17,6 +17,9 @@
 	@include break-large() {
 		display: none;
 	}
+	.search.is-open {
+		margin-bottom: 8px;
+	}
 }
 .sites-overview__page-title-container {
 	display: none;
@@ -206,4 +209,7 @@
 }
 .sites-overview__status-warning {
 	border-color:  var( --studio-yellow-20 );;
+}
+.sites-overview__filter-bar {
+	margin: 0 1px 8px;
 }
