@@ -103,6 +103,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			{
 				vertical_id: siteVerticalId,
 				seed: siteSlug || undefined,
+				_locale: locale,
 			},
 			{ enabled: enabledGeneratedDesigns && !! siteVerticalId && ! isAnchorSite }
 		);
