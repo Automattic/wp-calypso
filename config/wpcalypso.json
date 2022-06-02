@@ -107,7 +107,7 @@
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
 		"signup/professional-email-step": false,
-		"signup/anchor-fm": true,
+		"signup/anchor-fm": false,
 		"signup/reskin": true,
 		"signup/social": true,
 		"signup/design-picker-categories": true,

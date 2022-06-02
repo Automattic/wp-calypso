@@ -51,7 +51,7 @@ const FlowWrapper: React.FC< { user: UserStore.CurrentUser | undefined } > = ( {
 	const { anchorFmPodcastId } = useAnchorFmParams();
 	let flow = siteSetupFlow;
 
-	if ( anchorFmPodcastId ) {
+	if ( anchorFmPodcastId && config.isEnabled( 'signup/anchor-fm' ) ) {
 		flow = anchorFmFlow;
 	}
 
