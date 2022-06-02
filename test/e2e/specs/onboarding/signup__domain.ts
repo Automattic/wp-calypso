@@ -19,7 +19,7 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), function () {
 	const inboxId = SecretsManager.secrets.mailosaur.signupInboxId;
-	const username = `e2eflowtestingdomainonly${ DataHelper.getTimestamp() }`;
+	const username = DataHelper.getUsername( { prefix: 'domainonly' } );
 	const email = DataHelper.getTestEmailAddress( {
 		inboxId: inboxId,
 		prefix: username,

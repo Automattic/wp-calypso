@@ -51,6 +51,27 @@ export function getTimestamp(): string {
 }
 
 /**
+ * Returns a username.
+ *
+ * If optional parameter `prefix` is set, the value
+ * is inserted between the `e2eflowtesting` prefix
+ * and the timestamp.
+ *
+ * Example:
+ * 	e2eflowtesting-1654124900-728
+ * 	e2eflowtestingfree-1654124900-129
+ *
+ * @param param0 Object parameter.
+ * @param {string} param0.prefix Prefix for the username.
+ * @returns {string} Generated username.
+ */
+export function getUsername( { prefix = '' }: { prefix?: string } = {} ): string {
+	const timestamp = getTimestamp();
+	const randomNumber = getRandomInteger( 0, 999 );
+	return `e2eflowtesting${ prefix }-${ timestamp }-${ randomNumber }`;
+}
+
+/**
  * Returns the date string in the requested format.
  *
  * @param {DateFormat} format Date format supported by NodeJS.

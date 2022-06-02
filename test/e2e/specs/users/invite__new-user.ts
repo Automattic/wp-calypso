@@ -22,7 +22,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 	const inboxId = SecretsManager.secrets.mailosaur.inviteInboxId;
 	const role = 'Editor';
-	const username = `e2eflowtestingeditor${ DataHelper.getTimestamp() }`;
+	const username = DataHelper.getUsername( { prefix: 'invited-editor' } );
 	const email = DataHelper.getTestEmailAddress( {
 		inboxId: inboxId,
 		prefix: username,
