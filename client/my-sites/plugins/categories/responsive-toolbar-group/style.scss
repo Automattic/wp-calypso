@@ -2,17 +2,6 @@
 	position: relative;
 	padding-bottom: 24px;
 
-	&::before {
-		box-sizing: border-box;
-		content: '';
-		position: absolute;
-		height: 100%;
-		width: 200vw;
-		left: -100vw;
-		z-index: -1;
-		border-bottom: 1px solid #eeeeee;
-	}
-
 	.responsive-toolbar-group__grouped-list {
 		justify-content: space-between;
 		flex-wrap: nowrap;

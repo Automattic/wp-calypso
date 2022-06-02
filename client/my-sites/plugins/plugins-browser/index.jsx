@@ -298,26 +298,28 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 
 			{ ! search && <Categories selected={ category } /> }
 
-			<PluginBrowserContent
-				clearSearch={ clearSearch }
-				pluginsByCategoryPopular={ pluginsByCategoryPopular }
-				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
-				isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
-				fetchNextPage={ fetchNextPage }
-				pluginsBySearchTerm={ pluginsBySearchTerm }
-				pluginsPagination={ pluginsPagination }
-				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
-				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
-				search={ search }
-				category={ category }
-				paidPlugins={ paidPlugins }
-				isFetchingPaidPlugins={ isFetchingPaidPlugins }
-				sites={ sites }
-				searchTitle={ searchTitle }
-				siteSlug={ siteSlug }
-				siteId={ siteId }
-				jetpackNonAtomic={ jetpackNonAtomic }
-			/>
+			<div className="plugins-browser__main-container">
+				<PluginBrowserContent
+					clearSearch={ clearSearch }
+					pluginsByCategoryPopular={ pluginsByCategoryPopular }
+					isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
+					isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
+					fetchNextPage={ fetchNextPage }
+					pluginsBySearchTerm={ pluginsBySearchTerm }
+					pluginsPagination={ pluginsPagination }
+					pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
+					isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
+					search={ search }
+					category={ category }
+					paidPlugins={ paidPlugins }
+					isFetchingPaidPlugins={ isFetchingPaidPlugins }
+					sites={ sites }
+					searchTitle={ searchTitle }
+					siteSlug={ siteSlug }
+					siteId={ siteId }
+					jetpackNonAtomic={ jetpackNonAtomic }
+				/>
+			</div>
 			{ ! category && ! search && <EducationFooter /> }
 		</MainComponent>
 	);

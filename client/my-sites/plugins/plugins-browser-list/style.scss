@@ -1,16 +1,6 @@
 .plugins-browser-list {
 	margin-bottom: 16px;
 
-	&::before {
-		box-sizing: border-box;
-		content: '';
-		background-color: #fdfdfd;
-		position: absolute;
-		height: 100%;
-		width: 200vw;
-		left: -100vw;
-		z-index: -1;
-	}
 	.feature-example & {
 		margin: 0;
 	}
