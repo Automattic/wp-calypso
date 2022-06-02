@@ -10,6 +10,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { mid_breakpoint, mobile_breakpoint } from './breakpoints';
+import { SCREEN_MID_BREAKPOINT_SIGNUP } from './constant';
 import { PlansComparisonAction } from './plans-comparison-action';
 import { PlansComparisonCol } from './plans-comparison-col';
 import { PlansComparisonColHeader } from './plans-comparison-col-header';
@@ -80,7 +81,7 @@ export const globalOverrides = css`
 				padding: 12px calc( var( --sidebar-width-min ) + 24px + 1px ) 24px 24px;
 			}
 
-			@media ( max-width: 782px ) {
+			@media ( max-width: ${ SCREEN_MID_BREAKPOINT_SIGNUP }px ) {
 				html[dir='ltr'] &,
 				html[dir='rtl'] & {
 					padding: 24px 16px;
@@ -205,23 +206,12 @@ const ComparisonGrid = styled.div`
 	display: grid;
 	column-gap: 50px;
 	grid-template-columns: 1fr 1fr;
-	margin-top: 64px;
-	margin-bottom: 64px;
+	margin: 40px auto;
 	max-width: 820px;
-	padding: 0 20px;
-
-	.is-section-plans & {
-		html[dir='ltr'] & {
-			margin-left: auto;
-		}
-		html[dir='rtl'] & {
-			margin-right: auto;
-		}
-	}
 
 	.is-section-signup & {
-		margin-left: auto;
-		margin-right: auto;
+		margin: 64px auto;
+		padding: 0 20px;
 	}
 
 	@keyframes fade-in-rows {
@@ -234,7 +224,10 @@ const ComparisonGrid = styled.div`
 	}
 
 	${ mid_breakpoint( `column-gap: 25px` ) }
-	${ mobile_breakpoint( `grid-template-columns: 1fr;` ) }
+	${ mobile_breakpoint( `
+		grid-template-columns: 1fr;
+		padding: 0 20px;
+	` ) }
 `;
 
 const PlansComparisonToggle = styled.div`
