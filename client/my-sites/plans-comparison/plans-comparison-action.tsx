@@ -8,6 +8,7 @@ import {
 	PLAN_WPCOM_STARTER,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import styled from '@emotion/styled';
 import classNames from 'classnames';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -26,6 +27,7 @@ interface Props {
 	manageHref?: string;
 	onClick?: () => void;
 	disabled?: boolean;
+	className?: string;
 }
 
 type TranslateFunc = ReturnType< typeof useTranslate >;
@@ -57,6 +59,20 @@ function getButtonText( props: Partial< Props >, translate: TranslateFunc ): Tra
 	} );
 }
 
+const ActionButton = styled( Button )`
+	display: block;
+	box-shadow: 0px 1px 2px rgba( 0, 0, 0, 0.05 );
+	border-radius: 4px;
+	font-weight: 500;
+	width: 100%;
+
+	&.is-primary,
+	&.is-primary:hover {
+		background: #0675c4;
+		border-color: #0675c4;
+	}
+`;
+
 export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 	buttonText,
 	currentSitePlanSlug,
@@ -67,7 +83,7 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 } ) => {
 	const { plan } = props;
 	const translate = useTranslate();
-	const className = classNames( { 'is-primary': props.isPrimary } );
+	const className = classNames( { 'is-primary': props.isPrimary }, props.className );
 	const { isCurrentPlan, isInSignup, isPlaceholder } = props;
 
 	const handleClick = useCallback( () => {
@@ -102,13 +118,13 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 	}
 
 	return (
-		<Button
+		<ActionButton
 			className={ className }
 			onClick={ handleClick }
 			href={ manageHref }
 			disabled={ disabled }
 		>
 			{ buttonText }
-		</Button>
+		</ActionButton>
 	);
 };

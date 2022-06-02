@@ -9,48 +9,16 @@ import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
 import { getSitePlan } from 'calypso/state/sites/selectors';
-import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
-import isStarterPlanEnabled from './is-starter-plan-enabled';
+import { mid_breakpoint, mobile_breakpoint } from './breakpoints';
 import { PlansComparisonAction } from './plans-comparison-action';
+import { PlansComparisonCol } from './plans-comparison-col';
 import { PlansComparisonColHeader } from './plans-comparison-col-header';
 import { planComparisonFeatures } from './plans-comparison-features';
-import { PlansComparisonRow, DesktopContent, MobileContent } from './plans-comparison-row';
 import { PlansDomainConnectionInfo } from './plans-domain-connection-info';
 import usePlanPrices from './use-plan-prices';
 import usePlans from './use-plans';
 import type { WPComPlan } from '@automattic/calypso-products';
 import type { RequestCartProduct as CartItem } from '@automattic/shopping-cart';
-
-interface TableProps {
-	firstColWidth: number;
-	planCount: number;
-	hideFreePlan?: boolean;
-}
-
-const getRowMobileLayout = ( breakpoint: number, pageClass: string ) => `
-	@media screen and ( max-width: ${ breakpoint }px ) {
-		${ pageClass } & {
-			th.is-first,
-			td.is-first {
-				display: none;
-			}
-
-			${ DesktopContent } {
-				display: none;
-			}
-
-			${ MobileContent } {
-				display: block;
-			}
-
-			th,
-			td {
-				width: ${ ( { planCount }: { planCount: number } ) => `${ 100 / planCount }%` };
-				height: unset;
-			}
-		}
-	}
-`;
 
 export const globalOverrides = css`
 	.is-section-plans {
@@ -233,9 +201,14 @@ export const globalOverrides = css`
 	}
 `;
 
-const ComparisonTable = styled.table< TableProps >`
-	border-collapse: collapse;
-	max-width: ${ ( { hideFreePlan } ) => ( hideFreePlan ? 728 : 980 ) }px;
+const ComparisonGrid = styled.div`
+	display: grid;
+	column-gap: 50px;
+	grid-template-columns: 1fr 1fr;
+	margin-top: 64px;
+	margin-bottom: 64px;
+	max-width: 862px;
+	padding: 0 20px;
 
 	.is-section-plans & {
 		html[dir='ltr'] & {
@@ -251,93 +224,6 @@ const ComparisonTable = styled.table< TableProps >`
 		margin-right: auto;
 	}
 
-	th,
-	td {
-		background: #fdfdfd;
-		border-bottom: 1px solid rgba( 220, 220, 222, 0.2 );
-		padding: 1.25rem;
-		height: 4.5rem;
-		box-sizing: border-box;
-		width: ${ ( { firstColWidth, planCount } ) => `${ ( 100 - firstColWidth ) / planCount }%` };
-		font-size: 0.875rem;
-		vertical-align: middle;
-
-		@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
-			.is-section-signup & {
-				width: 50%;
-			}
-		}
-
-		@media screen and ( max-width: ${ SCREEN_BREAKPOINT_PLANS }px ) {
-			.is-section-plans & {
-				width: 50%;
-			}
-		}
-	}
-
-	tbody th,
-	tbody td {
-		padding: 0.78rem 1.25rem;
-		height: 4rem;
-	}
-
-	tbody th {
-		html[dir='ltr'] & {
-			padding-left: 0;
-		}
-		html[dir='rtl'] & {
-			padding-right: 0;
-		}
-	}
-
-	thead th,
-	thead td {
-		vertical-align: top;
-		border-bottom: none;
-		@media screen and ( min-width: ${ SCREEN_BREAKPOINT_SIGNUP + 1 }px ) {
-			.is-section-signup & {
-				padding-bottom: 3.6rem;
-			}
-		}
-
-		@media screen and ( min-width: ${ SCREEN_BREAKPOINT_PLANS + 1 }px ) {
-			.is-section-plans & {
-				padding-bottom: 3.6rem;
-			}
-		}
-	}
-
-	th:last-child,
-	td:last-child {
-		background: #f0f7fc;
-	}
-
-	th.is-first,
-	td.is-first {
-		width: ${ ( { firstColWidth, hideFreePlan } ) => ( hideFreePlan ? 50 : firstColWidth ) }%;
-	}
-
-	th .button {
-		width: 100%;
-		border-radius: 4px;
-		font-weight: 500;
-	}
-
-	th:last-child .button {
-		background: #0675c4;
-		border-color: #0675c4;
-	}
-
-	th:last-child .button .button:hover {
-		background: #055d9c;
-		border-color: #055d9c;
-	}
-
-	${ ( { hideFreePlan } ) =>
-		! hideFreePlan && getRowMobileLayout( SCREEN_BREAKPOINT_SIGNUP, '.is-section-signup' ) }
-	${ ( { hideFreePlan } ) =>
-		! hideFreePlan && getRowMobileLayout( SCREEN_BREAKPOINT_PLANS, '.is-section-plans' ) }
-
 	@keyframes fade-in-rows {
 		0% {
 			opacity: 0;
@@ -346,63 +232,35 @@ const ComparisonTable = styled.table< TableProps >`
 			opacity: 1;
 		}
 	}
+
+	${ mid_breakpoint( `column-gap: 25px` ) }
+	${ mobile_breakpoint( `grid-template-columns: 1fr;` ) }
 `;
 
-const THead = styled.thead< { isInSignup: boolean } >`
-	position: sticky;
-	top: ${ ( { isInSignup } ) => ( isInSignup ? '0' : `var( --masterbar-height )` ) };
-`;
+const PlansComparisonToggle = styled.div`
+	grid-column: 1 / 3;
 
-const PlansComparisonRows = styled.tbody`
-	tr:last-child {
-		th,
-		td {
-			border-bottom: none;
-		}
-	}
-`;
+	button {
+		background: rgba( 246, 247, 247, 0.5 );
+		display: block;
+		text-align: center;
+		border-radius: 2px;
+		padding: 15px;
+		width: 100%;
+		cursor: pointer;
 
-const PlansComparisonCollapsibleRows = styled( PlansComparisonRows )< {
-	collapsed: boolean;
-} >`
-	display: ${ ( props ) => ( props.collapsed ? 'table-row-group' : 'none' ) };
-	border-top: 1px solid rgba( 220, 220, 222, 0.2 );
-	animation: fade-in-rows 0.3s ease;
-`;
-
-const PlansComparisonToggle = styled.tbody`
-	tr {
-		th,
-		td,
-		td:last-child {
-			padding: 0;
-			border-bottom: none;
-			background: none;
-		}
-
-		${ getRowMobileLayout( SCREEN_BREAKPOINT_SIGNUP, '.is-section-signup' ) }
-		${ getRowMobileLayout( SCREEN_BREAKPOINT_PLANS, '.is-section-plans' ) }
-
-		button {
-			background: rgba( 246, 247, 247, 0.5 );
-			display: block;
-			text-align: center;
-			border-radius: 2px;
-			padding: 15px;
-			width: 100%;
-			margin: 0;
-			cursor: pointer;
-
-			.gridicon.gridicon {
-				html[dir='ltr'] & {
-					margin-right: 4px;
-				}
-				html[dir='rtl'] & {
-					margin-left: 4px;
-				}
+		.gridicon.gridicon {
+			html[dir='ltr'] & {
+				margin-right: 4px;
+			}
+			html[dir='rtl'] & {
+				margin-left: 4px;
 			}
 		}
 	}
+	${ mobile_breakpoint( `
+		display: none;
+	` ) }
 `;
 interface Props {
 	isInSignup?: boolean;
@@ -456,88 +314,74 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 		selectedSiteSlug && purchaseId
 			? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
 			: `/plans/${ selectedSiteSlug || '' }`;
-
 	return (
 		<>
 			<Global styles={ globalOverrides } />
-			<ComparisonTable
-				firstColWidth={ 31 }
-				planCount={ plans.length }
-				hideFreePlan={ hideFreePlan && ! isStarterPlanEnabled() }
-			>
-				<THead isInSignup={ isInSignup }>
-					<tr>
-						<td className={ `is-first` }>
-							<br />
-						</td>
-						{ plans.map( ( plan, index ) => (
-							<PlansComparisonColHeader
-								key={ plan.getProductId() }
-								plan={ plan }
-								currencyCode={ currencyCode }
-								price={ prices[ index ].price }
-								originalPrice={ prices[ index ].originalPrice }
-								translate={ translate }
-							>
-								{ selectedDomainConnection && <PlansDomainConnectionInfo plan={ plan } /> }
-								<PlansComparisonAction
-									currentSitePlanSlug={ sitePlan?.product_slug }
-									plan={ plan }
-									isInSignup={ isInSignup }
-									isPrimary={ plan.type === TYPE_PRO }
-									isCurrentPlan={ sitePlan?.product_slug === plan.getStoreSlug() }
-									manageHref={ manageHref }
-									disabled={
-										selectedDomainConnection && [ TYPE_FREE, TYPE_FLEXIBLE ].includes( plan.type )
-									}
-									onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
-								/>
-							</PlansComparisonColHeader>
-						) ) }
-					</tr>
-				</THead>
-				<PlansComparisonRows>
-					{ planComparisonFeatures.slice( 0, 8 ).map( ( feature ) => (
-						<PlansComparisonRow
-							feature={ feature }
-							plans={ plans }
-							isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
-							key={ feature.features[ 0 ] }
+			<ComparisonGrid>
+				{ plans.map( ( plan, index ) => (
+					<PlansComparisonColHeader
+						key={ plan.getProductId() }
+						plan={ plan }
+						currencyCode={ currencyCode }
+						price={ prices[ index ].price }
+						originalPrice={ prices[ index ].originalPrice }
+						translate={ translate }
+					>
+						{ selectedDomainConnection && <PlansDomainConnectionInfo plan={ plan } /> }
+						<PlansComparisonAction
+							currentSitePlanSlug={ sitePlan?.product_slug }
+							plan={ plan }
+							isInSignup={ isInSignup }
+							isPrimary={ plan.type === TYPE_PRO }
+							isCurrentPlan={ sitePlan?.product_slug === plan.getStoreSlug() }
+							manageHref={ manageHref }
+							disabled={
+								selectedDomainConnection && [ TYPE_FREE, TYPE_FLEXIBLE ].includes( plan.type )
+							}
+							onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
 						/>
-					) ) }
-				</PlansComparisonRows>
-				<PlansComparisonCollapsibleRows collapsed={ showCollapsibleRows }>
-					{ planComparisonFeatures.slice( 8 ).map( ( feature ) => (
-						<PlansComparisonRow
-							feature={ feature }
-							plans={ plans }
-							isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
-							key={ feature.features[ 0 ] }
+					</PlansComparisonColHeader>
+				) ) }
+
+				{ plans.map( ( plan ) => (
+					<PlansComparisonCol
+						plan={ plan }
+						key={ plan.getProductId() }
+						features={ planComparisonFeatures }
+						showCollapsibleRows={ showCollapsibleRows }
+						isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
+					>
+						<PlansComparisonAction
+							currentSitePlanSlug={ sitePlan?.product_slug }
+							plan={ plan }
+							className="plans-comparison__collapsible"
+							isInSignup={ isInSignup }
+							isPrimary={ plan.type === TYPE_PRO }
+							isCurrentPlan={ sitePlan?.product_slug === plan.getStoreSlug() }
+							manageHref={ manageHref }
+							disabled={
+								selectedDomainConnection && [ TYPE_FREE, TYPE_FLEXIBLE ].includes( plan.type )
+							}
+							onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
 						/>
-					) ) }
-				</PlansComparisonCollapsibleRows>
+					</PlansComparisonCol>
+				) ) }
 				<PlansComparisonToggle>
-					<tr>
-						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-						<th className="is-first"></th>
-						<td colSpan={ 2 }>
-							<button onClick={ toggleCollapsibleRows }>
-								{ showCollapsibleRows ? (
-									<>
-										<Gridicon size={ 12 } icon="chevron-up" />
-										{ translate( 'Hide full plan comparison' ) }
-									</>
-								) : (
-									<>
-										<Gridicon size={ 12 } icon="chevron-down" />
-										{ translate( 'Show full plan comparison' ) }
-									</>
-								) }
-							</button>
-						</td>
-					</tr>
+					<button onClick={ toggleCollapsibleRows }>
+						{ showCollapsibleRows ? (
+							<>
+								<Gridicon size={ 12 } icon="chevron-up" />
+								{ translate( 'Hide full plan comparison' ) }
+							</>
+						) : (
+							<>
+								<Gridicon size={ 12 } icon="chevron-down" />
+								{ translate( 'Show full plan comparison' ) }
+							</>
+						) }
+					</button>
 				</PlansComparisonToggle>
-			</ComparisonTable>
+			</ComparisonGrid>
 		</>
 	);
 };

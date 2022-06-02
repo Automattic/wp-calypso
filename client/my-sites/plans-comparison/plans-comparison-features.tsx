@@ -56,47 +56,23 @@ export interface PlanComparisonFeature {
 	 */
 	getCellText: (
 		feature: string | undefined,
-		isMobile: boolean,
+		title: TranslateResult,
 		isLegacySiteWithHigherLimits?: boolean,
 		extraArgs?: unknown
 	) => TranslateResult | [ TranslateResult, TranslateResult ];
 }
 
-function defaultGetCellText(
-	featureTitle: TranslateResult
-): PlanComparisonFeature[ 'getCellText' ] {
-	return ( feature, isMobile = false ) => {
-		if ( ! isMobile ) {
-			if ( feature ) {
-				return (
-					<>
-						<Gridicon icon="checkmark" />
-						{ translate( 'Included' ) }
-					</>
-				);
-			}
-
-			return (
-				<>
-					<Gridicon icon="cross" />
-					{ translate( 'Not included' ) }
-				</>
-			);
-		}
-
-		return feature
-			? translate( '%(featureTitle)s included', { args: { featureTitle } } )
-			: translate( '%(featureTitle)s {{strong}}not{{/strong}} included', {
-					args: { featureTitle },
-					components: { strong: <strong /> },
-			  } );
-	};
-}
+const defaultGetCellText: PlanComparisonFeature[ 'getCellText' ] = ( feature, title ) => (
+	<>
+		<Gridicon icon={ feature ? 'checkmark' : 'cross' } />
+		{ title }
+	</>
+);
 
 export const planComparisonFeatures: PlanComparisonFeature[] = [
 	{
 		get title() {
-			return translate( 'Custom domain name' );
+			return translate( 'Free domain for one year' );
 		},
 		get description() {
 			return translate(
@@ -104,31 +80,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_CUSTOM_DOMAIN ],
-		getCellText: ( feature, isMobile = false ) => {
-			if ( ! isMobile ) {
-				if ( feature ) {
-					return (
-						<>
-							<Gridicon icon="checkmark" />
-							{ translate( 'Free for one year' ) }
-						</>
-					);
-				}
-
-				return (
-					<>
-						<Gridicon icon="cross" />
-						{ translate( 'Not included' ) }
-					</>
-				);
-			}
-
-			return feature
-				? translate( 'Custom domain name is free for one year!' )
-				: translate( 'Custom domain name is {{strong}}not{{/strong}} included', {
-						components: { strong: <strong /> },
-				  } );
-		},
+		getCellText: defaultGetCellText,
 	},
 	{
 		get title() {
@@ -143,17 +95,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_PAYMENT_BLOCKS ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Collect payments' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Collect payments is included' )
-					: translate( 'Collect payments is {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
-		},
+		getCellText: defaultGetCellText,
 	},
 	{
 		get title() {
@@ -172,7 +114,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_1GB_STORAGE, FEATURE_6GB_STORAGE, FEATURE_50GB_STORAGE ],
-		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
+		getCellText: ( feature, title, isLegacySiteWithHigherLimits ) => {
 			const legacyStorageSize = 3;
 			let storageSize = 1;
 
@@ -184,11 +126,11 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 				storageSize = 50;
 			}
 
-			if ( isMobile ) {
-				if ( isLegacySiteWithHigherLimits && legacyStorageSize > storageSize ) {
-					return translate(
-						'{{del}}%(originalStorage)sGB of storage{{/del}} %(modifiedStorage)sGB on this site',
-						{
+			if ( isLegacySiteWithHigherLimits && legacyStorageSize > storageSize ) {
+				return (
+					<>
+						<Gridicon icon="checkmark" />
+						{ translate( '{{del}}%(originalStorage)sGB{{/del}} %(modifiedStorage)sGB of storage', {
 							components: {
 								del: <del />,
 							},
@@ -196,31 +138,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 								originalStorage: storageSize,
 								modifiedStorage: legacyStorageSize,
 							},
-						}
-					);
-				}
-
-				return translate( '%sGB of storage', {
-					args: [ storageSize ],
-				} );
-			}
-
-			if ( isLegacySiteWithHigherLimits && legacyStorageSize > storageSize ) {
-				return (
-					<>
-						<Gridicon icon="checkmark" />
-						{ translate(
-							'{{del}}%(originalStorage)sGB{{/del}} %(modifiedStorage)sGB on this site',
-							{
-								components: {
-									del: <del />,
-								},
-								args: {
-									originalStorage: storageSize,
-									modifiedStorage: legacyStorageSize,
-								},
-							}
-						) }
+						} ) }
 					</>
 				);
 			}
@@ -228,7 +146,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			return (
 				<>
 					<Gridicon icon="checkmark" />
-					{ translate( '%sGB', {
+					{ translate( '%sGB of storage', {
 						args: [ storageSize ],
 						comment: '%s is a number of gigabytes.',
 					} ) }
@@ -246,31 +164,17 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_GOOGLE_ANALYTICS ],
-		getCellText: ( feature, isMobile = false ) => {
-			if ( ! isMobile ) {
-				if ( feature ) {
-					return (
-						<>
-							<Gridicon icon="checkmark" />
-							{ translate( 'Included' ) }
-						</>
-					);
-				}
-
-				return (
-					<>
-						<Gridicon icon="cross" />
-						{ translate( 'Not included' ) }
-					</>
-				);
-			}
-
-			return feature
-				? translate( 'Google Analytics integration' )
-				: translate( 'Google Analytics integration is {{strong}}not{{/strong}} included', {
-						components: { strong: <strong /> },
-				  } );
+		getCellText: defaultGetCellText,
+	},
+	{
+		get title() {
+			return translate( 'Advanced social media tools' );
 		},
+		get description() {
+			return translate( 'Amplify your voice with our built-in social tools.' );
+		},
+		features: [ FEATURE_SOCIAL_MEDIA_TOOLS ],
+		getCellText: defaultGetCellText,
 	},
 	{
 		get title() {
@@ -285,31 +189,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_INSTALL_PLUGINS ],
-		getCellText: ( feature, isMobile = false ) => {
-			if ( ! isMobile ) {
-				if ( feature ) {
-					return (
-						<>
-							<Gridicon icon="checkmark" />
-							{ translate( 'Unlimited plugins' ) }
-						</>
-					);
-				}
-
-				return (
-					<>
-						<Gridicon icon="cross" />
-						{ translate( 'Not included' ) }
-					</>
-				);
-			}
-
-			return feature
-				? translate( 'Unlimited WordPress plugins' )
-				: translate( 'WordPress plugins are {{strong}}not{{/strong}} included', {
-						components: { strong: <strong /> },
-				  } );
-		},
+		getCellText: defaultGetCellText,
 	},
 	{
 		get title() {
@@ -324,17 +204,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_PREMIUM_SUPPORT ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Premium support' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Premium support is included' )
-					: translate( 'Premium support is {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
-		},
+		getCellText: defaultGetCellText,
 	},
 	{
 		get title() {
@@ -346,17 +216,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_PREMIUM_THEMES ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Premium themes' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Premium themes are included' )
-					: translate( 'Premium themes are {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
-		},
+		getCellText: defaultGetCellText,
 	},
 	{
 		get title() {
@@ -368,79 +228,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_WOOCOMMERCE ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'WooCommerce' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'WooCommerce is included' )
-					: translate( 'WooCommerce is {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
-		},
-	},
-	{
-		get title() {
-			return translate( 'Advanced social media tools' );
-		},
-		get description() {
-			return translate( 'Amplify your voice with our built-in social tools.' );
-		},
-		features: [ FEATURE_SOCIAL_MEDIA_TOOLS ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Built in social media tools' ) )(
-				feature,
-				isMobile
-			);
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Built in social media tools are included' )
-					: translate( 'Built in social media tools are {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
-		},
-	},
-	{
-		get title() {
-			return translate( 'Professional Email' );
-		},
-		get subtitle() {
-			return translate( 'Custom email address with your own domain.' );
-		},
-		get description() {
-			return translate(
-				'Custom email address with mailbox, calendar, templates and more. Register free for 3 months with your custom domain. After 3 months, you have the option to renew or cancel your email subscription.'
-			);
-		},
-		features: [ FEATURE_TITAN_EMAIL ],
-		getCellText: ( feature, isMobile = false ) => {
-			if ( ! isMobile ) {
-				if ( feature ) {
-					return (
-						<>
-							<Gridicon icon="checkmark" />
-							{ translate( 'Free for 3 months' ) }
-						</>
-					);
-				}
-
-				return (
-					<>
-						<Gridicon icon="cross" />
-						{ translate( 'Not included' ) }
-					</>
-				);
-			}
-
-			return feature
-				? translate( 'Professional Email is free for 3 months' )
-				: translate( 'Professional Email is {{strong}}not{{/strong}} included', {
-						components: { strong: <strong /> },
-				  } );
-		},
+		getCellText: defaultGetCellText,
 	},
 	{
 		get title() {
@@ -452,17 +240,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_NO_ADS ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Remove ads' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Remove ads is included' )
-					: translate( 'Remove ads is {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
-		},
+		getCellText: defaultGetCellText,
 	},
 	{
 		get title() {
@@ -475,17 +253,19 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			return translate( 'Get found faster with built-in SEO tools.' );
 		},
 		features: [ FEATURE_ADVANCED_SEO ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Advanced SEO tools' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Advanced SEO tools are included' )
-					: translate( 'Advanced SEO tools are {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
+		getCellText: defaultGetCellText,
+	},
+	{
+		get title() {
+			return translate( 'Unlimited Website Administrators' );
 		},
+		get description() {
+			return translate(
+				'Pro WordPress lets you have unlimited users editing your site. This is ideal for having multiple collaborators help you have your website built and maintained.'
+			);
+		},
+		features: [ FEATURE_UNLIMITED_ADMINS ],
+		getCellText: defaultGetCellText,
 	},
 	{
 		get title() {
@@ -497,83 +277,22 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_VIDEO_UPLOADS ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Upload videos' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Upload videos is included' )
-					: translate( 'Upload videos is {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
-		},
+		getCellText: defaultGetCellText,
 	},
 	{
 		get title() {
-			return translate( 'Website Administrator' );
+			return translate( 'Professional Email is free for 3 months' );
+		},
+		get subtitle() {
+			return translate( 'Custom email address with your own domain.' );
 		},
 		get description() {
 			return translate(
-				'Pro WordPress lets you have unlimited users editing your site. This is ideal for having multiple collaborators help you have your website built and maintained.'
+				'Custom email address with mailbox, calendar, templates and more. Register free for 3 months with your custom domain. After 3 months, you have the option to renew or cancel your email subscription.'
 			);
 		},
-		features: [ FEATURE_UNLIMITED_ADMINS ],
-		getCellText: ( feature, isMobile = false, isLegacySiteWithHigherLimits = false ) => {
-			const adminCount = 1;
-
-			if ( ! isMobile ) {
-				if ( feature ) {
-					return translate( 'Unlimited' );
-				}
-
-				if ( isLegacySiteWithHigherLimits ) {
-					// Adding "administrator" is redundant here (and differs from the non-legacy
-					// case below), but we're adding it because just having the number crossed
-					// out is hard to read.
-					return translate(
-						'{{del}}%(adminCount)s administrator{{/del}} Unlimited on this site',
-						'{{del}}%(adminCount)s administrators{{/del}} Unlimited on this site',
-						{
-							count: adminCount,
-							components: {
-								del: <del />,
-							},
-							args: { adminCount: numberFormat( adminCount, 0 ) },
-						}
-					);
-				}
-
-				return String( adminCount );
-			}
-
-			if ( feature ) {
-				return translate( 'Unlimited Website Administrators' );
-			}
-
-			if ( isLegacySiteWithHigherLimits ) {
-				return translate(
-					'{{del}}%(adminCount)s Website Administrator{{/del}} Unlimited on this site',
-					'{{del}}%(adminCount)s Website Administrators{{/del}} Unlimited on this site',
-					{
-						count: adminCount,
-						components: {
-							del: <del />,
-						},
-						args: { adminCount: numberFormat( adminCount, 0 ) },
-					}
-				);
-			}
-
-			return translate(
-				'%(adminCount)s Website Administrator',
-				'%(adminCount)s Website Administrators',
-				{
-					count: adminCount,
-					args: { adminCount: numberFormat( adminCount, 0 ) },
-				}
-			);
-		},
+		features: [ FEATURE_TITAN_EMAIL ],
+		getCellText: defaultGetCellText,
 	},
 	{
 		get title() {
@@ -588,17 +307,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_MONETISE ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Earn money from ads' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Earn money from ads is included' )
-					: translate( 'Earn money from ads is {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
-		},
+		getCellText: defaultGetCellText,
 	},
 	{
 		get title() {
@@ -610,20 +319,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_SFTP_DATABASE ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'SFTP, Database access' ) )(
-				feature,
-				isMobile
-			);
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'SFTP, Database access is included' )
-					: translate( 'SFTP, Database access is {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
-		},
+		getCellText: defaultGetCellText,
 	},
 	{
 		get title() {
@@ -635,20 +331,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_SITE_BACKUPS_AND_RESTORE ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Automated website backups' ) )(
-				feature,
-				isMobile
-			);
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Automated website backups are included' )
-					: translate( 'Automated website backups are {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
-		},
+		getCellText: defaultGetCellText,
 	},
 	{
 		get title() {
@@ -660,16 +343,6 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_JETPACK_ESSENTIAL ],
-		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Jetpack essentials' ) )( feature, isMobile );
-			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Jetpack essentials are included' )
-					: translate( 'Jetpack essentials are {{strong}}not{{/strong}} included', {
-							components: { strong: <strong /> },
-					  } );
-			}
-			return cellText;
-		},
+		getCellText: defaultGetCellText,
 	},
 ];

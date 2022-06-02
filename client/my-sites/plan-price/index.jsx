@@ -86,7 +86,7 @@ export class PlanPrice extends Component {
 
 			return (
 				<span className={ classes }>
-					{ priceRange[ 0 ].price.symbol }
+					<sup>{ priceRange[ 0 ].price.symbol }</sup>
 					{ ! higherPrice && renderPrice( priceRange[ 0 ] ) }
 					{ higherPrice &&
 						translate( '%(smallerPrice)s-%(higherPrice)s', {
