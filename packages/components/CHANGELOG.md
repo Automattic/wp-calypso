@@ -1,5 +1,9 @@
 ## next
 
+## 2.0.1
+
+- Add missing dependencies: `@automattic/typography` and `wpcom-proxy-request`
+
 ## 2.0.0
 
 - Add WordPressLogo component (#64110)
@@ -51,7 +55,7 @@
 - Add and import darker blue single product icons. (#46360)
 - Use FormTextInput for all type="text" inputs (#45746)
 
-## Breaking changes
+### Breaking changes
 
 - Update to React 17 and latest WordPress packages (#54793)
 
