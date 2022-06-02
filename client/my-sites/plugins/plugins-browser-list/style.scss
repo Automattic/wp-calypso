@@ -10,7 +10,6 @@
 		width: 200vw;
 		left: -100vw;
 		z-index: -1;
-		border-top: 1px solid #eeeeee;
 	}
 	.feature-example & {
 		margin: 0;
@@ -42,7 +41,7 @@
 	justify-content: space-between;
 	flex-wrap: wrap;
 
-	padding-top: 16px;
+	padding-top: 48px;
 	.plugins-browser-list__titles {
 		padding-bottom: 10px;
 
