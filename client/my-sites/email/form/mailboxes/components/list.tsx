@@ -82,11 +82,13 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 					if ( ! [ FIELD_FIRSTNAME, FIELD_NAME ].includes( field.fieldName ) ) {
 						return;
 					}
-					if ( mailbox.getFieldError( FIELD_MAILBOX ) || mailbox.getFieldValue( FIELD_MAILBOX ) ) {
-						// return;
+					if ( mailbox.getIsFieldTouched( FIELD_MAILBOX ) ) {
+						return;
 					}
+
 					mailbox.setFieldValue( FIELD_MAILBOX, sanitizeMailboxValue( field.value ) );
-					setMailboxes( [ ...mailboxes ] );
+
+					mailbox.formFields.mailbox.dispatchState();
 				};
 
 				return (

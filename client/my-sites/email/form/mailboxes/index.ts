@@ -96,6 +96,10 @@ class MailboxForm< T extends EmailProvider > {
 		return this.getFormField( fieldName )?.isRequired;
 	}
 
+	getIsFieldTouched( fieldName: FormFieldNames ) {
+		return this.getFormField( fieldName )?.isTouched;
+	}
+
 	getIsFieldVisible( fieldName: FormFieldNames ) {
 		return this.getFormField( fieldName )?.isVisible;
 	}
