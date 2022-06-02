@@ -19,10 +19,10 @@ type MutationContext = {
 /**
  * Deletes a mailbox from a Professional Email (Titan) account
  *
- * @param {string} domainName The domain name of the mailbox
- * @param {string} mailboxName The mailbox name
- * @param {object} mutationOptions Mutation options passed on to `useMutation`
- * @returns {{ data, error, isLoading: boolean, removeTitanMailbox: Function, ...}} Returns various parameters piped from `useMutation`
+ * @param domainName The domain name of the mailbox
+ * @param mailboxName The mailbox name
+ * @param mutationOptions Mutation options passed on to `useMutation`
+ * @returns Returns the result of the `useMutation` call
  */
 export function useRemoveTitanMailboxMutation(
 	domainName: string,

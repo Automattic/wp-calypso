@@ -7,12 +7,12 @@ import { getCacheKey as getEmailDomainsQueryKey } from './use-get-email-domains-
 import type { UseMutationOptions, UseMutationResult } from 'react-query';
 
 /**
- * Deletes a mailbox from a Professional Email (Titan) account
+ * Deletes an email forward
  *
  * @param domainName The domain name of the mailbox
  * @param mailboxName The mailbox name
  * @param mutationOptions Mutation options passed on to `useMutation`
- * @returns {{ data, error, isLoading: boolean, removeTitanMailbox: Function, ...}} Returns various parameters piped from `useMutation`
+ * @returns Returns the result of the `useMutation` call
  */
 export function useRemoveEmailForwardMutation(
 	domainName: string,
@@ -23,7 +23,7 @@ export function useRemoveEmailForwardMutation(
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
-	const useEmailsQueryKey = getEmailAccountsQueryKey( selectedSiteId, domainName );
+	const useGetEmailAccountsQueryKey = getEmailAccountsQueryKey( selectedSiteId, domainName );
 	const useGetEmailDomainsQueryKey = getEmailDomainsQueryKey( selectedSiteId );
 
 	const suppliedOnSettled = mutationOptions.onSettled;
@@ -32,7 +32,7 @@ export function useRemoveEmailForwardMutation(
 		suppliedOnSettled?.( data, error, variables, context );
 
 		await Promise.all( [
-			queryClient.invalidateQueries( useEmailsQueryKey ),
+			queryClient.invalidateQueries( useGetEmailAccountsQueryKey ),
 			queryClient.invalidateQueries( useGetEmailDomainsQueryKey ),
 		] );
 	};
