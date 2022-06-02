@@ -5,7 +5,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -14,7 +13,7 @@ import type { ReactElement } from 'react';
 const globalOverrides = css`
 	.is-section-add-ons {
 		#content.layout__content {
-			background: #fdfdfd;
+			background: red;
 		}
 	}
 `;
