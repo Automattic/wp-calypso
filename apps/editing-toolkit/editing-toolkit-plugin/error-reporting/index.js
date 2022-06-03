@@ -19,7 +19,6 @@ function activateSentry() {
 		// of transactions for performance monitoring.
 		// We recommend adjusting this value in production
 		release: 'wpcom-test-01',
-		tracesSampleRate: 1.0,
 	} );
 
 	// We still need to report the head errors, if any.
