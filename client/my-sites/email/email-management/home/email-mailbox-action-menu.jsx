@@ -90,7 +90,7 @@ const getTitanMenuItems = ( {
 	const isEmbeddedInboxTestingEnabled = isEnabled( 'emails/embedded-inbox-testing' );
 
 	const mailboxPrefixUrl = isEmbeddedInboxTestingEnabled
-		? 'https://webmail-qa.riva.co/0.2377'
+		? 'https://webmail-alpha.riva.co'
 		: titanAppsUrlPrefix;
 
 	return [
@@ -98,25 +98,27 @@ const getTitanMenuItems = ( {
 			href: getTitanEmailUrl( mailboxPrefixUrl, email, false, window.location.href ),
 			image: titanMailIcon,
 			imageAltText: translate( 'Titan Mail icon' ),
+			isInternalLink: isEmbeddedInboxTestingEnabled,
 			title: translate( 'View Mail', {
 				comment: 'View the Email application (i.e. the webmail) for Titan',
 			} ),
 			onClick: getTitanClickHandler( 'webmail' ),
-			isInternalLink: isEmbeddedInboxTestingEnabled,
 		},
 		{
-			href: getTitanCalendarUrl( titanAppsUrlPrefix, email ),
+			href: getTitanCalendarUrl( mailboxPrefixUrl, email ),
 			image: titanCalendarIcon,
 			imageAltText: translate( 'Titan Calendar icon' ),
+			isInternalLink: isEmbeddedInboxTestingEnabled,
 			title: translate( 'View Calendar', {
 				comment: 'View the Calendar application for Titan',
 			} ),
 			onClick: getTitanClickHandler( 'calendar' ),
 		},
 		{
-			href: getTitanContactsUrl( titanAppsUrlPrefix, email ),
+			href: getTitanContactsUrl( mailboxPrefixUrl, email ),
 			image: titanContactsIcon,
 			imageAltText: translate( 'Titan Contacts icon' ),
+			isInternalLink: isEmbeddedInboxTestingEnabled,
 			title: translate( 'View Contacts', {
 				comment: 'View the Contacts application for Titan',
 			} ),
