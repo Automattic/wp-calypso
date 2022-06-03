@@ -4,7 +4,6 @@ import {
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
 	JETPACK_SITE_DISCONNECT_REQUEST,
-	JETPACK_SITE_DISCONNECT_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -351,7 +350,7 @@ export const jetpackSiteDisconnected = ( state = false, action ) => {
 		case JETPACK_SITE_DISCONNECT_REQUEST: {
 			return false;
 		}
-		case JETPACK_SITE_DISCONNECT_SUCCESS: {
+		case JETPACK_DISCONNECT_RECEIVE: {
 			return true;
 		}
 	}
