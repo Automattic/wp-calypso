@@ -20,8 +20,8 @@
 			rgba( 255, 255, 255, 0 ) 25%
 		),
 		radial-gradient(
-			circle at 28% 58%,
-			rgba( 206, 217, 242, 0.7 ) 0%,
+			circle at 35% 70%,
+			rgba( 206, 217, 242, 0.6 ) 5%,
 			rgba( 255, 255, 255, 0 ) 30%
 		),
 		radial-gradient(
@@ -36,8 +36,7 @@
 }
 
 .jetpack-upsell__heading {
-	margin-top: 1.5rem;
-	margin-bottom: 1rem;
+	margin-top: 2.5rem;
 
 	font-size: 1.75rem;
 	font-weight: 700;
@@ -58,7 +57,7 @@
 	display: flex;
 	align-items: center;
 
-	padding: 0.75rem 7.5%;
+	padding: 0.5rem 2%;
 
 	background-color: var( --studio-jetpack-green-5 );
 
@@ -80,7 +79,7 @@
 }
 
 .jetpack-upsell__product-name {
-	margin-bottom: 1rem;
+	margin-bottom: 0.25rem;
 
 	color: var( --studio-gray-100 );
 
@@ -94,7 +93,7 @@
 	color: var( --studio-gray-100 );
 	list-style-type: none;
 
-	font-weight: 400;
+	font-weight: 300;
 
 	> li {
 		margin: 0.5rem 0;
@@ -138,6 +137,7 @@
 
 .jetpack-upsell__action-yes {
 	width: 100%;
+	max-width: 425px;
 	padding: 0.4375rem 1rem;
 
 	font-size: 1rem;
@@ -173,7 +173,7 @@
 	}
 
 	&:focus {
-		box-shadow: 0 0 0 1px var( --studio-gray-100 );
+		box-shadow: 0 0 0 1pt var( --studio-gray-100 );
 		outline: none;
 
 		text-decoration: none;
@@ -182,7 +182,7 @@
 
 .jetpack-upsell__cost-info,
 .jetpack-upsell__price-skeleton {
-	min-height: 6.5rem;
+	min-height: 135px;
 }
 
 .jetpack-upsell__price-skeleton {
@@ -190,15 +190,20 @@
 		@include placeholder();
 
 		&:nth-child( 1 ) {
-			width: 23.5rem;
-			height: 1.25rem;
-			margin-bottom: 1.25rem;
+			width: 375px;
+			height: 20px;
+			margin-bottom: 20px;
 		}
 
 		&:nth-child( 2 ) {
-			width: 3.125rem;
-			height: 3.125rem;
-			margin-bottom: 1.25rem;
+			width: 50px;
+			height: 50px;
+			margin-bottom: 20px;
+		}
+
+		&:nth-child( 3 ) {
+			width: 100px;
+			height: 20px;
 		}
 	}
 }
@@ -206,15 +211,6 @@
 .jetpack-upsell__price-ctn {
 	display: flex;
 	align-items: flex-end;
-}
-
-.jetpack-upsell__price-plus {
-	margin-bottom: 0.5rem;
-	margin-inline-end: 0.5rem;
-
-	font-size: 28px;
-	font-weight: 700;
-	line-height: 1;
 }
 
 .jetpack-upsell__price {
@@ -252,6 +248,18 @@
 	color: var( --studio-gray-50 );
 
 	font-weight: 500;
+}
+
+.jetpack-upsell__normal-price-ctn {
+	margin-top: 1rem;
+
+	color: var( --studio-gray-50 );
+
+	font-size: 0.875rem;
+}
+
+.jetpack-upsell__normal-price {
+	color: var( --studio-gray-100 );
 }
 
 .jetpack-upsell__footer {
