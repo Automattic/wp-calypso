@@ -5,6 +5,7 @@ import {
 	isDomainTransfer,
 	isGoogleWorkspace,
 	isMonthly,
+	isNoAds,
 	isPlan,
 	isTitanMail,
 	isWpComBusinessPlan,
@@ -168,6 +169,8 @@ function CheckoutSummaryFeaturesList( props: {
 	const hasOnlyStarterPlan =
 		plans.filter( ( plan ) => isStarterPlan( plan.product_slug ) ).length === plans.length;
 
+	const hasNoAdsAddOn = responseCart.products.filter( ( product ) => isNoAds( product ) );
+
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
 			{ hasDomainsInCart &&
@@ -180,6 +183,14 @@ function CheckoutSummaryFeaturesList( props: {
 					nextDomainIsFree={ nextDomainIsFree }
 				/>
 			) }
+
+			{ hasNoAdsAddOn && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon id="features-list-support-text" />
+					{ translate( 'Remove WordPress.com ads from your site' ) }
+				</CheckoutSummaryFeaturesListItem>
+			) }
+
 			{ ! hasOnlyStarterPlan && (
 				<CheckoutSummaryFeaturesListItem>
 					<WPCheckoutCheckIcon id="features-list-support-text" />
