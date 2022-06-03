@@ -8,7 +8,12 @@ import JetpackBenefitsStep from 'calypso/components/marketing-survey/cancel-jetp
 import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import { getName, isAutoRenewing, isPurchaseCancelable } from 'calypso/lib/purchases';
+import {
+	canReenableAutoRenewal,
+	getName,
+	isAutoRenewing,
+	isPurchaseCancelable,
+} from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -43,7 +48,10 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	const initialCancellationStep = useMemo( () => {
 		// In these cases, the subscription is getting removed.
 		// Show the benefits step first.
-		if ( flowType === CANCEL_FLOW_TYPE.REMOVE || CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND ) {
+		if (
+			flowType === CANCEL_FLOW_TYPE.REMOVE ||
+			flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
+		) {
 			return steps.FEATURES_LOST_STEP;
 		}
 
@@ -80,18 +88,6 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		);
 	};
 
-	// run on mount
-	useEffect( () => {
-		resetSurveyState();
-	}, [] );
-
-	// if isVisible changes
-	useEffect( () => {
-		if ( isVisible && cancellationStep === steps.INITIAL_STEP ) {
-			recordEvent( 'calypso_purchases_cancel_form_start' );
-		}
-	}, [ isVisible ] );
-
 	/**
 	 * Get possible steps for the survey
 	 */
@@ -106,10 +102,12 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		}
 
 		if (
-			// A purchase that is not cancellable or is currently set to auto-renew ( has not been cancelled yet ).
+			// A purchase that is not cancellable ( can only be removed ),
+			// OR a purchase that is currently set to auto-renew ( has not been cancelled yet ).
 			// If a purchase that meets these criteria is being removed, present the survey step.
 			( CANCEL_FLOW_TYPE.REMOVE === flowType &&
-				( ! isPurchaseCancelable( purchase ) || isAutoRenewing( purchase ) ) ) ||
+				( ( ! isPurchaseCancelable( purchase ) && ! canReenableAutoRenewal( purchase ) ) ||
+					isAutoRenewing( purchase ) ) ) ||
 			CANCEL_FLOW_TYPE.CANCEL_AUTORENEW === flowType ||
 			CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND === flowType
 		) {
@@ -118,6 +116,25 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 		return availableSteps;
 	}, [ flowType, steps, purchase ] );
+
+	const { firstStep, lastStep } = useMemo( () => {
+		return {
+			firstStep: availableSurveySteps[ 0 ],
+			lastStep: availableSurveySteps[ availableSurveySteps.length - 1 ],
+		};
+	}, [ availableSurveySteps ] );
+
+	// run on mount
+	useEffect( () => {
+		resetSurveyState();
+	}, [] );
+
+	// if isVisible changes
+	useEffect( () => {
+		if ( isVisible && cancellationStep === firstStep ) {
+			recordEvent( 'calypso_purchases_cancel_form_start' );
+		}
+	}, [ isVisible, firstStep ] );
 
 	const handleCloseDialog = () => {
 		props.onClose();
@@ -193,7 +210,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		const close = {
 			action: 'close',
 			disabled: disabled,
-			isPrimary: steps.LAST_STEP !== cancellationStep,
+			isPrimary: lastStep !== cancellationStep,
 			label: translate( "I'll keep it" ),
 		};
 		const next = {
@@ -223,7 +240,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 		// on the last step
 		// show the cancel button
-		if ( steps.LAST_STEP === cancellationStep ) {
+		if ( lastStep === cancellationStep ) {
 			return firstButtons.concat( [ cancel ] );
 		}
 
