@@ -190,7 +190,6 @@ export type PayPalExpressEndpointRequestPayload = {
 export type PayPalExpressEndpointResponse = unknown;
 
 export interface WPCOMCart {
-	items: LineItem[];
 	total: LineItem;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 }

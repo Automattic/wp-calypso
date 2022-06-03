@@ -1,6 +1,6 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, Fragment } from 'react';
+import { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
@@ -82,13 +82,20 @@ const PopularSearches = ( props ) => {
 };
 
 const SearchBoxHeader = ( props ) => {
-	const { doSearch, searchTerm, title, searchTerms, isSticky, popularSearchesRef, isSearching } =
-		props;
-	const searchBoxRef = useRef( null );
+	const {
+		doSearch,
+		searchTerm,
+		title,
+		searchTerms,
+		isSticky,
+		popularSearchesRef,
+		isSearching,
+		searchRef,
+	} = props;
 
 	// since the search input is an uncontrolled component we need to tap in into the component api and trigger an update
 	const updateSearchBox = ( keyword ) => {
-		searchBoxRef.current.setKeyword( keyword );
+		searchRef.current.setKeyword( keyword );
 		doSearch( keyword );
 	};
 
@@ -99,7 +106,7 @@ const SearchBoxHeader = ( props ) => {
 				<SearchBox
 					doSearch={ doSearch }
 					searchTerm={ searchTerm }
-					searchBoxRef={ searchBoxRef }
+					searchBoxRef={ searchRef }
 					isSearching={ isSearching }
 				/>
 			</div>

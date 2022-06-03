@@ -4,7 +4,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect } from 'react';
 import siteOptionsUrl from 'calypso/assets/images/onboarding/site-options.svg';
 import storeImageUrl from 'calypso/assets/images/onboarding/store-onboarding.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -23,11 +23,20 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
-	const site = useSite();
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const translate = useTranslate();
+	const site = useSite();
 
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
+
+	useEffect( () => {
+		if ( ! site ) {
+			return;
+		}
+
+		setSiteTitle( site.name || '' );
+		setTagline( site.description );
+	}, [ site ] );
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();

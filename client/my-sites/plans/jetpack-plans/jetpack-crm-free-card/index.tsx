@@ -31,7 +31,7 @@ const useCrmFreeItem = ( duration: Duration ): SelectorProduct => {
 				items: [
 					{ slug: 'not used', text: translate( 'Unlimited contacts' ) },
 					{ slug: 'not used', text: translate( 'Manage billing and create invoices' ) },
-					{ slug: 'not used', text: translate( 'CRM fully integrated with WordPress' ) },
+					{ slug: 'not used', text: translate( 'Fully integrated with WordPress & WooCommerce' ) },
 				],
 			},
 			type: ITEM_TYPE_PLAN, // not used
@@ -85,7 +85,9 @@ const CardWithPrice: React.FC< CardWithPriceProps > = ( { duration, siteId } ) =
 			buttonPrimary
 			item={ crmFreeProduct }
 			headerLevel={ 3 }
-			description={ translate( 'Build better relationships with your customers and clients.' ) }
+			description={ translate(
+				'Build better relationships with your customers and clients. Ideal for WooCommerce stores.'
+			) }
 			buttonLabel={ translate( 'Get CRM' ) }
 			buttonURL={ CRM_FREE_URL }
 			onButtonClick={ onButtonClick }

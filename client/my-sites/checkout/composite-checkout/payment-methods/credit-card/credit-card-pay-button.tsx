@@ -1,5 +1,5 @@
 import { useStripe } from '@automattic/calypso-stripe';
-import { Button, FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
 import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
@@ -26,7 +26,7 @@ export default function CreditCardPayButton( {
 	activeButtonText?: string;
 } ) {
 	const { __ } = useI18n();
-	const [ , total ] = useLineItems();
+	const total = useTotal();
 	const { stripeConfiguration, stripe } = useStripe();
 	const fields = useSelect( ( select ) => select( 'wpcom-credit-card' ).getFields() );
 	const useForAllSubscriptions = useSelect( ( select ) =>

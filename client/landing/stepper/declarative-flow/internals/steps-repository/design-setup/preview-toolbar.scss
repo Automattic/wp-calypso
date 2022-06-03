@@ -51,17 +51,10 @@
 }
 
 .preview-toolbar__browser-header {
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	position: relative;
 	max-width: 100%;
 	height: 40px;
-	border: 1px solid rgba( 0, 0, 0, 0.12 );
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 6px 6px 0 0;
 	margin: 0 auto;
-	box-sizing: border-box;
 	transition: max-width 0.2s ease-out;
 
 	svg {
@@ -70,6 +63,28 @@
 		top: 50%;
 		transform: translateY( -50% );
 		fill: rgba( 0, 0, 0, 0.12 );
+	}
+}
+
+.preview-toolbar__browser-header-content {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	width: 100%;
+	height: 100%;
+	background-color: #fff;
+	z-index: 1;
+
+	&::before {
+		content: '';
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		border: 1px solid rgba( 0, 0, 0, 0.12 );
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 6px 6px 0 0;
+		box-sizing: border-box;
 	}
 }
 

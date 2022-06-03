@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { Button } from '@wordpress/components';
@@ -9,7 +10,7 @@ import cx from 'classnames';
 import { useEffect, useState } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
-import Contents from './contents';
+import CalypsoStateProvider from './CalypsoStateProvider';
 import './help-center.scss';
 
 function HelpCenterContent() {
@@ -24,12 +25,21 @@ function HelpCenterContent() {
 		}
 	}, [ data, isLoading ] );
 
+	const handleToggleHelpCenter = () => {
+		if ( show ) {
+			recordTracksEvent( 'calypso_inlinehelp_close', { location: 'help-center-desktop' } );
+		} else {
+			recordTracksEvent( 'calypso_inlinehelp_show', { location: 'help-center-desktop' } );
+		}
+		setShowHelpCenter( ! show );
+	};
+
 	const content = (
 		<span className="etk-help-center">
 			<Button
 				className={ cx( 'entry-point-button', { 'is-active': show } ) }
-				onClick={ () => setShowHelpCenter( ! show ) }
-				icon={ <HelpIcon newItems={ showHelpIconDot } active={ show } /> }
+				onClick={ handleToggleHelpCenter }
+				icon={ <HelpIcon newItems={ showHelpIconDot } /> }
 			></Button>
 		</span>
 	);
@@ -43,12 +53,7 @@ function HelpCenterContent() {
 					<PinnedItems scope="core/edit-widgets">{ content }</PinnedItems>
 				</>
 			) }
-			{ show && (
-				<HelpCenter
-					content={ <Contents handleClose={ () => setShowHelpCenter( false ) } /> }
-					handleClose={ () => setShowHelpCenter( false ) }
-				/>
-			) }
+			{ show && <HelpCenter handleClose={ () => setShowHelpCenter( false ) } /> }
 		</>
 	);
 }
@@ -57,7 +62,9 @@ registerPlugin( 'etk-help-center', {
 	render: () => {
 		return (
 			<QueryClientProvider client={ whatsNewQueryClient }>
-				<HelpCenterContent />,
+				<CalypsoStateProvider>
+					<HelpCenterContent />
+				</CalypsoStateProvider>
 			</QueryClientProvider>
 		);
 	},

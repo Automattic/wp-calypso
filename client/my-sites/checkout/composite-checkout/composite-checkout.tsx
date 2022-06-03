@@ -217,7 +217,7 @@ export default function CompositeCheckout( {
 		isInitialCartLoading,
 	} );
 
-	const { items, total, allowedPaymentMethods } = useMemo(
+	const { total, allowedPaymentMethods } = useMemo(
 		() => translateResponseCartToWPCOMCart( responseCart ),
 		[ responseCart ]
 	);
@@ -690,7 +690,6 @@ export default function CompositeCheckout( {
 				options={ { useJetpackGoogleAnalytics: isJetpackCheckout || isJetpackNotAtomic } }
 			/>
 			<CheckoutProvider
-				items={ items }
 				total={ total }
 				onPaymentComplete={ handlePaymentComplete }
 				onPaymentError={ handlePaymentError }

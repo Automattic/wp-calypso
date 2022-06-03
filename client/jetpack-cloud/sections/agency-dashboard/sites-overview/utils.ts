@@ -1,6 +1,123 @@
 import { translate } from 'i18n-calypso';
-import type { AllowedTypes, SiteData, FormattedRowObj } from './types';
+import type {
+	AllowedTypes,
+	SiteData,
+	FormattedRowObj,
+	StatusEventNames,
+	ActionEventNames,
+	AllowedStatusTypes,
+	AllowedActionTypes,
+} from './types';
 import type { ReactChild } from 'react';
+
+// Event names for all actions for large screen(>960px) and small screen(<960px)
+export const actionEventNames: ActionEventNames = {
+	issue_license: {
+		large_screen: 'calypso_jetpack_agency_dashboard_issue_license_large_screen',
+		small_screen: 'calypso_jetpack_agency_dashboard_issue_license_small_screen',
+	},
+	view_activity: {
+		large_screen: 'calypso_jetpack_agency_dashboard_view_activity_large_screen',
+		small_screen: 'calypso_jetpack_agency_dashboard_view_activity_small_screen',
+	},
+	view_site: {
+		large_screen: 'calypso_jetpack_agency_dashboard_view_site_large_screen',
+		small_screen: 'calypso_jetpack_agency_dashboard_view_site_small_screen',
+	},
+	visit_wp_admin: {
+		large_screen: 'calypso_jetpack_agency_dashboard_visit_wp_admin_large_screen',
+		small_screen: 'calypso_jetpack_agency_dashboard_visit_wp_admin_small_screen',
+	},
+};
+
+// Returns event name based on the action type
+export const getActionEventName = ( actionType: AllowedActionTypes, isLargeScreen: boolean ) => {
+	const deviceKey = isLargeScreen ? 'large_screen' : 'small_screen';
+	return actionEventNames?.[ actionType ]?.[ deviceKey ];
+};
+
+// Backup feature status event names for large screen(>960px) and small screen(<960px)
+const backupEventNames: StatusEventNames = {
+	inactive: {
+		small_screen: 'calypso_jetpack_agency_dashboard_add_backup_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_add_backup_click_large_screen',
+	},
+	progress: {
+		small_screen: 'calypso_jetpack_agency_dashboard_backup_progress_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_backup_progress_click_large_screen',
+	},
+	failed: {
+		small_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_large_screen',
+	},
+	warning: {
+		small_screen: 'calypso_jetpack_agency_dashboard_backup_warning_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_backup_warning_click_large_screen',
+	},
+	success: {
+		small_screen: 'calypso_jetpack_agency_dashboard_backup_success_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_backup_success_click_large_screen',
+	},
+};
+
+// Scan feature status event names for large screen(>960px) and small screen(<960px)
+const scanEventNames: StatusEventNames = {
+	inactive: {
+		small_screen: 'calypso_jetpack_agency_dashboard_add_scan_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_add_scan_click_large_screen',
+	},
+	progress: {
+		small_screen: 'calypso_jetpack_agency_dashboard_scan_progress_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_scan_progress_click_large_screen',
+	},
+	failed: {
+		small_screen: 'calypso_jetpack_agency_dashboard_scan_threats_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_scan_threats_click_large_screen',
+	},
+	success: {
+		small_screen: 'calypso_jetpack_agency_dashboard_scan_success_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_scan_success_click_large_screen',
+	},
+};
+
+// Montitor feature status event names for large screen(>960px) and small screen(<960px)
+const monitorEventNames: StatusEventNames = {
+	failed: {
+		small_screen: 'calypso_jetpack_agency_dashboard_monitor_site_down_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_monitor_site_down_click_large_screen',
+	},
+};
+
+// Plugin updates status event names for large screen(>960px) and small screen(<960px)
+const pluginEventNames: StatusEventNames = {
+	warning: {
+		small_screen: 'calypso_jetpack_agency_dashboard_update_plugins_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_update_plugins_click_large_screen',
+	},
+};
+
+// Returns event name needed for all the feature state clicks on the agency dashboard
+const getRowEventName = (
+	type: AllowedTypes,
+	status: AllowedStatusTypes,
+	isLargeScreen: boolean
+) => {
+	const deviceKey = isLargeScreen ? 'large_screen' : 'small_screen';
+	switch ( type ) {
+		case 'backup': {
+			return backupEventNames?.[ status ]?.[ deviceKey ];
+		}
+		case 'scan': {
+			return scanEventNames?.[ status ]?.[ deviceKey ];
+		}
+		case 'monitor': {
+			return monitorEventNames?.[ status ]?.[ deviceKey ];
+		}
+		case 'plugin': {
+			return pluginEventNames?.[ status ]?.[ deviceKey ];
+		}
+	}
+};
 
 /**
  * Returns link and tooltip for each feature based on status
@@ -13,14 +130,18 @@ const getLinks = (
 	status: string,
 	siteUrl: string,
 	siteId: number
-): { tooltip: ReactChild | undefined; link: string; isExternalLink: boolean } => {
+): {
+	tooltip: ReactChild | undefined;
+	link: string;
+	isExternalLink: boolean;
+} => {
 	let link = '';
 	let isExternalLink = false;
 	let tooltip;
 	switch ( type ) {
 		case 'backup': {
 			if ( status === 'inactive' ) {
-				link = `/partner-portal/issue-license/?site_id=${ siteId }`;
+				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-realtime`;
 			} else {
 				link = `/backup/${ siteUrl }`;
 			}
@@ -31,7 +152,7 @@ const getLinks = (
 		}
 		case 'scan': {
 			if ( status === 'inactive' ) {
-				link = `/partner-portal/issue-license/?site_id=${ siteId }`;
+				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-scan`;
 			} else {
 				link = `/scan/${ siteUrl }`;
 			}
@@ -53,6 +174,7 @@ const getLinks = (
 		case 'plugin': {
 			if ( status === 'warning' ) {
 				link = `https://wordpress.com/plugins/updates/${ siteUrl }`;
+				isExternalLink = true;
 			}
 			break;
 		}
@@ -66,7 +188,8 @@ const getLinks = (
  */
 export const getRowMetaData = (
 	rows: SiteData,
-	type: AllowedTypes
+	type: AllowedTypes,
+	isLargeScreen: boolean
 ): {
 	row: { value: { url: string }; status: string; error: string };
 	link: string;
@@ -75,12 +198,14 @@ export const getRowMetaData = (
 	tooltip: ReactChild | undefined;
 	tooltipId: string;
 	siteDown: boolean;
+	eventName: string | undefined;
 } => {
 	const row = rows[ type ];
 	const siteUrl = rows.site?.value?.url;
 	const siteError = rows.site.error;
 	const siteId = rows.site?.value?.blog_id;
 	const { link, tooltip, isExternalLink } = getLinks( type, row.status, siteUrl, siteId );
+	const eventName = getRowEventName( type, row.status, isLargeScreen );
 	return {
 		row,
 		link,
@@ -89,6 +214,7 @@ export const getRowMetaData = (
 		tooltip,
 		tooltipId: `${ siteId }-${ type }`,
 		siteDown: rows.monitor.error,
+		eventName,
 	};
 };
 

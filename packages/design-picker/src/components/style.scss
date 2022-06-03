@@ -465,11 +465,23 @@
 	@include break-small {
 		border-radius: 2px;
 		height: 170px;
+		min-height: 100px;
+		max-height: 300px;
+		flex-basis: 100%;
 		padding: 8px;
 
 		.generated-design-thumbnail__header {
 			display: none;
 		}
+	}
+}
+
+.generated-design-picker__main {
+	height: 0;
+
+	@include break-small {
+		flex: 1;
+		height: auto;
 	}
 }
 

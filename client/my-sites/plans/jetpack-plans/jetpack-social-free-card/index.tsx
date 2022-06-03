@@ -1,17 +1,14 @@
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { ITEM_TYPE_PRODUCT } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isJetpackConnectionPluginActive from 'calypso/state/sites/selectors/is-jetpack-connection-plugin-active';
+import useSocialFreeButtonProps from './use-social-free-button-props';
 import type { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
-
-const SOCIAL_FREE_URL = isJetpackCloud()
-	? '/pricing/jetpack-social/welcome'
-	: 'https://wordpress.org/plugins/jetpack-social/'; // This may need to be updated (page doesn't exist yet).
 
 const useSocialFreeItem = (): SelectorProduct => {
 	const translate = useTranslate();
@@ -23,9 +20,13 @@ const useSocialFreeItem = (): SelectorProduct => {
 			displayName: translate( 'Social' ),
 			features: {
 				items: [
-					{ slug: 'not used', text: translate( 'Schedule or share instantly' ) },
-					{ slug: 'not used', text: translate( 'Connect to leading social platforms' ) },
-					{ slug: 'not used', text: translate( 'Manage everything from Publishing Hub' ) },
+					{ slug: 'not used', text: translate( 'Auto-publish on popular social media platforms' ) },
+					{ slug: 'not used', text: translate( 'Schedule your posts' ) },
+					{ slug: 'not used', text: translate( 'Preview content before sharing' ) },
+					{
+						slug: 'not used',
+						text: translate( 'Central dashboard to manage all social platform connections' ),
+					},
 				],
 			},
 			type: ITEM_TYPE_PRODUCT, // not used
@@ -47,14 +48,17 @@ const CardWithPrice: React.FC< CardWithPriceProps > = ( { siteId } ) => {
 	const translate = useTranslate();
 	const socialFreeProduct = useSocialFreeItem();
 
-	const dispatch = useDispatch();
-	const onButtonClick = useCallback( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_product_jpsocialfree_click', {
-				site_id: siteId ?? undefined,
-			} )
-		);
-	}, [ dispatch, siteId ] );
+	const socialPluginActive =
+		useSelector( ( state ) =>
+			isJetpackConnectionPluginActive( state, siteId, 'jetpack-social' )
+		) || false;
+
+	const {
+		primary: buttonPrimary,
+		href: buttonHref,
+		label: buttonLabel,
+		onClick: onButtonClick,
+	} = useSocialFreeButtonProps( siteId, socialPluginActive );
 
 	return (
 		<JetpackProductCard
@@ -64,15 +68,16 @@ const CardWithPrice: React.FC< CardWithPriceProps > = ( { siteId } ) => {
 			hideSavingLabel
 			showNewLabel
 			showAbovePriceText
-			buttonPrimary
+			buttonPrimary={ buttonPrimary }
 			item={ socialFreeProduct }
 			headerLevel={ 3 }
 			description={ translate(
-				'Grow your audience effortlessly by automating posting on social media.'
+				'Easily share your website content on your social media channels.'
 			) }
-			buttonLabel={ translate( 'Get Social' ) }
-			buttonURL={ SOCIAL_FREE_URL }
+			buttonLabel={ buttonLabel }
+			buttonURL={ buttonHref }
 			onButtonClick={ onButtonClick }
+			isOwned={ socialPluginActive }
 			collapseFeaturesOnMobile
 		/>
 	);

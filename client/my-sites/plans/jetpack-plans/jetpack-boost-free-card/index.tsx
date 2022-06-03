@@ -1,17 +1,14 @@
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { ITEM_TYPE_PRODUCT } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isJetpackConnectionPluginActive from 'calypso/state/sites/selectors/is-jetpack-connection-plugin-active';
+import useBoostFreeButtonProps from './use-boost-free-button-props';
 import type { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
-
-const BOOST_FREE_URL = isJetpackCloud()
-	? '/pricing/jetpack-boost/welcome'
-	: 'https://wordpress.org/plugins/jetpack-boost/';
 
 const useBoostFreeItem = (): SelectorProduct => {
 	const translate = useTranslate();
@@ -23,9 +20,10 @@ const useBoostFreeItem = (): SelectorProduct => {
 			displayName: translate( 'Boost' ),
 			features: {
 				items: [
-					{ slug: 'not used', text: translate( 'Defer Non-Essential Javascript' ) },
-					{ slug: 'not used', text: translate( 'Optimize CSS Structure' ) },
-					{ slug: 'not used', text: translate( 'Lazy Image Loading' ) },
+					{ slug: 'not used', text: translate( 'Optimize CSS loading' ) },
+					{ slug: 'not used', text: translate( 'Defer non-essential JavaScript' ) },
+					{ slug: 'not used', text: translate( 'Lazy image loading' ) },
+					{ slug: 'not used', text: translate( 'Site performance scores' ) },
 				],
 			},
 			type: ITEM_TYPE_PRODUCT, // not used
@@ -46,15 +44,16 @@ export type CardWithPriceProps = {
 const CardWithPrice: React.FC< CardWithPriceProps > = ( { siteId } ) => {
 	const translate = useTranslate();
 	const boostFreeProduct = useBoostFreeItem();
+	const boostPluginActive =
+		useSelector( ( state ) => isJetpackConnectionPluginActive( state, siteId, 'jetpack-boost' ) ) ||
+		false;
 
-	const dispatch = useDispatch();
-	const onButtonClick = useCallback( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_product_jpboostfree_click', {
-				site_id: siteId ?? undefined,
-			} )
-		);
-	}, [ dispatch, siteId ] );
+	const {
+		primary: buttonPrimary,
+		href: buttonHref,
+		label: buttonLabel,
+		onClick: onButtonClick,
+	} = useBoostFreeButtonProps( siteId, boostPluginActive );
 
 	return (
 		<JetpackProductCard
@@ -64,15 +63,16 @@ const CardWithPrice: React.FC< CardWithPriceProps > = ( { siteId } ) => {
 			hideSavingLabel
 			showNewLabel
 			showAbovePriceText
-			buttonPrimary
+			buttonPrimary={ buttonPrimary }
 			item={ boostFreeProduct }
 			headerLevel={ 3 }
 			description={ translate(
-				"Boost gives your site the same performance advantages as the world's leading websites."
+				'All of the essential tools to speed up your site — no developer required.'
 			) }
-			buttonLabel={ translate( 'Get Boost' ) }
-			buttonURL={ BOOST_FREE_URL }
+			buttonLabel={ buttonLabel }
+			buttonURL={ buttonHref }
 			onButtonClick={ onButtonClick }
+			isOwned={ boostPluginActive }
 			collapseFeaturesOnMobile
 		/>
 	);

@@ -1,15 +1,13 @@
 import {
-	isPlan,
 	isGoogleWorkspaceExtraLicence,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from '@automattic/calypso-products';
-import { isValueTruthy, getLabel, getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
+import { isValueTruthy, getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
 } from './translate-payment-method-names';
-import type { LineItem } from '@automattic/composite-checkout';
 import type {
 	ResponseCart,
 	ResponseCartProduct,
@@ -33,7 +31,7 @@ import type {
  * @returns Cart object suitable for passing to the checkout component
  */
 export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WPCOMCart {
-	const { products, allowed_payment_methods } = serverCart;
+	const { allowed_payment_methods } = serverCart;
 
 	const totalItem = getTotalLineItemFromCart( serverCart );
 
@@ -45,30 +43,8 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		.map( translateWpcomPaymentMethodToCheckoutPaymentMethod );
 
 	return {
-		items: products.map( translateReponseCartProductToLineItem ),
 		total: totalItem,
 		allowedPaymentMethods,
-	};
-}
-
-// Convert a backend cart item to a checkout cart item
-function translateReponseCartProductToLineItem( serverCartItem: ResponseCartProduct ): LineItem {
-	const { product_slug, currency, item_subtotal_display, item_subtotal_integer, uuid } =
-		serverCartItem;
-
-	const label = getLabel( serverCartItem );
-
-	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
-
-	return {
-		id: uuid,
-		label,
-		type,
-		amount: {
-			currency: currency || '',
-			value: item_subtotal_integer || 0,
-			displayValue: item_subtotal_display || '',
-		},
 	};
 }
 

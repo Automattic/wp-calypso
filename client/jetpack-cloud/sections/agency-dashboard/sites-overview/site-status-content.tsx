@@ -2,17 +2,26 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { ReactElement, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import Tooltip from 'calypso/components/tooltip';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getRowMetaData } from './utils';
 import type { AllowedTypes, SiteData } from './types';
 
 interface Props {
 	rows: SiteData;
 	type: AllowedTypes;
+	isLargeScreen?: boolean;
 }
 
-export default function SiteStatusContent( { rows, type }: Props ): ReactElement {
+export default function SiteStatusContent( {
+	rows,
+	type,
+	isLargeScreen = false,
+}: Props ): ReactElement {
+	const dispatch = useDispatch();
+
 	const {
 		link,
 		isExternalLink,
@@ -21,7 +30,8 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 		tooltip,
 		tooltipId,
 		siteDown,
-	} = getRowMetaData( rows, type );
+		eventName,
+	} = getRowMetaData( rows, type, isLargeScreen );
 
 	// Disable clicks/hover when there is a site error &
 	// when the row it is not monitor and monitor status is down
@@ -39,7 +49,7 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 	};
 
 	const handleClickRowAction = () => {
-		// Handle track event here
+		dispatch( recordTracksEvent( eventName ) );
 	};
 
 	if ( type === 'site' ) {

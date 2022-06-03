@@ -13,6 +13,7 @@ interface GeneratedDesignPickerWebPreviewProps {
 	verticalId: string;
 	isSelected: boolean;
 	isPrivateAtomic: boolean;
+	isStickyToolbar?: boolean;
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 }
 
@@ -23,6 +24,7 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 	verticalId,
 	isSelected,
 	isPrivateAtomic,
+	isStickyToolbar,
 	recordTracksEvent,
 } ) => {
 	const translate = useTranslate();
@@ -44,6 +46,7 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 			siteId={ site?.ID }
 			url={ site?.URL }
 			isPrivateAtomic={ isPrivateAtomic }
+			isStickyToolbar={ isSelected && isStickyToolbar }
 			translate={ translate }
 			recordTracksEvent={ recordTracksEvent }
 		/>

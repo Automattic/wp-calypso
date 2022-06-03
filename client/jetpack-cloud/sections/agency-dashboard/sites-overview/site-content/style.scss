@@ -4,9 +4,12 @@
 .site-content__no-sites {
 	text-align: center;
 	font-size: 1.5rem;
+	margin-top: 16px;
 }
 .site-content__mobile-view {
 	@include break-large() {
 		display: none;
 	}
+	margin-bottom: 1.5rem;
 }
+

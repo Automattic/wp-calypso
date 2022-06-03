@@ -17,7 +17,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 	const siteTitle = DataHelper.getBlogName();
 	const email = DataHelper.getTestEmailAddress( {
 		inboxId: SecretsManager.secrets.mailosaur.signupInboxId,
-		prefix: `e2eflowtestinggutenboarding${ DataHelper.getTimestamp() }`,
+		prefix: DataHelper.getUsername( { prefix: 'gutenboarding' } ),
 	} );
 	const signupPassword = SecretsManager.secrets.passwordForNewTestSignUps;
 	const themeName = 'Twenty Twenty-Two Red';

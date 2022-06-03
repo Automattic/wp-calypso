@@ -5,9 +5,13 @@ import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { useEffect, useRef } from 'react';
 import { getDesignPreviewUrl, getMShotOptions } from '../utils';
 import type { Design } from '../types';
 import './style.scss';
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
 
 interface GeneratedDesignThumbnailProps {
 	slug: string;
@@ -77,11 +81,41 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 } ) => {
 	const { __ } = useI18n();
 
+	const isMobile = useViewportMatch( 'small', '<' );
+
+	const wrapperRef = useRef< HTMLDivElement >( null );
+
+	useEffect( () => {
+		if ( isMobile ) {
+			wrapperRef.current?.style.removeProperty( 'height' );
+			return noop;
+		}
+
+		const handleResponsive = () => {
+			if ( ! wrapperRef.current ) {
+				return;
+			}
+
+			const offsetTop = wrapperRef.current.offsetTop - window.pageYOffset;
+			wrapperRef.current.style.setProperty( 'height', `calc( 100vh - ${ offsetTop }px` );
+		};
+
+		handleResponsive();
+
+		window.addEventListener( 'resize', handleResponsive );
+		window.addEventListener( 'scroll', handleResponsive );
+
+		return () => {
+			window.removeEventListener( 'resize', handleResponsive );
+			window.removeEventListener( 'scroll', handleResponsive );
+		};
+	}, [ isMobile ] );
+
 	return (
 		<div className="generated-design-picker">
 			{ heading }
 			<div className="generated_design-picker__content">
-				<div className="generated-design-picker__thumbnails">
+				<div className="generated-design-picker__thumbnails" ref={ wrapperRef }>
 					{ designs &&
 						designs.map( ( design, index ) => (
 							<GeneratedDesignThumbnail
@@ -96,9 +130,11 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 						{ __( 'View more options' ) }
 					</Button>
 				</div>
-				<div className="generated-design-picker__previews">{ previews }</div>
+				<div className="generated-design-picker__main">
+					<div className="generated-design-picker__previews">{ previews }</div>
+					{ footer }
+				</div>
 			</div>
-			{ footer }
 		</div>
 	);
 };

@@ -2,6 +2,9 @@
 	.entry-point-button {
 		&.is-active {
 			background: #1e1e1e;
+			svg {
+				fill: white;
+			}
 		}
 	}
 }

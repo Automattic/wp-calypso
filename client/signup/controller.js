@@ -278,6 +278,12 @@ export default {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
+		// Set referral parameter in signup dependency store so we can retrieve it in getSignupDestination().
+		const refParameter = query && query.ref;
+		if ( refParameter ) {
+			context.store.dispatch( updateDependencies( { refParameter } ) );
+		}
+
 		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
@@ -285,7 +291,7 @@ export default {
 			locale: context.params.lang,
 			flowName,
 			queryObject: query,
-			refParameter: query && query.ref,
+			refParameter,
 			stepName,
 			stepSectionName,
 			stepComponent,

@@ -83,17 +83,7 @@ const SetAsPrimary = ( { domain, selectedSite }: SetAsPrimaryProps ) => {
 			} )
 		);
 		try {
-			await new Promise( ( resolve, reject ) => {
-				dispatch(
-					setPrimaryDomain( selectedSite.ID, domain.name, ( error, data ) => {
-						if ( ! error && data && data.success ) {
-							resolve( null );
-						} else {
-							reject( error );
-						}
-					} )
-				);
-			} );
+			await dispatch( setPrimaryDomain( selectedSite.ID, domain.name ) );
 			dispatch( showUpdatePrimaryDomainSuccessNotice( domain.name ) );
 		} catch ( error ) {
 			dispatch( showUpdatePrimaryDomainErrorNotice( ( error as Error ).message ) );

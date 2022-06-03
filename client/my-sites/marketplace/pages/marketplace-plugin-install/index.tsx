@@ -3,7 +3,7 @@ import { Button } from '@automattic/components';
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch, DefaultRootState } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -244,11 +244,26 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ pluginActive, automatedTransferStatus ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
-	const steps = [
-		isUploadFlow ? translate( 'Uploading plugin' ) : translate( 'Setting up plugin installation' ),
-		translate( 'Installing plugin' ),
-		translate( 'Activating plugin' ),
-	];
+	const steps = useMemo(
+		() => [
+			isUploadFlow
+				? translate( 'Uploading plugin' )
+				: translate( 'Setting up plugin installation' ),
+			translate( 'Installing plugin' ),
+			translate( 'Activating plugin' ),
+		],
+		[ isUploadFlow, translate ]
+	);
+
+	const additionalSteps = useMemo(
+		() => [
+			translate( 'Connecting the dots' ),
+			translate( 'Still working' ),
+			translate( 'Wheels are in motion' ),
+			translate( 'Working magic' ),
+		],
+		[ translate ]
+	);
 
 	const renderError = () => {
 		// Evaluate error causes in priority order
@@ -400,7 +415,13 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 				<Item>{ translate( 'Plugin installation' ) }</Item>
 			</Masterbar>
 			<div className="marketplace-plugin-install__root">
-				{ renderError() || <MarketplaceProgressBar steps={ steps } currentStep={ currentStep } /> }
+				{ renderError() || (
+					<MarketplaceProgressBar
+						steps={ steps }
+						currentStep={ currentStep }
+						additionalSteps={ additionalSteps }
+					/>
+				) }
 			</div>
 		</ThemeProvider>
 	);

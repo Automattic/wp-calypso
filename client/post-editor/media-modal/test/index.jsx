@@ -27,7 +27,13 @@ jest.mock( 'calypso/post-editor/media-modal/markup', () => ( {
 jest.mock( 'calypso/post-editor/media-modal/secondary-actions', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'calypso/lib/accept', () => require( 'sinon' ).stub().callsArgWithAsync( 1, true ) );
+jest.mock( 'calypso/lib/accept', () =>
+	jest.fn( ( message, callback ) => {
+		if ( callback ) {
+			callback( true );
+		}
+	} )
+);
 jest.mock( 'calypso/my-sites/media-library', () =>
 	require( 'calypso/components/empty-component' )
 );

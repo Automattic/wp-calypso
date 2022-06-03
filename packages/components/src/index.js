@@ -16,3 +16,4 @@ export { Gravatar } from './gravatar';
 export { HappinessEngineersTray } from './happiness-engineers-tray';
 export { Spinner } from './spinner';
 export { SpinnerExample } from './spinner/example';
+export { default as WordPressLogo } from './wordpress-logo';

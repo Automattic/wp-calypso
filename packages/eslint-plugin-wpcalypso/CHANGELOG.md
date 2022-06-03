@@ -1,5 +1,10 @@
 #### Unreleased
 
+#### v6.0.1 (unreleased)
+
+- Add missing optional peer dependency on `eslint-plugin-react`.
+- Mark the peer dependency on `eslint-plugin-react-hooks` as optional to match that on `eslint-plugin-react`.
+
 #### v6.0.0 (2022-05-13)
 
 - Breaking: Migrated from `babel-eslint` to `@babel/eslint-parser`. This requires `@babel/core` to be

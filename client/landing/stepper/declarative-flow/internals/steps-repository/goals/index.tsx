@@ -1,8 +1,8 @@
-import { Onboard } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SelectGoals from './select-goals';
 import type { Step } from '../../types';
@@ -17,9 +17,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const headerText = translate( 'Welcome! What are your goals?' );
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
 
-	// Mock step content
-	const [ selectedGoals, setSelectedGoals ] = useState< Onboard.GoalKey[] >( [] );
-	const stepContent = <SelectGoals selectedGoals={ selectedGoals } onChange={ setSelectedGoals } />;
+	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
+	const { setGoals } = useDispatch( ONBOARD_STORE );
+
+	const stepContent = <SelectGoals selectedGoals={ goals } onChange={ setGoals } />;
 
 	return (
 		<StepContainer

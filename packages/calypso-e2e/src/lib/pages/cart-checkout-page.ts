@@ -41,8 +41,11 @@ const selectors = {
 	submitBillingInformationButton:
 		'[data-testid="contact-form--visible"] button.checkout-button.is-status-primary',
 
+	// Payment method cards
+	existingCreditCard: ( cardHolderName: string ) =>
+		`label[for*="existingCard"]:has-text("${ cardHolderName }")`,
+
 	// Payment field
-	paymentMethod: '[data-testid="payment-method-step--visible"]',
 	cardholderName: `input[id="cardholder-name"]`,
 	cardNumberFrame: 'iframe[title="Secure card number input frame"]',
 	cardNumberInput: 'input[data-elements-stable-field-name="cardNumber"]',
@@ -66,7 +69,7 @@ const selectors = {
 };
 
 /**
- * Page representing the cart checkout page for purchases made in Upgrades.
+ * Page representing the Secure Checkout page.
  */
 export class CartCheckoutPage {
 	private page: Page;
@@ -227,11 +230,33 @@ export class CartCheckoutPage {
 	}
 
 	/**
+	 * Selects a saved card payment method.
+	 *
+	 * @param {string} cardHolderName Name of the card holder associated with the payment method.
+	 */
+	async selectSavedCard( cardHolderName: string ): Promise< void > {
+		const selector = this.page.locator( selectors.existingCreditCard( cardHolderName ) ).first();
+
+		await selector.click();
+	}
+
+	/**
 	 * Enter payment details.
+	 *
+	 * Note that this method will always choose to create
+	 * a new card entry even if the intended payment
+	 * details have already been saved.
 	 *
 	 * @param {PaymentDetails} paymentDetails Object implementing the PaymentDetails interface.
 	 */
 	async enterPaymentDetails( paymentDetails: PaymentDetails ): Promise< void > {
+		// Click on the Credit or debit card input in order
+		// to expand the fields.
+		const cardInputLocator = this.page.locator( `span:has-text("Credit or debit card")` );
+		await cardInputLocator.click();
+
+		// Begin filling in the card details from
+		// top to bottom.
 		await this.page.fill( selectors.cardholderName, paymentDetails.cardHolder );
 
 		const cardNumberFrameHandle = await this.page.waitForSelector( selectors.cardNumberFrame );
