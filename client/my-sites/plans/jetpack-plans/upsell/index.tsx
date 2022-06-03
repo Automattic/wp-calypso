@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_SCAN,
@@ -5,16 +6,20 @@ import {
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	getJetpackProductsDisplayNames,
 } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Gridicon, Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
-import Main from 'calypso/components/main';
 import { useExperiment } from 'calypso/lib/explat';
+import { preventWidows } from 'calypso/lib/formatting';
+import badge14Src from 'calypso/my-sites/checkout/composite-checkout/components/assets/icons/badge-14.svg';
 import PlanPrice from 'calypso/my-sites/plan-price';
+import { GUARANTEE_DAYS } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -74,7 +79,11 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 			return {
 				intro: translate( 'Here’s a popular bundle for comprehensive site security:' ),
 				description: translate( 'Save money with all Jetpack security products in one bundle:' ),
-				cta: translate( 'Upgrade your site security for only an additional:' ),
+				cta: translate( 'Upgrade your site security for only an additional{{asterisk/}}:', {
+					components: {
+						asterisk: <sup>*</sup>,
+					},
+				} ),
 				features: [
 					{
 						slug: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
@@ -103,7 +112,11 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 	const priceDelta =
 		( upsellPriceObj?.discountedPrice || upsellPriceObj?.originalPrice ) -
 		( productPriceObj?.discountedPrice || productPriceObj?.originalPrice );
+	const originalPriceDelta =
+		upsellPriceObj?.originalPrice -
+		( productPriceObj?.discountedPrice || productPriceObj?.originalPrice );
 	const isLoadingPrice = productPriceObj?.isFetching || upsellPriceObj?.isFetching;
+	const showPrice = ! isLoadingPrice && priceDelta > 0;
 
 	useEffect( () => {
 		if ( ! isLoadingUpsellPageExperiment && experimentAssignment?.variationName !== 'treatment' ) {
@@ -132,52 +145,138 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 			<QueryIntroOffers siteId={ siteId ?? 'none' } />
 
-			<Main wideLayout>
-				<h1>
-					{ translate( 'Nice choice, we added %(productName)s to your cart.', {
-						args: {
-							productName,
-						},
-					} ) }{ ' ' }
-					{ intro }
-				</h1>
-				<p>{ translate( 'Best value' ) }</p>
-				<h2>{ upsellName }</h2>
-				{ description && <p>{ description }</p> }
-				{ features?.length && (
-					<ul>
-						{ features.map( ( { slug, text } ) => (
-							<li key={ slug }>
-								{ productNames[ slug ] || slug } -{ ' ' }
-								{ slug === productSlug ? translate( 'Already in your cart' ) : text }
-							</li>
-						) ) }
-					</ul>
-				) }
-				{ ! isLoadingPrice && priceDelta > 0 && (
-					<>
-						{ cta && <p>{ cta }</p> }
-						<PlanPrice rawPrice={ priceDelta } currency={ currencyCode } displayPerMonthNotation />
-						<br />
-					</>
-				) }
-				<Button href={ upsellCheckoutURL } primary>
-					{ translate( 'Upgrade to %(productName)s', {
-						args: {
-							productName: upsellName,
-						},
-					} ) }
-				</Button>
-				<br />
-				<br />
-				<Button href={ productCheckoutURL }>
-					{ translate( 'No thanks, proceed with %(productName)s', {
-						args: {
-							productName,
-						},
-					} ) }
-				</Button>
-			</Main>
+			<main className="jetpack-upsell">
+				<div className="jetpack-upsell__blobs">
+					<div className="jetpack-upsell__header">
+						<h1 className="jetpack-upsell__heading">
+							{ translate( 'Nice choice, we added %(productName)s to your cart.', {
+								args: {
+									productName,
+								},
+							} ) }
+							<br />
+							{ intro }
+						</h1>
+					</div>
+
+					<div className="jetpack-upsell__card">
+						<div className="jetpack-upsell__card-header">
+							<Gridicon icon="star" size={ 18 } aria-hidden={ true } />
+							{ translate( 'Best value' ) }
+						</div>
+						<div className="jetpack-upsell__card-body">
+							<h2 className="jetpack-upsell__product-name">{ upsellName }</h2>
+							{ description && <p>{ description }</p> }
+							{ features?.length && (
+								<ul className="jetpack-upsell__features">
+									{ features.map( ( { slug, text } ) => {
+										const isProductSelected = slug === productSlug;
+
+										return (
+											<li
+												className={ classNames( { 'is-selected': isProductSelected } ) }
+												key={ slug }
+											>
+												<span className="jetpack-upsell__icon-ctn">
+													<Gridicon
+														icon={ isProductSelected ? 'checkmark' : 'plus' }
+														size={ 18 }
+														aria-hidden={ true }
+													/>
+												</span>
+												<span className="jetpack-upsell__features-product">
+													{ productNames[ slug ] || slug }
+												</span>
+												{ ' - ' }
+												<span className="jetpack-upsell__features-desc">
+													{ isProductSelected ? translate( 'Already in your cart' ) : text }
+												</span>
+											</li>
+										);
+									} ) }
+								</ul>
+							) }
+							{ isLoadingPrice && (
+								<div className="jetpack-upsell__price-skeleton">
+									<div></div>
+									<div></div>
+									<div></div>
+								</div>
+							) }
+							{ showPrice && (
+								<div className="jetpack-upsell__cost-info">
+									{ cta && <p>{ cta }</p> }
+									<div className="jetpack-upsell__price-ctn">
+										<PlanPrice
+											className="jetpack-upsell__price"
+											rawPrice={ priceDelta }
+											currency={ currencyCode }
+										/>
+										<span className="jetpack-upsell__price-timeframe">
+											{ translate( '/month, paid yearly' ) }
+										</span>
+									</div>
+									{ originalPriceDelta > priceDelta && (
+										<div className="jetpack-upsell__normal-price-ctn">
+											{ translate( 'Normally {{price/}}', {
+												components: {
+													price: (
+														<span className="jetpack-upsell__normal-price">
+															{ formatCurrency( originalPriceDelta, currencyCode as string, {
+																precision: 2,
+																stripZeros: true,
+															} ) }
+														</span>
+													),
+												},
+											} ) }
+										</div>
+									) }
+								</div>
+							) }
+							<div className="jetpack-upsell__actions">
+								<Button className="jetpack-upsell__action-yes" href={ upsellCheckoutURL } primary>
+									{ translate( 'Upgrade to %(productName)s', {
+										args: {
+											productName: upsellName,
+										},
+									} ) }
+								</Button>
+								<a className="jetpack-upsell__action-no" href={ productCheckoutURL }>
+									{ translate( 'No thanks, proceed with %(productName)s', {
+										args: {
+											productName,
+										},
+									} ) }
+								</a>
+							</div>
+						</div>
+					</div>
+
+					<div className="jetpack-upsell__footer">
+						<p className="jetpack-upsell__guarantee">
+							{ 14 === GUARANTEE_DAYS && <img src={ badge14Src } alt="" /> }
+							<span>
+								{ preventWidows(
+									translate( '%(days)d day money back guarantee.', {
+										args: { days: GUARANTEE_DAYS },
+									} )
+								) }
+							</span>
+						</p>
+						{ showPrice && (
+							<p className="jetpack-upsell__note">
+								<sup>*</sup>
+								{ preventWidows(
+									translate(
+										'Discount is for the first year only, all renewals are at full price.'
+									)
+								) }
+							</p>
+						) }
+					</div>
+				</div>
+			</main>
 		</>
 	);
 };

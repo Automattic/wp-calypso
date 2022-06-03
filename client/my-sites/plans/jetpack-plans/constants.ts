@@ -43,6 +43,7 @@ import type { JetpackPlanSlug, JetpackPurchasableItemSlug } from '@automattic/ca
 
 export const PLAN_COMPARISON_PAGE = 'https://jetpack.com/features/comparison/';
 export const INTRO_PRICING_DISCOUNT_PERCENTAGE = 50;
+export const GUARANTEE_DAYS = 14;
 
 // Types of items. This determines the card UI.
 export const ITEM_TYPE_PLAN = 'item-type-plan';

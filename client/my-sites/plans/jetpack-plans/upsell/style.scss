@@ -1,0 +1,289 @@
+@import '@wordpress/base-styles/mixins';
+
+.jetpack-upsell {
+	background-color: #f6f7f7;
+}
+
+.jetpack-upsell__blobs {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	box-sizing: border-box;
+	min-height: 100vh;
+	padding: 2rem 5%;
+
+	// Green, blue, and yellow
+	background: radial-gradient(
+			circle at 70% 50%,
+			rgba( 6, 158, 8, 0.15 ) 0%,
+			rgba( 255, 255, 255, 0 ) 25%
+		),
+		radial-gradient(
+			circle at 35% 70%,
+			rgba( 206, 217, 242, 0.6 ) 5%,
+			rgba( 255, 255, 255, 0 ) 30%
+		),
+		radial-gradient(
+			circle at 50% 35%,
+			rgba( 245, 230, 179, 0.5 ) 0%,
+			rgba( 255, 255, 255, 0 ) 35%
+		);
+}
+
+.jetpack-upsell__header {
+	text-align: center;
+}
+
+.jetpack-upsell__heading {
+	margin-top: 2.5rem;
+
+	font-size: 1.75rem;
+	font-weight: 700;
+}
+
+.jetpack-upsell__card {
+	width: 100%;
+	max-width: 550px;
+	margin: 1.5rem 0;
+
+	background: var( --color-surface );
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+	box-shadow: 0 4px 24px rgba( 0, 0, 0, 0.05 );
+}
+
+.jetpack-upsell__card-header {
+	display: flex;
+	align-items: center;
+
+	padding: 0.5rem 2%;
+
+	background-color: var( --studio-jetpack-green-5 );
+
+	font-weight: 700;
+	line-height: 1;
+
+	.gridicon {
+		margin-top: -1px;
+		margin-inline-end: 0.5rem;
+	}
+}
+
+.jetpack-upsell__card-body {
+	padding: 1.5rem 7.5%;
+
+	p {
+		font-size: 1rem;
+	}
+}
+
+.jetpack-upsell__product-name {
+	margin-bottom: 0.25rem;
+
+	color: var( --studio-gray-100 );
+
+	font-size: 1.75rem;
+	font-weight: 700;
+}
+
+.jetpack-upsell__features {
+	margin: 0 0 1.75rem;
+
+	color: var( --studio-gray-100 );
+	list-style-type: none;
+
+	font-weight: 300;
+
+	> li {
+		margin: 0.5rem 0;
+
+		&.is-selected {
+			.gridicon {
+				fill: var( --studio-jetpack-green-40 );
+			}
+		}
+	}
+}
+
+.jetpack-upsell__icon-ctn {
+	display: inline-block;
+
+	width: 1.5rem;
+
+	.gridicon {
+		margin-bottom: -2px;
+	}
+}
+
+.jetpack-upsell__features-product {
+	font-weight: 700;
+}
+
+.jetpack-upsell__features-desc {
+	.is-selected & {
+		font-style: italic;
+	}
+}
+
+.jetpack-upsell__actions {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1.25rem;
+
+	margin-top: 1.75rem;
+}
+
+.jetpack-upsell__action-yes {
+	width: 100%;
+	max-width: 425px;
+	padding: 0.4375rem 1rem;
+
+	font-size: 1rem;
+
+	background-color: var( --studio-gray-100 ) !important;
+	border: none !important;
+
+	&:hover,
+	&:active {
+		background-color: var( --studio-gray-80 ) !important;
+	}
+
+	&:focus {
+		box-shadow: none !important;
+		outline: solid 2px var( --studio-gray-100 );
+		outline-offset: 2px;
+	}
+}
+
+.jetpack-upsell__action-no {
+	display: inline-block;
+	padding: 0 0.25rem;
+
+	border-radius: 4px;
+	color: var( --studio-gray-100 ) !important;
+
+	font-weight: 600;
+	text-decoration: underline;
+
+	&:hover,
+	&:active {
+		text-decoration-thickness: 2px;
+	}
+
+	&:focus {
+		box-shadow: 0 0 0 1pt var( --studio-gray-100 );
+		outline: none;
+
+		text-decoration: none;
+	}
+}
+
+.jetpack-upsell__cost-info,
+.jetpack-upsell__price-skeleton {
+	min-height: 135px;
+}
+
+.jetpack-upsell__price-skeleton {
+	> div {
+		@include placeholder();
+
+		&:nth-child( 1 ) {
+			width: 375px;
+			height: 20px;
+			margin-bottom: 20px;
+		}
+
+		&:nth-child( 2 ) {
+			width: 50px;
+			height: 50px;
+			margin-bottom: 20px;
+		}
+
+		&:nth-child( 3 ) {
+			width: 100px;
+			height: 20px;
+		}
+	}
+}
+
+.jetpack-upsell__price-ctn {
+	display: flex;
+	align-items: flex-end;
+}
+
+.jetpack-upsell__price {
+	color: var( --studio-gray-100 ) !important;
+
+	line-height: 1 !important;
+
+	.plan-price__currency-symbol {
+		position: relative;
+		top: -0.5rem;
+
+		color: inherit;
+
+		font-size: 1.5rem;
+		font-weight: 500;
+	}
+
+	.plan-price__integer {
+		font-size: 3rem;
+		font-weight: 700;
+	}
+
+	.plan-price__fraction {
+		position: relative;
+		top: -0.75rem;
+
+		font-size: 1rem;
+	}
+}
+
+.jetpack-upsell__price-timeframe {
+	position: relative;
+	top: -0.125rem;
+
+	color: var( --studio-gray-50 );
+
+	font-weight: 500;
+}
+
+.jetpack-upsell__normal-price-ctn {
+	margin-top: 1rem;
+
+	color: var( --studio-gray-50 );
+
+	font-size: 0.875rem;
+}
+
+.jetpack-upsell__normal-price {
+	color: var( --studio-gray-100 );
+}
+
+.jetpack-upsell__footer {
+	font-size: 0.875rem;
+	text-align: center;
+
+	p {
+		font-size: inherit;
+	}
+}
+
+.jetpack-upsell__guarantee {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.25rem;
+
+	margin: 0 0 0.25rem;
+
+	font-weight: 500;
+}
+
+.jetpack-upsell__note {
+	margin: 0;
+
+	color: var( --studio-gray-50 );
+}
