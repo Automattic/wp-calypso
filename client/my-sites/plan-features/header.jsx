@@ -450,7 +450,6 @@ export class PlanFeaturesHeader extends Component {
 			plansWithScroll,
 			isInVerticalScrollingPlansExperiment,
 			isLoggedInMonthlyPricing,
-			productDisplayPrice,
 		} = this.props;
 		const displayFlatPrice =
 			isInSignup && ! plansWithScroll && ! isInVerticalScrollingPlansExperiment;
@@ -465,7 +464,6 @@ export class PlanFeaturesHeader extends Component {
 							displayFlatPrice={ displayFlatPrice }
 							displayPerMonthNotation={ true }
 							original
-							productDisplayPrice={ productDisplayPrice }
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
@@ -473,7 +471,6 @@ export class PlanFeaturesHeader extends Component {
 							displayFlatPrice={ displayFlatPrice }
 							displayPerMonthNotation={ true }
 							discounted
-							productDisplayPrice={ productDisplayPrice }
 						/>
 					</div>
 					{ plansWithScroll ? null : this.renderCreditLabel() }
@@ -487,7 +484,6 @@ export class PlanFeaturesHeader extends Component {
 				rawPrice={ fullPrice }
 				displayFlatPrice={ displayFlatPrice }
 				displayPerMonthNotation={ isInSignup || isLoggedInMonthlyPricing }
-				productDisplayPrice={ productDisplayPrice }
 			/>
 		);
 	}
