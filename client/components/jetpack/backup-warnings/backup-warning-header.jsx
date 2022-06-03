@@ -7,15 +7,15 @@ const warningCodeText = ( warningCode ) => {
 	const typeMap = {
 		SERIOUS_ROW_COUNT_MISMATCH: translate( 'Serious row count mismatch' ),
 		SELECT_COMMAND_DENIED_TO_USER: translate( 'Select command denied to user' ),
-		TABLE_MARKED_AS_CRASHED: translate( 'Table marked as crashed' ),
+		TABLE_MARKED_AS_CRASHED: translate( 'Table(s) marked as crashed' ),
 		TABLE_MARKED_AS_CRASHED_LAST_REPAIR_FAILED: translate(
-			'Table marked as crashed - Last repair failed'
+			'Table(s) marked as crashed - Last repair failed'
 		),
-		FILE_NOT_FOUND: translate( 'File not found' ),
+		FILE_NOT_FOUND: translate( 'File(s) not found' ),
 		DOWNLOADED_FILE_HAS_BAD_SIZE: translate( 'Downloaded file has bad size' ),
 		PERMISSION_DENIED: translate( 'Permission denied' ),
-		NO_SUCH_FILE: translate( 'No such file' ),
-		UNABLE_TO_OPEN_FILE: translate( 'Unable to open file' ),
+		NO_SUCH_FILE: translate( 'No such file(s)' ),
+		UNABLE_TO_OPEN_FILE: translate( 'Unable to open file(s)' ),
 		TIMEOUT: translate( 'Connection timed out' ),
 		UNABLE_TO_CONNECT_TO_ANY_TARGET: translate( 'Unable to connect to server' ),
 		UNABLE_TO_START_SUBSYSTEM: translate( 'Unable to start subsystem' ),
@@ -46,7 +46,7 @@ const BackupWarningHeader = ( { warning, warningCode } ) => {
 			<div className="backup-warning-header__titles">
 				<div className="backup-warning-header__card-top">{ warningCodeText( warningCode ) }</div>
 				<div className="backup-warning-header__card-bottom">
-					{ warning.items.length } { translate( 'files affected.' ) }
+					{ warning.items.length } { translate( 'files affected' ) }
 				</div>
 			</div>
 		</>

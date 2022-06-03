@@ -213,6 +213,9 @@
 	font-size: $font-body-small;
 	color: #50575e;
 	margin-left: 124px;
+	line-height: 24px;
+	overflow-x: scroll;
+	white-space: nowrap;
 }
 
 .backup-warnings__info {
@@ -224,5 +227,6 @@
 	.gridicons-help-outline {
 		min-width: 100px;
 		padding-right: 24px;
+		margin: auto;
 	}
 }
