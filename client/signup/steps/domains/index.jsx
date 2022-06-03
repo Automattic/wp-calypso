@@ -723,8 +723,8 @@ class DomainsStep extends Component {
 
 		const { isAllDomains, translate, isReskinned } = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
-		const siteSlug = get( this.props, 'queryObject.siteSlug' );
-		const source = get( this.props, 'queryObject.source' );
+		const siteSlug = this.props.queryObject?.siteSlug;
+		const source = this.props.queryObject?.source;
 		let backUrl;
 		let backLabelText;
 		let isExternalBackUrl = false;
