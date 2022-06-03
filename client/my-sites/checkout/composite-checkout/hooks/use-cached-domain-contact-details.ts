@@ -85,8 +85,11 @@ function useCachedContactDetailsForCheckoutForm(
 			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode : '',
 		} )
 			.then( () => {
-				debug( 'Contact details are populated; attempting to skip to payment method step' );
-				return setStepCompleteStatus( 'contact-form' );
+				if ( cachedContactDetails.countryCode ) {
+					debug( 'Contact details are populated; attempting to skip to payment method step' );
+					return setStepCompleteStatus( 'contact-form' );
+				}
+				return false;
 			} )
 			.then( ( didSkip: boolean ) => {
 				if ( didSkip ) {
