@@ -341,15 +341,20 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		window.scrollTo( { top: 0 } );
 	}, [ isForceStaticDesigns ] );
 
-	if ( selectedDesign && isPreviewingDesign && ! showGeneratedDesigns ) {
-		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
-		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
-		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
-		const previewUrl = getDesignPreviewUrl( selectedDesign, {
+	let previewUrl = null;
+
+	if ( selectedDesign ) {
+		previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
 			// If the user fills out the site title with write intent, we show it on the design preview
 			siteTitle: intent === 'write' ? siteTitle : undefined,
 		} );
+	}
+
+	if ( selectedDesign && isPreviewingDesign && ! showGeneratedDesigns ) {
+		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
+		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
+		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
 
 		const stepContent = (
 			<WebPreview
@@ -441,6 +446,11 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 				<>
 					<div className={ classnames( 'step-container__header', 'design-setup__header' ) }>
 						{ heading }
+						{ previewUrl && (
+							<Button target="_blank" href={ previewUrl }>
+								{ translate( 'Preview' ) }
+							</Button>
+						) }
 						<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'top' ) }>
 							{ translate( 'Continue' ) }
 						</Button>
@@ -460,6 +470,11 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 					} ) }
 				>
 					<div className="design-setup__footer-content">
+						{ previewUrl && (
+							<Button target="_blank" href={ previewUrl }>
+								{ translate( 'Preview' ) }
+							</Button>
+						) }
 						<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'bottom' ) }>
 							{ translate( 'Continue' ) }
 						</Button>
