@@ -35,7 +35,6 @@ import { isJetpackSite, isJetpackProductSite } from 'calypso/state/sites/selecto
 import WPCheckout from './components/wp-checkout';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from './hooks/use-add-products-from-url';
-import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
 import useCheckoutFlowTrackKey from './hooks/use-checkout-flow-track-key';
 import useCountryList from './hooks/use-country-list';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
@@ -251,7 +250,6 @@ export default function CompositeCheckout( {
 	useWpcomStore();
 
 	useDetectedCountryCode();
-	useCachedDomainContactDetails( countriesList );
 
 	// Record errors adding products to the cart
 	useActOnceOnStrings( [ cartProductPrepError ].filter( isValueTruthy ), ( messages ) => {
