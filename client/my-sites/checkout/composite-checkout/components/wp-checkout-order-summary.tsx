@@ -169,7 +169,7 @@ function CheckoutSummaryFeaturesList( props: {
 	const hasOnlyStarterPlan =
 		plans.filter( ( plan ) => isStarterPlan( plan.product_slug ) ).length === plans.length;
 
-	const hasNoAdsAddOn = responseCart.products.filter( ( product ) => isNoAds( product ) );
+	const hasNoAdsAddOn = responseCart.products.some( ( product ) => isNoAds( product ) );
 
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
