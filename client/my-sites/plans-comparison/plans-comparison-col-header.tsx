@@ -98,7 +98,7 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 	translate,
 } ) => {
 	const isDiscounted = typeof originalPrice === 'number';
-	const classes = classNames( plan.getStoreSlug, 'plans-comparison-col-header' );
+	const classes = classNames( plan.getStoreSlug(), 'plans-comparison-col-header' );
 
 	return (
 		<PlanComparisonHeader className={ classes }>
