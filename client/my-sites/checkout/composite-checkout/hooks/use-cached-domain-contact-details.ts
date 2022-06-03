@@ -1,8 +1,10 @@
+import { useSetStepComplete } from '@automattic/composite-checkout';
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import useCountryList from './use-country-list';
@@ -37,6 +39,8 @@ function useCachedContactDetailsForCheckoutForm(
 ): void {
 	const countriesList = useCountryList( overrideCountryList );
 	const previousDetailsForForm = useRef< PossiblyCompleteDomainContactDetails >();
+	const reduxDispatch = useReduxDispatch();
+	const setStepCompleteStatus = useSetStepComplete();
 
 	const arePostalCodesSupported =
 		countriesList.length && cachedContactDetails?.countryCode
@@ -75,8 +79,17 @@ function useCachedContactDetailsForCheckoutForm(
 		loadDomainContactDetailsFromCache( {
 			...cachedContactDetails,
 			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode : '',
-		} );
+		} )
+			.then( () => {
+				debug( 'Contact details are populated; attempting to skip to payment method step' );
+				return setStepCompleteStatus( 'contact-form' );
+			} )
+			.then( () => {
+				reduxDispatch( recordTracksEvent( 'calypso_checkout_skip_to_last_step' ) );
+			} );
 	}, [
+		reduxDispatch,
+		setStepCompleteStatus,
 		cachedContactDetails,
 		arePostalCodesSupported,
 		loadDomainContactDetailsFromCache,
