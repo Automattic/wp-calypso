@@ -6,7 +6,9 @@ import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-
 
 const debug = debugFactory( 'calypso:composite-checkout:use-is-cached-contact-form-valid' );
 
-export default function useIsCachedContactFormValid( contactValidationCallback ) {
+export default function useIsCachedContactFormValid(
+	contactValidationCallback: undefined | ( () => Promise< boolean > )
+) {
 	const cachedContactDetails = useSelector( getContactDetailsCache );
 	const hasValidated = useRef( false );
 	const shouldResetFormStatus = useRef( false );
