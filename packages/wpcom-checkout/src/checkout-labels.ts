@@ -1,4 +1,5 @@
 import {
+	isAddOn,
 	isPlan,
 	isDomainTransfer,
 	isDomainProduct,
@@ -8,6 +9,9 @@ import {
 	isTitanMail,
 	isP2Plus,
 	isJetpackProductSlug,
+	isMonthlyProduct,
+	isYearly,
+	isBiennially,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { isWpComProductRenewal as isRenewal } from './is-wpcom-product-renewal';
@@ -59,12 +63,24 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 		}
 	}
 
-	if ( ! isRenewalItem && serverCartItem.months_per_bill_period === 1 ) {
-		return String( translate( 'Billed monthly' ) );
+	if ( isAddOn( serverCartItem ) && ! isRenewalItem ) {
+		return String( translate( 'Add-On' ) );
 	}
 
 	if ( isRenewalItem ) {
 		return String( translate( 'Renewal' ) );
+	}
+
+	if ( isMonthlyProduct( serverCartItem ) ) {
+		return String( translate( 'Billed monthly' ) );
+	}
+
+	if ( isYearly( serverCartItem ) ) {
+		return String( translate( 'Billed annually' ) );
+	}
+
+	if ( isBiennially( serverCartItem ) ) {
+		return String( translate( 'Billed every two years' ) );
 	}
 
 	return '';
