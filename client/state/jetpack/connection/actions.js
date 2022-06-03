@@ -5,6 +5,8 @@ import {
 	JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS,
 	JETPACK_CONNECTION_STATUS_REQUEST_FAILURE,
 	JETPACK_DISCONNECT_RECEIVE,
+	JETPACK_SITE_DISCONNECT_REQUEST,
+	JETPACK_SITE_DISCONNECT_SUCCESS,
 	JETPACK_USER_CONNECTION_CHANGE_OWNER,
 	JETPACK_USER_CONNECTION_DATA_RECEIVE,
 	JETPACK_USER_CONNECTION_DATA_REQUEST,
@@ -76,15 +78,24 @@ export const requestJetpackUserConnectionData = ( siteId ) => {
 	};
 };
 
-export const disconnect = ( siteId ) => ( dispatch ) =>
-	wp.req.post( `/jetpack-blogs/${ siteId }/mine/delete` ).then( ( response ) => {
+export const disconnect = ( siteId ) => {
+	return ( dispatch ) => {
 		dispatch( {
-			type: JETPACK_DISCONNECT_RECEIVE,
-			siteId,
-			status: response,
+			type: JETPACK_SITE_DISCONNECT_REQUEST,
 		} );
-		dispatch( fetchCurrentUser() );
-	} );
+		return wp.req.post( `/jetpack-blogs/${ siteId }/mine/delete` ).then( ( response ) => {
+			dispatch( {
+				type: JETPACK_DISCONNECT_RECEIVE,
+				siteId,
+				status: response,
+			} );
+			dispatch( {
+				type: JETPACK_SITE_DISCONNECT_SUCCESS,
+			} );
+			dispatch( fetchCurrentUser() );
+		} );
+	};
+};
 
 /**
  * Change the jetpack connection owner.

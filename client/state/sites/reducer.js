@@ -3,6 +3,8 @@ import {
 	MEDIA_DELETE,
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
+	JETPACK_SITE_DISCONNECT_REQUEST,
+	JETPACK_SITE_DISCONNECT_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -336,6 +338,26 @@ export const hasAllSitesList = withSchemaValidation(
 	}
 );
 
+/**
+ * Returns the updated disconnected state after an action has been dispatched.
+ * Tracks whether a network request is completed or not.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
+ */
+export const jetpackSiteDisconnected = ( state = false, action ) => {
+	switch ( action.type ) {
+		case JETPACK_SITE_DISCONNECT_REQUEST: {
+			return false;
+		}
+		case JETPACK_SITE_DISCONNECT_SUCCESS: {
+			return true;
+		}
+	}
+	return state;
+};
+
 export default combineReducers( {
 	connection,
 	domains,
@@ -347,4 +369,5 @@ export default combineReducers( {
 	features,
 	requesting,
 	hasAllSitesList,
+	jetpackSiteDisconnected,
 } );
