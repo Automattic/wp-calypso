@@ -84,6 +84,19 @@ export interface Config {
 	closeHandler: CloseHandler;
 	isMinimized?: boolean;
 	options?: Options;
+	placement?:
+		| 'top-start'
+		| 'top'
+		| 'top-end'
+		| 'left-start'
+		| 'left'
+		| 'left-end'
+		| 'right-start'
+		| 'right'
+		| 'right-end'
+		| 'bottom-start'
+		| 'bottom'
+		| 'bottom-end';
 }
 
 export type Tour = React.FunctionComponent< { config: Config } >;

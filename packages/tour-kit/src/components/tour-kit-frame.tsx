@@ -118,7 +118,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		update: popperUpdate,
 	} = usePopper( referenceElement, popperElement, {
 		strategy: 'fixed',
-		placement: 'bottom',
+		placement: config?.placement ?? 'bottom',
 		modifiers: [
 			{
 				name: 'preventOverflow',
