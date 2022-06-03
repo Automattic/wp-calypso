@@ -6,7 +6,7 @@ import { useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { MailboxFormWrapper } from 'calypso/my-sites/email/form/mailboxes/components/form';
-import { sanitizeMailboxValue } from 'calypso/my-sites/email/form/mailboxes/components/sanitize-mailbox-value';
+import { sanitizeMailboxValue } from 'calypso/my-sites/email/form/mailboxes/components/utilities/sanitize-mailbox-value';
 import {
 	FIELD_FIRSTNAME,
 	FIELD_MAILBOX,
@@ -87,6 +87,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 					}
 
 					mailbox.setFieldValue( FIELD_MAILBOX, sanitizeMailboxValue( field.value ) );
+					mailbox.validateField( FIELD_MAILBOX );
 
 					mailbox.formFields.mailbox.dispatchState();
 				};

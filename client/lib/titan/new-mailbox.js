@@ -476,6 +476,7 @@ export {
 	areAllMailboxesAvailable,
 	areAllMailboxesValid,
 	buildNewTitanMailbox,
+	checkMailboxAvailability,
 	decorateMailboxWithAvailabilityError,
 	getMailboxPropTypeShape,
 	sanitizeEmailSuggestion,

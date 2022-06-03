@@ -2,6 +2,7 @@ import {
 	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_DOMAIN,
 	FIELD_FIRSTNAME,
+	FIELD_IS_ADMIN,
 	FIELD_LASTNAME,
 	FIELD_MAILBOX,
 	FIELD_NAME,
@@ -18,10 +19,10 @@ import {
 	AlternateEmailValidator,
 	ExistingMailboxNamesValidator,
 	MailboxNameValidator,
-	PasswordValidator,
-	RequiredValidator,
-	RequiredIfVisibleValidator,
 	MaximumStringLengthValidator,
+	PasswordValidator,
+	RequiredIfVisibleValidator,
+	RequiredValidator,
 } from 'calypso/my-sites/email/form/mailboxes/validators';
 import type {
 	FormFieldNames,
@@ -82,6 +83,28 @@ class MailboxForm< T extends EmailProvider > {
 
 			field.error = null;
 		}
+	}
+
+	getAsCartItem(): Record< string, string | boolean | undefined > {
+		const commonFields = {
+			email: `${ this.getFieldValue< string >( FIELD_MAILBOX ) }@${ this.getFieldValue< string >(
+				FIELD_DOMAIN
+			) }`.toLowerCase(),
+			password: this.getFieldValue< string >( FIELD_PASSWORD ),
+		};
+
+		return this.provider === EmailProvider.Google
+			? {
+					...commonFields,
+					firstname: this.getFieldValue< string >( FIELD_FIRSTNAME ),
+					lastname: this.getFieldValue< string >( FIELD_LASTNAME ),
+			  }
+			: {
+					...commonFields,
+					alternative_email: this.getFieldValue< string >( FIELD_ALTERNATIVE_EMAIL ),
+					is_admin: this.getFieldValue< boolean >( FIELD_IS_ADMIN ),
+					name: this.getFieldValue< string >( FIELD_NAME ),
+			  };
 	}
 
 	getFieldValue< R >( fieldName: FormFieldNames ) {

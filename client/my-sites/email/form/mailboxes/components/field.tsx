@@ -5,7 +5,7 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import { useGetDefaultFieldLabelText } from 'calypso/my-sites/email/form/mailboxes/components/use-get-default-field-label-text';
+import { useGetDefaultFieldLabelText } from 'calypso/my-sites/email/form/mailboxes/components/utilities/use-get-default-field-label-text';
 import type {
 	MailboxFormFieldBase,
 	MutableFormFieldNames,

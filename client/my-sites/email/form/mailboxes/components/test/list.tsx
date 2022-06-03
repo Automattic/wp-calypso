@@ -7,7 +7,7 @@ import {
 	MailboxListProps,
 	NewMailBoxList,
 } from 'calypso/my-sites/email/form/mailboxes/components/list';
-import { useGetDefaultFieldLabelText } from 'calypso/my-sites/email/form/mailboxes/components/use-get-default-field-label-text';
+import { useGetDefaultFieldLabelText } from 'calypso/my-sites/email/form/mailboxes/components/utilities/use-get-default-field-label-text';
 import { FIELD_MAILBOX } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 

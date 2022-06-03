@@ -176,7 +176,14 @@ export default {
 	},
 
 	emailManagementTestComponent( pageContext, next ) {
-		pageContext.primary = <TestComponent site={ pageContext.params.site } />;
+		pageContext.primary = (
+			<CalypsoShoppingCartProvider>
+				<TestComponent
+					selectedDomainName={ pageContext.params.domain }
+					site={ pageContext.params.site }
+				/>
+			</CalypsoShoppingCartProvider>
+		);
 		next();
 	},
 };

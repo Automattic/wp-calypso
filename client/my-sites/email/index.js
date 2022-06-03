@@ -45,7 +45,7 @@ export default function () {
 	);
 
 	page(
-		paths.emailManagementTestComponent( ':site' ),
+		paths.emailManagementTestComponent( ':site', ':domain' ),
 		...commonHandlers,
 		controller.emailManagementTestComponent,
 		makeLayout,
