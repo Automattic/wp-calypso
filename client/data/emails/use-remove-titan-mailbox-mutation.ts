@@ -1,37 +1,42 @@
-import { useCallback } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import wp from 'calypso/lib/wp';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getCacheKey } from './use-emails-query';
+import { getCacheKey } from './use-get-email-accounts-query';
+import type { QueryClient, QueryKey, UseMutationOptions, UseMutationResult } from 'react-query';
 
 const invalidationDelayTimeout = 5000;
-const noop = () => {};
 
-const getNumberOfMailboxes = ( queryClient, queryKey ) => {
-	const data = queryClient.getQueryData( queryKey );
+const getNumberOfMailboxes = ( queryClient: QueryClient, queryKey: QueryKey ) => {
+	const data = queryClient.getQueryData< any >( queryKey );
 	return data?.accounts?.[ 0 ].emails?.length || 0;
+};
+
+type MutationContext = {
+	previousNumberOfMailboxes: number;
 };
 
 /**
  * Deletes a mailbox from a Professional Email (Titan) account
  *
- * @param {string} domainName The domain name of the mailbox
- * @param {string} mailboxName The mailbox name
- * @param {object} mutationOptions Mutation options passed on to `useMutation`
- * @returns {{ data, error, isLoading: boolean, removeTitanMailbox: Function, ...}} Returns various parameters piped from `useMutation`
+ * @param domainName The domain name of the mailbox
+ * @param mailboxName The mailbox name
+ * @param mutationOptions Mutation options passed on to `useMutation`
+ * @returns Returns the result of the `useMutation` call
  */
-export function useRemoveTitanMailboxMutation( domainName, mailboxName, mutationOptions = null ) {
+export function useRemoveTitanMailboxMutation(
+	domainName: string,
+	mailboxName: string,
+	mutationOptions: UseMutationOptions< unknown, unknown, void, MutationContext > = {}
+): UseMutationResult< unknown, unknown, void, unknown > {
 	const queryClient = useQueryClient();
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	const queryKey = getCacheKey( selectedSiteId, domainName );
 
-	mutationOptions = mutationOptions ?? {};
-
 	// Collect the supplied callback
-	const suppliedOnSettled = mutationOptions.onSettled ?? noop;
+	const suppliedOnSettled = mutationOptions.onSettled;
 
 	// Setup actions to happen before the mutation
 	mutationOptions.onMutate = async () => {
@@ -53,7 +58,7 @@ export function useRemoveTitanMailboxMutation( domainName, mailboxName, mutation
 			const numberOfMailboxes = getNumberOfMailboxes( queryClient, queryKey );
 
 			// Determine if we already have updated data, since the removal job is not synchronous
-			if ( numberOfMailboxes < context.previousNumberOfMailboxes ) {
+			if ( context && numberOfMailboxes < context.previousNumberOfMailboxes ) {
 				return;
 			}
 
@@ -63,7 +68,7 @@ export function useRemoveTitanMailboxMutation( domainName, mailboxName, mutation
 		} );
 	};
 
-	const mutation = useMutation(
+	return useMutation(
 		() =>
 			wp.req.get( {
 				path: `/emails/titan/${ encodeURIComponent( domainName ) }/mailbox/${ encodeURIComponent(
@@ -74,14 +79,4 @@ export function useRemoveTitanMailboxMutation( domainName, mailboxName, mutation
 			} ),
 		mutationOptions
 	);
-
-	const { mutate } = mutation;
-
-	// Memoize the `mutate` method into a callback
-	const removeTitanMailbox = useCallback( () => {
-		mutate( {} );
-	}, [ mutate ] );
-
-	// Bundle the callback to make it easy for downstream clients to invoke it
-	return { removeTitanMailbox, ...mutation };
 }

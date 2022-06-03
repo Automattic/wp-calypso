@@ -1,7 +1,7 @@
 import {
 	Button,
 	FormStatus,
-	useLineItems,
+	useTotal,
 	useFormStatus,
 	useTransactionStatus,
 	PaymentProcessorResponseType,
@@ -132,7 +132,7 @@ const WeChatField = styled( Field )`
 `;
 
 function WeChatPayButton( { disabled, onClick, store, stripe, stripeConfiguration, siteSlug } ) {
-	const [ items, total ] = useLineItems();
+	const total = useTotal();
 	const { formStatus } = useFormStatus();
 	const { resetTransaction } = useTransactionStatus();
 	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
@@ -166,8 +166,6 @@ function WeChatPayButton( { disabled, onClick, store, stripe, stripeConfiguratio
 					onClick( {
 						stripe,
 						name: customerName?.value,
-						items,
-						total,
 						stripeConfiguration,
 					} ).then( ( processorResponse ) => {
 						if ( processorResponse?.type === PaymentProcessorResponseType.MANUAL ) {

@@ -16,7 +16,7 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function () {
 	const inboxId = SecretsManager.secrets.mailosaur.signupInboxId;
-	const username = `e2eflowtestingwpcc${ DataHelper.getTimestamp() }`;
+	const username = DataHelper.getUsername( { prefix: 'wpcc' } );
 	const email = DataHelper.getTestEmailAddress( {
 		inboxId: inboxId,
 		prefix: username,

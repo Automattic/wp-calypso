@@ -13,6 +13,10 @@ $placeholder-color: #909398;
 		margin: auto;
 		max-width: 500px;
 
+		@include break-medium {
+			max-width: 700px;
+		}
+
 		.components-button.action-buttons__next.is-primary {
 			position: absolute;
 			min-width: auto;
@@ -28,6 +32,11 @@ $placeholder-color: #909398;
 
 	.capture__input-wrapper-padding {
 		max-width: 450px;
+
+		@include break-medium {
+			max-width: 650px;
+		}
+
 		padding-right: 50px;
 	}
 
@@ -55,7 +64,7 @@ $placeholder-color: #909398;
 			display: none;
 		}
 
-		@include break-small {
+		@include break-medium {
 			font-size: 2.75rem; /* stylelint-disable-line */
 		}
 

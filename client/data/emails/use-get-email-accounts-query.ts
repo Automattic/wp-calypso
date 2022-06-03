@@ -1,7 +1,13 @@
 import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 
-export const getCacheKey = ( siteId, domain ) => [ 'emailAccounts', siteId, domain ];
+type UseQueryParams = Parameters< typeof useQuery >;
+
+export const getCacheKey = ( siteId: number | null, domain: string ) => [
+	'emailAccounts',
+	siteId,
+	domain,
+];
 
 /**
  * Get the associated emails given a Site Identificator
@@ -13,8 +19,12 @@ export const getCacheKey = ( siteId, domain ) => [ 'emailAccounts', siteId, doma
  * @returns {data, error, isLoading} Returns and object with the
  * data associated to the SiteId & Domain
  */
-export const useEmailAccountsQuery = ( siteId, domain, queryOptions = {} ) => {
-	return useQuery(
+export const useGetEmailAccountsQuery = (
+	siteId: number,
+	domain: string,
+	queryOptions?: UseQueryParams[ 2 ]
+) => {
+	return useQuery< any >(
 		getCacheKey( siteId, domain ),
 		() =>
 			wpcom.req.get( {

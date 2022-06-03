@@ -16,6 +16,13 @@ import type { LanguageSlug } from '@automattic/languages';
 
 type Translations = {
 	[ language in LanguageSlug ]?: Partial< {
+		etkPlugin: {
+			welcomeGuide: {
+				openGuideSelector: string;
+				welcomeTitleSelector: string;
+				closeButtonSelector: string;
+			};
+		};
 		blocks: {
 			blockName: string;
 			blockEditorSelector: string;
@@ -26,6 +33,15 @@ type Translations = {
 };
 const translations: Translations = {
 	en: {
+		etkPlugin: {
+			welcomeGuide: {
+				openGuideSelector:
+					'.interface-more-menu-dropdown__content button:has-text("Welcome Guide")',
+				welcomeTitleSelector:
+					'.wpcom-tour-kit-step-card__heading:has-text("Welcome to WordPress!")',
+				closeButtonSelector: '.wpcom-tour-kit button[aria-label="Close Tour"]',
+			},
+		},
 		blocks: [
 			// Core
 			{
@@ -86,6 +102,15 @@ const translations: Translations = {
 		],
 	},
 	fr: {
+		etkPlugin: {
+			welcomeGuide: {
+				openGuideSelector:
+					'.interface-more-menu-dropdown__content button:has-text("Guide de bienvenue")',
+				welcomeTitleSelector:
+					'.wpcom-tour-kit-step-card__heading:has-text("Bienvenue dans WordPress !")',
+				closeButtonSelector: '.wpcom-tour-kit button[aria-label="Fermer la visite"]',
+			},
+		},
 		blocks: [
 			// Core
 			{
@@ -148,6 +173,15 @@ const translations: Translations = {
 		],
 	},
 	he: {
+		etkPlugin: {
+			welcomeGuide: {
+				openGuideSelector:
+					'.interface-more-menu-dropdown__content button:has-text("מדריך ברוכים הבאים")',
+				welcomeTitleSelector:
+					'.wpcom-tour-kit-step-card__heading:has-text("ברוך בואך ל-WordPress!")',
+				closeButtonSelector: '.wpcom-tour-kit button[aria-label="לסגור את הסיור"]',
+			},
+		},
 		blocks: [
 			// Core
 			{
@@ -256,6 +290,25 @@ describe( 'I18N: Editor', function () {
 
 			it( 'Go to the new post page', async function () {
 				await editorPage.visit( 'post' );
+			} );
+		} );
+
+		describe( 'Editing Toolkit Plugin', function () {
+			it( 'Translations for Welcome Guide', async function () {
+				const frame = await editorPage.getEditorHandle();
+				const timeout = 10 * 1000;
+				// We know these are all defined because of the filtering above. Non-null asserting is safe here.
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				const etkTranslations = translations[ locale ]!.etkPlugin!;
+
+				await editorPage.openEditorOptionsMenu();
+				await frame.locator( etkTranslations.welcomeGuide.openGuideSelector ).click( { timeout } );
+				await frame.waitForSelector( etkTranslations.welcomeGuide.welcomeTitleSelector, {
+					timeout,
+				} );
+				await frame
+					.locator( etkTranslations.welcomeGuide.closeButtonSelector )
+					.click( { timeout } );
 			} );
 		} );
 

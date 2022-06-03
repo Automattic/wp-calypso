@@ -1,5 +1,6 @@
 import { localize, translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateFilter } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { TypeSelector } from './type-selector';
 
@@ -42,6 +43,16 @@ const IssueTypeSelector: React.FunctionComponent< Props > = ( props ) => {
 };
 
 const selectIssueType = ( types: any ) => ( dispatch: any ) => {
+	if ( types.length ) {
+		const eventObj = types.reduce(
+			( acc: any, obj: any ) => ( {
+				...acc,
+				[ `issue_type_${ obj }` ]: true,
+			} ),
+			{}
+		);
+		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_filter', eventObj ) );
+	}
 	return dispatch( updateFilter( types ) );
 };
 
