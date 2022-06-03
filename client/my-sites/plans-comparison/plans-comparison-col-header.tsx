@@ -100,10 +100,11 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 					<>
 						<p>Great for blogs and simple sites:</p>
 						<ul>
-							<li>Custom website address.</li>
-							<li> Collect payments and donations.</li>
+							<li>Custom domain name.</li>
+							<li>Collect payments and donations.</li>
 							<li>6GB of storage for images.</li>
-							<li>Flexible upgrade options.</li>
+							<li>Automatic WordPress updates.</li>
+							<li>A la carte upgrades available.</li>
 						</ul>
 					</>
 				) }
@@ -113,9 +114,10 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 						<p>Great for business and custom sites:</p>
 						<ul>
 							<li>Unlock 50k+ plugins and themes.</li>
-							<li> Advanced ecommerce tools.</li>
+							<li>Advanced ecommerce tools.</li>
+							<li>Premium website themes.</li>
 							<li>50GB of media storage.</li>
-							<li>Premium live chat support.</li>
+							<li>24-hour live chat support.</li>
 						</ul>
 					</>
 				) }

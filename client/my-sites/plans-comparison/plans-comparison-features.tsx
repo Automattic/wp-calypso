@@ -103,7 +103,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 		get description() {
 			return translate(
-				'All WordPress.com plans include unlimited traffic, so you never have to worry about surprise charges.'
+				'All WordPress.com plans include unlimited traffic so you never have to worry about surprise charges.'
 			);
 		},
 		features: [ FEATURE_UNLIMITED_TRAFFIC ],
@@ -138,7 +138,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			return translate( 'Managed Hosting' );
 		},
 		get description() {
-			return translate( 'Managed hosting description' );
+			return translate(
+				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
+			);
 		},
 		features: [ FEATURE_MANAGED_HOSTING ],
 		getCellText: ( feature, isMobile = false ) => {
@@ -172,7 +174,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			return translate( 'Free themes' );
 		},
 		get description() {
-			return translate( 'Hundreds of beautiful themes to choose from.' );
+			return translate( 'All WordPress.com plans include access to dozens of beautiful themes.' );
 		},
 		features: [ FEATURE_FREE_THEMES ],
 		getCellText: ( feature, isMobile = false ) => {
@@ -195,7 +197,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			}
 
 			return feature
-				? translate( 'Free themes included.' )
+				? translate( 'Dozens of free themes included' )
 				: translate( 'Free themes {{strong}}not{{/strong}} included', {
 						components: { strong: <strong /> },
 				  } );

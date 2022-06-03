@@ -1,4 +1,4 @@
-import { TYPE_FREE, TYPE_FLEXIBLE, TYPE_PRO, TYPE_STARTER } from '@automattic/calypso-products';
+import { TYPE_FREE, TYPE_FLEXIBLE, TYPE_PRO } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -467,96 +467,90 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	return (
 		<>
 			<Global styles={ globalOverrides } />
-			<ComparisonTable
-				firstColWidth={ 31 }
-				planCount={ plans.length }
-				hideFreePlan={ hideFreePlan && ! isStarterPlanEnabled() }
-			>
-				<THead isInSignup={ isInSignup }>
-					<tr>
-						<td className={ `is-first` }>
-							<br />
-						</td>
-						{ plans.map( ( plan, index ) => (
-							<PlansComparisonColHeader
-								key={ plan.getProductId() }
-								plan={ plan }
-								currencyCode={ currencyCode }
-								price={ prices[ index ].price }
-								originalPrice={ prices[ index ].originalPrice }
-								translate={ translate }
-								isExperiment={ 'treatment' === experimentAssignment?.variationName }
-							>
-								{ selectedDomainConnection && <PlansDomainConnectionInfo plan={ plan } /> }
-								<PlansComparisonAction
-									currentSitePlanSlug={ sitePlan?.product_slug }
-									plan={ plan }
-									isInSignup={ isInSignup }
-									isPrimary={ plan.type === TYPE_PRO }
-									isCurrentPlan={ sitePlan?.product_slug === plan.getStoreSlug() }
-									manageHref={ manageHref }
-									disabled={
-										selectedDomainConnection && [ TYPE_FREE, TYPE_FLEXIBLE ].includes( plan.type )
-									}
-									onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
-								/>
-							</PlansComparisonColHeader>
-						) ) }
-					</tr>
-				</THead>
-				{ /* { 'treatment' === experimentAssignment?.variationName && (
-					<ComparisonHeader>
+			{ ! isLoadingExperimentAssignment && (
+				<ComparisonTable
+					firstColWidth={ 31 }
+					planCount={ plans.length }
+					hideFreePlan={ hideFreePlan && ! isStarterPlanEnabled() }
+				>
+					<THead isInSignup={ isInSignup }>
 						<tr>
-							<td colSpan={ isMobile ? 1 : 2 }>Detailed plan comparison:</td>
-							<td>&nbsp;</td>
+							<td className={ `is-first` }>
+								<br />
+							</td>
+							{ plans.map( ( plan, index ) => (
+								<PlansComparisonColHeader
+									key={ plan.getProductId() }
+									plan={ plan }
+									currencyCode={ currencyCode }
+									price={ prices[ index ].price }
+									originalPrice={ prices[ index ].originalPrice }
+									translate={ translate }
+									isExperiment={ 'treatment' === experimentAssignment?.variationName }
+								>
+									{ selectedDomainConnection && <PlansDomainConnectionInfo plan={ plan } /> }
+									<PlansComparisonAction
+										currentSitePlanSlug={ sitePlan?.product_slug }
+										plan={ plan }
+										isInSignup={ isInSignup }
+										isPrimary={ plan.type === TYPE_PRO }
+										isCurrentPlan={ sitePlan?.product_slug === plan.getStoreSlug() }
+										manageHref={ manageHref }
+										disabled={
+											selectedDomainConnection && [ TYPE_FREE, TYPE_FLEXIBLE ].includes( plan.type )
+										}
+										onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
+									/>
+								</PlansComparisonColHeader>
+							) ) }
 						</tr>
-					</ComparisonHeader>
-				) } */ }
-				<PlansComparisonRows>
-					{ planComparisonFeatures
-						.slice( featureSliceStart, featureSliceDefaultLength )
-						.map( ( feature ) => (
+					</THead>
+					<PlansComparisonRows>
+						{ planComparisonFeatures
+							.slice( featureSliceStart, featureSliceDefaultLength )
+							.map( ( feature ) => (
+								<PlansComparisonRow
+									feature={ feature }
+									plans={ plans }
+									isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
+									key={ feature.features[ 0 ] }
+									isExperiment={ 'treatment' === experimentAssignment?.variationName }
+								/>
+							) ) }
+					</PlansComparisonRows>
+					<PlansComparisonCollapsibleRows collapsed={ showCollapsibleRows }>
+						{ planComparisonFeatures.slice( featureSliceDefaultLength ).map( ( feature ) => (
 							<PlansComparisonRow
 								feature={ feature }
 								plans={ plans }
 								isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
 								key={ feature.features[ 0 ] }
-								isExperiment={ 'treatment' === experimentAssignment?.variationName }
 							/>
 						) ) }
-				</PlansComparisonRows>
-				<PlansComparisonCollapsibleRows collapsed={ showCollapsibleRows }>
-					{ planComparisonFeatures.slice( featureSliceDefaultLength ).map( ( feature ) => (
-						<PlansComparisonRow
-							feature={ feature }
-							plans={ plans }
-							isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
-							key={ feature.features[ 0 ] }
-						/>
-					) ) }
-				</PlansComparisonCollapsibleRows>
-				<PlansComparisonToggle>
-					<tr>
-						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-						<th className="is-first"></th>
-						<td colSpan={ 2 }>
-							<button onClick={ toggleCollapsibleRows }>
-								{ showCollapsibleRows ? (
-									<>
-										<Gridicon size={ 12 } icon="chevron-up" />
-										{ translate( 'Hide full plan comparison' ) }
-									</>
-								) : (
-									<>
-										<Gridicon size={ 12 } icon="chevron-down" />
-										{ translate( 'Show full plan comparison' ) }
-									</>
-								) }
-							</button>
-						</td>
-					</tr>
-				</PlansComparisonToggle>
-			</ComparisonTable>
+					</PlansComparisonCollapsibleRows>
+					<PlansComparisonToggle>
+						<tr>
+							{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+							<th className="is-first"></th>
+							<td colSpan={ 2 }>
+								<button onClick={ toggleCollapsibleRows }>
+									{ showCollapsibleRows ? (
+										<>
+											<Gridicon size={ 12 } icon="chevron-up" />
+											{ translate( 'Hide full plan comparison' ) }
+										</>
+									) : (
+										<>
+											<Gridicon size={ 12 } icon="chevron-down" />
+											{ translate( 'Show full plan comparison' ) }
+										</>
+									) }
+								</button>
+							</td>
+						</tr>
+					</PlansComparisonToggle>
+				</ComparisonTable>
+			) }
 		</>
 	);
 };
