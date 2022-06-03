@@ -1,13 +1,11 @@
 import {
+	isChargeback,
 	isDomainProduct,
+	isDomainRedemption,
 	isDomainTransfer,
 	isGoogleWorkspace,
 	isGoogleWorkspaceExtraLicence,
-	isGoogleWorkspaceMonthly,
-	isMonthly,
-	isPlan,
-	isTitanMail,
-	isTitanMailMonthly,
+	isMonthlyProduct,
 } from '@automattic/calypso-products';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -22,21 +20,14 @@ export default function getRefundDays( product: ResponseCartProduct ): number {
 		return 4;
 	}
 
-	if ( isPlan( product ) ) {
-		return isMonthly( product.product_slug ) ? 7 : 14;
+	if ( isGoogleWorkspace( product ) && isGoogleWorkspaceExtraLicence( product ) ) {
+		return 0;
 	}
 
-	if ( isGoogleWorkspace( product ) ) {
-		if ( isGoogleWorkspaceExtraLicence( product ) ) {
-			return 0;
-		}
-
-		return isGoogleWorkspaceMonthly( product ) ? 7 : 14;
+	// These are fees, and therefore not refundable.
+	if ( isChargeback( product ) || isDomainRedemption( product ) ) {
+		return 0;
 	}
 
-	if ( isTitanMail( product ) ) {
-		return isTitanMailMonthly( product ) ? 7 : 14;
-	}
-
-	return 0;
+	return isMonthlyProduct( product ) ? 7 : 14;
 }

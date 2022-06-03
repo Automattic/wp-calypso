@@ -10,7 +10,7 @@ import {
 	TestAccount,
 	PostsPage,
 	ParagraphBlock,
-	SnackbarNotificationComponent,
+	NoticeComponent,
 	getTestAccountByFeature,
 	envToFeatureKey,
 	ElementHelper,
@@ -142,8 +142,8 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Confirmation notice is shown', async function () {
-			const snackbarNotificationComponent = new SnackbarNotificationComponent( page );
-			await snackbarNotificationComponent.noticeShown( 'Post successfully moved to trash.', {
+			const noticeComponent = new NoticeComponent( page );
+			await noticeComponent.noticeShown( 'Post successfully moved to trash.', {
 				type: 'Success',
 			} );
 		} );
@@ -159,8 +159,8 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Confirmation notice is shown', async function () {
-			const snackbarNotificationComponent = new SnackbarNotificationComponent( page );
-			await snackbarNotificationComponent.noticeShown( 'Post successfully deleted', {
+			const noticeComponent = new NoticeComponent( page );
+			await noticeComponent.noticeShown( 'Post successfully deleted', {
 				type: 'Success',
 			} );
 		} );
