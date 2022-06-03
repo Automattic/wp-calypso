@@ -70,8 +70,8 @@ export const siteSetupFlow: Flow = {
 		const adminUrl = useSelect(
 			( select ) => site && select( SITE_STORE ).getSiteOption( site.ID, 'admin_url' )
 		);
-		const isAtomic = useSelect( ( select ) =>
-			select( SITE_STORE ).isSiteAtomic( site?.ID as number )
+		const isAtomic = useSelect(
+			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 		const { setPendingAction, setStepProgress } = useDispatch( ONBOARD_STORE );
