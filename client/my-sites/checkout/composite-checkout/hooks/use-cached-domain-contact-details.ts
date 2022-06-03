@@ -53,7 +53,14 @@ function useCachedContactDetailsForCheckoutForm(
 			'useCachedContactDetailsForCheckoutForm must be run after the checkout data store has been initialized'
 		);
 	}
-	const { loadDomainContactDetailsFromCache } = checkoutStoreActions;
+	// NOTE: the types for @wordpress/data actions imply that actions return void
+	// but they actually return Promise< void > so I override this type here
+	// until the actual types can be fixed.
+	const { loadDomainContactDetailsFromCache } = checkoutStoreActions as {
+		loadDomainContactDetailsFromCache: (
+			info: PossiblyCompleteDomainContactDetails
+		) => Promise< void >;
+	};
 
 	// When we have fetched or loaded contact details, send them to the
 	// `wpcom-checkout` data store for use by the checkout contact form.
