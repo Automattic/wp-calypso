@@ -35,17 +35,19 @@ const PlanTitle = styled.h2`
 	}
 `;
 
-const PlanDescription = styled.p`
+const PlanDescription = styled.div`
 	font-size: 1rem;
 	font-weight: 400;
 	margin: 0 0 1.5rem;
 
 	ul {
+		font-size: 0.875rem;
 		margin-left: 1rem;
 	}
 
 	p {
 		font-weight: 500;
+		margin-bottom: 0.75rem;
 	}
 
 	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
