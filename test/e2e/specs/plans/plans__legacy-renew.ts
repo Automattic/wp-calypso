@@ -9,12 +9,13 @@ import {
 	IndividualPurchasePage,
 	CartCheckoutPage,
 	TestAccount,
+	NoticeComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () {
+describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Renew' ), function () {
 	const planTier = 'Personal';
 	const planName = `WordPress.com ${ planTier }`;
 	let page: Page;
@@ -44,19 +45,18 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Upgrade' ), function () 
 			await plansPage.validateActivePlan( planTier );
 		} );
 
-		it( 'Click on the Plans tab', async function () {
-			await plansPage.clickTab( 'Plans' );
+		it( 'Legacy plan notice is shown', async function () {
+			const noticeComponent = new NoticeComponent( page );
+			const message = `You’re currently on a legacy plan. If you’d like to learn about your eligibility to switch to a Pro plan please contact support.`;
+			await noticeComponent.noticeShown( message );
 		} );
 	} );
 
 	describe( 'Renew Plan', function () {
-		it( `Manage ${ planName } plan`, async function () {
-			// This navigation also validates that we correctly identify the active plan in the Plans table.
-			// The button text won't be correct if Premium isn't the active plan.
-			await plansPage.clickPlanActionButton( { plan: planTier, buttonText: 'Manage plan' } );
-		} );
-
 		it( `Details of purchased plan ${ planTier } are shown`, async function () {
+			const plansPage = new PlansPage( page, 'legacy' );
+			await plansPage.clickManagePlan();
+
 			individualPurchasesPage = new IndividualPurchasePage( page );
 			await individualPurchasesPage.validatePurchaseTitle( planName );
 		} );
