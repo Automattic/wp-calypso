@@ -70,6 +70,7 @@ const getTitanClickHandler = ( app ) => {
  * Returns the available menu items for Titan Emails
  *
  * @param {Object} titanMenuParams The argument for this function.
+ * @param {import('calypso/lib/domains/types').ResponseDomain} titanMenuParams.domain The domain object.
  * @param {Object} titanMenuParams.mailbox The mailbox object.
  * @param {Function} titanMenuParams.showRemoveMailboxDialog The function that removes modal dialogs for confirming mailbox removals
  * @param {string} titanMenuParams.titanAppsUrlPrefix The URL prefix for Titan Apps
@@ -77,6 +78,7 @@ const getTitanClickHandler = ( app ) => {
  * @returns Array of menu items
  */
 const getTitanMenuItems = ( {
+	domain,
 	mailbox,
 	showRemoveMailboxDialog,
 	titanAppsUrlPrefix,
@@ -112,20 +114,24 @@ const getTitanMenuItems = ( {
 			} ),
 			onClick: getTitanClickHandler( 'contacts' ),
 		},
-		{
-			isInternalLink: true,
-			materialIcon: 'delete',
-			onClick: () => {
-				showRemoveMailboxDialog?.();
+		...( domain.currentUserCanAddEmail
+			? [
+					{
+						isInternalLink: true,
+						materialIcon: 'delete',
+						onClick: () => {
+							showRemoveMailboxDialog?.();
 
-				recordTracksEvent( 'calypso_email_management_titan_remove_mailbox_click', {
-					domain_name: mailbox.domain,
-					mailbox: mailbox.mailbox,
-				} );
-			},
-			key: `remove_mailbox:${ mailbox.mailbox }`,
-			title: translate( 'Remove mailbox' ),
-		},
+							recordTracksEvent( 'calypso_email_management_titan_remove_mailbox_click', {
+								domain_name: mailbox.domain,
+								mailbox: mailbox.mailbox,
+							} );
+						},
+						key: `remove_mailbox:${ mailbox.mailbox }`,
+						title: translate( 'Remove mailbox' ),
+					},
+			  ]
+			: [] ),
 	];
 };
 
@@ -399,6 +405,7 @@ const EmailMailboxActionMenu = ( { account, domain, mailbox } ) => {
 	const getMenuItems = () => {
 		if ( domainHasTitanMailWithUs ) {
 			return getTitanMenuItems( {
+				domain,
 				mailbox,
 				showRemoveMailboxDialog: () => setRemoveTitanMailboxDialogVisible( true ),
 				titanAppsUrlPrefix,

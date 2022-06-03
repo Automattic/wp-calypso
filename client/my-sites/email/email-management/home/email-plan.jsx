@@ -93,7 +93,8 @@ function EmailPlan( { domain, selectedSite, source } ) {
 
 	const canAddMailboxes =
 		( getGSuiteProductSlug( domain ) || getTitanProductSlug( domain ) ) &&
-		getGSuiteSubscriptionStatus( domain ) !== 'suspended';
+		getGSuiteSubscriptionStatus( domain ) !== 'suspended' &&
+		domain.currentUserCanAddEmail;
 	const hasSubscription = hasEmailSubscription( domain );
 
 	const handleBack = () => {

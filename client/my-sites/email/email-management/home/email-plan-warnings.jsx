@@ -70,19 +70,32 @@ class EmailPlanWarnings extends Component {
 	}
 
 	render() {
-		const { warning } = this.props;
-		if ( ! warning ) {
+		const { domain, translate, warning } = this.props;
+
+		if ( ! warning && domain.currentUserCanAddEmail ) {
 			return null;
 		}
 
 		return (
 			<div className="email-plan-warnings__container">
-				<div className="email-plan-warnings__warning">
-					<div className="email-plan-warnings__message">
-						<span>{ warning.message }</span>
+				{ ! domain.currentUserCanAddEmail && (
+					<div className="email-plan-warnings__warning">
+						<div className="email-plan-warnings__message">
+							<span>
+								{ translate( 'Only the email subscription owner can add or remove mailboxes.' ) }
+							</span>
+						</div>
 					</div>
-					<div className="email-plan-warnings__cta">{ this.renderCTA() }</div>
-				</div>
+				) }
+
+				{ warning && (
+					<div className="email-plan-warnings__warning">
+						<div className="email-plan-warnings__message">
+							<span>{ warning.message }</span>
+						</div>
+						<div className="email-plan-warnings__cta">{ this.renderCTA() }</div>
+					</div>
+				) }
 			</div>
 		);
 	}
