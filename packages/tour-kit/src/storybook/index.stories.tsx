@@ -13,6 +13,9 @@ const References = () => {
 				</div>
 				<div className={ 'storybook__tourkit-references-b' }>
 					<p>Reference B</p>
+					<div style={ { display: 'grid', placeItems: 'center' } }>
+						<input style={ { margin: 'auto', display: 'block' } }></input>
+					</div>
 				</div>
 				<div className={ 'storybook__tourkit-references-c' }>
 					<p>Reference C</p>
@@ -129,6 +132,13 @@ const StoryTour = ( { options = {} }: { options?: Config[ 'options' ] } ) => {
 export const Default = () => <StoryTour />;
 export const Overlay = () => <StoryTour options={ { effects: { overlay: true } } } />;
 export const Spotlight = () => <StoryTour options={ { effects: { spotlight: {} } } } />;
+export const SpotlightInteractivity = () => (
+	<StoryTour
+		options={ {
+			effects: { spotlight: { interactivity: { rootElementSelector: '#root', enabled: true } } },
+		} }
+	/>
+);
 export const AutoScroll = () => (
 	<>
 		<div style={ { height: '10vh' } }></div>

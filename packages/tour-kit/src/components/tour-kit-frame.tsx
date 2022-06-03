@@ -222,7 +222,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				{ showSpotlight() && (
 					<Spotlight
 						referenceElement={ referenceElement }
-						styles={ config.options?.effects?.spotlight?.styles }
+						{ ...( config.options?.effects?.spotlight || {} ) }
 					/>
 				) }
 				<div
