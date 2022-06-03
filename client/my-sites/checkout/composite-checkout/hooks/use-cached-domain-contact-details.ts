@@ -84,8 +84,10 @@ function useCachedContactDetailsForCheckoutForm(
 				debug( 'Contact details are populated; attempting to skip to payment method step' );
 				return setStepCompleteStatus( 'contact-form' );
 			} )
-			.then( () => {
-				reduxDispatch( recordTracksEvent( 'calypso_checkout_skip_to_last_step' ) );
+			.then( ( didSkip: boolean ) => {
+				if ( didSkip ) {
+					reduxDispatch( recordTracksEvent( 'calypso_checkout_skip_to_last_step' ) );
+				}
 			} );
 	}, [
 		reduxDispatch,
