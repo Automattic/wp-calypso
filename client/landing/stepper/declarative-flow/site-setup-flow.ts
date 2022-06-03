@@ -64,15 +64,21 @@ export const siteSetupFlow: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
-		const siteSlug = useSiteSlugParam();
-		const siteId = useSelect(
-			( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug )
-		);
+		const siteSlugParam = useSiteSlugParam();
+		const site = useSite();
+
+		let siteSlug: string | null = null;
+		if ( siteSlugParam ) {
+			siteSlug = siteSlugParam;
+		} else if ( site ) {
+			siteSlug = new URL( site.URL ).host;
+		}
+
 		const adminUrl = useSelect(
-			( select ) => siteSlug && select( SITE_STORE ).getSiteOption( siteId as number, 'admin_url' )
+			( select ) => site && select( SITE_STORE ).getSiteOption( site.ID, 'admin_url' )
 		);
-		const isAtomic = useSelect( ( select ) =>
-			select( SITE_STORE ).isSiteAtomic( siteId as number )
+		const isAtomic = useSelect(
+			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 		const { setPendingAction, setStepProgress } = useDispatch( ONBOARD_STORE );
