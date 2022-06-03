@@ -483,6 +483,9 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 			? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
 			: `/plans/${ selectedSiteSlug || '' }`;
 
+	const featureSliceStart = 'treatment' === experimentAssignment?.variationName ? 0 : 3;
+	const featureSliceDefaultLength = 'treatment' === experimentAssignment?.variationName ? 12 : 8;
+
 	return (
 		<>
 			<Global styles={ globalOverrides } />
@@ -539,10 +542,6 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 											</div>
 											<div>
 												<Gridicon icon="checkmark" />
-												Automatic WordPress updates.
-											</div>
-											<div>
-												<Gridicon icon="checkmark" />
 												Flexible upgrade options.
 											</div>
 										</PlansHighlightFeatures>
@@ -569,10 +568,6 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 											<Gridicon icon="checkmark" />
 											Premium live chat support.
 										</div>
-										<div>
-											<Gridicon icon="checkmark" />
-											SFTP and database access for devs.
-										</div>
 									</PlansHighlightFeatures>
 								) }
 							</PlansComparisonColHeader>
@@ -588,18 +583,20 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 					</ComparisonHeader>
 				) } */ }
 				<PlansComparisonRows>
-					{ planComparisonFeatures.slice( 0, 8 ).map( ( feature ) => (
-						<PlansComparisonRow
-							feature={ feature }
-							plans={ plans }
-							isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
-							key={ feature.features[ 0 ] }
-							isExperiment={ 'treatment' === experimentAssignment?.variationName }
-						/>
-					) ) }
+					{ planComparisonFeatures
+						.slice( featureSliceStart, featureSliceDefaultLength )
+						.map( ( feature ) => (
+							<PlansComparisonRow
+								feature={ feature }
+								plans={ plans }
+								isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
+								key={ feature.features[ 0 ] }
+								isExperiment={ 'treatment' === experimentAssignment?.variationName }
+							/>
+						) ) }
 				</PlansComparisonRows>
 				<PlansComparisonCollapsibleRows collapsed={ showCollapsibleRows }>
-					{ planComparisonFeatures.slice( 8 ).map( ( feature ) => (
+					{ planComparisonFeatures.slice( featureSliceDefaultLength ).map( ( feature ) => (
 						<PlansComparisonRow
 							feature={ feature }
 							plans={ plans }

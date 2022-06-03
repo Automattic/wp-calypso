@@ -205,6 +205,7 @@ import {
 	WPCOM_FEATURES_SCAN,
 	WPCOM_FEATURES_ANTISPAM,
 	WPCOM_FEATURES_BACKUPS,
+	FEATURE_MANAGED_HOSTING,
 } from './constants';
 import type {
 	BillingTerm,
@@ -1637,15 +1638,9 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 	getSubTitle: () => i18n.translate( 'Essential features. Freedom to grow.' ),
 	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
 	getPlanCompareFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_UNLIMITED_ADMINS,
-		FEATURE_6GB_STORAGE,
-		FEATURE_GOOGLE_ANALYTICS,
-		FEATURE_PAYMENT_BLOCKS,
-		FEATURE_TITAN_EMAIL,
-	],
-	getPlanCompareFeaturesTest: () => [
 		FEATURE_UNLIMITED_TRAFFIC,
+		FEATURE_MANAGED_HOSTING,
+		FEATURE_FREE_THEMES,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_ADMINS,
 		FEATURE_6GB_STORAGE,
@@ -1683,6 +1678,9 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 	getSubTitle: () => i18n.translate( 'Unlimited features. Unbeatable value.' ),
 	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
 	getPlanCompareFeatures: () => [
+		FEATURE_UNLIMITED_TRAFFIC,
+		FEATURE_MANAGED_HOSTING,
+		FEATURE_FREE_THEMES,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_PREMIUM_THEMES,
 		FEATURE_INSTALL_PLUGINS,
