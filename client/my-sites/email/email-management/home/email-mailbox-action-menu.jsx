@@ -449,7 +449,7 @@ const EmailMailboxActionMenu = ( { account, domain, mailbox } ) => {
 					successful={ emailForwardRemovalStatus === 'success' }
 				/>
 			) }
-			<EllipsisMenu position="bottom" className="email-mailbox-action-menu__main">
+			<EllipsisMenu position="bottom left" className="email-mailbox-action-menu__main">
 				{ menuItems.map(
 					( {
 						href,
