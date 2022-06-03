@@ -153,11 +153,7 @@ class MeSidebar extends Component {
 						/>
 					</SidebarMenu>
 				</SidebarRegion>
-				<CollapseSidebar
-					key="collapse"
-					title={ translate( 'Collapse menu' ) }
-					icon="dashicons-admin-collapse"
-				/>
+				<CollapseSidebar title={ translate( 'Collapse menu' ) } icon="dashicons-admin-collapse" />
 				<SidebarFooter />
 			</Sidebar>
 		);
