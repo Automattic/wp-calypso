@@ -1,3 +1,4 @@
+import { addQueryArgs } from 'calypso/lib/url';
 import { SITE_LAUNCH } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/launch';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
@@ -35,5 +36,5 @@ export const launchSiteOrRedirectToLaunchSignupFlow =
 		const siteSlug = getSiteSlug( getState(), siteId );
 
 		// TODO: consider using the `page` library instead of calling using `location.href` here
-		window.location.href = `/start/launch-site?siteSlug=${ siteSlug }&source=${ source }`;
+		window.location.href = addQueryArgs( { siteSlug, source }, '/start/launch-site' );
 	};
