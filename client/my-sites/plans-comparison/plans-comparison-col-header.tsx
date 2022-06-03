@@ -1,3 +1,4 @@
+import { TYPE_PRO, TYPE_STARTER } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
@@ -39,6 +40,14 @@ const PlanDescription = styled.p`
 	font-weight: 400;
 	margin: 0 0 1.5rem;
 
+	ul {
+		margin-left: 1rem;
+	}
+
+	p {
+		font-weight: 500;
+	}
+
 	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
 		.is-section-signup & {
 			display: none;
@@ -50,10 +59,6 @@ const PlanDescription = styled.p`
 			display: none;
 		}
 	}
-`;
-
-const PlanSubTitle = styled( PlanDescription )`
-	font-weight: 600;
 `;
 
 const PriceContainer = styled.div`
@@ -89,8 +94,34 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 	return (
 		<th scope="col">
 			<PlanTitle>{ plan.getTitle() }</PlanTitle>
-			{ isExperiment && <PlanSubTitle>{ plan.getSubTitle() }</PlanSubTitle> }
-			<PlanDescription>{ plan.getDescription() }</PlanDescription>
+
+			<PlanDescription>
+				{ plan.type === TYPE_STARTER && isExperiment && (
+					<>
+						<p>Great for blogs and simple sites:</p>
+						<ul>
+							<li>Custom website address.</li>
+							<li> Collect payments and donations.</li>
+							<li>6GB of storage for images.</li>
+							<li>Flexible upgrade options.</li>
+						</ul>
+					</>
+				) }
+
+				{ plan.type === TYPE_PRO && isExperiment && (
+					<>
+						<p>Great for business and custom sites:</p>
+						<ul>
+							<li>Unlock 50k+ plugins and themes.</li>
+							<li> Advanced ecommerce tools.</li>
+							<li>50GB of media storage.</li>
+							<li>Premium live chat support.</li>
+						</ul>
+					</>
+				) }
+
+				{ ! isExperiment && plan.getDescription() }
+			</PlanDescription>
 			<PriceContainer>
 				{ isDiscounted && (
 					<>

@@ -405,28 +405,6 @@ const PlansComparisonToggle = styled.tbody`
 	}
 `;
 
-const PlansHighlightFeatures = styled.div`
-	font-size: 1rem;
-	font-weight: 400;
-	margin: 1.5rem 0 1rem;
-
-	.gridicon.gridicon {
-		width: 1.1em;
-		height: 1.1em;
-
-		html[dir='ltr'] & {
-			margin: 0 5px -2px 0;
-		}
-		html[dir='rtl'] & {
-			margin: 0 0 -2px 5px;
-		}
-	}
-
-	.gridicons-checkmark {
-		fill: var( --studio-green-50 );
-	}
-`;
-
 interface Props {
 	isInSignup?: boolean;
 	selectedSiteId?: number;
@@ -522,54 +500,6 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 									}
 									onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
 								/>
-								{ plan.type === TYPE_STARTER &&
-									'treatment' === experimentAssignment?.variationName && (
-										<PlansHighlightFeatures>
-											<p>
-												<b>Great for bloggers and simple sites:</b>
-											</p>
-											<div>
-												<Gridicon icon="checkmark" />
-												Custom website address.
-											</div>
-											<div>
-												<Gridicon icon="checkmark" />
-												Collect payments and donations.
-											</div>
-											<div>
-												<Gridicon icon="checkmark" />
-												6GB of storage for images.
-											</div>
-											<div>
-												<Gridicon icon="checkmark" />
-												Flexible upgrade options.
-											</div>
-										</PlansHighlightFeatures>
-									) }
-
-								{ plan.type === TYPE_PRO && 'treatment' === experimentAssignment?.variationName && (
-									<PlansHighlightFeatures>
-										<p>
-											<b>Great for pros and interactive sites:</b>
-										</p>
-										<div>
-											<Gridicon icon="checkmark" />
-											Unlock 50k+ plugins and themes.
-										</div>
-										<div>
-											<Gridicon icon="checkmark" />
-											Advanced ecommerce tools.
-										</div>
-										<div>
-											<Gridicon icon="checkmark" />
-											50GB of media storage.
-										</div>
-										<div>
-											<Gridicon icon="checkmark" />
-											Premium live chat support.
-										</div>
-									</PlansHighlightFeatures>
-								) }
 							</PlansComparisonColHeader>
 						) ) }
 					</tr>

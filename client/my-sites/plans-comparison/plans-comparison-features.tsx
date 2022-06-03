@@ -102,7 +102,9 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			return translate( 'Unlimited Traffic' );
 		},
 		get description() {
-			return translate( 'Unlimited traffic description' );
+			return translate(
+				'All WordPress.com plans include unlimited traffic, so you never have to worry about surprise charges.'
+			);
 		},
 		features: [ FEATURE_UNLIMITED_TRAFFIC ],
 		getCellText: ( feature, isMobile = false ) => {
@@ -577,14 +579,14 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 					{ translate( 'Included' ) }
 				</>
 			) : (
-				<>{ translate( 'Available for $2/month' ) }</>
+				<>{ translate( 'Available for +$2/month' ) }</>
 			);
 			if ( isMobile ) {
 				cellText = feature ? (
 					<>{ translate( 'Remove ads is included' ) }</>
 				) : (
 					<>
-						{ translate( 'Remove ads for $2 per month', {
+						{ translate( 'Remove ads for +$2 per month', {
 							components: { strong: <strong /> },
 						} ) }
 					</>
