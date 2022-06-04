@@ -82,16 +82,24 @@ const TestComponent = ( { selectedDomainName }: TestComponentProps ): JSX.Elemen
 		} );
 	};
 
+	const areAllMailboxesValid = ( mailboxes: MailboxForm< EmailProvider >[] ): boolean => {
+		return mailboxes.every( ( mailbox ) => mailbox.isValid() );
+	};
+
 	const onSubmit = async ( mailboxes: MailboxForm< EmailProvider >[] ) => {
 		mailboxes.forEach( ( mailbox ) => {
 			mailbox.validate( true );
 		} );
 
-		const allMailboxesAreValid = mailboxes.every( ( mailbox ) => mailbox.isValid() );
+		if ( ! areAllMailboxesValid( mailboxes ) ) {
+			return;
+		}
+
+		await Promise.all( mailboxes.map( ( mailbox ) => mailbox.validateOnDemand() ) );
 
 		const cartItems = getCartItems( mailboxes );
 
-		if ( ! allMailboxesAreValid || ! cartItems ) {
+		if ( ! areAllMailboxesValid( mailboxes ) || ! cartItems ) {
 			return;
 		}
 
