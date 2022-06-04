@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import nock from 'nock';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import {
 	FIELD_ALTERNATIVE_EMAIL,
@@ -16,6 +17,7 @@ import {
 	AlternateEmailValidator,
 	ExistingMailboxNamesValidator,
 	MailboxNameValidator,
+	MailboxNameValidityValidator,
 	MaximumStringLengthValidator,
 	PasswordValidator,
 	RequiredValidator,
@@ -301,8 +303,7 @@ describe( 'Mailbox form validation', () => {
 						fieldValue = fieldValue.value;
 					}
 
-					const field = Reflect.get( mailboxForm.formFields, key );
-					Reflect.set( field, 'value', fieldValue );
+					mailboxForm.setFieldValue( key as FormFieldNames, fieldValue );
 				}
 			} );
 
@@ -313,8 +314,9 @@ describe( 'Mailbox form validation', () => {
 					return;
 				}
 
-				const field = Reflect.get( mailboxForm.formFields, key );
-				expect( field.error ).toEqual( expectedFieldErrorMap[ key ] );
+				expect( mailboxForm.getFieldError( key as FormFieldNames ) ).toEqual(
+					expectedFieldErrorMap[ key ]
+				);
 			} );
 
 			const fieldErrorMap = Object.fromEntries(
@@ -325,6 +327,100 @@ describe( 'Mailbox form validation', () => {
 
 			expect( fieldErrorMap ).toStrictEqual( expectedFieldErrorMap );
 			expect( mailboxForm.hasErrors() ).toBe( Object.keys( expectedFieldErrorMap ).length > 0 );
+		}
+	);
+} );
+
+describe( 'Mailbox on demand form validation', () => {
+	const finalTestDataForOnDemandCases = [
+		provideGoogleTestData(
+			'Availability tests for not-existing mailbox names should pass for Google',
+			createTestDataForTitan( {
+				[ FIELD_MAILBOX ]: 'not-existing',
+			} ),
+			{
+				[ FIELD_MAILBOX ]: null,
+			}
+		),
+		provideGoogleTestData(
+			'Availability tests for existing mailbox names should pass for Google',
+			createTestDataForTitan( {
+				[ FIELD_MAILBOX ]: 'existing',
+			} ),
+			{
+				[ FIELD_MAILBOX ]: null,
+			}
+		),
+		provideTitanTestData(
+			'Availability tests for not-existing mailbox names should pass for Titan',
+			createTestDataForTitan( {
+				[ FIELD_MAILBOX ]: 'not-existing',
+			} ),
+			{
+				[ FIELD_MAILBOX ]: null,
+			}
+		),
+		provideTitanTestData(
+			'Availability tests for existing mailbox names should fail for Titan',
+			createTestDataForTitan( {
+				[ FIELD_MAILBOX ]: 'existing',
+			} ),
+			{
+				[ FIELD_MAILBOX ]: MailboxNameValidityValidator.getUnavailableMailboxError(
+					'existing',
+					'existing exists as email account'
+				),
+			}
+		),
+	];
+
+	beforeAll( () => {
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( `/wpcom/v2/emails/titan/existing/check-mailbox-availability/example.com` )
+			.reply( 409, { message: 'existing exists as email account' } )
+			.get( `/wpcom/v2/emails/titan/not-existing/check-mailbox-availability/example.com` )
+			.reply( 200, { message: 'OK' } );
+	} );
+
+	afterAll( () => {
+		nock.cleanAll();
+	} );
+
+	it.each( finalTestDataForOnDemandCases )(
+		'$title',
+		( { provider, fieldValueMap, expectedFieldErrorMap }, done ) => {
+			const mailboxForm = new MailboxForm( provider, 'example.com' );
+
+			Object.keys( fieldValueMap ).forEach( ( key ) => {
+				if ( Reflect.has( mailboxForm.formFields, key ) ) {
+					let fieldValue = fieldValueMap[ key ];
+
+					if ( fieldValue && typeof fieldValue === 'object' ) {
+						if ( ! fieldValue.value ) {
+							return;
+						}
+
+						fieldValue = fieldValue.value;
+					}
+
+					mailboxForm.setFieldValue( key as FormFieldNames, fieldValue );
+				}
+			} );
+
+			mailboxForm
+				.validateOnDemand()
+				.then( () => {
+					Object.keys( expectedFieldErrorMap ).forEach( ( key ) => {
+						if ( ! Reflect.has( mailboxForm.formFields, key ) ) {
+							return;
+						}
+
+						expect( mailboxForm.getFieldError( key as FormFieldNames ) ).toEqual(
+							expectedFieldErrorMap[ key ]
+						);
+					} );
+				} )
+				.finally( () => ( done as unknown as () => void )() );
 		}
 	);
 } );

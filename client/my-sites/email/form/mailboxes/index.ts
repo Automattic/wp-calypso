@@ -19,6 +19,7 @@ import {
 	AlternateEmailValidator,
 	ExistingMailboxNamesValidator,
 	MailboxNameValidator,
+	MailboxNameValidityValidator,
 	MaximumStringLengthValidator,
 	PasswordValidator,
 	RequiredIfVisibleValidator,
@@ -73,6 +74,23 @@ class MailboxForm< T extends EmailProvider > {
 			[ FIELD_PASSWORD, new PasswordValidator( minimumPasswordLength ) ],
 			[ FIELD_UUID, new RequiredValidator< string >() ],
 		];
+	}
+
+	/**
+	 * On demand validators may be async i.e. making network calls, or may require a set of conditions to be fulfilled
+	 *
+	 * @private
+	 */
+	private getOnDemandValidators(): Record< string, [ ValidatorFieldNames, Validator< unknown > ] > {
+		const domainField = this.getFormField< string >( FIELD_DOMAIN );
+		const domainName = domainField?.value ?? '';
+
+		return {
+			[ MailboxNameValidityValidator.name ]: [
+				FIELD_MAILBOX,
+				new MailboxNameValidityValidator( domainName, this.provider ),
+			],
+		};
 	}
 
 	clearErrors() {
@@ -196,6 +214,29 @@ class MailboxForm< T extends EmailProvider > {
 		this.getValidators()
 			.filter( ( [ currentFieldName, validator ] ) => currentFieldName === fieldName && validator )
 			.forEach( ( [ , validator ] ) => validator.validate( field ) );
+	}
+
+	async validateOnDemand() {
+		this.clearErrors();
+
+		for ( const [ fieldName, validator ] of Object.values( this.getOnDemandValidators() ) ) {
+			if ( ! fieldName || ! validator ) {
+				continue;
+			}
+
+			const field = this.getFormField( fieldName );
+			if ( ! field || field.error ) {
+				continue;
+			}
+
+			const isAsync = validator.validate.constructor.name === 'AsyncFunction';
+			if ( ! isAsync ) {
+				validator.validate( field );
+				return;
+			}
+
+			await validator.validate( field );
+		}
 	}
 }
 
