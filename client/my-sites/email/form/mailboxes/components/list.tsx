@@ -12,6 +12,7 @@ import {
 	FIELD_MAILBOX,
 	FIELD_NAME,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
+import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/mailbox-operations';
 import {
 	EmailProvider,
 	MailboxFormFieldBase,
@@ -23,7 +24,7 @@ import './style.scss';
 interface MailboxListProps {
 	hiddenFieldNames?: MutableFormFieldNames[];
 	onCancel?: () => void;
-	onSubmit: ( mailboxes: MailboxForm< EmailProvider >[] ) => void;
+	onSubmit: ( mailboxOperations: MailboxOperations ) => void;
 	provider: EmailProvider;
 	selectedDomainName: string;
 	showAddNewMailboxButton?: boolean;
@@ -67,14 +68,14 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 
 	const handleCancel = () => onCancel();
 
-	const persistMailboxes = () => {
+	const persistMailboxesToState = () => {
 		setMailboxes( [ ...mailboxes ] );
 	};
 
 	const handleSubmit = () => {
 		mailboxes.forEach( ( mailbox ) => mailbox.validate( true ) );
-		setMailboxes( [ ...mailboxes ] );
-		onSubmit( mailboxes, persistMailboxes );
+		persistMailboxesToState();
+		onSubmit( new MailboxOperations( mailboxes, persistMailboxesToState ) );
 	};
 
 	return (

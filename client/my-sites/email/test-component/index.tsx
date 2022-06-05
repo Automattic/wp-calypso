@@ -23,6 +23,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/list';
+import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/mailbox-operations';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -82,26 +83,20 @@ const TestComponent = ( { selectedDomainName }: TestComponentProps ): JSX.Elemen
 		} );
 	};
 
-	const areAllMailboxesValid = ( mailboxes: MailboxForm< EmailProvider >[] ): boolean => {
-		return mailboxes.every( ( mailbox ) => mailbox.isValid() );
-	};
+	const onSubmit = async ( mailboxOperations: MailboxOperations ) => {
+		mailboxOperations.validateAll();
 
-	const onSubmit = async ( mailboxes: MailboxForm< EmailProvider >[], persistMailboxes ) => {
-		mailboxes.forEach( ( mailbox ) => {
-			mailbox.validate( true );
-		} );
-
-		if ( ! areAllMailboxesValid( mailboxes ) ) {
+		if ( ! mailboxOperations.areAllValid() ) {
 			return;
 		}
 
-		await Promise.all( mailboxes.map( ( mailbox ) => mailbox.validateOnDemand() ) );
+		await mailboxOperations.validateOnDemand();
 
-		persistMailboxes();
+		mailboxOperations.persistMailboxesToState();
 
-		const cartItems = getCartItems( mailboxes );
+		const cartItems = getCartItems( mailboxOperations.mailboxes );
 
-		if ( ! areAllMailboxesValid( mailboxes ) || ! cartItems ) {
+		if ( ! mailboxOperations.areAllValid() || ! cartItems ) {
 			return;
 		}
 
