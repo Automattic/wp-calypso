@@ -1,13 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { PluginActivateToggle } from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import fixtures from './fixtures';
 
-jest.mock( 'calypso/my-sites/plugins/plugin-action/plugin-action', () =>
-	require( './mocks/plugin-action' )
-);
+jest.mock( 'calypso/my-sites/plugins/plugin-action/plugin-action', () => ( { action } ) => (
+	<input type="checkbox" onClick={ action } />
+) );
 
 describe( 'PluginActivateToggle', () => {
 	const mockedProps = {
@@ -18,25 +19,21 @@ describe( 'PluginActivateToggle', () => {
 		translate: jest.fn(),
 	};
 
-	test( 'should render the component', () => {
-		const wrapper = mount( <PluginActivateToggle { ...mockedProps } { ...fixtures } /> );
+	test( 'should register an event when the subcomponent action is executed', async () => {
+		render( <PluginActivateToggle { ...mockedProps } { ...fixtures } /> );
 
-		expect( wrapper.find( '.plugin-action' ) ).toHaveLength( 1 );
-	} );
-
-	test( 'should register an event when the subcomponent action is executed', () => {
-		const wrapper = mount( <PluginActivateToggle { ...mockedProps } { ...fixtures } /> );
-
-		wrapper.simulate( 'click' );
+		const box = screen.getByRole( 'checkbox' );
+		await userEvent.click( box );
 
 		expect( mockedProps.recordGoogleEvent ).toHaveBeenCalled();
 		expect( mockedProps.recordTracksEvent ).toHaveBeenCalled();
 	} );
 
-	test( 'should call an action when the subcomponent action is executed', () => {
-		const wrapper = mount( <PluginActivateToggle { ...mockedProps } { ...fixtures } /> );
+	test( 'should call an action when the subcomponent action is executed', async () => {
+		render( <PluginActivateToggle { ...mockedProps } { ...fixtures } /> );
 
-		wrapper.simulate( 'click' );
+		const box = screen.getByRole( 'checkbox' );
+		await userEvent.click( box );
 
 		expect( mockedProps.togglePluginActivation ).toHaveBeenCalled();
 	} );
