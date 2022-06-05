@@ -27784,12 +27784,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:wp-prettier@2.6.2-beta-1":
-  version: 2.6.2-beta-1
-  resolution: "wp-prettier@npm:2.6.2-beta-1"
+"prettier@npm:wp-prettier@2.6.2":
+  version: 2.6.2
+  resolution: "wp-prettier@npm:2.6.2"
   bin:
     prettier: bin-prettier.js
-  checksum: 5375d3f19a909715dbc52ca4ac2ded0a0ae4531cd64f99ebb76f2935ea969ee1e42a7d2ffece7b388797e136343b77c2c25f8cae752c2f28ba712454a1b24095
+  checksum: 49c3d980ec4311db4cba48b60a37e0fc3dbe0ca2d7e066cab37969b3d65bb28d0fad09d9ce0c07bc7eb7e0eab4d688cf83e47efe6ad6ba113d13a2e6cd9a5423
   languageName: node
   linkType: hard
 
@@ -35969,7 +35969,7 @@ swiper@4.5.1:
     postcss: ^8.4.5
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
-    prettier: "npm:wp-prettier@2.6.2-beta-1"
+    prettier: "npm:wp-prettier@2.6.2"
     react: ^17.0.2
     react-dom: ^17.0.2
     readline-sync: ^1.4.10
