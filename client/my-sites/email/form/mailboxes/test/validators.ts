@@ -376,9 +376,9 @@ describe( 'Mailbox on demand form validation', () => {
 
 	beforeAll( () => {
 		nock( 'https://public-api.wordpress.com:443' )
-			.get( `/wpcom/v2/emails/titan/existing/check-mailbox-availability/example.com` )
+			.get( `/wpcom/v2/emails/titan/example.com/check-mailbox-availability/existing` )
 			.reply( 409, { message: 'existing exists as email account' } )
-			.get( `/wpcom/v2/emails/titan/not-existing/check-mailbox-availability/example.com` )
+			.get( `/wpcom/v2/emails/titan/example.com/check-mailbox-availability/not-existing` )
 			.reply( 200, { message: 'OK' } );
 	} );
 
@@ -388,7 +388,7 @@ describe( 'Mailbox on demand form validation', () => {
 
 	it.each( finalTestDataForOnDemandCases )(
 		'$title',
-		( { provider, fieldValueMap, expectedFieldErrorMap }, done ) => {
+		async ( { provider, fieldValueMap, expectedFieldErrorMap } ) => {
 			const mailboxForm = new MailboxForm( provider, 'example.com' );
 
 			Object.keys( fieldValueMap ).forEach( ( key ) => {
@@ -407,20 +407,17 @@ describe( 'Mailbox on demand form validation', () => {
 				}
 			} );
 
-			mailboxForm
-				.validateOnDemand()
-				.then( () => {
-					Object.keys( expectedFieldErrorMap ).forEach( ( key ) => {
-						if ( ! Reflect.has( mailboxForm.formFields, key ) ) {
-							return;
-						}
+			await mailboxForm.validateOnDemand();
 
-						expect( mailboxForm.getFieldError( key as FormFieldNames ) ).toEqual(
-							expectedFieldErrorMap[ key ]
-						);
-					} );
-				} )
-				.finally( () => ( done as unknown as () => void )() );
+			Object.keys( expectedFieldErrorMap ).forEach( ( key ) => {
+				if ( ! Reflect.has( mailboxForm.formFields, key ) ) {
+					return;
+				}
+
+				expect( mailboxForm.getFieldError( key as FormFieldNames ) ).toEqual(
+					expectedFieldErrorMap[ key ]
+				);
+			} );
 		}
 	);
 } );

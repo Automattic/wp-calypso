@@ -67,10 +67,14 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 
 	const handleCancel = () => onCancel();
 
+	const persistMailboxes = () => {
+		setMailboxes( [ ...mailboxes ] );
+	};
+
 	const handleSubmit = () => {
 		mailboxes.forEach( ( mailbox ) => mailbox.validate( true ) );
 		setMailboxes( [ ...mailboxes ] );
-		onSubmit( mailboxes );
+		onSubmit( mailboxes, persistMailboxes );
 	};
 
 	return (

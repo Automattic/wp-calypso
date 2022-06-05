@@ -323,10 +323,10 @@ class MailboxNameValidityValidator extends BaseValidator< string > {
 		if ( ! field.value ) {
 			return;
 		}
-		window.console.log( [ 'XXX 1', field.value, this.domainName ] );
+
 		// Check that this mailbox name is available against the domain
 		const { message, status } = await checkMailboxAvailability( this.domainName, field.value );
-		window.console.log( [ 'XXX 2', { message, status } ] );
+
 		// If mailbox name is not available ...
 		if ( status !== 200 ) {
 			field.error = MailboxNameValidityValidator.getUnavailableMailboxError( field.value, message );

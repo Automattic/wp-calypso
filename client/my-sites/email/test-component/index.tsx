@@ -86,7 +86,7 @@ const TestComponent = ( { selectedDomainName }: TestComponentProps ): JSX.Elemen
 		return mailboxes.every( ( mailbox ) => mailbox.isValid() );
 	};
 
-	const onSubmit = async ( mailboxes: MailboxForm< EmailProvider >[] ) => {
+	const onSubmit = async ( mailboxes: MailboxForm< EmailProvider >[], persistMailboxes ) => {
 		mailboxes.forEach( ( mailbox ) => {
 			mailbox.validate( true );
 		} );
@@ -96,6 +96,8 @@ const TestComponent = ( { selectedDomainName }: TestComponentProps ): JSX.Elemen
 		}
 
 		await Promise.all( mailboxes.map( ( mailbox ) => mailbox.validateOnDemand() ) );
+
+		persistMailboxes();
 
 		const cartItems = getCartItems( mailboxes );
 

@@ -219,24 +219,17 @@ class MailboxForm< T extends EmailProvider > {
 	async validateOnDemand() {
 		this.clearErrors();
 
-		for ( const [ fieldName, validator ] of Object.values( this.getOnDemandValidators() ) ) {
-			if ( ! fieldName || ! validator ) {
-				continue;
-			}
+		const promises = Promise.all(
+			Object.values( this.getOnDemandValidators() )
+				.filter(
+					( [ fieldName, validator ] ) => fieldName && this.getFormField( fieldName ) && validator
+				)
+				.map( ( [ fieldName, validator ] ) =>
+					validator.validate( this.getFormField( fieldName as FormFieldNames ) )
+				)
+		);
 
-			const field = this.getFormField( fieldName );
-			if ( ! field || field.error ) {
-				continue;
-			}
-
-			const isAsync = validator.validate.constructor.name === 'AsyncFunction';
-			if ( ! isAsync ) {
-				validator.validate( field );
-				return;
-			}
-
-			await validator.validate( field );
-		}
+		await promises;
 	}
 }
 
