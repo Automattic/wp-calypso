@@ -25,10 +25,9 @@ describe( 'Theme', () => {
 
 	describe( 'rendering', () => {
 		describe( 'with default display buttonContents', () => {
-			test( 'should render a <div> with a className of "theme"', () => {
+			test( 'should render an element with a className of "theme"', () => {
 				const { container } = render( <Theme { ...props } /> );
 				expect( container.firstChild ).toHaveClass( 'theme', 'is-actionable' );
-				expect( container.firstChild.nodeName ).toBe( 'DIV' );
 				expect( container.getElementsByTagName( 'h2' )[ 0 ] ).toHaveTextContent(
 					'Twenty Seventeen'
 				);
@@ -91,11 +90,10 @@ describe( 'Theme', () => {
 	} );
 
 	describe( 'when isPlaceholder is set to true', () => {
-		test( 'should render a <div> with an is-placeholder class', () => {
+		test( 'should render an element with an is-placeholder class', () => {
 			const theme = { id: 'placeholder-1', name: 'Loading' };
 			const { container } = render( <Theme { ...props } theme={ theme } isPlaceholder /> );
 
-			expect( container.firstChild.nodeName ).toBe( 'DIV' );
 			expect( container.firstChild ).toHaveClass( 'is-placeholder' );
 		} );
 	} );
