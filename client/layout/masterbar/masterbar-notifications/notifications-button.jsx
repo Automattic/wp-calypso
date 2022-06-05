@@ -32,17 +32,16 @@ class MasterbarItemNotifications extends Component {
 		newNote: this.props.hasUnseenNotifications,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.isNotificationsOpen && nextProps.isNotificationsOpen ) {
-			nextProps.recordTracksEvent( 'calypso_notification_open', {
+	componentDidUpdate( prevProps ) {
+		if ( ! prevProps.isNotificationsOpen && this.props.isNotificationsOpen ) {
+			this.props.recordTracksEvent( 'calypso_notification_open', {
 				unread_notifications: store.get( 'wpnotes_unseen_count' ),
 			} );
 			this.setNotesIndicator( 0 );
 		}
 
 		// focus on main window if we just closed the notes panel
-		if ( this.props.isNotificationsOpen && ! nextProps.isNotificationsOpen ) {
+		if ( prevProps.isNotificationsOpen && ! this.props.isNotificationsOpen ) {
 			this.notificationLink.current.blur();
 			this.notificationPanel.current.blur();
 			window.focus();
