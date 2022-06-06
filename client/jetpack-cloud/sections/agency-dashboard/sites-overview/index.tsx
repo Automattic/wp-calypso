@@ -21,16 +21,21 @@ export default function SitesOverview(): ReactElement {
 
 	const { search, currentPage, filter } = useContext( SitesOverviewContext );
 
-	const { data, isError, isFetching } = useFetchDashboardSites(
+	const { data, isError, isFetching, refetch } = useFetchDashboardSites(
 		search,
 		currentPage,
-		filter,
-		jetpackSiteDisconnected
+		filter
 	);
 
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_visit' ) );
 	}, [ dispatch ] );
+
+	useEffect( () => {
+		if ( jetpackSiteDisconnected ) {
+			refetch();
+		}
+	}, [ refetch, jetpackSiteDisconnected ] );
 
 	const pageTitle = translate( 'Dashboard' );
 

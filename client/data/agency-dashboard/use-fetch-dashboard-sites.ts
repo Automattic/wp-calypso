@@ -17,21 +17,12 @@ const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) =>
 const useFetchDashboardSites = (
 	searchQuery: string,
 	currentPage: number,
-	filter: AgencyDashboardFilter,
-	jetpackSiteDisconnected: boolean
+	filter: AgencyDashboardFilter
 ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	return useQuery(
-		[
-			'jetpack-cloud',
-			'agency-dashboard',
-			'sites',
-			searchQuery,
-			currentPage,
-			filter,
-			jetpackSiteDisconnected,
-		],
+		[ 'jetpack-cloud', 'agency-dashboard', 'sites', searchQuery, currentPage, filter ],
 		() =>
 			wpcomJpl.req.get(
 				{
