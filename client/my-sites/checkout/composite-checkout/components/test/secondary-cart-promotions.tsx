@@ -106,6 +106,14 @@ describe( 'SecondaryCartPromotions', () => {
 		} );
 	} );
 
+	/**
+	 * TODO
+	 * The UpSell box is temporarily disabled, it will be reactivated with a new logic.
+	 * See the issue 708 at: https://github.com/Automattic/martech/issues/708
+	 */
+
+	// eslint-disable-next-line jest/no-commented-out-tests
+	/*
 	describe( 'CartFreeUserPlanUpsell', () => {
 		describe( 'when there is a domain in the cart for a site without a paid plan', () => {
 			test( 'displays the free user plan upsell component', () => {
@@ -143,4 +151,5 @@ describe( 'SecondaryCartPromotions', () => {
 			} );
 		} );
 	} );
+	*/
 } );
