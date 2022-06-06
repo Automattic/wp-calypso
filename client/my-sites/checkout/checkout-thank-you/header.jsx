@@ -27,7 +27,6 @@ import {
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
 import { emailManagementEdit } from 'calypso/my-sites/email/paths';
-import { downloadTrafficGuide } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -354,12 +353,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.open( getTitanEmailUrl( this.props.titanAppsUrlPrefix, '' ) );
 	};
 
-	downloadTrafficGuideHandler = ( event ) => {
-		event.preventDefault();
-
-		downloadTrafficGuide();
-	};
-
 	startTransfer = ( event ) => {
 		event.preventDefault();
 
@@ -555,8 +548,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 			clickHandler = this.visitScheduler;
 		} else if ( this.isSingleDomainPurchase() ) {
 			clickHandler = this.visitDomain;
-		} else if ( isTrafficGuidePurchase ) {
-			clickHandler = this.downloadTrafficGuideHandler;
 		} else if ( isTitanMail( primaryPurchase ) ) {
 			clickHandler = this.visitTitanWebmail;
 		}

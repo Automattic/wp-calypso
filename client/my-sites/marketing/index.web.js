@@ -11,7 +11,6 @@ import {
 	redirectSharingButtons,
 	sharingButtons,
 	traffic,
-	ultimateTrafficGuide,
 } from './controller';
 
 export default function ( router ) {
@@ -21,7 +20,6 @@ export default function ( router ) {
 		'/marketing/sharing-buttons',
 		'/marketing/tools',
 		'/marketing/traffic',
-		'/marketing/ultimate-traffic-guide',
 		'/sharing',
 		'/sharing/buttons',
 		'/marketing/business-tools',
@@ -83,17 +81,6 @@ export default function ( router ) {
 		siteSelection,
 		navigation,
 		marketingBusinessTools,
-		layout,
-		makeLayout,
-		clientRender
-	);
-
-	router(
-		'/marketing/ultimate-traffic-guide/:domain',
-		siteSelection,
-		sites,
-		navigation,
-		ultimateTrafficGuide,
 		layout,
 		makeLayout,
 		clientRender
