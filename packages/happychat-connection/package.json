@@ -40,6 +40,5 @@
 	},
 	"peerDependencies": {
 		"react": "^17.0.2"
-	},
-	"private": true
+	}
 }
