@@ -76,10 +76,6 @@ export function emailManagementAddGSuiteUsers(
 	return '/email/' + productType + '/add-users/' + siteName;
 }
 
-export function emailManagementTestComponent( siteName, domain ) {
-	return '/email/test-component/' + siteName + '/' + domain;
-}
-
 export function emailManagementManageTitanAccount(
 	siteName,
 	domainName,

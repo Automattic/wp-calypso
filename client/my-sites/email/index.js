@@ -44,14 +44,6 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		paths.emailManagementTestComponent( ':site', ':domain' ),
-		...commonHandlers,
-		controller.emailManagementTestComponent,
-		makeLayout,
-		clientRender
-	);
-
 	registerMultiPage( {
 		paths: [
 			paths.emailManagement( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
