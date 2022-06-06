@@ -1,40 +1,26 @@
-import { Button } from '@automattic/components';
-import { translate, useRtl } from 'i18n-calypso';
-import { useState } from 'react';
+import { useRtl } from 'i18n-calypso';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { MailboxField } from 'calypso/my-sites/email/form/mailboxes/components/field';
 import {
 	EmailProvider,
-	FormFieldNames,
 	GoogleMailboxFormFields,
 	MailboxFormFieldBase,
 	TitanMailboxFormFields,
 } from 'calypso/my-sites/email/form/mailboxes/types';
 
 interface MailboxFormWrapperProps {
-	onSubmit: ( mailbox: MailboxForm< EmailProvider > ) => void;
-	provider: EmailProvider;
-	selectedDomainName: string;
+	mailbox: MailboxForm< EmailProvider >;
+	onFieldValueChanged?: ( field: MailboxFormFieldBase< string > ) => void;
 }
 
 const MailboxFormWrapper = ( {
 	children,
-	onSubmit,
-	provider,
-	selectedDomainName,
-}: MailboxFormWrapperProps & { children?: JSX.Element } ) => {
+	mailbox,
+	onFieldValueChanged = () => undefined,
+}: MailboxFormWrapperProps & {
+	children?: JSX.Element | false;
+} ): JSX.Element => {
 	const isRtl = useRtl();
-	const [ { mailbox }, setMailboxState ] = useState( {
-		mailbox: new MailboxForm< EmailProvider >( provider, selectedDomainName ),
-	} );
-
-	const renderedFields = new Set< string >();
-
-	const handleSubmit = () => {
-		renderedFields.forEach( ( fieldName ) => mailbox.validateField( fieldName as FormFieldNames ) );
-		setMailboxState( { mailbox } );
-		onSubmit( mailbox );
-	};
 
 	const formFields = mailbox.formFields;
 	const domainAffix = {
@@ -42,9 +28,9 @@ const MailboxFormWrapper = ( {
 	};
 
 	const commonProps = ( field: MailboxFormFieldBase< string > ) => {
-		renderedFields.add( field.fieldName );
 		return {
 			field,
+			onFieldValueChanged,
 			onRequestFieldValidation: () => mailbox.validateField( field.fieldName ),
 		};
 	};
@@ -99,15 +85,11 @@ const MailboxFormWrapper = ( {
 
 	return (
 		<div>
-			<div className="form__fields">
-				{ provider === EmailProvider.Titan ? <TitanFormFields /> : <GoogleFormFields /> }
+			<div className="form__fields form__new-mailbox">
+				{ mailbox.provider === EmailProvider.Titan ? <TitanFormFields /> : <GoogleFormFields /> }
 			</div>
 
 			<div className="form__children">{ children }</div>
-
-			<Button className="form__button" primary onClick={ handleSubmit }>
-				{ translate( 'Complete setup' ) }
-			</Button>
 		</div>
 	);
 };

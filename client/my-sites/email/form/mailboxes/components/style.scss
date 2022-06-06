@@ -1,0 +1,92 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.list__main {
+	.form-fieldset {
+		.form-label {
+			margin-bottom: 0;
+
+			.form-text-input-with-affixes__suffix,
+			.form-text-input-with-affixes__prefix {
+				font-weight: normal;
+			}
+		}
+
+		.form-label > input[type=text],
+		.form-label > .form-text-input-with-affixes,
+		.form-label > .form-password-input {
+			margin-top: 5px;
+		}
+	}
+
+	.list__actions {
+		display: flex;
+		flex-direction: column-reverse;
+
+		@include break-mobile {
+			flex-direction: row;
+			justify-content: space-between;
+		}
+
+		> .button:not( :last-child ) {
+			margin-top: 1em;
+
+			@include break-mobile {
+				margin-top: 0;
+				margin-right: 1.5em;
+			}
+		}
+	}
+
+	.list__supplied-actions {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+
+		&.not-show-add-new-mailbox {
+			flex-direction: row-reverse;
+		}
+
+		@include break-mobile {
+			flex-direction: row;
+		}
+
+		> .button:not( :first-child ) {
+			margin-top: 1em;
+
+			@include break-mobile {
+				margin-top: 0;
+				margin-left: 1.5em;
+			}
+		}
+	}
+
+	.list__main-actions {
+		display: flex;
+		flex-direction: column;
+
+		button {
+			margin-top: 10px;
+		}
+
+		@include break-mobile {
+			flex-direction: row;
+
+			button {
+				margin-left: 10px;
+				margin-top: 0;
+			}
+		}
+	}
+}
+
+.list__numbered-heading.card-heading {
+	color: var( --color-text-subtle );
+	line-height: 2;
+	margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+.list__separator {
+	margin-top: 1.5em;
+}
