@@ -182,10 +182,10 @@ class ManagePurchase extends Component {
 	}
 
 	handleRenew = () => {
-		const { purchase, siteSlug, redirectTo, dispatch } = this.props;
+		const { purchase, siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
 
-		dispatch( handleRenewNowClick( purchase, siteSlug, options ) );
+		this.props.handleRenewNowClick( purchase, siteSlug, options );
 	};
 
 	handleRenewMonthly = () => {
@@ -208,9 +208,9 @@ class ManagePurchase extends Component {
 	};
 
 	handleRenewMultiplePurchases = ( purchases ) => {
-		const { siteSlug, redirectTo, dispatch } = this.props;
+		const { siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
-		dispatch( handleRenewMultiplePurchasesClick( purchases, siteSlug, options ) );
+		this.props.handleRenewMultiplePurchasesClick( purchases, siteSlug, options );
 	};
 
 	shouldShowNonPrimaryDomainWarning() {
@@ -981,51 +981,57 @@ function PurchasesQueryComponent( { isSiteLevel, selectedSiteId } ) {
 	return <QueryUserPurchases />;
 }
 
-export default connect( ( state, props ) => {
-	const purchase = getByPurchaseId( state, props.purchaseId );
-	const purchaseAttachedTo =
-		purchase && purchase.attachedToPurchaseId
-			? getByPurchaseId( state, purchase.attachedToPurchaseId )
-			: null;
-	const selectedSiteId = getSelectedSiteId( state );
-	const siteId = purchase?.siteId ?? null;
-	const purchases = purchase && getSitePurchases( state, purchase.siteId );
-	const userId = getCurrentUserId( state );
-	const isProductOwner = purchase && purchase.userId === userId;
-	const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
-	const isPurchasePlan = purchase && isPlan( purchase );
-	const isPurchaseTheme = purchase && isTheme( purchase );
-	const productsList = getProductsList( state );
-	const site = getSite( state, siteId );
-	const hasLoadedSites = ! isRequestingSites( state );
-	const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
-	const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug );
-	const relatedMonthlyPlanPrice = getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug );
-	return {
-		hasLoadedDomains,
-		hasLoadedSites,
-		hasLoadedPurchasesFromServer: props.isSiteLevel
-			? hasLoadedSitePurchasesFromServer( state )
-			: hasLoadedUserPurchasesFromServer( state ),
-		hasNonPrimaryDomainsFlag: getCurrentUser( state )
-			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
-			: false,
-		hasCustomPrimaryDomain: hasCustomDomain( site ),
-		productsList,
-		purchase,
-		purchases,
-		purchaseAttachedTo,
-		siteId,
-		selectedSiteId,
-		isProductOwner,
-		site,
-		renewableSitePurchases,
-		plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, undefined ),
-		isPurchaseTheme,
-		theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),
-		isAtomicSite: isSiteAtomic( state, siteId ),
-		relatedMonthlyPlanSlug,
-		relatedMonthlyPlanPrice,
-		isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
-	};
-} )( localize( ManagePurchase ) );
+export default connect(
+	( state, props ) => {
+		const purchase = getByPurchaseId( state, props.purchaseId );
+		const purchaseAttachedTo =
+			purchase && purchase.attachedToPurchaseId
+				? getByPurchaseId( state, purchase.attachedToPurchaseId )
+				: null;
+		const selectedSiteId = getSelectedSiteId( state );
+		const siteId = purchase?.siteId ?? null;
+		const purchases = purchase && getSitePurchases( state, purchase.siteId );
+		const userId = getCurrentUserId( state );
+		const isProductOwner = purchase && purchase.userId === userId;
+		const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
+		const isPurchasePlan = purchase && isPlan( purchase );
+		const isPurchaseTheme = purchase && isTheme( purchase );
+		const productsList = getProductsList( state );
+		const site = getSite( state, siteId );
+		const hasLoadedSites = ! isRequestingSites( state );
+		const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
+		const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug );
+		const relatedMonthlyPlanPrice = getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug );
+		return {
+			hasLoadedDomains,
+			hasLoadedSites,
+			hasLoadedPurchasesFromServer: props.isSiteLevel
+				? hasLoadedSitePurchasesFromServer( state )
+				: hasLoadedUserPurchasesFromServer( state ),
+			hasNonPrimaryDomainsFlag: getCurrentUser( state )
+				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+				: false,
+			hasCustomPrimaryDomain: hasCustomDomain( site ),
+			productsList,
+			purchase,
+			purchases,
+			purchaseAttachedTo,
+			siteId,
+			selectedSiteId,
+			isProductOwner,
+			site,
+			renewableSitePurchases,
+			plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, undefined ),
+			isPurchaseTheme,
+			theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),
+			isAtomicSite: isSiteAtomic( state, siteId ),
+			relatedMonthlyPlanSlug,
+			relatedMonthlyPlanPrice,
+			isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
+		};
+	},
+	{
+		handleRenewNowClick,
+		handleRenewMultiplePurchasesClick,
+	}
+)( localize( ManagePurchase ) );
