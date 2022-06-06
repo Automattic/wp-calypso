@@ -46,7 +46,7 @@ export default function getPlanFeatures(
 			freeOneYearDomain,
 			String( translate( 'Collect Payments' ) ),
 			String( translate( '6GB of Storage' ) ),
-			String( translate( 'Free professional e-mail for 3 months' ) ),
+			String( translate( 'Free Professional Email for 3 months' ) ),
 			String( translate( 'Track your stats with Google Analytics' ) ),
 		].filter( isValueTruthy );
 	}
@@ -72,7 +72,7 @@ export default function getPlanFeatures(
 			String( translate( 'Install custom plugins and themes' ) ),
 			String( translate( 'Sell products with WooCommerce' ) ),
 			String( translate( '50GB of Storage' ) ),
-			String( translate( 'Free professional e-mail for 3 months' ) ),
+			String( translate( 'Free Professional Email for 3 months' ) ),
 		].filter( isValueTruthy );
 	}
 
