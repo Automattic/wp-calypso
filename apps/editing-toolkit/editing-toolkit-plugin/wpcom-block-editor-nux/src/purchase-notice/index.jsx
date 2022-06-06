@@ -1,51 +1,34 @@
-import { Snackbar } from '@wordpress/components';
-import { createPortal, useRef } from '@wordpress/element';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
 import './style.scss';
 
 function PurchaseNotice() {
 	const [ hasPaymentNotice, setHasPaymentNotice ] = useState( false );
-	const portalParent = useRef( document.createElement( 'div' ) ).current;
+	const { createNotice } = useDispatch( noticesStore );
 
 	useEffect( () => {
 		const noticePattern = /[&?]notice=([\w_-]+)/;
 		const match = noticePattern.exec( document.location.search );
 		const notice = match && match[ 1 ];
-		if ( 'purchase-success' === notice ) {
+		if ( 'purchase-success' === notice && hasPaymentNotice === false ) {
 			setHasPaymentNotice( true );
+			createNotice(
+				'info',
+				__(
+					'Welcome to the pro plan! Premium blocks are now available to use.',
+					'full-site-editing'
+				),
+				{
+					isDismissible: true,
+					type: 'snackbar',
+				}
+			);
 		}
 	} );
 
-	useEffect( () => {
-		const portalParentElement = document.body;
-		portalParentElement.appendChild( portalParent );
-
-		return () => {
-			portalParentElement.removeChild( portalParent );
-		};
-	}, [ portalParent ] );
-
-	if ( ! hasPaymentNotice ) {
-		return null;
-	}
-	const actions = [
-		{
-			onClick: () => setHasPaymentNotice( false ),
-		},
-	];
-	const content = __(
-		'Welcome to the pro plan! Premium blocks are now available to use.',
-		'full-site-editing'
-	);
-	const snackbarContent = (
-		<div className="wpcom-block-editor-purchase-notice">
-			<Snackbar className="wpcom-block-editor-purchase-notice__snackbar" actions={ actions }>
-				{ content }
-			</Snackbar>
-		</div>
-	);
-	return <>{ createPortal( snackbarContent, portalParent ) }</>;
+	return null;
 }
 
 export default PurchaseNotice;
