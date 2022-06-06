@@ -75,7 +75,8 @@ function useCachedContactDetailsForCheckoutForm(
 		didFillForm.current = true;
 		// NOTE: the types for `@wordpress/data` actions imply that actions return
 		// `void` by default but they actually return `Promise<void>` so I override
-		// this type here until the actual types can be improved.
+		// this type here until the actual types can be improved. See
+		// https://github.com/DefinitelyTyped/DefinitelyTyped/pull/60693
 		loadDomainContactDetailsFromCache< Promise< void > >( {
 			...cachedContactDetails,
 			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode : '',
