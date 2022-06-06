@@ -40,7 +40,7 @@ const TestComponent = ( { selectedDomainName }: TestComponentProps ): JSX.Elemen
 
 	const [ state, setState ] = useState( { isValidating: false, isAddingToCart: false } );
 
-	const provider = EmailProvider.Google;
+	const provider = EmailProvider.Titan;
 	const mailProduct = useSelector( ( state ) =>
 		getMailProductForProvider( state, provider, selectedDomain )
 	);
