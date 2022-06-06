@@ -24,6 +24,7 @@ import {
 	getActivePersonalPlanDataForType,
 	createTestReduxStore,
 	countryList,
+	getBasicCart,
 } from './util';
 
 /* eslint-disable jest/no-conditional-expect */
@@ -54,29 +55,7 @@ describe( 'CompositeCheckout', () => {
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 
-		const initialCart = {
-			coupon: '',
-			coupon_savings_total: 0,
-			coupon_savings_total_integer: 0,
-			coupon_savings_total_display: '0',
-			currency: 'BRL',
-			locale: 'br-pt',
-			is_coupon_applied: false,
-			products: [ planWithoutDomain ],
-			tax: {
-				display_taxes: true,
-				location: {},
-			},
-			temporary: false,
-			allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
-			total_tax_integer: 700,
-			total_tax_display: 'R$7',
-			total_cost_integer: 15600,
-			total_cost_display: 'R$156',
-			sub_total_integer: 15600,
-			sub_total_display: 'R$156',
-			coupon_discounts_integer: [],
-		};
+		const initialCart = getBasicCart();
 
 		const mockSetCartEndpoint = mockSetCartEndpointWith( {
 			currency: initialCart.currency,
