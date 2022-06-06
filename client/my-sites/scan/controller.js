@@ -5,7 +5,7 @@ import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user
 import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
 import ScanHistoryPlaceholder from 'calypso/components/jetpack/scan-history-placeholder';
-import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
+import { UpsellProductCardPlaceholder } from 'calypso/components/jetpack/upsell-product-card/index.tsx';
 import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getSiteScanRequestStatus from 'calypso/state/selectors/get-site-scan-request-status';
@@ -16,9 +16,13 @@ import ScanHistoryPage from './history';
 import ScanPage from './main';
 import ScanUpsellPage from './scan-upsell';
 import WPCOMScanUpsellPage from './wpcom-scan-upsell';
+import WpcomScanUpsellPlaceholder from './wpcom-scan-upsell-placeholder';
 
 export function showUpsellIfNoScan( context, next ) {
-	context.primary = scanUpsellSwitcher( <ScanPlaceholder />, context.primary );
+	const ScanUpsellPlaceholder = isJetpackCloud()
+		? UpsellProductCardPlaceholder
+		: WpcomScanUpsellPlaceholder;
+	context.primary = scanUpsellSwitcher( <ScanUpsellPlaceholder />, context.primary );
 	next();
 }
 
