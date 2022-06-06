@@ -775,8 +775,11 @@ object PreReleaseE2ETests : E2EBuildType(
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
 				sendTo = "#e2eflowtesting-notif"
-				messageFormat = simpleMessageFormat()
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
 			}
+			branchFilter = "+:<default>"
 			buildFailedToStart = true
 			buildFailed = true
 			buildFinishedSuccessfully = true
