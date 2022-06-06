@@ -965,6 +965,22 @@ export function mockContactDetailsValidationEndpoint(
 		.reply( mockResponse );
 }
 
+export function mockMatchMediaOnWindow(): void {
+	Object.defineProperty( window, 'matchMedia', {
+		writable: true,
+		value: jest.fn().mockImplementation( ( query ) => ( {
+			matches: false,
+			media: query,
+			onchange: null,
+			addListener: jest.fn(), // deprecated
+			removeListener: jest.fn(), // deprecated
+			addEventListener: jest.fn(),
+			removeEventListener: jest.fn(),
+			dispatchEvent: jest.fn(),
+		} ) ),
+	} );
+}
+
 // Add the below custom Jest assertion to TypeScript.
 declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
