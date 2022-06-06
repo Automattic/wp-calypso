@@ -9560,7 +9560,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/notices@npm:^3.10.0":
+"@wordpress/notices@npm:^3.10.0, @wordpress/notices@npm:^3.2.8, @wordpress/notices@npm:^3.7.0, @wordpress/notices@npm:^3.9.0":
   version: 3.10.0
   resolution: "@wordpress/notices@npm:3.10.0"
   dependencies:
@@ -9571,20 +9571,6 @@ __metadata:
   peerDependencies:
     react: ^17.0.0
   checksum: 9a967a8eb603f3659f8e28fbcdf3a4fa2f8aa311e4337a7d2cb25231c16890b9ab2be07a685a0eb2b495d26f5850f9e257bddab0d5bfb831b7d7e94076b9515a
-  languageName: node
-  linkType: hard
-
-"@wordpress/notices@npm:^3.2.8, @wordpress/notices@npm:^3.7.0, @wordpress/notices@npm:^3.9.0":
-  version: 3.9.0
-  resolution: "@wordpress/notices@npm:3.9.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-    "@wordpress/a11y": ^3.9.0
-    "@wordpress/data": ^6.9.0
-    lodash: ^4.17.21
-  peerDependencies:
-    react: ^17.0.0
-  checksum: d9fa5697877af979023c6b6c607298ec108bf35909605315139637633b3a8f62c1ff15630455ca64cf57745d065e5a0ba3ecbab451a75c45abe6ebe6be8b2fbd
   languageName: node
   linkType: hard
 
