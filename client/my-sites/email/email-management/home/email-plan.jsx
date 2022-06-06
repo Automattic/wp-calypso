@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -83,6 +83,7 @@ function getMailboxes( data ) {
 
 function EmailPlan( { domain, selectedSite, source } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const purchase = useSelector( ( state ) => getEmailPurchaseByDomain( state, domain ) );
 	const isLoadingPurchase = useSelector(
@@ -102,9 +103,11 @@ function EmailPlan( { domain, selectedSite, source } ) {
 	const handleRenew = ( event ) => {
 		event.preventDefault();
 
-		handleRenewNowClick( purchase, selectedSite.slug, {
-			tracksProps: { source: 'email-plan-view' },
-		} );
+		dispatch(
+			handleRenewNowClick( purchase, selectedSite.slug, {
+				tracksProps: { source: 'email-plan-view' },
+			} )
+		);
 	};
 
 	function getAddMailboxProps() {

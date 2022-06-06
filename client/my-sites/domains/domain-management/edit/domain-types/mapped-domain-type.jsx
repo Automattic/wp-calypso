@@ -119,7 +119,7 @@ class MappedDomainType extends Component {
 			<div>
 				{ ( isLoadingPurchase || purchase ) && (
 					<RenewButton
-						compact={ true }
+						compact
 						purchase={ purchase }
 						selectedSite={ this.props.selectedSite }
 						subscriptionId={ parseInt( subscriptionId, 10 ) }
@@ -170,19 +170,32 @@ class MappedDomainType extends Component {
 	}
 
 	render() {
-		const { domain, selectedSite, purchase, mappingPurchase, isLoadingPurchase } = this.props;
-		const { name: domain_name } = domain;
+		const {
+			domain,
+			selectedSite,
+			purchase,
+			mappingPurchase,
+			isLoadingPurchase,
+			translate,
+			dispatch,
+		} = this.props;
 
-		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase, {
-			isJetpackSite: this.props.isJetpackSite,
-			isSiteAutomatedTransfer: this.props.isSiteAutomatedTransfer,
-		} );
+		const { statusText, statusClass, icon } = resolveDomainStatus(
+			domain,
+			purchase,
+			translate,
+			dispatch,
+			{
+				isJetpackSite: this.props.isJetpackSite,
+				isSiteAutomatedTransfer: this.props.isSiteAutomatedTransfer,
+			}
+		);
 
 		return (
 			<div className="domain-types__container">
 				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DomainStatus
-					header={ domain_name }
+					header={ domain.name }
 					statusText={ statusText }
 					statusClass={ statusClass }
 					icon={ icon }
@@ -200,14 +213,14 @@ class MappedDomainType extends Component {
 						domain={ domain }
 					/>
 				</DomainStatus>
-				<Card compact={ true } className="domain-types__expiration-row">
+				<Card compact className="domain-types__expiration-row">
 					<DomainExpiryOrRenewal { ...this.props } />
 					{ this.renderDefaultRenewButton() }
 					{ domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
 				<DomainManagementNavigationEnhanced
 					domain={ domain }
-					selectedSite={ this.props.selectedSite }
+					selectedSite={ selectedSite }
 					purchase={ mappingPurchase }
 					isLoadingPurchase={ isLoadingPurchase }
 				/>

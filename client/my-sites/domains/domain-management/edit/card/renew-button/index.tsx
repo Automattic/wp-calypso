@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 import { handleRenewNowClick, getRenewalPrice } from 'calypso/lib/purchases';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
@@ -36,6 +37,7 @@ function RenewButton( {
 	tracksProps,
 }: RenewButtonProps ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	if ( ! subscriptionId ) {
 		return null;
@@ -68,7 +70,7 @@ function RenewButton( {
 	}
 
 	function handleRenew() {
-		handleRenewNowClick( purchase as Purchase, selectedSite.slug, { tracksProps } );
+		dispatch( handleRenewNowClick( purchase as Purchase, selectedSite.slug, { tracksProps } ) );
 	}
 
 	return (

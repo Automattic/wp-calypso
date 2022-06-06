@@ -2,6 +2,8 @@ import { Circle, SVG } from '@wordpress/components';
 import { home, Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { useTranslate, type TranslateResult } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { resolveDomainStatus } from 'calypso/lib/domains';
@@ -10,7 +12,6 @@ import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-manage
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
-import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
@@ -22,6 +23,8 @@ type SettingsHeaderProps = {
 
 export default function SettingsHeader( { domain, site, purchase }: SettingsHeaderProps ) {
 	const { __ } = useI18n();
+	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const renderCircle = () => (
 		<SVG viewBox="0 0 24 24" height={ 8 } width={ 8 }>
@@ -73,7 +76,7 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 	};
 
 	const renderStatusBadge = ( domain: ResponseDomain ) => {
-		const { status, statusClass } = resolveDomainStatus( domain );
+		const { status, statusClass } = resolveDomainStatus( domain, null, translate, dispatch );
 
 		if ( status ) {
 			return statusClass === 'status-success'
@@ -102,10 +105,16 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 	};
 
 	const renderNotices = () => {
-		const { noticeText, statusClass } = resolveDomainStatus( domain, purchase, {
-			siteSlug: site?.slug,
-			getMappingErrors: true,
-		} );
+		const { noticeText, statusClass } = resolveDomainStatus(
+			domain,
+			purchase,
+			translate,
+			dispatch,
+			{
+				siteSlug: site.slug,
+				getMappingErrors: true,
+			}
+		);
 
 		if ( noticeText && statusClass )
 			return (
