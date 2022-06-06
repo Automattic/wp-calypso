@@ -79,9 +79,16 @@ const MailboxField = ( {
 		return null;
 	}
 
-	const onBlur = () => {
-		onRequestFieldValidation( field );
+	field.dispatchState = () => {
 		setFieldState( { field } );
+	};
+
+	const onBlur = () => {
+		if ( ! field.isTouched ) {
+			field.isTouched = field.hasValidValue();
+		}
+		onRequestFieldValidation( field );
+		field.dispatchState();
 	};
 
 	const onChange = ( event: ChangeEvent< HTMLInputElement > ) => {
@@ -91,11 +98,11 @@ const MailboxField = ( {
 		}
 		field.value = value;
 
-		// Validate the field on the fly if there was already an error
-		if ( field.error ) {
+		// Validate the field on the fly if there was already an error, or the field was already touched
+		if ( field.error || field.isTouched ) {
 			onRequestFieldValidation( field );
 		}
-		setFieldState( { field } );
+		field.dispatchState();
 		onFieldValueChanged( field );
 	};
 
