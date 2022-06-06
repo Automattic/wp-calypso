@@ -28,7 +28,7 @@ import './style.scss';
 
 class MembershipsProductsSection extends Component {
 	state = {
-		showAddEditDialog: false,
+		showAddEditDialog: window.location.hash === '#add-new-payment-plan',
 		showDeleteDialog: false,
 		product: null,
 	};
