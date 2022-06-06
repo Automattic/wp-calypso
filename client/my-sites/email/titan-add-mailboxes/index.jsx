@@ -275,7 +275,7 @@ class TitanAddMailboxes extends Component {
 						/>
 					) }
 
-					{ false && selectedDomain && titanMailProduct && hasTitanMailWithUs( selectedDomain ) && (
+					{ selectedDomain && titanMailProduct && hasTitanMailWithUs( selectedDomain ) && (
 						<EmailPricingNotice
 							domain={ selectedDomain }
 							expiryDate={ getTitanExpiryDate( selectedDomain ) }
