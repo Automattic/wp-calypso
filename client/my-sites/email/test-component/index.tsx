@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
-import { TitanProductUser, useShoppingCart } from '@automattic/shopping-cart';
-import { useEffect } from '@wordpress/element';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
@@ -10,22 +9,17 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
-import { titanMailMonthly, titanMailYearly } from 'calypso/lib/cart-values/cart-items';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import {
-	getMaxTitanMailboxCount,
-	getTitanProductName,
-	getTitanProductSlug,
-	hasTitanMailWithUs,
-	isTitanMonthlyProduct,
-} from 'calypso/lib/titan';
+import { getTitanProductName } from 'calypso/lib/titan';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
-import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/list';
-import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/mailbox-operations';
+import getMailProductForProvider from 'calypso/my-sites/email/form/mailboxes/components/selectors/get-mail-product-for-provider';
+import getCartItems from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-cart-items';
+import { getMailProductProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-mail-product-properties';
+import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
+import { FIELD_NAME } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -33,7 +27,7 @@ interface TestComponentProps {
 	selectedDomainName: string;
 }
 
-const TestComponent = ( { selectedDomainName }: TestComponentProps ): JSX.Element => {
+const TestComponent = ( { selectedDomainName }: TestComponentProps ): JSX.Element | null => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const cartKey = useCartKey();
@@ -44,72 +38,39 @@ const TestComponent = ( { selectedDomainName }: TestComponentProps ): JSX.Elemen
 		selectedDomainName,
 	} );
 
-	const productSlug = getTitanProductSlug( selectedDomain );
-	const maxTitanMailboxCount = hasTitanMailWithUs( selectedDomain )
-		? getMaxTitanMailboxCount( selectedDomain )
-		: 0;
-	const titanMailProduct = useSelector( ( state ) =>
-		productSlug ? getProductBySlug( state, productSlug ) : null
+	const [ state, setState ] = useState( { isValidating: false, isAddingToCart: false } );
+
+	const provider = EmailProvider.Google;
+	const mailProduct = useSelector( ( state ) =>
+		getMailProductForProvider( state, provider, selectedDomain )
 	);
 
-	const [ state, setState ] = useState( { isCheckingAvailability: false, isAddingToCart: false } );
-
-	useEffect( () => {
-		state.isCheckingAvailability && setState( { ...state, isCheckingAvailability: false } );
-	}, [ state ] );
-
-	const getCartItems = ( mailboxes: MailboxForm< EmailProvider >[] ) => {
-		const quantity = mailboxes.length + maxTitanMailboxCount;
-		const new_quantity = mailboxes.length;
-		const email_users = mailboxes.map( ( mailbox ) =>
-			mailbox.getAsCartItem()
-		) as unknown as TitanProductUser[];
-
-		if ( ! titanMailProduct ) {
-			return null;
-		}
-
-		const cartItemFunction = isTitanMonthlyProduct( titanMailProduct )
-			? titanMailMonthly
-			: titanMailYearly;
-
-		return cartItemFunction( {
-			domain: selectedDomainName,
-			quantity,
-			extra: {
-				email_users,
-				new_quantity,
-			},
-		} );
-	};
+	if ( ! mailProduct ) {
+		return <QueryProductsList persist />;
+	}
 
 	const onSubmit = async ( mailboxOperations: MailboxOperations ) => {
-		mailboxOperations.validateAll();
+		const mailProperties = getMailProductProperties(
+			provider,
+			selectedDomain,
+			mailProduct,
+			mailboxOperations.mailboxes.length
+		);
 
-		if ( ! mailboxOperations.areAllValid() ) {
-			return;
-		}
-
-		await mailboxOperations.validateOnDemand();
-
-		mailboxOperations.persistMailboxesToState();
-
-		const cartItems = getCartItems( mailboxOperations.mailboxes );
-
-		if ( ! mailboxOperations.areAllValid() || ! cartItems ) {
+		setState( { ...state, isValidating: true } );
+		if ( ! ( await mailboxOperations.validateAndCheck( mailProperties.isExtraItemPurchase ) ) ) {
+			setState( { ...state, isValidating: false } );
 			return;
 		}
 
 		setState( { ...state, isAddingToCart: true } );
+
 		cartManager
-			.addProductsToCart( [ cartItems ] )
+			.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, mailProperties ) ] )
 			.then( () => {
-				setState( { ...state, isAddingToCart: false } );
 				page( '/checkout/' + selectedSite?.slug );
 			} )
-			.catch( () => {
-				setState( { ...state, isAddingToCart: false } );
-			} );
+			.finally( () => setState( { ...state, isAddingToCart: false } ) );
 	};
 
 	return (
@@ -126,8 +87,10 @@ const TestComponent = ( { selectedDomainName }: TestComponentProps ): JSX.Elemen
 
 				<Card>
 					<NewMailBoxList
+						areButtonsBusy={ state.isAddingToCart || state.isValidating }
+						hiddenFieldNames={ [ FIELD_NAME ] }
 						onSubmit={ onSubmit }
-						provider={ EmailProvider.Titan }
+						provider={ provider }
 						selectedDomainName={ selectedDomainName }
 						showAddNewMailboxButton
 						showCancelButton

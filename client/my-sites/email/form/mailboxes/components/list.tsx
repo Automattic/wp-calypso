@@ -6,13 +6,13 @@ import { useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { MailboxFormWrapper } from 'calypso/my-sites/email/form/mailboxes/components/form';
+import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import { sanitizeMailboxValue } from 'calypso/my-sites/email/form/mailboxes/components/utilities/sanitize-mailbox-value';
 import {
 	FIELD_FIRSTNAME,
 	FIELD_MAILBOX,
 	FIELD_NAME,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
-import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/mailbox-operations';
 import {
 	EmailProvider,
 	MailboxFormFieldBase,
@@ -22,6 +22,7 @@ import {
 import './style.scss';
 
 interface MailboxListProps {
+	areButtonsBusy?: boolean;
 	hiddenFieldNames?: MutableFormFieldNames[];
 	onCancel?: () => void;
 	onSubmit: ( mailboxOperations: MailboxOperations ) => void;
@@ -36,6 +37,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 	const translate = useTranslate();
 
 	const {
+		areButtonsBusy = false,
 		hiddenFieldNames = [],
 		onCancel = () => undefined,
 		onSubmit,
@@ -52,7 +54,10 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 
 	// Set visibility for desired hidden fields
 	mailboxes.forEach( ( mailbox ) => {
-		hiddenFieldNames.forEach( ( fieldName ) => mailbox.setFieldIsVisible( fieldName, true ) );
+		hiddenFieldNames.forEach( ( fieldName ) => {
+			mailbox.setFieldIsVisible( fieldName, false );
+			mailbox.setFieldIsRequired( fieldName, false );
+		} );
 	} );
 
 	const addMailbox = () => {
@@ -112,7 +117,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 							<>
 								<div className="list__actions">
 									{ index > 0 && (
-										<Button onClick={ removeMailbox( uuid ) }>
+										<Button onClick={ removeMailbox( uuid ) } busy={ areButtonsBusy }>
 											<Gridicon icon="trash" />
 											<span>{ translate( 'Remove this mailbox' ) }</span>
 										</Button>
@@ -132,7 +137,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 				} ) }
 			>
 				{ showAddNewMailboxButton && (
-					<Button onClick={ addMailbox }>
+					<Button onClick={ addMailbox } busy={ areButtonsBusy }>
 						<Gridicon icon="plus" />
 						<span>{ translate( 'Add another mailbox' ) }</span>
 					</Button>
@@ -140,11 +145,11 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 
 				<div className="list__main-actions">
 					{ showCancelButton && (
-						<Button onClick={ handleCancel }>
+						<Button onClick={ handleCancel } busy={ areButtonsBusy }>
 							<span>{ translate( 'Cancel' ) }</span>
 						</Button>
 					) }
-					<Button primary onClick={ handleSubmit }>
+					<Button primary onClick={ handleSubmit } busy={ areButtonsBusy }>
 						<span>{ submitActionText }</span>
 					</Button>
 				</div>
