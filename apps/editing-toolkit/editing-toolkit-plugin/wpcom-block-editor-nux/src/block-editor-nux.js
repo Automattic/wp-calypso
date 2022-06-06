@@ -10,7 +10,6 @@ import { useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import { getQueryArg } from '@wordpress/url';
 import DraftPostModal from './draft-post-modal';
-import PaymentsBlockUpgradeModal from './payments-block-upgrade-modal';
 import PostPublishedModal from './post-published-modal';
 import PurchaseNotice from './purchase-notice';
 import SellerCelebrationModal from './seller-celebration-modal';
@@ -83,7 +82,6 @@ registerPlugin( 'wpcom-block-editor-nux', {
 			<WelcomeTour />
 			<PostPublishedModal />
 			<SellerCelebrationModal />
-			<PaymentsBlockUpgradeModal />
 			<PurchaseNotice />
 		</>
 	),
