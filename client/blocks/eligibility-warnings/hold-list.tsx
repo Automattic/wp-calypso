@@ -86,6 +86,7 @@ function getHoldMessages(
 			supportUrl: null,
 		},
 		EXCESSIVE_DISK_SPACE: {
+			// translators: "Meet disk quota" appears just after "To continue you'll need to: "
 			title: translate( 'Meet disk quota' ),
 			description: <ExcessiveDiskSpace />,
 			supportUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
