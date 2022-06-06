@@ -712,7 +712,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		const match = noticePattern.exec( document.location.search );
 		const notice = match && match[ 1 ];
 
-		let finalIframeSrc = iframeUrl;
+		let finalIframeSrc = iframeUrl + ( notice && `&notice=${ notice }` );
 		if ( isIframeLoaded ) {
 			finalIframeSrc = currentIFrameUrl + ( notice && `&notice=${ notice }` );
 		}
