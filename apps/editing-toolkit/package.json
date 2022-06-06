@@ -95,7 +95,6 @@
 		"@wordpress/interface": "^4.8.0",
 		"@wordpress/is-shallow-equal": "^4.9.0",
 		"@wordpress/keycodes": "^3.9.0",
-		"@wordpress/notices": "^3.10.0",
 		"@wordpress/nux": "^5.7.0",
 		"@wordpress/plugins": "^4.7.0",
 		"@wordpress/primitives": "^3.7.0",
