@@ -1,8 +1,4 @@
-import {
-	getDesignPreviewUrl,
-	DEFAULT_VIEWPORT_WIDTH,
-	MOBILE_VIEWPORT_WIDTH,
-} from '@automattic/design-picker';
+import { getDesignPreviewUrl, DEFAULT_VIEWPORT_WIDTH } from '@automattic/design-picker';
 import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -51,7 +47,7 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 			autoHeight
 			siteId={ site?.ID }
 			url={ site?.URL }
-			fixedViewportWidth={ ! isMobile ? DEFAULT_VIEWPORT_WIDTH : MOBILE_VIEWPORT_WIDTH }
+			fixedViewportWidth={ ! isMobile ? DEFAULT_VIEWPORT_WIDTH : undefined }
 			isPrivateAtomic={ isPrivateAtomic }
 			isStickyToolbar={ isSelected && isStickyToolbar }
 			translate={ translate }

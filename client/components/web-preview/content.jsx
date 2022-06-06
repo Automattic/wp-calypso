@@ -68,16 +68,20 @@ export default class WebPreviewContent extends Component {
 			debug( 'removing iframe contents' );
 			this.setIframeMarkup( '' );
 		}
-		// If the fixedViewportWidth changes, re-calculate the iframe styles.
-		if (
-			this.props.fixedViewportWidth &&
-			this.props.fixedViewportWidth !== prevProps.fixedViewportWidth
-		) {
-			this.handleResize();
-		}
 		// Focus preview when showing modal
 		if ( this.props.showPreview && ! prevProps.showPreview && this.state.loaded ) {
 			this.focusIfNeeded();
+		}
+
+		// If the fixedViewportWidth changes, re-calculate the iframe styles.
+		if ( this.props.fixedViewportWidth !== prevProps.fixedViewportWidth ) {
+			if ( this.props.fixedViewportWidth ) {
+				this.handleResize();
+				window.addEventListener( 'resize', this.handleResize );
+			} else {
+				this.resetResize();
+				window.removeEventListener( 'resize', this.handleResize );
+			}
 		}
 	}
 
@@ -134,7 +138,7 @@ export default class WebPreviewContent extends Component {
 		let iframeStyle = {};
 
 		if ( ! this.iframe.parentElement?.clientWidth ) {
-			this.setState( { iframeStyle, iframeScaleRatio } );
+			this.resetResize();
 			return;
 		}
 
@@ -145,6 +149,10 @@ export default class WebPreviewContent extends Component {
 		};
 
 		this.setState( { iframeStyle, iframeScaleRatio } );
+	};
+
+	resetResize = () => {
+		this.setState( { iframeStyle: {}, iframeScaleRatio: 1 } );
 	};
 
 	redirectToAuth() {
