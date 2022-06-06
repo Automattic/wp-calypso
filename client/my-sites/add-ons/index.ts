@@ -9,7 +9,6 @@ export default function () {
 		'/add-ons/:site',
 		siteSelection,
 		addOnsSiteSelectionHeader,
-		sites,
 		navigation,
 		addOnsManagement,
 		makeLayout,

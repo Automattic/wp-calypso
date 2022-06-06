@@ -4,7 +4,7 @@ import AddOnsMain from './main';
 
 export const addOnsSiteSelectionHeader = ( context: PageJS.Context, next: () => void ) => {
 	context.getSiteSelectionHeaderText = () => {
-		return translate( 'Select a site to open {{strong}}Add Ons{{/strong}}', {
+		return translate( 'Select a site to open {{strong}}Add-Ons{{/strong}}', {
 			components: {
 				strong: <strong />,
 			},
@@ -24,7 +24,7 @@ export const addOnsManagement = ( context: PageJS.Context, next: () => void ) =>
 		return null;
 	}
 
-	context.primary = <AddOnsMain />;
+	context.primary = <AddOnsMain context={ context } />;
 
 	next();
 };
