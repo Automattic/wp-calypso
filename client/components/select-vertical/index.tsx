@@ -78,15 +78,13 @@ const SelectVertical: React.FC< Props > = ( {
 				isLoading={ isDebouncing || isLoadingDefaultVertical || isLoadingSuggestions }
 				isShowSkipOption={ hasUserInput }
 				isDisableInput={ isLoadingDefaultVertical }
-				onSuggestionsHide={ () => {
-					setHasUserInput( false );
-				} }
 				onInputChange={ ( searchTerm: string ) => {
 					setHasUserInput( searchTerm !== '' );
 					setSearchTerm( searchTerm );
 					onInputChange?.( searchTerm );
 				} }
 				onSelect={ ( vertical: Vertical ) => {
+					setHasUserInput( false );
 					setSearchTerm( vertical.label );
 					onSelect?.( vertical );
 				} }

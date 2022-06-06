@@ -14,7 +14,6 @@ interface Props {
 	isLoading?: boolean | undefined;
 	isShowSkipOption?: boolean | undefined;
 	isDisableInput?: boolean | undefined;
-	onSuggestionsHide?: () => void;
 	onInputChange?: ( value: string ) => void;
 	onSelect?: ( vertical: Vertical ) => void;
 }
@@ -26,7 +25,6 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 	isLoading,
 	isShowSkipOption,
 	isDisableInput,
-	onSuggestionsHide,
 	onInputChange,
 	onSelect,
 } ) => {
@@ -43,7 +41,6 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 
 	const hideSuggestions = () => {
 		setIsShowSuggestions( false );
-		onSuggestionsHide?.();
 	};
 
 	const handleTextInputBlur = ( event: React.FocusEvent ) => {
