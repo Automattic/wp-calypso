@@ -34,6 +34,7 @@ import {
 	countryList,
 	gSuiteProduct,
 	caDomainProduct,
+	mockContactDetailsValidationEndpoint,
 } from './util';
 
 /* eslint-disable jest/no-conditional-expect */
@@ -310,22 +311,14 @@ describe( 'CompositeCheckout', () => {
 						return gSuiteProduct;
 				}
 			} )();
-			const endpointPath = ( () => {
-				switch ( name ) {
-					case 'plan':
-						return '/rest/v1.1/me/tax-contact-information/validate';
-					case 'domain':
-						return '/rest/v1.2/me/domain-contact-information/validate';
-					case 'gsuite':
-						return '/rest/v1.1/me/google-apps/validate';
-				}
-			} )();
+
 			const validContactDetails = {
 				postal_code: '10001',
 				country_code: 'US',
 				email: 'test@example.com',
 			};
 			nock.cleanAll();
+
 			const messages = ( () => {
 				if ( valid === 'valid' ) {
 					return undefined;
@@ -340,8 +333,14 @@ describe( 'CompositeCheckout', () => {
 					postal_code: [ 'Postal code error message' ],
 				};
 			} )();
-			nock( 'https://public-api.wordpress.com' )
-				.post( endpointPath, ( body ) => {
+
+			mockContactDetailsValidationEndpoint(
+				name === 'plan' ? 'tax' : name,
+				{
+					success: valid === 'valid',
+					messages,
+				},
+				( body ) => {
 					if (
 						body.contact_information.postal_code === validContactDetails.postal_code &&
 						body.contact_information.country_code === validContactDetails.country_code
@@ -357,11 +356,9 @@ describe( 'CompositeCheckout', () => {
 						}
 						return true;
 					}
-				} )
-				.reply( 200, {
-					success: valid === 'valid',
-					messages,
-				} );
+				}
+			);
+
 			nock( 'https://public-api.wordpress.com' )
 				.post( '/rest/v1.1/signups/validation/user/', ( body ) => {
 					return (

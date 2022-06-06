@@ -896,13 +896,36 @@ export const expectedCreateAccountRequest = {
 	},
 };
 
-export function mockCachedContactDetailsEndpoint( data ): void {
+export function mockCachedContactDetailsEndpoint( responseData ): void {
 	const endpoint = jest.fn();
 	endpoint.mockReturnValue( true );
-	const mockDomainContactResponse = () => [ 200, data ];
+	const mockDomainContactResponse = () => [ 200, responseData ];
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/domain-contact-information' )
 		.reply( mockDomainContactResponse );
+}
+
+export function mockContactDetailsValidationEndpoint(
+	type: 'domain' | 'gsuite' | 'tax',
+	responseData,
+	conditionCallback?: ( body ) => boolean
+): void {
+	const endpointPath = ( () => {
+		switch ( type ) {
+			case 'tax':
+				return '/rest/v1.1/me/tax-contact-information/validate';
+			case 'domain':
+				return '/rest/v1.2/me/domain-contact-information/validate';
+			case 'gsuite':
+				return '/rest/v1.1/me/google-apps/validate';
+		}
+	} )();
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+	const mockResponse = () => [ 200, responseData ];
+	nock( 'https://public-api.wordpress.com' )
+		.post( endpointPath, conditionCallback )
+		.reply( mockResponse );
 }
 
 // Add the below custom Jest assertion to TypeScript.
