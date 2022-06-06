@@ -15,6 +15,9 @@ const CustomizeTheme = ( { translate, blockEditorSettings, areBlockEditorSetting
 	const customizeLink = useSelector( ( state ) =>
 		getCustomizeUrl( state, currentThemeId, siteId, isFSEActive )
 	);
+	const customizeThemeButtonText = isFSEActive
+		? translate( 'Edit site' )
+		: translate( 'Start customizing' );
 
 	return (
 		<div className="product-purchase-features-list__item">
@@ -28,7 +31,7 @@ const CustomizeTheme = ( { translate, blockEditorSettings, areBlockEditorSetting
 						'selection of fonts and colors.'
 				) }
 				buttonText={
-					areBlockEditorSettingsLoading ? translate( 'Loading…' ) : translate( 'Start customizing' )
+					areBlockEditorSettingsLoading ? translate( 'Loading…' ) : customizeThemeButtonText
 				}
 				href={ customizeLink }
 			/>
