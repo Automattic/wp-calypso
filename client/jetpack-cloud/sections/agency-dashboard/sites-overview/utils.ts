@@ -82,6 +82,10 @@ const scanEventNames: StatusEventNames = {
 
 // Montitor feature status event names for large screen(>960px) and small screen(<960px)
 const monitorEventNames: StatusEventNames = {
+	disabled: {
+		small_screen: 'calypso_jetpack_agency_dashboard_monitor_inactive_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_monitor_inactive_click_large_screen',
+	},
 	failed: {
 		small_screen: 'calypso_jetpack_agency_dashboard_monitor_site_down_click_small_screen',
 		large_screen: 'calypso_jetpack_agency_dashboard_monitor_site_down_click_large_screen',
@@ -129,6 +133,7 @@ const getLinks = (
 	type: AllowedTypes,
 	status: string,
 	siteUrl: string,
+	siteUrlWithScheme: string,
 	siteId: number
 ): {
 	tooltip: ReactChild | undefined;
@@ -164,6 +169,9 @@ const getLinks = (
 		case 'monitor': {
 			if ( status === 'failed' ) {
 				link = `https://jptools.wordpress.com/debug/?url=${ siteUrl }`;
+				isExternalLink = true;
+			} else if ( status === 'disabled' ) {
+				link = `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack#/settings`;
 				isExternalLink = true;
 			}
 			if ( status === 'success' ) {
@@ -202,9 +210,16 @@ export const getRowMetaData = (
 } => {
 	const row = rows[ type ];
 	const siteUrl = rows.site?.value?.url;
+	const siteUrlWithScheme = rows.site?.value?.url_with_scheme;
 	const siteError = rows.site.error;
 	const siteId = rows.site?.value?.blog_id;
-	const { link, tooltip, isExternalLink } = getLinks( type, row.status, siteUrl, siteId );
+	const { link, tooltip, isExternalLink } = getLinks(
+		type,
+		row.status,
+		siteUrl,
+		siteUrlWithScheme,
+		siteId
+	);
 	const eventName = getRowEventName( type, row.status, isLargeScreen );
 	return {
 		row,
