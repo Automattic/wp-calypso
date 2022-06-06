@@ -341,6 +341,12 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		window.scrollTo( { top: 0 } );
 	}, [ isForceStaticDesigns ] );
 
+	useEffect( () => {
+		if ( showGeneratedDesigns ) {
+			window.scrollTo( { top: 0 } );
+		}
+	}, [ isPreviewingDesign, showGeneratedDesigns ] );
+
 	let previewUrl = null;
 
 	if ( selectedDesign ) {
@@ -446,11 +452,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 				<>
 					<div className={ classnames( 'step-container__header', 'design-setup__header' ) }>
 						{ heading }
-						{ previewUrl && (
-							<Button target="_blank" href={ previewUrl }>
-								{ translate( 'Preview' ) }
-							</Button>
-						) }
 						<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'top' ) }>
 							{ translate( 'Continue' ) }
 						</Button>
@@ -470,11 +471,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 					} ) }
 				>
 					<div className="design-setup__footer-content">
-						{ previewUrl && (
-							<Button target="_blank" href={ previewUrl }>
-								{ translate( 'Preview' ) }
-							</Button>
-						) }
 						<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'bottom' ) }>
 							{ translate( 'Continue' ) }
 						</Button>

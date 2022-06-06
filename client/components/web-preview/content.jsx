@@ -41,8 +41,7 @@ export default class WebPreviewContent extends Component {
 		if ( this.props.previewMarkup ) {
 			this.setIframeMarkup( this.props.previewMarkup );
 		}
-
-		if ( this.props.vpw ) {
+		if ( this.props.fixedViewportWidth ) {
 			this.handleResize();
 			window.addEventListener( 'resize', this.handleResize );
 		}
@@ -68,6 +67,13 @@ export default class WebPreviewContent extends Component {
 		if ( ! this.props.previewMarkup && prevProps.previewMarkup ) {
 			debug( 'removing iframe contents' );
 			this.setIframeMarkup( '' );
+		}
+		// If the fixedViewportWidth changes, re-calculate the iframe styles.
+		if (
+			this.props.fixedViewportWidth &&
+			this.props.fixedViewportWidth !== prevProps.fixedViewportWidth
+		) {
+			this.handleResize();
 		}
 		// Focus preview when showing modal
 		if ( this.props.showPreview && ! prevProps.showPreview && this.state.loaded ) {
@@ -115,7 +121,7 @@ export default class WebPreviewContent extends Component {
 				return;
 			case 'page-dimensions-on-load':
 			case 'page-dimensions-on-resize':
-				if ( this.props.autoHeight ) {
+				if ( this.props.autoHeight || this.props.fixedViewportWidth ) {
 					this.setState( { viewport: data.payload } );
 				}
 				return;
@@ -123,14 +129,19 @@ export default class WebPreviewContent extends Component {
 	};
 
 	handleResize = () => {
-		const { vpw } = this.props;
-		const iframeScaleRatio = this.iframe.parentElement.clientWidth / vpw;
-		const iframeStyle = {
-			maxWidth: 'none',
+		const { fixedViewportWidth: vpw } = this.props;
+		let iframeScaleRatio = 1;
+		let iframeStyle = {};
+
+		if ( ! this.iframe.parentElement?.clientWidth ) {
+			this.setState( { iframeStyle, iframeScaleRatio } );
+			return;
+		}
+
+		iframeScaleRatio = this.iframe.parentElement.clientWidth / vpw;
+		iframeStyle = {
 			width: `${ vpw }px`,
-			margin: 0,
 			transform: `scale( ${ iframeScaleRatio } )`,
-			transformOrigin: '0 0',
 		};
 
 		this.setState( { iframeStyle, iframeScaleRatio } );
@@ -295,6 +306,7 @@ export default class WebPreviewContent extends Component {
 			'is-tablet': this.state.device === 'tablet',
 			'is-phone': this.state.device === 'phone',
 			'is-seo': this.state.device === 'seo',
+			'is-fixed-viewport-width': !! this.props.fixedViewportWidth,
 			'is-loaded': isLoaded,
 		} );
 
@@ -427,8 +439,8 @@ WebPreviewContent.propTypes = {
 	autoHeight: PropTypes.bool,
 	// The toolbar should sticky or not
 	isStickyToolbar: PropTypes.bool,
-	// Fixed the viewport width of the iframe if provided
-	vpw: PropTypes.number,
+	// Fixes the viewport width of the iframe if provided.
+	fixedViewportWidth: PropTypes.number,
 };
 
 WebPreviewContent.defaultProps = {
