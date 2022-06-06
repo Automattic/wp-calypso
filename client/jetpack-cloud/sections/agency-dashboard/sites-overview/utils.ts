@@ -94,6 +94,10 @@ const pluginEventNames: StatusEventNames = {
 		small_screen: 'calypso_jetpack_agency_dashboard_update_plugins_click_small_screen',
 		large_screen: 'calypso_jetpack_agency_dashboard_update_plugins_click_large_screen',
 	},
+	success: {
+		small_screen: 'calypso_jetpack_agency_dashboard_plugin_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_plugin_click_large_screen',
+	},
 };
 
 // Returns event name needed for all the feature state clicks on the agency dashboard
