@@ -1,3 +1,4 @@
+import * as PopperJS from '@popperjs/core';
 import React from 'react';
 import type { Modifier } from 'react-popper';
 
@@ -84,19 +85,7 @@ export interface Config {
 	closeHandler: CloseHandler;
 	isMinimized?: boolean;
 	options?: Options;
-	placement?:
-		| 'top-start'
-		| 'top'
-		| 'top-end'
-		| 'left-start'
-		| 'left'
-		| 'left-end'
-		| 'right-start'
-		| 'right'
-		| 'right-end'
-		| 'bottom-start'
-		| 'bottom'
-		| 'bottom-end';
+	placement?: PopperJS.Placement;
 }
 
 export type Tour = React.FunctionComponent< { config: Config } >;
