@@ -103,6 +103,9 @@ class MailboxForm< T extends EmailProvider > {
 		}
 	}
 
+	/**
+	 * Returns the mailbox field values in a shape that can be consumed by the shopping cart at checkout
+	 */
 	getAsCartItem(): Record< string, string | boolean | undefined > {
 		const commonFields = {
 			email: `${ this.getFieldValue< string >( FIELD_MAILBOX ) }@${ this.getFieldValue< string >(
