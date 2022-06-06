@@ -133,7 +133,9 @@ export default withCurrentRoute(
 		const sectionName = currentSection?.name ?? null;
 		const sectionTitle = currentSection?.title ?? '';
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
-		const isWhiteLogin = currentRoute.startsWith( '/log-in/new' );
+		const isWhiteLogin =
+			currentRoute.startsWith( '/log-in/new' ) ||
+			document.location.search.match( /partner-signup/ );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
 		const noMasterbarForRoute = isJetpackLogin || isWhiteLogin || isJetpackWooDnaFlow || isP2Login;
