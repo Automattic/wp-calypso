@@ -17,7 +17,7 @@ import {
 	AlternateEmailValidator,
 	ExistingMailboxNamesValidator,
 	MailboxNameValidator,
-	MailboxNameValidityValidator,
+	MailboxNameAvailabilityValidator,
 	MaximumStringLengthValidator,
 	PasswordValidator,
 	RequiredValidator,
@@ -366,7 +366,7 @@ describe( 'Mailbox on demand form validation', () => {
 				[ FIELD_MAILBOX ]: 'existing',
 			} ),
 			{
-				[ FIELD_MAILBOX ]: MailboxNameValidityValidator.getUnavailableMailboxError(
+				[ FIELD_MAILBOX ]: MailboxNameAvailabilityValidator.getUnavailableMailboxError(
 					'existing',
 					'existing exists as email account'
 				),

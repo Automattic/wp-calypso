@@ -281,7 +281,7 @@ class ExistingMailboxNamesValidator extends BaseValidator< string > {
 	}
 }
 
-class MailboxNameValidityValidator extends BaseValidator< string > {
+class MailboxNameAvailabilityValidator extends BaseValidator< string > {
 	private readonly domainName: string;
 	private readonly provider: EmailProvider;
 
@@ -343,7 +343,10 @@ class MailboxNameValidityValidator extends BaseValidator< string > {
 
 		// If mailbox name is not available ...
 		if ( status !== 200 ) {
-			field.error = MailboxNameValidityValidator.getUnavailableMailboxError( field.value, message );
+			field.error = MailboxNameAvailabilityValidator.getUnavailableMailboxError(
+				field.value,
+				message
+			);
 		}
 	}
 }
@@ -354,7 +357,7 @@ export {
 	AlternateEmailValidator,
 	ExistingMailboxNamesValidator,
 	MailboxNameValidator,
-	MailboxNameValidityValidator,
+	MailboxNameAvailabilityValidator,
 	PasswordValidator,
 	RequiredValidator,
 	RequiredIfVisibleValidator,

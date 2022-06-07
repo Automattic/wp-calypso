@@ -19,7 +19,7 @@ import {
 	AlternateEmailValidator,
 	ExistingMailboxNamesValidator,
 	MailboxNameValidator,
-	MailboxNameValidityValidator,
+	MailboxNameAvailabilityValidator,
 	MaximumStringLengthValidator,
 	PasswordValidator,
 	RequiredIfVisibleValidator,
@@ -86,9 +86,9 @@ class MailboxForm< T extends EmailProvider > {
 		const domainName = domainField?.value ?? '';
 
 		return {
-			[ MailboxNameValidityValidator.name ]: [
+			[ MailboxNameAvailabilityValidator.name ]: [
 				FIELD_MAILBOX,
-				new MailboxNameValidityValidator( domainName, this.provider ),
+				new MailboxNameAvailabilityValidator( domainName, this.provider ),
 			],
 		};
 	}
@@ -187,7 +187,7 @@ class MailboxForm< T extends EmailProvider > {
 		this.clearErrors();
 
 		for ( const [ fieldName, validator ] of this.getValidators() ) {
-			if ( ! fieldName || ! validator ) {
+			if ( ! fieldName ) {
 				continue;
 			}
 
