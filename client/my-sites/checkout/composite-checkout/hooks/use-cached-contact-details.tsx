@@ -5,6 +5,7 @@ import type {
 	FetchedContactDetails,
 	PossiblyCompleteDomainContactDetails,
 } from '@automattic/wpcom-checkout';
+import type { ComponentType, FC } from 'react';
 
 export function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null {
 	const { data: cachedContactDetails, isFetching } = useQuery<
@@ -21,4 +22,15 @@ export function useCachedContactDetails(): PossiblyCompleteDomainContactDetails 
 		{ refetchOnMount: 'always' }
 	);
 	return isFetching ? null : cachedContactDetails ?? null;
+}
+
+export function withCachedContactDetails< ComponentProps >(
+	Component: ComponentType<
+		ComponentProps & { cachedContactDetails: PossiblyCompleteDomainContactDetails | null }
+	>
+): FC< ComponentProps > {
+	return ( props ) => {
+		const cachedContactDetails = useCachedContactDetails();
+		return <Component { ...props } cachedContactDetails={ cachedContactDetails } />;
+	};
 }
