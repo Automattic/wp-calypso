@@ -1,6 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
+import { Icon } from '@wordpress/icons';
 import { useSelector } from 'react-redux';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import type { AddOn } from '../hooks/use-add-ons';
@@ -35,6 +36,10 @@ const Frame = styled.div`
 	.add-ons-card__billing-info {
 		color: var( --studio-gray-40 );
 	}
+
+	.add-ons-card__icon {
+		display: flex;
+	}
 `;
 
 const BillingInfo = ( { addOnSlug }: { addOnSlug: string } ) => {
@@ -45,11 +50,9 @@ const BillingInfo = ( { addOnSlug }: { addOnSlug: string } ) => {
 
 const AddOnCard = ( props: Props ) => {
 	const isSelected = props.isSelected?.( props.slug );
-
 	const onActionPrimary = () => {
 		props.actionPrimary?.handler( props.slug );
 	};
-
 	const onActionSelected = () => {
 		props.actionSelected?.handler( props.slug );
 	};
@@ -58,8 +61,8 @@ const AddOnCard = ( props: Props ) => {
 		<Frame>
 			<Card>
 				<CardHeader isBorderless={ true } className="add-ons-card__header">
-					<div>
-						<Gridicon icon="customize" size={ 48 } />
+					<div className="add-ons-card__icon">
+						<Icon icon={ props.icon } size={ 44 } />
 					</div>
 					<div>
 						<div>{ props.name }</div>

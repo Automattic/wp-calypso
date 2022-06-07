@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import noAdsIcon from '../icons/no-ads';
 
 export interface AddOn {
 	slug: string;
@@ -7,7 +8,7 @@ export interface AddOn {
 	description: string;
 	cost: number;
 	highlight?: boolean;
-	icon?: string;
+	icon: JSX.Element;
 }
 
 // these are pulled from API in the hook below
@@ -16,6 +17,7 @@ const addOnsActive = [
 		slug: 'no-adverts/no-adverts.php',
 		highlight: false,
 		nameOverride: 'Remove Ads',
+		icon: noAdsIcon,
 	},
 ];
 
@@ -38,6 +40,7 @@ const useAddOns = () => {
 				description: product?.description,
 				cost: product?.cost,
 				highlight: addOn.highlight,
+				icon: addOn.icon,
 			} as AddOn;
 		} );
 	} );

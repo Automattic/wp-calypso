@@ -9026,6 +9026,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/element@npm:^4.8.0":
+  version: 4.8.0
+  resolution: "@wordpress/element@npm:4.8.0"
+  dependencies:
+    "@babel/runtime": ^7.16.0
+    "@types/react": ^17.0.37
+    "@types/react-dom": ^17.0.11
+    "@wordpress/escape-html": ^2.10.0
+    lodash: ^4.17.21
+    react: ^17.0.2
+    react-dom: ^17.0.2
+  checksum: 8eb8cace49582d80df2f7391db4d408375545392ca6c2677a44249940d0347720335052f7042373a9c22de92f6d5e9e4b599c3076ca78520b56212772a18b76d
+  languageName: node
+  linkType: hard
+
 "@wordpress/env@npm:^4.7.0":
   version: 4.7.0
   resolution: "@wordpress/env@npm:4.7.0"
@@ -9521,6 +9536,17 @@ __metadata:
     "@wordpress/element": ^4.7.0
     classnames: ^2.3.1
   checksum: 7d6ac1781c70be51290b696ea3a1bcba571e21d8bba4627971bbf21d2e7951c046304bee00f1488063e08990376550be6bf39aae4da06a2d8f315bdaaf04dda1
+  languageName: node
+  linkType: hard
+
+"@wordpress/primitives@npm:^3.8.0":
+  version: 3.8.0
+  resolution: "@wordpress/primitives@npm:3.8.0"
+  dependencies:
+    "@babel/runtime": ^7.16.0
+    "@wordpress/element": ^4.8.0
+    classnames: ^2.3.1
+  checksum: c58ff7999acb9519afd4d1edb0c48f30fd97dcbd45d4e742bb6741ea8e493343c54e7a1b295a579d0a0c1e7b3d104e530ebcbda5e25bfd19a8d650317dd51c8f
   languageName: node
   linkType: hard
 
@@ -35669,6 +35695,7 @@ swiper@4.5.1:
     "@wordpress/icons": ^9.0.0
     "@wordpress/is-shallow-equal": ^4.9.0
     "@wordpress/jest-preset-default": ^8.2.0
+    "@wordpress/primitives": ^3.8.0
     "@wordpress/url": ^3.10.0
     babel-loader: ^8.2.3
     backstopjs: 5.1.0
