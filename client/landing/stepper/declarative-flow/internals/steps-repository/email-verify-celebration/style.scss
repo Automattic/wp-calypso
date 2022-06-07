@@ -1,0 +1,58 @@
+@import '@automattic/onboarding/styles/mixins';
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+$bg-image: url( './celebration-background.svg' );
+
+.site-setup.email-verify-celebration {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: $bg-image;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.step-container.email-verify-celebration-step {
+    margin-top: -60px;
+	.formatted-header .formatted-header__subtitle {
+		text-align: center;
+	}
+}
+.email-verify-celebration__content {
+    text-align: center;
+}
+
+
+$design-button-primary-color: var( --color-primary );
+$design-button-primary-hover-color: var( --color-primary-60 );
+
+.email-verify-celebration__button {
+	background: $design-button-primary-color;
+	border-color: $design-button-primary-color;
+	padding: 9px 48px;
+	border-radius: 4px;
+	font-weight: 500;
+	box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+
+	&:hover,
+	&:focus {
+		background: $design-button-primary-hover-color;
+		border-color: $design-button-primary-hover-color;
+	}
+}
+
+.email-verify-celebration__link {
+    text-decoration: underline;
+	&.button.is-borderless {
+		padding: 10px 14px;
+	}
+	&.components-button.is-link:not( :disabled ),
+	&.components-button.is-link:not( :disabled ) {
+		color: var( --studio-gray-40 );
+	}
+	&.components-button.is-link:hover:not( :disabled ),
+	&.components-button.is-link:active:not( :disabled ) {
+		color: var( --studio-gray-60 );
+	}
+}
