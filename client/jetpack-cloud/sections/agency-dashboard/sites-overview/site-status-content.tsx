@@ -54,7 +54,16 @@ export default function SiteStatusContent( {
 
 	if ( type === 'site' ) {
 		// Site issues is the sum of scan threats and plugin updates
-		const siteIssues = rows.scan.threats + rows.plugin.updates;
+		let siteIssues = rows.scan.threats + rows.plugin.updates;
+		let isFailed = !! rows.scan.threats;
+		if ( [ 'failed', 'warning' ].includes( rows.backup.status ) ) {
+			siteIssues = siteIssues + 1;
+			isFailed = isFailed || 'failed' === rows.backup.status;
+		}
+		if ( [ 'failed' ].includes( rows.monitor.status ) ) {
+			siteIssues = siteIssues + 1;
+			isFailed = true;
+		}
 		let errorContent;
 		if ( error ) {
 			errorContent = (
@@ -67,7 +76,7 @@ export default function SiteStatusContent( {
 				<span
 					className={ classNames(
 						'sites-overview__status-count',
-						rows.scan.threats ? 'sites-overview__status-failed' : 'sites-overview__status-warning'
+						isFailed ? 'sites-overview__status-failed' : 'sites-overview__status-warning'
 					) }
 				>
 					{ siteIssues }
