@@ -1,4 +1,5 @@
 import React from 'react';
+import { SpotlightInteractivityConfiguration } from './components/tour-kit-spotlight-interactivity';
 import type { Modifier } from 'react-popper';
 
 export interface Step {
@@ -64,11 +65,25 @@ export interface Callbacks {
 export interface Options {
 	classNames?: string | string[];
 	callbacks?: Callbacks;
+	/** An object to enable/disable/combine various tour effects, such as spotlight, overlay, and autoscroll */
 	effects?: {
-		spotlight?: { styles?: React.CSSProperties };
-		arrowIndicator?: boolean; // defaults to true
+		/** Adds a semi-transparent overlay and highlights the reference element
+		 * 	when provided with a transparent box over it. The existence of this configuration
+		 *  key implies enabling the spotlight effect. */
+		spotlight?: {
+			/** An object that configures whether the user is allowed to interact with the referenced element during the tour */
+			interactivity?: SpotlightInteractivityConfiguration;
+			/** CSS properties that configures the styles applied to the spotlight overlay */
+			styles?: React.CSSProperties;
+		};
+		/** Shows a little triangle that points to the referenced element. Defaults to true */
+		arrowIndicator?: boolean;
+		/** Includes the semi-transparent overlay for all the steps Also blocks interactions for everything except the tour dialogues,
+		 *  including the referenced elements. Refer to spotlight interactivity configuration to affect this.
+		 *
+		 *  Defaults to false, but if spotlight is enabled it implies this is enabled as well. */
 		overlay?: boolean;
-		// https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
+		/** Configures the autoscroll behaviour. Defaults to False. More information about the configuration at: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView */
 		autoScroll?: ScrollIntoViewOptions | boolean;
 	};
 	popperModifiers?: PopperModifier[];
