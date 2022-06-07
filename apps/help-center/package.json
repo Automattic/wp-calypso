@@ -33,6 +33,7 @@
 		"@wordpress/components": "^19.9.0",
 		"@wordpress/compose": "^5.5.0",
 		"@wordpress/data": "^6.7.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^3.5.0",
 		"@wordpress/element": "^4.5.0",
 		"@wordpress/interface": "^4.6.0",
 		"@wordpress/plugins": "^4.5.0",

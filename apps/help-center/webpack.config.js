@@ -8,6 +8,7 @@ const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' )
 const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
@@ -15,102 +16,132 @@ const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'fa
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const outputPath = path.join( __dirname, 'dist' );
 
-module.exports = {
-	bail: ! isDevelopment,
-	entry: path.join( __dirname, 'src', 'index.js' ),
-	mode: isDevelopment ? 'development' : 'production',
-	devtool: false,
-	output: {
-		path: outputPath,
-		filename: 'build.min.js',
-	},
-	optimization: {
-		minimize: ! isDevelopment,
-		minimizer: Minify( {
-			extractComments: false,
-			terserOptions: {
-				ecma: 5,
-				safari10: true,
-				mangle: { reserved: [ '__', '_n', '_nx', '_x' ] },
+const FSE_MODULE_PREFIX = 'a8c-fse';
+
+function getWebpackConfig() {
+	return {
+		bail: ! isDevelopment,
+		entry: path.join( __dirname, 'src', 'index.js' ),
+		mode: isDevelopment ? 'development' : 'production',
+		devtool: false,
+		output: {
+			path: outputPath,
+			filename: 'build.min.js',
+		},
+		optimization: {
+			minimize: ! isDevelopment,
+			minimizer: Minify( {
+				extractComments: false,
+				terserOptions: {
+					ecma: 5,
+					safari10: true,
+					mangle: { reserved: [ '__', '_n', '_nx', '_x' ] },
+				},
+			} ),
+			splitChunks: false,
+		},
+		module: {
+			strictExportPresence: true,
+			rules: [
+				TranspileConfig.loader( {
+					exclude: /node_modules\//,
+					presets: [ require.resolve( '@automattic/calypso-babel-config/presets/default' ) ],
+				} ),
+				TranspileConfig.loader( {
+					include: shouldTranspileDependency,
+					presets: [ require.resolve( '@automattic/calypso-babel-config/presets/dependencies' ) ],
+				} ),
+				SassConfig.loader( {
+					includePaths: [ __dirname ],
+					postCssOptions: {
+						// Do not use postcss.config.js. This ensure we have the final say on how PostCSS is used in calypso.
+						// This is required because Calypso imports `@automattic/notifications` and that package defines its
+						// own `postcss.config.js` that they use for their webpack bundling process.
+						config: false,
+						plugins: [ autoprefixerPlugin() ],
+					},
+					prelude: `@use '${ require.resolve(
+						'calypso/assets/stylesheets/shared/_utils.scss'
+					) }' as *;`,
+				} ),
+				FileConfig.loader(),
+			],
+		},
+		resolve: {
+			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+			mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
+			conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
+		},
+		node: false,
+		plugins: [
+			BuildMetaPlugin( { outputPath } ),
+			new webpack.DefinePlugin( {
+				__i18n_text_domain__: JSON.stringify( 'full-site-editing' ),
+				global: 'window',
+				'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
+			} ),
+			...SassConfig.plugins( {
+				filename: 'build.min.css',
+				minify: ! isDevelopment,
+			} ),
+			/*
+			 * ExPlat: Don't import the server logger when we are in the browser
+			 */
+			new webpack.NormalModuleReplacementPlugin(
+				/^calypso\/server\/lib\/logger$/,
+				'calypso/lib/explat/internals/logger-browser-replacement'
+			),
+			new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
+			new ExtensiveLodashReplacementPlugin(),
+			new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+			shouldEmitStats &&
+				new BundleAnalyzerPlugin( {
+					analyzerMode: 'server',
+					statsOptions: {
+						source: false,
+						reasons: false,
+						optimizationBailout: false,
+						chunkOrigins: false,
+						chunkGroups: true,
+					},
+				} ),
+			new DependencyExtractionWebpackPlugin( {
+				injectPolyfill: true,
+				outputFilename: '[name].asset.php',
+				requestToExternal( request ) {
+					if ( request.startsWith( FSE_MODULE_PREFIX ) ) {
+						switch ( request ) {
+							// This is not a real module, it is a placeholder that corresponds to a WordPress script handle registered with the same name.
+							// This allows us to import the module, declaring the dependency via JavaScript.
+							// A TypeScript type helps ensure it's used properly. See `./typings/fse`
+							case 'a8c-fse-common-data-stores':
+								return request;
+
+							default:
+								throw new Error( `Received unknown module request ${ request }.` );
+						}
+					}
+					// The extraction logic will only extract a package if requestToExternal
+					// explicitly returns undefined for the given request. Null
+					// shortcuts the logic such that react-i18n will be bundled.
+					if ( request === '@wordpress/react-i18n' ) {
+						return null;
+					}
+				},
+			} ),
+		].filter( Boolean ),
+		devServer: {
+			host: 'calypso.localhost',
+			port: 3000,
+			static: {
+				directory: path.join( __dirname, 'dist' ),
 			},
-		} ),
-		splitChunks: false,
-	},
-	module: {
-		strictExportPresence: true,
-		rules: [
-			TranspileConfig.loader( {
-				exclude: /node_modules\//,
-				presets: [ require.resolve( '@automattic/calypso-babel-config/presets/default' ) ],
-			} ),
-			TranspileConfig.loader( {
-				include: shouldTranspileDependency,
-				presets: [ require.resolve( '@automattic/calypso-babel-config/presets/dependencies' ) ],
-			} ),
-			SassConfig.loader( {
-				includePaths: [ __dirname ],
-				postCssOptions: {
-					// Do not use postcss.config.js. This ensure we have the final say on how PostCSS is used in calypso.
-					// This is required because Calypso imports `@automattic/notifications` and that package defines its
-					// own `postcss.config.js` that they use for their webpack bundling process.
-					config: false,
-					plugins: [ autoprefixerPlugin() ],
-				},
-				prelude: `@use '${ require.resolve(
-					'calypso/assets/stylesheets/shared/_utils.scss'
-				) }' as *;`,
-			} ),
-			FileConfig.loader(),
-		],
-	},
-	resolve: {
-		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
-		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
-		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
-	},
-	node: false,
-	plugins: [
-		BuildMetaPlugin( { outputPath } ),
-		new webpack.DefinePlugin( {
-			__i18n_text_domain__: JSON.stringify( 'full-site-editing' ),
-			global: 'window',
-			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
-		} ),
-		...SassConfig.plugins( {
-			filename: 'build.min.css',
-			minify: ! isDevelopment,
-		} ),
-		/*
-		 * ExPlat: Don't import the server logger when we are in the browser
-		 */
-		new webpack.NormalModuleReplacementPlugin(
-			/^calypso\/server\/lib\/logger$/,
-			'calypso/lib/explat/internals/logger-browser-replacement'
-		),
-		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
-		new ExtensiveLodashReplacementPlugin(),
-		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
-		shouldEmitStats &&
-			new BundleAnalyzerPlugin( {
-				analyzerMode: 'server',
-				statsOptions: {
-					source: false,
-					reasons: false,
-					optimizationBailout: false,
-					chunkOrigins: false,
-					chunkGroups: true,
-				},
-			} ),
-	].filter( Boolean ),
-	devServer: {
-		host: 'calypso.localhost',
-		port: 3000,
-		static: {
-			directory: path.join( __dirname, 'dist' ),
+			client: {
+				progress: true,
+			},
+			watchFiles: [ 'dist/**/*' ],
 		},
-		client: {
-			progress: true,
-		},
-		watchFiles: [ 'dist/**/*' ],
-	},
-};
+	};
+}
+
+module.exports = getWebpackConfig;
