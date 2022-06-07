@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { take, times } from 'lodash';
+import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -77,7 +77,7 @@ class FollowingManageSearchFeedsResults extends Component {
 						showLastUpdatedDate: false,
 						followSource: READER_FOLLOWING_MANAGE_SEARCH_RESULT,
 					} }
-					items={ showMoreResults ? searchResults : take( searchResults, 10 ) }
+					items={ showMoreResults ? searchResults : searchResults.slice( 0, 10 ) }
 					width={ width }
 					fetchNextPage={ this.fetchNextPage }
 					hasNextPage={ showMoreResults ? this.hasNextPage : undefined }

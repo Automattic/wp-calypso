@@ -1,25 +1,19 @@
-import { PREVIEW_SITE_SET, PREVIEW_URL_CLEAR, PREVIEW_URL_SET } from 'calypso/state/action-types';
+import { PREVIEW_URL_CLEAR, PREVIEW_URL_SET } from 'calypso/state/action-types';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 import 'calypso/state/ui/init';
 
-export function setPreviewUrl( url ) {
+export function setPreviewUrl( url, siteId ) {
 	return {
 		type: PREVIEW_URL_SET,
 		url,
+		siteId,
 	};
 }
 
 export function clearPreviewUrl() {
 	return {
 		type: PREVIEW_URL_CLEAR,
-	};
-}
-
-export function setAllSitesPreviewSiteId( siteId ) {
-	return {
-		type: PREVIEW_SITE_SET,
-		siteId,
 	};
 }
 

@@ -1,6 +1,7 @@
 import { registerStore } from '@wordpress/data';
 import { useRef } from 'react';
 import {
+	emptyManagedContactDetails,
 	getInitialWpcomStoreState,
 	managedContactDetailsUpdaters as updaters,
 } from '../types/wpcom-store-state';
@@ -33,10 +34,7 @@ type WpcomStoreAction =
 			payload: PossiblyCompleteDomainContactDetails;
 	  };
 
-export function useWpcomStore(
-	managedContactDetails: ManagedContactDetails,
-	updateContactDetailsCache: ( _: DomainContactDetails ) => void
-): void {
+export function useWpcomStore(): void {
 	// Only register once
 	const registerIsComplete = useRef< boolean >( false );
 	if ( registerIsComplete.current ) {
@@ -50,7 +48,6 @@ export function useWpcomStore(
 	): ManagedContactDetails {
 		switch ( action.type ) {
 			case 'UPDATE_DOMAIN_CONTACT_FIELDS': {
-				updateContactDetailsCache( action.payload );
 				return updaters.updateDomainContactFields( state, action.payload );
 			}
 			case 'UPDATE_VAT_ID':
@@ -92,7 +89,7 @@ export function useWpcomStore(
 	registerStore( 'wpcom-checkout', {
 		reducer( state: WpcomStoreState | undefined, action: WpcomStoreAction ): WpcomStoreState {
 			const checkedState =
-				state === undefined ? getInitialWpcomStoreState( managedContactDetails ) : state;
+				state === undefined ? getInitialWpcomStoreState( emptyManagedContactDetails ) : state;
 			return {
 				contactDetails: contactReducer( checkedState.contactDetails, action ),
 				recaptchaClientId: recaptchaClientIdReducer( checkedState.recaptchaClientId, action ),

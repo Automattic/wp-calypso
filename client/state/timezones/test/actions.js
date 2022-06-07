@@ -1,11 +1,10 @@
-import { expect } from 'chai';
 import { TIMEZONES_RECEIVE, TIMEZONES_REQUEST } from 'calypso/state/action-types';
 import { requestTimezones, timezonesReceive } from '../actions';
 
 describe( 'actions', () => {
 	describe( 'creators functions', () => {
 		test( '#requestTimezones()', () => {
-			expect( requestTimezones() ).to.eql( {
+			expect( requestTimezones() ).toEqual( {
 				type: TIMEZONES_REQUEST,
 			} );
 		} );
@@ -30,7 +29,7 @@ describe( 'actions', () => {
 				},
 			};
 
-			expect( timezonesReceive( responseData ) ).to.eql( {
+			expect( timezonesReceive( responseData ) ).toEqual( {
 				type: TIMEZONES_RECEIVE,
 				...responseData,
 			} );

@@ -13,21 +13,23 @@ import 'calypso/state/user-settings/init';
  *
  * @param {Array} fields Array of keys to be saved from unsaved user settings
  */
-const saveUnsavedUserSettings = ( fields = [] ) => async ( dispatch, getState ) => {
-	const unsavedUserSettings = getUnsavedUserSettings( getState() );
+const saveUnsavedUserSettings =
+	( fields = [] ) =>
+	async ( dispatch, getState ) => {
+		const unsavedUserSettings = getUnsavedUserSettings( getState() );
 
-	const settingsToSave = fields.reduce( ( obj, attr ) => {
-		if ( unsavedUserSettings[ attr ] !== undefined ) {
-			obj[ attr ] = unsavedUserSettings[ attr ];
-		}
-		return obj;
-	}, {} );
+		const settingsToSave = fields.reduce( ( obj, attr ) => {
+			if ( unsavedUserSettings[ attr ] !== undefined ) {
+				obj[ attr ] = unsavedUserSettings[ attr ];
+			}
+			return obj;
+		}, {} );
 
-	const response = await wp.me().settings().update( settingsToSave );
-	dispatch( saveUserSettingsSuccess( fromApi( response ) ) );
-	dispatch( clearUnsavedUserSettings( fields ) );
+		const response = await wp.me().settings().update( settingsToSave );
+		dispatch( saveUserSettingsSuccess( fromApi( response ) ) );
+		dispatch( clearUnsavedUserSettings( fields ) );
 
-	return response;
-};
+		return response;
+	};
 
 export default saveUnsavedUserSettings;

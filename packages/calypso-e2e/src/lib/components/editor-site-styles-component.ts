@@ -1,4 +1,5 @@
 import { Page, Locator } from 'playwright';
+import { DimensionsSettings, EditorDimensionsComponent } from './editor-dimensions-component';
 import {
 	ColorSettings,
 	EditorColorPickerComponent,
@@ -27,6 +28,7 @@ export class EditorSiteStylesComponent {
 
 	private editorColorPickerComponent: EditorColorPickerComponent;
 	private editorTypographyComponent: EditorTypographyComponent;
+	private editorDimensionsComponent: EditorDimensionsComponent;
 
 	/**
 	 * Creates an instance of the component.
@@ -40,6 +42,7 @@ export class EditorSiteStylesComponent {
 
 		this.editorColorPickerComponent = new EditorColorPickerComponent( page, editor );
 		this.editorTypographyComponent = new EditorTypographyComponent( page, editor, 'site-styles' );
+		this.editorDimensionsComponent = new EditorDimensionsComponent( page, editor, 'site-styles' );
 	}
 
 	/**
@@ -101,6 +104,28 @@ export class EditorSiteStylesComponent {
 		await this.clickMenuButton( blockName );
 		await this.clickMenuButton( 'Typography' );
 		await this.editorTypographyComponent.setTypography( typographySettings );
+	}
+
+	/**
+	 * Set global layout settings for the site.
+	 * Note that only the "Padding" dimension is available globally.
+	 *
+	 * @param {DimensionsSettings} settings The dimensions settings to set.
+	 */
+	async setGlobalLayout( settings: DimensionsSettings ): Promise< void > {
+		await this.returnToTopMenu();
+		await this.clickMenuButton( 'Layout' );
+		await this.editorDimensionsComponent.setDimensions( settings );
+	}
+
+	/**
+	 * Reset the global layout dimensions.
+	 * (To empty layout defaults, not the theme defaults.)
+	 */
+	async resetGlobalLayout(): Promise< void > {
+		await this.returnToTopMenu();
+		await this.clickMenuButton( 'Layout' );
+		await this.editorDimensionsComponent.resetAll();
 	}
 
 	/**

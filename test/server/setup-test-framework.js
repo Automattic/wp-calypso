@@ -1,8 +1,4 @@
-import chai from 'chai';
 import * as nock from 'nock';
-import sinonChai from 'sinon-chai';
-
-chai.use( sinonChai );
 
 // Disables all network requests for all tests.
 nock.disableNetConnect();
@@ -19,3 +15,9 @@ afterAll( () => {
 	nock.restore();
 	nock.cleanAll();
 } );
+
+// Don't need to mock specific functions for any tests, but mocking
+// module because it accesses the `document` global.
+jest.mock( 'wpcom-proxy-request', () => ( {
+	__esModule: true,
+} ) );

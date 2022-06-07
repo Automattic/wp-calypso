@@ -155,6 +155,7 @@ export const FEATURE_SPAM_10K_PER_MONTH = 'spam-block-10k';
 export const FEATURE_FILTERING_V2 = 'filtering-v2';
 export const FEATURE_LANGUAGE_SUPPORT_V2 = 'language-support-v2';
 export const FEATURE_SPELLING_CORRECTION_V2 = 'spelling-correction-v2';
+export const FEATURE_SUPPORTS_WOOCOMMERCE_V2 = 'supports-woocommerce-v2';
 export const FEATURE_JETPACK_BACKUP_DAILY = PRODUCT_JETPACK_BACKUP_DAILY;
 export const FEATURE_JETPACK_BACKUP_DAILY_MONTHLY = PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY;
 export const FEATURE_JETPACK_BACKUP_REALTIME = PRODUCT_JETPACK_BACKUP_REALTIME;
@@ -203,6 +204,8 @@ export const FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT = 'p2-priority-chat-email-su
 export const FEATURE_P2_ACTIVITY_OVERVIEW = 'p2-activity-overview';
 
 // New features Flexible and Pro plans introduced.
+export const FEATURE_MANAGED_HOSTING = 'managed-hosting';
+export const FEATURE_UNLIMITED_TRAFFIC = 'unlimited-traffic';
 export const FEATURE_UNLIMITED_USERS = 'unlimited-users';
 export const FEATURE_UNLIMITED_POSTS_PAGES = 'unlimited-posts-pages';
 export const FEATURE_PAYMENT_BLOCKS = 'payment-blocks';
@@ -211,3 +214,30 @@ export const FEATURE_UNLIMITED_ADMINS = 'unlimited-admins';
 export const FEATURE_ADDITIONAL_SITES = 'additional-sites';
 export const FEATURE_WOOCOMMERCE = 'woocommerce';
 export const FEATURE_SOCIAL_MEDIA_TOOLS = 'social-media-tools';
+
+// From class-wpcom-features.php in WPCOM
+export const WPCOM_FEATURES_AKISMET = 'akismet';
+export const WPCOM_FEATURES_ANTISPAM = 'antispam';
+export const WPCOM_FEATURES_ATOMIC = 'atomic';
+export const WPCOM_FEATURES_BACKUPS = 'backups';
+export const WPCOM_FEATURES_BACKUPS_RESTORE = 'restore';
+export const WPCOM_FEATURES_CDN = 'cdn';
+export const WPCOM_FEATURES_CLASSIC_SEARCH = 'search';
+export const WPCOM_FEATURES_CLOUDFLARE_CDN = 'cloudflare-cdn';
+export const WPCOM_FEATURES_FULL_ACTIVITY_LOG = 'full-activity-log';
+export const WPCOM_FEATURES_INSTANT_SEARCH = 'instant-search';
+export const WPCOM_FEATURES_LIVE_SUPPORT = 'live_support';
+export const WPCOM_FEATURES_NO_ADVERTS = 'no-adverts/no-adverts.php';
+export const WPCOM_FEATURES_NO_WPCOM_BRANDING = 'no-wpcom-branding';
+export const WPCOM_FEATURES_PREMIUM_THEMES = 'premium-themes';
+export const WPCOM_FEATURES_PRIORITY_SUPPORT = 'priority_support';
+export const WPCOM_FEATURES_REAL_TIME_BACKUPS = 'real-time-backups';
+export const WPCOM_FEATURES_SCAN = 'scan';
+export const WPCOM_FEATURES_SEO_PREVIEW_TOOLS = 'seo-preview-tools';
+export const WPCOM_FEATURES_UPLOAD_AUDIO_FILES = 'upload-audio-files';
+export const WPCOM_FEATURES_UPLOAD_VIDEO_FILES = 'upload-video-files';
+export const WPCOM_FEATURES_VAULTPRESS_BACKUPS = 'vaultpress-backups';
+export const WPCOM_FEATURES_VIDEO_HOSTING = 'video-hosting';
+export const WPCOM_FEATURES_VIDEOPRESS = 'videopress';
+export const WPCOM_FEATURES_VIDEOPRESS_UNLIMITED_STORAGE = 'videopress-unlimited-storage';
+export const WPCOM_FEATURES_WORDADS = 'wordads';

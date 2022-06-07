@@ -14,8 +14,10 @@ import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
 import searchSites from 'calypso/components/search-sites';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { showAgencyDashboard } from 'calypso/state/partner-portal/partner/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -32,7 +34,7 @@ const ALL_SITES = 'ALL_SITES';
 const noop = () => {};
 const debug = debugFactory( 'calypso:site-selector' );
 
-class SiteSelector extends Component {
+export class SiteSelector extends Component {
 	static propTypes = {
 		isPlaceholder: PropTypes.bool,
 		sites: PropTypes.array,
@@ -459,89 +461,91 @@ class SiteSelector extends Component {
 	}
 }
 
-const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePath } ) => (
-	dispatch,
-	getState
-) => {
-	const state = getState();
-	const pathname = getPathnameForSite();
-	if ( pathname ) {
-		page( pathname );
-	}
-
-	function getPathnameForSite() {
+const navigateToSite =
+	( siteId, { allSitesPath, allSitesSingleUser, siteBasePath } ) =>
+	( dispatch, getState ) => {
+		const state = getState();
 		const site = getSite( state, siteId );
-		debug( 'getPathnameForSite', siteId, site );
-
-		if ( siteId === ALL_SITES ) {
-			// default posts links to /posts/my when possible and /posts when not
-			const postsBase = allSitesSingleUser ? '/posts' : '/posts/my';
-			const path = allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
-
-			// There is currently no "all sites" version of the insights page
-			return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
-		} else if ( siteBasePath ) {
-			const base = getSiteBasePath( site );
-
-			// Record original URL type. The original URL should be a path-absolute URL, e.g. `/posts`.
-			const urlType = determineUrlType( base );
-
-			// Get URL parts and modify the path.
-			const { origin, pathname: urlPathname, search } = getUrlParts( base );
-			const newPathname = `${ urlPathname }/${ site.slug }`;
-
-			try {
-				// Get an absolute URL from the original URL, the modified path, and some defaults.
-				const absoluteUrl = getUrlFromParts( {
-					origin: origin || window.location.origin,
-					pathname: newPathname,
-					search,
-				} );
-
-				// Format the absolute URL down to the original URL type.
-				return format( absoluteUrl, urlType );
-			} catch {
-				// Invalid URLs will cause `getUrlFromParts` to throw. Return `null` in that case.
-				return null;
-			}
+		if ( isJetpackCloud() && ! site && showAgencyDashboard( state ) ) {
+			return page.redirect( '/dashboard' );
 		}
-	}
-
-	function getSiteBasePath( site ) {
-		let path = siteBasePath;
-		const postsBase = site.jetpack || site.single_user_site ? '/posts' : '/posts/my';
-
-		// Default posts to /posts/my when possible and /posts when not
-		path = path.replace( /^\/posts\b(\/my)?/, postsBase );
-
-		// Default stats to /stats/slug when on a 3rd level post/page summary
-		if ( path.match( /^\/stats\/(post|page)\// ) ) {
-			path = '/stats';
+		const pathname = getPathnameForSite();
+		if ( pathname ) {
+			page( pathname );
 		}
 
-		if ( path.match( /^\/domains\/manage\// ) ) {
-			path = '/domains/manage';
-		}
+		function getPathnameForSite() {
+			debug( 'getPathnameForSite', siteId, site );
 
-		if ( path.match( /^\/email\// ) ) {
-			path = '/email';
-		}
+			if ( siteId === ALL_SITES ) {
+				// default posts links to /posts/my when possible and /posts when not
+				const postsBase = allSitesSingleUser ? '/posts' : '/posts/my';
+				const path = allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
 
-		if ( path.match( /^\/store\/stats\// ) ) {
-			const isStore = site.jetpack && site.options && site.options.woocommerce_is_active;
-			if ( ! isStore ) {
-				path = '/stats/day';
+				// There is currently no "all sites" version of the insights page
+				return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
+			} else if ( siteBasePath ) {
+				const base = getSiteBasePath();
+
+				// Record original URL type. The original URL should be a path-absolute URL, e.g. `/posts`.
+				const urlType = determineUrlType( base );
+
+				// Get URL parts and modify the path.
+				const { origin, pathname: urlPathname, search } = getUrlParts( base );
+				const newPathname = `${ urlPathname }/${ site.slug }`;
+
+				try {
+					// Get an absolute URL from the original URL, the modified path, and some defaults.
+					const absoluteUrl = getUrlFromParts( {
+						origin: origin || window.location.origin,
+						pathname: newPathname,
+						search,
+					} );
+
+					// Format the absolute URL down to the original URL type.
+					return format( absoluteUrl, urlType );
+				} catch {
+					// Invalid URLs will cause `getUrlFromParts` to throw. Return `null` in that case.
+					return null;
+				}
 			}
 		}
 
-		// Jetpack Cloud: default to /backups/ when in the details of a particular backup
-		if ( path.match( /^\/backup\/.*\/(download|restore|detail)/ ) ) {
-			path = '/backup';
-		}
+		function getSiteBasePath() {
+			let path = siteBasePath;
+			const postsBase = site.jetpack || site.single_user_site ? '/posts' : '/posts/my';
 
-		return path;
-	}
-};
+			// Default posts to /posts/my when possible and /posts when not
+			path = path.replace( /^\/posts\b(\/my)?/, postsBase );
+
+			// Default stats to /stats/slug when on a 3rd level post/page summary
+			if ( path.match( /^\/stats\/(post|page)\// ) ) {
+				path = '/stats';
+			}
+
+			if ( path.match( /^\/domains\/manage\// ) ) {
+				path = '/domains/manage';
+			}
+
+			if ( path.match( /^\/email\// ) ) {
+				path = '/email';
+			}
+
+			if ( path.match( /^\/store\/stats\// ) ) {
+				const isStore = site.jetpack && site.options && site.options.woocommerce_is_active;
+				if ( ! isStore ) {
+					path = '/stats/day';
+				}
+			}
+
+			// Jetpack Cloud: default to /backups/ when in the details of a particular backup
+			if ( path.match( /^\/backup\/.*\/(download|restore|detail)/ ) ) {
+				path = '/backup';
+			}
+
+			return path;
+		}
+	};
 
 const mapState = ( state ) => {
 	const user = getCurrentUser( state );

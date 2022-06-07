@@ -7,6 +7,11 @@
 
 .theme-jetpack-cloud,
 .color-scheme.is-jetpack-cloud {
+	// Masterbar
+	@media only screen and ( min-width: 782px ) {
+		--masterbar-height: 46px;
+	}
+
 	.main {
 		box-sizing: border-box;
 		padding-left: 16px;
@@ -25,6 +30,7 @@
 	border-radius: var( --jetpack-corners-soft );
 	box-sizing: border-box;
 	font-weight: 500; /* stylelint-disable-line scales/font-weights */
+	transition: background-color 0.1s;
 
 	&:hover {
 		background-color: var( --color-accent-0 );
@@ -54,8 +60,8 @@
 	border-color: var( --studio-jetpack-green-50 );
 
 	&:hover {
-		background-color: var( --studio-jetpack-green-60 );
-		border-color: var( --studio-jetpack-green-60 );
+		background-color: var( --studio-jetpack-green-70 );
+		border-color: var( --studio-jetpack-green-70 );
 	}
 
 	&:focus {
@@ -65,8 +71,8 @@
 	}
 
 	&:active {
-		background: var( --studio-jetpack-green-60 );
-		border-color: var( --studio-jetpack-green-60 );
+		background: var( --studio-jetpack-green-70 );
+		border-color: var( --studio-jetpack-green-70 );
 	}
 
 	&[disabled],
@@ -276,5 +282,55 @@ html {
 	.empty-content__line {
 		font-weight: 400;
 		line-height: inherit;
+	}
+}
+
+.layout__secondary {
+	border-right: 1px solid var( --color-sidebar-border );
+}
+
+.layout.focus-content .layout__secondary {
+	@media only screen and ( max-width: 782px ) and ( min-width: 660px ) {
+		transform: none;
+		padding: 0;
+	}
+}
+
+.masterbar {
+	font-size: $font-body;
+}
+
+.sections__logo, .dashboard-overview__logo, .site-content__logo {
+	fill: var( --color-neutral-10 );
+	color: var( --color-neutral-10 );
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
+
+	path {
+		fill: var( --color-neutral-10 );
+	}
+
+	@include breakpoint-deprecated( '>960px' ) {
+		width: 100px;
+		height: 100px;
+	}
+}
+
+// Dropdown menu styles
+
+.section-nav.is-open {
+
+	.section-nav__panel {
+		padding-bottom: 0;
+		background: linear-gradient( to bottom, var( --color-neutral-0 ) 0, var( --color-surface ) 4px );
+		border: 1px solid var( --color-neutral-10 );
+		border-radius: 2px;
+		box-shadow: 0 2px 5px #0000001a, 0 0 56px rgb( 0 0 0 / 8% );
+	}
+
+	.section-nav-group {
+		margin-top: 0;
 	}
 }

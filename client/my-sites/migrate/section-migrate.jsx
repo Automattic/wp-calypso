@@ -1,5 +1,5 @@
 import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
-import { Button, Card, CompactCard, ProgressBar, Gridicon } from '@automattic/components';
+import { Button, Card, CompactCard, ProgressBar, Gridicon, Spinner } from '@automattic/components';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import { get, isEmpty, omit } from 'lodash';
 import moment from 'moment';
@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import Spinner from 'calypso/components/spinner';
 import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
 import { urlToSlug } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';

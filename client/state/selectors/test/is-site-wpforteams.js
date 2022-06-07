@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 describe( 'isSiteWPForTeams()', () => {
@@ -9,7 +8,7 @@ describe( 'isSiteWPForTeams()', () => {
 			},
 		};
 
-		expect( isSiteWPForTeams( state, 12345 ) ).to.be.null;
+		expect( isSiteWPForTeams( state, 12345 ) ).toBeNull();
 	} );
 
 	test( 'should return false if site is not a WP for Teams one', () => {
@@ -25,7 +24,7 @@ describe( 'isSiteWPForTeams()', () => {
 			},
 		};
 
-		expect( isSiteWPForTeams( state, 12345 ) ).to.be.false;
+		expect( isSiteWPForTeams( state, 12345 ) ).toBe( false );
 	} );
 
 	test( 'should return true if site is a WP for Teams one', () => {
@@ -41,6 +40,6 @@ describe( 'isSiteWPForTeams()', () => {
 			},
 		};
 
-		expect( isSiteWPForTeams( state, 12345 ) ).to.be.true;
+		expect( isSiteWPForTeams( state, 12345 ) ).toBe( true );
 	} );
 } );

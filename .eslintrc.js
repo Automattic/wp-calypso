@@ -221,7 +221,6 @@ module.exports = {
 					// These files don't have GPL license
 					files: [
 						'./desktop/package.json',
-						'./packages/magellan-mocha-plugin/package.json',
 						'./packages/material-design-icons/package.json',
 						'./packages/wpcom-proxy-request/package.json',
 						'./packages/wpcom-xhr-request/package.json',
@@ -304,19 +303,6 @@ module.exports = {
 				assertFunctionNames: [
 					// Jest
 					'expect',
-
-					// Chai
-					'chai.assert',
-					'chai.assert.*',
-					'assert',
-					'assert.*',
-					'equal',
-					'ok',
-					'deepStrictEqual',
-					'chaiExpect',
-
-					// Sinon
-					'sinon.assert.*',
 				],
 			},
 		],

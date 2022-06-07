@@ -4,6 +4,12 @@ import ExternalLink from 'calypso/components/external-link';
 
 import './style.scss';
 
+export function ReactQueryDevtoolsHelper() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return <div className="environment is-react-query-devtools" />;
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+}
+
 export function PreferencesHelper() {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return <div className="environment is-prefs" />;

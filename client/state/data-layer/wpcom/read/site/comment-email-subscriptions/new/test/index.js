@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
@@ -16,7 +15,7 @@ describe( 'comment-email-subscriptions', () => {
 		test( 'should dispatch an http request and call through next', () => {
 			const action = subscribeToNewCommentEmail( 1234 );
 			const result = requestCommentEmailSubscription( action );
-			expect( result ).to.eql(
+			expect( result ).toEqual(
 				http(
 					{
 						method: 'POST',
@@ -33,7 +32,7 @@ describe( 'comment-email-subscriptions', () => {
 	describe( 'receiveCommentEmailSubscription', () => {
 		test( 'should do nothing if successful', () => {
 			const result = receiveCommentEmailSubscription( null, { subscribed: true } );
-			expect( result ).to.be.undefined;
+			expect( result ).toBeUndefined();
 		} );
 
 		test( 'should dispatch an unsubscribe if it fails using next', () => {
@@ -41,20 +40,20 @@ describe( 'comment-email-subscriptions', () => {
 				{ payload: { blogId: 1234 } },
 				{ subscribed: false }
 			);
-			expect( result[ 0 ].notice.text ).to.eql(
+			expect( result[ 0 ].notice.text ).toEqual(
 				'Sorry, we had a problem subscribing. Please try again.'
 			);
-			expect( result[ 1 ] ).to.eql( bypassDataLayer( unsubscribeToNewCommentEmail( 1234 ) ) );
+			expect( result[ 1 ] ).toEqual( bypassDataLayer( unsubscribeToNewCommentEmail( 1234 ) ) );
 		} );
 	} );
 
 	describe( 'receiveCommentEmailSubscriptionError', () => {
 		test( 'should dispatch an error notice and unsubscribe action using next', () => {
 			const result = receiveCommentEmailSubscriptionError( { payload: { blogId: 1234 } }, null );
-			expect( result[ 0 ].notice.text ).to.eql(
+			expect( result[ 0 ].notice.text ).toEqual(
 				'Sorry, we had a problem subscribing. Please try again.'
 			);
-			expect( result[ 1 ] ).to.eql( bypassDataLayer( unsubscribeToNewCommentEmail( 1234 ) ) );
+			expect( result[ 1 ] ).toEqual( bypassDataLayer( unsubscribeToNewCommentEmail( 1234 ) ) );
 		} );
 	} );
 } );

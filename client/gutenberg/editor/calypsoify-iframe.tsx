@@ -52,7 +52,6 @@ import {
 	isJetpackSite,
 	getSite,
 } from 'calypso/state/sites/selectors';
-import { setHelpCenterVisible } from 'calypso/state/ui/help-center-visible/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import isAppBannerDismissed from 'calypso/state/ui/selectors/app-banner-is-dismissed';
 import isHelpCenterVisible from 'calypso/state/ui/selectors/help-center-is-visible';
@@ -115,6 +114,7 @@ enum EditorActions {
 	GetCheckoutModalStatus = 'getCheckoutModalStatus',
 	OpenRevisions = 'openRevisions',
 	PostStatusChange = 'postStatusChange',
+	OpenLinkInParentFrame = 'openLinkInParentFrame',
 	ViewPost = 'viewPost',
 	SetDraftId = 'draftIdSet',
 	TrashPost = 'trashPost',
@@ -404,6 +404,11 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 
 		if ( EditorActions.ViewPost === action ) {
+			const { postUrl } = payload;
+			window.open( postUrl, '_top' );
+		}
+
+		if ( EditorActions.OpenLinkInParentFrame === action ) {
 			const { postUrl } = payload;
 			window.open( postUrl, '_top' );
 		}
@@ -897,7 +902,6 @@ const mapDispatchToProps = {
 	fetchMediaItem,
 	getMediaItem,
 	clearLastNonEditorRoute,
-	setHelpCenterVisible,
 };
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;

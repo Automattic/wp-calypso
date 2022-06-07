@@ -12,7 +12,7 @@ const TransferConnectedDomainNudge = ( {
 	domain,
 	location,
 	siteSlug,
-}: TransferConnectedDomainNudgeProps ): JSX.Element | null => {
+}: TransferConnectedDomainNudgeProps ) => {
 	const translate = useTranslate();
 
 	const domainRegistryExpiryDate = moment( domain.registryExpiryDate );

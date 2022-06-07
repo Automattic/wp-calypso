@@ -4,13 +4,15 @@ import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual, some } from 'lodash';
 import photon from 'photon';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
 import PulsingDot from 'calypso/components/pulsing-dot';
+import Tootlip from 'calypso/components/tooltip';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { updateThemes } from 'calypso/state/themes/actions/theme-update';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
 
@@ -32,6 +34,7 @@ export class Theme extends Component {
 			demo_uri: PropTypes.string,
 			stylesheet: PropTypes.string,
 			taxonomies: PropTypes.object,
+			update: PropTypes.object,
 		} ),
 		// If true, highlight this theme as active
 		active: PropTypes.bool,
@@ -68,6 +71,10 @@ export class Theme extends Component {
 			PropTypes.func,
 			PropTypes.shape( { current: PropTypes.any } ),
 		] ),
+		siteId: PropTypes.number,
+		isUpdating: PropTypes.bool,
+		isUpdated: PropTypes.bool,
+		errorOnUpdate: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -78,7 +85,20 @@ export class Theme extends Component {
 		active: false,
 	};
 
+	prevThemeThumbnailRef = createRef( null );
+	themeThumbnailRef = createRef( null );
+
+	state = {
+		descriptionTooltipVisible: false,
+	};
+
 	shouldComponentUpdate( nextProps ) {
+		const themeThumbnailRefUpdated = this.themeThumbnailRef.current !== this.themeThumbnailRef.prev;
+
+		if ( themeThumbnailRefUpdated ) {
+			this.prevThemeThumbnailRef.current = this.themeThumbnailRef.current;
+		}
+
 		return (
 			nextProps.theme.id !== this.props.theme.id ||
 			nextProps.active !== this.props.active ||
@@ -90,9 +110,18 @@ export class Theme extends Component {
 			) ||
 			nextProps.screenshotClickUrl !== this.props.screenshotClickUrl ||
 			nextProps.onScreenshotClick !== this.props.onScreenshotClick ||
-			nextProps.onMoreButtonClick !== this.props.onMoreButtonClick
+			nextProps.onMoreButtonClick !== this.props.onMoreButtonClick ||
+			themeThumbnailRefUpdated
 		);
 	}
+
+	showDescriptionTooltip = () => {
+		this.setState( { descriptionTooltipVisible: true } );
+	};
+
+	hideDescriptionTooltip = () => {
+		this.setState( { descriptionTooltipVisible: false } );
+	};
 
 	onScreenshotClick = () => {
 		const { onScreenshotClick } = this.props;
@@ -136,6 +165,72 @@ export class Theme extends Component {
 
 	setBookmark = () => {
 		this.props.setThemesBookmark( this.props.theme.id );
+	};
+
+	updateTheme = () => {
+		this.props.updateThemes( [ this.props.theme.id ], this.props.siteId );
+	};
+
+	renderUpdateAlert = () => {
+		const { isUpdated, isUpdating, errorOnUpdate, theme, translate } = this.props;
+
+		if ( ! theme.update && ! isUpdated && ! isUpdating && ! errorOnUpdate ) {
+			return;
+		}
+
+		let content;
+		let alertType;
+
+		if ( errorOnUpdate ) {
+			alertType = 'danger';
+			content = (
+				<div>
+					<span>
+						<Gridicon icon="cross" size={ 18 } />
+						{ translate( 'Failed to update Theme.' ) }
+					</span>
+				</div>
+			);
+		} else if ( isUpdated ) {
+			alertType = 'success';
+			content = (
+				<div>
+					<span>
+						<Gridicon icon="checkmark" size={ 18 } />
+						{ translate( 'Theme updated!' ) }
+					</span>
+				</div>
+			);
+		} else if ( isUpdating ) {
+			alertType = 'info';
+			content = (
+				<div>
+					<span>
+						<Gridicon className="theme__updating-animated" icon="refresh" size={ 18 } />
+						{ translate( 'Updating theme.' ) }
+					</span>
+				</div>
+			);
+		} else if ( theme.update ) {
+			alertType = 'warning';
+			content = (
+				<div>
+					<span>
+						<Gridicon icon="refresh" size={ 18 } />
+						{ translate( 'New version available.' ) }
+					</span>
+					<Button onClick={ this.updateTheme } primary className="theme__button-link" borderless>
+						{ translate( 'Update now' ) }
+					</Button>
+				</div>
+			);
+		}
+
+		return (
+			<div className="theme__update-alert">
+				<div className={ `${ alertType } theme__update-alert-content` }>{ content }</div>
+			</div>
+		);
 	};
 
 	render() {
@@ -226,13 +321,15 @@ export class Theme extends Component {
 						{ translate( 'Beginner' ) }
 					</Ribbon>
 				) }
-				<div className="theme__content" { ...bookmarkRef }>
+				<div ref={ this.themeThumbnailRef } className="theme__content" { ...bookmarkRef }>
+					{ this.renderUpdateAlert() }
 					<a
 						aria-label={ name }
 						className="theme__thumbnail"
 						href={ this.props.screenshotClickUrl || 'javascript:;' /* fallback for a11y */ }
 						onClick={ this.onScreenshotClick }
-						title={ themeDescription }
+						onMouseEnter={ this.showDescriptionTooltip }
+						onMouseLeave={ this.hideDescriptionTooltip }
 					>
 						{ isActionable && (
 							<div className="theme__thumbnail-label">{ this.props.actionLabel }</div>
@@ -252,6 +349,14 @@ export class Theme extends Component {
 							</div>
 						) }
 					</a>
+
+					<Tootlip
+						context={ this.themeThumbnailRef.current }
+						isVisible={ this.state.descriptionTooltipVisible }
+						showDelay={ 1000 }
+					>
+						<div className="theme__tooltip">{ themeDescription }</div>
+					</Tootlip>
 
 					<div className="theme__info">
 						<h2 className="theme__info-title">{ name }</h2>
@@ -283,4 +388,17 @@ export class Theme extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent, setThemesBookmark } )( localize( Theme ) );
+export default connect(
+	( state, { theme } ) => {
+		const {
+			themes: { themesUpdate },
+		} = state;
+		const { themesUpdateFailed, themesUpdating, themesUpdated } = themesUpdate;
+		return {
+			errorOnUpdate: themesUpdateFailed && themesUpdateFailed.indexOf( theme.id ) > -1,
+			isUpdating: themesUpdating && themesUpdating.indexOf( theme.id ) > -1,
+			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
+		};
+	},
+	{ recordTracksEvent, setThemesBookmark, updateThemes }
+)( localize( Theme ) );

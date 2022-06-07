@@ -16,7 +16,7 @@ const ThreatLowRiskItemHeader: React.FC< Props > = ( { threatCount } ) => {
 			) }
 			<InfoPopover position="top" screenReaderText={ translate( 'Learn more' ) }>
 				{ translate(
-					"Low risk items don't have a negative impact on your site and can be safely ignored."
+					'Low risk items could have a negative impact on your site and should either be fixed or ignored at your convenience.'
 				) }
 			</InfoPopover>
 		</>

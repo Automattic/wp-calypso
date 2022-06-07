@@ -36,10 +36,10 @@ const JetpackBenefitsSiteBackups: React.FC< Props > = ( { siteId, isStandalone }
 	const backups = useSelector( ( state ) => getRewindBackups( state, siteId ) );
 
 	const dispatch = useDispatch();
-	const refreshBackupProgress = useCallback( () => dispatch( requestRewindBackups( siteId ) ), [
-		dispatch,
-		siteId,
-	] );
+	const refreshBackupProgress = useCallback(
+		() => dispatch( requestRewindBackups( siteId ) ),
+		[ dispatch, siteId ]
+	);
 
 	const loadingBackups = backups === null; // getRewindBackups returns null if there are no backups for the siteId
 	const backupCurrentlyInProgress = useSelector( ( state ) =>

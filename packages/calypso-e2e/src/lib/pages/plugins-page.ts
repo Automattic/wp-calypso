@@ -10,7 +10,8 @@ const selectors = {
 	// React modal buttons
 	modalButtonWithText: ( text: string ) => `.dialog__action-buttons button:has-text("${ text }")`,
 
-	sectionTitle: ( section: string ) => `.plugins-browser-list__title:text("${ section }")`,
+	listTitle: ( section: string ) => `.plugins-browser-list__title:text("${ section }")`,
+	listSubtitle: ( section: string ) => `.plugins-browser-list__subtitle:text("${ section }")`,
 	pluginTitleOnSection: ( section: string, plugin: string ) =>
 		`.plugins-browser-list:has(.plugins-browser-list__title.${ section }) :text-is("${ plugin }")`,
 	sectionTitles: '.plugins-browser-list__title',
@@ -26,7 +27,8 @@ const selectors = {
 	searchIcon: '.search-component__open-icon',
 	searchInput: 'input.search-component__input',
 	searchResult: ( text: string ) => `.plugins-browser-item__title:text("${ text }")`,
-	searchResultTitle: ( text: string ) => `:text("Search results for ${ text }")`,
+	// eslint-disable-next-line no-useless-escape
+	searchResultTitle: ( text: string ) => `:text('plugins for "${ text }"')`,
 
 	// Plugin view
 	pluginHamburgerMenu: `.plugin-site-jetpack__action`,
@@ -81,7 +83,14 @@ export class PluginsPage {
 	 * Validate page has the section
 	 */
 	async validateHasSection( section: string ): Promise< void > {
-		await this.page.waitForSelector( selectors.sectionTitle( section ) );
+		await this.page.waitForSelector( selectors.listTitle( section ) );
+	}
+
+	/**
+	 * Validate page has a list subtitle containing text
+	 */
+	async validateHasSubtitle( section: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.listSubtitle( section ) );
 	}
 
 	/**

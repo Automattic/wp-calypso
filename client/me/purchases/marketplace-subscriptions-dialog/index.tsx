@@ -18,7 +18,7 @@ export const MarketPlaceSubscriptionsDialog = ( {
 	removePlan,
 	isDialogVisible,
 	activeSubscriptions,
-}: MarketPlaceSubscriptionsDialogProps ): JSX.Element => {
+}: MarketPlaceSubscriptionsDialogProps ) => {
 	const translate = useTranslate();
 
 	const buttons = [

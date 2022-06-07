@@ -56,7 +56,7 @@
 	}
 }
 
-.thank-you__step-cta > a.button:not( .is-primary ) {
+.thank-you__step-cta > .button:not( .is-primary ) {
 	border-color: var( --color-accent );
 	color: var( --color-accent );
 }

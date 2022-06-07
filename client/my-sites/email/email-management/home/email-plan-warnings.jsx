@@ -3,6 +3,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	hasUnusedMailboxWarning,
 	hasGoogleAccountTOSWarning,
@@ -39,7 +40,15 @@ class EmailPlanWarnings extends Component {
 		const { domain, translate } = this.props;
 
 		return (
-			<Button compact primary href={ getGoogleAdminWithTosUrl( domain.name ) } target="_blank">
+			<Button
+				compact
+				primary
+				href={ getGoogleAdminWithTosUrl( domain.name ) }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_email_management_google_workspace_accept_tos_link_click' );
+				} }
+				target="_blank"
+			>
 				{ translate( 'Finish setup' ) }
 				<Gridicon icon="external" />
 			</Button>

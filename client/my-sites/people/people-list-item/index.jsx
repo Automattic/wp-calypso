@@ -111,16 +111,8 @@ class PeopleListItem extends PureComponent {
 	};
 
 	render() {
-		const {
-			className,
-			invite,
-			onRemove,
-			siteId,
-			translate,
-			type,
-			user,
-			inviteWasDeleted,
-		} = this.props;
+		const { className, invite, onRemove, siteId, translate, type, user, inviteWasDeleted } =
+			this.props;
 
 		const isInvite = invite && ( 'invite' === type || 'invite-details' === type );
 

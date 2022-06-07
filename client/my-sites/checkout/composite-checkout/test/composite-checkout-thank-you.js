@@ -266,6 +266,23 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `https://my.site/wp-admin/admin.php?page=jetpack-backup` );
 	} );
 
+	it( 'redirects to the sites wp-admin if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product and redirectTo is defined', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		redirectCheckoutToWpAdmin.mockImplementation( () => true );
+		const adminUrl = 'https://my.site/wp-admin/';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_complete' } ],
+			},
+			adminUrl,
+			redirectTo: 'admin.php?page=some-page',
+		} );
+		expect( url ).toBe( `https://my.site/wp-admin/admin.php?page=some-page` );
+	} );
+
 	it( 'redirects to the plans page with thank-you query string if there is a non-atomic jetpack product', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
@@ -1162,12 +1179,22 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd?d=traffic-guide' );
 	} );
 
-	it( 'redirects to a url on the site we are checking out', () => {
+	it( 'redirects to a url on the same site we are checking out', () => {
 		const redirectTo = 'https://foo.bar/some-path?with-args=yes';
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			redirectTo,
 			siteSlug: 'foo.bar',
+		} );
+		expect( url ).toBe( redirectTo );
+	} );
+
+	it( 'redirects to a url on the same subdirectory site we are checking out', () => {
+		const redirectTo = 'https://foo.bar/subdirectory/some-path?with-args=yes';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			redirectTo,
+			siteSlug: 'foo.bar::subdirectory',
 		} );
 		expect( url ).toBe( redirectTo );
 	} );

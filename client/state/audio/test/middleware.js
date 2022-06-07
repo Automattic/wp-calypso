@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import { spy } from 'sinon';
 import { HAPPYCHAT_IO_RECEIVE_MESSAGE } from 'calypso/state/action-types';
 import middleware from '../middleware';
 
@@ -10,17 +8,17 @@ describe( 'Audio Middleware', () => {
 	let _window; // Keep a copy of the original window if any
 
 	beforeEach( () => {
-		next = spy();
+		next = jest.fn();
 
 		store = {
-			dispatch: spy(),
+			dispatch: jest.fn(),
 		};
 
 		// Spy on (new Audio()).play()
-		play = spy();
+		play = jest.fn();
 		_window = global.window;
 		global.window = {
-			Audio: spy( function () {
+			Audio: jest.fn( function () {
 				return { play };
 			} ),
 		};
@@ -35,8 +33,8 @@ describe( 'Audio Middleware', () => {
 
 		middleware( store )( next )( action );
 
-		expect( store.dispatch ).to.not.have.been.called;
-		expect( next ).to.have.been.calledWith( action );
+		expect( store.dispatch ).not.toBeCalled();
+		expect( next ).toBeCalledWith( action );
 	} );
 
 	test( 'should not play any sound when no audio support', () => {
@@ -51,9 +49,9 @@ describe( 'Audio Middleware', () => {
 
 		middleware( store )( next )( action );
 
-		expect( store.dispatch ).to.not.have.been.called;
-		expect( next ).to.have.been.calledWith( action );
-		expect( play ).to.not.have.been.called;
+		expect( store.dispatch ).not.toBeCalled();
+		expect( next ).toBeCalledWith( action );
+		expect( play ).not.toBeCalled();
 	} );
 
 	test( 'should play sound when receiving a new message from the operator', () => {
@@ -66,9 +64,9 @@ describe( 'Audio Middleware', () => {
 
 		middleware( store )( next )( action );
 
-		expect( store.dispatch ).to.not.have.been.called;
-		expect( next ).to.have.been.calledWith( action );
-		expect( window.Audio ).to.have.been.calledWith( '/calypso/audio/chat-pling.wav' );
-		expect( play ).to.have.been.calledWith();
+		expect( store.dispatch ).not.toBeCalled();
+		expect( next ).toBeCalledWith( action );
+		expect( window.Audio ).toBeCalledWith( '/calypso/audio/chat-pling.wav' );
+		expect( play ).toBeCalledWith();
 	} );
 } );

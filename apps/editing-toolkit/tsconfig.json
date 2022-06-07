@@ -41,7 +41,9 @@
 		{ "path": "../../packages/onboarding" },
 		{ "path": "../../packages/launch" },
 		{ "path": "../../packages/tour-kit" },
+		{ "path": "../../packages/happychat-connection" },
 		{ "path": "../../packages/plans-grid" },
+		{ "path": "../../packages/site-picker" },
 		{ "path": "../../packages/i18n-utils" }
 	]
 }

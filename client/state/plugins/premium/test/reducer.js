@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	PLUGIN_SETUP_INSTRUCTIONS_FETCH,
@@ -27,7 +26,7 @@ describe( 'premium reducer', () => {
 				type: PLUGIN_SETUP_INSTRUCTIONS_FETCH,
 				siteId: 'one.site',
 			} );
-			expect( state ).to.eql( { 'one.site': true } );
+			expect( state ).toEqual( { 'one.site': true } );
 		} );
 		test( 'keeps track of multiple sites', () => {
 			const originalState = deepFreeze( { 'one.site': true } );
@@ -35,7 +34,7 @@ describe( 'premium reducer', () => {
 				type: PLUGIN_SETUP_INSTRUCTIONS_FETCH,
 				siteId: 'two.site',
 			} );
-			expect( state ).to.eql( { 'one.site': true, 'two.site': true } );
+			expect( state ).toEqual( { 'one.site': true, 'two.site': true } );
 		} );
 		test( 'should track when fetches end', () => {
 			const originalState = deepFreeze( { 'one.site': true } );
@@ -43,7 +42,7 @@ describe( 'premium reducer', () => {
 				type: PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
 				siteId: 'one.site',
 			} );
-			expect( state ).to.eql( { 'one.site': false } );
+			expect( state ).toEqual( { 'one.site': false } );
 		} );
 		test( 'should track when fetches end for many sites', () => {
 			const originalState = deepFreeze( { 'one.site': true } );
@@ -51,7 +50,7 @@ describe( 'premium reducer', () => {
 				type: PLUGIN_SETUP_INSTRUCTIONS_RECEIVE,
 				siteId: 'two.site',
 			} );
-			expect( state ).to.eql( { 'one.site': true, 'two.site': false } );
+			expect( state ).toEqual( { 'one.site': true, 'two.site': false } );
 		} );
 		test( 'should not change when plugin status updates', () => {
 			const originalState = deepFreeze( { 'one.site': false } );
@@ -59,7 +58,7 @@ describe( 'premium reducer', () => {
 				type: PLUGIN_SETUP_INSTALL,
 				siteId: 'one.site',
 			} );
-			expect( state ).to.eql( originalState );
+			expect( state ).toEqual( originalState );
 		} );
 	} );
 
@@ -71,7 +70,7 @@ describe( 'premium reducer', () => {
 				siteId: 'one.site',
 				data: initSite,
 			} );
-			expect( state ).to.eql( { 'one.site': initSite } );
+			expect( state ).toEqual( { 'one.site': initSite } );
 		} );
 
 		test( 'should keep track of install instructions for multiple sites', () => {
@@ -81,7 +80,7 @@ describe( 'premium reducer', () => {
 				siteId: 'two.site',
 				data: initSite,
 			} );
-			expect( state ).to.eql( { 'one.site': installingSite, 'two.site': initSite } );
+			expect( state ).toEqual( { 'one.site': installingSite, 'two.site': initSite } );
 		} );
 
 		test( 'should track when a plugin has started installing', () => {
@@ -91,7 +90,7 @@ describe( 'premium reducer', () => {
 				siteId: 'one.site',
 				slug: 'vaultpress',
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'one.site': [
 					{
 						slug: 'vaultpress',
@@ -125,7 +124,7 @@ describe( 'premium reducer', () => {
 				siteId: 'one.site',
 				slug: 'akismet',
 			} );
-			expect( state ).to.eql( { 'one.site': activatingSite } );
+			expect( state ).toEqual( { 'one.site': activatingSite } );
 		} );
 
 		test( 'should track when a plugin is being configured', () => {
@@ -135,7 +134,7 @@ describe( 'premium reducer', () => {
 				siteId: 'one.site',
 				slug: 'akismet',
 			} );
-			expect( state ).to.eql( { 'one.site': configuringSite } );
+			expect( state ).toEqual( { 'one.site': configuringSite } );
 		} );
 
 		test( 'should track when a plugin has successfully finished', () => {
@@ -145,7 +144,7 @@ describe( 'premium reducer', () => {
 				siteId: 'one.site',
 				slug: 'akismet',
 			} );
-			expect( state ).to.eql( { 'one.site': finishedPluginSite } );
+			expect( state ).toEqual( { 'one.site': finishedPluginSite } );
 		} );
 
 		test( 'should track any errors when installing a plugin', () => {
@@ -180,7 +179,7 @@ describe( 'premium reducer', () => {
 				slug: 'polldaddy',
 				error: { name: 'ErrorCode', message: 'Something went wrong.' },
 			} );
-			expect( state ).to.eql( { 'one.site': siteWithError } );
+			expect( state ).toEqual( { 'one.site': siteWithError } );
 		} );
 
 		test( 'should serialize non-error state omitting the key', () => {
@@ -197,7 +196,7 @@ describe( 'premium reducer', () => {
 			} );
 
 			const nextState = serialize( plugins, originalState );
-			expect( nextState ).to.deep.eql( {
+			expect( nextState ).toEqual( {
 				'one.site': [
 					{
 						slug: 'vaultpress',
@@ -223,7 +222,7 @@ describe( 'premium reducer', () => {
 				],
 			} );
 			const nextState = serialize( plugins, originalState );
-			expect( nextState ).eql( {
+			expect( nextState ).toEqual( {
 				'error-site': [
 					{
 						slug: 'vaultpress',

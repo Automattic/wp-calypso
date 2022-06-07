@@ -272,7 +272,8 @@ validators.validIndonesiaNik = {
 
 validators.validIndiaGstin = {
 	isValid( value ) {
-		const gstinRegex = /^([0-2][0-9]|[3][0-7])[A-Z]{3}[ABCFGHLJPTK][A-Z]\d{4}[A-Z][A-Z0-9][Z][A-Z0-9]$/i;
+		const gstinRegex =
+			/^([0-2][0-9]|[3][0-7])[A-Z]{3}[ABCFGHLJPTK][A-Z]\d{4}[A-Z][A-Z0-9][Z][A-Z0-9]$/i;
 
 		if ( ! value ) {
 			return true;

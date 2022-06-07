@@ -35,10 +35,12 @@ export function receiveSiteBlock() {
 	} );
 }
 
-export const receiveSiteBlockError = ( { payload: { siteId } } ) => ( dispatch ) => {
-	dispatch( errorNotice( translate( 'Sorry, there was a problem blocking that site.' ) ) );
-	dispatch( bypassDataLayer( unblockSite( siteId ) ) );
-};
+export const receiveSiteBlockError =
+	( { payload: { siteId } } ) =>
+	( dispatch ) => {
+		dispatch( errorNotice( translate( 'Sorry, there was a problem blocking that site.' ) ) );
+		dispatch( bypassDataLayer( unblockSite( siteId ) ) );
+	};
 
 registerHandlers( 'state/data-layer/wpcom/me/block/sites/new/index.js', {
 	[ READER_SITE_BLOCK ]: [

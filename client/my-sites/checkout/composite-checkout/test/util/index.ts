@@ -1,18 +1,22 @@
 import config from '@automattic/calypso-config';
-import {
-	getEmptyResponseCart,
-	getEmptyResponseCartProduct,
-	RequestCartProduct,
-} from '@automattic/shopping-cart';
+import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import { prettyDOM } from '@testing-library/react';
 import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
+import domainManagementReducer from 'calypso/state/domains/management/reducer';
 import type {
+	CartKey,
 	SetCart,
 	RequestCart,
 	ResponseCart,
 	ResponseCartProduct,
+	RequestCartProduct,
 } from '@automattic/shopping-cart';
+import type {
+	CountryListItem,
+	PossiblyCompleteDomainContactDetails,
+} from '@automattic/wpcom-checkout';
 
 export const stripeConfiguration = {
 	processor_id: 'IE',
@@ -35,7 +39,23 @@ export const processorOptions = {
 	stripe: undefined,
 };
 
-export const countryList = [
+export const cachedContactDetails: PossiblyCompleteDomainContactDetails = {
+	firstName: null,
+	lastName: null,
+	organization: null,
+	email: null,
+	alternateEmail: null,
+	phone: null,
+	address1: null,
+	address2: null,
+	city: null,
+	state: null,
+	postalCode: null,
+	countryCode: null,
+	fax: null,
+};
+
+export const countryList: CountryListItem[] = [
 	{
 		code: 'US',
 		name: 'United States',
@@ -56,6 +76,7 @@ export const countryList = [
 export const siteId = 13579;
 
 export const domainProduct = {
+	...getEmptyResponseCartProduct(),
 	product_name: '.cash Domain',
 	product_slug: 'domain_reg',
 	currency: 'BRL',
@@ -79,6 +100,7 @@ export const domainProduct = {
 };
 
 export const caDomainProduct = {
+	...getEmptyResponseCartProduct(),
 	product_name: '.ca Domain',
 	product_slug: 'domain_reg',
 	currency: 'BRL',
@@ -102,6 +124,7 @@ export const caDomainProduct = {
 };
 
 export const gSuiteProduct = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'G Suite',
 	product_slug: 'gapps',
 	currency: 'BRL',
@@ -118,6 +141,7 @@ export const gSuiteProduct = {
 };
 
 export const domainTransferProduct = {
+	...getEmptyResponseCartProduct(),
 	product_name: '.cash Domain',
 	product_slug: 'domain_transfer',
 	currency: 'BRL',
@@ -140,6 +164,7 @@ export const domainTransferProduct = {
 };
 
 export const planWithBundledDomain = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal',
 	product_slug: 'personal-bundle',
 	currency: 'BRL',
@@ -158,6 +183,7 @@ export const planWithBundledDomain = {
 };
 
 export const planWithoutDomain = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal',
 	product_slug: 'personal-bundle',
 	currency: 'BRL',
@@ -175,6 +201,7 @@ export const planWithoutDomain = {
 };
 
 export const planWithoutDomainMonthly = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal Monthly',
 	product_slug: 'personal-bundle-monthly',
 	currency: 'BRL',
@@ -192,6 +219,7 @@ export const planWithoutDomainMonthly = {
 };
 
 export const planWithoutDomainBiannual = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal 2 Year',
 	product_slug: 'personal-bundle-2y',
 	currency: 'BRL',
@@ -209,6 +237,7 @@ export const planWithoutDomainBiannual = {
 };
 
 export const planLevel2 = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Business',
 	product_slug: 'business-bundle',
 	currency: 'BRL',
@@ -226,6 +255,7 @@ export const planLevel2 = {
 };
 
 export const planLevel2Monthly = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Business Monthly',
 	product_slug: 'business-bundle-monthly',
 	currency: 'BRL',
@@ -243,6 +273,7 @@ export const planLevel2Monthly = {
 };
 
 export const planLevel2Biannual = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Business 2 Year',
 	product_slug: 'business-bundle-2y',
 	currency: 'BRL',
@@ -296,7 +327,10 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 			sub_total_integer: totalInteger - taxInteger,
 			sub_total_with_taxes_display: 'R$156',
 			sub_total_with_taxes_integer: totalInteger,
-			tax: { location: {}, display_taxes: true },
+			tax: {
+				location: requestCart.tax?.location ?? {},
+				display_taxes: !! requestCart.tax?.location?.postal_code,
+			},
 			total_cost: 0,
 			total_cost_display: 'R$156',
 			total_cost_integer: totalInteger,
@@ -474,6 +508,46 @@ function convertRequestProductToResponseProduct(
 	};
 }
 
+export function getBasicCart(): ResponseCart {
+	const cart = getEmptyResponseCart();
+	return {
+		...cart,
+		coupon: '',
+		coupon_savings_total_integer: 0,
+		coupon_savings_total_display: '0',
+		currency: 'BRL',
+		locale: 'br-pt',
+		is_coupon_applied: false,
+		products: [ planWithoutDomain ],
+		tax: {
+			display_taxes: true,
+			location: {},
+		},
+		allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
+		total_tax_integer: 700,
+		total_tax_display: 'R$7',
+		total_cost_integer: 15600,
+		total_cost_display: 'R$156',
+		sub_total_integer: 15600,
+		sub_total_display: 'R$156',
+		coupon_discounts_integer: [],
+	};
+}
+
+export function mockCartEndpoint( initialCart: ResponseCart, currency: string, locale: string ) {
+	let cart = initialCart;
+	const mockSetCart = mockSetCartEndpointWith( { currency, locale } );
+	const setCart = async ( cartKey: CartKey, val: RequestCart ) => {
+		cart = await mockSetCart( cartKey, val );
+		return cart;
+	};
+
+	return {
+		getCart: async () => cart,
+		setCart,
+	};
+}
+
 export function mockGetCartEndpointWith( initialCart: ResponseCart ) {
 	return async () => {
 		return initialCart;
@@ -618,8 +692,9 @@ export function getPlansItemsState() {
 }
 
 export function createTestReduxStore() {
-	return applyMiddleware( thunk )( createStore )( () => {
+	const rootReducer = ( state, action ) => {
 		return {
+			...state,
 			plans: {
 				items: getPlansItemsState(),
 			},
@@ -716,8 +791,10 @@ export function createTestReduxStore() {
 			},
 			purchases: {},
 			countries: { payments: countryList, domains: countryList },
+			domains: { management: domainManagementReducer( state?.domains?.management ?? {}, action ) },
 		};
-	} );
+	};
+	return createStore( rootReducer, applyMiddleware( thunk ) );
 }
 
 export function mockPayPalEndpoint( endpointResponse ) {
@@ -849,4 +926,106 @@ export const expectedCreateAccountRequest = {
 	locale: 'en',
 	client_id: config( 'wpcom_signup_id' ),
 	client_secret: config( 'wpcom_signup_key' ),
+	tos: {
+		locale: 'en',
+		path: '/',
+		viewport: '0x0',
+	},
 };
+
+export function mockCachedContactDetailsEndpoint( responseData ): void {
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+	const mockDomainContactResponse = () => [ 200, responseData ];
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/domain-contact-information' )
+		.reply( mockDomainContactResponse );
+}
+
+export function mockContactDetailsValidationEndpoint(
+	type: 'domain' | 'gsuite' | 'tax',
+	responseData,
+	conditionCallback?: ( body ) => boolean
+): void {
+	const endpointPath = ( () => {
+		switch ( type ) {
+			case 'tax':
+				return '/rest/v1.1/me/tax-contact-information/validate';
+			case 'domain':
+				return '/rest/v1.2/me/domain-contact-information/validate';
+			case 'gsuite':
+				return '/rest/v1.1/me/google-apps/validate';
+		}
+	} )();
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+	const mockResponse = () => [ 200, responseData ];
+	nock( 'https://public-api.wordpress.com' )
+		.post( endpointPath, conditionCallback )
+		.reply( mockResponse );
+}
+
+export function mockMatchMediaOnWindow(): void {
+	Object.defineProperty( window, 'matchMedia', {
+		writable: true,
+		value: jest.fn().mockImplementation( ( query ) => ( {
+			matches: false,
+			media: query,
+			onchange: null,
+			addListener: jest.fn(), // deprecated
+			removeListener: jest.fn(), // deprecated
+			addEventListener: jest.fn(),
+			removeEventListener: jest.fn(),
+			dispatchEvent: jest.fn(),
+		} ) ),
+	} );
+}
+
+// Add the below custom Jest assertion to TypeScript.
+declare global {
+	// eslint-disable-next-line @typescript-eslint/no-namespace
+	namespace jest {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		interface Matchers< R > {
+			toNeverAppear(): Promise< CustomMatcherResult >;
+		}
+	}
+}
+
+expect.extend( {
+	/**
+	 * Assert that a DOM element never appears, even after some time passes.
+	 *
+	 * The argument should be a call to one of testing-library's `findBy...`
+	 * methods which will throw if they do not find a result.
+	 *
+	 * This is an async matcher so you must await its result.
+	 *
+	 * Example:
+	 * `await expect( screen.findByText( 'Bad things' ) ).toNeverAppear();`
+	 *
+	 * This is a little tricky because we need to keep checking over time, so we
+	 * use this slightly convoluted technique:
+	 * https://stackoverflow.com/a/68318058/2615868
+	 */
+	async toNeverAppear( elementPromise: Promise< HTMLElement > ) {
+		let pass = false;
+		let element = null;
+		try {
+			element = await elementPromise;
+		} catch {
+			pass = true;
+		}
+		if ( pass ) {
+			return {
+				message: () => `expected element to appear but it did not.`,
+				pass: true,
+			};
+		}
+		const elementPretty = element ? prettyDOM( element ) : '';
+		return {
+			message: () => `expected element to never appear but it did:\n${ elementPretty }`,
+			pass: false,
+		};
+	},
+} );

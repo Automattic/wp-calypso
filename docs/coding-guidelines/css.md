@@ -157,7 +157,7 @@ Example of the above:
 
 - DO use `@extend` when in doubt, using the `%placeholder` syntax. This will produce leaner output.
 - DON'T use mixins for anything that doesn't accept an argument. This is `@extend` territory.
-- DO read [this article](http://miguelcamba.com/blog/2013/07/11/sass-placeholders-versus-mixins-and-extends/) if you don't understand `@extend`.
+- DO read [this article](https://kirillibrahim.medium.com/sass-mixin-vs-extend-ac4dfb9892c4) if you don't understand `@extend`.
 
 ### Comments
 

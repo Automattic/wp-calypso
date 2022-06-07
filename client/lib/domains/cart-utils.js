@@ -8,7 +8,6 @@ import { hasDomainRegistration, getDomainRegistrations } from 'calypso/lib/cart-
  *
  * @param {import('@automattic/wpcom-checkout').WPCOMTransactionEndpointResponse} [receipt] - The receipt for the transaction
  * @param {import('@automattic/shopping-cart').ResponseCart} cart - The cart for the transaction
- *
  * @returns {string|null} the name of the first domain for the transaction.
  */
 export function getDomainNameFromReceiptOrCart( receipt, cart ) {

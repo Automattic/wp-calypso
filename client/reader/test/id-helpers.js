@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { toValidId } from '../id-helpers';
 
 describe( 'toValidId', () => {
@@ -20,7 +19,7 @@ describe( 'toValidId', () => {
 	testCases.forEach( function ( testCase ) {
 		const [ provided, expected ] = testCase;
 		test( `'${ provided }' should yield '${ expected }'`, () => {
-			expect( toValidId( provided ) ).to.equal( expected );
+			expect( toValidId( provided ) ).toEqual( expected );
 		} );
 	} );
 } );

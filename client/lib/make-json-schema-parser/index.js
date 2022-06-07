@@ -32,7 +32,6 @@ const defaultTransformer = ( data ) => data;
  * @param {object}   schema        JSON schema
  * @param {Function} transformer   Transformer function
  * @param {object}   schemaOptions Options to pass to schema validator
- *
  * @returns {Parser}               Function to validate and transform data
  */
 export function makeJsonSchemaParser(

@@ -47,7 +47,7 @@ class WPCOM_Documentation_Links {
 
 		wp_enqueue_script(
 			'wpcom-documentation-links-script',
-			plugins_url( 'dist/wpcom-documentation-links.js', __FILE__ ),
+			plugins_url( 'dist/wpcom-documentation-links.min.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			$version,
 			true

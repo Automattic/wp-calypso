@@ -1,5 +1,4 @@
 import { Button, Guide } from '@wordpress/components';
-import { take } from 'lodash-es/array';
 import { useState } from 'react';
 import './modal-style.scss';
 import Visual from './plans-visual.svg';
@@ -50,7 +49,7 @@ export default function ModalTemplate( {
 										{ CTA.message }
 									</Button>
 								</p>
-								{ take( disclaimer, 2 ).map( ( line ) => (
+								{ disclaimer.slice( 0, 2 ).map( ( line ) => (
 									<p className="modal__disclaimer">{ line }</p>
 								) ) }
 							</div>

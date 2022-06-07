@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import PropTypes from 'prop-types';
 import { useCallback, useContext } from 'react';
 import CheckoutContext from '../lib/checkout-context';
 import joinClasses from '../lib/join-classes';
@@ -33,12 +32,13 @@ export default function CheckoutPaymentMethods( {
 	summary?: boolean;
 	isComplete: boolean;
 	className?: string;
-} ): JSX.Element | null {
+} ) {
 	const { __ } = useI18n();
 	const { onPageLoadError, onPaymentMethodChanged } = useContext( CheckoutContext );
-	const onError = useCallback( ( error ) => onPageLoadError?.( 'payment_method_load', error ), [
-		onPageLoadError,
-	] );
+	const onError = useCallback(
+		( error: Error ) => onPageLoadError?.( 'payment_method_load', error ),
+		[ onPageLoadError ]
+	);
 
 	const paymentMethod = usePaymentMethod();
 	const [ , setPaymentMethod ] = usePaymentMethodId();
@@ -111,13 +111,7 @@ export default function CheckoutPaymentMethods( {
 	);
 }
 
-CheckoutPaymentMethods.propTypes = {
-	summary: PropTypes.bool,
-	isComplete: PropTypes.bool.isRequired,
-	className: PropTypes.string,
-};
-
-export function CheckoutPaymentMethodsTitle(): JSX.Element {
+export function CheckoutPaymentMethodsTitle() {
 	const { __ } = useI18n();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
@@ -137,7 +131,7 @@ function PaymentMethod( {
 	onClick,
 	ariaLabel,
 	summary,
-}: PaymentMethodProps ): JSX.Element {
+}: PaymentMethodProps ) {
 	const { formStatus } = useFormStatus();
 	if ( summary ) {
 		return <>{ inactiveContent && inactiveContent }</>;
@@ -158,17 +152,6 @@ function PaymentMethod( {
 		</RadioButton>
 	);
 }
-
-PaymentMethod.propTypes = {
-	id: PropTypes.string.isRequired,
-	onClick: PropTypes.func,
-	checked: PropTypes.bool.isRequired,
-	ariaLabel: PropTypes.string.isRequired,
-	activeContent: PropTypes.node,
-	label: PropTypes.node,
-	inactiveContent: PropTypes.node,
-	summary: PropTypes.bool,
-};
 
 interface PaymentMethodProps {
 	id: string;

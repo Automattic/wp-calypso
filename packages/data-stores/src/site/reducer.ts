@@ -10,7 +10,13 @@ import {
 	AtomicTransferStatus,
 	LatestAtomicTransferStatus,
 } from './types';
-import { AtomicTransferState, LatestAtomicTransferState, AtomicSoftwareStatusState } from '.';
+import {
+	AtomicTransferState,
+	LatestAtomicTransferState,
+	AtomicSoftwareStatusState,
+	AtomicSoftwareInstallState,
+	AtomicSoftwareInstallStatus,
+} from '.';
 import type { Action } from './actions';
 import type { Reducer } from 'redux';
 
@@ -134,6 +140,15 @@ export const sitesSettings: Reducer< { [ key: number ]: SiteSettings }, Action >
 	if ( action.type === 'RECEIVE_SITE_SETTINGS' ) {
 		return { ...state, [ action.siteId ]: action.settings };
 	}
+	if ( action.type === 'UPDATE_SITE_SETTINGS' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				...state?.[ action.siteId ],
+				...action.settings,
+			},
+		};
+	}
 	return state;
 };
 
@@ -166,32 +181,27 @@ export const launchStatus: Reducer< { [ key: number ]: SiteLaunchState }, Action
 };
 
 export const siteSetupErrors: Reducer<
-	{ [ key: number ]: any | undefined },
+	{
+		error?: string;
+		message?: string;
+	},
 	{
 		type: string;
-		siteId: number;
 		error?: string;
 		message?: string;
 	}
 > = ( state = {}, action ) => {
 	if ( action.type === 'SET_SITE_SETUP_ERROR' ) {
-		const { siteId, error, message } = action;
+		const { error, message } = action;
 
 		return {
-			...state,
-			[ siteId ]: {
-				error,
-				message,
-			},
+			error,
+			message,
 		};
 	}
 
 	if ( action.type === 'CLEAR_SITE_SETUP_ERROR' ) {
-		const newState = {
-			...state,
-		};
-
-		delete newState[ action.siteId ];
+		return {};
 	}
 
 	return state;
@@ -311,6 +321,46 @@ export const atomicSoftwareStatus: Reducer<
 	return state;
 };
 
+export const atomicSoftwareInstallStatus: Reducer<
+	{ [ key: number ]: AtomicSoftwareInstallState },
+	Action
+> = ( state = {}, action ) => {
+	if ( action.type === 'ATOMIC_SOFTWARE_INSTALL_START' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				[ action.softwareSet ]: {
+					status: AtomicSoftwareInstallStatus.IN_PROGRESS,
+					error: undefined,
+				},
+			},
+		};
+	}
+	if ( action.type === 'ATOMIC_SOFTWARE_INSTALL_SUCCESS' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				[ action.softwareSet ]: {
+					status: AtomicSoftwareInstallStatus.SUCCESS,
+					error: undefined,
+				},
+			},
+		};
+	}
+	if ( action.type === 'ATOMIC_SOFTWARE_INSTALL_FAILURE' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				[ action.softwareSet ]: {
+					status: AtomicSoftwareInstallStatus.FAILURE,
+					error: action.error,
+				},
+			},
+		};
+	}
+	return state;
+};
+
 const newSite = combineReducers( {
 	data: newSiteData,
 	error: newSiteError,
@@ -328,6 +378,7 @@ const reducer = combineReducers( {
 	atomicTransferStatus,
 	latestAtomicTransferStatus,
 	atomicSoftwareStatus,
+	atomicSoftwareInstallStatus,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -1,47 +1,63 @@
-import {
-	isBusiness,
-	isEcommerce,
-	isEnterprise,
-	isPro,
-	isMonthly,
-} from '@automattic/calypso-products';
+import { FEATURE_INSTALL_PLUGINS, WPCOM_FEATURES_LIVE_SUPPORT } from '@automattic/calypso-products';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { default as isVipSite } from 'calypso/state/selectors/is-vip-site';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
-import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
-import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-const shouldUpgradeCheck = (
-	state: IAppState,
-	selectedSite: { ID: number; plan: WithSnakeCaseSlug | WithCamelCaseSlug }
-) => {
-	return selectedSite
-		? ! (
-				isPro( selectedSite?.plan ) ||
-				isBusiness( selectedSite?.plan ) ||
-				isEnterprise( selectedSite?.plan ) ||
-				isEcommerce( selectedSite?.plan ) ||
-				isJetpackSite( state, selectedSite?.ID ) ||
-				isVipSite( state, selectedSite?.ID )
-		  )
-		: null;
+/*
+ * shouldUpgradeCheck:
+ * Does the selected blog need an upgrade before installing marketplace addons?
+ * If it's missing the FEATURE_INSTALL_PLUGINS, shouldUpgradeCheck returns true,
+ * except standalone jetpack and VIP sites always return false.
+ */
+const shouldUpgradeCheck = ( state: IAppState, siteId: number | null ): boolean | null => {
+	if ( ! siteId ) {
+		return null;
+	}
+	const canInstallPlugins = siteHasFeature( state, siteId, FEATURE_INSTALL_PLUGINS );
+	const isStandaloneJetpack =
+		isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId );
+	const isVip = isVipSite( state, siteId );
+	return ! canInstallPlugins && ! isStandaloneJetpack && ! isVip;
 };
 
-export const isAnnualPlanOrUpgradeableAnnualPeriod = ( state: IAppState ) => {
-	const selectedSiteId = getSelectedSiteId( state );
-	const currentPlan = selectedSiteId && getCurrentPlan( state, selectedSiteId );
-	const isAnnualPlan = currentPlan && ! isMonthly( currentPlan.productSlug );
+/*
+ * hasOrIntendsToBuyLiveSupport:
+ * - Does the selected blog already have a plan or product providing the LIVE_SUPPORT feature?
+ * OR
+ * - Does the user need to purchase an upgrade before installing Marketplace Addons
+ * and do they have the Annual purchase selected?
+ *   ( We assume this means they'll be buying a plan that includes Live Support ).
+ */
+export const hasOrIntendsToBuyLiveSupport = ( state: IAppState ): boolean => {
+	const siteId = getSelectedSiteId( state );
 
-	const selectedSite = getSelectedSite( state );
-	const shouldUpgrade = selectedSite && shouldUpgradeCheck( state, selectedSite );
+	const hasLiveSupport = siteHasFeature( state, siteId, WPCOM_FEATURES_LIVE_SUPPORT );
+	const needsUpgrade = shouldUpgradeCheck( state, siteId );
 
-	const billingPeriod = getBillingInterval( state );
-	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
+	if ( needsUpgrade ) {
+		/**
+		 * We need to upgrade plans to buy a marketplace addon.
+		 *
+		 * We don't know exactly what plan we're buying, but we do know if the
+		 * user has "monthly" or "yearly" selected in the top right.
+		 * Assume that "yearly" means that they'll get Live Support.
+		 *
+		 * If they already have live support, or if they are looking at annual
+		 * plans, return true.
+		 */
+		const billingPeriod = getBillingInterval( state );
+		// This refers to the top right [ Monthly ] [ Annual ] selection.
+		const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
+		return isAnnualPeriod || hasLiveSupport;
+	}
 
-	return ( ! shouldUpgrade && isAnnualPlan ) || ( shouldUpgrade && isAnnualPeriod );
+	// We do not need to upgrade. Return if we have live support directly.
+	return hasLiveSupport;
 };
 
 export default shouldUpgradeCheck;

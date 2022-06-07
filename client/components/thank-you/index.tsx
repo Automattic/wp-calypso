@@ -146,7 +146,7 @@ const ThankYouSupportSection = ( props: ThankYouSupportSectionProps ) => {
 	);
 };
 
-export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
+export const ThankYou = ( props: ThankYouProps ) => {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 
@@ -197,7 +197,7 @@ export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
 			},
 			{
 				href: localizeUrl( SUPPORT_ROOT ),
-				title: translate( 'View support documentation' ),
+				title: translate( 'View WordPress.com support guides' ),
 			},
 		],
 	};

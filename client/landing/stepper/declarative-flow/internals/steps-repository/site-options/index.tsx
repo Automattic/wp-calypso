@@ -1,15 +1,14 @@
 /* eslint-disable no-console */
-import { Button } from '@automattic/components';
+import { Button, FormInputValidation } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect } from 'react';
 import siteOptionsUrl from 'calypso/assets/images/onboarding/site-options.svg';
 import storeImageUrl from 'calypso/assets/images/onboarding/store-onboarding.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
@@ -24,17 +23,19 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
-	const site = useSite();
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const translate = useTranslate();
+	const site = useSite();
 
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
-	React.useEffect( () => {
-		if ( site ) {
-			setSiteTitle( site.name ?? '' );
-			setTagline( site.description );
+	useEffect( () => {
+		if ( ! site ) {
+			return;
 		}
+
+		setSiteTitle( site.name || '' );
+		setTagline( site.description );
 	}, [ site ] );
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
@@ -88,13 +89,12 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 	const siteTitleError = null;
 	const taglineError = null;
 
-	const { headerText, headerImage, siteTitleLabel, taglineExplanation } = getTextsFromIntent(
-		intent
-	);
+	const { headerText, headerImage, siteTitleLabel, taglineExplanation } =
+		getTextsFromIntent( intent );
 
 	const stepContent = (
 		<form className="site-options__form" onSubmit={ handleSubmit }>
-			<FormFieldset className="site-options__form-fieldset">
+			<FormFieldset disabled={ ! site } className="site-options__form-fieldset">
 				<FormLabel htmlFor="siteTitle" optional={ ! isSiteTitleRequired }>
 					{ siteTitleLabel }
 				</FormLabel>
@@ -107,7 +107,7 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 				/>
 				{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
 			</FormFieldset>
-			<FormFieldset className="site-options__form-fieldset">
+			<FormFieldset disabled={ ! site } className="site-options__form-fieldset">
 				<FormLabel htmlFor="tagline" optional={ ! isTaglineRequired }>
 					{ translate( 'Tagline' ) }
 				</FormLabel>
@@ -124,7 +124,7 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 					{ taglineExplanation }
 				</FormSettingExplanation>
 			</FormFieldset>
-			<Button className="site-options__submit-button" type="submit" primary>
+			<Button disabled={ ! site } className="site-options__submit-button" type="submit" primary>
 				{ translate( 'Continue' ) }
 			</Button>
 		</form>

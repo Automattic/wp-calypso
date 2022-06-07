@@ -7,6 +7,8 @@ import type { WPComPlan } from '@automattic/calypso-products';
 interface Props {
 	feature: PlanComparisonFeature;
 	plans: WPComPlan[];
+	isLegacySiteWithHigherLimits: boolean;
+	isExperiment?: boolean;
 }
 
 export const DesktopContent = styled.div`
@@ -61,7 +63,11 @@ function renderContent( content: ReturnType< PlanComparisonFeature[ 'getCellText
 	);
 }
 
-export const PlansComparisonRow: React.FunctionComponent< Props > = ( { feature, plans } ) => {
+export const PlansComparisonRow: React.FunctionComponent< Props > = ( {
+	feature,
+	plans,
+	isLegacySiteWithHigherLimits,
+} ) => {
 	return (
 		<tr>
 			<PlansComparisonRowHeader
@@ -79,10 +85,14 @@ export const PlansComparisonRow: React.FunctionComponent< Props > = ( { feature,
 				return (
 					<td key={ plan.getProductId() }>
 						<DesktopContent>
-							{ renderContent( feature.getCellText( includedFeature, false ) ) }
+							{ renderContent(
+								feature.getCellText( includedFeature, false, isLegacySiteWithHigherLimits )
+							) }
 						</DesktopContent>
 						<MobileContent>
-							{ renderContent( feature.getCellText( includedFeature, true ) ) }
+							{ renderContent(
+								feature.getCellText( includedFeature, true, isLegacySiteWithHigherLimits )
+							) }
 						</MobileContent>
 					</td>
 				);

@@ -1,4 +1,4 @@
-import { Button, FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
@@ -139,7 +139,7 @@ function EpsPayButton( {
 	onClick?: ProcessPayment;
 	store: EpsStore;
 } ) {
-	const [ , total ] = useLineItems();
+	const total = useTotal();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect( ( select ) => select( 'eps' ).getCustomerName() );
 

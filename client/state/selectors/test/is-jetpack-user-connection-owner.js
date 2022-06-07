@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import isJetpackUserConnectionOwner from 'calypso/state/selectors/is-jetpack-user-connection-owner';
 import { dataItems } from './fixtures/jetpack-connection';
 
@@ -13,7 +12,7 @@ describe( 'isJetpackUserConnectionOwner()', () => {
 		};
 		const siteId = 12345678;
 		const output = isJetpackUserConnectionOwner( stateIn, siteId );
-		expect( output ).to.be.true;
+		expect( output ).toBe( true );
 	} );
 
 	test( "should return false if the user is not the owner of the site's connection", () => {
@@ -26,7 +25,7 @@ describe( 'isJetpackUserConnectionOwner()', () => {
 		};
 		const siteId = 87654321;
 		const output = isJetpackUserConnectionOwner( stateIn, siteId );
-		expect( output ).to.be.false;
+		expect( output ).toBe( false );
 	} );
 
 	test( 'should return null if the information is not known yet', () => {
@@ -39,6 +38,6 @@ describe( 'isJetpackUserConnectionOwner()', () => {
 		};
 		const siteId = 88888888;
 		const output = isJetpackUserConnectionOwner( stateIn, siteId );
-		expect( output ).to.be.null;
+		expect( output ).toBeNull();
 	} );
 } );

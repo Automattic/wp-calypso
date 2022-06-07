@@ -1,3 +1,4 @@
+import { Spinner } from '@automattic/components';
 import { localize, translate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -5,7 +6,6 @@ import QRCode from 'qrcode.react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
-import Spinner from 'calypso/components/spinner';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/constants';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';

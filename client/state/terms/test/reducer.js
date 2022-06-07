@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import TermQueryManager from 'calypso/lib/query-manager/term';
 import {
@@ -9,7 +8,6 @@ import {
 	TERMS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import reducer, { queries, queryRequests } from '../reducer';
 
 /**
@@ -35,19 +33,19 @@ const testTerms = [
 ];
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'queries', 'queryRequests' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'queries', 'queryRequests' ] )
+		);
 	} );
 
 	describe( 'queryRequests()', () => {
 		test( 'should default to an empty object', () => {
 			const state = queryRequests( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track term query request fetching', () => {
@@ -58,7 +56,7 @@ describe( 'reducer', () => {
 				taxonomy: 'category',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					category: {
 						'{"search":"ribs"}': true,
@@ -83,7 +81,7 @@ describe( 'reducer', () => {
 				taxonomy: 'category',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					category: {
 						'{"search":"ribs"}': true,
@@ -103,7 +101,7 @@ describe( 'reducer', () => {
 				taxonomy: 'category',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					category: {
 						'{"search":"ribs"}': false,
@@ -121,7 +119,7 @@ describe( 'reducer', () => {
 				taxonomy: 'category',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					category: {
 						'{"search":"ribs"}': false,
@@ -135,7 +133,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = queries( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track term query request success', () => {
@@ -149,11 +147,11 @@ describe( 'reducer', () => {
 				query,
 			} );
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.have.keys( 'category' );
-			expect( state[ 2916284 ].category ).to.be.an.instanceof( TermQueryManager );
-			expect( state[ 2916284 ].category.getItems( query ) ).to.eql( testTerms );
-			expect( state[ 2916284 ].category.getFound( query ) ).to.equal( 2 );
+			expect( Object.keys( state ) ).toEqual( expect.arrayContaining( [ '2916284' ] ) );
+			expect( Object.keys( state[ 2916284 ] ) ).toContain( 'category' );
+			expect( state[ 2916284 ].category ).toBeInstanceOf( TermQueryManager );
+			expect( state[ 2916284 ].category.getItems( query ) ).toEqual( testTerms );
+			expect( state[ 2916284 ].category.getFound( query ) ).toEqual( 2 );
 		} );
 
 		test( 'should track items even if no query is specified', () => {
@@ -164,10 +162,10 @@ describe( 'reducer', () => {
 				taxonomy: 'category',
 			} );
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.have.keys( 'category' );
-			expect( state[ 2916284 ].category ).to.be.an.instanceof( TermQueryManager );
-			expect( state[ 2916284 ].category.getItems() ).to.eql( testTerms );
+			expect( Object.keys( state ) ).toEqual( expect.arrayContaining( [ '2916284' ] ) );
+			expect( Object.keys( state[ 2916284 ] ) ).toContain( 'category' );
+			expect( state[ 2916284 ].category ).toBeInstanceOf( TermQueryManager );
+			expect( state[ 2916284 ].category.getItems() ).toEqual( testTerms );
 		} );
 
 		test( 'should return the same state if no changes to received items', () => {
@@ -183,7 +181,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( queries( undefined, action ) );
 			const state = queries( original, action );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should accumulate query request success', () => {
@@ -207,8 +205,10 @@ describe( 'reducer', () => {
 				taxonomy: 'post_tag',
 			} );
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.have.keys( [ 'category', 'post_tag' ] );
+			expect( Object.keys( state ) ).toEqual( expect.arrayContaining( [ '2916284' ] ) );
+			expect( Object.keys( state[ 2916284 ] ) ).toEqual(
+				expect.arrayContaining( [ 'category', 'post_tag' ] )
+			);
 		} );
 
 		test( 'should omit removed term', () => {
@@ -228,10 +228,10 @@ describe( 'reducer', () => {
 				termId: testTerms[ 0 ].ID,
 			} );
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.have.keys( 'category' );
-			expect( state[ 2916284 ].category.getItems() ).to.have.length( testTerms.length - 1 );
-			expect( state[ 2916284 ].category.getItem( testTerms[ 0 ].ID ) ).to.be.undefined;
+			expect( Object.keys( state ) ).toEqual( expect.arrayContaining( [ '2916284' ] ) );
+			expect( Object.keys( state[ 2916284 ] ) ).toContain( 'category' );
+			expect( state[ 2916284 ].category.getItems() ).toHaveLength( testTerms.length - 1 );
+			expect( state[ 2916284 ].category.getItem( testTerms[ 0 ].ID ) ).toBeUndefined();
 		} );
 
 		test( 'should persist state', () => {
@@ -248,9 +248,11 @@ describe( 'reducer', () => {
 
 			const state = serialize( queries, original );
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.have.keys( [ 'category' ] );
-			expect( state[ 2916284 ].category ).to.have.keys( [ 'data', 'options' ] );
+			expect( Object.keys( state ) ).toEqual( expect.arrayContaining( [ '2916284' ] ) );
+			expect( Object.keys( state[ 2916284 ] ) ).toEqual( expect.arrayContaining( [ 'category' ] ) );
+			expect( Object.keys( state[ 2916284 ].category ) ).toEqual(
+				expect.arrayContaining( [ 'data', 'options' ] )
+			);
 		} );
 
 		test( 'should load persisted state', () => {
@@ -268,7 +270,7 @@ describe( 'reducer', () => {
 			const serialized = serialize( queries, original );
 			const state = deserialize( queries, serialized );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
@@ -278,7 +280,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 	} );
 } );

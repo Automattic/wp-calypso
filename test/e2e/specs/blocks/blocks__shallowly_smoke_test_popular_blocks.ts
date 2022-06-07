@@ -19,11 +19,11 @@ import {
 	EditorPage,
 	TestAccount,
 	envVariables,
-	skipItIf,
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { skipItIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 

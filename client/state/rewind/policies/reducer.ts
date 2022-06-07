@@ -30,11 +30,13 @@ const policies = (
 		case REWIND_POLICIES_REQUEST_FAILURE:
 			return {
 				...state,
+				isInitialized: true,
 				requestStatus: 'failure',
 			};
 		case REWIND_POLICIES_SET:
 			return {
 				requestStatus: state.requestStatus,
+				isInitialized: true,
 				...policies,
 			};
 	}

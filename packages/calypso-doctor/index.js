@@ -4,7 +4,6 @@ const evaluations = [
 	require( './evaluations/node-memory' ),
 	require( './evaluations/node-npm-cache' ),
 	require( './evaluations/node-puppeteer' ),
-	require( './evaluations/node-chromedriver' ),
 	require( './evaluations/node-playwright' ),
 	require( './evaluations/docker-cpu' ),
 	require( './evaluations/docker-memory' ),
@@ -23,7 +22,11 @@ const runEvaluations = async () => {
 			};
 
 			try {
-				const { result, ignored, evaluationMessage = '' } = await new Promise(
+				const {
+					result,
+					ignored,
+					evaluationMessage = '',
+				} = await new Promise(
 					// eslint-disable-next-line no-async-promise-executor
 					async ( resolve, reject ) => {
 						try {

@@ -71,22 +71,18 @@ class ImageEditor extends Component {
 
 	editCanvasRef = createRef();
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( newProps ) {
-		const { media: currentMedia } = this.props;
+	componentDidUpdate( prevProps ) {
+		const { media } = this.props;
 
-		if ( newProps.media && ! isEqual( newProps.media, currentMedia ) ) {
+		if ( media && ! isEqual( prevProps.media, media ) ) {
 			this.props.resetAllImageEditorState();
-
-			this.updateFileInfo( newProps.media );
-
+			this.updateFileInfo();
 			this.setDefaultAspectRatio();
 		}
 	}
 
 	componentDidMount() {
-		this.updateFileInfo( this.props.media );
-
+		this.updateFileInfo();
 		this.setDefaultAspectRatio();
 	}
 
@@ -98,8 +94,8 @@ class ImageEditor extends Component {
 		);
 	};
 
-	updateFileInfo = ( media ) => {
-		const { site } = this.props;
+	updateFileInfo = () => {
+		const { site, media } = this.props;
 
 		let src;
 		let fileName = 'default';

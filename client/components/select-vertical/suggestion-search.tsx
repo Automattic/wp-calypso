@@ -1,10 +1,9 @@
-import { Gridicon, Suggestions } from '@automattic/components';
+import { Gridicon, Suggestions, Spinner } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useCallback, useMemo, useRef, useState } from 'react';
+import { FC, useMemo, useRef, useState } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import Spinner from 'calypso/components/spinner';
 import type { Vertical } from './types';
 import './style.scss';
 
@@ -12,8 +11,9 @@ interface Props {
 	placeholder?: string;
 	searchTerm: string;
 	suggestions: Vertical[];
-	isDisableInput?: boolean | undefined;
 	isLoading?: boolean | undefined;
+	isShowSkipOption?: boolean | undefined;
+	isDisableInput?: boolean | undefined;
 	onInputChange?: ( value: string ) => void;
 	onSelect?: ( vertical: Vertical ) => void;
 }
@@ -22,8 +22,9 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 	placeholder,
 	searchTerm,
 	suggestions,
-	isDisableInput,
 	isLoading,
+	isShowSkipOption,
+	isDisableInput,
 	onInputChange,
 	onSelect,
 } ) => {
@@ -34,100 +35,93 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 	const toggleIconRef = useRef( null );
 	const translate = useTranslate();
 
-	const handleTextInputBlur = useCallback(
-		( event ) => {
-			// Hide the suggestion dropdown unless the focus is moved to the toggle icon.
-			if ( event && event.relatedTarget?.contains( toggleIconRef.current ) ) {
-				return;
-			}
-
-			setIsShowSuggestions( false );
-			setIsFocused( false );
-		},
-		[ setIsShowSuggestions, setIsFocused ]
-	);
-
-	const handleTextInputFocus = useCallback( () => {
+	const showSuggestions = () => {
 		setIsShowSuggestions( true );
+	};
+
+	const hideSuggestions = () => {
+		setIsShowSuggestions( false );
+	};
+
+	const handleTextInputBlur = ( event: React.FocusEvent ) => {
+		// Hide the suggestion dropdown unless the focus is moved to the toggle icon.
+		if ( event && event.relatedTarget?.contains( toggleIconRef.current ) ) {
+			return;
+		}
+
+		hideSuggestions();
+		setIsFocused( false );
+	};
+
+	const handleTextInputFocus = () => {
+		showSuggestions();
 		setIsFocused( true );
-	}, [ setIsShowSuggestions, setIsFocused ] );
+	};
 
-	const handleTextInputChange = useCallback(
-		( event: React.ChangeEvent< HTMLInputElement > ) => {
-			// Reset the vertical selection if input field is empty.
-			// This is so users don't need to explicitly select "Something else" to clear previous selection.
-			if ( event.target.value.trim().length === 0 ) {
-				onSelect?.( { value: '', label: '' } );
-			}
+	const handleTextInputChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		// Reset the vertical selection if input field is empty.
+		// This is so users don't need to explicitly select "Something else" to clear previous selection.
+		if ( event.target.value.trim().length === 0 ) {
+			onSelect?.( { value: '', label: '' } );
+		}
 
-			setIsShowSuggestions( true );
-			onInputChange?.( event.target.value );
-		},
-		[ setIsShowSuggestions ]
-	);
+		showSuggestions();
+		onInputChange?.( event.target.value );
+	};
 
-	const handleToggleSuggestionsBlur = useCallback(
-		( event ) => {
-			// Hide the suggestion dropdown unless the focus is moved to the input field.
-			if ( event && event.relatedTarget?.contains( inputRef.current ) ) {
-				return;
-			}
+	const handleToggleSuggestionsBlur = ( event: React.FocusEvent ) => {
+		// Hide the suggestion dropdown unless the focus is moved to the input field.
+		if ( event && event.relatedTarget?.contains( inputRef.current ) ) {
+			return;
+		}
 
-			setIsShowSuggestions( false );
-			setIsFocused( false );
-		},
-		[ setIsFocused ]
-	);
+		hideSuggestions();
+		setIsFocused( false );
+	};
 
-	const handleToggleSuggestionsClick = useCallback( () => {
+	const handleToggleSuggestionsClick = () => {
 		if ( isDisableInput ) {
 			return;
 		}
 
-		setIsShowSuggestions( ! isShowSuggestions );
-	}, [ setIsShowSuggestions, isShowSuggestions, isDisableInput ] );
+		if ( isShowSuggestions ) {
+			hideSuggestions();
+		} else {
+			showSuggestions();
+		}
+	};
 
-	const handleToggleSuggestionsKeyDown = useCallback(
-		( event: React.KeyboardEvent< HTMLButtonElement > ) => {
-			if ( event.key === 'Escape' || event.key === 'Tab' ) {
-				setIsShowSuggestions( false );
-			}
-		},
-		[ setIsShowSuggestions ]
-	);
+	const handleToggleSuggestionsKeyDown = ( event: React.KeyboardEvent< HTMLButtonElement > ) => {
+		if ( event.key === 'Escape' || event.key === 'Tab' ) {
+			hideSuggestions();
+		}
+	};
 
-	const handleTextInputKeyDown = useCallback(
-		( event: KeyboardEvent ) => {
-			if ( event.key === 'Enter' && isShowSuggestions ) {
-				event.preventDefault();
-			}
+	const handleTextInputKeyDown = ( event: KeyboardEvent ) => {
+		if ( event.key === 'Enter' && isShowSuggestions ) {
+			event.preventDefault();
+		}
 
-			if ( event.key === 'Escape' ) {
-				setIsShowSuggestions( false );
-			}
+		if ( event.key === 'Escape' ) {
+			hideSuggestions();
+		}
 
-			if ( suggestionsRef.current ) {
-				( suggestionsRef.current as Suggestions ).handleKeyEvent( event );
-			}
-		},
-		[ setIsShowSuggestions, isShowSuggestions, suggestionsRef ]
-	);
+		if ( suggestionsRef.current ) {
+			( suggestionsRef.current as Suggestions ).handleKeyEvent( event );
+		}
+	};
 
-	const handleSuggestionsSelect = useCallback(
-		( { label, value }: { label: string; value?: string } ) => {
-			setIsShowSuggestions( false );
-			onInputChange?.( label );
-			onSelect?.( { label, value } as Vertical );
-		},
-		[ setIsShowSuggestions ]
-	);
+	const handleSuggestionsSelect = ( { label, value }: { label: string; value?: string } ) => {
+		hideSuggestions();
+		onSelect?.( { label, value } as Vertical );
+	};
 
 	const getSuggestions = useMemo( () => {
 		if ( isLoading || ! isShowSuggestions ) {
 			return [];
 		}
 
-		if ( searchTerm === '' ) {
+		if ( ! isShowSkipOption ) {
 			return suggestions || [];
 		}
 
@@ -138,7 +132,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 				category: 0 < suggestions.length ? '—' : '',
 			},
 		] );
-	}, [ translate, searchTerm, suggestions, isLoading, isShowSuggestions ] );
+	}, [ translate, suggestions, isLoading, isShowSuggestions, isShowSkipOption ] );
 
 	return (
 		<div

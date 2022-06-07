@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useDisplayCartMessages } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
@@ -11,22 +12,24 @@ import type { ResponseCartMessage } from '@automattic/shopping-cart';
 import type { CalypsoDispatch } from 'calypso/state/types';
 import type { TranslateResult } from 'i18n-calypso';
 
-function CartMessage( { message }: { message: ResponseCartMessage } ): JSX.Element {
+function CartMessage( { message }: { message: ResponseCartMessage } ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
 
-	const getPrettyMessage = useMemo( () => getMessagePrettifier( translate, selectedSiteSlug ), [
-		translate,
-		selectedSiteSlug,
-	] );
+	const getPrettyMessage = useMemo(
+		() => getMessagePrettifier( translate, selectedSiteSlug ),
+		[ translate, selectedSiteSlug ]
+	);
 	return <>{ getPrettyMessage( message ) }</>;
 }
 
 export default function CartMessages(): null {
 	const cartKey = useCartKey();
-	const { responseCart: cart, isLoading: isLoadingCart, clearMessages } = useShoppingCart(
-		cartKey
-	);
+	const {
+		responseCart: cart,
+		isLoading: isLoadingCart,
+		clearMessages,
+	} = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
 
 	const showErrorMessages = useCallback(
@@ -111,7 +114,7 @@ function getInvalidMultisitePurchaseErrorMessage( {
 		<>
 			{ message }&nbsp;
 			<a
-				href={ JETPACK_SUPPORT + 'backup/#does-jetpack-backup-support-multisite' }
+				href={ localizeUrl( JETPACK_SUPPORT ) + 'backup/#does-jetpack-backup-support-multisite' }
 				target="_blank"
 				rel="noopener noreferrer"
 			>

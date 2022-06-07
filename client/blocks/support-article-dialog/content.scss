@@ -1,3 +1,6 @@
+@import '@automattic/typography/styles/variables';
+@import 'calypso/assets/stylesheets/shared/mixins/_breakpoints';
+
 .support-article-dialog__story-content {
 	color: var( --color-neutral-70 );
 	font-size: $font-body;

@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Dialog, Gridicon } from '@automattic/components';
+import { Dialog, Gridicon, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
-import Spinner from 'calypso/components/spinner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
@@ -90,36 +89,38 @@ class AutoLoadingHomepageModal extends Component {
 		this.setState( { homepageAction: event.currentTarget.value } );
 	};
 
-	closeModalHandler = ( action = 'dismiss' ) => () => {
-		const { installingThemeId, siteId, source } = this.props;
-		if ( 'activeTheme' === action ) {
-			this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
-			const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
-			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_activate_click', {
-				theme: installingThemeId,
-				keep_current_homepage: keepCurrentHomepage,
-			} );
-			return this.props.activateTheme(
-				installingThemeId,
-				siteId,
-				source,
-				false,
-				keepCurrentHomepage
-			);
-		} else if ( 'keepCurrentTheme' === action ) {
-			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
-				action: 'button',
-				theme: installingThemeId,
-			} );
-			return this.props.hideAutoLoadingHomepageWarning();
-		} else if ( 'dismiss' === action ) {
-			recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
-				action: 'escape',
-				theme: installingThemeId,
-			} );
-			return this.props.hideAutoLoadingHomepageWarning();
-		}
-	};
+	closeModalHandler =
+		( action = 'dismiss' ) =>
+		() => {
+			const { installingThemeId, siteId, source } = this.props;
+			if ( 'activeTheme' === action ) {
+				this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
+				const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
+				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_activate_click', {
+					theme: installingThemeId,
+					keep_current_homepage: keepCurrentHomepage,
+				} );
+				return this.props.activateTheme(
+					installingThemeId,
+					siteId,
+					source,
+					false,
+					keepCurrentHomepage
+				);
+			} else if ( 'keepCurrentTheme' === action ) {
+				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
+					action: 'button',
+					theme: installingThemeId,
+				} );
+				return this.props.hideAutoLoadingHomepageWarning();
+			} else if ( 'dismiss' === action ) {
+				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
+					action: 'escape',
+					theme: installingThemeId,
+				} );
+				return this.props.hideAutoLoadingHomepageWarning();
+			}
+		};
 
 	render() {
 		const {

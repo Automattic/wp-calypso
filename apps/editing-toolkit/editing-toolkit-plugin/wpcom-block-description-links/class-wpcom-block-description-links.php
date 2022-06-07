@@ -47,7 +47,7 @@ class WPCOM_Block_Description_Links {
 
 		wp_enqueue_script(
 			'wpcom-block-description-links-script',
-			plugins_url( 'dist/wpcom-block-description-links.js', __FILE__ ),
+			plugins_url( 'dist/wpcom-block-description-links.min.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			$version,
 			true

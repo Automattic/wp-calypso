@@ -3,10 +3,7 @@ import wpcom from 'calypso/lib/wp';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { QueryOptions, UseQueryResult } from 'react-query';
 
-export const useGetEmailDomainsQueryCacheKey = ( siteId: number | null ) => [
-	'emails-management/domains',
-	siteId,
-];
+export const getCacheKey = ( siteId: number | null ) => [ 'emails-management/domains', siteId ];
 
 interface Options extends QueryOptions {
 	enabled?: boolean;
@@ -17,7 +14,7 @@ export const useGetEmailDomainsQuery = (
 	queryOptions: Options
 ): UseQueryResult< { domains: ResponseDomain[] } > => {
 	const { enabled = true } = queryOptions;
-	return useQuery( useGetEmailDomainsQueryCacheKey( siteId ), () => fetchEmailDomains( siteId ), {
+	return useQuery( getCacheKey( siteId ), () => fetchEmailDomains( siteId ), {
 		...queryOptions,
 		enabled: !! siteId && enabled,
 	} );

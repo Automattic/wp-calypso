@@ -15,7 +15,7 @@ interface PagePatternsPluginProps {
 	theme?: string;
 }
 
-export function PagePatternsPlugin( props: PagePatternsPluginProps ): JSX.Element {
+export function PagePatternsPlugin( props: PagePatternsPluginProps ) {
 	const { setOpenState } = useDispatch( 'automattic/starter-page-layouts' );
 	const { setUsedPageOrPatternsModal } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );

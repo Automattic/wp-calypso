@@ -1,11 +1,11 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, Fragment } from 'react';
+import { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
-const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef } ) => {
+const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef, isSearching } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -24,6 +24,7 @@ const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef } ) => {
 				placeholder={ translate( 'Try searching "ecommerce"' ) }
 				delaySearch={ false }
 				recordEvent={ recordSearchEvent }
+				searching={ isSearching }
 			/>
 		</div>
 	);
@@ -81,12 +82,20 @@ const PopularSearches = ( props ) => {
 };
 
 const SearchBoxHeader = ( props ) => {
-	const { doSearch, searchTerm, title, searchTerms, isSticky, popularSearchesRef } = props;
-	const searchBoxRef = useRef( null );
+	const {
+		doSearch,
+		searchTerm,
+		title,
+		searchTerms,
+		isSticky,
+		popularSearchesRef,
+		isSearching,
+		searchRef,
+	} = props;
 
 	// since the search input is an uncontrolled component we need to tap in into the component api and trigger an update
 	const updateSearchBox = ( keyword ) => {
-		searchBoxRef.current.setKeyword( keyword );
+		searchRef.current.setKeyword( keyword );
 		doSearch( keyword );
 	};
 
@@ -94,7 +103,12 @@ const SearchBoxHeader = ( props ) => {
 		<div className={ isSticky ? 'search-box-header fixed-top' : 'search-box-header' }>
 			<div className="search-box-header__header">{ title }</div>
 			<div className="search-box-header__search">
-				<SearchBox doSearch={ doSearch } searchTerm={ searchTerm } searchBoxRef={ searchBoxRef } />
+				<SearchBox
+					doSearch={ doSearch }
+					searchTerm={ searchTerm }
+					searchBoxRef={ searchRef }
+					isSearching={ isSearching }
+				/>
 			</div>
 			<PopularSearches
 				doSearch={ updateSearchBox }

@@ -41,11 +41,25 @@ export default async function existingCardProcessor(
 		includeGSuiteDetails,
 		contactDetails,
 		reduxDispatch,
+		responseCart,
 	} = dataForProcessor;
 	if ( ! stripe ) {
 		throw new Error( 'Stripe is required to submit an existing card payment' );
 	}
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'existingCard' } ) );
+
+	const cartCountry = responseCart.tax.location.country_code ?? '';
+	const formCountry = contactDetails?.countryCode?.value ?? '';
+	if ( cartCountry !== formCountry ) {
+		// Changes to the contact form data should always be sent to the cart, so
+		// this should not be possible.
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_mismatched_tax_location', {
+				form_country: formCountry,
+				cart_country: cartCountry,
+			} )
+		);
+	}
 
 	const domainDetails = getDomainDetails( contactDetails, {
 		includeDomainDetails,
@@ -63,7 +77,7 @@ export default async function existingCardProcessor(
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: dataForProcessor.siteId ? String( dataForProcessor.siteId ) : undefined,
 			contactDetails: domainDetails ?? null,
-			responseCart: dataForProcessor.responseCart,
+			responseCart,
 		} ),
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
 	} );

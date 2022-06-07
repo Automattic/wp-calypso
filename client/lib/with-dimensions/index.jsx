@@ -39,8 +39,8 @@ export default ( EnhancedComponent ) =>
 			height: 0,
 		};
 
-		handleResize = afterLayoutFlush( ( props = this.props ) => {
-			const domElement = props.domTarget || this.setRef || this.divRef;
+		handleResize = afterLayoutFlush( () => {
+			const domElement = this.props.domTarget || this.setRef || this.divRef;
 
 			if ( domElement ) {
 				const dimensions = domElement.getClientRects()[ 0 ];
@@ -64,8 +64,8 @@ export default ( EnhancedComponent ) =>
 			this.handleResize();
 		}
 
-		UNSAFE_componentWillReceiveProps( nextProps ) {
-			this.handleResize( nextProps );
+		componentDidUpdate() {
+			this.handleResize();
 		}
 
 		componentWillUnmount() {

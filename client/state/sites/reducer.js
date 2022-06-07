@@ -3,6 +3,7 @@ import {
 	MEDIA_DELETE,
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
+	JETPACK_SITE_DISCONNECT_REQUEST,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -20,7 +21,6 @@ import {
 } from 'calypso/state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import blogStickers from './blog-stickers/reducer';
 import connection from './connection/reducer';
 import domains from './domains/reducer';
 import { featuresReducer as features } from './features/reducer';
@@ -337,6 +337,26 @@ export const hasAllSitesList = withSchemaValidation(
 	}
 );
 
+/**
+ * Returns the updated disconnected state after an action has been dispatched.
+ * Tracks whether a network request is completed or not.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
+ */
+export const jetpackSiteDisconnected = ( state = false, action ) => {
+	switch ( action.type ) {
+		case JETPACK_SITE_DISCONNECT_REQUEST: {
+			return false;
+		}
+		case JETPACK_DISCONNECT_RECEIVE: {
+			return true;
+		}
+	}
+	return state;
+};
+
 export default combineReducers( {
 	connection,
 	domains,
@@ -347,6 +367,6 @@ export default combineReducers( {
 	products,
 	features,
 	requesting,
-	blogStickers,
 	hasAllSitesList,
+	jetpackSiteDisconnected,
 } );

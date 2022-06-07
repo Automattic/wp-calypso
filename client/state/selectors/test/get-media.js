@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import getMedia from 'calypso/state/selectors/get-media';
 
@@ -32,7 +31,7 @@ describe( 'getMedia()', () => {
 	test( 'should return null if the site is not in state', () => {
 		const media = getMedia( state, 2916285, query );
 
-		expect( media ).to.be.null;
+		expect( media ).toBeNull();
 	} );
 
 	test( 'should return null if the query is not in state', () => {
@@ -40,12 +39,12 @@ describe( 'getMedia()', () => {
 			search: 'flowers',
 		} );
 
-		expect( media ).to.be.null;
+		expect( media ).toBeNull();
 	} );
 
 	test( 'should return media', () => {
 		const media = getMedia( state, 2916284, query );
 
-		expect( media ).to.eql( [ item ] );
+		expect( media ).toEqual( [ item ] );
 	} );
 } );

@@ -108,12 +108,14 @@ export const Swipeable = ( {
 		[ pagesStyle ]
 	);
 
-	const hasSwipedToNextPage = useCallback( ( delta ) => ( isRtl ? delta > 0 : delta < 0 ), [
-		isRtl,
-	] );
-	const hasSwipedToPreviousPage = useCallback( ( delta ) => ( isRtl ? delta < 0 : delta > 0 ), [
-		isRtl,
-	] );
+	const hasSwipedToNextPage = useCallback(
+		( delta ) => ( isRtl ? delta > 0 : delta < 0 ),
+		[ isRtl ]
+	);
+	const hasSwipedToPreviousPage = useCallback(
+		( delta ) => ( isRtl ? delta < 0 : delta > 0 ),
+		[ isRtl ]
+	);
 
 	const handleDragEnd = useCallback(
 		( event ) => {

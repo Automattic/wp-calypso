@@ -1,20 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-
+import { fireEvent, render } from '@testing-library/react';
 import { useCallback } from 'react';
-import ReactDOM from 'react-dom';
-import { act } from 'react-dom/test-utils';
-import { useFakeTimers } from 'sinon';
 import { useWindowResizeCallback, useWindowResizeRect, THROTTLE_RATE } from '..';
 
 const initialRect = { width: 10, height: 10 };
 
 describe( 'useWindowResizeCallback', () => {
-	let container;
 	let lastRect;
 	let callback;
-	let clock;
 
 	// Auxiliary function to create a test component.
 	function createTestComponent( cb, mock ) {
@@ -33,9 +28,7 @@ describe( 'useWindowResizeCallback', () => {
 	}
 
 	beforeEach( () => {
-		clock = useFakeTimers();
-		container = document.createElement( 'div' );
-		document.body.appendChild( container );
+		jest.useFakeTimers();
 
 		callback = jest.fn( ( boundingClientRect ) => {
 			lastRect = boundingClientRect;
@@ -43,10 +36,8 @@ describe( 'useWindowResizeCallback', () => {
 	} );
 
 	afterEach( () => {
-		clock.restore();
-		document.body.removeChild( container );
-		ReactDOM.unmountComponentAtNode( container );
-		container = null;
+		jest.runOnlyPendingTimers();
+		jest.useRealTimers();
 	} );
 
 	// eslint-disable-next-line jest/expect-expect
@@ -56,18 +47,14 @@ describe( 'useWindowResizeCallback', () => {
 			return <div ref={ ref } />;
 		};
 
-		act( () => {
-			ReactDOM.render( <TestComponent />, container );
-		} );
+		render( <TestComponent /> );
 	} );
 
 	it( 'triggers an initial callback', () => {
 		const getBoundingClientRectMock = jest.fn().mockReturnValueOnce( initialRect );
 		const TestComponent = createTestComponent( callback, getBoundingClientRectMock );
 
-		act( () => {
-			ReactDOM.render( <TestComponent />, container );
-		} );
+		render( <TestComponent /> );
 
 		expect( lastRect ).toBe( initialRect );
 		expect( callback ).toHaveBeenCalledTimes( 1 );
@@ -82,21 +69,15 @@ describe( 'useWindowResizeCallback', () => {
 
 		const TestComponent = createTestComponent( callback, getBoundingClientRectMock );
 
-		act( () => {
-			ReactDOM.render( <TestComponent />, container );
-		} );
+		render( <TestComponent /> );
 
 		expect( lastRect ).toBe( initialRect );
 
 		// Fire resize event.
-		act( () => {
-			global.dispatchEvent( new Event( 'resize' ) );
-		} );
+		fireEvent.resize( window );
 
 		// Flush timer queue to trigger callbacks.
-		act( () => {
-			clock.tick( THROTTLE_RATE );
-		} );
+		jest.advanceTimersByTime( THROTTLE_RATE );
 
 		expect( lastRect ).toBe( secondRect );
 		expect( callback ).toHaveBeenCalledTimes( 2 );
@@ -111,21 +92,15 @@ describe( 'useWindowResizeCallback', () => {
 
 		const TestComponent = createTestComponent( callback, getBoundingClientRectMock );
 
-		act( () => {
-			ReactDOM.render( <TestComponent />, container );
-		} );
+		render( <TestComponent /> );
 
 		expect( lastRect ).toBe( initialRect );
 
 		// Fire resize event.
-		act( () => {
-			global.dispatchEvent( new Event( 'resize' ) );
-		} );
+		fireEvent.resize( window );
 
 		// Flush timer queue to trigger callbacks.
-		act( () => {
-			clock.tick( THROTTLE_RATE );
-		} );
+		jest.advanceTimersByTime( THROTTLE_RATE );
 
 		expect( lastRect ).toBe( initialRect );
 		expect( callback ).toHaveBeenCalledTimes( 1 );
@@ -133,8 +108,6 @@ describe( 'useWindowResizeCallback', () => {
 } );
 
 describe( 'useWindowResizeRect', () => {
-	let clock;
-	let container;
 	let lastRect;
 	let renderTracker;
 
@@ -159,18 +132,13 @@ describe( 'useWindowResizeRect', () => {
 	}
 
 	beforeEach( () => {
-		clock = useFakeTimers();
-		container = document.createElement( 'div' );
-		document.body.appendChild( container );
-
+		jest.useFakeTimers();
 		renderTracker = jest.fn();
 	} );
 
 	afterEach( () => {
-		clock.restore();
-		document.body.removeChild( container );
-		ReactDOM.unmountComponentAtNode( container );
-		container = null;
+		jest.runOnlyPendingTimers();
+		jest.useRealTimers();
 	} );
 
 	it( 'returns the initial rect', () => {
@@ -181,11 +149,9 @@ describe( 'useWindowResizeRect', () => {
 
 		const TestComponent = createTestComponent( getBoundingClientRectMock );
 
-		act( () => {
-			ReactDOM.render( <TestComponent />, container );
-		} );
+		const { container } = render( <TestComponent /> );
 
-		expect( container.textContent ).toBe( initialRect.width.toString() );
+		expect( container ).toHaveTextContent( initialRect.width.toString() );
 		expect( lastRect ).toBe( initialRect );
 
 		// We expect 2 renders:
@@ -205,24 +171,18 @@ describe( 'useWindowResizeRect', () => {
 
 		const TestComponent = createTestComponent( getBoundingClientRectMock );
 
-		act( () => {
-			ReactDOM.render( <TestComponent />, container );
-		} );
+		const { container } = render( <TestComponent /> );
 
-		expect( container.textContent ).toBe( initialRect.width.toString() );
+		expect( container ).toHaveTextContent( initialRect.width.toString() );
 		expect( lastRect ).toBe( initialRect );
 
 		// Fire resize event.
-		act( () => {
-			global.dispatchEvent( new Event( 'resize' ) );
-		} );
+		fireEvent.resize( window );
 
 		// Flush timer queue to trigger callbacks.
-		act( () => {
-			clock.tick( THROTTLE_RATE );
-		} );
+		jest.advanceTimersByTime( THROTTLE_RATE );
 
-		expect( container.textContent ).toBe( secondRect.width.toString() );
+		expect( container ).toHaveTextContent( secondRect.width.toString() );
 		expect( lastRect ).toBe( secondRect );
 
 		// We expect 3 renders:
@@ -242,24 +202,18 @@ describe( 'useWindowResizeRect', () => {
 
 		const TestComponent = createTestComponent( getBoundingClientRectMock );
 
-		act( () => {
-			ReactDOM.render( <TestComponent />, container );
-		} );
+		const { container } = render( <TestComponent /> );
 
-		expect( container.textContent ).toBe( initialRect.width.toString() );
+		expect( container ).toHaveTextContent( initialRect.width.toString() );
 		expect( lastRect ).toBe( initialRect );
 
 		// Fire resize event.
-		act( () => {
-			global.dispatchEvent( new Event( 'resize' ) );
-		} );
+		fireEvent.resize( window );
 
 		// Flush timer queue to trigger callbacks.
-		act( () => {
-			clock.tick( THROTTLE_RATE );
-		} );
+		jest.advanceTimersByTime( THROTTLE_RATE );
 
-		expect( container.textContent ).toBe( initialRect.width.toString() );
+		expect( container ).toHaveTextContent( initialRect.width.toString() );
 		expect( lastRect ).toBe( initialRect );
 
 		// We expect 2 renders:

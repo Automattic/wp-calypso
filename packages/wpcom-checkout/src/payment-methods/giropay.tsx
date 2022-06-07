@@ -1,4 +1,4 @@
-import { Button, FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
@@ -78,7 +78,7 @@ export function createGiropayMethod( { store }: { store: GiropayStore } ): Payme
 	};
 }
 
-function GiropayFields(): JSX.Element {
+function GiropayFields() {
 	const { __ } = useI18n();
 
 	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() );
@@ -140,8 +140,8 @@ function GiropayPayButton( {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: GiropayStore;
-} ): JSX.Element {
-	const [ , total ] = useLineItems();
+} ) {
+	const total = useTotal();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() );
 

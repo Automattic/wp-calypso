@@ -1,6 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, ReactNode } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	newUser,
 	GSuiteNewUser as NewUser,
@@ -8,7 +9,7 @@ import {
 	validateUsers,
 } from 'calypso/lib/gsuite/new-users';
 import GSuiteNewUser from './new-user';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { ReactElement } from 'react';
 
 import './style.scss';
@@ -16,7 +17,7 @@ import './style.scss';
 interface GSuiteNewUserListProps {
 	autoFocus?: boolean;
 	children?: ReactNode;
-	domains?: SiteDomain[];
+	domains?: ResponseDomain[];
 	extraValidation: ( user: NewUser ) => NewUser;
 	selectedDomainName: string;
 	showAddAnotherMailboxButton?: boolean;
@@ -40,33 +41,40 @@ const GSuiteNewUserList = ( {
 }: GSuiteNewUserListProps ): ReactElement => {
 	const translate = useTranslate();
 
-	const onUserValueChange = ( uuid: string ) => (
-		fieldName: string,
-		fieldValue: string,
-		mailBoxFieldTouched = false
-	) => {
-		const changedUsers = users.map( ( user ) => {
-			if ( user.uuid !== uuid ) {
-				return user;
-			}
+	const onUserValueChange =
+		( uuid: string ) =>
+		( fieldName: string, fieldValue: string, mailBoxFieldTouched = false ) => {
+			const changedUsers = users.map( ( user ) => {
+				if ( user.uuid !== uuid ) {
+					return user;
+				}
 
-			const changedUser = { ...user, [ fieldName ]: { value: fieldValue, error: null } };
+				const changedUser = { ...user, [ fieldName ]: { value: fieldValue, error: null } };
 
-			if ( 'firstName' === fieldName && ! mailBoxFieldTouched ) {
-				return { ...changedUser, mailBox: { value: sanitizeEmail( fieldValue ), error: null } };
-			}
+				if ( 'firstName' === fieldName && ! mailBoxFieldTouched ) {
+					return { ...changedUser, mailBox: { value: sanitizeEmail( fieldValue ), error: null } };
+				}
 
-			return changedUser;
-		} );
-		onUsersChange( validateUsers( changedUsers, extraValidation ) );
-	};
+				return changedUser;
+			} );
+			onUsersChange( validateUsers( changedUsers, extraValidation ) );
+		};
 
 	const onUserAdd = () => {
+		recordTracksEvent(
+			'calypso_email_google_workspace_add_mailboxes_add_another_mailbox_button_click',
+			{ mailbox_count: users.length + 1 }
+		);
+
 		onUsersChange( [ ...users, newUser( selectedDomainName ) ] );
 	};
 
 	const onUserRemove = ( uuid: string ) => () => {
 		const newUserList = users.filter( ( _user ) => _user.uuid !== uuid );
+
+		recordTracksEvent( 'calypso_email_google_workspace_add_mailboxes_remove_mailbox_button_click', {
+			mailbox_count: newUserList.length,
+		} );
 
 		onUsersChange( 0 < newUserList.length ? newUserList : [ newUser( selectedDomainName ) ] );
 	};

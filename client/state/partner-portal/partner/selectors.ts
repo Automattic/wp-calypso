@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import find from 'lodash/find';
 import type {
 	APIError,
@@ -43,4 +44,13 @@ export function getCurrentPartner( state: PartnerPortalStore ): Partner | null {
 
 export function getPartnerRequestError( state: PartnerPortalStore ): APIError | null {
 	return state.partnerPortal.partner.error;
+}
+
+export function isAgencyUser( state: PartnerPortalStore ): boolean {
+	const partner = getCurrentPartner( state );
+	return partner?.partner_type === 'agency';
+}
+
+export function showAgencyDashboard( state: PartnerPortalStore ): boolean {
+	return config.isEnabled( 'jetpack/agency-dashboard' ) && isAgencyUser( state );
 }

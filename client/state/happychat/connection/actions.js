@@ -301,7 +301,6 @@ export const sendNotTyping = () => sendTyping( false );
  * @param {string} locale representing the user selected locale
  * @param { Array } groups of string happychat groups (wp.com, jpop) based on the site selected
  * @param {object} skills object based on product and language ( formerly group and locale )
- *
  * @returns {object} Action object
  */
 export const sendPreferences = ( locale, groups, skills ) => ( {
@@ -319,7 +318,6 @@ export const sendPreferences = ( locale, groups, skills ) => ( {
  * set on the current chat.
  *
  * @param {object} fieldData Key/values of Custom Fields to be set
- *
  * @returns {object} Action object
  */
 export const setChatCustomFields = ( fieldData ) => ( {

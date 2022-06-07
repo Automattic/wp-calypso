@@ -2,10 +2,8 @@ import { useProcessPayment, PaymentProcessorResponseType } from '@automattic/com
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { translateResponseCartToWPCOMCart } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-cart';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { ResponseCart } from '@automattic/shopping-cart';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 
 export function extractStoredCardMetaValue( card: StoredCard, key: string ): string | undefined {
@@ -17,12 +15,10 @@ type OnClose = () => void;
 type SubmitTransactionFunction = () => void;
 
 export function useSubmitTransaction( {
-	cart,
 	storedCard,
 	setStep,
 	onClose,
 }: {
-	cart: ResponseCart;
 	storedCard: StoredCard | undefined;
 	setStep: SetStep;
 	onClose: OnClose;
@@ -34,10 +30,8 @@ export function useSubmitTransaction( {
 		if ( ! storedCard ) {
 			throw new Error( 'No saved card found' );
 		}
-		const wpcomCart = translateResponseCartToWPCOMCart( cart );
 		setStep( 'processing' );
 		callPaymentProcessor( {
-			items: wpcomCart.items,
 			name: storedCard.name,
 			storedDetailsId: storedCard.stored_details_id,
 			paymentMethodToken: storedCard.mp_ref,
@@ -64,7 +58,7 @@ export function useSubmitTransaction( {
 				reduxDispatch( errorNotice( error.message ) );
 				onClose();
 			} );
-	}, [ callPaymentProcessor, cart, storedCard, setStep, onClose, reduxDispatch ] );
+	}, [ callPaymentProcessor, storedCard, setStep, onClose, reduxDispatch ] );
 }
 
 export function formatDate( cardExpiry: string ): string {

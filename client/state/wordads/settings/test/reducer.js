@@ -13,7 +13,7 @@ describe( 'reducer', () => {
 	const originalConsoleWarn = global.console.warn;
 
 	beforeAll( () => {
-		global.console.warn = jest.fn();
+		jest.spyOn( console, 'warn' ).mockImplementation();
 	} );
 
 	afterAll( () => {

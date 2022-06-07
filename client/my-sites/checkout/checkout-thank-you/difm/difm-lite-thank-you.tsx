@@ -5,7 +5,7 @@ import HappinessSupport from 'calypso/components/happiness-support';
 
 import './style.scss';
 
-export default function DIFMLiteThankYou(): JSX.Element {
+export default function DIFMLiteThankYou() {
 	const translate = useTranslate();
 
 	return (

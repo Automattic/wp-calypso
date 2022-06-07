@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	SITE_CONNECTION_STATUS_RECEIVE,
@@ -6,23 +5,28 @@ import {
 	SITE_CONNECTION_STATUS_REQUEST_FAILURE,
 	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import reducer, { items, requesting } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
+	beforeAll( () => {
+		jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+	} );
+
+	afterAll( () => {
+		jest.clearAllMocks();
 	} );
 
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'items', 'requesting' ] )
+		);
 	} );
 
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should store connection status when received', () => {
@@ -32,7 +36,7 @@ describe( 'reducer', () => {
 				status: true,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: true,
 			} );
 		} );
@@ -47,7 +51,7 @@ describe( 'reducer', () => {
 				status: false,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: true,
 				77203074: false,
 			} );
@@ -64,7 +68,7 @@ describe( 'reducer', () => {
 				status: false,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: false,
 				77203074: false,
 			} );
@@ -75,7 +79,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track connection status request when started', () => {
@@ -84,7 +88,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: true,
 			} );
 		} );
@@ -98,7 +102,7 @@ describe( 'reducer', () => {
 				siteId: 77203074,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: true,
 				77203074: true,
 			} );
@@ -114,7 +118,7 @@ describe( 'reducer', () => {
 				siteId: 2916284,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: false,
 				77203074: true,
 			} );
@@ -130,7 +134,7 @@ describe( 'reducer', () => {
 				siteId: 77203074,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: false,
 				77203074: false,
 			} );

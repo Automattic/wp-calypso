@@ -1,10 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { EditorMediaModalDetailItem as DetailItem } from '../detail-item';
 
 jest.mock( 'calypso/post-editor/media-modal/detail/detail-fields', () =>
@@ -43,11 +40,7 @@ const SHARED_PROPS = {
 };
 
 describe( 'EditorMediaModalDetailItem', () => {
-	let isVideoPressEnabled;
-
-	useSandbox( ( sandbox ) => {
-		isVideoPressEnabled = sandbox.stub().returns( true );
-	} );
+	const isVideoPressEnabled = jest.fn( () => true );
 
 	test( 'should display at least one edit button for a VideoPress video on a public site', () => {
 		const tree = shallow(
@@ -60,7 +53,7 @@ describe( 'EditorMediaModalDetailItem', () => {
 
 		const editButton = tree.find( '.editor-media-modal-detail__edit' );
 
-		expect( editButton ).to.have.length.at.least( 1 );
+		expect( editButton.length ).toBeGreaterThanOrEqual( 1 );
 	} );
 
 	test( 'should display at least one edit button for a VideoPress video on a private site', () => {
@@ -75,7 +68,7 @@ describe( 'EditorMediaModalDetailItem', () => {
 
 		const editButton = tree.find( '.editor-media-modal-detail__edit' );
 
-		expect( editButton ).to.have.length.at.least( 1 );
+		expect( editButton.length ).toBeGreaterThanOrEqual( 1 );
 	} );
 
 	test( 'should display at least one edit button for an image on a public site', () => {
@@ -83,7 +76,7 @@ describe( 'EditorMediaModalDetailItem', () => {
 
 		const editButton = tree.find( '.editor-media-modal-detail__edit' );
 
-		expect( editButton ).to.have.length.at.least( 1 );
+		expect( editButton.length ).toBeGreaterThanOrEqual( 1 );
 	} );
 
 	test( 'should not display edit button for an image on a private site', () => {
@@ -93,6 +86,6 @@ describe( 'EditorMediaModalDetailItem', () => {
 
 		const editButton = tree.find( '.editor-media-modal-detail__edit' );
 
-		expect( editButton ).to.have.length( 0 );
+		expect( editButton ).toHaveLength( 0 );
 	} );
 } );

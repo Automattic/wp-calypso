@@ -55,21 +55,23 @@ export function requestMedia( action ) {
 	];
 }
 
-export const requestMediaSuccess = ( { siteId, query }, data ) => ( dispatch, getState ) => {
-	if (
-		! isEqual(
-			omit( query, 'page_handle' ),
-			omit( getNextPageQuery( getState(), siteId ), 'page_handle' )
-		)
-	) {
-		dispatch( successMediaRequest( siteId, query ) );
-		return;
-	}
+export const requestMediaSuccess =
+	( { siteId, query }, data ) =>
+	( dispatch, getState ) => {
+		if (
+			! isEqual(
+				omit( query, 'page_handle' ),
+				omit( getNextPageQuery( getState(), siteId ), 'page_handle' )
+			)
+		) {
+			dispatch( successMediaRequest( siteId, query ) );
+			return;
+		}
 
-	dispatch( receiveMedia( siteId, data.media, data.found, query ) );
-	dispatch( successMediaRequest( siteId, query ) );
-	dispatch( setNextPageHandle( siteId, data.meta ) );
-};
+		dispatch( receiveMedia( siteId, data.media, data.found, query ) );
+		dispatch( successMediaRequest( siteId, query ) );
+		dispatch( setNextPageHandle( siteId, data.meta ) );
+	};
 
 export const requestMediaError = ( { siteId, query } ) => failMediaRequest( siteId, query );
 

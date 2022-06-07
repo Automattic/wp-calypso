@@ -10,16 +10,11 @@ interface StatsNoContentBannerProps {
 	siteId: number;
 }
 
-export const StatsNoContentBanner = ( {
-	siteId,
-	siteSlug,
-}: StatsNoContentBannerProps ): JSX.Element | null => {
-	const {
-		data: hasNeverPublishedPost,
-		isLoading: isHasNeverPublishedPostLoading,
-	} = useHasNeverPublishedPost( siteId ?? null, true, {
-		retry: false,
-	} );
+export const StatsNoContentBanner = ( { siteId, siteSlug }: StatsNoContentBannerProps ) => {
+	const { data: hasNeverPublishedPost, isLoading: isHasNeverPublishedPostLoading } =
+		useHasNeverPublishedPost( siteId ?? null, true, {
+			retry: false,
+		} );
 
 	if ( ! hasNeverPublishedPost || isHasNeverPublishedPostLoading ) {
 		return null;

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getOriginalUserSetting from 'calypso/state/selectors/get-original-user-setting';
 
 describe( 'getOriginalUserSetting()', () => {
@@ -13,7 +12,7 @@ describe( 'getOriginalUserSetting()', () => {
 			'foo'
 		);
 
-		expect( setting ).to.be.null;
+		expect( setting ).toBeNull();
 	} );
 
 	test( 'should ignore the unsaved settings and always return the server value', () => {
@@ -27,6 +26,6 @@ describe( 'getOriginalUserSetting()', () => {
 			'foo'
 		);
 
-		expect( setting ).to.eql( 'bar' );
+		expect( setting ).toEqual( 'bar' );
 	} );
 } );

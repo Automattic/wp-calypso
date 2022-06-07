@@ -19,46 +19,44 @@ const withSiteMonitorSettings = createHigherOrderComponent( ( Wrapped ) => {
 		const translate = useTranslate();
 		const queryClient = useQueryClient();
 		const { data, isLoading: isFetchingSettings } = useSiteMonitorSettingsQuery( siteId );
-		const {
-			isLoading: isUpdatingSettings,
-			updateSiteMonitorSettings,
-		} = useUpdateSiteMonitorSettingsMutation( siteId, {
-			onMutate: async ( settings ) => {
-				const queryKey = [ 'site-monitor-settings', siteId ];
+		const { isLoading: isUpdatingSettings, updateSiteMonitorSettings } =
+			useUpdateSiteMonitorSettingsMutation( siteId, {
+				onMutate: async ( settings ) => {
+					const queryKey = [ 'site-monitor-settings', siteId ];
 
-				// Cancel any current refetches, so they don't overwrite our optimistic update
-				await queryClient.cancelQueries( queryKey );
+					// Cancel any current refetches, so they don't overwrite our optimistic update
+					await queryClient.cancelQueries( queryKey );
 
-				// Snapshot the previous value
-				const previousSettings = queryClient.getQueryData( queryKey );
+					// Snapshot the previous value
+					const previousSettings = queryClient.getQueryData( queryKey );
 
-				// Optimistically update to the new value
-				queryClient.setQueryData( queryKey, ( { settings: oldSettings } ) => {
-					return { ...oldSettings, ...settings };
-				} );
+					// Optimistically update to the new value
+					queryClient.setQueryData( queryKey, ( { settings: oldSettings } ) => {
+						return { ...oldSettings, ...settings };
+					} );
 
-				// Store previous settings in case of failure
-				return { previousSettings };
-			},
-			onSuccess() {
-				dispatch( successNotice( translate( 'Settings saved successfully!' ), noticeOptions ) );
-			},
-			onError( err, newSettings, context ) {
-				// Revert to previous settings on failure
-				queryClient.setQueryData( [ 'site-monitor-settings', siteId ], context.previousSettings );
+					// Store previous settings in case of failure
+					return { previousSettings };
+				},
+				onSuccess() {
+					dispatch( successNotice( translate( 'Settings saved successfully!' ), noticeOptions ) );
+				},
+				onError( err, newSettings, context ) {
+					// Revert to previous settings on failure
+					queryClient.setQueryData( [ 'site-monitor-settings', siteId ], context.previousSettings );
 
-				dispatch(
-					errorNotice(
-						translate( 'There was a problem saving your changes. Please, try again.' ),
-						noticeOptions
-					)
-				);
-			},
-			onSettled: () => {
-				// Refetch settings regardless
-				queryClient.invalidateQueries( [ 'site-monitor-settings', siteId ] );
-			},
-		} );
+					dispatch(
+						errorNotice(
+							translate( 'There was a problem saving your changes. Please, try again.' ),
+							noticeOptions
+						)
+					);
+				},
+				onSettled: () => {
+					// Refetch settings regardless
+					queryClient.invalidateQueries( [ 'site-monitor-settings', siteId ] );
+				},
+			} );
 
 		return (
 			<Wrapped

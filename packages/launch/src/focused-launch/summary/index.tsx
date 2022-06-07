@@ -299,12 +299,8 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		PlanProduct | undefined
 	>();
 
-	const {
-		defaultPaidPlan,
-		defaultFreePlan,
-		defaultPaidPlanProduct,
-		defaultFreePlanProduct,
-	} = usePlans( billingPeriod );
+	const { defaultPaidPlan, defaultFreePlan, defaultPaidPlanProduct, defaultFreePlanProduct } =
+		usePlans( billingPeriod );
 
 	React.useEffect( () => {
 		if (
@@ -514,22 +510,18 @@ type StepIndexRenderFunction = ( renderOptions: {
 const Summary: React.FunctionComponent = () => {
 	const { siteId } = React.useContext( LaunchContext );
 
-	const [
-		hasSelectedDomain,
-		isSiteTitleStepVisible,
-		selectedDomain,
-		selectedPlanProductId,
-	] = useSelect( ( select ) => {
-		const launchStore = select( LAUNCH_STORE );
-		const { isSiteTitleStepVisible, domain, planProductId } = launchStore.getState();
+	const [ hasSelectedDomain, isSiteTitleStepVisible, selectedDomain, selectedPlanProductId ] =
+		useSelect( ( select ) => {
+			const launchStore = select( LAUNCH_STORE );
+			const { isSiteTitleStepVisible, domain, planProductId } = launchStore.getState();
 
-		return [
-			launchStore.hasSelectedDomainOrSubdomain(),
-			isSiteTitleStepVisible,
-			domain,
-			planProductId,
-		];
-	}, [] );
+			return [
+				launchStore.hasSelectedDomainOrSubdomain(),
+				isSiteTitleStepVisible,
+				domain,
+				planProductId,
+			];
+		}, [] );
 
 	const isSelectedPlanPaid = useSelect(
 		( select ) => select( LAUNCH_STORE ).isSelectedPlanPaid(),
@@ -537,12 +529,8 @@ const Summary: React.FunctionComponent = () => {
 	);
 
 	const { launchSite } = useDispatch( SITE_STORE );
-	const {
-		setModalDismissible,
-		unsetModalDismissible,
-		showModalTitle,
-		showSiteTitleStep,
-	} = useDispatch( LAUNCH_STORE );
+	const { setModalDismissible, unsetModalDismissible, showModalTitle, showSiteTitleStep } =
+		useDispatch( LAUNCH_STORE );
 
 	const { title, isValidTitle, isDefaultTitle, updateTitle } = useTitle();
 	const { siteSubdomain, hasPaidDomain } = useSiteDomains();

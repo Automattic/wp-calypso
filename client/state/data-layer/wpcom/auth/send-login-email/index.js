@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
+import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import {
 	LOGIN_EMAIL_SEND,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
@@ -68,6 +69,7 @@ export const sendLoginEmail = ( action ) => {
 					...( redirect_to && { redirect_to } ),
 					...( flow && { flow } ),
 					create_account: createAccount,
+					tos: getToSAcceptancePayload(),
 				},
 			},
 			{ ...action, infoNoticeId: noticeAction ? noticeAction.notice.noticeId : null }

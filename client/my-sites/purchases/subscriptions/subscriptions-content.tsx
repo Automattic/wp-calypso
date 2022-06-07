@@ -83,7 +83,7 @@ function SubscriptionsContent( {
 	return <NoPurchasesMessage />;
 }
 
-export default function SubscriptionsContentWrapper(): JSX.Element {
+export default function SubscriptionsContentWrapper() {
 	const isFetchingPurchases = useSelector( isFetchingSitePurchases );
 	const hasLoadedPurchases = useSelector( hasLoadedSitePurchasesFromServer );
 	const selectedSiteId = useSelector( getSelectedSiteId );

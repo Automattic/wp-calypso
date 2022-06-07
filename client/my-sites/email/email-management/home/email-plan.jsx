@@ -1,20 +1,20 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { localize, useTranslate } from 'i18n-calypso';
+import config from '@automattic/calypso-config';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
+import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import {
 	getGoogleAdminUrl,
 	getGoogleMailServiceFamily,
 	getGSuiteProductSlug,
+	getGSuiteSubscriptionStatus,
 	getProductType,
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
@@ -48,8 +48,6 @@ import {
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getEmailForwards } from 'calypso/state/selectors/get-email-forwards';
-import isRequestingEmailForwards from 'calypso/state/selectors/is-requesting-email-forwards';
 
 const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 	const translate = useTranslate();
@@ -73,40 +71,46 @@ UpgradeNavItem.propTypes = {
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
 
-const EmailPlan = ( props ) => {
-	const shouldCheckForEmailForwards = ( domain ) => {
-		return ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain );
-	};
+function getAccount( data ) {
+	return data?.accounts?.[ 0 ];
+}
 
-	function getAccount( data ) {
-		return data?.accounts?.[ 0 ];
-	}
+function getMailboxes( data ) {
+	const account = getAccount( data );
 
-	function getMailboxes( data ) {
-		const account = getAccount( data );
+	return account?.emails ?? [];
+}
 
-		return account?.emails ?? [];
-	}
+function EmailPlan( { domain, selectedSite, source } ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const purchase = useSelector( ( state ) => getEmailPurchaseByDomain( state, domain ) );
+	const isLoadingPurchase = useSelector(
+		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
+	);
+	const currentRoute = useSelector( getCurrentRoute );
+
+	const canAddMailboxes =
+		( getGSuiteProductSlug( domain ) || getTitanProductSlug( domain ) ) &&
+		getGSuiteSubscriptionStatus( domain ) !== 'suspended';
+	const hasSubscription = hasEmailSubscription( domain );
 
 	const handleBack = () => {
-		const { selectedSite } = props;
-
 		page( emailManagement( selectedSite.slug ) );
 	};
 
 	const handleRenew = ( event ) => {
 		event.preventDefault();
 
-		const { purchase, selectedSite } = props;
-
-		handleRenewNowClick( purchase, selectedSite.slug, {
-			tracksProps: { source: 'email-plan-view' },
-		} );
+		dispatch(
+			handleRenewNowClick( purchase, selectedSite.slug, {
+				tracksProps: { source: 'email-plan-view' },
+			} )
+		);
 	};
 
 	function getAddMailboxProps() {
-		const { currentRoute, domain, selectedSite, source } = props;
-
 		if ( hasGSuiteWithUs( domain ) ) {
 			return {
 				path: emailManagementAddGSuiteUsers(
@@ -131,7 +135,7 @@ const EmailPlan = ( props ) => {
 				};
 			}
 
-			const showExternalControlPanelLink = ! isEnabled( 'titan/iframe-control-panel' );
+			const showExternalControlPanelLink = ! config.isEnabled( 'titan/iframe-control-panel' );
 			const controlPanelUrl = showExternalControlPanelLink
 				? emailManagementTitanControlPanelRedirect( selectedSite.slug, domain.name, currentRoute, {
 						context: TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL,
@@ -152,8 +156,6 @@ const EmailPlan = ( props ) => {
 	}
 
 	function getHeaderText() {
-		const { domain, translate } = props;
-
 		if ( hasGSuiteWithUs( domain ) ) {
 			const googleMailService = getGoogleMailServiceFamily( getGSuiteProductSlug( domain ) );
 
@@ -179,8 +181,6 @@ const EmailPlan = ( props ) => {
 	}
 
 	function renderViewBillingAndPaymentSettingsNavItem() {
-		const { hasSubscription, purchase, selectedSite, translate } = props;
-
 		if ( ! hasSubscription ) {
 			return null;
 		}
@@ -199,8 +199,6 @@ const EmailPlan = ( props ) => {
 	}
 
 	function getManageAllNavItemProps() {
-		const { currentRoute, domain, selectedSite } = props;
-
 		if ( hasGSuiteWithUs( domain ) ) {
 			return {
 				external: true,
@@ -209,7 +207,7 @@ const EmailPlan = ( props ) => {
 		}
 
 		if ( hasTitanMailWithUs( domain ) ) {
-			if ( isEnabled( 'titan/iframe-control-panel' ) ) {
+			if ( config.isEnabled( 'titan/iframe-control-panel' ) ) {
 				return {
 					path: emailManagementManageTitanAccount( selectedSite.slug, domain.name, currentRoute ),
 				};
@@ -224,8 +222,6 @@ const EmailPlan = ( props ) => {
 	}
 
 	function renderManageAllMailboxesNavItem() {
-		const { translate } = props;
-
 		const manageAllNavItemProps = getManageAllNavItemProps();
 
 		if ( manageAllNavItemProps === null ) {
@@ -243,9 +239,7 @@ const EmailPlan = ( props ) => {
 	}
 
 	function renderAddNewMailboxesOrRenewNavItem() {
-		const { canAddMailboxes, domain, hasSubscription, purchase, translate } = props;
-
-		if ( hasTitanMailWithUs( domain ) && ! hasSubscription && canAddMailboxes ) {
+		if ( hasTitanMailWithUs( domain ) && ! hasSubscription ) {
 			return (
 				<VerticalNavItem { ...getAddMailboxProps() }>
 					{ translate( 'Add new mailboxes' ) }
@@ -266,14 +260,11 @@ const EmailPlan = ( props ) => {
 				);
 			}
 
-			if ( canAddMailboxes ) {
-				return (
-					<VerticalNavItem { ...getAddMailboxProps() }>
-						{ translate( 'Add new mailboxes' ) }
-					</VerticalNavItem>
-				);
-			}
-			return null;
+			return (
+				<VerticalNavItem { ...getAddMailboxProps() } disabled={ ! canAddMailboxes }>
+					{ translate( 'Add new mailboxes' ) }
+				</VerticalNavItem>
+			);
 		}
 
 		return (
@@ -283,32 +274,15 @@ const EmailPlan = ( props ) => {
 		);
 	}
 
-	const {
-		currentRoute,
-		domain,
-		selectedSite,
-		hasSubscription,
-		purchase,
-		isLoadingPurchase,
-	} = props;
-
-	// Ensure we check for email forwarding additions and removals
-	const shouldQueryEmailForwards = shouldCheckForEmailForwards( domain );
-
-	const { data, isLoading } = useEmailAccountsQuery( props.selectedSite.ID, props.domain.name, {
+	const { data, isLoading } = useGetEmailAccountsQuery( selectedSite.ID, domain.name, {
 		retry: false,
 	} );
 
 	return (
 		<>
 			{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
-
-			{ shouldQueryEmailForwards && <QueryEmailForwards domainName={ domain.name } /> }
-
 			<DocumentHead title={ titleCase( getHeaderText() ) } />
-
 			<HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake>
-
 			<EmailPlanHeader
 				domain={ domain }
 				hasEmailSubscription={ hasSubscription }
@@ -318,59 +292,32 @@ const EmailPlan = ( props ) => {
 				selectedSite={ selectedSite }
 				emailAccount={ data?.accounts?.[ 0 ] || {} }
 			/>
-
 			<EmailPlanMailboxesList
 				account={ getAccount( data ) }
 				domain={ domain }
 				mailboxes={ getMailboxes( data ) }
 				isLoadingEmails={ isLoading }
 			/>
-
 			<div className="email-plan__actions">
 				<VerticalNav>
 					{ renderAddNewMailboxesOrRenewNavItem() }
-
 					<UpgradeNavItem
 						currentRoute={ currentRoute }
 						domain={ domain }
 						selectedSiteSlug={ selectedSite.slug }
 					/>
-
 					{ renderManageAllMailboxesNavItem() }
-
 					{ renderViewBillingAndPaymentSettingsNavItem() }
 				</VerticalNav>
 			</div>
 		</>
 	);
-};
+}
 
-EmailPlan.propType = {
+EmailPlan.propTypes = {
 	domain: PropTypes.object.isRequired,
 	selectedSite: PropTypes.object.isRequired,
 	source: PropTypes.string,
-
-	// Connected props
-	canAddMailboxes: PropTypes.bool,
-	currentRoute: PropTypes.string,
-	emailForwards: PropTypes.array,
-	hasSubscription: PropTypes.bool,
-	isLoadingEmailForwards: PropTypes.bool,
-	isLoadingPurchase: PropTypes.bool,
-	purchase: PropTypes.object,
 };
 
-export default connect( ( state, ownProps ) => {
-	return {
-		canAddMailboxes:
-			Boolean( getGSuiteProductSlug( ownProps.domain ) ) ||
-			Boolean( getTitanProductSlug( ownProps.domain ) ),
-		currentRoute: getCurrentRoute( state ),
-		emailForwards: getEmailForwards( state, ownProps.domain.name ),
-		isLoadingEmailForwards: isRequestingEmailForwards( state, ownProps.domain.name ),
-		isLoadingPurchase:
-			isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state ),
-		purchase: getEmailPurchaseByDomain( state, ownProps.domain ),
-		hasSubscription: hasEmailSubscription( ownProps.domain ),
-	};
-} )( localize( EmailPlan ) );
+export default EmailPlan;

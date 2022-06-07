@@ -71,15 +71,16 @@ project {
 		password("mc_teamcity_webhook", "credentialsJSON:7a711930-afd4-4058-b33f-39af8a0b7f91", display = ParameterDisplay.HIDDEN)
 		password("TRANSLATE_GH_APP_SECRET", "credentialsJSON:083cc9f7-4e9a-461f-b213-bc306baaeb28", display = ParameterDisplay.HIDDEN)
 		password("TRANSLATE_GH_APP_ID", "credentialsJSON:c03b1958-5ec3-4f4c-ab1c-ca1bf0e629f5", display = ParameterDisplay.HIDDEN)
+		password("SENTRY_AUTH_TOKEN", "credentialsJSON:e266a488-d639-4baa-b681-0e11be59ebc1", display = ParameterDisplay.HIDDEN)
 
 		// Fetch all heads. This is used for builds that merge trunk before running tests
 		param("teamcity.git.fetchAllHeads", "true")
 
 		// e2e config decryption key references. See PCYsg-vnR-p2 for more info.
 		password("E2E_CONFIG_ENCRYPTION_KEY_JANUARY_22", "credentialsJSON:b06c1dcd-2188-45e2-b08b-dd97b06e2be6", display = ParameterDisplay.HIDDEN)
-		password("E2E_CONFIG_ENCRYPTION_KEY_MARCH_01_22", "credentialsJSON:5631ff82-dd5d-4eb7-bb08-bdb7e51d4ff6", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_MARCH_01_22", "credentialsJSON:5631ff82-dd5d-4eb7-bb08-bdb7e51d4ff6", display = ParameterDisplay.HIDDEN)
 		password("CONFIG_E2E_ENCRYPTION_KEY_LEGACY", "credentialsJSON:819c139c-90a1-4803-8367-00e5aa5fdb07", display = ParameterDisplay.HIDDEN)
-		param("E2E_CONFIG_ENCRYPTION_KEY", "%E2E_CONFIG_ENCRYPTION_KEY_MARCH_01_22%")
+		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_MARCH_01_22%", display = ParameterDisplay.HIDDEN)
 	}
 
 	features {

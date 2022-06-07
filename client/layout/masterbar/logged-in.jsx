@@ -35,22 +35,24 @@ import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-cur
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSectionName, getSectionGroup } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import { MasterBarMobileMenu } from './masterbar-menu';
-import Notifications from './notifications';
+import Notifications from './masterbar-notifications/notifications-button';
 
 const NEW_MASTERBAR_SHIPPING_DATE = new Date( 2022, 3, 14 ).getTime();
 const MENU_POPOVER_PREFERENCE_KEY = 'dismissible-card-masterbar-collapsable-menu-popover';
 
 const MOBILE_BREAKPOINT = '<480px';
+const IS_RESPONSIVE_MENU_BREAKPOINT = '<782px';
 
 class MasterbarLoggedIn extends Component {
 	state = {
 		isActionSearchVisible: false,
 		isMenuOpen: false,
 		isMobile: isWithinBreakpoint( MOBILE_BREAKPOINT ),
+		isResponsiveMenu: isWithinBreakpoint( IS_RESPONSIVE_MENU_BREAKPOINT ),
 		// making the ref a state triggers a re-render when it changes (needed for popover)
 		menuBtnRef: null,
 	};
@@ -74,6 +76,10 @@ class MasterbarLoggedIn extends Component {
 		this.unsubscribeToViewPortChanges = subscribeIsWithinBreakpoint(
 			MOBILE_BREAKPOINT,
 			( isMobile ) => this.setState( { isMobile } )
+		);
+		this.unsubscribeResponsiveMenuViewPortChanges = subscribeIsWithinBreakpoint(
+			IS_RESPONSIVE_MENU_BREAKPOINT,
+			( isResponsiveMenu ) => this.setState( { isResponsiveMenu } )
 		);
 	}
 	handleLayoutFocus = ( currentSection ) => {
@@ -106,6 +112,7 @@ class MasterbarLoggedIn extends Component {
 	componentWillUnmount() {
 		document.removeEventListener( 'keydown', this.actionSearchShortCutListener );
 		this.unsubscribeToViewPortChanges?.();
+		this.unsubscribeResponsiveMenuViewPortChanges?.();
 	}
 
 	clickMySites = () => {
@@ -206,14 +213,14 @@ class MasterbarLoggedIn extends Component {
 			isCustomerHomeEnabled,
 			section,
 		} = this.props;
-		const { isMenuOpen } = this.state;
+		const { isMenuOpen, isResponsiveMenu } = this.state;
 
 		const homeUrl = isCustomerHomeEnabled
 			? `/home/${ siteSlug }`
 			: getStatsPathForTab( 'day', siteSlug );
 
 		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
-		if ( 'sites' === section ) {
+		if ( 'sites' === section && isResponsiveMenu ) {
 			mySitesUrl = '';
 		}
 		const icon =
@@ -338,7 +345,11 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderCart() {
-		const { currentSelectedSiteSlug, currentSelectedSiteId } = this.props;
+		const { currentSelectedSiteSlug, currentSelectedSiteId, sectionGroup } = this.props;
+		// Only display the masterbar cart when we are viewing a site-specific page.
+		if ( sectionGroup !== 'sites' ) {
+			return null;
+		}
 		return (
 			<AsyncLoad
 				require="./masterbar-cart/masterbar-cart-wrapper"
@@ -368,16 +379,14 @@ class MasterbarLoggedIn extends Component {
 			>
 				<Gravatar
 					className="masterbar__item-me-gravatar"
-					user={ this.props.user }
+					user={ user }
 					alt={ translate( 'My Profile' ) }
 					size={ 18 }
 				/>
 				<span className="masterbar__item-me-label">
-					{ isMobile
-						? user?.display_name
-						: translate( 'My Profile', {
-								context: 'Toolbar, must be shorter than ~12 chars',
-						  } ) }
+					{ translate( 'My Profile', {
+						context: 'Toolbar, must be shorter than ~12 chars',
+					} ) }
 				</span>
 			</Item>
 		);
@@ -403,12 +412,8 @@ class MasterbarLoggedIn extends Component {
 
 	renderMenu() {
 		const { menuBtnRef } = this.state;
-		const {
-			translate,
-			hasDismissedThePopover,
-			isFetchingPrefs,
-			isUserNewerThanNewNavigation,
-		} = this.props;
+		const { translate, hasDismissedThePopover, isFetchingPrefs, isUserNewerThanNewNavigation } =
+			this.props;
 		return (
 			<>
 				<Item
@@ -473,7 +478,15 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderHelpCenter() {
-		return <AsyncLoad require="./masterbar-help-center" placeholder={ null } />;
+		const { currentSelectedSiteId } = this.props;
+
+		return (
+			<AsyncLoad
+				require="./masterbar-help-center"
+				siteId={ currentSelectedSiteId }
+				placeholder={ null }
+			/>
+		);
 	}
 
 	render() {
@@ -542,6 +555,7 @@ class MasterbarLoggedIn extends Component {
 
 export default connect(
 	( state ) => {
+		const sectionGroup = getSectionGroup( state );
 		// Falls back to using the user's primary site if no site has been selected
 		// by the user yet
 		const currentSelectedSiteId = getSelectedSiteId( state );
@@ -554,6 +568,7 @@ export default connect(
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			siteSlug: getSiteSlug( state, siteId ),
+			sectionGroup,
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
 			user: getCurrentUser( state ),

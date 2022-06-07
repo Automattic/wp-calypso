@@ -1,7 +1,8 @@
+import { when } from 'jest-when';
 import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
 import isUserRegistrationDaysWithinRange from '../is-user-registration-days-within-range';
 jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	getCurrentUserDate: require( 'sinon' ).stub(),
+	getCurrentUserDate: jest.fn(),
 } ) );
 
 describe( 'isUserRegistrationDaysWithinRange()', () => {
@@ -9,14 +10,14 @@ describe( 'isUserRegistrationDaysWithinRange()', () => {
 	const registrationDate = '2019-03-15';
 
 	test( 'should return null when there is no current user date', () => {
-		getCurrentUserDate.withArgs( state ).returns( null );
+		when( getCurrentUserDate ).calledWith( state ).mockReturnValue( null );
 		const refDate = registrationDate;
 		expect( isUserRegistrationDaysWithinRange( state, refDate, 5, 10 ) ).toBe( null );
 	} );
 
 	describe( 'when there is a current user date', () => {
 		beforeAll( () => {
-			getCurrentUserDate.withArgs( state ).returns( registrationDate );
+			when( getCurrentUserDate ).calledWith( state ).mockReturnValue( registrationDate );
 		} );
 
 		test( 'should return false when user has been registered for less than the lower bound', () => {

@@ -19,7 +19,7 @@ import type { VatDetails, UpdateError } from './use-vat-details';
 
 import './style.scss';
 
-export default function VatInfoPage(): JSX.Element {
+export default function VatInfoPage() {
 	const translate = useTranslate();
 	const { isLoading, fetchError } = useVatDetails();
 
@@ -55,17 +55,12 @@ export default function VatInfoPage(): JSX.Element {
 	);
 }
 
-function VatForm(): JSX.Element {
+function VatForm() {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const [ currentVatDetails, setCurrentVatDetails ] = useState< VatDetails >( {} );
-	const {
-		vatDetails,
-		isUpdating,
-		isUpdateSuccessful,
-		setVatDetails,
-		updateError,
-	} = useVatDetails();
+	const { vatDetails, isUpdating, isUpdateSuccessful, setVatDetails, updateError } =
+		useVatDetails();
 
 	const saveDetails = () => {
 		reduxDispatch( recordTracksEvent( 'calypso_vat_details_update' ) );
@@ -223,7 +218,7 @@ function useDisplayVatNotices( {
 }: {
 	error: UpdateError | null;
 	success: boolean;
-} ): void {
+} ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -266,13 +261,7 @@ function useDisplayVatNotices( {
 	}, [ error, success, reduxDispatch, translate ] );
 }
 
-function useRecordVatEvents( {
-	error,
-	success,
-}: {
-	error: UpdateError | null;
-	success: boolean;
-} ): void {
+function useRecordVatEvents( { error, success }: { error: UpdateError | null; success: boolean } ) {
 	const reduxDispatch = useDispatch();
 
 	useEffect( () => {
@@ -290,7 +279,7 @@ function useRecordVatEvents( {
 	}, [ error, success, reduxDispatch ] );
 }
 
-function LoadingPlaceholder(): JSX.Element {
+function LoadingPlaceholder() {
 	return (
 		<>
 			<div className="vat-info__form-placeholder"></div>

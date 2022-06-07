@@ -21,3 +21,8 @@ export enum LicenseSortDirection {
 	Ascending = 'asc',
 	Descending = 'desc',
 }
+
+export interface AssignLicenceProps {
+	selectedSite?: { ID: number; domain: string } | null;
+	suggestedProduct?: string | null;
+}

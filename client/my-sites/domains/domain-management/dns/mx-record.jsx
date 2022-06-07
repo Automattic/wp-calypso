@@ -1,9 +1,9 @@
+import { FormInputValidation } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';

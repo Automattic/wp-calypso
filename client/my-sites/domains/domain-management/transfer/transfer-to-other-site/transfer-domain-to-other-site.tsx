@@ -9,7 +9,7 @@ import SiteSelector from 'calypso/components/site-selector';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
@@ -122,7 +122,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		);
 	}
 
-	render(): JSX.Element {
+	render() {
 		const { selectedSite, selectedDomainName, currentRoute, translate } = this.props;
 		const { slug } = selectedSite;
 		const componentClassName = 'transfer-domain-to-other-site';
@@ -156,7 +156,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		);
 	}
 
-	renderBreadcrumbs = (): JSX.Element => {
+	renderBreadcrumbs = () => {
 		const { translate, selectedSite, selectedDomainName, currentRoute } = this.props;
 
 		const items = [
@@ -181,17 +181,12 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 			showBackArrow: true,
 		};
 
-		return <Breadcrumbs items={ items } mobileItem={ mobileItem } />;
+		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
 	};
 
-	renderSection(): JSX.Element {
-		const {
-			currentUserCanManage,
-			selectedDomainName,
-			aftermarketAuction,
-			translate,
-			domain,
-		} = this.props;
+	renderSection() {
+		const { currentUserCanManage, selectedDomainName, aftermarketAuction, translate, domain } =
+			this.props;
 		const { children, ...propsWithoutChildren } = this.props;
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard { ...propsWithoutChildren } />;

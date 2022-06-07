@@ -9,14 +9,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export class CommentHeader extends PureComponent {
 	render() {
-		const {
-			commentId,
-			isBulkMode,
-			isPostView,
-			isSelected,
-			showAuthorMoreInfo,
-			isDisabled,
-		} = this.props;
+		const { commentId, isBulkMode, isPostView, isSelected, showAuthorMoreInfo, isDisabled } =
+			this.props;
 
 		return (
 			<div className="comment__header">

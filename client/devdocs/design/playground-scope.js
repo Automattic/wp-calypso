@@ -2,6 +2,7 @@ export {
 	Button,
 	Card,
 	CompactCard,
+	FormInputValidation,
 	Gridicon,
 	Popover,
 	ProgressBar,
@@ -48,7 +49,6 @@ export { default as FormCheckbox } from 'calypso/components/forms/form-checkbox'
 export { default as FormCountrySelect } from 'calypso/components/forms/form-country-select';
 export { default as FormCurrencyInput } from 'calypso/components/forms/form-currency-input';
 export { default as FormFieldset } from 'calypso/components/forms/form-fieldset';
-export { default as FormInputValidation } from 'calypso/components/forms/form-input-validation';
 export { default as FormLabel } from 'calypso/components/forms/form-label';
 export { default as FormLegend } from 'calypso/components/forms/form-legend';
 export { default as FormPasswordInput } from 'calypso/components/forms/form-password-input';
@@ -99,7 +99,6 @@ export { default as SegmentedControl } from 'calypso/components/segmented-contro
 export { default as SelectDropdown } from 'calypso/components/select-dropdown';
 export { default as ShareButton } from 'calypso/components/share-button';
 export { default as SocialLogo } from 'calypso/components/social-logo';
-export { default as Spinner } from 'calypso/components/spinner';
 export { default as SpinnerButton } from 'calypso/components/spinner-button';
 export { default as SpinnerLine } from 'calypso/components/spinner-line';
 export { default as SplitButton } from 'calypso/components/split-button';

@@ -33,7 +33,7 @@ import './style.scss';
 
 function useLogBillingHistoryError( message: string ) {
 	return useCallback(
-		( error ) => {
+		( error: Error ) => {
 			logToLogstash( {
 				feature: 'calypso_client',
 				message,
@@ -41,7 +41,7 @@ function useLogBillingHistoryError( message: string ) {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'site_level_billing_history',
-					message: String( error ),
+					message: error.message + '; Stack: ' + error.stack,
 				},
 			} );
 		},
@@ -101,13 +101,7 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
-export function ReceiptView( {
-	siteSlug,
-	receiptId,
-}: {
-	siteSlug: string;
-	receiptId: number;
-} ): JSX.Element {
+export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receiptId: number } ) {
 	const translate = useTranslate();
 	const transaction = useSelector( ( state ) => getPastBillingTransaction( state, receiptId ) );
 	const logBillingHistoryError = useLogBillingHistoryError( 'site level receipt view load error' );

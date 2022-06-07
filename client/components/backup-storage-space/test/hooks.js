@@ -8,17 +8,19 @@ const EXAMPLE_SITE_SLUG = 'mysite.example';
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
+	useDispatch: jest.fn().mockImplementation( () => () => {} ),
 } ) );
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-slug', () =>
 	jest.fn().mockImplementation( () => EXAMPLE_SITE_SLUG )
 );
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
+jest.mock( 'calypso/state/analytics/actions/record' );
 
-import '@testing-library/jest-dom/extend-expect';
 import { render } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { useStorageUsageText } from 'calypso/components/backup-storage-space/hooks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
 const GIGABYTE = 2 ** 30;
 const TERABYTE = 2 ** 40;
@@ -98,6 +100,22 @@ describe( 'useStorageUsageText', () => {
 		const link = text.querySelector( 'a' );
 		expect( link ).toBeInTheDocument();
 		expect( link ).toHaveAttribute( 'href', `/pricing/storage/${ EXAMPLE_SITE_SLUG }` );
+	} );
+
+	test( 'fires the correct Tracks event when the Upgrade link is clicked', () => {
+		const text = renderText( GIGABYTE, GIGABYTE * 10 );
+
+		// Simulate clicking the Upgrade link
+		const link = text.querySelector( 'a' );
+		expect( link ).toBeInTheDocument();
+		link.click();
+
+		expect( recordTracksEvent ).toHaveBeenCalled();
+		const [ eventName, storageInfo ] = recordTracksEvent.mock.calls[ 0 ];
+
+		expect( eventName ).toEqual( 'calypso_jetpack_backup_storage_usage_upgrade_click' );
+		expect( storageInfo.bytes_used ).toEqual( GIGABYTE );
+		expect( storageInfo.bytes_available ).toEqual( GIGABYTE * 10 );
 	} );
 
 	// NOTE: Technically this should only happen for plans with the highest

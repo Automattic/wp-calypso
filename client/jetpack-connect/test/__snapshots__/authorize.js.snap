@@ -19,6 +19,13 @@ exports[`JetpackAuthorize renders as expected 1`] = `
     <div
       className="jetpack-connect__logged-in-form"
     >
+      <QuerySiteFeatures
+        siteIds={
+          Array [
+            98765,
+          ]
+        }
+      />
       <QuerySitePurchases
         siteId={98765}
       />

@@ -2,8 +2,20 @@
  * @jest-environment jsdom
  */
 
-import { shallow } from 'enzyme';
+import userSettings from 'calypso/state/user-settings/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ReaderSidebarPromo, shouldRenderAppPromo } from '../promo';
+
+const initialState = {};
+
+function renderWithRedux( ui ) {
+	return renderWithProvider( ui, {
+		initialState,
+		reducers: {
+			userSettings,
+		},
+	} );
+}
 
 describe( 'ReaderSidebarPromo', () => {
 	const shouldRenderAppPromoDefaultProps = {
@@ -17,16 +29,14 @@ describe( 'ReaderSidebarPromo', () => {
 
 	test( 'should render the AppPromo when the shouldRenderAppPromo property is true', () => {
 		const adjustedProperties = { shouldRenderAppPromo: true };
-		const wrapper = shallow( <ReaderSidebarPromo { ...adjustedProperties } /> );
-		expect( wrapper.find( '.sidebar__app-promo' ) ).toHaveLength( 1 );
+		const { container } = renderWithRedux( <ReaderSidebarPromo { ...adjustedProperties } /> );
+		expect( container.firstChild ).toHaveClass( 'sidebar__app-promo' );
 	} );
 
 	test( 'should not render the AppPromo when the shouldRenderAppPromo property is false', () => {
-		const adjustedProperties = {
-			shouldRenderAppPromo: false,
-		};
-		const wrapper = shallow( <ReaderSidebarPromo { ...adjustedProperties } /> );
-		expect( wrapper.find( '.sidebar__app-promo' ) ).toHaveLength( 0 );
+		const adjustedProperties = { shouldRenderAppPromo: false };
+		const { container } = renderWithRedux( <ReaderSidebarPromo { ...adjustedProperties } /> );
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	describe( 'shouldRenderAppPromo', () => {

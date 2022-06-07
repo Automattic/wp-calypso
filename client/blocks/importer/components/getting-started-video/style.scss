@@ -1,0 +1,18 @@
+.getting-started-video {
+	margin: 3rem 0;
+	text-align: center;
+
+	iframe {
+		width: 100%;
+	}
+
+	p {
+		margin-bottom: 1.5em;
+		color: var( --studio-gray-50 );
+	}
+
+	strong {
+		font-weight: 500; /* stylelint-disable-line */
+		color: var( --studio-gray-100 );
+	}
+}

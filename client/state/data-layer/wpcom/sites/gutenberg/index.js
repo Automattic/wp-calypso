@@ -21,13 +21,12 @@ const fetchGutenbergOptInData = ( action ) =>
 		action
 	);
 
-const setGutenbergOptInData = (
-	{ siteId },
-	{ editor_web: editor, eligible_gutenframe: isEligibleForGutenframe }
-) => ( dispatch ) => {
-	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
-	dispatch( { type: GUTENBERG_IFRAME_ELIGIBLE_SET, siteId, isEligibleForGutenframe } );
-};
+const setGutenbergOptInData =
+	( { siteId }, { editor_web: editor, eligible_gutenframe: isEligibleForGutenframe } ) =>
+	( dispatch ) => {
+		dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
+		dispatch( { type: GUTENBERG_IFRAME_ELIGIBLE_SET, siteId, isEligibleForGutenframe } );
+	};
 
 const dispatchFetchGutenbergOptInData = dispatchRequest( {
 	fetch: fetchGutenbergOptInData,

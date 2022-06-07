@@ -60,6 +60,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'starter',
+			steps: [ 'user', 'domains', 'plans-starter' ],
+			destination: getSignupDestination,
+			description: 'Create an account and a blog and then add the starter plan to the users cart.',
+			lastModified: '2022-05-05',
+			showRecaptcha: true,
+		},
+		{
 			name: 'free',
 			steps: [ 'user', 'domains' ],
 			destination: getSignupDestination,
@@ -412,6 +420,20 @@ export function generateFlows( {
 			excludeFromManageSiteFlows: true,
 			lastModified: '2022-03-10',
 			enableBranchSteps: true,
+		},
+		{
+			name: 'website-design-services',
+			steps: [
+				'choose-service',
+				'difm-options',
+				'social-profiles',
+				'difm-design-setup-site',
+				'difm-page-picker',
+			],
+			destination: getDIFMSignupDestination,
+			description: 'A flow for DIFM onboarding',
+			excludeFromManageSiteFlows: true,
+			lastModified: '2022-05-02',
 		},
 
 		{

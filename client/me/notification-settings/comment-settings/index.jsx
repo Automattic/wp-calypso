@@ -2,7 +2,6 @@ import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QueryUserDevices from 'calypso/components/data/query-user-devices';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import Main from 'calypso/components/main';
@@ -50,7 +49,6 @@ class NotificationCommentsSettings extends Component {
 					path="/me/notifications/comments"
 					title="Me > Notifications > Comments on other sites"
 				/>
-				<QueryUserDevices />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
 				<FormattedHeader

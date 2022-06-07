@@ -1,5 +1,5 @@
 import path from 'path';
-import { Dialog, Gridicon } from '@automattic/components';
+import { Dialog, Gridicon, Spinner } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -12,7 +12,6 @@ import ExternalLink from 'calypso/components/external-link';
 import FilePicker from 'calypso/components/file-picker';
 import Gravatar from 'calypso/components/gravatar';
 import InfoPopover from 'calypso/components/info-popover';
-import Spinner from 'calypso/components/spinner';
 import {
 	recordTracksEvent,
 	recordGoogleEvent,

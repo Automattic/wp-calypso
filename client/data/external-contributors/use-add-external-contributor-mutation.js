@@ -21,9 +21,10 @@ function useAddExternalContributorMutation() {
 	);
 
 	const { mutate } = mutation;
-	const addExternalContributor = useCallback( ( siteId, userId ) => mutate( { siteId, userId } ), [
-		mutate,
-	] );
+	const addExternalContributor = useCallback(
+		( siteId, userId ) => mutate( { siteId, userId } ),
+		[ mutate ]
+	);
 
 	return { addExternalContributor, ...mutation };
 }

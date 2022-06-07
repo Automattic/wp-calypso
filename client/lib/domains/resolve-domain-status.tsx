@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { translate } from 'i18n-calypso';
+import { localizeUrl } from '@automattic/i18n-utils';
 import moment from 'moment';
 import { modeType, stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
 import { isSubdomain } from 'calypso/lib/domains';
@@ -10,7 +10,7 @@ import {
 	INCOMING_DOMAIN_TRANSFER_STATUSES,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	GDPR_POLICIES,
-	DOMAIN_EXPIRATION_AUCTION,
+	DOMAIN_EXPIRATION,
 } from 'calypso/lib/url/support';
 import {
 	domainManagementEdit,
@@ -20,6 +20,8 @@ import {
 import { transferStatus, type as domainTypes, gdprConsentStatus } from './constants';
 import type { ResponseDomain } from './types';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { CalypsoDispatch } from 'calypso/state/types';
+import type { I18N } from 'i18n-calypso';
 import type { ReactChild } from 'react';
 
 export type ResolveDomainStatusReturn =
@@ -52,6 +54,8 @@ export type ResolveDomainStatusOptionsBag = {
 export function resolveDomainStatus(
 	domain: ResponseDomain,
 	purchase: Purchase | null = null,
+	translate: I18N[ 'translate' ],
+	dispatch: CalypsoDispatch,
 	{
 		isJetpackSite = null,
 		isSiteAutomatedTransfer = null,
@@ -65,7 +69,7 @@ export function resolveDomainStatus(
 			strong: <strong />,
 			a: (
 				<a
-					href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
+					href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS ) }
 					rel="noopener noreferrer"
 					target="_blank"
 					onClick={ ( e ) => e.stopPropagation() }
@@ -124,14 +128,14 @@ export function resolveDomainStatus(
 					);
 				}
 
-				if ( isExpiringSoon( domain, 5 ) ) {
+				if ( isExpiringSoon( domain, 7 ) ) {
 					return {
 						statusText: expiresMessage,
-						statusClass: 'status-error',
-						status: translate( 'Expiring soon' ),
+						statusClass: `status-${ domain.autoRenewing ? 'success' : 'error' }`,
+						status: domain.autoRenewing ? translate( 'Active' ) : translate( 'Expiring soon' ),
 						icon: 'info',
 						listStatusText: expiresMessage,
-						listStatusClass: 'alert',
+						listStatusClass: domain.autoRenewing ? 'info' : 'alert',
 						listStatusWeight: 1000,
 						noticeText,
 					};
@@ -220,19 +224,23 @@ export function resolveDomainStatus(
 
 		case domainTypes.REGISTERED:
 			if ( domain.aftermarketAuction ) {
-				const statusMessage = translate( 'Expiry auction' );
+				const statusMessage = translate( 'Expired' );
 				return {
 					statusText: statusMessage,
 					statusClass: 'status-warning',
 					status: statusMessage,
 					icon: 'info',
 					noticeText: translate(
-						'Your domain expired over 30 days ago and has been offered for sale at auction. If it is not sold you may be able to restore the domain to your account by paying a redemption fee starting on {{strong}}%(renewableUntil)s{{/strong}}. Until then, you will not be able to make any changes or transfer the domain. {{a}}Learn more{{/a}}',
+						'This domain expired more than 30 days ago and is no longer available to manage or renew. We may be able to restore it after {{strong}}%(renewableUntil)s{{/strong}}. {{a}}Learn more{{/a}}',
 						{
 							components: {
 								strong: <strong />,
 								a: (
-									<a href={ DOMAIN_EXPIRATION_AUCTION } rel="noopener noreferrer" target="_blank" />
+									<a
+										href={ localizeUrl( DOMAIN_EXPIRATION ) }
+										rel="noopener noreferrer"
+										target="_blank"
+									/>
 								),
 							},
 							args: {
@@ -333,7 +341,10 @@ export function resolveDomainStatus(
 										components: {
 											strong: <strong />,
 											a: (
-												<Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />
+												<Button
+													plain
+													onClick={ () => dispatch( handleRenewNowClick( purchase, siteSlug ) ) }
+												/>
 											),
 										},
 										args: { renewableUntil },
@@ -359,7 +370,10 @@ export function resolveDomainStatus(
 										components: {
 											strong: <strong />,
 											a: (
-												<Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />
+												<Button
+													plain
+													onClick={ () => dispatch( handleRenewNowClick( purchase, siteSlug ) ) }
+												/>
 											),
 										},
 										args: { redeemableUntil },
@@ -417,7 +431,12 @@ export function resolveDomainStatus(
 					purchase && siteSlug && domain.currentUserIsOwner
 						? translate( '{{a}}Renew now{{/a}}', {
 								components: {
-									a: <Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />,
+									a: (
+										<Button
+											plain
+											onClick={ () => dispatch( handleRenewNowClick( purchase, siteSlug ) ) }
+										/>
+									),
 								},
 						  } )
 						: translate( 'It can be renewed by the owner.' );
@@ -472,7 +491,11 @@ export function resolveDomainStatus(
 							components: {
 								strong: <strong />,
 								learnMore: (
-									<a href={ SETTING_PRIMARY_DOMAIN } rel="noopener noreferrer" target="_blank" />
+									<a
+										href={ localizeUrl( SETTING_PRIMARY_DOMAIN ) }
+										rel="noopener noreferrer"
+										target="_blank"
+									/>
 								),
 								try: (
 									<a href={ `http://${ domain.name }` } rel="noopener noreferrer" target="_blank" />
@@ -560,7 +583,7 @@ export function resolveDomainStatus(
 					'This domain requires explicit user consent to complete the registration. %(detailCta)s. {{a}}Learn more{{/a}}',
 					{
 						components: {
-							a: <a href={ GDPR_POLICIES } />,
+							a: <a href={ localizeUrl( GDPR_POLICIES ) } />,
 						},
 						args: { detailCta },
 					}
@@ -624,7 +647,7 @@ export function resolveDomainStatus(
 								strong: <strong />,
 								a: (
 									<a
-										href={ INCOMING_DOMAIN_TRANSFER_STATUSES }
+										href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES ) }
 										rel="noopener noreferrer"
 										target="_blank"
 										onClick={ ( e ) => e.stopPropagation() }
@@ -642,7 +665,7 @@ export function resolveDomainStatus(
 							components: {
 								a: (
 									<a
-										href={ INCOMING_DOMAIN_TRANSFER_STATUSES }
+										href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES ) }
 										rel="noopener noreferrer"
 										target="_blank"
 									/>

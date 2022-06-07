@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { SIGNUP_COMPLETE_RESET } from 'calypso/state/action-types';
 import {
 	updateWebsiteContentCurrentIndex,
@@ -63,7 +62,7 @@ describe( 'reducer', () => {
 				{ ...initialTestState },
 				updateWebsiteContentCurrentIndex( 5 )
 			)
-		).to.be.eql( {
+		).toEqual( {
 			...initialTestState,
 			currentIndex: 5,
 		} );
@@ -88,7 +87,7 @@ describe( 'reducer', () => {
 					},
 				] )
 			)
-		).to.be.eql( {
+		).toEqual( {
 			...initialTestState,
 			websiteContent: {
 				...initialTestState.websiteContent,
@@ -185,7 +184,7 @@ describe( 'reducer', () => {
 					},
 				] )
 			)
-		).to.be.eql( {
+		).toEqual( {
 			...initialTestState,
 			websiteContent: {
 				...initialTestState.websiteContent,
@@ -232,7 +231,7 @@ describe( 'reducer', () => {
 			image: { caption: 'test', url: 'www.test.com/test.test.jpg' },
 		} );
 		const recieved = websiteContentCollectionReducer( { ...initialTestState }, action );
-		expect( recieved ).to.be.eql( {
+		expect( recieved ).toEqual( {
 			...initialTestState,
 			imageUploadStates: {
 				Home: {
@@ -286,7 +285,7 @@ describe( 'reducer', () => {
 			mediaIndex: 2,
 		} );
 		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
-		expect( nextState ).to.be.eql( {
+		expect( nextState ).toEqual( {
 			...initialTestState,
 			imageUploadStates: {
 				About: {
@@ -300,7 +299,7 @@ describe( 'reducer', () => {
 			{ ...initialTestState },
 			failedAction
 		);
-		expect( nextAfterFailedState ).to.be.eql( {
+		expect( nextAfterFailedState ).toEqual( {
 			...initialTestState,
 			imageUploadStates: {
 				About: {
@@ -326,7 +325,7 @@ describe( 'reducer', () => {
 		let nextState = websiteContentCollectionReducer( { ...initialTestState }, actionImageUploaded );
 		nextState = websiteContentCollectionReducer( nextState, secondActionImageUploaded );
 
-		expect( nextState ).to.be.eql( {
+		expect( nextState ).toEqual( {
 			...initialTestState,
 			websiteContent: {
 				...initialTestState.websiteContent,
@@ -364,7 +363,7 @@ describe( 'reducer', () => {
 			mediaIndex: 1,
 		} );
 		nextState = websiteContentCollectionReducer( nextState, actionRemoveInMemoryImage );
-		expect( nextState ).to.be.eql( {
+		expect( nextState ).toEqual( {
 			...initialTestState,
 			websiteContent: {
 				...initialTestState.websiteContent,
@@ -400,7 +399,7 @@ describe( 'reducer', () => {
 	test( 'should update relevent state when the logo uploading is completed', () => {
 		const action = logoUploadCompleted( 'wp.me/some-random-image.png' );
 		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
-		expect( nextState ).to.be.eql( {
+		expect( nextState ).toEqual( {
 			...initialTestState,
 			imageUploadStates: {
 				[ LOGO_SECTION_ID ]: {
@@ -417,7 +416,7 @@ describe( 'reducer', () => {
 	test( 'should update the logo uploading started/failed state correctly', () => {
 		const action = logoUploadStarted();
 		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
-		expect( nextState ).to.be.eql( {
+		expect( nextState ).toEqual( {
 			...initialTestState,
 			imageUploadStates: {
 				[ LOGO_SECTION_ID ]: {
@@ -431,7 +430,7 @@ describe( 'reducer', () => {
 			{ ...initialTestState },
 			failedAction
 		);
-		expect( nextAfterFailedState ).to.be.eql( {
+		expect( nextAfterFailedState ).toEqual( {
 			...initialTestState,
 			imageUploadStates: {
 				[ LOGO_SECTION_ID ]: {
@@ -444,7 +443,7 @@ describe( 'reducer', () => {
 	test( 'should update relevent state when in memory logo information is removed', () => {
 		const action = logoRemoved();
 		const nextState = websiteContentCollectionReducer( { ...initialTestState }, action );
-		expect( nextState ).to.be.eql( {
+		expect( nextState ).toEqual( {
 			...initialTestState,
 			imageUploadStates: {
 				[ LOGO_SECTION_ID ]: {
@@ -464,7 +463,7 @@ describe( 'reducer', () => {
 			fieldValue: 'Testing Content',
 			fieldName: 'content',
 		} );
-		expect( websiteContentCollectionReducer( { ...initialTestState }, action ) ).to.be.eql( {
+		expect( websiteContentCollectionReducer( { ...initialTestState }, action ) ).toEqual( {
 			...initialTestState,
 			websiteContent: {
 				...initialState.websiteContent,
@@ -510,6 +509,6 @@ describe( 'reducer', () => {
 				type: SIGNUP_COMPLETE_RESET,
 				action: {},
 			} )
-		).to.be.eql( initialState );
+		).toEqual( initialState );
 	} );
 } );

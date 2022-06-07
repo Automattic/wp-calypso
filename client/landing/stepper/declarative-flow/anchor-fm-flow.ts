@@ -1,3 +1,7 @@
+import { useSelect } from '@wordpress/data';
+import { useEffect } from 'react';
+import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { StepPath } from './internals/steps-repository';
@@ -11,22 +15,30 @@ export const anchorFmFlow: Flow = {
 	name: 'anchor-fm',
 
 	useSteps() {
-		return [ 'podcastTitle', 'designSetup', 'fontPairing' ] as StepPath[];
+		useEffect( () => {
+			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
+		}, [] );
+
+		return [ 'login', 'podcastTitle', 'designSetup', 'processing', 'error' ] as StepPath[];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
-		const siteSlug = useSiteSlugParam();
+		const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
+		const siteSlugParam = useSiteSlugParam();
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, 'anchor-fm', currentStep );
+			const siteSlug = siteSlugParam || getNewSite()?.site_slug;
 
 			switch ( currentStep ) {
+				case 'login':
+					return navigate( 'podcastTitle' );
 				case 'podcastTitle':
 					return navigate( 'designSetup' );
 				case 'designSetup':
-					return navigate( 'fontPairing' );
-				case 'fontPairing':
-					return redirect( `/page/home/${ siteSlug }` );
+					return navigate( 'processing' );
+				case 'processing':
+					return redirect( `/page/${ siteSlug }/home` );
 			}
 		}
 
@@ -34,28 +46,29 @@ export const anchorFmFlow: Flow = {
 			switch ( currentStep ) {
 				case 'designSetup':
 					return navigate( 'podcastTitle' );
-				case 'fontPairing':
-					return navigate( 'designSetup' );
 				default:
 					return navigate( 'podcastTitle' );
 			}
 		};
 
 		const goNext = () => {
+			const siteSlug = siteSlugParam || getNewSite()?.site_slug;
+
 			switch ( currentStep ) {
+				case 'login':
+					return navigate( 'podcastTitle' );
 				case 'podcastTitle':
 					return navigate( 'designSetup' );
 				case 'designSetup':
-					return navigate( 'fontPairing' );
-				case 'fontPairing':
-					return redirect( `/page/home/${ siteSlug }` );
-
+					return navigate( 'processing' );
+				case 'processing':
+					return redirect( `/page/${ siteSlug }/home` );
 				default:
 					return navigate( 'podcastTitle' );
 			}
 		};
 
-		const goToStep = ( step: StepPath ) => {
+		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
 			navigate( step );
 		};
 

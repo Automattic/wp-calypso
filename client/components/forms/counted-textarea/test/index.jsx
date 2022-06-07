@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import { CountedTextarea } from '../';
 
@@ -13,23 +12,23 @@ describe( 'index', () => {
 		renderer.render( <CountedTextarea value="Hello World!" /> );
 		const result = renderer.getRenderOutput();
 
-		expect( result.props.className ).to.equal( 'counted-textarea' );
-		expect( result.props.children ).to.have.length( 2 );
-		expect( result.props.children[ 1 ].props.children[ 0 ] ).to.equal( '12 characters' );
+		expect( result.props.className ).toEqual( 'counted-textarea' );
+		expect( result.props.children ).toHaveLength( 2 );
+		expect( result.props.children[ 1 ].props.children[ 0 ] ).toEqual( '12 characters' );
 	} );
 
 	test( 'should render warning styles when the acceptable length is exceeded', () => {
 		renderer.render( <CountedTextarea value="Hello World!" acceptableLength={ 10 } /> );
 		const result = renderer.getRenderOutput();
 
-		expect( result.props.className ).to.equal( 'counted-textarea is-exceeding-acceptable-length' );
+		expect( result.props.className ).toEqual( 'counted-textarea is-exceeding-acceptable-length' );
 	} );
 
 	test( 'should apply className to the wrapper element', () => {
 		renderer.render( <CountedTextarea value="Hello World!" className="custom-class" /> );
 		const result = renderer.getRenderOutput();
 
-		expect( result.props.className ).to.equal( 'counted-textarea custom-class' );
+		expect( result.props.className ).toEqual( 'counted-textarea custom-class' );
 	} );
 
 	test( 'should pass props to the child textarea', () => {
@@ -41,10 +40,10 @@ describe( 'index', () => {
 		);
 		const result = renderer.getRenderOutput();
 
-		expect( result.props.children ).to.have.length( 2 );
-		expect( result.props.children[ 0 ].props.value ).to.equal( value );
-		expect( result.props.children[ 0 ].props.placeholder ).to.equal( placeholder );
-		expect( result.props.children[ 0 ].props.className ).to.equal( 'counted-textarea__input' );
+		expect( result.props.children ).toHaveLength( 2 );
+		expect( result.props.children[ 0 ].props.value ).toEqual( value );
+		expect( result.props.children[ 0 ].props.placeholder ).toEqual( placeholder );
+		expect( result.props.children[ 0 ].props.className ).toEqual( 'counted-textarea__input' );
 	} );
 
 	test( 'should not use the placeholder as the counted item if value is empty and countPlaceholderLength is not set', () => {
@@ -56,7 +55,7 @@ describe( 'index', () => {
 		);
 		const result = renderer.getRenderOutput();
 
-		expect( result.props.children[ 1 ].props.children[ 0 ] ).to.equal( '0 characters' );
+		expect( result.props.children[ 1 ].props.children[ 0 ] ).toEqual( '0 characters' );
 	} );
 
 	test( 'should use the placeholder as the counted item if value is empty and countPlaceholderLength is true', () => {
@@ -73,7 +72,7 @@ describe( 'index', () => {
 		);
 		const result = renderer.getRenderOutput();
 
-		expect( result.props.children[ 1 ].props.children[ 0 ] ).to.equal( '16 characters' );
+		expect( result.props.children[ 1 ].props.children[ 0 ] ).toEqual( '16 characters' );
 	} );
 
 	test( 'should use the value as the counted item if value is set', () => {
@@ -85,7 +84,7 @@ describe( 'index', () => {
 		);
 		const result = renderer.getRenderOutput();
 
-		expect( result.props.children[ 1 ].props.children[ 0 ] ).to.equal( '12 characters' );
+		expect( result.props.children[ 1 ].props.children[ 0 ] ).toEqual( '12 characters' );
 	} );
 
 	test( 'should not pass acceptableLength prop to the child textarea', () => {
@@ -101,10 +100,10 @@ describe( 'index', () => {
 		);
 		const result = renderer.getRenderOutput();
 
-		expect( result.props.children ).to.have.length( 2 );
-		expect( result.props.children[ 0 ].props.value ).to.equal( value );
-		expect( result.props.children[ 0 ].props.acceptableLength ).to.be.undefined;
-		expect( result.props.children[ 0 ].props.className ).to.equal( 'counted-textarea__input' );
+		expect( result.props.children ).toHaveLength( 2 );
+		expect( result.props.children[ 0 ].props.value ).toEqual( value );
+		expect( result.props.children[ 0 ].props.acceptableLength ).toBeUndefined();
+		expect( result.props.children[ 0 ].props.className ).toEqual( 'counted-textarea__input' );
 	} );
 
 	test( 'should render a reversed count when set to showRemainingCount', () => {
@@ -120,9 +119,9 @@ describe( 'index', () => {
 		);
 		const result = renderer.getRenderOutput();
 
-		expect( result.props.className ).to.equal( 'counted-textarea' );
-		expect( result.props.children ).to.have.length( 2 );
-		expect( result.props.children[ 1 ].props.children[ 0 ] ).to.equal( '128 characters remaining' );
+		expect( result.props.className ).toEqual( 'counted-textarea' );
+		expect( result.props.children ).toHaveLength( 2 );
+		expect( result.props.children[ 1 ].props.children[ 0 ] ).toEqual( '128 characters remaining' );
 	} );
 
 	test( 'should render additional panel content when set', () => {
@@ -141,9 +140,9 @@ describe( 'index', () => {
 		);
 		const result = renderer.getRenderOutput();
 
-		expect( result.props.className ).to.equal( 'counted-textarea' );
-		expect( result.props.children ).to.have.length( 2 );
-		expect( result.props.children[ 1 ].props.children[ 0 ] ).to.equal( '128 characters remaining' );
-		expect( result.props.children[ 1 ].props.children[ 1 ] ).to.equal( 'Extra stuff' );
+		expect( result.props.className ).toEqual( 'counted-textarea' );
+		expect( result.props.children ).toHaveLength( 2 );
+		expect( result.props.children[ 1 ].props.children[ 0 ] ).toEqual( '128 characters remaining' );
+		expect( result.props.children[ 1 ].props.children[ 1 ] ).toEqual( 'Extra stuff' );
 	} );
 } );

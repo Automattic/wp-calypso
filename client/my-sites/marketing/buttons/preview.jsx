@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { filter, some } from 'lodash';
@@ -132,13 +133,13 @@ class SharingButtonsPreview extends Component {
 	getReblogButtonElement = () => {
 		if ( this.props.showReblog ) {
 			return (
-				<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__reblog">
+				<div className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__reblog">
 					{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 					{ /* 16 is used in the preview to match the buttons on the frontend of the website. */ }
 					<Gridicon icon="reblog" size={ 16 } />
 					{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 					{ this.props.translate( 'Reblog' ) }
-				</a>
+				</div>
 			);
 		}
 	};
@@ -147,15 +148,18 @@ class SharingButtonsPreview extends Component {
 		if ( this.props.showLike ) {
 			return (
 				<span>
-					<a className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__like">
+					<div className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__like">
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ /* 16 is used in the preview to match the buttons on the frontend of the website. */ }
 						<Gridicon icon="star" size={ 16 } />
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ this.props.translate( 'Like' ) }
-					</a>
+					</div>
 					<div className="sharing-buttons-preview__fake-user">
-						<img src="https://1.gravatar.com/avatar/767fc9c115a1b989744c755db47feb60" />
+						<img
+							src="https://1.gravatar.com/avatar/767fc9c115a1b989744c755db47feb60"
+							alt="Matt Mullenweg"
+						/>
 					</div>
 					<div className="sharing-buttons-preview__fake-like">
 						{ this.props.translate( 'One blogger likes this.' ) }
@@ -174,11 +178,7 @@ class SharingButtonsPreview extends Component {
 					buttons={ enabledButtons }
 					visibility="visible"
 					style={ this.props.style }
-					showMore={
-						'hidden' === this.state.buttonsTrayVisibility ||
-						some( this.props.buttons, { visibility: 'hidden' } )
-					}
-					forceMorePreviewVisible={ 'hidden' === this.state.buttonsTrayVisibility }
+					showMore={ some( this.props.buttons, { visibility: 'hidden' } ) }
 				/>
 			);
 		}

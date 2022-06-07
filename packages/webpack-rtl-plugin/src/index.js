@@ -1,4 +1,3 @@
-const cssDiff = require( '@romainberger/css-diff' );
 const rtlcss = require( 'rtlcss' );
 const { ConcatSource } = require( 'webpack' ).sources;
 
@@ -45,14 +44,11 @@ class WebpackRTLPlugin {
 									assets[ filename ] = cachedRTL;
 								} else {
 									const baseSource = assetInstance.source();
-									let rtlSource = rtlcss.process(
+									const rtlSource = rtlcss.process(
 										baseSource,
 										this.options.options,
 										this.options.plugins
 									);
-									if ( this.options.diffOnly ) {
-										rtlSource = cssDiff( baseSource, rtlSource );
-									}
 									// Save the asset
 									assets[ filename ] = new ConcatSource( rtlSource );
 									this.cache.set( assetInstance, assets[ filename ] );

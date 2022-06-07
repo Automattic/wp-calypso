@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	KEYRING_SERVICES_RECEIVE,
@@ -7,7 +6,6 @@ import {
 	KEYRING_SERVICES_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import reducer, { items, isFetching } from '../reducer';
 
 const originalKeyringServices = {
@@ -35,8 +33,7 @@ const originalKeyringServices = {
 			class: 'twitter', // eslint-disable-line quote-props
 			unicode: '\f202',
 		},
-		icon:
-			'http://i.wordpress.com/wp-content/admin-plugins/publicize/assets/publicize-twitter-2x.png',
+		icon: 'http://i.wordpress.com/wp-content/admin-plugins/publicize/assets/publicize-twitter-2x.png',
 		jetpack_module_required: 'publicize',
 		jetpack_support: true,
 		label: 'Twitter',
@@ -47,17 +44,19 @@ const originalKeyringServices = {
 };
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'isFetching' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'items', 'isFetching' ] )
+		);
 	} );
 
 	describe( '#statesList()', () => {
 		test( 'should default to empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should store the states list received', () => {
@@ -69,7 +68,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( originalKeyringServices );
+			expect( state ).toEqual( originalKeyringServices );
 		} );
 
 		describe( 'persistence', () => {
@@ -77,21 +76,21 @@ describe( 'reducer', () => {
 				const original = deepFreeze( originalKeyringServices );
 				const services = serialize( items, original );
 
-				expect( services ).to.eql( original );
+				expect( services ).toEqual( original );
 			} );
 
 			test( 'loads valid persisted state', () => {
 				const original = deepFreeze( originalKeyringServices );
 				const services = deserialize( items, original );
 
-				expect( services ).to.eql( original );
+				expect( services ).toEqual( original );
 			} );
 
 			test( 'loads default state when schema does not match', () => {
 				const original = deepFreeze( [ { ID: 'facebook' }, { ID: 'twitter' } ] );
 				const services = deserialize( items, original );
 
-				expect( services ).to.eql( {} );
+				expect( services ).toEqual( {} );
 			} );
 		} );
 	} );
@@ -100,28 +99,28 @@ describe( 'reducer', () => {
 		test( 'should default to false', () => {
 			const state = isFetching( undefined, {} );
 
-			expect( state ).to.eql( false );
+			expect( state ).toEqual( false );
 		} );
 
 		test( 'should be true after a request begins', () => {
 			const state = isFetching( false, {
 				type: KEYRING_SERVICES_REQUEST,
 			} );
-			expect( state ).to.eql( true );
+			expect( state ).toEqual( true );
 		} );
 
 		test( 'should be false when a request completes', () => {
 			const state = isFetching( true, {
 				type: KEYRING_SERVICES_REQUEST_SUCCESS,
 			} );
-			expect( state ).to.eql( false );
+			expect( state ).toEqual( false );
 		} );
 
 		test( 'should be false when a request fails', () => {
 			const state = isFetching( true, {
 				type: KEYRING_SERVICES_REQUEST_FAILURE,
 			} );
-			expect( state ).to.eql( false );
+			expect( state ).toEqual( false );
 		} );
 	} );
 } );

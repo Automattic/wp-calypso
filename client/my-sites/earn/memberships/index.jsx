@@ -2,7 +2,7 @@ import {
 	FEATURE_PREMIUM_CONTENT_CONTAINER,
 	FEATURE_DONATIONS,
 	FEATURE_RECURRING_PAYMENTS,
-	FEATURE_MEMBERSHIPS,
+	FEATURE_SIMPLE_PAYMENTS,
 	PLAN_PERSONAL,
 	PLAN_JETPACK_PERSONAL,
 } from '@automattic/calypso-products';
@@ -35,6 +35,7 @@ import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earn
 import { requestDisconnectStripeAccount } from 'calypso/state/memberships/settings/actions';
 import {
 	getConnectedAccountIdForSiteId,
+	getConnectedAccountDescriptionForSiteId,
 	getConnectUrlForSiteId,
 } from 'calypso/state/memberships/settings/selectors';
 import {
@@ -45,7 +46,7 @@ import {
 	getTotalSubscribersForSiteId,
 	getOwnershipsForSiteId,
 } from 'calypso/state/memberships/subscribers/selectors';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -248,11 +249,9 @@ class MembershipsSection extends Component {
 					<Card>
 						<div className="memberships__module-content module-content">
 							<div>
-								{ orderBy(
-									Object.values( this.props.subscribers ),
-									[ 'id' ],
-									[ 'desc' ]
-								).map( ( sub ) => this.renderSubscriber( sub ) ) }
+								{ orderBy( Object.values( this.props.subscribers ), [ 'id' ], [ 'desc' ] ).map(
+									( sub ) => this.renderSubscriber( sub )
+								) }
 							</div>
 							<InfiniteScroll
 								nextPageMethod={ ( triggeredByInteraction ) =>
@@ -342,8 +341,19 @@ class MembershipsSection extends Component {
 						<div className="memberships__module-plans-icon">
 							<Gridicon size={ 24 } icon={ 'link-break' } />
 						</div>
-						<div className="memberships__module-settings-title">
-							{ this.props.translate( 'Disconnect Stripe Account' ) }
+						<div>
+							<div className="memberships__module-settings-title">
+								{ this.props.translate( 'Disconnect Stripe Account' ) }
+							</div>
+							{ this.props.connectedAccountDescription ? (
+								<div className="memberships__module-settings-description">
+									{ this.props.translate( 'Connected to %(connectedAccountDescription)s', {
+										args: {
+											connectedAccountDescription: this.props.connectedAccountDescription,
+										},
+									} ) }
+								</div>
+							) : null }
 						</div>
 					</div>
 				</Card>
@@ -499,7 +509,7 @@ class MembershipsSection extends Component {
 		);
 	}
 
-	renderOnboarding( cta ) {
+	renderOnboarding( cta, intro ) {
 		const { translate } = this.props;
 
 		return (
@@ -512,14 +522,14 @@ class MembershipsSection extends Component {
 						<p className="memberships__onboarding-paragraph">
 							{ preventWidows(
 								translate(
-									'WordPress.com Payments makes it easy to sell physical and digital goods, accept donations, charge for in-person services, build subscription newsletters, and more.'
+									'Our payments blocks make it easy to add a buy button for digital goods or services, collect donations via a form, or limit access for specific content to subscribers-only.'
 								)
 							) }
 						</p>
 						<p className="memberships__onboarding-paragraph">
 							{ preventWidows(
 								translate(
-									'One-time, monthly, and yearly credit and debit card payment options are supported. {{link}}Learn more about payments.{{/link}}',
+									'The Payment Button, Donations Form, and Premium Content blocks all require you to first connect your bank account details with our secure payment processor, Stripe.',
 									{
 										components: {
 											link: (
@@ -530,13 +540,16 @@ class MembershipsSection extends Component {
 								)
 							) }
 						</p>
+						{ intro ? <p className="memberships__onboarding-paragraph">{ intro }</p> : null }
 						<p className="memberships__onboarding-paragraph">{ cta }</p>
 						<p className="memberships__onboarding-paragraph memberships__onboarding-paragraph-disclaimer">
-							{ preventWidows(
-								translate(
-									'Payments are securely processed by Stripe, a payment partner for all credit and debit card payments.'
-								)
-							) }
+							<em>
+								{ preventWidows(
+									translate(
+										'All credit and debit card payments made through these blocks are securely and seamlessly processed by Stripe.'
+									)
+								) }
+							</em>
 						</p>
 					</div>
 					<div className="memberships__onboarding-column-image">
@@ -545,33 +558,29 @@ class MembershipsSection extends Component {
 				</div>
 				<div className="memberships__onboarding-benefits">
 					<div>
-						<h3>{ translate( 'Payments for anything' ) }</h3>
+						<h3>{ translate( 'No plugin required' ) }</h3>
 						{ preventWidows(
 							translate(
-								'Send paid newsletters and offer premium content, services, physical and digital goods, accept donations, and more.'
+								'No additional installs or purchases. Simply connect your banking details with our payment processor, Stripe, and insert a block to get started.'
 							)
 						) }
 					</div>
 					<div>
-						<h3>{ translate( 'Flexibile options' ) }</h3>
+						<h3>{ translate( 'One-time and recurring options' ) }</h3>
 						{ preventWidows(
 							translate(
-								'Add as many one-time, monthly, yearly, and lifetime subscription options as you need.'
+								'Accept one-time, monthly, and yearly payments from your visitors. This is perfect for a single purchase or tip — or a recurring donation, membership fee, or subscription.'
 							)
 						) }
 					</div>
 					<div>
-						<h3>{ translate( "You're in control" ) }</h3>
-						{ preventWidows(
-							translate(
-								'You choose which content requires payment. Easily manage subscribers and payment plans.'
-							)
-						) }
+						<h3>{ translate( 'No membership fees' ) }</h3>
+						{ preventWidows( translate( 'No monthly or annual fees charged.' ) ) }
 					</div>
 					<div>
-						<h3>{ translate( 'Global payments' ) }</h3>
+						<h3>{ translate( 'Join thousands of others' ) }</h3>
 						{ preventWidows(
-							translate( 'Collect payments in 135 countries to reach customers around the world.' )
+							'Sites that actively promoted their businesses and causes on social media, email, and other platforms have collected tens of thousands of dollars through these blocks.'
 						) }
 					</div>
 				</div>
@@ -600,7 +609,17 @@ class MembershipsSection extends Component {
 					>
 						{ this.props.translate( 'Connect Stripe to Get Started' ) }{ ' ' }
 						<Gridicon size={ 18 } icon={ 'external' } />
-					</Button>
+					</Button>,
+					this.props.connectedAccountDescription
+						? this.props.translate(
+								'Previously connected to Stripe account %(connectedAccountDescription)s',
+								{
+									args: {
+										connectedAccountDescription: this.props.connectedAccountDescription,
+									},
+								}
+						  )
+						: null
 				) }
 			</div>
 		);
@@ -612,9 +631,9 @@ class MembershipsSection extends Component {
 				<UpsellNudge
 					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
 					shouldDisplay={ () => true }
-					feature={ FEATURE_MEMBERSHIPS }
+					feature={ FEATURE_SIMPLE_PAYMENTS }
 					title={ this.props.translate( 'Upgrade to the Pro plan' ) }
-					description={ this.props.translate( 'Upgrade to start selling.' ) }
+					description={ this.props.translate( 'Upgrade to enable Payment Blocks.' ) }
 					showIcon={ true }
 					event="calypso_memberships_upsell_nudge"
 					tracksImpressionName="calypso_upgrade_nudge_impression"
@@ -660,11 +679,12 @@ const mapStateToProps = ( state ) => {
 		totalSubscribers: getTotalSubscribersForSiteId( state, siteId ),
 		subscribers: getOwnershipsForSiteId( state, siteId ),
 		connectedAccountId: getConnectedAccountIdForSiteId( state, siteId ),
+		connectedAccountDescription: getConnectedAccountDescriptionForSiteId( state, siteId ),
 		connectUrl: getConnectUrlForSiteId( state, siteId ),
 		hasStripeFeature:
-			hasActiveSiteFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
-			hasActiveSiteFeature( state, siteId, FEATURE_DONATIONS ) ||
-			hasActiveSiteFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
+			siteHasFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
+			siteHasFeature( state, siteId, FEATURE_DONATIONS ) ||
+			siteHasFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 		isJetpack: isJetpackSite( state, siteId ),
 	};
 };

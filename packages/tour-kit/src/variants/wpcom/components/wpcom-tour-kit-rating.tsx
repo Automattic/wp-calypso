@@ -10,7 +10,7 @@ import type { WpcomConfig } from '../../../index';
 const WpcomTourKitRating: React.FunctionComponent = () => {
 	const [ tempRating, setTempRating ] = useState< 'thumbs-up' | 'thumbs-down' >();
 	const context = useTourKitContext();
-	const config = ( context.config as unknown ) as WpcomConfig;
+	const config = context.config as unknown as WpcomConfig;
 	const tourRating = config.options?.tourRating?.useTourRating?.() ?? tempRating;
 	const { __ } = useI18n();
 

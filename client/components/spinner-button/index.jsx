@@ -1,8 +1,8 @@
+import { Spinner } from '@automattic/components';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import Button from 'calypso/components/forms/form-button';
-import Spinner from 'calypso/components/spinner';
 
 import './style.scss';
 

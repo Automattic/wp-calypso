@@ -1,3 +1,4 @@
+import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
@@ -12,6 +13,7 @@ import QueryContactDetailsCache from 'calypso/components/data/query-contact-deta
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
+import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -25,16 +27,14 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getIsIntroOfferRequesting from 'calypso/state/selectors/get-is-requesting-into-offers';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, isJetpackProductSite } from 'calypso/state/sites/selectors';
 import WPCheckout from './components/wp-checkout';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from './hooks/use-add-products-from-url';
-import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
 import useCheckoutFlowTrackKey from './hooks/use-checkout-flow-track-key';
 import useCountryList from './hooks/use-country-list';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
@@ -60,7 +60,6 @@ import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
 import weChatProcessor from './lib/we-chat-processor';
 import webPayProcessor from './lib/web-pay-processor';
 import { StoredCard } from './types/stored-cards';
-import { emptyManagedContactDetails } from './types/wpcom-store-state';
 import type { PaymentProcessorOptions } from './types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type {
@@ -120,7 +119,7 @@ export default function CompositeCheckout( {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
 		useSelector(
@@ -128,6 +127,9 @@ export default function CompositeCheckout( {
 		) ||
 		isJetpackCheckout ||
 		false;
+	const hasJetpackStandalonePlugins =
+		useSelector( ( state ) => siteId && isJetpackProductSite( state, siteId ) ) || false;
+	const usesJetpackProducts = isJetpackNotAtomic || hasJetpackStandalonePlugins;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const isLoadingIntroOffers = useSelector( ( state ) =>
 		getIsIntroOfferRequesting( state, siteId )
@@ -160,7 +162,7 @@ export default function CompositeCheckout( {
 		isUserComingFromLoginForm,
 	} );
 
-	const countriesList = useCountryList( overrideCountryList || [] );
+	const countriesList = useCountryList( overrideCountryList );
 
 	const {
 		productsForCart,
@@ -170,7 +172,7 @@ export default function CompositeCheckout( {
 		productAliasFromUrl,
 		purchaseId,
 		isInModal,
-		isJetpackNotAtomic,
+		usesJetpackProducts,
 		isPrivate,
 		siteSlug: updatedSiteSlug,
 		isLoggedOutCart,
@@ -214,7 +216,7 @@ export default function CompositeCheckout( {
 		isInitialCartLoading,
 	} );
 
-	const { items, total, allowedPaymentMethods } = useMemo(
+	const { total, allowedPaymentMethods } = useMemo(
 		() => translateResponseCartToWPCOMCart( responseCart ),
 		[ responseCart ]
 	);
@@ -245,10 +247,9 @@ export default function CompositeCheckout( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	useWpcomStore( emptyManagedContactDetails, updateContactDetailsCache );
+	useWpcomStore();
 
 	useDetectedCountryCode();
-	useCachedDomainContactDetails( countriesList );
 
 	// Record errors adding products to the cart
 	useActOnceOnStrings( [ cartProductPrepError ].filter( isValueTruthy ), ( messages ) => {
@@ -298,19 +299,18 @@ export default function CompositeCheckout( {
 		[ ...responseCartErrors, cartLoadingError, cartProductPrepError ].filter( isValueTruthy )
 			.length > 0;
 
-	const {
-		isRemovingProductFromCart,
-		removeProductFromCartAndMaybeRedirect,
-	} = useRemoveFromCartAndRedirect(
-		updatedSiteSlug,
-		createUserAndSiteBeforeTransaction,
-		customizedPreviousPath
-	);
+	const { isRemovingProductFromCart, removeProductFromCartAndMaybeRedirect } =
+		useRemoveFromCartAndRedirect(
+			updatedSiteSlug,
+			createUserAndSiteBeforeTransaction,
+			customizedPreviousPath
+		);
 
-	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
-		wpcomGetStoredCards,
-		Boolean( isLoggedOutCart )
-	);
+	const {
+		storedCards,
+		isLoading: isLoadingStoredCards,
+		error: storedCardsError,
+	} = useStoredCards( wpcomGetStoredCards, Boolean( isLoggedOutCart ) );
 
 	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) => {
@@ -501,6 +501,7 @@ export default function CompositeCheckout( {
 		arePaymentMethodsLoading ||
 		paymentMethods.length < 1 ||
 		responseCart.products.length < 1 ||
+		countriesList.length < 1 ||
 		isLoadingIntroOffers;
 	if ( isLoading ) {
 		debug( 'still loading because one of these is true', {
@@ -508,6 +509,7 @@ export default function CompositeCheckout( {
 			paymentMethods: paymentMethods.length < 1,
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: responseCart.products.length < 1,
+			countriesList: countriesList.length < 1,
 			isLoadingIntroOffers,
 		} );
 	} else {
@@ -524,8 +526,8 @@ export default function CompositeCheckout( {
 	} );
 
 	const onPageLoadError: CheckoutPageErrorCallback = useCallback(
-		( errorType, errorMessage, errorData ) => {
-			logStashLoadErrorEvent( errorType, errorMessage, errorData );
+		( errorType, error, errorData ) => {
+			logStashLoadErrorEvent( errorType, error, errorData );
 			function errorTypeToTracksEventName( type: string ): string {
 				switch ( type ) {
 					case 'page_load':
@@ -544,7 +546,7 @@ export default function CompositeCheckout( {
 			}
 			reduxDispatch(
 				recordTracksEvent( errorTypeToTracksEventName( errorType ), {
-					error_message: errorMessage,
+					error_message: error.message + '; Stack: ' + error.stack,
 					...errorData,
 				} )
 			);
@@ -661,6 +663,14 @@ export default function CompositeCheckout( {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
 	}, [ reduxDispatch, translate ] );
 
+	const cartHasSearchProduct = useMemo(
+		() =>
+			responseCart.products.some( ( { product_slug } ) =>
+				JETPACK_SEARCH_PRODUCTS.includes( product_slug as typeof JETPACK_SEARCH_PRODUCTS[ number ] )
+			),
+		[ responseCart.products ]
+	);
+
 	return (
 		<Fragment>
 			<QueryIntroOffers siteId={ updatedSiteId } />
@@ -670,6 +680,7 @@ export default function CompositeCheckout( {
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
+			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type={ 'post' } /> }
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"
@@ -677,7 +688,6 @@ export default function CompositeCheckout( {
 				options={ { useJetpackGoogleAnalytics: isJetpackCheckout || isJetpackNotAtomic } }
 			/>
 			<CheckoutProvider
-				items={ items }
 				total={ total }
 				onPaymentComplete={ handlePaymentComplete }
 				onPaymentError={ handlePaymentError }

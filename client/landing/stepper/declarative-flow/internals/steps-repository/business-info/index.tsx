@@ -36,26 +36,22 @@ const BusinessInfo: Step = function ( props ): ReactElement | null {
 	const { goNext, goBack, submit } = props.navigation;
 
 	const { __ } = useI18n();
-
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
-
 	const siteSlug = useQuery().get( 'siteSlug' );
-
 	const siteId = useSelect(
 		( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug )
 	);
-
 	const settings = useSelect(
 		( select ) => ( siteId && select( SITE_STORE ).getSiteSettings( siteId ) ) || {}
 	);
-
 	const onboardingProfile = settings?.woocommerce_onboarding_profile || {};
-
 	const [ profileChanges, setProfileChanges ] = useState< {
 		[ key: string ]: string | boolean | Array< string > | undefined;
 	} >( {} );
 
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
+
+	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 
 	function updateProductTypes( type: string ) {
 		const productTypes = getProfileValue( 'product_types' ) || [];
@@ -101,10 +97,14 @@ const BusinessInfo: Step = function ( props ): ReactElement | null {
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 		if ( siteId ) {
+			const changes = {
+				...profileChanges,
+				[ 'completed' ]: true,
+			};
 			saveSiteSettings( siteId, {
 				woocommerce_onboarding_profile: {
 					...onboardingProfile,
-					...profileChanges,
+					...changes,
 				},
 			} );
 		}
@@ -282,6 +282,7 @@ const BusinessInfo: Step = function ( props ): ReactElement | null {
 						/>
 					}
 					stepContent={ getContent() }
+					stepProgress={ stepProgress }
 					recordTracksEvent={ recordTracksEvent }
 				/>
 			</div>

@@ -4,11 +4,11 @@ import envVariables from '../../env-variables';
 const selectors = {
 	// Generic
 	button: ( text: string ) => `button:text("${ text }")`,
-	backLink: 'a:text("Back")',
+	backLink: 'button:text("Back")',
 
 	// Inputs
-	blogNameInput: 'input#siteTitle',
-	taglineInput: 'input#tagline',
+	blogNameInput: 'input#siteTitle:not(:disabled)',
+	taglineInput: 'input#tagline:not(:disabled)',
 
 	// Themes
 	themePickerContainer: '.design-picker',
@@ -49,7 +49,9 @@ export class StartSiteFlow {
 	 * @param {string} name Name for the blog.
 	 */
 	async enterBlogName( name: string ): Promise< void > {
-		await this.page.fill( selectors.blogNameInput, name );
+		await this.page.waitForLoadState( 'networkidle' );
+		const locator = this.page.locator( selectors.blogNameInput );
+		await locator.fill( name );
 	}
 
 	/**
@@ -58,7 +60,9 @@ export class StartSiteFlow {
 	 * @param {string} tagline Tagline for the blog.
 	 */
 	async enterTagline( tagline: string ): Promise< void > {
-		await this.page.fill( selectors.taglineInput, tagline );
+		await this.page.waitForLoadState( 'networkidle' );
+		const locator = this.page.locator( selectors.taglineInput );
+		await locator.fill( tagline );
 	}
 
 	/**
@@ -72,7 +76,7 @@ export class StartSiteFlow {
 	 * Navigate back one screen in the flow.
 	 */
 	async goBackOneScreen(): Promise< void > {
-		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selectors.backLink ) ] );
+		await this.page.click( selectors.backLink );
 	}
 
 	/**

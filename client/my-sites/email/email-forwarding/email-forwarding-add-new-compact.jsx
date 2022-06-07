@@ -1,10 +1,9 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, FormInputValidation, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';

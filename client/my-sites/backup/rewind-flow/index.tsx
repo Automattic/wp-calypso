@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -6,7 +6,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
-import Spinner from 'calypso/components/spinner';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import wpcom from 'calypso/lib/wp';

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import {
 	getSiteStatsForQuery,
@@ -30,7 +29,7 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( requesting ).to.be.false;
+			expect( requesting ).toBe( false );
 		} );
 
 		test( 'should return false if query is not requesting', () => {
@@ -53,7 +52,7 @@ describe( 'selectors', () => {
 				{ startDate: '2015-06-01', endDate: '2016-06-01' }
 			);
 
-			expect( requesting ).to.be.false;
+			expect( requesting ).toBe( false );
 		} );
 
 		test( 'should return true if query is in progress', () => {
@@ -76,7 +75,7 @@ describe( 'selectors', () => {
 				{ startDate: '2015-06-01', endDate: '2016-06-01' }
 			);
 
-			expect( requesting ).to.be.true;
+			expect( requesting ).toBe( true );
 		} );
 	} );
 
@@ -95,7 +94,7 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( hasFailed ).to.be.false;
+			expect( hasFailed ).toBe( false );
 		} );
 
 		test( 'should return false if the request status is success', () => {
@@ -121,7 +120,7 @@ describe( 'selectors', () => {
 				{ startDate: '2015-06-01', endDate: '2016-06-01' }
 			);
 
-			expect( hasFailed ).to.be.false;
+			expect( hasFailed ).toBe( false );
 		} );
 
 		test( 'should return true if the request status is error', () => {
@@ -147,7 +146,7 @@ describe( 'selectors', () => {
 				{ startDate: '2015-06-01', endDate: '2016-06-01' }
 			);
 
-			expect( hasFailed ).to.be.true;
+			expect( hasFailed ).toBe( true );
 		} );
 	} );
 
@@ -166,7 +165,7 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( stats ).to.be.null;
+			expect( stats ).toBeNull();
 		} );
 
 		test( 'should return matching stats', () => {
@@ -193,7 +192,7 @@ describe( 'selectors', () => {
 				{ startDate: '2015-06-01', endDate: '2016-06-01' }
 			);
 
-			expect( stats ).to.eql( {
+			expect( stats ).toEqual( {
 				1461889800: 1,
 				1461972600: 1,
 				1462059000: 1,
@@ -215,7 +214,7 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( stats ).to.eql( {} );
+			expect( stats ).toEqual( {} );
 		} );
 
 		test( 'should return properly formatted data if matching data for query exists', () => {
@@ -244,7 +243,7 @@ describe( 'selectors', () => {
 				{ startDate: '2015-06-01', endDate: '2016-06-01' }
 			);
 
-			expect( stats ).to.eql( {
+			expect( stats ).toEqual( {
 				'2016-04-29': 2,
 				'2016-04-30': 1,
 			} );
@@ -272,7 +271,7 @@ describe( 'selectors', () => {
 				{ startDate: '2015-06-01', endDate: '2016-06-01' }
 			);
 
-			expect( stats ).to.eql( {} );
+			expect( stats ).toEqual( {} );
 		} );
 
 		test( 'should return post streak data based on the GMT offset of the current site', () => {
@@ -331,18 +330,18 @@ describe( 'selectors', () => {
 				gmtOffset: 10,
 			} );
 
-			expect( stats1 ).to.eql( {
+			expect( stats1 ).toEqual( {
 				'2016-04-28': 1,
 				'2016-04-29': 1,
 				'2016-04-30': 1,
 			} );
 
-			expect( stats2 ).to.eql( {
+			expect( stats2 ).toEqual( {
 				'2016-04-29': 2,
 				'2016-04-30': 1,
 			} );
 
-			expect( stats3 ).to.eql( {
+			expect( stats3 ).toEqual( {
 				'2016-04-29': 1,
 				'2016-04-30': 1,
 				'2016-05-01': 1,
@@ -369,7 +368,7 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( stats ).to.be.null;
+			expect( stats ).toBeNull();
 		} );
 
 		test( 'should return API payload data, if no normalizer exists', () => {
@@ -398,7 +397,7 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( stats ).to.eql( {
+			expect( stats ).toEqual( {
 				bestPostTitleEver: 'Chicken and Ribs',
 			} );
 		} );
@@ -435,7 +434,7 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( stats ).to.eql( {
+			expect( stats ).toEqual( {
 				posts: 2,
 				views: 300,
 				visitors: 400,
@@ -464,7 +463,7 @@ describe( 'selectors', () => {
 				{}
 			);
 
-			expect( stats ).to.eql( [] );
+			expect( stats ).toEqual( [] );
 		} );
 
 		test( 'should return normalized data, if normalizer exists', () => {
@@ -518,7 +517,7 @@ describe( 'selectors', () => {
 				}
 			);
 
-			expect( stats ).to.eql( [ [ '"United States"', 1 ] ] );
+			expect( stats ).toEqual( [ [ '"United States"', 1 ] ] );
 		} );
 	} );
 } );

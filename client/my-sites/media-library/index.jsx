@@ -9,8 +9,7 @@ import searchUrl from 'calypso/lib/search-url';
 import { selectMediaItems } from 'calypso/state/media/actions';
 import getMediaErrors from 'calypso/state/selectors/get-media-errors';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
-import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import {
 	isKeyringConnectionsFetching,
@@ -119,14 +118,7 @@ class MediaLibrary extends Component {
 	};
 
 	filterRequiresUpgrade() {
-		const {
-			filter,
-			site,
-			source,
-			isJetpack,
-			hasVideoUploadFeature,
-			hasVideoUploadAvailableFeature,
-		} = this.props;
+		const { filter, site, source, isJetpack, hasVideoUploadFeature } = this.props;
 		if ( source ) {
 			return false;
 		}
@@ -136,7 +128,7 @@ class MediaLibrary extends Component {
 				return ! ( ( site && site.options.upgraded_filetypes_enabled ) || isJetpack );
 
 			case 'videos':
-				return ! hasVideoUploadFeature && !! hasVideoUploadAvailableFeature;
+				return ! hasVideoUploadFeature;
 		}
 
 		return false;
@@ -214,12 +206,7 @@ export default connect(
 		needsKeyring: needsKeyring( state, source ),
 		selectedItems: getMediaLibrarySelectedItems( state, site?.ID ),
 		isJetpack: isJetpackSite( state, site?.ID ),
-		hasVideoUploadFeature: hasActiveSiteFeature( state, site?.ID, 'upload-video-files' ),
-		hasVideoUploadAvailableFeature: hasAvailableSiteFeature(
-			state,
-			site?.ID,
-			'upload-video-files'
-		),
+		hasVideoUploadFeature: siteHasFeature( state, site?.ID, 'upload-video-files' ),
 	} ),
 	{
 		requestKeyringConnections,

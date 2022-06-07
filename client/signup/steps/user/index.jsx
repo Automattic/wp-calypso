@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -181,7 +182,7 @@ export class UserStep extends Component {
 					'Not sure what this is all about? {{a}}We can help clear that up for you.{{/a}}',
 					{
 						components: {
-							a: <a href={ WPCC } target="_blank" rel="noopener noreferrer" />,
+							a: <a href={ localizeUrl( WPCC ) } target="_blank" rel="noopener noreferrer" />,
 						},
 						comment:
 							'Text displayed on the Signup page to users willing to sign up for an app via WordPress.com',
@@ -479,6 +480,12 @@ export class UserStep extends Component {
 						components: { strong: <strong /> },
 					}
 				) }
+				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
+					args: {
+						currentStep: 1,
+						totalSteps: 3,
+					},
+				} ) }
 			>
 				{ this.renderSignupForm() }
 			</P2StepWrapper>

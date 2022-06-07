@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
@@ -109,9 +108,7 @@ const GoogleWorkspaceCard = ( {
 	const [ addingToCart, setAddingToCart ] = useState( false );
 
 	const isGSuiteSupported =
-		canPurchaseGSuite &&
-		( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) ) &&
-		( isEnabled( 'google-workspace-monthly' ) || intervalLength === IntervalLength.ANNUALLY );
+		canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
 
 	const googleWorkspace: ProviderCardProps = { ...googleWorkspaceCardInformation };
 	googleWorkspace.detailsExpanded = isGSuiteSupported && detailsExpanded;

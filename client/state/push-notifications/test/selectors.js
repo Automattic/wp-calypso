@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getStatus } from '../selectors';
 
 describe( 'selectors', () => {
@@ -11,7 +10,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'unknown' );
+			expect( getStatus( mockState ) ).toEqual( 'unknown' );
 		} );
 
 		test( 'should return denied if blocked & API is ready', () => {
@@ -23,7 +22,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'denied' );
+			expect( getStatus( mockState ) ).toEqual( 'denied' );
 		} );
 
 		test( 'should return subscribed if enabled and wpcomSubscription.ID is truthy', () => {
@@ -41,7 +40,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'subscribed' );
+			expect( getStatus( mockState ) ).toEqual( 'subscribed' );
 		} );
 
 		test( 'should return enabling if enabled and wpcomSubscription is null', () => {
@@ -56,7 +55,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'enabling' );
+			expect( getStatus( mockState ) ).toEqual( 'enabling' );
 		} );
 
 		test( 'should return enabling if enabled and wpcomSubscription is false', () => {
@@ -72,7 +71,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'enabling' );
+			expect( getStatus( mockState ) ).toEqual( 'enabling' );
 		} );
 
 		test( 'should return disabling if not enabled and wpcomSubscription is present', () => {
@@ -90,7 +89,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'disabling' );
+			expect( getStatus( mockState ) ).toEqual( 'disabling' );
 		} );
 
 		test( 'should return unsubscribed if not enabled and wpcomSubscription is null', () => {
@@ -105,7 +104,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'unsubscribed' );
+			expect( getStatus( mockState ) ).toEqual( 'unsubscribed' );
 		} );
 
 		test( 'should return unsubscribed if not enabled and wpcomSubscription is false', () => {
@@ -121,7 +120,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getStatus( mockState ) ).to.eql( 'unsubscribed' );
+			expect( getStatus( mockState ) ).toEqual( 'unsubscribed' );
 		} );
 	} );
 } );

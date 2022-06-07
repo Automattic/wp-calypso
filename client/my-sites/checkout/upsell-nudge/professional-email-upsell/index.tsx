@@ -1,5 +1,5 @@
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
-import { Button, Gridicon } from '@automattic/components';
+import { Button, FormInputValidation, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -10,7 +10,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import Badge from 'calypso/components/badge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';

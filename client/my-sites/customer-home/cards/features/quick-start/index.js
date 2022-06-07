@@ -1,10 +1,9 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, HappinessEngineersTray } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
-import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { composeAnalytics, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';

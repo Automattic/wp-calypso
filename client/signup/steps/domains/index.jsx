@@ -1,4 +1,3 @@
-import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
@@ -21,7 +20,6 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getDomainProductSlug, TRUENAME_COUPONS, TRUENAME_TLDS } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -437,72 +435,26 @@ class DomainsStep extends Component {
 		) : null;
 
 		return (
-			<ProvideExperimentData
-				name="calypso_signup_domain_mobile_browser_chrome_added_v4"
-				options={ {
-					isEligible:
-						isMobile() &&
-						[ 'onboarding', 'launch-site', 'free', 'pro' ].includes( this.props.flowName ),
-				} }
-			>
-				{ ( isLoading, experimentAssignment ) => {
-					if ( isLoading ) {
-						return null;
-					}
-
-					if ( experimentAssignment?.variationName === 'treatment' ) {
-						return (
-							<div className="domains__domain-side-content-container domains__domain-side-content-container-mobile-experiment">
-								<div className="domains__domain-side-content-container-browser-chrome">
-									<span></span>
-									<span></span>
-									<span className="domains__domain-side-content-container-browser-chrome-url">
-										https://
-										{ this.props.translate( 'yoursitename', {
-											comment: 'example url used to explain what a domain is.',
-										} ) }
-										.com
-									</span>
-									<span></span>
-								</div>
-								{ ! this.shouldHideDomainExplainer() &&
-									this.props.isPlanSelectionAvailableLaterInFlow && (
-										<div className="domains__domain-side-content domains__free-domain">
-											<ReskinSideExplainer
-												onClick={ this.handleDomainExplainerClick }
-												type={ 'free-domain-explainer' }
-											/>
-										</div>
-									) }
-								{ useYourDomain }
-							</div>
-						);
-					}
-					return (
-						<div className="domains__domain-side-content-container">
-							{ ! this.shouldHideDomainExplainer() &&
-								this.props.isPlanSelectionAvailableLaterInFlow && (
-									<div className="domains__domain-side-content domains__free-domain">
-										<ReskinSideExplainer
-											onClick={ this.handleDomainExplainerClick }
-											type={ 'free-domain-explainer' }
-											flowName={ this.props.flowName }
-										/>
-									</div>
-								) }
-							{ useYourDomain }
-							{ this.shouldDisplayDomainOnlyExplainer() && (
-								<div className="domains__domain-side-content">
-									<ReskinSideExplainer
-										onClick={ this.handleDomainExplainerClick }
-										type={ 'free-domain-only-explainer' }
-									/>
-								</div>
-							) }
-						</div>
-					);
-				} }
-			</ProvideExperimentData>
+			<div className="domains__domain-side-content-container">
+				{ ! this.shouldHideDomainExplainer() && this.props.isPlanSelectionAvailableLaterInFlow && (
+					<div className="domains__domain-side-content domains__free-domain">
+						<ReskinSideExplainer
+							onClick={ this.handleDomainExplainerClick }
+							type={ 'free-domain-explainer' }
+							flowName={ this.props.flowName }
+						/>
+					</div>
+				) }
+				{ useYourDomain }
+				{ this.shouldDisplayDomainOnlyExplainer() && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer
+							onClick={ this.handleDomainExplainerClick }
+							type={ 'free-domain-only-explainer' }
+						/>
+					</div>
+				) }
+			</div>
 		);
 	};
 
@@ -642,14 +594,8 @@ class DomainsStep extends Component {
 	};
 
 	getSubHeaderText() {
-		const {
-			flowName,
-			isAllDomains,
-			siteType,
-			stepSectionName,
-			isReskinned,
-			translate,
-		} = this.props;
+		const { flowName, isAllDomains, siteType, stepSectionName, isReskinned, translate } =
+			this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -675,14 +621,8 @@ class DomainsStep extends Component {
 	}
 
 	getHeaderText() {
-		const {
-			headerText,
-			isAllDomains,
-			siteType,
-			isReskinned,
-			stepSectionName,
-			translate,
-		} = this.props;
+		const { headerText, isAllDomains, siteType, isReskinned, stepSectionName, translate } =
+			this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Your next big idea starts here' );
@@ -782,7 +722,9 @@ class DomainsStep extends Component {
 		}
 
 		const { isAllDomains, translate, isReskinned } = this.props;
-		const source = get( this.props, 'queryObject.source' );
+		const siteUrl = this.props.selectedSite?.URL;
+		const siteSlug = this.props.queryObject?.siteSlug;
+		const source = this.props.queryObject?.source;
 		let backUrl;
 		let backLabelText;
 		let isExternalBackUrl = false;
@@ -797,7 +739,17 @@ class DomainsStep extends Component {
 		} else {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, null, this.getLocale() );
 
-			if ( backUrl === this.removeQueryParam( this.props.path ) ) {
+			if ( 'site' === source && siteUrl ) {
+				backUrl = siteUrl;
+				backLabelText = translate( 'Back to My Site' );
+				isExternalBackUrl = true;
+			} else if ( 'my-home' === source && siteSlug ) {
+				backUrl = `/home/${ siteSlug }`;
+				backLabelText = translate( 'Back to My Home' );
+			} else if ( 'general-settings' === source && siteSlug ) {
+				backUrl = `/settings/general/${ siteSlug }`;
+				backLabelText = translate( 'Back to General Settings' );
+			} else if ( backUrl === this.removeQueryParam( this.props.path ) ) {
 				backUrl = '/sites/';
 				backLabelText = translate( 'Back to My Sites' );
 			}
@@ -892,7 +844,7 @@ export default connect(
 			sites: getSitesItems( state ),
 			isPlanSelectionAvailableLaterInFlow:
 				( ! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ) ) ||
-				( eligibleForProPlan && 'pro' === flowName ),
+				[ 'pro', 'starter' ].includes( flowName ),
 			userLoggedIn: isUserLoggedIn( state ),
 			eligibleForProPlan,
 		};

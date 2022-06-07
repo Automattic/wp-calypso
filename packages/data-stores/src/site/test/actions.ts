@@ -343,5 +343,37 @@ describe( 'Site Actions', () => {
 				status,
 			} );
 		} );
+		it( 'should start an Atomic software install', () => {
+			const { initiateSoftwareInstall } = createActions( mockedClientCredentials );
+			const softwareSet = 'woo-on-plans';
+			const generator = initiateSoftwareInstall( siteId, softwareSet );
+
+			const mockedApiResponse = {
+				request: {
+					apiNamespace: 'wpcom/v2',
+					method: 'POST',
+					path: `/sites/${ siteId }/atomic/software/${ softwareSet }`,
+					body: {},
+				},
+				type: 'WPCOM_REQUEST',
+			};
+
+			// First iteration: ATOMIC_SOFTWARE_INSTALL_START is fired
+			expect( generator.next().value ).toEqual( {
+				type: 'ATOMIC_SOFTWARE_INSTALL_START',
+				siteId,
+				softwareSet,
+			} );
+
+			// Second iteration: WP_COM_REQUEST is fired
+			expect( generator.next().value ).toEqual( mockedApiResponse );
+
+			// Third iteration: ATOMIC_SOFTWARE_INSTALL_SUCCESS is fired
+			expect( generator.next().value ).toEqual( {
+				type: 'ATOMIC_SOFTWARE_INSTALL_SUCCESS',
+				siteId,
+				softwareSet,
+			} );
+		} );
 	} );
 } );

@@ -158,10 +158,12 @@
 	"sections": {
 		"jetpack-cloud": false,
 		"jetpack-cloud-agency-dashboard": false,
+		"jetpack-cloud-agency-signup": false,
 		"jetpack-cloud-auth": false,
 		"jetpack-cloud-partner-portal": false,
 		"jetpack-cloud-pricing": false,
-		"jetpack-cloud-settings": false
+		"jetpack-cloud-settings": false,
+		"jetpack-social": false
 	},
 	"site_filter": [],
 	"theme": "default",
@@ -181,6 +183,7 @@
 		"setup-site",
 		"account",
 		"do-it-for-me",
+		"website-design-services",
 		"desktop",
 		"developer",
 		"site-content-collection",
@@ -202,6 +205,7 @@
 		"ecommerce",
 		"ecommerce-monthly",
 		"pro",
+		"starter",
 		"domain"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"

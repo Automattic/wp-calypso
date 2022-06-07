@@ -53,7 +53,7 @@ function newspack_blocks_block_args( $args, $name ) {
 	$script_data = require NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'editor.asset.php';
 	wp_register_script(
 		$block_prefix . 'editor',
-		plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'editor.js', __FILE__ ),
+		plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'editor.min.js', __FILE__ ),
 		$script_data['dependencies'],
 		$script_data['version'],
 		true
@@ -78,7 +78,7 @@ function newspack_blocks_block_args( $args, $name ) {
 	$script_data = require NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'view.asset.php';
 	wp_register_script(
 		$block_prefix . 'view',
-		plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'view.js', __FILE__ ),
+		plugins_url( NEWSPACK_BLOCKS__BLOCKS_DIRECTORY . $block_prefix . 'view.min.js', __FILE__ ),
 		$script_data['dependencies'],
 		$script_data['version'],
 		true

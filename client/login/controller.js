@@ -6,6 +6,7 @@ import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
+import QrCodeLoginPage from './qr-code-login';
 import WPLogin from './wp-login';
 
 const enhanceContextWithLogin = ( context ) => {
@@ -88,6 +89,12 @@ export function magicLogin( context, next ) {
 	next();
 }
 
+export function qrCodeLogin( context, next ) {
+	context.primary = <QrCodeLoginPage locale={ context.params.lang } />;
+
+	next();
+}
+
 function getHandleEmailedLinkFormComponent( flow ) {
 	if ( flow === 'jetpack' && config.isEnabled( 'jetpack/magic-link-signup' ) ) {
 		return HandleEmailedLinkFormJetpackConnect;
@@ -122,8 +129,15 @@ export function magicLoginUse( context, next ) {
 }
 
 export function redirectDefaultLocale( context, next ) {
+	// Do not redirect if it's server side
+	if ( context.isServerSide ) {
+		return next();
+	}
 	// Only handle simple routes
 	if ( context.pathname !== '/log-in/en' && context.pathname !== '/log-in/jetpack/en' ) {
+		if ( ! isUserLoggedIn( context.store.getState() ) && ! context.params.lang ) {
+			context.params.lang = config( 'i18n_default_locale_slug' );
+		}
 		return next();
 	}
 
@@ -143,9 +157,9 @@ export function redirectDefaultLocale( context, next ) {
 	}
 
 	if ( context.params.isJetpack === 'jetpack' ) {
-		context.redirect( '/log-in/jetpack' );
+		page.redirect( '/log-in/jetpack' );
 	} else {
-		context.redirect( '/log-in' );
+		page.redirect( '/log-in' );
 	}
 }
 

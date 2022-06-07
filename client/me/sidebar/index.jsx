@@ -1,9 +1,10 @@
 import config from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Sidebar from 'calypso/layout/sidebar';
+import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
@@ -11,7 +12,7 @@ import SidebarRegion from 'calypso/layout/sidebar/region';
 import { clearStore, disablePersistence } from 'calypso/lib/user/store';
 import ProfileGravatar from 'calypso/me/profile-gravatar';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
-import { itemLinkMatches } from 'calypso/my-sites/sidebar-unified/utils';
+import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -19,7 +20,7 @@ import { logoutUser } from 'calypso/state/logout/actions';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 import './style.scss';
-import 'calypso/my-sites/sidebar-unified/style.scss'; // nav-unification overrides. Should be removed once launched.
+import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 
 class MeSidebar extends Component {
 	onNavigate = () => {
@@ -69,7 +70,8 @@ class MeSidebar extends Component {
 							onClick={ this.onSignOut }
 							title={ translate( 'Log out of WordPress.com' ) }
 						>
-							{ translate( 'Log out' ) }
+							<span class="sidebar__me-signout-text">{ translate( 'Log out' ) }</span>
+							<Gridicon icon="popout" size={ 16 } />
 						</Button>
 					</div>
 
@@ -151,6 +153,7 @@ class MeSidebar extends Component {
 						/>
 					</SidebarMenu>
 				</SidebarRegion>
+				<CollapseSidebar title={ translate( 'Collapse menu' ) } icon="dashicons-admin-collapse" />
 				<SidebarFooter />
 			</Sidebar>
 		);

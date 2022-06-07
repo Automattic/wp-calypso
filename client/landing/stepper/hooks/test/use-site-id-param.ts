@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import '@testing-library/jest-dom/extend-expect';
 import { renderHook } from '@testing-library/react-hooks';
 import { useSiteIdParam } from '../use-site-id-param';
 

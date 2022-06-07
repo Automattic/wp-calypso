@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import { spy } from 'sinon';
 import {
 	COMMENTS_DELETE,
 	COMMENTS_RECEIVE,
@@ -7,7 +5,6 @@ import {
 	NOTICE_CREATE,
 } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 import {
 	createPlaceholderComment,
 	dispatchNewCommentRequest,
@@ -16,13 +13,15 @@ import {
 } from '../utils';
 
 describe( 'utility functions', () => {
-	useFakeTimers();
+	beforeAll( () => {
+		jest.useFakeTimers().setSystemTime( 0 );
+	} );
 
 	describe( '#createPlaceholderComment()', () => {
 		test( 'should return a comment placeholder', () => {
 			const placeholder = createPlaceholderComment( 'comment text', 1, 2 );
 
-			expect( placeholder ).to.eql( {
+			expect( placeholder ).toEqual( {
 				ID: 'placeholder-0',
 				content: 'comment text',
 				date: '1970-01-01T00:00:00.000Z',
@@ -58,14 +57,14 @@ describe( 'utility functions', () => {
 		test( 'should dispatch a http request action to the specified path', () => {
 			const result = dispatchNewCommentRequest( action, '/sites/foo/comments' );
 
-			expect( result[ 0 ] ).to.eql( {
+			expect( result[ 0 ] ).toEqual( {
 				type: COMMENTS_RECEIVE,
 				siteId: 2916284,
 				postId: 1010,
 				skipSort: false,
 				comments: [ placeholder ],
 			} );
-			expect( result[ 1 ] ).to.eql(
+			expect( result[ 1 ] ).toEqual(
 				http( {
 					apiVersion: '1.1',
 					method: 'POST',
@@ -90,11 +89,11 @@ describe( 'utility functions', () => {
 
 			const result = updatePlaceholderComment( action, comment );
 
-			expect( result ).to.have.length( 3 );
-			expect( result[ 0 ].type ).to.eql( COMMENTS_DELETE );
-			expect( result[ 0 ].siteId ).to.eql( 2916284 );
-			expect( result[ 0 ].postId ).to.eql( 1010 );
-			expect( result[ 0 ].commentId ).to.eql( 'placeholder-id' );
+			expect( result ).toHaveLength( 3 );
+			expect( result[ 0 ].type ).toEqual( COMMENTS_DELETE );
+			expect( result[ 0 ].siteId ).toEqual( 2916284 );
+			expect( result[ 0 ].postId ).toEqual( 1010 );
+			expect( result[ 0 ].commentId ).toEqual( 'placeholder-id' );
 		} );
 
 		test( 'should dispatch a comments receive action', () => {
@@ -108,8 +107,8 @@ describe( 'utility functions', () => {
 
 			const result = updatePlaceholderComment( action, comment );
 
-			expect( result ).to.have.length( 3 );
-			expect( result[ 1 ] ).to.eql( {
+			expect( result ).toHaveLength( 3 );
+			expect( result[ 1 ] ).toEqual( {
 				type: COMMENTS_RECEIVE,
 				siteId: 2916284,
 				postId: 1010,
@@ -130,8 +129,8 @@ describe( 'utility functions', () => {
 
 			const result = updatePlaceholderComment( action, comment );
 
-			expect( result ).to.have.length( 3 );
-			expect( result[ 2 ] ).to.eql( {
+			expect( result ).toHaveLength( 3 );
+			expect( result[ 2 ] ).toEqual( {
 				type: COMMENTS_COUNT_INCREMENT,
 				siteId: 2916284,
 				postId: 1010,
@@ -156,8 +155,8 @@ describe( 'utility functions', () => {
 				},
 				{ ID: 1, content: 'this is the content' }
 			);
-			expect( result ).to.have.length( 4 );
-			expect( result[ result.length - 1 ] ).to.eql( {
+			expect( result ).toHaveLength( 4 );
+			expect( result[ result.length - 1 ] ).toEqual( {
 				type: 'COMMENTS_LIST_REQUEST',
 				query: {
 					listType: 'site',
@@ -173,7 +172,7 @@ describe( 'utility functions', () => {
 
 	describe( '#handleWriteCommentFailure()', () => {
 		test( 'should dispatch an error notice', () => {
-			const dispatch = spy();
+			const dispatch = jest.fn();
 			const getState = () => ( {
 				posts: {
 					queries: {},
@@ -182,13 +181,18 @@ describe( 'utility functions', () => {
 
 			handleWriteCommentFailure( { siteId: 2916284, postId: 1010 } )( dispatch, getState );
 
-			expect( dispatch ).to.have.been.calledWithMatch( {
-				type: NOTICE_CREATE,
-				notice: {
-					status: 'is-error',
-					text: 'Could not add a reply to this post',
-				},
-			} );
+			expect( dispatch ).toBeCalledWith(
+				expect.objectContaining( {
+					type: NOTICE_CREATE,
+					notice: {
+						duration: expect.any( Number ),
+						noticeId: expect.any( String ),
+						showDismiss: expect.any( Boolean ),
+						status: 'is-error',
+						text: 'Could not add a reply to this post',
+					},
+				} )
+			);
 		} );
 	} );
 } );

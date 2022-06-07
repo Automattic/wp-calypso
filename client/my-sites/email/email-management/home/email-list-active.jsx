@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import MaterialIcon from 'calypso/components/material-icon';
 import SectionHeader from 'calypso/components/section-header';
-import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
+import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-type-icon';
 import {
 	getNumberOfMailboxesText,
@@ -14,7 +14,7 @@ import {
 import { emailManagement } from 'calypso/my-sites/email/paths';
 
 const EmailListActiveWarning = ( { domain, selectedSiteId } ) => {
-	const { data, error, isLoading } = useEmailAccountsQuery( selectedSiteId, domain.name, {
+	const { data, error, isLoading } = useGetEmailAccountsQuery( selectedSiteId, domain.name, {
 		retry: false,
 	} );
 	let emailAccounts = null;
@@ -44,14 +44,8 @@ EmailListActiveWarning.propTypes = {
 
 class EmailListActive extends Component {
 	render() {
-		const {
-			currentRoute,
-			domains,
-			selectedSiteSlug,
-			translate,
-			selectedSiteId,
-			source,
-		} = this.props;
+		const { currentRoute, domains, selectedSiteSlug, translate, selectedSiteId, source } =
+			this.props;
 
 		if ( domains.length < 1 ) {
 			return null;

@@ -120,14 +120,8 @@ class TaxonomyManagerListItem extends Component {
 	};
 
 	render() {
-		const {
-			canSetAsDefault,
-			isDefault,
-			onClick,
-			term,
-			isPodcastingCategory,
-			translate,
-		} = this.props;
+		const { canSetAsDefault, isDefault, onClick, term, isPodcastingCategory, translate } =
+			this.props;
 		const name = this.getName();
 		const hasPosts = get( term, 'post_count', 0 ) > 0;
 		const className = classNames( 'taxonomy-manager__item', {

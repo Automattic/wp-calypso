@@ -23,4 +23,11 @@ export default function loadDevHelpers( reduxStore ) {
 			asyncRequire( 'calypso/lib/features-helper', ( helper ) => helper( el ) );
 		}
 	}
+
+	if ( config.isEnabled( 'dev/react-query-devtools' ) ) {
+		const el = document.querySelector( '.environment.is-react-query-devtools' );
+		if ( el ) {
+			asyncRequire( 'calypso/lib/react-query-devtools-helper', ( helper ) => helper( el ) );
+		}
+	}
 }

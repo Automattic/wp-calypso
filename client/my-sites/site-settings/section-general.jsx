@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { connect } from 'react-redux';
 import GeneralForm from 'calypso/my-sites/site-settings/form-general';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -10,9 +9,7 @@ import SiteTools from './site-tools';
 const SiteSettingsGeneral = ( { site, isWPForTeamsSite, isP2Hub } ) => (
 	<div className="site-settings__main general-settings">
 		<GeneralForm site={ site } />
-		{ isWPForTeamsSite && isP2Hub && isEnabled( 'p2/preapproved-domains' ) && (
-			<P2PreapprovedDomainsForm siteId={ site?.ID } />
-		) }
+		{ isWPForTeamsSite && isP2Hub && <P2PreapprovedDomainsForm siteId={ site?.ID } /> }
 		<SiteTools />
 	</div>
 );

@@ -1,4 +1,5 @@
 import { Card, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -132,7 +133,13 @@ class ContactsPrivacyCard extends Component {
 					<p className="contacts-privacy__settings-explanation">
 						{ translate( '{{a}}Learn more{{/a}} about private registration and GDPR protection.', {
 							components: {
-								a: <a href={ PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />,
+								a: (
+									<a
+										href={ localizeUrl( PUBLIC_VS_PRIVATE ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
 							},
 						} ) }
 					</p>

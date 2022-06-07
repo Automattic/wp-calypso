@@ -1,5 +1,4 @@
 import page from 'page';
-import { reduxGetState } from 'calypso/lib/redux-bridge';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 
@@ -15,41 +14,42 @@ export function isPostNotFound( post ) {
 	return post.statusCode === 404;
 }
 
-export function showSelectedPost( { replaceHistory, postKey, comments } ) {
-	if ( ! postKey ) {
-		return;
-	}
+export function showSelectedPost( { postKey, comments } ) {
+	return ( dispatch, getState ) => {
+		if ( ! postKey ) {
+			return;
+		}
 
-	// rec block
-	if ( postKey.isRecommendationBlock ) {
-		return;
-	}
+		// rec block
+		if ( postKey.isRecommendationBlock ) {
+			return;
+		}
 
-	const post = getPostByKey( reduxGetState(), postKey );
+		const post = getPostByKey( getState(), postKey );
 
-	if ( isXPost( post ) && ! replaceHistory ) {
-		return showFullXPost( XPostHelper.getXPostMetadata( post ) );
-	}
+		if ( isXPost( post ) ) {
+			return showFullXPost( XPostHelper.getXPostMetadata( post ) );
+		}
 
-	// normal
-	let mappedPost;
-	if ( postKey.feedId ) {
-		mappedPost = {
-			feed_ID: postKey.feedId,
-			feed_item_ID: postKey.postId,
-		};
-	} else {
-		mappedPost = {
-			site_ID: postKey.blogId,
-			ID: postKey.postId,
-		};
-	}
+		// normal
+		let mappedPost;
+		if ( postKey.feedId ) {
+			mappedPost = {
+				feed_ID: postKey.feedId,
+				feed_item_ID: postKey.postId,
+			};
+		} else {
+			mappedPost = {
+				site_ID: postKey.blogId,
+				ID: postKey.postId,
+			};
+		}
 
-	showFullPost( {
-		post: mappedPost,
-		replaceHistory,
-		comments,
-	} );
+		showFullPost( {
+			post: mappedPost,
+			comments,
+		} );
+	};
 }
 
 export function showFullXPost( xMetadata ) {
@@ -67,7 +67,7 @@ export function showFullXPost( xMetadata ) {
 	}
 }
 
-export function showFullPost( { post, replaceHistory, comments } ) {
+export function showFullPost( { post, comments } ) {
 	const hashtag = comments ? '#comments' : '';
 	let query = '';
 	if ( post.referral ) {
@@ -75,13 +75,10 @@ export function showFullPost( { post, replaceHistory, comments } ) {
 		query += `ref_blog=${ blogId }&ref_post=${ postId }`;
 	}
 
-	const method = replaceHistory ? 'replace' : 'show';
 	if ( post.feed_ID && post.feed_item_ID ) {
-		page[ method ](
-			`/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }`
-		);
+		page( `/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }` );
 	} else {
-		page[ method ]( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
+		page( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
 	}
 }
 

@@ -12,7 +12,6 @@ import 'calypso/state/themes/init';
  *
  * @param {string} themeId -- Theme to delete
  * @param {number} siteId -- Site to delete theme from
- *
  * @returns {Function} Action thunk
  */
 export function confirmDelete( themeId, siteId ) {

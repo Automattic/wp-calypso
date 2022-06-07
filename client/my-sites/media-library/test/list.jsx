@@ -3,8 +3,6 @@
  */
 
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expectSelectedItems", "expect"] }] */
-
-import { expect } from 'chai';
 import { mount } from 'enzyme';
 import { defer } from 'lodash';
 import moment from 'moment';
@@ -39,7 +37,7 @@ describe( 'MediaLibraryList item selection', () => {
 
 	function expectSelectedItems( ...args ) {
 		defer( function () {
-			expect( mockSelectedItems ).to.have.members(
+			expect( mockSelectedItems ).toContain(
 				args.map( function ( arg ) {
 					return fixtures.media[ arg ];
 				} )
@@ -202,12 +200,12 @@ describe( 'MediaLibraryList item selection', () => {
 
 		test( 'should have no group label for an ungrouped source', () => {
 			const grid = getList( fixtures.media, 'pexels' ).render();
-			expect( grid.props.getGroupLabel() ).to.equal( '' );
+			expect( grid.props.getGroupLabel() ).toEqual( '' );
 		} );
 
 		test( 'should use the source name as the item group for an ungrouped source', () => {
 			const grid = getList( fixtures.media, 'pexels' ).render();
-			expect( grid.props.getItemGroup() ).to.equal( 'pexels' );
+			expect( grid.props.getItemGroup() ).toEqual( 'pexels' );
 		} );
 	} );
 } );

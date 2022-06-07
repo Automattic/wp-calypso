@@ -14,12 +14,19 @@ import type { SiteVerticalsResponse } from 'calypso/data/site-verticals';
 interface Props {
 	defaultVertical?: string;
 	isSkipSynonyms?: boolean;
+	onInputChange?: ( searchTerm: string ) => void;
 	onSelect?: ( vertical: Vertical ) => void;
 }
 
-const SelectVertical: React.FC< Props > = ( { defaultVertical, isSkipSynonyms, onSelect } ) => {
+const SelectVertical: React.FC< Props > = ( {
+	defaultVertical,
+	isSkipSynonyms,
+	onInputChange,
+	onSelect,
+} ) => {
 	const translate = useTranslate();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
+	const [ hasUserInput, setHasUserInput ] = useState( false );
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 150 );
 	const isDebouncing = searchTerm !== debouncedSearchTerm;
 
@@ -64,14 +71,23 @@ const SelectVertical: React.FC< Props > = ( { defaultVertical, isSkipSynonyms, o
 				suggestions={
 					! isDebouncing
 						? mapManySiteVerticalsResponseToVertical(
-								( searchTerm === '' ? featured : suggestions ) || []
+								( ! hasUserInput ? featured : suggestions ) || []
 						  )
 						: []
 				}
 				isLoading={ isDebouncing || isLoadingDefaultVertical || isLoadingSuggestions }
+				isShowSkipOption={ hasUserInput }
 				isDisableInput={ isLoadingDefaultVertical }
-				onInputChange={ setSearchTerm }
-				onSelect={ onSelect }
+				onInputChange={ ( searchTerm: string ) => {
+					setHasUserInput( searchTerm !== '' );
+					setSearchTerm( searchTerm );
+					onInputChange?.( searchTerm );
+				} }
+				onSelect={ ( vertical: Vertical ) => {
+					setHasUserInput( false );
+					setSearchTerm( vertical.label );
+					onSelect?.( vertical );
+				} }
 			/>
 		</>
 	);

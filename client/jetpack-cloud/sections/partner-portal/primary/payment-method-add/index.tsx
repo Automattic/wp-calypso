@@ -44,9 +44,10 @@ function PaymentMethodAdd(): ReactElement {
 		stripeConfiguration,
 		stripe,
 	} );
-	const paymentMethods = useMemo( () => [ stripeMethod ].filter( isValueTruthy ), [
-		stripeMethod,
-	] );
+	const paymentMethods = useMemo(
+		() => [ stripeMethod ].filter( isValueTruthy ),
+		[ stripeMethod ]
+	);
 	const useAsPrimaryPaymentMethod = useSelect( ( select ) =>
 		select( 'credit-card' ).useAsPrimaryPaymentMethod()
 	);

@@ -1,20 +1,33 @@
 /**
  * External Dependencies
  */
+import { Spinner } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
 import classnames from 'classnames';
-import { useState } from 'react';
-import Draggable from 'react-draggable';
+import { useState, FC } from 'react';
+import Draggable, { DraggableProps } from 'react-draggable';
+import { MemoryRouter } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
+import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
-import { Container } from './types';
 
-const HelpCenterContainer: React.FC< Container > = ( { content, handleClose } ) => {
+interface OptionalDraggableProps extends Partial< DraggableProps > {
+	draggable: boolean;
+}
+
+const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props } ) => {
+	if ( ! draggable ) {
+		return <>{ props.children }</>;
+	}
+	return <Draggable { ...props } />;
+};
+
+const HelpCenterContainer: React.FC< Container > = ( { handleClose, isLoading } ) => {
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
@@ -39,41 +52,34 @@ const HelpCenterContainer: React.FC< Container > = ( { content, handleClose } ) 
 		onAnimationEnd: toggleVisible,
 	};
 
-	const containerContent = (
-		<>
-			<HelpCenterHeader
-				isMinimized={ isMinimized }
-				onMinimize={ () => setIsMinimized( true ) }
-				onMaximize={ () => setIsMinimized( false ) }
-				onDismiss={ onDismiss }
-			/>
-			{ ! isMinimized && (
-				<>
-					<HelpCenterContent content={ content } />
-					<HelpCenterFooter />
-				</>
-			) }
-		</>
-	);
-
-	if ( isMobile ) {
-		return (
-			<Card { ...animationProps } className={ classNames }>
-				{ containerContent }
-			</Card>
-		);
-	}
-
-	return isMinimized ? (
-		<Card className={ classNames } { ...animationProps }>
-			{ containerContent }
-		</Card>
-	) : (
-		<Draggable>
-			<Card className={ classNames } { ...animationProps }>
-				{ containerContent }
-			</Card>
-		</Draggable>
+	return (
+		<MemoryRouter>
+			<OptionalDraggable
+				disabled={ isMinimized }
+				draggable={ ! isMobile }
+				handle=".help-center__container-header"
+				bounds="body"
+			>
+				<Card className={ classNames } { ...animationProps }>
+					<HelpCenterHeader
+						isMinimized={ isMinimized }
+						onMinimize={ () => setIsMinimized( true ) }
+						onMaximize={ () => setIsMinimized( false ) }
+						onDismiss={ onDismiss }
+					/>
+					{ isLoading ? (
+						<div className="help-center-container__loading">
+							<Spinner baseClassName="" className="help-center-container__spinner" />
+						</div>
+					) : (
+						<>
+							<HelpCenterContent isMinimized={ isMinimized } />
+							{ ! isMinimized && <HelpCenterFooter /> }
+						</>
+					) }
+				</Card>
+			</OptionalDraggable>
+		</MemoryRouter>
 	);
 };
 

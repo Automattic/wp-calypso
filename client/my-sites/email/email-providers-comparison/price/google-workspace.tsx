@@ -1,6 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
@@ -19,7 +18,7 @@ import PriceInformation from 'calypso/my-sites/email/email-providers-comparison/
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 import './style.scss';
 
@@ -30,7 +29,7 @@ const getGoogleWorkspaceProductSlug = ( intervalLength: IntervalLength ): string
 };
 
 type GoogleWorkspacePriceProps = {
-	domain?: SiteDomain;
+	domain?: ResponseDomain;
 	intervalLength: IntervalLength;
 	isDomainInCart: boolean;
 };
@@ -39,7 +38,7 @@ const GoogleWorkspacePrice = ( {
 	domain,
 	intervalLength,
 	isDomainInCart,
-}: GoogleWorkspacePriceProps ): JSX.Element | null => {
+}: GoogleWorkspacePriceProps ) => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	const productSlug = getGoogleWorkspaceProductSlug( intervalLength );
@@ -58,14 +57,6 @@ const GoogleWorkspacePrice = ( {
 		return (
 			<div className="google-workspace-price__unavailable">
 				{ translate( 'Not available for this domain name' ) }
-			</div>
-		);
-	}
-
-	if ( ! isEnabled( 'google-workspace-monthly' ) && intervalLength === IntervalLength.MONTHLY ) {
-		return (
-			<div className="google-workspace-price__unavailable">
-				{ translate( 'Only available with annual billing' ) }
 			</div>
 		);
 	}

@@ -33,10 +33,11 @@ describe( 'reducer', () => {
 	} );
 
 	test( 'should return an object with the list of purchases when fetching completed', () => {
+		const siteId2 = '2828828282';
 		let state = reducer( undefined, {
 			type: PURCHASES_USER_FETCH_COMPLETED,
 			purchases: [
-				{ ID: '1', blog_id: siteId, user_id: userId },
+				{ ID: '1', blog_id: siteId2, user_id: userId },
 				{ ID: '2', blog_id: siteId, user_id: userId },
 			],
 		} );
@@ -44,16 +45,17 @@ describe( 'reducer', () => {
 		state = reducer( state, {
 			type: PURCHASES_SITE_FETCH_COMPLETED,
 			purchases: [
-				{ ID: '2', blog_id: siteId, user_id: userId },
+				{ ID: '2', blog_id: siteId, user_id: userId, other: true },
 				{ ID: '3', blog_id: siteId, user_id: userId },
 			],
+			siteId: Number( siteId ),
 		} );
 
 		expect( state ).toEqual( {
 			data: [
-				{ ID: '2', blog_id: siteId, user_id: userId },
+				{ ID: '1', blog_id: siteId2, user_id: userId },
+				{ ID: '2', blog_id: siteId, user_id: userId, other: true },
 				{ ID: '3', blog_id: siteId, user_id: userId },
-				{ ID: '1', blog_id: siteId, user_id: userId },
 			],
 			error: null,
 			isFetchingSitePurchases: false,

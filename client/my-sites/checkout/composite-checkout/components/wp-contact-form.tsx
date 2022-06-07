@@ -1,8 +1,7 @@
 import { FormStatus, useFormStatus, useIsStepActive } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
-import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';
-import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-form-complete';
+import useCachedDomainContactDetails from '../hooks/use-cached-domain-contact-details';
 import ContactDetailsContainer from './contact-details-container';
 import type {
 	CountryListItem,
@@ -30,24 +29,21 @@ export default function WPContactForm( {
 	countriesList,
 	shouldShowContactDetailsValidationErrors,
 	contactDetailsType,
-	contactValidationCallback,
 	isLoggedOutCart,
 }: {
 	countriesList: CountryListItem[];
 	shouldShowContactDetailsValidationErrors: boolean;
 	contactDetailsType: Exclude< ContactDetailsType, 'none' >;
-	contactValidationCallback: () => Promise< boolean >;
 	isLoggedOutCart: boolean;
-} ): JSX.Element {
+} ) {
 	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
 		select( 'wpcom-checkout' ).getContactInfo()
 	);
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
-	const isCachedContactFormValid = useIsCachedContactFormValid( contactValidationCallback );
 
-	useSkipToLastStepIfFormComplete( isCachedContactFormValid );
+	useCachedDomainContactDetails( countriesList );
 
 	return (
 		<BillingFormFields>

@@ -59,12 +59,23 @@ export interface APIPartnerKey {
 	has_licenses: boolean;
 }
 
+export interface APIPartnerAddress {
+	country: string;
+	city: string;
+	line1: string;
+	line2: string;
+	postal_code: string;
+	state: string;
+}
+
 export interface APIPartner {
 	id: number;
 	slug: string;
 	name: string;
+	address: APIPartnerAddress;
 	keys: APIPartnerKey[];
 	tos: string;
+	partner_type: string;
 }
 
 // The API-returned license object is not quite consistent right now so we only define the properties we actively rely on.
@@ -93,6 +104,7 @@ export interface APIError {
 	status: number;
 	code: string | null;
 	message: string;
+	data?: any;
 }
 
 export interface APIInvoices {
@@ -102,7 +114,8 @@ export interface APIInvoices {
 
 export interface APIInvoice {
 	id: string;
-	due_date: string;
+	number: string;
+	due_date: string | null;
 	status: InvoiceStatus;
 	total: number;
 	currency: string;
@@ -119,11 +132,26 @@ export interface Invoices {
 
 export interface Invoice {
 	id: string;
-	dueDate: string;
+	number: string;
+	dueDate: string | null;
 	status: InvoiceStatus;
 	total: number;
 	currency: string;
 	pdfUrl: string;
+}
+
+export interface CompanyDetailsPayload {
+	name: string;
+	city: string;
+	line1: string;
+	line2: string;
+	country: string;
+	postalCode: string;
+	state: string;
+}
+
+export interface PartnerDetailsPayload extends CompanyDetailsPayload {
+	tos?: 'consented';
 }
 
 /**
@@ -137,12 +165,23 @@ export interface PartnerKey {
 	hasLicenses: boolean;
 }
 
+export interface PartnerAddress {
+	country: string;
+	city: string;
+	line1: string;
+	line2: string;
+	postal_code: string;
+	state: string;
+}
+
 export interface Partner {
 	id: number;
 	slug: string;
 	name: string;
+	address: PartnerAddress;
 	keys: PartnerKey[];
 	tos: string;
+	partner_type: string;
 }
 
 export interface PartnerStore {

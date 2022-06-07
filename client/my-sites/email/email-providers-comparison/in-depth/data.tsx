@@ -1,6 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
@@ -30,7 +31,7 @@ export const professionalEmailFeatures: EmailProviderFeatures = {
 		support: translate( '24/7 support via email' ),
 		tools: translate( 'Inbox, Calendar and Contacts' ),
 	},
-	supportUrl: ADDING_TITAN_TO_YOUR_SITE,
+	supportUrl: localizeUrl( ADDING_TITAN_TO_YOUR_SITE ),
 	table: {
 		collaboration: '-',
 		importing: translate( 'One-click import of existing emails and contacts' ),
@@ -62,7 +63,7 @@ export const googleWorkspaceFeatures: EmailProviderFeatures = {
 			'Gmail, Calendar, Contacts, Meet, Chat, Drive, Docs, Sheets, Slides and more'
 		),
 	},
-	supportUrl: ADDING_GSUITE_TO_YOUR_SITE,
+	supportUrl: localizeUrl( ADDING_GSUITE_TO_YOUR_SITE ),
 	table: {
 		collaboration: translate( 'Real-time for Docs, Sheets, and Slides' ),
 		importing: translate( 'Easy to import your existing emails and contacts' ),

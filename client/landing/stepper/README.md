@@ -34,7 +34,9 @@ export const exampleFlow: Flow = {
 
 ## The API
 
-To create a flow, you only have to define `useSteps` and `useStepNavigation`. `useSteps` just returns an array of step keys, `useStepNavigation` is the engine where you make navigation decisions. This hook returns an object of type [`NavigationControls`](./declarative-flow/internals/types.ts):
+To create a flow, you only have to implement `useSteps` and `useStepNavigation`. `useSteps` just returns an array of step keys, `useStepNavigation` is the engine where you make navigation decisions. This hook returns an object of type [`NavigationControls`](./declarative-flow/internals/types.ts):
+
+There is also an optional `useSideEffect` hook. You can implement this hook to run any side-effects to the flow. You can prefetch information, send track events when something changes, etc...
 
 ```tsx
 // prettier-ignore

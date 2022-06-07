@@ -6,7 +6,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getThankYouPageUrl from './get-thank-you-page-url';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-get-thank-you-url' );
 
@@ -90,5 +90,5 @@ export interface GetThankYouUrlProps {
 	hideNudge?: boolean;
 	isInModal?: boolean;
 	isJetpackCheckout?: boolean;
-	domains: SiteDomain[] | undefined;
+	domains: ResponseDomain[] | undefined;
 }

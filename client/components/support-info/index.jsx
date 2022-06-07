@@ -1,4 +1,4 @@
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
@@ -17,7 +17,8 @@ function makePrivacyLink( privacyLink, link ) {
 	return null;
 }
 
-function SupportInfo( { text, link, position, translate, privacyLink } ) {
+function SupportInfo( { text, link, position, privacyLink } ) {
+	const translate = useTranslate();
 	const filteredPrivacyLink = makePrivacyLink( privacyLink, link );
 
 	return (
@@ -56,4 +57,4 @@ SupportInfo.propTypes = {
 	privacyLink: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 };
 
-export default localize( SupportInfo );
+export default SupportInfo;

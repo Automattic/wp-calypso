@@ -1,11 +1,10 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { MouseEvent, useState } from 'react';
 import placeholder from 'calypso/assets/images/difm/placeholder.svg';
 import FilePicker from 'calypso/components/file-picker';
-import Spinner from 'calypso/components/spinner';
 import { useAddMedia } from 'calypso/data/media/use-add-media';
 import { Label, SubLabel } from 'calypso/signup/accordion-form/form-components';
 import { SiteData } from 'calypso/state/ui/selectors/site-data';

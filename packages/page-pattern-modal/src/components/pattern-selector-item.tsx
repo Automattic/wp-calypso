@@ -10,7 +10,7 @@ interface PatternSelectorItemProps {
 	value?: string;
 }
 
-const PatternSelectorItem = ( props: PatternSelectorItemProps ): JSX.Element | null => {
+const PatternSelectorItem = ( props: PatternSelectorItemProps ) => {
 	const { value, onSelect, title, description, theme, locale, patternPostID } = props;
 
 	if ( title == null || value == null ) {

@@ -1,16 +1,16 @@
 import { Page } from 'playwright';
-import type { Plans } from '../../types';
-
-const selectors = {
-	freePlan: 'button:text("start with a free site")',
-	paidPlan: ( target: Plans ) => `button.is-${ target.toLowerCase() }-plan`,
-};
+import { NewSiteResponse } from '../../rest-api-client';
+import { PlansPage, Plans } from './plans-page';
+import type { SiteDetails } from '../../rest-api-client';
 
 /**
- * Class representing Signup > Pick a Plan page.
+ * Represents the Signup > Pick a Plan page.
+ *
+ * With the overhauled Plans, this class is a thin wrapper around the PlansPage object.
  */
 export class SignupPickPlanPage {
 	private page: Page;
+	private plansPage: PlansPage;
 
 	/**
 	 * Constructs an instance of the component.
@@ -19,25 +19,31 @@ export class SignupPickPlanPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+		this.plansPage = new PlansPage( page, 'current' );
 	}
 
 	/**
 	 * Selects a WordPress.com plan matching the name, triggering site creation.
 	 *
 	 * @param {Plans} name Name of the plan.
+	 * @returns {Promise<SiteDetails>} Details of the newly created site.
 	 */
-	async selectPlan( name: Plans ): Promise< void > {
-		if ( name === 'Free' ) {
-			await Promise.all( [
-				this.page.waitForNavigation( { timeout: 60000, waitUntil: 'load' } ),
-				this.page.click( selectors.freePlan ),
-			] );
-		} else {
-			await Promise.all( [
-				// Extend timeout in case the site creation step takes longer than expected.
-				this.page.waitForNavigation( { timeout: 60000, waitUntil: 'load' } ),
-				this.page.click( selectors.paidPlan( name ) ),
-			] );
+	async selectPlan( name: Plans ): Promise< SiteDetails > {
+		const [ response ] = await Promise.all( [
+			this.page.waitForResponse( /.*sites\/new\?.*/ ),
+			this.plansPage.selectPlan( name ),
+		] );
+
+		if ( ! response ) {
+			throw new Error( 'Failed to create new site when selecting a plan at signup.' );
 		}
+
+		const responseBody: NewSiteResponse = await response.json();
+
+		return {
+			id: responseBody.body.blog_details.blogid,
+			url: responseBody.body.blog_details.url,
+			name: responseBody.body.blog_details.blogname,
+		};
 	}
 }

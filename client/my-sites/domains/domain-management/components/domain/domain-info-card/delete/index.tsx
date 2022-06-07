@@ -17,7 +17,7 @@ const DomainDeleteInfoCard = ( {
 	selectedSite,
 	purchase,
 	isLoadingPurchase,
-}: DomainDeleteInfoCardProps ): JSX.Element | null => {
+}: DomainDeleteInfoCardProps ) => {
 	const translate = useTranslate();
 
 	if (

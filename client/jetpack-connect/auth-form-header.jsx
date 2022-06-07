@@ -1,3 +1,4 @@
+import { safeImageUrl } from '@automattic/calypso-url';
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -6,7 +7,6 @@ import { connect } from 'react-redux';
 import Site from 'calypso/blocks/site';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { decodeEntities } from 'calypso/lib/formatting';
-import safeImageUrl from 'calypso/lib/safe-image-url';
 import versionCompare from 'calypso/lib/version-compare';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getAuthorizationData } from 'calypso/state/jetpack-connect/selectors';

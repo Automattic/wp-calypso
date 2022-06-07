@@ -12,6 +12,7 @@ import {
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { getIntroductoryOfferIntervalDisplay } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -221,15 +222,20 @@ function PurchaseMetaOwner( { owner } ) {
 
 function PurchaseMetaPrice( { purchase } ) {
 	const translate = useTranslate();
-	const { priceText, productSlug } = purchase;
+	const { productSlug, productDisplayPrice } = purchase;
 	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
 	let period = translate( 'year' );
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
-		// translators: %(priceText)s is the price of the purchase with localized currency (i.e. "C$10")
-		return translate( '%(priceText)s {{period}}(one-time){{/period}}', {
-			args: { priceText },
+		// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10")
+		return translate( '{{displayPrice/}} {{period}}(one-time){{/period}}', {
 			components: {
+				displayPrice: (
+					<span
+						// eslint-disable-next-line react/no-danger
+						dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
+					/>
+				),
 				period: <span className="manage-purchase__time-period" />,
 			},
 		} );
@@ -255,10 +261,16 @@ function PurchaseMetaPrice( { purchase } ) {
 		period = translate( 'month' );
 	}
 
-	// translators: %(priceText)s is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
-	return translate( '%(priceText)s {{period}}/ %(period)s{{/period}}', {
-		args: { priceText, period },
+	// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
+	return translate( '{{displayPrice/}} {{period}}/ %(period)s{{/period}}', {
+		args: { period },
 		components: {
+			displayPrice: (
+				<span
+					// eslint-disable-next-line react/no-danger
+					dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
+				/>
+			),
 			period: <span className="manage-purchase__time-period" />,
 		},
 	} );
@@ -357,20 +369,35 @@ function RenewErrorMessage( { purchase, translate, site } ) {
 	if ( isJetpack ) {
 		return (
 			<div className="manage-purchase__footnotes">
+				{ isExpired( purchase )
+					? translate(
+							'%(purchaseName)s expired on %(siteSlug)s, and the site is no longer connected to WordPress.com. ' +
+								'To renew this purchase, please reconnect %(siteSlug)s to your WordPress.com account, then complete your purchase.',
+							{
+								args: {
+									purchaseName: getName( purchase ),
+									siteSlug: purchase.domain,
+								},
+							}
+					  )
+					: translate( 'The site %(siteSlug)s is no longer connected to WordPress.com.', {
+							args: {
+								siteSlug: purchase.domain,
+							},
+					  } ) }
+				&nbsp;
 				{ translate(
-					'%(purchaseName)s expired on %(siteSlug)s, and the site is no longer connected to WordPress.com. ' +
-						'To renew this purchase, please reconnect %(siteSlug)s to your WordPress.com account, then complete your purchase. ' +
-						'Now sure how to reconnect? {{supportPageLink}}Here are the instructions{{/supportPageLink}}.',
+					'Not sure how to reconnect? {{supportPageLink}}Here are the instructions{{/supportPageLink}}.',
 					{
 						args: {
-							purchaseName: getName( purchase ),
 							siteSlug: purchase.domain,
 						},
 						components: {
 							supportPageLink: (
 								<a
 									href={
-										JETPACK_SUPPORT + 'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
+										localizeUrl( JETPACK_SUPPORT ) +
+										'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
 									}
 								/>
 							),

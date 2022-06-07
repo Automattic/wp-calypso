@@ -4,6 +4,8 @@ import {
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
+	JETPACK_BOOST_PRODUCTS,
+	JETPACK_PERFORMANCE_CATEGORY,
 	JETPACK_SECURITY_CATEGORY,
 	JETPACK_GROWTH_CATEGORY,
 } from '@automattic/calypso-products';
@@ -16,11 +18,14 @@ import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner'
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import CategoryFilter from '../category-filter';
+import JetpackBoostFreeCard from '../jetpack-boost-free-card';
 import JetpackCrmFreeCard from '../jetpack-crm-free-card';
 import JetpackFreeCard from '../jetpack-free-card';
+import JetpackSocialFreeCard from '../jetpack-social-free-card';
 import MoreInfoBox from '../more-info-box';
 import PlanUpgradeSection from '../plan-upgrade';
 import PlansFilterBar from '../plans-filter-bar';
@@ -100,14 +105,13 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	onDurationChange,
 	scrollCardIntoView,
 	createButtonURL,
-	isPricingPageTreatment202204,
-	isPricingPageTest202204AssignmentLoading,
 } ) => {
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
 	const showProductCategories = ! isDesktop;
 
 	const showAnnualPlansOnly = config.isEnabled( 'jetpack/pricing-page-annual-only' );
+	const showBoostAndSocialFree = config.isEnabled( 'jetpack/pricing-add-boost-social' );
 
 	const [ category, setCategory ] = useState< JetpackProductCategory >();
 	const onCategoryChange = useCallback( setCategory, [ setCategory ] );
@@ -116,6 +120,11 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const currentPlanSlug = currentPlan?.product_slug || null;
+	const currentRoute = useSelector( getCurrentRoute );
+
+	const isStoreLanding =
+		currentRoute === '/jetpack/connect/store' ||
+		currentRoute.match( new RegExp( '^/jetpack/connect/plans/[^/]+/?(monthly|annual)?$' ) );
 
 	// Retrieve and cache the plans array, which might be already translated.
 	useEffect( () => {
@@ -137,8 +146,10 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 	}, [ duration, currentPlanSlug, translate ] );
 
 	const { shouldWrap: shouldWrapGrid, gridRef } = useWrapGridForSmallScreens( 3 );
-	const { availableProducts, purchasedProducts, includedInPlanProducts } = useGetPlansGridProducts(
-		siteId
+	const { availableProducts, purchasedProducts, includedInPlanProducts } =
+		useGetPlansGridProducts( siteId );
+	const siteHasBoostPremium = purchasedProducts.some( ( product ) =>
+		( JETPACK_BOOST_PRODUCTS as ReadonlyArray< string > ).includes( product.productSlug )
 	);
 	const [ popularItems, otherItems ] = useMemo( () => {
 		const allItems = sortByGridPosition( [
@@ -201,11 +212,13 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 				scrollCardIntoView={ scrollCardIntoView }
 				createButtonURL={ createButtonURL }
 				collapseFeaturesOnMobile
-				isPricingPageTreatment202204={ isPricingPageTreatment202204 }
-				isPricingPageTest202204AssignmentLoading={ isPricingPageTest202204AssignmentLoading }
 			/>
 		</li>
 	);
+
+	const showFourColumnGrid =
+		config.isEnabled( 'jetpack/pricing-add-boost-social' ) &&
+		( isJetpackCloud() || isStoreLanding );
 
 	return (
 		<>
@@ -255,10 +268,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 									isFeatured={ isFeatured }
 									scrollCardIntoView={ scrollCardIntoView }
 									createButtonURL={ createButtonURL }
-									isPricingPageTreatment202204={ isPricingPageTreatment202204 }
-									isPricingPageTest202204AssignmentLoading={
-										isPricingPageTest202204AssignmentLoading
-									}
 								/>
 							</li>
 						);
@@ -276,31 +285,50 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					/>
 				</div>
 			</ProductGridSection>
-			<ProductGridSection title={ translate( 'More Products' ) }>
-				<>
-					{ showProductCategories && (
-						<div className="product-grid__category-filter">
-							<CategoryFilter
-								defaultValue={ JETPACK_SECURITY_CATEGORY }
-								onChange={ onCategoryChange }
-							/>
-						</div>
-					) }
-					<ul className="product-grid__product-grid">
-						{ filteredItems.map( getOtherItemsProductCard ) }
-						{ ( ! showProductCategories || category === JETPACK_GROWTH_CATEGORY ) && (
-							<li>
-								<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
-							</li>
+			<div className={ classNames( { 'product-grid__fullwidth-wrapper': showFourColumnGrid } ) }>
+				<ProductGridSection
+					title={ translate( 'More Products' ) }
+					{ ...( showFourColumnGrid && { className: 'product-grid__wide-grid' } ) }
+				>
+					<>
+						{ showProductCategories && (
+							<div className="product-grid__category-filter">
+								<CategoryFilter
+									defaultValue={ JETPACK_SECURITY_CATEGORY }
+									onChange={ onCategoryChange }
+								/>
+							</div>
 						) }
-						{ showFreeCard && (
-							<li>
-								<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
-							</li>
-						) }
-					</ul>
-				</>
-			</ProductGridSection>
+						<ul className="product-grid__product-grid">
+							{ filteredItems.map( getOtherItemsProductCard ) }
+							{ ( ! showProductCategories || category === JETPACK_PERFORMANCE_CATEGORY ) &&
+								showBoostAndSocialFree &&
+								! siteHasBoostPremium && (
+									<li>
+										<JetpackBoostFreeCard siteId={ siteId } />
+									</li>
+								) }
+							{ ( ! showProductCategories || category === JETPACK_GROWTH_CATEGORY ) && (
+								<>
+									{ showBoostAndSocialFree && (
+										<li>
+											<JetpackSocialFreeCard siteId={ siteId } />
+										</li>
+									) }
+									<li>
+										<JetpackCrmFreeCard siteId={ siteId } duration={ duration } />
+									</li>
+								</>
+							) }
+							{ showFreeCard && (
+								<li>
+									<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+								</li>
+							) }
+						</ul>
+					</>
+				</ProductGridSection>
+			</div>
 			<StoreFooter />
 		</>
 	);

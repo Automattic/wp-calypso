@@ -10,9 +10,10 @@ import {
 	TestAccount,
 	PostsPage,
 	ParagraphBlock,
-	SnackbarNotificationComponent,
+	NoticeComponent,
 	getTestAccountByFeature,
 	envToFeatureKey,
+	ElementHelper,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -69,7 +70,14 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 			const testPage = await browser.newPage();
 			await testPage.goto( postURL.href );
 
-			await ParagraphBlock.validatePublishedContent( testPage, [ originalContent ] );
+			// Work around issue:
+			// https://github.com/Automattic/wp-calypso/issues/57503
+			await ElementHelper.reloadAndRetry( testPage, validatePublishedPage );
+
+			async function validatePublishedPage(): Promise< void > {
+				await ParagraphBlock.validatePublishedContent( testPage, [ originalContent ] );
+			}
+
 			await testPage.close();
 		} );
 	} );
@@ -134,8 +142,8 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Confirmation notice is shown', async function () {
-			const snackbarNotificationComponent = new SnackbarNotificationComponent( page );
-			await snackbarNotificationComponent.noticeShown( 'Post successfully moved to trash.', {
+			const noticeComponent = new NoticeComponent( page );
+			await noticeComponent.noticeShown( 'Post successfully moved to trash.', {
 				type: 'Success',
 			} );
 		} );
@@ -151,8 +159,8 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Confirmation notice is shown', async function () {
-			const snackbarNotificationComponent = new SnackbarNotificationComponent( page );
-			await snackbarNotificationComponent.noticeShown( 'Post successfully deleted', {
+			const noticeComponent = new NoticeComponent( page );
+			await noticeComponent.noticeShown( 'Post successfully deleted', {
 				type: 'Success',
 			} );
 		} );

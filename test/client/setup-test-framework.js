@@ -1,3 +1,5 @@
+import '@testing-library/jest-dom';
+
 const nock = require( 'nock' );
 
 // Disables all network requests for all tests.
@@ -41,26 +43,14 @@ jest.mock( 'enzyme', () => {
 	return actualEnzyme;
 } );
 
-// It "mocks" sinon, so that we can delay loading of
-// the utility functions until sinon is imported in tests.
-let mockSinonSetup = false;
-
-jest.mock( 'sinon', () => {
-	const actualSinon = jest.requireActual( 'sinon' );
-	if ( ! mockSinonSetup ) {
-		mockSinonSetup = true;
-
-		// configure custom sinon matchers for chai
-		const chai = jest.requireActual( 'chai' );
-		const sinonChai = jest.requireActual( 'sinon-chai' );
-		chai.use( sinonChai );
-		actualSinon.assert.expose( chai.assert, { prefix: '' } );
-	}
-	return actualSinon;
-} );
-
 // This is used by @wordpress/components in https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/ui/utils/space.ts#L33
 // JSDOM or CSSDOM don't provide an implementation for it, so for now we have to mock it.
 global.CSS = {
 	supports: jest.fn(),
 };
+
+// Don't need to mock specific functions for any tests, but mocking
+// module because it accesses the `document` global.
+jest.mock( 'wpcom-proxy-request', () => ( {
+	__esModule: true,
+} ) );

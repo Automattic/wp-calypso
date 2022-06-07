@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { shuffle } from '@automattic/js-utils';
 import { addQueryArgs } from '@wordpress/url';
+import { DEFAULT_VIEWPORT_WIDTH, MOBILE_VIEWPORT_WIDTH } from '../constants';
 import { availableDesignsConfig } from './available-designs-config';
 import type { Design, DesignUrlOptions } from '../types';
 import type { AvailableDesigns } from './available-designs-config';
@@ -41,12 +42,22 @@ export const getDesignUrl = (
 	return url;
 };
 
+type MShotInputOptions = {
+	scrollable?: boolean;
+	highRes?: boolean;
+	isMobile?: boolean;
+};
+
 // Used for both prefetching and loading design screenshots
-export const mShotOptions = ( { preview }: Design, highRes: boolean ): MShotsOptions => {
+export const getMShotOptions = ( {
+	scrollable,
+	highRes,
+	isMobile,
+}: MShotInputOptions = {} ): MShotsOptions => {
 	// Take care changing these values, as the design-picker CSS animations are written for these values (see the *__landscape and *__portrait classes)
 	return {
-		vpw: 1600,
-		vph: preview === 'static' ? 1040 : 1600,
+		vpw: isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH,
+		vph: scrollable ? 1600 : 1040,
 		// When `w` was 1200 it created a visual glitch on one thumbnail. #57261
 		w: highRes ? 1199 : 600,
 		screen_height: 3600,

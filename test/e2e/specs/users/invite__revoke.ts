@@ -9,6 +9,7 @@ import {
 	InvitePeoplePage,
 	PeoplePage,
 	TestAccount,
+	SecretsManager,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -16,7 +17,7 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 	const newUsername = `e2eflowtestingviewer${ DataHelper.getTimestamp() }`;
-	const inboxId = DataHelper.config.get( 'inviteInboxId' ) as string;
+	const inboxId = SecretsManager.secrets.mailosaur.inviteInboxId;
 	const testEmailAddress = DataHelper.getTestEmailAddress( {
 		inboxId: inboxId,
 		prefix: newUsername,

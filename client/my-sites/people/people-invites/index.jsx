@@ -1,4 +1,4 @@
-import { Card, Button, Dialog, Gridicon } from '@automattic/components';
+import { Card, Button, Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -25,6 +25,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import InviteButton from '../invite-button';
 import InvitesListEnd from './invites-list-end';
 
 import './style.scss';
@@ -106,14 +107,8 @@ class PeopleInvites extends PureComponent {
 	}
 
 	renderInvitesList() {
-		const {
-			acceptedInvites,
-			pendingInvites,
-			totalInvitesFound,
-			requesting,
-			site,
-			translate,
-		} = this.props;
+		const { acceptedInvites, pendingInvites, totalInvitesFound, requesting, site, translate } =
+			this.props;
 
 		if ( ! site || ! site.ID ) {
 			return this.renderPlaceholder();
@@ -220,14 +215,9 @@ class PeopleInvites extends PureComponent {
 	}
 
 	renderInviteUsersAction( isPrimary = true ) {
-		const { site, translate } = this.props;
+		const { site } = this.props;
 
-		return (
-			<Button primary={ isPrimary } href={ `/people/new/${ site.slug }` }>
-				<Gridicon icon="user-add" />
-				<span>{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }</span>
-			</Button>
-		);
+		return <InviteButton primary={ isPrimary } siteSlug={ site.slug } />;
 	}
 
 	renderPlaceholder() {

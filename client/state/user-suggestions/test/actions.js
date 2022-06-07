@@ -1,6 +1,5 @@
 import deepFreeze from 'deep-freeze';
 import nock from 'nock';
-import sinon from 'sinon';
 import {
 	USER_SUGGESTIONS_RECEIVE,
 	USER_SUGGESTIONS_REQUEST,
@@ -11,12 +10,6 @@ import sampleSuccessResponse from './sample-response.json';
 const siteId = 123;
 
 describe( 'actions', () => {
-	const spy = sinon.spy();
-
-	beforeEach( () => {
-		spy.resetHistory();
-	} );
-
 	describe( '#receiveUserSuggestions()', () => {
 		test( 'should return an action object', () => {
 			const suggestions = [];

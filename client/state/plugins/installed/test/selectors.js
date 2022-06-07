@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import { pick } from 'lodash';
 import {
@@ -72,87 +71,87 @@ const state = deepFreeze( {
 
 describe( 'Installed plugin selectors', () => {
 	test( 'should contain isRequesting method', () => {
-		expect( selectors.isRequesting ).to.be.a( 'function' );
+		expect( selectors.isRequesting ).toBeInstanceOf( Function );
 	} );
 
 	test( 'should contain isRequestingForSites method', () => {
-		expect( selectors.isRequestingForSites ).to.be.a( 'function' );
+		expect( selectors.isRequestingForSites ).toBeInstanceOf( Function );
 	} );
 
 	test( 'should contain getPlugins method', () => {
-		expect( selectors.getPlugins ).to.be.a( 'function' );
+		expect( selectors.getPlugins ).toBeInstanceOf( Function );
 	} );
 
 	test( 'should contain getPluginsWithUpdates method', () => {
-		expect( selectors.getPluginsWithUpdates ).to.be.a( 'function' );
+		expect( selectors.getPluginsWithUpdates ).toBeInstanceOf( Function );
 	} );
 
 	test( 'should contain getPluginOnSite method', () => {
-		expect( selectors.getPluginOnSite ).to.be.a( 'function' );
+		expect( selectors.getPluginOnSite ).toBeInstanceOf( Function );
 	} );
 
 	test( 'should contain getSitesWithPlugin method', () => {
-		expect( selectors.getSitesWithPlugin ).to.be.a( 'function' );
+		expect( selectors.getSitesWithPlugin ).toBeInstanceOf( Function );
 	} );
 
 	test( 'should contain getSiteObjectsWithPlugin method', () => {
-		expect( selectors.getSiteObjectsWithPlugin ).to.be.a( 'function' );
+		expect( selectors.getSiteObjectsWithPlugin ).toBeInstanceOf( Function );
 	} );
 
 	test( 'should contain getSitesWithoutPlugin method', () => {
-		expect( selectors.getSitesWithoutPlugin ).to.be.a( 'function' );
+		expect( selectors.getSitesWithoutPlugin ).toBeInstanceOf( Function );
 	} );
 
 	test( 'should contain getLogsForPlugin method', () => {
-		expect( selectors.getStatusForPlugin ).to.be.a( 'function' );
+		expect( selectors.getStatusForPlugin ).toBeInstanceOf( Function );
 	} );
 
 	describe( 'isRequesting', () => {
 		test( 'Should get `false` if this site is not in the current state', () => {
-			expect( selectors.isRequesting( state, 'no.site' ) ).to.be.false;
+			expect( selectors.isRequesting( state, 'no.site' ) ).toBe( false );
 		} );
 
 		test( 'Should get `false` if this site is not being fetched', () => {
-			expect( selectors.isRequesting( state, 'site.one' ) ).to.be.false;
+			expect( selectors.isRequesting( state, 'site.one' ) ).toBe( false );
 		} );
 
 		test( 'Should get `true` if this site is being fetched', () => {
-			expect( selectors.isRequesting( state, 'site.three' ) ).to.be.true;
+			expect( selectors.isRequesting( state, 'site.three' ) ).toBe( true );
 		} );
 	} );
 
 	describe( 'isRequestingForSites', () => {
 		test( 'Should get `false` if no sites are being fetched', () => {
-			expect( selectors.isRequestingForSites( state, [ 'site.one', 'site.two' ] ) ).to.be.false;
+			expect( selectors.isRequestingForSites( state, [ 'site.one', 'site.two' ] ) ).toBe( false );
 		} );
 
 		test( 'Should get `true` if any site is being fetched', () => {
-			expect( selectors.isRequestingForSites( state, [ 'site.one', 'site.three' ] ) ).to.be.true;
+			expect( selectors.isRequestingForSites( state, [ 'site.one', 'site.three' ] ) ).toBe( true );
 		} );
 
 		test( 'Should get `true` if any site is being fetched, even if one is not in the current state', () => {
-			expect( selectors.isRequestingForSites( state, [ 'no.site', 'site.three' ] ) ).to.be.true;
+			expect( selectors.isRequestingForSites( state, [ 'no.site', 'site.three' ] ) ).toBe( true );
 		} );
 
 		test( 'Should get `false` if sites are not being fetched, including a site not in the current state', () => {
-			expect( selectors.isRequestingForSites( state, [ 'no.site', 'site.two' ] ) ).to.be.false;
+			expect( selectors.isRequestingForSites( state, [ 'no.site', 'site.two' ] ) ).toBe( false );
 		} );
 	} );
 
 	describe( 'getPlugins', () => {
 		test( 'Should get an empty array if the requested site is not in the current state', () => {
 			const plugins = selectors.getPlugins( state, [ 'no.site' ] );
-			expect( plugins ).to.have.lengthOf( 0 );
+			expect( plugins ).toHaveLength( 0 );
 		} );
 
 		test( 'Should get an empty array if the plugins for this site are still being requested', () => {
 			const plugins = selectors.getPlugins( state, [ 'site.three' ] );
-			expect( plugins ).to.have.lengthOf( 0 );
+			expect( plugins ).toHaveLength( 0 );
 		} );
 
 		test( 'Should get a plugin list of length 3 if both sites are requested', () => {
 			const plugins = selectors.getPlugins( state, [ 'site.one', 'site.two' ] );
-			expect( plugins ).to.have.lengthOf( 3 );
+			expect( plugins ).toHaveLength( 3 );
 		} );
 
 		test( 'Should get a plugin list containing jetpack if both sites are requested', () => {
@@ -162,44 +161,46 @@ describe( 'Installed plugin selectors', () => {
 			const siteWithPlugin = {
 				[ siteTwoId ]: pick( jetpack, [ 'active', 'autoupdate', 'update' ] ),
 			};
-			expect( plugins ).to.deep.include( { ...jetpack, sites: siteWithPlugin } );
+			expect( plugins ).toEqual(
+				expect.arrayContaining( [ { ...jetpack, sites: siteWithPlugin } ] )
+			);
 		} );
 
 		test( 'Should get a plugin list of length 2 if only site 1 is requested', () => {
 			const plugins = selectors.getPlugins( state, [ 'site.one' ] );
-			expect( plugins ).to.have.lengthOf( 2 );
+			expect( plugins ).toHaveLength( 2 );
 		} );
 
 		test( 'Should get a plugin list of length 2 if active plugins on both sites are requested', () => {
 			const plugins = selectors.getPlugins( state, [ 'site.one', 'site.two' ], 'active' );
-			expect( plugins ).to.have.lengthOf( 2 );
+			expect( plugins ).toHaveLength( 2 );
 		} );
 
 		test( 'Should get a plugin list of length 1 if inactive plugins on site 1 is requested', () => {
 			const plugins = selectors.getPlugins( state, [ 'site.one' ], 'inactive' );
-			expect( plugins ).to.have.lengthOf( 1 );
+			expect( plugins ).toHaveLength( 1 );
 		} );
 	} );
 
 	describe( 'getPluginsWithUpdates', () => {
 		test( 'Should get an empty array if the requested site is not in the current state', () => {
 			const plugins = selectors.getPluginsWithUpdates( state, [ 'no.site' ] );
-			expect( plugins ).to.have.lengthOf( 0 );
+			expect( plugins ).toHaveLength( 0 );
 		} );
 
 		test( 'Should get a plugin list of length 1 when we can update files on the site', () => {
 			const plugins = selectors.getPluginsWithUpdates( state, [ 'site.one', 'site.two' ] );
-			expect( plugins ).to.have.lengthOf( 1 );
+			expect( plugins ).toHaveLength( 1 );
 		} );
 	} );
 
 	describe( 'getPluginOnSite', () => {
 		test( 'Should get an undefined value if the requested site is not in the current state', () => {
-			expect( selectors.getPluginOnSite( state, 'no.site', 'akismet' ) ).to.be.undefined;
+			expect( selectors.getPluginOnSite( state, 'no.site', 'akismet' ) ).toBeUndefined();
 		} );
 
 		test( 'Should get an undefined value if the requested plugin on this site is not in the current state', () => {
-			expect( selectors.getPluginOnSite( state, 'site.one', 'jetpack' ) ).to.be.undefined;
+			expect( selectors.getPluginOnSite( state, 'site.one', 'jetpack' ) ).toBeUndefined();
 		} );
 
 		test( 'Should get the plugin if the it exists on the requested site', () => {
@@ -208,18 +209,18 @@ describe( 'Installed plugin selectors', () => {
 			const siteWithPlugin = {
 				[ siteOneId ]: pick( akismet, [ 'active', 'autoupdate', 'update' ] ),
 			};
-			expect( plugin ).to.eql( { ...akismet, sites: siteWithPlugin } );
+			expect( plugin ).toEqual( { ...akismet, sites: siteWithPlugin } );
 		} );
 	} );
 
 	describe( 'getPluginOnSites', () => {
 		test( 'Should get an undefined value if the requested sites are not in the current state', () => {
 			const siteIds = [ 'no.site', 'some.site' ];
-			expect( selectors.getPluginOnSites( state, siteIds, 'akismet' ) ).to.be.undefined;
+			expect( selectors.getPluginOnSites( state, siteIds, 'akismet' ) ).toBeUndefined();
 		} );
 
 		test( 'Should get an undefined value if the requested plugin on these sites is not in the current state', () => {
-			expect( selectors.getPluginOnSites( state, [ 'site.one' ], 'jetpack' ) ).to.be.undefined;
+			expect( selectors.getPluginOnSites( state, [ 'site.one' ], 'jetpack' ) ).toBeUndefined();
 		} );
 
 		test( 'Should get the plugin if the it exists on one or more of the requested sites', () => {
@@ -229,40 +230,38 @@ describe( 'Installed plugin selectors', () => {
 				[ 'site.one' ]: pick( helloDolly, [ 'active', 'autoupdate', 'update' ] ),
 				[ 'site.two' ]: pick( helloDolly, [ 'active', 'autoupdate', 'update' ] ),
 			};
-			expect( plugin ).to.eql( { ...helloDolly, sites: sitesWithPlugins } );
+			expect( plugin ).toEqual( { ...helloDolly, sites: sitesWithPlugins } );
 		} );
 	} );
 
 	describe( 'getSitesWithPlugin', () => {
 		test( 'Should get an empty array if the requested site is not in the current state', () => {
-			expect( selectors.getSitesWithPlugin( state, [ 'no.site' ], 'akismet' ) ).to.have.lengthOf(
+			expect( selectors.getSitesWithPlugin( state, [ 'no.site' ], 'akismet' ) ).toHaveLength( 0 );
+		} );
+
+		test( "Should get an empty array if the requested plugin doesn't exist on any sites' state", () => {
+			expect(
+				selectors.getSitesWithPlugin( state, [ 'site.one', 'site.two' ], 'vaultpress' )
+			).toHaveLength( 0 );
+		} );
+
+		test( 'Should get an array of sites with the requested plugin', () => {
+			const siteIds = selectors.getSitesWithPlugin( state, [ 'site.one', 'site.two' ], 'jetpack' );
+			expect( siteIds ).toEqual( [ 'site.two' ] );
+		} );
+	} );
+
+	describe( 'getSiteObjectsWithPlugin', () => {
+		test( 'Should get an empty array if the requested site is not in the current state', () => {
+			expect( selectors.getSiteObjectsWithPlugin( state, [ 'no.site' ], 'akismet' ) ).toHaveLength(
 				0
 			);
 		} );
 
 		test( "Should get an empty array if the requested plugin doesn't exist on any sites' state", () => {
 			expect(
-				selectors.getSitesWithPlugin( state, [ 'site.one', 'site.two' ], 'vaultpress' )
-			).to.have.lengthOf( 0 );
-		} );
-
-		test( 'Should get an array of sites with the requested plugin', () => {
-			const siteIds = selectors.getSitesWithPlugin( state, [ 'site.one', 'site.two' ], 'jetpack' );
-			expect( siteIds ).to.eql( [ 'site.two' ] );
-		} );
-	} );
-
-	describe( 'getSiteObjectsWithPlugin', () => {
-		test( 'Should get an empty array if the requested site is not in the current state', () => {
-			expect(
-				selectors.getSiteObjectsWithPlugin( state, [ 'no.site' ], 'akismet' )
-			).to.have.lengthOf( 0 );
-		} );
-
-		test( "Should get an empty array if the requested plugin doesn't exist on any sites' state", () => {
-			expect(
 				selectors.getSiteObjectsWithPlugin( state, [ 'site.one', 'site.two' ], 'vaultpress' )
-			).to.have.lengthOf( 0 );
+			).toHaveLength( 0 );
 		} );
 
 		test( 'Should get an array of sites with the requested plugin', () => {
@@ -271,13 +270,13 @@ describe( 'Installed plugin selectors', () => {
 				[ 'site.one', 'site.two' ],
 				'jetpack'
 			);
-			expect( siteIds ).to.eql( [ getSite( state, 'site.two' ) ] );
+			expect( siteIds ).toEqual( [ getSite( state, 'site.two' ) ] );
 		} );
 	} );
 
 	describe( 'getSitesWithoutPlugin', () => {
 		test( 'Should get an empty array if the requested site is not in the current state', () => {
-			expect( selectors.getSitesWithoutPlugin( state, [ 'no.site' ], 'akismet' ) ).to.have.lengthOf(
+			expect( selectors.getSitesWithoutPlugin( state, [ 'no.site' ], 'akismet' ) ).toHaveLength(
 				0
 			);
 		} );
@@ -288,7 +287,7 @@ describe( 'Installed plugin selectors', () => {
 				[ 'site.one', 'site.two' ],
 				'akismet'
 			);
-			expect( siteIds ).to.eql( [ 'site.two' ] );
+			expect( siteIds ).toEqual( [ 'site.two' ] );
 		} );
 
 		test( 'Should get an empty array if the requested plugin exists on all requested sites', () => {
@@ -297,21 +296,23 @@ describe( 'Installed plugin selectors', () => {
 				[ 'site.one', 'site.two' ],
 				'hello-dolly'
 			);
-			expect( siteIds ).to.have.lengthOf( 0 );
+			expect( siteIds ).toHaveLength( 0 );
 		} );
 	} );
 
 	describe( 'getStatusForPlugin', () => {
 		test( 'Should get `false` if the requested site is not in the current state', () => {
-			expect( selectors.getStatusForPlugin( state, 'no.site', 'akismet/akismet' ) ).to.be.false;
+			expect( selectors.getStatusForPlugin( state, 'no.site', 'akismet/akismet' ) ).toBe( false );
 		} );
 
 		test( 'Should get `false` if the requested plugin on this site is not in the current state', () => {
-			expect( selectors.getStatusForPlugin( state, 'site.one', 'hello-dolly/hello' ) ).to.be.false;
+			expect( selectors.getStatusForPlugin( state, 'site.one', 'hello-dolly/hello' ) ).toBe(
+				false
+			);
 		} );
 
 		test( 'Should get the log if the requested site & plugin have logs', () => {
-			expect( selectors.getStatusForPlugin( state, 'site.one', 'akismet/akismet' ) ).to.eql( {
+			expect( selectors.getStatusForPlugin( state, 'site.one', 'akismet/akismet' ) ).toEqual( {
 				status: 'inProgress',
 				siteId: 'site.one',
 				pluginId: 'akismet/akismet',
@@ -330,7 +331,7 @@ describe( 'Installed plugin selectors', () => {
 					DEACTIVATE_PLUGIN,
 					'completed'
 				)
-			).to.be.false;
+			).toBe( false );
 		} );
 
 		test( 'Should get `false` if the plugin status for the action does not exist.', () => {
@@ -342,7 +343,7 @@ describe( 'Installed plugin selectors', () => {
 					INSTALL_PLUGIN,
 					'completed'
 				)
-			).to.be.false;
+			).toBe( false );
 		} );
 
 		test( 'Should get `false` if the plugin status for the action does not match the status.', () => {
@@ -354,7 +355,7 @@ describe( 'Installed plugin selectors', () => {
 					DEACTIVATE_PLUGIN,
 					'inProgress'
 				)
-			).to.be.false;
+			).toBe( false );
 		} );
 
 		test( 'Should get `false` if the plugin status for none of the actions matches the status.', () => {
@@ -366,7 +367,7 @@ describe( 'Installed plugin selectors', () => {
 					[ INSTALL_PLUGIN, ENABLE_AUTOUPDATE_PLUGIN ],
 					'completed'
 				)
-			).to.be.false;
+			).toBe( false );
 		} );
 
 		test( 'Should get `true` if the plugin status for the action matches the status.', () => {
@@ -378,7 +379,7 @@ describe( 'Installed plugin selectors', () => {
 					DEACTIVATE_PLUGIN,
 					'completed'
 				)
-			).to.be.true;
+			).toBe( true );
 		} );
 
 		test( 'Should get `true` if the plugin status for one of the actions matches the status.', () => {
@@ -390,7 +391,7 @@ describe( 'Installed plugin selectors', () => {
 					[ INSTALL_PLUGIN, DEACTIVATE_PLUGIN ],
 					'completed'
 				)
-			).to.be.true;
+			).toBe( true );
 		} );
 	} );
 
@@ -403,7 +404,7 @@ describe( 'Installed plugin selectors', () => {
 					'jetpack/jetpack',
 					DEACTIVATE_PLUGIN
 				)
-			).to.be.false;
+			).toBe( false );
 		} );
 
 		test( 'Should get `true` if the plugin status for the action is "inProgress".', () => {
@@ -414,13 +415,13 @@ describe( 'Installed plugin selectors', () => {
 					'akismet/akismet',
 					ENABLE_AUTOUPDATE_PLUGIN
 				)
-			).to.be.true;
+			).toBe( true );
 		} );
 	} );
 
 	describe( 'getPluginStatusesByType', () => {
 		test( 'Should return a list of all plugin statuses, and add siteId and pluginId to each status.', () => {
-			expect( selectors.getPluginStatusesByType( state, 'completed' ) ).to.deep.equal( [
+			expect( selectors.getPluginStatusesByType( state, 'completed' ) ).toEqual( [
 				{
 					siteId: 'site.one',
 					pluginId: 'jetpack/jetpack',
@@ -431,7 +432,7 @@ describe( 'Installed plugin selectors', () => {
 		} );
 
 		test( 'Should return an empty array if there are no matching statuses of that type.', () => {
-			expect( selectors.getPluginStatusesByType( state, 'someOtherType' ) ).to.eql( [] );
+			expect( selectors.getPluginStatusesByType( state, 'someOtherType' ) ).toEqual( [] );
 		} );
 	} );
 } );

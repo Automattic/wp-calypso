@@ -1,9 +1,9 @@
+import { Spinner } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import Spinner from 'calypso/components/spinner';
 import wpcom from 'calypso/lib/wp';
 
 class EmailUnverifiedNotice extends Component {

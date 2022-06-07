@@ -1,6 +1,4 @@
-import { expect } from 'chai';
-import lodash from 'lodash';
-import sinon from 'sinon';
+import { cloneDeep } from 'lodash';
 import {
 	isRequestingInvitesForSite,
 	getPendingInvitesForSite,
@@ -25,7 +23,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isRequestingInvitesForSite( state, 67890 ) ).to.equal( true );
+			expect( isRequestingInvitesForSite( state, 67890 ) ).toEqual( true );
 		} );
 
 		test( 'should return false when request is complete', () => {
@@ -37,7 +35,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isRequestingInvitesForSite( state, 12345 ) ).to.equal( false );
+			expect( isRequestingInvitesForSite( state, 12345 ) ).toEqual( false );
 		} );
 
 		test( 'should return false when invites have not been requested', () => {
@@ -46,7 +44,7 @@ describe( 'selectors', () => {
 					requesting: {},
 				},
 			};
-			expect( isRequestingInvitesForSite( state, 12345 ) ).to.equal( false );
+			expect( isRequestingInvitesForSite( state, 12345 ) ).toEqual( false );
 		} );
 	} );
 
@@ -83,7 +81,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getPendingInvitesForSite( state, 12345 ) ).to.eql(
+			expect( getPendingInvitesForSite( state, 12345 ) ).toEqual(
 				state.invites.items[ 12345 ].pending
 			);
 		} );
@@ -112,7 +110,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getPendingInvitesForSite( state, 12345 ) ).to.eql( [] );
+			expect( getPendingInvitesForSite( state, 12345 ) ).toEqual( [] );
 		} );
 
 		test( 'should return null if no invites for site', () => {
@@ -121,7 +119,7 @@ describe( 'selectors', () => {
 					items: {},
 				},
 			};
-			expect( getPendingInvitesForSite( state, 12345 ) ).to.equal( null );
+			expect( getPendingInvitesForSite( state, 12345 ) ).toBeNull();
 		} );
 	} );
 
@@ -150,7 +148,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getAcceptedInvitesForSite( state, 12345 ) ).to.eql(
+			expect( getAcceptedInvitesForSite( state, 12345 ) ).toEqual(
 				state.invites.items[ 12345 ].accepted
 			);
 		} );
@@ -179,7 +177,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getAcceptedInvitesForSite( state, 12345 ) ).to.eql( [] );
+			expect( getAcceptedInvitesForSite( state, 12345 ) ).toEqual( [] );
 		} );
 
 		test( 'should return null if no invites for site', () => {
@@ -188,19 +186,11 @@ describe( 'selectors', () => {
 					items: {},
 				},
 			};
-			expect( getAcceptedInvitesForSite( state, 12345 ) ).to.equal( null );
+			expect( getAcceptedInvitesForSite( state, 12345 ) ).toBeNull();
 		} );
 	} );
 
 	describe( '#getInviteForSite()', () => {
-		beforeAll( () => {
-			sinon.spy( lodash, 'find' );
-		} );
-
-		afterEach( () => {
-			lodash.find.resetHistory();
-		} );
-
 		test( 'should return invite', () => {
 			const state = {
 				invites: {
@@ -233,7 +223,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getInviteForSite( state, 12345, '123456asdf789' ) ).to.equal(
+			expect( getInviteForSite( state, 12345, '123456asdf789' ) ).toEqual(
 				state.invites.items[ 12345 ].pending[ 0 ]
 			);
 		} );
@@ -271,21 +261,16 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( lodash.find.callCount ).to.equal( 0 );
-
 			const call1 = getInviteForSite( state, 12345, '123456asdf789' );
-			expect( lodash.find.callCount ).to.equal( 2 );
-			expect( call1 ).to.equal( state.invites.items[ 12345 ].accepted[ 0 ] );
+			expect( call1 ).toBe( state.invites.items[ 12345 ].accepted[ 0 ] );
 
 			const call2 = getInviteForSite( state, 12345, '123456asdf789' );
-			expect( lodash.find.callCount ).to.equal( 2 );
-			expect( call1 ).to.equal( call2 );
+			expect( call1 ).toBe( call2 );
 
-			const newState = lodash.cloneDeep( state );
+			const newState = cloneDeep( state );
 			const call3 = getInviteForSite( newState, 12345, '123456asdf789' );
-			expect( lodash.find.callCount ).to.equal( 4 );
-			expect( call3 ).to.equal( newState.invites.items[ 12345 ].accepted[ 0 ] );
-			expect( call3 ).not.to.equal( call2 );
+			expect( call3 ).toEqual( newState.invites.items[ 12345 ].accepted[ 0 ] );
+			expect( call3 ).not.toBe( call2 );
 		} );
 
 		test( 'should return null when invites do not exist for site', () => {
@@ -294,7 +279,7 @@ describe( 'selectors', () => {
 					items: {},
 				},
 			};
-			expect( getInviteForSite( state, 12345, '123456asdf789' ) ).to.equal( null );
+			expect( getInviteForSite( state, 12345, '123456asdf789' ) ).toBeNull();
 		} );
 
 		test( 'should return null if the given invite key is not valid for site', () => {
@@ -329,7 +314,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getInviteForSite( state, 12345, '123456asdf000' ) ).to.equal( null );
+			expect( getInviteForSite( state, 12345, '123456asdf000' ) ).toBeNull();
 		} );
 	} );
 
@@ -343,7 +328,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isRequestingInviteResend( state, 67890, '789lkjh123456' ) ).to.equal( true );
+			expect( isRequestingInviteResend( state, 67890, '789lkjh123456' ) ).toEqual( true );
 		} );
 
 		test( 'should return false when resend request is complete', () => {
@@ -355,7 +340,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isRequestingInviteResend( state, 12345, '123456asdf789' ) ).to.equal( false );
+			expect( isRequestingInviteResend( state, 12345, '123456asdf789' ) ).toEqual( false );
 		} );
 
 		test( 'should return false when resend has not been requested', () => {
@@ -364,7 +349,7 @@ describe( 'selectors', () => {
 					requestingResend: {},
 				},
 			};
-			expect( isRequestingInviteResend( state, 12345, '9876asdf54321' ) ).to.equal( false );
+			expect( isRequestingInviteResend( state, 12345, '9876asdf54321' ) ).toEqual( false );
 		} );
 	} );
 
@@ -375,7 +360,7 @@ describe( 'selectors', () => {
 					counts: {},
 				},
 			};
-			expect( getNumberOfInvitesFoundForSite( state, 12345 ) ).to.equal( null );
+			expect( getNumberOfInvitesFoundForSite( state, 12345 ) ).toBeNull();
 		} );
 
 		test( 'should return the number found when count is known', () => {
@@ -386,7 +371,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getNumberOfInvitesFoundForSite( state, 12345 ) ).to.equal( 678 );
+			expect( getNumberOfInvitesFoundForSite( state, 12345 ) ).toEqual( 678 );
 		} );
 	} );
 
@@ -401,7 +386,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( didInviteResendSucceed( state, 12345, '123456asdf789' ) ).to.equal( true );
+			expect( didInviteResendSucceed( state, 12345, '123456asdf789' ) ).toEqual( true );
 		} );
 
 		test( 'should return false when a resend is pending', () => {
@@ -414,7 +399,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( didInviteResendSucceed( state, 67890, '789lkjh123456' ) ).to.equal( false );
+			expect( didInviteResendSucceed( state, 67890, '789lkjh123456' ) ).toEqual( false );
 		} );
 
 		test( 'should return false when a resend is failure', () => {
@@ -427,7 +412,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( didInviteResendSucceed( state, 34567, 'asdf987654321' ) ).to.equal( false );
+			expect( didInviteResendSucceed( state, 34567, 'asdf987654321' ) ).toEqual( false );
 		} );
 
 		test( 'should return false when resend has not been requested', () => {
@@ -436,7 +421,7 @@ describe( 'selectors', () => {
 					requestingResend: {},
 				},
 			};
-			expect( didInviteResendSucceed( state, 12345, '9876asdf54321' ) ).to.equal( false );
+			expect( didInviteResendSucceed( state, 12345, '9876asdf54321' ) ).toEqual( false );
 		} );
 	} );
 
@@ -449,7 +434,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( didInviteDeletionSucceed( state, 12345, '123456asdf789' ) ).to.equal( true );
+			expect( didInviteDeletionSucceed( state, 12345, '123456asdf789' ) ).toEqual( true );
 		} );
 
 		test( 'should return false when a deletion is pending', () => {
@@ -460,7 +445,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( didInviteDeletionSucceed( state, 67890, '789lkjh123456' ) ).to.equal( false );
+			expect( didInviteDeletionSucceed( state, 67890, '789lkjh123456' ) ).toEqual( false );
 		} );
 
 		test( 'should return false when a deletion is failure', () => {
@@ -471,7 +456,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( didInviteDeletionSucceed( state, 34567, 'asdf987654321' ) ).to.equal( false );
+			expect( didInviteDeletionSucceed( state, 34567, 'asdf987654321' ) ).toEqual( false );
 		} );
 
 		test( 'should return false when deletion has not been requested', () => {
@@ -480,7 +465,7 @@ describe( 'selectors', () => {
 					deleting: {},
 				},
 			};
-			expect( didInviteDeletionSucceed( state, 12345, '9876asdf54321' ) ).to.equal( false );
+			expect( didInviteDeletionSucceed( state, 12345, '9876asdf54321' ) ).toEqual( false );
 		} );
 	} );
 
@@ -493,7 +478,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isDeletingInvite( state, 67890, '789lkjh123456' ) ).to.equal( true );
+			expect( isDeletingInvite( state, 67890, '789lkjh123456' ) ).toEqual( true );
 		} );
 
 		test( 'should return false when deletion request is complete', () => {
@@ -504,7 +489,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isDeletingInvite( state, 12345, '123456asdf789' ) ).to.equal( false );
+			expect( isDeletingInvite( state, 12345, '123456asdf789' ) ).toEqual( false );
 		} );
 
 		test( 'should return false when deletion has not been requested', () => {
@@ -513,7 +498,7 @@ describe( 'selectors', () => {
 					deleting: {},
 				},
 			};
-			expect( isDeletingInvite( state, 12345, '9876asdf54321' ) ).to.equal( false );
+			expect( isDeletingInvite( state, 12345, '9876asdf54321' ) ).toEqual( false );
 		} );
 	} );
 
@@ -529,7 +514,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isDeletingAnyInvite( state, 12345 ) ).to.equal( true );
+			expect( isDeletingAnyInvite( state, 12345 ) ).toEqual( true );
 		} );
 
 		test( 'should return false when all deletion requests are complete', () => {
@@ -543,7 +528,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isDeletingAnyInvite( state, 12345 ) ).to.equal( false );
+			expect( isDeletingAnyInvite( state, 12345 ) ).toEqual( false );
 		} );
 
 		test( 'should return false when deletion has not been requested', () => {
@@ -552,7 +537,7 @@ describe( 'selectors', () => {
 					deleting: {},
 				},
 			};
-			expect( isDeletingAnyInvite( state, 12345 ) ).to.equal( false );
+			expect( isDeletingAnyInvite( state, 12345 ) ).toEqual( false );
 		} );
 	} );
 } );

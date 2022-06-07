@@ -16,7 +16,7 @@
   - [Advanced techniques](#advanced-techniques)
     - [Save authentication cookies](#save-authentication-cookies)
     - [Use the mobile viewport](#use-the-mobile-viewport)
-    - [Target local webapp](#target-local-webapp)
+    - [Target a different environment](#target-a-different-environment)
     - [Debug mode](#debug-mode)
       - [Notes on TypeScript](#notes-on-typescript)
 
@@ -62,11 +62,11 @@ See the [list of groups](docs/overview.md#what-is-tested).
 
 ### Save authentication cookies
 
-Specify accounts to be pre-authenticated by saving authentication cookies and reusing them for each test that is run against those accounts.
+Specified accounts will be pre-authenticated prior to the main test suite executions and their cookies saved to be re-used until expiry (typically 3 days).
 
-**Enable**
+Specify a list of user accounts found in [Secret Manager](packages/calypso-e2e/src/secrets/secrets-manager.ts), separated by commas:
 
-```
+```test/e2e/docs/tests_local.md
 export AUTHENTICATE_ACCOUNTS=simpleSitePersonalPlanUser,eCommerceUser,defaultUser
 ```
 
@@ -77,34 +77,34 @@ By default, tests run against the `desktop` viewport size, approximately 1920x10
 - mobile
 - desktop
 
-```
+To specify the viewport size:
+
+a. set the viewport size to persist in the shell: `export VIEWPORT_NAME=<viewport>`
+
+b. set the viewport size for the command only: `VIEWPORT_NAME=<viewport> yarn jest <test_path>`
+
+```bash
 VIEWPORT_NAME=mobile yarn jest ...
 ```
 
-### Target local webapp
+### Target a different environment
 
-Local webapp refers to a locally served instance of the `wp-calypso` frontend.
+To target a webapp running in a different environment:
 
-1. override the `calypsoBaseURL` value to point to `http://calypso.localhost:3000` using one of the following methods:
+1. determine the base URL to use for the appropriate environment.
 
-   a. change the `calypsoBaseURL` value in `test/e2e/config/default.json`.
+   - for local webapp: `http://calypso.localhost:3000`
+   - for staging webapp: `https://wordpress.com`
+   - for wpcalypso webapp: `https://wpcalypso.wordpress.com`
 
-   b. create a new local configuration. See [Test Environment](./test_environment.md#local-configs).
+2. set the `CALYPSO_BASE_URL` environment variable:
 
-   c. export `calypsoBaseURL` override as part of environment variable: `export NODE_CONFIG="{\"calypsoBaseURL\":\"${'$'}{URL/}\"}"`
+   a. set the variable to persist in the shell: `export CALYPSO_BASE_URL=<url>`
 
-2. start the webapp:
-
-```shell
-yarn start
-```
-
-3. once webapp is started, open `http://calypso.localhost:3000` in your browser.
+   b. set the variable for the command only: `CALYPSO_BASE_URL=<url> yarn jest <test_path>`
 
 <img alt="Local Calypso Webapp" src="https://cldup.com/1WwDmUXWen.png" />
-<sup><center>Local webapp start page.</center></sup>
-
-The local environment is now ready for testing. When a test is run, it will hit the locally run webapp instead of the WordPress.com staging environment.
+<sup><center>Example: webapp running on localhost.</center></sup>
 
 ### Debug mode
 

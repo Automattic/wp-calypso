@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { get, map, take, values } from 'lodash';
+import { get, values } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
@@ -80,10 +80,11 @@ class PostByline extends Component {
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
-		let tagsInOccurrenceOrder = values( post.tags );
+		const tagsInOccurrenceOrder = values( post.tags );
 		tagsInOccurrenceOrder.sort( ( a, b ) => b.post_count - a.post_count );
-		tagsInOccurrenceOrder = take( tagsInOccurrenceOrder, TAGS_TO_SHOW );
-		const tags = map( tagsInOccurrenceOrder, ( tag ) => <TagLink tag={ tag } key={ tag.slug } /> );
+		const tags = tagsInOccurrenceOrder
+			.slice( 0, TAGS_TO_SHOW )
+			.map( ( tag ) => <TagLink tag={ tag } key={ tag.slug } /> );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (

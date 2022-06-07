@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import { login } from 'calypso/lib/paths';
@@ -15,10 +16,10 @@ export function loggedOut( context, next ) {
 	let url;
 	switch ( context.path ) {
 		case '/help':
-			url = SUPPORT_ROOT;
+			url = localizeUrl( SUPPORT_ROOT );
 			break;
 		case '/help/contact':
-			url = CONTACT;
+			url = localizeUrl( CONTACT );
 			break;
 		default:
 			url = login( { redirectTo: window.location.href } );

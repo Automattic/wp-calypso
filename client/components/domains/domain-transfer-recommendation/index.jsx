@@ -1,4 +1,5 @@
 import { Button, Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import Badge from 'calypso/components/badge';
 import CardHeading from 'calypso/components/card-heading';
@@ -22,7 +23,7 @@ export default function DomainTransferRecommendation() {
 			</div>
 			<Button
 				className="domain-transfer-recommendation__action"
-				href={ INCOMING_DOMAIN_TRANSFER }
+				href={ localizeUrl( INCOMING_DOMAIN_TRANSFER ) }
 				compact
 			>
 				{ __( 'Transfer instead' ) }

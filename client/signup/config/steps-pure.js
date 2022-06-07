@@ -9,6 +9,7 @@ import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_WPCOM_PRO,
+	PLAN_WPCOM_STARTER,
 	TYPE_FREE,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
@@ -289,6 +290,17 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			defaultDependencies: {
 				cartItem: PLAN_WPCOM_PRO,
+			},
+		},
+
+		'plans-starter': {
+			stepName: 'plans-starter',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_WPCOM_STARTER,
 			},
 		},
 
@@ -675,6 +687,11 @@ export function generateSteps( {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
 				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
 			},
+		},
+
+		'choose-service': {
+			stepName: 'choose-service',
+			providesDependencies: [ 'siteSlug', 'newOrExistingSiteChoice' ],
 		},
 
 		'new-or-existing-site': {

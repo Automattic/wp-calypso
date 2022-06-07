@@ -1,10 +1,10 @@
-import { useShoppingCart } from '@automattic/shopping-cart';
+import { useSetStepComplete } from '@automattic/composite-checkout';
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import useCountryList from './use-country-list';
@@ -15,18 +15,92 @@ import type {
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
 
-function areTaxFieldsDifferent(
-	previousTaxFields: PossiblyCompleteDomainContactDetails | undefined,
-	nextTaxFields: PossiblyCompleteDomainContactDetails | undefined
-): boolean {
-	if (
-		nextTaxFields?.countryCode === previousTaxFields?.countryCode &&
-		nextTaxFields?.postalCode === previousTaxFields?.postalCode &&
-		nextTaxFields?.state === previousTaxFields?.state
-	) {
-		return false;
+function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null {
+	const reduxDispatch = useReduxDispatch();
+	const haveRequestedCachedDetails = useRef< 'not-started' | 'pending' | 'done' >( 'not-started' );
+	const cachedContactDetails = useSelector( getContactDetailsCache );
+	useEffect( () => {
+		if ( haveRequestedCachedDetails.current === 'not-started' ) {
+			debug( 'requesting cached domain contact details' );
+			reduxDispatch( requestContactDetailsCache() );
+			haveRequestedCachedDetails.current = 'pending';
+		}
+	}, [ reduxDispatch ] );
+	if ( haveRequestedCachedDetails.current === 'pending' && cachedContactDetails ) {
+		debug( 'cached domain contact details retrieved', cachedContactDetails );
+		haveRequestedCachedDetails.current = 'done';
 	}
-	return true;
+	return cachedContactDetails;
+}
+
+function useCachedContactDetailsForCheckoutForm(
+	cachedContactDetails: PossiblyCompleteDomainContactDetails | null,
+	overrideCountryList?: CountryListItem[]
+): void {
+	const countriesList = useCountryList( overrideCountryList );
+	const reduxDispatch = useReduxDispatch();
+	const setStepCompleteStatus = useSetStepComplete();
+	const didFillForm = useRef( false );
+
+	const arePostalCodesSupported =
+		countriesList.length && cachedContactDetails?.countryCode
+			? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode )
+			: false;
+
+	const checkoutStoreActions = useDispatch( 'wpcom-checkout' );
+	if ( ! checkoutStoreActions?.loadDomainContactDetailsFromCache ) {
+		throw new Error(
+			'useCachedContactDetailsForCheckoutForm must be run after the checkout data store has been initialized'
+		);
+	}
+	const { loadDomainContactDetailsFromCache } = checkoutStoreActions;
+
+	// When we have fetched or loaded contact details, send them to the
+	// `wpcom-checkout` data store for use by the checkout contact form.
+	useEffect( () => {
+		// Once this activates, do not do it again.
+		if ( didFillForm.current ) {
+			return;
+		}
+		// Do nothing if the contact details are loading, or the countries are loading.
+		if ( ! cachedContactDetails ) {
+			debug( 'cached contact details for form have not loaded' );
+			return;
+		}
+		if ( ! countriesList.length ) {
+			debug( 'cached contact details for form are waiting for the countries list' );
+			return;
+		}
+		debug( 'using fetched cached contact details for checkout data store', cachedContactDetails );
+		didFillForm.current = true;
+		// NOTE: the types for `@wordpress/data` actions imply that actions return
+		// `void` by default but they actually return `Promise<void>` so I override
+		// this type here until the actual types can be improved. See
+		// https://github.com/DefinitelyTyped/DefinitelyTyped/pull/60693
+		loadDomainContactDetailsFromCache< Promise< void > >( {
+			...cachedContactDetails,
+			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode : '',
+		} )
+			.then( () => {
+				if ( cachedContactDetails.countryCode ) {
+					debug( 'Contact details are populated; attempting to skip to payment method step' );
+					return setStepCompleteStatus( 'contact-form' );
+				}
+				return false;
+			} )
+			.then( ( didSkip: boolean ) => {
+				if ( didSkip ) {
+					reduxDispatch( recordTracksEvent( 'calypso_checkout_skip_to_last_step' ) );
+				}
+			} );
+	}, [
+		reduxDispatch,
+		setStepCompleteStatus,
+		cachedContactDetails,
+		arePostalCodesSupported,
+		loadDomainContactDetailsFromCache,
+		countriesList,
+	] );
 }
 
 /**
@@ -36,94 +110,6 @@ function areTaxFieldsDifferent(
 export default function useCachedDomainContactDetails(
 	overrideCountryList?: CountryListItem[]
 ): void {
-	const reduxDispatch = useReduxDispatch();
-	const countriesList = useCountryList( overrideCountryList );
-	const haveRequestedCachedDetails = useRef( false );
-	const previousDetailsForCart = useRef< PossiblyCompleteDomainContactDetails >();
-	const previousDetailsForForm = useRef< PossiblyCompleteDomainContactDetails >();
-	const cartKey = useCartKey();
-	const {
-		updateLocation: updateCartLocation,
-		isLoading: isLoadingCart,
-		loadingError: cartLoadingError,
-	} = useShoppingCart( cartKey );
-
-	useEffect( () => {
-		if ( ! haveRequestedCachedDetails.current ) {
-			debug( 'requesting cached domain contact details' );
-			reduxDispatch( requestContactDetailsCache() );
-			haveRequestedCachedDetails.current = true;
-		}
-	}, [ reduxDispatch ] );
-
-	const cachedContactDetails = useSelector( getContactDetailsCache );
-
-	const arePostalCodesSupported =
-		countriesList.length && cachedContactDetails?.countryCode
-			? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode )
-			: true;
-
-	const { loadDomainContactDetailsFromCache } = useDispatch( 'wpcom-checkout' );
-
-	// When we have fetched or loaded contact details, send them to the
-	// `wpcom-checkout` data store for use by the checkout contact form.
-	useEffect( () => {
-		// Do nothing if the contact details are loading, or the countries are loading.
-		if ( ! cachedContactDetails || ! countriesList.length ) {
-			return;
-		}
-		// Do nothing if the cached data has not changed since the last time we
-		// sent the data to the form (this typically will only ever need to be
-		// activated once).
-		if ( previousDetailsForForm.current === cachedContactDetails ) {
-			return;
-		}
-		previousDetailsForForm.current = cachedContactDetails;
-		debug( 'using fetched cached domain contact details', cachedContactDetails );
-		loadDomainContactDetailsFromCache( {
-			...cachedContactDetails,
-			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode : undefined,
-		} );
-	}, [
-		cachedContactDetails,
-		arePostalCodesSupported,
-		loadDomainContactDetailsFromCache,
-		countriesList,
-	] );
-
-	// When we have fetched or loaded contact details, send them to the
-	// to the shopping cart for calculating taxes.
-	useEffect( () => {
-		// Do nothing if the cart is loading, the contact details are loading, or the countries are loading.
-		if ( isLoadingCart || cartLoadingError || ! cachedContactDetails || ! countriesList.length ) {
-			return;
-		}
-		if (
-			! cachedContactDetails.countryCode &&
-			! cachedContactDetails.postalCode &&
-			! cachedContactDetails.state
-		) {
-			return;
-		}
-		// Do nothing if the cached data has not changed since the last time we
-		// sent the data to the cart endpoint (this typically will only ever need
-		// to be activated once).
-		if ( ! areTaxFieldsDifferent( previousDetailsForCart.current, cachedContactDetails ) ) {
-			return;
-		}
-		previousDetailsForCart.current = cachedContactDetails;
-		debug( 'updating cart tax details with cached contact details', cachedContactDetails );
-		updateCartLocation( {
-			countryCode: cachedContactDetails.countryCode ?? '',
-			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode ?? '' : '',
-			subdivisionCode: cachedContactDetails.state ?? '',
-		} );
-	}, [
-		cartLoadingError,
-		isLoadingCart,
-		cachedContactDetails,
-		updateCartLocation,
-		arePostalCodesSupported,
-		countriesList,
-	] );
+	const cachedContactDetails = useCachedContactDetails();
+	useCachedContactDetailsForCheckoutForm( cachedContactDetails, overrideCountryList );
 }

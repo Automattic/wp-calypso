@@ -1,4 +1,3 @@
-import { assert } from 'chai';
 import {
 	HELP_TICKET_CONFIGURATION_REQUEST,
 	HELP_TICKET_CONFIGURATION_REQUEST_SUCCESS,
@@ -11,7 +10,7 @@ describe( 'ticket-support/configuration reducer', () => {
 	test( 'should default to the expected structure', () => {
 		const defaultState = reducer( undefined, {} );
 
-		assert.deepEqual( defaultState, {
+		expect( defaultState ).toEqual( {
 			isReady: false,
 			isRequesting: false,
 			isUserEligible: false,
@@ -24,7 +23,7 @@ describe( 'ticket-support/configuration reducer', () => {
 			type: HELP_TICKET_CONFIGURATION_REQUEST,
 		} );
 
-		assert.isTrue( state.isRequesting );
+		expect( state.isRequesting ).toBe( true );
 	} );
 
 	test( 'should set isUserEligible as is and isReady to true', () => {
@@ -33,9 +32,9 @@ describe( 'ticket-support/configuration reducer', () => {
 			configuration: dummyConfiguration,
 		} );
 
-		assert.isTrue( state.isReady );
-		assert.equal( state.isUserEligible, dummyConfiguration.is_user_eligible );
-		assert.isFalse( state.isRequesting );
+		expect( state.isReady ).toBe( true );
+		expect( state.isUserEligible ).toEqual( dummyConfiguration.is_user_eligible );
+		expect( state.isRequesting ).toBe( false );
 	} );
 
 	test( 'should leave isReady as it is and requestError as the error on failed requests', () => {
@@ -47,9 +46,9 @@ describe( 'ticket-support/configuration reducer', () => {
 			}
 		);
 
-		assert.isFalse( state.isReady );
-		assert.isFalse( state.isRequesting );
-		assert.deepEqual( state.requestError, dummyError );
+		expect( state.isReady ).toBe( false );
+		expect( state.isRequesting ).toBe( false );
+		expect( state.requestError ).toEqual( dummyError );
 	} );
 
 	const requestErrorState = { requestError: dummyError };
@@ -59,7 +58,7 @@ describe( 'ticket-support/configuration reducer', () => {
 			type: HELP_TICKET_CONFIGURATION_REQUEST,
 		} );
 
-		assert.isNull( state.requestError );
+		expect( state.requestError ).toBeNull();
 	} );
 
 	test( 'should set requestError as false on receiving the successful action', () => {
@@ -68,6 +67,6 @@ describe( 'ticket-support/configuration reducer', () => {
 			configuration: dummyConfiguration,
 		} );
 
-		assert.isNull( state.requestError );
+		expect( state.requestError ).toBeNull();
 	} );
 } );

@@ -21,7 +21,8 @@ describe( 'redirectToJetpack', () => {
 	test( 'redirect needed', () => {
 		const context = { query: { unlinked: '1' } };
 		const site = { URL: 'https://example.org' };
-		const expectedRedirectURLMatch = /^https:\/\/example.org\/wp-admin\/\?(.*)&action=authorize_redirect&dest_url=/i;
+		const expectedRedirectURLMatch =
+			/^https:\/\/example.org\/wp-admin\/\?(.*)&action=authorize_redirect&dest_url=/i;
 
 		const needsRedirect = shouldRedirectToJetpackAuthorize( context, site );
 		expect( needsRedirect ).toBe( true );

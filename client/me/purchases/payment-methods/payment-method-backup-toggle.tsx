@@ -1,6 +1,6 @@
 import { CheckboxControl, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -23,7 +23,7 @@ async function setIsBackup(
 	} );
 }
 
-export default function PaymentMethodBackupToggle( { card }: { card: StoredCard } ): JSX.Element {
+export default function PaymentMethodBackupToggle( { card }: { card: StoredCard } ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const storedDetailsId = card.stored_details_id;

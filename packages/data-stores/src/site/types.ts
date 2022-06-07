@@ -1,4 +1,10 @@
+import type { DispatchFromMap } from '../mapped-types';
 import type { FeatureId } from '../wpcom-features';
+import type { ActionCreators } from './actions';
+
+export interface Dispatch {
+	dispatch: DispatchFromMap< ActionCreators >;
+}
 
 export interface NewSiteBlogDetails {
 	url: string;
@@ -93,6 +99,10 @@ export interface SiteDetails {
 	description: string;
 	URL: string;
 	launch_status: string;
+	jetpack: boolean;
+	is_fse_eligible: boolean;
+	is_fse_active: boolean;
+	logo: { id: string; sizes: string[]; url: string };
 	options: {
 		admin_url?: string;
 		advanced_seo_front_page_description?: string;
@@ -189,6 +199,8 @@ export interface SiteDetails {
 		activate_plugins: boolean;
 	};
 }
+
+export type SiteOption = keyof SiteDetails[ 'options' ];
 
 export interface SiteError {
 	error: string;
@@ -366,3 +378,23 @@ export type AtomicSoftwareStatusState = Record<
 		error: AtomicSoftwareStatusError | undefined;
 	}
 >;
+
+export enum AtomicSoftwareInstallStatus {
+	UNINITIALIZED = 'unintialized',
+	IN_PROGRESS = 'in_progress',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+}
+export type AtomicSoftwareInstallState = Record<
+	string,
+	{
+		status: AtomicSoftwareInstallStatus | undefined;
+		error: AtomicSoftwareInstallError | undefined;
+	}
+>;
+export interface AtomicSoftwareInstallError {
+	name: string;
+	status: number;
+	message: string;
+	code: string;
+}

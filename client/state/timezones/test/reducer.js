@@ -1,29 +1,20 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { timezonesReceive } from '../actions';
 import timezonesReducer, { byContinents, labels, rawOffsets } from '../reducer';
 
 describe( 'reducer', () => {
-	let sandbox;
-
-	useSandbox( ( newSandbox ) => {
-		sandbox = newSandbox;
-		sandbox.stub( console, 'warn' );
-	} );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should export expected reducer keys', () => {
-		expect( timezonesReducer( undefined, {} ) ).to.have.keys( [
-			'byContinents',
-			'labels',
-			'rawOffsets',
-		] );
+		expect( Object.keys( timezonesReducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'byContinents', 'labels', 'rawOffsets' ] )
+		);
 	} );
 
 	describe( '#rawOffsets()', () => {
 		test( 'should default to an empty action object', () => {
-			expect( rawOffsets( undefined, {} ) ).to.eql( {} );
+			expect( rawOffsets( undefined, {} ) ).toEqual( {} );
 		} );
 
 		test( 'should index `rawOffsets` state', () => {
@@ -44,7 +35,7 @@ describe( 'reducer', () => {
 			};
 
 			const newState = rawOffsets( initialState, action );
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should override `rawOffsets` state', () => {
@@ -69,7 +60,7 @@ describe( 'reducer', () => {
 			};
 
 			const newState = rawOffsets( initialState, action );
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should persist state', () => {
@@ -84,7 +75,7 @@ describe( 'reducer', () => {
 			const expectedState = initialState;
 			const newState = serialize( rawOffsets, initialState );
 
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should load persisted state', () => {
@@ -97,7 +88,7 @@ describe( 'reducer', () => {
 
 			const expectedState = initialState;
 			const newState = deserialize( rawOffsets, initialState );
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
@@ -110,14 +101,14 @@ describe( 'reducer', () => {
 			deepFreeze( initialStateTWO );
 			const newStateTWO = deserialize( rawOffsets, initialStateTWO );
 
-			expect( newStateONE ).to.eql( {} );
-			expect( newStateTWO ).to.eql( {} );
+			expect( newStateONE ).toEqual( {} );
+			expect( newStateTWO ).toEqual( {} );
 		} );
 	} );
 
 	describe( '#labels()', () => {
 		test( 'should default to an empty action object', () => {
-			expect( rawOffsets( undefined, {} ) ).to.eql( {} );
+			expect( rawOffsets( undefined, {} ) ).toEqual( {} );
 		} );
 
 		test( 'should index `labels` state', () => {
@@ -138,7 +129,7 @@ describe( 'reducer', () => {
 			};
 
 			const newState = labels( initialState, action );
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should override `labels` state', () => {
@@ -163,7 +154,7 @@ describe( 'reducer', () => {
 			};
 
 			const newState = labels( initialState, action );
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should persist state', () => {
@@ -179,7 +170,7 @@ describe( 'reducer', () => {
 			const expectedState = initialState;
 			const newState = serialize( labels, initialState );
 
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should load persisted state', () => {
@@ -192,20 +183,20 @@ describe( 'reducer', () => {
 
 			const expectedState = initialState;
 			const newState = deserialize( labels, initialState );
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
 			const initialStateONE = { labels: { foo: 'bar' } };
 			deepFreeze( initialStateONE );
 			const newStateONE = deserialize( labels, initialStateONE );
-			expect( newStateONE ).to.eql( {} );
+			expect( newStateONE ).toEqual( {} );
 		} );
 	} );
 
 	describe( '#byContinents()', () => {
 		test( 'should default to an empty action object', () => {
-			expect( rawOffsets( undefined, {} ) ).to.eql( {} );
+			expect( rawOffsets( undefined, {} ) ).toEqual( {} );
 		} );
 
 		test( 'should index `rawOffsets` state', () => {
@@ -226,7 +217,7 @@ describe( 'reducer', () => {
 			};
 
 			const newState = byContinents( initialState, action );
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should override timezones.byContinents state', () => {
@@ -250,7 +241,7 @@ describe( 'reducer', () => {
 			};
 
 			const newState = byContinents( initialState, action );
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should persist state', () => {
@@ -266,7 +257,7 @@ describe( 'reducer', () => {
 			const expectedState = initialState;
 			const newState = serialize( byContinents, initialState );
 
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should load persisted state', () => {
@@ -279,14 +270,14 @@ describe( 'reducer', () => {
 
 			const expectedState = initialState;
 			const newState = deserialize( byContinents, initialState );
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
 			const initialStateONE = { byContinents: { foo: 'bar' } };
 			deepFreeze( initialStateONE );
 			const newStateONE = deserialize( byContinents, initialStateONE );
-			expect( newStateONE ).to.eql( {} );
+			expect( newStateONE ).toEqual( {} );
 		} );
 	} );
 } );

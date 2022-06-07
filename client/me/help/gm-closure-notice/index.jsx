@@ -1,102 +1,77 @@
 import 'moment-timezone'; // monkey patches the existing moment.js
-import {
-	isEcommercePlan,
-	isBusinessPlan,
-	isPremiumPlan,
-	isPersonalPlan,
-} from '@automattic/calypso-products';
+import { WPCOM_FEATURES_LIVE_SUPPORT } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { some } from 'lodash';
 import { useSelector } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 
 import './style.scss';
 
 const DATE_FORMAT_SHORT = 'MMMM D';
 const DATE_FORMAT_LONG = 'dddd, MMMM Do LT';
 
-export default function GMClosureNotice( {
-	priorityChatClosesAt,
-	priorityChatReopensAt,
-	compact,
-	basicChatClosesAt,
-	basicChatReopensAt,
-	displayAt,
-} ) {
+export default function GMClosureNotice( { compact, closesAt, reopensAt } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	const purchases = useSelector( getUserPurchases );
 
-	const hasBusinessOrEcommercePlan = some(
-		purchases,
-		( { productSlug } ) => isBusinessPlan( productSlug ) || isEcommercePlan( productSlug )
+	const hasLiveChat = useSelector( ( state ) =>
+		Object.values( getSitesItems( state ) ).some( ( { ID } ) =>
+			siteHasFeature( state, ID ?? 0, WPCOM_FEATURES_LIVE_SUPPORT )
+		)
 	);
-	const hasPersonalOrPremiumPlan = some(
-		purchases,
-		( { productSlug } ) => isPersonalPlan( productSlug ) || isPremiumPlan( productSlug )
-	);
-	const hasNoPlan = ! hasBusinessOrEcommercePlan && ! hasPersonalOrPremiumPlan;
 
 	const currentDate = moment();
 	const guessedTimezone = moment.tz.guess();
 
-	const [ closesAt, reopensAt ] = [
-		moment.tz(
-			hasBusinessOrEcommercePlan ? priorityChatClosesAt : basicChatClosesAt,
-			guessedTimezone
-		),
-		moment.tz(
-			hasBusinessOrEcommercePlan ? priorityChatReopensAt : basicChatReopensAt,
-			guessedTimezone
-		),
+	const [ closes, reopens ] = [
+		moment.tz( closesAt, guessedTimezone ),
+		moment.tz( reopensAt, guessedTimezone ),
 	];
 
-	if ( ! currentDate.isBetween( displayAt, reopensAt ) ) {
+	if ( ! currentDate.isBetween( closes, reopens ) ) {
 		return null;
 	}
 
-	const HEADING = translate( 'Limited Support %(closesAt)s – %(reopensAt)s', {
+	const HEADING = translate( 'Limited Support %(closes)s – %(reopens)s', {
 		args: {
-			closesAt: closesAt.format( DATE_FORMAT_SHORT ),
-			reopensAt: reopensAt.format(
-				reopensAt.isSame( closesAt, 'month' ) ? 'D' : DATE_FORMAT_SHORT
-			),
+			closes: closes.format( DATE_FORMAT_SHORT ),
+			reopens: reopens.format( reopens.isSame( closes, 'month' ) ? 'D' : DATE_FORMAT_SHORT ),
 		},
 	} );
 
 	const mainMessageArgs = {
-		closes_at: closesAt.format( DATE_FORMAT_LONG ),
-		reopens_at: reopensAt.format( DATE_FORMAT_LONG ),
+		closes_at: closes.format( DATE_FORMAT_LONG ),
+		reopens_at: reopens.format( DATE_FORMAT_LONG ),
 	};
 
 	const MAIN_MESSAGES = {
 		before: {
-			hasPlan: translate(
+			hasLiveChat: translate(
 				'Live chat support will be closed from %(closes_at)s until %(reopens_at)s. Customer support via email will remain open.',
 				{ args: mainMessageArgs }
 			),
-			nonPlan: translate(
+			privateSupport: translate(
 				'Private support will be closed from %(closes_at)s until %(reopens_at)s.',
 				{ args: mainMessageArgs }
 			),
 		},
 		during: {
-			hasPlan: translate(
+			hasLiveChat: translate(
 				'Live chat support is closed until %(reopens_at)s. In the meantime you can still reach us by email.',
 				{ args: mainMessageArgs }
 			),
-			nonPlan: translate( 'Private support is closed until %(reopens_at)s.', {
+			privateSupport: translate( 'Private support is closed until %(reopens_at)s.', {
 				args: mainMessageArgs,
 			} ),
 		},
 	};
 
 	const REASON_MESSAGES = {
-		hasPlan: translate(
+		hasLiveChat: translate(
 			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, you can submit an email ticket through the contact form: {{contactLink}}{{/contactLink}}',
 			{
 				components: {
@@ -107,7 +82,7 @@ export default function GMClosureNotice( {
 				},
 			}
 		),
-		nonPlan: translate(
+		generalSupport: translate(
 			'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together to work on improving our services, building new features, and learning how to better serve our customers like you. But never fear! If you need help in the meantime, check our support site at {{supportLink}}%(linkUrl)s{{/supportLink}}',
 			{
 				components: {
@@ -129,9 +104,11 @@ export default function GMClosureNotice( {
 		}
 	);
 
-	const period = currentDate.isBefore( closesAt ) ? 'before' : 'during';
-	const mainMessage = hasNoPlan ? MAIN_MESSAGES[ period ].nonPlan : MAIN_MESSAGES[ period ].hasPlan;
-	const reason = hasNoPlan ? REASON_MESSAGES.nonPlan : REASON_MESSAGES.hasPlan;
+	const period = currentDate.isBefore( closes ) ? 'before' : 'during';
+	const mainMessage = hasLiveChat
+		? MAIN_MESSAGES[ period ].hasLiveChat
+		: MAIN_MESSAGES[ period ].privateSupport;
+	const reason = hasLiveChat ? REASON_MESSAGES.hasLiveChat : REASON_MESSAGES.generalSupport;
 
 	if ( compact ) {
 		return (
@@ -157,7 +134,7 @@ export default function GMClosureNotice( {
 			<div>
 				<p>{ mainMessage }</p>
 				<p>{ reason }</p>
-				{ hasNoPlan && <p>{ FORUMS_NOTE }</p> }
+				{ ! hasLiveChat && <p>{ FORUMS_NOTE }</p> }
 			</div>
 			<hr />
 		</div>

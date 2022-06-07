@@ -332,9 +332,9 @@ class RegisterDomainStep extends Component {
 
 		if ( this.props.includeWordPressDotCom || this.props.includeDotBlogSubdomain ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
-				const freeSubdomainPlaceholders = Array(
-					this.getFreeSubdomainSuggestionsQuantity()
-				).fill( { is_placeholder: true } );
+				const freeSubdomainPlaceholders = Array( this.getFreeSubdomainSuggestionsQuantity() ).fill(
+					{ is_placeholder: true }
+				);
 				suggestions.unshift( ...freeSubdomainPlaceholders );
 			} else if ( ! isEmpty( this.state.subdomainSearchResults ) ) {
 				suggestions.unshift( ...this.state.subdomainSearchResults );
@@ -411,6 +411,7 @@ class RegisterDomainStep extends Component {
 						/>
 					) }
 					{ this.renderFilterContent() }
+					{ this.renderDomainExplanationImage() }
 					{ this.renderSideContent() }
 					<QueryContactDetailsCache />
 				</div>
@@ -586,6 +587,23 @@ class RegisterDomainStep extends Component {
 					illustrationWidth={ 280 }
 				/>
 			</>
+		);
+	}
+
+	renderDomainExplanationImage() {
+		return (
+			<div className="register-domain-step__domain-side-content-container-domain-explanation-image">
+				<span></span>
+				<span></span>
+				<span className="register-domain-step__domain-side-content-container-domain-explanation-image-url">
+					https://
+					{ this.props.translate( 'yoursitename', {
+						comment: 'example url used to explain what a domain is.',
+					} ) }
+					.com
+				</span>
+				<span></span>
+			</div>
 		);
 	}
 
@@ -1183,13 +1201,8 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderExampleSuggestions() {
-		const {
-			isReskinned,
-			domainsWithPlansOnly,
-			offerUnavailableOption,
-			products,
-			path,
-		} = this.props;
+		const { isReskinned, domainsWithPlansOnly, offerUnavailableOption, products, path } =
+			this.props;
 
 		if ( isReskinned ) {
 			return this.renderBestNamesPrompt();

@@ -155,6 +155,7 @@ export function getRedirectAfterAccept( invite ) {
 
 	const readerPath = '/read';
 	const postsListPath = '/posts/' + invite.site.ID;
+	const myHomePath = '/home/' + invite.site.domain;
 	const getDestinationUrl = ( redirect ) => {
 		const remoteLoginHost = `https://${ invite.site.domain }`;
 		const remoteLoginBackUrl = ( destinationPath ) => `https://wordpress.com${ destinationPath }`;
@@ -180,6 +181,6 @@ export function getRedirectAfterAccept( invite ) {
 			return getDestinationUrl( readerPath );
 
 		default:
-			return getDestinationUrl( postsListPath );
+			return getDestinationUrl( myHomePath );
 	}
 }
