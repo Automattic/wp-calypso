@@ -91,6 +91,10 @@ const monitorEventNames: StatusEventNames = {
 		small_screen: 'calypso_jetpack_agency_dashboard_monitor_site_down_click_small_screen',
 		large_screen: 'calypso_jetpack_agency_dashboard_monitor_site_down_click_large_screen',
 	},
+	success: {
+		small_screen: 'calypso_jetpack_agency_dashboard_monitor_success_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_monitor_success_click_large_screen',
+	},
 };
 
 // Plugin updates status event names for large screen(>960px) and small screen(<960px)
@@ -210,7 +214,7 @@ const getLinks = (
 			if ( status === 'failed' ) {
 				link = `https://jptools.wordpress.com/debug/?url=${ siteUrl }`;
 				isExternalLink = true;
-			} else if ( status === 'disabled' ) {
+			} else {
 				link = `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack#/settings`;
 				isExternalLink = true;
 			}
