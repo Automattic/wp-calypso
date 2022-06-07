@@ -39,14 +39,17 @@ export default function IssueLicenseForm( {
 	const products = useProductsQuery( {
 		select: alphabeticallySortedProductOptions,
 	} );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	const assignLicense = useAssignLicenseMutation( {
 		onSuccess: ( license: any ) => {
+			setIsSubmitting( false );
 			page.redirect(
 				addQueryArgs( { highlight: license.license_key }, '/partner-portal/licenses' )
 			);
 		},
 		onError: ( error: Error ) => {
+			setIsSubmitting( false );
 			dispatch( errorNotice( error.message ) );
 		},
 	} );
@@ -56,6 +59,7 @@ export default function IssueLicenseForm( {
 			const licenseKey = license.license_key;
 			const selectedSiteId = selectedSite?.ID;
 			if ( selectedSiteId ) {
+				setIsSubmitting( true );
 				assignLicense.mutate( { licenseKey, selectedSite: selectedSiteId } );
 			} else {
 				page.redirect(
@@ -147,7 +151,7 @@ export default function IssueLicenseForm( {
 								primary
 								className="issue-license-form__select-license"
 								disabled={ ! product }
-								busy={ issueLicense.isLoading }
+								busy={ issueLicense.isLoading || isSubmitting }
 								onClick={ onIssueLicense }
 							>
 								{ translate( 'Select License' ) }
