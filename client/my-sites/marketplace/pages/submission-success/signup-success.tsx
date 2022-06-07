@@ -1,9 +1,9 @@
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import checkCircleImage from 'calypso/assets/images/marketplace/check-circle.png';
-import settingsImage from 'calypso/assets/images/marketplace/settings.png';
-import shoppingCartImage from 'calypso/assets/images/marketplace/shopping-cart.png';
+import checkCircleImage from 'calypso/assets/images/marketplace/check-circle-gray.svg';
+import settingsImage from 'calypso/assets/images/marketplace/settings.svg';
+import shoppingCartImage from 'calypso/assets/images/marketplace/shopping-cart.svg';
 import submissionSuccessImage from 'calypso/assets/images/marketplace/submission-success.png';
 import theme from 'calypso/my-sites/marketplace/theme';
 import MasterbarLogo from '../../components/masterbar-logo';
