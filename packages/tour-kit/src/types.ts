@@ -1,3 +1,4 @@
+import * as PopperJS from '@popperjs/core';
 import React from 'react';
 import { SpotlightInteractivityConfiguration } from './components/tour-kit-spotlight-interactivity';
 import type { Modifier } from 'react-popper';
@@ -99,6 +100,7 @@ export interface Config {
 	closeHandler: CloseHandler;
 	isMinimized?: boolean;
 	options?: Options;
+	placement?: PopperJS.Placement;
 }
 
 export type Tour = React.FunctionComponent< { config: Config } >;
