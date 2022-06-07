@@ -1,5 +1,6 @@
 import phpUnserialize from 'phpunserialize';
 import {
+	UseQueryResult,
 	UseQueryOptions,
 	InfiniteData,
 	useInfiniteQuery,
