@@ -1,14 +1,16 @@
 import { useSetStepComplete } from '@automattic/composite-checkout';
+import { mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useEffect, useRef } from 'react';
-import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
+import { useQuery } from 'react-query';
+import { useDispatch as useReduxDispatch } from 'react-redux';
+import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
-import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import useCountryList from './use-country-list';
 import type {
+	FetchedContactDetails,
 	PossiblyCompleteDomainContactDetails,
 	CountryListItem,
 } from '@automattic/wpcom-checkout';
@@ -16,21 +18,20 @@ import type {
 const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
 
 function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null {
-	const reduxDispatch = useReduxDispatch();
-	const haveRequestedCachedDetails = useRef< 'not-started' | 'pending' | 'done' >( 'not-started' );
-	const cachedContactDetails = useSelector( getContactDetailsCache );
-	useEffect( () => {
-		if ( haveRequestedCachedDetails.current === 'not-started' ) {
-			debug( 'requesting cached domain contact details' );
-			reduxDispatch( requestContactDetailsCache() );
-			haveRequestedCachedDetails.current = 'pending';
-		}
-	}, [ reduxDispatch ] );
-	if ( haveRequestedCachedDetails.current === 'pending' && cachedContactDetails ) {
-		debug( 'cached domain contact details retrieved', cachedContactDetails );
-		haveRequestedCachedDetails.current = 'done';
-	}
-	return cachedContactDetails;
+	const { data: cachedContactDetails, isFetching } = useQuery<
+		PossiblyCompleteDomainContactDetails,
+		Error
+	>(
+		'cached-contact-details',
+		() =>
+			wpcom.req
+				.get( '/me/domain-contact-information' )
+				.then( ( data: FetchedContactDetails ) =>
+					mapRecordKeysRecursively( data, snakeToCamelCase )
+				),
+		{ refetchOnMount: 'always' }
+	);
+	return isFetching ? null : cachedContactDetails ?? null;
 }
 
 function useCachedContactDetailsForCheckoutForm(
