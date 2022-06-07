@@ -75,7 +75,7 @@ export default class WebPreviewContent extends Component {
 
 		// If the fixedViewportWidth changes, re-calculate the iframe styles.
 		if ( this.props.fixedViewportWidth !== prevProps.fixedViewportWidth ) {
-			if ( this.props.fixedViewportWidth ) {
+			if ( this.props.fixedViewportWidth && ! prevProps.fixedViewportWidth ) {
 				this.handleResize();
 				window.addEventListener( 'resize', this.handleResize );
 			} else {
