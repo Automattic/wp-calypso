@@ -7,8 +7,8 @@ const selectors = {
 	backLink: 'button:text("Back")',
 
 	// Inputs
-	blogNameInput: 'input#siteTitle:not(:disabled)',
-	taglineInput: 'input#tagline:not(:disabled)',
+	blogNameInput: 'input[name="siteTitle"]',
+	taglineInput: 'input[name="tagline"]',
 
 	// Themes
 	themePickerContainer: '.design-picker',
@@ -51,7 +51,13 @@ export class StartSiteFlow {
 	async enterBlogName( name: string ): Promise< void > {
 		await this.page.waitForLoadState( 'networkidle' );
 		const locator = this.page.locator( selectors.blogNameInput );
+		await locator.fill( '' );
 		await locator.fill( name );
+
+		const readBack = await locator.inputValue();
+		if ( readBack !== name ) {
+			throw new Error( `Failed to set blog name: expected ${ name }, got ${ readBack }` );
+		}
 	}
 
 	/**
@@ -62,7 +68,13 @@ export class StartSiteFlow {
 	async enterTagline( tagline: string ): Promise< void > {
 		await this.page.waitForLoadState( 'networkidle' );
 		const locator = this.page.locator( selectors.taglineInput );
+		await locator.fill( '' );
 		await locator.fill( tagline );
+
+		const readBack = await locator.inputValue();
+		if ( readBack !== tagline ) {
+			throw new Error( `Failed to set blog tagline: expected ${ tagline }, got ${ readBack }` );
+		}
 	}
 
 	/**
