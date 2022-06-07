@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 /**
  * External Dependencies
  */
@@ -5,6 +6,8 @@ import { useSupportAvailability } from '@automattic/data-stores';
 import { useHappychatAvailable } from '@automattic/happychat-connection';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
+import { useSelector } from 'react-redux';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
@@ -20,8 +23,12 @@ import '../styles.scss';
 const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
+	const siteId = useSelector( getSelectedSiteId );
+
 	// prefetch the current site and user
-	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( window._currentSiteId ) );
+	const site = useSelect( ( select ) =>
+		select( SITE_STORE ).getSite( siteId || window._currentSiteId )
+	);
 	const user = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { setDirectlyData } = useDispatch( HELP_CENTER_STORE );
 	const { isLoading: isLoadingChat } = useSupportAvailability( 'CHAT' );

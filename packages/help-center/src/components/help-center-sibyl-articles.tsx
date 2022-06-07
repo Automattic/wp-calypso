@@ -73,7 +73,7 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 				aria-labelledby="help-center--contextual_help"
 			>
 				{ articles.map( ( article ) => (
-					<li>
+					<li key={ article.link }>
 						<Link to={ getPostUrl( article as Article, message ) }>
 							<Icon icon={ page } />
 							{ article.title }
