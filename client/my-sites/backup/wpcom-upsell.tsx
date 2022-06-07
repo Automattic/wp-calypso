@@ -73,16 +73,16 @@ export default function WPCOMUpsellPage(): ReactElement {
 				{ ! isAdmin && (
 					<Notice
 						status="is-warning"
-						text={ translate( 'Only site administrators can upgrade to the Pro plan.' ) }
+						text={ translate( 'Only site administrators can upgrade to the Business plan.' ) }
 						showDismiss={ false }
 					/>
 				) }
 				{ isAdmin && (
 					<PromoCardCTA
 						cta={ {
-							text: translate( 'Upgrade to Pro Plan' ),
+							text: translate( 'Upgrade to Business Plan' ),
 							action: {
-								url: `/checkout/${ siteSlug }/pro`,
+								url: `/checkout/${ siteSlug }/business`,
 								onClick: onUpgradeClick,
 								selfTarget: true,
 							},
@@ -93,7 +93,9 @@ export default function WPCOMUpsellPage(): ReactElement {
 
 			{ ! hasFullActivityLogFeature && (
 				<>
-					<h2 className="backup__subheader">{ translate( 'Also included in the Pro Plan' ) }</h2>
+					<h2 className="backup__subheader">
+						{ translate( 'Also included in the Business Plan' ) }
+					</h2>
 
 					<PromoSection { ...promos } />
 				</>
