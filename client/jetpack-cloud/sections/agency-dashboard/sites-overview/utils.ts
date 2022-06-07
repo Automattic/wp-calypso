@@ -7,6 +7,7 @@ import type {
 	ActionEventNames,
 	AllowedStatusTypes,
 	AllowedActionTypes,
+	StatusTooltip,
 } from './types';
 import type { ReactChild } from 'react';
 
@@ -127,6 +128,49 @@ const getRowEventName = (
 	}
 };
 
+const backupTooltips: StatusTooltip = {
+	failed: translate( 'Latest backup failed' ),
+	warning: translate( 'Latest backup completed with warnings' ),
+	inactive: translate( 'Add Jetpack Backup to this site' ),
+	progress: translate( 'Backup in progress' ),
+	success: translate( 'Latest backup completed successfully' ),
+};
+
+const scanTooltips: StatusTooltip = {
+	failed: translate( 'Potential threats found' ),
+	inactive: translate( 'Add Jetpack Scan to this site' ),
+	progress: translate( 'Scan in progress' ),
+	success: translate( 'No threats detected' ),
+};
+
+const monitorTooltips: StatusTooltip = {
+	failed: translate( 'Site appears to be offline' ),
+	success: translate( 'No downtime detected' ),
+	disabled: translate( 'Monitor is off' ),
+};
+
+const pluginTooltips: StatusTooltip = {
+	warning: translate( 'Plugin updates are available' ),
+	success: translate( 'No plugin updates found' ),
+};
+
+const getTooltip = ( type: AllowedTypes, status: string ) => {
+	switch ( type ) {
+		case 'backup': {
+			return backupTooltips?.[ status ];
+		}
+		case 'scan': {
+			return scanTooltips?.[ status ];
+		}
+		case 'monitor': {
+			return monitorTooltips?.[ status ];
+		}
+		case 'plugin': {
+			return pluginTooltips?.[ status ];
+		}
+	}
+};
+
 /**
  * Returns link and tooltip for each feature based on status
  * which will be used to format row values. link will be used
@@ -140,22 +184,17 @@ const getLinks = (
 	siteUrlWithScheme: string,
 	siteId: number
 ): {
-	tooltip: ReactChild | undefined;
 	link: string;
 	isExternalLink: boolean;
 } => {
 	let link = '';
 	let isExternalLink = false;
-	let tooltip;
 	switch ( type ) {
 		case 'backup': {
 			if ( status === 'inactive' ) {
 				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-realtime`;
 			} else {
 				link = `/backup/${ siteUrl }`;
-			}
-			if ( status === 'progress' ) {
-				tooltip = translate( 'Backup in progress' );
 			}
 			break;
 		}
@@ -164,9 +203,6 @@ const getLinks = (
 				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-scan`;
 			} else {
 				link = `/scan/${ siteUrl }`;
-			}
-			if ( status === 'progress' ) {
-				tooltip = translate( 'Scan in progress' );
 			}
 			break;
 		}
@@ -178,9 +214,6 @@ const getLinks = (
 				link = `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack#/settings`;
 				isExternalLink = true;
 			}
-			if ( status === 'success' ) {
-				tooltip = translate( 'Monitor is on and your site is online' );
-			}
 			break;
 		}
 		case 'plugin': {
@@ -189,7 +222,7 @@ const getLinks = (
 			break;
 		}
 	}
-	return { link, isExternalLink, tooltip };
+	return { link, isExternalLink };
 };
 
 /**
@@ -215,13 +248,8 @@ export const getRowMetaData = (
 	const siteUrlWithScheme = rows.site?.value?.url_with_scheme;
 	const siteError = rows.site.error;
 	const siteId = rows.site?.value?.blog_id;
-	const { link, tooltip, isExternalLink } = getLinks(
-		type,
-		row.status,
-		siteUrl,
-		siteUrlWithScheme,
-		siteId
-	);
+	const { link, isExternalLink } = getLinks( type, row.status, siteUrl, siteUrlWithScheme, siteId );
+	const tooltip = getTooltip( type, row.status );
 	const eventName = getRowEventName( type, row.status, isLargeScreen );
 	return {
 		row,
