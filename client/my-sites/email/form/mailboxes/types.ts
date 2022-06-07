@@ -20,8 +20,10 @@ enum EmailProvider {
 }
 
 interface MailboxFormField< Type > {
+	dispatchState: () => void;
 	error: FieldError;
 	isRequired: boolean;
+	isTouched: boolean;
 	isVisible: boolean;
 	readonly typeName: string;
 	value: Type;
@@ -43,9 +45,14 @@ abstract class MailboxFormFieldBase< T > implements MailboxFormField< T > {
 
 	value!: T;
 	isRequired;
+	isTouched = false;
 	isVisible = true;
 	fieldName: FormFieldNames;
 	readonly typeName = String.name.toLowerCase();
+
+	dispatchState = (): void => {
+		return;
+	};
 
 	constructor( fieldName: FormFieldNames, isRequired = true ) {
 		this.fieldName = fieldName;
