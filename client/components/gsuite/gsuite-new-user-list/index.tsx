@@ -70,11 +70,11 @@ const GSuiteNewUserList = ( {
 	};
 
 	const onUserRemove = ( uuid: string ) => () => {
-		recordTracksEvent( 'calypso_email_google_workspace_add_mailboxes_remove_mailbox_button_click', {
-			mailbox_count: users.length - 1,
-		} );
-
 		const newUserList = users.filter( ( _user ) => _user.uuid !== uuid );
+
+		recordTracksEvent( 'calypso_email_google_workspace_add_mailboxes_remove_mailbox_button_click', {
+			mailbox_count: newUserList.length,
+		} );
 
 		onUsersChange( 0 < newUserList.length ? newUserList : [ newUser( selectedDomainName ) ] );
 	};

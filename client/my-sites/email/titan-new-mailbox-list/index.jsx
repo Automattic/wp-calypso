@@ -61,11 +61,11 @@ const TitanNewMailboxList = ( {
 	};
 
 	const onMailboxRemove = ( currentMailboxes, uuid ) => () => {
-		recordTracksEvent( 'calypso_email_titan_add_mailboxes_remove_mailbox_button_click', {
-			mailbox_count: mailboxes.length - 1,
-		} );
-
 		const remainingMailboxes = currentMailboxes.filter( ( mailbox ) => mailbox.uuid !== uuid );
+
+		recordTracksEvent( 'calypso_email_titan_add_mailboxes_remove_mailbox_button_click', {
+			mailbox_count: remainingMailboxes.length,
+		} );
 
 		const updatedMailboxes =
 			0 < remainingMailboxes.length
