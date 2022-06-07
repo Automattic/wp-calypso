@@ -50,6 +50,7 @@ export default function CloneSettingsMain() {
 	const [ sourceSiteId, setSourceSiteId ] = useState( 0 );
 
 	const isTeamMember = select( register() ).isA8cTeamMember();
+	const isLoading = ! select( register() ).hasFinishedResolution( 'isA8cTeamMember' );
 
 	const onSelect = useCallback( ( element ) => {
 		const id = parseInt( element.target.value );
@@ -64,9 +65,9 @@ export default function CloneSettingsMain() {
 		}
 	}, [ siteId, sourceSiteId, dispatch ] );
 
-	let body = 'Functionality is not available';
+	let body = isLoading ? 'Loading…' : 'Functionality is not available';
 
-	if ( isTeamMember ) {
+	if ( ! isLoading && isTeamMember ) {
 		body = (
 			<form>
 				{ chooseSite( siteId, sites, onSelect ) }
