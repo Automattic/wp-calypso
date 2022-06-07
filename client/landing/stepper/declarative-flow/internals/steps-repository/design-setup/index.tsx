@@ -155,7 +155,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 		if ( showGeneratedDesigns ) {
 			return translate(
-				'One of these homepage options could be great to start with. You can always change later.'
+				'Based on your input, these designs have been tailored for you. You can always change later.'
 			);
 		}
 
@@ -337,10 +337,12 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		is_generated_designs: showGeneratedDesigns,
 	} );
 
-	// Make sure people is at the top when switching between generated designs and static designs
+	// Make sure people is at the top when:
+	// 1. Switching between generated designs and static designs.
+	// 2. Entering/leaving preview mode.
 	useEffect( () => {
 		window.scrollTo( { top: 0 } );
-	}, [ isForceStaticDesigns ] );
+	}, [ isForceStaticDesigns, isPreviewingDesign ] );
 
 	if ( selectedDesign && isPreviewingDesign && ! showGeneratedDesigns ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
