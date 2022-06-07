@@ -308,6 +308,7 @@ const formatMonitorData = ( site: SiteData ) => {
 	} else if ( ! site.monitor_site_status ) {
 		monitor.status = 'failed';
 		monitor.value = translate( 'Site Down' );
+		monitor.error = true;
 	} else {
 		monitor.status = 'success';
 	}
