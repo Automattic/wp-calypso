@@ -35,8 +35,5 @@ export const getCurrentOAuth2Client = ( state ) => {
  * @returns {boolean}         Whether the OAuth2 layout should be used.
  */
 export const showOAuth2Layout = ( state ) => {
-	if ( document.location.search.match( /partner-signup/ ) ) {
-		return false;
-	}
 	return !! getCurrentOAuth2ClientId( state );
 };

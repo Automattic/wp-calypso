@@ -10,6 +10,7 @@ import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isPartnerSignupFlow } from 'calypso/state/login/utils';
 import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
@@ -37,6 +38,7 @@ const LayoutLoggedOut = ( {
 	redirectUri,
 	useOAuth2Layout,
 	showGdprBanner,
+	isPartnerSignup,
 } ) => {
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -66,7 +68,7 @@ const LayoutLoggedOut = ( {
 	let masterbar = null;
 
 	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
-	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
+	if ( useOAuth2Layout && oauth2Client && oauth2Client.name && ! isPartnerSignup ) {
 		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			masterbar = null;
 		} else {
@@ -133,9 +135,8 @@ export default withCurrentRoute(
 		const sectionName = currentSection?.name ?? null;
 		const sectionTitle = currentSection?.title ?? '';
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
-		const isWhiteLogin =
-			currentRoute.startsWith( '/log-in/new' ) ||
-			currentQuery?.redirect_to.match( /partner-signup/ );
+		const isPartnerSignup = isPartnerSignupFlow( currentQuery?.redirect_to || '' );
+		const isWhiteLogin = currentRoute.startsWith( '/log-in/new' ) || isPartnerSignup;
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
 		const noMasterbarForRoute = isJetpackLogin || isWhiteLogin || isJetpackWooDnaFlow || isP2Login;
@@ -159,6 +160,7 @@ export default withCurrentRoute(
 			sectionTitle,
 			oauth2Client: getCurrentOAuth2Client( state ),
 			useOAuth2Layout: showOAuth2Layout( state ),
+			isPartnerSignup,
 		};
 	} )( LayoutLoggedOut )
 );
