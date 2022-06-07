@@ -1,8 +1,8 @@
 import { ScreenReaderText } from '@automattic/components';
-import { useDailyBackupStatus } from 'calypso/my-sites/backup/status/hooks';
 import { useTranslate } from 'i18n-calypso';
 import Badge from 'calypso/components/badge';
 import { getBackupWarnings } from 'calypso/lib/jetpack/backup-utils';
+import { useDailyBackupStatus } from 'calypso/my-sites/backup/status/hooks';
 
 const BackupBadge = ( { siteId } ) => {
 	const translate = useTranslate();
