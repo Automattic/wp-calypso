@@ -624,3 +624,26 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	margin-top: -16px;
 	margin-bottom: 16px;
 }
+
+.start-over {
+	.card h1 {
+		font-size: 1.5rem;
+	}
+
+	.start-over__backups {
+		background-color: var( --studio-blue-0 );
+		border: 1px solid var( --studio-blue-5 );
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 5px;
+		padding: 1.25rem;
+		margin-top: 2rem;
+		font-size: 0.875rem;
+
+		h4 {
+			color: var( --studio-gray-80 );
+			font-weight: 600;
+			margin-bottom: 0.5rem;
+			font-size: 1rem;
+		}
+	}
+}
