@@ -102,6 +102,15 @@
 		font-size: 0.875rem;
 	}
 }
+.sites-overview__overlay {
+	display: block;
+	position: absolute;
+	height: 50px;
+	width: 20px;
+	right: 70px;
+	background: linear-gradient( to right, rgba( 255, 255, 255, 0.8 ) 30%, rgba( 255, 255, 255, 1 ) 100% );
+	top: 0;
+}
 .sites-overview__vertical-align-middle {
 	vertical-align: middle;
 }
