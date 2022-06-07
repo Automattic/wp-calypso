@@ -19,6 +19,7 @@ import MaterialIcon from 'calypso/components/material-icon';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { useRemoveEmailForwardMutation } from 'calypso/data/emails/use-remove-email-forward-mutation';
 import { useRemoveTitanMailboxMutation } from 'calypso/data/emails/use-remove-titan-mailbox-mutation';
+import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	getEmailAddress,
@@ -114,7 +115,7 @@ const getTitanMenuItems = ( {
 			} ),
 			onClick: getTitanClickHandler( 'contacts' ),
 		},
-		...( domain.currentUserCanAddEmail
+		...( canCurrentUserAddEmail( domain )
 			? [
 					{
 						isInternalLink: true,

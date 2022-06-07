@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import {
 	hasUnusedMailboxWarning,
 	hasGoogleAccountTOSWarning,
@@ -72,13 +73,13 @@ class EmailPlanWarnings extends Component {
 	render() {
 		const { domain, translate, warning } = this.props;
 
-		if ( ! warning && domain.currentUserCanAddEmail ) {
+		if ( ! warning && canCurrentUserAddEmail( domain ) ) {
 			return null;
 		}
 
 		return (
 			<div className="email-plan-warnings__container">
-				{ ! domain.currentUserCanAddEmail && (
+				{ ! canCurrentUserAddEmail( domain ) && (
 					<div className="email-plan-warnings__warning">
 						<div className="email-plan-warnings__message">
 							<span>
