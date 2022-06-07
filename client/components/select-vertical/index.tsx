@@ -26,6 +26,7 @@ const SelectVertical: React.FC< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
+	const [ hasUserInput, setHasUserInput ] = useState( false );
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 150 );
 	const isDebouncing = searchTerm !== debouncedSearchTerm;
 
@@ -70,17 +71,20 @@ const SelectVertical: React.FC< Props > = ( {
 				suggestions={
 					! isDebouncing
 						? mapManySiteVerticalsResponseToVertical(
-								( searchTerm === '' ? featured : suggestions ) || []
+								( ! hasUserInput ? featured : suggestions ) || []
 						  )
 						: []
 				}
 				isLoading={ isDebouncing || isLoadingDefaultVertical || isLoadingSuggestions }
+				isShowSkipOption={ hasUserInput }
 				isDisableInput={ isLoadingDefaultVertical }
 				onInputChange={ ( searchTerm: string ) => {
+					setHasUserInput( searchTerm !== '' );
 					setSearchTerm( searchTerm );
 					onInputChange?.( searchTerm );
 				} }
 				onSelect={ ( vertical: Vertical ) => {
+					setHasUserInput( false );
 					setSearchTerm( vertical.label );
 					onSelect?.( vertical );
 				} }
