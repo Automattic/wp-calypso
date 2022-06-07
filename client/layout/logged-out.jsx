@@ -135,7 +135,7 @@ export default withCurrentRoute(
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 		const isWhiteLogin =
 			currentRoute.startsWith( '/log-in/new' ) ||
-			document.location.search.match( /partner-signup/ );
+			currentQuery?.redirect_to.match( /partner-signup/ );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
 		const noMasterbarForRoute = isJetpackLogin || isWhiteLogin || isJetpackWooDnaFlow || isP2Login;
