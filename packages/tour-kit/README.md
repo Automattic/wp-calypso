@@ -170,5 +170,5 @@ The main API for configuring a tour is the config object. See example usage and 
 
 - `portalElementId`: A string that lets you customize under which DOM element the Tour will be appended.
 
-`placement`: Describes the preferred placement of the popper. Possible values are left-start, left, left-end, top-start, top, top-end, right-start, right, right-end, bottom-start, bottom, and bottom-end.
+`placement` (Optional) : Describes the preferred placement of the popper. Possible values are left-start, left, left-end, top-start, top, top-end, right-start, right, right-end, bottom-start, bottom, and bottom-end.
 
