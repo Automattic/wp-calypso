@@ -171,7 +171,7 @@ export default connect(
 			cloneUrl,
 			showChangeAddress: ! isJetpack && ! isVip && ! isP2,
 			showClone: 'active' === rewindState.state && ! isAtomic,
-			showDeleteContent: ! isJetpack && ! isVip && ! isP2Hub,
+			showDeleteContent: ( ! isJetpack || isAtomic ) && ! isVip && ! isP2Hub,
 			showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,
 			showManageConnection: isJetpack && ! isAtomic,
 			siteId,
