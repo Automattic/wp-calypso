@@ -46,7 +46,6 @@ const STICKY_OPTIONS = {
  * The design picker step
  */
 const designSetup: Step = function DesignSetup( { navigation, flow } ) {
-	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
 	const [ isForceStaticDesigns, setIsForceStaticDesigns ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
@@ -116,8 +115,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		[ selectedDesign, generatedDesigns, isMobile ]
 	);
 
-	const isPreviewingGeneratedDesign =
-		isMobile && showGeneratedDesigns && selectedDesign && isPreviewingDesign;
+	const isPreviewingGeneratedDesign = isMobile && showGeneratedDesigns && selectedDesign;
 
 	const visibility = useNewSiteVisibility();
 
@@ -268,14 +266,12 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		} );
 
 		setSelectedDesign( _selectedDesign );
-		setIsPreviewingDesign( true );
 	}
 
 	function viewMoreDesigns() {
 		recordTracksEvent( 'calypso_signup_design_view_more_select' );
 
 		setSelectedDesign( undefined );
-		setIsPreviewingDesign( false );
 		setIsForceStaticDesigns( true );
 	}
 
@@ -306,7 +302,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			intent: intent,
 		};
 
-		if ( ! isPreviewingDesign && isForceStaticDesigns ) {
+		if ( ! selectedDesign && isForceStaticDesigns ) {
 			recordTracksEvent( 'calypso_signup_back_to_generated_design_step' );
 		}
 
@@ -314,9 +310,8 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	}
 
 	const handleBackClick = () => {
-		if ( isPreviewingDesign && ( ! showGeneratedDesigns || isMobile ) ) {
+		if ( selectedDesign && ( ! showGeneratedDesigns || isMobile ) ) {
 			setSelectedDesign( undefined );
-			setIsPreviewingDesign( false );
 			return;
 		}
 
@@ -333,7 +328,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	};
 
 	// Track scroll event to make sure people are scrolling on mobile.
-	useTrackScrollPageFromTop( isMobile && ! isPreviewingDesign, flow || '', STEP_NAME, {
+	useTrackScrollPageFromTop( isMobile && ! selectedDesign, flow || '', STEP_NAME, {
 		is_generated_designs: showGeneratedDesigns,
 	} );
 
@@ -342,9 +337,15 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	// 2. Entering/leaving preview mode.
 	useEffect( () => {
 		window.scrollTo( { top: 0 } );
-	}, [ isForceStaticDesigns, isPreviewingDesign ] );
+	}, [ isForceStaticDesigns, !! selectedDesign ] );
 
-	if ( selectedDesign && isPreviewingDesign && ! showGeneratedDesigns ) {
+	// When the intent is build, we can potentially show the generated design picker.
+	// Don't render until we've fetched the generated designs from the backend.
+	if ( ( ! site || isLoadingGeneratedDesigns ) && ! isAnchorSite ) {
+		return null;
+	}
+
+	if ( selectedDesign && ! showGeneratedDesigns ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
@@ -403,12 +404,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
 		);
-	}
-
-	// When the intent is build, we can potentially show the generated design picker.
-	// Don't render until we've fetched the generated designs from the backend.
-	if ( ( ! site || isLoadingGeneratedDesigns ) && ! isAnchorSite ) {
-		return null;
 	}
 
 	const heading = (
