@@ -11,7 +11,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 const CustomizeTheme = ( { translate, blockEditorSettings, areBlockEditorSettingsLoading } ) => {
 	const isFSEActive = blockEditorSettings?.is_fse_active;
 	const siteId = useSelector( getSelectedSiteId );
-	const currentThemeId = useSelector( getActiveTheme );
+	const currentThemeId = useSelector( ( state ) => getActiveTheme( state, siteId ) );
 	const customizeLink = useSelector( ( state ) =>
 		getCustomizeUrl( state, currentThemeId, siteId, isFSEActive )
 	);
