@@ -14,7 +14,6 @@ import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItemEnhanced from 'calypso/components/vertical-nav/item/enhanced';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL,
@@ -31,7 +30,6 @@ import {
 } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	emailManagement,
-	emailManagementManageTitanMailboxes,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import {
@@ -154,11 +152,6 @@ class TitanManageMailboxes extends Component {
 
 		return (
 			<>
-				<PageViewTracker
-					path={ emailManagementManageTitanMailboxes( ':site', ':domain' ) }
-					title="Email Management > Titan > Manage All Mailboxes"
-				/>
-
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 				{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
