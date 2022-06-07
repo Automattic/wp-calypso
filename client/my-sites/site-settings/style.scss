@@ -646,4 +646,26 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 			font-size: 1rem;
 		}
 	}
+
+	.start-over__empty-site-button {
+		width: 100%;
+		margin-top: 1.5rem;
+	}
+
+	.start-over__checkbox-container {
+		background-color: var( --studio-white );
+		padding: 0.8125rem 1.25rem;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 5px;
+		box-shadow: 0 1px 2px rgb( 0 0 0 / 5% );
+		border: 1px solid var( --studio-gray-5 );
+		display: flex;
+		align-items: center;
+		margin-bottom: 0.75rem;
+
+		.components-base-control__field {
+			display: flex;
+			align-items: center;
+		}
+	}
 }

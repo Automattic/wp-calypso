@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { CheckboxControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
+import wpcom from 'calypso/lib/wp';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -15,6 +16,7 @@ class StartOver extends Component {
 		atomicRevertCheckTwo: false,
 		simpleRevertCheckOne: false,
 		simpleRevertCheckTwo: false,
+		isEmptyButtonBusy: false,
 	};
 
 	static defaultProps = {
@@ -22,7 +24,7 @@ class StartOver extends Component {
 	};
 
 	getCheckboxConsent() {
-		const { translate } = this.props;
+		const { selectedSiteSlug, translate } = this.props;
 		const {
 			atomicRevertCheckOne,
 			atomicRevertCheckTwo,
@@ -35,6 +37,7 @@ class StartOver extends Component {
 			return (
 				<>
 					<CheckboxControl
+						className="start-over__checkbox-container"
 						label={ translate(
 							'Any themes/plugins you have installed on the site will be removed, along with their data.'
 						) }
@@ -42,6 +45,7 @@ class StartOver extends Component {
 						onChange={ ( isChecked ) => this.setState( { atomicRevertCheckOne: isChecked } ) }
 					/>
 					<CheckboxControl
+						className="start-over__checkbox-container"
 						label={ translate(
 							'Your site will return to its original settings and theme right before the first plugin or custom theme was installed.'
 						) }
@@ -55,13 +59,22 @@ class StartOver extends Component {
 		return (
 			<>
 				<CheckboxControl
+					className="start-over__checkbox-container"
 					label={ translate(
-						'All posts, pages, media, comments, tags, and themes will be deleted.'
+						`All data for {{strong}}%(selectedSiteSlug)s{{/strong}} will be deleted. This includes posts, pages, media, comments, tags, and themes.`,
+						{
+							args: { selectedSiteSlug },
+							components: {
+								// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+								strong: <strong className="is-highlighted" />,
+							},
+						}
 					) }
 					checked={ simpleRevertCheckOne }
 					onChange={ ( isChecked ) => this.setState( { simpleRevertCheckOne: isChecked } ) }
 				/>
 				<CheckboxControl
+					className="start-over__checkbox-container"
 					label={ translate(
 						'I understand that there is no way to retrieve my data unless I have downloaded a backup.'
 					) }
@@ -72,13 +85,43 @@ class StartOver extends Component {
 		);
 	}
 
+	clickEmptySiteButton = async () => {
+		const { siteId } = this.props;
+		this.setState( { isEmptyButtonBusy: true } );
+		const params = { site_id: siteId };
+
+		const response = await wpcom.req.post(
+			{
+				apiNamespace: 'wpcom/v2',
+				path: '/empty-site',
+			},
+			params
+		);
+		if ( ! response.success ) {
+			this.setState( { isEmptyButtonBusy: false } );
+			// Set notice about error
+		}
+
+		const currentPageUrl = new URL( document.location );
+		currentPageUrl.searchParams.append( 'empty', 'success' );
+		window.location.href = currentPageUrl.toString();
+	};
+
 	render() {
 		const atomicTransferDate = null;
 		const { selectedSiteSlug, translate, atomicTransfer } = this.props;
-
+		const {
+			atomicRevertCheckOne,
+			atomicRevertCheckTwo,
+			simpleRevertCheckOne,
+			simpleRevertCheckTwo,
+			isEmptyButtonBusy,
+		} = this.state;
+		let canClickEmptyButton;
 		let subHeaderText;
 
-		if ( atomicTransfer ) {
+		if ( Object.keys( atomicTransfer ).length ) {
+			canClickEmptyButton = atomicRevertCheckOne && atomicRevertCheckTwo;
 			subHeaderText = translate(
 				'After emptying your site, we will return your site back to the point when you installed your first plugin or custom theme or activated hosting features on {{strong}}%(atomicTransferDate)s{{/strong}}. All your posts, pages and media will be deleted.',
 				{
@@ -89,6 +132,8 @@ class StartOver extends Component {
 					},
 				}
 			);
+		} else {
+			canClickEmptyButton = simpleRevertCheckOne && simpleRevertCheckTwo;
 		}
 
 		return (
@@ -140,6 +185,16 @@ class StartOver extends Component {
 								{ translate( 'Go to your backups' ) }
 							</ExternalLink>
 						</div>
+						<Button
+							primary
+							scary
+							disabled={ ! canClickEmptyButton }
+							onClick={ this.clickEmptySiteButton }
+							className="start-over__empty-site-button"
+							busy={ isEmptyButtonBusy }
+						>
+							{ translate( 'Empty Site' ) }
+						</Button>
 					</Card>
 				</div>
 			</>
@@ -153,5 +208,6 @@ export default connect( ( state ) => {
 	return {
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 		atomicTransfer: getAtomicTransfer( state, siteId ),
+		siteId,
 	};
 } )( localize( StartOver ) );
