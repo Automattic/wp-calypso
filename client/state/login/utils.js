@@ -176,3 +176,7 @@ export async function postLoginRequest( action, bodyObj ) {
 	}
 	throw new HTTPError( response, await response.text() );
 }
+
+export function isPartnerSignupFlow( redirectTo ) {
+	return redirectTo?.match( /woocommerce\.com\/partner-signup/ )?.length > 0;
+}
