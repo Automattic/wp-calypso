@@ -30,10 +30,6 @@ class PagesMain extends Component {
 		search: PropTypes.string,
 	};
 
-	static defaultProps = {
-		perPage: 20,
-	};
-
 	getAnalyticsPath() {
 		const { status, siteId } = this.props;
 		const basePath = '/pages';

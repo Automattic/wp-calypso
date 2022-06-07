@@ -90,7 +90,6 @@ class Pages extends Component {
 	};
 
 	static defaultProps = {
-		perPage: 100,
 		loading: false,
 		lastPage: false,
 		page: 0,
