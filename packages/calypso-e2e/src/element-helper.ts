@@ -60,7 +60,9 @@ export async function clickNavTab( page: Page, name: string ): Promise< void > {
 	const selectedTabName = await selectedTabLocator.innerText();
 
 	// Short circuit operation if the active tab and target tabs are the same.
-	if ( selectedTabName === name ) {
+	// Strip numerals from the extracted tab name to account for the slightly
+	// different implementation in PostsPage.
+	if ( selectedTabName.replace( /[0-9]/g, '' ) === name ) {
 		return;
 	}
 
@@ -90,7 +92,8 @@ export async function clickNavTab( page: Page, name: string ): Promise< void > {
 	);
 	const newSelectedTabName = await newSelectedTabLocator.innerText();
 
-	if ( newSelectedTabName !== name ) {
+	// Strip numerals from the extracted tab name, similar to above.
+	if ( newSelectedTabName.replace( /[0-9]/g, '' ) !== name ) {
 		throw new Error(
 			`Failed to confirm NavTab is active: expected ${ name }, got ${ newSelectedTabName }`
 		);
