@@ -72,8 +72,8 @@ UpgradeNavItem.propTypes = {
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
 
-function getAccount( data ) {
-	return data?.accounts?.[ 0 ];
+function getAccount( accounts ) {
+	return accounts?.[ 0 ];
 }
 
 function getMailboxes( data ) {
@@ -276,9 +276,11 @@ function EmailPlan( { domain, selectedSite, source } ) {
 		);
 	}
 
-	const { data, isLoading } = useGetEmailAccountsQuery( selectedSite.ID, domain.name, {
-		retry: false,
-	} );
+	const { data: emailAccounts = [], isLoading } = useGetEmailAccountsQuery(
+		selectedSite.ID,
+		domain.name,
+		{ retry: false }
+	);
 
 	return (
 		<>
@@ -292,12 +294,12 @@ function EmailPlan( { domain, selectedSite, source } ) {
 				isLoadingPurchase={ isLoadingPurchase }
 				purchase={ purchase }
 				selectedSite={ selectedSite }
-				emailAccount={ data?.accounts?.[ 0 ] || {} }
+				emailAccount={ getAccount( emailAccounts ) }
 			/>
 			<EmailPlanMailboxesList
-				account={ getAccount( data ) }
+				account={ getAccount( emailAccounts ) }
 				domain={ domain }
-				mailboxes={ getMailboxes( data ) }
+				mailboxes={ getMailboxes( emailAccounts ) }
 				isLoadingEmails={ isLoading }
 			/>
 			<div className="email-plan__actions">

@@ -1,11 +1,24 @@
 import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
+import type { UseQueryOptions } from 'react-query';
 
-type UseQueryParams = Parameters< typeof useQuery >;
+export type Mailbox = {
+	domain: string;
+	mailbox: string;
+};
+
+export type EmailAccount = {
+	account_type: string;
+	emails: Mailbox[];
+};
+
+export type UseGetEmailAccountsQueryData = EmailAccount[];
 
 export const getCacheKey = ( siteId: number | null, domain: string ) => [
-	'emailAccounts',
+	'sites',
 	siteId,
+	'emails',
+	'account',
 	domain,
 ];
 
@@ -22,15 +35,18 @@ export const getCacheKey = ( siteId: number | null, domain: string ) => [
 export const useGetEmailAccountsQuery = (
 	siteId: number,
 	domain: string,
-	queryOptions?: UseQueryParams[ 2 ]
+	queryOptions?: UseQueryOptions< any, unknown, UseGetEmailAccountsQueryData >
 ) => {
-	return useQuery< any >(
+	return useQuery< any, unknown, UseGetEmailAccountsQueryData >(
 		getCacheKey( siteId, domain ),
 		() =>
 			wpcom.req.get( {
 				path: `/sites/${ siteId }/emails/accounts/${ encodeURIComponent( domain ) }/mailboxes`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		queryOptions
+		{
+			select: ( data ) => data.accounts,
+			...queryOptions,
+		}
 	);
 };

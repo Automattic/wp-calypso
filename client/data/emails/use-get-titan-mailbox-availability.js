@@ -1,6 +1,14 @@
 import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 
+export const getCacheKey = ( domain, mailbox ) => [
+	'emails',
+	'titan',
+	domain,
+	'check-mailbox-availability',
+	mailbox,
+];
+
 /**
  * A list of error statuses that are seen as final and shouldn't be retried for this query
  *
@@ -18,7 +26,7 @@ const finalErrorStatuses = [ 400, 401, 403, 409 ];
  */
 export const useGetTitanMailboxAvailability = ( domainName, mailboxName, queryOptions = {} ) => {
 	return useQuery(
-		[ domainName, mailboxName ],
+		getCacheKey( domainName, mailboxName ),
 		() =>
 			wpcom.req.get( {
 				path: `/emails/titan/${ encodeURIComponent(

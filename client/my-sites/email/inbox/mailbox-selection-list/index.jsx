@@ -7,7 +7,10 @@ import { useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { getMailboxesCacheKey, useGetMailboxes } from 'calypso/data/emails/use-get-mailboxes';
+import {
+	getCacheKey as getMailboxesQueryKey,
+	useGetMailboxes,
+} from 'calypso/data/emails/use-get-mailboxes';
 import errorIllustration from 'calypso/landing/browsehappy/illustration.svg';
 import {
 	getEmailAddress,
@@ -195,7 +198,7 @@ const MailboxLoaderError = ( { refetchMailboxes, siteId } ) => {
 	const queryClient = useQueryClient();
 
 	const reloadMailboxes = () => {
-		queryClient.removeQueries( getMailboxesCacheKey( siteId ) );
+		queryClient.removeQueries( getMailboxesQueryKey( siteId ) );
 		refetchMailboxes();
 	};
 
@@ -235,7 +238,12 @@ const MailboxSelectionList = () => {
 	const selectedSiteId = selectedSite?.ID ?? null;
 	const translate = useTranslate();
 
-	const { data, isError, isLoading, refetch } = useGetMailboxes( selectedSiteId, {
+	const {
+		data: allMailboxes = [],
+		isError,
+		isLoading,
+		refetch,
+	} = useGetMailboxes( selectedSiteId, {
 		retry: 2,
 	} );
 
@@ -256,9 +264,7 @@ const MailboxSelectionList = () => {
 		return <MailboxLoaderError refetchMailboxes={ refetch } siteId={ selectedSiteId } />;
 	}
 
-	const mailboxes = ( data?.mailboxes ?? [] ).filter(
-		( mailbox ) => ! isEmailForwardAccount( mailbox )
-	);
+	const mailboxes = allMailboxes.filter( ( mailbox ) => ! isEmailForwardAccount( mailbox ) );
 
 	return (
 		<div className="mailbox-selection-list__container">
