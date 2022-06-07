@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/i18n-utils",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "WordPress.com i18n utils.",
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso",
@@ -29,6 +29,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-url": "workspace:^",
+		"@automattic/languages": "workspace:^",
 		"@wordpress/compose": "^5.7.0",
 		"@wordpress/i18n": "^4.9.0",
 		"react": "^17.0.2",
