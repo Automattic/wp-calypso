@@ -27,7 +27,7 @@ const EmailVerifyCelebration: Step = function EmailVerifyCelebration( { navigati
 	}
 
 	const userName = 'Valter';
-	const userEmail = 'valterlorran@gmail.com';
+	const userEmail = 'example.email@gmail.com';
 
 	const headerText = createInterpolateElement(
 		sprintf( __( "You're all set %(userName)s! <br />We just need to verify your email." ), {
