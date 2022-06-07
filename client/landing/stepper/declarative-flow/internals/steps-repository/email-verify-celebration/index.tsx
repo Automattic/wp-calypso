@@ -34,6 +34,7 @@ const EmailVerifyCelebration: Step = function EmailVerifyCelebration( { navigati
 	const userEmail = user.email;
 
 	const headerText = createInterpolateElement(
+		/* translators: the userName is the display name of the user, eg: Valter */
 		sprintf( __( "You're all set %(userName)s! <br />We just need to verify your email." ), {
 			userName,
 		} ),
@@ -42,6 +43,7 @@ const EmailVerifyCelebration: Step = function EmailVerifyCelebration( { navigati
 
 	const subHeaderText = createInterpolateElement(
 		sprintf(
+			/* translators: the userEmail is the email of the user */
 			__(
 				'A verification email has been sent to %(userEmail)s. <br />Please continue your journey from the following the link sent.'
 			),
