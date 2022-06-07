@@ -5,11 +5,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
-import ExternalLink from 'calypso/components/external-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import version_compare from 'calypso/lib/version-compare';
+import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
@@ -21,11 +21,10 @@ import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/st
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { PREINSTALLED_PLUGINS } from '../constants';
 import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
-
-const PREINSTALLED_PLUGINS = [ 'Jetpack by WordPress.com', 'Akismet', 'VaultPress' ];
 
 const PluginsBrowserListElement = ( props ) => {
 	const {
@@ -35,7 +34,6 @@ const PluginsBrowserListElement = ( props ) => {
 		iconSize = 40,
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
-		billingPeriod,
 	} = props;
 
 	const translate = useTranslate();
@@ -89,7 +87,7 @@ const PluginsBrowserListElement = ( props ) => {
 			return false;
 		}
 
-		return ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.name );
+		return ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug );
 	}, [ isJetpack, site, plugin ] );
 
 	const isUntestedVersion = useMemo( () => {
@@ -112,7 +110,7 @@ const PluginsBrowserListElement = ( props ) => {
 		return ! isCompatiblePlugin( plugin.slug ) && ! jetpackNonAtomic;
 	} );
 
-	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite?.ID ) );
 
 	if ( isPlaceholder ) {
 		return <Placeholder iconSize={ iconSize } />;
@@ -121,6 +119,13 @@ const PluginsBrowserListElement = ( props ) => {
 	const classNames = classnames( 'plugins-browser-item', variant, {
 		incompatible: isPluginIncompatible,
 	} );
+
+	const onClick = ( e ) => {
+		e.preventDefault();
+		e.stopPropagation();
+		window.location.href = 'https://wordpress.com/support/incompatible-plugins/';
+	};
+
 	return (
 		<li className={ classNames }>
 			<a
@@ -161,9 +166,15 @@ const PluginsBrowserListElement = ( props ) => {
 					</div>
 				) }
 				{ isPluginIncompatible && (
-					<ExternalLink icon={ false } href="https://wordpress.com/support/incompatible-plugins/">
+					<span
+						role="link"
+						tabIndex="-1"
+						onClick={ onClick }
+						onKeyPress={ onClick }
+						className="plugins-browser-item__incompatible"
+					>
 						{ translate( 'Why is this plugin not compatible with WordPress.com?' ) }
-					</ExternalLink>
+					</span>
 				) }
 				<div className="plugins-browser-item__footer">
 					{ variant === PluginsBrowserElementVariant.Extended && (
@@ -171,7 +182,6 @@ const PluginsBrowserListElement = ( props ) => {
 							sitesWithPlugin={ sitesWithPlugin }
 							isWpcomPreinstalled={ isWpcomPreinstalled }
 							plugin={ plugin }
-							billingPeriod={ billingPeriod }
 							shouldUpgrade={ shouldUpgrade }
 							currentSites={ currentSites }
 						/>
@@ -207,7 +217,6 @@ const InstalledInOrPricing = ( {
 	sitesWithPlugin,
 	isWpcomPreinstalled,
 	plugin,
-	billingPeriod,
 	shouldUpgrade,
 	currentSites,
 } ) => {
@@ -216,13 +225,14 @@ const InstalledInOrPricing = ( {
 	const isPluginAtive = useSelector( ( state ) =>
 		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
 	)?.active;
+	const active = isWpcomPreinstalled || isPluginAtive;
 
 	let checkmarkColorClass = 'checkmark--active';
 
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		if ( selectedSiteId ) {
-			checkmarkColorClass = isPluginAtive ? 'checkmark--active' : 'checkmark--inactive';
+			checkmarkColorClass = active ? 'checkmark--active' : 'checkmark--inactive';
 		}
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
@@ -237,8 +247,8 @@ const InstalledInOrPricing = ( {
 				</div>
 				{ selectedSiteId && (
 					<div className="plugins-browser-item__active">
-						<Badge type={ isPluginAtive ? 'success' : 'info' }>
-							{ isPluginAtive ? translate( 'Active' ) : translate( 'Inactive' ) }
+						<Badge type={ active ? 'success' : 'info' }>
+							{ active ? translate( 'Active' ) : translate( 'Inactive' ) }
 						</Badge>
 					</div>
 				) }
@@ -249,7 +259,7 @@ const InstalledInOrPricing = ( {
 
 	return (
 		<div className="plugins-browser-item__pricing">
-			<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
+			<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
 				{ ( { isFetching, price, period } ) =>
 					isFetching ? (
 						<div className="plugins-browser-item__pricing-placeholder">...</div>

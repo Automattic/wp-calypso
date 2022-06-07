@@ -1,5 +1,9 @@
 import config from '@automattic/calypso-config';
-import { HappinessEngineersTray, Gravatar } from '@automattic/components';
+import {
+	HappinessEngineersTray,
+	Gravatar,
+	SpinnerExample as Spinner,
+} from '@automattic/components';
 import Buttons from '@automattic/components/src/button/docs/example';
 import Cards from '@automattic/components/src/card/docs/example';
 import Gridicon from '@automattic/components/src/gridicon/docs/example';
@@ -96,7 +100,6 @@ import ShareButton from 'calypso/components/share-button/docs/example';
 import SocialLogos from 'calypso/components/social-logo/docs/example';
 import SpinnerButton from 'calypso/components/spinner-button/docs/example';
 import SpinnerLine from 'calypso/components/spinner-line/docs/example';
-import Spinner from 'calypso/components/spinner/docs/example';
 import SplitButton from 'calypso/components/split-button/docs/example';
 import Spotlight from 'calypso/components/spotlight/docs/example';
 import StepProgress from 'calypso/components/step-progress/docs/example';

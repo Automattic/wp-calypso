@@ -1,6 +1,7 @@
 import { isPlan } from '@automattic/calypso-products';
 import { Card, Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
@@ -355,7 +356,13 @@ class UseYourDomainStep extends Component {
 		const buttonText = translate( 'Transfer to WordPress.com' );
 		const learnMore = translate( '{{a}}Learn more about domain transfers{{/a}}', {
 			components: {
-				a: <a href={ INCOMING_DOMAIN_TRANSFER } rel="noopener noreferrer" target="_blank" />,
+				a: (
+					<a
+						href={ localizeUrl( INCOMING_DOMAIN_TRANSFER ) }
+						rel="noopener noreferrer"
+						target="_blank"
+					/>
+				),
 			},
 		} );
 
@@ -384,7 +391,13 @@ class UseYourDomainStep extends Component {
 		const buttonText = translate( 'Map your domain' );
 		const learnMore = translate( '{{a}}Learn more about domain mapping{{/a}}', {
 			components: {
-				a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
+				a: (
+					<a
+						href={ localizeUrl( MAP_EXISTING_DOMAIN ) }
+						rel="noopener noreferrer"
+						target="_blank"
+					/>
+				),
 			},
 		} );
 

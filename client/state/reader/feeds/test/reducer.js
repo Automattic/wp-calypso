@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	READER_FEED_REQUEST,
@@ -12,7 +11,7 @@ import { items, queuedRequests, lastFetched } from '../reducer';
 describe( 'reducer', () => {
 	describe( 'items', () => {
 		test( 'should return an empty map by default', () => {
-			expect( items( undefined, {} ) ).to.deep.equal( {} );
+			expect( items( undefined, {} ) ).toEqual( {} );
 		} );
 
 		test( 'should update the state when receiving a feed', () => {
@@ -29,7 +28,7 @@ describe( 'reducer', () => {
 						},
 					}
 				)[ 1 ]
-			).to.deep.equal( {
+			).toEqual( {
 				feed_ID: 1,
 				blog_ID: 2,
 				feed_URL: 'http://example.com',
@@ -59,7 +58,7 @@ describe( 'reducer', () => {
 						},
 					}
 				)[ 1 ]
-			).to.deep.equal( {
+			).toEqual( {
 				feed_ID: 1,
 				blog_ID: 2,
 				name: 'ben & jerries',
@@ -90,7 +89,7 @@ describe( 'reducer', () => {
 						},
 					}
 				)[ 1 ]
-			).to.deep.equal( {
+			).toEqual( {
 				feed_ID: 1,
 				blog_ID: 2,
 				name: 'ben & jerries',
@@ -108,7 +107,7 @@ describe( 'reducer', () => {
 
 		test( 'should serialize feed entries', () => {
 			const unvalidatedObject = deepFreeze( { hi: 'there' } );
-			expect( serialize( items, unvalidatedObject ) ).to.deep.equal( unvalidatedObject );
+			expect( serialize( items, unvalidatedObject ) ).toEqual( unvalidatedObject );
 		} );
 
 		test( 'should not serialize errors', () => {
@@ -119,7 +118,7 @@ describe( 'reducer', () => {
 					is_error: true,
 				},
 			} );
-			expect( serialize( items, stateWithErrors ) ).to.deep.equal( {
+			expect( serialize( items, stateWithErrors ) ).toEqual( {
 				12: { feed_ID: 12 },
 			} );
 		} );
@@ -128,7 +127,7 @@ describe( 'reducer', () => {
 			'should reject deserializing entries it cannot validate',
 			captureConsole( () => {
 				const unvalidatedObject = deepFreeze( { hi: 'there' } );
-				expect( deserialize( items, unvalidatedObject ) ).to.deep.equal( {} );
+				expect( deserialize( items, unvalidatedObject ) ).toEqual( {} );
 			} )
 		);
 
@@ -146,7 +145,7 @@ describe( 'reducer', () => {
 					image: 'http://example.com/favicon',
 				},
 			} );
-			expect( deserialize( items, validState ) ).to.deep.equal( validState );
+			expect( deserialize( items, validState ) ).toEqual( validState );
 		} );
 
 		test( 'should stash an error object in the map if the request fails', () => {
@@ -159,7 +158,7 @@ describe( 'reducer', () => {
 						payload: { feed_ID: 666 },
 					}
 				)
-			).to.deep.equal( { 666: { feed_ID: 666, is_error: true } } );
+			).toEqual( { 666: { feed_ID: 666, is_error: true } } );
 		} );
 
 		test( 'should overwrite an existing entry on receiving a new feed', () => {
@@ -175,7 +174,7 @@ describe( 'reducer', () => {
 						image: 'http://example.com/image',
 					},
 				} )
-			).to.deep.equal( {
+			).toEqual( {
 				666: {
 					feed_ID: 666,
 					blog_ID: 888,
@@ -201,7 +200,7 @@ describe( 'reducer', () => {
 					error: new Error( 'request failed' ),
 					payload: { feed_ID: 666 },
 				} )
-			).to.deep.equal( startingState );
+			).toEqual( startingState );
 		} );
 	} );
 
@@ -215,7 +214,7 @@ describe( 'reducer', () => {
 						payload: { feed_ID: 1 },
 					}
 				)
-			).to.deep.equal( { 1: true } );
+			).toEqual( { 1: true } );
 		} );
 
 		test( 'should remove the feed from the set inflight', () => {
@@ -224,7 +223,7 @@ describe( 'reducer', () => {
 					type: READER_FEED_REQUEST_SUCCESS,
 					payload: { feed_ID: 1 },
 				} )
-			).to.deep.equal( {} );
+			).toEqual( {} );
 		} );
 	} );
 
@@ -235,7 +234,8 @@ describe( 'reducer', () => {
 				type: READER_FEED_REQUEST_SUCCESS,
 				payload: { feed_ID: 1 },
 			};
-			expect( lastFetched( original, action ) ).to.have.a.property( 1 ).that.is.a( 'number' );
+			expect( lastFetched( original, action ) ).toHaveProperty( '1' );
+			expect( lastFetched( original, action )[ 1 ] ).toEqual( expect.any( Number ) );
 		} );
 	} );
 } );

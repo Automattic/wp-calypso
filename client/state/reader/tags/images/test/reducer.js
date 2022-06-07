@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	READER_TAG_IMAGES_RECEIVE,
@@ -11,7 +10,7 @@ describe( 'reducer', () => {
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should insert a new image for a new tag', () => {
@@ -27,7 +26,7 @@ describe( 'reducer', () => {
 				tag: 'apple',
 			} );
 
-			expect( state.apple[ 0 ] ).to.eql( newImage );
+			expect( state.apple[ 0 ] ).toEqual( newImage );
 		} );
 
 		test( 'should insert a new image for an existing tag', () => {
@@ -43,14 +42,14 @@ describe( 'reducer', () => {
 				tag: 'banana',
 			} );
 
-			expect( state.banana[ 1 ] ).to.eql( newImage );
+			expect( state.banana[ 1 ] ).toEqual( newImage );
 		} );
 	} );
 
 	describe( '#requesting()', () => {
 		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should index requesting state by tag', () => {
@@ -59,7 +58,7 @@ describe( 'reducer', () => {
 				type: READER_TAG_IMAGES_REQUEST,
 				tag,
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				banana: true,
 			} );
 		} );
@@ -72,7 +71,7 @@ describe( 'reducer', () => {
 				type: READER_TAG_IMAGES_REQUEST,
 				tag: 'pen',
 			} );
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				pineapple: false,
 				pen: true,
 			} );
@@ -88,7 +87,7 @@ describe( 'reducer', () => {
 				tag: 'pen',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				pineapple: false,
 				pen: false,
 			} );

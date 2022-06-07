@@ -3,18 +3,10 @@ import {
 	FEATURE_SIMPLE_PAYMENTS,
 	PLAN_PREMIUM,
 	PLAN_JETPACK_SECURITY_DAILY,
-	isPremiumPlan,
-	isBusinessPlan,
-	isEcommercePlan,
-	isJetpackPremiumPlan,
-	isJetpackBusinessPlan,
-	isSecurityDailyPlan,
-	isSecurityRealTimePlan,
-	isCompletePlan,
-	isProPlan,
 	FEATURE_PREMIUM_CONTENT_CONTAINER,
 	FEATURE_DONATIONS,
 	FEATURE_RECURRING_PAYMENTS,
+	WPCOM_FEATURES_WORDADS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
@@ -34,9 +26,9 @@ import wp from 'calypso/lib/wp';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { hasFeature, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -49,7 +41,6 @@ import './style.scss';
 interface ConnectedProps {
 	siteId: number;
 	selectedSiteSlug: SiteSlug | null;
-	isFreePlan: boolean;
 	isNonAtomicJetpack: boolean;
 	isLoading: boolean;
 	hasSimplePayments: boolean;
@@ -59,7 +50,6 @@ interface ConnectedProps {
 	trackUpgrade: ( plan: string, feature: string ) => void;
 	trackLearnLink: ( feature: string ) => void;
 	trackCtaButton: ( feature: string ) => void;
-	isPremiumOrBetterPlan?: boolean;
 	isUserAdmin?: boolean;
 	eligibleForProPlan?: boolean;
 	hasDonations: boolean;
@@ -67,18 +57,9 @@ interface ConnectedProps {
 	hasRecurringPayments: boolean;
 }
 
-type BoolFunction = ( arg: string ) => boolean;
-function overSome< F extends BoolFunction, T extends string >( ...checks: F[] ) {
-	return function ( item: T ) {
-		return checks.some( ( check ) => check( item ) );
-	};
-}
-
 const Home: FunctionComponent< ConnectedProps > = ( {
 	siteId,
 	selectedSiteSlug,
-	isFreePlan,
-	isPremiumOrBetterPlan,
 	isNonAtomicJetpack,
 	isUserAdmin,
 	isLoading,
@@ -121,7 +102,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		// Space isn't included in the translatable string to prevent it being easily missed.
 		return isNonAtomicJetpack
 			? ' ' + jetpackText
-			: ' ' + translate( 'Available with any paid plan.' );
+			: ' ' + translate( 'Available with any paid plan — no plugin required.' );
 	};
 
 	const getPremiumPlanNames = () => {
@@ -189,6 +170,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getRecurringPaymentsCard = () => {
+		const hasConnectionCtaTitle = translate( 'Manage Payment Button' );
+		const noConnectionCtaTitle = translate( 'Enable Payment Button' );
+		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
 		const cta = ! hasRecurringPayments
 			? {
 					text: translate( 'Unlock this feature' ),
@@ -198,35 +182,40 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  }
 			: {
-					text: translate( 'Collect payments' ),
+					text: ctaTitle,
 					action: () => {
 						trackCtaButton( 'recurring-payments' );
 						page( `/earn/payments/${ selectedSiteSlug }` );
 					},
 			  };
-		const hasConnectionTitle = translate( 'Manage payments' );
-		const noConnectionTitle = translate( 'Collect payments' );
-		const title = hasConnectedAccount ? hasConnectionTitle : noConnectionTitle;
+		const title = translate( 'Collect payments' );
 
-		const hasConnectionBody = translate(
-			"Manage your customers and subscribers, or your current subscription options and review the total revenue that you've made from payments."
-		);
-		const noConnectionBody = (
+		const body = (
 			<>
-				{ translate(
-					'Accept one-time and recurring credit card payments for physical products, services, memberships, subscriptions, and donations.'
-				) }
-				{ isFreePlan && <em>{ getAnyPlanNames() }</em> }
+				{ hasConnectedAccount
+					? translate(
+							'Let visitors pay for digital goods and services or make quick, pre-set donations by inserting the Payment Button block.'
+					  )
+					: translate(
+							'Let visitors pay for digital goods and services or make quick, pre-set donations by enabling the Payment Button block.'
+					  ) }
+				<>
+					<br />
+					<em>{ getAnyPlanNames() }</em>
+				</>
 			</>
 		);
-		const body = hasConnectedAccount ? hasConnectionBody : noConnectionBody;
 
-		const learnMoreLink = isFreePlan
+		const learnMoreLink = ! hasConnectedAccount
 			? {
-					url: 'https://wordpress.com/support/recurring-payments/',
+					url: 'https://wordpress.com/payments-donations/',
 					onClick: () => trackLearnLink( 'recurring-payments' ),
 			  }
-			: null;
+			: {
+					url: 'https://wordpress.com/support/wordpress-editor/blocks/payments/#payment-button-block',
+					onClick: () => trackLearnLink( 'recurring-payments' ),
+					label: translate( 'Support documentation' ),
+			  };
 		return {
 			title,
 			body,
@@ -244,6 +233,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getDonationsCard = () => {
+		const hasConnectionCtaTitle = translate( 'Manage Donations Form' );
+		const noConnectionCtaTitle = translate( 'Enable Donations Form' );
+		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
 		const cta = ! hasDonations
 			? {
 					text: translate( 'Unlock this feature' ),
@@ -253,7 +245,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  }
 			: {
-					text: translate( 'Manage donations' ),
+					text: ctaTitle,
 					action: () => {
 						trackCtaButton( 'donations' );
 						page( `/earn/payments/${ selectedSiteSlug }` );
@@ -263,17 +255,30 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 		const body = (
 			<>
-				{ translate(
-					'Collect donations, tips, and contributions for your creative pursuits, organization, or whatever your website is about.'
-				) }
-				{ isFreePlan && <em>{ getAnyPlanNames() }</em> }
+				{ hasConnectedAccount
+					? translate(
+							'Accept one-time and recurring donations by inserting the Donations Form block.'
+					  )
+					: translate(
+							'Accept one-time and recurring donations by enabling the Donations Form block.'
+					  ) }
+				<>
+					<br />
+					<em>{ getAnyPlanNames() }</em>
+				</>
 			</>
 		);
 
-		const learnMoreLink = {
-			url: localizeUrl( 'https://wordpress.com/support/donations/' ),
-			onClick: () => trackLearnLink( 'donations' ),
-		};
+		const learnMoreLink = ! hasConnectedAccount
+			? {
+					url: localizeUrl( 'https://wordpress.com/payments-donations/' ),
+					onClick: () => trackLearnLink( 'donations' ),
+			  }
+			: {
+					url: localizeUrl( 'https://wordpress.com/support/wordpress-editor/blocks/donations/' ),
+					onClick: () => trackLearnLink( 'donations' ),
+					label: translate( 'Support documentation' ),
+			  };
 
 		return {
 			title,
@@ -292,6 +297,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 * @returns {object} Object with props to render a PromoCard.
 	 */
 	const getPremiumContentCard = () => {
+		const hasConnectionCtaTitle = translate( 'Manage Premium Content' );
+		const noConnectionCtaTitle = translate( 'Enable Premium Content' );
+		const ctaTitle = hasConnectedAccount ? hasConnectionCtaTitle : noConnectionCtaTitle;
 		if ( isNonAtomicJetpack ) {
 			return;
 		}
@@ -304,44 +312,36 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  }
 			: {
-					text: translate( 'Add premium content subscriptions' ),
+					text: ctaTitle,
 					action: () => {
 						trackCtaButton( 'premium-content' );
 						page( `/earn/payments/${ selectedSiteSlug }` );
 					},
 			  };
-		const title = hasConnectedAccount
-			? translate( 'Manage your premium content' )
-			: translate( 'Collect payments for content' );
-		const body = hasConnectedAccount ? (
-			translate(
-				'Create paid subscription options to share premium content like text, images, video, and any other content on your website. Browse our {{a}}docs{{/a}} for the details.',
-				{
-					components: {
-						a: (
-							<a
-								href="https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/"
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-					},
-				}
-			)
-		) : (
+		const title = translate( 'Profit from subscriber-only content' );
+		const hasConnectionBodyText = translate(
+			'Create paid subscriptions so only subscribers can see selected content on your site — everyone else will see a paywall.'
+		);
+		const noConnectionBodyText = translate(
+			'Create paid subscription options to share premium content like text, images, video, and any other content on your website.'
+		);
+		const bodyText = hasConnectedAccount ? hasConnectionBodyText : noConnectionBodyText;
+
+		const body = (
 			<>
-				{ translate(
-					'Create paid subscription options to share premium content like text, images, video, and any other content on your website.'
-				) }
-				{ isFreePlan && <em>{ getAnyPlanNames() }</em> }
+				{ bodyText }
+				<>
+					<br />
+					<em>{ getAnyPlanNames() }</em>
+				</>
 			</>
 		);
-		const learnMoreLink = isFreePlan
-			? {
-					url: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/',
-					onClick: () => trackLearnLink( 'premium-content' ),
-			  }
-			: null;
+		const learnMoreLink = {
+			url: 'https://wordpress.com/support/wordpress-editor/blocks/premium-content-block/',
+			onClick: () => trackLearnLink( 'premium-content' ),
+			label: hasConnectedAccount ? translate( 'Support documentation' ) : null,
+		};
+
 		return {
 			title,
 			body,
@@ -382,13 +382,12 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 					},
 			  };
 		const title = translate( 'Send paid email newsletters' );
-		const body = isFreePlan ? (
+		const body = ! hasPremiumContent ? (
 			<>
 				{ ' ' }
 				{ translate(
 					'Share premium content with paying subscribers automatically through email.'
 				) }
-				{ <em>{ getAnyPlanNames() }</em> }
 			</>
 		) : (
 			translate( 'Share premium content with paying subscribers automatically through email.' )
@@ -489,7 +488,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
 				) }
-				{ ! isPremiumOrBetterPlan && <em>{ getPremiumPlanNames() }</em> }
+				{ ! hasWordAds && <em>{ getPremiumPlanNames() }</em> }
 			</>
 		);
 
@@ -578,49 +577,33 @@ export default connect(
 		const siteId = getSelectedSiteId( state ) ?? 0;
 		const selectedSiteSlug = getSelectedSiteSlug( state );
 		const site = getSiteBySlug( state, selectedSiteSlug );
-		const isFreePlan = ! isCurrentPlanPaid( state, siteId );
 
 		const hasConnectedAccount =
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
-		const isLoading = ( hasConnectedAccount === null && ! isFreePlan ) || sitePlanSlug === null;
-		const isPremiumOrBetterPlan = Boolean(
-			sitePlanSlug &&
-				overSome(
-					isPremiumPlan,
-					isBusinessPlan,
-					isEcommercePlan,
-					isJetpackPremiumPlan,
-					isJetpackBusinessPlan,
-					isSecurityDailyPlan,
-					isSecurityRealTimePlan,
-					isCompletePlan,
-					isProPlan
-				)( sitePlanSlug )
-		);
+		const hasPaidPlan = isCurrentPlanPaid( state, siteId );
+		const isLoading = ( hasConnectedAccount === null && hasPaidPlan ) || sitePlanSlug === null;
+
 		return {
 			siteId,
 			selectedSiteSlug,
-			isFreePlan,
-			isPremiumOrBetterPlan,
 			isNonAtomicJetpack: Boolean(
 				isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 			),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
-			hasWordAds: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
-			hasSimplePayments: hasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
+			hasWordAds: siteHasFeature( state, siteId, WPCOM_FEATURES_WORDADS ),
+			hasSimplePayments: siteHasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
 			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
 			isLoading,
 			hasSetupAds: Boolean(
 				site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
 			),
-			hasDonations: hasConnectedAccount || hasActiveSiteFeature( state, siteId, FEATURE_DONATIONS ),
+			hasDonations: hasConnectedAccount || siteHasFeature( state, siteId, FEATURE_DONATIONS ),
 			hasPremiumContent:
-				hasConnectedAccount ||
-				hasActiveSiteFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ),
+				hasConnectedAccount || siteHasFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ),
 			hasRecurringPayments:
-				hasConnectedAccount || hasActiveSiteFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
+				hasConnectedAccount || siteHasFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 		};
 	},
 	( dispatch ) => ( {

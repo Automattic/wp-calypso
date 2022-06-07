@@ -6,8 +6,8 @@ import isHappychatConnectionUninitialized from 'calypso/state/happychat/selector
 import { getHappychatAuth } from 'calypso/state/happychat/utils';
 
 export default connect(
-	( state ) => ( {
-		getAuth: getHappychatAuth( state ),
+	( state, ownProps ) => ( {
+		getAuth: ownProps.getAuth || getHappychatAuth( state ),
 		isConnectionUninitialized: isHappychatConnectionUninitialized( state ),
 		isHappychatEnabled: config.isEnabled( 'happychat' ),
 	} ),

@@ -1,7 +1,7 @@
 import {
 	Button,
 	FormStatus,
-	useLineItems,
+	useTotal,
 	useFormStatus,
 	PaymentLogo,
 } from '@automattic/composite-checkout';
@@ -135,7 +135,7 @@ function ExistingCardLabel( {
 	storedDetailsId: string;
 	paymentPartnerProcessorId: string;
 	allowEditingTaxInfo?: boolean;
-} ): JSX.Element {
+} ) {
 	const { __, _x } = useI18n();
 
 	/* translators: %s is the last 4 digits of the credit card number */
@@ -182,7 +182,7 @@ function ExistingCardPayButton( {
 	activeButtonText?: string;
 	isTaxInfoRequired?: boolean;
 } ) {
-	const [ items, total ] = useLineItems();
+	const total = useTotal();
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 
@@ -211,7 +211,6 @@ function ExistingCardPayButton( {
 					);
 				} else {
 					onClick( {
-						items,
 						name: cardholderName,
 						storedDetailsId,
 						paymentMethodToken,
@@ -240,7 +239,7 @@ function ButtonContents( {
 	formStatus: string;
 	total: LineItem;
 	activeButtonText?: string;
-} ): JSX.Element {
+} ) {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
 		return <>{ __( 'Processing…' ) }</>;

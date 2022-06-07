@@ -2,40 +2,31 @@
  * @jest-environment jsdom
  */
 
-import { expect } from 'chai';
 import ReactDomServer from 'react-dom/server';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import markup from '../markup';
 
 describe( 'markup', () => {
-	let sandbox;
 	const site = {};
-
-	useSandbox( ( newSandbox ) => ( sandbox = newSandbox ) );
-
-	beforeEach( () => {
-		sandbox.restore();
-	} );
 
 	describe( '#get()', () => {
 		test( 'should return an empty string if not passed any arguments', () => {
 			const value = markup.get( site );
 
-			expect( value ).to.equal( '' );
+			expect( value ).toEqual( '' );
 		} );
 
 		test( 'should defer to a specific mime type handler if one exists', () => {
-			sandbox.stub( markup.mimeTypes, 'image' );
+			jest.spyOn( markup.mimeTypes, 'image' );
 			markup.get( site, { mime_type: 'image/png' } );
 
-			expect( markup.mimeTypes.image ).to.have.been.called;
+			expect( markup.mimeTypes.image ).toBeCalled();
 		} );
 
 		test( 'should return a link for a mime type prefix without a specific handler', () => {
-			sandbox.stub( markup, 'link' );
+			jest.spyOn( markup, 'link' );
 			markup.get( site, { mime_type: 'application/pdf' } );
 
-			expect( markup.link ).to.have.been.called;
+			expect( markup.link ).toBeCalled();
 		} );
 	} );
 
@@ -46,7 +37,7 @@ describe( 'markup', () => {
 				title: 'document',
 			} );
 
-			expect( value ).to.equal(
+			expect( value ).toEqual(
 				'<a href="http://example.com/wp-content/uploads/document.pdf" title="document">document</a>'
 			);
 		} );
@@ -63,8 +54,8 @@ describe( 'markup', () => {
 				width: 276,
 			} );
 
-			expect( value.type ).to.equal( 'dl' );
-			expect( ReactDomServer.renderToStaticMarkup( value ) ).to.equal(
+			expect( value.type ).toEqual( 'dl' );
+			expect( ReactDomServer.renderToStaticMarkup( value ) ).toEqual(
 				'<dl class="wp-caption" style="width:276px"><dt class="wp-caption-dt"><img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="276" class="alignnone size-full wp-image-1"/></dt><dd class="wp-caption-dd">Logo</dd></dl>'
 			);
 		} );
@@ -78,7 +69,7 @@ describe( 'markup', () => {
 				width: 276,
 			} );
 
-			expect( value ).to.be.null;
+			expect( value ).toBeNull();
 		} );
 
 		test( 'should accept a captioned string, returning a React element', () => {
@@ -87,8 +78,8 @@ describe( 'markup', () => {
 				'[caption id="attachment_1627" align="aligncenter" width="660"]<img class="size-full wp-image-1627" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" /> Ceramic[/caption]'
 			);
 
-			expect( value.type ).to.equal( 'dl' );
-			expect( ReactDomServer.renderToStaticMarkup( value ) ).to.equal(
+			expect( value.type ).toEqual( 'dl' );
+			expect( ReactDomServer.renderToStaticMarkup( value ) ).toEqual(
 				'<dl class="wp-caption aligncenter" style="width:660px"><dt class="wp-caption-dt"><img class="size-full wp-image-1627" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" /></dt><dd class="wp-caption-dd">Ceramic</dd></dl>'
 			);
 		} );
@@ -103,7 +94,7 @@ describe( 'markup', () => {
 					thumbnails: {},
 				} );
 
-				expect( value ).to.equal(
+				expect( value ).toEqual(
 					'<img src="http%3A//example.com/ddd1d6b0-f31b-4937-ae9e-97f1d660cf71" class="alignnone size-full wp-image-media-4"/>'
 				);
 			} );
@@ -117,7 +108,7 @@ describe( 'markup', () => {
 					width: 276,
 				} );
 
-				expect( value ).to.equal(
+				expect( value ).toEqual(
 					'<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="276" class="alignnone size-full wp-image-1"/>'
 				);
 			} );
@@ -142,7 +133,7 @@ describe( 'markup', () => {
 					{ size: 'large' }
 				);
 
-				expect( value ).to.equal(
+				expect( value ).toEqual(
 					'<img src="http://example.wordpress.com/image.png?w=1024" width="1024" height="410" class="alignnone size-large wp-image-1"/>'
 				);
 			} );
@@ -167,7 +158,7 @@ describe( 'markup', () => {
 					{ size: 'large' }
 				);
 
-				expect( value ).to.equal(
+				expect( value ).toEqual(
 					'<img src="http://example.wordpress.com/image.png?w=410" width="410" height="1024" class="alignnone size-large wp-image-1"/>'
 				);
 			} );
@@ -185,7 +176,7 @@ describe( 'markup', () => {
 					{ forceResize: true }
 				);
 
-				expect( value ).to.equal(
+				expect( value ).toEqual(
 					'<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png?w=276" alt="Automattic" width="276" class="alignnone size-full wp-image-1"/>'
 				);
 			} );
@@ -198,7 +189,7 @@ describe( 'markup', () => {
 					width: 276,
 				} );
 
-				expect( value ).to.equal(
+				expect( value ).toEqual(
 					'<img src="&quot;&quot;&gt;&lt;SCRIPT&gt;alert(&quot;XSS&quot;)&lt;/SCRIPT&gt;&quot;" width="276" class="alignnone size-full wp-image-1"/>'
 				);
 			} );
@@ -222,7 +213,7 @@ describe( 'markup', () => {
 					{ size: 'large' }
 				);
 
-				expect( value ).to.equal(
+				expect( value ).toEqual(
 					'<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png?w=200" alt="Automattic" width="200" class="alignnone size-large wp-image-1"/>'
 				);
 			} );
@@ -244,7 +235,7 @@ describe( 'markup', () => {
 					{ size: 'large' }
 				);
 
-				expect( value ).to.equal(
+				expect( value ).toEqual(
 					'<img src="http://example.com/wp-content/uploads/2015/05/logo11w-1024x1024.png" alt="WordPress" width="1024" class="alignnone size-large wp-image-1"/>'
 				);
 			} );
@@ -259,7 +250,7 @@ describe( 'markup', () => {
 					width: 276,
 				} );
 
-				expect( value ).to.equal(
+				expect( value ).toEqual(
 					'[caption id="attachment_1" width="276"]<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="276" class="alignnone size-full wp-image-1"/> Logo[/caption]'
 				);
 			} );
@@ -278,7 +269,7 @@ describe( 'markup', () => {
 					{ size: 'large' }
 				);
 
-				expect( value ).to.equal(
+				expect( value ).toEqual(
 					'<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png?w=1024" alt="Automattic" width="1024" height="111" class="alignnone size-large wp-image-1"/>'
 				);
 			} );
@@ -294,7 +285,7 @@ describe( 'markup', () => {
 					transient: true,
 				} );
 
-				expect( value ).to.equal(
+				expect( value ).toEqual(
 					'<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="2760" height="300" class="alignnone size-full wp-image-1" data-istransient="istransient"/>'
 				);
 			} );
@@ -310,7 +301,7 @@ describe( 'markup', () => {
 					transient: false,
 				} );
 
-				expect( value ).to.equal(
+				expect( value ).toEqual(
 					'<img src="https://s1.wp.com/wp-content/themes/a8c/automattic-2011/images/automattic-logo.png" alt="Automattic" width="2760" height="300" class="alignnone size-full wp-image-1"/>'
 				);
 			} );
@@ -322,7 +313,7 @@ describe( 'markup', () => {
 					URL: 'http://example.com/wp-content/uploads/2015/06/loop.mp3',
 				} );
 
-				expect( value ).to.equal(
+				expect( value ).toEqual(
 					'[audio src="http://example.com/wp-content/uploads/2015/06/loop.mp3"][/audio]'
 				);
 			} );
@@ -334,7 +325,7 @@ describe( 'markup', () => {
 					videopress_guid: '11acMj3O',
 				} );
 
-				expect( value ).to.equal( '[wpvideo 11acMj3O]' );
+				expect( value ).toEqual( '[wpvideo 11acMj3O]' );
 			} );
 
 			test( 'should return a `video` shortcode for a video', () => {
@@ -344,7 +335,7 @@ describe( 'markup', () => {
 					width: 1436,
 				} );
 
-				expect( value ).to.equal(
+				expect( value ).toEqual(
 					'[video src="http://example.com/wp-content/uploads/2015/06/loop.mp4" height="454" width="1436"][/video]'
 				);
 			} );

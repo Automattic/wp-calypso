@@ -18,6 +18,7 @@ interface WPORGResponse {
 		pagination: {
 			results: number;
 			page: number;
+			pages: number;
 		};
 	};
 	isLoading: boolean;
@@ -90,12 +91,18 @@ const usePlugins = ( {
 		enabled: ! infinite && ! WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) && wporgEnabled,
 	} ) as WPORGResponse;
 
+	// For this to be enabled it should:
+	// 1. The request should be marked as infinite and wporg fetching should be enabled (wporgEnabled)
+	// 2. Either we have a search term or we have a valid category (when searching from the top-paid or top-free page)
 	const {
 		data: { plugins: wporgPluginsInfinite = [], pagination: wporgPaginationInfinite } = {},
 		isLoading: isFetchingWPORGInfinite,
 		fetchNextPage,
 	} = searchHook( wporgPluginsOptions, {
-		enabled: infinite && WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) && wporgEnabled,
+		enabled:
+			infinite &&
+			!! ( search || ! WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) ) &&
+			wporgEnabled,
 	} ) as WPORGResponse;
 
 	const dotOrgPlugins = infinite ? wporgPluginsInfinite : wporgPlugins;
@@ -149,12 +156,26 @@ const usePlugins = ( {
 			break;
 	}
 
+	function fetchNextPageAndStop() {
+		if (
+			infinite &&
+			dotOrgPagination?.page &&
+			dotOrgPagination?.pages &&
+			dotOrgPagination.page >= dotOrgPagination.pages
+		) {
+			return;
+		}
+
+		fetchNextPage && fetchNextPage();
+	}
+
 	return {
 		plugins,
 		isFetching,
-		fetchNextPage,
+		fetchNextPage: fetchNextPageAndStop,
 		pagination: {
 			page: dotOrgPagination?.page,
+			pages: dotOrgPagination?.pages,
 			results,
 		},
 	};

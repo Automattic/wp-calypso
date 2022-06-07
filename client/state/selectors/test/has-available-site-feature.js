@@ -1,8 +1,7 @@
-import { expect } from 'chai';
-import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
+import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
 
 describe( 'selectors', () => {
-	describe( '#hasAvailableSiteFeature()', () => {
+	describe( '#getPlansForFeature()', () => {
 		test( 'should return False when no site id', () => {
 			const available = {
 				'feature-available-01': [ 'plan-01', 'plan-02', 'plan-03' ],
@@ -22,8 +21,8 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const availableFeature = hasAvailableSiteFeature( state );
-			expect( availableFeature ).to.eql( false );
+			const availableFeature = getPlansForFeature( state );
+			expect( availableFeature ).toEqual( false );
 		} );
 
 		test( 'should return False when site does not exist', () => {
@@ -45,8 +44,8 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const availableFeature = hasAvailableSiteFeature( state, 'unknown' );
-			expect( availableFeature ).to.eql( false );
+			const availableFeature = getPlansForFeature( state, 'unknown' );
+			expect( availableFeature ).toEqual( false );
 		} );
 
 		test( 'should return False when feature is not populated', () => {
@@ -54,8 +53,8 @@ describe( 'selectors', () => {
 				sites: {},
 			};
 
-			const availableFeature = hasAvailableSiteFeature( state, 123001 );
-			expect( availableFeature ).to.eql( false );
+			const availableFeature = getPlansForFeature( state, 123001 );
+			expect( availableFeature ).toEqual( false );
 		} );
 
 		test( 'should return False when available feature is not populated', () => {
@@ -69,8 +68,8 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const availableFeature = hasAvailableSiteFeature( state, 123001 );
-			expect( availableFeature ).to.eql( false );
+			const availableFeature = getPlansForFeature( state, 123001 );
+			expect( availableFeature ).toEqual( false );
 		} );
 
 		test( 'should return False when feature id is not defined', () => {
@@ -92,8 +91,8 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const availableFeature = hasAvailableSiteFeature( state, 123001 );
-			expect( availableFeature ).to.eql( false );
+			const availableFeature = getPlansForFeature( state, 123001 );
+			expect( availableFeature ).toEqual( false );
 		} );
 
 		test( 'should return False when feature is not defined in the available object', () => {
@@ -115,8 +114,8 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const availableFeature = hasAvailableSiteFeature( state, 123001, 'not-available-feature' );
-			expect( availableFeature ).to.eql( false );
+			const availableFeature = getPlansForFeature( state, 123001, 'not-available-feature' );
+			expect( availableFeature ).toEqual( false );
 		} );
 
 		test( 'should return plans array when feature available', () => {
@@ -138,8 +137,8 @@ describe( 'selectors', () => {
 				},
 			};
 
-			const availableFeature = hasAvailableSiteFeature( state, 123001, 'feature-available-01' );
-			expect( availableFeature ).to.eql( [ 'plan-01', 'plan-02', 'plan-03' ] );
+			const availableFeature = getPlansForFeature( state, 123001, 'feature-available-01' );
+			expect( availableFeature ).toEqual( [ 'plan-01', 'plan-02', 'plan-03' ] );
 		} );
 	} );
 } );

@@ -286,50 +286,6 @@ describe( 'Webpack RTL Plugin', () => {
 		} );
 	} );
 
-	describe( 'Diff', () => {
-		const rtlCssBundlePath = path.join( __dirname, 'dist-diff/style.rtl.css' );
-
-		beforeAll( () => {
-			return new Promise( function ( done ) {
-				const config = {
-					...baseConfig,
-					output: {
-						path: path.resolve( __dirname, 'dist-diff' ),
-						filename: 'bundle.js',
-					},
-					plugins: [
-						new MiniCssExtractPlugin( {
-							filename: 'style.css',
-						} ),
-						new WebpackRTLPlugin( {
-							diffOnly: true,
-						} ),
-					],
-				};
-
-				webpack( config, ( err, stats ) => {
-					if ( err ) {
-						return done( err );
-					}
-
-					if ( stats.hasErrors() ) {
-						return done( new Error( stats.toString() ) );
-					}
-
-					done();
-				} );
-			} );
-		} );
-
-		it( 'should only contain the diff between the source and the rtl version', () => {
-			const contentRrlCss = fs.readFileSync( rtlCssBundlePath, 'utf-8' ).replace( /\r/g, '' );
-			const expected = fs
-				.readFileSync( path.join( __dirname, 'rtl-diff-result.css' ), 'utf-8' )
-				.replace( /\r/g, '' );
-			expect( contentRrlCss ).toBe( expected );
-		} );
-	} );
-
 	describe( 'Asset with query string', () => {
 		const config = {
 			...baseConfig,

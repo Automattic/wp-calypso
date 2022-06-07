@@ -1,11 +1,10 @@
-import { expect } from 'chai';
 import { getSurveyVertical, getSurveyOtherText, getSurveySiteType } from '../selectors';
 
 describe( 'selectors', () => {
 	test( 'should return empty string as a default state', () => {
-		expect( getSurveyVertical( { signup: undefined } ) ).to.be.eql( '' );
-		expect( getSurveyOtherText( { signup: undefined } ) ).to.be.eql( '' );
-		expect( getSurveySiteType( { signup: undefined } ) ).to.be.eql( 'site' );
+		expect( getSurveyVertical( { signup: undefined } ) ).toEqual( '' );
+		expect( getSurveyOtherText( { signup: undefined } ) ).toEqual( '' );
+		expect( getSurveySiteType( { signup: undefined } ) ).toEqual( 'site' );
 	} );
 
 	test( 'should return chosen vertical from the state', () => {
@@ -21,7 +20,7 @@ describe( 'selectors', () => {
 					},
 				},
 			} )
-		).to.be.eql( 'test-survey' );
+		).toEqual( 'test-survey' );
 	} );
 
 	test( 'should return typed other text from the state', () => {
@@ -37,7 +36,7 @@ describe( 'selectors', () => {
 					},
 				},
 			} )
-		).to.be.eql( 'test-other-text' );
+		).toEqual( 'test-other-text' );
 	} );
 
 	test( 'should return site type from the state', () => {
@@ -53,6 +52,6 @@ describe( 'selectors', () => {
 					},
 				},
 			} )
-		).to.be.eql( 'test-site-type' );
+		).toEqual( 'test-site-type' );
 	} );
 } );

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 
@@ -23,15 +22,15 @@ describe( 'getMediaItem()', () => {
 	};
 
 	test( 'should return null if the site is not in state', () => {
-		expect( getMediaItem( state, 2916285, 42 ) ).to.be.null;
+		expect( getMediaItem( state, 2916285, 42 ) ).toBeNull();
 	} );
 
 	test( 'should return null if the media for the site is not in state', () => {
-		expect( getMediaItem( state, 2916284, 43 ) ).to.be.null;
+		expect( getMediaItem( state, 2916284, 43 ) ).toBeNull();
 	} );
 
 	test( 'should return the media item', () => {
-		expect( getMediaItem( state, 2916284, 42 ) ).to.eql( item );
+		expect( getMediaItem( state, 2916284, 42 ) ).toEqual( item );
 	} );
 
 	describe( 'transient media', () => {
@@ -74,19 +73,19 @@ describe( 'getMediaItem()', () => {
 		describe( 'before promotion', () => {
 			test( 'should return the transient media item', () => {
 				const result = getMediaItem( transientStatePreSave, siteId, transientItem.ID );
-				expect( result ).to.eql( transientItem );
+				expect( result ).toEqual( transientItem );
 			} );
 		} );
 
 		describe( 'after promotion', () => {
 			test( 'should return the actual media item when given the transient ID', () => {
 				const result = getMediaItem( transientStatePostSave, siteId, transientItem.ID );
-				expect( result ).to.eql( item );
+				expect( result ).toEqual( item );
 			} );
 
 			test( 'should return the actual media item when given the server ID', () => {
 				const result = getMediaItem( transientStatePostSave, siteId, item.ID );
-				expect( result ).to.eql( item );
+				expect( result ).toEqual( item );
 			} );
 		} );
 	} );

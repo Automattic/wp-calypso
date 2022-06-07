@@ -13,6 +13,8 @@ import {
 } from 'calypso/state/analytics/actions';
 import CustomNameserversRow from './custom-nameservers-row';
 
+import './style.scss';
+
 const MIN_NAMESERVER_LENGTH = 2;
 const MAX_NAMESERVER_LENGTH = 4;
 
@@ -111,7 +113,7 @@ class CustomNameserversForm extends PureComponent {
 
 	handleChange = ( nameserver, index ) => {
 		const nameservers = [ ...this.props.nameservers ];
-		nameservers[ index ] = nameserver;
+		nameservers[ index ] = ( nameserver || '' ).trim();
 		this.props.onChange( nameservers );
 	};
 

@@ -1,6 +1,4 @@
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import { spy } from 'sinon';
 import HappychatButton from 'calypso/components/happychat/button';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
 import {
@@ -23,14 +21,14 @@ describe( 'HappinessSupport', () => {
 
 	test( 'should render translated heading content', () => {
 		const heading = wrapper.find( 'h3' );
-		expect( heading ).to.have.length( 1 );
-		expect( heading.props().children ).to.equal( 'Translated: Priority support' );
+		expect( heading ).toHaveLength( 1 );
+		expect( heading.props().children ).toEqual( 'Translated: Priority support' );
 	} );
 
 	test( 'should render translated help content', () => {
 		const content = wrapper.find( 'p.happiness-support__description' );
-		expect( content ).to.have.length( 1 );
-		expect( content.props().children ).to.equal(
+		expect( content ).toHaveLength( 1 );
+		expect( content.props().children ).toEqual(
 			'Translated: {{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your\xA0account.'
 		);
 	} );
@@ -38,7 +36,7 @@ describe( 'HappinessSupport', () => {
 	test( 'should render a translated support button', () => {
 		expect(
 			wrapper.find( 'ForwardRef(Button).happiness-support__support-button>span' ).props().children
-		).to.equal( 'Translated: Support documentation' );
+		).toEqual( 'Translated: Support documentation' );
 	} );
 
 	test( 'should render a support button with link to SUPPORT_ROOT if it is not for JetPack', () => {
@@ -47,25 +45,23 @@ describe( 'HappinessSupport', () => {
 		);
 		expect(
 			wrapper.find( 'ForwardRef(Button).happiness-support__support-button' ).props().href
-		).to.equal( SUPPORT_ROOT );
+		).toEqual( SUPPORT_ROOT );
 	} );
 
 	test( 'should render a support button with link to JETPACK_SUPPORT if it is for JetPack', () => {
 		wrapper = shallow(
 			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack={ true } />
 		);
-		expect( wrapper.find( 'ForwardRef(Button)' ).last().prop( 'href' ) ).to.equal(
-			JETPACK_SUPPORT
-		);
+		expect( wrapper.find( 'ForwardRef(Button)' ).last().prop( 'href' ) ).toEqual( JETPACK_SUPPORT );
 	} );
 
 	test( 'should have is-placeholder className only if it is a placeholder', () => {
-		expect( wrapper.find( '.happiness-support' ).hasClass( 'is-placeholder' ) ).to.be.false;
+		expect( wrapper.find( '.happiness-support' ).hasClass( 'is-placeholder' ) ).toBe( false );
 
 		wrapper = shallow(
 			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isPlaceholder={ true } />
 		);
-		expect( wrapper.find( '.happiness-support' ).hasClass( 'is-placeholder' ) ).to.be.true;
+		expect( wrapper.find( '.happiness-support' ).hasClass( 'is-placeholder' ) ).toBe( true );
 	} );
 
 	test( 'should render a <HappychatConnection /> when showLiveChat prop is true', () => {
@@ -76,7 +72,7 @@ describe( 'HappinessSupport', () => {
 				showLiveChatButton={ true }
 			/>
 		);
-		expect( wrapper.find( HappychatConnection ) ).to.have.length( 1 );
+		expect( wrapper.find( HappychatConnection ) ).toHaveLength( 1 );
 	} );
 
 	describe( 'LiveChat button', () => {
@@ -93,42 +89,42 @@ describe( 'HappinessSupport', () => {
 
 		test( 'should be rendered only when showLiveChatButton prop is true and LiveChat is available', () => {
 			// should be rendered here
-			expect( wrapper.find( HappychatButton ) ).to.have.length( 1 );
+			expect( wrapper.find( HappychatButton ) ).toHaveLength( 1 );
 
 			// false cases
 			wrapper = shallow( <HappinessSupport { ...props } /> );
-			expect( wrapper.find( HappychatButton ) ).to.have.length( 0 );
+			expect( wrapper.find( HappychatButton ) ).toHaveLength( 0 );
 
 			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton={ true } /> );
-			expect( wrapper.find( HappychatButton ) ).to.have.length( 0 );
+			expect( wrapper.find( HappychatButton ) ).toHaveLength( 0 );
 
 			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton={ false } /> );
-			expect( wrapper.find( HappychatButton ) ).to.have.length( 0 );
+			expect( wrapper.find( HappychatButton ) ).toHaveLength( 0 );
 
 			wrapper = shallow(
 				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ false } />
 			);
-			expect( wrapper.find( HappychatButton ) ).to.have.length( 0 );
+			expect( wrapper.find( HappychatButton ) ).toHaveLength( 0 );
 
 			wrapper = shallow(
 				<HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable={ true } />
 			);
-			expect( wrapper.find( HappychatButton ) ).to.have.length( 0 );
+			expect( wrapper.find( HappychatButton ) ).toHaveLength( 0 );
 
 			wrapper = shallow(
 				<HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable={ false } />
 			);
-			expect( wrapper.find( HappychatButton ) ).to.have.length( 0 );
+			expect( wrapper.find( HappychatButton ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should render translated content', () => {
-			expect( wrapper.find( HappychatButton ).props().children ).to.equal(
+			expect( wrapper.find( HappychatButton ).props().children ).toEqual(
 				'Translated: Ask a question'
 			);
 		} );
 
 		test( 'should fire tracks event with given event name when clicked', () => {
-			const recordTracksEvent = spy();
+			const recordTracksEvent = jest.fn();
 
 			wrapper = shallow(
 				<HappinessSupport
@@ -140,13 +136,13 @@ describe( 'HappinessSupport', () => {
 				/>
 			);
 
-			expect( recordTracksEvent ).not.to.be.called;
+			expect( recordTracksEvent ).not.toHaveBeenCalled();
 			wrapper.find( HappychatButton ).simulate( 'click' );
-			expect( recordTracksEvent ).to.be.calledWith( 'test:eventName' );
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'test:eventName' );
 		} );
 
 		test( 'should not fire tracks event when no event name is passed even if clicked', () => {
-			const recordTracksEvent = spy();
+			const recordTracksEvent = jest.fn();
 
 			wrapper = shallow(
 				<HappinessSupport
@@ -157,9 +153,9 @@ describe( 'HappinessSupport', () => {
 				/>
 			);
 
-			expect( recordTracksEvent ).not.to.be.called;
+			expect( recordTracksEvent ).not.toHaveBeenCalled();
 			wrapper.find( HappychatButton ).simulate( 'click' );
-			expect( recordTracksEvent ).not.to.be.called;
+			expect( recordTracksEvent ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -175,47 +171,47 @@ describe( 'HappinessSupport', () => {
 			wrapper = shallow(
 				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ true } />
 			);
-			expect( wrapper.find( selector ) ).to.have.length( 0 );
+			expect( wrapper.find( selector ) ).toHaveLength( 0 );
 
 			// should be rendered in the following cases
 			wrapper = shallow( <HappinessSupport { ...props } /> );
-			expect( wrapper.find( selector ) ).to.have.length( 1 );
+			expect( wrapper.find( selector ) ).toHaveLength( 1 );
 
 			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton={ true } /> );
-			expect( wrapper.find( selector ) ).to.have.length( 1 );
+			expect( wrapper.find( selector ) ).toHaveLength( 1 );
 
 			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton={ false } /> );
-			expect( wrapper.find( selector ) ).to.have.length( 1 );
+			expect( wrapper.find( selector ) ).toHaveLength( 1 );
 
 			wrapper = shallow(
 				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ false } />
 			);
-			expect( wrapper.find( selector ) ).to.have.length( 1 );
+			expect( wrapper.find( selector ) ).toHaveLength( 1 );
 
 			wrapper = shallow(
 				<HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable={ true } />
 			);
-			expect( wrapper.find( selector ) ).to.have.length( 1 );
+			expect( wrapper.find( selector ) ).toHaveLength( 1 );
 
 			wrapper = shallow(
 				<HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable={ false } />
 			);
-			expect( wrapper.find( selector ) ).to.have.length( 1 );
+			expect( wrapper.find( selector ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should be rendered with link to CALYPSO_CONTACT if it is not for JetPack', () => {
 			wrapper = shallow( <HappinessSupport { ...props } /> );
-			expect( wrapper.find( selector ).prop( 'href' ) ).to.equal( CALYPSO_CONTACT );
+			expect( wrapper.find( selector ).prop( 'href' ) ).toEqual( CALYPSO_CONTACT );
 		} );
 
 		test( 'should be rendered with link to JETPACK_CONTACT_SUPPORT if it is for JetPack', () => {
 			wrapper = shallow( <HappinessSupport { ...props } isJetpack={ true } /> );
-			expect( wrapper.find( selector ).prop( 'href' ) ).to.equal( JETPACK_CONTACT_SUPPORT );
+			expect( wrapper.find( selector ).prop( 'href' ) ).toEqual( JETPACK_CONTACT_SUPPORT );
 		} );
 
 		test( 'should render translated content', () => {
 			wrapper = shallow( <HappinessSupport { ...props } /> );
-			expect( wrapper.find( selector ).props().children ).to.equal( 'Translated: Ask a question' );
+			expect( wrapper.find( selector ).props().children ).toEqual( 'Translated: Ask a question' );
 		} );
 	} );
 } );

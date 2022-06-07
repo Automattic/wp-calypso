@@ -1,4 +1,4 @@
-import { Button, FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
@@ -138,7 +138,7 @@ function AlipayPayButton( {
 	onClick?: ProcessPayment;
 	store: AlipayStore;
 } ) {
-	const [ items, total ] = useLineItems();
+	const total = useTotal();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect( ( select ) => select( 'alipay' ).getCustomerName() );
 
@@ -159,8 +159,6 @@ function AlipayPayButton( {
 					debug( 'submitting alipay payment' );
 					onClick( {
 						name: customerName?.value,
-						items,
-						total,
 					} );
 				}
 			} }

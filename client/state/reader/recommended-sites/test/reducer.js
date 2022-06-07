@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import freeze from 'deep-freeze';
 import { receiveRecommendedSites } from '../actions';
 import { items, pagingOffset } from '../reducer';
@@ -19,7 +18,7 @@ describe( 'reducer', () => {
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should add rec results to an empty object', () => {
@@ -27,7 +26,7 @@ describe( 'reducer', () => {
 			const action = receiveRecommendedSites( { seed, sites } );
 			const nextState = items( prevState, action );
 
-			expect( nextState ).to.eql( {
+			expect( nextState ).toEqual( {
 				[ seed ]: sites,
 			} );
 		} );
@@ -38,7 +37,7 @@ describe( 'reducer', () => {
 			};
 			const action = receiveRecommendedSites( { seed, sites } );
 			const nextState = items( prevState, action );
-			expect( nextState ).to.eql( {
+			expect( nextState ).toEqual( {
 				...prevState,
 				[ seed ]: sites,
 			} );
@@ -47,7 +46,7 @@ describe( 'reducer', () => {
 
 	describe( '#pagingOffset', () => {
 		test( 'should default to empty object', () => {
-			expect( pagingOffset( undefined, {} ) ).to.eql( {} );
+			expect( pagingOffset( undefined, {} ) ).toEqual( {} );
 		} );
 
 		test( 'should set the offset of a seed to the specified number', () => {
@@ -55,7 +54,7 @@ describe( 'reducer', () => {
 			const action = receiveRecommendedSites( { seed, offset: 20 } );
 			const nextState = pagingOffset( prevState, action );
 
-			expect( nextState ).to.eql( {
+			expect( nextState ).toEqual( {
 				[ seed ]: 20,
 			} );
 		} );
@@ -65,7 +64,7 @@ describe( 'reducer', () => {
 			const action = receiveRecommendedSites( { seed, offset: 20 } );
 			const nextState = pagingOffset( prevState, action );
 
-			expect( nextState ).to.eql( {
+			expect( nextState ).toEqual( {
 				[ seed ]: 42,
 			} );
 		} );

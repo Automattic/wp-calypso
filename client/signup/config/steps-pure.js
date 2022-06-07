@@ -689,6 +689,11 @@ export function generateSteps( {
 			},
 		},
 
+		'choose-service': {
+			stepName: 'choose-service',
+			providesDependencies: [ 'siteSlug', 'newOrExistingSiteChoice' ],
+		},
+
 		'new-or-existing-site': {
 			stepName: 'new-or-existing-site',
 			fulfilledStepCallback: isNewOrExistingSiteFulfilled,

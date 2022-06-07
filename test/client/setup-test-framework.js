@@ -1,3 +1,5 @@
+import '@testing-library/jest-dom';
+
 const nock = require( 'nock' );
 
 // Disables all network requests for all tests.
@@ -39,24 +41,6 @@ jest.mock( 'enzyme', () => {
 		expect.addSnapshotSerializer( createSerializer( { mode: 'deep' } ) );
 	}
 	return actualEnzyme;
-} );
-
-// It "mocks" sinon, so that we can delay loading of
-// the utility functions until sinon is imported in tests.
-let mockSinonSetup = false;
-
-jest.mock( 'sinon', () => {
-	const actualSinon = jest.requireActual( 'sinon' );
-	if ( ! mockSinonSetup ) {
-		mockSinonSetup = true;
-
-		// configure custom sinon matchers for chai
-		const chai = jest.requireActual( 'chai' );
-		const sinonChai = jest.requireActual( 'sinon-chai' );
-		chai.use( sinonChai );
-		actualSinon.assert.expose( chai.assert, { prefix: '' } );
-	}
-	return actualSinon;
 } );
 
 // This is used by @wordpress/components in https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/ui/utils/space.ts#L33

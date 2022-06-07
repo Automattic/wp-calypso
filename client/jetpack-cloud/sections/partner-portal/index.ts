@@ -94,6 +94,16 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
+
+		page(
+			`/partner-portal/company-details`,
+			controller.requireAccessContext,
+			controller.requireTermsOfServiceConsentContext,
+			controller.requireSelectedPartnerKeyContext,
+			controller.companyDetailsDashboardContext,
+			makeLayout,
+			clientRender
+		);
 	}
 
 	// Billing Dashboard.

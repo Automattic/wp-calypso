@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { isFreePlan } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual } from 'lodash';
@@ -15,7 +15,7 @@ import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // For site time offset
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -44,10 +44,6 @@ import {
 } from 'calypso/state/analytics/actions';
 import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import {
-	siteHasBackupProductPurchase,
-	siteHasScanProductPurchase,
-} from 'calypso/state/purchases/selectors';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getRewindPoliciesRequestStatus from 'calypso/state/rewind/selectors/get-rewind-policies-request-status';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
@@ -60,8 +56,7 @@ import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSiteSlug,
 	getSiteTitle,
@@ -380,14 +375,14 @@ class ActivityLog extends Component {
 	}
 
 	renderNoLogsContent() {
-		const { filter, displayRulesLoaded, logsLoaded, siteId, translate, siteHasNoLog, slug } =
+		const { filter, displayRulesLoaded, logsLoaded, siteId, translate, hasFullActivityLog, slug } =
 			this.props;
 
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
 		if ( displayRulesLoaded && logsLoaded ) {
 			return isFilterEmpty ? (
-				<ActivityLogExample siteId={ siteId } siteIsOnFreePlan={ siteHasNoLog } />
+				<ActivityLogExample siteId={ siteId } siteIsOnFreePlan={ ! hasFullActivityLog } />
 			) : (
 				<Fragment>
 					<EmptyContent
@@ -427,7 +422,7 @@ class ActivityLog extends Component {
 			moment,
 			rewindState,
 			siteId,
-			siteHasNoLog,
+			hasFullActivityLog,
 			translate,
 			isAtomic,
 			isJetpack,
@@ -475,7 +470,7 @@ class ActivityLog extends Component {
 					<QueryRewindBackupStatus siteId={ siteId } />
 				) }
 				<QuerySiteSettings siteId={ siteId } />
-				<QuerySitePurchases siteId={ siteId } />
+				<QuerySiteFeatures siteIds={ [ siteId ] } />
 				<QueryRewindBackups siteId={ siteId } />
 
 				{ isJetpackCloud() && <SidebarNavigation /> }
@@ -496,7 +491,7 @@ class ActivityLog extends Component {
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }
 				<IntroBanner siteId={ siteId } />
-				{ siteHasNoLog && isIntroDismissed && ! isJetpackSiteSecondaryNetworkSite && (
+				{ ! hasFullActivityLog && isIntroDismissed && ! isJetpackSiteSecondaryNetworkSite && (
 					<UpgradeBanner siteId={ siteId } />
 				) }
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
@@ -519,7 +514,7 @@ class ActivityLog extends Component {
 							total={ logs.length }
 						/>
 						<section className="activity-log__wrapper">
-							{ siteHasNoLog && <div className="activity-log__fader" /> }
+							{ ! hasFullActivityLog && <div className="activity-log__fader" /> }
 							{ theseLogs.map( ( log ) =>
 								log.isAggregate ? (
 									<Fragment key={ log.activityId }>
@@ -550,7 +545,7 @@ class ActivityLog extends Component {
 						{ showVisibleDaysLimitUpsell && (
 							<VisibleDaysLimitUpsell cardClassName="activity-log-item__card" />
 						) }
-						{ siteHasNoLog && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
+						{ ! hasFullActivityLog && ! isIntroDismissed && <UpgradeBanner siteId={ siteId } /> }
 						<Pagination
 							compact={ isMobile() }
 							className="activity-log__pagination is-bottom-pagination"
@@ -569,10 +564,10 @@ class ActivityLog extends Component {
 	}
 
 	renderFilterbar() {
-		const { siteId, filter, logs, siteHasNoLog, displayRulesLoaded, logsLoaded } = this.props;
+		const { siteId, filter, logs, hasFullActivityLog, displayRulesLoaded, logsLoaded } = this.props;
 		const isFilterEmpty = isEqual( emptyFilter, filter );
 
-		if ( siteHasNoLog ) {
+		if ( ! hasFullActivityLog ) {
 			return null;
 		}
 
@@ -600,7 +595,7 @@ class ActivityLog extends Component {
 
 		return (
 			<Main wideLayout>
-				<QuerySitePurchases siteId={ siteId } />
+				<QuerySiteFeatures siteIds={ [ siteId ] } />
 				<PageViewTracker path="/activity-log/:site" title="Activity" />
 				<DocumentHead title={ translate( 'Activity' ) } />
 				{ siteId && <QueryRewindPolicies siteId={ siteId } /> }
@@ -665,13 +660,7 @@ export default connect(
 		const rewindState = getRewindState( state, siteId );
 		const restoreStatus = rewindState.rewind && rewindState.rewind.status;
 		const filter = getActivityLogFilter( state, siteId );
-		const siteIsOnFreePlan =
-			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
-			! isVipSite( state, siteId );
-		const siteHasNoLog =
-			siteIsOnFreePlan &&
-			! siteHasBackupProductPurchase( state, siteId ) &&
-			! siteHasScanProductPurchase( state, siteId );
+
 		const isJetpack = isJetpackSite( state, siteId );
 
 		const displayRulesLoaded = getRewindPoliciesRequestStatus( state, siteId ) === 'success';
@@ -695,7 +684,7 @@ export default connect(
 			siteSettingsUrl: getSettingsUrl( state, siteId, 'general' ),
 			slug: getSiteSlug( state, siteId ),
 			timezone,
-			siteHasNoLog,
+			hasFullActivityLog: siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG ),
 			isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
 			isJetpackSiteSecondaryNetworkSite: getIsJetpackSiteSecondaryNetworkSite( state, siteId ),
 		};

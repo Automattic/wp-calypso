@@ -17,7 +17,7 @@ export default function PaymentLogo( {
 }: {
 	brand: string;
 	isSummary?: boolean;
-} ): JSX.Element | null {
+} ) {
 	let cardFieldIcon = null;
 
 	switch ( brand ) {
@@ -108,7 +108,7 @@ const LockIconGraphic = styled( LockIcon )`
 	}
 `;
 
-function LockIcon( { className }: { className?: string } ): JSX.Element {
+function LockIcon( { className }: { className?: string } ) {
 	return (
 		<svg
 			className={ className }

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { buildDIFMCartExtrasObject } from '../assemblers';
 
 describe( 'assembler', () => {
@@ -19,7 +18,7 @@ describe( 'assembler', () => {
 			displayAddress: 'test displayAddress',
 			selectedPageTitles: [ 'test1', 'test2' ],
 		};
-		expect( buildDIFMCartExtrasObject( dependencies ) ).to.be.eql( {
+		expect( buildDIFMCartExtrasObject( dependencies ) ).toEqual( {
 			twitter_url: 'test twitterUrl',
 			facebook_url: 'test facebookUrl',
 			linkedin_url: 'test linkedinUrl',

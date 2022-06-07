@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	isRequestingPostTypeTaxonomies,
 	getPostTypeTaxonomies,
@@ -20,7 +19,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBe( false );
 		} );
 
 		test( 'should return false if no request has been made for site post type', () => {
@@ -40,7 +39,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBe( false );
 		} );
 
 		test( 'should return false if request has finished for site post type', () => {
@@ -61,7 +60,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBe( false );
 		} );
 
 		test( 'should return true if requesting for site post type', () => {
@@ -82,7 +81,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( isRequesting ).to.be.true;
+			expect( isRequesting ).toBe( true );
 		} );
 	} );
 
@@ -100,7 +99,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( taxonomies ).to.be.null;
+			expect( taxonomies ).toBeNull();
 		} );
 
 		test( 'should return an array of known taxonomies', () => {
@@ -129,7 +128,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( taxonomies ).to.eql( [
+			expect( taxonomies ).toEqual( [
 				{ name: 'category', label: 'Categories' },
 				{ name: 'post_tag', label: 'Tags' },
 			] );
@@ -151,7 +150,7 @@ describe( 'selectors', () => {
 				'post_tag'
 			);
 
-			expect( taxonomy ).to.be.null;
+			expect( taxonomy ).toBeNull();
 		} );
 
 		test( 'should return null if post type is not known', () => {
@@ -181,7 +180,7 @@ describe( 'selectors', () => {
 				'post_tag'
 			);
 
-			expect( taxonomy ).to.be.null;
+			expect( taxonomy ).toBeNull();
 		} );
 
 		test( 'should return null if taxonomy is not known', () => {
@@ -211,7 +210,7 @@ describe( 'selectors', () => {
 				'not_a_taxonomy'
 			);
 
-			expect( taxonomy ).to.be.null;
+			expect( taxonomy ).toBeNull();
 		} );
 
 		test( 'should return a known taxonomy', () => {
@@ -241,7 +240,7 @@ describe( 'selectors', () => {
 				'post_tag'
 			);
 
-			expect( taxonomy ).to.eql( {
+			expect( taxonomy ).toEqual( {
 				name: 'post_tag',
 				label: 'Tags',
 			} );

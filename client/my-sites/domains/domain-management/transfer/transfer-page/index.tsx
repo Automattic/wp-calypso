@@ -1,4 +1,5 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Spinner } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -15,7 +16,6 @@ import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
-import Spinner from 'calypso/components/spinner';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, getTopLevelOfTld, isMappedDomain } from 'calypso/lib/domains';
 import { DESIGNATED_AGENT, TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
@@ -57,7 +57,7 @@ import './style.scss';
 type ToggleControlProps = React.ComponentProps< typeof ToggleControl > & { disabled?: boolean };
 const FixedToggleControl = ( props: ToggleControlProps ) => <ToggleControl { ...props } />;
 
-const TransferPage = ( props: TransferPageProps ): JSX.Element => {
+const TransferPage = ( props: TransferPageProps ) => {
 	const dispatch = useDispatch();
 	const {
 		currentRoute,
@@ -289,7 +289,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 					moment( domain.transferAwayEligibleAt ).format( 'LL' )
 				),
 				{
-					a: createElement( 'a', { href: supportLink } ),
+					a: createElement( 'a', { href: localizeUrl( supportLink ) } ),
 				}
 			);
 		}
@@ -334,7 +334,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 		);
 	};
 
-	const renderContent = (): JSX.Element | null => {
+	const renderContent = () => {
 		if ( ! domain ) {
 			return null;
 		}
@@ -390,7 +390,7 @@ const TransferPage = ( props: TransferPageProps ): JSX.Element => {
 									'However, transferring a domain to another provider can take five to seven days during which no changes to the domain can be made. Read <a>this important information</a> before starting a transfer.'
 								),
 								{
-									a: createElement( 'a', { href: TRANSFER_DOMAIN_REGISTRATION } ),
+									a: createElement( 'a', { href: localizeUrl( TRANSFER_DOMAIN_REGISTRATION ) } ),
 								}
 							) }
 						</p>

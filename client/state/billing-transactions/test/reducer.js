@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	BILLING_RECEIPT_EMAIL_SEND,
@@ -10,29 +9,28 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import reducer, { requesting, items, sendingReceiptEmail } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'requesting',
-			'items',
-			'sendingReceiptEmail',
-			'individualTransactions',
-			'ui',
-		] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [
+				'requesting',
+				'items',
+				'sendingReceiptEmail',
+				'individualTransactions',
+				'ui',
+			] )
+		);
 	} );
 
 	describe( '#requesting()', () => {
 		test( 'should default to an false', () => {
 			const state = requesting( undefined, {} );
 
-			expect( state ).to.be.false;
+			expect( state ).toBe( false );
 		} );
 
 		test( 'should set requesting to true value if a request is initiated', () => {
@@ -40,7 +38,7 @@ describe( 'reducer', () => {
 				type: BILLING_TRANSACTIONS_REQUEST,
 			} );
 
-			expect( state ).to.be.true;
+			expect( state ).toBe( true );
 		} );
 
 		test( 'should set requesting to false if request finishes successfully', () => {
@@ -48,7 +46,7 @@ describe( 'reducer', () => {
 				type: BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 			} );
 
-			expect( state ).to.eql( false );
+			expect( state ).toEqual( false );
 		} );
 
 		test( 'should set requesting to false if request finishes unsuccessfully', () => {
@@ -56,7 +54,7 @@ describe( 'reducer', () => {
 				type: BILLING_TRANSACTIONS_REQUEST_FAILURE,
 			} );
 
-			expect( state ).to.eql( false );
+			expect( state ).toEqual( false );
 		} );
 	} );
 
@@ -79,7 +77,7 @@ describe( 'reducer', () => {
 		test( 'should default to empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should store the billing transactions properly', () => {
@@ -88,7 +86,7 @@ describe( 'reducer', () => {
 				...billingTransactions,
 			} );
 
-			expect( state ).to.eql( billingTransactions );
+			expect( state ).toEqual( billingTransactions );
 		} );
 
 		test( 'should override previous billing transactions', () => {
@@ -115,25 +113,25 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( billingTransactions );
+			expect( state ).toEqual( billingTransactions );
 		} );
 
 		test( 'should persist state', () => {
 			const state = serialize( items, deepFreeze( billingTransactions ) );
 
-			expect( state ).to.eql( billingTransactions );
+			expect( state ).toEqual( billingTransactions );
 		} );
 
 		test( 'should load valid persisted state', () => {
 			const state = deserialize( items, deepFreeze( billingTransactions ) );
 
-			expect( state ).to.eql( billingTransactions );
+			expect( state ).toEqual( billingTransactions );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
 			const state = deserialize( items, deepFreeze( { example: 'test' } ) );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 	} );
 
@@ -145,7 +143,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = sendingReceiptEmail( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should set sendingReceiptEmail of that receipt to true value if a request is initiated', () => {
@@ -154,7 +152,7 @@ describe( 'reducer', () => {
 				receiptId: 12345678,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: true,
 				...state,
 			} );
@@ -166,7 +164,7 @@ describe( 'reducer', () => {
 				receiptId: 12345678,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: false,
 				...state,
 			} );
@@ -178,7 +176,7 @@ describe( 'reducer', () => {
 				receiptId: 12345678,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				12345678: false,
 				...state,
 			} );

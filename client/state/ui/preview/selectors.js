@@ -8,7 +8,6 @@ import 'calypso/state/ui/init';
  *
  * @param  {object}  state Global state tree
  * @returns {?string}  The url or null
- *
  * @see client/blocks/site-preview
  */
 export function getPreviewUrl( state ) {

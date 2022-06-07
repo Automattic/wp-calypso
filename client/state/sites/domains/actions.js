@@ -21,7 +21,6 @@ import 'calypso/state/data-layer/wpcom/domains/privacy/index.js';
  * Module vars
  */
 const debug = debugFactory( 'calypso:state:sites:domains:actions' );
-const noop = () => {};
 
 /**
  * Action creator function
@@ -153,32 +152,17 @@ export function disableDomainPrivacy( siteId, domain ) {
 }
 
 /**
- * @callback onComplete
- * @param {any} error
- * @param {any} data
- * @returns {void}
- */
-
-/**
  * @param {number} siteId
  * @param {string} domain
- * @param {onComplete} onComplete
  */
-export const setPrimaryDomain =
-	( siteId, domain, onComplete = noop ) =>
-	( dispatch ) => {
-		debug( 'setPrimaryDomain', siteId, domain );
-		return wpcom.req.post( `/sites/${ siteId }/domains/primary`, { domain }, ( error, data ) => {
-			if ( error ) {
-				return onComplete( error, data );
-			}
-
-			return dispatch( fetchSiteDomains( siteId ) ).then( () => {
-				onComplete( null, data );
-				dispatch( requestSite( siteId ) );
-			} );
-		} );
-	};
+export const setPrimaryDomain = ( siteId, domain ) => async ( dispatch ) => {
+	debug( 'setPrimaryDomain', siteId, domain );
+	await wpcom.req.post( `/sites/${ siteId }/domains/primary`, { domain } );
+	await Promise.all( [
+		dispatch( requestSite( siteId ) ),
+		dispatch( fetchSiteDomains( siteId ) ),
+	] );
+};
 
 export function discloseDomainContactInfo( siteId, domain ) {
 	return {

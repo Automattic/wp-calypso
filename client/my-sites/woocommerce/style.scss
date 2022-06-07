@@ -64,6 +64,10 @@ body.is-section-woocommerce-installation.theme-default.color-scheme {
 			@include onboarding-large-text;
 			margin-bottom: 1.5em;
 		}
+
+		.empty-content__action {
+			margin: 0 0 10px 10px;
+		}
 	}
 
 	.landing-page__features-section {

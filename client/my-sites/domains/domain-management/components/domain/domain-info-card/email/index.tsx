@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import Count from 'calypso/components/count';
-import { useEmailAccountsQuery } from 'calypso/data/emails/use-emails-query';
+import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { type as domainType } from 'calypso/lib/domains/constants';
 import { getEmailAddress } from 'calypso/lib/emails';
@@ -9,13 +9,10 @@ import DomainInfoCard from '..';
 import type { DomainInfoCardProps } from '../types';
 import type { EmailAccount } from './types';
 
-const DomainEmailInfoCard = ( {
-	domain,
-	selectedSite,
-}: DomainInfoCardProps ): JSX.Element | null => {
+const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) => {
 	const translate = useTranslate();
 	const typesUnableToAddEmail = [ domainType.TRANSFER, domainType.SITE_REDIRECT ] as const;
-	const { data, error, isLoading } = useEmailAccountsQuery( selectedSite.ID, domain.name );
+	const { data, error, isLoading } = useGetEmailAccountsQuery( selectedSite.ID, domain.name );
 
 	let emailAddresses: string[] = [];
 

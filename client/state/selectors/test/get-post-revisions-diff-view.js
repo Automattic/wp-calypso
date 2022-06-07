@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getPostRevisionsDiffView } from 'calypso/state/posts/selectors/get-post-revisions-diff-view';
 
 describe( 'getPostRevisionsDiffView', () => {
@@ -13,7 +12,7 @@ describe( 'getPostRevisionsDiffView', () => {
 					},
 				},
 			} )
-		).to.eql( 'unified' );
+		).toEqual( 'unified' );
 	} );
 
 	test( 'should return "split" if the revisions UI diffView state is split', () => {
@@ -28,6 +27,6 @@ describe( 'getPostRevisionsDiffView', () => {
 					},
 				},
 			} )
-		).to.eql( 'split' );
+		).toEqual( 'split' );
 	} );
 } );

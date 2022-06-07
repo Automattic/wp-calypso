@@ -13,16 +13,10 @@ import { useDailyBackupStatus, useRealtimeBackupStatus } from './hooks';
 export const DailyStatus = ( { selectedDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 
-	const moment = useLocalizedMoment();
-
 	const { isLoading, lastBackupBeforeDate, lastBackupAttemptOnDate, deltas } = useDailyBackupStatus(
 		siteId,
 		selectedDate
 	);
-
-	// Eagerly cache requests for the days before and after our selected date, to make navigation smoother
-	useDailyBackupStatus( siteId, moment( selectedDate ).subtract( 1, 'day' ) );
-	useDailyBackupStatus( siteId, moment( selectedDate ).add( 1, 'day' ) );
 
 	const lastBackupDate = useDateWithOffset( lastBackupBeforeDate?.activityTs );
 
@@ -56,10 +50,6 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 		lastSuccessfulBackupOnDate,
 		backupAttemptsOnDate,
 	} = useRealtimeBackupStatus( siteId, selectedDate );
-
-	// Eagerly cache requests for the days before and after our selected date, to make navigation smoother
-	useRealtimeBackupStatus( siteId, moment( selectedDate ).subtract( 1, 'day' ) );
-	useRealtimeBackupStatus( siteId, moment( selectedDate ).add( 1, 'day' ) );
 
 	const lastBackupDate = useDateWithOffset( lastBackupBeforeDate?.activityTs );
 

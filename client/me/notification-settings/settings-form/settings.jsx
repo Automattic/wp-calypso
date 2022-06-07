@@ -1,8 +1,6 @@
-import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
-import { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import getUserDevices from 'calypso/state/selectors/get-user-devices';
+import { useState } from 'react';
+import { useNotificationDevicesQuery } from 'calypso/data/notification-devices/use-notification-devices-query';
 import Labels from './labels';
 import Stream from './stream';
 import StreamSelector from './stream-selector';
@@ -16,80 +14,74 @@ const streams = {
 	DEVICES: 'devices',
 };
 
-class NotificationSettingsForm extends PureComponent {
-	static propTypes = {
-		blogId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
-		devices: PropTypes.array,
-		settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
-		settings: PropTypes.object.isRequired,
-		onToggle: PropTypes.func.isRequired,
-	};
+function NotificationSettingsForm( { blogId, settingKeys, settings, onToggle } ) {
+	const [ selectedStream, setSelectedStream ] = useState( streams.TIMELINE );
+	const { data: devices = [] } = useNotificationDevicesQuery();
 
-	state = { selectedStream: streams.TIMELINE };
-
-	getSelectedStreamSettings = () => {
-		if ( isNaN( this.state.selectedStream ) ) {
-			return get( this.props.settings, this.state.selectedStream );
+	const getSelectedStreamSettings = () => {
+		if ( isNaN( selectedStream ) ) {
+			return settings[ selectedStream ];
 		}
 
-		return find( get( this.props.settings, 'devices' ), {
-			device_id: parseInt( this.state.selectedStream, 10 ),
-		} );
+		return settings.devices?.find( ( { device_id } ) => device_id === parseInt( selectedStream ) );
 	};
 
-	render() {
-		const selectedStreamSettings = this.getSelectedStreamSettings();
+	const selectedStreamSettings = getSelectedStreamSettings();
 
-		return (
-			<div className="notification-settings-form">
-				<StreamSelector
-					selectedStream={ this.state.selectedStream }
-					onChange={ ( selectedStream ) => this.setState( { selectedStream } ) }
-					settings={ selectedStreamSettings }
+	return (
+		<div className="notification-settings-form">
+			<StreamSelector
+				selectedStream={ selectedStream }
+				onChange={ setSelectedStream }
+				settings={ selectedStreamSettings }
+			/>
+			<div className="notification-settings-form__streams">
+				<Labels settingKeys={ settingKeys } />
+				<Stream
+					key={ streams.TIMELINE }
+					blogId={ blogId }
+					stream={ streams.TIMELINE }
+					settingKeys={ settingKeys }
+					settings={ settings[ streams.TIMELINE ] }
+					onToggle={ onToggle }
 				/>
-				<div className="notification-settings-form__streams">
-					<Labels settingKeys={ this.props.settingKeys } />
+				<Stream
+					key={ streams.EMAIL }
+					blogId={ blogId }
+					stream={ streams.EMAIL }
+					settingKeys={ settingKeys }
+					settings={ settings[ streams.EMAIL ] }
+					onToggle={ onToggle }
+				/>
+				{ devices && devices.length > 0 && (
 					<Stream
-						key={ streams.TIMELINE }
-						blogId={ this.props.blogId }
-						stream={ streams.TIMELINE }
-						settingKeys={ this.props.settingKeys }
-						settings={ get( this.props.settings, streams.TIMELINE ) }
-						onToggle={ this.props.onToggle }
+						key={ streams.DEVICES }
+						blogId={ blogId }
+						devices={ devices }
+						settingKeys={ settingKeys }
+						settings={ settings[ streams.DEVICES ] }
+						onToggle={ onToggle }
 					/>
-					<Stream
-						key={ streams.EMAIL }
-						blogId={ this.props.blogId }
-						stream={ streams.EMAIL }
-						settingKeys={ this.props.settingKeys }
-						settings={ get( this.props.settings, streams.EMAIL ) }
-						onToggle={ this.props.onToggle }
-					/>
-					{ this.props.devices && this.props.devices.length > 0 && (
-						<Stream
-							key={ streams.DEVICES }
-							blogId={ this.props.blogId }
-							devices={ this.props.devices }
-							settingKeys={ this.props.settingKeys }
-							settings={ get( this.props.settings, streams.DEVICES ) }
-							onToggle={ this.props.onToggle }
-						/>
-					) }
-					<Stream
-						key={ 'selected-stream' }
-						className={ 'selected-stream' }
-						blogId={ this.props.blogId }
-						stream={ this.state.selectedStream }
-						settingKeys={ this.props.settingKeys }
-						settings={ selectedStreamSettings }
-						onToggle={ this.props.onToggle }
-					/>
-				</div>
+				) }
+				<Stream
+					key="selected-stream"
+					className="selected-stream"
+					blogId={ blogId }
+					stream={ selectedStream }
+					settingKeys={ settingKeys }
+					settings={ selectedStreamSettings }
+					onToggle={ onToggle }
+				/>
 			</div>
-		);
-	}
+		</div>
+	);
 }
 
-export default connect( ( state ) => ( {
-	devices: getUserDevices( state ),
-} ) )( NotificationSettingsForm );
+NotificationSettingsForm.propTypes = {
+	blogId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+	settingKeys: PropTypes.arrayOf( PropTypes.string ).isRequired,
+	settings: PropTypes.object.isRequired,
+	onToggle: PropTypes.func.isRequired,
+};
+
+export default NotificationSettingsForm;

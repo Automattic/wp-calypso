@@ -16,12 +16,7 @@ interface Props {
 	action: 'fix' | 'ignore';
 }
 
-export default function ThreatFixHeader( {
-	threat,
-	fixAllDialog,
-	onCheckFix,
-	action,
-}: Props ): JSX.Element {
+export default function ThreatFixHeader( { threat, fixAllDialog, onCheckFix, action }: Props ) {
 	const [ checkedFix, setCheckedFix ] = useState( true );
 
 	const checkFix = ( event: { target: { checked: boolean } } ) => {

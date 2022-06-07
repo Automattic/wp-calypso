@@ -1,4 +1,5 @@
 import { Button, Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -48,7 +49,13 @@ class TransferRestrictionMessage extends PureComponent {
 				'{{a}}Learn how{{/a}}.',
 			{
 				components: {
-					a: <a href={ MAP_EXISTING_DOMAIN } rel="noopener noreferrer" target="_blank" />,
+					a: (
+						<a
+							href={ localizeUrl( MAP_EXISTING_DOMAIN ) }
+							rel="noopener noreferrer"
+							target="_blank"
+						/>
+					),
 				},
 			}
 		);

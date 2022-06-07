@@ -61,7 +61,7 @@ class MasterbarItemPlanUpsell extends Component {
 
 		return (
 			<ProvideExperimentData
-				name="masterbar_plan_upsell_202202_v2"
+				name="masterbar_plan_upsell_202202_v4"
 				options={ {
 					isEligible: showPlanUpsell,
 				} }

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
 
 describe( 'isHiddenSite()', () => {
@@ -16,7 +15,7 @@ describe( 'isHiddenSite()', () => {
 			2916285
 		);
 
-		expect( isHidden ).to.be.null;
+		expect( isHidden ).toBeNull();
 	} );
 
 	test( 'should return false for public sites', () => {
@@ -33,7 +32,7 @@ describe( 'isHiddenSite()', () => {
 			2916284
 		);
 
-		expect( isHidden ).to.be.false;
+		expect( isHidden ).toBe( false );
 	} );
 
 	test( 'should return true for hidden sites', () => {
@@ -50,6 +49,6 @@ describe( 'isHiddenSite()', () => {
 			2916284
 		);
 
-		expect( isHidden ).to.be.true;
+		expect( isHidden ).toBe( true );
 	} );
 } );

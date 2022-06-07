@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	READER_RELATED_POSTS_REQUEST,
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
@@ -21,7 +20,7 @@ describe( 'items', () => {
 					},
 				}
 			)
-		).to.deep.equal( {
+		).toEqual( {
 			'1-1-all': [ 2, 3, 4 ],
 		} );
 	} );
@@ -41,7 +40,7 @@ describe( 'items', () => {
 					},
 				}
 			)
-		).to.deep.equal( {
+		).toEqual( {
 			'1-1-all': [ 3, 4, 9 ],
 		} );
 	} );
@@ -60,7 +59,7 @@ describe( 'queuedRequests', () => {
 					},
 				}
 			)
-		).to.deep.equal( {
+		).toEqual( {
 			'1-1-all': true,
 		} );
 	} );
@@ -79,7 +78,7 @@ describe( 'queuedRequests', () => {
 					},
 				}
 			)
-		).to.deep.equal( {
+		).toEqual( {
 			'1-1-all': false,
 		} );
 	} );
@@ -96,7 +95,7 @@ describe( 'queuedRequests', () => {
 					},
 				}
 			)
-		).to.deep.equal( {
+		).toEqual( {
 			'1-1-all': false,
 		} );
 	} );

@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import '@testing-library/jest-dom/extend-expect';
 import { renderHook } from '@testing-library/react-hooks';
 import nock from 'nock';
 import { QueryClient, QueryClientProvider } from 'react-query';

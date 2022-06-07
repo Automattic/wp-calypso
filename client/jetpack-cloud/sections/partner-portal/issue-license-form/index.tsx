@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import sortBy from 'lodash/sortBy';
 import page from 'page';
 import { ReactElement, useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -15,30 +16,40 @@ import {
 	APIProductFamily,
 	APIProductFamilyProduct,
 } from 'calypso/state/partner-portal/types';
+import { AssignLicenceProps } from '../types';
+
 import './style.scss';
 
 function selectProductOptions( families: APIProductFamily[] ): APIProductFamilyProduct[] {
 	return families.flatMap( ( family ) => family.products );
 }
 
-interface Props {
-	selectedSite?: number | null;
+function alphabeticallySortedProductOptions(
+	families: APIProductFamily[]
+): APIProductFamilyProduct[] {
+	return sortBy( selectProductOptions( families ), ( product ) => product.name );
 }
 
-export default function IssueLicenseForm( { selectedSite }: Props ): ReactElement {
+export default function IssueLicenseForm( {
+	selectedSite,
+	suggestedProduct,
+}: AssignLicenceProps ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const products = useProductsQuery( {
-		select: selectProductOptions,
+		select: alphabeticallySortedProductOptions,
 	} );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	const assignLicense = useAssignLicenseMutation( {
 		onSuccess: ( license: any ) => {
+			setIsSubmitting( false );
 			page.redirect(
 				addQueryArgs( { highlight: license.license_key }, '/partner-portal/licenses' )
 			);
 		},
 		onError: ( error: Error ) => {
+			setIsSubmitting( false );
 			dispatch( errorNotice( error.message ) );
 		},
 	} );
@@ -46,8 +57,10 @@ export default function IssueLicenseForm( { selectedSite }: Props ): ReactElemen
 	const issueLicense = useIssueLicenseMutation( {
 		onSuccess: ( license ) => {
 			const licenseKey = license.license_key;
-			if ( selectedSite ) {
-				assignLicense.mutate( { licenseKey, selectedSite } );
+			const selectedSiteId = selectedSite?.ID;
+			if ( selectedSiteId ) {
+				setIsSubmitting( true );
+				assignLicense.mutate( { licenseKey, selectedSite: selectedSiteId } );
 			} else {
 				page.redirect(
 					addQueryArgs( { key: license.license_key }, '/partner-portal/assign-license' )
@@ -102,6 +115,7 @@ export default function IssueLicenseForm( { selectedSite }: Props ): ReactElemen
 				onSelectProduct={ onSelectProduct }
 				isSelected={ productOption.slug === product }
 				tabIndex={ 100 + i }
+				suggestedProduct={ suggestedProduct }
 			/>
 		) );
 
@@ -109,6 +123,8 @@ export default function IssueLicenseForm( { selectedSite }: Props ): ReactElemen
 		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_submit', { product } ) );
 		issueLicense.mutate( { product } );
 	}, [ dispatch, product, issueLicense.mutate ] );
+
+	const selectedSiteDomian = selectedSite?.domain;
 
 	return (
 		<div className="issue-license-form">
@@ -118,16 +134,24 @@ export default function IssueLicenseForm( { selectedSite }: Props ): ReactElemen
 				<>
 					<div className="issue-license-form__top">
 						<p className="issue-license-form__description">
-							{ translate(
-								'Select the Jetpack product you would like to issue a new license for'
-							) }
+							{ selectedSiteDomian
+								? translate(
+										'Select the Jetpack product you would like to add to {{strong}}%(selectedSiteDomian)s{{/strong}}',
+										{
+											args: { selectedSiteDomian },
+											components: { strong: <strong /> },
+										}
+								  )
+								: translate(
+										'Select the Jetpack product you would like to issue a new license for'
+								  ) }
 						</p>
 						<div className="issue-license-form__controls">
 							<Button
 								primary
 								className="issue-license-form__select-license"
 								disabled={ ! product }
-								busy={ issueLicense.isLoading }
+								busy={ issueLicense.isLoading || isSubmitting }
 								onClick={ onIssueLicense }
 							>
 								{ translate( 'Select License' ) }

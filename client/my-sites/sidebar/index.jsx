@@ -7,12 +7,13 @@
  *   Currently experimental/WIP.
  */
 
+import { Spinner } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { Fragment, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import Spinner from 'calypso/components/spinner';
 import Sidebar from 'calypso/layout/sidebar';
+import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import { isExternal } from 'calypso/lib/url';
@@ -24,7 +25,6 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSidebarIsCollapsed, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AddNewSite from './add-new-site';
-import CollapseSidebar from './collapse-sidebar';
 import MySitesSidebarUnifiedItem from './item';
 import MySitesSidebarUnifiedMenu from './menu';
 import useDomainsViewStatus from './use-domains-view-status';

@@ -9,6 +9,8 @@ import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 
 export type { State };
 
+export { GoalKey } from './constants';
+
 /**
  * Onboard store depends on site-store. You should register the site before using this store.
  */
@@ -26,8 +28,10 @@ export function register(): typeof STORE_KEY {
 			'anchorSpotifyUrl',
 			'domain',
 			'domainSearch',
+			'goals',
 			'hasUsedDomainsStep',
 			'hasUsedPlansStep',
+			'intent',
 			'lastLocation',
 			'planProductId',
 			'randomizedDesigns',
@@ -36,7 +40,7 @@ export function register(): typeof STORE_KEY {
 			'selectedFonts',
 			'selectedSite',
 			'siteTitle',
-			'intent',
+			'storeType',
 		],
 	} );
 

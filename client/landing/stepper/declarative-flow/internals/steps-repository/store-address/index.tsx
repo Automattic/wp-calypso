@@ -1,3 +1,4 @@
+import { FormInputValidation } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { ComboboxControl } from '@wordpress/components';
@@ -7,7 +8,6 @@ import emailValidator from 'email-validator';
 import { FormEvent, ReactElement, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -57,6 +57,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 	const { __ } = useI18n();
 	const [ errors, setErrors ] = useState( {} as Record< FormFields, string > );
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
+	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 
 	const [ settingChanges, setSettingChanges ] = useState< {
 		[ key: string ]: string;
@@ -291,8 +292,10 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 					align={ 'left' }
 				/>
 			}
+			intent={ intent }
 			stepContent={ getContent() }
 			recordTracksEvent={ recordTracksEvent }
+			stepProgress={ stepProgress }
 			hideSkip
 		/>
 	);

@@ -3,13 +3,8 @@ import Notice from 'calypso/components/notice';
 import { hasGSuiteWithAnotherProvider, hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
 
-const EmailExistingPaidServiceNotice = ( {
-	domain,
-}: {
-	domain: ResponseDomain | SiteDomain;
-} ): JSX.Element | null => {
+const EmailExistingPaidServiceNotice = ( { domain }: { domain: ResponseDomain } ) => {
 	const translate = useTranslate();
 
 	const hasGoogleWithAnotherProvider = hasGSuiteWithAnotherProvider( domain );

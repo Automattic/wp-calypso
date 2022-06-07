@@ -1,6 +1,5 @@
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["testPlansArrayIndependentOfOrder"] }] */
 
-import { expect } from 'chai';
 import { planLevelsMatch } from '../src';
 import {
 	PLAN_BUSINESS_MONTHLY,
@@ -25,8 +24,8 @@ import {
 describe( 'planLevelsMatch', () => {
 	const testPlansArrayIndependentOfOrder = ( plansArray, result ) =>
 		plansArray.forEach( ( [ slugA, slugB ] ) => {
-			expect( planLevelsMatch( slugA, slugB ) ).to.be[ result ];
-			expect( planLevelsMatch( slugB, slugA ) ).to.be[ result ];
+			expect( planLevelsMatch( slugA, slugB ) ).toBe[ result ];
+			expect( planLevelsMatch( slugB, slugA ) ).toBe[ result ];
 		} );
 
 	test( 'should return true for identical plans', () => {

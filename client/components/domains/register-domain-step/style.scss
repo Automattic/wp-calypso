@@ -293,3 +293,55 @@ body.is-section-signup.is-white-signup {
 		color: var( --color-link );
 	}
 }
+.register-domain-step__placeholder {
+	display: none;
+
+	@include break-large {
+		display: block;
+	}
+}
+.register-domain-step__domain-side-content-container-domain-explanation-image {
+	position: relative;
+	background-color: #d9d8da;
+	border-top-right-radius: 4px;
+	border-top-left-radius: 4px;
+	display: flex;
+	padding: 10px 5px 30px;
+	justify-content: space-between;
+	margin: 20px auto;
+	max-width: 600px;
+
+	@include break-large {
+		display: none;
+	}
+
+	&::after {
+		content: '';
+		width: auto;
+		height: 20px;
+		background-color:  #f5f5f5;
+		position: absolute;
+		border-top-right-radius: 4px;
+		border-top-left-radius: 4px;
+		bottom: 0;
+		left: 10px;
+		right: 10px;
+	}
+
+	span {
+		width: 32px;
+		height: 32px;
+		background: #fff;
+		border-radius: 4px;
+		margin: 3px 6px;
+	}
+}
+.register-domain-step__domain-side-content-container-domain-explanation-image-url {
+	flex-grow: 2;
+	padding: 0 10px;
+	line-height: 32px;
+	font-size: $font-body-extra-small;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+

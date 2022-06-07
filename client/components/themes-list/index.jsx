@@ -34,6 +34,7 @@ export class ThemesList extends Component {
 			PropTypes.func,
 			PropTypes.shape( { current: PropTypes.any } ),
 		] ),
+		siteId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -68,7 +69,7 @@ export class ThemesList extends Component {
 			return null;
 		}
 		// Decide if we should pass ref for bookmark.
-		const { themesBookmark } = this.props;
+		const { themesBookmark, siteId } = this.props;
 		const bookmarkRef = themesBookmark === theme.id ? this.props.bookmarkRef : null;
 
 		return (
@@ -88,6 +89,7 @@ export class ThemesList extends Component {
 				installing={ this.props.isInstalling( theme.id ) }
 				upsellUrl={ this.props.upsellUrl }
 				bookmarkRef={ bookmarkRef }
+				siteId={ siteId }
 			/>
 		);
 	}

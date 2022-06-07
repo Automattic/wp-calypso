@@ -12,7 +12,6 @@ const initialState = {
  * @param {object} state  Current state
  * @param {object} action Action payload
  * @returns {object} Updated state
- *
  */
 export default function language( state = initialState, action ) {
 	switch ( action.type ) {

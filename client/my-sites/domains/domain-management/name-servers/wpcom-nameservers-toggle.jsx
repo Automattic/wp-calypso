@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -57,7 +58,7 @@ class NameserversToggle extends PureComponent {
 						components: {
 							a: (
 								<a
-									href={ CHANGE_NAME_SERVERS }
+									href={ localizeUrl( CHANGE_NAME_SERVERS ) }
 									target="_blank"
 									rel="noopener noreferrer"
 									onClick={ this.handleLearnMoreClick }

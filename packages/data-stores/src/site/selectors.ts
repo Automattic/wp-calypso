@@ -46,11 +46,11 @@ export const isSiteLaunching = ( state: State, siteId: number ) => {
 };
 
 export const isSiteAtomic = ( state: State, siteId: number | string ) => {
-	return select( STORE_KEY ).getSite( siteId )?.options.is_wpcom_atomic === true;
+	return select( STORE_KEY ).getSite( siteId )?.options?.is_wpcom_atomic === true;
 };
 
 export const isSiteWPForTeams = ( state: State, siteId: number | string ) => {
-	return select( STORE_KEY ).getSite( siteId )?.options.is_wpforteams_site === true;
+	return select( STORE_KEY ).getSite( siteId )?.options?.is_wpforteams_site === true;
 };
 
 export const getSiteDomains = ( state: State, siteId: number ) => {
@@ -107,7 +107,7 @@ export const getAtomicSoftwareInstallError = (
 	return state.atomicSoftwareInstallStatus[ siteId ]?.[ softwareSet ]?.error;
 };
 
-export const hasActiveSiteFeature = (
+export const siteHasFeature = (
 	_: State,
 	siteId: number | undefined,
 	featureKey: string
@@ -117,25 +117,8 @@ export const hasActiveSiteFeature = (
 	);
 };
 
-export const hasAvailableSiteFeature = (
-	_: State,
-	siteId: number | undefined,
-	featureKey: string
-): boolean => {
-	return Boolean(
-		siteId && select( STORE_KEY ).getSite( siteId )?.plan?.features.available[ featureKey ]
-	);
-};
-
 export const requiresUpgrade = ( state: State, siteId: number | null ) => {
-	const isWoopFeatureActive = Boolean(
-		siteId && select( STORE_KEY ).hasActiveSiteFeature( siteId, 'woop' )
-	);
-	const hasWoopFeatureAvailable = Boolean(
-		siteId && select( STORE_KEY ).hasAvailableSiteFeature( siteId, 'woop' )
-	);
-
-	return Boolean( ! isWoopFeatureActive && hasWoopFeatureAvailable );
+	return siteId && ! select( STORE_KEY ).siteHasFeature( siteId, 'woop' );
 };
 
 export function isJetpackSite( state: State, siteId?: number ): boolean {

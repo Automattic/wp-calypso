@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST,
 	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_SUCCESS,
@@ -26,7 +25,7 @@ describe( 'wpcom-api', () => {
 
 		describe( '#requestResendEmailVerification', () => {
 			test( 'should dispatch an HTTP request to the email forward resend-verification endpoint', () => {
-				expect( requestResendEmailVerification( action ) ).to.eql(
+				expect( requestResendEmailVerification( action ) ).toEqual(
 					http(
 						{
 							method: 'POST',
@@ -44,9 +43,9 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch a error notice and resend email verification failure action on error', () => {
 				const resultActions = resendEmailVerificationFailure( action, { message } );
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_FAILURE,
 					domainName,
 					mailbox,
@@ -60,15 +59,15 @@ describe( 'wpcom-api', () => {
 			test( 'should dispatch a success notice and a resend email verification success action on a good response', () => {
 				const resultActions = resendEmailVerificationSuccess( action, { sent: true } );
 
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isSuccessNotice( resultActions[ 0 ] ) ).to.be.true;
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isSuccessNotice( resultActions[ 0 ] ) ).toBe( true );
 				expect(
 					noticeHasText(
 						resultActions[ 0 ],
 						'Successfully sent confirmation email for test@example.com to 123@abc.com.'
 					)
-				).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_SUCCESS,
 					domainName,
 					mailbox,
@@ -79,9 +78,9 @@ describe( 'wpcom-api', () => {
 			test( 'should dispatch a error notice and a resend email verification failure action on response with sent: false', () => {
 				const resultActions = resendEmailVerificationSuccess( action, { sent: false } );
 
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_FAILURE,
 					domainName,
 					mailbox,
@@ -93,9 +92,9 @@ describe( 'wpcom-api', () => {
 			test( 'should dispatch a error notice and a resend email verification failure action on no response', () => {
 				const resultActions = resendEmailVerificationSuccess( action, undefined );
 
-				expect( resultActions ).to.have.lengthOf( 2 );
-				expect( isErrorNotice( resultActions[ 0 ] ) ).to.be.true;
-				expect( resultActions[ 1 ] ).to.eql( {
+				expect( resultActions ).toHaveLength( 2 );
+				expect( isErrorNotice( resultActions[ 0 ] ) ).toBe( true );
+				expect( resultActions[ 1 ] ).toEqual( {
 					type: EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_FAILURE,
 					domainName,
 					mailbox,

@@ -40,7 +40,7 @@ export default function Field( {
 	errorMessage?: ReactNode;
 	autoComplete?: string;
 	disabled?: boolean;
-} ): JSX.Element {
+} ) {
 	const fieldOnChange = ( event: { target: { value: string } } ) => {
 		if ( onChange ) {
 			onChange( event.target.value );

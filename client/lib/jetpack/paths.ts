@@ -22,6 +22,12 @@ export const settingsHostSelectionPath = ( siteSlug: string | null ): string =>
 export const settingsCredentialsPath = ( siteSlug: string, host: string ): string =>
 	settingsPath( siteSlug, `credentials/${ host }` );
 
+export const disconnectPath = ( siteSlug: string ): string =>
+	settingsPath( siteSlug, 'disconnect-site' );
+
+export const confirmDisconnectPath = ( siteSlug: string ): string =>
+	settingsPath( siteSlug, 'disconnect-site/confirm' );
+
 export const purchasesBasePath = () => '/purchases';
 export const purchasesPath = ( siteSlug: string | null ): string =>
 	siteSlug ? `${ purchasesBasePath() }/${ siteSlug }` : purchasesBasePath();
@@ -29,3 +35,7 @@ export const purchasesPath = ( siteSlug: string | null ): string =>
 export const socialBasePath = () => '/jetpack-social';
 export const socialPath = ( siteSlug?: string ): string =>
 	siteSlug ? `${ socialBasePath() }/${ siteSlug }` : socialBasePath();
+
+export const partnerPortalBasePath = () => '/partner-portal';
+
+export const agencySignupBasePath = () => '/agency/signup';

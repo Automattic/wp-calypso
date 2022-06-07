@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getImageEditorIsGreaterThanMinimumDimensions from 'calypso/state/selectors/get-image-editor-is-greater-than-minimum-dimensions';
 
 describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
@@ -11,7 +10,7 @@ describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
 			},
 		} );
 
-		expect( isGreaterThanMinimumDimensions ).to.be.false;
+		expect( isGreaterThanMinimumDimensions ).toBe( false );
 	} );
 	test( 'should return false if the width value is not an integer', () => {
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions(
@@ -26,7 +25,7 @@ describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
 			50
 		);
 
-		expect( isGreaterThanMinimumDimensions ).to.be.false;
+		expect( isGreaterThanMinimumDimensions ).toBe( false );
 	} );
 	test( 'should return false if the height value is not an integer', () => {
 		const isGreaterThanMinimumDimensions = getImageEditorIsGreaterThanMinimumDimensions(
@@ -41,7 +40,7 @@ describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
 			50
 		);
 
-		expect( isGreaterThanMinimumDimensions ).to.be.false;
+		expect( isGreaterThanMinimumDimensions ).toBe( false );
 	} );
 
 	test( 'should return false if the dimensions do not meet the supplied minimum dimensions', () => {
@@ -57,7 +56,7 @@ describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
 			50
 		);
 
-		expect( isGreaterThanMinimumDimensions ).to.be.false;
+		expect( isGreaterThanMinimumDimensions ).toBe( false );
 	} );
 
 	test( 'should return true if the dimensions meet the supplied minimum dimensions', () => {
@@ -73,6 +72,6 @@ describe( 'getImageEditorIsGreaterThanMinimumDimensions()', () => {
 			44
 		);
 
-		expect( isGreaterThanMinimumDimensions ).to.be.true;
+		expect( isGreaterThanMinimumDimensions ).toBe( true );
 	} );
 } );

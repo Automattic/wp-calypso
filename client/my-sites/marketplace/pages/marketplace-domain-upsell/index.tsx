@@ -63,7 +63,7 @@ function MarketplaceDomainUpsellHeader() {
 
 const getSiteNameFromURL = ( url: string ) => url?.split( '.' )?.[ 0 ] ?? url;
 
-function CalypsoWrappedMarketplaceDomainUpsell(): JSX.Element {
+function CalypsoWrappedMarketplaceDomainUpsell() {
 	const [ selectedDomainProductUUID, setDomainProductUUID ] = useState< string >( '' );
 	const [ selectedDomain, setDomain ] = useState< DomainSuggestions.DomainSuggestion | undefined >(
 		undefined

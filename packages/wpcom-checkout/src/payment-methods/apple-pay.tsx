@@ -27,7 +27,7 @@ export function createApplePayMethod(
 	};
 }
 
-export function ApplePayLabel(): JSX.Element {
+export function ApplePayLabel() {
 	const { __ } = useI18n();
 
 	return (
@@ -50,7 +50,7 @@ export function ApplePaySubmitButton( {
 	onClick?: ProcessPayment;
 	stripe: Stripe;
 	stripeConfiguration: StripeConfiguration;
-} ): JSX.Element {
+} ) {
 	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
 	const onSubmit = useCallback(
 		( { name, paymentMethodToken } ) => {
@@ -92,12 +92,12 @@ export function ApplePaySubmitButton( {
 	);
 }
 
-export function ApplePaySummary(): JSX.Element {
+export function ApplePaySummary() {
 	const { __ } = useI18n();
 	return <Fragment>{ __( 'Apple Pay' ) }</Fragment>;
 }
 
-function ApplePayIcon( { fill }: { fill: string } ): JSX.Element {
+function ApplePayIcon( { fill }: { fill: string } ) {
 	return (
 		<svg
 			width="38"

@@ -53,7 +53,7 @@ button {
 .site-setup,
 .anchor-fm {
 	position: relative;
-	padding: 48px 0 0;
+	padding: 60px 0 0;
 	box-sizing: border-box;
 
 	&.courses {
@@ -70,7 +70,8 @@ button {
 		}
 	}
 
-	.import-step {
+	.import-step,
+	.importer-step {
 		@include onboarding-block-margin;
 	}
 
@@ -116,5 +117,13 @@ button {
 	.step-container {
 		--color-accent: #117ac9;
 		--color-accent-60: #0e64a5;
+	}
+}
+
+@media ( max-width: 660px ) {
+	body.is-section-stepper .wpcom-site {
+		.inline-help {
+			bottom: 74px;
+		}
 	}
 }

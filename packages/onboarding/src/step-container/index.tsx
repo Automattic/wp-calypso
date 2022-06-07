@@ -1,7 +1,9 @@
+import { WordPressLogo } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { ReactChild, ReactElement } from 'react';
 import ActionButtons from '../action-buttons';
+import FlowProgress from '../flow-progress';
 import StepNavigationLink from '../step-navigation-link';
 import './style.scss';
 
@@ -10,6 +12,8 @@ interface Props {
 	stepSectionName?: string;
 	stepContent: ReactElement;
 	shouldHideNavButtons?: boolean;
+	shouldStickyNavButtons?: boolean;
+	hasStickyNavButtonsPadding?: boolean;
 	hideBack?: boolean;
 	hideSkip?: boolean;
 	hideNext?: boolean;
@@ -34,6 +38,7 @@ interface Props {
 	goNext?: () => void;
 	flowName?: string;
 	intent?: string;
+	stepProgress?: { count: number; progress: number };
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 }
 
@@ -41,6 +46,8 @@ const StepContainer: React.FC< Props > = ( {
 	stepContent,
 	stepName,
 	shouldHideNavButtons,
+	shouldStickyNavButtons,
+	hasStickyNavButtonsPadding,
 	hideBack,
 	backLabelText,
 	hideSkip,
@@ -65,6 +72,7 @@ const StepContainer: React.FC< Props > = ( {
 	flowName,
 	intent,
 	stepSectionName,
+	stepProgress,
 	recordTracksEvent,
 } ) => {
 	const translate = useTranslate();
@@ -126,6 +134,11 @@ const StepContainer: React.FC< Props > = ( {
 		);
 	}
 
+	function ProgressIndicator() {
+		if ( ! stepProgress ) return null;
+		return <FlowProgress count={ stepProgress?.count } progress={ stepProgress?.progress } />;
+	}
+
 	function NextButton() {
 		if ( shouldHideNavButtons || ! goNext ) {
 			return null;
@@ -156,12 +169,18 @@ const StepContainer: React.FC< Props > = ( {
 			<ActionButtons
 				className={ classNames( 'step-container__navigation', {
 					'should-hide-nav-buttons': shouldHideNavButtons,
+					'should-sticky-nav-buttons': shouldStickyNavButtons,
+					'has-sticky-nav-buttons-padding': hasStickyNavButtonsPadding,
 				} ) }
 			>
+				{ shouldStickyNavButtons && (
+					<WordPressLogo className="step-container__navigation-logo" size={ 24 } />
+				) }
 				{ ! hideBack && <BackButton /> }
 				{ ! hideSkip && skipButtonAlign === 'top' && <SkipButton /> }
 				{ ! hideNext && <NextButton /> }
 				{ customizedActionButtons }
+				<ProgressIndicator />
 			</ActionButtons>
 			{ ! hideFormattedHeader && (
 				<div className="step-container__header">

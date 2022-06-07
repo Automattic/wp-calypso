@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import { match } from 'sinon';
 import {
 	SITE_CONNECTION_STATUS_RECEIVE,
 	SITE_CONNECTION_STATUS_REQUEST,
@@ -7,12 +5,14 @@ import {
 	SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { requestConnectionStatus } from '../actions';
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
+
+	beforeEach( () => {
+		spy = jest.fn();
+	} );
 
 	const siteId = 12345678;
 
@@ -31,7 +31,7 @@ describe( 'actions', () => {
 			test( 'should dispatch a connection status request action when thunk triggered', () => {
 				requestConnectionStatus( siteId )( spy );
 
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: SITE_CONNECTION_STATUS_REQUEST,
 					siteId,
 				} );
@@ -39,13 +39,13 @@ describe( 'actions', () => {
 
 			test( 'should dispatch connection status request success and receive actions upon success', () => {
 				return requestConnectionStatus( siteId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: SITE_CONNECTION_STATUS_RECEIVE,
 						siteId,
 						status: true,
 					} );
 
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: SITE_CONNECTION_STATUS_REQUEST_SUCCESS,
 						siteId,
 					} );
@@ -67,10 +67,10 @@ describe( 'actions', () => {
 
 			test( 'should dispatch connection status request failure action upon error', () => {
 				return requestConnectionStatus( siteId )( spy ).then( () => {
-					expect( spy ).to.have.been.calledWith( {
+					expect( spy ).toBeCalledWith( {
 						type: SITE_CONNECTION_STATUS_REQUEST_FAILURE,
 						siteId,
-						error: match( { message: errorMessage } ),
+						error: expect.objectContaining( { message: errorMessage } ),
 					} );
 				} );
 			} );

@@ -1,9 +1,10 @@
+import { Spinner } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-import request from 'wpcom-proxy-request';
-import Spinner from 'calypso/components/spinner';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 
 function P2JoinWorkspaceCodeInput( { workspaceStatus, setWorkspaceStatus } ) {
 	const CHALLENGE_CODE_LENGTH = 6;
@@ -83,12 +84,13 @@ function P2JoinWorkspaceCodeInput( { workspaceStatus, setWorkspaceStatus } ) {
 
 		setIsLoading( true );
 
-		await request(
+		recordTracksEvent( 'calypso_signup_p2_join_workspace_code_attempt' );
+
+		await wpcom.req.post(
 			{
 				path: '/p2/preapproved-joining/request-join',
 				apiNamespace: 'wpcom/v2',
 				global: true,
-				method: 'POST',
 				body: {
 					hub_id: hubId,
 					code: challengeCode,
@@ -98,9 +100,12 @@ function P2JoinWorkspaceCodeInput( { workspaceStatus, setWorkspaceStatus } ) {
 				setIsLoading( false );
 
 				if ( ! response.success ) {
+					recordTracksEvent( 'calypso_signup_p2_join_workspace_code_attempt_fail' );
 					setError( response.error || __( 'An error has occurred. Please try again.' ) );
 					return;
 				}
+
+				recordTracksEvent( 'calypso_signup_p2_join_workspace_code_attempt_success' );
 
 				setWorkspaceStatus( {
 					...workspaceStatus,
@@ -114,6 +119,7 @@ function P2JoinWorkspaceCodeInput( { workspaceStatus, setWorkspaceStatus } ) {
 	};
 
 	const handleCancelJoin = () => {
+		recordTracksEvent( 'calypso_signup_p2_join_workspace_join_request_cancel' );
 		setWorkspaceStatus( { ...workspaceStatus, requested: null } );
 		setError( null );
 	};

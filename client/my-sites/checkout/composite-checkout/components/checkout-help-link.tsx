@@ -6,6 +6,7 @@ import {
 	isPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { SUPPORT_HAPPYCHAT, SUPPORT_FORUM, SUPPORT_DIRECTLY } from '@automattic/help-center';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -19,11 +20,7 @@ import getSupportLevel from 'calypso/state/happychat/selectors/get-support-level
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import isPresalesChatAvailable from 'calypso/state/happychat/selectors/is-presales-chat-available';
 import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
-import getSupportVariation, {
-	SUPPORT_HAPPYCHAT,
-	SUPPORT_FORUM,
-	SUPPORT_DIRECTLY,
-} from 'calypso/state/selectors/get-inline-help-support-variation';
+import getSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import isSupportVariationDetermined from 'calypso/state/selectors/is-support-variation-determined';
 import type { Theme } from '@automattic/composite-checkout';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
@@ -47,7 +44,7 @@ const HappychatButton = styled( HappychatButtonUnstyled )`
 	}
 `;
 
-export function PaymentChatButton( { plan }: { plan: string | undefined } ): JSX.Element {
+export function PaymentChatButton( { plan }: { plan: string | undefined } ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const supportLevel = useSelector( getSupportLevel );
@@ -124,7 +121,7 @@ const LoadingButton = styled.p< StyledProps >`
 	position: relative;
 `;
 
-export default function CheckoutHelpLink(): JSX.Element {
+export default function CheckoutHelpLink() {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const cartKey = useCartKey();

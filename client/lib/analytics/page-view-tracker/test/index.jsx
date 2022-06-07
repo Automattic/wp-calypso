@@ -1,32 +1,31 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
 import { mount } from 'enzyme';
-import { spy } from 'sinon';
-import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 import { PageViewTracker } from '../';
 
 describe( 'PageViewTracker', () => {
-	let clock;
+	beforeEach( () => {
+		jest.useFakeTimers();
+	} );
 
-	useFakeTimers( ( fakeClock ) => {
-		clock = fakeClock;
+	afterEach( () => {
+		jest.runOnlyPendingTimers();
+		jest.useRealTimers();
 	} );
 
 	test( 'should immediately fire off event when given no delay', () => {
-		const recorder = spy();
+		const recorder = jest.fn();
 
 		mount(
 			<PageViewTracker path="/test" title="test" recorder={ recorder } hasSelectedSiteLoaded />
 		);
 
-		expect( recorder ).to.have.been.calledOnce;
+		expect( recorder ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'should wait for the delay before firing off the event', () => {
-		const recorder = spy();
+		const recorder = jest.fn();
 
 		mount(
 			<PageViewTracker
@@ -38,20 +37,29 @@ describe( 'PageViewTracker', () => {
 			/>
 		);
 
-		expect( recorder ).to.not.have.been.called;
+		expect( recorder ).not.toHaveBeenCalled();
 
-		clock.tick( 500 );
+		jest.advanceTimersByTime( 500 );
 
-		expect( recorder ).to.have.been.calledOnce;
+		expect( recorder ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'should pass the appropriate event information', () => {
-		const recorder = spy();
+		const recorder = jest.fn();
+		const properties = {};
+		const options = {};
 
 		mount(
-			<PageViewTracker path="/test" title="test" recorder={ recorder } hasSelectedSiteLoaded />
+			<PageViewTracker
+				path="/test"
+				title="test"
+				properties={ properties }
+				options={ options }
+				recorder={ recorder }
+				hasSelectedSiteLoaded
+			/>
 		);
 
-		expect( recorder ).to.have.been.calledWith( '/test', 'test' );
+		expect( recorder ).toHaveBeenCalledWith( '/test', 'test', 'default', properties, options );
 	} );
 } );

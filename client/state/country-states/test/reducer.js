@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	COUNTRY_STATES_RECEIVE,
@@ -7,7 +6,6 @@ import {
 	COUNTRY_STATES_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import reducer, { items, isFetching } from '../reducer';
 
 const originalCountryStates = [
@@ -24,17 +22,19 @@ const originalCountryStates = [
 ];
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'isFetching' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'items', 'isFetching' ] )
+		);
 	} );
 
 	describe( '#statesList()', () => {
 		test( 'should default to empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should store the states list received', () => {
@@ -47,21 +47,21 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state.us ).to.eql( originalCountryStates );
+			expect( state.us ).toEqual( originalCountryStates );
 		} );
 
 		describe( 'persistence', () => {
 			test( 'persists state', () => {
 				const original = deepFreeze( { us: originalCountryStates } );
 				const state = serialize( items, original );
-				expect( state ).to.eql( original );
+				expect( state ).toEqual( original );
 			} );
 
 			test( 'loads valid persisted state', () => {
 				const original = deepFreeze( { us: originalCountryStates } );
 				const state = deserialize( items, original );
 
-				expect( state ).to.eql( original );
+				expect( state ).toEqual( original );
 			} );
 
 			test( 'loads default state when schema does not match', () => {
@@ -71,7 +71,7 @@ describe( 'reducer', () => {
 					AS: 'American Samoa',
 				} );
 				const state = deserialize( items, original );
-				expect( state ).to.eql( {} );
+				expect( state ).toEqual( {} );
 			} );
 		} );
 	} );
@@ -80,7 +80,7 @@ describe( 'reducer', () => {
 		test( 'should default to empty object', () => {
 			const state = isFetching( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should be true after a request begins', () => {
@@ -88,7 +88,7 @@ describe( 'reducer', () => {
 				type: COUNTRY_STATES_REQUEST,
 				countryCode: 'us',
 			} );
-			expect( state.us ).to.eql( true );
+			expect( state.us ).toEqual( true );
 		} );
 
 		test( 'should be false when a request completes', () => {
@@ -96,7 +96,7 @@ describe( 'reducer', () => {
 				type: COUNTRY_STATES_REQUEST_SUCCESS,
 				countryCode: 'ca',
 			} );
-			expect( state.ca ).to.eql( false );
+			expect( state.ca ).toEqual( false );
 		} );
 
 		test( 'should be false when a request fails', () => {
@@ -104,7 +104,7 @@ describe( 'reducer', () => {
 				type: COUNTRY_STATES_REQUEST_FAILURE,
 				countryCode: 'de',
 			} );
-			expect( state.de ).to.eql( false );
+			expect( state.de ).toEqual( false );
 		} );
 	} );
 } );

@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { Button } from '@wordpress/components';
@@ -9,15 +10,13 @@ import cx from 'classnames';
 import { useEffect, useState } from 'react';
 import { QueryClientProvider } from 'react-query';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
-import Contents from './contents';
+import CalypsoStateProvider from './CalypsoStateProvider';
 import './help-center.scss';
 
 function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
-	const [ selectedArticle, setSelectedArticle ] = useState( null );
-	const [ footerContent, setFooterContent ] = useState( null );
 	const [ showHelpIconDot, setShowHelpIconDot ] = useState( false );
 	const { data, isLoading } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
 	useEffect( () => {
@@ -26,39 +25,35 @@ function HelpCenterContent() {
 		}
 	}, [ data, isLoading ] );
 
-	useEffect( () => {
-		if ( ! show ) {
-			setSelectedArticle( null );
+	const handleToggleHelpCenter = () => {
+		if ( show ) {
+			recordTracksEvent( 'calypso_inlinehelp_close', { location: 'help-center-desktop' } );
+		} else {
+			recordTracksEvent( 'calypso_inlinehelp_show', { location: 'help-center-desktop' } );
 		}
-	}, [ show ] );
+		setShowHelpCenter( ! show );
+	};
+
+	const content = (
+		<span className="etk-help-center">
+			<Button
+				className={ cx( 'entry-point-button', { 'is-active': show } ) }
+				onClick={ handleToggleHelpCenter }
+				icon={ <HelpIcon newItems={ showHelpIconDot } /> }
+			></Button>
+		</span>
+	);
 
 	return (
 		<>
 			{ isDesktop && (
-				<PinnedItems scope="core/edit-post">
-					<span className="etk-help-center">
-						<Button
-							className={ cx( 'entry-point-button', { 'is-active': show } ) }
-							onClick={ () => setShowHelpCenter( ! show ) }
-							icon={ <HelpIcon newItems={ showHelpIconDot } active={ show } /> }
-						></Button>
-					</span>
-				</PinnedItems>
+				<>
+					<PinnedItems scope="core/edit-post">{ content }</PinnedItems>
+					<PinnedItems scope="core/edit-site">{ content }</PinnedItems>
+					<PinnedItems scope="core/edit-widgets">{ content }</PinnedItems>
+				</>
 			) }
-			{ show && (
-				<HelpCenter
-					content={
-						<Contents
-							selectedArticle={ selectedArticle }
-							setSelectedArticle={ setSelectedArticle }
-							setFooterContent={ setFooterContent }
-						/>
-					}
-					headerText={ selectedArticle?.title }
-					handleClose={ () => setShowHelpCenter( false ) }
-					footerContent={ footerContent }
-				/>
-			) }
+			{ show && <HelpCenter handleClose={ () => setShowHelpCenter( false ) } /> }
 		</>
 	);
 }
@@ -67,7 +62,9 @@ registerPlugin( 'etk-help-center', {
 	render: () => {
 		return (
 			<QueryClientProvider client={ whatsNewQueryClient }>
-				<HelpCenterContent />,
+				<CalypsoStateProvider>
+					<HelpCenterContent />
+				</CalypsoStateProvider>
 			</QueryClientProvider>
 		);
 	},

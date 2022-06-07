@@ -1,50 +1,40 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
-import { mount } from 'enzyme';
-import { spy } from 'sinon';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { PluginActivateToggle } from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import fixtures from './fixtures';
 
-jest.mock( 'calypso/my-sites/plugins/plugin-action/plugin-action', () =>
-	require( './mocks/plugin-action' )
-);
+jest.mock( 'calypso/my-sites/plugins/plugin-action/plugin-action', () => ( { action } ) => (
+	<input type="checkbox" onClick={ action } />
+) );
 
 describe( 'PluginActivateToggle', () => {
 	const mockedProps = {
-		recordGoogleEvent: spy(),
-		recordTracksEvent: spy(),
-		removePluginStatuses: spy(),
-		togglePluginActivation: spy(),
-		translate: spy(),
+		recordGoogleEvent: jest.fn(),
+		recordTracksEvent: jest.fn(),
+		removePluginStatuses: jest.fn(),
+		togglePluginActivation: jest.fn(),
+		translate: jest.fn(),
 	};
 
-	afterEach( () => {
-		mockedProps.recordGoogleEvent.resetHistory();
+	test( 'should register an event when the subcomponent action is executed', async () => {
+		render( <PluginActivateToggle { ...mockedProps } { ...fixtures } /> );
+
+		const box = screen.getByRole( 'checkbox' );
+		await userEvent.click( box );
+
+		expect( mockedProps.recordGoogleEvent ).toHaveBeenCalled();
+		expect( mockedProps.recordTracksEvent ).toHaveBeenCalled();
 	} );
 
-	test( 'should render the component', () => {
-		const wrapper = mount( <PluginActivateToggle { ...mockedProps } { ...fixtures } /> );
+	test( 'should call an action when the subcomponent action is executed', async () => {
+		render( <PluginActivateToggle { ...mockedProps } { ...fixtures } /> );
 
-		expect( wrapper.find( '.plugin-action' ) ).to.have.lengthOf( 1 );
-	} );
+		const box = screen.getByRole( 'checkbox' );
+		await userEvent.click( box );
 
-	test( 'should register an event when the subcomponent action is executed', () => {
-		const wrapper = mount( <PluginActivateToggle { ...mockedProps } { ...fixtures } /> );
-
-		wrapper.simulate( 'click' );
-
-		expect( mockedProps.recordGoogleEvent.called ).to.equal( true );
-		expect( mockedProps.recordTracksEvent.called ).to.equal( true );
-	} );
-
-	test( 'should call an action when the subcomponent action is executed', () => {
-		const wrapper = mount( <PluginActivateToggle { ...mockedProps } { ...fixtures } /> );
-
-		wrapper.simulate( 'click' );
-
-		expect( mockedProps.togglePluginActivation.called ).to.equal( true );
+		expect( mockedProps.togglePluginActivation ).toHaveBeenCalled();
 	} );
 } );

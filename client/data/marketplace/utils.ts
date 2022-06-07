@@ -11,14 +11,10 @@ export const getPluginsListKey = (
 		options.searchTerm || '',
 		options.pageSize || '',
 		options.locale || '',
+		options.page || '',
+		infinite ? 'infinite' : '',
+		options.tag && ! options.searchTerm ? options.tag : '',
 	];
-	if ( infinite ) {
-		keyParams.push( 'infinite' );
-	} else {
-		keyParams.push( options.page || '' );
-	}
-	if ( options.tag && ! options.searchTerm ) {
-		keyParams.push( options.tag );
-	}
+
 	return [ key, ...keyParams ];
 };

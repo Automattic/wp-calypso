@@ -1,6 +1,10 @@
 import {
+	isBlogger,
+	isBusiness,
 	isChargeback,
+	isCredits,
 	isDelayedDomainTransfer,
+	isDIFMProduct,
 	isDomainMapping,
 	isDomainProduct,
 	isDomainRedemption,
@@ -9,19 +13,17 @@ import {
 	isEcommerce,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
+	isJetpackBusinessPlan,
 	isJetpackPlan,
-	isPlan,
-	isBlogger,
 	isPersonal,
+	isPlan,
 	isPremium,
-	isBusiness,
+	isPro,
 	isSiteRedirect,
+	isStarter,
 	isTheme,
 	isTitanMail,
-	isJetpackBusinessPlan,
 	shouldFetchSitePlans,
-	isDIFMProduct,
-	isPro,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -48,6 +50,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
+import { isStarterPlanEnabled } from 'calypso/my-sites/plans-comparison';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import {
@@ -56,6 +59,7 @@ import {
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
+import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
@@ -63,7 +67,7 @@ import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
 import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
-import { getPlansBySite, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
 import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
 import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
@@ -85,8 +89,8 @@ import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
 import ProPlanDetails from './pro-plan-details';
 import SiteRedirectDetails from './site-redirect-details';
+import StarterPlanDetails from './starter-plan-details';
 import TransferPending from './transfer-pending';
-
 import './style.scss';
 
 function getPurchases( props ) {
@@ -324,10 +328,6 @@ export class CheckoutThankYou extends Component {
 		return page( this.props.siteHomeUrl );
 	};
 
-	isEligibleForLiveChat = () => {
-		return isJetpackBusinessPlan( this.props.planSlug );
-	};
-
 	getAnalyticsProperties = () => {
 		const { gsuiteReceiptId, receiptId, selectedFeature: feature, selectedSite } = this.props;
 		const site = get( selectedSite, 'slug' );
@@ -372,11 +372,12 @@ export class CheckoutThankYou extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, isHappychatEligible } = this.props;
 		let purchases = [];
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
 		let wasEcommercePlanPurchased = false;
+		let showHappinessSupport = ! this.props.isSimplified;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
 		let wasDomainProduct = false;
@@ -385,13 +386,14 @@ export class CheckoutThankYou extends Component {
 		let wasTitanEmailProduct = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
-			purchases = getPurchases( this.props );
+			purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
 
 			wasGSuiteOrGoogleWorkspace = purchases.some( isGSuiteOrGoogleWorkspace );
 			wasTitanEmailProduct = purchases.some( isTitanMail );
 			failedPurchases = getFailedPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
+			showHappinessSupport = showHappinessSupport && ! purchases.some( isStarter ); // Don't show support if Starter was purchased
 			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
 			wasDomainProduct = purchases.some(
 				( purchase ) =>
@@ -401,6 +403,9 @@ export class CheckoutThankYou extends Component {
 			);
 			wasDIFMProduct = purchases.some( isDIFMProduct );
 			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
+		} else if ( isStarterPlanEnabled() ) {
+			// Don't show the Happiness support until we figure out the user doesn't have a starter plan
+			showHappinessSupport = false;
 		}
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
@@ -503,12 +508,12 @@ export class CheckoutThankYou extends Component {
 				<PageViewTracker { ...this.getAnalyticsProperties() } title="Checkout Thank You" />
 
 				<Card className="checkout-thank-you__content">{ this.productRelatedMessages() }</Card>
-				{ ! this.props.isSimplified && (
+				{ showHappinessSupport && (
 					<Card className="checkout-thank-you__footer">
 						<HappinessSupport
 							isJetpack={ wasJetpackPlanPurchased }
 							liveChatButtonEventName="calypso_plans_autoconfig_chat_initiated"
-							showLiveChatButton={ this.isEligibleForLiveChat() }
+							showLiveChatButton={ isHappychatEligible }
 						/>
 					</Card>
 				) }
@@ -569,6 +574,8 @@ export class CheckoutThankYou extends Component {
 				return [ BloggerPlanDetails, find( purchases, isBlogger ) ];
 			} else if ( purchases.some( isPersonal ) ) {
 				return [ PersonalPlanDetails, find( purchases, isPersonal ) ];
+			} else if ( purchases.some( isStarter ) ) {
+				return [ StarterPlanDetails, find( purchases, isStarter ) ];
 			} else if ( purchases.some( isPremium ) ) {
 				return [ PremiumPlanDetails, find( purchases, isPremium ) ];
 			} else if ( purchases.some( isBusiness ) ) {
@@ -698,12 +705,11 @@ export class CheckoutThankYou extends Component {
 export default connect(
 	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
-		const planSlug = getSitePlanSlug( state, siteId );
 		const activeTheme = getActiveTheme( state, siteId );
 
 		return {
 			isProductsListFetching: isProductsListFetching( state ),
-			planSlug,
+			isHappychatEligible: isHappychatUserEligible( state ),
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),

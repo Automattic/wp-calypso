@@ -38,7 +38,6 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import NoPermissionsError from './no-permissions-error';
-import PluginsBrowser from './plugins-browser';
 import PluginsList from './plugins-list';
 
 import './style.scss';
@@ -288,11 +287,10 @@ export class PluginsMain extends Component {
 	}
 
 	renderPluginsContent() {
-		const { filter, search } = this.props;
+		const { search } = this.props;
 
 		const currentPlugins = this.getCurrentPlugins();
 		const showInstalledPluginList = ! isEmpty( currentPlugins ) || this.isFetchingPlugins();
-		const showSuggestedPluginsList = filter === 'all' || ( ! showInstalledPluginList && search );
 
 		if ( ! showInstalledPluginList && ! search ) {
 			const emptyContentData = this.getEmptyContentData();
@@ -317,41 +315,7 @@ export class PluginsMain extends Component {
 			/>
 		);
 
-		const morePluginsHeader = showInstalledPluginList && showSuggestedPluginsList && (
-			<h3 className="plugins__more-header">{ this.props.translate( 'More Plugins' ) }</h3>
-		);
-
-		let searchTitle;
-		if ( search ) {
-			searchTitle = this.props.translate( 'Suggested plugins for: {{b}}%(searchQuery)s{{/b}}', {
-				textOnly: true,
-				args: {
-					searchQuery: search,
-				},
-				components: {
-					b: <b />,
-				},
-			} );
-		}
-
-		const suggestedPluginsList = showSuggestedPluginsList && (
-			<PluginsBrowser
-				hideSearchForm
-				hideHeader
-				path={ this.props.context.path }
-				search={ search }
-				searchTitle={ searchTitle }
-				trackPageViews={ false }
-			/>
-		);
-
-		return (
-			<div>
-				{ installedPluginsList }
-				{ morePluginsHeader }
-				{ suggestedPluginsList }
-			</div>
-		);
+		return <div>{ installedPluginsList }</div>;
 	}
 
 	handleAddPluginButtonClick = () => {

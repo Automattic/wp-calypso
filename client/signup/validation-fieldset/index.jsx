@@ -1,9 +1,9 @@
+import { FormInputValidation } from '@automattic/components';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { values } from 'lodash';
 import { Component } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import './style.scss';
 const debug = debugFactory( 'calypso:validate-fieldset' );
 

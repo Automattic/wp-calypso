@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
-import * as React from 'react';
+import type { HTMLAttributes, PropsWithChildren } from 'react';
 
-const Error = styled.div< React.HTMLAttributes< HTMLDivElement > >`
+const Error = styled.div< HTMLAttributes< HTMLDivElement > >`
 	display: block;
 	padding: 24px 16px;
 	border-left: 3px solid ${ ( props ) => props.theme.colors.error };
@@ -15,6 +15,7 @@ const Error = styled.div< React.HTMLAttributes< HTMLDivElement > >`
 	}
 `;
 
-export default function ErrorMessage( { children }: { children?: React.ReactNode } ): JSX.Element {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export default function ErrorMessage( { children }: PropsWithChildren< {} > ) {
 	return <Error>{ children }</Error>;
 }

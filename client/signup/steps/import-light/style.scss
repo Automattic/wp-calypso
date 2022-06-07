@@ -1,4 +1,4 @@
-@import '../import/style/base';
+@import '~calypso/blocks/import/style/base';
 
 .signup.is-import-light {
 	.import__onboarding-page {
@@ -9,16 +9,11 @@
 			margin-right: 0;
 		}
 
-		.onboarding-title {
-			font-family: var( --font-base, var( --font-base-default ) );
-			font-size: 1.5em; /* stylelint-disable-line */
-			margin-bottom: 0.5em /* stylelint-disable-line */;
-		}
-
-		.onboarding-subtitle {
-			font-size: 1rem;
-			line-height: 1.5em;
-			color: var( --studio-gray-50 );
+		.onboarding-progress {
+			@include break-medium {
+				max-width: 500px;
+				margin: auto;
+			}
 		}
 	}
 }

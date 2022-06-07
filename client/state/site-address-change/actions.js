@@ -134,9 +134,11 @@ export const requestSiteAddressChange =
 			if ( newSlug ) {
 				dispatch( recordTracksEvent( 'calypso_siteaddresschange_success', eventProperties ) );
 
-				await dispatch( requestSite( siteId ) );
-				// Re-fetch domains, as we changed the primary domain name
-				await dispatch( fetchSiteDomains( siteId ) );
+				// Re-fetch site and domains, as we changed the primary domain name
+				await Promise.all( [
+					dispatch( requestSite( siteId ) ),
+					dispatch( fetchSiteDomains( siteId ) ),
+				] );
 
 				dispatch( {
 					type: SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,

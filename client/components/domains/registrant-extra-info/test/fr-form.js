@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { sanitizeVat } from '../fr-form';
 
 describe( 'fr-form', () => {
@@ -14,7 +13,7 @@ describe( 'fr-form', () => {
 			];
 
 			vatPatterns.forEach( ( { before, after } ) =>
-				expect( sanitizeVat( before ) ).to.eql( after )
+				expect( sanitizeVat( before ) ).toEqual( after )
 			);
 		} );
 
@@ -66,8 +65,8 @@ describe( 'fr-form', () => {
 				[ 'GBHA9997' ],
 			];
 
-			validVatPatterns.forEach( ( [ pattern, description ] ) =>
-				expect( sanitizeVat( pattern ) ).to.eql( pattern.toUpperCase(), description )
+			validVatPatterns.forEach( ( [ pattern ] ) =>
+				expect( sanitizeVat( pattern ) ).toEqual( pattern.toUpperCase() )
 			);
 		} );
 	} );

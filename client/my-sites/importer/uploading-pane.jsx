@@ -1,4 +1,4 @@
-import { ProgressBar, Gridicon } from '@automattic/components';
+import { ProgressBar, FormInputValidation, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { truncate } from 'lodash';
@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
 import DropZone from 'calypso/components/drop-zone';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import TextInput from 'calypso/components/forms/form-text-input';

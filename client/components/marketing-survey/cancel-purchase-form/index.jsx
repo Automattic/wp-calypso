@@ -14,6 +14,7 @@ import {
 } from '@automattic/calypso-products';
 import { Dialog, Button } from '@automattic/components';
 import { getCurrencyDefaults } from '@automattic/format-currency';
+import { SUPPORT_HAPPYCHAT } from '@automattic/help-center';
 import {
 	Button as GutenbergButton,
 	CheckboxControl,
@@ -52,12 +53,10 @@ import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-act
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import {
 	getDowngradePlanRawPrice,
-	shouldRevertAtomicSiteBeforeDeactivation,
+	willAtomicSiteRevertAfterPurchaseDeactivation,
 } from 'calypso/state/purchases/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
-import getSupportVariation, {
-	SUPPORT_HAPPYCHAT,
-} from 'calypso/state/selectors/get-inline-help-support-variation';
+import getSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import getSiteImportEngine from 'calypso/state/selectors/get-site-import-engine';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import getSite from 'calypso/state/sites/selectors/get-site';
@@ -118,11 +117,11 @@ class CancelPurchaseForm extends Component {
 	}
 
 	getAllSurveySteps() {
-		const { purchase, shouldRevertAtomicSite } = this.props;
+		const { purchase, willAtomicSiteRevert } = this.props;
 
 		if ( isPlan( purchase ) ) {
 			if ( this.shouldUseBlankCanvasLayout() ) {
-				if ( shouldRevertAtomicSite ) {
+				if ( willAtomicSiteRevert ) {
 					return [ FEEDBACK_STEP, ATOMIC_REVERT_STEP ];
 				}
 
@@ -1255,7 +1254,7 @@ export default connect(
 		downgradePlanPrice: getDowngradePlanRawPrice( state, purchase ),
 		supportVariation: getSupportVariation( state ),
 		site: getSite( state, purchase.siteId ),
-		shouldRevertAtomicSite: shouldRevertAtomicSiteBeforeDeactivation( state, purchase.id ),
+		willAtomicSiteRevert: willAtomicSiteRevertAfterPurchaseDeactivation( state, purchase.id ),
 		atomicTransfer: getAtomicTransfer( state, purchase.siteId ),
 	} ),
 	{

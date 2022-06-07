@@ -46,6 +46,15 @@ $input-max-width: 448px;
     .podcast-title__explanation {
         display: flex;
         flex-direction: column;
+        input[type='text'] {
+            @include break-medium {
+                font-size: 4rem; /* stylelint-disable-line scales/font-sizes */
+            }
+            padding: 0;
+            border: 0;
+            line-height: 1;
+        }
+
     }
 
     input[type='text'],
@@ -124,7 +133,7 @@ $input-max-width: 448px;
         max-width: 100%;
 
         &.is-empty {
-            max-width: 275px;
+            max-width: 310px;
             background: var( --color-text-subtle );
         }
 

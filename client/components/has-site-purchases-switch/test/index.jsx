@@ -6,7 +6,6 @@ import { reducer as purchases } from 'calypso/state/purchases/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import HasSitePurchasesSwitch from '../index';
 
-import '@testing-library/jest-dom/extend-expect';
 jest.mock( 'calypso/components/data/query-site-purchases', () => () => <p>Query</p> );
 
 const siteId = 1;

@@ -1,0 +1,80 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+@import '@automattic/typography/styles/fonts';
+
+.goals__container {
+	padding: 0 20px;
+
+	.step-container__header {
+		.formatted-header {
+			padding-top: 44px;
+			text-align: left;
+
+			.formatted-header__subtitle,
+			.formatted-header__title {
+				@include break-mobile {
+					text-align: center;
+				}
+			}
+
+			@include break-mobile {
+				padding-top: 72px;
+			}
+		}
+	}
+
+	.select-goals__container {
+		font-family: 'Inter', $sans;
+		display: grid;
+		gap: 16px;
+		grid-template-columns: repeat( 1, 1fr );
+
+		.select-goals__goal-title {
+			margin-right: 14px;
+		}
+
+		.select-goals__premium-badge {
+			display: inline-block;
+			background: #101517;
+			color: #ffffff;
+			border-radius: 4px;
+			font-weight: 500;
+			font-size: 0.75rem;
+			line-height: 20px;
+			padding: 0 10px;
+		}
+
+		@include break-small {
+			grid-template-columns: repeat( 2, 1fr );
+		}
+	}
+}
+
+.select-card__container {
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 17px 25px;
+	font-size: 0.875rem;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+
+	.select-card__label {
+		pointer-events: none;
+		user-select: none;
+	}
+
+	&.selected {
+		border: 2px solid #0675c4;
+		background: linear-gradient( 180deg, rgba( 6, 117, 196, 0.2 ) -44.3%, rgba( 255, 255, 255, 0 ) 100% );
+		padding: 16px 24px;
+	}
+
+	.components-base-control__field {
+		margin-bottom: 0;
+	}
+
+	.components-checkbox-control__input[type=checkbox] {
+		border-color: #a7aaad;
+	}
+}

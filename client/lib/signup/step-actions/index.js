@@ -18,6 +18,7 @@ import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
+import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import flows from 'calypso/signup/config/flows';
@@ -761,6 +762,7 @@ export function createAccount(
 				client_id: config( 'wpcom_signup_id' ),
 				client_secret: config( 'wpcom_signup_key' ),
 				...userData,
+				tos: getToSAcceptancePayload(),
 			},
 			responseHandler( SIGNUP_TYPE_SOCIAL )
 		);
@@ -780,6 +782,7 @@ export function createAccount(
 					locale: getLocaleSlug(),
 					client_id: config( 'wpcom_signup_id' ),
 					client_secret: config( 'wpcom_signup_key' ),
+					tos: getToSAcceptancePayload(),
 				},
 				oauth2Signup
 					? {
@@ -1007,13 +1010,17 @@ export function excludeStepIfEmailVerified( stepName, defaultDependencies, nextP
 	   we need to display it again when the user comes back to the flow
 	   after verification. */
 	if ( nextProps.flowName === 'p2' && nextProps?.progress[ stepName ]?.status === 'in-progress' ) {
+		debug( 'User email verification is in progress, do not skip this step' );
 		return;
 	}
 
+	debug( 'User email is verified: %s', nextProps?.isEmailVerified );
 	if ( ! nextProps.isEmailVerified ) {
 		return;
 	}
 
+	debug( 'Skipping P2 email confirmation step' );
+	recordTracksEvent( 'calypso_signup_p2_confirm_email_autoskip' );
 	nextProps.submitSignupStep( { stepName, wasSkipped: true } );
 	flows.excludeStep( stepName );
 }
@@ -1030,10 +1037,11 @@ export function excludeStepIfProfileComplete( stepName, defaultDependencies, nex
 	}
 
 	const currentUser = getCurrentUser( state );
-
+	debug( 'Checking profile for current user', currentUser );
 	if ( currentUser?.display_name !== currentUser?.username ) {
+		debug( 'Skipping P2 complete profile step' );
+		recordTracksEvent( 'calypso_signup_p2_complete_profile_autoskip' );
 		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
-
 		flows.excludeStep( stepName );
 	}
 }

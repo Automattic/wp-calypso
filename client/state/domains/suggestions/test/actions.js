@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	DOMAINS_SUGGESTIONS_RECEIVE,
 	DOMAINS_SUGGESTIONS_REQUEST,
@@ -6,16 +5,13 @@ import {
 	DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { receiveDomainsSuggestions, requestDomainsSuggestions } from '../actions';
 
 describe( 'actions', () => {
-	let sandbox;
 	let spy;
 
-	useSandbox( ( newSandbox ) => {
-		sandbox = newSandbox;
-		spy = sandbox.spy();
+	beforeEach( () => {
+		spy = jest.fn();
 	} );
 
 	const exampleQuery = {
@@ -42,7 +38,7 @@ describe( 'actions', () => {
 			const suggestions = exampleSuggestions;
 			const queryObject = exampleQuery;
 			const action = receiveDomainsSuggestions( suggestions, queryObject );
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: DOMAINS_SUGGESTIONS_RECEIVE,
 				suggestions,
 				queryObject,
@@ -67,15 +63,17 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestDomainsSuggestions( exampleQuery )( spy );
-			expect( spy ).to.have.been.calledWithMatch( {
-				type: DOMAINS_SUGGESTIONS_REQUEST,
-				queryObject: exampleQuery,
-			} );
+			expect( spy ).toBeCalledWith(
+				expect.objectContaining( {
+					type: DOMAINS_SUGGESTIONS_REQUEST,
+					queryObject: exampleQuery,
+				} )
+			);
 		} );
 
 		test( 'should dispatch receive action when request completes', () => {
 			return requestDomainsSuggestions( exampleQuery )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: DOMAINS_SUGGESTIONS_RECEIVE,
 					queryObject: exampleQuery,
 					suggestions: exampleSuggestions,
@@ -85,7 +83,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch success action when request completes', () => {
 			return requestDomainsSuggestions( exampleQuery )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,
 					queryObject: exampleQuery,
 				} );
@@ -94,10 +92,10 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return requestDomainsSuggestions( failingQuery )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: DOMAINS_SUGGESTIONS_REQUEST_FAILURE,
 					queryObject: failingQuery,
-					error: sandbox.match( {
+					error: expect.objectContaining( {
 						message: 'An active access token must be used to access domains suggestions.',
 					} ),
 				} );

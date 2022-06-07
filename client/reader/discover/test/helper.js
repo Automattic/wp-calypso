@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { assert } from 'chai';
 import { get, omit } from 'lodash';
 import * as helper from '../helper';
 import * as fixtures from './fixtures';
@@ -15,83 +14,83 @@ describe( 'helper', () => {
 
 	describe( 'isDiscoverPost', () => {
 		test( 'returns true if discover metadata is present', () => {
-			assert.isTrue( helper.isDiscoverPost( discoverPost ) );
+			expect( helper.isDiscoverPost( discoverPost ) ).toBe( true );
 		} );
 
 		test( 'returns true if the site id is discovery_blog_id', () => {
 			const withoutMetadata = omit( fixtures.discoverSiteFormat, 'discover_metadata' );
-			assert.isTrue( helper.isDiscoverPost( withoutMetadata ) );
+			expect( helper.isDiscoverPost( withoutMetadata ) ).toBe( true );
 		} );
 
 		test( 'returns false if the site is not disover or discover metadata is not present', () => {
-			assert.isFalse( helper.isDiscoverPost( fixtures.nonDiscoverPost ) );
+			expect( helper.isDiscoverPost( fixtures.nonDiscoverPost ) ).toBe( false );
 		} );
 
 		test( 'returns false if the post is undefined', () => {
-			assert.isFalse( helper.isDiscoverPost() );
+			expect( helper.isDiscoverPost() ).toBe( false );
 		} );
 	} );
 
 	describe( 'isDiscoverSitePick', () => {
 		test( 'returns true if the post is a site pick', () => {
-			assert.isTrue( helper.isDiscoverSitePick( fixtures.discoverSiteFormat ) );
+			expect( helper.isDiscoverSitePick( fixtures.discoverSiteFormat ) ).toBe( true );
 		} );
 
 		test( 'returns false if the post is not a site pick', () => {
-			assert.isFalse( helper.isDiscoverSitePick( discoverPost ) );
+			expect( helper.isDiscoverSitePick( discoverPost ) ).toBe( false );
 		} );
 
 		test( 'returns false if the post is undefined', () => {
-			assert.isFalse( helper.isDiscoverSitePick() );
+			expect( helper.isDiscoverSitePick() ).toBe( false );
 		} );
 	} );
 
 	describe( 'isInternalDiscoverPost', () => {
 		test( 'returns true if the post is internal to wpcom', () => {
-			assert.isTrue( helper.isInternalDiscoverPost( discoverPost ) );
+			expect( helper.isInternalDiscoverPost( discoverPost ) ).toBe( true );
 		} );
 
 		test( 'returns false if the post is not internal to wpcom', () => {
-			assert.isFalse( helper.isInternalDiscoverPost( fixtures.externalDiscoverPost ) );
+			expect( helper.isInternalDiscoverPost( fixtures.externalDiscoverPost ) ).toBe( false );
 		} );
 	} );
 
 	describe( 'getSiteUrl', () => {
 		test( 'returns a reader route if the post is internal', () => {
-			assert.match( helper.getSiteUrl( discoverPost ), /^\/read\/blogs/ );
+			expect( helper.getSiteUrl( discoverPost ) ).toMatch( /^\/read\/blogs/ );
 		} );
 
 		test( 'returns the permalink if the post is not internal', () => {
 			const permalink = get( fixtures.externalDiscoverPost, 'discover_metadata.permalink' );
-			assert.equal( permalink, helper.getSiteUrl( fixtures.externalDiscoverPost ) );
+			expect( permalink ).toEqual( helper.getSiteUrl( fixtures.externalDiscoverPost ) );
 		} );
 
 		test( 'returns undefined if the post is not a discover post', () => {
-			assert.isUndefined( helper.getSiteUrl( fixtures.nonDiscoverPost ) );
+			expect( helper.getSiteUrl( fixtures.nonDiscoverPost ) ).not.toBeDefined();
 		} );
 	} );
 
 	describe( 'hasSource', () => {
 		test( 'returns true if the post is not a site pick', () => {
-			assert.isTrue( helper.hasSource( discoverPost ) );
+			expect( helper.hasSource( discoverPost ) ).toBe( true );
 		} );
 
 		test( 'returns false if the post is a site pick', () => {
-			assert.isFalse( helper.hasSource( fixtures.discoverSiteFormat ) );
+			expect( helper.hasSource( fixtures.discoverSiteFormat ) ).toBe( false );
 		} );
 
 		test( 'returns false if the post is undefined', () => {
-			assert.isFalse( helper.hasSource() );
+			expect( helper.hasSource() ).toBe( false );
 		} );
 	} );
 
 	describe( 'getSourceData', () => {
 		test( 'returns empty object if the post is not a discover post', () => {
-			assert.deepEqual( {}, helper.getSourceData( fixtures.nonDiscoverPost ) );
+			expect( {} ).toEqual( helper.getSourceData( fixtures.nonDiscoverPost ) );
 		} );
 
 		test( 'returns empty object if the post is external', () => {
-			assert.deepEqual( {}, helper.getSourceData( fixtures.externalDiscoverPost ) );
+			expect( {} ).toEqual( helper.getSourceData( fixtures.externalDiscoverPost ) );
 		} );
 
 		test( 'returns blog id if the post is a discover site pick', () => {
@@ -102,7 +101,7 @@ describe( 'helper', () => {
 				),
 				postId: undefined,
 			};
-			assert.deepEqual( fixtureData, helper.getSourceData( fixtures.discoverSiteFormat ) );
+			expect( fixtureData ).toEqual( helper.getSourceData( fixtures.discoverSiteFormat ) );
 		} );
 
 		test( 'returns the post and blog id', () => {
@@ -110,31 +109,31 @@ describe( 'helper', () => {
 				blogId: get( discoverPost, 'discover_metadata.featured_post_wpcom_data.blog_id' ),
 				postId: get( discoverPost, 'discover_metadata.featured_post_wpcom_data.post_id' ),
 			};
-			assert.deepEqual( fixtureData, helper.getSourceData( discoverPost ) );
+			expect( fixtureData ).toEqual( helper.getSourceData( discoverPost ) );
 		} );
 	} );
 
 	describe( 'getLinkProps', () => {
 		test( 'returns empty props if the post is internal', () => {
 			const siteUrl = helper.getSiteUrl( discoverPost );
-			assert.deepEqual( helper.getLinkProps( siteUrl ), { rel: '', target: '' } );
+			expect( helper.getLinkProps( siteUrl ) ).toEqual( { rel: '', target: '' } );
 		} );
 
 		test( 'returns props for external posts', () => {
 			const siteUrl = helper.getSiteUrl( fixtures.externalDiscoverPost );
-			assert.deepEqual( helper.getLinkProps( siteUrl ), { rel: 'external', target: '_blank' } );
+			expect( helper.getLinkProps( siteUrl ) ).toEqual( { rel: 'external', target: '_blank' } );
 		} );
 	} );
 
 	describe( 'getSourceFollowUrl', () => {
 		test( 'returns the site url if its a discover pick to an internal site', () => {
 			const followUrl = helper.getSourceFollowUrl( discoverPost );
-			assert.equal( followUrl, get( discoverPost, 'discover_metadata.attribution.blog_url' ) );
+			expect( followUrl ).toEqual( get( discoverPost, 'discover_metadata.attribution.blog_url' ) );
 		} );
 
 		test( 'returns undefined if the post is not a discover pick', () => {
 			const followUrl = helper.getSourceFollowUrl( fixtures.nonDiscoverPost );
-			assert.isUndefined( followUrl );
+			expect( followUrl ).not.toBeDefined();
 		} );
 	} );
 } );

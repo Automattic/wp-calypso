@@ -110,7 +110,7 @@ export default function MembershipItem( {
 	subscription,
 }: {
 	subscription: MembershipSubscription;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 
 	return (

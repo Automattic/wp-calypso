@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -61,7 +62,15 @@ class MappedDomainType extends Component {
 			secondaryMessage = translate(
 				"Please note that it can take up to 72 hours for your changes to become available. If you're still not seeing your site loading at %(domainName)s, please wait a few more hours, clear your browser cache, and try again. {{learnMoreLink}}Learn all about mapping an existing domain in our support docs{{/learnMoreLink}}.",
 				{
-					components: { learnMoreLink: this.renderLinkTo( MAP_EXISTING_DOMAIN ) },
+					components: {
+						learnMoreLink: (
+							<a
+								href={ localizeUrl( MAP_EXISTING_DOMAIN ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
 					args: { domainName: domain.name },
 				}
 			);
@@ -83,10 +92,6 @@ class MappedDomainType extends Component {
 				<div className="mapped-domain-type__small-message">{ secondaryMessage }</div>
 			</Fragment>
 		);
-	}
-
-	renderLinkTo( url ) {
-		return <a href={ url } target="_blank" rel="noopener noreferrer" />;
 	}
 
 	renderDefaultRenewButton() {
@@ -114,7 +119,7 @@ class MappedDomainType extends Component {
 			<div>
 				{ ( isLoadingPurchase || purchase ) && (
 					<RenewButton
-						compact={ true }
+						compact
 						purchase={ purchase }
 						selectedSite={ this.props.selectedSite }
 						subscriptionId={ parseInt( subscriptionId, 10 ) }
@@ -165,19 +170,32 @@ class MappedDomainType extends Component {
 	}
 
 	render() {
-		const { domain, selectedSite, purchase, mappingPurchase, isLoadingPurchase } = this.props;
-		const { name: domain_name } = domain;
+		const {
+			domain,
+			selectedSite,
+			purchase,
+			mappingPurchase,
+			isLoadingPurchase,
+			translate,
+			dispatch,
+		} = this.props;
 
-		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase, {
-			isJetpackSite: this.props.isJetpackSite,
-			isSiteAutomatedTransfer: this.props.isSiteAutomatedTransfer,
-		} );
+		const { statusText, statusClass, icon } = resolveDomainStatus(
+			domain,
+			purchase,
+			translate,
+			dispatch,
+			{
+				isJetpackSite: this.props.isJetpackSite,
+				isSiteAutomatedTransfer: this.props.isSiteAutomatedTransfer,
+			}
+		);
 
 		return (
 			<div className="domain-types__container">
 				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DomainStatus
-					header={ domain_name }
+					header={ domain.name }
 					statusText={ statusText }
 					statusClass={ statusClass }
 					icon={ icon }
@@ -195,14 +213,14 @@ class MappedDomainType extends Component {
 						domain={ domain }
 					/>
 				</DomainStatus>
-				<Card compact={ true } className="domain-types__expiration-row">
+				<Card compact className="domain-types__expiration-row">
 					<DomainExpiryOrRenewal { ...this.props } />
 					{ this.renderDefaultRenewButton() }
 					{ domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
 				<DomainManagementNavigationEnhanced
 					domain={ domain }
-					selectedSite={ this.props.selectedSite }
+					selectedSite={ selectedSite }
 					purchase={ mappingPurchase }
 					isLoadingPurchase={ isLoadingPurchase }
 				/>

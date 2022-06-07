@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	JETPACK_MODULE_ACTIVATE,
@@ -21,7 +20,7 @@ describe( 'reducer', () => {
 	describe( 'items', () => {
 		test( 'state should default to empty object', () => {
 			const state = itemsReducer( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should activate a module', () => {
@@ -33,7 +32,7 @@ describe( 'reducer', () => {
 				moduleSlug: 'module-a',
 			};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut[ siteId ][ 'module-a' ].active ).to.be.true;
+			expect( stateOut[ siteId ][ 'module-a' ].active ).toBe( true );
 		} );
 
 		test( 'should deactivate a module', () => {
@@ -45,7 +44,7 @@ describe( 'reducer', () => {
 				moduleSlug: 'module-b',
 			};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut[ siteId ][ 'module-b' ].active ).to.be.false;
+			expect( stateOut[ siteId ][ 'module-b' ].active ).toBe( false );
 		} );
 
 		test( 'should replace the items object for the site with a new list of modules', () => {
@@ -57,7 +56,7 @@ describe( 'reducer', () => {
 				modules: MODULES_FIXTURE[ siteId ],
 			};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut[ siteId ] ).to.eql( MODULES_FIXTURE[ siteId ] );
+			expect( stateOut[ siteId ] ).toEqual( MODULES_FIXTURE[ siteId ] );
 		} );
 
 		test( 'should update modules activation state when updating settings', () => {
@@ -83,7 +82,7 @@ describe( 'reducer', () => {
 				},
 			};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut[ siteId ] ).to.eql( {
+			expect( stateOut[ siteId ] ).toEqual( {
 				'related-posts': {
 					module: 'related-posts',
 					active: true,
@@ -118,7 +117,7 @@ describe( 'reducer', () => {
 				},
 			};
 			const stateOut = itemsReducer( deepFreeze( stateIn ), action );
-			expect( stateOut[ siteId ] ).to.eql( {
+			expect( stateOut[ siteId ] ).toEqual( {
 				'related-posts': {
 					module: 'related-posts',
 					active: true,
@@ -134,7 +133,7 @@ describe( 'reducer', () => {
 	describe( 'requests', () => {
 		test( 'state should default to initialState', () => {
 			const state = requestsReducer( undefined, {} );
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		describe( '#moduleActivation', () => {
@@ -147,7 +146,7 @@ describe( 'reducer', () => {
 					moduleSlug: 'moduleSlug',
 				};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-				expect( stateOut[ siteId ][ action.moduleSlug ].activating ).to.be.true;
+				expect( stateOut[ siteId ][ action.moduleSlug ].activating ).toBe( true );
 			} );
 
 			test( 'should set [ siteId ][ moduleSlug ].activating to false when module has been activated', () => {
@@ -159,7 +158,7 @@ describe( 'reducer', () => {
 					moduleSlug: 'moduleSlug',
 				};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-				expect( stateOut[ siteId ][ action.moduleSlug ].activating ).to.be.false;
+				expect( stateOut[ siteId ][ action.moduleSlug ].activating ).toBe( false );
 			} );
 
 			test( 'should set [ siteId ][ moduleSlug ].activating to false when activating a module fails', () => {
@@ -171,7 +170,7 @@ describe( 'reducer', () => {
 					moduleSlug: 'moduleSlug',
 				};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-				expect( stateOut[ siteId ][ action.moduleSlug ].activating ).to.be.false;
+				expect( stateOut[ siteId ][ action.moduleSlug ].activating ).toBe( false );
 			} );
 		} );
 
@@ -185,7 +184,7 @@ describe( 'reducer', () => {
 					moduleSlug: 'moduleSlug',
 				};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-				expect( stateOut[ siteId ][ action.moduleSlug ].deactivating ).to.be.true;
+				expect( stateOut[ siteId ][ action.moduleSlug ].deactivating ).toBe( true );
 			} );
 
 			test( 'should set [ siteId ][ moduleSlug ].deactivating to false when module has been deactivated', () => {
@@ -197,7 +196,7 @@ describe( 'reducer', () => {
 					moduleSlug: 'moduleSlug',
 				};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-				expect( stateOut[ siteId ][ action.moduleSlug ].deactivating ).to.be.false;
+				expect( stateOut[ siteId ][ action.moduleSlug ].deactivating ).toBe( false );
 			} );
 
 			test( 'should set [ siteId ][ moduleSlug ].deactivating to false when deactivating a module fails', () => {
@@ -209,7 +208,7 @@ describe( 'reducer', () => {
 					moduleSlug: 'moduleSlug',
 				};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-				expect( stateOut[ siteId ][ action.moduleSlug ].deactivating ).to.be.false;
+				expect( stateOut[ siteId ][ action.moduleSlug ].deactivating ).toBe( false );
 			} );
 		} );
 
@@ -222,7 +221,7 @@ describe( 'reducer', () => {
 					siteId,
 				};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-				expect( stateOut[ siteId ].fetchingModules ).to.be.true;
+				expect( stateOut[ siteId ].fetchingModules ).toBe( true );
 			} );
 
 			test( 'should set [ siteId ].fetchingModules to false when the module list has been received', () => {
@@ -234,7 +233,7 @@ describe( 'reducer', () => {
 					modules: {},
 				};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-				expect( stateOut[ siteId ].fetchingModules ).to.be.false;
+				expect( stateOut[ siteId ].fetchingModules ).toBe( false );
 			} );
 
 			test( 'should set [ siteId ].fetchingModules to false when requesting the module list fails', () => {
@@ -246,7 +245,7 @@ describe( 'reducer', () => {
 					modules: {},
 				};
 				const stateOut = requestsReducer( deepFreeze( stateIn ), action );
-				expect( stateOut[ siteId ].fetchingModules ).to.be.false;
+				expect( stateOut[ siteId ].fetchingModules ).toBe( false );
 			} );
 		} );
 	} );

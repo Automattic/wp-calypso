@@ -11,7 +11,6 @@ import sidebar from './sidebar/reducer';
  *
  * @param state redux state
  * @param action redux action
- *
  * @returns {null|string} last path selected
  */
 export const lastPath = withPersistence( ( state = null, action ) => {

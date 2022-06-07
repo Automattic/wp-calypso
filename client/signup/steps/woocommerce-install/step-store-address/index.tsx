@@ -1,10 +1,10 @@
+import { FormInputValidation } from '@automattic/components';
 import styled from '@emotion/styled';
 import { TextControl, ComboboxControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import emailValidator from 'email-validator';
 import { ReactElement, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { fetchWooCommerceCountries } from 'calypso/state/countries/actions';

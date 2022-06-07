@@ -9,6 +9,7 @@ export * from './lib';
 export * from './secrets';
 export * from './email-client';
 export * from './totp-client';
+export * from './rest-api-client';
 
 export type { TracksEvent, TracksEventProperties } from './types';
 export type { TestFile } from './media-helper';

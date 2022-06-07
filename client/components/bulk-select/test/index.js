@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, render } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { BulkSelect } from '../index';
 
 const noop = () => {};
@@ -81,7 +81,8 @@ describe( 'index', () => {
 				ariaLabel="Select All"
 			/>
 		);
-		expect( container.querySelectorAll( 'input' )[ 0 ].getAttribute( 'aria-label' ) ).toBe(
+		expect( container.querySelectorAll( 'input' )[ 0 ] ).toHaveAttribute(
+			'aria-label',
 			'Select All'
 		);
 	} );
@@ -96,10 +97,10 @@ describe( 'index', () => {
 			/>
 		);
 		// There is no prop readOnly, so this is null
-		expect( container.querySelectorAll( 'input' )[ 0 ].getAttribute( 'readonly' ) ).toBeNull();
+		expect( container.querySelectorAll( 'input' )[ 0 ] ).not.toHaveAttribute( 'readonly' );
 	} );
 
-	test( 'should be call onToggle when clicked', () => {
+	test( 'should be call onToggle when clicked', async () => {
 		const handleToggle = jest.fn();
 
 		const { container } = render(
@@ -110,61 +111,52 @@ describe( 'index', () => {
 				onToggle={ handleToggle }
 			/>
 		);
-		fireEvent.click( container.querySelectorAll( 'input' )[ 0 ] );
+		await userEvent.click( container.querySelectorAll( 'input' )[ 0 ] );
 		expect( handleToggle ).toHaveBeenCalled();
 	} );
 
-	test( 'should be call onToggle with the new state when there are no selected elements', () => {
-		return new Promise( ( done ) => {
-			const callback = function ( newState ) {
-				expect( newState ).toBe( true );
-				done();
-			};
-			const { container } = render(
-				<BulkSelect
-					translate={ translate }
-					selectedElements={ 0 }
-					totalElements={ 3 }
-					onToggle={ callback }
-				/>
-			);
-			fireEvent.click( container.querySelectorAll( 'input' )[ 0 ] );
-		} );
+	test( 'should be call onToggle with the new state when there are no selected elements', async () => {
+		const onToggle = jest.fn();
+		const { container } = render(
+			<BulkSelect
+				translate={ translate }
+				selectedElements={ 0 }
+				totalElements={ 3 }
+				onToggle={ onToggle }
+			/>
+		);
+		await userEvent.click( container.querySelectorAll( 'input' )[ 0 ] );
+		expect( onToggle ).toHaveBeenCalledTimes( 1 );
+		expect( onToggle ).toHaveBeenCalledWith( true );
 	} );
 
-	test( 'should be call onToggle with the new state when there are some selected elements', () => {
-		return new Promise( ( done ) => {
-			const callback = function ( newState ) {
-				expect( newState ).toBe( false );
-				done();
-			};
-			const { container } = render(
-				<BulkSelect
-					translate={ translate }
-					selectedElements={ 1 }
-					totalElements={ 3 }
-					onToggle={ callback }
-				/>
-			);
-			fireEvent.click( container.querySelectorAll( 'input' )[ 0 ] );
-		} );
+	test( 'should be call onToggle with the new state when there are some selected elements', async () => {
+		const onToggle = jest.fn();
+		const { container } = render(
+			<BulkSelect
+				translate={ translate }
+				selectedElements={ 1 }
+				totalElements={ 3 }
+				onToggle={ onToggle }
+			/>
+		);
+		await userEvent.click( container.querySelectorAll( 'input' )[ 0 ] );
+		expect( onToggle ).toHaveBeenCalledTimes( 1 );
+		expect( onToggle ).toHaveBeenCalledWith( false );
 	} );
 
-	test( 'should be call onToggle with the new state when there all elements are selected', () => {
-		return new Promise( ( done ) => {
-			const callback = function ( newState ) {
-				expect( newState ).toBe( false );
-				done();
-			};
-			const { container } = render(
-				<BulkSelect
-					translate={ translate }
-					selectedElements={ 3 }
-					totalElements={ 3 }
-					onToggle={ callback }
-				/>
-			);
-			fireEvent.click( container.querySelectorAll( 'input' )[ 0 ] );
-		} );
+	test( 'should be call onToggle with the new state when there all elements are selected', async () => {
+		const onToggle = jest.fn();
+		const { container } = render(
+			<BulkSelect
+				translate={ translate }
+				selectedElements={ 3 }
+				totalElements={ 3 }
+				onToggle={ onToggle }
+			/>
+		);
+		await userEvent.click( container.querySelectorAll( 'input' )[ 0 ] );
+		expect( onToggle ).toHaveBeenCalledTimes( 1 );
+		expect( onToggle ).toHaveBeenCalledWith( false );
 	} );
 } );

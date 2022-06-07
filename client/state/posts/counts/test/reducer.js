@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	CURRENT_USER_RECEIVE,
@@ -12,23 +11,22 @@ import {
 	POSTS_RECEIVE,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import reducer, { requesting, counts } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'counts' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'requesting', 'counts' ] )
+		);
 	} );
 
 	describe( '#requesting()', () => {
 		test( 'should default to an empty object', () => {
 			const state = requesting( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track request fetching', () => {
@@ -38,7 +36,7 @@ describe( 'reducer', () => {
 				postType: 'post',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: true,
 				},
@@ -57,7 +55,7 @@ describe( 'reducer', () => {
 				postType: 'page',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: true,
 					page: true,
@@ -78,7 +76,7 @@ describe( 'reducer', () => {
 				postType: 'post',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: true,
 					page: true,
@@ -105,7 +103,7 @@ describe( 'reducer', () => {
 				postType: 'post',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: false,
 					page: true,
@@ -132,7 +130,7 @@ describe( 'reducer', () => {
 				postType: 'page',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: false,
 					page: false,
@@ -152,7 +150,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = counts( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track received post counts by type', () => {
@@ -166,7 +164,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: {
 						all: { publish: 2 },
@@ -195,7 +193,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: {
 						all: { publish: 2 },
@@ -232,7 +230,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: {
 						all: { publish: 3 },
@@ -277,7 +275,7 @@ describe( 'reducer', () => {
 				postId: 481,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: {
 						all: { publish: 2, trash: 0 },
@@ -312,7 +310,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: {
 						all: { publish: 4, draft: 0, trash: 0 },
@@ -347,7 +345,7 @@ describe( 'reducer', () => {
 				post: { status: 'trash' },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: {
 						all: { publish: 3, draft: 0, trash: 1 },
@@ -382,7 +380,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					post: {
 						all: { publish: 4, draft: 0, trash: 0 },
@@ -407,7 +405,7 @@ describe( 'reducer', () => {
 			} );
 			const state = serialize( counts, original );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should load valid persisted state', () => {
@@ -425,7 +423,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( counts, original );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
@@ -443,7 +441,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( counts, original );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 	} );
 } );

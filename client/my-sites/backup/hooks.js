@@ -1,16 +1,16 @@
-import { useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import {
 	SUCCESSFUL_BACKUP_ACTIVITIES,
 	BACKUP_ATTEMPT_ACTIVITIES,
 } from 'calypso/lib/jetpack/backup-utils';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
-import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
-import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 
 const byActivityTsDescending = ( a, b ) => ( a.activityTs > b.activityTs ? -1 : 1 );
 
@@ -61,15 +61,9 @@ export const useFirstMatchingBackupAttempt = (
 	siteId,
 	{ before, after, successOnly, sortOrder } = {}
 ) => {
-	const dispatch = useDispatch();
-
-	useEffect( () => {
-		dispatch( requestRewindCapabilities( siteId ) );
-	}, [ siteId ] );
-
-	const rewindCapabilities = useSelector( ( state ) => getRewindCapabilities( state, siteId ) );
-	const hasRealtimeBackups =
-		Array.isArray( rewindCapabilities ) && rewindCapabilities.includes( 'backup-realtime' );
+	const hasRealtimeBackups = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS )
+	);
 
 	const filter = hasRealtimeBackups
 		? getRealtimeAttemptFilter( { before, after, sortOrder } )

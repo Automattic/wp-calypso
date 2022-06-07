@@ -13,14 +13,13 @@ import {
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
-	usePaymentMethod,
 	useTotal,
 	CheckoutErrorBoundary,
 	CheckoutFormSubmit,
 	PaymentMethodStep,
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { styled, getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
+import { styled } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -41,9 +40,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
-import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
+import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
@@ -67,7 +66,7 @@ const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-const ContactFormTitle = (): JSX.Element => {
+const ContactFormTitle = () => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
@@ -157,7 +156,7 @@ export default function WPCheckout( {
 	areThereErrors: boolean;
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
-} ): JSX.Element {
+} ) {
 	const cartKey = useCartKey();
 	const {
 		responseCart,
@@ -168,7 +167,6 @@ export default function WPCheckout( {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
-	const activePaymentMethod = usePaymentMethod();
 	const reduxDispatch = useReduxDispatch();
 
 	const areThereDomainProductsInCart =
@@ -225,58 +223,17 @@ export default function WPCheckout( {
 
 	const { formStatus } = useFormStatus();
 
-	const arePostalCodesSupported =
-		countriesList.length && contactInfo.countryCode?.value
-			? getCountryPostalCodeSupport( countriesList, contactInfo.countryCode.value )
-			: false;
-
-	const updateCartContactDetails = useCallback( () => {
-		const nonTaxPaymentMethods = [ 'free-purchase' ];
-		if ( ! activePaymentMethod || ! contactInfo ) {
-			return;
-		}
-
-		// When the contact details change, update the tax location in cart if the
-		// active payment method is taxable.
-		if ( nonTaxPaymentMethods.includes( activePaymentMethod.id ) ) {
-			// This data is intentionally empty so we do not charge taxes
-			updateLocation( {
-				countryCode: '',
-				postalCode: '',
-				subdivisionCode: '',
-			} );
-		} else {
-			// The tax form does not include a subdivisionCode field but the server
-			// will sometimes fill in the value on the cart itself so we should not
-			// try to update it when the field does not exist.
-			const subdivisionCode = contactDetailsType === 'tax' ? undefined : contactInfo.state?.value;
-			updateLocation( {
-				countryCode: contactInfo.countryCode?.value,
-				postalCode: arePostalCodesSupported ? contactInfo.postalCode?.value : '',
-				subdivisionCode,
-			} );
-		}
-	}, [
-		activePaymentMethod,
-		updateLocation,
-		contactInfo,
-		contactDetailsType,
-		arePostalCodesSupported,
-	] );
-
-	useUpdateCartLocationWhenPaymentMethodChanges( activePaymentMethod, updateCartContactDetails );
-
 	const onReviewError = useCallback(
-		( error ) =>
-			onPageLoadError( 'step_load', String( error ), {
+		( error: Error ) =>
+			onPageLoadError( 'step_load', error, {
 				step_id: 'review',
 			} ),
 		[ onPageLoadError ]
 	);
 
 	const onSummaryError = useCallback(
-		( error ) =>
-			onPageLoadError( 'step_load', String( error ), {
+		( error: Error ) =>
+			onPageLoadError( 'step_load', error, {
 				step_id: 'summary',
 			} ),
 		[ onPageLoadError ]
@@ -447,13 +404,12 @@ export default function WPCheckout( {
 			/>
 			{ contactDetailsType !== 'none' && (
 				<CheckoutStep
-					stepId={ 'contact-form' }
+					stepId="contact-form"
 					isCompleteCallback={ async () => {
 						setShouldShowContactDetailsValidationErrors( true );
 						// Touch the fields so they display validation errors
 						touchContactFields();
-						updateCartContactDetails();
-						return validateContactDetails(
+						const validationResponse = await validateContactDetails(
 							contactInfo,
 							isLoggedOutCart,
 							responseCart,
@@ -463,25 +419,32 @@ export default function WPCheckout( {
 							reduxDispatch,
 							translate,
 							true
-						).then( ( response ) => {
-							if ( response ) {
-								// When the contact details change, update the cached contact details on
-								// the server. This can fail if validation fails but we will silently
-								// ignore failures here because the validation call will handle them better
-								// than this will.
-								reduxDispatch(
-									saveContactDetailsCache( prepareDomainContactValidationRequest( contactInfo ) )
-								);
+						);
+						if ( validationResponse ) {
+							// When the contact details change, update the cart's tax location to match.
+							await updateCartContactDetailsForCheckout(
+								countriesList,
+								responseCart,
+								updateLocation,
+								contactInfo
+							);
 
-								reduxDispatch(
-									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
-										step: 1,
-										step_name: 'contact-form',
-									} )
-								);
-							}
-							return response;
-						} );
+							// When the contact details change, update the cached contact details on
+							// the server. This can fail if validation fails but we will silently
+							// ignore failures here because the validation call will handle them better
+							// than this will.
+							reduxDispatch(
+								saveContactDetailsCache( prepareDomainContactValidationRequest( contactInfo ) )
+							);
+
+							reduxDispatch(
+								recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+									step: 1,
+									step_name: 'contact-form',
+								} )
+							);
+						}
+						return validationResponse;
 					} }
 					activeStepContent={
 						<WPContactForm

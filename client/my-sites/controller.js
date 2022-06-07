@@ -457,7 +457,7 @@ export function siteSelection( context, next ) {
 	}
 
 	// If the path fragment does not resemble a site, set all sites to visible
-	if ( ! siteFragment ) {
+	if ( ! ( typeof siteFragment === 'string' && siteFragment.length ) ) {
 		dispatch( setAllSitesSelected() );
 		return next();
 	}
@@ -494,9 +494,6 @@ export function siteSelection( context, next ) {
 					}
 				} else if ( shouldRedirectToJetpackAuthorize( context, site ) ) {
 					navigate( getJetpackAuthorizeURL( context, site ) );
-				} else if ( 'plugins' === context.path.split( '?' )[ 0 ].split( '/' )[ 1 ] ) {
-					// When path start with /plugins, redirect won't use site as query param. In plugins the param could be a site, plugin or category.
-					page.redirect( sectionify( context.path, siteFragment ) );
 				} else {
 					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 					const allSitesPath = addQueryArgs(

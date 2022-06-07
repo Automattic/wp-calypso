@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 
 describe( 'getCurrentRouteParameterized()', () => {
@@ -18,7 +17,7 @@ describe( 'getCurrentRouteParameterized()', () => {
 			sites: sites,
 		};
 
-		expect( getCurrentRouteParameterized( state, 12345 ) ).to.be.null;
+		expect( getCurrentRouteParameterized( state, 12345 ) ).toBeNull();
 	} );
 
 	test( 'it returns null when state is missing the site', () => {
@@ -27,7 +26,7 @@ describe( 'getCurrentRouteParameterized()', () => {
 			sites: { items: {} },
 		};
 
-		expect( getCurrentRouteParameterized( state, 12345 ) ).to.be.null;
+		expect( getCurrentRouteParameterized( state, 12345 ) ).toBeNull();
 	} );
 
 	test( 'it replaces the site slug with :site', () => {
@@ -36,7 +35,7 @@ describe( 'getCurrentRouteParameterized()', () => {
 			sites,
 		};
 
-		expect( getCurrentRouteParameterized( state, 12345 ) ).to.equal( '/test/url/:site' );
+		expect( getCurrentRouteParameterized( state, 12345 ) ).toEqual( '/test/url/:site' );
 	} );
 
 	test( 'it replaces the site ID with :siteid', () => {
@@ -49,6 +48,6 @@ describe( 'getCurrentRouteParameterized()', () => {
 			sites: sites,
 		};
 
-		expect( getCurrentRouteParameterized( state, 12345 ) ).to.equal( '/test/url/:siteid' );
+		expect( getCurrentRouteParameterized( state, 12345 ) ).toEqual( '/test/url/:siteid' );
 	} );
 } );

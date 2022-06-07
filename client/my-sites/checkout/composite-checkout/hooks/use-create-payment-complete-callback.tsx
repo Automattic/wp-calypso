@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import debugFactory from 'debug';
@@ -30,6 +31,7 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { requestSite } from 'calypso/state/sites/actions';
+import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import {
 	isJetpackSite,
 	getJetpackCheckoutRedirectUrl,
@@ -154,7 +156,7 @@ export default function useCreatePaymentCompleteCallback( {
 				console.error( err );
 				reduxDispatch(
 					recordCompositeCheckoutErrorDuringAnalytics( {
-						errorObject: err,
+						errorObject: err as Error,
 						failureDescription: 'useCreatePaymentCompleteCallback',
 					} )
 				);
@@ -191,6 +193,7 @@ export default function useCreatePaymentCompleteCallback( {
 
 			if ( siteId ) {
 				reduxDispatch( requestSite( siteId ) );
+				reduxDispatch( fetchSiteFeatures( siteId ) );
 			}
 
 			if (
@@ -320,7 +323,9 @@ function displayRenewalSuccessNotice(
 							email: product.user_email,
 						},
 						components: {
-							a: <a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
+							a: (
+								<a href={ localizeUrl( AUTO_RENEWAL ) } target="_blank" rel="noopener noreferrer" />
+							),
 						},
 					}
 				),

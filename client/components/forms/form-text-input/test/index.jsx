@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import '@testing-library/jest-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import FormTextInput from '../';
 
 describe( '<FormTextInput />', () => {
@@ -32,27 +32,29 @@ describe( '<FormTextInput />', () => {
 		expect( input ).toHaveAttribute( 'placeholder', 'test placeholder' );
 	} );
 
-	test( 'should call select if selectOnFocus is true', () => {
-		render( <FormTextInput selectOnFocus={ true } /> );
-		const select = jest.fn();
-		const event = { target: { select } };
+	test( 'should call select if selectOnFocus is true', async () => {
+		const value = 'arbitrary-value';
+		render( <FormTextInput value={ value } selectOnFocus /> );
 
 		const input = screen.getByRole( 'textbox' );
 
-		fireEvent.click( input, event );
+		await userEvent.click( input );
 
-		expect( select ).toHaveBeenCalledTimes( 1 );
+		const selected = input.value.substring( input.selectionStart, input.selectionEnd );
+
+		expect( selected ).toBe( value );
 	} );
 
-	test( 'should not call select if selectOnFocus is false', () => {
-		render( <FormTextInput selectOnFocus={ false } /> );
-		const select = jest.fn();
-		const event = { target: { select } };
+	test( 'should not call select if selectOnFocus is false', async () => {
+		const value = 'arbitrary-value';
+		render( <FormTextInput value={ value } selectOnFocus={ false } /> );
 
 		const input = screen.getByRole( 'textbox' );
 
-		fireEvent.click( input, event );
+		await userEvent.click( input );
 
-		expect( select ).not.toHaveBeenCalled();
+		const selected = input.value.substring( input.selectionStart, input.selectionEnd );
+
+		expect( selected ).toBe( '' );
 	} );
 } );

@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import EmptyContent from 'calypso/components/empty-content';
@@ -12,7 +13,10 @@ const NoSitePurchasesMessage: React.FC = () => {
 		<Main className="empty-content">
 			<EmptyContent
 				action={
-					<a className="empty-content__action button is-primary" href={ JETPACK_PRICING_PAGE }>
+					<a
+						className="empty-content__action button is-primary"
+						href={ localizeUrl( JETPACK_PRICING_PAGE ) }
+					>
 						{ translate( 'Upgrade for quick restores' ) }
 					</a>
 				}

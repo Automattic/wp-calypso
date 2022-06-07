@@ -7,6 +7,10 @@ import {
 	isJetpackPlanSlug,
 	isJetpackScan,
 	isJetpackScanSlug,
+	planHasFeature,
+	WPCOM_FEATURES_ANTISPAM,
+	WPCOM_FEATURES_BACKUPS,
+	WPCOM_FEATURES_SCAN,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useEffect } from 'react';
@@ -14,14 +18,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
-import {
-	isPlanIncludingSiteBackup,
-	isBackupProductIncludedInSitePlan,
-	isPlanIncludingSiteAntiSpam,
-	isAntiSpamProductIncludedInSitePlan,
-	isPlanIncludingSiteScan,
-	isScanProductIncludedInSitePlan,
-} from 'calypso/state/sites/products/conflicts';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSitePlan,
 	getSiteProducts,
@@ -32,7 +29,6 @@ import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import CartPlanOverlapsOwnedProductNotice from './cart-plan-overlaps-owned-product-notice';
 import JetpackPluginRequiredVersionNotice from './jetpack-plugin-required-version-notice';
 import SitePlanIncludesCartProductNotice from './site-plan-includes-cart-product-notice';
-
 import './style.scss';
 
 /**
@@ -82,15 +78,24 @@ const PrePurchaseNotices = () => {
 
 		if ( ! planSlugInCart ) return null;
 
-		if ( isPlanIncludingSiteBackup( state, siteId, planSlugInCart ) ) {
+		if (
+			planHasFeature( planSlugInCart, WPCOM_FEATURES_BACKUPS ) &&
+			siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
+		) {
 			return currentSiteProducts.find( isJetpackBackup );
 		}
 
-		if ( isPlanIncludingSiteAntiSpam( state, siteId, planSlugInCart ) ) {
+		if (
+			planHasFeature( planSlugInCart, WPCOM_FEATURES_ANTISPAM ) &&
+			siteHasFeature( state, siteId, WPCOM_FEATURES_ANTISPAM )
+		) {
 			return currentSiteProducts.find( isJetpackAntiSpam );
 		}
 
-		if ( isPlanIncludingSiteScan( state, siteId, planSlugInCart ) ) {
+		if (
+			planHasFeature( planSlugInCart, WPCOM_FEATURES_SCAN ) &&
+			siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN )
+		) {
 			return currentSiteProducts.find( isJetpackScan );
 		}
 
@@ -105,21 +110,15 @@ const PrePurchaseNotices = () => {
 		const antiSpamSlugInCart = cartItemSlugs.find( isJetpackAntiSpamSlug );
 		const scanSlugInCart = cartItemSlugs.find( isJetpackScanSlug );
 
-		if (
-			backupSlugInCart &&
-			isBackupProductIncludedInSitePlan( state, siteId, backupSlugInCart )
-		) {
+		if ( backupSlugInCart && siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS ) ) {
 			return getProductFromSlug( backupSlugInCart );
 		}
 
-		if (
-			antiSpamSlugInCart &&
-			isAntiSpamProductIncludedInSitePlan( state, siteId, antiSpamSlugInCart )
-		) {
+		if ( antiSpamSlugInCart && siteHasFeature( state, siteId, WPCOM_FEATURES_ANTISPAM ) ) {
 			return getProductFromSlug( antiSpamSlugInCart );
 		}
 
-		if ( scanSlugInCart && isScanProductIncludedInSitePlan( state, siteId, scanSlugInCart ) ) {
+		if ( scanSlugInCart && siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ) ) {
 			return getProductFromSlug( scanSlugInCart );
 		}
 

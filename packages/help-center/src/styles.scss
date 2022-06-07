@@ -12,9 +12,23 @@ $head-foot-height: 50px;
 	z-index: 9999;
 	cursor: default;
 
+	button.button-primary,
+	button.button-secondary {
+		font-size: $font-title-small;
+	}
+
+	.button {
+		font-size: $font-body-small;
+	}
+
 	& > div {
 		display: flex;
 		flex-direction: column;
+	}
+
+	button.components-button:focus {
+		box-shadow: none;
+		outline: none;
 	}
 
 	.help-center__container-header {
@@ -25,7 +39,33 @@ $head-foot-height: 50px;
 		// We can remove this when the bug is fixed
 		.help-center-header__minimize svg {
 			transform: scale( 0.7, 1 );
-			transform-origin: right;
+			transform-origin: center;
+		}
+
+		.help-center-header__text {
+			max-width: 300px;
+			font-size: $font-body-small;
+			font-weight: 500;
+			display: flex;
+			align-items: center;
+
+			.help-center-header__article-title {
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				max-width: 200px;
+			}
+
+			.help-center-header__icon {
+				display: flex;
+				align-items: center;
+				margin-right: 4px;
+
+				svg {
+					font-size: $font-title-small;
+					margin-right: 4px;
+				}
+			}
 		}
 	}
 
@@ -37,13 +77,19 @@ $head-foot-height: 50px;
 	.help-center__container-footer {
 		height: auto;
 		padding: 16px;
+
+		// hide when empty
+		&:empty {
+			display: none;
+		}
 	}
 
 	&.is-desktop {
 		top: calc( $header-height + 16px );
 		right: 16px;
 		width: 410px;
-		height: 800px;
+		height: 80vh;
+		max-height: 800px;
 		box-shadow: 0 0 3px 0 rgba( 0, 0, 0, 0.25 );
 		overflow: auto;
 
@@ -69,18 +115,22 @@ $head-foot-height: 50px;
 	}
 
 	&.is-mobile {
-		top: 47px;
+		top: 60px;
 		bottom: 0;
 		left: 0;
 		right: 0;
 		max-height: 100%;
 
 		.help-center__container-content {
-			height: calc( 100% - $head-foot-height * 2 );
+			flex: auto;
 		}
 
-		&.no-footer .help-center__container-content {
-			height: auto;
+		.help-center__container-footer {
+			margin-bottom: 0;
+		}
+
+		.help-center-contact-page__button {
+			line-height: 2.15;
 		}
 
 		&.is-minimized {
@@ -105,15 +155,27 @@ $head-foot-height: 50px;
 		display: inline-block;
 		margin-left: 8px;
 		padding: 2px 6px;
-		background: #c9356e;
+		background: var( --studio-pink-50 );
 		border-radius: 20px; // stylelint-disable-line scales/radii
 		font-size: $font-body-extra-small;
 		color: white;
+	}
+
+	.help-center-header__a8c-only-badge {
+		display: inline-block;
+		margin-left: 8px;
+		padding: 2px 6px;
+		background: lightgray;
+		border-radius: 4px;
+		font-size: $font-body-extra-small;
+		color: var( --studio-gray-50 );
+		text-transform: uppercase;
 	}
 }
 
 .ticket-success-screen__help-center {
 	text-align: center;
+
 	.ticket-success-screen__help-center-heading {
 		font-size: $font-title-small;
 		color: $studio-gray-100;
@@ -148,7 +210,10 @@ $head-foot-height: 50px;
 }
 
 button.button.back-button__help-center.is-borderless {
-	color: $studio-gray-80;
+	display: flex;
+	align-items: center;
+	color: black;
+	font-size: $font-body-small;
 }
 
 .help-center__container-content {
@@ -156,5 +221,61 @@ button.button.back-button__help-center.is-borderless {
 
 	> *:not( iframe ) {
 		padding: 16px;
+	}
+}
+
+.help-center-sibyl-articles__list {
+	list-style: none;
+	box-sizing: border-box;
+	padding: 0;
+
+	> li {
+		padding: 0;
+
+		> a {
+			display: flex;
+			align-items: center;
+			text-decoration: none;
+			color: var( --studio-gray-100 );
+			margin-bottom: 16px;
+			font-size: $font-body-small;
+		}
+	}
+
+	svg {
+		margin-right: 15px;
+		border-radius: 2px;
+		display: block;
+		padding: 8px;
+		background: var( --studio-gray-0 );
+		fill: var( --studio-blue-50 );
+		flex-shrink: 0;
+	}
+}
+
+.inline-help__results-title,
+.help-center__section-title {
+	font-size: $font-body-small;
+	font-weight: 500;
+	color: var( --studio-gray-100 );
+}
+
+.help-center-sibyl-articles__container {
+	padding-top: 0;
+}
+
+.help-center-container__loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
+.help-center-container__spinner {
+	.spinner__outer {
+		border-top-color: var( --wp-admin-theme-color );
+	}
+	.spinner__inner {
+		border-top-color: var( --wp-admin-theme-color );
+		border-right-color: var( --wp-admin-theme-color );
 	}
 }

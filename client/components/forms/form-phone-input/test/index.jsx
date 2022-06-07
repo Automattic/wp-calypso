@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { FormPhoneInput } from '../';
 
 const countriesList = [
@@ -46,7 +47,7 @@ describe( 'FormPhoneInput', () => {
 			expect( option.textContent ).toBe( countriesList[ 0 ].name );
 		} );
 
-		test( 'should update country on change', () => {
+		test( 'should update country on change', async () => {
 			const onChange = jest.fn();
 			const { container } = render(
 				<FormPhoneInput
@@ -58,7 +59,7 @@ describe( 'FormPhoneInput', () => {
 
 			const [ select ] = container.getElementsByClassName( 'form-country-select' );
 
-			fireEvent.change( select, { target: { value: countriesList[ 1 ].code } } );
+			await userEvent.selectOptions( select, countriesList[ 1 ].code );
 
 			expect( onChange ).toHaveBeenCalledWith(
 				expect.objectContaining( { countryData: countriesList[ 1 ] } )

@@ -40,7 +40,7 @@ const selectors = {
 	visibilityButton: '.edit-post-post-visibility__toggle',
 	visibilityPopover: 'fieldset.editor-post-visibility__dialog-fieldset',
 	visibilityOption: ( option: PrivacyOptions ) => `input[value="${ option.toLowerCase() }"]`,
-	postPasswordInput: '.editor-post-visibility__dialog-password-input',
+	postPasswordInput: '.editor-post-visibility__password-input',
 
 	// Schedule
 	scheduleButton: `button.edit-post-post-schedule__toggle`,

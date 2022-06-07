@@ -102,7 +102,7 @@ function ExpiringSoon( props ) {
 			<p>{ noticeText }</p>
 			{ domain.currentUserCanManage && ( purchase || isLoadingPurchase ) && (
 				<RenewButton
-					primary={ true }
+					primary
 					purchase={ purchase }
 					selectedSite={ selectedSite }
 					subscriptionId={ parseInt( subscriptionId, 10 ) }

@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { render, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import withServerCredentialsForm from 'calypso/components/jetpack/with-server-credentials-form';
@@ -124,22 +125,35 @@ describe( 'useWithServerCredentials HOC', () => {
 		const { utils } = setup( {} );
 		const submitButton = utils.getByText( 'Submit' );
 		const errorMessagesContainer = utils.getByTestId( 'error-messages' );
-		fireEvent.click( submitButton );
+		await userEvent.click( submitButton );
 		expect( errorMessagesContainer.innerHTML ).toContain( 'Please enter your server password.' );
 		expect( actions.updateCredentials ).not.toBeCalled();
 	} );
 
 	it( 'should update credentials (should not display error messages)', async () => {
+		const user = userEvent.setup();
 		const { utils } = setup();
 		const submitButton = utils.getByText( 'Submit' );
-		const errorMessagesContainer = utils.getByTestId( 'error-messages' );
-		[ 'user', 'pass', 'host' ].forEach( ( inputName ) => {
-			const input = utils.getByTestId( inputName );
-			fireEvent.change( input, { target: { value: inputName } } );
-			expect( input.value ).toBe( inputName );
-		} );
-		fireEvent.click( submitButton );
-		expect( errorMessagesContainer.innerHTML ).toBe( '' );
+		const errorMessagesContainer = screen.getByTestId( 'error-messages' );
+
+		const userInput = utils.getByTestId( 'user' );
+		await user.clear( userInput );
+		await user.type( userInput, 'user' );
+		expect( userInput.value ).toBe( 'user' );
+
+		const passwordInput = utils.getByTestId( 'pass' );
+		await user.clear( passwordInput );
+		await user.type( passwordInput, 'pass' );
+		expect( passwordInput.value ).toBe( 'pass' );
+
+		const hostInput = utils.getByTestId( 'host' );
+		await user.clear( hostInput );
+		await user.type( hostInput, 'host' );
+		expect( hostInput.value ).toBe( 'host' );
+
+		await user.click( submitButton );
+
+		expect( errorMessagesContainer ).toBeEmptyDOMElement();
 		expect( actions.updateCredentials ).toHaveBeenCalledTimes( 1 );
 		expect( actions.updateCredentials ).toBeCalledWith(
 			9999,
@@ -160,7 +174,7 @@ describe( 'useWithServerCredentials HOC', () => {
 	it( 'should delete credentials', async () => {
 		const { utils } = setup();
 		const deleteButton = utils.getByText( 'Delete' );
-		fireEvent.click( deleteButton );
+		await userEvent.click( deleteButton );
 		expect( actions.deleteCredentials ).toHaveBeenCalledTimes( 1 );
 		expect( actions.deleteCredentials ).toBeCalledWith( 9999, 'main' );
 	} );
@@ -171,7 +185,7 @@ describe( 'useWithServerCredentials HOC', () => {
 		expect( advancedSection.innerHTML ).toContain( '' );
 
 		const toggleButton = utils.getByText( 'Advanced Section' );
-		fireEvent.click( toggleButton );
+		await userEvent.click( toggleButton );
 		expect( advancedSection.innerHTML ).toContain( 'Hidden content!' );
 	} );
 
@@ -187,7 +201,7 @@ describe( 'useWithServerCredentials HOC', () => {
 		expect( formDataContainer.innerHTML ).toContain( '33' );
 		expect( formDataContainer.innerHTML ).toContain( '/jetpack/path' );
 
-		fireEvent.click( submitButton );
+		await userEvent.click( submitButton );
 		expect( errorMessagesContainer.innerHTML ).not.toContain(
 			'Please enter your server username.'
 		);

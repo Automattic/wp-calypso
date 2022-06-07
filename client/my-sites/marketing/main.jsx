@@ -1,4 +1,4 @@
-import { FEATURE_NO_ADS } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_NO_ADVERTS } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
@@ -123,6 +123,9 @@ export const Sharing = ( {
 		titleHeader = translate( 'Integrations' );
 	}
 
+	const upsellNudgeTitle = translate( 'Remove ads from your site with the No Ads add-on' );
+	const upsellNudgeHref = `/checkout/${ siteSlug }/no-ads`;
+
 	const selected = find( filters, { route: pathname } );
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -155,9 +158,9 @@ export const Sharing = ( {
 			{ ! isVip && ! isJetpack && (
 				<UpsellNudge
 					event="sharing_no_ads"
-					feature={ FEATURE_NO_ADS }
-					description={ translate( 'Prevent ads from showing on your site.' ) }
-					title={ translate( 'No ads with WordPress.com Pro' ) }
+					feature={ WPCOM_FEATURES_NO_ADVERTS }
+					href={ upsellNudgeHref }
+					title={ upsellNudgeTitle }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
 					showIcon={ true }
@@ -170,8 +173,8 @@ export const Sharing = ( {
 
 Sharing.propTypes = {
 	canManageOptions: PropTypes.bool,
-	isVipSite: PropTypes.bool,
 	contentComponent: PropTypes.node,
+	isVipSite: PropTypes.bool,
 	path: PropTypes.string,
 	showButtons: PropTypes.bool,
 	showConnections: PropTypes.bool,

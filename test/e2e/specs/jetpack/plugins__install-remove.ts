@@ -7,7 +7,7 @@ import {
 	envVariables,
 	TestAccount,
 	PluginsPage,
-	SnackbarNotificationComponent,
+	NoticeComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -19,7 +19,7 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 	const pluginName = envVariables.VIEWPORT_NAME === 'desktop' ? 'Hello Dolly' : 'Developer';
 	let page: Page;
 	let pluginsPage: PluginsPage;
-	let snackbarNotificationComponent: SnackbarNotificationComponent;
+	let noticeComponent: NoticeComponent;
 	let siteURL: string;
 
 	beforeAll( async function () {
@@ -51,12 +51,10 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 
 		it( `Return to ${ pluginName } page`, async function () {
 			await page.goBack();
-			snackbarNotificationComponent = new SnackbarNotificationComponent( page );
-			await snackbarNotificationComponent.noticeShown(
-				`Successfully installed and activated ${ pluginName } on ${ siteURL }`,
-				{ type: 'Success' }
-			);
-			await snackbarNotificationComponent.dismiss();
+			noticeComponent = new NoticeComponent( page );
+			const message = `Successfully installed and activated ${ pluginName } on ${ siteURL }`;
+			await noticeComponent.noticeShown( message, { type: 'Success' } );
+			await noticeComponent.dismiss( message );
 		} );
 	} );
 
@@ -69,11 +67,11 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 	describe( 'Plugin: Remove', function () {
 		it( 'Remove plugin', async function () {
 			await pluginsPage.clickRemovePlugin();
-			await snackbarNotificationComponent.noticeShown(
-				`Successfully removed ${ pluginName } on ${ siteURL }.`,
-				{ type: 'Success' }
-			);
-			await snackbarNotificationComponent.dismiss();
+			const message = `Successfully removed ${ pluginName } on ${ siteURL }.`;
+			await noticeComponent.noticeShown( message, {
+				type: 'Success',
+			} );
+			await noticeComponent.dismiss( message );
 		} );
 	} );
 } );

@@ -114,7 +114,7 @@ export class Banner extends Component {
 		const { event, feature, compact, onClick, tracksClickName, tracksClickProperties } = this.props;
 
 		if ( event && tracksClickName ) {
-			this.props.recordTracksEvent( tracksClickName, {
+			this.props.recordTracksEvent?.( tracksClickName, {
 				cta_name: event,
 				cta_feature: feature,
 				cta_size: compact ? 'compact' : 'regular',
@@ -129,7 +129,7 @@ export class Banner extends Component {
 		const { event, feature, onDismiss, tracksDismissName, tracksDismissProperties } = this.props;
 
 		if ( event && tracksDismissName ) {
-			this.props.recordTracksEvent( tracksDismissName, {
+			this.props.recordTracksEvent?.( tracksDismissName, {
 				cta_name: event,
 				cta_feature: feature,
 				...tracksDismissProperties,

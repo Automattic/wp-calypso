@@ -1,8 +1,4 @@
-import chai from 'chai';
 import * as nock from 'nock';
-import sinonChai from 'sinon-chai';
-
-chai.use( sinonChai );
 
 // Disables all network requests for all tests.
 nock.disableNetConnect();

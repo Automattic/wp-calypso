@@ -1,4 +1,4 @@
-import { FEATURE_PREMIUM_THEMES, planHasFeature } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { compact, property, snakeCase } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -9,7 +9,8 @@ import ThemesList from 'calypso/components/themes-list';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer.js';
-import { getSiteSlug, isJetpackSite, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
 	arePremiumThemesEnabled,
@@ -153,7 +154,7 @@ class ThemesSelection extends Component {
 	};
 
 	render() {
-		const { source, query, upsellUrl } = this.props;
+		const { source, query, upsellUrl, siteId } = this.props;
 
 		return (
 			<div className="themes__selection">
@@ -174,6 +175,7 @@ class ThemesSelection extends Component {
 					emptyContent={ this.props.emptyContent }
 					placeholderCount={ this.props.placeholderCount }
 					bookmarkRef={ this.props.bookmarkRef }
+					siteId={ siteId }
 				/>
 			</div>
 		);
@@ -211,8 +213,11 @@ export const ConnectedThemesSelection = connect(
 		const isJetpack = isJetpackSite( state, siteId );
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const premiumThemesEnabled = arePremiumThemesEnabled( state, siteId );
-		const sitePlanSlug = getSitePlanSlug( state, siteId );
-		const hasUnlimitedPremiumThemes = planHasFeature( sitePlanSlug, FEATURE_PREMIUM_THEMES );
+		const hasUnlimitedPremiumThemes = siteHasFeature(
+			state,
+			siteId,
+			WPCOM_FEATURES_PREMIUM_THEMES
+		);
 
 		let sourceSiteId;
 		if ( source === 'wpcom' || source === 'wporg' ) {

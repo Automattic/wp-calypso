@@ -1,4 +1,5 @@
 import { Button, ProgressBar, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -72,7 +73,7 @@ export class PaidPlanThankYou extends Component {
 						) }
 					</p>
 					<p>
-						<Button primary href={ SETTING_UP_PREMIUM_SERVICES } target="_blank">
+						<Button primary href={ localizeUrl( SETTING_UP_PREMIUM_SERVICES ) } target="_blank">
 							<span>{ translate( 'Set up features' ) }</span> <Gridicon icon="external" />
 						</Button>
 					</p>
@@ -101,7 +102,7 @@ export class PaidPlanThankYou extends Component {
 						) }
 					</p>
 					<p>
-						<Button primary href={ SETTING_UP_PREMIUM_SERVICES } target="_blank">
+						<Button primary href={ localizeUrl( SETTING_UP_PREMIUM_SERVICES ) } target="_blank">
 							<span>{ translate( 'Set up features' ) }</span> <Gridicon icon="external" />
 						</Button>
 					</p>

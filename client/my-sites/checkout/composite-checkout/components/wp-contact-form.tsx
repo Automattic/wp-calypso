@@ -38,7 +38,7 @@ export default function WPContactForm( {
 	contactDetailsType: Exclude< ContactDetailsType, 'none' >;
 	contactValidationCallback: () => Promise< boolean >;
 	isLoggedOutCart: boolean;
-} ): JSX.Element {
+} ) {
 	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
 		select( 'wpcom-checkout' ).getContactInfo()
 	);

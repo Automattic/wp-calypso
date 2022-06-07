@@ -1,6 +1,6 @@
 import { FEATURE_WP_SUBDOMAIN } from '@automattic/calypso-products';
 import * as redux from 'react-redux';
-import hasAvailableSiteFeature from 'calypso/state/selectors/has-available-site-feature';
+import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
 import { useSelectedSiteSelector } from '../';
 import { isJetpackSite } from '../../selectors';
 
@@ -42,8 +42,6 @@ describe( 'useSelectedSiteSelector()', () => {
 			},
 		};
 		useSelector.mockImplementation( ( selector ) => selector( state ) );
-		expect( useSelectedSiteSelector( hasAvailableSiteFeature, FEATURE_WP_SUBDOMAIN ) ).toEqual(
-			true
-		);
+		expect( useSelectedSiteSelector( getPlansForFeature, FEATURE_WP_SUBDOMAIN ) ).toEqual( true );
 	} );
 } );

@@ -1,10 +1,10 @@
 import classnames from 'classnames';
 import React from 'react';
+import Capture from 'calypso/blocks/import-light/capture';
+import Colors from 'calypso/blocks/import-light/colors';
+import Scanning from 'calypso/blocks/import-light/scanning';
+import Summary from 'calypso/blocks/import-light/summary';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import Capture from './capture';
-import Colors from './colors';
-import Scanning from './scanning';
-import Summary from './summary';
 import type { FunctionComponent } from 'react';
 
 import './style.scss';

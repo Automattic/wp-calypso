@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { COMMENTS_QUERY_UPDATE } from 'calypso/state/action-types';
 import { updateCommentsQuery } from 'calypso/state/comments/ui/actions';
 
@@ -18,7 +17,7 @@ describe( 'actions', () => {
 
 			const action = updateCommentsQuery( siteId, comments, query );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: COMMENTS_QUERY_UPDATE,
 				siteId,
 				comments,

@@ -11,8 +11,8 @@ export default function CheckoutSubmitButton( {
 }: {
 	className?: string;
 	disabled?: boolean;
-	onLoadError?: ( error: string ) => void;
-} ): JSX.Element | null {
+	onLoadError?: ( error: Error ) => void;
+} ) {
 	const { formStatus } = useFormStatus();
 	const { __ } = useI18n();
 	const isDisabled = disabled || formStatus !== FormStatus.READY;

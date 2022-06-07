@@ -1,8 +1,19 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .is-p-2-join-workspace .p2-step-wrapper {
 	max-width: 620px;
 
 	button.components-button.is-busy {
 		background-image: none;
+	}
+
+	.p2-step-wrapper__subheader-text {
+		padding: 0 2rem;
+
+		@include break-small {
+			padding: 0;
+		}
 	}
 }
 
@@ -14,8 +25,12 @@
 	display: grid;
 	grid-template-columns: min-content auto min-content;
 	grid-column-gap: 12px;
-	padding: 0.75rem 1.5rem;
+	padding: 0.75rem;
 	border-top: 1px solid var( --p2-color-border-light );
+
+	@include break-small {
+		padding: 0.75rem 1.5rem;
+	}
 
 	&:last-of-type {
 		border-bottom: 1px solid var( --p2-color-border-light );
@@ -30,14 +45,23 @@
 	font-size: 1.25rem;
 	height: 50px;
 	width: 50px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
 	border-radius: 2px;
+	display: none;
+
+	@include break-small {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
 }
 
 .p2-join-workspace__workspace-name {
 	font-weight: 600;
+	grid-area: 1/1/span 1/span 2;
+
+	@include break-small {
+		grid-area: 1/2/span 1/span 1;
+	}
 
 	.p2-join-workspace__workspace-link {
 		color: var( --p2-color-text );
@@ -52,7 +76,11 @@
 	font-size: 0.75rem;
 	color: var( --p2-color-border-medium );
 	grid-area: 2 / 2;
-	line-height: 0.5;
+	grid-area: 2/1/span 1/span 2;
+
+	@include break-small {
+		grid-area: 2/2/span 1/span 1;
+	}
 	
 	> span::after {
 		content: '·';
@@ -87,25 +115,44 @@
 	background: var( --p2-color-background-light );
 	padding: 1.2rem;
 	display: grid;
-	grid-template-columns: auto auto;
-	grid-template-rows: auto auto;
 	border-radius: 2px; /* stylelint-disable-line scales/radii */
+
+	@include break-small {
+		grid-template-columns: auto auto;
+		grid-template-rows: auto auto;
+	}
 }
 
 .p2-join-workspace__create-workspace-header {
 	font-size: 0.875rem;
 	font-weight: 600;
+	text-align: center;
+
+	@include break-small {
+		text-align: left;
+	}
 }
 
 .p2-join-workspace__create-workspace-subheader {
 	font-size: 0.75rem;
+	text-align: center;
+
+	@include break-small {
+		text-align: left;
+	}
 }
 
 .p2-join-workspace__create-workspace-action {
-	grid-area: 1 / 2 / span 2;
 	align-items: center;
 	display: flex;
-	justify-content: right;
+	padding-top: 18px;
+	justify-content: center;
+
+	@include break-small {
+		grid-area: 1 / 2 / span 2;
+		justify-content: right;
+		padding-top: unset;
+	}
 	
 	button:not( :disabled ) {
 		background: var( --p2-color-link );

@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-const DnsRecordItemPlaceholder = (): JSX.Element => {
+const DnsRecordItemPlaceholder = () => {
 	return (
 		<div className="dns-record-item is-placeholder">
 			<div className="dns-record-item__type" />

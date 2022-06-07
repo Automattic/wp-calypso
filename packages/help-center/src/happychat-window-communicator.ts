@@ -1,27 +1,36 @@
+import { useHappychatAuth } from '@automattic/happychat-connection';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
-import { SITE_STORE } from './components/help-center-contact-form';
 import { STORE_KEY } from './store';
 import type { WindowState } from './types';
 
+/**
+ * This hook attaches an event listener to the window to listen to Happychat messages that com from https://widgets.wp.com/calypso-happychat/
+ * It collects information from the help-center store and forwards it to Happychat. It also forwards the unread count and the state changes (ended, blurred, closed, opened) to whoever uses the hook
+ *
+ * @param onStateChange a callback that will be called whenever state changes
+ * @param onUnreadChange a callback that will be called with the number of new unread messages
+ */
 export function useHCWindowCommunicator(
 	onStateChange: ( state: WindowState ) => void,
 	onUnreadChange: ( unreadCount: number ) => void
 ) {
-	const { siteId, subject, message, otherSiteURL } = useSelect( ( select ) => {
+	const { selectedSite, subject, message, userDeclaredSite } = useSelect( ( select ) => {
 		return {
-			siteId: select( STORE_KEY ).getSiteId(),
+			selectedSite: select( STORE_KEY ).getSite(),
+			userDeclaredSite: select( STORE_KEY ).getUserDeclaredSite(),
 			subject: select( STORE_KEY ).getSubject(),
 			message: select( STORE_KEY ).getMessage(),
-			otherSiteURL: select( STORE_KEY ).getOtherSiteURL(),
 		};
 	} );
-	const { resetPopup } = useDispatch( STORE_KEY );
 
-	const planSlug = useSelect(
-		( select ) =>
-			( siteId && select( SITE_STORE ).getSite( siteId )?.plan?.product_slug ) || 'Unknown plan'
+	const currentSite = useSelect( ( select ) =>
+		select( 'automattic/site' ).getSite( window._currentSiteId )
 	);
+
+	const supportSite = selectedSite || userDeclaredSite || currentSite;
+	const { resetStore } = useDispatch( STORE_KEY );
+	const auth = useHappychatAuth();
 
 	useEffect( () => {
 		const messageHandler = ( event: MessageEvent ) => {
@@ -36,18 +45,30 @@ export function useHCWindowCommunicator(
 						if ( data.state === 'ended' ) {
 							// cleanup
 							window.removeEventListener( 'message', messageHandler );
-							resetPopup();
+							// now clear the store, since we sent everything
+							resetStore();
 						}
 						break;
 					case 'happy-chat-introduction-data': {
 						event.source?.postMessage(
 							{
 								type: 'happy-chat-introduction-data',
-								siteId,
+								siteId: supportSite?.ID.toString(),
 								subject,
 								message,
-								planSlug,
-								otherSiteURL,
+								planSlug: supportSite?.plan?.product_slug,
+								siteUrl: supportSite?.URL,
+							},
+							{ targetOrigin: event.origin }
+						);
+
+						break;
+					}
+					case 'happy-chat-authentication-data': {
+						event.source?.postMessage(
+							{
+								type: 'happy-chat-authentication-data',
+								authData: auth?.data,
 							},
 							{ targetOrigin: event.origin }
 						);
@@ -61,14 +82,5 @@ export function useHCWindowCommunicator(
 		return () => {
 			window.removeEventListener( 'message', messageHandler, false );
 		};
-	}, [
-		onStateChange,
-		onUnreadChange,
-		siteId,
-		subject,
-		message,
-		otherSiteURL,
-		planSlug,
-		resetPopup,
-	] );
+	}, [ onStateChange, onUnreadChange, supportSite, subject, message, auth, resetStore ] );
 }

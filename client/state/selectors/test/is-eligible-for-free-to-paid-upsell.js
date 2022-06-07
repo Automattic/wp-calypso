@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { when } from 'jest-when';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isMappedDomainSite from 'calypso/state/selectors/is-mapped-domain-site';
 import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
@@ -7,59 +7,59 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isEligibleForFreeToPaidUpsell from '../is-eligible-for-free-to-paid-upsell';
 
 jest.mock( 'calypso/state/selectors/can-current-user', () => ( {
-	canCurrentUser: require( 'sinon' ).stub(),
+	canCurrentUser: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/sites/selectors', () => ( {
-	isJetpackSite: require( 'sinon' ).stub(),
+	isJetpackSite: jest.fn(),
 } ) );
-jest.mock( 'calypso/state/selectors/is-mapped-domain-site', () => require( 'sinon' ).stub() );
-jest.mock( 'calypso/state/selectors/is-site-on-free-plan', () => require( 'sinon' ).stub() );
-jest.mock( 'calypso/state/selectors/is-vip-site', () => require( 'sinon' ).stub() );
+jest.mock( 'calypso/state/selectors/is-mapped-domain-site', () => jest.fn() );
+jest.mock( 'calypso/state/selectors/is-site-on-free-plan', () => jest.fn() );
+jest.mock( 'calypso/state/selectors/is-vip-site', () => jest.fn() );
 
 describe( 'isEligibleForFreeToPaidUpsell', () => {
 	const state = 'state';
 	const siteId = 'siteId';
 
 	const meetAllConditions = () => {
-		canCurrentUser.withArgs( state, siteId, 'manage_options' ).returns( true );
-		isJetpackSite.withArgs( state, siteId ).returns( false );
-		isMappedDomainSite.withArgs( state, siteId ).returns( false );
-		isSiteOnFreePlan.withArgs( state, siteId ).returns( true );
-		isVipSite.withArgs( state, siteId ).returns( false );
+		when( canCurrentUser ).calledWith( state, siteId, 'manage_options' ).mockReturnValue( true );
+		when( isJetpackSite ).calledWith( state, siteId ).mockReturnValue( false );
+		when( isMappedDomainSite ).calledWith( state, siteId ).mockReturnValue( false );
+		when( isSiteOnFreePlan ).calledWith( state, siteId ).mockReturnValue( true );
+		when( isVipSite ).calledWith( state, siteId ).mockReturnValue( false );
 	};
 
 	test( 'should return false when user can not manage options', () => {
 		meetAllConditions();
-		canCurrentUser.withArgs( state, siteId, 'manage_options' ).returns( false );
-		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).to.be.false;
+		when( canCurrentUser ).calledWith( state, siteId, 'manage_options' ).mockReturnValue( false );
+		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return false when site is Jetpack', () => {
 		meetAllConditions();
-		isJetpackSite.withArgs( state, siteId ).returns( true );
-		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).to.be.false;
+		when( isJetpackSite ).calledWith( state, siteId ).mockReturnValue( true );
+		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return false when site has mapped domain', () => {
 		meetAllConditions();
-		isMappedDomainSite.withArgs( state, siteId ).returns( true );
-		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).to.be.false;
+		when( isMappedDomainSite ).calledWith( state, siteId ).mockReturnValue( true );
+		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return false when site is not on a free plan', () => {
 		meetAllConditions();
-		isSiteOnFreePlan.withArgs( state, siteId ).returns( false );
-		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).to.be.false;
+		when( isSiteOnFreePlan ).calledWith( state, siteId ).mockReturnValue( false );
+		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return false when site is a vip site', () => {
 		meetAllConditions();
-		isVipSite.withArgs( state, siteId ).returns( true );
-		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).to.be.false;
+		when( isVipSite ).calledWith( state, siteId ).mockReturnValue( true );
+		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return true when all conditions are met', () => {
 		meetAllConditions();
-		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).to.be.true;
+		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( true );
 	} );
 } );

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getCurrentLayoutFocus } from '../../layout-focus/selectors';
 
 describe( 'selectors', () => {
@@ -17,7 +16,7 @@ describe( 'selectors', () => {
 
 	describe( 'getCurrentLayoutFocus', () => {
 		test( 'returns the current layout focus area', () => {
-			expect( getCurrentLayoutFocus( state ) ).to.equal( 'sites' );
+			expect( getCurrentLayoutFocus( state ) ).toEqual( 'sites' );
 		} );
 	} );
 } );

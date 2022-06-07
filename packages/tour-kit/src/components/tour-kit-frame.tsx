@@ -118,7 +118,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		update: popperUpdate,
 	} = usePopper( referenceElement, popperElement, {
 		strategy: 'fixed',
-		placement: 'bottom',
+		placement: config?.placement ?? 'bottom',
 		modifiers: [
 			{
 				name: 'preventOverflow',
@@ -192,6 +192,12 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		}
 	}, [ popperUpdate, referenceElement ] );
 
+	useEffect( () => {
+		if ( referenceElement && config.options?.effects?.autoScroll ) {
+			referenceElement.scrollIntoView( config.options.effects.autoScroll );
+		}
+	}, [ config.options?.effects?.autoScroll, referenceElement ] );
+
 	const classes = classnames(
 		'tour-kit-frame',
 		isMobile ? 'is-mobile' : 'is-desktop',
@@ -216,7 +222,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				{ showSpotlight() && (
 					<Spotlight
 						referenceElement={ referenceElement }
-						styles={ config.options?.effects?.spotlight?.styles }
+						{ ...( config.options?.effects?.spotlight || {} ) }
 					/>
 				) }
 				<div

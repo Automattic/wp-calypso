@@ -1,13 +1,7 @@
 import classNames from 'classnames';
-import type { ReactNode } from 'react';
+import type { PropsWithChildren } from 'react';
 
-const ActionPanelCta = ( {
-	children,
-	className,
-}: {
-	children: ReactNode;
-	className?: string;
-} ): JSX.Element => {
+const ActionPanelCta = ( { children, className }: PropsWithChildren< { className?: string } > ) => {
 	return <div className={ classNames( 'action-panel__cta', className ) }>{ children }</div>;
 };
 

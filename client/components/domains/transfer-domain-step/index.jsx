@@ -1,5 +1,6 @@
 import { PLAN_WPCOM_PRO, isPlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -280,7 +281,7 @@ class TransferDomainStep extends Component {
 								components: {
 									a: (
 										<a
-											href={ INCOMING_DOMAIN_TRANSFER }
+											href={ localizeUrl( INCOMING_DOMAIN_TRANSFER ) }
 											rel="noopener noreferrer"
 											target="_blank"
 										/>

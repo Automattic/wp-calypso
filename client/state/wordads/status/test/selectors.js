@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { isSiteWordadsUnsafe } from '../selectors';
 
 describe( 'selectors', () => {
@@ -15,13 +14,13 @@ describe( 'selectors', () => {
 	};
 	describe( '#isSiteWordadsUnsafe()', () => {
 		test( 'should return status value for a given site ID', () => {
-			expect( isSiteWordadsUnsafe( state, 2916284 ) ).to.eql( 'mature' );
+			expect( isSiteWordadsUnsafe( state, 2916284 ) ).toEqual( 'mature' );
 		} );
 		test( 'should return false when sticker absent', () => {
-			expect( isSiteWordadsUnsafe( state, 77203074 ) ).to.eql( false );
+			expect( isSiteWordadsUnsafe( state, 77203074 ) ).toEqual( false );
 		} );
 		test( 'should return false when site absent', () => {
-			expect( isSiteWordadsUnsafe( state, 123 ) ).to.eql( false );
+			expect( isSiteWordadsUnsafe( state, 123 ) ).toEqual( false );
 		} );
 	} );
 } );

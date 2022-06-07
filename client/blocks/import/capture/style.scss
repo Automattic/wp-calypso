@@ -1,0 +1,93 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+$placeholder-color: #909398;
+
+.import__onboarding-page {
+	.capture__content {
+		min-height: 80px;
+	}
+
+	.capture__input-wrapper {
+		position: relative;
+		margin: auto;
+		max-width: 500px;
+
+		@include break-medium {
+			max-width: 700px;
+		}
+
+		.components-button.action-buttons__next.is-primary {
+			position: absolute;
+			min-width: auto;
+			padding: 0.625em;
+			top: 2px;
+			right: 0;
+
+			@include break-small {
+				top: 4px;
+			}
+		}
+	}
+
+	.capture__input-wrapper-padding {
+		max-width: 450px;
+
+		@include break-medium {
+			max-width: 650px;
+		}
+
+		padding-right: 50px;
+	}
+
+	.capture__input {
+		width: 100%;
+
+		font-size: 2rem;
+		font-family: $brand-serif;
+		font-weight: 400;
+		line-height: 1.1818em;
+		letter-spacing: -0.4px;
+
+		height: auto;
+		background: transparent;
+		border: none;
+		padding: 0;
+		color: var( --studio-gray-100 );
+
+		&:focus {
+			box-shadow: none;
+			outline: none;
+		}
+
+		&::-ms-clear {
+			display: none;
+		}
+
+		@include break-medium {
+			font-size: 2.75rem; /* stylelint-disable-line */
+		}
+
+		&::placeholder {
+			color: $placeholder-color;
+			line-height: normal;
+		}
+
+		&::-ms-clear {
+			display: none;
+		}
+	}
+
+	.capture__input-error-msg {
+		color: var( --studio-red-60 );
+		font-size: 0.875rem;
+		line-height: 1.4286em;
+		margin-top: 8px;
+	}
+
+	.capture__next-button-icon {
+		.rtl & {
+			transform: scaleX( -1 );
+		}
+	}
+}

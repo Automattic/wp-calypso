@@ -1,8 +1,8 @@
 import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
+import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { SITE_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
@@ -19,7 +19,7 @@ export const anchorFmFlow: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [ 'podcastTitle', 'designSetup', 'processing' ] as StepPath[];
+		return [ 'login', 'podcastTitle', 'designSetup', 'processing', 'error' ] as StepPath[];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -31,6 +31,8 @@ export const anchorFmFlow: Flow = {
 			const siteSlug = siteSlugParam || getNewSite()?.site_slug;
 
 			switch ( currentStep ) {
+				case 'login':
+					return navigate( 'podcastTitle' );
 				case 'podcastTitle':
 					return navigate( 'designSetup' );
 				case 'designSetup':
@@ -53,6 +55,8 @@ export const anchorFmFlow: Flow = {
 			const siteSlug = siteSlugParam || getNewSite()?.site_slug;
 
 			switch ( currentStep ) {
+				case 'login':
+					return navigate( 'podcastTitle' );
 				case 'podcastTitle':
 					return navigate( 'designSetup' );
 				case 'designSetup':
@@ -64,7 +68,7 @@ export const anchorFmFlow: Flow = {
 			}
 		};
 
-		const goToStep = ( step: StepPath ) => {
+		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
 			navigate( step );
 		};
 
