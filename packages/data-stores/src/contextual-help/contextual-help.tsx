@@ -43,7 +43,7 @@ export const defaultFallbackLinks = [
 		},
 		get description() {
 			return __(
-				'Learn more about installing a custom theme or plugin using the Pro plan.',
+				'Learn more about installing a custom theme or plugin using the Business plan.',
 				__i18n_text_domain__
 			);
 		},
@@ -786,7 +786,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 			get description() {
 				return __(
 					'On WordPress.com, we include the most popular plugin functionality within our ' +
-						'sites automatically. Additionally, the Pro plan allows you to choose from many ' +
+						'sites automatically. Additionally, the Business plan allows you to choose from many ' +
 						'thousands of plugins, and install them on your site.',
 					__i18n_text_domain__
 				);
@@ -817,7 +817,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 			},
 			get description() {
 				return __(
-					'Along with all the tools and features built right into WordPress.com, the Pro plan ' +
+					'Along with all the tools and features built right into WordPress.com, the Business plan ' +
 						'allows you to install other plugins.',
 					__i18n_text_domain__
 				);
@@ -833,7 +833,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 			},
 			get description() {
 				return __(
-					"When you want to build a one-of-a-kind website, it's time for WordPress.com Pro: " +
+					"When you want to build a one-of-a-kind website, it's time for WordPress.com Business: " +
 						'upload plugins and themes to create a truly tailored experience for your visitors.',
 					__i18n_text_domain__
 				);
@@ -1698,7 +1698,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 			},
 			get description() {
 				return __(
-					'Sites on the Pro Plan using custom plugins and/or custom themes now have the option to switch PHP versions.',
+					'Sites on the Business Plan using custom plugins and/or custom themes and any site on the eCommerce Plan, now have the option to switch PHP versions.',
 					__i18n_text_domain__
 				);
 			},
