@@ -40,7 +40,7 @@ export function SibylArticles( { message, supportSite }: Props ) {
 				aria-labelledby="help-center--contextual_help"
 			>
 				{ articles.map( ( article ) => (
-					<li>
+					<li key={ article.link }>
 						<a href={ article.link } target="_blank" rel="noreferrer noopener">
 							<Icon icon={ page } />
 							{ article.title }
