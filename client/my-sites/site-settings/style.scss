@@ -668,4 +668,12 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 			align-items: center;
 		}
 	}
+
+	strong.is-highlighted {
+		background-color: var( --studio-yellow-5 );
+		padding: 0.25rem 0.5rem;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 5px;
+		color: var( --stugio-gray-80 );
+	}
 }
