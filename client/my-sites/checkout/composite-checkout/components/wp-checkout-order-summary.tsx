@@ -187,7 +187,7 @@ function CheckoutSummaryFeaturesList( props: {
 			{ hasNoAdsAddOn && (
 				<CheckoutSummaryFeaturesListItem>
 					<WPCheckoutCheckIcon id="features-list-support-text" />
-					{ translate( 'Remove WordPress.com ads from your site' ) }
+					{ translate( 'Remove ads from your site with the No Ads add-on' ) }
 				</CheckoutSummaryFeaturesListItem>
 			) }
 
