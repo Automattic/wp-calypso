@@ -5,16 +5,17 @@ import debugFactory from 'debug';
 import { useEffect, useRef } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { useCachedContactDetails } from './use-cached-contact-details';
 import useCountryList from './use-country-list';
 import type {
 	PossiblyCompleteDomainContactDetails,
 	CountryListItem,
 } from '@automattic/wpcom-checkout';
 
-const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
+const debug = debugFactory(
+	'calypso:composite-checkout:use-cached-contact-details-for-checkout-form'
+);
 
-function useCachedContactDetailsForCheckoutForm(
+export function useCachedContactDetailsForCheckoutForm(
 	cachedContactDetails: PossiblyCompleteDomainContactDetails | null,
 	overrideCountryList?: CountryListItem[]
 ): void {
@@ -82,15 +83,4 @@ function useCachedContactDetailsForCheckoutForm(
 		loadDomainContactDetailsFromCache,
 		countriesList,
 	] );
-}
-
-/**
- * Load cached contact details from the server and use them to populate the
- * checkout contact form and the shopping cart tax location.
- */
-export default function useCachedDomainContactDetails(
-	overrideCountryList?: CountryListItem[]
-): void {
-	const cachedContactDetails = useCachedContactDetails();
-	useCachedContactDetailsForCheckoutForm( cachedContactDetails, overrideCountryList );
 }
