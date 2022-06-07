@@ -144,7 +144,7 @@ class StartOver extends Component {
 				>
 					<HeaderCake backHref={ '/settings/general/' + selectedSiteSlug }>Start Over</HeaderCake>
 					<Card>
-						<h1>{ translate( 'Start Over' ) }</h1>
+						<FormattedHeader brandFont headerText={ translate( 'Start Over' ) } />
 						<p>
 							{ translate(
 								"If you want a site but don't want any of the posts and pages you have now, " +
