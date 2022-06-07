@@ -7,8 +7,7 @@ import {
 	createShoppingCartManagerClient,
 	getEmptyResponseCart,
 } from '@automattic/shopping-cart';
-import '@testing-library/jest-dom/extend-expect';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
 import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -87,75 +86,6 @@ function MyTestContent( { countries }: { countries: CountryListItem[] } ) {
 }
 
 describe( 'useCachedDomainContactDetails', () => {
-	it( 'sends the postal code and country from the contact details endpoint to the cart for country with postal code', async () => {
-		const countryCode = 'US';
-		const postalCode = '10001';
-		mockCachedContactDetailsEndpoint( {
-			country_code: countryCode,
-			postal_code: postalCode,
-		} );
-		render( <MyTestWrapper countries={ countryList } /> );
-		await waitFor( () => {
-			expect( screen.queryByText( `Tax Country: ${ countryCode }` ) ).toBeInTheDocument();
-			expect( screen.queryByText( `Tax Postal: ${ postalCode }` ) ).toBeInTheDocument();
-		} );
-	} );
-
-	it( 'sends the country from the contact details endpoint to the cart for country without postal code', async () => {
-		mockCachedContactDetailsEndpoint( {
-			country_code: 'CW',
-			postal_code: '10001',
-		} );
-		render( <MyTestWrapper countries={ countryList } /> );
-		await waitFor( () => {
-			expect( screen.queryByText( `Tax Country: CW` ) ).toBeInTheDocument();
-			expect( screen.queryByText( `Tax Postal: 10001` ) ).not.toBeInTheDocument();
-		} );
-	} );
-
-	it( 'does not send the country from the contact details endpoint to the cart if countries have not loaded', async () => {
-		mockCachedContactDetailsEndpoint( {
-			country_code: 'US',
-			postal_code: '10001',
-		} );
-		render( <MyTestWrapper countries={ [] } /> );
-		await expect( screen.findByText( 'Tax Country: US' ) ).toNeverAppear();
-		await expect( screen.findByText( 'Tax Postal: 10001' ) ).toNeverAppear();
-	} );
-
-	it( 'does not send the country from the contact details endpoint to the cart if the cart reloads after they have already been sent', async () => {
-		mockCachedContactDetailsEndpoint( {
-			country_code: 'US',
-			postal_code: '10001',
-		} );
-		render( <MyTestWrapper countries={ countryList } /> );
-		// Wait for the cart info to be populated by the hook.
-		await waitFor( () => {
-			expect( screen.queryByText( 'Tax Country: US' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Tax Postal: 10001' ) ).toBeInTheDocument();
-		} );
-
-		// Change the cart info to something else.
-		fireEvent.change( screen.getByLabelText( 'Country' ), {
-			target: { value: 'US' },
-		} );
-		fireEvent.change( screen.getByLabelText( 'Postal' ), {
-			target: { value: '90210' },
-		} );
-		fireEvent.click( await screen.findByText( 'Click to set cart tax location' ) );
-		await waitFor( () => {
-			expect( screen.queryByText( 'Tax Country: US' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Tax Postal: 90210' ) ).toBeInTheDocument();
-		} );
-
-		// Reload the cart and verify that the hook does not revert the cart info.
-		fireEvent.click( await screen.findByText( 'Click to reload cart' ) );
-		await expect( screen.findByText( 'Tax Postal: 10001' ) ).toNeverAppear();
-		await waitFor( () => {
-			expect( screen.queryByText( 'Tax Postal: 90210' ) ).toBeInTheDocument();
-		} );
-	} );
-
 	it( 'sends the postal code and country from the contact details endpoint to the checkout data store for country with postal code', async () => {
 		const countryCode = 'US';
 		const postalCode = '10001';

@@ -27,7 +27,7 @@ export function createGooglePayMethod(
 	};
 }
 
-export function GooglePayLabel(): JSX.Element {
+export function GooglePayLabel() {
 	return (
 		<Fragment>
 			<span>{ 'Google Pay' }</span>
@@ -48,7 +48,7 @@ export function GooglePaySubmitButton( {
 	onClick?: ProcessPayment;
 	stripe: Stripe;
 	stripeConfiguration: StripeConfiguration;
-} ): JSX.Element {
+} ) {
 	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
 	const onSubmit = useCallback(
 		( { name, paymentMethodToken } ) => {
@@ -89,6 +89,6 @@ export function GooglePaySubmitButton( {
 	);
 }
 
-export function GooglePaySummary(): JSX.Element {
+export function GooglePaySummary() {
 	return <Fragment>{ 'Google Pay' }</Fragment>;
 }

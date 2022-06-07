@@ -1,12 +1,9 @@
 import deepFreeze from 'deep-freeze';
 import { REWIND_BACKUPS_SET } from 'calypso/state/action-types';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import reducer from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should default to an empty object', () => {
 		const state = reducer( undefined, {} );

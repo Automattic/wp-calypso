@@ -165,7 +165,7 @@ export const getTask = (
 					  ),
 				actionText: isBlogger ? translate( 'Launch blog' ) : translate( 'Launch site' ),
 				actionDispatch: launchSiteOrRedirectToLaunchSignupFlow,
-				actionDispatchArgs: [ siteId ],
+				actionDispatchArgs: [ siteId, 'my-home' ],
 				actionDisableOnComplete: true,
 			};
 			break;

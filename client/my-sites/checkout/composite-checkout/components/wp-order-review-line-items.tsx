@@ -12,8 +12,6 @@ import {
 	getPartnerCoupon,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import PropTypes from 'prop-types';
-import * as React from 'react';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -24,6 +22,7 @@ import type {
 	ResponseCartProduct,
 	RemoveCouponFromCart,
 } from '@automattic/shopping-cart';
+import type { PropsWithChildren } from 'react';
 
 const WPOrderReviewList = styled.ul< { theme?: Theme } >`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
@@ -42,10 +41,9 @@ const WPOrderReviewListItem = styled.li`
 export function WPOrderReviewSection( {
 	children,
 	className,
-}: {
-	children: React.ReactNode;
+}: PropsWithChildren< {
 	className?: string;
-} ): JSX.Element {
+} > ) {
 	return <div className={ joinClasses( [ className, 'order-review-section' ] ) }>{ children }</div>;
 }
 
@@ -77,7 +75,7 @@ export function WPOrderReviewLineItems( {
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
 	isJetpackCheckout: boolean;
-} ): JSX.Element {
+} ) {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const { formStatus } = useFormStatus();
@@ -148,16 +146,6 @@ export function WPOrderReviewLineItems( {
 		</WPOrderReviewList>
 	);
 }
-
-WPOrderReviewLineItems.propTypes = {
-	className: PropTypes.string,
-	siteId: PropTypes.number,
-	isSummary: PropTypes.bool,
-	removeProductFromCart: PropTypes.func,
-	removeCoupon: PropTypes.func,
-	onChangePlanLength: PropTypes.func,
-	createUserAndSiteBeforeTransaction: PropTypes.bool,
-};
 
 /**
  * Checks if the given item is the premium plan product and the DIFM product exists in the provided shopping cart object

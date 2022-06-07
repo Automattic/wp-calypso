@@ -43,7 +43,7 @@ function ChangePaymentMethod( {
 	purchaseId,
 	purchaseListUrl,
 	siteSlug,
-}: ChangePaymentMethodProps ): JSX.Element {
+}: ChangePaymentMethodProps ) {
 	const hasLoadedSites = useSelector( ( state ) => ! isRequestingSites( state ) );
 	const hasLoadedStoredCards = useSelector( hasLoadedStoredCardsFromServer );
 	const hasLoadedUserPurchases = useSelector( hasLoadedUserPurchasesFromServer );
@@ -127,7 +127,7 @@ function getChangePaymentMethodTitleCopy( currentPaymentMethodId: string ): stri
 	return String( titles.changePaymentMethod );
 }
 
-export default function ChangePaymentMethodWrapper( props: ChangePaymentMethodProps ): JSX.Element {
+export default function ChangePaymentMethodWrapper( props: ChangePaymentMethodProps ) {
 	const locale = useSelector( getCurrentUserLocale );
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>

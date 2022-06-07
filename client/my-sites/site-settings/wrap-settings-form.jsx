@@ -167,7 +167,8 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 		};
 
 		submitForm = () => {
-			const { fields, jetpackFieldsToUpdate, settingsFields, siteId, siteIsJetpack } = this.props;
+			const { dirtyFields, fields, jetpackFieldsToUpdate, settingsFields, siteId, siteIsJetpack } =
+				this.props;
 			this.props.removeNotice( 'site-settings-save' );
 			debug( 'submitForm', { fields, settingsFields } );
 
@@ -180,7 +181,9 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 			}
 
 			const siteFields = pick( fields, settingsFields.site );
-			this.props.saveSiteSettings( siteId, siteFields );
+			const modifiedFields = pick( siteFields, dirtyFields );
+
+			this.props.saveSiteSettings( siteId, modifiedFields );
 		};
 
 		handleRadio = ( event ) => {

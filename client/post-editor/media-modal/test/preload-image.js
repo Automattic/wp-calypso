@@ -1,45 +1,43 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import preloadImage from '../preload-image';
 
 describe( '#preloadImage()', () => {
-	let sandbox;
-	let Image;
+	let image;
 
-	useSandbox( ( newSandbox ) => {
-		sandbox = newSandbox;
-		Image = sandbox.stub( global.window, 'Image' );
+	beforeAll( () => {
+		image = jest.spyOn( global.window, 'Image' );
 	} );
 
 	beforeEach( () => {
 		preloadImage.cache.clear();
 	} );
 
+	afterEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	test( 'should load an image', () => {
-		const src = 'example.jpg';
+		const src = 'https://wordpress.com/example.jpg';
 
 		preloadImage( src );
 
-		expect( Image ).to.have.been.calledOnce;
-		expect( Image ).to.have.been.calledWithNew;
-		expect( Image.returnValues[ 0 ].src ).to.equal( src );
+		expect( image ).toBeCalledTimes( 1 );
+		expect( image.mock.results[ 0 ].value.src ).toEqual( src );
 	} );
 
 	test( 'should only load an image once per `src`', () => {
-		preloadImage( 'example.jpg' );
-		preloadImage( 'example.jpg' );
+		preloadImage( 'https://wordpress.com/example.jpg' );
+		preloadImage( 'https://wordpress.com/example.jpg' );
 
-		expect( Image ).to.have.been.calledOnce;
+		expect( image ).toBeCalledTimes( 1 );
 	} );
 
 	test( 'should load an image per unique `src`', () => {
-		preloadImage( 'example1.jpg' );
-		preloadImage( 'example2.jpg' );
+		preloadImage( 'https://wordpress.com/example1.jpg' );
+		preloadImage( 'https://wordpress.com/example2.jpg' );
 
-		expect( Image ).to.have.been.calledTwice;
+		expect( image ).toBeCalledTimes( 2 );
 	} );
 } );

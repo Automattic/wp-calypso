@@ -1,3 +1,4 @@
+import { FormInputValidation } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
@@ -6,7 +7,6 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import QueryCountryStates from 'calypso/components/data/query-country-states';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';

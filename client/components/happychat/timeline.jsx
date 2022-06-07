@@ -179,17 +179,18 @@ const groupMessages = ( messages ) => {
 	let user_id;
 	let type;
 	let source;
-
-	messages.forEach( ( message ) => {
-		if ( user_id !== message.user_id || type !== message.type || source !== message.source ) {
-			// This message is not like the others in this group, start a new group...
-			groups.push( [] );
-			// ... and update the comparison variables to what we expect to find in this new group.
-			( { user_id, type, source } = message );
-		}
-		// Add this message to the last group.
-		groups[ groups.length - 1 ].push( message );
-	} );
+	messages
+		.filter( ( message ) => !! message.message )
+		.forEach( ( message ) => {
+			if ( user_id !== message.user_id || type !== message.type || source !== message.source ) {
+				// This message is not like the others in this group, start a new group...
+				groups.push( [] );
+				// ... and update the comparison variables to what we expect to find in this new group.
+				( { user_id, type, source } = message );
+			}
+			// Add this message to the last group.
+			groups[ groups.length - 1 ].push( message );
+		} );
 
 	return groups;
 };

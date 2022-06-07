@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	isRequestingWordAdsApproval,
 	isRequestingWordAdsApprovalForSite,
@@ -21,9 +20,9 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isRequestingWordAdsApproval( state, 2916284 ) ).to.equal( true );
-			expect( isRequestingWordAdsApproval( state, 77203074 ) ).to.equal( false );
-			expect( isRequestingWordAdsApproval( state, 'unknown' ) ).to.equal( false );
+			expect( isRequestingWordAdsApproval( state, 2916284 ) ).toEqual( true );
+			expect( isRequestingWordAdsApproval( state, 77203074 ) ).toEqual( false );
+			expect( isRequestingWordAdsApproval( state, 'unknown' ) ).toEqual( false );
 		} );
 	} );
 	describe( '#isRequestingWordAdsApprovalForSite()', () => {
@@ -38,9 +37,9 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( isRequestingWordAdsApprovalForSite( state, { ID: 2916284 } ) ).to.equal( true );
-			expect( isRequestingWordAdsApprovalForSite( state, { ID: 77203074 } ) ).to.equal( false );
-			expect( isRequestingWordAdsApprovalForSite( state, null ) ).to.equal( false );
+			expect( isRequestingWordAdsApprovalForSite( state, { ID: 2916284 } ) ).toEqual( true );
+			expect( isRequestingWordAdsApprovalForSite( state, { ID: 77203074 } ) ).toEqual( false );
+			expect( isRequestingWordAdsApprovalForSite( state, null ) ).toEqual( false );
 		} );
 	} );
 	describe( '#getWordAdsError()', () => {
@@ -55,8 +54,8 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getWordAdsError( state, 2916284 ) ).to.equal( null );
-			expect( getWordAdsError( state, 77203074 ) ).to.equal( 'Something unexpected happened' );
+			expect( getWordAdsError( state, 2916284 ) ).toBeNull();
+			expect( getWordAdsError( state, 77203074 ) ).toEqual( 'Something unexpected happened' );
 		} );
 	} );
 	describe( '#getWordAdsErrorForSite()', () => {
@@ -71,11 +70,11 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getWordAdsErrorForSite( state, { ID: 2916284 } ) ).to.equal( null );
-			expect( getWordAdsErrorForSite( state, { ID: 77203074 } ) ).to.equal(
+			expect( getWordAdsErrorForSite( state, { ID: 2916284 } ) ).toBeNull();
+			expect( getWordAdsErrorForSite( state, { ID: 77203074 } ) ).toEqual(
 				'Something unexpected happened'
 			);
-			expect( getWordAdsErrorForSite( state, null ) ).to.equal( null );
+			expect( getWordAdsErrorForSite( state, null ) ).toBeNull();
 		} );
 	} );
 	describe( '#getWordAdsSuccess()', () => {
@@ -90,8 +89,8 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getWordAdsSuccess( state, 2916284 ) ).to.equal( null );
-			expect( getWordAdsSuccess( state, 77203074 ) ).to.equal( true );
+			expect( getWordAdsSuccess( state, 2916284 ) ).toBeNull();
+			expect( getWordAdsSuccess( state, 77203074 ) ).toEqual( true );
 		} );
 	} );
 	describe( '#getWordAdsSuccessForSite()', () => {
@@ -106,9 +105,9 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getWordAdsSuccessForSite( state, { ID: 2916284 } ) ).to.equal( null );
-			expect( getWordAdsSuccessForSite( state, { ID: 77203074 } ) ).to.equal( true );
-			expect( getWordAdsSuccessForSite( state, null ) ).to.equal( null );
+			expect( getWordAdsSuccessForSite( state, { ID: 2916284 } ) ).toBeNull();
+			expect( getWordAdsSuccessForSite( state, { ID: 77203074 } ) ).toEqual( true );
+			expect( getWordAdsSuccessForSite( state, null ) ).toBeNull();
 		} );
 	} );
 } );

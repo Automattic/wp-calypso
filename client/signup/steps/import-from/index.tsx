@@ -3,6 +3,16 @@ import classnames from 'classnames';
 import page from 'page';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import BloggerImporter from 'calypso/blocks/importer/blogger';
+import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
+import NotFound from 'calypso/blocks/importer/components/not-found';
+import { useSignupStepNavigator } from 'calypso/blocks/importer/hooks/use-signup-step-navigator';
+import MediumImporter from 'calypso/blocks/importer/medium';
+import SquarespaceImporter from 'calypso/blocks/importer/squarespace';
+import { Importer, ImportJob } from 'calypso/blocks/importer/types';
+import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
+import WixImporter from 'calypso/blocks/importer/wix';
+import WordpressImporter from 'calypso/blocks/importer/wordpress';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -18,15 +28,6 @@ import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSite, getSiteId } from 'calypso/state/sites/selectors';
-import BloggerImporter from './blogger';
-import NotAuthorized from './components/not-authorized';
-import NotFound from './components/not-found';
-import MediumImporter from './medium';
-import SquarespaceImporter from './squarespace';
-import { Importer, ImportJob } from './types';
-import { getImporterTypeForEngine } from './util';
-import WixImporter from './wix';
-import WordpressImporter from './wordpress';
 import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import './style.scss';
 
@@ -62,6 +63,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 	const getImportJob = ( engine: Importer ): ImportJob | undefined => {
 		return siteImports.find( ( x ) => x.type === getImporterTypeForEngine( engine ) );
 	};
+	const stepNavigator = useSignupStepNavigator( siteId, siteSlug, fromSite );
 
 	/**
 	 ↓ Effects
@@ -108,10 +110,6 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 		}
 	}
 
-	function shouldHideBackBtn() {
-		return false;
-	}
-
 	function getBackUrl() {
 		if ( stepName === 'importing' ) {
 			return getStepUrl( 'importer', 'capture', '', '', { siteSlug } );
@@ -150,6 +148,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 				siteSlug={ siteSlug }
 				fromSite={ fromSite }
 				urlData={ urlData }
+				stepNavigator={ stepNavigator }
 			/>
 		);
 	}
@@ -164,6 +163,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 				siteSlug={ siteSlug }
 				fromSite={ fromSite }
 				urlData={ urlData }
+				stepNavigator={ stepNavigator }
 			/>
 		);
 	}
@@ -178,6 +178,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 				siteSlug={ siteSlug }
 				fromSite={ fromSite }
 				urlData={ urlData }
+				stepNavigator={ stepNavigator }
 			/>
 		);
 	}
@@ -190,6 +191,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 				siteId={ siteId }
 				siteSlug={ siteSlug }
 				fromSite={ fromSite }
+				stepNavigator={ stepNavigator }
 			/>
 		);
 	}
@@ -201,6 +203,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 				siteId={ siteId }
 				siteSlug={ siteSlug }
 				fromSite={ fromSite }
+				stepNavigator={ stepNavigator }
 			/>
 		);
 	}
@@ -213,7 +216,7 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 				flowName={ 'importer' }
 				stepName={ stepName }
 				hideSkip={ true }
-				hideBack={ shouldHideBackBtn() }
+				hideBack={ false }
 				backUrl={ getBackUrl() }
 				goToPreviousStep={ goToPreviousStep }
 				hideNext={ true }
@@ -234,7 +237,12 @@ const ImportOnboardingFrom: React.FunctionComponent< Props > = ( props ) => {
 								} else if ( ! siteSlug ) {
 									return <NotFound />;
 								} else if ( ! hasPermission() ) {
-									return <NotAuthorized siteSlug={ siteSlug } />;
+									return (
+										<NotAuthorized
+											onStartBuilding={ stepNavigator?.goToIntentPage }
+											onBackToStart={ stepNavigator?.goToImportCapturePage }
+										/>
+									);
 								} else if (
 									engine === 'blogger' &&
 									isEnabled( 'onboarding/import-from-blogger' )

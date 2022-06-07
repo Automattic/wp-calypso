@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getThumbnailForIframe } from '../selectors';
 
 describe( 'selectors', () => {
@@ -14,7 +13,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getThumbnailForIframe( state, embedUrl ) ).to.equal( undefined );
+			expect( getThumbnailForIframe( state, embedUrl ) ).toBeUndefined();
 		} );
 
 		test( 'should return the thumbnail if it exists for an iframe src', () => {
@@ -27,7 +26,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getThumbnailForIframe( state, embedUrl ) ).to.eql( thumbnailUrl );
+			expect( getThumbnailForIframe( state, embedUrl ) ).toEqual( thumbnailUrl );
 		} );
 	} );
 } );

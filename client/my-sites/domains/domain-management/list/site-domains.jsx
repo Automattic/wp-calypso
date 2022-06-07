@@ -17,7 +17,7 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type } from 'calypso/lib/domains/constants';
-import Breadcrumbs from 'calypso/my-sites/domains/domain-management/components/breadcrumbs';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/list/empty-domains-list-card';
 import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
@@ -34,14 +34,13 @@ import {
 	showUpdatePrimaryDomainSuccessNotice,
 	showUpdatePrimaryDomainErrorNotice,
 } from 'calypso/state/domains/management/actions';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getPurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import DomainOnly from './domain-only';
@@ -59,7 +58,19 @@ import {
 import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
 
-const noop = () => {};
+const changePrimary = ( domain, mode ) =>
+	composeAnalytics(
+		recordGoogleEvent(
+			'Domain Management',
+			'Changed Primary Domain to in List',
+			'Domain Name',
+			domain.name
+		),
+		recordTracksEvent( 'calypso_domain_management_list_change_primary_domain_click', {
+			section: domain.type,
+			mode,
+		} )
+	);
 
 export class SiteDomains extends Component {
 	static propTypes = {
@@ -68,10 +79,6 @@ export class SiteDomains extends Component {
 		isRequestingDomains: PropTypes.bool,
 		context: PropTypes.object,
 		renderAllSites: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		changePrimary: noop,
 	};
 
 	state = {
@@ -93,6 +100,7 @@ export class SiteDomains extends Component {
 			selectedSite,
 			context,
 			translate,
+			dispatch,
 		} = this.props;
 		const { primaryDomainIndex, settingPrimaryDomain } = this.state;
 		const disabled = settingPrimaryDomain;
@@ -123,19 +131,27 @@ export class SiteDomains extends Component {
 				initialSortOrder: -1,
 				sortFunctions: [
 					( first, second, sortOrder ) => {
-						const { listStatusWeight: firstStatusWeight } = resolveDomainStatus( first, null, {
-							getMappingErrors: true,
-						} );
-						const { listStatusWeight: secondStatusWeight } = resolveDomainStatus( second, null, {
-							getMappingErrors: true,
-						} );
+						const { listStatusWeight: firstStatusWeight } = resolveDomainStatus(
+							first,
+							null,
+							translate,
+							dispatch,
+							{ getMappingErrors: true }
+						);
+						const { listStatusWeight: secondStatusWeight } = resolveDomainStatus(
+							second,
+							null,
+							translate,
+							dispatch,
+							{ getMappingErrors: true }
+						);
 						return ( ( firstStatusWeight ?? 0 ) - ( secondStatusWeight ?? 0 ) ) * sortOrder;
 					},
 					getReverseSimpleSortFunctionBy( 'domain' ),
 				],
 				bubble: countDomainsInOrangeStatus(
 					nonWpcomDomains.map( ( domain ) =>
-						resolveDomainStatus( domain, null, {
+						resolveDomainStatus( domain, null, translate, dispatch, {
 							getMappingErrors: true,
 							siteSlug: selectedSite.slug,
 						} )
@@ -292,7 +308,7 @@ export class SiteDomains extends Component {
 		];
 
 		return (
-			<Breadcrumbs
+			<DomainHeader
 				items={ [ item ] }
 				mobileItem={ item }
 				buttons={ buttons }
@@ -371,17 +387,9 @@ export class SiteDomains extends Component {
 		);
 	}
 
-	setPrimaryDomain( domainName ) {
-		return new Promise( ( resolve, reject ) => {
-			this.props.setPrimaryDomain( this.props.selectedSite.ID, domainName, ( error, data ) => {
-				if ( ! error && data && data.success ) {
-					page.redirect( domainManagementList( this.props.selectedSite.slug ) );
-					resolve();
-				} else {
-					reject( error );
-				}
-			} );
-		} );
+	async setPrimaryDomain( domainName ) {
+		await this.props.dispatch( setPrimaryDomain( this.props.selectedSite.ID, domainName ) );
+		page.redirect( domainManagementList( this.props.selectedSite.slug ) );
 	}
 
 	handleUpdatePrimaryDomainWpcom = ( domainName ) => {
@@ -389,7 +397,7 @@ export class SiteDomains extends Component {
 			return;
 		}
 
-		this.props.changePrimary( domainName, 'wpcom_domain_manage_click' );
+		this.props.dispatch( changePrimary( domainName, 'wpcom_domain_manage_click' ) );
 
 		const currentPrimaryIndex = this.props.domains.findIndex( ( { isPrimary } ) => isPrimary );
 		this.setState( { settingPrimaryDomain: true, primaryDomainIndex: -1 } );
@@ -398,10 +406,10 @@ export class SiteDomains extends Component {
 			.then(
 				() => {
 					this.setState( { primaryDomainIndex: -1 } );
-					this.props.showUpdatePrimaryDomainSuccessNotice( domainName );
+					this.props.dispatch( showUpdatePrimaryDomainSuccessNotice( domainName ) );
 				},
 				( error ) => {
-					this.props.showUpdatePrimaryDomainErrorNotice( error.message );
+					this.props.dispatch( showUpdatePrimaryDomainErrorNotice( error.message ) );
 					this.setState( { primaryDomainIndex: currentPrimaryIndex } );
 				}
 			)
@@ -417,7 +425,7 @@ export class SiteDomains extends Component {
 			return;
 		}
 
-		this.props.changePrimary( domain, mode );
+		this.props.dispatch( changePrimary( domain, mode ) );
 		const currentPrimaryIndex = this.props.domains.findIndex( ( { isPrimary } ) => isPrimary );
 		const currentPrimaryName = this.props.domains[ currentPrimaryIndex ].name;
 
@@ -437,14 +445,14 @@ export class SiteDomains extends Component {
 					settingPrimaryDomain: false,
 				} );
 
-				this.props.showUpdatePrimaryDomainSuccessNotice( domain.name );
+				this.props.dispatch( showUpdatePrimaryDomainSuccessNotice( domain.name ) );
 			},
 			( error ) => {
 				this.setState( {
 					settingPrimaryDomain: false,
 					primaryDomainIndex: currentPrimaryIndex,
 				} );
-				this.props.showUpdatePrimaryDomainErrorNotice( error.message );
+				this.props.dispatch( showUpdatePrimaryDomainErrorNotice( error.message ) );
 			}
 		);
 	};
@@ -472,51 +480,27 @@ export class SiteDomains extends Component {
 	};
 }
 
-const changePrimary = ( domain, mode ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Changed Primary Domain to in List',
-			'Domain Name',
-			domain.name
-		),
-		recordTracksEvent( 'calypso_domain_management_list_change_primary_domain_click', {
-			section: domain.type,
-			mode,
-		} )
-	);
+export default connect( ( state, ownProps ) => {
+	const siteId = ownProps?.selectedSite?.ID || null;
+	const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+	const selectedSite = ownProps?.selectedSite || null;
+	const isOnFreePlan = selectedSite?.plan?.is_free || false;
+	const purchases = getPurchases( state );
+	const productsList = getProductsList( state );
 
-export default connect(
-	( state, ownProps ) => {
-		const siteId = ownProps?.selectedSite?.ID || null;
-		const userCanManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-		const selectedSite = ownProps?.selectedSite || null;
-		const isOnFreePlan = selectedSite?.plan?.is_free || false;
-		const purchases = getPurchases( state );
-		const productsList = getProductsList( state );
-
-		return {
-			currentRoute: getCurrentRoute( state ),
-			hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
-			hasProductsList: 0 < ( Object.getOwnPropertyNames( productsList )?.length ?? 0 ),
-			isDomainOnly: isDomainOnlySite( state, siteId ),
-			isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
-			hasNonPrimaryDomainsFlag: getCurrentUser( state )
-				? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
-				: false,
-			isOnFreePlan,
-			userCanManageOptions,
-			canSetPrimaryDomain: hasActiveSiteFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
-			purchases,
-			isFetchingPurchases: isFetchingSitePurchases( state ),
-		};
-	},
-	{
-		changePrimary,
-		errorNotice,
-		setPrimaryDomain,
-		showUpdatePrimaryDomainErrorNotice,
-		showUpdatePrimaryDomainSuccessNotice,
-		successNotice,
-	}
-)( localize( withLocalizedMoment( SiteDomains ) ) );
+	return {
+		currentRoute: getCurrentRoute( state ),
+		hasDomainCredit: !! ownProps.selectedSite && hasDomainCredit( state, siteId ),
+		hasProductsList: 0 < ( Object.getOwnPropertyNames( productsList )?.length ?? 0 ),
+		isDomainOnly: isDomainOnlySite( state, siteId ),
+		isAtomicSite: isSiteAutomatedTransfer( state, siteId ),
+		hasNonPrimaryDomainsFlag: getCurrentUser( state )
+			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+			: false,
+		isOnFreePlan,
+		userCanManageOptions,
+		canSetPrimaryDomain: siteHasFeature( state, siteId, FEATURE_SET_PRIMARY_CUSTOM_DOMAIN ),
+		purchases,
+		isFetchingPurchases: isFetchingSitePurchases( state ),
+	};
+} )( localize( withLocalizedMoment( SiteDomains ) ) );

@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { isEmpty, merge, reduce } from 'lodash';
 import { PureComponent } from 'react';
@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { getDomainRegistrations, getDomainTransfers } from 'calypso/lib/cart-values/cart-items';
 import { getTld, isHstsRequired } from 'calypso/lib/domains';
 import { HTTPS_SSL } from 'calypso/lib/url/support';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -48,25 +49,22 @@ class DomainRegistrationHsts extends PureComponent {
 		const { translate } = this.props;
 
 		return (
-			<div className="checkout__domain-registration-hsts">
-				<Gridicon icon="info-outline" size={ 18 } />
-				<p>
-					{ translate(
-						'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
-							'to host a website. When you host this domain at WordPress.com an SSL ' +
-							'certificate is included. {{a}}Learn more{{/a}}.',
-						{
-							args: {
-								tld: tlds,
-							},
-							components: {
-								a: <a href={ HTTPS_SSL } target="_blank" rel="noopener noreferrer" />,
-								strong: <strong />,
-							},
-						}
-					) }
-				</p>
-			</div>
+			<CheckoutTermsItem>
+				{ translate(
+					'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
+						'to host a website. When you host this domain at WordPress.com an SSL ' +
+						'certificate is included. {{a}}Learn more{{/a}}.',
+					{
+						args: {
+							tld: tlds,
+						},
+						components: {
+							a: <a href={ localizeUrl( HTTPS_SSL ) } target="_blank" rel="noopener noreferrer" />,
+							strong: <strong />,
+						},
+					}
+				) }
+			</CheckoutTermsItem>
 		);
 	}
 }

@@ -1,5 +1,7 @@
 import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
+import JetpackBoostWelcomePage from 'calypso/components/jetpack/jetpack-boost-welcome';
 import JetpackFreeWelcomePage from 'calypso/components/jetpack/jetpack-free-welcome';
+import JetpackSocialWelcomePage from 'calypso/components/jetpack/jetpack-social-welcome';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -85,6 +87,16 @@ export const productSelect =
 
 export function jetpackFreeWelcome( context: PageJS.Context, next: () => void ): void {
 	context.primary = <JetpackFreeWelcomePage />;
+	next();
+}
+
+export function jetpackBoostWelcome( context: PageJS.Context, next: () => void ): void {
+	context.primary = <JetpackBoostWelcomePage />;
+	next();
+}
+
+export function jetpackSocialWelcome( context: PageJS.Context, next: () => void ): void {
+	context.primary = <JetpackSocialWelcomePage />;
 	next();
 }
 

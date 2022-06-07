@@ -33,7 +33,6 @@ let lastRetargetTime = 0;
  *
  * @param {string} urlPath The URL path we should report to the ad-trackers which may be different from the actual one
  * for privacy reasons.
- *
  * @returns {void}
  */
 export async function retarget( urlPath ) {

@@ -30,15 +30,15 @@ describe( 'US Address Fieldset', () => {
 
 	test( 'should render expected input components', () => {
 		renderWithProvider( <UsAddressFieldset { ...defaultProps } /> );
-		expect( screen.queryByLabelText( 'City' ) ).toBeDefined();
-		expect( screen.queryByLabelText( 'State' ) ).toBeDefined();
-		expect( screen.queryByLabelText( 'ZIP code' ) ).toBeDefined();
+		expect( screen.queryByLabelText( 'City' ) ).toBeInTheDocument();
+		expect( screen.queryByLabelText( 'State' ) ).toBeInTheDocument();
+		expect( screen.queryByLabelText( 'ZIP code' ) ).toBeInTheDocument();
 	} );
 
 	test( 'should render all expected input components but postal code', () => {
 		renderWithProvider( <UsAddressFieldset { ...propsWithoutPostalCode } /> );
-		expect( screen.queryByLabelText( 'City' ) ).toBeDefined();
-		expect( screen.queryByLabelText( 'State' ) ).toBeDefined();
-		expect( screen.queryByLabelText( 'Postal Code' ) ).toBeNull();
+		expect( screen.queryByLabelText( 'City' ) ).toBeInTheDocument();
+		expect( screen.queryByLabelText( 'State' ) ).toBeInTheDocument();
+		expect( screen.queryByLabelText( 'Postal Code' ) ).not.toBeInTheDocument();
 	} );
 } );

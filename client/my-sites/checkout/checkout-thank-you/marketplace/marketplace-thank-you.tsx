@@ -5,11 +5,9 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import { ThankYou } from 'calypso/components/thank-you';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import Item from 'calypso/layout/masterbar/item';
-import Masterbar from 'calypso/layout/masterbar/masterbar';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
+import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
@@ -41,53 +39,9 @@ const ThankYouContainer = styled.div`
 	}
 `;
 
-const MasterbarStyled = styled( Masterbar )`
-	--color-masterbar-background: var( --studio-white );
-	--color-masterbar-text: var( --studio-gray-60 );
-	border-bottom: 0;
-`;
-
-const WordPressLogoStyled = styled( WordPressLogo )`
-	max-height: calc( 100% - 47px );
-	align-self: center;
-	fill: rgb( 54, 54, 54 );
-`;
-
-const ItemStyled = styled( Item )`
-	cursor: pointer;
-	font-size: 14px;
-	font-weight: 500;
-	padding: 0;
-	justify-content: left;
-
-	&:hover {
-		background: var( --studio-white );
-		text-decoration: underline;
-	}
-
-	.gridicon {
-		height: 17px;
-		fill: var( --studio-black );
-
-		@media ( max-width: 480px ) {
-			margin: 0;
-		}
-	}
-
-	@media ( max-width: 480px ) {
-		.masterbar__item-content {
-			display: block;
-		}
-	}
-`;
-
 const AtomicTransferComplete = 'completed';
 
-interface IProps {
-	productSlug: string;
-}
-
-const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
+const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -106,7 +60,7 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 		if ( ! siteId || transfer?.status === AtomicTransferComplete ) {
 			return;
 		}
-		waitFor( 2 ).then( () => dispatch( dispatch( requestLatestAtomicTransfer( siteId ) ) ) );
+		waitFor( 2 ).then( () => dispatch( requestLatestAtomicTransfer( siteId ) ) );
 	}, [ siteId, dispatch, transfer ] );
 
 	useEffect( () => {
@@ -238,17 +192,12 @@ const MarketplaceThankYou = ( { productSlug }: IProps ): JSX.Element => {
 					}
 				` }
 			/>
-			<MasterbarStyled>
-				<WordPressLogoStyled />
-				<ItemStyled
-					icon="chevron-left"
-					onClick={ () =>
-						( document.location.href = `${ document.location.origin }/plugins/${ siteSlug }` )
-					} // Force reload the page.
-				>
-					{ translate( 'Back to plugins' ) }
-				</ItemStyled>
-			</MasterbarStyled>
+			<MasterbarStyled
+				onClick={ () =>
+					( document.location.href = `${ document.location.origin }/plugins/${ siteSlug }` )
+				}
+				backText={ translate( 'Back to plugins' ) }
+			/>
 			<ThankYouContainer>
 				<ThankYou
 					containerClassName="marketplace-thank-you"

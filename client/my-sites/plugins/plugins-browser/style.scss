@@ -29,3 +29,27 @@
 		}
 	}
 }
+
+.plugins-browser__clear-filters, .plugins-browser__clear-filters:visited {
+	text-decoration: underline;
+	color: var( --studio-black );
+}
+
+.plugins-browser__no-results {
+	@include breakpoint-deprecated('<660px') {
+		margin: 0 16px;
+	}
+}
+.plugins-browser__main-container {
+	&::before {
+		box-sizing: border-box;
+		content: '';
+		background-color: #fdfdfd;
+		position: absolute;
+		height: 100%;
+		width: 200vw;
+		left: -100vw;
+		z-index: -1;
+		border-top: 1px solid #eeeeee;
+	}
+}

@@ -1,4 +1,5 @@
 import { isDomainRegistration, isDomainMapping } from '@automattic/calypso-products';
+import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -180,7 +181,13 @@ const CancelPurchaseRefundInformation = ( {
 									'servers{{/a}} instead.',
 								{
 									components: {
-										a: <a href={ UPDATE_NAMESERVERS } target="_blank" rel="noopener noreferrer" />,
+										a: (
+											<a
+												href={ localizeUrl( UPDATE_NAMESERVERS ) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
 									},
 								}
 							),

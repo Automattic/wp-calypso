@@ -16,5 +16,6 @@ module.exports = {
 	setupFilesAfterEnv: [ '<rootDir>/../test/client/setup-test-framework.js' ],
 	globals: {
 		google: {},
+		__i18n_text_domain__: 'default',
 	},
 };

@@ -1,6 +1,5 @@
 import debugFactory from 'debug';
-import { useMemo } from 'react';
-import * as React from 'react';
+import { useMemo, PropsWithChildren } from 'react';
 import ShoppingCartContext from './shopping-cart-context';
 import ShoppingCartOptionsContext from './shopping-cart-options-context';
 import type { ShoppingCartManagerOptions, ShoppingCartManagerClient } from './types';
@@ -11,11 +10,10 @@ export default function ShoppingCartProvider( {
 	managerClient,
 	options,
 	children,
-}: {
+}: PropsWithChildren< {
 	managerClient: ShoppingCartManagerClient;
 	options?: ShoppingCartManagerOptions;
-	children: React.ReactNode;
-} ): JSX.Element {
+} > ) {
 	if ( ! options ) {
 		options = {};
 	}

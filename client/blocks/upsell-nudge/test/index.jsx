@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -12,16 +15,25 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
-import { shallow } from 'enzyme';
+import uiReducer from 'calypso/state/ui/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { UpsellNudge } from '../index';
 
-const props = {
-	callToAction: null,
-	title: 'banner title',
-	forceDisplay: true,
-};
+function renderWithRedux( ui ) {
+	return renderWithProvider( ui, {
+		reducers: {
+			ui: uiReducer,
+		},
+	} );
+}
 
 describe( 'UpsellNudge should render a Banner with a class name corresponding to appropriate plan', () => {
+	const props = {
+		callToAction: null,
+		title: 'banner title',
+		forceDisplay: true,
+	};
+
 	[
 		PLAN_PERSONAL,
 		PLAN_PERSONAL_2_YEARS,
@@ -29,8 +41,8 @@ describe( 'UpsellNudge should render a Banner with a class name corresponding to
 		PLAN_JETPACK_PERSONAL_MONTHLY,
 	].forEach( ( plan ) => {
 		test( 'Personal', () => {
-			const comp = shallow( <UpsellNudge { ...props } plan={ plan } /> );
-			expect( comp.find( '.is-upgrade-personal' ) ).toHaveLength( 1 );
+			const { container } = renderWithRedux( <UpsellNudge { ...props } plan={ plan } /> );
+			expect( container.firstChild ).toHaveClass( 'is-upgrade-personal' );
 		} );
 	} );
 
@@ -41,8 +53,8 @@ describe( 'UpsellNudge should render a Banner with a class name corresponding to
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 	].forEach( ( plan ) => {
 		test( 'Premium', () => {
-			const comp = shallow( <UpsellNudge { ...props } plan={ plan } /> );
-			expect( comp.find( '.is-upgrade-premium' ) ).toHaveLength( 1 );
+			const { container } = renderWithRedux( <UpsellNudge { ...props } plan={ plan } /> );
+			expect( container.firstChild ).toHaveClass( 'is-upgrade-premium' );
 		} );
 	} );
 
@@ -53,8 +65,8 @@ describe( 'UpsellNudge should render a Banner with a class name corresponding to
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 	].forEach( ( plan ) => {
 		test( 'Business', () => {
-			const comp = shallow( <UpsellNudge { ...props } plan={ plan } /> );
-			expect( comp.find( '.is-upgrade-business' ) ).toHaveLength( 1 );
+			const { container } = renderWithRedux( <UpsellNudge { ...props } plan={ plan } /> );
+			expect( container.firstChild ).toHaveClass( 'is-upgrade-business' );
 		} );
 	} );
 } );

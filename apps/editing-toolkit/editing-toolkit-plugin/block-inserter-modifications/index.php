@@ -32,7 +32,7 @@ function enqueue_script( $filename, $in_footer = false ) {
 
 	wp_enqueue_script(
 		$filename,
-		plugins_url( 'dist/' . $filename . '.js', __FILE__ ),
+		plugins_url( 'dist/' . $filename . '.min.js', __FILE__ ),
 		$asset['dependencies'],
 		$asset['version'],
 		$in_footer

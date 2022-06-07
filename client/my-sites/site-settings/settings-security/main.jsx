@@ -1,10 +1,10 @@
-import { FEATURE_SECURITY_SETTINGS } from '@automattic/calypso-products';
+import { FEATURE_SECURITY_SETTINGS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -14,24 +14,23 @@ import JetpackCredentials from 'calypso/my-sites/site-settings/jetpack-credentia
 import JetpackCredentialsBanner from 'calypso/my-sites/site-settings/jetpack-credentials-banner';
 import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
 import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
-import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import isRewindActive from 'calypso/state/selectors/is-rewind-active';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { shouldDisplayJetpackCredentialsBanner } from 'calypso/state/site-settings/jetpack-credentials-banner/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export const SiteSettingsSecurity = ( {
 	site,
 	siteId,
-	hasScanProduct,
+	hasScan,
+	hasSecuritySettings,
 	hasActiveRewind,
 	isJetpackSectionEnabled,
 	shouldDisplayBanner,
 	translate,
-	hasActiveSecuritySettingsFeature,
 } ) => {
-	if ( ! hasActiveSecuritySettingsFeature ) {
+	if ( ! hasSecuritySettings ) {
 		return (
 			<EmptyContent
 				action={ translate( 'Manage general settings for %(site)s', {
@@ -47,14 +46,14 @@ export const SiteSettingsSecurity = ( {
 
 	// If Jetpack section is enabled, we no longer display the credentials here, instead we
 	// display a Banner with a CTA that points to their new location (Settings > Jetpack).
-	const showCredentials = ! isJetpackSectionEnabled && ( hasActiveRewind || hasScanProduct );
+	const showCredentials = ! isJetpackSectionEnabled && ( hasActiveRewind || hasScan );
 	const showJetpackBanner =
-		isJetpackSectionEnabled && ( hasActiveRewind || hasScanProduct ) && shouldDisplayBanner;
+		isJetpackSectionEnabled && ( hasActiveRewind || hasScan ) && shouldDisplayBanner;
 
 	return (
 		<Main className="settings-security site-settings">
 			<QueryRewindState siteId={ siteId } />
-			<QuerySitePurchases siteId={ siteId } />
+			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			<DocumentHead title={ translate( 'Security Settings' ) } />
 			<JetpackDevModeNotice />
 			<FormattedHeader
@@ -76,11 +75,11 @@ export const SiteSettingsSecurity = ( {
 SiteSettingsSecurity.propTypes = {
 	site: PropTypes.object,
 	siteId: PropTypes.number,
-	hasScanProduct: PropTypes.bool,
+	hasScan: PropTypes.bool,
 	hasActiveRewind: PropTypes.bool,
 	isJetpackSectionEnabled: PropTypes.bool,
 	shouldDisplayBanner: PropTypes.bool,
-	hasActiveSecuritySettingsFeature: PropTypes.bool,
+	hasSecuritySettings: PropTypes.bool,
 };
 
 export default connect( ( state ) => {
@@ -90,14 +89,10 @@ export default connect( ( state ) => {
 	return {
 		site,
 		siteId,
-		hasScanProduct: siteHasScanProductPurchase( state, siteId ),
+		hasScan: siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ),
 		hasActiveRewind: isRewindActive( state, siteId ),
 		isJetpackSectionEnabled: isJetpackSectionEnabledForSite( state, siteId ),
 		shouldDisplayBanner: shouldDisplayJetpackCredentialsBanner( state ),
-		hasActiveSecuritySettingsFeature: hasActiveSiteFeature(
-			state,
-			siteId,
-			FEATURE_SECURITY_SETTINGS
-		),
+		hasSecuritySettings: siteHasFeature( state, siteId, FEATURE_SECURITY_SETTINGS ),
 	};
 } )( localize( SiteSettingsSecurity ) );

@@ -1,6 +1,4 @@
-import { expect } from 'chai';
 import page from 'page';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import searchUrl from '..';
 
 const SEARCH_KEYWORD = 'giraffe';
@@ -10,16 +8,16 @@ describe( 'SearchUrl', () => {
 	let onReplace;
 	let onPage;
 
-	useSandbox( ( sandbox ) => {
-		onSearch = sandbox.stub();
-		onReplace = sandbox.stub( page, 'replace' );
-		onPage = sandbox.stub( page, 'show' );
+	beforeEach( () => {
+		onSearch = jest.fn();
+		onReplace = jest.spyOn( page, 'replace' );
+		onPage = jest.spyOn( page, 'show' );
 	} );
 
 	test( 'should call onSearch if provided', () => {
 		searchUrl( SEARCH_KEYWORD, '', onSearch );
 
-		expect( onSearch ).to.have.been.calledWith( SEARCH_KEYWORD );
+		expect( onSearch ).toBeCalledWith( SEARCH_KEYWORD );
 	} );
 
 	test( 'should replace existing search keyword', () => {
@@ -27,7 +25,7 @@ describe( 'SearchUrl', () => {
 
 		searchUrl( SEARCH_KEYWORD, 'existing' );
 
-		expect( onReplace ).to.have.been.calledWith( '/cat?s=' + SEARCH_KEYWORD );
+		expect( onReplace ).toBeCalledWith( '/cat?s=' + SEARCH_KEYWORD );
 	} );
 
 	test( 'should set page URL if no existing keyword', () => {
@@ -35,6 +33,6 @@ describe( 'SearchUrl', () => {
 
 		searchUrl( SEARCH_KEYWORD );
 
-		expect( onPage ).to.have.been.calledWith( '/cat?s=' + SEARCH_KEYWORD );
+		expect( onPage ).toBeCalledWith( '/cat?s=' + SEARCH_KEYWORD );
 	} );
 } );

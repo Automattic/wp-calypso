@@ -2,7 +2,7 @@ import {
 	getPlan,
 	PLAN_WPCOM_PRO,
 	PLAN_PERSONAL,
-	FEATURE_NO_ADS,
+	WPCOM_FEATURES_NO_ADVERTS,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
@@ -62,7 +62,7 @@ class DomainToPlanNudge extends Component {
 				} ) }
 				event="domain_to_personal_nudge" //actually cta_name
 				dismissPreferenceName="domain-to-plan-nudge"
-				feature={ FEATURE_NO_ADS }
+				feature={ WPCOM_FEATURES_NO_ADVERTS }
 				href={ `/checkout/${ siteId }/personal` }
 				list={ [
 					translate( 'Remove WordPress.com Ads' ),

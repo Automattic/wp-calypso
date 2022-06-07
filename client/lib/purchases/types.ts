@@ -14,6 +14,7 @@ export interface Purchase {
 	renewDate: string;
 	mostRecentRenewDate?: string;
 	productSlug: string;
+	productDisplayPrice: string;
 	siteId: number;
 	subscribedDate: string;
 	payment: PurchasePayment;

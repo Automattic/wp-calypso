@@ -1,4 +1,4 @@
-import { Dialog } from '@automattic/components';
+import { Dialog, FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
 import classnames from 'classnames';
@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -110,6 +109,9 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const [ editedMultiplePerUser, setEditedMultiplePerUser ] = useState(
 		product?.multiple_per_user ?? false
 	);
+
+	const [ editedMarkAsDonation, setEditedMarkAsDonation ] = useState( product?.type ?? null );
+
 	const [ editedPayWhatYouWant, setEditedPayWhatYouWant ] = useState(
 		product?.buyer_can_change_amount ?? false
 	);
@@ -166,6 +168,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	};
 	const handlePayWhatYouWant = ( newValue ) => setEditedPayWhatYouWant( newValue );
 	const handleMultiplePerUser = ( newValue ) => setEditedMultiplePerUser( newValue );
+	const handleMarkAsDonation = ( newValue ) =>
+		setEditedMarkAsDonation( true === newValue ? 'donation' : null );
 	const onNameChange = ( event ) => setEditedProductName( event.target.value );
 	const onSelectSchedule = ( event ) => setEditedSchedule( event.target.value );
 
@@ -182,6 +186,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					multiple_per_user: editedMultiplePerUser,
 					welcome_email_content: editedCustomConfirmationMessage,
 					subscribe_as_site_subscriber: editedPostsEmail,
+					type: editedMarkAsDonation,
+					is_editable: true,
 				},
 				translate( 'Added "%s" payment plan.', { args: editedProductName } )
 			);
@@ -198,6 +204,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					multiple_per_user: editedMultiplePerUser,
 					welcome_email_content: editedCustomConfirmationMessage,
 					subscribe_as_site_subscriber: editedPostsEmail,
+					type: editedMarkAsDonation,
+					is_editable: true,
 				},
 				translate( 'Updated "%s" payment plan.', { args: editedProductName } )
 			);
@@ -287,6 +295,14 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						label={ translate(
 							'Allow the same customer to purchase or sign up to this plan multiple times.'
 						) }
+					/>
+				</FormFieldset>
+				<FormFieldset>
+					<ToggleControl
+						onChange={ handleMarkAsDonation }
+						checked={ 'donation' === editedMarkAsDonation }
+						label={ translate( 'Mark this plan as a donation.' ) }
+						disabled={ !! product }
 					/>
 				</FormFieldset>
 			</>

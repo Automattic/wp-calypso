@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import {
 	getEditorPostId,
@@ -16,7 +15,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( postId ).to.equal( 183 );
+			expect( postId ).toEqual( 183 );
 		} );
 	} );
 
@@ -28,7 +27,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( isNew ).to.be.false;
+			expect( isNew ).toBe( false );
 		} );
 
 		test( 'should return true if no post ID is currently set', () => {
@@ -38,7 +37,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( isNew ).to.be.true;
+			expect( isNew ).toBe( true );
 		} );
 	} );
 
@@ -53,7 +52,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( path ).to.equal( '/post/2916284' );
+			expect( path ).toEqual( '/post/2916284' );
 		} );
 
 		test( 'should prefix the post route for post types', () => {
@@ -72,7 +71,7 @@ describe( 'selectors', () => {
 				'post'
 			);
 
-			expect( path ).to.equal( '/post/example.wordpress.com' );
+			expect( path ).toEqual( '/post/example.wordpress.com' );
 		} );
 
 		test( 'should prefix the page route for page types', () => {
@@ -91,7 +90,7 @@ describe( 'selectors', () => {
 				'page'
 			);
 
-			expect( path ).to.equal( '/page/example.wordpress.com' );
+			expect( path ).toEqual( '/page/example.wordpress.com' );
 		} );
 
 		test( 'should prefix the type route for custom post types', () => {
@@ -110,7 +109,7 @@ describe( 'selectors', () => {
 				'jetpack-portfolio'
 			);
 
-			expect( path ).to.equal( '/edit/jetpack-portfolio/example.wordpress.com' );
+			expect( path ).toEqual( '/edit/jetpack-portfolio/example.wordpress.com' );
 		} );
 	} );
 
@@ -135,7 +134,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( path ).to.equal( '/post/example.wordpress.com/841' );
+			expect( path ).toEqual( '/post/example.wordpress.com/841' );
 		} );
 
 		test( 'should return the post path with the site ID if site unknown', () => {
@@ -153,7 +152,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( path ).to.equal( '/post/2916284/841' );
+			expect( path ).toEqual( '/post/2916284/841' );
 		} );
 
 		test( 'should prefix the post route for post types', () => {
@@ -187,7 +186,7 @@ describe( 'selectors', () => {
 				841
 			);
 
-			expect( path ).to.equal( '/post/example.wordpress.com/841' );
+			expect( path ).toEqual( '/post/example.wordpress.com/841' );
 		} );
 
 		test( 'should prefix the page route for page types', () => {
@@ -221,7 +220,7 @@ describe( 'selectors', () => {
 				413
 			);
 
-			expect( path ).to.equal( '/page/example.wordpress.com/413' );
+			expect( path ).toEqual( '/page/example.wordpress.com/413' );
 		} );
 
 		test( 'should prefix the type route for custom post types', () => {
@@ -255,7 +254,7 @@ describe( 'selectors', () => {
 				120
 			);
 
-			expect( path ).to.equal( '/edit/jetpack-portfolio/example.wordpress.com/120' );
+			expect( path ).toEqual( '/edit/jetpack-portfolio/example.wordpress.com/120' );
 		} );
 
 		test( 'should derive post type from edited post', () => {
@@ -281,7 +280,7 @@ describe( 'selectors', () => {
 				2916284
 			);
 
-			expect( path ).to.equal( '/edit/jetpack-portfolio/example.wordpress.com' );
+			expect( path ).toEqual( '/edit/jetpack-portfolio/example.wordpress.com' );
 		} );
 
 		test( 'should allow overriding the fallback post type for unknown post', () => {
@@ -305,7 +304,7 @@ describe( 'selectors', () => {
 				'jetpack-portfolio'
 			);
 
-			expect( path ).to.equal( '/edit/jetpack-portfolio/example.wordpress.com' );
+			expect( path ).toEqual( '/edit/jetpack-portfolio/example.wordpress.com' );
 		} );
 	} );
 } );

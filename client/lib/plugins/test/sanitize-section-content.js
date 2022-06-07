@@ -46,25 +46,23 @@ test( 'should strip out disallowed attributes', () =>
 
 test( 'should allow http(s) links', () => {
 	const img = cleanNode( '<img src="http://example.com/images/1f39.png?v=25">' );
-	expect( img.getAttribute( 'src' ) ).toBe( 'http://example.com/images/1f39.png?v=25' );
+	expect( img ).toHaveAttribute( 'src', 'http://example.com/images/1f39.png?v=25' );
 
 	const link = cleanNode( '<a id="test" href="https://github.com/README.md">docs</a>' );
-	expect( link.getAttribute( 'href' ) ).toBe(
-		'https://github.com/README.md?referrer=wordpress.com'
-	);
+	expect( link ).toHaveAttribute( 'href', 'https://github.com/README.md?referrer=wordpress.com' );
 } );
 
 test( 'should omit non http(s) links', () => {
-	expect( cleanNode( '<a href="file:///etc/passwd">a</a>' ).getAttribute( 'href' ) ).toBeNull();
-	expect( cleanNode( '<a href="javascript:alert(o)">a</a>' ).getAttribute( 'href' ) ).toBeNull();
-	expect( cleanNode( '<a href="ssh://bankvault">a</a>' ).getAttribute( 'href' ) ).toBeNull();
-	expect( cleanNode( '<a href="deep+link">a</a>' ).getAttribute( 'href' ) ).toBeNull();
+	expect( cleanNode( '<a href="file:///etc/passwd">a</a>' ) ).not.toHaveAttribute( 'href' );
+	expect( cleanNode( '<a href="javascript:alert(o)">a</a>' ) ).not.toHaveAttribute( 'href' );
+	expect( cleanNode( '<a href="ssh://bankvault">a</a>' ) ).not.toHaveAttribute( 'href' );
+	expect( cleanNode( '<a href="deep+link">a</a>' ) ).not.toHaveAttribute( 'href' );
 } );
 
 test( 'should set link params', () => {
 	const link = cleanNode( '<a href="https://example.com">' );
 
-	expect( link.getAttribute( 'target' ) ).toBe( '_blank' );
+	expect( link ).toHaveAttribute( 'target', '_blank' );
 
 	const rel = link.getAttribute( 'rel' ).split( ' ' );
 	expect( rel ).toContain( 'external' );
@@ -75,7 +73,8 @@ test( 'should set link params', () => {
 test( 'should add referrer query parameter', () => {
 	const link = cleanNode( '<a href="https://example.com?other-query">' );
 
-	expect( link.getAttribute( 'href' ) ).toBe(
+	expect( link ).toHaveAttribute(
+		'href',
 		'https://example.com?other-query=&referrer=wordpress.com'
 	);
 } );
@@ -89,7 +88,7 @@ test( 'should secure Youtube sources', () => {
 		'<iframe type="text/html" class="youtube-player" src="http://youtube.com/123456" />'
 	);
 
-	expect( embed.getAttribute( 'src' ) ).toBe( 'https://youtube.com/123456' );
+	expect( embed ).toHaveAttribute( 'src', 'https://youtube.com/123456' );
 } );
 
 test( 'should bump up header levels', () => {
@@ -159,10 +158,8 @@ test( 'should prevent known XSS attacks', () => {
 	).toBe( '' );
 
 	expect(
-		cleanNode(
-			'<A HREF="javascript:document.location=\'http://www.google.com/\'">XSS</A>'
-		).getAttribute( 'href' )
-	).toBeNull();
+		cleanNode( '<A HREF="javascript:document.location=\'http://www.google.com/\'">XSS</A>' )
+	).not.toHaveAttribute( 'href' );
 } );
 
 test( 'should prevent backspace-based XSS attacks', () => {
@@ -170,5 +167,5 @@ test( 'should prevent backspace-based XSS attacks', () => {
 		'<a href="http://example.com">' + '\u0008'.repeat( 71 ) + 'javascript:alert(1)\u0022>xss</a>'
 	);
 
-	expect( link.getAttribute( 'href' ) ).toBe( 'http://example.com?referrer=wordpress.com' );
+	expect( link ).toHaveAttribute( 'href', 'http://example.com?referrer=wordpress.com' );
 } );

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import {
 	EMAIL_FORWARDING_REQUEST,
 	EMAIL_FORWARDING_REQUEST_SUCCESS,
@@ -36,31 +35,31 @@ describe( 'emailForwardsReducer', () => {
 		test( 'should set type to null', () => {
 			const state = emailForwardsReducer( undefined, action );
 
-			expect( state ).to.have.nested.property( 'example\\.com.type', null );
+			expect( state ).toHaveProperty( [ 'example.com', 'type' ], null );
 		} );
 
 		test( 'should set requesting to true', () => {
 			const state = emailForwardsReducer( undefined, action );
 
-			expect( state ).to.have.nested.property( 'example\\.com.requesting', true );
+			expect( state ).toHaveProperty( [ 'example.com', 'requesting' ], true );
 		} );
 
 		test( 'should set requestError to false', () => {
 			const state = emailForwardsReducer( undefined, action );
 
-			expect( state ).to.have.nested.property( 'example\\.com.requestError', false );
+			expect( state ).toHaveProperty( [ 'example.com', 'requestError' ], false );
 		} );
 
 		test( 'should set forwards to null', () => {
 			const state = emailForwardsReducer( undefined, action );
 
-			expect( state ).to.have.nested.property( 'example\\.com.forwards', null );
+			expect( state ).toHaveProperty( [ 'example.com', 'forwards' ], null );
 		} );
 
 		test( 'should set mxServers to null', () => {
 			const state = emailForwardsReducer( undefined, action );
 
-			expect( state ).to.have.nested.property( 'example\\.com.mxServers', null );
+			expect( state ).toHaveProperty( [ 'example.com', 'mxServers' ], null );
 		} );
 	} );
 
@@ -74,22 +73,19 @@ describe( 'emailForwardsReducer', () => {
 		test( 'should set type to null', () => {
 			const state = emailForwardsReducer( undefined, action );
 
-			expect( state ).to.have.nested.property( 'example\\.com.type', null );
+			expect( state ).toHaveProperty( [ 'example.com', 'type' ], null );
 		} );
 
 		test( 'should set requesting to false', () => {
 			const state = emailForwardsReducer( undefined, action );
 
-			expect( state ).to.have.nested.property( 'example\\.com.requesting', false );
+			expect( state ).toHaveProperty( [ 'example.com', 'requesting' ], false );
 		} );
 
 		test( 'should set requestError to response error message if a message exists on error', () => {
 			const state = emailForwardsReducer( undefined, action );
 
-			expect( state ).to.have.deep.nested.property(
-				'example\\.com.requestError',
-				'An error has occured'
-			);
+			expect( state ).toHaveProperty( [ 'example.com', 'requestError' ], 'An error has occured' );
 		} );
 
 		test( 'should set requestError to true if a message does not exists on error', () => {
@@ -99,19 +95,19 @@ describe( 'emailForwardsReducer', () => {
 				error: true,
 			} );
 
-			expect( state ).to.have.nested.property( 'example\\.com.requestError', true );
+			expect( state ).toHaveProperty( [ 'example.com', 'requestError' ], true );
 		} );
 
 		test( 'should set forwards to null', () => {
 			const state = emailForwardsReducer( undefined, action );
 
-			expect( state ).to.have.nested.property( 'example\\.com.forwards', null );
+			expect( state ).toHaveProperty( [ 'example.com', 'forwards' ], null );
 		} );
 
 		test( 'should set mxServers to null', () => {
 			const state = emailForwardsReducer( undefined, action );
 
-			expect( state ).to.have.nested.property( 'example\\.com.mxServers', null );
+			expect( state ).toHaveProperty( [ 'example.com', 'mxServers' ], null );
 		} );
 	} );
 
@@ -126,7 +122,7 @@ describe( 'emailForwardsReducer', () => {
 				},
 			} );
 
-			expect( state ).to.have.nested.property( 'example\\.com.type', 'forward' );
+			expect( state ).toHaveProperty( [ 'example.com', 'type' ], 'forward' );
 		} );
 
 		test( 'should set type for a response of type `custom`', () => {
@@ -139,7 +135,7 @@ describe( 'emailForwardsReducer', () => {
 				},
 			} );
 
-			expect( state ).to.have.nested.property( 'example\\.com.type', 'custom' );
+			expect( state ).toHaveProperty( [ 'example.com', 'type' ], 'custom' );
 		} );
 
 		test( 'should set type for a response of type `google-apps`', () => {
@@ -151,7 +147,7 @@ describe( 'emailForwardsReducer', () => {
 				},
 			} );
 
-			expect( state ).to.have.nested.property( 'example\\.com.type', 'google-apps' );
+			expect( state ).toHaveProperty( [ 'example.com', 'type' ], 'google-apps' );
 		} );
 
 		test( 'should set type for a response of type `google-apps-another-provider`', () => {
@@ -164,10 +160,7 @@ describe( 'emailForwardsReducer', () => {
 				},
 			} );
 
-			expect( state ).to.have.nested.property(
-				'example\\.com.type',
-				'google-apps-another-provider'
-			);
+			expect( state ).toHaveProperty( [ 'example.com', 'type' ], 'google-apps-another-provider' );
 		} );
 
 		test( 'should set requestError to false from a response of any type', () => {
@@ -190,7 +183,7 @@ describe( 'emailForwardsReducer', () => {
 				},
 			} );
 
-			expect( state ).to.have.nested.property( 'example\\.com.requestError', false );
+			expect( state ).toHaveProperty( [ 'example.com', 'requestError' ], false );
 		} );
 
 		test( 'should set requesting to false from a response of any type', () => {
@@ -213,7 +206,7 @@ describe( 'emailForwardsReducer', () => {
 				},
 			} );
 
-			expect( state ).to.have.nested.property( 'example\\.com.requesting', false );
+			expect( state ).toHaveProperty( [ 'example.com', 'requesting' ], false );
 		} );
 
 		test( 'should set forwards from a response of type `forward`', () => {
@@ -226,9 +219,10 @@ describe( 'emailForwardsReducer', () => {
 				},
 			} );
 
-			expect( state ).to.have.deep.nested.property( 'example\\.com.forwards', [
-				TEST_MAILBOX_EXAMPLE_DOT_COM,
-			] );
+			expect( state ).toHaveProperty(
+				[ 'example.com', 'forwards' ],
+				[ TEST_MAILBOX_EXAMPLE_DOT_COM ]
+			);
 		} );
 
 		test( 'should set forwards to an empty array from any other response', () => {
@@ -238,7 +232,7 @@ describe( 'emailForwardsReducer', () => {
 				response: {},
 			} );
 
-			expect( state ).to.have.deep.nested.property( 'example\\.com.forwards', [] );
+			expect( state ).toHaveProperty( [ 'example.com', 'forwards' ], [] );
 		} );
 
 		test( 'should set mxServers from a response of type `custom`', () => {
@@ -251,9 +245,10 @@ describe( 'emailForwardsReducer', () => {
 				},
 			} );
 
-			expect( state ).to.have.deep.nested.property( 'example\\.com.mxServers', [
-				TEST_MX_RECORD_EXAMPLE_DOT_COM,
-			] );
+			expect( state ).toHaveProperty(
+				[ 'example.com', 'mxServers' ],
+				[ TEST_MX_RECORD_EXAMPLE_DOT_COM ]
+			);
 		} );
 
 		test( 'should set mxServers to an empty array from any other responses', () => {
@@ -263,7 +258,7 @@ describe( 'emailForwardsReducer', () => {
 				response: {},
 			} );
 
-			expect( state ).to.have.deep.nested.property( 'example\\.com.mxServers', [] );
+			expect( state ).toHaveProperty( [ 'example.com', 'mxServers' ], [] );
 		} );
 	} );
 
@@ -281,16 +276,19 @@ describe( 'emailForwardsReducer', () => {
 				}
 			);
 
-			expect( state ).to.have.deep.nested.property( 'example\\.com.forwards', [
-				{
-					email: 'a@example.com',
-					mailbox: 'a',
-					domain: 'example.com',
-					forward_address: 'original@mail.com',
-					active: false,
-					temporary: true,
-				},
-			] );
+			expect( state ).toHaveProperty(
+				[ 'example.com', 'forwards' ],
+				[
+					{
+						email: 'a@example.com',
+						mailbox: 'a',
+						domain: 'example.com',
+						forward_address: 'original@mail.com',
+						active: false,
+						temporary: true,
+					},
+				]
+			);
 		} );
 
 		test( 'should add new temporary forward to forwards in ascending alpha order', () => {
@@ -325,7 +323,7 @@ describe( 'emailForwardsReducer', () => {
 				}
 			);
 
-			expect( state ).to.have.deep.nested.property( 'example\\.com.forwards[1]', {
+			expect( state ).toHaveProperty( [ 'example.com', 'forwards', 1 ], {
 				email: 'b@example.com',
 				mailbox: 'b',
 				domain: 'example.com',
@@ -376,7 +374,7 @@ describe( 'emailForwardsReducer', () => {
 				verified: false,
 			} );
 
-			expect( state ).to.have.nested.property( 'example\\.com.forwards[1].temporary', false );
+			expect( state ).toHaveProperty( [ 'example.com', 'forwards', 1, 'temporary' ], false );
 		} );
 
 		test( 'should set verified on already-verified new forward', () => {
@@ -387,7 +385,7 @@ describe( 'emailForwardsReducer', () => {
 				verified: true,
 			} );
 
-			expect( state ).to.have.nested.property( 'example\\.com.forwards[1].active', true );
+			expect( state ).toHaveProperty( [ 'example.com', 'forwards', 1, 'active' ], true );
 		} );
 	} );
 
@@ -433,8 +431,8 @@ describe( 'emailForwardsReducer', () => {
 				}
 			);
 
-			expect( state ).to.have.nested.property( 'example\\.com.forwards' );
-			expect( state[ 'example.com' ].forwards ).to.eql( [
+			expect( state ).toHaveProperty( [ 'example.com', 'forwards' ] );
+			expect( state[ 'example.com' ].forwards ).toEqual( [
 				{
 					email: 'a@example.com',
 					mailbox: 'a',
@@ -495,8 +493,8 @@ describe( 'emailForwardsReducer', () => {
 				}
 			);
 
-			expect( state ).to.have.nested.property( 'example\\.com.forwards' );
-			expect( state[ 'example.com' ].forwards ).to.eql( [
+			expect( state ).toHaveProperty( [ 'example.com', 'forwards' ] );
+			expect( state[ 'example.com' ].forwards ).toEqual( [
 				{
 					email: 'a@example.com',
 					mailbox: 'a',
@@ -548,7 +546,7 @@ describe( 'emailForwardsReducer', () => {
 				mailbox: 'b',
 			} );
 
-			expect( state ).to.have.nested.property( 'example\\.com.forwards[1].temporary', true );
+			expect( state ).toHaveProperty( [ 'example.com', 'forwards', 1, 'temporary' ], true );
 		} );
 	} );
 
@@ -585,7 +583,7 @@ describe( 'emailForwardsReducer', () => {
 				error: true,
 			} );
 
-			expect( state ).to.have.nested.property( 'example\\.com.forwards[1].temporary', false );
+			expect( state ).toHaveProperty( [ 'example.com', 'forwards', 1, 'temporary' ], false );
 		} );
 	} );
 
@@ -621,8 +619,8 @@ describe( 'emailForwardsReducer', () => {
 				mailbox: 'b',
 			} );
 
-			expect( state ).to.have.nested.property( 'example\\.com.forwards' );
-			expect( state[ 'example.com' ].forwards ).to.eql( [
+			expect( state ).toHaveProperty( [ 'example.com', 'forwards' ] );
+			expect( state[ 'example.com' ].forwards ).toEqual( [
 				{
 					email: 'a@example.com',
 					mailbox: 'a',

@@ -1,10 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
-import { mount, shallow } from 'enzyme';
-import { spy } from 'sinon';
+import { render } from '@testing-library/react';
 import CloseOnEscape from '../';
 
 const simulateEscapeKeydown = () =>
@@ -13,16 +10,16 @@ const simulateEscapeKeydown = () =>
 describe( 'CloseOnEscape', () => {
 	describe( 'rendering', () => {
 		test( 'renders nothing', () => {
-			const wrapper = shallow( <CloseOnEscape /> );
-			expect( wrapper.type() ).to.be.a( 'null' );
+			const { container } = render( <CloseOnEscape /> );
+			expect( container ).toBeEmptyDOMElement();
 		} );
 	} );
 
 	describe( 'escape keydown event', () => {
 		test( 'calls the `onEscape` method of stacked components in LIFO order on each escape keydown', () => {
-			const onEscapeSpy = spy();
+			const onEscapeSpy = jest.fn();
 
-			const wrapper1 = mount(
+			const wrapper1 = render(
 				<CloseOnEscape
 					onEscape={ function () {
 						onEscapeSpy( 1 );
@@ -31,7 +28,7 @@ describe( 'CloseOnEscape', () => {
 				/>
 			);
 
-			const wrapper2 = mount(
+			const wrapper2 = render(
 				<CloseOnEscape
 					onEscape={ function () {
 						onEscapeSpy( 2 );
@@ -41,11 +38,11 @@ describe( 'CloseOnEscape', () => {
 			);
 
 			simulateEscapeKeydown();
-			expect( onEscapeSpy ).to.have.been.calledWith( 2 );
-			expect( onEscapeSpy ).not.to.have.been.calledWith( 1 );
+			expect( onEscapeSpy ).toHaveBeenCalledWith( 2 );
+			expect( onEscapeSpy ).not.toHaveBeenCalledWith( 1 );
 
 			simulateEscapeKeydown();
-			expect( onEscapeSpy ).to.have.been.calledWith( 1 );
+			expect( onEscapeSpy ).toHaveBeenCalledWith( 1 );
 		} );
 	} );
 } );

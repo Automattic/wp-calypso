@@ -12,18 +12,11 @@ import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png'
 import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
 import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
 import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import {
-	marketingConnections,
-	marketingUltimateTrafficGuide,
-	pluginsPath,
-} from 'calypso/my-sites/marketing/paths';
-import { hasTrafficGuidePurchase } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
+import { marketingConnections, pluginsPath } from 'calypso/my-sites/marketing/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import { getUserPurchases } from 'calypso/state/purchases/selectors';
-import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import * as T from 'calypso/types';
 import MarketingToolsFeature from './feature';
@@ -37,11 +30,10 @@ export const MarketingTools: FunctionComponent = () => {
 	const recordTracksEvent = ( event: string ) => dispatch( recordTracksEventAction( event ) );
 
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
-	const purchases = useSelector( getUserPurchases );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
-	const sitePlan = useSelector( ( state ) => getSitePlanSlug( state, siteId ) ) || '';
-	const showFacebookUpsell = [ 'value_bundle', 'personal-bundle', 'free_plan' ].includes(
-		sitePlan
+
+	const facebookPluginInstalled = useSelector( ( state ) =>
+		getPluginOnSite( state, siteId, 'official-facebook-pixel' )
 	);
 
 	const handleBusinessToolsClick = () => {
@@ -86,18 +78,15 @@ export const MarketingTools: FunctionComponent = () => {
 		page( marketingConnections( selectedSiteSlug ) );
 	};
 
-	const handleUltimateTrafficGuideClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_ultimate_traffic_guide_button_click' );
-
-		page( marketingUltimateTrafficGuide( selectedSiteSlug ) );
+	const handleSEOCourseClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_seo_course_button_click' );
 	};
 
 	const isEnglish = ( config( 'english_locales' ) as string[] ).includes( getLocaleSlug() ?? '' );
 
 	return (
 		<Fragment>
-			<QueryUserPurchases />
-			{ ! sitePlan && <QuerySitePlans siteId={ siteId } /> }
+			<QueryJetpackPlugins siteIds={ [ siteId ] } />
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
@@ -131,7 +120,7 @@ export const MarketingTools: FunctionComponent = () => {
 					</Button>
 				</MarketingToolsFeature>
 
-				{ getLocaleSlug() === 'en' && (
+				{ ! facebookPluginInstalled && (
 					<MarketingToolsFeature
 						title={ translate( 'Want to connect with your audience on Facebook and Instagram?' ) }
 						description={ translate(
@@ -144,30 +133,19 @@ export const MarketingTools: FunctionComponent = () => {
 						) }
 						imagePath={ facebookLogo }
 					>
-						{ ! showFacebookUpsell && (
-							<Button
-								onClick={ handleFacebookClick }
-								href="https://wordpress.com/plugins/official-facebook-pixel"
-								target="_blank"
-							>
-								{ translate( 'Add Facebook for WordPress.com' ) }
-							</Button>
-						) }
-						{ showFacebookUpsell && (
-							<Button
-								onClick={ handleFacebookClick }
-								href={ `/plans/${ selectedSiteSlug }?customerType=business` }
-							>
-								{ translate( 'Unlock this feature' ) }
-							</Button>
-						) }
+						<Button
+							onClick={ handleFacebookClick }
+							href={ `/plugins/official-facebook-pixel/${ selectedSiteSlug }` }
+						>
+							{ translate( 'Add Facebook for WordPress.com' ) }
+						</Button>
 					</MarketingToolsFeature>
 				) }
 
 				<MarketingToolsFeature
-					title={ translate( 'Build your community, following, and income with Earn tools' ) }
+					title={ translate( 'Monetize your site' ) }
 					description={ translate(
-						'Increase engagement and income on your site by accepting payments for just about anything – physical and digital goods, services, donations, or access to exclusive content.'
+						'Accept payments or donations with our native payment blocks, limit content to paid subscribers only, opt into our ad network to earn revenue, and refer friends to WordPress.com for credits.'
 					) }
 					imagePath={ earnIllustration }
 				>
@@ -234,17 +212,18 @@ export const MarketingTools: FunctionComponent = () => {
 
 				{ isEnglish && (
 					<MarketingToolsFeature
-						title={ translate( 'Introducing the WordPress.com Ultimate Traffic Guide' ) }
+						title={ translate( 'Increase traffic to your WordPress.com site' ) }
 						description={ translate(
-							"Our brand new Ultimate Traffic Guide reveals more than a dozen of today's most effective traffic techniques. " +
-								'The guide is appropriate for beginner to intermediate users.'
+							'Take our free introductory course about search engine optimization (SEO) and learn how to improve your site or blog for both search engines and humans.'
 						) }
 						imagePath={ rocket }
 					>
-						<Button onClick={ handleUltimateTrafficGuideClick }>
-							{ hasTrafficGuidePurchase( purchases )
-								? translate( 'Download now' )
-								: translate( 'Learn more' ) }
+						<Button
+							onClick={ handleSEOCourseClick }
+							href="https://wpcourses.com/course/intro-to-search-engine-optimization-seo/"
+							target="_blank"
+						>
+							{ translate( 'Register now' ) }
 						</Button>
 					</MarketingToolsFeature>
 				) }

@@ -11,7 +11,6 @@ import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { titanMailMonthly, titanMailYearly } from 'calypso/lib/cart-values/cart-items';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
@@ -36,11 +35,7 @@ import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailPricingNotice from 'calypso/my-sites/email/email-pricing-notice';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/gsuite-add-users/add-users-placeholder';
-import {
-	emailManagement,
-	emailManagementNewTitanAccount,
-	emailManagementTitanSetUpMailbox,
-} from 'calypso/my-sites/email/paths';
+import { emailManagement, emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-unused-mailbox-notice';
 import TitanNewMailboxList from 'calypso/my-sites/email/titan-new-mailbox-list';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -232,7 +227,6 @@ class TitanAddMailboxes extends Component {
 
 	render() {
 		const {
-			currentRoute,
 			isLoadingDomains,
 			isSelectedDomainNameValid,
 			maxTitanMailboxCount,
@@ -248,12 +242,8 @@ class TitanAddMailboxes extends Component {
 			return null;
 		}
 
-		const analyticsPath = emailManagementNewTitanAccount( ':site', ':domain', currentRoute );
-
 		return (
 			<>
-				<PageViewTracker path={ analyticsPath } title="Email Management > Add Titan Mailboxes" />
-
 				<QueryProductsList />
 
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }

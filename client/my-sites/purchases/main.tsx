@@ -30,7 +30,7 @@ import { getChangeOrAddPaymentMethodUrlFor } from './utils';
 
 function useLogPurchasesError( message: string ) {
 	return useCallback(
-		( error ) => {
+		( error: Error ) => {
 			logToLogstash( {
 				feature: 'calypso_client',
 				message,
@@ -38,7 +38,7 @@ function useLogPurchasesError( message: string ) {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'site_level_purchases',
-					message: String( error ),
+					message: error.message + '; Stack: ' + error.stack,
 				},
 			} );
 		},
@@ -46,7 +46,7 @@ function useLogPurchasesError( message: string ) {
 	);
 }
 
-export function Purchases(): JSX.Element {
+export function Purchases() {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const logPurchasesError = useLogPurchasesError( 'site level purchases load error' );
@@ -92,7 +92,7 @@ export function PurchaseDetails( {
 }: {
 	purchaseId: number;
 	siteSlug: string;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level purchase details load error' );
 	const redirectTo = getManagePurchaseUrlFor( siteSlug, purchaseId );
@@ -141,7 +141,7 @@ export function PurchaseCancel( {
 }: {
 	purchaseId: number;
 	siteSlug: string;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level purchase cancel load error' );
 
@@ -179,7 +179,7 @@ export function PurchaseChangePaymentMethod( {
 }: {
 	purchaseId: number;
 	siteSlug: string;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError(
 		'site level purchase edit payment method load error'
@@ -218,7 +218,7 @@ export function PurchaseCancelDomain( {
 }: {
 	purchaseId: number;
 	siteSlug: string;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level purchase cancel domain load error' );
 

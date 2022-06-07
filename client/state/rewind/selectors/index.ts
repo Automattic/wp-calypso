@@ -6,4 +6,3 @@ export { default as getRewindSizeRequestStatus } from './get-rewind-size-request
 export { default as isRequestingRewindPolicies } from './is-requesting-rewind-policies';
 export { default as isRequestingRewindSize } from './is-requesting-rewind-size';
 export { default as siteHasBackupInProgress } from './site-has-backup-in-progress';
-export { default as siteHasRealtimeBackups } from './site-has-realtime-backups';

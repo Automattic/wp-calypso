@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { SIGNUP_STEPS_SITE_TITLE_SET } from 'calypso/state/action-types';
 import signupDependencyStore from '../reducer';
 
@@ -12,6 +11,6 @@ describe( 'reducer', () => {
 					siteTitle: 'site title',
 				}
 			)
-		).to.be.eql( 'site title' );
+		).toEqual( 'site title' );
 	} );
 } );

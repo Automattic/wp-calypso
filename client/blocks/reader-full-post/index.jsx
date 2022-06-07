@@ -353,13 +353,13 @@ export class FullPostView extends Component {
 
 	goToNextPost = () => {
 		if ( this.props.nextPost ) {
-			showSelectedPost( { postKey: this.props.nextPost } );
+			this.props.showSelectedPost( { postKey: this.props.nextPost } );
 		}
 	};
 
 	goToPreviousPost = () => {
 		if ( this.props.previousPost ) {
-			showSelectedPost( { postKey: this.props.previousPost } );
+			this.props.showSelectedPost( { postKey: this.props.previousPost } );
 		}
 	};
 
@@ -689,5 +689,6 @@ export default connect(
 		requestMarkAsUnseen,
 		requestMarkAsSeenBlog,
 		requestMarkAsUnseenBlog,
+		showSelectedPost,
 	}
 )( FullPostView );

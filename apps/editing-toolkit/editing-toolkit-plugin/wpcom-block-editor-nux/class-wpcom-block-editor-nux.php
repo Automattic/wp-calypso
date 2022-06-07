@@ -48,7 +48,7 @@ class WPCOM_Block_Editor_NUX {
 
 		wp_enqueue_script(
 			'wpcom-block-editor-nux-script',
-			plugins_url( 'dist/wpcom-block-editor-nux.js', __FILE__ ),
+			plugins_url( 'dist/wpcom-block-editor-nux.min.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
 			$version,
 			true

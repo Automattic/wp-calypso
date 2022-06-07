@@ -4,8 +4,8 @@ import { DataHelper } from '../..';
 const selectors = {
 	// Generic
 	button: ( text: string ) => `button:text("${ text }")`,
-	backLink: 'a:text("Back")',
-	dontHaveASiteButton: 'a:text("I don\'t have a site address")',
+	backLink: '.navigation-link:text("Back")',
+	dontHaveASiteButton: '.navigation-link:text("I don\'t have a site address")',
 
 	// Inputs
 	urlInput: 'input.capture__input',
@@ -27,8 +27,7 @@ const selectors = {
 	// Buttons
 	checkUrlButton: 'form.capture__input-wrapper button.action-buttons__next',
 	startBuildingButton: 'div.import__onboarding-page button.action-buttons__next',
-	startImportButton:
-		'div.is-intent button.select-items-alt__item-button:text("Import your site content")',
+	startImportButton: 'button.select-items-alt__item-button:text("Import your site content")',
 	// And entry of the list of selectable importers
 	importerListButton: ( index: number ) =>
 		`div.list__importers-primary:nth-child(${ index + 1 }) .action-card__button-container button`,
@@ -42,8 +41,9 @@ export class StartImportFlow {
 	 * Constructs an instance of the flow.
 	 *
 	 * @param {Page} page The underlying page.
+	 * @param framework
 	 */
-	constructor( private page: Page ) {}
+	constructor( private page: Page, private framework: 'signup' | 'stepper' ) {}
 
 	/**
 	 * Given text, click on the button's first instance with the text.
@@ -149,7 +149,9 @@ export class StartImportFlow {
 	 * @param {string} siteSlug The site slug URL.
 	 */
 	async startImport( siteSlug: string ): Promise< void > {
-		await this.page.goto( DataHelper.getCalypsoURL( '/start/importer', { siteSlug } ) );
+		const route = this.framework === 'signup' ? '/start/importer' : '/setup/';
+
+		await this.page.goto( DataHelper.getCalypsoURL( route, { siteSlug } ) );
 	}
 
 	/**
@@ -158,7 +160,9 @@ export class StartImportFlow {
 	 * @param {string} siteSlug The site slug URL.
 	 */
 	async startSetup( siteSlug: string ): Promise< void > {
-		await this.page.goto( DataHelper.getCalypsoURL( '/start/setup-site/intent', { siteSlug } ) );
+		const route = this.framework === 'signup' ? '/start/setup-site/intent' : '/setup/intent';
+
+		await this.page.goto( DataHelper.getCalypsoURL( route, { siteSlug } ) );
 		await this.validateSetupPage();
 		await this.page.click( selectors.startImportButton );
 	}

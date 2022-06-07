@@ -6,7 +6,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
-export function EmptyCart(): JSX.Element {
+export function EmptyCart() {
 	const reduxDispatch = useDispatch();
 	const previousPath = useSelector( getPreviousPath );
 	const referrer = window?.document?.referrer ?? '';
@@ -30,12 +30,12 @@ export function EmptyCart(): JSX.Element {
 	);
 }
 
-function EmptyCartTitle(): JSX.Element {
+function EmptyCartTitle() {
 	const translate = useTranslate();
 	return <>{ String( translate( 'You have no items in your cart' ) ) }</>;
 }
 
-function EmptyCartExplanation(): JSX.Element {
+function EmptyCartExplanation() {
 	const translate = useTranslate();
 	return (
 		<>

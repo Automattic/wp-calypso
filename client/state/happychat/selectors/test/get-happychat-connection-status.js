@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
@@ -19,7 +18,7 @@ describe( '#getConnectionStatus', () => {
 					},
 				},
 			} );
-			expect( getHappychatConnectionStatus( stateUninitialized ) ).to.equal(
+			expect( getHappychatConnectionStatus( stateUninitialized ) ).toEqual(
 				HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED
 			);
 		} );
@@ -32,7 +31,7 @@ describe( '#getConnectionStatus', () => {
 					},
 				},
 			} );
-			expect( getHappychatConnectionStatus( stateConnected ) ).to.be.equals(
+			expect( getHappychatConnectionStatus( stateConnected ) ).toEqual(
 				HAPPYCHAT_CONNECTION_STATUS_CONNECTED
 			);
 		} );
@@ -45,7 +44,7 @@ describe( '#getConnectionStatus', () => {
 					},
 				},
 			} );
-			expect( getHappychatConnectionStatus( stateDisconnected ) ).to.be.equals(
+			expect( getHappychatConnectionStatus( stateDisconnected ) ).toEqual(
 				HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED
 			);
 		} );
@@ -58,7 +57,7 @@ describe( '#getConnectionStatus', () => {
 					},
 				},
 			} );
-			expect( getHappychatConnectionStatus( stateConnecting ) ).to.be.equals(
+			expect( getHappychatConnectionStatus( stateConnecting ) ).toEqual(
 				HAPPYCHAT_CONNECTION_STATUS_CONNECTING
 			);
 		} );
@@ -71,7 +70,7 @@ describe( '#getConnectionStatus', () => {
 					},
 				},
 			} );
-			expect( getHappychatConnectionStatus( stateReconnecting ) ).to.be.equals(
+			expect( getHappychatConnectionStatus( stateReconnecting ) ).toEqual(
 				HAPPYCHAT_CONNECTION_STATUS_RECONNECTING
 			);
 		} );

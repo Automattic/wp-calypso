@@ -1,7 +1,7 @@
+import { Spinner } from '@automattic/components';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import Spinner from 'calypso/components/spinner';
 import { url, isItemBeingUploaded } from 'calypso/lib/media/utils';
 import MediaImage from 'calypso/my-sites/media-library/media-image';
 

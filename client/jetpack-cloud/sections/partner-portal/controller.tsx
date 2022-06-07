@@ -1,6 +1,7 @@
 import page from 'page';
 import AssignLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/assign-license';
 import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
+import CompanyDetailsDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/company-details-dashboard';
 import InvoicesDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/invoices-dashboard';
 import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import LandingPage from 'calypso/jetpack-cloud/sections/partner-portal/primary/landing-page';
@@ -84,14 +85,14 @@ export function licensesContext( context: PageJS.Context, next: () => void ): vo
 }
 
 export function issueLicenseContext( context: PageJS.Context, next: () => void ): void {
-	const { site_id: siteId } = context.query;
+	const { site_id: siteId, product_slug: productSlug } = context.query;
 	const state = context.store.getState();
 	const sites = getSitesItems( state );
 	const selectedSite = sites[ siteId ] ? siteId : null;
 
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <IssueLicense selectedSite={ selectedSite } />;
+	context.primary = <IssueLicense selectedSite={ selectedSite } productSlug={ productSlug } />;
 	next();
 }
 
@@ -127,6 +128,13 @@ export function invoicesDashboardContext( context: PageJS.Context, next: () => v
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
 	context.primary = <InvoicesDashboard />;
+	next();
+}
+
+export function companyDetailsDashboardContext( context: PageJS.Context, next: () => void ): void {
+	context.header = <Header />;
+	context.secondary = <PartnerPortalSidebar path={ context.path } />;
+	context.primary = <CompanyDetailsDashboard />;
 	next();
 }
 

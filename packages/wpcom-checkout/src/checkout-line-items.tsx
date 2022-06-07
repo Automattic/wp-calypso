@@ -1,4 +1,5 @@
 import {
+	isAddOn,
 	isDomainRegistration,
 	isPlan,
 	isMonthlyProduct,
@@ -23,7 +24,7 @@ import {
 } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, PropsWithChildren } from 'react';
 import { getSublabel, getLabel } from './checkout-labels';
 import { getIntroductoryOfferIntervalDisplay } from './get-introductory-offer-interval-display';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
@@ -189,7 +190,7 @@ function WPNonProductLineItem( {
 	removeProductFromCart?: () => void;
 	createUserAndSiteBeforeTransaction?: boolean;
 	isPwpoUser?: boolean;
-} ): JSX.Element {
+} ) {
 	const id = lineItem.id;
 	const itemSpanId = `checkout-line-item-${ id }`;
 	const label = lineItem.label;
@@ -278,7 +279,7 @@ function WPCouponLineItem( {
 	createUserAndSiteBeforeTransaction?: boolean;
 	isPwpoUser?: boolean;
 	hasPartnerCoupon?: boolean;
-} ): JSX.Element {
+} ) {
 	return (
 		<div
 			className={ joinClasses( [ className, 'coupon-line-item' ] ) }
@@ -297,13 +298,7 @@ function WPCouponLineItem( {
 	);
 }
 
-function EmailMeta( {
-	product,
-	isRenewal,
-}: {
-	product: ResponseCartProduct;
-	isRenewal: boolean;
-} ): JSX.Element | null {
+function EmailMeta( { product, isRenewal }: { product: ResponseCartProduct; isRenewal: boolean } ) {
 	const translate = useTranslate();
 
 	if ( isRenewal ) {
@@ -542,11 +537,11 @@ function returnModalCopy(
 	}
 }
 
-function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ): JSX.Element {
+function JetpackSearchMeta( { product }: { product: ResponseCartProduct } ) {
 	return <ProductTier product={ product } />;
 }
 
-function ProductTier( { product }: { product: ResponseCartProduct } ): JSX.Element | null {
+function ProductTier( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 
 	if ( isJetpackSearch( product ) && product.current_quantity ) {
@@ -570,16 +565,12 @@ function ProductTier( { product }: { product: ResponseCartProduct } ): JSX.Eleme
 	return null;
 }
 
-function LineItemSublabelAndPrice( {
-	product,
-}: {
-	product: ResponseCartProduct;
-} ): JSX.Element | null {
+function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const productSlug = product.product_slug;
 	const sublabel = getSublabel( product );
 
-	if ( isPlan( product ) || isJetpackProductSlug( productSlug ) ) {
+	if ( isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug ) ) {
 		if ( isP2Plus( product ) ) {
 			// This is the price for one item for products with a quantity (eg. seats in a license).
 			const itemPrice = product.item_original_cost_for_quantity_one_display;
@@ -684,11 +675,7 @@ function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) 
 	return coupon_savings_integer > 0;
 }
 
-function FirstTermDiscountCallout( {
-	product,
-}: {
-	product: ResponseCartProduct;
-} ): JSX.Element | null {
+function FirstTermDiscountCallout( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const planSlug = product.product_slug;
 	const origCost = product.item_original_cost_integer;
@@ -723,11 +710,7 @@ function FirstTermDiscountCallout( {
 	return null;
 }
 
-function IntroductoryOfferCallout( {
-	product,
-}: {
-	product: ResponseCartProduct;
-} ): JSX.Element | null {
+function IntroductoryOfferCallout( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	if ( product.introductory_offer_terms?.reason ) {
 		return (
@@ -751,7 +734,7 @@ function IntroductoryOfferCallout( {
 	return <DiscountCallout>{ text }</DiscountCallout>;
 }
 
-function PartnerLogo( { className }: { className?: string } ): JSX.Element | null {
+function PartnerLogo( { className }: { className?: string } ) {
 	const translate = useTranslate();
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -766,11 +749,7 @@ function PartnerLogo( { className }: { className?: string } ): JSX.Element | nul
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
-function DomainDiscountCallout( {
-	product,
-}: {
-	product: ResponseCartProduct;
-} ): JSX.Element | null {
+function DomainDiscountCallout( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 
 	const isFreeBundledDomainRegistration = product.is_bundled && product.item_subtotal_integer === 0;
@@ -787,11 +766,7 @@ function DomainDiscountCallout( {
 	return null;
 }
 
-function CouponDiscountCallout( {
-	product,
-}: {
-	product: ResponseCartProduct;
-} ): JSX.Element | null {
+function CouponDiscountCallout( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 
 	if ( isCouponApplied( product ) ) {
@@ -801,11 +776,7 @@ function CouponDiscountCallout( {
 	return null;
 }
 
-function GSuiteDiscountCallout( {
-	product,
-}: {
-	product: ResponseCartProduct;
-} ): JSX.Element | null {
+function GSuiteDiscountCallout( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 
 	if (
@@ -831,8 +802,7 @@ function WPLineItem( {
 	onRemoveProduct,
 	onRemoveProductClick,
 	onRemoveProductCancel,
-}: {
-	children?: React.ReactNode;
+}: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
 	hasDeleteButton?: boolean;
@@ -844,7 +814,7 @@ function WPLineItem( {
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
-} ): JSX.Element {
+} > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
 	const hasBundledDomainsInCart = responseCart.products.some(

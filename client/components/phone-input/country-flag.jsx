@@ -1,7 +1,6 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Spinner } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import Spinner from 'calypso/components/spinner';
 import { flagUrl } from 'calypso/lib/flags';
 
 export default class extends Component {
@@ -18,6 +17,7 @@ export default class extends Component {
 
 	componentDidUpdate( oldProps ) {
 		if ( this.props.countryCode && this.props.countryCode !== oldProps.countryCode ) {
+			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { ready: false, error: false } );
 		}
 	}

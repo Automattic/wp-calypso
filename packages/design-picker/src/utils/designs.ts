@@ -13,7 +13,8 @@ export const getDesignPreviewUrl = (
 	}
 	let url = addQueryArgs( 'https://public-api.wordpress.com/wpcom/v2/block-previews/site', {
 		stylesheet: recipe?.stylesheet,
-		pattern_ids: recipe?.patternIds?.join( ',' ),
+		pattern_ids: recipe?.pattern_ids?.join( ',' ),
+		vertical_id: options.verticalId,
 		language: options.language,
 		viewport_height: 700,
 		source_site: 'patternboilerplates.wordpress.com',

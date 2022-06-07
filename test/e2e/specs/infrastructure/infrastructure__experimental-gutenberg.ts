@@ -81,7 +81,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 		const expectedBlockPatternCount = 50;
 		const frame = await editorPage.getEditorHandle();
 		const actualBlockPatternCount = await frame.evaluate(
-			`window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns.length`
+			`window.wp.data.select( 'core' ).getBlockPatterns().length`
 		);
 
 		expect( actualBlockPatternCount ).toBeGreaterThanOrEqual( expectedBlockPatternCount );

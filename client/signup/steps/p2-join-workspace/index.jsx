@@ -1,16 +1,20 @@
+import { Spinner } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useState, useEffect, createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, chevronRight } from '@wordpress/icons';
+import debugFactory from 'debug';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import request from 'wpcom-proxy-request';
-import Spinner from 'calypso/components/spinner';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import './style.scss';
 import P2JoinWorkspaceCodeInput from './code-input';
+
+const debug = debugFactory( 'calypso:signup:p2-join-workspace' );
 
 function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, submitSignupStep } ) {
 	const dispatch = useDispatch();
@@ -35,10 +39,9 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 
 		setIsLoading( true );
 
-		const workspaceList = await request( {
+		const workspaceList = await wpcom.req.get( {
 			path: '/p2/preapproved-joining/list-workspaces',
 			apiNamespace: 'wpcom/v2',
-			global: true,
 		} );
 
 		setEligibleWorkspaces( workspaceList );
@@ -47,33 +50,52 @@ function P2JoinWorkspace( { flowName, goToNextStep, positionInFlow, stepName, su
 	}, [ userEmail ] );
 
 	useEffect( () => {
+		debug( 'Fetching workspace list' );
 		fetchList();
 	}, [ fetchList ] );
 
+	useEffect( () => {
+		if ( eligibleWorkspaces.length > 0 || isLoading ) {
+			return;
+		}
+
+		submitSignupStep( {
+			stepName,
+			wasSkipped: true,
+		} );
+
+		recordTracksEvent( 'calypso_signup_p2_join_workspace_autoskip' );
+		goToNextStep();
+	}, [ eligibleWorkspaces, isLoading, submitSignupStep, stepName, goToNextStep ] );
+
 	const handleJoinWorkspaceClick = async ( { id, name } ) => {
+		recordTracksEvent( 'calypso_signup_p2_join_workspace_join_request' );
+
 		// Remember which workspace is being requested, for more accurate loading feedback.
 		setWorkspaceStatus( {
 			...workspaceStatus,
 			requesting: id,
 		} );
 
-		const response = await request( {
+		const response = await wpcom.req.post( {
 			path: '/p2/preapproved-joining/request-code',
 			apiNamespace: 'wpcom/v2',
 			global: true,
-			method: 'POST',
 			body: {
 				hub_id: parseInt( id ),
 			},
 		} );
 
-		if ( response.success ) {
-			setWorkspaceStatus( {
-				...workspaceStatus,
-				requesting: null,
-				requested: { id: parseInt( response.hub_id ), name },
-			} );
+		if ( ! response.success ) {
+			recordTracksEvent( 'calypso_signup_p2_join_workspace_join_request_fail' );
 		}
+
+		recordTracksEvent( 'calypso_signup_p2_join_workspace_join_request_success' );
+		setWorkspaceStatus( {
+			...workspaceStatus,
+			requesting: null,
+			requested: { id: parseInt( response.hub_id ), name },
+		} );
 	};
 
 	const handleCreateWorkspaceClick = () => {

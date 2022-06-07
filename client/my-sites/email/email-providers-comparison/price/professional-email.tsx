@@ -10,7 +10,7 @@ import PriceWithInterval from 'calypso/my-sites/email/email-providers-comparison
 import PriceInformation from 'calypso/my-sites/email/email-providers-comparison/price/price-information';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import type { SiteDomain } from 'calypso/state/sites/domains/types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 import './style.scss';
 
@@ -21,7 +21,7 @@ const getTitanProductSlug = ( intervalLength: IntervalLength ): string => {
 };
 
 type ProfessionalEmailPriceProps = {
-	domain?: SiteDomain;
+	domain?: ResponseDomain;
 	intervalLength: IntervalLength;
 	isDomainInCart: boolean;
 };
@@ -30,7 +30,7 @@ const ProfessionalEmailPrice = ( {
 	domain,
 	intervalLength,
 	isDomainInCart,
-}: ProfessionalEmailPriceProps ): JSX.Element | null => {
+}: ProfessionalEmailPriceProps ) => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
 	const productSlug = getTitanProductSlug( intervalLength );

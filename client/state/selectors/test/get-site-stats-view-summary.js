@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { getSiteStatsViewSummary } from 'calypso/state/stats/lists/selectors';
 
 describe( 'getSiteStatsViewSummary()', () => {
@@ -18,7 +17,7 @@ describe( 'getSiteStatsViewSummary()', () => {
 			2916284
 		);
 
-		expect( data ).to.be.null;
+		expect( data ).toBeNull();
 	} );
 
 	test( 'should return an empty object if data is empty', () => {
@@ -43,7 +42,7 @@ describe( 'getSiteStatsViewSummary()', () => {
 			2916284
 		);
 
-		expect( data ).to.eql( {} );
+		expect( data ).toEqual( {} );
 	} );
 
 	test( 'should return a parsed object if data is present', () => {
@@ -74,7 +73,7 @@ describe( 'getSiteStatsViewSummary()', () => {
 			2916284
 		);
 
-		expect( data ).to.eql( {
+		expect( data ).toEqual( {
 			2014: {
 				0: {
 					total: 31,
@@ -128,7 +127,7 @@ describe( 'getSiteStatsViewSummary()', () => {
 			2916284
 		);
 
-		expect( data[ today.getFullYear() ][ today.getMonth() ] ).to.eql( {
+		expect( data[ today.getFullYear() ][ today.getMonth() ] ).toEqual( {
 			total: 96,
 			average: Math.round( 96 / daysSinceStartOfMonth ),
 			daysInMonth: daysSinceStartOfMonth,

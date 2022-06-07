@@ -1,12 +1,11 @@
 import {
 	isWpComAnnualPlan,
 	FEATURE_ADVANCED_SEO,
-	FEATURE_SEO_PREVIEW_TOOLS,
 	TYPE_BUSINESS,
 	TYPE_PRO,
 	findFirstSimilarPlanKey,
 } from '@automattic/calypso-products';
-import { Card, Button } from '@automattic/components';
+import { Card, Button, FormInputValidation } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, isEqual, mapValues, pickBy } from 'lodash';
 import { Component, createRef } from 'react';
@@ -17,7 +16,6 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Notice from 'calypso/components/notice';
@@ -33,13 +31,12 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
-import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settings/actions';
 import {
 	isSiteSettingsSaveSuccessful,
@@ -48,7 +45,6 @@ import {
 	isSavingSiteSettings,
 } from 'calypso/state/site-settings/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
-import { hasFeature } from 'calypso/state/sites/plans/selectors';
 import {
 	getSeoTitleFormatsForSite,
 	isJetpackSite,
@@ -269,12 +265,10 @@ export class SiteSettingsFormSEO extends Component {
 			siteIsJetpack && ! isAtomic
 				? {
 						title: translate( 'Boost your search engine ranking' ),
-						feature: FEATURE_SEO_PREVIEW_TOOLS,
 						href: `/checkout/${ slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ADVANCED_SEO ] }`,
 				  }
 				: {
 						title: upsellTitle,
-						feature: FEATURE_ADVANCED_SEO,
 						plan:
 							selectedSite.plan &&
 							findFirstSimilarPlanKey( selectedSite.plan.product_slug, {
@@ -328,6 +322,7 @@ export class SiteSettingsFormSEO extends Component {
 				) }
 				{ ! showAdvancedSeo && selectedSite.plan && (
 					<UpsellNudge
+						feature={ FEATURE_ADVANCED_SEO }
 						forceDisplay={ siteIsJetpack }
 						{ ...upsellProps }
 						description={ translate(
@@ -440,12 +435,6 @@ const mapStateToProps = ( state ) => {
 	const selectedSite = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	// SEO Tools are available with Business plan on WordPress.com, and
-	// will soon be available on all Jetpack sites, so we're checking
-	// the availability of the module.
-	const isAdvancedSeoEligible =
-		hasActiveSiteFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
-		( ! siteIsJetpack || get( getJetpackModules( state, siteId ), 'seo-tools.available', false ) );
 
 	const activePlugins = getPlugins( state, [ siteId ], 'active' );
 	const conflictedSeoPlugin = siteIsJetpack
@@ -458,15 +447,13 @@ const mapStateToProps = ( state ) => {
 		siteIsJetpack,
 		selectedSite,
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
-		showAdvancedSeo: isAdvancedSeoEligible,
+		showAdvancedSeo: siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
 		isAtomic: isAtomicSite( state, siteId ),
 		showWebsiteMeta: !! get( selectedSite, 'options.advanced_seo_front_page_description', '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
 		isSiteHidden: isHiddenSite( state, siteId ),
 		isSitePrivate: isPrivateSite( state, siteId ),
 		siteIsComingSoon: isSiteComingSoon( state, siteId ),
-		hasAdvancedSEOFeature: hasFeature( state, siteId, FEATURE_ADVANCED_SEO ),
-		hasSeoPreviewFeature: hasFeature( state, siteId, FEATURE_SEO_PREVIEW_TOOLS ),
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 		saveError: getSiteSettingsSaveError( state, siteId ),
 		path: getCurrentRouteParameterized( state, siteId ),

@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { filterListBySearchTerm } from 'calypso/blocks/inline-help/admin-sections';
 
 describe( 'filterListBySearchTerm()', () => {
@@ -21,17 +20,17 @@ describe( 'filterListBySearchTerm()', () => {
 
 	test( 'should ignore non-word characters and return an empty array', () => {
 		const result = filterListBySearchTerm( "<$(*&#\\\\\\'''''>", mockCollection );
-		expect( result ).to.deep.equal( [] );
+		expect( result ).toEqual( [] );
 	} );
 
 	test( 'should return an empty array for no matches', () => {
 		const result = filterListBySearchTerm( 'ciao', mockCollection );
-		expect( result ).to.deep.equal( [] );
+		expect( result ).toEqual( [] );
 	} );
 
 	test( 'should return a direct match', () => {
 		const result = filterListBySearchTerm( 'The best section', mockCollection );
-		expect( result ).to.deep.equal( [
+		expect( result ).toEqual( [
 			{
 				description: 'Better than that other section.',
 				icon: 'beta',
@@ -44,7 +43,7 @@ describe( 'filterListBySearchTerm()', () => {
 
 	test( 'should return a partial match', () => {
 		const result = filterListBySearchTerm( 'best section', mockCollection );
-		expect( result ).to.deep.equal( [
+		expect( result ).toEqual( [
 			{
 				description: 'Better than that other section.',
 				icon: 'beta',
@@ -57,7 +56,7 @@ describe( 'filterListBySearchTerm()', () => {
 
 	test( 'should return a synonym match', () => {
 		const result = filterListBySearchTerm( 'yolo', mockCollection );
-		expect( result ).to.deep.equal( [
+		expect( result ).toEqual( [
 			{
 				description: 'Better than that other section.',
 				icon: 'beta',

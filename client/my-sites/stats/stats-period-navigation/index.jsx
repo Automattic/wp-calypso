@@ -53,17 +53,8 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	render() {
-		const {
-			children,
-			date,
-			moment,
-			period,
-			url,
-			hidePreviousArrow,
-			hideNextArrow,
-			isRtl,
-			queryParams,
-		} = this.props;
+		const { children, date, moment, period, url, hidePreviousArrow, hideNextArrow, queryParams } =
+			this.props;
 
 		const isToday = moment( date ).isSame( moment(), period );
 		const previousDay = moment( date ).subtract( 1, period ).format( 'YYYY-MM-DD' );
@@ -86,7 +77,7 @@ class StatsPeriodNavigation extends PureComponent {
 						href={ `${ url }${ previousDayQuery }` }
 						onClick={ this.handleClickPrevious }
 					>
-						<Gridicon icon={ isRtl ? 'arrow-right' : 'arrow-left' } size={ 18 } />
+						<Gridicon icon={ 'arrow-left' } size={ 18 } />
 					</a>
 				}
 				<div className="stats-period-navigation__children">{ children }</div>
@@ -98,7 +89,7 @@ class StatsPeriodNavigation extends PureComponent {
 						href={ `${ url }${ nextDayQuery }` }
 						onClick={ this.handleClickNext }
 					>
-						<Gridicon icon={ isRtl ? 'arrow-left' : 'arrow-right' } size={ 18 } />
+						<Gridicon icon={ 'arrow-right' } size={ 18 } />
 					</a>
 				}
 			</div>

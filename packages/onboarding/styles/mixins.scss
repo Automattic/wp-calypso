@@ -104,8 +104,15 @@
 	}
 }
 
+/* (2560x1440) 2K resolution */
+@mixin onboarding-break-2k() {
+	@media ( min-width: 2560px ) {
+		@content;
+	}
+}
+
 /* (1920x1080) Full HD Display */
-@mixin onboarding-break-gigantic() {
+@mixin onboarding-break-full-hd() {
 	@media ( min-width: 1920px ) {
 		@content;
 	}

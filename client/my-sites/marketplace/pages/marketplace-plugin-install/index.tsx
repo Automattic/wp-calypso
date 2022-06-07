@@ -1,9 +1,9 @@
-import { isBusiness, isEcommerce, isEnterprise, isPro } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch, DefaultRootState } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -34,6 +34,7 @@ import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id'
 import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { initiateThemeTransfer as initiateTransfer } from 'calypso/state/themes/actions';
 import {
@@ -50,9 +51,7 @@ interface InstalledPlugin {
 	id?: number;
 }
 
-const MarketplacePluginInstall = ( {
-	productSlug,
-}: MarketplacePluginInstallProps ): JSX.Element => {
+const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProps ) => {
 	const isUploadFlow = ! productSlug;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ initializeInstallFlow, setInitializeInstallFlow ] = useState( false );
@@ -123,15 +122,9 @@ const MarketplacePluginInstall = ( {
 	);
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 
-	const supportsAtomicUpgrade = useRef< boolean >();
-	useEffect( () => {
-		supportsAtomicUpgrade.current =
-			selectedSite?.plan &&
-			( isPro( selectedSite.plan ) ||
-				isBusiness( selectedSite.plan ) ||
-				isEnterprise( selectedSite.plan ) ||
-				isEcommerce( selectedSite.plan ) );
-	}, [ selectedSite ] );
+	const hasAtomicFeature = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID ?? null, WPCOM_FEATURES_ATOMIC )
+	);
 
 	// retrieve plugin data if not available
 	useEffect( () => {
@@ -143,9 +136,9 @@ const MarketplacePluginInstall = ( {
 	// Check if the user plan is enough for installation or it is a self-hosted jetpack site
 	// if not, check again in 2s and show an error message
 	useEffect( () => {
-		if ( ! supportsAtomicUpgrade.current && ! isJetpackSelfHosted ) {
+		if ( ! hasAtomicFeature && ! isJetpackSelfHosted ) {
 			waitFor( 2 ).then( () => {
-				if ( ! supportsAtomicUpgrade.current && ! isJetpackSelfHosted ) {
+				if ( ! hasAtomicFeature && ! isJetpackSelfHosted ) {
 					setNonInstallablePlanError( true );
 				}
 			} );
@@ -190,7 +183,7 @@ const MarketplacePluginInstall = ( {
 				dispatch( installPlugin( siteId, wporgPlugin, false ) );
 
 				triggerInstallFlow();
-			} else if ( supportsAtomicUpgrade.current ) {
+			} else if ( hasAtomicFeature ) {
 				// initialize atomic flow
 				setAtomicFlow( true );
 				dispatch( initiateTransfer( siteId, null, productSlug ) );
@@ -208,6 +201,7 @@ const MarketplacePluginInstall = ( {
 		wporgPlugin,
 		productSlug,
 		dispatch,
+		hasAtomicFeature,
 	] );
 
 	// Validate completition of atomic transfer flow
@@ -250,11 +244,26 @@ const MarketplacePluginInstall = ( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ pluginActive, automatedTransferStatus ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
-	const steps = [
-		isUploadFlow ? translate( 'Uploading plugin' ) : translate( 'Setting up plugin installation' ),
-		translate( 'Installing plugin' ),
-		translate( 'Activating plugin' ),
-	];
+	const steps = useMemo(
+		() => [
+			isUploadFlow
+				? translate( 'Uploading plugin' )
+				: translate( 'Setting up plugin installation' ),
+			translate( 'Installing plugin' ),
+			translate( 'Activating plugin' ),
+		],
+		[ isUploadFlow, translate ]
+	);
+
+	const additionalSteps = useMemo(
+		() => [
+			translate( 'Connecting the dots' ),
+			translate( 'Still working' ),
+			translate( 'Wheels are in motion' ),
+			translate( 'Working magic' ),
+		],
+		[ translate ]
+	);
 
 	const renderError = () => {
 		// Evaluate error causes in priority order
@@ -406,7 +415,13 @@ const MarketplacePluginInstall = ( {
 				<Item>{ translate( 'Plugin installation' ) }</Item>
 			</Masterbar>
 			<div className="marketplace-plugin-install__root">
-				{ renderError() || <MarketplaceProgressBar steps={ steps } currentStep={ currentStep } /> }
+				{ renderError() || (
+					<MarketplaceProgressBar
+						steps={ steps }
+						currentStep={ currentStep }
+						additionalSteps={ additionalSteps }
+					/>
+				) }
 			</div>
 		</ThemeProvider>
 	);

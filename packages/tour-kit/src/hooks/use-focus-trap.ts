@@ -39,7 +39,7 @@ const useFocusTrap = ( ref: React.MutableRefObject< null | HTMLElement > ): void
 	);
 
 	useEffect( () => {
-		const focusableElements = focus.focusable.find( ref.current as HTMLElement );
+		const focusableElements = ref.current ? focus.focusable.find( ref.current as HTMLElement ) : [];
 
 		if ( focusableElements && focusableElements.length ) {
 			setFirstFocusableElement( focusableElements[ 0 ] as HTMLElement );

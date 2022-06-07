@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { shallow } from 'enzyme';
 import moment from 'moment';
 import {
@@ -9,7 +10,7 @@ import {
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
 import { useIsDateVisible } from 'calypso/my-sites/backup/hooks';
-import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
+import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import DailyBackupStatus from '..';
 import BackupFailed from '../status-card/backup-failed';
 import BackupScheduled from '../status-card/backup-scheduled';
@@ -34,7 +35,7 @@ jest.mock( 'calypso/state/selectors/get-site-timezone-value' );
 jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
 
 jest.mock( 'calypso/state/selectors/get-rewind-backups' );
-jest.mock( 'calypso/state/selectors/get-rewind-capabilities' );
+jest.mock( 'calypso/state/selectors/get-site-features' );
 
 jest.mock( 'calypso/lib/jetpack/backup-utils' );
 
@@ -53,7 +54,7 @@ describe( 'DailyBackupStatus', () => {
 
 	beforeEach( () => {
 		useIsDateVisible.mockImplementation( () => () => true );
-		getRewindCapabilities.mockReset();
+		getSiteFeatures.mockReset();
 		isSuccessfulDailyBackup.mockReset();
 		isSuccessfulRealtimeBackup.mockReset();
 	} );
@@ -95,7 +96,9 @@ describe( 'DailyBackupStatus', () => {
 	} );
 
 	test( 'shows "backup failed" for Backup Real-time sites when a failed real-time backup is provided', () => {
-		getRewindCapabilities.mockImplementation( () => [ 'backup-realtime' ] );
+		getSiteFeatures.mockImplementation( () => ( {
+			active: [ WPCOM_FEATURES_REAL_TIME_BACKUPS ],
+		} ) );
 		isSuccessfulRealtimeBackup.mockImplementation( () => false );
 
 		const status = getStatus( <DailyBackupStatus selectedDate={ ARBITRARY_DATE } backup={ {} } /> );
@@ -111,7 +114,9 @@ describe( 'DailyBackupStatus', () => {
 	} );
 
 	test( 'shows "backup successful" for Backup Real-time sites when a successful real-time backup is provided', () => {
-		getRewindCapabilities.mockImplementation( () => [ 'backup-realtime' ] );
+		getSiteFeatures.mockImplementation( () => ( {
+			active: [ WPCOM_FEATURES_REAL_TIME_BACKUPS ],
+		} ) );
 		isSuccessfulRealtimeBackup.mockImplementation( () => true );
 
 		const status = getStatus( <DailyBackupStatus selectedDate={ ARBITRARY_DATE } backup={ {} } /> );

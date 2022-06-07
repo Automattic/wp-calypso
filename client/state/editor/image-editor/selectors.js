@@ -16,7 +16,6 @@ export function getImageEditorTransform( state ) {
  *
  * @param  {object}  state Global state tree
  * @returns {object}  image data { src, fileName }
- *
  */
 export function getImageEditorFileInfo( state ) {
 	return state.editor.imageEditor.fileInfo;
@@ -27,7 +26,6 @@ export function getImageEditorFileInfo( state ) {
  *
  * @param  {object}  state Global state tree
  * @returns {boolean} true if editor has changes
- *
  */
 export function imageEditorHasChanges( state ) {
 	return state.editor.imageEditor.hasChanges;
@@ -38,7 +36,6 @@ export function imageEditorHasChanges( state ) {
  *
  * @param  {object}  state Global state tree
  * @returns {boolean} true if image has been loaded
- *
  */
 export function isImageEditorImageLoaded( state ) {
 	return ! state.editor.imageEditor.imageIsLoading;
@@ -49,7 +46,6 @@ export function isImageEditorImageLoaded( state ) {
  *
  * @param  {object} state Global state tree
  * @returns {object} topBound, leftBound, bottomBound and rightBound of the canvas
- *
  */
 export function getImageEditorCropBounds( state ) {
 	return state.editor.imageEditor.cropBounds;
@@ -60,7 +56,6 @@ export function getImageEditorCropBounds( state ) {
  *
  * @param  {object} state Global state tree
  * @returns {object} topRatio, leftRatio, widthRatio and heightRatio of the crop
- *
  */
 export function getImageEditorCrop( state ) {
 	return state.editor.imageEditor.crop;
@@ -71,7 +66,6 @@ export function getImageEditorCrop( state ) {
  *
  * @param  {object} state Global state tree
  * @returns {object} one of the AspectRatios as defined in state/editor/image-editor/constants
- *
  */
 export function getImageEditorAspectRatio( state ) {
 	return state.editor.imageEditor.aspectRatio;

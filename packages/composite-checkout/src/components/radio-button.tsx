@@ -175,7 +175,7 @@ export default function RadioButton( {
 	disabled,
 	id,
 	ariaLabel,
-}: RadioButtonProps ): JSX.Element {
+}: RadioButtonProps ) {
 	const [ isFocused, changeFocus ] = useState( false );
 
 	return (

@@ -1,11 +1,11 @@
 import {
-	isBusinessPlan,
-	isCompletePlan,
-	isJetpackPlanSlug,
-	isPersonalPlan,
-	isPremiumPlan,
-	isSecurityDailyPlan,
-	isSecurityRealTimePlan,
+	planHasFeature,
+	FEATURE_GOOGLE_ANALYTICS,
+	FEATURE_JETPACK_VIDEOPRESS,
+	FEATURE_PREMIUM_SUPPORT,
+	FEATURE_SIMPLE_PAYMENTS,
+	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+	FEATURE_WORDADS_INSTANT,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
@@ -20,27 +20,12 @@ interface Props {
 	productSlug: string;
 }
 
-const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
+const JetpackGeneralBenefits: React.FC< Props > = ( { productSlug } ) => {
 	const translate = useTranslate();
-	const { productSlug } = props;
-	const hasSecurityDailyPlan = isSecurityDailyPlan( productSlug );
-	const hasSecurityRealTimePlan = isSecurityRealTimePlan( productSlug );
-	const hasCompletePlan = isCompletePlan( productSlug );
-	const hasPersonalPlan = isPersonalPlan( productSlug );
-	const hasPremiumPlan = isPremiumPlan( productSlug );
-	const hasBusinessPlan = isBusinessPlan( productSlug );
-	const hasJetpackPlanSlug = isJetpackPlanSlug( productSlug );
 	const benefits = [];
 
 	// Priority Support
-	if (
-		hasSecurityDailyPlan ||
-		hasSecurityRealTimePlan ||
-		hasCompletePlan ||
-		hasPersonalPlan ||
-		hasPremiumPlan ||
-		hasBusinessPlan
-	) {
+	if ( planHasFeature( productSlug, FEATURE_PREMIUM_SUPPORT ) ) {
 		benefits.push(
 			<React.Fragment>
 				{ translate(
@@ -56,15 +41,7 @@ const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
 	}
 
 	// Payment Collection
-	// Ad Program
-	// Google Analytics
-	if (
-		hasSecurityDailyPlan ||
-		hasSecurityRealTimePlan ||
-		hasCompletePlan ||
-		hasPremiumPlan ||
-		hasBusinessPlan
-	) {
+	if ( planHasFeature( productSlug, FEATURE_SIMPLE_PAYMENTS ) ) {
 		benefits.push(
 			<React.Fragment>
 				{ translate( 'The ability to {{strong}}collect payments{{/strong}}.', {
@@ -74,6 +51,10 @@ const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
 				} ) }
 			</React.Fragment>
 		);
+	}
+
+	// Ad Program
+	if ( planHasFeature( productSlug, FEATURE_WORDADS_INSTANT ) ) {
 		benefits.push(
 			<React.Fragment>
 				{ translate( 'The {{strong}}Ad program{{/strong}} for WordPress.', {
@@ -83,6 +64,10 @@ const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
 				} ) }
 			</React.Fragment>
 		);
+	}
+
+	// Google Analytics
+	if ( planHasFeature( productSlug, FEATURE_GOOGLE_ANALYTICS ) ) {
 		benefits.push(
 			<React.Fragment>
 				{ translate( 'The {{strong}}Google Analytics{{/strong}} integration.', {
@@ -94,8 +79,20 @@ const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
 		);
 	}
 
-	// 13GB of video hosting
-	if ( hasPremiumPlan || hasSecurityDailyPlan ) {
+	// 1TB of Video Hosting
+	if ( planHasFeature( productSlug, FEATURE_JETPACK_VIDEOPRESS ) ) {
+		benefits.push(
+			<React.Fragment>
+				{ translate( 'Up to 1TB of {{strong}}high-speed video hosting{{/strong}}.', {
+					components: {
+						strong: <strong />,
+					},
+				} ) }
+			</React.Fragment>
+		);
+	}
+	// 13GB of Video Hosting
+	else if ( planHasFeature( productSlug, FEATURE_VIDEO_UPLOADS_JETPACK_PRO ) ) {
 		benefits.push(
 			<React.Fragment>
 				{ translate( 'Up to 13GB of {{strong}}high-speed video hosting{{/strong}}.', {
@@ -107,46 +104,27 @@ const JetpackGeneralBenefits: React.FC< Props > = ( props ) => {
 		);
 	}
 
-	// Unlimited Video Hosting
-	if ( hasBusinessPlan || hasSecurityRealTimePlan || hasCompletePlan ) {
-		benefits.push(
-			<React.Fragment>
-				{ translate( 'Unlimited {{strong}}high-speed video hosting{{/strong}}.', {
+	// General benefits of all Jetpack Plans (brute force protection, CDN)
+	benefits.push(
+		<React.Fragment>
+			{ translate(
+				'Brute force {{strong}}attack protection{{/strong}} and {{strong}}downtime monitoring{{/strong}}.',
+				{
 					components: {
 						strong: <strong />,
 					},
-				} ) }
-			</React.Fragment>
-		);
-	}
+				}
+			) }
+		</React.Fragment>
+	);
 
-	// General benefits of all Jetpack Plans (brute force protection, CDN)
-	if ( hasJetpackPlanSlug ) {
-		benefits.push(
-			<React.Fragment>
-				{ translate(
-					'Brute force {{strong}}attack protection{{/strong}} and {{strong}}downtime monitoring{{/strong}}.',
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
-			</React.Fragment>
-		);
-	}
-
-	if ( benefits.length > 0 ) {
-		return (
-			<ul className="jetpack-benefits__general-benefit-list">
-				{ benefits.map( ( benefit, idx ) => {
-					return <li key={ idx }>{ benefit }</li>;
-				} ) }
-			</ul>
-		);
-	}
-
-	return null;
+	return (
+		<ul className="jetpack-benefits__general-benefit-list">
+			{ benefits.map( ( benefit, idx ) => {
+				return <li key={ idx }>{ benefit }</li>;
+			} ) }
+		</ul>
+	);
 };
 
 export default JetpackGeneralBenefits;

@@ -1,10 +1,9 @@
-import { Button } from '@automattic/components';
+import { Button, Spinner } from '@automattic/components';
 import { isDesktop } from '@automattic/viewport';
 import classnames from 'classnames';
 import { useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import fireworksIllustration from 'calypso/assets/images/customer-home/illustration--fireworks-v2.svg';
-import Spinner from 'calypso/components/spinner';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

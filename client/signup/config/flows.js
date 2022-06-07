@@ -59,7 +59,7 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( { domainItem, siteId, siteSlug }, localeSlug ) {
+function getSignupDestination( { domainItem, siteId, siteSlug, refParameter }, localeSlug ) {
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
@@ -73,8 +73,13 @@ function getSignupDestination( { domainItem, siteId, siteSlug }, localeSlug ) {
 		queryParam = { siteId };
 	}
 
+	// Add referral param to query args
+	if ( refParameter ) {
+		queryParam.ref = refParameter;
+	}
+
 	if ( isEnabled( 'signup/stepper-flow' ) ) {
-		return addQueryArgs( queryParam, '/setup/intent' );
+		return addQueryArgs( queryParam, '/setup' );
 	}
 
 	// Initially ship to English users only, then ship to all users when translations complete

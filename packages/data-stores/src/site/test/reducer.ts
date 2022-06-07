@@ -144,7 +144,7 @@ describe( 'Site', () => {
 		} );
 
 		it( 'should default to the initial state when an unknown action is dispatched', () => {
-			const state = siteSetupErrors( undefined, { type: 'TEST_ACTION', siteId } );
+			const state = siteSetupErrors( undefined, { type: 'TEST_ACTION' } );
 			expect( state ).toStrictEqual( {} );
 		} );
 
@@ -154,12 +154,10 @@ describe( 'Site', () => {
 			const error = 'test_error';
 			const message = 'This is a test error';
 
-			const action = setSiteSetupError( siteId, error, message );
+			const action = setSiteSetupError( error, message );
 			const expected = {
-				[ siteId ]: {
-					error,
-					message,
-				},
+				error,
+				message,
 			};
 
 			expect( siteSetupErrors( originalState, action ) ).toEqual( expected );

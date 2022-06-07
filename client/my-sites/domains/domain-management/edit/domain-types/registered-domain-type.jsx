@@ -1,5 +1,6 @@
 import { Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -36,7 +37,9 @@ import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 class RegisteredDomainType extends Component {
 	renderExpired() {
 		const { domain, purchase, isLoadingPurchase, translate, moment } = this.props;
-		const domainsLink = ( link ) => <a href={ link } target="_blank" rel="noopener noreferrer" />;
+		const domainsLink = ( link ) => (
+			<a href={ localizeUrl( link ) } target="_blank" rel="noopener noreferrer" />
+		);
 
 		if ( ! domain.expired || domain.pendingTransfer ) {
 			return null;
@@ -112,7 +115,7 @@ class RegisteredDomainType extends Component {
 					( isLoadingPurchase || purchase ) &&
 					( domain.isRenewable || domain.isRedeemable ) && (
 						<RenewButton
-							primary={ true }
+							primary
 							purchase={ purchase }
 							selectedSite={ this.props.selectedSite }
 							subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
@@ -129,7 +132,11 @@ class RegisteredDomainType extends Component {
 		const { domain, translate } = this.props;
 		const { registrationDate, name: domain_name } = domain;
 		const domainsLink = (
-			<a href={ DOMAIN_RECENTLY_REGISTERED } target="_blank" rel="noopener noreferrer" />
+			<a
+				href={ localizeUrl( DOMAIN_RECENTLY_REGISTERED ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			/>
 		);
 
 		const recentlyRegistered = isRecentlyRegistered( registrationDate );
@@ -189,7 +196,7 @@ class RegisteredDomainType extends Component {
 			<div>
 				{ ( isLoadingPurchase || purchase ) && (
 					<RenewButton
-						compact={ true }
+						compact
 						purchase={ purchase }
 						selectedSite={ this.props.selectedSite }
 						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
@@ -264,12 +271,26 @@ class RegisteredDomainType extends Component {
 	}
 
 	render() {
-		const { domain, selectedSite, purchase, isLoadingPurchase, isDomainOnlySite } = this.props;
+		const {
+			domain,
+			selectedSite,
+			purchase,
+			isLoadingPurchase,
+			isDomainOnlySite,
+			translate,
+			dispatch,
+		} = this.props;
 		const { name: domain_name } = domain;
 
-		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase, {
-			isDomainOnlySite,
-		} );
+		const { statusText, statusClass, icon } = resolveDomainStatus(
+			domain,
+			purchase,
+			translate,
+			dispatch,
+			{
+				isDomainOnlySite,
+			}
+		);
 
 		return (
 			<div className="domain-types__container">

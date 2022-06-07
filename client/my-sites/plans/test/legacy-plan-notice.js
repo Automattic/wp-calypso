@@ -1,45 +1,50 @@
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+import { render, screen } from '@testing-library/react';
 import legacyPlanNotice from 'calypso/my-sites/plans/legacy-plan-notice';
 
 describe( 'Shows legacy plan notice for ex-plans', () => {
 	test( 'Do not show legacy plan notice for sites on Free plan', () => {
-		expect(
+		const { container } = render(
 			legacyPlanNotice( true, { plan: { product_slug: 'free_plan', is_free: true } } )
-		).toBeUndefined();
+		);
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'Do not show legacy plan notice to sites on Business plan', () => {
-		expect(
+		const { container } = render(
 			legacyPlanNotice( true, { plan: { product_slug: 'business-bundle' } } )
-		).toBeUndefined();
+		);
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'Do not show legacy plan notice to sites on eCommerce plan', () => {
-		expect(
+		const { container } = render(
 			legacyPlanNotice( true, { plan: { product_slug: 'ecommerce-bundle' } } )
-		).toBeUndefined();
+		);
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'Do not show legacy plan notice to sites on Pro plan', () => {
-		expect( legacyPlanNotice( true, { plan: { product_slug: 'pro-plan' } } ) ).toBeUndefined();
+		const { container } = render(
+			legacyPlanNotice( true, { plan: { product_slug: 'pro-plan' } } )
+		);
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'Show legacy plan notice to sites on Blogger plan', () => {
-		const wrapper = shallow(
-			legacyPlanNotice( true, { plan: { product_slug: 'blogger-bundle' } } )
-		);
-		expect( wrapper.is( 'Notice' ) ).toBe( true );
+		render( legacyPlanNotice( true, { plan: { product_slug: 'blogger-bundle' } } ) );
+		expect( screen.queryByRole( 'status' ) ).toBeInTheDocument();
 	} );
 
 	test( 'Show legacy plan notice to sites on Personal plan', () => {
-		const wrapper = shallow(
-			legacyPlanNotice( true, { plan: { product_slug: 'personal-bundle' } } )
-		);
-		expect( wrapper.is( 'Notice' ) ).toBe( true );
+		render( legacyPlanNotice( true, { plan: { product_slug: 'personal-bundle' } } ) );
+		expect( screen.queryByRole( 'status' ) ).toBeInTheDocument();
 	} );
 
 	test( 'Show legacy plan notice to sites on Premium plan', () => {
-		const wrapper = shallow( legacyPlanNotice( true, { plan: { product_slug: 'value_bundle' } } ) );
-		expect( wrapper.is( 'Notice' ) ).toBe( true );
+		render( legacyPlanNotice( true, { plan: { product_slug: 'value_bundle' } } ) );
+		expect( screen.queryByRole( 'status' ) ).toBeInTheDocument();
 	} );
 } );

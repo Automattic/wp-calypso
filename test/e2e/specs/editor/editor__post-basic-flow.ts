@@ -6,13 +6,13 @@ import {
 	DataHelper,
 	EditorPage,
 	PublishedPostPage,
-	skipItIf,
 	TestAccount,
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { skipItIf } from '../../jest-helpers';
 
 const quote =
 	'The problem with quotes on the Internet is that it is hard to verify their authenticity.\n- Abraham Lincoln';

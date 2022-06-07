@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { expect } from 'chai';
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import SupportInfo from '../';
 
 describe( 'SupportInfo', () => {
@@ -13,15 +13,25 @@ describe( 'SupportInfo', () => {
 		privacyLink: 'https://foo.com/privacy/',
 	};
 
-	const wrapper = shallow( <SupportInfo { ...testProps } /> ).dive();
+	test( 'should have a proper "Learn more" link', async () => {
+		render( <SupportInfo { ...testProps } /> );
 
-	it( 'should have a proper "Learn more" link', () => {
-		expect( wrapper.find( 'ExternalLink' ).get( 0 ).props.href ).to.be.equal( 'https://foo.com/' );
+		await userEvent.click( screen.getByRole( 'button' ) );
+
+		const link = screen.getByRole( 'link', { name: /learn more/i } );
+
+		expect( link ).toBeInTheDocument();
+		expect( link ).toHaveAttribute( 'href', testProps.link );
 	} );
 
-	it( 'should have a proper "Privacy Information" link', () => {
-		expect( wrapper.find( 'ExternalLink' ).get( 1 ).props.href ).to.be.equal(
-			'https://foo.com/privacy/'
-		);
+	it( 'should have a proper "Privacy Information" link', async () => {
+		render( <SupportInfo { ...testProps } /> );
+
+		await userEvent.click( screen.getByRole( 'button' ) );
+
+		const link = screen.getByRole( 'link', { name: /privacy information/i } );
+
+		expect( link ).toBeInTheDocument();
+		expect( link ).toHaveAttribute( 'href', testProps.privacyLink );
 	} );
 } );

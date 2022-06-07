@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { SIGNUP_STEPS_SURVEY_SET, SIGNUP_COMPLETE_RESET } from 'calypso/state/action-types';
 import signupSurveyReducer from '../reducer';
 
@@ -16,7 +15,7 @@ describe( 'reducer', () => {
 					},
 				}
 			)
-		).to.be.eql( {
+		).toEqual( {
 			vertical: 'test-survey',
 			otherText: 'test-other-text',
 			siteType: 'test-site-type',
@@ -36,6 +35,6 @@ describe( 'reducer', () => {
 					action: {},
 				}
 			)
-		).to.be.eql( {} );
+		).toEqual( {} );
 	} );
 } );

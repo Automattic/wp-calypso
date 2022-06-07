@@ -1,5 +1,6 @@
 /** @jest-environment jsdom */
 
+jest.mock( 'page' );
 jest.mock( 'react-query', () => ( {
 	useQuery: () => [],
 } ) );
@@ -61,6 +62,8 @@ import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-
 import PluginsBrowser from '../';
 
 window.__i18n_text_domain__ = JSON.stringify( 'default' );
+window.IntersectionObserver = jest.fn( () => ( { observe: jest.fn(), disconnect: jest.fn() } ) );
+
 const initialReduxState = {
 	plugins: {
 		wporg: {

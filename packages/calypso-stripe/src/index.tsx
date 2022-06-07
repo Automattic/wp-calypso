@@ -1,8 +1,16 @@
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import debugFactory from 'debug';
-import { useRef, useEffect, useCallback, useState, useContext, createContext } from 'react';
-import * as React from 'react';
+import {
+	useRef,
+	useEffect,
+	useCallback,
+	useState,
+	useContext,
+	createContext,
+	ComponentType,
+	PropsWithChildren,
+} from 'react';
 import type {
 	Stripe,
 	StripeError,
@@ -477,10 +485,9 @@ function areRequestArgsEqual(
 export function StripeSetupIntentIdProvider( {
 	children,
 	fetchStipeSetupIntentId,
-}: {
-	children: JSX.Element;
+}: PropsWithChildren< {
 	fetchStipeSetupIntentId: GetStripeSetupIntentId;
-} ) {
+} > ) {
 	const setupIntentData = useFetchSetupIntentId( fetchStipeSetupIntentId );
 
 	return (
@@ -495,12 +502,11 @@ export function StripeHookProvider( {
 	fetchStripeConfiguration,
 	configurationArgs = null,
 	locale = undefined,
-}: {
-	children: JSX.Element;
+}: PropsWithChildren< {
 	fetchStripeConfiguration: GetStripeConfiguration;
 	configurationArgs?: undefined | null | GetStripeConfigurationArgs;
 	locale?: undefined | string;
-} ): JSX.Element {
+} > ) {
 	const { stripeConfiguration, stripeConfigurationError } = useStripeConfiguration(
 		fetchStripeConfiguration,
 		configurationArgs
@@ -571,12 +577,9 @@ export function useStripeSetupIntentId(): StripeSetupIntentIdData {
  *
  * Adds several props to the wrapped component. See docs of useStripe for
  * details of the properties it provides.
- *
- * @param {object} WrappedComponent The component to wrap
- * @returns {object} WrappedComponent
  */
-export function withStripeProps< P >( WrappedComponent: React.ComponentType< P > ): React.FC< P > {
-	return ( props: P ): JSX.Element => {
+export function withStripeProps< P >( WrappedComponent: ComponentType< P > ) {
+	return ( props: P ) => {
 		const stripeData = useStripe();
 		const newProps = { ...props, ...stripeData };
 		return <WrappedComponent { ...newProps } />;

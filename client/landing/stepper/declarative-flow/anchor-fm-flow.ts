@@ -1,6 +1,8 @@
 import { useSelect } from '@wordpress/data';
+import { useEffect } from 'react';
+import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { SITE_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
@@ -13,7 +15,11 @@ export const anchorFmFlow: Flow = {
 	name: 'anchor-fm',
 
 	useSteps() {
-		return [ 'podcastTitle', 'designSetup', 'processing' ] as StepPath[];
+		useEffect( () => {
+			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
+		}, [] );
+
+		return [ 'login', 'podcastTitle', 'designSetup', 'processing', 'error' ] as StepPath[];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -25,12 +31,14 @@ export const anchorFmFlow: Flow = {
 			const siteSlug = siteSlugParam || getNewSite()?.site_slug;
 
 			switch ( currentStep ) {
+				case 'login':
+					return navigate( 'podcastTitle' );
 				case 'podcastTitle':
 					return navigate( 'designSetup' );
 				case 'designSetup':
 					return navigate( 'processing' );
 				case 'processing':
-					return redirect( `/page/home/${ siteSlug }` );
+					return redirect( `/page/${ siteSlug }/home` );
 			}
 		}
 
@@ -47,16 +55,20 @@ export const anchorFmFlow: Flow = {
 			const siteSlug = siteSlugParam || getNewSite()?.site_slug;
 
 			switch ( currentStep ) {
+				case 'login':
+					return navigate( 'podcastTitle' );
 				case 'podcastTitle':
 					return navigate( 'designSetup' );
 				case 'designSetup':
-					return redirect( `/page/home/${ siteSlug }` );
+					return navigate( 'processing' );
+				case 'processing':
+					return redirect( `/page/${ siteSlug }/home` );
 				default:
 					return navigate( 'podcastTitle' );
 			}
 		};
 
-		const goToStep = ( step: StepPath ) => {
+		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
 			navigate( step );
 		};
 

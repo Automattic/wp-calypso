@@ -1,4 +1,3 @@
-import { expect, assert } from 'chai';
 import moment from 'moment';
 import { sameDay, sameSite, combine, combineCards, injectRecommendations } from '../utils';
 
@@ -30,13 +29,13 @@ describe( 'reader stream', () => {
 		const oneMonthAgoPostKey = datePostKey( moment( today ).subtract( 1, 'month' ).toDate() );
 
 		test( 'should return true when two days are the same day', () => {
-			assert( sameDay( todayPostKey, todayPostKey2 ) );
+			expect( sameDay( todayPostKey, todayPostKey2 ) ).toBe( true );
 		} );
 
 		test( 'should return false when two days are not the same day', () => {
-			assert( ! sameDay( todayPostKey, oneYearAgoPostKey ) );
-			assert( ! sameDay( todayPostKey, oneYearInTheFuturePostKey ) );
-			assert( ! sameDay( todayPostKey, oneMonthAgoPostKey ) );
+			expect( sameDay( todayPostKey, oneYearAgoPostKey ) ).toBe( false );
+			expect( sameDay( todayPostKey, oneYearInTheFuturePostKey ) ).toBe( false );
+			expect( sameDay( todayPostKey, oneMonthAgoPostKey ) ).toBe( false );
 		} );
 	} );
 
@@ -44,27 +43,27 @@ describe( 'reader stream', () => {
 		test( 'should return true when two postKeys represent the same site', () => {
 			const postId = 'postId';
 			const isSame = sameSite( { blogId: 'site1', postId }, { blogId: 'site1', postId } );
-			assert( isSame );
+			expect( isSame ).toBe( true );
 		} );
 
 		test( 'should return true when two postKeys represent the same feed', () => {
 			const isSame = sameSite( postKey1, postKey2 );
-			assert( isSame );
+			expect( isSame ).toBe( true );
 		} );
 
 		test( 'should return true when samesite and one item is a combinedCard', () => {
 			const isSame = sameSite( combinedCardPostKey1, combinedCardPostKey2 );
-			assert( isSame );
+			expect( isSame ).toBe( true );
 		} );
 
 		test( 'should return false when different site and one item is a combinedCard', () => {
 			const isSame = sameSite( { ...combinedCardPostKey1, feedId: 'feed3' }, combinedCardPostKey2 );
-			assert( ! isSame );
+			expect( isSame ).toBe( false );
 		} );
 
 		test( 'should work when both postKeys represent combinedCards', () => {
 			const isSame = sameSite( combinedCardPostKey1, combinedCardPostKey2 );
-			assert( isSame );
+			expect( isSame ).toBe( true );
 		} );
 
 		test( 'recs should never be marked as sameSite', () => {
@@ -72,14 +71,14 @@ describe( 'reader stream', () => {
 				{ ...postKey1, isRecommendationBlock: 'isRecommendationBlock' },
 				postKey1
 			);
-			assert.isNotTrue( isSame );
+			expect( isSame ).toBe( false );
 		} );
 	} );
 
 	describe( '#combine', () => {
 		test( 'should combine two regular postkeys', () => {
 			const combined = combine( postKey1, postKey2 );
-			expect( combined ).to.eql( {
+			expect( combined ).toEqual( {
 				feedId: postKey1.feedId,
 				postIds: [ postKey1.postId, postKey2.postId ],
 				isCombination: true,
@@ -89,12 +88,12 @@ describe( 'reader stream', () => {
 
 		test( 'should return null if either postKey is null', () => {
 			const combined = combine( postKey1, null );
-			assert.equal( combined, null );
+			expect( combined ).toBeNull();
 		} );
 
 		test( 'should combine a combined card with a regular postKey', () => {
 			const combined = combine( combinedCardPostKey1, postKey1 );
-			expect( combined ).to.eql( {
+			expect( combined ).toEqual( {
 				...combinedCardPostKey1,
 				postIds: combinedCardPostKey1.postIds.concat( postKey1.postId ),
 			} );
@@ -102,7 +101,7 @@ describe( 'reader stream', () => {
 
 		test( 'should combine two combined cards correctly', () => {
 			const combined = combine( combinedCardPostKey1, combinedCardPostKey2 );
-			expect( combined ).to.eql( {
+			expect( combined ).toEqual( {
 				...combinedCardPostKey1,
 				postIds: combinedCardPostKey1.postIds.concat( combinedCardPostKey2.postIds ),
 			} );
@@ -121,11 +120,11 @@ describe( 'reader stream', () => {
 		test( 'should combine series with 2 in a rows', () => {
 			const postKeysSet1 = [ site1Key1, site1Key2 ];
 			const combinedItems1 = combineCards( postKeysSet1 );
-			expect( combinedItems1 ).eql( [ combine( site1Key1, site1Key2 ) ] );
+			expect( combinedItems1 ).toEqual( [ combine( site1Key1, site1Key2 ) ] );
 
 			const postKeysSet2 = [ site4Key1, site1Key1, site1Key2, site3Key1 ];
 			const combinedItems2 = combineCards( postKeysSet2 );
-			expect( combinedItems2 ).eql( [ site4Key1, combine( site1Key1, site1Key2 ), site3Key1 ] );
+			expect( combinedItems2 ).toEqual( [ site4Key1, combine( site1Key1, site1Key2 ), site3Key1 ] );
 		} );
 
 		test( 'should combine cards with series of 3 in a row', () => {
@@ -133,17 +132,17 @@ describe( 'reader stream', () => {
 
 			const postKeys1 = [ site1Key1, site1Key2, site1Key3 ];
 			const combinedItems1 = combineCards( postKeys1 );
-			expect( combinedItems1 ).eql( [ combinedCard ] );
+			expect( combinedItems1 ).toEqual( [ combinedCard ] );
 
 			const postKeys2 = [ site4Key1, site1Key1, site1Key2, site1Key3, site3Key1 ];
 			const combinedItems2 = combineCards( postKeys2 );
-			expect( combinedItems2 ).eql( [ site4Key1, combinedCard, site3Key1 ] );
+			expect( combinedItems2 ).toEqual( [ site4Key1, combinedCard, site3Key1 ] );
 		} );
 
 		test( 'should not combine any cards when no series exist', () => {
 			const postKeys = [ site1Key1, site2Key2, site3Key1, site4Key1 ];
 			const combinedItems = combineCards( postKeys );
-			expect( combinedItems ).eql( postKeys );
+			expect( combinedItems ).toEqual( postKeys );
 		} );
 
 		test( 'should not combine discover cards', () => {
@@ -160,15 +159,15 @@ describe( 'reader stream', () => {
 			const combinedFeedItems = combineCards( discoverFeedPostKeys );
 			const combinedSiteItems = combineCards( discoverSitePostKeys );
 
-			expect( combinedFeedItems ).eql( discoverFeedPostKeys );
-			expect( combinedSiteItems ).eql( discoverSitePostKeys );
+			expect( combinedFeedItems ).toEqual( discoverFeedPostKeys );
+			expect( combinedSiteItems ).toEqual( discoverSitePostKeys );
 		} );
 
 		test( 'should not combine cards that are greater than a day apart', () => {
 			const theDistantPast = moment().year( -1 ).toDate();
 			const postKeys = [ site1Key1, { ...site1Key2, date: theDistantPast } ];
 			const combinedItems = combineCards( postKeys );
-			expect( combinedItems ).eql( postKeys );
+			expect( combinedItems ).toEqual( postKeys );
 		} );
 	} );
 
@@ -186,7 +185,7 @@ describe( 'reader stream', () => {
 			const items = [ {} ];
 			const injectedItems = injectRecommendations( items, [], 1 );
 
-			expect( injectedItems ).eql( items );
+			expect( injectedItems ).toEqual( items );
 		} );
 
 		test( 'should not modify items if cards per rec is greater than length of items', () => {
@@ -194,7 +193,7 @@ describe( 'reader stream', () => {
 			const items = [ {} ];
 			const injectedItems = injectRecommendations( items, recs, 1 );
 
-			expect( injectedItems ).eql( items );
+			expect( injectedItems ).toEqual( items );
 		} );
 
 		test( 'should inject 2 recs for each regular post when cards per rec = 1', () => {
@@ -202,7 +201,7 @@ describe( 'reader stream', () => {
 			const items = [ post(), post(), post(), post(), post() ];
 			const injectedItems = injectRecommendations( items, recs, 1 );
 
-			expect( injectedItems ).eql( [
+			expect( injectedItems ).toEqual( [
 				post(),
 				createRecBlock( [ rec(), rec() ], 0 ),
 				post(),
@@ -220,7 +219,7 @@ describe( 'reader stream', () => {
 			const items = [ post(), post(), post() ];
 			const injectedItems = injectRecommendations( items, recs, 1 );
 
-			expect( injectedItems ).eql( [
+			expect( injectedItems ).toEqual( [
 				post(),
 				createRecBlock( [ rec(), rec() ], 0 ),
 				post(),
@@ -233,7 +232,7 @@ describe( 'reader stream', () => {
 			const items = [ post(), post(), post(), post(), post() ];
 			const injectedItems = injectRecommendations( items, recs, 4 );
 
-			expect( injectedItems ).eql( [
+			expect( injectedItems ).toEqual( [
 				post(),
 				post(),
 				post(),

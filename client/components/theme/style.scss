@@ -200,6 +200,72 @@ $theme-info-height: 54px;
 	overflow: hidden;
 }
 
+.theme__update-alert {
+	position:absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1;
+	padding: 1px;
+	font-size: 0.75rem;
+	.theme__update-alert-content {
+		@keyframes theme__rotate-spinner {
+			100% {
+				transform: rotate( 360deg );
+			}
+		}
+
+		.theme__updating-animated {
+			animation: 2s linear infinite;
+			animation-name: theme__rotate-spinner;
+		}
+	
+		svg {
+			margin: 0 0.5rem -0.25rem;
+		}
+		span {
+			line-height: 30px;
+		}
+		&.warning {
+			background-color: #fcf9e8;
+			border-left: 4px #dba617 solid;
+		}
+		&.success {
+			background-color: #e4f8e9;
+			border-left: 4px var( --color-success ) solid;
+		}
+		&.info {
+			background-color: #e4f0f8;
+			border-left: 4px #0675c4 solid;
+		}
+		&.danger {
+			background-color: #f8e4e4;
+			border-left: 4px #c40606 solid;
+		}
+	}
+
+	.theme__button-link.button.is-borderless {
+		float: right;
+		font-size: 0.75rem;
+		line-height: 30px;
+		margin-right: 0.5em;
+	}
+}
+
+.theme__button-link {
+	&.button.is-borderless {
+		padding: 0;
+	}
+	&.components-button.is-link:not( :disabled ),
+	&.components-button.is-link:not( :disabled ) {
+		color: var( --studio-gray-40 );
+	}
+	&.components-button.is-link:hover:not( :disabled ),
+	&.components-button.is-link:active:not( :disabled ) {
+		color: var( --studio-gray-60 );
+	}
+}
+
 .theme__img {
 	position: absolute;
 	top: 0;
@@ -294,3 +360,6 @@ $theme-info-height: 54px;
 	text-transfrom: capitalize;
 }
 
+.theme__tooltip {
+	max-width: 300px;
+}

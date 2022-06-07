@@ -1,9 +1,9 @@
 import phpUnserialize from 'phpunserialize';
 import {
-	UseQueryResult,
 	UseQueryOptions,
 	InfiniteData,
 	useInfiniteQuery,
+	UseInfiniteQueryResult,
 	useQuery,
 } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -271,7 +271,7 @@ const extractPages = ( pages: Array< { hits: ESHits } > = [] ) => {
 export const useSiteSearchPlugins = (
 	options: PluginQueryOptions,
 	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = false }: UseQueryOptions = {}
-): UseQueryResult => {
+): UseInfiniteQueryResult => {
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
 	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;

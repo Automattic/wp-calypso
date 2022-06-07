@@ -175,7 +175,7 @@ class Suggestions extends Component< Props, State > {
 		return categories;
 	}
 
-	render(): JSX.Element | null {
+	render() {
 		const { query, className, title } = this.props;
 		const containerClass = classnames( 'suggestions', className );
 

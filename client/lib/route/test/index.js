@@ -2,146 +2,142 @@
  * @jest-environment jsdom
  */
 
-import { expect } from 'chai';
 import * as route from '../';
 
 describe( 'route', function () {
 	describe( 'getSiteFragment', function () {
 		describe( 'for the root path', function () {
 			test( 'should return false', function () {
-				expect( route.getSiteFragment( '/' ) ).to.equal( false );
+				expect( route.getSiteFragment( '/' ) ).toEqual( false );
 			} );
 		} );
 		describe( 'for editor paths', function () {
 			test( 'should return false when there is no site yet', function () {
-				expect( route.getSiteFragment( '/post' ) ).to.equal( false );
-				expect( route.getSiteFragment( '/page' ) ).to.equal( false );
+				expect( route.getSiteFragment( '/post' ) ).toEqual( false );
+				expect( route.getSiteFragment( '/page' ) ).toEqual( false );
 			} );
 			test( 'should return the site when editing an existing post', function () {
-				expect( route.getSiteFragment( '/post/example.wordpress.com/231' ) ).to.equal(
+				expect( route.getSiteFragment( '/post/example.wordpress.com/231' ) ).toEqual(
 					'example.wordpress.com'
 				);
-				expect( route.getSiteFragment( '/post/2916284/231' ) ).to.equal( 2916284 );
+				expect( route.getSiteFragment( '/post/2916284/231' ) ).toEqual( 2916284 );
 			} );
 			test( 'should return the site when editing a new post', function () {
-				expect( route.getSiteFragment( '/post/example.wordpress.com' ) ).to.equal(
+				expect( route.getSiteFragment( '/post/example.wordpress.com' ) ).toEqual(
 					'example.wordpress.com'
 				);
-				expect( route.getSiteFragment( '/post/2916284' ) ).to.equal( 2916284 );
-				expect( route.getSiteFragment( '/post/example.wordpress.com/new' ) ).to.equal(
+				expect( route.getSiteFragment( '/post/2916284' ) ).toEqual( 2916284 );
+				expect( route.getSiteFragment( '/post/example.wordpress.com/new' ) ).toEqual(
 					'example.wordpress.com'
 				);
-				expect( route.getSiteFragment( '/post/2916284/new' ) ).to.equal( 2916284 );
+				expect( route.getSiteFragment( '/post/2916284/new' ) ).toEqual( 2916284 );
 			} );
 			test( 'should return the site when editing an existing page', function () {
-				expect( route.getSiteFragment( '/page/example.wordpress.com/29' ) ).to.equal(
+				expect( route.getSiteFragment( '/page/example.wordpress.com/29' ) ).toEqual(
 					'example.wordpress.com'
 				);
-				expect( route.getSiteFragment( '/page/2916284/29' ) ).to.equal( 2916284 );
+				expect( route.getSiteFragment( '/page/2916284/29' ) ).toEqual( 2916284 );
 			} );
 			test( 'should return the site when editing a new page', function () {
-				expect( route.getSiteFragment( '/page/example.wordpress.com' ) ).to.equal(
+				expect( route.getSiteFragment( '/page/example.wordpress.com' ) ).toEqual(
 					'example.wordpress.com'
 				);
-				expect( route.getSiteFragment( '/page/2916284' ) ).to.equal( 2916284 );
-				expect( route.getSiteFragment( '/page/example.wordpress.com/new' ) ).to.equal(
+				expect( route.getSiteFragment( '/page/2916284' ) ).toEqual( 2916284 );
+				expect( route.getSiteFragment( '/page/example.wordpress.com/new' ) ).toEqual(
 					'example.wordpress.com'
 				);
-				expect( route.getSiteFragment( '/page/2916284/new' ) ).to.equal( 2916284 );
+				expect( route.getSiteFragment( '/page/2916284/new' ) ).toEqual( 2916284 );
 			} );
 			test( 'should return the site when editing a an existing custom post type', function () {
 				expect(
 					route.getSiteFragment( '/edit/jetpack-portfolio/example.wordpress.com/218' )
-				).to.equal( 'example.wordpress.com' );
-				expect( route.getSiteFragment( '/edit/jetpack-portfolio/2916284/218' ) ).to.equal(
-					2916284
-				);
+				).toEqual( 'example.wordpress.com' );
+				expect( route.getSiteFragment( '/edit/jetpack-portfolio/2916284/218' ) ).toEqual( 2916284 );
 			} );
 			test( 'should return the site when editing a new custom post type', function () {
-				expect( route.getSiteFragment( '/edit/jetpack-portfolio/example.wordpress.com' ) ).to.equal(
+				expect( route.getSiteFragment( '/edit/jetpack-portfolio/example.wordpress.com' ) ).toEqual(
 					'example.wordpress.com'
 				);
-				expect( route.getSiteFragment( '/edit/jetpack-portfolio/2916284' ) ).to.equal( 2916284 );
+				expect( route.getSiteFragment( '/edit/jetpack-portfolio/2916284' ) ).toEqual( 2916284 );
 				expect(
 					route.getSiteFragment( '/edit/jetpack-portfolio/example.wordpress.com/new' )
-				).to.equal( 'example.wordpress.com' );
-				expect( route.getSiteFragment( '/edit/jetpack-portfolio/2916284/new' ) ).to.equal(
-					2916284
-				);
+				).toEqual( 'example.wordpress.com' );
+				expect( route.getSiteFragment( '/edit/jetpack-portfolio/2916284/new' ) ).toEqual( 2916284 );
 			} );
 			test( 'should not return a non-safe numeric site', () => {
-				expect( route.getSiteFragment( '/edit/jetpack-portfolio/1000000000000000000000/new' ) ).to
-					.be.false;
+				expect(
+					route.getSiteFragment( '/edit/jetpack-portfolio/1000000000000000000000/new' )
+				).toBe( false );
 			} );
 		} );
 		describe( 'for listing paths', function () {
 			test( 'should return false when there is no site yet', function () {
-				expect( route.getSiteFragment( '/posts' ) ).to.equal( false );
-				expect( route.getSiteFragment( '/posts/drafts' ) ).to.equal( false );
-				expect( route.getSiteFragment( '/pages' ) ).to.equal( false );
-				expect( route.getSiteFragment( '/pages/drafts' ) ).to.equal( false );
+				expect( route.getSiteFragment( '/posts' ) ).toEqual( false );
+				expect( route.getSiteFragment( '/posts/drafts' ) ).toEqual( false );
+				expect( route.getSiteFragment( '/pages' ) ).toEqual( false );
+				expect( route.getSiteFragment( '/pages/drafts' ) ).toEqual( false );
 			} );
 			test( 'should return the site when viewing posts', function () {
-				expect( route.getSiteFragment( '/posts/example.wordpress.com' ) ).to.equal(
+				expect( route.getSiteFragment( '/posts/example.wordpress.com' ) ).toEqual(
 					'example.wordpress.com'
 				);
-				expect( route.getSiteFragment( '/posts/2916284' ) ).to.equal( 2916284 );
+				expect( route.getSiteFragment( '/posts/2916284' ) ).toEqual( 2916284 );
 			} );
 			test( 'should return the site when viewing posts with a filter', function () {
-				expect( route.getSiteFragment( '/posts/drafts/example.wordpress.com' ) ).to.equal(
+				expect( route.getSiteFragment( '/posts/drafts/example.wordpress.com' ) ).toEqual(
 					'example.wordpress.com'
 				);
-				expect( route.getSiteFragment( '/posts/drafts/2916284' ) ).to.equal( 2916284 );
+				expect( route.getSiteFragment( '/posts/drafts/2916284' ) ).toEqual( 2916284 );
 			} );
 			test( 'should return the site when viewing pages', function () {
-				expect( route.getSiteFragment( '/pages/example.wordpress.com' ) ).to.equal(
+				expect( route.getSiteFragment( '/pages/example.wordpress.com' ) ).toEqual(
 					'example.wordpress.com'
 				);
-				expect( route.getSiteFragment( '/pages/2916284' ) ).to.equal( 2916284 );
+				expect( route.getSiteFragment( '/pages/2916284' ) ).toEqual( 2916284 );
 			} );
 			test( 'should return the site when viewing pages with a filter', function () {
-				expect( route.getSiteFragment( '/pages/drafts/example.wordpress.com' ) ).to.equal(
+				expect( route.getSiteFragment( '/pages/drafts/example.wordpress.com' ) ).toEqual(
 					'example.wordpress.com'
 				);
-				expect( route.getSiteFragment( '/pages/drafts/2916284' ) ).to.equal( 2916284 );
+				expect( route.getSiteFragment( '/pages/drafts/2916284' ) ).toEqual( 2916284 );
 			} );
 			test( 'should not return a non-safe numeric site', () => {
-				expect( route.getSiteFragment( '/pages/drafts/1000000000000000000000' ) ).to.be.false;
+				expect( route.getSiteFragment( '/pages/drafts/1000000000000000000000' ) ).toBe( false );
 			} );
 		} );
 		describe( 'for stats paths', function () {
 			test( 'should return false when there is no site yet', function () {
-				expect( route.getSiteFragment( '/stats' ) ).to.equal( false );
-				expect( route.getSiteFragment( '/stats/day' ) ).to.equal( false );
+				expect( route.getSiteFragment( '/stats' ) ).toEqual( false );
+				expect( route.getSiteFragment( '/stats/day' ) ).toEqual( false );
 			} );
 			test( 'should return the site when viewing the default stats page', function () {
-				expect( route.getSiteFragment( '/stats/day/example.wordpress.com' ) ).to.equal(
+				expect( route.getSiteFragment( '/stats/day/example.wordpress.com' ) ).toEqual(
 					'example.wordpress.com'
 				);
-				expect( route.getSiteFragment( '/stats/day/2916284' ) ).to.equal( 2916284 );
+				expect( route.getSiteFragment( '/stats/day/2916284' ) ).toEqual( 2916284 );
 			} );
 			test( 'should not return a non-safe numeric site', () => {
-				expect( route.getSiteFragment( '/stats/day/1000000000000000000000' ) ).to.be.false;
+				expect( route.getSiteFragment( '/stats/day/1000000000000000000000' ) ).toBe( false );
 			} );
 		} );
 		describe( 'for purchases paths', function () {
 			test( 'should return the correct site fragment when working with purchases', function () {
-				expect( route.getSiteFragment( '/me/purchases/example.wordpress.com' ) ).to.equal(
+				expect( route.getSiteFragment( '/me/purchases/example.wordpress.com' ) ).toEqual(
 					'example.wordpress.com'
 				);
-				expect( route.getSiteFragment( '/me/purchases/2916284' ) ).to.equal( 2916284 );
-				expect( route.getSiteFragment( '/me/purchases/example.wordpress.com/cancel' ) ).to.equal(
+				expect( route.getSiteFragment( '/me/purchases/2916284' ) ).toEqual( 2916284 );
+				expect( route.getSiteFragment( '/me/purchases/example.wordpress.com/cancel' ) ).toEqual(
 					'example.wordpress.com'
 				);
-				expect( route.getSiteFragment( '/me/purchases/2916284/cancel' ) ).to.equal( 2916284 );
+				expect( route.getSiteFragment( '/me/purchases/2916284/cancel' ) ).toEqual( 2916284 );
 				expect(
 					route.getSiteFragment(
 						'/me/purchases/example.wordpress.com/12345678/payment/edit/87654321'
 					)
-				).to.equal( 'example.wordpress.com' );
+				).toEqual( 'example.wordpress.com' );
 				expect(
 					route.getSiteFragment( '/me/purchases/2916284/12345678/payment/edit/87654321' )
-				).to.equal( 2916284 );
+				).toEqual( 2916284 );
 			} );
 		} );
 	} );
@@ -149,60 +145,60 @@ describe( 'route', function () {
 	describe( 'addSiteFragment', function () {
 		describe( 'for editor paths', function () {
 			test( 'should add a site when editing a new post', function () {
-				expect( route.addSiteFragment( '/post', 'example.wordpress.com' ) ).to.equal(
+				expect( route.addSiteFragment( '/post', 'example.wordpress.com' ) ).toEqual(
 					'/post/example.wordpress.com'
 				);
-				expect( route.addSiteFragment( '/post', 2916284 ) ).to.equal( '/post/2916284' );
-				expect( route.addSiteFragment( '/post/new', 'example.wordpress.com' ) ).to.equal(
+				expect( route.addSiteFragment( '/post', 2916284 ) ).toEqual( '/post/2916284' );
+				expect( route.addSiteFragment( '/post/new', 'example.wordpress.com' ) ).toEqual(
 					'/post/example.wordpress.com/new'
 				);
-				expect( route.addSiteFragment( '/post/new', 2916284 ) ).to.equal( '/post/2916284/new' );
+				expect( route.addSiteFragment( '/post/new', 2916284 ) ).toEqual( '/post/2916284/new' );
 			} );
 			test( 'should add a site when editing a new page', function () {
-				expect( route.addSiteFragment( '/page', 'example.wordpress.com' ) ).to.equal(
+				expect( route.addSiteFragment( '/page', 'example.wordpress.com' ) ).toEqual(
 					'/page/example.wordpress.com'
 				);
-				expect( route.addSiteFragment( '/page', 2916284 ) ).to.equal( '/page/2916284' );
-				expect( route.addSiteFragment( '/page/new', 'example.wordpress.com' ) ).to.equal(
+				expect( route.addSiteFragment( '/page', 2916284 ) ).toEqual( '/page/2916284' );
+				expect( route.addSiteFragment( '/page/new', 'example.wordpress.com' ) ).toEqual(
 					'/page/example.wordpress.com/new'
 				);
-				expect( route.addSiteFragment( '/page/new', 2916284 ) ).to.equal( '/page/2916284/new' );
+				expect( route.addSiteFragment( '/page/new', 2916284 ) ).toEqual( '/page/2916284/new' );
 			} );
 			test( 'should add a site when editing a new custom post type', function () {
 				expect(
 					route.addSiteFragment( '/edit/jetpack-portfolio', 'example.wordpress.com' )
-				).to.equal( '/edit/jetpack-portfolio/example.wordpress.com' );
-				expect( route.addSiteFragment( '/edit/jetpack-portfolio', 2916284 ) ).to.equal(
+				).toEqual( '/edit/jetpack-portfolio/example.wordpress.com' );
+				expect( route.addSiteFragment( '/edit/jetpack-portfolio', 2916284 ) ).toEqual(
 					'/edit/jetpack-portfolio/2916284'
 				);
 				expect(
 					route.addSiteFragment( '/edit/jetpack-portfolio/new', 'example.wordpress.com' )
-				).to.equal( '/edit/jetpack-portfolio/example.wordpress.com/new' );
-				expect( route.addSiteFragment( '/edit/jetpack-portfolio/new', 2916284 ) ).to.equal(
+				).toEqual( '/edit/jetpack-portfolio/example.wordpress.com/new' );
+				expect( route.addSiteFragment( '/edit/jetpack-portfolio/new', 2916284 ) ).toEqual(
 					'/edit/jetpack-portfolio/2916284/new'
 				);
 			} );
 			test( 'should replace the site when editing a new post', function () {
 				expect(
 					route.addSiteFragment( '/post/notexample.wordpress.com', 'example.wordpress.com' )
-				).to.equal( '/post/example.wordpress.com' );
-				expect( route.addSiteFragment( '/post/106782956', 2916284 ) ).to.equal( '/post/2916284' );
+				).toEqual( '/post/example.wordpress.com' );
+				expect( route.addSiteFragment( '/post/106782956', 2916284 ) ).toEqual( '/post/2916284' );
 				expect(
 					route.addSiteFragment( '/post/notexample.wordpress.com/new', 'example.wordpress.com' )
-				).to.equal( '/post/example.wordpress.com/new' );
-				expect( route.addSiteFragment( '/post/106782956/new', 2916284 ) ).to.equal(
+				).toEqual( '/post/example.wordpress.com/new' );
+				expect( route.addSiteFragment( '/post/106782956/new', 2916284 ) ).toEqual(
 					'/post/2916284/new'
 				);
 			} );
 			test( 'should replace the site when editing a new page', function () {
 				expect(
 					route.addSiteFragment( '/page/notexample.wordpress.com', 'example.wordpress.com' )
-				).to.equal( '/page/example.wordpress.com' );
-				expect( route.addSiteFragment( '/page/106782956', 2916284 ) ).to.equal( '/page/2916284' );
+				).toEqual( '/page/example.wordpress.com' );
+				expect( route.addSiteFragment( '/page/106782956', 2916284 ) ).toEqual( '/page/2916284' );
 				expect(
 					route.addSiteFragment( '/page/notexample.wordpress.com/new', 'example.wordpress.com' )
-				).to.equal( '/page/example.wordpress.com/new' );
-				expect( route.addSiteFragment( '/page/106782956/new', 2916284 ) ).to.equal(
+				).toEqual( '/page/example.wordpress.com/new' );
+				expect( route.addSiteFragment( '/page/106782956/new', 2916284 ) ).toEqual(
 					'/page/2916284/new'
 				);
 			} );
@@ -212,8 +208,8 @@ describe( 'route', function () {
 						'/edit/jetpack-portfolio/notexample.wordpress.com',
 						'example.wordpress.com'
 					)
-				).to.equal( '/edit/jetpack-portfolio/example.wordpress.com' );
-				expect( route.addSiteFragment( '/edit/jetpack-portfolio/106782956', 2916284 ) ).to.equal(
+				).toEqual( '/edit/jetpack-portfolio/example.wordpress.com' );
+				expect( route.addSiteFragment( '/edit/jetpack-portfolio/106782956', 2916284 ) ).toEqual(
 					'/edit/jetpack-portfolio/2916284'
 				);
 				expect(
@@ -221,25 +217,25 @@ describe( 'route', function () {
 						'/edit/jetpack-portfolio/notexample.wordpress.com/new',
 						'example.wordpress.com'
 					)
-				).to.equal( '/edit/jetpack-portfolio/example.wordpress.com/new' );
-				expect(
-					route.addSiteFragment( '/edit/jetpack-portfolio/106782956/new', 2916284 )
-				).to.equal( '/edit/jetpack-portfolio/2916284/new' );
+				).toEqual( '/edit/jetpack-portfolio/example.wordpress.com/new' );
+				expect( route.addSiteFragment( '/edit/jetpack-portfolio/106782956/new', 2916284 ) ).toEqual(
+					'/edit/jetpack-portfolio/2916284/new'
+				);
 			} );
 			// These two tests are a bit contrived, but still good to have
 			test( 'should replace the site when editing an existing post', function () {
 				expect(
 					route.addSiteFragment( '/post/notexample.wordpress.com/231', 'example.wordpress.com' )
-				).to.equal( '/post/example.wordpress.com/231' );
-				expect( route.addSiteFragment( '/post/106782956/231', 2916284 ) ).to.equal(
+				).toEqual( '/post/example.wordpress.com/231' );
+				expect( route.addSiteFragment( '/post/106782956/231', 2916284 ) ).toEqual(
 					'/post/2916284/231'
 				);
 			} );
 			test( 'should replace the site when editing an existing page', function () {
 				expect(
 					route.addSiteFragment( '/page/notexample.wordpress.com/29', 'example.wordpress.com' )
-				).to.equal( '/page/example.wordpress.com/29' );
-				expect( route.addSiteFragment( '/page/106782956/29', 2916284 ) ).to.equal(
+				).toEqual( '/page/example.wordpress.com/29' );
+				expect( route.addSiteFragment( '/page/106782956/29', 2916284 ) ).toEqual(
 					'/page/2916284/29'
 				);
 			} );
@@ -250,46 +246,46 @@ describe( 'route', function () {
 		} );
 		describe( 'for listing paths', function () {
 			test( 'should append the site when viewing posts', function () {
-				expect( route.addSiteFragment( '/posts', 'example.wordpress.com' ) ).to.equal(
+				expect( route.addSiteFragment( '/posts', 'example.wordpress.com' ) ).toEqual(
 					'/posts/example.wordpress.com'
 				);
-				expect( route.addSiteFragment( '/posts', 2916284 ) ).to.equal( '/posts/2916284' );
+				expect( route.addSiteFragment( '/posts', 2916284 ) ).toEqual( '/posts/2916284' );
 			} );
 			test( 'should append the site when viewing posts with a filter', function () {
-				expect( route.addSiteFragment( '/posts/drafts', 'example.wordpress.com' ) ).to.equal(
+				expect( route.addSiteFragment( '/posts/drafts', 'example.wordpress.com' ) ).toEqual(
 					'/posts/drafts/example.wordpress.com'
 				);
-				expect( route.addSiteFragment( '/posts/drafts', 2916284 ) ).to.equal(
+				expect( route.addSiteFragment( '/posts/drafts', 2916284 ) ).toEqual(
 					'/posts/drafts/2916284'
 				);
 			} );
 			test( 'should append the site when viewing pages', function () {
-				expect( route.addSiteFragment( '/pages', 'example.wordpress.com' ) ).to.equal(
+				expect( route.addSiteFragment( '/pages', 'example.wordpress.com' ) ).toEqual(
 					'/pages/example.wordpress.com'
 				);
-				expect( route.addSiteFragment( '/pages', 2916284 ) ).to.equal( '/pages/2916284' );
+				expect( route.addSiteFragment( '/pages', 2916284 ) ).toEqual( '/pages/2916284' );
 			} );
 			test( 'should append the site when viewing pages with a filter', function () {
-				expect( route.addSiteFragment( '/pages/drafts', 'example.wordpress.com' ) ).to.equal(
+				expect( route.addSiteFragment( '/pages/drafts', 'example.wordpress.com' ) ).toEqual(
 					'/pages/drafts/example.wordpress.com'
 				);
-				expect( route.addSiteFragment( '/pages/drafts', 2916284 ) ).to.equal(
+				expect( route.addSiteFragment( '/pages/drafts', 2916284 ) ).toEqual(
 					'/pages/drafts/2916284'
 				);
 			} );
 		} );
 		describe( 'for stats paths', function () {
 			test( 'should append the site when viewing stats without a filter', function () {
-				expect( route.addSiteFragment( '/stats', 'example.wordpress.com' ) ).to.equal(
+				expect( route.addSiteFragment( '/stats', 'example.wordpress.com' ) ).toEqual(
 					'/stats/example.wordpress.com'
 				);
-				expect( route.addSiteFragment( '/stats', 2916284 ) ).to.equal( '/stats/2916284' );
+				expect( route.addSiteFragment( '/stats', 2916284 ) ).toEqual( '/stats/2916284' );
 			} );
 			test( 'should append the site when viewing the default stats page', function () {
-				expect( route.addSiteFragment( '/stats/day', 'example.wordpress.com' ) ).to.equal(
+				expect( route.addSiteFragment( '/stats/day', 'example.wordpress.com' ) ).toEqual(
 					'/stats/day/example.wordpress.com'
 				);
-				expect( route.addSiteFragment( '/stats/day', 2916284 ) ).to.equal( '/stats/day/2916284' );
+				expect( route.addSiteFragment( '/stats/day', 2916284 ) ).toEqual( '/stats/day/2916284' );
 			} );
 		} );
 	} );
@@ -297,98 +293,98 @@ describe( 'route', function () {
 	describe( 'sectionify', function () {
 		describe( 'for the root path', function () {
 			test( 'should return the same path', function () {
-				expect( route.sectionify( '/' ) ).to.equal( '/' );
+				expect( route.sectionify( '/' ) ).toEqual( '/' );
 			} );
 		} );
 		describe( 'for editor paths', function () {
 			test( 'should return the same path when there is no site yet', function () {
-				expect( route.sectionify( '/post' ) ).to.equal( '/post' );
-				expect( route.sectionify( '/page' ) ).to.equal( '/page' );
+				expect( route.sectionify( '/post' ) ).toEqual( '/post' );
+				expect( route.sectionify( '/page' ) ).toEqual( '/page' );
 			} );
 			test( 'should remove the site when editing an existing post', function () {
-				expect( route.sectionify( '/post/example.wordpress.com/231' ) ).to.equal( '/post/231' );
-				expect( route.sectionify( '/post/2916284/231' ) ).to.equal( '/post/231' );
+				expect( route.sectionify( '/post/example.wordpress.com/231' ) ).toEqual( '/post/231' );
+				expect( route.sectionify( '/post/2916284/231' ) ).toEqual( '/post/231' );
 			} );
 			test( 'should remove the site when editing a new post', function () {
-				expect( route.sectionify( '/post/example.wordpress.com' ) ).to.equal( '/post' );
-				expect( route.sectionify( '/post/2916284' ) ).to.equal( '/post' );
-				expect( route.sectionify( '/post/example.wordpress.com/new' ) ).to.equal( '/post/new' );
-				expect( route.sectionify( '/post/2916284/new' ) ).to.equal( '/post/new' );
+				expect( route.sectionify( '/post/example.wordpress.com' ) ).toEqual( '/post' );
+				expect( route.sectionify( '/post/2916284' ) ).toEqual( '/post' );
+				expect( route.sectionify( '/post/example.wordpress.com/new' ) ).toEqual( '/post/new' );
+				expect( route.sectionify( '/post/2916284/new' ) ).toEqual( '/post/new' );
 			} );
 			test( 'should remove the site when editing an existing page', function () {
-				expect( route.sectionify( '/page/example.wordpress.com/29' ) ).to.equal( '/page/29' );
-				expect( route.sectionify( '/page/2916284/29' ) ).to.equal( '/page/29' );
+				expect( route.sectionify( '/page/example.wordpress.com/29' ) ).toEqual( '/page/29' );
+				expect( route.sectionify( '/page/2916284/29' ) ).toEqual( '/page/29' );
 			} );
 			test( 'should remove the site when editing a new page', function () {
-				expect( route.sectionify( '/page/example.wordpress.com' ) ).to.equal( '/page' );
-				expect( route.sectionify( '/page/2916284' ) ).to.equal( '/page' );
-				expect( route.sectionify( '/page/example.wordpress.com/new' ) ).to.equal( '/page/new' );
-				expect( route.sectionify( '/page/2916284/new' ) ).to.equal( '/page/new' );
+				expect( route.sectionify( '/page/example.wordpress.com' ) ).toEqual( '/page' );
+				expect( route.sectionify( '/page/2916284' ) ).toEqual( '/page' );
+				expect( route.sectionify( '/page/example.wordpress.com/new' ) ).toEqual( '/page/new' );
+				expect( route.sectionify( '/page/2916284/new' ) ).toEqual( '/page/new' );
 			} );
 			test( 'should remove the site when editing an existing custom post type', function () {
-				expect( route.sectionify( '/edit/jetpack-portfolio/example.wordpress.com/231' ) ).to.equal(
+				expect( route.sectionify( '/edit/jetpack-portfolio/example.wordpress.com/231' ) ).toEqual(
 					'/edit/jetpack-portfolio/231'
 				);
-				expect( route.sectionify( '/edit/jetpack-portfolio/2916284/231' ) ).to.equal(
+				expect( route.sectionify( '/edit/jetpack-portfolio/2916284/231' ) ).toEqual(
 					'/edit/jetpack-portfolio/231'
 				);
 			} );
 			test( 'should remove the site when editing a new custom post type', function () {
-				expect( route.sectionify( '/edit/jetpack-portfolio/example.wordpress.com' ) ).to.equal(
+				expect( route.sectionify( '/edit/jetpack-portfolio/example.wordpress.com' ) ).toEqual(
 					'/edit/jetpack-portfolio'
 				);
-				expect( route.sectionify( '/edit/jetpack-portfolio/2916284' ) ).to.equal(
+				expect( route.sectionify( '/edit/jetpack-portfolio/2916284' ) ).toEqual(
 					'/edit/jetpack-portfolio'
 				);
-				expect( route.sectionify( '/edit/jetpack-portfolio/example.wordpress.com/new' ) ).to.equal(
+				expect( route.sectionify( '/edit/jetpack-portfolio/example.wordpress.com/new' ) ).toEqual(
 					'/edit/jetpack-portfolio/new'
 				);
-				expect( route.sectionify( '/edit/jetpack-portfolio/2916284/new' ) ).to.equal(
+				expect( route.sectionify( '/edit/jetpack-portfolio/2916284/new' ) ).toEqual(
 					'/edit/jetpack-portfolio/new'
 				);
 			} );
 		} );
 		describe( 'for listing paths', function () {
 			test( 'should return the same path when there is no site yet', function () {
-				expect( route.sectionify( '/posts' ) ).to.equal( '/posts' );
-				expect( route.sectionify( '/posts/drafts' ) ).to.equal( '/posts/drafts' );
-				expect( route.sectionify( '/pages' ) ).to.equal( '/pages' );
-				expect( route.sectionify( '/pages/drafts' ) ).to.equal( '/pages/drafts' );
+				expect( route.sectionify( '/posts' ) ).toEqual( '/posts' );
+				expect( route.sectionify( '/posts/drafts' ) ).toEqual( '/posts/drafts' );
+				expect( route.sectionify( '/pages' ) ).toEqual( '/pages' );
+				expect( route.sectionify( '/pages/drafts' ) ).toEqual( '/pages/drafts' );
 			} );
 			test( 'should remove the site when viewing posts', function () {
-				expect( route.sectionify( '/posts/example.wordpress.com' ) ).to.equal( '/posts' );
-				expect( route.sectionify( '/posts/2916284' ) ).to.equal( '/posts' );
+				expect( route.sectionify( '/posts/example.wordpress.com' ) ).toEqual( '/posts' );
+				expect( route.sectionify( '/posts/2916284' ) ).toEqual( '/posts' );
 			} );
 			test( 'should remove the site when viewing posts with a filter', function () {
-				expect( route.sectionify( '/posts/drafts/example.wordpress.com' ) ).to.equal(
+				expect( route.sectionify( '/posts/drafts/example.wordpress.com' ) ).toEqual(
 					'/posts/drafts'
 				);
-				expect( route.sectionify( '/posts/drafts/2916284' ) ).to.equal( '/posts/drafts' );
+				expect( route.sectionify( '/posts/drafts/2916284' ) ).toEqual( '/posts/drafts' );
 			} );
 			test( 'should remove the site when viewing pages', function () {
-				expect( route.sectionify( '/pages/example.wordpress.com' ) ).to.equal( '/pages' );
-				expect( route.sectionify( '/pages/2916284' ) ).to.equal( '/pages' );
+				expect( route.sectionify( '/pages/example.wordpress.com' ) ).toEqual( '/pages' );
+				expect( route.sectionify( '/pages/2916284' ) ).toEqual( '/pages' );
 			} );
 			test( 'should remove the site when viewing pages with a filter', function () {
-				expect( route.sectionify( '/pages/drafts/example.wordpress.com' ) ).to.equal(
+				expect( route.sectionify( '/pages/drafts/example.wordpress.com' ) ).toEqual(
 					'/pages/drafts'
 				);
-				expect( route.sectionify( '/pages/drafts/2916284' ) ).to.equal( '/pages/drafts' );
+				expect( route.sectionify( '/pages/drafts/2916284' ) ).toEqual( '/pages/drafts' );
 			} );
 		} );
 		describe( 'for stats paths', function () {
 			test( 'should return the same path when there is no site yet', function () {
-				expect( route.sectionify( '/stats' ) ).to.equal( '/stats' );
-				expect( route.sectionify( '/stats/day' ) ).to.equal( '/stats/day' );
+				expect( route.sectionify( '/stats' ) ).toEqual( '/stats' );
+				expect( route.sectionify( '/stats/day' ) ).toEqual( '/stats/day' );
 			} );
 			test( 'should remove the site when viewing the default stats page', function () {
-				expect( route.sectionify( '/stats/day/example.wordpress.com' ) ).to.equal( '/stats/day' );
-				expect( route.sectionify( '/stats/day/2916284' ) ).to.equal( '/stats/day' );
+				expect( route.sectionify( '/stats/day/example.wordpress.com' ) ).toEqual( '/stats/day' );
+				expect( route.sectionify( '/stats/day/2916284' ) ).toEqual( '/stats/day' );
 			} );
 		} );
 		describe( 'for special paths', function () {
 			test( 'should remove the site when the fragment is passed explicitly', function () {
-				expect( route.sectionify( '/domains/manage/not-a-site', 'not-a-site' ) ).to.equal(
+				expect( route.sectionify( '/domains/manage/not-a-site', 'not-a-site' ) ).toEqual(
 					'/domains/manage'
 				);
 			} );
@@ -397,19 +393,19 @@ describe( 'route', function () {
 
 	describe( 'getMessagePathForJITM', function () {
 		test( 'strips starting and ending slash from path', function () {
-			expect( route.getMessagePathForJITM( '/test/' ) ).to.equal( 'test' );
+			expect( route.getMessagePathForJITM( '/test/' ) ).toEqual( 'test' );
 		} );
 
 		test( 'converts internal slashes to dashes', function () {
-			expect( route.getMessagePathForJITM( 'test/path/to/site' ) ).to.equal( 'test-path-to-site' );
+			expect( route.getMessagePathForJITM( 'test/path/to/site' ) ).toEqual( 'test-path-to-site' );
 		} );
 
 		test( 'should simplify stats paths', function () {
-			expect( route.getMessagePathForJITM( '/stats/day' ) ).to.equal( 'stats' );
-			expect( route.getMessagePathForJITM( '/stats/week' ) ).to.equal( 'stats' );
-			expect( route.getMessagePathForJITM( '/stats/month' ) ).to.equal( 'stats' );
-			expect( route.getMessagePathForJITM( '/stats/year' ) ).to.equal( 'stats' );
-			expect( route.getMessagePathForJITM( '/stats/insights' ) ).to.equal( 'stats' );
+			expect( route.getMessagePathForJITM( '/stats/day' ) ).toEqual( 'stats' );
+			expect( route.getMessagePathForJITM( '/stats/week' ) ).toEqual( 'stats' );
+			expect( route.getMessagePathForJITM( '/stats/month' ) ).toEqual( 'stats' );
+			expect( route.getMessagePathForJITM( '/stats/year' ) ).toEqual( 'stats' );
+			expect( route.getMessagePathForJITM( '/stats/insights' ) ).toEqual( 'stats' );
 		} );
 	} );
 } );

@@ -5,8 +5,8 @@
 jest.mock(
 	'calypso/blocks/upsell-nudge',
 	() =>
-		function UpsellNudge() {
-			return <div />;
+		function UpsellNudge( { plan } ) {
+			return <div data-testid="upsell-nudge">{ plan }</div>;
 		}
 );
 
@@ -21,21 +21,22 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_WPCOM_PRO,
 } from '@automattic/calypso-products';
-import { render, fireEvent } from '@testing-library/react';
-import { shallow } from 'enzyme';
-import '@testing-library/jest-dom/extend-expect';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import moment from 'moment';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { Provider } from 'react-redux';
-import { applyMiddleware, createStore } from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import editorReducer from 'calypso/state/editor/reducer';
+import mediaReducer from 'calypso/state/media/reducer';
+import siteSettingsReducer from 'calypso/state/site-settings/reducer';
+import timezonesReducer from 'calypso/state/timezones/reducer';
+import uiReducer from 'calypso/state/ui/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SiteSettingsFormGeneral } from '../form-general';
 
 moment.tz = {
 	guess: () => moment(),
 };
 
-const initialReduxState = {
+const initialState = {
 	siteSettings: {},
 	sites: {
 		items: [],
@@ -57,18 +58,16 @@ const initialReduxState = {
 };
 
 function renderWithRedux( ui ) {
-	const queryClient = new QueryClient();
-	const store = createStore(
-		( state ) => state,
-		initialReduxState,
-		applyMiddleware( thunkMiddleware )
-	);
-
-	return render(
-		<QueryClientProvider client={ queryClient }>
-			<Provider store={ store }>{ ui }</Provider>
-		</QueryClientProvider>
-	);
+	return renderWithProvider( ui, {
+		initialState,
+		reducers: {
+			editor: editorReducer,
+			media: mediaReducer,
+			siteSettings: siteSettingsReducer,
+			timezones: timezonesReducer,
+			ui: uiReducer,
+		},
+	} );
 }
 
 const props = {
@@ -89,42 +88,42 @@ const props = {
 
 describe( 'SiteSettingsFormGeneral', () => {
 	test( 'should not blow up and have proper CSS class', () => {
-		const comp = shallow( <SiteSettingsFormGeneral { ...props } /> );
-		expect( comp.find( '.site-settings__site-options' ).length ).toBe( 1 );
+		const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...props } /> );
+		expect( container.getElementsByClassName( 'site-settings__site-options' ) ).toHaveLength( 1 );
 	} );
 
 	describe( 'UpsellNudge should get appropriate plan constant', () => {
 		[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( ( plan ) => {
 			test( `Business 1 year for (${ plan })`, () => {
-				const comp = shallow(
+				renderWithRedux(
 					<SiteSettingsFormGeneral
 						{ ...props }
 						siteIsJetpack={ false }
 						site={ { plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
 					/>
 				);
-				expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
-				expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_WPCOM_PRO );
+				expect( screen.queryByTestId( 'upsell-nudge' ) ).toBeVisible();
+				expect( screen.queryByTestId( 'upsell-nudge' ).textContent ).toBe( PLAN_WPCOM_PRO );
 			} );
 		} );
 
 		[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach( ( plan ) => {
 			test( `Business 2 year for (${ plan })`, () => {
-				const comp = shallow(
+				renderWithRedux(
 					<SiteSettingsFormGeneral
 						{ ...props }
 						siteIsJetpack={ false }
 						site={ { plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
 					/>
 				);
-				expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
-				expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS );
+				expect( screen.queryByTestId( 'upsell-nudge' ) ).toBeVisible();
+				expect( screen.queryByTestId( 'upsell-nudge' ).textContent ).toBe( PLAN_BUSINESS );
 			} );
 		} );
 
 		test( 'No UpsellNudge for jetpack plans', () => {
-			const comp = shallow( <SiteSettingsFormGeneral { ...props } siteIsJetpack={ true } /> );
-			expect( comp.find( 'UpsellNudge' ).length ).toBe( 0 );
+			renderWithRedux( <SiteSettingsFormGeneral { ...props } siteIsJetpack={ true } /> );
+			expect( screen.queryByTestId( 'upsell-nudge' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -152,7 +151,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
 		} );
 
-		test( `Selecting Hidden should switch radio to Public`, () => {
+		test( `Selecting Hidden should switch radio to Public`, async () => {
 			testProps.fields.blog_public = -1;
 			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
@@ -164,7 +163,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			const publicRadio = getByLabelText( 'Public' );
 			expect( publicRadio ).not.toBeChecked();
 
-			fireEvent.click( hiddenCheckbox );
+			await userEvent.click( hiddenCheckbox );
 			expect( testProps.updateFields ).toBeCalledWith( {
 				blog_public: 0,
 				wpcom_coming_soon: 0,
@@ -172,7 +171,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			} );
 		} );
 
-		test( `Hidden checkbox should be possible to unselect`, () => {
+		test( `Hidden checkbox should be possible to unselect`, async () => {
 			testProps.fields.blog_public = 0;
 			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
 
@@ -184,7 +183,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			const publicRadio = getByLabelText( 'Public' );
 			expect( publicRadio ).toBeChecked();
 
-			fireEvent.click( hiddenCheckbox );
+			await userEvent.click( hiddenCheckbox );
 			expect( testProps.updateFields ).toBeCalledWith( {
 				blog_public: 1,
 				wpcom_coming_soon: 0,
@@ -219,7 +218,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					{ blog_public: -1, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
 				],
 			].forEach( ( [ name, text, initialBlogPublic, updatedFields ] ) => {
-				test( `${ name } option should be selectable`, () => {
+				test( `${ name } option should be selectable`, async () => {
 					testProps.fields.blog_public = initialBlogPublic;
 					const { getByLabelText } = renderWithRedux(
 						<SiteSettingsFormGeneral { ...testProps } />
@@ -227,7 +226,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 
 					const radioButton = getByLabelText( text, { exact: false } );
 					expect( radioButton ).not.toBeChecked();
-					fireEvent.click( radioButton );
+					await userEvent.click( radioButton );
 					expect( testProps.updateFields ).toBeCalledWith( updatedFields );
 				} );
 			} );
@@ -313,8 +312,10 @@ describe( 'SiteSettingsFormGeneral', () => {
 					isAtomicAndEditingToolkitDeactivated: false,
 				};
 
-				const comp = shallow( <SiteSettingsFormGeneral { ...newProps } /> );
-				expect( comp.find( '.site-settings__visibility-label.is-coming-soon' ).length ).toBe( 1 );
+				const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...newProps } /> );
+				expect(
+					container.querySelectorAll( '.site-settings__visibility-label.is-coming-soon' )
+				).toHaveLength( 1 );
 			} );
 
 			test( 'Should hide Coming Soon form element when the site is atomic and the editing toolkit plugin is disabled', () => {
@@ -322,8 +323,10 @@ describe( 'SiteSettingsFormGeneral', () => {
 					...props,
 					isAtomicAndEditingToolkitDeactivated: true,
 				};
-				const comp = shallow( <SiteSettingsFormGeneral { ...newProps } /> );
-				expect( comp.find( '.site-settings__visibility-label.is-coming-soon' ).length ).toBe( 0 );
+				const { container } = renderWithRedux( <SiteSettingsFormGeneral { ...newProps } /> );
+				expect(
+					container.querySelectorAll( '.site-settings__visibility-label.is-coming-soon' )
+				).toHaveLength( 0 );
 			} );
 
 			test( 'Should check public not indexed when coming soon plugin is not available', () => {

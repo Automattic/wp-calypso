@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 
@@ -21,7 +20,7 @@ describe( 'Domain Suggestion', () => {
 				/>
 			);
 
-			expect( domainSuggestion.props()[ 'data-e2e-domain' ] ).to.equal( 'example.com' );
+			expect( domainSuggestion.props()[ 'data-e2e-domain' ] ).toEqual( 'example.com' );
 		} );
 	} );
 } );

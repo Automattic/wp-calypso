@@ -4,6 +4,8 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
+import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -31,6 +33,8 @@ export const Connections = ( { siteId, translate } ) => {
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="connections__sharing-settings connections__sharing-connections">
 			<DocumentHead title={ titleHeader } />
+			<QueryKeyringConnections />
+			<QueryKeyringServices />
 			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			{ siteId && <QueryPublicizeConnections siteId={ siteId } /> }
 			<FormattedHeader

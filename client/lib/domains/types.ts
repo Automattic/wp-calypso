@@ -47,20 +47,20 @@ export type TransferStatus = keyof typeof transferStatus | null;
 
 export type ResponseDomain = {
 	adminEmail: string | null | undefined;
+	aftermarketAuction: boolean;
 	aRecordsRequiredForMapping?: Array< string >;
 	autoRenewalDate: string;
 	autoRenewing: boolean;
-	aftermarketAuction: boolean;
 	beginTransferUntilDate: string;
 	blogId: number;
 	bundledPlanSubscriptionId: string | number | null | undefined;
-	canSetAsPrimary: boolean;
 	canManageDnsRecords: boolean;
 	canManageNameServers: boolean;
-	canUpdateContactInfo: boolean;
 	cannotManageDnsRecordsReason: string | null;
 	cannotManageNameServersReason: string | null;
 	cannotUpdateContactInfoReason: string | null;
+	canSetAsPrimary: boolean;
+	canUpdateContactInfo: boolean;
 	connectionMode: string;
 	contactInfoDisclosed: boolean;
 	contactInfoDisclosureAvailable: boolean;
@@ -110,8 +110,8 @@ export type ResponseDomain = {
 	redeemableUntil: string;
 	registrar: string;
 	registrationDate: string;
-	renewableUntil: string;
 	registryExpiryDate: string;
+	renewableUntil: string;
 	sslStatus: string | null;
 	subdomainPart?: string;
 	subscriptionId: string | null;

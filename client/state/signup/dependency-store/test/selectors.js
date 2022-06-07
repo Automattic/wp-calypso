@@ -1,9 +1,8 @@
-import { expect } from 'chai';
 import { getSignupDependencyStore } from '../selectors';
 
 describe( 'selectors', () => {
 	test( 'should return empty object as a default state', () => {
-		expect( getSignupDependencyStore( { signup: undefined }, {} ) ).to.be.eql( {} );
+		expect( getSignupDependencyStore( { signup: undefined }, {} ) ).toEqual( {} );
 	} );
 
 	test( 'should return signupDependencyStore instance from the state', () => {
@@ -16,6 +15,6 @@ describe( 'selectors', () => {
 				},
 				{}
 			)
-		).to.be.eql( { test: 123 } );
+		).toEqual( { test: 123 } );
 	} );
 } );

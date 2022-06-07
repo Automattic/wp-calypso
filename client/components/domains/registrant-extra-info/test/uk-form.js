@@ -1,5 +1,5 @@
+import { FormInputValidation } from '@automattic/components';
 import { shallow } from 'enzyme';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import { RegistrantExtraInfoUkForm } from '../uk-form';
 
 const mockProps = {

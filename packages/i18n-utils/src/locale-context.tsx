@@ -76,7 +76,7 @@ export function useLocale(): string {
 		} );
 	}, [ providerHasLocale ] );
 
-	return fromProvider || fromWpI18n || 'en';
+	return fromProvider || fromWpI18n || window?._currentUserLocale || 'en';
 }
 
 /**
@@ -92,12 +92,10 @@ export function useLocale(): string {
  * }
  * export default withLocale( MyComponent );
  */
-export const withLocale = createHigherOrderComponent< { locale: string }, any >(
-	( InnerComponent ) => {
-		return ( props ) => {
-			const locale = useLocale();
-			return <InnerComponent locale={ locale } { ...props } />;
-		};
-	},
-	'withLocale'
-);
+export const withLocale = createHigherOrderComponent< { locale: string } >( ( InnerComponent ) => {
+	return ( props ) => {
+		const locale = useLocale();
+		const innerProps = { ...props, locale } as React.ComponentProps< typeof InnerComponent >;
+		return <InnerComponent { ...innerProps } />;
+	};
+}, 'withLocale' );

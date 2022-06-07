@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import i18n, { translate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, translate } from 'i18n-calypso';
 import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
@@ -56,6 +56,7 @@ import {
 	FEATURE_GOOGLE_MY_BUSINESS,
 	FEATURE_HOSTING,
 	FEATURE_INSTALL_PLUGINS,
+	FEATURE_JETPACK_1TB_BACKUP_STORAGE,
 	FEATURE_JETPACK_ADVANCED,
 	FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
 	FEATURE_JETPACK_ANTI_SPAM,
@@ -122,8 +123,10 @@ import {
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_SITE_BACKUPS_AND_RESTORE,
 	FEATURE_SITE_STATS,
+	FEATURE_SOCIAL_MEDIA_TOOLS,
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_STANDARD_SECURITY_TOOLS,
+	FEATURE_TITAN_EMAIL,
 	FEATURE_TRAFFIC_TOOLS,
 	FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 	FEATURE_UPLOAD_PLUGINS,
@@ -135,6 +138,7 @@ import {
 	FEATURE_WP_SUBDOMAIN,
 	FEATURE_WP_SUBDOMAIN_SIGNUP,
 	FEATURE_UNLIMITED_ADMINS,
+	FEATURE_UNLIMITED_TRAFFIC,
 	FEATURE_PAYMENT_BLOCKS,
 	FEATURE_WOOCOMMERCE,
 	GROUP_JETPACK,
@@ -176,6 +180,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_STARTER,
 	PLAN_WPCOM_PRO,
 	PREMIUM_DESIGN_FOR_STORES,
 	TERM_ANNUALLY,
@@ -195,8 +200,12 @@ import {
 	TYPE_SECURITY_T2,
 	TYPE_FLEXIBLE,
 	TYPE_PRO,
-	FEATURE_TITAN_EMAIL,
-	FEATURE_SOCIAL_MEDIA_TOOLS,
+	TYPE_STARTER,
+	WPCOM_FEATURES_ATOMIC,
+	WPCOM_FEATURES_SCAN,
+	WPCOM_FEATURES_ANTISPAM,
+	WPCOM_FEATURES_BACKUPS,
+	FEATURE_MANAGED_HOSTING,
 } from './constants';
 import type {
 	BillingTerm,
@@ -476,6 +485,10 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UPLOAD_THEMES_PLUGINS,
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
+		WPCOM_FEATURES_ATOMIC,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [],
 } );
@@ -563,7 +576,13 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
 	// Features not displayed but used for checking plan abilities
-	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS, FEATURE_CLOUDFLARE_ANALYTICS ],
+	getIncludedFeatures: () => [
+		FEATURE_AUDIO_UPLOADS,
+		FEATURE_CLOUDFLARE_ANALYTICS,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
+	],
 	getInferiorFeatures: () => [],
 } );
 
@@ -666,6 +685,10 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CLOUDFLARE_ANALYTICS,
 		FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT,
 		FEATURE_SEO_PREVIEW_TOOLS,
+		WPCOM_FEATURES_ATOMIC,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [],
 } );
@@ -706,6 +729,8 @@ const getJetpackPersonalDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_ACTIVITY_LOG,
 		FEATURE_PREMIUM_SUPPORT,
 		FEATURE_ALL_FREE_FEATURES_JETPACK,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 } );
 
@@ -758,6 +783,9 @@ const getJetpackPremiumDetails = (): IncompleteJetpackPlan => ( {
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_ADVANCED_SEO,
 			FEATURE_ALL_FREE_FEATURES_JETPACK,
+			WPCOM_FEATURES_SCAN,
+			WPCOM_FEATURES_ANTISPAM,
+			WPCOM_FEATURES_BACKUPS,
 		] ),
 } );
 
@@ -818,6 +846,9 @@ const getJetpackBusinessDetails = (): IncompleteJetpackPlan => ( {
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
+			WPCOM_FEATURES_SCAN,
+			WPCOM_FEATURES_ANTISPAM,
+			WPCOM_FEATURES_BACKUPS,
 		] ),
 	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );
@@ -852,6 +883,9 @@ const getPlanJetpackSecurityDailyDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 } );
 
@@ -896,6 +930,9 @@ const getPlanJetpackSecurityRealtimeDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
@@ -934,6 +971,9 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );
@@ -957,6 +997,9 @@ const getPlanJetpackSecurityT2Details = (): IncompleteJetpackPlan => ( {
 		FEATURE_WORDADS_INSTANT,
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_PREMIUM_SUPPORT,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
@@ -981,6 +1024,7 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 	getTagline: () => translate( 'For best-in-class WordPress sites' ),
 	getPlanCardFeatures: () => [
 		FEATURE_JETPACK_ALL_BACKUP_SECURITY_FEATURES,
+		FEATURE_JETPACK_1TB_BACKUP_STORAGE,
 		FEATURE_JETPACK_PRODUCT_VIDEOPRESS,
 		FEATURE_PRODUCT_SEARCH_V2,
 		FEATURE_CRM_V2,
@@ -1009,6 +1053,9 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 			FEATURE_GOOGLE_ANALYTICS,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_PREMIUM_SUPPORT,
+			WPCOM_FEATURES_SCAN,
+			WPCOM_FEATURES_ANTISPAM,
+			WPCOM_FEATURES_BACKUPS,
 		] ),
 	getInferiorFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
@@ -1574,6 +1621,35 @@ PLANS_LIST[ PLAN_P2_FREE ] = {
 };
 
 // Brand new WPCOM plans
+PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
+	...getDotcomPlanDetails(),
+	group: GROUP_WPCOM,
+	type: TYPE_STARTER,
+	term: TERM_ANNUALLY,
+	getTitle: () => i18n.translate( 'WordPress Starter' ),
+	getProductId: () => 1033,
+	getStoreSlug: () => PLAN_WPCOM_STARTER,
+	getPathSlug: () => 'starter',
+	getDescription: () =>
+		i18n.hasTranslation( 'Start with a custom domain name, simple payments, and extra storage.' ) ||
+		[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
+			? i18n.translate( 'Start with a custom domain name, simple payments, and extra storage.' )
+			: i18n.translate( 'Start your WordPress.com website. Limited functionality and storage.' ),
+	getSubTitle: () => i18n.translate( 'Essential features. Freedom to grow.' ),
+	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
+	getPlanCompareFeatures: () => [
+		FEATURE_UNLIMITED_TRAFFIC,
+		FEATURE_MANAGED_HOSTING,
+		FEATURE_FREE_THEMES,
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_UNLIMITED_ADMINS,
+		FEATURE_6GB_STORAGE,
+		FEATURE_GOOGLE_ANALYTICS,
+		FEATURE_PAYMENT_BLOCKS,
+		FEATURE_TITAN_EMAIL,
+	],
+};
+
 PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
 	// Inherits the free plan
 	...PLANS_LIST[ PLAN_FREE ],
@@ -1595,9 +1671,16 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 	getProductId: () => 1032,
 	getStoreSlug: () => PLAN_WPCOM_PRO,
 	getPathSlug: () => 'pro',
-	getDescription: () => i18n.translate( 'The full power of modern WordPress hosting made easy.' ),
+	getDescription: () =>
+		i18n.translate(
+			'Unlock the full power of WordPress with plugins, custom themes and much more.'
+		),
+	getSubTitle: () => i18n.translate( 'Unlimited features. Unbeatable value.' ),
 	getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' ),
 	getPlanCompareFeatures: () => [
+		FEATURE_UNLIMITED_TRAFFIC,
+		FEATURE_MANAGED_HOSTING,
+		FEATURE_FREE_THEMES,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_PREMIUM_THEMES,
 		FEATURE_INSTALL_PLUGINS,
@@ -1617,6 +1700,7 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 		FEATURE_JETPACK_ESSENTIAL,
 		FEATURE_SIMPLE_PAYMENTS,
 		FEATURE_WORDADS_INSTANT,
+		FEATURE_GOOGLE_ANALYTICS,
 	],
 	getIncludedFeatures: () => [
 		FEATURE_ADVANCED_DESIGN,
@@ -1639,5 +1723,9 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 		FEATURE_UPLOAD_PLUGINS,
 		FEATURE_UPLOAD_THEMES,
 		FEATURE_UPLOAD_THEMES_PLUGINS,
+		WPCOM_FEATURES_ATOMIC,
+		WPCOM_FEATURES_SCAN,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
 	],
 };

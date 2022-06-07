@@ -1,9 +1,9 @@
-import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import TosText from 'calypso/me/purchases/manage-purchase/payment-method-selector/tos-text';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -37,14 +37,9 @@ class TermsOfService extends Component {
 
 	render() {
 		return (
-			<div
-				className="checkout__terms"
-				role="presentation"
-				onClick={ this.recordTermsAndConditionsClick }
-			>
-				<Gridicon icon="info-outline" size={ 18 } />
-				<p>{ this.renderTerms() }</p>
-			</div>
+			<CheckoutTermsItem onClick={ this.recordTermsAndConditionsClick }>
+				{ this.renderTerms() }
+			</CheckoutTermsItem>
 		);
 	}
 }

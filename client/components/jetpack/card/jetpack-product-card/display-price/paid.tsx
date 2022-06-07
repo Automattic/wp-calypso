@@ -1,4 +1,4 @@
-import { translate, TranslateResult } from 'i18n-calypso';
+import { TranslateResult } from 'i18n-calypso';
 import InfoPopover from 'calypso/components/info-popover';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import TimeFrame from './time-frame';
@@ -15,8 +15,6 @@ type OwnProps = {
 	displayFrom?: boolean;
 	tooltipText?: TranslateResult | ReactNode;
 	expiryDate?: Moment;
-	isPricingPageTreatment202204?: boolean;
-	isPricingPageTest202204AssignmentLoading?: boolean;
 };
 
 const Paid: React.FC< OwnProps > = ( {
@@ -28,21 +26,19 @@ const Paid: React.FC< OwnProps > = ( {
 	displayFrom,
 	tooltipText,
 	expiryDate,
-	isPricingPageTreatment202204,
-	isPricingPageTest202204AssignmentLoading,
 } ) => {
 	const finalPrice = discountedPrice ?? originalPrice;
 
 	// Placeholder (while prices are loading)
-	if (
-		! currencyCode ||
-		! originalPrice ||
-		pricesAreFetching ||
-		isPricingPageTest202204AssignmentLoading
-	) {
+	if ( ! currencyCode || ! originalPrice || pricesAreFetching ) {
 		return (
 			<>
-				<PlanPrice original className="display-price__original-price" />
+				<PlanPrice
+					original
+					className="display-price__original-price"
+					rawPrice={ 0.01 }
+					currencyCode={ '$' }
+				/>
 				{ /* Remove this secondary <PlanPrice/> placeholder if we're not showing discounted prices */ }
 				<PlanPrice discounted rawPrice={ 0.01 } currencyCode={ '$' } />
 				<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
@@ -57,55 +53,21 @@ const Paid: React.FC< OwnProps > = ( {
 		 * what when seen in the dev docs page, but somehow it doesn't in
 		 * the pricing page.
 		 */
-		if ( isPricingPageTreatment202204 ) {
-			return (
-				<>
-					<span dir="ltr">
-						<PlanPrice
-							discounted
-							className="display-price__discounted-price"
-							rawPrice={ finalPrice as number }
-							currencyCode={ currencyCode }
-							displayShortPerMonthNotation
-						/>
-					</span>
-					<br />
-					<span dir="ltr">
-						<PlanPrice
-							original
-							className="display-price__original-price display-price__original-price-small"
-							rawPrice={ originalPrice as number }
-							currencyCode={ currencyCode }
-							originalPricePrefix={ translate( 'normally', {
-								comment: 'A way to describe a price before a discount is applied',
-							} ) }
-						/>
-					</span>
-				</>
-			);
-		}
-
 		return (
 			<>
-				<span dir="ltr">
-					<PlanPrice
-						original
-						className="display-price__original-price"
-						rawPrice={ originalPrice as number }
-						currencyCode={ currencyCode }
-					/>
-				</span>
-				<span dir="ltr">
-					<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
-				</span>
+				<PlanPrice
+					original
+					className="display-price__original-price"
+					rawPrice={ originalPrice as number }
+					currencyCode={ currencyCode }
+				/>
+				<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
 			</>
 		);
 	};
 
 	const renderNonDiscountedPrice = () => (
-		<span dir="ltr">
-			<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
-		</span>
+		<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
 	);
 
 	const renderPrice = () =>
@@ -120,9 +82,7 @@ const Paid: React.FC< OwnProps > = ( {
 					{ tooltipText }
 				</InfoPopover>
 			) }
-			{ ! isPricingPageTreatment202204 && (
-				<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
-			) }
+			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
 		</>
 	);
 };

@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_CREATE_FAILURE,
@@ -14,7 +12,6 @@ import {
 	PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import {
 	createSiteConnection,
 	deleteSiteConnection,
@@ -28,7 +25,10 @@ import {
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
+
+	beforeEach( () => {
+		spy = jest.fn();
+	} );
 
 	describe( '#fetchConnections()', () => {
 		useNock( ( nock ) => {
@@ -47,7 +47,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			return fetchConnections( 2916284 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: PUBLICIZE_CONNECTIONS_REQUEST,
 					siteId: 2916284,
 				} );
@@ -56,27 +56,27 @@ describe( 'actions', () => {
 
 		test( 'should dispatch receive action when request completes', () => {
 			return fetchConnections( 2916284 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledThrice;
+				expect( spy ).toBeCalledTimes( 3 );
 
-				const action1 = spy.getCall( 1 ).args[ 0 ];
-				expect( action1.type ).to.equal( PUBLICIZE_CONNECTIONS_RECEIVE );
-				expect( action1.siteId ).to.equal( 2916284 );
-				expect( action1.data.connections ).to.eql( [ { ID: 2, site_ID: 2916284 } ] );
+				const action1 = spy.mock.calls[ 1 ][ 0 ];
+				expect( action1.type ).toEqual( PUBLICIZE_CONNECTIONS_RECEIVE );
+				expect( action1.siteId ).toEqual( 2916284 );
+				expect( action1.data.connections ).toEqual( [ { ID: 2, site_ID: 2916284 } ] );
 
-				const action2 = spy.getCall( 2 ).args[ 0 ];
-				expect( action2.type ).to.equal( PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS );
-				expect( action2.siteId ).to.equal( 2916284 );
+				const action2 = spy.mock.calls[ 2 ][ 0 ];
+				expect( action2.type ).toEqual( PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS );
+				expect( action2.siteId ).toEqual( 2916284 );
 			} );
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
 			return fetchConnections( 77203074 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledTwice;
+				expect( spy ).toBeCalledTimes( 2 );
 
-				const action = spy.getCall( 1 ).args[ 0 ];
-				expect( action.type ).to.equal( PUBLICIZE_CONNECTIONS_REQUEST_FAILURE );
-				expect( action.siteId ).to.equal( 77203074 );
-				expect( action.error.message ).to.equal(
+				const action = spy.mock.calls[ 1 ][ 0 ];
+				expect( action.type ).toEqual( PUBLICIZE_CONNECTIONS_REQUEST_FAILURE );
+				expect( action.siteId ).toEqual( 77203074 );
+				expect( action.error.message ).toEqual(
 					'An active access token must be used to access publicize connections.'
 				);
 			} );
@@ -96,10 +96,10 @@ describe( 'actions', () => {
 				2916284,
 				2
 			)( spy ).then( () => {
-				const action1 = spy.getCall( 0 ).args[ 0 ];
-				expect( action1.type ).to.equal( PUBLICIZE_CONNECTION_RECEIVE );
-				expect( action1.siteId ).to.equal( 2916284 );
-				expect( action1.connection ).to.eql( { ID: 2, site_ID: 2916284 } );
+				const action1 = spy.mock.calls[ 0 ][ 0 ];
+				expect( action1.type ).toEqual( PUBLICIZE_CONNECTION_RECEIVE );
+				expect( action1.siteId ).toEqual( 2916284 );
+				expect( action1.connection ).toEqual( { ID: 2, site_ID: 2916284 } );
 			} );
 		} );
 	} );
@@ -133,10 +133,10 @@ describe( 'actions', () => {
 				2,
 				1
 			)( spy ).then( () => {
-				const action = spy.getCall( 0 ).args[ 0 ];
+				const action = spy.mock.calls[ 0 ][ 0 ];
 
-				expect( action.type ).to.equal( PUBLICIZE_CONNECTION_CREATE );
-				expect( action.connection ).to.eql( { ID: 2, site_ID: 2916284 } );
+				expect( action.type ).toEqual( PUBLICIZE_CONNECTION_CREATE );
+				expect( action.connection ).toEqual( { ID: 2, site_ID: 2916284 } );
 			} );
 		} );
 
@@ -146,9 +146,9 @@ describe( 'actions', () => {
 				2,
 				1
 			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: PUBLICIZE_CONNECTION_CREATE_FAILURE,
-					error: sinon.match( {
+					error: expect.objectContaining( {
 						message: 'An active access token must be used to access publicize connections.',
 					} ),
 				} );
@@ -182,10 +182,10 @@ describe( 'actions', () => {
 				{ ID: 2, site_ID: 2916284, label: 'Facebook' },
 				attributes
 			)( spy ).then( () => {
-				const action = spy.getCall( 0 ).args[ 0 ];
+				const action = spy.mock.calls[ 0 ][ 0 ];
 
-				expect( action.type ).to.equal( PUBLICIZE_CONNECTION_UPDATE );
-				expect( action.connection ).to.eql( { ID: 2, site_ID: 2916284 } );
+				expect( action.type ).toEqual( PUBLICIZE_CONNECTION_UPDATE );
+				expect( action.connection ).toEqual( { ID: 2, site_ID: 2916284 } );
 			} );
 		} );
 
@@ -194,9 +194,9 @@ describe( 'actions', () => {
 				{ ID: 2, site_ID: 77203074, label: 'Facebook' },
 				attributes
 			)( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,
-					error: sinon.match( {
+					error: expect.objectContaining( {
 						message: 'An active access token must be used to access publicize connections.',
 					} ),
 				} );
@@ -221,7 +221,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch delete action when request completes', () => {
 			return deleteSiteConnection( { ID: 2, site_ID: 2916284 } )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: PUBLICIZE_CONNECTION_DELETE,
 					connection: {
 						ID: 2,
@@ -233,9 +233,9 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return deleteSiteConnection( { ID: 2, site_ID: 77203074 } )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: PUBLICIZE_CONNECTION_DELETE_FAILURE,
-					error: sinon.match( {
+					error: expect.objectContaining( {
 						message: 'An active access token must be used to access publicize connections.',
 					} ),
 				} );
@@ -247,7 +247,7 @@ describe( 'actions', () => {
 		test( 'should return an action object', () => {
 			const action = deleteConnection( { ID: 2, site_ID: 2916284 } );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: PUBLICIZE_CONNECTION_DELETE,
 				connection: {
 					ID: 2,
@@ -261,7 +261,7 @@ describe( 'actions', () => {
 		test( 'should return an action object', () => {
 			const action = failCreateConnection( { message: 'An error occurred' } );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: PUBLICIZE_CONNECTION_CREATE_FAILURE,
 				error: {
 					message: 'An error occurred',
@@ -275,7 +275,7 @@ describe( 'actions', () => {
 			const data = { connections: [ { ID: 2, site_ID: 2916284 } ] };
 			const action = receiveConnections( 2916284, data );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: PUBLICIZE_CONNECTIONS_RECEIVE,
 				siteId: 2916284,
 				data,

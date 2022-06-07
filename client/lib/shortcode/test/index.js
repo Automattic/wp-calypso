@@ -1,10 +1,9 @@
-import { expect } from 'chai';
 import { normalizeAttributes, parse, parseAttributes, stringify } from '../index';
 
 describe( 'index', () => {
 	describe( '#parseAttributes()', () => {
 		test( 'should parse a string of named attributes', () => {
-			expect( parseAttributes( 'bar="baz"' ) ).to.eql( {
+			expect( parseAttributes( 'bar="baz"' ) ).toEqual( {
 				named: {
 					bar: 'baz',
 				},
@@ -13,14 +12,14 @@ describe( 'index', () => {
 		} );
 
 		test( 'should parse a string of numeric attributes', () => {
-			expect( parseAttributes( 'bar baz' ) ).to.eql( {
+			expect( parseAttributes( 'bar baz' ) ).toEqual( {
 				named: {},
 				numeric: [ 'bar', 'baz' ],
 			} );
 		} );
 
 		test( 'should parse a string of mixed attributes', () => {
-			expect( parseAttributes( 'bar="baz" qux' ) ).to.eql( {
+			expect( parseAttributes( 'bar="baz" qux' ) ).toEqual( {
 				named: {
 					bar: 'baz',
 				},
@@ -31,7 +30,7 @@ describe( 'index', () => {
 
 	describe( '#normalizeAttributes()', () => {
 		test( 'should normalize a string of named attributes', () => {
-			expect( normalizeAttributes( 'bar="baz"' ) ).to.eql( {
+			expect( normalizeAttributes( 'bar="baz"' ) ).toEqual( {
 				named: {
 					bar: 'baz',
 				},
@@ -40,14 +39,14 @@ describe( 'index', () => {
 		} );
 
 		test( 'should normalize a string of numeric attributes', () => {
-			expect( normalizeAttributes( 'bar' ) ).to.eql( {
+			expect( normalizeAttributes( 'bar' ) ).toEqual( {
 				named: {},
 				numeric: [ 'bar' ],
 			} );
 		} );
 
 		test( 'should normalize a string of mixed attributes', () => {
-			expect( normalizeAttributes( 'bar="baz" qux' ) ).to.eql( {
+			expect( normalizeAttributes( 'bar="baz" qux' ) ).toEqual( {
 				named: {
 					bar: 'baz',
 				},
@@ -56,7 +55,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should normalize an array as numeric attributes', () => {
-			expect( normalizeAttributes( [ 'bar' ] ) ).to.eql( {
+			expect( normalizeAttributes( [ 'bar' ] ) ).toEqual( {
 				named: {},
 				numeric: [ 'bar' ],
 			} );
@@ -68,13 +67,13 @@ describe( 'index', () => {
 				numeric: [ 'qux' ],
 			};
 
-			expect( normalizeAttributes( attributes ) ).to.eql( attributes );
+			expect( normalizeAttributes( attributes ) ).toEqual( attributes );
 		} );
 
 		test( 'should normalize an object as the named attributes', () => {
 			const attributes = { bar: 'baz' };
 
-			expect( normalizeAttributes( attributes ) ).to.eql( {
+			expect( normalizeAttributes( attributes ) ).toEqual( {
 				named: attributes,
 				numeric: [],
 			} );
@@ -87,7 +86,7 @@ describe( 'index', () => {
 				stringify( {
 					tag: 'foo',
 				} )
-			).to.equal( '[foo][/foo]' );
+			).toEqual( '[foo][/foo]' );
 		} );
 
 		test( 'should accept an object of named attributes', () => {
@@ -98,7 +97,7 @@ describe( 'index', () => {
 						bar: 'baz',
 					},
 				} )
-			).to.equal( '[foo bar="baz"][/foo]' );
+			).toEqual( '[foo bar="baz"][/foo]' );
 		} );
 
 		test( 'should accept an array of numeric attributes', () => {
@@ -107,7 +106,7 @@ describe( 'index', () => {
 					tag: 'foo',
 					attrs: [ 'bar' ],
 				} )
-			).to.equal( '[foo bar][/foo]' );
+			).toEqual( '[foo bar][/foo]' );
 		} );
 
 		test( 'should accept an object of mixed attributes', () => {
@@ -119,7 +118,7 @@ describe( 'index', () => {
 						numeric: [ 'qux' ],
 					},
 				} )
-			).to.equal( '[foo bar="baz" qux][/foo]' );
+			).toEqual( '[foo bar="baz" qux][/foo]' );
 		} );
 
 		test( 'should omit the closing tag for single type', () => {
@@ -128,7 +127,7 @@ describe( 'index', () => {
 					tag: 'foo',
 					type: 'single',
 				} )
-			).to.equal( '[foo]' );
+			).toEqual( '[foo]' );
 		} );
 
 		test( 'should self-close for self-closing type', () => {
@@ -137,7 +136,7 @@ describe( 'index', () => {
 					tag: 'foo',
 					type: 'self-closing',
 				} )
-			).to.equal( '[foo /]' );
+			).toEqual( '[foo /]' );
 		} );
 
 		test( 'should include content between the opening and closing tags', () => {
@@ -146,20 +145,20 @@ describe( 'index', () => {
 					tag: 'foo',
 					content: 'Bar',
 				} )
-			).to.equal( '[foo]Bar[/foo]' );
+			).toEqual( '[foo]Bar[/foo]' );
 		} );
 	} );
 
 	describe( '#parse()', () => {
 		test( 'should interpret a closed shortcode', () => {
-			expect( parse( '[foo][/foo]' ) ).to.eql( {
+			expect( parse( '[foo][/foo]' ) ).toEqual( {
 				tag: 'foo',
 				type: 'closed',
 			} );
 		} );
 
 		test( 'should interpret a shortcode with named attributes', () => {
-			expect( parse( '[foo bar="baz"][/foo]' ) ).to.eql( {
+			expect( parse( '[foo bar="baz"][/foo]' ) ).toEqual( {
 				tag: 'foo',
 				type: 'closed',
 				attrs: {
@@ -172,7 +171,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should interpret a shortcode with numeric attributes', () => {
-			expect( parse( '[foo bar][/foo]' ) ).to.eql( {
+			expect( parse( '[foo bar][/foo]' ) ).toEqual( {
 				tag: 'foo',
 				type: 'closed',
 				attrs: {
@@ -183,7 +182,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should interpret a shortcode with mixed attributes', () => {
-			expect( parse( '[foo bar="baz" qux][/foo]' ) ).to.eql( {
+			expect( parse( '[foo bar="baz" qux][/foo]' ) ).toEqual( {
 				tag: 'foo',
 				type: 'closed',
 				attrs: {
@@ -196,21 +195,21 @@ describe( 'index', () => {
 		} );
 
 		test( 'should interpret a single type shortcode', () => {
-			expect( parse( '[foo]' ) ).to.eql( {
+			expect( parse( '[foo]' ) ).toEqual( {
 				tag: 'foo',
 				type: 'single',
 			} );
 		} );
 
 		test( 'should interpret a self-closing shortcode', () => {
-			expect( parse( '[foo /]' ) ).to.eql( {
+			expect( parse( '[foo /]' ) ).toEqual( {
 				tag: 'foo',
 				type: 'self-closing',
 			} );
 		} );
 
 		test( 'should interpret a shortcode with content', () => {
-			expect( parse( '[foo]Bar[/foo]' ) ).to.eql( {
+			expect( parse( '[foo]Bar[/foo]' ) ).toEqual( {
 				tag: 'foo',
 				type: 'closed',
 				content: 'Bar',

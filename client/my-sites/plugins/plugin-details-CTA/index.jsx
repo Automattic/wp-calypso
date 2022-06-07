@@ -22,10 +22,11 @@ import { removePluginStatuses } from 'calypso/state/plugins/installed/status/act
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { PREINSTALLED_PLUGINS } from '../constants';
 import { PluginCustomDomainDialog } from '../plugin-custom-domain-dialog';
 import { PluginPrice, getPeriodVariationValue } from '../plugin-price';
 import USPS from './usps';
@@ -56,7 +57,7 @@ const PluginDetailsCTA = ( {
 
 	const shouldUpgrade =
 		useSelector(
-			( state ) => ! hasActiveSiteFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
+			( state ) => ! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
 		) && ! isJetpackSelfHosted;
 
 	// Eligibilities for Simple Sites.
@@ -115,6 +116,18 @@ const PluginDetailsCTA = ( {
 	if ( isPluginInstalledOnsite ) {
 		// Check if already instlaled on the site
 		return null;
+	}
+
+	// If we cannot retrieve plugin status through jetpack ( ! isJetpack ) and plugin is preinstalled.
+	if ( ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug ) ) {
+		return (
+			<div className="plugin-details-CTA__container">
+				<div className="plugin-details-CTA__price">{ translate( 'Free' ) }</div>
+				<span className="plugin-details-CTA__preinstalled">
+					{ plugin.name + translate( ' is automatically managed for you.' ) }
+				</span>
+			</div>
+		);
 	}
 
 	return (

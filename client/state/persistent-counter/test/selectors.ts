@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { PREFERENCE_BASE_NAME } from '../constants';
 import {
 	getCounterName,
@@ -24,7 +23,7 @@ describe( 'selectors', () => {
 				...reduxState,
 				preferences: {},
 			};
-			expect( getCounterName( state, COUNTER_NAME, true ) ).to.equal(
+			expect( getCounterName( state, COUNTER_NAME, true ) ).toEqual(
 				`${ COUNTER_NAME }-${ TEST_SITE_ID }`
 			);
 		} );
@@ -34,7 +33,7 @@ describe( 'selectors', () => {
 				...reduxState,
 				preferences: {},
 			};
-			expect( getCounterName( state, COUNTER_NAME, false ) ).to.equal( `${ COUNTER_NAME }` );
+			expect( getCounterName( state, COUNTER_NAME, false ) ).toEqual( `${ COUNTER_NAME }` );
 		} );
 	} );
 
@@ -44,7 +43,7 @@ describe( 'selectors', () => {
 				...reduxState,
 				preferences: {},
 			};
-			expect( getCounter( state, COUNTER_NAME, false ) ).to.deep.equal( {
+			expect( getCounter( state, COUNTER_NAME, false ) ).toEqual( {
 				count: 0,
 				lastUpdated: null,
 			} );
@@ -64,7 +63,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getCounter( state, COUNTER_NAME, false ) ).to.deep.equal( {
+			expect( getCounter( state, COUNTER_NAME, false ) ).toEqual( {
 				count: 5,
 				lastUpdated: 1646852413406,
 			} );
@@ -84,7 +83,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getCounter( state, COUNTER_NAME, true ) ).to.deep.equal( {
+			expect( getCounter( state, COUNTER_NAME, true ) ).toEqual( {
 				count: 11,
 				lastUpdated: 1646852413406,
 			} );
@@ -97,7 +96,7 @@ describe( 'selectors', () => {
 				...reduxState,
 				preferences: {},
 			};
-			expect( getCount( state, COUNTER_NAME, false ) ).to.be.undefined;
+			expect( getCount( state, COUNTER_NAME, false ) ).toBeUndefined();
 		} );
 
 		test( 'should return the correct count value if preference exist and keyedToSiteId arg is false', () => {
@@ -114,7 +113,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getCount( state, COUNTER_NAME, false ) ).to.equal( 7 );
+			expect( getCount( state, COUNTER_NAME, false ) ).toEqual( 7 );
 		} );
 
 		test( 'should return the correct count value if counter exist and keyedToSiteId arg is true', () => {
@@ -131,7 +130,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getCount( state, COUNTER_NAME, true ) ).to.equal( 3 );
+			expect( getCount( state, COUNTER_NAME, true ) ).toEqual( 3 );
 		} );
 	} );
 
@@ -151,7 +150,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( lastUpdatedIsToday( state, COUNTER_NAME, false ) ).to.be.true;
+			expect( lastUpdatedIsToday( state, COUNTER_NAME, false ) ).toBe( true );
 		} );
 
 		test( 'should return false if counter was not updated today', () => {
@@ -169,7 +168,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( lastUpdatedIsToday( state, COUNTER_NAME, false ) ).to.be.false;
+			expect( lastUpdatedIsToday( state, COUNTER_NAME, false ) ).toBe( false );
 		} );
 	} );
 
@@ -188,7 +187,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( counterExists( state, 'my-counter-name', false ) ).to.be.true;
+			expect( counterExists( state, 'my-counter-name', false ) ).toBe( true );
 		} );
 
 		test( 'should return false if counter preference key does not exist', () => {
@@ -206,7 +205,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( lastUpdatedIsToday( state, 'wrong-counter-name', false ) ).to.be.false;
+			expect( lastUpdatedIsToday( state, 'wrong-counter-name', false ) ).toBe( false );
 		} );
 	} );
 } );

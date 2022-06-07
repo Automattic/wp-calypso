@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import {
@@ -21,7 +20,6 @@ import {
 	POSTS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import reducer, {
 	items,
 	queryRequests,
@@ -32,29 +30,29 @@ import reducer, {
 } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'counts',
-			'items',
-			'siteRequests',
-			'queryRequests',
-			'queries',
-			'allSitesQueries',
-			'edits',
-			'likes',
-			'revisions',
-		] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [
+				'counts',
+				'items',
+				'siteRequests',
+				'queryRequests',
+				'queries',
+				'allSitesQueries',
+				'edits',
+				'likes',
+				'revisions',
+			] )
+		);
 	} );
 
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should index received posts by global ID', () => {
@@ -76,7 +74,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
 				'6c831c187ffef321eb43a67761a525a3': [ 2916284, 413 ],
 			} );
@@ -98,7 +96,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
 				'6c831c187ffef321eb43a67761a525a3': [ 2916284, 413 ],
 			} );
@@ -114,7 +112,7 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should persist state', () => {
@@ -123,7 +121,7 @@ describe( 'reducer', () => {
 			} );
 			const state = serialize( items, original );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should load valid persisted state', () => {
@@ -132,7 +130,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( items, original );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
@@ -146,7 +144,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( items, original );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 	} );
 
@@ -154,7 +152,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = queryRequests( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track post query request fetching', () => {
@@ -164,7 +162,7 @@ describe( 'reducer', () => {
 				query: { search: 'Hello' },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'2916284:{"search":"Hello"}': true,
 			} );
 		} );
@@ -175,7 +173,7 @@ describe( 'reducer', () => {
 				query: { search: 'Hello' },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'{"search":"Hello"}': true,
 			} );
 		} );
@@ -191,7 +189,7 @@ describe( 'reducer', () => {
 				query: { search: 'Hello W' },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'2916284:{"search":"Hello"}': true,
 				'2916284:{"search":"Hello W"}': true,
 			} );
@@ -213,7 +211,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'2916284:{"search":"Hello"}': false,
 			} );
 		} );
@@ -226,7 +224,7 @@ describe( 'reducer', () => {
 				error: new Error(),
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				'2916284:{"search":"Hello"}': false,
 			} );
 		} );
@@ -236,7 +234,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = queries( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track post query request success', () => {
@@ -258,9 +256,9 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.be.an.instanceof( PostQueryManager );
-			expect( state[ 2916284 ].getItems( { search: 'Hello' } ) ).to.eql( [
+			expect( Object.keys( state ) ).toEqual( expect.arrayContaining( [ '2916284' ] ) );
+			expect( state[ 2916284 ] ).toBeInstanceOf( PostQueryManager );
+			expect( state[ 2916284 ].getItems( { search: 'Hello' } ) ).toEqual( [
 				{
 					ID: 841,
 					site_ID: 2916284,
@@ -307,10 +305,10 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.be.an.instanceof( PostQueryManager );
-			expect( state[ 2916284 ].getItems( { search: 'Hello' } ) ).to.have.length( 1 );
-			expect( state[ 2916284 ].getItems( { search: 'Hello W' } ) ).to.have.length( 1 );
+			expect( Object.keys( state ) ).toEqual( expect.arrayContaining( [ '2916284' ] ) );
+			expect( state[ 2916284 ] ).toBeInstanceOf( PostQueryManager );
+			expect( state[ 2916284 ].getItems( { search: 'Hello' } ) ).toHaveLength( 1 );
+			expect( state[ 2916284 ].getItems( { search: 'Hello W' } ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should return the same state if successful request has no changes', () => {
@@ -333,7 +331,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( queries( deepFreeze( {} ), action ) );
 			const state = queries( original, action );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should track posts even if not associated with an existing site or query', () => {
@@ -348,9 +346,9 @@ describe( 'reducer', () => {
 				posts: [ postObject ],
 			} );
 
-			expect( state ).to.have.keys( [ '2916284' ] );
-			expect( state[ 2916284 ] ).to.be.an.instanceof( PostQueryManager );
-			expect( state[ 2916284 ].getItems() ).to.eql( [ postObject ] );
+			expect( Object.keys( state ) ).toEqual( expect.arrayContaining( [ '2916284' ] ) );
+			expect( state[ 2916284 ] ).toBeInstanceOf( PostQueryManager );
+			expect( state[ 2916284 ].getItems() ).toEqual( [ postObject ] );
 		} );
 
 		test( 'should update received posts', () => {
@@ -387,7 +385,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state[ 2916284 ].getItem( 841 ) ).to.eql( {
+			expect( state[ 2916284 ].getItem( 841 ) ).toEqual( {
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
@@ -422,8 +420,8 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( '__RESTORE_PENDING' );
-			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
+			expect( state[ 2916284 ].getItem( 841 ).status ).toEqual( '__RESTORE_PENDING' );
+			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should apply pending trash status on restore failure actions', () => {
@@ -457,8 +455,8 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( 'trash' );
-			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 1 );
+			expect( state[ 2916284 ].getItem( 841 ).status ).toEqual( 'trash' );
+			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should apply save actions as partial received posts', () => {
@@ -490,7 +488,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state[ 2916284 ].getItem( 841 ) ).to.eql( {
+			expect( state[ 2916284 ].getItem( 841 ) ).toEqual( {
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
@@ -525,8 +523,8 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( '__DELETE_PENDING' );
-			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
+			expect( state[ 2916284 ].getItem( 841 ).status ).toEqual( '__DELETE_PENDING' );
+			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should restore item when post delete fails', () => {
@@ -553,7 +551,7 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( original[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
+			expect( original[ 2916284 ].getItems( { status: 'trash' } ) ).toHaveLength( 0 );
 
 			const state = queries( original, {
 				type: POST_DELETE_FAILURE,
@@ -561,8 +559,8 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( 'trash' );
-			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 1 );
+			expect( state[ 2916284 ].getItem( 841 ).status ).toEqual( 'trash' );
+			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should remove item when post delete action success dispatched', () => {
@@ -591,7 +589,7 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state[ 2916284 ].getItems() ).to.have.length( 0 );
+			expect( state[ 2916284 ].getItems() ).toHaveLength( 0 );
 		} );
 
 		test( 'should persist state', () => {
@@ -614,7 +612,7 @@ describe( 'reducer', () => {
 
 			const state = serialize( queries, original );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					data: {
 						items: {
@@ -666,7 +664,7 @@ describe( 'reducer', () => {
 
 			const state = deserialize( queries, original );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: new PostQueryManager( {
 					items: {
 						841: {
@@ -693,7 +691,7 @@ describe( 'reducer', () => {
 
 			const state = deserialize( queries, original );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 	} );
 
@@ -701,7 +699,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = siteRequests( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should map site ID, post ID to true value if request in progress', () => {
@@ -711,7 +709,7 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: true,
 				},
@@ -732,7 +730,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: true,
 					413: true,
@@ -754,7 +752,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: false,
 				},
@@ -775,7 +773,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: false,
 				},
@@ -787,7 +785,7 @@ describe( 'reducer', () => {
 		test( 'should default to an empty object', () => {
 			const state = edits( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track new post draft revisions by site ID', () => {
@@ -798,7 +796,7 @@ describe( 'reducer', () => {
 				post: { title: 'Ribs & Chicken' },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					'': [ { title: 'Ribs & Chicken' } ],
 				},
@@ -813,7 +811,7 @@ describe( 'reducer', () => {
 				post: { title: 'Hello World' },
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: [ { title: 'Hello World' } ],
 				},
@@ -835,7 +833,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					'': [ { title: 'Ribs & Chicken' } ],
 					841: [ { title: 'Hello World' } ],
@@ -858,7 +856,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					'': [ { title: 'Ribs & Chicken' } ],
 				},
@@ -882,7 +880,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					'': [
 						{
@@ -919,7 +917,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					'': [
 						{
@@ -946,7 +944,7 @@ describe( 'reducer', () => {
 				posts: [ { ID: 842, site_ID: 2916284, type: 'post' } ],
 			} );
 
-			expect( newState ).to.equal( state );
+			expect( newState ).toEqual( state );
 		} );
 
 		test( 'should eliminate redundant data on posts received', () => {
@@ -963,7 +961,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: [ { title: 'Hello World' } ],
 					'': [ { title: 'Unrelated' } ],
@@ -1024,7 +1022,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: [ { title: 'Hello World' } ],
 					'': [ { title: 'Unrelated' } ],
@@ -1081,7 +1079,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: [
 						{
@@ -1136,7 +1134,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: [ { title: 'Hello World' } ],
 				},
@@ -1178,7 +1176,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: [
 						{
@@ -1226,7 +1224,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: [ { title: 'Hello World' } ],
 				},
@@ -1260,7 +1258,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: null,
 				},
@@ -1304,7 +1302,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: [
 						{
@@ -1338,7 +1336,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: null,
 				},
@@ -1370,7 +1368,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					842: [ { title: 'I like turtles' } ],
 				},
@@ -1405,16 +1403,16 @@ describe( 'reducer', () => {
 
 			expect(
 				edits( editsStateWithStatus( 'publish' ), receivePostActionWithStatus( 'future' ) )
-			).to.eql( emptyEditsState );
+			).toEqual( emptyEditsState );
 			expect(
 				edits( editsStateWithStatus( 'publish' ), receivePostActionWithStatus( 'publish' ) )
-			).to.eql( emptyEditsState );
+			).toEqual( emptyEditsState );
 			expect(
 				edits( editsStateWithStatus( 'future' ), receivePostActionWithStatus( 'publish' ) )
-			).to.eql( emptyEditsState );
+			).toEqual( emptyEditsState );
 			expect(
 				edits( editsStateWithStatus( 'draft' ), receivePostActionWithStatus( 'draft' ) )
-			).to.eql( emptyEditsState );
+			).toEqual( emptyEditsState );
 		} );
 
 		test( "should ignore reset edits action when discarded site doesn't exist", () => {
@@ -1425,7 +1423,7 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should copy edits when the post is saved and prior postId was null', () => {
@@ -1447,7 +1445,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: [ { title: 'Ribs & Chicken' } ],
 					842: [ { title: 'I like turtles' } ],
@@ -1463,7 +1461,7 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should discard edits when we stop editing the post', () => {
@@ -1485,7 +1483,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					'': {
 						title: 'Ribs & Chicken',
@@ -1514,7 +1512,7 @@ describe( 'reducer', () => {
 				}
 			);
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					841: null,
 					'': {
@@ -1529,9 +1527,9 @@ describe( 'reducer', () => {
 		test( 'should default to a new PostQueryManager', () => {
 			const state = allSitesQueries( undefined, {} );
 
-			expect( state ).to.be.an.instanceof( PostQueryManager );
-			expect( state.data ).to.eql( { items: {}, queries: {} } );
-			expect( state.options ).to.eql( { itemKey: 'global_ID' } );
+			expect( state ).toBeInstanceOf( PostQueryManager );
+			expect( state.data ).toEqual( { items: {}, queries: {} } );
+			expect( state.options ).toEqual( { itemKey: 'global_ID' } );
 		} );
 
 		test( 'should track post query request success', () => {
@@ -1553,7 +1551,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state.getItems( { search: 'Hello' } ) ).to.eql( [
+			expect( state.getItems( { search: 'Hello' } ) ).toEqual( [
 				{
 					ID: 841,
 					site_ID: 2916284,
@@ -1598,9 +1596,11 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state.data.items ).to.have.keys( [ '3d097cb7c5473c169bba0eb8e3c6cb64' ] );
-			expect( state.getItems( { search: 'Hello' } ) ).to.have.length( 1 );
-			expect( state.getItems( { search: 'Hello W' } ) ).to.have.length( 1 );
+			expect( Object.keys( state.data.items ) ).toEqual(
+				expect.arrayContaining( [ '3d097cb7c5473c169bba0eb8e3c6cb64' ] )
+			);
+			expect( state.getItems( { search: 'Hello' } ) ).toHaveLength( 1 );
+			expect( state.getItems( { search: 'Hello W' } ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should return the same state if successful request has no changes', () => {
@@ -1623,7 +1623,7 @@ describe( 'reducer', () => {
 			const original = deepFreeze( allSitesQueries( undefined, action ) );
 			const state = allSitesQueries( original, action );
 
-			expect( state ).to.equal( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should track post items received from site-specific queries', () => {
@@ -1638,7 +1638,9 @@ describe( 'reducer', () => {
 				posts: [ postObject ],
 			} );
 
-			expect( state.data.items ).to.have.keys( [ '3d097cb7c5473c169bba0eb8e3c6cb64' ] );
+			expect( Object.keys( state.data.items ) ).toEqual(
+				expect.arrayContaining( [ '3d097cb7c5473c169bba0eb8e3c6cb64' ] )
+			);
 		} );
 
 		test( 'should ignore query results of site-specific queries', () => {
@@ -1657,7 +1659,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state.data ).to.eql( { items: {}, queries: {} } );
+			expect( state.data ).toEqual( { items: {}, queries: {} } );
 		} );
 
 		test( 'should update received posts', () => {
@@ -1694,7 +1696,7 @@ describe( 'reducer', () => {
 				],
 			} );
 
-			expect( state.getItem( '3d097cb7c5473c169bba0eb8e3c6cb64' ) ).to.eql( {
+			expect( state.getItem( '3d097cb7c5473c169bba0eb8e3c6cb64' ) ).toEqual( {
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
@@ -1728,10 +1730,10 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal(
+			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).toEqual(
 				'__RESTORE_PENDING'
 			);
-			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 0 );
+			expect( state.getItems( { status: 'trash' } ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should apply pending trash status on restore failure actions', () => {
@@ -1764,8 +1766,8 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal( 'trash' );
-			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 1 );
+			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).toEqual( 'trash' );
+			expect( state.getItems( { status: 'trash' } ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should apply save actions as partial received posts', () => {
@@ -1797,7 +1799,7 @@ describe( 'reducer', () => {
 				},
 			} );
 
-			expect( state.getItem( '3d097cb7c5473c169bba0eb8e3c6cb64' ) ).to.eql( {
+			expect( state.getItem( '3d097cb7c5473c169bba0eb8e3c6cb64' ) ).toEqual( {
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
@@ -1831,10 +1833,10 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal(
+			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).toEqual(
 				'__DELETE_PENDING'
 			);
-			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 0 );
+			expect( state.getItems( { status: 'trash' } ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should restore item when post delete fails', () => {
@@ -1860,7 +1862,7 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( original.getItems( { status: 'trash' } ) ).to.have.length( 0 );
+			expect( original.getItems( { status: 'trash' } ) ).toHaveLength( 0 );
 
 			const state = allSitesQueries( original, {
 				type: POST_DELETE_FAILURE,
@@ -1868,8 +1870,8 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).to.equal( 'trash' );
-			expect( state.getItems( { status: 'trash' } ) ).to.have.length( 1 );
+			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).toEqual( 'trash' );
+			expect( state.getItems( { status: 'trash' } ) ).toHaveLength( 1 );
 		} );
 
 		test( 'should remove item when post delete action success dispatched', () => {
@@ -1898,7 +1900,7 @@ describe( 'reducer', () => {
 				postId: 841,
 			} );
 
-			expect( state.getItems() ).to.have.length( 0 );
+			expect( state.getItems() ).toHaveLength( 0 );
 		} );
 
 		test( 'should persist state', () => {
@@ -1921,7 +1923,7 @@ describe( 'reducer', () => {
 
 			const state = serialize( allSitesQueries, original );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				data: {
 					items: {
 						'3d097cb7c5473c169bba0eb8e3c6cb64': {
@@ -1969,7 +1971,7 @@ describe( 'reducer', () => {
 
 			const state = deserialize( allSitesQueries, original );
 
-			expect( state ).to.eql(
+			expect( state ).toEqual(
 				new PostQueryManager(
 					{
 						items: {
@@ -1997,9 +1999,9 @@ describe( 'reducer', () => {
 
 			const state = deserialize( allSitesQueries, original );
 
-			expect( state ).to.be.an.instanceof( PostQueryManager );
-			expect( state.data ).to.eql( { items: {}, queries: {} } );
-			expect( state.options ).to.eql( { itemKey: 'global_ID' } );
+			expect( state ).toBeInstanceOf( PostQueryManager );
+			expect( state.data ).toEqual( { items: {}, queries: {} } );
+			expect( state.options ).toEqual( { itemKey: 'global_ID' } );
 		} );
 	} );
 } );

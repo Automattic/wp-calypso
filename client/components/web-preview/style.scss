@@ -242,6 +242,12 @@ a.web-preview__external.button {
 	.is-seo & {
 		max-width: 865px;
 	}
+
+	.is-fixed-viewport-width & {
+		margin: 0;
+		max-width: none;
+		transform-origin: 0 0;
+	}
 }
 
 .web-preview__frame-wrapper {

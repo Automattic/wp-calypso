@@ -1,7 +1,6 @@
 import { CompactCard } from '@automattic/components';
 import classnames from 'classnames';
-import { ReactElement } from 'react';
-import * as React from 'react';
+import type { PropsWithChildren } from 'react';
 import './style.scss';
 
 interface Props {
@@ -13,7 +12,7 @@ export default function LicenseListItem( {
 	header = false,
 	className = '',
 	children,
-}: React.PropsWithChildren< Props > ): ReactElement {
+}: PropsWithChildren< Props > ) {
 	return (
 		<CompactCard className={ className }>
 			<div

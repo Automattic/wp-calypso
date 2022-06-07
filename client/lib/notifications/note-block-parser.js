@@ -149,12 +149,12 @@ const themeNode = ( { site_slug, slug, version, uri, intent, section } ) => ( {
 const inferNode = ( range ) => {
 	const { type, url } = range;
 
-	if ( type ) {
-		return typedNode( range );
-	}
-
 	if ( url ) {
 		return linkNode( range );
+	}
+
+	if ( type ) {
+		return typedNode( range );
 	}
 
 	return range;
@@ -272,7 +272,6 @@ const parse = ( [ prev, text, offset ], nextRange ) => {
  * prep work on the list of block ranges.
  *
  * @see parse
- *
  * @param {object} block the block to parse
  * @returns {Array} list of text and node segments with children
  */

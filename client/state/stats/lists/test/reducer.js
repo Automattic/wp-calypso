@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import {
 	SITE_STATS_RECEIVE,
@@ -6,7 +5,6 @@ import {
 	SITE_STATS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import reducer, { items, requests } from '../reducer';
 
 /**
@@ -30,19 +28,19 @@ const streakQuery = { startDate: '2015-06-01', endDate: '2016-06-01' };
 const streakQueryDos = { startDate: '2014-06-01', endDate: '2015-06-01' };
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requests', 'items' ] );
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'requests', 'items' ] )
+		);
 	} );
 
 	describe( 'requests()', () => {
 		test( 'should default to an empty object', () => {
 			const state = requests( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should track stats list request fetching', () => {
@@ -53,7 +51,7 @@ describe( 'reducer', () => {
 				query: streakQuery,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					statsStreak: {
 						'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
@@ -84,7 +82,7 @@ describe( 'reducer', () => {
 				query: streakQueryDos,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					statsStreak: {
 						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': {
@@ -111,7 +109,7 @@ describe( 'reducer', () => {
 				date: today,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					statsStreak: {
 						'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
@@ -133,7 +131,7 @@ describe( 'reducer', () => {
 				error: new Error(),
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					statsStreak: {
 						'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
@@ -157,7 +155,7 @@ describe( 'reducer', () => {
 			} );
 			const state = serialize( items, original );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should load valid persisted state', () => {
@@ -170,7 +168,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( items, original );
 
-			expect( state ).to.eql( original );
+			expect( state ).toEqual( original );
 		} );
 
 		test( 'should not load persisted state with invalid statType', () => {
@@ -181,7 +179,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( items, original );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should not load persisted state with invalid query', () => {
@@ -194,7 +192,7 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( items, original );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should not load persisted state with non-object data', () => {
@@ -207,13 +205,13 @@ describe( 'reducer', () => {
 			} );
 			const state = deserialize( items, original );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should add received stats', () => {
@@ -225,7 +223,7 @@ describe( 'reducer', () => {
 				data: streakResponse,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					statsStreak: {
 						'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': streakResponse,
@@ -243,7 +241,7 @@ describe( 'reducer', () => {
 				data: '',
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					statsStreak: {
 						'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': null,
@@ -269,7 +267,7 @@ describe( 'reducer', () => {
 				data: streakResponseDos,
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					statsStreak: {
 						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': streakResponse,
@@ -296,7 +294,7 @@ describe( 'reducer', () => {
 				data: streakResponseDos,
 			} );
 
-			expect( state[ 2916284 ] ).to.not.equal( original[ 2916284 ] );
+			expect( state[ 2916284 ] ).not.toEqual( original[ 2916284 ] );
 		} );
 
 		test( 'should add additional statTypes', () => {
@@ -316,7 +314,7 @@ describe( 'reducer', () => {
 				data: {},
 			} );
 
-			expect( state ).to.eql( {
+			expect( state ).toEqual( {
 				2916284: {
 					statsStreak: {
 						'[["endDate","2016-07-01"],["startDate","2016-06-01"]]': streakResponse,
@@ -345,7 +343,7 @@ describe( 'reducer', () => {
 				data: {},
 			} );
 
-			expect( state[ 2916284 ].statsStreak ).to.equal( original[ 2916284 ].statsStreak );
+			expect( state[ 2916284 ].statsStreak ).toEqual( original[ 2916284 ].statsStreak );
 		} );
 
 		test( 'should not change another site property', () => {
@@ -365,7 +363,7 @@ describe( 'reducer', () => {
 				data: {},
 			} );
 
-			expect( state[ 2916284 ].statsStreak ).to.equal( original[ 2916284 ].statsStreak );
+			expect( state[ 2916284 ].statsStreak ).toEqual( original[ 2916284 ].statsStreak );
 		} );
 	} );
 } );

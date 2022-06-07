@@ -1,9 +1,8 @@
-import { expect } from 'chai';
 import isSurveyFilledIn from '../is-survey-filled-in';
 
 describe( 'isSurveyFilledIn', () => {
 	test( 'should return false when no questions are answered', () => {
-		expect( isSurveyFilledIn( {} ) ).to.equal( false );
+		expect( isSurveyFilledIn( {} ) ).toEqual( false );
 	} );
 
 	test( 'should return true when question one and two are answered', () => {
@@ -12,7 +11,7 @@ describe( 'isSurveyFilledIn', () => {
 				questionOneRadio: 'tooHard',
 				questionTwoRadio: 'tooHard',
 			} )
-		).to.equal( true );
+		).toEqual( true );
 	} );
 
 	test( 'should return true when question one is answered and there are no options for question two', () => {
@@ -21,7 +20,7 @@ describe( 'isSurveyFilledIn', () => {
 				questionOneRadio: 'tooHard',
 				questionTwoOrder: [],
 			} )
-		).to.equal( true );
+		).toEqual( true );
 	} );
 
 	test( 'should return false when question one is another reason and there is no text', () => {
@@ -31,7 +30,7 @@ describe( 'isSurveyFilledIn', () => {
 				questionOneText: '',
 				questionTwoRadio: 'tooHard',
 			} )
-		).to.equal( false );
+		).toEqual( false );
 	} );
 
 	test( 'should return false when question two is another reason and there is no text', () => {
@@ -41,7 +40,7 @@ describe( 'isSurveyFilledIn', () => {
 				questionTwoRadio: 'anotherReasonTwo',
 				questionTwoText: '',
 			} )
-		).to.equal( false );
+		).toEqual( false );
 	} );
 
 	test( 'should return true when question one and two are another reason and both have text', () => {
@@ -52,6 +51,6 @@ describe( 'isSurveyFilledIn', () => {
 				questionTwoRadio: 'anotherReasonTwo',
 				questionTwoText: 'the reason',
 			} )
-		).to.equal( true );
+		).toEqual( true );
 	} );
 } );

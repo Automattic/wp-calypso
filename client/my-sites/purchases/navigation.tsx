@@ -16,7 +16,7 @@ export default function PurchasesNavigation( {
 }: {
 	section: keyof Titles;
 	siteSlug: string | null;
-} ): JSX.Element {
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 

@@ -1,8 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
-import sinon from 'sinon';
 import afterLayoutFlush from '../';
 
 jest.useFakeTimers();
@@ -47,8 +45,8 @@ function setupPreserveThisTest() {
 describe( 'afterLayoutFlush', () => {
 	describe( 'in browsers that support requestAnimationFrame', () => {
 		beforeAll( () => {
-			sinon.stub( window, 'requestAnimationFrame' ).callsFake( requestAnimationFrameFake );
-			sinon.stub( window, 'cancelAnimationFrame' ).callsFake( cancelAnimationFrameFake );
+			jest.spyOn( window, 'requestAnimationFrame' ).mockImplementation( requestAnimationFrameFake );
+			jest.spyOn( window, 'cancelAnimationFrame' ).mockImplementation( cancelAnimationFrameFake );
 		} );
 
 		beforeEach( () => {
@@ -144,9 +142,14 @@ describe( 'afterLayoutFlush', () => {
 	} );
 
 	describe( 'in browsers that do not support requestAnimationFrame', () => {
+		let originalRequestAnimationFrame;
 		beforeAll( () => {
-			sinon.restore();
-			sinon.stub( window, 'requestAnimationFrame' ).value( undefined );
+			originalRequestAnimationFrame = window.requestAnimationFrame;
+			window.requestAnimationFrame = undefined;
+		} );
+
+		afterAll( () => {
+			window.requestAnimationFrame = originalRequestAnimationFrame;
 		} );
 
 		test( 'should execute after a timeout', () => {
@@ -217,6 +220,4 @@ describe( 'afterLayoutFlush', () => {
 			expect( ptt.callback ).toHaveBeenCalledWith( 'bar' );
 		} );
 	} );
-
-	afterAll( () => sinon.restore() );
 } );

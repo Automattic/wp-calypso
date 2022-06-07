@@ -216,14 +216,12 @@ export function useLocalizeUrl() {
 	);
 }
 
-export const withLocalizeUrl = createHigherOrderComponent<
-	{
-		localizeUrl: ReturnType< typeof useLocalizeUrl >;
-	},
-	any
->( ( InnerComponent ) => {
+export const withLocalizeUrl = createHigherOrderComponent< {
+	localizeUrl: ReturnType< typeof useLocalizeUrl >;
+} >( ( InnerComponent ) => {
 	return ( props ) => {
 		const localizeUrl = useLocalizeUrl();
-		return <InnerComponent localizeUrl={ localizeUrl } { ...props } />;
+		const innerProps = { ...props, localizeUrl } as React.ComponentProps< typeof InnerComponent >;
+		return <InnerComponent { ...innerProps } />;
 	};
 }, 'withLocalizeUrl' );

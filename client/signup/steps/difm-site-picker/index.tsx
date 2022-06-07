@@ -76,19 +76,6 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 				}
 			)
 		);
-		//Skip domains step
-		dispatch(
-			submitSignupStep(
-				{
-					stepName: 'domains',
-					wasSkipped: true,
-				},
-				{
-					domainItem: undefined,
-					themeItem: undefined,
-				}
-			)
-		);
 
 		goToNextStep();
 	};

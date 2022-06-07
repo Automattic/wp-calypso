@@ -116,6 +116,8 @@ class SectionNav extends Component {
 			if ( child.type === Search ) {
 				if ( child.props.pinned ) {
 					this.hasPinnedSearch = true;
+
+					extraProps.onSearchOpen = this.generateOnSearchOpen( child.props.onSearchOpen );
 				}
 
 				extraProps.onSearch = this.generateOnSearch( child.props.onSearch );
@@ -148,6 +150,13 @@ class SectionNav extends Component {
 	generateOnSearch( existingOnSearch ) {
 		return ( ...args ) => {
 			existingOnSearch( ...args );
+			this.closeMobilePanel();
+		};
+	}
+
+	generateOnSearchOpen( existingOnSearchOpen ) {
+		return ( ...args ) => {
+			existingOnSearchOpen( ...args );
 			this.closeMobilePanel();
 		};
 	}

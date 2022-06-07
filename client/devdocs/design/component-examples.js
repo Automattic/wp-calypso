@@ -32,7 +32,6 @@ export { default as FormattedHeader } from 'calypso/components/formatted-header/
 export { default as FormFields } from 'calypso/components/forms/docs/example';
 export { default as Gauge } from 'calypso/components/gauge/docs/example';
 export { default as GlobalNotices } from 'calypso/components/global-notices/docs/example';
-export { default as Gravatar } from 'calypso/components/gravatar/docs/example';
 export { default as HeaderButton } from 'calypso/components/header-button/docs/example';
 export { default as Headers } from 'calypso/components/header-cake/docs/example';
 export { default as ImagePreloader } from 'calypso/components/image-preloader/docs/example';
@@ -66,7 +65,7 @@ export { default as SegmentedControl } from 'calypso/components/segmented-contro
 export { default as SelectDropdown } from 'calypso/components/select-dropdown/docs/example';
 export { default as ShareButton } from 'calypso/components/share-button/docs/example';
 export { default as SocialLogos } from 'calypso/components/social-logo/docs/example';
-export { default as Spinner } from 'calypso/components/spinner/docs/example';
+export { Spinner } from '@automattic/components';
 export { default as SpinnerButton } from 'calypso/components/spinner-button/docs/example';
 export { default as SpinnerLine } from 'calypso/components/spinner-line/docs/example';
 export { default as SplitButton } from 'calypso/components/split-button/docs/example';

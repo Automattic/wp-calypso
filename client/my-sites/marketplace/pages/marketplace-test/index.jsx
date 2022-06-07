@@ -67,7 +67,7 @@ export default function MarketplaceTest() {
 	// eslint-disable-next-line no-console
 	console.log( { dataSearch, isFetchingSearch } );
 
-	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite ) );
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSiteId ) );
 
 	const isRequestingForSite = useSelector( ( state ) =>
 		isRequestingForSites( state, [ selectedSiteId ] )

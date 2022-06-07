@@ -9,8 +9,6 @@ import {
 	SiteSettings,
 	AtomicTransferStatus,
 	LatestAtomicTransferStatus,
-	HappyChatAvailability,
-	EmailSupportAvailability,
 } from './types';
 import {
 	AtomicTransferState,
@@ -83,28 +81,6 @@ export const isFetchingSiteDetails: Reducer< boolean | undefined, Action > = (
 	return state;
 };
 
-export const happyChatAvailability: Reducer< HappyChatAvailability | undefined, Action > = (
-	state,
-	action
-) => {
-	switch ( action.type ) {
-		case 'RECEIVE_HAPPY_CHAT_AVAILABILITY':
-			return action.availability;
-	}
-	return state;
-};
-
-export const emailSupportAvailability: Reducer< EmailSupportAvailability | undefined, Action > = (
-	state,
-	action
-) => {
-	switch ( action.type ) {
-		case 'RECEIVE_EMAIL_SUPPORT_AVAILABILITY':
-			return action.availability;
-	}
-	return state;
-};
-
 export const sites: Reducer< { [ key: number | string ]: SiteDetails | undefined }, Action > = (
 	state = {},
 	action
@@ -164,6 +140,15 @@ export const sitesSettings: Reducer< { [ key: number ]: SiteSettings }, Action >
 	if ( action.type === 'RECEIVE_SITE_SETTINGS' ) {
 		return { ...state, [ action.siteId ]: action.settings };
 	}
+	if ( action.type === 'UPDATE_SITE_SETTINGS' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				...state?.[ action.siteId ],
+				...action.settings,
+			},
+		};
+	}
 	return state;
 };
 
@@ -196,32 +181,27 @@ export const launchStatus: Reducer< { [ key: number ]: SiteLaunchState }, Action
 };
 
 export const siteSetupErrors: Reducer<
-	{ [ key: number ]: any | undefined },
+	{
+		error?: string;
+		message?: string;
+	},
 	{
 		type: string;
-		siteId: number;
 		error?: string;
 		message?: string;
 	}
 > = ( state = {}, action ) => {
 	if ( action.type === 'SET_SITE_SETUP_ERROR' ) {
-		const { siteId, error, message } = action;
+		const { error, message } = action;
 
 		return {
-			...state,
-			[ siteId ]: {
-				error,
-				message,
-			},
+			error,
+			message,
 		};
 	}
 
 	if ( action.type === 'CLEAR_SITE_SETUP_ERROR' ) {
-		const newState = {
-			...state,
-		};
-
-		delete newState[ action.siteId ];
+		return {};
 	}
 
 	return state;
@@ -395,8 +375,6 @@ const reducer = combineReducers( {
 	sitesDomains,
 	sitesSettings,
 	siteSetupErrors,
-	happyChatAvailability,
-	emailSupportAvailability,
 	atomicTransferStatus,
 	latestAtomicTransferStatus,
 	atomicSoftwareStatus,

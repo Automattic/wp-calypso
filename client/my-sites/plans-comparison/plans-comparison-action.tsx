@@ -5,6 +5,7 @@ import {
 	PLAN_WPCOM_PRO,
 	PLAN_FREE,
 	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_STARTER,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
@@ -36,9 +37,11 @@ function getButtonText( props: Partial< Props >, translate: TranslateFunc ): Tra
 	const planSlug = plan?.getStoreSlug();
 
 	if ( planSlug === PLAN_WPCOM_PRO ) {
-		return 'en' === i18n.getLocaleSlug() || i18n.hasTranslation( 'Start with Pro' )
-			? translate( 'Start with Pro' )
+		return 'en' === i18n.getLocaleSlug() || i18n.hasTranslation( 'Choose Pro' )
+			? translate( 'Choose Pro' )
 			: translate( 'Try Pro risk-free' );
+	} else if ( planSlug === PLAN_WPCOM_STARTER ) {
+		return translate( 'Choose Starter' );
 	} else if ( planSlug === PLAN_FREE || planSlug === PLAN_WPCOM_FLEXIBLE ) {
 		return translate( 'Start with Free' );
 	}
@@ -88,8 +91,14 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 		manageHref = undefined;
 	}
 
-	if ( ! isInSignup && [ TYPE_FLEXIBLE, TYPE_FREE ].includes( plan.type ) ) {
-		return null;
+	if ( ! isInSignup ) {
+		if ( isCurrentPlan ) {
+			return <Button disabled>{ translate( 'This is your plan' ) }</Button>;
+		}
+
+		if ( [ TYPE_FLEXIBLE, TYPE_FREE ].includes( plan.type ) ) {
+			return null;
+		}
 	}
 
 	return (

@@ -1,8 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
-import { expect } from 'chai';
 import { mount } from 'enzyme';
 import { Provider as ReduxProvider } from 'react-redux';
 import MediaLibraryDataSource from 'calypso/my-sites/media-library/data-source';
@@ -38,8 +36,8 @@ describe( 'MediaLibraryDataSource', () => {
 					/>
 				</ReduxProvider>
 			);
-			expect( wrapper.find( 'button[data-source="google_photos"]' ) ).to.have.length( 1 );
-			expect( wrapper.find( 'button[data-source="pexels"]' ) ).to.have.length( 1 );
+			expect( wrapper.find( 'button[data-source="google_photos"]' ) ).toHaveLength( 1 );
+			expect( wrapper.find( 'button[data-source="pexels"]' ) ).toHaveLength( 1 );
 		} );
 
 		test( 'excludes data sources listed in disabledSources', () => {
@@ -55,8 +53,8 @@ describe( 'MediaLibraryDataSource', () => {
 					/>
 				</ReduxProvider>
 			);
-			expect( wrapper.find( 'button[data-source="google_photos"]' ) ).to.have.length( 1 );
-			expect( wrapper.find( 'button[data-source="pexels"]' ) ).to.have.length( 0 );
+			expect( wrapper.find( 'button[data-source="google_photos"]' ) ).toHaveLength( 1 );
+			expect( wrapper.find( 'button[data-source="pexels"]' ) ).toHaveLength( 0 );
 		} );
 	} );
 } );

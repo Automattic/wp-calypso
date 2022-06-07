@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { sslStatuses } from 'calypso/lib/domains/constants';
@@ -7,7 +8,7 @@ import type { DetailsCardProps } from '../types';
 
 import './style.scss';
 
-const DomainSecurityDetails = ( { domain }: DetailsCardProps ): JSX.Element | null => {
+const DomainSecurityDetails = ( { domain }: DetailsCardProps ) => {
 	const translate = useTranslate();
 
 	if ( ! isSecuredWithUs( domain ) ) {
@@ -22,14 +23,14 @@ const DomainSecurityDetails = ( { domain }: DetailsCardProps ): JSX.Element | nu
 				return null;
 			case sslStatuses.SSL_PENDING:
 				return translate(
-					'It may take up to a few hours hours to add an SSL certificate to your site. If you are not seeing it yet, give it some time to take effect.',
+					'It may take up to a few hours to add an SSL certificate to your site. If you are not seeing it yet, give it some time to take effect.',
 					{ textOnly: true }
 				);
 			case sslStatuses.SSL_DISABLED:
 			default:
 				return translate(
 					'There is an issue with your certificate. Contact us to {{a}}learn more{{/a}}.',
-					{ components: { a: <a href={ CONTACT } /> } }
+					{ components: { a: <a href={ localizeUrl( CONTACT ) } /> } }
 				);
 		}
 	};
@@ -55,7 +56,7 @@ const DomainSecurityDetails = ( { domain }: DetailsCardProps ): JSX.Element | nu
 				<div className="domain-security-details__description-help-text">
 					{ translate(
 						'We give you strong HTTPS encryption with your domain for free. This provides a trust indicator for your visitors and keeps their connection to your site secure. {{a}}Learn more{{/a}}',
-						{ components: { a: <a href={ HTTPS_SSL } /> } }
+						{ components: { a: <a href={ localizeUrl( HTTPS_SSL ) } /> } }
 					) }
 				</div>
 			</div>

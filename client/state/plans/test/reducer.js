@@ -1,7 +1,5 @@
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import {
 	plansReceiveAction,
 	plansRequestSuccessAction,
@@ -16,21 +14,17 @@ import plansReducer, {
 import { WPCOM_RESPONSE } from './fixture';
 
 describe( 'reducer', () => {
-	let sandbox;
-
-	useSandbox( ( newSandbox ) => {
-		sandbox = newSandbox;
-		// mute off console warn
-		sandbox.stub( console, 'warn' );
-	} );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should export expected reducer keys', () => {
-		expect( plansReducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting', 'error' ] );
+		expect( Object.keys( plansReducer( undefined, {} ) ) ).toEqual(
+			expect.arrayContaining( [ 'items', 'requesting', 'error' ] )
+		);
 	} );
 
 	describe( '#items()', () => {
 		test( 'should default to an empty Array', () => {
-			expect( itemsReducer( undefined, [] ) ).to.eql( [] );
+			expect( itemsReducer( undefined, [] ) ).toEqual( [] );
 		} );
 
 		test( 'should index items state', () => {
@@ -42,7 +36,7 @@ describe( 'reducer', () => {
 
 			const newState = itemsReducer( initialState, action );
 
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should override plans', () => {
@@ -56,7 +50,7 @@ describe( 'reducer', () => {
 
 			const newState = itemsReducer( initialState, action );
 
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should persist state', () => {
@@ -69,7 +63,7 @@ describe( 'reducer', () => {
 
 			const newState = serialize( itemsReducer, initialState );
 
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should load persisted state', () => {
@@ -81,7 +75,7 @@ describe( 'reducer', () => {
 
 			const newState = deserialize( itemsReducer, initialState );
 
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should not load invalid persisted state', () => {
@@ -94,13 +88,13 @@ describe( 'reducer', () => {
 
 			const newState = deserialize( itemsReducer, initialState );
 
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 	} );
 
 	describe( '#requesting()', () => {
 		test( 'should return FALSE when initial state is undefined and action is unknown', () => {
-			expect( requestReducer( undefined, {} ) ).to.eql( false );
+			expect( requestReducer( undefined, {} ) ).toEqual( false );
 		} );
 
 		test( 'should return TRUE when initial state is undefined and action is REQUEST', () => {
@@ -111,7 +105,7 @@ describe( 'reducer', () => {
 
 			const newState = requestReducer( initialState, action );
 
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should update `requesting` state on SUCCESS', () => {
@@ -124,7 +118,7 @@ describe( 'reducer', () => {
 
 			const newState = requestReducer( initialState, action );
 
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should update `requesting` state on FAILURE', () => {
@@ -137,13 +131,13 @@ describe( 'reducer', () => {
 
 			const newState = requestReducer( initialState, action );
 
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 	} );
 
 	describe( '#errors()', () => {
 		test( 'should return FALSE when initial state is undefined and action is unknown', () => {
-			expect( errorReducer( undefined, {} ) ).to.eql( false );
+			expect( errorReducer( undefined, {} ) ).toEqual( false );
 		} );
 
 		test( 'should set `error` state to TRUE on FAILURE', () => {
@@ -155,7 +149,7 @@ describe( 'reducer', () => {
 
 			const newState = errorReducer( initialState, action );
 
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should set `error` state to FALSE on REQUEST', () => {
@@ -168,7 +162,7 @@ describe( 'reducer', () => {
 
 			const newState = errorReducer( initialState, action );
 
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 
 		test( 'should set `error` state to FALSE on SUCCESS', () => {
@@ -181,7 +175,7 @@ describe( 'reducer', () => {
 
 			const newState = errorReducer( initialState, action );
 
-			expect( newState ).to.eql( expectedState );
+			expect( newState ).toEqual( expectedState );
 		} );
 	} );
 } );

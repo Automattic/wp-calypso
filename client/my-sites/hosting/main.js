@@ -20,9 +20,8 @@ import {
 	getAutomatedTransferStatus,
 	isAutomatedTransferActive,
 } from 'calypso/state/automated-transfer/selectors';
-import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteOnAtomicPlan from 'calypso/state/selectors/is-site-on-atomic-plan';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import MiscellaneousCard from './miscellaneous-card';
@@ -54,9 +53,8 @@ class Hosting extends Component {
 
 	render() {
 		const {
-			canViewAtomicHosting,
 			clickActivate,
-			isOnAtomicPlan,
+			hasSftpFeature,
 			isDisabled,
 			isTransferring,
 			requestSiteById,
@@ -65,10 +63,6 @@ class Hosting extends Component {
 			translate,
 			transferState,
 		} = this.props;
-
-		if ( ! canViewAtomicHosting ) {
-			return null;
-		}
 
 		const getUpgradeBanner = () => (
 			<UpsellNudge
@@ -182,7 +176,7 @@ class Hosting extends Component {
 					) }
 					align="left"
 				/>
-				{ isOnAtomicPlan ? getAtomicActivationNotice() : getUpgradeBanner() }
+				{ hasSftpFeature ? getAtomicActivationNotice() : getUpgradeBanner() }
 				{ getContent() }
 			</Main>
 		);
@@ -195,14 +189,13 @@ export const clickActivate = () =>
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 
 		return {
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
-			isDisabled:
-				! isSiteOnAtomicPlan( state, siteId ) || ! isSiteAutomatedTransfer( state, siteId ),
-			isOnAtomicPlan: isSiteOnAtomicPlan( state, siteId ),
-			canViewAtomicHosting: canSiteViewAtomicHosting( state ),
+			isDisabled: ! hasSftpFeature || ! isSiteAutomatedTransfer( state, siteId ),
+			hasSftpFeature,
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
 		};

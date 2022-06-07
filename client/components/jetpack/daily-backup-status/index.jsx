@@ -1,9 +1,11 @@
+import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
+import BackupWarnings from 'calypso/components/jetpack/backup-warnings/backup-warnings';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import {
@@ -14,7 +16,8 @@ import {
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { useIsDateVisible } from 'calypso/my-sites/backup/hooks';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
-import { getInProgressBackupForSite, siteHasRealtimeBackups } from 'calypso/state/rewind/selectors';
+import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupFailed from './status-card/backup-failed';
 import BackupInProgress from './status-card/backup-in-progress';
@@ -45,7 +48,9 @@ const DailyBackupStatus = ( {
 		[ dispatch, siteId ]
 	);
 
-	const hasRealtimeBackups = useSelector( ( state ) => siteHasRealtimeBackups( state, siteId ) );
+	const hasRealtimeBackups = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS )
+	);
 	const backupCurrentlyInProgress = useSelector( ( state ) =>
 		getInProgressBackupForSite( state, siteId )
 	);
@@ -146,11 +151,14 @@ const Wrapper = ( props ) => {
 	// Fetch the status of the most recent backups
 	// to see if there's a backup currently in progress
 	return (
-		<Card className="daily-backup-status">
-			<QueryRewindPolicies siteId={ siteId } />
-			<QueryRewindBackups siteId={ siteId } />
-			<DailyBackupStatus { ...props } />
-		</Card>
+		<>
+			<Card className="daily-backup-status">
+				<QueryRewindPolicies siteId={ siteId } />
+				<QueryRewindBackups siteId={ siteId } />
+				<DailyBackupStatus { ...props } />
+			</Card>
+			<BackupWarnings backup={ props.backup } />
+		</>
 	);
 };
 

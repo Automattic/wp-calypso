@@ -20,11 +20,17 @@ const ACCELERATED_INCREMENT = 5;
 export default function MarketplaceProgressBar( {
 	steps,
 	currentStep,
+	additionalSteps,
+	additionalStepsTimeout = 7000,
 }: {
 	steps: TranslateResult[];
 	currentStep: number;
-} ): JSX.Element {
+	additionalSteps?: TranslateResult[];
+	additionalStepsTimeout?: number;
+} ) {
 	const translate = useTranslate();
+	const [ stepValue, setStepValue ] = useState( steps[ currentStep ] );
+	const [ additionalStepsTimeoutId, setAdditionalStepsTimeoutId ] = useState< NodeJS.Timeout >();
 	const [ simulatedProgressPercentage, setSimulatedProgressPercentage ] = useState( 1 );
 	useEffect( () => {
 		const timeOutReference = setTimeout( () => {
@@ -40,6 +46,42 @@ export default function MarketplaceProgressBar( {
 		return () => clearTimeout( timeOutReference );
 	}, [ simulatedProgressPercentage, steps, currentStep ] );
 
+	useEffect( () => {
+		setStepValue( steps[ currentStep ] );
+		setAdditionalStepsTimeoutId( undefined );
+	}, [ steps, currentStep ] );
+
+	// Show additional messages when available
+	useEffect( () => {
+		function updateStepValueAfterTimeout() {
+			if ( additionalSteps?.length ) {
+				const timeoutId = setTimeout( () => {
+					const randomIndex = Math.floor( Math.random() * additionalSteps.length );
+					const newValue = additionalSteps[ randomIndex ];
+
+					if ( newValue !== stepValue ) {
+						setStepValue( newValue );
+					}
+
+					updateStepValueAfterTimeout();
+				}, additionalStepsTimeout );
+
+				if ( additionalStepsTimeoutId ) {
+					clearTimeout( additionalStepsTimeoutId );
+				}
+				setAdditionalStepsTimeoutId( timeoutId );
+			}
+		}
+
+		updateStepValueAfterTimeout();
+
+		return () => {
+			if ( additionalStepsTimeoutId ) {
+				clearTimeout( additionalStepsTimeoutId );
+			}
+		};
+	}, [ additionalSteps, currentStep ] );
+
 	/* translators: %(currentStep)s  Is the current step number, given that steps are set of counting numbers representing each step starting from 1, %(stepCount)s  Is the total number of steps, Eg: Step 1 of 3  */
 	const stepIndication = translate( 'Step %(currentStep)s of %(stepCount)s', {
 		args: { currentStep: currentStep + 1, stepCount: steps.length },
@@ -47,7 +89,7 @@ export default function MarketplaceProgressBar( {
 
 	return (
 		<Container>
-			<Title className="progressbar__title wp-brand-font">{ steps[ currentStep ] }</Title>
+			<Title className="progressbar__title wp-brand-font">{ stepValue }</Title>
 			<StyledProgressBar
 				value={ simulatedProgressPercentage }
 				color="var( --studio-pink-50 )"

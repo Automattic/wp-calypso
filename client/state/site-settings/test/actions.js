@@ -1,5 +1,3 @@
-import { expect } from 'chai';
-import sinon from 'sinon';
 import {
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_REQUEST,
@@ -11,7 +9,6 @@ import {
 	SITE_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import {
 	receiveSiteSettings,
 	requestSiteSettings,
@@ -26,14 +23,17 @@ const getState = () => ( {
 
 describe( 'actions', () => {
 	let spy;
-	useSandbox( ( sandbox ) => ( spy = sandbox.spy() ) );
+
+	beforeEach( () => {
+		spy = jest.fn();
+	} );
 
 	describe( 'receiveSiteSettings()', () => {
 		test( 'should return an action object', () => {
 			const settings = { settingKey: 'cat' };
 			const action = receiveSiteSettings( 2916284, settings );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: SITE_SETTINGS_RECEIVE,
 				siteId: 2916284,
 				settings,
@@ -46,7 +46,7 @@ describe( 'actions', () => {
 			const settings = { settingKey: 'cat' };
 			const action = updateSiteSettings( 2916284, settings );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: SITE_SETTINGS_UPDATE,
 				siteId: 2916284,
 				settings,
@@ -74,7 +74,7 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestSiteSettings( 2916284 )( spy, getState );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toBeCalledWith( {
 				type: SITE_SETTINGS_REQUEST,
 				siteId: 2916284,
 			} );
@@ -82,8 +82,8 @@ describe( 'actions', () => {
 
 		test( 'should dispatch receive action when request completes', () => {
 			return requestSiteSettings( 2916284 )( spy, getState ).then( () => {
-				expect( spy ).to.have.been.calledWith(
-					sinon.match(
+				expect( spy ).toBeCalledWith(
+					expect.objectContaining(
 						receiveSiteSettings( 2916284, {
 							blogname: 'blog name',
 							blogdescription: 'blog description',
@@ -96,8 +96,8 @@ describe( 'actions', () => {
 
 		test( 'should dispatch request success action when request completes', () => {
 			return requestSiteSettings( 2916284 )( spy, getState ).then( () => {
-				expect( spy ).to.have.been.calledWith(
-					sinon.match( {
+				expect( spy ).toBeCalledWith(
+					expect.objectContaining( {
 						type: SITE_SETTINGS_REQUEST_SUCCESS,
 						siteId: 2916284,
 					} )
@@ -107,10 +107,10 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return requestSiteSettings( 2916285 )( spy, getState ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: SITE_SETTINGS_REQUEST_FAILURE,
 					siteId: 2916285,
-					error: sinon.match( { message: 'User cannot access this private blog.' } ),
+					error: expect.objectContaining( { message: 'User cannot access this private blog.' } ),
 				} );
 			} );
 		} );
@@ -134,7 +134,7 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			saveSiteSettings( 2916284, { settingKey: 'chicken' } )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toBeCalledWith( {
 				type: SITE_SETTINGS_SAVE,
 				siteId: 2916284,
 			} );
@@ -142,7 +142,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch update action when request completes', () => {
 			return saveSiteSettings( 2916284 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith(
+				expect( spy ).toBeCalledWith(
 					updateSiteSettings( 2916284, {
 						real_update: 'ribs',
 					} )
@@ -152,7 +152,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch save success action when request completes', () => {
 			return saveSiteSettings( 2916284 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: SITE_SETTINGS_SAVE_SUCCESS,
 					siteId: 2916284,
 				} );
@@ -161,10 +161,10 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return saveSiteSettings( 2916285 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toBeCalledWith( {
 					type: SITE_SETTINGS_SAVE_FAILURE,
 					siteId: 2916285,
-					error: sinon.match( { message: 'User cannot access this private blog.' } ),
+					error: expect.objectContaining( { message: 'User cannot access this private blog.' } ),
 				} );
 			} );
 		} );

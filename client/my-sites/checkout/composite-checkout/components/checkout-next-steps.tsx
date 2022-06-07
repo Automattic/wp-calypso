@@ -74,10 +74,7 @@ const NextStepIcon = styled( BaseIcon )`
 	background-color: ${ ( props ) => props.theme.colors.surface };
 `;
 
-export default function CheckoutNextSteps( {
-	responseCart,
-	headerText,
-}: Props ): JSX.Element | null {
+export default function CheckoutNextSteps( { responseCart, headerText }: Props ) {
 	const translate = useTranslate();
 
 	const steps: NextStepsStep[] = useMemo( () => {

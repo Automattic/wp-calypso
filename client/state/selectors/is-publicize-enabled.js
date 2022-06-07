@@ -7,7 +7,6 @@ import { isJetpackModuleActive, getSiteOption } from 'calypso/state/sites/select
  * @param {object} state 	Global state tree
  * @param {number} siteId 	Site ID
  * @param {string} postType Post type slug
- *
  * @returns {boolean} True when enabled
  */
 export default function isPublicizeEnabled( state, siteId, postType ) {

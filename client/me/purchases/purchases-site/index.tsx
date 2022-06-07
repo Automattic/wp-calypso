@@ -4,7 +4,6 @@ import {
 	JETPACK_PLANS,
 	JETPACK_PRODUCTS_LIST,
 } from '@automattic/calypso-products';
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -33,7 +32,7 @@ export default function PurchasesSite(
 				cards: StoredCard[];
 				showSite?: boolean;
 		  }
-): JSX.Element {
+) {
 	const site = useSelector( ( state ) => getSite( state, props.siteId ?? 0 ) );
 	if ( props.isPlaceholder ) {
 		return <PurchaseItem isPlaceholder />;
@@ -87,14 +86,3 @@ export default function PurchasesSite(
 		</div>
 	);
 }
-
-PurchasesSite.propTypes = {
-	getManagePurchaseUrlFor: PropTypes.func,
-	isPlaceholder: PropTypes.bool,
-	name: PropTypes.string,
-	purchases: PropTypes.array,
-	showSite: PropTypes.bool,
-	siteId: PropTypes.number,
-	slug: PropTypes.string,
-	cards: PropTypes.array,
-};

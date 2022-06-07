@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
-import './inline-help-search-results.scss';
 
 function InlineHelpCompactResults( { helpLinks, onClick } ) {
 	return (

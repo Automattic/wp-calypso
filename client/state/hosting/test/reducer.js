@@ -1,12 +1,9 @@
 import deepFreeze from 'deep-freeze';
 import { HOSTING_SFTP_USERS_SET, HOSTING_SFTP_USER_UPDATE } from 'calypso/state/action-types';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import reducer, { sftpUsers } from '../reducer';
 
 describe( 'reducer', () => {
-	useSandbox( ( sandbox ) => {
-		sandbox.stub( console, 'warn' );
-	} );
+	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	describe( '#sftpUsers()', () => {
 		test( 'should default to an empty object', () => {

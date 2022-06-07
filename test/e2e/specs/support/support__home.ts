@@ -2,7 +2,12 @@
  * @group calypso-pr
  */
 
-import { DataHelper, TestAccount, SupportComponent } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	TestAccount,
+	SupportComponent,
+	TestAccountName,
+} from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
@@ -11,8 +16,8 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 	let page: Page;
 
 	describe.each( [
-		{ siteType: 'Simple', accountName: 'defaultUser' },
-		{ siteType: 'Atomic', accountName: 'eCommerceUser' },
+		{ siteType: 'Simple', accountName: 'defaultUser' as TestAccountName },
+		{ siteType: 'Atomic', accountName: 'eCommerceUser' as TestAccountName },
 	] )( 'Search from Support Card ($siteType)', function ( { accountName } ) {
 		let supportComponent: SupportComponent;
 

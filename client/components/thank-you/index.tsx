@@ -146,7 +146,7 @@ const ThankYouSupportSection = ( props: ThankYouSupportSectionProps ) => {
 	);
 };
 
-export const ThankYou = ( props: ThankYouProps ): JSX.Element => {
+export const ThankYou = ( props: ThankYouProps ) => {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 

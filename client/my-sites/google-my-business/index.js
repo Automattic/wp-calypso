@@ -1,15 +1,17 @@
 import config from '@automattic/calypso-config';
+import { FEATURE_GOOGLE_MY_BUSINESS } from '@automattic/calypso-products';
 import page from 'page';
 import { makeLayout } from 'calypso/controller';
 import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
 import isGoogleMyBusinessLocationConnected from 'calypso/state/selectors/is-google-my-business-location-connected';
-import isSiteGoogleMyBusinessEligible from 'calypso/state/selectors/is-site-google-my-business-eligible';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import { requestKeyringServices } from 'calypso/state/sharing/services/actions';
 import { requestSiteKeyrings } from 'calypso/state/site-keyrings/actions';
 import { getSiteKeyringsForService } from 'calypso/state/site-keyrings/selectors';
+import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { getSiteHomeUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { newAccount, selectBusinessType, selectLocation, stats } from './controller';
@@ -25,11 +27,17 @@ const loadKeyringsMiddleware = ( context, next ) => {
 		context.store.dispatch( requestSiteKeyrings( siteId ) ),
 	] ).then( next );
 };
+const loadSiteFeaturesMiddleware = ( context, next ) => {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+
+	context.store.dispatch( fetchSiteFeatures( siteId ) ).then( next );
+};
 
 const redirectUnauthorized = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	const siteIsGMBEligible = isSiteGoogleMyBusinessEligible( state, siteId );
+	const siteIsGMBEligible = siteHasFeature( state, siteId, FEATURE_GOOGLE_MY_BUSINESS );
 	const canUserManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 	if ( ! siteIsGMBEligible || ! canUserManageOptions ) {
 		page.redirect( getSiteHomeUrl( state, siteId ) );
@@ -50,6 +58,7 @@ export default function ( router ) {
 	router(
 		'/google-my-business/new/:site',
 		siteSelection,
+		loadSiteFeaturesMiddleware,
 		redirectUnauthorized,
 		newAccount,
 		navigation,
@@ -61,6 +70,7 @@ export default function ( router ) {
 	router(
 		'/google-my-business/select-location/:site',
 		siteSelection,
+		loadSiteFeaturesMiddleware,
 		redirectUnauthorized,
 		selectLocation,
 		navigation,
@@ -72,12 +82,13 @@ export default function ( router ) {
 	router(
 		'/google-my-business/stats/:site',
 		siteSelection,
+		loadSiteFeaturesMiddleware,
 		redirectUnauthorized,
 		loadKeyringsMiddleware,
 		( context, next ) => {
 			const state = context.store.getState();
 			const siteId = getSelectedSiteId( state );
-			const siteIsGMBEligible = isSiteGoogleMyBusinessEligible( state, siteId );
+			const siteIsGMBEligible = siteHasFeature( state, siteId, FEATURE_GOOGLE_MY_BUSINESS );
 			const hasConnectedLocation = isGoogleMyBusinessLocationConnected( state, siteId );
 			const hasLocationsAvailable = getGoogleMyBusinessLocations( state, siteId ).length > 0;
 
@@ -97,6 +108,7 @@ export default function ( router ) {
 	router(
 		'/google-my-business/select-business-type/:site',
 		siteSelection,
+		loadSiteFeaturesMiddleware,
 		redirectUnauthorized,
 		selectBusinessType,
 		navigation,
@@ -106,6 +118,7 @@ export default function ( router ) {
 	router(
 		'/google-my-business/:site',
 		siteSelection,
+		loadSiteFeaturesMiddleware,
 		redirectUnauthorized,
 		loadKeyringsMiddleware,
 		( context ) => {
