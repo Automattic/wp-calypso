@@ -80,7 +80,7 @@ const CheckoutMasterbar = ( {
 	return (
 		<Masterbar>
 			<div className="masterbar__secure-checkout">
-				{ isLeavingAllowed && (
+				{ isLeavingAllowed && ! isJetpack && (
 					<Item
 						icon="cross"
 						className="masterbar__close-button"

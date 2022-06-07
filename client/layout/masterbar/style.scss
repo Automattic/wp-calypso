@@ -42,6 +42,7 @@ $masterbar-color-secondary: #101517;
 	}
 
 	.is-section-checkout.is-jetpack-site & {
+		padding-left: 8px;
 		background-color: var( --color-jetpack-masterbar-background );
 		border-bottom: 1px solid var( --color-jetpack-masterbar-border );
 		color: var( --color-jetpack-masterbar-text );
