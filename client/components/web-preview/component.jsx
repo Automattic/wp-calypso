@@ -59,6 +59,8 @@ export class WebPreviewModal extends Component {
 		fetchPriority: PropTypes.string,
 		// Set height based on page content. This requires the page to post it's dimensions as message.
 		autoHeight: PropTypes.bool,
+		// Fixes the viewport width of the iframe if provided.
+		fixedViewportWidth: PropTypes.number,
 	};
 
 	static defaultProps = {

@@ -29,7 +29,7 @@ class EmailPlanSubscription extends Component {
 
 		return (
 			<RenewButton
-				compact={ true }
+				compact
 				purchase={ purchase }
 				primary={ this.hasSubscriptionExpired() }
 				selectedSite={ selectedSite }

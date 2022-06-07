@@ -11,6 +11,11 @@ const SENTRY_CONFIG: SentryApi.BrowserOptions = {
 	dsn: 'https://61275d63a504465ab315245f1a379dab@o248881.ingest.sentry.io/6313676',
 	// Determine the sample of errors collected where 1.0 is 100% of errors.
 	sampleRate: 1.0, // We're disabling it for 90% of requests, so we should track 100% of errors for the remaining 10% of requests.
+	// Don't track errors on these URLs.
+	denyUrls: [
+		// Matches browser extension URLs, like "moz-extension://..." or "safari-web-extension://..."
+		/^[a-z]+(-[a-z]+)?-extension:\/\//i,
+	],
 };
 
 type SupportedMethods =

@@ -2,9 +2,12 @@ import { Gridicon, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import type { SiteNode } from '../types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getActionEventName } from '../utils';
+import type { SiteNode, AllowedActionTypes } from '../types';
 import type { ReactElement } from 'react';
 
 import './style.scss';
@@ -15,8 +18,13 @@ interface Props {
 	siteError: boolean;
 }
 
-export default function SiteActions( { isLargeScreen, site, siteError }: Props ): ReactElement {
+export default function SiteActions( {
+	isLargeScreen = false,
+	site,
+	siteError,
+}: Props ): ReactElement {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const [ isOpen, setIsOpen ] = useState( false );
 
@@ -34,8 +42,9 @@ export default function SiteActions( { isLargeScreen, site, siteError }: Props )
 	const siteUrlWithScheme = site?.value?.url_with_scheme;
 	const siteId = site?.value?.blog_id;
 
-	const handleClickMenuItem = () => {
-		// Handle track event here
+	const handleClickMenuItem = ( actionType: AllowedActionTypes ) => {
+		const eventName = getActionEventName( actionType, isLargeScreen );
+		dispatch( recordTracksEvent( eventName ) );
 	};
 
 	return (
@@ -57,12 +66,12 @@ export default function SiteActions( { isLargeScreen, site, siteError }: Props )
 				context={ buttonActionRef.current }
 				isVisible={ isOpen }
 				onClose={ closeDropdown }
-				position="bottom"
+				position="bottom left"
 			>
 				{ ! siteError && (
 					<>
 						<PopoverMenuItem
-							onClick={ handleClickMenuItem }
+							onClick={ () => handleClickMenuItem( 'issue_license' ) }
 							href={ `/partner-portal/issue-license/?site_id=${ siteId }` }
 							className="site-actions__menu-item"
 							icon="chevron-right"
@@ -70,7 +79,7 @@ export default function SiteActions( { isLargeScreen, site, siteError }: Props )
 							{ translate( 'Issue new license' ) }
 						</PopoverMenuItem>
 						<PopoverMenuItem
-							onClick={ handleClickMenuItem }
+							onClick={ () => handleClickMenuItem( 'view_activity' ) }
 							href={ `/activity-log/${ siteUrl }` }
 							className="site-actions__menu-item"
 							icon="chevron-right"
@@ -81,7 +90,7 @@ export default function SiteActions( { isLargeScreen, site, siteError }: Props )
 				) }
 				<PopoverMenuItem
 					isExternalLink
-					onClick={ handleClickMenuItem }
+					onClick={ () => handleClickMenuItem( 'view_site' ) }
 					href={ siteUrlWithScheme }
 					className="site-actions__menu-item"
 				>
@@ -89,7 +98,7 @@ export default function SiteActions( { isLargeScreen, site, siteError }: Props )
 				</PopoverMenuItem>
 				<PopoverMenuItem
 					isExternalLink
-					onClick={ handleClickMenuItem }
+					onClick={ () => handleClickMenuItem( 'visit_wp_admin' ) }
 					href={ `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack#/dashboard` }
 					className="site-actions__menu-item"
 				>

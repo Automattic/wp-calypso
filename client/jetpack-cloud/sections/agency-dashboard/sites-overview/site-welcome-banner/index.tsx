@@ -3,6 +3,7 @@ import { ReactElement, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import tipIcon from 'calypso/assets/images/jetpack/tip-icon.svg';
 import Banner from 'calypso/components/banner';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE,
 	JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE_HOME_PAGE as homePagePreferenceName,
@@ -36,19 +37,40 @@ export default function SiteWelcomeBanner( {
 		[ dispatch, preference, preferenceName ]
 	);
 
+	const handleTrackEvents = useCallback(
+		( eventName: string ) => {
+			dispatch( recordTracksEvent( eventName ) );
+		},
+		[ dispatch ]
+	);
+
 	const isDismissed = preference?.dismiss;
 	const hideBanner = ! isDashboardView && homePagePreference?.view;
 
 	useEffect( () => {
 		if ( ! isDismissed && ! hideBanner ) {
 			savePreferenceType( 'view' );
+			handleTrackEvents(
+				isDashboardView
+					? 'calypso_jetpack_agency_dashboard_home_page_banner_view'
+					: 'calypso_jetpack_agency_dashboard_other_page_banner_view'
+			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
+	const trackViewEvent = () => {
+		handleTrackEvents( 'calypso_jetpack_agency_dashboard_other_page_banner_view_dashboard_click' );
+	};
+
 	const dismissBanner = useCallback( () => {
 		savePreferenceType( 'dismiss' );
-	}, [ savePreferenceType ] );
+		handleTrackEvents(
+			isDashboardView
+				? 'calypso_jetpack_agency_dashboard_home_page_banner_dismiss_click'
+				: 'calypso_jetpack_agency_dashboard_other_page_banner_dismiss_click'
+		);
+	}, [ handleTrackEvents, isDashboardView, savePreferenceType ] );
 
 	// Hide the banner if the banner is already viewed
 	// on the dashboard page or the banner is dismissed
@@ -73,9 +95,10 @@ export default function SiteWelcomeBanner( {
 			iconPath={ tipIcon }
 			callToAction={ isDashboardView ? translate( 'Got it' ) : translate( 'View' ) }
 			href={ isDashboardView ? '' : '/dashboard' }
-			onClick={ isDashboardView && dismissBanner }
+			onClick={ isDashboardView ? dismissBanner : trackViewEvent }
 			dismissTemporary={ ! isDashboardView }
 			onDismiss={ dismissBanner }
+			disableHref={ isDashboardView }
 			dismissPreferenceName={ isDashboardView ? '' : preferenceName }
 		/>
 	);

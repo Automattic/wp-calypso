@@ -1,50 +1,40 @@
 /**
  * @jest-environment jsdom
  */
-import { mount } from 'enzyme';
-import { spy } from 'sinon';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { PluginAutoUpdateToggle } from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import fixtures from './fixtures';
 
-jest.mock( 'calypso/my-sites/plugins/plugin-action/plugin-action', () =>
-	require( './mocks/plugin-action' )
-);
-jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
+jest.mock( 'calypso/my-sites/plugins/plugin-action/plugin-action', () => ( { action } ) => (
+	<input type="checkbox" onClick={ action } />
+) );
 
 describe( 'PluginAutoupdateToggle', () => {
 	const mockedProps = {
-		recordGoogleEvent: spy(),
-		recordTracksEvent: spy(),
-		removePluginStatuses: spy(),
-		translate: spy(),
-		togglePluginAutoUpdate: spy(),
+		recordGoogleEvent: jest.fn(),
+		recordTracksEvent: jest.fn(),
+		removePluginStatuses: jest.fn(),
+		translate: jest.fn(),
+		togglePluginAutoUpdate: jest.fn(),
 	};
 
-	afterEach( () => {
-		mockedProps.togglePluginAutoUpdate.resetHistory();
-		mockedProps.recordGoogleEvent.resetHistory();
+	test( 'should register an event when the subcomponent action is executed', async () => {
+		render( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
+
+		const box = screen.getByRole( 'checkbox' );
+		await userEvent.click( box );
+
+		expect( mockedProps.recordGoogleEvent ).toHaveBeenCalled();
+		expect( mockedProps.recordTracksEvent ).toHaveBeenCalled();
 	} );
 
-	test( 'should render the component', () => {
-		const wrapper = mount( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
+	test( 'should call an action when the subcomponent action is executed', async () => {
+		render( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
 
-		expect( wrapper.find( '.plugin-action' ) ).toHaveLength( 1 );
-	} );
+		const box = screen.getByRole( 'checkbox' );
+		await userEvent.click( box );
 
-	test( 'should register an event when the subcomponent action is executed', () => {
-		const wrapper = mount( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
-
-		wrapper.simulate( 'click' );
-
-		expect( mockedProps.recordGoogleEvent.called ).toEqual( true );
-		expect( mockedProps.recordTracksEvent.called ).toEqual( true );
-	} );
-
-	test( 'should call an action when the subcomponent action is executed', () => {
-		const wrapper = mount( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
-
-		wrapper.simulate( 'click' );
-
-		expect( mockedProps.togglePluginAutoUpdate.called ).toEqual( true );
+		expect( mockedProps.togglePluginAutoUpdate ).toHaveBeenCalled();
 	} );
 } );

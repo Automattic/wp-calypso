@@ -1,21 +1,37 @@
-import { useQuery, UseQueryResult } from 'react-query';
+import { stringify } from 'qs';
+import { useQuery, UseQueryResult, QueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import type { StarterDesignsGenerated } from './types';
+import type { StarterDesignsGenerated, StarterDesignsGeneratedQueryParams } from './types';
 import type { Design } from '@automattic/design-picker/src/types';
 
-export function useStarterDesignsGeneratedQuery(): UseQueryResult< Design[] > {
-	return useQuery( [ 'starter-designs-generated' ], () => fetchStarterDesignsGenerated(), {
-		select: ( response ) => response.map( apiStarterDesignsGeneratedToDesign ),
-		enabled: true,
-		refetchOnMount: 'always',
-		staleTime: Infinity,
-	} );
+interface Options extends QueryOptions< StarterDesignsGenerated[], unknown > {
+	enabled?: boolean;
 }
 
-function fetchStarterDesignsGenerated(): Promise< StarterDesignsGenerated[] > {
+export function useStarterDesignsGeneratedQuery(
+	queryParams: StarterDesignsGeneratedQueryParams,
+	queryOptions: Options = {}
+): UseQueryResult< Design[] > {
+	return useQuery(
+		[ 'starter-designs-generated', queryParams ],
+		() => fetchStarterDesignsGenerated( queryParams ),
+		{
+			select: ( response: StarterDesignsGenerated[] ) =>
+				response.map( apiStarterDesignsGeneratedToDesign ),
+			refetchOnMount: 'always',
+			staleTime: Infinity,
+			...queryOptions,
+		}
+	);
+}
+
+function fetchStarterDesignsGenerated(
+	queryParams: StarterDesignsGeneratedQueryParams
+): Promise< StarterDesignsGenerated[] > {
 	return wpcomRequest< StarterDesignsGenerated[] >( {
 		apiNamespace: 'wpcom/v2',
 		path: '/starter-designs/generated',
+		query: stringify( queryParams ),
 	} );
 }
 

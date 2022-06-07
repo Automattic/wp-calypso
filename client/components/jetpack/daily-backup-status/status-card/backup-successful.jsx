@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
 import ExternalLink from 'calypso/components/external-link';
-import BackupWarningRetry from 'calypso/components/jetpack/backup-warning-retry';
+import BackupWarningRetry from 'calypso/components/jetpack/backup-warnings/backup-warning-retry';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';

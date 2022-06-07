@@ -248,8 +248,16 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 							>
 								{ translate( 'Auto fix all' ) }
 							</Button>
+							<Button className="scan-threats__scan-secondary-button" onClick={ dispatchScanRun }>
+								{ translate( 'Scan now' ) }
+							</Button>
 						</div>
 					</>
+				) }
+				{ ! hasFixableThreats && (
+					<Button primary className="scan-threats__button" onClick={ dispatchScanRun }>
+						{ translate( 'Scan now' ) }
+					</Button>
 				) }
 			</Card>
 			<ThreatListHeader />

@@ -27,7 +27,6 @@ import page from 'page';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { errorNotice } from 'calypso/state/notices/actions';
 
 const debug = debugFactory( 'calypso:purchases' );
@@ -139,35 +138,37 @@ function getSubscriptionEndDate( purchase ) {
  * @param {object} [options.tracksProps] - where was the renew button clicked from
  */
 function handleRenewNowClick( purchase, siteSlug, options = {} ) {
-	const renewItem = getRenewalItemFromProduct( purchase, {
-		domain: purchase.meta,
-	} );
+	return ( dispatch ) => {
+		try {
+			const renewItem = getRenewalItemFromProduct( purchase, { domain: purchase.meta } );
 
-	// Track the renew now submit.
-	recordTracksEvent( 'calypso_purchases_renew_now_click', {
-		product_slug: purchase.productSlug,
-		...options.tracksProps,
-	} );
+			// Track the renew now submit.
+			recordTracksEvent( 'calypso_purchases_renew_now_click', {
+				product_slug: purchase.productSlug,
+				...options.tracksProps,
+			} );
 
-	if ( ! renewItem.extra.purchaseId ) {
-		reduxDispatch( errorNotice( 'Could not find purchase id for renewal.' ) );
-		throw new Error( 'Could not find purchase id for renewal.' );
-	}
-	if ( ! renewItem.product_slug ) {
-		reduxDispatch( errorNotice( 'Could not find product slug for renewal.' ) );
-		throw new Error( 'Could not find product slug for renewal.' );
-	}
-	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
+			if ( ! renewItem.extra.purchaseId ) {
+				throw new Error( 'Could not find purchase id for renewal.' );
+			}
+			if ( ! renewItem.product_slug ) {
+				throw new Error( 'Could not find product slug for renewal.' );
+			}
+			const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
 
-	let renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
-		siteSlug || ''
-	}`;
-	if ( options.redirectTo ) {
-		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
-	}
-	debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
+			let renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
+				siteSlug || ''
+			}`;
+			if ( options.redirectTo ) {
+				renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
+			}
+			debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
-	page( isJetpackCloud() ? `https://wordpress.com${ renewalUrl }` : renewalUrl );
+			page( isJetpackCloud() ? `https://wordpress.com${ renewalUrl }` : renewalUrl );
+		} catch ( error ) {
+			dispatch( errorNotice( error.message ) );
+		}
+	};
 }
 
 /**
@@ -180,35 +181,40 @@ function handleRenewNowClick( purchase, siteSlug, options = {} ) {
  * @param {object} [options.tracksProps] - where was the renew button clicked from
  */
 function handleRenewMultiplePurchasesClick( purchases, siteSlug, options = {} ) {
-	purchases.forEach( ( purchase ) => {
-		// Track the renew now submit.
-		recordTracksEvent( 'calypso_purchases_renew_multiple_click', {
-			product_slug: purchase.productSlug,
-			...options.tracksProps,
-		} );
-	} );
+	return ( dispatch ) => {
+		try {
+			purchases.forEach( ( purchase ) => {
+				// Track the renew now submit.
+				recordTracksEvent( 'calypso_purchases_renew_multiple_click', {
+					product_slug: purchase.productSlug,
+					...options.tracksProps,
+				} );
+			} );
 
-	const renewItems = purchases.map( ( otherPurchase ) =>
-		getRenewalItemFromProduct( otherPurchase, {
-			domain: otherPurchase.meta,
-		} )
-	);
-	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( renewItems );
+			const renewItems = purchases.map( ( otherPurchase ) =>
+				getRenewalItemFromProduct( otherPurchase, {
+					domain: otherPurchase.meta,
+				} )
+			);
+			const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( renewItems );
 
-	if ( purchaseIds.length === 0 ) {
-		reduxDispatch( errorNotice( 'Could not find product slug or purchase id for renewal.' ) );
-		throw new Error( 'Could not find product slug or purchase id for renewal.' );
-	}
+			if ( purchaseIds.length === 0 ) {
+				throw new Error( 'Could not find product slug or purchase id for renewal.' );
+			}
 
-	let renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join( ',' ) }/${
-		siteSlug || ''
-	}`;
-	if ( options.redirectTo ) {
-		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
-	}
-	debug( 'handling renewal click', purchases, siteSlug, renewItems, renewalUrl );
+			let renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join(
+				','
+			) }/${ siteSlug || '' }`;
+			if ( options.redirectTo ) {
+				renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
+			}
+			debug( 'handling renewal click', purchases, siteSlug, renewItems, renewalUrl );
 
-	page( renewalUrl );
+			page( renewalUrl );
+		} catch ( error ) {
+			dispatch( errorNotice( error.message ) );
+		}
+	};
 }
 
 function getProductSlugsAndPurchaseIds( renewItems ) {

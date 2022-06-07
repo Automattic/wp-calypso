@@ -321,7 +321,7 @@ export function trackTranslatorStatus( isTranslatorEnabled ) {
 
 	if ( changed && _isTranslatorEnabled !== undefined ) {
 		debug( tracksEvent );
-		recordTracksEvent( tracksEvent, { locale: i18n.getLocaleSlug } );
+		recordTracksEvent( tracksEvent, { locale: i18n.getLocaleSlug() } );
 	}
 
 	_isTranslatorEnabled = newSetting;

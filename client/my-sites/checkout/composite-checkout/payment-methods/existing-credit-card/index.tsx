@@ -1,7 +1,7 @@
 import {
 	Button,
 	FormStatus,
-	useLineItems,
+	useTotal,
 	useFormStatus,
 	PaymentLogo,
 } from '@automattic/composite-checkout';
@@ -182,7 +182,7 @@ function ExistingCardPayButton( {
 	activeButtonText?: string;
 	isTaxInfoRequired?: boolean;
 } ) {
-	const [ items, total ] = useLineItems();
+	const total = useTotal();
 	const { formStatus } = useFormStatus();
 	const translate = useTranslate();
 
@@ -211,7 +211,6 @@ function ExistingCardPayButton( {
 					);
 				} else {
 					onClick( {
-						items,
 						name: cardholderName,
 						storedDetailsId,
 						paymentMethodToken,

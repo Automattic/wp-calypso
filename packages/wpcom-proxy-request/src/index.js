@@ -266,7 +266,6 @@ function getFileValue( v ) {
  *
  * @see https://bugs.chromium.org/p/chromium/issues/detail?id=866805
  * @see https://bugs.chromium.org/p/chromium/issues/detail?id=631877
- *
  * @param {Array} formData Form data to patch
  */
 function patchFileObjects( formData ) {

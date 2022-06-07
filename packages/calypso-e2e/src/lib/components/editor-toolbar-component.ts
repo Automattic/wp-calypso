@@ -1,9 +1,12 @@
 import { Page, Locator } from 'playwright';
 import envVariables from '../../env-variables';
+import { translateFromPage } from '../utils';
 
 export type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
 
 const panel = 'div.interface-interface-skeleton__header';
+const settingsButtonLabel = 'Settings';
+const moreOptionsLabel = 'Options';
 const selectors = {
 	// Block Inserter
 	// Note the partial class match. This is to support site and post editor. We can't use aria-label because of i18n. :(
@@ -35,14 +38,15 @@ const selectors = {
 	detailsButton: `${ panel } button[aria-label="Details"]`,
 
 	// Editor settings
-	settingsButton: `${ panel } .edit-post-header__settings .interface-pinned-items button[aria-label="Settings"]`,
+	settingsButton: ( label = settingsButtonLabel ) =>
+		`${ panel } .edit-post-header__settings .interface-pinned-items button[aria-label="${ label }"]`,
 
 	// Undo/Redo
 	undoButton: 'button[aria-disabled=false][aria-label="Undo"]',
 	redoButton: 'button[aria-disabled=false][aria-label="Redo"]',
 
 	// More options
-	moreOptionsButton: `${ panel } button[aria-label="Options"]`,
+	moreOptionsButton: ( label = moreOptionsLabel ) => `${ panel } button[aria-label="${ label }"]`,
 
 	// Site editor save
 	saveSiteEditorButton: `${ panel } button.edit-site-save-button__button`,
@@ -68,6 +72,13 @@ export class EditorToolbarComponent {
 	constructor( page: Page, editor: Locator ) {
 		this.page = page;
 		this.editor = editor;
+	}
+
+	/**
+	 * Translate string.
+	 */
+	private async translateFromPage( string: string ): Promise< string > {
+		return translateFromPage( this.editor, string );
 	}
 
 	/* General helper */
@@ -225,10 +236,13 @@ export class EditorToolbarComponent {
 	 * Opens the editor settings.
 	 */
 	async openSettings(): Promise< void > {
-		if ( await this.targetIsOpen( selectors.settingsButton ) ) {
+		const label = await this.translateFromPage( settingsButtonLabel );
+		const selector = selectors.settingsButton( label );
+
+		if ( await this.targetIsOpen( selector ) ) {
 			return;
 		}
-		const locator = this.editor.locator( selectors.settingsButton );
+		const locator = this.editor.locator( selector );
 		await locator.click();
 	}
 
@@ -236,10 +250,13 @@ export class EditorToolbarComponent {
 	 * Closes the editor settings.
 	 */
 	async closeSettings(): Promise< void > {
-		if ( ! ( await this.targetIsOpen( selectors.settingsButton ) ) ) {
+		const label = await this.translateFromPage( settingsButtonLabel );
+		const selector = selectors.settingsButton( label );
+
+		if ( ! ( await this.targetIsOpen( selector ) ) ) {
 			return;
 		}
-		const locator = this.editor.locator( selectors.settingsButton );
+		const locator = this.editor.locator( selector );
 		await locator.click();
 	}
 
@@ -348,8 +365,11 @@ export class EditorToolbarComponent {
 	 * Opens the more options menu (three dots).
 	 */
 	async openMoreOptionsMenu(): Promise< void > {
-		if ( ! ( await this.targetIsOpen( selectors.moreOptionsButton ) ) ) {
-			const locator = this.editor.locator( selectors.moreOptionsButton );
+		const label = await this.translateFromPage( moreOptionsLabel );
+		const selector = selectors.moreOptionsButton( label );
+
+		if ( ! ( await this.targetIsOpen( selector ) ) ) {
+			const locator = this.editor.locator( selector );
 			await locator.click();
 		}
 	}

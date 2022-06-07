@@ -1,7 +1,7 @@
 /**
  * Component which handle remote credentials for installing Jetpack
  */
-import { Button, Card, FormInputValidation, Gridicon } from '@automattic/components';
+import { Button, Card, FormInputValidation, Gridicon, Spinner } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -15,7 +15,6 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import Spinner from 'calypso/components/spinner';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

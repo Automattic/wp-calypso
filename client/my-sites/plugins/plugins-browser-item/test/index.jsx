@@ -1,5 +1,5 @@
 /** @jest-environment jsdom */
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import PluginsBrowserListElement from '../';
@@ -26,10 +26,9 @@ describe( 'PluginsBrowserItem Incompatible Plugins Message', () => {
 			plugin: { name: 'wordfence', slug: 'wordfence' },
 		};
 
-		const comp = shallow( <PluginsBrowserListElement { ...props } /> );
-		expect( comp.text().includes( 'Why is this plugin not compatible with WordPress.com?' ) ).toBe(
-			true
-		);
+		render( <PluginsBrowserListElement { ...props } /> );
+		const message = screen.queryByText( 'Why is this plugin not compatible with WordPress.com?' );
+		expect( message ).toBeInTheDocument();
 	} );
 
 	test( 'should render the incompatible plugin message on Atomic Sites', () => {
@@ -40,10 +39,9 @@ describe( 'PluginsBrowserItem Incompatible Plugins Message', () => {
 			plugin: { name: 'wordfence', slug: 'wordfence' },
 		};
 
-		const comp = shallow( <PluginsBrowserListElement { ...props } /> );
-		expect( comp.text().includes( 'Why is this plugin not compatible with WordPress.com?' ) ).toBe(
-			true
-		);
+		render( <PluginsBrowserListElement { ...props } /> );
+		const message = screen.queryByText( 'Why is this plugin not compatible with WordPress.com?' );
+		expect( message ).toBeInTheDocument();
 	} );
 
 	test( 'should NOT render the incompatible plugin message on JetpackSite non Atomic sites', () => {
@@ -54,10 +52,9 @@ describe( 'PluginsBrowserItem Incompatible Plugins Message', () => {
 			plugin: { name: 'wordfence', slug: 'wordfence' },
 		};
 
-		const comp = shallow( <PluginsBrowserListElement { ...props } /> );
-		expect( comp.text().includes( 'Why is this plugin not compatible with WordPress.com?' ) ).toBe(
-			false
-		);
+		render( <PluginsBrowserListElement { ...props } /> );
+		const message = screen.queryByText( 'Why is this plugin not compatible with WordPress.com?' );
+		expect( message ).not.toBeInTheDocument();
 	} );
 
 	test( 'should NOT render the incompatible plugin message if it is not in the list', () => {
@@ -68,9 +65,8 @@ describe( 'PluginsBrowserItem Incompatible Plugins Message', () => {
 			plugin: { name: 'woocommerce', slug: 'woocommerce' },
 		};
 
-		const comp = shallow( <PluginsBrowserListElement { ...props } /> );
-		expect( comp.text().includes( 'Why is this plugin not compatible with WordPress.com?' ) ).toBe(
-			false
-		);
+		render( <PluginsBrowserListElement { ...props } /> );
+		const message = screen.queryByText( 'Why is this plugin not compatible with WordPress.com?' );
+		expect( message ).not.toBeInTheDocument();
 	} );
 } );

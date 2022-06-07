@@ -37,7 +37,6 @@ export function PurchaseModal( {
 }: PurchaseModalProps ) {
 	const [ step, setStep ] = useState( BEFORE_SUBMIT );
 	const submitTransaction = useSubmitTransaction( {
-		cart,
 		setStep,
 		storedCard: cards[ 0 ],
 		onClose,

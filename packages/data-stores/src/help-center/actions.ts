@@ -6,6 +6,12 @@ export const setShowHelpCenter = ( show: boolean ) =>
 		show,
 	} as const );
 
+export const setDirectlyData = ( data: { isLoaded: boolean; hasSession: boolean } ) =>
+	( {
+		type: 'HELP_CENTER_SET_DIRECTLY_DATA',
+		data,
+	} as const );
+
 export const setSite = ( site: SiteDetails | undefined ) =>
 	( {
 		type: 'HELP_CENTER_SET_SITE',
@@ -54,6 +60,7 @@ export const resetStore = () =>
 
 export type HelpCenterAction = ReturnType<
 	| typeof setShowHelpCenter
+	| typeof setDirectlyData
 	| typeof setSite
 	| typeof setSubject
 	| typeof resetStore

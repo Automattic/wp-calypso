@@ -1,4 +1,5 @@
-import { getDesignPreviewUrl } from '@automattic/design-picker';
+import { getDesignPreviewUrl, DEFAULT_VIEWPORT_WIDTH } from '@automattic/design-picker';
+import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import WebPreview from 'calypso/components/web-preview/content';
@@ -13,6 +14,7 @@ interface GeneratedDesignPickerWebPreviewProps {
 	verticalId: string;
 	isSelected: boolean;
 	isPrivateAtomic: boolean;
+	isStickyToolbar?: boolean;
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 }
 
@@ -23,9 +25,11 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 	verticalId,
 	isSelected,
 	isPrivateAtomic,
+	isStickyToolbar,
 	recordTracksEvent,
 } ) => {
 	const translate = useTranslate();
+	const isMobile = ! useViewportMatch( 'small' );
 
 	return (
 		<WebPreview
@@ -43,7 +47,9 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 			autoHeight
 			siteId={ site?.ID }
 			url={ site?.URL }
+			fixedViewportWidth={ ! isMobile ? DEFAULT_VIEWPORT_WIDTH : undefined }
 			isPrivateAtomic={ isPrivateAtomic }
+			isStickyToolbar={ isSelected && isStickyToolbar }
 			translate={ translate }
 			recordTracksEvent={ recordTracksEvent }
 		/>

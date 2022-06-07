@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { Spinner } from '@automattic/components';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, edit, home, moreVertical } from '@wordpress/icons';
@@ -9,7 +10,6 @@ import SiteAddressChanger from 'calypso/blocks/site-address-changer';
 import Badge from 'calypso/components/badge';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import Spinner from 'calypso/components/spinner';
 
 import './free-domain-item.scss';
 

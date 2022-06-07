@@ -397,6 +397,9 @@ function getProductSlugFromAlias( productAlias: string ): string {
 	if ( decodedAlias === 'domain-mapping' ) {
 		return 'domain_map';
 	}
+	if ( decodedAlias === 'no-ads' ) {
+		return 'no-adverts/no-adverts.php';
+	}
 	if ( decodedAlias === 'theme' ) {
 		return 'premium_theme';
 	}

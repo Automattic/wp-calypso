@@ -20,6 +20,7 @@ export const getPendingAction = ( state: State ) => state.pendingAction;
 export const getProgress = ( state: State ) => state.progress;
 export const getProgressTitle = ( state: State ) => state.progressTitle;
 export const getStepProgress = ( state: State ) => state.stepProgress;
+export const getGoals = ( state: State ) => state.goals;
 export const getState = ( state: State ) => state;
 export const hasPaidDesign = ( state: State ): boolean => {
 	if ( ! state.selectedDesign ) {

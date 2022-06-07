@@ -33,7 +33,7 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 
 	const intents = useIntents();
 	const site = useSite();
-	const canImport = Boolean( site?.capabilities.manage_options );
+	const canImport = Boolean( site?.capabilities?.manage_options );
 	const intentsAlt = useIntentsAlt( canImport );
 
 	const submitIntent = ( intent: string ) => {

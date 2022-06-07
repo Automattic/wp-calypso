@@ -10,8 +10,13 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step';
+import {
+	AssertConditionResult,
+	AssertConditionState,
+	Flow,
+	ProvidedDependencies,
+} from './internals/types';
 import type { StepPath } from './internals/steps-repository';
-import type { Flow, ProvidedDependencies } from './internals/types';
 
 function redirect( to: string ) {
 	window.location.href = to;
@@ -24,12 +29,14 @@ export const siteSetupFlow: Flow = {
 		return [
 			...( isEnabled( 'signup/site-vertical-step' ) ? [ 'vertical' ] : [] ),
 			'intent',
+			...( isEnabled( 'signup/goals-step' ) ? [ 'goals' ] : [] ),
 			'options',
 			'designSetup',
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
 			'import',
+			...( isEnabled( 'onboarding/import-light' ) ? [ 'importLight' ] : [] ),
 			'importList',
 			'importReady',
 			'importReadyNot',
@@ -46,6 +53,7 @@ export const siteSetupFlow: Flow = {
 			'error',
 			'wooTransfer',
 			'wooInstallPlugins',
+			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'wooVerifyEmail' ] : [] ),
 			'wooConfirm',
 		] as StepPath[];
 	},
@@ -57,15 +65,21 @@ export const siteSetupFlow: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
-		const siteSlug = useSiteSlugParam();
-		const siteId = useSelect(
-			( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug )
-		);
+		const siteSlugParam = useSiteSlugParam();
+		const site = useSite();
+
+		let siteSlug: string | null = null;
+		if ( siteSlugParam ) {
+			siteSlug = siteSlugParam;
+		} else if ( site ) {
+			siteSlug = new URL( site.URL ).host;
+		}
+
 		const adminUrl = useSelect(
-			( select ) => siteSlug && select( SITE_STORE ).getSiteOption( siteId as number, 'admin_url' )
+			( select ) => site && select( SITE_STORE ).getSiteOption( site.ID, 'admin_url' )
 		);
-		const isAtomic = useSelect( ( select ) =>
-			select( SITE_STORE ).isSiteAtomic( siteId as number )
+		const isAtomic = useSelect(
+			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 		const { setPendingAction, setStepProgress } = useDispatch( ONBOARD_STORE );
@@ -344,18 +358,26 @@ export const siteSetupFlow: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 
-	useAssertConditions() {
+	useAssertConditions(): AssertConditionResult {
 		const siteSlug = useSiteSlugParam();
 		const siteId = useSiteIdParam();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 
 		if ( ! userIsLoggedIn ) {
 			redirect( '/start' );
-			throw new Error( 'site-setup requires a logged in user' );
+			return {
+				state: AssertConditionState.FAILURE,
+				message: 'site-setup requires a logged in user',
+			};
 		}
 
 		if ( ! siteSlug && ! siteId ) {
-			throw new Error( 'site-setup did not provide the site slug or site id it is configured to.' );
+			return {
+				state: AssertConditionState.FAILURE,
+				message: 'site-setup did not provide the site slug or site id it is configured to.',
+			};
 		}
+
+		return { state: AssertConditionState.SUCCESS };
 	},
 };

@@ -31,7 +31,7 @@ skipDescribeIf( isStagingOrProd )(
 	DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ),
 	function () {
 		const inboxId = SecretsManager.secrets.mailosaur.inviteInboxId;
-		const username = `e2eflowtestingpaid${ DataHelper.getTimestamp() }`;
+		const username = DataHelper.getUsername( { prefix: 'paid' } );
 		const email = DataHelper.getTestEmailAddress( {
 			inboxId: inboxId,
 			prefix: username,

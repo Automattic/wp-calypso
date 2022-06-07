@@ -7,7 +7,6 @@ import { stringify } from 'qs';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
 import ComparisonList from 'calypso/my-sites/email/email-providers-comparison/in-depth/comparison-list';
@@ -86,11 +85,6 @@ const EmailProvidersInDepthComparison = ( {
 
 	return (
 		<Main wideLayout>
-			<PageViewTracker
-				path={ emailManagementInDepthComparison( ':site', ':domain', null, source ) }
-				title="Email Comparison > In-Depth Comparison"
-			/>
-
 			<QueryProductsList />
 
 			<h1 className="email-providers-in-depth-comparison__header">

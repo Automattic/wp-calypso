@@ -1,5 +1,4 @@
 /**
- * @group calypso-release
  */
 
 import {
@@ -21,7 +20,7 @@ declare const browser: Browser;
 describe(
 	DataHelper.createSuiteTitle( 'Plans: Create a WordPress.com Free site as a new user' ),
 	function () {
-		const username = `e2eflowtestingfree${ DataHelper.getTimestamp() }`;
+		const username = DataHelper.getUsername( { prefix: 'freeplan' } );
 		const password = SecretsManager.secrets.passwordForNewTestSignUps;
 		const email = DataHelper.getTestEmailAddress( {
 			inboxId: SecretsManager.secrets.mailosaur.inviteInboxId,

@@ -19,6 +19,11 @@ window.configData = {
 	signup_url: '/',
 	discover_blog_id: 53424024,
 	discover_feed_id: 41325786,
+	directly_rtm_widget_environment: 'sandbox',
+	directly_rtm_widget_ids: {
+		sandbox: '8a2968fc57d1e2f40157f42bf2d43160',
+		production: '8a12a3ca5a21a619015a47e492b02cfc',
+	},
 };
 window.process = {
 	env: {

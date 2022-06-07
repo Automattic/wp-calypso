@@ -9,39 +9,39 @@ import deepFreeze from 'deep-freeze';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import isSiteOnPaidPlan from '../is-site-on-paid-plan';
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
-	getCurrentPlan: require( 'sinon' ).stub(),
+	getCurrentPlan: jest.fn(),
 } ) );
 
 describe( 'isSiteOnPaidPlan', () => {
 	const state = deepFreeze( {} );
 
 	test( 'should return false when plan is not known', () => {
-		getCurrentPlan.returns( null );
+		getCurrentPlan.mockReturnValue( null );
 		expect( isSiteOnPaidPlan( state, 'site1' ) ).toBe( false );
 	} );
 
 	test( 'should return false when on free plan', () => {
-		getCurrentPlan.returns( { productSlug: PLAN_FREE } );
+		getCurrentPlan.mockReturnValue( { productSlug: PLAN_FREE } );
 		expect( isSiteOnPaidPlan( state, 'site1' ) ).toBe( false );
 	} );
 
 	test( 'should return false when on free Jetpack plan', () => {
-		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_FREE } );
+		getCurrentPlan.mockReturnValue( { productSlug: PLAN_JETPACK_FREE } );
 		expect( isSiteOnPaidPlan( state, 'site1' ) ).toBe( false );
 	} );
 
 	test( 'should return true when on paid plan', () => {
-		getCurrentPlan.returns( { productSlug: PLAN_BUSINESS } );
+		getCurrentPlan.mockReturnValue( { productSlug: PLAN_BUSINESS } );
 		expect( isSiteOnPaidPlan( state, 'site1' ) ).toBe( true );
 	} );
 
 	test( 'should return true when on eCommerce plan', () => {
-		getCurrentPlan.returns( { productSlug: PLAN_ECOMMERCE } );
+		getCurrentPlan.mockReturnValue( { productSlug: PLAN_ECOMMERCE } );
 		expect( isSiteOnPaidPlan( state, 'site1' ) ).toBe( true );
 	} );
 
 	test( 'should return true when on paid Jetpack plan', () => {
-		getCurrentPlan.returns( { productSlug: PLAN_JETPACK_BUSINESS } );
+		getCurrentPlan.mockReturnValue( { productSlug: PLAN_JETPACK_BUSINESS } );
 		expect( isSiteOnPaidPlan( state, 'site1' ) ).toBe( true );
 	} );
 } );
