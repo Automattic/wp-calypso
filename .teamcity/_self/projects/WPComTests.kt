@@ -45,9 +45,9 @@ object WPComTests : Project({
 	buildType(gutenbergPlaywrightBuildType("mobile", "ba0f925b-497b-4156-977e-5bfbe94f5744", atomic=true, edge=true));
 
 	// Editor Tracking
-	buildType(editorTrackingBuildType("desktop", "", atomic=false, edge=false));
+	buildType(editorTrackingBuildType("desktop", "bd15ed14-e77d-11ec-8fea-0242ac120002", atomic=false, edge=false));
 	// Editor Tracking Edge
-	buildType(editorTrackingBuildType("desktop", "", atomic=false, edge=true));
+	buildType(editorTrackingBuildType("desktop", "c752ca9a-e77d-11ec-8fea-0242ac120002", atomic=false, edge=true));
 
 	buildType(coblocksPlaywrightBuildType("desktop", "08f88b93-993e-4de8-8d80-4a94981d9af4"));
 	buildType(coblocksPlaywrightBuildType("mobile", "cbcd44d5-4d31-4adc-b1b5-97f1225c6a7c"));
