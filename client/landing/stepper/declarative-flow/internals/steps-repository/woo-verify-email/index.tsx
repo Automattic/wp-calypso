@@ -50,7 +50,7 @@ const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
 		sprintf(
 			/* translators: the userEmail is the email of the user */
 			__(
-				'A verification email has been sent to %(userEmail)s. <br />Please continue your journey from the following the link sent.'
+				'A verification email has been sent to %(userEmail)s. <br />Please continue your journey from the link sent.'
 			),
 			{ userEmail }
 		),
