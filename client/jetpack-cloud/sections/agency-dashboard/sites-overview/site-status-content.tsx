@@ -77,6 +77,7 @@ export default function SiteStatusContent( {
 		return (
 			<>
 				<span className="sites-overview__row-text">{ value.url }</span>
+				<span className="sites-overview__overlay"></span>
 				{ errorContent }
 			</>
 		);
