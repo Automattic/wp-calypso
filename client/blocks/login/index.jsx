@@ -537,7 +537,7 @@ export default connect(
 		isAnchorFmSignup: getIsAnchorFmSignup(
 			get( getCurrentQueryArguments( state ), 'redirect_to' )
 		),
-		isPartnerSignup: isPartnerSignupFlow( get( getCurrentQueryArguments( state ), 'redirect_to' ) ),
+		isPartnerSignup: isPartnerSignupFlow( getCurrentQueryArguments( state )?.redirect_to ),
 	} ),
 	{
 		rebootAfterLogin,

@@ -380,7 +380,7 @@ export default connect(
 		query: getCurrentQueryArguments( state ),
 		isJetpackWooCommerceFlow: 'woocommerce-onboarding' === getCurrentQueryArguments( state ).from,
 		wccomFrom: getCurrentQueryArguments( state )[ 'wccom-from' ],
-		isPartnerSignup: isPartnerSignupFlow( getCurrentQueryArguments( state )?.redirect_to || '' ),
+		isPartnerSignup: isPartnerSignupFlow( getCurrentQueryArguments( state )?.redirect_to ),
 	} ),
 	{
 		recordTracksEvent,
