@@ -122,7 +122,11 @@ export default connect(
 		storeState,
 		ownProps: Omit<
 			WeChatQRProps,
-			'showErrorNotice' | 'transactionReceiptId' | 'transactionStatus' | 'transactionError'
+			| 'showErrorNotice'
+			| 'transactionReceiptId'
+			| 'transactionStatus'
+			| 'transactionError'
+			| 'translate'
 		>
 	) => {
 		const { receiptId, processingStatus } =

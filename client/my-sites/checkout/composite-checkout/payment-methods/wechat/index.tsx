@@ -42,7 +42,7 @@ declare module '@wordpress/data' {
 }
 
 interface WeChatStripeResponse {
-	order_id: string;
+	order_id: number;
 	redirect_url: string;
 }
 
