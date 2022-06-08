@@ -10,6 +10,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
+import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import {
 	getGoogleAdminUrl,
 	getGoogleMailServiceFamily,
@@ -93,7 +94,8 @@ function EmailPlan( { domain, selectedSite, source } ) {
 
 	const canAddMailboxes =
 		( getGSuiteProductSlug( domain ) || getTitanProductSlug( domain ) ) &&
-		getGSuiteSubscriptionStatus( domain ) !== 'suspended';
+		getGSuiteSubscriptionStatus( domain ) !== 'suspended' &&
+		canCurrentUserAddEmail( domain );
 	const hasSubscription = hasEmailSubscription( domain );
 
 	const handleBack = () => {
