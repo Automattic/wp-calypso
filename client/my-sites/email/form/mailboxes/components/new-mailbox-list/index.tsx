@@ -5,7 +5,7 @@ import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
-import { MailboxFormWrapper } from 'calypso/my-sites/email/form/mailboxes/components/form';
+import { MailboxFormWrapper } from 'calypso/my-sites/email/form/mailboxes/components/mailbox-form-wrapper';
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import { sanitizeMailboxValue } from 'calypso/my-sites/email/form/mailboxes/components/utilities/sanitize-mailbox-value';
 import {
@@ -84,7 +84,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 	};
 
 	return (
-		<div className="list__main">
+		<div className="new-mailbox-list__main">
 			{ mailboxes.map( ( mailbox, index ) => {
 				const uuid = mailbox.formFields.uuid.value;
 
@@ -105,7 +105,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 				return (
 					<Fragment key={ 'form-' + uuid }>
 						{ index > 0 && (
-							<CardHeading className="list__numbered-heading" tagName="h3" size={ 20 }>
+							<CardHeading className="new-mailbox-list__numbered-heading" tagName="h3" size={ 20 }>
 								{ translate( 'Mailbox %(position)s', {
 									args: { position: index + 1 },
 									comment:
@@ -115,7 +115,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 						) }
 						<MailboxFormWrapper mailbox={ mailbox } onFieldValueChanged={ onFieldValueChanged }>
 							<>
-								<div className="list__actions">
+								<div className="new-mailbox-list__actions">
 									{ index > 0 && (
 										<Button onClick={ removeMailbox( uuid ) } busy={ areButtonsBusy }>
 											<Gridicon icon="trash" />
@@ -124,7 +124,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 									) }
 								</div>
 
-								<hr className="list__separator" />
+								<hr className="new-mailbox-list__separator" />
 							</>
 						</MailboxFormWrapper>
 					</Fragment>
@@ -132,7 +132,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 			} ) }
 
 			<div
-				className={ classNames( 'list__supplied-actions', {
+				className={ classNames( 'new-mailbox-list__supplied-actions', {
 					'not-show-add-new-mailbox': ! showAddNewMailboxButton,
 				} ) }
 			>
@@ -143,7 +143,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 					</Button>
 				) }
 
-				<div className="list__main-actions">
+				<div className="new-mailbox-list__main-actions">
 					{ showCancelButton && (
 						<Button onClick={ handleCancel } busy={ areButtonsBusy }>
 							<span>{ translate( 'Cancel' ) }</span>

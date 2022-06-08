@@ -1,6 +1,6 @@
 import { useRtl } from 'i18n-calypso';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
-import { MailboxField } from 'calypso/my-sites/email/form/mailboxes/components/field';
+import { MailboxField } from 'calypso/my-sites/email/form/mailboxes/components/mailbox-field';
 import {
 	EmailProvider,
 	GoogleMailboxFormFields,

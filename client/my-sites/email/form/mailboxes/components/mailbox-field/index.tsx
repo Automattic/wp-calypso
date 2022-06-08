@@ -12,6 +12,8 @@ import type {
 } from 'calypso/my-sites/email/form/mailboxes/types';
 import type { ChangeEvent } from 'react';
 
+import './style.scss';
+
 interface MailboxFormFieldProps {
 	field: MailboxFormFieldBase< string >;
 	isPasswordField?: boolean;
@@ -108,7 +110,7 @@ const MailboxField = ( {
 
 	return (
 		<FormFieldset>
-			<FormLabel>
+			<FormLabel className="mailbox-field__form-label">
 				{ fieldLabelText }
 				<MailboxFieldInput { ...props } onBlur={ onBlur } onChange={ onChange } />
 				{ children }

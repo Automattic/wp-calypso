@@ -25,7 +25,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/add-mailboxes/add-users-placeholder';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailPricingNotice from 'calypso/my-sites/email/email-pricing-notice';
-import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/list';
+import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import getMailProductForProvider from 'calypso/my-sites/email/form/mailboxes/components/selectors/get-mail-product-for-provider';
 import getCartItems from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-cart-items';
 import { getMailProductProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-mail-product-properties';
