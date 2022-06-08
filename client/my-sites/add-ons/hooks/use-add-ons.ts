@@ -19,6 +19,12 @@ const addOnsActive = [
 		nameOverride: 'Remove Ads',
 		icon: noAdsIcon,
 	},
+	{
+		slug: WPCOM_FEATURES_NO_ADVERTS,
+		highlight: false,
+		nameOverride: 'Remove Ads',
+		icon: noAdsIcon,
+	},
 ];
 
 // memoize on products list

@@ -29,14 +29,6 @@ const globalOverrides = css`
 
 const HeaderSpacer = styled.div`
 	height: 58px;
-
-	@include breakpoint-deprecated( '<960px' ) {
-		height: 66px;
-	}
-
-	@include breakpoint-deprecated( '<660px' ) {
-		height: 76px;
-	}
 `;
 
 const Content = styled.div`

@@ -31,6 +31,11 @@ const Frame = styled.div`
 
 	.add-ons-card__selected-badge {
 		display: flex;
+		align-items: center;
+
+		.add-ons-card__checkmark {
+			color: var( --studio-green-30 );
+		}
 	}
 
 	.add-ons-card__billing-info {
@@ -80,7 +85,7 @@ const AddOnCard = ( props: Props ) => {
 						<>
 							<Button onClick={ onActionSelected }>{ props.actionSelected.text }</Button>
 							<div className="add-ons-card__selected-badge">
-								<Gridicon icon="checkmark" />
+								<Gridicon icon="checkmark" className={ 'add-ons-card__checkmark' } />
 								<span>Included in your plan</span>
 							</div>
 						</>
