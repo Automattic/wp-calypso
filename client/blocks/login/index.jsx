@@ -20,6 +20,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
+import SignupHeader from 'calypso/signup/signup-header';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
@@ -243,7 +244,7 @@ class Login extends Component {
 
 			if ( isWooOAuth2Client( oauth2Client ) ) {
 				if ( isPartnerSignup ) {
-					preHeader = <Gridicon icon="my-sites" size={ 72 } />;
+					preHeader = <SignupHeader shouldShowLoadingScreen={ false } isReskinned={ true } />;
 					headerText = translate( 'Log in to your account' );
 					postHeader = null;
 				} else if ( wccomFrom ) {
