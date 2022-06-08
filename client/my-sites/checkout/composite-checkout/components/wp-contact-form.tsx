@@ -44,8 +44,8 @@ export default function WPContactForm( {
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
 
-	const cachedContactDetails = useCachedContactDetails();
-	useCachedContactDetailsForCheckoutForm( cachedContactDetails, countriesList );
+	const { data, isFetching } = useCachedContactDetails();
+	useCachedContactDetailsForCheckoutForm( isFetching ? null : data ?? null, countriesList );
 
 	return (
 		<BillingFormFields>
