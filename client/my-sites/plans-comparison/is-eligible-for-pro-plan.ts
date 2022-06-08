@@ -3,10 +3,11 @@ import { isPro } from '@automattic/calypso-products';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AppState } from 'calypso/types';
 
-export function isEligibleForProPlan( state: AppState, siteId?: number ): boolean {
+export function isEligibleForProPlan( state: AppState, siteId?: number | null ): boolean {
 	if (
 		siteId &&
 		( ( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
@@ -14,8 +15,9 @@ export function isEligibleForProPlan( state: AppState, siteId?: number ): boolea
 	) {
 		return false;
 	}
-
-	const currentPlan = getCurrentPlan( state, siteId );
+	siteId = siteId || getSelectedSiteId( state );
+	const selectedSite = getSite( state, siteId || '' );
+	const currentPlan = getCurrentPlan( state, siteId ) || selectedSite?.plan;
 	if ( currentPlan && isPro( currentPlan ) ) {
 		return true;
 	}
