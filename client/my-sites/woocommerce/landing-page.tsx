@@ -15,7 +15,6 @@ import WarningCard from 'calypso/components/warning-card';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
-// import { requestEmailVerification } from 'calypso/state/data-layer/wpcom/me/send-verification-email';
 import { successNotice } from 'calypso/state/notices/actions';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import WooCommerceColophon from './woocommerce-colophon';
