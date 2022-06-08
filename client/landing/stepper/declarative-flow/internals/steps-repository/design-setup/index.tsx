@@ -115,7 +115,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		[ selectedDesign, generatedDesigns, isMobile ]
 	);
 
-	const isPreviewingGeneratedDesign = isMobile && showGeneratedDesigns && selectedDesign;
+	const isPreviewingGeneratedDesign = isMobile && showGeneratedDesigns && !! selectedDesign;
 
 	const visibility = useNewSiteVisibility();
 
