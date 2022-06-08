@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_NO_ADVERTS } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
 import { getProductBySlug, getProductName } from 'calypso/state/products-list/selectors';
 import noAdsIcon from '../icons/no-ads';
@@ -13,7 +14,7 @@ export interface AddOnMeta {
 // these are pulled from API in the hook below
 const addOnsActive = [
 	{
-		slug: 'no-adverts/no-adverts.php',
+		slug: WPCOM_FEATURES_NO_ADVERTS,
 		highlight: false,
 		nameOverride: 'Remove Ads',
 		icon: noAdsIcon,

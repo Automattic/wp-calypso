@@ -8,6 +8,7 @@ export { getProductIntroductoryOffer } from './get-product-introductory-offer';
 export { getProductName } from './get-product-name';
 export { getProductDisplayCost } from './get-product-display-cost';
 export { getProductPriceTierList } from './get-product-price-tiers';
+export { getProductTerm } from './get-product-term';
 export { getProductsList } from './get-products-list';
 export { getProductsListType } from './get-products-list-type';
 export { isProductsListFetching } from './is-products-list-fetching';
