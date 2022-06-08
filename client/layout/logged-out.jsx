@@ -8,6 +8,7 @@ import { withCurrentRoute } from 'calypso/components/route';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import PartnerSignupMasterbar from 'calypso/layout/masterbar/partner-signup';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isPartnerSignupFlow } from 'calypso/state/login/utils';
@@ -68,8 +69,10 @@ const LayoutLoggedOut = ( {
 	let masterbar = null;
 
 	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
-	if ( useOAuth2Layout && oauth2Client && oauth2Client.name && ! isPartnerSignup ) {
-		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
+		if ( isPartnerSignup ) {
+			masterbar = <PartnerSignupMasterbar />;
+		} else if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			masterbar = null;
 		} else {
 			classes.dops = true;
@@ -135,7 +138,7 @@ export default withCurrentRoute(
 		const sectionName = currentSection?.name ?? null;
 		const sectionTitle = currentSection?.title ?? '';
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
-		const isPartnerSignup = isPartnerSignupFlow( currentQuery?.redirect_to || '' );
+		const isPartnerSignup = isPartnerSignupFlow( currentQuery?.redirect_to );
 		const isWhiteLogin = currentRoute.startsWith( '/log-in/new' ) || isPartnerSignup;
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
