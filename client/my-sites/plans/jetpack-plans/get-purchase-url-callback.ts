@@ -23,15 +23,11 @@ import type {
  * @param {string} siteSlug Selected site
  * @param {string | string[]} products Slugs of the products to add to the cart
  * @param {QueryArgs} urlQueryArgs Additional query params appended to url (ie. for affiliate tracking, or whatever)
- * @param {string} rootUrl Plans/pricing page root URL
- * @param {boolean} showUpsellPage Whether to show the upsell page before checkout
  */
 export function buildCheckoutURL(
 	siteSlug: string,
 	products: string | string[],
-	urlQueryArgs: QueryArgs = {},
-	rootUrl = '',
-	showUpsellPage = false
+	urlQueryArgs: QueryArgs = {}
 ): string {
 	const productsArray = Array.isArray( products ) ? products : [ products ];
 	const productsString = productsArray.join( ',' );
@@ -55,24 +51,6 @@ export function buildCheckoutURL(
 		'development' === urlQueryArgs.calypso_env
 			? 'http://calypso.localhost:3000'
 			: 'https://wordpress.com';
-
-	// Link to upsell page if upsell feature enabled
-	if ( showUpsellPage && rootUrl ) {
-		// Upsell page only supports one product
-		const product = productsArray[ 0 ];
-
-		// If upsell exists
-		if ( product in PURCHASE_FLOW_UPSELLS_MATRIX ) {
-			if ( ! urlQueryArgs.checkoutBackUrl ) {
-				urlQueryArgs.checkoutBackUrl = window.location.href;
-			}
-
-			return addQueryArgs(
-				urlQueryArgs,
-				`${ rootUrl.replace( /\/$/, '' ) }/upsell/${ product }/${ siteSlug }`
-			);
-		}
-	}
 
 	// siteless checkout
 	if (
@@ -104,6 +82,40 @@ export function buildCheckoutURL(
 		? addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` )
 		: addQueryArgs( urlQueryArgs, path );
 }
+
+/**
+ * Build the URL to the upsell page.
+ *
+ * @param {string} siteSlug Selected site
+ * @param {string | string[]} products Slugs of the products to add to the cart
+ * @param {QueryArgs} urlQueryArgs Additional query params appended to url (ie. for affiliate tracking, or whatever)
+ * @param {string} rootUrl Plans/pricing page root URL
+ * @returns {string|null}
+ */
+export const buildUpsellURL = (
+	siteSlug: string,
+	products: string | string[],
+	urlQueryArgs: QueryArgs = {},
+	rootUrl = ''
+): string | null => {
+	const productsArray = Array.isArray( products ) ? products : [ products ];
+	// Upsell page only supports one product
+	const product = productsArray[ 0 ];
+
+	// If upsell exists
+	if ( product in PURCHASE_FLOW_UPSELLS_MATRIX ) {
+		if ( ! urlQueryArgs.checkoutBackUrl ) {
+			urlQueryArgs.checkoutBackUrl = window.location.href;
+		}
+
+		return addQueryArgs(
+			urlQueryArgs,
+			`${ rootUrl.replace( /\/$/, '' ) }/upsell/${ product }/${ siteSlug }`
+		);
+	}
+
+	return null;
+};
 
 /**
  * Get the function for generating the URL for the product checkout page
@@ -139,5 +151,12 @@ export const getPurchaseURLCallback =
 			return isJetpackCloud() ? `https://wordpress.com${ relativePath }` : relativePath;
 		}
 
-		return buildCheckoutURL( siteSlug, product.productSlug, urlQueryArgs, rootUrl, showUpsellPage );
+		let url;
+
+		// Link to upsell page if upsell feature enabled
+		if ( showUpsellPage ) {
+			url = buildUpsellURL( siteSlug, product.productSlug, urlQueryArgs, rootUrl );
+		}
+
+		return url || buildCheckoutURL( siteSlug, product.productSlug, urlQueryArgs );
 	};
