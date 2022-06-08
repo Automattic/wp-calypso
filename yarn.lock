@@ -246,7 +246,7 @@ __metadata:
     asana-phrase: ^0.0.8
     mailosaur: ^7.3.1
     node-fetch: ^2.6.6
-    playwright: 1.22.2
+    playwright: ^1.22.2
     totp-generator: ^0.0.12
     typescript: ^4.5.5
   languageName: unknown
@@ -9982,7 +9982,7 @@ __metadata:
     keytar: ^7.7.0
     lodash: ^4.17.21
     make-dir: ^3.1.0
-    playwright: 1.22.2
+    playwright: ^1.22.2
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -26879,7 +26879,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:1.22.2":
+"playwright@npm:^1.22.2":
   version: 1.22.2
   resolution: "playwright@npm:1.22.2"
   dependencies:
@@ -35963,7 +35963,7 @@ swiper@4.5.1:
     lodash: ^4.17.20
     mailosaur: ^4.0.0
     node-fetch: ^2.6.1
-    playwright: 1.22.2
+    playwright: ^1.22.2
     postcss: ^8.3.11
     webpack: ^5.63.0
   languageName: unknown
