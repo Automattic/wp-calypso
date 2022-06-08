@@ -159,10 +159,9 @@ object BuildDockerImage : BuildType({
 					exit 0
 				fi
 
-				FAILURES=$(curl --silent -X GET -H "Content-Type: text/plain" https://teamcity.a8c.com/guestAuth/app/rest/builds/?locator=id:%teamcity.build.id% | grep -c "FAILURE")
-				if [ ${'$'}FAILURES -ne 0 ]; then
-					ACTION="fail"
-				else
+				ACTION="fail"
+				SUCCESS=$(curl --silent -X GET -H "Content-Type: text/plain" https://teamcity.a8c.com/guestAuth/app/rest/builds/?locator=id:%teamcity.build.id% | grep -c 'status="SUCCESS"')
+				if [ ${'$'}SUCCESS -eq 1 ]; then
 					docker push "registry.a8c.com/calypso/app:latest"
 					ACTION="done"
 				fi
