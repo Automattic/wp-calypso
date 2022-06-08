@@ -8,17 +8,21 @@ jest.mock( 'calypso/blocks/dismissible-card', () => {
 	};
 } );
 
-jest.mock( 'calypso/lib/analytics/track-component-view', () => {
-	return function TrackComponentView() {
-		return null;
-	};
-} );
-
 import { Card } from '@automattic/components';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { shallow } from 'enzyme';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { Banner } from '../index';
+
+jest.mock( 'calypso/state/analytics/actions', () => {
+	return {
+		recordTracksEvent: jest.fn( () => ( {
+			type: 'ANALYTICS_EVENT_RECORD',
+		} ) ),
+	};
+} );
 
 const props = {
 	callToAction: null,
@@ -26,6 +30,10 @@ const props = {
 };
 
 describe( 'Banner basic tests', () => {
+	afterEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	test( 'should not blow up and have proper CSS class', () => {
 		const { container } = render( <Banner { ...props } /> );
 		expect( container.firstChild ).toHaveClass( 'banner' );
@@ -115,13 +123,13 @@ describe( 'Banner basic tests', () => {
 	} );
 
 	test( 'should record Tracks event when event is specified', () => {
-		const comp = shallow( <Banner { ...props } event="test" /> );
-		expect( comp.find( 'TrackComponentView' ) ).toHaveLength( 1 );
+		renderWithProvider( <Banner { ...props } event="test" /> );
+		expect( recordTracksEvent.mock.calls[ 0 ][ 1 ].cta_name ).toBe( 'test' );
 	} );
 
 	test( 'should not record Tracks event when event is not specified', () => {
-		const comp = shallow( <Banner { ...props } /> );
-		expect( comp.find( 'TrackComponentView' ) ).toHaveLength( 0 );
+		renderWithProvider( <Banner { ...props } /> );
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	test( 'should render Card with href if href prop is passed', () => {
