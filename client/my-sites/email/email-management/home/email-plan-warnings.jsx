@@ -83,7 +83,9 @@ class EmailPlanWarnings extends Component {
 					<div className="email-plan-warnings__warning">
 						<div className="email-plan-warnings__message">
 							<span>
-								{ translate( 'Only the email subscription owner can add or remove mailboxes.' ) }
+								{ translate(
+									'This email subscription was purchased by a different WordPress.com account. To add or remove mailboxes, log in to that account or contact the account owner.'
+								) }
 							</span>
 						</div>
 					</div>
