@@ -433,6 +433,7 @@ __metadata:
   resolution: "@automattic/data-stores@workspace:packages/data-stores"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/domain-utils": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/happychat-connection": "workspace:^"
     "@types/validator": ^13.7.1
@@ -449,6 +450,7 @@ __metadata:
     redux: ^4.1.2
     tslib: ^2.3.0
     typescript: ^4.5.5
+    use-debounce: ^3.1.0
     utility-types: ^3.10.0
     validator: ^13.5.2
     wait-for-expect: ^3.0.2
@@ -702,6 +704,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
+    "@automattic/languages": "workspace:^"
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": 7.0.2
@@ -1261,8 +1264,6 @@ __metadata:
     "@wordpress/primitives": ^3.7.0
     "@wordpress/react-i18n": ^3.7.0
     classnames: ^2.3.1
-    react: ^17.0.2
-    react-dom: ^17.0.2
     react-popper: ^2.2.5
     typescript: ^4.5.5
   peerDependencies:

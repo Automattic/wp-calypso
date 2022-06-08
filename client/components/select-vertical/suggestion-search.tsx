@@ -11,8 +11,9 @@ interface Props {
 	placeholder?: string;
 	searchTerm: string;
 	suggestions: Vertical[];
-	isDisableInput?: boolean | undefined;
 	isLoading?: boolean | undefined;
+	isShowSkipOption?: boolean | undefined;
+	isDisableInput?: boolean | undefined;
 	onInputChange?: ( value: string ) => void;
 	onSelect?: ( vertical: Vertical ) => void;
 }
@@ -21,8 +22,9 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 	placeholder,
 	searchTerm,
 	suggestions,
-	isDisableInput,
 	isLoading,
+	isShowSkipOption,
+	isDisableInput,
 	onInputChange,
 	onSelect,
 } ) => {
@@ -33,18 +35,26 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 	const toggleIconRef = useRef( null );
 	const translate = useTranslate();
 
+	const showSuggestions = () => {
+		setIsShowSuggestions( true );
+	};
+
+	const hideSuggestions = () => {
+		setIsShowSuggestions( false );
+	};
+
 	const handleTextInputBlur = ( event: React.FocusEvent ) => {
 		// Hide the suggestion dropdown unless the focus is moved to the toggle icon.
 		if ( event && event.relatedTarget?.contains( toggleIconRef.current ) ) {
 			return;
 		}
 
-		setIsShowSuggestions( false );
+		hideSuggestions();
 		setIsFocused( false );
 	};
 
 	const handleTextInputFocus = () => {
-		setIsShowSuggestions( true );
+		showSuggestions();
 		setIsFocused( true );
 	};
 
@@ -55,7 +65,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 			onSelect?.( { value: '', label: '' } );
 		}
 
-		setIsShowSuggestions( true );
+		showSuggestions();
 		onInputChange?.( event.target.value );
 	};
 
@@ -65,7 +75,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 			return;
 		}
 
-		setIsShowSuggestions( false );
+		hideSuggestions();
 		setIsFocused( false );
 	};
 
@@ -74,12 +84,16 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 			return;
 		}
 
-		setIsShowSuggestions( ! isShowSuggestions );
+		if ( isShowSuggestions ) {
+			hideSuggestions();
+		} else {
+			showSuggestions();
+		}
 	};
 
 	const handleToggleSuggestionsKeyDown = ( event: React.KeyboardEvent< HTMLButtonElement > ) => {
 		if ( event.key === 'Escape' || event.key === 'Tab' ) {
-			setIsShowSuggestions( false );
+			hideSuggestions();
 		}
 	};
 
@@ -89,7 +103,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 		}
 
 		if ( event.key === 'Escape' ) {
-			setIsShowSuggestions( false );
+			hideSuggestions();
 		}
 
 		if ( suggestionsRef.current ) {
@@ -98,7 +112,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 	};
 
 	const handleSuggestionsSelect = ( { label, value }: { label: string; value?: string } ) => {
-		setIsShowSuggestions( false );
+		hideSuggestions();
 		onSelect?.( { label, value } as Vertical );
 	};
 
@@ -107,7 +121,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 			return [];
 		}
 
-		if ( searchTerm === '' ) {
+		if ( ! isShowSkipOption ) {
 			return suggestions || [];
 		}
 
@@ -118,7 +132,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 				category: 0 < suggestions.length ? '—' : '',
 			},
 		] );
-	}, [ translate, searchTerm, suggestions, isLoading, isShowSuggestions ] );
+	}, [ translate, suggestions, isLoading, isShowSuggestions, isShowSkipOption ] );
 
 	return (
 		<div

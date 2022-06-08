@@ -51,6 +51,20 @@
 			border: solid 1px var( --color-error );
 		}
 	}
+
+	&.with-warning {
+		.activity-card__time-icon {
+			fill: var( --color-warning );
+		}
+
+		.activity-card__time-text {
+			color: var( --color-warning );
+		}
+
+		.card {
+			border: solid 1px var( --color-warning );
+		}
+	}
 }
 
 .activity-card__header {

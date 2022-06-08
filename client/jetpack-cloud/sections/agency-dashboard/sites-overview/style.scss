@@ -23,6 +23,7 @@
 	}
 	.search.is-open {
 		margin-bottom: 8px;
+		box-shadow: 0 0 0 1px var( --color-neutral-5 );
 	}
 }
 .sites-overview__page-title-container {
@@ -99,6 +100,18 @@
 		width: 100%;
 		margin-left: 0;
 		font-size: 0.875rem;
+	}
+}
+.sites-overview__overlay {
+	display: block;
+	position: absolute;
+	height: 49px;
+	width: 20px;
+	background: linear-gradient( to right, rgba( 255, 255, 255, 0.8 ) 30%, rgba( 255, 255, 255, 1 ) 100% );
+	top: 0;
+	right: 70px;
+	@include break-large() {
+		right: 0;
 	}
 }
 .sites-overview__vertical-align-middle {
@@ -215,7 +228,10 @@
 	border-color:  var( --studio-yellow-20 );;
 }
 .sites-overview__filter-bar {
-	margin: 0 1px 8px;
+	margin: 0 0 8px;
+	@include break-large() {
+		margin: 0 1px 8px;
+	}
 	.filterbar__wrap.card {
 		overflow-x: scroll;
 		@include break-large() {

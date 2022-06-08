@@ -9,14 +9,10 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasTitanMailWithUs, getTitanProductName } from 'calypso/lib/titan';
 import EmailHeader from 'calypso/my-sites/email/email-header';
-import {
-	emailManagementPurchaseNewEmailAccount,
-	emailManagementTitanSetUpMailbox,
-} from 'calypso/my-sites/email/paths';
+import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import TitanSetUpMailboxForm from 'calypso/my-sites/email/titan-set-up-mailbox/titan-set-up-mailbox-form';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -40,8 +36,6 @@ const TitanSetUpMailbox = ( { selectedDomainName, source } ) => {
 
 	const areSiteDomainsLoaded = useSelector( ( state ) => hasLoadedSiteDomains( state, siteId ) );
 
-	const analyticsPath = emailManagementTitanSetUpMailbox( ':site', ':domain', currentRoute );
-
 	const siteSlug = selectedSite?.slug ?? null;
 
 	const handleBack = useCallback( () => {
@@ -62,8 +56,6 @@ const TitanSetUpMailbox = ( { selectedDomainName, source } ) => {
 
 	return (
 		<>
-			<PageViewTracker path={ analyticsPath } title="Email Management > Set Up Titan Mailbox" />
-
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 			<Main wideLayout={ true }>

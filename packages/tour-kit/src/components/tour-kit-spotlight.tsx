@@ -1,15 +1,25 @@
-import { useMemo, useState } from '@wordpress/element';
+import { useMemo, useState, useEffect } from '@wordpress/element';
 import classnames from 'classnames';
 import { usePopper } from 'react-popper';
 import Overlay from './tour-kit-overlay';
+import {
+	SpotlightInteractivity,
+	SpotlightInteractivityConfiguration,
+} from './tour-kit-spotlight-interactivity';
 import type { Rect, Placement } from '@popperjs/core';
 
+export const SPOTLIT_ELEMENT_CLASS = 'wp-tour-kit-spotlit';
 interface Props {
 	referenceElement: HTMLElement | null;
 	styles?: React.CSSProperties;
+	interactivity?: SpotlightInteractivityConfiguration;
 }
 
-const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement, styles } ) => {
+const TourKitSpotlight: React.FunctionComponent< Props > = ( {
+	referenceElement,
+	styles,
+	interactivity,
+} ) => {
 	const [ popperElement, sePopperElement ] = useState< HTMLElement | null >( null );
 	const referenceRect = referenceElement?.getBoundingClientRect();
 	const modifiers = [
@@ -75,8 +85,20 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( { referenceElement,
 		  }
 		: null;
 
+	/**
+	 * Add a .wp-spotlit class to the referenced element so that we can
+	 * apply CSS styles to it, for whatever purposes such as interactivity
+	 */
+	useEffect( () => {
+		referenceElement?.classList.add( SPOTLIT_ELEMENT_CLASS );
+		return () => {
+			referenceElement?.classList.remove( SPOTLIT_ELEMENT_CLASS );
+		};
+	}, [ referenceElement ] );
+
 	return (
 		<>
+			<SpotlightInteractivity { ...interactivity } />
 			<Overlay visible={ ! clipRepositionProps } />
 			<div
 				className={ classnames( 'tour-kit-spotlight', {
