@@ -232,8 +232,11 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
 		if (
+			// Default process
 			( installedPlugin && pluginActive ) ||
+			// Tranfer to atomic using a marketplace plugin
 			( atomicFlow && transferStates.COMPLETE === automatedTransferStatus ) ||
+			// Transfer to atomic uploading a zip plugin
 			( isUploadFlow && ! atomicFlow && transferStates.COMPLETE === automatedTransferStatus )
 		) {
 			waitFor( 1 ).then( () =>
