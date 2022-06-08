@@ -16,7 +16,7 @@ export function useCachedContactDetails() {
 				.then( ( data: FetchedContactDetails ) =>
 					mapRecordKeysRecursively( data, snakeToCamelCase )
 				),
-		{ refetchOnMount: 'always' }
+		{}
 	);
 }
 
