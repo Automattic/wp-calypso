@@ -4,11 +4,8 @@ import envVariables from './env-variables';
 const navTabParent = 'div.section-nav';
 
 const selectors = {
-	// General
-	main: 'main[role="main"]',
-
 	// clickNavTab
-	navTabItem: ( { name = '', selected }: { name?: string; selected?: boolean } = {} ) =>
+	navTabItem: ( { name = '', selected = false }: { name?: string; selected?: boolean } = {} ) =>
 		`${ navTabParent } a[aria-current="${ selected }"]:has(span:has-text("${ name }"))`,
 	navTabMobileToggleButton: `${ navTabParent } button.section-nav__mobile-header`,
 };
@@ -68,13 +65,9 @@ export async function clickNavTab( page: Page, name: string ): Promise< void > {
 
 	// Mobile view - navtabs become a dropdown and thus it must be opened first.
 	if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-		// Layout can shift in certain pages (eg. PlansPage) as elements are lazy loaded.
-		const mainElement = await page.waitForSelector( selectors.main );
-		await Promise.all( [
-			page.waitForLoadState( 'networkidle' ),
-			mainElement.waitForElementState( 'stable' ),
-		] );
+		await page.waitForLoadState( 'networkidle' );
 
+		// Open the Navtabs which now act as a pseudo-dropdown menu.
 		const navTabsButtonLocator = page.locator( selectors.navTabMobileToggleButton );
 		await navTabsButtonLocator.click();
 
