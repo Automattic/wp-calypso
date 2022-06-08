@@ -73,22 +73,6 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	}
 
 	function renderWarningNotice() {
-		if ( currentUserEmail && ! isEmailVerified ) {
-			return (
-				<WarningsOrHoldsSection>
-					<WarningCard
-						message={ sprintf(
-							/* translators: %s: The user's primary email address (ex.: user@example.com) */
-							__(
-								"You need to confirm your email address before setting up a store. We've sent an email to %s with instructions for you to follow."
-							),
-							currentUserEmail
-						) }
-					/>
-				</WarningsOrHoldsSection>
-			);
-		}
-
 		if ( ! isTransferringBlocked || ! isDataReady ) {
 			return null;
 		}
@@ -153,9 +137,7 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	let finalCTAHandler = onCTAClickHandler;
 	let displayData: DisplayData | null;
 
-	const unverifiedEmail = true;
-
-	if ( unverifiedEmail ) {
+	if ( ! isEmailVerified ) {
 		secondaryAction = (
 			<Button
 				className="landing-page__secondary empty-content__action"
@@ -169,13 +151,13 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 
 		displayData = {
 			title: _x( 'Verify your email address before setting up a store', 'Header text' ),
-			illustration: '/calypso/images/illustrations/illustration-shopping-bags.svg',
+			illustration: '/calypso/images/illustrations/page-bag.svg',
 			line: sprintf(
 				/* translators: %s: The unverified email */
 				__(
 					'A verification email has been sent to %s. Follow the link in the verification email to confirm that you can access your email account.'
 				),
-				unverifiedEmail
+				currentUserEmail
 			),
 			action: _x( 'Resend verification email', 'Button text' ),
 		};
@@ -218,7 +200,7 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 				line={ displayData.line }
 				action={ displayData.action }
 				actionCallback={ finalCTAHandler }
-				actionDisabled={ isTransferringBlocked || ! isEmailVerified }
+				actionDisabled={ isTransferringBlocked }
 				actionRef={ ctaRef }
 				secondaryAction={ secondaryAction }
 				className="landing-page__empty-content"
