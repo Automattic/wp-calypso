@@ -65,7 +65,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 
 		it( 'Enter registrar details', async function () {
 			await cartCheckoutPage.enterDomainRegistrarDetails(
-				DataHelper.getTestDomainRegistrarDetails( email )
+				DataHelper.getTestDomainRegistrarDetails( testUser.email )
 			);
 		} );
 
