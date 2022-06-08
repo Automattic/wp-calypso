@@ -289,6 +289,8 @@ const formatBackupData = ( site: SiteData ) => {
 			break;
 		case 'rewind_backup_complete_warning':
 		case 'backup_only_complete_warning':
+		case 'rewind_backup_error_warning':
+		case 'backup_only_error_warning':
 			backup.status = 'warning';
 			backup.value = translate( 'Warning' );
 			break;
