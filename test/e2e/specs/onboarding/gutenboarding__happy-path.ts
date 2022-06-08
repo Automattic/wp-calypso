@@ -7,19 +7,16 @@ import {
 	CloseAccountFlow,
 	GutenboardingFlow,
 	FullSiteEditorPage,
-	SecretsManager,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
-	const siteTitle = DataHelper.getBlogName();
-	const email = DataHelper.getTestEmailAddress( {
-		inboxId: SecretsManager.secrets.mailosaur.signupInboxId,
-		prefix: DataHelper.getUsername( { prefix: 'gutenboarding' } ),
+	const testUser = DataHelper.getNewTestUser( {
+		usernamePrefix: 'gutenboarding',
 	} );
-	const signupPassword = SecretsManager.secrets.passwordForNewTestSignUps;
+
 	const themeName = 'Twenty Twenty-Two Red';
 
 	let gutenboardingFlow: GutenboardingFlow;
@@ -36,13 +33,13 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 
 		it( 'Enter new site name', async function () {
 			gutenboardingFlow = new GutenboardingFlow( page );
-			await gutenboardingFlow.enterSiteTitle( siteTitle );
+			await gutenboardingFlow.enterSiteTitle( testUser.siteName );
 			await gutenboardingFlow.clickButton( 'Continue' );
 		} );
 
 		it( 'Search for and select a WordPress.com domain name', async function () {
-			await gutenboardingFlow.searchDomain( siteTitle );
-			await gutenboardingFlow.selectDomain( siteTitle.concat( '.wordpress.com' ) );
+			await gutenboardingFlow.searchDomain( testUser.siteName );
+			await gutenboardingFlow.selectDomain( testUser.siteName.concat( '.wordpress.com' ) );
 			await gutenboardingFlow.clickButton( 'Continue' );
 		} );
 
@@ -66,7 +63,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenboarding: Create' ), function () {
 		it( 'Create account', async function () {
 			await Promise.all( [
 				page.waitForNavigation( { waitUntil: 'networkidle' } ),
-				gutenboardingFlow.signup( email, signupPassword ),
+				gutenboardingFlow.signup( testUser.email, testUser.password ),
 			] );
 		} );
 

@@ -13,22 +13,19 @@ import {
 	Roles,
 	CloseAccountFlow,
 	TestAccount,
-	SecretsManager,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
-	const inboxId = SecretsManager.secrets.mailosaur.inviteInboxId;
 	const role = 'Editor';
-	const username = DataHelper.getUsername( { prefix: 'invited-editor' } );
-	const email = DataHelper.getTestEmailAddress( {
-		inboxId: inboxId,
-		prefix: username,
-	} );
-	const signupPassword = SecretsManager.secrets.passwordForNewTestSignUps;
 	const invitingUser = 'calypsoPreReleaseUser';
+	const inbox = 'signupInboxId';
+	const testUser = DataHelper.getNewTestUser( {
+		inbox: inbox,
+		usernamePrefix: 'invited',
+	} );
 
 	let adjustedInviteLink: string;
 	let page: Page;
@@ -56,9 +53,8 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 			await peoplePage.clickInviteUser();
 
 			const invitePeoplePage = new InvitePeoplePage( page );
-			console.log( email );
 			await invitePeoplePage.invite( {
-				email: email,
+				email: testUser.email,
 				role: role as Roles,
 				message: `Test invite for role of ${ role }`,
 			} );
@@ -67,7 +63,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		it( 'Confirm invite is pending', async function () {
 			await sidebarComponent.navigate( 'Users', 'All Users' );
 			await peoplePage.clickTab( 'Invites' );
-			await peoplePage.selectInvitedUser( email );
+			await peoplePage.selectInvitedUser( testUser.email );
 		} );
 	} );
 
@@ -75,8 +71,8 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		it( `Invite email was received for test user`, async function () {
 			const emailClient = new EmailClient();
 			const message = await emailClient.getLastEmail( {
-				inboxId: inboxId,
-				emailAddress: email,
+				inboxId: inbox,
+				emailAddress: testUser.email,
 			} );
 			const links = await emailClient.getLinksFromMessage( message );
 			const acceptInviteLink = links.find( ( link: string ) =>
@@ -90,7 +86,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 			await page.goto( adjustedInviteLink );
 
 			const userSignupPage = new UserSignupPage( page );
-			await userSignupPage.signup( email, username, signupPassword );
+			await userSignupPage.signup( testUser.email, testUser.username, testUser.password );
 		} );
 
 		it( 'User sees welcome banner after signup', async function () {
@@ -118,7 +114,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 
 		it( 'View invited user in Team', async function () {
 			peoplePage = new PeoplePage( page );
-			await peoplePage.selectUser( username );
+			await peoplePage.selectUser( testUser.username );
 		} );
 
 		it( 'Remove invited user from site', async function () {
@@ -132,7 +128,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 			await loginPage.visit();
 			await Promise.all( [
 				page.waitForNavigation( { url: '**/read' } ),
-				loginPage.logInWithCredentials( email, signupPassword ),
+				loginPage.logInWithCredentials( testUser.email, testUser.password ),
 			] );
 		} );
 

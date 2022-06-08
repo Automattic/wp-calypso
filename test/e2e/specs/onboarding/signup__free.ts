@@ -14,7 +14,6 @@ import {
 	GeneralSettingsPage,
 	ComingSoonPage,
 	MyHomePage,
-	SecretsManager,
 	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
@@ -24,15 +23,10 @@ import type { SiteDetails, NewUserDetails } from '@automattic/calypso-e2e';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function () {
-	const inboxId = SecretsManager.secrets.mailosaur.inviteInboxId;
-	const username = DataHelper.getUsername( { prefix: 'free' } );
-	const email = DataHelper.getTestEmailAddress( {
-		inboxId: inboxId,
-		prefix: username,
+	const testUser = DataHelper.getNewTestUser( {
+		usernamePrefix: 'free',
 	} );
-	const signupPassword = SecretsManager.secrets.passwordForNewTestSignUps;
-	const blogName = DataHelper.getBlogName();
-	const tagline = `${ blogName } tagline`;
+	const tagline = `${ testUser.siteName } tagline`;
 
 	let page: Page;
 	let userDetails: NewUserDetails;
@@ -54,14 +48,18 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 
 		it( 'Sign up as new user', async function () {
 			const userSignupPage = new UserSignupPage( page );
-			userDetails = await userSignupPage.signup( email, username, signupPassword );
+			userDetails = await userSignupPage.signup(
+				testUser.email,
+				testUser.username,
+				testUser.password
+			);
 
 			userCreatedFlag = true;
 		} );
 
 		it( 'Select a free .wordpress.com domain', async function () {
 			domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.search( blogName );
+			await domainSearchComponent.search( testUser.siteName );
 			await domainSearchComponent.selectDomain( '.wordpress.com' );
 		} );
 
@@ -80,7 +78,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		} );
 
 		it( 'Enter blog name', async function () {
-			await startSiteFlow.enterBlogName( blogName );
+			await startSiteFlow.enterBlogName( testUser.siteName );
 		} );
 
 		it( 'Enter tagline', async function () {
@@ -136,7 +134,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		it( 'Validate blog name and tagline', async function () {
 			generalSettingsPage = new GeneralSettingsPage( page );
 
-			await generalSettingsPage.validateSiteTitle( blogName );
+			await generalSettingsPage.validateSiteTitle( testUser.siteName );
 			await generalSettingsPage.validateSiteTagline( tagline );
 		} );
 	} );
@@ -164,7 +162,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 
 		it( 'Search for a domain to reveal Skip Purchase button', async function () {
 			domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.search( username + '.live' );
+			await domainSearchComponent.search( testUser.username + '.live' );
 		} );
 
 		it( 'Skip domain purchasse', async function () {
@@ -190,15 +188,15 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 
 	afterAll( async function () {
 		const restAPIClient = new RestAPIClient(
-			{ username: username, password: signupPassword },
+			{ username: testUser.username, password: testUser.password },
 			userDetails.bearer_token
 		);
 
 		if ( userCreatedFlag ) {
 			await apiCloseAccount( restAPIClient, {
 				userID: userDetails.ID,
-				username: username,
-				email: email,
+				username: testUser.username,
+				email: testUser.email,
 			} );
 		}
 	} );
