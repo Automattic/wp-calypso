@@ -305,7 +305,7 @@ const goals: Reducer< GoalKey[], OnboardAction > = ( state = [], action ) => {
 	return state;
 };
 
-const editEmail: Reducer< string, OnboardAction > = ( state = [], action ) => {
+const editEmail: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_EDIT_EMAIL' ) {
 		return action.email;
 	}

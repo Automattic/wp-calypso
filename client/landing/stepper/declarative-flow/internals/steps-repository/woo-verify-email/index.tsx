@@ -1,11 +1,13 @@
 import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { UserData } from 'calypso/lib/user/user';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -17,18 +19,36 @@ function redirect( to: string ) {
 }
 
 const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
-	const { goBack } = navigation;
+	const { goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const user = useSelector( getCurrentUser ) as UserData;
+	const { setEditEmail } = useDispatch( ONBOARD_STORE );
+	const editEmail = useSelect( ( select ) => select( ONBOARD_STORE ).getEditEmail() );
 
 	function getContent() {
 		return (
 			<div className="woo-verify-email__content">
-				<Button className="woo-verify-email__button" primary>
+				<Button
+					className="woo-verify-email__button"
+					primary
+					onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
+						e.preventDefault();
+
+						setEditEmail( '' );
+					} }
+				>
 					{ __( 'Resend verification email' ) }
 				</Button>
 				<br />
-				<Button className="woo-verify-email__link" borderless href="#">
+				<Button
+					className="woo-verify-email__link"
+					borderless
+					onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
+						e.preventDefault();
+
+						submit?.( {}, 'edit-email' );
+					} }
+				>
 					{ __( 'Edit email address' ) }
 				</Button>
 			</div>
@@ -52,7 +72,7 @@ const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
 			__(
 				'A verification email has been sent to %(userEmail)s. <br />Please continue your journey from the link sent.'
 			),
-			{ userEmail }
+			{ userEmail: editEmail.length > 0 ? editEmail : userEmail }
 		),
 		{ br: createElement( 'br' ) }
 	);

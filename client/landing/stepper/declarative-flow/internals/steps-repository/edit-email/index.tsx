@@ -1,6 +1,6 @@
 import { FormInputValidation } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import emailValidator from 'email-validator';
 import React, { FormEvent, ReactElement, useState } from 'react';
@@ -19,16 +19,16 @@ import './style.scss';
 type FormFields = 'email' | 'password';
 
 const EditEmail: Step = function EditEmail( { navigation } ) {
-	const { goBack } = navigation;
+	const { goBack, submit } = navigation;
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const { __ } = useI18n();
 	const [ errors, setErrors ] = useState( {} as Record< FormFields, string > );
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const { setEditEmail } = useDispatch( ONBOARD_STORE );
 	const [ email, setEmail ] = useState( '' );
-	const [ submitted, setSubmitted ] = useState( false );
 	const [ sendError, setSendError ] = useState( '' );
 
-	const headerText = __( 'Enter a new email address, and your current password' );
+	const headerText = __( 'Enter a new email address' );
 
 	const validate = (): boolean => {
 		const errors = {} as Record< FormFields, string >;
@@ -55,7 +55,9 @@ const EditEmail: Step = function EditEmail( { navigation } ) {
 				user_email: email,
 			} );
 
-			setSubmitted( true );
+			await setEditEmail( email );
+
+			submit?.();
 		} catch ( err: any ) {
 			setSendError( err.message );
 		}
@@ -81,24 +83,15 @@ const EditEmail: Step = function EditEmail( { navigation } ) {
 					</FormFieldset>
 
 					<ActionSection>
-						{ ! submitted && (
-							<StyledNextButton
-								type="submit"
-								disabled={ Object.values( errors ).filter( Boolean ).length > 0 }
-							>
-								{ __( 'Send a verification to my new email' ) }
-							</StyledNextButton>
-						) }
+						<StyledNextButton
+							type="submit"
+							disabled={ Object.values( errors ).filter( Boolean ).length > 0 }
+						>
+							{ __( 'Send a verification to my new email' ) }
+						</StyledNextButton>
 						{ sendError && (
 							<Notice className="edit-email__error" showDismiss={ false } status="is-error">
 								{ sendError }
-							</Notice>
-						) }
-						{ submitted && (
-							<Notice className="edit-email__notice" showDismiss={ false } status="is-info">
-								{ __(
-									'Your email change is pending. Please take a moment to check for an email with the subject "[WordPress.com] New Email Address" to confirm your change.'
-								) }
 							</Notice>
 						) }
 					</ActionSection>
