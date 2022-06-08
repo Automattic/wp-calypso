@@ -20,7 +20,7 @@
 	"dependencies": {
 		"@types/totp-generator": "^0.0.3",
 		"mailosaur": "^7.3.1",
-		"playwright": "^1.19.2",
+		"playwright": "^1.22.2",
 		"totp-generator": "^0.0.12"
 	},
 	"devDependencies": {
