@@ -1,7 +1,6 @@
 import { Spinner } from '@automattic/components';
-import { localize, translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import page from 'page';
-import PropTypes from 'prop-types';
 import QRCode from 'qrcode.react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -10,23 +9,26 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/constants';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
+import type { ResponseCart } from '@automattic/shopping-cart';
+import type { LocalizeProps } from 'i18n-calypso';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-export class WechatPaymentQRCode extends Component {
-	static propTypes = {
-		className: PropTypes.string,
-		orderId: PropTypes.number.isRequired,
-		redirectUrl: PropTypes.string.isRequired,
-		cart: PropTypes.object.isRequired,
-		slug: PropTypes.string,
-		reset: PropTypes.func.isRequired,
-		transactionError: PropTypes.object,
-		transactionStatus: PropTypes.string,
-		transactionReceiptId: PropTypes.number,
-		showErrorNotice: PropTypes.func,
-	};
+interface WeChatQRProps {
+	className?: string;
+	orderId: number;
+	redirectUrl: string;
+	cart: ResponseCart;
+	slug?: string;
+	reset: () => void;
+	transactionError?: boolean;
+	transactionStatus?: string;
+	transactionReceiptId?: number;
+	showErrorNotice: typeof errorNotice;
+	translate: LocalizeProps[ 'translate' ];
+}
 
+export class WeChatPaymentQRcode extends Component< WeChatQRProps > {
 	componentDidUpdate() {
 		const {
 			slug,
@@ -46,7 +48,7 @@ export class WechatPaymentQRCode extends Component {
 			reset();
 
 			showErrorNotice(
-				translate( "Sorry, we couldn't process your payment. Please try again later." ),
+				this.props.translate( "Sorry, we couldn't process your payment. Please try again later." ),
 				{
 					displayOnNextPage: true,
 				}
@@ -56,9 +58,12 @@ export class WechatPaymentQRCode extends Component {
 		} else if ( transactionStatus === ORDER_TRANSACTION_STATUS.FAILURE ) {
 			reset();
 
-			showErrorNotice( translate( 'Payment failed. Please check your account and try again.' ), {
-				displayOnNextPage: true,
-			} );
+			showErrorNotice(
+				this.props.translate( 'Payment failed. Please check your account and try again.' ),
+				{
+					displayOnNextPage: true,
+				}
+			);
 
 			page( slug ? `/checkout/${ slug }` : '/plans' );
 		} else if ( transactionStatus === ORDER_TRANSACTION_STATUS.SUCCESS ) {
@@ -82,7 +87,7 @@ export class WechatPaymentQRCode extends Component {
 				<QueryOrderTransaction orderId={ this.props.orderId } pollIntervalMs={ 2000 } />
 
 				<p className="checkout__wechat-qrcode-instruction">
-					{ translate(
+					{ this.props.translate(
 						'Please scan the barcode using the WeChat Pay application to confirm your %(price)s payment.',
 						{
 							args: { price: this.props.cart.total_cost_display },
@@ -98,7 +103,7 @@ export class WechatPaymentQRCode extends Component {
 				<Spinner className="checkout__wechat-qrcode-spinner" size={ 30 } />
 
 				<p className="checkout__wechat-qrcode-redirect supporting-text">
-					{ translate(
+					{ this.props.translate(
 						'On mobile? To open and pay with the WeChat Pay app directly, {{a}}click here{{/a}}.',
 						{
 							components: { a: <a href={ this.props.redirectUrl } /> },
@@ -113,7 +118,13 @@ export class WechatPaymentQRCode extends Component {
 }
 
 export default connect(
-	( storeState, ownProps ) => {
+	(
+		storeState,
+		ownProps: Omit<
+			WeChatQRProps,
+			'showErrorNotice' | 'transactionReceiptId' | 'transactionStatus' | 'transactionError'
+		>
+	) => {
 		const { receiptId, processingStatus } =
 			getOrderTransaction( storeState, ownProps.orderId ) || {};
 		const transactionError = getOrderTransactionError( storeState, ownProps.orderId );
@@ -121,12 +132,10 @@ export default connect(
 		return {
 			transactionReceiptId: receiptId,
 			transactionStatus: processingStatus,
-			transactionError: transactionError,
+			transactionError: !! transactionError,
 		};
 	},
 	{
 		showErrorNotice: errorNotice,
 	}
-)( localize( WechatPaymentQRCode ) );
-
-/* eslint-enable wpcalypso/jsx-classname-namespace */
+)( localize( WeChatPaymentQRcode ) );
