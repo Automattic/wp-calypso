@@ -41,16 +41,11 @@ class StartOver extends Component {
 		}
 	}
 
-	getCheckboxContent( hasAtomicTransferCompleted = false ) {
-		const { selectedSiteSlug, translate } = this.props;
-		const {
-			atomicRevertCheckOne,
-			atomicRevertCheckTwo,
-			simpleRevertCheckOne,
-			simpleRevertCheckTwo,
-		} = this.state;
+	getCheckboxContent() {
+		const { selectedSiteSlug, isAtomicSite, translate } = this.props;
+		const { checkTwo, checkOne } = this.state;
 
-		if ( hasAtomicTransferCompleted ) {
+		if ( isAtomicSite ) {
 			return (
 				<>
 					<CheckboxControl
@@ -58,15 +53,15 @@ class StartOver extends Component {
 						label={ translate(
 							'Any themes/plugins you have installed on the site will be removed, along with their data.'
 						) }
-						checked={ atomicRevertCheckOne }
+						checked={ checkOne }
 						onChange={ ( isChecked ) => this.setState( { checkOne: isChecked } ) }
 					/>
 					<CheckboxControl
 						className="start-over__checkbox-container"
 						label={ translate(
-							'Your site will return to its original settings and theme right before the first plugin or custom theme was installed.'
+							"I understand that without taking a backup, my site's data such as posts, pages, media, comments, tags, and themes are permanently deleted and cannot be retrieved."
 						) }
-						checked={ atomicRevertCheckTwo }
+						checked={ checkTwo }
 						onChange={ ( isChecked ) => this.setState( { checkTwo: isChecked } ) }
 					/>
 				</>
@@ -87,15 +82,15 @@ class StartOver extends Component {
 							},
 						}
 					) }
-					checked={ simpleRevertCheckOne }
+					checked={ checkOne }
 					onChange={ ( isChecked ) => this.setState( { checkOne: isChecked } ) }
 				/>
 				<CheckboxControl
 					className="start-over__checkbox-container"
 					label={ translate(
-						'I understand that there is no way to retrieve my data unless I have downloaded a backup.'
+						"I understand that without taking a backup, my site's data is permanently deleted and cannot be retrieved."
 					) }
-					checked={ simpleRevertCheckTwo }
+					checked={ checkTwo }
 					onChange={ ( isChecked ) => this.setState( { checkTwo: isChecked } ) }
 				/>
 			</>
@@ -133,16 +128,17 @@ class StartOver extends Component {
 		}
 	};
 
-	getSubheaderText( hasAtomicTransferCompleted = false ) {
-		const { atomicTransfer, moment, translate } = this.props;
+	getSubheaderText() {
+		const { atomicTransfer, isAtomicSite, moment, translate } = this.props;
 		const atomicTransferDate = moment( atomicTransfer.created_at ).format( 'LL' );
 
-		if ( ! hasAtomicTransferCompleted ) {
+		if ( ! isAtomicSite ) {
 			return;
 		}
 
 		return translate(
-			'After emptying your site, we will return your site back to the point when you installed your first plugin or custom theme or activated hosting features on {{strong}}%(atomicTransferDate)s{{/strong}}. All your posts, pages and media will be deleted.',
+			'After emptying your site, we will return your site back to the point when you installed your first plugin or custom theme or activated ' +
+				'hosting features on {{strong}}%(atomicTransferDate)s{{/strong}}. All your posts, pages and media will be deleted.',
 			{
 				args: { atomicTransferDate },
 				components: {
@@ -154,10 +150,9 @@ class StartOver extends Component {
 	}
 
 	renderEmptySiteConfirmationContent() {
-		const { translate, selectedSiteSlug, atomicTransfer } = this.props;
+		const { translate, selectedSiteSlug } = this.props;
 		const { checkOne, checkTwo, isEmptyButtonBusy } = this.state;
 		const shouldEnableButton = checkOne && checkTwo;
-		const hasAtomicTransferCompleted = Object.keys( atomicTransfer ).length > 0;
 
 		return (
 			<div className=" main main-column start-over start-over__confirm">
@@ -165,7 +160,7 @@ class StartOver extends Component {
 					<FormattedHeader
 						brandFont
 						headerText={ translate( 'Proceed with caution - this will delete all your content' ) }
-						subHeaderText={ this.getSubheaderText( hasAtomicTransferCompleted ) }
+						subHeaderText={ this.getSubheaderText() }
 					/>
 					<p>
 						{ translate(
@@ -173,13 +168,13 @@ class StartOver extends Component {
 							{ components: { strong: <strong /> } }
 						) }
 					</p>
-					{ this.getCheckboxContent( hasAtomicTransferCompleted ) }
+					{ this.getCheckboxContent() }
 
 					<div className="start-over__backups">
 						<h4>{ translate( 'Would you like to download the backup of your site?' ) }</h4>
 						<p>
 							{ translate(
-								'If you change your mind later or want to secure your data, you can download a backup.'
+								'It is recommended that you backup your current data, so that you can restore it if you change your mind later.'
 							) }
 						</p>
 						<ExternalLink icon href={ `/backup/${ selectedSiteSlug }` }>
