@@ -14,6 +14,7 @@ import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItemEnhanced from 'calypso/components/vertical-nav/item/enhanced';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	TITAN_CONTROL_PANEL_CONTEXT_CONFIGURE_CATCH_ALL_EMAIL,
@@ -83,6 +84,11 @@ class TitanManageMailboxes extends Component {
 		disabled: isDisabled,
 		materialIcon,
 		path: this.getPath( context ),
+		onClick: () => {
+			recordTracksEvent( 'calypso_email_management_titan_manage_mailboxes_link_click', {
+				context,
+			} );
+		},
 		text,
 	} );
 

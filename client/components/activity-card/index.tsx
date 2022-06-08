@@ -54,12 +54,12 @@ const ActivityCard: React.FC< OwnProps > = ( { className, summarize, shareable, 
 	const backupTimeDisplay = useBackupTimeDisplay( activity.activityTs );
 
 	const showStreamsContent = showContent && activity.streams;
-	const hasActivityFailed = activity.activityStatus === 'error';
 
 	return (
 		<div
 			className={ classnames( className, 'activity-card', {
-				'with-error': hasActivityFailed,
+				'with-error': 'error' === activity.activityStatus,
+				'with-warning': 'warning' === activity.activityStatus,
 			} ) }
 		>
 			<QueryRewindState siteId={ siteId } />

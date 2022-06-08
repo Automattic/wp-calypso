@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/i18n-utils",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "WordPress.com i18n utils.",
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso",
@@ -16,6 +16,9 @@
 		"directory": "packages/i18n-utils"
 	},
 	"author": "Automattic Inc.",
+	"publishConfig": {
+		"access": "public"
+	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
@@ -26,6 +29,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-url": "workspace:^",
+		"@automattic/languages": "workspace:^",
 		"@wordpress/compose": "^5.7.0",
 		"@wordpress/i18n": "^4.9.0",
 		"react": "^17.0.2",
