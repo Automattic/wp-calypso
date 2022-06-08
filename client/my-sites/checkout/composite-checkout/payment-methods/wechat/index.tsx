@@ -21,7 +21,6 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import WeChatPaymentQRcodeUnstyled from './wechat-payment-qrcode';
-import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { LineItem, ProcessPayment } from '@automattic/composite-checkout';
 import type {
 	PaymentMethodStore,
@@ -30,7 +29,6 @@ import type {
 	StoreActions,
 	StoreState,
 } from '@automattic/wpcom-checkout';
-import type { Stripe } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'calypso:composite-checkout:wechat-payment-method' );
 
@@ -82,28 +80,17 @@ export function createWeChatPaymentMethodStore(): WeChatStore {
 
 export function createWeChatMethod( {
 	store,
-	stripe,
-	stripeConfiguration,
 	siteSlug,
 }: {
 	store: WeChatStore;
-	stripe: Stripe;
-	stripeConfiguration: StripeConfiguration;
-	siteSlug: string;
+	siteSlug?: string;
 } ) {
 	return {
 		id: 'wechat',
 		paymentProcessorId: 'wechat',
 		label: <WeChatLabel />,
 		activeContent: <WeChatFields />,
-		submitButton: (
-			<WeChatPayButton
-				store={ store }
-				stripe={ stripe }
-				stripeConfiguration={ stripeConfiguration }
-				siteSlug={ siteSlug }
-			/>
-		),
+		submitButton: <WeChatPayButton store={ store } siteSlug={ siteSlug } />,
 		inactiveContent: <WeChatSummary />,
 		getAriaLabel: () => 'WeChat Pay',
 	};
@@ -187,16 +174,12 @@ function WeChatPayButton( {
 	disabled,
 	onClick,
 	store,
-	stripe,
-	stripeConfiguration,
 	siteSlug,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: WeChatStore;
-	stripe: Stripe;
-	stripeConfiguration: StripeConfiguration;
-	siteSlug: string;
+	siteSlug?: string;
 } ) {
 	const total = useTotal();
 	const { formStatus } = useFormStatus();
@@ -240,9 +223,7 @@ function WeChatPayButton( {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting wechat payment' );
 					onClick( {
-						stripe,
 						name: customerName?.value,
-						stripeConfiguration,
 					} ).then( ( processorResponse ) => {
 						if ( processorResponse?.type === PaymentProcessorResponseType.MANUAL ) {
 							setStripeResponseWithCode( processorResponse.payload as WeChatStripeResponse );
