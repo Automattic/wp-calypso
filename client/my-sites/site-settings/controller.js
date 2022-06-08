@@ -66,7 +66,7 @@ export function disconnectSiteConfirm( context, next ) {
 }
 
 export function startOver( context, next ) {
-	context.primary = <StartOver path={ context.path } />;
+	context.primary = <StartOver path={ context.path } queryParams={ context.query } />;
 	next();
 }
 

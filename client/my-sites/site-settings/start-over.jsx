@@ -3,12 +3,17 @@ import { CheckboxControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import ActionPanel from 'calypso/components/action-panel';
+import ActionPanelBody from 'calypso/components/action-panel/body';
+import ActionPanelFigure from 'calypso/components/action-panel/figure';
+import ActionPanelTitle from 'calypso/components/action-panel/title';
 import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import wpcom from 'calypso/lib/wp';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -25,10 +30,14 @@ class StartOver extends Component {
 	};
 
 	componentDidMount() {
-		const { siteId } = this.props;
+		const { siteId, translate } = this.props;
 
 		if ( this.props.isAtomicSite && siteId ) {
 			this.props.fetchAtomicTransfer( siteId );
+		}
+
+		if ( this.props.queryParams?.empty === 'success' ) {
+			this.props.successNotice( translate( "Site's contents successfully deleted." ) );
 		}
 	}
 
@@ -93,26 +102,35 @@ class StartOver extends Component {
 		);
 	}
 
-	clickEmptySiteButton = async () => {
+	clickEmptySiteButton = async ( event ) => {
+		event.preventDefault();
 		const { siteId } = this.props;
 		this.setState( { isEmptyButtonBusy: true } );
 		const params = { site_id: siteId };
 
-		const response = await wpcom.req.post(
-			{
-				apiNamespace: 'wpcom/v2',
-				path: '/empty-site',
-			},
-			params
-		);
-		if ( ! response.success ) {
-			this.setState( { isEmptyButtonBusy: false } );
-			// Set notice about error
-		}
+		try {
+			const response = await wpcom.req.post(
+				{
+					apiNamespace: 'wpcom/v2',
+					path: '/empty-site',
+				},
+				params
+			);
 
-		const currentPageUrl = new URL( document.location );
-		currentPageUrl.searchParams.append( 'empty', 'success' );
-		window.location.href = currentPageUrl.toString();
+			if ( ! response?.success ) {
+				throw new Error( 'Failed to empty site' );
+			}
+
+			const currentPageUrl = new URL( document.location );
+			currentPageUrl.searchParams.append( 'empty', 'success' );
+			window.location.href = currentPageUrl.toString();
+		} catch ( error ) {
+			this.setState( { isEmptyButtonBusy: false } );
+			this.props.errorNotice(
+				this.props.translate( 'Looks like something went wrong. Try again or contact support.' )
+			);
+			throw error;
+		}
 	};
 
 	getSubheaderText( hasAtomicTransferCompleted = false ) {
@@ -183,8 +201,8 @@ class StartOver extends Component {
 		);
 	}
 
-	render() {
-		const { selectedSiteSlug, translate } = this.props;
+	renderSuccessContent() {
+		const { translate } = this.props;
 
 		return (
 			<>
@@ -192,9 +210,67 @@ class StartOver extends Component {
 					className="main main-column start-over" // eslint-disable-line wpcalypso/jsx-classname-namespace
 					role="main"
 				>
-					<HeaderCake backHref={ '/settings/general/' + selectedSiteSlug }>Start Over</HeaderCake>
+					<HeaderCake backHref={ '/settings/general/' + this.props.selectedSiteSlug }>
+						{ translate( 'Start Over' ) }
+					</HeaderCake>
+					<ActionPanel>
+						<ActionPanelBody>
+							<ActionPanelFigure inlineBodyText={ true }>
+								<img
+									src="/calypso/images/wordpress/logo-stars.svg"
+									alt=""
+									width="170"
+									height="143"
+								/>
+							</ActionPanelFigure>
+							<ActionPanelTitle>
+								{ translate( 'The contents of your site have been deleted.' ) }
+							</ActionPanelTitle>
+							<p>
+								{ translate(
+									"Now that all your site's contents have been deleted, go ahead and start afresh! We can't wait to see what you will create!"
+								) }
+							</p>
+							<p>
+								{ translate(
+									'To help you get started on the right foot, check out this helpful video tutorial.'
+								) }
+							</p>
+							<p>
+								<iframe
+									width="560"
+									height="315"
+									src="https://www.youtube.com/embed/WGUGBPRLtgU"
+									title="YouTube video player"
+									frameborder="0"
+									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+									allowfullscreen
+								></iframe>
+							</p>
+						</ActionPanelBody>
+					</ActionPanel>
+				</div>
+			</>
+		);
+	}
+
+	render() {
+		const { selectedSiteSlug, translate } = this.props;
+
+		if ( this.props.queryParams?.empty === 'success' ) {
+			return this.renderSuccessContent();
+		}
+
+		return (
+			<>
+				<div
+					className="main main-column start-over" // eslint-disable-line wpcalypso/jsx-classname-namespace
+					role="main"
+				>
+					<HeaderCake backHref={ '/settings/general/' + selectedSiteSlug }>
+						{ translate( 'Start Over' ) }
+					</HeaderCake>
 					<Card>
-						{ /* <FormattedHeader brandFont headerText={ translate( 'Start Over' ) } /> */ }
 						<p>
 							{ translate(
 								"If you want a site but don't want any of the posts and pages you have now, " +
@@ -226,5 +302,5 @@ export default connect(
 			siteId,
 		};
 	},
-	{ fetchAtomicTransfer }
+	{ fetchAtomicTransfer, errorNotice, successNotice }
 )( localize( withLocalizedMoment( StartOver ) ) );
