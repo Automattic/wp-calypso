@@ -40,7 +40,7 @@
 		"help": true,
 		"importers/substack": true,
 		"inline-help": true,
-		"jetpack/agency-dashboard": false,
+		"jetpack/agency-dashboard": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/features-section/simple": true,
 		"jetpack/features-section/atomic": true,
