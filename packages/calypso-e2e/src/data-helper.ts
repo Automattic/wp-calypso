@@ -1,6 +1,7 @@
 import phrase from 'asana-phrase';
 import envVariables from './env-variables';
 import { SecretsManager, TestAccountName } from './secrets';
+import type { Secrets } from './secrets';
 
 export type DateFormat = 'ISO';
 
@@ -26,7 +27,44 @@ export interface RegistrarDetails {
 	postalCode: string;
 }
 
+export interface NewTestUser {
+	username: string;
+	password: string;
+	email: string;
+	siteName: string;
+}
+
 export type CreditCardIssuers = 'Visa';
+
+/**
+ * Returns a set of data required to sign up
+ * as a new user and create a new site.
+ *
+ * Note that this function only generates the test data;
+ * it does not actually create the test user.
+ *
+ * @returns {NewTestUser} Data for new test user.
+ */
+export function getNewTestUser( {
+	inbox = 'defaultUserInboxId',
+	usernamePrefix = '',
+}: { inbox?: keyof Secrets[ 'mailosaur' ]; usernamePrefix?: string } = {} ): NewTestUser {
+	const username = getUsername( { prefix: usernamePrefix } );
+	const password = SecretsManager.secrets.passwordForNewTestSignUps;
+
+	const email = getTestEmailAddress( {
+		inboxId: SecretsManager.secrets.mailosaur[ inbox ],
+		prefix: username,
+	} );
+	const siteName = getBlogName();
+
+	return {
+		username: username,
+		password: password,
+		email: email,
+		siteName: siteName,
+	};
+}
 
 /**
  * Generate a pseudo-random integer, inclusive on the lower bound and exclusive on the upper bound.
@@ -68,7 +106,7 @@ export function getTimestamp(): string {
 export function getUsername( { prefix = '' }: { prefix?: string } = {} ): string {
 	const timestamp = getTimestamp();
 	const randomNumber = getRandomInteger( 0, 999 );
-	return `e2eflowtesting${ prefix }-${ timestamp }-${ randomNumber }`;
+	return `e2eflowtesting${ prefix }${ timestamp }${ randomNumber }`;
 }
 
 /**
