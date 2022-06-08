@@ -17,7 +17,7 @@ exports[`Marketplace SignupSuccess should render the page as expected 1`] = `
   <EmotionGlobal
     styles={
       Object {
-        "map": "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNpZ251cC1zdWNjZXNzLnRzeCJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFrQmdCIiwiZmlsZSI6InNpZ251cC1zdWNjZXNzLnRzeCIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IFRoZW1lUHJvdmlkZXIsIEdsb2JhbCwgY3NzIH0gZnJvbSAnQGVtb3Rpb24vcmVhY3QnO1xuaW1wb3J0IHsgQnV0dG9uIH0gZnJvbSAnQHdvcmRwcmVzcy9jb21wb25lbnRzJztcbmltcG9ydCB7IHVzZVRyYW5zbGF0ZSB9IGZyb20gJ2kxOG4tY2FseXBzbyc7XG5pbXBvcnQgY2hlY2tDaXJjbGVJbWFnZSBmcm9tICdjYWx5cHNvL2Fzc2V0cy9pbWFnZXMvbWFya2V0cGxhY2UvY2hlY2stY2lyY2xlLnBuZyc7XG5pbXBvcnQgc2V0dGluZ3NJbWFnZSBmcm9tICdjYWx5cHNvL2Fzc2V0cy9pbWFnZXMvbWFya2V0cGxhY2Uvc2V0dGluZ3MucG5nJztcbmltcG9ydCBzaG9wcGluZ0NhcnRJbWFnZSBmcm9tICdjYWx5cHNvL2Fzc2V0cy9pbWFnZXMvbWFya2V0cGxhY2Uvc2hvcHBpbmctY2FydC5wbmcnO1xuaW1wb3J0IHN1Ym1pc3Npb25TdWNjZXNzSW1hZ2UgZnJvbSAnY2FseXBzby9hc3NldHMvaW1hZ2VzL21hcmtldHBsYWNlL3N1Ym1pc3Npb24tc3VjY2Vzcy5wbmcnO1xuaW1wb3J0IHRoZW1lIGZyb20gJ2NhbHlwc28vbXktc2l0ZXMvbWFya2V0cGxhY2UvdGhlbWUnO1xuaW1wb3J0IE1hc3RlcmJhckxvZ28gZnJvbSAnLi4vLi4vY29tcG9uZW50cy9tYXN0ZXJiYXItbG9nbyc7XG5pbXBvcnQgJy4vc3R5bGUuc2Nzcyc7XG5cbmNvbnN0IFNpZ251cFN1Y2Nlc3MgPSAoKSA9PiB7XG5cdGNvbnN0IHRyYW5zbGF0ZSA9IHVzZVRyYW5zbGF0ZSgpO1xuXG5cdHJldHVybiAoXG5cdFx0PFRoZW1lUHJvdmlkZXIgdGhlbWU9eyB0aGVtZSB9PlxuXHRcdFx0eyAvKiBVc2luZyBHbG9iYWwgdG8gb3ZlcnJpZGUgR2xvYmFsIG1hc3RlcmJhciBoZWlnaHQgKi8gfVxuXHRcdFx0PEdsb2JhbFxuXHRcdFx0XHRzdHlsZXM9eyBjc3NgXG5cdFx0XHRcdFx0Ym9keS5pcy1zZWN0aW9uLW1hcmtldHBsYWNlIHtcblx0XHRcdFx0XHRcdC0tbWFzdGVyYmFyLWhlaWdodDogNzJweDtcblx0XHRcdFx0XHR9XG5cdFx0XHRcdGAgfVxuXHRcdFx0Lz5cblx0XHRcdDxNYXN0ZXJiYXJMb2dvIC8+XG5cdFx0XHQ8ZGl2IGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzXCI+XG5cdFx0XHRcdDxkaXYgY2xhc3NOYW1lPVwic2lnbnVwLXN1Y2Nlc3NfX2hlYWRlclwiPlxuXHRcdFx0XHRcdDxpbWcgc3JjPXsgc3VibWlzc2lvblN1Y2Nlc3NJbWFnZSB9IGFsdD1cIlN1Ym1pc3Npb24gc3VjY2Vzc1wiIC8+XG5cdFx0XHRcdFx0PGgxIGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19oZWFkZXItdGl0bGUgd3AtYnJhbmQtZm9udFwiPlxuXHRcdFx0XHRcdFx0eyB0cmFuc2xhdGUoICdXZeKAmWxsIGJlIGluIHRvdWNoJyApIH1cblx0XHRcdFx0XHQ8L2gxPlxuXHRcdFx0XHRcdDxwPlxuXHRcdFx0XHRcdFx0eyB0cmFuc2xhdGUoXG5cdFx0XHRcdFx0XHRcdCdUaGFuayB5b3UgZm9yIGFwcGx5IHRvIGpvaW4gdGhlIFdvcmRQcmVzcy5jb20gbWFya2V0cGxhY2UuIFdl4oCZbGwgYmUgaW4gdG91Y2ggd2l0aCB5b3UgdmVyeSBzb29uIHRvIGRpc2N1c3MgbmV4dCBzdGVwcy4nXG5cdFx0XHRcdFx0XHQpIH1cblx0XHRcdFx0XHQ8L3A+XG5cdFx0XHRcdDwvZGl2PlxuXHRcdFx0XHQ8ZGl2IGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19ib2R5XCI+XG5cdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93XCI+XG5cdFx0XHRcdFx0XHQ8ZGl2IGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19yb3ctaWNvblwiPlxuXHRcdFx0XHRcdFx0XHQ8aW1nIHNyYz17IGNoZWNrQ2lyY2xlSW1hZ2UgfSBhbHQ9XCJcIiAvPlxuXHRcdFx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdFx0XHQ8ZGl2IGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19yb3ctY29udGVudFwiPlxuXHRcdFx0XHRcdFx0XHQ8aDI+eyB0cmFuc2xhdGUoICdMZWFybiBNb3JlJyApIH08L2gyPlxuXHRcdFx0XHRcdFx0XHQ8cD57IHRyYW5zbGF0ZSggJ1JlYWQgbW9yZSBhYm91dCBzZWxsaW5nIG9uIHRoZSBXb3JkUHJlc3MuY29tIG1hcmtldHBsYWNlLicgKSB9PC9wPlxuXHRcdFx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdFx0XHQ8QnV0dG9uIGlzU2Vjb25kYXJ5IGhyZWY9XCJodHRwczovL2RldmVsb3Blci53b3JkcHJlc3MuY29tL3dvcmRwcmVzcy1jb20tbWFya2V0cGxhY2UvXCI+XG5cdFx0XHRcdFx0XHRcdHsgdHJhbnNsYXRlKCAnQ29udGludWUnICkgfVxuXHRcdFx0XHRcdFx0PC9CdXR0b24+XG5cdFx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdFx0PGhyIC8+XG5cdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93XCI+XG5cdFx0XHRcdFx0XHQ8ZGl2IGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19yb3ctaWNvblwiPlxuXHRcdFx0XHRcdFx0XHQ8aW1nIHNyYz17IHNob3BwaW5nQ2FydEltYWdlIH0gYWx0PVwiXCIgLz5cblx0XHRcdFx0XHRcdDwvZGl2PlxuXHRcdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LWNvbnRlbnRcIj5cblx0XHRcdFx0XHRcdFx0PGgyPnsgdHJhbnNsYXRlKCAnVmlldyB0aGUgbWFya2V0cGxhY2UnICkgfTwvaDI+XG5cdFx0XHRcdFx0XHRcdDxwPnsgdHJhbnNsYXRlKCAnU2lnbiBpbiB0byBzZWUgd2hhdCB0aGUgbWFya2V0cGxhY2UgaGFzIHRvIG9mZmVyLicgKSB9PC9wPlxuXHRcdFx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdFx0XHQ8QnV0dG9uIGlzU2Vjb25kYXJ5IGhyZWY9XCIvcGx1Z2luc1wiPlxuXHRcdFx0XHRcdFx0XHR7IHRyYW5zbGF0ZSggJ0NvbnRpbnVlJyApIH1cblx0XHRcdFx0XHRcdDwvQnV0dG9uPlxuXHRcdFx0XHRcdDwvZGl2PlxuXHRcdFx0XHRcdDxociAvPlxuXHRcdFx0XHRcdDxkaXYgY2xhc3NOYW1lPVwic2lnbnVwLXN1Y2Nlc3NfX3Jvd1wiPlxuXHRcdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LWljb25cIj5cblx0XHRcdFx0XHRcdFx0PGltZyBzcmM9eyBzZXR0aW5nc0ltYWdlIH0gYWx0PVwiXCIgLz5cblx0XHRcdFx0XHRcdDwvZGl2PlxuXHRcdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LWNvbnRlbnRcIj5cblx0XHRcdFx0XHRcdFx0PGgyPnsgdHJhbnNsYXRlKCAnRGV2ZWxvcGVyIFBhZ2UnICkgfTwvaDI+XG5cdFx0XHRcdFx0XHRcdDxwPnsgdHJhbnNsYXRlKCAnTGVhcm4gbW9yZSBhYm91dCBidWlsZGluZyBhIFdvcmRQcmVzcy5jb20gaW50ZWdyYXRpb24uJyApIH08L3A+XG5cdFx0XHRcdFx0XHQ8L2Rpdj5cblx0XHRcdFx0XHRcdDxCdXR0b24gaXNTZWNvbmRhcnkgaHJlZj1cImh0dHBzOi8vZGV2ZWxvcGVyLndvcmRwcmVzcy5jb21cIj5cblx0XHRcdFx0XHRcdFx0eyB0cmFuc2xhdGUoICdDb250aW51ZScgKSB9XG5cdFx0XHRcdFx0XHQ8L0J1dHRvbj5cblx0XHRcdFx0XHQ8L2Rpdj5cblx0XHRcdFx0PC9kaXY+XG5cdFx0XHQ8L2Rpdj5cblx0XHRcdDxkaXYgY2xhc3NOYW1lPVwic2lnbnVwLXN1Y2Nlc3NfX2Zvb3RlclwiPlxuXHRcdFx0XHQ8cD5Db250YWN0IG91ciB0ZWFtcyBkaXJlY3RseTo8L3A+XG5cdFx0XHRcdDxwIGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19mb290ZXItY29udGFjdFwiPlxuXHRcdFx0XHRcdDxhIGhyZWY9XCJodHRwczovL3dwdmlwLmNvbS8/cmVmPXBhcnRuZXJzLWxwXCI+V29yZFByZXNzLmNvbSBWSVA8L2E+LHsgJyAnIH1cblx0XHRcdFx0XHQ8YSBocmVmPVwiaHR0cHM6Ly9qZXRwYWNrLmNvbS9mb3IvaG9zdHMvP3JlZj1wYXJ0bmVycy1scFwiPkpldHBhY2s8L2E+LCBvcnsgJyAnIH1cblx0XHRcdFx0XHQ8YSBocmVmPVwiaHR0cHM6Ly93b29jb21tZXJjZS5jb20vP3JlZj1wYXJ0bmVycy1scFwiPldvb0NvbW1lcmNlPC9hPlxuXHRcdFx0XHQ8L3A+XG5cdFx0XHQ8L2Rpdj5cblx0XHQ8L1RoZW1lUHJvdmlkZXI+XG5cdCk7XG59O1xuXG5leHBvcnQgZGVmYXVsdCBTaWdudXBTdWNjZXNzO1xuIl19 */",
+        "map": "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNpZ251cC1zdWNjZXNzLnRzeCJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFrQmdCIiwiZmlsZSI6InNpZ251cC1zdWNjZXNzLnRzeCIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IFRoZW1lUHJvdmlkZXIsIEdsb2JhbCwgY3NzIH0gZnJvbSAnQGVtb3Rpb24vcmVhY3QnO1xuaW1wb3J0IHsgQnV0dG9uIH0gZnJvbSAnQHdvcmRwcmVzcy9jb21wb25lbnRzJztcbmltcG9ydCB7IHVzZVRyYW5zbGF0ZSB9IGZyb20gJ2kxOG4tY2FseXBzbyc7XG5pbXBvcnQgY2hlY2tDaXJjbGVJbWFnZSBmcm9tICdjYWx5cHNvL2Fzc2V0cy9pbWFnZXMvbWFya2V0cGxhY2UvY2hlY2stY2lyY2xlLWdyYXkuc3ZnJztcbmltcG9ydCBzZXR0aW5nc0ltYWdlIGZyb20gJ2NhbHlwc28vYXNzZXRzL2ltYWdlcy9tYXJrZXRwbGFjZS9zZXR0aW5ncy5zdmcnO1xuaW1wb3J0IHNob3BwaW5nQ2FydEltYWdlIGZyb20gJ2NhbHlwc28vYXNzZXRzL2ltYWdlcy9tYXJrZXRwbGFjZS9zaG9wcGluZy1jYXJ0LnN2Zyc7XG5pbXBvcnQgc3VibWlzc2lvblN1Y2Nlc3NJbWFnZSBmcm9tICdjYWx5cHNvL2Fzc2V0cy9pbWFnZXMvbWFya2V0cGxhY2Uvc3VibWlzc2lvbi1zdWNjZXNzLnBuZyc7XG5pbXBvcnQgdGhlbWUgZnJvbSAnY2FseXBzby9teS1zaXRlcy9tYXJrZXRwbGFjZS90aGVtZSc7XG5pbXBvcnQgTWFzdGVyYmFyTG9nbyBmcm9tICcuLi8uLi9jb21wb25lbnRzL21hc3RlcmJhci1sb2dvJztcbmltcG9ydCAnLi9zdHlsZS5zY3NzJztcblxuY29uc3QgU2lnbnVwU3VjY2VzcyA9ICgpID0+IHtcblx0Y29uc3QgdHJhbnNsYXRlID0gdXNlVHJhbnNsYXRlKCk7XG5cblx0cmV0dXJuIChcblx0XHQ8VGhlbWVQcm92aWRlciB0aGVtZT17IHRoZW1lIH0+XG5cdFx0XHR7IC8qIFVzaW5nIEdsb2JhbCB0byBvdmVycmlkZSBHbG9iYWwgbWFzdGVyYmFyIGhlaWdodCAqLyB9XG5cdFx0XHQ8R2xvYmFsXG5cdFx0XHRcdHN0eWxlcz17IGNzc2Bcblx0XHRcdFx0XHRib2R5LmlzLXNlY3Rpb24tbWFya2V0cGxhY2Uge1xuXHRcdFx0XHRcdFx0LS1tYXN0ZXJiYXItaGVpZ2h0OiA3MnB4O1xuXHRcdFx0XHRcdH1cblx0XHRcdFx0YCB9XG5cdFx0XHQvPlxuXHRcdFx0PE1hc3RlcmJhckxvZ28gLz5cblx0XHRcdDxkaXYgY2xhc3NOYW1lPVwic2lnbnVwLXN1Y2Nlc3NcIj5cblx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19faGVhZGVyXCI+XG5cdFx0XHRcdFx0PGltZyBzcmM9eyBzdWJtaXNzaW9uU3VjY2Vzc0ltYWdlIH0gYWx0PVwiU3VibWlzc2lvbiBzdWNjZXNzXCIgLz5cblx0XHRcdFx0XHQ8aDEgY2xhc3NOYW1lPVwic2lnbnVwLXN1Y2Nlc3NfX2hlYWRlci10aXRsZSB3cC1icmFuZC1mb250XCI+XG5cdFx0XHRcdFx0XHR7IHRyYW5zbGF0ZSggJ1dl4oCZbGwgYmUgaW4gdG91Y2gnICkgfVxuXHRcdFx0XHRcdDwvaDE+XG5cdFx0XHRcdFx0PHA+XG5cdFx0XHRcdFx0XHR7IHRyYW5zbGF0ZShcblx0XHRcdFx0XHRcdFx0J1RoYW5rIHlvdSBmb3IgYXBwbHkgdG8gam9pbiB0aGUgV29yZFByZXNzLmNvbSBtYXJrZXRwbGFjZS4gV2XigJlsbCBiZSBpbiB0b3VjaCB3aXRoIHlvdSB2ZXJ5IHNvb24gdG8gZGlzY3VzcyBuZXh0IHN0ZXBzLidcblx0XHRcdFx0XHRcdCkgfVxuXHRcdFx0XHRcdDwvcD5cblx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdDxkaXYgY2xhc3NOYW1lPVwic2lnbnVwLXN1Y2Nlc3NfX2JvZHlcIj5cblx0XHRcdFx0XHQ8ZGl2IGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19yb3dcIj5cblx0XHRcdFx0XHRcdDxpbWcgc3JjPXsgY2hlY2tDaXJjbGVJbWFnZSB9IGFsdD1cIlwiIGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19yb3ctaWNvblwiIC8+XG5cdFx0XHRcdFx0XHQ8ZGl2IGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19yb3ctd3JhcHBlclwiPlxuXHRcdFx0XHRcdFx0XHQ8ZGl2IGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19yb3ctY29udGVudFwiPlxuXHRcdFx0XHRcdFx0XHRcdDxoMj57IHRyYW5zbGF0ZSggJ0xlYXJuIE1vcmUnICkgfTwvaDI+XG5cdFx0XHRcdFx0XHRcdFx0PHA+eyB0cmFuc2xhdGUoICdSZWFkIG1vcmUgYWJvdXQgc2VsbGluZyBvbiB0aGUgV29yZFByZXNzLmNvbSBtYXJrZXRwbGFjZS4nICkgfTwvcD5cblx0XHRcdFx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdFx0XHRcdDxCdXR0b24gaXNTZWNvbmRhcnkgaHJlZj1cImh0dHBzOi8vZGV2ZWxvcGVyLndvcmRwcmVzcy5jb20vd29yZHByZXNzLWNvbS1tYXJrZXRwbGFjZS9cIj5cblx0XHRcdFx0XHRcdFx0XHR7IHRyYW5zbGF0ZSggJ0NvbnRpbnVlJyApIH1cblx0XHRcdFx0XHRcdFx0PC9CdXR0b24+XG5cdFx0XHRcdFx0XHQ8L2Rpdj5cblx0XHRcdFx0XHQ8L2Rpdj5cblx0XHRcdFx0XHQ8aHIgLz5cblx0XHRcdFx0XHQ8ZGl2IGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19yb3dcIj5cblx0XHRcdFx0XHRcdDxpbWcgc3JjPXsgc2hvcHBpbmdDYXJ0SW1hZ2UgfSBhbHQ9XCJcIiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LWljb25cIiAvPlxuXHRcdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LXdyYXBwZXJcIj5cblx0XHRcdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LWNvbnRlbnRcIj5cblx0XHRcdFx0XHRcdFx0XHQ8aDI+eyB0cmFuc2xhdGUoICdWaWV3IHRoZSBtYXJrZXRwbGFjZScgKSB9PC9oMj5cblx0XHRcdFx0XHRcdFx0XHQ8cD57IHRyYW5zbGF0ZSggJ1NpZ24gaW4gdG8gc2VlIHdoYXQgdGhlIG1hcmtldHBsYWNlIGhhcyB0byBvZmZlci4nICkgfTwvcD5cblx0XHRcdFx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdFx0XHRcdDxCdXR0b24gaXNTZWNvbmRhcnkgaHJlZj1cIi9wbHVnaW5zXCI+XG5cdFx0XHRcdFx0XHRcdFx0eyB0cmFuc2xhdGUoICdDb250aW51ZScgKSB9XG5cdFx0XHRcdFx0XHRcdDwvQnV0dG9uPlxuXHRcdFx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdFx0PGhyIC8+XG5cdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93XCI+XG5cdFx0XHRcdFx0XHQ8aW1nIHNyYz17IHNldHRpbmdzSW1hZ2UgfSBhbHQ9XCJcIiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LWljb25cIiAvPlxuXHRcdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LXdyYXBwZXJcIj5cblx0XHRcdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LWNvbnRlbnRcIj5cblx0XHRcdFx0XHRcdFx0XHQ8aDI+eyB0cmFuc2xhdGUoICdEZXZlbG9wZXIgUGFnZScgKSB9PC9oMj5cblx0XHRcdFx0XHRcdFx0XHQ8cD57IHRyYW5zbGF0ZSggJ0xlYXJuIG1vcmUgYWJvdXQgYnVpbGRpbmcgYSBXb3JkUHJlc3MuY29tIGludGVncmF0aW9uLicgKSB9PC9wPlxuXHRcdFx0XHRcdFx0XHQ8L2Rpdj5cblx0XHRcdFx0XHRcdFx0PEJ1dHRvbiBpc1NlY29uZGFyeSBocmVmPVwiaHR0cHM6Ly9kZXZlbG9wZXIud29yZHByZXNzLmNvbVwiPlxuXHRcdFx0XHRcdFx0XHRcdHsgdHJhbnNsYXRlKCAnQ29udGludWUnICkgfVxuXHRcdFx0XHRcdFx0XHQ8L0J1dHRvbj5cblx0XHRcdFx0XHRcdDwvZGl2PlxuXHRcdFx0XHRcdDwvZGl2PlxuXHRcdFx0XHQ8L2Rpdj5cblx0XHRcdDwvZGl2PlxuXHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fZm9vdGVyXCI+XG5cdFx0XHRcdDxwPkNvbnRhY3Qgb3VyIHRlYW1zIGRpcmVjdGx5OjwvcD5cblx0XHRcdFx0PHAgY2xhc3NOYW1lPVwic2lnbnVwLXN1Y2Nlc3NfX2Zvb3Rlci1jb250YWN0XCI+XG5cdFx0XHRcdFx0PGEgaHJlZj1cImh0dHBzOi8vd3B2aXAuY29tLz9yZWY9cGFydG5lcnMtbHBcIj5Xb3JkUHJlc3MuY29tIFZJUDwvYT4seyAnICcgfVxuXHRcdFx0XHRcdDxhIGhyZWY9XCJodHRwczovL2pldHBhY2suY29tL2Zvci9ob3N0cy8/cmVmPXBhcnRuZXJzLWxwXCI+SmV0cGFjazwvYT4sIG9yeyAnICcgfVxuXHRcdFx0XHRcdDxhIGhyZWY9XCJodHRwczovL3dvb2NvbW1lcmNlLmNvbS8/cmVmPXBhcnRuZXJzLWxwXCI+V29vQ29tbWVyY2U8L2E+XG5cdFx0XHRcdDwvcD5cblx0XHRcdDwvZGl2PlxuXHRcdDwvVGhlbWVQcm92aWRlcj5cblx0KTtcbn07XG5cbmV4cG9ydCBkZWZhdWx0IFNpZ251cFN1Y2Nlc3M7XG4iXX0= */",
         "name": "sizr66-SignupSuccess",
         "styles": "body.is-section-marketplace{--masterbar-height:72px;};label:SignupSuccess;",
         "toString": [Function],
@@ -50,88 +50,91 @@ exports[`Marketplace SignupSuccess should render the page as expected 1`] = `
       <div
         className="signup-success__row"
       >
-        <div
+        <img
+          alt=""
           className="signup-success__row-icon"
-        >
-          <img
-            alt=""
-            src="check-circle.png"
-          />
-        </div>
+          src="check-circle-gray.svg"
+        />
         <div
-          className="signup-success__row-content"
+          className="signup-success__row-wrapper"
         >
-          <h2>
-            Learn More
-          </h2>
-          <p>
-            Read more about selling on the WordPress.com marketplace.
-          </p>
+          <div
+            className="signup-success__row-content"
+          >
+            <h2>
+              Learn More
+            </h2>
+            <p>
+              Read more about selling on the WordPress.com marketplace.
+            </p>
+          </div>
+          <ForwardRef(Button)
+            href="https://developer.wordpress.com/wordpress-com-marketplace/"
+            isSecondary={true}
+          >
+            Continue
+          </ForwardRef(Button)>
         </div>
-        <ForwardRef(Button)
-          href="https://developer.wordpress.com/wordpress-com-marketplace/"
-          isSecondary={true}
-        >
-          Continue
-        </ForwardRef(Button)>
       </div>
       <hr />
       <div
         className="signup-success__row"
       >
-        <div
+        <img
+          alt=""
           className="signup-success__row-icon"
-        >
-          <img
-            alt=""
-            src="shopping-cart.png"
-          />
-        </div>
+          src="shopping-cart.svg"
+        />
         <div
-          className="signup-success__row-content"
+          className="signup-success__row-wrapper"
         >
-          <h2>
-            View the marketplace
-          </h2>
-          <p>
-            Sign in to see what the marketplace has to offer.
-          </p>
+          <div
+            className="signup-success__row-content"
+          >
+            <h2>
+              View the marketplace
+            </h2>
+            <p>
+              Sign in to see what the marketplace has to offer.
+            </p>
+          </div>
+          <ForwardRef(Button)
+            href="/plugins"
+            isSecondary={true}
+          >
+            Continue
+          </ForwardRef(Button)>
         </div>
-        <ForwardRef(Button)
-          href="/plugins"
-          isSecondary={true}
-        >
-          Continue
-        </ForwardRef(Button)>
       </div>
       <hr />
       <div
         className="signup-success__row"
       >
-        <div
+        <img
+          alt=""
           className="signup-success__row-icon"
-        >
-          <img
-            alt=""
-            src="settings.png"
-          />
-        </div>
+          src="settings.svg"
+        />
         <div
-          className="signup-success__row-content"
+          className="signup-success__row-wrapper"
         >
-          <h2>
-            Developer Page
-          </h2>
-          <p>
-            Learn more about building a WordPress.com integration.
-          </p>
+          <div
+            className="signup-success__row-content"
+          >
+            <h2>
+              Developer Page
+            </h2>
+            <p>
+              Learn more about building a WordPress.com integration.
+            </p>
+          </div>
+          <ForwardRef(Button)
+            href="https://developer.wordpress.com"
+            isSecondary={true}
+          >
+            Continue
+          </ForwardRef(Button)>
         </div>
-        <ForwardRef(Button)
-          href="https://developer.wordpress.com"
-          isSecondary={true}
-        >
-          Continue
-        </ForwardRef(Button)>
       </div>
     </div>
   </div>

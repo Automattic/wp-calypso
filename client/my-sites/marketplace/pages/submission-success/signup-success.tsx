@@ -37,42 +37,42 @@ const SignupSuccess = () => {
 				</div>
 				<div className="signup-success__body">
 					<div className="signup-success__row">
-						<div className="signup-success__row-icon">
-							<img src={ checkCircleImage } alt="" />
+						<img src={ checkCircleImage } alt="" className="signup-success__row-icon" />
+						<div className="signup-success__row-wrapper">
+							<div className="signup-success__row-content">
+								<h2>{ translate( 'Learn More' ) }</h2>
+								<p>{ translate( 'Read more about selling on the WordPress.com marketplace.' ) }</p>
+							</div>
+							<Button isSecondary href="https://developer.wordpress.com/wordpress-com-marketplace/">
+								{ translate( 'Continue' ) }
+							</Button>
 						</div>
-						<div className="signup-success__row-content">
-							<h2>{ translate( 'Learn More' ) }</h2>
-							<p>{ translate( 'Read more about selling on the WordPress.com marketplace.' ) }</p>
-						</div>
-						<Button isSecondary href="https://developer.wordpress.com/wordpress-com-marketplace/">
-							{ translate( 'Continue' ) }
-						</Button>
 					</div>
 					<hr />
 					<div className="signup-success__row">
-						<div className="signup-success__row-icon">
-							<img src={ shoppingCartImage } alt="" />
+						<img src={ shoppingCartImage } alt="" className="signup-success__row-icon" />
+						<div className="signup-success__row-wrapper">
+							<div className="signup-success__row-content">
+								<h2>{ translate( 'View the marketplace' ) }</h2>
+								<p>{ translate( 'Sign in to see what the marketplace has to offer.' ) }</p>
+							</div>
+							<Button isSecondary href="/plugins">
+								{ translate( 'Continue' ) }
+							</Button>
 						</div>
-						<div className="signup-success__row-content">
-							<h2>{ translate( 'View the marketplace' ) }</h2>
-							<p>{ translate( 'Sign in to see what the marketplace has to offer.' ) }</p>
-						</div>
-						<Button isSecondary href="/plugins">
-							{ translate( 'Continue' ) }
-						</Button>
 					</div>
 					<hr />
 					<div className="signup-success__row">
-						<div className="signup-success__row-icon">
-							<img src={ settingsImage } alt="" />
+						<img src={ settingsImage } alt="" className="signup-success__row-icon" />
+						<div className="signup-success__row-wrapper">
+							<div className="signup-success__row-content">
+								<h2>{ translate( 'Developer Page' ) }</h2>
+								<p>{ translate( 'Learn more about building a WordPress.com integration.' ) }</p>
+							</div>
+							<Button isSecondary href="https://developer.wordpress.com">
+								{ translate( 'Continue' ) }
+							</Button>
 						</div>
-						<div className="signup-success__row-content">
-							<h2>{ translate( 'Developer Page' ) }</h2>
-							<p>{ translate( 'Learn more about building a WordPress.com integration.' ) }</p>
-						</div>
-						<Button isSecondary href="https://developer.wordpress.com">
-							{ translate( 'Continue' ) }
-						</Button>
 					</div>
 				</div>
 			</div>
