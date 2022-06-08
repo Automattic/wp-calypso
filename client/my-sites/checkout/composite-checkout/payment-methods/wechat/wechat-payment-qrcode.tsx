@@ -1,6 +1,10 @@
 import { Spinner } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+// For some reason, the missing types for qrcode.react are a TS error and not
+// just a warning so we must disable the error to pass compilation.
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: There are no type definitions for qrcode.react.
 import QRCode from 'qrcode.react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
