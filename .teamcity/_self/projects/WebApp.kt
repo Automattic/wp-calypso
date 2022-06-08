@@ -164,7 +164,7 @@ object BuildDockerImage : BuildType({
 					ACTION="fail"
 				else
 					docker push "registry.a8c.com/calypso/app:latest"
-					ACTION="done";
+					ACTION="done"
 				fi
 
 				payload=${'$'}(jq -n \
