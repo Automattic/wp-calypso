@@ -27,12 +27,18 @@ import type { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
 import './style.scss';
 
 interface Props {
+	rootUrl: string;
 	siteSlug: string;
 	productSlug: string;
 	urlQueryArgs: QueryArgs;
 }
 
-const JetpackUpsellPage: React.FC< Props > = ( { siteSlug, productSlug, urlQueryArgs } ) => {
+const JetpackUpsellPage: React.FC< Props > = ( {
+	rootUrl,
+	siteSlug,
+	productSlug,
+	urlQueryArgs,
+} ) => {
 	const upsellSlug = PURCHASE_FLOW_UPSELLS_MATRIX[ productSlug ];
 	const productNames = getJetpackProductsDisplayNames();
 
@@ -100,10 +106,11 @@ const JetpackUpsellPage: React.FC< Props > = ( { siteSlug, productSlug, urlQuery
 	const isLoadingPrice = productPriceObj?.isFetching || upsellPriceObj?.isFetching;
 
 	useEffect( () => {
-		const dontShowUpsell =
-			! isLoadingUpsellPageExperiment && experimentAssignment?.variationName !== 'treatment';
+		if ( ! isLoadingUpsellPageExperiment && experimentAssignment?.variationName !== 'treatment' ) {
+			page.redirect( `${ rootUrl }/${ siteSlug }` );
+		}
 
-		if ( ( ! upsellSlug || isUpsellOwned || dontShowUpsell ) && productCheckoutURL ) {
+		if ( ( ! upsellSlug || isUpsellOwned ) && productCheckoutURL ) {
 			page.redirect( productCheckoutURL );
 		}
 	}, [
@@ -112,9 +119,11 @@ const JetpackUpsellPage: React.FC< Props > = ( { siteSlug, productSlug, urlQuery
 		productCheckoutURL,
 		isLoadingUpsellPageExperiment,
 		experimentAssignment,
+		rootUrl,
+		siteSlug,
 	] );
 
-	if ( ! upsellSlug || isFetchingPurchases || isUpsellOwned ) {
+	if ( isLoadingUpsellPageExperiment || ! upsellSlug || isFetchingPurchases || isUpsellOwned ) {
 		return null;
 	}
 

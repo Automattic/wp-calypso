@@ -120,17 +120,20 @@ export const jetpackStoragePricing = ( context: PageJS.Context, next: () => void
 	next();
 };
 
-export const jetpackProductUpsell = ( context: PageJS.Context, next: () => void ) => {
-	const { site, product } = context.params;
-	const urlQueryArgs = context.query;
+export const jetpackProductUpsell =
+	( rootUrl: string ): PageJS.Callback =>
+	( context: PageJS.Context, next: () => void ) => {
+		const { site, product } = context.params;
+		const urlQueryArgs = context.query;
 
-	context.primary = (
-		<JetpackUpsellPage
-			siteSlug={ site || urlQueryArgs.site }
-			productSlug={ product }
-			urlQueryArgs={ urlQueryArgs }
-		/>
-	);
+		context.primary = (
+			<JetpackUpsellPage
+				rootUrl={ rootUrl }
+				siteSlug={ site || urlQueryArgs.site }
+				productSlug={ product }
+				urlQueryArgs={ urlQueryArgs }
+			/>
+		);
 
-	next();
-};
+		next();
+	};

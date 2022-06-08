@@ -6,7 +6,7 @@ export const jetpackUpsell = ( rootUrl: string, ...rest: PageJS.Callback[] ) => 
 	page(
 		`${ rootUrl }/upsell/:product/:site?`,
 		...rest,
-		jetpackProductUpsell,
+		jetpackProductUpsell( rootUrl ),
 		makeLayout,
 		clientRender
 	);
