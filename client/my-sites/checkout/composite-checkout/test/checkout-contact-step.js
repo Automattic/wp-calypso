@@ -57,6 +57,7 @@ describe( 'Checkout contact step', () => {
 	let MyCheckout;
 
 	beforeEach( () => {
+		nock.cleanAll();
 		jest.clearAllMocks();
 		getPlansBySiteId.mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
@@ -123,6 +124,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'does not render the contact step when the purchase is free', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -133,6 +138,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders the contact step when the purchase is not free', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		render( <MyCheckout />, container );
 		await waitFor( () => {
 			expect( screen.getByText( /Enter your (billing|contact) information/ ) ).toBeInTheDocument();
@@ -140,6 +149,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders the tax fields only when no domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -150,6 +163,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders the domain fields when a domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -160,6 +177,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders the domain fields when a domain transfer is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithBundledDomain, domainTransferProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -170,6 +191,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'does not render country-specific domain fields when no country has been chosen and a domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -184,6 +209,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders country-specific domain fields when a country has been chosen and a domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -201,6 +230,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a plan is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -213,6 +246,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a plan is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -225,6 +262,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -239,6 +280,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -255,6 +300,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'does not complete the contact step when the contact step button has not been clicked and there are no cached details', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		// Wait for the cart to load
@@ -321,6 +370,10 @@ describe( 'Checkout contact step', () => {
 				email: 'test@example.com',
 			};
 			nock.cleanAll();
+
+			mockCachedContactDetailsEndpoint( {
+				country_code: null,
+			} );
 
 			const messages = ( () => {
 				if ( valid === 'valid' ) {
@@ -437,6 +490,10 @@ describe( 'Checkout contact step', () => {
 	);
 
 	it( 'renders the checkout summary', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		render( <MyCheckout />, container );
 		await waitFor( () => {
 			expect( screen.getByText( 'Purchase Details' ) ).toBeInTheDocument();
@@ -445,6 +502,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'removes a product from the cart after clicking to remove it in edit mode', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
