@@ -1,8 +1,8 @@
 import { Button } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
+import { Fragment, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
 import EmailForwardingAddNewCompact from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact';
 import { composeAnalytics, withAnalytics } from 'calypso/state/analytics/actions';
@@ -11,154 +11,123 @@ import {
 	addEmailForwardSuccess,
 	isAddingEmailForward,
 } from 'calypso/state/selectors/get-email-forwards';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-class EmailForwardingAddNewCompactList extends Component {
-	static propTypes = {
-		onConfirmEmailForwarding: PropTypes.func.isRequired,
-		onAddEmailForwardSuccess: PropTypes.func,
-		selectedDomainName: PropTypes.string.isRequired,
+const EmailForwardingAddNewCompactList = ( {
+	onAddEmailForwardSuccess,
+	onConfirmEmailForwarding,
+	selectedDomainName,
+} ) => {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const [ emailForwards, setEmailForwards ] = useState( [
+		{ destination: '', mailbox: '', isValid: false },
+	] );
+	const [ newEmailForwardAdded, setNewEmailForwardAdded ] = useState( false );
+
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const isSubmittingEmailForward = useSelector( ( state ) =>
+		isAddingEmailForward( state, selectedDomainName )
+	);
+	const emailForwardSuccess = useSelector( ( state ) =>
+		addEmailForwardSuccess( state, selectedDomainName )
+	);
+
+	useEffect( () => {
+		if ( emailForwardSuccess && newEmailForwardAdded ) {
+			setNewEmailForwardAdded( false );
+			onAddEmailForwardSuccess?.();
+		}
+	}, [ emailForwardSuccess, newEmailForwardAdded, onAddEmailForwardSuccess ] );
+
+	const hasValidEmailForwards = () => {
+		return ! emailForwards?.some( ( forward ) => ! forward.isValid );
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			emailForwards: [ { destination: '', mailbox: '', isValid: false } ],
-			newEmailForwardAdded: false,
-		};
-	}
-
-	hasValidEmailForwards() {
-		return ! this.state.emailForwards?.some( ( forward ) => ! forward.isValid );
-	}
-
-	addNewEmailForwardWithAnalytics = ( domainName, mailbox, destination ) => {
+	const addNewEmailForwardWithAnalytics = ( domainName, mailbox, destination ) => {
 		withAnalytics(
 			composeAnalytics(
-				this.props.onConfirmEmailForwarding(),
-				this.props.addEmailForward( domainName, mailbox, destination )
+				onConfirmEmailForwarding(),
+				dispatch( addEmailForward( domainName, mailbox, destination ) )
 			)
 		);
 	};
 
-	addNewEmailForwardsClick = ( event ) => {
-		const { isSubmittingEmailForward, selectedSiteSlug, selectedDomainName } = this.props;
-
+	const submitNewEmailForwards = ( event ) => {
 		event.preventDefault();
 
 		if ( isSubmittingEmailForward ) {
 			return;
 		}
 
-		this.state.emailForwards?.map( ( forward ) => {
-			const { mailbox, destination } = forward;
-
-			this.addNewEmailForwardWithAnalytics(
-				selectedDomainName,
-				mailbox,
-				destination,
-				selectedSiteSlug
-			);
+		emailForwards?.map( ( { mailbox, destination } ) => {
+			addNewEmailForwardWithAnalytics( selectedDomainName, mailbox, destination, selectedSiteSlug );
 		} );
-		this.setState( { newEmailForwardAdded: true } );
+
+		setNewEmailForwardAdded( true );
 	};
 
-	onAddNewEmailForward = () => {
-		this.setState( ( currentState ) => {
-			return {
-				emailForwards: [ ...currentState.emailForwards, { destination: '', mailbox: '' } ],
-			};
+	const onAddNewEmailForward = () => {
+		setEmailForwards( ( prev ) => {
+			return [ ...prev, { destination: '', mailbox: '' } ];
 		} );
 	};
 
-	renderActionsButtons() {
-		const { translate } = this.props;
-		return (
+	const onRemoveEmailForward = ( index ) => {
+		const newEmailForwards = [ ...emailForwards ];
+		newEmailForwards.splice( index, 1 );
+		setEmailForwards( newEmailForwards );
+	};
+
+	const onUpdateEmailForward = ( index, name, value ) => {
+		// eslint-disable-next-line prefer-const
+		let newEmailForwards = [ ...emailForwards ];
+		newEmailForwards[ index ][ name ] = value;
+
+		const validEmailForward = validateAllFields( newEmailForwards[ index ] );
+		newEmailForwards[ index ].isValid =
+			validEmailForward.mailbox.length === 0 && validEmailForward.destination.length === 0;
+
+		setEmailForwards( newEmailForwards );
+	};
+
+	return (
+		<form onSubmit={ submitNewEmailForwards }>
+			{ emailForwards.map( ( fields, index ) => (
+				<Fragment key={ `email-forwarding__add-new_fragment__card-${ index }` }>
+					<div className="email-forwarding__add-new">
+						<EmailForwardingAddNewCompact
+							disabled={ isSubmittingEmailForward }
+							emailForwards={ emailForwards }
+							fields={ fields }
+							index={ index }
+							onAddEmailForward={ onAddNewEmailForward }
+							onRemoveEmailForward={ onRemoveEmailForward }
+							onUpdateEmailForward={ onUpdateEmailForward }
+							selectedDomainName={ selectedDomainName }
+						/>
+					</div>
+				</Fragment>
+			) ) }
+
 			<div className="email-forwarding-add-new-compact-list__actions">
 				<Button
 					primary
-					onClick={ this.addNewEmailForwardsClick }
-					disabled={ ! this.hasValidEmailForwards() }
+					disabled={ ! hasValidEmailForwards() || isSubmittingEmailForward }
+					type="submit"
 				>
 					{ translate( 'Add' ) }
 				</Button>
 			</div>
-		);
-	}
+		</form>
+	);
+};
 
-	onRemoveEmailForward = ( index ) => {
-		const emailForwards = [ ...this.state.emailForwards ];
-		emailForwards.splice( index, 1 );
-		this.setState( { emailForwards } );
-	};
+EmailForwardingAddNewCompactList.propTypes = {
+	onConfirmEmailForwarding: PropTypes.func.isRequired,
+	onAddEmailForwardSuccess: PropTypes.func,
+	selectedDomainName: PropTypes.string.isRequired,
+};
 
-	onUpdateEmailForward = ( index, name, value ) => {
-		// eslint-disable-next-line prefer-const
-		let emailForwards = [ ...this.state.emailForwards ];
-		emailForwards[ index ][ name ] = value;
-
-		const validEmailForward = validateAllFields( emailForwards[ index ] );
-		emailForwards[ index ].isValid =
-			validEmailForward.mailbox.length === 0 && validEmailForward.destination.length === 0;
-
-		this.setState( { emailForwards } );
-	};
-
-	componentDidUpdate( prevProps ) {
-		const { emailForwardSuccess, onAddEmailForwardSuccess } = this.props;
-
-		const { newEmailForwardAdded } = this.state;
-
-		if (
-			emailForwardSuccess &&
-			onAddEmailForwardSuccess &&
-			newEmailForwardAdded &&
-			prevProps.emailForwardSuccess !== emailForwardSuccess
-		) {
-			onAddEmailForwardSuccess();
-		}
-	}
-
-	render() {
-		const { selectedDomainName } = this.props;
-
-		const { emailForwards } = this.state;
-
-		return (
-			<>
-				{ emailForwards.map( ( fields, index ) => (
-					<Fragment key={ `email-forwarding__add-new_fragment__card-${ index }` }>
-						<form className="email-forwarding__add-new">
-							<EmailForwardingAddNewCompact
-								emailForwards={ emailForwards }
-								fields={ fields }
-								index={ index }
-								onAddEmailForward={ this.onAddNewEmailForward }
-								onRemoveEmailForward={ this.onRemoveEmailForward }
-								onUpdateEmailForward={ this.onUpdateEmailForward }
-								selectedDomainName={ selectedDomainName }
-							/>
-						</form>
-						<hr
-							className="email-forwarding__add-new-separator"
-							key={ `email-forwarding__add-new_hr-${ index }` }
-						/>
-					</Fragment>
-				) ) }
-				<div>{ this.renderActionsButtons() }</div>
-			</>
-		);
-	}
-}
-
-export default connect(
-	( state, ownProps ) => {
-		return {
-			emailForwardSuccess: addEmailForwardSuccess( state, ownProps.selectedDomainName ),
-			selectedSiteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
-			isSubmittingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
-		};
-	},
-	{ addEmailForward }
-)( localize( EmailForwardingAddNewCompactList ) );
+export default EmailForwardingAddNewCompactList;
