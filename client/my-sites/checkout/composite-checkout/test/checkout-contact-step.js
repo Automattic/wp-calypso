@@ -12,6 +12,7 @@ import {
 	waitForElementToBeRemoved,
 } from '@testing-library/react';
 import nock from 'nock';
+import { QueryClientProvider, QueryClient } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -76,6 +77,7 @@ describe( 'Checkout contact step', () => {
 		} );
 
 		const store = createTestReduxStore();
+		const queryClient = new QueryClient();
 
 		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
 			const managerClient = createShoppingCartManagerClient( {
@@ -84,28 +86,33 @@ describe( 'Checkout contact step', () => {
 			} );
 			const mainCartKey = 'foo.com';
 			useCartKey.mockImplementation( () => ( useUndefinedCartKey ? undefined : mainCartKey ) );
-			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+			nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.post( '/rest/v1.1/logstash' )
+				.reply( 200 );
 			mockMatchMediaOnWindow();
 			return (
-				<ReduxProvider store={ store }>
-					<ShoppingCartProvider
-						managerClient={ managerClient }
-						options={ {
-							defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
-						} }
-						{ ...additionalCartProps }
-					>
-						<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-							<CompositeCheckout
-								siteId={ siteId }
-								siteSlug={ 'foo.com' }
-								getStoredCards={ async () => [] }
-								overrideCountryList={ countryList }
-								{ ...additionalProps }
-							/>
-						</StripeHookProvider>
-					</ShoppingCartProvider>
-				</ReduxProvider>
+				<QueryClientProvider client={ queryClient }>
+					<ReduxProvider store={ store }>
+						<ShoppingCartProvider
+							managerClient={ managerClient }
+							options={ {
+								defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
+							} }
+							{ ...additionalCartProps }
+						>
+							<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+								<CompositeCheckout
+									siteId={ siteId }
+									siteSlug={ 'foo.com' }
+									getStoredCards={ async () => [] }
+									overrideCountryList={ countryList }
+									{ ...additionalProps }
+								/>
+							</StripeHookProvider>
+						</ShoppingCartProvider>
+					</ReduxProvider>
+				</QueryClientProvider>
 			);
 		};
 	} );
@@ -252,7 +259,7 @@ describe( 'Checkout contact step', () => {
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
-		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
+		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
 	} );
 
 	it( 'autocompletes the contact step when there are valid cached details', async () => {
@@ -265,8 +272,10 @@ describe( 'Checkout contact step', () => {
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
+		// Wait for validation to start
+		await screen.findByText( 'Please wait…' );
 		// Wait for the validation to complete
-		await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
+		await waitFor( () => expect( screen.queryByText( 'Please wait…' ) ).not.toBeInTheDocument() );
 		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 	} );
 
@@ -278,10 +287,6 @@ describe( 'Checkout contact step', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		// Wait for the cart to load
-		await screen.findByText( 'Country' );
-		// Wait for the validation to complete
-		await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
 		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
 	} );
 
