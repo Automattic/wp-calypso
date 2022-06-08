@@ -1,7 +1,16 @@
+/* eslint-disable no-restricted-imports */
+/**
+ * External Dependencies
+ */
 import { useHappychatAuth } from '@automattic/happychat-connection';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
+import { useSelector } from 'react-redux';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+/**
+ * Internal Dependencies
+ */
 import { HELP_CENTER_STORE, SITE_STORE } from './stores';
 import type { WindowState } from './types';
 
@@ -25,10 +34,8 @@ export function useHCWindowCommunicator(
 		};
 	} );
 
-	const currentSite = useSelect(
-		( select ) => select( SITE_STORE ).getSite( window._currentSiteId ),
-		[ window._currentSiteId ]
-	);
+	const siteId = useSelector( getSelectedSiteId );
+	const currentSite = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ), [ siteId ] );
 
 	const queryClient = useQueryClient();
 

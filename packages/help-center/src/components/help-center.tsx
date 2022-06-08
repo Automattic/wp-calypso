@@ -26,9 +26,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 
 	// prefetch the current site and user
-	const site = useSelect( ( select ) =>
-		select( SITE_STORE ).getSite( siteId || window._currentSiteId )
-	);
+	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
 	const user = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { setDirectlyData } = useDispatch( HELP_CENTER_STORE );
 	const { isLoading: isLoadingChat } = useSupportAvailability( 'CHAT' );
