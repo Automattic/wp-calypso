@@ -233,16 +233,19 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 	useEffect( () => {
 		if (
 			( installedPlugin && pluginActive ) ||
-			( atomicFlow && transferStates.COMPLETE === automatedTransferStatus )
+			( atomicFlow && transferStates.COMPLETE === automatedTransferStatus ) ||
+			( isUploadFlow && ! atomicFlow && transferStates.COMPLETE === automatedTransferStatus )
 		) {
 			waitFor( 1 ).then( () =>
 				page.redirect(
-					`/marketplace/thank-you/${ installedPlugin?.slug || productSlug }/${ selectedSiteSlug }`
+					`/marketplace/thank-you/${
+						installedPlugin?.slug || productSlug || uploadedPluginSlug
+					}/${ selectedSiteSlug }`
 				)
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginActive, automatedTransferStatus ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
+	}, [ pluginActive, automatedTransferStatus, atomicFlow, isUploadFlow ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
 	const steps = useMemo(
 		() => [
