@@ -21,9 +21,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 	const role = 'Editor';
 	const invitingUser = 'calypsoPreReleaseUser';
-	const inbox = 'signupInboxId';
 	const testUser = DataHelper.getNewTestUser( {
-		inbox: inbox,
 		usernamePrefix: 'invited',
 	} );
 
@@ -71,7 +69,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 		it( `Invite email was received for test user`, async function () {
 			const emailClient = new EmailClient();
 			const message = await emailClient.getLastEmail( {
-				inboxId: inbox,
+				inboxId: testUser.inboxId,
 				emailAddress: testUser.email,
 			} );
 			const links = await emailClient.getLinksFromMessage( message );

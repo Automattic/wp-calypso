@@ -32,6 +32,7 @@ export interface NewTestUser {
 	password: string;
 	email: string;
 	siteName: string;
+	inboxId: string;
 }
 
 export type CreditCardIssuers = 'Visa';
@@ -43,17 +44,20 @@ export type CreditCardIssuers = 'Visa';
  * Note that this function only generates the test data;
  * it does not actually create the test user.
  *
+ * @param param0 Object parameter.
+ * @param {keyof Secrets['mailosaur']} [param0.mailosaurInbox] Optional key to specify the mailosaur server to use. Defaults to `signupInboxId`.
+ * @param {string} [param0.usernamePrefix] Optional key to specify the username prefix inserted between the `e2eflowtesting` and timestamp. Defaults to an empty string.
  * @returns {NewTestUser} Data for new test user.
  */
 export function getNewTestUser( {
-	inbox = 'defaultUserInboxId',
+	mailosaurInbox = 'signupInboxId',
 	usernamePrefix = '',
-}: { inbox?: keyof Secrets[ 'mailosaur' ]; usernamePrefix?: string } = {} ): NewTestUser {
+}: { mailosaurInbox?: keyof Secrets[ 'mailosaur' ]; usernamePrefix?: string } = {} ): NewTestUser {
 	const username = getUsername( { prefix: usernamePrefix } );
 	const password = SecretsManager.secrets.passwordForNewTestSignUps;
 
 	const email = getTestEmailAddress( {
-		inboxId: SecretsManager.secrets.mailosaur[ inbox ],
+		inboxId: SecretsManager.secrets.mailosaur[ mailosaurInbox ],
 		prefix: username,
 	} );
 	const siteName = getBlogName();
@@ -63,6 +67,7 @@ export function getNewTestUser( {
 		password: password,
 		email: email,
 		siteName: siteName,
+		inboxId: SecretsManager.secrets.mailosaur[ mailosaurInbox ],
 	};
 }
 

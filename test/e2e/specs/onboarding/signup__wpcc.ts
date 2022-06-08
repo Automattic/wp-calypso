@@ -15,9 +15,7 @@ import { Page, Browser } from 'playwright';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function () {
-	const inbox = 'signupInboxId';
 	const testUser = DataHelper.getNewTestUser( {
-		inbox: inbox,
 		usernamePrefix: 'wpcc',
 	} );
 
@@ -50,7 +48,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 		it( 'Get activation link', async function () {
 			const emailClient = new EmailClient();
 			const message = await emailClient.getLastEmail( {
-				inboxId: inbox,
+				inboxId: testUser.inboxId,
 				emailAddress: testUser.email,
 				subject: 'Activate',
 			} );
