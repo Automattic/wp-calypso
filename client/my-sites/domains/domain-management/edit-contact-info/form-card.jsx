@@ -150,9 +150,9 @@ class EditContactInfoFormCard extends Component {
 			.utc( this.props.selectedDomain.registrationDate )
 			.add( 60, 'days' )
 			.toISOString();
-		const newRegistration = moment.utc().isBefore( registrationDatePlus60Days );
+		const newRegistrationLock = moment.utc().isSameOrBefore( registrationDatePlus60Days );
 
-		if ( ! newRegistration ) {
+		if ( ! newRegistrationLock ) {
 			return (
 				<>
 					<TransferLockOptOutForm
