@@ -55,7 +55,6 @@ export const siteSetupFlow: Flow = {
 			'wooInstallPlugins',
 			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'wooVerifyEmail' ] : [] ),
 			'wooConfirm',
-			'emailVerifyCelebration',
 		] as StepPath[];
 	},
 	useSideEffect() {

@@ -4,7 +4,7 @@
 
 $bg-image: url( './celebration-background.svg' );
 
-.site-setup.email-verify-celebration {
+.site-setup.woo-verify-email {
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -13,13 +13,13 @@ $bg-image: url( './celebration-background.svg' );
     background-repeat: no-repeat;
     background-position: center center;
 }
-.step-container.email-verify-celebration-step {
+.step-container.woo-verify-email {
     margin-top: -60px;
 	.formatted-header .formatted-header__subtitle {
 		text-align: center;
 	}
 }
-.email-verify-celebration__content {
+.woo-verify-email__content {
     text-align: center;
 }
 
@@ -27,7 +27,7 @@ $bg-image: url( './celebration-background.svg' );
 $design-button-primary-color: var( --color-primary );
 $design-button-primary-hover-color: var( --color-primary-60 );
 
-.email-verify-celebration__button {
+.ewoo-verify-email__button {
 	background: $design-button-primary-color;
 	border-color: $design-button-primary-color;
 	padding: 9px 48px;
@@ -42,7 +42,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 	}
 }
 
-.email-verify-celebration__link {
+.woo-verify-email__link {
     text-decoration: underline;
 	&.button.is-borderless {
 		padding: 10px 14px;
