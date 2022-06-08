@@ -4,9 +4,9 @@ import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useSelector } from 'react-redux';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
-import type { AddOn } from '../hooks/use-add-ons';
+import type { AddOnMeta } from '../hooks/use-add-ons';
 
-interface Props extends AddOn {
+interface Props extends AddOnMeta {
 	actionPrimary?: {
 		text: string;
 		handler: ( slug: string ) => void;
@@ -45,7 +45,7 @@ const Frame = styled.div`
 const BillingInfo = ( { addOnSlug }: { addOnSlug: string } ) => {
 	const price = useSelector( ( state ) => getProductDisplayCost( state, addOnSlug ) );
 
-	return <div className="add-ons-card__billing-info">{ price }</div>;
+	return <div className="add-ons-card__billing-info">{ price } yearly</div>;
 };
 
 const AddOnCard = ( props: Props ) => {

@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import AddOnCard from './add-ons-card';
-import type { AddOn } from '../hooks/use-add-ons';
+import type { AddOnMeta } from '../hooks/use-add-ons';
 
 interface Props {
-	addOns: ( AddOn | null )[];
+	addOns: ( AddOnMeta | null )[];
 	actionPrimary?: {
 		text: string;
 		handler: ( slug: string ) => void;

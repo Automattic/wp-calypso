@@ -1,12 +1,11 @@
 import { useSelector } from 'react-redux';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { getProductBySlug, getProductName } from 'calypso/state/products-list/selectors';
 import noAdsIcon from '../icons/no-ads';
 
-export interface AddOn {
+export interface AddOnMeta {
 	slug: string;
 	name: string;
 	description: string;
-	cost: number;
 	highlight?: boolean;
 	icon: JSX.Element;
 }
@@ -26,6 +25,7 @@ const useAddOns = () => {
 	return useSelector( ( state ) => {
 		return addOnsActive.map( ( addOn ) => {
 			const product = getProductBySlug( state, addOn.slug );
+			const productName = getProductName( state, addOn.slug );
 
 			// will not render anything if product not fetched from API
 			// - can remove and update `adOnsActive` with description, name, etc. to still render
@@ -36,12 +36,11 @@ const useAddOns = () => {
 
 			return {
 				slug: addOn.slug,
-				name: addOn.nameOverride || product?.product_name,
+				name: addOn.nameOverride || productName,
 				description: product?.description,
-				cost: product?.cost,
 				highlight: addOn.highlight,
 				icon: addOn.icon,
-			} as AddOn;
+			} as AddOnMeta;
 		} );
 	} );
 };
