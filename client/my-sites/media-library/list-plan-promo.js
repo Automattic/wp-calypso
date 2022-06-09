@@ -96,7 +96,7 @@ class MediaLibraryListPlanPromo extends Component {
 
 	render() {
 		const action = (
-			<Button className="button is-primary" onClick={ this.viewPlansPage }>
+			<Button className="list-plan-promo__button button is-primary" onClick={ this.viewPlansPage }>
 				{ this.props.translate( 'See Plans' ) }
 			</Button>
 		);
