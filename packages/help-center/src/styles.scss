@@ -309,6 +309,12 @@ button.button.back-button__help-center.is-borderless {
 			cursor: pointer;
 		}
 
+
+		.help-center__container.is-desktop {
+			position: fixed;
+			top: calc( var( --masterbar-height ) + 16px );
+		}
+
 		.search-card {
 			.search {
 				border: none;
