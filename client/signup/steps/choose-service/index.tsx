@@ -1,4 +1,10 @@
-import { getPlan, PLAN_WPCOM_PRO, WPCOM_DIFM_LITE } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import {
+	getPlan,
+	PLAN_PREMIUM,
+	PLAN_WPCOM_PRO,
+	WPCOM_DIFM_LITE,
+} from '@automattic/calypso-products';
 import { IntentScreen } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -55,7 +61,9 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 					args: {
 						displayCost,
 						fulfillmentDays: 4,
-						plan: getPlan( PLAN_WPCOM_PRO )?.getTitle(),
+						plan: isEnabled( 'plans/pro-plan' )
+							? getPlan( PLAN_WPCOM_PRO )?.getTitle()
+							: getPlan( PLAN_PREMIUM )?.getTitle(),
 					},
 					components: {
 						PriceWrapper: isLoading ? <Placeholder /> : <strong />,
