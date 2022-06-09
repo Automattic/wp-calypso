@@ -1,0 +1,9 @@
+{
+	"name": "@automattic/calypso-mp-data-analysis",
+	"version": "1.0.0",
+	"author": "Automattic Inc.",
+	"dependencies": {
+		"axios": "^0.27.2",
+		"csv-parse": "^5.1.0"
+	}
+}
