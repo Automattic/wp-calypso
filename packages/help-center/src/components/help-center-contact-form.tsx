@@ -321,9 +321,7 @@ export const HelpCenterContactForm = () => {
 
 	return (
 		<main className="help-center-contact-form">
-			<header>
-				<BackButton />
-			</header>
+			<BackButton />
 			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
 			{ formTitles.formSubtitle && (
 				<p className="help-center-contact-form__site-picker-form-subtitle">

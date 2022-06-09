@@ -323,7 +323,7 @@ button.button.back-button__help-center.is-borderless {
 	}
 
 	.help-center-contact-form {
-		.button {
+		.button:not( .back-button__help-center ) {
 			line-height: 2.71428571;
 			min-height: 40px;
 			margin-bottom: 4px;
