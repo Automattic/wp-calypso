@@ -48,10 +48,8 @@ describe( 'Banner basic tests', () => {
 	} );
 
 	test( 'should render DismissibleCard if dismissPreferenceName is defined', () => {
-		const { container } = renderWithRedux(
-			<Banner { ...props } dismissPreferenceName={ 'banner-test' } />
-		);
-		expect( container.firstChild ).toHaveClass( 'is-dismissible' );
+		renderWithRedux( <Banner { ...props } dismissPreferenceName={ 'banner-test' } /> );
+		expect( screen.getByLabelText( 'Dismiss' ) ).toBeInTheDocument();
 	} );
 
 	test( 'should have .has-call-to-action class if callToAction is defined', () => {
