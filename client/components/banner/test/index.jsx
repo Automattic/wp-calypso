@@ -2,17 +2,10 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'calypso/blocks/dismissible-card', () => {
-	return function DismissibleCard() {
-		return null;
-	};
-} );
-
-import { Card } from '@automattic/components';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { shallow } from 'enzyme';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import preferencesReducer from 'calypso/state/preferences/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { Banner } from '../index';
 
@@ -23,6 +16,15 @@ jest.mock( 'calypso/state/analytics/actions', () => {
 		} ) ),
 	};
 } );
+
+function renderWithRedux( ui ) {
+	return renderWithProvider( ui, {
+		reducers: {
+			preferences: preferencesReducer,
+		},
+		initialState: { preferences: { remoteValues: {} } },
+	} );
+}
 
 const props = {
 	callToAction: null,
@@ -46,9 +48,10 @@ describe( 'Banner basic tests', () => {
 	} );
 
 	test( 'should render DismissibleCard if dismissPreferenceName is defined', () => {
-		const comp = shallow( <Banner { ...props } dismissPreferenceName={ 'banner-test' } /> );
-		expect( comp.find( Card ) ).toHaveLength( 0 );
-		expect( comp.find( 'DismissibleCard' ) ).toHaveLength( 1 );
+		const { container } = renderWithRedux(
+			<Banner { ...props } dismissPreferenceName={ 'banner-test' } />
+		);
+		expect( container.firstChild ).toHaveClass( 'is-dismissible' );
 	} );
 
 	test( 'should have .has-call-to-action class if callToAction is defined', () => {
