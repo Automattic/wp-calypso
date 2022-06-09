@@ -187,7 +187,7 @@ export function isPartnerSignupQuery( currentQuery ) {
 	}
 
 	if ( typeof currentQuery?.oauth2_redirect === 'string' ) {
-		return /woocommerce\.com%2Fpartner-signup/.test( currentQuery.oauth2_redirect );
+		return /woocommerce\.com\/partner-signup/.test( currentQuery.oauth2_redirect );
 	}
 
 	return false;
