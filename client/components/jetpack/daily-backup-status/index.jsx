@@ -157,7 +157,7 @@ const Wrapper = ( props ) => {
 				<QueryRewindBackups siteId={ siteId } />
 				<DailyBackupStatus { ...props } />
 			</Card>
-			<BackupWarnings backup={ props.backup } />
+			<BackupWarnings selectedDate={ props.selectedDate } siteId={ siteId } />
 		</>
 	);
 };
