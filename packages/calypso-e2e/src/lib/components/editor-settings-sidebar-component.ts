@@ -44,10 +44,9 @@ const selectors = {
 
 	// Schedule
 	scheduleButton: `button.edit-post-post-schedule__toggle`,
-	scheduleInput: ( attribute: string ) => `input[name="${ attribute }"]`,
-	scheduleMeridianButton: ( meridian: 'am' | 'pm' ) =>
-		`button.components-datetime__time-${ meridian }-button`,
-	scheduleMonthSelect: `select[name="month"]`,
+	scheduleInput: ( attribute: string ) => `role=spinbutton[name="${ attribute }"i]`,
+	scheduleMeridianButton: ( meridian: 'am' | 'pm' ) => `role=button[name="${ meridian }"i]`,
+	scheduleMonthSelect: `role=combobox[name="month"i]`,
 
 	// Permalink
 	permalinkInput: '.components-base-control__field:has-text("URL Slug") input',
@@ -290,6 +289,12 @@ export class EditorSettingsSidebarComponent {
 				// 2 digits as required by the select.
 				const monthSelectLocator = this.editor.locator( selectors.scheduleMonthSelect );
 				await monthSelectLocator.selectOption( date[ key ].toString().padStart( 2, '0' ) );
+				continue;
+			}
+			if ( key === 'date' ) {
+				console.log( 'lkjwer' );
+				const daySelector = this.editor.locator( selectors.scheduleInput( 'day' ) );
+				await daySelector.fill( date[ key ].toString() );
 				continue;
 			}
 
