@@ -130,7 +130,7 @@ fun editorTrackingBuildType( targetDevice: String, buildUuid: String, atomic: Bo
 	var edgeType = if (edge) "edge" else "production";
 
     return E2EBuildType (
-		buildId = "WPComTests_editor-tracking_${siteType}_${edgeType}_$targetDevice",
+		buildId = "WPComTests_editor_tracking_${siteType}_${edgeType}_$targetDevice",
 		buildUuid = buildUuid,
 		buildName = "Editor tracking $siteType E2E tests $edgeType ($targetDevice)",
 		buildDescription = "Runs editor tracking $siteType E2E tests on $targetDevice size",
