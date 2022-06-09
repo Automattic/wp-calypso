@@ -119,6 +119,13 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 	const showPrice = ! isLoadingPrice && priceDelta > 0;
 
 	useEffect( () => {
+		// Because .layout__content has padding, we need to make sure that this upsell page has
+		// enough height available to display the color blobs without cropping them. This causes
+		// the scroll bar to appear in Calypso blue. Here we make sure we see the top of the page.
+		window.scrollTo( 0, 0 );
+	}, [] );
+
+	useEffect( () => {
 		if ( ! isLoadingUpsellPageExperiment && experimentAssignment?.variationName !== 'treatment' ) {
 			page.redirect( `${ rootUrl }/${ siteSlug }` );
 		}
