@@ -11,8 +11,8 @@ import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect, useMemo, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import { useExperiment } from 'calypso/lib/explat';
@@ -22,10 +22,12 @@ import PlanPrice from 'calypso/my-sites/plan-price';
 import { GUARANTEE_DAYS } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PURCHASE_FLOW_UPSELLS_MATRIX } from '../constants';
+import getViewTrackerPath from '../get-view-tracker-path';
 import slugToSelectorProduct from '../slug-to-selector-product';
 import type { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
 
@@ -47,6 +49,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 	const upsellSlug = PURCHASE_FLOW_UPSELLS_MATRIX[ productSlug ];
 	const productNames = getJetpackProductsDisplayNames();
 
+	const dispatch = useDispatch();
 	const [ isLoadingUpsellPageExperiment, experimentAssignment ] = useExperiment(
 		'calypso_jetpack_upsell_page_2022_06'
 	);
@@ -117,6 +120,24 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		( productPriceObj?.discountedPrice || productPriceObj?.originalPrice );
 	const isLoadingPrice = productPriceObj?.isFetching || upsellPriceObj?.isFetching;
 	const showPrice = ! isLoadingPrice && priceDelta > 0;
+
+	const viewTrackerPath = useMemo(
+		() => getViewTrackerPath( rootUrl, siteSlug ),
+		[ rootUrl, siteSlug ]
+	);
+	const onCtaClick = useCallback(
+		( productSlug, isUpsell = false ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_upsell_page_product_click', {
+					site_id: siteId || undefined,
+					product_slug: productSlug,
+					path: viewTrackerPath,
+					is_upsell: isUpsell,
+				} )
+			);
+		},
+		[ siteId, viewTrackerPath, dispatch ]
+	);
 
 	useEffect( () => {
 		if ( ! isLoadingUpsellPageExperiment && experimentAssignment?.variationName !== 'treatment' ) {
@@ -235,14 +256,23 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 								</div>
 							) }
 							<div className="jetpack-upsell__actions">
-								<Button className="jetpack-upsell__action-yes" href={ upsellCheckoutURL } primary>
+								<Button
+									className="jetpack-upsell__action-yes"
+									href={ upsellCheckoutURL }
+									onClick={ () => onCtaClick( upsellSlug, true ) }
+									primary
+								>
 									{ translate( 'Upgrade to %(productName)s', {
 										args: {
 											productName: upsellName,
 										},
 									} ) }
 								</Button>
-								<a className="jetpack-upsell__action-no" href={ productCheckoutURL }>
+								<a
+									className="jetpack-upsell__action-no"
+									href={ productCheckoutURL }
+									onClick={ () => onCtaClick( productSlug ) }
+								>
 									{ translate( 'No thanks, proceed with %(productName)s', {
 										args: {
 											productName,
