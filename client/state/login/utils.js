@@ -176,3 +176,19 @@ export async function postLoginRequest( action, bodyObj ) {
 	}
 	throw new HTTPError( response, await response.text() );
 }
+
+export function isPartnerSignupQuery( currentQuery ) {
+	if ( ! currentQuery ) {
+		return false;
+	}
+
+	if ( typeof currentQuery?.redirect_to === 'string' ) {
+		return /woocommerce\.com\/partner-signup/.test( currentQuery.redirect_to );
+	}
+
+	if ( typeof currentQuery?.oauth2_redirect === 'string' ) {
+		return /woocommerce\.com%2Fpartner-signup/.test( currentQuery.oauth2_redirect );
+	}
+
+	return false;
+}

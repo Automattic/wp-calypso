@@ -11,7 +11,7 @@ import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import PartnerSignupMasterbar from 'calypso/layout/masterbar/partner-signup';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { isPartnerSignupQuery } from 'calypso/login/partner-signup';
+import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
