@@ -1,10 +1,11 @@
-import { Button } from '@automattic/components';
+import { Button, FormInputValidation } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
-import { createElement, createInterpolateElement } from '@wordpress/element';
+import { createElement, createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { UserData } from 'calypso/lib/user/user';
@@ -20,13 +21,41 @@ const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
 	const { goBack } = navigation;
 	const { __ } = useI18n();
 	const user = useSelector( getCurrentUser ) as UserData;
+	const defaultButtonState = {
+		status: 'default',
+		message: __( 'Resend verification email' ),
+	};
+	const [ buttonState, setButtonState ] = useState( defaultButtonState );
+	const [ error, setError ] = useState( '' );
+	const sendEmail = useSendEmailVerification();
+
+	const sendVerification = async () => {
+		setButtonState( { status: 'processing', message: __( 'Sending…' ) } );
+		sendEmail()
+			.then( () => {
+				setButtonState( { status: 'success', message: __( 'Request sent!' ) } );
+				setTimeout( () => setButtonState( defaultButtonState ), 3000 );
+			} )
+			.catch( () => {
+				setError( __( 'There was an error processing your request.' ) );
+				setButtonState( defaultButtonState );
+			} );
+	};
 
 	function getContent() {
 		return (
 			<div className="woo-verify-email__content">
-				<Button className="woo-verify-email__button" primary>
-					{ __( 'Resend verification email' ) }
+				<Button
+					className="woo-verify-email__button"
+					busy={ buttonState.status === 'processing' }
+					primary
+					onClick={ () => sendVerification() }
+				>
+					{ buttonState.message }
 				</Button>
+				{ error && (
+					<FormInputValidation className="woo-verify-email__error-notice" isError text={ error } />
+				) }
 				<br />
 				<Button className="woo-verify-email__link" borderless href="#">
 					{ __( 'Edit email address' ) }
