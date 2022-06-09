@@ -85,11 +85,11 @@ const MailboxFormWrapper = ( {
 
 	return (
 		<div>
-			<div className="form__fields form__new-mailbox">
+			<div className="mailbox-form-wrapper__fields mailbox-form-wrapper__new-mailbox">
 				{ mailbox.provider === EmailProvider.Titan ? <TitanFormFields /> : <GoogleFormFields /> }
 			</div>
 
-			<div className="form__children">{ children }</div>
+			<div className="mailbox-form-wrapper__children">{ children }</div>
 		</div>
 	);
 };
