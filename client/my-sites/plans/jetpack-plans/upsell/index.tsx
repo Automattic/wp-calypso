@@ -7,7 +7,6 @@ import {
 	getJetpackProductsDisplayNames,
 } from '@automattic/calypso-products';
 import { Gridicon, Button } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import page from 'page';
@@ -112,9 +111,6 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 	const priceDelta =
 		( upsellPriceObj?.discountedPrice || upsellPriceObj?.originalPrice ) -
 		( productPriceObj?.discountedPrice || productPriceObj?.originalPrice );
-	const originalPriceDelta =
-		upsellPriceObj?.originalPrice -
-		( productPriceObj?.discountedPrice || productPriceObj?.originalPrice );
 	const isLoadingPrice = productPriceObj?.isFetching || upsellPriceObj?.isFetching;
 	const showPrice = ! isLoadingPrice && priceDelta > 0;
 
@@ -207,7 +203,6 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 								<div className="jetpack-upsell__price-skeleton">
 									<div></div>
 									<div></div>
-									<div></div>
 								</div>
 							) }
 							{ showPrice && (
@@ -223,22 +218,6 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 											{ translate( '/month, paid yearly' ) }
 										</span>
 									</div>
-									{ originalPriceDelta > priceDelta && (
-										<div className="jetpack-upsell__normal-price-ctn">
-											{ translate( 'Normally {{price/}}', {
-												components: {
-													price: (
-														<span className="jetpack-upsell__normal-price">
-															{ formatCurrency( originalPriceDelta, currencyCode as string, {
-																precision: 2,
-																stripZeros: true,
-															} ) }
-														</span>
-													),
-												},
-											} ) }
-										</div>
-									) }
 								</div>
 							) }
 							<div className="jetpack-upsell__actions">
