@@ -1321,6 +1321,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				PLAN_WPCOM_STARTER,
+				PLAN_WPCOM_PRO,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_MONTHLY,
@@ -1343,6 +1345,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				PLAN_WPCOM_STARTER,
+				PLAN_WPCOM_PRO,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_MONTHLY,
@@ -1389,6 +1393,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				PLAN_WPCOM_STARTER,
+				PLAN_WPCOM_PRO,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_MONTHLY,
@@ -1414,6 +1420,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
+				PLAN_WPCOM_STARTER,
+				PLAN_WPCOM_PRO,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_MONTHLY,
