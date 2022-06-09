@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isPro } from '@automattic/calypso-products';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AppState } from 'calypso/types';
@@ -17,7 +16,7 @@ export function isEligibleForProPlan( state: AppState, siteId?: number | null ):
 	}
 	siteId = siteId || getSelectedSiteId( state );
 	const selectedSite = getSite( state, siteId || '' );
-	const currentPlan = getCurrentPlan( state, siteId ) || selectedSite?.plan;
+	const currentPlan = selectedSite?.plan;
 	if ( currentPlan && isPro( currentPlan ) ) {
 		return true;
 	}
