@@ -476,10 +476,8 @@ export function siteSelection( context, next ) {
 		dispatch( requestSite( siteFragment ) )
 			.catch( () => null )
 			.then( ( site ) => {
-				let freshSiteId = getSiteId( getState(), siteFragment );
-
-				// If the fragment matches the *.wordpress.com domain for a site with a mapped domain, redirect to the mapped domain.
-				// e.g /site-editor/example.wordpress.com -> /site-editor/example.com
+				// If we found a site using the fragment and the fragment matches the *.wordpress.com domain for a site with a mapped domain,
+				// redirect to the mapped domain, e.g /site-editor/example.wordpress.com -> /site-editor/example.com
 				if ( site && site.ID ) {
 					const siteSlug = getSiteSlug( getState(), site.ID );
 					const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
@@ -489,6 +487,8 @@ export function siteSelection( context, next ) {
 						return page.redirect( `${ basePath }/${ siteSlug }` );
 					}
 				}
+
+				let freshSiteId = getSiteId( getState(), siteFragment );
 
 				if ( ! freshSiteId ) {
 					const wpcomStagingFragment = siteFragment.replace(
