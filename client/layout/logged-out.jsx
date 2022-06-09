@@ -40,6 +40,7 @@ const LayoutLoggedOut = ( {
 	useOAuth2Layout,
 	showGdprBanner,
 	isPartnerSignup,
+	isPartnerSignupStart,
 } ) => {
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -70,7 +71,7 @@ const LayoutLoggedOut = ( {
 
 	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
 	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
-		if ( isPartnerSignup ) {
+		if ( isPartnerSignup && ! isPartnerSignupStart ) {
 			masterbar = <PartnerSignupMasterbar />;
 		} else if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			masterbar = null;
@@ -139,7 +140,9 @@ export default withCurrentRoute(
 		const sectionTitle = currentSection?.title ?? '';
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 		const isPartnerSignup = isPartnerSignupQuery( currentQuery );
-		const isWhiteLogin = currentRoute.startsWith( '/log-in/new' ) || isPartnerSignup;
+		const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
+		const isWhiteLogin =
+			currentRoute.startsWith( '/log-in/new' ) || ( isPartnerSignup && ! isPartnerSignupStart );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
 		const noMasterbarForRoute = isJetpackLogin || isWhiteLogin || isJetpackWooDnaFlow || isP2Login;
@@ -164,6 +167,7 @@ export default withCurrentRoute(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			useOAuth2Layout: showOAuth2Layout( state ),
 			isPartnerSignup,
+			isPartnerSignupStart,
 		};
 	} )( LayoutLoggedOut )
 );
