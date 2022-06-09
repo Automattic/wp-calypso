@@ -16,7 +16,7 @@ function QueryPostStats( { siteId, postId, fields } ) {
 	const memoizedFields = useMemoCompare( fields, ( a, b ) => a?.join() === b?.join() );
 
 	useEffect( () => {
-		if ( siteId && typeof postId === 'number' ) {
+		if ( siteId && postId > -1 ) {
 			dispatch( request( siteId, postId, memoizedFields ) );
 		}
 	}, [ dispatch, siteId, postId, memoizedFields ] );
