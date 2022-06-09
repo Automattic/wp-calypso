@@ -23,17 +23,17 @@ const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
 	const user = useSelector( getCurrentUser ) as UserData;
 	const defaultButtonState = {
 		status: 'default',
-		message: __( 'Resend verification email' ),
+		buttonText: __( 'Resend verification email' ),
 	};
 	const [ buttonState, setButtonState ] = useState( defaultButtonState );
 	const [ error, setError ] = useState( '' );
 	const sendEmail = useSendEmailVerification();
 
 	const sendVerification = async () => {
-		setButtonState( { status: 'processing', message: __( 'Sending…' ) } );
+		setButtonState( { status: 'processing', buttonText: __( 'Sending…' ) } );
 		sendEmail()
 			.then( () => {
-				setButtonState( { status: 'success', message: __( 'Request sent!' ) } );
+				setButtonState( { status: 'success', buttonText: __( 'Request sent!' ) } );
 				setTimeout( () => setButtonState( defaultButtonState ), 3000 );
 			} )
 			.catch( () => {
@@ -51,12 +51,11 @@ const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
 					primary
 					onClick={ () => sendVerification() }
 				>
-					{ buttonState.message }
+					{ buttonState.buttonText }
 				</Button>
-				{ error && (
+				{ true && (
 					<FormInputValidation className="woo-verify-email__error-notice" isError text={ error } />
 				) }
-				<br />
 				<Button className="woo-verify-email__link" borderless href="#">
 					{ __( 'Edit email address' ) }
 				</Button>
