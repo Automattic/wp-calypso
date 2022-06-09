@@ -477,13 +477,17 @@ export function siteSelection( context, next ) {
 			.catch( () => null )
 			.then( ( site ) => {
 				let freshSiteId = getSiteId( getState(), siteFragment );
-				const siteSlug = getSiteSlug( getState(), site.ID );
-				const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
 
 				// If the fragment matches the *.wordpress.com domain for a site with a mapped domain, redirect to the mapped domain.
-				if ( ! freshSiteId && unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
-					const basePath = sectionify( context.path, siteFragment );
-					return page.redirect( `${ basePath }/${ siteSlug }` );
+				// e.g /site-editor/example.wordpress.com -> /site-editor/example.com
+				if ( site && site.ID ) {
+					const siteSlug = getSiteSlug( getState(), site.ID );
+					const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
+
+					if ( unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
+						const basePath = sectionify( context.path, siteFragment );
+						return page.redirect( `${ basePath }/${ siteSlug }` );
+					}
 				}
 
 				if ( ! freshSiteId ) {
