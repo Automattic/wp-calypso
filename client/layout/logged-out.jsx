@@ -11,7 +11,7 @@ import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import PartnerSignupMasterbar from 'calypso/layout/masterbar/partner-signup';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { isPartnerSignupFlow } from 'calypso/state/login/utils';
+import { isPartnerSignupQuery } from 'calypso/login/partner-signup';
 import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
@@ -138,7 +138,7 @@ export default withCurrentRoute(
 		const sectionName = currentSection?.name ?? null;
 		const sectionTitle = currentSection?.title ?? '';
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
-		const isPartnerSignup = isPartnerSignupFlow( currentQuery?.redirect_to );
+		const isPartnerSignup = isPartnerSignupQuery( currentQuery );
 		const isWhiteLogin = currentRoute.startsWith( '/log-in/new' ) || isPartnerSignup;
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
