@@ -12,7 +12,16 @@ function queryProducts(): Promise< APIProductFamily[] > {
 			path: '/jetpack-licensing/partner/product-families',
 		} )
 		.then( ( data: APIProductFamily[] ) => {
-			const exclude = [ 'free', 'personal', 'premium', 'professional' ];
+			const exclude = [
+				'free',
+				'personal',
+				'premium',
+				'professional',
+				'jetpack-backup-daily',
+				'jetpack-backup-realtime',
+				'jetpack-backup-t0',
+				'jetpack-boost',
+			];
 
 			return data
 				.map( ( family ) => {
