@@ -1,14 +1,15 @@
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import FoldableCard from 'calypso/components/foldable-card';
-import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
+import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -28,6 +29,7 @@ import ActionBox from './action-box';
 import './style.scss';
 
 export const QuickLinks = ( {
+	siteId,
 	canEditPages,
 	canCustomize,
 	canSwitchThemes,
@@ -56,10 +58,11 @@ export const QuickLinks = ( {
 	siteAdminUrl,
 	editHomePageUrl,
 	siteSlug,
-	blockEditorSettings,
-	areBlockEditorSettingsLoading,
 } ) => {
-	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
+	const userLoggedIn = useSelector( isUserLoggedIn );
+	const activeThemeQueryResult = useActiveThemeQuery( siteId, userLoggedIn );
+	const isFSEActive =
+		activeThemeQueryResult?.data?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false;
 
 	const translate = useTranslate();
 	const [
@@ -216,10 +219,6 @@ export const QuickLinks = ( {
 			flushDebouncedUpdateHomeQuickLinksToggleStatus();
 		};
 	}, [] );
-
-	if ( areBlockEditorSettingsLoading ) {
-		return null;
-	}
 
 	return (
 		<FoldableCard
@@ -386,6 +385,7 @@ const mapStateToProps = ( state ) => {
 	const canAddEmail = getDomainsThatCanAddEmail( domains ).length > 0;
 
 	return {
+		siteId,
 		canEditPages: canCurrentUser( state, siteId, 'edit_pages' ),
 		canCustomize: canCurrentUser( state, siteId, 'customize' ),
 		canSwitchThemes: canCurrentUser( state, siteId, 'switch_themes' ),
@@ -449,4 +449,4 @@ const ConnectedQuickLinks = connect(
 	mergeProps
 )( QuickLinks );
 
-export default withBlockEditorSettings( ConnectedQuickLinks );
+export default ConnectedQuickLinks;
