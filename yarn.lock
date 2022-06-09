@@ -287,6 +287,8 @@ __metadata:
   dependencies:
     axios: ^0.27.2
     csv-parse: ^5.1.0
+    csv-stringify: ^6.1.0
+    fs-extra: ^10.1.0
   languageName: unknown
   linkType: soft
 
@@ -14688,6 +14690,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"csv-stringify@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "csv-stringify@npm:6.1.0"
+  checksum: 111ae51c5ecf9aab17f36775d18b1b2db64fb5593c195a69538a95459fee1a53ca67f0d0b37a1f763d76fdeb7e10991e1b6509b0511d9159d7dad4ff9d60718c
+  languageName: node
+  linkType: hard
+
 "ctype@npm:0.5.3":
   version: 0.5.3
   resolution: "ctype@npm:0.5.3"
@@ -18346,6 +18355,17 @@ __metadata:
     jsonfile: ^6.0.1
     universalify: ^2.0.0
   checksum: 85802f3d9e49d197744a8372f0d78d5a1faa3df73f4c5375d6366a4b9f745197d3da1f095841443d50f29a9f81cdc01363eb6d17bef2ba70c268559368211040
+  languageName: node
+  linkType: hard
+
+"fs-extra@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "fs-extra@npm:10.1.0"
+  dependencies:
+    graceful-fs: ^4.2.0
+    jsonfile: ^6.0.1
+    universalify: ^2.0.0
+  checksum: 5f579466e7109719d162a9249abbeffe7f426eb133ea486e020b89bc6d67a741134076bf439983f2eb79276ceaf6bd7b7c1e43c3fd67fe889863e69072fb0a5e
   languageName: node
   linkType: hard
 
