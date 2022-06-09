@@ -53,7 +53,7 @@ const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
 				>
 					{ buttonState.buttonText }
 				</Button>
-				{ true && (
+				{ error && (
 					<FormInputValidation className="woo-verify-email__error-notice" isError text={ error } />
 				) }
 				<Button className="woo-verify-email__link" borderless href="#">
