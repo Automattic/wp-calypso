@@ -100,7 +100,11 @@ export class WeChatPaymentQRcode extends Component< WeChatQRProps > {
 					) }
 				</p>
 
-				<div className="checkout__wechat-qrcode">
+				<div
+					className="checkout__wechat-qrcode"
+					data-testid="wechat-qrcode"
+					data-redirect-url={ this.props.redirectUrl }
+				>
 					<QRCode value={ this.props.redirectUrl } />
 				</div>
 
