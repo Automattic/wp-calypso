@@ -40,6 +40,10 @@ export type StatusEventNames = {
 	[ key in AllowedStatusTypes | string ]: { small_screen: string; large_screen: string };
 };
 
+export type StatusTooltip = {
+	[ key in AllowedStatusTypes | string ]: ReactChild;
+};
+
 export type AllowedActionTypes = 'issue_license' | 'view_activity' | 'view_site' | 'visit_wp_admin';
 
 export type ActionEventNames = {

@@ -16,6 +16,9 @@
 		"directory": "packages/languages"
 	},
 	"author": "Automattic Inc.",
+	"publishConfig": {
+		"access": "public"
+	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",

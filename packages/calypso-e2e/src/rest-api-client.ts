@@ -2,7 +2,7 @@ import fetch, { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 import { SecretsManager } from './secrets';
 import type { AccountCredentials } from './data-helper';
 
-interface AccountClosureDetails {
+export interface AccountClosureDetails {
 	userID: number;
 	username: string;
 	email: string;
@@ -71,6 +71,10 @@ interface SiteDeletionResponse {
 	ID: number;
 	name: string;
 	status: string;
+}
+
+export interface AccountClosureResponse {
+	success: boolean;
 }
 
 const BEARER_TOKEN_URL = 'https://wordpress.com/wp-login.php?action=login-endpoint';
@@ -311,7 +315,7 @@ export class RestAPIClient {
 	 */
 	async closeAccount(
 		expectedAccountDetails: AccountClosureDetails
-	): Promise< { success: boolean } > {
+	): Promise< AccountClosureResponse > {
 		const accountInformation = await this.getMyAccountInformation();
 
 		// Multiple guards to ensure we are operating on the

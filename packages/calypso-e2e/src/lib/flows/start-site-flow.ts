@@ -49,7 +49,9 @@ export class StartSiteFlow {
 	 * @param {string} name Name for the blog.
 	 */
 	async enterBlogName( name: string ): Promise< void > {
-		await this.page.fill( selectors.blogNameInput, name );
+		await this.page.waitForLoadState( 'networkidle' );
+		const locator = this.page.locator( selectors.blogNameInput );
+		await locator.fill( name );
 	}
 
 	/**
@@ -58,7 +60,9 @@ export class StartSiteFlow {
 	 * @param {string} tagline Tagline for the blog.
 	 */
 	async enterTagline( tagline: string ): Promise< void > {
-		await this.page.fill( selectors.taglineInput, tagline );
+		await this.page.waitForLoadState( 'networkidle' );
+		const locator = this.page.locator( selectors.taglineInput );
+		await locator.fill( tagline );
 	}
 
 	/**

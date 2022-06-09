@@ -34,7 +34,12 @@ const DashboardSidebar: FunctionComponent< Props > = ( { path } ) => {
 			<SiteSelector showAddNewSite showAllSites allSitesPath={ path } siteBasePath="/backup" />
 			<Sidebar className="sidebar__jetpack-cloud">
 				<SidebarRegion>
-					<CurrentSite />
+					<CurrentSite
+						// Ignore type checking because TypeScript is incorrectly inferring the prop type due to JSX usage in <CurrentSite /> component
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
+						forceAllSitesView
+					/>
 					<SidebarMenu>
 						<SidebarItem
 							customIcon={ <JetpackIcons icon="dashboard" /> }

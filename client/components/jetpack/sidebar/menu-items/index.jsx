@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryScanState from 'calypso/components/data/query-jetpack-scan';
+import BackupBadge from 'calypso/components/jetpack/backup-badge';
 import ScanBadge from 'calypso/components/jetpack/scan-badge';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import { backupPath, scanPath } from 'calypso/lib/jetpack/paths';
@@ -26,6 +27,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 	const isWPForTeamsSite = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
 
 	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
+
 	const scanProgress = useSelector( ( state ) => getSiteScanProgress( state, siteId ) );
 	const scanThreats = useSelector( ( state ) => getSiteScanThreats( state, siteId ) );
 
@@ -65,7 +67,9 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 					onNavigate={ onNavigate( tracksEventNames.backupClicked ) }
 					selected={ currentPathMatches( backupPath( siteSlug ) ) }
 					expandSection={ expandSection }
-				/>
+				>
+					<BackupBadge siteId={ siteId } />
+				</SidebarItem>
 			) }
 			{ isAdmin && ! isWPCOM && ! isWPForTeamsSite && (
 				<SidebarItem

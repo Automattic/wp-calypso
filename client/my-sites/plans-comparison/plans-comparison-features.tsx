@@ -19,6 +19,9 @@ import {
 	FEATURE_MONETISE,
 	FEATURE_JETPACK_ESSENTIAL,
 	FEATURE_GOOGLE_ANALYTICS,
+	FEATURE_UNLIMITED_TRAFFIC,
+	FEATURE_FREE_THEMES,
+	FEATURE_MANAGED_HOSTING,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { translate, numberFormat } from 'i18n-calypso';
@@ -94,6 +97,112 @@ function defaultGetCellText(
 }
 
 export const planComparisonFeatures: PlanComparisonFeature[] = [
+	{
+		get title() {
+			return translate( 'Unlimited Traffic' );
+		},
+		get description() {
+			return translate(
+				'All WordPress.com plans include unlimited traffic so you never have to worry about surprise charges.'
+			);
+		},
+		features: [ FEATURE_UNLIMITED_TRAFFIC ],
+		getCellText: ( feature, isMobile = false ) => {
+			if ( ! isMobile ) {
+				if ( feature ) {
+					return (
+						<>
+							<Gridicon icon="checkmark" />
+							{ translate( 'Included' ) }
+						</>
+					);
+				}
+
+				return (
+					<>
+						<Gridicon icon="cross" />
+						{ translate( 'Not included' ) }
+					</>
+				);
+			}
+
+			return feature
+				? translate( 'Unlimited traffic included' )
+				: translate( 'Unlimited traffic is {{strong}}not{{/strong}} included', {
+						components: { strong: <strong /> },
+				  } );
+		},
+	},
+	{
+		get title() {
+			return translate( 'Managed Hosting' );
+		},
+		get description() {
+			return translate(
+				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
+			);
+		},
+		features: [ FEATURE_MANAGED_HOSTING ],
+		getCellText: ( feature, isMobile = false ) => {
+			if ( ! isMobile ) {
+				if ( feature ) {
+					return (
+						<>
+							<Gridicon icon="checkmark" />
+							{ translate( 'Included' ) }
+						</>
+					);
+				}
+
+				return (
+					<>
+						<Gridicon icon="cross" />
+						{ translate( 'Not included' ) }
+					</>
+				);
+			}
+
+			return feature
+				? translate( 'Managed hosting included' )
+				: translate( 'Managed hosting is {{strong}}not{{/strong}} included', {
+						components: { strong: <strong /> },
+				  } );
+		},
+	},
+	{
+		get title() {
+			return translate( 'Free themes' );
+		},
+		get description() {
+			return translate( 'All WordPress.com plans include access to dozens of beautiful themes.' );
+		},
+		features: [ FEATURE_FREE_THEMES ],
+		getCellText: ( feature, isMobile = false ) => {
+			if ( ! isMobile ) {
+				if ( feature ) {
+					return (
+						<>
+							<Gridicon icon="checkmark" />
+							{ translate( 'Included' ) }
+						</>
+					);
+				}
+
+				return (
+					<>
+						<Gridicon icon="cross" />
+						{ translate( 'Not included' ) }
+					</>
+				);
+			}
+
+			return feature
+				? translate( 'Dozens of free themes included' )
+				: translate( 'Free themes {{strong}}not{{/strong}} included', {
+						components: { strong: <strong /> },
+				  } );
+		},
+	},
 	{
 		get title() {
 			return translate( 'Custom domain name' );
@@ -347,13 +456,25 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 		features: [ FEATURE_PREMIUM_THEMES ],
 		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Premium themes' ) )( feature, isMobile );
+			// let cellText = defaultGetCellText( translate( 'Premium themes' ) )( feature, isMobile );
+			let cellText = feature ? (
+				<>
+					<Gridicon icon="checkmark" />
+					{ translate( 'Included' ) }
+				</>
+			) : (
+				<>{ translate( 'Available for $50+ each' ) }</>
+			);
 			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Premium themes are included' )
-					: translate( 'Premium themes are {{strong}}not{{/strong}} included', {
+				cellText = feature ? (
+					<>{ translate( 'Premium themes are included' ) }</>
+				) : (
+					<>
+						{ translate( 'Premium themes are {{strong}}not{{/strong}} included', {
 							components: { strong: <strong /> },
-					  } );
+						} ) }
+					</>
+				);
 			}
 			return cellText;
 		},
@@ -453,13 +574,25 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 		features: [ FEATURE_NO_ADS ],
 		getCellText: ( feature, isMobile = false ) => {
-			let cellText = defaultGetCellText( translate( 'Remove ads' ) )( feature, isMobile );
+			// let cellText = defaultGetCellText( translate( 'Remove ads' ) )( feature, isMobile );
+			let cellText = feature ? (
+				<>
+					<Gridicon icon="checkmark" />
+					{ translate( 'Included' ) }
+				</>
+			) : (
+				<>{ translate( 'Available for +$2/month' ) }</>
+			);
 			if ( isMobile ) {
-				cellText = feature
-					? translate( 'Remove ads is included' )
-					: translate( 'Remove ads is {{strong}}not{{/strong}} included', {
+				cellText = feature ? (
+					<>{ translate( 'Remove ads is included' ) }</>
+				) : (
+					<>
+						{ translate( 'Remove ads for +$2 per month', {
 							components: { strong: <strong /> },
-					  } );
+						} ) }
+					</>
+				);
 			}
 			return cellText;
 		},

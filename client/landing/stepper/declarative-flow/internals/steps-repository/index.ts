@@ -27,6 +27,7 @@ export { default as wooInstallPlugins } from './woo-install-plugins';
 export { default as processing } from './processing-step';
 export { default as error } from './error-step';
 export { default as wooConfirm } from './woo-confirm';
+export { default as wooVerifyEmail } from './woo-verify-email';
 
 export type StepPath =
 	| 'courses'
@@ -57,4 +58,5 @@ export type StepPath =
 	| 'wooTransfer'
 	| 'wooInstallPlugins'
 	| 'error'
-	| 'wooConfirm';
+	| 'wooConfirm'
+	| 'wooVerifyEmail';

@@ -15,7 +15,6 @@ import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	getEligibleGSuiteDomain,
@@ -38,7 +37,7 @@ import {
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailPricingNotice from 'calypso/my-sites/email/email-pricing-notice';
-import { emailManagementAddGSuiteUsers, emailManagement } from 'calypso/my-sites/email/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
@@ -237,33 +236,17 @@ class GSuiteAddUsers extends Component {
 	}
 
 	render() {
-		const {
-			currentRoute,
-			domains,
-			googleMailProduct,
-			selectedDomainName,
-			selectedSite,
-			translate,
-		} = this.props;
+		const { domains, googleMailProduct, selectedDomainName, selectedSite, translate } = this.props;
 
 		const selectedDomain = getSelectedDomain( {
 			domains,
 			selectedDomainName: selectedDomainName,
 		} );
 
-		const analyticsPath = emailManagementAddGSuiteUsers(
-			':site',
-			selectedDomainName ? ':domain' : undefined,
-			':productType',
-			currentRoute
-		);
-
 		const googleMailServiceFamily = getGoogleMailServiceFamily( googleMailProduct?.product_slug );
 
 		return (
 			<>
-				<PageViewTracker path={ analyticsPath } title="Email Management > Add Google Users" />
-
 				<QueryProductsList />
 
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }

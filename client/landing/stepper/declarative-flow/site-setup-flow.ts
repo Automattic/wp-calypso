@@ -53,6 +53,7 @@ export const siteSetupFlow: Flow = {
 			'error',
 			'wooTransfer',
 			'wooInstallPlugins',
+			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'wooVerifyEmail' ] : [] ),
 			'wooConfirm',
 		] as StepPath[];
 	},

@@ -27,7 +27,7 @@ export default function BackupWarningRetry( { siteId } ) {
 		trackedRequestBackupSite();
 		setDisable( true );
 	};
-	const warningInfoLink = `https://jetpack.com/redirect?source=jetpack-support-backup`;
+	const warningInfoLink = 'https://jetpack.com/support/backup/troubleshooting-jetpack-backup/';
 
 	return (
 		<div className="backup-warning-retry__wrapper">

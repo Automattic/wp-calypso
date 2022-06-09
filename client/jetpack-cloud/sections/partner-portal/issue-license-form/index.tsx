@@ -16,6 +16,8 @@ import {
 	APIProductFamily,
 	APIProductFamilyProduct,
 } from 'calypso/state/partner-portal/types';
+import { AssignLicenceProps } from '../types';
+
 import './style.scss';
 
 function selectProductOptions( families: APIProductFamily[] ): APIProductFamilyProduct[] {
@@ -28,28 +30,26 @@ function alphabeticallySortedProductOptions(
 	return sortBy( selectProductOptions( families ), ( product ) => product.name );
 }
 
-interface Props {
-	selectedSite?: number | null;
-	suggestedProduct?: string | null;
-}
-
 export default function IssueLicenseForm( {
 	selectedSite,
 	suggestedProduct,
-}: Props ): ReactElement {
+}: AssignLicenceProps ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const products = useProductsQuery( {
 		select: alphabeticallySortedProductOptions,
 	} );
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	const assignLicense = useAssignLicenseMutation( {
 		onSuccess: ( license: any ) => {
+			setIsSubmitting( false );
 			page.redirect(
 				addQueryArgs( { highlight: license.license_key }, '/partner-portal/licenses' )
 			);
 		},
 		onError: ( error: Error ) => {
+			setIsSubmitting( false );
 			dispatch( errorNotice( error.message ) );
 		},
 	} );
@@ -57,8 +57,10 @@ export default function IssueLicenseForm( {
 	const issueLicense = useIssueLicenseMutation( {
 		onSuccess: ( license ) => {
 			const licenseKey = license.license_key;
-			if ( selectedSite ) {
-				assignLicense.mutate( { licenseKey, selectedSite } );
+			const selectedSiteId = selectedSite?.ID;
+			if ( selectedSiteId ) {
+				setIsSubmitting( true );
+				assignLicense.mutate( { licenseKey, selectedSite: selectedSiteId } );
 			} else {
 				page.redirect(
 					addQueryArgs( { key: license.license_key }, '/partner-portal/assign-license' )
@@ -122,6 +124,8 @@ export default function IssueLicenseForm( {
 		issueLicense.mutate( { product } );
 	}, [ dispatch, product, issueLicense.mutate ] );
 
+	const selectedSiteDomian = selectedSite?.domain;
+
 	return (
 		<div className="issue-license-form">
 			{ products.isLoading && <div className="issue-license-form__placeholder" /> }
@@ -130,16 +134,24 @@ export default function IssueLicenseForm( {
 				<>
 					<div className="issue-license-form__top">
 						<p className="issue-license-form__description">
-							{ translate(
-								'Select the Jetpack product you would like to issue a new license for'
-							) }
+							{ selectedSiteDomian
+								? translate(
+										'Select the Jetpack product you would like to add to {{strong}}%(selectedSiteDomian)s{{/strong}}',
+										{
+											args: { selectedSiteDomian },
+											components: { strong: <strong /> },
+										}
+								  )
+								: translate(
+										'Select the Jetpack product you would like to issue a new license for'
+								  ) }
 						</p>
 						<div className="issue-license-form__controls">
 							<Button
 								primary
 								className="issue-license-form__select-license"
 								disabled={ ! product }
-								busy={ issueLicense.isLoading }
+								busy={ issueLicense.isLoading || isSubmitting }
 								onClick={ onIssueLicense }
 							>
 								{ translate( 'Select License' ) }
