@@ -155,7 +155,7 @@ class StatsSite extends Component {
 				description={ translate(
 					'Changing your site from private to public helps people find you and get more visitors. Don’t worry, you can keep working on your site.'
 				) }
-				disableCircle="true"
+				disableCircle={ true }
 				event="calypso_stats_private_site_banner"
 				dismissPreferenceName={ `stats-launch-private-site-${ siteId }` }
 				href={ `/settings/general/${ siteSlug }` }
