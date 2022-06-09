@@ -17,8 +17,9 @@ import { FormCheckbox } from 'calypso/devdocs/design/playground-scope';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getMimePrefix, url } from 'calypso/lib/media/utils';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import versionCompare from 'calypso/lib/version-compare';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EditorMediaModalFieldset from '../fieldset';
 
@@ -353,8 +354,10 @@ class EditorMediaModalDetailFields extends Component {
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isWpcom = ! isJetpackSite( state, siteId );
-	const hasVideoPrivacyFeature =
-		isWpcom && siteHasFeature( state, siteId, 'videopress-privacy-setting' );
+	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+	const isJetpackPrivateVideoSupported =
+		siteJetpackVersion && versionCompare( siteJetpackVersion, '10.9', '>=' );
+	const hasVideoPrivacyFeature = isWpcom || isJetpackPrivateVideoSupported;
 
 	return {
 		siteId,
