@@ -15,7 +15,9 @@ interface Props extends AddOnMeta {
 		text: string;
 		handler: ( slug: string ) => void;
 	};
-	isSelected?: ( slug: string ) => boolean;
+	// returns true/false if add-on is to be treated as "selected" (either added to cart, or part of plan, or ...)
+	// can extend to return a "selected status" string, if we need to tailor
+	useAddOnSelectedStatus?: ( slug: string ) => boolean;
 }
 
 const Frame = styled.div`
@@ -59,7 +61,7 @@ const BillingInfo = ( { addOnSlug }: { addOnSlug: string } ) => {
 };
 
 const AddOnCard = ( props: Props ) => {
-	const isSelected = props.isSelected?.( props.slug );
+	const isSelected = props.useAddOnSelectedStatus?.( props.slug );
 	const onActionPrimary = () => {
 		props.actionPrimary?.handler( props.slug );
 	};

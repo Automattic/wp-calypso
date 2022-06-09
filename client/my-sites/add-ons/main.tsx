@@ -87,12 +87,19 @@ interface Props {
 	context?: PageJS.Context;
 }
 
-const AddOnsMain: React.FunctionComponent< Props > = () => {
-	const addOns = useAddOns();
+const useAddOnSelectedStatus = ( slug: string ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePurchases = useSelector( ( state ) => {
 		return getSitePurchases( state, selectedSite?.ID );
 	} );
+
+	return sitePurchases.filter( ( product ) => product.productSlug === slug ).length > 0;
+};
+
+const AddOnsMain: React.FunctionComponent< Props > = () => {
+	const addOns = useAddOns();
+	const selectedSite = useSelector( getSelectedSite );
+
 	const canManageSite = useSelector( ( state ) => {
 		if ( ! selectedSite ) {
 			return;
@@ -117,10 +124,6 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 		page.redirect( `/purchases/subscriptions/${ selectedSite?.slug }` );
 	};
 
-	const isAddOnSelected = ( slug: string ) => {
-		return sitePurchases.filter( ( product ) => product.productSlug === slug ).length > 0;
-	};
-
 	return (
 		<div>
 			<Global styles={ globalOverrides } />
@@ -131,7 +134,7 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 				<AddOnsGrid
 					actionPrimary={ { text: 'Buy add-on', handler: handleActionPrimary } }
 					actionSelected={ { text: 'Manage add-on', handler: handleActionSelected } }
-					isAddOnSelected={ isAddOnSelected }
+					useAddOnSelectedStatus={ useAddOnSelectedStatus }
 					addOns={ addOns }
 					highlight={ false }
 				/>

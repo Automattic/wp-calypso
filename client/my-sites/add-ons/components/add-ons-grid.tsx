@@ -12,7 +12,9 @@ interface Props {
 		text: string;
 		handler: ( slug: string ) => void;
 	};
-	isAddOnSelected?: ( slug: string ) => boolean;
+	// returns true/false if add-on is to be treated as "selected" (either added to cart, or part of plan, or ...)
+	// can extend to return a "selected status" string, if we need to tailor
+	useAddOnSelectedStatus?: ( slug: string ) => boolean;
 	highlight: boolean;
 }
 
@@ -31,7 +33,7 @@ const AddOnsGrid = ( {
 	addOns,
 	actionPrimary,
 	actionSelected,
-	isAddOnSelected,
+	useAddOnSelectedStatus,
 	highlight,
 }: Props ) => {
 	return (
@@ -42,7 +44,7 @@ const AddOnsGrid = ( {
 						key={ addOn.slug }
 						actionPrimary={ actionPrimary }
 						actionSelected={ actionSelected }
-						isSelected={ isAddOnSelected }
+						useAddOnSelectedStatus={ useAddOnSelectedStatus }
 						{ ...addOn }
 						highlight={ highlight ? addOn.highlight : false }
 					/>
