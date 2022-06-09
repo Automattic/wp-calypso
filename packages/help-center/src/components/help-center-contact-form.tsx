@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 /**
  * External Dependencies
  */
@@ -15,10 +16,12 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import { useHistory, useLocation } from 'react-router-dom';
 import { askDirectlyQuestion, execute } from '../directly';
 import { HELP_CENTER_STORE, USER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
@@ -181,9 +184,8 @@ export const HelpCenterContactForm = () => {
 
 	const formTitles = titles[ mode ];
 
-	const currentSite = useSelect( ( select ) =>
-		select( SITE_STORE ).getSite( window._currentSiteId )
-	);
+	const siteId = useSelector( getSelectedSiteId );
+	const currentSite = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
 
 	let supportSite: typeof currentSite;
 
@@ -215,8 +217,8 @@ export const HelpCenterContactForm = () => {
 			case 'EMAIL': {
 				if ( supportSite ) {
 					const ticketMeta = [
-						'Site I need help with: ' + supportSite?.URL,
-						'Plan: ' + supportSite?.plan?.product_slug,
+						'Site I need help with: ' + supportSite.URL,
+						'Plan: ' + supportSite.plan?.product_slug,
 					];
 
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
