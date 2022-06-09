@@ -86,8 +86,10 @@ function getHoldMessages(
 			supportUrl: null,
 		},
 		EXCESSIVE_DISK_SPACE: {
-			// translators: "Meet disk quota" appears just after "To continue you'll need to: "
-			title: translate( 'Meet disk quota' ),
+			title: translate( 'Purchase or free up storage', {
+				comment:
+					'Message displayed when a Simple site cannot be transferred to Atomic because there is not enough disk space. It appears after the heading "To continue you\'ll need to: ", inside a list with actions to perform in order to proceed with the transfer.',
+			} ),
 			description: <ExcessiveDiskSpace />,
 			supportUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
 		},
