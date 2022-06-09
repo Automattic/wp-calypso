@@ -66,6 +66,20 @@ class WPCom_Tutorials {
 	}
 
 	/**
+	 * Unregisters a registered Tutorial
+	 *
+	 * @param string $id Tutorial ID.
+	 * @return bool      True if successfully unregistered, false if not found.
+	 */
+	public function unregister( $id ) {
+		if ( ! isset( $this->registry[ $id ] ) ) {
+			return false;
+		}
+		unset( $this->registry[ $id ] );
+		return true;
+	}
+
+	/**
 	 * Validates the options passed in `WPCom_Tutorials::register`.
 	 *
 	 * @param array $options Associative array passed with registration.
