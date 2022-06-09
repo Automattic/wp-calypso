@@ -36,23 +36,19 @@ let timesValidationFailed = 0;
 class Site extends Component {
 	static displayName = 'Site';
 
-	state = {
-		form: null,
-		submitting: false,
-	};
+	constructor( props ) {
+		super( props );
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
 		let initialState;
 
-		if ( this.props.step && this.props.step.form ) {
-			initialState = this.props.step.form;
+		if ( props.step && props.step.form ) {
+			initialState = props.step.form;
 
-			if ( ! isEmpty( this.props.step.errors ) ) {
+			if ( ! isEmpty( props.step.errors ) ) {
 				initialState = formState.setFieldErrors(
 					formState.setFieldsValidating( initialState ),
 					{
-						site: this.props.step.errors[ 0 ].message,
+						site: props.step.errors[ 0 ].message,
 					},
 					true
 				);
@@ -70,7 +66,10 @@ class Site extends Component {
 			initialState: initialState,
 		} );
 
-		this.setState( { form: this.formStateController.getInitialState() } );
+		this.state = {
+			form: this.formStateController.getInitialState(),
+			submitting: false,
+		};
 	}
 
 	componentWillUnmount() {
