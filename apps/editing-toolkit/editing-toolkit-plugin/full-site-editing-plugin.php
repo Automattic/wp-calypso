@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: WordPress.com Editing Toolkit
+ * Plugin Name: DEV WordPress.com Editing Toolkit
  * Description: Enhances your page creation workflow within the Block Editor.
  * Version: 2.21
  * Author: Automattic
@@ -414,3 +414,11 @@ function load_block_description_links() {
 	require_once __DIR__ . '/wpcom-block-description-links/class-wpcom-block-description-links.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_description_links' );
+
+/**
+ * Load Tutorials API
+ */
+function load_tutorials() {
+	require_once __DIR__ . '/tutorials/tutorials.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tutorials' );
