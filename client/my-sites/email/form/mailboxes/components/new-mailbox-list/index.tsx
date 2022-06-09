@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { MailboxFormWrapper } from 'calypso/my-sites/email/form/mailboxes/components/mailbox-form-wrapper';
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
@@ -51,6 +52,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 	const createNewMailbox = () => new MailboxForm< EmailProvider >( provider, selectedDomainName );
 
 	const [ mailboxes, setMailboxes ] = useState( [ createNewMailbox() ] );
+	const isTitan = provider === EmailProvider.Titan;
 
 	// Set visibility for desired hidden fields
 	mailboxes.forEach( ( mailbox ) => {
@@ -61,14 +63,26 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 	} );
 
 	const addMailbox = () => {
-		setMailboxes( [ ...mailboxes, createNewMailbox() ] );
+		const newMailboxes = [ ...mailboxes, createNewMailbox() ];
+		setMailboxes( newMailboxes );
+		const eventName = isTitan
+			? 'calypso_email_titan_add_mailboxes_add_another_mailbox_button_click'
+			: 'calypso_email_google_workspace_add_mailboxes_add_another_mailbox_button_click';
+		recordTracksEvent( eventName, { mailbox_count: newMailboxes.length + 1 } );
 	};
 
 	const removeMailbox = useCallback(
 		( uuid: string ) => () => {
-			setMailboxes( mailboxes.filter( ( mailbox ) => mailbox.formFields.uuid.value !== uuid ) );
+			const newMailboxes = mailboxes.filter(
+				( mailbox ) => mailbox.formFields.uuid.value !== uuid
+			);
+			setMailboxes( newMailboxes );
+			const eventName = isTitan
+				? 'calypso_email_titan_add_mailboxes_remove_mailbox_button_click'
+				: 'calypso_email_google_workspace_add_mailboxes_remove_mailbox_button_click';
+			recordTracksEvent( eventName, { mailbox_count: newMailboxes.length + 1 } );
 		},
-		[ mailboxes ]
+		[ isTitan, mailboxes ]
 	);
 
 	const handleCancel = () => onCancel();
