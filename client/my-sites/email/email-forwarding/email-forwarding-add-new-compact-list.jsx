@@ -113,8 +113,9 @@ const EmailForwardingAddNewCompactList = ( {
 
 			<div className="email-forwarding-add-new-compact-list__actions">
 				<Button
-					primary
+					busy={ isSubmittingEmailForward }
 					disabled={ ! hasValidEmailForwards() || isSubmittingEmailForward }
+					primary
 					type="submit"
 				>
 					{ translate( 'Add' ) }
