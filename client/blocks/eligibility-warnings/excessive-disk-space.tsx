@@ -21,7 +21,7 @@ const ExcessiveDiskSpace = ( { translate }: { translate: LocalizeProps[ 'transla
 
 	return (
 		<div>
-			{ translate( "Your site's disk usage exceeds the amount provided by its plan." ) }
+			{ translate( 'Your site does not have enough free disk space.' ) }
 			<div className="eligibility-warnings__plan-storage-wrapper">
 				<PlanStorage siteId={ selectedSiteId }>{ null }</PlanStorage>
 			</div>
