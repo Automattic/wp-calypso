@@ -182,7 +182,7 @@
 
 .jetpack-upsell__cost-info,
 .jetpack-upsell__price-skeleton {
-	min-height: 135px;
+	min-height: 6.5rem;
 }
 
 .jetpack-upsell__price-skeleton {
@@ -199,11 +199,6 @@
 			width: 3.125rem;
 			height: 3.125rem;
 			margin-bottom: 1.25rem;
-		}
-
-		&:nth-child( 3 ) {
-			width: 6.25rem;
-			height: 1.25rem;
 		}
 	}
 }
@@ -248,18 +243,6 @@
 	color: var( --studio-gray-50 );
 
 	font-weight: 500;
-}
-
-.jetpack-upsell__normal-price-ctn {
-	margin-top: 1rem;
-
-	color: var( --studio-gray-50 );
-
-	font-size: 0.875rem;
-}
-
-.jetpack-upsell__normal-price {
-	color: var( --studio-gray-100 );
 }
 
 .jetpack-upsell__footer {
