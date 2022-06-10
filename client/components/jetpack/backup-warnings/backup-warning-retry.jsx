@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -21,6 +22,7 @@ export default function BackupWarningRetry( { siteId } ) {
 		requestBackupSite,
 		'calypso_jetpack_backup_retry_click'
 	);
+	const trackLearnWhy = recordTracksEvent( 'calypso_jetpack_backup_learn_why_click' );
 	const retryText = translate( 'Retry' );
 	const queuedText = translate( 'Retry queued' );
 	const enqueueRetry = () => {
@@ -41,6 +43,7 @@ export default function BackupWarningRetry( { siteId } ) {
 								target="_blank"
 								rel="noopener noreferrer"
 								icon={ false }
+								onClick={ trackLearnWhy }
 							/>
 						),
 					},

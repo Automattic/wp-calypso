@@ -16,6 +16,7 @@ export interface Props {
 	expandedSummary?: string | ReactNode;
 	clickableHeader?: boolean;
 	onClick?: () => void;
+	onOpen?: () => void;
 }
 
 class LogItem extends PureComponent< Props > {
@@ -34,8 +35,16 @@ class LogItem extends PureComponent< Props > {
 	}
 
 	render() {
-		const { clickableHeader, highlight, children, className, expandedSummary, summary, onClick } =
-			this.props;
+		const {
+			clickableHeader,
+			highlight,
+			children,
+			className,
+			expandedSummary,
+			summary,
+			onClick,
+			onOpen,
+		} = this.props;
 		return (
 			<FoldableCard
 				header={ this.renderHeader() }
@@ -45,6 +54,7 @@ class LogItem extends PureComponent< Props > {
 				summary={ summary }
 				clickableHeader={ clickableHeader }
 				onClick={ onClick }
+				onOpen={ onOpen }
 			>
 				{ children }
 			</FoldableCard>

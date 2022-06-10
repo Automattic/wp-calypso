@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -136,6 +137,7 @@ const BackupWarnings = ( { backup } ) => {
 
 	const warnings = getBackupWarnings( backup );
 	const hasWarnings = Object.keys( warnings ).length !== 0;
+	const trackExpandWarning = recordTracksEvent( 'calypso_jetpack_backup_expand_warning_click' );
 
 	if ( ! hasWarnings ) {
 		return <></>;
@@ -154,6 +156,7 @@ const BackupWarnings = ( { backup } ) => {
 				header={
 					<BackupWarningHeader warning={ warnings[ warningCode ] } warningCode={ warningCode } />
 				}
+				onOpen={ trackExpandWarning }
 			>
 				<ul className="backup-warnings__file-list">{ fileList }</ul>
 				<div className="backup-warnings__info">
