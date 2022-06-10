@@ -6,4 +6,5 @@ export const PREINSTALLED_PLUGINS = [
 	'full-site-editing',
 	'layout-grid',
 	'page-optimize',
+	'jetpack-search',
 ];
