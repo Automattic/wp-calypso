@@ -292,7 +292,6 @@ export class EditorSettingsSidebarComponent {
 				continue;
 			}
 			if ( key === 'date' ) {
-				console.log( 'lkjwer' );
 				const daySelector = this.editor.locator( selectors.scheduleInput( 'day' ) );
 				await daySelector.fill( date[ key ].toString() );
 				continue;
