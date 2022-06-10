@@ -66,7 +66,7 @@ const getWarningInfo = ( code, category ) => {
 				components: {
 					ExternalLink: (
 						<ExternalLink
-							href="https://jetpack.com/support/backup/backups-via-the-jetpack-plugin/adding-credentials-to-jetpack/#file-access-permissions"
+							href="https://jetpack.com/blog/error-establishing-database-connection-on-wordpress/"
 							target="_blank"
 							rel="noopener noreferrer"
 							icon={ false }
