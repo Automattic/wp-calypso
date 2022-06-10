@@ -1,7 +1,6 @@
 import phrase from 'asana-phrase';
 import envVariables from './env-variables';
-import { SecretsManager, TestAccountName } from './secrets';
-import type { Secrets } from './secrets';
+import { SecretsManager } from './secrets';
 import type {
 	PaymentDetails,
 	DateFormat,
@@ -9,6 +8,7 @@ import type {
 	NewTestUserDetails,
 	AccountCredentials,
 } from './types/data-helper.types';
+import type { Secrets, TestAccountName } from './types/secret-manager.types';
 
 /**
  * Returns a set of data required to sign up
