@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
@@ -11,13 +10,19 @@ import {
 	addEmailForwardSuccess,
 	isAddingEmailForward,
 } from 'calypso/state/selectors/get-email-forwards';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import type { FormEvent } from 'react';
+
+type Props = {
+	onConfirmEmailForwarding?: () => void;
+	onAddEmailForwardSuccess: () => void;
+	selectedDomainName: string;
+};
 
 const EmailForwardingAddNewCompactList = ( {
 	onAddEmailForwardSuccess,
 	onConfirmEmailForwarding,
 	selectedDomainName,
-} ) => {
+}: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -26,7 +31,6 @@ const EmailForwardingAddNewCompactList = ( {
 	] );
 	const [ newEmailForwardAdded, setNewEmailForwardAdded ] = useState( false );
 
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const isSubmittingEmailForward = useSelector( ( state ) =>
 		isAddingEmailForward( state, selectedDomainName )
 	);
@@ -45,16 +49,16 @@ const EmailForwardingAddNewCompactList = ( {
 		return ! emailForwards?.some( ( forward ) => ! forward.isValid );
 	};
 
-	const addNewEmailForwardWithAnalytics = ( domainName, mailbox, destination ) => {
+	const addNewEmailForwardWithAnalytics = ( mailbox: string, destination: string ) => {
 		withAnalytics(
 			composeAnalytics(
-				onConfirmEmailForwarding(),
-				dispatch( addEmailForward( domainName, mailbox, destination ) )
+				onConfirmEmailForwarding?.(),
+				dispatch( addEmailForward( selectedDomainName, mailbox, destination ) )
 			)
 		);
 	};
 
-	const submitNewEmailForwards = ( event ) => {
+	const submitNewEmailForwards = ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
 		if ( isSubmittingEmailForward ) {
@@ -62,7 +66,7 @@ const EmailForwardingAddNewCompactList = ( {
 		}
 
 		emailForwards?.map( ( { mailbox, destination } ) => {
-			addNewEmailForwardWithAnalytics( selectedDomainName, mailbox, destination, selectedSiteSlug );
+			addNewEmailForwardWithAnalytics( mailbox, destination );
 		} );
 
 		setNewEmailForwardAdded( true );
@@ -70,17 +74,21 @@ const EmailForwardingAddNewCompactList = ( {
 
 	const onAddNewEmailForward = () => {
 		setEmailForwards( ( prev ) => {
-			return [ ...prev, { destination: '', mailbox: '' } ];
+			return [ ...prev, { destination: '', mailbox: '', isValid: false } ];
 		} );
 	};
 
-	const onRemoveEmailForward = ( index ) => {
+	const onRemoveEmailForward = ( index: number ) => {
 		const newEmailForwards = [ ...emailForwards ];
 		newEmailForwards.splice( index, 1 );
 		setEmailForwards( newEmailForwards );
 	};
 
-	const onUpdateEmailForward = ( index, name, value ) => {
+	const onUpdateEmailForward = (
+		index: number,
+		name: 'destination' | 'mailbox',
+		value: string
+	) => {
 		// eslint-disable-next-line prefer-const
 		let newEmailForwards = [ ...emailForwards ];
 		newEmailForwards[ index ][ name ] = value;
@@ -123,12 +131,6 @@ const EmailForwardingAddNewCompactList = ( {
 			</div>
 		</form>
 	);
-};
-
-EmailForwardingAddNewCompactList.propTypes = {
-	onConfirmEmailForwarding: PropTypes.func.isRequired,
-	onAddEmailForwardSuccess: PropTypes.func,
-	selectedDomainName: PropTypes.string.isRequired,
 };
 
 export default EmailForwardingAddNewCompactList;
