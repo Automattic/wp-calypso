@@ -33,7 +33,7 @@ export const getCacheKey = ( siteId: number | null, domain: string ) => [
  * @returns Returns the result of the `useQuery` call
  */
 export const useGetEmailAccountsQuery = (
-	siteId: number,
+	siteId: number | null,
 	domain: string,
 	queryOptions?: UseQueryOptions< any, unknown, UseGetEmailAccountsQueryData >
 ) => {

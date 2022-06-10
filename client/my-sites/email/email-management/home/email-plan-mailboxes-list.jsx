@@ -117,7 +117,9 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes }
 
 				<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
 
-				<EmailMailboxActionMenu account={ account } domain={ domain } mailbox={ mailbox } />
+				{ ! mailbox.temporary && (
+					<EmailMailboxActionMenu account={ account } domain={ domain } mailbox={ mailbox } />
+				) }
 			</MailboxListItem>
 		);
 	} );

@@ -1,13 +1,13 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
+import { useIsLoading as useAddEmailForwardMutationIsLoading } from 'calypso/data/emails/use-add-email-forward-mutation';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
@@ -98,21 +98,15 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const hasSitesLoaded = useSelector( ( state ) => hasLoadedSites( state ) );
 
-	const {
-		data: allDomains = [],
-		isLoading: isSiteDomainLoading,
-		remove: removeEmailDomainsCache,
-	} = useGetDomainsQuery( selectedSite?.ID ?? null, {
-		retry: false,
-	} );
+	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
 
-	// Clear the query data when the component unmounts in order to prevent showing stale data when
-	// users return here after e.g. adding a new email forward.
-	useEffect( () => {
-		return () => {
-			removeEmailDomainsCache();
-		};
-	}, [] );
+	const { data: allDomains = [], isLoading: isSiteDomainLoading } = useGetDomainsQuery(
+		selectedSite?.ID ?? null,
+		{
+			refetchOnMount: ! addEmailForwardMutationActive,
+			retry: false,
+		}
+	);
 
 	const domains = allDomains.map( createSiteDomainObject );
 
