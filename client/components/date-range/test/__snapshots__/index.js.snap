@@ -6,9 +6,11 @@ exports[`DateRange should render 1`] = `
 >
   <span
     class="button-group date-range__trigger"
+    role="group"
   >
     <button
       aria-haspopup="true"
+      aria-label="Select date range"
       class="button date-range__trigger-btn"
       type="button"
     >
