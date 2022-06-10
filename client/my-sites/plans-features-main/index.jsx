@@ -10,6 +10,8 @@ import {
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,
+	isProPlan,
+	isStarterPlan,
 	planMatches,
 	TYPE_FREE,
 	TYPE_BLOGGER,
@@ -163,6 +165,7 @@ export class PlansFeaturesMain extends Component {
 			isJetpack,
 			isLandingPage,
 			isLaunchPage,
+			isCurrentPlanRetired,
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
@@ -191,7 +194,19 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans="wpcom"
 			>
-				{ currentPurchaseIsInAppPurchase && (
+				{ isCurrentPlanRetired && (
+					<Notice
+						showDismiss={ false }
+						status="is-info"
+						text={ translate(
+							'Your current plan is no longer available for new subscriptions. ' +
+								'You’re all set to continue with the plan for as long as you like. ' +
+								'Alternatively, you can switch to any of our current plans by selecting it below. ' +
+								'Please keep in mind that switching plans will be irreversible.'
+						) }
+					/>
+				) }
+				{ ! isCurrentPlanRetired && currentPurchaseIsInAppPurchase && (
 					<Notice
 						showDismiss={ false }
 						status="is-info"
@@ -531,6 +546,7 @@ export default connect(
 		}
 
 		return {
+			isCurrentPlanRetired: isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug ),
 			currentPurchaseIsInAppPurchase: currentPurchase?.isInAppPurchase,
 			customerType,
 			domains: getDomainsBySiteId( state, siteId ),
