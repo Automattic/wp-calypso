@@ -4,7 +4,11 @@
 // Otherwise, we'd add a fair amount to the bundle size when we don't really need
 // it for every single request.
 import config from '@automattic/calypso-config';
+import debugFactory from 'debug';
 import type * as SentryApi from '@sentry/react';
+import type { Options } from '@sentry/types';
+
+const debug = debugFactory( 'calypso:sentry' );
 
 // Static sentry configuration. We add any dynamic values when initializing Sentry.
 const SENTRY_CONFIG: SentryApi.BrowserOptions = {
@@ -57,14 +61,17 @@ function dispatchSentryMethodCall< Method extends SupportedMethods >(
 	args: Parameters< typeof SentryApi[ Method ] >
 ) {
 	const { state: status } = state;
+	if ( status === 'error' || status === 'disabled' ) {
+		return;
+	}
+
 	if ( status === 'loaded' ) {
 		// @ts-expect-error We have a union of tuples and TypeScript wants a Tuple. It's OK.
 		state.sentry[ method ]( ...args );
 		return;
 	}
-	if ( status === 'error' || status === 'disabled' ) {
-		return;
-	}
+
+	// Since we haven't yet loaded, queue the event for processing.
 	callQueue.push( { f: method, a: args } );
 }
 export function addBreadcrumb( ...args: Parameters< typeof SentryApi.addBreadcrumb > ) {
@@ -119,7 +126,7 @@ function beforeBreadcrumb( breadcrumb: SentryApi.Breadcrumb ): SentryApi.Breadcr
 }
 
 interface SentryOptions {
-	beforeSend: ( e: SentryApi.Event ) => SentryApi.Event | null;
+	beforeSend: Options[ 'beforeSend' ];
 	userId?: number;
 }
 export async function initSentry( { beforeSend, userId }: SentryOptions ) {
@@ -132,20 +139,22 @@ export async function initSentry( { beforeSend, userId }: SentryOptions ) {
 		}
 		state = { state: 'loading' };
 
-		// Enable Sentry only for 10% of requests or always in calypso.live for testing.
-		// Always disable if catch-js-errors is not available in the environment.
+		// Always enable Sentry in calypso.live. Otherwise, if catch-js-errors is
+		// available for the environment, enable for 10% of requests.
 		if (
 			! (
-				config.isEnabled( 'catch-js-errors' ) &&
-				( config( 'env_id' ) === 'wpcalypso' || Math.floor( Math.random() * 10 ) === 1 )
+				config( 'env_id' ) === 'wpcalypso' ||
+				( config.isEnabled( 'catch-js-errors' ) && Math.floor( Math.random() * 10 ) === 1 )
 			)
 		) {
+			debug( 'Disabling sentry.' );
 			// Set state to disabled to stop maintaining a queue of sentry method calls.
 			state = { state: 'disabled' };
 			// Note that the `clearQueues()` call in the finally block is still
 			// executed after returning here, so cleanup does happen correctly.
 			return;
 		}
+		debug( 'Enabling sentry.' );
 
 		const errorHandler = ( errorEvent: ErrorEvent ): void =>
 			void errorQueue.push( [
@@ -196,8 +205,14 @@ export async function initSentry( { beforeSend, userId }: SentryOptions ) {
 				},
 				environment,
 				release,
-				beforeBreadcrumb,
-				beforeSend,
+				beforeBreadcrumb: ( breadcrumb ) => {
+					debug( 'Sending breadcrumb to sentry.' );
+					return beforeBreadcrumb( breadcrumb );
+				},
+				beforeSend: ( event, hint ) => {
+					debug( 'Sending error to sentry.' );
+					return beforeSend ? beforeSend( event, hint ) : event;
+				},
 			} );
 			state = { state: 'loaded', sentry: Sentry };
 		} catch ( err ) {

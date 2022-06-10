@@ -64,7 +64,8 @@
 		"@emotion/react": "^11.4.1",
 		"@emotion/styled": "^11.3.0",
 		"@github/webauthn-json": "^0.4.1",
-		"@sentry/react": "^6.19.4",
+		"@sentry/react": "^6.19.7",
+		"@sentry/types": "^6.19.7",
 		"@stripe/react-stripe-js": "^1.4.1",
 		"@stripe/stripe-js": "^1.17.1",
 		"@wordpress/a11y": "^3.9.0",
@@ -209,7 +210,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
-		"@sentry/webpack-plugin": "^1.18.8",
+		"@sentry/webpack-plugin": "^1.18.9",
 		"@testing-library/dom": "^8.13.0",
 		"@testing-library/jest-dom": "^5.16.2",
 		"@testing-library/react": "^12.1.3",
