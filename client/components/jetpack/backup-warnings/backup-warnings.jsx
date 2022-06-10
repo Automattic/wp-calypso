@@ -137,7 +137,6 @@ const BackupWarnings = ( { backup } ) => {
 
 	const warnings = getBackupWarnings( backup );
 	const hasWarnings = Object.keys( warnings ).length !== 0;
-	const trackExpandWarning = recordTracksEvent( 'calypso_jetpack_backup_expand_warning_click' );
 
 	if ( ! hasWarnings ) {
 		return <></>;
@@ -156,7 +155,7 @@ const BackupWarnings = ( { backup } ) => {
 				header={
 					<BackupWarningHeader warning={ warnings[ warningCode ] } warningCode={ warningCode } />
 				}
-				onOpen={ trackExpandWarning }
+				onOpen={ () => recordTracksEvent( 'calypso_jetpack_backup_expand_warning_click' ) }
 			>
 				<ul className="backup-warnings__file-list">{ fileList }</ul>
 				<div className="backup-warnings__info">
