@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import ExternalLink from 'calypso/components/external-link';
 import BackupWarningHeader from 'calypso/components/jetpack/backup-warnings/backup-warning-header';
 import BackupWarningListHeader from 'calypso/components/jetpack/backup-warnings/backup-warning-list-header';
 import LogItem from 'calypso/components/jetpack/log-item';
@@ -10,27 +11,70 @@ import './style.scss';
 
 // If code specific info doesn't exist, fall back to category
 const getWarningInfo = ( code, category ) => {
-	const retryMessage =
-		' ' +
-		translate(
-			"After that, If you'd like to restart the backup click “retry”, or let it resolve on its own."
-		);
-
 	const warningCategoryInfo = {
-		GENERIC: translate( 'If you\'d like to restart the backup click "retry".' ),
-		PERMISSIONS:
-			translate( 'Ensure the account has read access to the listed files.' ) + retryMessage,
-		CONNECTION:
-			translate(
-				'The connection may have been interrupted. Ensure the site is accessible and credentials are correct.'
-			) + retryMessage,
-		TRANSIENT:
-			translate( 'You can fix transient file errors by adding a .donotbackup file.' ) +
-			retryMessage,
-		DATABASE:
-			translate(
-				'Ensure your database credentials have proper access to your database and your tables are not corrupt.'
-			) + retryMessage,
+		GENERIC: translate(
+			'You can wait for the new backup to run tomorrow, or trigger a new backup by clicking the "Retry" button.'
+		),
+		PERMISSIONS: translate(
+			'Ensure your SFT/SSH/FTP username has {{ExternalLink}}full permissions{{/ExternalLink}} to the listed files. You can wait for the new backup to run tomorrow, or trigger a new backup by clicking the "Retry" button.',
+			{
+				components: {
+					ExternalLink: (
+						<ExternalLink
+							href="https://jetpack.com/support/backup/backups-via-the-jetpack-plugin/adding-credentials-to-jetpack/#file-access-permissions"
+							target="_blank"
+							rel="noopener noreferrer"
+							icon={ false }
+						/>
+					),
+				},
+			}
+		),
+		CONNECTION: translate(
+			'Looks like your connection was interrupted. Ensure your site is accessible and the {{ExternalLink}}server credentials{{/ExternalLink}} are correct. You can wait for the new backup to run tomorrow, or trigger a new backup by clicking the "Retry" button.',
+			{
+				components: {
+					ExternalLink: (
+						<ExternalLink
+							href="https://jetpack.com/support/backup/backups-via-the-jetpack-plugin/adding-credentials-to-jetpack/"
+							target="_blank"
+							rel="noopener noreferrer"
+							icon={ false }
+						/>
+					),
+				},
+			}
+		),
+		TRANSIENT: translate(
+			'You can fix transient file errors by adding a {{ExternalLink}}donotbackup folder{{/ExternalLink}} and moving the files listed to it. You can wait for the new backup to run tomorrow, or trigger a new backup by clicking the "Retry" button.',
+			{
+				components: {
+					ExternalLink: (
+						<ExternalLink
+							href="https://jetpack.com/support/backup/backups-via-the-jetpack-plugin/#frequently-asked-questions"
+							target="_blank"
+							rel="noopener noreferrer"
+							icon={ false }
+						/>
+					),
+				},
+			}
+		),
+		DATABASE: translate(
+			'Ensure your database credentials have {{ExternalLink}}proper access to your database{{/ExternalLink}} and your tables are not corrupt. You can wait for the new backup to run tomorrow, or trigger a new backup by clicking the "Retry" button.',
+			{
+				components: {
+					ExternalLink: (
+						<ExternalLink
+							href="https://jetpack.com/support/backup/backups-via-the-jetpack-plugin/adding-credentials-to-jetpack/#file-access-permissions"
+							target="_blank"
+							rel="noopener noreferrer"
+							icon={ false }
+						/>
+					),
+				},
+			}
+		),
 	};
 
 	const warningCodeInfo = {
