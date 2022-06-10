@@ -36,7 +36,7 @@ describe( 'Banner basic tests', () => {
 		jest.clearAllMocks();
 	} );
 
-	test( 'should not blow up and have proper CSS class', () => {
+	test( 'should output Banner component with proper CSS class', () => {
 		const { container } = render( <Banner { ...props } /> );
 		expect( container.firstChild ).toHaveClass( 'banner' );
 	} );
@@ -76,12 +76,12 @@ describe( 'Banner basic tests', () => {
 		const { plan, ...propsWithoutPlan } = props;
 		const { container } = render( <Banner { ...propsWithoutPlan } jetpack /> );
 		expect( container.firstChild ).toHaveClass( 'is-jetpack' );
-		expect( container.getElementsByTagName( 'svg' ).length ).toBe( 1 );
+		expect( container.getElementsByTagName( 'svg' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should render have .is-horizontal class if horizontal prop is defined', () => {
 		const { container } = render( <Banner { ...props } horizontal /> );
-		expect( container.getElementsByClassName( 'is-horizontal' ).length ).toBe( 1 );
+		expect( container.getElementsByClassName( 'is-horizontal' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should render a <PlanPrice /> when price is specified', () => {
@@ -97,7 +97,7 @@ describe( 'Banner basic tests', () => {
 
 	test( 'should render no <PlanPrice /> components when there are no prices', () => {
 		const { container } = render( <Banner { ...props } /> );
-		expect( container.getElementsByClassName( 'plan-price__integer' ).length ).toBe( 0 );
+		expect( container.getElementsByClassName( 'plan-price__integer' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should render a .banner__description when description is specified', () => {
@@ -107,13 +107,13 @@ describe( 'Banner basic tests', () => {
 
 	test( 'should not render a .banner__description when description is not specified', () => {
 		const { container } = render( <Banner { ...props } /> );
-		expect( container.getElementsByClassName( 'banner__description"' ).length ).toBe( 0 );
+		expect( container.getElementsByClassName( 'banner__description"' ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should render a .banner__list when list is specified', () => {
 		const { container } = render( <Banner { ...props } list={ [ 'test1', 'test2' ] } /> );
-		expect( container.querySelectorAll( '.banner__list' ).length ).toBe( 1 );
-		expect( container.querySelectorAll( '.banner__list li' ).length ).toBe( 2 );
+		expect( container.querySelectorAll( '.banner__list' ) ).toHaveLength( 1 );
+		expect( container.querySelectorAll( '.banner__list li' ) ).toHaveLength( 2 );
 		expect( screen.getByText( 'test1' ) ).toBeVisible();
 		expect( screen.getByText( 'test2' ) ).toBeVisible();
 	} );
