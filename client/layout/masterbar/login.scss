@@ -1,0 +1,40 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+
+.masterbar__login {
+	width: 100%;
+	margin: 0;
+	padding: 20px 24px;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+
+	@include breakpoint-deprecated('<480px') {
+		padding: 20px;
+	}
+}
+
+.masterbar__login-logo {
+	fill: var( --color-text );
+	stroke: var( --color-text );
+}
+
+.masterbar__login-back-link {
+	display: flex;
+	align-items: center;
+	margin-left: 25px;
+	font-size: 0.875rem;
+	font-weight: 600;
+
+	&, &:visited, &:hover, &:focus {
+		color: var( --color-text );
+	}
+
+	@include breakpoint-deprecated('<480px') {
+		display: none;
+	}
+}
+

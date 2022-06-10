@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -7,8 +8,8 @@ import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
+import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
-import PartnerSignupMasterbar from 'calypso/layout/masterbar/partner-signup';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
@@ -19,6 +20,7 @@ import {
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
+
 import './style.scss';
 
 const LayoutLoggedOut = ( {
@@ -68,11 +70,12 @@ const LayoutLoggedOut = ( {
 	};
 
 	let masterbar = null;
+	const localizeUrl = useLocalizeUrl();
 
 	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
 	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
 		if ( isPartnerSignup && ! isPartnerSignupStart ) {
-			masterbar = <PartnerSignupMasterbar />;
+			masterbar = <MasterbarLogin goBackUrl={ localizeUrl( 'https://wordpress.com/partners/' ) } />;
 		} else if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			masterbar = null;
 		} else {
@@ -145,11 +148,14 @@ export default withCurrentRoute(
 			currentRoute.startsWith( '/log-in/new' ) || ( isPartnerSignup && ! isPartnerSignupStart );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
-		const noMasterbarForRoute = isJetpackLogin || isWhiteLogin || isJetpackWooDnaFlow || isP2Login;
+		const noMasterbarForRoute =
+			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
 		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
+		const masterbarIsHidden =
+			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute;
 
 		return {
 			isJetpackLogin,
@@ -159,8 +165,7 @@ export default withCurrentRoute(
 			isJetpackWooDnaFlow,
 			isP2Login,
 			wccomFrom,
-			masterbarIsHidden:
-				! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
+			masterbarIsHidden,
 			sectionGroup,
 			sectionName,
 			sectionTitle,
