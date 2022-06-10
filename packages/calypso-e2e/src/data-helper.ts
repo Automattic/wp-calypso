@@ -2,40 +2,13 @@ import phrase from 'asana-phrase';
 import envVariables from './env-variables';
 import { SecretsManager, TestAccountName } from './secrets';
 import type { Secrets } from './secrets';
-
-export type DateFormat = 'ISO';
-
-export interface PaymentDetails {
-	cardHolder: string;
-	cardNumber: string;
-	expiryMonth: string;
-	expiryYear: string;
-	cvv: string;
-	countryCode: string;
-	postalCode: string;
-}
-
-export interface RegistrarDetails {
-	firstName: string;
-	lastName: string;
-	email: string;
-	phone: string;
-	countryCode: string;
-	address: string;
-	city: string;
-	stateCode: string;
-	postalCode: string;
-}
-
-export interface NewTestUser {
-	username: string;
-	password: string;
-	email: string;
-	siteName: string;
-	inboxId: string;
-}
-
-export type CreditCardIssuers = 'Visa';
+import type {
+	PaymentDetails,
+	DateFormat,
+	RegistrarDetails,
+	NewTestUserDetails,
+	AccountCredentials,
+} from './types/data-helper.types';
 
 /**
  * Returns a set of data required to sign up
@@ -47,12 +20,15 @@ export type CreditCardIssuers = 'Visa';
  * @param param0 Object parameter.
  * @param {keyof Secrets['mailosaur']} [param0.mailosaurInbox] Optional key to specify the mailosaur server to use. Defaults to `signupInboxId`.
  * @param {string} [param0.usernamePrefix] Optional key to specify the username prefix inserted between the `e2eflowtesting` and timestamp. Defaults to an empty string.
- * @returns {NewTestUser} Data for new test user.
+ * @returns Data for new test user.
  */
 export function getNewTestUser( {
 	mailosaurInbox = 'signupInboxId',
 	usernamePrefix = '',
-}: { mailosaurInbox?: keyof Secrets[ 'mailosaur' ]; usernamePrefix?: string } = {} ): NewTestUser {
+}: {
+	mailosaurInbox?: keyof Secrets[ 'mailosaur' ];
+	usernamePrefix?: string;
+} = {} ): NewTestUserDetails {
 	const username = getUsername( { prefix: usernamePrefix } );
 	const password = SecretsManager.secrets.passwordForNewTestSignUps;
 
@@ -121,7 +97,7 @@ export function getUsername( { prefix = '' }: { prefix?: string } = {} ): string
  * @returns {string|null} If valid date format string is supplied, string is returned. Otherwise, null.
  */
 export function getDateString( format: DateFormat ): string | null {
-	if ( format === 'ISO' ) {
+	if ( format === 'ISO-8601' ) {
 		return new Date().toISOString();
 	}
 	return null;
@@ -160,12 +136,6 @@ export function getCalypsoURL(
 	);
 
 	return url.toString();
-}
-
-export interface AccountCredentials {
-	username: string;
-	password: string;
-	totpKey?: string;
 }
 
 /**

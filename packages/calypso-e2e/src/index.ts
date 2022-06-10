@@ -12,6 +12,4 @@ export * from './totp-client';
 export * from './rest-api-client';
 export * from './types';
 
-export type { TracksEvent, TracksEventProperties } from './types';
 export type { TestFile } from './media-helper';
-export type { PaymentDetails } from './data-helper';

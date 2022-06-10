@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
-import type { AccountCredentials } from './data-helper';
+import type { AccountCredentials } from './types/data-helper.types';
 import type {
 	AccountDetails,
 	SiteDetails,
