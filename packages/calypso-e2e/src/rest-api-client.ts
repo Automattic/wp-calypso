@@ -1,81 +1,28 @@
-import fetch, { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
+import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
 import type { AccountCredentials } from './data-helper';
+import type {
+	AccountDetails,
+	SiteDetails,
+	BearerTokenResponse,
+	AllSitesResponse,
+	MyAccountInformationResponse,
+	AccountClosureResponse,
+	SiteDeletionResponse,
+	CalypsoPreferencesResponse,
+} from './types/rest-api-client.types';
+import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
-export interface AccountClosureDetails {
-	userID: number;
-	username: string;
-	email: string;
-}
-export interface SiteDetails {
-	url: string;
-	id: string;
-	name: string;
-}
-
+/* Internal types and interfaces */
 type EndpointVersions = '1' | '1.1' | '1.2' | '1.3';
-interface BearerTokenResponse {
-	success: string;
-	data: {
-		bearer_token: string;
-		token_links: string[];
-	};
-}
+
 interface RequestParams {
 	method: 'post' | 'get';
 	headers?: HeadersInit;
 	body?: BodyInit;
 }
-interface Site {
-	ID: number;
-	name: string;
-	description: string;
-	URL: string;
-	site_owner: number;
-}
-interface AllSitesResponse {
-	sites: Site[];
-}
-interface CalypsoPreferencesResponse {
-	calypso_preferences: {
-		recentSites: number[];
-	};
-}
-interface MyAccountInformationResponse {
-	ID: number;
-	username: string;
-	email: string;
-}
-export interface NewUserResponse {
-	code: number;
-	body: {
-		success: boolean;
-		user_id: number;
-		username: string;
-		bearer_token: string;
-	};
-}
-export interface NewSiteResponse {
-	code: number;
-	body: {
-		success: boolean;
-		blog_details: {
-			url: string;
-			blogid: string;
-			blogname: string;
-			site_slug: string;
-		};
-	};
-}
-interface SiteDeletionResponse {
-	ID: number;
-	name: string;
-	status: string;
-}
 
-export interface AccountClosureResponse {
-	success: boolean;
-}
+/* Constants */
 
 const BEARER_TOKEN_URL = 'https://wordpress.com/wp-login.php?action=login-endpoint';
 const REST_API_BASE_URL = 'https://public-api.wordpress.com';
@@ -134,7 +81,7 @@ export class RestAPIClient {
 	/**
 	 * Returns the appropriate authorization header.
 	 *
-	 * @returns {Promise<string>} Authorization header in the requested scheme.
+	 * @returns {Promise<string>} Authorizatmion header in the requested scheme.
 	 * @throws {Error} If a scheme not yet implemented is requested.
 	 */
 	private async getAuthorizationHeader( scheme: 'bearer' ): Promise< string > {
@@ -310,12 +257,10 @@ export class RestAPIClient {
 	 * authenticated via the bearer token is checked against the
 	 * supplied parameters.
 	 *
-	 * @param { AccountClosureDetails} expectedAccountDetails Details of the accounts to be closed.
+	 * @param { AccountDetails} expectedAccountDetails Details of the accounts to be closed.
 	 * @returns {Promise<boolean>} True if account closure was successful. False otherwise.
 	 */
-	async closeAccount(
-		expectedAccountDetails: AccountClosureDetails
-	): Promise< AccountClosureResponse > {
+	async closeAccount( expectedAccountDetails: AccountDetails ): Promise< AccountClosureResponse > {
 		const accountInformation = await this.getMyAccountInformation();
 
 		// Multiple guards to ensure we are operating on the
