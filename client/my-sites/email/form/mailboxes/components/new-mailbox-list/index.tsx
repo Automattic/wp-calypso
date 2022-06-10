@@ -139,7 +139,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 								<>
 									<div className="new-mailbox-list__actions">
 										{ index > 0 && (
-											<Button onClick={ removeMailbox( uuid ) } busy={ areButtonsBusy }>
+											<Button onClick={ removeMailbox( uuid ) } disabled={ areButtonsBusy }>
 												<Gridicon icon="trash" />
 												<span>{ translate( 'Remove this mailbox' ) }</span>
 											</Button>
@@ -159,7 +159,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 					} ) }
 				>
 					{ showAddNewMailboxButton && (
-						<Button onClick={ addMailbox } busy={ areButtonsBusy }>
+						<Button onClick={ addMailbox } disabled={ areButtonsBusy }>
 							<Gridicon icon="plus" />
 							<span>{ translate( 'Add another mailbox' ) }</span>
 						</Button>
@@ -167,7 +167,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 
 					<div className="new-mailbox-list__main-actions">
 						{ showCancelButton && (
-							<Button onClick={ handleCancel } busy={ areButtonsBusy }>
+							<Button onClick={ handleCancel } disabled={ areButtonsBusy }>
 								<span>{ translate( 'Cancel' ) }</span>
 							</Button>
 						) }
