@@ -27,9 +27,7 @@ export function setActivePartnerKey( partnerKeyId: number ): PartnerPortalThunkA
 		dispatch( { type: JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE, partnerKeyId } );
 
 		const key = getActivePartnerKey( getState() );
-
 		wpcomJetpackLicensing.loadToken( key ? key.oAuth2Token : '' );
-
 		dispatch( { type: JETPACK_PARTNER_PORTAL_OAUTH_TOKEN_SET } );
 	};
 }
