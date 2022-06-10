@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { Fragment, useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
@@ -68,7 +68,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 		const eventName = isTitan
 			? 'calypso_email_titan_add_mailboxes_add_another_mailbox_button_click'
 			: 'calypso_email_google_workspace_add_mailboxes_add_another_mailbox_button_click';
-		recordTracksEvent( eventName, { mailbox_count: newMailboxes.length + 1 } );
+		recordTracksEvent( eventName, { mailbox_count: newMailboxes.length } );
 	};
 
 	const removeMailbox = useCallback(
@@ -80,7 +80,7 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 			const eventName = isTitan
 				? 'calypso_email_titan_add_mailboxes_remove_mailbox_button_click'
 				: 'calypso_email_google_workspace_add_mailboxes_remove_mailbox_button_click';
-			recordTracksEvent( eventName, { mailbox_count: newMailboxes.length + 1 } );
+			recordTracksEvent( eventName, { mailbox_count: newMailboxes.length } );
 		},
 		[ isTitan, mailboxes ]
 	);
@@ -91,84 +91,93 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 		setMailboxes( [ ...mailboxes ] );
 	};
 
-	const handleSubmit = () => {
+	const handleSubmit = ( event: FormEvent< HTMLFormElement > ) => {
+		event.preventDefault();
+
 		mailboxes.forEach( ( mailbox ) => mailbox.validate( true ) );
 		persistMailboxesToState();
+
 		onSubmit( new MailboxOperations( mailboxes, persistMailboxesToState ) );
 	};
 
 	return (
-		<div className="new-mailbox-list__main">
-			{ mailboxes.map( ( mailbox, index ) => {
-				const uuid = mailbox.formFields.uuid.value;
+		<form onSubmit={ handleSubmit }>
+			<fieldset className="new-mailbox-list__main" disabled={ areButtonsBusy }>
+				{ mailboxes.map( ( mailbox, index ) => {
+					const uuid = mailbox.formFields.uuid.value;
 
-				const onFieldValueChanged = ( field: MailboxFormFieldBase< string > ) => {
-					if ( ! [ FIELD_FIRSTNAME, FIELD_NAME ].includes( field.fieldName ) ) {
-						return;
-					}
-					if ( mailbox.getIsFieldTouched( FIELD_MAILBOX ) ) {
-						return;
-					}
+					const onFieldValueChanged = ( field: MailboxFormFieldBase< string > ) => {
+						if ( ! [ FIELD_FIRSTNAME, FIELD_NAME ].includes( field.fieldName ) ) {
+							return;
+						}
+						if ( mailbox.getIsFieldTouched( FIELD_MAILBOX ) ) {
+							return;
+						}
 
-					mailbox.setFieldValue( FIELD_MAILBOX, sanitizeMailboxValue( field.value ) );
-					mailbox.validateField( FIELD_MAILBOX );
+						mailbox.setFieldValue( FIELD_MAILBOX, sanitizeMailboxValue( field.value ) );
+						mailbox.validateField( FIELD_MAILBOX );
 
-					mailbox.formFields.mailbox.dispatchState();
-				};
+						mailbox.formFields.mailbox.dispatchState();
+					};
 
-				return (
-					<Fragment key={ 'form-' + uuid }>
-						{ index > 0 && (
-							<CardHeading className="new-mailbox-list__numbered-heading" tagName="h3" size={ 20 }>
-								{ translate( 'Mailbox %(position)s', {
-									args: { position: index + 1 },
-									comment:
-										'%(position)s is the position of the mailbox in a list, e.g. Mailbox 1, Mailbox 2, etc',
-								} ) }
-							</CardHeading>
-						) }
-						<MailboxFormWrapper mailbox={ mailbox } onFieldValueChanged={ onFieldValueChanged }>
-							<>
-								<div className="new-mailbox-list__actions">
-									{ index > 0 && (
-										<Button onClick={ removeMailbox( uuid ) } busy={ areButtonsBusy }>
-											<Gridicon icon="trash" />
-											<span>{ translate( 'Remove this mailbox' ) }</span>
-										</Button>
-									) }
-								</div>
+					return (
+						<Fragment key={ 'form-' + uuid }>
+							{ index > 0 && (
+								<CardHeading
+									className="new-mailbox-list__numbered-heading"
+									tagName="h3"
+									size={ 20 }
+								>
+									{ translate( 'Mailbox %(position)s', {
+										args: { position: index + 1 },
+										comment:
+											'%(position)s is the position of the mailbox in a list, e.g. Mailbox 1, Mailbox 2, etc',
+									} ) }
+								</CardHeading>
+							) }
+							<MailboxFormWrapper mailbox={ mailbox } onFieldValueChanged={ onFieldValueChanged }>
+								<>
+									<div className="new-mailbox-list__actions">
+										{ index > 0 && (
+											<Button onClick={ removeMailbox( uuid ) } busy={ areButtonsBusy }>
+												<Gridicon icon="trash" />
+												<span>{ translate( 'Remove this mailbox' ) }</span>
+											</Button>
+										) }
+									</div>
 
-								<hr className="new-mailbox-list__separator" />
-							</>
-						</MailboxFormWrapper>
-					</Fragment>
-				);
-			} ) }
-
-			<div
-				className={ classNames( 'new-mailbox-list__supplied-actions', {
-					'not-show-add-new-mailbox': ! showAddNewMailboxButton,
+									<hr className="new-mailbox-list__separator" />
+								</>
+							</MailboxFormWrapper>
+						</Fragment>
+					);
 				} ) }
-			>
-				{ showAddNewMailboxButton && (
-					<Button onClick={ addMailbox } busy={ areButtonsBusy }>
-						<Gridicon icon="plus" />
-						<span>{ translate( 'Add another mailbox' ) }</span>
-					</Button>
-				) }
 
-				<div className="new-mailbox-list__main-actions">
-					{ showCancelButton && (
-						<Button onClick={ handleCancel } busy={ areButtonsBusy }>
-							<span>{ translate( 'Cancel' ) }</span>
+				<div
+					className={ classNames( 'new-mailbox-list__supplied-actions', {
+						'not-show-add-new-mailbox': ! showAddNewMailboxButton,
+					} ) }
+				>
+					{ showAddNewMailboxButton && (
+						<Button onClick={ addMailbox } busy={ areButtonsBusy }>
+							<Gridicon icon="plus" />
+							<span>{ translate( 'Add another mailbox' ) }</span>
 						</Button>
 					) }
-					<Button primary onClick={ handleSubmit } busy={ areButtonsBusy }>
-						<span>{ submitActionText }</span>
-					</Button>
+
+					<div className="new-mailbox-list__main-actions">
+						{ showCancelButton && (
+							<Button onClick={ handleCancel } busy={ areButtonsBusy }>
+								<span>{ translate( 'Cancel' ) }</span>
+							</Button>
+						) }
+						<Button busy={ areButtonsBusy } primary type="submit">
+							<span>{ submitActionText }</span>
+						</Button>
+					</div>
 				</div>
-			</div>
-		</div>
+			</fieldset>
+		</form>
 	);
 };
 

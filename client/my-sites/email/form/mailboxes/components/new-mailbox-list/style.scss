@@ -1,6 +1,12 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+.new-mailbox-list__main {
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+
 .new-mailbox-list__actions {
 	display: flex;
 	flex-direction: column-reverse;

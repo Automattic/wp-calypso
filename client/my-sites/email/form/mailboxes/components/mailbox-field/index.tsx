@@ -1,5 +1,5 @@
 import { FormInputValidation } from '@automattic/components';
-import { useState } from 'react';
+import { InvalidEvent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
@@ -29,11 +29,13 @@ const MailboxFieldInput = ( {
 	isPasswordField = false,
 	onBlur,
 	onChange,
+	onInvalid,
 	textInputPrefix,
 	textInputSuffix,
 }: MailboxFormFieldProps & {
 	onBlur: () => void;
 	onChange: ( event: ChangeEvent< HTMLInputElement > ) => void;
+	onInvalid: ( event: InvalidEvent< HTMLInputElement > ) => void;
 } ): JSX.Element => {
 	const hasAffix = Boolean( textInputPrefix ) || Boolean( textInputSuffix );
 	const FormTextComponent = hasAffix ? FormTextInputWithAffixes : FormTextInput;
@@ -43,6 +45,7 @@ const MailboxFieldInput = ( {
 		name: field.fieldName,
 		onBlur,
 		onChange,
+		onInvalid,
 		required: field.isRequired,
 		value: field.value,
 	};
@@ -108,11 +111,22 @@ const MailboxField = ( {
 		onFieldValueChanged( field );
 	};
 
+	const onInvalid = ( event: InvalidEvent< HTMLInputElement > ) => {
+		event.preventDefault();
+		onRequestFieldValidation( field );
+		field.dispatchState();
+	};
+
 	return (
 		<FormFieldset>
 			<FormLabel className="mailbox-field__form-label">
 				{ fieldLabelText }
-				<MailboxFieldInput { ...props } onBlur={ onBlur } onChange={ onChange } />
+				<MailboxFieldInput
+					{ ...props }
+					onBlur={ onBlur }
+					onChange={ onChange }
+					onInvalid={ onInvalid }
+				/>
 				{ children }
 			</FormLabel>
 			{ field.error && <FormInputValidation text={ field.error } isError /> }

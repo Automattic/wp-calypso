@@ -27,7 +27,7 @@ const MailboxFormWrapper = ( {
 		[ isRtl ? 'textInputPrefix' : 'textInputSuffix' ]: `\u200e@${ formFields.domain.value }\u202c`,
 	};
 
-	const commonProps = ( field: MailboxFormFieldBase< string > ) => {
+	const commonFieldProps = ( field: MailboxFormFieldBase< string > ) => {
 		return {
 			field,
 			onFieldValueChanged,
@@ -40,11 +40,11 @@ const MailboxFormWrapper = ( {
 			<>
 				<MailboxField
 					lowerCaseChangeValue
-					{ ...commonProps( formFields.mailbox ) }
+					{ ...commonFieldProps( formFields.mailbox ) }
 					{ ...domainAffix }
 				/>
 
-				<MailboxField isPasswordField { ...commonProps( formFields.password ) } />
+				<MailboxField isPasswordField { ...commonFieldProps( formFields.password ) } />
 			</>
 		);
 	};
@@ -55,11 +55,11 @@ const MailboxFormWrapper = ( {
 		return (
 			<>
 				{ googleFormFields.firstName && (
-					<MailboxField { ...commonProps( googleFormFields.firstName ) } />
+					<MailboxField { ...commonFieldProps( googleFormFields.firstName ) } />
 				) }
 
 				{ googleFormFields.lastName && (
-					<MailboxField { ...commonProps( googleFormFields.lastName ) } />
+					<MailboxField { ...commonFieldProps( googleFormFields.lastName ) } />
 				) }
 
 				<UserFormFields />
@@ -72,12 +72,12 @@ const MailboxFormWrapper = ( {
 
 		return (
 			<>
-				{ titanFormFields.name && <MailboxField { ...commonProps( titanFormFields.name ) } /> }
+				{ titanFormFields.name && <MailboxField { ...commonFieldProps( titanFormFields.name ) } /> }
 
 				<UserFormFields />
 
 				{ titanFormFields.alternativeEmail && (
-					<MailboxField { ...commonProps( titanFormFields.alternativeEmail ) } />
+					<MailboxField { ...commonFieldProps( titanFormFields.alternativeEmail ) } />
 				) }
 			</>
 		);
