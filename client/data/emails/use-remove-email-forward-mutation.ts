@@ -78,7 +78,7 @@ export default function useRemoveEmailForwardMutation(
 					{
 						...previousEmailAccountsQueryData.accounts[ 0 ],
 						emails: emailForwards.filter(
-							( forward: EmailForward ) => forward.mailbox === emailForward.mailbox
+							( forward: EmailForward ) => forward.mailbox !== emailForward.mailbox
 						),
 					},
 				],
