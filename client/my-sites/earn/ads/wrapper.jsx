@@ -1,5 +1,5 @@
 import {
-	PLAN_WPCOM_PRO,
+	PLAN_PREMIUM,
 	PLAN_JETPACK_SECURITY_DAILY,
 	WPCOM_FEATURES_WORDADS,
 } from '@automattic/calypso-products';
@@ -189,14 +189,14 @@ class AdsWrapper extends Component {
 
 	renderUpsell() {
 		const { siteSlug, translate } = this.props;
-		const bannerURL = `/checkout/${ siteSlug }/pro`;
+		const bannerURL = `/checkout/${ siteSlug }/premium`;
 		return (
 			<UpsellNudge
 				callToAction={ translate( 'Upgrade' ) }
-				plan={ PLAN_WPCOM_PRO }
-				title={ translate( 'Upgrade to the Pro plan and start earning' ) }
+				plan={ PLAN_PREMIUM }
+				title={ translate( 'Upgrade to the Premium plan and start earning' ) }
 				description={ translate(
-					"By upgrading to the Pro plan, you'll be able to monetize your site through the WordAds program."
+					"By upgrading to the Premium plan, you'll be able to monetize your site through the WordAds program."
 				) }
 				feature={ WPCOM_FEATURES_WORDADS }
 				href={ bannerURL }

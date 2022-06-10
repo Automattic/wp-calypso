@@ -393,7 +393,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 							<span>
 								{ createInterpolateElement(
 									__(
-										'Grow your business with <strong>WordPress.com Pro</strong>',
+										'Grow your business with <strong>WordPress Business</strong>',
 										__i18n_text_domain__
 									),
 									{
@@ -477,7 +477,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						<p className="focused-launch-summary__side-commentary-title">
 							{ createInterpolateElement(
 								__(
-									'Monetize your site with <strong>WordPress.com Pro</strong>',
+									'Monetize your site with <strong>WordPress Premium</strong>',
 									__i18n_text_domain__
 								),
 								{

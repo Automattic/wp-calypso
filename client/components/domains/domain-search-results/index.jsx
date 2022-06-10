@@ -116,7 +116,7 @@ class DomainSearchResults extends Component {
 					);
 				} else {
 					offer = translate(
-						'If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} with WordPress.com Pro.',
+						'If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} with WordPress.com Premium.',
 						{ args: { domain }, components }
 					);
 				}

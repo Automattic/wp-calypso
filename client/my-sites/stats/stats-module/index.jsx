@@ -188,7 +188,9 @@ class StatsModule extends Component {
 					{ summary && 'countryviews' === path && (
 						<UpsellNudge
 							title={ translate( 'Add Google Analytics' ) }
-							description={ translate( 'Upgrade to a Pro Plan for Google Analytics integration.' ) }
+							description={ translate(
+								'Upgrade to a Premium Plan for Google Analytics integration.'
+							) }
 							event="googleAnalytics-stats-countries"
 							feature={ FEATURE_GOOGLE_ANALYTICS }
 							plan={ PLAN_PREMIUM }

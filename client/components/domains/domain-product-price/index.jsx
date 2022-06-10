@@ -43,7 +43,7 @@ class DomainProductPrice extends Component {
 				}
 				break;
 			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
-				message = translate( 'Pro plan required' );
+				message = translate( 'Personal plan required' );
 				break;
 		}
 
