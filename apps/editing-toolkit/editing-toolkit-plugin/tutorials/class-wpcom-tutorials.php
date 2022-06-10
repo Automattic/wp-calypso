@@ -4,7 +4,7 @@
  *
  * Each Tutorial contains a flat list of Tasks. Each Task may contain several Steps in
  * a `WpcomTourKit` component on the frontend, but we are only concerned with the top
- * two levels of Tutorial and its contained Steps, tracking Step completion status
+ * two levels of Tutorial and its contained Tasks, tracking Task completion status
  * on the backend. This API will be used to generate
  *
  * @package A8C\FSE
