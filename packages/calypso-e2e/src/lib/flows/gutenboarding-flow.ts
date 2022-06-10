@@ -1,5 +1,6 @@
 import { Page } from 'playwright';
 import envVariables from '../../env-variables';
+import { ViewportName } from '../../types/env-variables.types';
 import { LegacyPlans } from '../pages/plans-page';
 
 export type Features =
@@ -31,7 +32,7 @@ const selectors = {
 
 	// Design
 	designButton: ( name: string ) => `button[data-e2e-button="freeOption"]:has-text("${ name }")`,
-	fontPairingButton: ( platform: 'mobile' | 'desktop', fontName: string ) => {
+	fontPairingButton: ( platform: ViewportName, fontName: string ) => {
 		return `.style-preview__font-options-${ platform } span:text("${ fontName }")`;
 	},
 	mobileFontPairingDropdown: `button.style-preview__font-option-select`,

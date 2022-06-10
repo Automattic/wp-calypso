@@ -12,6 +12,8 @@ const getTargetDeviceOptions = () => {
 		case 'desktop':
 			deviceName = 'Desktop Chrome HiDPI';
 			break;
+		default:
+			throw new Error( 'No viewport specified.' );
 	}
 
 	if ( ! deviceName ) {

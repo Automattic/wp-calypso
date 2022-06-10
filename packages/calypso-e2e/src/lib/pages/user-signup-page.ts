@@ -1,7 +1,7 @@
 import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
-import { NewUserResponse } from '../../rest-api-client';
+import type { NewUserResponse } from '../../types/rest-api-client.types';
 
 export interface NewUserDetails {
 	ID: number;

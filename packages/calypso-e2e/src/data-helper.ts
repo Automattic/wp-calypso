@@ -363,3 +363,39 @@ export function createSuiteTitle( title: string ): string {
 
 	return parts.join( ' ' );
 }
+
+/**
+ * Returns the Magnificent 16 test locales, known as Mag16.
+ *
+ * @returns {string[]} Array of strings in ISO-639-1 standard.
+ */
+export function getMag16Locales(): string[] {
+	return [
+		'en',
+		'es',
+		'pt-br',
+		'de',
+		'fr',
+		'he',
+		'ja',
+		'it',
+		'nl',
+		'ru',
+		'tr',
+		'id',
+		'zh-cn',
+		'zh-tw',
+		'ko',
+		'ar',
+		'sv',
+	];
+}
+
+/**
+ * Returns the list of viewports that are available for the framework.
+ *
+ * @returns {string([])} Array of strings for valid viewports.
+ */
+export function getViewports(): string[] {
+	return [ 'mobile', 'desktop' ];
+}

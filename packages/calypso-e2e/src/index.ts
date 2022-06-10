@@ -3,7 +3,7 @@ export * as DataHelper from './data-helper';
 export * as ElementHelper from './element-helper';
 export * as MediaHelper from './media-helper';
 
-export { default as envVariables, TEST_LOCALES } from './env-variables';
+export { default as envVariables } from './env-variables';
 
 export * from './lib';
 export * from './secrets';

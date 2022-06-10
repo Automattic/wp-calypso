@@ -1,7 +1,6 @@
 import { Page } from 'playwright';
-import { NewSiteResponse } from '../../rest-api-client';
 import { PlansPage, Plans } from './plans-page';
-import type { SiteDetails } from '../../rest-api-client';
+import type { SiteDetails, NewSiteResponse } from '../../types/rest-api-client.types';
 
 /**
  * Represents the Signup > Pick a Plan page.
