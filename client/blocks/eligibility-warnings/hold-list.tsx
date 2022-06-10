@@ -86,7 +86,7 @@ function getHoldMessages(
 			supportUrl: null,
 		},
 		EXCESSIVE_DISK_SPACE: {
-			title: translate( 'Purchase or free up storage', {
+			title: translate( 'Increase storage space', {
 				comment:
 					'Message displayed when a Simple site cannot be transferred to Atomic because there is not enough disk space. It appears after the heading "To continue you\'ll need to: ", inside a list with actions to perform in order to proceed with the transfer.',
 			} ),
