@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: DEV WordPress.com Editing Toolkit
+ * Plugin Name: WordPress.com Editing Toolkit
  * Description: Enhances your page creation workflow within the Block Editor.
  * Version: 2.21
  * Author: Automattic
