@@ -257,6 +257,11 @@ export const setGoals = ( goals: GoalKey[] ) => ( {
 	goals,
 } );
 
+export const setEditEmail = ( email: string ) => ( {
+	type: 'SET_EDIT_EMAIL' as const,
+	email,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -289,4 +294,5 @@ export type OnboardAction = ReturnType<
 	| typeof setProgressTitle
 	| typeof setStepProgress
 	| typeof setGoals
+	| typeof setEditEmail
 >;

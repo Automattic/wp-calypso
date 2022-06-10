@@ -305,6 +305,16 @@ const goals: Reducer< GoalKey[], OnboardAction > = ( state = [], action ) => {
 	return state;
 };
 
+const editEmail: Reducer< string, OnboardAction > = ( state = [], action ) => {
+	if ( action.type === 'SET_EDIT_EMAIL' ) {
+		return action.email;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -333,6 +343,7 @@ const reducer = combineReducers( {
 	progressTitle,
 	stepProgress,
 	goals,
+	editEmail,
 } );
 
 export type State = ReturnType< typeof reducer >;
