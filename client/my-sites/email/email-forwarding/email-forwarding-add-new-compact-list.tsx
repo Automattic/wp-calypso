@@ -89,8 +89,7 @@ const EmailForwardingAddNewCompactList = ( {
 		name: 'destination' | 'mailbox',
 		value: string
 	) => {
-		// eslint-disable-next-line prefer-const
-		let newEmailForwards = [ ...emailForwards ];
+		const newEmailForwards = [ ...emailForwards ];
 		newEmailForwards[ index ][ name ] = value;
 
 		const validEmailForward = validateAllFields( newEmailForwards[ index ] );
