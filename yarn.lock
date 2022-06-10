@@ -18035,17 +18035,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.7":
-  version: 1.14.9
-  resolution: "follow-redirects@npm:1.14.9"
-  peerDependenciesMeta:
-    debug:
-      optional: true
-  checksum: 08c465c17cbf3011ad16516609ee476abffa8fd1ff78c2082f1ff43614cb06586a0ccc8e99e5ebe13da06d064367cb269789e3ca0e93e2ad5b24fdc30b4294b6
-  languageName: node
-  linkType: hard
-
-"follow-redirects@npm:^1.14.9":
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.7, follow-redirects@npm:^1.14.9":
   version: 1.15.1
   resolution: "follow-redirects@npm:1.15.1"
   peerDependenciesMeta:
@@ -18347,18 +18337,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fs-extra@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "fs-extra@npm:10.0.0"
-  dependencies:
-    graceful-fs: ^4.2.0
-    jsonfile: ^6.0.1
-    universalify: ^2.0.0
-  checksum: 85802f3d9e49d197744a8372f0d78d5a1faa3df73f4c5375d6366a4b9f745197d3da1f095841443d50f29a9f81cdc01363eb6d17bef2ba70c268559368211040
-  languageName: node
-  linkType: hard
-
-"fs-extra@npm:^10.1.0":
+"fs-extra@npm:^10.0.0, fs-extra@npm:^10.1.0":
   version: 10.1.0
   resolution: "fs-extra@npm:10.1.0"
   dependencies:
