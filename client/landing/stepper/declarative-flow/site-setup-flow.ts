@@ -55,6 +55,8 @@ export const siteSetupFlow: Flow = {
 			'wooInstallPlugins',
 			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'wooVerifyEmail' ] : [] ),
 			'wooConfirm',
+			'editEmail',
+			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'editEmail' ] : [] ),
 		] as StepPath[];
 	},
 	useSideEffect() {
@@ -250,6 +252,17 @@ export const siteSetupFlow: Flow = {
 				case 'wooInstallPlugins':
 					return navigate( 'processing' );
 
+				case 'editEmail':
+					return navigate( 'wooVerifyEmail' );
+
+				case 'wooVerifyEmail': {
+					if ( params[ 0 ] === 'edit-email' ) {
+						return navigate( 'editEmail' );
+					}
+
+					return navigate( 'wooVerifyEmail' );
+				}
+
 				case 'courses': {
 					return exitFlow( `/post/${ siteSlug }` );
 				}
@@ -309,6 +322,9 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'bloggerStartingPoint' );
 					}
 					return navigate( 'intent' );
+
+				case 'editEmail':
+					return navigate( 'wooVerifyEmail' );
 
 				case 'importList':
 				case 'importReady':
