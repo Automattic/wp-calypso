@@ -95,14 +95,16 @@
 	align-items: center;
 	padding: 0;
 	p {
+		color: var( --studio-gray-60 );
 		font-size: $font-body-small;
 		margin-bottom: 0;
 	}
 	.signup-success__footer-contact {
 		font-weight: 500;
-		border-bottom: 1px solid #000;
+
 		a {
 			color: #000;
+			border-bottom: 1px solid #000;
 		}
 	}
 }
