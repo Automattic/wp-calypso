@@ -38,6 +38,10 @@ export function isFetchingPartner( state: PartnerPortalStore ): boolean {
 	return state.partnerPortal.partner.isFetching;
 }
 
+export function getIsPartnerOAuthTokenLoaded( state: PartnerPortalStore ): boolean {
+	return state.partnerPortal.partner.isPartnerOAuthTokenLoaded;
+}
+
 export function getCurrentPartner( state: PartnerPortalStore ): Partner | null {
 	return state.partnerPortal.partner.current;
 }

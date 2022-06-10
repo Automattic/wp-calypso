@@ -6,6 +6,7 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/partner-portal/agency-dashboard/selectors';
+import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import SitesOverviewContext from './context';
 import SiteContent from './site-content';
 import SiteFilters from './site-filters';
@@ -18,10 +19,12 @@ export default function SitesOverview(): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
+	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 
 	const { search, currentPage, filter } = useContext( SitesOverviewContext );
 
 	const { data, isError, isFetching, refetch } = useFetchDashboardSites(
+		isPartnerOAuthTokenLoaded,
 		search,
 		currentPage,
 		filter

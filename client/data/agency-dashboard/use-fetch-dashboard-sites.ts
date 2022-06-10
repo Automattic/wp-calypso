@@ -15,6 +15,7 @@ const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) =>
 	);
 
 const useFetchDashboardSites = (
+	isPartnerOAuthTokenLoaded: boolean,
 	searchQuery: string,
 	currentPage: number,
 	filter: AgencyDashboardFilter
@@ -48,6 +49,7 @@ const useFetchDashboardSites = (
 				dispatch(
 					errorNotice( translate( 'Failed to retrieve your sites. Please try again later.' ) )
 				),
+			enabled: isPartnerOAuthTokenLoaded,
 		}
 	);
 };

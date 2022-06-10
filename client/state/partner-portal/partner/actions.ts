@@ -2,6 +2,7 @@ import { translate } from 'i18n-calypso';
 import { wpcomJetpackLicensing } from 'calypso/lib/wp';
 import {
 	JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE,
+	JETPACK_PARTNER_PORTAL_OAUTH_TOKEN_SET,
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE,
@@ -26,7 +27,10 @@ export function setActivePartnerKey( partnerKeyId: number ): PartnerPortalThunkA
 		dispatch( { type: JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE, partnerKeyId } );
 
 		const key = getActivePartnerKey( getState() );
+
 		wpcomJetpackLicensing.loadToken( key ? key.oAuth2Token : '' );
+
+		dispatch( { type: JETPACK_PARTNER_PORTAL_OAUTH_TOKEN_SET } );
 	};
 }
 
