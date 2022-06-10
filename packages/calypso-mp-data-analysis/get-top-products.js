@@ -81,7 +81,7 @@ const getTopProducts = async () => {
 
 	await fs.outputFile(
 		'results/top-products.csv',
-		stringify( results, { columns: [ { key: 'product' }, { key: 'count' } ] } )
+		stringify( results, { columns: [ { key: 'product' }, { key: 'count' } ], header: true } )
 	);
 };
 

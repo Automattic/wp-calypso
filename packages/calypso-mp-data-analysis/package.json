@@ -7,5 +7,8 @@
 		"csv-parse": "^5.1.0",
 		"csv-stringify": "^6.1.0",
 		"fs-extra": "^10.1.0"
+	},
+	"scripts": {
+		"generate": "node get-top-categories.js && node get-top-products.js"
 	}
 }

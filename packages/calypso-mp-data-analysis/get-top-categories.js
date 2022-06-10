@@ -229,7 +229,7 @@ const getTopTagsAndCategories = async () => {
 
 	await fs.outputFile(
 		'results/top-tags.csv',
-		stringify( topTags, { columns: [ { key: 'tag' }, { key: 'count' } ] } )
+		stringify( topTags, { columns: [ { key: 'tag' }, { key: 'count' } ], header: true } )
 	);
 
 	const topCategories = Object.values( categories )
@@ -248,7 +248,7 @@ const getTopTagsAndCategories = async () => {
 
 	await fs.outputFile(
 		'results/top-categories.csv',
-		stringify( topCategories, { columns: [ { key: 'category' }, { key: 'count' } ] } )
+		stringify( topCategories, { columns: [ { key: 'category' }, { key: 'count' } ], header: true } )
 	);
 };
 
