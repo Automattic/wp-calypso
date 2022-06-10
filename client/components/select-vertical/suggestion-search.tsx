@@ -8,9 +8,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import type { Vertical } from './types';
 import './style.scss';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
-
 interface Props {
 	placeholder?: string;
 	searchTerm: string;
@@ -142,7 +139,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 
 	useEffect( () => {
 		if ( ! ( window.visualViewport && isMobile ) ) {
-			return noop;
+			return;
 		}
 
 		const handleResize = () => {
