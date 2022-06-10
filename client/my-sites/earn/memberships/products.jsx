@@ -112,7 +112,7 @@ class MembershipsProductsSection extends Component {
 						{ this.renderEllipsisMenu( product.ID ) }
 					</CompactCard>
 				) ) }
-				{ this.state.showAddEditDialog && (
+				{ this.state.showAddEditDialog && this.props.hasStripeFeature && (
 					<RecurringPaymentsPlanAddEditModal
 						closeDialog={ this.closeDialog }
 						product={ this.state.product }
