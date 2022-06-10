@@ -144,7 +144,13 @@ export default function SiteStatusContent( {
 			rel = 'noreferrer';
 		}
 		updatedContent = (
-			<a target={ target } rel={ rel } onClick={ handleClickRowAction } href={ link }>
+			<a
+				data-testid={ `row-${ tooltipId }` }
+				target={ target }
+				rel={ rel }
+				onClick={ handleClickRowAction }
+				href={ link }
+			>
 				{ content }
 			</a>
 		);
