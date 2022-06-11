@@ -1,4 +1,4 @@
-import { BlockFlow, EditorContext, PublishedPostContext } from '..';
+import { BlockFlow, EditorContext, PublishedPostContext } from '../../../types';
 
 interface ConfigurationData {
 	// Both name lookup and restaurant ID lookup are supported.

@@ -3,17 +3,7 @@ import fs from 'fs/promises';
 import os from 'os';
 import path from 'path';
 import { getTimestamp } from './data-helper';
-
-/**
- * Interface for holding various parts of a filepath.
- */
-export interface TestFile {
-	fullpath: string; // eg. /usr/home/wp-calypso/test/e2e/image-uploads/image.jpg
-	dirname: string; // eg. /usr/home/wp-calypso/test/e2e/image-uploads/
-	basename: string; // eg. image.jpg
-	filename: string; // eg. image
-	extension: string; // eg. .jpg
-}
+import type { TestFile } from './types/media-helper.types';
 
 /**
  * Creates a temporary test file by cloning a source file under a new name.

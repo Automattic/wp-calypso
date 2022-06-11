@@ -3,11 +3,6 @@ import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
 import type { NewUserResponse } from '../../types/rest-api-client.types';
 
-export interface NewUserDetails {
-	ID: number;
-	bearer_token: string;
-}
-
 const selectors = {
 	// Fields
 	emailInput: 'input[name="email"]',
@@ -58,8 +53,9 @@ export class UserSignupPage {
 	 * @param {string} email Email address of the new user.
 	 * @param {string} username Username of the new user.
 	 * @param {string} password Password of the new user.
+	 * @returns Response from the REST API.
 	 */
-	async signup( email: string, username: string, password: string ): Promise< NewUserDetails > {
+	async signup( email: string, username: string, password: string ): Promise< NewUserResponse > {
 		await this.page.fill( selectors.emailInput, email );
 		await this.page.fill( selectors.usernameInput, username );
 		await this.page.fill( selectors.passwordInput, password );
@@ -81,7 +77,7 @@ export class UserSignupPage {
 
 		const responseBody: NewUserResponse = await response.json();
 
-		return { ID: responseBody.body.user_id, bearer_token: responseBody.body.bearer_token };
+		return responseBody;
 	}
 
 	/**

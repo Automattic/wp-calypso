@@ -1,4 +1,4 @@
-import { BlockFlow, EditorContext, PublishedPostContext } from '..';
+import { BlockFlow, EditorContext, PublishedPostContext } from '../../../types';
 
 interface ConfigurationData {
 	nameLabel: string;

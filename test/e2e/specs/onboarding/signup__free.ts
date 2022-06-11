@@ -18,7 +18,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
-import type { SiteDetails, NewUserDetails } from '@automattic/calypso-e2e';
+import type { SiteDetails, NewUserResponse } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;
 
@@ -29,7 +29,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 	const tagline = `${ testUser.siteName } tagline`;
 
 	let page: Page;
-	let userDetails: NewUserDetails;
+	let userDetails: NewUserResponse;
 	let siteDetails: SiteDetails;
 	let userCreatedFlag = false;
 	let domainSearchComponent: DomainSearchComponent;
@@ -189,12 +189,12 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 	afterAll( async function () {
 		const restAPIClient = new RestAPIClient(
 			{ username: testUser.username, password: testUser.password },
-			userDetails.bearer_token
+			userDetails.body.bearer_token
 		);
 
 		if ( userCreatedFlag ) {
 			await apiCloseAccount( restAPIClient, {
-				userID: userDetails.ID,
+				userID: userDetails.body.user_id,
 				username: testUser.username,
 				email: testUser.email,
 			} );

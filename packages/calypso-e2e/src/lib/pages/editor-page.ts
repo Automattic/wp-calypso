@@ -17,7 +17,7 @@ import {
 } from '../components';
 import { BlockInserter, OpenInlineInserter } from './shared-types';
 import type { SiteType } from '../../lib/utils';
-import type { PreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from '../components';
+import type { EditorPreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from '../../types';
 
 const selectors = {
 	// iframe and editor
@@ -701,11 +701,11 @@ export class EditorPage {
 	 * For Desktop and Tablet viewports, this method will not return any value.
 	 * For Mobile viewport, an error is thrown.
 	 *
-	 * @param {PreviewOptions} target Target preview size.
+	 * @param {EditorPreviewOptions} target Target preview size.
 	 * @returns {Page|void} Handler for the Page object on mobile. Void otherwise.
 	 * @throws {Error} If the current viewport is not of Desktop or Tablet.
 	 */
-	async previewAsDesktop( target: PreviewOptions ): Promise< void > {
+	async previewAsDesktop( target: EditorPreviewOptions ): Promise< void > {
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			throw new Error(
 				`This method only works in non-mobile viewport, current viewport: ${ envVariables.VIEWPORT_NAME } `

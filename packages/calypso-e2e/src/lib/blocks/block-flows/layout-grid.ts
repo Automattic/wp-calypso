@@ -1,5 +1,5 @@
 import { Locator } from 'playwright';
-import { BlockFlow, EditorContext, PublishedPostContext } from '..';
+import { BlockFlow, EditorContext, PublishedPostContext } from '../../../types';
 import { OpenInlineInserter } from '../../pages';
 
 // As a layout block, there's pretty massive amounts of potential variability in configuration.

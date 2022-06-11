@@ -1,24 +1,11 @@
 import { Page, Locator } from 'playwright';
 import envVariables from '../../env-variables';
-
-export type EditorSidebarTab = 'Post' | 'Block' | 'Page';
-export type ArticleSections =
-	| 'Status & Visibility'
-	| 'Revisions'
-	| 'Permalink'
-	| 'Categories'
-	| 'Tags'
-	| 'Discussion';
-export type PrivacyOptions = 'Public' | 'Private' | 'Password';
-
-export interface Schedule {
-	year: number;
-	month: number;
-	date: number;
-	hours: number;
-	minutes: number;
-	meridian: 'am' | 'pm';
-}
+import type {
+	Schedule,
+	EditorSidebarTab,
+	ArticleSections,
+	PrivacyOptions,
+} from '../../types/editor-settings-sidebar-component.types';
 
 const panel = '[aria-label="Editor settings"]';
 
