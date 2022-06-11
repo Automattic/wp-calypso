@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import buildConnection from './connection';
 import useHappychatAuth from './use-happychat-auth';
 
-let cachedAvailableValue: boolean | undefined = undefined;
+let cachedAvailableValue: boolean | undefined = true;
 
 export function useHappychatAvailable() {
 	const [ available, setIsAvailable ] = useState< boolean | undefined >( cachedAvailableValue );

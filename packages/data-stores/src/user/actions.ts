@@ -85,7 +85,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	};
 }
 
-type ActionCreators = ReturnType< typeof createActions >;
+export type ActionCreators = ReturnType< typeof createActions >;
 
 export type Action =
 	| ReturnType<

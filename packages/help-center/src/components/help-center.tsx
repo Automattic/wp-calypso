@@ -13,7 +13,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  */
 import { execute } from '../directly';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
-import { HELP_CENTER_STORE, USER_STORE } from '../stores';
+import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import { SITE_STORE } from './help-center-contact-form';
 import HelpCenterContainer from './help-center-container';
@@ -25,9 +25,8 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 
 	const siteId = useSelector( getSelectedSiteId );
 
-	// prefetch the current site and user
-	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
-	const user = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	// prefetch the current site
+	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ), [ siteId ] );
 	const { setDirectlyData } = useDispatch( HELP_CENTER_STORE );
 	const { isLoading: isLoadingChat } = useSupportAvailability( 'CHAT' );
 	const { isLoading: isLoadingChatAvailable } = useHappychatAvailable();
@@ -45,13 +44,11 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 		}
 	}, [ supportData, setDirectlyData ] );
 
-	const isLoading = [
-		! site,
-		! user,
-		isSupportDataLoading,
-		isLoadingChat,
-		isLoadingChatAvailable,
-	].some( Boolean );
+	console.log( 'omar', [ ! site, isSupportDataLoading, isLoadingChat, isLoadingChatAvailable ] );
+
+	const isLoading = [ ! site, isSupportDataLoading, isLoadingChat, isLoadingChatAvailable ].some(
+		Boolean
+	);
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];

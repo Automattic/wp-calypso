@@ -1,35 +1,38 @@
-import type { Action } from 'redux';
+import type { Action } from './actions';
+export interface Dispatch {
+	dispatch: ( action: Action ) => void;
+}
 
 export interface CurrentUser {
 	ID: number;
 	display_name: string;
 	username: string;
-	email: string;
+	email?: string;
 	/**
 	 * The user's locale slug, e.g. `es`.
 	 */
-	language: string;
+	language?: string;
 
 	/**
 	 * The bootstraped user's locale slug, e.g. `es`.
 	 */
-	localeSlug: string;
+	localeSlug?: string;
 
 	/**
 	 * The user's locale variant, e.g. `es-mx`.
 	 * If there is no variant, `""` empty string is returned.
 	 */
-	locale_variant: string;
+	locale_variant?: string;
 
 	/**
 	 * The bootstrapped user's locale variant, e.g. `es-mx`.
 	 */
-	localeVariant: string;
+	localeVariant?: string;
 
 	/**
 	 * The user's existing sites count.
 	 */
-	site_count: number;
+	site_count?: number;
 }
 
 export interface NewUser {
@@ -76,4 +79,34 @@ export interface CreateAccountParams {
 
 export interface CreateAccountAction extends Action {
 	params?: CreateAccountParams;
+}
+
+export interface WpOrgUser {
+	id: number;
+	name: string;
+	url: string;
+	description: string;
+	link: string;
+	slug: string;
+	avatar_urls: Record< number, string >;
+	meta: {
+		persisted_preferences: {
+			[ key: string ]:
+				| {
+						welcomeGuide: boolean;
+						isComplementaryAreaVisible: boolean;
+						complementaryArea?: unknown;
+				  }
+				| Date;
+		};
+		admin_color: string;
+	};
+	_links: {
+		self: {
+			href: string;
+		}[];
+		collection: {
+			href: string;
+		}[];
+	};
 }

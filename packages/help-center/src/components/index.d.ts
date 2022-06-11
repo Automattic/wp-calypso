@@ -30,6 +30,11 @@ declare module 'calypso/state/ui/selectors' {
 	export const getSectionName: ( state: unknown ) => string;
 }
 
+declare module 'calypso/state/selectors/is-site-automated-transfer' {
+	const isSiteAutomatedTransfer: ( state: unknown, siteId: number ) => boolean;
+	export default isSiteAutomatedTransfer;
+}
+
 declare module 'calypso/state/sites/hooks' {
 	export const useSiteOption: ( state: unknown ) => string;
 }
