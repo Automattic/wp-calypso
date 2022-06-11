@@ -7,10 +7,12 @@ import userEvent from '@testing-library/user-event';
 import { translate } from 'i18n-calypso';
 import MockDate from 'mockdate';
 import moment from 'moment';
-import DatePicker from 'calypso/components/date-picker';
-import DateRangeHeader from 'calypso/components/date-range/header';
-import DateRangeInputs from 'calypso/components/date-range/inputs';
 import { DateRange } from '../index.js';
+
+jest.mock( 'lodash', () => ( {
+	...jest.requireActual( 'lodash' ),
+	debounce: ( fn ) => fn,
+} ) );
 
 function dateToLocaleString( date ) {
 	return moment.isDate( date ) || moment.isMoment( date ) ? moment( date ).format( 'L' ) : date;
@@ -151,30 +153,30 @@ describe( 'DateRange', () => {
 			expect( range ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
 		} );
 
-		test( 'should update trigger props to match currently selected dates', () => {
+		test( 'should update trigger props to match currently selected dates', async () => {
 			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
 			const from = screen.getByLabelText( 'From' );
 			const to = screen.getByLabelText( 'To' );
 			const applyBtn = screen.getByText( 'Apply' );
 
-			userEvent.type( from, '04-01-2018' );
-			userEvent.type( to, '04-29-2018' );
+			await userEvent.type( from, '04-01-2018' );
+			await userEvent.type( to, '04-29-2018' );
 
-			userEvent.click( applyBtn );
+			await userEvent.click( applyBtn );
 
 			const range = screen.getByLabelText( 'Select date range' ).querySelector( 'span' ).innerHTML;
 
 			expect( range ).toEqual( '04/01/2018 - 04/29/2018' );
 		} );
 
-		test( 'should toggle popover on trigger click', () => {
+		test( 'should toggle popover on trigger click', async () => {
 			render( <DateRange translate={ translate } moment={ moment } /> );
 
 			// Open
-			userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
 			const popover = screen.getByRole( 'tooltip' );
 
@@ -182,12 +184,12 @@ describe( 'DateRange', () => {
 
 			// Close
 			const applyBtn = screen.getByText( 'Apply' );
-			userEvent.click( applyBtn );
+			await userEvent.click( applyBtn );
 
 			expect( popover ).not.toBeVisible();
 		} );
 
-		test( 'should reset Dates on trigger clear btn click', () => {
+		test( 'should reset Dates on trigger clear btn click', async () => {
 			const endDate = moment( '05-30-2018', 'MM-DD-YYYY' );
 			const startDate = moment( '04-30-2018', 'MM-DD-YYYY' );
 
@@ -201,7 +203,7 @@ describe( 'DateRange', () => {
 			);
 
 			const clearBtn = screen.getByTitle( 'Clear date selection' );
-			userEvent.click( clearBtn );
+			await userEvent.click( clearBtn );
 
 			const range = screen.getByLabelText( 'Select date range' ).querySelector( 'span' ).innerHTML;
 			expect( range ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
@@ -215,45 +217,7 @@ describe( 'DateRange', () => {
 			removeListener: jest.fn(),
 		};
 
-		test( 'should pass expected default props to DatePicker', () => {
-			const wrapper = render( <DateRange translate={ translate } moment={ moment } /> );
-			const instance = wrapper.instance();
-			const datePicker = wrapper.find( DatePicker );
-
-			expect( datePicker.props() ).toEqual(
-				expect.objectContaining( {
-					showOutsideDays: false,
-					fromMonth: undefined,
-					toMonth: undefined,
-					onSelectDay: instance.onSelectDate,
-					selectedDays: [
-						null,
-						{
-							from: null,
-							to: null,
-						},
-					],
-					numberOfMonths: 2, // controlled via matchMedia mock
-					disabledDays: [ {} ],
-					calendarViewDate: null,
-					rootClassNames: {
-						'date-range__picker': true,
-					},
-					modifiers: {
-						start: null,
-						end: null,
-						range: {
-							from: null,
-							to: null,
-						},
-						'range-end': null,
-						'range-start': null,
-					},
-				} )
-			);
-		} );
-
-		test( 'should set 2 month calendar view on screens >480px by default', () => {
+		test( 'should set 2 month calendar view on screens >480px by default', async () => {
 			window.matchMedia = jest.fn().mockImplementation( ( query ) => {
 				return {
 					...matchMediaDefaults,
@@ -262,13 +226,28 @@ describe( 'DateRange', () => {
 				};
 			} );
 
-			const wrapper = render( <DateRange translate={ translate } moment={ moment } /> );
-			const datePicker = wrapper.find( DatePicker );
+			const selectedStartDate = moment( '10-01-2018', 'MM-DD-YYYY' );
+			const selectedEndDate = moment( '11-01-2018', 'MM-DD-YYYY' );
 
-			expect( datePicker.props().numberOfMonths ).toEqual( 2 );
+			render(
+				<DateRange
+					selectedStartDate={ selectedStartDate }
+					selectedEndDate={ selectedEndDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
+
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+
+			const startMonth = screen.getByText( 'October 2018' );
+			const endMonth = screen.getByText( 'November 2018' );
+
+			expect( startMonth ).toBeVisible();
+			expect( endMonth ).toBeVisible();
 		} );
 
-		test( 'should set 1 month calendar view on screens <480px by default', () => {
+		test( 'should set 1 month calendar view on screens <480px by default', async () => {
 			window.matchMedia = jest.fn().mockImplementation( ( query ) => {
 				return {
 					...matchMediaDefaults,
@@ -277,225 +256,205 @@ describe( 'DateRange', () => {
 				};
 			} );
 
-			const wrapper = render( <DateRange translate={ translate } moment={ moment } /> );
-			const datePicker = wrapper.find( DatePicker );
+			const selectedStartDate = moment( '10-01-2018', 'MM-DD-YYYY' );
+			const selectedEndDate = moment( '11-01-2018', 'MM-DD-YYYY' );
 
-			expect( datePicker.props().numberOfMonths ).toEqual( 1 );
+			render(
+				<DateRange
+					selectedStartDate={ selectedStartDate }
+					selectedEndDate={ selectedEndDate }
+					translate={ translate }
+					moment={ moment }
+				/>
+			);
+
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+
+			const startMonth = screen.getByText( 'October 2018' );
+			const endMonth = screen.queryByText( 'November 2018' );
+
+			expect( startMonth ).toBeVisible();
+			expect( endMonth ).toBeNull();
 		} );
 
-		test( 'should disable dates before firstSelectableDate when set', () => {
-			const today = new Date();
-			const wrapper = render(
-				<DateRange translate={ translate } moment={ moment } firstSelectableDate={ today } />
+		test( 'should disable dates before firstSelectableDate when set', async () => {
+			const firstSelectableDate = moment( '10-03-2018', 'MM-DD-YYYY' );
+
+			render(
+				<DateRange
+					translate={ translate }
+					moment={ moment }
+					firstSelectableDate={ firstSelectableDate }
+				/>
 			);
-			const datePicker = wrapper.find( DatePicker );
 
-			const expected = [
-				{
-					before: today,
-				},
-			];
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			const actual = datePicker.props().disabledDays;
+			// We assume that dates before the `firstSelectableDate` date and on/after
+			// it are disabled/enabled respectively. We test two of each for good
+			// measure. Testing all enabled/disabled dates wouldn't be feasible.
+			const someDisabledDates = [ 'Mon, Oct 1, 2018 12:00 PM', 'Tue, Oct 2, 2018 12:00 PM' ];
+			const someEnabledDates = [ 'Wed, Oct 3, 2018 12:00 PM', 'Thu, Oct 4, 2018 12:00 PM' ];
 
-			expect( actual ).toEqual( expected );
+			// Dates before `10-03-2018`
+			someDisabledDates.forEach( ( timestamp ) => {
+				const el = screen.getByLabelText( timestamp );
+				expect( el ).toHaveAttribute( 'aria-disabled', 'true' );
+			} );
+
+			// Dates on/after `10-03-2018`
+			someEnabledDates.forEach( ( timestamp ) => {
+				const el = screen.getByLabelText( timestamp );
+				expect( el ).toHaveAttribute( 'aria-disabled', 'false' );
+			} );
 		} );
 
-		test( 'should disable dates after lastSelectableDate when set', () => {
-			const today = new Date();
-			const wrapper = render(
-				<DateRange translate={ translate } moment={ moment } lastSelectableDate={ today } />
+		test( 'should disable dates after lastSelectableDate when set', async () => {
+			const lastSelectableDate = moment( '10-03-2018', 'MM-DD-YYYY' );
+
+			render(
+				<DateRange
+					translate={ translate }
+					moment={ moment }
+					lastSelectableDate={ lastSelectableDate }
+				/>
 			);
-			const datePicker = wrapper.find( DatePicker );
 
-			const expected = [
-				{
-					after: today,
-				},
-			];
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			const actual = datePicker.props().disabledDays;
+			// We assume that dates on/before the `lastSelectableDate` date and after
+			// it are enabled/disabled respectively. We test two of each for good
+			// measure. Testing all enabled/disabled dates wouldn't be feasible.
+			const someEnabledDates = [ 'Tue, Oct 2, 2018 12:00 PM', 'Wed, Oct 3, 2018 12:00 PM' ];
+			const someDisabledDates = [ 'Thu, Oct 4, 2018 12:00 PM', 'Fri, Oct 5, 2018 12:00 PM' ];
 
-			expect( actual ).toEqual( expected );
+			// Dates on/before `10-03-2018`
+			someEnabledDates.forEach( ( timestamp ) => {
+				const el = screen.getByLabelText( timestamp );
+				expect( el ).toHaveAttribute( 'aria-disabled', 'false' );
+			} );
+
+			// Dates after `10-03-2018`
+			someDisabledDates.forEach( ( timestamp ) => {
+				const el = screen.getByLabelText( timestamp );
+				expect( el ).toHaveAttribute( 'aria-disabled', 'true' );
+			} );
 		} );
 
-		test( 'should disable DatePicker UI for months previous to firstSelectableDate when set', () => {
-			const today = new Date();
+		test( 'should *not* show the navigation button for the month prior to the one for `firstSelectableDate`', async () => {
+			const firstSelectableDate = moment( '10-03-2018', 'MM-DD-YYYY' );
 
-			const wrapper = render(
-				<DateRange translate={ translate } moment={ moment } firstSelectableDate={ today } />
+			render(
+				<DateRange
+					translate={ translate }
+					moment={ moment }
+					firstSelectableDate={ firstSelectableDate }
+				/>
 			);
-			const datePicker = wrapper.find( DatePicker );
 
-			const expected = today;
-			const actual = datePicker.props().fromMonth;
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			expect( actual ).toEqual( expected );
+			const previousMonthBtn = screen.queryByLabelText( /Previous month/ );
+			const nextMonthBtn = screen.getByLabelText( 'Next month (December 2018)' );
+
+			expect( previousMonthBtn ).toBeNull();
+			expect( nextMonthBtn ).toBeVisible();
 		} );
 
-		test( 'should disable DatePicker UI for months after lastSelectableDate when set', () => {
-			const today = new Date();
+		test( 'should *not* show the navigation button for the month afer to the one for `lastSelectableDate`', async () => {
+			const lastSelectableDate = moment( '10-03-2018', 'MM-DD-YYYY' );
 
-			const wrapper = render(
-				<DateRange translate={ translate } moment={ moment } lastSelectableDate={ today } />
+			render(
+				<DateRange
+					translate={ translate }
+					moment={ moment }
+					lastSelectableDate={ lastSelectableDate }
+				/>
 			);
-			const datePicker = wrapper.find( DatePicker );
 
-			const expected = today;
-			const actual = datePicker.props().toMonth;
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			expect( actual ).toEqual( expected );
+			const previousMonthBtn = screen.getByLabelText( 'Previous month (August 2018)' );
+			const nextMonthBtn = screen.queryByLabelText( /Next month/ );
+
+			expect( previousMonthBtn ).toBeVisible();
+			expect( nextMonthBtn ).toBeNull();
 		} );
 	} );
 
 	describe( 'Input elements', () => {
-		test( 'should see inputs reflect date picker selection', () => {
-			const wrapper = render( <DateRange translate={ translate } moment={ moment } /> );
+		test( 'should see inputs reflect date picker selection', async () => {
+			const firstSelectableDate = moment( '04-03-2018', 'MM-DD-YYYY' );
 
-			const expectedStart = '2018-04-03';
-			const expectedEnd = '2018-04-29';
+			const startDate = 'Tue, Apr 3, 2018 12:00 PM';
+			const endDate = 'Tue, May 29, 2018 12:00 PM';
 
-			const newStartDate = moment( expectedStart );
-			const newEndDate = moment( expectedEnd );
-
-			// Select dates using API
-			wrapper.instance().onSelectDate( newStartDate );
-			wrapper.instance().onSelectDate( newEndDate );
-
-			// Force update
-			wrapper.update();
-
-			const dateRangeInputs = wrapper.find( DateRangeInputs );
-
-			expect( dateRangeInputs.props() ).toEqual(
-				expect.objectContaining( {
-					startDateValue: dateToLocaleString( newStartDate ),
-					endDateValue: dateToLocaleString( newEndDate ),
-				} )
-			);
-		} );
-
-		test( 'should update start date selection on start date input blur event', () => {
-			const endDate = moment( '2018-05-30' );
-			const startDate = moment( endDate ).subtract( 1, 'months' );
-
-			const wrapper = render(
+			render(
 				<DateRange
-					selectedStartDate={ startDate }
-					selectedEndDate={ endDate }
 					translate={ translate }
 					moment={ moment }
+					firstSelectableDate={ firstSelectableDate }
 				/>
 			);
 
-			wrapper.instance().handleInputBlur( '03/20/2018', 'Start' );
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			await userEvent.click( screen.getByLabelText( startDate ) );
+			await userEvent.click( screen.getByLabelText( endDate ) );
 
-			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual(
-				dateToLocaleString( '03/20/2018' )
-			);
+			const fromInput = screen.queryByDisplayValue( '04/03/2018' );
+			const toInput = screen.getByDisplayValue( '05/29/2018' );
+
+			expect( fromInput ).toBeVisible();
+			expect( toInput ).toBeVisible();
 		} );
 
-		test( 'should update end date selection on end date input blur event', () => {
-			const endDate = moment( '2018-05-30' );
-			const startDate = moment( endDate ).subtract( 1, 'months' );
+		test( 'should update start date selection on start date input blur', async () => {
+			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const wrapper = render(
-				<DateRange
-					selectedStartDate={ startDate }
-					selectedEndDate={ endDate }
-					translate={ translate }
-					moment={ moment }
-				/>
-			);
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			await userEvent.click( screen.getByLabelText( 'From' ) );
+			await userEvent.keyboard( '05/30/2018' );
+			// This causes a blur on the `From` input, which is enough for our test case
+			await userEvent.click( screen.getByLabelText( 'To' ) );
+			await userEvent.keyboard( '06/30/2018' );
 
-			const inputs = wrapper.find( DateRangeInputs );
+			const startDateEl = screen.getByLabelText( 'Wed, May 30, 2018 12:00 PM' );
 
-			inputs.props().onInputBlur( '05/28/2018', 'End' );
-
-			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual(
-				dateToLocaleString( '05/28/2018' )
-			);
+			expect( startDateEl ).toHaveAttribute( 'aria-selected', 'true' );
 		} );
 
-		test( 'should not update date selection on input change event', () => {
-			const endDate = moment( '2018-05-28' );
-			const startDate = moment( endDate ).subtract( 1, 'months' );
+		test( 'should update end date selection on end date input blur', async () => {
+			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const wrapper = render(
-				<DateRange
-					selectedStartDate={ startDate }
-					selectedEndDate={ endDate }
-					translate={ translate }
-					moment={ moment }
-				/>
-			);
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			await userEvent.click( screen.getByLabelText( 'To' ) );
+			await userEvent.keyboard( '06/30/2018' );
+			// This causes a blur on the `From` input, which is enough for our test case
+			await userEvent.click( screen.getByLabelText( 'From' ) );
+			await userEvent.keyboard( '05/30/2018' );
 
-			wrapper.instance().handleInputChange( '05/30/2018', 'End' );
+			const endDateEl = screen.getByLabelText( 'Sat, Jun 30, 2018 12:00 PM' );
 
-			wrapper.instance().handleInputChange( '05/01/2018', 'Start' );
-
-			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual(
-				dateToLocaleString( endDate )
-			);
-
-			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual(
-				dateToLocaleString( startDate )
-			);
+			expect( endDateEl ).toHaveAttribute( 'aria-selected', 'true' );
 		} );
 
-		test( 'should update `textInput*` state on input change event', () => {
-			const endDate = moment( '2018-05-28' );
-			const startDate = moment( endDate ).subtract( 1, 'months' );
+		test( 'should not update date selection on input change', async () => {
+			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const newStartDate = '03/30/2018';
-			const newEndDate = '06/30/2018';
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			await userEvent.click( screen.getByLabelText( 'From' ) );
+			await userEvent.keyboard( '05/30/2018' );
 
-			const wrapper = render(
-				<DateRange
-					selectedStartDate={ startDate }
-					selectedEndDate={ endDate }
-					translate={ translate }
-					moment={ moment }
-				/>
-			);
+			const el = screen.getByLabelText( 'Sat, Jun 30, 2018 12:00 PM' );
 
-			wrapper.instance().handleInputChange( newStartDate, 'Start' );
-			wrapper.instance().handleInputChange( newEndDate, 'End' );
-
-			expect( wrapper.state().textInputStartDate ).toEqual( dateToLocaleString( newStartDate ) );
-			expect( wrapper.state().textInputEndDate ).toEqual( dateToLocaleString( newEndDate ) );
+			expect( el ).toHaveAttribute( 'aria-selected', 'false' );
 		} );
 
-		test( 'should not update either start or end date selection if the new input date value is the same as that stored in state', () => {
-			const endDate = moment( '2018-05-28' );
-			const startDate = moment( endDate ).subtract( 1, 'months' );
+		test( 'should not update start/end dates if input date is invalid', async () => {
+			const startDate = moment( '05-30-2018', 'MM-DD-YYYY' );
+			const endDate = moment( startDate ).add( 1, 'months' );
 
-			const wrapper = render(
-				<DateRange
-					selectedStartDate={ startDate }
-					selectedEndDate={ endDate }
-					translate={ translate }
-					moment={ moment }
-				/>
-			);
-
-			wrapper.instance().handleInputBlur( '2018-04-28', 'Start' ); // same as original date
-			wrapper.instance().handleInputBlur( '2018-05-28', 'End' ); // same as original date
-
-			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual(
-				dateToLocaleString( startDate )
-			);
-
-			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual(
-				dateToLocaleString( endDate )
-			);
-		} );
-
-		test( 'should not update start/end dates if input date is invalid', () => {
-			const endDate = moment( '2018-05-28' );
-			const startDate = moment( endDate ).subtract( 1, 'months' );
-
-			const wrapper = render(
+			render(
 				<DateRange
 					selectedStartDate={ startDate }
 					selectedEndDate={ endDate }
@@ -506,229 +465,195 @@ describe( 'DateRange', () => {
 
 			const invalidDateString = 'inv/alid/datestring';
 
-			wrapper.instance().handleInputBlur( invalidDateString, 'Start' );
-			wrapper.instance().handleInputBlur( invalidDateString, 'End' );
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			expect( dateToLocaleString( wrapper.state().startDate ) ).not.toEqual( invalidDateString );
-			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual(
-				dateToLocaleString( startDate )
-			);
-			expect( dateToLocaleString( wrapper.state().endDate ) ).not.toEqual( invalidDateString );
-			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual(
-				dateToLocaleString( endDate )
-			);
+			const fromEl = screen.getByLabelText( 'From' );
+			const toEl = screen.getByLabelText( 'To' );
+
+			await userEvent.clear( fromEl );
+			await userEvent.click( fromEl );
+			await userEvent.keyboard( invalidDateString );
+			await userEvent.clear( toEl );
+			await userEvent.click( toEl );
+			await userEvent.keyboard( invalidDateString );
+
+			const startDateEl = screen.getByLabelText( 'Wed, May 30, 2018 12:00 PM' );
+			const endDateEl = screen.getByLabelText( 'Sat, Jun 30, 2018 12:00 PM' );
+
+			expect( startDateEl ).toHaveAttribute( 'aria-selected', 'true' );
+			expect( endDateEl ).toHaveAttribute( 'aria-selected', 'true' );
 		} );
 
-		test( 'should not update start date if input date is outside firstSelectableDate', () => {
-			const endDate = moment( '2018-05-28' );
-			const startDate = moment( '2018-04-28' );
+		test( 'should not update start date if input date is outside firstSelectableDate', async () => {
+			const firstSelectableDate = moment( '05-27-2018', 'MM-DD-YYYY' );
+			// Sat, May 26, 2018 12:00 PM, one day before the `firstSelectableDate`
+			const badDateInputString = '05/26/2018';
+			const badDateLabelString = 'Sat, May 26, 2018 12:00 PM';
 
-			const firstSelectableDate = moment( '2018-03-28' );
-
-			const badDate = moment( firstSelectableDate ).subtract( 11, 'months' );
-
-			const wrapper = render(
+			render(
 				<DateRange
-					selectedStartDate={ startDate }
-					selectedEndDate={ endDate }
 					firstSelectableDate={ firstSelectableDate }
 					translate={ translate }
 					moment={ moment }
 				/>
 			);
 
-			const inputs = wrapper.find( DateRangeInputs );
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			inputs.props().onInputBlur( badDate, 'Start' );
+			await userEvent.click( screen.getByLabelText( 'From' ) );
+			await userEvent.keyboard( badDateInputString );
 
-			expect( dateToLocaleString( wrapper.state().startDate ) ).not.toEqual( badDate );
+			const supposedStartDateEl = screen.getByLabelText( badDateLabelString );
+
+			expect( supposedStartDateEl ).toHaveAttribute( 'aria-selected', 'false' );
 		} );
 
-		test( 'should not update end date if input date is outside firstSelectableDate', () => {
-			const endDate = moment( '2018-05-28' );
-			const startDate = moment( '2018-04-28' );
+		test( 'should not update end date if input date is outside firstSelectableDate', async () => {
+			const firstSelectableDate = moment( '05-27-2018', 'MM-DD-YYYY' );
+			// Sat, May 26, 2018 12:00 PM, one day before the `firstSelectableDate`
+			const badDateInputString = '05/26/2018';
+			const badDateLabelString = 'Sat, May 26, 2018 12:00 PM';
 
-			const firstSelectableDate = moment( '2018-03-28' );
-
-			const badDate = moment( firstSelectableDate ).subtract( 11, 'months' );
-
-			const wrapper = render(
+			render(
 				<DateRange
-					selectedStartDate={ startDate }
-					selectedEndDate={ endDate }
 					firstSelectableDate={ firstSelectableDate }
 					translate={ translate }
 					moment={ moment }
 				/>
 			);
 
-			const inputs = wrapper.find( DateRangeInputs );
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			inputs.props().onInputBlur( badDate, 'End' );
+			await userEvent.click( screen.getByLabelText( 'To' ) );
+			await userEvent.keyboard( badDateInputString );
 
-			expect( dateToLocaleString( wrapper.state().startDate ) ).not.toEqual( badDate );
+			const supposedStartDateEl = screen.getByLabelText( badDateLabelString );
+
+			expect( supposedStartDateEl ).toHaveAttribute( 'aria-selected', 'false' );
 		} );
 
-		test( 'should not update start or end date if the value of input for the start date is outside lastSelectableDate', () => {
-			const startDate = moment( '2018-04-28' );
-			const endDate = moment( '2018-05-28' );
+		test( 'should not update start date if input date is outside lastSelectableDate', async () => {
+			const firstSelectableDate = moment( '05-27-2018', 'MM-DD-YYYY' );
+			// Sun, May 27, 2018 12:00 PM, one day after the `lastSelectableDate`
+			const badDateInputString = '05/27/2018';
+			const badDateLabelString = 'Sun, May 27, 2018 12:00 PM';
 
-			const lastSelectableDate = moment( '2018-06-28' );
-
-			const badDate = dateToLocaleString( moment( lastSelectableDate ).add( 11, 'months' ) );
-
-			const wrapper = render(
+			render(
 				<DateRange
-					selectedStartDate={ startDate }
-					selectedEndDate={ endDate }
-					lastSelectableDate={ lastSelectableDate }
+					lastSelectableDate={ firstSelectableDate }
 					translate={ translate }
 					moment={ moment }
 				/>
 			);
 
-			const inputs = wrapper.find( DateRangeInputs );
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			inputs.props().onInputBlur( badDate, 'End' );
+			await userEvent.click( screen.getByLabelText( 'From' ) );
+			await userEvent.keyboard( badDateInputString );
 
-			expect( dateToLocaleString( wrapper.state().startDate ) ).not.toEqual( badDate );
-			expect( dateToLocaleString( wrapper.state().endDate ) ).not.toEqual( badDate );
+			const supposedStartDateEl = screen.getByLabelText( badDateLabelString );
 
-			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual( '04/28/2018' );
-			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual( '05/28/2018' );
+			expect( supposedStartDateEl ).toHaveAttribute( 'aria-selected', 'false' );
 		} );
 	} );
 
-	describe( 'Callback props', () => {
-		test( 'should call onDateSelect function when a date is selected', () => {
-			const callback = jest.fn();
+	test( 'should not update end date if input date is outside lastSelectableDate', async () => {
+		const firstSelectableDate = moment( '05-27-2018', 'MM-DD-YYYY' );
+		// Sun, May 27, 2018 12:00 PM, one day after the `lastSelectableDate`
+		const badDateInputString = '05/27/2018';
+		const badDateLabelString = 'Sun, May 27, 2018 12:00 PM';
 
-			const wrapper = render(
-				<DateRange translate={ translate } moment={ moment } onDateSelect={ callback } />
-			);
+		render(
+			<DateRange
+				lastSelectableDate={ firstSelectableDate }
+				translate={ translate }
+				moment={ moment }
+			/>
+		);
 
-			const newStartDate = moment( '2018-04-01' );
-			const newEndDate = moment( '2018-04-29' );
+		await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			// Select dates using API
-			wrapper.instance().onSelectDate( newStartDate );
-			wrapper.instance().onSelectDate( newEndDate );
+		await userEvent.click( screen.getByLabelText( 'To' ) );
+		await userEvent.keyboard( badDateInputString );
 
-			expect( callback ).toHaveBeenCalledTimes( 2 );
+		const supposedStartDateEl = screen.getByLabelText( badDateLabelString );
 
-			expect( dateToLocaleString( callback.mock.calls[ 0 ][ 0 ] ) ).toEqual(
-				dateToLocaleString( newStartDate )
-			);
-			expect( dateToLocaleString( callback.mock.calls[ 1 ][ 1 ] ) ).toEqual(
-				dateToLocaleString( newEndDate )
-			);
-		} );
-
-		test( 'should call onDateCommit function when a date is committed/applied', () => {
-			const callback = jest.fn();
-
-			const wrapper = render(
-				<DateRange translate={ translate } moment={ moment } onDateCommit={ callback } />
-			);
-
-			const newStartDate = moment( '2018-04-01' );
-			const newEndDate = moment( '2018-04-29' );
-
-			// Select dates using API
-			wrapper.instance().onSelectDate( newStartDate );
-			wrapper.instance().onSelectDate( newEndDate );
-
-			// Commit/apply those dates
-			wrapper.instance().commitDates();
-
-			expect( callback ).toHaveBeenCalledTimes( 1 );
-			expect( dateToLocaleString( callback.mock.calls[ 0 ][ 0 ] ) ).toEqual(
-				dateToLocaleString( newStartDate )
-			);
-			expect( dateToLocaleString( callback.mock.calls[ 0 ][ 1 ] ) ).toEqual(
-				dateToLocaleString( newEndDate )
-			);
-		} );
+		expect( supposedStartDateEl ).toHaveAttribute( 'aria-selected', 'false' );
 	} );
 
 	describe( 'Actions and Information UI', () => {
-		test( 'should only persist date selection when user clicks "Apply" button', () => {
-			const wrapper = render( <DateRange translate={ translate } moment={ moment } /> );
-			const originalStartDate = wrapper.state().startDate;
-			const originalEndDate = wrapper.state().endDate;
+		test( 'should persist date selection when user clicks the "Apply" button', async () => {
+			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			// Get child components
-			const dateRangeHeader = wrapper.find( DateRangeHeader );
-			const datePicker = wrapper.find( DatePicker );
+			const originalRange = screen
+				.getByLabelText( 'Select date range' )
+				.querySelector( 'span' ).innerHTML;
 
-			const newStartDate = moment( '2018-04-01' );
-			const newEndDate = moment( '2018-04-29' );
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			await userEvent.click( screen.getByLabelText( 'From' ) );
+			await userEvent.keyboard( '04/01/2018' );
+			await userEvent.click( screen.getByLabelText( 'To' ) );
+			await userEvent.keyboard( '04/29/2018' );
+			await userEvent.click( screen.getByLabelText( 'Apply' ) );
 
-			// Select dates using API
-			datePicker.props().onSelectDay( newStartDate );
-			datePicker.props().onSelectDay( newEndDate );
+			const newRange = screen
+				.getByLabelText( 'Select date range' )
+				.querySelector( 'span' ).innerHTML;
 
-			// Force update
-			wrapper.update();
-
-			// Calls whichever method DateRange passes into DateRangeHeader component
-			dateRangeHeader.props().onCancelClick();
-
-			// Should still be the original dates...
-			expect( wrapper.state() ).toEqual(
-				expect.objectContaining( {
-					startDate: originalStartDate,
-					endDate: originalEndDate,
-				} )
-			);
-
-			// Select dates using API
-			datePicker.props().onSelectDay( newStartDate );
-			datePicker.props().onSelectDay( newEndDate );
-
-			// Force update
-			wrapper.update();
-
-			// Calls whichever method DateRange passes into DateRangeHeader component
-			dateRangeHeader.props().onApplyClick();
-
-			// Should now be persisted
-			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual(
-				dateToLocaleString( newStartDate )
-			);
-			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual(
-				dateToLocaleString( newEndDate )
-			);
+			expect( originalRange ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
+			expect( newRange ).toEqual( '04/01/2018 - 04/29/2018' );
 		} );
 
-		test( 'Should display prompt to select first date when no start date selected', () => {
-			// Note that no dates are selected
-			const wrapper = render( <DateRange translate={ translate } moment={ moment } /> );
+		test( 'should discard date selection when user clicks the "Cancel" button', async () => {
+			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const infoText = wrapper.find( '.date-range__info' ).text();
+			const originalRange = screen
+				.getByLabelText( 'Select date range' )
+				.querySelector( 'span' ).innerHTML;
+
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			await userEvent.click( screen.getByLabelText( 'From' ) );
+			await userEvent.keyboard( '04/01/2018' );
+			await userEvent.click( screen.getByLabelText( 'To' ) );
+			await userEvent.keyboard( '04/29/2018' );
+			await userEvent.click( screen.getByLabelText( 'Cancel' ) );
+
+			const newRange = screen
+				.getByLabelText( 'Select date range' )
+				.querySelector( 'span' ).innerHTML;
+
+			expect( originalRange ).toEqual( newRange );
+		} );
+
+		test( 'Should display prompt to select first date when no start date selected', async () => {
+			render( <DateRange translate={ translate } moment={ moment } /> );
+
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+
+			const infoText = screen.getByRole( 'status' ).textContent;
 
 			expect( infoText ).toEqual( expect.stringContaining( 'Please select the first day' ) );
 		} );
 
-		test( 'Should display prompt to select last date when no end date selected', () => {
-			const startDate = moment( '2018-04-28' );
+		test( 'Should display prompt to select last date when no end date selected', async () => {
+			const startDate = moment( '04-28-2018', 'MM-DD-YYYY' );
 
-			// Note that no dates are selected
-			const wrapper = render(
+			render(
 				<DateRange selectedStartDate={ startDate } translate={ translate } moment={ moment } />
 			);
 
-			const infoText = wrapper.find( '.date-range__info' ).text();
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+
+			const infoText = screen.getByRole( 'status' ).textContent;
 
 			expect( infoText ).toEqual( expect.stringContaining( 'Please select the last day' ) );
 		} );
 
-		test( 'Should display reset button when both dates are selected', () => {
-			const startDate = moment( '2018-04-28' );
-			const endDate = moment( '2018-05-28' );
+		test( 'Should display reset button when both dates are selected', async () => {
+			const startDate = moment( '04-28-2018', 'MM-DD-YYYY' );
+			const endDate = moment( '05-28-2018', 'MM-DD-YYYY' );
 
-			// Note that no dates are selected
-			const wrapper = render(
+			render(
 				<DateRange
 					selectedStartDate={ startDate }
 					selectedEndDate={ endDate }
@@ -737,16 +662,18 @@ describe( 'DateRange', () => {
 				/>
 			);
 
-			const resetExists = wrapper.exists( '.date-range__info-btn' );
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			expect( resetExists ).toBe( true );
+			const resetBtn = screen.getByLabelText( 'Reset selected dates' );
+
+			expect( resetBtn ).toBeTruthy();
 		} );
 
-		test( 'Should reset selection when reset UI clicked', () => {
-			const startDate = moment( '2018-04-28' );
-			const endDate = moment( '2018-05-28' );
+		test( 'Should reset selection when reset UI clicked', async () => {
+			const startDate = moment( '04-28-2018', 'MM-DD-YYYY' );
+			const endDate = moment( '05-28-2018', 'MM-DD-YYYY' );
 
-			const wrapper = render(
+			render(
 				<DateRange
 					selectedStartDate={ startDate }
 					selectedEndDate={ endDate }
@@ -755,92 +682,47 @@ describe( 'DateRange', () => {
 				/>
 			);
 
-			const inputs = wrapper.find( DateRangeInputs );
-			const resetBtn = wrapper.find( '.date-range__info-btn' );
+			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			inputs.props().onInputBlur( '03/20/2018', 'Start' );
-			inputs.props().onInputBlur( '09/20/2018', 'End' );
+			const fromEl = screen.getByLabelText( 'From' );
+			const toEl = screen.getByLabelText( 'To' );
 
-			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual(
-				dateToLocaleString( '03/20/2018' )
+			await userEvent.click( fromEl );
+			await userEvent.clear( fromEl );
+			await userEvent.keyboard( '04/13/2018' );
+			await userEvent.click( toEl );
+			await userEvent.clear( toEl );
+			await userEvent.keyboard( '05/13/2018' );
+			// force a blur out of `toEl`
+			await userEvent.click( fromEl );
+
+			expect( screen.getByLabelText( 'Fri, Apr 13, 2018 12:00 PM' ) ).toHaveAttribute(
+				'aria-selected',
+				'true'
 			);
-			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual(
-				dateToLocaleString( '09/20/2018' )
-			);
-
-			// Now click to "clear" or "reset" the selection
-			resetBtn.simulate( 'click' );
-
-			expect( dateToLocaleString( wrapper.state().startDate ) ).toEqual(
-				dateToLocaleString( '04/28/2018' )
-			);
-			expect( dateToLocaleString( wrapper.state().endDate ) ).toEqual(
-				dateToLocaleString( '05/28/2018' )
-			);
-		} );
-	} );
-
-	describe( 'Render props', () => {
-		test( 'should allow for render prop to overide trigger render', () => {
-			const spyComponent = jest.fn();
-
-			render(
-				<DateRange translate={ translate } moment={ moment } renderTrigger={ spyComponent } />
+			expect( screen.getByLabelText( 'Sun, May 13, 2018 12:00 PM' ) ).toHaveAttribute(
+				'aria-selected',
+				'true'
 			);
 
-			const props = spyComponent.mock.calls[ 0 ][ 0 ];
-			const propKeys = Object.keys( props ).sort();
+			const resetBtn = screen.getByLabelText( 'Reset selected dates' );
+			await userEvent.click( resetBtn );
 
-			expect( spyComponent ).toHaveBeenCalledTimes( 1 );
-
-			expect( propKeys ).toEqual(
-				[
-					'startDate',
-					'endDate',
-					'startDateText',
-					'endDateText',
-					'isCompact',
-					'buttonRef',
-					'onTriggerClick',
-					'onClearClick',
-					'triggerText',
-					'showClearBtn',
-				].sort()
+			expect( fromEl.value ).toEqual( '04/28/2018' );
+			expect( toEl.value ).toEqual( '05/28/2018' );
+			expect( screen.getByLabelText( 'Sat, Apr 28, 2018 12:00 PM' ) ).toHaveAttribute(
+				'aria-selected',
+				'true'
 			);
-		} );
-
-		test( 'should allow for render prop to overide header render', () => {
-			const spyComponent = jest.fn();
-
-			render(
-				<DateRange translate={ translate } moment={ moment } renderHeader={ spyComponent } />
-			);
-
-			const props = spyComponent.mock.calls[ 0 ][ 0 ];
-			const propKeys = Object.keys( props ).sort();
-
-			expect( spyComponent ).toHaveBeenCalledTimes( 1 );
-
-			expect( propKeys ).toEqual( [ 'onApplyClick', 'onCancelClick' ].sort() );
-		} );
-
-		test( 'should allow for render prop to overide inputs render', () => {
-			const spyComponent = jest.fn();
-
-			render(
-				<DateRange translate={ translate } moment={ moment } renderInputs={ spyComponent } />
-			);
-
-			const props = spyComponent.mock.calls[ 0 ][ 0 ];
-			const propKeys = Object.keys( props ).sort();
-
-			expect( spyComponent ).toHaveBeenCalledTimes( 1 );
-
-			expect( propKeys ).toEqual(
-				[ 'startDateValue', 'endDateValue', 'onInputChange', 'onInputBlur', 'onInputFocus' ].sort()
+			expect( screen.getByLabelText( 'Mon, May 28, 2018 12:00 PM' ) ).toHaveAttribute(
+				'aria-selected',
+				'true'
 			);
 		} );
 	} );
+
+	// TODO Other tests?
+	// - Navigate to next/prev months
 
 	afterEach( () => {
 		MockDate.reset();

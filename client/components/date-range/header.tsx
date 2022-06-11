@@ -22,10 +22,21 @@ const DateRangeHeader: FunctionComponent< Props > = ( {
 
 	return (
 		<div className="date-range__popover-header">
-			<Button className="date-range__cancel-btn" onClick={ onCancelClick } compact>
+			<Button
+				className="date-range__cancel-btn"
+				onClick={ onCancelClick }
+				compact
+				aria-label="Cancel"
+			>
 				{ cancelButtonText || translate( 'Cancel' ) }
 			</Button>
-			<Button className="date-range__apply-btn" onClick={ onApplyClick } primary compact>
+			<Button
+				className="date-range__apply-btn"
+				onClick={ onApplyClick }
+				primary
+				compact
+				aria-label="Apply"
+			>
 				{ applyButtonText || translate( 'Apply' ) }
 			</Button>
 		</div>
