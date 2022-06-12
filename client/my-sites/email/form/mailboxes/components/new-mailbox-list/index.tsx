@@ -3,18 +3,11 @@ import { Fragment, useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { FormEvent, useState } from 'react';
-import { useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import {
-	EMAIL_ACCOUNT_TYPE_GOOGLE_WORKSPACE,
-	EMAIL_ACCOUNT_TYPE_GSUITE,
-	EMAIL_ACCOUNT_TYPE_TITAN_MAIL,
-	EMAIL_ACCOUNT_TYPE_TITAN_MAIL_EXTERNAL,
-} from 'calypso/lib/emails/email-provider-constants';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { MailboxFormWrapper } from 'calypso/my-sites/email/form/mailboxes/components/mailbox-form-wrapper';
+import useGetExistingMailboxNames from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list/use-get-existing-mailbox-names';
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import { sanitizeMailboxValue } from 'calypso/my-sites/email/form/mailboxes/components/utilities/sanitize-mailbox-value';
 import {
@@ -27,7 +20,6 @@ import {
 	MailboxFormFieldBase,
 	MutableFormFieldNames,
 } from 'calypso/my-sites/email/form/mailboxes/types';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -42,45 +34,6 @@ interface MailboxListProps {
 	showCancelButton?: boolean;
 	submitActionText?: TranslateResult;
 }
-
-interface ExistingMailAccount {
-	account_type: string;
-	emails: {
-		email_type: string;
-		mailbox: string;
-	}[];
-}
-
-const mapProviderToEmailAccountTypes = ( provider: EmailProvider ): string[] =>
-	( {
-		[ EmailProvider.Titan ]: [
-			EMAIL_ACCOUNT_TYPE_TITAN_MAIL,
-			EMAIL_ACCOUNT_TYPE_TITAN_MAIL_EXTERNAL,
-		],
-		[ EmailProvider.Google ]: [ EMAIL_ACCOUNT_TYPE_GOOGLE_WORKSPACE, EMAIL_ACCOUNT_TYPE_GSUITE ],
-	}[ provider ] );
-
-const useGetExistingMailboxNames = (
-	provider: EmailProvider,
-	selectedDomainName: string
-): string[] => {
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const {
-		data: { accounts } = {},
-		error,
-		isLoading,
-	} = useGetEmailAccountsQuery( selectedSiteId as number, selectedDomainName );
-
-	if ( error || isLoading || ! accounts ) {
-		return [];
-	}
-
-	const emailAccountTypes = mapProviderToEmailAccountTypes( provider );
-
-	return ( accounts as ExistingMailAccount[] )
-		.filter( ( { account_type } ) => emailAccountTypes.includes( account_type ) )
-		.flatMap( ( { emails } ) => emails.map( ( { mailbox } ) => mailbox ) );
-};
 
 const NewMailBoxList = (
 	props: MailboxListProps & { children?: JSX.Element }
