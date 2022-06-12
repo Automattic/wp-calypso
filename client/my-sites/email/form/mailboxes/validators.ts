@@ -274,7 +274,7 @@ class ExistingMailboxNamesValidator extends BaseValidator< string > {
 
 	validateField( field: MailboxFormFieldBase< string > ): void {
 		const existingMailboxNames = this.existingMailboxNames ?? [];
-		if ( ! existingMailboxNames || field.value ) {
+		if ( ! existingMailboxNames || ! field.value ) {
 			return;
 		}
 

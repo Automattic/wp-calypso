@@ -66,12 +66,12 @@ const useGetExistingMailboxNames = (
 ): string[] => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const {
-		data: { accounts },
+		data: { accounts } = {},
 		error,
 		isLoading,
 	} = useGetEmailAccountsQuery( selectedSiteId as number, selectedDomainName );
 
-	if ( error || isLoading ) {
+	if ( error || isLoading || ! accounts ) {
 		return [];
 	}
 
