@@ -87,6 +87,7 @@ export const HelpCenterContactPage: React.FC = () => {
 export const HelpCenterContactButton: React.FC = () => {
 	const { __ } = useI18n();
 	const url = useStillNeedHelpURL();
+	const hasCookies = true;
 
 	const trackContactButtonClicked = () => {
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
@@ -96,7 +97,7 @@ export const HelpCenterContactButton: React.FC = () => {
 
 	return (
 		<Link
-			to={ url }
+			to={ hasCookies ? url : { pathname: url } }
 			onClick={ trackContactButtonClicked }
 			className="button help-center-contact-page__button"
 		>
