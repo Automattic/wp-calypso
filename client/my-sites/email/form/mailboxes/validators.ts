@@ -261,22 +261,29 @@ class ExistingMailboxNamesValidator extends BaseValidator< string > {
 		this.existingMailboxNames = existingMailboxNames;
 	}
 
-	static getExistingMailboxError(): FieldError {
-		return i18n.translate( 'Please use unique mailboxes.' );
+	static getExistingMailboxError( existingMailbox: string ): FieldError {
+		return i18n.translate(
+			'Please use unique mailboxes. {{strong}}%(existingMailbox)s{{/strong}} already exists in your account',
+			{
+				comment: '%(existingMailbox)s is the local part of an email address',
+				args: { existingMailbox },
+				components: { strong: createElement( 'strong' ) },
+			}
+		);
 	}
 
 	validateField( field: MailboxFormFieldBase< string > ): void {
 		const existingMailboxNames = this.existingMailboxNames ?? [];
-		if ( ! existingMailboxNames ) {
+		if ( ! existingMailboxNames || field.value ) {
 			return;
 		}
 
+		const fieldValueLowerCased = field.value.toLowerCase();
+
 		if (
-			existingMailboxNames
-				.map( ( item ) => item.toLowerCase() )
-				.includes( field.value?.toLowerCase() ?? '' )
+			existingMailboxNames.map( ( item ) => item.toLowerCase() ).includes( fieldValueLowerCased )
 		) {
-			field.error = ExistingMailboxNamesValidator.getExistingMailboxError();
+			field.error = ExistingMailboxNamesValidator.getExistingMailboxError( fieldValueLowerCased );
 		}
 	}
 }
