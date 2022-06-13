@@ -1,6 +1,7 @@
 import { ToolbarGroup, ToolbarButton, Dropdown, MenuItem, MenuGroup } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { ReactChild, useCallback, useEffect, useRef, useState } from 'react';
 
 import './style.scss';
@@ -33,6 +34,7 @@ export default function DropdownGroup( {
 	const [ activeIndex, setActiveIndex ] = useState< number >( initialActiveIndex );
 	const [ groupedIndexes, setGroupedIndexes ] = useState< GroupedIndexStore >( {} );
 	const { current: shadowListItems } = useRef< HTMLButtonElement[] >( [] );
+	const translate = useTranslate();
 
 	const assignRef = ( index: number, element: HTMLButtonElement ) => {
 		shadowListItems[ index ] = element;
@@ -92,7 +94,7 @@ export default function DropdownGroup( {
 								onToggle();
 							} }
 						>
-							More
+							{ translate( 'More' ) }
 							<Icon icon={ chevronDown } />
 						</ToolbarButton>
 					) }

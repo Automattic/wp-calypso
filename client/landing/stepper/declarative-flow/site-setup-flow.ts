@@ -1,8 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useDesignsBySite } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useDispatch as reduxDispatch } from 'react-redux';
+import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useFSEStatus } from '../hooks/use-fse-status';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
@@ -55,6 +56,8 @@ export const siteSetupFlow: Flow = {
 			'wooInstallPlugins',
 			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'wooVerifyEmail' ] : [] ),
 			'wooConfirm',
+			'editEmail',
+			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'editEmail' ] : [] ),
 		] as StepPath[];
 	},
 	useSideEffect() {
@@ -67,6 +70,7 @@ export const siteSetupFlow: Flow = {
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
+		const currentUser = useSelector( getCurrentUser );
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -152,6 +156,13 @@ export const siteSetupFlow: Flow = {
 					if ( storeType === 'power' ) {
 						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
 
+						if (
+							isEnabled( 'signup/woo-verify-email' ) &&
+							currentUser &&
+							! currentUser.email_verified
+						) {
+							return navigate( 'wooVerifyEmail' );
+						}
 						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 
@@ -250,6 +261,17 @@ export const siteSetupFlow: Flow = {
 				case 'wooInstallPlugins':
 					return navigate( 'processing' );
 
+				case 'editEmail':
+					return navigate( 'wooVerifyEmail' );
+
+				case 'wooVerifyEmail': {
+					if ( params[ 0 ] === 'edit-email' ) {
+						return navigate( 'editEmail' );
+					}
+
+					return navigate( 'wooVerifyEmail' );
+				}
+
 				case 'courses': {
 					return exitFlow( `/post/${ siteSlug }` );
 				}
@@ -309,6 +331,9 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'bloggerStartingPoint' );
 					}
 					return navigate( 'intent' );
+
+				case 'editEmail':
+					return navigate( 'wooVerifyEmail' );
 
 				case 'importList':
 				case 'importReady':

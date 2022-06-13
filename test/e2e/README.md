@@ -56,8 +56,10 @@ nvm use <node_version>
 
 5. install `yarn`.
 
+See [this guide](https://yarnpkg.com/getting-started/install).
+
 ```
-npm install yarn
+corepack enable
 ```
 
 6. clone this repository

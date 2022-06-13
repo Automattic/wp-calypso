@@ -1,6 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import AddMailboxes from 'calypso/my-sites/email/add-mailboxes';
 import EmailForwardsAdd from 'calypso/my-sites/email/email-forwards-add';
 import EmailHome from 'calypso/my-sites/email/email-management/email-home';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
@@ -90,6 +92,9 @@ export default {
 	},
 
 	emailManagementNewTitanAccount( pageContext, next ) {
+		const TitanAddMailboxesComponent = isEnabled( 'unify-mailbox-forms' )
+			? AddMailboxes
+			: TitanAddMailboxes;
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
@@ -97,7 +102,7 @@ export default {
 					title="Email Management > Add Titan Mailboxes"
 				/>
 
-				<TitanAddMailboxes
+				<TitanAddMailboxesComponent
 					source={ pageContext.query.source }
 					selectedDomainName={ pageContext.params.domain }
 				/>

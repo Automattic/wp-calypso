@@ -128,11 +128,18 @@ export function resolveDomainStatus(
 					);
 				}
 
+				let status = translate( 'Active' );
+				if ( ! domain.autoRenewing ) {
+					status = domain.bundledPlanSubscriptionId
+						? translate( 'Expires with your plan' )
+						: translate( 'Expiring soon' );
+				}
+
 				if ( isExpiringSoon( domain, 7 ) ) {
 					return {
 						statusText: expiresMessage,
 						statusClass: `status-${ domain.autoRenewing ? 'success' : 'error' }`,
-						status: domain.autoRenewing ? translate( 'Active' ) : translate( 'Expiring soon' ),
+						status: status,
 						icon: 'info',
 						listStatusText: expiresMessage,
 						listStatusClass: domain.autoRenewing ? 'info' : 'alert',
@@ -144,7 +151,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: expiresMessage,
 					statusClass: 'status-warning',
-					status: translate( 'Expiring soon' ),
+					status: status,
 					icon: 'info',
 					listStatusText: expiresMessage,
 					listStatusClass: 'warning',
