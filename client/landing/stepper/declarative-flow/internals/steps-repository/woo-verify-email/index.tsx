@@ -1,7 +1,7 @@
 import { Button, FormInputValidation } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
-import { createElement, createInterpolateElement, useState } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { createElement, createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
@@ -60,7 +60,10 @@ const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
 				{ error && (
 					<FormInputValidation className="woo-verify-email__error-notice" isError text={ error } />
 				) }
-				<Button className="woo-verify-email__link" borderless href="#">
+				<Button
+					className="woo-verify-email__link"
+					borderless
+					href="#"
 					primary
 					onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
 						e.preventDefault();
