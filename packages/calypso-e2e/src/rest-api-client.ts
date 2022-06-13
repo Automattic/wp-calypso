@@ -88,7 +88,7 @@ export class RestAPIClient {
 	/**
 	 * Returns the appropriate authorization header.
 	 *
-	 * @returns {Promise<string>} Authorizatmion header in the requested scheme.
+	 * @returns {Promise<string>} Authorization header in the requested scheme.
 	 * @throws {Error} If a scheme not yet implemented is requested.
 	 */
 	private async getAuthorizationHeader( scheme: 'bearer' ): Promise< string > {
