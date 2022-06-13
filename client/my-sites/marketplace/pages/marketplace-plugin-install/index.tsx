@@ -234,7 +234,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		if (
 			// Default process
 			( installedPlugin && pluginActive ) ||
-			// Tranfer to atomic using a marketplace plugin
+			// Transfer to atomic using a marketplace plugin
 			( atomicFlow && transferStates.COMPLETE === automatedTransferStatus ) ||
 			// Transfer to atomic uploading a zip plugin
 			( isUploadFlow && ! atomicFlow && transferStates.COMPLETE === automatedTransferStatus )
