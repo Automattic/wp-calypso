@@ -1,8 +1,9 @@
 import { Gridicon, Suggestions, Spinner } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useMemo, useRef, useState } from 'react';
+import { FC, useMemo, useRef, useState, useEffect } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import type { Vertical } from './types';
 import './style.scss';
@@ -31,9 +32,11 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 	const [ isShowSuggestions, setIsShowSuggestions ] = useState( false );
 	const [ isFocused, setIsFocused ] = useState( false );
 	const inputRef = useRef( null );
-	const suggestionsRef = useRef( null );
+	const wrapperRef = useRef< HTMLDivElement >( null );
+	const suggestionsRef = useRef< Suggestions >( null );
 	const toggleIconRef = useRef( null );
 	const translate = useTranslate();
+	const isMobile = useViewportMatch( 'small', '<' );
 
 	const showSuggestions = () => {
 		setIsShowSuggestions( true );
@@ -107,7 +110,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 		}
 
 		if ( suggestionsRef.current ) {
-			( suggestionsRef.current as Suggestions ).handleKeyEvent( event );
+			suggestionsRef.current.handleKeyEvent( event );
 		}
 	};
 
@@ -134,12 +137,38 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 		] );
 	}, [ translate, suggestions, isLoading, isShowSuggestions, isShowSkipOption ] );
 
+	useEffect( () => {
+		if ( ! ( window.visualViewport && isMobile ) ) {
+			return;
+		}
+
+		const handleResize = () => {
+			if ( ! wrapperRef.current ) {
+				return;
+			}
+
+			wrapperRef.current.style.setProperty(
+				'--select-vertical-search-dropdown-height',
+				`${ window.visualViewport.height * 0.4 }px`
+			);
+		};
+
+		handleResize();
+
+		window.visualViewport.addEventListener( 'resize', handleResize );
+
+		return () => {
+			window.visualViewport.removeEventListener( 'resize', handleResize );
+		};
+	}, [ wrapperRef, isMobile ] );
+
 	return (
 		<div
 			className={ classnames( 'select-vertical__suggestion-search', {
 				'is-focused': isFocused,
 				'is-show-suggestions': isShowSuggestions && ! isLoading,
 			} ) }
+			ref={ wrapperRef }
 			aria-expanded={ isShowSuggestions }
 		>
 			<div className="select-vertical__suggestion-input">
