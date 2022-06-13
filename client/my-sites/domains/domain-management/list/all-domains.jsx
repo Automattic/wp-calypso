@@ -266,7 +266,7 @@ class AllDomains extends Component {
 
 		const { isSavingContactInfo } = this.state;
 
-		const selectedFilter = context?.query?.filter;
+		const selectedFilter = context?.query?.filter || 'owned-by-me';
 
 		const domains =
 			selectedFilter === 'domain-only'
@@ -587,20 +587,20 @@ class AllDomains extends Component {
 	renderDomainTableFilterButton() {
 		const { context, translate, sites } = this.props;
 
-		const selectedFilter = context?.query?.filter;
+		const selectedFilter = context?.query?.filter || 'owned-by-me';
 		const nonWpcomDomains = this.mergeFilteredDomainsWithDomainsDetails();
 
 		const filterOptions = [
 			{
 				label: translate( 'All domains' ),
-				value: '',
-				path: domainManagementRoot(),
+				value: 'all-domains',
+				path: domainManagementRoot() + '?' + stringify( { filter: 'all-domains' } ),
 				count: nonWpcomDomains?.length,
 			},
 			{
 				label: translate( 'Owned by me' ),
 				value: 'owned-by-me',
-				path: domainManagementRoot() + '?' + stringify( { filter: 'owned-by-me' } ),
+				path: domainManagementRoot(),
 				count: filterDomainsByOwner( nonWpcomDomains, 'owned-by-me' )?.length,
 			},
 			{
@@ -620,7 +620,7 @@ class AllDomains extends Component {
 		return (
 			<DomainsTableFilterButton
 				key="breadcrumb_button_2"
-				selectedFilter={ selectedFilter || '' }
+				selectedFilter={ selectedFilter }
 				filterOptions={ filterOptions }
 				isLoading={ this.isLoadingDomainDetails() }
 				disabled={ this.isLoadingDomainDetails() }
