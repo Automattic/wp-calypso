@@ -12,10 +12,10 @@ import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AddOnsGrid from './components/add-ons-grid';
+import useAddOnPurchaseStatus from './hooks/use-add-on-purchase-status';
 import useAddOns from './hooks/use-add-ons';
 import type { ReactElement } from 'react';
 
@@ -87,15 +87,6 @@ interface Props {
 	context?: PageJS.Context;
 }
 
-const useAddOnSelectedStatus = ( slug: string ) => {
-	const selectedSite = useSelector( getSelectedSite );
-	const sitePurchases = useSelector( ( state ) => {
-		return getSitePurchases( state, selectedSite?.ID );
-	} );
-
-	return sitePurchases.filter( ( product ) => product.productSlug === slug ).length > 0;
-};
-
 const AddOnsMain: React.FunctionComponent< Props > = () => {
 	const addOns = useAddOns();
 	const selectedSite = useSelector( getSelectedSite );
@@ -134,7 +125,7 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 				<AddOnsGrid
 					actionPrimary={ { text: 'Buy add-on', handler: handleActionPrimary } }
 					actionSelected={ { text: 'Manage add-on', handler: handleActionSelected } }
-					useAddOnSelectedStatus={ useAddOnSelectedStatus }
+					useAddOnSelectedStatus={ useAddOnPurchaseStatus }
 					addOns={ addOns }
 					highlight={ false }
 				/>
