@@ -11,7 +11,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
 import type { UseMutationOptions } from 'react-query';
 
-type MailboxDetails = {
+type AddMailboxFormData = {
 	destination: string;
 	mailbox: string;
 };
@@ -20,8 +20,10 @@ type Context = {
 	[ key: string ]: any;
 };
 
+const MUTATION_KEY = 'addEmailForward';
+
 export function useIsLoading() {
-	const activeCount = useIsMutating( 'addEmailForward' );
+	const activeCount = useIsMutating( MUTATION_KEY );
 
 	return Boolean( activeCount );
 }
@@ -36,7 +38,7 @@ export function useIsLoading() {
 export default function useAddEmailForwardMutation(
 	domainName: string,
 	mutationOptions: Omit<
-		UseMutationOptions< any, unknown, MailboxDetails, Context >,
+		UseMutationOptions< any, unknown, AddMailboxFormData, Context >,
 		'mutationFn'
 	> = {}
 ) {
@@ -53,7 +55,7 @@ export default function useAddEmailForwardMutation(
 	const suppliedOnMutate = mutationOptions.onMutate;
 	const suppliedOnError = mutationOptions.onError;
 
-	mutationOptions.mutationKey = 'addEmailForward';
+	mutationOptions.mutationKey = MUTATION_KEY;
 
 	mutationOptions.onSettled = ( data, error, variables, context ) => {
 		suppliedOnSettled?.( data, error, variables, context );
@@ -181,7 +183,7 @@ export default function useAddEmailForwardMutation(
 		dispatch( errorNotice( errorMessage ) );
 	};
 
-	return useMutation< any, unknown, MailboxDetails, Context >(
+	return useMutation< any, unknown, AddMailboxFormData, Context >(
 		( { mailbox, destination } ) =>
 			wp.req.post( `/domains/${ encodeURIComponent( domainName ) }/email/new`, {
 				mailbox,

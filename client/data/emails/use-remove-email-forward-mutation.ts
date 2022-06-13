@@ -8,21 +8,14 @@ import wp from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
+import type { EmailForward } from './types';
 import type { UseMutationOptions } from 'react-query';
-
-type EmailForward = {
-	domain: string;
-	email_type: 'email_forward';
-	is_verified: boolean;
-	mailbox: string;
-	role: string;
-	target: string;
-	warnings: any[];
-};
 
 type Context = {
 	[ key: string ]: any;
 };
+
+const MUTATION_KEY = 'removeEmailForward';
 
 /**
  * Deletes an email forward
@@ -52,7 +45,7 @@ export default function useRemoveEmailForwardMutation(
 	const suppliedOnError = mutationOptions.onError;
 	const suppliedOnSuccess = mutationOptions.onSuccess;
 
-	mutationOptions.mutationKey = 'removeEmailForward';
+	mutationOptions.mutationKey = MUTATION_KEY;
 
 	mutationOptions.onSettled = ( data, error, variables, context ) => {
 		suppliedOnSettled?.( data, error, variables, context );
