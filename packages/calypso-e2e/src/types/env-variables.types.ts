@@ -1,17 +1,12 @@
-import { getViewports, getMag16Locales } from '../data-helper';
 import { TestAccountName } from '../index';
 
-const VIEWPORT_NAMES = getViewports();
-const TEST_LOCALES = getMag16Locales();
-
-export type EnvVariableKey = string;
 export type EnvVariableValue = boolean | string | string[] | number;
 export type EnvVariables = {
-	[ key: EnvVariableKey ]: EnvVariableValue;
+	[ key: string ]: EnvVariableValue;
 };
 
-export type ViewportName = typeof VIEWPORT_NAMES[ number ];
-export type TestLocales = string[] & typeof TEST_LOCALES;
+export type ViewportName = string;
+export type TestLocales = string[];
 
 export interface SupportedEnvVariables extends EnvVariables {
 	VIEWPORT_NAME: ViewportName;
