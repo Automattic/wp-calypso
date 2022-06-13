@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -159,6 +160,7 @@ const BackupWarnings = ( { siteId, selectedDate } ) => {
 				header={
 					<BackupWarningHeader warning={ warnings[ warningCode ] } warningCode={ warningCode } />
 				}
+				onOpen={ () => recordTracksEvent( 'calypso_jetpack_backup_expand_warning_click' ) }
 			>
 				<ul className="backup-warnings__file-list">{ fileList }</ul>
 				<div className="backup-warnings__info">

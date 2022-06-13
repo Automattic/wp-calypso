@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -41,6 +42,7 @@ export default function BackupWarningRetry( { siteId } ) {
 								target="_blank"
 								rel="noopener noreferrer"
 								icon={ false }
+								onClick={ () => recordTracksEvent( 'calypso_jetpack_backup_learn_why_click' ) }
 							/>
 						),
 					},
