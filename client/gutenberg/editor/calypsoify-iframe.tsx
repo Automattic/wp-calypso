@@ -708,15 +708,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			checkoutModalOptions,
 		} = this.state;
 
-		const noticePattern = /[&?]notice=([\w_-]+)/;
-		const match = noticePattern.exec( document.location.search );
-		const notice = match && match[ 1 ];
-
-		let finalIframeSrc = iframeUrl + ( notice && `&notice=${ notice }` );
-		if ( isIframeLoaded ) {
-			finalIframeSrc = currentIFrameUrl + ( notice && `&notice=${ notice }` );
-		}
-
 		const isUsingClassicBlock = !! classicBlockEditorId;
 		const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
 		const { redirectTo, isFocusedLaunch, ...cartData } = checkoutModalOptions || {};
@@ -744,8 +735,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 						<Iframe
 							className={ isIframeLoaded ? 'is-loaded' : '' }
 							ref={ this.iframeRef }
-							src={ finalIframeSrc }
-							// src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
+							src={ isIframeLoaded ? currentIFrameUrl : iframeUrl }
 							// NOTE: Do not include any "editor load" events in
 							// this handler. It really only tracks if the document
 							// has loaded. That document could just be a 404 or
