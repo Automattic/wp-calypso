@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { renderToString } from 'react-dom/server';
 import { Provider } from 'react-redux';
 import LayoutLoggedOut from '../logged-out';
