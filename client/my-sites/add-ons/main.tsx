@@ -88,6 +88,7 @@ interface Props {
 }
 
 const AddOnsMain: React.FunctionComponent< Props > = () => {
+	const translate = useTranslate();
 	const addOns = useAddOns();
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -103,12 +104,12 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 		return <NoAccess />;
 	}
 
-	const handleActionPrimary = ( slug: string ) => {
-		if ( 'no-adverts/no-adverts.php' === slug ) {
+	const handleActionPrimary = ( addOnSlug: string ) => {
+		if ( 'no-adverts/no-adverts.php' === addOnSlug ) {
 			page.redirect( `/checkout/${ selectedSite?.slug }/no-ads` );
 			return;
 		}
-		page.redirect( `/checkout/${ selectedSite?.slug }/${ slug }` );
+		page.redirect( `/checkout/${ selectedSite?.slug }/${ addOnSlug }` );
 	};
 
 	const handleActionSelected = () => {
@@ -123,8 +124,8 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 			<PageViewTracker path="/add-ons/:site" title="Add-Ons" />
 			<ContentWithHeader>
 				<AddOnsGrid
-					actionPrimary={ { text: 'Buy add-on', handler: handleActionPrimary } }
-					actionSelected={ { text: 'Manage add-on', handler: handleActionSelected } }
+					actionPrimary={ { text: translate( 'Buy add-on' ), handler: handleActionPrimary } }
+					actionSelected={ { text: translate( 'Manage add-on' ), handler: handleActionSelected } }
 					useAddOnSelectedStatus={ useAddOnPurchaseStatus }
 					addOns={ addOns }
 					highlight={ false }

@@ -5,16 +5,16 @@ import type { AddOnMeta } from '../hooks/use-add-ons';
 interface Props {
 	addOns: ( AddOnMeta | null )[];
 	actionPrimary?: {
-		text: string;
-		handler: ( slug: string ) => void;
+		text: string | React.ReactChild;
+		handler: ( addOnSlug: string ) => void;
 	};
 	actionSelected?: {
-		text: string;
-		handler: ( slug: string ) => void;
+		text: string | React.ReactChild;
+		handler: ( addOnSlug: string ) => void;
 	};
 	// returns true/false if add-on is to be treated as "selected" (either added to cart, or part of plan, or ...)
 	// can extend to return a "selected status" string, if we need to tailor
-	useAddOnSelectedStatus?: ( slug: string ) => boolean;
+	useAddOnSelectedStatus?: ( addOnSlug: string ) => boolean;
 	highlight: boolean;
 }
 

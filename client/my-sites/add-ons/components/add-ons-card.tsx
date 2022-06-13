@@ -2,25 +2,26 @@ import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getProductDisplayCost, getProductTerm } from 'calypso/state/products-list/selectors';
 import type { AddOnMeta } from '../hooks/use-add-ons';
 
 interface Props extends AddOnMeta {
 	actionPrimary?: {
-		text: string;
-		handler: ( slug: string ) => void;
+		text: string | React.ReactChild;
+		handler: ( addOnSlug: string ) => void;
 	};
 	actionSelected?: {
-		text: string;
-		handler: ( slug: string ) => void;
+		text: string | React.ReactChild;
+		handler: ( addOnSlug: string ) => void;
 	};
 	// returns true/false if add-on is to be treated as "selected" (either added to cart, or part of plan, or ...)
 	// can extend to return a "selected status" string, if we need to tailor
-	useAddOnSelectedStatus?: ( slug: string ) => boolean;
+	useAddOnSelectedStatus?: ( addOnSlug: string ) => boolean;
 }
 
-const Frame = styled.div`
+const Container = styled.div`
 	width: 100%;
 	.add-ons-card__header {
 		display: flex;
@@ -61,6 +62,7 @@ const BillingInfo = ( { addOnSlug }: { addOnSlug: string } ) => {
 };
 
 const AddOnCard = ( props: Props ) => {
+	const translate = useTranslate();
 	const isSelected = props.useAddOnSelectedStatus?.( props.slug );
 	const onActionPrimary = () => {
 		props.actionPrimary?.handler( props.slug );
@@ -70,7 +72,7 @@ const AddOnCard = ( props: Props ) => {
 	};
 
 	return (
-		<Frame>
+		<Container>
 			<Card>
 				<CardHeader isBorderless={ true } className="add-ons-card__header">
 					<div className="add-ons-card__icon">
@@ -88,7 +90,7 @@ const AddOnCard = ( props: Props ) => {
 							<Button onClick={ onActionSelected }>{ props.actionSelected.text }</Button>
 							<div className="add-ons-card__selected-badge">
 								<Gridicon icon="checkmark" className={ 'add-ons-card__checkmark' } />
-								<span>Included in your plan</span>
+								<span>{ translate( 'Included in your plan' ) }</span>
 							</div>
 						</>
 					) }
@@ -99,7 +101,7 @@ const AddOnCard = ( props: Props ) => {
 					) }
 				</CardFooter>
 			</Card>
-		</Frame>
+		</Container>
 	);
 };
 
