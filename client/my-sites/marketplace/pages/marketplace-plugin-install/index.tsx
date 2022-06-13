@@ -237,7 +237,10 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 			// Transfer to atomic using a marketplace plugin
 			( atomicFlow && transferStates.COMPLETE === automatedTransferStatus ) ||
 			// Transfer to atomic uploading a zip plugin
-			( isUploadFlow && ! atomicFlow && transferStates.COMPLETE === automatedTransferStatus )
+			( uploadedPluginSlug &&
+				isUploadFlow &&
+				! isAtomic &&
+				transferStates.COMPLETE === automatedTransferStatus )
 		) {
 			waitFor( 1 ).then( () =>
 				page.redirect(
@@ -248,7 +251,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginActive, automatedTransferStatus, atomicFlow, isUploadFlow ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
+	}, [ pluginActive, automatedTransferStatus, atomicFlow, isUploadFlow, isAtomic ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
 	const steps = useMemo(
 		() => [
