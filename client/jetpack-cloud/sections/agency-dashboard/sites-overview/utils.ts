@@ -241,7 +241,7 @@ export const getRowMetaData = (
 	row: { value: { url: string }; status: string; error: string };
 	link: string;
 	isExternalLink: boolean;
-	siteError: string;
+	siteError: boolean;
 	tooltip: ReactChild | undefined;
 	tooltipId: string;
 	siteDown: boolean;
