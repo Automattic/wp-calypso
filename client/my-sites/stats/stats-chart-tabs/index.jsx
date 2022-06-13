@@ -141,7 +141,7 @@ const memoizedQuery = memoizeLast( ( chartTab, date, period, quantity, siteId ) 
 } ) );
 
 const connectComponent = connect(
-	( state, { activeLegend, period: { period }, chartTab, queryDate } ) => {
+	( state, { activeLegend, period: { period }, chartTab, queryDate, numberFormat } ) => {
 		const siteId = getSelectedSiteId( state );
 		if ( ! siteId ) {
 			return NO_SITE_STATE;
@@ -149,7 +149,14 @@ const connectComponent = connect(
 
 		const quantity = 'year' === period ? 10 : 30;
 		const counts = getCountRecords( state, siteId, period );
-		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
+		const chartData = buildChartData(
+			activeLegend,
+			chartTab,
+			counts,
+			period,
+			queryDate,
+			numberFormat
+		);
 		const loadingTabs = getLoadingTabs( state, siteId, period );
 		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length !== quantity;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
