@@ -48,7 +48,7 @@ export function getPartnerRequestError( state: PartnerPortalStore ): APIError | 
 
 export function isAgencyUser( state: PartnerPortalStore ): boolean {
 	const partner = getCurrentPartner( state );
-	return partner?.partner_type === 'agency';
+	return partner?.partner_type === 'agency' || partner?.partner_type === 'agency_beta';
 }
 
 export function showAgencyDashboard( state: PartnerPortalStore ): boolean {
