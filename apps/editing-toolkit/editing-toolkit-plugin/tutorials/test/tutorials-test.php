@@ -13,7 +13,7 @@ class WPCom_Tutorials_Test extends TestCase {
 			wpcom_tutorials()->unregister( $id );
 		}
 		// delete status storage
-		delete_option( WPCom_Tutorials::OPTION_NAME );
+		wpcom_tutorials()->persist_statuses( [] );
 	}
 
 	public function test_registered_tutorial_is_returned() {
@@ -90,6 +90,48 @@ class WPCom_Tutorials_Test extends TestCase {
 		);
 		$this->assertEmpty( wpcom_get_all_tutorials() );
 		$this->assertFalse( $foo4 );
+	}
+
+	public function test_persisted_task_statuses() {
+		wpcom_register_tutorial(
+			'foo',
+			array(
+				'title' => 'Foo',
+				'tasks' => $this->get_tasks(),
+			)
+		);
+		wpcom_register_tutorial(
+			'bar',
+			array(
+				'title' => 'Bar',
+				'tasks' => $this->get_tasks(),
+			)
+		);
+
+		wp_set_current_user( 1 );
+
+		$bar_task_1 = $this->get_task_by_id( wpcom_get_tutorial( 'foo' )['tasks'], 'bar' );
+		$this->assertEquals( $bar_task_1['status'], 'pending' );
+
+		wpcom_tutorial_mark_task( 'foo', 'bar', 'skipped' );
+		$bar_task_2 = $this->get_task_by_id( wpcom_get_tutorial( 'foo' )['tasks'], 'bar' );
+		$this->assertEquals( $bar_task_2['status'], 'skipped' );
+
+		wpcom_tutorial_mark_task( 'foo', 'bar', 'pending' );
+		$bar_task_3 = $this->get_task_by_id( wpcom_get_tutorial( 'foo' )['tasks'], 'bar' );
+		$this->assertEquals( $bar_task_3['status'], 'pending' );
+
+
+		wpcom_tutorial_mark_task( 'bar', 'bar', 'complete' );
+		$baz_task = $this->get_task_by_id( wpcom_get_tutorial( 'bar' )['tasks'], 'bar' );
+		$this->assertEquals( $baz_task['status'], 'complete' );
+
+		wp_set_current_user( 0 );
+	}
+
+	private function get_task_by_id( $tasks, $id ) {
+		$filtered = wp_list_filter( $tasks, [ 'id' => $id ] );
+		return empty( $filtered ) ? null : $filtered[0];
 	}
 
 	// boilerplace

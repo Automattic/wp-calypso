@@ -16,11 +16,6 @@
 class WPCom_Tutorials {
 
 	/**
-	 * The WP option for storing our task progress status.
-	 */
-	const OPTION_NAME = 'wpcom_tutorials_status';
-
-	/**
 	 * Storage for our singleton instance.
 	 *
 	 * @var null|WPCom_Tutorials
@@ -161,17 +156,20 @@ class WPCom_Tutorials {
 	 * @return array     Completion statuses for Tutorial ID.
 	 */
 	public function get_statuses( $id ) {
-		$statuses = $this->load_all_statuses();
+		$statuses = $this->load_persisted_statuses();
 		return isset( $statuses[ $id ] ) ? $statuses[ $id ] : array();
 	}
 
 	/**
-	 * Loads all Tutorial statuses.
+	 * Loads all Tutorial statuses from the database.
 	 *
 	 * @return array All Tutorial completion statuses.
 	 */
-	private function load_all_statuses() {
-		return (array) get_option( self::OPTION_NAME, array() );
+	private function load_persisted_statuses() {
+		if ( function_exists( 'get_user_attribute' ) ) {
+			return get_user_attribute( get_current_user_id(), 'wpcom_tutorials_status' );
+		}
+		return (array) get_user_meta( get_current_user_id(), 'wpcom_tutorials_status', true );
 	}
 
 	/**
@@ -187,7 +185,7 @@ class WPCom_Tutorials {
 			return false;
 		}
 
-		$statuses = $this->load_all_statuses();
+		$statuses = $this->load_persisted_statuses();
 		if ( ! isset( $statuses[ $tutorial_id ] ) ) {
 			$statuses[ $tutorial_id ] = array();
 		}
@@ -200,7 +198,20 @@ class WPCom_Tutorials {
 			$statuses[ $tutorial_id ][ $task_id ] = $status;
 		}
 
-		return update_option( self::OPTION_NAME, $statuses );
+		return $this->persist_statuses( $statuses );
+	}
+
+	/**
+	 * Persist statuses to the DB, using the platform-appropriate tech
+	 *
+	 * @param array $statuses All statuses to persist.
+	 * @return bool           True if persisting succeeded, otherwise false.
+	 */
+	public function persist_statuses( $statuses ) {
+		if ( function_exists( 'update_user_attribute' ) ) {
+			return update_user_attribute( get_current_user_id(), 'wpcom_tutorials_status', $statuses );
+		}
+		return update_user_meta( get_current_user_id(), 'wpcom_tutorials_status', $statuses );
 	}
 
 	/**
