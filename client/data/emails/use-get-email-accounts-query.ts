@@ -1,18 +1,9 @@
 import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
+import type { EmailAccount } from './types';
 import type { UseQueryOptions } from 'react-query';
 
-export type Mailbox = {
-	domain: string;
-	mailbox: string;
-};
-
-export type EmailAccount = {
-	account_type: string;
-	emails: Mailbox[];
-};
-
-export type UseGetEmailAccountsQueryData = EmailAccount[];
+type UseGetEmailAccountsQueryData = EmailAccount[];
 
 export const getCacheKey = ( siteId: number | null, domain: string ) => [
 	'sites',

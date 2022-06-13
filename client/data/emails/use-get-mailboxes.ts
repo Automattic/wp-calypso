@@ -1,8 +1,9 @@
 import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
+import type { Mailbox } from './types';
 import type { UseQueryOptions } from 'react-query';
 
-type UseGetMailboxesQueryData = any[];
+type UseGetMailboxesQueryData = Mailbox[];
 
 export const getCacheKey = ( siteId: number | null ) => [ 'sites', siteId, 'emails', 'mailboxes' ];
 
