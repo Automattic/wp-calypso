@@ -1,3 +1,4 @@
+import { ProgressBar } from '@automattic/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useEffect } from 'react';
@@ -6,6 +7,7 @@ import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from '
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import SignupHeader from 'calypso/signup/signup-header';
+import { ONBOARD_STORE } from '../../stores';
 import recordStepStart from './analytics/record-step-start';
 import * as Steps from './steps-repository';
 import { AssertConditionState, Flow } from './types';
@@ -62,6 +64,9 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	const assertCondition = flow.useAssertConditions?.() ?? { state: AssertConditionState.SUCCESS };
 
+	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
+
 	const renderStep = ( path: StepPath ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
@@ -82,6 +87,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return (
 					<Route key={ path } path={ `/${ path }` }>
 						<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
+							<ProgressBar value={ progressValue * 100 } total={ 100 } color="#1e81cc" />
 							<SignupHeader />
 							{ renderStep( path ) }
 						</div>

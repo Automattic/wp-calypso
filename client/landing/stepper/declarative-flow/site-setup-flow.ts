@@ -11,6 +11,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
+import { useUpdateFlowProgress } from '../hooks/use-update-flow-progress';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -100,32 +101,14 @@ export const siteSetupFlow: Flow = {
 			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const { setPendingAction, setStepProgress, resetGoals, resetIntent, resetSelectedDesign } =
+		const { setPendingAction, resetGoals, resetIntent, resetSelectedDesign } =
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
 		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
 
-		// Set up Step progress for Woo flow - "Step 2 of 4"
-		if ( intent === 'sell' && storeType === 'power' ) {
-			switch ( currentStep ) {
-				case 'storeAddress':
-					setStepProgress( { progress: 1, count: 4 } );
-					break;
-				case 'businessInfo':
-					setStepProgress( { progress: 2, count: 4 } );
-					break;
-				case 'wooConfirm':
-					setStepProgress( { progress: 3, count: 4 } );
-					break;
-				case 'processing':
-					setStepProgress( { progress: 4, count: 4 } );
-					break;
-			}
-		} else {
-			setStepProgress( undefined );
-		}
+		useUpdateFlowProgress( currentStep );
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {

@@ -70,6 +70,15 @@ button {
 		}
 	}
 
+	.progress-bar {
+		position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+		border-radius: 0;
+		z-index: 99;
+	}
+
 	.import-step,
 	.importer-step {
 		@include onboarding-block-margin;
