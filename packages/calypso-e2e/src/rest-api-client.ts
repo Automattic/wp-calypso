@@ -14,8 +14,15 @@ import type {
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
 /* Internal types and interfaces */
+
+/**
+ * Specifies the version of WordPress.com REST API.
+ */
 type EndpointVersions = '1' | '1.1' | '1.2' | '1.3';
 
+/**
+ * Interface defining the request structure to be sent to the API.
+ */
 interface RequestParams {
 	method: 'post' | 'get';
 	headers?: HeadersInit;

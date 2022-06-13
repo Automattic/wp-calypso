@@ -22,16 +22,16 @@ export interface BearerTokenResponse {
 	};
 }
 
-export interface Site {
-	ID: number;
-	name: string;
-	description: string;
-	URL: string;
-	site_owner: number;
-}
-
 export interface AllSitesResponse {
-	sites: Site[];
+	sites: [
+		{
+			ID: number;
+			name: string;
+			description: string;
+			URL: string;
+			site_owner: number;
+		}
+	];
 }
 
 export interface CalypsoPreferencesResponse {
