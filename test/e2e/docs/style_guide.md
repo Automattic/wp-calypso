@@ -9,21 +9,22 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-  - [Variable naming](#variable-naming)
-  - [Use async/await](#use-asyncawait)
-  - [Selectors](#selectors)
-    - [No selectors within class definition](#no-selectors-within-class-definition)
-    - [Extract repetitive selectors](#extract-repetitive-selectors)
-    - [Prefer user-facing selectors](#prefer-user-facing-selectors)
-    - [Naming](#naming)
-    - [Involve minimal selectors](#involve-minimal-selectors)
-    - [Convert repetitive variations to dynamic selector](#convert-repetitive-variations-to-dynamic-selector)
-  - [Test steps](#test-steps)
-    - [Only one top-level describe block](#only-one-top-level-describe-block)
-    - [Do not use modal verbs](#do-not-use-modal-verbs)
-    - [Prefer smaller steps](#prefer-smaller-steps)
-  - [Single responsibility function](#single-responsibility-function)
-  - [Destructure parameters](#destructure-parameters)
+    - [Variable naming](#variable-naming)
+    - [Use async/await over](#use-asyncawait-over)
+    - [Selectors](#selectors)
+        - [No selectors within class definition](#no-selectors-within-class-definition)
+        - [Extract repetitive selectors](#extract-repetitive-selectors)
+        - [Do not use Xpath](#do-not-use-xpath)
+        - [Prefer user-facing selectors](#prefer-user-facing-selectors)
+        - [Naming](#naming)
+        - [Involve minimal selectors in methods](#involve-minimal-selectors-in-methods)
+        - [Convert repetitive variations to dynamic selector](#convert-repetitive-variations-to-dynamic-selector)
+    - [Test steps](#test-steps)
+        - [Only one top-level describe block](#only-one-top-level-describe-block)
+        - [Do not use modal verbs](#do-not-use-modal-verbs)
+        - [Prefer smaller steps](#prefer-smaller-steps)
+    - [Single responsibility function](#single-responsibility-function)
+    - [Destructure parameters](#destructure-parameters)
 
 <!-- /TOC -->
 
@@ -47,7 +48,7 @@ const myHomePage = new MyHomePage( page );
 
 ---
 
-## Use async/await
+## Use async/await over
 
 We use async functions and `await` to wait for commands to finish. This lets asynchronous methods execute like synchronous methods.
 For every method which returns a promise or thenable object `await` should be used. Keep in mind that `await` is only valid inside async function.
@@ -91,6 +92,8 @@ The following guidance are in addition to suggestions by the Playwright project.
 
 Place selectors within the same file, but outside of the class representing the object. Never place a selector within the class definition itself.
 
+For examples see [EditorPage](https://github.com/Automattic/wp-calypso/blob/8428228ee6547007faf3e765133d2396967d504a/packages/calypso-e2e/src/lib/pages/editor-page.ts) or [NotificationComponent](https://github.com/Automattic/wp-calypso/blob/8428228ee6547007faf3e765133d2396967d504a/packages/calypso-e2e/src/lib/components/notifications-component.ts).
+
 **Avoid**:
 
 ```typescript
@@ -115,7 +118,7 @@ class SomeObject() {
 
 ### Extract repetitive selectors
 
-While defining one-off selectors within a code block is acceptable, if the same selector is used more than twice, move the selector into the `selectors` object:
+While one-off selectors within a code block is acceptable, if the same selector is used more than twice, move the selector into the `selectors` object:
 
 **Avoid**:
 
@@ -126,7 +129,7 @@ class SomeObject() {
 	}
 
 	async doSomethingElse() {
-		await this.page.click( '#submit' );
+		await this.page.click( '#submit' ); // Notice the #submit selector is used twice.
 	}
 }
 ```
@@ -135,7 +138,7 @@ class SomeObject() {
 
 ```typescript
 const selectors = {
-	submitButton: '#submit',
+	submitButton: '#submit', // Move it into the `selectors` object.
 }
 
 class SomeObject() {
@@ -150,14 +153,29 @@ class SomeObject() {
 
 ```
 
-### Prefer user-facing selectors
+### Do not use Xpath
 
-Where possible, use text, CSS or user-facing attributes (like an `aria-label` instead of a `class` name). These are less likely to change over time.
+This is simple; do not use Xpath selectors. 
 
 **Avoid**:
 
 ```typescript
-await page.click( 'xpath=//button' );
+const locator = page.locator( '//button' );
+```
+
+**Instead**:
+
+```typescript
+await locator = page.locator( 'button' ); // or 'button[type="submit"]' or literally anything else.
+```
+
+### Prefer user-facing selectors
+
+Where possible, use text, CSS or user-facing attributes (like an `aria-label` instead of a `class` name).
+
+**Avoid**:
+
+```typescript
 await page.click( 'div.someclass .yet-another-class .attribute .very-long-attribute)
 ```
 
@@ -166,12 +184,12 @@ await page.click( 'div.someclass .yet-another-class .attribute .very-long-attrib
 ```typescript
 await page.click( 'button:has-text("Submit")' );
 await page.click( 'button[aria-label="Some Class"]' );
-await page.click( 'button[data-e2e="navigation-forward"]' );
+await page.click( 'role=spinbutton[name="Continue"]' );
 ```
 
 ### Naming
 
-Name selectors based on function, type and description. Try to avoid using element location unless multiple similar buttons exist.
+Name selectors based on function, type and description. Try to avoid using element location unless multiple similar buttons exist. This way the selector name does not become outdated if the UI changes.
 
 Do not append the term 'Selector' or similar to the selector name. It is redundant.
 
@@ -179,9 +197,9 @@ Do not append the term 'Selector' or similar to the selector name. It is redunda
 
 ```typescript
 const selectors = {
-	contactButtonOnHeaderPane: '.button contact-us',
-	secondButtonOnPopupSelector: '.button send-form',
-	select: 'select.month',
+	contactButtonOnHeaderPane: '.button contact-us', // What if the button moves?
+	secondButtonOnPopupSelector: '.button send-form', // Breaks the 'selector' sub-rule.
+	select: 'select.month', // Not descriptive at all.
 };
 ```
 
@@ -195,35 +213,40 @@ const selectors = {
 };
 ```
 
-### Involve minimal selectors
+### Involve minimal selectors in methods
 
-Only involve selectors that are required for the test flow. Do not wait on unrelated selectors.
+When method(s) need to wait on an element on the page, involve the minimal number of selectors as possible. Playwright has a strong [auto-wait mechanism](https://playwright.dev/docs/actionability) that handles 95% of the cases.
+
+For instance, when loading the Media page:
+- Good: wait either on the gallery being present, or the thumbnails having generated. 
+- Bad: wait on the header text _and_ the gallery _and_ the upload button _and_ the thumbnails.
 
 **Avoid**:
 
 ```typescript
 await this.page.waitForSelector( '.some-unnecessary-selector-not-related-to-the-test-flow' );
-await this.page.fill( '.someclass__form-input .is-selected' );
+await this.page.fill( '.actual-element-involved-in-the-flow' );
 ```
 
 **Instead**:
 
 ```typescript
-await this.page.fill( 'input[aria-placeholder="Enter contact details"]' );
+await this.page.fill( '.actual-element-involved-in-the-flow' );
 ```
 
 ### Convert repetitive variations to dynamic selector
 
-Combine many selectors into one dynamic selector.
+Combine similar or repetitive selectors into a dynamic selector
 Dynamic selector is also useful when the target selector depends on a known conditional (eg. mobile/desktop, language).
 
 **Avoid**:
 
 ```typescript
 const selectors = {
-	submitButton: ':text("Submit")',
-	cancelButton: ':text("Cancel")',
-	pauseButton: ':text("Pause")',
+	submitButton: 'button:text("Submit")',
+	cancelButton: 'button:text("Cancel")',
+	pauseButton: 'button:text("Pause")',
+	// Note the repetitive selectors varying only by text.
 };
 ```
 
@@ -231,8 +254,14 @@ const selectors = {
 
 ```typescript
 const selectors = {
-	button: ( action: string ) => `:text("${ action }")`,
+	button: ( action: string ) => `button:text("${ action }")`,
 };
+
+// then, in the POM
+
+async funtion clickButton( text: string ) {
+	await this.page.click( selectors.button( text ) ); 
+}
 ```
 
 ---
@@ -241,12 +270,14 @@ const selectors = {
 
 ### Only one top-level `describe` block
 
-Only place one top-level or root-level `describe` block.
+Only place one top/root-level `describe` block.
+
+Multiple root-level `describe` blocks are a sign that the file needs to be split into smaller files or the flow re-examined.
 
 **Avoid**:
 
 ```typescript
-describe('Feature 1', function ()) {}
+describe('Feature 1', function()) {}
 
 describe('Feature 2', function()) {}
 
@@ -256,17 +287,21 @@ describe('Feature 3', function()) {}
 **Instead**:
 
 ```typescript
-describe( 'Feature', function () {
+// In spec1.ts
+describe( 'Feature: Use sub-feature 1', function () {
 	describe( 'Feature 1', function () {} );
+} );
+
+// In spec2.ts
+describe( 'Feature: Use sub-feature 2', function () {
 	describe( 'Feature 2', function () {} );
-	describe( 'Feature 3', function () {} );
 } );
 ```
 
 ### Do not use modal verbs
 
 Avoid the use of modal verbs such as `can`, `should`, `could` or `must`.
-Instead state the action(s) the step is expected to perform.
+Instead state the action(s) the step is expected to perform, or the end result of what _should_ happen after this step.
 
 **Avoid**:
 

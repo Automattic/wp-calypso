@@ -9,16 +9,16 @@
 <!-- TOC -->
 
 - [Writing Tests](#writing-tests)
-  - [Example test spec](#example-test-spec)
-  - [Quick start](#quick-start)
-  - [Child-level describe blocks](#child-level-describe-blocks)
-  - [Test step](#test-step)
-  - [Hooks](#hooks)
-  - [Viewports](#viewports)
-  - [Block Smoke Testing](#block-smoke-testing)
-    - [Overview](#overview)
-    - [How To](#how-to)
-    - [Examples](#examples)
+    - [Example test spec](#example-test-spec)
+    - [Quick start](#quick-start)
+    - [Child-level describe blocks](#child-level-describe-blocks)
+    - [Test step](#test-step)
+    - [Hooks](#hooks)
+    - [Viewports](#viewports)
+    - [Block Smoke Testing](#block-smoke-testing)
+        - [Overview](#overview)
+        - [How To](#how-to)
+        - [Examples](#examples)
 
 <!-- /TOC -->
 
@@ -27,6 +27,8 @@
 ```shell
 specs/search__preview.ts
 ```
+
+<details>
 
 ```typescript
 /**
@@ -103,6 +105,8 @@ describe( DataHelper.createSuiteTitle( 'Search: Preview' ), function () {
 	} );
 } );
 ```
+
+</details>
 
 ## Quick start
 
@@ -316,7 +320,7 @@ export class ExampleBlockFlow implements BlockFlow {
 }
 ```
 
-</details d>
+</details>
 
 <details>
 <summary>Spec test file:</summary>
