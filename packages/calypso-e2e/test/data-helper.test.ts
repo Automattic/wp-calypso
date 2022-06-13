@@ -8,7 +8,7 @@ import {
 	createSuiteTitle,
 } from '../src/data-helper';
 import { SecretsManager } from '../src/secrets';
-import type { Secrets } from '../src/types/secret-manager.types';
+import type { Secrets } from '../src/types';
 
 const fakeSecrets = {
 	testAccounts: {
