@@ -1,4 +1,7 @@
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+import { render, screen } from '@testing-library/react';
 import ReaderAuthorLink from '../index';
 
 jest.mock( 'calypso/reader/stats', () => ( {
@@ -15,52 +18,52 @@ describe( 'ReaderAuthorLink', () => {
 	} );
 
 	test( 'should render children', () => {
-		const wrapper = shallow(
+		const { container } = render(
 			<ReaderAuthorLink author={ author }>Barnaby Blogwit</ReaderAuthorLink>
 		);
-		expect( wrapper.contains( 'Barnaby Blogwit' ) ).toEqual( true );
+		expect( container ).toHaveTextContent( 'Barnaby Blogwit' );
 	} );
 
 	test( 'should accept a custom class of `test__ace`', () => {
-		const wrapper = shallow(
+		const { container } = render(
 			<ReaderAuthorLink author={ author } className="test__ace">
 				xyz
 			</ReaderAuthorLink>
 		);
-		expect( wrapper.is( '.test__ace' ) ).toEqual( true );
+		expect( container.firstChild ).toHaveClass( 'test__ace' );
 	} );
 
 	test( 'should return null with a null author name', () => {
 		author.name = null;
-		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
-		expect( wrapper.type() ).toBe( null );
+		const { container } = render( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'should return null with a blocked author name', () => {
 		author.name = 'admin';
-		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
-		expect( wrapper.type() ).toBe( null );
+		const { container } = render( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'should use siteUrl if provided', () => {
 		const siteUrl = 'http://discover.wordpress.com';
-		const wrapper = shallow(
+		render(
 			<ReaderAuthorLink author={ author } siteUrl={ siteUrl }>
 				xyz
 			</ReaderAuthorLink>
 		);
-		expect( wrapper.find( '.reader-author-link' ).prop( 'href' ) ).toEqual( siteUrl );
+		expect( screen.getByRole( 'link' ) ).toHaveAttribute( 'href', siteUrl );
 	} );
 
 	test( 'should use author.URL if site URL is not provided', () => {
-		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
-		expect( wrapper.find( '.reader-author-link' ).prop( 'href' ) ).toEqual( author.URL );
+		render( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
+		expect( screen.getByRole( 'link' ) ).toHaveAttribute( 'href', author.URL );
 	} );
 
 	test( 'should not return a link if siteUrl and author.URL are both missing', () => {
 		author.URL = null;
-		const wrapper = shallow( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
+		const { container } = render( <ReaderAuthorLink author={ author }>xyz</ReaderAuthorLink> );
 		// Should just return children
-		expect( wrapper.type() ).toEqual( 'span' );
+		expect( container.firstChild.nodeName ).toEqual( 'SPAN' );
 	} );
 } );
