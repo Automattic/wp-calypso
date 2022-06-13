@@ -20,6 +20,10 @@ export type NavigationControls = {
 	 * Submits the answers provided in the flow
 	 */
 	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
+	/**
+	 * Exits the flow and continue to the given path
+	 */
+	exitFlow?: ( to: string ) => void;
 };
 
 /**
