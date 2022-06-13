@@ -30,8 +30,11 @@ const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
 	const [ buttonState, setButtonState ] = useState( defaultButtonState );
 	const [ error, setError ] = useState( '' );
 	const sendEmail = useSendEmailVerification();
+	const { setEditEmail } = useDispatch( ONBOARD_STORE );
+	const editEmail = useSelect( ( select ) => select( ONBOARD_STORE ).getEditEmail() );
 
 	const sendVerification = async () => {
+		setEditEmail( '' );
 		setButtonState( { status: 'processing', buttonText: __( 'Sending…' ) } );
 		sendEmail()
 			.then( () => {
@@ -43,8 +46,6 @@ const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
 				setButtonState( defaultButtonState );
 			} );
 	};
-	const { setEditEmail } = useDispatch( ONBOARD_STORE );
-	const editEmail = useSelect( ( select ) => select( ONBOARD_STORE ).getEditEmail() );
 
 	function getContent() {
 		return (
@@ -53,7 +54,10 @@ const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
 					className="woo-verify-email__button"
 					busy={ buttonState.status === 'processing' }
 					primary
-					onClick={ () => sendVerification() }
+					onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
+						e.preventDefault();
+						sendVerification();
+					} }
 				>
 					{ buttonState.buttonText }
 				</Button>
@@ -63,22 +67,8 @@ const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
 				<Button
 					className="woo-verify-email__link"
 					borderless
-					href="#"
-					primary
 					onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
 						e.preventDefault();
-
-						setEditEmail( '' );
-					} }
-				>
-					{ __( 'Resend verification email' ) }
-				</Button>
-				<Button
-					className="woo-verify-email__link"
-					borderless
-					onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
-						e.preventDefault();
-
 						submit?.( {}, 'edit-email' );
 					} }
 				>
