@@ -158,7 +158,7 @@ Media.prototype.addFiles = function ( query, files, fn ) {
 	files = isArray ? files : [ files ];
 
 	files = files.filter( ( file ) => {
-		if ( !! file.type && file.type.startsWith( 'video/' ) ) {
+		if ( !! file.canUseVideopress && !! file.type && file.type.startsWith( 'video/' ) ) {
 			videoFiles.push( file );
 			return false;
 		}
