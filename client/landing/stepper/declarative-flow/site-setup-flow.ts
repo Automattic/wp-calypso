@@ -11,6 +11,7 @@ import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step';
 import {
 	AssertConditionResult,
@@ -19,10 +20,6 @@ import {
 	ProvidedDependencies,
 } from './internals/types';
 import type { StepPath } from './internals/steps-repository';
-
-function redirect( to: string ) {
-	window.location.href = to;
-}
 
 export const siteSetupFlow: Flow = {
 	name: 'site-setup',
