@@ -13,6 +13,7 @@ export const SITEMAP_PAGE = 'SITEMAP_PAGE';
 export const PROFILE_PAGE = 'PROFILE_PAGE';
 export const MENU_PAGE = 'MENU_PAGE';
 export const SERVICES_PAGE = 'SERVICES_PAGE';
+export const TESTIMONIALS_PAGE = 'TESTIMONIALS_PAGE';
 
 //The maximum number of pages allowed
 export const PAGE_LIMIT = 5;

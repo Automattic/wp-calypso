@@ -65,7 +65,7 @@ class MailboxForm< T extends EmailProvider > {
 			[ FIELD_MAILBOX, new RequiredValidator< string >() ],
 			[ FIELD_NAME, new RequiredIfVisibleValidator() ],
 			[ FIELD_NAME, new MaximumStringLengthValidator( 60 ) ],
-			[ FIELD_MAILBOX, new ExistingMailboxNamesValidator( this.existingMailboxNames ) ],
+			[ FIELD_MAILBOX, new ExistingMailboxNamesValidator( domainName, this.existingMailboxNames ) ],
 			[
 				FIELD_MAILBOX,
 				new MailboxNameValidator( domainName, mailboxHasDomainError, areApostrophesSupported ),

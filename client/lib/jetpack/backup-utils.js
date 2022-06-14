@@ -75,7 +75,7 @@ export const getBackupErrorCode = ( activity ) => {
  * @param backup {object} Backup to check
  */
 export const getBackupWarnings = ( backup ) => {
-	if ( ! backup.activityWarnings ) {
+	if ( ! backup || ! backup.activityWarnings ) {
 		return {};
 	}
 	const warnings = {};

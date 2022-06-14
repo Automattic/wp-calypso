@@ -1,7 +1,17 @@
+/* eslint-disable no-restricted-imports */
+/**
+ * External Dependencies
+ */
 import { useHappychatAuth } from '@automattic/happychat-connection';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
-import { STORE_KEY } from './store';
+import { useQueryClient } from 'react-query';
+import { useSelector } from 'react-redux';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+/**
+ * Internal Dependencies
+ */
+import { HELP_CENTER_STORE, SITE_STORE } from './stores';
 import type { WindowState } from './types';
 
 /**
@@ -17,23 +27,27 @@ export function useHCWindowCommunicator(
 ) {
 	const { selectedSite, subject, message, userDeclaredSite } = useSelect( ( select ) => {
 		return {
-			selectedSite: select( STORE_KEY ).getSite(),
-			userDeclaredSite: select( STORE_KEY ).getUserDeclaredSite(),
-			subject: select( STORE_KEY ).getSubject(),
-			message: select( STORE_KEY ).getMessage(),
+			selectedSite: select( HELP_CENTER_STORE ).getSite(),
+			userDeclaredSite: select( HELP_CENTER_STORE ).getUserDeclaredSite(),
+			subject: select( HELP_CENTER_STORE ).getSubject(),
+			message: select( HELP_CENTER_STORE ).getMessage(),
 		};
 	} );
 
-	const currentSite = useSelect( ( select ) =>
-		select( 'automattic/site' ).getSite( window._currentSiteId )
-	);
+	const siteId = useSelector( getSelectedSiteId );
+	const currentSite = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ), [ siteId ] );
+
+	const queryClient = useQueryClient();
 
 	const supportSite = selectedSite || userDeclaredSite || currentSite;
-	const { resetStore } = useDispatch( STORE_KEY );
-	const auth = useHappychatAuth();
+	const { resetStore } = useDispatch( HELP_CENTER_STORE );
+	useHappychatAuth();
 
 	useEffect( () => {
 		const messageHandler = ( event: MessageEvent ) => {
+			// please be careful about changing this check
+			// sometimes we send sensitive information to this event's origin,
+			// and changing this to something untrusted is a serious security risk.
 			if ( event.origin === 'https://widgets.wp.com' ) {
 				const { data } = event;
 				switch ( data.type ) {
@@ -65,22 +79,27 @@ export function useHCWindowCommunicator(
 						break;
 					}
 					case 'happy-chat-authentication-data': {
-						event.source?.postMessage(
-							{
-								type: 'happy-chat-authentication-data',
-								authData: auth?.data,
-							},
-							{ targetOrigin: event.origin }
-						);
+						// this hooks up to the query initiated above (useHappychatAuth)
+						// and returns a promise. We wait for this promise to prevent a race-condition.
+						queryClient.fetchQuery( 'getHappychatAuth' ).then( ( auth ) => {
+							event.source?.postMessage(
+								{
+									type: 'happy-chat-authentication-data',
+									authData: auth,
+								},
+								{ targetOrigin: event.origin }
+							);
+						} );
 						break;
 					}
 				}
 			}
 		};
 
-		window.addEventListener( 'message', messageHandler, false );
+		window.addEventListener( 'message', messageHandler );
+
 		return () => {
-			window.removeEventListener( 'message', messageHandler, false );
+			window.removeEventListener( 'message', messageHandler );
 		};
-	}, [ onStateChange, onUnreadChange, supportSite, subject, message, auth, resetStore ] );
+	}, [ onStateChange, onUnreadChange, queryClient, supportSite, subject, message, resetStore ] );
 }

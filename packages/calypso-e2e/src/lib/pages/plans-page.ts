@@ -153,25 +153,18 @@ export class PlansPage {
 			return;
 		}
 
-		// If the target tab is already active, short circuit.
-		const currentSelectedLocator = this.page.locator( selectors.activeNavigationTab( targetTab ) );
-		if ( ( await currentSelectedLocator.count() ) > 0 ) {
-			return;
+		// On mobile viewports, the way PlansPage loads its contents
+		// causes an event to fire which closes all open panes.
+		// Waiting for one of the last SVGs to load on the page is
+		// a hacky but effective workaround.
+		// See https://github.com/Automattic/wp-calypso/issues/64389
+		// and https://github.com/Automattic/wp-calypso/pull/64421#discussion_r892589761.
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			await this.page.waitForResponse( ( response ) =>
+				response.url().includes( '/images/wpcom-ecommerce' )
+			);
 		}
 
-		if ( targetTab === 'My Plan' ) {
-			// User is currently on the Plans tab and going to My Plans.
-			// Wait for the Plans grid to fully render.
-			const plansGridLocator = this.page.locator( selectors.legacyPlansGrid );
-			await plansGridLocator.waitFor();
-		}
-		if ( targetTab === 'Plans' ) {
-			// User is currently on the My Plans tab and going to Plans.
-			// Wait for the detais of the current plan to complete rendering
-			// asynchronously.
-			const placeholderLocator = this.page.locator( `.my-plan-card${ selectors.placeholder }` );
-			await placeholderLocator.waitFor( { state: 'hidden' } );
-		}
 		await clickNavTab( this.page, targetTab );
 	}
 

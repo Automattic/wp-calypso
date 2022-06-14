@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
 import { useSelector } from 'react-redux';
+import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
 import CardHeading from 'calypso/components/card-heading';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -85,10 +86,11 @@ function getHoldMessages(
 			supportUrl: null,
 		},
 		EXCESSIVE_DISK_SPACE: {
-			title: translate( 'Upload not available' ),
-			description: translate(
-				'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
-			),
+			title: translate( 'Increase storage space', {
+				comment:
+					'Message displayed when a Simple site cannot be transferred to Atomic because there is not enough disk space. It appears after the heading "To continue you\'ll need to: ", inside a list with actions to perform in order to proceed with the transfer.',
+			} ),
+			description: <ExcessiveDiskSpace />,
 			supportUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
 		},
 	};

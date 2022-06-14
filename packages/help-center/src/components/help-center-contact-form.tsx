@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 /**
  * External Dependencies
  */
@@ -15,12 +16,14 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import { useHistory, useLocation } from 'react-router-dom';
 import { askDirectlyQuestion, execute } from '../directly';
-import { STORE_KEY, USER_KEY } from '../store';
+import { HELP_CENTER_STORE, USER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { SitePicker } from '../types';
 import { BackButton } from './back-button';
@@ -130,15 +133,15 @@ export const HelpCenterContactForm = () => {
 	const { selectedSite, subject, message, userDeclaredSiteUrl, directlyData } = useSelect(
 		( select ) => {
 			return {
-				selectedSite: select( STORE_KEY ).getSite(),
-				subject: select( STORE_KEY ).getSubject(),
-				message: select( STORE_KEY ).getMessage(),
-				userDeclaredSiteUrl: select( STORE_KEY ).getUserDeclaredSiteUrl(),
-				directlyData: select( STORE_KEY ).getDirectly(),
+				selectedSite: select( HELP_CENTER_STORE ).getSite(),
+				subject: select( HELP_CENTER_STORE ).getSubject(),
+				message: select( HELP_CENTER_STORE ).getMessage(),
+				userDeclaredSiteUrl: select( HELP_CENTER_STORE ).getUserDeclaredSiteUrl(),
+				directlyData: select( HELP_CENTER_STORE ).getDirectly(),
 			};
 		}
 	);
-	const userData = useSelect( ( select ) => select( USER_KEY ).getCurrentUser() );
+	const userData = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 
 	const {
 		setSite,
@@ -148,7 +151,7 @@ export const HelpCenterContactForm = () => {
 		setUserDeclaredSite,
 		setSubject,
 		setMessage,
-	} = useDispatch( STORE_KEY );
+	} = useDispatch( HELP_CENTER_STORE );
 
 	const {
 		result: ownershipResult,
@@ -181,9 +184,8 @@ export const HelpCenterContactForm = () => {
 
 	const formTitles = titles[ mode ];
 
-	const currentSite = useSelect( ( select ) =>
-		select( SITE_STORE ).getSite( window._currentSiteId )
-	);
+	const siteId = useSelector( getSelectedSiteId );
+	const currentSite = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
 
 	let supportSite: typeof currentSite;
 
@@ -215,8 +217,8 @@ export const HelpCenterContactForm = () => {
 			case 'EMAIL': {
 				if ( supportSite ) {
 					const ticketMeta = [
-						'Site I need help with: ' + supportSite?.URL,
-						'Plan: ' + supportSite?.plan?.product_slug,
+						'Site I need help with: ' + supportSite.URL,
+						'Plan: ' + supportSite.plan?.product_slug,
 					];
 
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
@@ -319,9 +321,7 @@ export const HelpCenterContactForm = () => {
 
 	return (
 		<main className="help-center-contact-form">
-			<header>
-				<BackButton />
-			</header>
+			<BackButton />
 			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
 			{ formTitles.formSubtitle && (
 				<p className="help-center-contact-form__site-picker-form-subtitle">

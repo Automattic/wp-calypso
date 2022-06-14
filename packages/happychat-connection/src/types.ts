@@ -46,6 +46,7 @@ export interface HappychatAuth {
 	user: {
 		jwt: string;
 	} & HappychatUser;
+	fullUser: User;
 }
 
 export interface Action {

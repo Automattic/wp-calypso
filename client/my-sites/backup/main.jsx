@@ -28,7 +28,6 @@ import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewin
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteSettingsInitialized from 'calypso/state/selectors/is-site-settings-initialized';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -162,14 +161,13 @@ const AdminContent = ( { selectedDate } ) => {
 const BackupStatus = ( { selectedDate, needCredentials, onDateChange } ) => {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
-	const isSettingsInitialized = useSelectedSiteSelector( isSiteSettingsInitialized );
 
 	const hasRealtimeBackups = useSelectedSiteSelector(
 		siteHasFeature,
 		WPCOM_FEATURES_REAL_TIME_BACKUPS
 	);
 
-	if ( isFetchingSiteFeatures || ! isPoliciesInitialized || ! isSettingsInitialized ) {
+	if ( isFetchingSiteFeatures || ! isPoliciesInitialized ) {
 		return <BackupPlaceholder showDatePicker={ true } />;
 	}
 

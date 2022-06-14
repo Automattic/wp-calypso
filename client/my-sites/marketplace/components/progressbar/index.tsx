@@ -31,6 +31,7 @@ export default function MarketplaceProgressBar( {
 	const translate = useTranslate();
 	const [ stepValue, setStepValue ] = useState( steps[ currentStep ] );
 	const [ additionalStepsTimeoutId, setAdditionalStepsTimeoutId ] = useState< NodeJS.Timeout >();
+	const [ currentAdditionalSteps, setCurrentAdditionalSteps ] = useState< TranslateResult[] >( [] );
 	const [ simulatedProgressPercentage, setSimulatedProgressPercentage ] = useState( 1 );
 	useEffect( () => {
 		const timeOutReference = setTimeout( () => {
@@ -51,15 +52,26 @@ export default function MarketplaceProgressBar( {
 		setAdditionalStepsTimeoutId( undefined );
 	}, [ steps, currentStep ] );
 
-	// Show additional messages when available
+	/**
+	 * If the current list of additional steps is empty,
+	 * restart it with a shuffled version of the additional steps
+	 */
+	useEffect( () => {
+		if ( currentAdditionalSteps.length === 0 && additionalSteps?.length ) {
+			const newAdditionalSteps = [ ...additionalSteps ];
+			newAdditionalSteps.sort( () => 0.5 - Math.random() );
+			setCurrentAdditionalSteps( newAdditionalSteps );
+		}
+	} );
+
+	// Show additional messages in order when available
 	useEffect( () => {
 		function updateStepValueAfterTimeout() {
-			if ( additionalSteps?.length ) {
+			if ( currentAdditionalSteps?.length ) {
 				const timeoutId = setTimeout( () => {
-					const randomIndex = Math.floor( Math.random() * additionalSteps.length );
-					const newValue = additionalSteps[ randomIndex ];
+					const newValue = currentAdditionalSteps.shift();
 
-					if ( newValue !== stepValue ) {
+					if ( newValue && newValue !== stepValue ) {
 						setStepValue( newValue );
 					}
 

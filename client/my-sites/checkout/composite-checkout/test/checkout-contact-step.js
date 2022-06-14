@@ -34,6 +34,7 @@ import {
 	countryList,
 	gSuiteProduct,
 	caDomainProduct,
+	mockCachedContactDetailsEndpoint,
 	mockContactDetailsValidationEndpoint,
 	getBasicCart,
 	mockMatchMediaOnWindow,
@@ -246,13 +247,42 @@ describe( 'Checkout contact step', () => {
 		} );
 	} );
 
-	it( 'does not complete the contact step when the contact step button has not been clicked', async () => {
+	it( 'does not complete the contact step when the contact step button has not been clicked and there are no cached details', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		await waitFor( () => {
-			expect( screen.getByText( 'Country' ) ).toBeInTheDocument();
-		} );
+		// Wait for the cart to load
+		await screen.findByText( 'Country' );
 		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'autocompletes the contact step when there are valid cached details', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: 'US',
+			postal_code: '10001',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		// Wait for the cart to load
+		await screen.findByText( 'Country' );
+		// Wait for the validation to complete
+		await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
+		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not autocomplete the contact step when there are invalid cached details', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: 'US',
+			postal_code: 'ABCD',
+		} );
+		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MyCheckout cartChanges={ cartChanges } />, container );
+		// Wait for the cart to load
+		await screen.findByText( 'Country' );
+		// Wait for the validation to complete
+		await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
+		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
 	} );
 
 	it.each( [

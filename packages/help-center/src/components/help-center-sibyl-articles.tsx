@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import {
 	useSibylQuery,
@@ -8,8 +9,11 @@ import {
 import { useSelect } from '@wordpress/data';
 import { Icon, page } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
+import { getSectionName } from 'calypso/state/ui/selectors';
 import { Article } from '../types';
 
 export const SITE_STORE = 'automattic/site' as const;
@@ -59,9 +63,12 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 
 	const { data: intent } = useSiteIntent( supportSite?.ID );
 
-	const articles = sibylArticles?.length
-		? sibylArticles
-		: getContextResults( 'gutenberg-editor', intent?.site_intent ?? '' );
+	const sectionName = useSelector( getSectionName );
+	const articles = useMemo( () => {
+		return sibylArticles?.length
+			? sibylArticles
+			: getContextResults( sectionName, intent?.site_intent ?? '' );
+	}, [ sibylArticles, sectionName, intent?.site_intent ] );
 
 	return (
 		<div className="help-center-sibyl-articles__container">
@@ -73,7 +80,7 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 				aria-labelledby="help-center--contextual_help"
 			>
 				{ articles.map( ( article ) => (
-					<li>
+					<li key={ article.link }>
 						<Link to={ getPostUrl( article as Article, message ) }>
 							<Icon icon={ page } />
 							{ article.title }

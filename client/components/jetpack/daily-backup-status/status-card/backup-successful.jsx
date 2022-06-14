@@ -9,6 +9,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
 import { getBackupWarnings } from 'calypso/lib/jetpack/backup-utils';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { useDailyBackupStatus } from 'calypso/my-sites/backup/status/hooks';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -30,7 +31,8 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 		siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS )
 	);
 
-	const warnings = getBackupWarnings( backup );
+	const backupStatus = useDailyBackupStatus( siteId, selectedDate );
+	const warnings = getBackupWarnings( backupStatus.lastBackupAttemptOnDate );
 	const hasWarnings = Object.keys( warnings ).length !== 0;
 
 	const moment = useLocalizedMoment();

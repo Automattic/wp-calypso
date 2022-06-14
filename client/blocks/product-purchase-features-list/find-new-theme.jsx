@@ -12,7 +12,7 @@ export default localize( ( { selectedSite, translate } ) => {
 					'Access a diverse selection of beautifully designed premium themes included with your plan.'
 				) }
 				buttonText={ translate( 'Browse premium themes' ) }
-				href={ '/themes/' + selectedSite.slug }
+				href={ '/themes/premium/' + selectedSite.slug }
 			/>
 		</div>
 	);

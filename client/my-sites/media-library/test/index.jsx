@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { mount } from 'enzyme';
+import { render } from '@testing-library/react';
 import { requestKeyringConnections as requestStub } from 'calypso/state/sharing/keyring/actions';
 import MediaLibrary from '..';
 
@@ -46,8 +46,12 @@ describe( 'MediaLibrary', () => {
 		ID: 123,
 	};
 
-	const getItem = ( source ) =>
-		mount( <MediaLibrary site={ site } store={ store } source={ source } /> );
+	const props = {
+		site,
+		store,
+	};
+
+	const getItem = ( source ) => render( <MediaLibrary { ...props } source={ source } /> );
 
 	describe( 'keyring request', () => {
 		afterEach( () => {
@@ -67,16 +71,16 @@ describe( 'MediaLibrary', () => {
 		} );
 
 		test( 'is issued when component source changes and now viewing an external source', () => {
-			const library = getItem( '' );
+			const { rerender } = getItem( '' );
 
-			library.setProps( { source: 'google_photos' } );
+			rerender( <MediaLibrary { ...props } source={ 'google_photos' } /> );
 			expect( requestStub ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'is not issued when component source changes and not viewing an external source', () => {
-			const library = getItem( '' );
+			const { rerender } = getItem( '' );
 
-			library.setProps( { source: '' } );
+			rerender( <MediaLibrary { ...props } source={ '' } /> );
 			expect( requestStub ).toHaveBeenCalledTimes( 0 );
 		} );
 

@@ -1,6 +1,7 @@
 import phrase from 'asana-phrase';
 import envVariables from './env-variables';
 import { SecretsManager, TestAccountName } from './secrets';
+import type { Secrets } from './secrets';
 
 export type DateFormat = 'ISO';
 
@@ -26,7 +27,49 @@ export interface RegistrarDetails {
 	postalCode: string;
 }
 
+export interface NewTestUser {
+	username: string;
+	password: string;
+	email: string;
+	siteName: string;
+	inboxId: string;
+}
+
 export type CreditCardIssuers = 'Visa';
+
+/**
+ * Returns a set of data required to sign up
+ * as a new user and create a new site.
+ *
+ * Note that this function only generates the test data;
+ * it does not actually create the test user.
+ *
+ * @param param0 Object parameter.
+ * @param {keyof Secrets['mailosaur']} [param0.mailosaurInbox] Optional key to specify the mailosaur server to use. Defaults to `signupInboxId`.
+ * @param {string} [param0.usernamePrefix] Optional key to specify the username prefix inserted between the `e2eflowtesting` and timestamp. Defaults to an empty string.
+ * @returns {NewTestUser} Data for new test user.
+ */
+export function getNewTestUser( {
+	mailosaurInbox = 'signupInboxId',
+	usernamePrefix = '',
+}: { mailosaurInbox?: keyof Secrets[ 'mailosaur' ]; usernamePrefix?: string } = {} ): NewTestUser {
+	const username = getUsername( { prefix: usernamePrefix } );
+	const password = SecretsManager.secrets.passwordForNewTestSignUps;
+
+	const email = getTestEmailAddress( {
+		inboxId: SecretsManager.secrets.mailosaur[ mailosaurInbox ],
+		prefix: username,
+	} );
+	const siteName = getBlogName();
+
+	return {
+		username: username,
+		password: password,
+		email: email,
+		siteName: siteName,
+		inboxId: SecretsManager.secrets.mailosaur[ mailosaurInbox ],
+	};
+}
 
 /**
  * Generate a pseudo-random integer, inclusive on the lower bound and exclusive on the upper bound.
@@ -68,7 +111,7 @@ export function getTimestamp(): string {
 export function getUsername( { prefix = '' }: { prefix?: string } = {} ): string {
 	const timestamp = getTimestamp();
 	const randomNumber = getRandomInteger( 0, 999 );
-	return `e2eflowtesting${ prefix }-${ timestamp }-${ randomNumber }`;
+	return `e2eflowtesting${ prefix }${ timestamp }${ randomNumber }`;
 }
 
 /**

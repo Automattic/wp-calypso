@@ -21,26 +21,48 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import WeChatPaymentQRcodeUnstyled from './wechat-payment-qrcode';
+import type { LineItem, ProcessPayment } from '@automattic/composite-checkout';
+import type {
+	PaymentMethodStore,
+	StoreSelectors,
+	StoreSelectorsWithState,
+	StoreActions,
+	StoreState,
+} from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wechat-payment-method' );
 
-export function createWeChatPaymentMethodStore() {
+type StoreKey = 'wechat';
+type NounsInStore = 'customerName';
+type WeChatStore = PaymentMethodStore< NounsInStore >;
+
+declare module '@wordpress/data' {
+	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
+	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
+}
+
+interface WeChatStripeResponse {
+	order_id: number;
+	redirect_url: string;
+}
+
+const actions: StoreActions< NounsInStore > = {
+	changeCustomerName( payload ) {
+		return { type: 'CUSTOMER_NAME_SET', payload };
+	},
+};
+
+const selectors: StoreSelectorsWithState< NounsInStore > = {
+	getCustomerName( state ) {
+		return state.customerName || '';
+	},
+};
+
+export function createWeChatPaymentMethodStore(): WeChatStore {
 	debug( 'creating a new wechat payment method store' );
-	const actions = {
-		changeCustomerName( payload ) {
-			return { type: 'CUSTOMER_NAME_SET', payload };
-		},
-	};
-
-	const selectors = {
-		getCustomerName( state ) {
-			return state.customerName || '';
-		},
-	};
-
-	const store = registerStore( 'wechat', {
+	return registerStore( 'wechat', {
 		reducer(
-			state = {
+			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
 			action
@@ -54,52 +76,24 @@ export function createWeChatPaymentMethodStore() {
 		actions,
 		selectors,
 	} );
-
-	return { ...store, actions, selectors };
 }
 
-export function createWeChatMethod( { store, stripe, stripeConfiguration, siteSlug } ) {
+export function createWeChatMethod( {
+	store,
+	siteSlug,
+}: {
+	store: WeChatStore;
+	siteSlug?: string;
+} ) {
 	return {
 		id: 'wechat',
 		paymentProcessorId: 'wechat',
 		label: <WeChatLabel />,
-		activeContent: <WeChatFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />,
-		submitButton: (
-			<WeChatPayButton
-				store={ store }
-				stripe={ stripe }
-				stripeConfiguration={ stripeConfiguration }
-				siteSlug={ siteSlug }
-			/>
-		),
+		activeContent: <WeChatFields />,
+		submitButton: <WeChatPayButton store={ store } siteSlug={ siteSlug } />,
 		inactiveContent: <WeChatSummary />,
 		getAriaLabel: () => 'WeChat Pay',
 	};
-}
-
-function WeChatFields() {
-	const { __ } = useI18n();
-
-	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
-	const { changeCustomerName } = useDispatch( 'wechat' );
-	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== FormStatus.READY;
-
-	return (
-		<WeChatFormWrapper>
-			<WeChatField
-				id="wechat-cardholder-name"
-				type="Text"
-				autoComplete="cc-name"
-				label={ __( 'Your name' ) }
-				value={ customerName?.value ?? '' }
-				onChange={ changeCustomerName }
-				isError={ customerName?.isTouched && customerName?.value.length < 3 }
-				errorMessage={ __( 'Your name must contain at least 3 characters' ) }
-				disabled={ isDisabled }
-			/>
-		</WeChatFormWrapper>
-	);
 }
 
 const WeChatFormWrapper = styled.div`
@@ -131,58 +125,6 @@ const WeChatField = styled( Field )`
 	}
 `;
 
-function WeChatPayButton( { disabled, onClick, store, stripe, stripeConfiguration, siteSlug } ) {
-	const total = useTotal();
-	const { formStatus } = useFormStatus();
-	const { resetTransaction } = useTransactionStatus();
-	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
-	const cartKey = useCartKey();
-	const { responseCart: cart } = useShoppingCart( cartKey );
-	const [ stripeResponseWithCode, setStripeResponseWithCode ] = useState( null );
-
-	useScrollQRCodeIntoView( !! stripeResponseWithCode );
-
-	if ( stripeResponseWithCode ) {
-		return (
-			<WeChatPaymentQRcode
-				orderId={ stripeResponseWithCode.order_id }
-				cart={ cart }
-				redirectUrl={ stripeResponseWithCode.redirect_url }
-				slug={ siteSlug }
-				reset={ () => {
-					resetTransaction();
-					setStripeResponseWithCode( null );
-				} }
-			/>
-		);
-	}
-
-	return (
-		<Button
-			disabled={ disabled }
-			onClick={ () => {
-				if ( isFormValid( store ) ) {
-					debug( 'submitting wechat payment' );
-					onClick( {
-						stripe,
-						name: customerName?.value,
-						stripeConfiguration,
-					} ).then( ( processorResponse ) => {
-						if ( processorResponse?.type === PaymentProcessorResponseType.MANUAL ) {
-							setStripeResponseWithCode( processorResponse.payload );
-						}
-					} );
-				}
-			} }
-			buttonType="primary"
-			isBusy={ FormStatus.SUBMITTING === formStatus }
-			fullWidth
-		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
-		</Button>
-	);
-}
-
 const WeChatPaymentQRcode = styled( WeChatPaymentQRcodeUnstyled )`
 	background-color: #fff;
 	margin: -24px;
@@ -203,16 +145,117 @@ const WeChatPaymentQRcode = styled( WeChatPaymentQRcodeUnstyled )`
 	}
 `;
 
-function ButtonContents( { formStatus, total } ) {
+function WeChatFields() {
+	const { __ } = useI18n();
+
+	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
+	const { changeCustomerName } = useDispatch( 'wechat' );
+	const { formStatus } = useFormStatus();
+	const isDisabled = formStatus !== FormStatus.READY;
+
+	return (
+		<WeChatFormWrapper>
+			<WeChatField
+				id="wechat-cardholder-name"
+				type="Text"
+				autoComplete="cc-name"
+				label={ __( 'Your name' ) }
+				value={ customerName?.value ?? '' }
+				onChange={ changeCustomerName }
+				isError={ customerName?.isTouched && customerName?.value.length < 3 }
+				errorMessage={ __( 'Your name must contain at least 3 characters' ) }
+				disabled={ isDisabled }
+			/>
+		</WeChatFormWrapper>
+	);
+}
+
+function WeChatPayButton( {
+	disabled,
+	onClick,
+	store,
+	siteSlug,
+}: {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+	store: WeChatStore;
+	siteSlug?: string;
+} ) {
+	const total = useTotal();
+	const { formStatus } = useFormStatus();
+	const { resetTransaction } = useTransactionStatus();
+	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
+	const cartKey = useCartKey();
+	const { responseCart: cart } = useShoppingCart( cartKey );
+	const [ stripeResponseWithCode, setStripeResponseWithCode ] =
+		useState< null | WeChatStripeResponse >( null );
+
+	useScrollQRCodeIntoView( !! stripeResponseWithCode );
+
+	if ( stripeResponseWithCode ) {
+		return (
+			<WeChatPaymentQRcode
+				orderId={ stripeResponseWithCode.order_id }
+				cart={ cart }
+				redirectUrl={ stripeResponseWithCode.redirect_url }
+				slug={ siteSlug }
+				reset={ () => {
+					resetTransaction();
+					setStripeResponseWithCode( null );
+				} }
+			/>
+		);
+	}
+
+	// This must be typed as optional because it's injected by cloning the
+	// element in CheckoutSubmitButton, but the uncloned element does not have
+	// this prop yet.
+	if ( ! onClick ) {
+		throw new Error(
+			'Missing onClick prop; WeChatPayButton must be used as a payment button in CheckoutSubmitButton'
+		);
+	}
+
+	return (
+		<Button
+			disabled={ disabled }
+			onClick={ () => {
+				if ( isFormValid( store ) ) {
+					debug( 'submitting wechat payment' );
+					onClick( {
+						name: customerName?.value,
+					} ).then( ( processorResponse ) => {
+						if ( processorResponse?.type === PaymentProcessorResponseType.MANUAL ) {
+							setStripeResponseWithCode( processorResponse.payload as WeChatStripeResponse );
+						}
+					} );
+				}
+			} }
+			buttonType="primary"
+			isBusy={ FormStatus.SUBMITTING === formStatus }
+			fullWidth
+		>
+			<ButtonContents formStatus={ formStatus } total={ total } />
+		</Button>
+	);
+}
+
+function ButtonContents( {
+	formStatus,
+	total,
+}: {
+	formStatus: FormStatus;
+	total: LineItem;
+} ): JSX.Element {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
-		return __( 'Processing…' );
+		return <>{ __( 'Processing…' ) }</>;
 	}
 	if ( formStatus === FormStatus.READY ) {
 		/* translators: %s is the total to be paid in localized currency */
-		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
+		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
 	}
-	return __( 'Please wait…' );
+	return <>{ __( 'Please wait…' ) }</>;
 }
 
 function WeChatSummary() {
@@ -225,12 +268,12 @@ function WeChatSummary() {
 	);
 }
 
-function isFormValid( store ) {
-	const customerName = store.selectors.getCustomerName( store.getState() );
+function isFormValid( store: WeChatStore ): boolean {
+	const customerName = selectors.getCustomerName( store.getState() );
 
 	if ( ! customerName?.value.length || customerName?.value.length < 3 ) {
 		// Touch the field so it displays a validation error
-		store.dispatch( store.actions.changeCustomerName( '' ) );
+		store.dispatch( actions.changeCustomerName( '' ) );
 		return false;
 	}
 	return true;
@@ -258,7 +301,7 @@ function WeChatLogo() {
 	);
 }
 
-function useScrollQRCodeIntoView( shouldScroll ) {
+function useScrollQRCodeIntoView( shouldScroll: boolean ): void {
 	useEffect( () => {
 		if ( shouldScroll && typeof window === 'object' ) {
 			window.document.querySelector( '.checkout__wechat-qrcode' )?.scrollIntoView?.();
