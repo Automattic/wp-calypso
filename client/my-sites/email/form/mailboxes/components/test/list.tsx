@@ -3,6 +3,11 @@
  */
 import { fireEvent, render, screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
+import nock from 'nock';
+import { ReactChild } from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import {
 	MailboxListProps,
 	NewMailBoxList,
@@ -11,7 +16,27 @@ import { useGetDefaultFieldLabelText } from 'calypso/my-sites/email/form/mailbox
 import { FIELD_MAILBOX } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 
+function renderWithStore( element: ReactChild ) {
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	const store = createStore( ( state ) => state, { ui: { selectedSiteId: 1 } } );
+	return {
+		...render(
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>{ element }</Provider>
+			</QueryClientProvider>
+		),
+		store,
+	};
+}
+
 describe( '<NewMailBoxList /> suite', () => {
+	beforeAll( () => {
+		nock( 'https://public-api.wordpress.com:443' )
+			.persist()
+			.get( '/wpcom/v2/sites/1/emails/accounts/example.com/mailboxes' )
+			.reply( 200, { accounts: [] } );
+	} );
+
 	const defaultProps = {
 		onSubmit: () => undefined,
 		provider: EmailProvider.Titan,
@@ -19,7 +44,9 @@ describe( '<NewMailBoxList /> suite', () => {
 	} as MailboxListProps;
 
 	const setup = ( propOverrides: Partial< MailboxListProps > = {} ) => {
-		const { container } = render( <NewMailBoxList { ...defaultProps } { ...propOverrides } /> );
+		const { container } = renderWithStore(
+			<NewMailBoxList { ...defaultProps } { ...propOverrides } />
+		);
 		return container;
 	};
 

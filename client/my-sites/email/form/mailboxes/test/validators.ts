@@ -139,7 +139,10 @@ const finalTestDataForAllCases = [
 		'Existing mailboxes should fail validation',
 		createTestDataForGoogle(),
 		{
-			[ FIELD_MAILBOX ]: ExistingMailboxNamesValidator.getExistingMailboxError(),
+			[ FIELD_MAILBOX ]: ExistingMailboxNamesValidator.getExistingMailboxError(
+				'example.com',
+				'info'
+			),
 		},
 		[ 'info' ]
 	),
@@ -147,7 +150,10 @@ const finalTestDataForAllCases = [
 		'Existing mailboxes should fail validation',
 		createTestDataForTitan(),
 		{
-			[ FIELD_MAILBOX ]: ExistingMailboxNamesValidator.getExistingMailboxError(),
+			[ FIELD_MAILBOX ]: ExistingMailboxNamesValidator.getExistingMailboxError(
+				'example.com',
+				'info'
+			),
 		},
 		[ 'info' ]
 	),
