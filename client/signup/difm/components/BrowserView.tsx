@@ -7,6 +7,7 @@ import {
 	PHOTO_GALLERY_PAGE,
 	SERVICE_SHOWCASE_PAGE,
 	SITEMAP_PAGE,
+	TESTIMONIALS_PAGE,
 } from 'calypso/signup/difm/constants';
 import aboutPage from 'calypso/signup/difm/images/page-descriptions/about-page.svg';
 import blogPage from 'calypso/signup/difm/images/page-descriptions/blog-page.svg';
@@ -14,6 +15,7 @@ import contactPage from 'calypso/signup/difm/images/page-descriptions/contact-pa
 import homePage from 'calypso/signup/difm/images/page-descriptions/home-page.svg';
 import photoGallery from 'calypso/signup/difm/images/page-descriptions/photo-gallery.svg';
 import serviceShowcase from 'calypso/signup/difm/images/page-descriptions/service-showcase.svg';
+import testimonials from 'calypso/signup/difm/images/page-descriptions/testimonials.svg';
 import threeDots from 'calypso/signup/difm/images/three-dots.svg';
 
 const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
@@ -55,26 +57,26 @@ const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean 
 `;
 
 const HeaderContainer = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
-    height: 7px;
-    position: relative;
-    border-radius: 6px;
-    padding: 5px 0 0px 6.5px;
+	height: 7px;
+	position: relative;
+	border-radius: 6px;
+	padding: 5px 0 0px 6.5px;
 	img {
-    	position: absolute;
+		position: absolute;
 	}
-}`;
+`;
 
 const Line = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
 	height: 0.75px;
-    background-color: var( --studio-gray-10 );
-    position: absolute;
+	background-color: var( --studio-gray-10 );
+	position: absolute;
 	width: ${ ( { isSelected } ) => ( isSelected ? '224px' : '222px' ) };
 	left: ${ ( { isSelected } ) => ( isSelected ? '-1px' : '0' ) };
-    top: 12px;
-	&:hover{
+	top: 12px;
+	&:hover {
 		width: ${ ( { isSelected } ) => ( isSelected ? '224px' : '221px' ) };
 	}
-}`;
+`;
 
 function Header( props: { isSelected?: boolean; isClickDisabled?: boolean } ) {
 	return (
@@ -134,6 +136,8 @@ export function BrowserView( {
 				return photoGallery;
 			case SERVICE_SHOWCASE_PAGE:
 				return serviceShowcase;
+			case TESTIMONIALS_PAGE:
+				return testimonials;
 			default:
 				return homePage;
 		}

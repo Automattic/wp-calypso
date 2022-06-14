@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useDesignsBySite } from '@automattic/design-picker';
+import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -27,8 +28,11 @@ export const siteSetupFlow: Flow = {
 	name: 'site-setup',
 
 	useSteps() {
+		const locale = useLocale();
+		const isEnglishLocales = englishLocales.includes( locale );
+
 		return [
-			...( isEnabled( 'signup/site-vertical-step' ) ? [ 'vertical' ] : [] ),
+			...( isEnabled( 'signup/site-vertical-step' ) && isEnglishLocales ? [ 'vertical' ] : [] ),
 			'intent',
 			...( isEnabled( 'signup/goals-step' ) ? [ 'goals' ] : [] ),
 			'options',
