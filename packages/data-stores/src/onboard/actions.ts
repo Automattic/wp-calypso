@@ -5,7 +5,7 @@ import { DomainSuggestion } from '../domain-suggestions/types';
 import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
 import { FeatureId } from '../wpcom-features/types';
-import { GoalKey, STORE_KEY } from './constants';
+import { SiteGoal, STORE_KEY } from './constants';
 import type { State } from '.';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair } from '@automattic/design-picker/src/types';
@@ -252,7 +252,7 @@ export const setStepProgress = (
 	stepProgress,
 } );
 
-export const setGoals = ( goals: GoalKey[] ) => ( {
+export const setGoals = ( goals: SiteGoal[] ) => ( {
 	type: 'SET_GOALS' as const,
 	goals,
 } );

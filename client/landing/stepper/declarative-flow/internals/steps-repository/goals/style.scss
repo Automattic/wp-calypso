@@ -23,7 +23,7 @@
 		}
 	}
 
-	.select-goals__container {
+	.select-goals__cards-container {
 		font-family: 'Inter', $sans;
 		display: grid;
 		gap: 16px;
@@ -46,6 +46,23 @@
 
 		@include break-small {
 			grid-template-columns: repeat( 2, 1fr );
+		}
+	}
+
+	.select-goals__actions-container {
+		padding-top: 48px;
+		display: flex;
+		flex-direction: row;
+		justify-content: left;
+
+		button {
+			width: 130px;
+			height: 44px;
+			border-radius: 4px;
+		}
+
+		@include break-small {
+			justify-content: center;
 		}
 	}
 }
