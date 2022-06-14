@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import GdprBanner from 'calypso/blocks/gdpr-banner';
@@ -43,6 +44,7 @@ const LayoutLoggedOut = ( {
 	showGdprBanner,
 	isPartnerSignup,
 	isPartnerSignupStart,
+	locale,
 } ) => {
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -70,12 +72,14 @@ const LayoutLoggedOut = ( {
 	};
 
 	let masterbar = null;
-	const localizeUrl = useLocalizeUrl();
 
 	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
 	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
 		if ( isPartnerSignup && ! isPartnerSignupStart ) {
-			masterbar = <MasterbarLogin goBackUrl={ localizeUrl( 'https://wordpress.com/partners/' ) } />;
+			// Using localizeUrl directly to sidestep issue with useLocale use in SSR
+			masterbar = (
+				<MasterbarLogin goBackUrl={ localizeUrl( 'https://wordpress.com/partners/', locale ) } />
+			);
 		} else if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			masterbar = null;
 		} else {
@@ -174,5 +178,5 @@ export default withCurrentRoute(
 			isPartnerSignup,
 			isPartnerSignupStart,
 		};
-	} )( LayoutLoggedOut )
+	} )( localize( LayoutLoggedOut ) )
 );
