@@ -38,7 +38,7 @@ describe( 'DailyPostButton', () => {
 					markPostSeen={ markPostSeen }
 				/>
 			);
-			expect( container.firstChild ).not.toBeInTheDocument();
+			expect( container ).toBeEmptyDOMElement();
 		} );
 
 		test( 'renders as a span tag by default', () => {
@@ -54,9 +54,7 @@ describe( 'DailyPostButton', () => {
 			);
 
 			expect( container.firstChild ).toHaveClass( 'daily-post-button' );
-
-			const span = container.querySelector( 'span' );
-			expect( container.firstChild ).toBe( span );
+			expect( container.firstChild.tagName ).toBe( 'SPAN' );
 		} );
 
 		test( 'renders as the tag specified in props tagName', () => {
@@ -72,8 +70,7 @@ describe( 'DailyPostButton', () => {
 				/>
 			);
 
-			const article = screen.queryByRole( 'article' );
-			expect( container.firstChild ).toBe( article );
+			expect( container.firstChild.tagName ).toBe( 'ARTICLE' );
 		} );
 	} );
 
