@@ -23,7 +23,7 @@ const DomainSecurityDetails = ( { domain }: DetailsCardProps ) => {
 				return null;
 			case sslStatuses.SSL_PENDING:
 				return translate(
-					'It may take up to a few hours hours to add an SSL certificate to your site. If you are not seeing it yet, give it some time to take effect.',
+					'It may take up to a few hours to add an SSL certificate to your site. If you are not seeing it yet, give it some time to take effect.',
 					{ textOnly: true }
 				);
 			case sslStatuses.SSL_DISABLED:

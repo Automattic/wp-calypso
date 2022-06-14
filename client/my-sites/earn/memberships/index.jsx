@@ -35,6 +35,7 @@ import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earn
 import { requestDisconnectStripeAccount } from 'calypso/state/memberships/settings/actions';
 import {
 	getConnectedAccountIdForSiteId,
+	getConnectedAccountDescriptionForSiteId,
 	getConnectUrlForSiteId,
 } from 'calypso/state/memberships/settings/selectors';
 import {
@@ -45,7 +46,7 @@ import {
 	getTotalSubscribersForSiteId,
 	getOwnershipsForSiteId,
 } from 'calypso/state/memberships/subscribers/selectors';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -340,8 +341,19 @@ class MembershipsSection extends Component {
 						<div className="memberships__module-plans-icon">
 							<Gridicon size={ 24 } icon={ 'link-break' } />
 						</div>
-						<div className="memberships__module-settings-title">
-							{ this.props.translate( 'Disconnect Stripe Account' ) }
+						<div>
+							<div className="memberships__module-settings-title">
+								{ this.props.translate( 'Disconnect Stripe Account' ) }
+							</div>
+							{ this.props.connectedAccountDescription ? (
+								<div className="memberships__module-settings-description">
+									{ this.props.translate( 'Connected to %(connectedAccountDescription)s', {
+										args: {
+											connectedAccountDescription: this.props.connectedAccountDescription,
+										},
+									} ) }
+								</div>
+							) : null }
 						</div>
 					</div>
 				</Card>
@@ -497,7 +509,7 @@ class MembershipsSection extends Component {
 		);
 	}
 
-	renderOnboarding( cta ) {
+	renderOnboarding( cta, intro ) {
 		const { translate } = this.props;
 
 		return (
@@ -528,6 +540,7 @@ class MembershipsSection extends Component {
 								)
 							) }
 						</p>
+						{ intro ? <p className="memberships__onboarding-paragraph">{ intro }</p> : null }
 						<p className="memberships__onboarding-paragraph">{ cta }</p>
 						<p className="memberships__onboarding-paragraph memberships__onboarding-paragraph-disclaimer">
 							<em>
@@ -596,7 +609,17 @@ class MembershipsSection extends Component {
 					>
 						{ this.props.translate( 'Connect Stripe to Get Started' ) }{ ' ' }
 						<Gridicon size={ 18 } icon={ 'external' } />
-					</Button>
+					</Button>,
+					this.props.connectedAccountDescription
+						? this.props.translate(
+								'Previously connected to Stripe account %(connectedAccountDescription)s',
+								{
+									args: {
+										connectedAccountDescription: this.props.connectedAccountDescription,
+									},
+								}
+						  )
+						: null
 				) }
 			</div>
 		);
@@ -656,11 +679,12 @@ const mapStateToProps = ( state ) => {
 		totalSubscribers: getTotalSubscribersForSiteId( state, siteId ),
 		subscribers: getOwnershipsForSiteId( state, siteId ),
 		connectedAccountId: getConnectedAccountIdForSiteId( state, siteId ),
+		connectedAccountDescription: getConnectedAccountDescriptionForSiteId( state, siteId ),
 		connectUrl: getConnectUrlForSiteId( state, siteId ),
 		hasStripeFeature:
-			hasActiveSiteFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
-			hasActiveSiteFeature( state, siteId, FEATURE_DONATIONS ) ||
-			hasActiveSiteFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
+			siteHasFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
+			siteHasFeature( state, siteId, FEATURE_DONATIONS ) ||
+			siteHasFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 		isJetpack: isJetpackSite( state, siteId ),
 	};
 };

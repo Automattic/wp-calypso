@@ -55,6 +55,7 @@
 		color: #101517;
 		text-decoration: underline;
 		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		text-align: end;
 
 		@include break-mobile {
 			margin-top: 0;

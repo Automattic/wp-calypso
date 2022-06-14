@@ -1,4 +1,4 @@
-import { Card } from '@automattic/components';
+import { Card, Spinner } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -7,7 +7,6 @@ import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powe
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySites from 'calypso/components/data/query-sites';
 import EmptyContent from 'calypso/components/empty-content';
-import Spinner from 'calypso/components/spinner';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getTitanMailOrderId, getTitanProductName, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { fetchTitanAutoLoginURL } from 'calypso/my-sites/email/email-management/titan-functions';

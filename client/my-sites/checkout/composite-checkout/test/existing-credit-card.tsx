@@ -8,7 +8,8 @@ import {
 	makeSuccessResponse,
 	CheckoutFormSubmit,
 } from '@automattic/composite-checkout';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -104,10 +105,9 @@ describe( 'Existing credit card payment methods', () => {
 			></TestWrapper>
 		);
 		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
-		fireEvent.click( await screen.findByText( activePayButtonText ) );
+		await userEvent.click( await screen.findByText( activePayButtonText ) );
 		await waitFor( () => {
 			expect( existingCardProcessor ).toHaveBeenCalledWith( {
-				items: [],
 				name: cardholderName,
 				storedDetailsId,
 				paymentMethodToken,
@@ -129,10 +129,9 @@ describe( 'Existing credit card payment methods', () => {
 			></TestWrapper>
 		);
 		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
-		fireEvent.click( await screen.findByText( activePayButtonText ) );
+		await userEvent.click( await screen.findByText( activePayButtonText ) );
 		await waitFor( () => {
 			expect( existingCardProcessor ).toHaveBeenCalledWith( {
-				items: [],
 				name: cardholderName,
 				storedDetailsId,
 				paymentMethodToken,
@@ -154,7 +153,7 @@ describe( 'Existing credit card payment methods', () => {
 			></TestWrapper>
 		);
 		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
-		fireEvent.click( await screen.findByText( activePayButtonText ) );
+		await userEvent.click( await screen.findByText( activePayButtonText ) );
 		await waitFor( () => {
 			expect( existingCardProcessor ).not.toHaveBeenCalled();
 		} );

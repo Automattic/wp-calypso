@@ -2,24 +2,41 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { ReactElement, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import Tooltip from 'calypso/components/tooltip';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getRowMetaData } from './utils';
 import type { AllowedTypes, SiteData } from './types';
 
 interface Props {
 	rows: SiteData;
 	type: AllowedTypes;
+	isLargeScreen?: boolean;
 }
 
-export default function SiteStatusContent( { rows, type }: Props ): ReactElement {
+export default function SiteStatusContent( {
+	rows,
+	type,
+	isLargeScreen = false,
+}: Props ): ReactElement {
+	const dispatch = useDispatch();
+
 	const {
 		link,
+		isExternalLink,
 		row: { value, status, error },
 		siteError,
 		tooltip,
 		tooltipId,
-	} = getRowMetaData( rows, type );
+		siteDown,
+		eventName,
+	} = getRowMetaData( rows, type, isLargeScreen );
+
+	// Disable clicks/hover when there is a site error &
+	// when the row it is not monitor and monitor status is down
+	// since monitor is clickable when site is down.
+	const disabledStatus = siteError || ( type !== 'monitor' && siteDown );
 
 	const statusContentRef = useRef< HTMLSpanElement | null >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
@@ -32,11 +49,21 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 	};
 
 	const handleClickRowAction = () => {
-		// Handle track event here
+		dispatch( recordTracksEvent( eventName ) );
 	};
 
 	if ( type === 'site' ) {
-		const siteIssues = rows.scan.threats || rows.plugin.updates;
+		// Site issues is the sum of scan threats and plugin updates
+		let siteIssuesCount = rows.scan.threats + rows.plugin.updates;
+		let isHighSeverityError = !! rows.scan.threats;
+		if ( [ 'failed', 'warning' ].includes( rows.backup.status ) ) {
+			siteIssuesCount = siteIssuesCount + 1;
+			isHighSeverityError = isHighSeverityError || 'failed' === rows.backup.status;
+		}
+		if ( [ 'failed' ].includes( rows.monitor.status ) ) {
+			siteIssuesCount = siteIssuesCount + 1;
+			isHighSeverityError = true;
+		}
 		let errorContent;
 		if ( error ) {
 			errorContent = (
@@ -44,21 +71,22 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 					<Gridicon size={ 24 } icon="notice-outline" />
 				</span>
 			);
-		} else if ( siteIssues ) {
+		} else if ( siteIssuesCount ) {
 			errorContent = (
 				<span
 					className={ classNames(
 						'sites-overview__status-count',
-						rows.scan.threats ? 'sites-overview__status-failed' : 'sites-overview__status-warning'
+						isHighSeverityError ? 'sites-overview__status-failed' : 'sites-overview__status-warning'
 					) }
 				>
-					{ siteIssues }
+					{ siteIssuesCount }
 				</span>
 			);
 		}
 		return (
 			<>
 				<span className="sites-overview__row-text">{ value.url }</span>
+				<span className="sites-overview__overlay"></span>
 				{ errorContent }
 			</>
 		);
@@ -87,7 +115,7 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 			content = <Gridicon icon="checkmark" size={ 18 } className="sites-overview__grey-icon" />;
 			break;
 		}
-		case 'active': {
+		case 'disabled': {
 			content = <Gridicon icon="minus-small" size={ 18 } className="sites-overview__icon-active" />;
 			break;
 		}
@@ -109,20 +137,26 @@ export default function SiteStatusContent( { rows, type }: Props ): ReactElement
 	let updatedContent = content;
 
 	if ( link ) {
+		let target = '_self';
+		let rel;
+		if ( isExternalLink ) {
+			target = '_blank';
+			rel = 'noreferrer';
+		}
 		updatedContent = (
-			<a onClick={ handleClickRowAction } href={ link }>
+			<a target={ target } rel={ rel } onClick={ handleClickRowAction } href={ link }>
 				{ content }
 			</a>
 		);
 	}
 
-	if ( siteError ) {
+	if ( disabledStatus ) {
 		updatedContent = <span className="sites-overview__disabled">{ content } </span>;
 	}
 
 	return (
 		<>
-			{ tooltip && ! siteError ? (
+			{ tooltip && ! disabledStatus ? (
 				<>
 					<span
 						ref={ statusContentRef }

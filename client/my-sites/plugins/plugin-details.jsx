@@ -56,8 +56,8 @@ import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-use
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	isJetpackSite,
 	isRequestingSites as checkRequestingSites,
@@ -373,12 +373,12 @@ function SitesListArea( { fullPlugin: plugin, isPluginInstalledOnsite, billingPe
 
 	const availableOnSites = useSelector( ( state ) =>
 		sitesWithoutPlugin.filter( ( site ) =>
-			hasActiveSiteFeature( state, site.ID, FEATURE_INSTALL_PLUGINS )
+			siteHasFeature( state, site.ID, FEATURE_INSTALL_PLUGINS )
 		)
 	);
 	const upgradeNeededSites = useSelector( ( state ) =>
 		sitesWithoutPlugin.filter(
-			( site ) => ! hasActiveSiteFeature( state, site.ID, FEATURE_INSTALL_PLUGINS )
+			( site ) => ! siteHasFeature( state, site.ID, FEATURE_INSTALL_PLUGINS )
 		)
 	);
 

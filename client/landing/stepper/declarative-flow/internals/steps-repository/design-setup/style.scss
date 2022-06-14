@@ -9,13 +9,9 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 .design-setup {
 	.step-container {
-		padding-left: 24px;
-		padding-right: 24px;
+		padding-left: 20px;
+		padding-right: 20px;
 		max-width: 1440px;
-
-		.step-container__navigation.action-buttons {
-			border: none;
-		}
 
 		.step-container__content {
 			margin-top: 32px;
@@ -40,8 +36,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			}
 
 			.formatted-header__subtitle {
-				// Overrides some very specific selectors in /client/signup/style.scss
-				margin: 12px 0 48px !important;
+				margin: 12px 0 48px;
 			}
 		}
 
@@ -87,12 +82,8 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				text-align: left;
 				color: $gray-60;
 				font-size: 1rem;
-				margin: 8px 0 0;
+				margin: 12px 0 32px;
 				line-height: 24px;
-
-				@include breakpoint-deprecated('<660px') {
-					margin-top: 16px;
-				}
 			}
 		}
 
@@ -294,6 +285,22 @@ $design-button-primary-color: rgb( 17, 122, 201 );
  * Generated Design Picker
  */
 .design-picker__is-generated {
+	&.step-container {
+		max-width: none;
+
+		@include onboarding-break-full-hd {
+			.generated-design-picker__thumbnails {
+				padding-right: 4rem;
+			}
+		}
+
+		@include onboarding-break-2k {
+			max-width: 2240px;
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
+
 	&.design-picker__is-generated-previewing {
 		.design-setup__header,
 		.generated-design-picker__thumbnails {
@@ -304,8 +311,12 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			}
 		}
 
-		.generated-design-picker__previews {
+		.generated-design-picker__main {
+			flex: 1;
 			height: auto;
+		}
+
+		.generated-design-picker__previews {
 			min-height: calc( 100vh - 172px );
 			margin-bottom: 84px;
 		}
@@ -370,55 +381,53 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	.design-setup__header {
 		align-items: center;
 		display: flex;
-		margin: 48px 0;
+		margin: 0 0 48px;
 		row-gap: 1.5rem;
 		flex-wrap: wrap;
-	}
 
-	.design-setup__footer {
-		display: none;
-		margin: 0 auto;
-
-		.design-setup__footer-inner {
-			align-self: stretch;
-			align-items: center;
-			background-color: #ffffff;
-			display: flex;
-			justify-content: flex-end;
-			width: 100%;
+		.button {
+			display: none;
 
 			@include break-small {
-				margin-left: 154px;
-			}
-
-			@include break-medium {
-				margin-left: 248px;
+				display: inherit;
 			}
 		}
 
 		@include break-small {
-			align-items: center;
-			bottom: 0;
+			margin-top: 48px;
+		}
+	}
+
+	.design-setup__footer {
+		display: none;
+		position: relative;
+
+		.design-setup__footer-content {
+			position: absolute;
+			top: 100%;
+			width: 100%;
+			height: 100%;
 			display: flex;
-			height: 118px;
+			align-items: center;
 			justify-content: flex-end;
-			left: 0;
-			max-width: 1440px;
+			background-color: #ffffff;
 			opacity: 0;
 			pointer-events: none;
-			position: sticky;
-			right: 0;
-			transform: translateY( 118px );
 			transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+		}
 
-			&.is-visible {
+		@include break-small {
+			display: block;
+			position: sticky;
+			bottom: 0;
+			height: 118px;
+			overflow: hidden;
+			z-index: 1;
+
+			&.is-visible .design-setup__footer-content {
 				opacity: 1;
-				transform: translateY( 0 );
-				z-index: 1;
-
-				.design-setup__footer-inner {
-					pointer-events: auto;
-				}
+				transform: translateY( -100% );
+				pointer-events: auto;
 			}
 		}
 	}
@@ -426,6 +435,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	.generated_design-picker__content {
 		display: flex;
 		flex-direction: row;
+		align-items: flex-start;
 	}
 
 	.generated-design-picker__thumbnails {
@@ -436,8 +446,11 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		row-gap: 24px;
 
 		@include break-small {
+			position: sticky;
+			top: 109px;
 			flex: 0 154px;
 			padding-right: 1.5rem;
+			margin-bottom: 0;
 		}
 
 		@include break-medium {
@@ -449,11 +462,8 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 	.generated-design-picker__previews {
 		display: flex;
-		height: 0;
-		flex: 1;
 		flex-direction: column;
 		row-gap: 24px;
-		margin-bottom: 44px;
 		position: relative;
 
 		.web-preview__inner {
@@ -486,18 +496,19 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				min-height: 80vh;
 			}
 		}
-
-		@include break-small {
-			height: auto;
-		}
 	}
 
 	.generated-design-picker__view-more {
 		border-radius: 4px;
 		font-weight: 500;
 		line-height: 1.25rem;
-		margin: 8px 0;
+		margin: 8px 0 -6px;
 		width: 100%;
+		flex-shrink: 0;
+
+		@include break-small {
+			margin-bottom: 48px;
+		}
 	}
 
 	.step-container__content {

@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { shallow } from 'enzyme';
-import { useSandbox } from 'calypso/test-helpers/use-sinon';
 import { EditorMediaModalDetailItem as DetailItem } from '../detail-item';
 
 jest.mock( 'calypso/post-editor/media-modal/detail/detail-fields', () =>
@@ -41,11 +40,7 @@ const SHARED_PROPS = {
 };
 
 describe( 'EditorMediaModalDetailItem', () => {
-	let isVideoPressEnabled;
-
-	useSandbox( ( sandbox ) => {
-		isVideoPressEnabled = sandbox.stub().returns( true );
-	} );
+	const isVideoPressEnabled = jest.fn( () => true );
 
 	test( 'should display at least one edit button for a VideoPress video on a public site', () => {
 		const tree = shallow(

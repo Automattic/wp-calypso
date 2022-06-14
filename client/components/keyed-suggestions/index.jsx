@@ -1,17 +1,6 @@
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
-import {
-	has,
-	pick,
-	pickBy,
-	without,
-	isEmpty,
-	filter,
-	map,
-	sortBy,
-	partition,
-	includes,
-} from 'lodash';
+import { has, pick, pickBy, without, isEmpty, map, sortBy, partition, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { cosineSimilarity } from 'calypso/lib/trigram';
@@ -202,9 +191,9 @@ class KeyedSuggestions extends Component {
 		const filtered = {};
 
 		//If this is valid full taxonomy:filter we want to show alternatives instead of suggestions
-		if ( filterText !== undefined && includes( terms[ taxonomy ], filter ) ) {
+		if ( filterText !== undefined && includes( terms[ taxonomy ], filterText ) ) {
 			// remove what is already in input - so we can add it to the beggining of the list
-			const otherSuggestions = without( terms[ taxonomy ], filter );
+			const otherSuggestions = without( terms[ taxonomy ], filterText );
 			// add back at the beggining of the list so it will showup first.
 			otherSuggestions.unshift( filterText );
 			// limit or show all
@@ -283,14 +272,14 @@ class KeyedSuggestions extends Component {
 					return max_seen > SEARCH_THRESHOLD;
 				};
 
-				filtered[ key ] = filter(
-					map( terms[ key ], ( term, k ) =>
-						cleanFilterTerm === '' ||
-						matcher( term.name.toLowerCase(), cleanFilterTerm.toLowerCase() )
-							? k
-							: null
-					)
-				).slice( 0, limit );
+				filtered[ key ] = map( terms[ key ], ( term, k ) =>
+					cleanFilterTerm === '' ||
+					matcher( term.name.toLowerCase(), cleanFilterTerm.toLowerCase() )
+						? k
+						: null
+				)
+					.filter( Boolean )
+					.slice( 0, limit );
 			}
 		}
 		return this.removeEmptySuggestions( filtered );

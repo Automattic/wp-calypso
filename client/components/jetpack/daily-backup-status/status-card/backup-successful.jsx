@@ -1,16 +1,18 @@
+import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
 import ExternalLink from 'calypso/components/external-link';
-import BackupWarningRetry from 'calypso/components/jetpack/backup-warning-retry';
+import BackupWarningRetry from 'calypso/components/jetpack/backup-warnings/backup-warning-retry';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
 import { getBackupWarnings } from 'calypso/lib/jetpack/backup-utils';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
-import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
+import { useDailyBackupStatus } from 'calypso/my-sites/backup/status/hooks';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ActionButtons from '../action-buttons';
@@ -25,12 +27,12 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
-	const hasRealtimeBackups = useSelector( ( state ) => {
-		const capabilities = getRewindCapabilities( state, siteId );
-		return Array.isArray( capabilities ) && capabilities.includes( 'backup-realtime' );
-	} );
+	const hasRealtimeBackups = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS )
+	);
 
-	const warnings = getBackupWarnings( backup );
+	const backupStatus = useDailyBackupStatus( siteId, selectedDate );
+	const warnings = getBackupWarnings( backupStatus.lastBackupAttemptOnDate );
 	const hasWarnings = Object.keys( warnings ).length !== 0;
 
 	const moment = useLocalizedMoment();

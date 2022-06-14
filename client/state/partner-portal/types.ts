@@ -59,10 +59,20 @@ export interface APIPartnerKey {
 	has_licenses: boolean;
 }
 
+export interface APIPartnerAddress {
+	country: string;
+	city: string;
+	line1: string;
+	line2: string;
+	postal_code: string;
+	state: string;
+}
+
 export interface APIPartner {
 	id: number;
 	slug: string;
 	name: string;
+	address: APIPartnerAddress;
 	keys: APIPartnerKey[];
 	tos: string;
 	partner_type: string;
@@ -94,6 +104,7 @@ export interface APIError {
 	status: number;
 	code: string | null;
 	message: string;
+	data?: any;
 }
 
 export interface APIInvoices {
@@ -129,6 +140,20 @@ export interface Invoice {
 	pdfUrl: string;
 }
 
+export interface CompanyDetailsPayload {
+	name: string;
+	city: string;
+	line1: string;
+	line2: string;
+	country: string;
+	postalCode: string;
+	state: string;
+}
+
+export interface PartnerDetailsPayload extends CompanyDetailsPayload {
+	tos?: 'consented';
+}
+
 /**
  * Store.
  */
@@ -140,10 +165,20 @@ export interface PartnerKey {
 	hasLicenses: boolean;
 }
 
+export interface PartnerAddress {
+	country: string;
+	city: string;
+	line1: string;
+	line2: string;
+	postal_code: string;
+	state: string;
+}
+
 export interface Partner {
 	id: number;
 	slug: string;
 	name: string;
+	address: PartnerAddress;
 	keys: PartnerKey[];
 	tos: string;
 	partner_type: string;

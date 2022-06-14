@@ -1,27 +1,23 @@
 import {
-	isPlan,
 	isGoogleWorkspaceExtraLicence,
 	isGSuiteOrGoogleWorkspaceProductSlug,
 } from '@automattic/calypso-products';
-import {
-	getTotalLineItemFromCart,
-	tryToGuessPostalCodeFormat,
-	isValueTruthy,
-	getLabel,
-} from '@automattic/wpcom-checkout';
+import { isValueTruthy, getTotalLineItemFromCart } from '@automattic/wpcom-checkout';
+import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
 } from './translate-payment-method-names';
-import type { LineItem } from '@automattic/composite-checkout';
 import type {
 	ResponseCart,
 	ResponseCartProduct,
 	ResponseCartTaxData,
 	DomainContactDetails,
+	RequestCart,
+	RequestCartTaxData,
+	CartKey,
 } from '@automattic/shopping-cart';
 import type {
-	WPCOMTransactionEndpointCart,
 	WPCOMTransactionEndpointRequestPayload,
 	TransactionRequest,
 	WPCOMCart,
@@ -35,7 +31,7 @@ import type {
  * @returns Cart object suitable for passing to the checkout component
  */
 export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WPCOMCart {
-	const { products, allowed_payment_methods } = serverCart;
+	const { allowed_payment_methods } = serverCart;
 
 	const totalItem = getTotalLineItemFromCart( serverCart );
 
@@ -47,30 +43,8 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		.map( translateWpcomPaymentMethodToCheckoutPaymentMethod );
 
 	return {
-		items: products.map( translateReponseCartProductToLineItem ),
 		total: totalItem,
 		allowedPaymentMethods,
-	};
-}
-
-// Convert a backend cart item to a checkout cart item
-function translateReponseCartProductToLineItem( serverCartItem: ResponseCartProduct ): LineItem {
-	const { product_slug, currency, item_subtotal_display, item_subtotal_integer, uuid } =
-		serverCartItem;
-
-	const label = getLabel( serverCartItem );
-
-	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
-
-	return {
-		id: uuid,
-		label,
-		type,
-		amount: {
-			currency: currency || '',
-			value: item_subtotal_integer || 0,
-			displayValue: item_subtotal_display || '',
-		},
 	};
 }
 
@@ -84,7 +58,7 @@ export function createTransactionEndpointCartFromResponseCart( {
 	siteId: string | undefined;
 	contactDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
-} ): WPCOMTransactionEndpointCart {
+} ): RequestCart {
 	if ( responseCart.products.some( ( product ) => product.extra.isJetpackCheckout ) ) {
 		const isUserLess = responseCart.cart_key === 'no-user';
 		const isSiteLess = responseCart.blog_id === 0;
@@ -98,13 +72,10 @@ export function createTransactionEndpointCartFromResponseCart( {
 		// /transactions endpoint. If there is no blog ID, a temporary blog is created on the backend side.
 		return {
 			blog_id: responseCart.blog_id.toString(),
-			cart_key: cartKey.toString(),
+			cart_key: cartKey as CartKey,
 			create_new_blog: isSiteLess,
-			is_jetpack_checkout: true,
 			coupon: responseCart.coupon || '',
-			currency: responseCart.currency,
 			temporary: false,
-			extra: [],
 			products: responseCart.products.map( ( item ) =>
 				addRegistrationDataToGSuiteCartProduct( item, contactDetails )
 			),
@@ -114,13 +85,10 @@ export function createTransactionEndpointCartFromResponseCart( {
 
 	return {
 		blog_id: siteId || '0',
-		cart_key: siteId || 'no-site',
+		cart_key: ( siteId || 'no-site' ) as CartKey,
 		create_new_blog: siteId ? false : true,
-		is_jetpack_checkout: false,
 		coupon: responseCart.coupon || '',
-		currency: responseCart.currency,
 		temporary: false,
-		extra: [],
 		products: responseCart.products.map( ( item ) =>
 			addRegistrationDataToGSuiteCartProduct( item, contactDetails )
 		),
@@ -130,15 +98,13 @@ export function createTransactionEndpointCartFromResponseCart( {
 
 function createTransactionEndpointTaxFromResponseCartTax(
 	tax: ResponseCartTaxData
-): Omit< ResponseCartTaxData, 'display_taxes' > {
-	const { country_code, postal_code } = tax.location;
-	const formattedPostalCode = postal_code
-		? tryToGuessPostalCodeFormat( postal_code.toUpperCase(), country_code )
-		: undefined;
+): RequestCartTaxData {
+	const { country_code, postal_code, subdivision_code } = tax.location;
 	return {
 		location: {
-			...( country_code ? { country_code } : {} ),
-			...( formattedPostalCode ? { postal_code: formattedPostalCode } : {} ),
+			country_code,
+			postal_code,
+			subdivision_code,
 		},
 	};
 }
@@ -219,5 +185,6 @@ export function createTransactionEndpointRequestPayload( {
 			useForAllSubscriptions,
 			eventSource,
 		},
+		tos: getToSAcceptancePayload(),
 	};
 }

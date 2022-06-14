@@ -1,0 +1,80 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.wpcom-upsell-placeholder {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	position: relative;
+	margin: 0 auto 10px;
+	padding: 16px;
+	box-sizing: border-box;
+	background: var( --color-surface );
+	box-shadow: 0 0 0 1px var( --color-border-subtle );
+
+	@include break-mobile {
+		flex-direction: row;
+		padding: 24px;
+		padding-bottom: 16px;
+	}
+
+	@include break-xlarge {
+		padding-left: 64px;
+		padding-right: 64px;
+	}
+
+	span {
+		@include placeholder( --color-neutral-10 );
+	}
+
+	.wpcom-upsell-placeholder__figure {
+		width: 100%;
+		margin: 24px 0;
+		margin-top: 3px;
+		@include break-mobile {
+			max-width: 120px;
+			padding: 3px 24px 0 0;
+			margin-bottom: 0;
+		}
+	}
+
+	.wpcom-upsell-placeholder__figure-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 8px;
+	}
+
+	.wpcom-upsell-placeholder__figure-placeholder {
+		width: 104px;
+		height: 104px;
+		@include placeholder( --color-neutral-10 );
+	}
+
+	.wpcom-upsell-placeholder__body {
+		h2 {
+			font-family: 'Recoleta', 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
+			font-size: 1.5rem;
+			line-height: 32px;
+			margin-bottom: 8px;
+		}
+		p {
+			margin-bottom: 8px;
+		}
+
+		.wpcom-upsell-placeholder__action {
+			padding-top: 17px;
+		}
+
+		.wpcom-upsell-placeholder__action-button {
+			display: inline-block;
+			margin: 0 1em 4px 0;
+			font-size: 14px;
+			line-height: 22px;
+			border-radius: 2px;
+			padding: 8px 14px;
+			@include placeholder( --color-neutral-10 );
+		}
+	}
+}

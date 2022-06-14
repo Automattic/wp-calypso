@@ -41,6 +41,7 @@ export default function SiteTable( { isFetching, columns, items }: Props ): Reac
 					items.map( ( item ) => {
 						const site = item.site;
 						const blogId = site.value.blog_id;
+						const siteError = site.error || item.monitor.error;
 						return (
 							<Fragment key={ `table-row-${ blogId }` }>
 								<tr className="site-table__table-row">
@@ -52,7 +53,7 @@ export default function SiteTable( { isFetching, columns, items }: Props ): Reac
 													className={ classNames( site.error && 'site-table__td-with-error' ) }
 													key={ `table-data-${ row.type }-${ blogId }` }
 												>
-													<SiteStatusContent rows={ item } type={ row.type } />
+													<SiteStatusContent rows={ item } type={ row.type } isLargeScreen />
 												</td>
 											);
 										}
@@ -63,7 +64,7 @@ export default function SiteTable( { isFetching, columns, items }: Props ): Reac
 											'site-table__actions'
 										) }
 									>
-										<SiteActions isLargeScreen site={ site } />
+										<SiteActions isLargeScreen site={ site } siteError={ siteError } />
 									</td>
 								</tr>
 								{ site.error ? (

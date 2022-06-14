@@ -10,10 +10,8 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import getTextWidth from 'calypso/landing/gutenboarding/onboarding-block/acquire-intent/get-text-width';
-import { useAnchorFmParams } from 'calypso/landing/stepper/hooks/use-anchor-fm-params';
-import useDetectMatchingAnchorSite from 'calypso/landing/stepper/hooks/use-detect-matching-anchor-site';
 import usePodcastTitle from 'calypso/landing/stepper/hooks/use-podcast-title';
-import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import type { Step } from '../../types';
@@ -22,22 +20,23 @@ import './style.scss';
 const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 	const { goBack, submit, goToStep } = navigation;
 	const { __ } = useI18n();
-	const { isAnchorFmPodcastIdError } = useAnchorFmParams();
-	const { setSiteSetupError } = useDispatch( SITE_STORE );
-
-	//Check to see if there is a site with a matching anchor podcast ID
-	const isLookingUpMatchingAnchorSites = useDetectMatchingAnchorSite();
 
 	const PodcastTitleForm: React.FC = () => {
 		//Get the podcast title from the API
 		const podcastTitle = usePodcastTitle();
 		const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
+		const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+		const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 		const hasSiteTitle = siteTitle.length > 0;
-		const { setSiteTitle, setAnchorPodcastId, setAnchorEpisodeId, setAnchorSpotifyUrl } =
-			useDispatch( ONBOARD_STORE );
-		const { anchorFmPodcastId, isAnchorFmPodcastIdError, anchorFmEpisodeId, anchorFmSpotifyUrl } =
-			useAnchorFmParams();
+		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 		const [ formTouched, setFormTouched ] = useState( false );
+
+		useEffect( () => {
+			if ( ! currentUser && ! newUser ) {
+				//Go to login
+				goToStep?.( 'login' );
+			}
+		}, [ currentUser, newUser ] );
 
 		/*
 		 * If we don't have a custom title in the store and we haven't touched the form input,
@@ -56,14 +55,8 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 		const handleSubmit = ( siteTitle: string ) => {
 			const providedDependencies = {
 				siteTitle,
-				anchorFmPodcastId,
-				anchorFmEpisodeId,
-				anchorFmSpotifyUrl,
 			};
 			setSiteTitle( siteTitle );
-			setAnchorPodcastId( ! isAnchorFmPodcastIdError ? anchorFmPodcastId : null );
-			setAnchorEpisodeId( anchorFmEpisodeId );
-			setAnchorSpotifyUrl( anchorFmSpotifyUrl );
 			submit?.( providedDependencies );
 		};
 
@@ -71,11 +64,6 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 			setFormTouched( true );
 			setSiteTitle( event.currentTarget.value );
 		};
-
-		//If we're still checking for matching Anchor sites, don't show the form
-		if ( isLookingUpMatchingAnchorSites ) {
-			return <div />;
-		}
 
 		return (
 			<form
@@ -114,17 +102,6 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 			</form>
 		);
 	};
-
-	useEffect( () => {
-		if ( isAnchorFmPodcastIdError ) {
-			const error = __( "We're sorry!" );
-			const message = __(
-				"We're unable to locate your podcast. Return to Anchor or continue with site creation."
-			);
-			setSiteSetupError( error, message );
-			return goToStep?.( 'error' );
-		}
-	}, [ isAnchorFmPodcastIdError ] );
 
 	return (
 		<StepContainer

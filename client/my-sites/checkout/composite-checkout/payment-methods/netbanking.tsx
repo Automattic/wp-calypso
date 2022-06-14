@@ -1,4 +1,4 @@
-import { Button, FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
 import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
@@ -236,7 +236,7 @@ function NetBankingPayButton( {
 	store: NetBankingStore;
 } ) {
 	const { __ } = useI18n();
-	const [ , total ] = useLineItems();
+	const total = useTotal();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect( ( select ) => select( 'netbanking' ).getCustomerName() );
 	const fields = useSelect( ( select ) => select( 'netbanking' ).getFields() );

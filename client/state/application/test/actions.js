@@ -1,4 +1,3 @@
-import { spy } from 'sinon';
 import {
 	CONNECTION_LOST,
 	CONNECTION_RESTORED,
@@ -9,58 +8,64 @@ import { connectionLost, connectionRestored } from '../actions';
 
 describe( 'state/application actions', () => {
 	describe( '#connectionLost()', () => {
-		const dispatch = spy();
+		const dispatch = jest.fn();
 		const exampleText = 'potato';
 
 		//( dispatch ) because it is a thunk action creator
 		connectionLost( exampleText )( dispatch );
 
 		test( 'should dispatch an action with CONNECTION_LOST type', () => {
-			expect( dispatch.calledWith( { type: CONNECTION_LOST } ) ).ok;
+			expect( dispatch ).toHaveBeenCalledWith( { type: CONNECTION_LOST } );
 		} );
 
 		test( 'should remove notice with connectionRestored information', () => {
-			expect( dispatch.calledWith( { type: NOTICE_REMOVE, noticeId: 'connectionRestored' } ) ).ok;
+			expect( dispatch ).toHaveBeenCalledWith( {
+				type: NOTICE_REMOVE,
+				noticeId: 'connectionRestored',
+			} );
 		} );
 
 		test( 'should dispatch a notice with connectionLost information', () => {
-			expect(
-				dispatch.calledWithMatch( {
+			expect( dispatch ).toHaveBeenCalledWith(
+				expect.objectContaining( {
 					type: NOTICE_CREATE,
-					notice: {
+					notice: expect.objectContaining( {
 						noticeId: 'connectionLost',
 						text: exampleText,
-					},
+					} ),
 				} )
-			).ok;
+			);
 		} );
 	} );
 
 	describe( '#connectionRestored()', () => {
-		const dispatch = spy();
+		const dispatch = jest.fn();
 		const exampleText = 'potato';
 
 		//( dispatch ) because it is a thunk action creator
 		connectionRestored( exampleText )( dispatch );
 
 		test( 'should dispatch an action with CONNECTION_RESTORED type', () => {
-			expect( dispatch.calledWith( { type: CONNECTION_RESTORED } ) ).ok;
+			expect( dispatch ).toHaveBeenCalledWith( { type: CONNECTION_RESTORED } );
 		} );
 
 		test( 'should remove notice with connectionLost information', () => {
-			expect( dispatch.calledWith( { type: NOTICE_REMOVE, noticeId: 'connectionLost' } ) ).ok;
+			expect( dispatch ).toHaveBeenCalledWith( {
+				type: NOTICE_REMOVE,
+				noticeId: 'connectionLost',
+			} );
 		} );
 
 		test( 'should dispatch a notice with connectionRestored information', () => {
-			expect(
-				dispatch.calledWithMatch( {
+			expect( dispatch ).toHaveBeenCalledWith(
+				expect.objectContaining( {
 					type: NOTICE_CREATE,
-					notice: {
+					notice: expect.objectContaining( {
 						noticeId: 'connectionRestored',
 						text: exampleText,
-					},
+					} ),
 				} )
-			).ok;
+			);
 		} );
 	} );
 } );

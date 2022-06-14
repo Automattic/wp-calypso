@@ -57,19 +57,16 @@ class Customize extends Component {
 		prevPath: null,
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		this.getReturnUrl().then( ( validatedUrl ) => {
 			this.setState( {
 				returnUrl: validatedUrl,
 			} );
 		} );
-		this.redirectIfNeeded( this.props.pathname );
+		this.redirectIfNeeded();
 		this.listenToCustomizer();
 		this.waitForLoading();
-	}
 
-	componentDidMount() {
 		if ( window ) {
 			window.scrollTo( 0, 0 );
 		}
@@ -82,17 +79,16 @@ class Customize extends Component {
 		this.cancelWaitingTimer();
 	}
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		this.redirectIfNeeded( nextProps.pathname );
+	componentDidUpdate() {
+		this.redirectIfNeeded();
 	}
 
 	setCustomizerIframetRef = ( element ) => {
 		this.customizerIframe = element;
 	};
 
-	redirectIfNeeded = ( pathname ) => {
-		const { menusUrl, isJetpack, customizerUrl } = this.props;
+	redirectIfNeeded = () => {
+		const { menusUrl, isJetpack, customizerUrl, pathname } = this.props;
 		if ( startsWith( pathname, '/customize/menus' ) && pathname !== menusUrl ) {
 			page( menusUrl );
 		}

@@ -16,6 +16,7 @@ export type PlanActionButton = 'Manage plan' | 'Upgrade';
 const selectors = {
 	// Generic
 	placeholder: `.is-placeholder`,
+	managePlanButton: `a:has-text("Manage plan")`,
 
 	// Navigation
 	mobileNavTabsToggle: `button.section-nav__mobile-header`,
@@ -39,7 +40,8 @@ const selectors = {
 	},
 
 	// My Plans view
-	myPlanTitle: ( planName: LegacyPlans ) => `.my-plan-card__title:has-text("${ planName }")`,
+	myPlanTitle: ( planName: LegacyPlans | Plans ) =>
+		`.my-plan-card__title:has-text("${ planName }")`,
 };
 
 /**
@@ -59,11 +61,24 @@ export class PlansPage {
 		this.version = version;
 	}
 
+	/* Generic */
+
 	/**
-	 * Wait until the page is loaded and stable.
+	 * Validates that the provided plan name is the title of the active plan in the My Plan tab of the Plans page. Throws if it isn't.
+	 *
+	 * @param {LegacyPlans} expectedPlan Name of the expected plan.
+	 * @throws If the expected plan title is not found in the timeout period.
 	 */
-	private async waitUntilLoaded(): Promise< void > {
-		await this.page.waitForLoadState( 'load' );
+	async validateActivePlan( expectedPlan: LegacyPlans | Plans ): Promise< void > {
+		const expectedPlanLocator = this.page.locator( selectors.myPlanTitle( expectedPlan ) );
+		await expectedPlanLocator.waitFor();
+	}
+
+	/**
+	 * Clicks on the "Manage plan" button, which can be found in the My Plan tab.
+	 */
+	async clickManagePlan(): Promise< void > {
+		await this.page.click( selectors.managePlanButton );
 	}
 
 	/* Current Plans */
@@ -104,6 +119,26 @@ export class PlansPage {
 		await showButtonLocator.waitFor();
 	}
 
+	/**
+	 * Validates that the provided tab name is the the currently active tab in the wrapper Plans page. Throws if it isn't.
+	 *
+	 * @param {PlansPageTab} expectedTab Name of the expected tab.
+	 * @throws If the expected tab name is not the active tab.
+	 */
+	async validateActiveTab( expectedTab: PlansPageTab ): Promise< void > {
+		// For mobile sized viewport, the currently selected tab name
+		// is hidden behind a pseudo-dropdown.
+		// Therefore the valicdation will look for hidden element.
+		const currentSelectedLocator = this.page.locator(
+			selectors.activeNavigationTab( expectedTab )
+		);
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			await currentSelectedLocator.waitFor( { state: 'hidden' } );
+		} else {
+			await currentSelectedLocator.waitFor();
+		}
+	}
+
 	/* Legacy Plans */
 
 	/**
@@ -118,57 +153,19 @@ export class PlansPage {
 			return;
 		}
 
-		// If the target tab is already active, short circuit.
-		const currentSelectedLocator = this.page.locator( selectors.activeNavigationTab( targetTab ) );
-		if ( ( await currentSelectedLocator.count() ) > 0 ) {
-			return;
-		}
-
-		if ( targetTab === 'My Plan' ) {
-			// User is currently on the Plans tab and going to My Plans.
-			// Wait for the Plans grid to fully render.
-			const plansGridLocator = this.page.locator( selectors.legacyPlansGrid );
-			await plansGridLocator.waitFor();
-		}
-		if ( targetTab === 'Plans' ) {
-			// User is currently on the My Plans tab and going to Plans.
-			// Wait for the detais of the current plan to complete rendering
-			// asynchronously.
-			const placeholderLocator = this.page.locator( `.my-plan-card${ selectors.placeholder }` );
-			await placeholderLocator.waitFor( { state: 'hidden' } );
-		}
-		await clickNavTab( this.page, targetTab );
-	}
-
-	/**
-	 * Validates that the provided plan name is the title of the active plan in the My Plan tab of the Plans page. Throws if it isn't.
-	 *
-	 * @param {LegacyPlans} expectedPlan Name of the expected plan.
-	 * @throws If the expected plan title is not found in the timeout period.
-	 */
-	async validateActivePlanInMyPlanTab( expectedPlan: LegacyPlans ): Promise< void > {
-		const expectedPlanLocator = this.page.locator( selectors.myPlanTitle( expectedPlan ) );
-		await expectedPlanLocator.waitFor();
-	}
-
-	/**
-	 * Validates that the provided tab name is the the currently active tab in the wrapper Plans page. Throws if it isn't.
-	 *
-	 * @param {PlansPageTab} expectedTab Name of the expected tab.
-	 * @throws If the expected tab name is not the active tab.
-	 */
-	async validateActiveNavigationTab( expectedTab: PlansPageTab ): Promise< void > {
-		// For mobile sized viewport, the currently selected tab name
-		// is hidden behind a pseudo-dropdown.
-		// Therefore the valicdation will look for hidden element.
-		const currentSelectedLocator = this.page.locator(
-			selectors.activeNavigationTab( expectedTab )
-		);
+		// On mobile viewports, the way PlansPage loads its contents
+		// causes an event to fire which closes all open panes.
+		// Waiting for one of the last SVGs to load on the page is
+		// a hacky but effective workaround.
+		// See https://github.com/Automattic/wp-calypso/issues/64389
+		// and https://github.com/Automattic/wp-calypso/pull/64421#discussion_r892589761.
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			await currentSelectedLocator.waitFor( { state: 'hidden' } );
-		} else {
-			await currentSelectedLocator.waitFor();
+			await this.page.waitForResponse( ( response ) =>
+				response.url().includes( '/images/wpcom-ecommerce' )
+			);
 		}
+
+		await clickNavTab( this.page, targetTab );
 	}
 
 	/**

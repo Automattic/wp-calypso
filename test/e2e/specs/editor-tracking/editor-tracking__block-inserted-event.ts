@@ -1,5 +1,5 @@
 /**
- * @group gutenberg
+ * @group editor-tracking
  */
 
 import {

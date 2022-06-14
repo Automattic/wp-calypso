@@ -1,14 +1,13 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { useVerticalImagesQuery } from '@automattic/data-stores';
+import { useStarterDesignsGeneratedQuery } from '@automattic/data-stores';
 import DesignPicker, {
 	GeneratedDesignPicker,
 	PremiumBadge,
 	useCategorization,
 	isBlankCanvasDesign,
 	getDesignPreviewUrl,
-	useGeneratedDesignsQuery,
 	useDesignsBySite,
 } from '@automattic/design-picker';
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
@@ -18,33 +17,39 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import useTrackScrollPageFromTop from '../../../../hooks/use-track-scroll-page-from-top';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../../stores';
 import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { getCategorizationOptions } from './categories';
 import GeneratedDesignPickerWebPreview from './generated-design-picker-web-preview';
 import PreviewToolbar from './preview-toolbar';
-import StickyFooter from './sticky-footer';
+import StickyPositioner from './sticky-positioner';
 import type { Step } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
+
+const STEP_NAME = 'design-setup';
+
+// The distance from top when sticky should be 109px and it's aligned with thumbnails and previews
+const STICKY_OPTIONS = {
+	rootMargin: '-109px 0px 0px',
+};
 
 /**
  * The design picker step
  */
 const designSetup: Step = function DesignSetup( { navigation, flow } ) {
-	const continueButtonRef = useRef( null );
-	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
 	const [ isForceStaticDesigns, setIsForceStaticDesigns ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
-	const { goBack, submit } = navigation;
+	const { goBack, submit, goToStep } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
 	const site = useSite();
@@ -59,25 +64,19 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const siteSlug = useSiteSlugParam();
 	const siteTitle = site?.name;
 	const isReskinned = true;
-	const siteVerticalId = useSelect(
-		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site.ID ) ) || undefined
-	);
-	const { data: siteVerticalImages = [], isLoading: isLoadingSiteVerticalImages } =
-		useVerticalImagesQuery( siteVerticalId || '', { limit: 1 } );
-	const isVerticalizedWithImages = !! siteVerticalId && siteVerticalImages.length > 0;
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
 	const isPrivateAtomic = Boolean( site?.launch_status === 'unlaunched' && isAtomic );
-
 	const isEligibleForProPlan = useSelect(
 		( select ) => site && select( SITE_STORE ).isEligibleForProPlan( site.ID )
 	);
+
+	const siteVerticalId = useSelect(
+		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site.ID ) ) || ''
+	);
+
 	const showDesignPickerCategories =
 		isEnabled( 'signup/design-picker-categories' ) && ! isAnchorSite;
-	const showGeneratedDesigns =
-		isEnabled( 'signup/design-picker-generated-designs' ) &&
-		intent === 'build' &&
-		isVerticalizedWithImages &&
-		! isForceStaticDesigns;
+
 	const showDesignPickerCategoriesAllFilter = isEnabled( 'signup/design-picker-categories' );
 
 	const isPremiumThemeAvailable = Boolean(
@@ -95,23 +94,43 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		[ staticDesigns ]
 	);
 
-	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
-		useGeneratedDesignsQuery();
+	const enabledGeneratedDesigns =
+		isEnabled( 'signup/design-picker-generated-designs' ) && intent === 'build';
 
-	const shuffledGeneratedDesigns = useMemo(
-		() => shuffle( generatedDesigns ),
-		[ generatedDesigns ]
-	);
+	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
+		useStarterDesignsGeneratedQuery(
+			{
+				vertical_id: siteVerticalId,
+				seed: siteSlug || undefined,
+				_locale: locale,
+			},
+			{ enabled: enabledGeneratedDesigns && !! siteVerticalId && ! isAnchorSite }
+		);
+
+	const showGeneratedDesigns =
+		enabledGeneratedDesigns && generatedDesigns.length > 0 && ! isForceStaticDesigns;
 
 	const selectedGeneratedDesign = useMemo(
-		() => selectedDesign ?? ( ! isMobile ? shuffledGeneratedDesigns[ 0 ] : undefined ),
-		[ selectedDesign, shuffledGeneratedDesigns, isMobile ]
+		() => selectedDesign ?? ( ! isMobile ? generatedDesigns[ 0 ] : undefined ),
+		[ selectedDesign, generatedDesigns, isMobile ]
 	);
 
-	const isPreviewingGeneratedDesign =
-		isMobile && showGeneratedDesigns && selectedDesign && isPreviewingDesign;
+	const isPreviewingGeneratedDesign = isMobile && showGeneratedDesigns && !! selectedDesign;
 
 	const visibility = useNewSiteVisibility();
+
+	const [ isSticky, setIsSticky ] = useState( false );
+
+	const hasTrackedView = useRef( false );
+	useEffect( () => {
+		if ( showGeneratedDesigns && ! hasTrackedView.current ) {
+			hasTrackedView.current = true;
+			recordTracksEvent( 'calypso_signup_generated_design_picker_view', {
+				vertical_id: siteVerticalId,
+				generated_designs: generatedDesigns?.map( ( design ) => design.slug ).join( ',' ),
+			} );
+		}
+	}, [ showGeneratedDesigns, hasTrackedView, generatedDesigns ] );
 
 	function headerText() {
 		if ( showGeneratedDesigns ) {
@@ -134,7 +153,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 		if ( showGeneratedDesigns ) {
 			return translate(
-				'One of these homepage options could be great to start with. You can always change later.'
+				'Based on your input, these designs have been tailored for you. You can always change later.'
 			);
 		}
 
@@ -164,7 +183,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		intent,
 		is_premium: design?.is_premium,
 		is_generated: showGeneratedDesigns,
-		...( design?.recipe?.patternIds && { pattern_ids: design.recipe.patternIds.join( ',' ) } ),
+		...( design?.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
 	} );
 
 	const categorizationOptions = getCategorizationOptions(
@@ -173,7 +192,15 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	);
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
+
+	useEffect( () => {
+		if ( isAnchorSite && ! currentUser && ! newUser ) {
+			//Go to login
+			goToStep?.( 'login' );
+		}
+	}, [ currentUser, newUser ] );
 
 	function pickDesign(
 		_selectedDesign: Design | undefined = selectedDesign,
@@ -182,7 +209,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlug && _selectedDesign ) {
 			const positionIndex = showGeneratedDesigns
-				? shuffledGeneratedDesigns.findIndex( ( design ) => design.slug === _selectedDesign.slug )
+				? generatedDesigns.findIndex( ( design ) => design.slug === _selectedDesign.slug )
 				: -1;
 
 			setPendingAction( () => setDesignOnSite( siteSlug, _selectedDesign, siteVerticalId ) );
@@ -199,12 +226,19 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			submit?.( providedDependencies );
 		} else if ( isAnchorSite && _selectedDesign ) {
 			setPendingAction( async () => {
-				if ( ! currentUser ) {
+				if ( ! currentUser && ! newUser ) {
 					return;
 				}
 
+				let user = '';
+				if ( currentUser ) {
+					user = currentUser.username;
+				} else if ( newUser ) {
+					user = newUser.username as string;
+				}
+
 				await createSite( {
-					username: currentUser.username,
+					username: user,
 					languageSlug: locale,
 					bearerToken: undefined,
 					visibility,
@@ -232,14 +266,12 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		} );
 
 		setSelectedDesign( _selectedDesign );
-		setIsPreviewingDesign( true );
 	}
 
 	function viewMoreDesigns() {
 		recordTracksEvent( 'calypso_signup_design_view_more_select' );
 
 		setSelectedDesign( undefined );
-		setIsPreviewingDesign( false );
 		setIsForceStaticDesigns( true );
 	}
 
@@ -270,7 +302,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 			intent: intent,
 		};
 
-		if ( ! isPreviewingDesign && isForceStaticDesigns ) {
+		if ( ! selectedDesign && isForceStaticDesigns ) {
 			recordTracksEvent( 'calypso_signup_back_to_generated_design_step' );
 		}
 
@@ -278,9 +310,8 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	}
 
 	const handleBackClick = () => {
-		if ( isPreviewingDesign && ( ! showGeneratedDesigns || isMobile ) ) {
+		if ( selectedDesign && ( ! showGeneratedDesigns || isMobile ) ) {
 			setSelectedDesign( undefined );
-			setIsPreviewingDesign( false );
 			return;
 		}
 
@@ -292,7 +323,29 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		goBack();
 	};
 
-	if ( selectedDesign && isPreviewingDesign && ! showGeneratedDesigns ) {
+	const handleShouldStickyChange = ( shouldSticky: boolean ) => {
+		setIsSticky( shouldSticky );
+	};
+
+	// Track scroll event to make sure people are scrolling on mobile.
+	useTrackScrollPageFromTop( isMobile && ! selectedDesign, flow || '', STEP_NAME, {
+		is_generated_designs: showGeneratedDesigns,
+	} );
+
+	// Make sure people is at the top when:
+	// 1. Switching between generated designs and static designs.
+	// 2. Entering/leaving preview mode.
+	useEffect( () => {
+		window.scrollTo( { top: 0 } );
+	}, [ isForceStaticDesigns, !! selectedDesign ] );
+
+	// When the intent is build, we can potentially show the generated design picker.
+	// Don't render until we've fetched the generated designs from the backend.
+	if ( ( ! site || isLoadingGeneratedDesigns ) && ! isAnchorSite ) {
+		return null;
+	}
+
+	if ( selectedDesign && ! showGeneratedDesigns ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
@@ -324,7 +377,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 		return (
 			<StepContainer
-				stepName={ 'design-setup' }
+				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
 				hideNext={ shouldUpgrade }
@@ -353,15 +406,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		);
 	}
 
-	// When the intent is build, we can potentially show the generated design picker.
-	// Additional data is needed from the backend to determine whether to show it or not.
-	if (
-		intent === 'build' &&
-		( isLoadingSiteVerticalImages || ( showGeneratedDesigns && isLoadingGeneratedDesigns ) )
-	) {
-		return null;
-	}
-
 	const heading = (
 		<FormattedHeader
 			className={ isAnchorSite ? 'is-anchor-header' : null }
@@ -375,10 +419,10 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const stepContent = showGeneratedDesigns ? (
 		<GeneratedDesignPicker
 			selectedDesign={ selectedGeneratedDesign }
-			designs={ shuffledGeneratedDesigns }
+			designs={ generatedDesigns }
 			verticalId={ siteVerticalId }
 			locale={ locale }
-			previews={ shuffledGeneratedDesigns.map( ( design ) => (
+			previews={ generatedDesigns.map( ( design ) => (
 				<GeneratedDesignPickerWebPreview
 					key={ design.slug }
 					site={ site }
@@ -387,32 +431,38 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 					verticalId={ siteVerticalId }
 					isSelected={ design.slug === selectedGeneratedDesign?.slug }
 					isPrivateAtomic={ isPrivateAtomic }
+					isStickyToolbar={ ! isMobile && isSticky }
 					recordTracksEvent={ recordTracksEvent }
 				/>
 			) ) }
 			heading={
-				<div className={ classnames( 'step-container__header', 'design-setup__header' ) }>
-					{ heading }
-					<Button
-						ref={ continueButtonRef }
-						primary
-						onClick={ () => pickDesign( selectedGeneratedDesign, 'top' ) }
-					>
-						{ translate( 'Continue' ) }
-					</Button>
-				</div>
+				<>
+					<div className={ classnames( 'step-container__header', 'design-setup__header' ) }>
+						{ heading }
+						<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'top' ) }>
+							{ translate( 'Continue' ) }
+						</Button>
+					</div>
+					{ ! isMobile && (
+						<StickyPositioner
+							stickyOptions={ STICKY_OPTIONS }
+							onShouldStickyChange={ handleShouldStickyChange }
+						/>
+					) }
+				</>
 			}
 			footer={
-				<StickyFooter
-					className={ classnames( 'step-container__footer', 'design-setup__footer' ) }
-					targetRef={ continueButtonRef }
+				<div
+					className={ classnames( 'step-container__footer', 'design-setup__footer', {
+						'is-visible': isSticky,
+					} ) }
 				>
-					<div className={ 'design-setup__footer-inner' }>
+					<div className="design-setup__footer-content">
 						<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'bottom' ) }>
 							{ translate( 'Continue' ) }
 						</Button>
 					</div>
-				</StickyFooter>
+				</div>
 			}
 			onPreview={ previewDesign }
 			onViewMore={ viewMoreDesigns }
@@ -442,13 +492,15 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'design-step' }
+			stepName={ STEP_NAME }
 			className={ classnames( {
 				'design-picker__is-generated': showGeneratedDesigns,
 				'design-picker__is-generated-previewing': isPreviewingGeneratedDesign,
 				'design-picker__has-categories': showDesignPickerCategories,
 				'design-picker__sell-intent': 'sell' === intent,
 			} ) }
+			shouldStickyNavButtons={ showGeneratedDesigns }
+			hasStickyNavButtonsPadding={ isSticky }
 			hideSkip={ isPreviewingGeneratedDesign || isAnchorSite }
 			hideNext={ ! isPreviewingGeneratedDesign }
 			skipButtonAlign={ 'top' }

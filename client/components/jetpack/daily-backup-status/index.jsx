@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
+import BackupWarnings from 'calypso/components/jetpack/backup-warnings/backup-warnings';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import {
@@ -150,11 +151,14 @@ const Wrapper = ( props ) => {
 	// Fetch the status of the most recent backups
 	// to see if there's a backup currently in progress
 	return (
-		<Card className="daily-backup-status">
-			<QueryRewindPolicies siteId={ siteId } />
-			<QueryRewindBackups siteId={ siteId } />
-			<DailyBackupStatus { ...props } />
-		</Card>
+		<>
+			<Card className="daily-backup-status">
+				<QueryRewindPolicies siteId={ siteId } />
+				<QueryRewindBackups siteId={ siteId } />
+				<DailyBackupStatus { ...props } />
+			</Card>
+			<BackupWarnings selectedDate={ props.selectedDate } siteId={ siteId } />
+		</>
 	);
 };
 

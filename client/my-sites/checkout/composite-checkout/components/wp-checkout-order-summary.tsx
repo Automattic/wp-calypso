@@ -1,14 +1,17 @@
 import {
-	isPlan,
-	isMonthly,
-	getYearlyPlanByMonthly,
 	getPlan,
+	getYearlyPlanByMonthly,
 	isDomainProduct,
 	isDomainTransfer,
-	isWpComPersonalPlan,
-	isWpComPlan,
+	isGoogleWorkspace,
+	isMonthly,
+	isNoAds,
+	isPlan,
+	isTitanMail,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
+	isWpComPersonalPlan,
+	isWpComPlan,
 	isWpComPremiumPlan,
 	isStarterPlan,
 } from '@automattic/calypso-products';
@@ -31,10 +34,9 @@ import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getPlanFeatures from '../lib/get-plan-features';
+import getRefundDays from '../lib/get-refund-days';
 import getRefundText from '../lib/get-refund-text';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -79,11 +81,7 @@ export default function WPCheckoutOrderSummary( {
 				{ isCartUpdating ? (
 					<LoadingCheckoutSummaryFeaturesList />
 				) : (
-					<CheckoutSummaryFeaturesList
-						siteId={ siteId }
-						hasMonthlyPlanInCart={ hasMonthlyPlanInCart }
-						nextDomainIsFree={ nextDomainIsFree }
-					/>
+					<CheckoutSummaryFeaturesList siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />
 				) }
 			</CheckoutSummaryFeatures>
 			{ ! isCartUpdating && ! hasRenewalInCart && plan && hasMonthlyPlanInCart && (
@@ -146,10 +144,9 @@ function SwitchToAnnualPlan( {
 
 function CheckoutSummaryFeaturesList( props: {
 	siteId: number | undefined;
-	hasMonthlyPlanInCart: boolean;
 	nextDomainIsFree: boolean;
 } ) {
-	const { hasMonthlyPlanInCart = false, siteId, nextDomainIsFree } = props;
+	const { siteId, nextDomainIsFree } = props;
 
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -163,23 +160,16 @@ function CheckoutSummaryFeaturesList( props: {
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 	const hasPlanInCart = plans.length > 0;
 
-	const translate = useTranslate();
-	const isJetpackNotAtomic = useSelector( ( state ) =>
-		siteId ? isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) : undefined
+	const refundableProducts = responseCart.products.filter(
+		( product ) => product.cost && getRefundDays( product )
 	);
 
-	const showRefundText = responseCart.total_cost > 0;
-
-	let refundDays = 0;
-	if ( hasDomainsInCart && ! hasPlanInCart ) {
-		refundDays = 4;
-	} else if ( hasPlanInCart && ! hasDomainsInCart ) {
-		refundDays = hasMonthlyPlanInCart ? 7 : 14;
-	}
-	const refundText = getRefundText( refundDays, null, translate );
+	const translate = useTranslate();
 
 	const hasOnlyStarterPlan =
 		plans.filter( ( plan ) => isStarterPlan( plan.product_slug ) ).length === plans.length;
+
+	const hasNoAdsAddOn = responseCart.products.some( ( product ) => isNoAds( product ) );
 
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
@@ -193,39 +183,44 @@ function CheckoutSummaryFeaturesList( props: {
 					nextDomainIsFree={ nextDomainIsFree }
 				/>
 			) }
+
+			{ hasNoAdsAddOn && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon id="features-list-support-text" />
+					{ translate( 'Remove ads from your site with the No Ads add-on' ) }
+				</CheckoutSummaryFeaturesListItem>
+			) }
+
 			{ ! hasOnlyStarterPlan && (
 				<CheckoutSummaryFeaturesListItem>
 					<WPCheckoutCheckIcon id="features-list-support-text" />
-					<SupportText plans={ plans } isJetpackNotAtomic={ isJetpackNotAtomic } />
+					{ translate( 'Customer support via email' ) }
 				</CheckoutSummaryFeaturesListItem>
 			) }
 
 			{ ! hasPlanInCart && <CheckoutSummaryChatIfAvailable siteId={ siteId } /> }
 
-			{ showRefundText && (
-				<CheckoutSummaryFeaturesListItem>
-					<WPCheckoutCheckIcon id="features-list-refund-text" />
-					{ refundText }
-				</CheckoutSummaryFeaturesListItem>
-			) }
+			{ refundableProducts.map( ( product ) => {
+				let productName = product.product_name;
+
+				if ( isDomainProduct( product ) ) {
+					productName = product.meta;
+				} else if ( isGoogleWorkspace( product ) || isTitanMail( product ) ) {
+					if ( product.extra?.email_users?.length ) {
+						const emailUsers = product.extra?.email_users?.map( ( user ) => user.email );
+						productName = emailUsers.join( ', ' );
+					}
+				}
+
+				return (
+					<CheckoutSummaryFeaturesListItem key={ product.uuid }>
+						<WPCheckoutCheckIcon id="features-list-refund-text" />
+						{ getRefundText( getRefundDays( product ), productName, translate ) }
+					</CheckoutSummaryFeaturesListItem>
+				);
+			} ) }
 		</CheckoutSummaryFeaturesListWrapper>
 	);
-}
-
-function SupportText( {
-	plans,
-	isJetpackNotAtomic,
-}: {
-	plans: Array< ResponseCartProduct >;
-	isJetpackNotAtomic?: boolean | null;
-} ) {
-	const translate = useTranslate();
-
-	if ( plans.length && ! isJetpackNotAtomic ) {
-		return <span>{ translate( 'Unlimited customer support via email' ) }</span>;
-	}
-
-	return <span>{ translate( 'Customer support via email' ) }</span>;
 }
 
 function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCartProduct } ) {

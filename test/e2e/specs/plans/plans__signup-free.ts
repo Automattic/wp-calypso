@@ -1,5 +1,4 @@
 /**
- * @group calypso-release
  */
 
 import {
@@ -8,7 +7,6 @@ import {
 	SignupPickPlanPage,
 	StartSiteFlow,
 	SidebarComponent,
-	SecretsManager,
 	PlansPage,
 	RestAPIClient,
 	UserSignupPage,
@@ -21,13 +19,9 @@ declare const browser: Browser;
 describe(
 	DataHelper.createSuiteTitle( 'Plans: Create a WordPress.com Free site as a new user' ),
 	function () {
-		const username = `e2eflowtestingfree${ DataHelper.getTimestamp() }`;
-		const password = SecretsManager.secrets.passwordForNewTestSignUps;
-		const email = DataHelper.getTestEmailAddress( {
-			inboxId: SecretsManager.secrets.mailosaur.inviteInboxId,
-			prefix: username,
+		const testUser = DataHelper.getNewTestUser( {
+			usernamePrefix: 'signupfree',
 		} );
-		const blogName = DataHelper.getBlogName();
 
 		let page: Page;
 		let userID: number;
@@ -47,7 +41,11 @@ describe(
 
 			it( 'Sign up as new user', async function () {
 				const userSignupPage = new UserSignupPage( page );
-				const details = await userSignupPage.signup( email, username, password );
+				const details = await userSignupPage.signup(
+					testUser.email,
+					testUser.username,
+					testUser.password
+				);
 				userID = details.ID;
 				bearerToken = details.bearer_token;
 
@@ -58,7 +56,7 @@ describe(
 		describe( 'Onboarding', function () {
 			it( 'Select a free .wordpress.com domain', async function () {
 				const domainSearchComponent = new DomainSearchComponent( page );
-				await domainSearchComponent.search( blogName );
+				await domainSearchComponent.search( testUser.siteName );
 				await domainSearchComponent.selectDomain( '.wordpress.com' );
 			} );
 
@@ -102,14 +100,14 @@ describe(
 			}
 
 			const restAPIClient = new RestAPIClient(
-				{ username: username, password: password },
+				{ username: testUser.username, password: testUser.password },
 				bearerToken
 			);
 
 			const response = await restAPIClient.closeAccount( {
 				userID: userID,
-				username: username,
-				email: email,
+				username: testUser.username,
+				email: testUser.email,
 			} );
 
 			if ( response.success !== true ) {

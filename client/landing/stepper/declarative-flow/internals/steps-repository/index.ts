@@ -1,11 +1,14 @@
 export { default as courses } from './courses';
 export { default as intent } from './intent-step';
+export { default as goals } from './goals';
 export { default as podcastTitle } from './podcast-title';
+export { default as login } from './login';
 export { default as options } from './site-options';
 export { default as bloggerStartingPoint } from './blogger-starting-point';
 export { default as storeFeatures } from './store-features';
 export { default as designSetup } from './design-setup';
 export { default as import } from './import';
+export { default as importLight } from './import-light';
 export { default as importList } from './import-list';
 export { default as importReady } from './import-ready';
 export { default as importReadyNot } from './import-ready-not';
@@ -24,10 +27,13 @@ export { default as wooInstallPlugins } from './woo-install-plugins';
 export { default as processing } from './processing-step';
 export { default as error } from './error-step';
 export { default as wooConfirm } from './woo-confirm';
+export { default as wooVerifyEmail } from './woo-verify-email';
+export { default as editEmail } from './edit-email';
 
 export type StepPath =
 	| 'courses'
 	| 'intent'
+	| 'goals'
 	| 'podcastTitle'
 	| 'options'
 	| 'bloggerStartingPoint'
@@ -35,6 +41,7 @@ export type StepPath =
 	| 'designSetup'
 	| 'import'
 	| 'importList'
+	| 'importLight'
 	| 'importReady'
 	| 'importReadyNot'
 	| 'importReadyWpcom'
@@ -47,8 +54,11 @@ export type StepPath =
 	| 'businessInfo'
 	| 'storeAddress'
 	| 'processing'
+	| 'login'
 	| 'vertical'
 	| 'wooTransfer'
 	| 'wooInstallPlugins'
 	| 'error'
-	| 'wooConfirm';
+	| 'wooConfirm'
+	| 'wooVerifyEmail'
+	| 'editEmail';

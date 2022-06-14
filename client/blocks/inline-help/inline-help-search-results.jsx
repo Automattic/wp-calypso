@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { getContextResults } from '@automattic/help-center';
+import { getContextResults } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
 import { Icon, page as pageIcon, arrowRight } from '@wordpress/icons';

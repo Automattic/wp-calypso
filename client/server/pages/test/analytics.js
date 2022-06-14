@@ -1,6 +1,5 @@
 import events from 'events';
 import { logSectionResponse } from 'calypso/server/pages/analytics';
-import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 import analytics from '../../lib/analytics';
 
 const TWO_SECONDS = 2000;
@@ -23,9 +22,7 @@ describe( 'index', () => {
 		} );
 
 		describe( 'when rendering a section', () => {
-			let clock;
-
-			useFakeTimers( ( newClock ) => ( clock = newClock ) );
+			jest.useFakeTimers();
 
 			beforeEach( () => {
 				jest.spyOn( analytics.statsd, 'recordTiming' );
@@ -41,12 +38,12 @@ describe( 'index', () => {
 
 			test( 'logs response analytics', () => {
 				// Clear throttling
-				clock.tick( TWO_SECONDS );
+				jest.advanceTimersByTime( TWO_SECONDS );
 
 				logSectionResponse( request, response, next );
 
 				// Move time forward and mock the "finish" event
-				clock.tick( TWO_SECONDS );
+				jest.advanceTimersByTime( TWO_SECONDS );
 				response.emit( 'finish' );
 
 				expect( analytics.statsd.recordTiming ).toBeCalledWith(
@@ -62,12 +59,12 @@ describe( 'index', () => {
 				request.context.target = undefined;
 
 				// Clear throttling
-				clock.tick( TWO_SECONDS );
+				jest.advanceTimersByTime( TWO_SECONDS );
 
 				logSectionResponse( request, response, next );
 
 				// Move time forward and mock the "finish" event
-				clock.tick( TWO_SECONDS );
+				jest.advanceTimersByTime( TWO_SECONDS );
 				response.emit( 'finish' );
 
 				expect( analytics.statsd.recordTiming ).toBeCalledWith(
@@ -81,7 +78,7 @@ describe( 'index', () => {
 
 			test( 'throttles calls to log analytics', () => {
 				// Clear throttling
-				clock.tick( TWO_SECONDS );
+				jest.advanceTimersByTime( TWO_SECONDS );
 
 				logSectionResponse( request, response, next );
 				logSectionResponse( request2, response2, next );
@@ -92,7 +89,7 @@ describe( 'index', () => {
 				expect( analytics.statsd.recordTiming ).toBeCalledTimes( 1 );
 				expect( analytics.statsd.recordCounting ).toBeCalledTimes( 1 );
 
-				clock.tick( TWO_SECONDS );
+				jest.advanceTimersByTime( TWO_SECONDS );
 				response.emit( 'finish' );
 				response2.emit( 'finish' );
 

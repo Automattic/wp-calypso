@@ -1,9 +1,10 @@
+/* eslint-disable no-restricted-imports */
 /**
  * External Dependencies
  */
-import { Button, Popover } from '@automattic/components';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
-	useHas3PC,
 	useSubmitTicketMutation,
 	useSubmitForumsMutation,
 	useSiteAnalysis,
@@ -13,19 +14,21 @@ import { SitePickerDropDown } from '@automattic/site-picker';
 import { TextControl, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { Icon, info, commentContent } from '@wordpress/icons';
-import React, { useEffect, useState, useContext } from 'react';
+import { Icon, info } from '@wordpress/icons';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useHistory, useLocation } from 'react-router-dom';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import { HelpCenterContext } from '../help-center-context';
-import { STORE_KEY } from '../store';
+import { askDirectlyQuestion, execute } from '../directly';
+import { HELP_CENTER_STORE, USER_STORE } from '../stores';
+import { getSupportVariationFromMode } from '../support-variations';
 import { SitePicker } from '../types';
 import { BackButton } from './back-button';
-import InlineChat from './help-center-inline-chat';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
-import { SuccessScreen } from './ticket-success-screen';
 import './help-center-contact-form.scss';
 
 export const SITE_STORE = 'automattic/site';
@@ -36,7 +39,12 @@ const fakeFaces = Array.from(
 );
 const randomTwoFaces = fakeFaces.sort( () => Math.random() - 0.5 ).slice( 0, 2 );
 
-const HelpCenterSitePicker: React.FC< SitePicker > = ( { onSelect, currentSite, siteId } ) => {
+const HelpCenterSitePicker: React.FC< SitePicker > = ( {
+	onSelect,
+	currentSite,
+	siteId,
+	enabled,
+} ) => {
 	const otherSite = {
 		name: __( 'Other site', __i18n_text_domain__ ),
 		ID: 0,
@@ -50,12 +58,20 @@ const HelpCenterSitePicker: React.FC< SitePicker > = ( { onSelect, currentSite, 
 
 	const options = [ currentSite, otherSite ];
 
-	return <SitePickerDropDown onPickSite={ pickSite } options={ options } siteId={ siteId } />;
+	return (
+		<SitePickerDropDown
+			enabled={ enabled }
+			onPickSite={ pickSite }
+			options={ options }
+			siteId={ siteId }
+		/>
+	);
 };
 
 const titles: {
 	[ key: string ]: {
 		formTitle: string;
+		formSubtitle?: string;
 		trayText?: string;
 		formDisclaimer?: string;
 		buttonLabel: string;
@@ -74,6 +90,20 @@ const titles: {
 		buttonLabel: __( 'Email us', __i18n_text_domain__ ),
 		buttonLoadingLabel: __( 'Sending email', __i18n_text_domain__ ),
 	},
+	DIRECTLY: {
+		formTitle: __( 'Start live chat with an expert', 'full-site-editing' ),
+		formSubtitle: __(
+			'These are others, like yourself, who have been selected because of their WordPress.com knowledge to help answer questions.',
+			'full-site-editing'
+		),
+		trayText: __( 'An expert user will be with you right away', 'full-site-editing' ),
+		formDisclaimer: __(
+			'Please do not provide financial or contact information when submitting this form.',
+			'full-site-editing'
+		),
+		buttonLabel: __( 'Ask an expert', 'full-site-editing' ),
+		buttonLoadingLabel: __( 'Connecting you to an expert', 'full-site-editing' ),
+	},
 	FORUM: {
 		formTitle: __( 'Ask in our community forums', __i18n_text_domain__ ),
 		formDisclaimer: __(
@@ -85,75 +115,56 @@ const titles: {
 	},
 };
 
-type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
-interface ContactFormProps {
-	mode: Mode;
-	onBackClick: () => void;
-	onGoHome: () => void;
-	siteId: number | null;
-	onPopupOpen?: () => void;
-}
+type Mode = 'CHAT' | 'EMAIL' | 'DIRECTLY' | 'FORUM';
 
-const POPUP_TOP_BAR_HEIGHT = 60;
-
-function openPopup( event: React.MouseEvent< HTMLButtonElement > ): Window {
-	const helpCenterContainer = event.currentTarget.closest(
-		'.help-center__container'
-	) as HTMLDivElement;
-
-	const HCRect = helpCenterContainer.getBoundingClientRect();
-	const windowTop = event.screenY - event.clientY;
-
-	const popupTop = windowTop + HCRect.top - POPUP_TOP_BAR_HEIGHT;
-	const popupLeft = window.screenLeft + HCRect.left;
-	const popupWidth = HCRect.width;
-	const popupHeight = HCRect.height - POPUP_TOP_BAR_HEIGHT;
-
-	const popup = window.open(
-		'https://widgets.wp.com/calypso-happychat/',
-		'happy-chat-window',
-		`toolbar=no,scrollbars=yes,location=no,addressbar=no,width=${ popupWidth },height=${ popupHeight },left=${ popupLeft },top=${ popupTop }`
-	) as Window;
-
-	return popup;
-}
-
-const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHome } ) => {
-	const [ openChat, setOpenChat ] = useState( false );
-	const [ contactSuccess, setContactSuccess ] = useState( false );
-	const [ forumTopicUrl, setForumTopicUrl ] = useState( '' );
+export const HelpCenterContactForm = () => {
+	const { search } = useLocation();
+	const params = new URLSearchParams( search );
+	const mode = params.get( 'mode' ) as Mode;
+	const history = useHistory();
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
+	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 	const locale = useLocale();
 	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
 	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
-	const { setHeaderText } = useContext( HelpCenterContext );
-	const { selectedSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
-		return {
-			selectedSite: select( STORE_KEY ).getSite(),
-			subject: select( STORE_KEY ).getSubject(),
-			message: select( STORE_KEY ).getMessage(),
-			userDeclaredSiteUrl: select( STORE_KEY ).getUserDeclaredSiteUrl(),
-		};
-	} );
+	const { selectedSite, subject, message, userDeclaredSiteUrl, directlyData } = useSelect(
+		( select ) => {
+			return {
+				selectedSite: select( HELP_CENTER_STORE ).getSite(),
+				subject: select( HELP_CENTER_STORE ).getSubject(),
+				message: select( HELP_CENTER_STORE ).getMessage(),
+				userDeclaredSiteUrl: select( HELP_CENTER_STORE ).getUserDeclaredSiteUrl(),
+				directlyData: select( HELP_CENTER_STORE ).getDirectly(),
+			};
+		}
+	);
+	const userData = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 
 	const {
 		setSite,
 		resetStore,
+		setShowHelpCenter,
 		setUserDeclaredSiteUrl,
 		setUserDeclaredSite,
 		setSubject,
 		setMessage,
-		setPopup,
-	} = useDispatch( STORE_KEY );
+	} = useDispatch( HELP_CENTER_STORE );
 
 	const {
 		result: ownershipResult,
 		isLoading: isAnalysisLoading,
 		site: userDeclaredSite,
 	} = useSiteAnalysis( userDeclaredSiteUrl );
+
+	useEffect( () => {
+		const supportVariation = getSupportVariationFromMode( mode );
+		recordTracksEvent( 'calypso_inlinehelp_contact_view', {
+			support_variation: supportVariation,
+		} );
+	}, [ mode ] );
 
 	// record the resolved site
 	useEffect( () => {
@@ -163,38 +174,18 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 	}, [ userDeclaredSite, setUserDeclaredSite ] );
 
 	useEffect( () => {
-		switch ( mode ) {
-			case 'CHAT':
-				if ( openChat ) {
-					setHeaderText(
-						<>
-							<Icon icon={ commentContent } />
-							{ __( 'Live chat', __i18n_text_domain__ ) }
-						</>
-					);
-				} else {
-					setHeaderText( __( 'Start live chat', __i18n_text_domain__ ) );
-				}
-				break;
-			case 'EMAIL':
-				setHeaderText( __( 'Send us an email', __i18n_text_domain__ ) );
-				break;
-			case 'FORUM':
-				setHeaderText( __( 'Ask in our community forums', __i18n_text_domain__ ) );
-				break;
+		if ( directlyData?.hasSession ) {
+			execute( [ 'maximize', {} ] );
+			setShowHelpCenter( false );
 		}
-	}, [ mode, openChat, setHeaderText ] );
-
-	const { hasCookies, isLoading: loadingCookies } = useHas3PC();
+	}, [ directlyData, setShowHelpCenter ] );
 
 	const isSubmitting = submittingTicket || submittingTopic;
-	const isLoading = loadingCookies || isSubmitting;
 
 	const formTitles = titles[ mode ];
 
-	const currentSite = useSelect( ( select ) =>
-		select( SITE_STORE ).getSite( window._currentSiteId )
-	);
+	const siteId = useSelector( getSelectedSiteId );
+	const currentSite = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
 
 	let supportSite: typeof currentSite;
 
@@ -205,25 +196,29 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 		supportSite = selectedSite || currentSite;
 	}
 
-	function handleCTA( event: React.MouseEvent< HTMLButtonElement > ) {
+	function handleCTA() {
 		switch ( mode ) {
 			case 'CHAT': {
 				if ( supportSite ) {
-					if ( hasCookies ) {
-						setOpenChat( true );
-						break;
-					} else {
-						const popup = openPopup( event );
-						setPopup( popup );
-					}
+					recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+						support_variation: 'happychat',
+					} );
+
+					recordTracksEvent( 'calypso_help_live_chat_begin', {
+						site_plan_product_id: supportSite ? supportSite.plan?.product_id : null,
+						is_automated_transfer: supportSite ? supportSite.options.is_automated_transfer : null,
+					} );
+					history.push( '/inline-chat' );
+					break;
 				}
 				break;
 			}
+
 			case 'EMAIL': {
 				if ( supportSite ) {
 					const ticketMeta = [
-						'Site I need help with: ' + supportSite?.URL,
-						'Plan: ' + supportSite?.plan?.product_slug,
+						'Site I need help with: ' + supportSite.URL,
+						'Plan: ' + supportSite.plan?.product_slug,
 					];
 
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
@@ -234,13 +229,21 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 						locale,
 						client: 'browser:help-center',
 						is_chat_overflow: false,
-					} ).then( () => {
-						setContactSuccess( true );
-						resetStore();
-					} );
+					} )
+						.then( () => {
+							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+								support_variation: 'kayako',
+							} );
+							history.push( '/success' );
+							resetStore();
+						} )
+						.catch( () => {
+							setHasSubmittingError( true );
+						} );
 				}
 				break;
 			}
+
 			case 'FORUM': {
 				submitTopic( {
 					site: supportSite,
@@ -249,20 +252,28 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					locale,
 					hideInfo: hideSiteInfo,
 					userDeclaredSiteUrl,
-				} ).then( ( response ) => {
-					setForumTopicUrl( response.topic_URL );
-					resetStore();
+				} )
+					.then( ( response ) => {
+						recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+							support_variation: 'forums',
+						} );
+						history.push( `/success?forumTopic=${ encodeURIComponent( response.topic_URL ) }` );
+						resetStore();
+					} )
+					.catch( () => {
+						setHasSubmittingError( true );
+					} );
+				break;
+			}
+			case 'DIRECTLY': {
+				askDirectlyQuestion( message ?? '', userData?.display_name ?? '', userData?.email ?? '' );
+				recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
+					support_variation: 'directly',
 				} );
+				setShowHelpCenter( false );
 				break;
 			}
 		}
-	}
-	if ( openChat ) {
-		return <InlineChat />;
-	}
-
-	if ( contactSuccess || forumTopicUrl ) {
-		return <SuccessScreen forumTopicUrl={ forumTopicUrl } onBack={ onGoHome } />;
 	}
 
 	const InfoTip = () => {
@@ -294,33 +305,49 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 	};
 
 	const isCTADisabled = () => {
-		return isLoading || ( mode !== 'FORUM' && ! supportSite ) || ! message;
+		if ( isSubmitting || ! message ) {
+			return true;
+		}
+
+		switch ( mode ) {
+			case 'CHAT':
+				return ! supportSite;
+			case 'EMAIL':
+				return ! supportSite || ! subject;
+			case 'FORUM':
+				return ! subject;
+		}
 	};
 
 	return (
 		<main className="help-center-contact-form">
-			<header>
-				{ /* forum users don't have other support options, send them back to home, not the support options screen */ }
-				<BackButton onClick={ mode === 'FORUM' ? onGoHome : onBackClick } />
-			</header>
+			<BackButton />
 			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
+			{ formTitles.formSubtitle && (
+				<p className="help-center-contact-form__site-picker-form-subtitle">
+					{ formTitles.formSubtitle }
+				</p>
+			) }
 			{ formTitles.formDisclaimer && (
 				<p className="help-center-contact-form__site-picker-form-warning">
 					{ formTitles.formDisclaimer }
 				</p>
 			) }
-			<section>
-				<HelpCenterSitePicker
-					currentSite={ currentSite }
-					onSelect={ ( id: string | number ) => {
-						if ( id !== 0 ) {
-							setSite( currentSite );
-						}
-						setSitePickerChoice( id === 0 ? 'OTHER_SITE' : 'CURRENT_SITE' );
-					} }
-					siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
-				/>
-			</section>
+			{ mode !== 'DIRECTLY' && (
+				<section>
+					<HelpCenterSitePicker
+						enabled={ mode === 'FORUM' }
+						currentSite={ currentSite }
+						onSelect={ ( id: string | number ) => {
+							if ( id !== 0 ) {
+								setSite( currentSite );
+							}
+							setSitePickerChoice( id === 0 ? 'OTHER_SITE' : 'CURRENT_SITE' );
+						} }
+						siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
+					/>
+				</section>
+			) }
 			{ sitePickerChoice === 'OTHER_SITE' && (
 				<>
 					<section>
@@ -343,6 +370,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 			{ [ 'FORUM', 'EMAIL' ].includes( mode ) && (
 				<section>
 					<TextControl
+						className="help-center-contact-form__subject"
 						label={ __( 'Subject', __i18n_text_domain__ ) }
 						value={ subject ?? '' }
 						onChange={ setSubject }
@@ -361,7 +389,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					id="help-center-contact-form__message"
 					rows={ 10 }
 					value={ message ?? '' }
-					onChange={ ( event ) => setMessage( event.target.value ) }
+					onInput={ ( event ) => setMessage( event.currentTarget.value ) }
 					className="help-center-contact-form__message"
 				/>
 			</section>
@@ -378,6 +406,7 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 					</div>
 				</section>
 			) }
+
 			<section>
 				<Button
 					disabled={ isCTADisabled() }
@@ -387,6 +416,12 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 				>
 					{ isSubmitting ? formTitles.buttonLoadingLabel : formTitles.buttonLabel }
 				</Button>
+				{ hasSubmittingError && (
+					<FormInputValidation
+						isError
+						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
+					/>
+				) }
 			</section>
 			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && (
 				<section>
@@ -404,5 +439,3 @@ const ContactForm: React.FC< ContactFormProps > = ( { mode, onBackClick, onGoHom
 		</main>
 	);
 };
-
-export default ContactForm;

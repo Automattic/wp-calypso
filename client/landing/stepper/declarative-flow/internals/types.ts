@@ -33,7 +33,7 @@ export type UseStepNavigationHook = (
 	steps?: StepPath[]
 ) => NavigationControls;
 
-export type UseAssertConditionsHook = () => void;
+export type UseAssertConditionsHook = () => AssertConditionResult;
 
 export type Flow = {
 	name: string;
@@ -55,3 +55,14 @@ export type StepProps = {
 export type Step = React.FC< StepProps >;
 
 export type ProvidedDependencies = Record< string, unknown >;
+
+export enum AssertConditionState {
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+	CHECKING = 'checking',
+}
+
+export type AssertConditionResult = {
+	state: AssertConditionState;
+	message?: string;
+};

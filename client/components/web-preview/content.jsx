@@ -23,6 +23,8 @@ export default class WebPreviewContent extends Component {
 		iframeUrl: null,
 		device: this.props.defaultViewportDevice || 'computer',
 		viewport: null,
+		iframeStyle: {},
+		iframeScaleRatio: 1,
 		loaded: false,
 		isLoadingSubpage: false,
 	};
@@ -39,12 +41,17 @@ export default class WebPreviewContent extends Component {
 		if ( this.props.previewMarkup ) {
 			this.setIframeMarkup( this.props.previewMarkup );
 		}
+		if ( this.props.fixedViewportWidth ) {
+			this.handleResize();
+			window.addEventListener( 'resize', this.handleResize );
+		}
 
 		this.props.onDeviceUpdate( this.state.device );
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'message', this.handleMessage );
+		window.removeEventListener( 'resize', this.handleResize );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -64,6 +71,17 @@ export default class WebPreviewContent extends Component {
 		// Focus preview when showing modal
 		if ( this.props.showPreview && ! prevProps.showPreview && this.state.loaded ) {
 			this.focusIfNeeded();
+		}
+
+		// If the fixedViewportWidth changes, re-calculate the iframe styles.
+		if ( this.props.fixedViewportWidth !== prevProps.fixedViewportWidth ) {
+			if ( this.props.fixedViewportWidth && ! prevProps.fixedViewportWidth ) {
+				this.handleResize();
+				window.addEventListener( 'resize', this.handleResize );
+			} else {
+				this.resetResize();
+				window.removeEventListener( 'resize', this.handleResize );
+			}
 		}
 	}
 
@@ -106,11 +124,35 @@ export default class WebPreviewContent extends Component {
 				this.setState( { isLoadingSubpage: true } );
 				return;
 			case 'page-dimensions-on-load':
-				if ( this.props.autoHeight ) {
+			case 'page-dimensions-on-resize':
+				if ( this.props.autoHeight || this.props.fixedViewportWidth ) {
 					this.setState( { viewport: data.payload } );
 				}
 				return;
 		}
+	};
+
+	handleResize = () => {
+		const { fixedViewportWidth: vpw } = this.props;
+		let iframeScaleRatio = 1;
+		let iframeStyle = {};
+
+		if ( ! this.iframe.parentElement?.clientWidth ) {
+			this.resetResize();
+			return;
+		}
+
+		iframeScaleRatio = this.iframe.parentElement.clientWidth / vpw;
+		iframeStyle = {
+			width: `${ vpw }px`,
+			transform: `scale( ${ iframeScaleRatio } )`,
+		};
+
+		this.setState( { iframeStyle, iframeScaleRatio } );
+	};
+
+	resetResize = () => {
+		this.setState( { iframeStyle: {}, iframeScaleRatio: 1 } );
 	};
 
 	redirectToAuth() {
@@ -272,6 +314,7 @@ export default class WebPreviewContent extends Component {
 			'is-tablet': this.state.device === 'tablet',
 			'is-phone': this.state.device === 'phone',
 			'is-seo': this.state.device === 'seo',
+			'is-fixed-viewport-width': !! this.props.fixedViewportWidth,
 			'is-loaded': isLoaded,
 		} );
 
@@ -293,12 +336,17 @@ export default class WebPreviewContent extends Component {
 					showUrl={ this.props.showUrl && isWithinBreakpoint( '>960px' ) }
 					selectSeoPreview={ this.selectSEO }
 					isLoading={ this.state.isLoadingSubpage }
+					isSticky={ this.props.isStickyToolbar }
 				/>
 				{ this.props.belowToolbar }
 				{ ( ! isLoaded || this.state.isLoadingSubpage ) && <SpinnerLine /> }
 				<div
 					className="web-preview__placeholder"
-					style={ this.state.viewport ? { minHeight: this.state.viewport.height } : null }
+					style={
+						this.state.viewport
+							? { minHeight: this.state.viewport.height * this.state.iframeScaleRatio }
+							: null
+					}
 				>
 					{ showLoadingMessage && (
 						<div className="web-preview__loading-message-wrapper">
@@ -314,6 +362,7 @@ export default class WebPreviewContent extends Component {
 							<iframe
 								ref={ this.setIframeInstance }
 								className="web-preview__frame"
+								style={ { ...this.state.iframeStyle, height: this.state.viewport?.height } }
 								src="about:blank"
 								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
 								title={ this.props.iframeTitle || translate( 'Preview' ) }
@@ -396,6 +445,10 @@ WebPreviewContent.propTypes = {
 	fetchPriority: PropTypes.string,
 	// Set height based on page content. This requires the page to post it's dimensions as message.
 	autoHeight: PropTypes.bool,
+	// The toolbar should sticky or not
+	isStickyToolbar: PropTypes.bool,
+	// Fixes the viewport width of the iframe if provided.
+	fixedViewportWidth: PropTypes.number,
 };
 
 WebPreviewContent.defaultProps = {

@@ -1,6 +1,10 @@
 import {
+	isBlogger,
+	isBusiness,
 	isChargeback,
+	isCredits,
 	isDelayedDomainTransfer,
+	isDIFMProduct,
 	isDomainMapping,
 	isDomainProduct,
 	isDomainRedemption,
@@ -9,20 +13,17 @@ import {
 	isEcommerce,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
-	isJetpackPlan,
-	isPlan,
-	isBlogger,
-	isPersonal,
-	isPremium,
-	isBusiness,
-	isSiteRedirect,
-	isTheme,
-	isStarter,
-	isTitanMail,
 	isJetpackBusinessPlan,
-	shouldFetchSitePlans,
-	isDIFMProduct,
+	isJetpackPlan,
+	isPersonal,
+	isPlan,
+	isPremium,
 	isPro,
+	isSiteRedirect,
+	isStarter,
+	isTheme,
+	isTitanMail,
+	shouldFetchSitePlans,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
@@ -58,6 +59,7 @@ import {
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
+import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
@@ -65,7 +67,7 @@ import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
 import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
-import { getPlansBySite, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
 import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
 import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
@@ -326,10 +328,6 @@ export class CheckoutThankYou extends Component {
 		return page( this.props.siteHomeUrl );
 	};
 
-	isEligibleForLiveChat = () => {
-		return isJetpackBusinessPlan( this.props.planSlug );
-	};
-
 	getAnalyticsProperties = () => {
 		const { gsuiteReceiptId, receiptId, selectedFeature: feature, selectedSite } = this.props;
 		const site = get( selectedSite, 'slug' );
@@ -374,7 +372,7 @@ export class CheckoutThankYou extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, isHappychatEligible } = this.props;
 		let purchases = [];
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
@@ -388,7 +386,7 @@ export class CheckoutThankYou extends Component {
 		let wasTitanEmailProduct = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
-			purchases = getPurchases( this.props );
+			purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
 
 			wasGSuiteOrGoogleWorkspace = purchases.some( isGSuiteOrGoogleWorkspace );
 			wasTitanEmailProduct = purchases.some( isTitanMail );
@@ -515,7 +513,7 @@ export class CheckoutThankYou extends Component {
 						<HappinessSupport
 							isJetpack={ wasJetpackPlanPurchased }
 							liveChatButtonEventName="calypso_plans_autoconfig_chat_initiated"
-							showLiveChatButton={ this.isEligibleForLiveChat() }
+							showLiveChatButton={ isHappychatEligible }
 						/>
 					</Card>
 				) }
@@ -707,12 +705,11 @@ export class CheckoutThankYou extends Component {
 export default connect(
 	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
-		const planSlug = getSitePlanSlug( state, siteId );
 		const activeTheme = getActiveTheme( state, siteId );
 
 		return {
 			isProductsListFetching: isProductsListFetching( state ),
-			planSlug,
+			isHappychatEligible: isHappychatUserEligible( state ),
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),

@@ -49,7 +49,6 @@ ENV NVM_DIR=/calypso/.nvm
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
 ENV SKIP_TSC=true
-ENV CHROMEDRIVER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 
@@ -77,15 +76,14 @@ ENTRYPOINT [ "/bin/bash" ]
 #### This image is used to run E2E tests.
 FROM base as ci-e2e
 
-ENV CHROMEDRIVER_SKIP_DOWNLOAD=false
 ENV PUPPETEER_SKIP_DOWNLOAD=false
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=false
-ENV DETECT_CHROMEDRIVER_VERSION=true
 ENV DISPLAY=:99
 
 RUN apt update \
 	&& apt-get install -y \
 		fonts-liberation \
+		fonts-noto \
 		git-restore-mtime \
 		gtk2-engines-pixbuf \
 		libappindicator3-1 \
@@ -96,10 +94,8 @@ RUN apt update \
 		libgbm-dev \
 		libnspr4 \
 		libnss3 \
-		libnss3 \
 		libsecret-1-dev \
 		libx11-xcb1 \
-		libxss1 \
 		libxss1 \
 		libxtst6 \
 		xdg-utils \
@@ -109,10 +105,6 @@ RUN apt update \
 		xfonts-cyrillic \
 		xfonts-scalable \
 		xvfb
-
-RUN wget --no-verbose https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-	&& apt-get install -y ./google-chrome-stable_current_amd64.deb \
-	&& rm ./google-chrome-stable_current_amd64.deb
 
 ENTRYPOINT [ "/bin/bash" ]
 

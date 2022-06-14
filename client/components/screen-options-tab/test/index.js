@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { fireEvent, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import jetpack from 'calypso/state/jetpack/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -105,20 +106,21 @@ describe( 'ScreenOptionsTab', () => {
 		expect( screen.queryByTestId( 'screen-options-tab' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'it toggles dropdown when clicked', () => {
+	test( 'it toggles dropdown when clicked', async () => {
+		const user = userEvent.setup();
 		render( <ScreenOptionsTab wpAdminPath="index.php" />, { initialState } );
 
 		// We expect the dropdown to not be shown by default.
 		expect( screen.queryByTestId( 'screen-options-dropdown' ) ).not.toBeInTheDocument();
 
 		// Click the button.
-		fireEvent.click( screen.getAllByRole( 'button' )[ 0 ] );
+		await user.click( screen.getAllByRole( 'button' )[ 0 ] );
 
 		// Dropdown should exist now it has been toggled.
 		expect( screen.queryByTestId( 'screen-options-dropdown' ) ).toBeInTheDocument();
 
 		// Click the button again.
-		fireEvent.click( screen.getAllByRole( 'button' )[ 0 ] );
+		await user.click( screen.getAllByRole( 'button' )[ 0 ] );
 
 		// Dropdown should not be shown again after toggling it off.
 		expect( screen.queryByTestId( 'screen-options-dropdown' ) ).not.toBeInTheDocument();

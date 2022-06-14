@@ -1,6 +1,8 @@
 import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useState, ReactElement } from 'react';
+import { useDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
 import SiteStatusContent from '../site-status-content';
@@ -14,10 +16,17 @@ interface Props {
 }
 
 export default function SiteCard( { rows, columns }: Props ): ReactElement {
+	const dispatch = useDispatch();
+
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
 	const toggleIsExpanded = () => {
-		setIsExpanded( ( prevValue ) => ! prevValue );
+		setIsExpanded( ( expanded ) => {
+			if ( ! expanded ) {
+				dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_card_expand' ) );
+			}
+			return ! expanded;
+		} );
 	};
 
 	const toggleContent = isExpanded ? (
@@ -29,7 +38,7 @@ export default function SiteCard( { rows, columns }: Props ): ReactElement {
 	const headerItem = rows[ 'site' ];
 
 	const site = rows.site;
-	const siteError = site.error;
+	const siteError = site.error || rows.monitor.error;
 	const siteUrl = site.value.url;
 
 	return (
@@ -45,12 +54,12 @@ export default function SiteCard( { rows, columns }: Props ): ReactElement {
 					{ toggleContent }
 					<SiteStatusContent rows={ rows } type={ headerItem.type } />
 				</span>
-				<SiteActions site={ site } />
+				<SiteActions site={ site } siteError={ siteError } />
 			</div>
 
 			{ isExpanded && (
 				<div className="site-card__expanded-content">
-					{ siteError && <SiteErrorContent siteUrl={ siteUrl } /> }
+					{ site.error && <SiteErrorContent siteUrl={ siteUrl } /> }
 					{ columns
 						.filter( ( column ) => column.key !== 'site' )
 						.map( ( column, index ) => {
@@ -60,7 +69,7 @@ export default function SiteCard( { rows, columns }: Props ): ReactElement {
 									<div
 										className={ classNames(
 											'site-card__expanded-content-list',
-											! siteError && 'site-card__content-list-no-error'
+											! site.error && 'site-card__content-list-no-error'
 										) }
 										key={ index }
 									>

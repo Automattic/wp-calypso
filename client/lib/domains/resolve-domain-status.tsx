@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { modeType, stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
 import { isSubdomain } from 'calypso/lib/domains';
@@ -21,6 +20,8 @@ import {
 import { transferStatus, type as domainTypes, gdprConsentStatus } from './constants';
 import type { ResponseDomain } from './types';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { CalypsoDispatch } from 'calypso/state/types';
+import type { I18N } from 'i18n-calypso';
 import type { ReactChild } from 'react';
 
 export type ResolveDomainStatusReturn =
@@ -53,6 +54,8 @@ export type ResolveDomainStatusOptionsBag = {
 export function resolveDomainStatus(
 	domain: ResponseDomain,
 	purchase: Purchase | null = null,
+	translate: I18N[ 'translate' ],
+	dispatch: CalypsoDispatch,
 	{
 		isJetpackSite = null,
 		isSiteAutomatedTransfer = null,
@@ -125,11 +128,18 @@ export function resolveDomainStatus(
 					);
 				}
 
+				let status = translate( 'Active' );
+				if ( ! domain.autoRenewing ) {
+					status = domain.bundledPlanSubscriptionId
+						? translate( 'Expires with your plan' )
+						: translate( 'Expiring soon' );
+				}
+
 				if ( isExpiringSoon( domain, 7 ) ) {
 					return {
 						statusText: expiresMessage,
 						statusClass: `status-${ domain.autoRenewing ? 'success' : 'error' }`,
-						status: domain.autoRenewing ? translate( 'Active' ) : translate( 'Expiring soon' ),
+						status: status,
 						icon: 'info',
 						listStatusText: expiresMessage,
 						listStatusClass: domain.autoRenewing ? 'info' : 'alert',
@@ -141,7 +151,7 @@ export function resolveDomainStatus(
 				return {
 					statusText: expiresMessage,
 					statusClass: 'status-warning',
-					status: translate( 'Expiring soon' ),
+					status: status,
 					icon: 'info',
 					listStatusText: expiresMessage,
 					listStatusClass: 'warning',
@@ -338,7 +348,10 @@ export function resolveDomainStatus(
 										components: {
 											strong: <strong />,
 											a: (
-												<Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />
+												<Button
+													plain
+													onClick={ () => dispatch( handleRenewNowClick( purchase, siteSlug ) ) }
+												/>
 											),
 										},
 										args: { renewableUntil },
@@ -364,7 +377,10 @@ export function resolveDomainStatus(
 										components: {
 											strong: <strong />,
 											a: (
-												<Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />
+												<Button
+													plain
+													onClick={ () => dispatch( handleRenewNowClick( purchase, siteSlug ) ) }
+												/>
 											),
 										},
 										args: { redeemableUntil },
@@ -422,7 +438,12 @@ export function resolveDomainStatus(
 					purchase && siteSlug && domain.currentUserIsOwner
 						? translate( '{{a}}Renew now{{/a}}', {
 								components: {
-									a: <Button plain onClick={ () => handleRenewNowClick( purchase, siteSlug ) } />,
+									a: (
+										<Button
+											plain
+											onClick={ () => dispatch( handleRenewNowClick( purchase, siteSlug ) ) }
+										/>
+									),
 								},
 						  } )
 						: translate( 'It can be renewed by the owner.' );

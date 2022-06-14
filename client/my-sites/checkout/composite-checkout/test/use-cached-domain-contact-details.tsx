@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { CheckoutProvider, CheckoutStep, CheckoutStepGroup } from '@automattic/composite-checkout';
 import {
 	ShoppingCartProvider,
 	useShoppingCart,
@@ -24,13 +25,34 @@ import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-c
 const initialCart = getEmptyResponseCart();
 const { getCart, setCart } = mockCartEndpoint( initialCart, 'USD', 'US' );
 const cartManagerClient = createShoppingCartManagerClient( { getCart, setCart } );
-const reduxStore = createTestReduxStore();
+const paymentMethods = [];
+const paymentProcessors = {};
 
-function MyTestWrapper( { countries }: { countries: CountryListItem[] } ) {
+function MyTestWrapper( {
+	countries,
+	reduxStore,
+}: {
+	countries: CountryListItem[];
+	reduxStore: ReturnType< typeof createTestReduxStore >;
+} ) {
 	return (
 		<ReduxProvider store={ reduxStore }>
 			<ShoppingCartProvider managerClient={ cartManagerClient }>
-				<MyTestContent countries={ countries } />
+				<CheckoutProvider paymentMethods={ paymentMethods } paymentProcessors={ paymentProcessors }>
+					<CheckoutStepGroup>
+						<CheckoutStep
+							stepId="contact-form"
+							titleContent={ <em>Contact step</em> }
+							isCompleteCallback={ () => false }
+							activeStepContent={ <MyTestContent countries={ countries } /> }
+						/>
+						<CheckoutStep
+							stepId="other-step"
+							titleContent={ <em>Other step</em> }
+							isCompleteCallback={ () => false }
+						/>
+					</CheckoutStepGroup>
+				</CheckoutProvider>
 			</ShoppingCartProvider>
 		</ReduxProvider>
 	);
@@ -93,7 +115,8 @@ describe( 'useCachedDomainContactDetails', () => {
 			country_code: countryCode,
 			postal_code: postalCode,
 		} );
-		render( <MyTestWrapper countries={ countryList } /> );
+		const reduxStore = createTestReduxStore();
+		render( <MyTestWrapper countries={ countryList } reduxStore={ reduxStore } /> );
 		await waitFor( () => {
 			expect( screen.queryByText( `Form Country: ${ countryCode }` ) ).toBeInTheDocument();
 			expect( screen.queryByText( `Form Postal: ${ postalCode }` ) ).toBeInTheDocument();
@@ -107,7 +130,8 @@ describe( 'useCachedDomainContactDetails', () => {
 			country_code: countryCode,
 			postal_code: postalCode,
 		} );
-		render( <MyTestWrapper countries={ countryList } /> );
+		const reduxStore = createTestReduxStore();
+		render( <MyTestWrapper countries={ countryList } reduxStore={ reduxStore } /> );
 		await waitFor( () => {
 			expect( screen.queryByText( `Form Country: ${ countryCode }` ) ).toBeInTheDocument();
 			expect( screen.queryByText( `Form Postal: ${ postalCode }` ) ).not.toBeInTheDocument();
@@ -121,7 +145,8 @@ describe( 'useCachedDomainContactDetails', () => {
 			country_code: countryCode,
 			postal_code: postalCode,
 		} );
-		render( <MyTestWrapper countries={ [] } /> );
+		const reduxStore = createTestReduxStore();
+		render( <MyTestWrapper countries={ [] } reduxStore={ reduxStore } /> );
 		await expect( screen.findByText( 'Form Country: US' ) ).toNeverAppear();
 		await expect( screen.findByText( 'Form Postal: 10001' ) ).toNeverAppear();
 	} );

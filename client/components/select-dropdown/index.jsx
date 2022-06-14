@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { filter, find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component } from 'react';
+import { v4 as uuid } from 'uuid';
 import Count from 'calypso/components/count';
 import MaterialIcon from 'calypso/components/material-icon';
 import TranslatableString from 'calypso/components/translatable/proptype';
@@ -49,9 +50,7 @@ class SelectDropdown extends Component {
 		style: {},
 	};
 
-	static instances = 0;
-
-	instanceId = ++SelectDropdown.instances;
+	instanceId = uuid();
 
 	state = {
 		isOpen: false,
@@ -283,26 +282,26 @@ class SelectDropdown extends Component {
 	}
 
 	navigateItem = ( event ) => {
-		switch ( event.keyCode ) {
-			case 9: //tab
+		switch ( event.code ) {
+			case 'Tab':
 				this.navigateItemByTabKey( event );
 				break;
-			case 32: // space
-			case 13: // enter
+			case 'Space':
+			case 'Enter':
 				event.preventDefault();
 				this.activateItem();
 				break;
-			case 38: // up arrow
+			case 'ArrowUp':
 				event.preventDefault();
 				this.focusSibling( 'previous' );
 				this.openDropdown();
 				break;
-			case 40: // down arrow
+			case 'ArrowDown':
 				event.preventDefault();
 				this.focusSibling( 'next' );
 				this.openDropdown();
 				break;
-			case 27: // escape
+			case 'Escape':
 				event.preventDefault();
 				this.closeDropdown();
 				this.dropdownContainerRef.current.focus();

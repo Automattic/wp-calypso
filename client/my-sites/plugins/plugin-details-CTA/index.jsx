@@ -11,10 +11,7 @@ import { userCan } from 'calypso/lib/site/utils';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	getEligibility,
-	isEligibleForAutomatedTransfer,
-} from 'calypso/state/automated-transfer/selectors';
+import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
@@ -22,8 +19,8 @@ import { removePluginStatuses } from 'calypso/state/plugins/installed/status/act
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
-import hasActiveSiteFeature from 'calypso/state/selectors/has-active-site-feature';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { PREINSTALLED_PLUGINS } from '../constants';
@@ -57,18 +54,15 @@ const PluginDetailsCTA = ( {
 
 	const shouldUpgrade =
 		useSelector(
-			( state ) => ! hasActiveSiteFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
+			( state ) => ! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
 		) && ! isJetpackSelfHosted;
 
 	// Eligibilities for Simple Sites.
 	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
 		getEligibility( state, selectedSite?.ID )
 	);
-	const isEligible = useSelector( ( state ) =>
-		isEligibleForAutomatedTransfer( state, selectedSite?.ID )
-	);
 	const hasEligibilityMessages =
-		! isAtomic && ! isJetpack && ( eligibilityHolds || eligibilityWarnings || isEligible );
+		! isAtomic && ! isJetpack && ( eligibilityHolds?.length || eligibilityWarnings?.length );
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsCTAPlaceholder />;

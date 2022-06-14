@@ -7,7 +7,7 @@ import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
@@ -21,7 +21,7 @@ import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import useUrlSearch from 'calypso/lib/url-search/use-url-search';
+import { setQueryArgs } from 'calypso/lib/query-args';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import NoResults from 'calypso/my-sites/no-results';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -41,8 +41,6 @@ import {
 } from 'calypso/state/analytics/actions';
 import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
-import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
-import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { getPlugins, isEqualSlugOrId } from 'calypso/state/plugins/installed/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
@@ -76,15 +74,16 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 		targetRef: searchHeaderRef,
 		referenceRef: navigationHeaderRef,
 	} = useScrollAboveElement();
+	const searchRef = useRef( null );
 
-	const { doSearch } = useUrlSearch();
+	const clearSearch = useCallback( () => {
+		searchRef?.current?.setKeyword( '' );
+	}, [ searchRef ] );
+
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
-
-	// Billing period switcher.
-	const billingPeriod = useSelector( getBillingInterval );
 
 	const { plugins: paidPlugins = [], isFetching: isFetchingPaidPlugins } = usePlugins( {
 		category: 'paid',
@@ -128,6 +127,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 		pagination: pluginsPagination,
 		fetchNextPage,
 	} = usePlugins( {
+		infinite: true,
 		search,
 		wpcomEnabled: !! search,
 		wporgEnabled: !! search,
@@ -154,6 +154,12 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
+
+	useEffect( () => {
+		if ( ! search ) {
+			clearSearch();
+		}
+	}, [ clearSearch, search ] );
 
 	useEffect( () => {
 		const items = [
@@ -280,9 +286,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 			/>
 
 			<SearchBoxHeader
+				searchRef={ searchRef }
 				popularSearchesRef={ searchHeaderRef }
 				isSticky={ isAboveElement }
-				doSearch={ doSearch }
+				doSearch={ ( searchTerm ) => setQueryArgs( '' !== searchTerm ? { s: searchTerm } : {} ) }
 				searchTerm={ search }
 				isSearching={ isFetchingPluginsBySearchTerm }
 				title={ translate( 'Plugins you need to get your projects done' ) }
@@ -291,28 +298,29 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 
 			{ ! search && <Categories selected={ category } /> }
 
-			<PluginBrowserContent
-				pluginsByCategoryPopular={ pluginsByCategoryPopular }
-				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
-				isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
-				fetchNextPage={ fetchNextPage }
-				pluginsBySearchTerm={ pluginsBySearchTerm }
-				pluginsPagination={ pluginsPagination }
-				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
-				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
-				search={ search }
-				category={ category }
-				paidPlugins={ paidPlugins }
-				isFetchingPaidPlugins={ isFetchingPaidPlugins }
-				sites={ sites }
-				searchTitle={ searchTitle }
-				siteSlug={ siteSlug }
-				siteId={ siteId }
-				jetpackNonAtomic={ jetpackNonAtomic }
-				billingPeriod={ billingPeriod }
-				setBillingPeriod={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
-			/>
-			<EducationFooter />
+			<div className="plugins-browser__main-container">
+				<PluginBrowserContent
+					clearSearch={ clearSearch }
+					pluginsByCategoryPopular={ pluginsByCategoryPopular }
+					isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
+					isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
+					fetchNextPage={ fetchNextPage }
+					pluginsBySearchTerm={ pluginsBySearchTerm }
+					pluginsPagination={ pluginsPagination }
+					pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
+					isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
+					search={ search }
+					category={ category }
+					paidPlugins={ paidPlugins }
+					isFetchingPaidPlugins={ isFetchingPaidPlugins }
+					sites={ sites }
+					searchTitle={ searchTitle }
+					siteSlug={ siteSlug }
+					siteId={ siteId }
+					jetpackNonAtomic={ jetpackNonAtomic }
+				/>
+			</div>
+			{ ! category && ! search && <EducationFooter /> }
 		</MainComponent>
 	);
 };
@@ -322,12 +330,15 @@ const ClearSearch = () => {
 	const translate = useTranslate();
 
 	return (
-		<a
-			className={ 'plugins-browser__clear-filters' }
-			href={ '/plugins' + ( siteSlug ? '/' + siteSlug : '' ) }
-		>
-			{ translate( 'Clear' ) }
-		</a>
+		<>
+			&nbsp;
+			<a
+				className={ 'plugins-browser__clear-filters' }
+				href={ '/plugins' + ( siteSlug ? '/' + siteSlug : '' ) }
+			>
+				{ translate( 'Clear' ) }
+			</a>
+		</>
 	);
 };
 const SearchListView = ( {
@@ -339,7 +350,6 @@ const SearchListView = ( {
 	siteSlug,
 	siteId,
 	sites,
-	billingPeriod,
 	categoryName,
 } ) => {
 	const dispatch = useDispatch();
@@ -423,7 +433,6 @@ const SearchListView = ( {
 					currentSites={ sites }
 					variant={ PluginsBrowserListVariant.Paginated }
 					extended
-					billingPeriod={ billingPeriod }
 				/>
 				<InfiniteScroll nextPageMethod={ fetchNextPage } />
 			</>
@@ -431,36 +440,58 @@ const SearchListView = ( {
 	}
 
 	return (
-		<NoResults
-			text={ translate( 'No plugins match your search for {{searchTerm/}}.', {
-				textOnly: true,
-				components: { searchTerm: <em>{ searchTerm }</em> },
-			} ) }
-		/>
+		<div className="plugins-browser__no-results">
+			<NoResults
+				text={ translate( 'No plugins match your search for {{searchTerm/}}.', {
+					textOnly: true,
+					components: { searchTerm: <em>{ searchTerm }</em> },
+				} ) }
+			/>
+		</div>
 	);
 };
 
-const FullListView = ( { category, siteSlug, sites, billingPeriod, setBillingPeriod } ) => {
-	const isPaidCategory = category === 'paid';
-	const { plugins, isFetching, fetchNextPage } = usePlugins( { category, infinite: true } );
+const FullListView = ( { category, siteSlug, sites } ) => {
+	const { plugins, isFetching, fetchNextPage, pagination } = usePlugins( {
+		category,
+		infinite: true,
+	} );
 
 	const categories = useCategories();
-	const categoryName = [ 'paid', 'popular' ].includes( category )
-		? categories[ category ]?.name
-		: null;
+	const categoryName = categories[ category ]?.name;
+	const translate = useTranslate();
+
+	let title = '';
+	if ( categoryName && pagination ) {
+		title = translate(
+			'Found %(total)s plugin under "%(categoryName)s"',
+			'Found %(total)s plugins under "%(categoryName)s"',
+			{
+				count: pagination.results,
+				textOnly: true,
+				args: {
+					total: pagination.results,
+					categoryName,
+				},
+			}
+		);
+	}
 
 	return (
 		<>
 			<PluginsBrowserList
 				plugins={ plugins }
 				listName={ category }
-				title={ categoryName }
+				subtitle={
+					<>
+						{ title }
+						<ClearSearch />
+					</>
+				}
 				site={ siteSlug }
 				showPlaceholders={ isFetching }
 				currentSites={ sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
-				billingPeriod={ billingPeriod }
-				setBillingPeriod={ isPaidCategory && setBillingPeriod }
 				extended
 			/>
 
@@ -479,8 +510,6 @@ const PluginSingleListView = ( {
 	isFetchingPaidPlugins,
 	siteSlug,
 	sites,
-	billingPeriod,
-	setBillingPeriod,
 } ) => {
 	const translate = useTranslate();
 
@@ -533,8 +562,6 @@ const PluginSingleListView = ( {
 			showPlaceholders={ isFetching }
 			currentSites={ sites }
 			variant={ PluginsBrowserListVariant.Fixed }
-			billingPeriod={ billingPeriod }
-			setBillingPeriod={ category === 'paid' && setBillingPeriod }
 			extended
 		/>
 	);

@@ -1,14 +1,11 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
+import { Button, FormInputValidation } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { isCommentableDiscoverPost } from 'calypso/blocks/comments/helper';
-import AsyncLoad from 'calypso/components/async-load';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import Gravatar from 'calypso/components/gravatar';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
@@ -136,25 +133,6 @@ class PostCommentForm extends Component {
 
 		const isReply = !! this.props.parentCommentId;
 
-		const formTextarea = isEnabled( 'reader/gutenberg-for-comments' ) ? (
-			<AsyncLoad
-				require="./block-editor"
-				onChange={ this.handleTextChange }
-				siteId={ this.props.post.site_ID }
-			/>
-		) : (
-			<AutoresizingFormTextarea
-				value={ this.props.commentText }
-				placeholder={ translate( 'Enter your comment here…' ) }
-				onKeyUp={ this.handleKeyUp }
-				onKeyDown={ this.handleKeyDown }
-				onFocus={ this.handleFocus }
-				onBlur={ this.handleBlur }
-				onChange={ this.handleTextChange }
-				enableAutoFocus={ isReply }
-			/>
-		);
-
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
@@ -162,7 +140,16 @@ class PostCommentForm extends Component {
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
 				<FormFieldset>
 					<Gravatar user={ this.props.currentUser } />
-					{ formTextarea }
+					<AutoresizingFormTextarea
+						value={ this.props.commentText }
+						placeholder={ translate( 'Enter your comment here…' ) }
+						onKeyUp={ this.handleKeyUp }
+						onKeyDown={ this.handleKeyDown }
+						onFocus={ this.handleFocus }
+						onBlur={ this.handleBlur }
+						onChange={ this.handleTextChange }
+						enableAutoFocus={ isReply }
+					/>
 					<Button
 						className={ buttonClasses }
 						disabled={ this.props.commentText.length === 0 }

@@ -1,3 +1,4 @@
+import { WordPressLogo } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { ReactChild, ReactElement } from 'react';
@@ -11,6 +12,8 @@ interface Props {
 	stepSectionName?: string;
 	stepContent: ReactElement;
 	shouldHideNavButtons?: boolean;
+	shouldStickyNavButtons?: boolean;
+	hasStickyNavButtonsPadding?: boolean;
 	hideBack?: boolean;
 	hideSkip?: boolean;
 	hideNext?: boolean;
@@ -43,6 +46,8 @@ const StepContainer: React.FC< Props > = ( {
 	stepContent,
 	stepName,
 	shouldHideNavButtons,
+	shouldStickyNavButtons,
+	hasStickyNavButtonsPadding,
 	hideBack,
 	backLabelText,
 	hideSkip,
@@ -164,8 +169,13 @@ const StepContainer: React.FC< Props > = ( {
 			<ActionButtons
 				className={ classNames( 'step-container__navigation', {
 					'should-hide-nav-buttons': shouldHideNavButtons,
+					'should-sticky-nav-buttons': shouldStickyNavButtons,
+					'has-sticky-nav-buttons-padding': hasStickyNavButtonsPadding,
 				} ) }
 			>
+				{ shouldStickyNavButtons && (
+					<WordPressLogo className="step-container__navigation-logo" size={ 24 } />
+				) }
 				{ ! hideBack && <BackButton /> }
 				{ ! hideSkip && skipButtonAlign === 'top' && <SkipButton /> }
 				{ ! hideNext && <NextButton /> }

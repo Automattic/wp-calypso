@@ -10,7 +10,8 @@
 	"calypso:src": "src/index.ts",
 	"sideEffects": [
 		"*.css",
-		"*.scss"
+		"*.scss",
+		"src/directly/*"
 	],
 	"repository": {
 		"type": "git",
@@ -31,16 +32,17 @@
 	},
 	"dependencies": {
 		"@automattic/components": "workspace:^",
+		"@automattic/happychat-connection": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/site-picker": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@popperjs/core": "^2.10.2",
-		"@wordpress/base-styles": "^4.4.0",
-		"@wordpress/components": "^19.9.0",
-		"@wordpress/i18n": "^4.7.0",
-		"@wordpress/icons": "^8.3.0",
-		"@wordpress/primitives": "^3.5.0",
+		"@wordpress/base-styles": "^4.5.0",
+		"@wordpress/components": "^19.11.0",
+		"@wordpress/i18n": "^4.9.0",
+		"@wordpress/icons": "^9.0.0",
+		"@wordpress/primitives": "^3.7.0",
 		"classnames": "^2.3.1",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",

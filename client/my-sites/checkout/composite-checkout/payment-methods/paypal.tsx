@@ -2,7 +2,6 @@ import {
 	FormStatus,
 	TransactionStatus,
 	useTransactionStatus,
-	useLineItems,
 	useFormStatus,
 	Button,
 } from '@automattic/composite-checkout';
@@ -209,7 +208,6 @@ function PayPalSubmitButton( {
 } ) {
 	const { formStatus } = useFormStatus();
 	const { transactionStatus } = useTransactionStatus();
-	const [ items ] = useLineItems();
 	const postalCode = useSelect( ( select ) => select( storeKey )?.getPostalCode() );
 	const countryCode = useSelect( ( select ) => select( storeKey )?.getCountryCode() );
 
@@ -220,7 +218,6 @@ function PayPalSubmitButton( {
 			);
 		}
 		onClick( {
-			items,
 			postalCode: postalCode?.value,
 			countryCode: countryCode?.value,
 		} );

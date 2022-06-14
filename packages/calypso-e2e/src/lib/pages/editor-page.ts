@@ -796,5 +796,12 @@ export class EditorPage {
 		return await this.editorGutenbergComponent.editorHasBlockWarning();
 	}
 
+	/**
+	 * Open the editor options menu.
+	 */
+	async openEditorOptionsMenu(): Promise< void > {
+		return this.editorToolbarComponent.openMoreOptionsMenu();
+	}
+
 	//#endregion
 }

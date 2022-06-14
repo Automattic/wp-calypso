@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import { HelpIcon } from '@automattic/help-center';
 import classnames from 'classnames';
@@ -13,13 +14,23 @@ const MasterbarHelpCenter = ( { siteId } ) => {
 
 	const helpCenterVisible = useSelector( isHelpCenterVisible );
 	const dispatch = useDispatch();
+
+	const handleToggleHelpCenter = () => {
+		if ( helpCenterVisible ) {
+			recordTracksEvent( 'calypso_inlinehelp_close', { location: 'help-center-mobile' } );
+		} else {
+			recordTracksEvent( 'calypso_inlinehelp_show', { location: 'help-center-mobile' } );
+		}
+		dispatch( setHelpCenterVisible( ! helpCenterVisible ) );
+	};
+
 	return (
 		<Item
-			onClick={ () => dispatch( setHelpCenterVisible( ! helpCenterVisible ) ) }
+			onClick={ handleToggleHelpCenter }
 			className={ classnames( 'masterbar__item-help', {
 				'is-active': helpCenterVisible,
 			} ) }
-			icon={ <HelpIcon newItems={ newItems } active={ helpCenterVisible } /> }
+			icon={ <HelpIcon newItems={ newItems } /> }
 		/>
 	);
 };

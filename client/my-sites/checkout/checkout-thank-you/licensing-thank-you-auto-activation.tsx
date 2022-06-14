@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, FormInputValidation, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import page from 'page';
@@ -6,7 +6,6 @@ import { FC, useState, useCallback, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.png';
 import QueryProducts from 'calypso/components/data/query-products-list';
-import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

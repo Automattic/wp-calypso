@@ -159,11 +159,11 @@ object BuildDockerImage : BuildType({
 					exit 0
 				fi
 
-				docker push "registry.a8c.com/calypso/app:latest"
-				ACTION="done";
-				FAILURES=$(curl --silent -X GET -H "Content-Type: text/plain" https://teamcity.a8c.com/guestAuth/app/rest/builds/?locator=id:%teamcity.build.id% | grep -c "FAILURE")
-				if [ ${'$'}FAILURES -ne 0 ]; then
-					ACTION="fail"
+				ACTION="fail"
+				SUCCESS=$(curl --silent -X GET -H "Content-Type: text/plain" https://teamcity.a8c.com/guestAuth/app/rest/builds/?locator=id:%teamcity.build.id% | grep -c 'status="SUCCESS"')
+				if [ ${'$'}SUCCESS -eq 1 ]; then
+					docker push "registry.a8c.com/calypso/app:latest"
+					ACTION="done"
 				fi
 
 				payload=${'$'}(jq -n \
@@ -235,6 +235,31 @@ object BuildDockerImage : BuildType({
 				}
 				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
 			}
+		}
+
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#team-calypso-bot"
+				messageFormat = simpleMessageFormat()
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			firstSuccessAfterFailure = true
+			buildProbablyHanging = true
 		}
 	}
 })
@@ -750,8 +775,11 @@ object PreReleaseE2ETests : E2EBuildType(
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
 				sendTo = "#e2eflowtesting-notif"
-				messageFormat = simpleMessageFormat()
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
 			}
+			branchFilter = "+:<default>"
 			buildFailedToStart = true
 			buildFailed = true
 			buildFinishedSuccessfully = true

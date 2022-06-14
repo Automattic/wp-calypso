@@ -1,4 +1,4 @@
-import { Button, FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
@@ -141,7 +141,7 @@ function GiropayPayButton( {
 	onClick?: ProcessPayment;
 	store: GiropayStore;
 } ) {
-	const [ , total ] = useLineItems();
+	const total = useTotal();
 	const { formStatus } = useFormStatus();
 	const customerName = useSelect( ( select ) => select( 'giropay' ).getCustomerName() );
 

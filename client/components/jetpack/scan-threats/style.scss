@@ -138,19 +138,18 @@
 
 		> p {
 			font-size: $font-body;
-			font-weight: normal;
-			width: 100%;
-			text-align: center;
+			width: auto;
+			text-align: left;
+			flex-grow: 1;
+			margin: 0 !important;
 			// line-height: 24px;
 
-			@include breakpoint-deprecated( '>660px' ) {
-				width: auto;
-				text-align: left;
-			}
-
-			@include breakpoint-deprecated( '>800px' ) {
-				flex-grow: 1;
-				margin: 0 !important;
+			@include breakpoint-deprecated( '<960px' ) {
+				font-size: $font-body;
+				font-weight: normal;
+				width: 100%;
+				text-align: center;
+				padding-bottom: 10px;
 			}
 		}
 	}
@@ -160,7 +159,14 @@
 		height: 40px;
 		border-radius: 2px;
 		font-weight: 600;
-		@include breakpoint-deprecated( '<800px' ) {
+		@include breakpoint-deprecated( '<960px' ) {
+			flex-grow: 1;
+		}
+	}
+
+	&__scan-secondary-button {
+		margin-left: 10px;
+		@include breakpoint-deprecated( '<960px' ) {
 			flex-grow: 1;
 		}
 	}

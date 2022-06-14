@@ -1,4 +1,5 @@
 import {
+	isAddOn,
 	isDomainRegistration,
 	isPlan,
 	isMonthlyProduct,
@@ -570,7 +571,7 @@ function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct }
 	const productSlug = product.product_slug;
 	const sublabel = getSublabel( product );
 
-	if ( isPlan( product ) || isJetpackProductSlug( productSlug ) ) {
+	if ( isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug ) ) {
 		if ( isP2Plus( product ) ) {
 			// This is the price for one item for products with a quantity (eg. seats in a license).
 			const itemPrice = product.item_original_cost_for_quantity_one_display;

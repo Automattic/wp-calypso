@@ -2,13 +2,28 @@
 @import '@wordpress/base-styles/mixins';
 
 .sites-overview {
-	height: 100vh;
+	.current-section {
+		padding: 0 16px;
+	}
+}
+.sites-overview__container {
 	padding: 16px;
+	max-width: 1500px;
+	margin: auto;
 	@include break-large() {
 		padding: 0;
 	}
 	@include break-wide() {
 		padding: 6px 16px;
+	}
+}
+.sites-overview__search {
+	@include break-large() {
+		display: none;
+	}
+	.search.is-open {
+		margin-bottom: 8px;
+		box-shadow: 0 0 0 1px var( --color-neutral-5 );
 	}
 }
 .sites-overview__page-title-container {
@@ -85,6 +100,18 @@
 		width: 100%;
 		margin-left: 0;
 		font-size: 0.875rem;
+	}
+}
+.sites-overview__overlay {
+	display: block;
+	position: absolute;
+	height: 49px;
+	width: 20px;
+	background: linear-gradient( to right, rgba( 255, 255, 255, 0.8 ) 30%, rgba( 255, 255, 255, 1 ) 100% );
+	top: 0;
+	right: 70px;
+	@include break-large() {
+		right: 0;
 	}
 }
 .sites-overview__vertical-align-middle {
@@ -199,4 +226,16 @@
 }
 .sites-overview__status-warning {
 	border-color:  var( --studio-yellow-20 );;
+}
+.sites-overview__filter-bar {
+	margin: 0 0 8px;
+	@include break-large() {
+		margin: 0 1px 8px;
+	}
+	.filterbar__wrap.card {
+		overflow-x: scroll;
+		@include break-large() {
+			overflow-x: visible;
+		}
+	}
 }

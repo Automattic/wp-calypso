@@ -1,8 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useDesignsBySite } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useDispatch as reduxDispatch } from 'react-redux';
+import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useFSEStatus } from '../hooks/use-fse-status';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
@@ -10,8 +11,13 @@ import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProcessingResult } from './internals/steps-repository/processing-step';
+import {
+	AssertConditionResult,
+	AssertConditionState,
+	Flow,
+	ProvidedDependencies,
+} from './internals/types';
 import type { StepPath } from './internals/steps-repository';
-import type { Flow, ProvidedDependencies } from './internals/types';
 
 function redirect( to: string ) {
 	window.location.href = to;
@@ -24,12 +30,14 @@ export const siteSetupFlow: Flow = {
 		return [
 			...( isEnabled( 'signup/site-vertical-step' ) ? [ 'vertical' ] : [] ),
 			'intent',
+			...( isEnabled( 'signup/goals-step' ) ? [ 'goals' ] : [] ),
 			'options',
 			'designSetup',
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
 			'import',
+			...( isEnabled( 'onboarding/import-light' ) ? [ 'importLight' ] : [] ),
 			'importList',
 			'importReady',
 			'importReadyNot',
@@ -46,7 +54,10 @@ export const siteSetupFlow: Flow = {
 			'error',
 			'wooTransfer',
 			'wooInstallPlugins',
+			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'wooVerifyEmail' ] : [] ),
 			'wooConfirm',
+			'editEmail',
+			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'editEmail' ] : [] ),
 		] as StepPath[];
 	},
 	useSideEffect() {
@@ -57,15 +68,22 @@ export const siteSetupFlow: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
-		const siteSlug = useSiteSlugParam();
-		const siteId = useSelect(
-			( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug )
-		);
+		const siteSlugParam = useSiteSlugParam();
+		const site = useSite();
+		const currentUser = useSelector( getCurrentUser );
+
+		let siteSlug: string | null = null;
+		if ( siteSlugParam ) {
+			siteSlug = siteSlugParam;
+		} else if ( site ) {
+			siteSlug = new URL( site.URL ).host;
+		}
+
 		const adminUrl = useSelect(
-			( select ) => siteSlug && select( SITE_STORE ).getSiteOption( siteId as number, 'admin_url' )
+			( select ) => site && select( SITE_STORE ).getSiteOption( site.ID, 'admin_url' )
 		);
-		const isAtomic = useSelect( ( select ) =>
-			select( SITE_STORE ).isSiteAtomic( siteId as number )
+		const isAtomic = useSelect(
+			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 		const { setPendingAction, setStepProgress } = useDispatch( ONBOARD_STORE );
@@ -138,7 +156,14 @@ export const siteSetupFlow: Flow = {
 					if ( storeType === 'power' ) {
 						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
 
-						return exitFlow( `${ adminUrl }/wp-admin/admin.php?page=wc-admin` );
+						if (
+							isEnabled( 'signup/woo-verify-email' ) &&
+							currentUser &&
+							! currentUser.email_verified
+						) {
+							return navigate( 'wooVerifyEmail' );
+						}
+						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 
 					if ( FSEActive && intent !== 'write' ) {
@@ -183,6 +208,9 @@ export const siteSetupFlow: Flow = {
 						}
 						case 'write': {
 							return navigate( 'options' );
+						}
+						case 'difm': {
+							return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
 						}
 						default: {
 							return navigate( submittedIntent as StepPath );
@@ -232,6 +260,17 @@ export const siteSetupFlow: Flow = {
 
 				case 'wooInstallPlugins':
 					return navigate( 'processing' );
+
+				case 'editEmail':
+					return navigate( 'wooVerifyEmail' );
+
+				case 'wooVerifyEmail': {
+					if ( params[ 0 ] === 'edit-email' ) {
+						return navigate( 'editEmail' );
+					}
+
+					return navigate( 'wooVerifyEmail' );
+				}
 
 				case 'courses': {
 					return exitFlow( `/post/${ siteSlug }` );
@@ -293,6 +332,9 @@ export const siteSetupFlow: Flow = {
 					}
 					return navigate( 'intent' );
 
+				case 'editEmail':
+					return navigate( 'wooVerifyEmail' );
+
 				case 'importList':
 				case 'importReady':
 				case 'importReadyNot':
@@ -341,18 +383,26 @@ export const siteSetupFlow: Flow = {
 		return { goNext, goBack, goToStep, submit };
 	},
 
-	useAssertConditions() {
+	useAssertConditions(): AssertConditionResult {
 		const siteSlug = useSiteSlugParam();
 		const siteId = useSiteIdParam();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 
 		if ( ! userIsLoggedIn ) {
 			redirect( '/start' );
-			throw new Error( 'site-setup requires a logged in user' );
+			return {
+				state: AssertConditionState.FAILURE,
+				message: 'site-setup requires a logged in user',
+			};
 		}
 
 		if ( ! siteSlug && ! siteId ) {
-			throw new Error( 'site-setup did not provide the site slug or site id it is configured to.' );
+			return {
+				state: AssertConditionState.FAILURE,
+				message: 'site-setup did not provide the site slug or site id it is configured to.',
+			};
 		}
+
+		return { state: AssertConditionState.SUCCESS };
 	},
 };

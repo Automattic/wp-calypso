@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/data-stores",
-	"version": "2.0.1",
+	"version": "3.0.1",
 	"description": "Calypso Data Stores.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -31,16 +31,19 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/domain-utils": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
-		"@wordpress/api-fetch": "^6.4.0",
-		"@wordpress/data-controls": "^2.7.0",
-		"@wordpress/deprecated": "^3.7.0",
-		"@wordpress/url": "^3.8.0",
+		"@automattic/happychat-connection": "workspace:^",
+		"@wordpress/api-fetch": "^6.6.0",
+		"@wordpress/data-controls": "^2.9.0",
+		"@wordpress/deprecated": "^3.9.0",
+		"@wordpress/url": "^3.10.0",
 		"fast-json-stable-stringify": "^2.1.0",
 		"i18n-calypso": "workspace:^",
 		"qs": "^6.9.1",
 		"redux": "^4.1.2",
 		"tslib": "^2.3.0",
+		"use-debounce": "^3.1.0",
 		"utility-types": "^3.10.0",
 		"validator": "^13.5.2"
 	},
@@ -53,6 +56,7 @@
 		"@types/validator": "^13.7.1",
 		"jest-fetch-mock": "^3.0.3",
 		"nock": "^12.0.3",
+		"node-fetch": "^2.6.6",
 		"typescript": "^4.5.5",
 		"wait-for-expect": "^3.0.2",
 		"wpcom-proxy-request": "workspace:^"

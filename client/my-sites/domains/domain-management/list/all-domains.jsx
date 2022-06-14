@@ -25,11 +25,7 @@ import wpcom from 'calypso/lib/wp';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'calypso/state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice } from 'calypso/state/notices/actions';
 import {
 	getUserPurchases,
@@ -263,8 +259,9 @@ class AllDomains extends Component {
 			context,
 			requestingSiteDomains,
 			hasLoadedUserPurchases,
-			translate,
 			isContactEmailEditContext,
+			translate,
+			dispatch,
 		} = this.props;
 
 		const { isSavingContactInfo } = this.state;
@@ -330,19 +327,31 @@ class AllDomains extends Component {
 				initialSortOrder: -1,
 				sortFunctions: [
 					( first, second, sortOrder ) => {
-						const { listStatusWeight: firstStatusWeight } = resolveDomainStatus( first, null, {
-							getMappingErrors: true,
-						} );
-						const { listStatusWeight: secondStatusWeight } = resolveDomainStatus( second, null, {
-							getMappingErrors: true,
-						} );
+						const { listStatusWeight: firstStatusWeight } = resolveDomainStatus(
+							first,
+							null,
+							translate,
+							dispatch,
+							{
+								getMappingErrors: true,
+							}
+						);
+						const { listStatusWeight: secondStatusWeight } = resolveDomainStatus(
+							second,
+							null,
+							translate,
+							dispatch,
+							{
+								getMappingErrors: true,
+							}
+						);
 						return ( ( firstStatusWeight ?? 0 ) - ( secondStatusWeight ?? 0 ) ) * sortOrder;
 					},
 					getReverseSimpleSortFunctionBy( 'domain' ),
 				],
 				bubble: countDomainsInOrangeStatus(
 					domains.map( ( domain ) =>
-						resolveDomainStatus( domain, null, {
+						resolveDomainStatus( domain, null, translate, dispatch, {
 							getMappingErrors: true,
 							siteSlug: sites[ domain.blogId ].slug,
 						} )
@@ -466,13 +475,21 @@ class AllDomains extends Component {
 
 		if ( selectedDomainNamesList.length === 0 ) {
 			this.setState( { isSavingContactInfo: false }, () =>
-				this.props.infoNotice( this.props.translate( 'No domains selected.' ) )
+				this.props.dispatch( infoNotice( this.props.translate( 'No domains selected.' ) ) )
 			);
 			return;
 		}
 
 		if ( this.props.isContactEmailEditContext ) {
-			this.props.saveContactEmailClick();
+			this.props.dispatch(
+				recordGoogleEvent(
+					'Domain Management',
+					'Clicked "Save contact info" Button in ListAll > Bulk edit email address'
+				)
+			);
+			this.props.dispatch(
+				recordTracksEvent( 'calypso_domain_management_list_all_save_contact_email_click' )
+			);
 		}
 
 		const saveWhoisPromises = selectedDomainNamesList.map( ( domainName ) => {
@@ -512,7 +529,9 @@ class AllDomains extends Component {
 
 		Promise.allSettled( saveWhoisPromises ).then( () => {
 			this.setState( { isSavingContactInfo: false }, () =>
-				this.props.infoNotice( this.props.translate( 'Saving contact info is complete.' ) )
+				this.props.dispatch(
+					infoNotice( this.props.translate( 'Saving contact info is complete.' ) )
+				)
 			);
 		} );
 	};
@@ -684,15 +703,6 @@ class AllDomains extends Component {
 	}
 }
 
-const saveContactEmailClick = () =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Management',
-			'Clicked "Save contact info" Button in ListAll > Bulk edit email address'
-		),
-		recordTracksEvent( 'calypso_domain_management_list_all_save_contact_email_click' )
-	);
-
 const getSitesById = ( state ) => {
 	return ( getSites( state ) ?? [] ).reduce( ( result, site ) => {
 		result[ site.ID ] = site;
@@ -736,29 +746,23 @@ const getFilteredDomainsList = ( state, context ) => {
 	}
 };
 
-export default connect(
-	( state, { context } ) => {
-		const sites = getSitesById( state );
-		const action = parse( context.querystring )?.action;
+export default connect( ( state, { context } ) => {
+	const sites = getSitesById( state );
+	const action = parse( context.querystring )?.action;
 
-		return {
-			action,
-			canManageSitesMap: canCurrentUserForSites( state, Object.keys( sites ), 'manage_options' ),
-			currentRoute: getCurrentRoute( state ),
-			domainsList: getFlatDomainsList( state ),
-			domainsDetails: getAllDomains( state ),
-			filteredDomainsList: getFilteredDomainsList( state, context ),
-			hasAllSitesLoaded: hasAllSitesList( state ),
-			isContactEmailEditContext: ListAllActions.editContactEmail === action,
-			purchases: getUserPurchases( state ) || [],
-			hasLoadedUserPurchases: hasLoadedUserPurchasesFromServer( state ),
-			requestingFlatDomains: isRequestingAllDomains( state ),
-			requestingSiteDomains: getAllRequestingSiteDomains( state ),
-			sites,
-		};
-	},
-	{
-		saveContactEmailClick,
-		infoNotice,
-	}
-)( localize( AllDomains ) );
+	return {
+		action,
+		canManageSitesMap: canCurrentUserForSites( state, Object.keys( sites ), 'manage_options' ),
+		currentRoute: getCurrentRoute( state ),
+		domainsList: getFlatDomainsList( state ),
+		domainsDetails: getAllDomains( state ),
+		filteredDomainsList: getFilteredDomainsList( state, context ),
+		hasAllSitesLoaded: hasAllSitesList( state ),
+		isContactEmailEditContext: ListAllActions.editContactEmail === action,
+		purchases: getUserPurchases( state ) || [],
+		hasLoadedUserPurchases: hasLoadedUserPurchasesFromServer( state ),
+		requestingFlatDomains: isRequestingAllDomains( state ),
+		requestingSiteDomains: getAllRequestingSiteDomains( state ),
+		sites,
+	};
+} )( localize( AllDomains ) );

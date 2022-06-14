@@ -71,6 +71,7 @@ const stepNameToModuleName = {
 	'plans-premium-monthly': 'plans',
 	'design-setup-site': 'design-picker',
 	'new-or-existing-site': 'new-or-existing-site',
+	'choose-service': 'choose-service',
 	'difm-site-picker': 'difm-site-picker',
 	'difm-design-setup-site': 'design-picker',
 	'difm-options': 'site-options',

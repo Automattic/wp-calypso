@@ -20,7 +20,7 @@
 	"dependencies": {
 		"@types/totp-generator": "^0.0.3",
 		"mailosaur": "^7.3.1",
-		"playwright": "^1.19.2",
+		"playwright": "^1.22.2",
 		"totp-generator": "^0.0.12"
 	},
 	"devDependencies": {
@@ -31,7 +31,7 @@
 		"@types/jest": "^27.4.0",
 		"@types/node": "^16.11.26",
 		"@types/node-fetch": "^2.6.1",
-		"@wordpress/i18n": "^4.2.4",
+		"@wordpress/i18n": "^4.9.0",
 		"asana-phrase": "^0.0.8",
 		"node-fetch": "^2.6.6",
 		"typescript": "^4.5.5"

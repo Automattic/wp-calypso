@@ -1,5 +1,5 @@
+import { Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import Spinner from 'calypso/components/spinner';
 
 export default function WaitForKey() {
 	const translate = useTranslate();

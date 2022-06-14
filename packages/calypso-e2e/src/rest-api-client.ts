@@ -2,10 +2,15 @@ import fetch, { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 import { SecretsManager } from './secrets';
 import type { AccountCredentials } from './data-helper';
 
-interface AccountClosureDetails {
+export interface AccountClosureDetails {
 	userID: number;
 	username: string;
 	email: string;
+}
+export interface SiteDetails {
+	url: string;
+	id: string;
+	name: string;
 }
 
 type EndpointVersions = '1' | '1.1' | '1.2' | '1.3';
@@ -49,6 +54,27 @@ export interface NewUserResponse {
 		username: string;
 		bearer_token: string;
 	};
+}
+export interface NewSiteResponse {
+	code: number;
+	body: {
+		success: boolean;
+		blog_details: {
+			url: string;
+			blogid: string;
+			blogname: string;
+			site_slug: string;
+		};
+	};
+}
+interface SiteDeletionResponse {
+	ID: number;
+	name: string;
+	status: string;
+}
+
+export interface AccountClosureResponse {
+	success: boolean;
 }
 
 const BEARER_TOKEN_URL = 'https://wordpress.com/wp-login.php?action=login-endpoint';
@@ -180,6 +206,79 @@ export class RestAPIClient {
 		return await this.sendRequest( this.getRequestURL( '1.1', '/me/sites' ), params );
 	}
 
+	/**
+	 * Deletes a site.
+	 *
+	 * If the target site has an upgrade purchased within the
+	 * sandboxed environment, it can be deleted without first
+	 * cancelling the subscription.
+	 *
+	 * Otherwise the active subscription must be first cancelled
+	 * otherwise the REST API will throw a HTTP 403 status.
+	 *
+	 * @param {SiteDetails} expectedSiteDetails Expected details for the site to be deleted.
+	 * @returns {SiteDeletionResponse | null} Null if deletion was unsuccessful or not performed. SiteDeletionResponse otherwise.
+	 */
+	async deleteSite( expectedSiteDetails: SiteDetails ): Promise< SiteDeletionResponse | null > {
+		if ( ! expectedSiteDetails.url.includes( 'e2e' ) ) {
+			console.warn( `Aborting site deletion: target is not a test site.` );
+			return null;
+		}
+
+		const mySites = await this.getAllSites();
+
+		// Start from tail end of the array since
+		// the target of site deletion is likely the
+		// most recently created site.
+		for ( const site of mySites.sites.reverse() ) {
+			const myAccountInformation = await this.getMyAccountInformation();
+
+			if ( site.site_owner !== myAccountInformation.ID ) {
+				console.info(
+					`Aborting site deletion: site owner ID did not match.\nExpected: ${ site.site_owner }, Got: ${ myAccountInformation.ID } `
+				);
+				break;
+			}
+
+			// Normalize URL to ensure equal comparison.
+			if ( new URL( site.URL ).href !== new URL( expectedSiteDetails.url ).href ) {
+				console.info(
+					`Aborting site deletion: site URL did not match.\nExpected: ${ site.URL }, Got: ${ expectedSiteDetails.url } `
+				);
+				break;
+			}
+
+			if ( site.ID !== parseInt( expectedSiteDetails.id ) ) {
+				console.info(
+					`Aborting site deletion: site ID did not match.\nExpected: ${ site.ID }, Got: ${ expectedSiteDetails.id } `
+				);
+				break;
+			}
+
+			if ( site.name !== expectedSiteDetails.name ) {
+				console.info(
+					`Aborting site deletion: site name did not match.\nExpected: ${ site.name }, Got: ${ expectedSiteDetails.name } `
+				);
+				break;
+			}
+
+			const params: RequestParams = {
+				method: 'post',
+				headers: {
+					Authorization: await this.getAuthorizationHeader( 'bearer' ),
+					'Content-Type': this.getContentTypeHeader( 'json' ),
+				},
+			};
+
+			return await this.sendRequest(
+				this.getRequestURL( '1.1', `/sites/${ expectedSiteDetails.id }/delete` ),
+				params
+			);
+		}
+		// If nothing matches, return that no action was performed.
+		return null;
+	}
+
 	/* Me */
 
 	/**
@@ -211,11 +310,12 @@ export class RestAPIClient {
 	 * authenticated via the bearer token is checked against the
 	 * supplied parameters.
 	 *
+	 * @param { AccountClosureDetails} expectedAccountDetails Details of the accounts to be closed.
 	 * @returns {Promise<boolean>} True if account closure was successful. False otherwise.
 	 */
 	async closeAccount(
 		expectedAccountDetails: AccountClosureDetails
-	): Promise< { success: boolean } > {
+	): Promise< AccountClosureResponse > {
 		const accountInformation = await this.getMyAccountInformation();
 
 		// Multiple guards to ensure we are operating on the

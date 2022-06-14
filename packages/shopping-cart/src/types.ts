@@ -190,10 +190,13 @@ export interface CartSyncManager {
 }
 
 export interface RequestCart {
+	blog_id?: number | string;
+	cart_key?: CartKey;
 	products: RequestCartProduct[];
 	tax: RequestCartTaxData;
 	coupon: string;
 	temporary: false;
+	create_new_blog?: boolean;
 }
 
 export type RequestCartTaxData = null | {

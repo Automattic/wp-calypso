@@ -1,69 +1,71 @@
 /**
  * @jest-environment jsdom
  */
-import { mount, shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import PluginAction from '../plugin-action';
 
 jest.mock( 'calypso/components/info-popover', () =>
 	require( 'calypso/components/empty-component' )
 );
 
+jest.mock( '@wordpress/components', () => ( {
+	ToggleControl: () => <input type="checkbox" data-testid="toggle-control" />,
+} ) );
+
 describe( 'PluginAction', () => {
 	describe( 'rendering with form toggle', () => {
 		test( 'should have plugin-action class', () => {
-			const wrapper = shallow( <PluginAction /> );
-
-			expect( wrapper.find( '.plugin-action' ) ).toHaveLength( 1 );
+			const { container } = render( <PluginAction /> );
+			expect( container.firstChild ).toHaveClass( 'plugin-action' );
 		} );
 
 		test( 'should render compact form toggle when no children passed', () => {
-			const wrapper = mount( <PluginAction /> );
-
-			expect( wrapper.find( 'input.components-form-toggle__input' ) ).toHaveLength( 1 );
+			render( <PluginAction /> );
+			const toggle = screen.queryByRole( 'checkbox' );
+			expect( toggle ).toBeInTheDocument();
 		} );
 
-		test( 'should render a plugin action label', () => {
-			const wrapper = shallow(
-				<PluginAction label="hello">
-					<span />
+		test( 'should render a plugin action label alongside children', () => {
+			render(
+				<PluginAction label="plugin-action-label">
+					<span data-testid="plugin-action-children" />
 				</PluginAction>
 			);
 
-			expect( wrapper.find( '.plugin-action__label' ) ).toHaveLength( 1 );
+			const label = screen.queryByText( 'plugin-action-label' );
+			const children = screen.queryByTestId( 'plugin-action-children' );
+
+			expect( label ).toBeInTheDocument();
+			expect( label ).toHaveClass( 'plugin-action__label' );
+
+			expect( children ).toBeInTheDocument();
+			expect( children.parentNode ).toHaveClass( 'plugin-action__children' );
 		} );
 	} );
 
 	describe( 'rendering children', () => {
 		test( 'should not render a form toggle when children exist', () => {
-			const wrapper = mount(
+			render(
 				<PluginAction>
 					<span />
 				</PluginAction>
 			);
 
-			expect( wrapper.find( '.components-form-toggle__input' ) ).toHaveLength( 0 );
+			const toggle = screen.queryByTestId( 'toggle-control' );
+			expect( toggle ).not.toBeInTheDocument();
 		} );
 
 		test( 'should render child within plugin-action__children container', () => {
-			const wrapper = mount(
+			render(
 				<PluginAction>
-					<span />
-				</PluginAction>
-			);
-			const children = wrapper.find( '.plugin-action__children' );
-
-			expect( children.length ).toEqual( 1 );
-			expect( children.props().children[ 0 ].type ).toEqual( 'span' );
-		} );
-
-		test( 'should render a plugin action label', () => {
-			const wrapper = mount(
-				<PluginAction label="hello">
-					<span />
+					<span data-testid="plugin-action-children" />
 				</PluginAction>
 			);
 
-			expect( wrapper.find( '.plugin-action__label' ) ).toHaveLength( 1 );
+			const children = screen.getByTestId( 'plugin-action-children' );
+
+			expect( children ).toBeInTheDocument();
+			expect( children.parentNode ).toHaveClass( 'plugin-action__children' );
 		} );
 	} );
 } );
