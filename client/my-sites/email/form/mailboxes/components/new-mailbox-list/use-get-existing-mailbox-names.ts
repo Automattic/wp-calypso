@@ -17,7 +17,7 @@ interface ExistingMailAccount {
 	}[];
 }
 
-const mapProviderToEmailAccountTypes = ( provider: EmailProvider ): string[] =>
+const getEmailAccountTypes = ( provider: EmailProvider ): string[] =>
 	( {
 		[ EmailProvider.Titan ]: [
 			EMAIL_ACCOUNT_TYPE_TITAN_MAIL,
@@ -41,7 +41,7 @@ const useGetExistingMailboxNames = (
 		return [];
 	}
 
-	const emailAccountTypes = mapProviderToEmailAccountTypes( provider );
+	const emailAccountTypes = getEmailAccountTypes( provider );
 
 	return ( accounts as ExistingMailAccount[] )
 		.filter( ( { account_type } ) => emailAccountTypes.includes( account_type ) )

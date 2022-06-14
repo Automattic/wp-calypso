@@ -265,7 +265,7 @@ class ExistingMailboxNamesValidator extends BaseValidator< string > {
 
 	static getExistingMailboxError( domainName: string, existingMailbox: string ): FieldError {
 		return i18n.translate(
-			'Please use unique email addresses. {{strong}}%(emailAddress)s{{/strong}} already exists in your account',
+			'Please use unique email addresses. {{strong}}%(emailAddress)s{{/strong}} already exists in your account.',
 			{
 				args: { emailAddress: `${ existingMailbox }@${ domainName }` },
 				components: { strong: createElement( 'strong' ) },
