@@ -768,23 +768,6 @@ export function generateSteps( {
 			stepName: 'courses',
 		},
 
-		// ↓ importer steps
-		list: {
-			stepName: 'list',
-		},
-		capture: {
-			stepName: 'capture',
-		},
-		ready: {
-			stepName: 'ready',
-		},
-		importing: {
-			stepName: 'importing',
-		},
-		static: {
-			stepName: 'static',
-		},
-
 		// Woocommerce Install steps.
 		'store-address': {
 			stepName: 'store-address',
