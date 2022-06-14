@@ -7,24 +7,25 @@ import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import { EmailVerificationGate } from 'calypso/components/email-verification/email-verification-gate';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import {
-	getTitanExpiryDate,
-	getTitanMailboxPurchaseCost,
-	getTitanMailboxRenewalCost,
-	getTitanProductName,
-	isTitanMonthlyProduct,
-} from 'calypso/lib/titan';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { getTitanProductName } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/add-mailboxes/add-users-placeholder';
+import EmailProviderPricingNotice from 'calypso/my-sites/email/add-mailboxes/email-provider-pricing-notice';
+import {
+	EVENT_CANCEL_BUTTON_CLICK,
+	EVENT_CONTINUE_BUTTON_CLICK,
+	getEventName,
+} from 'calypso/my-sites/email/add-mailboxes/get-event-name';
 import EmailHeader from 'calypso/my-sites/email/email-header';
-import EmailPricingNotice from 'calypso/my-sites/email/email-pricing-notice';
 import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import getMailProductForProvider from 'calypso/my-sites/email/form/mailboxes/components/selectors/get-mail-product-for-provider';
 import getCartItems from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-cart-items';
@@ -123,6 +124,34 @@ const recordClickEvent = ( {
 	} );
 };
 
+const WithVerificationGate = ( {
+	children,
+	productFamily,
+	provider,
+}: {
+	children: JSX.Element;
+	productFamily: string;
+	provider: EmailProvider;
+} ): JSX.Element => {
+	const translate = useTranslate();
+
+	if ( provider === EmailProvider.Titan ) {
+		return <>{ children }</>;
+	}
+
+	return (
+		<EmailVerificationGate
+			noticeText={ translate( 'You must verify your email to purchase %(productFamily)s.', {
+				args: { productFamily },
+				comment: '%(productFamily)s can be either "G Suite" or "Google Workspace"',
+			} ) }
+			noticeStatus="is-info"
+		>
+			{ children }
+		</EmailVerificationGate>
+	);
+};
+
 const MailboxNotices = ( {
 	currentRoute,
 	isLoadingDomains,
@@ -138,7 +167,7 @@ const MailboxNotices = ( {
 		return null;
 	}
 
-	const { existingItemsCount, isExtraItemPurchase } = getMailProductProperties(
+	const { existingItemsCount } = getMailProductProperties(
 		provider,
 		selectedDomain,
 		mailProduct as ProductListItem
@@ -164,16 +193,11 @@ const MailboxNotices = ( {
 				/>
 			) }
 
-			{ selectedDomain && mailProduct && isTitan && isExtraItemPurchase && (
-				<EmailPricingNotice
-					domain={ selectedDomain }
-					expiryDate={ getTitanExpiryDate( selectedDomain ) }
-					mailboxRenewalCost={ getTitanMailboxRenewalCost( selectedDomain ) }
-					mailboxPurchaseCost={ getTitanMailboxPurchaseCost( selectedDomain ) }
-					product={ mailProduct }
-					isMonthlyBilling={ isTitanMonthlyProduct( mailProduct ) }
-				/>
-			) }
+			<EmailProviderPricingNotice
+				mailProduct={ mailProduct }
+				provider={ provider }
+				selectedDomain={ selectedDomain }
+			/>
 		</>
 	);
 };
@@ -203,7 +227,7 @@ const MailboxesForm = ( {
 
 	const onCancel = () => {
 		recordClickEvent( {
-			eventName: 'calypso_email_management_titan_add_mailboxes_cancel_button_click',
+			eventName: getEventName( provider, EVENT_CANCEL_BUTTON_CLICK ),
 			selectedDomainName,
 			source,
 		} );
@@ -220,7 +244,7 @@ const MailboxesForm = ( {
 
 		const recordContinueEvent = ( { canContinue }: { canContinue: boolean } ) => {
 			recordClickEvent( {
-				eventName: 'calypso_email_management_titan_add_mailboxes_continue_button_click',
+				eventName: getEventName( provider, EVENT_CONTINUE_BUTTON_CLICK ),
 				eventProps: {
 					can_continue: canContinue,
 					mailbox_count: mailboxOperations.mailboxes.length,
@@ -273,6 +297,7 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 	const {
 		currentRoute,
 		isLoadingDomains,
+		isTitan,
 		provider,
 		selectedDomain,
 		selectedDomainName,
@@ -286,6 +311,10 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 	);
 
 	const isSelectedDomainNameValid = !! selectedDomain;
+
+	const productName = isTitan
+		? getTitanProductName()
+		: getGoogleMailServiceFamily( mailProduct?.product_slug );
 
 	const goToEmail = (): void => {
 		page(
@@ -315,11 +344,18 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 
 				<EmailHeader />
 
-				<HeaderCake onClick={ goToEmail }>
-					{ getTitanProductName() + ': ' + selectedDomainName }
-				</HeaderCake>
-				<MailboxNotices { ...additionalProps } mailProduct={ mailProduct } />
-				<MailboxesForm { ...additionalProps } goToEmail={ goToEmail } mailProduct={ mailProduct } />
+				<HeaderCake onClick={ goToEmail }>{ productName + ': ' + selectedDomainName }</HeaderCake>
+
+				<WithVerificationGate productFamily={ `${ productName }` } provider={ provider }>
+					<>
+						<MailboxNotices { ...additionalProps } mailProduct={ mailProduct } />
+						<MailboxesForm
+							{ ...additionalProps }
+							goToEmail={ goToEmail }
+							mailProduct={ mailProduct }
+						/>
+					</>
+				</WithVerificationGate>
 			</Main>
 		</>
 	);
