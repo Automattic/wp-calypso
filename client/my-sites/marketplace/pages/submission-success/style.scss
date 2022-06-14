@@ -11,7 +11,7 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	padding: 0 0 72px;
+	padding: 0 0 40px;
 	gap: 41px;
 
 	@include breakpoint-deprecated( '>660px' ) {
@@ -95,14 +95,17 @@
 	align-items: center;
 	padding: 0;
 	p {
+		color: var( --studio-gray-60 );
 		font-size: $font-body-small;
 		margin-bottom: 0;
 	}
 	.signup-success__footer-contact {
 		font-weight: 500;
-		border-bottom: 1px solid #000;
+		margin-bottom: 30px;
+
 		a {
-			color: #000;
+			color: var( --studio-gray-100 );
+			border-bottom: 1px solid #000;
 		}
 	}
 }
