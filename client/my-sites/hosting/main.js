@@ -53,9 +53,9 @@ class Hosting extends Component {
 	}
 
 	componentDidMount() {
-		const { START, COMPLETE } = transferStates;
-		// Check if a reverted site still has the START or the COMPLETE status
-		if ( this.props.transferState === START || this.props.transferState === COMPLETE ) {
+		const { COMPLETE } = transferStates;
+		// Check if a reverted site still has the COMPLETE status
+		if ( this.props.transferState === COMPLETE ) {
 			// Try to refresh the transfer state
 			this.props.fetchAutomatedTransferStatus( this.props.siteId );
 		}
