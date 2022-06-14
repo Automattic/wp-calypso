@@ -23,6 +23,7 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
+	const [ formTouched, setFormTouched ] = React.useState( false );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const translate = useTranslate();
 	const site = useSite();
@@ -34,9 +35,13 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 			return;
 		}
 
+		if ( formTouched ) {
+			return;
+		}
+
 		setSiteTitle( site.name || '' );
 		setTagline( site.description );
-	}, [ site ] );
+	}, [ site, formTouched ] );
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
@@ -55,6 +60,8 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 	};
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
 		if ( site ) {
+			setFormTouched( true );
+
 			switch ( event.currentTarget.name ) {
 				case 'siteTitle':
 					return setSiteTitle( event.currentTarget.value );
