@@ -24,6 +24,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
 	const siteId = useSelector( getSelectedSiteId );
+	const isSimpleSite = window.location.host.endsWith( 'wordpress.com' );
 
 	// prefetch the current site and user
 	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
@@ -45,13 +46,11 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 		}
 	}, [ supportData, setDirectlyData ] );
 
-	const isLoading = [
-		! site,
-		! user,
-		isSupportDataLoading,
-		isLoadingChat,
-		isLoadingChatAvailable,
-	].some( Boolean );
+	const isLoading = isSimpleSite
+		? [ ! site, ! user, isSupportDataLoading, isLoadingChat, isLoadingChatAvailable ].some(
+				Boolean
+		  )
+		: false;
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];
