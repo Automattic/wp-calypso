@@ -26,3 +26,7 @@ export function getJetpackDashboardWelcomeBannerPreference(
 export function checkIfJetpackSiteGotDisconnected( state: AppState ): boolean {
 	return !! state.sites.jetpackSiteDisconnected;
 }
+
+export function getPurchasedLicense( state: AppState ): PurchasedProduct | null {
+	return state.agencyDashboard.purchasedLicense;
+}
