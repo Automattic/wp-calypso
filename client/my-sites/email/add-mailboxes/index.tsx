@@ -15,6 +15,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import { getTitanProductName } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -55,7 +56,6 @@ interface AddMailboxesAdditionalProps {
 	currentRoute: string;
 	isLoadingDomains: boolean;
 	isSelectedDomainNameValid: boolean;
-	isTitan: boolean;
 	provider: EmailProvider;
 	selectedDomain: ResponseDomain;
 	selectedDomainName: string;
@@ -64,6 +64,8 @@ interface AddMailboxesAdditionalProps {
 	source: string;
 	translate: typeof translate;
 }
+
+const isTitan = ( provider: EmailProvider ): boolean => provider === EmailProvider.Titan;
 
 const useAdditionalProps = ( {
 	provider = EmailProvider.Titan,
@@ -88,13 +90,10 @@ const useAdditionalProps = ( {
 
 	const isSelectedDomainNameValid = !! selectedDomain;
 
-	const isTitan = provider === EmailProvider.Titan;
-
 	return {
 		currentRoute,
 		isLoadingDomains,
 		isSelectedDomainNameValid,
-		isTitan,
 		provider,
 		selectedDomain,
 		selectedDomainName,
@@ -108,18 +107,20 @@ const useAdditionalProps = ( {
 const recordClickEvent = ( {
 	eventName,
 	eventProps = {},
+	provider,
 	selectedDomainName,
 	source = '',
 }: {
 	eventName: string;
 	eventProps?: Record< string, unknown >;
+	provider: EmailProvider;
 	selectedDomainName: string;
 	source?: string;
 } ) => {
 	recordTracksEvent( eventName, {
 		...eventProps,
 		domain_name: selectedDomainName,
-		provider: TITAN_PROVIDER_NAME,
+		provider: isTitan( provider ) ? TITAN_PROVIDER_NAME : GOOGLE_PROVIDER_NAME,
 		source,
 	} );
 };
@@ -135,7 +136,7 @@ const WithVerificationGate = ( {
 } ): JSX.Element => {
 	const translate = useTranslate();
 
-	if ( provider === EmailProvider.Titan ) {
+	if ( isTitan( provider ) ) {
 		return <>{ children }</>;
 	}
 
@@ -155,7 +156,6 @@ const WithVerificationGate = ( {
 const MailboxNotices = ( {
 	currentRoute,
 	isLoadingDomains,
-	isTitan,
 	mailProduct,
 	provider,
 	selectedDomainName,
@@ -176,6 +176,7 @@ const MailboxNotices = ( {
 	const handleUnusedMailboxFinishSetupClick = (): void => {
 		recordClickEvent( {
 			eventName: 'calypso_email_management_titan_add_mailboxes_create_mailbox_click',
+			provider,
 			selectedDomainName,
 			source,
 		} );
@@ -185,7 +186,7 @@ const MailboxNotices = ( {
 
 	return (
 		<>
-			{ selectedDomain && isTitan && (
+			{ selectedDomain && isTitan( provider ) && (
 				<TitanUnusedMailboxesNotice
 					domain={ selectedDomain }
 					maxTitanMailboxCount={ existingItemsCount }
@@ -228,6 +229,7 @@ const MailboxesForm = ( {
 	const onCancel = () => {
 		recordClickEvent( {
 			eventName: getEventName( provider, EVENT_CANCEL_BUTTON_CLICK ),
+			provider,
 			selectedDomainName,
 			source,
 		} );
@@ -249,6 +251,7 @@ const MailboxesForm = ( {
 					can_continue: canContinue,
 					mailbox_count: mailboxOperations.mailboxes.length,
 				},
+				provider,
 				selectedDomainName,
 				source,
 			} );
@@ -297,7 +300,6 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 	const {
 		currentRoute,
 		isLoadingDomains,
-		isTitan,
 		provider,
 		selectedDomain,
 		selectedDomainName,
@@ -312,7 +314,7 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 
 	const isSelectedDomainNameValid = !! selectedDomain;
 
-	const productName = isTitan
+	const productName = isTitan( provider )
 		? getTitanProductName()
 		: getGoogleMailServiceFamily( mailProduct?.product_slug );
 
