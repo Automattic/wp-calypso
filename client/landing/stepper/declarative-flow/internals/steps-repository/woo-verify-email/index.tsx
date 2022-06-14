@@ -12,12 +12,9 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { UserData } from 'calypso/lib/user/user';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { redirect } from '../import/util';
 import type { Step } from '../../types';
 import './style.scss';
-
-function redirect( to: string ) {
-	window.location.href = to;
-}
 
 const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
 	const { goBack, submit } = navigation;
