@@ -9,7 +9,7 @@ export function useStillNeedHelpURL() {
 	// TODO: check purchases instead
 	const isFreeUser = ! supportAvailability?.is_user_eligible_for_kayako;
 
-	if ( ! isSimpleSite && ! hasCookies ) {
+	if ( ! isSimpleSite || ! hasCookies ) {
 		return 'https://wordpress.com/help/contact';
 	}
 
