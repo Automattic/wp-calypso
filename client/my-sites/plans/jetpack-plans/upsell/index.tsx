@@ -209,6 +209,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 								<div className="jetpack-upsell__cost-info">
 									{ cta && <p>{ cta }</p> }
 									<div className="jetpack-upsell__price-ctn">
+										<span className="jetpack-upsell__price-plus">+</span>
 										<PlanPrice
 											className="jetpack-upsell__price"
 											rawPrice={ priceDelta }
