@@ -146,6 +146,14 @@ const themeNode = ( { site_slug, slug, version, uri, intent, section } ) => ( {
 	section,
 } );
 
+const backupNode = ( { site_slug, rewind_id, intent, section } ) => ( {
+	type: 'backup',
+	siteSlug: site_slug,
+	rewindId: rewind_id,
+	intent,
+	section,
+} );
+
 const inferNode = ( range ) => {
 	const { type, url } = range;
 
@@ -189,6 +197,9 @@ const nodeMappings = ( type ) => {
 
 		case 'theme':
 			return themeNode;
+
+		case 'backup':
+			return backupNode;
 
 		default:
 			return inferNode;
