@@ -202,6 +202,7 @@ export default {
 				/>
 
 				<TitanSetUpThankYou
+					containerClassName="titan-set-up-thank-you__container_wrapped"
 					domainName={ pageContext.params.domain }
 					emailAddress={ pageContext.query.email }
 				/>
