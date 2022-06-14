@@ -1,47 +1,7 @@
 import { flatten } from 'q-flat';
 import { encode } from 'qss';
-import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from './constants';
-import { ESDateRangeFilter, ESTermFilter } from './types';
-
-const isLengthyArray = ( array: Array< unknown > ) => Array.isArray( array ) && array.length > 0;
-
-const filterKeyToEsFilter: Record< string, ( param: string ) => ESTermFilter | ESDateRangeFilter > =
-	{
-		post_types: ( postType ) => ( { term: { post_type: postType } } ),
-		category: ( category ) => ( { term: { 'category.slug': category } } ),
-		post_tag: ( tag ) => ( { term: { 'tag.slug': tag } } ),
-	};
-
-export const FILTER_KEYS = Object.freeze( [
-	'author',
-	'post_types',
-	'category',
-	'post_format',
-	'post_tag',
-] );
-
-/**
- * Build an ElasticSerach filter object.
- *
- * @param {object} filterQuery - Filter query value object.
- * @returns {object} ElasticSearch filter object.
- */
-function buildFilterObject( filterQuery: Record< string, string[] > ) {
-	const filter: { bool: { must: object[] } } = { bool: { must: [] } };
-	FILTER_KEYS.filter( ( key ) => {
-		return isLengthyArray( filterQuery[ key ] );
-	} ).forEach( ( key ) => {
-		filterQuery[ key ].forEach( ( item ) => {
-			if ( filterKeyToEsFilter[ key ] ) {
-				filter.bool.must.push( filterKeyToEsFilter[ key ]( item ) );
-			} else {
-				// If key is not in the standard map, assume to be a custom taxonomy
-				filter.bool.must.push( { term: { [ `taxonomy.${ key }.slug` ]: item } } );
-			}
-		} );
-	} );
-	return filter;
-}
+import { RETURNABLE_FIELDS } from './constants';
+import type { SearchParams } from './types';
 
 // Maps sort values to values expected by the API
 const SORT_QUERY_MAP = new Map( [
@@ -69,60 +29,12 @@ function mapSortToApiValue( sort: string ) {
  *
  * @returns {string} The generated query string.
  */
-function generateApiQueryString( {
-	author,
-	filter,
-	groupId,
-	pageHandle,
-	query,
-	sort,
-	page = 0,
-	postsPerPage = 10,
-}: {
-	author?: string;
-	filter: Record< string, string[] >;
-	groupId: string;
-	pageHandle?: string;
-	query: string;
-	sort: string;
-	page?: number;
-	postsPerPage?: number;
-} ) {
-	if ( query === null ) {
-		query = '';
-	}
-
-	const size = postsPerPage || DEFAULT_PAGE_SIZE;
-	const from = ( ( page || DEFAULT_FIRST_PAGE ) - 1 ) * size;
-
-	const WPORGFIELDS = [
-		'rating',
-		'post_id',
-		'meta.assets_icons.value',
-		'meta.header_author.value',
-		'meta.header_author_uri.value',
-		'meta.last_updated.value',
-		'taxonomy.plugin_category.name',
-		'taxonomy.plugin_tags.name',
-		'excerpt_en',
-		'title_en',
-		'stable_tag',
-		'author',
-		'tested',
-		'num_ratings',
-		'support_threads',
-		'support_threads_resolved',
-		'active_installs',
-		'last_updated',
-		'slug',
-		// test fields
-		'post_type',
-		'title',
-	];
+function generateApiQueryString( { query, groupId, pageHandle, pageSize }: SearchParams ) {
+	const sort = 'score_default';
 
 	let params: {
 		fields: string[];
-		filter: { bool: { must: object[] } };
+		filter?: { bool: { must: object[] } };
 		page_handle?: string;
 		query: string;
 		sort: string;
@@ -130,13 +42,12 @@ function generateApiQueryString( {
 		group_id?: string;
 		from?: number;
 	} = {
-		fields: [ ...WPORGFIELDS ],
-		filter: buildFilterObject( filter ),
+		fields: [ ...RETURNABLE_FIELDS ],
+		// filter: buildFilterObject( filter ),
 		page_handle: pageHandle,
-		query: encodeURIComponent( query ),
+		query: encodeURIComponent( query ?? '' ),
 		sort: mapSortToApiValue( sort ),
-		size: postsPerPage,
-		from,
+		size: pageSize,
 	};
 
 	if ( groupId ) {
@@ -146,9 +57,9 @@ function generateApiQueryString( {
 		};
 	}
 
-	if ( author ) {
-		// TODO implement author search
-	}
+	// TODO implement author search
+	// if ( author ) {
+	// }
 
 	return encode( flatten( params ) );
 }
@@ -159,10 +70,10 @@ function generateApiQueryString( {
  * @param {object} options - Search options
  * @returns {Promise} A promise to the JSON response object
  */
-export function search( options ) {
+export function search( options: SearchParams ) {
 	const queryString = generateApiQueryString( options );
 
-	const pathForPublicApi = `/sites/${ options.siteId }/search?${ queryString }`;
+	const pathForPublicApi = `/marketplace/search?${ queryString }`;
 
 	const url = `https://public-api.wordpress.com/rest/v1.3${ pathForPublicApi }`;
 
