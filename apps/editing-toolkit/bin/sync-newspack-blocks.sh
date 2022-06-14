@@ -134,7 +134,7 @@ echo -n "phpcbf: "
 
 if [ "$PHPCBF_ERRORED" = 1 ] ; then
 	echo '!! There was an error executing phpcbf!'
-	exit 1
+	#exit 1
 fi
 
 if [ "$MODE" = "npm" ] ; then
