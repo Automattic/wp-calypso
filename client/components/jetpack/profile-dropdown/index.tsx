@@ -4,8 +4,10 @@ import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import useOutsideClickCallback from './use-outside-click-callback';
 import type { UserData } from 'calypso/lib/user/user';
 
@@ -17,23 +19,28 @@ const ProfileDropdown: React.FC = () => {
 	const ref = React.useRef( null );
 	const [ isExpanded, setExpanded ] = useState( false );
 	const user = useSelector( getCurrentUser ) as UserData;
+	const siteId = useSelector( getSelectedSiteId );
 
 	const toggle = useCallback( () => setExpanded( ! isExpanded ), [ isExpanded, setExpanded ] );
 	const close = useCallback( () => {
 		if ( isExpanded ) {
 			setExpanded( false );
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_masterbar_profile_close', {
+					site_id: siteId,
+				} )
+			);
 		}
-	}, [ isExpanded, setExpanded ] );
+	}, [ dispatch, isExpanded, siteId ] );
 
 	const trackedToggle = useTrackCallback( toggle, 'calypso_jetpack_masterbar_profile_toggle' );
-	const trackedClose = useTrackCallback( close, 'calypso_jetpack_masterbar_profile_close' );
 	const redirectToLogoutUrl = useCallback( () => dispatch( redirectToLogout() ), [ dispatch ] );
 	const trackedLogOut = useTrackCallback(
 		redirectToLogoutUrl,
 		'calypso_jetpack_settings_masterbar_logout'
 	);
 
-	useOutsideClickCallback( ref, trackedClose );
+	useOutsideClickCallback( ref, close );
 
 	return (
 		<nav
