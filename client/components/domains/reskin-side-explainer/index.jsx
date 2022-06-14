@@ -1,4 +1,4 @@
-import { localize } from 'i18n-calypso';
+import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -14,6 +14,7 @@ class ReskinSideExplainer extends Component {
 		let paidTitle;
 		let subtitle;
 		let freeSubtitle;
+		let hasFreeSubtitle;
 		let paidSubtitle;
 		let subtitle2;
 		let ctaText;
@@ -22,20 +23,18 @@ class ReskinSideExplainer extends Component {
 			'starter',
 			'pro',
 			'personal',
-			'personal-monthly',
 			'premium',
-			'premium-monthly',
 			'business',
-			'business-monthly',
 			'ecommerce',
-			'ecommerce-monthly',
 			'domain',
 		].includes( this.props.flowName );
+
+		const isEnLocale = [ 'en', 'en-gb' ].includes( getLocaleSlug() );
 
 		switch ( type ) {
 			case 'free-domain-explainer':
 				freeTitle = translate(
-					'Get a {{b}}free{{/b}} one-year domain registration with any paid plan.',
+					'Get a {{b}}free{{/b}} one-year domain registration with any paid annual plan.',
 					{
 						components: { b: <strong /> },
 					}
@@ -50,9 +49,16 @@ class ReskinSideExplainer extends Component {
 
 				title = isPaidPlan ? paidTitle : freeTitle;
 
-				freeSubtitle = translate(
-					'Use the search tool on this page to find a domain you love, then select a paid plan.'
-				);
+				hasFreeSubtitle =
+					i18n.hasTranslation(
+						'Use the search tool on this page to find a domain you love, then select any paid annual plan.'
+					) || isEnLocale;
+
+				freeSubtitle = hasFreeSubtitle
+					? translate(
+							'Use the search tool on this page to find a domain you love, then select any paid annual plan.'
+					  )
+					: null;
 
 				paidSubtitle = translate( 'Use the search tool on this page to find a domain you love.' );
 
@@ -61,6 +67,12 @@ class ReskinSideExplainer extends Component {
 				subtitle2 = translate(
 					'We’ll pay the first year’s domain registration fees for you, simple as that!'
 				);
+
+				if ( ! subtitle ) {
+					subtitle = subtitle2;
+					subtitle2 = null;
+				}
+
 				ctaText = false;
 
 				break;
