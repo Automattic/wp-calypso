@@ -4,12 +4,9 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { redirect } from './internals/steps-repository/import/util';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
-
-function redirect( to: string ) {
-	window.location.href = to;
-}
 
 export const anchorFmFlow: Flow = {
 	name: 'anchor-fm',
