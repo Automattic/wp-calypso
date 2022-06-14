@@ -9,6 +9,8 @@ const getAllowedHosts = ( siteSlug?: string ) => {
 		'jetpack.com',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
+		'calypso.localhost',
+		'wordpress.com',
 		...( ( siteSlug && [ siteSlug ] ) || [] ),
 	];
 
