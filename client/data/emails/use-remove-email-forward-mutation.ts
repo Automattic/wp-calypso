@@ -23,8 +23,8 @@ export function useRemoveEmailForwardMutation(
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
-	const useGetEmailAccountsQueryKey = getEmailAccountsQueryKey( selectedSiteId, domainName );
-	const useGetDomainsQueryKey = getEmailDomainsQueryKey( selectedSiteId );
+	const emailDomainsQueryKey = getEmailAccountsQueryKey( selectedSiteId, domainName );
+	const domainsQueryKey = getEmailDomainsQueryKey( selectedSiteId );
 
 	const suppliedOnSettled = mutationOptions.onSettled;
 
@@ -32,8 +32,8 @@ export function useRemoveEmailForwardMutation(
 		suppliedOnSettled?.( data, error, variables, context );
 
 		await Promise.all( [
-			queryClient.invalidateQueries( useGetEmailAccountsQueryKey ),
-			queryClient.invalidateQueries( useGetDomainsQueryKey ),
+			queryClient.invalidateQueries( emailDomainsQueryKey ),
+			queryClient.invalidateQueries( domainsQueryKey ),
 		] );
 	};
 

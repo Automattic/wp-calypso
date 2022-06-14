@@ -18,8 +18,9 @@ export const getCacheKey = ( siteId: number | null, domain: string ) => [
 	'sites',
 	siteId,
 	'emails',
-	'account',
+	'accounts',
 	domain,
+	'mailboxes',
 ];
 
 /**

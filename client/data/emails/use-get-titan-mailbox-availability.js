@@ -1,12 +1,12 @@
 import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 
-export const getCacheKey = ( domain, mailbox ) => [
+export const getCacheKey = ( domain, mailboxName ) => [
 	'emails',
 	'titan',
 	domain,
 	'check-mailbox-availability',
-	mailbox,
+	mailboxName,
 ];
 
 /**
