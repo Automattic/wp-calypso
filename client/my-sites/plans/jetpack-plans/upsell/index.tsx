@@ -130,7 +130,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 	return (
 		<>
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
-			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
+			<QueryIntroOffers siteId={ siteId ?? 'none' } />
 
 			<Main wideLayout>
 				<h1>
