@@ -9,22 +9,22 @@
 <!-- TOC -->
 
 - [Style Guide](#style-guide)
-    - [Variable naming](#variable-naming)
-    - [Use async/await over](#use-asyncawait-over)
-    - [Selectors](#selectors)
-        - [No selectors within class definition](#no-selectors-within-class-definition)
-        - [Extract repetitive selectors](#extract-repetitive-selectors)
-        - [Do not use Xpath](#do-not-use-xpath)
-        - [Prefer user-facing selectors](#prefer-user-facing-selectors)
-        - [Naming](#naming)
-        - [Involve minimal selectors in methods](#involve-minimal-selectors-in-methods)
-        - [Convert repetitive variations to dynamic selector](#convert-repetitive-variations-to-dynamic-selector)
-    - [Test steps](#test-steps)
-        - [Only one top-level describe block](#only-one-top-level-describe-block)
-        - [Do not use modal verbs](#do-not-use-modal-verbs)
-        - [Prefer smaller steps](#prefer-smaller-steps)
-    - [Single responsibility function](#single-responsibility-function)
-    - [Destructure parameters](#destructure-parameters)
+  - [Variable naming](#variable-naming)
+  - [Use async/await](#use-asyncawait)
+  - [Selectors](#selectors)
+    - [No selectors within class definition](#no-selectors-within-class-definition)
+    - [Extract repetitive selectors](#extract-repetitive-selectors)
+    - [Do not use Xpath](#do-not-use-xpath)
+    - [Prefer user-facing selectors](#prefer-user-facing-selectors)
+    - [Naming](#naming)
+    - [Involve minimal selectors in methods](#involve-minimal-selectors-in-methods)
+    - [Convert repetitive variations to dynamic selector](#convert-repetitive-variations-to-dynamic-selector)
+  - [Test steps](#test-steps)
+    - [Only one top-level describe block](#only-one-top-level-describe-block)
+    - [Do not use modal verbs](#do-not-use-modal-verbs)
+    - [Prefer smaller steps](#prefer-smaller-steps)
+  - [Single responsibility function](#single-responsibility-function)
+  - [Destructure parameters](#destructure-parameters)
 
 <!-- /TOC -->
 
@@ -155,7 +155,7 @@ class SomeObject() {
 
 ### Do not use Xpath
 
-This is simple; do not use Xpath selectors. 
+This is simple; do not use Xpath selectors.
 
 **Avoid**:
 
@@ -171,20 +171,23 @@ await locator = page.locator( 'button' ); // or 'button[type="submit"]' or liter
 
 ### Prefer user-facing selectors
 
-Where possible, use text, CSS or user-facing attributes (like an `aria-label` instead of a `class` name).
+Where possible, prefer user-facing attributes such as ARIA, user-facing text, role selectors. Use CSS selectors as last resort if no other suitable selectors can be found.
+
+See also: [the Playwright maintainers' definitive guide](https://playwright.dev/docs/selectors#best-practices).
 
 **Avoid**:
 
 ```typescript
-await page.click( 'div.someclass .yet-another-class .attribute .very-long-attribute)
+await page.click( 'div.someclass .yet-another-class .attribute .very-long-attribute' );
+await page.click( 'button .is-highlighted' );
 ```
 
 **Instead**:
 
 ```typescript
-await page.click( 'button:has-text("Submit")' );
-await page.click( 'button[aria-label="Some Class"]' );
-await page.click( 'role=spinbutton[name="Continue"]' );
+await page.click( 'button:has-text("Submit")' ); // Text based selector.
+await page.click( 'button[aria-label="Some Class"]' ); // ARIA selector.
+await page.click( 'role=spinbutton[name="Continue"]' ); // Role-based selector.
 ```
 
 ### Naming
@@ -217,21 +220,22 @@ const selectors = {
 
 When method(s) need to wait on an element on the page, involve the minimal number of selectors as possible. Playwright has a strong [auto-wait mechanism](https://playwright.dev/docs/actionability) that handles 95% of the cases.
 
-For instance, when loading the Media page:
-- Good: wait either on the gallery being present, or the thumbnails having generated. 
+For instance, when loading the Calypso Media page:
+
+- Good: wait either on the gallery being present, or the thumbnails having generated.
 - Bad: wait on the header text _and_ the gallery _and_ the upload button _and_ the thumbnails.
 
 **Avoid**:
 
 ```typescript
-await this.page.waitForSelector( '.some-unnecessary-selector-not-related-to-the-test-flow' );
-await this.page.fill( '.actual-element-involved-in-the-flow' );
+await this.page.waitForSelector( 'h1:has-text("New Page")' ); // Waiting for the h1 accomplishes nothing except to add another selector to complicate matters.
+await this.page.fill( 'input[placeholder="New Text"]' );
 ```
 
 **Instead**:
 
 ```typescript
-await this.page.fill( '.actual-element-involved-in-the-flow' );
+await this.page.fill( 'input[placeholder="New Text"]' );
 ```
 
 ### Convert repetitive variations to dynamic selector
@@ -260,7 +264,7 @@ const selectors = {
 // then, in the POM
 
 async funtion clickButton( text: string ) {
-	await this.page.click( selectors.button( text ) ); 
+	await this.page.click( selectors.button( text ) );
 }
 ```
 

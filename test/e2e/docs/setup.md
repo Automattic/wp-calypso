@@ -9,10 +9,10 @@
 <!-- TOC -->
 
 - [Setup](#setup)
-    - [Regular setup](#regular-setup)
-    - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
-    - [Apple Silicon arm64](#apple-silicon-arm64)
-    - [Help](#help)
+  - [Regular setup](#regular-setup)
+  - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
+  - [Apple Silicon arm64](#apple-silicon-arm64)
+  - [Help](#help)
 
 <!-- /TOC -->
 
@@ -73,7 +73,7 @@ At any point, run `arch` to verify whether shell is running with Rosetta 2 emula
 
 ## Apple Silicon (arm64)
 
-Steps in the [Setup](../README.md#quick-start) will get users up and running. 
+Steps in the [Setup](../README.md#quick-start) will get users up and running.
 However, between Step 7 and Step 8, this additional step may be required:
 
 7. set the following environment variables:

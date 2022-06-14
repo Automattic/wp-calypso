@@ -9,10 +9,10 @@
 <!-- TOC -->
 
 - [Test Environment](#test-environment)
-    - [Environment Variables](#environment-variables)
-    - [Secrets File](#secrets-file)
-        - [Decrypting the Secrets](#decrypting-the-secrets)
-        - [Using the Secrets](#using-the-secrets)
+  - [Environment Variables](#environment-variables)
+  - [Secrets File](#secrets-file)
+    - [Decrypting the Secrets](#decrypting-the-secrets)
+    - [Using the Secrets](#using-the-secrets)
 
 <!-- /TOC -->
 

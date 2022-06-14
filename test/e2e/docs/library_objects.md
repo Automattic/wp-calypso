@@ -13,10 +13,10 @@ For a brief introduction to Page Object Models, please refer to [this page](http
 <!-- TOC -->
 
 - [Library Objects](#library-objects)
-    - [Distinction](#distinction)
-    - [Components](#components)
-    - [Page](#page)
-    - [Flows](#flows)
+  - [Distinction](#distinction)
+  - [Components](#components)
+  - [Page](#page)
+  - [Flows](#flows)
 
 <!-- /TOC -->
 
@@ -40,7 +40,7 @@ Example: [StartSiteFlow](../../../packages/calypso-e2e/src/lib/flows/start-site-
 
 ## Components
 
-Components represent a sub-portion of the page, and are typically shared across multiple pages. A good example is the `SidebarComponent`, persisting across multiple pages in the Calypso dashboard. 
+Components represent a sub-portion of the page, and are typically shared across multiple pages. A good example is the `SidebarComponent`, persisting across multiple pages in the Calypso dashboard.
 
 The SidebarComponent, as an example, encapsulates element selectors and actions for only the Sidebar, leaving interactions on the main content pane for the respective Page objects.
 
@@ -161,7 +161,7 @@ export class SignupFlow {
 		const pageB = new PageB( page );
 		await pageB.agreeToEULA();
 		await pageB.submit();
-		
+
 		const componentC = new ComponentC( page );
 		await componentC.navigateToDashboard();
 	}
