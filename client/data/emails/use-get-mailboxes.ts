@@ -9,9 +9,9 @@ export const getCacheKey = ( siteId: number | null ) => [ 'sites', siteId, 'emai
 /**
  * Get the associated mailboxes for a given site
  *
- * @param {number} siteId Site identifier
- * @param {object} queryOptions Query options
- * @returns {data, error, isLoading} Returns an object with the requested mailboxes
+ * @param siteId Site identifier
+ * @param queryOptions Query options
+ * @returns Returns the result of the `useQuery` call
  */
 export const useGetMailboxes = (
 	siteId: number,

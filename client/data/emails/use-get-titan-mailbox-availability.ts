@@ -19,7 +19,7 @@ const finalErrorStatuses = [ 400, 401, 403, 409 ];
  * @param domainName The domain name of the mailbox
  * @param mailboxName The mailbox name
  * @param queryOptions Optional options to pass to the underlying query engine
- * @returns Returns various parameters piped from `useQuery`
+ * @returns Returns the result of the `useQuery` call
  */
 export const useGetTitanMailboxAvailability = (
 	domainName: string,

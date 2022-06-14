@@ -12,7 +12,7 @@ import type { UseMutationOptions } from 'react-query';
  * @param alternateEmailAddress An alternate email address where password resets and correspondences are sent
  * @param isAdmin The user has admin privileges on the account
  * @param mutationOptions Mutation options passed on to `useMutation`
- * @returns Returns various parameters piped from `useMutation`
+ * @returns Returns the result of the `useMutation` call
  */
 export function useCreateTitanMailboxMutation(
 	domainName: string,

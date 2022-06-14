@@ -27,11 +27,10 @@ export const getCacheKey = ( siteId: number | null, domain: string ) => [
  * Get the associated emails given a Site Identificator
  * and a domain string (example.com)
  *
- * @param {number} siteId Site identificator
- * @param {string} domain Domain
- * @param {object} queryOptions Query options
- * @returns {data, error, isLoading} Returns and object with the
- * data associated to the SiteId & Domain
+ * @param siteId Site identificator
+ * @param domain Domain
+ * @param queryOptions Query options
+ * @returns Returns the result of the `useQuery` call
  */
 export const useGetEmailAccountsQuery = (
 	siteId: number,
