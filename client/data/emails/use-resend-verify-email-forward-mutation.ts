@@ -6,7 +6,7 @@ import { getEmailForwardAddress } from 'calypso/lib/emails';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import type { EmailForward } from './types';
+import type { Mailbox } from './types';
 import type { UseMutationOptions } from 'react-query';
 
 const MUTATION_KEY = 'reverifyEmailForward';
@@ -20,7 +20,7 @@ const MUTATION_KEY = 'reverifyEmailForward';
  */
 export default function useResendVerifyEmailForwardMutation(
 	domainName: string,
-	mutationOptions: Omit< UseMutationOptions< any, unknown, EmailForward >, 'mutationFn' > = {}
+	mutationOptions: Omit< UseMutationOptions< any, unknown, Mailbox >, 'mutationFn' > = {}
 ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -71,7 +71,7 @@ export default function useResendVerifyEmailForwardMutation(
 		dispatch( errorNotice( failureMessage ) );
 	};
 
-	return useMutation< any, unknown, EmailForward >(
+	return useMutation< any, unknown, Mailbox >(
 		( { mailbox } ) =>
 			wp.req.post(
 				`/domains/${ encodeURIComponent( domainName ) }/email/${ encodeURIComponent(

@@ -8,7 +8,7 @@ import wp from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
-import type { EmailForward } from './types';
+import type { Mailbox } from './types';
 import type { UseMutationOptions } from 'react-query';
 
 type Context = {
@@ -26,10 +26,7 @@ const MUTATION_KEY = 'removeEmailForward';
  */
 export default function useRemoveEmailForwardMutation(
 	domainName: string,
-	mutationOptions: Omit<
-		UseMutationOptions< any, unknown, EmailForward, Context >,
-		'mutationFn'
-	> = {}
+	mutationOptions: Omit< UseMutationOptions< any, unknown, Mailbox, Context >, 'mutationFn' > = {}
 ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -71,7 +68,7 @@ export default function useRemoveEmailForwardMutation(
 					{
 						...previousEmailAccountsQueryData.accounts[ 0 ],
 						emails: emailForwards.filter(
-							( forward: EmailForward ) => forward.mailbox !== emailForward.mailbox
+							( forward: Mailbox ) => forward.mailbox !== emailForward.mailbox
 						),
 					},
 				],
@@ -133,7 +130,7 @@ export default function useRemoveEmailForwardMutation(
 		dispatch( errorMessage );
 	};
 
-	return useMutation< any, unknown, EmailForward, Context >(
+	return useMutation< any, unknown, Mailbox, Context >(
 		( { mailbox } ) =>
 			wp.req.post(
 				`/domains/${ encodeURIComponent( domainName ) }/email/${ encodeURIComponent(
