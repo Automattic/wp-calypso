@@ -7,6 +7,7 @@ import CardHeading from 'calypso/components/card-heading';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { MailboxFormWrapper } from 'calypso/my-sites/email/form/mailboxes/components/mailbox-form-wrapper';
+import useGetExistingMailboxNames from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list/use-get-existing-mailbox-names';
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import { sanitizeMailboxValue } from 'calypso/my-sites/email/form/mailboxes/components/utilities/sanitize-mailbox-value';
 import {
@@ -34,7 +35,9 @@ interface MailboxListProps {
 	submitActionText?: TranslateResult;
 }
 
-const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ): JSX.Element => {
+const NewMailBoxList = (
+	props: MailboxListProps & { children?: JSX.Element }
+): JSX.Element | null => {
 	const translate = useTranslate();
 
 	const {
@@ -49,7 +52,10 @@ const NewMailBoxList = ( props: MailboxListProps & { children?: JSX.Element } ):
 		submitActionText = translate( 'Submit' ),
 	} = props;
 
-	const createNewMailbox = () => new MailboxForm< EmailProvider >( provider, selectedDomainName );
+	const existingMailboxes = useGetExistingMailboxNames( provider, selectedDomainName );
+
+	const createNewMailbox = () =>
+		new MailboxForm< EmailProvider >( provider, selectedDomainName, existingMailboxes );
 
 	const [ mailboxes, setMailboxes ] = useState( [ createNewMailbox() ] );
 	const isTitan = provider === EmailProvider.Titan;
