@@ -9,7 +9,7 @@ class WPCom_Tutorials_Test extends TestCase {
 
 	public function tearDown() {
 		// cleanse after each test
-		foreach ( wpcom_get_all_tutorials() as $id ) {
+		foreach ( wpcom_get_registered_tutorial_ids() as $id ) {
 			wpcom_tutorials()->unregister( $id );
 		}
 		// delete status storage
@@ -37,7 +37,7 @@ class WPCom_Tutorials_Test extends TestCase {
 	}
 
 	public function test_all_registered_ids_are_returned() {
-		$this->assertEquals( wpcom_get_all_tutorials(), array() );
+		$this->assertEquals( wpcom_get_registered_tutorial_ids(), array() );
 
 		wpcom_register_tutorial(
 			'foo',
@@ -61,23 +61,23 @@ class WPCom_Tutorials_Test extends TestCase {
 			)
 		);
 
-		$this->assertEquals( wpcom_get_all_tutorials(), array( 'foo', 'bar', 'baz' ) );
+		$this->assertEquals( wpcom_get_registered_tutorial_ids(), array( 'foo', 'bar', 'baz' ) );
 	}
 
 	public function test_tutorial_with_malformed_options_fails() {
 		// empty option object
 		$foo1 = wpcom_register_tutorial( 'foo', array() );
-		$this->assertEmpty( wpcom_get_all_tutorials() );
+		$this->assertEmpty( wpcom_get_registered_tutorial_ids() );
 		$this->assertFalse( $foo1 );
 
 		// no title
 		$foo2 = wpcom_register_tutorial( 'foo', array( 'tasks' => $this->get_tasks() ) );
-		$this->assertEmpty( wpcom_get_all_tutorials() );
+		$this->assertEmpty( wpcom_get_registered_tutorial_ids() );
 		$this->assertFalse( $foo2 );
 
 		// no steps
 		$foo3 = wpcom_register_tutorial( 'foo', array( 'title' => 'Foo' ) );
-		$this->assertEmpty( wpcom_get_all_tutorials() );
+		$this->assertEmpty( wpcom_get_registered_tutorial_ids() );
 		$this->assertFalse( $foo3 );
 
 		// empty steps
@@ -88,7 +88,7 @@ class WPCom_Tutorials_Test extends TestCase {
 				'steps' => array(),
 			)
 		);
-		$this->assertEmpty( wpcom_get_all_tutorials() );
+		$this->assertEmpty( wpcom_get_registered_tutorial_ids() );
 		$this->assertFalse( $foo4 );
 	}
 

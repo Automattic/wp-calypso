@@ -70,6 +70,6 @@ function wpcom_tutorial_mark_task( $tutorial_id, $task_id, $status ) {
  *
  * @return array list of registered Tutorial IDs.
  */
-function wpcom_get_all_tutorials() {
-	return wpcom_tutorials()->get_all();
+function wpcom_get_registered_tutorial_ids() {
+	return wpcom_tutorials()->get_registered_ids();
 }

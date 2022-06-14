@@ -127,7 +127,7 @@ class WPCom_Tutorials {
 	 *
 	 * @return array list of registered Tutorial IDs.
 	 */
-	public function get_all() {
+	public function get_registered_ids() {
 		return array_keys( $this->registry );
 	}
 
