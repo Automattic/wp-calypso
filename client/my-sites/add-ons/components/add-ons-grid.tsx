@@ -18,7 +18,7 @@ interface Props {
 	highlight: boolean;
 }
 
-const Grid = styled.div`
+const Container = styled.div`
 	display: grid;
 	grid-template-columns: repeat( 1, 1fr );
 	column-gap: 10px;
@@ -37,7 +37,7 @@ const AddOnsGrid = ( {
 	highlight,
 }: Props ) => {
 	return (
-		<Grid>
+		<Container>
 			{ addOns.map( ( addOn ) =>
 				addOn ? (
 					<AddOnCard
@@ -50,7 +50,7 @@ const AddOnsGrid = ( {
 					/>
 				) : null
 			) }
-		</Grid>
+		</Container>
 	);
 };
 

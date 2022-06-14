@@ -119,7 +119,7 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 	return (
 		<div>
 			<Global styles={ globalOverrides } />
-			<QueryProductsList persist />
+			<QueryProductsList />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
 			<PageViewTracker path="/add-ons/:site" title="Add-Ons" />
 			<ContentWithHeader>

@@ -6,6 +6,7 @@ export { getProductBySlug } from './get-product-by-slug';
 export { getProductCost } from './get-product-cost';
 export { getProductIntroductoryOffer } from './get-product-introductory-offer';
 export { getProductName } from './get-product-name';
+export { getProductDescription } from './get-product-description';
 export { getProductDisplayCost } from './get-product-display-cost';
 export { getProductPriceTierList } from './get-product-price-tiers';
 export { getProductTerm } from './get-product-term';

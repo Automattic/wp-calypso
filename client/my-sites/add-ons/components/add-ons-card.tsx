@@ -3,8 +3,6 @@ import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-import { getProductDisplayCost, getProductTerm } from 'calypso/state/products-list/selectors';
 import type { AddOnMeta } from '../hooks/use-add-ons';
 
 interface Props extends AddOnMeta {
@@ -50,17 +48,6 @@ const Container = styled.div`
 	}
 `;
 
-const BillingInfo = ( { addOnSlug }: { addOnSlug: string } ) => {
-	const price = useSelector( ( state ) => getProductDisplayCost( state, addOnSlug ) );
-	const term = useSelector( ( state ) => getProductTerm( state, addOnSlug ) );
-
-	return (
-		<div className="add-ons-card__billing-info">
-			{ price } / { term }
-		</div>
-	);
-};
-
 const AddOnCard = ( props: Props ) => {
 	const translate = useTranslate();
 	const isSelected = props.useAddOnSelectedStatus?.( props.slug );
@@ -80,7 +67,9 @@ const AddOnCard = ( props: Props ) => {
 					</div>
 					<div>
 						<div>{ props.name }</div>
-						<BillingInfo addOnSlug={ props.slug } />
+						<div className="add-ons-card__billing-info">
+							{ props.displayCost } / { props.term }
+						</div>
 					</div>
 				</CardHeader>
 				<CardBody>{ props.description }</CardBody>

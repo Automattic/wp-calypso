@@ -1,20 +1,30 @@
 import { WPCOM_FEATURES_NO_ADVERTS } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { getProductBySlug, getProductName } from 'calypso/state/products-list/selectors';
+import {
+	getProductBySlug,
+	getProductDescription,
+	getProductDisplayCost,
+	getProductName,
+	getProductTerm,
+} from 'calypso/state/products-list/selectors';
 import noAdsIcon from '../icons/no-ads';
 
 export interface AddOnMeta {
 	slug: string;
-	name: string | React.ReactChild;
-	description: string | React.ReactChild;
 	highlight?: boolean;
 	icon: JSX.Element;
+	name: string | React.ReactChild | null;
+	description: string | React.ReactChild | null;
+	displayCost: string | React.ReactChild | null;
+	term?: string | React.ReactChild | null; // year, month, etc.
 }
 
 // memoize on products list
-const useAddOns = () => {
+const useAddOns = (): ( AddOnMeta | null )[] => {
 	const translate = useTranslate();
+
+	// list add-ons to show in UI here
 	const addOnsActive = [
 		{
 			slug: WPCOM_FEATURES_NO_ADVERTS,
@@ -33,10 +43,13 @@ const useAddOns = () => {
 		},
 	] as const;
 
-	return useSelector( ( state ) => {
+	return useSelector( ( state ): ( AddOnMeta | null )[] => {
 		return addOnsActive.map( ( addOn ) => {
 			const product = getProductBySlug( state, addOn.slug );
-			const productName = getProductName( state, addOn.slug );
+			const name = getProductName( state, addOn.slug );
+			const description = getProductDescription( state, addOn.slug );
+			const displayCost = getProductDisplayCost( state, addOn.slug );
+			const term = getProductTerm( state, addOn.slug );
 
 			if ( ! product ) {
 				// will not render anything if product not fetched from API
@@ -47,11 +60,13 @@ const useAddOns = () => {
 
 			return {
 				slug: addOn.slug,
-				name: addOn?.overrides?.name ?? productName,
-				description: product?.description,
 				highlight: addOn.highlight,
 				icon: addOn.icon,
-			} as AddOnMeta;
+				name: addOn?.overrides?.name ?? name,
+				description,
+				displayCost,
+				term,
+			};
 		} );
 	} );
 };
