@@ -36,7 +36,8 @@
 }
 
 .jetpack-upsell__heading {
-	margin-top: 2.5rem;
+	margin-top: 1.5rem;
+	margin-bottom: 1rem;
 
 	font-size: 1.75rem;
 	font-weight: 700;
@@ -57,7 +58,7 @@
 	display: flex;
 	align-items: center;
 
-	padding: 0.5rem 2%;
+	padding: 0.75rem 7.5%;
 
 	background-color: var( --studio-jetpack-green-5 );
 
@@ -79,7 +80,7 @@
 }
 
 .jetpack-upsell__product-name {
-	margin-bottom: 0.25rem;
+	margin-bottom: 1rem;
 
 	color: var( --studio-gray-100 );
 
@@ -137,7 +138,6 @@
 
 .jetpack-upsell__action-yes {
 	width: 100%;
-	max-width: 425px;
 	padding: 0.4375rem 1rem;
 
 	font-size: 1rem;
@@ -206,6 +206,15 @@
 .jetpack-upsell__price-ctn {
 	display: flex;
 	align-items: flex-end;
+}
+
+.jetpack-upsell__price-plus {
+	margin-bottom: 0.5rem;
+	margin-inline-end: 0.5rem;
+
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1;
 }
 
 .jetpack-upsell__price {
