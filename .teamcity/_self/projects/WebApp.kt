@@ -404,6 +404,9 @@ object RunAllUnitTests : BuildType({
 				unset NODE_ENV
 				unset CALYPSO_ENV
 
+				# Decrypt calypso-e2e secrets
+				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
+
 				# Run packages tests
 				yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-teamcity --silent
 			"""
@@ -448,7 +451,6 @@ object RunAllUnitTests : BuildType({
 			""".trimIndent()
 		}
 	}
-
 	failureConditions {
 		executionTimeoutMin = 10
 	}

@@ -15,7 +15,7 @@ export interface SiteDetails {
 /* Response Interfaces */
 
 export interface BearerTokenResponse {
-	success: string;
+	success: true;
 	data: {
 		bearer_token: string;
 		token_links: string[];
@@ -44,6 +44,9 @@ export interface MyAccountInformationResponse {
 	ID: number;
 	username: string;
 	email: string;
+	primary_blog: number;
+	primary_blog_url: string;
+	language: string;
 }
 
 export interface NewUserResponse {
@@ -75,4 +78,23 @@ export interface SiteDeletionResponse {
 
 export interface AccountClosureResponse {
 	success: boolean;
+}
+
+/* Error Responses */
+
+export interface BearerTokenErrorResponse {
+	success: false;
+	data: {
+		errors: [
+			{
+				code: string;
+				message: string;
+			}
+		];
+	};
+}
+
+export interface ErrorResponse {
+	error: string;
+	message: string;
 }
