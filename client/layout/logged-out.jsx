@@ -47,11 +47,11 @@ const LayoutLoggedOut = ( {
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
 	const isJetpackCheckout =
-		sectionName === 'checkout' && window?.location.pathname.startsWith( '/checkout/jetpack' );
+		sectionName === 'checkout' && window.location.pathname.startsWith( '/checkout/jetpack' );
 
 	const isJetpackThankYou =
 		sectionName === 'checkout' &&
-		window?.location.pathname.startsWith( '/checkout/jetpack/thank-you' );
+		window.location.pathname.startsWith( '/checkout/jetpack/thank-you' );
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
