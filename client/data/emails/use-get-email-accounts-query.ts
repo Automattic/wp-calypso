@@ -36,6 +36,7 @@ export const useGetEmailAccountsQuery = (
 				apiNamespace: 'wpcom/v2',
 			} ),
 		{
+			enabled: Boolean( siteId && domain ),
 			select: ( data ) => data.accounts,
 			...queryOptions,
 		}

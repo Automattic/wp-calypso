@@ -7,11 +7,11 @@ import page from 'page';
 import { stringify } from 'qs';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
+import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
@@ -77,6 +77,10 @@ const EmailProvidersStackedComparison = ( {
 				: GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
 		)
 	);
+
+	useGetEmailAccountsQuery( selectedSite?.ID as number, selectedDomainName, {
+		enabled: ! isDomainInCart,
+	} );
 
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
@@ -189,8 +193,6 @@ const EmailProvidersStackedComparison = ( {
 	return (
 		<Main wideLayout>
 			<QueryProductsList />
-
-			{ ! isDomainInCart && <QueryEmailForwards domainName={ selectedDomainName } /> }
 
 			{ ! isDomainInCart && selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
