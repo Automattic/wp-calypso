@@ -1,3 +1,12 @@
+/* EditorToolbarComponent */
+
+/**
+ * Preview options.
+ */
+export type EditorPreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
+
+/* EditorSettingsSidebarComponent */
+
 /**
  * Tabs in the Editor Settings Sidebar.
  *
@@ -19,12 +28,12 @@ export type ArticleSections =
 /**
  * Post/Page privacy options.
  */
-export type PrivacyOptions = 'Public' | 'Private' | 'Password';
+export type ArticlePrivacyOptions = 'Public' | 'Private' | 'Password';
 
 /**
  * Schedule format for specifying a pubilshed date (future/past).
  */
-export interface Schedule {
+export interface ArticlePublishSchedule {
 	year: number;
 	month: number;
 	date: number;

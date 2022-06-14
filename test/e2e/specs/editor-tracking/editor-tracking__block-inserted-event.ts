@@ -16,9 +16,9 @@ import {
 	TemplatePartBlock,
 	OpenInlineInserter,
 	HeaderBlock,
-	TracksEventProperties,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
+import type { TracksEventProperties } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;
 

@@ -1,4 +1,4 @@
-import { BlockFlow, EditorContext, PublishedPostContext } from '../../../types';
+import { BlockFlow, EditorContext, PublishedPostContext } from './types';
 
 interface ConfigurationData {
 	phoneNumber: number | string;

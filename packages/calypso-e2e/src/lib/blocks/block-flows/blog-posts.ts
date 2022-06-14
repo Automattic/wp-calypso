@@ -1,4 +1,4 @@
-import { BlockFlow } from '../../../types';
+import { BlockFlow } from './types';
 
 const blockParentSelector = '[aria-label="Block: Blog Posts"]';
 

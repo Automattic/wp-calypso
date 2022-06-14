@@ -1,7 +1,7 @@
 import { Page, Locator } from 'playwright';
 import envVariables from '../../env-variables';
 import { translateFromPage } from '../utils';
-import type { EditorPreviewOptions } from '../../types/editor-toolbar-component.types';
+import type { EditorPreviewOptions } from './types';
 
 const panel = 'div.interface-interface-skeleton__header';
 const settingsButtonLabel = 'Settings';

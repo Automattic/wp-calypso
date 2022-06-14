@@ -17,7 +17,12 @@ import {
 } from '../components';
 import { BlockInserter, OpenInlineInserter } from './shared-types';
 import type { SiteType } from '../../lib/utils';
-import type { EditorPreviewOptions, EditorSidebarTab, PrivacyOptions, Schedule } from '../../types';
+import type {
+	EditorPreviewOptions,
+	EditorSidebarTab,
+	ArticlePrivacyOptions,
+	ArticlePublishSchedule,
+} from '../components/types';
 
 const selectors = {
 	// iframe and editor
@@ -442,12 +447,12 @@ export class EditorPage {
 	/**
 	 * Sets the article's privacy/visibility option.
 	 *
-	 * @param {PrivacyOptions} visibility Visibility option for the article.
+	 * @param {ArticlePrivacyOptions} visibility Visibility option for the article.
 	 * @param param1 Object parameters.
 	 * @param {string} param1.password Password for the post.
 	 */
 	async setArticleVisibility(
-		visibility: PrivacyOptions,
+		visibility: ArticlePrivacyOptions,
 		{ password }: { password?: string }
 	): Promise< void > {
 		await Promise.race( [
@@ -584,7 +589,7 @@ export class EditorPage {
 	 *
 	 * This method requires the Editor Settings sidebar to be open.
 	 */
-	async schedule( date: Schedule ): Promise< void > {
+	async schedule( date: ArticlePublishSchedule ): Promise< void > {
 		await Promise.race( [
 			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
 			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
