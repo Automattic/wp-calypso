@@ -255,18 +255,19 @@ class PasswordValidator extends BaseValidator< string > {
 
 class ExistingMailboxNamesValidator extends BaseValidator< string > {
 	private readonly existingMailboxNames: string[];
+	private readonly domainName: string;
 
-	constructor( existingMailboxNames: string[] ) {
+	constructor( domainName: string, existingMailboxNames: string[] ) {
 		super();
+		this.domainName = domainName;
 		this.existingMailboxNames = existingMailboxNames;
 	}
 
-	static getExistingMailboxError( existingMailbox: string ): FieldError {
+	static getExistingMailboxError( domainName: string, existingMailbox: string ): FieldError {
 		return i18n.translate(
-			'Please use unique mailboxes. {{strong}}%(existingMailbox)s{{/strong}} already exists in your account',
+			'Please use unique email addresses. {{strong}}%(emailAddress)s{{/strong}} already exists in your account',
 			{
-				comment: '%(existingMailbox)s is the local part of an email address',
-				args: { existingMailbox },
+				args: { emailAddress: `${ existingMailbox }@${ domainName }` },
 				components: { strong: createElement( 'strong' ) },
 			}
 		);
@@ -283,7 +284,10 @@ class ExistingMailboxNamesValidator extends BaseValidator< string > {
 		if (
 			existingMailboxNames.map( ( item ) => item.toLowerCase() ).includes( fieldValueLowerCased )
 		) {
-			field.error = ExistingMailboxNamesValidator.getExistingMailboxError( fieldValueLowerCased );
+			field.error = ExistingMailboxNamesValidator.getExistingMailboxError(
+				this.domainName,
+				fieldValueLowerCased
+			);
 		}
 	}
 }
