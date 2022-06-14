@@ -28,6 +28,8 @@
 specs/search__preview.ts
 ```
 
+<details>
+
 ```typescript
 /**
  * @group calypso-pr
@@ -103,6 +105,8 @@ describe( DataHelper.createSuiteTitle( 'Search: Preview' ), function () {
 	} );
 } );
 ```
+
+</details>
 
 ## Quick start
 
@@ -316,7 +320,7 @@ export class ExampleBlockFlow implements BlockFlow {
 }
 ```
 
-</details d>
+</details>
 
 <details>
 <summary>Spec test file:</summary>
