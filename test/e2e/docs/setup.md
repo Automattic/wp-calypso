@@ -22,6 +22,9 @@ Follow the [Quick Start](../README.md) guide to install required software.
 
 ## Apple Silicon (emulated x86_64)
 
+> Note: Steps for Apple Silicon is constantly changing and may not be accurate.
+> Since January 2021 when these steps were written Apple Silicon support has improved significantly across the board and these steps may no longer be necessary.
+
 1. install i386 Homebrew:
 
 ```
@@ -70,15 +73,16 @@ At any point, run `arch` to verify whether shell is running with Rosetta 2 emula
 
 ## Apple Silicon (arm64)
 
-Similar to instructions in macOS Intel architecture, install the arm64 variant of the required software, then follow these steps:
+Steps in the [Setup](../README.md#quick-start) will get users up and running.
+However, between Step 7 and Step 8, this additional step may be required:
 
-1. set the following environment variables:
+7. set the following environment variables:
 
 ```
 PUPPETEER_SKIP_DOWNLOAD=true
 ```
 
-2. install dependencies:
+8. install dependencies:
 
 ```
 yarn install
