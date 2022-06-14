@@ -167,3 +167,13 @@ export function formatApiPartner( partner: APIPartner ): Partner {
 		} ) ),
 	};
 }
+
+/**
+ * Format the string by removing Jetpack, (, ) from the product name
+ *
+ * @param product Product name
+ * @returns Product title
+ */
+export function getProductTitle( product: string ): string {
+	return product.replace( 'Jetpack ', '' ).replace( '(', '' ).replace( ')', '' );
+}

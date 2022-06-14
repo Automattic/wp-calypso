@@ -1,5 +1,8 @@
-import { Preference } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import type {
+	Preference,
+	PurchasedProduct,
+} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import type { AppState } from 'calypso/types';
 
 export const JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE =

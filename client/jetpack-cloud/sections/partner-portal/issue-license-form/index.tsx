@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setPurchasedProduct } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
@@ -17,6 +18,7 @@ import {
 	APIProductFamilyProduct,
 } from 'calypso/state/partner-portal/types';
 import { AssignLicenceProps } from '../types';
+import { getProductTitle } from '../utils';
 
 import './style.scss';
 
@@ -41,9 +43,29 @@ export default function IssueLicenseForm( {
 	} );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
+	const [ product, setProduct ] = useState( '' );
+
+	const handleRedirectToDashboard = useCallback( () => {
+		if ( selectedSite ) {
+			const selectedProduct = products?.data?.find( ( p ) => p.slug === product );
+			if ( selectedProduct ) {
+				dispatch(
+					setPurchasedProduct( {
+						selectedSite: selectedSite.domain,
+						selectedProduct: getProductTitle( selectedProduct.name ),
+					} )
+				);
+				return page.redirect( '/dashboard' );
+			}
+		}
+	}, [ dispatch, product, products?.data, selectedSite ] );
+
 	const assignLicense = useAssignLicenseMutation( {
 		onSuccess: ( license: any ) => {
 			setIsSubmitting( false );
+			if ( selectedSite ) {
+				handleRedirectToDashboard();
+			}
 			page.redirect(
 				addQueryArgs( { highlight: license.license_key }, '/partner-portal/licenses' )
 			);
@@ -92,7 +114,6 @@ export default function IssueLicenseForm( {
 			dispatch( errorNotice( errorMessage ) );
 		},
 	} );
-	const [ product, setProduct ] = useState( '' );
 
 	const onSelectProduct = useCallback(
 		( value ) => {
