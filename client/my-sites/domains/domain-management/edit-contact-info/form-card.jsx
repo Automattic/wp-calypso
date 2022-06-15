@@ -148,11 +148,11 @@ class EditContactInfoFormCard extends Component {
 		const { domainRegistrationAgreementUrl, translate } = this.props;
 		const registrationDatePlus60Days = moment
 			.utc( this.props.selectedDomain.registrationDate )
-			.add( 60, 'days' )
-			.toISOString();
-		const newRegistrationLock = moment.utc().isSameOrBefore( registrationDatePlus60Days );
+			.add( 60, 'days' );
+		// .toISOString();
+		const isLocked = moment.utc().isSameOrBefore( registrationDatePlus60Days );
 
-		if ( ! newRegistrationLock ) {
+		if ( ! isLocked ) {
 			return (
 				<>
 					<TransferLockOptOutForm
