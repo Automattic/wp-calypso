@@ -76,6 +76,8 @@ const EmailMailboxWarnings = ( { account, mailbox } ) => {
 						return <EmailMailboxReverifyWarning key={ warningKey } mailbox={ mailbox } />;
 					}
 				}
+
+				return null;
 			} ) }
 		</>
 	);
