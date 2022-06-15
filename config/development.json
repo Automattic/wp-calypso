@@ -115,6 +115,7 @@
 		"plans/starter-plan": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": true,
+		"plugins/plugin-details-layout": false,
 		"post-editor/checkout-overlay": true,
 		"press-this": true,
 		"publicize-preview": true,
