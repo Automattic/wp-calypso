@@ -96,7 +96,7 @@ export default function LicensePreview( {
 		}
 
 		page.redirect( redirectUrl );
-	}, [ isAgency, validPaymentMethod, translate, dispatch, errorNotice ] );
+	}, [ isAgency, validPaymentMethod, translate, dispatch, errorNotice, licenseKey ] );
 
 	useEffect( () => {
 		if ( isHighlighted ) {
