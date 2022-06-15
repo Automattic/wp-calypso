@@ -224,11 +224,17 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	create_new_blog: boolean;
 	cart_key: CartKey;
 	products: P[];
-	total_tax: string; // Please try not to use this
+	/**
+	 * @deprecated Use total_tax_integer or total_tax_display
+	 */
+	total_tax: string;
 	total_tax_integer: number;
 	total_tax_display: string;
 	total_tax_breakdown: TaxBreakdownItem[];
-	total_cost: number; // Please try not to use this
+	/**
+	 * @deprecated Use total_cost_integer or total_cost_display
+	 */
+	total_cost: number;
 	total_cost_integer: number;
 	total_cost_display: string;
 	coupon_savings_total_integer: number;
