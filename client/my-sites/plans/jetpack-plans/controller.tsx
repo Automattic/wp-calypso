@@ -135,5 +135,8 @@ export const jetpackProductUpsell =
 			/>
 		);
 
+		// Hide sidebar
+		context.secondary = null;
+
 		next();
 	};
