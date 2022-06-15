@@ -1,4 +1,4 @@
-import { BlockFlow, EditorContext, PublishedPostContext } from '..';
+import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 type DaysOfWeek = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat' | 'Sun';
 

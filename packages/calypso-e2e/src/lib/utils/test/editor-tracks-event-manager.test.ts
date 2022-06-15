@@ -1,6 +1,6 @@
 import { it, describe, expect } from '@jest/globals';
-import { createEventMatchingPredicate } from '../../../src/lib/utils/editor-tracks-event-manager';
-import { TracksEvent } from '../../../src/types';
+import { createEventMatchingPredicate } from '../editor-tracks-event-manager';
+import { TracksEvent } from '../types';
 
 describe( 'Test: createEventMatchingPredicate', function () {
 	const fakeTracksEvents: TracksEvent[] = [

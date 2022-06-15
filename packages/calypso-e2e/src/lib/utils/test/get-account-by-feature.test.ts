@@ -1,14 +1,11 @@
 import { describe, expect, it } from '@jest/globals';
-import { TestAccountName } from '../../../src';
-import {
-	getTestAccountByFeature,
-	envToFeatureKey,
-} from '../../../src/lib/utils/get-test-account-by-feature';
+import { TestAccountName } from '../../../secrets';
+import { getTestAccountByFeature, envToFeatureKey } from '../get-test-account-by-feature';
 import type {
 	FeatureCriteria,
 	TestAccountEnvVariables,
 	FeatureKey,
-} from '../../../src/lib/utils/get-test-account-by-feature';
+} from '../get-test-account-by-feature';
 
 describe( 'getTestAccountByFeature', function () {
 	const customCriteria: FeatureCriteria[] = [

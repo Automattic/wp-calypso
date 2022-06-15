@@ -1,6 +1,6 @@
-import { TestAccountName } from '../../secrets';
 import defaultCriteria from './criteria-for-test-accounts';
-import type { SupportedEnvVariables } from '../../env-variables';
+import type { TestAccountName } from '../../secrets';
+import type { SupportedEnvVariables } from '../../types/env-variables.types';
 
 export type TestAccountEnvVariables = Pick<
 	SupportedEnvVariables,

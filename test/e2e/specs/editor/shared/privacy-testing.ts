@@ -3,13 +3,13 @@ import {
 	EditorPage,
 	TestAccount,
 	envVariables,
-	PrivacyOptions,
 	PublishedPostPage,
 	PageTemplateModalComponent,
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import type { ArticlePrivacyOptions } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;
 
@@ -22,9 +22,9 @@ const pagePassword = 'cat';
  * Accepts as parameter the intended page/post privacy option.
  *
  * @param param0 Keyed object parameter.
- * @param {PrivacyOptions} param0.visibility Intended page/post privacy option.
+ * @param {ArticlePrivacyOptions} param0.visibility Intended page/post privacy option.
  */
-export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions } ): void {
+export function createPrivacyTests( { visibility }: { visibility: ArticlePrivacyOptions } ): void {
 	describe( DataHelper.createSuiteTitle( `Editor: Privacy (${ visibility })` ), function () {
 		const features = envToFeatureKey( envVariables );
 		const accountName = getTestAccountByFeature( features, [
@@ -63,7 +63,7 @@ export function createPrivacyTests( { visibility }: { visibility: PrivacyOptions
 
 			it( `Set page visibility to ${ visibility }`, async function () {
 				await editorPage.openSettings();
-				await editorPage.setArticleVisibility( visibility as PrivacyOptions, {
+				await editorPage.setArticleVisibility( visibility as ArticlePrivacyOptions, {
 					password: pagePassword,
 				} );
 				await editorPage.closeSettings();

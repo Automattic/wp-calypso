@@ -6,8 +6,9 @@ import {
 	getAccountSiteURL,
 	toTitleCase,
 	createSuiteTitle,
-} from '../src/data-helper';
-import { Secrets, SecretsManager } from '../src/secrets';
+} from '../data-helper';
+import { SecretsManager } from '../secrets';
+import type { Secrets } from '../secrets';
 
 const fakeSecrets = {
 	testAccounts: {

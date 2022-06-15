@@ -9,3 +9,4 @@
 !**/src/secrets/secrets-manager.ts
 !**/src/secrets/index.ts
 !**/src/secrets/encrypted.enc
+!**/src/secrets/types.ts

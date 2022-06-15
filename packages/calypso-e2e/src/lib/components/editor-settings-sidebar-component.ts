@@ -1,24 +1,11 @@
 import { Page, Locator } from 'playwright';
 import envVariables from '../../env-variables';
-
-export type EditorSidebarTab = 'Post' | 'Block' | 'Page';
-export type ArticleSections =
-	| 'Status & Visibility'
-	| 'Revisions'
-	| 'Permalink'
-	| 'Categories'
-	| 'Tags'
-	| 'Discussion';
-export type PrivacyOptions = 'Public' | 'Private' | 'Password';
-
-export interface Schedule {
-	year: number;
-	month: number;
-	date: number;
-	hours: number;
-	minutes: number;
-	meridian: 'am' | 'pm';
-}
+import type {
+	ArticlePublishSchedule,
+	EditorSidebarTab,
+	ArticleSections,
+	ArticlePrivacyOptions,
+} from './types';
 
 const panel = '[aria-label="Editor settings"]';
 
@@ -39,7 +26,7 @@ const selectors = {
 	// Status & Visibility
 	visibilityButton: '.edit-post-post-visibility__toggle',
 	visibilityPopover: 'fieldset.editor-post-visibility__dialog-fieldset',
-	visibilityOption: ( option: PrivacyOptions ) => `input[value="${ option.toLowerCase() }"]`,
+	visibilityOption: ( option: ArticlePrivacyOptions ) => `input[value="${ option.toLowerCase() }"]`,
 	postPasswordInput: '.editor-post-visibility__password-input',
 
 	// Schedule
@@ -195,13 +182,13 @@ export class EditorSettingsSidebarComponent {
 	/**
 	 * Sets the post visibility to the provided visibility setting.
 	 *
-	 * @param {PrivacyOptions} visibility Desired post visibility setting.
+	 * @param {ArticlePrivacyOptions} visibility Desired post visibility setting.
 	 * @param param1 Object parameter.
 	 * @param {string} param1.password Password for the post. Normally an optinal value, this
 	 * 	must be set if the `visibility` parameter is set to `Password`.
 	 */
 	async selectVisibility(
-		visibility: PrivacyOptions,
+		visibility: ArticlePrivacyOptions,
 		{ password }: { password?: string } = {}
 	): Promise< void > {
 		const optionLocator = this.editor.locator( selectors.visibilityOption( visibility ) );
@@ -270,10 +257,10 @@ export class EditorSettingsSidebarComponent {
 	/**
 	 * Schedules the page/post.
 	 *
-	 * @param {Schedule} date Date of the article to be scheduled.
+	 * @param {ArticlePublishSchedule} date Date of the article to be scheduled.
 	 */
-	async setScheduleDetails( date: Schedule ): Promise< void > {
-		let key: keyof Schedule;
+	async setScheduleDetails( date: ArticlePublishSchedule ): Promise< void > {
+		let key: keyof ArticlePublishSchedule;
 
 		for ( key in date ) {
 			if ( key === 'meridian' ) {
