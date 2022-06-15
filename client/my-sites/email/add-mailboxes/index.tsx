@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useState } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -129,11 +129,10 @@ const WithVerificationGate = ( {
 	children,
 	productFamily,
 	provider,
-}: {
-	children: JSX.Element;
+}: PropsWithChildren< {
 	productFamily: string;
 	provider: EmailProvider;
-} ): JSX.Element => {
+} > ) => {
 	const translate = useTranslate();
 
 	if ( isTitan( provider ) ) {
@@ -349,14 +348,12 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 				<HeaderCake onClick={ goToEmail }>{ productName + ': ' + selectedDomainName }</HeaderCake>
 
 				<WithVerificationGate productFamily={ `${ productName }` } provider={ provider }>
-					<>
-						<MailboxNotices { ...additionalProps } mailProduct={ mailProduct } />
-						<MailboxesForm
-							{ ...additionalProps }
-							goToEmail={ goToEmail }
-							mailProduct={ mailProduct }
-						/>
-					</>
+					<MailboxNotices { ...additionalProps } mailProduct={ mailProduct } />
+					<MailboxesForm
+						{ ...additionalProps }
+						goToEmail={ goToEmail }
+						mailProduct={ mailProduct }
+					/>
 				</WithVerificationGate>
 			</Main>
 		</>
