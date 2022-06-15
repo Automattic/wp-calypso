@@ -35,7 +35,7 @@ const SignupSuccess = () => {
 					{ currentQuery?.returning !== 'true' ? (
 						<p>
 							{ translate(
-								'Thank you for apply to join the WordPress.com marketplace. We’ll be in touch with you very soon to discuss next steps.'
+								'Thank you for applying to join the WordPress.com marketplace. We’ll be in touch with you very soon to discuss next steps.'
 							) }
 						</p>
 					) : (
