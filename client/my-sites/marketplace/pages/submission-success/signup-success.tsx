@@ -1,16 +1,19 @@
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import checkCircleImage from 'calypso/assets/images/marketplace/check-circle-gray.svg';
 import settingsImage from 'calypso/assets/images/marketplace/settings.svg';
 import shoppingCartImage from 'calypso/assets/images/marketplace/shopping-cart.svg';
 import submissionSuccessImage from 'calypso/assets/images/marketplace/submission-success.png';
 import theme from 'calypso/my-sites/marketplace/theme';
+import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import MasterbarLogo from '../../components/masterbar-logo';
 import './style.scss';
 
 const SignupSuccess = () => {
 	const translate = useTranslate();
+	const currentQuery = useSelector( getCurrentQueryArguments );
 
 	return (
 		<ThemeProvider theme={ theme }>
@@ -29,11 +32,19 @@ const SignupSuccess = () => {
 					<h1 className="signup-success__header-title wp-brand-font">
 						{ translate( 'We’ll be in touch' ) }
 					</h1>
-					<p>
-						{ translate(
-							'Thank you for apply to join the WordPress.com marketplace. We’ll be in touch with you very soon to discuss next steps.'
-						) }
-					</p>
+					{ currentQuery?.returning !== 'true' ? (
+						<p>
+							{ translate(
+								'Thank you for apply to join the WordPress.com marketplace. We’ll be in touch with you very soon to discuss next steps.'
+							) }
+						</p>
+					) : (
+						<p>
+							{ translate(
+								'Great! You’re already a vendor! Here is what you can do next while we’re still working on building your Product Dashboard.'
+							) }
+						</p>
+					) }
 				</div>
 				<div className="signup-success__body">
 					<div className="signup-success__row">
