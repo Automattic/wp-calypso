@@ -14,7 +14,6 @@ import {
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { Argument } from 'classnames';
 
 /**
  * Import styles
@@ -22,7 +21,7 @@ import type { Argument } from 'classnames';
 import './style.scss';
 
 type TitanSetUpThankYouProps = {
-	containerClassName?: Argument;
+	containerClassName?: string;
 	domainName: string;
 	emailAddress?: string;
 	title?: string;
