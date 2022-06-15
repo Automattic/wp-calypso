@@ -75,8 +75,6 @@ export default function () {
 
 	jetpackUpsell( `/jetpack/connect/store`, controller.offerResetContext );
 	jetpackPlans( `/jetpack/connect/store`, controller.offerResetContext );
-	jetpackUpsell( `/jetpack/connect/store`, controller.offerResetContext );
-	jetpackPlans( `/jetpack/connect/store`, controller.offerResetContext );
 
 	page(
 		'/jetpack/connect/:_(akismet|plans|vaultpress)/:interval(yearly|monthly)?',
