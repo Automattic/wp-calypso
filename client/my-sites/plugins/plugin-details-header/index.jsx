@@ -17,6 +17,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
 
 	const selectedSite = useSelector( getSelectedSite );
+	const banner = plugin.banners?.high || plugin.banners?.low;
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsHeaderPlaceholder />;
@@ -28,6 +29,11 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 
 	return (
 		<div className="plugin-details-header__container">
+			{ Boolean( banner ) && (
+				<div className="plugin-details-header__banner">
+					<img className="plugin-details-header__banner-image" alt={ plugin.name } src={ banner } />
+				</div>
+			) }
 			<div className="plugin-details-header__main-info">
 				<img className="plugin-details-header__icon" src={ plugin.icon } alt="" />
 				<div className="plugin-details-header__title-container">
