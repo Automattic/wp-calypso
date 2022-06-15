@@ -18,6 +18,7 @@ interface GeneratedDesignThumbnailProps {
 	thumbnailUrl: string;
 	isSelected: boolean;
 	onPreview: () => void;
+	index: number;
 }
 
 const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
@@ -25,12 +26,14 @@ const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
 	thumbnailUrl,
 	isSelected,
 	onPreview,
+	index,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	return (
 		<button
 			type="button"
+			aria-label={ `Preview design option ${ index }` }
 			className={ classnames( 'generated-design-thumbnail', { 'is-selected': isSelected } ) }
 			onClick={ onPreview }
 		>
@@ -124,6 +127,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 								thumbnailUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
 								isSelected={ selectedDesign?.slug === design.slug }
 								onPreview={ () => onPreview( design, index ) }
+								index={ index + 1 }
 							/>
 						) ) }
 					<Button className="generated-design-picker__view-more" onClick={ onViewMore }>
