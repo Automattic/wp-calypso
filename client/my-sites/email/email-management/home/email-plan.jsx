@@ -9,6 +9,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { useIsLoading as useAddEmailForwardMutationIsLoading } from 'calypso/data/emails/use-add-email-forward-mutation';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import {
@@ -276,10 +277,15 @@ function EmailPlan( { domain, selectedSite, source } ) {
 		);
 	}
 
+	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
+
 	const { data: emailAccounts = [], isLoading } = useGetEmailAccountsQuery(
 		selectedSite.ID,
 		domain.name,
-		{ retry: false }
+		{
+			refetchOnMount: ! addEmailForwardMutationActive,
+			retry: false,
+		}
 	);
 
 	return (
