@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import sortBy from 'lodash/sortBy';
 import page from 'page';
@@ -41,8 +42,11 @@ export default function IssueLicenseForm( {
 	const products = useProductsQuery( {
 		select: alphabeticallySortedProductOptions,
 	} );
-	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
+	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
+	const [ redirectToDashboard ] = useState( fromDashboard );
+
+	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ product, setProduct ] = useState( '' );
 
 	const handleRedirectToDashboard = useCallback(
@@ -69,7 +73,7 @@ export default function IssueLicenseForm( {
 	const assignLicense = useAssignLicenseMutation( {
 		onSuccess: ( license: any ) => {
 			setIsSubmitting( false );
-			if ( selectedSite ) {
+			if ( redirectToDashboard ) {
 				handleRedirectToDashboard( license.license_key );
 				return;
 			}
