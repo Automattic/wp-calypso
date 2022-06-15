@@ -35,7 +35,7 @@ import {
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
 } from 'calypso/state/login/selectors';
-import { isPasswordlessAccount } from 'calypso/state/login/utils';
+import { isPasswordlessAccount, isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
@@ -211,6 +211,7 @@ class Login extends Component {
 			twoStepNonce,
 			fromSite,
 			isAnchorFmSignup,
+			isPartnerSignup,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -240,57 +241,59 @@ class Login extends Component {
 					"'clientTitle' is the name of the app that uses WordPress.com authentication (e.g. 'Akismet' or 'VaultPress')",
 			} );
 
-			if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
-				preHeader = <Gridicon icon="my-sites" size={ 72 } />;
-				postHeader = (
-					<p>
-						{ translate(
-							'WooCommerce.com now uses WordPress.com Accounts.{{br/}}{{a}}Learn more about the benefits{{/a}}',
-							{
-								components: {
-									a: (
-										<a
-											href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/"
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-									br: <br />,
-								},
-							}
-						) }
-					</p>
-				);
-			}
-
-			if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
-				preHeader = (
-					<Fragment>
-						{ 'cart' === wccomFrom ? (
-							<WooCommerceConnectCartHeader />
-						) : (
-							<div className="login__woocommerce-wrapper">
-								<div className={ classNames( 'login__woocommerce-logo' ) }>
-									<svg width={ 200 } viewBox={ '0 0 1270 170' }>
-										<AsyncLoad
-											require="calypso/components/jetpack-header/woocommerce"
-											darkColorScheme={ false }
-											placeholder={ null }
-										/>
-									</svg>
+			if ( isWooOAuth2Client( oauth2Client ) ) {
+				if ( isPartnerSignup ) {
+					headerText = translate( 'Log in to your account' );
+				} else if ( wccomFrom ) {
+					preHeader = (
+						<Fragment>
+							{ 'cart' === wccomFrom ? (
+								<WooCommerceConnectCartHeader />
+							) : (
+								<div className="login__woocommerce-wrapper">
+									<div className={ classNames( 'login__woocommerce-logo' ) }>
+										<svg width={ 200 } viewBox={ '0 0 1270 170' }>
+											<AsyncLoad
+												require="calypso/components/jetpack-header/woocommerce"
+												darkColorScheme={ false }
+												placeholder={ null }
+											/>
+										</svg>
+									</div>
 								</div>
-							</div>
-						) }
-					</Fragment>
-				);
-				headerText = translate( 'Log in with a WordPress.com account' );
-				postHeader = (
-					<p className="login__header-subtitle">
-						{ translate(
-							'Log in to WooCommerce.com with your WordPress.com account to connect your store and manage your extensions'
-						) }
-					</p>
-				);
+							) }
+						</Fragment>
+					);
+					headerText = translate( 'Log in with a WordPress.com account' );
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ translate(
+								'Log in to WooCommerce.com with your WordPress.com account to connect your store and manage your extensions'
+							) }
+						</p>
+					);
+				} else {
+					preHeader = <Gridicon icon="my-sites" size={ 72 } />;
+					postHeader = (
+						<p>
+							{ translate(
+								'WooCommerce.com now uses WordPress.com Accounts.{{br/}}{{a}}Learn more about the benefits{{/a}}',
+								{
+									components: {
+										a: (
+											<a
+												href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/"
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+										br: <br />,
+									},
+								}
+							) }
+						</p>
+					);
+				}
 			}
 
 			if ( isJetpackCloudOAuth2Client( oauth2Client ) ) {
@@ -534,6 +537,7 @@ export default connect(
 		isAnchorFmSignup: getIsAnchorFmSignup(
 			get( getCurrentQueryArguments( state ), 'redirect_to' )
 		),
+		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 	} ),
 	{
 		rebootAfterLogin,

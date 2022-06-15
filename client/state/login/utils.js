@@ -176,3 +176,27 @@ export async function postLoginRequest( action, bodyObj ) {
 	}
 	throw new HTTPError( response, await response.text() );
 }
+
+/**
+ * https://woocommerce.com/partner-signup uses a wp.com branded login and signup flow
+ * while using woocommerces's oauth client id.
+ *
+ * This function detects this situation by checking for a redirect back to that page.
+ */
+export function isPartnerSignupQuery( currentQuery ) {
+	if ( ! currentQuery ) {
+		return false;
+	}
+
+	// Handles login through /log-in/?redirect_to=...
+	if ( typeof currentQuery?.redirect_to === 'string' ) {
+		return /woocommerce\.com\/partner-signup/.test( currentQuery.redirect_to );
+	}
+
+	// Handles user creation through /start/wpcc?oauth2_redirect=...
+	if ( typeof currentQuery?.oauth2_redirect === 'string' ) {
+		return /woocommerce\.com\/partner-signup/.test( currentQuery.oauth2_redirect );
+	}
+
+	return false;
+}

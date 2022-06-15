@@ -1,5 +1,7 @@
 import config from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import GdprBanner from 'calypso/blocks/gdpr-banner';
@@ -7,9 +9,11 @@ import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
+import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
@@ -17,6 +21,7 @@ import {
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
+
 import './style.scss';
 
 const LayoutLoggedOut = ( {
@@ -37,6 +42,9 @@ const LayoutLoggedOut = ( {
 	redirectUri,
 	useOAuth2Layout,
 	showGdprBanner,
+	isPartnerSignup,
+	isPartnerSignupStart,
+	locale,
 } ) => {
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -67,7 +75,12 @@ const LayoutLoggedOut = ( {
 
 	// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
 	if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
-		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+		if ( isPartnerSignup && ! isPartnerSignupStart ) {
+			// Using localizeUrl directly to sidestep issue with useLocale use in SSR
+			masterbar = (
+				<MasterbarLogin goBackUrl={ localizeUrl( 'https://wordpress.com/partners/', locale ) } />
+			);
+		} else if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			masterbar = null;
 		} else {
 			classes.dops = true;
@@ -133,14 +146,20 @@ export default withCurrentRoute(
 		const sectionName = currentSection?.name ?? null;
 		const sectionTitle = currentSection?.title ?? '';
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
-		const isWhiteLogin = currentRoute.startsWith( '/log-in/new' );
+		const isPartnerSignup = isPartnerSignupQuery( currentQuery );
+		const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
+		const isWhiteLogin =
+			currentRoute.startsWith( '/log-in/new' ) || ( isPartnerSignup && ! isPartnerSignupStart );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
-		const noMasterbarForRoute = isJetpackLogin || isWhiteLogin || isJetpackWooDnaFlow || isP2Login;
+		const noMasterbarForRoute =
+			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
 		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
+		const masterbarIsHidden =
+			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute;
 
 		return {
 			isJetpackLogin,
@@ -150,13 +169,14 @@ export default withCurrentRoute(
 			isJetpackWooDnaFlow,
 			isP2Login,
 			wccomFrom,
-			masterbarIsHidden:
-				! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
+			masterbarIsHidden,
 			sectionGroup,
 			sectionName,
 			sectionTitle,
 			oauth2Client: getCurrentOAuth2Client( state ),
 			useOAuth2Layout: showOAuth2Layout( state ),
+			isPartnerSignup,
+			isPartnerSignupStart,
 		};
-	} )( LayoutLoggedOut )
+	} )( localize( LayoutLoggedOut ) )
 );
