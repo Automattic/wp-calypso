@@ -54,7 +54,7 @@ const Categories = ( { selected }: { selected?: string } ) => {
 
 		let url;
 		if ( category.slug !== 'discover' ) {
-			url = `/plugins/${ category.slug }/${ domain || '' }`;
+			url = `/plugins/browse/${ category.slug }/${ domain || '' }`;
 		} else {
 			url = `/plugins/${ domain || '' }`;
 		}
