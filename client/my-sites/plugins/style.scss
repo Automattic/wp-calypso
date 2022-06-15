@@ -118,6 +118,8 @@ body.is-section-plugins.theme-default.color-scheme {
 }
 
 .plugin-details__layout {
+	padding-top: 54px;
+
 	@include display-grid;
 	@include grid-template-columns( 3, 80px, 1fr );
 	grid-template-areas: 'header header actions'
@@ -135,6 +137,7 @@ body.is-section-plugins.theme-default.color-scheme {
 
 	.plugin-details__content {
 		grid-area: content;
+		padding-top: 50px;
 	}
 
 	.plugin-details__actions {
@@ -166,8 +169,6 @@ body.is-section-plugins.theme-default.color-scheme {
 
 .plugin-details__body {
 	.plugin-sections {
-		margin-top: 20px;
-
 		.section-nav {
 			box-shadow: none;
 		}
@@ -285,9 +286,14 @@ body.is-section-plugins header .select-dropdown__item {
 .legacy {
 	.plugin-details__body {
 		border-top: 1px solid var( --studio-gray-5 );
+
+		.plugin-sections {
+			margin-top: 20px;
+		}
 	}
 
 	.plugin-details__layout {
+		padding-top: 0;
 		grid-template-areas: none;
 		grid-template-columns: initial;
 
