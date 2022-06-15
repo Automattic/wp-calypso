@@ -1,5 +1,6 @@
 import { AnyAction } from 'redux';
 import {
+	JETPACK_PARTNER_PORTAL_OAUTH_TOKEN_SET,
 	JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE,
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE,
@@ -37,6 +38,15 @@ export const isFetching = ( state = initialState.isFetching, action: AnyAction )
 	}
 
 	return state;
+};
+
+export const isPartnerOAuthTokenLoaded = ( state = false, action: AnyAction ) => {
+	switch ( action.type ) {
+		case JETPACK_PARTNER_PORTAL_OAUTH_TOKEN_SET:
+			return true;
+		default:
+			return state;
+	}
 };
 
 const activePartnerKeyReducer = ( state = initialState.activePartnerKey, action: AnyAction ) => {
@@ -79,6 +89,7 @@ export const error = ( state = initialState.error, action: AnyAction ) => {
 export default combineReducers( {
 	hasFetched,
 	isFetching,
+	isPartnerOAuthTokenLoaded,
 	activePartnerKey,
 	current,
 	error,

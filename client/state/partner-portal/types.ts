@@ -187,6 +187,7 @@ export interface Partner {
 export interface PartnerStore {
 	hasFetched: boolean;
 	isFetching: boolean;
+	isPartnerOAuthTokenLoaded: boolean;
 	activePartnerKey: number;
 	current: Partner | null;
 	error: APIError | null;
