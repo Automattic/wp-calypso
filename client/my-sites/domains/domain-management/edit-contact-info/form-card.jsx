@@ -2,6 +2,7 @@ import { Dialog } from '@automattic/components';
 import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual, includes, snakeCase } from 'lodash';
+import moment from 'moment';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -145,9 +146,12 @@ class EditContactInfoFormCard extends Component {
 
 	renderTransferLockOptOut() {
 		const { domainRegistrationAgreementUrl, translate } = this.props;
-		const transferLockExpiration = this.props.selectedDomain.transferAwayEligibleAt;
+		const registrationDatePlus60Days = moment
+			.utc( this.props.selectedDomain.registrationDate )
+			.add( 60, 'days' );
+		const isLocked = moment.utc().isSameOrBefore( registrationDatePlus60Days );
 
-		if ( ! transferLockExpiration ) {
+		if ( ! isLocked ) {
 			return (
 				<>
 					<TransferLockOptOutForm
