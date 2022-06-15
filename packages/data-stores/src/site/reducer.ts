@@ -3,6 +3,7 @@ import {
 	NewSiteBlogDetails,
 	NewSiteErrorResponse,
 	SiteDetails,
+	SiteError,
 	Domain,
 	SiteLaunchState,
 	SiteLaunchStatus,
@@ -63,6 +64,17 @@ export const isFetchingSite: Reducer< boolean | undefined, Action > = ( state = 
 		case 'RESET_SITE_STORE':
 		case 'RESET_RECEIVE_NEW_SITE_FAILED':
 			return false;
+	}
+	return state;
+};
+
+export const fetchingSiteError: Reducer< SiteError | undefined, Action > = ( state, action ) => {
+	switch ( action.type ) {
+		case 'RECEIVE_SITE_FAILED':
+			return {
+				error: action.response.error,
+				message: action.response.message,
+			};
 	}
 	return state;
 };
@@ -370,6 +382,7 @@ const newSite = combineReducers( {
 const reducer = combineReducers( {
 	isFetchingSiteDetails,
 	newSite,
+	fetchingSiteError,
 	sites,
 	launchStatus,
 	sitesDomains,

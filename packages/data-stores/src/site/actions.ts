@@ -106,7 +106,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		verticalId,
 	} );
 
-	const receiveSiteFailed = ( siteId: number, response: SiteError | undefined ) => ( {
+	const receiveSiteFailed = ( siteId: number, response: SiteError ) => ( {
 		type: 'RECEIVE_SITE_FAILED' as const,
 		siteId,
 		response,

@@ -1,6 +1,6 @@
 // wpcomRequest is a temporary rename while we're working on migrating generators to thunks
 import wpcomRequest from 'wpcom-proxy-request';
-import type { SiteDetails, Domain, SiteSettings, Dispatch } from './types';
+import type { SiteDetails, Domain, SiteSettings, Dispatch, NewSiteErrorResponse } from './types';
 
 /**
  * Attempt to find a site based on its id, and if not return undefined.
@@ -21,7 +21,7 @@ export const getSite =
 			} );
 			dispatch.receiveSite( siteId, existingSite );
 		} catch ( err ) {
-			dispatch.receiveSiteFailed( siteId, undefined );
+			dispatch.receiveSiteFailed( siteId, err as NewSiteErrorResponse );
 		}
 	};
 
