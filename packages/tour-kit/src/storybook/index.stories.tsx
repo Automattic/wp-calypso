@@ -8,7 +8,10 @@ const References = () => {
 	return (
 		<div className={ 'storybook__tourkit-references' }>
 			<div className={ 'storybook__tourkit-references-container' }>
-				<div className={ 'storybook__tourkit-references-a' }>
+				<div
+					style={ { resize: 'both', overflow: 'auto' } }
+					className={ 'storybook__tourkit-references-a' }
+				>
 					<p>Reference A</p>
 				</div>
 				<div className={ 'storybook__tourkit-references-b' }>
@@ -153,6 +156,16 @@ export const SpotlightInteractivity = () => (
 	<StoryTour
 		options={ {
 			effects: { spotlight: { interactivity: { rootElementSelector: '#root', enabled: true } } },
+		} }
+	/>
+);
+export const SpotlightInteractivityWithAutoResize = () => (
+	<StoryTour
+		options={ {
+			effects: {
+				spotlight: { interactivity: { rootElementSelector: '#root', enabled: true } },
+				liveResize: { mutation: true, resize: true, rootElementSelector: '#root' },
+			},
 		} }
 	/>
 );
