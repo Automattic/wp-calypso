@@ -28,6 +28,7 @@ import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sid
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
 
 import './style.scss';
 
@@ -89,11 +90,17 @@ function PaymentMethodAdd(): ReactElement {
 
 	const successCallback = useCallback( () => {
 		if ( getQueryArg( window.location.href, 'return' ) ) {
-			setSuccessRedirect( true );
+			reduxDispatch(
+				fetchStoredCards( {
+					startingAfter: '',
+					endingBefore: '',
+				} )
+			);
+			setSuccessRedirect( () => true );
 		} else {
 			page( '/partner-portal/payment-methods/' );
 		}
-	}, [ reduxDispatch, page ] );
+	}, [ reduxDispatch, page, setSuccessRedirect, window, getQueryArg ] );
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
