@@ -1,4 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
+import { DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT } from '../constants';
 import type { Design, DesignPreviewOptions } from '../types';
 
 export const getDesignPreviewUrl = (
@@ -6,17 +7,25 @@ export const getDesignPreviewUrl = (
 	options: DesignPreviewOptions = {}
 ): string => {
 	const { recipe, slug } = design;
+	let viewport = { width: DEFAULT_VIEWPORT_WIDTH, height: DEFAULT_VIEWPORT_HEIGHT };
+
+	if ( typeof window !== 'undefined' ) {
+		const { innerWidth: width, innerHeight: height } = window;
+		viewport = { width, height };
+	}
 
 	//Anchor.fm themes get previews from their starter sites, ${slug}starter.wordpress.com
 	if ( [ 'hannah', 'riley', 'gilbert' ].indexOf( slug ) >= 0 ) {
 		return `https://${ slug }starter.wordpress.com`;
 	}
+
 	let url = addQueryArgs( 'https://public-api.wordpress.com/wpcom/v2/block-previews/site', {
 		stylesheet: recipe?.stylesheet,
 		pattern_ids: recipe?.pattern_ids?.join( ',' ),
 		vertical_id: options.verticalId,
 		language: options.language,
-		viewport_height: 700,
+		viewport_width: viewport.width,
+		viewport_height: viewport.height,
 		source_site: 'patternboilerplates.wordpress.com',
 	} );
 

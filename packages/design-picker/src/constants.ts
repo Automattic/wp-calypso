@@ -56,4 +56,5 @@ export const ANCHORFM_FONT_PAIRINGS = [
  * mShot options
  */
 export const DEFAULT_VIEWPORT_WIDTH = 1600;
+export const DEFAULT_VIEWPORT_HEIGHT = 700;
 export const MOBILE_VIEWPORT_WIDTH = 599;
