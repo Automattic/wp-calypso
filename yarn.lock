@@ -1549,6 +1549,7 @@ __metadata:
     "@wordpress/plugins": ^4.7.0
     "@wordpress/primitives": ^3.7.0
     "@wordpress/react-i18n": ^3.7.0
+    "@wordpress/readable-js-assets-webpack-plugin": ^1.0.4
     "@wordpress/rich-text": ^5.7.0
     "@wordpress/scripts": ^23.1.0
     "@wordpress/server-side-render": ^3.7.0
@@ -9549,6 +9550,15 @@ __metadata:
     "@wordpress/i18n": ^4.9.0
     utility-types: ^3.10.0
   checksum: 83bb2b485e33340a85e58e47aac7cb31141a70ed806bfe5c97b30bb5998be4f37ffbf295d29300bbe9a29b79729c11c004a4c2537c67c69c183cab28696e02ec
+  languageName: node
+  linkType: hard
+
+"@wordpress/readable-js-assets-webpack-plugin@npm:^1.0.4":
+  version: 1.0.5
+  resolution: "@wordpress/readable-js-assets-webpack-plugin@npm:1.0.5"
+  peerDependencies:
+    webpack: ^4.8.3 || ^5.0.0
+  checksum: 8550eb60b6fe02d9b36c98bf22c75c42a15fabb5f6bca83cbeb53d0950e1fafdac0a1ac50c6940f7d5ef0e0af28b9a8272e50e93c0575b1d8a990a0103d5b52c
   languageName: node
   linkType: hard
 
