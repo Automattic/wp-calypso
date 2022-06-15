@@ -7,12 +7,14 @@ import { getEmailAddress } from 'calypso/lib/emails';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import DomainInfoCard from '..';
 import type { DomainInfoCardProps } from '../types';
-import type { EmailAccount } from './types';
 
 const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) => {
 	const translate = useTranslate();
 	const typesUnableToAddEmail = [ domainType.TRANSFER, domainType.SITE_REDIRECT ] as const;
-	const { data, error, isLoading } = useGetEmailAccountsQuery( selectedSite.ID, domain.name );
+	const { data: emailAccounts = [], error } = useGetEmailAccountsQuery(
+		selectedSite.ID,
+		domain.name
+	);
 
 	let emailAddresses: string[] = [];
 
@@ -20,16 +22,12 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 		return null;
 	}
 
-	if ( ! isLoading && ! error ) {
-		const emailAccounts: EmailAccount[] = data?.accounts;
-
-		if ( emailAccounts.length ) {
-			emailAddresses = emailAccounts
-				.map( ( a ) => a.emails )
-				.flat()
-				.map( getEmailAddress )
-				.filter( ( email ) => email );
-		}
+	if ( ! error && emailAccounts.length ) {
+		emailAddresses = emailAccounts
+			.map( ( a ) => a.emails )
+			.flat()
+			.map( getEmailAddress )
+			.filter( ( email ) => email );
 	}
 
 	return ! emailAddresses.length ? (
