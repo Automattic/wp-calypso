@@ -149,7 +149,6 @@ class EditContactInfoFormCard extends Component {
 		const registrationDatePlus60Days = moment
 			.utc( this.props.selectedDomain.registrationDate )
 			.add( 60, 'days' );
-		// .toISOString();
 		const isLocked = moment.utc().isSameOrBefore( registrationDatePlus60Days );
 
 		if ( ! isLocked ) {
