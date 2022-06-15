@@ -45,26 +45,33 @@ export default function IssueLicenseForm( {
 
 	const [ product, setProduct ] = useState( '' );
 
-	const handleRedirectToDashboard = useCallback( () => {
-		if ( selectedSite ) {
-			const selectedProduct = products?.data?.find( ( p ) => p.slug === product );
-			if ( selectedProduct ) {
-				dispatch(
-					setPurchasedProduct( {
-						selectedSite: selectedSite.domain,
-						selectedProduct: getProductTitle( selectedProduct.name ),
-					} )
-				);
-				return page.redirect( '/dashboard' );
+	const handleRedirectToDashboard = useCallback(
+		( licenseKey ) => {
+			if ( selectedSite ) {
+				const selectedProduct = products?.data?.find( ( p ) => p.slug === product );
+				if ( selectedProduct ) {
+					dispatch(
+						setPurchasedProduct( {
+							selectedSite: selectedSite.domain,
+							selectedProduct: {
+								name: getProductTitle( selectedProduct.name ),
+								key: licenseKey,
+							},
+						} )
+					);
+					return page.redirect( '/dashboard' );
+				}
 			}
-		}
-	}, [ dispatch, product, products?.data, selectedSite ] );
+		},
+		[ dispatch, product, products?.data, selectedSite ]
+	);
 
 	const assignLicense = useAssignLicenseMutation( {
 		onSuccess: ( license: any ) => {
 			setIsSubmitting( false );
 			if ( selectedSite ) {
-				handleRedirectToDashboard();
+				handleRedirectToDashboard( license.license_key );
+				return;
 			}
 			page.redirect(
 				addQueryArgs( { highlight: license.license_key }, '/partner-portal/licenses' )

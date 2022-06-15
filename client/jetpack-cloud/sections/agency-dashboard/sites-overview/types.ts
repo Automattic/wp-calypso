@@ -66,4 +66,7 @@ export type AgencyDashboardFilter = {
 	issueTypes: Array< AgencyDashboardFilterOption | string >;
 };
 
-export type PurchasedProduct = { selectedSite: string; selectedProduct: string };
+export type PurchasedProduct = {
+	selectedSite: string;
+	selectedProduct: { name: string; key: string };
+};

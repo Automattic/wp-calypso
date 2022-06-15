@@ -1,6 +1,9 @@
 import page from 'page';
 import { AnyAction } from 'redux';
-import { AgencyDashboardFilterOption } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
+import {
+	AgencyDashboardFilterOption,
+	PurchasedProduct,
+} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import './init';
 import { LICENSE_PURCHASED_VIA_AGENCY_DASHBOARD } from './action-types';
@@ -26,9 +29,6 @@ export const updateFilter = ( filterOptions: AgencyDashboardFilterOption[] ) => 
 	navigateToFilter( filterOptions );
 };
 
-export function setPurchasedProduct( product?: {
-	selectedSite: string;
-	selectedProduct: string;
-} ): AnyAction {
+export function setPurchasedProduct( product?: PurchasedProduct ): AnyAction {
 	return { type: LICENSE_PURCHASED_VIA_AGENCY_DASHBOARD, payload: product };
 }

@@ -28,7 +28,7 @@ export default function SiteAddLicenseNotification( {
 		};
 	}, [ dismissBanner ] );
 
-	if ( ! selectedSite || ! selectedProduct ) {
+	if ( ! selectedSite || ! selectedProduct?.name ) {
 		return null;
 	}
 
@@ -39,7 +39,7 @@ export default function SiteAddLicenseNotification( {
 					'A {{strong}}%(selectedProduct)s{{/strong}} license was succesfully assigned to {{em}}%(selectedSite)s{{/em}}. Please allow a few minutes for your features to activate.',
 					{
 						args: {
-							selectedProduct,
+							selectedProduct: selectedProduct.name,
 							selectedSite,
 						},
 						components: {
@@ -54,7 +54,7 @@ export default function SiteAddLicenseNotification( {
 				onDismiss={ dismissBanner }
 				icon="info-outline"
 				callToAction={ translate( 'View License Details' ) }
-				href={ '/partner-portal/licenses' }
+				href={ `/partner-portal/licenses?highlight=${ selectedProduct.key }` }
 			/>
 		</div>
 	);
