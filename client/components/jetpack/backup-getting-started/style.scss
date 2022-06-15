@@ -1,0 +1,93 @@
+$card-height-desktop: 250px;
+$preview-max-width: 360px;
+$content-max-width: 210px;
+
+.backup-getting-started {
+	display: grid;
+	height: $card-height-desktop;
+	background-image: url( 'calypso/assets/images/jetpack/getting-started-backup-bg.svg' );
+	background-color: #f9f9f6;
+	grid-template-columns: minmax( 0, $preview-max-width ) minmax( $content-max-width, 1fr );
+	grid-column-gap: 1.5rem;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		height: auto;
+		background-image: none;
+		grid-template-columns: 1fr;
+		grid-gap: 0;
+	}
+}
+
+.backup-getting-started__preview {
+	position: relative;
+	border-radius: 9px; /* stylelint-disable-line scales/radii */
+	box-shadow: 0 5px 5px 0 rgb( #000, 0.01 ), 5px 5px 22px 0 rgb( #000, 0.25 );
+	overflow: hidden;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		margin: 0 0 2rem;
+	}
+
+	&[data-hidden='mobile'] {
+		@include breakpoint-deprecated( '<660px' ) {
+			display: none;
+		}
+	}
+	&[data-hidden='desktop'] {
+		@include breakpoint-deprecated( '>660px' ) {
+			display: none;
+		}
+	}
+}
+
+.backup-getting-started__image {
+	display: block;
+	width: auto;
+	height: 100%;
+	object-fit: contain;
+	background-color: var( --studio-white );
+}
+
+.backup-getting-started__time-length {
+	position: absolute;
+	right: 0.75rem;
+	bottom: 0.75rem;
+	padding: 0.25rem 0.5rem;
+	border-radius: 5px; /* stylelint-disable-line scales/radii */
+	background-color: var( --studio-gray-80 );
+	color: #fff;
+	font-family: 'Inter', $sans;
+	font-size: 1.25rem;
+	font-weight: 700;
+	line-height: 1;
+	letter-spacing: -0.02em;
+	user-select: none;
+}
+
+.backup-getting-started__content {
+	display: flex;
+	flex-direction: column;
+}
+
+.backup-getting-started__header {
+	font-size: 1.25rem;
+	line-height: 1.5rem;
+	letter-spacing: -0.02em;
+	font-weight: 700;
+	margin: 0 0 1rem;
+}
+
+.backup-getting-started__text {
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	letter-spacing: -0.02em;
+	margin: 0 0 1rem;
+}
+
+.backup-getting-started__button {
+	margin-top: auto;
+	align-self: flex-start;
+	/* Jetpack Green enforces green background as a default and we want Emerald style here */
+	background-color: var( --studio-black ) !important;
+	border-color: var( --studio-black ) !important;
+}
