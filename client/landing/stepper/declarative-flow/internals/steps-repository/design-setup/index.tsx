@@ -345,7 +345,8 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		return null;
 	}
 
-	if ( selectedDesign && ! showGeneratedDesigns ) {
+	// In Anchor sites, full-screen design previews are disabled.
+	if ( selectedDesign && ! showGeneratedDesigns && ! isAnchorSite ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
