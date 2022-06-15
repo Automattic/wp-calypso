@@ -1,10 +1,5 @@
 import { Browser } from 'playwright';
-
-// Because these types are ultimately accessed on "window", adding them here.
-export interface TracksEventProperties {
-	[ key: string ]: boolean | number | string;
-}
-export type TracksEvent = [ string, TracksEventProperties ];
+import type { TracksEvent } from './types/editor-tracks.types';
 
 // Expose global browser initialized in jest-playwright-config/test-environment.ts
 declare global {
