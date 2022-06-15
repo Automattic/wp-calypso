@@ -6,12 +6,13 @@ let cachedAvailableValue: boolean | undefined = undefined;
 
 export function useHappychatAvailable() {
 	const [ available, setIsAvailable ] = useState< boolean | undefined >( cachedAvailableValue );
+	const isSimpleSite = window.location.host.endsWith( 'wordpress.com' );
 	const { data: dataAuth, isLoading: isLoadingAuth } = useHappychatAuth(
 		cachedAvailableValue === undefined
 	);
 
 	useEffect( () => {
-		if ( ! isLoadingAuth && dataAuth && cachedAvailableValue === undefined ) {
+		if ( isSimpleSite && ! isLoadingAuth && dataAuth && cachedAvailableValue === undefined ) {
 			const connection = buildConnection( {
 				receiveAccept: ( receivedAvailability ) => {
 					cachedAvailableValue = receivedAvailability;
@@ -24,7 +25,7 @@ export function useHappychatAvailable() {
 			} );
 			connection.init( ( value: unknown ) => value, Promise.resolve( dataAuth ) );
 		}
-	}, [ dataAuth, isLoadingAuth ] );
+	}, [ dataAuth, isLoadingAuth, isSimpleSite ] );
 
 	return { available: Boolean( available ), isLoading: available === undefined };
 }

@@ -49,7 +49,7 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const [ isForceStaticDesigns, setIsForceStaticDesigns ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
-	const { goBack, submit, goToStep } = navigation;
+	const { goBack, submit, goToStep, exitFlow } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
 	const site = useSite();
@@ -65,7 +65,11 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 	const siteTitle = site?.name;
 	const isReskinned = true;
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
-	const isPrivateAtomic = Boolean( site?.launch_status === 'unlaunched' && isAtomic );
+	useEffect( () => {
+		if ( isAtomic ) {
+			exitFlow?.( `/site-editor/${ siteSlug }` );
+		}
+	}, [ isAtomic ] );
 	const isEligibleForProPlan = useSelect(
 		( select ) => site && select( SITE_STORE ).isEligibleForProPlan( site.ID )
 	);
@@ -115,7 +119,8 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		[ selectedDesign, generatedDesigns, isMobile ]
 	);
 
-	const isPreviewingGeneratedDesign = isMobile && showGeneratedDesigns && !! selectedDesign;
+	const isPreviewingGeneratedDesign =
+		isMobile && showGeneratedDesigns && !! selectedDesign && ! isAnchorSite;
 
 	const visibility = useNewSiteVisibility();
 
@@ -345,7 +350,8 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 		return null;
 	}
 
-	if ( selectedDesign && ! showGeneratedDesigns ) {
+	// In Anchor sites, full-screen design previews are disabled.
+	if ( selectedDesign && ! showGeneratedDesigns && ! isAnchorSite ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
@@ -368,7 +374,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 				} ) }
 				toolbarComponent={ PreviewToolbar }
 				siteId={ site?.ID }
-				isPrivateAtomic={ isPrivateAtomic }
 				url={ site?.URL }
 				translate={ translate }
 				recordTracksEvent={ recordTracksEvent }
@@ -430,7 +435,6 @@ const designSetup: Step = function DesignSetup( { navigation, flow } ) {
 					locale={ locale }
 					verticalId={ siteVerticalId }
 					isSelected={ design.slug === selectedGeneratedDesign?.slug }
-					isPrivateAtomic={ isPrivateAtomic }
 					isStickyToolbar={ ! isMobile && isSticky }
 					recordTracksEvent={ recordTracksEvent }
 				/>

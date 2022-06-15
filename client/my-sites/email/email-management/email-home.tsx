@@ -7,7 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
-import { useGetEmailDomainsQuery } from 'calypso/data/emails/use-get-email-domains-query';
+import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
@@ -99,10 +99,10 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 	const hasSitesLoaded = useSelector( ( state ) => hasLoadedSites( state ) );
 
 	const {
-		data,
+		data: allDomains = [],
 		isLoading: isSiteDomainLoading,
 		remove: removeEmailDomainsCache,
-	} = useGetEmailDomainsQuery( selectedSite?.ID ?? null, {
+	} = useGetDomainsQuery( selectedSite?.ID ?? null, {
 		retry: false,
 	} );
 
@@ -114,7 +114,7 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 		};
 	}, [] );
 
-	const domains = data?.domains?.map( createSiteDomainObject );
+	const domains = allDomains.map( createSiteDomainObject );
 
 	if ( isSiteDomainLoading || ! hasSitesLoaded || ! selectedSite || ! domains ) {
 		return <LoadingPlaceholder />;
