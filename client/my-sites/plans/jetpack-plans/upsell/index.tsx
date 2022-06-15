@@ -43,7 +43,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 	const productNames = getJetpackProductsDisplayNames();
 
 	const [ isLoadingUpsellPageExperiment, experimentAssignment ] = useExperiment(
-		'jetpack_upsell_page_2022_05'
+		'calypso_jetpack_upsell_page_2022_06'
 	);
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );

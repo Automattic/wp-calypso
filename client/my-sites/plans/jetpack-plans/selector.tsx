@@ -59,7 +59,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	const legacyPlan = planRecommendation ? planRecommendation[ 0 ] : null;
 
 	const [ isLoadingUpsellPageExperiment, experimentAssignment ] = useExperiment(
-		'jetpack_upsell_page_2022_05'
+		'calypso_jetpack_upsell_page_2022_06'
 	);
 	const showUpsellPage = experimentAssignment?.variationName === 'treatment';
 
