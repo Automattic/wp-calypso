@@ -5,7 +5,6 @@ import {
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR,
-	JETPACK_PARTNER_PORTAL_PARTNER_SET_HAS_VALID_PAYMENT_METHOD,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { activePartnerKeySchema } from './schema';
@@ -78,15 +77,6 @@ const current = ( state = initialState.current, action: AnyAction ) => {
 			if ( null !== state ) {
 				return Object.assign( state, {
 					has_valid_payment_method: !! action?.payment_method_id,
-				} );
-			}
-
-			return state;
-
-		case JETPACK_PARTNER_PORTAL_PARTNER_SET_HAS_VALID_PAYMENT_METHOD:
-			if ( null !== state ) {
-				return Object.assign( state, {
-					has_valid_payment_method: action.hasValidPaymentMethod,
 				} );
 			}
 

@@ -6,14 +6,12 @@ import {
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE,
-	JETPACK_PARTNER_PORTAL_PARTNER_SET_HAS_VALID_PAYMENT_METHOD,
 } from 'calypso/state/action-types';
 import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	getActivePartnerKey,
 	getActivePartnerKeyId,
 	isFetchingPartner,
-	hasFetchedPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { APIError, Partner, PartnerPortalThunkAction } from 'calypso/state/partner-portal/types';
 
@@ -87,20 +85,5 @@ export function receivePartnerError( error: APIError ): PartnerPortalThunkAction
 				errorNotice( translate( 'We were unable to retrieve your partner account details.' ) )
 			);
 		}
-	};
-}
-
-export function setPartnerHasValidPaymentMethod(
-	hasValidPaymentMethod: boolean
-): PartnerPortalThunkAction {
-	return ( dispatch, getState ) => {
-		if ( ! hasFetchedPartner( getState() ) || isFetchingPartner( getState() ) ) {
-			return;
-		}
-
-		dispatch( {
-			type: JETPACK_PARTNER_PORTAL_PARTNER_SET_HAS_VALID_PAYMENT_METHOD,
-			hasValidPaymentMethod,
-		} );
 	};
 }

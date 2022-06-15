@@ -28,7 +28,6 @@ import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sid
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { setPartnerHasValidPaymentMethod } from 'calypso/state/partner-portal/partner/actions';
 
 import './style.scss';
 
@@ -89,7 +88,6 @@ function PaymentMethodAdd(): ReactElement {
 	);
 
 	const successCallback = useCallback( () => {
-		reduxDispatch( setPartnerHasValidPaymentMethod( true ) );
 		if ( getQueryArg( window.location.href, 'return' ) ) {
 			setSuccessRedirect( true );
 		} else {
