@@ -32,13 +32,14 @@ import {
 	PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
+	PRODUCT_JETPACK_ANTI_SPAM,
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
 import type { SelectorProduct } from './types';
-import type { JetpackPlanSlug } from '@automattic/calypso-products';
+import type { JetpackPlanSlug, JetpackPurchasableItemSlug } from '@automattic/calypso-products';
 
 export const PLAN_COMPARISON_PAGE = 'https://jetpack.com/features/comparison/';
 export const INTRO_PRICING_DISCOUNT_PERCENTAGE = 50;
@@ -177,6 +178,15 @@ export const PRODUCT_UPSELLS_BY_FEATURE: Record< string, JetpackPlanSlug > = {
 	[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	[ FEATURE_ADVANCED_SEO ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	[ FEATURE_ACTIVITY_LOG ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+};
+
+/**
+ * Matrix of products upsold in the purchase flow, in between the pricing and checkout pages.
+ */
+export const PURCHASE_FLOW_UPSELLS_MATRIX: Record< string, JetpackPurchasableItemSlug > = {
+	[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: PLAN_JETPACK_SECURITY_T1_YEARLY,
+	[ PRODUCT_JETPACK_SCAN ]: PLAN_JETPACK_SECURITY_T1_YEARLY,
+	[ PRODUCT_JETPACK_ANTI_SPAM ]: PLAN_JETPACK_SECURITY_T1_YEARLY,
 };
 
 /**
