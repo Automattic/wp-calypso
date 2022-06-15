@@ -2,13 +2,7 @@ import config from '@automattic/calypso-config';
 import styled from '@emotion/styled';
 import { FunctionComponent, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-/**
- * TODO
- * The UpSell box is temporarily disabled, it will be reactivated with a new logic.
- * See the issue 708 at: https://github.com/Automattic/martech/issues/708
- *
- * import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-user-plan-upsell';
- */
+import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-user-plan-upsell';
 import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-renewals-reminder';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { ResponseCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -23,6 +17,7 @@ interface Props {
 type DivProps = {
 	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
+
 const UpsellWrapper = styled.div< DivProps >`
 	background: ${ ( props ) => props.theme.colors.surface };
 
@@ -79,7 +74,7 @@ const UpsellWrapper = styled.div< DivProps >`
 const SecondaryCartPromotions: FunctionComponent< Props > = ( {
 	responseCart,
 	addItemToCart,
-	/* isCartPendingUpdate, */
+	isCartPendingUpdate,
 } ) => {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) as number );
 	const isPurchaseRenewal = useMemo(
@@ -99,23 +94,19 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( {
 		);
 	}
 
-	return null;
+	if ( config.isEnabled( 'checkout_sellup_box' ) ) {
+		return (
+			<UpsellWrapper>
+				<CartFreeUserPlanUpsell
+					cart={ responseCart }
+					addItemToCart={ addItemToCart }
+					isCartPendingUpdate={ isCartPendingUpdate }
+				/>
+			</UpsellWrapper>
+		);
+	}
 
-	/**
-	 * TODO
-	 * The UpSell box is temporarily disabled, it will be reactivated with a new logic.
-	 * See the issue 708 at: https://github.com/Automattic/martech/issues/708
-	 *
-	 * return (
-	 *	<UpsellWrapper>
-	 *		<CartFreeUserPlanUpsell
-	 *			cart={ responseCart }
-	 *			addItemToCart={ addItemToCart }
-	 *			isCartPendingUpdate={ isCartPendingUpdate }
-	 *		/>
-	 *	</UpsellWrapper>
-	 * );
-	 */
+	return null;
 };
 
 export default SecondaryCartPromotions;

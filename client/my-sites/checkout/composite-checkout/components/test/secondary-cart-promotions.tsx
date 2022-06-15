@@ -106,50 +106,43 @@ describe( 'SecondaryCartPromotions', () => {
 		} );
 	} );
 
-	/**
-	 * TODO
-	 * The UpSell box is temporarily disabled, it will be reactivated with a new logic.
-	 * See the issue 708 at: https://github.com/Automattic/martech/issues/708
-	 */
+	if ( config.isEnabled( 'checkout_sellup_box' ) ) {
+		describe( 'CartFreeUserPlanUpsell', () => {
+			describe( 'when there is a domain in the cart for a site without a paid plan', () => {
+				test( 'displays the free user plan upsell component', () => {
+					const { queryByText } = render(
+						<ReduxProvider store={ store }>
+							<ThemeProvider theme={ checkoutTheme }>
+								<SecondaryCartPromotions
+									responseCart={ responseCartWithRenewal }
+									addItemToCart={ jest.fn() }
+								/>
+							</ThemeProvider>
+						</ReduxProvider>
+					);
+					expect( queryByText( 'Upgrade and save' ) ).toBeTruthy();
+					expect( queryByText( 'Add to Cart' ) ).toBeTruthy();
+				} );
 
-	// eslint-disable-next-line jest/no-commented-out-tests
-	/*
-	describe( 'CartFreeUserPlanUpsell', () => {
-		describe( 'when there is a domain in the cart for a site without a paid plan', () => {
-			test( 'displays the free user plan upsell component', () => {
-				const { queryByText } = render(
-					<ReduxProvider store={ store }>
-						<ThemeProvider theme={ checkoutTheme }>
-							<SecondaryCartPromotions
-								responseCart={ responseCartWithRenewal }
-								addItemToCart={ jest.fn() }
-							/>
-						</ThemeProvider>
-					</ReduxProvider>
-				);
-				expect( queryByText( 'Upgrade and save' ) ).toBeTruthy();
-				expect( queryByText( 'Add to Cart' ) ).toBeTruthy();
-			} );
-
-			test( 'adds the plan to the cart when "Add to Cart" is clicked', async () => {
-				const mockAddItemToCart = jest.fn();
-				const { queryByText } = render(
-					<ReduxProvider store={ store }>
-						<ThemeProvider theme={ checkoutTheme }>
-							<SecondaryCartPromotions
-								responseCart={ responseCartWithRenewal }
-								addItemToCart={ mockAddItemToCart }
-							/>
-						</ThemeProvider>
-					</ReduxProvider>
-				);
-				await userEvent.click( queryByText( 'Add to Cart' ) );
-				expect( mockAddItemToCart ).toHaveBeenCalledTimes( 1 );
-				expect( mockAddItemToCart ).toHaveBeenCalledWith( {
-					product_slug: 'personal-bundle',
+				test( 'adds the plan to the cart when "Add to Cart" is clicked', async () => {
+					const mockAddItemToCart = jest.fn();
+					const { queryByText } = render(
+						<ReduxProvider store={ store }>
+							<ThemeProvider theme={ checkoutTheme }>
+								<SecondaryCartPromotions
+									responseCart={ responseCartWithRenewal }
+									addItemToCart={ mockAddItemToCart }
+								/>
+							</ThemeProvider>
+						</ReduxProvider>
+					);
+					await userEvent.click( queryByText( 'Add to Cart' ) );
+					expect( mockAddItemToCart ).toHaveBeenCalledTimes( 1 );
+					expect( mockAddItemToCart ).toHaveBeenCalledWith( {
+						product_slug: 'personal-bundle',
+					} );
 				} );
 			} );
 		} );
-	} );
-	*/
+	}
 } );
