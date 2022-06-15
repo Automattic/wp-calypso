@@ -35,6 +35,11 @@ export const fetchStoredCards =
 					type: 'STORED_CARDS_FETCH_COMPLETED',
 					list: data.items,
 				} );
+
+				dispatch( {
+					type: 'STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED',
+					payment_method_id: data.items.find( ( currCard ) => currCard.is_default ),
+				} );
 			} )
 			.catch( ( error: Error ) => {
 				const errorMessage =
