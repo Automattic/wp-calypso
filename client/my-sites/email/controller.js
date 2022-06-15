@@ -39,9 +39,10 @@ export default {
 	},
 
 	emailManagementAddGSuiteUsers( pageContext, next ) {
-		const GSuiteAddMailboxesComponent = isEnabled( 'unify-mailbox-forms' )
-			? AddMailboxes
-			: GSuiteAddUsers;
+		const unifyMailboxForms = isEnabled( 'unify-mailbox-forms' );
+		const AddMailboxesComponent = unifyMailboxForms ? AddMailboxes : GSuiteAddUsers;
+		const extraProps = unifyMailboxForms ? { provider: EmailProvider.Google } : {};
+
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
@@ -49,10 +50,10 @@ export default {
 					title="Email Management > Add Google Users"
 				/>
 
-				<GSuiteAddMailboxesComponent
-					provider={ EmailProvider.Google }
+				<AddMailboxesComponent
 					source={ pageContext.query.source }
 					selectedDomainName={ pageContext.params.domain }
+					{ ...extraProps }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
