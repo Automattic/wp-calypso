@@ -13,7 +13,7 @@ interface GeneratedDesignPickerWebPreviewProps {
 	locale: string;
 	verticalId: string;
 	isSelected: boolean;
-	isPrivateAtomic: boolean;
+	isPrivateAtomic?: boolean;
 	isStickyToolbar?: boolean;
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 }

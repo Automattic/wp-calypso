@@ -381,13 +381,16 @@ export const siteSetupFlow: Flow = {
 			navigate( step );
 		};
 
-		return { goNext, goBack, goToStep, submit };
+		return { goNext, goBack, goToStep, submit, exitFlow };
 	},
 
 	useAssertConditions(): AssertConditionResult {
 		const siteSlug = useSiteSlugParam();
 		const siteId = useSiteIdParam();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const fetchingSiteError = useSelect( ( select ) =>
+			select( SITE_STORE ).getFetchingSiteError()
+		);
 
 		if ( ! userIsLoggedIn ) {
 			redirect( '/start' );
@@ -398,9 +401,18 @@ export const siteSetupFlow: Flow = {
 		}
 
 		if ( ! siteSlug && ! siteId ) {
+			redirect( '/' );
 			return {
 				state: AssertConditionState.FAILURE,
 				message: 'site-setup did not provide the site slug or site id it is configured to.',
+			};
+		}
+
+		if ( fetchingSiteError ) {
+			redirect( '/' );
+			return {
+				state: AssertConditionState.FAILURE,
+				message: fetchingSiteError.message,
 			};
 		}
 
