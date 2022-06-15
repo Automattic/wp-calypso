@@ -2,6 +2,9 @@
 
 .plugin-details-CTA__container {
 	@extend %plugin-header;
+}
+
+.legacy .plugin-details-CTA__container {
 	padding-bottom: 0;
 }
 

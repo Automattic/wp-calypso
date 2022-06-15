@@ -62,6 +62,7 @@
 		"plans/starter-plan": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
+		"plugins/plugin-details-layout": false,
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,

@@ -118,9 +118,29 @@ body.is-section-plugins.theme-default.color-scheme {
 }
 
 .plugin-details__layout {
-	@include breakpoint-deprecated( '>1040px' ) {
-		@include display-grid;
-		@include grid-template-columns( 3, 80px, 1fr );
+	@include display-grid;
+	@include grid-template-columns( 3, 80px, 1fr );
+	grid-template-areas: 'header header actions'
+						'content content actions';
+
+	@include breakpoint-deprecated( '<960px' ) {
+		grid-template-areas: 'header header header'
+							'actions actions actions'
+							'content content content';
+	}
+
+	.plugin-details__header {
+		grid-area: header;
+	}
+
+	.plugin-details__content {
+		grid-area: content;
+	}
+
+	.plugin-details__actions {
+		grid-area: actions;
+		background-color: var( --studio-gray-0 );
+		padding: 20px;
 	}
 
 	.plugin-details__layout-col-left {
@@ -145,8 +165,6 @@ body.is-section-plugins.theme-default.color-scheme {
 }
 
 .plugin-details__body {
-	border-top: 1px solid var( --studio-gray-5 );
-
 	.plugin-sections {
 		margin-top: 20px;
 
@@ -262,4 +280,18 @@ body.is-section-plugins.theme-default.color-scheme {
 
 body.is-section-plugins header .select-dropdown__item {
 	padding: 0 0 0 16px !important;
+}
+
+.legacy {
+	.plugin-details__body {
+		border-top: 1px solid var( --studio-gray-5 );
+	}
+
+	.plugin-details__layout {
+		grid-template-areas: none;
+		@include breakpoint-deprecated( '>1040px' ) {
+			@include display-grid;
+			@include grid-template-columns( 3, 80px, 1fr );
+		}
+	}
 }
