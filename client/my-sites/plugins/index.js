@@ -33,6 +33,7 @@ export default function () {
 
 	page(
 		'/plugins/browse/:category/:site?',
+		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
 		browsePlugins,
