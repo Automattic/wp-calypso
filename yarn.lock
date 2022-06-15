@@ -281,6 +281,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-mp-data-analysis@workspace:packages/calypso-mp-data-analysis":
+  version: 0.0.0-use.local
+  resolution: "@automattic/calypso-mp-data-analysis@workspace:packages/calypso-mp-data-analysis"
+  dependencies:
+    axios: ^0.27.2
+    csv-parse: ^5.1.0
+    csv-stringify: ^6.1.0
+    fs-extra: ^10.1.0
+  languageName: unknown
+  linkType: soft
+
 "@automattic/calypso-polyfills@workspace:^, @automattic/calypso-polyfills@workspace:packages/calypso-polyfills":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-polyfills@workspace:packages/calypso-polyfills"
@@ -11141,6 +11152,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^0.27.2":
+  version: 0.27.2
+  resolution: "axios@npm:0.27.2"
+  dependencies:
+    follow-redirects: ^1.14.9
+    form-data: ^4.0.0
+  checksum: 76d673d2a90629944b44d6f345f01e58e9174690f635115d5ffd4aca495d99bcd8f95c590d5ccb473513f5ebc1d1a6e8934580d0c57cdd0498c3a101313ef771
+  languageName: node
+  linkType: hard
+
 "axobject-query@npm:^2.2.0":
   version: 2.2.0
   resolution: "axobject-query@npm:2.2.0"
@@ -14658,6 +14679,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"csv-parse@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "csv-parse@npm:5.1.0"
+  checksum: 63a85f8a7b0df613e0c2039e3a62d3c3877f670952dc0c0dfc2ba642f5d8b5d33b1bfb6943c65bec5ea56bba39c3ae6d3b93cf649f436c3d6cc558aa98905653
+  languageName: node
+  linkType: hard
+
+"csv-stringify@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "csv-stringify@npm:6.1.0"
+  checksum: 111ae51c5ecf9aab17f36775d18b1b2db64fb5593c195a69538a95459fee1a53ca67f0d0b37a1f763d76fdeb7e10991e1b6509b0511d9159d7dad4ff9d60718c
+  languageName: node
+  linkType: hard
+
 "ctype@npm:0.5.3":
   version: 0.5.3
   resolution: "ctype@npm:0.5.3"
@@ -17996,13 +18031,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.7":
-  version: 1.14.9
-  resolution: "follow-redirects@npm:1.14.9"
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.7, follow-redirects@npm:^1.14.9":
+  version: 1.15.1
+  resolution: "follow-redirects@npm:1.15.1"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 08c465c17cbf3011ad16516609ee476abffa8fd1ff78c2082f1ff43614cb06586a0ccc8e99e5ebe13da06d064367cb269789e3ca0e93e2ad5b24fdc30b4294b6
+  checksum: ea21337fe38eac8d75f5af12c425cc40e0bb44dcc3091fd0bde1c828596251a7a9638b5720fee5a0a5c62524450cbe16c52aae1dce88c6aee68577e441842e7f
   languageName: node
   linkType: hard
 
@@ -18298,14 +18333,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fs-extra@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "fs-extra@npm:10.0.0"
+"fs-extra@npm:^10.0.0, fs-extra@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "fs-extra@npm:10.1.0"
   dependencies:
     graceful-fs: ^4.2.0
     jsonfile: ^6.0.1
     universalify: ^2.0.0
-  checksum: 85802f3d9e49d197744a8372f0d78d5a1faa3df73f4c5375d6366a4b9f745197d3da1f095841443d50f29a9f81cdc01363eb6d17bef2ba70c268559368211040
+  checksum: 5f579466e7109719d162a9249abbeffe7f426eb133ea486e020b89bc6d67a741134076bf439983f2eb79276ceaf6bd7b7c1e43c3fd67fe889863e69072fb0a5e
   languageName: node
   linkType: hard
 
