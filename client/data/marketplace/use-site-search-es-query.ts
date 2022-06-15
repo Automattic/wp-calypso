@@ -1,5 +1,7 @@
 import { UseQueryResult, UseQueryOptions, useInfiniteQuery, InfiniteData } from 'react-query';
+import { useSelector } from 'react-redux';
 import { extractSearchInformation } from 'calypso/lib/plugins/utils';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from './constants';
 import { search } from './site-search-api';
 import { ESHits, ESResponse, Plugin, PluginQueryOptions } from './types';
@@ -65,6 +67,7 @@ export const useNewSiteSearchPluginsInfinite = (
 	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
 	const [ searchTerm /*, author*/ ] = extractSearchInformation( options.searchTerm );
+	const locale = useSelector( getCurrentUserLocale );
 	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
 
 	return useInfiniteQuery(
@@ -75,6 +78,7 @@ export const useNewSiteSearchPluginsInfinite = (
 				groupId: 'wporg',
 				pageHandle: pageParam,
 				pageSize,
+				locale: options.locale || locale,
 			} ),
 		{
 			select: ( data: InfiniteData< ESResponse > ) => {

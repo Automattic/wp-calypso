@@ -29,7 +29,7 @@ function mapSortToApiValue( sort: string ) {
  *
  * @returns {string} The generated query string.
  */
-function generateApiQueryString( { query, groupId, pageHandle, pageSize }: SearchParams ) {
+function generateApiQueryString( { query, groupId, pageHandle, pageSize, locale }: SearchParams ) {
 	const sort = 'score_default';
 
 	let params: {
@@ -41,6 +41,7 @@ function generateApiQueryString( { query, groupId, pageHandle, pageSize }: Searc
 		size: number;
 		group_id?: string;
 		from?: number;
+		lang: string;
 	} = {
 		fields: [ ...RETURNABLE_FIELDS ],
 		// filter: buildFilterObject( filter ),
@@ -48,6 +49,7 @@ function generateApiQueryString( { query, groupId, pageHandle, pageSize }: Searc
 		query: encodeURIComponent( query ?? '' ),
 		sort: mapSortToApiValue( sort ),
 		size: pageSize,
+		lang: locale,
 	};
 
 	if ( groupId ) {

@@ -66,4 +66,5 @@ export type SearchParams = {
 	groupId: string;
 	pageHandle: string | undefined;
 	pageSize: number;
+	locale: string;
 };
