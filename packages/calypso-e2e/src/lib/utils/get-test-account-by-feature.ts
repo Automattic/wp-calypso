@@ -1,6 +1,6 @@
 import defaultCriteria from './criteria-for-test-accounts';
+import type { TestAccountName } from '../../secrets';
 import type { SupportedEnvVariables } from '../../types/env-variables.types';
-import type { TestAccountName } from '../../types/secrets-manager.types';
 
 export type TestAccountEnvVariables = Pick<
 	SupportedEnvVariables,

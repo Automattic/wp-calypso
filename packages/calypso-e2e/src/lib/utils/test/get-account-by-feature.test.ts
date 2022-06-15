@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { TestAccountName } from '../../..';
+import { TestAccountName } from '../../../secrets';
 import { getTestAccountByFeature, envToFeatureKey } from '../get-test-account-by-feature';
 import type {
 	FeatureCriteria,

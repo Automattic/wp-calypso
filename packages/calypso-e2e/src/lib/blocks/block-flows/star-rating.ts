@@ -1,4 +1,4 @@
-import { BlockFlow, EditorContext, PublishedPostContext } from './types';
+import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 const wholeRatings = [ 1, 2, 3, 4, 5 ] as const;
 type WholeRating = typeof wholeRatings[ number ];

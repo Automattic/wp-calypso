@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We have to do some dynamic parsing and iteration as we validate JSON.
 import fs from 'fs';
 import path from 'path';
-import type { Secrets } from '../types';
+import type { Secrets } from '.';
 
 export const TEST_ACCOUNT_NAMES = [
 	'defaultUser',

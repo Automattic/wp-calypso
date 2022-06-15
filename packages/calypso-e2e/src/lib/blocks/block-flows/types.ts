@@ -1,5 +1,5 @@
 import { Locator, Page } from 'playwright';
-import { EditorPage } from '../../pages/editor-page';
+import { EditorPage } from '../../pages';
 
 /**
  * An interface for block-based flows to enable iterating the same smoke test cases for a set of blocks.

@@ -1,7 +1,7 @@
 import phrase from 'asana-phrase';
 import envVariables from './env-variables';
 import { SecretsManager } from './secrets';
-import type { Secrets, TestAccountName } from './types';
+import type { Secrets, TestAccountName } from './secrets';
 import type {
 	PaymentDetails,
 	DateFormat,

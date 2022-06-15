@@ -1,5 +1,5 @@
 import { createTestFile } from '../../../media-helper';
-import { BlockFlow, EditorContext, PublishedPostContext } from './types';
+import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 interface ConfigurationData {
 	imagePaths: string[];
