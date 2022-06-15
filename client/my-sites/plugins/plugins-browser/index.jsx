@@ -176,7 +176,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 		if ( category ) {
 			items.push( {
 				label: categoryName,
-				href: `/plugins/${ category }/${ siteSlug || '' }`,
+				href: `/plugins/browse/${ category }/${ siteSlug || '' }`,
 				id: 'category',
 			} );
 		}
