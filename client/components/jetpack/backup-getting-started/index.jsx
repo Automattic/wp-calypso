@@ -28,7 +28,7 @@ export default function BackupGettingStarted() {
 	};
 
 	return (
-		<DismissibleCard preferenceName="backup-getting-started-1" className="backup-getting-started">
+		<DismissibleCard preferenceName="backup-getting-started" className="backup-getting-started">
 			<VideoPreview { ...videoPreviewProps } hiddenOn="mobile" />
 			<div className="backup-getting-started__content">
 				<h3 className="backup-getting-started__header">
