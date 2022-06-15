@@ -1,4 +1,4 @@
-import { TestAccountName } from '../index';
+import { TestAccountName } from '../';
 
 export type EnvVariableValue = boolean | string | string[] | number;
 export type EnvVariables = {
