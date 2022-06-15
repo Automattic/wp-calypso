@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import thankYouEmail from 'calypso/assets/images/illustrations/thank-you-email.svg';
@@ -20,6 +21,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 type TitanSetUpThankYouProps = {
+	containerClassName?: string;
 	domainName: string;
 	emailAddress?: string;
 	title?: string;
@@ -27,6 +29,7 @@ type TitanSetUpThankYouProps = {
 };
 
 const TitanSetUpThankYou = ( {
+	containerClassName,
 	domainName,
 	emailAddress,
 	subtitle,
@@ -118,7 +121,7 @@ const TitanSetUpThankYou = ( {
 
 	return (
 		<ThankYou
-			containerClassName="titan-set-up-thank-you__container"
+			containerClassName={ classNames( 'titan-set-up-thank-you__container', containerClassName ) }
 			headerClassName={ 'titan-set-up-thank-you__header' }
 			sections={ [ titanThankYouSection ] }
 			showSupportSection={ true }
