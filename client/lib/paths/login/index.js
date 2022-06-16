@@ -40,7 +40,6 @@ export function login( {
 	allowSiteConnection = undefined,
 	signupUrl = undefined,
 	useQRCode = undefined,
-	isPartnerSignup = undefined,
 } = {} ) {
 	let url = '/log-in';
 
@@ -100,10 +99,6 @@ export function login( {
 
 	if ( allowSiteConnection ) {
 		url = addQueryArgs( { allow_site_connection: '1' }, url );
-	}
-
-	if ( isPartnerSignup ) {
-		url = addQueryArgs( { redirect_to: isPartnerSignup }, url );
 	}
 
 	return url;
