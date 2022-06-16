@@ -11,6 +11,7 @@ import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan
 import EmailProvidersInDepthComparison from 'calypso/my-sites/email/email-providers-comparison/in-depth';
 import { castIntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
+import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import InboxManagement from 'calypso/my-sites/email/inbox';
 import * as paths from 'calypso/my-sites/email/paths';
@@ -38,6 +39,10 @@ export default {
 	},
 
 	emailManagementAddGSuiteUsers( pageContext, next ) {
+		const unifyMailboxForms = isEnabled( 'unify-mailbox-forms' );
+		const AddMailboxesComponent = unifyMailboxForms ? AddMailboxes : GSuiteAddUsers;
+		const extraProps = unifyMailboxForms ? { provider: EmailProvider.Google } : {};
+
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
@@ -45,9 +50,10 @@ export default {
 					title="Email Management > Add Google Users"
 				/>
 
-				<GSuiteAddUsers
+				<AddMailboxesComponent
 					source={ pageContext.query.source }
 					selectedDomainName={ pageContext.params.domain }
+					{ ...extraProps }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
