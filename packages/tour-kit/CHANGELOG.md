@@ -1,3 +1,7 @@
+## 1.1.1
+
+- Added missing configuration passthrough on spotlight live resize component
+
 ## 1.1.0
 
 - Added live resize functionality using ResizeObserver and MutationObserver
