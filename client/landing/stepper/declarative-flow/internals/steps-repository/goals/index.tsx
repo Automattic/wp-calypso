@@ -99,6 +99,14 @@ const GoalsStep: Step = ( { navigation } ) => {
 		<SelectGoals selectedGoals={ goals } onChange={ handleChange } onSubmit={ handleSubmit } />
 	);
 
+	useEffect( () => {
+		const comingFromCreateBlogLanding = refParameter === 'create-blog-lp';
+
+		if ( comingFromCreateBlogLanding && goals.length === 0 ) {
+			setGoals( [ Onboard.SiteGoal.Write ] );
+		}
+	}, [ refParameter ] );
+
 	return (
 		<StepContainer
 			stepName={ 'goals-step' }
