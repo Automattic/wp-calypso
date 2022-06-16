@@ -1,5 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
-import { DEFAULT_VIEWPORT_HEIGHT } from '../constants';
+import { DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT } from '../constants';
 import type { Design, DesignPreviewOptions } from '../types';
 
 export const getDesignPreviewUrl = (
