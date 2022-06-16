@@ -227,6 +227,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				{ showSpotlight() && (
 					<Spotlight
 						referenceElement={ referenceElement }
+						liveResize={ config.options?.effects?.liveResize || {} }
 						{ ...( config.options?.effects?.spotlight || {} ) }
 					/>
 				) }
