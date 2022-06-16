@@ -1,71 +1,34 @@
-import assert from 'assert';
 import phoneValidation from '..';
 
 describe( 'Phone Validation Library', () => {
-	test( 'should fail an empty number', () => {
-		assert.strictEqual( phoneValidation( '' ).error, 'phone_number_empty' );
+	test.each( [
+		{ input: '', expected: 'phone_number_empty' },
+		{ input: '+1234567', expected: 'phone_number_too_short' },
+		{ input: '+123456789a', expected: 'phone_number_contains_letters' },
+		{ input: '+(12345)6789', expected: 'phone_number_contains_special_characters' },
+		{ input: '+111111111', expected: 'phone_number_invalid' },
+	] )( 'Input $input shows error message $expected', function ( { input, expected } ) {
+		expect( phoneValidation( input ).error ).toStrictEqual( expected );
 	} );
-	test( 'should fail a short number', () => {
-		assert.strictEqual( phoneValidation( '+1234567' ).error, 'phone_number_too_short' );
-	} );
-	test( 'should fail a number containing letters', () => {
-		assert.strictEqual( phoneValidation( '+123456789a' ).error, 'phone_number_contains_letters' );
-	} );
-	test( 'should fail a number containing special characters', () => {
-		assert.strictEqual(
-			phoneValidation( '+(12345)6789' ).error,
-			'phone_number_contains_special_characters'
-		);
-	} );
-	test( 'should fail an invalid number', () => {
-		assert.strictEqual( phoneValidation( '+111111111' ).error, 'phone_number_invalid' );
-	} );
-	test( 'should pass a valid number', () => {
-		assert.strictEqual( phoneValidation( '+447941952721' ).info, 'phone_number_valid' );
-	} );
-	test( 'should pass a valid number in US 463 area code', () => {
-		assert.strictEqual( phoneValidation( '+14631234567' ).info, 'phone_number_valid' );
-	} );
-	test( 'should pass a valid 10 digit argentine without leading 9 number', () => {
-		assert.strictEqual( phoneValidation( '+542231234567' ).info, 'phone_number_valid' );
-	} );
-	test( 'should pass a valid 10 digit argentine with leading 9 number', () => {
-		assert.strictEqual( phoneValidation( '+5492231234567' ).info, 'phone_number_valid' );
-	} );
-	test( 'should pass a valid 8-digit croatian number', () => {
-		assert.strictEqual( phoneValidation( '+38598123456' ).info, 'phone_number_valid' );
-	} );
-	test( 'should pass a valid 8-digit danish number', () => {
-		assert.strictEqual( phoneValidation( '+4528123456' ).info, 'phone_number_valid' );
-	} );
-	test( 'should pass a valid 7-digit jamaican number', () => {
-		assert.strictEqual( phoneValidation( '+18761234567' ).info, 'phone_number_valid' );
-	} );
-	test( 'should pass a valid new format vietnamese number starting with 7', () => {
-		assert.strictEqual( phoneValidation( '+84761234567' ).info, 'phone_number_valid' );
-	} );
-	test( 'should pass a valid new format vietnamese number starting with 3', () => {
-		assert.strictEqual( phoneValidation( '+84361234567' ).info, 'phone_number_valid' );
-	} );
-	test( 'should pass a valid new format vietnamese number with leading zero', () => {
-		assert.strictEqual( phoneValidation( '+840361234567' ).info, 'phone_number_valid' );
-	} );
-	test( 'should pass a valid greenland number starting with 2', () => {
-		assert.strictEqual( phoneValidation( '+299239349' ).info, 'phone_number_valid' );
-	} );
-	test( 'should pass a valid qatari number', () => {
-		assert.strictEqual( phoneValidation( '+97466641333' ).info, 'phone_number_valid' );
-	} );
-	test( 'should pass a valid myanmar number with 7 digits after leading 9', () => {
-		assert.strictEqual( phoneValidation( '+9595512345' ).info, 'phone_number_valid' );
-	} );
-	test( 'should pass a valid myanmar number with 8 digits after leading 9', () => {
-		assert.strictEqual( phoneValidation( '+95942612345' ).info, 'phone_number_valid' );
-	} );
-	test( 'should pass a valid myanmar number with 9 digits after leading 9', () => {
-		assert.strictEqual( phoneValidation( '+959426123456' ).info, 'phone_number_valid' );
-	} );
-	test( 'should pass a valid Brazilian number starting with 119', () => {
-		assert.strictEqual( phoneValidation( '+5511961231234' ).info, 'phone_number_valid' );
+
+	test.each( [
+		{ input: '+447941952721', expected: 'phone_number_valid' }, // Valid United Kingdom number
+		{ input: '+14631234567', expected: 'phone_number_valid' }, // Valid United States number
+		{ input: '+542231234567', expected: 'phone_number_valid' }, // Valid Argentina without leading 9
+		{ input: '+5492231234567', expected: 'phone_number_valid' }, // Valid Argentina with leading 9
+		{ input: '+38598123456', expected: 'phone_number_valid' }, // Valid Croatian number
+		{ input: '+4528123456', expected: 'phone_number_valid' }, // Valid Danish number
+		{ input: '+18761234567', expected: 'phone_number_valid' }, // Valid Jamaican number
+		{ input: '+84761234567', expected: 'phone_number_valid' }, // Valid Vietnamese (new) with leading 7
+		{ input: '+84361234567', expected: 'phone_number_valid' }, // Valid Vietnamese (new) with leading 3
+		{ input: '+840361234567', expected: 'phone_number_valid' }, // Valid Vietnamese (new) with leading 0
+		{ input: '+299239349', expected: 'phone_number_valid' }, // Valid Greenland with leading 2
+		{ input: '+97466641333', expected: 'phone_number_valid' }, // Valid Qatar with leading 2
+		{ input: '+9595512345', expected: 'phone_number_valid' }, // Valid Myanmar with 7 digits
+		{ input: '+95942612345', expected: 'phone_number_valid' }, // Valid Myanmar with 8 digits
+		{ input: '+959426123456', expected: 'phone_number_valid' }, // Valid Myanmar with 9 digits
+		{ input: '+5511961231234', expected: 'phone_number_valid' }, // Valid Brazil with 9 digits
+	] )( 'Input $input validates as valid number', function ( { input, expected } ) {
+		expect( phoneValidation( input ).info ).toStrictEqual( expected );
 	} );
 } );
