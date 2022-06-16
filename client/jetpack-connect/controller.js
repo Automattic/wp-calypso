@@ -29,6 +29,7 @@ import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
+import { JETPACK_PRICING_PAGE } from 'calypso/lib/url/support';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { startAuthorizeStep } from 'calypso/state/jetpack-connect/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -485,4 +486,10 @@ export function redirectToSiteLessCheckout( context, next ) {
 	}
 
 	next();
+}
+
+export function redirectToCloudPricingPage() {
+	window.location.href = JETPACK_PRICING_PAGE;
+
+	return;
 }

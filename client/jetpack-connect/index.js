@@ -14,10 +14,14 @@ import './style.scss';
 export default function () {
 	const locale = getLanguageRouteParam( 'locale' );
 
+	const legacyPlans = [ 'personal', 'premium', 'pro' ].join( '|' );
+
+	page(
+		`/jetpack/connect/:type(${ legacyPlans })/:interval(yearly|monthly)?/${ locale }`,
+		controller.redirectToCloudPricingPage
+	);
+
 	const planTypeString = [
-		'personal',
-		'premium',
-		'pro',
 		'backup',
 		'scan',
 		'realtimebackup',
