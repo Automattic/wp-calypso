@@ -21,8 +21,8 @@ export const getDesignPreviewUrl = (
 		pattern_ids: recipe?.pattern_ids?.join( ',' ),
 		vertical_id: options.verticalId,
 		language: options.language,
-		source_site: 'patternboilerplates.wordpress.com',
 		viewport_height,
+		source_site: 'patternboilerplates.wordpress.com',
 	} );
 
 	const siteTitle = options.siteTitle || design.title;
