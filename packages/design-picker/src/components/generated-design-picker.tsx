@@ -3,6 +3,7 @@
 import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect, useRef } from 'react';
@@ -18,7 +19,7 @@ interface GeneratedDesignThumbnailProps {
 	thumbnailUrl: string;
 	isSelected: boolean;
 	onPreview: () => void;
-	index: number;
+	label: number;
 }
 
 const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
@@ -26,14 +27,16 @@ const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
 	thumbnailUrl,
 	isSelected,
 	onPreview,
-	index,
+	label,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
+	const { __ } = useI18n();
 
 	return (
 		<button
 			type="button"
-			aria-label={ `Preview design option ${ index }` }
+			/* translators: %s: Option number. Ex. Preview design option 1. */
+			aria-label={ sprintf( __( 'Preview design option %s' ), label ) }
 			className={ classnames( 'generated-design-thumbnail', { 'is-selected': isSelected } ) }
 			onClick={ onPreview }
 		>
@@ -127,7 +130,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 								thumbnailUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
 								isSelected={ selectedDesign?.slug === design.slug }
 								onPreview={ () => onPreview( design, index ) }
-								index={ index + 1 }
+								label={ index + 1 }
 							/>
 						) ) }
 					<Button className="generated-design-picker__view-more" onClick={ onViewMore }>
