@@ -73,6 +73,7 @@ describe( 'selectors', () => {
 				blogCreatedDate: undefined,
 				canExplicitRenew: false,
 				canDisableAutoRenew: false,
+				canReenableAutoRenewal: false,
 				costToUnbundle: NaN,
 				costToUnbundleText: undefined,
 				currencyCode: undefined,

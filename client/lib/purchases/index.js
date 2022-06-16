@@ -593,6 +593,16 @@ function canExplicitRenew( purchase ) {
 	return purchase.canExplicitRenew;
 }
 
+/**
+ * Checks whether the purchase can have auto-renewal turned back on
+ *
+ * @param {object} purchase - the purchase with which we are concerned
+ * @returns {boolean} true if the purchase can have auto renewal re-enabled
+ */
+function canReenableAutoRenewal( purchase ) {
+	return purchase.canReenableAutoRenewal;
+}
+
 function creditCardExpiresBeforeSubscription( purchase ) {
 	const creditCard = purchase?.payment?.creditCard;
 
@@ -759,6 +769,7 @@ function shouldRenderMonthlyRenewalOption( purchase ) {
 
 export {
 	canExplicitRenew,
+	canReenableAutoRenewal,
 	creditCardExpiresBeforeSubscription,
 	creditCardHasAlreadyExpired,
 	getDomainRegistrationAgreementUrl,
@@ -781,6 +792,7 @@ export {
 	isPaidWithPaypal,
 	isPaidWithCredits,
 	isPartnerPurchase,
+	isPurchaseCancelable,
 	hasPaymentMethod,
 	isCloseToExpiration,
 	isExpired,

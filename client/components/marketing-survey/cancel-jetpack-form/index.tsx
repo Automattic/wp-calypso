@@ -1,18 +1,23 @@
 import { Button, Dialog } from '@automattic/components';
 import { Button as ButtonType } from '@automattic/components/dist/types/dialog/button-bar';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import JetpackBenefitsStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-benefits-step';
 import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
+import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import { getName } from 'calypso/lib/purchases';
+import {
+	canReenableAutoRenewal,
+	getName,
+	isAutoRenewing,
+	isPurchaseCancelable,
+} from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import nextStep from '../cancel-purchase-form/next-step';
-// import previousStep from '../cancel-purchase-form/previous-step';
 import * as steps from './steps';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -32,10 +37,27 @@ interface Props {
 	recordTracksEvent: ( name: string, data: Record< string, unknown > ) => void;
 }
 
-const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ...props } ) => {
+const CancelJetpackForm: React.FC< Props > = ( {
+	isVisible = false,
+	purchase,
+	flowType,
+	...props
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ cancellationStep, setCancellationStep ] = useState( steps.FEATURES_LOST_STEP ); // set initial state
+	const initialCancellationStep = useMemo( () => {
+		// In these cases, the subscription is getting removed.
+		// Show the benefits step first.
+		if (
+			flowType === CANCEL_FLOW_TYPE.REMOVE ||
+			flowType === CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
+		) {
+			return steps.FEATURES_LOST_STEP;
+		}
+
+		return steps.CANCELLATION_REASON_STEP;
+	}, [ flowType, purchase, steps ] );
+	const [ cancellationStep, setCancellationStep ] = useState( initialCancellationStep ); // set initial state
 	const [ surveyAnswerId, setSurveyAnswerId ] = useState< string | null >( null );
 	const [ surveyAnswerText, setSurveyAnswerText ] = useState< TranslateResult | string >( '' );
 
@@ -48,15 +70,13 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 	 * Clear out stored state for the flow
 	 */
 	const resetSurveyState = () => {
-		setCancellationStep( steps.FEATURES_LOST_STEP );
+		setCancellationStep( initialCancellationStep );
 		setSurveyAnswerId( null );
 		setSurveyAnswerText( '' );
 	};
 
 	// Record an event for Tracks
 	const recordEvent = ( name: string, properties = {} ) => {
-		const { flowType } = props;
-
 		dispatch(
 			recordTracksEvent( name, {
 				cancellation_flow: flowType,
@@ -68,6 +88,42 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 		);
 	};
 
+	/**
+	 * Get possible steps for the survey
+	 */
+	const availableSurveySteps = useMemo( () => {
+		const availableSteps = [];
+
+		if (
+			CANCEL_FLOW_TYPE.REMOVE === flowType ||
+			CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND === flowType
+		) {
+			availableSteps.push( steps.FEATURES_LOST_STEP );
+		}
+
+		if (
+			// A purchase that is not cancellable ( can only be removed ),
+			// OR a purchase that is currently set to auto-renew ( has not been cancelled yet ).
+			// If a purchase that meets these criteria is being removed, present the survey step.
+			( CANCEL_FLOW_TYPE.REMOVE === flowType &&
+				( ( ! isPurchaseCancelable( purchase ) && ! canReenableAutoRenewal( purchase ) ) ||
+					isAutoRenewing( purchase ) ) ) ||
+			CANCEL_FLOW_TYPE.CANCEL_AUTORENEW === flowType ||
+			CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND === flowType
+		) {
+			availableSteps.push( steps.CANCELLATION_REASON_STEP );
+		}
+
+		return availableSteps;
+	}, [ flowType, steps, purchase ] );
+
+	const { firstStep, lastStep } = useMemo( () => {
+		return {
+			firstStep: availableSurveySteps[ 0 ],
+			lastStep: availableSurveySteps[ availableSurveySteps.length - 1 ],
+		};
+	}, [ availableSurveySteps ] );
+
 	// run on mount
 	useEffect( () => {
 		resetSurveyState();
@@ -75,19 +131,10 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 
 	// if isVisible changes
 	useEffect( () => {
-		if ( isVisible && cancellationStep === steps.INITIAL_STEP ) {
+		if ( isVisible && cancellationStep === firstStep ) {
 			recordEvent( 'calypso_purchases_cancel_form_start' );
 		}
-	}, [ isVisible ] );
-
-	/**
-	 * Get possible steps for the survey
-	 */
-	const getAvailableSurveySteps = () => {
-		// this could vary based on the user data/ product
-		// for now, only showing two steps for all Jetpack plans and products
-		return [ steps.FEATURES_LOST_STEP, steps.CANCELLATION_REASON_STEP ];
-	};
+	}, [ isVisible, firstStep ] );
 
 	const handleCloseDialog = () => {
 		props.onClose();
@@ -99,8 +146,7 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 	};
 
 	const setSurveyStep = ( stepFunction: ( step: string, steps: string[] ) => string ) => {
-		const availableSteps = getAvailableSurveySteps();
-		const newStep = stepFunction( cancellationStep, availableSteps );
+		const newStep = stepFunction( cancellationStep, availableSurveySteps );
 
 		setCancellationStep( newStep );
 
@@ -112,10 +158,6 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 	const clickNext = () => {
 		setSurveyStep( nextStep );
 	};
-
-	// const clickPrevious = () => {
-	// 	setSurveyStep( previousStep );
-	// };
 
 	const onSubmit = () => {
 		if ( surveyAnswerId ) {
@@ -165,12 +207,10 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 	const renderStepButtons = () => {
 		const { disableButtons } = props;
 		const disabled = disableButtons;
-
-		// in most cases, we will have a previous and next
 		const close = {
 			action: 'close',
 			disabled: disabled,
-			isPrimary: steps.LAST_STEP !== cancellationStep,
+			isPrimary: lastStep !== cancellationStep,
 			label: translate( "I'll keep it" ),
 		};
 		const next = {
@@ -179,15 +219,12 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 			label: translate( 'Next step' ),
 			onClick: clickNext,
 		};
-		// const prev = {
-		// 	action: 'prev',
-		// 	disabled,
-		// 	label: translate( 'Previous step' ),
-		// 	onClick: clickPrevious,
-		// };
-
-		const cancelText = translate( 'Cancel my plan' );
-		const cancellingText = translate( 'Cancelling' );
+		const cancelText =
+			flowType === CANCEL_FLOW_TYPE.REMOVE
+				? translate( 'Remove subscription' )
+				: translate( 'Cancel subscription' );
+		const cancellingText =
+			flowType === CANCEL_FLOW_TYPE.REMOVE ? translate( 'Removing' ) : translate( 'Cancelling' );
 		const cancel = (
 			<Button
 				disabled={ props.disableButtons }
@@ -199,23 +236,13 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 				{ props.disableButtons ? cancellingText : cancelText }
 			</Button>
 		);
-
 		const firstButtons: [ ButtonType ] = [ close ];
 
 		// on the last step
 		// show the cancel button
-		if ( steps.LAST_STEP === cancellationStep ) {
-			// const stepsCount = getAvailableSurveySteps().length;
-			// if ( stepsCount > 1 ) {
-			// 	firstButtons.push( prev );
-			// }
+		if ( lastStep === cancellationStep ) {
 			return firstButtons.concat( [ cancel ] );
 		}
-
-		// return firstButtons.concat(
-		// 	// on the first step, just show the "next" button
-		// 	cancellationStep === steps.INITIAL_STEP ? [ next ] : [ next, prev ]
-		// );
 
 		return firstButtons.concat( [ next ] );
 	};
@@ -229,9 +256,9 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 	const renderCurrentStep = () => {
 		const productName = getName( purchase );
 
-		// Step 1: what will be lost by cancelling
+		// Step 1: what will be lost by removing the subscription
 		if ( steps.FEATURES_LOST_STEP === cancellationStep ) {
-			// show the user what features they will lose if they cancel the Jetpack plan/ product
+			// show the user what features they will lose if they remove the Jetpack plan/ product
 			// this differs a bit depending on the product/ what JP modules are active
 			return (
 				<JetpackBenefitsStep
@@ -242,7 +269,7 @@ const CancelJetpackForm: React.FC< Props > = ( { isVisible = false, purchase, ..
 			);
 		}
 
-		// Step 2: Survey Question - where will this get sent?
+		// Step 2: Survey Question
 		if ( steps.CANCELLATION_REASON_STEP === cancellationStep ) {
 			// ask for brief feedback on why the user is cancelling the plan
 			// follow similar pattern used in the Jetpack disconnection flow
