@@ -16,7 +16,7 @@ import { getMailProductProperties } from 'calypso/my-sites/email/form/mailboxes/
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
-interface ProviderPricingNoticeProps {
+interface EmailProviderPricingNoticeProps {
 	emailProduct: ProductListItem | null;
 	provider: EmailProvider;
 	selectedDomain: ResponseDomain;
@@ -26,7 +26,7 @@ export const EmailProviderPricingNotice = ( {
 	emailProduct,
 	provider,
 	selectedDomain,
-}: ProviderPricingNoticeProps ): JSX.Element | null => {
+}: EmailProviderPricingNoticeProps ): JSX.Element | null => {
 	const { isAdditionalMailboxesPurchase } = getMailProductProperties(
 		provider,
 		selectedDomain,

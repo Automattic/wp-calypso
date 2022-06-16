@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { PropsWithChildren, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -24,8 +24,8 @@ import EmailProviderPricingNotice from 'calypso/my-sites/email/add-mailboxes/ema
 import {
 	EVENT_CANCEL_BUTTON_CLICK,
 	EVENT_CONTINUE_BUTTON_CLICK,
-	getEventName,
-} from 'calypso/my-sites/email/add-mailboxes/get-event-name';
+	getTracksEventName,
+} from 'calypso/my-sites/email/add-mailboxes/get-tracks-event-name';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import getMailProductForProvider from 'calypso/my-sites/email/form/mailboxes/components/selectors/get-mail-product-for-provider';
@@ -130,7 +130,7 @@ const WithVerificationGate = ( {
 	productFamily,
 	provider,
 }: PropsWithChildren< {
-	productFamily: string;
+	productFamily: TranslateResult | string;
 	provider: EmailProvider;
 } > ) => {
 	const translate = useTranslate();
@@ -227,7 +227,7 @@ const MailboxesForm = ( {
 
 	const onCancel = () => {
 		recordClickEvent( {
-			eventName: getEventName( provider, EVENT_CANCEL_BUTTON_CLICK ),
+			eventName: getTracksEventName( provider, EVENT_CANCEL_BUTTON_CLICK ),
 			provider,
 			selectedDomainName,
 			source,
@@ -245,7 +245,7 @@ const MailboxesForm = ( {
 
 		const recordContinueEvent = ( { canContinue }: { canContinue: boolean } ) => {
 			recordClickEvent( {
-				eventName: getEventName( provider, EVENT_CONTINUE_BUTTON_CLICK ),
+				eventName: getTracksEventName( provider, EVENT_CONTINUE_BUTTON_CLICK ),
 				eventProps: {
 					can_continue: canContinue,
 					mailbox_count: mailboxOperations.mailboxes.length,
@@ -349,7 +349,7 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 
 				<HeaderCake onClick={ goToEmail }>{ productName + ': ' + selectedDomainName }</HeaderCake>
 
-				<WithVerificationGate productFamily={ `${ productName }` } provider={ provider }>
+				<WithVerificationGate productFamily={ productName } provider={ provider }>
 					<MailboxNotices { ...additionalProps } emailProduct={ emailProduct } />
 					<MailboxesForm
 						{ ...additionalProps }
