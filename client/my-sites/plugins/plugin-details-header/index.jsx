@@ -158,22 +158,24 @@ const LegacyPluginDetailsHeader = ( { plugin } ) => {
 
 const LIMIT_OF_TAGS = 3;
 const Tags = ( { plugin } ) => {
+	const selectedSite = useSelector( getSelectedSite );
+
 	if ( ! plugin?.tags ) {
 		return null;
 	}
 
-	const tags = Object.values( plugin.tags || {} ).slice( 0, LIMIT_OF_TAGS );
+	const tagKeys = Object.keys( plugin.tags || {} ).slice( 0, LIMIT_OF_TAGS );
 
 	return (
 		<span className="plugin-details-header__tag-badge-container">
-			{ tags.map( ( tag ) => (
-				<Badge
-					key={ `badge-${ tag.replace( ' ', '' ) }` }
-					type="info"
+			{ tagKeys.map( ( tagKey ) => (
+				<a
+					key={ `badge-${ tagKey.replace( ' ', '' ) }` }
 					className="plugin-details-header__tag-badge"
+					href={ `/plugins/browse/${ tagKey }/${ selectedSite?.slug || '' }` }
 				>
-					{ tag }
-				</Badge>
+					<Badge type="info">{ plugin.tags[ tagKey ] }</Badge>
+				</a>
 			) ) }
 		</span>
 	);
