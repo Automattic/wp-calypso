@@ -144,6 +144,7 @@ class Login extends Component {
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: authType,
 					locale: this.props.locale,
+					isPartnerSignup: this.props.redirectTo,
 				} )
 			);
 		}
