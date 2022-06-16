@@ -99,6 +99,9 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	 */
 	useEffect( recordScanningEvent, [ isAnalyzing ] );
 	useEffect( recordScanningErrorEvent, [ analyzerError ] );
+	useEffect( () => {
+		recordTracksEvent( trackEventName, trackEventParams );
+	}, [] );
 
 	return (
 		<>
