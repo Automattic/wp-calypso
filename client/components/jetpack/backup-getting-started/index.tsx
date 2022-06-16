@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import videoThumbnail2x from 'calypso/assets/images/jetpack/getting-started-backup-video-thumbnail-2x.png';
@@ -7,7 +8,13 @@ import { preventWidows } from 'calypso/lib/formatting';
 import './style.scss';
 import { GETTING_STARTED_WITH_JETPACK_BACKUP_VIDEO_URL } from './consts';
 
-const VideoPreview = ( { srcs, description, timeLength, hiddenOn } ) => (
+type VideoPreviewProps = {
+	srcs: [ string ] | [ string, string ];
+	description: string;
+	timeLength: string;
+	hiddenOn?: 'desktop' | 'mobile';
+};
+const VideoPreview = ( { srcs, description, timeLength, hiddenOn }: VideoPreviewProps ) => (
 	<div className="backup-getting-started__preview" data-hidden={ hiddenOn }>
 		<img
 			className="backup-getting-started__image"
@@ -21,9 +28,11 @@ const VideoPreview = ( { srcs, description, timeLength, hiddenOn } ) => (
 
 export default function BackupGettingStarted() {
 	const translate = useTranslate();
-	const videoPreviewProps = {
+	const videoPreviewProps: VideoPreviewProps = {
 		srcs: [ videoThumbnail, videoThumbnail2x ],
-		description: translate( 'Getting started with Jetpack Backup video thumbnail' ),
+		description: translate( 'Getting started with Jetpack Backup video thumbnail', {
+			textOnly: true,
+		} ),
 		timeLength: '2:55',
 	};
 
@@ -31,9 +40,9 @@ export default function BackupGettingStarted() {
 		<DismissibleCard preferenceName="backup-getting-started" className="backup-getting-started">
 			<VideoPreview { ...videoPreviewProps } hiddenOn="mobile" />
 			<div className="backup-getting-started__content">
-				<h3 className="backup-getting-started__header">
+				<div className="backup-getting-started__header">
 					{ preventWidows( translate( 'Getting started with Jetpack Backup' ) ) }
-				</h3>
+				</div>
 				<p className="backup-getting-started__text">
 					{ preventWidows(
 						translate(
@@ -43,8 +52,12 @@ export default function BackupGettingStarted() {
 				</p>
 				<VideoPreview { ...videoPreviewProps } hiddenOn="desktop" />
 				<Button
+					target="_blank"
 					className="backup-getting-started__button"
-					onClick={ () => window.open( GETTING_STARTED_WITH_JETPACK_BACKUP_VIDEO_URL ) }
+					href={ GETTING_STARTED_WITH_JETPACK_BACKUP_VIDEO_URL }
+					onClick={ () =>
+						recordTracksEvent( 'calypso_jetpack_backup_getting_started_video_click' )
+					}
 					primary
 				>
 					{ translate( 'Watch a video' ) }
