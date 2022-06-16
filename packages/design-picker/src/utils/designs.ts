@@ -7,9 +7,12 @@ export const getDesignPreviewUrl = (
 	options: DesignPreviewOptions = {}
 ): string => {
 	const { recipe, slug } = design;
+	const viewport_width =
+		options.viewport_width ??
+		( typeof window !== 'undefined' ? window.innerWidth : DEFAULT_VIEWPORT_WIDTH );
 	const viewport_height =
 		options.viewport_height ??
-		( typeof window !== 'undefined' ? window.innerWidth : DEFAULT_VIEWPORT_HEIGHT );
+		( typeof window !== 'undefined' ? window.innerHeight : DEFAULT_VIEWPORT_HEIGHT );
 
 	//Anchor.fm themes get previews from their starter sites, ${slug}starter.wordpress.com
 	if ( [ 'hannah', 'riley', 'gilbert' ].indexOf( slug ) >= 0 ) {
@@ -21,6 +24,7 @@ export const getDesignPreviewUrl = (
 		pattern_ids: recipe?.pattern_ids?.join( ',' ),
 		vertical_id: options.verticalId,
 		language: options.language,
+		viewport_width,
 		viewport_height,
 		source_site: 'patternboilerplates.wordpress.com',
 	} );
