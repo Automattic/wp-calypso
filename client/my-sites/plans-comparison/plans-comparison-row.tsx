@@ -67,6 +67,7 @@ export const PlansComparisonRow: React.FunctionComponent< Props > = ( {
 	feature,
 	plans,
 	isLegacySiteWithHigherLimits,
+	isExperiment = false,
 } ) => {
 	return (
 		<tr>
@@ -86,12 +87,22 @@ export const PlansComparisonRow: React.FunctionComponent< Props > = ( {
 					<td key={ plan.getProductId() }>
 						<DesktopContent>
 							{ renderContent(
-								feature.getCellText( includedFeature, false, isLegacySiteWithHigherLimits )
+								feature.getCellText(
+									includedFeature,
+									false,
+									isLegacySiteWithHigherLimits,
+									isExperiment
+								)
 							) }
 						</DesktopContent>
 						<MobileContent>
 							{ renderContent(
-								feature.getCellText( includedFeature, true, isLegacySiteWithHigherLimits )
+								feature.getCellText(
+									includedFeature,
+									true,
+									isLegacySiteWithHigherLimits,
+									isExperiment
+								)
 							) }
 						</MobileContent>
 					</td>

@@ -2,10 +2,10 @@ import { TYPE_FREE, TYPE_FLEXIBLE, TYPE_PRO } from '@automattic/calypso-products
 import { Gridicon } from '@automattic/components';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
+import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useExperiment } from 'calypso/lib/explat';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
@@ -435,9 +435,13 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	hideFreePlan,
 	onSelectPlan,
 } ) => {
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'pricing_packaging_plans_page_copy_test'
-	);
+	// const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+	// 	'pricing_packaging_plans_page_copy_test'
+	// );
+	const [ isReadingCookie, setIsReadingCookie ] = useState( true );
+	const [ isUsUser, setIsUsUser ] = useState( false );
+	const [ featureSliceStart, setFeatureSliceStart ] = useState( 3 );
+
 	const legacySiteWithHigherLimits = useSelector( ( state ) =>
 		isLegacySiteWithHigherLimits( state, selectedSiteId || 0 )
 	);
@@ -461,13 +465,19 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 			? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
 			: `/plans/${ selectedSiteSlug || '' }`;
 
-	const featureSliceStart = 'treatment' === experimentAssignment?.variationName ? 0 : 3;
-	const featureSliceDefaultLength = 'treatment' === experimentAssignment?.variationName ? 12 : 8;
+	useEffect( () => {
+		const cookies = cookie.parse( document.cookie );
+		if ( cookies.country_code === 'US' ) {
+			setIsUsUser( true );
+			setFeatureSliceStart( 0 );
+		}
+		setIsReadingCookie( false );
+	}, [] );
 
 	return (
 		<>
 			<Global styles={ globalOverrides } />
-			{ ! isLoadingExperimentAssignment && (
+			{ ! isReadingCookie && (
 				<ComparisonTable
 					firstColWidth={ 31 }
 					planCount={ plans.length }
@@ -486,7 +496,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 									price={ prices[ index ].price }
 									originalPrice={ prices[ index ].originalPrice }
 									translate={ translate }
-									isExperiment={ 'treatment' === experimentAssignment?.variationName }
+									isExperiment={ isUsUser }
 								>
 									{ selectedDomainConnection && <PlansDomainConnectionInfo plan={ plan } /> }
 									<PlansComparisonAction
@@ -506,25 +516,24 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 						</tr>
 					</THead>
 					<PlansComparisonRows>
-						{ planComparisonFeatures
-							.slice( featureSliceStart, featureSliceDefaultLength )
-							.map( ( feature ) => (
-								<PlansComparisonRow
-									feature={ feature }
-									plans={ plans }
-									isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
-									key={ feature.features[ 0 ] }
-									isExperiment={ 'treatment' === experimentAssignment?.variationName }
-								/>
-							) ) }
-					</PlansComparisonRows>
-					<PlansComparisonCollapsibleRows collapsed={ showCollapsibleRows }>
-						{ planComparisonFeatures.slice( featureSliceDefaultLength ).map( ( feature ) => (
+						{ planComparisonFeatures.slice( featureSliceStart, 12 ).map( ( feature ) => (
 							<PlansComparisonRow
 								feature={ feature }
 								plans={ plans }
 								isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
 								key={ feature.features[ 0 ] }
+								isExperiment={ isUsUser }
+							/>
+						) ) }
+					</PlansComparisonRows>
+					<PlansComparisonCollapsibleRows collapsed={ showCollapsibleRows }>
+						{ planComparisonFeatures.slice( 12 ).map( ( feature ) => (
+							<PlansComparisonRow
+								feature={ feature }
+								plans={ plans }
+								isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
+								key={ feature.features[ 0 ] }
+								isExperiment={ isUsUser }
 							/>
 						) ) }
 					</PlansComparisonCollapsibleRows>
