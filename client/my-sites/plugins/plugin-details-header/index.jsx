@@ -165,7 +165,7 @@ const Tags = ( { plugin } ) => {
 	const tags = Object.values( plugin.tags || {} ).slice( 0, LIMIT_OF_TAGS );
 
 	return (
-		<span>
+		<span className="plugin-details-header__tag-badge-container">
 			{ tags.map( ( tag ) => (
 				<Badge
 					key={ `badge-${ tag.replace( ' ', '' ) }` }

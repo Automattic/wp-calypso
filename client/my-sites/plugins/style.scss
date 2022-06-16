@@ -120,6 +120,10 @@ body.is-section-plugins.theme-default.color-scheme {
 .plugin-details__layout {
 	padding-top: 54px;
 
+	@include breakpoint-deprecated( '<960px' ) {
+		padding-top: 0;
+	}
+
 	@include display-grid;
 	@include grid-template-columns( 3, 80px, 1fr );
 	grid-template-areas: 'header header actions'
@@ -144,6 +148,10 @@ body.is-section-plugins.theme-default.color-scheme {
 		grid-area: actions;
 		background-color: var( --studio-gray-0 );
 		padding: 20px;
+
+		@include breakpoint-deprecated( '<960px' ) {
+			margin-top: 40px;
+		}
 	}
 
 	.plugin-details__layout-col-left {

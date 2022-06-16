@@ -18,7 +18,7 @@ $mobile-icon-height: 175px;
 
 	@include break-mobile {
 		flex-wrap: nowrap;
-		align-items: center;
+		align-items: flex-start;
 		justify-content: flex-start;
 	}
 	
@@ -46,6 +46,10 @@ $mobile-icon-height: 175px;
 
 .plugin-details-header__banner {
 	padding-bottom: 34px;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		display: none;
+	}
 }
 
 .plugin-details-header__name {
@@ -61,8 +65,7 @@ $mobile-icon-height: 175px;
 }
 
 .plugin-details-header__subtitle-separator {
-	padding-left: 16px;
-	padding-right: 8px;
+	padding: 0 16px;
 	color: #dddddd;
 	font-size: $font-body;
 }
@@ -100,8 +103,25 @@ $mobile-icon-height: 175px;
 	}
 }
 
+.plugin-details-header__tag-badge-container {
+	display: inline-block;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		margin-top: 12px;
+		display: block;
+	}
+}
+
 .plugin-details-header__tag-badge {
 	margin-left: 8px;
+
+	&:first-child {
+		margin-left: 0;
+	}
+
+	&.badge {
+		border-radius: 4px;
+	}
 }
 
 .is-placeholder {
@@ -150,9 +170,19 @@ $mobile-icon-height: 175px;
 
 	.plugin-details-header__info {
 		padding: 0 5px;
+
+		@media screen and ( max-width: 1040px ) {
+			padding-bottom: 12px;
+		}
 	}
 
 	.plugin-details-header__name {
 		line-height: 48px;
+	}
+
+	.plugin-details-header__main-info {
+		@include break-mobile {
+			align-items: center;
+		}
 	}
 }
