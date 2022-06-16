@@ -1,5 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
-import { DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT } from '../constants';
+import { DEFAULT_VIEWPORT_HEIGHT } from '../constants';
 import type { Design, DesignPreviewOptions } from '../types';
 
 export const getDesignPreviewUrl = (
@@ -7,12 +7,10 @@ export const getDesignPreviewUrl = (
 	options: DesignPreviewOptions = {}
 ): string => {
 	const { recipe, slug } = design;
-	let viewport = { width: DEFAULT_VIEWPORT_WIDTH, height: DEFAULT_VIEWPORT_HEIGHT };
-
-	if ( typeof window !== 'undefined' ) {
-		const { innerWidth: width, innerHeight: height } = window;
-		viewport = { width, height };
-	}
+	const viewport_height =
+		options.viewport_height ?? typeof window !== 'undefined'
+			? window.innerWidth
+			: DEFAULT_VIEWPORT_HEIGHT;
 
 	//Anchor.fm themes get previews from their starter sites, ${slug}starter.wordpress.com
 	if ( [ 'hannah', 'riley', 'gilbert' ].indexOf( slug ) >= 0 ) {
@@ -24,8 +22,7 @@ export const getDesignPreviewUrl = (
 		pattern_ids: recipe?.pattern_ids?.join( ',' ),
 		vertical_id: options.verticalId,
 		language: options.language,
-		viewport_width: viewport.width,
-		viewport_height: viewport.height,
+		viewport_height: viewport_height,
 		source_site: 'patternboilerplates.wordpress.com',
 	} );
 
