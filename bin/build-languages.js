@@ -16,6 +16,12 @@ const LANGUAGE_MANIFEST_FILENAME = 'language-manifest.json';
 const OUTPUT_PATH = './public/languages';
 const langSlugs = languages.default.map( ( { langSlug } ) => langSlug );
 
+const CONFIG_BLOCK_KEY = '';
+const DECIMAL_POINT_KEY = 'number_format_decimals';
+const DECIMAL_POINT_TRANSLATION = 'number_format_decimal_point';
+const THOUSANDS_SEPARATOR_KEY = 'number_format_thousands_sep';
+const THOUSANDS_SEPARATOR_TRANSLATION = 'number_format_thousands_sep';
+
 // Create languages directory
 function createLanguagesDir() {
 	return mkdirp.sync( OUTPUT_PATH );
@@ -166,9 +172,13 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 				( chunk ) => path.parse( chunk ).name
 			);
 			const manifestJsonDataRaw = {
-				locale: _.pick( languageTranslations, [ '' ] ),
+				locale: _.pick( languageTranslations, [ CONFIG_BLOCK_KEY ] ),
 				translatedChunks: translatedChunksKeys,
 			};
+			manifestJsonDataRaw.locale[ DECIMAL_POINT_KEY ] =
+				languageTranslations[ DECIMAL_POINT_TRANSLATION ];
+			manifestJsonDataRaw.locale[ THOUSANDS_SEPARATOR_KEY ] =
+				languageTranslations[ THOUSANDS_SEPARATOR_TRANSLATION ];
 			const manifestJsonDataFingerprint = JSON.stringify( manifestJsonDataRaw );
 
 			manifestJsonDataRaw.hash = crypto
