@@ -82,7 +82,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 					subHeaderText={ __( 'Choose what you would like to import to your new site.' ) }
 				/>
 				<div className={ 'step-wrapper__header-image' }>
-					<img alt="Import" src={ illustrationImg } />
+					<img alt="Import" src={ illustrationImg } aria-hidden="true" />
 				</div>
 			</div>
 			<div className={ 'import-layout__column' }>

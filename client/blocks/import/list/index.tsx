@@ -40,7 +40,7 @@ const ListStep: React.FunctionComponent< Props > = ( props ) => {
 					<div className="import__heading">
 						<Title>{ __( 'Import your content from another platform' ) }</Title>
 
-						<img alt="Import" src={ illustrationImg } />
+						<img alt="Import" src={ illustrationImg } aria-hidden="true" />
 					</div>
 				</div>
 				<div className={ 'import-layout__column' }>

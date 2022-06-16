@@ -28,7 +28,7 @@ const Capture: FunctionComponent< Props > = ( props ) => {
 							) }
 						/>
 						<div className={ 'step-wrapper__header-image' }>
-							<img alt="Light import" src={ illustrationImg } />
+							<img alt="Light import" src={ illustrationImg } aria-hidden="true" />
 						</div>
 					</div>
 				</div>
