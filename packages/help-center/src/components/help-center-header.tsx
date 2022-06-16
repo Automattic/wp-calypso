@@ -1,5 +1,5 @@
 import { CardHeader, Button, Flex } from '@wordpress/components';
-import { closeSmall, chevronUp, lineSolid, commentContent, Icon } from '@wordpress/icons';
+import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
@@ -11,7 +11,12 @@ import type { ReactElement } from 'react';
 export function ArticleTitle() {
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
-	return <span className="help-center-header__article-title">{ params.get( 'title' ) }</span>;
+	return (
+		<>
+			<Icon icon={ page } />
+			<span className="help-center-header__article-title">{ params.get( 'title' ) }</span>
+		</>
+	);
 }
 
 const SupportModeTitle = (): ReactElement => {
