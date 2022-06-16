@@ -21,6 +21,8 @@ export interface DesignRecipe {
 
 export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
 
+export type DesignType = 'vertical' | 'premium' | 'standard' | 'default' | 'anchor-fm'; // For measuring what kind of the design user picked
+
 export interface Design {
 	slug: string;
 	title: string;
@@ -31,6 +33,7 @@ export interface Design {
 	is_featured_picks?: boolean; // Whether this design will be featured in the sidebar. Example: Blank Canvas
 	showFirst?: boolean; // Whether this design will appear at the top, regardless of category
 	preview?: 'static';
+	design_type?: DesignType;
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;

@@ -14,7 +14,7 @@ import type { Step } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
 
-const AnchorFmDesignPicker: Step = ( { navigation } ) => {
+const AnchorFmDesignPicker: Step = ( { navigation, flow } ) => {
 	const { goBack, submit, goToStep } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
@@ -66,6 +66,13 @@ const AnchorFmDesignPicker: Step = ( { navigation } ) => {
 
 			return setDesignOnSite( newSite.site_slug, _selectedDesign, '' );
 		} );
+
+		recordTracksEvent( 'calypso_signup_design_type_submit', {
+			flow,
+			intent: 'anchor-fm',
+			design_type: _selectedDesign.design_type,
+		} );
+
 		submit?.();
 	};
 
