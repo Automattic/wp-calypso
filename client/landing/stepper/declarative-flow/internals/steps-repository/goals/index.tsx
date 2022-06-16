@@ -18,9 +18,17 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
 
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
+	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const { setGoals } = useDispatch( ONBOARD_STORE );
-
-	const stepContent = <SelectGoals selectedGoals={ goals } onChange={ setGoals } />;
+	const stepContent = (
+		<SelectGoals
+			selectedGoals={ goals }
+			onChange={ setGoals }
+			onSubmit={ () => {
+				navigation.submit?.( { intent } );
+			} }
+		/>
+	);
 
 	return (
 		<StepContainer

@@ -1,27 +1,27 @@
-import { GoalKey, IntentKey } from '../constants';
+import { SiteGoal, SiteIntent } from '../constants';
 import { goalsToIntent } from '../utils';
 
 describe( 'Test onboard utils', () => {
 	it.each( [
 		{
 			goals: [],
-			expectedIntent: IntentKey.Build,
+			expectedIntent: SiteIntent.Build,
 		},
 		{
-			goals: [ GoalKey.Write, GoalKey.Import, GoalKey.DIFM ],
-			expectedIntent: IntentKey.DIFM,
+			goals: [ SiteGoal.Write, SiteGoal.Import, SiteGoal.DIFM ],
+			expectedIntent: SiteIntent.DIFM,
 		},
 		{
-			goals: [ GoalKey.Write, GoalKey.Sell, GoalKey.Promote ],
-			expectedIntent: IntentKey.Write,
+			goals: [ SiteGoal.Write, SiteGoal.Sell, SiteGoal.Promote ],
+			expectedIntent: SiteIntent.Write,
 		},
 		{
-			goals: [ GoalKey.Sell, GoalKey.Write, GoalKey.Promote ],
-			expectedIntent: IntentKey.Sell,
+			goals: [ SiteGoal.Sell, SiteGoal.Write, SiteGoal.Promote ],
+			expectedIntent: SiteIntent.Sell,
 		},
 		{
-			goals: [ GoalKey.Promote, GoalKey.Sell, GoalKey.Write ],
-			expectedIntent: IntentKey.Build,
+			goals: [ SiteGoal.Promote, SiteGoal.Sell, SiteGoal.Write ],
+			expectedIntent: SiteIntent.Build,
 		},
 	] )( 'Should map the $goals to $expectedIntent intent', ( { goals, expectedIntent } ) => {
 		expect( goalsToIntent( goals ) ).toBe( expectedIntent );

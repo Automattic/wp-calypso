@@ -1,5 +1,5 @@
 import { combineReducers } from '@wordpress/data';
-import { GoalKey } from './constants';
+import { SiteGoal } from './constants';
 import { goalsToIntent } from './utils';
 import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
@@ -299,7 +299,7 @@ const stepProgress: Reducer< { count: number; progress: number } | undefined, On
 	return state;
 };
 
-const goals: Reducer< GoalKey[], OnboardAction > = ( state = [], action ) => {
+const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'SET_GOALS' ) {
 		return action.goals;
 	}
