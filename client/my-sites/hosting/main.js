@@ -25,13 +25,13 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import MiscellaneousCard from './miscellaneous-card';
-import PhpVersionCard from './php-version-card';
 import PhpMyAdminCard from './phpmyadmin-card';
 import RestorePlanSoftwareCard from './restore-plan-software-card';
 import SFTPCard from './sftp-card';
 import SiteBackupCard from './site-backup-card';
 import SupportCard from './support-card';
 import WebServerLogsCard from './web-server-logs-card';
+import WebServerSettingsCard from './web-server-settings-card';
 
 import './style.scss';
 
@@ -150,7 +150,7 @@ class Hosting extends Component {
 						<Column type="main" className="hosting__main-layout-col">
 							<SFTPCard disabled={ isDisabled } />
 							<PhpMyAdminCard disabled={ isDisabled } />
-							<PhpVersionCard disabled={ isDisabled } />
+							<WebServerSettingsCard disabled={ isDisabled } />
 							<RestorePlanSoftwareCard disabled={ isDisabled } />
 							<MiscellaneousCard disabled={ isDisabled } />
 							<WebServerLogsCard disabled={ isDisabled } />
