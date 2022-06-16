@@ -21,7 +21,15 @@ export interface DesignRecipe {
 
 export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
 
-export type DesignType = 'vertical' | 'premium' | 'standard' | 'default' | 'anchor-fm'; // For measuring what kind of the design user picked
+/**
+ * For measuring what kind of the design user picked.
+ */
+export type DesignType =
+	| 'vertical'
+	| 'premium'
+	| 'standard' // The design is free.
+	| 'default' // The default design and it means user skipped the step and didn't select any design.
+	| 'anchor-fm';
 
 export interface Design {
 	slug: string;
