@@ -5,6 +5,7 @@ import {
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR,
+	STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { activePartnerKeySchema } from './schema';
@@ -73,7 +74,7 @@ const current = ( state = initialState.current, action: AnyAction ) => {
 
 			return action.partner;
 
-		case 'STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED':
+		case STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED:
 			if ( null !== state ) {
 				return Object.assign( state, {
 					has_valid_payment_method: !! action?.payment_method_id,
