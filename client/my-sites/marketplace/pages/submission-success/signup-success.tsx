@@ -1,16 +1,21 @@
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import checkCircleImage from 'calypso/assets/images/marketplace/check-circle-gray.svg';
 import settingsImage from 'calypso/assets/images/marketplace/settings.svg';
 import shoppingCartImage from 'calypso/assets/images/marketplace/shopping-cart.svg';
 import submissionSuccessImage from 'calypso/assets/images/marketplace/submission-success.png';
 import theme from 'calypso/my-sites/marketplace/theme';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import MasterbarLogo from '../../components/masterbar-logo';
 import './style.scss';
 
 const SignupSuccess = () => {
 	const translate = useTranslate();
+	const currentQuery = useSelector( getCurrentQueryArguments );
+	const userName = useSelector( getCurrentUserName );
 
 	return (
 		<ThemeProvider theme={ theme }>
@@ -24,17 +29,35 @@ const SignupSuccess = () => {
 			/>
 			<MasterbarLogo />
 			<div className="signup-success">
-				<div className="signup-success__header">
-					<img src={ submissionSuccessImage } alt="Submission success" />
-					<h1 className="signup-success__header-title wp-brand-font">
-						{ translate( 'We’ll be in touch' ) }
-					</h1>
-					<p>
-						{ translate(
-							'Thank you for apply to join the WordPress.com marketplace. We’ll be in touch with you very soon to discuss next steps.'
-						) }
-					</p>
-				</div>
+				{ currentQuery?.returning !== 'true' ? (
+					<div className="signup-success__header">
+						<img src={ submissionSuccessImage } alt="Submission success" />
+						<h1 className="signup-success__header-title wp-brand-font">
+							{ translate( 'We’ll be in touch' ) }
+						</h1>
+						<p>
+							{ translate(
+								'Thank you for applying to join the WordPress.com marketplace. We’ll be in touch with you very soon to discuss next steps.'
+							) }
+						</p>
+					</div>
+				) : (
+					<div className="signup-success__header">
+						<img src={ submissionSuccessImage } alt="Submission success" />
+						<h1 className="signup-success__header-title wp-brand-font">
+							{ translate( 'Hello, %(username)s', {
+								args: {
+									username: userName,
+								},
+							} ) }
+						</h1>
+						<p>
+							{ translate(
+								'Great! You’re already a vendor! Here is what you can do next while we’re still working on building your Product Dashboard.'
+							) }
+						</p>
+					</div>
+				) }
 				<div className="signup-success__body">
 					<div className="signup-success__row">
 						<img src={ checkCircleImage } alt="" className="signup-success__row-icon" />
