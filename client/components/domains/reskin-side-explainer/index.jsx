@@ -1,12 +1,34 @@
 import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { isStarterPlanEnabled } from 'calypso/my-sites/plans-comparison';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
 class ReskinSideExplainer extends Component {
+	_isMounted = false;
+	constructor( props ) {
+		super( props );
+		this.state = {
+			experiment: null,
+		};
+	}
+	componentDidMount() {
+		this._isMounted = true;
+
+		loadExperimentAssignment( 'pricing_packaging_domains_pick_later' ).then( ( experimentName ) => {
+			if ( this._isMounted ) {
+				this.setState( { experiment: experimentName } );
+			}
+		} );
+	}
+
+	componentWillUnmount() {
+		this._isMounted = false;
+	}
+
 	getStarterPlanOverrides( isEnLocale ) {
 		const { translate } = this.props;
 
@@ -61,7 +83,15 @@ class ReskinSideExplainer extends Component {
 			subtitle = subtitle2;
 			subtitle2 = null;
 		}
-		return { title, subtitle, subtitle2, ctaText: false };
+
+		const hasCta = i18n.hasTranslation( 'Choose my domain later' ) || isEnLocale;
+
+		const ctaText =
+			hasCta && this.state.experiment?.variationName === 'treatment'
+				? translate( 'Choose my domain later' )
+				: false;
+
+		return { title, subtitle, subtitle2, ctaText };
 	}
 	getStrings() {
 		const { type, translate } = this.props;
