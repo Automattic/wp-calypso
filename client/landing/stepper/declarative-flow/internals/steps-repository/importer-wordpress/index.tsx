@@ -3,9 +3,9 @@ import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { withImporterWrapper } from '../importer';
 import './style.scss';
 
-const ImporterWordpress: Step = function ( props ) {
-	const Importer = withImporterWrapper( WordpressImporter );
+const Importer = withImporterWrapper( WordpressImporter );
 
+const ImporterWordpress: Step = function ( props ) {
 	return <Importer importer={ 'wordpress' } { ...props } />;
 };
 
