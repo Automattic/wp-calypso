@@ -94,6 +94,7 @@ describe( 'reducer', () => {
 			12345678: {
 				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
+				staticFile404: null,
 			},
 		} );
 	} );
@@ -103,6 +104,7 @@ describe( 'reducer', () => {
 			12345678: {
 				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
+				staticFile404: null,
 			},
 		};
 		const state = reducer( previousState, {
@@ -115,10 +117,12 @@ describe( 'reducer', () => {
 			12345678: {
 				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
+				staticFile404: null,
 			},
 			9876543: {
 				phpVersion: null,
 				sftpUsers: [ 9, 8, 7 ],
+				staticFile404: null,
 			},
 		} );
 	} );

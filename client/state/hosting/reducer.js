@@ -3,6 +3,7 @@ import {
 	HOSTING_PHP_VERSION_SET,
 	HOSTING_SFTP_USER_UPDATE,
 	HOSTING_SFTP_USERS_SET,
+	HOSTING_STATIC_FILE_404_SET,
 } from 'calypso/state/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
@@ -33,9 +34,19 @@ const phpVersion = ( state = null, { type, version } ) => {
 	return state;
 };
 
+const staticFile404 = ( state = null, { type, setting } ) => {
+	switch ( type ) {
+		case HOSTING_STATIC_FILE_404_SET:
+			return setting;
+	}
+
+	return state;
+};
+
 const atomicHostingReducer = combineReducers( {
 	phpVersion,
 	sftpUsers,
+	staticFile404,
 } );
 
 const reducer = keyedReducer( 'siteId', atomicHostingReducer );
