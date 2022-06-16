@@ -40,7 +40,7 @@ const getGSuiteCartItems = (
 	mailboxes: MailboxForm< EmailProvider >[],
 	mailProperties: MailProperties
 ) => {
-	const { isExtraItemPurchase, emailProduct, newQuantity, quantity } = mailProperties;
+	const { isAdditionalMailboxesPurchase, emailProduct, newQuantity, quantity } = mailProperties;
 
 	const users = mailboxes.map( ( mailbox ) =>
 		mailbox.getAsCartItem()
@@ -57,13 +57,13 @@ const getGSuiteCartItems = (
 
 	const productSlug = emailProduct.product_slug;
 
-	if ( isGSuiteProductSlug( productSlug ) && isExtraItemPurchase ) {
+	if ( isGSuiteProductSlug( productSlug ) && isAdditionalMailboxesPurchase ) {
 		return googleAppsExtraLicenses( properties );
 	}
 
 	properties = { ...properties, quantity };
 
-	if ( isExtraItemPurchase ) {
+	if ( isAdditionalMailboxesPurchase ) {
 		properties = { ...properties, new_quantity: newQuantity };
 	}
 

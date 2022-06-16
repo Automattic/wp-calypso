@@ -257,7 +257,9 @@ const MailboxesForm = ( {
 		};
 
 		setState( { ...state, isValidating: true } );
-		if ( ! ( await mailboxOperations.validateAndCheck( mailProperties.isExtraItemPurchase ) ) ) {
+		if (
+			! ( await mailboxOperations.validateAndCheck( mailProperties.isAdditionalMailboxesPurchase ) )
+		) {
 			recordContinueEvent( { canContinue: false } );
 			setState( { ...state, isValidating: false } );
 			return;

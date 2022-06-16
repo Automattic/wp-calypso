@@ -27,13 +27,13 @@ export const EmailProviderPricingNotice = ( {
 	provider,
 	selectedDomain,
 }: ProviderPricingNoticeProps ): JSX.Element | null => {
-	const { isExtraItemPurchase } = getMailProductProperties(
+	const { isAdditionalMailboxesPurchase } = getMailProductProperties(
 		provider,
 		selectedDomain,
 		emailProduct as ProductListItem
 	);
 
-	if ( ! selectedDomain || ! emailProduct || ! isExtraItemPurchase ) {
+	if ( ! selectedDomain || ! emailProduct || ! isAdditionalMailboxesPurchase ) {
 		return null;
 	}
 
