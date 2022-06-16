@@ -1,25 +1,33 @@
 import { Button } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import illustrationImg from 'calypso/assets/images/onboarding/import-1.svg';
 import ActionCard from 'calypso/components/action-card';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { urlDataUpdate } from 'calypso/state/imports/url-analyzer/actions';
-import { GoToStep, ImporterPlatform, UrlData } from '../types';
-import type * as React from 'react';
+import { GoToStep, ImporterPlatform, UrlData, RecordTracksEvent } from '../types';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+const trackEventName = 'calypso_signup_step_start';
+const trackEventParams = {
+	flow: 'importer',
+	step: 'list',
+};
+
 interface Props {
 	goToStep: GoToStep;
 	urlDataUpdate: ( urlData: UrlData ) => void;
+	recordTracksEvent: RecordTracksEvent;
 }
 
 const ListStep: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const { goToStep, urlDataUpdate } = props;
+	const { goToStep, urlDataUpdate, recordTracksEvent } = props;
 
 	const onButtonClick = ( platform: ImporterPlatform ): void => {
 		urlDataUpdate( {
@@ -32,6 +40,13 @@ const ListStep: React.FunctionComponent< Props > = ( props ) => {
 		} );
 		goToStep( `ready` );
 	};
+
+	/**
+	 ↓ Effects
+	 */
+	useEffect( () => {
+		recordTracksEvent( trackEventName, trackEventParams );
+	}, [] );
 
 	return (
 		<>
@@ -122,6 +137,7 @@ const ListStep: React.FunctionComponent< Props > = ( props ) => {
 
 const connector = connect( () => ( {} ), {
 	urlDataUpdate,
+	recordTracksEvent,
 } );
 
 export default connector( ListStep );
