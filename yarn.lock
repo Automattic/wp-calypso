@@ -1276,6 +1276,7 @@ __metadata:
     "@wordpress/primitives": ^3.7.0
     "@wordpress/react-i18n": ^3.7.0
     classnames: ^2.3.1
+    debug: ^4.3.4
     react-popper: ^2.2.5
     typescript: ^4.5.5
   peerDependencies:
