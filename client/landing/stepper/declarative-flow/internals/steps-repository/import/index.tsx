@@ -13,7 +13,7 @@ import './style.scss';
 
 export const ImportWrapper: Step = function ( props ) {
 	const { __ } = useI18n();
-	const { navigation, children } = props;
+	const { navigation, children, stepName } = props;
 	const currentRoute = useCurrentRoute();
 	const shouldHideSkipBtn = currentRoute !== BASE_ROUTE;
 
@@ -22,7 +22,8 @@ export const ImportWrapper: Step = function ( props ) {
 			<DocumentHead title={ __( 'Import your site content' ) } />
 
 			<StepContainer
-				stepName={ 'import-step' }
+				stepName={ stepName || 'import-step' }
+				flowName={ 'importer' }
 				className={ 'import__onboarding-page' }
 				hideSkip={ shouldHideSkipBtn }
 				hideFormattedHeader={ true }
