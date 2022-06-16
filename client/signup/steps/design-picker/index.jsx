@@ -64,16 +64,15 @@ export default function DesignPickerStep( props ) {
 			: 'free';
 
 	// Limit themes to those that support the Site editor, if site is fse eligible
-	const { isLoading: blockEditorSettingsAreLoading, data: blockEditorSettings } =
-		useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.useDIFMThemes );
-	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
+	const { isLoading: blockEditorSettingsAreLoading } = useBlockEditorSettingsQuery(
+		siteId,
+		userLoggedIn && ! props.useDIFMThemes
+	);
 
 	const getThemeFilters = () => {
 		if ( props.useDIFMThemes ) return 'do-it-for-me';
 
-		if ( isFSEEligible ) return 'auto-loading-homepage,full-site-editing';
-
-		return 'auto-loading-homepage';
+		return 'auto-loading-homepage,full-site-editing';
 	};
 
 	const { data: apiThemes = [] } = useThemeDesignsQuery(

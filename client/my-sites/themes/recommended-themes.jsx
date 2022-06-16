@@ -13,13 +13,12 @@ const RecommendedThemes = ( props ) => {
 	const dispatch = useDispatch();
 	const userLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
 	const { siteId } = props;
-	const { isLoading: isLoadingBlockEditorSettings, data } = useBlockEditorSettingsQuery(
+	const { isLoading: isLoadingBlockEditorSettings } = useBlockEditorSettingsQuery(
 		siteId,
 		userLoggedIn
 	);
 
-	const isFSEEligible = data?.is_fse_eligible ?? false;
-	const recommendedThemesFilter = isFSEEligible ? 'full-site-editing' : 'auto-loading-homepage';
+	const recommendedThemesFilter = 'full-site-editing';
 
 	const customizedThemesList = useSelector( ( state ) =>
 		getRecommendedThemesSelector( state, recommendedThemesFilter )
