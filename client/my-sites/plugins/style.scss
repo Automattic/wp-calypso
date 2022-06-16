@@ -289,6 +289,8 @@ body.is-section-plugins header .select-dropdown__item {
 
 	.plugin-details__layout {
 		grid-template-areas: none;
+		grid-template-columns: initial;
+
 		@include breakpoint-deprecated( '>1040px' ) {
 			@include display-grid;
 			@include grid-template-columns( 3, 80px, 1fr );
