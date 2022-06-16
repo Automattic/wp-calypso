@@ -77,7 +77,9 @@ class EditorMediaModalDetailPreviewVideoPress extends Component {
 			// Potential solution to this is to prevent the `videopress_refresh_iframe` message from being SENT until
 			// the update has completed.
 			setTimeout( () => {
-				this.video.src += ''; // force reload of potentially cross-origin iframe
+				if ( null !== this.video ) {
+					this.video.src += ''; // force reload of potentially cross-origin iframe
+				}
 			}, 1000 );
 		}
 
