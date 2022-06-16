@@ -1,5 +1,5 @@
+import { DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT } from '../../constants';
 import { Design, DesignPreviewOptions } from '../../types';
-import { DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT } from '../constants';
 import { getDesignPreviewUrl } from '../designs';
 
 describe( 'Design Picker designs utils', () => {
