@@ -9,14 +9,7 @@ import {
 	makeLayoutMiddleware,
 } from 'calypso/controller/shared';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
-import {
-	login,
-	magicLogin,
-	qrCodeLogin,
-	magicLoginUse,
-	redirectJetpack,
-	redirectDefaultLocale,
-} from './controller';
+import { login, magicLogin, qrCodeLogin, magicLoginUse, redirectJetpack } from './controller';
 import redirectLoggedIn from './redirect-logged-in';
 import { setShouldServerSideRenderLogin } from './ssr';
 
@@ -104,7 +97,6 @@ export default ( router ) => {
 			`/log-in/${ lang }`,
 		],
 		redirectJetpack,
-		redirectDefaultLocale,
 		setLocaleMiddleware(),
 		setHrefLangLinks,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
