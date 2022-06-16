@@ -13,7 +13,7 @@ import { useSelect } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback, useMemo, ReactElement, useEffect, useState } from 'react';
+import { useCallback, useMemo, ReactElement, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -28,6 +28,7 @@ import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sid
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { hasValidPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
 
 import './style.scss';
@@ -35,7 +36,7 @@ import './style.scss';
 function PaymentMethodAdd(): ReactElement {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
-	const [ successRedirect, setSuccessRedirect ] = useState( false );
+	const hasPaymentMethod = useSelector( hasValidPaymentMethod );
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 	const {
 		reload: reloadSetupIntentId,
@@ -56,7 +57,7 @@ function PaymentMethodAdd(): ReactElement {
 		select( 'credit-card' ).useAsPrimaryPaymentMethod()
 	);
 
-	useReturnUrl( successRedirect );
+	useReturnUrl( hasPaymentMethod );
 
 	const onGoToPaymentMethods = () => {
 		reduxDispatch(
@@ -96,11 +97,10 @@ function PaymentMethodAdd(): ReactElement {
 					endingBefore: '',
 				} )
 			);
-			setSuccessRedirect( () => true );
 		} else {
 			page( '/partner-portal/payment-methods/' );
 		}
-	}, [ reduxDispatch, page, setSuccessRedirect, window, getQueryArg ] );
+	}, [ reduxDispatch, page, window, getQueryArg ] );
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
