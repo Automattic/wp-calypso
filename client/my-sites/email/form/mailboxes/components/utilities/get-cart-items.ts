@@ -16,13 +16,13 @@ const getTitanCartItems = (
 	mailboxes: MailboxForm< EmailProvider >[],
 	mailProperties: MailProperties
 ) => {
-	const { mailProduct, newQuantity, quantity } = mailProperties;
+	const { emailProduct, newQuantity, quantity } = mailProperties;
 
 	const email_users = mailboxes.map( ( mailbox ) =>
 		mailbox.getAsCartItem()
 	) as unknown as TitanProductUser[];
 
-	const cartItemFunction = isTitanMonthlyProduct( mailProduct )
+	const cartItemFunction = isTitanMonthlyProduct( emailProduct )
 		? titanMailMonthly
 		: titanMailYearly;
 
@@ -40,7 +40,7 @@ const getGSuiteCartItems = (
 	mailboxes: MailboxForm< EmailProvider >[],
 	mailProperties: MailProperties
 ) => {
-	const { isExtraItemPurchase, mailProduct, newQuantity, quantity } = mailProperties;
+	const { isAdditionalMailboxesPurchase, emailProduct, newQuantity, quantity } = mailProperties;
 
 	const users = mailboxes.map( ( mailbox ) =>
 		mailbox.getAsCartItem()
@@ -55,15 +55,15 @@ const getGSuiteCartItems = (
 		users: GSuiteProductUser[];
 	} = { domain, users };
 
-	const productSlug = mailProduct.product_slug;
+	const productSlug = emailProduct.product_slug;
 
-	if ( isGSuiteProductSlug( productSlug ) && isExtraItemPurchase ) {
+	if ( isGSuiteProductSlug( productSlug ) && isAdditionalMailboxesPurchase ) {
 		return googleAppsExtraLicenses( properties );
 	}
 
 	properties = { ...properties, quantity };
 
-	if ( isExtraItemPurchase ) {
+	if ( isAdditionalMailboxesPurchase ) {
 		properties = { ...properties, new_quantity: newQuantity };
 	}
 
