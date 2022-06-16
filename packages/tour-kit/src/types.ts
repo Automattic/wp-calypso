@@ -1,6 +1,7 @@
 import * as PopperJS from '@popperjs/core';
 import React from 'react';
 import { SpotlightInteractivityConfiguration } from './components/tour-kit-spotlight-interactivity';
+import { LiveResizeConfiguration } from './utils/live-resize-modifier';
 import type { Modifier } from 'react-popper';
 
 export interface Step {
@@ -86,6 +87,8 @@ export interface Options {
 		overlay?: boolean;
 		/** Configures the autoscroll behaviour. Defaults to False. More information about the configuration at: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView */
 		autoScroll?: ScrollIntoViewOptions | boolean;
+		/** Configures the behaviour for automatically resizing the tour kit elements (TourKitFrame and Spotlight). Defaults to disabled. */
+		liveResize?: LiveResizeConfiguration;
 	};
 	popperModifiers?: PopperModifier[];
 	portalParentElement?: HTMLElement | null;

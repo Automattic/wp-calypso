@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from '@wordpress/element';
 import classnames from 'classnames';
 import { usePopper } from 'react-popper';
+import { LiveResizeConfiguration, liveResizeModifier } from '../utils/live-resize-modifier';
 import Overlay from './tour-kit-overlay';
 import {
 	SpotlightInteractivity,
@@ -13,15 +14,18 @@ interface Props {
 	referenceElement: HTMLElement | null;
 	styles?: React.CSSProperties;
 	interactivity?: SpotlightInteractivityConfiguration;
+	liveResize?: LiveResizeConfiguration;
 }
 
 const TourKitSpotlight: React.FunctionComponent< Props > = ( {
 	referenceElement,
 	styles,
 	interactivity,
+	liveResize,
 } ) => {
 	const [ popperElement, sePopperElement ] = useState< HTMLElement | null >( null );
 	const referenceRect = referenceElement?.getBoundingClientRect();
+
 	const modifiers = [
 		{
 			name: 'flip',
@@ -55,6 +59,10 @@ const TourKitSpotlight: React.FunctionComponent< Props > = ( {
 			} ),
 			[]
 		),
+		// useMemo because https://popper.js.org/react-popper/v2/faq/#why-i-get-render-loop-whenever-i-put-a-function-inside-the-popper-configuration
+		useMemo( () => {
+			return liveResizeModifier( liveResize );
+		}, [ liveResize ] ),
 	];
 
 	const { styles: popperStyles, attributes: popperAttributes } = usePopper(
