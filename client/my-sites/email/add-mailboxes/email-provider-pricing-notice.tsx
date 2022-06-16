@@ -17,23 +17,23 @@ import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 interface ProviderPricingNoticeProps {
-	mailProduct: ProductListItem | null;
+	emailProduct: ProductListItem | null;
 	provider: EmailProvider;
 	selectedDomain: ResponseDomain;
 }
 
 export const EmailProviderPricingNotice = ( {
-	mailProduct,
+	emailProduct,
 	provider,
 	selectedDomain,
 }: ProviderPricingNoticeProps ): JSX.Element | null => {
 	const { isExtraItemPurchase } = getMailProductProperties(
 		provider,
 		selectedDomain,
-		mailProduct as ProductListItem
+		emailProduct as ProductListItem
 	);
 
-	if ( ! selectedDomain || ! mailProduct || ! isExtraItemPurchase ) {
+	if ( ! selectedDomain || ! emailProduct || ! isExtraItemPurchase ) {
 		return null;
 	}
 
@@ -44,8 +44,8 @@ export const EmailProviderPricingNotice = ( {
 				expiryDate={ getTitanExpiryDate( selectedDomain ) }
 				mailboxRenewalCost={ getTitanMailboxRenewalCost( selectedDomain ) }
 				mailboxPurchaseCost={ getTitanMailboxPurchaseCost( selectedDomain ) }
-				product={ mailProduct }
-				isMonthlyBilling={ isTitanMonthlyProduct( mailProduct ) }
+				product={ emailProduct }
+				isMonthlyBilling={ isTitanMonthlyProduct( emailProduct ) }
 			/>
 		);
 	}
@@ -56,8 +56,8 @@ export const EmailProviderPricingNotice = ( {
 			expiryDate={ getGSuiteExpiryDate( selectedDomain ) }
 			mailboxRenewalCost={ getGSuiteMailboxRenewalCost( selectedDomain ) }
 			mailboxPurchaseCost={ getGSuiteMailboxPurchaseCost( selectedDomain ) }
-			product={ mailProduct }
-			isMonthlyBilling={ isGoogleWorkspaceMonthly( mailProduct ) }
+			product={ emailProduct }
+			isMonthlyBilling={ isGoogleWorkspaceMonthly( emailProduct ) }
 		/>
 	);
 };

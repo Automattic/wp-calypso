@@ -155,13 +155,13 @@ const WithVerificationGate = ( {
 const MailboxNotices = ( {
 	currentRoute,
 	isLoadingDomains,
-	mailProduct,
+	emailProduct,
 	provider,
 	selectedDomainName,
 	selectedDomain,
 	selectedSite,
 	source,
-}: AddMailboxesAdditionalProps & { mailProduct: ProductListItem | null } ): JSX.Element | null => {
+}: AddMailboxesAdditionalProps & { emailProduct: ProductListItem | null } ): JSX.Element | null => {
 	if ( isLoadingDomains ) {
 		return null;
 	}
@@ -169,7 +169,7 @@ const MailboxNotices = ( {
 	const { existingItemsCount } = getMailProductProperties(
 		provider,
 		selectedDomain,
-		mailProduct as ProductListItem
+		emailProduct as ProductListItem
 	);
 
 	const handleUnusedMailboxFinishSetupClick = (): void => {
@@ -194,7 +194,7 @@ const MailboxNotices = ( {
 			) }
 
 			<EmailProviderPricingNotice
-				mailProduct={ mailProduct }
+				emailProduct={ emailProduct }
 				provider={ provider }
 				selectedDomain={ selectedDomain }
 			/>
@@ -205,7 +205,7 @@ const MailboxNotices = ( {
 const MailboxesForm = ( {
 	goToEmail,
 	isLoadingDomains,
-	mailProduct,
+	emailProduct,
 	provider,
 	selectedDomain,
 	selectedDomainName,
@@ -213,7 +213,7 @@ const MailboxesForm = ( {
 	source,
 	translate,
 }: AddMailboxesAdditionalProps & {
-	mailProduct: ProductListItem | null;
+	emailProduct: ProductListItem | null;
 	goToEmail: () => void;
 } ): JSX.Element => {
 	const [ state, setState ] = useState( { isValidating: false, isAddingToCart: false } );
@@ -221,7 +221,7 @@ const MailboxesForm = ( {
 	const cartKey = useCartKey();
 	const cartManager = useShoppingCart( cartKey );
 
-	if ( isLoadingDomains || ! mailProduct ) {
+	if ( isLoadingDomains || ! emailProduct ) {
 		return <AddEmailAddressesCardPlaceholder />;
 	}
 
@@ -239,7 +239,7 @@ const MailboxesForm = ( {
 		const mailProperties = getMailProductProperties(
 			provider,
 			selectedDomain,
-			mailProduct,
+			emailProduct,
 			mailboxOperations.mailboxes.length
 		);
 
@@ -307,7 +307,7 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 		translate,
 	} = additionalProps;
 
-	const mailProduct = useSelector( ( state ) =>
+	const emailProduct = useSelector( ( state ) =>
 		getMailProductForProvider( state, provider, selectedDomain )
 	);
 
@@ -315,7 +315,7 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 
 	const productName = isTitan( provider )
 		? getTitanProductName()
-		: getGoogleMailServiceFamily( mailProduct?.product_slug );
+		: getGoogleMailServiceFamily( emailProduct?.product_slug );
 
 	const goToEmail = (): void => {
 		page(
@@ -348,11 +348,11 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 				<HeaderCake onClick={ goToEmail }>{ productName + ': ' + selectedDomainName }</HeaderCake>
 
 				<WithVerificationGate productFamily={ `${ productName }` } provider={ provider }>
-					<MailboxNotices { ...additionalProps } mailProduct={ mailProduct } />
+					<MailboxNotices { ...additionalProps } emailProduct={ emailProduct } />
 					<MailboxesForm
 						{ ...additionalProps }
 						goToEmail={ goToEmail }
-						mailProduct={ mailProduct }
+						emailProduct={ emailProduct }
 					/>
 				</WithVerificationGate>
 			</Main>
