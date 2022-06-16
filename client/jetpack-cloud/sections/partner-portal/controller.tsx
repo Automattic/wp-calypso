@@ -30,7 +30,6 @@ import {
 } from 'calypso/state/partner-portal/partner/selectors';
 import { ToSConsent } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
-import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import Header from './header';
 import type PageJS from 'page';
 
@@ -85,14 +84,15 @@ export function licensesContext( context: PageJS.Context, next: () => void ): vo
 }
 
 export function issueLicenseContext( context: PageJS.Context, next: () => void ): void {
-	const { site_id: siteId, product_slug: productSlug } = context.query;
+	const { site_id: siteId, product_slug: suggestedProduct } = context.query;
 	const state = context.store.getState();
-	const sites = getSitesItems( state );
-	const selectedSite = sites[ siteId ] ? siteId : null;
-
+	const sites = getSites( state );
+	const selectedSite = siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
 	context.header = <Header />;
 	context.secondary = <PartnerPortalSidebar path={ context.path } />;
-	context.primary = <IssueLicense selectedSite={ selectedSite } productSlug={ productSlug } />;
+	context.primary = (
+		<IssueLicense selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
+	);
 	next();
 }
 

@@ -1,14 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { PluginAutoUpdateToggle } from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import fixtures from './fixtures';
 
-jest.mock( 'calypso/my-sites/plugins/plugin-action/plugin-action', () =>
-	require( './mocks/plugin-action' )
-);
-jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
+jest.mock( 'calypso/my-sites/plugins/plugin-action/plugin-action', () => ( { action } ) => (
+	<input type="checkbox" onClick={ action } />
+) );
 
 describe( 'PluginAutoupdateToggle', () => {
 	const mockedProps = {
@@ -19,25 +19,21 @@ describe( 'PluginAutoupdateToggle', () => {
 		togglePluginAutoUpdate: jest.fn(),
 	};
 
-	test( 'should render the component', () => {
-		const wrapper = mount( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
+	test( 'should register an event when the subcomponent action is executed', async () => {
+		render( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
 
-		expect( wrapper.find( '.plugin-action' ) ).toHaveLength( 1 );
-	} );
-
-	test( 'should register an event when the subcomponent action is executed', () => {
-		const wrapper = mount( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
-
-		wrapper.simulate( 'click' );
+		const box = screen.getByRole( 'checkbox' );
+		await userEvent.click( box );
 
 		expect( mockedProps.recordGoogleEvent ).toHaveBeenCalled();
 		expect( mockedProps.recordTracksEvent ).toHaveBeenCalled();
 	} );
 
-	test( 'should call an action when the subcomponent action is executed', () => {
-		const wrapper = mount( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
+	test( 'should call an action when the subcomponent action is executed', async () => {
+		render( <PluginAutoUpdateToggle { ...mockedProps } { ...fixtures } /> );
 
-		wrapper.simulate( 'click' );
+		const box = screen.getByRole( 'checkbox' );
+		await userEvent.click( box );
 
 		expect( mockedProps.togglePluginAutoUpdate ).toHaveBeenCalled();
 	} );

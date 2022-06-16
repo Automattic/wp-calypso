@@ -450,19 +450,6 @@ export default function WPCheckout( {
 						<WPContactForm
 							countriesList={ countriesList }
 							shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
-							contactValidationCallback={ () =>
-								validateContactDetails(
-									contactInfo,
-									isLoggedOutCart,
-									responseCart,
-									showErrorMessageBriefly,
-									applyDomainContactValidationResults,
-									clearDomainContactErrorMessages,
-									reduxDispatch,
-									translate,
-									false
-								)
-							}
 							contactDetailsType={ contactDetailsType }
 							isLoggedOutCart={ isLoggedOutCart }
 						/>

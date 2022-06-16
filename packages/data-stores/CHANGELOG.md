@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.1
+
+- Add missing dependency @automattic/domain-utils, use-debounce
+
 ## 3.0.0
 
 - Add dependency node-fetch and export `LinksForSection` & `getContextResults`  (#64092)

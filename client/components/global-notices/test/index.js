@@ -1,6 +1,9 @@
+/**
+ * @jest-environment jsdom
+ */
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import deepFreeze from 'deep-freeze';
-import { shallow } from 'enzyme';
-import Notice from 'calypso/components/notice';
 import { GlobalNotices } from '..';
 
 const baseProps = deepFreeze( {
@@ -12,8 +15,8 @@ beforeEach( jest.clearAllMocks );
 
 describe( '<GlobalNotices />', () => {
 	test( 'should not render without notices', () => {
-		const wrapper = shallow( <GlobalNotices { ...baseProps } /> );
-		expect( wrapper.type() ).toBeNull();
+		const { container } = render( <GlobalNotices { ...baseProps } /> );
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'should render notices with the expected structure', () => {
@@ -25,11 +28,11 @@ describe( '<GlobalNotices />', () => {
 				text: 'A test notice',
 			},
 		];
-		const wrapper = shallow( <GlobalNotices { ...baseProps } storeNotices={ notices } /> );
-		//expect( wrapper.hasClass( 'global-notices' ) ).toBe( true );
-		expect( wrapper.prop( 'id' ) ).toBe( 'overlay-notices' );
-		expect( wrapper.find( Notice ) ).toHaveLength( 1 );
-		expect( wrapper ).toMatchSnapshot();
+		const { container } = render( <GlobalNotices { ...baseProps } storeNotices={ notices } /> );
+		expect( container.firstChild ).toHaveClass( 'global-notices' );
+		expect( container.firstChild ).toHaveAttribute( 'id', 'overlay-notices' );
+		expect( screen.queryAllByRole( 'status' ) ).toHaveLength( 1 );
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( 'should use provided id', () => {
@@ -41,13 +44,13 @@ describe( '<GlobalNotices />', () => {
 				text: 'A test notice',
 			},
 		];
-		const wrapper = shallow(
+		const { container } = render(
 			<GlobalNotices { ...baseProps } storeNotices={ notices } id="test-id" />
 		);
-		expect( wrapper.prop( 'id' ) ).toBe( 'test-id' );
+		expect( container.firstChild ).toHaveAttribute( 'id', 'test-id' );
 	} );
 
-	test( 'should call dismissals', () => {
+	test( 'should call dismissals', async () => {
 		const notices = [
 			{
 				noticeId: 'testing-notice',
@@ -58,11 +61,9 @@ describe( '<GlobalNotices />', () => {
 			},
 		];
 
-		const wrapper = shallow(
-			<GlobalNotices { ...baseProps } storeNotices={ notices } id="test-id" />
-		);
+		render( <GlobalNotices { ...baseProps } storeNotices={ notices } id="test-id" /> );
 
-		wrapper.find( Notice ).prop( 'onDismissClick' )();
+		await userEvent.click( screen.getByRole( 'button' ) );
 
 		expect( notices[ 0 ].onDismissClick ).toHaveBeenCalledTimes( 1 );
 		expect( baseProps.removeNotice ).toHaveBeenCalledTimes( 1 );

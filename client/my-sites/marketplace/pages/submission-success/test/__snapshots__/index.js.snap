@@ -1,111 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Marketplace SignupSuccess should render the page as expected 1`] = `
-<ThemeProvider
-  theme={
+<ContextProvider
+  value={
     Object {
-      "fontSize": Object {
-        "small": "14px",
+      "store": Object {
+        "@@observable": [Function],
+        "addReducer": [Function],
+        "dispatch": [Function],
+        "getCurrentReducer": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
       },
-      "weights": Object {
-        "bold": "600",
-        "normal": "400",
+      "subscription": Object {
+        "addNestedSub": [Function],
+        "getListeners": [Function],
+        "handleChangeWrapper": [Function],
+        "isSubscribed": [Function],
+        "notifyNestedSubs": [Function],
+        "onStateChange": [Function],
+        "trySubscribe": [Function],
+        "tryUnsubscribe": [Function],
       },
     }
   }
 >
-  <EmotionGlobal
-    styles={
-      Object {
-        "map": "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNpZ251cC1zdWNjZXNzLnRzeCJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFnQmdCIiwiZmlsZSI6InNpZ251cC1zdWNjZXNzLnRzeCIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IEdyaWRpY29uIH0gZnJvbSAnQGF1dG9tYXR0aWMvY29tcG9uZW50cyc7XG5pbXBvcnQgeyBUaGVtZVByb3ZpZGVyLCBHbG9iYWwsIGNzcyB9IGZyb20gJ0BlbW90aW9uL3JlYWN0JztcbmltcG9ydCB7IEJ1dHRvbiB9IGZyb20gJ0B3b3JkcHJlc3MvY29tcG9uZW50cyc7XG5pbXBvcnQgeyB1c2VUcmFuc2xhdGUgfSBmcm9tICdpMThuLWNhbHlwc28nO1xuaW1wb3J0IHN1Ym1pc3Npb25TdWNjZXNzSW1hZ2UgZnJvbSAnY2FseXBzby9hc3NldHMvaW1hZ2VzL21hcmtldHBsYWNlL3N1Ym1pc3Npb24tc3VjY2Vzcy5wbmcnO1xuaW1wb3J0IHRoZW1lIGZyb20gJ2NhbHlwc28vbXktc2l0ZXMvbWFya2V0cGxhY2UvdGhlbWUnO1xuaW1wb3J0IE1hc3RlcmJhclN0eWxlZCBmcm9tICcuLi8uLi9jb21wb25lbnRzL21hc3RlcmJhci1zdHlsZWQnO1xuaW1wb3J0ICcuL3N0eWxlLnNjc3MnO1xuXG5jb25zdCBTaWdudXBTdWNjZXNzID0gKCkgPT4ge1xuXHRjb25zdCB0cmFuc2xhdGUgPSB1c2VUcmFuc2xhdGUoKTtcblxuXHRyZXR1cm4gKFxuXHRcdDxUaGVtZVByb3ZpZGVyIHRoZW1lPXsgdGhlbWUgfT5cblx0XHRcdHsgLyogVXNpbmcgR2xvYmFsIHRvIG92ZXJyaWRlIEdsb2JhbCBtYXN0ZXJiYXIgaGVpZ2h0ICovIH1cblx0XHRcdDxHbG9iYWxcblx0XHRcdFx0c3R5bGVzPXsgY3NzYFxuXHRcdFx0XHRcdGJvZHkuaXMtc2VjdGlvbi1tYXJrZXRwbGFjZSB7XG5cdFx0XHRcdFx0XHQtLW1hc3RlcmJhci1oZWlnaHQ6IDcycHg7XG5cdFx0XHRcdFx0fVxuXHRcdFx0XHRgIH1cblx0XHRcdC8+XG5cdFx0XHQ8TWFzdGVyYmFyU3R5bGVkXG5cdFx0XHRcdG9uQ2xpY2s9eyAoKSA9PiAoIGRvY3VtZW50LmxvY2F0aW9uLmhyZWYgPSBgJHsgZG9jdW1lbnQubG9jYXRpb24ub3JpZ2luIH1gICkgfVxuXHRcdFx0XHRiYWNrVGV4dD17IHRyYW5zbGF0ZSggJ0JhY2sgdG8gV29yZFByZXNzLmNvbScgKSB9XG5cdFx0XHQvPlxuXHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc1wiPlxuXHRcdFx0XHQ8ZGl2IGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19oZWFkZXJcIj5cblx0XHRcdFx0XHQ8aW1nIHNyYz17IHN1Ym1pc3Npb25TdWNjZXNzSW1hZ2UgfSBhbHQ9XCJTdWJtaXNzaW9uIHN1Y2Nlc3NcIiAvPlxuXHRcdFx0XHRcdDxoMSBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19faGVhZGVyLXRpdGxlIHdwLWJyYW5kLWZvbnRcIj5cblx0XHRcdFx0XHRcdHsgdHJhbnNsYXRlKCAnV2XigJlsbCBiZSBpbiB0b3VjaCcgKSB9XG5cdFx0XHRcdFx0PC9oMT5cblx0XHRcdFx0XHQ8cD5cblx0XHRcdFx0XHRcdHsgdHJhbnNsYXRlKFxuXHRcdFx0XHRcdFx0XHQnVGhhbmsgeW91IGZvciBhcHBseSB0byBqb2luIHRoZSBXb3JkUHJlc3MuY29tIG1hcmtldHBsYWNlLiBXZeKAmWxsIGJlIGluIHRvdWNoIHdpdGggeW91IHZlcnkgc29vbiB0byBkaXNjdXNzIG5leHQgc3RlcHMuJ1xuXHRcdFx0XHRcdFx0KSB9XG5cdFx0XHRcdFx0PC9wPlxuXHRcdFx0XHQ8L2Rpdj5cblx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fYm9keVwiPlxuXHRcdFx0XHRcdDxkaXYgY2xhc3NOYW1lPVwic2lnbnVwLXN1Y2Nlc3NfX3Jvd1wiPlxuXHRcdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LWljb25cIj5cblx0XHRcdFx0XHRcdFx0PEdyaWRpY29uIGljb249XCJjYXJ0XCIgLz5cblx0XHRcdFx0XHRcdDwvZGl2PlxuXHRcdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LWNvbnRlbnRcIj5cblx0XHRcdFx0XHRcdFx0PGgyPnsgdHJhbnNsYXRlKCAnTGVhcm4gTW9yZScgKSB9PC9oMj5cblx0XHRcdFx0XHRcdFx0PHA+eyB0cmFuc2xhdGUoICdSZWFkIG1vcmUgYWJvdXQgc2VsbGluZyBvbiB0aGUgV29yZFByZXNzLmNvbSBtYXJrZXRwbGFjZS4nICkgfTwvcD5cblx0XHRcdFx0XHRcdDwvZGl2PlxuXHRcdFx0XHRcdFx0PEJ1dHRvbiBpc1NlY29uZGFyeSBocmVmPVwiaHR0cHM6Ly9kZXZlbG9wZXIud29yZHByZXNzLmNvbS93b3JkcHJlc3MtY29tLW1hcmtldHBsYWNlL1wiPlxuXHRcdFx0XHRcdFx0XHR7IHRyYW5zbGF0ZSggJ0NvbnRpbnVlJyApIH1cblx0XHRcdFx0XHRcdDwvQnV0dG9uPlxuXHRcdFx0XHRcdDwvZGl2PlxuXHRcdFx0XHRcdDxociAvPlxuXHRcdFx0XHRcdDxkaXYgY2xhc3NOYW1lPVwic2lnbnVwLXN1Y2Nlc3NfX3Jvd1wiPlxuXHRcdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LWljb25cIj5cblx0XHRcdFx0XHRcdFx0PEdyaWRpY29uIGljb249XCJjb2dcIiAvPlxuXHRcdFx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdFx0XHQ8ZGl2IGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19yb3ctY29udGVudFwiPlxuXHRcdFx0XHRcdFx0XHQ8aDI+eyB0cmFuc2xhdGUoICdWaWV3IHRoZSBtYXJrZXRwbGFjZScgKSB9PC9oMj5cblx0XHRcdFx0XHRcdFx0PHA+eyB0cmFuc2xhdGUoICdTaWduIGluIHRvIHNlZSB3aGF0IHRoZSBtYXJrZXRwbGFjZSBoYXMgdG8gb2ZmZXIuJyApIH08L3A+XG5cdFx0XHRcdFx0XHQ8L2Rpdj5cblx0XHRcdFx0XHRcdDxCdXR0b24gaXNTZWNvbmRhcnkgaHJlZj1cIi9wbHVnaW5zXCI+XG5cdFx0XHRcdFx0XHRcdHsgdHJhbnNsYXRlKCAnQ29udGludWUnICkgfVxuXHRcdFx0XHRcdFx0PC9CdXR0b24+XG5cdFx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdDwvZGl2PlxuXHRcdFx0PC9kaXY+XG5cdFx0PC9UaGVtZVByb3ZpZGVyPlxuXHQpO1xufTtcblxuZXhwb3J0IGRlZmF1bHQgU2lnbnVwU3VjY2VzcztcbiJdfQ== */",
-        "name": "sizr66-SignupSuccess",
-        "styles": "body.is-section-marketplace{--masterbar-height:72px;};label:SignupSuccess;",
-        "toString": [Function],
-      }
-    }
-  />
-  <MasterbarStyled
-    backText="Back to WordPress.com"
-    onClick={[Function]}
-  />
-  <div
-    className="signup-success"
-  >
-    <div
-      className="signup-success__header"
-    >
-      <img
-        alt="Submission success"
-        src="submission-success.png"
-      />
-      <h1
-        className="signup-success__header-title wp-brand-font"
-      >
-        We’ll be in touch
-      </h1>
-      <p>
-        Thank you for apply to join the WordPress.com marketplace. We’ll be in touch with you very soon to discuss next steps.
-      </p>
-    </div>
-    <div
-      className="signup-success__body"
-    >
-      <div
-        className="signup-success__row"
-      >
-        <div
-          className="signup-success__row-icon"
-        >
-          <Gridicon
-            icon="cart"
-          />
-        </div>
-        <div
-          className="signup-success__row-content"
-        >
-          <h2>
-            Learn More
-          </h2>
-          <p>
-            Read more about selling on the WordPress.com marketplace.
-          </p>
-        </div>
-        <ForwardRef(Button)
-          href="https://developer.wordpress.com/wordpress-com-marketplace/"
-          isSecondary={true}
-        >
-          Continue
-        </ForwardRef(Button)>
-      </div>
-      <hr />
-      <div
-        className="signup-success__row"
-      >
-        <div
-          className="signup-success__row-icon"
-        >
-          <Gridicon
-            icon="cog"
-          />
-        </div>
-        <div
-          className="signup-success__row-content"
-        >
-          <h2>
-            View the marketplace
-          </h2>
-          <p>
-            Sign in to see what the marketplace has to offer.
-          </p>
-        </div>
-        <ForwardRef(Button)
-          href="/plugins"
-          isSecondary={true}
-        >
-          Continue
-        </ForwardRef(Button)>
-      </div>
-    </div>
-  </div>
-</ThemeProvider>
+  <SignupSuccess />
+</ContextProvider>
 `;

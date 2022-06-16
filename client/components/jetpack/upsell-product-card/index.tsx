@@ -164,16 +164,11 @@ export const UpsellProductCardPlaceholder: React.FC = () => {
 	return (
 		<JetpackRnaActionCard
 			headerText={ 'Placeholder title' }
+			subHeaderText={ `This is placeholder text for the product description. The description text is
+					approximately 18 words and 126 characters.` }
 			ctaButtonLabel={ 'Button label' }
 			isPlaceholder
 		>
-			<p className="upsell-product-card__description">
-				<span>
-					This is placeholder text for the product description. The description text is
-					approximately 18 words and 126 characters.
-				</span>
-			</p>
-
 			<ul className="upsell-product-card__features">
 				<li className="upsell-product-card__features-item" key={ 1 }>
 					<span>Placeholder feature text 1</span>

@@ -8,6 +8,7 @@ interface Props {
 	feature: PlanComparisonFeature;
 	plans: WPComPlan[];
 	isLegacySiteWithHigherLimits: boolean;
+	isExperiment?: boolean;
 }
 
 export const DesktopContent = styled.div`

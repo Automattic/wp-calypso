@@ -317,3 +317,20 @@ html {
 		height: 100px;
 	}
 }
+
+// Dropdown menu styles
+
+.section-nav.is-open {
+
+	.section-nav__panel {
+		padding-bottom: 0;
+		background: linear-gradient( to bottom, var( --color-neutral-0 ) 0, var( --color-surface ) 4px );
+		border: 1px solid var( --color-neutral-10 );
+		border-radius: 2px;
+		box-shadow: 0 2px 5px #0000001a, 0 0 56px rgb( 0 0 0 / 8% );
+	}
+
+	.section-nav-group {
+		margin-top: 0;
+	}
+}

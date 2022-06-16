@@ -54,7 +54,16 @@ export default function SiteStatusContent( {
 
 	if ( type === 'site' ) {
 		// Site issues is the sum of scan threats and plugin updates
-		const siteIssues = rows.scan.threats + rows.plugin.updates;
+		let siteIssuesCount = rows.scan.threats + rows.plugin.updates;
+		let isHighSeverityError = !! rows.scan.threats;
+		if ( [ 'failed', 'warning' ].includes( rows.backup.status ) ) {
+			siteIssuesCount = siteIssuesCount + 1;
+			isHighSeverityError = isHighSeverityError || 'failed' === rows.backup.status;
+		}
+		if ( [ 'failed' ].includes( rows.monitor.status ) ) {
+			siteIssuesCount = siteIssuesCount + 1;
+			isHighSeverityError = true;
+		}
 		let errorContent;
 		if ( error ) {
 			errorContent = (
@@ -62,21 +71,22 @@ export default function SiteStatusContent( {
 					<Gridicon size={ 24 } icon="notice-outline" />
 				</span>
 			);
-		} else if ( siteIssues ) {
+		} else if ( siteIssuesCount ) {
 			errorContent = (
 				<span
 					className={ classNames(
 						'sites-overview__status-count',
-						rows.scan.threats ? 'sites-overview__status-failed' : 'sites-overview__status-warning'
+						isHighSeverityError ? 'sites-overview__status-failed' : 'sites-overview__status-warning'
 					) }
 				>
-					{ siteIssues }
+					{ siteIssuesCount }
 				</span>
 			);
 		}
 		return (
 			<>
 				<span className="sites-overview__row-text">{ value.url }</span>
+				<span className="sites-overview__overlay"></span>
 				{ errorContent }
 			</>
 		);

@@ -55,14 +55,14 @@ async function AppBoot() {
 	try {
 		auth = await requestHappyChatAuth();
 		user = filterUserObject( auth.fullUser );
-	} catch ( error ) {
+	} catch ( _error ) {
 		// this error most likely means we couldn't auth the user due to 3rd party cookies blockage
 		// attempt to get auth information from the parent window (when this is opened in an iframe)
 		try {
 			const authFromParent = await requestDataFromParent();
 			auth = authFromParent;
 			user = filterUserObject( auth.fullUser );
-		} catch ( _error ) {
+		} catch ( error ) {
 			// there are no 3rd party cookies nor auth data from the parent
 			ReactDom.render(
 				<div className="happy-chat-error-screen">
@@ -74,7 +74,8 @@ async function AppBoot() {
 				</div>,
 				document.getElementById( 'wpcom' )
 			);
-			return;
+			// throw the error to console log it and to stop execution
+			throw error;
 		}
 	}
 

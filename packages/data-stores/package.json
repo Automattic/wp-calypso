@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/data-stores",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"description": "Calypso Data Stores.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -31,6 +31,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/domain-utils": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/happychat-connection": "workspace:^",
 		"@wordpress/api-fetch": "^6.6.0",
@@ -42,6 +43,7 @@
 		"qs": "^6.9.1",
 		"redux": "^4.1.2",
 		"tslib": "^2.3.0",
+		"use-debounce": "^3.1.0",
 		"utility-types": "^3.10.0",
 		"validator": "^13.5.2"
 	},

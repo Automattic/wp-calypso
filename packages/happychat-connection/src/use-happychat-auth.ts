@@ -42,9 +42,8 @@ export async function requestHappyChatAuth() {
 }
 
 export default function useHappychatAuth( enabled = true ) {
-	return useQuery< HappychatAuth, typeof Error >( 'getHappychatAuth', requestHappyChatAuth, {
-		refetchOnWindowFocus: false,
-		keepPreviousData: true,
+	return useQuery< HappychatAuth >( 'getHappychatAuth', requestHappyChatAuth, {
+		staleTime: Infinity,
 		enabled,
 	} );
 }

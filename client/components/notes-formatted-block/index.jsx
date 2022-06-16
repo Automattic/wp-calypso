@@ -36,6 +36,7 @@ const FormattedBlock = FormattedBlockRenderer( {
 	person: Blocks.Person,
 	plugin: Blocks.Plugin,
 	theme: Blocks.Theme,
+	backup: Blocks.Backup,
 } );
 
 export default FormattedBlock;

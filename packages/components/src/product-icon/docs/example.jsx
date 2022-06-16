@@ -71,17 +71,11 @@ function ProductIconExample() {
 
 			<hr />
 
-			<h3>Jetpack Plan Icons v2</h3>
+			<h3>Jetpack Bundle Icons v2</h3>
 			<div style={ wrapperStyle }>
 				<div style={ iconStyle }>
 					<ProductIcon slug="jetpack_complete_v2" />
 				</div>
-			</div>
-
-			<hr />
-
-			<h3>Jetpack Bundle Icons v2</h3>
-			<div style={ wrapperStyle }>
 				<div style={ iconStyle }>
 					<ProductIcon slug="jetpack_security_v2" />
 				</div>
@@ -104,7 +98,16 @@ function ProductIconExample() {
 					<ProductIcon slug="jetpack_search_v2" />
 				</div>
 				<div style={ iconStyle }>
+					<ProductIcon slug="jetpack_boost" />
+				</div>
+				<div style={ iconStyle }>
 					<ProductIcon slug="jetpack_videopress" />
+				</div>
+				<div style={ iconStyle }>
+					<ProductIcon slug="jetpack_social" />
+				</div>
+				<div style={ iconStyle }>
+					<ProductIcon slug="jetpack_crm" />
 				</div>
 			</div>
 		</Fragment>

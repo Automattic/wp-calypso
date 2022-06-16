@@ -1,32 +1,51 @@
 import phrase from 'asana-phrase';
 import envVariables from './env-variables';
-import { SecretsManager, TestAccountName } from './secrets';
+import { SecretsManager } from './secrets';
+import type { Secrets, TestAccountName } from './secrets';
+import type {
+	PaymentDetails,
+	DateFormat,
+	RegistrarDetails,
+	NewTestUserDetails,
+	AccountCredentials,
+} from './types/data-helper.types';
 
-export type DateFormat = 'ISO';
+/**
+ * Returns a set of data required to sign up
+ * as a new user and create a new site.
+ *
+ * Note that this function only generates the test data;
+ * it does not actually create the test user.
+ *
+ * @param param0 Object parameter.
+ * @param {keyof Secrets['mailosaur']} [param0.mailosaurInbox] Optional key to specify the mailosaur server to use. Defaults to `signupInboxId`.
+ * @param {string} [param0.usernamePrefix] Optional key to specify the username prefix inserted between the `e2eflowtesting` and timestamp. Defaults to an empty string.
+ * @returns Data for new test user.
+ */
+export function getNewTestUser( {
+	mailosaurInbox = 'signupInboxId',
+	usernamePrefix = '',
+}: {
+	mailosaurInbox?: keyof Secrets[ 'mailosaur' ];
+	usernamePrefix?: string;
+} = {} ): NewTestUserDetails {
+	const username = getUsername( { prefix: usernamePrefix } );
+	const password = SecretsManager.secrets.passwordForNewTestSignUps;
 
-export interface PaymentDetails {
-	cardHolder: string;
-	cardNumber: string;
-	expiryMonth: string;
-	expiryYear: string;
-	cvv: string;
-	countryCode: string;
-	postalCode: string;
+	const email = getTestEmailAddress( {
+		inboxId: SecretsManager.secrets.mailosaur[ mailosaurInbox ],
+		prefix: username,
+	} );
+	const siteName = getBlogName();
+
+	return {
+		username: username,
+		password: password,
+		email: email,
+		siteName: siteName,
+		inboxId: SecretsManager.secrets.mailosaur[ mailosaurInbox ],
+	};
 }
-
-export interface RegistrarDetails {
-	firstName: string;
-	lastName: string;
-	email: string;
-	phone: string;
-	countryCode: string;
-	address: string;
-	city: string;
-	stateCode: string;
-	postalCode: string;
-}
-
-export type CreditCardIssuers = 'Visa';
 
 /**
  * Generate a pseudo-random integer, inclusive on the lower bound and exclusive on the upper bound.
@@ -68,7 +87,7 @@ export function getTimestamp(): string {
 export function getUsername( { prefix = '' }: { prefix?: string } = {} ): string {
 	const timestamp = getTimestamp();
 	const randomNumber = getRandomInteger( 0, 999 );
-	return `e2eflowtesting${ prefix }-${ timestamp }-${ randomNumber }`;
+	return `e2eflowtesting${ prefix }${ timestamp }${ randomNumber }`;
 }
 
 /**
@@ -78,7 +97,7 @@ export function getUsername( { prefix = '' }: { prefix?: string } = {} ): string
  * @returns {string|null} If valid date format string is supplied, string is returned. Otherwise, null.
  */
 export function getDateString( format: DateFormat ): string | null {
-	if ( format === 'ISO' ) {
+	if ( format === 'ISO-8601' ) {
 		return new Date().toISOString();
 	}
 	return null;
@@ -117,12 +136,6 @@ export function getCalypsoURL(
 	);
 
 	return url.toString();
-}
-
-export interface AccountCredentials {
-	username: string;
-	password: string;
-	totpKey?: string;
 }
 
 /**
@@ -319,4 +332,40 @@ export function createSuiteTitle( title: string ): string {
 	const parts = [ `${ toTitleCase( title ) }` ];
 
 	return parts.join( ' ' );
+}
+
+/**
+ * Returns the Magnificent 16 test locales, known as Mag16.
+ *
+ * @returns {string[]} Array of strings in ISO-639-1 standard.
+ */
+export function getMag16Locales(): string[] {
+	return [
+		'en',
+		'es',
+		'pt-br',
+		'de',
+		'fr',
+		'he',
+		'ja',
+		'it',
+		'nl',
+		'ru',
+		'tr',
+		'id',
+		'zh-cn',
+		'zh-tw',
+		'ko',
+		'ar',
+		'sv',
+	];
+}
+
+/**
+ * Returns the list of viewports that are available for the framework.
+ *
+ * @returns {string([])} Array of strings for valid viewports.
+ */
+export function getViewports(): string[] {
+	return [ 'mobile', 'desktop' ];
 }

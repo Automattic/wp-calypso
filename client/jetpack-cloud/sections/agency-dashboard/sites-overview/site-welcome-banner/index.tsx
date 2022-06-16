@@ -98,6 +98,7 @@ export default function SiteWelcomeBanner( {
 			onClick={ isDashboardView ? dismissBanner : trackViewEvent }
 			dismissTemporary={ ! isDashboardView }
 			onDismiss={ dismissBanner }
+			disableHref={ isDashboardView }
 			dismissPreferenceName={ isDashboardView ? '' : preferenceName }
 		/>
 	);

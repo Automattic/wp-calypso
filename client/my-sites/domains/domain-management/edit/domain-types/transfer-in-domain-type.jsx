@@ -11,7 +11,6 @@ import { resolveDomainStatus } from 'calypso/lib/domains';
 import { transferStatus } from 'calypso/lib/domains/constants';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES } from 'calypso/lib/url/support';
 import { domainUseMyDomain } from 'calypso/my-sites/domains/paths';
-import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	getByPurchaseId,
 	hasLoadedSitePurchasesFromServer,
@@ -139,10 +138,15 @@ class TransferInDomainType extends Component {
 	}
 
 	render() {
-		const { domain, selectedSite, purchase, isLoadingPurchase } = this.props;
+		const { domain, selectedSite, purchase, isLoadingPurchase, translate, dispatch } = this.props;
 		const { name: domain_name } = domain;
 
-		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase );
+		const { statusText, statusClass, icon } = resolveDomainStatus(
+			domain,
+			purchase,
+			translate,
+			dispatch
+		);
 
 		return (
 			<div className="domain-types__container">
@@ -166,16 +170,11 @@ class TransferInDomainType extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		const { subscriptionId } = ownProps.domain;
-		return {
-			purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
-			isLoadingPurchase:
-				isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
-		};
-	},
-	{
-		errorNotice,
-	}
-)( withLocalizedMoment( localize( TransferInDomainType ) ) );
+export default connect( ( state, ownProps ) => {
+	const { subscriptionId } = ownProps.domain;
+	return {
+		purchase: subscriptionId ? getByPurchaseId( state, parseInt( subscriptionId, 10 ) ) : null,
+		isLoadingPurchase:
+			isFetchingSitePurchases( state ) && ! hasLoadedSitePurchasesFromServer( state ),
+	};
+} )( withLocalizedMoment( localize( TransferInDomainType ) ) );

@@ -2,8 +2,9 @@
 .intro-pricing-banner__sticky,
 .intro-pricing-banner__loading {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 
+	align-items: center;
 	justify-content: center;
 
 	.intro-pricing-banner__discount,
@@ -17,6 +18,10 @@
 
 	> :not( :last-child ) {
 		margin-right: 16px;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		flex-direction: row;
 	}
 }
 
@@ -45,7 +50,11 @@
 	box-shadow: 0 4px 4px 0 #00000014;
 
 	z-index: 2;
-	height: 54px;
+	height: 74px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		height: 52px;
+	}
 }
 .is-section-jetpack-connect,
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {

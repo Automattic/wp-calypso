@@ -7,8 +7,8 @@ const selectors = {
 	backLink: 'button:text("Back")',
 
 	// Inputs
-	blogNameInput: 'input#siteTitle:not(:disabled)',
-	taglineInput: 'input#tagline:not(:disabled)',
+	blogNameInput: ( value: string ) => `input[name="siteTitle"][value="${ value }"]`,
+	taglineInput: 'input[name="tagline"]',
 
 	// Themes
 	themePickerContainer: '.design-picker',
@@ -49,7 +49,18 @@ export class StartSiteFlow {
 	 * @param {string} name Name for the blog.
 	 */
 	async enterBlogName( name: string ): Promise< void > {
-		await this.page.fill( selectors.blogNameInput, name );
+		await this.page.waitForLoadState( 'networkidle' );
+		// Wait for the input to be populated with the default value `Site Title`.
+		// See https://github.com/Automattic/wp-calypso/issues/64271.
+		const defaultInputlocator = this.page.locator( selectors.blogNameInput( 'Site Title' ) );
+		await defaultInputlocator.fill( name );
+
+		// Verify the data is saved as expected.
+		const filledInputLocator = this.page.locator( selectors.blogNameInput( name ) );
+		const readBack = await filledInputLocator.inputValue();
+		if ( readBack !== name ) {
+			throw new Error( `Failed to set blog name: expected ${ name }, got ${ readBack }` );
+		}
 	}
 
 	/**
@@ -58,7 +69,15 @@ export class StartSiteFlow {
 	 * @param {string} tagline Tagline for the blog.
 	 */
 	async enterTagline( tagline: string ): Promise< void > {
-		await this.page.fill( selectors.taglineInput, tagline );
+		await this.page.waitForLoadState( 'networkidle' );
+		const locator = this.page.locator( selectors.taglineInput );
+		await locator.fill( tagline );
+
+		// Verify the data is saved as expected.
+		const readBack = await locator.inputValue();
+		if ( readBack !== tagline ) {
+			throw new Error( `Failed to set blog tagline: expected ${ tagline }, got ${ readBack }` );
+		}
 	}
 
 	/**

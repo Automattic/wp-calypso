@@ -1,6 +1,8 @@
 import emailValidator from 'email-validator';
 import i18n from 'i18n-calypso';
-import React from 'react';
+import { createElement } from 'react';
+import wp from 'calypso/lib/wp';
+import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import type { FieldError, MailboxFormFieldBase } from 'calypso/my-sites/email/form/mailboxes/types';
 
 interface Validator< T > {
@@ -75,9 +77,9 @@ class MaximumStringLengthValidator extends BaseValidator< string > {
 }
 
 class MailboxNameValidator extends BaseValidator< string > {
-	areApostrophesSupported: boolean;
-	domainName: string;
-	mailboxHasDomainError: boolean;
+	private readonly areApostrophesSupported: boolean;
+	private readonly domainName: string;
+	private readonly mailboxHasDomainError: boolean;
 
 	constructor(
 		domainName: string,
@@ -126,7 +128,7 @@ class MailboxNameValidator extends BaseValidator< string > {
 }
 
 class AlternateEmailValidator extends BaseValidator< string > {
-	domainName: string;
+	private readonly domainName: string;
 
 	constructor( domainName: string ) {
 		super();
@@ -145,7 +147,7 @@ class AlternateEmailValidator extends BaseValidator< string > {
 					domain: domainName,
 				},
 				components: {
-					strong: React.createElement( 'strong' ),
+					strong: createElement( 'strong' ),
 				},
 			}
 		);
@@ -252,29 +254,110 @@ class PasswordValidator extends BaseValidator< string > {
 }
 
 class ExistingMailboxNamesValidator extends BaseValidator< string > {
-	existingMailboxNames: string[];
+	private readonly existingMailboxNames: string[];
+	private readonly domainName: string;
 
-	constructor( existingMailboxNames: string[] ) {
+	constructor( domainName: string, existingMailboxNames: string[] ) {
 		super();
+		this.domainName = domainName;
 		this.existingMailboxNames = existingMailboxNames;
 	}
 
-	static getExistingMailboxError(): FieldError {
-		return i18n.translate( 'Please use unique mailboxes.' );
+	static getExistingMailboxError( domainName: string, existingMailbox: string ): FieldError {
+		return i18n.translate(
+			'Please use unique email addresses. {{strong}}%(emailAddress)s{{/strong}} already exists in your account.',
+			{
+				args: { emailAddress: `${ existingMailbox }@${ domainName }` },
+				components: { strong: createElement( 'strong' ) },
+			}
+		);
 	}
 
 	validateField( field: MailboxFormFieldBase< string > ): void {
 		const existingMailboxNames = this.existingMailboxNames ?? [];
-		if ( ! existingMailboxNames ) {
+		if ( ! existingMailboxNames || ! field.value ) {
 			return;
 		}
 
+		const fieldValueLowerCased = field.value.toLowerCase();
+
 		if (
-			existingMailboxNames
-				.map( ( item ) => item.toLowerCase() )
-				.includes( field.value?.toLowerCase() ?? '' )
+			existingMailboxNames.map( ( item ) => item.toLowerCase() ).includes( fieldValueLowerCased )
 		) {
-			field.error = ExistingMailboxNamesValidator.getExistingMailboxError();
+			field.error = ExistingMailboxNamesValidator.getExistingMailboxError(
+				this.domainName,
+				fieldValueLowerCased
+			);
+		}
+	}
+}
+
+class MailboxNameAvailabilityValidator extends BaseValidator< string > {
+	private readonly domainName: string;
+	private readonly provider: EmailProvider;
+
+	constructor( domainName: string, provider: EmailProvider ) {
+		super();
+		this.domainName = domainName;
+		this.provider = provider;
+	}
+
+	static getUnavailableMailboxError( mailboxName: string, message: string ): FieldError {
+		return i18n.translate( '{{strong}}%(mailbox)s{{/strong}} is not available: %(message)s', {
+			comment:
+				'%(mailbox)s is the local part of an email address. %(message)s is a translated message that gives context to why the mailbox is not available',
+			args: {
+				mailbox: mailboxName,
+				message,
+			},
+			components: {
+				strong: createElement( 'strong' ),
+			},
+		} );
+	}
+
+	async checkMailboxAvailability( domain: string, mailbox: string ) {
+		try {
+			const encDomain = encodeURIComponent( domain );
+			const encMailbox = encodeURIComponent( mailbox );
+			const response = await wp.req.get( {
+				path: `/emails/titan/${ encDomain }/check-mailbox-availability/${ encMailbox }`,
+				apiNamespace: 'wpcom/v2',
+			} );
+			return { message: response.message, status: 200 };
+		} catch ( error: any ) {
+			return { message: error?.message, status: error?.statusCode };
+		}
+	}
+
+	async validate( field?: MailboxFormFieldBase< string > ) {
+		if ( ! field || field.hasError() ) {
+			return;
+		}
+
+		await this.validateField( field );
+	}
+
+	async validateField( field: MailboxFormFieldBase< string > ) {
+		// Google has no mailbox name validator at this time
+		if ( this.provider === EmailProvider.Google ) {
+			return;
+		}
+
+		// There's nothing to validate if the field has no value
+		if ( ! field.value ) {
+			return;
+		}
+
+		// Check that this mailbox name is available against the domain
+		const { message, status } = await this.checkMailboxAvailability( this.domainName, field.value );
+
+		// If mailbox name is not available ...
+		if ( status !== 200 ) {
+			field.error = MailboxNameAvailabilityValidator.getUnavailableMailboxError(
+				field.value,
+				message
+			);
 		}
 	}
 }
@@ -285,6 +368,7 @@ export {
 	AlternateEmailValidator,
 	ExistingMailboxNamesValidator,
 	MailboxNameValidator,
+	MailboxNameAvailabilityValidator,
 	PasswordValidator,
 	RequiredValidator,
 	RequiredIfVisibleValidator,

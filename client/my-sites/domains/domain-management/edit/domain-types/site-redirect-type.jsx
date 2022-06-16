@@ -30,7 +30,7 @@ class SiteRedirectType extends Component {
 			<div>
 				{ ( isLoadingPurchase || purchase ) && (
 					<RenewButton
-						compact={ true }
+						compact
 						purchase={ purchase }
 						selectedSite={ this.props.selectedSite }
 						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
@@ -76,10 +76,15 @@ class SiteRedirectType extends Component {
 	}
 
 	render() {
-		const { domain, selectedSite, purchase, isLoadingPurchase } = this.props;
+		const { domain, selectedSite, purchase, isLoadingPurchase, translate, dispatch } = this.props;
 		const { name: domain_name } = domain;
 
-		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase );
+		const { statusText, statusClass, icon } = resolveDomainStatus(
+			domain,
+			purchase,
+			translate,
+			dispatch
+		);
 
 		return (
 			<div className="domain-types__container">

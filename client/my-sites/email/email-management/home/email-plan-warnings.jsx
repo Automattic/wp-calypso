@@ -3,6 +3,8 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import {
 	hasUnusedMailboxWarning,
 	hasGoogleAccountTOSWarning,
@@ -39,7 +41,15 @@ class EmailPlanWarnings extends Component {
 		const { domain, translate } = this.props;
 
 		return (
-			<Button compact primary href={ getGoogleAdminWithTosUrl( domain.name ) } target="_blank">
+			<Button
+				compact
+				primary
+				href={ getGoogleAdminWithTosUrl( domain.name ) }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_email_management_google_workspace_accept_tos_link_click' );
+				} }
+				target="_blank"
+			>
 				{ translate( 'Finish setup' ) }
 				<Gridicon icon="external" />
 			</Button>
@@ -61,19 +71,34 @@ class EmailPlanWarnings extends Component {
 	}
 
 	render() {
-		const { warning } = this.props;
-		if ( ! warning ) {
+		const { domain, translate, warning } = this.props;
+
+		if ( ! warning && canCurrentUserAddEmail( domain ) ) {
 			return null;
 		}
 
 		return (
 			<div className="email-plan-warnings__container">
-				<div className="email-plan-warnings__warning">
-					<div className="email-plan-warnings__message">
-						<span>{ warning.message }</span>
+				{ ! canCurrentUserAddEmail( domain ) && (
+					<div className="email-plan-warnings__warning">
+						<div className="email-plan-warnings__message">
+							<span>
+								{ translate(
+									'This email subscription was purchased by a different WordPress.com account. To add or remove mailboxes, log in to that account or contact the account owner.'
+								) }
+							</span>
+						</div>
 					</div>
-					<div className="email-plan-warnings__cta">{ this.renderCTA() }</div>
-				</div>
+				) }
+
+				{ warning && (
+					<div className="email-plan-warnings__warning">
+						<div className="email-plan-warnings__message">
+							<span>{ warning.message }</span>
+						</div>
+						<div className="email-plan-warnings__cta">{ this.renderCTA() }</div>
+					</div>
+				) }
 			</div>
 		);
 	}

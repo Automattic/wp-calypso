@@ -1,12 +1,11 @@
 import { isJetpackBackupSlug, WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products';
 import Debug from 'debug';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import FormattedHeader from 'calypso/components/formatted-header';
-import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
 import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
 import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
+import { UpsellProductCardPlaceholder } from 'calypso/components/jetpack/upsell-product-card';
 import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -19,6 +18,7 @@ import BackupUpsell from './backup-upsell';
 import BackupsPage from './main';
 import BackupRewindFlow, { RewindFlowPurpose } from './rewind-flow';
 import WPCOMBackupUpsell from './wpcom-backup-upsell';
+import WpcomBackupUpsellPlaceholder from './wpcom-backup-upsell-placeholder';
 
 const debug = new Debug( 'calypso:my-sites:backup:controller' );
 
@@ -26,6 +26,9 @@ export function showUpsellIfNoBackup( context, next ) {
 	debug( 'controller: showUpsellIfNoBackup', context.params );
 
 	const UpsellComponent = isJetpackCloud() ? BackupUpsell : WPCOMBackupUpsell;
+	const UpsellPlaceholder = isJetpackCloud()
+		? UpsellProductCardPlaceholder
+		: WpcomBackupUpsellPlaceholder;
 	context.primary = (
 		<>
 			<UpsellSwitch
@@ -39,10 +42,7 @@ export function showUpsellIfNoBackup( context, next ) {
 				productSlugTest={ isJetpackBackupSlug }
 			>
 				{ isJetpackCloud() && <SidebarNavigation /> }
-				{ ! isJetpackCloud() && (
-					<FormattedHeader brandFont headerText="Jetpack Backup" align="left" />
-				) }
-				<BackupPlaceholder />
+				<UpsellPlaceholder />
 			</UpsellSwitch>
 		</>
 	);

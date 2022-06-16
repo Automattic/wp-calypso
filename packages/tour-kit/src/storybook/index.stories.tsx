@@ -8,11 +8,17 @@ const References = () => {
 	return (
 		<div className={ 'storybook__tourkit-references' }>
 			<div className={ 'storybook__tourkit-references-container' }>
-				<div className={ 'storybook__tourkit-references-a' }>
+				<div
+					style={ { resize: 'both', overflow: 'auto' } }
+					className={ 'storybook__tourkit-references-a' }
+				>
 					<p>Reference A</p>
 				</div>
 				<div className={ 'storybook__tourkit-references-b' }>
 					<p>Reference B</p>
+					<div style={ { display: 'grid', placeItems: 'center' } }>
+						<input style={ { margin: 'auto', display: 'block' } }></input>
+					</div>
 				</div>
 				<div className={ 'storybook__tourkit-references-c' }>
 					<p>Reference C</p>
@@ -25,8 +31,17 @@ const References = () => {
 	);
 };
 
-const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'options' ] } ) => {
+const Tour = ( {
+	onClose,
+	options,
+	placement,
+}: {
+	onClose: () => void;
+	options?: Config[ 'options' ];
+	placement?: Config[ 'placement' ];
+} ) => {
 	const config: Config = {
+		placement: placement || 'bottom',
 		steps: [
 			{
 				referenceElements: {
@@ -114,14 +129,22 @@ const Tour = ( { onClose, options }: { onClose: () => void; options?: Config[ 'o
 	return <TourKit config={ config } />;
 };
 
-const StoryTour = ( { options = {} }: { options?: Config[ 'options' ] } ) => {
+const StoryTour = ( {
+	options = {},
+	placement,
+}: {
+	options?: Config[ 'options' ];
+	placement?: Config[ 'placement' ];
+} ) => {
 	const [ showTour, setShowTour ] = useState( false );
 
 	return (
 		<div className="storybook__tourkit">
 			<References />
 			{ ! showTour && <button onClick={ () => setShowTour( true ) }>Start Tour</button> }
-			{ showTour && <Tour onClose={ () => setShowTour( false ) } options={ options } /> }
+			{ showTour && (
+				<Tour onClose={ () => setShowTour( false ) } options={ options } placement={ placement } />
+			) }
 		</div>
 	);
 };
@@ -129,6 +152,23 @@ const StoryTour = ( { options = {} }: { options?: Config[ 'options' ] } ) => {
 export const Default = () => <StoryTour />;
 export const Overlay = () => <StoryTour options={ { effects: { overlay: true } } } />;
 export const Spotlight = () => <StoryTour options={ { effects: { spotlight: {} } } } />;
+export const SpotlightInteractivity = () => (
+	<StoryTour
+		options={ {
+			effects: { spotlight: { interactivity: { rootElementSelector: '#root', enabled: true } } },
+		} }
+	/>
+);
+export const SpotlightInteractivityWithAutoResize = () => (
+	<StoryTour
+		options={ {
+			effects: {
+				spotlight: { interactivity: { rootElementSelector: '#root', enabled: true } },
+				liveResize: { mutation: true, resize: true, rootElementSelector: '#root' },
+			},
+		} }
+	/>
+);
 export const AutoScroll = () => (
 	<>
 		<div style={ { height: '10vh' } }></div>
@@ -143,3 +183,5 @@ export const AutoScroll = () => (
 		/>
 	</>
 );
+
+export const Placement = () => <StoryTour placement={ 'left' } />;

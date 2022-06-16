@@ -233,7 +233,9 @@
 		margin-right: 8px;
 	}
 
-	&:hover {
+	&.is-selected,
+	&:hover,
+	&:focus {
 		> img {
 			filter: grayscale( 100% ) brightness( 0.2 ) invert( 1 );
 		}
@@ -420,10 +422,10 @@
 	width: 100%;
 
 	.email-plan-warnings__warning {
-		padding-top: 30px;
+		padding-top: 24px;
 
 		.email-plan-warnings__cta {
-			margin-top: 25px;
+			margin-top: 16px;
 
 			.button {
 				font-size: $font-body-small;

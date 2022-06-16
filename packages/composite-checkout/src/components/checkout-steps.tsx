@@ -763,7 +763,7 @@ export function useIsStepComplete(): boolean {
 	return !! stepCompleteStatus[ stepNumber ];
 }
 
-export function useSetStepComplete(): ( stepId: string ) => Promise< void > {
+export function useSetStepComplete(): ( stepId: string ) => Promise< boolean > {
 	const { getStepCompleteCallback, stepCompleteStatus, getStepNumberFromId } =
 		useContext( CheckoutStepDataContext );
 	return useJITCallback( async ( stepId: string ) => {
@@ -777,10 +777,11 @@ export function useSetStepComplete(): ( stepId: string ) => Promise< void > {
 			if ( ! stepCompleteStatus[ step ] ) {
 				const didStepComplete = await getStepCompleteCallback( step )();
 				if ( ! didStepComplete ) {
-					break;
+					return false;
 				}
 			}
 		}
+		return true;
 	} );
 }
 

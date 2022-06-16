@@ -5,6 +5,9 @@ const selectors = {
 	blockInserterSearch: 'input[placeholder="Search"]',
 	blockInserterResultItem: '.block-editor-block-types-list__list-item',
 
+	// First paragraph in the editor
+	firstParagraph: 'p[role="document"].is-selected',
+
 	// Publish
 	postButton: 'button:text("Publish")',
 };
@@ -40,6 +43,7 @@ export class IsolatedBlockEditorComponent {
 		// Click on the editor title. This has the effect of dismissing the block inserter
 		// if open, and restores focus back to the editor root container, allowing insertion
 		// of blocks.
+		await this.page.waitForSelector( selectors.firstParagraph );
 		await this.page.click( selectors.blockInserterToggle );
 		await this.page.fill( selectors.blockInserterSearch, blockName );
 		await this.page.click( `${ selectors.blockInserterResultItem } span:text("${ blockName }")` );

@@ -4,11 +4,11 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
-import { MailboxField } from 'calypso/my-sites/email/form/mailboxes/components/field';
+import { MailboxField } from 'calypso/my-sites/email/form/mailboxes/components/mailbox-field';
 import { useGetDefaultFieldLabelText } from 'calypso/my-sites/email/form/mailboxes/components/use-get-default-field-label-text';
 import { FIELD_FIRSTNAME } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
-import type { MailboxFormFieldProps } from 'calypso/my-sites/email/form/mailboxes/components/field';
+import type { MailboxFormFieldProps } from 'calypso/my-sites/email/form/mailboxes/components/mailbox-field';
 import type { MutableFormFieldNames } from 'calypso/my-sites/email/form/mailboxes/types';
 
 describe( '<MailboxField /> suite', () => {

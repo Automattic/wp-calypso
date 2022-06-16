@@ -11,6 +11,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
@@ -21,6 +22,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import isRewindPoliciesInitialized from 'calypso/state/rewind/selectors/is-rewind-policies-initialized';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
@@ -131,6 +133,7 @@ const AdminContent = ( { selectedDate } ) => {
 
 	return (
 		<>
+			<QuerySiteSettings siteId={ siteId } />
 			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			<QueryRewindPolicies
 				siteId={ siteId } /* The policies inform the max visible limit for backups */
@@ -144,36 +147,44 @@ const AdminContent = ( { selectedDate } ) => {
 					<DocumentHead title={ translate( 'Latest backups' ) } />
 					<PageViewTracker path="/backup/:site" title="Backups" />
 
-					<div className="backup__main-wrap">
-						<div className="backup__last-backup-status">
-							{ needCredentials && <EnableRestoresBanner /> }
-
-							<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
-							<BackupStorageSpace />
-							<BackupStatus selectedDate={ selectedDate } />
-						</div>
-					</div>
+					<BackupStatus
+						onDateChange={ onDateChange }
+						selectedDate={ selectedDate }
+						needCredentials={ needCredentials }
+					/>
 				</>
 			) }
 		</>
 	);
 };
 
-const BackupStatus = ( { selectedDate } ) => {
+const BackupStatus = ( { selectedDate, needCredentials, onDateChange } ) => {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
+	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
+
 	const hasRealtimeBackups = useSelectedSiteSelector(
 		siteHasFeature,
 		WPCOM_FEATURES_REAL_TIME_BACKUPS
 	);
 
-	if ( isFetchingSiteFeatures ) {
-		return <BackupPlaceholder showDatePicker={ false } />;
+	if ( isFetchingSiteFeatures || ! isPoliciesInitialized ) {
+		return <BackupPlaceholder showDatePicker={ true } />;
 	}
 
-	return hasRealtimeBackups ? (
-		<RealtimeStatus selectedDate={ selectedDate } />
-	) : (
-		<DailyStatus selectedDate={ selectedDate } />
+	return (
+		<div className="backup__main-wrap">
+			<div className="backup__last-backup-status">
+				{ needCredentials && <EnableRestoresBanner /> }
+
+				<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
+				<BackupStorageSpace />
+				{ hasRealtimeBackups ? (
+					<RealtimeStatus selectedDate={ selectedDate } />
+				) : (
+					<DailyStatus selectedDate={ selectedDate } />
+				) }
+			</div>
+		</div>
 	);
 };
 

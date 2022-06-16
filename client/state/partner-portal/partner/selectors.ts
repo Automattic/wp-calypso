@@ -38,6 +38,10 @@ export function isFetchingPartner( state: PartnerPortalStore ): boolean {
 	return state.partnerPortal.partner.isFetching;
 }
 
+export function getIsPartnerOAuthTokenLoaded( state: PartnerPortalStore ): boolean {
+	return state.partnerPortal.partner.isPartnerOAuthTokenLoaded;
+}
+
 export function getCurrentPartner( state: PartnerPortalStore ): Partner | null {
 	return state.partnerPortal.partner.current;
 }
@@ -48,7 +52,7 @@ export function getPartnerRequestError( state: PartnerPortalStore ): APIError | 
 
 export function isAgencyUser( state: PartnerPortalStore ): boolean {
 	const partner = getCurrentPartner( state );
-	return partner?.partner_type === 'agency';
+	return partner?.partner_type === 'agency' || partner?.partner_type === 'agency_beta';
 }
 
 export function showAgencyDashboard( state: PartnerPortalStore ): boolean {

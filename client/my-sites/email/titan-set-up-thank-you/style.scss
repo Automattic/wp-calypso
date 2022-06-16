@@ -1,19 +1,19 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.titan-set-up-thank-you__icon-external {
-	margin-left: 4px;
+.titan-set-up-thank-you__container_wrapped {
+	@include break-small {
+		margin-left: -24px;
+		margin-right: -24px;
+	}
+	@include break-large {
+		margin-left: -32px;
+		margin-right: -32px;
+	}
 }
 
-.thank-you__container.titan-set-up-thank-you__container {
-	margin-left: -33px;
-	margin-right: -32px;
-	padding-left: 33px;
-	padding-right: 32px;
-	@include breakpoint-deprecated( '>660px' ) {
-		padding-left: 0;
-		padding-right: 0;
-	}
+.titan-set-up-thank-you__icon-external {
+	margin-left: 4px;
 }
 
 .thank-you__step-cta {

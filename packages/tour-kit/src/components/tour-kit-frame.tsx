@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { useEffect, useState, useCallback, useRef } from '@wordpress/element';
+import { useEffect, useState, useCallback, useMemo, useRef } from '@wordpress/element';
 import classnames from 'classnames';
 import { usePopper } from 'react-popper';
 /**
@@ -10,6 +10,7 @@ import { usePopper } from 'react-popper';
  */
 import useStepTracking from '../hooks/use-step-tracking';
 import { classParser } from '../utils';
+import { liveResizeModifier } from '../utils/live-resize-modifier';
 import KeyboardNavigation from './keyboard-navigation';
 import TourKitMinimized from './tour-kit-minimized';
 import Overlay from './tour-kit-overlay';
@@ -118,7 +119,7 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 		update: popperUpdate,
 	} = usePopper( referenceElement, popperElement, {
 		strategy: 'fixed',
-		placement: 'bottom',
+		placement: config?.placement ?? 'bottom',
 		modifiers: [
 			{
 				name: 'preventOverflow',
@@ -145,6 +146,10 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 					fallbackPlacements: [ 'top', 'left', 'right' ],
 				},
 			},
+			useMemo(
+				() => liveResizeModifier( config.options?.effects?.liveResize ),
+				[ config.options?.effects?.liveResize ]
+			),
 			...( config.options?.popperModifiers || [] ),
 		],
 	} );
@@ -222,7 +227,8 @@ const TourKitFrame: React.FunctionComponent< Props > = ( { config } ) => {
 				{ showSpotlight() && (
 					<Spotlight
 						referenceElement={ referenceElement }
-						styles={ config.options?.effects?.spotlight?.styles }
+						liveResize={ config.options?.effects?.liveResize || {} }
+						{ ...( config.options?.effects?.spotlight || {} ) }
 					/>
 				) }
 				<div

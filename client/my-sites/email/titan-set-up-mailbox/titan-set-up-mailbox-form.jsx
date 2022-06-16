@@ -64,14 +64,15 @@ const useHandleSetupAction = (
 			{ enabled: false } // Delays the query, and returns a callback that can be called later
 		);
 
-	const { isLoading: isCreatingMailbox, createTitanMailbox } = useCreateTitanMailboxMutation(
-		getMailboxDomainName( mailbox ),
-		mailbox.name?.value,
-		getMailboxUserName( mailbox ),
-		mailbox.password?.value,
-		mailbox.alternativeEmail?.value,
-		mailbox.isAdmin?.value
-	);
+	const { isLoading: isCreatingMailbox, mutateAsync: createTitanMailbox } =
+		useCreateTitanMailboxMutation(
+			getMailboxDomainName( mailbox ),
+			mailbox.name?.value,
+			getMailboxUserName( mailbox ),
+			mailbox.password?.value,
+			mailbox.alternativeEmail?.value,
+			mailbox.isAdmin?.value
+		);
 
 	let isCheckingAvailability = isLoadingMailboxAvailability;
 

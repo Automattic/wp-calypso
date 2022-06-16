@@ -13,10 +13,10 @@ import {
 	VIDEO_GALLERY_PAGE,
 	PORTFOLIO_PAGE,
 	FAQ_PAGE,
-	SITEMAP_PAGE,
 	PROFILE_PAGE,
 	PAGE_LIMIT,
 	SERVICES_PAGE,
+	TESTIMONIALS_PAGE,
 	MENU_PAGE,
 } from 'calypso/signup/difm/constants';
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
@@ -182,7 +182,11 @@ function PageSelector( {
 			<PageCell pageId={ MENU_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
 			<PageCell pageId={ PORTFOLIO_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
 			<PageCell pageId={ FAQ_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
-			<PageCell pageId={ SITEMAP_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+			<PageCell
+				pageId={ TESTIMONIALS_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
 			<PageCell pageId={ PROFILE_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
 		</PageGrid>
 	);

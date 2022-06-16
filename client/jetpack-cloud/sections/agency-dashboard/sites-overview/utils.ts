@@ -7,6 +7,7 @@ import type {
 	ActionEventNames,
 	AllowedStatusTypes,
 	AllowedActionTypes,
+	StatusTooltip,
 } from './types';
 import type { ReactChild } from 'react';
 
@@ -82,9 +83,17 @@ const scanEventNames: StatusEventNames = {
 
 // Montitor feature status event names for large screen(>960px) and small screen(<960px)
 const monitorEventNames: StatusEventNames = {
+	disabled: {
+		small_screen: 'calypso_jetpack_agency_dashboard_monitor_inactive_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_monitor_inactive_click_large_screen',
+	},
 	failed: {
 		small_screen: 'calypso_jetpack_agency_dashboard_monitor_site_down_click_small_screen',
 		large_screen: 'calypso_jetpack_agency_dashboard_monitor_site_down_click_large_screen',
+	},
+	success: {
+		small_screen: 'calypso_jetpack_agency_dashboard_monitor_success_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_monitor_success_click_large_screen',
 	},
 };
 
@@ -93,6 +102,10 @@ const pluginEventNames: StatusEventNames = {
 	warning: {
 		small_screen: 'calypso_jetpack_agency_dashboard_update_plugins_click_small_screen',
 		large_screen: 'calypso_jetpack_agency_dashboard_update_plugins_click_large_screen',
+	},
+	success: {
+		small_screen: 'calypso_jetpack_agency_dashboard_plugin_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_plugin_click_large_screen',
 	},
 };
 
@@ -119,6 +132,49 @@ const getRowEventName = (
 	}
 };
 
+const backupTooltips: StatusTooltip = {
+	failed: translate( 'Latest backup failed' ),
+	warning: translate( 'Latest backup completed with warnings' ),
+	inactive: translate( 'Add Jetpack Backup to this site' ),
+	progress: translate( 'Backup in progress' ),
+	success: translate( 'Latest backup completed successfully' ),
+};
+
+const scanTooltips: StatusTooltip = {
+	failed: translate( 'Potential threats found' ),
+	inactive: translate( 'Add Jetpack Scan to this site' ),
+	progress: translate( 'Scan in progress' ),
+	success: translate( 'No threats detected' ),
+};
+
+const monitorTooltips: StatusTooltip = {
+	failed: translate( 'Site appears to be offline' ),
+	success: translate( 'No downtime detected' ),
+	disabled: translate( 'Monitor is off' ),
+};
+
+const pluginTooltips: StatusTooltip = {
+	warning: translate( 'Plugin updates are available' ),
+	success: translate( 'No plugin updates found' ),
+};
+
+const getTooltip = ( type: AllowedTypes, status: string ) => {
+	switch ( type ) {
+		case 'backup': {
+			return backupTooltips?.[ status ];
+		}
+		case 'scan': {
+			return scanTooltips?.[ status ];
+		}
+		case 'monitor': {
+			return monitorTooltips?.[ status ];
+		}
+		case 'plugin': {
+			return pluginTooltips?.[ status ];
+		}
+	}
+};
+
 /**
  * Returns link and tooltip for each feature based on status
  * which will be used to format row values. link will be used
@@ -129,24 +185,20 @@ const getLinks = (
 	type: AllowedTypes,
 	status: string,
 	siteUrl: string,
+	siteUrlWithScheme: string,
 	siteId: number
 ): {
-	tooltip: ReactChild | undefined;
 	link: string;
 	isExternalLink: boolean;
 } => {
 	let link = '';
 	let isExternalLink = false;
-	let tooltip;
 	switch ( type ) {
 		case 'backup': {
 			if ( status === 'inactive' ) {
 				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-realtime`;
 			} else {
 				link = `/backup/${ siteUrl }`;
-			}
-			if ( status === 'progress' ) {
-				tooltip = translate( 'Backup in progress' );
 			}
 			break;
 		}
@@ -156,30 +208,25 @@ const getLinks = (
 			} else {
 				link = `/scan/${ siteUrl }`;
 			}
-			if ( status === 'progress' ) {
-				tooltip = translate( 'Scan in progress' );
-			}
 			break;
 		}
 		case 'monitor': {
 			if ( status === 'failed' ) {
 				link = `https://jptools.wordpress.com/debug/?url=${ siteUrl }`;
 				isExternalLink = true;
-			}
-			if ( status === 'success' ) {
-				tooltip = translate( 'Monitor is on and your site is online' );
-			}
-			break;
-		}
-		case 'plugin': {
-			if ( status === 'warning' ) {
-				link = `https://wordpress.com/plugins/updates/${ siteUrl }`;
+			} else {
+				link = `${ siteUrlWithScheme }/wp-admin/admin.php?page=jetpack#/settings`;
 				isExternalLink = true;
 			}
 			break;
 		}
+		case 'plugin': {
+			link = `https://wordpress.com/plugins/updates/${ siteUrl }`;
+			isExternalLink = true;
+			break;
+		}
 	}
-	return { link, isExternalLink, tooltip };
+	return { link, isExternalLink };
 };
 
 /**
@@ -194,7 +241,7 @@ export const getRowMetaData = (
 	row: { value: { url: string }; status: string; error: string };
 	link: string;
 	isExternalLink: boolean;
-	siteError: string;
+	siteError: boolean;
 	tooltip: ReactChild | undefined;
 	tooltipId: string;
 	siteDown: boolean;
@@ -202,9 +249,11 @@ export const getRowMetaData = (
 } => {
 	const row = rows[ type ];
 	const siteUrl = rows.site?.value?.url;
+	const siteUrlWithScheme = rows.site?.value?.url_with_scheme;
 	const siteError = rows.site.error;
 	const siteId = rows.site?.value?.blog_id;
-	const { link, tooltip, isExternalLink } = getLinks( type, row.status, siteUrl, siteId );
+	const { link, isExternalLink } = getLinks( type, row.status, siteUrl, siteUrlWithScheme, siteId );
+	const tooltip = getTooltip( type, row.status );
 	const eventName = getRowEventName( type, row.status, isLargeScreen );
 	return {
 		row,
@@ -240,6 +289,8 @@ const formatBackupData = ( site: SiteData ) => {
 			break;
 		case 'rewind_backup_complete_warning':
 		case 'backup_only_complete_warning':
+		case 'rewind_backup_error_warning':
+		case 'backup_only_error_warning':
 			backup.status = 'warning';
 			backup.value = translate( 'Warning' );
 			break;
@@ -291,6 +342,7 @@ const formatMonitorData = ( site: SiteData ) => {
 	} else if ( ! site.monitor_site_status ) {
 		monitor.status = 'failed';
 		monitor.value = translate( 'Site Down' );
+		monitor.error = true;
 	} else {
 		monitor.status = 'success';
 	}

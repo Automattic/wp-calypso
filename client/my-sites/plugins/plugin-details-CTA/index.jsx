@@ -11,10 +11,7 @@ import { userCan } from 'calypso/lib/site/utils';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	getEligibility,
-	isEligibleForAutomatedTransfer,
-} from 'calypso/state/automated-transfer/selectors';
+import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
@@ -64,11 +61,8 @@ const PluginDetailsCTA = ( {
 	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
 		getEligibility( state, selectedSite?.ID )
 	);
-	const isEligible = useSelector( ( state ) =>
-		isEligibleForAutomatedTransfer( state, selectedSite?.ID )
-	);
 	const hasEligibilityMessages =
-		! isAtomic && ! isJetpack && ( eligibilityHolds || eligibilityWarnings || isEligible );
+		! isAtomic && ! isJetpack && ( eligibilityHolds?.length || eligibilityWarnings?.length );
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsCTAPlaceholder />;

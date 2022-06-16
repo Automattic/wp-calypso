@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { isEnabled } from '@automattic/calypso-config';
+import { englishLocales, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
 import { IntentScreen, StepContainer } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -33,7 +34,7 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 
 	const intents = useIntents();
 	const site = useSite();
-	const canImport = Boolean( site?.capabilities.manage_options );
+	const canImport = Boolean( site?.capabilities?.manage_options );
 	const intentsAlt = useIntentsAlt( canImport );
 
 	const submitIntent = ( intent: string ) => {
@@ -51,7 +52,12 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 			goNext={ goNext }
 			skipLabelText={ translate( 'Skip to dashboard' ) }
 			skipButtonAlign={ 'top' }
-			hideBack={ ! isEnabled( 'signup/site-vertical-step' ) }
+			hideBack={
+				! (
+					isEnabled( 'signup/site-vertical-step' ) &&
+					englishLocales.includes( translate.localeSlug || i18nDefaultLocaleSlug )
+				)
+			}
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader

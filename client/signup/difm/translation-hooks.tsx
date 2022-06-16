@@ -14,6 +14,7 @@ import {
 	PROFILE_PAGE,
 	MENU_PAGE,
 	SERVICES_PAGE,
+	TESTIMONIALS_PAGE,
 } from 'calypso/signup/difm/constants';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -39,6 +40,7 @@ export function useTranslatedPageTitles() {
 			[ PROFILE_PAGE ]: translate( 'Profile' ),
 			[ MENU_PAGE ]: translate( 'Menu' ),
 			[ SERVICES_PAGE ]: translate( 'Services' ),
+			[ TESTIMONIALS_PAGE ]: translate( 'Testimonials' ),
 		} ),
 		[ translate ]
 	);

@@ -156,9 +156,12 @@ The main API for configuring a tour is the config object. See example usage and 
 - `effects`: An object to enable/disable/combine various tour effects:
 
   - `spotlight`: Adds a semi-transparent overlay and highlights the reference element when provided with a transparent box over it. Expects an object with optional styles to override the default highlight/spotlight behavior when provided (default: spotlight wraps the entire reference element).
+	  - `interactivity`: An object that configures whether the user is allowed to interact with the referenced element during the tour
+	  - `styles`: CSS properties that configures the styles applied to the spotlight overlay
   - `arrowIndicator`: Adds an arrow tip pointing at the reference element when provided.
   - `overlay`: Includes the semi-transparent overlay for all the steps (also blocks interactions with the rest of the page)
   - `autoScroll`: The page scrolls up and down automatically such that the step target element is visible to the user.
+  - `liveResize`: Configures the behaviour for automatically resizing the tour kit elements (TourKitFrame and Spotlight). Defaults to disabled.
 
 - `callbacks`: An object of callbacks to handle side effects from various interactions (see [types.ts](./src/types.ts)).
 
@@ -170,4 +173,5 @@ The main API for configuring a tour is the config object. See example usage and 
 
 - `portalElementId`: A string that lets you customize under which DOM element the Tour will be appended.
 
+`placement` (Optional) : Describes the preferred placement of the popper. Possible values are left-start, left, left-end, top-start, top, top-end, right-start, right, right-end, bottom-start, bottom, and bottom-end.
 

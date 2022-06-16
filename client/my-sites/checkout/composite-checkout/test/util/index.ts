@@ -76,6 +76,7 @@ export const countryList: CountryListItem[] = [
 export const siteId = 13579;
 
 export const domainProduct = {
+	...getEmptyResponseCartProduct(),
 	product_name: '.cash Domain',
 	product_slug: 'domain_reg',
 	currency: 'BRL',
@@ -99,6 +100,7 @@ export const domainProduct = {
 };
 
 export const caDomainProduct = {
+	...getEmptyResponseCartProduct(),
 	product_name: '.ca Domain',
 	product_slug: 'domain_reg',
 	currency: 'BRL',
@@ -122,6 +124,7 @@ export const caDomainProduct = {
 };
 
 export const gSuiteProduct = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'G Suite',
 	product_slug: 'gapps',
 	currency: 'BRL',
@@ -138,6 +141,7 @@ export const gSuiteProduct = {
 };
 
 export const domainTransferProduct = {
+	...getEmptyResponseCartProduct(),
 	product_name: '.cash Domain',
 	product_slug: 'domain_transfer',
 	currency: 'BRL',
@@ -160,6 +164,7 @@ export const domainTransferProduct = {
 };
 
 export const planWithBundledDomain = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal',
 	product_slug: 'personal-bundle',
 	currency: 'BRL',
@@ -178,6 +183,7 @@ export const planWithBundledDomain = {
 };
 
 export const planWithoutDomain = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal',
 	product_slug: 'personal-bundle',
 	currency: 'BRL',
@@ -195,6 +201,7 @@ export const planWithoutDomain = {
 };
 
 export const planWithoutDomainMonthly = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal Monthly',
 	product_slug: 'personal-bundle-monthly',
 	currency: 'BRL',
@@ -212,6 +219,7 @@ export const planWithoutDomainMonthly = {
 };
 
 export const planWithoutDomainBiannual = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Personal 2 Year',
 	product_slug: 'personal-bundle-2y',
 	currency: 'BRL',
@@ -229,6 +237,7 @@ export const planWithoutDomainBiannual = {
 };
 
 export const planLevel2 = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Business',
 	product_slug: 'business-bundle',
 	currency: 'BRL',
@@ -246,6 +255,7 @@ export const planLevel2 = {
 };
 
 export const planLevel2Monthly = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Business Monthly',
 	product_slug: 'business-bundle-monthly',
 	currency: 'BRL',
@@ -263,6 +273,7 @@ export const planLevel2Monthly = {
 };
 
 export const planLevel2Biannual = {
+	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Business 2 Year',
 	product_slug: 'business-bundle-2y',
 	currency: 'BRL',
@@ -494,6 +505,32 @@ function convertRequestProductToResponseProduct(
 			item_subtotal_integer: 0,
 			item_tax: 0,
 		};
+	};
+}
+
+export function getBasicCart(): ResponseCart {
+	const cart = getEmptyResponseCart();
+	return {
+		...cart,
+		coupon: '',
+		coupon_savings_total_integer: 0,
+		coupon_savings_total_display: '0',
+		currency: 'BRL',
+		locale: 'br-pt',
+		is_coupon_applied: false,
+		products: [ planWithoutDomain ],
+		tax: {
+			display_taxes: true,
+			location: {},
+		},
+		allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
+		total_tax_integer: 700,
+		total_tax_display: 'R$7',
+		total_cost_integer: 15600,
+		total_cost_display: 'R$156',
+		sub_total_integer: 15600,
+		sub_total_display: 'R$156',
+		coupon_discounts_integer: [],
 	};
 }
 
@@ -896,13 +933,52 @@ export const expectedCreateAccountRequest = {
 	},
 };
 
-export function mockCachedContactDetailsEndpoint( data ): void {
+export function mockCachedContactDetailsEndpoint( responseData ): void {
 	const endpoint = jest.fn();
 	endpoint.mockReturnValue( true );
-	const mockDomainContactResponse = () => [ 200, data ];
+	const mockDomainContactResponse = () => [ 200, responseData ];
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/domain-contact-information' )
 		.reply( mockDomainContactResponse );
+}
+
+export function mockContactDetailsValidationEndpoint(
+	type: 'domain' | 'gsuite' | 'tax',
+	responseData,
+	conditionCallback?: ( body ) => boolean
+): void {
+	const endpointPath = ( () => {
+		switch ( type ) {
+			case 'tax':
+				return '/rest/v1.1/me/tax-contact-information/validate';
+			case 'domain':
+				return '/rest/v1.2/me/domain-contact-information/validate';
+			case 'gsuite':
+				return '/rest/v1.1/me/google-apps/validate';
+		}
+	} )();
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+	const mockResponse = () => [ 200, responseData ];
+	nock( 'https://public-api.wordpress.com' )
+		.post( endpointPath, conditionCallback )
+		.reply( mockResponse );
+}
+
+export function mockMatchMediaOnWindow(): void {
+	Object.defineProperty( window, 'matchMedia', {
+		writable: true,
+		value: jest.fn().mockImplementation( ( query ) => ( {
+			matches: false,
+			media: query,
+			onchange: null,
+			addListener: jest.fn(), // deprecated
+			removeListener: jest.fn(), // deprecated
+			addEventListener: jest.fn(),
+			removeEventListener: jest.fn(),
+			dispatchEvent: jest.fn(),
+		} ) ),
+	} );
 }
 
 // Add the below custom Jest assertion to TypeScript.

@@ -66,7 +66,7 @@ export default function SiteActions( {
 				context={ buttonActionRef.current }
 				isVisible={ isOpen }
 				onClose={ closeDropdown }
-				position="bottom"
+				position="bottom left"
 			>
 				{ ! siteError && (
 					<>

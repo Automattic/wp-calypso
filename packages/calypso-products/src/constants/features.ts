@@ -204,6 +204,8 @@ export const FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT = 'p2-priority-chat-email-su
 export const FEATURE_P2_ACTIVITY_OVERVIEW = 'p2-activity-overview';
 
 // New features Flexible and Pro plans introduced.
+export const FEATURE_MANAGED_HOSTING = 'managed-hosting';
+export const FEATURE_UNLIMITED_TRAFFIC = 'unlimited-traffic';
 export const FEATURE_UNLIMITED_USERS = 'unlimited-users';
 export const FEATURE_UNLIMITED_POSTS_PAGES = 'unlimited-posts-pages';
 export const FEATURE_PAYMENT_BLOCKS = 'payment-blocks';

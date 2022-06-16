@@ -1,68 +1,56 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Theme rendering with default display buttonContents should match snapshot 1`] = `
-<Memo(Card)
-  className="theme is-actionable"
+<div
+  class="card theme is-actionable is-clickable"
   data-e2e-theme="twenty-seventeen"
-  onClick={[Function]}
 >
   <div
-    className="theme__content"
+    class="theme__content"
   >
     <a
       aria-label="Twenty Seventeen"
-      className="theme__thumbnail"
+      class="theme__thumbnail"
       href="javascript:;"
-      onClick={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
     >
       <div
-        className="theme__thumbnail-label"
+        class="theme__thumbnail-label"
       />
       <img
-        className="theme__img"
-        id={null}
+        class="theme__img"
         src="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360"
-        srcSet="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
+        srcset="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
       />
     </a>
-    <Tooltip
-      context={null}
-      isVisible={false}
-      position="top"
-      showDelay={1000}
-      showOnMobile={false}
-    >
-      <div
-        className="theme__tooltip"
-      />
-    </Tooltip>
     <div
-      className="theme__info"
+      class="theme__info"
     >
       <h2
-        className="theme__info-title"
+        class="theme__info-title"
       >
         Twenty Seventeen
       </h2>
       <span
-        className="theme__badge-price theme__badge-price-upgrade"
+        class="theme__badge-price theme__badge-price-upgrade"
       />
-      <ThemeMoreButton
-        active={false}
-        onMoreButtonClick={[Function]}
-        options={
-          Object {
-            "dummyAction": Object {
-              "action": [MockFunction],
-              "label": "Dummy action",
-            },
-          }
-        }
-        themeId="twentyseventeen"
-      />
+      <span
+        class="theme__more-button"
+      >
+        <button>
+          <svg
+            class="gridicon gridicons-ellipsis"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <use
+              xlink:href="gridicons.svg#gridicons-ellipsis"
+            />
+          </svg>
+        </button>
+      </span>
     </div>
   </div>
-</Memo(Card)>
+</div>
 `;

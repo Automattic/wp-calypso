@@ -189,14 +189,10 @@ function useCreateGiropay( {
 function useCreateWeChat( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 	siteSlug,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 	siteSlug?: string | undefined;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
@@ -206,12 +202,10 @@ function useCreateWeChat( {
 			shouldLoad
 				? createWeChatMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 						siteSlug,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration, siteSlug ]
+		[ shouldLoad, paymentMethodStore, siteSlug ]
 	);
 }
 
@@ -419,8 +413,6 @@ export default function useCreatePaymentMethods( {
 	const wechatMethod = useCreateWeChat( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 		siteSlug,
 	} );
 

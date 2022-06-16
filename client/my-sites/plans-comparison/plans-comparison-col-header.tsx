@@ -1,3 +1,4 @@
+import { TYPE_PRO, TYPE_STARTER } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
@@ -9,6 +10,7 @@ interface Props {
 	plan: Plan;
 	price?: number;
 	originalPrice?: number;
+	isExperiment?: boolean;
 	onClick?: ( productSlug: string ) => void;
 	translate: typeof translate;
 }
@@ -33,10 +35,20 @@ const PlanTitle = styled.h2`
 	}
 `;
 
-const PlanDescription = styled.p`
+const PlanDescription = styled.div`
 	font-size: 1rem;
 	font-weight: 400;
 	margin: 0 0 1.5rem;
+
+	ul {
+		font-size: 0.875rem;
+		margin-left: 1rem;
+	}
+
+	p {
+		font-weight: 500;
+		margin-bottom: 0.75rem;
+	}
 
 	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
 		.is-section-signup & {
@@ -77,13 +89,43 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 	originalPrice,
 	children,
 	translate,
+	isExperiment,
 } ) => {
 	const isDiscounted = typeof originalPrice === 'number';
 
 	return (
 		<th scope="col">
 			<PlanTitle>{ plan.getTitle() }</PlanTitle>
-			<PlanDescription>{ plan.getDescription() }</PlanDescription>
+
+			<PlanDescription>
+				{ plan.type === TYPE_STARTER && isExperiment && (
+					<>
+						<p>Great for blogs and simple sites:</p>
+						<ul>
+							<li>Custom domain name.</li>
+							<li>Collect payments and donations.</li>
+							<li>6GB of storage for images.</li>
+							<li>Automatic WordPress updates.</li>
+							<li>A la carte upgrades available.</li>
+						</ul>
+					</>
+				) }
+
+				{ plan.type === TYPE_PRO && isExperiment && (
+					<>
+						<p>Great for business and custom sites:</p>
+						<ul>
+							<li>Unlock 50k+ plugins and themes.</li>
+							<li>Advanced ecommerce tools.</li>
+							<li>Premium website themes.</li>
+							<li>50GB of media storage.</li>
+							<li>24-hour live chat support.</li>
+						</ul>
+					</>
+				) }
+
+				{ ! isExperiment && plan.getDescription() }
+			</PlanDescription>
 			<PriceContainer>
 				{ isDiscounted && (
 					<>

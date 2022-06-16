@@ -11,7 +11,12 @@ export {
 	isBlankCanvasDesign,
 	getMShotOptions,
 } from './utils';
-export { FONT_PAIRINGS, ANCHORFM_FONT_PAIRINGS } from './constants';
+export {
+	FONT_PAIRINGS,
+	ANCHORFM_FONT_PAIRINGS,
+	DEFAULT_VIEWPORT_WIDTH,
+	MOBILE_VIEWPORT_WIDTH,
+} from './constants';
 export type { FontPair, Design, Category } from './types';
 export { useCategorization } from './hooks/use-categorization';
 export { useThemeDesignsQuery } from './hooks/use-theme-designs-query';

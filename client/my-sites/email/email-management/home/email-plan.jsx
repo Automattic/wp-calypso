@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -10,6 +10,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
+import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import {
 	getGoogleAdminUrl,
 	getGoogleMailServiceFamily,
@@ -71,8 +72,8 @@ UpgradeNavItem.propTypes = {
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
 
-function getAccount( data ) {
-	return data?.accounts?.[ 0 ];
+function getAccount( accounts ) {
+	return accounts?.[ 0 ];
 }
 
 function getMailboxes( data ) {
@@ -83,6 +84,7 @@ function getMailboxes( data ) {
 
 function EmailPlan( { domain, selectedSite, source } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const purchase = useSelector( ( state ) => getEmailPurchaseByDomain( state, domain ) );
 	const isLoadingPurchase = useSelector(
@@ -92,7 +94,8 @@ function EmailPlan( { domain, selectedSite, source } ) {
 
 	const canAddMailboxes =
 		( getGSuiteProductSlug( domain ) || getTitanProductSlug( domain ) ) &&
-		getGSuiteSubscriptionStatus( domain ) !== 'suspended';
+		getGSuiteSubscriptionStatus( domain ) !== 'suspended' &&
+		canCurrentUserAddEmail( domain );
 	const hasSubscription = hasEmailSubscription( domain );
 
 	const handleBack = () => {
@@ -102,9 +105,11 @@ function EmailPlan( { domain, selectedSite, source } ) {
 	const handleRenew = ( event ) => {
 		event.preventDefault();
 
-		handleRenewNowClick( purchase, selectedSite.slug, {
-			tracksProps: { source: 'email-plan-view' },
-		} );
+		dispatch(
+			handleRenewNowClick( purchase, selectedSite.slug, {
+				tracksProps: { source: 'email-plan-view' },
+			} )
+		);
 	};
 
 	function getAddMailboxProps() {
@@ -271,9 +276,11 @@ function EmailPlan( { domain, selectedSite, source } ) {
 		);
 	}
 
-	const { data, isLoading } = useGetEmailAccountsQuery( selectedSite.ID, domain.name, {
-		retry: false,
-	} );
+	const { data: emailAccounts = [], isLoading } = useGetEmailAccountsQuery(
+		selectedSite.ID,
+		domain.name,
+		{ retry: false }
+	);
 
 	return (
 		<>
@@ -287,12 +294,12 @@ function EmailPlan( { domain, selectedSite, source } ) {
 				isLoadingPurchase={ isLoadingPurchase }
 				purchase={ purchase }
 				selectedSite={ selectedSite }
-				emailAccount={ data?.accounts?.[ 0 ] || {} }
+				emailAccount={ getAccount( emailAccounts ) }
 			/>
 			<EmailPlanMailboxesList
-				account={ getAccount( data ) }
+				account={ getAccount( emailAccounts ) }
 				domain={ domain }
-				mailboxes={ getMailboxes( data ) }
+				mailboxes={ getMailboxes( emailAccounts ) }
 				isLoadingEmails={ isLoading }
 			/>
 			<div className="email-plan__actions">

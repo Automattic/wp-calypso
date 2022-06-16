@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Fragment } from 'react';
 import CardHeading from 'calypso/components/card-heading';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	buildNewTitanMailbox,
 	getMailboxPropTypeShape,
@@ -52,11 +53,19 @@ const TitanNewMailboxList = ( {
 	};
 
 	const onMailboxAdd = () => {
+		recordTracksEvent( 'calypso_email_titan_add_mailboxes_add_another_mailbox_button_click', {
+			mailbox_count: mailboxes.length + 1,
+		} );
+
 		onMailboxesChange( [ ...mailboxes, buildNewTitanMailbox( selectedDomainName, false ) ] );
 	};
 
 	const onMailboxRemove = ( currentMailboxes, uuid ) => () => {
 		const remainingMailboxes = currentMailboxes.filter( ( mailbox ) => mailbox.uuid !== uuid );
+
+		recordTracksEvent( 'calypso_email_titan_add_mailboxes_remove_mailbox_button_click', {
+			mailbox_count: remainingMailboxes.length,
+		} );
 
 		const updatedMailboxes =
 			0 < remainingMailboxes.length

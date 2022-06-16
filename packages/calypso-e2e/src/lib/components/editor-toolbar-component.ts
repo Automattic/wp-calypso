@@ -1,8 +1,7 @@
 import { Page, Locator } from 'playwright';
 import envVariables from '../../env-variables';
 import { translateFromPage } from '../utils';
-
-export type PreviewOptions = 'Desktop' | 'Mobile' | 'Tablet';
+import type { EditorPreviewOptions } from './types';
 
 const panel = 'div.interface-interface-skeleton__header';
 const settingsButtonLabel = 'Settings';
@@ -21,9 +20,9 @@ const selectors = {
 
 	// Preview
 	previewButton: `${ panel } :text("Preview"):visible`,
-	desktopPreviewMenuItem: ( target: PreviewOptions ) =>
+	desktopPreviewMenuItem: ( target: EditorPreviewOptions ) =>
 		`button[role="menuitem"] span:text("${ target }")`,
-	previewPane: ( target: PreviewOptions ) => `.is-${ target.toLowerCase() }-preview`,
+	previewPane: ( target: EditorPreviewOptions ) => `.is-${ target.toLowerCase() }-preview`,
 
 	// Publish
 	publishButton: ( state: 'disabled' | 'enabled' ) => {
@@ -166,7 +165,7 @@ export class EditorToolbarComponent {
 	 * Launches the Preview when in Desktop mode, then selects the
 	 * target preview option.
 	 */
-	async openDesktopPreview( target: PreviewOptions ): Promise< void > {
+	async openDesktopPreview( target: EditorPreviewOptions ): Promise< void > {
 		// Click on the Preview button to open the menu.
 		await this.openDesktopPreviewMenu();
 

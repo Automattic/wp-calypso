@@ -8,14 +8,14 @@ export type SiteColumns = Array< { key: string; title: ReactChild } >;
 
 export interface SiteNode {
 	value: { blog_id: number; url: string; url_with_scheme: string };
-	error: string;
+	error: boolean;
 	type: AllowedTypes;
 	status: string;
 }
 export interface SiteData {
 	site: SiteNode;
-	scan: { threats: number };
-	plugin: { updates: number };
+	scan: { threats: number; type: AllowedTypes; status: AllowedStatusTypes; value: ReactChild };
+	plugin: { updates: number; type: AllowedTypes; status: AllowedStatusTypes; value: ReactChild };
 	[ key: string ]: any;
 }
 
@@ -38,6 +38,10 @@ export type AllowedStatusTypes = 'inactive' | 'progress' | 'failed' | 'warning' 
 
 export type StatusEventNames = {
 	[ key in AllowedStatusTypes | string ]: { small_screen: string; large_screen: string };
+};
+
+export type StatusTooltip = {
+	[ key in AllowedStatusTypes | string ]: ReactChild;
 };
 
 export type AllowedActionTypes = 'issue_license' | 'view_activity' | 'view_site' | 'visit_wp_admin';

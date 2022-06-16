@@ -1,0 +1,41 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+
+.masterbar__login {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+
+	margin: 20px 24px;
+	@include breakpoint-deprecated('<480px') {
+		margin: 20px;
+	}
+
+	// Absolute positioning is required here because the .layout__content calculates padding-top based on --masterbar-height.
+	position: absolute;
+}
+
+// Match (W) logo fill and stroke seen in /start
+.masterbar__login-logo {
+	fill: var( --color-text );
+	stroke: var( --color-text );
+}
+
+.masterbar__login-back-link {
+	margin-left: 25px;
+	display: flex;
+	align-items: center;
+	font-size: $font-body-small;
+	font-weight: 600;
+
+	// Override link color
+	&, &:visited, &:hover, &:focus {
+		color: var( --color-text );
+	}
+
+	// Hide "< Go back" link on mobile
+	@include breakpoint-deprecated('<480px') {
+		display: none;
+	}
+}
+

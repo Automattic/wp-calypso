@@ -1,8 +1,9 @@
 import { Gridicon, Suggestions, Spinner } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useMemo, useRef, useState } from 'react';
+import { FC, useMemo, useRef, useState, useEffect } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import type { Vertical } from './types';
 import './style.scss';
@@ -11,8 +12,9 @@ interface Props {
 	placeholder?: string;
 	searchTerm: string;
 	suggestions: Vertical[];
-	isDisableInput?: boolean | undefined;
 	isLoading?: boolean | undefined;
+	isShowSkipOption?: boolean | undefined;
+	isDisableInput?: boolean | undefined;
 	onInputChange?: ( value: string ) => void;
 	onSelect?: ( vertical: Vertical ) => void;
 }
@@ -21,17 +23,28 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 	placeholder,
 	searchTerm,
 	suggestions,
-	isDisableInput,
 	isLoading,
+	isShowSkipOption,
+	isDisableInput,
 	onInputChange,
 	onSelect,
 } ) => {
 	const [ isShowSuggestions, setIsShowSuggestions ] = useState( false );
 	const [ isFocused, setIsFocused ] = useState( false );
 	const inputRef = useRef( null );
-	const suggestionsRef = useRef( null );
+	const wrapperRef = useRef< HTMLDivElement >( null );
+	const suggestionsRef = useRef< Suggestions >( null );
 	const toggleIconRef = useRef( null );
 	const translate = useTranslate();
+	const isMobile = useViewportMatch( 'small', '<' );
+
+	const showSuggestions = () => {
+		setIsShowSuggestions( true );
+	};
+
+	const hideSuggestions = () => {
+		setIsShowSuggestions( false );
+	};
 
 	const handleTextInputBlur = ( event: React.FocusEvent ) => {
 		// Hide the suggestion dropdown unless the focus is moved to the toggle icon.
@@ -39,12 +52,12 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 			return;
 		}
 
-		setIsShowSuggestions( false );
+		hideSuggestions();
 		setIsFocused( false );
 	};
 
 	const handleTextInputFocus = () => {
-		setIsShowSuggestions( true );
+		showSuggestions();
 		setIsFocused( true );
 	};
 
@@ -55,7 +68,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 			onSelect?.( { value: '', label: '' } );
 		}
 
-		setIsShowSuggestions( true );
+		showSuggestions();
 		onInputChange?.( event.target.value );
 	};
 
@@ -65,7 +78,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 			return;
 		}
 
-		setIsShowSuggestions( false );
+		hideSuggestions();
 		setIsFocused( false );
 	};
 
@@ -74,12 +87,16 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 			return;
 		}
 
-		setIsShowSuggestions( ! isShowSuggestions );
+		if ( isShowSuggestions ) {
+			hideSuggestions();
+		} else {
+			showSuggestions();
+		}
 	};
 
 	const handleToggleSuggestionsKeyDown = ( event: React.KeyboardEvent< HTMLButtonElement > ) => {
 		if ( event.key === 'Escape' || event.key === 'Tab' ) {
-			setIsShowSuggestions( false );
+			hideSuggestions();
 		}
 	};
 
@@ -89,16 +106,16 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 		}
 
 		if ( event.key === 'Escape' ) {
-			setIsShowSuggestions( false );
+			hideSuggestions();
 		}
 
 		if ( suggestionsRef.current ) {
-			( suggestionsRef.current as Suggestions ).handleKeyEvent( event );
+			suggestionsRef.current.handleKeyEvent( event );
 		}
 	};
 
 	const handleSuggestionsSelect = ( { label, value }: { label: string; value?: string } ) => {
-		setIsShowSuggestions( false );
+		hideSuggestions();
 		onSelect?.( { label, value } as Vertical );
 	};
 
@@ -107,7 +124,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 			return [];
 		}
 
-		if ( searchTerm === '' ) {
+		if ( ! isShowSkipOption ) {
 			return suggestions || [];
 		}
 
@@ -118,7 +135,32 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 				category: 0 < suggestions.length ? '—' : '',
 			},
 		] );
-	}, [ translate, searchTerm, suggestions, isLoading, isShowSuggestions ] );
+	}, [ translate, suggestions, isLoading, isShowSuggestions, isShowSkipOption ] );
+
+	useEffect( () => {
+		if ( ! ( window.visualViewport && isMobile ) ) {
+			return;
+		}
+
+		const handleResize = () => {
+			if ( ! wrapperRef.current ) {
+				return;
+			}
+
+			wrapperRef.current.style.setProperty(
+				'--select-vertical-search-dropdown-height',
+				`${ window.visualViewport.height * 0.4 }px`
+			);
+		};
+
+		handleResize();
+
+		window.visualViewport.addEventListener( 'resize', handleResize );
+
+		return () => {
+			window.visualViewport.removeEventListener( 'resize', handleResize );
+		};
+	}, [ wrapperRef, isMobile ] );
 
 	return (
 		<div
@@ -126,6 +168,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 				'is-focused': isFocused,
 				'is-show-suggestions': isShowSuggestions && ! isLoading,
 			} ) }
+			ref={ wrapperRef }
 			aria-expanded={ isShowSuggestions }
 		>
 			<div className="select-vertical__suggestion-input">

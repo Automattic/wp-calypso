@@ -9,40 +9,37 @@ import {
 	LoginPage,
 	UserSignupPage,
 	SignupPickPlanPage,
-	CloseAccountFlow,
 	StartSiteFlow,
 	SidebarComponent,
 	GeneralSettingsPage,
 	ComingSoonPage,
 	MyHomePage,
-	SecretsManager,
+	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { apiCloseAccount } from '../shared';
+import type { SiteDetails, NewUserResponse } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function () {
-	const inboxId = SecretsManager.secrets.mailosaur.inviteInboxId;
-	const username = DataHelper.getUsername( { prefix: 'free' } );
-	const email = DataHelper.getTestEmailAddress( {
-		inboxId: inboxId,
-		prefix: username,
+	const testUser = DataHelper.getNewTestUser( {
+		usernamePrefix: 'free',
 	} );
-	const signupPassword = SecretsManager.secrets.passwordForNewTestSignUps;
-	const blogName = DataHelper.getBlogName();
-	const tagline = `${ blogName } tagline`;
+	const tagline = `${ testUser.siteName } tagline`;
 
 	let page: Page;
+	let userDetails: NewUserResponse;
+	let siteDetails: SiteDetails;
+	let userCreatedFlag = false;
 	let domainSearchComponent: DomainSearchComponent;
-	let editorPage: EditorPage;
-	let startSiteFlow: StartSiteFlow;
 	let generalSettingsPage: GeneralSettingsPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
 	} );
 
-	describe( 'Signup and select plan', function () {
+	describe( 'Signup', function () {
 		it( 'Navigate to Signup page', async function () {
 			const loginPage = new LoginPage( page );
 			await loginPage.visit();
@@ -51,29 +48,37 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 
 		it( 'Sign up as new user', async function () {
 			const userSignupPage = new UserSignupPage( page );
-			await userSignupPage.signup( email, username, signupPassword );
+			userDetails = await userSignupPage.signup(
+				testUser.email,
+				testUser.username,
+				testUser.password
+			);
+
+			userCreatedFlag = true;
 		} );
 
 		it( 'Select a free .wordpress.com domain', async function () {
 			domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.search( blogName );
+			await domainSearchComponent.search( testUser.siteName );
 			await domainSearchComponent.selectDomain( '.wordpress.com' );
 		} );
 
 		it( 'Select WordPress.com Free plan', async function () {
 			const signupPickPlanPage = new SignupPickPlanPage( page );
-			await signupPickPlanPage.selectPlan( 'Free' );
+			siteDetails = await signupPickPlanPage.selectPlan( 'Free' );
 		} );
 	} );
 
 	describe( 'Onboarding flow', function () {
+		let startSiteFlow: StartSiteFlow;
+
 		it( 'Select "write" path', async function () {
 			startSiteFlow = new StartSiteFlow( page );
 			await startSiteFlow.clickButton( 'Start writing' );
 		} );
 
 		it( 'Enter blog name', async function () {
-			await startSiteFlow.enterBlogName( blogName );
+			await startSiteFlow.enterBlogName( testUser.siteName );
 		} );
 
 		it( 'Enter tagline', async function () {
@@ -112,6 +117,8 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 	} );
 
 	describe( 'Validate site metadata', function () {
+		let editorPage: EditorPage;
+
 		it( 'Return to Calypso dashboard', async function () {
 			editorPage = new EditorPage( page );
 			// Force the flow back into the configured environment for the test suite e.g. wpcalypso or calypso.localhost
@@ -127,7 +134,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		it( 'Validate blog name and tagline', async function () {
 			generalSettingsPage = new GeneralSettingsPage( page );
 
-			await generalSettingsPage.validateSiteTitle( blogName );
+			await generalSettingsPage.validateSiteTitle( testUser.siteName );
 			await generalSettingsPage.validateSiteTagline( tagline );
 		} );
 	} );
@@ -136,10 +143,12 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		it( 'Verify site is not yet launched', async function () {
 			const tmpPage = await browser.newPage();
 			// TODO: make a utility to obtain the blog URL.
-			await tmpPage.goto( `https://${ blogName }.wordpress.com` );
-			// View site without logging in.
+			await tmpPage.goto( siteDetails.url );
+
+			// View site as logged out user.
 			const comingSoonPage = new ComingSoonPage( tmpPage );
 			await comingSoonPage.validateComingSoonState();
+
 			// Dispose the test page and context.
 			await tmpPage.close();
 		} );
@@ -153,7 +162,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 
 		it( 'Search for a domain to reveal Skip Purchase button', async function () {
 			domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.search( username + '.live' );
+			await domainSearchComponent.search( testUser.username + '.live' );
 		} );
 
 		it( 'Skip domain purchasse', async function () {
@@ -161,7 +170,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			await domainSearchComponent.clickButton( 'Skip Purchase' );
 		} );
 
-		it( 'Keep free plan', async function () {
+		it( 'Keep WordPress.com Free', async function () {
 			try {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
 				await signupPickPlanPage.selectPlan( 'Free' );
@@ -171,16 +180,24 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			}
 		} );
 
-		it( 'Confirm site is launched', async function () {
+		it( 'Navigated to Home dashboard', async function () {
 			const myHomePage = new MyHomePage( page );
 			await myHomePage.validateTaskHeadingMessage( 'You launched your site!' );
 		} );
 	} );
 
-	describe( 'Delete user account', function () {
-		it( 'Close account', async function () {
-			const closeAccountFlow = new CloseAccountFlow( page );
-			await closeAccountFlow.closeAccount();
-		} );
+	afterAll( async function () {
+		const restAPIClient = new RestAPIClient(
+			{ username: testUser.username, password: testUser.password },
+			userDetails.body.bearer_token
+		);
+
+		if ( userCreatedFlag ) {
+			await apiCloseAccount( restAPIClient, {
+				userID: userDetails.body.user_id,
+				username: testUser.username,
+				email: testUser.email,
+			} );
+		}
 	} );
 } );

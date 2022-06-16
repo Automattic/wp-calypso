@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -38,6 +39,7 @@ const PluginsBrowserListElement = ( props ) => {
 
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const localizeUrl = useLocalizeUrl();
 
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -123,7 +125,7 @@ const PluginsBrowserListElement = ( props ) => {
 	const onClick = ( e ) => {
 		e.preventDefault();
 		e.stopPropagation();
-		window.location.href = 'https://wordpress.com/support/incompatible-plugins/';
+		window.location.href = localizeUrl( 'https://wordpress.com/support/incompatible-plugins/' );
 	};
 
 	return (

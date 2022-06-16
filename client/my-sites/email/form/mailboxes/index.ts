@@ -2,6 +2,7 @@ import {
 	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_DOMAIN,
 	FIELD_FIRSTNAME,
+	FIELD_IS_ADMIN,
 	FIELD_LASTNAME,
 	FIELD_MAILBOX,
 	FIELD_NAME,
@@ -18,10 +19,11 @@ import {
 	AlternateEmailValidator,
 	ExistingMailboxNamesValidator,
 	MailboxNameValidator,
-	PasswordValidator,
-	RequiredValidator,
-	RequiredIfVisibleValidator,
+	MailboxNameAvailabilityValidator,
 	MaximumStringLengthValidator,
+	PasswordValidator,
+	RequiredIfVisibleValidator,
+	RequiredValidator,
 } from 'calypso/my-sites/email/form/mailboxes/validators';
 import type {
 	FormFieldNames,
@@ -63,7 +65,7 @@ class MailboxForm< T extends EmailProvider > {
 			[ FIELD_MAILBOX, new RequiredValidator< string >() ],
 			[ FIELD_NAME, new RequiredIfVisibleValidator() ],
 			[ FIELD_NAME, new MaximumStringLengthValidator( 60 ) ],
-			[ FIELD_MAILBOX, new ExistingMailboxNamesValidator( this.existingMailboxNames ) ],
+			[ FIELD_MAILBOX, new ExistingMailboxNamesValidator( domainName, this.existingMailboxNames ) ],
 			[
 				FIELD_MAILBOX,
 				new MailboxNameValidator( domainName, mailboxHasDomainError, areApostrophesSupported ),
@@ -72,6 +74,23 @@ class MailboxForm< T extends EmailProvider > {
 			[ FIELD_PASSWORD, new PasswordValidator( minimumPasswordLength ) ],
 			[ FIELD_UUID, new RequiredValidator< string >() ],
 		];
+	}
+
+	/**
+	 * On demand validators may be async i.e. making network calls, or may require a set of conditions to be fulfilled
+	 *
+	 * @private
+	 */
+	private getOnDemandValidators(): Record< string, [ ValidatorFieldNames, Validator< unknown > ] > {
+		const domainField = this.getFormField< string >( FIELD_DOMAIN );
+		const domainName = domainField?.value ?? '';
+
+		return {
+			[ MailboxNameAvailabilityValidator.name ]: [
+				FIELD_MAILBOX,
+				new MailboxNameAvailabilityValidator( domainName, this.provider ),
+			],
+		};
 	}
 
 	clearErrors() {
@@ -84,6 +103,31 @@ class MailboxForm< T extends EmailProvider > {
 		}
 	}
 
+	/**
+	 * Returns the mailbox field values in a shape that can be consumed by the shopping cart at checkout
+	 */
+	getAsCartItem(): Record< string, string | boolean | undefined > {
+		const commonFields = {
+			email: `${ this.getFieldValue< string >( FIELD_MAILBOX ) }@${ this.getFieldValue< string >(
+				FIELD_DOMAIN
+			) }`.toLowerCase(),
+			password: this.getFieldValue< string >( FIELD_PASSWORD ),
+		};
+
+		return this.provider === EmailProvider.Google
+			? {
+					...commonFields,
+					firstname: this.getFieldValue< string >( FIELD_FIRSTNAME ),
+					lastname: this.getFieldValue< string >( FIELD_LASTNAME ),
+			  }
+			: {
+					...commonFields,
+					alternative_email: this.getFieldValue< string >( FIELD_ALTERNATIVE_EMAIL ),
+					is_admin: this.getFieldValue< boolean >( FIELD_IS_ADMIN ),
+					name: this.getFieldValue< string >( FIELD_NAME ),
+			  };
+	}
+
 	getFieldValue< R >( fieldName: FormFieldNames ) {
 		return this.getFormField< R >( fieldName )?.value;
 	}
@@ -94,6 +138,10 @@ class MailboxForm< T extends EmailProvider > {
 
 	getIsFieldRequired( fieldName: FormFieldNames ) {
 		return this.getFormField( fieldName )?.isRequired;
+	}
+
+	getIsFieldTouched( fieldName: FormFieldNames ) {
+		return this.getFormField( fieldName )?.isTouched;
 	}
 
 	getIsFieldVisible( fieldName: FormFieldNames ) {
@@ -135,7 +183,7 @@ class MailboxForm< T extends EmailProvider > {
 		}
 	}
 
-	validate() {
+	validate( skipInvisibleFields = false ) {
 		this.clearErrors();
 
 		for ( const [ fieldName, validator ] of this.getValidators() ) {
@@ -145,6 +193,10 @@ class MailboxForm< T extends EmailProvider > {
 
 			const field = this.getFormField( fieldName );
 			if ( ! field || field.error ) {
+				continue;
+			}
+
+			if ( skipInvisibleFields && ! field.isVisible ) {
 				continue;
 			}
 
@@ -165,6 +217,22 @@ class MailboxForm< T extends EmailProvider > {
 		this.getValidators()
 			.filter( ( [ currentFieldName, validator ] ) => currentFieldName === fieldName && validator )
 			.forEach( ( [ , validator ] ) => validator.validate( field ) );
+	}
+
+	async validateOnDemand() {
+		this.clearErrors();
+
+		const promises = Promise.all(
+			Object.values( this.getOnDemandValidators() )
+				.filter(
+					( [ fieldName, validator ] ) => fieldName && this.getFormField( fieldName ) && validator
+				)
+				.map( ( [ fieldName, validator ] ) =>
+					validator.validate( this.getFormField( fieldName as FormFieldNames ) )
+				)
+		);
+
+		await promises;
 	}
 }
 

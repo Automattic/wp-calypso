@@ -115,7 +115,7 @@ class RegisteredDomainType extends Component {
 					( isLoadingPurchase || purchase ) &&
 					( domain.isRenewable || domain.isRedeemable ) && (
 						<RenewButton
-							primary={ true }
+							primary
 							purchase={ purchase }
 							selectedSite={ this.props.selectedSite }
 							subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
@@ -196,7 +196,7 @@ class RegisteredDomainType extends Component {
 			<div>
 				{ ( isLoadingPurchase || purchase ) && (
 					<RenewButton
-						compact={ true }
+						compact
 						purchase={ purchase }
 						selectedSite={ this.props.selectedSite }
 						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
@@ -271,12 +271,26 @@ class RegisteredDomainType extends Component {
 	}
 
 	render() {
-		const { domain, selectedSite, purchase, isLoadingPurchase, isDomainOnlySite } = this.props;
+		const {
+			domain,
+			selectedSite,
+			purchase,
+			isLoadingPurchase,
+			isDomainOnlySite,
+			translate,
+			dispatch,
+		} = this.props;
 		const { name: domain_name } = domain;
 
-		const { statusText, statusClass, icon } = resolveDomainStatus( domain, purchase, {
-			isDomainOnlySite,
-		} );
+		const { statusText, statusClass, icon } = resolveDomainStatus(
+			domain,
+			purchase,
+			translate,
+			dispatch,
+			{
+				isDomainOnlySite,
+			}
+		);
 
 		return (
 			<div className="domain-types__container">

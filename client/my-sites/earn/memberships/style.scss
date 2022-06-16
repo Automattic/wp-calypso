@@ -244,6 +244,11 @@
 	align-items: center;
 }
 
+.memberships__module-settings-description {
+	color: var( --color-neutral-100 );
+	font-size: $font-body-small;
+}
+
 .memberships__module-plans-description {
 	color: var( --color-neutral-100 );
 	font-size: $font-body-small;

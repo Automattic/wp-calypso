@@ -1,8 +1,10 @@
+import { useSetStepComplete } from '@automattic/composite-checkout';
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import useCountryList from './use-country-list';
@@ -36,7 +38,9 @@ function useCachedContactDetailsForCheckoutForm(
 	overrideCountryList?: CountryListItem[]
 ): void {
 	const countriesList = useCountryList( overrideCountryList );
-	const previousDetailsForForm = useRef< PossiblyCompleteDomainContactDetails >();
+	const reduxDispatch = useReduxDispatch();
+	const setStepCompleteStatus = useSetStepComplete();
+	const didFillForm = useRef( false );
 
 	const arePostalCodesSupported =
 		countriesList.length && cachedContactDetails?.countryCode
@@ -54,6 +58,10 @@ function useCachedContactDetailsForCheckoutForm(
 	// When we have fetched or loaded contact details, send them to the
 	// `wpcom-checkout` data store for use by the checkout contact form.
 	useEffect( () => {
+		// Once this activates, do not do it again.
+		if ( didFillForm.current ) {
+			return;
+		}
 		// Do nothing if the contact details are loading, or the countries are loading.
 		if ( ! cachedContactDetails ) {
 			debug( 'cached contact details for form have not loaded' );
@@ -63,20 +71,31 @@ function useCachedContactDetailsForCheckoutForm(
 			debug( 'cached contact details for form are waiting for the countries list' );
 			return;
 		}
-		// Do nothing if the cached data has not changed since the last time we
-		// sent the data to the form (this typically will only ever need to be
-		// activated once).
-		if ( previousDetailsForForm.current === cachedContactDetails ) {
-			debug( 'cached contact details for form have not changed' );
-			return;
-		}
-		previousDetailsForForm.current = cachedContactDetails;
 		debug( 'using fetched cached contact details for checkout data store', cachedContactDetails );
-		loadDomainContactDetailsFromCache( {
+		didFillForm.current = true;
+		// NOTE: the types for `@wordpress/data` actions imply that actions return
+		// `void` by default but they actually return `Promise<void>` so I override
+		// this type here until the actual types can be improved. See
+		// https://github.com/DefinitelyTyped/DefinitelyTyped/pull/60693
+		loadDomainContactDetailsFromCache< Promise< void > >( {
 			...cachedContactDetails,
 			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode : '',
-		} );
+		} )
+			.then( () => {
+				if ( cachedContactDetails.countryCode ) {
+					debug( 'Contact details are populated; attempting to skip to payment method step' );
+					return setStepCompleteStatus( 'contact-form' );
+				}
+				return false;
+			} )
+			.then( ( didSkip: boolean ) => {
+				if ( didSkip ) {
+					reduxDispatch( recordTracksEvent( 'calypso_checkout_skip_to_last_step' ) );
+				}
+			} );
 	}, [
+		reduxDispatch,
+		setStepCompleteStatus,
 		cachedContactDetails,
 		arePostalCodesSupported,
 		loadDomainContactDetailsFromCache,

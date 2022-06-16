@@ -3,21 +3,17 @@
  */
 import { fireEvent, render, screen } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
-import { MailboxFormWrapper } from 'calypso/my-sites/email/form/mailboxes/components/form';
+import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
+import { MailboxFormWrapper } from 'calypso/my-sites/email/form/mailboxes/components/mailbox-form-wrapper';
 import { useGetDefaultFieldLabelText } from 'calypso/my-sites/email/form/mailboxes/components/use-get-default-field-label-text';
 import { FIELD_MAILBOX } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
-import type { MailboxFormWrapperProps } from 'calypso/my-sites/email/form/mailboxes/components/form';
 
 describe( '<MailboxFormWrapper /> suite', () => {
-	const defaultProps = {
-		onSubmit: () => undefined,
-		provider: EmailProvider.Google,
-		selectedDomainName: 'example.com',
-	} as MailboxFormWrapperProps;
+	const mailbox = new MailboxForm( EmailProvider.Google, 'example.com' );
 
 	const setup = () => {
-		const { container } = render( <MailboxFormWrapper { ...defaultProps } /> );
+		const { container } = render( <MailboxFormWrapper mailbox={ mailbox } /> );
 		return container;
 	};
 
@@ -25,17 +21,16 @@ describe( '<MailboxFormWrapper /> suite', () => {
 		setup();
 
 		expect( screen.getAllByRole( 'textbox' ).length ).toBeGreaterThan( 2 );
-		expect( screen.getAllByRole( 'button' ).length ).toEqual( 1 );
 	} );
 
-	it( 'Form submission should trigger pre-validation of input fields', () => {
+	it( 'Element blur should trigger pre-validation of associated field', () => {
 		setup();
 
 		const {
 			result: { current: displayText },
 		} = renderHook( () => useGetDefaultFieldLabelText( FIELD_MAILBOX ) );
 
-		fireEvent.click( screen.getByRole( 'button' ) );
+		fireEvent.blur( screen.getAllByRole( 'textbox' )[ 0 ] );
 
 		const elements = screen.getAllByText( displayText as string );
 		expect( elements ).toHaveLength( 1 );

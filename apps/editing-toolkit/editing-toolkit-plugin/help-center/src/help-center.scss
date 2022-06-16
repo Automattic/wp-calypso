@@ -7,10 +7,10 @@
 			}
 		}
 	}
-}
 
-.components-base-control__label {
-	color: var( --studio-gray-60 );
+	.interface-pinned-items & {
+		order: 4;
+	}
 }
 
 .help-center__container {

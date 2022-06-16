@@ -9,12 +9,10 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import EmailForwardingAddNewCompactList from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact-list';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
 	emailManagement,
-	emailManagementAddEmailForwards,
 	emailManagementPurchaseNewEmailAccount,
 } from 'calypso/my-sites/email/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -75,12 +73,8 @@ const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps
 		page( emailManagement( selectedSite.slug, selectedDomainName, currentRoute ) );
 	}, [ currentRoute, selectedDomainName, selectedSite ] );
 
-	const analyticsPath = emailManagementAddEmailForwards( ':site', ':domain', currentRoute );
-
 	return (
 		<div className="email-forwards-add">
-			<PageViewTracker path={ analyticsPath } title="Email Management > Add Email Forwards" />
-
 			<QueryProductsList />
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
