@@ -13,7 +13,9 @@ export const useAddMedia = () => {
 			( site.options.active_modules && site.options.active_modules.includes( 'videopress' ) );
 		const canUseVideopress = isVideoPressEnabled || isVideoPressModuleActive;
 
-		const fileCallback = ( fileObject ) => ( fileObject.canUseVideopress = canUseVideopress );
+		const fileCallback = ( fileObject ) => {
+			fileObject.canUseVideopress = canUseVideopress;
+		};
 
 		if ( isFileList( file ) ) {
 			Array.from( file ).forEach( fileCallback );
