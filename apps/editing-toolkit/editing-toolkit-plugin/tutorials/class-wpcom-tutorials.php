@@ -51,7 +51,6 @@ class WPCom_Tutorials {
 	 * @return bool           True if successfully registered, false if it failed.
 	 */
 	public function register( $id, $options ) {
-		// @todo verify tasks strutcture
 		if ( ! $this->validate_options( $options ) ) {
 			return false;
 		}
@@ -184,6 +183,9 @@ class WPCom_Tutorials {
 		if ( ! $this->validate_status( $status ) ) {
 			return false;
 		}
+		if ( ! $this->task_exists( $tutorial_id, $task_id ) ) {
+			return false;
+		}
 
 		$statuses = $this->load_persisted_statuses();
 		if ( ! isset( $statuses[ $tutorial_id ] ) ) {
@@ -199,6 +201,23 @@ class WPCom_Tutorials {
 		}
 
 		return $this->persist_statuses( $statuses );
+	}
+
+	/**
+	 * Checks if a task exists for a registered tutorial.
+	 *
+	 * @param string $tutorial_id A tutorial ID.
+	 * @param string $task_id     A task ID.
+	 * @return bool True if it exists, otherwise false.
+	 */
+	private function task_exists( $tutorial_id, $task_id ) {
+		$tutorial = $this->get_tutorial( $tutorial_id );
+		foreach ( $tutorial['tasks'] as $task ) {
+			if ( $task_id === $task['id'] ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
