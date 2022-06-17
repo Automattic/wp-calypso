@@ -30,7 +30,7 @@ import { STEP_NAME } from './constants';
 import GeneratedDesignPickerWebPreview from './generated-design-picker-web-preview';
 import PreviewToolbar from './preview-toolbar';
 import StickyPositioner from './sticky-positioner';
-import type { Step } from '../../types';
+import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
 
@@ -179,6 +179,18 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	);
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
 
+	const handleSubmit = ( providedDependencies?: ProvidedDependencies ) => {
+		const _selectedDesign = providedDependencies?.selectedDesign as Design;
+
+		recordTracksEvent( 'calypso_signup_design_type_submit', {
+			flow,
+			intent,
+			design_type: _selectedDesign?.design_type ?? 'default',
+		} );
+
+		submit?.( providedDependencies );
+	};
+
 	function pickDesign(
 		_selectedDesign: Design | undefined = selectedDesign,
 		buttonLocation?: string
@@ -196,11 +208,10 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				...( showGeneratedDesigns && positionIndex >= 0 && { position_index: positionIndex } ),
 			} );
 
-			const providedDependencies = {
+			handleSubmit( {
 				selectedDesign: _selectedDesign,
 				selectedSiteCategory: categorization.selection,
-			};
-			submit?.( providedDependencies );
+			} );
 		}
 	}
 
@@ -448,7 +459,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			skipLabelText={ intent === 'write' ? translate( 'Skip and draft first post' ) : undefined }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
-			goNext={ () => ( isPreviewingGeneratedDesign ? pickDesign() : submit?.() ) }
+			goNext={ isPreviewingGeneratedDesign ? pickDesign : handleSubmit }
 			goBack={ handleBackClick }
 		/>
 	);
