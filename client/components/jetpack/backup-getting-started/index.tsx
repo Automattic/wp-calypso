@@ -60,7 +60,7 @@ export default function BackupGettingStarted() {
 					}
 					primary
 				>
-					{ translate( 'Watch a video' ) }
+					{ translate( 'Watch the video' ) }
 				</Button>
 			</div>
 		</DismissibleCard>
