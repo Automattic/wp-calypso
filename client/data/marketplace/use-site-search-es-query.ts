@@ -40,10 +40,9 @@ const mapStarRatingToPercent = ( starRating?: number ) => ( starRating ?? 0 / 5 
 const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	if ( ! results ) return [];
 	return results.map( ( { fields: hit } ) => {
-		const slug = hit[ 'title.default' ].toLowerCase().replace( /\s/g, '-' );
 		const plugin = {
 			name: hit[ 'title.default' ], // TODO: add localization
-			slug: slug,
+			slug: hit.slug,
 			version: hit[ 'plugin.stable_tag' ],
 			author: hit.author,
 			author_name: hit.author,

@@ -10,7 +10,7 @@ export type PluginQueryOptions = {
 
 export type Plugin = {
 	name?: string;
-	slug?: string;
+	slug: string;
 	version?: string;
 	author?: string;
 	author_profile?: string;
@@ -27,6 +27,7 @@ export type Plugin = {
 };
 
 export type ESIndexResult = {
+	slug: string;
 	date: string;
 	comment_count: number;
 	author_login: string;

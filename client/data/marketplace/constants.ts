@@ -10,16 +10,10 @@ export const WPORG_CACHE_KEY = 'wporg-plugins';
 
 // TODO: Only include the required fields here
 export const RETURNABLE_FIELDS = [
-	'author',
-	'author_login',
-	'blog_name',
 	'blog_icon_url',
-	'blog_id',
 	'category.name.default',
 	'comment_count',
 	'content..*.word_count',
-	'date',
-	'date_gmt',
 	'excerpt.default',
 	'excerpt_html',
 	'gravatar_url',
@@ -29,13 +23,22 @@ export const RETURNABLE_FIELDS = [
 	'like_count',
 	'modified',
 	'modified_gmt',
-	'permalink.url.raw',
-	'post_id',
-	'post_type',
 	'shortcode_types',
 	'tag.name.default',
 	'title.default',
 	'title_html',
+
+	// Marketplace fields
+	'author',
+	'author_login',
+	'blog_id',
+	'blog_name',
+	'date',
+	'date_gmt',
+	'permalink.url.raw',
+	'post_id',
+	'post_type',
+	'slug',
 
 	// WooCommerce product fields
 	'wc.rating.count_1',
