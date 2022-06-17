@@ -391,7 +391,7 @@ function load_help_center() {
 
 	$current_segment = 10; // segment of existing users that will get the help center in %.
 	$user_segment    = get_current_user_id() % 100;
-	// only shipping to en locale for now
+	// only shipping to en locale for now.
 	$current_locale = get_locale();
 
 	if ( $is_proxied || ( 'en' === $current_locale && $user_segment < $current_segment ) ) {
