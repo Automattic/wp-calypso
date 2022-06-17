@@ -6,7 +6,7 @@ import {
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import './init';
-import { LICENSE_PURCHASED_VIA_AGENCY_DASHBOARD } from './action-types';
+import { JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE } from './action-types';
 
 const filterStateToQuery = ( filterOptions: AgencyDashboardFilterOption[] ) => {
 	if ( ! filterOptions.length ) {
@@ -29,6 +29,6 @@ export const updateFilter = ( filterOptions: AgencyDashboardFilterOption[] ) => 
 	navigateToFilter( filterOptions );
 };
 
-export function setPurchasedProduct( product?: PurchasedProduct ): AnyAction {
-	return { type: LICENSE_PURCHASED_VIA_AGENCY_DASHBOARD, payload: product };
+export function setPurchasedLicense( product?: PurchasedProduct ): AnyAction {
+	return { type: JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE, payload: product };
 }

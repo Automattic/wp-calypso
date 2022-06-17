@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactElement, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import Banner from 'calypso/components/banner';
-import { setPurchasedProduct } from 'calypso/state/jetpack-agency-dashboard/actions';
+import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import type { PurchasedProduct } from '../types';
 
 import './style.scss';
@@ -18,7 +18,7 @@ export default function SiteAddLicenseNotification( {
 	const { selectedSite, selectedProduct } = purchasedLicense;
 
 	const dismissBanner = useCallback( () => {
-		dispatch( setPurchasedProduct() );
+		dispatch( setPurchasedLicense() );
 	}, [ dispatch ] );
 
 	useEffect( () => {

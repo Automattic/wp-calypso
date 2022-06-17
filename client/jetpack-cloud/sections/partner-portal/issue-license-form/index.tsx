@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setPurchasedProduct } from 'calypso/state/jetpack-agency-dashboard/actions';
+import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
@@ -48,26 +48,21 @@ export default function IssueLicenseForm( {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ product, setProduct ] = useState( '' );
 
-	const handleRedirectToDashboard = useCallback(
-		( licenseKey ) => {
-			if ( selectedSite ) {
-				const selectedProduct = products?.data?.find( ( p ) => p.slug === product );
-				if ( selectedProduct ) {
-					dispatch(
-						setPurchasedProduct( {
-							selectedSite: selectedSite.domain,
-							selectedProduct: {
-								name: getProductTitle( selectedProduct.name ),
-								key: licenseKey,
-							},
-						} )
-					);
-					return page.redirect( '/dashboard' );
-				}
-			}
-		},
-		[ dispatch, product, products?.data, selectedSite ]
-	);
+	const handleRedirectToDashboard = ( licenseKey: string ) => {
+		const selectedProduct = products?.data?.find( ( p ) => p.slug === product );
+		if ( selectedSite && selectedProduct ) {
+			dispatch(
+				setPurchasedLicense( {
+					selectedSite: selectedSite?.domain,
+					selectedProduct: {
+						name: getProductTitle( selectedProduct.name ),
+						key: licenseKey,
+					},
+				} )
+			);
+		}
+		return page.redirect( '/dashboard' );
+	};
 
 	const assignLicense = useAssignLicenseMutation( {
 		onSuccess: ( license: any ) => {

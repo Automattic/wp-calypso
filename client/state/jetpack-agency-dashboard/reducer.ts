@@ -1,8 +1,8 @@
-import { LICENSE_PURCHASED_VIA_AGENCY_DASHBOARD } from './action-types';
+import { JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE } from './action-types';
 import type { PurchasedProduct } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
 interface LicensePurchasedAction {
-	type: typeof LICENSE_PURCHASED_VIA_AGENCY_DASHBOARD;
+	type: typeof JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE;
 	payload: PurchasedProduct | null;
 }
 
@@ -13,7 +13,7 @@ export default function agencyDashboardReducer(
 	action: AgencyDashboardReducerAction | null
 ) {
 	switch ( action?.type ) {
-		case LICENSE_PURCHASED_VIA_AGENCY_DASHBOARD:
+		case JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE:
 			return { ...state, purchasedLicense: action.payload };
 	}
 	return state;
