@@ -55,12 +55,14 @@ export interface PlanComparisonFeature {
 	 * @param {string} feature The feature constant. e.g. FEATURE_UNLIMITED_ADMINS
 	 * @param {boolean} isMobile Whether the text is displayed on mobile.
 	 * @param {boolean} isLegacySiteWithHigherLimits Whether the feature is being displayed in the context of a legacy site that is entitled to higher free plan limits.
+	 * @param {boolean} isExperiment Whether to show data associated with Explat experiment.
 	 * @returns {TranslateResult|TranslateResult[]} Array of text if there is an additional description.
 	 */
 	getCellText: (
 		feature: string | undefined,
 		isMobile: boolean,
 		isLegacySiteWithHigherLimits?: boolean,
+		isExperiment?: boolean,
 		extraArgs?: unknown
 	) => TranslateResult | [ TranslateResult, TranslateResult ];
 }
@@ -455,16 +457,25 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_PREMIUM_THEMES ],
-		getCellText: ( feature, isMobile = false ) => {
-			// let cellText = defaultGetCellText( translate( 'Premium themes' ) )( feature, isMobile );
-			let cellText = feature ? (
-				<>
-					<Gridicon icon="checkmark" />
-					{ translate( 'Included' ) }
-				</>
-			) : (
-				<>{ translate( 'Available for $50+ each' ) }</>
-			);
+		getCellText: (
+			feature,
+			isMobile = false,
+			isLegacySiteWithHigherLimits = false,
+			isExperiment = false
+		) => {
+			let cellText;
+			if ( isExperiment && ! isLegacySiteWithHigherLimits ) {
+				cellText = feature ? (
+					<>
+						<Gridicon icon="checkmark" />
+						{ translate( 'Included' ) }
+					</>
+				) : (
+					<>{ translate( 'Available for $50+ each' ) }</>
+				);
+			} else {
+				cellText = defaultGetCellText( translate( 'Premium themes' ) )( feature, isMobile );
+			}
 			if ( isMobile ) {
 				cellText = feature ? (
 					<>{ translate( 'Premium themes are included' ) }</>
@@ -573,27 +584,37 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_NO_ADS ],
-		getCellText: ( feature, isMobile = false ) => {
-			// let cellText = defaultGetCellText( translate( 'Remove ads' ) )( feature, isMobile );
-			let cellText = feature ? (
-				<>
-					<Gridicon icon="checkmark" />
-					{ translate( 'Included' ) }
-				</>
-			) : (
-				<>{ translate( 'Available for +$2/month' ) }</>
-			);
+		getCellText: (
+			feature,
+			isMobile = false,
+			isLegacySiteWithHigherLimits = false,
+			isExperiment = false
+		) => {
+			let cellText;
+			if ( isExperiment && ! isLegacySiteWithHigherLimits ) {
+				cellText = feature ? (
+					<>
+						<Gridicon icon="checkmark" />
+						{ translate( 'Included' ) }
+					</>
+				) : (
+					<>{ translate( 'Available for +$2/month' ) }</>
+				);
+			} else {
+				cellText = defaultGetCellText( translate( 'Remove ads' ) )( feature, isMobile );
+			}
 			if ( isMobile ) {
 				cellText = feature ? (
 					<>{ translate( 'Remove ads is included' ) }</>
 				) : (
 					<>
-						{ translate( 'Remove ads for +$2 per month', {
+						{ translate( 'Remove ads is {{strong}}not{{/strong}} included', {
 							components: { strong: <strong /> },
 						} ) }
 					</>
 				);
 			}
+
 			return cellText;
 		},
 	},
