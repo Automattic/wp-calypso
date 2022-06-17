@@ -45,10 +45,18 @@ export const HelpCenterMoreResources = () => {
 
 	const [ showGuide, setShowGuide ] = useState( false );
 
-	const trackCoursesButtonClick = () => {
+	const trackMoreResourcesButtonClick = ( resource: string ) => {
+		recordTracksEvent( 'calypso_help_moreresources_click', {
+			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
+			resource: resource,
+		} );
+	};
+
+	const trackWebinairsButtonClick = () => {
 		recordTracksEvent( 'calypso_help_courses_click', {
 			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
 		} );
+		trackMoreResourcesButtonClick( 'webinairs' );
 	};
 
 	const handleWhatsNewClick = () => {
@@ -56,6 +64,7 @@ export const HelpCenterMoreResources = () => {
 			setHasSeenWhatsNewModal( true );
 		}
 		setShowGuide( true );
+		trackMoreResourcesButtonClick( 'whats-new' );
 	};
 
 	return (
@@ -69,6 +78,7 @@ export const HelpCenterMoreResources = () => {
 							rel="noreferrer"
 							target="_blank"
 							className="inline-help__video"
+							onClick={ () => trackMoreResourcesButtonClick( 'video' ) }
 						>
 							<Icon icon={ video } size={ 24 } />
 							<span>{ __( 'Video tutorials' ) }</span>
@@ -81,7 +91,7 @@ export const HelpCenterMoreResources = () => {
 							href={ localizeUrl( 'https://wordpress.com/webinars' ) }
 							rel="noreferrer"
 							target="_blank"
-							onClick={ trackCoursesButtonClick }
+							onClick={ trackWebinairsButtonClick }
 							className="inline-help__capture-video"
 						>
 							<Icon icon={ captureVideo } size={ 24 } />
@@ -96,6 +106,7 @@ export const HelpCenterMoreResources = () => {
 							rel="noreferrer"
 							target="_blank"
 							className="inline-help__desktop"
+							onClick={ () => trackMoreResourcesButtonClick( 'courses' ) }
 						>
 							<Icon icon={ desktop } size={ 24 } />
 							<span>{ __( 'Courses' ) }</span>
@@ -109,6 +120,7 @@ export const HelpCenterMoreResources = () => {
 							rel="noreferrer"
 							target="_blank"
 							className="inline-help__format-list-numbered"
+							onClick={ () => trackMoreResourcesButtonClick( 'guides' ) }
 						>
 							<Icon icon={ formatListNumbered } size={ 24 } />
 							<span>{ __( 'Step-by-step guides' ) }</span>
