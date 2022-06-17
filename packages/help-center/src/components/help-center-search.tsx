@@ -20,14 +20,17 @@ export const HelpCenterSearch = () => {
 		( event, result ) => {
 			const search = new URLSearchParams( {
 				postId: result.post_id,
-				blogId: result.blog_id,
 				query: searchQuery,
 				link: result.link ?? '',
 				title: result.title,
-			} ).toString();
+			} );
+
+			if ( result.blog_id ) {
+				search.append( 'blogId', result.blog_id );
+			}
 
 			event.preventDefault();
-			history.push( `/post/?${ search }` );
+			history.push( `/post/?${ search.toString() }` );
 		},
 		[ history, searchQuery ]
 	);
