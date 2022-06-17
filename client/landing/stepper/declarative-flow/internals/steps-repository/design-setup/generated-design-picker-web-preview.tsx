@@ -11,6 +11,7 @@ interface GeneratedDesignPickerWebPreviewProps {
 	site?: SiteDetails | null;
 	design: Design;
 	locale: string;
+	viewport: { width: number; height: number } | null;
 	verticalId: string;
 	isSelected: boolean;
 	isPrivateAtomic?: boolean;
@@ -22,6 +23,7 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 	site,
 	design,
 	locale,
+	viewport,
 	verticalId,
 	isSelected,
 	isPrivateAtomic,
@@ -31,6 +33,10 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 	const translate = useTranslate();
 	const isMobile = ! useViewportMatch( 'small' );
 
+	if ( ! viewport ) {
+		return null;
+	}
+
 	return (
 		<WebPreview
 			className={ classnames( { 'is-selected': isSelected } ) }
@@ -38,7 +44,12 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 			showClose={ false }
 			showEdit={ false }
 			showDeviceSwitcher={ false }
-			previewUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
+			previewUrl={ getDesignPreviewUrl( design, {
+				language: locale,
+				verticalId,
+				viewport_width: viewport?.width,
+				viewport_height: viewport?.height,
+			} ) }
 			loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
 				components: { strong: <strong /> },
 			} ) }

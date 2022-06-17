@@ -49,6 +49,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const { goBack, submit, exitFlow } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
+	const viewport = useRef( null );
 	const site = useSite();
 	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
@@ -295,6 +296,11 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		window.scrollTo( { top: 0 } );
 	}, [ isForceStaticDesigns, !! selectedDesign ] );
 
+	useEffect( () => {
+		const { innerWidth: width, innerHeight: height } = window;
+		viewport.current = { width, height };
+	}, [] );
+
 	// When the intent is build, we can potentially show the generated design picker.
 	// Don't render until we've fetched the generated designs from the backend.
 	if ( ! site || isLoadingGeneratedDesigns ) {
@@ -376,12 +382,14 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			designs={ generatedDesigns }
 			verticalId={ siteVerticalId }
 			locale={ locale }
+			viewport={ viewport.current }
 			previews={ generatedDesigns.map( ( design ) => (
 				<GeneratedDesignPickerWebPreview
 					key={ design.slug }
 					site={ site }
 					design={ design }
 					locale={ locale }
+					viewport={ viewport.current }
 					verticalId={ siteVerticalId }
 					isSelected={ design.slug === selectedGeneratedDesign?.slug }
 					isStickyToolbar={ ! isMobile && isSticky }

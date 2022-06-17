@@ -62,6 +62,7 @@ export interface GeneratedDesignPickerProps {
 	previews: React.ReactElement[];
 	verticalId: string;
 	locale: string;
+	viewport: { width: number; height: number } | null;
 	heading?: React.ReactElement;
 	footer?: React.ReactElement;
 	onPreview: ( design: Design, positionIndex: number ) => void;
@@ -74,15 +75,14 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 	previews,
 	verticalId,
 	locale,
+	viewport,
 	heading,
 	footer,
 	onPreview,
 	onViewMore,
 } ) => {
 	const { __ } = useI18n();
-
 	const isMobile = useViewportMatch( 'small', '<' );
-
 	const wrapperRef = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
@@ -111,6 +111,10 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 		};
 	}, [ isMobile ] );
 
+	if ( ! viewport ) {
+		return null;
+	}
+
 	return (
 		<div className="generated-design-picker">
 			{ heading }
@@ -121,7 +125,12 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 							<GeneratedDesignThumbnail
 								key={ design.slug }
 								slug={ design.slug }
-								thumbnailUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
+								thumbnailUrl={ getDesignPreviewUrl( design, {
+									language: locale,
+									verticalId,
+									viewport_width: viewport?.width,
+									viewport_height: viewport?.height,
+								} ) }
 								isSelected={ selectedDesign?.slug === design.slug }
 								onPreview={ () => onPreview( design, index ) }
 							/>
