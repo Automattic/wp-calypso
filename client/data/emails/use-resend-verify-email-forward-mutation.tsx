@@ -1,12 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
-import { createElement } from 'react';
 import { useMutation } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { getEmailForwardAddress } from 'calypso/lib/emails';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import type { Mailbox } from './types';
+import type { EmailAccountEmail } from './types';
 import type { UseMutationOptions } from 'react-query';
 
 const MUTATION_KEY = 'reverifyEmailForward';
@@ -20,7 +19,7 @@ const MUTATION_KEY = 'reverifyEmailForward';
  */
 export default function useResendVerifyEmailForwardMutation(
 	domainName: string,
-	mutationOptions: Omit< UseMutationOptions< any, unknown, Mailbox >, 'mutationFn' > = {}
+	mutationOptions: Omit< UseMutationOptions< any, unknown, EmailAccountEmail >, 'mutationFn' > = {}
 ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -47,7 +46,7 @@ export default function useResendVerifyEmailForwardMutation(
 
 		dispatch(
 			successNotice( successMessage, {
-				duration: 5000,
+				duration: 7000,
 			} )
 		);
 	};
@@ -63,7 +62,7 @@ export default function useResendVerifyEmailForwardMutation(
 					email: variables.mailbox + '@' + domainName,
 				},
 				components: {
-					contactSupportLink: createElement( 'a', { href: CALYPSO_CONTACT } ),
+					contactSupportLink: <a href={ CALYPSO_CONTACT } />,
 				},
 			}
 		);
@@ -71,7 +70,7 @@ export default function useResendVerifyEmailForwardMutation(
 		dispatch( errorNotice( failureMessage ) );
 	};
 
-	return useMutation< any, unknown, Mailbox >(
+	return useMutation< any, unknown, EmailAccountEmail >(
 		( { mailbox } ) =>
 			wp.req.post(
 				`/domains/${ encodeURIComponent( domainName ) }/email/${ encodeURIComponent(

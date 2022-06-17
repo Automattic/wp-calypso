@@ -1,14 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
-import { createElement } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCacheKey as getEmailDomainsQueryKey } from 'calypso/data/domains/use-get-domains-query';
 import { getEmailAddress } from 'calypso/lib/emails';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
-import type { Mailbox } from './types';
+import type { EmailAccountEmail } from './types';
 import type { UseMutationOptions } from 'react-query';
 
 type Context = {
@@ -18,7 +18,7 @@ type Context = {
 const MUTATION_KEY = 'removeEmailForward';
 
 /**
- * Deletes an email forward
+ * Deletes an email forward, including relevant optimistic data mutations.
  *
  * @param domainName The domain name of the mailbox
  * @param mutationOptions Mutation options passed on to `useMutation`
@@ -26,7 +26,10 @@ const MUTATION_KEY = 'removeEmailForward';
  */
 export default function useRemoveEmailForwardMutation(
 	domainName: string,
-	mutationOptions: Omit< UseMutationOptions< any, unknown, Mailbox, Context >, 'mutationFn' > = {}
+	mutationOptions: Omit<
+		UseMutationOptions< any, unknown, EmailAccountEmail, Context >,
+		'mutationFn'
+	> = {}
 ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -34,7 +37,7 @@ export default function useRemoveEmailForwardMutation(
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
-	const emailDomainsQueryKey = getEmailAccountsQueryKey( selectedSiteId, domainName );
+	const emailAccountsQueryKey = getEmailAccountsQueryKey( selectedSiteId, domainName );
 	const domainsQueryKey = getEmailDomainsQueryKey( selectedSiteId );
 
 	const suppliedOnSettled = mutationOptions.onSettled;
@@ -47,36 +50,62 @@ export default function useRemoveEmailForwardMutation(
 	mutationOptions.onSettled = ( data, error, variables, context ) => {
 		suppliedOnSettled?.( data, error, variables, context );
 
-		queryClient.invalidateQueries( emailDomainsQueryKey );
+		queryClient.invalidateQueries( emailAccountsQueryKey );
 		queryClient.invalidateQueries( domainsQueryKey );
 	};
 
 	mutationOptions.onMutate = async ( emailForward ) => {
 		suppliedOnMutate?.( emailForward );
 
-		await queryClient.cancelQueries( emailDomainsQueryKey );
+		await queryClient.cancelQueries( emailAccountsQueryKey );
+		await queryClient.cancelQueries( domainsQueryKey );
+
+		const previousEmailAccountsQueryData = queryClient.getQueryData< any >( emailAccountsQueryKey );
+
+		const emailForwards = previousEmailAccountsQueryData?.accounts?.[ 0 ]?.emails;
 
 		// Optimistically remove email forward from `useGetEmailAccountsQuery` data
-		const previousEmailAccountsQueryData = queryClient.getQueryData< any >( emailDomainsQueryKey );
-
-		const emailForwards = previousEmailAccountsQueryData.accounts?.[ 0 ]?.emails;
-
 		if ( emailForwards ) {
-			queryClient.setQueryData( emailDomainsQueryKey, {
+			queryClient.setQueryData( emailAccountsQueryKey, {
 				...previousEmailAccountsQueryData,
 				accounts: [
 					{
 						...previousEmailAccountsQueryData.accounts[ 0 ],
 						emails: emailForwards.filter(
-							( forward: Mailbox ) => forward.mailbox !== emailForward.mailbox
+							( forward: EmailAccountEmail ) => forward.mailbox !== emailForward.mailbox
 						),
 					},
 				],
 			} );
 		}
 
+		const previousDomainsQueryData = queryClient.getQueryData< any >( domainsQueryKey );
+
+		// Optimistically decrement `email_forwards_count` in `useGetDomainsQuery` data
+		if ( previousDomainsQueryData ) {
+			const selectedDomainIndex = previousDomainsQueryData.domains.findIndex(
+				( { domain }: { domain: string } ) => domain === domainName
+			);
+
+			if ( selectedDomainIndex >= 0 ) {
+				const selectedDomain = previousDomainsQueryData.domains[ selectedDomainIndex ];
+				const newDomains = [ ...previousDomainsQueryData.domains ];
+
+				newDomains.splice( selectedDomainIndex, 1, {
+					...selectedDomain,
+					email_forwards_count: selectedDomain.email_forwards_count - 1,
+				} );
+
+				queryClient.setQueryData( domainsQueryKey, {
+					...previousDomainsQueryData,
+					domains: newDomains,
+				} );
+			}
+		}
+
 		return {
-			[ JSON.stringify( emailDomainsQueryKey ) ]: previousEmailAccountsQueryData,
+			[ JSON.stringify( emailAccountsQueryKey ) ]: previousEmailAccountsQueryData,
+			[ JSON.stringify( domainsQueryKey ) ]: previousDomainsQueryData,
 		};
 	};
 
@@ -86,12 +115,12 @@ export default function useRemoveEmailForwardMutation(
 		const emailAddress = getEmailAddress( emailForward );
 
 		const successMessage = successNotice(
-			translate( '{{strong}}%(emailAddress)s{{/strong}} has been removed from your account', {
+			translate( '{{strong}}%(emailAddress)s{{/strong}} has been removed from your account.', {
 				comment:
 					'%(emailAddress)s is the receiver email address for the email forward being deleted',
 				args: { emailAddress },
 				components: {
-					strong: createElement( 'strong' ),
+					strong: <strong />,
 				},
 			} ),
 			{ duration: 7000 }
@@ -105,22 +134,25 @@ export default function useRemoveEmailForwardMutation(
 
 		if ( context ) {
 			queryClient.setQueryData(
-				emailDomainsQueryKey,
-				context[ JSON.stringify( emailDomainsQueryKey ) ]
+				emailAccountsQueryKey,
+				context[ JSON.stringify( emailAccountsQueryKey ) ]
 			);
+
+			queryClient.setQueryData( domainsQueryKey, context[ JSON.stringify( domainsQueryKey ) ] );
 		}
 
 		const emailAddress = getEmailAddress( emailForward );
 
 		const errorMessage = errorNotice(
 			translate(
-				'There was an error removing {{strong}}%(emailAddress)s{{/strong}} from your account',
+				'Failed to remove email forward for {{strong}}%(emailAddress)s{{/strong}}. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 				{
 					comment:
 						'%(emailAddress)s is the receiver email address for the email forward being deleted',
 					args: { emailAddress },
 					components: {
-						strong: createElement( 'strong' ),
+						contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+						strong: <strong />,
 					},
 				}
 			),
@@ -130,7 +162,7 @@ export default function useRemoveEmailForwardMutation(
 		dispatch( errorMessage );
 	};
 
-	return useMutation< any, unknown, Mailbox, Context >(
+	return useMutation< any, unknown, EmailAccountEmail, Context >(
 		( { mailbox } ) =>
 			wp.req.post(
 				`/domains/${ encodeURIComponent( domainName ) }/email/${ encodeURIComponent(

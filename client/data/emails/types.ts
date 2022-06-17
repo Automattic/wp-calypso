@@ -5,6 +5,7 @@ export type EmailAccountEmail = {
 	mailbox: string;
 	role: string;
 	target: string;
+	temporary?: boolean;
 	warnings: Warning[];
 };
 
@@ -19,9 +20,15 @@ type Warning = {
 	warning_type: string;
 };
 
+// Comes from the `/sites/${ siteId }/emails/accounts/${ domain }/mailboxes` API endpoint
 export type EmailAccount = {
 	account_id?: number;
-	account_type: string;
+	account_type:
+		| 'email_forwarding'
+		| 'google_workspace'
+		| 'google_gsuite'
+		| 'titan'
+		| 'titan_external';
 	domains: EmailAccountDomain[];
 	emails: EmailAccountEmail[];
 	maximum_mailboxes: number;
@@ -30,6 +37,7 @@ export type EmailAccount = {
 	warnings: Warning[];
 };
 
+// Comes from the `/sites/${ siteId }/emails/mailboxes` API endpoint
 export type Mailbox = {
 	account_type: string;
 	domain: string;

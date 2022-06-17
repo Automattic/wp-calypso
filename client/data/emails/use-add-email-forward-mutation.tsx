@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { orderBy } from 'lodash';
-import { createElement } from 'react';
 import { useIsMutating, useMutation, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCacheKey as getEmailDomainsQueryKey } from 'calypso/data/domains/use-get-domains-query';
@@ -48,8 +47,8 @@ export default function useAddEmailForwardMutation(
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
-	const useGetEmailAccountsQueryKey = getEmailAccountsQueryKey( selectedSiteId, domainName );
-	const useGetDomainsQueryKey = getEmailDomainsQueryKey( selectedSiteId );
+	const emailAccountsQueryKey = getEmailAccountsQueryKey( selectedSiteId, domainName );
+	const domainsQueryKey = getEmailDomainsQueryKey( selectedSiteId );
 
 	const suppliedOnSettled = mutationOptions.onSettled;
 	const suppliedOnMutate = mutationOptions.onMutate;
@@ -60,20 +59,18 @@ export default function useAddEmailForwardMutation(
 	mutationOptions.onSettled = ( data, error, variables, context ) => {
 		suppliedOnSettled?.( data, error, variables, context );
 
-		queryClient.invalidateQueries( useGetEmailAccountsQueryKey );
-		queryClient.invalidateQueries( useGetDomainsQueryKey );
+		queryClient.invalidateQueries( emailAccountsQueryKey );
+		queryClient.invalidateQueries( domainsQueryKey );
 	};
 
 	mutationOptions.onMutate = async ( variables ) => {
 		const { mailbox, destination } = variables;
 		suppliedOnMutate?.( variables );
 
-		await queryClient.cancelQueries( useGetEmailAccountsQueryKey );
-		await queryClient.cancelQueries( useGetDomainsQueryKey );
+		await queryClient.cancelQueries( emailAccountsQueryKey );
+		await queryClient.cancelQueries( domainsQueryKey );
 
-		const previousEmailAccountsQueryData = queryClient.getQueryData< any >(
-			useGetEmailAccountsQueryKey
-		);
+		const previousEmailAccountsQueryData = queryClient.getQueryData< any >( emailAccountsQueryKey );
 		const emailForwards = previousEmailAccountsQueryData?.accounts?.[ 0 ]?.emails;
 
 		// Optimistically add email forward to `useGetEmailAccountsQuery` data
@@ -96,7 +93,7 @@ export default function useAddEmailForwardMutation(
 				[ 'asc' ]
 			);
 
-			queryClient.setQueryData( useGetEmailAccountsQueryKey, {
+			queryClient.setQueryData( emailAccountsQueryKey, {
 				...previousEmailAccountsQueryData,
 				accounts: [
 					{
@@ -107,9 +104,9 @@ export default function useAddEmailForwardMutation(
 			} );
 		}
 
-		const previousDomainsQueryData = queryClient.getQueryData< any >( useGetDomainsQueryKey );
+		const previousDomainsQueryData = queryClient.getQueryData< any >( domainsQueryKey );
 
-		// Optimistically increment the email_forward counter in `useGetDomainsQuery` data
+		// Optimistically increment `email_forwards_count` in `useGetDomainsQuery` data
 		if ( previousDomainsQueryData ) {
 			const selectedDomainIndex = previousDomainsQueryData.domains.findIndex(
 				( { domain }: { domain: string } ) => domain === domainName
@@ -124,7 +121,7 @@ export default function useAddEmailForwardMutation(
 					email_forwards_count: selectedDomain.email_forwards_count + 1,
 				} );
 
-				queryClient.setQueryData( useGetDomainsQueryKey, {
+				queryClient.setQueryData( domainsQueryKey, {
 					...previousDomainsQueryData,
 					domains: newDomains,
 				} );
@@ -132,8 +129,8 @@ export default function useAddEmailForwardMutation(
 		}
 
 		return {
-			[ JSON.stringify( useGetEmailAccountsQueryKey ) ]: previousEmailAccountsQueryData,
-			[ JSON.stringify( useGetDomainsQueryKey ) ]: previousDomainsQueryData,
+			[ JSON.stringify( emailAccountsQueryKey ) ]: previousEmailAccountsQueryData,
+			[ JSON.stringify( domainsQueryKey ) ]: previousDomainsQueryData,
 		};
 	};
 
@@ -142,40 +139,37 @@ export default function useAddEmailForwardMutation(
 
 		if ( context ) {
 			queryClient.setQueryData(
-				useGetEmailAccountsQueryKey,
-				context[ JSON.stringify( useGetEmailAccountsQueryKey ) ]
+				emailAccountsQueryKey,
+				context[ JSON.stringify( emailAccountsQueryKey ) ]
 			);
 
-			queryClient.setQueryData(
-				useGetDomainsQueryKey,
-				context[ JSON.stringify( useGetDomainsQueryKey ) ]
-			);
+			queryClient.setQueryData( domainsQueryKey, context[ JSON.stringify( domainsQueryKey ) ] );
 		}
 
+		const noticeComponents = {
+			contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+			strong: <strong />,
+		};
+
 		let errorMessage = translate(
-			'Failed to add email forwarding record. ' +
-				'Please try again or ' +
-				'{{contactSupportLink}}contact support{{/contactSupportLink}}.',
+			'Failed to add email forward for {{strong}}%(emailAddress)s{{/strong}}. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 			{
-				components: {
-					contactSupportLink: createElement( 'a', { href: CALYPSO_CONTACT } ),
+				args: {
+					emailAddress: variables.mailbox,
 				},
+				components: noticeComponents,
 			}
 		);
 
 		if ( error ) {
 			errorMessage = translate(
-				'Failed to add email forwarding record ' +
-					'with message "%(message)s". ' +
-					'Please try again or ' +
-					'{{contactSupportLink}}contact support{{/contactSupportLink}}.',
+				'Failed to add email forward for {{strong}}%(emailAddress)s{{/strong}} with message "%(message)s". Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 				{
 					args: {
+						emailAddress: variables.mailbox,
 						message: error,
 					},
-					components: {
-						contactSupportLink: createElement( 'a', { href: CALYPSO_CONTACT } ),
-					},
+					components: noticeComponents,
 				}
 			);
 		}
