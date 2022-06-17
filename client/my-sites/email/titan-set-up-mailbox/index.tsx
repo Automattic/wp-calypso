@@ -1,9 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import PropTypes from 'prop-types';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HeaderCake from 'calypso/components/header-cake';
@@ -19,24 +17,29 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-const TitanSetUpMailbox = ( { selectedDomainName, source } ) => {
+interface TitanSetUpMailboxProps {
+	selectedDomainName: string;
+	source: string;
+}
+
+const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxProps ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
 	const currentRoute = useSelector( getCurrentRoute );
 
 	const previousRoute = useSelector( getPreviousRoute );
 
-	const siteId = selectedSite?.ID ?? null;
-
-	const domains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
+	const domains = useSelector( ( state ) =>
+		getDomainsBySiteId( state, selectedSite?.ID ?? undefined )
+	);
 
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 
 	const hasTitanSubscription = hasTitanMailWithUs( selectedDomain );
 
-	const areSiteDomainsLoaded = useSelector( ( state ) => hasLoadedSiteDomains( state, siteId ) );
-
-	const siteSlug = selectedSite?.slug ?? null;
+	const areSiteDomainsLoaded = useSelector( ( state ) =>
+		hasLoadedSiteDomains( state, selectedSite?.ID ?? null )
+	);
 
 	const handleBack = useCallback( () => {
 		page( previousRoute );
@@ -45,9 +48,13 @@ const TitanSetUpMailbox = ( { selectedDomainName, source } ) => {
 	const translate = useTranslate();
 
 	if ( areSiteDomainsLoaded && ! hasTitanSubscription ) {
-		page(
-			emailManagementPurchaseNewEmailAccount( siteSlug, selectedDomainName, currentRoute, source )
-		);
+		const siteSlug = selectedSite?.slug ?? null;
+
+		if ( siteSlug ) {
+			page(
+				emailManagementPurchaseNewEmailAccount( siteSlug, selectedDomainName, currentRoute, source )
+			);
+		}
 
 		return null;
 	}
@@ -59,7 +66,7 @@ const TitanSetUpMailbox = ( { selectedDomainName, source } ) => {
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 			<Main wideLayout={ true }>
-				<DocumentHead title={ titleCase( title ) } />
+				<DocumentHead title={ title } />
 
 				<EmailHeader />
 
@@ -76,11 +83,6 @@ const TitanSetUpMailbox = ( { selectedDomainName, source } ) => {
 			</Main>
 		</>
 	);
-};
-
-TitanSetUpMailbox.propType = {
-	selectedDomainName: PropTypes.string.isRequired,
-	source: PropTypes.string,
 };
 
 export default TitanSetUpMailbox;
