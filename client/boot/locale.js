@@ -1,24 +1,10 @@
 import config from '@automattic/calypso-config';
-import {
-	isDefaultLocale,
-	isTranslatedIncompletely,
-	getLanguageSlugs,
-} from '@automattic/i18n-utils';
+import { isTranslatedIncompletely } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
 import { initLanguageEmpathyMode } from 'calypso/lib/i18n-utils/empathy-mode';
 import { loadUserUndeployedTranslations } from 'calypso/lib/i18n-utils/switch-locale';
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setLocale } from 'calypso/state/ui/language/actions';
-
-function getLocaleFromPathname() {
-	const pathname = window.location.pathname.replace( /\/$/, '' );
-	const lastPathSegment = pathname.substr( pathname.lastIndexOf( '/' ) + 1 );
-	const pathLocaleSlug =
-		getLanguageSlugs().includes( lastPathSegment ) &&
-		! isDefaultLocale( lastPathSegment ) &&
-		lastPathSegment;
-	return pathLocaleSlug;
-}
 
 export const setupLocale = ( currentUser, reduxStore ) => {
 	if ( config.isEnabled( 'i18n/empathy-mode' ) && currentUser.i18n_empathy_mode ) {
@@ -59,11 +45,9 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 	} else if ( bootstrappedLocaleSlug ) {
 		// Use locale slug from bootstrapped language manifest object
 		reduxStore.dispatch( setLocale( bootstrappedLocaleSlug ) );
-	} else {
-		// For logged out Calypso pages, set the locale from slug
-		const pathLocaleSlug = getLocaleFromPathname();
-		pathLocaleSlug && reduxStore.dispatch( setLocale( pathLocaleSlug, '' ) );
 	}
-
-	// If user is logged out and translations are not bootstrapped, we assume default locale
+	// else
+	// If user is logged out and translations are not bootstrapped, we assume default locale.
+	// Also, some logged out routes now choose to override this locale using a lang path param,
+	// for these routes, setLocale is dispatched inside setLocaleMiddleware (client/controller/shared.js)
 };
