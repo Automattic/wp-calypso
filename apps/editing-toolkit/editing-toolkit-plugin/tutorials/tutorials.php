@@ -73,3 +73,13 @@ function wpcom_tutorial_mark_task( $tutorial_id, $task_id, $status ) {
 function wpcom_get_registered_tutorial_ids() {
 	return wpcom_tutorials()->get_registered_ids();
 }
+
+/**
+ * Callback for registering the Tutorials endpoint.
+ */
+function wpcom_register_tutorials_endpoints() {
+	require_once __DIR__ . '/class-wpcom-tutorials-endpoint.php';
+	$tutorials_endpoint = new WPCom_Tutorials_Endpoint();
+	$tutorials_endpoint->register_rest_routes();
+}
+add_action( 'rest_api_init', 'wpcom_register_tutorials_endpoints' );
