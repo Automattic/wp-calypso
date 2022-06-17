@@ -9,6 +9,10 @@ import preferencesReducer from 'calypso/state/preferences/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { Banner } from '../index';
 
+jest.mock( 'calypso/my-sites/plan-price', () => ( props ) => (
+	<div data-testid="banner-price-plan-mock">{ props.rawPrice }</div>
+) );
+
 jest.mock( 'calypso/state/analytics/actions', () => ( {
 	recordTracksEvent: jest.fn( () => ( {
 		type: 'ANALYTICS_EVENT_RECORD',
@@ -69,18 +73,17 @@ describe( 'Banner basic tests', () => {
 
 	test( 'should render a <PlanPrice /> when price is specified', () => {
 		render( <Banner { ...props } price={ 100 } /> );
-		expect( screen.getByText( '100' ) ).toBeVisible();
+		expect( screen.queryByTestId( 'banner-price-plan-mock' ) ).toHaveTextContent( '100' );
 	} );
 
 	test( 'should render two <PlanPrice /> components when there are two prices', () => {
 		render( <Banner { ...props } price={ [ 100, 80 ] } /> );
-		expect( screen.getByText( '100' ) ).toBeVisible();
-		expect( screen.getByText( '80' ) ).toBeVisible();
+		expect( screen.queryAllByTestId( 'banner-price-plan-mock' ) ).toHaveLength( 2 );
 	} );
 
 	test( 'should render no <PlanPrice /> components when there are no prices', () => {
-		const { container } = render( <Banner { ...props } /> );
-		expect( container.getElementsByClassName( 'plan-price' ) ).toHaveLength( 0 );
+		render( <Banner { ...props } /> );
+		expect( screen.queryByTestId( 'banner-price-plan-mock' ) ).toBeNull();
 	} );
 
 	test( 'should render a .banner__description when description is specified', () => {
