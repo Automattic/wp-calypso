@@ -62,9 +62,9 @@ class CancelPurchaseButton extends Component {
 	};
 
 	handleCancelPurchaseClick = () => {
-		if ( isDomainRegistration( this.props.purchase ) ) {
+		/*if ( isDomainRegistration( this.props.purchase ) ) {
 			return this.goToCancelConfirmation();
-		}
+		}*/
 
 		this.setState( {
 			showDialog: true,

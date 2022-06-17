@@ -1,4 +1,5 @@
 import {
+	isDomainRegistration,
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isWpComMonthlyPlan,
@@ -44,7 +45,7 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import HappychatButton from 'calypso/components/happychat/button';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getName, isRefundable } from 'calypso/lib/purchases';
+import { getName as getDomainName, getName, isRefundable } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -113,21 +114,26 @@ class CancelPurchaseForm extends Component {
 
 	shouldUseBlankCanvasLayout() {
 		const { isJetpack, purchase } = this.props;
-		return isPlan( purchase ) && ! isJetpack;
+
+		if ( isJetpack ) {
+			return false;
+		}
+
+		return isPlan( purchase ) || isDomainRegistration( purchase );
 	}
 
 	getAllSurveySteps() {
 		const { purchase, willAtomicSiteRevert } = this.props;
 
-		if ( isPlan( purchase ) ) {
-			if ( this.shouldUseBlankCanvasLayout() ) {
-				if ( willAtomicSiteRevert ) {
-					return [ FEEDBACK_STEP, ATOMIC_REVERT_STEP ];
-				}
-
-				return [ FEEDBACK_STEP ];
+		if ( this.shouldUseBlankCanvasLayout() ) {
+			if ( isPlan( purchase ) && willAtomicSiteRevert ) {
+				return [ FEEDBACK_STEP, ATOMIC_REVERT_STEP ];
 			}
 
+			return [ FEEDBACK_STEP ];
+		}
+
+		if ( isPlan( purchase ) ) {
 			return [ INITIAL_STEP, FINAL_STEP ];
 		}
 
@@ -844,9 +850,20 @@ class CancelPurchaseForm extends Component {
 	};
 
 	surveyContent() {
-		const { atomicTransfer, translate, isImport, isJetpack, moment, showSurvey, site } = this.props;
+		const { atomicTransfer, translate, isImport, isJetpack, moment, purchase, showSurvey, site } =
+			this.props;
 		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep } = this.state;
 		const productName = isJetpack ? translate( 'Jetpack' ) : translate( 'WordPress.com' );
+		const subheaderText = isDomainRegistration( purchase )
+			? translate(
+					'Since domain cancellation can cause your site to stop working, we’d like to make sure we help you take the right action.'
+			  )
+			: translate(
+					'Before you go, please answer a few quick questions to help us improve %(productName)s.',
+					{
+						args: { productName },
+					}
+			  );
 
 		if ( surveyStep === FEEDBACK_STEP ) {
 			return (
@@ -854,12 +871,7 @@ class CancelPurchaseForm extends Component {
 					<FormattedHeader
 						brandFont
 						headerText={ translate( 'Share your feedback' ) }
-						subHeaderText={ translate(
-							'Before you go, please answer a few quick questions to help us improve %(productName)s.',
-							{
-								args: { productName },
-							}
-						) }
+						subHeaderText={ subheaderText }
 					/>
 					<div className="cancel-purchase-form__feedback-questions">
 						{ this.renderQuestionOne() }
@@ -1161,24 +1173,37 @@ class CancelPurchaseForm extends Component {
 		}
 	}
 
+	getHeaderContent = () => {
+		const { flowType, purchase, site, translate } = this.props;
+		const isRemoving = flowType === CANCEL_FLOW_TYPE.REMOVE;
+
+		if ( isDomainRegistration( purchase ) ) {
+			return (
+				<>
+					{ isRemoving ? translate( 'Remove domain' ) : translate( 'Cancel domain' ) }
+					<span className="cancel-purchase-form__site-slug">{ getDomainName( purchase ) }</span>
+				</>
+			);
+		}
+
+		return (
+			<>
+				{ isRemoving ? translate( 'Remove plan' ) : translate( 'Cancel plan' ) }
+				<span className="cancel-purchase-form__site-slug">{ site.slug }</span>
+			</>
+		);
+	};
+
 	render() {
 		const { surveyStep } = this.state;
 		if ( ! surveyStep ) {
 			return null;
 		}
 
-		const {
-			flowType,
-			isChatActive,
-			isChatAvailable,
-			isJetpack,
-			purchase,
-			site,
-			supportVariation,
-			translate,
-		} = this.props;
+		const { isChatActive, isChatAvailable, purchase, site, supportVariation, translate } =
+			this.props;
 
-		if ( isPlan( purchase ) && ! isJetpack ) {
+		if ( this.shouldUseBlankCanvasLayout() ) {
 			const steps = this.getAllSurveySteps();
 
 			return (
@@ -1189,10 +1214,7 @@ class CancelPurchaseForm extends Component {
 					{ this.props.isVisible && (
 						<BlankCanvas className="cancel-purchase-form">
 							<BlankCanvas.Header onBackClick={ this.closeDialog }>
-								{ flowType === CANCEL_FLOW_TYPE.REMOVE
-									? translate( 'Remove plan' )
-									: translate( 'Cancel plan' ) }
-								<span className="cancel-purchase-form__site-slug">{ site.slug }</span>
+								{ this.getHeaderContent() }
 								{ steps.length > 1 && (
 									<span className="cancel-purchase-form__step">
 										{ translate( 'Step %(currentStep)d of %(totalSteps)d', {
