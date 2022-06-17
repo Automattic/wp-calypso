@@ -4,6 +4,7 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { useState, useEffect, useMemo } from 'react';
 import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import QueryPurchaseCancellationOffers from 'calypso/components/data/query-purchase-cancellation-offers';
 import JetpackBenefitsStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-benefits-step';
 import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
@@ -301,15 +302,22 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	};
 
 	return (
-		<Dialog
-			leaveTimeout={ 0 } // this closes the modal immediately, which makes the experience feel snappier
-			onClose={ handleCloseDialog }
-			buttons={ renderStepButtons() } // buttons change based on current step
-			isVisible={ isVisible }
-			className="cancel-jetpack-form__dialog"
-		>
-			<div className="cancel-jetpack-form__dialog-content">{ renderCurrentStep() }</div>
-		</Dialog>
+		<>
+			<QueryPurchaseCancellationOffers
+				siteId={ purchase.siteId }
+				purchaseId={ purchase.id }
+				ownershipId={ purchase.ownershipId }
+			/>
+			<Dialog
+				leaveTimeout={ 0 } // this closes the modal immediately, which makes the experience feel snappier
+				onClose={ handleCloseDialog }
+				buttons={ renderStepButtons() } // buttons change based on current step
+				isVisible={ isVisible }
+				className="cancel-jetpack-form__dialog"
+			>
+				<div className="cancel-jetpack-form__dialog-content">{ renderCurrentStep() }</div>
+			</Dialog>
+		</>
 	);
 };
 

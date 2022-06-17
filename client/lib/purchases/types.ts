@@ -8,6 +8,7 @@ export interface Purchase {
 	meta?: string;
 	isRechargeable: boolean;
 	isDomainRegistration?: boolean;
+	ownershipId: number;
 	productName: string;
 	currencyCode: string;
 	expiryDate: string;
