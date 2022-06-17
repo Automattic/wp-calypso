@@ -435,9 +435,6 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	hideFreePlan,
 	onSelectPlan,
 } ) => {
-	// const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-	// 	'pricing_packaging_plans_page_copy_test'
-	// );
 	const [ isReadingCookie, setIsReadingCookie ] = useState( true );
 	const [ isUsUser, setIsUsUser ] = useState( false );
 	const [ featureSliceStart, setFeatureSliceStart ] = useState( 3 );
