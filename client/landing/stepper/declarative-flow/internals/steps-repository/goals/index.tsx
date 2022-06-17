@@ -21,6 +21,8 @@ type TracksGoalsSelectEventProperties = {
 	intent: string;
 };
 
+const SiteGoal = Onboard.SiteGoal;
+
 /**
  * The goals capture step
  */
@@ -51,12 +53,24 @@ const GoalsStep: Step = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_signup_goals_select', eventProperties );
 	};
 
+	const recordIntentSelectTracksEvent = () => {
+		const hasImportGoal = goals.indexOf( SiteGoal.Import ) > -1;
+
+		const eventProperties = {
+			intent,
+			import: hasImportGoal,
+		};
+
+		recordTracksEvent( 'calypso_signup_intent_select', eventProperties );
+	};
+
 	const stepContent = (
 		<SelectGoals
 			selectedGoals={ goals }
 			onChange={ setGoals }
 			onSubmit={ () => {
 				recordGoalsSelectTracksEvent();
+				recordIntentSelectTracksEvent();
 				navigation.submit?.( { intent } );
 			} }
 		/>
