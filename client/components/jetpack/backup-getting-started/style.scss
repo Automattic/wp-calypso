@@ -63,7 +63,6 @@ $content-max-width: 210px;
 	border-radius: 4px;
 	background-color: var( --studio-gray-80 );
 	color: var( --studio-white );
-	font-family: 'Inter', $sans;
 	font-size: 1.25rem;
 	font-weight: 700;
 	line-height: 1;
@@ -94,19 +93,4 @@ $content-max-width: 210px;
 .backup-getting-started__button {
 	margin-top: auto;
 	align-self: flex-start;
-	/* Jetpack Green enforces green background as a default and we want Emerald style here */
-	background-color: var( --studio-black ) !important;
-	border-color: var( --studio-black ) !important;
-
-	&:hover {
-		background-color: var( --studio-gray-80 ) !important;
-		border-color: var( --studio-gray-80 ) !important;
-	}
-	&:focus {
-		background-color: var( --studio-black ) !important;
-	}
-	&:active {
-		background: var( --studio-black ) !important;
-		border-color: var( --studio-black ) !important;
-	}
 }
