@@ -1,6 +1,5 @@
 export const BASE_STALE_TIME = 1000 * 60 * 60 * 2; // 2 hours
 export const DEFAULT_PAGE_SIZE = 20;
-export const DEFAULT_FIRST_PAGE = 0;
 export const DEFAULT_CATEGORY = 'all';
 
 export const SITE_SEARCH_CACHE_KEY = 'wpcom-site-search-wporg-plugins';
@@ -9,6 +8,7 @@ export const WCCOM_PLUGINS_BLOG_ID = '113771570';
 
 export const WPORG_CACHE_KEY = 'wporg-plugins';
 
+// TODO: Only include the required fields here
 export const RETURNABLE_FIELDS = [
 	'author',
 	'author_login',

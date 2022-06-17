@@ -2,7 +2,7 @@ import { UseQueryResult, UseQueryOptions, useInfiniteQuery, InfiniteData } from 
 import { useSelector } from 'react-redux';
 import { extractSearchInformation } from 'calypso/lib/plugins/utils';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { DEFAULT_FIRST_PAGE, DEFAULT_PAGE_SIZE } from './constants';
+import { DEFAULT_PAGE_SIZE } from './constants';
 import { search } from './site-search-api';
 import { ESHits, ESResponse, Plugin, PluginQueryOptions } from './types';
 import { getPluginsListKey } from './utils';
@@ -72,7 +72,7 @@ export const useNewSiteSearchPluginsInfinite = (
 
 	return useInfiniteQuery(
 		getPluginsListKey( 'DEBUG-new-site-seach', options, true ),
-		( { pageParam = DEFAULT_FIRST_PAGE } ) =>
+		( { pageParam } ) =>
 			search( {
 				query: searchTerm,
 				groupId: 'wporg',
