@@ -40,8 +40,6 @@ export class LocaleSuggestions extends Component {
 				}
 			}
 		}
-
-		this.props.setLocale( locale );
 	}
 
 	componentDidUpdate( prevProps ) {
