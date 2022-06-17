@@ -1,16 +1,16 @@
 import { combineReducers } from '@wordpress/data';
-import type { AnalyzerActions } from './actions';
+import type { Action } from './actions';
 import type { ColorsState } from './types';
 import type { Reducer } from 'redux';
 
-const analyzer: Reducer< ColorsState, AnalyzerActions > = ( state = {}, action ) => {
-	if ( action.type === 'ANALYZE_COLORS' ) {
+const analyzer: Reducer< ColorsState, Action > = ( state = {}, action ) => {
+	if ( action.type === 'COLORS_ANALYZE_START' ) {
 		return {
 			analyzing: true,
 		};
 	}
 
-	if ( action.type === 'ANALYZE_COLORS_RECEIVED' ) {
+	if ( action.type === 'COLORS_ANALYZE_SUCCESS' ) {
 		const colors = { ...state.colors };
 		colors[ action.data.url ] = action.data.colors;
 
@@ -20,7 +20,7 @@ const analyzer: Reducer< ColorsState, AnalyzerActions > = ( state = {}, action )
 		};
 	}
 
-	if ( action.type === 'ANALYZE_COLORS_FAILED' ) {
+	if ( action.type === 'COLORS_ANALYZE_FAILED' ) {
 		return {
 			analyzing: false,
 		};
