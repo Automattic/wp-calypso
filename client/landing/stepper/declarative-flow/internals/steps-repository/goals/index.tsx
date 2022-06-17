@@ -54,7 +54,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 	};
 
 	const recordIntentSelectTracksEvent = () => {
-		const hasImportGoal = goals.indexOf( SiteGoal.Import ) > -1;
+		const hasImportGoal = goals.includes( SiteGoal.Import );
 
 		const eventProperties = {
 			intent,
