@@ -44,7 +44,6 @@ export default function IssueLicenseForm( {
 	} );
 
 	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
-	const [ redirectToDashboard ] = useState( fromDashboard );
 
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ product, setProduct ] = useState( '' );
@@ -73,7 +72,7 @@ export default function IssueLicenseForm( {
 	const assignLicense = useAssignLicenseMutation( {
 		onSuccess: ( license: any ) => {
 			setIsSubmitting( false );
-			if ( redirectToDashboard ) {
+			if ( fromDashboard ) {
 				handleRedirectToDashboard( license.license_key );
 				return;
 			}

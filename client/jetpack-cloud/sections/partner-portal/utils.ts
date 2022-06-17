@@ -175,5 +175,5 @@ export function formatApiPartner( partner: APIPartner ): Partner {
  * @returns Product title
  */
 export function getProductTitle( product: string ): string {
-	return product.replace( 'Jetpack ', '' ).replace( '(', '' ).replace( ')', '' );
+	return product.replace( /(?:Jetpack\s|[)(])/gi, '' );
 }

@@ -15,8 +15,7 @@ export default function SiteAddLicenseNotification( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const selectedSite = purchasedLicense.selectedSite;
-	const selectedProduct = purchasedLicense.selectedProduct;
+	const { selectedSite, selectedProduct } = purchasedLicense;
 
 	const dismissBanner = useCallback( () => {
 		dispatch( setPurchasedProduct() );
