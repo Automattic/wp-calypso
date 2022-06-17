@@ -43,7 +43,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 		};
 
 		goals.forEach( ( goal, i ) => {
-			eventProperties[ goal ] = i;
+			eventProperties[ goal ] = i + 1;
 		} );
 
 		// TODO: Add ref prop in another PR.
