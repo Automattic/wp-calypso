@@ -4,13 +4,14 @@ import { Flex, FlexItem } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
 import { Icon, external } from '@wordpress/icons';
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 // eslint-disable-next-line no-restricted-imports
 import ArticleContent from 'calypso/blocks/support-article-dialog/dialog-content';
 import { BackButton } from './back-button';
 
 export const HelpCenterEmbedResult: React.FC = () => {
 	const { search } = useLocation();
+	const history = useHistory();
 	const params = new URLSearchParams( search );
 	const postId = params.get( 'postId' );
 	const blogId = params.get( 'blogId' );
@@ -27,11 +28,22 @@ export const HelpCenterEmbedResult: React.FC = () => {
 		recordTracksEvent( `calypso_inlinehelp_article_open`, tracksData );
 	}, [ query, link ] );
 
+	const redirectToSearchOrHome = () => {
+		if ( query ) {
+			const search = new URLSearchParams( {
+				query,
+			} ).toString();
+			history.push( `/?${ search }` );
+		} else {
+			history.push( '/' );
+		}
+	};
+
 	return (
 		<div className="help-center-embed-result">
 			<Flex justify="space-between">
 				<FlexItem>
-					<BackButton />
+					<BackButton onClick={ redirectToSearchOrHome } />
 				</FlexItem>
 				<FlexItem>
 					<Button
