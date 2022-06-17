@@ -12,6 +12,11 @@
 	}
 }
 
+// If the help center is shipped in core, we hide the black fab button
+.a8c-faux-inline-help__button {
+	display: none;
+}
+
 .help-center__container {
 	&.is-mobile {
 		&.is-minimized {
