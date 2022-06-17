@@ -255,11 +255,7 @@ describe( 'Checkout contact step', () => {
 		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
 	} );
 
-	/**
-	 * TODO: Restore these tests, which were failing for some reason on #64718
-	 */
-	/* eslint-disable jest/no-disabled-tests */
-	it.skip( 'autocompletes the contact step when there are valid cached details', async () => {
+	it( 'autocompletes the contact step when there are valid cached details', async () => {
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'US',
 			postal_code: '10001',
@@ -269,12 +265,13 @@ describe( 'Checkout contact step', () => {
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
-		// Wait for the validation to complete
-		await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
-		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
+		// Wait for the validation to complete, then check we've advanced to the next payment step
+		await waitFor( () =>
+			expect( screen.queryByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument()
+		);
 	} );
 
-	it.skip( 'does not autocomplete the contact step when there are invalid cached details', async () => {
+	it( 'does not autocomplete the contact step when there are invalid cached details', async () => {
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'US',
 			postal_code: 'ABCD',
@@ -284,8 +281,7 @@ describe( 'Checkout contact step', () => {
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
-		// Wait for the validation to complete
-		await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
+		// Check that we never advance to the next payment step
 		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
 	} );
 
