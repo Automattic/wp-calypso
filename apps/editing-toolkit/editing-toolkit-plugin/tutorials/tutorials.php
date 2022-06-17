@@ -50,7 +50,7 @@ function wpcom_register_tutorial( $tutorial_id, $options ) {
  * @return null|array Tutorial associative array if found, null if not.
  */
 function wpcom_get_tutorial( $tutorial_id ) {
-	return wpcom_tutorials()->get( $tutorial_id );
+	return wpcom_tutorials()->get_tutorial( $tutorial_id );
 }
 
 /**

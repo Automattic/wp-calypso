@@ -111,7 +111,7 @@ class WPCom_Tutorials {
 	 * @param string $id  The ID of the Tutorial to fetch.
 	 * @return null|array Tutorial associative array if found, null if not.
 	 */
-	public function get( $id ) {
+	public function get_tutorial( $id ) {
 		if ( ! isset( $this->registry[ $id ] ) ) {
 			return null;
 		}
