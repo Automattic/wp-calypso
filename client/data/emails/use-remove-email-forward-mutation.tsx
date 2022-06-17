@@ -5,7 +5,7 @@ import { getCacheKey as getEmailDomainsQueryKey } from 'calypso/data/domains/use
 import { getEmailAddress } from 'calypso/lib/emails';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wp from 'calypso/lib/wp';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
 import type { EmailAccountEmail } from './types';
@@ -43,7 +43,6 @@ export default function useRemoveEmailForwardMutation(
 	const suppliedOnSettled = mutationOptions.onSettled;
 	const suppliedOnMutate = mutationOptions.onMutate;
 	const suppliedOnError = mutationOptions.onError;
-	const suppliedOnSuccess = mutationOptions.onSuccess;
 
 	mutationOptions.mutationKey = MUTATION_KEY;
 
@@ -107,26 +106,6 @@ export default function useRemoveEmailForwardMutation(
 			[ JSON.stringify( emailAccountsQueryKey ) ]: previousEmailAccountsQueryData,
 			[ JSON.stringify( domainsQueryKey ) ]: previousDomainsQueryData,
 		};
-	};
-
-	mutationOptions.onSuccess = ( data, emailForward, context ) => {
-		suppliedOnSuccess?.( data, emailForward, context );
-
-		const emailAddress = getEmailAddress( emailForward );
-
-		const successMessage = successNotice(
-			translate( '{{strong}}%(emailAddress)s{{/strong}} has been removed from your account.', {
-				comment:
-					'%(emailAddress)s is the receiver email address for the email forward being deleted',
-				args: { emailAddress },
-				components: {
-					strong: <strong />,
-				},
-			} ),
-			{ duration: 7000 }
-		);
-
-		dispatch( successMessage );
 	};
 
 	mutationOptions.onError = ( error, emailForward, context ) => {
