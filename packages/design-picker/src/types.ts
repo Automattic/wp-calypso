@@ -63,6 +63,8 @@ export interface DesignPreviewOptions {
 	language?: string;
 	verticalId?: string;
 	siteTitle?: string;
+	viewport_width?: number;
+	viewport_height?: number;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */
