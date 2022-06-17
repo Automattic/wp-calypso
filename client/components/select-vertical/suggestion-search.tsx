@@ -31,7 +31,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 } ) => {
 	const [ isShowSuggestions, setIsShowSuggestions ] = useState( false );
 	const [ isFocused, setIsFocused ] = useState( false );
-	const inputRef = useRef( null );
+	const inputRef = useRef< HTMLInputElement >( null );
 	const wrapperRef = useRef< HTMLDivElement >( null );
 	const suggestionsRef = useRef< Suggestions >( null );
 	const toggleIconRef = useRef( null );
@@ -62,12 +62,6 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 	};
 
 	const handleTextInputChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		// Reset the vertical selection if input field is empty.
-		// This is so users don't need to explicitly select "Something else" to clear previous selection.
-		if ( event.target.value.trim().length === 0 ) {
-			onSelect?.( { value: '', label: '' } );
-		}
-
 		showSuggestions();
 		onInputChange?.( event.target.value );
 	};
@@ -112,6 +106,11 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 		if ( suggestionsRef.current ) {
 			suggestionsRef.current.handleKeyEvent( event );
 		}
+	};
+
+	const handleTextInputClear = () => {
+		onInputChange?.( '' );
+		inputRef.current?.focus();
 	};
 
 	const handleSuggestionsSelect = ( { label, value }: { label: string; value?: string } ) => {
@@ -172,7 +171,6 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 			aria-expanded={ isShowSuggestions }
 		>
 			<div className="select-vertical__suggestion-input">
-				{ isLoading && isShowSuggestions && <Spinner /> }
 				<FormTextInput
 					inputRef={ inputRef }
 					value={ searchTerm }
@@ -184,15 +182,26 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 					onKeyDown={ handleTextInputKeyDown }
 					autoComplete="off"
 				/>
-				<Button
-					ref={ toggleIconRef }
-					onFocus={ () => setIsFocused( true ) }
-					onBlur={ handleToggleSuggestionsBlur }
-					onClick={ handleToggleSuggestionsClick }
-					onKeyDown={ handleToggleSuggestionsKeyDown }
-				>
-					<Gridicon size={ 18 } icon="chevron-down" />
-				</Button>
+				<div className="select-vertical__suggestion-buttons">
+					{ isLoading && isShowSuggestions && <Spinner /> }
+					{ !! searchTerm && (
+						<Button
+							aria-label={ translate( 'Clear Search' ) as string }
+							onClick={ handleTextInputClear }
+						>
+							<Gridicon size={ 18 } icon="cross-small" />
+						</Button>
+					) }
+					<Button
+						ref={ toggleIconRef }
+						onFocus={ () => setIsFocused( true ) }
+						onBlur={ handleToggleSuggestionsBlur }
+						onClick={ handleToggleSuggestionsClick }
+						onKeyDown={ handleToggleSuggestionsKeyDown }
+					>
+						<Gridicon size={ 18 } icon="chevron-down" />
+					</Button>
+				</div>
 			</div>
 			<Suggestions
 				className="select-vertical__suggestion-search-dropdown"
