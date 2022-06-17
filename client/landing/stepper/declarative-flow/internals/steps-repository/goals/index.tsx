@@ -1,3 +1,4 @@
+import { Onboard } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -7,6 +8,18 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SelectGoals from './select-goals';
 import type { Step } from '../../types';
 import './style.scss';
+
+type TracksGoalsSelectEventProperties = {
+	goals: string;
+	write?: number;
+	promote?: number;
+	sell?: number;
+	difm?: number;
+	import?: number;
+	other?: number;
+	ref?: string;
+	intent: string;
+};
 
 /**
  * The goals capture step
@@ -20,11 +33,30 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const { setGoals } = useDispatch( ONBOARD_STORE );
+
+	const recordGoalsSelectTracksEvent = () => {
+		const { serializeGoals } = Onboard.utils;
+
+		const eventProperties: TracksGoalsSelectEventProperties = {
+			goals: serializeGoals( goals ),
+			intent,
+		};
+
+		goals.forEach( ( goal, i ) => {
+			eventProperties[ goal ] = i;
+		} );
+
+		// TODO: Add ref prop in another PR.
+
+		recordTracksEvent( 'calypso_signup_goals_select', eventProperties );
+	};
+
 	const stepContent = (
 		<SelectGoals
 			selectedGoals={ goals }
 			onChange={ setGoals }
 			onSubmit={ () => {
+				recordGoalsSelectTracksEvent();
 				navigation.submit?.( { intent } );
 			} }
 		/>
