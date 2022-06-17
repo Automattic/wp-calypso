@@ -21,6 +21,8 @@ class EmailForwardingAddNewCompact extends Component {
 		emailForwards: PropTypes.array,
 	};
 
+	isMounted = false;
+
 	constructor( props ) {
 		super( props );
 
@@ -37,12 +39,22 @@ class EmailForwardingAddNewCompact extends Component {
 		} );
 	}
 
+	componentDidMount() {
+		this.isMounted = true;
+	}
+
+	componentWillUnmount() {
+		this.isMounted = false;
+	}
+
 	getInitialFields() {
 		return this.props.fields;
 	}
 
 	setFormState = ( fields ) => {
-		this.setState( { fields } );
+		if ( this.isMounted ) {
+			this.setState( { fields } );
+		}
 	};
 
 	renderAddButton() {

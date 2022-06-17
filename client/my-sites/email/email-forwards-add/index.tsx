@@ -65,7 +65,7 @@ const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps
 		page( emailManagement( selectedSite.slug, selectedDomainName, currentRoute ) );
 	}, [ currentRoute, selectedDomainName, selectedSite, source ] );
 
-	const onAddEmailForwardSuccess = useCallback( () => {
+	const onAddedEmailForward = useCallback( () => {
 		if ( ! selectedSite ) {
 			return;
 		}
@@ -101,7 +101,7 @@ const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps
 
 					{ ! areDomainsLoading && (
 						<EmailForwardingAddNewCompactList
-							onAddEmailForwardSuccess={ onAddEmailForwardSuccess }
+							onAddedEmailForward={ onAddedEmailForward }
 							onConfirmEmailForwarding={ noop }
 							selectedDomainName={ selectedDomainName }
 						/>

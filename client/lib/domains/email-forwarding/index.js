@@ -13,7 +13,7 @@ function validateAllFields( fieldValues, existingEmailForwards = [] ) {
 			return [ 'Invalid' ];
 		}
 
-		if ( name !== 'mailbox' ) {
+		if ( fieldName !== 'mailbox' ) {
 			return [];
 		}
 
