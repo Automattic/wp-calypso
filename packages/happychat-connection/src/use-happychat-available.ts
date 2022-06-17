@@ -6,7 +6,7 @@ let cachedAvailableValue: boolean | undefined = undefined;
 
 export function useHappychatAvailable() {
 	const [ available, setIsAvailable ] = useState< boolean | undefined >( cachedAvailableValue );
-	const isSimpleSite = window.location.host.endsWith( 'wordpress.com' );
+	const isSimpleSite = window.location.host.endsWith( '.wordpress.com' );
 	const { data: dataAuth, isLoading: isLoadingAuth } = useHappychatAuth(
 		cachedAvailableValue === undefined
 	);
