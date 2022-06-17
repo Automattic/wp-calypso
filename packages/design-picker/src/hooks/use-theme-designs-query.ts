@@ -58,18 +58,21 @@ function apiThemeToDesign( { id, name, taxonomies, stylesheet }: any ): Design {
 		( { slug }: any ) => slug === 'featured'
 	);
 
+	const is_premium = stylesheet && stylesheet.startsWith( 'premium/' );
+
 	return {
 		slug: id,
 		title: name,
 		recipe: {
 			stylesheet,
 		},
-		is_premium: stylesheet && stylesheet.startsWith( 'premium/' ),
+		is_premium,
 		categories: taxonomies?.theme_subject ?? [],
 		features: [],
 		is_featured_picks: isFeaturedPicks,
 		showFirst: isFeaturedPicks,
 		...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
+		design_type: is_premium ? 'premium' : 'standard',
 
 		// Deprecated; used for /start flow
 		stylesheet,
