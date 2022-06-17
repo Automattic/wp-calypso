@@ -58,6 +58,15 @@ export function getTitanContactsUrl( titanAppsUrlPrefix, email ) {
 	return getTitanUrl( titanAppsUrlPrefix, email, TITAN_APPS.CONTACTS );
 }
 
+/**
+ * Gets the Web client URL for Professional Email
+ *
+ * @param { string } titanAppsUrlPrefix URL prefix to build the final URL based on the next parameters
+ * @param { string | undefined } email Email account is going to be used
+ * @param { boolean } clearPreviousSessions Flag to clear session in the Web Client
+ * @param { string } redirectUrl URL to go back from the Web Client
+ * @returns { string } Path to be used to send the user to the Web Client
+ */
 export function getTitanEmailUrl(
 	titanAppsUrlPrefix,
 	email,

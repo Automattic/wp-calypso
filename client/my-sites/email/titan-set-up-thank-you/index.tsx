@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -41,6 +42,12 @@ const TitanSetUpThankYou = ( {
 	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 	const translate = useTranslate();
 
+	const isEmbeddedInboxTestingEnabled = isEnabled( 'emails/embedded-inbox-testing' );
+
+	const mailboxPrefixUrl = isEmbeddedInboxTestingEnabled
+		? 'https://webmail-alpha.riva.co'
+		: titanAppsUrlPrefix;
+
 	const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
 
 	const thankYouImage = {
@@ -67,9 +74,13 @@ const TitanSetUpThankYou = ( {
 				stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
 				stepCta: (
 					<FullWidthButton
-						href={ getTitanEmailUrl( titanAppsUrlPrefix, emailAddress, true ) }
+						href={ getTitanEmailUrl(
+							mailboxPrefixUrl,
+							emailAddress,
+							true,
+							`${ window.location.protocol }//${ window.location.host }/${ emailManagementPath }`
+						) }
 						primary
-						target="_blank"
 						onClick={ () => {
 							recordEmailAppLaunchEvent( {
 								provider: 'titan',
@@ -79,7 +90,6 @@ const TitanSetUpThankYou = ( {
 						} }
 					>
 						{ translate( 'Go to Inbox' ) }
-						<Gridicon className="titan-set-up-thank-you__icon-external" icon="external" />
 					</FullWidthButton>
 				),
 			},
