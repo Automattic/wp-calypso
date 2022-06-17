@@ -25,3 +25,16 @@ export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
 
 	return SiteIntent.Build;
 };
+
+export const serializeGoals = ( goals: SiteGoal[] ): string => {
+	// Serialize goals by first + alphabetical order.
+	const firstGoal = goals.find( ( goal ) =>
+		[ SiteGoal.Write, SiteGoal.Sell, SiteGoal.Promote, SiteGoal.DIFM, SiteGoal.Import ].includes(
+			goal
+		)
+	);
+
+	return ( firstGoal ? [ firstGoal ] : [] )
+		.concat( goals.filter( ( goal ) => goal !== firstGoal ).sort() )
+		.join( ',' );
+};
