@@ -2,9 +2,8 @@ import { TYPE_FREE, TYPE_FLEXIBLE, TYPE_PRO } from '@automattic/calypso-products
 import { Gridicon } from '@automattic/components';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
-import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -435,10 +434,6 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	hideFreePlan,
 	onSelectPlan,
 } ) => {
-	const [ isReadingCookie, setIsReadingCookie ] = useState( true );
-	const [ isUsUser, setIsUsUser ] = useState( false );
-	const [ featureSliceStart, setFeatureSliceStart ] = useState( 3 );
-
 	const legacySiteWithHigherLimits = useSelector( ( state ) =>
 		isLegacySiteWithHigherLimits( state, selectedSiteId || 0 )
 	);
@@ -462,101 +457,87 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 			? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
 			: `/plans/${ selectedSiteSlug || '' }`;
 
-	useEffect( () => {
-		const cookies = cookie.parse( document.cookie );
-		if ( cookies.country_code === 'US' ) {
-			setIsUsUser( true );
-			setFeatureSliceStart( 0 );
-		}
-		setIsReadingCookie( false );
-	}, [] );
-
 	return (
 		<>
 			<Global styles={ globalOverrides } />
-			{ ! isReadingCookie && (
-				<ComparisonTable
-					firstColWidth={ 31 }
-					planCount={ plans.length }
-					hideFreePlan={ hideFreePlan && ! isStarterPlanEnabled() }
-				>
-					<THead isInSignup={ isInSignup }>
-						<tr>
-							<td className={ `is-first` }>
-								<br />
-							</td>
-							{ plans.map( ( plan, index ) => (
-								<PlansComparisonColHeader
-									key={ plan.getProductId() }
+			<ComparisonTable
+				firstColWidth={ 31 }
+				planCount={ plans.length }
+				hideFreePlan={ hideFreePlan && ! isStarterPlanEnabled() }
+			>
+				<THead isInSignup={ isInSignup }>
+					<tr>
+						<td className={ `is-first` }>
+							<br />
+						</td>
+						{ plans.map( ( plan, index ) => (
+							<PlansComparisonColHeader
+								key={ plan.getProductId() }
+								plan={ plan }
+								currencyCode={ currencyCode }
+								price={ prices[ index ].price }
+								originalPrice={ prices[ index ].originalPrice }
+								translate={ translate }
+							>
+								{ selectedDomainConnection && <PlansDomainConnectionInfo plan={ plan } /> }
+								<PlansComparisonAction
+									currentSitePlanSlug={ sitePlan?.product_slug }
 									plan={ plan }
-									currencyCode={ currencyCode }
-									price={ prices[ index ].price }
-									originalPrice={ prices[ index ].originalPrice }
-									translate={ translate }
-									isExperiment={ isUsUser }
-								>
-									{ selectedDomainConnection && <PlansDomainConnectionInfo plan={ plan } /> }
-									<PlansComparisonAction
-										currentSitePlanSlug={ sitePlan?.product_slug }
-										plan={ plan }
-										isInSignup={ isInSignup }
-										isPrimary={ plan.type === TYPE_PRO }
-										isCurrentPlan={ sitePlan?.product_slug === plan.getStoreSlug() }
-										manageHref={ manageHref }
-										disabled={
-											selectedDomainConnection && [ TYPE_FREE, TYPE_FLEXIBLE ].includes( plan.type )
-										}
-										onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
-									/>
-								</PlansComparisonColHeader>
-							) ) }
-						</tr>
-					</THead>
-					<PlansComparisonRows>
-						{ planComparisonFeatures.slice( featureSliceStart, 12 ).map( ( feature ) => (
-							<PlansComparisonRow
-								feature={ feature }
-								plans={ plans }
-								isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
-								key={ feature.features[ 0 ] }
-								isExperiment={ isUsUser }
-							/>
+									isInSignup={ isInSignup }
+									isPrimary={ plan.type === TYPE_PRO }
+									isCurrentPlan={ sitePlan?.product_slug === plan.getStoreSlug() }
+									manageHref={ manageHref }
+									disabled={
+										selectedDomainConnection && [ TYPE_FREE, TYPE_FLEXIBLE ].includes( plan.type )
+									}
+									onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
+								/>
+							</PlansComparisonColHeader>
 						) ) }
-					</PlansComparisonRows>
-					<PlansComparisonCollapsibleRows collapsed={ showCollapsibleRows }>
-						{ planComparisonFeatures.slice( 12 ).map( ( feature ) => (
-							<PlansComparisonRow
-								feature={ feature }
-								plans={ plans }
-								isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
-								key={ feature.features[ 0 ] }
-								isExperiment={ isUsUser }
-							/>
-						) ) }
-					</PlansComparisonCollapsibleRows>
-					<PlansComparisonToggle>
-						<tr>
-							{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-							<th className="is-first"></th>
-							<td colSpan={ 2 }>
-								<button onClick={ toggleCollapsibleRows }>
-									{ showCollapsibleRows ? (
-										<>
-											<Gridicon size={ 12 } icon="chevron-up" />
-											{ translate( 'Hide full plan comparison' ) }
-										</>
-									) : (
-										<>
-											<Gridicon size={ 12 } icon="chevron-down" />
-											{ translate( 'Show full plan comparison' ) }
-										</>
-									) }
-								</button>
-							</td>
-						</tr>
-					</PlansComparisonToggle>
-				</ComparisonTable>
-			) }
+					</tr>
+				</THead>
+				<PlansComparisonRows>
+					{ planComparisonFeatures.slice( 0, 12 ).map( ( feature ) => (
+						<PlansComparisonRow
+							feature={ feature }
+							plans={ plans }
+							isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
+							key={ feature.features[ 0 ] }
+						/>
+					) ) }
+				</PlansComparisonRows>
+				<PlansComparisonCollapsibleRows collapsed={ showCollapsibleRows }>
+					{ planComparisonFeatures.slice( 12 ).map( ( feature ) => (
+						<PlansComparisonRow
+							feature={ feature }
+							plans={ plans }
+							isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
+							key={ feature.features[ 0 ] }
+						/>
+					) ) }
+				</PlansComparisonCollapsibleRows>
+				<PlansComparisonToggle>
+					<tr>
+						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+						<th className="is-first"></th>
+						<td colSpan={ 2 }>
+							<button onClick={ toggleCollapsibleRows }>
+								{ showCollapsibleRows ? (
+									<>
+										<Gridicon size={ 12 } icon="chevron-up" />
+										{ translate( 'Hide full plan comparison' ) }
+									</>
+								) : (
+									<>
+										<Gridicon size={ 12 } icon="chevron-down" />
+										{ translate( 'Show full plan comparison' ) }
+									</>
+								) }
+							</button>
+						</td>
+					</tr>
+				</PlansComparisonToggle>
+			</ComparisonTable>
 		</>
 	);
 };
