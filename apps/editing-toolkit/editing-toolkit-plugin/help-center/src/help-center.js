@@ -36,11 +36,12 @@ function HelpCenterContent() {
 
 	const content = (
 		<Button
-			isPressed={ show }
 			className={ cx( 'entry-point-button', 'help-center', { 'is-active': show } ) }
 			onClick={ handleToggleHelpCenter }
 			icon={ <HelpIcon newItems={ showHelpIconDot } /> }
 			label="Help"
+			aria-pressed={ show ? true : false }
+			aria-expanded={ show ? true : false }
 		></Button>
 	);
 
