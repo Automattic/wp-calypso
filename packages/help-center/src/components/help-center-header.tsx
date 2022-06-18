@@ -72,7 +72,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 	return (
 		<CardHeader className={ classNames }>
 			<Flex>
-				<p className="help-center-header__text">
+				<p id="header-text" className="help-center-header__text">
 					{ isMinimized ? (
 						<Switch>
 							<Route path="/" exact>

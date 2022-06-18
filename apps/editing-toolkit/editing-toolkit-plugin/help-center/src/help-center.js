@@ -35,13 +35,13 @@ function HelpCenterContent() {
 	};
 
 	const content = (
-		<span className="etk-help-center">
-			<Button
-				className={ cx( 'entry-point-button', { 'is-active': show } ) }
-				onClick={ handleToggleHelpCenter }
-				icon={ <HelpIcon newItems={ showHelpIconDot } /> }
-			></Button>
-		</span>
+		<Button
+			isPressed={ show }
+			className={ cx( 'entry-point-button', 'help-center', { 'is-active': show } ) }
+			onClick={ handleToggleHelpCenter }
+			icon={ <HelpIcon newItems={ showHelpIconDot } /> }
+			label="Help"
+		></Button>
 	);
 
 	return (
