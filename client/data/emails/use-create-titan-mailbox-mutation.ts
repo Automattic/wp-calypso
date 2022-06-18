@@ -8,7 +8,6 @@ import {
 	FIELD_NAME,
 	FIELD_PASSWORD,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
-import type { UseMutationOptions } from 'react-query';
 
 type TitanMailboxFields = {
 	[ FIELD_DOMAIN ]: string;
@@ -22,12 +21,9 @@ type TitanMailboxFields = {
 /**
  * Creates a mailbox for a Professional Email (Titan) account
  *
- * @param mutationOptions Mutation options passed on to `useMutation`
  * @returns Returns the result of the `useMutation` call
  */
-const useCreateTitanMailboxMutation = (
-	mutationOptions: UseMutationOptions< unknown, unknown, TitanMailboxFields > = {}
-) => {
+const useCreateTitanMailboxMutation = () => {
 	return useMutation< unknown, unknown, TitanMailboxFields >(
 		( { alternativeEmail, domain, isAdmin, mailbox, name, password } ) => {
 			return wpcom.req.post( {
@@ -41,8 +37,7 @@ const useCreateTitanMailboxMutation = (
 					is_admin: isAdmin,
 				},
 			} );
-		},
-		mutationOptions
+		}
 	);
 };
 
