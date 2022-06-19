@@ -103,6 +103,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 							className={ 'help-center-header__maximize' }
 							label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
 							icon={ chevronUp }
+							tooltipPosition="top left"
 							onClick={ requestMaximize }
 						/>
 					) : (
@@ -110,6 +111,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 							className={ 'help-center-header__minimize' }
 							label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
 							icon={ lineSolid }
+							tooltipPosition="top left"
 							onClick={ onMinimize }
 						/>
 					) }
@@ -117,6 +119,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 					<Button
 						className={ 'help-center-header__close' }
 						label={ __( 'Close Help Center', __i18n_text_domain__ ) }
+						tooltipPosition="top left"
 						icon={ closeSmall }
 						onClick={ onDismiss }
 					/>
