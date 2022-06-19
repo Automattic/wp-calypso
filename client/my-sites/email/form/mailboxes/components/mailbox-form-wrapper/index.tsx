@@ -27,15 +27,20 @@ const MailboxFormWrapper = ( {
 		[ isRtl ? 'textInputPrefix' : 'textInputSuffix' ]: `\u200e@${ formFields.domain.value }\u202c`,
 	};
 
+	let renderPosition = 0;
+
 	const commonFieldProps = ( field: MailboxFormFieldBase< string > ) => {
+		++renderPosition;
+
 		return {
 			field,
 			onFieldValueChanged,
 			onRequestFieldValidation: () => mailbox.validateField( field.fieldName ),
+			renderPosition,
 		};
 	};
 
-	const UserFormFields = () => {
+	const renderUserFormFields = () => {
 		return (
 			<>
 				<MailboxField
@@ -62,7 +67,7 @@ const MailboxFormWrapper = ( {
 					<MailboxField { ...commonFieldProps( googleFormFields.lastName ) } />
 				) }
 
-				<UserFormFields />
+				{ renderUserFormFields() }
 			</>
 		);
 	};
@@ -74,7 +79,7 @@ const MailboxFormWrapper = ( {
 			<>
 				{ titanFormFields.name && <MailboxField { ...commonFieldProps( titanFormFields.name ) } /> }
 
-				<UserFormFields />
+				{ renderUserFormFields() }
 
 				{ titanFormFields.alternativeEmail && (
 					<MailboxField { ...commonFieldProps( titanFormFields.alternativeEmail ) } />

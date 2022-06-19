@@ -20,6 +20,7 @@ interface MailboxFormFieldProps {
 	lowerCaseChangeValue?: boolean;
 	onFieldValueChanged?: ( field: MailboxFormFieldBase< string > ) => void;
 	onRequestFieldValidation: ( field: MailboxFormFieldBase< string > ) => void;
+	renderPosition: number;
 	textInputPrefix?: string;
 	textInputSuffix?: string;
 }
@@ -30,6 +31,7 @@ const MailboxFieldInput = ( {
 	onBlur,
 	onChange,
 	onInvalid,
+	renderPosition,
 	textInputPrefix,
 	textInputSuffix,
 }: MailboxFormFieldProps & {
@@ -46,6 +48,7 @@ const MailboxFieldInput = ( {
 		onBlur,
 		onChange,
 		onInvalid,
+		...( renderPosition === 1 ? { autoFocus: true } : {} ),
 		required: field.isRequired,
 		value: field.value,
 	};
