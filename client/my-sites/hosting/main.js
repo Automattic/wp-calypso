@@ -15,6 +15,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
 	getAutomatedTransferStatus,
@@ -48,6 +49,15 @@ class Hosting extends Component {
 			event.preventDefault();
 			event.stopImmediatePropagation();
 			this.setState( { clickOutside: true } );
+		}
+	}
+
+	componentDidMount() {
+		const { COMPLETE } = transferStates;
+		// Check if a reverted site still has the COMPLETE status
+		if ( this.props.transferState === COMPLETE ) {
+			// Try to refresh the transfer state
+			this.props.fetchAutomatedTransferStatus( this.props.siteId );
 		}
 	}
 
@@ -202,6 +212,7 @@ export default connect(
 	},
 	{
 		clickActivate,
+		fetchAutomatedTransferStatus,
 		requestSiteById: requestSite,
 	}
 )( localize( wrapWithClickOutside( Hosting ) ) );
