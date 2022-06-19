@@ -374,8 +374,10 @@ export default withCurrentRoute(
 		const userSegment = userId % 100;
 		const locale = getCurrentLocaleSlug( state );
 		const isEditor = getSectionName( state ) === 'gutenberg-editor';
+		const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
 
-		const disableFAB = locale === 'en' && isEditor && userSegment < currentSegment;
+		const disableFAB =
+			isHelpCenterEnabled && locale === 'en' && isEditor && userSegment < currentSegment;
 
 		return {
 			masterbarIsHidden,
