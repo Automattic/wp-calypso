@@ -15,7 +15,6 @@
 }
 
 .help-center .help-center__container-content {
-
 	/**
  	 * SEARCH
  	 */
@@ -128,8 +127,6 @@
 						color: var( --color-neutral );
 					}
 				}
-
-
 			}
 		}
 
@@ -192,7 +189,7 @@
 						color: var( --studio-gray-100 );
 					}
 
-					> svg:last-child {
+					.inline-help__new-releases_dot {
 						align-self: auto;
 						background: none;
 						color: var( --color-masterbar-unread-dot-background );
@@ -204,6 +201,11 @@
 						box-shadow: 0 0 0 1px var( --studio-blue-30 ), 0 0 2px 1px rgb( 79 148 212 / 80% );
 						outline: 1px solid transparent;
 					}
+				}
+
+				> svg:last-child {
+					fill: unset;
+					margin-left: auto;
 				}
 			}
 		}
