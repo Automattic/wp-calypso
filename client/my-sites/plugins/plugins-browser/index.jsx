@@ -458,7 +458,7 @@ const FullListView = ( { category, siteSlug, sites } ) => {
 	} );
 
 	const categories = useCategories();
-	const categoryName = categories[ category ]?.name;
+	const categoryName = categories[ category ]?.name || category;
 	const translate = useTranslate();
 
 	let title = '';
