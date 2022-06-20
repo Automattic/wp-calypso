@@ -55,7 +55,6 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, isLoading } 
 	return (
 		<MemoryRouter>
 			<OptionalDraggable
-				disabled={ isMinimized }
 				draggable={ ! isMobile }
 				handle=".help-center__container-header"
 				bounds="body"
