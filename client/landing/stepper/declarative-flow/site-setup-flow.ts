@@ -198,6 +198,7 @@ export const siteSetupFlow: Flow = {
 				}
 
 				case 'goals': {
+					const { intent } = providedDependencies;
 					if ( intent === SiteIntent.DIFM ) {
 						return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
 					}
