@@ -17,7 +17,7 @@ function PurchaseNotice() {
 			createNotice(
 				'info',
 				__(
-					'Welcome to the pro plan! Premium blocks are now available to use.',
+					'Welcome to the Pro plan! Premium blocks are now available to use.',
 					'full-site-editing'
 				),
 				{
