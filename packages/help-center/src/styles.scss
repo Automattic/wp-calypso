@@ -203,6 +203,14 @@ button.button.back-button__help-center.is-borderless {
 	align-items: center;
 	color: black;
 	font-size: $font-body-small;
+	padding-right: 5px;
+
+	&:focus {
+		color: #043959;
+		box-shadow: 0 0 0 1px #4f94d4, 0 0 2px 1px rgba( 79, 148, 212, 0.8 );
+		outline: 1px solid transparent;
+		border-color: inherit;
+	}
 }
 
 .help-center__container-content {
@@ -228,6 +236,10 @@ button.button.back-button__help-center.is-borderless {
 			color: var( --studio-gray-100 );
 			margin-bottom: 16px;
 			font-size: $font-body-small;
+
+			&:hover {
+				background: var( --color-neutral-0 );
+			}
 		}
 	}
 
@@ -297,7 +309,6 @@ button.button.back-button__help-center.is-borderless {
 		label {
 			cursor: pointer;
 		}
-
 
 		.help-center__container.is-desktop {
 			position: fixed;
