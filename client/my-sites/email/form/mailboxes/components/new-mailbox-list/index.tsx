@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import { Fragment, useCallback } from '@wordpress/element';
+import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { FormEvent, useState } from 'react';
@@ -183,7 +183,7 @@ const NewMailBoxList = (
 					};
 
 					return (
-						<Fragment key={ 'form-' + uuid }>
+						<div key={ 'form-' + uuid }>
 							{ index > 0 && (
 								<CardHeading
 									className="new-mailbox-list__numbered-heading"
@@ -212,7 +212,7 @@ const NewMailBoxList = (
 									<hr className="new-mailbox-list__separator" />
 								</>
 							</MailboxFormWrapper>
-						</Fragment>
+						</div>
 					);
 				} ) }
 
