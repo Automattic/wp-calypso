@@ -40,6 +40,13 @@ export const SelectGoals: React.FC< SelectGoalsProps > = ( {
 		onSubmit();
 	};
 
+	const handleSubmit = () => {
+		// Omit import from selection if it was added to the selection
+		// after user presses back from Import step.
+		handleChange( false, Onboard.SiteGoal.Import );
+		onSubmit();
+	};
+
 	return (
 		<>
 			<div className="select-goals__cards-container">
@@ -62,7 +69,7 @@ export const SelectGoals: React.FC< SelectGoalsProps > = ( {
 
 			<div className="select-goals__actions-container">
 				<ImportLink onClick={ handleImportLinkClick }></ImportLink>
-				<Button primary onClick={ onSubmit }>
+				<Button primary onClick={ handleSubmit }>
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
