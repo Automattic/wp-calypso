@@ -69,7 +69,7 @@ const usePlugins = ( {
 	let results = 0;
 
 	const categories = useCategories();
-	const categoryTags = categories[ category || '' ]?.tags || [];
+	const categoryTags = categories[ category || '' ]?.tags || [ category ];
 	const tag = categoryTags.join( ',' );
 
 	const searchHook =

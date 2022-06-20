@@ -104,7 +104,13 @@ export default function IssueLicenseForm( {
 							'{{a}}Try adding a new payment method{{/a}} or contact support.',
 						{
 							components: {
-								a: <a href={ '/partner-portal/payment-methods/add' } />,
+								a: (
+									<a
+										href={
+											'/partner-portal/payment-methods/add?return=/partner-portal/issue-license'
+										}
+									/>
+								),
 								br: <br />,
 							},
 						}

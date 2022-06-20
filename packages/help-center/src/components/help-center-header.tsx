@@ -87,12 +87,6 @@ const HelpCenterHeader: React.FC< Header > = ( {
 					) : (
 						__( 'Help Center', __i18n_text_domain__ )
 					) }
-					<span
-						className="help-center-header__a8c-only-badge"
-						title="The help center is only visible to Automatticians at this stage."
-					>
-						a8c only
-					</span>
 					{ isMinimized && unreadCount ? (
 						<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
 					) : null }
@@ -103,6 +97,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 							className={ 'help-center-header__maximize' }
 							label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
 							icon={ chevronUp }
+							tooltipPosition="top left"
 							onClick={ requestMaximize }
 						/>
 					) : (
@@ -110,6 +105,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 							className={ 'help-center-header__minimize' }
 							label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
 							icon={ lineSolid }
+							tooltipPosition="top left"
 							onClick={ onMinimize }
 						/>
 					) }
@@ -117,6 +113,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 					<Button
 						className={ 'help-center-header__close' }
 						label={ __( 'Close Help Center', __i18n_text_domain__ ) }
+						tooltipPosition="top left"
 						icon={ closeSmall }
 						onClick={ onDismiss }
 					/>

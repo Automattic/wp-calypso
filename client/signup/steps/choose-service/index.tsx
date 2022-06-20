@@ -37,6 +37,13 @@ interface Props {
 
 type DIFMOrBuiltByIntent = SelectItem< ChoiceType >;
 
+const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' );
+
+const getBackUrl = ( siteSlug?: string ) => {
+	const step = goalsCaptureStepEnabled ? 'goals' : 'intent';
+	return `/setup/${ step }?siteSlug=${ siteSlug }`;
+};
+
 const Placeholder = () => <span className="choose-service__placeholder">&nbsp;</span>;
 
 export default function ChooseServiceStep( props: Props ): React.ReactNode {
@@ -131,7 +138,7 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 						intentsAlt={ [] }
 					/>
 				}
-				backUrl={ `/setup/intent?siteSlug=${ props.queryObject.siteSlug }` }
+				backUrl={ getBackUrl( props.queryObject.siteSlug ) }
 				hideBack={ false }
 				allowBackFirstStep={ true }
 				align={ 'left' }
