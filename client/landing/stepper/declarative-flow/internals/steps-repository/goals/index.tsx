@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import SelectGoals from './select-goals';
 import type { Step } from '../../types';
 import './style.scss';
@@ -35,6 +36,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const { setGoals } = useDispatch( ONBOARD_STORE );
+	const refParameter = getQueryArgs()?.ref;
 
 	const recordGoalsSelectTracksEvent = () => {
 		const { serializeGoals } = Onboard.utils;
@@ -48,7 +50,9 @@ const GoalsStep: Step = ( { navigation } ) => {
 			eventProperties[ goal ] = i + 1;
 		} );
 
-		// TODO: Add ref prop in another PR.
+		if ( refParameter ) {
+			eventProperties.ref = getQueryArgs()?.ref as string;
+		}
 
 		recordTracksEvent( 'calypso_signup_goals_select', eventProperties );
 	};
