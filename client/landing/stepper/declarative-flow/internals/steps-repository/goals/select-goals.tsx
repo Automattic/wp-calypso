@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useGoals } from './goals';
 import ImportLink from './import-link';
 import SelectCard from './select-card';
@@ -13,27 +14,24 @@ type SelectGoalsProps = {
 
 const SiteGoal = Onboard.SiteGoal;
 
-export const SelectGoals: React.FC< SelectGoalsProps > = ( {
-	onChange,
-	onSubmit,
-	selectedGoals,
-} ) => {
+export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsProps ) => {
 	const translate = useTranslate();
 	const goalOptions = useGoals();
+	const [ submitting, setSubmitting ] = useState( false );
 
 	const handleChange = ( selected: boolean, goal: Onboard.SiteGoal ) => {
-		// Always remove potential duplicates
-		const newSelectedGoals = [ ...selectedGoals ];
-
-		// Add newly selected goal to the array
-		if ( selected ) {
-			newSelectedGoals.push( goal );
-		} else {
-			const goalIndex = newSelectedGoals.indexOf( goal );
-			newSelectedGoals.splice( goalIndex, 1 );
+		if ( submitting ) {
+			return;
 		}
 
-		onChange( newSelectedGoals );
+		const newSelectedGoals = new Set( selectedGoals );
+		selected ? newSelectedGoals.add( goal ) : newSelectedGoals.delete( goal );
+		onChange( Array.from( newSelectedGoals ) );
+	};
+
+	const handleSubmit = ( goals: Onboard.SiteGoal[] ) => {
+		setSubmitting( true );
+		onSubmit( goals );
 	};
 
 	return (
@@ -55,8 +53,15 @@ export const SelectGoals: React.FC< SelectGoalsProps > = ( {
 			</div>
 
 			<div className="select-goals__actions-container">
-				<ImportLink onClick={ () => onSubmit( [ ...selectedGoals, SiteGoal.Import ] ) } />
-				<Button primary onClick={ () => onSubmit( [ ...selectedGoals ] ) }>
+				<ImportLink
+					busy={ submitting }
+					onClick={ () => {
+						if ( ! selectedGoals.includes( SiteGoal.Import ) ) {
+							handleSubmit( [ ...selectedGoals, SiteGoal.Import ] );
+						}
+					} }
+				/>
+				<Button primary busy={ submitting } onClick={ () => handleSubmit( [ ...selectedGoals ] ) }>
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
