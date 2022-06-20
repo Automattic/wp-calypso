@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useGoals } from './goals';
 import ImportLink from './import-link';
 import SelectCard from './select-card';
@@ -13,7 +14,6 @@ type SelectGoalsProps = {
 
 const SiteGoal = Onboard.SiteGoal;
 
-<<<<<<< HEAD
 export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsProps ) => {
 	const translate = useTranslate();
 	const goalOptions = useGoals();
@@ -42,30 +42,6 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 	const handleImportLinkClick = () => {
 		const selectedGoalsWithImport = addGoal( SiteGoal.Import );
 		onSubmit( selectedGoalsWithImport );
-=======
-export const SelectGoals: React.FC< SelectGoalsProps > = ( {
-	onChange,
-	onSubmit,
-	selectedGoals,
-} ) => {
-	const translate = useTranslate();
-	const goalOptions = useGoals();
-
-	const handleChange = ( selected: boolean, goal: Onboard.SiteGoal ) => {
-		// Always remove potential duplicates
-		const newSelectedGoals = [ ...selectedGoals ];
-
-		// Add newly selected goal to the array
-		if ( selected ) {
-			newSelectedGoals.push( goal );
-		} else {
-			const goalIndex = newSelectedGoals.indexOf( goal );
-			newSelectedGoals.splice( goalIndex, 1 );
-		}
-
-		onChange( newSelectedGoals );
->>>>>>> 69596a337f (Refactor the PR and fix handling async store updates)
-	};
 
 	return (
 		<>
@@ -86,13 +62,8 @@ export const SelectGoals: React.FC< SelectGoalsProps > = ( {
 			</div>
 
 			<div className="select-goals__actions-container">
-<<<<<<< HEAD
 				<ImportLink onClick={ handleImportLinkClick } />
 				<Button primary onClick={ handleContinueButtonClick }>
-=======
-				<ImportLink onClick={ () => onSubmit( [ ...selectedGoals, SiteGoal.Import ] ) } />
-				<Button primary onClick={ () => onSubmit( [ ...selectedGoals ] ) }>
->>>>>>> 69596a337f (Refactor the PR and fix handling async store updates)
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>

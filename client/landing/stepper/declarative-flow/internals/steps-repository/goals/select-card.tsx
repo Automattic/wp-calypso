@@ -31,7 +31,7 @@ const SelectCard = < T, >( {
 			onClickCapture={ handleClick }
 			role="presentation"
 		>
-			<CheckboxControl checked={ selected } id={ id } onChange={ () => undefined } />
+			<CheckboxControl aria-busy checked={ selected } id={ id } onChange={ () => undefined } />
 			<label className="select-card__label" htmlFor={ id }>
 				{ children }
 			</label>
