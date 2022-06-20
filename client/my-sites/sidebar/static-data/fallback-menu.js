@@ -37,6 +37,7 @@ export default function buildFallbackResponse( {
 	shouldShowApperanceBackground = false,
 	shouldShowAdControl = false,
 	shouldShowAMP = false,
+	shouldShowAddOns = false,
 } = {} ) {
 	let inbox = [];
 	if ( shouldShowInbox ) {
@@ -80,13 +81,17 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/plans/${ siteDomain }`,
 				},
-				{
-					parent: 'upgrades',
-					slug: 'Add-Ons',
-					title: translate( 'Add-Ons' ),
-					type: 'submenu-item',
-					url: `/add-ons/${ siteDomain }`,
-				},
+				...( shouldShowAddOns
+					? [
+							{
+								parent: 'upgrades',
+								slug: 'Add-Ons',
+								title: translate( 'Add-Ons' ),
+								type: 'submenu-item',
+								url: `/add-ons/${ siteDomain }`,
+							},
+					  ]
+					: [] ),
 				{
 					parent: 'upgrades',
 					slug: 'Domains',

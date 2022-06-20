@@ -61,6 +61,7 @@
 		"me/account-close": true,
 		"me/vat-details": true,
 		"migration/sign-in-with-google": false,
+		"my-sites/add-ons": true,
 		"network-connection": true,
 		"plans/starter-plan": true,
 		"plans/personal-plan": true,

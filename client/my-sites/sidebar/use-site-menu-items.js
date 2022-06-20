@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -48,6 +49,8 @@ const useSiteMenuItems = () => {
 
 	const shouldShowInbox = ! isP2;
 
+	const shouldShowAddOnsInFallbackMenu = isEnabled( 'my-sites/add-ons' ) && ! isAtomic;
+
 	/**
 	 * When no site domain is provided, lets show only menu items that support all sites screens.
 	 */
@@ -72,6 +75,7 @@ const useSiteMenuItems = () => {
 		shouldShowWooCommerce,
 		shouldShowThemes,
 		shouldShowInbox,
+		shouldShowAddOns: shouldShowAddOnsInFallbackMenu,
 	};
 
 	return menuItems ?? buildFallbackResponse( fallbackDataOverrides );

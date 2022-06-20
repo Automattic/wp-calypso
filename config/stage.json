@@ -76,6 +76,7 @@
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
 		"migration/sign-in-with-google": false,
+		"my-sites/add-ons": true,
 		"p2/p2-plus": true,
 		"page/export": true,
 		"plans/starter-plan": true,
