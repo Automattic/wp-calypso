@@ -51,7 +51,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 		} );
 
 		if ( refParameter ) {
-			eventProperties.ref = getQueryArgs()?.ref as string;
+			eventProperties.ref = refParameter as string;
 		}
 
 		recordTracksEvent( 'calypso_signup_goals_select', eventProperties );
