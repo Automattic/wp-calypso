@@ -1,22 +1,26 @@
 import { PLAN_ANNUAL_PERIOD, PLAN_MONTHLY_PERIOD } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import TosText from 'calypso/me/purchases/manage-purchase/payment-method-selector/tos-text';
+import { CancellationOffer } from 'calypso/state/cancellation-offers/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 interface Props {
 	purchase: Purchase;
 	siteId: number;
-	offer: object;
+	offer: CancellationOffer;
 }
 
-const JetpackCancellationOfferStep: React.FC< Props > = ( props ) => {
+const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 	const { offer, purchase } = props;
 	const translate = useTranslate();
 
 	const interval = useMemo( () => {
-		const periods = offer.discounted_periods;
+		const periods = offer.discountedPeriods;
 		const billingInterval = purchase.billPeriodDays;
 
 		switch ( billingInterval ) {
@@ -35,6 +39,10 @@ const JetpackCancellationOfferStep: React.FC< Props > = ( props ) => {
 		}
 	}, [ purchase, offer ] );
 
+	const onClickAccept = useCallback( () => {
+		return;
+	}, [] );
+
 	return (
 		<>
 			<FormattedHeader
@@ -46,19 +54,40 @@ const JetpackCancellationOfferStep: React.FC< Props > = ( props ) => {
 				isSecondary={ true }
 			/>
 
-			<div>
-				<p>
+			<div className="jetpack-cancellation-offer__card">
+				<JetpackLogo className="jetpack-cancellation-offer__logo" full size={ 36 } />
+				<p className="jetpack-cancellation-offer__headline">
 					{ translate( 'Get %(discount)d%% off %(name)s for the next %(interval)s.', {
 						args: {
-							discount: offer.discount_percentage,
+							discount: offer.discountPercentage,
 							name: purchase.productName,
 							interval: interval,
 						},
 					} ) }
+				</p>
+				<p>
+					{ translate( '%(discount)d%% discount will be applied next time you are billed.', {
+						args: {
+							discount: offer.discountPercentage,
+						},
+					} ) }
+				</p>
+				<p></p>
+				<Button
+					className="jetpack-cancellation-offer__accept-cta"
+					primary
+					onClick={ onClickAccept }
+				>
+					{ translate( 'Get discount*' ) }
+				</Button>
+				<p>
+					<small>
+						*<TosText />
+					</small>
 				</p>
 			</div>
 		</>
 	);
 };
 
-export default JetpackCancellationOfferStep;
+export default JetpackCancellationOffer;

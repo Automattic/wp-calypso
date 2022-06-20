@@ -4,9 +4,33 @@ import {
 	PURCHASE_CANCELLATION_OFFER_RECEIVE,
 	PURCHASE_CANCELLATION_OFFER_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import {
+	CancellationOffer,
+	CancellationOfferAPIResponse,
+} from 'calypso/state/cancellation-offers/types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
+import type { AnyAction } from 'redux';
 
-const isFetching = ( state = {}, action ) => {
+// Map the response to a typed object.
+const mapResponseObject = ( {
+	currency_code,
+	discount_percentage,
+	discounted_periods,
+	formatted_price,
+	offer_code,
+}: CancellationOfferAPIResponse ): CancellationOffer => ( {
+	currencyCode: currency_code,
+	discountPercentage: discount_percentage,
+	discountedPeriods: discounted_periods,
+	formattedPrice: formatted_price,
+	offerCode: offer_code,
+} );
+
+const createIntroOfferMap = ( payload: CancellationOfferAPIResponse[] ) => {
+	return payload.map( mapResponseObject );
+};
+
+const isFetching = ( state = {}, action: AnyAction ) => {
 	switch ( action.type ) {
 		case PURCHASE_CANCELLATION_OFFER_REQUEST:
 			return true;
@@ -18,7 +42,7 @@ const isFetching = ( state = {}, action ) => {
 	return state;
 };
 
-const error = ( state = {}, action ) => {
+const error = ( state = {}, action: AnyAction ) => {
 	switch ( action.type ) {
 		case PURCHASE_CANCELLATION_OFFER_REQUEST_FAILURE:
 			return action.error;
@@ -27,10 +51,10 @@ const error = ( state = {}, action ) => {
 	return state;
 };
 
-const offers = ( state = [], action ) => {
+const offers = ( state = [], action: AnyAction ) => {
 	switch ( action.type ) {
 		case PURCHASE_CANCELLATION_OFFER_RECEIVE:
-			return action.offers;
+			return createIntroOfferMap( action.offers );
 	}
 
 	return state;

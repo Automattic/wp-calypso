@@ -90,3 +90,44 @@ input[type='text'].form-text-input.jetpack-cancellation-survey__choice-item-text
 	padding: 0;
 	margin-left: 1rem;
 }
+
+// Cancellation offer step
+.jetpack-cancellation-offer {
+	&__card {
+		background: var( --studio-white );
+		padding: 2rem;
+		box-shadow: 0 0 40px 0 var( --studio-gray-0 );
+		border: 1px solid var( --studio-gray-50 );
+	}
+
+	&__logo {
+		margin-bottom: 1.5rem;
+	}
+
+	&__headline {
+		font-size: 2.25rem;
+		color: var( --studio-jetpack-green-60 );
+		font-weight: 700;
+		line-height: 1.15;
+		margin-bottom: 1rem;
+	}
+
+	&__accept-cta {
+		padding: 0.5rem 1.25rem;
+		font-size: 1rem;
+		background-color: var( --studio-gray-100 ) !important;
+		border: none !important;
+		margin-bottom: 1rem;
+
+		&:hover,
+		&:active {
+			background-color: var( --studio-gray-80 ) !important;
+		}
+
+		&:focus {
+			box-shadow: none !important;
+			outline: solid 2px var( --studio-gray-100 );
+			outline-offset: 2px;
+		}
+	}
+}

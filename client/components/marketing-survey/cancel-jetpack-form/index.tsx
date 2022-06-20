@@ -7,7 +7,7 @@ import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryPurchaseCancellationOffers from 'calypso/components/data/query-purchase-cancellation-offers';
 import JetpackBenefitsStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-benefits-step';
-import JetpackCancellationOfferStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-offer-step';
+import JetpackCancellationOfferStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-offer';
 import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
