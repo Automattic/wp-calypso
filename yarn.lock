@@ -12533,10 +12533,8 @@ __metadata:
     postcss: ^8.4.5
     prismjs: ^1.26.0
     prop-types: ^15.7.2
-    q-flat: ^1.0.7
     qrcode.react: ^1.0.1
     qs: ^6.9.1
-    qss: ^2.0.3
     react: ^17.0.2
     react-click-outside: ^3.0.1
     react-day-picker: ^7.4.10
@@ -28231,13 +28229,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"q-flat@npm:^1.0.7":
-  version: 1.0.7
-  resolution: "q-flat@npm:1.0.7"
-  checksum: e6e59289e457adc12d93bc56bbb7c82c0e8de61504df3d6aad8d0c388688475a10ac4f6dc71e8934f7b31773bb449e7740eedf65522c0678e509f0730065c95b
-  languageName: node
-  linkType: hard
-
 "qr.js@npm:0.0.0":
   version: 0.0.0
   resolution: "qr.js@npm:0.0.0"
@@ -28278,13 +28269,6 @@ __metadata:
   version: 6.5.2
   resolution: "qs@npm:6.5.2"
   checksum: dab79026d56e6f1fdcc4779a1c6e05d05dad2199443a025815399f545294c9ea2c3ab50a5198600f5f13f52c5672b4389ceccf946919e150467281abf6edf747
-  languageName: node
-  linkType: hard
-
-"qss@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "qss@npm:2.0.3"
-  checksum: 8cd0bc5ab6edf4031b59bcf0a44c7ba118b6af3b3afdd509ed8bb6bc7afefc6d697c925a73ac17bc933d356b957b35285a3c3b4c3bb4e655304ba229ade164a4
   languageName: node
   linkType: hard
 

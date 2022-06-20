@@ -1,5 +1,4 @@
-import { flatten } from 'q-flat';
-import { encode } from 'qss';
+import qs from 'qs';
 import { RETURNABLE_FIELDS, MARKETPLACE_SEARCH_URL } from './constants';
 import type { SearchParams } from './types';
 
@@ -32,14 +31,14 @@ function mapSortToApiValue( sort: string ) {
 function generateApiQueryString( { query, groupId, pageHandle, pageSize, locale }: SearchParams ) {
 	const sort = 'score_default';
 
-	let params: {
+	const params: {
 		fields: string[];
 		filter?: { bool: { must: object[] } };
 		page_handle?: string;
 		query: string;
 		sort: string;
 		size: number;
-		group_id?: string;
+		group_id: string;
 		from?: number;
 		lang: string;
 	} = {
@@ -50,20 +49,14 @@ function generateApiQueryString( { query, groupId, pageHandle, pageSize, locale 
 		sort: mapSortToApiValue( sort ),
 		size: pageSize,
 		lang: locale,
+		group_id: groupId,
 	};
-
-	if ( groupId ) {
-		params = {
-			...params,
-			group_id: groupId,
-		};
-	}
 
 	// TODO implement author search
 	// if ( author ) {
 	// }
 
-	return encode( flatten( params ) );
+	return qs.stringify( params, { arrayFormat: 'brackets' } );
 }
 
 /**
