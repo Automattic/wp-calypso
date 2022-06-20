@@ -1,12 +1,12 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, SubTitle, Title } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { delay } from 'lodash';
 import React, { useEffect, useState } from 'react';
+import AnalysisProgress from 'calypso/blocks/import-light/analysis-progress';
 import Capture from 'calypso/blocks/import-light/capture';
 import Colors from 'calypso/blocks/import-light/colors';
-import Scanning from 'calypso/blocks/import-light/scanning';
 import Summary from 'calypso/blocks/import-light/summary';
 import DocumentHead from 'calypso/components/data/document-head';
 import { ANALYZER_STORE } from 'calypso/landing/stepper/stores';
@@ -42,16 +42,26 @@ const ImportLight: Step = function ImportStep( props ) {
 	}
 
 	function renderStepContent() {
+		let percentage = 2;
+
+		if ( progressState === 'scanning' ) percentage = 33;
+		else if ( progressState === 'colors' ) percentage = 67;
+		else percentage = 99;
+
 		switch ( progressState ) {
 			case 'scanning':
-				return <Scanning website={ url } />;
-
 			case 'colors':
 				return (
-					<Colors
-						colors={ colorsData?.link || [] }
-						onColorAnimationFinish={ onColorAnimationFinish }
-					/>
+					<AnalysisProgress percentage={ percentage }>
+						<Title>{ __( 'Scanning your site' ) }</Title>
+						{ progressState === 'scanning' && <SubTitle>{ url }</SubTitle> }
+						{ progressState === 'colors' && (
+							<Colors
+								colors={ colorsData?.link || [] }
+								onColorAnimationFinish={ onColorAnimationFinish }
+							/>
+						) }
+					</AnalysisProgress>
 				);
 
 			case 'summary':
