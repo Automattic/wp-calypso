@@ -196,7 +196,7 @@ const getLinks = (
 	switch ( type ) {
 		case 'backup': {
 			if ( status === 'inactive' ) {
-				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-realtime`;
+				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-realtime&source=dashboard`;
 			} else {
 				link = `/backup/${ siteUrl }`;
 			}
@@ -204,7 +204,7 @@ const getLinks = (
 		}
 		case 'scan': {
 			if ( status === 'inactive' ) {
-				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-scan`;
+				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-scan&source=dashboard`;
 			} else {
 				link = `/scan/${ siteUrl }`;
 			}

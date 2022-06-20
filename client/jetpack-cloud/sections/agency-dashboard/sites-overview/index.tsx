@@ -5,9 +5,13 @@ import DocumentHead from 'calypso/components/data/document-head';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/partner-portal/agency-dashboard/selectors';
+import {
+	checkIfJetpackSiteGotDisconnected,
+	getPurchasedLicense,
+} from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import SitesOverviewContext from './context';
+import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
 import SiteFilters from './site-filters';
 import SiteSearch from './site-search';
@@ -20,6 +24,7 @@ export default function SitesOverview(): ReactElement {
 	const dispatch = useDispatch();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
+	const purchasedLicense = useSelector( getPurchasedLicense );
 
 	const { search, currentPage, filter } = useContext( SitesOverviewContext );
 
@@ -48,6 +53,9 @@ export default function SitesOverview(): ReactElement {
 			<SidebarNavigation sectionTitle={ pageTitle } />
 			<div className="sites-overview__container">
 				<SiteWelcomeBanner isDashboardView />
+				{ purchasedLicense && data?.sites && (
+					<SiteAddLicenseNotification purchasedLicense={ purchasedLicense } />
+				) }
 				<div className="sites-overview__page-title-container">
 					<h2 className="sites-overview__page-title">{ pageTitle }</h2>
 					<div className="sites-overview__page-subtitle">
