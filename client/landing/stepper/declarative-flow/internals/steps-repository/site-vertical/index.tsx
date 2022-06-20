@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -12,8 +13,10 @@ import SiteVerticalForm from './form';
 import type { Step } from '../../types';
 import type { Vertical } from 'calypso/components/select-vertical/types';
 
+const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' );
+
 const SiteVertical: Step = function SiteVertical( { navigation } ) {
-	const { goNext, submit } = navigation;
+	const { goBack, goNext, submit } = navigation;
 	const [ vertical, setVertical ] = React.useState< Vertical | null >();
 	const [ isBusy, setIsBusy ] = React.useState( false );
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
@@ -58,12 +61,13 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	return (
 		<StepContainer
 			stepName={ 'site-vertical' }
+			goBack={ goalsCaptureStepEnabled ? goBack : undefined }
 			goNext={ goNext }
 			headerImageUrl={ siteVerticalImage }
 			skipLabelText={ translate( 'Skip to dashboard' ) }
 			skipButtonAlign={ 'top' }
 			isHorizontalLayout={ true }
-			hideBack={ true }
+			hideBack={ ! goalsCaptureStepEnabled }
 			formattedHeader={
 				<FormattedHeader
 					id={ 'site-vertical-header' }
