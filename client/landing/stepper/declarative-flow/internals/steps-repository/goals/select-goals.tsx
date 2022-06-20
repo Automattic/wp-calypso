@@ -13,6 +13,7 @@ type SelectGoalsProps = {
 
 const SiteGoal = Onboard.SiteGoal;
 
+<<<<<<< HEAD
 export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsProps ) => {
 	const translate = useTranslate();
 	const goalOptions = useGoals();
@@ -41,31 +42,57 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 	const handleImportLinkClick = () => {
 		const selectedGoalsWithImport = addGoal( SiteGoal.Import );
 		onSubmit( selectedGoalsWithImport );
+=======
+export const SelectGoals: React.FC< SelectGoalsProps > = ( {
+	onChange,
+	onSubmit,
+	selectedGoals,
+} ) => {
+	const translate = useTranslate();
+	const goalOptions = useGoals();
+
+	const handleChange = ( selected: boolean, goal: Onboard.SiteGoal ) => {
+		// Always remove potential duplicates
+		const newSelectedGoals = [ ...selectedGoals ];
+
+		// Add newly selected goal to the array
+		if ( selected ) {
+			newSelectedGoals.push( goal );
+		} else {
+			const goalIndex = newSelectedGoals.indexOf( goal );
+			newSelectedGoals.splice( goalIndex, 1 );
+		}
+
+		onChange( newSelectedGoals );
+>>>>>>> 69596a337f (Refactor the PR and fix handling async store updates)
 	};
 
 	return (
 		<>
 			<div className="select-goals__cards-container">
-				{ goalOptions
-					.filter( ( { key } ) => key !== Onboard.SiteGoal.Import )
-					.map( ( { key, title, isPremium } ) => (
-						<SelectCard
-							key={ key }
-							onChange={ handleChange }
-							selected={ selectedGoals.includes( key ) }
-							value={ key }
-						>
-							<span className="select-goals__goal-title">{ title }</span>
-							{ isPremium && (
-								<span className="select-goals__premium-badge">{ translate( 'Premium' ) }</span>
-							) }
-						</SelectCard>
-					) ) }
+				{ goalOptions.map( ( { key, title, isPremium } ) => (
+					<SelectCard
+						key={ key }
+						onChange={ handleChange }
+						selected={ selectedGoals.includes( key ) }
+						value={ key }
+					>
+						<span className="select-goals__goal-title">{ title }</span>
+						{ isPremium && (
+							<span className="select-goals__premium-badge">{ translate( 'Premium' ) }</span>
+						) }
+					</SelectCard>
+				) ) }
 			</div>
 
 			<div className="select-goals__actions-container">
+<<<<<<< HEAD
 				<ImportLink onClick={ handleImportLinkClick } />
 				<Button primary onClick={ handleContinueButtonClick }>
+=======
+				<ImportLink onClick={ () => onSubmit( [ ...selectedGoals, SiteGoal.Import ] ) } />
+				<Button primary onClick={ () => onSubmit( [ ...selectedGoals ] ) }>
+>>>>>>> 69596a337f (Refactor the PR and fix handling async store updates)
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
