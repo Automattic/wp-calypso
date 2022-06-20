@@ -15,6 +15,11 @@ export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
 		return SiteIntent.DIFM;
 	}
 
+	// Prioritize sell flow. As long as user picks sell, redirect to sell flow.
+	if ( goals.includes( SiteGoal.Sell ) ) {
+		return SiteIntent.Sell;
+	}
+
 	const intentDecidingGoal = ( goals as IntentDecidingGoal[] ).find( ( goal ) =>
 		INTENT_DECIDING_GOALS.includes( goal )
 	);
