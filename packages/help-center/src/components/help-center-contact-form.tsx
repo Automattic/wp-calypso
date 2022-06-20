@@ -229,6 +229,7 @@ export const HelpCenterContactForm = () => {
 						locale,
 						client: 'browser:help-center',
 						is_chat_overflow: false,
+						blog_url: supportSite.URL,
 					} )
 						.then( () => {
 							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
