@@ -11,21 +11,78 @@ import useGetExistingMailboxNames from 'calypso/my-sites/email/form/mailboxes/co
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import { sanitizeMailboxValue } from 'calypso/my-sites/email/form/mailboxes/components/utilities/sanitize-mailbox-value';
 import {
+	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_FIRSTNAME,
+	FIELD_IS_ADMIN,
+	FIELD_LASTNAME,
 	FIELD_MAILBOX,
 	FIELD_NAME,
+	FIELD_PASSWORD,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import {
 	EmailProvider,
+	FormFieldNames,
 	MailboxFormFieldBase,
 	MutableFormFieldNames,
 } from 'calypso/my-sites/email/form/mailboxes/types';
 
 import './style.scss';
 
+type HiddenFieldNames = Exclude<
+	MutableFormFieldNames,
+	typeof FIELD_MAILBOX | typeof FIELD_PASSWORD
+>;
+
+const possibleHiddenFieldNames: HiddenFieldNames[] = [
+	FIELD_NAME,
+	FIELD_FIRSTNAME,
+	FIELD_LASTNAME,
+	FIELD_ALTERNATIVE_EMAIL,
+	FIELD_IS_ADMIN,
+];
+
+const setFieldsVisibilities = (
+	mailboxes: MailboxForm< EmailProvider >[],
+	hiddenFieldNames: HiddenFieldNames[]
+) => {
+	mailboxes.forEach( ( mailbox ) => {
+		// First do a reset
+		possibleHiddenFieldNames
+			.filter( ( fieldName ) => ! hiddenFieldNames.includes( fieldName ) )
+			.forEach( ( fieldName ) => {
+				mailbox.setFieldIsVisible( fieldName, true );
+				mailbox.setFieldIsRequired( fieldName, fieldName !== FIELD_IS_ADMIN );
+			} );
+		possibleHiddenFieldNames
+			.filter( ( fieldName ) => hiddenFieldNames.includes( fieldName ) )
+			.forEach( ( fieldName ) => {
+				mailbox.setFieldIsVisible( fieldName, false );
+				mailbox.setFieldIsRequired( fieldName, false );
+			} );
+	} );
+};
+
+const setFieldsInitialValues = (
+	mailboxes: MailboxForm< EmailProvider >[],
+	initialFieldValues: Partial< Record< HiddenFieldNames, string | boolean > >
+) => {
+	mailboxes.forEach( ( mailbox ) => {
+		Object.entries( initialFieldValues ).forEach( ( [ fieldName, value ] ) => {
+			const currentFieldName = fieldName as FormFieldNames;
+			if (
+				! mailbox.getFieldValue( currentFieldName ) ||
+				! mailbox.getIsFieldTouched( currentFieldName )
+			) {
+				mailbox.setFieldValue( currentFieldName, value );
+			}
+		} );
+	} );
+};
+
 interface MailboxListProps {
 	areButtonsBusy?: boolean;
-	hiddenFieldNames?: MutableFormFieldNames[];
+	hiddenFieldNames?: HiddenFieldNames[];
+	initialFieldValues?: Partial< Record< HiddenFieldNames, string | boolean > >;
 	onCancel?: () => void;
 	onSubmit: ( mailboxOperations: MailboxOperations ) => void;
 	provider: EmailProvider;
@@ -42,7 +99,9 @@ const NewMailBoxList = (
 
 	const {
 		areButtonsBusy = false,
+		children,
 		hiddenFieldNames = [],
+		initialFieldValues = {},
 		onCancel = () => undefined,
 		onSubmit,
 		provider,
@@ -61,12 +120,9 @@ const NewMailBoxList = (
 	const isTitan = provider === EmailProvider.Titan;
 
 	// Set visibility for desired hidden fields
-	mailboxes.forEach( ( mailbox ) => {
-		hiddenFieldNames.forEach( ( fieldName ) => {
-			mailbox.setFieldIsVisible( fieldName, false );
-			mailbox.setFieldIsRequired( fieldName, false );
-		} );
-	} );
+	setFieldsVisibilities( mailboxes, hiddenFieldNames );
+	// Set initial values
+	setFieldsInitialValues( mailboxes, initialFieldValues );
 
 	const addMailbox = () => {
 		const newMailboxes = [ ...mailboxes, createNewMailbox() ];
@@ -143,6 +199,7 @@ const NewMailBoxList = (
 							) }
 							<MailboxFormWrapper mailbox={ mailbox } onFieldValueChanged={ onFieldValueChanged }>
 								<>
+									<div className="new-mailbox-list__children">{ children }</div>
 									<div className="new-mailbox-list__actions">
 										{ index > 0 && (
 											<Button onClick={ removeMailbox( uuid ) } disabled={ areButtonsBusy }>
@@ -188,4 +245,4 @@ const NewMailBoxList = (
 };
 
 export { NewMailBoxList };
-export type { MailboxListProps };
+export type { HiddenFieldNames, MailboxListProps };
