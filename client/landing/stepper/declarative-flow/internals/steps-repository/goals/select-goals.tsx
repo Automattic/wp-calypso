@@ -19,17 +19,10 @@ export const SelectGoals: React.FC< SelectGoalsProps > = ( {
 	const translate = useTranslate();
 	const goalOptions = useGoals();
 
-	const handleChange = ( selected: boolean, value: Onboard.SiteGoal ) => {
-		const newSelectedGoals = [ ...selectedGoals ];
-		const goalKey = value;
-
-		if ( selected ) {
-			newSelectedGoals.push( goalKey );
-		} else {
-			const goalIndex = newSelectedGoals.indexOf( goalKey );
-			newSelectedGoals.splice( goalIndex, 1 );
-		}
-
+	const handleChange = ( selected: boolean, goal: Onboard.SiteGoal ) => {
+		const newSelectedGoals = selected
+			? [ ...selectedGoals, goal ]
+			: selectedGoals.filter( ( selectedGoal ) => selectedGoal !== goal );
 		onChange( newSelectedGoals );
 	};
 
