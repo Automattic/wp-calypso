@@ -61,7 +61,7 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	} );
 };
 
-export const useNewSiteSearchPluginsInfinite = (
+export const useESPluginsInfinite = (
 	options: PluginQueryOptions,
 	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
