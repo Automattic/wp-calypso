@@ -107,6 +107,7 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 							trackScrollPage={ props.trackScrollPage }
 							source="wpcom"
 							emptyContent={ emptyContent }
+							upsellUrl={ upsellUrl }
 						/>
 					</div>
 				) }
