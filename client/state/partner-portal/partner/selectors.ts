@@ -43,7 +43,7 @@ export function getIsPartnerOAuthTokenLoaded( state: PartnerPortalStore ): boole
 }
 
 export function getCurrentPartner( state: PartnerPortalStore ): Partner | null {
-	return state.partnerPortal.partner.current;
+	return state.partnerPortal?.partner.current || null;
 }
 
 export function getPartnerRequestError( state: PartnerPortalStore ): APIError | null {
@@ -57,4 +57,9 @@ export function isAgencyUser( state: PartnerPortalStore ): boolean {
 
 export function showAgencyDashboard( state: PartnerPortalStore ): boolean {
 	return config.isEnabled( 'jetpack/agency-dashboard' ) && isAgencyUser( state );
+}
+
+export function hasValidPaymentMethod( state: PartnerPortalStore ): boolean {
+	const partner = getCurrentPartner( state );
+	return partner?.has_valid_payment_method || false;
 }
