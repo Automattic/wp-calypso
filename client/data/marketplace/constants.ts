@@ -8,6 +8,11 @@ export const WCCOM_PLUGINS_BLOG_ID = '113771570';
 
 export const WPORG_CACHE_KEY = 'wporg-plugins';
 
+const PUBLIC_WPCOM_REST = 'https://public-api.wordpress.com';
+const REST_API_VERSION = '/rest/v1.3';
+const MARKETPLACE_URL_PATH = '/marketplace/search';
+export const MARKETPLACE_SEARCH_URL = PUBLIC_WPCOM_REST + REST_API_VERSION + MARKETPLACE_URL_PATH;
+
 // TODO: Only include the required fields here
 export const RETURNABLE_FIELDS = [
 	'blog_icon_url',

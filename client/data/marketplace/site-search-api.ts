@@ -1,6 +1,6 @@
 import { flatten } from 'q-flat';
 import { encode } from 'qss';
-import { RETURNABLE_FIELDS } from './constants';
+import { RETURNABLE_FIELDS, MARKETPLACE_SEARCH_URL } from './constants';
 import type { SearchParams } from './types';
 
 // Maps sort values to values expected by the API
@@ -75,9 +75,7 @@ function generateApiQueryString( { query, groupId, pageHandle, pageSize, locale 
 export function search( options: SearchParams ) {
 	const queryString = generateApiQueryString( options );
 
-	const pathForPublicApi = `/marketplace/search?${ queryString }`;
-
-	const url = `https://public-api.wordpress.com/rest/v1.3${ pathForPublicApi }`;
+	const url = `${ MARKETPLACE_SEARCH_URL }?${ queryString }`;
 
 	// NOTE: API Nonce is necessary to authenticate requests to class-wpcom-rest-api-v2-endpoint-search.php.
 	return fetch( url, {
