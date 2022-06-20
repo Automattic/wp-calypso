@@ -120,6 +120,11 @@ export type Plan = BillingTerm & {
 
 export type WithSnakeCaseSlug = { product_slug: string };
 export type WithCamelCaseSlug = { productSlug: string };
+export type WithSnakeCaseIsDomain = { is_domain_registration: boolean };
+export type WithCamelCaseIsDomain = { isDomainRegistration: boolean };
+
+export type Purchase = ( WithSnakeCaseSlug | WithCamelCaseSlug ) &
+	( WithSnakeCaseIsDomain | WithCamelCaseIsDomain );
 
 export interface PlanMatchesQuery {
 	term?: string;

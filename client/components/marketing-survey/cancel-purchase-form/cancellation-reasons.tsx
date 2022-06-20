@@ -1,5 +1,7 @@
 import { JETPACK_PRODUCTS_LIST } from '@automattic/calypso-products';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
+import { TRANSFER_DOMAIN_REGISTRATION, UPDATE_NAMESERVERS } from 'calypso/lib/url/support';
 import { DOWNGRADEABLE_PLANS_FROM_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import type { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
@@ -31,6 +33,11 @@ export interface CancellationReason extends CancellationReasonBase {
 	textPlaceholder?: TranslateReturnType;
 
 	/**
+	 * Whether the additional input is required.
+	 */
+	isTextRequired?: boolean;
+
+	/**
 	 * Default value for the sub category select
 	 */
 	selectInitialValue?: string;
@@ -44,6 +51,16 @@ export interface CancellationReason extends CancellationReasonBase {
 	 * Options for the sub category select
 	 */
 	selectOptions?: CancellationReasonBase[];
+
+	/**
+	 * Text to show after a reason has been selected to provide additional help
+	 */
+	helpMessage?: TranslateReturnType;
+
+	/**
+	 * Whether the reason blocks the next step (effectively blocking the cancellation).
+	 */
+	isNextStepBlocked?: boolean;
 }
 
 /**
@@ -68,6 +85,7 @@ export const LAST_REASON: CancellationReason = {
 	get textPlaceholder() {
 		return translate( 'Can you please specify?' );
 	},
+	isTextRequired: true,
 };
 
 export const CANCELLATION_REASONS: CancellationReason[] = [
@@ -283,6 +301,93 @@ export const DOMAIN_TRANSFER_CANCELLATION_REASONS: CancellationReason[] = [
 	},
 ];
 
+export const DOMAIN_REGISTRATION_CANCELLATION_REASONS: CancellationReason[] = [
+	{
+		value: 'misspelled',
+		get label() {
+			return translate( 'I misspelled the domain' );
+		},
+		get helpMessage() {
+			return translate(
+				'If you misspelled the domain name you were attempting to purchase, it’s likely that others will as well, ' +
+					'and you might want to consider keeping the misspelled domain.'
+			);
+		},
+	},
+	{
+		value: 'other_host',
+		get label() {
+			return translate( 'I want to use the domain with another service or host' );
+		},
+		get helpMessage() {
+			return translate(
+				'Canceling a domain name causes the domain to become unavailable for a brief period. ' +
+					'Afterward, anyone can repurchase. If you wish to use the domain with another service, ' +
+					'you’ll want to {{a}}update your name servers{{/a}} instead.',
+				{
+					components: {
+						a: (
+							<a
+								href={ localizeUrl( UPDATE_NAMESERVERS ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				}
+			);
+		},
+		isNextStepBlocked: true,
+	},
+	{
+		value: 'transfer',
+		get label() {
+			return translate( 'I want to transfer my domain to another registrar' );
+		},
+		get helpMessage() {
+			return translate(
+				'Canceling a domain name may cause the domain to become unavailable for a long time before it ' +
+					'can be purchased again, and someone may purchase it before you get a chance. Instead, ' +
+					'please {{a}}use our transfer out feature{{/a}} if you want to use this domain again in the future.',
+				{
+					components: {
+						a: (
+							<a
+								href={ localizeUrl( TRANSFER_DOMAIN_REGISTRATION ) }
+								target="_blank"
+								rel="noopener noreferrer"
+							/>
+						),
+					},
+				}
+			);
+		},
+		isNextStepBlocked: true,
+	},
+	{
+		value: 'expectations',
+		get label() {
+			return translate( 'The service isn’t what I expected' );
+		},
+		get helpMessage() {
+			return translate(
+				'If you misspelled the domain name you were attempting to purchase, it’s likely that others will as well, ' +
+					'and you might want to consider keeping the misspelled domain.'
+			);
+		},
+	},
+	{
+		value: 'wanted_free',
+		get label() {
+			return translate( 'I meant to get a free blog' );
+		},
+		get textPlaceholder() {
+			return translate( 'Please provide a brief description of your reasons for canceling.' );
+		},
+		isTextRequired: true,
+	},
+];
+
 interface CancellationReasonsOptions {
 	/**
 	 * The slug of the product being removed.
@@ -306,6 +411,7 @@ export function getCancellationReasons(
 		...CANCELLATION_REASONS,
 		...JETPACK_CANCELLATION_REASONS,
 		...DOMAIN_TRANSFER_CANCELLATION_REASONS,
+		...DOMAIN_REGISTRATION_CANCELLATION_REASONS,
 		...getExtraJetpackReasons( opts ),
 	];
 
