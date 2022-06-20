@@ -467,7 +467,13 @@ const navigateToSite =
 		const state = getState();
 		const site = getSite( state, siteId );
 		if ( isJetpackCloud() && ! site && showAgencyDashboard( state ) ) {
-			return page.redirect( '/dashboard' );
+			const isDefaultFilterCleared = getPreference(
+				state,
+				'jetpack-dashboard-default-filter-cleared'
+			);
+			return page.redirect(
+				isDefaultFilterCleared ? '/dashboard' : '/dashboard?issue_types=all_issues'
+			);
 		}
 		const pathname = getPathnameForSite();
 		if ( pathname ) {

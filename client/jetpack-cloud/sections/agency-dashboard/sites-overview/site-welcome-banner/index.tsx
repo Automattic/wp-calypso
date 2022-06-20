@@ -72,11 +72,17 @@ export default function SiteWelcomeBanner( {
 		);
 	}, [ handleTrackEvents, isDashboardView, savePreferenceType ] );
 
+	const isDefaultFilterCleared = useSelector( ( state ) =>
+		getPreference( state, 'jetpack-dashboard-default-filter-cleared' )
+	);
+
 	// Hide the banner if the banner is already viewed
 	// on the dashboard page or the banner is dismissed
 	if ( isDismissed || hideBanner ) {
 		return null;
 	}
+
+	const dashboardHref = isDefaultFilterCleared ? '/dashboard' : '/dashboard?issue_types=all_issues';
 
 	return (
 		<Banner
@@ -94,7 +100,7 @@ export default function SiteWelcomeBanner( {
 			horizontal
 			iconPath={ tipIcon }
 			callToAction={ isDashboardView ? translate( 'Got it' ) : translate( 'View' ) }
-			href={ isDashboardView ? '' : '/dashboard' }
+			href={ isDashboardView ? '' : dashboardHref }
 			onClick={ isDashboardView ? dismissBanner : trackViewEvent }
 			dismissTemporary={ ! isDashboardView }
 			onDismiss={ dismissBanner }

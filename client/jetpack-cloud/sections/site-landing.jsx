@@ -8,22 +8,36 @@ import {
 	isFetchingPartner,
 	isAgencyUser,
 } from 'calypso/state/partner-portal/partner/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
+
 import '../style.scss';
 
 export default function SiteLanding( { primarySiteSlug, isPrimarySiteJetpackSite } ) {
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
+	const isDefaultFilterCleared = useSelector( ( state ) =>
+		getPreference( state, 'jetpack-dashboard-default-filter-cleared' )
+	);
 	const isAgency = useSelector( isAgencyUser );
 	const isAgencyEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
 	useEffect( () => {
 		if ( hasFetched ) {
 			if ( isAgency && isAgencyEnabled ) {
-				page.redirect( '/dashboard' );
+				page.redirect(
+					isDefaultFilterCleared ? '/dashboard' : '/dashboard?issue_types=all_issues'
+				);
 				return;
 			}
 			isPrimarySiteJetpackSite ? page( `/landing/${ primarySiteSlug }` ) : page( `/landing` );
 		}
-	}, [ primarySiteSlug, hasFetched, isPrimarySiteJetpackSite, isAgency, isAgencyEnabled ] );
+	}, [
+		primarySiteSlug,
+		hasFetched,
+		isPrimarySiteJetpackSite,
+		isAgency,
+		isAgencyEnabled,
+		isDefaultFilterCleared,
+	] );
 
 	return <>{ isFetching ? <JetpackLogo size={ 72 } className="sections__logo" /> : null }</>;
 }
