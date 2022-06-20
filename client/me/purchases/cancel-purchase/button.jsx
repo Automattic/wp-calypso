@@ -28,7 +28,7 @@ import {
 	cancelPurchase,
 	extendPurchaseWithFreeMonth,
 } from 'calypso/lib/purchases/actions';
-import { confirmCancelDomain, purchasesRoot } from 'calypso/me/purchases/paths';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { getDowngradePlanFromPurchase } from 'calypso/state/purchases/selectors';
@@ -42,7 +42,6 @@ class CancelPurchaseButton extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
 		purchaseListUrl: PropTypes.string,
-		getConfirmCancelDomainUrlFor: PropTypes.func,
 		siteSlug: PropTypes.string.isRequired,
 		cancelBundledDomain: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
@@ -51,7 +50,6 @@ class CancelPurchaseButton extends Component {
 
 	static defaultProps = {
 		purchaseListUrl: purchasesRoot,
-		getConfirmCancelDomainUrlFor: confirmCancelDomain,
 	};
 
 	state = {
@@ -66,10 +64,6 @@ class CancelPurchaseButton extends Component {
 	};
 
 	handleCancelPurchaseClick = () => {
-		/*if ( isDomainRegistration( this.props.purchase ) ) {
-			return this.goToCancelConfirmation();
-		}*/
-
 		this.setState( {
 			showDialog: true,
 		} );
@@ -79,13 +73,6 @@ class CancelPurchaseButton extends Component {
 		this.setState( {
 			showDialog: false,
 		} );
-	};
-
-	goToCancelConfirmation = () => {
-		const { id } = this.props.purchase;
-		const slug = this.props.siteSlug;
-
-		page( this.props.getConfirmCancelDomainUrlFor( slug, id ) );
 	};
 
 	cancelPurchase = () => {

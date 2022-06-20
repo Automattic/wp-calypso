@@ -45,7 +45,7 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import HappychatButton from 'calypso/components/happychat/button';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getName as getDomainName, getName, isRefundable } from 'calypso/lib/purchases';
+import { getName, isRefundable } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -371,7 +371,7 @@ class CancelPurchaseForm extends Component {
 				confirm: true,
 				product_id: purchase.productId,
 				blog_id: purchase.siteId,
-				domain: getDomainName( purchase ),
+				domain: getName( purchase ),
 			};
 
 			this.setState( { submitting: true } );
@@ -1234,7 +1234,7 @@ class CancelPurchaseForm extends Component {
 			return (
 				<>
 					{ isRemoveFlow ? translate( 'Remove domain' ) : translate( 'Cancel domain' ) }
-					<span className="cancel-purchase-form__site-slug">{ getDomainName( purchase ) }</span>
+					<span className="cancel-purchase-form__site-slug">{ getName( purchase ) }</span>
 				</>
 			);
 		}
