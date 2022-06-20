@@ -26,6 +26,7 @@
 		"ad-tracking": false,
 		"build/sites-dashboard": true,
 		"calypsoify/plugins": true,
+		"cancellation-offers": false,
 		"catch-js-errors": false,
 		"cloudflare": true,
 		"current-site/domain-warning": true,

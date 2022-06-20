@@ -8,11 +8,7 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 // API request to get the cancellation offers
-const fetchCancellationOffers = ( action: {
-	siteId: number;
-	purchaseId: number;
-	ownershipId: number;
-} ) => {
+const fetchCancellationOffers = ( action: { siteId: number; purchaseId: number } ) => {
 	return http(
 		{
 			method: 'GET',
@@ -20,7 +16,7 @@ const fetchCancellationOffers = ( action: {
 			apiNamespace: 'wpcom/v2',
 			query: {
 				site: action.siteId,
-				ownership: action.ownershipId,
+				purchase: action.purchaseId,
 			},
 		},
 		action

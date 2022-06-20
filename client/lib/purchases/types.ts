@@ -1,6 +1,7 @@
 // TODO: complete this type
 export interface Purchase {
 	active?: boolean;
+	billPeriodDays: number;
 	id: number;
 	userId: number;
 	saleAmount?: number;
@@ -8,7 +9,6 @@ export interface Purchase {
 	meta?: string;
 	isRechargeable: boolean;
 	isDomainRegistration?: boolean;
-	ownershipId: number;
 	productName: string;
 	currencyCode: string;
 	expiryDate: string;

@@ -7,11 +7,10 @@ import {
 import 'calypso/state/data-layer/wpcom/cancellation-offers/index';
 import 'calypso/state/cancellation-offers/init';
 
-export const fetchCancellationOffers = ( siteId, purchaseId, ownershipId ) => ( {
+export const fetchCancellationOffers = ( siteId, purchaseId ) => ( {
 	type: PURCHASE_CANCELLATION_OFFER_REQUEST,
 	siteId,
 	purchaseId,
-	ownershipId,
 } );
 
 export const receiveCancellationOffers = ( purchaseId, offers ) => ( {

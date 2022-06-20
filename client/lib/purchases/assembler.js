@@ -61,7 +61,6 @@ function createPurchaseObject( purchase ) {
 		isRenewable: Boolean( purchase.is_renewable ),
 		isRenewal: Boolean( purchase.is_renewal ),
 		meta: purchase.meta,
-		ownershipId: Number( purchase.ownership_id ),
 		priceText: purchase.price_text,
 		partnerName: purchase.partner_name,
 		partnerSlug: purchase.partner_slug,

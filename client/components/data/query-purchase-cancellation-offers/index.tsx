@@ -7,14 +7,9 @@ import isFetchingCancellationOffers from 'calypso/state/cancellation-offers/sele
 interface OwnProps {
 	siteId?: number;
 	purchaseId?: number;
-	ownershipId?: number;
 }
 
-const QueryPurchaseCancellationOffers: React.FC< OwnProps > = ( {
-	siteId,
-	purchaseId,
-	ownershipId,
-} ) => {
+const QueryPurchaseCancellationOffers: React.FC< OwnProps > = ( { siteId, purchaseId } ) => {
 	const dispatch = useDispatch();
 
 	const fetchingCancellationOffers = useSelector( ( state ) =>
@@ -23,7 +18,7 @@ const QueryPurchaseCancellationOffers: React.FC< OwnProps > = ( {
 
 	useEffect( () => {
 		if ( siteId && fetchingCancellationOffers === null ) {
-			dispatch( fetchCancellationOffers( siteId, purchaseId, ownershipId ) );
+			dispatch( fetchCancellationOffers( siteId, purchaseId ) );
 		}
 	}, [ dispatch, fetchingCancellationOffers, siteId ] );
 

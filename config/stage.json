@@ -15,6 +15,7 @@
 	"features": {
 		"ad-tracking": false,
 		"calypsoify/plugins": true,
+		"cancellation-offers": true,
 		"catch-js-errors": true,
 		"cloudflare": true,
 		"current-site/domain-warning": true,

@@ -17,6 +17,7 @@
 		"ad-tracking": true,
 		"bilmur-script": true,
 		"calypsoify/plugins": true,
+		"cancellation-offers": false,
 		"catch-js-errors": true,
 		"cloudflare": true,
 		"current-site/domain-warning": true,
