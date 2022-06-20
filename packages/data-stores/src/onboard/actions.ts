@@ -257,6 +257,10 @@ export const setGoals = ( goals: SiteGoal[] ) => ( {
 	goals,
 } );
 
+export const clearImportGoal = () => ( {
+	type: 'CLEAR_IMPORT_GOAL' as const,
+} );
+
 export const setEditEmail = ( email: string ) => ( {
 	type: 'SET_EDIT_EMAIL' as const,
 	email,
@@ -294,5 +298,6 @@ export type OnboardAction = ReturnType<
 	| typeof setProgressTitle
 	| typeof setStepProgress
 	| typeof setGoals
+	| typeof clearImportGoal
 	| typeof setEditEmail
 >;

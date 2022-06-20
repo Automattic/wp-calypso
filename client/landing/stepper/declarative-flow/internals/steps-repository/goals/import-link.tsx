@@ -9,7 +9,7 @@ type ImportLinkProps = {
 	onClick: () => void;
 };
 
-export const ImportLink: React.FC< ImportLinkProps > = ( { onClick } ) => {
+export const ImportLink = ( { onClick }: ImportLinkProps ) => {
 	const site = useSite();
 	const canImport = Boolean( site?.capabilities?.manage_options );
 
