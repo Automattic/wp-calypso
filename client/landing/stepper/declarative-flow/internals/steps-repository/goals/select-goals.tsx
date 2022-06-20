@@ -20,9 +20,13 @@ export const SelectGoals: React.FC< SelectGoalsProps > = ( {
 	const goalOptions = useGoals();
 
 	const handleChange = ( selected: boolean, goal: Onboard.SiteGoal ) => {
-		const newSelectedGoals = selected
-			? [ ...selectedGoals, goal ]
-			: selectedGoals.filter( ( selectedGoal ) => selectedGoal !== goal );
+		// Always remove potential duplicates
+		const newSelectedGoals = selectedGoals.filter( ( selectedGoal ) => selectedGoal !== goal );
+
+		// Add newly selected goal to the array
+		if ( selected ) {
+			newSelectedGoals.push( goal );
+		}
 		onChange( newSelectedGoals );
 	};
 
