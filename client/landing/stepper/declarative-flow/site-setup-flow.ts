@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Onboard } from '@automattic/data-stores';
 import { useDesignsBySite } from '@automattic/design-picker';
 import { useLocale, englishLocales } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -21,6 +22,9 @@ import {
 } from './internals/types';
 import type { StepPath } from './internals/steps-repository';
 
+const SiteIntent = Onboard.SiteIntent;
+const SiteGoal = Onboard.SiteGoal;
+
 export const siteSetupFlow: Flow = {
 	name: 'site-setup',
 
@@ -29,9 +33,9 @@ export const siteSetupFlow: Flow = {
 		const isEnglishLocales = englishLocales.includes( locale );
 
 		return [
+			...( isEnabled( 'signup/goals-step' ) ? [ 'goals' ] : [] ),
 			...( isEnabled( 'signup/site-vertical-step' ) && isEnglishLocales ? [ 'vertical' ] : [] ),
 			'intent',
-			...( isEnabled( 'signup/goals-step' ) ? [ 'goals' ] : [] ),
 			'options',
 			'designSetup',
 			'bloggerStartingPoint',
@@ -68,6 +72,7 @@ export const siteSetupFlow: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+		const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
@@ -192,6 +197,26 @@ export const siteSetupFlow: Flow = {
 					}
 				}
 
+				case 'goals': {
+					if ( intent === SiteIntent.DIFM ) {
+						return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
+					}
+
+					const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' );
+					if ( verticalsStepEnabled ) {
+						return navigate( 'vertical' );
+					}
+
+					switch ( intent ) {
+						case SiteIntent.Write:
+						case SiteIntent.Sell:
+							return navigate( 'options' );
+						case SiteIntent.Build:
+						default:
+							return navigate( 'designSetup' );
+					}
+				}
+
 				case 'intent': {
 					const submittedIntent = params[ 0 ];
 					switch ( submittedIntent ) {
@@ -278,6 +303,22 @@ export const siteSetupFlow: Flow = {
 				}
 
 				case 'vertical': {
+					const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' );
+
+					if ( goalsCaptureStepEnabled ) {
+						if ( goals.includes( SiteGoal.Import ) ) {
+							return navigate( 'import' );
+						}
+
+						switch ( intent ) {
+							case SiteIntent.Write:
+							case SiteIntent.Sell:
+								return navigate( 'options' );
+							default:
+								return navigate( 'designSetup' );
+						}
+					}
+
 					return navigate( 'intent' );
 				}
 
@@ -331,6 +372,14 @@ export const siteSetupFlow: Flow = {
 						// this means we came from write => blogger staring point => choose a design
 						return navigate( 'bloggerStartingPoint' );
 					}
+
+					if ( isEnabled( 'signup/goals-step' ) ) {
+						if ( isEnabled( 'signup/site-vertical-step' ) ) {
+							return navigate( 'vertical' );
+						}
+						return navigate( 'goals' );
+					}
+
 					return navigate( 'intent' );
 
 				case 'editEmail':
@@ -349,6 +398,20 @@ export const siteSetupFlow: Flow = {
 				case 'importerSquarespace':
 				case 'importerWordpress':
 					return navigate( 'import' );
+
+				case 'vertical':
+					if ( isEnabled( 'signup/goals-step' ) ) {
+						return navigate( 'goals' );
+					}
+
+				case 'options':
+				case 'import':
+					if ( isEnabled( 'signup/goals-step' ) ) {
+						if ( isEnabled( 'signup/site-vertical-step' ) ) {
+							return navigate( 'vertical' );
+						}
+						return navigate( 'goals' );
+					}
 
 				default:
 					return navigate( 'intent' );
