@@ -52,6 +52,7 @@
 		"editor/help-center": true,
 		"checkout/help-center": true,
 		"email-accounts/enabled": true,
+		"email-provider-card/unified": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,
