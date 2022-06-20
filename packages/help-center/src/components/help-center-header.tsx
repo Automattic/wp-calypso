@@ -87,6 +87,12 @@ const HelpCenterHeader: React.FC< Header > = ( {
 					) : (
 						__( 'Help Center', __i18n_text_domain__ )
 					) }
+					<span
+						className="help-center-header__a8c-only-badge"
+						title="The help center is only visible to Automatticians at this stage."
+					>
+						a8c only
+					</span>
 					{ isMinimized && unreadCount ? (
 						<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
 					) : null }

@@ -21,7 +21,6 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
@@ -499,16 +498,7 @@ class MasterbarLoggedIn extends Component {
 		}
 		if ( isMobile ) {
 			const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
-
-			const currentSegment = 10; //percentage of users that will see the Help Center, not the FAB
-			const userSegment = this.props.user.ID % 100;
-
-			if (
-				this.props.isInEditor &&
-				isHelpCenterEnabled &&
-				userSegment < currentSegment &&
-				this.props.locale === 'en'
-			) {
+			if ( this.props.isInEditor && isHelpCenterEnabled ) {
 				return (
 					<Masterbar>
 						<div className="masterbar__section masterbar__section--left">
@@ -598,7 +588,6 @@ export default connect(
 			// If the user is newer than new navigation shipping date, don't tell them this nav is new. Everything is new to them.
 			isUserNewerThanNewNavigation:
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
-			locale: getCurrentLocaleSlug( state ),
 		};
 	},
 	{
