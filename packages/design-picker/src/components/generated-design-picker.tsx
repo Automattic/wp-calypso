@@ -3,6 +3,7 @@
 import { Button } from '@automattic/components';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect, useRef } from 'react';
@@ -18,6 +19,7 @@ interface GeneratedDesignThumbnailProps {
 	thumbnailUrl: string;
 	isSelected: boolean;
 	onPreview: () => void;
+	label: string;
 }
 
 const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
@@ -25,12 +27,14 @@ const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
 	thumbnailUrl,
 	isSelected,
 	onPreview,
+	label,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	return (
 		<button
 			type="button"
+			aria-label={ label }
 			className={ classnames( 'generated-design-thumbnail', { 'is-selected': isSelected } ) }
 			onClick={ onPreview }
 		>
@@ -124,6 +128,8 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 								thumbnailUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
 								isSelected={ selectedDesign?.slug === design.slug }
 								onPreview={ () => onPreview( design, index ) }
+								/* translators: %s: Option number. Ex. Preview design option 1. */
+								label={ sprintf( __( 'Preview design option %s' ), index + 1 ) }
 							/>
 						) ) }
 					<Button className="generated-design-picker__view-more" onClick={ onViewMore }>
