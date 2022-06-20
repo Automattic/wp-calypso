@@ -97,6 +97,7 @@
 		"signup/site-vertical-step": true,
 		"signup/stepper-flow": true,
 		"signup/woo-verify-email": false,
+		"signup/theme-preview-screen": false,
 		"site-indicator": true,
 		"stepper-woocommerce-poc": true,
 		"themes/premium": true,
