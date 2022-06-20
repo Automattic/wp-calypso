@@ -50,19 +50,24 @@
 	}
 
 	.select-goals__actions-container {
-		padding-top: 48px;
+		padding-top: 24px; // narrower top whitespace on mobile
+		padding-bottom: 60px + 48px; // height of sticky footer + height of bottom whitespace
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		justify-content: left;
 
-		button {
+		button.is-primary {
 			width: 130px;
 			height: 44px;
 			border-radius: 4px;
 		}
 
 		@include break-small {
-			justify-content: center;
+			// Restore center when going back to Plan A.
+			// justify-content: center;
+			padding: 48px 0;
+			flex-direction: row;
+			justify-content: space-between;
 		}
 	}
 }

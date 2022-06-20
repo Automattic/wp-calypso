@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useGoals } from './goals';
+import ImportLink from './import-link';
 import SelectCard from './select-card';
 
 type SelectGoalsProps = {
@@ -32,25 +33,35 @@ export const SelectGoals: React.FC< SelectGoalsProps > = ( {
 		onChange( newSelectedGoals );
 	};
 
+	const handleImportLinkClick = () => {
+		// Internally, pick Import as a selected goal.
+		// In goalsToIntent(), it will choose import as intent.
+		handleChange( true, Onboard.SiteGoal.Import );
+		onSubmit();
+	};
+
 	return (
 		<>
 			<div className="select-goals__cards-container">
-				{ goalOptions.map( ( { key, title, isPremium } ) => (
-					<SelectCard
-						key={ key }
-						onChange={ handleChange }
-						selected={ selectedGoals.includes( key ) }
-						value={ key }
-					>
-						<span className="select-goals__goal-title">{ title }</span>
-						{ isPremium && (
-							<span className="select-goals__premium-badge">{ translate( 'Premium' ) }</span>
-						) }
-					</SelectCard>
-				) ) }
+				{ goalOptions
+					.filter( ( { key } ) => key !== Onboard.SiteGoal.Import )
+					.map( ( { key, title, isPremium } ) => (
+						<SelectCard
+							key={ key }
+							onChange={ handleChange }
+							selected={ selectedGoals.includes( key ) }
+							value={ key }
+						>
+							<span className="select-goals__goal-title">{ title }</span>
+							{ isPremium && (
+								<span className="select-goals__premium-badge">{ translate( 'Premium' ) }</span>
+							) }
+						</SelectCard>
+					) ) }
 			</div>
 
 			<div className="select-goals__actions-container">
+				<ImportLink onClick={ handleImportLinkClick }></ImportLink>
 				<Button primary onClick={ onSubmit }>
 					{ translate( 'Continue' ) }
 				</Button>
