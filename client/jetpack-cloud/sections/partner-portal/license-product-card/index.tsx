@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement, useCallback, useEffect } from 'react';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
+import { getProductTitle } from '../utils';
 import './style.scss';
 
 interface Props {
@@ -16,7 +17,7 @@ interface Props {
 
 export default function LicenseProductCard( props: Props ): ReactElement {
 	const { tabIndex, product, isSelected, onSelectProduct, suggestedProduct } = props;
-	const productTitle = product.name.replace( 'Jetpack ', '' ).replace( '(', '' ).replace( ')', '' );
+	const productTitle = getProductTitle( product.name );
 	const translate = useTranslate();
 
 	const onSelect = useCallback( () => {

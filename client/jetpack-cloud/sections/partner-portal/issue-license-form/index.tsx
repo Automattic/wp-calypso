@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import sortBy from 'lodash/sortBy';
 import page from 'page';
@@ -7,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
@@ -17,6 +19,7 @@ import {
 	APIProductFamilyProduct,
 } from 'calypso/state/partner-portal/types';
 import { AssignLicenceProps } from '../types';
+import { getProductTitle } from '../utils';
 
 import './style.scss';
 
@@ -39,11 +42,35 @@ export default function IssueLicenseForm( {
 	const products = useProductsQuery( {
 		select: alphabeticallySortedProductOptions,
 	} );
+
+	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
+
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
+	const [ product, setProduct ] = useState( '' );
+
+	const handleRedirectToDashboard = ( licenseKey: string ) => {
+		const selectedProduct = products?.data?.find( ( p ) => p.slug === product );
+		if ( selectedSite && selectedProduct ) {
+			dispatch(
+				setPurchasedLicense( {
+					selectedSite: selectedSite?.domain,
+					selectedProduct: {
+						name: getProductTitle( selectedProduct.name ),
+						key: licenseKey,
+					},
+				} )
+			);
+		}
+		return page.redirect( '/dashboard' );
+	};
 
 	const assignLicense = useAssignLicenseMutation( {
 		onSuccess: ( license: any ) => {
 			setIsSubmitting( false );
+			if ( fromDashboard ) {
+				handleRedirectToDashboard( license.license_key );
+				return;
+			}
 			page.redirect(
 				addQueryArgs( { highlight: license.license_key }, '/partner-portal/licenses' )
 			);
@@ -92,7 +119,6 @@ export default function IssueLicenseForm( {
 			dispatch( errorNotice( errorMessage ) );
 		},
 	} );
-	const [ product, setProduct ] = useState( '' );
 
 	const onSelectProduct = useCallback(
 		( value ) => {

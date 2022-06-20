@@ -1,5 +1,8 @@
-import { Preference } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import type {
+	Preference,
+	PurchasedProduct,
+} from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import type { AppState } from 'calypso/types';
 
 export const JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE =
@@ -22,4 +25,8 @@ export function getJetpackDashboardWelcomeBannerPreference(
 
 export function checkIfJetpackSiteGotDisconnected( state: AppState ): boolean {
 	return !! state.sites.jetpackSiteDisconnected;
+}
+
+export function getPurchasedLicense( state: AppState ): PurchasedProduct | null {
+	return state.agencyDashboard.purchasedLicense;
 }

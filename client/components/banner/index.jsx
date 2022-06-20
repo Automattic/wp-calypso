@@ -40,6 +40,7 @@ export class Banner extends Component {
 		disableHref: PropTypes.bool,
 		dismissPreferenceName: PropTypes.string,
 		dismissTemporary: PropTypes.bool,
+		dismissWithoutSavingPreference: PropTypes.bool,
 		event: PropTypes.string,
 		feature: PropTypes.string,
 		horizontal: PropTypes.bool,
@@ -256,6 +257,7 @@ export class Banner extends Component {
 			compact,
 			disableHref,
 			dismissPreferenceName,
+			dismissWithoutSavingPreference,
 			dismissTemporary,
 			forceHref,
 			horizontal,
@@ -283,7 +285,7 @@ export class Banner extends Component {
 			{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
 			{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) },
 			{ 'is-compact': compact },
-			{ 'is-dismissible': dismissPreferenceName },
+			{ 'is-dismissible': dismissPreferenceName || dismissWithoutSavingPreference },
 			{ 'is-horizontal': horizontal },
 			{ 'is-jetpack': jetpack },
 			{ 'is-atomic': isAtomic }
@@ -309,6 +311,9 @@ export class Banner extends Component {
 				href={ ( disableHref || callToAction ) && ! forceHref ? null : this.getHref() }
 				onClick={ callToAction && ! forceHref ? null : this.handleClick }
 			>
+				{ dismissWithoutSavingPreference && (
+					<Gridicon icon="cross" className="banner__close-icon" onClick={ this.handleDismiss } />
+				) }
 				{ this.getIcon() }
 				{ this.getContent() }
 			</Card>
