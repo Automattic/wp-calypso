@@ -13,8 +13,7 @@ import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partn
 import SitesOverviewContext from './context';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
-import SiteFilters from './site-filters';
-import SiteSearch from './site-search';
+import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
 import SiteWelcomeBanner from './site-welcome-banner';
 
 import './style.scss';
@@ -62,12 +61,12 @@ export default function SitesOverview(): ReactElement {
 						{ translate( 'Manage all your Jetpack sites from one location' ) }
 					</div>
 				</div>
-				<div className="sites-overview__search">
-					<SiteSearch searchQuery={ search } currentPage={ currentPage } />
-				</div>
-				<div className="sites-overview__filter-bar">
-					<SiteFilters filter={ filter } isFetching={ isFetching } />
-				</div>
+				<SiteSearchFilterContainer
+					searchQuery={ search }
+					currentPage={ currentPage }
+					filter={ filter }
+					isFetching={ isFetching }
+				/>
 				<SiteContent
 					data={ data }
 					isError={ isError }

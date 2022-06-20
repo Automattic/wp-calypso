@@ -21,6 +21,7 @@ export default function SiteFilters( {
 
 	return (
 		<Filterbar
+			showFilterLabel={ false }
 			selectorTypes={ { issueType: true } }
 			filter={ filter }
 			isLoading={ isFetching }

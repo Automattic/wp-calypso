@@ -34,6 +34,11 @@ const IssueTypeSelector: React.FunctionComponent< Props > = ( props ) => {
 	];
 	return (
 		<TypeSelector
+			parentType={ {
+				key: 'all_issues',
+				name: translate( 'All issues' ),
+			} }
+			isNested
 			types={ issueTypes }
 			typeKey="issueTypes"
 			title={ translate( 'Issue Type' ) }
