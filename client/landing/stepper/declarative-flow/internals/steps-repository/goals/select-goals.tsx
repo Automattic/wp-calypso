@@ -46,19 +46,21 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 	return (
 		<>
 			<div className="select-goals__cards-container">
-				{ goalOptions.map( ( { key, title, isPremium } ) => (
-					<SelectCard
-						key={ key }
-						onChange={ handleChange }
-						selected={ selectedGoals.includes( key ) }
-						value={ key }
-					>
-						<span className="select-goals__goal-title">{ title }</span>
-						{ isPremium && (
-							<span className="select-goals__premium-badge">{ translate( 'Premium' ) }</span>
-						) }
-					</SelectCard>
-				) ) }
+				{ goalOptions
+					.filter( ( { key } ) => key !== Onboard.SiteGoal.Import )
+					.map( ( { key, title, isPremium } ) => (
+						<SelectCard
+							key={ key }
+							onChange={ handleChange }
+							selected={ selectedGoals.includes( key ) }
+							value={ key }
+						>
+							<span className="select-goals__goal-title">{ title }</span>
+							{ isPremium && (
+								<span className="select-goals__premium-badge">{ translate( 'Premium' ) }</span>
+							) }
+						</SelectCard>
+					) ) }
 			</div>
 
 			<div className="select-goals__actions-container">
