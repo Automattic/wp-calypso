@@ -9528,18 +9528,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/primitives@npm:^3.0.1, @wordpress/primitives@npm:^3.0.4, @wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.5.0, @wordpress/primitives@npm:^3.7.0":
-  version: 3.7.0
-  resolution: "@wordpress/primitives@npm:3.7.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-    "@wordpress/element": ^4.7.0
-    classnames: ^2.3.1
-  checksum: 7d6ac1781c70be51290b696ea3a1bcba571e21d8bba4627971bbf21d2e7951c046304bee00f1488063e08990376550be6bf39aae4da06a2d8f315bdaaf04dda1
-  languageName: node
-  linkType: hard
-
-"@wordpress/primitives@npm:^3.8.0":
+"@wordpress/primitives@npm:^3.0.1, @wordpress/primitives@npm:^3.0.4, @wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.5.0, @wordpress/primitives@npm:^3.7.0, @wordpress/primitives@npm:^3.8.0":
   version: 3.8.0
   resolution: "@wordpress/primitives@npm:3.8.0"
   dependencies:
