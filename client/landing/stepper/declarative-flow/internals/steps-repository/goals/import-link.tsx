@@ -6,11 +6,10 @@ import { useSite } from '../../../../hooks/use-site';
 import './import-link.scss';
 
 type ImportLinkProps = {
-	busy: boolean;
 	onClick: () => void;
 };
 
-export const ImportLink = ( { busy, onClick }: ImportLinkProps ) => {
+export const ImportLink = ( { onClick }: ImportLinkProps ) => {
 	const site = useSite();
 	const canImport = Boolean( site?.capabilities?.manage_options );
 
@@ -30,12 +29,7 @@ export const ImportLink = ( { busy, onClick }: ImportLinkProps ) => {
 			<p className="import-link__description">
 				{ translate( 'Already have an existing website?' ) }
 			</p>
-			<Button
-				disabled={ ! canImport }
-				className="import-link__button"
-				busy={ busy }
-				onClick={ onClick }
-			>
+			<Button disabled={ ! canImport } className="import-link__button" onClick={ onClick }>
 				{ translate( 'Import your site content' ) }
 			</Button>
 			{ ! canImport && (

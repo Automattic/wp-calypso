@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import { useGoals } from './goals';
 import ImportLink from './import-link';
 import SelectCard from './select-card';
@@ -17,21 +16,31 @@ const SiteGoal = Onboard.SiteGoal;
 export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsProps ) => {
 	const translate = useTranslate();
 	const goalOptions = useGoals();
-	const [ submitting, setSubmitting ] = useState( false );
 
-	const handleChange = ( selected: boolean, goal: Onboard.SiteGoal ) => {
-		if ( submitting ) {
-			return;
-		}
-
-		const newSelectedGoals = new Set( selectedGoals );
-		selected ? newSelectedGoals.add( goal ) : newSelectedGoals.delete( goal );
-		onChange( Array.from( newSelectedGoals ) );
+	const addGoal = ( goal: Onboard.SiteGoal ) => {
+		const goalSet = new Set( selectedGoals );
+		goalSet.add( goal );
+		return Array.from( goalSet );
 	};
 
-	const handleSubmit = ( goals: Onboard.SiteGoal[] ) => {
-		setSubmitting( true );
-		onSubmit( goals );
+	const removeGoal = ( goal: Onboard.SiteGoal ) => {
+		const goalSet = new Set( selectedGoals );
+		goalSet.delete( goal );
+		return Array.from( goalSet );
+	};
+
+	const handleChange = ( selected: boolean, goal: Onboard.SiteGoal ) => {
+		const newSelectedGoals = selected ? addGoal( goal ) : removeGoal( goal );
+		onChange( newSelectedGoals );
+	};
+
+	const handleContinueButtonClick = () => {
+		onSubmit( selectedGoals );
+	};
+
+	const handleImportLinkClick = () => {
+		const selectedGoalsWithImport = addGoal( SiteGoal.Import );
+		onSubmit( selectedGoalsWithImport );
 	};
 
 	return (
@@ -53,15 +62,8 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 			</div>
 
 			<div className="select-goals__actions-container">
-				<ImportLink
-					busy={ submitting }
-					onClick={ () => {
-						if ( ! selectedGoals.includes( SiteGoal.Import ) ) {
-							handleSubmit( [ ...selectedGoals, SiteGoal.Import ] );
-						}
-					} }
-				/>
-				<Button primary busy={ submitting } onClick={ () => handleSubmit( [ ...selectedGoals ] ) }>
+				<ImportLink onClick={ handleImportLinkClick } />
+				<Button primary onClick={ handleContinueButtonClick }>
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
