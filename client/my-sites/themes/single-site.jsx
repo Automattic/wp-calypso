@@ -1,6 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import Main from 'calypso/components/main';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getActiveTheme } from 'calypso/state/themes/selectors/get-active-theme';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -8,7 +9,7 @@ import SingleSiteThemeShowcaseJetpack from './single-site-jetpack';
 import SingleSiteThemeShowcaseWpcom from './single-site-wpcom';
 
 const SingleSiteThemeShowcaseWithOptions = ( props ) => {
-	const { activeTheme, isJetpack, siteId, translate } = props;
+	const { activeTheme, isAtomic, isJetpack, siteId, translate } = props;
 
 	const getScreenshotOption = ( themeId ) => {
 		return activeTheme === themeId ? 'customize' : 'info';
@@ -21,7 +22,7 @@ const SingleSiteThemeShowcaseWithOptions = ( props ) => {
 		return <Main fullWidthLayout className="themes" />;
 	}
 
-	if ( isJetpack ) {
+	if ( isJetpack && ! isAtomic ) {
 		return (
 			<SingleSiteThemeShowcaseJetpack
 				{ ...props }
@@ -53,6 +54,7 @@ export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		siteId: selectedSiteId,
+		isAtomic: isSiteWpcomAtomic( state, selectedSiteId ),
 		isJetpack: isJetpackSite( state, selectedSiteId ),
 		activeTheme: getActiveTheme( state, selectedSiteId ),
 	};
