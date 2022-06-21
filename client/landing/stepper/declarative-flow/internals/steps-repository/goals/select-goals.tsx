@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import { useGoals } from './goals';
 import ImportLink from './import-link';
 import SelectCard from './select-card';
