@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useMemo } from 'react';
 import { Plugin } from 'calypso/data/marketplace/types';
-import { useSiteSearchPlugins } from 'calypso/data/marketplace/use-site-search-es-query';
+import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
 import {
 	useWPCOMFeaturedPlugins,
 	useWPCOMPlugins,
@@ -74,7 +74,7 @@ const usePlugins = ( {
 
 	const searchHook =
 		isEnabled( 'marketplace-jetpack-plugin-search' ) && search
-			? useSiteSearchPlugins
+			? useESPluginsInfinite
 			: useWPORGInfinitePlugins;
 
 	const wporgPluginsOptions = {
