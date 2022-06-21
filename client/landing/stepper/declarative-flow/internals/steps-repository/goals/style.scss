@@ -7,18 +7,19 @@
 
 	.step-container__header {
 		.formatted-header {
-			padding-top: 44px;
+			// i2: padding-top: 44px;
+			// i2: text-align: left;
 			text-align: left;
 
 			.formatted-header__subtitle,
 			.formatted-header__title {
 				@include break-mobile {
-					text-align: center;
+					// i2: text-align: center;
 				}
 			}
 
 			@include break-mobile {
-				padding-top: 72px;
+				// i2: padding-top: 72px;
 			}
 		}
 	}
@@ -45,13 +46,13 @@
 		}
 
 		@include break-small {
-			grid-template-columns: repeat( 2, 1fr );
+			// i2: grid-template-columns: repeat( 2, 1fr );
+			grid-template-columns: repeat( 1, 1fr );
 		}
 	}
 
 	.select-goals__actions-container {
-		padding-top: 24px; // narrower top whitespace on mobile
-		padding-bottom: 60px + 48px; // height of sticky footer + height of bottom whitespace
+		padding: 32px 0 48px;
 		display: flex;
 		flex-direction: column;
 		justify-content: left;
@@ -63,12 +64,13 @@
 		}
 
 		@include break-small {
-			// Restore center when going back to Plan A.
-			// justify-content: center;
-			padding: 48px 0;
+			// i2: justify-content: center;
 			flex-direction: row;
-			justify-content: space-between;
 		}
+	}
+
+	.select-goals__links-container {
+		padding-bottom: 60px; // height of sticky footer
 	}
 }
 
@@ -88,7 +90,11 @@
 
 	&.selected {
 		border: 2px solid #0675c4;
-		background: linear-gradient( 180deg, rgba( 6, 117, 196, 0.2 ) -44.3%, rgba( 255, 255, 255, 0 ) 100% );
+		background: linear-gradient(
+			180deg,
+			rgba( 6, 117, 196, 0.2 ) -44.3%,
+			rgba( 255, 255, 255, 0 ) 100%
+		);
 		padding: 16px 24px;
 	}
 
@@ -96,7 +102,66 @@
 		margin-bottom: 0;
 	}
 
-	.components-checkbox-control__input[type=checkbox] {
+	.components-checkbox-control__input[type='checkbox'] {
 		border-color: #a7aaad;
+	}
+}
+
+.goals-link {
+	&__container {
+		position: relative;
+		padding: 0 0 32px;
+
+		@include break-small {
+			display: flex;
+			align-items: flex-start;
+			justify-content: space-between;
+			padding: 0 0 25px;
+		}
+	}
+
+	&__info-wrapper {
+		@include break-mobile {
+			display: flex;
+			align-items: flex-start;
+			width: 100%;
+		}
+	}
+
+	&__info {
+		flex: 1;
+		padding-right: 6px;
+	}
+
+	&__description {
+		font-size: $font-body-small;
+		color: #646970;
+		margin-bottom: 0;
+		margin-right: 0.2rem;
+	}
+
+	&__button {
+		margin-top: 2px;
+		padding: 0;
+		min-width: 130px;
+		border: none;
+		background: none;
+		color: #101517;
+		text-decoration: underline;
+		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		text-align: start;
+
+		@include break-small {
+			margin-top: 0;
+			text-align: end;
+		}
+
+		&:not( [disabled] ):hover {
+			color: var( --color-neutral-70 );
+		}
+	}
+
+	&__disabled-info svg {
+		fill: var( --color-neutral-20 );
 	}
 }
