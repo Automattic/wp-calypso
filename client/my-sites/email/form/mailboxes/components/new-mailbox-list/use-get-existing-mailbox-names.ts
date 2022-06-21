@@ -27,7 +27,9 @@ const useGetExistingMailboxNames = (
 		data: emailAccounts = [],
 		error,
 		isLoading,
-	} = useGetEmailAccountsQuery( selectedSiteId as number, selectedDomainName );
+	} = useGetEmailAccountsQuery( selectedSiteId as number, selectedDomainName, {
+		notifyOnChangeProps: [ 'data' ],
+	} );
 
 	if ( error || isLoading || ! emailAccounts.length ) {
 		return [];
