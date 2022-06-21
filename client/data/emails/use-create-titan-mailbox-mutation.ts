@@ -9,7 +9,7 @@ import {
 	FIELD_PASSWORD,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 
-type TitanMailboxFields = {
+export type TitanMailboxFields = {
 	[ FIELD_DOMAIN ]: string;
 	[ FIELD_NAME ]: string;
 	[ FIELD_MAILBOX ]: string;
@@ -23,7 +23,7 @@ type TitanMailboxFields = {
  *
  * @returns Returns the result of the `useMutation` call
  */
-const useCreateTitanMailboxMutation = () => {
+export const useCreateTitanMailboxMutation = () => {
 	return useMutation< unknown, unknown, TitanMailboxFields >(
 		( { alternativeEmail, domain, isAdmin, mailbox, name, password } ) => {
 			return wpcom.req.post( {
@@ -40,6 +40,3 @@ const useCreateTitanMailboxMutation = () => {
 		}
 	);
 };
-
-export { useCreateTitanMailboxMutation };
-export type { TitanMailboxFields };

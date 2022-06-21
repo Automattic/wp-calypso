@@ -16,22 +16,22 @@ import './style.scss';
 
 interface MailboxFormFieldProps {
 	field: MailboxFormFieldBase< string >;
+	isFirstField?: boolean;
 	isPasswordField?: boolean;
 	lowerCaseChangeValue?: boolean;
 	onFieldValueChanged?: ( field: MailboxFormFieldBase< string > ) => void;
 	onRequestFieldValidation: ( field: MailboxFormFieldBase< string > ) => void;
-	renderPosition: number;
 	textInputPrefix?: string;
 	textInputSuffix?: string;
 }
 
 const MailboxFieldInput = ( {
 	field,
+	isFirstField = false,
 	isPasswordField = false,
 	onBlur,
 	onChange,
 	onInvalid,
-	renderPosition,
 	textInputPrefix,
 	textInputSuffix,
 }: MailboxFormFieldProps & {
@@ -48,7 +48,7 @@ const MailboxFieldInput = ( {
 		onBlur,
 		onChange,
 		onInvalid,
-		...( renderPosition === 1 ? { autoFocus: true } : {} ),
+		...( isFirstField ? { autoFocus: true } : {} ),
 		required: field.isRequired,
 		value: field.value,
 	};

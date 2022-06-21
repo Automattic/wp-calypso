@@ -30,13 +30,11 @@ const MailboxFormWrapper = ( {
 	let renderPosition = 0;
 
 	const commonFieldProps = ( field: MailboxFormFieldBase< string > ) => {
-		++renderPosition;
-
 		return {
 			field,
 			onFieldValueChanged,
 			onRequestFieldValidation: () => mailbox.validateField( field.fieldName ),
-			renderPosition,
+			isFirstField: ++renderPosition === 1,
 		};
 	};
 
