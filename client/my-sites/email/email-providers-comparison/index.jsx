@@ -78,10 +78,7 @@ import {
 	getProductIntroductoryOffer,
 } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import {
-	getDomainsWithForwards,
-	isAddingEmailForward,
-} from 'calypso/state/selectors/get-email-forwards';
+import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -115,7 +112,6 @@ class EmailProvidersComparison extends Component {
 		gSuiteProduct: PropTypes.object,
 		hasCartDomain: PropTypes.bool,
 		isGSuiteSupported: PropTypes.bool.isRequired,
-		isSubmittingEmailForward: PropTypes.bool,
 		selectedSite: PropTypes.object,
 		titanMailProduct: PropTypes.object,
 	};
@@ -271,7 +267,7 @@ class EmailProvidersComparison extends Component {
 		}
 	};
 
-	onForwardingConfirmNewMailboxes = () => {
+	onBeforeAddEmailForwards = () => {
 		const { comparisonContext, source } = this.props;
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
@@ -322,7 +318,7 @@ class EmailProvidersComparison extends Component {
 			} );
 	};
 
-	onAddedEmailForward = () => {
+	onAddedEmailForwards = () => {
 		this.setState( { emailForwardAdded: true } );
 		const { domain, getSiteDomains, requestingSiteDomains, selectedSite } = this.props;
 		if ( ! requestingSiteDomains ) {
@@ -341,8 +337,8 @@ class EmailProvidersComparison extends Component {
 		const formFields = (
 			<EmailForwardingAddNewCompactList
 				selectedDomainName={ selectedDomainName }
-				onConfirmEmailForwarding={ this.onForwardingConfirmNewMailboxes }
-				onAddedEmailForward={ this.onAddedEmailForward }
+				onBeforeAddEmailForwards={ this.onBeforeAddEmailForwards }
+				onAddedEmailForwards={ this.onAddedEmailForwards }
 			/>
 		);
 
@@ -854,7 +850,6 @@ class EmailProvidersComparison extends Component {
 			domainsWithForwards,
 			hideEmailForwardingCard,
 			isGSuiteSupported,
-			isSubmittingEmailForward,
 			selectedDomainName,
 			selectedSite,
 			source,
@@ -865,7 +860,7 @@ class EmailProvidersComparison extends Component {
 		// - We're currently submitting/creating an email forward
 		// - We have added an email forward from this component
 		const shouldShowEmailForwardWarning =
-			! hideEmailForwardingCard && ! isSubmittingEmailForward && ! this.state.emailForwardAdded;
+			! hideEmailForwardingCard && ! this.state.emailForwardAdded;
 
 		return (
 			<Main wideLayout>
@@ -940,7 +935,6 @@ export default connect(
 			gSuiteProduct,
 			hasCartDomain,
 			hasDiscountForGSuite,
-			isSubmittingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
 			isGSuiteSupported,
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
 			selectedSite,

@@ -2,39 +2,6 @@ import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import 'calypso/state/email-forwarding/init';
 
 /**
- * Retrieve a list of email forwards for a particular domain
- *
- * @param  {object} state    Global state tree
- * @param  {string} domainName domainName to request email forwards for
- * @returns {object}          EmailForwards list
- */
-export function getEmailForwards( state, domainName ) {
-	return state?.emailForwarding?.[ domainName ]?.forwards ?? null;
-}
-
-/**
- * Determines whether we are in the process of adding a new email forward to the specified domain.
- *
- * @param  {object} state    Global state tree
- * @param  {string} domainName domainName to request email adding forwards state
- * @returns {boolean}          adding forwards
- */
-export function isAddingEmailForward( state, domainName ) {
-	return state?.emailForwarding?.[ domainName ]?.addingForward ?? false;
-}
-
-/**
- * Determines whether adding a new email forward was success or not.
- *
- * @param  {object} state    Global state tree
- * @param  {string} domainName domainName to request email adding forwards state
- * @returns {boolean}          adding forwards
- */
-export function addEmailForwardSuccess( state, domainName ) {
-	return state?.emailForwarding?.[ domainName ]?.addEmailForwardSuccess ?? false;
-}
-
-/**
  * Retrieve a list domains that have forwards
  *
  * @param  {object} state   Global state tree
