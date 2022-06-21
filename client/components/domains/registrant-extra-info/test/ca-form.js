@@ -1,4 +1,7 @@
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+import { render, screen } from '@testing-library/react';
 import { RegistrantExtraInfoCaForm } from '../ca-form';
 
 const mockProps = {
@@ -9,7 +12,6 @@ const mockProps = {
 };
 
 describe( 'ca-form', () => {
-	// eslint-disable-next-line jest/expect-expect
 	test( 'should render without errors when extra is empty', () => {
 		const testProps = {
 			...mockProps,
@@ -17,6 +19,10 @@ describe( 'ca-form', () => {
 			ccTldDetails: {},
 		};
 
-		shallow( <RegistrantExtraInfoCaForm { ...testProps } /> );
+		render( <RegistrantExtraInfoCaForm { ...testProps } /> );
+
+		expect(
+			screen.getByText( 'Choose the option that best describes your Canadian presence:' )
+		).toBeVisible();
 	} );
 } );

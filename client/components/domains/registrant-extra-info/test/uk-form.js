@@ -1,6 +1,12 @@
-import { FormInputValidation } from '@automattic/components';
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+import { render, screen } from '@testing-library/react';
 import { RegistrantExtraInfoUkForm } from '../uk-form';
+
+jest.mock( '@automattic/components', () => ( {
+	FormInputValidation: ( { text } ) => <div data-testid="test-validation">{ text }</div>,
+} ) );
 
 const mockProps = {
 	contactDetails: {},
@@ -24,9 +30,8 @@ describe( 'uk-form', () => {
 				},
 			};
 
-			const wrapper = shallow( <RegistrantExtraInfoUkForm { ...testProps } /> );
-			const error = wrapper.find( FormInputValidation );
-			expect( error.props() ).toHaveProperty( 'text', 'Test error message.' );
+			render( <RegistrantExtraInfoUkForm { ...testProps } /> );
+			expect( screen.getByTestId( 'test-validation' ) ).toHaveTextContent( 'Test error message.' );
 		} );
 
 		test( 'should render multiple registration errors', () => {
@@ -46,9 +51,8 @@ describe( 'uk-form', () => {
 				},
 			};
 
-			const wrapper = shallow( <RegistrantExtraInfoUkForm { ...testProps } /> );
-			const error = wrapper.find( FormInputValidation );
-			expect( error ).toHaveProperty( 'length', 3 );
+			render( <RegistrantExtraInfoUkForm { ...testProps } /> );
+			expect( screen.getAllByTestId( 'test-validation' ) ).toHaveLength( 3 );
 		} );
 	} );
 } );
