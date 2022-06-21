@@ -1,5 +1,4 @@
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import 'calypso/state/email-forwarding/init';
 
 /**
  * Retrieve a list domains that have forwards

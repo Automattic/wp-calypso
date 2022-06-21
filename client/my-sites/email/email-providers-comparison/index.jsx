@@ -14,7 +14,6 @@ import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -867,8 +866,6 @@ class EmailProvidersComparison extends Component {
 				<QueryProductsList />
 
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
-
-				{ ! hideEmailForwardingCard && <QueryEmailForwards domainName={ selectedDomainName } /> }
 
 				{ this.renderHeader() }
 
