@@ -4,7 +4,7 @@ import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
-type MailProperties = {
+type EmailProperties = {
 	existingItemsCount: number;
 	isAdditionalMailboxesPurchase: boolean;
 	emailProduct: ProductListItem;
@@ -12,12 +12,12 @@ type MailProperties = {
 	quantity: number;
 };
 
-const getMailProductProperties = (
+const getEmailProductProperties = (
 	provider: EmailProvider,
 	domain: ResponseDomain,
 	emailProduct: ProductListItem,
 	newItemsCount = 1
-): MailProperties => {
+): EmailProperties => {
 	const isTitanProvider = provider === EmailProvider.Titan;
 	const isAdditionalMailboxesPurchase = isTitanProvider
 		? hasTitanMailWithUs( domain )
@@ -41,5 +41,5 @@ const getMailProductProperties = (
 	};
 };
 
-export { getMailProductProperties };
-export type { MailProperties };
+export { getEmailProductProperties };
+export type { EmailProperties };

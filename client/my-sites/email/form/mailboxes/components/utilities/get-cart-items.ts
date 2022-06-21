@@ -9,12 +9,12 @@ import {
 import { GSuiteProductUser } from 'calypso/lib/gsuite/new-users';
 import { isTitanMonthlyProduct } from 'calypso/lib/titan';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
-import { MailProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-mail-product-properties';
+import { EmailProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-email-product-properties';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 
 const getTitanCartItems = (
 	mailboxes: MailboxForm< EmailProvider >[],
-	mailProperties: MailProperties
+	mailProperties: EmailProperties
 ) => {
 	const { emailProduct, newQuantity, quantity } = mailProperties;
 
@@ -38,7 +38,7 @@ const getTitanCartItems = (
 
 const getGSuiteCartItems = (
 	mailboxes: MailboxForm< EmailProvider >[],
-	mailProperties: MailProperties
+	mailProperties: EmailProperties
 ) => {
 	const { isAdditionalMailboxesPurchase, emailProduct, newQuantity, quantity } = mailProperties;
 
@@ -72,7 +72,7 @@ const getGSuiteCartItems = (
 
 const getCartItems = (
 	mailboxes: MailboxForm< EmailProvider >[],
-	mailProperties: MailProperties
+	mailProperties: EmailProperties
 ) => {
 	const provider = mailboxes[ 0 ].provider;
 
