@@ -160,7 +160,7 @@ export class StartImportFlow {
 	 * @param {string} siteSlug The site slug URL.
 	 */
 	async startSetup( siteSlug: string ): Promise< void > {
-		const route = '/setup/goals';
+		const route = this.framework === 'signup' ? '/start/setup-site/intent' : '/setup/intent';
 
 		await this.page.goto( DataHelper.getCalypsoURL( route, { siteSlug } ) );
 		await this.validateSetupPage();
