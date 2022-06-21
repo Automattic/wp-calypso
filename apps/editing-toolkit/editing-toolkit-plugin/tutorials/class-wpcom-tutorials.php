@@ -30,7 +30,7 @@ class WPCom_Tutorials {
 	private $registry = array();
 
 	/**
-	 * Gets aour singleton instance, initiating it the first time.
+	 * Gets our singleton instance, initiating it the first time.
 	 *
 	 * @return WPCom_Tutorials instance.
 	 */
