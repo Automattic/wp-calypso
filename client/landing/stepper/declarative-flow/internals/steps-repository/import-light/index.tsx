@@ -1,6 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { StepContainer, SubTitle, Title } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { createElement, createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { delay } from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -21,6 +23,7 @@ const ImportLight: Step = function ImportStep( props ) {
 
 	const [ url, setUrl ] = useState( '' );
 	const [ progressState, setProgressState ] = useState< ProgressState >( 'capture' );
+	const [ percentage, setPercentage ] = useState( 2 );
 	const { analyzeColors } = useDispatch( ANALYZER_STORE );
 	const colorsData = useSelect( ( select ) => select( ANALYZER_STORE ).getSiteColors( url ) );
 	const fetchingColorsInProgress = useSelect( ( select ) =>
@@ -28,38 +31,57 @@ const ImportLight: Step = function ImportStep( props ) {
 	);
 
 	useEffect( () => {
-		if ( progressState === 'scanning' && ! fetchingColorsInProgress ) setProgressState( 'colors' );
+		if ( progressState === 'scanning' && ! fetchingColorsInProgress ) {
+			makeProgress( 'import-colors', 66 );
+		}
 	} );
+
+	function makeProgress( state: ProgressState, percent?: number, delayMs = 0 ) {
+		delay( () => {
+			setProgressState( state );
+			percent !== undefined && setPercentage( percent );
+		}, delayMs );
+	}
 
 	function onUrlEnter( url: string ) {
 		setUrl( url );
 		analyzeColors( url );
-		setProgressState( 'scanning' );
+		makeProgress( 'scanning', 13, 0 );
+		makeProgress( 'scanning', 33, 500 );
 	}
 
 	function onColorAnimationFinish() {
-		delay( () => setProgressState( 'summary' ), 2000 );
+		makeProgress( 'import-colors-complete', 100, 2000 );
+		makeProgress( 'summary', 100, 3500 );
 	}
 
 	function renderStepContent() {
-		let percentage = 2;
-
-		if ( progressState === 'scanning' ) percentage = 33;
-		else if ( progressState === 'colors' ) percentage = 67;
-		else percentage = 99;
+		const colors = colorsData?.logo || [];
 
 		switch ( progressState ) {
 			case 'scanning':
-			case 'colors':
+			case 'import-colors':
+			case 'import-colors-complete':
 				return (
 					<AnalysisProgress percentage={ percentage }>
 						<Title>{ __( 'Scanning your site' ) }</Title>
 						{ progressState === 'scanning' && <SubTitle>{ url }</SubTitle> }
-						{ progressState === 'colors' && (
-							<Colors
-								colors={ colorsData?.link || [] }
-								onColorAnimationFinish={ onColorAnimationFinish }
-							/>
+						{ progressState === 'import-colors' && (
+							<Colors colors={ colors } onColorAnimationFinish={ onColorAnimationFinish } />
+						) }
+						{ progressState === 'import-colors-complete' && (
+							<SubTitle>
+								{ createInterpolateElement(
+									sprintf(
+										/* translators: the colorsNum could be any number from 0 to about ~10 */
+										__( 'We imported <span>%(colorsNum)s color swatches.</span>' ),
+										{ colorsNum: 4 }
+									),
+									{
+										span: createElement( 'span' ),
+									}
+								) }
+							</SubTitle>
 						) }
 					</AnalysisProgress>
 				);
