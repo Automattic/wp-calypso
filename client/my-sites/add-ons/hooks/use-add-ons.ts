@@ -12,7 +12,9 @@ import {
 	getProductName,
 	getProductTerm,
 } from 'calypso/state/products-list/selectors';
+import customDesignIcon from '../icons/custom-design';
 import noAdsIcon from '../icons/no-ads';
+import unlimitedThemesIcon from '../icons/unlimited-themes';
 
 export interface AddOnMeta {
 	slug: string;
@@ -42,13 +44,13 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 		{
 			slug: WPCOM_FEATURES_CUSTOM_DESIGN,
 			highlight: false,
-			icon: noAdsIcon,
+			icon: customDesignIcon,
 			overrides: null,
 		},
 		{
 			slug: WPCOM_FEATURES_UNLIMITED_THEMES,
 			highlight: false,
-			icon: noAdsIcon,
+			icon: unlimitedThemesIcon,
 			overrides: null,
 		},
 	] as const;
