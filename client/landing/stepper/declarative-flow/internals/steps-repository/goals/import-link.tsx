@@ -1,9 +1,9 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSite } from '../../../../hooks/use-site';
-import './import-link.scss';
 
 type ImportLinkProps = {
 	onClick: () => void;
@@ -25,18 +25,18 @@ export const ImportLink = ( { onClick }: ImportLinkProps ) => {
 	);
 
 	return (
-		<div className="import-link__container">
-			<p className="import-link__description">
+		<div className="goals-link__container">
+			<p className="goals-link__description">
 				{ translate( 'Already have an existing website?' ) }
 			</p>
-			<Button disabled={ ! canImport } className="import-link__button" onClick={ onClick }>
+			<Button disabled={ ! canImport } className="goals-link__button" onClick={ onClick }>
 				{ translate( 'Import your site content' ) }
 			</Button>
 			{ ! canImport && (
 				<>
 					&nbsp;
 					<Tooltip text={ importDisableText } position="bottom center">
-						<div className="import-link__disabled-info">
+						<div className="goals-link__disabled-info">
 							<Icon icon={ info } size={ 20 } />
 						</div>
 					</Tooltip>
