@@ -1,3 +1,4 @@
+import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import 'calypso/state/email-forwarding/init';
 
 /**
@@ -44,11 +45,5 @@ export function getDomainsWithForwards( state, domains ) {
 	if ( ! domains || ! domains.length ) {
 		return [];
 	}
-	return domains.reduce( ( accumulator, domain ) => {
-		const forwards = getEmailForwards( state, domain.domain );
-		if ( forwards && forwards.length ) {
-			accumulator.push( domain.domain );
-		}
-		return accumulator;
-	}, [] );
+	return domains.filter( hasEmailForwards ).map( ( { domain } ) => domain );
 }
