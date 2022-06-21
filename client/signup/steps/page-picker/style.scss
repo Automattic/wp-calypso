@@ -3,6 +3,7 @@
 
 .signup__step.is-difm-page-picker {
 	.step-wrapper.is-horizontal-layout {
+		justify-content: space-around;
 		margin-top: 25px;
 		@include break-small {
 			margin-top: 64px;
@@ -13,6 +14,10 @@
 			margin-bottom: 65px;
 			@include break-small {
 				min-width: 410px;
+				width: 410px;
+			}
+			.formatted-header__subtitle {
+				font-size: 0.875rem;
 			}
 			.step-wrapper__header-button {
 				margin-top: 34px;
