@@ -1,29 +1,33 @@
-import { shallow } from 'enzyme';
-import RegistrantExtraInfoCaForm from '../ca-form';
-import RegistrantExtraInfoFrForm from '../fr-form';
+/**
+ * @jest-environment jsdom
+ */
+import { render, screen } from '@testing-library/react';
 import RegistrantExtraInfoForm from '../index';
-import RegistrantExtraInfoUkForm from '../uk-form';
+
+jest.mock( '../ca-form', () => () => <div data-testid="ca-form"></div> );
+jest.mock( '../fr-form', () => () => <div data-testid="fr-form"></div> );
+jest.mock( '../uk-form', () => () => <div data-testid="uk-form"></div> );
 
 describe( 'Switcher Form', () => {
 	test( 'should render correct form for fr', () => {
-		const wrapper = shallow( <RegistrantExtraInfoForm tld="fr" /> );
+		render( <RegistrantExtraInfoForm tld="fr" /> );
 
-		expect( wrapper.find( RegistrantExtraInfoFrForm ) ).toHaveLength( 1 );
-		expect( wrapper.find( RegistrantExtraInfoCaForm ) ).toHaveLength( 0 );
+		expect( screen.getByTestId( 'fr-form' ) ).toBeVisible();
+		expect( screen.queryByTestId( 'ca-form' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render correct form for ca', () => {
-		const wrapper = shallow( <RegistrantExtraInfoForm tld="ca" /> );
+		render( <RegistrantExtraInfoForm tld="ca" /> );
 
-		expect( wrapper.find( RegistrantExtraInfoCaForm ) ).toHaveLength( 1 );
-		expect( wrapper.find( RegistrantExtraInfoFrForm ) ).toHaveLength( 0 );
+		expect( screen.getByTestId( 'ca-form' ) ).toBeVisible();
+		expect( screen.queryByTestId( 'fr-form' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render correct form for uk', () => {
-		const wrapper = shallow( <RegistrantExtraInfoForm tld="uk" /> );
+		render( <RegistrantExtraInfoForm tld="uk" /> );
 
-		expect( wrapper.find( RegistrantExtraInfoCaForm ) ).toHaveLength( 0 );
-		expect( wrapper.find( RegistrantExtraInfoFrForm ) ).toHaveLength( 0 );
-		expect( wrapper.find( RegistrantExtraInfoUkForm ) ).toHaveLength( 1 );
+		expect( screen.queryByTestId( 'ca-form' ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'fr-form' ) ).not.toBeInTheDocument();
+		expect( screen.getByTestId( 'uk-form' ) ).toBeVisible();
 	} );
 } );
