@@ -6,6 +6,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect, useRef } from 'react';
+import { DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT } from '../constants';
 import { getDesignPreviewUrl, getMShotOptions } from '../utils';
 import type { Design } from '../types';
 import './style.scss';
@@ -62,7 +63,6 @@ export interface GeneratedDesignPickerProps {
 	previews: React.ReactElement[];
 	verticalId: string;
 	locale: string;
-	viewport: { width: number; height: number } | null;
 	heading?: React.ReactElement;
 	footer?: React.ReactElement;
 	onPreview: ( design: Design, positionIndex: number ) => void;
@@ -75,7 +75,6 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 	previews,
 	verticalId,
 	locale,
-	viewport,
 	heading,
 	footer,
 	onPreview,
@@ -111,10 +110,6 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 		};
 	}, [ isMobile ] );
 
-	if ( ! viewport ) {
-		return null;
-	}
-
 	return (
 		<div className="generated-design-picker">
 			{ heading }
@@ -128,8 +123,8 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 								thumbnailUrl={ getDesignPreviewUrl( design, {
 									language: locale,
 									verticalId,
-									viewport_width: viewport?.width,
-									viewport_height: viewport?.height,
+									viewport_width: DEFAULT_VIEWPORT_WIDTH,
+									viewport_height: DEFAULT_VIEWPORT_HEIGHT,
 								} ) }
 								isSelected={ selectedDesign?.slug === design.slug }
 								onPreview={ () => onPreview( design, index ) }

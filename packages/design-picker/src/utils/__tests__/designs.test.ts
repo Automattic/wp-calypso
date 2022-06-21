@@ -1,4 +1,4 @@
-import { DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT } from '../../constants';
+import { DEFAULT_VIEWPORT_HEIGHT } from '../../constants';
 import { Design, DesignPreviewOptions } from '../../types';
 import { getDesignPreviewUrl } from '../designs';
 
@@ -13,13 +13,8 @@ describe( 'Design Picker designs utils', () => {
 		} as Design;
 
 		it( 'should return the block-previews/site endpoint with the correct query params', () => {
-			const options: DesignPreviewOptions = {
-				viewport_width: DEFAULT_VIEWPORT_WIDTH,
-				viewport_height: DEFAULT_VIEWPORT_HEIGHT,
-			};
-
 			expect( getDesignPreviewUrl( design, options ) ).toEqual(
-				`https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&viewport_width=${ DEFAULT_VIEWPORT_WIDTH }&viewport_height=${ DEFAULT_VIEWPORT_HEIGHT }&source_site=patternboilerplates.wordpress.com&site_title=Zoologist`
+				`https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&viewport_height=${ DEFAULT_VIEWPORT_HEIGHT }&source_site=patternboilerplates.wordpress.com&site_title=Zoologist`
 			);
 		} );
 
@@ -42,12 +37,10 @@ describe( 'Design Picker designs utils', () => {
 		it( 'should escape parentheses within the site title', () => {
 			const options: DesignPreviewOptions = {
 				siteTitle: 'Mock(Design)(Title)',
-				viewport_width: DEFAULT_VIEWPORT_WIDTH,
-				viewport_height: DEFAULT_VIEWPORT_HEIGHT,
 			};
 
 			expect( getDesignPreviewUrl( design, options ) ).toEqual(
-				`https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&viewport_width=${ DEFAULT_VIEWPORT_WIDTH }&viewport_height=${ DEFAULT_VIEWPORT_HEIGHT }&source_site=patternboilerplates.wordpress.com&site_title=Mock%28Design%29%28Title%29`
+				`https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&viewport_height=${ DEFAULT_VIEWPORT_HEIGHT }&source_site=patternboilerplates.wordpress.com&site_title=Mock%28Design%29%28Title%29`
 			);
 		} );
 	} );

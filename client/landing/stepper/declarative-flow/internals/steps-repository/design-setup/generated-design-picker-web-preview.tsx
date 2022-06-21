@@ -1,4 +1,8 @@
-import { getDesignPreviewUrl, DEFAULT_VIEWPORT_WIDTH } from '@automattic/design-picker';
+import {
+	getDesignPreviewUrl,
+	DEFAULT_VIEWPORT_WIDTH,
+	DEFAULT_VIEWPORT_HEIGHT,
+} from '@automattic/design-picker';
 import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -11,7 +15,6 @@ interface GeneratedDesignPickerWebPreviewProps {
 	site?: SiteDetails | null;
 	design: Design;
 	locale: string;
-	viewport: { width: number; height: number } | null;
 	verticalId: string;
 	isSelected: boolean;
 	isPrivateAtomic?: boolean;
@@ -23,7 +26,6 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 	site,
 	design,
 	locale,
-	viewport,
 	verticalId,
 	isSelected,
 	isPrivateAtomic,
@@ -32,10 +34,6 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 } ) => {
 	const translate = useTranslate();
 	const isMobile = ! useViewportMatch( 'small' );
-
-	if ( ! viewport ) {
-		return null;
-	}
 
 	return (
 		<WebPreview
@@ -47,8 +45,8 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 			previewUrl={ getDesignPreviewUrl( design, {
 				language: locale,
 				verticalId,
-				viewport_width: viewport?.width,
-				viewport_height: viewport?.height,
+				viewport_width: DEFAULT_VIEWPORT_WIDTH,
+				viewport_height: DEFAULT_VIEWPORT_HEIGHT,
 			} ) }
 			loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
 				components: { strong: <strong /> },

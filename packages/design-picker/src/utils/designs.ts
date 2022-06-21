@@ -1,5 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
-import { DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT } from '../constants';
+import { DEFAULT_VIEWPORT_HEIGHT } from '../constants';
 import type { Design, DesignPreviewOptions } from '../types';
 
 export const getDesignPreviewUrl = (
@@ -18,7 +18,7 @@ export const getDesignPreviewUrl = (
 		pattern_ids: recipe?.pattern_ids?.join( ',' ),
 		vertical_id: options.verticalId,
 		language: options.language,
-		viewport_width: options.viewport_width || DEFAULT_VIEWPORT_WIDTH,
+		...( options.viewport_width && { viewport_width: options.viewport_width } ),
 		viewport_height: options.viewport_height || DEFAULT_VIEWPORT_HEIGHT,
 		source_site: 'patternboilerplates.wordpress.com',
 	} );
