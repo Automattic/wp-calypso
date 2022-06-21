@@ -11,3 +11,12 @@ export const FIELD_MAILBOX = 'mailbox';
 export const FIELD_NAME = 'name';
 export const FIELD_PASSWORD = 'password';
 export const FIELD_UUID = 'uuid';
+
+export type TitanMailboxFields = {
+	[ FIELD_DOMAIN ]: string;
+	[ FIELD_NAME ]: string;
+	[ FIELD_MAILBOX ]: string;
+	[ FIELD_PASSWORD ]: string;
+	[ FIELD_ALTERNATIVE_EMAIL ]: string;
+	[ FIELD_IS_ADMIN ]: boolean;
+};

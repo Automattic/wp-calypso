@@ -11,9 +11,9 @@ import { emailManagementTitanSetUpThankYou } from 'calypso/my-sites/email/paths'
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { TitanMailboxFields } from 'calypso/data/emails/use-create-titan-mailbox-mutation';
 import type { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import type { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
+import type { TitanMailboxFields } from 'calypso/my-sites/email/form/mailboxes/constants';
 
 import './style.scss';
 

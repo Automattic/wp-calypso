@@ -1,22 +1,6 @@
 import { useMutation } from 'react-query';
 import wpcom from 'calypso/lib/wp';
-import {
-	FIELD_ALTERNATIVE_EMAIL,
-	FIELD_DOMAIN,
-	FIELD_IS_ADMIN,
-	FIELD_MAILBOX,
-	FIELD_NAME,
-	FIELD_PASSWORD,
-} from 'calypso/my-sites/email/form/mailboxes/constants';
-
-export type TitanMailboxFields = {
-	[ FIELD_DOMAIN ]: string;
-	[ FIELD_NAME ]: string;
-	[ FIELD_MAILBOX ]: string;
-	[ FIELD_PASSWORD ]: string;
-	[ FIELD_ALTERNATIVE_EMAIL ]: string;
-	[ FIELD_IS_ADMIN ]: boolean;
-};
+import type { TitanMailboxFields } from 'calypso/my-sites/email/form/mailboxes/constants';
 
 /**
  * Creates a mailbox for a Professional Email (Titan) account
