@@ -2,6 +2,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import * as i18n from '@wordpress/i18n';
 import { createContext, useContext, useEffect, useState } from 'react';
 import * as React from 'react';
+import { englishLocales } from './locales';
 import type { Locale } from './locales';
 
 export const localeContext = createContext< string | null >( null );
@@ -99,3 +100,19 @@ export const withLocale = createHigherOrderComponent< { locale: string } >( ( In
 		return <InnerComponent { ...innerProps } />;
 	};
 }, 'withLocale' );
+
+/**
+ * React hook providing whether the current locale slug belongs to English or not
+ *
+ * @example
+ *
+ * import { useIsEnglishLocale } from '@automattic/i18n-utils';
+ * function MyComponent() {
+ *   const isEnglishLocale = useIsEnglishLocale();
+ *   return <div>The current locale is English: { isEnglishLocale }</div>;
+ * }
+ */
+export function useIsEnglishLocale(): boolean {
+	const locale = useLocale();
+	return englishLocales.includes( locale );
+}

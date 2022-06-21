@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { useDesignsBySite } from '@automattic/design-picker';
-import { useLocale, englishLocales } from '@automattic/i18n-utils';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -29,12 +29,11 @@ export const siteSetupFlow: Flow = {
 	name: 'site-setup',
 
 	useSteps() {
-		const locale = useLocale();
-		const isEnglishLocales = englishLocales.includes( locale );
+		const isEnglishLocale = useIsEnglishLocale();
 
 		return [
 			...( isEnabled( 'signup/goals-step' ) ? [ 'goals' ] : [] ),
-			...( isEnabled( 'signup/site-vertical-step' ) && isEnglishLocales ? [ 'vertical' ] : [] ),
+			...( isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale ? [ 'vertical' ] : [] ),
 			'intent',
 			'options',
 			'designSetup',
@@ -77,6 +76,7 @@ export const siteSetupFlow: Flow = {
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
+		const isEnglishLocale = useIsEnglishLocale();
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -96,6 +96,7 @@ export const siteSetupFlow: Flow = {
 		const { setIntentOnSite } = useDispatch( SITE_STORE );
 		const { FSEActive } = useFSEStatus();
 		const dispatch = reduxDispatch();
+		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale;
 
 		// Set up Step progress for Woo flow - "Step 2 of 4"
 		if ( intent === 'sell' && storeType === 'power' ) {
@@ -208,7 +209,6 @@ export const siteSetupFlow: Flow = {
 						return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
 					}
 
-					const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' );
 					if ( verticalsStepEnabled ) {
 						return navigate( 'vertical' );
 					}
@@ -353,7 +353,7 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'options' );
 
 				case 'intent':
-					return navigate( isEnabled( 'signup/site-vertical-step' ) ? 'vertical' : 'intent' );
+					return navigate( verticalsStepEnabled ? 'vertical' : 'intent' );
 
 				case 'storeFeatures':
 					return navigate( 'options' );
@@ -380,7 +380,7 @@ export const siteSetupFlow: Flow = {
 					}
 
 					if ( isEnabled( 'signup/goals-step' ) ) {
-						if ( isEnabled( 'signup/site-vertical-step' ) ) {
+						if ( verticalsStepEnabled ) {
 							return navigate( 'vertical' );
 						}
 						return navigate( 'goals' );
@@ -414,7 +414,7 @@ export const siteSetupFlow: Flow = {
 				case 'import':
 					if ( isEnabled( 'signup/goals-step' ) ) {
 						// This can be unchecked when import step is shown after verticals.
-						// if ( isEnabled( 'signup/site-vertical-step' ) ) {
+						// if ( verticalsStepEnabled ) {
 						// 	return navigate( 'vertical' );
 						// }
 						return navigate( 'goals' );

@@ -10,7 +10,7 @@ import DesignPicker, {
 	getDesignPreviewUrl,
 	useDesignsBySite,
 } from '@automattic/design-picker';
-import { useLocale, englishLocales } from '@automattic/i18n-utils';
+import { useLocale, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
@@ -49,6 +49,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const { goBack, submit, exitFlow } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
+	const isEnglishLocale = useIsEnglishLocale();
 	const site = useSite();
 	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
@@ -89,8 +90,12 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		[ staticDesigns ]
 	);
 
+	const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale;
+
 	const enabledGeneratedDesigns =
-		isEnabled( 'signup/design-picker-generated-designs' ) && intent === 'build';
+		verticalsStepEnabled &&
+		isEnabled( 'signup/design-picker-generated-designs' ) &&
+		intent === 'build';
 
 	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
 		useStarterDesignsGeneratedQuery(
@@ -152,7 +157,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 
 		const text = translate( 'Choose a starting theme. You can change it later.' );
 
-		if ( englishLocales.includes( locale ) ) {
+		if ( isEnglishLocale ) {
 			// An English only trick so the line wraps between sentences.
 			return ( text as string )
 				.replace( /\s/g, '\xa0' ) // Replace all spaces with non-breaking spaces
