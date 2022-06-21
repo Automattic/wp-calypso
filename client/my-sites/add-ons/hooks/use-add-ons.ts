@@ -35,12 +35,6 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 				name: translate( 'Remove Ads' ),
 			},
 		},
-		{
-			slug: WPCOM_FEATURES_NO_ADVERTS,
-			highlight: false,
-			icon: noAdsIcon,
-			overrides: null,
-		},
 	] as const;
 
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
