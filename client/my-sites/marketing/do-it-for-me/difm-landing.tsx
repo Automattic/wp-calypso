@@ -5,10 +5,11 @@ import {
 	PLAN_WPCOM_PRO,
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
-import { Gridicon, Button } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import { Card } from '@wordpress/components';
+import { Card, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQ from 'calypso/components/foldable-faq';
@@ -22,13 +23,26 @@ import './difm-landing.scss';
 
 const Placeholder = () => <span className="difm-landing__price-placeholder">&nbsp;</span>;
 
+type StyledHeadingProps = {
+	fontSize: string;
+};
+
+const StyledHeading = styled.h1< StyledHeadingProps >`
+	font-size: ${ ( props ) => props.fontSize || '2.25rem' };
+	text-align: center;
+`;
+
 const StepsSection = styled.div`
 	display: flex;
 	align-items: center;
+	gap: 1rem;
 	div {
 		flex: 1;
 	}
 	margin: 3rem 0;
+	@media ( max-width: 660px ) {
+		flex-direction: column;
+	}
 `;
 
 const FAQSection = styled.div`
@@ -42,6 +56,9 @@ const TestimonialsSection = styled.div`
 	display: flex;
 	margin: 3rem 0;
 	gap: 1rem;
+	@media ( max-width: 660px ) {
+		flex-direction: column;
+	}
 `;
 
 const TestimonialWrapper = styled.div`
@@ -49,7 +66,7 @@ const TestimonialWrapper = styled.div`
 `;
 
 const TestimonialAuthor = styled.div`
-	color: var( --studio-green-60 );
+	color: var( --studio-gray-60 );
 	margin-top: 1rem;
 `;
 
@@ -68,6 +85,9 @@ const Testimonial = ( { quote, author }: { quote: string; author: string } ) => 
 const HeaderCard = styled( Card )`
 	margin-top: 3rem;
 	padding: 3rem 5rem;
+	@media ( max-width: 660px ) {
+		padding: 2rem;
+	}
 `;
 
 const HireButtonWrapper = styled.div`
@@ -75,10 +95,22 @@ const HireButtonWrapper = styled.div`
 	margin: 2rem 0;
 `;
 
+const LinkButton = styled( Button )`
+	font-size: 16px;
+`;
+
 export default function DIFMLanding( { onSubmit }: { onSubmit: () => void } ) {
 	const translate = useTranslate();
 	const displayCost = useSelector( ( state ) => getProductDisplayCost( state, WPCOM_DIFM_LITE ) );
 	const isLoading = useSelector( isProductsListFetching );
+
+	const [ expandedFAQId, setExpandedFAQId ] = useState( 'faq-1' );
+
+	const onFAQToggle = ( faqArgs: { id: string; isExpanded: boolean; height: number } ) => {
+		if ( faqArgs.isExpanded ) {
+			setExpandedFAQId( faqArgs.id );
+		}
+	};
 
 	const planTitle = isEnabled( 'plans/pro-plan' )
 		? getPlan( PLAN_WPCOM_PRO )?.getTitle()
@@ -86,7 +118,7 @@ export default function DIFMLanding( { onSubmit }: { onSubmit: () => void } ) {
 
 	const HireButton = () => (
 		<HireButtonWrapper>
-			<Button onClick={ onSubmit } primary>
+			<Button onClick={ onSubmit } isPrimary={ true }>
 				{ translate( 'Hire a Professional' ) }
 			</Button>
 		</HireButtonWrapper>
@@ -109,7 +141,7 @@ export default function DIFMLanding( { onSubmit }: { onSubmit: () => void } ) {
 			<HeaderCard>
 				<p>
 					{ translate(
-						'Do It For Me: Website Design Service is an excellent choice for anyone who prefers to have a professional set up their website. A professional builder will create custom layouts for up to %(pages)d pages of the site using your provided content. You’ll receive your new website within %(fulfillmentDays)d business days.',
+						'Do It For Me: Website Design Service is an excellent choice for anyone who prefers to have a professional set up their website. A WordPress.com professional builder will create custom layouts for up to %(pages)d pages of the site using your provided content. You’ll receive your new website within %(fulfillmentDays)d business days.',
 						{
 							args: {
 								fulfillmentDays: 4,
@@ -119,10 +151,10 @@ export default function DIFMLanding( { onSubmit }: { onSubmit: () => void } ) {
 					) }
 				</p>
 				<HireButton />
-				<FormattedHeader
-					align={ 'center' }
-					headerText={ translate( 'It only takes 4 simple steps.' ) }
-				/>
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+				<StyledHeading className="wp-brand-font" fontSize={ '2.25rem' }>
+					{ translate( 'It only takes 4 simple steps.' ) }
+				</StyledHeading>
 				<StepsSection>
 					<div>
 						<img
@@ -139,6 +171,9 @@ export default function DIFMLanding( { onSubmit }: { onSubmit: () => void } ) {
 						</ol>
 					</div>
 				</StepsSection>
+				<StyledHeading fontSize={ '1.5rem' }>
+					{ translate( 'Receive your finished website in 4 business days or less!' ) }
+				</StyledHeading>
 			</HeaderCard>
 			<TestimonialsSection>
 				{ /* Testimonial text will remain untranslated */ }
@@ -160,17 +195,37 @@ export default function DIFMLanding( { onSubmit }: { onSubmit: () => void } ) {
 			<FAQSection>
 				<FoldableFAQ
 					id="faq-1"
+					expanded={ expandedFAQId === 'faq-1' }
+					key={ `faq-1_${ expandedFAQId }` }
+					onToggle={ onFAQToggle }
 					question={ translate( 'What is Do It For Me: Website Design Service?' ) }
 				>
 					{ translate(
 						'This service was created for customers who would like to hire a professional to set up their website. Our professional builders have expert knowledge of the WordPress editor, themes, and available blocks; they take advantage of all the best options for your new site build. Once you’ve provided us with your content, we’ll create custom layouts for each page of your website and add your content to each of them. You will receive an email with a link to your finished website within 4 business days. You can then edit all of the content of the site using the WordPress editor. Add as many new pages or posts as you need, and contact WordPress.com support with any questions regarding how to edit or further customize your new site!'
 					) }
 				</FoldableFAQ>
-				<FoldableFAQ id="faq-2" question={ translate( 'How do I get started?' ) }>
-					<li>{ translate( 'Click Hire a Professional to begin.' ) }</li>
+				<FoldableFAQ
+					id="faq-2"
+					expanded={ expandedFAQId === 'faq-2' }
+					key={ `faq-2_${ expandedFAQId }` }
+					onToggle={ onFAQToggle }
+					question={ translate( 'How do I get started?' ) }
+				>
+					<li>
+						{ translate( 'Click {{a}}Hire a Professional{{/a}} to begin.', {
+							components: {
+								a: <LinkButton isLink={ true } onClick={ onSubmit } />,
+							},
+						} ) }
+					</li>
 					<li>
 						{ translate(
-							'Choose New site to begin a new site or Existing WordPress.com site if you’d like to use an existing site on your account. (Note that all existing website content will be deleted from the site so we can start fresh).'
+							'Choose {{b}}New site{{/b}} to begin a new site or {{b}}Existing WordPress.com{{/b}} site if you’d like to use an existing site on your account. (Note that all existing website content will be deleted from the site so we can start fresh).',
+							{
+								components: {
+									b: <b />,
+								},
+							}
 						) }
 					</li>
 					<li>
@@ -180,7 +235,12 @@ export default function DIFMLanding( { onSubmit }: { onSubmit: () => void } ) {
 					</li>
 					<li>
 						{ translate(
-							'Select your design from our catalog of professionally designed themes, or select Let us choose to let our professionals select the best design for your site (recommended).'
+							'Select your design from our catalog of professionally designed themes, or select {{b}}Let us choose{{/b}} to let our professionals select the best design for your site (recommended).',
+							{
+								components: {
+									b: <b />,
+								},
+							}
 						) }
 					</li>
 					<li>
@@ -197,14 +257,26 @@ export default function DIFMLanding( { onSubmit }: { onSubmit: () => void } ) {
 					<li>{ translate( 'Receive your finished website in 4 business days or less!' ) }</li>
 					<HireButton />
 				</FoldableFAQ>
-				<FoldableFAQ id="faq-3" question={ translate( 'Who is this service for?' ) }>
+				<FoldableFAQ
+					id="faq-3"
+					expanded={ expandedFAQId === 'faq-3' }
+					key={ `faq-3_${ expandedFAQId }` }
+					onToggle={ onFAQToggle }
+					question={ translate( 'Who is this service for?' ) }
+				>
 					<ul>
 						<li>{ translate( 'Small business owners looking to get online quickly.' ) }</li>
 						<li>{ translate( 'Bloggers wanting some help with their initial site setup.' ) }</li>
 						<li>{ translate( 'Anyone who could benefit from professional page layouts.' ) }</li>
 					</ul>
 				</FoldableFAQ>
-				<FoldableFAQ id="faq-4" question={ translate( 'How much does the service cost?' ) }>
+				<FoldableFAQ
+					id="faq-4"
+					expanded={ expandedFAQId === 'faq-4' }
+					key={ `faq-4_${ expandedFAQId }` }
+					onToggle={ onFAQToggle }
+					question={ translate( 'How much does the service cost?' ) }
+				>
 					{ translate(
 						'The service costs %(displayCost)s, plus one year of the %(planTitle)s hosting plan. If you choose to use an existing site that already has the plan, you will only be charged for the website design service.',
 						{
@@ -215,7 +287,13 @@ export default function DIFMLanding( { onSubmit }: { onSubmit: () => void } ) {
 						}
 					) }
 				</FoldableFAQ>
-				<FoldableFAQ id="faq-5" question={ translate( 'What does the service include?' ) }>
+				<FoldableFAQ
+					id="faq-5"
+					expanded={ expandedFAQId === 'faq-5' }
+					key={ `faq-5_${ expandedFAQId }` }
+					onToggle={ onFAQToggle }
+					question={ translate( 'What does the service include?' ) }
+				>
 					<ul>
 						<li>
 							{ translate(
@@ -240,13 +318,22 @@ export default function DIFMLanding( { onSubmit }: { onSubmit: () => void } ) {
 						<li>{ translate( 'Sourcing of additional professional images (when needed).' ) }</li>
 					</ul>
 				</FoldableFAQ>
-				<FoldableFAQ id="faq-6" question={ translate( 'What will my finished site look like?' ) }>
+				<FoldableFAQ
+					id="faq-6"
+					expanded={ expandedFAQId === 'faq-6' }
+					key={ `faq-6_${ expandedFAQId }` }
+					onToggle={ onFAQToggle }
+					question={ translate( 'What will my finished site look like?' ) }
+				>
 					{ translate(
 						'Your finished site will be built using a WordPress.com theme. The layout of your site will be a mobile-friendly responsive design and the content will adjust to look great on every device. The professional website builder will create the layout of each page based on the content you provide during the signup process. Additional high-quality professional images may be sourced from Pexels, a vast open source library of stock photos, to make sure each page stands out. Custom CSS may be added for further design tweaks.'
 					) }
 				</FoldableFAQ>
 				<FoldableFAQ
 					id="faq-7"
+					expanded={ expandedFAQId === 'faq-7' }
+					key={ `faq-7_${ expandedFAQId }` }
+					onToggle={ onFAQToggle }
 					question={ translate( 'What if I want changes to the finished site?' ) }
 				>
 					{ translate(
