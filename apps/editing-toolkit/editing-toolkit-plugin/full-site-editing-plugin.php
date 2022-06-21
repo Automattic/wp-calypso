@@ -394,7 +394,7 @@ function load_help_center() {
 	// only shipping to en locale for now.
 	$current_locale = get_locale();
 
-	if ( $is_proxied || ( 'en' === $current_locale && $user_segment < $current_segment ) ) {
+	if ( $is_proxied || ( str_starts_with( $current_locale, 'en' ) && $user_segment < $current_segment ) ) {
 		require_once __DIR__ . '/help-center/class-help-center.php';
 	}
 }
