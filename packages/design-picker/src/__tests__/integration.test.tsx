@@ -88,13 +88,14 @@ describe( '<DesignPicker /> integration', () => {
 		} )
 	);
 
-	it( 'Should not display the buttons inside the design picker', async () => {
+	it( 'Should not display the header and the buttons inside the design picker', async () => {
 		const renderedContainer = render(
 			<DesignPicker
 				locale={ MOCK_LOCALE }
 				onSelect={ jest.fn() }
 				recommendedCategorySlug={ null }
 				previewOnly={ true }
+				hasDesignOptionHeader={ false }
 				onPreview={ () => true }
 			/>
 		);
@@ -102,9 +103,13 @@ describe( '<DesignPicker /> integration', () => {
 		expect(
 			renderedContainer.container.querySelectorAll( '.design-button-cover__button' ).length
 		).toBe( 0 );
+
+		expect(
+			renderedContainer.container.querySelectorAll( '.design-picker__design-option-header' ).length
+		).toBe( 0 );
 	} );
 
-	it( 'Should display the buttons inside the design picker', async () => {
+	it( 'Should display the header and the buttons inside the design picker', async () => {
 		const renderedContainer = render(
 			<DesignPicker
 				locale={ MOCK_LOCALE }
@@ -117,5 +122,9 @@ describe( '<DesignPicker /> integration', () => {
 		expect(
 			renderedContainer.container.querySelectorAll( '.design-button-cover__button' ).length
 		).toBeGreaterThanOrEqual( 2 );
+
+		expect(
+			renderedContainer.container.querySelectorAll( '.design-picker__design-option-header' ).length
+		).toBeGreaterThanOrEqual( 1 );
 	} );
 } );

@@ -53,6 +53,7 @@ interface DesignButtonProps {
 	disabled?: boolean;
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
+	hasDesignOptionHeader?: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -63,6 +64,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	highRes,
 	disabled,
 	hideDesignTitle,
+	hasDesignOptionHeader = true,
 } ) => {
 	const { __ } = useI18n();
 
@@ -79,21 +81,26 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
 			onClick={ () => onSelect( design ) }
 		>
-			<span className="design-picker__design-option-header">
-				<svg width="28" height="6">
-					<g>
-						<rect width="6" height="6" rx="3" />
-						<rect x="11" width="6" height="6" rx="3" />
-						<rect x="22" width="6" height="6" rx="3" />
-					</g>
-				</svg>
-			</span>
+			{ hasDesignOptionHeader && (
+				<span className="design-picker__design-option-header">
+					<svg width="28" height="6">
+						<g>
+							<rect width="6" height="6" rx="3" />
+							<rect x="11" width="6" height="6" rx="3" />
+							<rect x="22" width="6" height="6" rx="3" />
+						</g>
+					</svg>
+				</span>
+			) }
 			<span
 				className={ classnames(
 					'design-picker__image-frame',
 					'design-picker__image-frame-landscape',
 					design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable',
-					{ 'design-picker__image-frame-blank': isBlankCanvas }
+					{
+						'design-picker__image-frame-blank': isBlankCanvas,
+						'design-picker__image-frame-no-header': ! hasDesignOptionHeader,
+					}
 				) }
 			>
 				{ isBlankCanvas ? (
@@ -237,6 +244,7 @@ export interface DesignPickerProps {
 	hideDesignTitle?: boolean;
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
+	hasDesignOptionHeader?: boolean;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -261,6 +269,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	recommendedCategorySlug,
 	isPremiumThemeAvailable,
 	previewOnly = false,
+	hasDesignOptionHeader = true,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
@@ -304,6 +313,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						hideDesignTitle={ hideDesignTitle }
 						isPremiumThemeAvailable={ isPremiumThemeAvailable }
 						previewOnly={ previewOnly }
+						hasDesignOptionHeader={ hasDesignOptionHeader }
 					/>
 				) ) }
 			</div>
