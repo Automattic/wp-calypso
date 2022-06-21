@@ -3,6 +3,9 @@ import { useTranslate } from 'i18n-calypso';
 import type { Goal } from './types';
 
 const SiteGoal = Onboard.SiteGoal;
+const HIDE_GOALS = [ SiteGoal.DIFM, SiteGoal.Import ];
+
+const shouldDisplayGoal = ( { key }: Goal ) => ! HIDE_GOALS.includes( key );
 
 export const useGoals = (): Goal[] => {
 	const translate = useTranslate();
@@ -32,5 +35,5 @@ export const useGoals = (): Goal[] => {
 			key: SiteGoal.Other,
 			title: translate( 'Other' ),
 		},
-	].filter( ( { key } ) => key !== Onboard.SiteGoal.Import );
+	].filter( shouldDisplayGoal );
 };
