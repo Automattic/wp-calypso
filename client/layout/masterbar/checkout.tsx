@@ -76,11 +76,12 @@ const CheckoutMasterbar = ( {
 	const isHelpCenterEnabled = config.isEnabled( 'checkout/help-center' );
 
 	const newItems = ! isLoading && ! data?.has_seen_whats_new_modal;
+	const showCloseButton = isLeavingAllowed && ! isJetpack;
 
 	return (
 		<Masterbar>
 			<div className="masterbar__secure-checkout">
-				{ isLeavingAllowed && (
+				{ showCloseButton && (
 					<Item
 						icon="cross"
 						className="masterbar__close-button"
