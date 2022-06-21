@@ -6,6 +6,7 @@ import DisconnectSite from 'calypso/my-sites/site-settings/disconnect-site';
 import ConfirmDisconnection from 'calypso/my-sites/site-settings/disconnect-site/confirm';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY } from '../agency-dashboard/sites-overview/utils';
 import NoSitesPurchasesMessage from './empty-content';
 import HasSiteCredentialsSwitch from './has-site-credentials-switch';
 import AdvancedCredentialsLoadingPlaceholder from './loading';
@@ -54,7 +55,7 @@ export const showNotAuthorizedForNonAdmins: PageJS.Callback = ( context, next ) 
 export const disconnectSite: PageJS.Callback = ( context, next ) => {
 	const isDefaultFilterCleared = getPreference(
 		context.state,
-		'jetpack-dashboard-default-filter-cleared'
+		JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY
 	);
 	context.primary = (
 		<DisconnectSite
@@ -73,7 +74,7 @@ export const disconnectSiteConfirm: PageJS.Callback = ( context, next ) => {
 	const { reason, type, text } = context.query;
 	const isDefaultFilterCleared = getPreference(
 		context.state,
-		'jetpack-dashboard-default-filter-cleared'
+		JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY
 	);
 	context.primary = (
 		<ConfirmDisconnection

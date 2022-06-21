@@ -9,6 +9,7 @@ import {
 	isAgencyUser,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import { JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY } from './agency-dashboard/sites-overview/utils';
 
 import '../style.scss';
 
@@ -16,7 +17,7 @@ export default function SiteLanding( { primarySiteSlug, isPrimarySiteJetpackSite
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
 	const isDefaultFilterCleared = useSelector( ( state ) =>
-		getPreference( state, 'jetpack-dashboard-default-filter-cleared' )
+		getPreference( state, JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY )
 	);
 	const isAgency = useSelector( isAgencyUser );
 	const isAgencyEnabled = config.isEnabled( 'jetpack/agency-dashboard' );

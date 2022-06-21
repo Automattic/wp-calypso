@@ -1,5 +1,6 @@
 import { localize, translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateFilter } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -53,7 +54,10 @@ const IssueTypeSelector: React.FunctionComponent< Props > = ( props ) => {
 
 const selectIssueType = ( types: any ) => ( dispatch: any ) => {
 	dispatch(
-		savePreference( 'jetpack-dashboard-default-filter-cleared', ! types.includes( parentTypeKey ) )
+		savePreference(
+			JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY,
+			! types.includes( parentTypeKey )
+		)
 	);
 	if ( types.length ) {
 		const eventObj = types.reduce(

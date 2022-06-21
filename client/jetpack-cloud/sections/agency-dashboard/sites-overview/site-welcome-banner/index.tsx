@@ -10,6 +10,7 @@ import {
 	getJetpackDashboardWelcomeBannerPreference as getPreference,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
+import { JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY } from '../utils';
 import type { PreferenceType } from '../types';
 
 export default function SiteWelcomeBanner( {
@@ -73,7 +74,7 @@ export default function SiteWelcomeBanner( {
 	}, [ handleTrackEvents, isDashboardView, savePreferenceType ] );
 
 	const isDefaultFilterCleared = useSelector( ( state ) =>
-		getPreference( state, 'jetpack-dashboard-default-filter-cleared' )
+		getPreference( state, JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY )
 	);
 
 	// Hide the banner if the banner is already viewed

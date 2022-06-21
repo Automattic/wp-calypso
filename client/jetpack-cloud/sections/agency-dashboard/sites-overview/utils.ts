@@ -11,6 +11,9 @@ import type {
 } from './types';
 import type { ReactChild } from 'react';
 
+export const JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY =
+	'jetpack-dashboard-default-filter-cleared';
+
 // Event names for all actions for large screen(>960px) and small screen(<960px)
 export const actionEventNames: ActionEventNames = {
 	issue_license: {

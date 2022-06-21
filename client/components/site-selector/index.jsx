@@ -14,6 +14,7 @@ import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
 import searchSites from 'calypso/components/search-sites';
+import { JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -469,7 +470,7 @@ const navigateToSite =
 		if ( isJetpackCloud() && ! site && showAgencyDashboard( state ) ) {
 			const isDefaultFilterCleared = getPreference(
 				state,
-				'jetpack-dashboard-default-filter-cleared'
+				JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY
 			);
 			return page.redirect(
 				isDefaultFilterCleared ? '/dashboard' : '/dashboard?issue_types=all_issues'
