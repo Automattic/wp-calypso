@@ -5,6 +5,7 @@ import {
 	PLAN_WPCOM_PRO,
 	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { IntentScreen } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -37,13 +38,6 @@ interface Props {
 
 type DIFMOrBuiltByIntent = SelectItem< ChoiceType >;
 
-const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' );
-
-const getBackUrl = ( siteSlug?: string ) => {
-	const step = goalsCaptureStepEnabled ? 'goals' : 'intent';
-	return `/setup/${ step }?siteSlug=${ siteSlug }`;
-};
-
 const Placeholder = () => <span className="choose-service__placeholder">&nbsp;</span>;
 
 export default function ChooseServiceStep( props: Props ): React.ReactNode {
@@ -51,6 +45,13 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 	const translate = useTranslate();
 	const displayCost = useSelector( ( state ) => getProductDisplayCost( state, WPCOM_DIFM_LITE ) );
 	const isLoading = useSelector( isProductsListFetching );
+	const isEnglishLocale = useIsEnglishLocale();
+	const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' ) && isEnglishLocale;
+
+	const getBackUrl = ( siteSlug?: string ) => {
+		const step = goalsCaptureStepEnabled ? 'goals' : 'intent';
+		return `/setup/${ step }?siteSlug=${ siteSlug }`;
+	};
 
 	const headerText = translate( 'Let our experts create your dream site' );
 
