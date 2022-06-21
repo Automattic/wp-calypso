@@ -1,4 +1,5 @@
 import { Design } from '@automattic/design-picker/src/types';
+import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
 import {
 	SiteLaunchError,
@@ -234,6 +235,17 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} catch ( e ) {}
 	}
 
+	function* setGoalsOnSite( siteSlug: string, goals: SiteGoal[] ) {
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteSlug ) }/site-goals`,
+				apiNamespace: 'wpcom/v2',
+				body: { site_goals: goals },
+				method: 'POST',
+			} );
+		} catch ( e ) {}
+	}
+
 	function* saveSiteTitle( siteId: number, blogname: string | undefined ) {
 		yield saveSiteSettings( siteId, { blogname } );
 	}
@@ -459,6 +471,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		saveSiteTitle,
 		saveSiteSettings,
 		setIntentOnSite,
+		setGoalsOnSite,
 		receiveSiteTitle,
 		fetchNewSite,
 		fetchSite,
