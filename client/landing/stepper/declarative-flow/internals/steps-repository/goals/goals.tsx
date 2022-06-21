@@ -32,5 +32,7 @@ export const useGoals = (): Goal[] => {
 			key: SiteGoal.Other,
 			title: translate( 'Other' ),
 		},
-	].filter( ( { key } ) => key !== Onboard.SiteGoal.Import );
+	]
+		.filter( ( { key } ) => key !== Onboard.SiteGoal.Import )
+		.filter( ( { key } ) => key !== Onboard.SiteGoal.DIFM );
 };

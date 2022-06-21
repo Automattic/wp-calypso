@@ -302,6 +302,9 @@ const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'CLEAR_IMPORT_GOAL' ) {
 		return state.filter( ( goal ) => goal !== SiteGoal.Import );
 	}
+	if ( action.type === 'CLEAR_DIFM_GOAL' ) {
+		return state.filter( ( goal ) => goal !== SiteGoal.DIFM );
+	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return [];
 	}
