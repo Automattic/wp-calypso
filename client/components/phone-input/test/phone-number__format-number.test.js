@@ -62,10 +62,13 @@ describe( 'National Format', () => {
 		{ number: '5512345678', country: 'BR', expected: '055 1234-5678' },
 		{ number: '9100123456', country: 'IN', expected: '091001 23456' },
 		{ number: '00000123456', country: 'UK', expected: '01234 56' },
-	] )( `Format full length numbers`, function ( { number, country, expected } ) {
-		const result = formatNumber( number, countries[ country ] );
-		expect( result ).toEqual( expected );
-	} );
+	] )(
+		`Format full length numbers ($number) for country $country`,
+		function ( { number, country, expected } ) {
+			const result = formatNumber( number, countries[ country ] );
+			expect( result ).toEqual( expected );
+		}
+	);
 
 	test.each( [
 		{ number: '4,', country: 'US', expected: '4' },
@@ -211,7 +214,7 @@ describe( 'Sanitization', () => {
 		{ number: '1aaaa', country: 'US', expected: '1' },
 		{ number: '1a', country: 'US', expected: '1' },
 	] )(
-		'Strip non-digits on string of length less than 3',
+		'Strip non-digits on string ($number) of length less than 3',
 		function ( { number, country, expected } ) {
 			const result = formatNumber( number, countries[ country ] );
 			expect( result ).toEqual( expected );
