@@ -42,6 +42,7 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 	const handleImportLinkClick = () => {
 		const selectedGoalsWithImport = addGoal( SiteGoal.Import );
 		onSubmit( selectedGoalsWithImport );
+	};
 
 	const handleDIFMLinkClick = () => {
 		const selectedGoalsWithDIFM = addGoal( SiteGoal.DIFM );
