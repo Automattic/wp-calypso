@@ -170,12 +170,14 @@ interface DesignButtonContainerProps extends DesignButtonProps {
 	isPremiumThemeAvailable?: boolean;
 	onPreview?: ( design: Design ) => void;
 	onUpgrade?: () => void;
+	previewOnly?: boolean;
 }
 
 const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	isPremiumThemeAvailable,
 	onPreview,
 	onUpgrade,
+	previewOnly = false,
 	...props
 } ) => {
 	const isDesktop = useViewportMatch( 'large' );
@@ -201,7 +203,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	// We don't need preview for blank canvas
 	return (
 		<div className="design-button-container">
-			{ ! isBlankCanvas && (
+			{ ! isBlankCanvas && ! previewOnly && (
 				<DesignButtonCover
 					design={ props.design }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
@@ -234,6 +236,7 @@ export interface DesignPickerProps {
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
 	isPremiumThemeAvailable?: boolean;
+	previewOnly?: boolean;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -257,6 +260,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	hideDesignTitle,
 	recommendedCategorySlug,
 	isPremiumThemeAvailable,
+	previewOnly = false,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
@@ -299,6 +303,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						hideFullScreenPreview={ hideFullScreenPreview }
 						hideDesignTitle={ hideDesignTitle }
 						isPremiumThemeAvailable={ isPremiumThemeAvailable }
+						previewOnly={ previewOnly }
 					/>
 				) ) }
 			</div>
