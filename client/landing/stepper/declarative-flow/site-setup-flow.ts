@@ -63,6 +63,7 @@ export const siteSetupFlow: Flow = {
 			'wooConfirm',
 			'editEmail',
 			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'editEmail' ] : [] ),
+			...( isEnabled( 'signup/theme-preview-screen' ) ? [ 'themeDesignPicker' ] : [] ),
 		] as StepPath[];
 	},
 	useSideEffect() {
