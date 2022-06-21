@@ -93,7 +93,7 @@ export const siteSetupFlow: Flow = {
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 		const { setPendingAction, setStepProgress } = useDispatch( ONBOARD_STORE );
-		const { setIntentOnSite } = useDispatch( SITE_STORE );
+		const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
 		const { FSEActive } = useFSEStatus();
 		const dispatch = reduxDispatch();
 
@@ -118,12 +118,18 @@ export const siteSetupFlow: Flow = {
 		}
 
 		const exitFlow = ( to: string ) => {
-			setPendingAction(
-				() =>
-					new Promise( () =>
-						setIntentOnSite( siteSlug as string, intent ).then( () => redirect( to ) )
-					)
-			);
+			setPendingAction( async () => {
+				if ( ! siteSlug ) {
+					return;
+				}
+
+				const pendingActions = [ setIntentOnSite( siteSlug, intent ) ];
+				if ( isEnabled( 'signup/goals-step' ) ) {
+					pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
+				}
+				await Promise.all( pendingActions );
+				redirect( to );
+			} );
 
 			navigate( 'processing' );
 		};
