@@ -6,7 +6,7 @@ import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import { recordTracksEventAddToCartClick } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import getCartItems from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-cart-items';
-import { getMailProductProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-mail-product-properties';
+import { getEmailProductProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-email-product-properties';
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -68,7 +68,7 @@ const getOnSubmitNewMailboxesHandler =
 			return;
 		}
 
-		const emailProperties = getMailProductProperties(
+		const emailProperties = getEmailProductProperties(
 			provider,
 			domain,
 			emailProduct as ProductListItem,
