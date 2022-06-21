@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { removeLocaleFromPath } from '@automattic/i18n-utils';
 import page from 'page';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
@@ -150,22 +150,14 @@ export function redirectDefaultLocale( context, next ) {
 		return next();
 	}
 
-	// Do not redirect if user is logged in and the locale is different than english
-	// so we force the page to display in english
+	// Allow logged in non-en user locales to load /log-in/en in english
+	// because /log-in won't render in english for these users.
 	const currentUserLocale = getCurrentUserLocale( context.store.getState() );
 	if ( currentUserLocale && currentUserLocale !== 'en' ) {
 		return next();
 	}
 
-	// Add querystring to redirect only comming from Partner Signup
-	const redirectQueryString = isPartnerSignupQuery( context.query )
-		? '?' + context.querystring
-		: '';
-	if ( context.params.isJetpack === 'jetpack' ) {
-		page.redirect( '/log-in/jetpack' );
-	} else {
-		page.redirect( '/log-in' + redirectQueryString );
-	}
+	page.redirect( removeLocaleFromPath( context.canonicalPath ) );
 }
 
 export function redirectJetpack( context, next ) {
