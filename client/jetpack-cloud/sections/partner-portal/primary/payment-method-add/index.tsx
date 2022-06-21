@@ -28,7 +28,10 @@ import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sid
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { hasValidPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
+import {
+	hasValidPaymentMethod,
+	isAgencyUser,
+} from 'calypso/state/partner-portal/partner/selectors';
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
 
 import './style.scss';
@@ -37,6 +40,7 @@ function PaymentMethodAdd(): ReactElement {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const hasPaymentMethod = useSelector( hasValidPaymentMethod );
+	const agencyUser = useSelector( isAgencyUser );
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 	const {
 		reload: reloadSetupIntentId,
@@ -57,7 +61,7 @@ function PaymentMethodAdd(): ReactElement {
 		select( 'credit-card' ).useAsPrimaryPaymentMethod()
 	);
 
-	useReturnUrl( hasPaymentMethod );
+	useReturnUrl( agencyUser && hasPaymentMethod );
 
 	const onGoToPaymentMethods = () => {
 		reduxDispatch(
