@@ -6,8 +6,7 @@ const SiteGoal = Onboard.SiteGoal;
 
 export const useGoals = (): Goal[] => {
 	const translate = useTranslate();
-
-	const goals: Goal[] = [
+	return [
 		{
 			key: SiteGoal.Write,
 			title: translate( 'Write and publish' ),
@@ -33,7 +32,5 @@ export const useGoals = (): Goal[] => {
 			key: SiteGoal.Other,
 			title: translate( 'Other' ),
 		},
-	];
-
-	return goals;
+	].filter( ( { key } ) => key !== Onboard.SiteGoal.Import );
 };
