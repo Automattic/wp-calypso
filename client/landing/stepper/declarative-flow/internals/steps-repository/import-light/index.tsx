@@ -64,7 +64,12 @@ const ImportLight: Step = function ImportStep( props ) {
 			case 'import-colors-complete':
 				return (
 					<AnalysisProgress percentage={ percentage }>
-						<Title>{ __( 'Scanning your site' ) }</Title>
+						{ progressState === 'scanning' && <Title>{ __( 'Scanning your site' ) }</Title> }
+						{ ( progressState === 'import-colors' ||
+							progressState === 'import-colors-complete' ) && (
+							<Title>{ __( 'Importing colors' ) }</Title>
+						) }
+
 						{ progressState === 'scanning' && <SubTitle>{ url }</SubTitle> }
 						{ progressState === 'import-colors' && (
 							<Colors colors={ colors } onColorAnimationFinish={ onColorAnimationFinish } />

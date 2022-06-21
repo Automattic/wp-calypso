@@ -11,7 +11,7 @@ interface Props {
 const AnalysisProgress: React.FunctionComponent< Props > = ( props ) => {
 	const { percentage, children } = props;
 
-	const elements = Array.isArray( children ) ? children : [ children ];
+	const elements = ( Array.isArray( children ) ? children : [ children ] ).filter( ( x ) => x );
 	const titleEl = elements[ 0 ].type === Title ? elements[ 0 ] : undefined;
 	const otherEl = titleEl ? elements.slice( 1 ) : elements;
 
