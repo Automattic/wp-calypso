@@ -1,0 +1,390 @@
+diff --git a/apps/inline-help/package.json b/apps/inline-help/package.json
+index fabce08c70..ad92295e33 100644
+--- a/apps/inline-help/package.json
++++ b/apps/inline-help/package.json
+@@ -1,7 +1,7 @@
+ {
+ 	"name": "@automattic/inline-help",
+ 	"version": "1.0.0",
+-	"description": "WordPress.com Inline Help Panel",
++	"description": "WordPress.com Inline Help Panel.",
+ 	"main": "dist/build.min.js",
+ 	"sideEffects": true,
+ 	"repository": {
+diff --git a/client/blocks/image-editor/docs/example.jsx b/client/blocks/image-editor/docs/example.jsx
+index 49669b6998..c4ab1a6d79 100644
+--- a/client/blocks/image-editor/docs/example.jsx
++++ b/client/blocks/image-editor/docs/example.jsx
+@@ -88,7 +88,7 @@ class ImageEditorExample extends Component {
+ 					} }
+ 				>
+ 					<h4>Changes to the image above are shown below</h4>
+-					<img id="devdocs-example-image-editor-result" src={ this.state.media.URL } />
++					<img alt="" id="devdocs-example-image-editor-result" src={ this.state.media.URL } />
+ 				</div>
+ 			</div>
+ 		);
+diff --git a/client/components/file-picker/docs/example.jsx b/client/components/file-picker/docs/example.jsx
+index 00eee413a1..97f919fdd8 100644
+--- a/client/components/file-picker/docs/example.jsx
++++ b/client/components/file-picker/docs/example.jsx
+@@ -48,7 +48,7 @@ export default class FilePickers extends Component {
+
+ 				<h4>Any internal content works:</h4>
+ 				<FilePicker onPick={ this.onSingle }>
+-					<a href="#">Select File…</a>
++					<a href="#input">Select File…</a>
+ 				</FilePicker>
+ 			</Card>
+ 		);
+diff --git a/client/components/popover-menu/docs/example.jsx b/client/components/popover-menu/docs/example.jsx
+index 6d7562ee6e..b0c983081d 100644
+--- a/client/components/popover-menu/docs/example.jsx
++++ b/client/components/popover-menu/docs/example.jsx
+@@ -43,7 +43,7 @@ class PopoverExample extends PureComponent {
+ 		return (
+ 			<div>
+ 				<button
+-					className="button"
++					className="example__button"
+ 					ref={ this.popoverButtonRef }
+ 					onClick={ this.swapPopoverVisibility }
+ 				>
+@@ -68,7 +68,7 @@ class PopoverExample extends PureComponent {
+ 		return (
+ 			<div>
+ 				<button
+-					className="button"
++					className="example__button"
+ 					ref={ this.popoverMenuButtonRef }
+ 					onClick={ this.showPopoverMenu }
+ 				>
+diff --git a/client/my-sites/checkout/checkout-thank-you/index.jsx b/client/my-sites/checkout/checkout-thank-you/index.jsx
+index 904240c136..09e7dea1f5 100644
+--- a/client/my-sites/checkout/checkout-thank-you/index.jsx
++++ b/client/my-sites/checkout/checkout-thank-you/index.jsx
+@@ -13,7 +13,6 @@ import {
+ 	isEcommerce,
+ 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
+ 	isGSuiteOrGoogleWorkspace,
+-	isJetpackBusinessPlan,
+ 	isJetpackPlan,
+ 	isPersonal,
+ 	isPlan,
+diff --git a/client/state/data-layer/wpcom/activity-log/update-credentials/index.js b/client/state/data-layer/wpcom/activity-log/update-credentials/index.js
+index 1ffad9d518..e99d6939c9 100644
+--- a/client/state/data-layer/wpcom/activity-log/update-credentials/index.js
++++ b/client/state/data-layer/wpcom/activity-log/update-credentials/index.js
+@@ -23,7 +23,7 @@ import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-sl
+
+ const debug = debugModule( 'calypso:data-layer:update-credentials' );
+ const navigateTo =
+-	undefined !== typeof window
++	'undefined' !== typeof window
+ 		? ( path ) => window.open( path, '_blank' )
+ 		: ( path ) => page( path );
+
+diff --git a/client/tsconfig.json b/client/tsconfig.json
+index 1286955d0a..3331a277fd 100644
+--- a/client/tsconfig.json
++++ b/client/tsconfig.json
+@@ -18,6 +18,7 @@
+ 	"references": [ { "path": "../packages" }, { "path": "../build-tools" } ],
+ 	"include": [
+ 		"**/*",
++		"src/**/*",
+ 		"./lib/domains/tlds/wpcom-multi-level-tlds.json",
+ 		"./__mocks__/lib/json-schema-draft-04.json",
+ 		"./package.json",
+diff --git a/docs/guide/hello-world.md b/docs/guide/hello-world.md
+index 57bcfefe95..cea2727241 100644
+--- a/docs/guide/hello-world.md
++++ b/docs/guide/hello-world.md
+@@ -101,7 +101,8 @@ You can read more about ES6 modules from Axel Rauschmayer's "[_ECMAScript 6 modu
+
+ Now it's time to configure our section. Open `client/sections.js` and add the following code to the end of the `sections` array:
+
+-```javascript
++```
++// in client/sections.js
+ 	{
+ 		name: 'hello-world',
+ 		paths: [ '/hello-world' ],
+@@ -110,7 +111,8 @@ Now it's time to configure our section. Open `client/sections.js` and add the fo
+ ```
+
+ The array should look something like:
+-```
++
++```javascript
+ const sections = [
+ 	// All of the other sections are here
+ 	// ...
+diff --git a/docs/testing/index.md b/docs/testing/index.md
+index 13eda05cfc..1ef80fcd7c 100644
+--- a/docs/testing/index.md
++++ b/docs/testing/index.md
+@@ -14,4 +14,3 @@ All of this might feel confusing and overwhelming even for seasoned developers.
+ - [Snapshot Tests](./snapshot-testing.md)
+ - [End-to-end Tests](../../test/e2e/README.md)
+ - [FAQ](./faq.md)
+-
+diff --git a/package.json b/package.json
+index 565762b905..c62827d4f0 100644
+--- a/package.json
++++ b/package.json
+@@ -186,6 +186,7 @@
+ 		"calypso-codemods": "workspace:^",
+ 		"config": "^3.3.6",
+ 		"debug": "^4.3.3",
++		"enhanced-resolve": "5.9.3",
+ 		"i18n-calypso": "workspace:^",
+ 		"i18n-calypso-cli": "workspace:^",
+ 		"lodash": "^4.17.21",
+diff --git a/packages/calypso-e2e/src/element-helper.ts b/packages/calypso-e2e/src/element-helper.ts
+index 4574d988b5..bc893bf272 100644
+--- a/packages/calypso-e2e/src/element-helper.ts
++++ b/packages/calypso-e2e/src/element-helper.ts
+@@ -37,7 +37,10 @@ export async function waitForElementEnabled(
+ 	const elementHandle = await page.waitForSelector( selector, options );
+ 	await Promise.all( [
+ 		elementHandle.waitForElementState( 'enabled', options ),
+-		page.waitForFunction( ( element: any ) => element.ariaDisabled !== 'true', elementHandle ),
++		page.waitForFunction(
++			( element: SVGElement | HTMLElement ) => element.ariaDisabled !== 'true',
++			elementHandle
++		),
+ 	] );
+ }
+
+diff --git a/packages/calypso-e2e/src/lib/blocks/pricing-table-block.ts b/packages/calypso-e2e/src/lib/blocks/pricing-table-block.ts
+index 44ddc5f5fe..4835a5ceab 100644
+--- a/packages/calypso-e2e/src/lib/blocks/pricing-table-block.ts
++++ b/packages/calypso-e2e/src/lib/blocks/pricing-table-block.ts
+@@ -59,7 +59,7 @@ export class PricingTableBlock {
+ 		// waitForFunction will do its own validation, so no need to return the value
+ 		// to caller for a check.
+ 		await frame.waitForFunction(
+-			( element: any ) => element.ariaPressed === 'true',
++			( element: SVGElement | HTMLElement ) => element.ariaPressed === 'true',
+ 			elementHandle
+ 		);
+ 	}
+diff --git a/packages/calypso-e2e/src/lib/pages/media-page.ts b/packages/calypso-e2e/src/lib/pages/media-page.ts
+index cf6b3b0a1e..af613e62be 100644
+--- a/packages/calypso-e2e/src/lib/pages/media-page.ts
++++ b/packages/calypso-e2e/src/lib/pages/media-page.ts
+@@ -92,7 +92,7 @@ export class MediaPage {
+ 		);
+ 		await elementHandle.click();
+ 		await this.page.waitForFunction(
+-			( element: any ) => element.classList.contains( 'is-selected' ),
++			( element: SVGElement | HTMLElement ) => element.classList.contains( 'is-selected' ),
+ 			elementHandle
+ 		);
+ 	}
+diff --git a/packages/calypso-e2e/src/lib/test-account.ts b/packages/calypso-e2e/src/lib/test-account.ts
+index 6ba2045923..097992e564 100644
+--- a/packages/calypso-e2e/src/lib/test-account.ts
++++ b/packages/calypso-e2e/src/lib/test-account.ts
+@@ -162,7 +162,7 @@ export class TestAccount {
+ 	 * is defined. Prefixes each message with the account name for easier
+ 	 * reference. Formatted similarly to the pw:api logs.
+ 	 */
+-	private log( message: any ) {
++	private log( message: string ) {
+ 		const { DEBUG } = process.env;
+ 		if ( DEBUG && DEBUG !== 'false' ) {
+ 			console.log(
+diff --git a/packages/calypso-e2e/src/lib/utils/get-test-account-by-feature.ts b/packages/calypso-e2e/src/lib/utils/get-test-account-by-feature.ts
+index 1f74e134e0..11bcda8c2d 100644
+--- a/packages/calypso-e2e/src/lib/utils/get-test-account-by-feature.ts
++++ b/packages/calypso-e2e/src/lib/utils/get-test-account-by-feature.ts
+@@ -33,6 +33,7 @@ function stringifyKey( o: FeatureKey ) {
+ 	const sorted = keys.sort().reduce( ( sorted, key ) => {
+ 		sorted[ key ] = o[ key ];
+ 		return sorted;
++		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 	}, {} as any ) as FeatureKey;
+
+ 	return JSON.stringify( sorted );
+diff --git a/packages/tour-kit/README.md b/packages/tour-kit/README.md
+index b5fb460ee7..18ddebb528 100644
+--- a/packages/tour-kit/README.md
++++ b/packages/tour-kit/README.md
+@@ -15,6 +15,7 @@ Variants are ready implementations of Tour Kit providing styled variations of th
+ This is a variant extracted from the guided tours in WordPress.com. It provides the two main renderers (step and minimized views) with controls for navigating, minimizing, and closing. Comes with optional rating in the last step and pagination controls.
+
+ (see usage and examples below)
++
+ ## Usage
+
+ A tour is made up of the following components:
+@@ -23,7 +24,7 @@ A tour is made up of the following components:
+   - some arbitrary metadata
+   - a set of optional reference elements selectors for rendering a step near
+   - a set of options:
+-	- classNames: optional custom CSS classes that will be applied to the step
++  - classNames: optional custom CSS classes that will be applied to the step
+ - Two renderers (used as render props internally):
+   - a step renderer (React component/function passed a set of properties)
+   - a minimized view renderer (for rendering a minimized view instead of closing)
+@@ -156,8 +157,8 @@ The main API for configuring a tour is the config object. See example usage and
+ - `effects`: An object to enable/disable/combine various tour effects:
+
+   - `spotlight`: Adds a semi-transparent overlay and highlights the reference element when provided with a transparent box over it. Expects an object with optional styles to override the default highlight/spotlight behavior when provided (default: spotlight wraps the entire reference element).
+-	  - `interactivity`: An object that configures whether the user is allowed to interact with the referenced element during the tour
+-	  - `styles`: CSS properties that configures the styles applied to the spotlight overlay
++    - `interactivity`: An object that configures whether the user is allowed to interact with the referenced element during the tour
++    - `styles`: CSS properties that configures the styles applied to the spotlight overlay
+   - `arrowIndicator`: Adds an arrow tip pointing at the reference element when provided.
+   - `overlay`: Includes the semi-transparent overlay for all the steps (also blocks interactions with the rest of the page)
+   - `autoScroll`: The page scrolls up and down automatically such that the step target element is visible to the user.
+@@ -167,6 +168,7 @@ The main API for configuring a tour is the config object. See example usage and
+
+ - `popperModifiers`: The tour uses Popper to position steps near reference elements (and for other effects). An implementation can pass its own modifiers to tailor the functionality further e.g. more offset or padding from the reference element.
+ - `tourRating` (optional - only in WPCOM Tour Kit variant):
++
+   - `enabled`: Whether to show rating in last step.
+   - `useTourRating`: (optional) A hook to provide the rating from an external source/state (see [types.ts](./src/types.ts)).
+   - `onTourRate`: (optional) A callback to fire off when a rating is submitted.
+@@ -174,4 +176,3 @@ The main API for configuring a tour is the config object. See example usage and
+ - `portalElementId`: A string that lets you customize under which DOM element the Tour will be appended.
+
+ `placement` (Optional) : Describes the preferred placement of the popper. Possible values are left-start, left, left-end, top-start, top, top-end, right-start, right, right-end, bottom-start, bottom, and bottom-end.
+-
+diff --git a/test/e2e/specs/appearance/theme__details-preview-activate.ts b/test/e2e/specs/appearance/theme__details-preview-activate.ts
+index 0621cef062..704ad7033f 100644
+--- a/test/e2e/specs/appearance/theme__details-preview-activate.ts
++++ b/test/e2e/specs/appearance/theme__details-preview-activate.ts
+@@ -74,15 +74,18 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
+ 		await previewComponent.closePreview();
+ 	} );
+
++	// eslint-disable-next-line jest/no-disabled-tests
+ 	it.skip( 'Activate theme', async function () {
+ 		await themesDetailPage.activate();
+ 	} );
+
++	// eslint-disable-next-line jest/no-disabled-tests
+ 	it.skip( 'Open theme customizer', async function () {
+ 		popupTab = await themesDetailPage.customizeSite();
+ 		await popupTab.waitForLoadState( 'load' );
+ 	} );
+
++	// eslint-disable-next-line jest/no-disabled-tests
+ 	it.skip( 'Close theme customizer', async function () {
+ 		await popupTab.close();
+ 	} );
+diff --git a/test/e2e/specs/domains/domains__add.ts b/test/e2e/specs/domains/domains__add.ts
+index 78dc95c2b3..ad76cbd704 100644
+--- a/test/e2e/specs/domains/domains__add.ts
++++ b/test/e2e/specs/domains/domains__add.ts
+@@ -18,6 +18,7 @@ import { Page, Browser } from 'playwright';
+
+ declare const browser: Browser;
+
++// eslint-disable-next-line jest/no-disabled-tests
+ describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), function () {
+ 	let page: Page;
+ 	let sidebarComponent: SidebarComponent;
+diff --git a/test/e2e/specs/editor-tracking/editor-tracking__fse-template-events.ts b/test/e2e/specs/editor-tracking/editor-tracking__fse-template-events.ts
+index 4375f62c29..fa75a63ba6 100644
+--- a/test/e2e/specs/editor-tracking/editor-tracking__fse-template-events.ts
++++ b/test/e2e/specs/editor-tracking/editor-tracking__fse-template-events.ts
+@@ -78,6 +78,7 @@ describe(
+ 		} );
+
+ 		// These events are currently broken :(. See https://github.com/Automattic/wp-calypso/issues/62924.
++		// eslint-disable-next-line jest/no-disabled-tests
+ 		describe.skip( 'wpcom_block_editor_template_part_choose_existing/replace', function () {
+ 			let page: Page;
+ 			let testAccount: TestAccount;
+diff --git a/test/e2e/specs/onboarding/signup__domain.ts b/test/e2e/specs/onboarding/signup__domain.ts
+index 3c7bdb9e6c..8b107cb131 100644
+--- a/test/e2e/specs/onboarding/signup__domain.ts
++++ b/test/e2e/specs/onboarding/signup__domain.ts
+@@ -75,6 +75,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
+
+ 		// Skipping this test because of inconsistency in cookie working in this flow
+ 		// See GH Issue #56961 (https://github.com/Automattic/wp-calypso/issues/56961)
++		// eslint-disable-next-line jest/no-disabled-tests
+ 		it.skip( 'Prices are shown in Japanese Yen', async function () {
+ 			const cartAmount = ( await cartCheckoutPage.getCheckoutTotalAmount( {
+ 				rawString: true,
+diff --git a/test/e2e/specs/support/support__home.ts b/test/e2e/specs/support/support__home.ts
+index 9a499f8dc0..61956e6808 100644
+--- a/test/e2e/specs/support/support__home.ts
++++ b/test/e2e/specs/support/support__home.ts
+@@ -54,11 +54,13 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
+
+ 		// Invalid keyword search often takes more than 30s to resolve.
+ 		// See: https://github.com/Automattic/wp-calypso/issues/55478
++		// eslint-disable-next-line jest/no-disabled-tests
+ 		it.skip( 'Enter invalid search keyword', async function () {
+ 			const keyword = ';;;ppp;;;';
+ 			await supportComponent.search( keyword );
+ 		} );
+
++		// eslint-disable-next-line jest/no-disabled-tests
+ 		it.skip( 'No search results are shown', async function () {
+ 			await supportComponent.noResultsShown();
+ 		} );
+diff --git a/test/e2e/specs/support/support__popover-invalid.ts b/test/e2e/specs/support/support__popover-invalid.ts
+index 6ae0a20709..5bd68f054e 100644
+--- a/test/e2e/specs/support/support__popover-invalid.ts
++++ b/test/e2e/specs/support/support__popover-invalid.ts
+@@ -56,6 +56,7 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover/Invalid Keywords' ), fu
+
+ 		// Invalid keyword search often takes more than 30s to resolve.
+ 		// See: https://github.com/Automattic/wp-calypso/issues/55478
++		// eslint-disable-next-line jest/no-disabled-tests
+ 		it.skip( 'Enter invalid search keyword and expect no results to be shown', async function () {
+ 			const keyword = ';;;ppp;;;';
+ 			await supportComponent.search( keyword );
+diff --git a/yarn.lock b/yarn.lock
+index 0db6e00515..1b7aecefb2 100644
+--- a/yarn.lock
++++ b/yarn.lock
+@@ -16119,6 +16119,16 @@ __metadata:
+   languageName: node
+   linkType: hard
+
++"enhanced-resolve@npm:5.9.3, enhanced-resolve@npm:^5.8.3":
++  version: 5.9.3
++  resolution: "enhanced-resolve@npm:5.9.3"
++  dependencies:
++    graceful-fs: ^4.2.4
++    tapable: ^2.2.0
++  checksum: 743428030e1d627835bfd05b7a9570ee163e728ab1d55fcd69de9c4ff3e84356c0c9c9deaa8164afb3c648699681a403801ac85b94d6a343838d38f36109643c
++  languageName: node
++  linkType: hard
++
+ "enhanced-resolve@npm:^4.5.0":
+   version: 4.5.0
+   resolution: "enhanced-resolve@npm:4.5.0"
+@@ -16130,16 +16140,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+
+-"enhanced-resolve@npm:^5.8.3":
+-  version: 5.8.3
+-  resolution: "enhanced-resolve@npm:5.8.3"
+-  dependencies:
+-    graceful-fs: ^4.2.4
+-    tapable: ^2.2.0
+-  checksum: c50de36c067359833577fb031de6a3b3d0eeb0627cb81fea1e132116d0b5a4fc746e0c8525f683de0a656f25aad08d3da773775b27608db1695ac47ac64ff673
+-  languageName: node
+-  linkType: hard
+-
+ "enquirer@npm:^2.3.5":
+   version: 2.3.6
+   resolution: "enquirer@npm:2.3.6"
+@@ -35896,6 +35896,7 @@ swiper@4.5.1:
+     css-loader: ^6.5.1
+     debug: ^4.3.3
+     doctrine: ^3.0.0
++    enhanced-resolve: 5.9.3
+     eslint: ^8.6.0
+     eslint-config-prettier: ^8.3.0
+     eslint-nibble: ^8.0.0

@@ -78,6 +78,7 @@ describe(
 		} );
 
 		// These events are currently broken :(. See https://github.com/Automattic/wp-calypso/issues/62924.
+		// eslint-disable-next-line jest/no-disabled-tests
 		describe.skip( 'wpcom_block_editor_template_part_choose_existing/replace', function () {
 			let page: Page;
 			let testAccount: TestAccount;

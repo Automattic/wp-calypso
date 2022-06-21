@@ -18,6 +18,7 @@
 	"references": [ { "path": "../packages" }, { "path": "../build-tools" } ],
 	"include": [
 		"**/*",
+		"src/**/*",
 		"./lib/domains/tlds/wpcom-multi-level-tlds.json",
 		"./__mocks__/lib/json-schema-draft-04.json",
 		"./package.json",
