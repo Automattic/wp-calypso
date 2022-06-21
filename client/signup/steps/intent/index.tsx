@@ -6,9 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
+import { addQueryArgs } from 'calypso/lib/route';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getStepUrl } from 'calypso/signup/utils';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
@@ -42,7 +42,7 @@ export const EXCLUDED_STEPS: { [ key: string ]: string[] } = {
 };
 
 const EXTERNAL_FLOW: { [ key: string ]: string } = {
-	import: 'importer',
+	import: '/setup/import',
 };
 
 const getExcludedSteps = ( providedDependencies?: Dependencies ) =>
@@ -73,7 +73,7 @@ export default function IntentStep( props: Props ): React.ReactNode {
 
 		if ( EXTERNAL_FLOW[ intent ] ) {
 			dispatch( submitSignupStep( { stepName }, providedDependencies ) );
-			page( getStepUrl( EXTERNAL_FLOW[ intent ], '', '', '', queryObject ) );
+			page( addQueryArgs( queryObject, EXTERNAL_FLOW[ intent ] ) );
 		} else {
 			branchSteps( providedDependencies );
 			dispatch( submitSignupStep( { stepName }, providedDependencies ) );
