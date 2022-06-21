@@ -51,7 +51,7 @@ const error = ( state = {}, action: AnyAction ) => {
 	return state;
 };
 
-const offers = ( state = [], action: AnyAction ) => {
+export const offers = ( state = [], action: AnyAction ) => {
 	switch ( action.type ) {
 		case PURCHASE_CANCELLATION_OFFER_RECEIVE:
 			return createIntroOfferMap( action.offers );
