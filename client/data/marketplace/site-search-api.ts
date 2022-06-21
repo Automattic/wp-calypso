@@ -1,5 +1,5 @@
-import qs from 'qs';
-import { RETURNABLE_FIELDS, MARKETPLACE_SEARCH_URL } from './constants';
+import wpcom from 'calypso/lib/wp';
+import { RETURNABLE_FIELDS } from './constants';
 import type { SearchParams } from './types';
 
 // Maps sort values to values expected by the API
@@ -56,8 +56,11 @@ function generateApiQueryString( { query, groupId, pageHandle, pageSize, locale 
 	// if ( author ) {
 	// }
 
-	return qs.stringify( params, { arrayFormat: 'brackets' } );
+	return params;
 }
+
+const marketplaceSearchApiBase = '/marketplace/search';
+const apiVersion = '1.3';
 
 /**
  * Perform a search.
@@ -68,20 +71,10 @@ function generateApiQueryString( { query, groupId, pageHandle, pageSize, locale 
 export function search( options: SearchParams ) {
 	const queryString = generateApiQueryString( options );
 
-	const url = `${ MARKETPLACE_SEARCH_URL }?${ queryString }`;
-
-	// NOTE: API Nonce is necessary to authenticate requests to class-wpcom-rest-api-v2-endpoint-search.php.
-	return fetch( url, {
-		headers: {},
-		credentials: 'same-origin',
-	} )
-		.then( ( response ) => {
-			if ( response.status !== 200 ) {
-				return Promise.reject(
-					`Unexpected response from API with status code ${ response.status }.`
-				);
-			}
-			return response;
-		} )
-		.then( ( r ) => r.json() );
+	return wpcom.req.get(
+		{
+			path: marketplaceSearchApiBase,
+		},
+		{ ...queryString, apiVersion }
+	);
 }
