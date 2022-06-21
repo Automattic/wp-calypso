@@ -18,6 +18,14 @@ jest.mock( '@automattic/calypso-config', () => ( {
 		return key;
 	},
 } ) );
+jest.mock( '@wordpress/compose', () => {
+	const originalModule = jest.requireActual( '@wordpress/compose' );
+	return {
+		__esModule: true,
+		...originalModule,
+		useViewportMatch: jest.fn( () => true ),
+	};
+} );
 
 const MOCK_LOCALE = 'en';
 const MOCK_DESIGN_TITLE = 'Cassel';
@@ -79,4 +87,35 @@ describe( '<DesignPicker /> integration', () => {
 			);
 		} )
 	);
+
+	it( 'Should not display the buttons inside the design picker', async () => {
+		const renderedContainer = render(
+			<DesignPicker
+				locale={ MOCK_LOCALE }
+				onSelect={ jest.fn() }
+				recommendedCategorySlug={ null }
+				previewOnly={ true }
+				onPreview={ () => true }
+			/>
+		);
+
+		expect(
+			renderedContainer.container.querySelectorAll( '.design-button-cover__button' ).length
+		).toBe( 0 );
+	} );
+
+	it( 'Should display the buttons inside the design picker', async () => {
+		const renderedContainer = render(
+			<DesignPicker
+				locale={ MOCK_LOCALE }
+				onSelect={ jest.fn() }
+				recommendedCategorySlug={ null }
+				onPreview={ () => true }
+			/>
+		);
+
+		expect(
+			renderedContainer.container.querySelectorAll( '.design-button-cover__button' ).length
+		).toBeGreaterThanOrEqual( 2 );
+	} );
 } );
