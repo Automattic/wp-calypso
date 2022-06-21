@@ -87,7 +87,7 @@ const ImportLight: Step = function ImportStep( props ) {
 				);
 
 			case 'summary':
-				return <Summary />;
+				return <Summary colorsNum={ colors.length } />;
 
 			case 'capture':
 			default:
