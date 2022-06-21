@@ -6,7 +6,6 @@ export { default as login } from './login';
 export { default as options } from './site-options';
 export { default as bloggerStartingPoint } from './blogger-starting-point';
 export { default as storeFeatures } from './store-features';
-export { default as themeDesignPicker } from './theme-design-picker';
 export { default as designSetup } from './design-setup';
 export { default as import } from './import';
 export { default as importLight } from './import-light';
@@ -62,5 +61,4 @@ export type StepPath =
 	| 'error'
 	| 'wooConfirm'
 	| 'wooVerifyEmail'
-	| 'editEmail'
-	| 'themeDesignPicker';
+	| 'editEmail';
