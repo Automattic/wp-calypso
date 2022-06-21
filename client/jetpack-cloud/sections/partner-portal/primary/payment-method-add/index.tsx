@@ -30,6 +30,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { hasValidPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
+import AssignLicenseStepProgress from '../../assign-license-step-progress';
 
 import './style.scss';
 
@@ -55,6 +56,11 @@ function PaymentMethodAdd(): ReactElement {
 	);
 	const useAsPrimaryPaymentMethod = useSelect( ( select ) =>
 		select( 'credit-card' ).useAsPrimaryPaymentMethod()
+	);
+
+	const returnQueryArg = useMemo(
+		() => getQueryArg( window.location.href, 'return' ),
+		[ window.location.href, getQueryArg ]
 	);
 
 	useReturnUrl( hasPaymentMethod );
@@ -90,7 +96,7 @@ function PaymentMethodAdd(): ReactElement {
 	);
 
 	const successCallback = useCallback( () => {
-		if ( getQueryArg( window.location.href, 'return' ) ) {
+		if ( returnQueryArg ) {
 			reduxDispatch(
 				fetchStoredCards( {
 					startingAfter: '',
@@ -120,6 +126,8 @@ function PaymentMethodAdd(): ReactElement {
 		<Main wideLayout className="payment-method-add">
 			<DocumentHead title={ translate( 'Payment Methods' ) } />
 			<SidebarNavigation />
+
+			{ returnQueryArg && <AssignLicenseStepProgress currentStep={ 2 } /> }
 
 			<div className="payment-method-add__header">
 				<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>
