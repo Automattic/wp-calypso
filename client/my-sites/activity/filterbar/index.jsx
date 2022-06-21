@@ -17,7 +17,6 @@ import './style.scss';
 export class Filterbar extends Component {
 	static defaultProps = {
 		selectorTypes: { dateRange: true, actionType: true },
-		showFilterLabel: true,
 	};
 
 	state = {
@@ -122,8 +121,7 @@ export class Filterbar extends Component {
 	};
 
 	render() {
-		const { translate, siteId, filter, isLoading, isVisible, selectorTypes, showFilterLabel } =
-			this.props;
+		const { translate, siteId, filter, isLoading, isVisible, selectorTypes } = this.props;
 
 		if ( siteId && isLoading && this.isEmptyFilter( filter ) ) {
 			return <div className="filterbar is-loading" />;
@@ -146,9 +144,7 @@ export class Filterbar extends Component {
 		return (
 			<div className="filterbar" id="filterbar">
 				<div className="filterbar__wrap card">
-					{ showFilterLabel && (
-						<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
-					) }
+					<span className="filterbar__label">{ translate( 'Filter by:' ) }</span>
 					<ul className="filterbar__control-list">
 						{ selectorTypes.dateRange && (
 							<li>

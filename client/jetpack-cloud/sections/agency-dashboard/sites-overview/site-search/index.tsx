@@ -12,8 +12,8 @@ export default function SiteSearch( {
 	currentPage: number;
 } ): ReactElement {
 	const translate = useTranslate();
-
 	const isMobile = useMobileBreakpoint();
+
 	const handleSearchSites = ( query: string ) => {
 		const params = new URLSearchParams( window.location.search );
 		const issueTypes = params.get( 'issue_types' );
@@ -29,11 +29,11 @@ export default function SiteSearch( {
 		<Search
 			hideFocus
 			isOpen
-			hideClose
+			hideClose={ ! searchQuery || ! isMobile }
 			initialValue={ searchQuery }
 			onSearch={ handleSearchSites }
 			placeholder={
-				isMobile ? translate( 'Search site...' ) : translate( 'Search by site title or domain...' )
+				isMobile ? translate( 'Search sites...' ) : translate( 'Search by site title or domain...' )
 			}
 			delaySearch={ true }
 		/>
