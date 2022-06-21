@@ -141,7 +141,11 @@ class WPCom_Tutorials {
 		$statuses            = $this->get_statuses( $tutorial['id'] );
 
 		foreach ( $tutorial['tasks'] as $task ) {
-			$task['status']        = isset( $statuses[ $task['id'] ] ) ? $statuses[ $task['id'] ] : 'pending';
+			// Default status is pending.
+			$task['status'] = 'pending';
+			if ( isset( $statuses[ $task['id'] ] ) ) {
+				$task['status'] = $statuses[ $task['id'] ];
+			}
 			$tasks_with_statuses[] = $task;
 		}
 
