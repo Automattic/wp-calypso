@@ -289,7 +289,7 @@ const ProfessionalEmailCardNew = ( props: EmailProvidersStackedCardProps ): Reac
 			provider={ provider }
 			selectedDomainName={ selectedDomainName }
 			showAddNewMailboxButton
-			submitActionText={ translate( 'Create your mailbox' ) }
+			submitActionText={ translate( 'Purchase' ) }
 		>
 			<PasswordResetFieldTip />
 		</NewMailBoxList>

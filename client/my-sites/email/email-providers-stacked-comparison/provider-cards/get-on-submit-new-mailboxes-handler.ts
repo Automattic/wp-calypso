@@ -19,7 +19,7 @@ export type GetOnSubmitNewMailboxesHandlerProps = {
 	emailProduct: ProductListItem | null;
 	isDomainInCart?: boolean;
 	provider: EmailProvider;
-	setAddingToCart: ( addingToCard: boolean ) => void;
+	setAddingToCart: ( isAddingToCart: boolean ) => void;
 	shoppingCartManager: ShoppingCartManagerActions;
 	siteSlug: string;
 	source: string;
@@ -68,7 +68,7 @@ const getOnSubmitNewMailboxesHandler =
 			return;
 		}
 
-		const mailProperties = getMailProductProperties(
+		const emailProperties = getMailProductProperties(
 			provider,
 			domain,
 			emailProduct as ProductListItem,
@@ -76,7 +76,7 @@ const getOnSubmitNewMailboxesHandler =
 		);
 
 		shoppingCartManager
-			.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, mailProperties ) ] )
+			.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, emailProperties ) ] )
 			.then( () => {
 				page( '/checkout/' + siteSlug );
 			} )

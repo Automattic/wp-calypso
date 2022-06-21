@@ -253,7 +253,7 @@ const GoogleWorkspaceCardNew = ( props: EmailProvidersStackedCardProps ): ReactE
 			provider={ provider }
 			selectedDomainName={ selectedDomainName }
 			showAddNewMailboxButton
-			submitActionText={ translate( 'Create your mailbox' ) }
+			submitActionText={ translate( 'Purchase' ) }
 		/>
 	);
 
