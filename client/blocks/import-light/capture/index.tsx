@@ -24,9 +24,9 @@ const Capture: FunctionComponent< Props > = ( props ) => {
 					<div className="import__heading">
 						<FormattedHeader
 							align={ 'left' }
-							headerText={ translate( 'What’s your existing site address?' ) }
+							headerText={ translate( 'Where will you import from?' ) }
 							subHeaderText={ translate(
-								'After a brief scan, we’ll prompt with what we can import.'
+								'After a brief scan, we’ll prompt with what we can import from your website.'
 							) }
 						/>
 						<div className={ 'step-wrapper__header-image' }>

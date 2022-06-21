@@ -1,6 +1,9 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+import { Button } from '@automattic/components';
 import { NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
-import { Icon } from '@wordpress/icons';
+import { sprintf } from '@wordpress/i18n';
+import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import React, { ChangeEvent, useState } from 'react';
@@ -22,12 +25,15 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ isValid, setIsValid ] = useState( true );
+	const exampleInputWebsite = 'www.artfulbaker.blog';
 
 	function validateUrl( url: string ) {
 		return CAPTURE_URL_RGX.test( url );
 	}
 
 	function onInputBlur() {
+		if ( ! urlValue ) return;
+
 		setIsValid( validateUrl( urlValue ) );
 	}
 
@@ -48,26 +54,41 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				</FormLabel>
 				<FormTextInput
 					type="text"
+					className={ classnames( { 'is-error': ! isValid } ) }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
 					autoFocus
 					autoComplete="off"
 					autoCorrect="off"
 					spellCheck="false"
 					value={ urlValue }
-					placeholder={ translate( 'Copy and paste' ) }
+					placeholder={ sprintf(
+						/* translators: the exampleSite is a URL, eg: www.artfulbaker.blog */
+						translate( 'Ex. %(exampleSite)s' ).toString(),
+						{
+							exampleSite: exampleInputWebsite,
+						}
+					) }
 					onBlur={ onInputBlur }
 					onChange={ onInputChange }
 				/>
+				<Button borderless={ true } className={ 'action-buttons__importer-list' }>
+					{ translate( "Don't have a site address?" ) }
+				</Button>
 				<FormSettingExplanation>
-					<span className={ classnames( { isError: ! isValid } ) }>
+					<span className={ classnames( { 'is-error': ! isValid } ) }>
 						{ isValid && (
 							<>
 								<Icon icon={ bulb } size={ 20 } />{ ' ' }
-								{ translate( 'You can skip this step to start fresh.' ) }
+								{ translate(
+									'You must own this website. You can still skip this step to start fresh.'
+								) }
 							</>
 						) }
 						{ ! isValid && (
-							<>{ translate( 'The address you entered is not valid. Please try again.' ) }</>
+							<>
+								<Icon icon={ info } size={ 20 } />{ ' ' }
+								{ translate( 'Please enter a valid website address. You can copy and paste.' ) }
+							</>
 						) }
 					</span>
 				</FormSettingExplanation>

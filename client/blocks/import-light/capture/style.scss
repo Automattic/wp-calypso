@@ -25,15 +25,25 @@
 
 	.form-setting-explanation {
 		font-style: normal;
-		margin-top: 1em;
 
 		svg {
 			position: relative;
-			top: 2px;
+			top: 4px;
 		}
 
-		.isError {
+		.is-error {
 			color: var( --color-error );
+
+			svg {
+				fill: var( --color-error );
+				transform: rotate( 180deg );
+			}
 		}
+	}
+
+	.action-buttons__importer-list {
+		text-decoration: underline;
+		color: var( --studio-gray-100 );
+		margin-top: 1em;
 	}
 }
