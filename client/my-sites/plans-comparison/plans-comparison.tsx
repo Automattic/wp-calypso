@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
+import usePlansComparisonMeta from 'calypso/data/plans/use-plans-comparison-meta';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
@@ -457,6 +458,13 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 			? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
 			: `/plans/${ selectedSiteSlug || '' }`;
 
+	const { status, data } = usePlansComparisonMeta( currencyCode );
+
+	if ( status === 'loading' || status === 'error' ) {
+		// TODO: it would be better to show a spinner here.
+		return null;
+	}
+
 	return (
 		<>
 			<Global styles={ globalOverrides } />
@@ -502,6 +510,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 							feature={ feature }
 							plans={ plans }
 							isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
+							meta={ data }
 							key={ feature.features[ 0 ] }
 						/>
 					) ) }
@@ -512,6 +521,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 							feature={ feature }
 							plans={ plans }
 							isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
+							meta={ data }
 							key={ feature.features[ 0 ] }
 						/>
 					) ) }

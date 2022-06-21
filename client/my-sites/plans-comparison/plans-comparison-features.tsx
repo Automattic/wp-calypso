@@ -24,8 +24,10 @@ import {
 	FEATURE_MANAGED_HOSTING,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { translate, numberFormat } from 'i18n-calypso';
 import isStarterPlanEnabled from './is-starter-plan-enabled';
+import type { PlansComparisonMetaData } from 'calypso/data/plans/use-plans-comparison-meta';
 import type { TranslateResult } from 'i18n-calypso';
 
 export interface PlanComparisonFeature {
@@ -455,14 +457,23 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_PREMIUM_THEMES ],
-		getCellText: ( feature, isMobile = false ) => {
+		getCellText: ( feature, isMobile = false, _, extraArgs: unknown ) => {
+			const meta = extraArgs as PlansComparisonMetaData;
+
 			let cellText = feature ? (
 				<>
 					<Gridicon icon="checkmark" />
 					{ translate( 'Included' ) }
 				</>
 			) : (
-				<>{ translate( 'Available for $50+ each' ) }</>
+				<>
+					{ translate( 'Available for %(price)s+ each', {
+						args: {
+							price: formatCurrency( meta.bottom_theme_price, meta.currency, { stripZeros: true } ),
+						},
+						comment: 'Translators: theme costs start from the _price_',
+					} ) }
+				</>
 			);
 
 			if ( isMobile ) {
@@ -476,6 +487,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 					</>
 				);
 			}
+
 			return cellText;
 		},
 	},
@@ -573,14 +585,25 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_NO_ADS ],
-		getCellText: ( feature, isMobile = false ) => {
+		getCellText: ( feature, isMobile = false, _, extraArgs: unknown ) => {
+			const meta = extraArgs as PlansComparisonMetaData;
+
 			let cellText = feature ? (
 				<>
 					<Gridicon icon="checkmark" />
 					{ translate( 'Included' ) }
 				</>
 			) : (
-				<>{ translate( 'Available for +$2/month' ) }</>
+				<>
+					{ translate( 'Available for +%(price)s/month', {
+						args: {
+							price: formatCurrency( meta.no_ads_monthly_cost, meta.currency, {
+								stripZeros: true,
+							} ),
+						},
+						comment: 'Translators: The no-ads feature costs additional $2/month.',
+					} ) }
+				</>
 			);
 
 			if ( isMobile ) {
