@@ -2,11 +2,11 @@
 /**
  * Plugin Name: WordPress.com Editing Toolkit
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 2.21
+ * Version: 7.7
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
- * Text Domain: full-site-editing
+ * Text Domain: test-full-site-editing
  *
  * @package A8C\FSE
  */
@@ -42,7 +42,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'A8C_ETK_PLUGIN_VERSION', 'dev' );
+define( 'A8C_ETK_PLUGIN_VERSION', '3.35485' );
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
@@ -387,12 +387,13 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
  */
 function load_help_center() {
 	// enable help center for all proxied users.
-	$is_proxied = function_exists( 'wpcom_is_proxied_request' ) ? wpcom_is_proxied_request() : false;
+	$is_proxied = $_SERVER['A8C_PROXIED_REQUEST'] || defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
+
+	// only shipping to en locale for now.
+	$current_locale = get_locale();
 
 	$current_segment = 10; // segment of existing users that will get the help center in %.
 	$user_segment    = get_current_user_id() % 100;
-	// only shipping to en locale for now.
-	$current_locale = get_locale();
 
 	if ( $is_proxied || ( str_starts_with( $current_locale, 'en' ) && $user_segment < $current_segment ) ) {
 		require_once __DIR__ . '/help-center/class-help-center.php';
