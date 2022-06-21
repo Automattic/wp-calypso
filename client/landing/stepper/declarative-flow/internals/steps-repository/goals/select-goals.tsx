@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
+import DIFMLink from './difm-link';
 import { useGoals } from './goals';
 import ImportLink from './import-link';
 import SelectCard from './select-card';
@@ -43,6 +44,11 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 		onSubmit( selectedGoalsWithImport );
 	};
 
+	const handleDIFMLinkClick = () => {
+		const selectedGoalsWithDIFM = addGoal( SiteGoal.DIFM );
+		onSubmit( selectedGoalsWithDIFM );
+	};
+
 	return (
 		<>
 			<div className="select-goals__cards-container">
@@ -63,6 +69,7 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 
 			<div className="select-goals__actions-container">
 				<ImportLink onClick={ handleImportLinkClick } />
+				<DIFMLink onClick={ handleDIFMLinkClick } />
 				<Button primary onClick={ handleContinueButtonClick }>
 					{ translate( 'Continue' ) }
 				</Button>
