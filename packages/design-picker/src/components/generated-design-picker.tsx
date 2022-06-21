@@ -6,7 +6,11 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect, useRef } from 'react';
-import { DEFAULT_VIEWPORT_WIDTH, DEFAULT_VIEWPORT_HEIGHT } from '../constants';
+import {
+	DEFAULT_VIEWPORT_WIDTH,
+	DEFAULT_VIEWPORT_HEIGHT,
+	MOBILE_VIEWPORT_WIDTH,
+} from '../constants';
 import { getDesignPreviewUrl, getMShotOptions } from '../utils';
 import type { Design } from '../types';
 import './style.scss';
@@ -123,7 +127,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 								thumbnailUrl={ getDesignPreviewUrl( design, {
 									language: locale,
 									verticalId,
-									viewport_width: DEFAULT_VIEWPORT_WIDTH,
+									viewport_width: isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH,
 									viewport_height: DEFAULT_VIEWPORT_HEIGHT,
 								} ) }
 								isSelected={ selectedDesign?.slug === design.slug }

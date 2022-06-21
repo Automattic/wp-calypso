@@ -2,6 +2,7 @@ import {
 	getDesignPreviewUrl,
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
+	MOBILE_VIEWPORT_WIDTH,
 } from '@automattic/design-picker';
 import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
@@ -45,7 +46,7 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 			previewUrl={ getDesignPreviewUrl( design, {
 				language: locale,
 				verticalId,
-				viewport_width: DEFAULT_VIEWPORT_WIDTH,
+				viewport_width: isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH,
 				viewport_height: DEFAULT_VIEWPORT_HEIGHT,
 			} ) }
 			loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
