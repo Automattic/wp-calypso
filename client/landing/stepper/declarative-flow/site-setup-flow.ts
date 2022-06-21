@@ -118,17 +118,22 @@ export const siteSetupFlow: Flow = {
 		}
 
 		const exitFlow = ( to: string ) => {
-			setPendingAction( async () => {
-				if ( ! siteSlug ) {
-					return;
-				}
-
-				const pendingActions = [ setIntentOnSite( siteSlug, intent ) ];
-				if ( isEnabled( 'signup/goals-step' ) ) {
-					pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
-				}
-				await Promise.all( pendingActions );
-				redirect( to );
+			setPendingAction( () => {
+				/**
+				 * This implementation seems very hacky.
+				 * The new Promise returned is never resolved or rejected.
+				 *
+				 * If we were to resolve the promise when all pending actions complete,
+				 * I found out this results in setIntentOnSite and setGoalsOnSite being called multiple times
+				 * because the exitFlow itself is called more than once on actual flow exits.
+				 */
+				return new Promise( () => {
+					const pendingActions = [ setIntentOnSite( siteSlug as string, intent ) ];
+					if ( siteSlug && isEnabled( 'signup/goals-step' ) ) {
+						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
+					}
+					Promise.all( pendingActions ).then( () => redirect( to ) );
+				} );
 			} );
 
 			navigate( 'processing' );
