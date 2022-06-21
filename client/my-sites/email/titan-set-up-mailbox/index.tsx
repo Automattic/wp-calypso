@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HeaderCake from 'calypso/components/header-cake';
@@ -68,7 +69,7 @@ const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxPro
 			{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
 			<Main wideLayout={ true }>
-				<DocumentHead title={ title } />
+				<DocumentHead title={ titleCase( title ) } />
 
 				<EmailHeader />
 
