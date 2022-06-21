@@ -27,6 +27,10 @@ type TracksGoalsSelectEventProperties = {
 const SiteGoal = Onboard.SiteGoal;
 const { serializeGoals, goalsToIntent } = Onboard.utils;
 
+const refGoals: Record< string, Onboard.SiteGoal[] > = {
+	'create-blog-lp': [ SiteGoal.Write ],
+};
+
 /**
  * The goals capture step
  */
@@ -42,7 +46,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 	const { setGoals, setIntent, clearImportGoal, clearDIFMGoal } = useDispatch( ONBOARD_STORE );
-	const refParameter = getQueryArgs()?.ref;
+	const refParameter = getQueryArgs()?.ref as string;
 
 	useEffect( () => {
 		clearImportGoal();
@@ -103,6 +107,14 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const stepContent = (
 		<SelectGoals selectedGoals={ goals } onChange={ handleChange } onSubmit={ handleSubmit } />
 	);
+
+	useEffect( () => {
+		const isValidRef = Object.keys( refGoals ).includes( refParameter );
+
+		if ( isValidRef && goals.length === 0 ) {
+			setGoals( refGoals[ refParameter ] );
+		}
+	}, [ refParameter, refGoals ] );
 
 	return (
 		<StepContainer
