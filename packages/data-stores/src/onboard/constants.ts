@@ -15,4 +15,5 @@ export enum SiteIntent {
 	Build = 'build',
 	DIFM = 'difm', // "Do It For Me"
 	WpAdmin = 'wpadmin',
+	Import = 'import', // deprecated
 }

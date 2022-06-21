@@ -1,6 +1,5 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteGoal } from './constants';
-import { goalsToIntent } from './utils';
 import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
@@ -227,9 +226,6 @@ const intent: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_INTENT' ) {
 		return action.intent;
 	}
-	if ( action.type === 'SET_GOALS' ) {
-		return goalsToIntent( action.goals );
-	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return '';
 	}
@@ -302,6 +298,9 @@ const stepProgress: Reducer< { count: number; progress: number } | undefined, On
 const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'SET_GOALS' ) {
 		return action.goals;
+	}
+	if ( action.type === 'CLEAR_IMPORT_GOAL' ) {
+		return state.filter( ( goal ) => goal !== SiteGoal.Import );
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return [];

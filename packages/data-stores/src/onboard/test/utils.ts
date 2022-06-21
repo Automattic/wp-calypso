@@ -9,7 +9,7 @@ describe( 'Test onboard utils', () => {
 		},
 		{
 			goals: [ SiteGoal.Write, SiteGoal.Import, SiteGoal.DIFM ],
-			expectedIntent: SiteIntent.DIFM,
+			expectedIntent: SiteIntent.Import,
 		},
 		{
 			goals: [ SiteGoal.Write, SiteGoal.Sell, SiteGoal.Promote ],

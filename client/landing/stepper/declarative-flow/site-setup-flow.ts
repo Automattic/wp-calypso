@@ -198,6 +198,12 @@ export const siteSetupFlow: Flow = {
 				}
 
 				case 'goals': {
+					const { intent } = providedDependencies;
+
+					if ( intent === SiteIntent.Import ) {
+						return navigate( 'import' );
+					}
+
 					if ( intent === SiteIntent.DIFM ) {
 						return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
 					}
@@ -407,9 +413,10 @@ export const siteSetupFlow: Flow = {
 				case 'options':
 				case 'import':
 					if ( isEnabled( 'signup/goals-step' ) ) {
-						if ( isEnabled( 'signup/site-vertical-step' ) ) {
-							return navigate( 'vertical' );
-						}
+						// This can be unchecked when import step is shown after verticals.
+						// if ( isEnabled( 'signup/site-vertical-step' ) ) {
+						// 	return navigate( 'vertical' );
+						// }
 						return navigate( 'goals' );
 					}
 
