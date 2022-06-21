@@ -27,7 +27,7 @@ const selectors = {
 	// Buttons
 	checkUrlButton: 'form.capture__input-wrapper button.action-buttons__next',
 	startBuildingButton: 'div.import__onboarding-page button.action-buttons__next',
-	startImportButton: 'button.select-items-alt__item-button:text("Import your site content")',
+	startImportButton: 'button.import-link__button:text("Import your site content")',
 	// And entry of the list of selectable importers
 	importerListButton: ( index: number ) =>
 		`div.list__importers-primary:nth-child(${ index + 1 }) .action-card__button-container button`,
@@ -160,7 +160,7 @@ export class StartImportFlow {
 	 * @param {string} siteSlug The site slug URL.
 	 */
 	async startSetup( siteSlug: string ): Promise< void > {
-		const route = this.framework === 'signup' ? '/start/setup-site/intent' : '/setup/intent';
+		const route = '/setup/goals';
 
 		await this.page.goto( DataHelper.getCalypsoURL( route, { siteSlug } ) );
 		await this.validateSetupPage();
