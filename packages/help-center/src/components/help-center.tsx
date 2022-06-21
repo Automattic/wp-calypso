@@ -3,7 +3,6 @@
  * External Dependencies
  */
 import { useSupportAvailability } from '@automattic/data-stores';
-import { useHappychatAvailable } from '@automattic/happychat-connection';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
@@ -31,7 +30,6 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 	const user = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { setDirectlyData } = useDispatch( HELP_CENTER_STORE );
 	const { isLoading: isLoadingChat } = useSupportAvailability( 'CHAT' );
-	const { isLoading: isLoadingChatAvailable } = useHappychatAvailable();
 	const { data: supportData, isLoading: isSupportDataLoading } = useSupportAvailability( 'OTHER' );
 	useStillNeedHelpURL();
 
@@ -47,9 +45,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 	}, [ supportData, setDirectlyData ] );
 
 	const isLoading = isSimpleSite
-		? [ ! site, ! user, isSupportDataLoading, isLoadingChat, isLoadingChatAvailable ].some(
-				Boolean
-		  )
+		? [ ! site, ! user, isSupportDataLoading, isLoadingChat ].some( Boolean )
 		: false;
 
 	useEffect( () => {
