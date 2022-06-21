@@ -12,15 +12,15 @@ export const useGoals = (): Goal[] => {
 	return [
 		{
 			key: SiteGoal.Write,
-			title: translate( 'Write and publish' ),
+			title: translate( 'Write & Publish' ),
 		},
 		{
 			key: SiteGoal.Sell,
-			title: translate( 'Sell goods or products' ),
+			title: translate( 'Sell online' ),
 		},
 		{
 			key: SiteGoal.Promote,
-			title: translate( 'Promote myself or my business' ),
+			title: translate( 'Promote myself or business' ),
 		},
 		{
 			key: SiteGoal.DIFM,
