@@ -20,7 +20,20 @@ interface Props extends AddOnMeta {
 }
 
 const Container = styled.div`
-	width: 100%;
+	.add-ons-card {
+		width: 100%;
+		height: 100%;
+
+		> div {
+			// @wordpress/components<Card> wraps content in a div
+			height: 100%;
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+		}
+	}
+
 	.add-ons-card__header {
 		display: flex;
 		justify-content: flex-start;
@@ -60,7 +73,7 @@ const AddOnCard = ( props: Props ) => {
 
 	return (
 		<Container>
-			<Card>
+			<Card className="add-ons-card">
 				<CardHeader isBorderless={ true } className="add-ons-card__header">
 					<div className="add-ons-card__icon">
 						<Icon icon={ props.icon } size={ 44 } />
@@ -72,7 +85,7 @@ const AddOnCard = ( props: Props ) => {
 						</div>
 					</div>
 				</CardHeader>
-				<CardBody>{ props.description }</CardBody>
+				<CardBody className="add-ons-card__body">{ props.description }</CardBody>
 				<CardFooter isBorderless={ true } className="add-ons-card__footer">
 					{ isSelected && props.actionSelected && (
 						<>
