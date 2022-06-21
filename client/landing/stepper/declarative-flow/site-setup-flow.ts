@@ -32,7 +32,7 @@ export const siteSetupFlow: Flow = {
 		const isEnglishLocale = useIsEnglishLocale();
 
 		return [
-			...( isEnabled( 'signup/goals-step' ) ? [ 'goals' ] : [] ),
+			...( isEnabled( 'signup/goals-step' ) && isEnglishLocale ? [ 'goals' ] : [] ),
 			...( isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale ? [ 'vertical' ] : [] ),
 			'intent',
 			'options',
@@ -97,6 +97,7 @@ export const siteSetupFlow: Flow = {
 		const { FSEActive } = useFSEStatus();
 		const dispatch = reduxDispatch();
 		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale;
+		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnglishLocale;
 
 		// Set up Step progress for Woo flow - "Step 2 of 4"
 		if ( intent === 'sell' && storeType === 'power' ) {
@@ -320,9 +321,7 @@ export const siteSetupFlow: Flow = {
 				}
 
 				case 'vertical': {
-					const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' );
-
-					if ( goalsCaptureStepEnabled ) {
+					if ( goalsStepEnabled ) {
 						if ( goals.includes( SiteGoal.Import ) ) {
 							return navigate( 'import' );
 						}
@@ -390,7 +389,7 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'bloggerStartingPoint' );
 					}
 
-					if ( isEnabled( 'signup/goals-step' ) ) {
+					if ( goalsStepEnabled ) {
 						if ( verticalsStepEnabled ) {
 							return navigate( 'vertical' );
 						}
@@ -417,13 +416,13 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'import' );
 
 				case 'vertical':
-					if ( isEnabled( 'signup/goals-step' ) ) {
+					if ( goalsStepEnabled ) {
 						return navigate( 'goals' );
 					}
 
 				case 'options':
 				case 'import':
-					if ( isEnabled( 'signup/goals-step' ) ) {
+					if ( goalsStepEnabled ) {
 						// This can be unchecked when import step is shown after verticals.
 						// if ( verticalsStepEnabled ) {
 						// 	return navigate( 'vertical' );
