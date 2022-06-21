@@ -13,7 +13,7 @@ describe( 'Design Picker designs utils', () => {
 		} as Design;
 
 		it( 'should return the block-previews/site endpoint with the correct query params', () => {
-			expect( getDesignPreviewUrl( design, options ) ).toEqual(
+			expect( getDesignPreviewUrl( design, {} ) ).toEqual(
 				`https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&viewport_height=${ DEFAULT_VIEWPORT_HEIGHT }&source_site=patternboilerplates.wordpress.com&site_title=Zoologist`
 			);
 		} );
