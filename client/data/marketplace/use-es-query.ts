@@ -83,12 +83,12 @@ export const useESPluginsInfinite = (
 			select: ( data: InfiniteData< ESResponse > ) => {
 				return {
 					...data,
-					plugins: mapIndexResultsToPluginData( data.pages.flatMap( ( p ) => p.results ) ),
-					pagination: { results: data.pages[ 0 ]?.total },
+					plugins: mapIndexResultsToPluginData( data.pages.flatMap( ( p ) => p.data.results ) ),
+					pagination: { results: data.pages[ 0 ]?.data?.total },
 				};
 			},
 			getNextPageParam: ( lastPage ) => {
-				return lastPage.page_handle || undefined;
+				return lastPage.data.page_handle || undefined;
 			},
 			enabled,
 			staleTime,

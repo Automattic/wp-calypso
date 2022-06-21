@@ -56,7 +56,7 @@ export type ESIndexResult = {
 
 export type ESHits = Array< { fields: ESIndexResult } >;
 
-export type ESResponse = { results: ESHits; total: number; page_handle: string };
+export type ESResponse = { data: { results: ESHits; total: number; page_handle: string } };
 
 export type ESTermFilter = { term: Record< string, string > };
 
