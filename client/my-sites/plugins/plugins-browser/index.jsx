@@ -3,6 +3,10 @@ import {
 	findFirstSimilarPlanKey,
 	TYPE_BUSINESS,
 } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_MANAGE_PLUGINS,
+	WPCOM_FEATURES_UPLOAD_PLUGINS,
+} from '@automattic/calypso-products/src';
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
@@ -61,6 +65,7 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import './style.scss';
+import siteHasFeature from '../../../state/selectors/site-has-feature';
 import usePlugins from '../use-plugins';
 
 /**
@@ -108,6 +113,12 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 	const siteId = useSelector( getSelectedSiteId );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
+	const hasUploadPlugins = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_UPLOAD_PLUGINS )
+	);
+	const hasManagePlugins = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS )
+	);
 
 	const {
 		plugins: pluginsByCategoryFeatured = [],
@@ -253,9 +264,14 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 							siteAdminUrl={ siteAdminUrl }
 							siteSlug={ siteSlug }
 							jetpackNonAtomic={ jetpackNonAtomic }
+							hasManagePlugins={ hasManagePlugins }
 						/>
 
-						<UploadPluginButton isMobile={ isMobile } siteSlug={ siteSlug } />
+						<UploadPluginButton
+							isMobile={ isMobile }
+							siteSlug={ siteSlug }
+							hasUploadPlugins={ hasUploadPlugins }
+						/>
 					</div>
 				</FixedNavigationHeader>
 			) }
@@ -623,11 +639,15 @@ const UpgradeNudge = ( { selectedSite, sitePlan, isVip, jetpackNonAtomic, siteSl
 	);
 };
 
-const UploadPluginButton = ( { isMobile, siteSlug } ) => {
+const UploadPluginButton = ( { isMobile, siteSlug, hasUploadPlugins } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const uploadUrl = '/plugins/upload' + ( siteSlug ? '/' + siteSlug : '' );
 
+	if ( ! hasUploadPlugins ) {
+		return null;
+	}
+
+	const uploadUrl = '/plugins/upload' + ( siteSlug ? '/' + siteSlug : '' );
 	const handleUploadPluginButtonClick = () => {
 		dispatch( recordTracksEvent( 'calypso_click_plugin_upload' ) );
 		dispatch( recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' ) );
@@ -647,10 +667,16 @@ const UploadPluginButton = ( { isMobile, siteSlug } ) => {
 	);
 };
 
-const ManageButton = ( { shouldShowManageButton, siteAdminUrl, siteSlug, jetpackNonAtomic } ) => {
+const ManageButton = ( {
+	shouldShowManageButton,
+	siteAdminUrl,
+	siteSlug,
+	jetpackNonAtomic,
+	hasManagePlugins,
+} ) => {
 	const translate = useTranslate();
 
-	if ( ! shouldShowManageButton ) {
+	if ( ! shouldShowManageButton || ! hasManagePlugins ) {
 		return null;
 	}
 
