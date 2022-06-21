@@ -13,7 +13,7 @@ import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { hasEmailForwards, getDomainsWithForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
@@ -28,7 +28,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -64,7 +63,7 @@ const EmailProvidersStackedComparison = ( {
 		domains,
 		selectedDomainName: selectedDomainName,
 	} );
-	const domainsWithForwards = useSelector( ( state ) => getDomainsWithForwards( state, domains ) );
+	const domainsWithForwards = getDomainsWithForwards( domains );
 
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
 

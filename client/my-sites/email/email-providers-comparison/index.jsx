@@ -32,7 +32,7 @@ import {
 	getCurrentUserCannotAddEmailReason,
 	getSelectedDomain,
 } from 'calypso/lib/domains';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { hasEmailForwards, getDomainsWithForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	getAnnualPrice,
 	getGoogleMailServiceFamily,
@@ -77,7 +77,6 @@ import {
 	getProductIntroductoryOffer,
 } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -924,7 +923,7 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			domain,
 			domainName,
-			domainsWithForwards: getDomainsWithForwards( state, domains ),
+			domainsWithForwards: getDomainsWithForwards( domains ),
 			gSuiteIntroductoryOffer: getProductIntroductoryOffer(
 				state,
 				GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY

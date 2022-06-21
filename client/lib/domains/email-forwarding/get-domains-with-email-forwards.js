@@ -3,11 +3,10 @@ import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 /**
  * Retrieve a list domains that have forwards
  *
- * @param  {object} state   Global state tree
- * @param  {Array} domains domains to filter
- * @returns {Array}          list of domains with forwards
+ * @param {import('calypso/lib/domains/types').ResponseDomain[]} domains Domains to filter
+ * @returns {string[]} An array of domain names that have forwards
  */
-export function getDomainsWithForwards( state, domains ) {
+export function getDomainsWithForwards( domains ) {
 	if ( ! domains || ! domains.length ) {
 		return [];
 	}
