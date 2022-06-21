@@ -30,6 +30,7 @@ import { STEP_NAME } from './constants';
 import GeneratedDesignPickerWebPreview from './generated-design-picker-web-preview';
 import PreviewToolbar from './preview-toolbar';
 import StickyPositioner from './sticky-positioner';
+import ThemeInfoPopup from './theme-info-popup';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
@@ -312,22 +313,28 @@ const NewSiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		} );
 
 		const stepContent = (
-			<WebPreview
-				showPreview
-				showClose={ false }
-				showEdit={ false }
-				externalUrl={ siteSlug }
-				showExternal={ true }
-				previewUrl={ previewUrl }
-				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
-					components: { strong: <strong /> },
-				} ) }
-				toolbarComponent={ PreviewToolbar }
-				siteId={ site?.ID }
-				url={ site?.URL }
-				translate={ translate }
-				recordTracksEvent={ recordTracksEvent }
-			/>
+			<>
+				<ThemeInfoPopup slug={ selectedDesign.slug } />
+				<WebPreview
+					showPreview
+					showClose={ false }
+					showEdit={ false }
+					externalUrl={ siteSlug }
+					showExternal={ true }
+					previewUrl={ previewUrl }
+					loadingMessage={ translate(
+						'{{strong}}One moment, please…{{/strong}} loading your site.',
+						{
+							components: { strong: <strong /> },
+						}
+					) }
+					toolbarComponent={ PreviewToolbar }
+					siteId={ site?.ID }
+					url={ site?.URL }
+					translate={ translate }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			</>
 		);
 
 		return (
