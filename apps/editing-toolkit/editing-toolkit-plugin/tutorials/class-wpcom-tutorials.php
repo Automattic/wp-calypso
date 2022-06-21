@@ -101,7 +101,10 @@ class WPCom_Tutorials {
 	 * @return bool       Validation success.
 	 */
 	private function validate_task( $task ) {
-		return isset( $task['id'] ) && isset( $task['title'] );
+		return isset( $task['id'] )
+			&& is_string( $task['id'] )
+			&& isset( $task['title'] )
+			&& is_string( $task['title'] );
 	}
 
 	/**
