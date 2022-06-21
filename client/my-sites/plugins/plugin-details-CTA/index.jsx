@@ -26,6 +26,8 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { PREINSTALLED_PLUGINS } from '../constants';
 import { PluginCustomDomainDialog } from '../plugin-custom-domain-dialog';
 import { PluginPrice, getPeriodVariationValue } from '../plugin-price';
+import PluginDetailsCTAJetpackSearch from './jetpack-search-cta';
+import PluginDetailsCTAPreinstalled from './preinstalled-cta';
 import USPS from './usps';
 import './style.scss';
 
@@ -112,14 +114,19 @@ const PluginDetailsCTA = ( {
 		return null;
 	}
 
+	if ( ! isJetpackSelfHosted && plugin.slug === 'jetpack-search' ) {
+		return (
+			<div className="plugin-details-CTA__container">
+				<PluginDetailsCTAJetpackSearch pluginName={ plugin.name } />
+			</div>
+		);
+	}
+
 	// If we cannot retrieve plugin status through jetpack ( ! isJetpack ) and plugin is preinstalled.
 	if ( ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug ) ) {
 		return (
 			<div className="plugin-details-CTA__container">
-				<div className="plugin-details-CTA__price">{ translate( 'Free' ) }</div>
-				<span className="plugin-details-CTA__preinstalled">
-					{ plugin.name + translate( ' is automatically managed for you.' ) }
-				</span>
+				<PluginDetailsCTAPreinstalled pluginName={ plugin.name } />
 			</div>
 		);
 	}
