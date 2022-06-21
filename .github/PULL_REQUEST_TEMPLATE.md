@@ -19,3 +19,13 @@ the linked issue.
 -->
 
 Related to #
+
+#### Things to check
+
+Here are some important things to check on each PR as an author and reviewer.
+
+- [ ] Have you written new tests for your changes?
+- [ ] Have you tested the feature in Simple, Atomic, and self-hosted Jetpack sites?
+- [ ] Are there any TypeScript or console errors?
+- [ ] Are we memoizing when appropriate (for expensive computations)?
+- [ ] Have we sent any new strings for translation ASAP?
