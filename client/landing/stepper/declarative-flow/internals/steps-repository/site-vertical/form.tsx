@@ -27,13 +27,15 @@ const SiteVerticalForm: React.FC< Props > = ( {
 	const translate = useTranslate();
 	const [ userInput, setUserInput ] = React.useState( '' );
 
-	React.useEffect( () => {
+	const handleInputChange = ( value: string ) => {
+		setUserInput( value );
+
 		// Reset the vertical selection if input field is empty.
 		// This is so users don't need to explicitly select "Something else" to clear previous selection.
-		if ( userInput.trim().length === 0 ) {
+		if ( value.trim().length === 0 ) {
 			onSelect?.( { value: '', label: '' } );
 		}
-	}, [ userInput ] );
+	};
 
 	return (
 		<form
@@ -46,7 +48,7 @@ const SiteVerticalForm: React.FC< Props > = ( {
 				<SelectVertical
 					defaultVertical={ defaultVertical }
 					isSkipSynonyms={ isSkipSynonyms }
-					onInputChange={ setUserInput }
+					onInputChange={ handleInputChange }
 					onSelect={ onSelect }
 				/>
 				<FormSettingExplanation>
