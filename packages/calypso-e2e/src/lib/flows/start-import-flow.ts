@@ -27,7 +27,7 @@ const selectors = {
 	// Buttons
 	checkUrlButton: 'form.capture__input-wrapper button.action-buttons__next',
 	startBuildingButton: 'div.import__onboarding-page button.action-buttons__next',
-	startImportButton: 'button.import-link__button:text("Import your site content")',
+	startImportButton: 'button:text("Import your site content")',
 	// And entry of the list of selectable importers
 	importerListButton: ( index: number ) =>
 		`div.list__importers-primary:nth-child(${ index + 1 }) .action-card__button-container button`,
