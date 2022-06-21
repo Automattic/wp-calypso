@@ -4,7 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { delay } from 'lodash';
+import { delay, uniqBy } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import AnalysisProgress from 'calypso/blocks/import-light/analysis-progress';
 import Capture from 'calypso/blocks/import-light/capture';
@@ -55,8 +55,19 @@ const ImportLight: Step = function ImportStep( props ) {
 		makeProgress( 'summary', 100, 3500 );
 	}
 
+	function getColors() {
+		const colors = colorsData
+			? [
+					...( colorsData?.background || [] ),
+					...( colorsData?.link || [] ),
+					...( colorsData?.text || [] ),
+			  ]
+			: [];
+		return uniqBy( colors, 'name' );
+	}
+
 	function renderStepContent() {
-		const colors = colorsData?.logo || [];
+		const colors = getColors();
 
 		switch ( progressState ) {
 			case 'scanning':
@@ -80,7 +91,7 @@ const ImportLight: Step = function ImportStep( props ) {
 									sprintf(
 										/* translators: the colorsNum could be any number from 0 to about ~10 */
 										__( 'We imported <span>%(colorsNum)s color swatches.</span>' ),
-										{ colorsNum: 4 }
+										{ colorsNum: colors.length }
 									),
 									{
 										span: createElement( 'span' ),
