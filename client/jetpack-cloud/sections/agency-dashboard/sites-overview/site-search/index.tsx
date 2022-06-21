@@ -1,5 +1,5 @@
-import { useTranslate } from 'i18n-calypso';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import Search from 'calypso/components/search';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -33,7 +33,7 @@ export default function SiteSearch( {
 			initialValue={ searchQuery }
 			onSearch={ handleSearchSites }
 			placeholder={
-				isMobile ? translate( 'Search sites...' ) : translate( 'Search by site title or domain...' )
+				isMobile ? translate( 'Search sites' ) : translate( 'Search by site title or domain' )
 			}
 			delaySearch={ true }
 		/>
