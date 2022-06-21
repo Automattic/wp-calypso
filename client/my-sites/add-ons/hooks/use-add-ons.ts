@@ -1,4 +1,8 @@
-import { WPCOM_FEATURES_NO_ADVERTS } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_NO_ADVERTS,
+	WPCOM_FEATURES_CUSTOM_DESIGN,
+	WPCOM_FEATURES_UNLIMITED_THEMES,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import {
@@ -34,6 +38,18 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 				// override API-fetched metadata
 				name: translate( 'Remove Ads' ),
 			},
+		},
+		{
+			slug: WPCOM_FEATURES_CUSTOM_DESIGN,
+			highlight: false,
+			icon: noAdsIcon,
+			overrides: null,
+		},
+		{
+			slug: WPCOM_FEATURES_UNLIMITED_THEMES,
+			highlight: false,
+			icon: noAdsIcon,
+			overrides: null,
 		},
 	] as const;
 

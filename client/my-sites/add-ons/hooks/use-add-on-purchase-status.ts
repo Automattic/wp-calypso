@@ -1,4 +1,8 @@
-import { WPCOM_FEATURES_NO_ADVERTS } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_NO_ADVERTS,
+	WPCOM_FEATURES_CUSTOM_DESIGN,
+	WPCOM_FEATURES_UNLIMITED_THEMES,
+} from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
 import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -18,6 +22,8 @@ const useAddOnPurchaseStatus = ( addOnSlug: string ) => {
 
 	switch ( addOnSlug ) {
 		case WPCOM_FEATURES_NO_ADVERTS:
+		case WPCOM_FEATURES_CUSTOM_DESIGN:
+		case WPCOM_FEATURES_UNLIMITED_THEMES:
 			if ( isSiteFeature ) {
 				return true;
 			}
