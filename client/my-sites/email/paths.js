@@ -131,6 +131,13 @@ export function emailManagementTitanSetUpMailbox(
 	} );
 }
 
+/**
+ * @param {string|undefined|null} siteName
+ * @param {string|undefined|null} domainName
+ * @param {string|null} emailAddress
+ * @param {string|null} relativeTo
+ * @returns {string}
+ */
 export function emailManagementTitanSetUpThankYou(
 	siteName,
 	domainName,
