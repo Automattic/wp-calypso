@@ -1,9 +1,14 @@
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useThemeDetails } from '../../../../hooks/use-theme-details';
+import ThemeFeatures from './theme-features';
 import './theme-info-popup.scss';
 
 interface ThemeInfoPopupProps {
 	slug: string;
+}
+
+interface PluginListProps {
+	plugins: Plugin[];
 }
 
 interface DescriptionProps {
@@ -26,27 +31,6 @@ const ThemeInfoPopup = ( { slug }: ThemeInfoPopupProps ) => {
 				</h1>
 				<p className="theme-info-popup__description">{ description }</p>
 			</div>
-		);
-	};
-
-	const ThemeFeatures = ( { features }: FeaturesProps ) => {
-		return (
-			<>
-				{ features.length > 0 && (
-					<div className="theme-info-popup__features-wrap popup-item">
-						<h2>Features</h2>
-						<div className="theme-info-popup__features">
-							{ features.map( ( feature, idx ) => {
-								return (
-									<div className="theme-info-popup__feature" key={ idx }>
-										{ feature.name }
-									</div>
-								);
-							} ) }
-						</div>
-					</div>
-				) }
-			</>
 		);
 	};
 
@@ -73,7 +57,7 @@ const ThemeInfoPopup = ( { slug }: ThemeInfoPopupProps ) => {
 		<div className="theme-info-popup">
 			<ThemeDescription author_uri={ author_uri } author={ author } description={ description } />
 			<SupportLinks />
-			<ThemeFeatures features={ features } />
+			<ThemeFeatures features={ features } heading="Features" />
 		</div>
 	);
 };
