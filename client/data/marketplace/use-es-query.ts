@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { extractSearchInformation } from 'calypso/lib/plugins/utils';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { DEFAULT_PAGE_SIZE } from './constants';
-import { search } from './site-search-api';
+import { search } from './search-api';
 import { ESHits, ESResponse, Plugin, PluginQueryOptions } from './types';
 import { getPluginsListKey } from './utils';
 
