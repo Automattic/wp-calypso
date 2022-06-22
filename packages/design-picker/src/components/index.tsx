@@ -1,5 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-
+import { isEnabled } from '@automattic/calypso-config';
 import { MShotsImage } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -74,6 +74,16 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const blankCanvasTitle = __( 'Blank Canvas', __i18n_text_domain__ );
 	const designTitle = isBlankCanvas ? blankCanvasTitle : defaultTitle;
 
+	function getPricingDescription() {
+		if ( ! isEnabled( 'signup/theme-preview-screen' ) ) {
+			return null;
+		}
+
+		const text = __( 'Free' );
+
+		return <div>{ text }</div>;
+	}
+
 	return (
 		<button
 			className="design-picker__design-option"
@@ -120,6 +130,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					) }
 					{ design.is_premium && premiumBadge }
 				</span>
+				{ getPricingDescription() }
 			</span>
 		</button>
 	);

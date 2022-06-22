@@ -52,7 +52,7 @@ export function useThemeDesignsQuery(
 	);
 }
 
-function apiThemeToDesign( { id, name, taxonomies, stylesheet }: any ): Design {
+function apiThemeToDesign( { id, name, taxonomies, stylesheet, price }: any ): Design {
 	// Designs use a "featured" term in the theme_picks taxonomy. For example: Blank Canvas
 	const isFeaturedPicks = !! taxonomies?.theme_picks?.find(
 		( { slug }: any ) => slug === 'featured'
@@ -73,6 +73,7 @@ function apiThemeToDesign( { id, name, taxonomies, stylesheet }: any ): Design {
 		showFirst: isFeaturedPicks,
 		...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
 		design_type: is_premium ? 'premium' : 'standard',
+		price,
 
 		// Deprecated; used for /start flow
 		stylesheet,
