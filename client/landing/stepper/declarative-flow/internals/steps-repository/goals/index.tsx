@@ -122,7 +122,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 		<StepContainer
 			stepName={ 'goals-step' }
 			goNext={ navigation.goNext }
-			skipLabelText={ translate( 'Skip to Dashboard' ) }
+			skipLabelText={ translate( 'Skip to dashboard' ) }
 			skipButtonAlign={ 'top' }
 			hideBack={ true }
 			isHorizontalLayout={ true }
