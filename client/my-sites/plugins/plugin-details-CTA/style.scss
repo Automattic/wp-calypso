@@ -59,10 +59,16 @@
 
 .plugin-details-CTA__install {
 	margin-bottom: 20px;
+}
+.plugin-details-CTA__install-button {
+	width: 100%;
+	padding: 12px 16px;
+}
 
+.plugin-details-CTA__jetpack-search {
+	margin-bottom: 20px;
 	.plugin-details-CTA__install-button {
-		width: 100%;
-		padding: 12px 16px;
+		margin-top: 32px;
 	}
 }
 

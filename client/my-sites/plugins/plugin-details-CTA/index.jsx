@@ -112,7 +112,11 @@ const PluginDetailsCTA = ( {
 	// Jetpack Search is a freemium plugin that comes preinstalled on WPCOM and also available on the WPORG repo.
 	// Because of its uniqueness, we display a custom CTA for sites that have it installed.
 	if ( plugin.slug === 'jetpack-search' && ( ! isJetpackSelfHosted || isPluginInstalledOnsite ) ) {
-		return <PluginDetailsCTAJetpackSearch pluginName={ plugin.name } />;
+		return (
+			<div className="plugin-details-CTA__container">
+				<PluginDetailsCTAJetpackSearch pluginName={ plugin.name } />
+			</div>
+		);
 	}
 
 	if ( isPluginInstalledOnsite ) {
