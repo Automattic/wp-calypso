@@ -194,6 +194,11 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		.step-container__header {
 			margin-top: 40px;
 
+			.design-setup__seller-header {
+				display: block;
+				text-align: center;
+			}
+
 			.formatted-header {
 				margin-top: 0;
 			}
@@ -270,6 +275,14 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			}
 		}
 	}
+}
+
+.design-setup__info-popover {
+	background-color: #000000;
+	padding: 8px 8px 3px;
+	border-radius: 2px;
+	margin-right: 10px;
+	cursor: pointer;
 }
 
 /* Hide categories from the sell intent */
