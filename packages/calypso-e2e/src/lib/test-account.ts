@@ -162,7 +162,7 @@ export class TestAccount {
 	 * is defined. Prefixes each message with the account name for easier
 	 * reference. Formatted similarly to the pw:api logs.
 	 */
-	private log( message: any ) {
+	private log( message: string ) {
 		const { DEBUG } = process.env;
 		if ( DEBUG && DEBUG !== 'false' ) {
 			console.log(

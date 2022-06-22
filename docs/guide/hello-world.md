@@ -101,7 +101,8 @@ You can read more about ES6 modules from Axel Rauschmayer's "[_ECMAScript 6 modu
 
 Now it's time to configure our section. Open `client/sections.js` and add the following code to the end of the `sections` array:
 
-```javascript
+```
+// in client/sections.js
 	{
 		name: 'hello-world',
 		paths: [ '/hello-world' ],
@@ -110,7 +111,8 @@ Now it's time to configure our section. Open `client/sections.js` and add the fo
 ```
 
 The array should look something like:
-```
+
+```javascript
 const sections = [
 	// All of the other sections are here
 	// ...
