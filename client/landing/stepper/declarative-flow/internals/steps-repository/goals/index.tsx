@@ -24,7 +24,7 @@ type TracksGoalsSelectEventProperties = {
 	intent: string;
 };
 
-const { SiteGoal, SiteIntent } = Onboard;
+const SiteGoal = Onboard.SiteGoal;
 const { serializeGoals, goalsToIntent } = Onboard.utils;
 
 const refGoals: Record< string, Onboard.SiteGoal[] > = {
@@ -44,17 +44,15 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
 
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
-	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
-	const { setGoals, setIntent, clearImportGoal, clearDIFMGoal } = useDispatch( ONBOARD_STORE );
+	const { setGoals, setIntent, clearImportGoal, clearDIFMGoal, resetIntent } =
+		useDispatch( ONBOARD_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
 
 	useEffect( () => {
 		clearImportGoal();
-	}, [ clearImportGoal ] );
-
-	useEffect( () => {
 		clearDIFMGoal();
-	}, [ clearDIFMGoal ] );
+		resetIntent();
+	}, [ clearDIFMGoal, clearImportGoal, resetIntent ] );
 
 	const handleChange = ( goals: Onboard.SiteGoal[] ) => {
 		const intent = goalsToIntent( goals );
@@ -119,20 +117,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ refParameter, refGoals ] );
 
-	const skipToDashboard = () => {
-		setIntent( SiteIntent.WpAdmin );
-	};
-
-	useEffect( () => {
-		if ( intent === SiteIntent.WpAdmin ) {
-			navigation.goNext();
-		}
-	}, [ intent, navigation ] );
-
 	return (
 		<StepContainer
 			stepName={ 'goals-step' }
-			goNext={ skipToDashboard }
+			goNext={ navigation.goNext }
 			skipLabelText={ translate( 'Skip to Dashboard' ) }
 			skipButtonAlign={ 'top' }
 			hideBack={ true }

@@ -211,6 +211,10 @@ export const setIntent = ( intent: string ) => ( {
 	intent,
 } );
 
+export const resetIntent = () => ( {
+	type: 'RESET_INTENT' as const,
+} );
+
 export const setStartingPoint = ( startingPoint: string ) => ( {
 	type: 'SET_STARTING_POINT' as const,
 	startingPoint,
@@ -303,6 +307,7 @@ export type OnboardAction = ReturnType<
 	| typeof setAnchorSpotifyUrl
 	| typeof startOnboarding
 	| typeof setIntent
+	| typeof resetIntent
 	| typeof setStartingPoint
 	| typeof setStoreAddressValue
 	| typeof setPendingAction
