@@ -451,6 +451,9 @@ export const siteSetupFlow: Flow = {
 				case 'intent':
 					return exitFlow( `/home/${ siteSlug }` );
 
+				case 'goals':
+					return exitFlow( `/home/${ siteSlug }` );
+
 				case 'vertical':
 					return exitFlow( `/home/${ siteSlug }` );
 

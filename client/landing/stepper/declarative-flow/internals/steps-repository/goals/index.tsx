@@ -24,7 +24,7 @@ type TracksGoalsSelectEventProperties = {
 	intent: string;
 };
 
-const SiteGoal = Onboard.SiteGoal;
+const { SiteGoal, SiteIntent } = Onboard;
 const { serializeGoals, goalsToIntent } = Onboard.utils;
 
 const refGoals: Record< string, Onboard.SiteGoal[] > = {
@@ -35,7 +35,6 @@ const refGoals: Record< string, Onboard.SiteGoal[] > = {
  * The goals capture step
  */
 const GoalsStep: Step = ( { navigation } ) => {
-	const { goNext } = navigation;
 	const translate = useTranslate();
 	const headerText = translate( 'Welcome!{{br/}}What are your goals?', {
 		components: {
@@ -45,6 +44,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
 
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
+	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const { setGoals, setIntent, clearImportGoal, clearDIFMGoal } = useDispatch( ONBOARD_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
 
@@ -114,12 +114,25 @@ const GoalsStep: Step = ( { navigation } ) => {
 		if ( isValidRef && goals.length === 0 ) {
 			setGoals( refGoals[ refParameter ] );
 		}
+		// Delibirately not including all deps in the deps array
+		// This hook is only meant to be executed when either refParameter, refGoals change in value
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ refParameter, refGoals ] );
+
+	const skipToDashboard = () => {
+		setIntent( SiteIntent.WpAdmin );
+	};
+
+	useEffect( () => {
+		if ( intent === SiteIntent.WpAdmin ) {
+			navigation.goNext();
+		}
+	}, [ intent, navigation ] );
 
 	return (
 		<StepContainer
 			stepName={ 'goals-step' }
-			goNext={ goNext }
+			goNext={ skipToDashboard }
 			skipLabelText={ translate( 'Skip to Dashboard' ) }
 			skipButtonAlign={ 'top' }
 			hideBack={ true }
