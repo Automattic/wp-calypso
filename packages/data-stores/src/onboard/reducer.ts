@@ -226,7 +226,7 @@ const intent: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_INTENT' ) {
 		return action.intent;
 	}
-	if ( [ 'RESET_INTENT', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return '';
 	}
 	return state;

@@ -44,15 +44,16 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
 
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
-	const { setGoals, setIntent, clearImportGoal, clearDIFMGoal, resetIntent } =
-		useDispatch( ONBOARD_STORE );
+	const { setGoals, setIntent, clearImportGoal, clearDIFMGoal } = useDispatch( ONBOARD_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
 
 	useEffect( () => {
 		clearImportGoal();
+	}, [ clearImportGoal ] );
+
+	useEffect( () => {
 		clearDIFMGoal();
-		resetIntent();
-	}, [ clearDIFMGoal, clearImportGoal, resetIntent ] );
+	}, [ clearDIFMGoal ] );
 
 	const handleChange = ( goals: Onboard.SiteGoal[] ) => {
 		const intent = goalsToIntent( goals );
