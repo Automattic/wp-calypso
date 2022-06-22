@@ -13,9 +13,10 @@ import './style.scss';
 interface Props {
 	translate: typeof translate;
 	onInputEnter: OnInputEnter;
+	onDontHaveSiteAddressClick?: () => void;
 }
 const Capture: FunctionComponent< Props > = ( props ) => {
-	const { translate, onInputEnter } = props;
+	const { translate, onInputEnter, onDontHaveSiteAddressClick } = props;
 
 	return (
 		<div className={ 'import-layout__center' }>
@@ -35,7 +36,10 @@ const Capture: FunctionComponent< Props > = ( props ) => {
 					</div>
 				</div>
 				<div className={ 'import-layout__column' }>
-					<CaptureInput onInputEnter={ onInputEnter } />
+					<CaptureInput
+						onInputEnter={ onInputEnter }
+						onDontHaveSiteAddressClick={ onDontHaveSiteAddressClick }
+					/>
 				</div>
 			</div>
 		</div>

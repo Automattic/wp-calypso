@@ -19,9 +19,10 @@ import type { FunctionComponent } from 'react';
 interface Props {
 	translate: typeof translate;
 	onInputEnter: OnInputEnter;
+	onDontHaveSiteAddressClick?: () => void;
 }
 const CaptureInput: FunctionComponent< Props > = ( props ) => {
-	const { translate, onInputEnter } = props;
+	const { translate, onInputEnter, onDontHaveSiteAddressClick } = props;
 
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ isValid, setIsValid ] = useState( false );
@@ -74,7 +75,11 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					) }
 					onChange={ onInputChange }
 				/>
-				<Button borderless={ true } className={ 'action-buttons__importer-list' }>
+				<Button
+					borderless={ true }
+					className={ 'action-buttons__importer-list' }
+					onClick={ onDontHaveSiteAddressClick }
+				>
 					{ translate( "Don't have a site address?" ) }
 				</Button>
 				<FormSettingExplanation>
