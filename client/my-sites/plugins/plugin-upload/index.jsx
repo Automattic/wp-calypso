@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_UPLOAD_PLUGINS } from '@automattic/calypso-products/src';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight } from 'lodash';
@@ -30,6 +31,7 @@ import {
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import siteHasFeature from '../../../state/selectors/site-has-feature';
 
 class PluginUpload extends Component {
 	state = {
@@ -93,8 +95,12 @@ class PluginUpload extends Component {
 	}
 
 	render() {
-		const { translate, isJetpackMultisite, siteId, siteSlug } = this.props;
+		const { translate, isJetpackMultisite, siteId, siteSlug, hasUploadPlugins } = this.props;
 		const { showEligibility } = this.state;
+
+		if ( ! hasUploadPlugins ) {
+			page( `/plugins/${ siteSlug }` );
+		}
 
 		return (
 			<Main>
@@ -126,6 +132,7 @@ const mapStateToProps = ( state ) => {
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
+	const hasUploadPlugins = siteHasFeature( state, siteId, WPCOM_FEATURES_UPLOAD_PLUGINS );
 
 	return {
 		siteId,
@@ -140,6 +147,7 @@ const mapStateToProps = ( state ) => {
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
+		hasUploadPlugins,
 	};
 };
 

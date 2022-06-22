@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_UPLOAD_PLUGINS } from '@automattic/calypso-products/src';
 import { Button } from '@automattic/components';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { Icon, upload } from '@wordpress/icons';
@@ -37,6 +38,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import siteHasFeature from '../../state/selectors/site-has-feature';
 import NoPermissionsError from './no-permissions-error';
 import PluginsList from './plugins-list';
 
@@ -343,8 +345,12 @@ export class PluginsMain extends Component {
 	};
 
 	renderUploadPluginButton( isMobile ) {
-		const { selectedSiteSlug, translate } = this.props;
+		const { selectedSiteSlug, translate, hasUploadPlugins } = this.props;
 		const uploadUrl = '/plugins/upload' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
+
+		if ( ! hasUploadPlugins ) {
+			return null;
+		}
 
 		return (
 			<Button
@@ -452,6 +458,11 @@ export default flow(
 			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
 			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
+			const hasUploadPlugins = siteHasFeature(
+				state,
+				selectedSiteId,
+				WPCOM_FEATURES_UPLOAD_PLUGINS
+			);
 
 			return {
 				hasJetpackSites: hasJetpackSites( state ),
@@ -473,6 +484,7 @@ export default flow(
 				userCanManagePlugins: selectedSiteId
 					? canCurrentUser( state, selectedSiteId, 'manage_options' )
 					: canCurrentUserManagePlugins( state ),
+				hasUploadPlugins: hasUploadPlugins,
 			};
 		},
 		{ wporgFetchPluginData, recordTracksEvent, recordGoogleEvent }
