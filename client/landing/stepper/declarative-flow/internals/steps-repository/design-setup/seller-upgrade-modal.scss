@@ -1,6 +1,12 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
 .seller-upgrade-modal {
-    @include breakpoint-medium {
-        display: flex;
+    display: flex;
+    flex-direction: column;
+
+    @include break-medium() {
+        flex-direction: row;
     }
 
     .seller-upgrade-modal__heading {

@@ -1,27 +1,40 @@
 import { getPlan, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import Badge from 'calypso/components/badge';
+import Modal from 'react-modal';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useThemeDetails } from 'calypso/landing/stepper/hooks/use-theme-details';
 import { getPlanPrice } from 'calypso/state/products-list/selectors';
+import ThemeFeatures from './theme-features';
 import './seller-upgrade-modal.scss';
 
-const SellerUpgradeModal = () => {
+interface SellerUpgradeModalProps {
+	/* Theme slug */
+	slug: string;
+}
+
+const SellerUpgradeModal: React.FC< SellerUpgradeModalProps > = ( { slug } ) => {
 	const translate = useTranslate();
 	const site = useSite();
 	const plan = getPlan( PLAN_WPCOM_PRO );
 	const siteId = site?.ID;
+	const theme = useThemeDetails( slug );
+	const features = theme.taxonomies.features;
+	const featuresHeading = translate( 'Theme features' ) as string;
 
+	//@todo: Need to get the actual price
 	const planPrice = 90 || getPlanPrice( state, siteId, plan, false );
 
+	//@todo: Add Tracks events for viewing and buttons
+
 	return (
-		<div className="seller-upgrade-modal">
+		<Modal className="seller-upgrade-modal" isOpen>
 			<div className="seller-upgrade-modal__col">
 				<Gridicon icon="star" />
 				<h2 className="seller-upgrade-modal__heading">
 					{ translate( 'Unlock this premium theme' ) }
 				</h2>
-				<div>
+				<p>
 					{ /* Translators: planPrice is the localized plan price */ }
 					{ translate(
 						"This theme requires a Pro plan to unlock. It's %(planPrice) a year, risk-free with a 14-day money-back guarantee.",
@@ -31,15 +44,17 @@ const SellerUpgradeModal = () => {
 							},
 						}
 					) }
-				</div>
+				</p>
 				<div className="seller-upgrade-modal__actions">
-					<Button>{ translate( 'Cancel' ) }</Button>
-					<Button primary>{ translate( 'Buy and activate' ) }</Button>
+					<Button onClick={ () => null }>{ translate( 'Cancel' ) }</Button>
+					<Button primary onClick={ () => null }>
+						{ translate( 'Buy and activate' ) }
+					</Button>
 				</div>
 			</div>
 			<div className="seller-upgrade-modal__col">
-				<Button className="seller-upgrade-modal__button-close">
-					<Gridicon icon="close" />
+				<Button className="seller-upgrade-modal__button-close" onClick={ () => null }>
+					<Gridicon icon="cross" />
 				</Button>
 				<div className="seller-upgrade-modal__included">
 					<h3>{ translate( 'Included with the Pro plan' ) }</h3>
@@ -62,16 +77,9 @@ const SellerUpgradeModal = () => {
 						</li>
 					</ul>
 				</div>
-				<div className="seller-upgrade-modal__features">
-					<h3>{ translate( 'Theme Features' ) }</h3>
-					<Badge>{ translate( 'Custom Colors' ) }</Badge>
-					<Badge>{ translate( 'Block Editor Styles' ) }</Badge>
-					<Badge>{ translate( 'Block Templates' ) }</Badge>
-					<Badge>{ translate( 'Featured Images' ) }</Badge>
-					<Badge>{ translate( 'Sticky Post' ) }</Badge>
-				</div>
+				<ThemeFeatures heading={ featuresHeading } features={ features } />
 			</div>
-		</div>
+		</Modal>
 	);
 };
 
