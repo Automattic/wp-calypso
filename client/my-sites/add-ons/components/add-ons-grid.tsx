@@ -14,7 +14,10 @@ interface Props {
 	};
 	// returns true/false if add-on is to be treated as "selected" (either added to cart, or part of plan, or ...)
 	// can extend to return a "selected status" string, if we need to tailor
-	useAddOnSelectedStatus?: ( addOnSlug: string ) => boolean;
+	useAddOnSelectedStatus?: ( addOnSlug: string ) => {
+		selected: boolean;
+		text?: string | React.ReactChild;
+	};
 	showFeatured: boolean;
 }
 

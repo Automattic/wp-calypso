@@ -2,7 +2,6 @@ import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
 import type { AddOnMeta } from '../hooks/use-add-ons';
 
 interface Props extends AddOnMeta {
@@ -16,7 +15,10 @@ interface Props extends AddOnMeta {
 	};
 	// returns true/false if add-on is to be treated as "selected" (either added to cart, or part of plan, or ...)
 	// can extend to return a "selected status" string, if we need to tailor
-	useAddOnSelectedStatus?: ( addOnSlug: string ) => boolean;
+	useAddOnSelectedStatus?: ( addOnSlug: string ) => {
+		selected: boolean;
+		text?: string | React.ReactChild;
+	};
 }
 
 const Container = styled.div`
@@ -62,8 +64,7 @@ const Container = styled.div`
 `;
 
 const AddOnCard = ( props: Props ) => {
-	const translate = useTranslate();
-	const isSelected = props.useAddOnSelectedStatus?.( props.slug );
+	const status = props.useAddOnSelectedStatus?.( props.slug );
 	const onActionPrimary = () => {
 		props.actionPrimary?.handler( props.slug );
 	};
@@ -87,16 +88,16 @@ const AddOnCard = ( props: Props ) => {
 				</CardHeader>
 				<CardBody className="add-ons-card__body">{ props.description }</CardBody>
 				<CardFooter isBorderless={ true } className="add-ons-card__footer">
-					{ isSelected && props.actionSelected && (
+					{ status?.selected && props.actionSelected && (
 						<>
 							<Button onClick={ onActionSelected }>{ props.actionSelected.text }</Button>
 							<div className="add-ons-card__selected-badge">
 								<Gridicon icon="checkmark" className={ 'add-ons-card__checkmark' } />
-								<span>{ translate( 'Included in your plan' ) }</span>
+								<span>{ status.text }</span>
 							</div>
 						</>
 					) }
-					{ ! isSelected && props.actionPrimary && (
+					{ ! status?.selected && props.actionPrimary && (
 						<Button onClick={ onActionPrimary } primary>
 							{ props.actionPrimary.text }
 						</Button>
