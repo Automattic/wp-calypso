@@ -1,4 +1,5 @@
 import { Frame, Page } from 'playwright';
+import { waitForElementEnabled } from '../../element-helper';
 import envVariables from '../../env-variables';
 
 const selectors = {
@@ -7,8 +8,9 @@ const selectors = {
 	backLink: 'button:text("Back")',
 
 	// Inputs
-	blogNameInput: ( value: string ) => `input[name="siteTitle"][value="${ value }"]`,
+	blogNameInput: 'input[name="siteTitle"]',
 	taglineInput: 'input[name="tagline"]',
+	verticalInput: '.select-vertical__suggestion-input input',
 
 	// Themes
 	themePickerContainer: '.design-picker',
@@ -44,19 +46,37 @@ export class StartSiteFlow {
 	}
 
 	/**
+	 * Enter site vertical.
+	 *
+	 * @param {string} vertical Name of the vertical to select
+	 */
+	async enterVertical( vertical: string ): Promise< void > {
+		await this.page.waitForLoadState( 'networkidle' );
+
+		const input = this.page.locator( selectors.verticalInput );
+		await input.fill( vertical );
+
+		const readBack = await input.inputValue();
+		if ( readBack !== vertical ) {
+			throw new Error( `Failed to set vertical: expected ${ vertical }, got ${ readBack }` );
+		}
+	}
+
+	/**
 	 * Enter blog name.
 	 *
 	 * @param {string} name Name for the blog.
 	 */
 	async enterBlogName( name: string ): Promise< void > {
 		await this.page.waitForLoadState( 'networkidle' );
-		// Wait for the input to be populated with the default value `Site Title`.
-		// See https://github.com/Automattic/wp-calypso/issues/64271.
-		const defaultInputlocator = this.page.locator( selectors.blogNameInput( 'Site Title' ) );
+		const defaultInputlocator = this.page.locator( selectors.blogNameInput );
+		// try waiting for element to become enabled
+		// we've had issues with this before https://github.com/Automattic/wp-calypso/issues/64271
+		waitForElementEnabled( this.page, selectors.blogNameInput );
 		await defaultInputlocator.fill( name );
 
 		// Verify the data is saved as expected.
-		const filledInputLocator = this.page.locator( selectors.blogNameInput( name ) );
+		const filledInputLocator = this.page.locator( selectors.blogNameInput );
 		const readBack = await filledInputLocator.inputValue();
 		if ( readBack !== name ) {
 			throw new Error( `Failed to set blog name: expected ${ name }, got ${ readBack }` );

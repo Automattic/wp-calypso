@@ -72,7 +72,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 	describe( 'Onboarding flow', function () {
 		let startSiteFlow: StartSiteFlow;
 
-		it( 'Select "write" path', async function () {
+		it( 'Skip goals step', async function () {
 			startSiteFlow = new StartSiteFlow( page );
 
 			await page.waitForLoadState( 'networkidle' );
@@ -81,7 +81,20 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			if ( isGoalsStep ) {
 				await page.click( '.select-card__container:first-of-type' );
 				await startSiteFlow.clickButton( 'Continue' );
-			} else {
+			}
+		} );
+
+		it( 'Select a vertical', async function () {
+			const isVerticalsStep = await page.isVisible( '.site-vertical' );
+			if ( isVerticalsStep ) {
+				await startSiteFlow.enterVertical( 'People & Society' );
+				await startSiteFlow.clickButton( 'Continue' );
+			}
+		} );
+
+		it( 'Select "write" path', async function () {
+			const isVerticalsStep = await page.isVisible( '.intent-step' );
+			if ( isVerticalsStep ) {
 				await startSiteFlow.clickButton( 'Start writing' );
 			}
 		} );
