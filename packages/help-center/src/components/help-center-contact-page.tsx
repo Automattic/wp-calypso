@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Spinner } from '@automattic/components';
 import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -23,6 +24,14 @@ export const HelpCenterContactPage: React.FC = () => {
 
 	const renderEmail = useShouldRenderEmailOption();
 	const renderChat = useShouldRenderChatOption();
+
+	if ( renderChat.isLoading ) {
+		return (
+			<div className="help-center-contact-page__loading">
+				<Spinner baseClassName="" />
+			</div>
+		);
+	}
 
 	return (
 		<div className="help-center-contact-page">

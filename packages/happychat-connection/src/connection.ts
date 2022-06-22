@@ -1,6 +1,13 @@
 import debugFactory from 'debug';
 import IO from 'socket.io-client';
-import type { Action, HappychatUser, ConnectionProps, HappychatAuth, Socket } from './types';
+import type {
+	Action,
+	HappychatUser,
+	ConnectionProps,
+	AvailabilityConnectionProps,
+	HappychatAuth,
+	Socket,
+} from './types';
 
 const debug = debugFactory( 'calypso:happychat:connection' );
 
@@ -30,11 +37,13 @@ export class Connection {
 	receiveToken?: () => void;
 	receiveUnauthorized?: ( message: string ) => void;
 	requestTranscript?: () => void;
+	closeAfterAccept: boolean;
 	dispatch?: Dispatch;
 	openSocket?: Promise< Socket >;
 
-	constructor( props: ConnectionProps = {} ) {
+	constructor( props: ConnectionProps = {}, closeAfterAccept = false ) {
 		Object.assign( this, props );
+		this.closeAfterAccept = closeAfterAccept;
 	}
 
 	/**
@@ -84,6 +93,9 @@ export class Connection {
 						.on( 'status', ( status: string ) => dispatch( this.receiveStatus?.( status ) ) )
 						.on( 'accept', ( accept: boolean ) => {
 							dispatch( this.receiveAccept?.( accept ) );
+							if ( this.closeAfterAccept ) {
+								socket.close();
+							}
 						} )
 						.on( 'localized-support', ( accept: boolean ) =>
 							dispatch( this.receiveLocalizedSupport?.( accept ) )
@@ -197,5 +209,10 @@ export class Connection {
 		);
 	}
 }
+
+// Used by the Help Center, it closes the socket after receiving 'accept' or 'unauthorized'
+export const buildConnectionForCheckingAvailability = (
+	connectionProps: AvailabilityConnectionProps
+) => new Connection( connectionProps, true );
 
 export default ( connectionProps: ConnectionProps ) => new Connection( connectionProps );
