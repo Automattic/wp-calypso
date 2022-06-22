@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
-import { FEATURE_INSTALL_PLUGINS } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -143,13 +143,13 @@ export class PluginInstallButton extends Component {
 			selectedSite,
 			plugin,
 			billingPeriod,
-			canInstallPlugins,
+			canInstallPurchasedPlugins,
 			eligibleForProPlan,
 		} = this.props;
 		const variationPeriod = getPeriodVariationValue( billingPeriod );
 		const product_slug = plugin?.variations?.[ variationPeriod ]?.product_slug;
 
-		const buttonLink = canInstallPlugins
+		const buttonLink = canInstallPurchasedPlugins
 			? `/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }`
 			: `/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
 					selectedSite?.plan,
@@ -164,7 +164,7 @@ export class PluginInstallButton extends Component {
 				<Button href={ buttonLink }>
 					<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
 					<Gridicon icon="plugins" size={ 18 } />
-					{ canInstallPlugins
+					{ canInstallPurchasedPlugins
 						? translate( 'Purchase and activate' )
 						: translate( 'Upgrade and activate' ) }
 				</Button>
@@ -316,7 +316,11 @@ export default connect(
 			siteId,
 			siteIsConnected: getSiteConnectionStatus( state, siteId ),
 			siteIsWpcomAtomic: isSiteWpcomAtomic( state, siteId ),
-			canInstallPlugins: siteHasFeature( state, siteId, FEATURE_INSTALL_PLUGINS ),
+			canInstallPurchasedPlugins: siteHasFeature(
+				state,
+				siteId,
+				WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
+			),
 			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
 		};
 	},
