@@ -41,6 +41,11 @@ export interface ConnectionProps {
 	requestTranscript?: () => void;
 }
 
+export interface AvailabilityConnectionProps {
+	receiveAccept?: ( accept: boolean ) => void;
+	receiveUnauthorized?: ( message: string ) => void;
+}
+
 export interface HappychatAuth {
 	url: string | Socket;
 	user: {
