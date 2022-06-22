@@ -179,6 +179,7 @@ const getFormSettings = ( settings ) =>
 	pick( settings, [
 		'amp_is_enabled',
 		'amp_is_supported',
+		'amp_is_deprecated',
 		'instant_search_enabled',
 		'jetpack_search_enabled',
 		'jetpack_search_supported',
