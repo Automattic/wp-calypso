@@ -490,6 +490,4 @@ export function redirectToSiteLessCheckout( context, next ) {
 
 export function redirectToCloudPricingPage() {
 	window.location.href = JETPACK_PRICING_PAGE;
-
-	return;
 }
