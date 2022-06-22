@@ -65,7 +65,7 @@ export const useESPluginsInfinite = (
 	options: PluginQueryOptions,
 	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
-	const [ searchTerm /*, author*/ ] = extractSearchInformation( options.searchTerm );
+	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
 	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
 
@@ -74,6 +74,7 @@ export const useESPluginsInfinite = (
 		( { pageParam } ) =>
 			search( {
 				query: searchTerm,
+				author,
 				groupId: 'wporg',
 				pageHandle: pageParam,
 				pageSize,
