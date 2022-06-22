@@ -30,7 +30,7 @@ function DismissibleCard( { className, highlight, temporary, onClick, preference
 		<Card className={ className } highlight={ highlight }>
 			<QueryPreferences />
 			<button
-				className="dismissible-card__close-icon"
+				className="dismissible-card__close-button"
 				onClick={ handleClick }
 				aria-label={ translate( 'Dismiss' ) }
 			>
