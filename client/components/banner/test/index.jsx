@@ -9,8 +9,13 @@ import preferencesReducer from 'calypso/state/preferences/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { Banner } from '../index';
 
-jest.mock( 'calypso/my-sites/plan-price', () => ( props ) => (
-	<div data-testid="banner-price-plan-mock">{ props.rawPrice }</div>
+jest.mock( 'calypso/my-sites/plan-price', () => ( { rawPrice, original } ) => (
+	<div
+		data-testid="banner-price-plan-mock"
+		className={ original ? 'is-original' : 'is-discounted' }
+	>
+		{ rawPrice }
+	</div>
 ) );
 
 jest.mock( 'calypso/state/analytics/actions', () => ( {
@@ -78,12 +83,17 @@ describe( 'Banner basic tests', () => {
 
 	test( 'should render two <PlanPrice /> components when there are two prices', () => {
 		render( <Banner { ...props } price={ [ 100, 80 ] } /> );
-		expect( screen.queryAllByTestId( 'banner-price-plan-mock' ) ).toHaveLength( 2 );
+		const planPriceMock = screen.queryAllByTestId( 'banner-price-plan-mock' );
+		expect( planPriceMock ).toHaveLength( 2 );
+		expect( planPriceMock[ 0 ] ).toHaveTextContent( 100 );
+		expect( planPriceMock[ 0 ] ).toHaveAttribute( 'class', 'is-original' );
+		expect( planPriceMock[ 1 ] ).toHaveTextContent( 80 );
+		expect( planPriceMock[ 1 ] ).toHaveAttribute( 'class', 'is-discounted' );
 	} );
 
 	test( 'should render no <PlanPrice /> components when there are no prices', () => {
 		render( <Banner { ...props } /> );
-		expect( screen.queryByTestId( 'banner-price-plan-mock' ) ).toBeNull();
+		expect( screen.queryByTestId( 'banner-price-plan-mock' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render a .banner__description when description is specified', () => {
@@ -100,8 +110,8 @@ describe( 'Banner basic tests', () => {
 		render( <Banner { ...props } list={ [ 'test1', 'test2' ] } /> );
 		expect( screen.queryByRole( 'list' ) ).toBeVisible();
 		expect( screen.queryAllByRole( 'listitem' ) ).toHaveLength( 2 );
-		expect( screen.getByText( 'test1' ) ).toBeVisible();
-		expect( screen.getByText( 'test2' ) ).toBeVisible();
+		expect( screen.queryAllByRole( 'listitem' )[ 0 ] ).toHaveTextContent( 'test1' );
+		expect( screen.queryAllByRole( 'listitem' )[ 1 ] ).toHaveTextContent( 'test2' );
 	} );
 
 	test( 'should not render a .banner__list when description is not specified', () => {
