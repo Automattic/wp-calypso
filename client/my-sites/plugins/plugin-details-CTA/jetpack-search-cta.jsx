@@ -28,13 +28,13 @@ export default function PluginDetailsCTAJetpackSearch( { pluginName } ) {
 	const buttonHref = isAtomic ? wpAdminUrl : `/settings/performance/${ siteSlug }`;
 
 	return (
-		<>
+		<div className="plugin-details-CTA__container">
 			<PreinstalledCTA pluginName={ pluginName } />
 			<div className="plugin-details-CTA__jetpack-search">
 				<Button className="plugin-details-CTA__install-button" href={ buttonHref } primary>
 					{ buttonLabel }
 				</Button>
 			</div>
-		</>
+		</div>
 	);
 }
