@@ -7,7 +7,6 @@ import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import {
 	activate as activateAction,
@@ -44,7 +43,7 @@ function getAllThemeOptions( { translate, blockEditorSettings } ) {
 		} ),
 		getUrl: getThemePurchaseUrl,
 		hideForTheme: ( state, themeId, siteId ) =>
-			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
+			isJetpackSite( state, siteId ) || // No individual theme purchase on a JP site
 			! isUserLoggedIn( state ) || // Not logged in
 			! isThemePremium( state, themeId ) || // Not a premium theme
 			isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
@@ -66,7 +65,6 @@ function getAllThemeOptions( { translate, blockEditorSettings } ) {
 			getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ),
 		hideForTheme: ( state, themeId, siteId ) =>
 			! isJetpackSite( state, siteId ) ||
-			isSiteWpcomAtomic( state, siteId ) ||
 			! isUserLoggedIn( state ) ||
 			! isThemePremium( state, themeId ) ||
 			isThemeActive( state, themeId, siteId ) ||
