@@ -25,7 +25,7 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgra
 	const featuresHeading = translate( 'Theme features' ) as string;
 
 	//@todo: Need to get the actual price
-	const planPrice = 90 || getPlanPrice( state, siteId, plan, false );
+	const planPrice = '$90' || getPlanPrice( state, siteId, plan, false );
 
 	//@todo: Add Tracks events for viewing and buttons
 
@@ -44,9 +44,9 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgra
 					{ translate( 'Unlock this premium theme' ) }
 				</h2>
 				<p>
-					{ /* Translators: planPrice is the localized plan price */ }
+					{ /* Translators: planPrice is the plan price in the user's currency */ }
 					{ translate(
-						"This theme requires a Pro plan to unlock. It's %(planPrice) a year, risk-free with a 14-day money-back guarantee.",
+						"This theme requires a Pro plan to unlock. It's %(planPrice)s a year, risk-free with a 14-day money-back guarantee.",
 						{
 							args: {
 								planPrice,
@@ -64,10 +64,6 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgra
 				</div>
 			</div>
 			<div className="seller-upgrade-modal__col">
-				<Button className="seller-upgrade-modal__close" borderless onClick={ () => closeModal() }>
-					<Gridicon icon="cross" size={ 12 } />
-					<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>
-				</Button>
 				<div className="seller-upgrade-modal__included">
 					<h3>{ translate( 'Included with the Pro plan' ) }</h3>
 					<ul>
@@ -89,7 +85,12 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgra
 						</li>
 					</ul>
 				</div>
+				<ThemeFeatures features={ features } heading={ featuresHeading } />
 			</div>
+			<Button className="seller-upgrade-modal__close" borderless onClick={ () => closeModal() }>
+				<Gridicon icon="cross" size={ 12 } />
+				<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>
+			</Button>
 		</Dialog>
 	);
 };

@@ -14,6 +14,26 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 		max-width: 775px;
 	}
 
+	&__col {
+		position: relative;
+		padding: 45px;
+		@include break-medium {
+			&:nth-of-type( 1 ) {
+				width: 58%;
+			}
+
+			&:nth-of-type( 2 ) {
+				width: 42%;
+			}
+		}
+
+		&:nth-of-type( 2 ) {
+			background-color: var( --studio-gray-0 );
+			padding-left: 25px;
+			padding-right: 25px;
+		}
+	}
+
 	&__star-box {
 		background: var( --studio-gray-100 );
 		border-radius: 4px;
@@ -28,52 +48,43 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 	&__heading {
 		@extend .wp-brand-font;
 		font-size: $font-headline-medium;
-		line-height: 1.2;
+		line-height: 1.1;
 		margin-bottom: 25px;
 	}
 
-	&__col {
-		position: relative;
-		padding: 24px;
-		@include break-medium {
-			&:nth-of-type( 1 ) {
-				width: 58%;
-			}
-
-			&:nth-of-type( 2 ) {
-				background-color: var( --studio-gray-0 );
-				width: 42%;
-			}
-		}
+	p {
+		margin-bottom: 40px;
 	}
 
 	&__close {
-		color: var( --text-subtle );
+		color: var( --color-text-subtle );
 		position: absolute;
-		top: 8px;
+		top: 0;
 		right: 8px;
+
+		.gridicon {
+			fill: var( --color-text-subtle );
+		}
 	}
 
 	&__actions {
 		display: flex;
-		flex-grow: 1;
-	}
-
-	p {
-		margin-bottom: 25px;
+		justify-content: space-between;
 	}
 
 	&__cancel.button {
 		border-radius: 4px;
+		width: 47%;
 	}
 
 	&__upgrade.button.is-primary {
 		background: $design-button-primary-color;
         border-color: $design-button-primary-color;
-        padding: 9px 48px;
+        padding: 9px 25px;
         border-radius: 4px;
         font-weight: 500;
         box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+		width: 47%;
 
         &:hover,
         &:focus {
@@ -91,7 +102,8 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 		}
 
 		ul, li {
-			line-height: 1.6;
+			font-size: $font-body-small;
+			line-height: 1.7;
 			list-style: none;
 			margin-left: 0;
 			padding-left: 0;
