@@ -131,7 +131,7 @@ export const siteSetupFlow: Flow = {
 				 */
 				return new Promise( () => {
 					const pendingActions = [ setIntentOnSite( siteSlug as string, intent ) ];
-					if ( siteSlug && isEnabled( 'signup/goals-step' ) ) {
+					if ( siteSlug && goalsStepEnabled ) {
 						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
 					}
 					Promise.all( pendingActions ).then( () => redirect( to ) );
