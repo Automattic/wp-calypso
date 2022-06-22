@@ -26,7 +26,6 @@ export const RETURNABLE_FIELDS = [
 	'shortcode_types',
 	'tag.name.default',
 	'title.default',
-	'title_html',
 
 	// Marketplace fields
 	'author',
@@ -101,4 +100,4 @@ export const RETURNABLE_FIELDS = [
 	'plugin.installation',
 	'plugin.faq',
 	'plugin.changelog',
-];
+] as const;
