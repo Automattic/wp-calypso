@@ -1,4 +1,7 @@
-import { FEATURE_INSTALL_PLUGINS, WPCOM_FEATURES_LIVE_SUPPORT } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+	WPCOM_FEATURES_LIVE_SUPPORT,
+} from '@automattic/calypso-products';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -11,18 +14,22 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /*
  * shouldUpgradeCheck:
  * Does the selected blog need an upgrade before installing marketplace addons?
- * If it's missing the FEATURE_INSTALL_PLUGINS, shouldUpgradeCheck returns true,
+ * If it's missing the WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS, shouldUpgradeCheck returns true,
  * except standalone jetpack and VIP sites always return false.
  */
 const shouldUpgradeCheck = ( state: IAppState, siteId: number | null ): boolean | null => {
 	if ( ! siteId ) {
 		return null;
 	}
-	const canInstallPlugins = siteHasFeature( state, siteId, FEATURE_INSTALL_PLUGINS );
+	const canInstallPurchasedPlugins = siteHasFeature(
+		state,
+		siteId,
+		WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
+	);
 	const isStandaloneJetpack =
 		isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId );
 	const isVip = isVipSite( state, siteId );
-	return ! canInstallPlugins && ! isStandaloneJetpack && ! isVip;
+	return ! canInstallPurchasedPlugins && ! isStandaloneJetpack && ! isVip;
 };
 
 /*
