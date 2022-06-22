@@ -61,6 +61,10 @@
 			width: 130px;
 			height: 44px;
 			border-radius: 4px;
+
+			&:focus {
+				box-shadow: 0 0 0 2px #fff, 0 0 0 4px var( --color-accent-60 );
+			}
 		}
 
 		@include break-small {
