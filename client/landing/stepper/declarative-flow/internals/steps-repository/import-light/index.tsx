@@ -62,13 +62,9 @@ const ImportLight: Step = function ImportStep( props ) {
 	}
 
 	function getColors() {
-		const colors = colorsData
-			? [
-					...( colorsData?.background || [] ),
-					...( colorsData?.link || [] ),
-					...( colorsData?.text || [] ),
-			  ]
-			: [];
+		const palette = colorsData?.preferred_palette;
+		const colors = palette ? [ palette?.background, palette?.link, palette?.text ] : [];
+
 		return uniqBy( colors, 'name' );
 	}
 
