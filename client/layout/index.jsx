@@ -377,7 +377,10 @@ export default withCurrentRoute(
 		);
 
 		const disableFAB =
-			isEditor && config.isEnabled( 'editor/help-center' ) && userAllowedToHelpCenter;
+			isEditor &&
+			( ( isEditor && config.isEnabled( 'editor/help-center' ) ) ||
+				( isCheckout && config.isEnabled( 'checkout/help-center' ) ) ) &&
+			userAllowedToHelpCenter;
 
 		return {
 			masterbarIsHidden,

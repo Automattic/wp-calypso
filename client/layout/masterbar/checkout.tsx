@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
 import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
@@ -24,6 +23,7 @@ interface Props {
 	previousPath?: string;
 	siteSlug?: string;
 	isLeavingAllowed?: boolean;
+	showHelpCenter?: boolean;
 }
 
 const CheckoutMasterbar = ( {
@@ -32,6 +32,7 @@ const CheckoutMasterbar = ( {
 	previousPath,
 	siteSlug,
 	isLeavingAllowed,
+	showHelpCenter,
 }: Props ) => {
 	const translate = useTranslate();
 	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
@@ -73,8 +74,6 @@ const CheckoutMasterbar = ( {
 		closeAndLeave();
 	};
 
-	const isHelpCenterEnabled = config.isEnabled( 'checkout/help-center' );
-
 	const newItems = ! isLoading && ! data?.has_seen_whats_new_modal;
 	const showCloseButton = isLeavingAllowed && ! isJetpack;
 
@@ -95,7 +94,7 @@ const CheckoutMasterbar = ( {
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			<Item className="masterbar__item-title">{ title }</Item>
-			{ isHelpCenterEnabled && (
+			{ showHelpCenter && (
 				<Item
 					onClick={ () => setIsHelpCenterVisible( ! isHelpCenterVisible ) }
 					className={ classnames( 'masterbar__item-help', {
@@ -114,7 +113,7 @@ const CheckoutMasterbar = ( {
 				secondaryButtonCTA={ modalSecondaryText }
 				secondaryAction={ clearCartAndLeave }
 			/>
-			{ isHelpCenterEnabled && isHelpCenterVisible && (
+			{ showHelpCenter && isHelpCenterVisible && (
 				<HelpCenter handleClose={ () => setIsHelpCenterVisible( false ) } />
 			) }
 		</Masterbar>
