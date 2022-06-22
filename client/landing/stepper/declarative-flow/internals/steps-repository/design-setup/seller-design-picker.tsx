@@ -437,6 +437,8 @@ const SellerDesignPicker: Step = ( { navigation, flow } ) => {
 			recommendedCategorySlug={ categorizationOptions.defaultSelection }
 			categoriesHeading={ heading }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
+			previewOnly={ true }
+			hasDesignOptionHeader={ false }
 		/>
 	);
 
