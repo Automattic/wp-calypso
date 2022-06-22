@@ -1,4 +1,7 @@
-import { isFreePlanProduct, FEATURE_INSTALL_PURCHASED_PLUGINS } from '@automattic/calypso-products';
+import {
+	isFreePlanProduct,
+	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+} from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -54,7 +57,8 @@ const PluginDetailsCTA = ( {
 
 	const shouldUpgrade =
 		useSelector(
-			( state ) => ! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_PURCHASED_PLUGINS )
+			( state ) =>
+				! siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
 		) && ! isJetpackSelfHosted;
 
 	// Eligibilities for Simple Sites.
