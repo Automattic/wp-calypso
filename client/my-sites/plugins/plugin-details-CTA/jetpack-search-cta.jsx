@@ -25,8 +25,8 @@ export default function PluginDetailsCTAJetpackSearch( { pluginName } ) {
 	const translate = useTranslate();
 
 	const buttonLabel = hasInstantSearch
-		? translate( 'Settings' )
-		: translate( 'Settings (Upgrades available)' );
+		? translate( 'Manage plugin' )
+		: translate( 'Manage plugin (upgrades available)' );
 
 	const buttonHref = isAtomic ? wpAdminUrl : `/settings/performance/${ siteSlug }`;
 
