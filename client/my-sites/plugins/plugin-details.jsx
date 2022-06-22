@@ -46,6 +46,7 @@ import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/w
 import {
 	isFetching as isWporgPluginFetchingSelector,
 	isFetched as isWporgPluginFetchedSelector,
+	hasError as isWporgPluginErrorSelector,
 	getPlugin as getWporgPluginSelector,
 } from 'calypso/state/plugins/wporg/selectors';
 import {
@@ -94,6 +95,10 @@ function PluginDetails( props ) {
 	const isWporgPluginFetched = useSelector( ( state ) =>
 		isWporgPluginFetchedSelector( state, props.pluginSlug )
 	);
+	const wporgPluginError = useSelector( ( state ) =>
+		isWporgPluginErrorSelector( state, props.pluginSlug )
+	);
+	const wporgPluginNotFound = wporgPluginError?.response?.status === 404;
 	const sitePlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSite?.ID, props.pluginSlug )
 	);
@@ -277,7 +282,7 @@ function PluginDetails( props ) {
 			<QueryJetpackPlugins siteIds={ siteIds } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
-			<QueryProductsList persist />
+			<QueryProductsList persist={ ! wporgPluginNotFound } />
 			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
 
 			<PluginNotices
