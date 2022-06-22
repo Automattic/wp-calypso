@@ -11,9 +11,11 @@ import './seller-upgrade-modal.scss';
 interface SellerUpgradeModalProps {
 	/* Theme slug */
 	slug: string;
+	isOpen: boolean;
+	closeModal: () => void;
 }
 
-const SellerUpgradeModal: React.FC< SellerUpgradeModalProps > = ( { slug } ) => {
+const SellerUpgradeModal = ( { slug, isOpen, closeModal }: SellerUpgradeModalProps ) => {
 	const translate = useTranslate();
 	const site = useSite();
 	const plan = getPlan( PLAN_WPCOM_PRO );
@@ -28,7 +30,7 @@ const SellerUpgradeModal: React.FC< SellerUpgradeModalProps > = ( { slug } ) => 
 	//@todo: Add Tracks events for viewing and buttons
 
 	return (
-		<Modal className="seller-upgrade-modal" isOpen>
+		<Modal className="seller-upgrade-modal" isOpen={ isOpen }>
 			<div className="seller-upgrade-modal__col">
 				<Gridicon icon="star" />
 				<h2 className="seller-upgrade-modal__heading">
@@ -46,14 +48,14 @@ const SellerUpgradeModal: React.FC< SellerUpgradeModalProps > = ( { slug } ) => 
 					) }
 				</p>
 				<div className="seller-upgrade-modal__actions">
-					<Button onClick={ () => null }>{ translate( 'Cancel' ) }</Button>
+					<Button onClick={ () => closeModal() }>{ translate( 'Cancel' ) }</Button>
 					<Button primary onClick={ () => null }>
 						{ translate( 'Buy and activate' ) }
 					</Button>
 				</div>
 			</div>
 			<div className="seller-upgrade-modal__col">
-				<Button className="seller-upgrade-modal__button-close" onClick={ () => null }>
+				<Button className="seller-upgrade-modal__button-close" onClick={ () => closeModal() }>
 					<Gridicon icon="cross" />
 				</Button>
 				<div className="seller-upgrade-modal__included">
