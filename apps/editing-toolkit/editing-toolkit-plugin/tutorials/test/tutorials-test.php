@@ -134,7 +134,7 @@ class WPCom_Tutorials_Test extends TestCase {
 		return empty( $filtered ) ? null : $filtered[0];
 	}
 
-	// boilerplace
+	// boilerplate
 	private function get_tasks() {
 		return array(
 			array(
