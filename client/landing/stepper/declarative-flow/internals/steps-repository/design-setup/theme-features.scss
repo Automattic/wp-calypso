@@ -13,7 +13,12 @@
         border-radius: 4px;
         color: #2c3338;
         font-weight: 500;
-        font-size: $font-body-small;
+        font-size: $font-body-extra-small;
         line-height: 20px;
+    }
+
+    h2 {
+        font-size: $font-body-small;
+        margin-bottom: 0.5rem;
     }
 }

@@ -17,7 +17,7 @@ const ThemeFeatures = ( { classNames, features, heading }: FeaturesProps ) => {
 		<>
 			{ features.length > 0 && (
 				<div className={ classes }>
-					{ heading && <h3>${ heading }</h3> }
+					{ heading && <h2>{ heading }</h2> }
 					<div className="theme-features__features">
 						{ features.map( ( feature, idx ) => {
 							return (
