@@ -30,7 +30,7 @@ import EmailHeader from 'calypso/my-sites/email/email-header';
 import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import getMailProductForProvider from 'calypso/my-sites/email/form/mailboxes/components/selectors/get-mail-product-for-provider';
 import getCartItems from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-cart-items';
-import { getMailProductProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-mail-product-properties';
+import { getEmailProductProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-email-product-properties';
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { emailManagement, emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
@@ -166,7 +166,7 @@ const MailboxNotices = ( {
 		return null;
 	}
 
-	const { existingItemsCount } = getMailProductProperties(
+	const { existingItemsCount } = getEmailProductProperties(
 		provider,
 		selectedDomain,
 		emailProduct as ProductListItem
@@ -236,7 +236,7 @@ const MailboxesForm = ( {
 	};
 
 	const onSubmit = async ( mailboxOperations: MailboxOperations ) => {
-		const mailProperties = getMailProductProperties(
+		const mailProperties = getEmailProductProperties(
 			provider,
 			selectedDomain,
 			emailProduct,

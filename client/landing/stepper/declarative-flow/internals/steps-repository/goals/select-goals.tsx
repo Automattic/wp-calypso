@@ -68,11 +68,13 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 			</div>
 
 			<div className="select-goals__actions-container">
-				<ImportLink onClick={ handleImportLinkClick } />
-				<DIFMLink onClick={ handleDIFMLinkClick } />
 				<Button primary onClick={ handleContinueButtonClick }>
 					{ translate( 'Continue' ) }
 				</Button>
+			</div>
+			<div className="select-goals__links-container">
+				<ImportLink onClick={ handleImportLinkClick } />
+				<DIFMLink onClick={ handleDIFMLinkClick } />
 			</div>
 		</>
 	);

@@ -53,6 +53,7 @@ interface DesignButtonProps {
 	disabled?: boolean;
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
+	hasDesignOptionHeader?: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -63,6 +64,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	highRes,
 	disabled,
 	hideDesignTitle,
+	hasDesignOptionHeader = true,
 } ) => {
 	const { __ } = useI18n();
 
@@ -79,21 +81,26 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
 			onClick={ () => onSelect( design ) }
 		>
-			<span className="design-picker__design-option-header">
-				<svg width="28" height="6">
-					<g>
-						<rect width="6" height="6" rx="3" />
-						<rect x="11" width="6" height="6" rx="3" />
-						<rect x="22" width="6" height="6" rx="3" />
-					</g>
-				</svg>
-			</span>
+			{ hasDesignOptionHeader && (
+				<span className="design-picker__design-option-header">
+					<svg width="28" height="6">
+						<g>
+							<rect width="6" height="6" rx="3" />
+							<rect x="11" width="6" height="6" rx="3" />
+							<rect x="22" width="6" height="6" rx="3" />
+						</g>
+					</svg>
+				</span>
+			) }
 			<span
 				className={ classnames(
 					'design-picker__image-frame',
 					'design-picker__image-frame-landscape',
 					design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable',
-					{ 'design-picker__image-frame-blank': isBlankCanvas }
+					{
+						'design-picker__image-frame-blank': isBlankCanvas,
+						'design-picker__image-frame-no-header': ! hasDesignOptionHeader,
+					}
 				) }
 			>
 				{ isBlankCanvas ? (
@@ -170,12 +177,14 @@ interface DesignButtonContainerProps extends DesignButtonProps {
 	isPremiumThemeAvailable?: boolean;
 	onPreview?: ( design: Design ) => void;
 	onUpgrade?: () => void;
+	previewOnly?: boolean;
 }
 
 const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	isPremiumThemeAvailable,
 	onPreview,
 	onUpgrade,
+	previewOnly = false,
 	...props
 } ) => {
 	const isDesktop = useViewportMatch( 'large' );
@@ -201,7 +210,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	// We don't need preview for blank canvas
 	return (
 		<div className="design-button-container">
-			{ ! isBlankCanvas && (
+			{ ! isBlankCanvas && ! previewOnly && (
 				<DesignButtonCover
 					design={ props.design }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
@@ -234,6 +243,8 @@ export interface DesignPickerProps {
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
 	isPremiumThemeAvailable?: boolean;
+	previewOnly?: boolean;
+	hasDesignOptionHeader?: boolean;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -257,6 +268,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	hideDesignTitle,
 	recommendedCategorySlug,
 	isPremiumThemeAvailable,
+	previewOnly = false,
+	hasDesignOptionHeader = true,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
@@ -299,6 +312,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						hideFullScreenPreview={ hideFullScreenPreview }
 						hideDesignTitle={ hideDesignTitle }
 						isPremiumThemeAvailable={ isPremiumThemeAvailable }
+						previewOnly={ previewOnly }
+						hasDesignOptionHeader={ hasDesignOptionHeader }
 					/>
 				) ) }
 			</div>

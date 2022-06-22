@@ -74,7 +74,16 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 
 		it( 'Select "write" path', async function () {
 			startSiteFlow = new StartSiteFlow( page );
-			await startSiteFlow.clickButton( 'Start writing' );
+
+			await page.waitForLoadState( 'networkidle' );
+			const isGoalsStep = await page.isVisible( ':has-text("What are your goals")' );
+
+			if ( isGoalsStep ) {
+				await page.click( '.select-card__container:first-of-type' );
+				await startSiteFlow.clickButton( 'Continue' );
+			} else {
+				await startSiteFlow.clickButton( 'Start writing' );
+			}
 		} );
 
 		it( 'Enter blog name', async function () {

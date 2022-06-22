@@ -259,13 +259,12 @@ button.button.back-button__help-center.is-borderless {
 	padding-top: 0;
 }
 
-.help-center-container__loading {
+.help-center-container__loading, .help-center-contact-page__loading {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	height: 100%;
-}
-.help-center-container__spinner {
+
 	.spinner__outer {
 		border-top-color: var( --wp-admin-theme-color );
 	}

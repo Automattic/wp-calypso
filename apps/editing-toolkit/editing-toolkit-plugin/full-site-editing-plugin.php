@@ -387,14 +387,15 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
  */
 function load_help_center() {
 	// enable help center for all proxied users.
-	$is_proxied = function_exists( 'wpcom_is_proxied_request' ) ? wpcom_is_proxied_request() : false;
+	$is_proxied = isset( $_SERVER['A8C_PROXIED_REQUEST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['A8C_PROXIED_REQUEST'] ) ) : false || defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
 
-	$current_segment = 10; // segment of existing users that will get the help center in %.
-	$user_segment    = get_current_user_id() % 100;
 	// only shipping to en locale for now.
 	$current_locale = get_locale();
 
-	if ( $is_proxied || ( 'en' === $current_locale && $user_segment < $current_segment ) ) {
+	$current_segment = 10; // segment of existing users that will get the help center in %.
+	$user_segment    = get_current_user_id() % 100;
+
+	if ( $is_proxied || ( str_starts_with( $current_locale, 'en' ) && $user_segment < $current_segment ) ) {
 		require_once __DIR__ . '/help-center/class-help-center.php';
 	}
 }

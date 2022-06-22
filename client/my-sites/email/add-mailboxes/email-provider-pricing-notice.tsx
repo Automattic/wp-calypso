@@ -12,7 +12,7 @@ import {
 	isTitanMonthlyProduct,
 } from 'calypso/lib/titan';
 import EmailPricingNotice from 'calypso/my-sites/email/email-pricing-notice';
-import { getMailProductProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-mail-product-properties';
+import { getEmailProductProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-email-product-properties';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
@@ -27,7 +27,7 @@ export const EmailProviderPricingNotice = ( {
 	provider,
 	selectedDomain,
 }: EmailProviderPricingNoticeProps ): JSX.Element | null => {
-	const { isAdditionalMailboxesPurchase } = getMailProductProperties(
+	const { isAdditionalMailboxesPurchase } = getEmailProductProperties(
 		provider,
 		selectedDomain,
 		emailProduct as ProductListItem

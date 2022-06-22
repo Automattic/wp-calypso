@@ -128,6 +128,12 @@ class MailboxForm< T extends EmailProvider > {
 			  };
 	}
 
+	getAsFlatObject(): Record< FormFieldNames, string | boolean | undefined > {
+		return Object.fromEntries(
+			Object.values( this.formFields ).map( ( field ) => [ field.fieldName, field.value ] )
+		);
+	}
+
 	getFieldValue< R >( fieldName: FormFieldNames ) {
 		return this.getFormField< R >( fieldName )?.value;
 	}

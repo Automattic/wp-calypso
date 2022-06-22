@@ -1,41 +1,26 @@
 import { useMutation } from 'react-query';
 import wpcom from 'calypso/lib/wp';
-import type { UseMutationOptions } from 'react-query';
+import type { TitanMailboxFields } from 'calypso/my-sites/email/form/mailboxes/constants';
 
 /**
  * Creates a mailbox for a Professional Email (Titan) account
  *
- * @param domainName The domain name of the mailbox
- * @param name The name of the user associated with the mailbox
- * @param mailboxName The mailbox name
- * @param password The password to the mailbox
- * @param alternateEmailAddress An alternate email address where password resets and correspondences are sent
- * @param isAdmin The user has admin privileges on the account
- * @param mutationOptions Mutation options passed on to `useMutation`
  * @returns Returns the result of the `useMutation` call
  */
-export function useCreateTitanMailboxMutation(
-	domainName: string,
-	name: string,
-	mailboxName: string,
-	password: string,
-	alternateEmailAddress: string,
-	isAdmin = false,
-	mutationOptions: UseMutationOptions = {}
-) {
-	return useMutation(
-		() =>
-			wpcom.req.post( {
-				path: `/emails/titan/${ encodeURIComponent( domainName ) }/mailbox/create`,
+export const useCreateTitanMailboxMutation = () => {
+	return useMutation< unknown, unknown, TitanMailboxFields >(
+		( { alternativeEmail, domain, isAdmin, mailbox, name, password } ) => {
+			return wpcom.req.post( {
+				path: `/emails/titan/${ encodeURIComponent( domain ) }/mailbox/create`,
 				apiNamespace: 'wpcom/v2',
 				body: {
 					name,
-					mailbox: mailboxName,
+					mailbox,
 					password,
-					alternate_email_address: alternateEmailAddress,
-					is_admin: isAdmin === true,
+					alternate_email_address: alternativeEmail,
+					is_admin: isAdmin,
 				},
-			} ),
-		{ ...mutationOptions, mutationKey: `${ domainName }@${ mailboxName }` }
+			} );
+		}
 	);
-}
+};

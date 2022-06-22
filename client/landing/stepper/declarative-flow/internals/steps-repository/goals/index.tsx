@@ -3,6 +3,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -26,18 +27,26 @@ type TracksGoalsSelectEventProperties = {
 const SiteGoal = Onboard.SiteGoal;
 const { serializeGoals, goalsToIntent } = Onboard.utils;
 
+const refGoals: Record< string, Onboard.SiteGoal[] > = {
+	'create-blog-lp': [ SiteGoal.Write ],
+};
+
 /**
  * The goals capture step
  */
 const GoalsStep: Step = ( { navigation } ) => {
 	const { goNext } = navigation;
 	const translate = useTranslate();
-	const headerText = translate( 'Welcome! What are your goals?' );
+	const headerText = translate( 'Welcome!{{br/}}What are your goals?', {
+		components: {
+			br: <br />,
+		},
+	} );
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
 
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 	const { setGoals, setIntent, clearImportGoal, clearDIFMGoal } = useDispatch( ONBOARD_STORE );
-	const refParameter = getQueryArgs()?.ref;
+	const refParameter = getQueryArgs()?.ref as string;
 
 	useEffect( () => {
 		clearImportGoal();
@@ -99,6 +108,14 @@ const GoalsStep: Step = ( { navigation } ) => {
 		<SelectGoals selectedGoals={ goals } onChange={ handleChange } onSubmit={ handleSubmit } />
 	);
 
+	useEffect( () => {
+		const isValidRef = Object.keys( refGoals ).includes( refParameter );
+
+		if ( isValidRef && goals.length === 0 ) {
+			setGoals( refGoals[ refParameter ] );
+		}
+	}, [ refParameter, refGoals ] );
+
 	return (
 		<StepContainer
 			stepName={ 'goals-step' }
@@ -106,7 +123,8 @@ const GoalsStep: Step = ( { navigation } ) => {
 			skipLabelText={ translate( 'Skip to Dashboard' ) }
 			skipButtonAlign={ 'top' }
 			hideBack={ true }
-			isHorizontalLayout={ false }
+			isHorizontalLayout={ true }
+			headerImageUrl={ intentImageUrl }
 			className={ 'goals__container' }
 			formattedHeader={
 				<FormattedHeader

@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -13,8 +14,6 @@ import SiteVerticalForm from './form';
 import type { Step } from '../../types';
 import type { Vertical } from 'calypso/components/select-vertical/types';
 
-const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' );
-
 const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const { goBack, goNext, submit } = navigation;
 	const [ vertical, setVertical ] = React.useState< Vertical | null >();
@@ -28,6 +27,8 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const headerText = translate( 'What’s your website about?' );
 	const subHeaderText = translate( 'Choose a category that defines your website the best.' );
 	const isSkipSynonyms = useQuery().get( 'isSkipSynonyms' );
+	const isEnglishLocale = useIsEnglishLocale();
+	const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' ) && isEnglishLocale;
 
 	const handleSiteVerticalSelect = ( vertical: Vertical ) => {
 		setVertical( vertical );

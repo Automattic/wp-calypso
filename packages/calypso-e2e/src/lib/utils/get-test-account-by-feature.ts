@@ -33,6 +33,7 @@ function stringifyKey( o: FeatureKey ) {
 	const sorted = keys.sort().reduce( ( sorted, key ) => {
 		sorted[ key ] = o[ key ];
 		return sorted;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	}, {} as any ) as FeatureKey;
 
 	return JSON.stringify( sorted );

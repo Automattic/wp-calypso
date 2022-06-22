@@ -17,14 +17,13 @@ const activationActions = [ ACTIVATE_PLUGIN, DEACTIVATE_PLUGIN ];
 export class PluginActivateToggle extends Component {
 	toggleActivation = () => {
 		const {
-			isMock,
 			disabled,
 			site,
 			plugin,
 			recordGoogleEvent: recordGAEvent,
 			recordTracksEvent: recordEvent,
 		} = this.props;
-		if ( isMock || disabled ) {
+		if ( disabled ) {
 			return;
 		}
 
@@ -125,12 +124,10 @@ export class PluginActivateToggle extends Component {
 PluginActivateToggle.propTypes = {
 	site: PropTypes.object.isRequired,
 	plugin: PropTypes.object.isRequired,
-	isMock: PropTypes.bool,
 	disabled: PropTypes.bool,
 };
 
 PluginActivateToggle.defaultProps = {
-	isMock: false,
 	disabled: false,
 };
 
