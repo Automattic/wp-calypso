@@ -16,7 +16,10 @@
 
 	input[type=text].form-text-input {
 		font-size: 0.875rem;
+		line-height: 2rem;
 		color: var( --studio-gray-90 );
+		border-radius: 4px;
+		border-color: var( --studio-gray-50 );
 	}
 
 	input[type=text].form-text-input::placeholder {
@@ -42,6 +45,7 @@
 	}
 
 	.action-buttons__importer-list {
+		font-weight: 500;
 		text-decoration: underline;
 		color: var( --studio-gray-100 );
 		margin-top: 1em;
