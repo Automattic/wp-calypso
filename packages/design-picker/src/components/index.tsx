@@ -55,6 +55,7 @@ interface DesignButtonProps {
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
 	hasDesignOptionHeader?: boolean;
+	isPremiumThemeAvailable?: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -66,6 +67,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	disabled,
 	hideDesignTitle,
 	hasDesignOptionHeader = true,
+	isPremiumThemeAvailable = false,
 } ) => {
 	const { __ } = useI18n();
 
@@ -122,7 +124,12 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						<span className="design-picker__option-name">{ designTitle }</span>
 					) }
 					{ design.is_premium && premiumBadge }
-					{ ! premiumBadge && <BadgeContainer badgeType={ badgeType } /> }
+					{ ! premiumBadge && (
+						<BadgeContainer
+							badgeType={ badgeType }
+							isPremiumThemeAvailable={ isPremiumThemeAvailable }
+						/>
+					) }
 				</span>
 			</span>
 		</button>
