@@ -24,6 +24,8 @@ class Help_Center {
 	public function __construct() {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
 		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
+		add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 110 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script' ), 100 );
 	}
 
 	/**
@@ -108,6 +110,28 @@ class Help_Center {
 		require_once __DIR__ . '/class-wp-rest-help-center-fetch-post.php';
 		$controller = new WP_REST_Help_Center_Fetch_Post();
 		$controller->register_rest_route();
+	}
+
+	/**
+	 * Add icon to WP-ADMIN admin bar
+	 */
+	public function admin_bar_menu() {
+		global $wp_admin_bar;
+
+		if ( ! is_object( $wp_admin_bar ) ) {
+			return;
+		}
+
+		$wp_admin_bar->add_menu(
+			array(
+				'id'     => 'help',
+				'title'  => file_get_contents( plugin_dir_path( __FILE__ ) . 'src/help-icon.svg', true ),
+				'parent' => 'top-secondary',
+				'meta'   => array(
+					'html' => '<div id="help-center" />',
+				),
+			)
+		);
 	}
 }
 add_action( 'init', array( __NAMESPACE__ . '\Help_Center', 'init' ) );

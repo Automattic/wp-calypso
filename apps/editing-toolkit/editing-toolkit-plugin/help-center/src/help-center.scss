@@ -1,3 +1,4 @@
+/* stylelint-disable selector-max-id */
 .help-center.entry-point-button {
 	&.is-active {
 		background: #1e1e1e;
@@ -17,6 +18,52 @@
 	&.is-mobile {
 		&.is-minimized {
 			margin-top: 0;
+		}
+	}
+}
+
+/**
+ * WP-ADMIN Masterbar Styling
+ */
+.wp-toolbar {
+	#wpadminbar #wp-admin-bar-help .ab-item {
+		position: relative;
+		padding: 0;
+		width: 36px;
+
+		&:hover {
+			cursor: pointer;
+		}
+	}
+
+	svg#help-center__icon {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		margin: auto;
+
+		// Need to set this up for notifications
+		#has-notification {
+			display: none;
+		}
+	}
+
+	.help-center {
+		button.components-button {
+			background: transparent;
+			border: none;
+			color: currentcolor;
+
+			&.inline-help__new-releases {
+				text-align: left;
+			}
+
+			svg {
+				fill: currentColor;
+			}
+
 		}
 	}
 }
