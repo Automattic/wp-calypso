@@ -11,6 +11,7 @@ import Capture from 'calypso/blocks/import-light/capture';
 import Colors from 'calypso/blocks/import-light/colors';
 import Summary from 'calypso/blocks/import-light/summary';
 import DocumentHead from 'calypso/components/data/document-head';
+import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ANALYZER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { ProgressState } from './types';
@@ -21,6 +22,7 @@ const ImportLight: Step = function ImportStep( props ) {
 	const { __ } = useI18n();
 	const { navigation } = props;
 
+	const siteSlug = useSiteSlugParam();
 	const [ url, setUrl ] = useState( '' );
 	const [ progressState, setProgressState ] = useState< ProgressState >( 'capture' );
 	const [ percentage, setPercentage ] = useState( 2 );
@@ -48,6 +50,10 @@ const ImportLight: Step = function ImportStep( props ) {
 		analyzeColors( url );
 		makeProgress( 'scanning', 13, 0 );
 		makeProgress( 'scanning', 33, 500 );
+	}
+
+	function goToImportListStep() {
+		navigation.goToStep?.( `importList?siteSlug=${ siteSlug }&backToStep=importLight` );
 	}
 
 	function onColorAnimationFinish() {
@@ -107,7 +113,9 @@ const ImportLight: Step = function ImportStep( props ) {
 
 			case 'capture':
 			default:
-				return <Capture onInputEnter={ onUrlEnter } />;
+				return (
+					<Capture onInputEnter={ onUrlEnter } onDontHaveSiteAddressClick={ goToImportListStep } />
+				);
 		}
 	}
 

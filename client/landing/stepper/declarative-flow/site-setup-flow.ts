@@ -4,6 +4,7 @@ import { useDesignsBySite } from '@automattic/design-picker';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useFSEStatus } from '../hooks/use-fse-status';
@@ -77,6 +78,7 @@ export const siteSetupFlow: Flow = {
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
 		const isEnglishLocale = useIsEnglishLocale();
+		const urlQueryParams = useQuery();
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -407,6 +409,15 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'wooVerifyEmail' );
 
 				case 'importList':
+					// eslint-disable-next-line no-case-declarations
+					const backToStep = urlQueryParams.get( 'backToStep' );
+
+					if ( backToStep ) {
+						return navigate( `${ backToStep as StepPath }?siteSlug=${ siteSlug }` );
+					}
+
+					return navigate( 'import' );
+
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':
