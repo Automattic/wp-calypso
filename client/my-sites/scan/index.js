@@ -41,7 +41,7 @@ export default function () {
 		scan,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScan,
-		wpcomAtomicTransfer,
+		wpcomAtomicTransfer( WPCOMScanUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
