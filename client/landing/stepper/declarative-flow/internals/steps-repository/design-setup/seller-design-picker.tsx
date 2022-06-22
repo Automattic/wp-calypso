@@ -42,7 +42,7 @@ const STICKY_OPTIONS = {
 /**
  * The site setup design picker
  */
-const NewSiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
+const SellerDesignPicker: Step = ( { navigation, flow } ) => {
 	const [ isForceStaticDesigns, setIsForceStaticDesigns ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
@@ -465,4 +465,4 @@ const NewSiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	);
 };
 
-export default NewSiteSetupDesignPicker;
+export default SellerDesignPicker;
