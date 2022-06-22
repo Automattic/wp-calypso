@@ -1,4 +1,5 @@
-import { Button } from '@automattic/components';
+import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
+import { Button, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement, FunctionComponent } from 'react';
@@ -8,13 +9,19 @@ import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
+import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
+import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import PromoCard from 'calypso/components/promo-section/promo-card';
+import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { preventWidows } from 'calypso/lib/formatting';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -65,7 +72,6 @@ const BackupVPActiveBody: FunctionComponent = () => {
 };
 
 const BackupUpsellBody: FunctionComponent = () => {
-	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_backup_upsell' );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
 	const isAdmin = useSelector(
@@ -73,44 +79,88 @@ const BackupUpsellBody: FunctionComponent = () => {
 	);
 	const translate = useTranslate();
 	const postCheckoutUrl = window.location.pathname + window.location.search;
+	const isJetpack = useSelector( ( state ) => siteId && isJetpackSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => siteId && isSiteWpcomAtomic( state, siteId ) );
+	const isWPcomSite = ! isJetpack || isAtomic;
+	const onUpgradeClick = useTrackCallback(
+		undefined,
+		isWPcomSite ? 'calypso_jetpack_backup_business_upsell' : 'calypso_jetpack_backup_upsell'
+	);
+	const hasFullActivityLogFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG )
+	);
+	const promos: PromoSectionProps = {
+		promos: [
+			{
+				title: translate( 'Activity Log' ),
+				body: translate(
+					'A complete record of everything that happens on your site, with history that spans over 30 days.'
+				),
+				image: <Gridicon icon="history" className="backup__upsell-icon" />,
+			},
+		],
+	};
 
 	return (
-		<PromoCard
-			title={ preventWidows( translate( 'Get time travel for your site with Jetpack Backup' ) ) }
-			image={ { path: JetpackBackupSVG } }
-			isPrimary
-		>
-			<p>
-				{ preventWidows(
-					translate(
-						'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
-					)
+		<>
+			<PromoCard
+				title={ preventWidows( translate( 'Get time travel for your site with Jetpack Backup' ) ) }
+				image={ { path: JetpackBackupSVG } }
+				isPrimary
+			>
+				<p>
+					{ preventWidows(
+						translate(
+							'Backup gives you granular control over your site, with the ability to restore it to any previous state, and export it at any time.'
+						)
+					) }
+				</p>
+
+				{ ! isAdmin && (
+					<Notice
+						status="is-warning"
+						text={ translate( 'Only site administrators can upgrade to access Backup.' ) }
+						showDismiss={ false }
+					/>
 				) }
-			</p>
+				{ isAdmin && isWPcomSite && (
+					<PromoCardCTA
+						cta={ {
+							text: translate( 'Upgrade to Pro Plan' ),
+							action: {
+								url: `/checkout/${ siteSlug }/pro`,
+								onClick: onUpgradeClick,
+								selfTarget: true,
+							},
+						} }
+					/>
+				) }
+				{ isAdmin && ! isWPcomSite && (
+					<div className="backup__wpcom-ctas">
+						<Button
+							className="backup__wpcom-cta"
+							href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_t1_yearly`, {
+								redirect_to: postCheckoutUrl,
+							} ) }
+							onClick={ onUpgradeClick }
+							primary
+						>
+							{ translate( 'Get backups' ) }
+						</Button>
+					</div>
+				) }
+			</PromoCard>
 
-			{ ! isAdmin && (
-				<Notice
-					status="is-warning"
-					text={ translate( 'Only site administrators can upgrade to access Backup.' ) }
-					showDismiss={ false }
-				/>
+			{ isWPcomSite && ! hasFullActivityLogFeature && (
+				<>
+					<h2 className="backup__subheader">{ translate( 'Also included in the Pro Plan' ) }</h2>
+
+					<PromoSection { ...promos } />
+				</>
 			) }
 
-			{ isAdmin && (
-				<div className="backup__wpcom-ctas">
-					<Button
-						className="backup__wpcom-cta"
-						href={ addQueryArgs( `/checkout/${ siteSlug }/jetpack_backup_t1_yearly`, {
-							redirect_to: postCheckoutUrl,
-						} ) }
-						onClick={ onUpgradeClick }
-						primary
-					>
-						{ translate( 'Get backups' ) }
-					</Button>
-				</div>
-			) }
-		</PromoCard>
+			{ isWPcomSite && <WhatIsJetpack /> }
+		</>
 	);
 };
 
