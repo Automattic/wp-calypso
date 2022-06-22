@@ -25,6 +25,7 @@ import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-erro
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSiteAdminUrl,
@@ -124,6 +125,7 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const error = getPluginUploadError( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
+	const jetpackNonAtomic = isJetpack && ! isAtomicSite( state, siteId );
 	const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
 	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
 	// Use this selector to take advantage of eligibility card placeholders
@@ -132,7 +134,8 @@ const mapStateToProps = ( state ) => {
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
-	const hasUploadPlugins = siteHasFeature( state, siteId, WPCOM_FEATURES_UPLOAD_PLUGINS );
+	const hasUploadPlugins =
+		siteHasFeature( state, siteId, WPCOM_FEATURES_UPLOAD_PLUGINS ) || jetpackNonAtomic;
 
 	return {
 		siteId,

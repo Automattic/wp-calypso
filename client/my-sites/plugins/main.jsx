@@ -31,6 +31,7 @@ import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-use
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getUpdateableJetpackSites from 'calypso/state/selectors/get-updateable-jetpack-sites';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	canJetpackSiteUpdateFiles,
@@ -466,16 +467,12 @@ export default flow(
 			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
 			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
-			const hasManagePlugins = siteHasFeature(
-				state,
-				selectedSiteId,
-				WPCOM_FEATURES_MANAGE_PLUGINS
-			);
-			const hasUploadPlugins = siteHasFeature(
-				state,
-				selectedSiteId,
-				WPCOM_FEATURES_UPLOAD_PLUGINS
-			);
+			const jetpackNonAtomic =
+				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId );
+			const hasManagePlugins =
+				siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_MANAGE_PLUGINS ) || jetpackNonAtomic;
+			const hasUploadPlugins =
+				siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_UPLOAD_PLUGINS ) || jetpackNonAtomic;
 
 			return {
 				hasJetpackSites: hasJetpackSites( state ),

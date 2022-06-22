@@ -113,11 +113,11 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 	const siteId = useSelector( getSelectedSiteId );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
-	const hasUploadPlugins = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_UPLOAD_PLUGINS )
+	const hasUploadPlugins = useSelector(
+		( state ) => siteHasFeature( state, siteId, WPCOM_FEATURES_UPLOAD_PLUGINS ) || jetpackNonAtomic
 	);
-	const hasManagePlugins = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS )
+	const hasManagePlugins = useSelector(
+		( state ) => siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS ) || jetpackNonAtomic
 	);
 
 	const {
