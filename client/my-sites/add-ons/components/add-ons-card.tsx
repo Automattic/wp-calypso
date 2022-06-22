@@ -25,7 +25,7 @@ const Container = styled.div`
 		height: 100%;
 
 		> div {
-			// @wordpress/components<Card> wraps content in a div
+			// @wordpress/components<Card> wraps content in a first inner div
 			height: 100%;
 			width: 100%;
 			display: flex;

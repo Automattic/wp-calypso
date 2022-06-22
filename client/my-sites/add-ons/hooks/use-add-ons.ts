@@ -18,7 +18,7 @@ import unlimitedThemesIcon from '../icons/unlimited-themes';
 
 export interface AddOnMeta {
 	slug: string;
-	highlight?: boolean;
+	featured?: boolean;
 	icon: JSX.Element;
 	name: string | React.ReactChild | null;
 	description: string | React.ReactChild | null;
@@ -34,7 +34,7 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 	const addOnsActive = [
 		{
 			slug: WPCOM_FEATURES_NO_ADVERTS,
-			highlight: false,
+			featured: false,
 			icon: noAdsIcon,
 			overrides: {
 				// override API-fetched metadata
@@ -43,13 +43,13 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 		},
 		{
 			slug: WPCOM_FEATURES_CUSTOM_DESIGN,
-			highlight: false,
+			featured: false,
 			icon: customDesignIcon,
 			overrides: null,
 		},
 		{
 			slug: WPCOM_FEATURES_UNLIMITED_THEMES,
-			highlight: false,
+			featured: false,
 			icon: unlimitedThemesIcon,
 			overrides: null,
 		},
@@ -72,7 +72,7 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 
 			return {
 				slug: addOn.slug,
-				highlight: addOn.highlight,
+				featured: addOn.featured,
 				icon: addOn.icon,
 				name: addOn?.overrides?.name ?? name,
 				description,

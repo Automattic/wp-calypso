@@ -15,7 +15,7 @@ interface Props {
 	// returns true/false if add-on is to be treated as "selected" (either added to cart, or part of plan, or ...)
 	// can extend to return a "selected status" string, if we need to tailor
 	useAddOnSelectedStatus?: ( addOnSlug: string ) => boolean;
-	highlight: boolean;
+	showFeatured: boolean;
 }
 
 const Container = styled.div`
@@ -34,7 +34,7 @@ const AddOnsGrid = ( {
 	actionPrimary,
 	actionSelected,
 	useAddOnSelectedStatus,
-	highlight,
+	showFeatured,
 }: Props ) => {
 	return (
 		<Container>
@@ -46,7 +46,7 @@ const AddOnsGrid = ( {
 						actionSelected={ actionSelected }
 						useAddOnSelectedStatus={ useAddOnSelectedStatus }
 						{ ...addOn }
-						highlight={ highlight ? addOn.highlight : false }
+						featured={ showFeatured ? addOn.featured : false }
 					/>
 				) : null
 			) }
