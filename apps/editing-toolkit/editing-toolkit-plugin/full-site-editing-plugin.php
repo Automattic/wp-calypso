@@ -387,7 +387,7 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
  */
 function load_help_center() {
 	// enable help center for all proxied users.
-	$is_proxied = $_SERVER['A8C_PROXIED_REQUEST'] || defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
+	$is_proxied = isset( $_SERVER['A8C_PROXIED_REQUEST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['A8C_PROXIED_REQUEST'] ) ) : false || defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
 
 	// only shipping to en locale for now.
 	$current_locale = get_locale();
