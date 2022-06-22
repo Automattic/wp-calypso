@@ -22,10 +22,12 @@ Related to #
 
 #### Things to check
 
-Here are some important things to check on each PR as an author and reviewer.
+Complete all of the items on this checklist **before** merging the PR into the trunk. Both the PR author and review are responsible for ensuring the checklist is completed. 
 
-- [ ] Have you written new tests for your changes?
-- [ ] Have you tested the feature in Simple, Atomic, and self-hosted Jetpack sites?
+Not all items will apply to every PR, and any inapplicable items can just be marked as complete.
+
+- [ ] [Have you written new tests](https://wpcalypso.wordpress.com/devdocs/docs/testing/index.md) for your changes?
+- [ ] Have you tested the feature in [Simple](https://atomicuniversity.wordpress.com/what-is-atomic/make-a-site-atomic/simple-vs-atomic), [Atomic](https://atomicuniversity.wordpress.com/what-is-atomic), and [self-hosted Jetpack sites](https://fieldguide.automattic.com/jurassic-ninja)?
 - [ ] Are there any TypeScript or console errors?
 - [ ] Are we memoizing when appropriate (for expensive computations)?
-- [ ] Have we sent any new strings for translation ASAP?
+- [ ] Have we sent any new strings [for translation](https://fieldguide.automattic.com/i18n/how-translation-projects-work) ASAP?
