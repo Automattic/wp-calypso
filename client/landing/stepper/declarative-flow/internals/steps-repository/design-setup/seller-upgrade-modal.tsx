@@ -1,5 +1,5 @@
 import { getPlan, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
-import { Button, Gridicon, Dialog } from '@automattic/components';
+import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useThemeDetails } from 'calypso/landing/stepper/hooks/use-theme-details';
@@ -31,13 +31,15 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgra
 
 	return (
 		<Dialog
-			className="seller-upgrade-Dialog"
+			className="seller-upgrade-modal"
 			isVisible={ isOpen }
 			onClose={ () => closeModal() }
 			isFullScreen
 		>
 			<div className="seller-upgrade-modal__col">
-				<Gridicon icon="star" />
+				<div className="seller-upgrade-modal__star-box">
+					<Gridicon icon="star" size={ 24 } />
+				</div>
 				<h2 className="seller-upgrade-modal__heading">
 					{ translate( 'Unlock this premium theme' ) }
 				</h2>
@@ -53,33 +55,36 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgra
 					) }
 				</p>
 				<div className="seller-upgrade-modal__actions">
-					<Button onClick={ () => closeModal() }>{ translate( 'Cancel' ) }</Button>
-					<Button primary onClick={ () => checkout() }>
-						{ translate( 'Buy and activate' ) }
+					<Button className="seller-upgrade-modal__cancel" onClick={ () => closeModal() }>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button className="seller-upgrade-modal__upgrade" primary onClick={ () => checkout() }>
+						{ translate( 'Upgrade plan' ) }
 					</Button>
 				</div>
 			</div>
 			<div className="seller-upgrade-modal__col">
-				<Button className="seller-upgrade-modal__button-close" onClick={ () => closeModal() }>
-					<Gridicon icon="cross" />
+				<Button className="seller-upgrade-modal__close" borderless onClick={ () => closeModal() }>
+					<Gridicon icon="cross" size={ 12 } />
+					<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>
 				</Button>
 				<div className="seller-upgrade-modal__included">
 					<h3>{ translate( 'Included with the Pro plan' ) }</h3>
 					<ul>
 						<li className="seller-upgrade-modal__included-item">
-							<Gridicon icon="check" />
+							<Gridicon icon="checkmark" size={ 16 } />
 							{ translate( 'Best-in-class hosting' ) }
 						</li>
 						<li className="seller-upgrade-modal__included-item">
-							<Gridicon icon="check" />
+							<Gridicon icon="checkmark" size={ 16 } />
 							{ translate( 'Access to premium themes' ) }
 						</li>
 						<li className="seller-upgrade-modal__included-item">
-							<Gridicon icon="check" />
+							<Gridicon icon="checkmark" size={ 16 } />
 							{ translate( "Access to 1000's of plugins" ) }
 						</li>
 						<li className="seller-upgrade-modal__included-item">
-							<Gridicon icon="check" />
+							<Gridicon icon="checkmark" size={ 16 } />
 							{ translate( 'Unlimited support' ) }
 						</li>
 					</ul>

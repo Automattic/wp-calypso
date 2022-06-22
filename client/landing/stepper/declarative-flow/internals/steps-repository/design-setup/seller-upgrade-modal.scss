@@ -1,19 +1,110 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
+$design-button-primary-color: var( --color-primary );
+$design-button-primary-hover-color: var( --color-primary-60 );
+
 .seller-upgrade-modal {
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
+	padding: 0;
 
-    @include break-medium() {
-        flex-direction: row;
-    }
+	@include break-medium() {
+		flex-direction: row;
+		max-width: 775px;
+	}
 
-    .seller-upgrade-modal__heading {
-        @extend .wp-brand-font;
-        font-size: $font-headline-medium;
-    }
-    .seller-upgrade-modal__price {
-        font-size: $font-headline-small;
-    }
+	&__star-box {
+		background: var( --studio-gray-100 );
+		border-radius: 4px;
+		fill: white;
+		line-height: 75px;
+		width: 64px;
+		height: 64px;
+		margin-bottom: 25px;
+		text-align: center;
+	}
+
+	&__heading {
+		@extend .wp-brand-font;
+		font-size: $font-headline-medium;
+		line-height: 1.2;
+		margin-bottom: 25px;
+	}
+
+	&__col {
+		position: relative;
+		padding: 24px;
+		@include break-medium {
+			&:nth-of-type( 1 ) {
+				width: 58%;
+			}
+
+			&:nth-of-type( 2 ) {
+				background-color: var( --studio-gray-0 );
+				width: 42%;
+			}
+		}
+	}
+
+	&__close {
+		color: var( --text-subtle );
+		position: absolute;
+		top: 8px;
+		right: 8px;
+	}
+
+	&__actions {
+		display: flex;
+		flex-grow: 1;
+	}
+
+	p {
+		margin-bottom: 25px;
+	}
+
+	&__cancel.button {
+		border-radius: 4px;
+	}
+
+	&__upgrade.button.is-primary {
+		background: $design-button-primary-color;
+        border-color: $design-button-primary-color;
+        padding: 9px 48px;
+        border-radius: 4px;
+        font-weight: 500;
+        box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+
+        &:hover,
+        &:focus {
+            background: $design-button-primary-hover-color;
+            border-color: $design-button-primary-hover-color;
+        }
+	}
+
+	&__included {
+		margin-bottom: 25px;
+
+		h3 {
+			font-size: $font-body-small;
+			font-weight: 500;
+		}
+
+		ul, li {
+			line-height: 1.6;
+			list-style: none;
+			margin-left: 0;
+			padding-left: 0;
+		}
+
+		li {
+			display: flex;
+			align-items: center;
+		}
+
+		.gridicon {
+			fill: var( --studio-green-50 );
+			margin-right: 10px;
+		}
+	}
 }
