@@ -88,7 +88,7 @@ class ImageEditorExample extends Component {
 					} }
 				>
 					<h4>Changes to the image above are shown below</h4>
-					<img id="devdocs-example-image-editor-result" src={ this.state.media.URL } />
+					<img alt="" id="devdocs-example-image-editor-result" src={ this.state.media.URL } />
 				</div>
 			</div>
 		);

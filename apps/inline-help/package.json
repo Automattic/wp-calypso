@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/inline-help",
 	"version": "1.0.0",
-	"description": "WordPress.com Inline Help Panel",
+	"description": "WordPress.com Inline Help Panel.",
 	"main": "dist/build.min.js",
 	"sideEffects": true,
 	"repository": {
