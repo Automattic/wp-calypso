@@ -1,8 +1,8 @@
 import { localize, translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateFilter } from 'calypso/state/jetpack-agency-dashboard/actions';
+import { JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { TypeSelector } from './type-selector';
 

@@ -8,9 +8,9 @@ import {
 	JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE,
 	JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE_HOME_PAGE as homePagePreferenceName,
 	getJetpackDashboardWelcomeBannerPreference as getPreference,
+	jetpackDashboardRedirectLink,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY } from '../utils';
 import type { PreferenceType } from '../types';
 
 export default function SiteWelcomeBanner( {
@@ -73,17 +73,13 @@ export default function SiteWelcomeBanner( {
 		);
 	}, [ handleTrackEvents, isDashboardView, savePreferenceType ] );
 
-	const isDefaultFilterCleared = useSelector( ( state ) =>
-		getPreference( state, JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY )
-	);
+	const dashboardHref = useSelector( jetpackDashboardRedirectLink );
 
 	// Hide the banner if the banner is already viewed
 	// on the dashboard page or the banner is dismissed
 	if ( isDismissed || hideBanner ) {
 		return null;
 	}
-
-	const dashboardHref = isDefaultFilterCleared ? '/dashboard' : '/dashboard?issue_types=all_issues';
 
 	return (
 		<Banner
