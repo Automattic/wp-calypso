@@ -1,7 +1,6 @@
 import { getPlan, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import Modal from 'react-modal';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useThemeDetails } from 'calypso/landing/stepper/hooks/use-theme-details';
 import { getPlanPrice } from 'calypso/state/products-list/selectors';
@@ -13,15 +12,16 @@ interface SellerUpgradeModalProps {
 	slug: string;
 	isOpen: boolean;
 	closeModal: () => void;
+	checkout: () => void;
 }
 
-const SellerUpgradeModal = ( { slug, isOpen, closeModal }: SellerUpgradeModalProps ) => {
+const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgradeModalProps ) => {
 	const translate = useTranslate();
 	const site = useSite();
 	const plan = getPlan( PLAN_WPCOM_PRO );
 	const siteId = site?.ID;
 	const theme = useThemeDetails( slug );
-	const features = theme.taxonomies.features;
+	const features = theme?.taxonomies?.features;
 	const featuresHeading = translate( 'Theme features' ) as string;
 
 	//@todo: Need to get the actual price
@@ -30,7 +30,12 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal }: SellerUpgradeModalPro
 	//@todo: Add Tracks events for viewing and buttons
 
 	return (
-		<Modal className="seller-upgrade-modal" isOpen={ isOpen }>
+		<Dialog
+			className="seller-upgrade-Dialog"
+			isVisible={ isOpen }
+			onClose={ () => closeModal() }
+			isFullScreen
+		>
 			<div className="seller-upgrade-modal__col">
 				<Gridicon icon="star" />
 				<h2 className="seller-upgrade-modal__heading">
@@ -49,7 +54,7 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal }: SellerUpgradeModalPro
 				</p>
 				<div className="seller-upgrade-modal__actions">
 					<Button onClick={ () => closeModal() }>{ translate( 'Cancel' ) }</Button>
-					<Button primary onClick={ () => null }>
+					<Button primary onClick={ () => checkout() }>
 						{ translate( 'Buy and activate' ) }
 					</Button>
 				</div>
@@ -79,9 +84,8 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal }: SellerUpgradeModalPro
 						</li>
 					</ul>
 				</div>
-				<ThemeFeatures heading={ featuresHeading } features={ features } />
 			</div>
-		</Modal>
+		</Dialog>
 	);
 };
 

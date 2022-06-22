@@ -238,7 +238,7 @@ const SellerDesignPicker: Step = ( { navigation, flow } ) => {
 	}
 
 	function upgradePlan() {
-		goToCheckout();
+		setShowUpgradeModal( true );
 	}
 
 	function goToCheckout() {
@@ -323,6 +323,7 @@ const SellerDesignPicker: Step = ( { navigation, flow } ) => {
 					slug={ selectedDesign.slug }
 					isOpen={ showUpgradeModal }
 					closeModal={ closeUpgradeModal }
+					checkout={ goToCheckout }
 				/>
 				<WebPreview
 					showPreview
