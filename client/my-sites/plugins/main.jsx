@@ -61,6 +61,7 @@ export class PluginsMain extends Component {
 			hasJetpackSites: hasJpSites,
 			selectedSiteIsJetpack,
 			selectedSiteSlug,
+			hasManagePlugins,
 		} = this.props;
 
 		currentPlugins.map( ( plugin ) => {
@@ -81,6 +82,10 @@ export class PluginsMain extends Component {
 			if ( ! selectedSiteSlug && ! hasJpSites ) {
 				page.redirect( '/plugins' );
 				return;
+			}
+
+			if ( ! hasManagePlugins ) {
+				page( `/plugins/${ this.props.selectedSiteSlug }` );
 			}
 		}
 	}
@@ -393,10 +398,6 @@ export class PluginsMain extends Component {
 	}
 
 	render() {
-		if ( ! this.props.hasManagePlugins ) {
-			page( `/plugins/${ this.props.selectedSiteSlug }` );
-		}
-
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 		}
