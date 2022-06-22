@@ -16,6 +16,7 @@ import {
 	sortDesigns,
 	excludeFseDesigns,
 } from '../utils';
+import BadgeContainer from './badge-container';
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design } from '../types';
@@ -54,6 +55,7 @@ interface DesignButtonProps {
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
 	hasDesignOptionHeader?: boolean;
+	isPremiumThemeAvailable?: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -65,6 +67,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	disabled,
 	hideDesignTitle,
 	hasDesignOptionHeader = true,
+	isPremiumThemeAvailable = false,
 } ) => {
 	const { __ } = useI18n();
 
@@ -83,6 +86,8 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 		return <div>{ text }</div>;
 	}
+
+	const badgeType = design.is_premium ? 'premium' : 'none';
 
 	return (
 		<button
@@ -129,6 +134,12 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						<span className="design-picker__option-name">{ designTitle }</span>
 					) }
 					{ design.is_premium && premiumBadge }
+					{ ! premiumBadge && (
+						<BadgeContainer
+							badgeType={ badgeType }
+							isPremiumThemeAvailable={ isPremiumThemeAvailable }
+						/>
+					) }
 				</span>
 				{ getPricingDescription() }
 			</span>
