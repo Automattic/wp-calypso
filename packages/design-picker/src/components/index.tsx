@@ -16,6 +16,7 @@ import {
 	sortDesigns,
 	excludeFseDesigns,
 } from '../utils';
+import BadgeContainer from './badge-container';
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design } from '../types';
@@ -74,6 +75,8 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const blankCanvasTitle = __( 'Blank Canvas', __i18n_text_domain__ );
 	const designTitle = isBlankCanvas ? blankCanvasTitle : defaultTitle;
 
+	const badgeType = design.is_premium ? 'premium' : 'none';
+
 	return (
 		<button
 			className="design-picker__design-option"
@@ -119,6 +122,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						<span className="design-picker__option-name">{ designTitle }</span>
 					) }
 					{ design.is_premium && premiumBadge }
+					{ ! premiumBadge && <BadgeContainer badgeType={ badgeType } /> }
 				</span>
 			</span>
 		</button>
