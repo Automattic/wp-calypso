@@ -7,6 +7,11 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect, useRef } from 'react';
+import {
+	DEFAULT_VIEWPORT_WIDTH,
+	DEFAULT_VIEWPORT_HEIGHT,
+	MOBILE_VIEWPORT_WIDTH,
+} from '../constants';
 import { getDesignPreviewUrl, getMShotOptions } from '../utils';
 import type { Design } from '../types';
 import './style.scss';
@@ -84,9 +89,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 	onViewMore,
 } ) => {
 	const { __ } = useI18n();
-
 	const isMobile = useViewportMatch( 'small', '<' );
-
 	const wrapperRef = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
@@ -125,7 +128,12 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 							<GeneratedDesignThumbnail
 								key={ design.slug }
 								slug={ design.slug }
-								thumbnailUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
+								thumbnailUrl={ getDesignPreviewUrl( design, {
+									language: locale,
+									verticalId,
+									viewport_width: isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH,
+									viewport_height: DEFAULT_VIEWPORT_HEIGHT,
+								} ) }
 								isSelected={ selectedDesign?.slug === design.slug }
 								onPreview={ () => onPreview( design, index ) }
 								/* translators: %s: Option number. Ex. Preview design option 1. */

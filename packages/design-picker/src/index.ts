@@ -15,6 +15,7 @@ export {
 	FONT_PAIRINGS,
 	ANCHORFM_FONT_PAIRINGS,
 	DEFAULT_VIEWPORT_WIDTH,
+	DEFAULT_VIEWPORT_HEIGHT,
 	MOBILE_VIEWPORT_WIDTH,
 } from './constants';
 export type { FontPair, Design, Category } from './types';
