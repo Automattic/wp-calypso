@@ -1,4 +1,7 @@
-import { WPCOM_FEATURES_UPLOAD_PLUGINS } from '@automattic/calypso-products/src';
+import {
+	WPCOM_FEATURES_MANAGE_PLUGINS,
+	WPCOM_FEATURES_UPLOAD_PLUGINS,
+} from '@automattic/calypso-products/src';
 import { Button } from '@automattic/components';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { Icon, upload } from '@wordpress/icons';
@@ -390,6 +393,10 @@ export class PluginsMain extends Component {
 	}
 
 	render() {
+		if ( ! this.props.hasManagePlugins ) {
+			page( `/plugins/${ this.props.selectedSiteSlug }` );
+		}
+
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 		}
@@ -458,6 +465,11 @@ export default flow(
 			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
 			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
+			const hasManagePlugins = siteHasFeature(
+				state,
+				selectedSiteId,
+				WPCOM_FEATURES_MANAGE_PLUGINS
+			);
 			const hasUploadPlugins = siteHasFeature(
 				state,
 				selectedSiteId,
@@ -484,6 +496,7 @@ export default flow(
 				userCanManagePlugins: selectedSiteId
 					? canCurrentUser( state, selectedSiteId, 'manage_options' )
 					: canCurrentUserManagePlugins( state ),
+				hasManagePlugins: hasManagePlugins,
 				hasUploadPlugins: hasUploadPlugins,
 			};
 		},
