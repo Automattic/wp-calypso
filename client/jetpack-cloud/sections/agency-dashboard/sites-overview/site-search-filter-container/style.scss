@@ -41,7 +41,7 @@
 		max-width: 100%;
 	}
 	.filterbar__wrap.card {
-		overflow-x: scroll;
+		overflow-x: auto;
 		box-shadow: none;
 		.filterbar__control-list {
 			li {
