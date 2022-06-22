@@ -1,0 +1,13 @@
+.seller-upgrade-modal {
+    @include breakpoint-medium {
+        display: flex;
+    }
+
+    .seller-upgrade-modal__heading {
+        @extend .wp-brand-font;
+        font-size: $font-headline-medium;
+    }
+    .seller-upgrade-modal__price {
+        font-size: $font-headline-small;
+    }
+}
