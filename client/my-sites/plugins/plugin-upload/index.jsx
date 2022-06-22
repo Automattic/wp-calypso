@@ -25,13 +25,13 @@ import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-erro
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import siteHasFeature from '../../../state/selectors/site-has-feature';
 
 class PluginUpload extends Component {
 	state = {

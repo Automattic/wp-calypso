@@ -52,6 +52,7 @@ import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSitePlan,
 	isJetpackSite,
@@ -65,7 +66,6 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import './style.scss';
-import siteHasFeature from '../../../state/selectors/site-has-feature';
 import usePlugins from '../use-plugins';
 
 /**

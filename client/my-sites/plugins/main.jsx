@@ -31,6 +31,7 @@ import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-use
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getUpdateableJetpackSites from 'calypso/state/selectors/get-updateable-jetpack-sites';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	canJetpackSiteUpdateFiles,
 	isJetpackSite,
@@ -41,7 +42,6 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import siteHasFeature from '../../state/selectors/site-has-feature';
 import NoPermissionsError from './no-permissions-error';
 import PluginsList from './plugins-list';
 
