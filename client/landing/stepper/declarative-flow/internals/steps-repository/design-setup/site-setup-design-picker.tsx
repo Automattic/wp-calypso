@@ -366,14 +366,9 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				formattedHeader={ header }
 				customizedActionButtons={
 					<div>
-						<button
-							type="button"
-							aria-label={ translate( 'More information' ) }
-							className={ 'design-setup__info-popover' }
-						>
+						<button type="button" className={ 'design-setup__info-popover' }>
 							<Gridicon fill={ 'white' } icon={ 'info-outline' } size={ 24 } />
 						</button>
-
 						{ shouldUpgrade ? (
 							<Button primary borderless={ false } onClick={ upgradePlan }>
 								{ translate( 'Upgrade Plan' ) }
