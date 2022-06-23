@@ -17,8 +17,22 @@ interface MailboxFormWrapperProps {
 	onFieldValueChanged?: ( field: MailboxFormFieldBase< string > ) => void;
 }
 
+type FieldValueChangedHandler = ( field: MailboxFormFieldBase< string > ) => void;
+
+interface CommonFieldProps {
+	field: MailboxFormFieldBase< string >;
+	isFirstVisibleField: boolean;
+	onFieldValueChanged: FieldValueChangedHandler;
+	onRequestFieldValidation: () => void;
+	isAutoFocusEnabled: boolean;
+}
+
 type MailboxFormWrapperWithCommonProps = MailboxFormWrapperProps & {
-	getCommonFieldProps: ReturnType< typeof createCommonFieldPropsHandler >;
+	getCommonFieldProps: (
+		field: MailboxFormFieldBase< string >,
+		onFieldValueChanged: FieldValueChangedHandler,
+		mailbox: MailboxForm< EmailProvider >
+	) => CommonFieldProps;
 	formFields: MailboxFormFields;
 };
 
@@ -27,9 +41,9 @@ const createCommonFieldPropsHandler = ( formIndex: number, isAutoFocusEnabled: b
 
 	return (
 		field: MailboxFormFieldBase< string >,
-		onFieldValueChanged: ( field: MailboxFormFieldBase< string > ) => void,
+		onFieldValueChanged: FieldValueChangedHandler,
 		mailbox: MailboxForm< EmailProvider >
-	) => {
+	): CommonFieldProps => {
 		if ( field.isVisible ) {
 			++renderPosition;
 		}
