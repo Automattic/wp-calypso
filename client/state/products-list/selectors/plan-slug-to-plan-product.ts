@@ -31,10 +31,7 @@ export const planSlugToPlanProduct = (
 	// is wrong here but it's a little shocking that this ever worked at all.
 	const constantObj = objectIsProduct( plan )
 		? applyTestFiltersToProductsList( plan.product_slug )
-		: applyTestFiltersToPlansList(
-				typeof plan === 'string' ? plan : plan.getStoreSlug(),
-				undefined
-		  );
+		: applyTestFiltersToPlansList( plan, undefined );
 	const product = products[ planOrProductSlug ];
 	if ( ! product ) {
 		throw new Error(
