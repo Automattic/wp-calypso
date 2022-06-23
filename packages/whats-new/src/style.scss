@@ -9,17 +9,17 @@ $wpcom-modal-breakpoint: 660px;
 
 $wpcom-modal-padding-v: 30px;
 $wpcom-modal-padding-h: 25px;
-$wpcom-modal-content-min-height: 350px;
+$wpcom-modal-content-min-height: 400px;
 $wpcom-modal-footer-padding-v: 20px;
 $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 // Core modal style overrides
 .whats-new-guide__main {
 	&.components-modal__frame {
-		overflow: visible;
 		height: 65vh;
 		top: calc( 17.5vh - #{$wpcom-modal-footer-height * 0.5} );
-
+		border-radius: 4px;
+		overflow: hidden;
 		@media ( max-width: $wpcom-modal-breakpoint ) {
 			width: 90vw;
 			min-width: 90vw;
