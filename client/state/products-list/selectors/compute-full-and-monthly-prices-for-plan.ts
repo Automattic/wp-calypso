@@ -97,16 +97,23 @@ function computePricesForWpComPlan(
 /**
  * Compute the Jetpack Search product tiered price based on the site's number of published posts.
  */
-function getSearchProductTierPrice( state: AppState, siteId: number, productSlug: string ): number {
+function getSearchProductTierPrice(
+	state: AppState,
+	siteId: number,
+	productSlug: string
+): number | null {
 	const postsCounts = getAllPostCounts( state, siteId, 'post' );
 	const postsCount = postsCounts?.publish || 0;
 	const priceTierList = getProductPriceTierList( state, productSlug );
-	const tier = priceTierList.filter(
+	const tiers = priceTierList.filter(
 		( tierItem ) =>
 			postsCount >= tierItem.minimum_units &&
 			( ! tierItem.maximum_units || postsCount <= tierItem.maximum_units )
 	);
-	const minPrice = tier[ 0 ].minimum_price.toString(); // is missing decimal, ie- $9.95 is returned as 995
+	if ( tiers.length < 1 ) {
+		return null;
+	}
+	const minPrice = tiers[ 0 ].minimum_price.toString(); // is missing decimal, ie- $9.95 is returned as 995
 	return (
 		// Inject decimal point into 100ths position.
 		Number(
