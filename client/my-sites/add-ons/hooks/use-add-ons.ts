@@ -17,7 +17,7 @@ import noAdsIcon from '../icons/no-ads';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 
 export interface AddOnMeta {
-	slug: string;
+	productSlug: string;
 	featured?: boolean;
 	icon: JSX.Element;
 	name: string | React.ReactChild | null;
@@ -33,7 +33,7 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 	// list add-ons to show in UI here
 	const addOnsActive = [
 		{
-			slug: WPCOM_FEATURES_NO_ADVERTS,
+			productSlug: WPCOM_FEATURES_NO_ADVERTS,
 			featured: true,
 			icon: noAdsIcon,
 			overrides: {
@@ -42,13 +42,13 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 			},
 		},
 		{
-			slug: WPCOM_FEATURES_CUSTOM_DESIGN,
+			productSlug: WPCOM_FEATURES_CUSTOM_DESIGN,
 			featured: false,
 			icon: customDesignIcon,
 			overrides: null,
 		},
 		{
-			slug: WPCOM_FEATURES_UNLIMITED_THEMES,
+			productSlug: WPCOM_FEATURES_UNLIMITED_THEMES,
 			featured: false,
 			icon: unlimitedThemesIcon,
 			overrides: null,
@@ -57,11 +57,11 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 
 	return useSelector( ( state ): ( AddOnMeta | null )[] => {
 		return addOnsActive.map( ( addOn ) => {
-			const product = getProductBySlug( state, addOn.slug );
-			const name = getProductName( state, addOn.slug );
-			const description = getProductDescription( state, addOn.slug );
-			const displayCost = getProductDisplayCost( state, addOn.slug );
-			const term = getProductTerm( state, addOn.slug );
+			const product = getProductBySlug( state, addOn.productSlug );
+			const name = getProductName( state, addOn.productSlug );
+			const description = getProductDescription( state, addOn.productSlug );
+			const displayCost = getProductDisplayCost( state, addOn.productSlug );
+			const term = getProductTerm( state, addOn.productSlug );
 
 			if ( ! product ) {
 				// will not render anything if product not fetched from API
@@ -71,7 +71,7 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 			}
 
 			return {
-				slug: addOn.slug,
+				productSlug: addOn.productSlug,
 				featured: addOn.featured,
 				icon: addOn.icon,
 				name: addOn?.overrides?.name ?? name,

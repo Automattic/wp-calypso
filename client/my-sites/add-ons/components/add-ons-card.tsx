@@ -9,13 +9,13 @@ import type { AddOnMeta } from '../hooks/use-add-ons';
 export interface Props {
 	actionPrimary?: {
 		text: string | React.ReactChild;
-		handler: ( addOnSlug: string ) => void;
+		handler: ( productSlug: string ) => void;
 	};
 	actionSelected?: {
 		text: string | React.ReactChild;
-		handler: ( addOnSlug: string ) => void;
+		handler: ( productSlug: string ) => void;
 	};
-	useAddOnSelectedStatus?: ( addOnSlug: string ) => {
+	useAddOnSelectedStatus?: ( productSlug: string ) => {
 		selected: boolean;
 		text?: string | React.ReactChild;
 	};
@@ -85,12 +85,12 @@ const AddOnCard = ( {
 	highlightFeatured,
 }: Props ) => {
 	const translate = useTranslate();
-	const selectedStatus = useAddOnSelectedStatus?.( addOnMeta.slug );
+	const selectedStatus = useAddOnSelectedStatus?.( addOnMeta.productSlug );
 	const onActionPrimary = () => {
-		actionPrimary?.handler( addOnMeta.slug );
+		actionPrimary?.handler( addOnMeta.productSlug );
 	};
 	const onActionSelected = () => {
-		actionSelected?.handler( addOnMeta.slug );
+		actionSelected?.handler( addOnMeta.productSlug );
 	};
 
 	return (

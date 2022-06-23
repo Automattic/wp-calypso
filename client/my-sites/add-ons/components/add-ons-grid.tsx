@@ -30,7 +30,7 @@ const AddOnsGrid = ( {
 			{ addOns.map( ( addOn ) =>
 				addOn ? (
 					<AddOnCard
-						key={ addOn.slug }
+						key={ addOn.productSlug }
 						actionPrimary={ actionPrimary }
 						actionSelected={ actionSelected }
 						useAddOnSelectedStatus={ useAddOnSelectedStatus }

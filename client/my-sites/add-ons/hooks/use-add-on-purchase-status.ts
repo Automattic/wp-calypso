@@ -8,20 +8,22 @@ import { useSelector } from 'react-redux';
 import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import getFeatureFromProduct from '../utils/get-feature-from-product';
 
 /**
  * Returns whether add-on product has been purchased or included in site plan.
  */
-const useAddOnPurchaseStatus = ( addOnSlug: string ) => {
+const useAddOnPurchaseStatus = ( addOnProductSlug: string ) => {
 	const translate = useTranslate();
 	const { purchased, isSiteFeature } = useSelector( ( state ) => {
 		const selectedSite = getSelectedSite( state );
 		const sitePurchases = getSitePurchases( state, selectedSite?.ID );
+		const addOnFeatureSlug = getFeatureFromProduct( addOnProductSlug );
 
 		return {
 			purchased:
-				sitePurchases.filter( ( product ) => product.productSlug === addOnSlug ).length > 0,
-			isSiteFeature: selectedSite && siteHasFeature( state, selectedSite?.ID, addOnSlug ),
+				sitePurchases.filter( ( product ) => product.productSlug === addOnProductSlug ).length > 0,
+			isSiteFeature: selectedSite && siteHasFeature( state, selectedSite?.ID, addOnFeatureSlug ),
 		};
 	} );
 
@@ -32,7 +34,7 @@ const useAddOnPurchaseStatus = ( addOnSlug: string ) => {
 		};
 	}
 
-	switch ( addOnSlug ) {
+	switch ( addOnProductSlug ) {
 		case WPCOM_FEATURES_NO_ADVERTS:
 		case WPCOM_FEATURES_CUSTOM_DESIGN:
 		case WPCOM_FEATURES_UNLIMITED_THEMES:
