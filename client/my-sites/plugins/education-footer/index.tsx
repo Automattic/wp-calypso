@@ -64,7 +64,7 @@ const EducationFooter = () => {
 					/>
 				</ThreeColumnContainer>
 			</Section>
-			<Section header={ __( 'Upgrade your WordPress site with confidence' ) } dark>
+			<Section header={ __( 'Add additional features to your WordPress site. Risk free.' ) } dark>
 				<ThreeColumnContainer>
 					<FeatureItem header={ __( 'Fully Managed' ) }>
 						{ __(
