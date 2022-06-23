@@ -265,6 +265,14 @@ export const clearDIFMGoal = () => ( {
 	type: 'CLEAR_DIFM_GOAL' as const,
 } );
 
+export const resetGoals = () => ( {
+	type: 'RESET_GOALS' as const,
+} );
+
+export const resetIntent = () => ( {
+	type: 'RESET_INTENT' as const,
+} );
+
 export const setEditEmail = ( email: string ) => ( {
 	type: 'SET_EDIT_EMAIL' as const,
 	email,
@@ -304,5 +312,7 @@ export type OnboardAction = ReturnType<
 	| typeof setGoals
 	| typeof clearImportGoal
 	| typeof clearDIFMGoal
+	| typeof resetGoals
+	| typeof resetIntent
 	| typeof setEditEmail
 >;
