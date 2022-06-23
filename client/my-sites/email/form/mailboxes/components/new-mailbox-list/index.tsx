@@ -64,6 +64,7 @@ const setFieldsVisibilities = (
 
 interface MailboxListProps {
 	areButtonsBusy?: boolean;
+	isAutoFocusEnabled?: boolean;
 	hiddenFieldNames?: HiddenFieldNames[];
 	initialFieldValues?: Partial< Record< HiddenFieldNames, string | boolean > >;
 	isInitialMailboxPurchase?: boolean;
@@ -83,6 +84,7 @@ const NewMailBoxList = (
 
 	const {
 		areButtonsBusy = false,
+		isAutoFocusEnabled = false,
 		children,
 		hiddenFieldNames = [],
 		initialFieldValues = {},
@@ -124,6 +126,10 @@ const NewMailBoxList = (
 	}, [ mailboxes ] );
 
 	useEffect( () => {
+		if ( hiddenFieldNames.length < 1 ) {
+			return;
+		}
+
 		setMailboxes( ( mailboxes ) => {
 			setFieldsVisibilities( mailboxes, hiddenFieldNames );
 			return [ ...mailboxes ];
@@ -205,6 +211,7 @@ const NewMailBoxList = (
 								mailbox={ mailbox }
 								onFieldValueChanged={ onFieldValueChanged }
 								index={ index }
+								isAutoFocusEnabled={ isAutoFocusEnabled }
 							>
 								<>
 									<div className="new-mailbox-list__children">{ children }</div>

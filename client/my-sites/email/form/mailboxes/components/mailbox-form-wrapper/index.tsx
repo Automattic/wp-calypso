@@ -12,6 +12,7 @@ import {
 
 interface MailboxFormWrapperProps {
 	index: number;
+	isAutoFocusEnabled: boolean;
 	mailbox: MailboxForm< EmailProvider >;
 	onFieldValueChanged?: ( field: MailboxFormFieldBase< string > ) => void;
 }
@@ -21,7 +22,7 @@ type MailboxFormWrapperWithCommonProps = MailboxFormWrapperProps & {
 	formFields: MailboxFormFields;
 };
 
-const createCommonFieldPropsHandler = ( formIndex: number ) => {
+const createCommonFieldPropsHandler = ( formIndex: number, isAutoFocusEnabled: boolean ) => {
 	let renderPosition = 0;
 
 	return (
@@ -37,6 +38,7 @@ const createCommonFieldPropsHandler = ( formIndex: number ) => {
 			field,
 			onFieldValueChanged,
 			onRequestFieldValidation: () => mailbox.validateField( field.fieldName ),
+			isAutoFocusEnabled,
 			isFirstVisibleField: formIndex === 0 && renderPosition === 1,
 		};
 	};
@@ -124,8 +126,8 @@ const TitanFormFields = ( props: MailboxFormWrapperWithCommonProps ) => {
 };
 
 const MailboxFormWrapper = ( props: PropsWithChildren< MailboxFormWrapperProps > ): JSX.Element => {
-	const { children, index, mailbox } = props;
-	const getCommonFieldProps = createCommonFieldPropsHandler( index );
+	const { children, index, isAutoFocusEnabled, mailbox } = props;
+	const getCommonFieldProps = createCommonFieldPropsHandler( index, isAutoFocusEnabled );
 	const formFields = mailbox.formFields;
 	const commonProps = { ...props, formFields, getCommonFieldProps };
 
