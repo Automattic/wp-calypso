@@ -41,7 +41,7 @@ describe( '<SiteActions>', () => {
 
 		expect( issueLicense ).toHaveProperty(
 			'href',
-			`https://example.com/partner-portal/issue-license/?site_id=${ site.value.blog_id }`
+			`https://example.com/partner-portal/issue-license/?site_id=${ site.value.blog_id }&source=dashboard`
 		);
 		expect( viewActivity ).toHaveProperty(
 			'href',
