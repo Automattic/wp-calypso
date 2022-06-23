@@ -35,7 +35,6 @@ const refGoals: Record< string, Onboard.SiteGoal[] > = {
  * The goals capture step
  */
 const GoalsStep: Step = ( { navigation } ) => {
-	const { goNext } = navigation;
 	const translate = useTranslate();
 	const headerText = translate( 'Welcome!{{br/}}What are your goals?', {
 		components: {
@@ -45,23 +44,15 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
 
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
-	const { setGoals, setIntent, clearImportGoal, clearDIFMGoal } = useDispatch( ONBOARD_STORE );
+	const { setGoals, setIntent, clearImportGoal, clearDIFMGoal, resetIntent } =
+		useDispatch( ONBOARD_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
 
 	useEffect( () => {
-		clearImportGoal();
-	}, [ clearImportGoal ] );
-
-	useEffect( () => {
 		clearDIFMGoal();
-	}, [ clearDIFMGoal ] );
-
-	const handleChange = ( goals: Onboard.SiteGoal[] ) => {
-		const intent = goalsToIntent( goals );
-		setIntent( intent );
-		setGoals( goals );
-		return intent;
-	};
+		clearImportGoal();
+		resetIntent();
+	}, [ clearDIFMGoal, clearImportGoal, resetIntent ] );
 
 	const recordGoalsSelectTracksEvent = (
 		goals: Onboard.SiteGoal[],
@@ -98,14 +89,19 @@ const GoalsStep: Step = ( { navigation } ) => {
 	};
 
 	const handleSubmit = ( submittedGoals: Onboard.SiteGoal[] ) => {
-		const intent = handleChange( submittedGoals );
+		setGoals( submittedGoals );
+
+		const intent = goalsToIntent( submittedGoals );
+		setIntent( intent );
+
 		recordGoalsSelectTracksEvent( submittedGoals, intent );
 		recordIntentSelectTracksEvent( submittedGoals, intent );
+
 		navigation.submit?.( { intent } );
 	};
 
 	const stepContent = (
-		<SelectGoals selectedGoals={ goals } onChange={ handleChange } onSubmit={ handleSubmit } />
+		<SelectGoals selectedGoals={ goals } onChange={ setGoals } onSubmit={ handleSubmit } />
 	);
 
 	useEffect( () => {
@@ -114,13 +110,16 @@ const GoalsStep: Step = ( { navigation } ) => {
 		if ( isValidRef && goals.length === 0 ) {
 			setGoals( refGoals[ refParameter ] );
 		}
+		// Delibirately not including all deps in the deps array
+		// This hook is only meant to be executed when either refParameter, refGoals change in value
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ refParameter, refGoals ] );
 
 	return (
 		<StepContainer
 			stepName={ 'goals-step' }
-			goNext={ goNext }
-			skipLabelText={ translate( 'Skip to Dashboard' ) }
+			goNext={ navigation.goNext }
+			skipLabelText={ translate( 'Skip to dashboard' ) }
 			skipButtonAlign={ 'top' }
 			hideBack={ true }
 			isHorizontalLayout={ true }

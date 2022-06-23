@@ -451,6 +451,10 @@ export const siteSetupFlow: Flow = {
 				case 'intent':
 					return exitFlow( `/home/${ siteSlug }` );
 
+				case 'goals':
+					// Skip to dashboard must have been pressed
+					return exitFlow( `/home/${ siteSlug }` );
+
 				case 'vertical':
 					return exitFlow( `/home/${ siteSlug }` );
 
