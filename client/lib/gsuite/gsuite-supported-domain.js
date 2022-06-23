@@ -22,8 +22,8 @@ export function getGSuiteSupportedDomains( domains ) {
 		// If the domain is registered through us, there is a provisioning period when
 		// `hasWpcomNameservers` will be false. We still want to let users buy Google Workspace
 		// during that period, even if we normally wouldn't let them under these conditions.
-		// Therefore, we check those conditions and only return `gsuiteIsUnavailable` if the
-		// registration happened less than 15 minutes ago. 15 minutes is an arbitrary number.
+		// Therefore, we check those conditions and return true if the registration happened less
+		// than 15 minutes ago. 15 minutes is an arbitrary number.
 		if ( isRegisteredDomain( domain ) && ! domain.hasWpcomNameservers ) {
 			const registeredTimestamp = Date.parse( domain.registrationDate );
 			const timeSinceRegistration = Date.now() - registeredTimestamp;
