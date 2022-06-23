@@ -17,6 +17,7 @@ import searchSites from 'calypso/components/search-sites';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { jetpackDashboardRedirectLink } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { showAgencyDashboard } from 'calypso/state/partner-portal/partner/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
@@ -467,7 +468,7 @@ const navigateToSite =
 		const state = getState();
 		const site = getSite( state, siteId );
 		if ( isJetpackCloud() && ! site && showAgencyDashboard( state ) ) {
-			return page.redirect( '/dashboard' );
+			return page.redirect( jetpackDashboardRedirectLink( state ) );
 		}
 		const pathname = getPathnameForSite();
 		if ( pathname ) {

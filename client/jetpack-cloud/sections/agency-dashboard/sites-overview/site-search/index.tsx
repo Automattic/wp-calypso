@@ -1,3 +1,4 @@
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import Search from 'calypso/components/search';
@@ -11,6 +12,7 @@ export default function SiteSearch( {
 	currentPage: number;
 } ): ReactElement {
 	const translate = useTranslate();
+	const isMobile = useMobileBreakpoint();
 
 	const handleSearchSites = ( query: string ) => {
 		const params = new URLSearchParams( window.location.search );
@@ -25,11 +27,14 @@ export default function SiteSearch( {
 
 	return (
 		<Search
+			hideFocus
 			isOpen
-			hideClose={ ! searchQuery }
+			hideClose={ ! searchQuery || ! isMobile }
 			initialValue={ searchQuery }
 			onSearch={ handleSearchSites }
-			placeholder={ translate( 'Search sites' ) }
+			placeholder={
+				isMobile ? translate( 'Search sites' ) : translate( 'Search by site title or domain' )
+			}
 			delaySearch={ true }
 		/>
 	);
