@@ -197,10 +197,10 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 	}, [] );
 
 	const steps = [
-		// translation: Link to the WordPress App.
-		translate( 'Open the {{link}}%(wordpress)s App{{/link}} on your phone.', {
+		// translation: Link to the Jetpack App.
+		translate( 'Open the {{link}}%(name)s App{{/link}} on your phone.', {
 			args: {
-				wordpress: 'WordPress',
+				name: 'Jetpack',
 			},
 			components: {
 				link: (
