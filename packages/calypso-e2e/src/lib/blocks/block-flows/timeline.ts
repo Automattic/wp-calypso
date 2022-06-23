@@ -1,4 +1,4 @@
-import { BlockFlow, EditorContext, PublishedPostContext } from '..';
+import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 // Because these are simple, pre-configured smoke test flows, there's no need to make this an array and dynamically add any number of entries.
 // Let's favor simplicity!

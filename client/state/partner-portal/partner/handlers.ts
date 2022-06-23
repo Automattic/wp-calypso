@@ -2,6 +2,7 @@ import { AnyAction } from 'redux';
 import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { JETPACK_PARTNER_PORTAL_PARTNER_REQUEST } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { dispatchRequest as vanillaDispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { receivePartnerError, receivePartner } from 'calypso/state/partner-portal/partner/actions';
 import {
@@ -17,6 +18,10 @@ export function fetchPartnerHandler( action: AnyAction ): AnyAction {
 			method: 'GET',
 			apiNamespace: 'wpcom/v2',
 			path: '/jetpack-licensing/partner',
+			// Ignore type checking because TypeScript is incorrectly inferring the prop type due to .js usage in wpcom-http/actions
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
+			retryPolicy: noRetry(),
 		},
 		action
 	) as AnyAction;

@@ -21,11 +21,12 @@ class EmailForwardingAddNewCompact extends Component {
 		emailForwards: PropTypes.array,
 	};
 
+	isMounted = false;
+
 	constructor( props ) {
 		super( props );
 
 		this.state = {
-			formSubmitting: false,
 			fields: this.props.fields,
 		};
 
@@ -38,12 +39,22 @@ class EmailForwardingAddNewCompact extends Component {
 		} );
 	}
 
+	componentDidMount() {
+		this.isMounted = true;
+	}
+
+	componentWillUnmount() {
+		this.isMounted = false;
+	}
+
 	getInitialFields() {
 		return this.props.fields;
 	}
 
 	setFormState = ( fields ) => {
-		this.setState( { fields } );
+		if ( this.isMounted ) {
+			this.setState( { fields } );
+		}
 	};
 
 	renderAddButton() {
@@ -91,7 +102,7 @@ class EmailForwardingAddNewCompact extends Component {
 				<FormFieldset>
 					<FormLabel>{ translate( 'Emails sent to' ) }</FormLabel>
 					<FormTextInputWithAffixes
-						disabled={ this.state.formSubmitting }
+						disabled={ this.props.disabled }
 						name="mailbox"
 						onChange={ ( event ) => this.onChange( event, index ) }
 						isError={ ! isValidMailbox }
@@ -104,7 +115,7 @@ class EmailForwardingAddNewCompact extends Component {
 				<FormFieldset>
 					<FormLabel>{ translate( 'Will be forwarded to this email address' ) }</FormLabel>
 					<FormTextInput
-						disabled={ this.state.formSubmitting }
+						disabled={ this.props.disabled }
 						name="destination"
 						onChange={ ( event ) => this.onChange( event, index ) }
 						isError={ ! isValidDestination }

@@ -3,15 +3,11 @@ import path from 'path';
 import chalk from 'chalk';
 import { BrowserContext, Page } from 'playwright';
 import { TestAccountName } from '..';
-import {
-	AccountCredentials,
-	getAccountCredential,
-	getAccountSiteURL,
-	getCalypsoURL,
-} from '../data-helper';
+import { getAccountCredential, getAccountSiteURL, getCalypsoURL } from '../data-helper';
 import envVariables from '../env-variables';
 import { TOTPClient } from '../totp-client';
 import { LoginPage } from './pages/login-page';
+import type { AccountCredentials } from '../types/data-helper.types';
 
 /**
  * Represents the WPCOM test account.
@@ -166,7 +162,7 @@ export class TestAccount {
 	 * is defined. Prefixes each message with the account name for easier
 	 * reference. Formatted similarly to the pw:api logs.
 	 */
-	private log( message: any ) {
+	private log( message: string ) {
 		const { DEBUG } = process.env;
 		if ( DEBUG && DEBUG !== 'false' ) {
 			console.log(

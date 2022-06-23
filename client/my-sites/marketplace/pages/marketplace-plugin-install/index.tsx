@@ -232,17 +232,26 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
 		if (
+			// Default process
 			( installedPlugin && pluginActive ) ||
-			( atomicFlow && transferStates.COMPLETE === automatedTransferStatus )
+			// Transfer to atomic using a marketplace plugin
+			( atomicFlow && transferStates.COMPLETE === automatedTransferStatus ) ||
+			// Transfer to atomic uploading a zip plugin
+			( uploadedPluginSlug &&
+				isUploadFlow &&
+				! isAtomic &&
+				transferStates.COMPLETE === automatedTransferStatus )
 		) {
 			waitFor( 1 ).then( () =>
 				page.redirect(
-					`/marketplace/thank-you/${ installedPlugin?.slug || productSlug }/${ selectedSiteSlug }`
+					`/marketplace/thank-you/${
+						installedPlugin?.slug || productSlug || uploadedPluginSlug
+					}/${ selectedSiteSlug }`
 				)
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginActive, automatedTransferStatus ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
+	}, [ pluginActive, automatedTransferStatus, atomicFlow, isUploadFlow, isAtomic ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
 	const steps = useMemo(
 		() => [
@@ -261,6 +270,14 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 			translate( 'Still working' ),
 			translate( 'Wheels are in motion' ),
 			translate( 'Working magic' ),
+			translate( 'Putting the pieces together' ),
+			translate( 'Assembling the parts' ),
+			translate( 'Stacking the building blocks' ),
+			translate( 'Getting our ducks in a row' ),
+			translate( 'Initiating countdown' ),
+			translate( 'Flipping the switches' ),
+			translate( 'Unlocking potential' ),
+			translate( 'Gears are turning' ),
 		],
 		[ translate ]
 	);

@@ -1,4 +1,4 @@
-import { Card, ProgressBar } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight } from 'lodash';
 import page from 'page';
@@ -21,7 +21,6 @@ import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/ac
 import { successNotice } from 'calypso/state/notices/actions';
 import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
-import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
@@ -80,26 +79,6 @@ class PluginUpload extends Component {
 		);
 	}
 
-	renderProgressBar() {
-		const { translate, progress, installing } = this.props;
-
-		const uploadingMessage = translate( 'Uploading your plugin' );
-		const installingMessage = translate( 'Installing your plugin' );
-
-		return (
-			<div>
-				<span className="plugin-upload__title">
-					{ installing ? installingMessage : uploadingMessage }
-				</span>
-				<ProgressBar
-					value={ progress }
-					title={ translate( 'Uploading progress' ) }
-					isPulsing={ installing }
-				/>
-			</div>
-		);
-	}
-
 	renderNotAvailableForMultisite() {
 		const { translate, siteAdminUrl } = this.props;
 
@@ -138,7 +117,6 @@ class PluginUpload extends Component {
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const error = getPluginUploadError( state, siteId );
-	const progress = getPluginUploadProgress( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
 	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
@@ -158,8 +136,6 @@ const mapStateToProps = ( state ) => {
 		failed: !! error,
 		pluginId: getUploadedPluginId( state, siteId ),
 		error,
-		progress,
-		installing: progress === 100,
 		isJetpackMultisite,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),

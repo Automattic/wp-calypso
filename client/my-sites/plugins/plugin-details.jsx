@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
@@ -70,6 +71,7 @@ function PluginDetails( props ) {
 	const translate = useTranslate();
 
 	const breadcrumbs = useSelector( getBreadcrumbs );
+	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
 
 	// Site information.
 	const selectedSite = useSelector( getSelectedSite );
@@ -242,6 +244,150 @@ function PluginDetails( props ) {
 
 	const showPlaceholder = existingPlugin === 'unknown';
 
+	if ( legacyVersion ) {
+		return (
+			<LegacyPluginDetails
+				getPageTitle={ getPageTitle }
+				analyticsPath={ analyticsPath }
+				siteIds={ siteIds }
+				selectedSite={ selectedSite }
+				selectedOrAllSites={ selectedOrAllSites }
+				isWide={ isWide }
+				breadcrumbs={ breadcrumbs }
+				isMarketplaceProduct={ isMarketplaceProduct }
+				requestingPluginsForSites={ requestingPluginsForSites }
+				isPluginInstalledOnsite={ isPluginInstalledOnsite }
+				billingPeriod={ billingPeriod }
+				fullPlugin={ fullPlugin }
+				sitesWithPlugins={ sitesWithPlugins }
+				isSiteConnected={ isSiteConnected }
+				trackSiteDisconnect={ trackSiteDisconnect }
+				showPlaceholder={ showPlaceholder }
+				isJetpackSelfHosted={ isJetpackSelfHosted }
+				isWpcom={ isWpcom }
+				{ ...props }
+			/>
+		);
+	}
+
+	return (
+		<MainComponent wideLayout>
+			<DocumentHead title={ getPageTitle() } />
+			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
+			<QueryJetpackPlugins siteIds={ siteIds } />
+			<QueryEligibility siteId={ selectedSite?.ID } />
+			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
+			<QueryProductsList persist />
+			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
+
+			<PluginNotices
+				pluginId={ fullPlugin.id }
+				sites={ sitesWithPlugins }
+				plugins={ [ fullPlugin ] }
+			/>
+
+			{ isSiteConnected === false && (
+				<Notice
+					icon="notice"
+					showDismiss={ false }
+					status="is-warning"
+					text={ translate( '%(siteName)s cannot be accessed.', {
+						textOnly: true,
+						args: { siteName: selectedSite.title },
+					} ) }
+				>
+					<NoticeAction
+						onClick={ trackSiteDisconnect }
+						href={ `/settings/disconnect-site/${ selectedSite.slug }?type=down` }
+					>
+						{ translate( 'I’d like to fix this now' ) }
+					</NoticeAction>
+				</Notice>
+			) }
+
+			<div className="plugin-details__page">
+				<div className="plugin-details__layout">
+					<div className="plugin-details__header">
+						<PluginDetailsHeader plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
+					</div>
+					<div className="plugin-details__content">
+						{ ! showPlaceholder && (
+							<div className="plugin-details__body">
+								{ ! isJetpackSelfHosted && ! isCompatiblePlugin( props.pluginSlug ) && (
+									<Notice
+										text={ translate(
+											'Incompatible plugin: This plugin is not supported on WordPress.com.'
+										) }
+										status="is-warning"
+										showDismiss={ false }
+									>
+										<NoticeAction href="https://wordpress.com/support/incompatible-plugins/">
+											{ translate( 'More info' ) }
+										</NoticeAction>
+									</Notice>
+								) }
+
+								{ fullPlugin.wporg || isMarketplaceProduct ? (
+									<PluginSections
+										className="plugin-details__plugins-sections"
+										plugin={ fullPlugin }
+										isWpcom={ isWpcom }
+										addBanner
+										removeReadMore
+									/>
+								) : (
+									<PluginSectionsCustom plugin={ fullPlugin } />
+								) }
+							</div>
+						) }
+					</div>
+
+					<div className="plugin-details__actions">
+						<PluginDetailsCTA
+							plugin={ fullPlugin }
+							siteIds={ siteIds }
+							selectedSite={ selectedSite }
+							isPluginInstalledOnsite={ isPluginInstalledOnsite }
+							isPlaceholder={ showPlaceholder }
+							billingPeriod={ billingPeriod }
+							isMarketplaceProduct={ isMarketplaceProduct }
+							isSiteConnected={ isSiteConnected }
+						/>
+
+						<br />
+						{ ! showPlaceholder && <PluginDetailsSidebar plugin={ fullPlugin } /> }
+					</div>
+				</div>
+			</div>
+		</MainComponent>
+	);
+}
+
+function LegacyPluginDetails( props ) {
+	const {
+		getPageTitle,
+		analyticsPath,
+		siteIds,
+		selectedSite,
+		selectedOrAllSites,
+		isWide,
+		breadcrumbs,
+		isMarketplaceProduct,
+		requestingPluginsForSites,
+		isPluginInstalledOnsite,
+		billingPeriod,
+		fullPlugin,
+		sitesWithPlugins,
+		isSiteConnected,
+		trackSiteDisconnect,
+		showPlaceholder,
+		isJetpackSelfHosted,
+		isWpcom,
+	} = props;
+
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+
 	return (
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
@@ -285,7 +431,7 @@ function PluginDetails( props ) {
 				</Notice>
 			) }
 
-			<div className="plugin-details__page">
+			<div className="plugin-details__page legacy">
 				<div className="plugin-details__layout plugin-details__top-section">
 					<div className="plugin-details__layout-col-left">
 						<PluginDetailsHeader plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />

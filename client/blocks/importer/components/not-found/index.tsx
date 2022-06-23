@@ -10,7 +10,11 @@ const NotFound: React.FunctionComponent = () => {
 			<SubTitle>
 				{ translate( "Sorry, the page you were looking for doesn't exist or has been moved." ) }
 			</SubTitle>
-			<img alt="Not Found" src="/calypso/images/illustrations/illustration-404.svg" />
+			<img
+				alt="Not Found"
+				src="/calypso/images/illustrations/illustration-404.svg"
+				aria-hidden="true"
+			/>
 		</div>
 	);
 };

@@ -1,6 +1,6 @@
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import classNames from 'classnames';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
@@ -16,6 +16,7 @@ import LicensingPromptDialog from 'calypso/components/jetpack/licensing-prompt-d
 import Main from 'calypso/components/main';
 import { MAIN_CONTENT_ID } from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useExperiment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -56,6 +57,11 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	const viewTrackerPath = getViewTrackerPath( rootUrl, siteSlugProp );
 	const viewTrackerProps = siteId ? { site: siteSlug } : {};
 	const legacyPlan = planRecommendation ? planRecommendation[ 0 ] : null;
+
+	const [ isLoadingUpsellPageExperiment, experimentAssignment ] = useExperiment(
+		'calypso_jetpack_upsell_page_2022_06'
+	);
+	const showUpsellPage = experimentAssignment?.variationName === 'treatment';
 
 	useEffect( () => {
 		dispatch(
@@ -122,7 +128,10 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		[]
 	);
 
-	const createProductURL = getPurchaseURLCallback( siteSlug, urlQueryArgs, locale );
+	const createProductURL = useMemo(
+		() => getPurchaseURLCallback( siteSlug, urlQueryArgs, locale, rootUrl, showUpsellPage ),
+		[ siteSlug, urlQueryArgs, locale, rootUrl, showUpsellPage ]
+	);
 
 	// Sends a user to a page based on whether there are subtypes.
 	const selectProduct: PurchaseCallback = (
@@ -216,6 +225,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 					onDurationChange={ trackDurationChange }
 					scrollCardIntoView={ scrollCardIntoView }
 					createButtonURL={ createProductURL }
+					isLoadingUpsellPageExperiment={ isLoadingUpsellPageExperiment }
 				/>
 
 				<QueryProductsList type="jetpack" />

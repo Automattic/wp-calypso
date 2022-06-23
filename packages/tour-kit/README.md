@@ -15,6 +15,7 @@ Variants are ready implementations of Tour Kit providing styled variations of th
 This is a variant extracted from the guided tours in WordPress.com. It provides the two main renderers (step and minimized views) with controls for navigating, minimizing, and closing. Comes with optional rating in the last step and pagination controls.
 
 (see usage and examples below)
+
 ## Usage
 
 A tour is made up of the following components:
@@ -23,7 +24,7 @@ A tour is made up of the following components:
   - some arbitrary metadata
   - a set of optional reference elements selectors for rendering a step near
   - a set of options:
-	- classNames: optional custom CSS classes that will be applied to the step
+  - classNames: optional custom CSS classes that will be applied to the step
 - Two renderers (used as render props internally):
   - a step renderer (React component/function passed a set of properties)
   - a minimized view renderer (for rendering a minimized view instead of closing)
@@ -156,16 +157,18 @@ The main API for configuring a tour is the config object. See example usage and 
 - `effects`: An object to enable/disable/combine various tour effects:
 
   - `spotlight`: Adds a semi-transparent overlay and highlights the reference element when provided with a transparent box over it. Expects an object with optional styles to override the default highlight/spotlight behavior when provided (default: spotlight wraps the entire reference element).
-	  - `interactivity`: An object that configures whether the user is allowed to interact with the referenced element during the tour
-	  - `styles`: CSS properties that configures the styles applied to the spotlight overlay
+    - `interactivity`: An object that configures whether the user is allowed to interact with the referenced element during the tour
+    - `styles`: CSS properties that configures the styles applied to the spotlight overlay
   - `arrowIndicator`: Adds an arrow tip pointing at the reference element when provided.
   - `overlay`: Includes the semi-transparent overlay for all the steps (also blocks interactions with the rest of the page)
   - `autoScroll`: The page scrolls up and down automatically such that the step target element is visible to the user.
+  - `liveResize`: Configures the behaviour for automatically resizing the tour kit elements (TourKitFrame and Spotlight). Defaults to disabled.
 
 - `callbacks`: An object of callbacks to handle side effects from various interactions (see [types.ts](./src/types.ts)).
 
 - `popperModifiers`: The tour uses Popper to position steps near reference elements (and for other effects). An implementation can pass its own modifiers to tailor the functionality further e.g. more offset or padding from the reference element.
 - `tourRating` (optional - only in WPCOM Tour Kit variant):
+
   - `enabled`: Whether to show rating in last step.
   - `useTourRating`: (optional) A hook to provide the rating from an external source/state (see [types.ts](./src/types.ts)).
   - `onTourRate`: (optional) A callback to fire off when a rating is submitted.
@@ -173,4 +176,3 @@ The main API for configuring a tour is the config object. See example usage and 
 - `portalElementId`: A string that lets you customize under which DOM element the Tour will be appended.
 
 `placement` (Optional) : Describes the preferred placement of the popper. Possible values are left-start, left, left-end, top-start, top, top-end, right-start, right, right-end, bottom-start, bottom, and bottom-end.
-

@@ -7,6 +7,7 @@ type Ticket = {
 	locale: string;
 	client: string;
 	is_chat_overflow: boolean;
+	blog_url: string;
 };
 
 export function useSubmitTicketMutation() {

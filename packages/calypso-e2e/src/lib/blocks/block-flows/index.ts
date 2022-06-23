@@ -1,3 +1,4 @@
+/* Block Flows */
 export * from './instagram';
 export * from './twitter';
 export * from './pay-with-paypal';
@@ -17,3 +18,6 @@ export * from './slideshow';
 export * from './tiled-gallery';
 export * from './youtube';
 export * from './layout-grid';
+
+/* Types */
+export * from './types';

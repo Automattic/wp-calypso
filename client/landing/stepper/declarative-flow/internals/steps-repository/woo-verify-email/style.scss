@@ -21,8 +21,24 @@ $bg-image: url( './celebration-background.svg' );
 }
 .woo-verify-email__content {
     text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
+.woo-verify-email__error-notice {
+	margin: 10px auto 0;
+	max-width: 350px;
+	width: auto;
+
+	span {
+		display: flex;
+
+		.gridicon {
+			margin-right: 10px;
+		}
+	}
+}
 
 $design-button-primary-color: var( --color-primary );
 $design-button-primary-hover-color: var( --color-primary-60 );

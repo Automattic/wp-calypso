@@ -176,7 +176,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 		if ( category ) {
 			items.push( {
 				label: categoryName,
-				href: `/plugins/${ category }/${ siteSlug || '' }`,
+				href: `/plugins/browse/${ category }/${ siteSlug || '' }`,
 				id: 'category',
 			} );
 		}
@@ -458,7 +458,7 @@ const FullListView = ( { category, siteSlug, sites } ) => {
 	} );
 
 	const categories = useCategories();
-	const categoryName = categories[ category ]?.name;
+	const categoryName = categories[ category ]?.name || category;
 	const translate = useTranslate();
 
 	let title = '';
@@ -542,9 +542,9 @@ const PluginSingleListView = ( {
 		.filter( isNotBlocked )
 		.filter( ( plugin ) => isNotInstalled( plugin, installedPlugins ) );
 
-	let listLink = '/plugins/' + category;
+	let listLink = '/plugins/browse/' + category;
 	if ( domain ) {
-		listLink = '/plugins/' + category + '/' + domain;
+		listLink = '/plugins/browse/' + category + '/' + domain;
 	}
 
 	if ( ! isFetching && plugins.length === 0 ) {
@@ -673,7 +673,7 @@ const ManageButton = ( { shouldShowManageButton, siteAdminUrl, siteSlug, jetpack
 
 const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) => {
 	const analyticsPageTitle = 'Plugin Browser' + category ? ` > ${ category }` : '';
-	let analyticsPath = category ? `/plugins/${ category }` : '/plugins';
+	let analyticsPath = category ? `/plugins/browse/${ category }` : '/plugins';
 
 	if ( selectedSiteId ) {
 		analyticsPath += '/:site';

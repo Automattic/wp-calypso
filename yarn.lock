@@ -281,6 +281,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-mp-data-analysis@workspace:packages/calypso-mp-data-analysis":
+  version: 0.0.0-use.local
+  resolution: "@automattic/calypso-mp-data-analysis@workspace:packages/calypso-mp-data-analysis"
+  dependencies:
+    axios: ^0.27.2
+    csv-parse: ^5.1.0
+    csv-stringify: ^6.1.0
+    fs-extra: ^10.1.0
+  languageName: unknown
+  linkType: soft
+
 "@automattic/calypso-polyfills@workspace:^, @automattic/calypso-polyfills@workspace:packages/calypso-polyfills":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-polyfills@workspace:packages/calypso-polyfills"
@@ -1265,6 +1276,7 @@ __metadata:
     "@wordpress/primitives": ^3.7.0
     "@wordpress/react-i18n": ^3.7.0
     classnames: ^2.3.1
+    debug: ^4.3.4
     react-popper: ^2.2.5
     typescript: ^4.5.5
   peerDependencies:
@@ -1515,7 +1527,6 @@ __metadata:
     "@emotion/react": ^11.4.1
     "@popperjs/core": ^2.10.2
     "@sentry/browser": ^6.19.6
-    "@sentry/tracing": ^6.19.6
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
     "@types/node": ^15.0.2
@@ -1550,6 +1561,7 @@ __metadata:
     "@wordpress/plugins": ^4.7.0
     "@wordpress/primitives": ^3.7.0
     "@wordpress/react-i18n": ^3.7.0
+    "@wordpress/readable-js-assets-webpack-plugin": ^1.0.4
     "@wordpress/rich-text": ^5.7.0
     "@wordpress/scripts": ^23.1.0
     "@wordpress/server-side-render": ^3.7.0
@@ -4869,19 +4881,6 @@ __metadata:
   peerDependencies:
     react: 15.x || 16.x || 17.x || 18.x
   checksum: 18f6a4bea654319fbb6682119cba2d5637bc20601df57e5a34675f2a9f49612a55144be1ca99d41b4722ae86e9b966ff9a74f881b247dd84db146902e8decfc7
-  languageName: node
-  linkType: hard
-
-"@sentry/tracing@npm:^6.19.6":
-  version: 6.19.6
-  resolution: "@sentry/tracing@npm:6.19.6"
-  dependencies:
-    "@sentry/hub": 6.19.6
-    "@sentry/minimal": 6.19.6
-    "@sentry/types": 6.19.6
-    "@sentry/utils": 6.19.6
-    tslib: ^1.9.3
-  checksum: 7ebefde852ad5943f055dc1cd865579a8b8d623a2600e764d80a95cc206e64bde3ab5c82b0aba474194422941dc899d22e45338e1502c654aeb4ec46c1d9580f
   languageName: node
   linkType: hard
 
@@ -9566,6 +9565,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/readable-js-assets-webpack-plugin@npm:^1.0.4":
+  version: 1.0.5
+  resolution: "@wordpress/readable-js-assets-webpack-plugin@npm:1.0.5"
+  peerDependencies:
+    webpack: ^4.8.3 || ^5.0.0
+  checksum: 8550eb60b6fe02d9b36c98bf22c75c42a15fabb5f6bca83cbeb53d0950e1fafdac0a1ac50c6940f7d5ef0e0af28b9a8272e50e93c0575b1d8a990a0103d5b52c
+  languageName: node
+  linkType: hard
+
 "@wordpress/redux-routine@npm:^3.14.2":
   version: 3.14.2
   resolution: "@wordpress/redux-routine@npm:3.14.2"
@@ -11142,6 +11150,16 @@ __metadata:
   dependencies:
     follow-redirects: ^1.14.7
   checksum: 33475dc847e8494341db5ff5d3ce3a830e511d9698eda1e2507618a0a875ca774e7c59b9194c70664e886699b5917416175da2ea5ccb67a2945f7cdc939d7c56
+  languageName: node
+  linkType: hard
+
+"axios@npm:^0.27.2":
+  version: 0.27.2
+  resolution: "axios@npm:0.27.2"
+  dependencies:
+    follow-redirects: ^1.14.9
+    form-data: ^4.0.0
+  checksum: 76d673d2a90629944b44d6f345f01e58e9174690f635115d5ffd4aca495d99bcd8f95c590d5ccb473513f5ebc1d1a6e8934580d0c57cdd0498c3a101313ef771
   languageName: node
   linkType: hard
 
@@ -14662,6 +14680,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"csv-parse@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "csv-parse@npm:5.1.0"
+  checksum: 63a85f8a7b0df613e0c2039e3a62d3c3877f670952dc0c0dfc2ba642f5d8b5d33b1bfb6943c65bec5ea56bba39c3ae6d3b93cf649f436c3d6cc558aa98905653
+  languageName: node
+  linkType: hard
+
+"csv-stringify@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "csv-stringify@npm:6.1.0"
+  checksum: 111ae51c5ecf9aab17f36775d18b1b2db64fb5593c195a69538a95459fee1a53ca67f0d0b37a1f763d76fdeb7e10991e1b6509b0511d9159d7dad4ff9d60718c
+  languageName: node
+  linkType: hard
+
 "ctype@npm:0.5.3":
   version: 0.5.3
   resolution: "ctype@npm:0.5.3"
@@ -16087,6 +16119,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"enhanced-resolve@npm:5.9.3, enhanced-resolve@npm:^5.8.3":
+  version: 5.9.3
+  resolution: "enhanced-resolve@npm:5.9.3"
+  dependencies:
+    graceful-fs: ^4.2.4
+    tapable: ^2.2.0
+  checksum: 743428030e1d627835bfd05b7a9570ee163e728ab1d55fcd69de9c4ff3e84356c0c9c9deaa8164afb3c648699681a403801ac85b94d6a343838d38f36109643c
+  languageName: node
+  linkType: hard
+
 "enhanced-resolve@npm:^4.5.0":
   version: 4.5.0
   resolution: "enhanced-resolve@npm:4.5.0"
@@ -16095,16 +16137,6 @@ __metadata:
     memory-fs: ^0.5.0
     tapable: ^1.0.0
   checksum: d95fc630606ea35bed21c4a029bbb1681919571a2d1d2011c7fc42a26a9e48ed3d74a89949ce331e1fd3229850a303e3218b887b92951330f16bdfbb93a10e64
-  languageName: node
-  linkType: hard
-
-"enhanced-resolve@npm:^5.8.3":
-  version: 5.8.3
-  resolution: "enhanced-resolve@npm:5.8.3"
-  dependencies:
-    graceful-fs: ^4.2.4
-    tapable: ^2.2.0
-  checksum: c50de36c067359833577fb031de6a3b3d0eeb0627cb81fea1e132116d0b5a4fc746e0c8525f683de0a656f25aad08d3da773775b27608db1695ac47ac64ff673
   languageName: node
   linkType: hard
 
@@ -18000,13 +18032,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.7":
-  version: 1.14.9
-  resolution: "follow-redirects@npm:1.14.9"
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.7, follow-redirects@npm:^1.14.9":
+  version: 1.15.1
+  resolution: "follow-redirects@npm:1.15.1"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: 08c465c17cbf3011ad16516609ee476abffa8fd1ff78c2082f1ff43614cb06586a0ccc8e99e5ebe13da06d064367cb269789e3ca0e93e2ad5b24fdc30b4294b6
+  checksum: ea21337fe38eac8d75f5af12c425cc40e0bb44dcc3091fd0bde1c828596251a7a9638b5720fee5a0a5c62524450cbe16c52aae1dce88c6aee68577e441842e7f
   languageName: node
   linkType: hard
 
@@ -18302,14 +18334,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fs-extra@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "fs-extra@npm:10.0.0"
+"fs-extra@npm:^10.0.0, fs-extra@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "fs-extra@npm:10.1.0"
   dependencies:
     graceful-fs: ^4.2.0
     jsonfile: ^6.0.1
     universalify: ^2.0.0
-  checksum: 85802f3d9e49d197744a8372f0d78d5a1faa3df73f4c5375d6366a4b9f745197d3da1f095841443d50f29a9f81cdc01363eb6d17bef2ba70c268559368211040
+  checksum: 5f579466e7109719d162a9249abbeffe7f426eb133ea486e020b89bc6d67a741134076bf439983f2eb79276ceaf6bd7b7c1e43c3fd67fe889863e69072fb0a5e
   languageName: node
   linkType: hard
 
@@ -35864,6 +35896,7 @@ swiper@4.5.1:
     css-loader: ^6.5.1
     debug: ^4.3.3
     doctrine: ^3.0.0
+    enhanced-resolve: 5.9.3
     eslint: ^8.6.0
     eslint-config-prettier: ^8.3.0
     eslint-nibble: ^8.0.0

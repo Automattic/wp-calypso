@@ -16,6 +16,11 @@ export function useReturnUrl( redirect: boolean ): void {
 			const returnQuery = getQueryArg( window.location.href, 'return' ) as string;
 			const returnUrl = ensurePartnerPortalReturnUrl( returnQuery );
 
+			// Avoids redirect attempt if there is no `return` parameter
+			if ( ! returnQuery ) {
+				return;
+			}
+
 			page.redirect( returnUrl );
 		}
 	}, [ redirect ] );

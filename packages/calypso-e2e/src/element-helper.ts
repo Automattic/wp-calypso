@@ -37,7 +37,10 @@ export async function waitForElementEnabled(
 	const elementHandle = await page.waitForSelector( selector, options );
 	await Promise.all( [
 		elementHandle.waitForElementState( 'enabled', options ),
-		page.waitForFunction( ( element: any ) => element.ariaDisabled !== 'true', elementHandle ),
+		page.waitForFunction(
+			( element: SVGElement | HTMLElement ) => element.ariaDisabled !== 'true',
+			elementHandle
+		),
 	] );
 }
 

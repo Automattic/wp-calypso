@@ -6,9 +6,9 @@
 
 # Library Objects
 
-The `@automattic/calypso-e2e` package offers a robust set of library objects patterned after the Page Object Model. When developing a new test spec, try to leverage these objects as much as possible for a seamless experience.
+The `@automattic/calypso-e2e` package offers a robust set of library objects patterned after the Page Object Model. When developing a new test spec, try to leverage these objects as much as possible. Doing so will reduce code duplication and make test development faster.
 
-For a brief introduction to Page Object Models, please refer to [this page](https://www.selenium.dev/documentation/guidelines/page_object_models/).
+For a brief introduction to Page Object Models, please refer to [this page](https://playwright.dev/docs/test-pom).
 
 <!-- TOC -->
 
@@ -24,17 +24,27 @@ For a brief introduction to Page Object Models, please refer to [this page](http
 
 There exists clear distinction between pages and components.
 
-**Components** - these form the smallest unit of functionality in a Page Object Model based library. Components represent functionality that are often embedded across distinct pages. For instance, if a search bar is embedded on multiple pages, the search bar functionality is best abstracted as a SearchBarComponent.
+**Components** - these form the smallest unit of functionality in a Page Object Model based library. Components represent functionality that are often embedded across distinct pages. For instance, if the same search bar is embedded on multiple pages, the search bar functionality is best abstracted as a SearchBarComponent.
 
-**Pages** - these are the most common objects in a Page Object Model. Each Page contains methods to interact with the page and any necessary helper methods. Selectors to support the methods should also be located in the file, but not as part of the Page object itself.
+Example: [NotificationComponent](../../../packages/calypso-e2e/src/lib/components/notifications-component.ts)
+
+**Pages** - these are the most common objects in a Page Object Model. Each Page contains methods to interact with the page and any necessary helper methods. Selectors to support the methods should also be located in the file, but as a top-level constant.
 
 There is less clear distinction between Pages and Flows and the general recommendation is to prefer Pages unless Flows absolutely make sense.
 
+Example: [EditorPage](../../../packages/calypso-e2e/src/lib/pages/editor-page.ts)
+
 **Flows** - these encapsulate interactions that span multiple pages or components, or start at one location and end at another. Interactions for each page of the flow can be implemented directly in the Flow object, or by importing relevant Page/Component objects and calling their methods.
+
+Example: [StartSiteFlow](../../../packages/calypso-e2e/src/lib/flows/start-site-flow.ts)
 
 ## Components
 
-Components represent a sub-portion of the page, and are often shared across multiple pages (_though not always!_). A good example is the Sidebar Component, persisting across multiple pages in the My Home dashboard. It encapsulates element selectors and actions for only the Sidebar, leaving interactions on the main content pane for the respective Page objects.
+Components represent a sub-portion of the page, and are typically shared across multiple pages. A good example is the `SidebarComponent`, persisting across multiple pages in the Calypso dashboard.
+
+The SidebarComponent, as an example, encapsulates element selectors and actions for only the Sidebar, leaving interactions on the main content pane for the respective Page objects.
+
+<img src="https://cldup.com/0n1U57DidJ.png"/>
 
 ```typescript
 const selectors = {
@@ -75,7 +85,7 @@ await someComponent.clickOnMenu();
 
 ## Page
 
-Pages are to be used to represent a page in Calypso. It can hold attributes, class methods to interact with the page and define other helper functions.
+Pages are to be used to represent a page in Calypso. It can hold attributes, class methods to interact with the page and define other helper functions. Pages can also import components and/or other pages to call their methdods.
 
 A well-implemented page object will abstract complex interactions on the page to an easily understandable method call. The method should be well-contained, predictable and easy to understand. Code reuse is promoted via the following principles:
 
@@ -147,9 +157,11 @@ export class SignupFlow {
 	async signup( { user: string, email: string, password: string } ): Promise< void > {
 		const componentA = new ComponentA( page );
 		await componentA.fillSignupForm( user, email, password );
+
 		const pageB = new PageB( page );
 		await pageB.agreeToEULA();
 		await pageB.submit();
+
 		const componentC = new ComponentC( page );
 		await componentC.navigateToDashboard();
 	}

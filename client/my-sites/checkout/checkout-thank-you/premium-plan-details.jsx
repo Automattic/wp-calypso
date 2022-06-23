@@ -84,7 +84,7 @@ const PremiumPlanDetails = ( {
 						"You've now got access to every premium theme, at no extra cost. Give one a try!"
 					) }
 					buttonText={ translate( 'Browse premium themes' ) }
-					href={ '/themes/' + selectedSite.slug }
+					href={ '/themes/premium/' + selectedSite.slug }
 				/>
 			) }
 

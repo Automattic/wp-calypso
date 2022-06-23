@@ -100,9 +100,7 @@ function plugin( context, next ) {
 export function browsePluginsOrPlugin( context, next ) {
 	const siteUrl = getSiteFragment( context.path );
 	if (
-		( context.params.plugin &&
-			( ( siteUrl && context.params.plugin === siteUrl.toString() ) ||
-				includes( ALLOWED_CATEGORIES, context.params.plugin ) ) ) ||
+		( context.params.plugin && siteUrl && context.params.plugin === siteUrl.toString() ) ||
 		context.query?.s
 	) {
 		browsePlugins( context, next );

@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { connect } from 'react-redux';
+import illustrationImg from 'calypso/assets/images/onboarding/import-1.svg';
 import ActionCard from 'calypso/components/action-card';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
 import { urlDataUpdate } from 'calypso/state/imports/url-analyzer/actions';
@@ -39,7 +40,7 @@ const ListStep: React.FunctionComponent< Props > = ( props ) => {
 					<div className="import__heading">
 						<Title>{ __( 'Import your content from another platform' ) }</Title>
 
-						<img alt="" src="/calypso/images/importer/onboarding.svg" />
+						<img alt="Import" src={ illustrationImg } aria-hidden="true" />
 					</div>
 				</div>
 				<div className={ 'import-layout__column' }>

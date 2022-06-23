@@ -1,15 +1,57 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`<GlobalNotices /> should render notices with the expected structure 1`] = `
-<GlobalNoticesContainer
-  id="overlay-notices"
->
-  <Localized(Notice)
-    key="notice-testing-notice"
-    onDismissClick={[Function]}
-    showDismiss={true}
-    status="is-success"
-    text="A test notice"
-  />
-</GlobalNoticesContainer>
+<div>
+  <div
+    class="global-notices"
+    id="overlay-notices"
+  >
+    <div
+      aria-label="Notice"
+      class="notice is-success is-dismissable"
+      role="status"
+    >
+      <span
+        class="notice__icon-wrapper"
+      >
+        <svg
+          class="gridicon gridicons-checkmark notice__icon"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <use
+            xlink:href="gridicons.svg#gridicons-checkmark"
+          />
+        </svg>
+      </span>
+      <span
+        class="notice__content"
+      >
+        <span
+          class="notice__text"
+        >
+          A test notice
+        </span>
+      </span>
+      <button
+        aria-label="Dismiss"
+        class="notice__dismiss"
+      >
+        <svg
+          class="gridicon gridicons-cross"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <use
+            xlink:href="gridicons.svg#gridicons-cross"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
 `;

@@ -109,6 +109,17 @@ export function emailManagementNewTitanAccount(
 	return emailManagementEdit( siteName, domainName, 'titan/new', relativeTo, { source } );
 }
 
+/**
+ * Retrieves the url to set up Titan mailboxes
+ *
+ *   https://wordpress.com/email/:domainName/forwarding/add/:siteName
+ *
+ * @param {string} siteName - slug of the current site
+ * @param {string} domainName - domain name to add forwarding for
+ * @param {string | null} relativeTo - optional path prefix
+ * @param {string | null} source - optional source
+ * @returns {string} the corresponding url
+ */
 export function emailManagementTitanSetUpMailbox(
 	siteName,
 	domainName,
@@ -120,6 +131,13 @@ export function emailManagementTitanSetUpMailbox(
 	} );
 }
 
+/**
+ * @param {string|undefined|null} siteName
+ * @param {string|undefined|null} domainName
+ * @param {string|null} emailAddress
+ * @param {string|null} relativeTo
+ * @returns {string}
+ */
 export function emailManagementTitanSetUpThankYou(
 	siteName,
 	domainName,

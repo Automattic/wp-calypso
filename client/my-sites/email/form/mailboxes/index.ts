@@ -65,7 +65,7 @@ class MailboxForm< T extends EmailProvider > {
 			[ FIELD_MAILBOX, new RequiredValidator< string >() ],
 			[ FIELD_NAME, new RequiredIfVisibleValidator() ],
 			[ FIELD_NAME, new MaximumStringLengthValidator( 60 ) ],
-			[ FIELD_MAILBOX, new ExistingMailboxNamesValidator( this.existingMailboxNames ) ],
+			[ FIELD_MAILBOX, new ExistingMailboxNamesValidator( domainName, this.existingMailboxNames ) ],
 			[
 				FIELD_MAILBOX,
 				new MailboxNameValidator( domainName, mailboxHasDomainError, areApostrophesSupported ),
@@ -126,6 +126,12 @@ class MailboxForm< T extends EmailProvider > {
 					is_admin: this.getFieldValue< boolean >( FIELD_IS_ADMIN ),
 					name: this.getFieldValue< string >( FIELD_NAME ),
 			  };
+	}
+
+	getAsFlatObject(): Record< FormFieldNames, string | boolean | undefined > {
+		return Object.fromEntries(
+			Object.values( this.formFields ).map( ( field ) => [ field.fieldName, field.value ] )
+		);
 	}
 
 	getFieldValue< R >( fieldName: FormFieldNames ) {

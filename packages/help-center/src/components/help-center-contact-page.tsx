@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Spinner } from '@automattic/components';
 import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -23,6 +24,14 @@ export const HelpCenterContactPage: React.FC = () => {
 
 	const renderEmail = useShouldRenderEmailOption();
 	const renderChat = useShouldRenderChatOption();
+
+	if ( renderChat.isLoading ) {
+		return (
+			<div className="help-center-contact-page__loading">
+				<Spinner baseClassName="" />
+			</div>
+		);
+	}
 
 	return (
 		<div className="help-center-contact-page">
@@ -87,6 +96,7 @@ export const HelpCenterContactPage: React.FC = () => {
 export const HelpCenterContactButton: React.FC = () => {
 	const { __ } = useI18n();
 	const url = useStillNeedHelpURL();
+	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 
 	const trackContactButtonClicked = () => {
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
@@ -96,7 +106,8 @@ export const HelpCenterContactButton: React.FC = () => {
 
 	return (
 		<Link
-			to={ url }
+			to={ redirectToWpcom ? { pathname: url } : url }
+			target={ redirectToWpcom ? '_blank' : '_self' }
 			onClick={ trackContactButtonClicked }
 			className="button help-center-contact-page__button"
 		>

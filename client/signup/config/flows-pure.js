@@ -285,40 +285,6 @@ export function generateFlows( {
 			},
 		},
 		{
-			name: 'importer',
-			steps: isEnabled( 'onboarding/import' ) ? [ 'capture', 'list', 'ready' ] : [],
-			destination: '/',
-			get pageTitle() {
-				return translate( 'Import your site content' );
-			},
-			description: 'A new import flow that can be used from the onboarding flow',
-			lastModified: '2021-10-18',
-			disallowResume: true,
-			providesDependenciesInQuery: [ 'siteSlug' ],
-		},
-		{
-			name: 'from',
-			steps: [ 'importing' ],
-			destination: '/',
-			get pageTitle() {
-				return translate( 'Import your site content' );
-			},
-			description: 'Onboarding - start from importer',
-			lastModified: '2021-11-15',
-			enableBranchSteps: true,
-		},
-		{
-			name: 'import-light',
-			steps: isEnabled( 'onboarding/import-light' ) ? [ 'static' ] : [],
-			destination: '/',
-			get pageTitle() {
-				return translate( 'Import light' );
-			},
-			description: 'Import light',
-			lastModified: '2022-02-25',
-			enableBranchSteps: true,
-		},
-		{
 			name: 'reader',
 			steps: [ 'reader-landing', 'user' ],
 			destination: '/',

@@ -90,7 +90,6 @@ class Pages extends Component {
 	};
 
 	static defaultProps = {
-		perPage: 100,
 		loading: false,
 		lastPage: false,
 		page: 0,
@@ -263,13 +262,13 @@ class Pages extends Component {
 		const { site, lastPage, query, showPublishedStatus } = this.props;
 
 		// Pages only display hierarchically for published pages on single-sites when
-		// there are 100 or fewer pages and no more pages to load (last page).
+		// there are 50 or fewer pages and no more pages to load (last page).
 		// Pages are not displayed hierarchically for search.
 		const showHierarchical =
 			site &&
 			query.status === 'publish,private' &&
 			lastPage &&
-			pages.length <= 100 &&
+			pages.length <= 50 &&
 			! query.search;
 
 		return showHierarchical

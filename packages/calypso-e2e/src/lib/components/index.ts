@@ -1,3 +1,4 @@
+/* POMs */
 export * from './navbar-component';
 export * from './navbar-cart-component';
 export * from './comments-component';
@@ -35,3 +36,6 @@ export * from './full-side-editor-nav-sidebar-component';
 export * from './editor-dimensions-component';
 
 export * from './me';
+
+/* Types */
+export * from './types';

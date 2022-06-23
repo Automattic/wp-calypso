@@ -217,7 +217,6 @@ class PluginItem extends Component {
 			<div className="plugin-item__actions">
 				{ canToggleActivation && (
 					<PluginActivateToggle
-						isMock={ this.props.isMock }
 						plugin={ this.props.plugin }
 						disabled={ this.props.isSelectable }
 						site={ this.props.selectedSite }
@@ -225,7 +224,6 @@ class PluginItem extends Component {
 				) }
 				{ canToggleAutoupdate && (
 					<PluginAutoupdateToggle
-						isMock={ this.props.isMock }
 						plugin={ this.props.plugin }
 						disabled={ this.props.isSelectable }
 						site={ this.props.selectedSite }

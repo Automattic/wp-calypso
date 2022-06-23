@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /* eslint-disable no-restricted-imports */
 import { useState, useCallback } from '@wordpress/element';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import InlineHelpSearchResults from 'calypso/blocks/inline-help/inline-help-search-results';
 import './help-center-search.scss';
@@ -9,21 +9,28 @@ import { HelpCenterMoreResources } from './help-center-more-resources';
 import { SibylArticles } from './help-center-sibyl-articles';
 
 export const HelpCenterSearch = () => {
-	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const history = useHistory();
+	const { search } = useLocation();
+	const params = new URLSearchParams( search );
+	const query = params.get( 'query' );
+
+	const [ searchQuery, setSearchQuery ] = useState( query || '' );
 
 	const redirectToArticle = useCallback(
 		( event, result ) => {
 			const search = new URLSearchParams( {
 				postId: result.post_id,
-				blogId: result.blog_id,
 				query: searchQuery,
 				link: result.link ?? '',
 				title: result.title,
-			} ).toString();
+			} );
+
+			if ( result.blog_id ) {
+				search.append( 'blogId', result.blog_id );
+			}
 
 			event.preventDefault();
-			history.push( `/post/?${ search }` );
+			history.push( `/post/?${ search.toString() }` );
 		},
 		[ history, searchQuery ]
 	);

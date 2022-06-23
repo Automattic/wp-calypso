@@ -49,22 +49,15 @@ $head-foot-height: 50px;
 			display: flex;
 			align-items: center;
 
+			svg {
+				margin-right: 3px;
+			}
+
 			.help-center-header__article-title {
 				overflow: hidden;
 				white-space: nowrap;
 				text-overflow: ellipsis;
 				max-width: 200px;
-			}
-
-			.help-center-header__icon {
-				display: flex;
-				align-items: center;
-				margin-right: 4px;
-
-				svg {
-					font-size: $font-title-small;
-					margin-right: 4px;
-				}
 			}
 		}
 	}
@@ -105,17 +98,11 @@ $head-foot-height: 50px;
 
 		&.is-minimized {
 			min-height: $head-foot-height;
-			top: unset;
-			bottom: 41px;
-			transform: unset !important; // revert dragging translation when minimized
-			.help-center__container-header {
-				cursor: default;
-			}
 		}
 	}
 
 	&.is-mobile {
-		top: 60px;
+		top: 45px;
 		bottom: 0;
 		left: 0;
 		right: 0;
@@ -127,10 +114,6 @@ $head-foot-height: 50px;
 
 		.help-center__container-footer {
 			margin-bottom: 0;
-		}
-
-		.help-center-contact-page__button {
-			line-height: 2.15;
 		}
 
 		&.is-minimized {
@@ -214,6 +197,14 @@ button.button.back-button__help-center.is-borderless {
 	align-items: center;
 	color: black;
 	font-size: $font-body-small;
+	padding-right: 5px;
+
+	&:focus {
+		color: #043959;
+		box-shadow: 0 0 0 1px #4f94d4, 0 0 2px 1px rgba( 79, 148, 212, 0.8 );
+		outline: 1px solid transparent;
+		border-color: inherit;
+	}
 }
 
 .help-center__container-content {
@@ -239,6 +230,10 @@ button.button.back-button__help-center.is-borderless {
 			color: var( --studio-gray-100 );
 			margin-bottom: 16px;
 			font-size: $font-body-small;
+
+			&:hover {
+				background: var( --color-neutral-0 );
+			}
 		}
 	}
 
@@ -264,13 +259,12 @@ button.button.back-button__help-center.is-borderless {
 	padding-top: 0;
 }
 
-.help-center-container__loading {
+.help-center-container__loading, .help-center-contact-page__loading {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	height: 100%;
-}
-.help-center-container__spinner {
+
 	.spinner__outer {
 		border-top-color: var( --wp-admin-theme-color );
 	}
@@ -309,7 +303,6 @@ button.button.back-button__help-center.is-borderless {
 			cursor: pointer;
 		}
 
-
 		.help-center__container.is-desktop {
 			position: fixed;
 			top: calc( var( --masterbar-height ) + 16px );
@@ -323,7 +316,7 @@ button.button.back-button__help-center.is-borderless {
 	}
 
 	.help-center-contact-form {
-		.button {
+		.button:not( .back-button__help-center ) {
 			line-height: 2.71428571;
 			min-height: 40px;
 			margin-bottom: 4px;

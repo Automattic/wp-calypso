@@ -3,7 +3,6 @@
  * External Dependencies
  */
 import { useSupportAvailability } from '@automattic/data-stores';
-import { useHappychatAvailable } from '@automattic/happychat-connection';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
@@ -24,13 +23,13 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
 	const siteId = useSelector( getSelectedSiteId );
+	const isSimpleSite = window.location.host.endsWith( '.wordpress.com' );
 
 	// prefetch the current site and user
 	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
 	const user = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { setDirectlyData } = useDispatch( HELP_CENTER_STORE );
 	const { isLoading: isLoadingChat } = useSupportAvailability( 'CHAT' );
-	const { isLoading: isLoadingChatAvailable } = useHappychatAvailable();
 	const { data: supportData, isLoading: isSupportDataLoading } = useSupportAvailability( 'OTHER' );
 	useStillNeedHelpURL();
 
@@ -45,17 +44,16 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 		}
 	}, [ supportData, setDirectlyData ] );
 
-	const isLoading = [
-		! site,
-		! user,
-		isSupportDataLoading,
-		isLoadingChat,
-		isLoadingChatAvailable,
-	].some( Boolean );
+	const isLoading = isSimpleSite
+		? [ ! site, ! user, isSupportDataLoading, isLoadingChat ].some( Boolean )
+		: false;
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];
 		portalParent.classList.add( ...classes );
+
+		portalParent.setAttribute( 'aria-modal', 'true' );
+		portalParent.setAttribute( 'aria-labelledby', 'header-text' );
 
 		document.body.appendChild( portalParent );
 

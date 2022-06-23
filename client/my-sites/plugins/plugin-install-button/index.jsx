@@ -59,21 +59,6 @@ export class PluginInstallButton extends Component {
 		}
 	};
 
-	updateJetpackAction = () => {
-		const {
-			plugin,
-			siteId,
-			recordGoogleEvent: recordGAEvent,
-			recordTracksEvent: recordEvent,
-		} = this.props;
-
-		recordGAEvent( 'Plugins', 'Update jetpack', 'Plugin Name', plugin.slug );
-		recordEvent( 'calypso_plugin_update_jetpack', {
-			site: siteId,
-			plugin: plugin.slug,
-		} );
-	};
-
 	clickSupportLink = () => {
 		this.props.recordGoogleEvent(
 			'Plugins',
@@ -320,7 +305,6 @@ PluginInstallButton.propTypes = {
 	plugin: PropTypes.object.isRequired,
 	isEmbed: PropTypes.bool,
 	isInstalling: PropTypes.bool,
-	isMock: PropTypes.bool,
 	disabled: PropTypes.bool,
 };
 

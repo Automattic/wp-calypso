@@ -1,30 +1,25 @@
 import { useEffect, useState } from 'react';
-import buildConnection from './connection';
+import { buildConnectionForCheckingAvailability } from './connection';
 import useHappychatAuth from './use-happychat-auth';
 
-let cachedAvailableValue: boolean | undefined = undefined;
-
 export function useHappychatAvailable() {
-	const [ available, setIsAvailable ] = useState< boolean | undefined >( cachedAvailableValue );
-	const { data: dataAuth, isLoading: isLoadingAuth } = useHappychatAuth(
-		cachedAvailableValue === undefined
-	);
+	const [ available, setIsAvailable ] = useState< boolean | undefined >( undefined );
+	const isSimpleSite = window.location.host.endsWith( '.wordpress.com' );
+	const { data: dataAuth, isLoading: isLoadingAuth } = useHappychatAuth();
 
 	useEffect( () => {
-		if ( ! isLoadingAuth && dataAuth && cachedAvailableValue === undefined ) {
-			const connection = buildConnection( {
+		if ( isSimpleSite && ! isLoadingAuth && dataAuth ) {
+			const connection = buildConnectionForCheckingAvailability( {
 				receiveAccept: ( receivedAvailability ) => {
-					cachedAvailableValue = receivedAvailability;
 					setIsAvailable( receivedAvailability );
 				},
 				receiveUnauthorized: () => {
-					cachedAvailableValue = false;
 					setIsAvailable( false );
 				},
 			} );
 			connection.init( ( value: unknown ) => value, Promise.resolve( dataAuth ) );
 		}
-	}, [ dataAuth, isLoadingAuth ] );
+	}, [ dataAuth, isLoadingAuth, isSimpleSite ] );
 
 	return { available: Boolean( available ), isLoading: available === undefined };
 }
