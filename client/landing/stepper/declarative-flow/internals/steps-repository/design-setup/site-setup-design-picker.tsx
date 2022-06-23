@@ -22,6 +22,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
+import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import useTrackScrollPageFromTop from '../../../../hooks/use-track-scroll-page-from-top';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
@@ -56,11 +57,13 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const siteSlug = useSiteSlugParam();
+	const siteId = useSiteIdParam();
+	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const siteTitle = site?.name;
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
 	useEffect( () => {
 		if ( isAtomic ) {
-			exitFlow?.( `/site-editor/${ siteSlug }` );
+			exitFlow?.( `/site-editor/${ siteSlugOrId }` );
 		}
 	}, [ isAtomic ] );
 	const isEligibleForProPlan = useSelect(
@@ -101,7 +104,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		useStarterDesignsGeneratedQuery(
 			{
 				vertical_id: siteVerticalId,
-				seed: siteSlug || undefined,
+				seed: siteSlugOrId || undefined,
 				_locale: locale,
 			},
 			{ enabled: enabledGeneratedDesigns && !! siteVerticalId }
@@ -201,12 +204,12 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		buttonLocation?: string
 	) {
 		setSelectedDesign( _selectedDesign );
-		if ( siteSlug && _selectedDesign ) {
+		if ( siteSlugOrId && _selectedDesign ) {
 			const positionIndex = showGeneratedDesigns
 				? generatedDesigns.findIndex( ( design ) => design.slug === _selectedDesign.slug )
 				: -1;
 
-			setPendingAction( () => setDesignOnSite( siteSlug, _selectedDesign, siteVerticalId ) );
+			setPendingAction( () => setDesignOnSite( siteSlugOrId, _selectedDesign, siteVerticalId ) );
 			recordTracksEvent( 'calypso_signup_select_design', {
 				...getEventPropsByDesign( _selectedDesign ),
 				...( buttonLocation && { button_location: buttonLocation } ),
@@ -247,12 +250,12 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 
 		const plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
 
-		if ( siteSlug ) {
+		if ( siteSlugOrId ) {
 			const params = new URLSearchParams();
 			params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 			window.location.href = `/checkout/${ encodeURIComponent(
-				siteSlug
+				siteSlugOrId
 			) }/${ plan }?${ params.toString() }`;
 		}
 	}
