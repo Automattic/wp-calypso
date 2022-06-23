@@ -19,7 +19,7 @@
 		}
 	}
 
-	.dismissible-card__close-icon {
+	.dismissible-card__close-button {
 
 		@include break-mobile {
 			transform: translateY( -50% );
