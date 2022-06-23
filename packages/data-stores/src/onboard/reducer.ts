@@ -226,7 +226,7 @@ const intent: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_INTENT' ) {
 		return action.intent;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( [ 'RESET_INTENT', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return '';
 	}
 	return state;
@@ -305,7 +305,7 @@ const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'CLEAR_DIFM_GOAL' ) {
 		return state.filter( ( goal ) => goal !== SiteGoal.DIFM );
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( [ 'RESET_GOALS', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return [];
 	}
 	return state;
