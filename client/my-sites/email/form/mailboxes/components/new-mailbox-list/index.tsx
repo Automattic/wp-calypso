@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
@@ -62,27 +62,14 @@ const setFieldsVisibilities = (
 	} );
 };
 
-const setFieldsInitialValues = (
-	mailboxes: MailboxForm< EmailProvider >[],
-	initialFieldValues: Partial< Record< HiddenFieldNames, string | boolean > >
-) => {
-	mailboxes.forEach( ( mailbox ) => {
-		Object.entries( initialFieldValues ).forEach( ( [ fieldName, value ] ) => {
-			const currentFieldName = fieldName as FormFieldNames;
-			if (
-				! mailbox.getFieldValue( currentFieldName ) ||
-				! mailbox.getIsFieldTouched( currentFieldName )
-			) {
-				mailbox.setFieldValue( currentFieldName, value );
-			}
-		} );
-	} );
-};
+const getMailboxNamesAlreadyProposedInForm = ( mailboxes: MailboxForm< EmailProvider >[] ) =>
+	mailboxes.map( ( mailbox ) => mailbox.getFieldValue( FIELD_MAILBOX ) as string );
 
 interface MailboxListProps {
 	areButtonsBusy?: boolean;
 	hiddenFieldNames?: HiddenFieldNames[];
 	initialFieldValues?: Partial< Record< HiddenFieldNames, string | boolean > >;
+	isInitialMailboxPurchase?: boolean;
 	onCancel?: () => void;
 	onSubmit: ( mailboxOperations: MailboxOperations ) => void;
 	provider: EmailProvider;
@@ -102,6 +89,7 @@ const NewMailBoxList = (
 		children,
 		hiddenFieldNames = [],
 		initialFieldValues = {},
+		isInitialMailboxPurchase = false,
 		onCancel = () => undefined,
 		onSubmit,
 		provider,
@@ -111,20 +99,50 @@ const NewMailBoxList = (
 		submitActionText = translate( 'Submit' ),
 	} = props;
 
-	const existingMailboxes = useGetExistingMailboxNames( provider, selectedDomainName );
+	const existingMailboxes = useGetExistingMailboxNames(
+		provider,
+		selectedDomainName,
+		isInitialMailboxPurchase
+	);
 
-	const createNewMailbox = () =>
-		new MailboxForm< EmailProvider >( provider, selectedDomainName, existingMailboxes );
+	const createNewMailbox = () => {
+		const mailbox = new MailboxForm< EmailProvider >(
+			provider,
+			selectedDomainName,
+			existingMailboxes
+		);
+		// Set initial values
+		Object.entries( initialFieldValues ).forEach( ( [ fieldName, value ] ) => {
+			mailbox.setFieldValue( fieldName as FormFieldNames, value );
+		} );
+		setFieldsVisibilities( [ mailbox ], hiddenFieldNames );
+		return mailbox;
+	};
 
 	const [ mailboxes, setMailboxes ] = useState( [ createNewMailbox() ] );
 	const isTitan = provider === EmailProvider.Titan;
 
-	// Set visibility for desired hidden fields
-	setFieldsVisibilities( mailboxes, hiddenFieldNames );
-	// Set initial values
-	setFieldsInitialValues( mailboxes, initialFieldValues );
+	const persistMailboxesToState = useCallback( () => {
+		setMailboxes( [ ...mailboxes ] );
+	}, [ mailboxes ] );
+
+	useEffect( () => {
+		setMailboxes( ( mailboxes ) => {
+			setFieldsVisibilities( mailboxes, hiddenFieldNames );
+			return [ ...mailboxes ];
+		} );
+	}, [ hiddenFieldNames ] );
 
 	const addMailbox = () => {
+		getMailboxNamesAlreadyProposedInForm( mailboxes ).forEach( ( mailboxName ) => {
+			window.console.log(
+				'ZXX add',
+				mailboxName,
+				existingMailboxes.set( mailboxName, 'proposed' ),
+				[ ...existingMailboxes.entries() ]
+			);
+		} );
+
 		const newMailboxes = [ ...mailboxes, createNewMailbox() ];
 		setMailboxes( newMailboxes );
 		const eventName = isTitan
@@ -135,23 +153,26 @@ const NewMailBoxList = (
 
 	const removeMailbox = useCallback(
 		( uuid: string ) => () => {
-			const newMailboxes = mailboxes.filter(
-				( mailbox ) => mailbox.formFields.uuid.value !== uuid
-			);
+			const newMailboxes = mailboxes.filter( ( mailbox ) => {
+				window.console.log(
+					'ZXX delete',
+					mailbox.formFields.mailbox.value,
+					existingMailboxes.delete( mailbox.formFields.mailbox.value ),
+					[ ...existingMailboxes.entries() ]
+				);
+				return mailbox.formFields.uuid.value !== uuid;
+			} );
+
 			setMailboxes( newMailboxes );
 			const eventName = isTitan
 				? 'calypso_email_titan_add_mailboxes_remove_mailbox_button_click'
 				: 'calypso_email_google_workspace_add_mailboxes_remove_mailbox_button_click';
 			recordTracksEvent( eventName, { mailbox_count: newMailboxes.length } );
 		},
-		[ isTitan, mailboxes ]
+		[ existingMailboxes, isTitan, mailboxes ]
 	);
-
+	// window.console.log( 'ZXX render', provider, [ ...existingMailboxes.entries() ] );
 	const handleCancel = () => onCancel();
-
-	const persistMailboxesToState = () => {
-		setMailboxes( [ ...mailboxes ] );
-	};
 
 	const handleSubmit = ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
@@ -197,7 +218,11 @@ const NewMailBoxList = (
 									} ) }
 								</CardHeading>
 							) }
-							<MailboxFormWrapper mailbox={ mailbox } onFieldValueChanged={ onFieldValueChanged }>
+							<MailboxFormWrapper
+								mailbox={ mailbox }
+								onFieldValueChanged={ onFieldValueChanged }
+								index={ index }
+							>
 								<>
 									<div className="new-mailbox-list__children">{ children }</div>
 									<div className="new-mailbox-list__actions">

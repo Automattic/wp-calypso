@@ -246,9 +246,10 @@ const GoogleWorkspaceCardNew = ( props: EmailProvidersStackedCardProps ): ReactE
 	} );
 
 	googleWorkspace.onExpandedChange = onExpandedChange;
-	googleWorkspace.formFields = (
+	googleWorkspace.formFields = ! isGSuiteSupported ? undefined : (
 		<NewMailBoxList
 			areButtonsBusy={ addingToCart }
+			isInitialMailboxPurchase
 			onSubmit={ handleSubmit }
 			provider={ provider }
 			selectedDomainName={ selectedDomainName }

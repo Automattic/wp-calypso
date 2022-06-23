@@ -148,7 +148,10 @@ class MailboxFormFieldsFactory {
 	}
 }
 
+type ExistingMailboxNameType = 'exists' | 'proposed';
+
 export type {
+	ExistingMailboxNameType,
 	FieldError,
 	FormFieldNames,
 	GoogleFormFieldNames,

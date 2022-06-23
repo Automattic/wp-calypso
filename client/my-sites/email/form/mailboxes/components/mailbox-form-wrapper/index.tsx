@@ -1,35 +1,34 @@
 import { useRtl } from 'i18n-calypso';
+import { PropsWithChildren } from 'react';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { MailboxField } from 'calypso/my-sites/email/form/mailboxes/components/mailbox-field';
 import {
 	EmailProvider,
 	GoogleMailboxFormFields,
 	MailboxFormFieldBase,
+	MailboxFormFields,
 	TitanMailboxFormFields,
 } from 'calypso/my-sites/email/form/mailboxes/types';
 
 interface MailboxFormWrapperProps {
+	index: number;
 	mailbox: MailboxForm< EmailProvider >;
 	onFieldValueChanged?: ( field: MailboxFormFieldBase< string > ) => void;
 }
 
-const MailboxFormWrapper = ( {
-	children,
-	mailbox,
-	onFieldValueChanged = () => undefined,
-}: MailboxFormWrapperProps & {
-	children?: JSX.Element | false;
-} ): JSX.Element => {
-	const isRtl = useRtl();
+type MailboxFormWrapperWithCommonProps = MailboxFormWrapperProps & {
+	getCommonFieldProps: ReturnType< typeof createCommonFieldPropsHandler >;
+	formFields: MailboxFormFields;
+};
 
-	const formFields = mailbox.formFields;
-	const domainAffix = {
-		[ isRtl ? 'textInputPrefix' : 'textInputSuffix' ]: `\u200e@${ formFields.domain.value }\u202c`,
-	};
-
+const createCommonFieldPropsHandler = ( formIndex: number ) => {
 	let renderPosition = 0;
 
-	const commonFieldProps = ( field: MailboxFormFieldBase< string > ) => {
+	return (
+		field: MailboxFormFieldBase< string >,
+		onFieldValueChanged: ( field: MailboxFormFieldBase< string > ) => void,
+		mailbox: MailboxForm< EmailProvider >
+	) => {
 		if ( field.isVisible ) {
 			++renderPosition;
 		}
@@ -38,62 +37,106 @@ const MailboxFormWrapper = ( {
 			field,
 			onFieldValueChanged,
 			onRequestFieldValidation: () => mailbox.validateField( field.fieldName ),
-			isFirstVisibleField: renderPosition === 1,
+			isFirstVisibleField: formIndex === 0 && renderPosition === 1,
 		};
 	};
+};
 
-	const renderUserFormFields = () => {
-		return (
-			<>
+const renderUserFormFields = ( {
+	formFields,
+	getCommonFieldProps,
+	isRtl,
+	mailbox,
+	onFieldValueChanged = () => undefined,
+}: MailboxFormWrapperWithCommonProps & {
+	isRtl: boolean;
+} ) => {
+	const domainAffix = {
+		[ isRtl ? 'textInputPrefix' : 'textInputSuffix' ]: `\u200e@${ formFields.domain.value }\u202c`,
+	};
+
+	return (
+		<>
+			<MailboxField
+				lowerCaseChangeValue
+				{ ...getCommonFieldProps( formFields.mailbox, onFieldValueChanged, mailbox ) }
+				{ ...domainAffix }
+			/>
+
+			<MailboxField
+				isPasswordField
+				{ ...getCommonFieldProps( formFields.password, onFieldValueChanged, mailbox ) }
+			/>
+		</>
+	);
+};
+
+const GoogleFormFields = ( props: MailboxFormWrapperWithCommonProps ) => {
+	const isRtl = useRtl();
+	const { formFields, getCommonFieldProps, mailbox, onFieldValueChanged = () => undefined } = props;
+	const googleFormFields = formFields as GoogleMailboxFormFields;
+
+	return (
+		<>
+			{ googleFormFields.firstName && (
 				<MailboxField
-					lowerCaseChangeValue
-					{ ...commonFieldProps( formFields.mailbox ) }
-					{ ...domainAffix }
+					{ ...getCommonFieldProps( googleFormFields.firstName, onFieldValueChanged, mailbox ) }
 				/>
+			) }
 
-				<MailboxField isPasswordField { ...commonFieldProps( formFields.password ) } />
-			</>
-		);
-	};
+			{ googleFormFields.lastName && (
+				<MailboxField
+					{ ...getCommonFieldProps( googleFormFields.lastName, onFieldValueChanged, mailbox ) }
+				/>
+			) }
 
-	const GoogleFormFields = () => {
-		const googleFormFields = formFields as GoogleMailboxFormFields;
+			{ renderUserFormFields( { ...props, isRtl } ) }
+		</>
+	);
+};
 
-		return (
-			<>
-				{ googleFormFields.firstName && (
-					<MailboxField { ...commonFieldProps( googleFormFields.firstName ) } />
-				) }
+const TitanFormFields = ( props: MailboxFormWrapperWithCommonProps ) => {
+	const isRtl = useRtl();
+	const { formFields, getCommonFieldProps, mailbox, onFieldValueChanged = () => undefined } = props;
+	const titanFormFields = formFields as TitanMailboxFormFields;
 
-				{ googleFormFields.lastName && (
-					<MailboxField { ...commonFieldProps( googleFormFields.lastName ) } />
-				) }
+	return (
+		<>
+			{ titanFormFields.name && (
+				<MailboxField
+					{ ...getCommonFieldProps( titanFormFields.name, onFieldValueChanged, mailbox ) }
+				/>
+			) }
 
-				{ renderUserFormFields() }
-			</>
-		);
-	};
+			{ renderUserFormFields( { ...props, isRtl } ) }
 
-	const TitanFormFields = () => {
-		const titanFormFields = formFields as TitanMailboxFormFields;
+			{ titanFormFields.alternativeEmail && (
+				<MailboxField
+					{ ...getCommonFieldProps(
+						titanFormFields.alternativeEmail,
+						onFieldValueChanged,
+						mailbox
+					) }
+				/>
+			) }
+		</>
+	);
+};
 
-		return (
-			<>
-				{ titanFormFields.name && <MailboxField { ...commonFieldProps( titanFormFields.name ) } /> }
-
-				{ renderUserFormFields() }
-
-				{ titanFormFields.alternativeEmail && (
-					<MailboxField { ...commonFieldProps( titanFormFields.alternativeEmail ) } />
-				) }
-			</>
-		);
-	};
+const MailboxFormWrapper = ( props: PropsWithChildren< MailboxFormWrapperProps > ): JSX.Element => {
+	const { children, index, mailbox } = props;
+	const getCommonFieldProps = createCommonFieldPropsHandler( index );
+	const formFields = mailbox.formFields;
+	const commonProps = { ...props, formFields, getCommonFieldProps };
 
 	return (
 		<div>
 			<div className="mailbox-form-wrapper__fields mailbox-form-wrapper__new-mailbox">
-				{ mailbox.provider === EmailProvider.Titan ? <TitanFormFields /> : <GoogleFormFields /> }
+				{ mailbox.provider === EmailProvider.Titan ? (
+					<TitanFormFields { ...commonProps } />
+				) : (
+					<GoogleFormFields { ...commonProps } />
+				) }
 			</div>
 
 			<div className="mailbox-form-wrapper__children">{ children }</div>

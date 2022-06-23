@@ -2,7 +2,10 @@ import emailValidator from 'email-validator';
 import i18n from 'i18n-calypso';
 import { createElement } from 'react';
 import wp from 'calypso/lib/wp';
-import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
+import {
+	EmailProvider,
+	ExistingMailboxNameType,
+} from 'calypso/my-sites/email/form/mailboxes/types';
 import type { FieldError, MailboxFormFieldBase } from 'calypso/my-sites/email/form/mailboxes/types';
 
 interface Validator< T > {
@@ -254,41 +257,59 @@ class PasswordValidator extends BaseValidator< string > {
 }
 
 class ExistingMailboxNamesValidator extends BaseValidator< string > {
-	private readonly existingMailboxNames: string[];
+	private readonly existingMailboxNames: Map< string, ExistingMailboxNameType >;
 	private readonly domainName: string;
 
-	constructor( domainName: string, existingMailboxNames: string[] ) {
+	constructor( domainName: string, existingMailboxNames: Map< string, ExistingMailboxNameType > ) {
 		super();
 		this.domainName = domainName;
 		this.existingMailboxNames = existingMailboxNames;
 	}
 
-	static getExistingMailboxError( domainName: string, existingMailbox: string ): FieldError {
+	static getExistingMailboxError(
+		domainName: string,
+		existingMailboxName: string,
+		existingMailboxNameType: ExistingMailboxNameType
+	): FieldError {
+		if ( existingMailboxNameType === 'exists' ) {
+			return i18n.translate(
+				'Please use unique email addresses. {{strong}}%(emailAddress)s{{/strong}} already exists in your account.',
+				{
+					args: { emailAddress: `${ existingMailboxName }@${ domainName }` },
+					components: { strong: createElement( 'strong' ) },
+				}
+			);
+		}
+
 		return i18n.translate(
-			'Please use unique email addresses. {{strong}}%(emailAddress)s{{/strong}} already exists in your account.',
+			'Please use unique email addresses. {{strong}}%(emailAddress)s{{/strong}} has already been specified before.',
 			{
-				args: { emailAddress: `${ existingMailbox }@${ domainName }` },
+				args: { emailAddress: `${ existingMailboxName }@${ domainName }` },
 				components: { strong: createElement( 'strong' ) },
 			}
 		);
 	}
 
 	validateField( field: MailboxFormFieldBase< string > ): void {
-		const existingMailboxNames = this.existingMailboxNames ?? [];
-		if ( ! existingMailboxNames || ! field.value ) {
+		if ( ! field.value ) {
 			return;
 		}
 
-		const fieldValueLowerCased = field.value.toLowerCase();
+		const fieldValueLowerCased = field.value.trim().toLowerCase();
 
-		if (
-			existingMailboxNames.map( ( item ) => item.toLowerCase() ).includes( fieldValueLowerCased )
-		) {
+		this.existingMailboxNames.forEach( ( value, key ) => {
+			const existingMailboxName = key.trim().toLowerCase();
+
+			if ( existingMailboxName !== fieldValueLowerCased ) {
+				return;
+			}
+
 			field.error = ExistingMailboxNamesValidator.getExistingMailboxError(
 				this.domainName,
-				fieldValueLowerCased
+				fieldValueLowerCased,
+				value
 			);
-		}
+		} );
 	}
 }
 

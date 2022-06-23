@@ -11,6 +11,7 @@ import {
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import {
 	EmailProvider,
+	ExistingMailboxNameType,
 	FieldError,
 	MailboxFormFieldBase,
 	MailboxFormFieldsFactory,
@@ -33,12 +34,17 @@ import type {
 import type { Validator } from 'calypso/my-sites/email/form/mailboxes/validators';
 
 class MailboxForm< T extends EmailProvider > {
-	existingMailboxNames: string[];
+	existingMailboxNames: Map< string, ExistingMailboxNameType >;
 	formFields: MailboxFormFields;
 	provider: T;
 
-	constructor( provider: T, domain: string, existingMailboxNames: string[] = [] ) {
-		this.existingMailboxNames = existingMailboxNames;
+	constructor(
+		provider: T,
+		domain: string,
+		existingMailboxNames?: Map< string, ExistingMailboxNameType >
+	) {
+		this.existingMailboxNames =
+			existingMailboxNames ?? new Map< string, ExistingMailboxNameType >();
 		this.formFields = MailboxFormFieldsFactory.create( provider, domain );
 		this.provider = provider;
 	}

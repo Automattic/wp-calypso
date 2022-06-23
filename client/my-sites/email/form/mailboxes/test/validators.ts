@@ -12,7 +12,10 @@ import {
 	FIELD_NAME,
 	FIELD_PASSWORD,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
-import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
+import {
+	EmailProvider,
+	ExistingMailboxNameType,
+} from 'calypso/my-sites/email/form/mailboxes/types';
 import {
 	AlternateEmailValidator,
 	ExistingMailboxNamesValidator,
@@ -41,7 +44,7 @@ type TitanTestDataType = Partial< Record< TitanFormFieldNames, FieldValue > >;
 const provideEmailProviderTestData = (
 	provider: EmailProvider,
 	title: string,
-	existingMailboxNames: string[],
+	existingMailboxNames: Map< string, ExistingMailboxNameType >,
 	fieldValueMap: Partial< Record< FormFieldNames, FieldValue > >,
 	expectedFieldErrorMap: Partial< Record< FormFieldNames, NonNullFieldError > >
 ) => {
@@ -58,7 +61,10 @@ const provideGoogleTestData = (
 	title: string,
 	fieldValueMap: GoogleTestDataType,
 	expectedFieldErrorMap: Partial< Record< GoogleFormFieldNames, NonNullFieldError > > = {},
-	existingMailboxNames: string[] = []
+	existingMailboxNames: Map< string, ExistingMailboxNameType > = new Map<
+		string,
+		ExistingMailboxNameType
+	>()
 ) =>
 	provideEmailProviderTestData(
 		EmailProvider.Google,
@@ -72,7 +78,10 @@ const provideTitanTestData = (
 	title: string,
 	fieldValueMap: TitanTestDataType,
 	expectedFieldErrorMap: Partial< Record< TitanFormFieldNames, NonNullFieldError > > = {},
-	existingMailboxNames: string[] = []
+	existingMailboxNames: Map< string, ExistingMailboxNameType > = new Map<
+		string,
+		ExistingMailboxNameType
+	>()
 ) =>
 	provideEmailProviderTestData(
 		EmailProvider.Titan,
@@ -141,10 +150,11 @@ const finalTestDataForAllCases = [
 		{
 			[ FIELD_MAILBOX ]: ExistingMailboxNamesValidator.getExistingMailboxError(
 				'example.com',
-				'info'
+				'info',
+				'exists'
 			),
 		},
-		[ 'info' ]
+		new Map( [ [ 'info', 'exists' ] ] )
 	),
 	provideTitanTestData(
 		'Existing mailboxes should fail validation',
@@ -152,10 +162,11 @@ const finalTestDataForAllCases = [
 		{
 			[ FIELD_MAILBOX ]: ExistingMailboxNamesValidator.getExistingMailboxError(
 				'example.com',
-				'info'
+				'info',
+				'proposed'
 			),
 		},
-		[ 'info' ]
+		new Map( [ [ 'info', 'proposed' ] ] )
 	),
 	provideGoogleTestData(
 		'Mailbox names with invalid characters should fail validation',
