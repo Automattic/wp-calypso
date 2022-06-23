@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRecommendedThemes } from 'calypso/state/themes/actions';
 import {
 	getRecommendedThemes as getRecommendedThemesSelector,
@@ -11,12 +9,6 @@ import { ConnectedThemesSelection } from './themes-selection';
 
 const RecommendedThemes = ( props ) => {
 	const dispatch = useDispatch();
-	const userLoggedIn = useSelector( ( state ) => isUserLoggedIn( state ) );
-	const { siteId } = props;
-	const { isLoading: isLoadingBlockEditorSettings } = useBlockEditorSettingsQuery(
-		siteId,
-		userLoggedIn
-	);
 
 	const recommendedThemesFilter = 'full-site-editing';
 
@@ -29,15 +21,13 @@ const RecommendedThemes = ( props ) => {
 	);
 
 	useEffect( () => {
-		if ( ! isLoadingBlockEditorSettings ) {
-			dispatch( getRecommendedThemes( recommendedThemesFilter ) );
-		}
-	}, [ isLoadingBlockEditorSettings, recommendedThemesFilter, dispatch ] );
+		dispatch( getRecommendedThemes( recommendedThemesFilter ) );
+	}, [ recommendedThemesFilter, dispatch ] );
 
 	return (
 		<ConnectedThemesSelection
 			{ ...props }
-			isLoading={ isLoadingBlockEditorSettings || areThemesLoading }
+			isLoading={ areThemesLoading }
 			customizedThemesList={ customizedThemesList }
 		/>
 	);
