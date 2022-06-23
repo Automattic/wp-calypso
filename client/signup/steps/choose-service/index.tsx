@@ -32,7 +32,7 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 		return `/setup/${ step }?siteSlug=${ siteSlug }`;
 	};
 
-	const headerText = translate( 'Hire a WordPress.com professional to set up your site.' );
+	const headerText = translate( 'Hire a professional to set up your site.' );
 	const subHeaderText = translate( 'Try risk free with a %(days)d-day money back guarantee', {
 		args: { days: 14 },
 	} );
