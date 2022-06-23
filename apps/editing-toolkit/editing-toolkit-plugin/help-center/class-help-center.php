@@ -92,6 +92,14 @@ class Help_Center {
 			'before'
 		);
 
+		wp_localize_script(
+			'help-center-script',
+			'helpCenter',
+			array(
+				'currentSiteId' => get_current_blog_id(),
+			)
+		);
+
 		wp_set_script_translations( 'help-center-script', 'full-site-editing' );
 	}
 
