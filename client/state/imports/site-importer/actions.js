@@ -1,5 +1,6 @@
 import { get } from 'lodash';
 import { stringify } from 'qs';
+import { convertPlatformName } from 'calypso/blocks/import/util.ts';
 import { prefetchmShotsPreview } from 'calypso/lib/mshots';
 import wpcom from 'calypso/lib/wp';
 import {
@@ -168,8 +169,8 @@ export const importSite =
 	};
 
 export const validateSiteIsImportable =
-	( { params, site, targetSiteUrl } ) =>
-	( dispatch ) => {
+	( { params, site, targetSiteUrl, targetPlatform } ) =>
+	async ( dispatch ) => {
 		const siteId = site.ID;
 
 		prefetchmShotsPreview( targetSiteUrl );
@@ -182,32 +183,60 @@ export const validateSiteIsImportable =
 		);
 		dispatch( startSiteImporterIsSiteImportable() );
 
-		return wpcom.req
-			.get( {
-				path: `/sites/${ siteId }/site-importer/is-site-importable?${ stringify( params ) }`,
-				apiNamespace: 'wpcom/v2',
-			} )
-			.then( ( response ) => {
+		const isSiteImportable = wpcom.req.get( {
+			path: `/sites/${ siteId }/site-importer/is-site-importable?${ stringify( params ) }`,
+			apiNamespace: 'wpcom/v2',
+		} );
+
+		const analyzeUrl = wpcom.req.get( {
+			path: `/imports/analyze-url?${ stringify( { site_url: targetSiteUrl } ) }`,
+			apiNamespace: 'wpcom/v2',
+		} );
+
+		const [ isSiteImportableResult, analyzeUrlResult ] = await Promise.allSettled( [
+			isSiteImportable,
+			analyzeUrl,
+		] );
+
+		if ( isSiteImportableResult.status === 'fulfilled' ) {
+			const response = isSiteImportableResult.value;
+			dispatch(
+				recordTracksEvent( 'calypso_site_importer_validate_site_success', {
+					blog_id: siteId,
+					site_url: response.site_url,
+					supported_content: sortAndStringify( response.supported_content ),
+					unsupported_content: sortAndStringify( response.unsupported_content ),
+					site_engine: response.engine,
+				} )
+			);
+			dispatch( siteImporterIsSiteImportableSuccessful( response ) );
+		} else {
+			dispatch(
+				recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
+					blog_id: siteId,
+					site_url: targetSiteUrl,
+				} )
+			);
+
+			// do platform validation if param - targetPlatform is given
+			if (
+				isSiteImportableResult?.reason?.code === 1000002 &&
+				targetPlatform &&
+				analyzeUrlResult?.value?.platform !== targetPlatform
+			) {
 				dispatch(
-					recordTracksEvent( 'calypso_site_importer_validate_site_success', {
-						blog_id: siteId,
-						site_url: response.site_url,
-						supported_content: sortAndStringify( response.supported_content ),
-						unsupported_content: sortAndStringify( response.unsupported_content ),
-						site_engine: response.engine,
+					siteImporterIsSiteImportableFailed( {
+						message: `The URL you entered does not seem to be a ${ convertPlatformName(
+							targetPlatform
+						) } site.`,
 					} )
 				);
-				dispatch( siteImporterIsSiteImportableSuccessful( response ) );
-			} )
-			.catch( ( error ) => {
-				dispatch(
-					recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
-						blog_id: siteId,
-						site_url: targetSiteUrl,
-					} )
-				);
-				dispatch( siteImporterIsSiteImportableFailed( error ) );
-			} );
+			} else {
+				dispatch( siteImporterIsSiteImportableFailed( isSiteImportableResult.reason ) );
+			}
+		}
+
+		return;
 	};
 
 export const resetSiteImporterImport = ( { importStage, site, targetSiteUrl } ) =>
