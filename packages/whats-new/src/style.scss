@@ -219,7 +219,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	margin: 0;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
-		font-size: $font-headline-small;
+		font-size: $font-title-large;
 	}
 
 	// overflowing text
@@ -237,8 +237,8 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	line-height: 22px;
 	margin: 10px 0;
 
-	/* Gray / Gray 60 */
-	color: var( --studio-gray-60 );
+	/* Gray / Gray 80 */
+	color: var( --studio-gray-80 );
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		font-size: $font-body;
@@ -248,6 +248,10 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 .whats-new-page__link {
 	font-size: $font-body;
+
+	&.is-tertiary {
+		color: var( --studio-blue-50 );
+	}
 }
 
 .whats-new-page__image {
