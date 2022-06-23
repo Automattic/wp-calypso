@@ -13,7 +13,7 @@ export type TestFilteredPlan =
 export interface PlanAndProduct {
 	planSlug: string;
 	plan: TestFilteredPlan | null;
-	product: ProductListItem;
+	product: ProductListItem | undefined;
 }
 
 /**
@@ -33,11 +33,6 @@ export const planSlugToPlanProduct = (
 		? applyTestFiltersToProductsList( plan.product_slug )
 		: applyTestFiltersToPlansList( plan, undefined );
 	const product = products[ planOrProductSlug ];
-	if ( ! product ) {
-		throw new Error(
-			`Could not convert "${ planOrProductSlug }" to product plan because it was not in the list of products provided.`
-		);
-	}
 	return {
 		planSlug: planOrProductSlug,
 		plan: plan === planOrProductSlug ? null : constantObj,
