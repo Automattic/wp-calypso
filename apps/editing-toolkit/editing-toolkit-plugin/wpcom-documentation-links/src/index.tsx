@@ -10,6 +10,8 @@ function overrideCoreDocumentationLinksToWpcom( translation: string, text: strin
 			return 'https://wordpress.com/support/wordpress-editor/';
 		case 'https://wordpress.org/support/article/site-editor/':
 			return 'https://wordpress.com/support/site-editor/';
+		case 'https://wordpress.org/support/article/block-based-widgets-editor/':
+			return 'https://wordpress.com/support/widgets/';
 	}
 
 	return translation;
