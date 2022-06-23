@@ -19,8 +19,6 @@ function dateToLocaleString( date ) {
 }
 
 describe( 'DateRange', () => {
-	let fixedEndDate;
-
 	beforeEach( () => {
 		// Mock matchMedia
 		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
@@ -33,15 +31,11 @@ describe( 'DateRange', () => {
 			};
 		} );
 
-		// Forces the date to be UTC format which avoids offset woes
-		// in the tests
-		fixedEndDate = moment.utc( '2018-06-01' );
-
 		// Set the clock for our test assertions so that new Date()
-		// will return the known `fixedEndDate` set above. This helps
-		// us control the non-determenism that comes from usage of
-		// JS `Date` within the component
-		MockDate.set( fixedEndDate );
+		// will return to a known deterministic date. This important
+		// for the component to render the expected calendars when
+		// an initial date is not passed to it in a test.
+		MockDate.set( moment.utc( '2018-06-01' ) );
 	} );
 
 	test( 'should render', () => {
