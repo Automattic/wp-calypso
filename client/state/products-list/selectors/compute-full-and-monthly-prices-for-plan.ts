@@ -8,21 +8,32 @@ import { getProductCost } from './get-product-cost';
 import { getProductPriceTierList } from './get-product-price-tiers';
 import { getProductSaleCouponCost } from './get-product-sale-coupon-cost';
 import { getProductSaleCouponDiscount } from './get-product-sale-coupon-discount';
+import type { Plan, JetpackPlan, WPComPlan } from '@automattic/calypso-products';
+import type { AppState } from 'calypso/types';
+
+interface FullAndMonthlyPrices {
+	priceFull: number;
+	priceFinal: number;
+	introductoryOfferPrice: number | null;
+}
 
 /**
- * Computes a full and monthly price for a given plan, based on it's slug/constant
+ * Computes a full and monthly price for a given plan, based on its slug/constant
  *
- * @param {object} state Current redux state
- * @param {number} siteId Site ID to consider
- * @param {object} planObject Plan object returned by getPlan() from @automattic/calypso-products
- * @returns {object} Object with a full and monthly price
+ * planObject is the plan object returned by getPlan() from @automattic/calypso-products
  */
-export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject ) => {
+export const computeFullAndMonthlyPricesForPlan = (
+	state: AppState,
+	siteId: number,
+	planObject: Plan | JetpackPlan | WPComPlan
+): FullAndMonthlyPrices => {
 	if ( planObject.group === GROUP_WPCOM ) {
 		return computePricesForWpComPlan( state, siteId, planObject );
 	}
 
-	const isJetpackSearchProduct = JETPACK_SEARCH_PRODUCTS.includes( planObject.getStoreSlug() );
+	const isJetpackSearchProduct = ( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes(
+		planObject.getStoreSlug()
+	);
 
 	// eslint-disable-next-line no-nested-ternary
 	const planOrProductPrice = ! getPlanPrice( state, siteId, planObject, false )
@@ -30,6 +41,11 @@ export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject ) 
 			? getSearchProductTierPrice( state, siteId, planObject.getStoreSlug() )
 			: getProductCost( state, planObject.getStoreSlug() )
 		: getPlanPrice( state, siteId, planObject, false );
+	if ( ! planOrProductPrice ) {
+		throw new Error(
+			'Plan does not have a price and therefore cannot be used to calculate term prices.'
+		);
+	}
 	const introOfferIsEligible = getIntroOfferIsEligible( state, planObject.getProductId(), siteId );
 	const saleCouponDiscount = getProductSaleCouponDiscount( state, planObject.getStoreSlug() ) || 0;
 	const introductoryOfferPrice = introOfferIsEligible
@@ -50,11 +66,13 @@ export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject ) 
 /**
  * Compute a full and monthly price for a given wpcom plan.
  *
- * @param {object} state Current redux state
- * @param {number} siteId Site ID to consider
- * @param {object} planObject Plan object returned by getPlan() from @automattic/calypso-products
+ * planObject is the plan object returned by getPlan() from @automattic/calypso-products
  */
-function computePricesForWpComPlan( state, siteId, planObject ) {
+function computePricesForWpComPlan(
+	state: AppState,
+	siteId: number,
+	planObject: Plan | JetpackPlan | WPComPlan
+): FullAndMonthlyPrices {
 	const priceFull = getPlanRawPrice( state, planObject.getProductId(), false ) || 0;
 	const introductoryOfferPrice = getIntroOfferPrice( state, planObject.getProductId(), siteId );
 
@@ -66,19 +84,16 @@ function computePricesForWpComPlan( state, siteId, planObject ) {
 }
 
 /**
- * Compute the Jetpack Search product tiered price based on the site's number of posts.
- *
- * @param {object} state Current redux state
- * @param {number} siteId Site ID to consider
- * @param {object} productSlug The product slug
- * @returns {number} The tiered price (given the site's number of published posts)
+ * Compute the Jetpack Search product tiered price based on the site's number of published posts.
  */
-function getSearchProductTierPrice( state, siteId, productSlug ) {
+function getSearchProductTierPrice( state: AppState, siteId: number, productSlug: string ): number {
 	const postsCounts = getAllPostCounts( state, siteId, 'post' );
 	const postsCount = postsCounts?.publish || 0;
 	const priceTierList = getProductPriceTierList( state, productSlug );
 	const tier = priceTierList.filter(
-		( tierItem ) => postsCount >= tierItem.minimum_units && postsCount <= tierItem.maximum_units
+		( tierItem ) =>
+			postsCount >= tierItem.minimum_units &&
+			( ! tierItem.maximum_units || postsCount <= tierItem.maximum_units )
 	);
 	const minPrice = tier[ 0 ].minimum_price.toString(); // is missing decimal, ie- $9.95 is returned as 995
 	return (
