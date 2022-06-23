@@ -18,7 +18,7 @@ interface Props {
 		selected: boolean;
 		text?: string | React.ReactChild;
 	};
-	showFeatured: boolean;
+	highlightFeatured: boolean;
 }
 
 const Container = styled.div`
@@ -37,7 +37,7 @@ const AddOnsGrid = ( {
 	actionPrimary,
 	actionSelected,
 	useAddOnSelectedStatus,
-	showFeatured,
+	highlightFeatured,
 }: Props ) => {
 	return (
 		<Container>
@@ -48,8 +48,8 @@ const AddOnsGrid = ( {
 						actionPrimary={ actionPrimary }
 						actionSelected={ actionSelected }
 						useAddOnSelectedStatus={ useAddOnSelectedStatus }
-						{ ...addOn }
-						featured={ showFeatured ? addOn.featured : false }
+						addOnMeta={ addOn }
+						highlightFeatured={ highlightFeatured }
 					/>
 				) : null
 			) }

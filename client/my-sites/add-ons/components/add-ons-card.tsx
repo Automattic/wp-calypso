@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import Badge from 'calypso/components/badge';
 import type { AddOnMeta } from '../hooks/use-add-ons';
 
-interface Props extends AddOnMeta {
+interface Props {
 	actionPrimary?: {
 		text: string | React.ReactChild;
 		handler: ( addOnSlug: string ) => void;
@@ -21,6 +21,8 @@ interface Props extends AddOnMeta {
 		selected: boolean;
 		text?: string | React.ReactChild;
 	};
+	highlightFeatured: boolean;
+	addOnMeta: AddOnMeta;
 }
 
 const Container = styled.div`
@@ -79,12 +81,12 @@ const Container = styled.div`
 
 const AddOnCard = ( props: Props ) => {
 	const translate = useTranslate();
-	const status = props.useAddOnSelectedStatus?.( props.slug );
+	const status = props.useAddOnSelectedStatus?.( props.addOnMeta.slug );
 	const onActionPrimary = () => {
-		props.actionPrimary?.handler( props.slug );
+		props.actionPrimary?.handler( props.addOnMeta.slug );
 	};
 	const onActionSelected = () => {
-		props.actionSelected?.handler( props.slug );
+		props.actionSelected?.handler( props.addOnMeta.slug );
 	};
 
 	return (
@@ -92,23 +94,23 @@ const AddOnCard = ( props: Props ) => {
 			<Card className="add-ons-card">
 				<CardHeader isBorderless={ true } className="add-ons-card__header">
 					<div className="add-ons-card__icon">
-						<Icon icon={ props.icon } size={ 44 } />
+						<Icon icon={ props.addOnMeta.icon } size={ 44 } />
 					</div>
 					<div className="add-ons-card__name-and-billing">
 						<div className="add-ons-card__name-tag">
-							<div>{ props.name }</div>
-							{ props.featured && (
+							<div>{ props.addOnMeta.name }</div>
+							{ props.highlightFeatured && props.addOnMeta.featured && (
 								<Badge key="popular" type="info-green" className="add-ons-card__featured-badge">
 									{ translate( 'Popular' ) }
 								</Badge>
 							) }
 						</div>
 						<div className="add-ons-card__billing">
-							{ props.displayCost } / { props.term }
+							{ props.addOnMeta.displayCost } / { props.addOnMeta.term }
 						</div>
 					</div>
 				</CardHeader>
-				<CardBody className="add-ons-card__body">{ props.description }</CardBody>
+				<CardBody className="add-ons-card__body">{ props.addOnMeta.description }</CardBody>
 				<CardFooter isBorderless={ true } className="add-ons-card__footer">
 					{ status?.selected && props.actionSelected && (
 						<>
