@@ -71,13 +71,14 @@ touch client/my-sites/hello-world/index.js
 Here we'll import the `page` module, the My Sites controller and our own controller, and write our main route handler:
 
 ```javascript
+import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import { helloWorld } from './controller';
 
 export default () => {
-	if ( config.isEnabled( 'hello-world' ) ) {
+	if ( isEnabled( 'hello-world' ) ) {
 		page( '/hello-world/:site?', siteSelection, navigation, helloWorld, makeLayout, clientRender );
 	} else {
 		page.redirect( '/' );
