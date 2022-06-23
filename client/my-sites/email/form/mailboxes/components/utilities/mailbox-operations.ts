@@ -13,21 +13,17 @@ export class MailboxOperations {
 	}
 
 	validateLocal() {
-		const mailboxNames = new Map< string, string >(
-			this.mailboxes.map( ( mailbox ) => {
-				return [
-					mailbox.getFieldValue( FIELD_UUID ) ?? '',
-					mailbox.getFieldValue( FIELD_MAILBOX ) ?? '',
-				];
-			} )
-		);
-
 		this.mailboxes.forEach( ( mailbox ) => {
-			const otherMailboxNames = new Map< string, string >( mailboxNames );
-			otherMailboxNames.delete( mailbox.getFieldValue( FIELD_UUID ) ?? '' );
+			const otherMailboxNames = this.mailboxes
+				.filter(
+					( currentMailbox ) =>
+						currentMailbox.getFieldValue( FIELD_UUID ) !== mailbox.getFieldValue( FIELD_UUID )
+				)
+				.map( ( mailbox ) => mailbox.getFieldValue< string >( FIELD_MAILBOX ) ?? '' );
+
 			mailbox.validate(
 				true,
-				mailbox.getPreviouslySpecifiedMailboxNameValidators( [ ...otherMailboxNames.values() ] )
+				mailbox.getPreviouslySpecifiedMailboxNameValidators( otherMailboxNames )
 			);
 		} );
 	}
