@@ -10,8 +10,10 @@ describe( 'LoggedOutFormLinkItem', () => {
 		render(
 			<LoggedOutFormLinkItem href="http://example.com">Example text here</LoggedOutFormLinkItem>
 		);
-		expect( screen.queryByRole( 'link' ) ).toHaveAttribute( 'href', 'http://example.com' );
-		expect( screen.queryByRole( 'link' ) ).toHaveTextContent( 'Example text here' );
+		const link = screen.queryByRole( 'link' );
+
+		expect( link ).toHaveAttribute( 'href', 'http://example.com' );
+		expect( link ).toHaveTextContent( 'Example text here' );
 	} );
 
 	test( 'should include own class and append passed class', () => {
