@@ -6,10 +6,7 @@ import {
 	EMAIL_ACCOUNT_TYPE_TITAN_MAIL,
 	EMAIL_ACCOUNT_TYPE_TITAN_MAIL_EXTERNAL,
 } from 'calypso/lib/emails/email-provider-constants';
-import {
-	EmailProvider,
-	ExistingMailboxNameType,
-} from 'calypso/my-sites/email/form/mailboxes/types';
+import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const getEmailAccountTypes = ( provider: EmailProvider ): string[] =>
@@ -25,7 +22,7 @@ const useGetExistingMailboxNames = (
 	provider: EmailProvider,
 	selectedDomainName: string,
 	isInitialMailboxPurchase = true
-): Map< string, ExistingMailboxNameType > => {
+): string[] => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const {
 		data: emailAccounts = [],
@@ -36,20 +33,15 @@ const useGetExistingMailboxNames = (
 		enabled: ! isInitialMailboxPurchase,
 	} );
 
-	const mailboxNames = new Map< string, ExistingMailboxNameType >();
-
 	if ( error || isLoading || ! emailAccounts.length ) {
-		return mailboxNames;
+		return [];
 	}
 
 	const emailAccountTypes = getEmailAccountTypes( provider );
 
-	emailAccounts
+	return emailAccounts
 		.filter( ( { account_type } ) => emailAccountTypes.includes( account_type ) )
-		.flatMap( ( { emails } ) => emails.map( ( { mailbox } ) => mailbox ) )
-		.forEach( ( mailboxName ) => mailboxNames.set( mailboxName, 'exists' ) );
-
-	return mailboxNames;
+		.flatMap( ( { emails } ) => emails.map( ( { mailbox } ) => mailbox ) );
 };
 
 export default useGetExistingMailboxNames;

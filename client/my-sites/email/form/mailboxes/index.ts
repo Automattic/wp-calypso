@@ -11,7 +11,6 @@ import {
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import {
 	EmailProvider,
-	ExistingMailboxNameType,
 	FieldError,
 	MailboxFormFieldBase,
 	MailboxFormFieldsFactory,
@@ -25,6 +24,7 @@ import {
 	PasswordValidator,
 	RequiredIfVisibleValidator,
 	RequiredValidator,
+	PreviouslySpecifiedMailboxNamesValidator,
 } from 'calypso/my-sites/email/form/mailboxes/validators';
 import type {
 	FormFieldNames,
@@ -34,17 +34,12 @@ import type {
 import type { Validator } from 'calypso/my-sites/email/form/mailboxes/validators';
 
 class MailboxForm< T extends EmailProvider > {
-	existingMailboxNames: Map< string, ExistingMailboxNameType >;
+	existingMailboxNames: string[];
 	formFields: MailboxFormFields;
 	provider: T;
 
-	constructor(
-		provider: T,
-		domain: string,
-		existingMailboxNames?: Map< string, ExistingMailboxNameType >
-	) {
-		this.existingMailboxNames =
-			existingMailboxNames ?? new Map< string, ExistingMailboxNameType >();
+	constructor( provider: T, domain: string, existingMailboxNames: string[] = [] ) {
+		this.existingMailboxNames = existingMailboxNames;
 		this.formFields = MailboxFormFieldsFactory.create( provider, domain );
 		this.provider = provider;
 	}
@@ -97,6 +92,20 @@ class MailboxForm< T extends EmailProvider > {
 				new MailboxNameAvailabilityValidator( domainName, this.provider ),
 			],
 		};
+	}
+
+	getPreviouslySpecifiedMailboxNameValidators(
+		previouslySpecifiedMailboxNames: string[]
+	): [ ValidatorFieldNames, Validator< unknown > ][] {
+		const domainField = this.getFormField< string >( FIELD_DOMAIN );
+		const domainName = domainField?.value ?? '';
+
+		return [
+			[
+				FIELD_MAILBOX,
+				new PreviouslySpecifiedMailboxNamesValidator( domainName, previouslySpecifiedMailboxNames ),
+			],
+		];
 	}
 
 	clearErrors() {
@@ -195,25 +204,37 @@ class MailboxForm< T extends EmailProvider > {
 		}
 	}
 
-	validate( skipInvisibleFields = false ) {
+	private validateFieldByName(
+		fieldName: ValidatorFieldNames,
+		validator: Validator< unknown >,
+		skipInvisibleFields: boolean
+	) {
+		if ( ! fieldName ) {
+			return;
+		}
+
+		const field = this.getFormField( fieldName );
+		if ( ! field || field.error ) {
+			return;
+		}
+
+		if ( skipInvisibleFields && ! field.isVisible ) {
+			return;
+		}
+
+		validator.validate( field );
+	}
+
+	validate(
+		skipInvisibleFields = false,
+		additionalValidators?: [ ValidatorFieldNames, Validator< unknown > ][]
+	) {
 		this.clearErrors();
 
-		for ( const [ fieldName, validator ] of this.getValidators() ) {
-			if ( ! fieldName ) {
-				continue;
-			}
-
-			const field = this.getFormField( fieldName );
-			if ( ! field || field.error ) {
-				continue;
-			}
-
-			if ( skipInvisibleFields && ! field.isVisible ) {
-				continue;
-			}
-
-			validator.validate( field );
-		}
+		[ ...this.getValidators(), ...( additionalValidators ?? [] ) ].forEach(
+			( [ fieldName, validator ] ) =>
+				this.validateFieldByName( fieldName, validator, skipInvisibleFields )
+		);
 	}
 
 	validateField( fieldName: FormFieldNames ) {

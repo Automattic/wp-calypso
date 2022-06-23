@@ -62,9 +62,6 @@ const setFieldsVisibilities = (
 	} );
 };
 
-const getMailboxNamesAlreadyProposedInForm = ( mailboxes: MailboxForm< EmailProvider >[] ) =>
-	mailboxes.map( ( mailbox ) => mailbox.getFieldValue( FIELD_MAILBOX ) as string );
-
 interface MailboxListProps {
 	areButtonsBusy?: boolean;
 	hiddenFieldNames?: HiddenFieldNames[];
@@ -134,44 +131,30 @@ const NewMailBoxList = (
 	}, [ hiddenFieldNames ] );
 
 	const addMailbox = () => {
-		getMailboxNamesAlreadyProposedInForm( mailboxes ).forEach( ( mailboxName ) => {
-			window.console.log(
-				'ZXX add',
-				mailboxName,
-				existingMailboxes.set( mailboxName, 'proposed' ),
-				[ ...existingMailboxes.entries() ]
-			);
-		} );
-
 		const newMailboxes = [ ...mailboxes, createNewMailbox() ];
-		setMailboxes( newMailboxes );
 		const eventName = isTitan
 			? 'calypso_email_titan_add_mailboxes_add_another_mailbox_button_click'
 			: 'calypso_email_google_workspace_add_mailboxes_add_another_mailbox_button_click';
+
+		setMailboxes( newMailboxes );
 		recordTracksEvent( eventName, { mailbox_count: newMailboxes.length } );
 	};
 
 	const removeMailbox = useCallback(
 		( uuid: string ) => () => {
-			const newMailboxes = mailboxes.filter( ( mailbox ) => {
-				window.console.log(
-					'ZXX delete',
-					mailbox.formFields.mailbox.value,
-					existingMailboxes.delete( mailbox.formFields.mailbox.value ),
-					[ ...existingMailboxes.entries() ]
-				);
-				return mailbox.formFields.uuid.value !== uuid;
-			} );
-
-			setMailboxes( newMailboxes );
+			const newMailboxes = mailboxes.filter(
+				( mailbox ) => mailbox.formFields.uuid.value !== uuid
+			);
 			const eventName = isTitan
 				? 'calypso_email_titan_add_mailboxes_remove_mailbox_button_click'
 				: 'calypso_email_google_workspace_add_mailboxes_remove_mailbox_button_click';
+
+			setMailboxes( newMailboxes );
 			recordTracksEvent( eventName, { mailbox_count: newMailboxes.length } );
 		},
-		[ existingMailboxes, isTitan, mailboxes ]
+		[ isTitan, mailboxes ]
 	);
-	// window.console.log( 'ZXX render', provider, [ ...existingMailboxes.entries() ] );
+
 	const handleCancel = () => onCancel();
 
 	const handleSubmit = ( event: FormEvent< HTMLFormElement > ) => {
