@@ -105,7 +105,12 @@ const ImportLight: Step = function ImportStep( props ) {
 				);
 
 			case 'summary':
-				return <Summary colorsNum={ colors.length } />;
+				return (
+					<Summary
+						colorsNum={ colors.length }
+						onContinueClick={ () => navigation.goToStep?.( 'designSetup' ) }
+					/>
+				);
 
 			case 'capture':
 			default:

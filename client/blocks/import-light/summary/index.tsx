@@ -9,10 +9,11 @@ import './style.scss';
 
 interface Props {
 	colorsNum: number;
+	onContinueClick?: () => void;
 }
 const Summary: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const { colorsNum } = props;
+	const { colorsNum, onContinueClick } = props;
 
 	return (
 		<div className="import-layout__center import-light__summary">
@@ -32,7 +33,9 @@ const Summary: React.FunctionComponent< Props > = ( props ) => {
 							}
 						) }
 					</SubTitle>
-					<NextButton>Continue</NextButton>
+					{ onContinueClick && (
+						<NextButton onClick={ onContinueClick }>{ __( 'Continue' ) }</NextButton>
+					) }
 				</Progress>
 			</div>
 		</div>
