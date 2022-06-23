@@ -270,14 +270,22 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			}
 		}
 	}
-}
 
-.design-setup__info-popover {
-	background-color: #000000;
-	padding: 8px 8px 3px;
-	border-radius: 2px;
-	margin-right: 10px;
-	cursor: pointer;
+	.step-container__header .formatted-header {
+		h1.formatted-header__title {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu,
+				Cantarell, 'Helvetica Neue', sans-serif;
+			font-weight: 500;
+		}
+	}
+
+	.design-setup__info-popover {
+		background-color: #000000;
+		padding: 8px 8px 3px;
+		border-radius: 2px;
+		margin-right: 10px;
+		cursor: pointer;
+	}
 }
 
 /* Hide categories from the sell intent */
