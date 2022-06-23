@@ -55,14 +55,13 @@ const PluginDetailsCTA = ( {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 	const isFreePlan = selectedSite && isFreePlanProduct( selectedSite.plan );
+	const pluginFeature = isMarketplaceProduct
+		? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
+		: FEATURE_INSTALL_PLUGINS;
 
 	const shouldUpgrade =
-		useSelector(
-			( state ) =>
-				( isMarketplaceProduct &&
-					! siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ) ) ||
-				! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
-		) && ! isJetpackSelfHosted;
+		useSelector( ( state ) => ! siteHasFeature( state, selectedSite?.ID, pluginFeature ) ) &&
+		! isJetpackSelfHosted;
 
 	// Eligibilities for Simple Sites.
 	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
