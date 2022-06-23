@@ -15,6 +15,7 @@ import { connect } from 'react-redux';
 import CancelJetpackForm from 'calypso/components/marketing-survey/cancel-jetpack-form';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	getName,
 	getSubscriptionEndDate,
@@ -27,18 +28,20 @@ import {
 	cancelPurchase,
 	extendPurchaseWithFreeMonth,
 } from 'calypso/lib/purchases/actions';
-import { confirmCancelDomain, purchasesRoot } from 'calypso/me/purchases/paths';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { getDowngradePlanFromPurchase } from 'calypso/state/purchases/selectors';
+import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
+import { receiveDeletedSite } from 'calypso/state/sites/actions';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
+import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
 		purchaseListUrl: PropTypes.string,
-		getConfirmCancelDomainUrlFor: PropTypes.func,
 		siteSlug: PropTypes.string.isRequired,
 		cancelBundledDomain: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
@@ -47,7 +50,6 @@ class CancelPurchaseButton extends Component {
 
 	static defaultProps = {
 		purchaseListUrl: purchasesRoot,
-		getConfirmCancelDomainUrlFor: confirmCancelDomain,
 	};
 
 	state = {
@@ -62,10 +64,6 @@ class CancelPurchaseButton extends Component {
 	};
 
 	handleCancelPurchaseClick = () => {
-		if ( isDomainRegistration( this.props.purchase ) ) {
-			return this.goToCancelConfirmation();
-		}
-
 		this.setState( {
 			showDialog: true,
 		} );
@@ -75,13 +73,6 @@ class CancelPurchaseButton extends Component {
 		this.setState( {
 			showDialog: false,
 		} );
-	};
-
-	goToCancelConfirmation = () => {
-		const { id } = this.props.purchase;
-		const slug = this.props.siteSlug;
-
-		page( this.props.getConfirmCancelDomainUrlFor( slug, id ) );
 	};
 
 	cancelPurchase = () => {
@@ -155,29 +146,41 @@ class CancelPurchaseButton extends Component {
 		page.redirect( this.props.purchaseListUrl );
 	};
 
-	cancelAndRefund = () => {
-		const { purchase, cancelBundledDomain } = this.props;
+	cancelAndRefund = ( data ) => {
+		const { isDomainOnlySite, purchase, cancelBundledDomain } = this.props;
 
 		this.setDisabled( true );
 
-		cancelAndRefundPurchase(
-			purchase.id,
-			{ product_id: purchase.productId, cancel_bundled_domain: cancelBundledDomain ? 1 : 0 },
-			( error, response ) => {
-				this.setDisabled( false );
+		if ( ! data ) {
+			data = { product_id: purchase.productId, cancel_bundled_domain: cancelBundledDomain ? 1 : 0 };
+		}
 
-				if ( error ) {
-					this.props.errorNotice( error.message );
-					this.cancellationFailed();
-					return;
-				}
+		cancelAndRefundPurchase( purchase.id, data, ( error, response ) => {
+			this.setDisabled( false );
 
-				this.props.refreshSitePlans( purchase.siteId );
-				this.props.clearPurchases();
-				this.props.successNotice( response.message, { displayOnNextPage: true } );
-				page.redirect( this.props.purchaseListUrl );
+			if ( isDomainOnlySite ) {
+				this.props.receiveDeletedSite( purchase.siteId );
+				this.props.setAllSitesSelected();
 			}
-		);
+
+			if ( error ) {
+				this.props.errorNotice( error.message );
+				this.cancellationFailed();
+				return;
+			}
+
+			this.props.refreshSitePlans( purchase.siteId );
+			this.props.clearPurchases();
+
+			if ( isDomainRegistration( purchase ) ) {
+				recordTracksEvent( 'calypso_domain_cancel_form_submit', {
+					product_slug: purchase.productSlug,
+				} );
+			}
+
+			this.props.successNotice( response.message, { displayOnNextPage: true } );
+			page.redirect( this.props.purchaseListUrl );
+		} );
 	};
 
 	downgradeClick = ( upsell ) => {
@@ -234,11 +237,11 @@ class CancelPurchaseButton extends Component {
 		}
 	};
 
-	submitCancelAndRefundPurchase = () => {
+	submitCancelAndRefundPurchase = ( data ) => {
 		const refundable = hasAmountAvailableToRefund( this.props.purchase );
 
 		if ( refundable ) {
-			this.cancelAndRefund();
+			this.cancelAndRefund( data );
 		} else {
 			this.cancelPurchase();
 		}
@@ -347,11 +350,14 @@ class CancelPurchaseButton extends Component {
 export default connect(
 	( state, { purchase } ) => ( {
 		isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
+		isDomainOnlySite: isDomainOnly( state, purchase.siteId ),
 	} ),
 	{
 		clearPurchases,
 		errorNotice,
 		successNotice,
 		refreshSitePlans,
+		receiveDeletedSite,
+		setAllSitesSelected,
 	}
 )( localize( CancelPurchaseButton ) );

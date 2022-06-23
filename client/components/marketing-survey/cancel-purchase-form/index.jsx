@@ -1,4 +1,5 @@
 import {
+	isDomainRegistration,
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isWpComMonthlyPlan,
@@ -113,21 +114,26 @@ class CancelPurchaseForm extends Component {
 
 	shouldUseBlankCanvasLayout() {
 		const { isJetpack, purchase } = this.props;
-		return isPlan( purchase ) && ! isJetpack;
+
+		if ( isJetpack ) {
+			return false;
+		}
+
+		return isPlan( purchase ) || isDomainRegistration( purchase );
 	}
 
 	getAllSurveySteps() {
 		const { purchase, willAtomicSiteRevert } = this.props;
 
-		if ( isPlan( purchase ) ) {
-			if ( this.shouldUseBlankCanvasLayout() ) {
-				if ( willAtomicSiteRevert ) {
-					return [ FEEDBACK_STEP, ATOMIC_REVERT_STEP ];
-				}
-
-				return [ FEEDBACK_STEP ];
+		if ( this.shouldUseBlankCanvasLayout() ) {
+			if ( isPlan( purchase ) && willAtomicSiteRevert ) {
+				return [ FEEDBACK_STEP, ATOMIC_REVERT_STEP ];
 			}
 
+			return [ FEEDBACK_STEP ];
+		}
+
+		if ( isPlan( purchase ) ) {
 			return [ INITIAL_STEP, FINAL_STEP ];
 		}
 
@@ -254,6 +260,7 @@ class CancelPurchaseForm extends Component {
 			...this.state,
 			questionOneRadio: value,
 			questionOneText: '',
+			questionOneConfirmed: false,
 			upsell: '',
 		};
 		this.setState( newState );
@@ -355,8 +362,20 @@ class CancelPurchaseForm extends Component {
 
 	onSubmit = () => {
 		const { purchase } = this.props;
+		let data = null;
 
-		if ( ! isGSuiteOrGoogleWorkspace( purchase ) ) {
+		if ( isDomainRegistration( purchase ) ) {
+			data = {
+				domain_cancel_reason: this.state.questionOneRadio,
+				domain_cancel_message: this.state.questionOneText,
+				confirm: true,
+				product_id: purchase.productId,
+				blog_id: purchase.siteId,
+				domain: getName( purchase ),
+			};
+
+			this.setState( { submitting: true } );
+		} else if ( ! isGSuiteOrGoogleWorkspace( purchase ) ) {
 			this.setState( {
 				isSubmitting: true,
 			} );
@@ -388,7 +407,7 @@ class CancelPurchaseForm extends Component {
 				} );
 		}
 
-		this.props.onClickFinalConfirm();
+		this.props.onClickFinalConfirm( data );
 
 		this.recordEvent( 'calypso_purchases_cancel_form_submit' );
 	};
@@ -517,8 +536,9 @@ class CancelPurchaseForm extends Component {
 	};
 
 	renderQuestionOne = () => {
-		const { translate } = this.props;
-		const { questionOneOrder, questionOneRadio, questionOneText } = this.state;
+		const { purchase, translate } = this.props;
+		const { questionOneOrder, questionOneRadio, questionOneText, questionOneConfirmed } =
+			this.state;
 		const { productSlug } = this.props.purchase; // Product being cancelled
 		const reasons = getCancellationReasons( questionOneOrder, { productSlug } );
 
@@ -532,6 +552,7 @@ class CancelPurchaseForm extends Component {
 						value={ questionOneRadio }
 						options={ reasons }
 						onChange={ this.onRadioOneChange }
+						help={ selectedOption?.helpMessage }
 					/>
 					{ selectedOption?.textPlaceholder && (
 						<TextControl
@@ -548,6 +569,22 @@ class CancelPurchaseForm extends Component {
 							onChange={ this.onSelectOneChange }
 						/>
 					) }
+					{ isDomainRegistration( purchase ) &&
+						questionOneRadio &&
+						! selectedOption?.isNextStepBlocked && (
+							<CheckboxControl
+								label={ translate(
+									'I understand that cancelling means that I may {{strong}}lose this domain forever{{/strong}}.',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+								checked={ questionOneConfirmed }
+								onChange={ ( isChecked ) => this.setState( { questionOneConfirmed: isChecked } ) }
+							/>
+						) }
 					{ this.showUpsell() }
 				</div>
 			);
@@ -692,8 +729,13 @@ class CancelPurchaseForm extends Component {
 	};
 
 	renderImportQuestion = () => {
+		const { isImport, translate } = this.props;
+
+		if ( ! isImport ) {
+			return null;
+		}
+
 		const reasons = [];
-		const { translate } = this.props;
 		const { importQuestionRadio, importQuestionText } = this.state;
 
 		const options = [
@@ -767,9 +809,13 @@ class CancelPurchaseForm extends Component {
 	};
 
 	renderFreeformQuestion = () => {
-		const { translate, isImport } = this.props;
+		const { translate, isImport, purchase } = this.props;
 
 		if ( this.shouldUseBlankCanvasLayout() ) {
+			if ( ! isPlan( purchase ) ) {
+				return null;
+			}
+
 			if ( ! isSurveyFilledIn( this.state, isImport ) ) {
 				// Do not display this question unless user has already answered previous questions.
 				return null;
@@ -844,9 +890,19 @@ class CancelPurchaseForm extends Component {
 	};
 
 	surveyContent() {
-		const { atomicTransfer, translate, isImport, isJetpack, moment, showSurvey, site } = this.props;
+		const { atomicTransfer, translate, isJetpack, moment, purchase, showSurvey, site } = this.props;
 		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep } = this.state;
 		const productName = isJetpack ? translate( 'Jetpack' ) : translate( 'WordPress.com' );
+		const subheaderText = isDomainRegistration( purchase )
+			? translate(
+					'Since domain cancellation can cause your site to stop working, we’d like to make sure we help you take the right action.'
+			  )
+			: translate(
+					'Before you go, please answer a few quick questions to help us improve %(productName)s.',
+					{
+						args: { productName },
+					}
+			  );
 
 		if ( surveyStep === FEEDBACK_STEP ) {
 			return (
@@ -854,16 +910,11 @@ class CancelPurchaseForm extends Component {
 					<FormattedHeader
 						brandFont
 						headerText={ translate( 'Share your feedback' ) }
-						subHeaderText={ translate(
-							'Before you go, please answer a few quick questions to help us improve %(productName)s.',
-							{
-								args: { productName },
-							}
-						) }
+						subHeaderText={ subheaderText }
 					/>
 					<div className="cancel-purchase-form__feedback-questions">
 						{ this.renderQuestionOne() }
-						{ isImport && this.renderImportQuestion() }
+						{ this.renderImportQuestion() }
 						{ this.renderQuestionTwo() }
 						{ this.renderFreeformQuestion() }
 					</div>
@@ -948,7 +999,7 @@ class CancelPurchaseForm extends Component {
 							) }
 						</p>
 						{ this.renderQuestionOne() }
-						{ isImport && this.renderImportQuestion() }
+						{ this.renderImportQuestion() }
 						{ this.renderQuestionTwo() }
 					</div>
 				);
@@ -1004,19 +1055,28 @@ class CancelPurchaseForm extends Component {
 
 		if ( this.shouldUseBlankCanvasLayout() ) {
 			const buttons = [];
+			const isDomain = isDomainRegistration( purchase );
 
 			let canGoNext = ! isCancelling;
 			if ( surveyStep === FEEDBACK_STEP ) {
-				canGoNext = isSurveyFilledIn( this.state, isImport );
+				canGoNext = isSurveyFilledIn( this.state, isImport, purchase );
 			} else if ( surveyStep === ATOMIC_REVERT_STEP ) {
 				canGoNext = atomicRevertCheckOne && atomicRevertCheckTwo;
 			}
 
-			buttons.push(
-				<GutenbergButton disabled={ isCancelling } isPrimary onClick={ this.closeDialog }>
-					{ translate( 'Keep my plan' ) }
-				</GutenbergButton>
-			);
+			if ( isDomain ) {
+				buttons.push(
+					<GutenbergButton disabled={ isCancelling } isPrimary onClick={ this.closeDialog }>
+						{ translate( 'Keep my domain' ) }
+					</GutenbergButton>
+				);
+			} else {
+				buttons.push(
+					<GutenbergButton disabled={ isCancelling } isPrimary onClick={ this.closeDialog }>
+						{ translate( 'Keep my plan' ) }
+					</GutenbergButton>
+				);
+			}
 
 			if ( ! isLastStep ) {
 				buttons.push(
@@ -1028,11 +1088,16 @@ class CancelPurchaseForm extends Component {
 
 			if ( isLastStep ) {
 				let actionText;
-				if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
-					actionText = isCancelling ? translate( 'Removing…' ) : translate( 'Remove plan' );
+				const isRemoveFlow = flowType === CANCEL_FLOW_TYPE.REMOVE;
+
+				if ( isCancelling ) {
+					actionText = isRemoveFlow ? translate( 'Removing…' ) : translate( 'Cancelling…' );
+				} else if ( isDomain ) {
+					actionText = isRemoveFlow ? translate( 'Remove domain' ) : translate( 'Cancel domain' );
 				} else {
-					actionText = isCancelling ? translate( 'Cancelling…' ) : translate( 'Cancel plan' );
+					actionText = isRemoveFlow ? translate( 'Remove plan' ) : translate( 'Cancel plan' );
 				}
+
 				buttons.push(
 					<GutenbergButton
 						isDefault
@@ -1161,24 +1226,37 @@ class CancelPurchaseForm extends Component {
 		}
 	}
 
+	getHeaderContent = () => {
+		const { flowType, purchase, site, translate } = this.props;
+		const isRemoveFlow = flowType === CANCEL_FLOW_TYPE.REMOVE;
+
+		if ( isDomainRegistration( purchase ) ) {
+			return (
+				<>
+					{ isRemoveFlow ? translate( 'Remove domain' ) : translate( 'Cancel domain' ) }
+					<span className="cancel-purchase-form__site-slug">{ getName( purchase ) }</span>
+				</>
+			);
+		}
+
+		return (
+			<>
+				{ isRemoveFlow ? translate( 'Remove plan' ) : translate( 'Cancel plan' ) }
+				<span className="cancel-purchase-form__site-slug">{ site.slug }</span>
+			</>
+		);
+	};
+
 	render() {
 		const { surveyStep } = this.state;
 		if ( ! surveyStep ) {
 			return null;
 		}
 
-		const {
-			flowType,
-			isChatActive,
-			isChatAvailable,
-			isJetpack,
-			purchase,
-			site,
-			supportVariation,
-			translate,
-		} = this.props;
+		const { isChatActive, isChatAvailable, purchase, site, supportVariation, translate } =
+			this.props;
 
-		if ( isPlan( purchase ) && ! isJetpack ) {
+		if ( this.shouldUseBlankCanvasLayout() ) {
 			const steps = this.getAllSurveySteps();
 
 			return (
@@ -1189,10 +1267,7 @@ class CancelPurchaseForm extends Component {
 					{ this.props.isVisible && (
 						<BlankCanvas className="cancel-purchase-form">
 							<BlankCanvas.Header onBackClick={ this.closeDialog }>
-								{ flowType === CANCEL_FLOW_TYPE.REMOVE
-									? translate( 'Remove plan' )
-									: translate( 'Cancel plan' ) }
-								<span className="cancel-purchase-form__site-slug">{ site.slug }</span>
+								{ this.getHeaderContent() }
 								{ steps.length > 1 && (
 									<span className="cancel-purchase-form__step">
 										{ translate( 'Step %(currentStep)d of %(totalSteps)d', {
@@ -1249,7 +1324,7 @@ export default connect(
 		isChatAvailable: isHappychatAvailable( state ),
 		isChatActive: hasActiveHappychatSession( state ),
 		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
-		isImport: !! getSiteImportEngine( state, purchase.siteId ),
+		isImport: !! getSiteImportEngine( state, purchase.siteId ) && isPlan( purchase ),
 		isJetpack: isJetpackPlan( purchase ) || isJetpackProduct( purchase ),
 		downgradePlanPrice: getDowngradePlanRawPrice( state, purchase ),
 		supportVariation: getSupportVariation( state ),
