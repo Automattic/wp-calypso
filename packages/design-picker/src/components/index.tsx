@@ -3,6 +3,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { MShotsImage } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -82,7 +83,30 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			return null;
 		}
 
-		const text = __( 'Free' );
+		let text: any = __( 'Free' );
+
+		if ( design.is_premium ) {
+			text = createInterpolateElement(
+				sprintf(
+					/* translators: %(price)s - the price of the theme */
+					__( '%(price)s per year or <a>included in the Pro plan</a>' ),
+					{
+						price: design.price,
+					}
+				),
+				{
+					a: (
+						<a
+							href="https://google.com"
+							target="__blank"
+							onClick={ ( e ) => {
+								e.stopPropagation();
+							} }
+						/>
+					),
+				}
+			);
+		}
 
 		return <div className="design-picker__pricing-description">{ text }</div>;
 	}
