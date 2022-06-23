@@ -213,7 +213,7 @@ const AccountEmailField = ( {
 		<>
 			<QueryAllDomains />
 			<FormFieldset>
-				<FormLabel htmlFor={ emailInputId }>{ translate( 'Email address' ) } </FormLabel>
+				<FormLabel htmlFor={ emailInputId }>{ translate( 'Email address' ) }</FormLabel>
 				<FormTextInput
 					disabled={ isEmailControlDisabled || isEmailChangePending }
 					id={ emailInputId }
@@ -223,6 +223,7 @@ const AccountEmailField = ( {
 					value={ emailAddress }
 					onChange={ onEmailAddressChange }
 				/>
+
 				<AccountEmailValidationNotice
 					emailInvalidReason={ emailInvalidReason }
 					unsavedUserSettings={ unsavedUserSettings }
