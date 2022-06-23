@@ -46,7 +46,6 @@ describe( 'DateRange', () => {
 	describe( 'Date range clamping', () => {
 		test( 'should ensure the end date is not before the start date', () => {
 			const selectedEndDate = moment( '06-01-2018', 'MM-DD-YYYY' );
-
 			const selectedStartDate = moment( selectedEndDate ).add( 1, 'months' );
 
 			render(
@@ -106,7 +105,6 @@ describe( 'DateRange', () => {
 
 		test( 'should clamp selected dates to respect lastSelectableDate prop', () => {
 			const lastSelectableDate = moment( '06-01-2018', 'MM-DD-YYYY' );
-
 			const startDateInFuture = moment( lastSelectableDate ).add( 1, 'months' );
 			const endDateInFuture = moment( lastSelectableDate ).add( 2, 'months' );
 
@@ -142,9 +140,11 @@ describe( 'DateRange', () => {
 		test( 'should render trigger with appropriate placeholders if no dates provided or selected', () => {
 			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const range = screen.getByLabelText( 'Select date range' ).querySelector( 'span' ).innerHTML;
+			const rangeText = screen
+				.getByLabelText( 'Select date range' )
+				.querySelector( 'span' ).innerHTML;
 
-			expect( range ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
+			expect( rangeText ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
 		} );
 
 		test( 'should update trigger props to match currently selected dates', async () => {
@@ -152,18 +152,20 @@ describe( 'DateRange', () => {
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			const from = screen.getByLabelText( 'From' );
-			const to = screen.getByLabelText( 'To' );
-			const applyBtn = screen.getByText( 'Apply' );
+			const fromInputEl = screen.getByLabelText( 'From' );
+			const toInputEl = screen.getByLabelText( 'To' );
+			const applyBtnEl = screen.getByText( 'Apply' );
 
-			await userEvent.type( from, '04-01-2018' );
-			await userEvent.type( to, '04-29-2018' );
+			await userEvent.type( fromInputEl, '04/01/2018' );
+			await userEvent.type( toInputEl, '04/29/2018' );
 
-			await userEvent.click( applyBtn );
+			await userEvent.click( applyBtnEl );
 
-			const range = screen.getByLabelText( 'Select date range' ).querySelector( 'span' ).innerHTML;
+			const rangeText = screen
+				.getByLabelText( 'Select date range' )
+				.querySelector( 'span' ).innerHTML;
 
-			expect( range ).toEqual( '04/01/2018 - 04/29/2018' );
+			expect( rangeText ).toEqual( '04/01/2018 - 04/29/2018' );
 		} );
 
 		test( 'should toggle popover on trigger click', async () => {
@@ -171,16 +173,15 @@ describe( 'DateRange', () => {
 
 			// Open
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			const popoverEl = screen.getByRole( 'tooltip' );
 
-			const popover = screen.getByRole( 'tooltip' );
-
-			expect( popover ).toBeVisible();
+			expect( popoverEl ).toBeVisible();
 
 			// Close
-			const applyBtn = screen.getByText( 'Apply' );
-			await userEvent.click( applyBtn );
+			const applyBtnEl = screen.getByText( 'Apply' );
+			await userEvent.click( applyBtnEl );
 
-			expect( popover ).not.toBeVisible();
+			expect( popoverEl ).not.toBeVisible();
 		} );
 
 		test( 'should reset Dates on trigger clear btn click', async () => {
@@ -196,11 +197,14 @@ describe( 'DateRange', () => {
 				/>
 			);
 
-			const clearBtn = screen.getByTitle( 'Clear date selection' );
-			await userEvent.click( clearBtn );
+			const clearBtnEl = screen.getByTitle( 'Clear date selection' );
+			await userEvent.click( clearBtnEl );
 
-			const range = screen.getByLabelText( 'Select date range' ).querySelector( 'span' ).innerHTML;
-			expect( range ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
+			const rangeText = screen
+				.getByLabelText( 'Select date range' )
+				.querySelector( 'span' ).innerHTML;
+
+			expect( rangeText ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
 		} );
 	} );
 
@@ -233,12 +237,11 @@ describe( 'DateRange', () => {
 			);
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			const startMonthEl = screen.getByText( 'October 2018' );
+			const endMonthEl = screen.getByText( 'November 2018' );
 
-			const startMonth = screen.getByText( 'October 2018' );
-			const endMonth = screen.getByText( 'November 2018' );
-
-			expect( startMonth ).toBeVisible();
-			expect( endMonth ).toBeVisible();
+			expect( startMonthEl ).toBeVisible();
+			expect( endMonthEl ).toBeVisible();
 		} );
 
 		test( 'should set 1 month calendar view on screens <480px by default', async () => {
@@ -263,12 +266,11 @@ describe( 'DateRange', () => {
 			);
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
+			const startMonthEl = screen.getByText( 'October 2018' );
+			const endMonthEl = screen.queryByText( 'November 2018' );
 
-			const startMonth = screen.getByText( 'October 2018' );
-			const endMonth = screen.queryByText( 'November 2018' );
-
-			expect( startMonth ).toBeVisible();
-			expect( endMonth ).toBeNull();
+			expect( startMonthEl ).toBeVisible();
+			expect( endMonthEl ).toBeNull();
 		} );
 
 		test( 'should disable dates before firstSelectableDate when set', async () => {
@@ -287,18 +289,18 @@ describe( 'DateRange', () => {
 			// We assume that dates before the `firstSelectableDate` date and on/after
 			// it are disabled/enabled respectively. We test two of each for good
 			// measure. Testing all enabled/disabled dates wouldn't be feasible.
-			const someDisabledDates = [ 'Mon, Oct 1, 2018 12:00 PM', 'Tue, Oct 2, 2018 12:00 PM' ];
-			const someEnabledDates = [ 'Wed, Oct 3, 2018 12:00 PM', 'Thu, Oct 4, 2018 12:00 PM' ];
+			const someDisabledDatesStrings = [ 'Mon, Oct 1, 2018 12:00 PM', 'Tue, Oct 2, 2018 12:00 PM' ];
+			const someEnabledDatesStrings = [ 'Wed, Oct 3, 2018 12:00 PM', 'Thu, Oct 4, 2018 12:00 PM' ];
 
 			// Dates before `10-03-2018`
-			someDisabledDates.forEach( ( timestamp ) => {
-				const el = screen.getByLabelText( timestamp );
+			someDisabledDatesStrings.forEach( ( dateString ) => {
+				const el = screen.getByLabelText( dateString );
 				expect( el ).toHaveAttribute( 'aria-disabled', 'true' );
 			} );
 
 			// Dates on/after `10-03-2018`
-			someEnabledDates.forEach( ( timestamp ) => {
-				const el = screen.getByLabelText( timestamp );
+			someEnabledDatesStrings.forEach( ( dateString ) => {
+				const el = screen.getByLabelText( dateString );
 				expect( el ).toHaveAttribute( 'aria-disabled', 'false' );
 			} );
 		} );
@@ -319,18 +321,18 @@ describe( 'DateRange', () => {
 			// We assume that dates on/before the `lastSelectableDate` date and after
 			// it are enabled/disabled respectively. We test two of each for good
 			// measure. Testing all enabled/disabled dates wouldn't be feasible.
-			const someEnabledDates = [ 'Tue, Oct 2, 2018 12:00 PM', 'Wed, Oct 3, 2018 12:00 PM' ];
-			const someDisabledDates = [ 'Thu, Oct 4, 2018 12:00 PM', 'Fri, Oct 5, 2018 12:00 PM' ];
+			const someEnabledDatesStrings = [ 'Tue, Oct 2, 2018 12:00 PM', 'Wed, Oct 3, 2018 12:00 PM' ];
+			const someDisabledDatesStrings = [ 'Thu, Oct 4, 2018 12:00 PM', 'Fri, Oct 5, 2018 12:00 PM' ];
 
 			// Dates on/before `10-03-2018`
-			someEnabledDates.forEach( ( timestamp ) => {
-				const el = screen.getByLabelText( timestamp );
+			someEnabledDatesStrings.forEach( ( dateString ) => {
+				const el = screen.getByLabelText( dateString );
 				expect( el ).toHaveAttribute( 'aria-disabled', 'false' );
 			} );
 
 			// Dates after `10-03-2018`
-			someDisabledDates.forEach( ( timestamp ) => {
-				const el = screen.getByLabelText( timestamp );
+			someDisabledDatesStrings.forEach( ( dateString ) => {
+				const el = screen.getByLabelText( dateString );
 				expect( el ).toHaveAttribute( 'aria-disabled', 'true' );
 			} );
 		} );
@@ -348,11 +350,11 @@ describe( 'DateRange', () => {
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			const previousMonthBtn = screen.queryByLabelText( /Previous month/ );
-			const nextMonthBtn = screen.getByLabelText( 'Next month (December 2018)' );
+			const previousMonthBtnEl = screen.queryByLabelText( /Previous month/ );
+			const nextMonthBtnEl = screen.getByLabelText( 'Next month (December 2018)' );
 
-			expect( previousMonthBtn ).toBeNull();
-			expect( nextMonthBtn ).toBeVisible();
+			expect( previousMonthBtnEl ).toBeNull();
+			expect( nextMonthBtnEl ).toBeVisible();
 		} );
 
 		test( 'should *not* show the navigation button for the month afer to the one for `lastSelectableDate`', async () => {
@@ -368,11 +370,11 @@ describe( 'DateRange', () => {
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			const previousMonthBtn = screen.getByLabelText( 'Previous month (August 2018)' );
-			const nextMonthBtn = screen.queryByLabelText( /Next month/ );
+			const previousMonthBtnEl = screen.getByLabelText( 'Previous month (August 2018)' );
+			const nextMonthBtnEl = screen.queryByLabelText( /Next month/ );
 
-			expect( previousMonthBtn ).toBeVisible();
-			expect( nextMonthBtn ).toBeNull();
+			expect( previousMonthBtnEl ).toBeVisible();
+			expect( nextMonthBtnEl ).toBeNull();
 		} );
 	} );
 
@@ -380,8 +382,8 @@ describe( 'DateRange', () => {
 		test( 'should see inputs reflect date picker selection', async () => {
 			const firstSelectableDate = moment( '04-03-2018', 'MM-DD-YYYY' );
 
-			const startDate = 'Tue, Apr 3, 2018 12:00 PM';
-			const endDate = 'Tue, May 29, 2018 12:00 PM';
+			const startDateString = 'Tue, Apr 3, 2018 12:00 PM';
+			const endDateString = 'Tue, May 29, 2018 12:00 PM';
 
 			render(
 				<DateRange
@@ -392,14 +394,14 @@ describe( 'DateRange', () => {
 			);
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
-			await userEvent.click( screen.getByLabelText( startDate ) );
-			await userEvent.click( screen.getByLabelText( endDate ) );
+			await userEvent.click( screen.getByLabelText( startDateString ) );
+			await userEvent.click( screen.getByLabelText( endDateString ) );
 
-			const fromInput = screen.queryByDisplayValue( '04/03/2018' );
-			const toInput = screen.getByDisplayValue( '05/29/2018' );
+			const fromInputEl = screen.queryByDisplayValue( '04/03/2018' );
+			const toInputEl = screen.getByDisplayValue( '05/29/2018' );
 
-			expect( fromInput ).toBeVisible();
-			expect( toInput ).toBeVisible();
+			expect( fromInputEl ).toBeVisible();
+			expect( toInputEl ).toBeVisible();
 		} );
 
 		test( 'should update start date selection on start date input blur', async () => {
@@ -459,14 +461,14 @@ describe( 'DateRange', () => {
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			const fromEl = screen.getByLabelText( 'From' );
-			const toEl = screen.getByLabelText( 'To' );
+			const fromInputEl = screen.getByLabelText( 'From' );
+			const toInputEl = screen.getByLabelText( 'To' );
 
-			await userEvent.clear( fromEl );
-			await userEvent.click( fromEl );
+			await userEvent.clear( fromInputEl );
+			await userEvent.click( fromInputEl );
 			await userEvent.keyboard( invalidDateString );
-			await userEvent.clear( toEl );
-			await userEvent.click( toEl );
+			await userEvent.clear( toInputEl );
+			await userEvent.click( toInputEl );
 			await userEvent.keyboard( invalidDateString );
 
 			const startDateEl = screen.getByLabelText( 'Wed, May 30, 2018 12:00 PM' );
@@ -577,7 +579,7 @@ describe( 'DateRange', () => {
 		test( 'should persist date selection when user clicks the "Apply" button', async () => {
 			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const originalRange = screen
+			const originalRangeText = screen
 				.getByLabelText( 'Select date range' )
 				.querySelector( 'span' ).innerHTML;
 
@@ -588,18 +590,18 @@ describe( 'DateRange', () => {
 			await userEvent.keyboard( '04/29/2018' );
 			await userEvent.click( screen.getByLabelText( 'Apply' ) );
 
-			const newRange = screen
+			const newRangeText = screen
 				.getByLabelText( 'Select date range' )
 				.querySelector( 'span' ).innerHTML;
 
-			expect( originalRange ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
-			expect( newRange ).toEqual( '04/01/2018 - 04/29/2018' );
+			expect( originalRangeText ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
+			expect( newRangeText ).toEqual( '04/01/2018 - 04/29/2018' );
 		} );
 
 		test( 'should discard date selection when user clicks the "Cancel" button', async () => {
 			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const originalRange = screen
+			const originalRangeText = screen
 				.getByLabelText( 'Select date range' )
 				.querySelector( 'span' ).innerHTML;
 
@@ -610,11 +612,11 @@ describe( 'DateRange', () => {
 			await userEvent.keyboard( '04/29/2018' );
 			await userEvent.click( screen.getByLabelText( 'Cancel' ) );
 
-			const newRange = screen
+			const newRangeText = screen
 				.getByLabelText( 'Select date range' )
 				.querySelector( 'span' ).innerHTML;
 
-			expect( originalRange ).toEqual( newRange );
+			expect( originalRangeText ).toEqual( newRangeText );
 		} );
 
 		test( 'Should display prompt to select first date when no start date selected', async () => {
@@ -676,17 +678,17 @@ describe( 'DateRange', () => {
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			const fromEl = screen.getByLabelText( 'From' );
-			const toEl = screen.getByLabelText( 'To' );
+			const fromInputEl = screen.getByLabelText( 'From' );
+			const toInputEl = screen.getByLabelText( 'To' );
 
-			await userEvent.click( fromEl );
-			await userEvent.clear( fromEl );
+			await userEvent.click( fromInputEl );
+			await userEvent.clear( fromInputEl );
 			await userEvent.keyboard( '04/13/2018' );
-			await userEvent.click( toEl );
-			await userEvent.clear( toEl );
+			await userEvent.click( toInputEl );
+			await userEvent.clear( toInputEl );
 			await userEvent.keyboard( '05/13/2018' );
 			// force a blur out of `toEl`
-			await userEvent.click( fromEl );
+			await userEvent.click( fromInputEl );
 
 			expect( screen.getByLabelText( 'Fri, Apr 13, 2018 12:00 PM' ) ).toHaveAttribute(
 				'aria-selected',
@@ -700,8 +702,8 @@ describe( 'DateRange', () => {
 			const resetBtn = screen.getByLabelText( 'Reset selected dates' );
 			await userEvent.click( resetBtn );
 
-			expect( fromEl.value ).toEqual( '04/28/2018' );
-			expect( toEl.value ).toEqual( '05/28/2018' );
+			expect( fromInputEl.value ).toEqual( '04/28/2018' );
+			expect( toInputEl.value ).toEqual( '05/28/2018' );
 			expect( screen.getByLabelText( 'Sat, Apr 28, 2018 12:00 PM' ) ).toHaveAttribute(
 				'aria-selected',
 				'true'
