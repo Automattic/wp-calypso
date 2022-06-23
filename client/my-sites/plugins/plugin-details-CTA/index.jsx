@@ -1,5 +1,6 @@
 import {
 	isFreePlanProduct,
+	FEATURE_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
@@ -58,7 +59,9 @@ const PluginDetailsCTA = ( {
 	const shouldUpgrade =
 		useSelector(
 			( state ) =>
-				! siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+				( isMarketplaceProduct &&
+					! siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ) ) ||
+				! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
 		) && ! isJetpackSelfHosted;
 
 	// Eligibilities for Simple Sites.
