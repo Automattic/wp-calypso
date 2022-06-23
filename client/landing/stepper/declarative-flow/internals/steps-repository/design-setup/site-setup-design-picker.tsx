@@ -21,6 +21,7 @@ import { useMemo, useRef, useState, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { urlToSlug } from 'calypso/lib/url';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -277,7 +278,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 			window.location.href = `/checkout/${ encodeURIComponent(
-				siteSlugOrId
+				siteSlug || urlToSlug( site?.URL || '' )
 			) }/${ plan }?${ params.toString() }`;
 		}
 	}
