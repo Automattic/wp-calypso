@@ -12,8 +12,8 @@ import type { Plan, PlanSlug, ProductSlug } from '@automattic/calypso-products';
 import type { AppState } from 'calypso/types';
 
 export interface FullAndMonthlyPrices {
-	priceFull: number;
-	priceFinal: number;
+	priceFull: number | null;
+	priceFinal: number | null;
 	introductoryOfferPrice: number | null;
 }
 
@@ -47,18 +47,13 @@ export const computeFullAndMonthlyPricesForPlan = (
 			? getSearchProductTierPrice( state, siteId, planObject.getStoreSlug() )
 			: getProductCost( state, planObject.getStoreSlug() )
 		: getPlanPrice( state, siteId, planObject, false );
-	if ( ! planOrProductPrice ) {
-		throw new Error(
-			'Plan does not have a price and therefore cannot be used to calculate term prices.'
-		);
-	}
 	const introOfferIsEligible = getIntroOfferIsEligible( state, planObject.getProductId(), siteId );
 	const saleCouponDiscount = getProductSaleCouponDiscount( state, planObject.getStoreSlug() ) || 0;
 	const introductoryOfferPrice = introOfferIsEligible
 		? getIntroOfferPrice( state, planObject.getProductId(), siteId )
 		: null;
 	const saleCouponCost = isJetpackSearchProduct
-		? Math.floor( planOrProductPrice * ( 1 - saleCouponDiscount ) * 100 ) / 100
+		? calculateSaleCouponCostForJetpackProduct( planOrProductPrice, saleCouponDiscount )
 		: getProductSaleCouponCost( state, planObject.getStoreSlug() );
 
 	return {
@@ -68,6 +63,16 @@ export const computeFullAndMonthlyPricesForPlan = (
 			introductoryOfferPrice !== null ? introductoryOfferPrice * ( 1 - saleCouponDiscount ) : null,
 	};
 };
+
+function calculateSaleCouponCostForJetpackProduct(
+	price: number | null,
+	saleCouponDiscount: number
+): number | null {
+	if ( ! price ) {
+		return null;
+	}
+	return Math.floor( price * ( 1 - saleCouponDiscount ) * 100 ) / 100;
+}
 
 /**
  * Compute a full and monthly price for a given wpcom plan.
