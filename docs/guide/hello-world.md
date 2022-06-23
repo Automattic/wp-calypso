@@ -107,7 +107,7 @@ Now it's time to configure our section. Open `client/sections.js` and add the fo
 		name: 'hello-world',
 		paths: [ '/hello-world' ],
 		module: 'calypso/my-sites/hello-world',
-	},
+	};
 ```
 
 The array should look something like:
