@@ -11,6 +11,29 @@ import type {
 } from './types';
 import type { ReactChild } from 'react';
 
+export const siteColumns = [
+	{
+		key: 'site',
+		title: translate( 'Site' ),
+	},
+	{
+		key: 'backup',
+		title: translate( 'Backup' ),
+	},
+	{
+		key: 'scan',
+		title: translate( 'Scan' ),
+	},
+	{
+		key: 'monitor',
+		title: translate( 'Monitor' ),
+	},
+	{
+		key: 'plugin',
+		title: translate( 'Plugin Updates' ),
+	},
+];
+
 // Event names for all actions for large screen(>960px) and small screen(<960px)
 export const actionEventNames: ActionEventNames = {
 	issue_license: {
@@ -366,10 +389,10 @@ export const formatSites = ( sites: Array< any > = [] ): Array< any > => {
 			scan: formatScanData( site ),
 			monitor: formatMonitorData( site ),
 			plugin: {
-				value: `${ pluginUpdates.length } ${ translate( 'Available' ) }`,
-				status: pluginUpdates.length > 0 ? 'warning' : 'success',
+				value: `${ pluginUpdates?.length } ${ translate( 'Available' ) }`,
+				status: pluginUpdates?.length > 0 ? 'warning' : 'success',
 				type: 'plugin',
-				updates: pluginUpdates.length,
+				updates: pluginUpdates?.length,
 			},
 		};
 	} );
