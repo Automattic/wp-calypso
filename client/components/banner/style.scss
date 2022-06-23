@@ -254,14 +254,14 @@
 	}
 }
 
-.banner.is-compact .dismissible-card__close-icon {
+.banner.is-compact .dismissible-card__close-button {
 	width: 16px;
 	height: 16px;
 	top: 50%;
 	margin-top: -8px;
 }
 
-.is-horizontal .dismissible-card__close-icon, .is-horizontal .banner__close-icon {
+.is-horizontal .dismissible-card__close-button, .is-horizontal .banner__close-icon {
 	top: 50%;
 	margin-top: -12px;
 }
