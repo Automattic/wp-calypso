@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useStarterDesignsGeneratedQuery } from '@automattic/data-stores';
 import DesignPicker, {
 	GeneratedDesignPicker,
@@ -55,7 +55,6 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
-	const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 	const siteSlug = useSiteSlugParam();
 	const siteTitle = site?.name;
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
@@ -336,49 +335,31 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			/>
 		);
 
-		let header = (
-			<FormattedHeader
-				id={ 'design-setup-header' }
-				headerText={ designTitle }
-				align={ isMobile ? 'left' : 'center' }
-			/>
-		);
-
-		if ( intent === 'sell' ) {
-			if ( storeType === 'simple' ) {
-				header = <p className="design-setup__seller-header">{ translate( 'Simple Store' ) }</p>;
-			} else {
-				header = (
-					<p className="design-setup__seller-header">{ translate( 'Multi Product Store' ) }</p>
-				);
-			}
-		}
-
 		return (
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
-				hideNext
+				hideNext={ shouldUpgrade }
 				className={ 'design-setup__preview' }
+				nextLabelText={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
 				goBack={ handleBackClick }
 				goNext={ () => pickDesign() }
-				formattedHeader={ header }
+				formattedHeader={
+					<FormattedHeader
+						id={ 'design-setup-header' }
+						headerText={ designTitle }
+						align={ isMobile ? 'left' : 'center' }
+					/>
+				}
 				customizedActionButtons={
-					<div>
-						<button type="button" className={ 'design-setup__info-popover' }>
-							<Gridicon fill={ 'white' } icon={ 'info-outline' } size={ 24 } />
-						</button>
+					<>
 						{ shouldUpgrade ? (
 							<Button primary borderless={ false } onClick={ upgradePlan }>
 								{ translate( 'Upgrade Plan' ) }
 							</Button>
-						) : (
-							<Button primary borderless={ false } onClick={ upgradePlan }>
-								{ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
-							</Button>
-						) }
-					</div>
+						) : undefined }
+					</>
 				}
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
