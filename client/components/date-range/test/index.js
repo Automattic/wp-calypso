@@ -407,11 +407,11 @@ describe( 'DateRange', () => {
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 			await userEvent.click( screen.getByLabelText( 'From' ) );
-			await userEvent.keyboard( '05/30/2018' );
+			await userEvent.keyboard( '06/30/2018' );
 			// This causes a blur on the `From` input
 			await userEvent.tab();
 
-			const startDateEl = screen.getByLabelText( 'Wed, May 30, 2018 12:00 PM' );
+			const startDateEl = screen.getByLabelText( 'Sat, Jun 30, 2018 12:00 PM' );
 
 			expect( startDateEl ).toHaveAttribute( 'aria-selected', 'true' );
 		} );
@@ -422,7 +422,7 @@ describe( 'DateRange', () => {
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 			await userEvent.click( screen.getByLabelText( 'To' ) );
 			await userEvent.keyboard( '06/30/2018' );
-			// This causes a blur on the `To`
+			// This causes a blur on the `To` input
 			await userEvent.tab();
 
 			const endDateEl = screen.getByLabelText( 'Sat, Jun 30, 2018 12:00 PM' );
@@ -712,9 +712,6 @@ describe( 'DateRange', () => {
 			);
 		} );
 	} );
-
-	// TODO Other tests?
-	// - Navigate to next/prev months
 
 	afterEach( () => {
 		MockDate.reset();
