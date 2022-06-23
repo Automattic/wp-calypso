@@ -3,12 +3,14 @@ import { get } from 'lodash';
 import { computeFullAndMonthlyPricesForPlan } from './compute-full-and-monthly-prices-for-plan';
 import { getProductsList } from './get-products-list';
 import { planSlugToPlanProduct } from './plan-slug-to-plan-product';
+import type { ProductListItem } from './get-products-list';
 import type { TestFilteredPlan, PlanAndProduct } from './plan-slug-to-plan-product';
 import type { AvailableProductVariant } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import type { AppState } from 'calypso/types';
 
-interface PlanAndProductWithPlan extends PlanAndProduct {
+interface NonNullablePlanAndProduct extends PlanAndProduct {
 	plan: TestFilteredPlan;
+	product: ProductListItem;
 }
 
 /**
@@ -24,8 +26,9 @@ export const computeProductsWithPrices = (
 
 	const planAndProducts = planSlugs.map( ( plan ) => planSlugToPlanProduct( products, plan ) );
 	const filteredPlanAndProducts = planAndProducts.filter(
-		( planProduct ) => planProduct.plan && get( planProduct, [ 'product', 'available' ] )
-	) as PlanAndProductWithPlan[];
+		( planProduct ) =>
+			planProduct.plan && planProduct.product && get( planProduct, [ 'product', 'available' ] )
+	) as NonNullablePlanAndProduct[];
 	const constructedVariants: AvailableProductVariant[] = filteredPlanAndProducts.map(
 		( availablePlanProduct ) => ( {
 			...availablePlanProduct,
