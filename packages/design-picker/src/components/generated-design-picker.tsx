@@ -1,7 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Button } from '@automattic/components';
-import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -12,7 +11,8 @@ import {
 	DEFAULT_VIEWPORT_HEIGHT,
 	MOBILE_VIEWPORT_WIDTH,
 } from '../constants';
-import { getDesignPreviewUrl, getMShotOptions } from '../utils';
+import { getDesignPreviewUrl } from '../utils';
+import ThemePreview from './theme-preview';
 import type { Design } from '../types';
 import './style.scss';
 
@@ -20,7 +20,6 @@ import './style.scss';
 const noop = () => {};
 
 interface GeneratedDesignThumbnailProps {
-	slug: string;
 	thumbnailUrl: string;
 	isSelected: boolean;
 	onPreview: () => void;
@@ -28,7 +27,6 @@ interface GeneratedDesignThumbnailProps {
 }
 
 const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
-	slug,
 	thumbnailUrl,
 	isSelected,
 	onPreview,
@@ -53,12 +51,9 @@ const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
 				</svg>
 			</span>
 			<span className="generated-design-thumbnail__image">
-				<MShotsImage
+				<ThemePreview
 					url={ thumbnailUrl }
-					alt=""
-					aria-labelledby={ `generated-design-thumbnail__image__${ slug }` }
-					options={ getMShotOptions( { isMobile } ) }
-					scrollable={ false }
+					viewportWidth={ isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH }
 				/>
 			</span>
 		</button>
@@ -127,7 +122,6 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 						designs.map( ( design, index ) => (
 							<GeneratedDesignThumbnail
 								key={ design.slug }
-								slug={ design.slug }
 								thumbnailUrl={ getDesignPreviewUrl( design, {
 									language: locale,
 									verticalId,
