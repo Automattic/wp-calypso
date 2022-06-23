@@ -29,7 +29,6 @@ const useGetExistingMailboxNames = (
 		error,
 		isLoading,
 	} = useGetEmailAccountsQuery( selectedSiteId as number, selectedDomainName, {
-		notifyOnChangeProps: [ 'data' ],
 		enabled: ! isInitialMailboxPurchase,
 	} );
 
