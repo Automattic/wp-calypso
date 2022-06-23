@@ -1,24 +1,10 @@
 import styled from '@emotion/styled';
 import AddOnCard from './add-ons-card';
 import type { AddOnMeta } from '../hooks/use-add-ons';
+import type { Props as CardProps } from './add-ons-card';
 
-interface Props {
+interface Props extends Omit< CardProps, 'addOnMeta' > {
 	addOns: ( AddOnMeta | null )[];
-	actionPrimary?: {
-		text: string | React.ReactChild;
-		handler: ( addOnSlug: string ) => void;
-	};
-	actionSelected?: {
-		text: string | React.ReactChild;
-		handler: ( addOnSlug: string ) => void;
-	};
-	// returns true/false if add-on is to be treated as "selected" (either added to cart, or part of plan, or ...)
-	// can extend to return a "selected status" string, if we need to tailor
-	useAddOnSelectedStatus?: ( addOnSlug: string ) => {
-		selected: boolean;
-		text?: string | React.ReactChild;
-	};
-	highlightFeatured: boolean;
 }
 
 const Container = styled.div`

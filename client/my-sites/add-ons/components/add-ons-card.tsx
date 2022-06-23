@@ -6,7 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import Badge from 'calypso/components/badge';
 import type { AddOnMeta } from '../hooks/use-add-ons';
 
-interface Props {
+export interface Props {
 	actionPrimary?: {
 		text: string | React.ReactChild;
 		handler: ( addOnSlug: string ) => void;
@@ -15,8 +15,6 @@ interface Props {
 		text: string | React.ReactChild;
 		handler: ( addOnSlug: string ) => void;
 	};
-	// returns true/false if add-on is to be treated as "selected" (either added to cart, or part of plan, or ...)
-	// can extend to return a "selected status" string, if we need to tailor
 	useAddOnSelectedStatus?: ( addOnSlug: string ) => {
 		selected: boolean;
 		text?: string | React.ReactChild;
@@ -79,14 +77,20 @@ const Container = styled.div`
 	}
 `;
 
-const AddOnCard = ( props: Props ) => {
+const AddOnCard = ( {
+	addOnMeta,
+	actionPrimary,
+	actionSelected,
+	useAddOnSelectedStatus,
+	highlightFeatured,
+}: Props ) => {
 	const translate = useTranslate();
-	const status = props.useAddOnSelectedStatus?.( props.addOnMeta.slug );
+	const selectedStatus = useAddOnSelectedStatus?.( addOnMeta.slug );
 	const onActionPrimary = () => {
-		props.actionPrimary?.handler( props.addOnMeta.slug );
+		actionPrimary?.handler( addOnMeta.slug );
 	};
 	const onActionSelected = () => {
-		props.actionSelected?.handler( props.addOnMeta.slug );
+		actionSelected?.handler( addOnMeta.slug );
 	};
 
 	return (
@@ -94,36 +98,36 @@ const AddOnCard = ( props: Props ) => {
 			<Card className="add-ons-card">
 				<CardHeader isBorderless={ true } className="add-ons-card__header">
 					<div className="add-ons-card__icon">
-						<Icon icon={ props.addOnMeta.icon } size={ 44 } />
+						<Icon icon={ addOnMeta.icon } size={ 44 } />
 					</div>
 					<div className="add-ons-card__name-and-billing">
 						<div className="add-ons-card__name-tag">
-							<div>{ props.addOnMeta.name }</div>
-							{ props.highlightFeatured && props.addOnMeta.featured && (
+							<div>{ addOnMeta.name }</div>
+							{ highlightFeatured && addOnMeta.featured && (
 								<Badge key="popular" type="info-green" className="add-ons-card__featured-badge">
 									{ translate( 'Popular' ) }
 								</Badge>
 							) }
 						</div>
 						<div className="add-ons-card__billing">
-							{ props.addOnMeta.displayCost } / { props.addOnMeta.term }
+							{ addOnMeta.displayCost } / { addOnMeta.term }
 						</div>
 					</div>
 				</CardHeader>
-				<CardBody className="add-ons-card__body">{ props.addOnMeta.description }</CardBody>
+				<CardBody className="add-ons-card__body">{ addOnMeta.description }</CardBody>
 				<CardFooter isBorderless={ true } className="add-ons-card__footer">
-					{ status?.selected && props.actionSelected && (
+					{ selectedStatus?.selected && actionSelected && (
 						<>
-							<Button onClick={ onActionSelected }>{ props.actionSelected.text }</Button>
+							<Button onClick={ onActionSelected }>{ actionSelected.text }</Button>
 							<div className="add-ons-card__selected-tag">
 								<Gridicon icon="checkmark" className={ 'add-ons-card__checkmark' } />
-								<span>{ status.text }</span>
+								<span>{ selectedStatus.text }</span>
 							</div>
 						</>
 					) }
-					{ ! status?.selected && props.actionPrimary && (
+					{ ! selectedStatus?.selected && actionPrimary && (
 						<Button onClick={ onActionPrimary } primary>
-							{ props.actionPrimary.text }
+							{ actionPrimary.text }
 						</Button>
 					) }
 				</CardFooter>
