@@ -1,5 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { isRegisteredDomain } from 'calypso/lib/domains';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	hasGoogleAccountTOSWarning,
@@ -9,6 +10,7 @@ import {
 import {
 	getGSuiteMailboxCount,
 	getGSuiteSubscriptionId,
+	getGSuiteSubscriptionStatus,
 	hasGSuiteWithUs,
 	isPendingGSuiteTOSAcceptance,
 } from 'calypso/lib/gsuite';
@@ -121,6 +123,22 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 			( emailAccount && hasGoogleAccountTOSWarning( emailAccount ) )
 		) {
 			return errorStatus;
+		}
+
+		// When users have registered a domain with us, we let them purchase Google Workspace
+		// before the domain provisioning has finished. However, the user won't see any mailboxes
+		// in the email management until the domain provisioning has finished. To avoid confusion,
+		// we display a warning under these conditions.
+		if (
+			isRegisteredDomain( domain ) &&
+			! domain.hasWpcomNameservers &&
+			getGSuiteSubscriptionStatus( domain ) === 'unknown'
+		) {
+			return {
+				statusClass: 'warning',
+				icon: 'info',
+				text: translate( 'Configuring domain…' ),
+			};
 		}
 
 		return activeStatus;
