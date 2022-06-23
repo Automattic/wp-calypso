@@ -241,6 +241,10 @@ const SellerDesignPicker: Step = ( { navigation, flow } ) => {
 	}
 
 	function upgradePlan() {
+		if ( ! isEnabled( 'signup/seller-upgrade-modal' ) ) {
+			return goToCheckout();
+		}
+
 		recordTracksEvent( 'calypso_signup_design_seller_upgrade_modal_show', {
 			theme: selectedDesign?.slug,
 		} );
@@ -252,9 +256,11 @@ const SellerDesignPicker: Step = ( { navigation, flow } ) => {
 			return null;
 		}
 
-		recordTracksEvent( 'calypso_signup_design_seller_upgrade_modal_checkout_button_click', {
-			theme: selectedDesign?.slug,
-		} );
+		if ( isEnabled( 'signup/seller-upgrade-modal' ) ) {
+			recordTracksEvent( 'calypso_signup_design_seller_upgrade_modal_checkout_button_click', {
+				theme: selectedDesign?.slug,
+			} );
+		}
 
 		const plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
 
