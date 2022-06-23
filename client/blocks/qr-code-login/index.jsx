@@ -4,7 +4,7 @@ import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QRCode from 'qrcode.react';
 import { useEffect, useState } from 'react';
-import qrCenter from 'calypso/assets/images/qr-login/wp.png';
+import qrCenter from 'calypso/assets/images/qr-login/app.png';
 import ExternalLink from 'calypso/components/external-link';
 import { setStoredItem, getStoredItem } from 'calypso/lib/browser-storage';
 import { useInterval } from 'calypso/lib/interval';
