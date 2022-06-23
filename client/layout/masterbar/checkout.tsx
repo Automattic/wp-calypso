@@ -1,12 +1,13 @@
 import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
 import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
-import HelpCenter, { HelpIcon } from '@automattic/help-center';
+import { HelpIcon } from '@automattic/help-center';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -114,7 +115,11 @@ const CheckoutMasterbar = ( {
 				secondaryAction={ clearCartAndLeave }
 			/>
 			{ showHelpCenter && isHelpCenterVisible && (
-				<HelpCenter handleClose={ () => setIsHelpCenterVisible( false ) } />
+				<AsyncLoad
+					require="@automattic/help-center"
+					placeholder={ null }
+					handleClose={ () => setIsHelpCenterVisible( false ) }
+				/>
 			) }
 		</Masterbar>
 	);
