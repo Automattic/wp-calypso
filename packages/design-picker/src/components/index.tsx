@@ -84,7 +84,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 		const text = __( 'Free' );
 
-		return <div>{ text }</div>;
+		return <div className="design-picker__pricing-description">{ text }</div>;
 	}
 
 	const badgeType = design.is_premium ? 'premium' : 'none';
