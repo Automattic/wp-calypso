@@ -5,7 +5,7 @@ import { ComboboxControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import emailValidator from 'email-validator';
-import { FormEvent, ReactElement, useState } from 'react';
+import { FormEvent, ReactElement, useState, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -36,6 +36,12 @@ type WooAddressSettings = {
 	woocommerce_onboarding_profile?: { store_email: string };
 };
 
+interface CountryOption {
+	value: string;
+	label: string;
+}
+type CountryOptions = CountryOption[];
+
 const CityZipRow = styled.div`
 	display: -ms-grid;
 	display: grid;
@@ -58,19 +64,47 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 	const [ errors, setErrors ] = useState( {} as Record< FormFields, string > );
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const [ filteredCountries, setFilteredCountries ] = useState< CountryOptions | null >( null );
+	const [ countriesAsOptions, setCountriesAsOptions ] = useState< CountryOptions | null >( null );
 
 	const [ settingChanges, setSettingChanges ] = useState< {
 		[ key: string ]: string;
 	} >( {} );
+
+	useEffect( () => {
+		if ( ! countriesAsOptions ) {
+			return;
+		}
+
+		setFilteredCountries( countriesAsOptions );
+	}, [ countriesAsOptions, setFilteredCountries ] );
+
+	useEffect( () => {
+		if ( ! countries ) {
+			return;
+		}
+		const options: CountryOptions = Object.entries( countries ).map( ( [ key, value ] ) => {
+			return { value: key, label: value };
+		} );
+
+		setCountriesAsOptions( options );
+	}, [ countries, setCountriesAsOptions ] );
+
+	useEffect( () => {
+		if ( filteredCountries && filteredCountries?.length <= 0 && countriesAsOptions ) {
+			setFilteredCountries( countriesAsOptions );
+		}
+	}, [ filteredCountries, countriesAsOptions, setFilteredCountries ] );
 
 	if ( ! countries ) {
 		return null;
 	}
 
 	const headerText = __( 'Add an address to accept payments' );
-	const countriesAsOptions = Object.entries( countries ).map( ( [ key, value ] ) => {
-		return { value: key, label: value };
-	} );
+
+	if ( ! filteredCountries ) {
+		return null;
+	}
 
 	function getSettingsValue( key: FormFields ) {
 		if ( key in settingChanges ) {
@@ -242,8 +276,24 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 							onChange={ ( value: string | null ) => {
 								onChange( 'store_country', value || '' );
 							} }
-							options={ countriesAsOptions }
+							options={ filteredCountries }
 							className={ errors[ 'store_country' ] ? 'is-error' : '' }
+							onFilterValueChange={ ( value: string ) => {
+								if ( ! value ) {
+									setFilteredCountries( countriesAsOptions );
+									return;
+								}
+
+								setFilteredCountries(
+									filteredCountries.filter( ( option ) => {
+										const re = /[—/\\]/g;
+										const label = option.label.replace( re, '' ).toLowerCase();
+										value = value.replace( re, '' ).toLowerCase();
+
+										return label.includes( value );
+									} )
+								);
+							} }
 						/>
 						<ControlError error={ errors[ 'store_country' ] || '' } />
 					</FormFieldset>
