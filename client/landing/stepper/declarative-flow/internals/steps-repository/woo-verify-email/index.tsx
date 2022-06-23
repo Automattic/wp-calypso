@@ -35,7 +35,10 @@ const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
 		setButtonState( { status: 'processing', buttonText: __( 'Sending…' ) } );
 		sendEmail()
 			.then( () => {
-				setButtonState( { status: 'success', buttonText: __( 'Request sent!' ) } );
+				setButtonState( {
+					status: 'success',
+					buttonText: __( 'The verification email has been sent.' ),
+				} );
 				setTimeout( () => setButtonState( defaultButtonState ), 3000 );
 			} )
 			.catch( () => {

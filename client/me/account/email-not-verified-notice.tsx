@@ -24,24 +24,18 @@ const EmailNotVerifiedNotice = () => {
 			const result = await resendEmail();
 			if ( result.success ) {
 				dispatch(
-					successNotice(
-						translate( 'Email has been resent. Please check your Inbox and Spam folders.' ),
-						{
-							id: resendEmailNotice,
-							duration: 4000,
-						}
-					)
+					successNotice( translate( 'The verification email has been sent.' ), {
+						id: resendEmailNotice,
+						duration: 4000,
+					} )
 				);
 				return;
 			}
 		} catch ( Error ) {}
 		dispatch(
-			errorNotice(
-				translate( 'Sorry, something went wrong trying to resend the email. Please try again' ),
-				{
-					id: resendEmailNotice,
-				}
-			)
+			errorNotice( translate( 'There was an error processing your request.' ), {
+				id: resendEmailNotice,
+			} )
 		);
 	};
 
