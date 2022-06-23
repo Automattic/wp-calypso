@@ -89,9 +89,9 @@ const GoalsStep: Step = ( { navigation } ) => {
 	};
 
 	const handleSubmit = ( submittedGoals: Onboard.SiteGoal[] ) => {
-		setGoals( goals );
+		setGoals( submittedGoals );
 
-		const intent = goalsToIntent( goals );
+		const intent = goalsToIntent( submittedGoals );
 		setIntent( intent );
 
 		recordGoalsSelectTracksEvent( submittedGoals, intent );
