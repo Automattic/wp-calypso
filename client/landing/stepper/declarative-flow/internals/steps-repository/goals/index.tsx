@@ -44,23 +44,15 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
 
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
-	const { setGoals, setIntent, clearImportGoal, clearDIFMGoal } = useDispatch( ONBOARD_STORE );
+	const { setGoals, setIntent, clearImportGoal, clearDIFMGoal, resetIntent } =
+		useDispatch( ONBOARD_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
 
 	useEffect( () => {
-		clearImportGoal();
-	}, [ clearImportGoal ] );
-
-	useEffect( () => {
 		clearDIFMGoal();
-	}, [ clearDIFMGoal ] );
-
-	const handleChange = ( goals: Onboard.SiteGoal[] ) => {
-		const intent = goalsToIntent( goals );
-		setIntent( intent );
-		setGoals( goals );
-		return intent;
-	};
+		clearImportGoal();
+		resetIntent();
+	}, [ clearDIFMGoal, clearImportGoal, resetIntent ] );
 
 	const recordGoalsSelectTracksEvent = (
 		goals: Onboard.SiteGoal[],
@@ -97,14 +89,19 @@ const GoalsStep: Step = ( { navigation } ) => {
 	};
 
 	const handleSubmit = ( submittedGoals: Onboard.SiteGoal[] ) => {
-		const intent = handleChange( submittedGoals );
+		setGoals( goals );
+
+		const intent = goalsToIntent( goals );
+		setIntent( intent );
+
 		recordGoalsSelectTracksEvent( submittedGoals, intent );
 		recordIntentSelectTracksEvent( submittedGoals, intent );
+
 		navigation.submit?.( { intent } );
 	};
 
 	const stepContent = (
-		<SelectGoals selectedGoals={ goals } onChange={ handleChange } onSubmit={ handleSubmit } />
+		<SelectGoals selectedGoals={ goals } onChange={ setGoals } onSubmit={ handleSubmit } />
 	);
 
 	useEffect( () => {
