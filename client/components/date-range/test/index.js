@@ -416,7 +416,6 @@ describe( 'DateRange', () => {
 			await userEvent.keyboard( '05/30/2018' );
 			// This causes a blur on the `From` input, which is enough for our test case
 			await userEvent.click( screen.getByLabelText( 'To' ) );
-			await userEvent.keyboard( '06/30/2018' );
 
 			const startDateEl = screen.getByLabelText( 'Wed, May 30, 2018 12:00 PM' );
 
@@ -431,7 +430,6 @@ describe( 'DateRange', () => {
 			await userEvent.keyboard( '06/30/2018' );
 			// This causes a blur on the `From` input, which is enough for our test case
 			await userEvent.click( screen.getByLabelText( 'From' ) );
-			await userEvent.keyboard( '05/30/2018' );
 
 			const endDateEl = screen.getByLabelText( 'Sat, Jun 30, 2018 12:00 PM' );
 
