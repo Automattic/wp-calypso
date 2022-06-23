@@ -2,6 +2,8 @@ import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
+import Badge from 'calypso/components/badge';
 import type { AddOnMeta } from '../hooks/use-add-ons';
 
 interface Props extends AddOnMeta {
@@ -39,31 +41,44 @@ const Container = styled.div`
 	.add-ons-card__header {
 		display: flex;
 		justify-content: flex-start;
+
+		.add-ons-card__icon {
+			display: flex;
+		}
+
+		.add-ons-card__name-and-billing {
+			.add-ons-card__billing {
+				color: var( --studio-gray-40 );
+			}
+
+			.add-ons-card__name-tag {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+
+				.add-ons-card__featured-badge {
+					border-radius: 4px;
+				}
+			}
+		}
 	}
 
 	.add-ons-card__footer {
 		display: flex;
-	}
 
-	.add-ons-card__selected-badge {
-		display: flex;
-		align-items: center;
+		.add-ons-card__selected-tag {
+			display: flex;
+			align-items: center;
 
-		.add-ons-card__checkmark {
-			color: var( --studio-green-30 );
+			.add-ons-card__checkmark {
+				color: var( --studio-green-30 );
+			}
 		}
-	}
-
-	.add-ons-card__billing-info {
-		color: var( --studio-gray-40 );
-	}
-
-	.add-ons-card__icon {
-		display: flex;
 	}
 `;
 
 const AddOnCard = ( props: Props ) => {
+	const translate = useTranslate();
 	const status = props.useAddOnSelectedStatus?.( props.slug );
 	const onActionPrimary = () => {
 		props.actionPrimary?.handler( props.slug );
@@ -79,9 +94,16 @@ const AddOnCard = ( props: Props ) => {
 					<div className="add-ons-card__icon">
 						<Icon icon={ props.icon } size={ 44 } />
 					</div>
-					<div>
-						<div>{ props.name }</div>
-						<div className="add-ons-card__billing-info">
+					<div className="add-ons-card__name-and-billing">
+						<div className="add-ons-card__name-tag">
+							<div>{ props.name }</div>
+							{ props.featured && (
+								<Badge key="popular" type="info-green" className="add-ons-card__featured-badge">
+									{ translate( 'Popular' ) }
+								</Badge>
+							) }
+						</div>
+						<div className="add-ons-card__billing">
 							{ props.displayCost } / { props.term }
 						</div>
 					</div>
@@ -91,7 +113,7 @@ const AddOnCard = ( props: Props ) => {
 					{ status?.selected && props.actionSelected && (
 						<>
 							<Button onClick={ onActionSelected }>{ props.actionSelected.text }</Button>
-							<div className="add-ons-card__selected-badge">
+							<div className="add-ons-card__selected-tag">
 								<Gridicon icon="checkmark" className={ 'add-ons-card__checkmark' } />
 								<span>{ status.text }</span>
 							</div>

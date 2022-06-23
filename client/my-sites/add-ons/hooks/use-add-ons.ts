@@ -34,7 +34,7 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 	const addOnsActive = [
 		{
 			slug: WPCOM_FEATURES_NO_ADVERTS,
-			featured: false,
+			featured: true,
 			icon: noAdsIcon,
 			overrides: {
 				// override API-fetched metadata

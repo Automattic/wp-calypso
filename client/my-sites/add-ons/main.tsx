@@ -128,7 +128,7 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 					actionSelected={ { text: translate( 'Manage add-on' ), handler: handleActionSelected } }
 					useAddOnSelectedStatus={ useAddOnPurchaseStatus }
 					addOns={ addOns }
-					showFeatured={ false }
+					showFeatured={ true }
 				/>
 			</ContentWithHeader>
 		</div>
