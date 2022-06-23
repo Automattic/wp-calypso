@@ -25,25 +25,42 @@ export const computeProductsWithPrices = (
 	const products = getProductsList( state );
 
 	const planAndProducts = planSlugs.map( ( plan ) => planSlugToPlanProduct( products, plan ) );
-	const filteredPlanAndProducts = planAndProducts.filter(
-		( planProduct ) =>
-			planProduct.plan && planProduct.product && get( planProduct, [ 'product', 'available' ] )
-	) as NonNullablePlanAndProduct[];
-	const constructedVariants: AvailableProductVariant[] = filteredPlanAndProducts.map(
-		( availablePlanProduct ) => ( {
-			...availablePlanProduct,
-			...computeFullAndMonthlyPricesForPlan( state, siteId, availablePlanProduct.plan ),
-		} )
-	);
+	const filteredPlanAndProducts = planAndProducts.filter( hasAvailablePlan );
+	const constructedVariants = filteredPlanAndProducts.map( ( availablePlanProduct ) => ( {
+		...availablePlanProduct,
+		...computeFullAndMonthlyPricesForPlan( state, siteId, availablePlanProduct.plan ),
+	} ) );
+	const filteredConstructedVariants = constructedVariants.filter( hasAvailablePrice );
 
-	return constructedVariants
-		.filter( ( availablePlanProduct ) => availablePlanProduct.priceFull )
-		.sort( ( a, b ) => {
-			const durationA = getTermDuration( ( a.plan as TestFilteredPlan ).term );
-			const durationB = getTermDuration( ( b.plan as TestFilteredPlan ).term );
-			if ( durationA === undefined || durationB === undefined ) {
-				return 0;
-			}
-			return durationA - durationB;
-		} );
+	return filteredConstructedVariants.sort( ( a, b ) => {
+		const durationA = getTermDuration( ( a.plan as TestFilteredPlan ).term );
+		const durationB = getTermDuration( ( b.plan as TestFilteredPlan ).term );
+		if ( durationA === undefined || durationB === undefined ) {
+			return 0;
+		}
+		return durationA - durationB;
+	} );
 };
+
+function hasAvailablePlan( planProduct: PlanAndProduct ): planProduct is NonNullablePlanAndProduct {
+	return !! (
+		planProduct.plan &&
+		planProduct.product &&
+		get( planProduct, [ 'product', 'available' ] )
+	);
+}
+
+interface PartialProductVariant {
+	priceFull: number | null;
+	priceFinal: number | null;
+	introductoryOfferPrice: number | null;
+	plan: TestFilteredPlan;
+	product: ProductListItem;
+	planSlug: string;
+}
+
+function hasAvailablePrice(
+	availablePlanProduct: PartialProductVariant
+): availablePlanProduct is AvailableProductVariant {
+	return !! ( availablePlanProduct as AvailableProductVariant ).priceFull;
+}
