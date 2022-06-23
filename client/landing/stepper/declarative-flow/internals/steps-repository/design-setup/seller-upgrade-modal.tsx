@@ -1,9 +1,8 @@
-import { getPlan, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
 import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/components';
+import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useThemeDetails } from 'calypso/landing/stepper/hooks/use-theme-details';
-import { getPlanPrice } from 'calypso/state/products-list/selectors';
+import { PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stores';
 import ThemeFeatures from './theme-features';
 import './seller-upgrade-modal.scss';
 
@@ -17,16 +16,14 @@ interface SellerUpgradeModalProps {
 
 const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgradeModalProps ) => {
 	const translate = useTranslate();
-	const site = useSite();
-	const plan = getPlan( PLAN_WPCOM_PRO );
-	const siteId = site?.ID;
 	const theme = useThemeDetails( slug );
 	const features = theme.data && theme.data.taxonomies.features;
 	const featuresHeading = translate( 'Theme features' ) as string;
-
-	//@todo: Need to get the actual price
-
-	const planPrice = '$180' || getPlanPrice( state, siteId, plan, false );
+	const plan = useSelect( ( select ) =>
+		select( PRODUCTS_LIST_STORE ).getProductBySlug( 'pro-plan' )
+	);
+	const planName = plan?.product_name;
+	const planPrice = plan?.combined_cost_display;
 
 	return (
 		<Dialog
@@ -43,11 +40,12 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgra
 					{ translate( 'Unlock this premium theme' ) }
 				</h1>
 				<p>
-					{ /* Translators: planPrice is the plan price in the user's currency */ }
+					{ /* Translators: planName is the name of the plan, planPrice is the plan price in the user's currency */ }
 					{ translate(
-						"This theme requires a Pro plan to unlock. It's %(planPrice)s a year, risk-free with a 14-day money-back guarantee.",
+						"This theme requires %(planName)s to unlock. It's %(planPrice)s a year, risk-free with a 14-day money-back guarantee.",
 						{
 							args: {
+								planName,
 								planPrice,
 							},
 						}
@@ -64,7 +62,14 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgra
 			</div>
 			<div className="seller-upgrade-modal__col">
 				<div className="seller-upgrade-modal__included">
-					<h2>{ translate( 'Included with the Pro plan' ) }</h2>
+					<h2>
+						{ /* Translators: planName is the name of the plan */ }
+						{ translate( 'Included with %(planName)s', {
+							args: {
+								planName,
+							},
+						} ) }
+					</h2>
 					<ul>
 						<li className="seller-upgrade-modal__included-item">
 							<Gridicon icon="checkmark" size={ 16 } />
