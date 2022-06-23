@@ -1,4 +1,8 @@
-import { GROUP_WPCOM, JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
+import {
+	getPriceTierForUnits,
+	GROUP_WPCOM,
+	JETPACK_SEARCH_PRODUCTS,
+} from '@automattic/calypso-products';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { getAllPostCounts } from 'calypso/state/posts/counts/selectors';
 import getIntroOfferIsEligible from 'calypso/state/selectors/get-intro-offer-is-eligible';
@@ -105,15 +109,11 @@ function getSearchProductTierPrice(
 	const postsCounts = getAllPostCounts( state, siteId, 'post' );
 	const postsCount = postsCounts?.publish || 0;
 	const priceTierList = getProductPriceTierList( state, productSlug );
-	const tiers = priceTierList.filter(
-		( tierItem ) =>
-			postsCount >= tierItem.minimum_units &&
-			( ! tierItem.maximum_units || postsCount <= tierItem.maximum_units )
-	);
-	if ( tiers.length < 1 ) {
+	const tier = getPriceTierForUnits( priceTierList, postsCount );
+	if ( ! tier ) {
 		return null;
 	}
-	const minPrice = tiers[ 0 ].minimum_price.toString(); // is missing decimal, ie- $9.95 is returned as 995
+	const minPrice = tier.minimum_price.toString(); // is missing decimal, ie- $9.95 is returned as 995
 	return (
 		// Inject decimal point into 100ths position.
 		Number(
