@@ -243,15 +243,6 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 						</li>
 					) ) }
 				</ol>
-				<p>
-					<ExternalLink
-						target="_blank"
-						icon={ false }
-						href="https://apps.wordpress.com/mobile/login-via-qr-code"
-					>
-						{ translate( 'Need help?' ) }
-					</ExternalLink>
-				</p>
 			</div>
 		</Card>
 	);
