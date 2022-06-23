@@ -84,6 +84,9 @@ const SellerDesignPicker: Step = ( { navigation, flow } ) => {
 	);
 
 	const closeUpgradeModal = () => {
+		recordTracksEvent( 'calypso_signup_design_seller_upgrade_modal_close_button_click', {
+			theme: selectedDesign?.slug,
+		} );
 		setShowUpgradeModal( false );
 	};
 
@@ -238,6 +241,9 @@ const SellerDesignPicker: Step = ( { navigation, flow } ) => {
 	}
 
 	function upgradePlan() {
+		recordTracksEvent( 'calypso_signup_design_seller_upgrade_modal_show', {
+			theme: selectedDesign?.slug,
+		} );
 		setShowUpgradeModal( true );
 	}
 
@@ -245,6 +251,10 @@ const SellerDesignPicker: Step = ( { navigation, flow } ) => {
 		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
 			return null;
 		}
+
+		recordTracksEvent( 'calypso_signup_design_seller_upgrade_modal_checkout_button_click', {
+			theme: selectedDesign?.slug,
+		} );
 
 		const plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
 

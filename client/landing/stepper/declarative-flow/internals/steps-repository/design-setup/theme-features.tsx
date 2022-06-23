@@ -12,7 +12,7 @@ interface FeaturesProps {
 }
 
 const ThemeFeatures = ( { classNames, features, heading }: FeaturesProps ) => {
-	const classes = classnames( 'theme-features__features-wrap popup-item', classNames );
+	const classes = classnames( 'theme-features__features-wrap', classNames );
 	return (
 		<>
 			{ features.length > 0 && (

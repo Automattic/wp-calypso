@@ -45,7 +45,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 		text-align: center;
 	}
 
-	&__heading {
+	h1.seller-upgrade-modal__heading {
 		@extend .wp-brand-font;
 		font-size: $font-headline-medium;
 		line-height: 1.1;
@@ -96,17 +96,13 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 	&__included {
 		margin-bottom: 25px;
 
-		h3 {
-			font-size: $font-body-small;
-			font-weight: 500;
-		}
-
 		ul, li {
 			font-size: $font-body-small;
 			line-height: 1.7;
 			list-style: none;
 			margin-left: 0;
 			padding-left: 0;
+			margin-top: 0;
 		}
 
 		li {
@@ -118,5 +114,11 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 			fill: var( --studio-green-50 );
 			margin-right: 10px;
 		}
+	}
+
+	h2 {
+		font-size: $font-body-small;
+		font-weight: 500;
+		margin-bottom: 5px;
 	}
 }

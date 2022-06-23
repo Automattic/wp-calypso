@@ -21,7 +21,7 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgra
 	const plan = getPlan( PLAN_WPCOM_PRO );
 	const siteId = site?.ID;
 	const theme = useThemeDetails( slug );
-	const features = theme?.taxonomies?.features;
+	const features = theme.data && theme.data.taxonomies.features;
 	const featuresHeading = translate( 'Theme features' ) as string;
 
 	//@todo: Need to get the actual price
@@ -40,9 +40,9 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgra
 				<div className="seller-upgrade-modal__star-box">
 					<Gridicon icon="star" size={ 24 } />
 				</div>
-				<h2 className="seller-upgrade-modal__heading">
+				<h1 className="seller-upgrade-modal__heading">
 					{ translate( 'Unlock this premium theme' ) }
-				</h2>
+				</h1>
 				<p>
 					{ /* Translators: planPrice is the plan price in the user's currency */ }
 					{ translate(
@@ -65,7 +65,7 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgra
 			</div>
 			<div className="seller-upgrade-modal__col">
 				<div className="seller-upgrade-modal__included">
-					<h3>{ translate( 'Included with the Pro plan' ) }</h3>
+					<h2>{ translate( 'Included with the Pro plan' ) }</h2>
 					<ul>
 						<li className="seller-upgrade-modal__included-item">
 							<Gridicon icon="checkmark" size={ 16 } />
