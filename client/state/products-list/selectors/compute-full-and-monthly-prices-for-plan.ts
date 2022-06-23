@@ -8,14 +8,20 @@ import { getProductCost } from './get-product-cost';
 import { getProductPriceTierList } from './get-product-price-tiers';
 import { getProductSaleCouponCost } from './get-product-sale-coupon-cost';
 import { getProductSaleCouponDiscount } from './get-product-sale-coupon-discount';
-import type { Plan, JetpackPlan, WPComPlan } from '@automattic/calypso-products';
+import type { Plan, PlanSlug, ProductSlug } from '@automattic/calypso-products';
 import type { AppState } from 'calypso/types';
 
-interface FullAndMonthlyPrices {
+export interface FullAndMonthlyPrices {
 	priceFull: number;
 	priceFinal: number;
 	introductoryOfferPrice: number | null;
 }
+
+type PlanOrProductSlug = PlanSlug | ProductSlug;
+type Optional< T, K extends keyof T > = Pick< Partial< T >, K > & Omit< T, K >;
+type PlanObject = Optional< Pick< Plan, 'group' | 'getProductId' >, 'group' > & {
+	getStoreSlug: () => PlanOrProductSlug;
+};
 
 /**
  * Computes a full and monthly price for a given plan, based on its slug/constant
@@ -25,7 +31,7 @@ interface FullAndMonthlyPrices {
 export const computeFullAndMonthlyPricesForPlan = (
 	state: AppState,
 	siteId: number,
-	planObject: Plan | JetpackPlan | WPComPlan
+	planObject: PlanObject
 ): FullAndMonthlyPrices => {
 	if ( planObject.group === GROUP_WPCOM ) {
 		return computePricesForWpComPlan( state, siteId, planObject );
@@ -71,7 +77,7 @@ export const computeFullAndMonthlyPricesForPlan = (
 function computePricesForWpComPlan(
 	state: AppState,
 	siteId: number,
-	planObject: Plan | JetpackPlan | WPComPlan
+	planObject: PlanObject
 ): FullAndMonthlyPrices {
 	const priceFull = getPlanRawPrice( state, planObject.getProductId(), false ) || 0;
 	const introductoryOfferPrice = getIntroOfferPrice( state, planObject.getProductId(), siteId );
