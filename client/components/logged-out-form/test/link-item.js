@@ -1,21 +1,23 @@
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+
+import { render, screen } from '@testing-library/react';
 import LoggedOutFormLinkItem from '../link-item';
 
 describe( 'LoggedOutFormLinkItem', () => {
 	test( 'should render an <a> element', () => {
-		const wrapper = shallow(
+		render(
 			<LoggedOutFormLinkItem href="http://example.com">Example text here</LoggedOutFormLinkItem>
 		);
-
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.type() ).toBe( 'a' );
+		expect( screen.queryByRole( 'link' ) ).toHaveAttribute( 'href', 'http://example.com' );
+		expect( screen.queryByRole( 'link' ) ).toHaveTextContent( 'Example text here' );
 	} );
 
 	test( 'should include own class and append passed class', () => {
 		const testClass = 'test-classname';
-		const wrapper = shallow( <LoggedOutFormLinkItem className={ testClass } /> );
+		const { container } = render( <LoggedOutFormLinkItem className={ testClass } /> );
 
-		expect( wrapper.hasClass( testClass ) ).toBe( true );
-		expect( wrapper.hasClass( 'logged-out-form__link-item' ) ).toBe( true );
+		expect( container.firstChild ).toHaveClass( 'test-classname' );
 	} );
 } );
