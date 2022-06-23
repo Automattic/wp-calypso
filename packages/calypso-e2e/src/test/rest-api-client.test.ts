@@ -1,137 +1,179 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// Disable the any check in order to mock private methods.
+import { describe, expect, test, jest } from '@jest/globals';
+import nock from 'nock';
+import { RestAPIClient, BEARER_TOKEN_URL } from '../rest-api-client';
+import { SecretsManager } from '../secrets';
+import type { Secrets } from '../secrets';
 
-import { describe, expect, jest, test } from '@jest/globals';
-import { SecretsManager } from '..';
-import { RestAPIClient } from '../rest-api-client';
+const fakeSecrets = {
+	calypsoOauthApplication: {
+		client_id: 'some_value',
+		client_secret: 'some_value',
+	},
+	testAccounts: {
+		basicUser: {
+			username: 'wpcomuser2',
+			password: 'hunter2',
+			primarySite: 'wpcomuser.wordpress.com/',
+		},
+		noUrlUser: {
+			username: 'nourluser',
+			password: 'password1234',
+		},
+	},
+} as unknown as Secrets;
 
-describe( 'RestAPIClient: private methods', function () {
-	test( 'Test: getBearerToken with valid credentials returns a valid bearer token', async function () {
-		const credentials = SecretsManager.secrets.testAccounts.defaultUser;
+jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
+
+describe( 'RestAPIClient: getBearerToken', function () {
+	test( 'Bearer Token is returned upon successful request', async function () {
+		const mockedToken = 'abcdefghijklmn';
+
+		nock( BEARER_TOKEN_URL )
+			.post( /.*/ )
+			.reply( 200, {
+				success: true,
+				data: {
+					bearer_token: mockedToken,
+					token_links: [ 'link_1', 'link_2' ],
+				},
+			} );
+
 		const restAPIClient = new RestAPIClient( {
-			username: credentials.username,
-			password: credentials.password,
+			username: 'user',
+			password: 'password',
 		} );
-		const bearerToken = await ( restAPIClient as any ).getBearerToken();
+		const bearerToken = await restAPIClient.getBearerToken();
 
 		expect( bearerToken ).toBeDefined();
+		expect( bearerToken ).toBe( mockedToken );
 		expect( typeof bearerToken ).toBe( 'string' );
-		expect( bearerToken.length ).toBe( 64 );
-	} );
-
-	test( 'Test: getBearerToken with invalid username throws an error', async function () {
-		const restAPIClient = new RestAPIClient( {
-			username: 'fake_user',
-			password: 'fake_password',
-		} );
-		await expect( ( restAPIClient as any ).getBearerToken() ).rejects.toThrowError(
-			"invalid_username: We don't seem to have an account with that name. Double-check the spelling and try again!"
-		);
-	} );
-
-	test( 'Test: getBearerToken with invalid password throws an error', async function () {
-		const credentials = SecretsManager.secrets.testAccounts.defaultUser;
-		const restAPIClient = new RestAPIClient( {
-			username: credentials.username,
-			password: 'fake_password',
-		} );
-		await expect( ( restAPIClient as any ).getBearerToken() ).rejects.toThrowError(
-			"incorrect_password: Oops, that's not the right password. Please try again!"
-		);
-	} );
-
-	test( 'Test: getAuthorizationHeader with supported scheme returns a valid authorization header string', async function () {
-		const restAPIClient = new RestAPIClient( {
-			username: 'fake_username',
-			password: 'fake_password',
-		} );
-
-		const mockedBearerToken = 'abcd';
-		jest
-			.spyOn( RestAPIClient.prototype as any, 'getBearerToken' )
-			.mockReturnValueOnce( mockedBearerToken );
-		const authorizationHeader = await ( restAPIClient as any ).getAuthorizationHeader( 'bearer' );
-
-		expect( authorizationHeader ).toEqual( `Bearer ${ mockedBearerToken }` );
-	} );
-
-	test( 'Test: getAuthorizationHeader with unsupported scheme throws an error', async function () {
-		const restAPIClient = new RestAPIClient( {
-			username: 'fake_username',
-			password: 'fake_password',
-		} );
-
-		await expect(
-			( restAPIClient as any ).getAuthorizationHeader( 'unsupported scheme' )
-		).rejects.toThrowError( 'Unsupported authorization scheme specified.' );
 	} );
 
 	test.each( [
 		{
-			version: '1.1',
-			endpoint: '/leading-slash',
-			expected: `/rest/v1.1/leading-slash`,
+			code: 'incorrect_password',
+			message: `Oops, that's not the right password. Please try again!`,
 		},
 		{
-			version: '1.1',
-			endpoint: 'no-leading-slash',
-			expected: `/rest/v1.1/no-leading-slash`,
+			code: 'invalid_username',
+			message: `We don't seem to have an account with that name. Double-check the spelling and try again!`,
 		},
-		{
-			version: '1.1',
-			endpoint: '/trailing-slash/',
-			expected: `/rest/v1.1/trailing-slash`,
-		},
-	] )(
-		'Test: getRequestURL returns expected values',
-		async function ( { version, endpoint, expected } ) {
-			const restAPIClient = new RestAPIClient( {
-				username: 'fake_username',
-				password: 'fake_password',
+	] )( `Throws error with expected code and message ($code)`, async function ( { code, message } ) {
+		nock( BEARER_TOKEN_URL )
+			.post( /.*/ )
+			.reply( 200, {
+				success: false,
+				data: {
+					errors: [
+						{
+							code: code,
+							message: message,
+						},
+					],
+				},
 			} );
 
-			const formattedEndpoint = ( restAPIClient as any ).getRequestURL( version, endpoint );
+		const restAPIClient = new RestAPIClient( {
+			username: 'fake_user',
+			password: 'fake_password',
+		} );
 
-			expect( formattedEndpoint.pathname ).toEqual( expected );
-		}
-	);
+		await expect( restAPIClient.getBearerToken() ).rejects.toThrowError(
+			`${ code }: ${ message }`
+		);
+	} );
 } );
 
 describe( 'RestAPIClient: getMyAccountInformation', function () {
-	test( 'Test: expected data is returned for defaultUser', async function () {
-		const credentials = SecretsManager.secrets.testAccounts.defaultUser;
-		const restAPIClient = new RestAPIClient( {
-			username: credentials.username,
-			password: credentials.password,
-		} );
-		const response = await restAPIClient.getMyAccountInformation();
+	const restAPIClient = new RestAPIClient( {
+		username: 'fake_user',
+		password: 'fake_password',
+	} );
+	const requestURL = restAPIClient.getRequestURL( '1.1', '/me' );
 
-		expect( response.username ).toBe( credentials.username );
-		expect( new URL( response.primary_blog_url ).hostname ).toEqual( credentials.primarySite );
-		expect( response.ID ).toBe( credentials.userID );
-		expect( response.email ).toBe( credentials.email );
+	test( 'Account information is returned on successful request', async function () {
+		const testData = {
+			ID: 420,
+			username: 'maryJane',
+			email: 'maryJane@test.com',
+			primary_blog: 199,
+			primary_blog_url: 'maryjane.test.com',
+			language: 'en',
+		};
+		nock( requestURL.origin ).get( requestURL.pathname ).reply( 200, testData );
+
+		const response = await restAPIClient.getMyAccountInformation();
+		expect( response.username ).toBe( testData.username );
+		expect( response.primary_blog_url ).toEqual( testData.primary_blog_url );
+		expect( response.ID ).toBe( testData.ID );
+		expect( response.email ).toBe( testData.email );
 	} );
 
-	test( 'Test: error is returned for invalid credentials', async function () {
-		const restAPIClient = new RestAPIClient( { username: 'fakeuser', password: 'test' } );
-		await expect( restAPIClient.getMyAccountInformation() ).rejects.toThrow(
-			"incorrect_password: Oops, that's not the right password. Please try again!"
+	test.each( [
+		{
+			code: 'invalid_token',
+			message: `The OAuth2 token is invalid`,
+		},
+		{
+			code: 'invalid_username',
+			message: `We don't seem to have an account with that name. Double-check the spelling and try again!`,
+		},
+	] )( `Throws error with expected code and message ($code)`, async function ( { code, message } ) {
+		nock( requestURL.origin )
+			.get( requestURL.pathname )
+			.reply( 400, { error: code, message: message } );
+
+		await expect( restAPIClient.getMyAccountInformation() ).rejects.toThrowError(
+			`${ code }: ${ message }`
 		);
 	} );
 } );
 
 describe( 'RestAPIClient: getAllSites', function () {
-	test( 'Test: expected data is returned for eCommerceUser', async function () {
-		const credentials = SecretsManager.secrets.testAccounts.eCommerceUser;
-		const restAPIClient = new RestAPIClient( {
-			username: credentials.username,
-			password: credentials.password,
-		} );
-		const response = await restAPIClient.getAllSites();
-		const sites = response.sites.map( ( site ) => site.URL );
+	const restAPIClient = new RestAPIClient( {
+		username: 'fake_user',
+		password: 'fake_password',
+	} );
+	const requestURL = restAPIClient.getRequestURL( '1.1', '/me/sites' );
 
-		// Origin doesn't have the trailing slash, while the site URL returned
-		// by the API contains trailing slashes and are thus hrefs.
-		expect( sites ).toContain( new URL( `https://${ credentials.primarySite }` ).origin );
+	test( 'Sites are returned on successful request', async function () {
+		const testData = {
+			sites: [
+				{
+					ID: 5420,
+					name: 'Site One',
+					description: 'My amazing site',
+					URL: 'https://myamazinsite.test.com',
+					site_owner: 420,
+				},
+				{
+					ID: 8799,
+					name: 'Site Two',
+					description: 'My amazing site, redux',
+					URL: 'https://myamazinsiteredux.test.com',
+					site_owner: 420,
+				},
+			],
+		};
+
+		nock( requestURL.origin ).get( requestURL.pathname ).reply( 200, testData );
+
+		const response = await restAPIClient.getAllSites();
+		expect( response.sites.length ).toBe( 2 );
+		expect( response.sites[ 0 ].ID ).toBe( 5420 );
+		expect( response.sites[ 1 ].ID ).toBe( 8799 );
+	} );
+
+	test.each( [
+		{
+			code: 'invalid_token',
+			message: `The OAuth2 token is invalid`,
+		},
+	] )( `Throws error with expected code and message ($code)`, async function ( { code, message } ) {
+		nock( requestURL.origin )
+			.get( requestURL.pathname )
+			.reply( 400, { error: code, message: message } );
+
+		await expect( restAPIClient.getAllSites() ).rejects.toThrowError( `${ code }: ${ message }` );
 	} );
 } );

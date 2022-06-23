@@ -33,7 +33,7 @@ interface RequestParams {
 
 /* Constants */
 
-const BEARER_TOKEN_URL = 'https://wordpress.com/wp-login.php?action=login-endpoint';
+export const BEARER_TOKEN_URL = 'https://wordpress.com/wp-login.php?action=login-endpoint';
 const REST_API_BASE_URL = 'https://public-api.wordpress.com';
 
 /**
@@ -63,7 +63,7 @@ export class RestAPIClient {
 	 * @returns {Promise<string>} String representing the bearer token.
 	 * @throws {Error} If the API responded with a success status of false.
 	 */
-	private async getBearerToken(): Promise< string > {
+	async getBearerToken(): Promise< string > {
 		if ( this.bearerToken !== null ) {
 			return this.bearerToken;
 		}
@@ -90,6 +90,7 @@ export class RestAPIClient {
 			throw new Error( `${ firstError?.code }: ${ firstError?.message }` );
 		}
 
+		this.bearerToken = response.data.bearer_token;
 		return response.data.bearer_token;
 	}
 
@@ -103,7 +104,6 @@ export class RestAPIClient {
 	 */
 	private async getAuthorizationHeader( scheme: 'bearer' ): Promise< string > {
 		if ( scheme === 'bearer' ) {
-			this.bearerToken = await this.getBearerToken();
 			return `Bearer ${ this.bearerToken }`;
 		}
 
@@ -126,7 +126,7 @@ export class RestAPIClient {
 	 * @param {string} endpoint REST API path.
 	 * @returns {URL} Full URL to the endpoint.
 	 */
-	private getRequestURL( version: EndpointVersions, endpoint: string ): URL {
+	getRequestURL( version: EndpointVersions, endpoint: string ): URL {
 		const path = `/rest/v${ version }/${ endpoint }`.replace( /([^:]\/)\/+/g, '$1' );
 		const sanitizedPath = path.trimEnd().replace( /\/$/, '' );
 		return new URL( sanitizedPath, REST_API_BASE_URL );
@@ -141,7 +141,6 @@ export class RestAPIClient {
 	 */
 	private async sendRequest( url: URL, params: RequestParams | URLSearchParams ): Promise< any > {
 		const response = await fetch( url, params as RequestInit );
-
 		return response.json();
 	}
 
@@ -160,6 +159,7 @@ export class RestAPIClient {
 	 * 	- site owner
 	 *
 	 * @returns {Promise<AllSitesResponse} JSON array of sites.
+	 * @throws {Error} If API responded with an error.
 	 */
 	async getAllSites(): Promise< AllSitesResponse > {
 		const params: RequestParams = {
@@ -170,7 +170,15 @@ export class RestAPIClient {
 			},
 		};
 
-		return await this.sendRequest( this.getRequestURL( '1.1', '/me/sites' ), params );
+		const response = await this.sendRequest( this.getRequestURL( '1.1', '/me/sites' ), params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
 	}
 
 	/**
