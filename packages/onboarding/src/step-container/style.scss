@@ -38,7 +38,7 @@
 
 			.step-container__header {
 				margin-top: 0;
-				padding-right: 20px;
+				padding-inline-end: 20px;
 			}
 		}
 	}
@@ -97,7 +97,7 @@
 
 			.formatted-header__subtitle {
 				padding: 0;
-				text-align: left;
+				text-align: start;
 				color: var( --studio-gray-60 );
 				font-size: 1rem;
 				margin-top: 16px;
@@ -186,7 +186,7 @@
 
 		.step-container__navigation-link.forward,
 		.step-container__skip-wrapper {
-			margin-left: auto;
+			margin-inline-start: auto;
 		}
 
 		.step-container__skip-heading {
@@ -197,7 +197,7 @@
 			display: none;
 			// Align with wordpress logo in signup-header
 			margin-top: 1px;
-			margin-right: 24px;
+			margin-inline-end: 24px;
 			fill: var( --color-text );
 			stroke: var( --color-text );
 
