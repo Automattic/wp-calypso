@@ -24,6 +24,7 @@ import { computeProductsWithPrices } from 'calypso/state/products-list/selectors
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { Plan, Product } from '@automattic/calypso-products';
+import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
@@ -38,11 +39,7 @@ function myFormatCurrency( price: number, code: string, options = {} ) {
 export interface AvailableProductVariant {
 	planSlug: string;
 	plan: Plan | Product;
-	product: {
-		product_id: number;
-		product_slug: string;
-		currency_code: string;
-	};
+	product: ProductListItem;
 	priceFull: number;
 	priceFinal: number;
 	introductoryOfferPrice: number | null;
