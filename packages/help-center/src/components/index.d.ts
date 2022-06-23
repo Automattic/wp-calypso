@@ -30,6 +30,10 @@ declare module 'calypso/state/ui/selectors' {
 	export const getSectionName: ( state: unknown ) => string;
 }
 
+declare module 'calypso/state/sites/selectors' {
+	export const getSite: ( state: unknown, siteId: number ) => { is_wpcom_atomic: boolean };
+}
+
 declare module 'calypso/state/sites/hooks' {
 	export const useSiteOption: ( state: unknown ) => string;
 }

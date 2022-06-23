@@ -11,6 +11,7 @@ import { Icon, captureVideo, desktop, formatListNumbered, video, external } from
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NewReleases from '../icons/new-releases';
 
@@ -24,16 +25,19 @@ export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
 	const [ showWhatsNewDot, setShowWhatsNewDot ] = useState( false );
 
-	const { isBusinessOrEcomPlanUser, siteId } = useSelector( ( state ) => {
+	const { isBusinessOrEcomPlanUser, siteId, isSimpleSite } = useSelector( ( state ) => {
 		const purchases = getUserPurchases( state );
 		const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
+		const siteId = getSelectedSiteId( state );
+		const site = getSite( state, siteId );
 
 		return {
 			isBusinessOrEcomPlanUser: !! (
 				purchaseSlugs &&
 				( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
 			),
-			siteId: getSelectedSiteId( state ),
+			isSimpleSite: site && ! site.is_wpcom_atomic,
+			siteId: siteId,
 		};
 	} );
 	const { data, isLoading, setHasSeenWhatsNewModal } = useHasSeenWhatsNewModalQuery( siteId );
@@ -131,22 +135,24 @@ export const HelpCenterMoreResources = () => {
 						</a>
 					</div>
 				</li>
-				<li className="inline-help__resource-item">
-					<div className="inline-help__resource-cell">
-						<Button
-							isLink
-							onClick={ () => handleWhatsNewClick() }
-							className="inline-help__new-releases"
-						>
-							<Icon icon={ <NewReleases /> } size={ 24 } />
-							<span>{ __( "What's new" ) }</span>
-							{ showWhatsNewDot && (
-								<Icon className="inline-help__new-releases_dot" icon={ circle } size={ 16 } />
-							) }
-							<Icon icon={ external } size={ 20 } />
-						</Button>
-					</div>
-				</li>
+				{ isSimpleSite && (
+					<li className="inline-help__resource-item">
+						<div className="inline-help__resource-cell">
+							<Button
+								isLink
+								onClick={ () => handleWhatsNewClick() }
+								className="inline-help__new-releases"
+							>
+								<Icon icon={ <NewReleases /> } size={ 24 } />
+								<span>{ __( "What's new" ) }</span>
+								{ showWhatsNewDot && (
+									<Icon className="inline-help__new-releases_dot" icon={ circle } size={ 16 } />
+								) }
+								<Icon icon={ external } size={ 20 } />
+							</Button>
+						</div>
+					</li>
+				) }
 			</ul>
 			{ showGuide && <WhatsNewGuide onClose={ () => setShowGuide( false ) } /> }
 		</>
