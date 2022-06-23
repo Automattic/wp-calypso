@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Onboard } from '@automattic/data-stores';
 import { useDesignsBySite } from '@automattic/design-picker';
-import { useLocale, englishLocales } from '@automattic/i18n-utils';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -21,17 +22,19 @@ import {
 } from './internals/types';
 import type { StepPath } from './internals/steps-repository';
 
+const SiteIntent = Onboard.SiteIntent;
+const SiteGoal = Onboard.SiteGoal;
+
 export const siteSetupFlow: Flow = {
 	name: 'site-setup',
 
 	useSteps() {
-		const locale = useLocale();
-		const isEnglishLocales = englishLocales.includes( locale );
+		const isEnglishLocale = useIsEnglishLocale();
 
 		return [
-			...( isEnabled( 'signup/site-vertical-step' ) && isEnglishLocales ? [ 'vertical' ] : [] ),
+			...( isEnabled( 'signup/goals-step' ) && isEnglishLocale ? [ 'goals' ] : [] ),
+			...( isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale ? [ 'vertical' ] : [] ),
 			'intent',
-			...( isEnabled( 'signup/goals-step' ) ? [ 'goals' ] : [] ),
 			'options',
 			'designSetup',
 			'bloggerStartingPoint',
@@ -68,10 +71,12 @@ export const siteSetupFlow: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+		const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
+		const isEnglishLocale = useIsEnglishLocale();
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -87,10 +92,13 @@ export const siteSetupFlow: Flow = {
 			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const { setPendingAction, setStepProgress } = useDispatch( ONBOARD_STORE );
-		const { setIntentOnSite } = useDispatch( SITE_STORE );
+		const { setPendingAction, setStepProgress, resetGoals, resetIntent } =
+			useDispatch( ONBOARD_STORE );
+		const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
 		const { FSEActive } = useFSEStatus();
 		const dispatch = reduxDispatch();
+		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale;
+		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnglishLocale;
 
 		// Set up Step progress for Woo flow - "Step 2 of 4"
 		if ( intent === 'sell' && storeType === 'power' ) {
@@ -113,14 +121,29 @@ export const siteSetupFlow: Flow = {
 		}
 
 		const exitFlow = ( to: string ) => {
-			setPendingAction(
-				() =>
-					new Promise( () =>
-						setIntentOnSite( siteSlug as string, intent ).then( () => redirect( to ) )
-					)
-			);
+			setPendingAction( () => {
+				/**
+				 * This implementation seems very hacky.
+				 * The new Promise returned is never resolved or rejected.
+				 *
+				 * If we were to resolve the promise when all pending actions complete,
+				 * I found out this results in setIntentOnSite and setGoalsOnSite being called multiple times
+				 * because the exitFlow itself is called more than once on actual flow exits.
+				 */
+				return new Promise( () => {
+					const pendingActions = [ setIntentOnSite( siteSlug as string, intent ) ];
+					if ( siteSlug && goalsStepEnabled ) {
+						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
+					}
+					Promise.all( pendingActions ).then( () => redirect( to ) );
+				} );
+			} );
 
 			navigate( 'processing' );
+
+			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
+			resetGoals();
+			resetIntent();
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
@@ -189,6 +212,31 @@ export const siteSetupFlow: Flow = {
 						default: {
 							return navigate( intent as StepPath );
 						}
+					}
+				}
+
+				case 'goals': {
+					const { intent } = providedDependencies;
+
+					if ( intent === SiteIntent.Import ) {
+						return navigate( 'import' );
+					}
+
+					if ( intent === SiteIntent.DIFM ) {
+						return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
+					}
+
+					if ( verticalsStepEnabled ) {
+						return navigate( 'vertical' );
+					}
+
+					switch ( intent ) {
+						case SiteIntent.Write:
+						case SiteIntent.Sell:
+							return navigate( 'options' );
+						case SiteIntent.Build:
+						default:
+							return navigate( 'designSetup' );
 					}
 				}
 
@@ -278,6 +326,20 @@ export const siteSetupFlow: Flow = {
 				}
 
 				case 'vertical': {
+					if ( goalsStepEnabled ) {
+						if ( goals.includes( SiteGoal.Import ) ) {
+							return navigate( 'import' );
+						}
+
+						switch ( intent ) {
+							case SiteIntent.Write:
+							case SiteIntent.Sell:
+								return navigate( 'options' );
+							default:
+								return navigate( 'designSetup' );
+						}
+					}
+
 					return navigate( 'intent' );
 				}
 
@@ -306,7 +368,7 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'options' );
 
 				case 'intent':
-					return navigate( isEnabled( 'signup/site-vertical-step' ) ? 'vertical' : 'intent' );
+					return navigate( verticalsStepEnabled ? 'vertical' : 'intent' );
 
 				case 'storeFeatures':
 					return navigate( 'options' );
@@ -331,6 +393,14 @@ export const siteSetupFlow: Flow = {
 						// this means we came from write => blogger staring point => choose a design
 						return navigate( 'bloggerStartingPoint' );
 					}
+
+					if ( goalsStepEnabled ) {
+						if ( verticalsStepEnabled ) {
+							return navigate( 'vertical' );
+						}
+						return navigate( 'goals' );
+					}
+
 					return navigate( 'intent' );
 
 				case 'editEmail':
@@ -350,6 +420,21 @@ export const siteSetupFlow: Flow = {
 				case 'importerWordpress':
 					return navigate( 'import' );
 
+				case 'vertical':
+					if ( goalsStepEnabled ) {
+						return navigate( 'goals' );
+					}
+
+				case 'options':
+				case 'import':
+					if ( goalsStepEnabled ) {
+						// This can be unchecked when import step is shown after verticals.
+						// if ( verticalsStepEnabled ) {
+						// 	return navigate( 'vertical' );
+						// }
+						return navigate( 'goals' );
+					}
+
 				default:
 					return navigate( 'intent' );
 			}
@@ -364,6 +449,10 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'bloggerStartingPoint' );
 
 				case 'intent':
+					return exitFlow( `/home/${ siteSlug }` );
+
+				case 'goals':
+					// Skip to dashboard must have been pressed
 					return exitFlow( `/home/${ siteSlug }` );
 
 				case 'vertical':
@@ -381,13 +470,16 @@ export const siteSetupFlow: Flow = {
 			navigate( step );
 		};
 
-		return { goNext, goBack, goToStep, submit };
+		return { goNext, goBack, goToStep, submit, exitFlow };
 	},
 
 	useAssertConditions(): AssertConditionResult {
 		const siteSlug = useSiteSlugParam();
 		const siteId = useSiteIdParam();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const fetchingSiteError = useSelect( ( select ) =>
+			select( SITE_STORE ).getFetchingSiteError()
+		);
 
 		if ( ! userIsLoggedIn ) {
 			redirect( '/start' );
@@ -398,9 +490,18 @@ export const siteSetupFlow: Flow = {
 		}
 
 		if ( ! siteSlug && ! siteId ) {
+			redirect( '/' );
 			return {
 				state: AssertConditionState.FAILURE,
 				message: 'site-setup did not provide the site slug or site id it is configured to.',
+			};
+		}
+
+		if ( fetchingSiteError ) {
+			redirect( '/' );
+			return {
+				state: AssertConditionState.FAILURE,
+				message: fetchingSiteError.message,
 			};
 		}
 

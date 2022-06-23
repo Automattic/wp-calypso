@@ -9,14 +9,6 @@ import {
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-interface ExistingMailAccount {
-	account_type: string;
-	emails: {
-		email_type: string;
-		mailbox: string;
-	}[];
-}
-
 const getEmailAccountTypes = ( provider: EmailProvider ): string[] =>
 	( {
 		[ EmailProvider.Titan ]: [
@@ -32,18 +24,20 @@ const useGetExistingMailboxNames = (
 ): string[] => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const {
-		data: { accounts } = {},
+		data: emailAccounts = [],
 		error,
 		isLoading,
-	} = useGetEmailAccountsQuery( selectedSiteId as number, selectedDomainName );
+	} = useGetEmailAccountsQuery( selectedSiteId as number, selectedDomainName, {
+		notifyOnChangeProps: [ 'data' ],
+	} );
 
-	if ( error || isLoading || ! accounts ) {
+	if ( error || isLoading || ! emailAccounts.length ) {
 		return [];
 	}
 
 	const emailAccountTypes = getEmailAccountTypes( provider );
 
-	return ( accounts as ExistingMailAccount[] )
+	return emailAccounts
 		.filter( ( { account_type } ) => emailAccountTypes.includes( account_type ) )
 		.flatMap( ( { emails } ) => emails.map( ( { mailbox } ) => mailbox ) );
 };

@@ -11,6 +11,29 @@ import type {
 } from './types';
 import type { ReactChild } from 'react';
 
+export const siteColumns = [
+	{
+		key: 'site',
+		title: translate( 'Site' ),
+	},
+	{
+		key: 'backup',
+		title: translate( 'Backup' ),
+	},
+	{
+		key: 'scan',
+		title: translate( 'Scan' ),
+	},
+	{
+		key: 'monitor',
+		title: translate( 'Monitor' ),
+	},
+	{
+		key: 'plugin',
+		title: translate( 'Plugin Updates' ),
+	},
+];
+
 // Event names for all actions for large screen(>960px) and small screen(<960px)
 export const actionEventNames: ActionEventNames = {
 	issue_license: {
@@ -196,7 +219,7 @@ const getLinks = (
 	switch ( type ) {
 		case 'backup': {
 			if ( status === 'inactive' ) {
-				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-realtime`;
+				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-realtime&source=dashboard`;
 			} else {
 				link = `/backup/${ siteUrl }`;
 			}
@@ -204,7 +227,7 @@ const getLinks = (
 		}
 		case 'scan': {
 			if ( status === 'inactive' ) {
-				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-scan`;
+				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-scan&source=dashboard`;
 			} else {
 				link = `/scan/${ siteUrl }`;
 			}
@@ -241,7 +264,7 @@ export const getRowMetaData = (
 	row: { value: { url: string }; status: string; error: string };
 	link: string;
 	isExternalLink: boolean;
-	siteError: string;
+	siteError: boolean;
 	tooltip: ReactChild | undefined;
 	tooltipId: string;
 	siteDown: boolean;
@@ -366,10 +389,10 @@ export const formatSites = ( sites: Array< any > = [] ): Array< any > => {
 			scan: formatScanData( site ),
 			monitor: formatMonitorData( site ),
 			plugin: {
-				value: `${ pluginUpdates.length } ${ translate( 'Available' ) }`,
-				status: pluginUpdates.length > 0 ? 'warning' : 'success',
+				value: `${ pluginUpdates?.length } ${ translate( 'Available' ) }`,
+				status: pluginUpdates?.length > 0 ? 'warning' : 'success',
 				type: 'plugin',
-				updates: pluginUpdates.length,
+				updates: pluginUpdates?.length,
 			},
 		};
 	} );

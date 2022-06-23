@@ -16,6 +16,7 @@ import './style.scss';
 
 interface MailboxFormFieldProps {
 	field: MailboxFormFieldBase< string >;
+	isFirstVisibleField?: boolean;
 	isPasswordField?: boolean;
 	lowerCaseChangeValue?: boolean;
 	onFieldValueChanged?: ( field: MailboxFormFieldBase< string > ) => void;
@@ -26,6 +27,7 @@ interface MailboxFormFieldProps {
 
 const MailboxFieldInput = ( {
 	field,
+	isFirstVisibleField = false,
 	isPasswordField = false,
 	onBlur,
 	onChange,
@@ -46,6 +48,7 @@ const MailboxFieldInput = ( {
 		onBlur,
 		onChange,
 		onInvalid,
+		...( isFirstVisibleField ? { autoFocus: true } : {} ),
 		required: field.isRequired,
 		value: field.value,
 	};

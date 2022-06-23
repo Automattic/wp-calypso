@@ -13,6 +13,7 @@ import {
 	LoginPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import type { NewUserResponse } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;
 
@@ -24,8 +25,7 @@ describe(
 		} );
 
 		let page: Page;
-		let userID: number;
-		let bearerToken: string;
+		let userDetails: NewUserResponse;
 		let userCreatedFlag = false;
 
 		beforeAll( async () => {
@@ -41,13 +41,11 @@ describe(
 
 			it( 'Sign up as new user', async function () {
 				const userSignupPage = new UserSignupPage( page );
-				const details = await userSignupPage.signup(
+				userDetails = await userSignupPage.signup(
 					testUser.email,
 					testUser.username,
 					testUser.password
 				);
-				userID = details.ID;
-				bearerToken = details.bearer_token;
 
 				userCreatedFlag = true;
 			} );
@@ -101,19 +99,19 @@ describe(
 
 			const restAPIClient = new RestAPIClient(
 				{ username: testUser.username, password: testUser.password },
-				bearerToken
+				userDetails.body.bearer_token
 			);
 
 			const response = await restAPIClient.closeAccount( {
-				userID: userID,
+				userID: userDetails.body.user_id,
 				username: testUser.username,
 				email: testUser.email,
 			} );
 
 			if ( response.success !== true ) {
-				console.warn( `Failed to delete user ID ${ userID }` );
+				console.warn( `Failed to delete user ID ${ userDetails.body.user_id }` );
 			} else {
-				console.log( `Successfully deleted user ID ${ userID }` );
+				console.log( `Successfully deleted user ID ${ userDetails.body.user_id }` );
 			}
 			return response;
 		} );

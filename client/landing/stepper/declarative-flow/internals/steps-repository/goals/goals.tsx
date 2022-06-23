@@ -2,38 +2,38 @@ import { Onboard } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import type { Goal } from './types';
 
-const GoalKey = Onboard.GoalKey;
+const SiteGoal = Onboard.SiteGoal;
+const HIDE_GOALS = [ SiteGoal.DIFM, SiteGoal.Import ];
+
+const shouldDisplayGoal = ( { key }: Goal ) => ! HIDE_GOALS.includes( key );
 
 export const useGoals = (): Goal[] => {
 	const translate = useTranslate();
-
-	const goals: Goal[] = [
+	return [
 		{
-			key: GoalKey.Write,
-			title: translate( 'Write and publish' ),
+			key: SiteGoal.Write,
+			title: translate( 'Write & Publish' ),
 		},
 		{
-			key: GoalKey.Sell,
-			title: translate( 'Sell goods or products' ),
+			key: SiteGoal.Sell,
+			title: translate( 'Sell online' ),
 		},
 		{
-			key: GoalKey.Promote,
-			title: translate( 'Promote myself or my business' ),
+			key: SiteGoal.Promote,
+			title: translate( 'Promote myself or business' ),
 		},
 		{
-			key: GoalKey.DIFM,
+			key: SiteGoal.DIFM,
 			title: translate( 'Hire a professional to design my website' ),
 			isPremium: true,
 		},
 		{
-			key: GoalKey.Import,
+			key: SiteGoal.Import,
 			title: translate( 'Import my existing website content' ),
 		},
 		{
-			key: GoalKey.Other,
+			key: SiteGoal.Other,
 			title: translate( 'Other' ),
 		},
-	];
-
-	return goals;
+	].filter( shouldDisplayGoal );
 };

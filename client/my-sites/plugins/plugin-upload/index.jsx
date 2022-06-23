@@ -1,4 +1,5 @@
-import { Card, ProgressBar } from '@automattic/components';
+import { WPCOM_FEATURES_UPLOAD_PLUGINS } from '@automattic/calypso-products/src';
+import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight } from 'lodash';
 import page from 'page';
@@ -21,10 +22,11 @@ import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/ac
 import { successNotice } from 'calypso/state/notices/actions';
 import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
 import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
-import getPluginUploadProgress from 'calypso/state/selectors/get-plugin-upload-progress';
 import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isPluginUploadInProgress from 'calypso/state/selectors/is-plugin-upload-in-progress';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSiteAdminUrl,
 	isJetpackSite,
@@ -80,26 +82,6 @@ class PluginUpload extends Component {
 		);
 	}
 
-	renderProgressBar() {
-		const { translate, progress, installing } = this.props;
-
-		const uploadingMessage = translate( 'Uploading your plugin' );
-		const installingMessage = translate( 'Installing your plugin' );
-
-		return (
-			<div>
-				<span className="plugin-upload__title">
-					{ installing ? installingMessage : uploadingMessage }
-				</span>
-				<ProgressBar
-					value={ progress }
-					title={ translate( 'Uploading progress' ) }
-					isPulsing={ installing }
-				/>
-			</div>
-		);
-	}
-
 	renderNotAvailableForMultisite() {
 		const { translate, siteAdminUrl } = this.props;
 
@@ -114,8 +96,12 @@ class PluginUpload extends Component {
 	}
 
 	render() {
-		const { translate, isJetpackMultisite, siteId, siteSlug } = this.props;
+		const { translate, isJetpackMultisite, siteId, siteSlug, hasUploadPlugins } = this.props;
 		const { showEligibility } = this.state;
+
+		if ( ! hasUploadPlugins ) {
+			page( `/plugins/${ siteSlug }` );
+		}
 
 		return (
 			<Main>
@@ -138,8 +124,8 @@ class PluginUpload extends Component {
 const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const error = getPluginUploadError( state, siteId );
-	const progress = getPluginUploadProgress( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
+	const jetpackNonAtomic = isJetpack && ! isAtomicSite( state, siteId );
 	const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
 	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
 	// Use this selector to take advantage of eligibility card placeholders
@@ -148,6 +134,8 @@ const mapStateToProps = ( state ) => {
 	const hasEligibilityMessages = ! (
 		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
 	);
+	const hasUploadPlugins =
+		siteHasFeature( state, siteId, WPCOM_FEATURES_UPLOAD_PLUGINS ) || jetpackNonAtomic;
 
 	return {
 		siteId,
@@ -158,12 +146,11 @@ const mapStateToProps = ( state ) => {
 		failed: !! error,
 		pluginId: getUploadedPluginId( state, siteId ),
 		error,
-		progress,
-		installing: progress === 100,
 		isJetpackMultisite,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
+		hasUploadPlugins,
 	};
 };
 

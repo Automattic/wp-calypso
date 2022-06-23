@@ -48,7 +48,11 @@ class AmpWpcom extends Component {
 
 	render() {
 		const {
-			fields: { amp_is_supported: ampIsSupported, amp_is_enabled: ampIsEnabled },
+			fields: {
+				amp_is_supported: ampIsSupported,
+				amp_is_deprecated: ampIsDeprecated,
+				amp_is_enabled: ampIsEnabled,
+			},
 			isRequestingSettings,
 			isSavingSettings,
 			siteSlug,
@@ -58,7 +62,7 @@ class AmpWpcom extends Component {
 		const isDisabled = isRequestingSettings || isSavingSettings;
 		const isCustomizeEnabled = ! isDisabled && ampIsEnabled;
 
-		if ( ! ampIsSupported ) {
+		if ( ! ampIsSupported || ampIsDeprecated ) {
 			return null;
 		}
 

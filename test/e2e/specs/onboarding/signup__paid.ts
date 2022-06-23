@@ -127,7 +127,15 @@ skipDescribeIf( isStagingOrProd )(
 		describe( 'Onboarding flow', function () {
 			it( 'Select "build" path', async function () {
 				startSiteFlow = new StartSiteFlow( page );
-				await startSiteFlow.clickButton( 'Start building' );
+
+				await page.waitForLoadState( 'networkidle' );
+				const isGoalsStep = await page.isVisible( ':has-text("What are your goals")' );
+
+				if ( isGoalsStep ) {
+					await startSiteFlow.clickButton( 'Continue' );
+				} else {
+					await startSiteFlow.clickButton( 'Start building' );
+				}
 			} );
 
 			it( 'Select a theme to preview', async function () {

@@ -1,172 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Marketplace SignupSuccess should render the page as expected 1`] = `
-<ThemeProvider
-  theme={
+<ContextProvider
+  value={
     Object {
-      "fontSize": Object {
-        "small": "14px",
+      "store": Object {
+        "@@observable": [Function],
+        "addReducer": [Function],
+        "dispatch": [Function],
+        "getCurrentReducer": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
       },
-      "weights": Object {
-        "bold": "600",
-        "normal": "400",
+      "subscription": Object {
+        "addNestedSub": [Function],
+        "getListeners": [Function],
+        "handleChangeWrapper": [Function],
+        "isSubscribed": [Function],
+        "notifyNestedSubs": [Function],
+        "onStateChange": [Function],
+        "trySubscribe": [Function],
+        "tryUnsubscribe": [Function],
       },
     }
   }
 >
-  <EmotionGlobal
-    styles={
-      Object {
-        "map": "/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNpZ251cC1zdWNjZXNzLnRzeCJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFrQmdCIiwiZmlsZSI6InNpZ251cC1zdWNjZXNzLnRzeCIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IFRoZW1lUHJvdmlkZXIsIEdsb2JhbCwgY3NzIH0gZnJvbSAnQGVtb3Rpb24vcmVhY3QnO1xuaW1wb3J0IHsgQnV0dG9uIH0gZnJvbSAnQHdvcmRwcmVzcy9jb21wb25lbnRzJztcbmltcG9ydCB7IHVzZVRyYW5zbGF0ZSB9IGZyb20gJ2kxOG4tY2FseXBzbyc7XG5pbXBvcnQgY2hlY2tDaXJjbGVJbWFnZSBmcm9tICdjYWx5cHNvL2Fzc2V0cy9pbWFnZXMvbWFya2V0cGxhY2UvY2hlY2stY2lyY2xlLWdyYXkuc3ZnJztcbmltcG9ydCBzZXR0aW5nc0ltYWdlIGZyb20gJ2NhbHlwc28vYXNzZXRzL2ltYWdlcy9tYXJrZXRwbGFjZS9zZXR0aW5ncy5zdmcnO1xuaW1wb3J0IHNob3BwaW5nQ2FydEltYWdlIGZyb20gJ2NhbHlwc28vYXNzZXRzL2ltYWdlcy9tYXJrZXRwbGFjZS9zaG9wcGluZy1jYXJ0LnN2Zyc7XG5pbXBvcnQgc3VibWlzc2lvblN1Y2Nlc3NJbWFnZSBmcm9tICdjYWx5cHNvL2Fzc2V0cy9pbWFnZXMvbWFya2V0cGxhY2Uvc3VibWlzc2lvbi1zdWNjZXNzLnBuZyc7XG5pbXBvcnQgdGhlbWUgZnJvbSAnY2FseXBzby9teS1zaXRlcy9tYXJrZXRwbGFjZS90aGVtZSc7XG5pbXBvcnQgTWFzdGVyYmFyTG9nbyBmcm9tICcuLi8uLi9jb21wb25lbnRzL21hc3RlcmJhci1sb2dvJztcbmltcG9ydCAnLi9zdHlsZS5zY3NzJztcblxuY29uc3QgU2lnbnVwU3VjY2VzcyA9ICgpID0+IHtcblx0Y29uc3QgdHJhbnNsYXRlID0gdXNlVHJhbnNsYXRlKCk7XG5cblx0cmV0dXJuIChcblx0XHQ8VGhlbWVQcm92aWRlciB0aGVtZT17IHRoZW1lIH0+XG5cdFx0XHR7IC8qIFVzaW5nIEdsb2JhbCB0byBvdmVycmlkZSBHbG9iYWwgbWFzdGVyYmFyIGhlaWdodCAqLyB9XG5cdFx0XHQ8R2xvYmFsXG5cdFx0XHRcdHN0eWxlcz17IGNzc2Bcblx0XHRcdFx0XHRib2R5LmlzLXNlY3Rpb24tbWFya2V0cGxhY2Uge1xuXHRcdFx0XHRcdFx0LS1tYXN0ZXJiYXItaGVpZ2h0OiA3MnB4O1xuXHRcdFx0XHRcdH1cblx0XHRcdFx0YCB9XG5cdFx0XHQvPlxuXHRcdFx0PE1hc3RlcmJhckxvZ28gLz5cblx0XHRcdDxkaXYgY2xhc3NOYW1lPVwic2lnbnVwLXN1Y2Nlc3NcIj5cblx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19faGVhZGVyXCI+XG5cdFx0XHRcdFx0PGltZyBzcmM9eyBzdWJtaXNzaW9uU3VjY2Vzc0ltYWdlIH0gYWx0PVwiU3VibWlzc2lvbiBzdWNjZXNzXCIgLz5cblx0XHRcdFx0XHQ8aDEgY2xhc3NOYW1lPVwic2lnbnVwLXN1Y2Nlc3NfX2hlYWRlci10aXRsZSB3cC1icmFuZC1mb250XCI+XG5cdFx0XHRcdFx0XHR7IHRyYW5zbGF0ZSggJ1dl4oCZbGwgYmUgaW4gdG91Y2gnICkgfVxuXHRcdFx0XHRcdDwvaDE+XG5cdFx0XHRcdFx0PHA+XG5cdFx0XHRcdFx0XHR7IHRyYW5zbGF0ZShcblx0XHRcdFx0XHRcdFx0J1RoYW5rIHlvdSBmb3IgYXBwbHkgdG8gam9pbiB0aGUgV29yZFByZXNzLmNvbSBtYXJrZXRwbGFjZS4gV2XigJlsbCBiZSBpbiB0b3VjaCB3aXRoIHlvdSB2ZXJ5IHNvb24gdG8gZGlzY3VzcyBuZXh0IHN0ZXBzLidcblx0XHRcdFx0XHRcdCkgfVxuXHRcdFx0XHRcdDwvcD5cblx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdDxkaXYgY2xhc3NOYW1lPVwic2lnbnVwLXN1Y2Nlc3NfX2JvZHlcIj5cblx0XHRcdFx0XHQ8ZGl2IGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19yb3dcIj5cblx0XHRcdFx0XHRcdDxpbWcgc3JjPXsgY2hlY2tDaXJjbGVJbWFnZSB9IGFsdD1cIlwiIGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19yb3ctaWNvblwiIC8+XG5cdFx0XHRcdFx0XHQ8ZGl2IGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19yb3ctd3JhcHBlclwiPlxuXHRcdFx0XHRcdFx0XHQ8ZGl2IGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19yb3ctY29udGVudFwiPlxuXHRcdFx0XHRcdFx0XHRcdDxoMj57IHRyYW5zbGF0ZSggJ0xlYXJuIE1vcmUnICkgfTwvaDI+XG5cdFx0XHRcdFx0XHRcdFx0PHA+eyB0cmFuc2xhdGUoICdSZWFkIG1vcmUgYWJvdXQgc2VsbGluZyBvbiB0aGUgV29yZFByZXNzLmNvbSBtYXJrZXRwbGFjZS4nICkgfTwvcD5cblx0XHRcdFx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdFx0XHRcdDxCdXR0b24gaXNTZWNvbmRhcnkgaHJlZj1cImh0dHBzOi8vZGV2ZWxvcGVyLndvcmRwcmVzcy5jb20vd29yZHByZXNzLWNvbS1tYXJrZXRwbGFjZS9cIj5cblx0XHRcdFx0XHRcdFx0XHR7IHRyYW5zbGF0ZSggJ0NvbnRpbnVlJyApIH1cblx0XHRcdFx0XHRcdFx0PC9CdXR0b24+XG5cdFx0XHRcdFx0XHQ8L2Rpdj5cblx0XHRcdFx0XHQ8L2Rpdj5cblx0XHRcdFx0XHQ8aHIgLz5cblx0XHRcdFx0XHQ8ZGl2IGNsYXNzTmFtZT1cInNpZ251cC1zdWNjZXNzX19yb3dcIj5cblx0XHRcdFx0XHRcdDxpbWcgc3JjPXsgc2hvcHBpbmdDYXJ0SW1hZ2UgfSBhbHQ9XCJcIiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LWljb25cIiAvPlxuXHRcdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LXdyYXBwZXJcIj5cblx0XHRcdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LWNvbnRlbnRcIj5cblx0XHRcdFx0XHRcdFx0XHQ8aDI+eyB0cmFuc2xhdGUoICdWaWV3IHRoZSBtYXJrZXRwbGFjZScgKSB9PC9oMj5cblx0XHRcdFx0XHRcdFx0XHQ8cD57IHRyYW5zbGF0ZSggJ1NpZ24gaW4gdG8gc2VlIHdoYXQgdGhlIG1hcmtldHBsYWNlIGhhcyB0byBvZmZlci4nICkgfTwvcD5cblx0XHRcdFx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdFx0XHRcdDxCdXR0b24gaXNTZWNvbmRhcnkgaHJlZj1cIi9wbHVnaW5zXCI+XG5cdFx0XHRcdFx0XHRcdFx0eyB0cmFuc2xhdGUoICdDb250aW51ZScgKSB9XG5cdFx0XHRcdFx0XHRcdDwvQnV0dG9uPlxuXHRcdFx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdFx0PC9kaXY+XG5cdFx0XHRcdFx0PGhyIC8+XG5cdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93XCI+XG5cdFx0XHRcdFx0XHQ8aW1nIHNyYz17IHNldHRpbmdzSW1hZ2UgfSBhbHQ9XCJcIiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LWljb25cIiAvPlxuXHRcdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LXdyYXBwZXJcIj5cblx0XHRcdFx0XHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fcm93LWNvbnRlbnRcIj5cblx0XHRcdFx0XHRcdFx0XHQ8aDI+eyB0cmFuc2xhdGUoICdEZXZlbG9wZXIgUGFnZScgKSB9PC9oMj5cblx0XHRcdFx0XHRcdFx0XHQ8cD57IHRyYW5zbGF0ZSggJ0xlYXJuIG1vcmUgYWJvdXQgYnVpbGRpbmcgYSBXb3JkUHJlc3MuY29tIGludGVncmF0aW9uLicgKSB9PC9wPlxuXHRcdFx0XHRcdFx0XHQ8L2Rpdj5cblx0XHRcdFx0XHRcdFx0PEJ1dHRvbiBpc1NlY29uZGFyeSBocmVmPVwiaHR0cHM6Ly9kZXZlbG9wZXIud29yZHByZXNzLmNvbVwiPlxuXHRcdFx0XHRcdFx0XHRcdHsgdHJhbnNsYXRlKCAnQ29udGludWUnICkgfVxuXHRcdFx0XHRcdFx0XHQ8L0J1dHRvbj5cblx0XHRcdFx0XHRcdDwvZGl2PlxuXHRcdFx0XHRcdDwvZGl2PlxuXHRcdFx0XHQ8L2Rpdj5cblx0XHRcdDwvZGl2PlxuXHRcdFx0PGRpdiBjbGFzc05hbWU9XCJzaWdudXAtc3VjY2Vzc19fZm9vdGVyXCI+XG5cdFx0XHRcdDxwPkNvbnRhY3Qgb3VyIHRlYW1zIGRpcmVjdGx5OjwvcD5cblx0XHRcdFx0PHAgY2xhc3NOYW1lPVwic2lnbnVwLXN1Y2Nlc3NfX2Zvb3Rlci1jb250YWN0XCI+XG5cdFx0XHRcdFx0PGEgaHJlZj1cImh0dHBzOi8vd3B2aXAuY29tLz9yZWY9cGFydG5lcnMtbHBcIj5Xb3JkUHJlc3MuY29tIFZJUDwvYT4seyAnICcgfVxuXHRcdFx0XHRcdDxhIGhyZWY9XCJodHRwczovL2pldHBhY2suY29tL2Zvci9ob3N0cy8/cmVmPXBhcnRuZXJzLWxwXCI+SmV0cGFjazwvYT4sIG9yeyAnICcgfVxuXHRcdFx0XHRcdDxhIGhyZWY9XCJodHRwczovL3dvb2NvbW1lcmNlLmNvbS8/cmVmPXBhcnRuZXJzLWxwXCI+V29vQ29tbWVyY2U8L2E+XG5cdFx0XHRcdDwvcD5cblx0XHRcdDwvZGl2PlxuXHRcdDwvVGhlbWVQcm92aWRlcj5cblx0KTtcbn07XG5cbmV4cG9ydCBkZWZhdWx0IFNpZ251cFN1Y2Nlc3M7XG4iXX0= */",
-        "name": "sizr66-SignupSuccess",
-        "styles": "body.is-section-marketplace{--masterbar-height:72px;};label:SignupSuccess;",
-        "toString": [Function],
-      }
-    }
-  />
-  <MasterbarLogo />
-  <div
-    className="signup-success"
-  >
-    <div
-      className="signup-success__header"
-    >
-      <img
-        alt="Submission success"
-        src="submission-success.png"
-      />
-      <h1
-        className="signup-success__header-title wp-brand-font"
-      >
-        We’ll be in touch
-      </h1>
-      <p>
-        Thank you for apply to join the WordPress.com marketplace. We’ll be in touch with you very soon to discuss next steps.
-      </p>
-    </div>
-    <div
-      className="signup-success__body"
-    >
-      <div
-        className="signup-success__row"
-      >
-        <img
-          alt=""
-          className="signup-success__row-icon"
-          src="check-circle-gray.svg"
-        />
-        <div
-          className="signup-success__row-wrapper"
-        >
-          <div
-            className="signup-success__row-content"
-          >
-            <h2>
-              Learn More
-            </h2>
-            <p>
-              Read more about selling on the WordPress.com marketplace.
-            </p>
-          </div>
-          <ForwardRef(Button)
-            href="https://developer.wordpress.com/wordpress-com-marketplace/"
-            isSecondary={true}
-          >
-            Continue
-          </ForwardRef(Button)>
-        </div>
-      </div>
-      <hr />
-      <div
-        className="signup-success__row"
-      >
-        <img
-          alt=""
-          className="signup-success__row-icon"
-          src="shopping-cart.svg"
-        />
-        <div
-          className="signup-success__row-wrapper"
-        >
-          <div
-            className="signup-success__row-content"
-          >
-            <h2>
-              View the marketplace
-            </h2>
-            <p>
-              Sign in to see what the marketplace has to offer.
-            </p>
-          </div>
-          <ForwardRef(Button)
-            href="/plugins"
-            isSecondary={true}
-          >
-            Continue
-          </ForwardRef(Button)>
-        </div>
-      </div>
-      <hr />
-      <div
-        className="signup-success__row"
-      >
-        <img
-          alt=""
-          className="signup-success__row-icon"
-          src="settings.svg"
-        />
-        <div
-          className="signup-success__row-wrapper"
-        >
-          <div
-            className="signup-success__row-content"
-          >
-            <h2>
-              Developer Page
-            </h2>
-            <p>
-              Learn more about building a WordPress.com integration.
-            </p>
-          </div>
-          <ForwardRef(Button)
-            href="https://developer.wordpress.com"
-            isSecondary={true}
-          >
-            Continue
-          </ForwardRef(Button)>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div
-    className="signup-success__footer"
-  >
-    <p>
-      Contact our teams directly:
-    </p>
-    <p
-      className="signup-success__footer-contact"
-    >
-      <a
-        href="https://wpvip.com/?ref=partners-lp"
-      >
-        WordPress.com VIP
-      </a>
-      ,
-       
-      <a
-        href="https://jetpack.com/for/hosts/?ref=partners-lp"
-      >
-        Jetpack
-      </a>
-      , or
-       
-      <a
-        href="https://woocommerce.com/?ref=partners-lp"
-      >
-        WooCommerce
-      </a>
-    </p>
-  </div>
-</ThemeProvider>
+  <SignupSuccess />
+</ContextProvider>
 `;

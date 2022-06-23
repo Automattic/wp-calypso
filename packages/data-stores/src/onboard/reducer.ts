@@ -1,6 +1,5 @@
 import { combineReducers } from '@wordpress/data';
-import { GoalKey } from './constants';
-import { goalsToIntent } from './utils';
+import { SiteGoal } from './constants';
 import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
@@ -227,10 +226,7 @@ const intent: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_INTENT' ) {
 		return action.intent;
 	}
-	if ( action.type === 'SET_GOALS' ) {
-		return goalsToIntent( action.goals );
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( [ 'RESET_INTENT', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return '';
 	}
 	return state;
@@ -299,11 +295,17 @@ const stepProgress: Reducer< { count: number; progress: number } | undefined, On
 	return state;
 };
 
-const goals: Reducer< GoalKey[], OnboardAction > = ( state = [], action ) => {
+const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'SET_GOALS' ) {
 		return action.goals;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'CLEAR_IMPORT_GOAL' ) {
+		return state.filter( ( goal ) => goal !== SiteGoal.Import );
+	}
+	if ( action.type === 'CLEAR_DIFM_GOAL' ) {
+		return state.filter( ( goal ) => goal !== SiteGoal.DIFM );
+	}
+	if ( [ 'RESET_GOALS', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return [];
 	}
 	return state;

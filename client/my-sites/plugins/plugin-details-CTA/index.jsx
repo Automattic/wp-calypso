@@ -1,4 +1,8 @@
-import { isFreePlanProduct, FEATURE_INSTALL_PLUGINS } from '@automattic/calypso-products';
+import {
+	isFreePlanProduct,
+	FEATURE_INSTALL_PLUGINS,
+	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+} from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -51,11 +55,13 @@ const PluginDetailsCTA = ( {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 	const isFreePlan = selectedSite && isFreePlanProduct( selectedSite.plan );
+	const pluginFeature = isMarketplaceProduct
+		? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
+		: FEATURE_INSTALL_PLUGINS;
 
 	const shouldUpgrade =
-		useSelector(
-			( state ) => ! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
-		) && ! isJetpackSelfHosted;
+		useSelector( ( state ) => ! siteHasFeature( state, selectedSite?.ID, pluginFeature ) ) &&
+		! isJetpackSelfHosted;
 
 	// Eligibilities for Simple Sites.
 	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>

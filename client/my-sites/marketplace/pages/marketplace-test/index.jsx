@@ -11,6 +11,7 @@ import { WarningList } from 'calypso/blocks/eligibility-warnings/warning-list';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
+import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
 import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
@@ -52,6 +53,19 @@ export default function MarketplaceTest() {
 	const isAtomicSite = useSelector( ( state ) => isSiteWpcomAtomic( state, selectedSiteId ?? 0 ) );
 	const pluginDetails = useSelector( ( state ) => getPlugins( state, [ selectedSiteId ] ) );
 	const { data = [], isFetching } = useWPCOMPlugins( 'all' );
+
+	const {
+		data: dataSearch = [],
+		isFetching: isFetchingSearch,
+		fetchNextPage,
+	} = useESPluginsInfinite( {
+		category: 'all',
+		searchTerm: 'woocommerce',
+		pageSize: 20,
+	} );
+
+	// eslint-disable-next-line no-console
+	console.log( { dataSearch, isFetchingSearch } );
 
 	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSiteId ) );
 
@@ -114,6 +128,7 @@ export default function MarketplaceTest() {
 
 	return (
 		<Container>
+			<button onClick={ fetchNextPage }>Fetch next page</button>
 			{ selectedSiteId && <QueryJetpackPlugins siteIds={ [ selectedSiteId ] } /> }
 			<Card key="wpcom-plugins">
 				<PluginsBrowserList

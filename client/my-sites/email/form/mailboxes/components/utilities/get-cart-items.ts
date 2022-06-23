@@ -9,20 +9,20 @@ import {
 import { GSuiteProductUser } from 'calypso/lib/gsuite/new-users';
 import { isTitanMonthlyProduct } from 'calypso/lib/titan';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
-import { MailProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-mail-product-properties';
+import { EmailProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-email-product-properties';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 
 const getTitanCartItems = (
 	mailboxes: MailboxForm< EmailProvider >[],
-	mailProperties: MailProperties
+	mailProperties: EmailProperties
 ) => {
-	const { mailProduct, newQuantity, quantity } = mailProperties;
+	const { emailProduct, newQuantity, quantity } = mailProperties;
 
 	const email_users = mailboxes.map( ( mailbox ) =>
 		mailbox.getAsCartItem()
 	) as unknown as TitanProductUser[];
 
-	const cartItemFunction = isTitanMonthlyProduct( mailProduct )
+	const cartItemFunction = isTitanMonthlyProduct( emailProduct )
 		? titanMailMonthly
 		: titanMailYearly;
 
@@ -38,9 +38,9 @@ const getTitanCartItems = (
 
 const getGSuiteCartItems = (
 	mailboxes: MailboxForm< EmailProvider >[],
-	mailProperties: MailProperties
+	mailProperties: EmailProperties
 ) => {
-	const { isExtraItemPurchase, mailProduct, newQuantity, quantity } = mailProperties;
+	const { isAdditionalMailboxesPurchase, emailProduct, newQuantity, quantity } = mailProperties;
 
 	const users = mailboxes.map( ( mailbox ) =>
 		mailbox.getAsCartItem()
@@ -55,15 +55,15 @@ const getGSuiteCartItems = (
 		users: GSuiteProductUser[];
 	} = { domain, users };
 
-	const productSlug = mailProduct.product_slug;
+	const productSlug = emailProduct.product_slug;
 
-	if ( isGSuiteProductSlug( productSlug ) && isExtraItemPurchase ) {
+	if ( isGSuiteProductSlug( productSlug ) && isAdditionalMailboxesPurchase ) {
 		return googleAppsExtraLicenses( properties );
 	}
 
 	properties = { ...properties, quantity };
 
-	if ( isExtraItemPurchase ) {
+	if ( isAdditionalMailboxesPurchase ) {
 		properties = { ...properties, new_quantity: newQuantity };
 	}
 
@@ -72,7 +72,7 @@ const getGSuiteCartItems = (
 
 const getCartItems = (
 	mailboxes: MailboxForm< EmailProvider >[],
-	mailProperties: MailProperties
+	mailProperties: EmailProperties
 ) => {
 	const provider = mailboxes[ 0 ].provider;
 

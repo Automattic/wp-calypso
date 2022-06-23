@@ -13,7 +13,6 @@ import {
 	isEcommerce,
 	isGSuiteOrExtraLicenseOrGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
-	isJetpackBusinessPlan,
 	isJetpackPlan,
 	isPersonal,
 	isPlan,

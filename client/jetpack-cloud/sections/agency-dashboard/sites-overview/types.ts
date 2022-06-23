@@ -6,16 +6,18 @@ export type AllowedTypes = 'site' | 'backup' | 'scan' | 'monitor' | 'plugin';
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< { key: string; title: ReactChild } >;
 
+export type AllowedStatusTypes = 'inactive' | 'progress' | 'failed' | 'warning' | 'success';
+
 export interface SiteNode {
 	value: { blog_id: number; url: string; url_with_scheme: string };
-	error: string;
+	error: boolean;
 	type: AllowedTypes;
-	status: string;
+	status: AllowedStatusTypes | string;
 }
 export interface SiteData {
 	site: SiteNode;
-	scan: { threats: number };
-	plugin: { updates: number };
+	scan: { threats: number; type: AllowedTypes; status: AllowedStatusTypes; value: ReactChild };
+	plugin: { updates: number; type: AllowedTypes; status: AllowedStatusTypes; value: ReactChild };
 	[ key: string ]: any;
 }
 
@@ -33,8 +35,6 @@ export type FormattedRowObj = {
 	threats?: number;
 	error?: boolean;
 };
-
-export type AllowedStatusTypes = 'inactive' | 'progress' | 'failed' | 'warning' | 'success';
 
 export type StatusEventNames = {
 	[ key in AllowedStatusTypes | string ]: { small_screen: string; large_screen: string };
@@ -64,4 +64,9 @@ export type AgencyDashboardFilterOption =
 
 export type AgencyDashboardFilter = {
 	issueTypes: Array< AgencyDashboardFilterOption | string >;
+};
+
+export type PurchasedProduct = {
+	selectedSite: string;
+	selectedProduct: { name: string; key: string };
 };

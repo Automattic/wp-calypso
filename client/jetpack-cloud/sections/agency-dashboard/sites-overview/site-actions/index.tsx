@@ -72,7 +72,7 @@ export default function SiteActions( {
 					<>
 						<PopoverMenuItem
 							onClick={ () => handleClickMenuItem( 'issue_license' ) }
-							href={ `/partner-portal/issue-license/?site_id=${ siteId }` }
+							href={ `/partner-portal/issue-license/?site_id=${ siteId }&source=dashboard` }
 							className="site-actions__menu-item"
 							icon="chevron-right"
 						>

@@ -1,4 +1,4 @@
 module.exports = {
 	preset: '../../test/packages/jest-preset.js',
-	testMatch: [ '<rootDir>/test/**/*.test.ts' ],
+	testMatch: [ '<rootDir>/src/**/*.test.ts' ],
 };

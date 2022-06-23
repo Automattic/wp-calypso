@@ -9,6 +9,7 @@ import {
 } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 import { jetpackStoragePlans } from 'calypso/my-sites/plans/jetpack-plans/jetpack-storage-plans';
+import { jetpackUpsell } from 'calypso/my-sites/plans/jetpack-plans/jetpack-upsell';
 import {
 	features,
 	plans,
@@ -92,6 +93,15 @@ export default function () {
 	// It needs to be defined before the other plans pages so that /plans/storage/:site
 	// will take precedence over /plans/:intervalType?/:site.
 	jetpackStoragePlans(
+		'/plans',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		redirectToPlansIfNotJetpack,
+		navigation
+	);
+
+	// Upsell page between pricing and checkout pages when purchasing some Jetpack products.
+	jetpackUpsell(
 		'/plans',
 		siteSelection,
 		wpForTeamsP2PlusNotSupportedRedirect,

@@ -191,14 +191,19 @@ class HelpContact extends Component {
 		this.setState( { isSubmitting: true } );
 		this.recordCompactSubmit( 'kayako' );
 
+		const payload = {
+			subject,
+			message: kayakoMessage,
+			locale: currentUserLocale,
+			client: config( 'client_slug' ),
+			is_chat_overflow: supportVariation === SUPPORT_CHAT_OVERFLOW,
+		};
+		if ( site ) {
+			payload.blog_url = site.URL;
+		}
+
 		wpcom.req
-			.post( '/help/tickets/kayako/new', {
-				subject,
-				message: kayakoMessage,
-				locale: currentUserLocale,
-				client: config( 'client_slug' ),
-				is_chat_overflow: supportVariation === SUPPORT_CHAT_OVERFLOW,
-			} )
+			.post( '/help/tickets/kayako/new', payload )
 			.then( () => {
 				this.setState( {
 					isSubmitting: false,

@@ -59,7 +59,7 @@ export class PricingTableBlock {
 		// waitForFunction will do its own validation, so no need to return the value
 		// to caller for a check.
 		await frame.waitForFunction(
-			( element: any ) => element.ariaPressed === 'true',
+			( element: SVGElement | HTMLElement ) => element.ariaPressed === 'true',
 			elementHandle
 		);
 	}

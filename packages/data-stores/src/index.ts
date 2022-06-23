@@ -10,6 +10,7 @@ import * as Plans from './plans';
 import * as ProductsList from './products-list';
 import * as Reader from './reader';
 import * as Site from './site';
+import * as StepperInternal from './stepper-internal';
 import * as User from './user';
 import * as Verticals from './verticals';
 import * as VerticalsTemplates from './verticals-templates';
@@ -44,6 +45,7 @@ export {
 	persistenceConfigFactory,
 	ProductsList,
 	AutomatedTransferEligibility,
+	StepperInternal,
 };
 
 /**

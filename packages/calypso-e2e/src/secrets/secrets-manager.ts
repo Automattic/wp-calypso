@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We have to do some dynamic parsing and iteration as we validate JSON.
 import fs from 'fs';
 import path from 'path';
+import type { Secrets } from '.';
 
 export const TEST_ACCOUNT_NAMES = [
 	'defaultUser',
@@ -25,43 +26,6 @@ export const TEST_ACCOUNT_NAMES = [
 	'notificationsUser',
 	'googleLoginUser',
 ] as const;
-
-export type TestAccountName = typeof TEST_ACCOUNT_NAMES[ number ];
-
-export type OtherTestSiteName = 'notifications';
-
-export interface Secrets {
-	passwordForNewTestSignUps: string;
-	storeSandboxCookieValue: string;
-	testCouponCode: string;
-	wpccAuthPath: string;
-	calypsoOauthApplication: {
-		client_id: string;
-		client_secret: string;
-	};
-	martechTosUploadCredentials: {
-		bearer_token: string;
-	};
-	mailosaur: {
-		apiKey: string;
-		inviteInboxId: string;
-		signupInboxId: string;
-		domainsInboxId: string;
-		defaultUserInboxId: string;
-	};
-	testAccounts: {
-		[ key in TestAccountName ]: {
-			username: string;
-			password: string;
-			primarySite?: string;
-			otherSites?: string[];
-			totpKey?: string;
-		};
-	};
-	otherTestSites: {
-		[ key in OtherTestSiteName ]: string;
-	};
-}
 
 /**
  * Static class that gives you access to secrets needed for E2E testing.

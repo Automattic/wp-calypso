@@ -20,15 +20,15 @@ export const SpotlightInteractivity: React.VFC< SpotlightInteractivityConfigurat
 		<style>
 			{ `
     .${ SPOTLIT_ELEMENT_CLASS }, .${ SPOTLIT_ELEMENT_CLASS } * {
-        pointer-events: auto !important;
+        pointer-events: auto;
     }
     .tour-kit-frame__container button {
-        pointer-events: auto !important;
+        pointer-events: auto;
     }
     .tour-kit-spotlight, .tour-kit-overlay {
-        pointer-events: none !important;
+        pointer-events: none;
     }
-    ${ rootElementSelector } :not(${ SPOTLIT_ELEMENT_CLASS }) {
+    ${ rootElementSelector } :not(.${ SPOTLIT_ELEMENT_CLASS }, .${ SPOTLIT_ELEMENT_CLASS } *) {
         pointer-events: none;
     }
     ` }

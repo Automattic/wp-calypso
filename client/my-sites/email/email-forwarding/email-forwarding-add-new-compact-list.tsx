@@ -1,61 +1,54 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { Fragment, useState } from 'react';
+import { useSelector } from 'react-redux';
+import useAddEmailForwardMutation from 'calypso/data/emails/use-add-email-forward-mutation';
+import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
 import EmailForwardingAddNewCompact from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact';
-import { composeAnalytics, withAnalytics } from 'calypso/state/analytics/actions';
-import { addEmailForward } from 'calypso/state/email-forwarding/actions';
-import {
-	addEmailForwardSuccess,
-	isAddingEmailForward,
-} from 'calypso/state/selectors/get-email-forwards';
+import { isAddingEmailForward } from 'calypso/state/selectors/get-email-forwards';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { FormEvent } from 'react';
 
 type Props = {
 	onConfirmEmailForwarding?: () => void;
-	onAddEmailForwardSuccess: () => void;
+	onAddedEmailForward: () => void;
 	selectedDomainName: string;
 };
 
 const EmailForwardingAddNewCompactList = ( {
-	onAddEmailForwardSuccess,
+	onAddedEmailForward,
 	onConfirmEmailForwarding,
 	selectedDomainName,
 }: Props ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const [ emailForwards, setEmailForwards ] = useState( [
 		{ destination: '', mailbox: '', isValid: false },
 	] );
-	const [ newEmailForwardAdded, setNewEmailForwardAdded ] = useState( false );
+
+	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	const isSubmittingEmailForward = useSelector( ( state ) =>
 		isAddingEmailForward( state, selectedDomainName )
 	);
-	const emailForwardSuccess = useSelector( ( state ) =>
-		addEmailForwardSuccess( state, selectedDomainName )
-	);
 
-	useEffect( () => {
-		if ( emailForwardSuccess && newEmailForwardAdded ) {
-			setNewEmailForwardAdded( false );
-			onAddEmailForwardSuccess?.();
-		}
-	}, [ emailForwardSuccess, newEmailForwardAdded, onAddEmailForwardSuccess ] );
+	const { data: emailAccounts = [] } = useGetEmailAccountsQuery(
+		selectedSiteId,
+		selectedDomainName
+	);
+	const existingEmailForwards = emailAccounts[ 0 ]?.emails ?? [];
+
+	const { mutate: addEmailForward } = useAddEmailForwardMutation( selectedDomainName );
 
 	const hasValidEmailForwards = () => {
 		return ! emailForwards?.some( ( forward ) => ! forward.isValid );
 	};
 
 	const addNewEmailForwardWithAnalytics = ( mailbox: string, destination: string ) => {
-		withAnalytics(
-			composeAnalytics(
-				onConfirmEmailForwarding?.(),
-				dispatch( addEmailForward( selectedDomainName, mailbox, destination ) )
-			)
-		);
+		onConfirmEmailForwarding?.();
+		addEmailForward( { mailbox, destination } );
+		onAddedEmailForward?.();
 	};
 
 	const submitNewEmailForwards = ( event: FormEvent< HTMLFormElement > ) => {
@@ -68,8 +61,6 @@ const EmailForwardingAddNewCompactList = ( {
 		emailForwards?.map( ( { mailbox, destination } ) => {
 			addNewEmailForwardWithAnalytics( mailbox, destination );
 		} );
-
-		setNewEmailForwardAdded( true );
 	};
 
 	const onAddNewEmailForward = () => {
@@ -92,7 +83,7 @@ const EmailForwardingAddNewCompactList = ( {
 		const newEmailForwards = [ ...emailForwards ];
 		newEmailForwards[ index ][ name ] = value;
 
-		const validEmailForward = validateAllFields( newEmailForwards[ index ] );
+		const validEmailForward = validateAllFields( newEmailForwards[ index ], existingEmailForwards );
 		newEmailForwards[ index ].isValid =
 			validEmailForward.mailbox.length === 0 && validEmailForward.destination.length === 0;
 
@@ -106,7 +97,10 @@ const EmailForwardingAddNewCompactList = ( {
 					<div className="email-forwarding__add-new">
 						<EmailForwardingAddNewCompact
 							disabled={ isSubmittingEmailForward }
-							emailForwards={ emailForwards }
+							emailForwards={ [
+								...existingEmailForwards,
+								...emailForwards.filter( ( forward, i ) => i !== index ),
+							] }
 							fields={ fields }
 							index={ index }
 							onAddEmailForward={ onAddNewEmailForward }

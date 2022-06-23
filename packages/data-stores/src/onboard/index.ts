@@ -9,7 +9,8 @@ import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 
 export type { State };
 
-export { GoalKey } from './constants';
+export { SiteGoal, SiteIntent } from './constants';
+export * as utils from './utils';
 
 /**
  * Onboard store depends on site-store. You should register the site before using this store.

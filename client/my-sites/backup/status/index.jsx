@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import BackupDelta from 'calypso/components/jetpack/backup-delta';
+import BackupGettingStarted from 'calypso/components/jetpack/backup-getting-started';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import MostRecentStatus from 'calypso/components/jetpack/daily-backup-status';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -74,6 +75,8 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 					lastBackupAttempt,
 				} }
 			/>
+
+			<BackupGettingStarted />
 
 			{ isDateVisible( selectedDate ) && lastBackupAttemptOnDate && (
 				<BackupDelta

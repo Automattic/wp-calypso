@@ -1,5 +1,12 @@
 import { startsWith } from 'lodash';
+import { useSelector } from 'react-redux';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export const Strong = ( { children } ) => <strong>{ children }</strong>;
 
@@ -140,6 +147,31 @@ export const Theme = ( { content, onClick, meta, children } ) => {
 			onClick={ onClick }
 			data-activity={ meta.activity }
 			data-section="themes"
+			data-intent="view"
+		>
+			{ children }
+		</a>
+	);
+};
+
+export const Backup = ( { content, onClick, meta, children } ) => {
+	const moment = useLocalizedMoment();
+
+	const siteId = useSelector( getSelectedSiteId );
+	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
+	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
+
+	const rewindDateLocal = applySiteOffset( moment( content.rewindId * 1000 ), {
+		timezone,
+		gmtOffset,
+	} );
+
+	return (
+		<a
+			href={ `/backup/${ content.siteSlug }?date=` + rewindDateLocal.format( INDEX_FORMAT ) }
+			onClick={ onClick }
+			data-activity={ meta.activity }
+			data-section="backups"
 			data-intent="view"
 		>
 			{ children }

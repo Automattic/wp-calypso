@@ -1,4 +1,4 @@
-import { BlockFlow, PublishedPostContext } from '..';
+import { BlockFlow, PublishedPostContext } from '.';
 
 const editorBlockParentSelector = '[aria-label="Block: Subscribe"]';
 const publishedBlockParentSelector = '.wp-block-jetpack-subscriptions';

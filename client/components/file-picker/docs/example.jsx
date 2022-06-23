@@ -48,7 +48,7 @@ export default class FilePickers extends Component {
 
 				<h4>Any internal content works:</h4>
 				<FilePicker onPick={ this.onSingle }>
-					<a href="#">Select File…</a>
+					<a href="#input">Select File…</a>
 				</FilePicker>
 			</Card>
 		);

@@ -1,6 +1,6 @@
 export const STORE_KEY = 'automattic/onboard';
 
-export enum GoalKey {
+export enum SiteGoal {
 	Write = 'write',
 	Sell = 'sell',
 	Promote = 'promote',
@@ -9,9 +9,11 @@ export enum GoalKey {
 	Other = 'other',
 }
 
-export enum IntentKey {
+export enum SiteIntent {
 	Write = 'write',
 	Sell = 'sell',
 	Build = 'build',
 	DIFM = 'difm', // "Do It For Me"
+	WpAdmin = 'wpadmin',
+	Import = 'import', // deprecated
 }

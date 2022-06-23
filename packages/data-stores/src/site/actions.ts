@@ -1,4 +1,5 @@
 import { Design } from '@automattic/design-picker/src/types';
+import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
 import {
 	SiteLaunchError,
@@ -106,7 +107,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		verticalId,
 	} );
 
-	const receiveSiteFailed = ( siteId: number, response: SiteError | undefined ) => ( {
+	const receiveSiteFailed = ( siteId: number, response: SiteError ) => ( {
 		type: 'RECEIVE_SITE_FAILED' as const,
 		siteId,
 		response,
@@ -229,6 +230,17 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				path: `/sites/${ encodeURIComponent( siteSlug ) }/site-intent`,
 				apiNamespace: 'wpcom/v2',
 				body: { site_intent: intent },
+				method: 'POST',
+			} );
+		} catch ( e ) {}
+	}
+
+	function* setGoalsOnSite( siteSlug: string, goals: SiteGoal[] ) {
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteSlug ) }/site-goals`,
+				apiNamespace: 'wpcom/v2',
+				body: { site_goals: goals },
 				method: 'POST',
 			} );
 		} catch ( e ) {}
@@ -459,6 +471,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		saveSiteTitle,
 		saveSiteSettings,
 		setIntentOnSite,
+		setGoalsOnSite,
 		receiveSiteTitle,
 		fetchNewSite,
 		fetchSite,

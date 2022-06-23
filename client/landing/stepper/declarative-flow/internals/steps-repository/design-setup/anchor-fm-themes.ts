@@ -1,10 +1,12 @@
+import type { Design } from '@automattic/design-picker';
+
 /*
  * Anchor.fm themes are not actual themes as we understand them.
  * They're built at site setup from specialized Headstart annotations
  * using existing themes `spearhead` and `mayland`.
  * Therefore we hard-code their data since it's not available via the themes API.
  */
-export const ANCHOR_FM_THEMES = [
+export const ANCHOR_FM_THEMES: Design[] = [
 	{
 		title: 'Gilbert',
 		slug: 'gilbert',
@@ -17,6 +19,7 @@ export const ANCHOR_FM_THEMES = [
 		is_premium: false,
 		features: [ 'anchorfm' ],
 		categories: [],
+		design_type: 'anchor-fm',
 	},
 	{
 		title: 'Hannah',
@@ -30,6 +33,7 @@ export const ANCHOR_FM_THEMES = [
 		is_premium: false,
 		features: [ 'anchorfm' ],
 		categories: [],
+		design_type: 'anchor-fm',
 	},
 	{
 		title: 'Riley',
@@ -43,5 +47,6 @@ export const ANCHOR_FM_THEMES = [
 		is_premium: false,
 		features: [ 'anchorfm' ],
 		categories: [],
+		design_type: 'anchor-fm',
 	},
 ];

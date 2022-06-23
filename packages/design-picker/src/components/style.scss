@@ -120,7 +120,14 @@
 		box-sizing: border-box;
 		position: relative;
 		overflow: hidden;
-		border-radius: 0 0 4px 4px; /* stylelint-disable-line scales/radii */
+
+		&:not( .design-picker__image-frame-no-header ) {
+			border-radius: 0 0 4px 4px; /* stylelint-disable-line scales/radii */
+		}
+
+		&.design-picker__image-frame-no-header {
+			border-radius: 0; /* stylelint-disable-line scales/radii */
+		}
 
 		img {
 			position: absolute;
@@ -140,12 +147,20 @@
 			width: 100%;
 			height: 100%;
 			border: 1px solid;
-			border-top-width: 0;
-			border-radius: 0 0 4px 4px; /* stylelint-disable-line scales/radii */
 			box-sizing: border-box;
 			background-color: transparent;
 			transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
 		}
+
+		&:not( .design-picker__image-frame-no-header )::after {
+			border-top-width: 0;
+			border-radius: 0 0 4px 4px; /* stylelint-disable-line scales/radii */
+		}
+
+		&.design-picker__image-frame-no-header::after {
+			border-radius: 0; /* stylelint-disable-line scales/radii */
+		}
+
 	}
 
 	// The Aspect ratio trick: padding % is relative to width, so we use

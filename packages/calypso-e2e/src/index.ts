@@ -3,14 +3,11 @@ export * as DataHelper from './data-helper';
 export * as ElementHelper from './element-helper';
 export * as MediaHelper from './media-helper';
 
-export { default as envVariables, TEST_LOCALES } from './env-variables';
+export { default as envVariables } from './env-variables';
 
 export * from './lib';
 export * from './secrets';
 export * from './email-client';
 export * from './totp-client';
 export * from './rest-api-client';
-
-export type { TracksEvent, TracksEventProperties } from './types';
-export type { TestFile } from './media-helper';
-export type { PaymentDetails } from './data-helper';
+export * from './types';

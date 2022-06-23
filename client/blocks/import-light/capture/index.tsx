@@ -1,5 +1,6 @@
 import { localize, translate } from 'i18n-calypso';
 import React from 'react';
+import illustrationImg from 'calypso/assets/images/onboarding/import-1.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import CaptureInput from './capture-input';
 import type { FunctionComponent } from 'react';
@@ -27,7 +28,7 @@ const Capture: FunctionComponent< Props > = ( props ) => {
 							) }
 						/>
 						<div className={ 'step-wrapper__header-image' }>
-							<img alt="Light import" src="/calypso/images/importer/onboarding-4.svg" />
+							<img alt="Light import" src={ illustrationImg } aria-hidden="true" />
 						</div>
 					</div>
 				</div>

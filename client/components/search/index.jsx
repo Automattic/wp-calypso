@@ -57,6 +57,7 @@ class Search extends Component {
 		maxLength: PropTypes.number,
 		minLength: PropTypes.number,
 		hideClose: PropTypes.bool,
+		hideFocus: PropTypes.bool,
 		compact: PropTypes.bool,
 		hideOpenIcon: PropTypes.bool,
 		inputLabel: PropTypes.string,
@@ -83,6 +84,7 @@ class Search extends Component {
 		dir: undefined,
 		fitsContainer: false,
 		hideClose: false,
+		hideFocus: false,
 		compact: false,
 		hideOpenIcon: false,
 	};
@@ -319,7 +321,7 @@ class Search extends Component {
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
 			'is-compact': this.props.compact,
-			'has-focus': this.state.hasFocus,
+			'has-focus': ! this.props.hideFocus && this.state.hasFocus,
 			'has-open-icon': ! this.props.hideOpenIcon,
 			search: true,
 		} );

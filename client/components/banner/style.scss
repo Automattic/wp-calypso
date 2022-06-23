@@ -72,7 +72,7 @@
 
 	.banner__icon,
 	.banner__icon-circle {
-		border-radius: 50%;
+		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		flex-shrink: 0;
 		height: 24px;
 		margin-right: 12px;
@@ -254,14 +254,23 @@
 	}
 }
 
-.banner.is-compact .dismissible-card__close-icon {
+.banner.is-compact .dismissible-card__close-button {
 	width: 16px;
 	height: 16px;
 	top: 50%;
 	margin-top: -8px;
 }
 
-.is-horizontal .dismissible-card__close-icon {
+.is-horizontal .dismissible-card__close-button, .is-horizontal .banner__close-icon {
 	top: 50%;
 	margin-top: -12px;
 }
+
+.banner__close-icon {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	color: var( --color-text-subtle );
+	cursor: pointer;
+}
+

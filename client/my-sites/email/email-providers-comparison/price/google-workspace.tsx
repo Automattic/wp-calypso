@@ -46,7 +46,7 @@ const GoogleWorkspacePrice = ( {
 
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
 
-	if ( ! domain && ! isDomainInCart ) {
+	if ( ! domain ) {
 		return null;
 	}
 
