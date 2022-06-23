@@ -25,9 +25,8 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgra
 	const featuresHeading = translate( 'Theme features' ) as string;
 
 	//@todo: Need to get the actual price
-	const planPrice = '$90' || getPlanPrice( state, siteId, plan, false );
 
-	//@todo: Add Tracks events for viewing and buttons
+	const planPrice = '$180' || getPlanPrice( state, siteId, plan, false );
 
 	return (
 		<Dialog

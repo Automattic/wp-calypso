@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import { useEffect } from 'react';
+import Modal from 'react-modal';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import SignupHeader from 'calypso/signup/signup-header';
@@ -23,6 +24,9 @@ const kebabCase = ( value: string ) => value.replace( /([a-z0-9])([A-Z])/g, '$1-
  * @returns A React router switch will all the routes
  */
 export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
+	// Configure app element that React Modal will aria-hide when modal is open
+	Modal.setAppElement( '#wpcom' );
+
 	const stepPaths = flow.useSteps();
 	const location = useLocation();
 	const currentRoute = location.pathname.substring( 1 ) as StepPath;
