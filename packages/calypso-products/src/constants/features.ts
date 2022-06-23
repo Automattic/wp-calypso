@@ -225,6 +225,7 @@ export const WPCOM_FEATURES_CDN = 'cdn';
 export const WPCOM_FEATURES_CLASSIC_SEARCH = 'search';
 export const WPCOM_FEATURES_CLOUDFLARE_CDN = 'cloudflare-cdn';
 export const WPCOM_FEATURES_FULL_ACTIVITY_LOG = 'full-activity-log';
+export const WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS = 'install-purchased-plugins';
 export const WPCOM_FEATURES_INSTANT_SEARCH = 'instant-search';
 export const WPCOM_FEATURES_LIVE_SUPPORT = 'live_support';
 export const WPCOM_FEATURES_MANAGE_PLUGINS = 'manage-plugins';
