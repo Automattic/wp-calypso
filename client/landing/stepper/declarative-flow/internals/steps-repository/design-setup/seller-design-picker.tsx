@@ -384,7 +384,7 @@ const SellerDesignPicker: Step = ( { navigation, flow } ) => {
 					<>
 						{ shouldUpgrade ? (
 							<Button primary borderless={ false } onClick={ upgradePlan }>
-								{ translate( 'Upgrade Plan' ) }
+								{ translate( 'Unlock Theme' ) }
 							</Button>
 						) : undefined }
 					</>
