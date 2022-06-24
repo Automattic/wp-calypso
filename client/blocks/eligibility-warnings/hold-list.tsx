@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -23,14 +24,32 @@ function getHoldMessages(
 ) {
 	return {
 		NO_BUSINESS_PLAN: {
-			title: eligibleForProPlan
-				? translate( 'Upgrade to a Pro plan' )
-				: translate( 'Upgrade to a Business plan' ),
+			title: ( function () {
+				if (
+					context === 'marketplace-product-details' &&
+					isEnabled( 'marketplace-starter-plan' )
+				) {
+					return translate( 'Upgrade to a Starter plan' );
+				}
+
+				if ( eligibleForProPlan ) {
+					return translate( 'Upgrade to a Pro plan' );
+				}
+
+				return translate( 'Upgrade to a Business plan' );
+			} )(),
 			description: ( function () {
 				if ( context === 'themes' ) {
 					return translate(
 						"You'll also get to install custom plugins, have more storage, and access live support."
 					);
+				}
+
+				if (
+					context === 'marketplace-product-details' &&
+					isEnabled( 'marketplace-starter-plan' )
+				) {
+					return translate( "You'll also get to collect payments and have more storage." );
 				}
 
 				if ( billingPeriod === IntervalLength.MONTHLY ) {

@@ -6,6 +6,7 @@ import {
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_BUSINESS,
 	PLAN_WPCOM_PRO,
+	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -258,9 +259,15 @@ function mergeProps(
 	let context: string | null = null;
 	let feature = '';
 	let ctaName = '';
-	if ( ownProps.currentContext === 'plugin-details' ) {
+	if (
+		ownProps.currentContext === 'plugin-details' ||
+		ownProps.currentContext === 'marketplace-product-details'
+	) {
 		context = ownProps.currentContext;
-		feature = FEATURE_INSTALL_PLUGINS;
+		feature =
+			ownProps.currentContext === 'plugin-details'
+				? FEATURE_INSTALL_PLUGINS
+				: WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS;
 		ctaName = 'calypso-plugin-details-eligibility-upgrade-nudge';
 	} else if ( includes( ownProps.backUrl, 'plugins' ) ) {
 		context = 'plugins';

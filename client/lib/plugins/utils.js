@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -9,6 +10,7 @@ import {
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_WPCOM_PRO,
+	PLAN_WPCOM_STARTER,
 } from '@automattic/calypso-products';
 import { filter, map, pick, sortBy } from 'lodash';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
@@ -335,9 +337,19 @@ export function getPluginAuthorProfileKeyword( plugin ) {
 /**
  * @param currentPlan
  * @param pluginBillingPeriod
+ * @param eligibleForProPlan
+ * @param isMarketplaceProduct
  * @returns the correct business plan slug depending on current plan and pluginBillingPeriod
  */
-export function businessPlanToAdd( currentPlan, pluginBillingPeriod, eligibleForProPlan ) {
+export function businessPlanToAdd(
+	currentPlan,
+	pluginBillingPeriod,
+	eligibleForProPlan,
+	isMarketplaceProduct = false
+) {
+	if ( isMarketplaceProduct && isEnabled( 'marketplace-starter-plan' ) ) {
+		return PLAN_WPCOM_STARTER;
+	}
 	if ( eligibleForProPlan ) {
 		return PLAN_WPCOM_PRO;
 	}
