@@ -355,6 +355,7 @@ class HelpContact extends Component {
 		if ( this.props.compact ) {
 			this.props.recordTracksEventAction( 'calypso_inlinehelp_contact_submit', {
 				support_variation: variation,
+				location: 'inline-help-popover',
 			} );
 		}
 	};

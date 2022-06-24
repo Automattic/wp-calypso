@@ -1,9 +1,12 @@
+/* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import SearchCard from 'calypso/components/search-card';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
 /**
  * Module variables
@@ -27,6 +30,7 @@ const InlineHelpSearchCard = ( {
 }: Props ) => {
 	const cardRef = useRef< { searchInput: HTMLInputElement } >();
 	const translate = useTranslate();
+	const sectionName = useSelector( getSectionName );
 
 	// Focus in the input element.
 	useEffect( () => {
@@ -44,11 +48,20 @@ const InlineHelpSearchCard = ( {
 	const searchHelperHandler = ( query: string ) => {
 		const inputQuery = query.trim();
 
-		if ( inputQuery?.length ) {
+		if ( location === 'help-center' ) {
+			if ( inputQuery?.length > 2 ) {
+				recordTracksEvent( 'calypso_inlinehelp_search', {
+					search_query: searchQuery,
+					location: location,
+					section: sectionName,
+				} );
+			}
+		} else if ( inputQuery?.length ) {
 			debug( 'search query received: ', searchQuery );
 			recordTracksEvent( 'calypso_inlinehelp_search', {
 				search_query: searchQuery,
 				location: location,
+				section: sectionName,
 			} );
 		}
 

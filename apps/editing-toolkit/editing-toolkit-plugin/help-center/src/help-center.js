@@ -9,12 +9,15 @@ import { PinnedItems } from '@wordpress/interface';
 import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
 import { QueryClientProvider } from 'react-query';
+import { useSelector } from 'react-redux';
+import { getSectionName } from 'calypso/state/ui/selectors';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import CalypsoStateProvider from './CalypsoStateProvider';
 import './help-center.scss';
 
 function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
+	const sectionName = useSelector( getSectionName );
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
@@ -27,11 +30,11 @@ function HelpCenterContent() {
 	}, [ data, isLoading ] );
 
 	const handleToggleHelpCenter = () => {
-		if ( show ) {
-			recordTracksEvent( 'calypso_inlinehelp_close', { location: 'help-center-desktop' } );
-		} else {
-			recordTracksEvent( 'calypso_inlinehelp_show', { location: 'help-center-desktop' } );
-		}
+		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'open' }`, {
+			location: 'help-center',
+			section: sectionName,
+		} );
+
 		setShowHelpCenter( ! show );
 	};
 
