@@ -76,25 +76,25 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			startSiteFlow = new StartSiteFlow( page );
 
 			await page.waitForLoadState( 'networkidle' );
-			const isGoalsStep = await page.isVisible( ':has-text("What are your goals")' );
+			const currentStep = await startSiteFlow.getCurrentStep();
 
-			if ( isGoalsStep ) {
-				await page.click( '.select-card__container:first-of-type' );
+			if ( currentStep === 'goals' ) {
+				await startSiteFlow.selectGoal( 'Write & Publish' );
 				await startSiteFlow.clickButton( 'Continue' );
 			}
 		} );
 
 		it( 'Select a vertical', async function () {
-			const isVerticalsStep = await page.isVisible( '.site-vertical' );
-			if ( isVerticalsStep ) {
+			const currentStep = await startSiteFlow.getCurrentStep();
+			if ( currentStep === 'vertical' ) {
 				await startSiteFlow.enterVertical( 'People & Society' );
 				await startSiteFlow.clickButton( 'Continue' );
 			}
 		} );
 
 		it( 'Select "write" path', async function () {
-			const isVerticalsStep = await page.isVisible( '.intent-step' );
-			if ( isVerticalsStep ) {
+			const currentStep = await startSiteFlow.getCurrentStep();
+			if ( currentStep === 'intent' ) {
 				await startSiteFlow.clickButton( 'Start writing' );
 			}
 		} );
