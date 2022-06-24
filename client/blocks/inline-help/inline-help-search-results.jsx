@@ -52,6 +52,7 @@ function HelpSearchResults( {
 	searchQuery = '',
 	placeholderLines,
 	openAdminInNewTab = false,
+	location = 'inline-help-popover',
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -105,6 +106,8 @@ function HelpSearchResults( {
 				recordTracksEvent( 'calypso_inlinehelp_admin_section_visit', {
 					link: link,
 					search_term: searchQuery,
+					location,
+					section: sectionName,
 				} )
 			);
 
