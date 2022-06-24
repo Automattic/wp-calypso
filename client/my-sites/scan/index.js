@@ -1,7 +1,7 @@
 import page from 'page';
 import { notFound, makeLayout, render as clientRender } from 'calypso/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import wpcomUpsellController from 'calypso/lib/jetpack/wpcom-upsell-controller';
+import wpcomAtomicTransfer from 'calypso/lib/jetpack/wpcom-atomic-transfer';
 import wrapInSiteOffsetProvider from 'calypso/lib/wrap-in-site-offset';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
@@ -41,7 +41,7 @@ export default function () {
 		scan,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScan,
-		wpcomUpsellController( WPCOMScanUpsellPage ),
+		wpcomAtomicTransfer( WPCOMScanUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
@@ -58,7 +58,7 @@ export default function () {
 		scanHistory,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScanHistory,
-		wpcomUpsellController( WPCOMScanUpsellPage ),
+		wpcomAtomicTransfer( WPCOMScanUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
@@ -75,7 +75,7 @@ export default function () {
 		scan,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScan,
-		wpcomUpsellController( WPCOMScanUpsellPage ),
+		wpcomAtomicTransfer( WPCOMScanUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,

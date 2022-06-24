@@ -123,12 +123,6 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 			return;
 		}
 
-		// Don't show an upsell if this is an Atomic site
-		if ( atomicSite ) {
-			setUpsell( false );
-			return;
-		}
-
 		// Only show an upsell if the state is 'unavailable'
 		setUpsell( state === 'unavailable' );
 	}, [ uiState, atomicSite, hasProduct, state ] );
