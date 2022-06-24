@@ -191,6 +191,46 @@ const ProfessionalEmailCard = ( {
 	return <EmailProvidersStackedCard { ...professionalEmail } />;
 };
 
+const PasswordResetTipField = ( {
+	userEmail,
+	showAlternateEmailField,
+	hiddenFieldNames,
+}: {
+	hiddenFieldNames: string[];
+	showAlternateEmailField: ( event: MouseEvent< HTMLElement > ) => void;
+	userEmail: string;
+} ) => {
+	const translate = useTranslate();
+
+	if ( ! hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) ) {
+		return null;
+	}
+
+	return (
+		<FormSettingExplanation>
+			{ translate(
+				'Your password reset email is {{strong}}%(userEmail)s{{/strong}}. {{a}}Change it{{/a}}.',
+				{
+					args: {
+						userEmail,
+					},
+					components: {
+						strong: <strong />,
+						a: (
+							<Button
+								href="#"
+								className="professional-email-card__change-it-button"
+								onClick={ showAlternateEmailField }
+								plain
+							/>
+						),
+					},
+				}
+			) }
+		</FormSettingExplanation>
+	);
+};
+
 const ProfessionalEmailCardNew = ( props: EmailProvidersStackedCardProps ): ReactElement => {
 	const {
 		detailsExpanded,
@@ -248,50 +288,23 @@ const ProfessionalEmailCardNew = ( props: EmailProvidersStackedCardProps ): Reac
 		siteSlug,
 	} );
 
-	const PasswordResetFieldTip = () => {
-		const translate = useTranslate();
-
-		if ( ! hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) ) {
-			return null;
-		}
-
-		return (
-			<FormSettingExplanation>
-				{ translate(
-					'Your password reset email is {{strong}}%(userEmail)s{{/strong}}. {{a}}Change it{{/a}}.',
-					{
-						args: {
-							userEmail,
-						},
-						components: {
-							strong: <strong />,
-							a: (
-								<Button
-									href="#"
-									className="professional-email-card__change-it-button"
-									onClick={ showAlternateEmailField }
-									plain
-								/>
-							),
-						},
-					}
-				) }
-			</FormSettingExplanation>
-		);
-	};
-
 	professionalEmail.formFields = (
 		<NewMailBoxList
 			areButtonsBusy={ addingToCart }
 			hiddenFieldNames={ hiddenFieldNames }
 			initialFieldValues={ { [ FIELD_ALTERNATIVE_EMAIL ]: userEmail } }
+			isInitialMailboxPurchase
 			onSubmit={ handleSubmit }
 			provider={ provider }
 			selectedDomainName={ selectedDomainName }
 			showAddNewMailboxButton
 			submitActionText={ translate( 'Purchase' ) }
 		>
-			<PasswordResetFieldTip />
+			<PasswordResetTipField
+				hiddenFieldNames={ hiddenFieldNames }
+				showAlternateEmailField={ showAlternateEmailField }
+				userEmail={ userEmail }
+			/>
 		</NewMailBoxList>
 	);
 

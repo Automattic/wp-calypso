@@ -1,5 +1,6 @@
 import i18n from 'i18n-calypso';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
+import { FIELD_MAILBOX, FIELD_UUID } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 
 export class MailboxOperations {
@@ -13,7 +14,17 @@ export class MailboxOperations {
 
 	validateLocal() {
 		this.mailboxes.forEach( ( mailbox ) => {
-			mailbox.validate( true );
+			const otherMailboxNames = this.mailboxes
+				.filter(
+					( currentMailbox ) =>
+						currentMailbox.getFieldValue( FIELD_UUID ) !== mailbox.getFieldValue( FIELD_UUID )
+				)
+				.map( ( mailbox ) => mailbox.getFieldValue< string >( FIELD_MAILBOX ) ?? '' );
+
+			mailbox.validate(
+				true,
+				mailbox.getPreviouslySpecifiedMailboxNameValidators( otherMailboxNames )
+			);
 		} );
 	}
 

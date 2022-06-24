@@ -115,6 +115,7 @@ const TitanSetUpMailboxForm = ( {
 		<Card>
 			<NewMailBoxList
 				areButtonsBusy={ isValidating }
+				isAutoFocusEnabled
 				onSubmit={ handleCompleteSetup }
 				provider={ EmailProvider.Titan }
 				selectedDomainName={ selectedDomainName }
