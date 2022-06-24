@@ -13,7 +13,6 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { initiateAutomatedTransferWithPluginZip } from 'calypso/state/automated-transfer/actions';
-import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
@@ -134,7 +133,6 @@ const mapStateToProps = ( state ) => {
 		isJetpackMultisite,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		showEligibility: ! hasUploadPlugins,
-		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
 	};
 };
 
