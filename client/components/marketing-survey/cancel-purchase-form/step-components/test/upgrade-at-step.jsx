@@ -1,67 +1,57 @@
-import { Button } from '@automattic/components';
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { UpgradeATStep } from '../upgrade-at-step';
 
 const noop = () => {};
+const props = {
+	recordTracksEvent: jest.fn(),
+	selectedSite: { slug: 'site_slug' },
+	translate: ( content ) => `Translated: ${ content }`,
+};
 
 describe( 'UpgradeATStep', () => {
-	const selectedSite = { slug: 'site_slug' };
+	test( 'should render translated heading content', () => {
+		const { container } = render( <UpgradeATStep { ...props } recordTracksEvent={ noop } /> );
+		expect( container.firstChild ).toHaveTextContent(
+			'Translated: New! Install Custom Plugins and Themes'
+		);
+	} );
 
-	describe( 'rendering translated content', () => {
-		let wrapper;
-		const translate = ( content ) => `Translated: ${ content }`;
+	test( 'should render translated link content', () => {
+		render( <UpgradeATStep { ...props } recordTracksEvent={ noop } /> );
+		expect( screen.queryByRole( 'group' ) ).toHaveTextContent(
+			'Translated: Did you know that you can now use third-party plugins and themes on the WordPress.com Business plan? ' +
+				'Claim a 25% discount when you upgrade your site today - {{b}}enter the code BIZC25 at checkout{{/b}}.'
+		);
+	} );
 
-		beforeEach( () => {
-			wrapper = shallow(
-				<UpgradeATStep
-					recordTracksEvent={ noop }
-					translate={ translate }
-					selectedSite={ selectedSite }
-				/>
-			);
-		} );
-
-		test( 'should render translated heading content', () => {
-			expect( wrapper.find( 'FormSectionHeading' ).props().children ).toEqual(
-				'Translated: New! Install Custom Plugins and Themes'
-			);
-		} );
-
-		test( 'should render translated link content', () => {
-			expect( wrapper.find( 'FormFieldset > p' ).props().children ).toEqual(
-				'Translated: Did you know that you can now use third-party plugins and themes on the WordPress.com Business plan? ' +
-					'Claim a 25% discount when you upgrade your site today - {{b}}enter the code BIZC25 at checkout{{/b}}.'
-			);
-		} );
-
-		test( 'should render translated confirmation content', () => {
-			expect( wrapper.find( 'FormFieldset > ForwardRef(Button)' ).props().children ).toEqual(
-				'Translated: Upgrade My Site'
-			);
-		} );
+	test( 'should render translated confirmation content', () => {
+		render( <UpgradeATStep { ...props } recordTracksEvent={ noop } /> );
+		expect( screen.queryByRole( 'link' ) ).toHaveTextContent( 'Translated: Upgrade My Site' );
 	} );
 
 	test( 'should render button with link to business plan checkout', () => {
-		const wrapper = shallow(
-			<UpgradeATStep recordTracksEvent={ noop } translate={ noop } selectedSite={ selectedSite } />
-		);
+		render( <UpgradeATStep { ...props } recordTracksEvent={ noop } translate={ noop } /> );
 
-		expect( wrapper.find( Button ).props().href ).toEqual(
+		expect( screen.queryByRole( 'link' ) ).toHaveAttribute(
+			'href',
 			'/checkout/site_slug/business?coupon=BIZC25'
 		);
 	} );
 
-	test( 'should fire tracks event when button is clicked', () => {
+	test( 'should fire tracks event when button is clicked', async () => {
 		const recordTracksEvent = jest.fn();
-		const wrapper = shallow(
-			<UpgradeATStep
-				recordTracksEvent={ recordTracksEvent }
-				translate={ noop }
-				selectedSite={ selectedSite }
-			/>
+		render(
+			<UpgradeATStep { ...props } translate={ noop } recordTracksEvent={ recordTracksEvent } />
 		);
+		const btn = screen.queryByRole( 'link' );
 
-		wrapper.find( Button ).simulate( 'click' );
+		btn.addEventListener( 'click', ( event ) => event.preventDefault(), false );
+		await userEvent.click( btn );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_cancellation_upgrade_at_step_upgrade_click'
