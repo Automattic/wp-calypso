@@ -27,6 +27,7 @@ const Container = styled.div`
 	.add-ons-card {
 		width: 100%;
 		height: 100%;
+		border-radius: 5px;
 
 		> div {
 			// @wordpress/components<Card> wraps content in a first inner div
@@ -34,13 +35,15 @@ const Container = styled.div`
 			width: 100%;
 			display: flex;
 			flex-direction: column;
-			justify-content: space-between;
+			padding: 18px 10px; // Card sections have 16x24 inner padding
+			box-sizing: border-box;
 		}
 	}
 
 	.add-ons-card__header {
 		display: flex;
 		justify-content: flex-start;
+		gap: 0.8em;
 
 		.add-ons-card__icon {
 			display: flex;
@@ -65,6 +68,7 @@ const Container = styled.div`
 
 	.add-ons-card__footer {
 		display: flex;
+		margin-top: auto;
 
 		.add-ons-card__selected-tag {
 			display: flex;
