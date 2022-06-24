@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
-import type { AccountCredentials } from './types/data-helper.types';
+import { BearerTokenErrorResponse } from './types';
 import type {
 	AccountDetails,
 	SiteDetails,
@@ -10,7 +10,9 @@ import type {
 	AccountClosureResponse,
 	SiteDeletionResponse,
 	CalypsoPreferencesResponse,
-} from './types/rest-api-client.types';
+	ErrorResponse,
+	AccountCredentials,
+} from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
 /* Internal types and interfaces */
@@ -31,7 +33,7 @@ interface RequestParams {
 
 /* Constants */
 
-const BEARER_TOKEN_URL = 'https://wordpress.com/wp-login.php?action=login-endpoint';
+export const BEARER_TOKEN_URL = 'https://wordpress.com/wp-login.php?action=login-endpoint';
 const REST_API_BASE_URL = 'https://public-api.wordpress.com';
 
 /**
@@ -59,8 +61,9 @@ export class RestAPIClient {
 	 * Otherwise, an API call is made to obtain the bearer token and the resulting value is returned
 	 *
 	 * @returns {Promise<string>} String representing the bearer token.
+	 * @throws {Error} If the API responded with a success status of false.
 	 */
-	private async getBearerToken(): Promise< string > {
+	async getBearerToken(): Promise< string > {
 		if ( this.bearerToken !== null ) {
 			return this.bearerToken;
 		}
@@ -74,13 +77,21 @@ export class RestAPIClient {
 		params.append( 'get_bearer_token', '1' );
 
 		// Request the bearer token for the user.
-		const response: BearerTokenResponse = await this.sendRequest( new URL( BEARER_TOKEN_URL ), {
-			method: 'post',
-			body: params,
-		} );
+		const response: BearerTokenResponse | BearerTokenErrorResponse = await this.sendRequest(
+			new URL( BEARER_TOKEN_URL ),
+			{
+				method: 'post',
+				body: params,
+			}
+		);
+
+		if ( response.success === false ) {
+			const firstError = response.data.errors.at( 0 );
+			throw new Error( `${ firstError?.code }: ${ firstError?.message }` );
+		}
 
 		this.bearerToken = response.data.bearer_token;
-		return this.bearerToken;
+		return response.data.bearer_token;
 	}
 
 	/* Request builder methods */
@@ -93,7 +104,7 @@ export class RestAPIClient {
 	 */
 	private async getAuthorizationHeader( scheme: 'bearer' ): Promise< string > {
 		if ( scheme === 'bearer' ) {
-			return `Bearer ${ await this.getBearerToken() }`;
+			return `Bearer ${ this.bearerToken }`;
 		}
 
 		throw new Error( 'Unsupported authorization scheme specified.' );
@@ -115,9 +126,10 @@ export class RestAPIClient {
 	 * @param {string} endpoint REST API path.
 	 * @returns {URL} Full URL to the endpoint.
 	 */
-	private getRequestURL( version: EndpointVersions, endpoint: string ): URL {
+	getRequestURL( version: EndpointVersions, endpoint: string ): URL {
 		const path = `/rest/v${ version }/${ endpoint }`.replace( /([^:]\/)\/+/g, '$1' );
-		return new URL( path, REST_API_BASE_URL );
+		const sanitizedPath = path.trimEnd().replace( /\/$/, '' );
+		return new URL( sanitizedPath, REST_API_BASE_URL );
 	}
 
 	/**
@@ -147,6 +159,7 @@ export class RestAPIClient {
 	 * 	- site owner
 	 *
 	 * @returns {Promise<AllSitesResponse} JSON array of sites.
+	 * @throws {Error} If API responded with an error.
 	 */
 	async getAllSites(): Promise< AllSitesResponse > {
 		const params: RequestParams = {
@@ -157,7 +170,15 @@ export class RestAPIClient {
 			},
 		};
 
-		return await this.sendRequest( this.getRequestURL( '1.1', '/me/sites' ), params );
+		const response = await this.sendRequest( this.getRequestURL( '1.1', '/me/sites' ), params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
 	}
 
 	/**
@@ -240,6 +261,7 @@ export class RestAPIClient {
 	 * via the bearer token.
 	 *
 	 * @returns {Promise<MyAccountInformationResponse>} Response containing user details.
+	 * @throws {Error} If API responded with an error.
 	 */
 	async getMyAccountInformation(): Promise< MyAccountInformationResponse > {
 		const params: RequestParams = {
@@ -250,7 +272,15 @@ export class RestAPIClient {
 			},
 		};
 
-		return await this.sendRequest( this.getRequestURL( '1.1', '/me' ), params );
+		const response = await this.sendRequest( this.getRequestURL( '1.1', '/me' ), params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
 	}
 
 	/**

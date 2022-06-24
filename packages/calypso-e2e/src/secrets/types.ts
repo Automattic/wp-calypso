@@ -29,6 +29,8 @@ export interface Secrets {
 			primarySite?: string;
 			otherSites?: string[];
 			totpKey?: string;
+			userID?: number;
+			email?: string;
 		};
 	};
 	otherTestSites: {
