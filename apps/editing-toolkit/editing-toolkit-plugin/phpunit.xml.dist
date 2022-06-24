@@ -22,5 +22,8 @@
 		<testsuite name="block-patterns">
 			<directory suffix="-test.php">./block-patterns/test/</directory>
 		</testsuite>
+		<testsuite name="tutorials">
+			<directory suffix="-test.php">./tutorials/test/</directory>
+		</testsuite>
 	</testsuites>
 </phpunit>
