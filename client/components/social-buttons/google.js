@@ -11,6 +11,7 @@ import GoogleIcon from 'calypso/components/social-icons/google';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
+import { postLoginRequest } from 'calypso/state/login/utils';
 
 let auth2InitDone = false;
 
@@ -178,6 +179,19 @@ class GoogleLoginButton extends Component {
 			} );
 
 		return this.initialized;
+	}
+
+	async handleAuthorizationCode( auth_code ) {
+		const response = await postLoginRequest( 'exchange-social-auth-code', {
+			service: 'google',
+			auth_code,
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} );
+
+		const { access_token, id_token } = response.body.data;
+
+		this.props.responseHandler( { access_token, id_token } );
 	}
 
 	handleClick( event ) {
