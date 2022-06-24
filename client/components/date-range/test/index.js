@@ -32,7 +32,7 @@ describe( 'DateRange', () => {
 		} );
 
 		// Set the clock for our test assertions so that new Date()
-		// will return to a known deterministic date. This important
+		// will return a known deterministic date. This important
 		// for the component to render the expected calendars when
 		// an initial date is not passed to it in a test.
 		MockDate.set( moment.utc( '2018-06-01' ) );
