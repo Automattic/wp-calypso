@@ -207,7 +207,7 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 					<ExternalLink
 						target="_blank"
 						icon={ false }
-						href="https://apps.wordpress.com/get/?campaign=calypso-qrcode-apps"
+						href="https://apps.wordpress.com/get/?campaign=login-qr-code"
 					/>
 				),
 			},
