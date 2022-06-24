@@ -499,7 +499,7 @@ class MasterbarLoggedIn extends Component {
 		}
 		if ( isMobile ) {
 			const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
-
+			const isSimpleSite = window.location.host.endsWith( '.wordpress.com' );
 			const currentSegment = 10; //percentage of users that will see the Help Center, not the FAB
 			const userSegment = this.props.user.ID % 100;
 
@@ -507,7 +507,8 @@ class MasterbarLoggedIn extends Component {
 				this.props.isInEditor &&
 				isHelpCenterEnabled &&
 				userSegment < currentSegment &&
-				this.props.locale === 'en'
+				this.props.locale === 'en' &&
+				isSimpleSite
 			) {
 				return (
 					<Masterbar>
