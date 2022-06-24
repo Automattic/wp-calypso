@@ -44,6 +44,12 @@ describe( 'DateRange', () => {
 	} );
 
 	describe( 'Date range clamping', () => {
+		const splitFromDateRangeText = () =>
+			screen
+				.getByLabelText( 'Date range' )
+				.textContent.split( '-' )
+				.map( ( s ) => s.trim() );
+
 		test( 'should ensure the end date is not before the start date', () => {
 			const selectedEndDate = moment( '06-01-2018', 'MM-DD-YYYY' );
 			const selectedStartDate = moment( selectedEndDate ).add( 1, 'months' );
@@ -57,10 +63,7 @@ describe( 'DateRange', () => {
 				/>
 			);
 
-			const [ actualStartDate, actualEndDate ] = screen
-				.getByLabelText( 'Date range' )
-				.textContent.split( '-' )
-				.map( ( s ) => s.trim() );
+			const [ actualStartDate, actualEndDate ] = splitFromDateRangeText();
 
 			const isStartBeforeEnd = moment( actualStartDate, 'MM-DD-YYYY' ).isBefore(
 				moment( actualEndDate, 'MM-DD-YYYY' )
@@ -88,10 +91,7 @@ describe( 'DateRange', () => {
 			const expectedStartDate = dateToLocaleString( firstSelectableDate );
 			const expectedEndDate = dateToLocaleString( firstSelectableDate );
 
-			let [ actualStartDate, actualEndDate ] = screen
-				.getByLabelText( 'Date range' )
-				.textContent.split( '-' )
-				.map( ( s ) => s.trim() );
+			let [ actualStartDate, actualEndDate ] = splitFromDateRangeText();
 
 			actualStartDate = dateToLocaleString( moment( actualStartDate, 'MM-DD-YYYY' ) );
 			actualEndDate = dateToLocaleString( moment( actualEndDate, 'MM-DD-YYYY' ) );
@@ -116,10 +116,7 @@ describe( 'DateRange', () => {
 				/>
 			);
 
-			let [ actualStartDate, actualEndDate ] = screen
-				.getByLabelText( 'Date range' )
-				.textContent.split( '-' )
-				.map( ( s ) => s.trim() );
+			let [ actualStartDate, actualEndDate ] = splitFromDateRangeText();
 
 			const expectedStartDate = dateToLocaleString( lastSelectableDate );
 			const expectedEndDate = dateToLocaleString( lastSelectableDate );
