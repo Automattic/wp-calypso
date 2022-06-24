@@ -74,6 +74,9 @@ class AmpWpcom extends Component {
 				href={ `/checkout/${ siteSlug }/pro` }
 				showIcon={ true }
 				forceDisplay
+				tracksImpressionName="calypso_settings_amp_upsell_impression"
+				tracksClickName="calypso_settings_amp_upsell_click"
+				event="calypso_settings_amp_upsell"
 			/>
 		);
 	}
