@@ -135,7 +135,7 @@ export const siteSetupFlow: Flow = {
 					if ( siteSlug && goalsStepEnabled ) {
 						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
 					}
-					Promise.all( pendingActions ).then( () => redirect( to ) );
+					Promise.all( pendingActions ).then( () => window.location.replace( to ) );
 				} );
 			} );
 
