@@ -171,7 +171,7 @@ describe( 'DateRange', () => {
 			const applyBtnEl = screen.getByText( 'Apply' );
 			await userEvent.click( applyBtnEl );
 
-			expect( popoverEl ).not.toBeVisible();
+			expect( popoverEl ).not.toBeInTheDocument();
 		} );
 
 		test( 'should reset Dates on trigger clear btn click', async () => {
@@ -258,7 +258,7 @@ describe( 'DateRange', () => {
 			const endMonthEl = screen.queryByText( 'November 2018' );
 
 			expect( startMonthEl ).toBeVisible();
-			expect( endMonthEl ).toBeNull();
+			expect( endMonthEl ).not.toBeInTheDocument();
 		} );
 
 		test( 'should disable dates before firstSelectableDate when set', async () => {
@@ -341,7 +341,7 @@ describe( 'DateRange', () => {
 			const previousMonthBtnEl = screen.queryByLabelText( /Previous month/ );
 			const nextMonthBtnEl = screen.getByLabelText( 'Next month (December 2018)' );
 
-			expect( previousMonthBtnEl ).toBeNull();
+			expect( previousMonthBtnEl ).not.toBeInTheDocument();
 			expect( nextMonthBtnEl ).toBeVisible();
 		} );
 
@@ -362,7 +362,7 @@ describe( 'DateRange', () => {
 			const nextMonthBtnEl = screen.queryByLabelText( /Next month/ );
 
 			expect( previousMonthBtnEl ).toBeVisible();
-			expect( nextMonthBtnEl ).toBeNull();
+			expect( nextMonthBtnEl ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -640,7 +640,7 @@ describe( 'DateRange', () => {
 
 			const resetBtn = screen.getByLabelText( 'Reset selected dates' );
 
-			expect( resetBtn ).toBeTruthy();
+			expect( resetBtn ).toBeVisible();
 		} );
 
 		test( 'Should reset selection when reset UI clicked', async () => {
