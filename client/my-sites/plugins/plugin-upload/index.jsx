@@ -1,7 +1,7 @@
 import { WPCOM_FEATURES_UPLOAD_PLUGINS } from '@automattic/calypso-products/src';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import { isEmpty, flowRight } from 'lodash';
+import { flowRight } from 'lodash';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -13,11 +13,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { initiateAutomatedTransferWithPluginZip } from 'calypso/state/automated-transfer/actions';
-import {
-	getEligibility,
-	isEligibleForAutomatedTransfer,
-	getAutomatedTransferStatus,
-} from 'calypso/state/automated-transfer/selectors';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
@@ -96,12 +92,8 @@ class PluginUpload extends Component {
 	}
 
 	render() {
-		const { translate, isJetpackMultisite, siteId, siteSlug, hasUploadPlugins } = this.props;
+		const { translate, isJetpackMultisite, siteId, siteSlug } = this.props;
 		const { showEligibility } = this.state;
-
-		if ( ! hasUploadPlugins ) {
-			page( `/plugins/${ siteSlug }` );
-		}
 
 		return (
 			<Main>
@@ -127,13 +119,6 @@ const mapStateToProps = ( state ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const jetpackNonAtomic = isJetpack && ! isAtomicSite( state, siteId );
 	const isJetpackMultisite = isJetpackSiteMultiSite( state, siteId );
-	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
-	// Use this selector to take advantage of eligibility card placeholders
-	// before data has loaded.
-	const isEligible = isEligibleForAutomatedTransfer( state, siteId );
-	const hasEligibilityMessages = ! (
-		isEmpty( eligibilityHolds ) && isEmpty( eligibilityWarnings )
-	);
 	const hasUploadPlugins =
 		siteHasFeature( state, siteId, WPCOM_FEATURES_UPLOAD_PLUGINS ) || jetpackNonAtomic;
 
@@ -148,9 +133,8 @@ const mapStateToProps = ( state ) => {
 		error,
 		isJetpackMultisite,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
-		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
+		showEligibility: ! hasUploadPlugins,
 		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
-		hasUploadPlugins,
 	};
 };
 
