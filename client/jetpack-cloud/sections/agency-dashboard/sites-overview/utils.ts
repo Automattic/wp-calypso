@@ -2,14 +2,17 @@ import { translate } from 'i18n-calypso';
 import type {
 	AllowedTypes,
 	SiteData,
-	FormattedRowObj,
+	SiteObj,
 	StatusEventNames,
 	ActionEventNames,
 	AllowedStatusTypes,
 	AllowedActionTypes,
 	StatusTooltip,
+	RowMetaData,
+	BackupNode,
+	ScanNode,
+	MonitorNode,
 } from './types';
-import type { ReactChild } from 'react';
 
 export const siteColumns = [
 	{
@@ -135,7 +138,7 @@ const pluginEventNames: StatusEventNames = {
 // Returns event name needed for all the feature state clicks on the agency dashboard
 const getRowEventName = (
 	type: AllowedTypes,
-	status: AllowedStatusTypes,
+	status: AllowedStatusTypes | string,
 	isLargeScreen: boolean
 ) => {
 	const deviceKey = isLargeScreen ? 'large_screen' : 'small_screen';
@@ -260,16 +263,7 @@ export const getRowMetaData = (
 	rows: SiteData,
 	type: AllowedTypes,
 	isLargeScreen: boolean
-): {
-	row: { value: { url: string }; status: string; error: string };
-	link: string;
-	isExternalLink: boolean;
-	siteError: boolean;
-	tooltip: ReactChild | undefined;
-	tooltipId: string;
-	siteDown: boolean;
-	eventName: string | undefined;
-} => {
+): RowMetaData => {
 	const row = rows[ type ];
 	const siteUrl = rows.site?.value?.url;
 	const siteUrlWithScheme = rows.site?.value?.url_with_scheme;
@@ -290,8 +284,8 @@ export const getRowMetaData = (
 	};
 };
 
-const formatBackupData = ( site: SiteData ) => {
-	const backup: FormattedRowObj = {
+const formatBackupData = ( site: SiteObj ) => {
+	const backup: BackupNode = {
 		value: '',
 		status: '',
 		type: 'backup',
@@ -324,8 +318,8 @@ const formatBackupData = ( site: SiteData ) => {
 	return backup;
 };
 
-const formatScanData = ( site: SiteData ) => {
-	const scan: FormattedRowObj = {
+const formatScanData = ( site: SiteObj ) => {
+	const scan: ScanNode = {
 		value: '',
 		status: '',
 		type: 'scan',
@@ -353,8 +347,8 @@ const formatScanData = ( site: SiteData ) => {
 	return scan;
 };
 
-const formatMonitorData = ( site: SiteData ) => {
-	const monitor: FormattedRowObj = {
+const formatMonitorData = ( site: SiteObj ) => {
+	const monitor: MonitorNode = {
 		value: '',
 		status: '',
 		type: 'monitor',
@@ -375,7 +369,7 @@ const formatMonitorData = ( site: SiteData ) => {
 /**
  * Returns formatted sites
  */
-export const formatSites = ( sites: Array< any > = [] ): Array< any > => {
+export const formatSites = ( sites: Array< SiteObj > = [] ): Array< SiteData > | [] => {
 	return sites.map( ( site ) => {
 		const pluginUpdates = site.awaiting_plugin_updates;
 		return {

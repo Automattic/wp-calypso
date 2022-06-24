@@ -6,19 +6,80 @@ export type AllowedTypes = 'site' | 'backup' | 'scan' | 'monitor' | 'plugin';
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< { key: string; title: ReactChild } >;
 
-export type AllowedStatusTypes = 'inactive' | 'progress' | 'failed' | 'warning' | 'success';
+export type AllowedStatusTypes =
+	| 'inactive'
+	| 'progress'
+	| 'failed'
+	| 'warning'
+	| 'success'
+	| 'disabled';
 
+export interface SiteObj {
+	blog_id: number;
+	url: string;
+	url_with_scheme: string;
+	monitor_active: boolean;
+	monitor_site_status: boolean;
+	has_scan: boolean;
+	has_backup: boolean;
+	latest_scan_threats_found: Array< any >;
+	latest_backup_status: string;
+	is_connection_healthy: boolean;
+	awaiting_plugin_updates: Array< string >;
+}
 export interface SiteNode {
-	value: { blog_id: number; url: string; url_with_scheme: string };
+	value: SiteObj;
 	error: boolean;
 	type: AllowedTypes;
 	status: AllowedStatusTypes | string;
 }
+
+export interface BackupNode {
+	type: AllowedTypes;
+	status: AllowedStatusTypes | string;
+	value: ReactChild;
+}
+
+export interface ScanNode {
+	type: AllowedTypes;
+	status: AllowedStatusTypes | string;
+	value: ReactChild;
+	threats: number;
+}
+
+interface PluginNode {
+	type: AllowedTypes;
+	status: AllowedStatusTypes;
+	value: ReactChild;
+	updates: number;
+}
+export interface MonitorNode {
+	type: AllowedTypes;
+	status: AllowedStatusTypes | string;
+	value: ReactChild;
+	error?: boolean;
+}
 export interface SiteData {
 	site: SiteNode;
-	scan: { threats: number; type: AllowedTypes; status: AllowedStatusTypes; value: ReactChild };
-	plugin: { updates: number; type: AllowedTypes; status: AllowedStatusTypes; value: ReactChild };
-	[ key: string ]: any;
+	backup: BackupNode;
+	scan: ScanNode;
+	plugin: PluginNode;
+	monitor: MonitorNode;
+}
+
+export interface RowMetaData {
+	row: {
+		value: SiteObj | any;
+		status: AllowedStatusTypes | string;
+		error?: boolean;
+	};
+	link: string;
+	isExternalLink: boolean;
+	siteError: boolean;
+	tooltip: ReactChild | undefined;
+	tooltipId: string;
+	siteDown?: boolean;
+	eventName: string | undefined;
 }
 
 export type PreferenceType = 'dismiss' | 'view';
@@ -26,14 +87,6 @@ export type PreferenceType = 'dismiss' | 'view';
 export type Preference = {
 	dismiss?: boolean;
 	view?: boolean;
-};
-
-export type FormattedRowObj = {
-	value: ReactChild;
-	status: string;
-	type: string;
-	threats?: number;
-	error?: boolean;
 };
 
 export type StatusEventNames = {
