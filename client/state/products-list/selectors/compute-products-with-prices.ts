@@ -62,5 +62,5 @@ interface PartialProductVariant {
 function hasAvailablePrice(
 	availablePlanProduct: PartialProductVariant
 ): availablePlanProduct is AvailableProductVariant {
-	return !! ( availablePlanProduct as AvailableProductVariant ).priceFull;
+	return Boolean( availablePlanProduct.priceFull );
 }
