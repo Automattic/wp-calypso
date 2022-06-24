@@ -21,8 +21,8 @@ const Container = styled.div`
 const AddOnsGrid = ( {
 	addOns,
 	actionPrimary,
-	actionSelected,
-	useAddOnSelectedStatus,
+	actionSecondary,
+	useAddOnAvailabilityStatus,
 	highlightFeatured,
 }: Props ) => {
 	return (
@@ -32,8 +32,8 @@ const AddOnsGrid = ( {
 					<AddOnCard
 						key={ addOn.productSlug }
 						actionPrimary={ actionPrimary }
-						actionSelected={ actionSelected }
-						useAddOnSelectedStatus={ useAddOnSelectedStatus }
+						actionSecondary={ actionSecondary }
+						useAddOnAvailabilityStatus={ useAddOnAvailabilityStatus }
 						addOnMeta={ addOn }
 						highlightFeatured={ highlightFeatured }
 					/>

@@ -29,7 +29,7 @@ const useAddOnPurchaseStatus = ( addOnProductSlug: string ) => {
 
 	if ( purchased ) {
 		return {
-			selected: true,
+			available: false,
 			text: translate( 'Purchased' ),
 		};
 	}
@@ -39,10 +39,10 @@ const useAddOnPurchaseStatus = ( addOnProductSlug: string ) => {
 		case WPCOM_FEATURES_CUSTOM_DESIGN:
 		case WPCOM_FEATURES_UNLIMITED_THEMES:
 			if ( isSiteFeature ) {
-				return { selected: true, text: translate( 'Included in your plan' ) };
+				return { available: false, text: translate( 'Included in your plan' ) };
 			}
 		default:
-			return { selected: false };
+			return { available: true };
 	}
 };
 

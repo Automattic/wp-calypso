@@ -11,12 +11,12 @@ export interface Props {
 		text: string | React.ReactChild;
 		handler: ( productSlug: string ) => void;
 	};
-	actionSelected?: {
+	actionSecondary?: {
 		text: string | React.ReactChild;
 		handler: ( productSlug: string ) => void;
 	};
-	useAddOnSelectedStatus?: ( productSlug: string ) => {
-		selected: boolean;
+	useAddOnAvailabilityStatus?: ( productSlug: string ) => {
+		available: boolean;
 		text?: string | React.ReactChild;
 	};
 	highlightFeatured: boolean;
@@ -90,17 +90,17 @@ const Container = styled.div`
 const AddOnCard = ( {
 	addOnMeta,
 	actionPrimary,
-	actionSelected,
-	useAddOnSelectedStatus,
+	actionSecondary,
+	useAddOnAvailabilityStatus,
 	highlightFeatured,
 }: Props ) => {
 	const translate = useTranslate();
-	const selectedStatus = useAddOnSelectedStatus?.( addOnMeta.productSlug );
+	const availabilityStatus = useAddOnAvailabilityStatus?.( addOnMeta.productSlug );
 	const onActionPrimary = () => {
 		actionPrimary?.handler( addOnMeta.productSlug );
 	};
-	const onActionSelected = () => {
-		actionSelected?.handler( addOnMeta.productSlug );
+	const onActionSecondary = () => {
+		actionSecondary?.handler( addOnMeta.productSlug );
 	};
 
 	return (
@@ -126,16 +126,20 @@ const AddOnCard = ( {
 				</CardHeader>
 				<CardBody className="add-ons-card__body">{ addOnMeta.description }</CardBody>
 				<CardFooter isBorderless={ true } className="add-ons-card__footer">
-					{ selectedStatus?.selected && actionSelected && (
+					{ ! availabilityStatus?.available && (
 						<>
-							<Button onClick={ onActionSelected }>{ actionSelected.text }</Button>
-							<div className="add-ons-card__selected-tag">
-								<Gridicon icon="checkmark" className={ 'add-ons-card__checkmark' } />
-								<span>{ selectedStatus.text }</span>
-							</div>
+							{ actionSecondary && (
+								<Button onClick={ onActionSecondary }>{ actionSecondary.text }</Button>
+							) }
+							{ availabilityStatus?.text && (
+								<div className="add-ons-card__selected-tag">
+									<Gridicon icon="checkmark" className={ 'add-ons-card__checkmark' } />
+									<span>{ availabilityStatus.text }</span>
+								</div>
+							) }
 						</>
 					) }
-					{ ! selectedStatus?.selected && actionPrimary && (
+					{ availabilityStatus?.available && actionPrimary && (
 						<Button onClick={ onActionPrimary } primary>
 							{ actionPrimary.text }
 						</Button>

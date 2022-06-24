@@ -133,8 +133,8 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 			<ContentWithHeader>
 				<AddOnsGrid
 					actionPrimary={ { text: translate( 'Buy add-on' ), handler: handleActionPrimary } }
-					actionSelected={ { text: translate( 'Manage add-on' ), handler: handleActionSelected } }
-					useAddOnSelectedStatus={ useAddOnPurchaseStatus }
+					actionSecondary={ { text: translate( 'Manage add-on' ), handler: handleActionSelected } }
+					useAddOnAvailabilityStatus={ useAddOnPurchaseStatus }
 					addOns={ addOns }
 					highlightFeatured={ true }
 				/>
