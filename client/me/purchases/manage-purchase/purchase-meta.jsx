@@ -257,6 +257,10 @@ function PurchaseMetaPrice( { purchase } ) {
 		}
 	}
 
+	if ( typeof plan === 'string' && plan.endsWith( 'monthly' ) ) {
+		period = translate( 'month' );
+	}
+
 	if ( isEmailMonthly( purchase ) ) {
 		period = translate( 'month' );
 	}
