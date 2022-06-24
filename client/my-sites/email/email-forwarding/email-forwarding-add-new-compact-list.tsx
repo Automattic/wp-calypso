@@ -6,19 +6,18 @@ import useAddEmailForwardMutation from 'calypso/data/emails/use-add-email-forwar
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
 import EmailForwardingAddNewCompact from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact';
-import { isAddingEmailForward } from 'calypso/state/selectors/get-email-forwards';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { FormEvent } from 'react';
 
 type Props = {
-	onConfirmEmailForwarding?: () => void;
-	onAddedEmailForward: () => void;
+	onBeforeAddEmailForwards?: () => void;
+	onAddedEmailForwards: () => void;
 	selectedDomainName: string;
 };
 
 const EmailForwardingAddNewCompactList = ( {
-	onAddedEmailForward,
-	onConfirmEmailForwarding,
+	onAddedEmailForwards,
+	onBeforeAddEmailForwards,
 	selectedDomainName,
 }: Props ) => {
 	const translate = useTranslate();
@@ -29,38 +28,33 @@ const EmailForwardingAddNewCompactList = ( {
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
-	const isSubmittingEmailForward = useSelector( ( state ) =>
-		isAddingEmailForward( state, selectedDomainName )
-	);
-
 	const { data: emailAccounts = [] } = useGetEmailAccountsQuery(
 		selectedSiteId,
 		selectedDomainName
 	);
 	const existingEmailForwards = emailAccounts[ 0 ]?.emails ?? [];
 
-	const { mutate: addEmailForward } = useAddEmailForwardMutation( selectedDomainName );
+	const { mutate: addEmailForward, isLoading: isAddingEmailForward } =
+		useAddEmailForwardMutation( selectedDomainName );
 
 	const hasValidEmailForwards = () => {
 		return ! emailForwards?.some( ( forward ) => ! forward.isValid );
 	};
 
-	const addNewEmailForwardWithAnalytics = ( mailbox: string, destination: string ) => {
-		onConfirmEmailForwarding?.();
-		addEmailForward( { mailbox, destination } );
-		onAddedEmailForward?.();
-	};
-
 	const submitNewEmailForwards = ( event: FormEvent< HTMLFormElement > ) => {
 		event.preventDefault();
 
-		if ( isSubmittingEmailForward ) {
+		if ( isAddingEmailForward ) {
 			return;
 		}
 
+		onBeforeAddEmailForwards?.();
+
 		emailForwards?.map( ( { mailbox, destination } ) => {
-			addNewEmailForwardWithAnalytics( mailbox, destination );
+			addEmailForward( { mailbox, destination } );
 		} );
+
+		onAddedEmailForwards?.();
 	};
 
 	const onAddNewEmailForward = () => {
@@ -96,7 +90,6 @@ const EmailForwardingAddNewCompactList = ( {
 				<Fragment key={ `email-forwarding__add-new_fragment__card-${ index }` }>
 					<div className="email-forwarding__add-new">
 						<EmailForwardingAddNewCompact
-							disabled={ isSubmittingEmailForward }
 							emailForwards={ [
 								...existingEmailForwards,
 								...emailForwards.filter( ( forward, i ) => i !== index ),
@@ -113,12 +106,7 @@ const EmailForwardingAddNewCompactList = ( {
 			) ) }
 
 			<div className="email-forwarding-add-new-compact-list__actions">
-				<Button
-					busy={ isSubmittingEmailForward }
-					disabled={ ! hasValidEmailForwards() || isSubmittingEmailForward }
-					primary
-					type="submit"
-				>
+				<Button disabled={ ! hasValidEmailForwards() } primary type="submit">
 					{ translate( 'Add' ) }
 				</Button>
 			</div>

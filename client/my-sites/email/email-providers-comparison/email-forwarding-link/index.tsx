@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { emailManagementAddEmailForwards } from 'calypso/my-sites/email/paths';
@@ -42,8 +41,6 @@ const EmailForwardingLink = ( {
 
 	return (
 		<div className="email-forwarding-link">
-			<QueryEmailForwards domainName={ selectedDomainName } />
-
 			{ translate( 'Looking for a free email solution? Start with {{a}}Email Forwarding{{/a}}.', {
 				components: {
 					a: (
