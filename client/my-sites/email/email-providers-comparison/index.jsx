@@ -14,7 +14,6 @@ import forwardingIcon from 'calypso/assets/images/email-providers/forwarding.svg
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan.svg';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -33,7 +32,10 @@ import {
 	getCurrentUserCannotAddEmailReason,
 	getSelectedDomain,
 } from 'calypso/lib/domains';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import {
+	hasEmailForwards,
+	getDomainsWithEmailForwards,
+} from 'calypso/lib/domains/email-forwarding';
 import {
 	getAnnualPrice,
 	getGoogleMailServiceFamily,
@@ -78,10 +80,6 @@ import {
 	getProductIntroductoryOffer,
 } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
-import {
-	getDomainsWithForwards,
-	isAddingEmailForward,
-} from 'calypso/state/selectors/get-email-forwards';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -115,7 +113,6 @@ class EmailProvidersComparison extends Component {
 		gSuiteProduct: PropTypes.object,
 		hasCartDomain: PropTypes.bool,
 		isGSuiteSupported: PropTypes.bool.isRequired,
-		isSubmittingEmailForward: PropTypes.bool,
 		selectedSite: PropTypes.object,
 		titanMailProduct: PropTypes.object,
 	};
@@ -271,7 +268,7 @@ class EmailProvidersComparison extends Component {
 		}
 	};
 
-	onForwardingConfirmNewMailboxes = () => {
+	onBeforeAddEmailForwards = () => {
 		const { comparisonContext, source } = this.props;
 
 		recordTracksEvent( 'calypso_email_providers_add_click', {
@@ -322,7 +319,7 @@ class EmailProvidersComparison extends Component {
 			} );
 	};
 
-	onAddedEmailForward = () => {
+	onAddedEmailForwards = () => {
 		this.setState( { emailForwardAdded: true } );
 		const { domain, getSiteDomains, requestingSiteDomains, selectedSite } = this.props;
 		if ( ! requestingSiteDomains ) {
@@ -341,8 +338,8 @@ class EmailProvidersComparison extends Component {
 		const formFields = (
 			<EmailForwardingAddNewCompactList
 				selectedDomainName={ selectedDomainName }
-				onConfirmEmailForwarding={ this.onForwardingConfirmNewMailboxes }
-				onAddedEmailForward={ this.onAddedEmailForward }
+				onBeforeAddEmailForwards={ this.onBeforeAddEmailForwards }
+				onAddedEmailForwards={ this.onAddedEmailForwards }
 			/>
 		);
 
@@ -854,7 +851,6 @@ class EmailProvidersComparison extends Component {
 			domainsWithForwards,
 			hideEmailForwardingCard,
 			isGSuiteSupported,
-			isSubmittingEmailForward,
 			selectedDomainName,
 			selectedSite,
 			source,
@@ -865,15 +861,13 @@ class EmailProvidersComparison extends Component {
 		// - We're currently submitting/creating an email forward
 		// - We have added an email forward from this component
 		const shouldShowEmailForwardWarning =
-			! hideEmailForwardingCard && ! isSubmittingEmailForward && ! this.state.emailForwardAdded;
+			! hideEmailForwardingCard && ! this.state.emailForwardAdded;
 
 		return (
 			<Main wideLayout>
 				<QueryProductsList />
 
 				{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
-
-				{ ! hideEmailForwardingCard && <QueryEmailForwards domainName={ selectedDomainName } /> }
 
 				{ this.renderHeader() }
 
@@ -932,7 +926,7 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			domain,
 			domainName,
-			domainsWithForwards: getDomainsWithForwards( state, domains ),
+			domainsWithForwards: getDomainsWithEmailForwards( domains ),
 			gSuiteIntroductoryOffer: getProductIntroductoryOffer(
 				state,
 				GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
@@ -940,7 +934,6 @@ export default connect(
 			gSuiteProduct,
 			hasCartDomain,
 			hasDiscountForGSuite,
-			isSubmittingEmailForward: isAddingEmailForward( state, ownProps.selectedDomainName ),
 			isGSuiteSupported,
 			requestingSiteDomains: isRequestingSiteDomains( state, domainName ),
 			selectedSite,

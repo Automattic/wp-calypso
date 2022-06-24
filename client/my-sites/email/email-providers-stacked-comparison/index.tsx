@@ -7,14 +7,16 @@ import page from 'page';
 import { stringify } from 'qs';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import {
+	hasEmailForwards,
+	getDomainsWithEmailForwards,
+} from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
@@ -29,7 +31,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -65,7 +66,7 @@ const EmailProvidersStackedComparison = ( {
 		domains,
 		selectedDomainName: selectedDomainName,
 	} );
-	const domainsWithForwards = useSelector( ( state ) => getDomainsWithForwards( state, domains ) );
+	const domainsWithForwards = getDomainsWithEmailForwards( domains );
 
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
 
@@ -190,8 +191,6 @@ const EmailProvidersStackedComparison = ( {
 		<Main wideLayout>
 			<QueryProductsList />
 
-			{ ! isDomainInCart && <QueryEmailForwards domainName={ selectedDomainName } /> }
-
 			{ ! isDomainInCart && selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
 			<h1 className="email-providers-stacked-comparison__header">
@@ -224,7 +223,7 @@ const EmailProvidersStackedComparison = ( {
 				onIntervalChange={ changeIntervalLength }
 			/>
 
-			{ hasExistingEmailForwards && domainsWithForwards !== undefined && (
+			{ hasExistingEmailForwards && domainsWithForwards?.length && (
 				<EmailExistingForwardsNotice
 					domainsWithForwards={ domainsWithForwards }
 					selectedDomainName={ selectedDomainName }
