@@ -4,6 +4,9 @@ const selectors = {
 	// Menu items
 	menuItem: ( menu: string ) =>
 		`.sidebar a:has(span:has-text("${ menu }")), .sidebar a[href="${ menu }"]`,
+
+	// Buttons
+	logoutButton: 'button[title="Log out of WordPress.com"]',
 };
 
 /**
@@ -31,5 +34,14 @@ export class MeSidebarComponent {
 			this.page.waitForNavigation(),
 			this.page.click( selectors.menuItem( menu ) ),
 		] );
+	}
+
+	/**
+	 * Clicks on the log out button and waits for the navigation
+	 * to complete.
+	 */
+	async clickLogout(): Promise< void > {
+		const locator = this.page.locator( selectors.logoutButton );
+		await Promise.all( [ this.page.waitForNavigation(), locator.click() ] );
 	}
 }
