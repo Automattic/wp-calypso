@@ -13,7 +13,10 @@ import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { hasEmailForwards, getDomainsWithForwards } from 'calypso/lib/domains/email-forwarding';
+import {
+	hasEmailForwards,
+	getDomainsWithEmailForwards,
+} from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
@@ -63,7 +66,7 @@ const EmailProvidersStackedComparison = ( {
 		domains,
 		selectedDomainName: selectedDomainName,
 	} );
-	const domainsWithForwards = getDomainsWithForwards( domains );
+	const domainsWithForwards = getDomainsWithEmailForwards( domains );
 
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );
 

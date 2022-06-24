@@ -32,7 +32,10 @@ import {
 	getCurrentUserCannotAddEmailReason,
 	getSelectedDomain,
 } from 'calypso/lib/domains';
-import { hasEmailForwards, getDomainsWithForwards } from 'calypso/lib/domains/email-forwarding';
+import {
+	hasEmailForwards,
+	getDomainsWithEmailForwards,
+} from 'calypso/lib/domains/email-forwarding';
 import {
 	getAnnualPrice,
 	getGoogleMailServiceFamily,
@@ -923,7 +926,7 @@ export default connect(
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			domain,
 			domainName,
-			domainsWithForwards: getDomainsWithForwards( domains ),
+			domainsWithForwards: getDomainsWithEmailForwards( domains ),
 			gSuiteIntroductoryOffer: getProductIntroductoryOffer(
 				state,
 				GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY
