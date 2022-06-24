@@ -25,10 +25,7 @@ function getHoldMessages(
 	return {
 		NO_BUSINESS_PLAN: {
 			title: ( function () {
-				if (
-					context === 'marketplace-product-details' &&
-					isEnabled( 'marketplace-starter-plan' )
-				) {
+				if ( context === 'marketplace-product' && isEnabled( 'marketplace-starter-plan' ) ) {
 					return translate( 'Upgrade to a Starter plan' );
 				}
 
@@ -45,10 +42,7 @@ function getHoldMessages(
 					);
 				}
 
-				if (
-					context === 'marketplace-product-details' &&
-					isEnabled( 'marketplace-starter-plan' )
-				) {
+				if ( context === 'marketplace-product' && isEnabled( 'marketplace-starter-plan' ) ) {
 					return translate( "You'll also get to collect payments and have more storage." );
 				}
 

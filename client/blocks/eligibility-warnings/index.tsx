@@ -261,7 +261,7 @@ function mergeProps(
 	let ctaName = '';
 	if (
 		ownProps.currentContext === 'plugin-details' ||
-		ownProps.currentContext === 'marketplace-product-details'
+		ownProps.currentContext === 'marketplace-product'
 	) {
 		context = ownProps.currentContext;
 		feature =
