@@ -134,9 +134,7 @@ describe( 'DateRange', () => {
 		test( 'should render trigger with appropriate placeholders if no dates provided or selected', () => {
 			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const rangeText = screen
-				.getByLabelText( 'Select date range' )
-				.querySelector( 'span' ).innerHTML;
+			const rangeText = screen.getByLabelText( 'Date range' ).textContent;
 
 			expect( rangeText ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
 		} );
@@ -155,9 +153,7 @@ describe( 'DateRange', () => {
 
 			await userEvent.click( applyBtnEl );
 
-			const rangeText = screen
-				.getByLabelText( 'Select date range' )
-				.querySelector( 'span' ).innerHTML;
+			const rangeText = screen.getByLabelText( 'Data range' ).textContent;
 
 			expect( rangeText ).toEqual( '04/01/2018 - 04/29/2018' );
 		} );
@@ -194,9 +190,7 @@ describe( 'DateRange', () => {
 			const clearBtnEl = screen.getByTitle( 'Clear date selection' );
 			await userEvent.click( clearBtnEl );
 
-			const rangeText = screen
-				.getByLabelText( 'Select date range' )
-				.querySelector( 'span' ).innerHTML;
+			const rangeText = screen.getByLabelText( 'Date range' ).textContent;
 
 			expect( rangeText ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
 		} );
@@ -573,9 +567,7 @@ describe( 'DateRange', () => {
 		test( 'should persist date selection when user clicks the "Apply" button', async () => {
 			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const originalRangeText = screen
-				.getByLabelText( 'Select date range' )
-				.querySelector( 'span' ).innerHTML;
+			const originalRangeText = screen.getByLabelText( 'Data range' ).textContent;
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 			await userEvent.click( screen.getByLabelText( 'From' ) );
@@ -584,9 +576,7 @@ describe( 'DateRange', () => {
 			await userEvent.keyboard( '04/29/2018' );
 			await userEvent.click( screen.getByLabelText( 'Apply' ) );
 
-			const newRangeText = screen
-				.getByLabelText( 'Select date range' )
-				.querySelector( 'span' ).innerHTML;
+			const newRangeText = screen.getByLabelText( 'Date range' ).textContent;
 
 			expect( originalRangeText ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
 			expect( newRangeText ).toEqual( '04/01/2018 - 04/29/2018' );
@@ -595,9 +585,7 @@ describe( 'DateRange', () => {
 		test( 'should discard date selection when user clicks the "Cancel" button', async () => {
 			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const originalRangeText = screen
-				.getByLabelText( 'Select date range' )
-				.querySelector( 'span' ).innerHTML;
+			const originalRangeText = screen.getByLabelText( 'Date range' ).textContent;
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 			await userEvent.click( screen.getByLabelText( 'From' ) );
@@ -606,9 +594,7 @@ describe( 'DateRange', () => {
 			await userEvent.keyboard( '04/29/2018' );
 			await userEvent.click( screen.getByLabelText( 'Cancel' ) );
 
-			const newRangeText = screen
-				.getByLabelText( 'Select date range' )
-				.querySelector( 'span' ).innerHTML;
+			const newRangeText = screen.getByLabelText( 'Date range' ).textContent;
 
 			expect( originalRangeText ).toEqual( newRangeText );
 		} );
