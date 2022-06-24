@@ -47,9 +47,9 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 
 		it( 'Get activation link', async function () {
 			const emailClient = new EmailClient();
-			const message = await emailClient.getLastEmail( {
+			const message = await emailClient.getLastMatchingMessage( {
 				inboxId: testUser.inboxId,
-				emailAddress: testUser.email,
+				sentTo: testUser.email,
 				subject: 'Activate',
 			} );
 			const links = await emailClient.getLinksFromMessage( message );
