@@ -17,6 +17,7 @@ import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterContactPage } from './help-center-contact-page';
 import { HelpCenterEmbedResult } from './help-center-embed-result';
 import InlineChat from './help-center-inline-chat';
+import { HelpCenterNextStepsTutorials } from './help-center-next-steps-tutorials';
 import { HelpCenterSearch } from './help-center-search';
 import { SuccessScreen } from './ticket-success-screen';
 
@@ -47,6 +48,9 @@ const HelpCenterContent: React.FC< Content > = ( { isMinimized } ) => {
 			</Route>
 			<Route path="/contact-form">
 				<HelpCenterContactForm />
+			</Route>
+			<Route path="/next-steps-tutorials">
+				<HelpCenterNextStepsTutorials />
 			</Route>
 			<Route path="/success">
 				<SuccessScreen />

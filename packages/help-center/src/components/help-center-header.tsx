@@ -1,9 +1,9 @@
-import { CardHeader, Button, Flex } from '@wordpress/components';
+import { CardHeader, Button, Flex, TabPanel } from '@wordpress/components';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
-import { Route, Switch, useLocation } from 'react-router-dom';
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import type { Header, WindowState } from '../types';
 import type { ReactElement } from 'react';
@@ -54,6 +54,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 	const { __ } = useI18n();
 	const [ chatWindowStatus, setChatWindowStatus ] = useState< WindowState >( 'closed' );
 	const [ unreadCount, setUnreadCount ] = useState< number >( 0 );
+	const history = useHistory();
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
 	function requestMaximize() {
@@ -70,56 +71,87 @@ const HelpCenterHeader: React.FC< Header > = ( {
 	useHCWindowCommunicator( setChatWindowStatus, setUnreadCount );
 
 	return (
-		<CardHeader className={ classNames }>
-			<Flex>
-				<p id="header-text" className="help-center-header__text">
-					{ isMinimized ? (
-						<Switch>
-							<Route path="/" exact>
-								{ __( 'Help Center', __i18n_text_domain__ ) }
-							</Route>
-							<Route path="/contact-options">
-								{ __( 'Contact Options', __i18n_text_domain__ ) }
-							</Route>
-							<Route path="/contact-form" component={ SupportModeTitle }></Route>
-							<Route path="/post" component={ ArticleTitle }></Route>
-						</Switch>
-					) : (
-						__( 'Help Center', __i18n_text_domain__ )
-					) }
-					{ isMinimized && unreadCount ? (
-						<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
-					) : null }
-				</p>
-				<div>
-					{ isMinimized ? (
-						<Button
-							className={ 'help-center-header__maximize' }
-							label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
-							icon={ chevronUp }
-							tooltipPosition="top left"
-							onClick={ requestMaximize }
-						/>
-					) : (
-						<Button
-							className={ 'help-center-header__minimize' }
-							label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
-							icon={ lineSolid }
-							tooltipPosition="top left"
-							onClick={ onMinimize }
-						/>
-					) }
+		<>
+			<CardHeader className={ classNames }>
+				<Flex>
+					<p id="header-text" className="help-center-header__text">
+						{ isMinimized ? (
+							<Switch>
+								<Route path="/" exact>
+									{ __( 'Help Center', __i18n_text_domain__ ) }
+								</Route>
+								<Route path="/contact-options">
+									{ __( 'Contact Options', __i18n_text_domain__ ) }
+								</Route>
+								<Route path="/contact-form" component={ SupportModeTitle }></Route>
+								<Route path="/post" component={ ArticleTitle }></Route>
+							</Switch>
+						) : (
+							__( 'Help Center', __i18n_text_domain__ )
+						) }
+						{ isMinimized && unreadCount ? (
+							<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
+						) : null }
+					</p>
+					<div>
+						{ isMinimized ? (
+							<Button
+								className={ 'help-center-header__maximize' }
+								label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
+								icon={ chevronUp }
+								tooltipPosition="top left"
+								onClick={ requestMaximize }
+							/>
+						) : (
+							<Button
+								className={ 'help-center-header__minimize' }
+								label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
+								icon={ lineSolid }
+								tooltipPosition="top left"
+								onClick={ onMinimize }
+							/>
+						) }
 
-					<Button
-						className={ 'help-center-header__close' }
-						label={ __( 'Close Help Center', __i18n_text_domain__ ) }
-						tooltipPosition="top left"
-						icon={ closeSmall }
-						onClick={ onDismiss }
-					/>
-				</div>
-			</Flex>
-		</CardHeader>
+						<Button
+							className={ 'help-center-header__close' }
+							label={ __( 'Close Help Center', __i18n_text_domain__ ) }
+							tooltipPosition="top left"
+							icon={ closeSmall }
+							onClick={ onDismiss }
+						/>
+					</div>
+				</Flex>
+			</CardHeader>
+			{ ! isMinimized && (
+				<TabPanel
+					className="help-center-header__tab-panel"
+					initialTabName="help"
+					tabs={ [
+						{
+							name: 'nextSteps',
+							title: 'Next Steps',
+							className: 'help-center-container__next-steps-tab',
+						},
+						{
+							name: 'help',
+							title: 'Help',
+							className: 'help-center-container__help-tab',
+						},
+					] }
+					onSelect={ ( tab ) => {
+						if ( tab === 'nextSteps' ) {
+							history.push( '/next-steps-tutorials' );
+						} else if ( tab === 'help' ) {
+							history.push( '/' );
+						}
+					} }
+				>
+					{ () => {
+						return <></>;
+					} }
+				</TabPanel>
+			) }
+		</>
 	);
 };
 

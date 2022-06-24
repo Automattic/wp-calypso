@@ -3,7 +3,7 @@
  */
 import { Spinner } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { Card, TabPanel } from '@wordpress/components';
+import { Card } from '@wordpress/components';
 import classnames from 'classnames';
 import { useState, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
@@ -52,7 +52,6 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, isLoading } 
 		},
 		onAnimationEnd: toggleVisible,
 	};
-
 	return (
 		<MemoryRouter>
 			<FeatureFlagProvider>
@@ -68,41 +67,16 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, isLoading } 
 							onMaximize={ () => setIsMinimized( false ) }
 							onDismiss={ onDismiss }
 						/>
-						<TabPanel
-							className="help-center-container__tab-panel"
-							tabs={ [
-								{
-									name: 'nextSteps',
-									title: 'Next Steps',
-									className: 'help-center-container__next-steps-tab',
-								},
-								{
-									name: 'help',
-									title: 'Help',
-									className: 'help-center-container__help-tab',
-								},
-							] }
-						>
-							{ ( tab ) => {
-								switch ( tab.name ) {
-									case 'nextSteps':
-										return <p>test</p>;
-									case 'help':
-										return isLoading ? (
-											<div className="help-center-container__loading">
-												<Spinner baseClassName="" className="help-center-container__spinner" />
-											</div>
-										) : (
-											<>
-												<HelpCenterContent isMinimized={ isMinimized } />
-												{ ! isMinimized && <HelpCenterFooter /> }
-											</>
-										);
-									default:
-										return <></>;
-								}
-							} }
-						</TabPanel>
+						{ isLoading ? (
+							<div className="help-center-container__loading">
+								<Spinner baseClassName="" className="help-center-container__spinner" />
+							</div>
+						) : (
+							<>
+								<HelpCenterContent isMinimized={ isMinimized } />
+								{ ! isMinimized && <HelpCenterFooter /> }
+							</>
+						) }
 					</Card>
 				</OptionalDraggable>
 			</FeatureFlagProvider>

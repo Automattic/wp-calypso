@@ -34,6 +34,7 @@ $head-foot-height: 50px;
 	.help-center__container-header {
 		height: $head-foot-height;
 		padding: 16px 8px 16px 16px;
+		border-bottom: 0;
 
 		// This icon does not accept size prop due to a bug - https://github.com/WordPress/gutenberg/pull/40315
 		// We can remove this when the bug is fixed
@@ -59,6 +60,17 @@ $head-foot-height: 50px;
 				text-overflow: ellipsis;
 				max-width: 200px;
 			}
+		}
+	}
+
+	.help-center-header__tab-panel {
+		.components-tab-panel__tabs {
+			border-bottom: 1px solid rgba( 0, 0, 0, 0.1 );
+		}
+
+		.components-tab-panel__tabs-item.is-active {
+			box-shadow: inset 0 0 0 var( --wp-admin-border-width-focus ) transparent,
+				inset 0 -3px 0 0 var( --color-accent );
 		}
 	}
 
@@ -259,7 +271,8 @@ button.button.back-button__help-center.is-borderless {
 	padding-top: 0;
 }
 
-.help-center-container__loading, .help-center-contact-page__loading {
+.help-center-container__loading,
+.help-center-contact-page__loading {
 	display: flex;
 	align-items: center;
 	justify-content: center;
