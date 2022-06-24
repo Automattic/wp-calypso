@@ -108,7 +108,8 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 	const onSelect = ( value: ChoiceType ) => {
 		recordTracksEvent( 'calypso_signup_difm_service_selected', { service: value } );
 		if ( 'builtby' === value ) {
-			window.location.href = 'https://builtbywp.com/';
+			window.location.href =
+				'https://builtbywp.com/?utm_medium=automattic_referred&utm_source=WordPresscom&utm_campaign=onboard';
 			return;
 		}
 		dispatch(
