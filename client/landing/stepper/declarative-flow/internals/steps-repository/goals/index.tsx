@@ -37,11 +37,13 @@ const refGoals: Record< string, Onboard.SiteGoal[] > = {
  */
 const GoalsStep: Step = ( { navigation } ) => {
 	const translate = useTranslate();
-	const headerText = translate( 'Welcome!{{br/}}What are your goals?', {
-		components: {
-			br: <br />,
-		},
-	} );
+	const welcomeText = translate( 'Welcome!' );
+	const whatAreYourGoalsText = translate( 'What are your goals?' );
+	const headerText = (
+		<>
+			{ welcomeText } <br /> { whatAreYourGoalsText }
+		</>
+	);
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
 
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
@@ -118,7 +120,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 
 	return (
 		<>
-			<DocumentHead title={ translate( 'What are your goals?' ) } />
+			<DocumentHead title={ whatAreYourGoalsText } />
 
 			<StepContainer
 				stepName={ 'goals-step' }
