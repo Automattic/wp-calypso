@@ -134,9 +134,9 @@ describe( 'DateRange', () => {
 		test( 'should render trigger with appropriate placeholders if no dates provided or selected', () => {
 			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const rangeText = screen.getByLabelText( 'Date range' ).textContent;
-
-			expect( rangeText ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
+			expect( screen.getByLabelText( 'Date range' ) ).toHaveTextContent(
+				'MM/DD/YYYY - MM/DD/YYYY'
+			);
 		} );
 
 		test( 'should update trigger props to match currently selected dates', async () => {
@@ -153,9 +153,9 @@ describe( 'DateRange', () => {
 
 			await userEvent.click( applyBtnEl );
 
-			const rangeText = screen.getByLabelText( 'Date range' ).textContent;
-
-			expect( rangeText ).toEqual( '04/01/2018 - 04/29/2018' );
+			expect( screen.getByLabelText( 'Date range' ) ).toHaveTextContent(
+				'04/01/2018 - 04/29/2018'
+			);
 		} );
 
 		test( 'should toggle popover on trigger click', async () => {
@@ -190,9 +190,9 @@ describe( 'DateRange', () => {
 			const clearBtnEl = screen.getByTitle( 'Clear date selection' );
 			await userEvent.click( clearBtnEl );
 
-			const rangeText = screen.getByLabelText( 'Date range' ).textContent;
-
-			expect( rangeText ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
+			expect( screen.getByLabelText( 'Date range' ) ).toHaveTextContent(
+				'MM/DD/YYYY - MM/DD/YYYY'
+			);
 		} );
 	} );
 
@@ -567,7 +567,9 @@ describe( 'DateRange', () => {
 		test( 'should persist date selection when user clicks the "Apply" button', async () => {
 			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const originalRangeText = screen.getByLabelText( 'Date range' ).textContent;
+			expect( screen.getByLabelText( 'Date range' ) ).toHaveTextContent(
+				'MM/DD/YYYY - MM/DD/YYYY'
+			);
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 			await userEvent.click( screen.getByLabelText( 'From' ) );
@@ -576,16 +578,17 @@ describe( 'DateRange', () => {
 			await userEvent.keyboard( '04/29/2018' );
 			await userEvent.click( screen.getByLabelText( 'Apply' ) );
 
-			const newRangeText = screen.getByLabelText( 'Date range' ).textContent;
-
-			expect( originalRangeText ).toEqual( 'MM/DD/YYYY - MM/DD/YYYY' );
-			expect( newRangeText ).toEqual( '04/01/2018 - 04/29/2018' );
+			expect( screen.getByLabelText( 'Date range' ) ).toHaveTextContent(
+				'04/01/2018 - 04/29/2018'
+			);
 		} );
 
 		test( 'should discard date selection when user clicks the "Cancel" button', async () => {
 			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const originalRangeText = screen.getByLabelText( 'Date range' ).textContent;
+			expect( screen.getByLabelText( 'Date range' ) ).toHaveTextContent(
+				'MM/DD/YYYY - MM/DD/YYYY'
+			);
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 			await userEvent.click( screen.getByLabelText( 'From' ) );
@@ -594,9 +597,9 @@ describe( 'DateRange', () => {
 			await userEvent.keyboard( '04/29/2018' );
 			await userEvent.click( screen.getByLabelText( 'Cancel' ) );
 
-			const newRangeText = screen.getByLabelText( 'Date range' ).textContent;
-
-			expect( originalRangeText ).toEqual( newRangeText );
+			expect( screen.getByLabelText( 'Date range' ) ).toHaveTextContent(
+				'MM/DD/YYYY - MM/DD/YYYY'
+			);
 		} );
 
 		test( 'Should display prompt to select first date when no start date selected', async () => {
@@ -604,9 +607,7 @@ describe( 'DateRange', () => {
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			const infoText = screen.getByRole( 'status' ).textContent;
-
-			expect( infoText ).toEqual( expect.stringContaining( 'Please select the first day' ) );
+			expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Please select the first day' );
 		} );
 
 		test( 'Should display prompt to select last date when no end date selected', async () => {
@@ -618,9 +619,7 @@ describe( 'DateRange', () => {
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 
-			const infoText = screen.getByRole( 'status' ).textContent;
-
-			expect( infoText ).toEqual( expect.stringContaining( 'Please select the last day' ) );
+			expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Please select the last day' );
 		} );
 
 		test( 'Should display reset button when both dates are selected', async () => {
@@ -682,8 +681,8 @@ describe( 'DateRange', () => {
 			const resetBtn = screen.getByLabelText( 'Reset selected dates' );
 			await userEvent.click( resetBtn );
 
-			expect( fromInputEl.value ).toEqual( '04/28/2018' );
-			expect( toInputEl.value ).toEqual( '05/28/2018' );
+			expect( fromInputEl ).toHaveValue( '04/28/2018' );
+			expect( toInputEl ).toHaveValue( '05/28/2018' );
 			expect( screen.getByLabelText( 'Sat, Apr 28, 2018 12:00 PM' ) ).toHaveAttribute(
 				'aria-selected',
 				'true'
