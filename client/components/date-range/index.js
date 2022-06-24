@@ -569,7 +569,7 @@ export class DateRange extends Component {
 						borderless
 						compact
 						onClick={ this.resetDates }
-						aria-label="Reset selected dates"
+						aria-label={ this.props.translate( 'Reset selected dates' ) }
 					>
 						{ this.props.translate( '{{icon/}} reset selected dates', {
 							components: { icon: <Gridicon aria-hidden="true" icon="cross-small" /> },

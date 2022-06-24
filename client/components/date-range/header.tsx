@@ -20,24 +20,27 @@ const DateRangeHeader: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
+	const cancelText = cancelButtonText || translate( 'Cancel' );
+	const applyText = applyButtonText || translate( 'Apply' );
+
 	return (
 		<div className="date-range__popover-header">
 			<Button
 				className="date-range__cancel-btn"
 				onClick={ onCancelClick }
 				compact
-				aria-label="Cancel"
+				aria-label={ cancelText }
 			>
-				{ cancelButtonText || translate( 'Cancel' ) }
+				{ cancelText }
 			</Button>
 			<Button
 				className="date-range__apply-btn"
 				onClick={ onApplyClick }
 				primary
 				compact
-				aria-label="Apply"
+				aria-label={ applyText }
 			>
-				{ applyButtonText || translate( 'Apply' ) }
+				{ applyText }
 			</Button>
 		</div>
 	);
