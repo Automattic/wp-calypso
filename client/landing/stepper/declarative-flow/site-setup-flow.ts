@@ -426,12 +426,15 @@ export const siteSetupFlow: Flow = {
 					}
 
 				case 'options':
+					if ( goalsStepEnabled ) {
+						if ( verticalsStepEnabled ) {
+							return navigate( 'vertical' );
+						}
+						return navigate( 'goals' );
+					}
+
 				case 'import':
 					if ( goalsStepEnabled ) {
-						// This can be unchecked when import step is shown after verticals.
-						// if ( verticalsStepEnabled ) {
-						// 	return navigate( 'vertical' );
-						// }
 						return navigate( 'goals' );
 					}
 
