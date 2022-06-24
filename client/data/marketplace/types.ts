@@ -64,6 +64,7 @@ export type ESDateRangeFilter = { range: Record< string, { gte: string; lt: stri
 
 export type SearchParams = {
 	query: string | undefined;
+	author: string | undefined;
 	groupId: string;
 	pageHandle: string | undefined;
 	pageSize: number;

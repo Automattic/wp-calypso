@@ -28,7 +28,14 @@ function mapSortToApiValue( sort: string ) {
  *
  * @returns {string} The generated query string.
  */
-function generateApiQueryString( { query, groupId, pageHandle, pageSize, locale }: SearchParams ) {
+function generateApiQueryString( {
+	query,
+	author,
+	groupId,
+	pageHandle,
+	pageSize,
+	locale,
+}: SearchParams ) {
 	const sort = 'score_default';
 
 	const params: {
@@ -43,7 +50,6 @@ function generateApiQueryString( { query, groupId, pageHandle, pageSize, locale 
 		lang: string;
 	} = {
 		fields: [ ...RETURNABLE_FIELDS ],
-		// filter: buildFilterObject( filter ),
 		page_handle: pageHandle,
 		query: encodeURIComponent( query ?? '' ),
 		sort: mapSortToApiValue( sort ),
@@ -52,9 +58,9 @@ function generateApiQueryString( { query, groupId, pageHandle, pageSize, locale 
 		group_id: groupId,
 	};
 
-	// TODO implement author search
-	// if ( author ) {
-	// }
+	if ( author ) {
+		params.filter = getFilterbyAuthor( author );
+	}
 
 	return params;
 }
@@ -77,4 +83,16 @@ export function search( options: SearchParams ) {
 		},
 		{ ...queryString, apiVersion }
 	);
+}
+
+function getFilterbyAuthor( author: string ): {
+	bool: {
+		must: { term: object }[];
+	};
+} {
+	return {
+		bool: {
+			must: [ { term: { 'plugin.author': author } } ],
+		},
+	};
 }
