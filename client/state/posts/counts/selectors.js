@@ -21,7 +21,7 @@ export function isRequestingPostCounts( state, siteId, postType ) {
  * @param  {object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @param  {string} postType Post type
- * @returns {object}          Post counts, keyed by status
+ * @returns {Object.<string, number>}          Post counts, keyed by status
  */
 export function getAllPostCounts( state, siteId, postType ) {
 	return get( state.posts.counts.counts, [ siteId, postType, 'all' ], null );

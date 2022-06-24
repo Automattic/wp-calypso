@@ -508,7 +508,7 @@ export function plansLink(
 }
 
 export function applyTestFiltersToPlansList(
-	planName: string,
+	planName: string | Plan,
 	abtest: string | undefined,
 	extraArgs: Record< string, string | boolean[] > = {}
 ): Plan & Pick< WPComPlan, 'getPlanCompareFeatures' > {
